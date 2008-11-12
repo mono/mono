@@ -44,12 +44,12 @@ using DbLinq.Util;
         /// <summary>
         /// There are the associations to load with a type
         /// </summary>
-        private IList<MemberInfo> eagerLoading = new List<MemberInfo>();
+        private readonly IList<MemberInfo> eagerLoading = new List<MemberInfo>();
 
         /// <summary>
         /// Criteria to restrict associations
         /// </summary>
-        private IDictionary<MemberInfo, LambdaExpression> criteria = new Dictionary<MemberInfo, LambdaExpression>();
+        private readonly IDictionary<MemberInfo, LambdaExpression> criteria = new Dictionary<MemberInfo, LambdaExpression>();
 
         /// <summary>
         /// Filters objects retrieved for a particular relationship. 

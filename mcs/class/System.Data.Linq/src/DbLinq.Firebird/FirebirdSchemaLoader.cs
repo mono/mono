@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
@@ -48,8 +49,21 @@ namespace DbLinq.Firebird
             return CreateTableName(dbTableName, dbSchema, nameAliases, nameFormat, WordsExtraction.FromDictionary);
         }
 
+        /// <summary>
+        /// Gets a usable name for the database.
+        /// </summary>
+        /// <param name="databaseName">Name of the database.</param>
+        /// <returns></returns>
+        protected override string GetDatabaseName(string databaseName)
+        {
+            return Path.GetFileNameWithoutExtension(databaseName);
+        }
+
         protected override void LoadStoredProcedures(Database schema, SchemaName schemaName, IDbConnection conn, NameFormat nameFormat)
         {
+            // TODO: debug stored procedures support
+            return;
+
             var procs = ReadProcedures(conn, schemaName.DbName);
 
             foreach (DataStoredProcedure proc in procs)

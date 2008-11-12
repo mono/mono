@@ -58,6 +58,11 @@ namespace DbLinq.Data.Linq.Sql
         /// </summary>
         public string Alias { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlParameterPart"/> class.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        /// <param name="alias">The alias.</param>
         public SqlParameterPart(string parameter, string alias)
         {
             Parameter = parameter;

@@ -41,18 +41,24 @@ namespace DbLinq.Data.Linq
     /// Contains list of datacontext entities to be deleted, inserted and updated.
     /// Merges table separate lists into single one.
     /// Standard DLinq class defined in MSDN.
-    /// Note: this is immutable and reflects a snapshot of the DataContext when calling GetChangeSet
+    /// Important: this is immutable and reflects a snapshot of the DataContext when calling GetChangeSet
     /// </summary>
     public sealed class ChangeSet
     {
-        private readonly IList<object> inserts;
-        public IList<object> Inserts { get { return inserts; } }
+        /// <summary>
+        /// All items to be inserted
+        /// </summary>
+        public IList<object> Inserts { get; private set; }
 
-        private readonly IList<object> updates;
-        public IList<object> Updates { get { return updates; } }
+        /// <summary>
+        /// All items to be updated
+        /// </summary>
+        public IList<object> Updates { get; private set; }
 
-        private readonly IList<object> deletes;
-        public IList<object> Deletes { get { return deletes; } }
+        /// <summary>
+        /// All items to be deleted
+        /// </summary>
+        public IList<object> Deletes { get; private set; }
 
         public override string ToString()
         {
@@ -60,11 +66,17 @@ namespace DbLinq.Data.Linq
                                  Inserts.Count, Deletes.Count, Updates.Count);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChangeSet"/> class.
+        /// </summary>
+        /// <param name="inserts">The inserts.</param>
+        /// <param name="updates">The updates.</param>
+        /// <param name="deletes">The deletes.</param>
         internal ChangeSet(List<object> inserts, List<object> updates, List<object> deletes)
         {
-            this.inserts = inserts.AsReadOnly();
-            this.updates = updates.AsReadOnly();
-            this.deletes = deletes.AsReadOnly();
+            Inserts = inserts.AsReadOnly();
+            Updates = updates.AsReadOnly();
+            Deletes = deletes.AsReadOnly();
         }
-    };
+    }
 }

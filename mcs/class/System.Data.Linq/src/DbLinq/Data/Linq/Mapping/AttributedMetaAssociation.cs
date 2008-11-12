@@ -2,7 +2,7 @@
 // 
 // MIT license
 //
-// Copyright (c) 2007-2008 Jiri Moudry
+// Copyright (c) 2007-2008 Jiri Moudry, Stefan Klinger
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data.Linq.Mapping;
+using System.Linq;
 using System.Reflection;
 using DbLinq.Util;
 using System.Collections.Generic;
@@ -39,86 +40,99 @@ namespace DbLinq.Data.Linq.Mapping
 {
     internal class AttributedMetaAssociation : MetaAssociation
     {
+		//Seperator used for key lists
+		private static readonly char[] STRING_SEPERATOR =  new[] { ',' };
+
         public AttributedMetaAssociation(MemberInfo member, AssociationAttribute attribute, MetaDataMember metaDataMember)
         {
-            memberInfo = member;
-            associationAttribute = attribute;
-            thisMember = metaDataMember;
-            Load();
+            _memberInfo = member;
+            _associationAttribute = attribute;
+            _thisMember = metaDataMember;
+
+        	SetupRelationship();
         }
 
-        public virtual void SetOtherKey(string literalOtherKey, MetaTable thisTable, MetaTable otherTable, MetaDataMember otherAssociationMember)
-        {
-            var comma = new[] { ',' };
-            var otherKeysList = new List<MetaDataMember>();
-            if (literalOtherKey != null)
-            {
-                foreach (var otherKeyRaw in literalOtherKey.Split(comma, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    var otherKey = otherKeyRaw.Trim();
-                    //we need to revisit this code - it has caused problems on both MySql and Pgsql
-                    MemberInfo[] otherKeyFields = otherTable.RowType.Type.GetMember(otherKey);
-                    if (otherKeyFields.Length == 0)
-                    {
-                        string msg = "ERROR L57 Database contains broken join information."
-                            + " thisTable=" + thisTable.TableName
-                            + " otherTable=" + otherTable.TableName
-                            + " orphanKey=" + literalOtherKey;
-                        throw new InvalidOperationException(msg);
-                    }
-                    var keyMember = otherKeyFields[0];
-                    otherKeysList.Add(new AttributedColumnMetaDataMember(keyMember, GetColumnAttribute(keyMember),
-                                                                         thisTable.RowType));
-                }
-            }
-            otherKeys = new ReadOnlyCollection<MetaDataMember>(otherKeysList);
-            otherMember = otherAssociationMember;
-        }
+		/// <summary>
+		/// This function sets up the relationship information based on the attribute <see cref="AttributedMetaModel"/>.
+		/// </summary>
+		private void SetupRelationship()
+		{
+			//Get the association target type
+			Type targetType = _memberInfo.GetFirstInnerReturnType();
 
-        protected virtual void Load()
-        {
-            LoadThisKey();
-        }
+			var metaModel = ThisMember.DeclaringType.Model as AttributedMetaModel;
+			if (metaModel == null)
+			{
+				throw new InvalidOperationException("Internal Error: MetaModel is not a AttributedMetaModel");
+			}
 
-        protected virtual void LoadThisKey()
-        {
-            var comma = new[] { ',' };
-            var thisKeyList = new List<MetaDataMember>();
-            if (associationAttribute.ThisKey != null)
-            {
-                foreach (
-                    var thisKeyRaw in associationAttribute.ThisKey.Split(comma, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    var thisKey = thisKeyRaw.Trim();
-                    var keyMember = memberInfo.DeclaringType.GetSingleMember(thisKey);
-                    thisKeyList.Add(new AttributedColumnMetaDataMember(keyMember, GetColumnAttribute(keyMember),
-                                                                       ThisMember.DeclaringType));
-                }
-            }
-            theseKeys = new ReadOnlyCollection<MetaDataMember>(thisKeyList);
-        }
+			MetaTable otherTable = metaModel.GetTable(targetType);
 
-        protected virtual ColumnAttribute GetColumnAttribute(MemberInfo memberInfo)
-        {
-            return memberInfo.GetAttribute<ColumnAttribute>();
-        }
+			//Setup "this key"
+			_thisKey = GetKeys(_associationAttribute.ThisKey, ThisMember.DeclaringType);
 
-        private AssociationAttribute associationAttribute;
-        private MemberInfo memberInfo;
+			//Setup other key
+			_otherKeys = GetKeys(_associationAttribute.OtherKey, otherTable.RowType);
+		}
+
+		/// <summary>
+		/// Returns a list of keys from the given meta type based on the key list string.
+		/// </summary>
+		/// <param name="keyListString">The key list string.</param>
+		/// <param name="parentType">Type of the parent.</param>
+		/// <returns></returns>
+		private static ReadOnlyCollection<MetaDataMember> GetKeys(string keyListString, MetaType parentType)
+		{
+			if(keyListString != null)
+			{
+				var thisKeyList = new List<MetaDataMember>();
+
+				string[] keyNames = keyListString.Split(STRING_SEPERATOR, StringSplitOptions.RemoveEmptyEntries);
+
+				foreach (string rawKeyName in keyNames)
+				{
+					string keyName = rawKeyName.Trim();
+
+					//TODO: maybe speed the lookup up
+					MetaDataMember key = (from dataMember in parentType.PersistentDataMembers
+					             where dataMember.Name == keyName
+					             select dataMember).SingleOrDefault();
+
+					if(key == null)
+					{
+						string errorMessage = string.Format("Could not find key member '{0}' of key '{1}' on type '{2}'. The key may be wrong or the field or property on '{2}' has changed names.",
+							keyName, keyListString, parentType.Type.Name);
+
+						throw new InvalidOperationException(errorMessage);
+					}
+
+					thisKeyList.Add(key);
+				}
+
+				return new ReadOnlyCollection<MetaDataMember>(thisKeyList);
+			}
+			else //Key is the primary key of this table
+			{
+				return parentType.IdentityMembers;
+			}
+		}
+
+        private AssociationAttribute _associationAttribute;
+        private MemberInfo _memberInfo;
 
         public override bool DeleteOnNull
         {
-            get { return associationAttribute.DeleteOnNull; }
+            get { return _associationAttribute.DeleteOnNull; }
         }
 
         public override string DeleteRule
         {
-            get { return associationAttribute.DeleteRule; }
+            get { return _associationAttribute.DeleteRule; }
         }
 
         public override bool IsForeignKey
         {
-            get { return associationAttribute.IsForeignKey; }
+            get { return _associationAttribute.IsForeignKey; }
         }
 
         public override bool IsMany
@@ -131,18 +145,18 @@ namespace DbLinq.Data.Linq.Mapping
 
         public override bool IsNullable
         {
-            get { return memberInfo.GetMemberType().CanBeNull(); }
+            get { return _memberInfo.GetMemberType().CanBeNull(); }
         }
 
         public override bool IsUnique
         {
-            get { return associationAttribute.IsUnique; }
+            get { return _associationAttribute.IsUnique; }
         }
 
-        private ReadOnlyCollection<MetaDataMember> otherKeys;
+        private ReadOnlyCollection<MetaDataMember> _otherKeys;
         public override ReadOnlyCollection<MetaDataMember> OtherKey
         {
-            get { return otherKeys; }
+            get { return _otherKeys; }
         }
 
         public override bool OtherKeyIsPrimaryKey
@@ -158,28 +172,28 @@ namespace DbLinq.Data.Linq.Mapping
             }
         }
 
-        private MetaDataMember otherMember;
+        private MetaDataMember _otherMember;
         public override MetaDataMember OtherMember
         {
-            get { return otherMember; }
+            get { return _otherMember; }
         }
 
         public override MetaType OtherType
         {
-            get { return thisMember.DeclaringType; }
+            get { return _thisMember.DeclaringType; }
         }
 
-        private ReadOnlyCollection<MetaDataMember> theseKeys;
+        private ReadOnlyCollection<MetaDataMember> _thisKey;
         public override ReadOnlyCollection<MetaDataMember> ThisKey
         {
-            get { return theseKeys; }
+            get { return _thisKey; }
         }
 
         public override bool ThisKeyIsPrimaryKey
         {
             get
             {
-                foreach (var thisKey in theseKeys)
+                foreach (var thisKey in _thisKey)
                 {
                     if (!thisKey.IsPrimaryKey)
                         return false;
@@ -188,10 +202,10 @@ namespace DbLinq.Data.Linq.Mapping
             }
         }
 
-        private MetaDataMember thisMember;
+        private MetaDataMember _thisMember;
         public override MetaDataMember ThisMember
         {
-            get { return thisMember; }
+            get { return _thisMember; }
         }
     }
 }

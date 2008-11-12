@@ -40,11 +40,21 @@ namespace System.Data.Linq.Identity.Implementation
 namespace DbLinq.Data.Linq.Identity.Implementation
 #endif
 {
+    /// <summary>
+    /// IIdentityReader default implementation
+    /// Currently uses reflection
+    /// TODO: use compilation
+    /// </summary>
     internal class IdentityReader : IIdentityReader
     {
-        private Type type;
-        private IList<MemberInfo> keyMembers = new List<MemberInfo>();
+        private readonly Type type;
+        private readonly IList<MemberInfo> keyMembers = new List<MemberInfo>();
 
+        /// <summary>
+        /// Gets an object identity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public IdentityKey GetIdentityKey(object entity)
         {
             lock (keyMembers)
@@ -62,6 +72,11 @@ namespace DbLinq.Data.Linq.Identity.Implementation
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdentityReader"/> class.
+        /// </summary>
+        /// <param name="t">The t.</param>
+        /// <param name="dataContext">The data context.</param>
         public IdentityReader(Type t, DataContext dataContext)
         {
             foreach (var member in dataContext.Mapping.GetTable(t).RowType.IdentityMembers)

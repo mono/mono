@@ -1,4 +1,5 @@
-﻿#region MIT license
+﻿
+#region MIT license
 // 
 // MIT license
 //
@@ -28,6 +29,9 @@ using System.Data;
 
 namespace DbLinq.Data.Linq.Database.Implementation
 {
+    /// <summary>
+    /// Default database transaction implementation
+    /// </summary>
     internal class DatabaseTransaction : IDatabaseTransaction
     {
         [ThreadStatic]
@@ -35,7 +39,11 @@ namespace DbLinq.Data.Linq.Database.Implementation
 
         private IDbTransaction _transaction;
 
-        public static IDbTransaction CurrentDbTransaction
+        /// <summary>
+        /// Gets the current db transaction.
+        /// </summary>
+        /// <value>The current db transaction.</value>
+        public static IDbTransaction currentTransaction
         {
             get
             {
@@ -45,7 +53,11 @@ namespace DbLinq.Data.Linq.Database.Implementation
             }
         }
 
-        public IDbTransaction Transaction { get { return CurrentDbTransaction; } }
+        /// <summary>
+        /// Returns current transaction (if any)
+        /// </summary>
+        /// <value></value>
+        public IDbTransaction Transaction { get { return currentTransaction; } }
 
         public DatabaseTransaction(IDbConnection connection)
         {
@@ -56,6 +68,10 @@ namespace DbLinq.Data.Linq.Database.Implementation
             _currentTransaction = this;
         }
 
+        /// <summary>
+        /// Call Commit() before Dispose() to save changes.
+        /// All unCommit()ed changes will be rolled back
+        /// </summary>
         public void Commit()
         {
             if (_transaction != null)
@@ -67,6 +83,9 @@ namespace DbLinq.Data.Linq.Database.Implementation
             }
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             if (_transaction != null)

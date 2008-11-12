@@ -28,6 +28,11 @@ using System.Globalization;
 
 namespace DbLinq.Language
 {
+    /// <summary>
+    /// Words manipulation for a specific language.
+    /// - Singularization/pluralization
+    /// - Words extraction
+    /// </summary>
     internal interface ILanguageWords
     {
         /// <summary>
@@ -45,9 +50,9 @@ namespace DbLinq.Language
 
         /// <summary>
         /// Extracts words from an undistinguishable letters magma
-        /// for example "shipsperunit" --> "ships" "per" "unit"
+        /// for example "shipsperunit" --&gt; "ships" "per" "unit"
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name="text">The text.</param>
         /// <returns></returns>
         IList<string> GetWords(string text);
 

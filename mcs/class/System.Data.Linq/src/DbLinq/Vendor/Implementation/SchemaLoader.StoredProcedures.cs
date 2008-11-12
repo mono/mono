@@ -32,6 +32,13 @@ namespace DbLinq.Vendor.Implementation
 {
     partial class SchemaLoader
     {
+        /// <summary>
+        /// Loads the stored procedures.
+        /// </summary>
+        /// <param name="schema">The schema.</param>
+        /// <param name="schemaName">Name of the schema.</param>
+        /// <param name="conn">The conn.</param>
+        /// <param name="nameFormat">The name format.</param>
         protected virtual void LoadStoredProcedures(Database schema, SchemaName schemaName, IDbConnection conn, NameFormat nameFormat)
         {
         }

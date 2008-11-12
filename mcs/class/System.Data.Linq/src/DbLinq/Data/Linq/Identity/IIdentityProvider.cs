@@ -35,6 +35,10 @@ namespace DbLinq.Data.Linq.Identity
     /// </summary>
     internal interface IIdentityProvider
     {
+        /// <summary>
+        /// The object provides its own identity.
+        /// </summary>
+        /// <returns></returns>
         IdentityKey GetIdentity();
     }
 }

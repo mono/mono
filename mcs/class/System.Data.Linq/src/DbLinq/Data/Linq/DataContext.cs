@@ -29,7 +29,6 @@ using System.Collections;
 using System.Data;
 using System.Data.Common;
 using System.Data.Linq.Mapping;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -58,6 +57,7 @@ using DbLinq.Vendor;
 using DbLinq.Data.Linq.Database;
 using DbLinq.Data.Linq.Database.Implementation;
 using System.Linq.Expressions;
+using System.Reflection.Emit;
 
 #if MONO_STRICT
 namespace System.Data.Linq
@@ -67,7 +67,8 @@ namespace DbLinq.Data.Linq
 {
     public partial class DataContext : IDisposable
     {
-        private readonly Dictionary<string, ITable> _tableMap = new Dictionary<string, ITable>();
+        //private readonly Dictionary<string, ITable> _tableMap = new Dictionary<string, ITable>();
+		private readonly Dictionary<Type, ITable> _tableMap = new Dictionary<Type, ITable>();
 
         public MetaModel Mapping { get; private set; }
         // PC question: at ctor, we get a IDbConnection and the Connection property exposes a DbConnection
@@ -247,20 +248,45 @@ namespace DbLinq.Data.Linq
             Mapping = mappingSource.GetModel(GetType());
         }
 
+		/// <summary>
+		/// Checks if the table is allready mapped or maps it if not.
+		/// </summary>
+		/// <param name="tableType">Type of the table.</param>
+		/// <exception cref="InvalidOperationException">Thrown if the table is not mappable.</exception>
+		private void CheckTableMapping(Type tableType)
+		{
+			//This will throw an exception if the table is not found
+			if(Mapping.GetTable(tableType) == null)
+			{
+				throw new InvalidOperationException("The type '" + tableType.Name + "' is not mapped as a Table.");
+			}
+		}
 
-        public Table<TEntity> GetTable<TEntity>() where TEntity : class
+		/// <summary>
+		/// Returns a Table for the type TEntity.
+		/// </summary>
+		/// <exception cref="InvalidOperationException">If the type TEntity is not mappable as a Table.</exception>
+		/// <typeparam name="TEntity">The table type.</typeparam>
+    	public Table<TEntity> GetTable<TEntity>() where TEntity : class
         {
             return (Table<TEntity>)GetTable(typeof(TEntity));
         }
 
+		/// <summary>
+		/// Returns a Table for the given type.
+		/// </summary>
+		/// <param name="type">The table type.</param>
+		/// <exception cref="InvalidOperationException">If the type is not mappable as a Table.</exception>
         public ITable GetTable(Type type)
         {
             lock (_tableMap)
             {
-                string tableName = type.FullName;
                 ITable tableExisting;
-                if (_tableMap.TryGetValue(tableName, out tableExisting))
+				if (_tableMap.TryGetValue(type, out tableExisting))
                     return tableExisting;
+
+				//Check for table mapping
+				CheckTableMapping(type);
 
                 var tableNew = Activator.CreateInstance(
                                   typeof(Table<>).MakeGenericType(type)
@@ -269,7 +295,7 @@ namespace DbLinq.Data.Linq
                                   , new object[] { this }
                                   , System.Globalization.CultureInfo.CurrentCulture) as ITable;
 
-                _tableMap[tableName] = tableNew;
+                _tableMap[type] = tableNew;
                 return tableNew;
             }
         }
@@ -683,7 +709,7 @@ namespace DbLinq.Data.Linq
         /// </summary>
         public IEnumerable<TResult> ExecuteQuery<TResult>(string query, params object[] parameters) where TResult : class, new()
         {
-            GetTable<TResult>();
+            //GetTable<TResult>();
             foreach (TResult result in ExecuteQuery(typeof(TResult), query, parameters))
                 yield return result;
         }
@@ -696,17 +722,19 @@ namespace DbLinq.Data.Linq
         }
 
         /// <summary>
-        /// TODO: DataLoadOptions ds = new DataLoadOptions(); ds.LoadWith<Customer>(p => p.Orders);
+        /// Gets or sets the load options
         /// </summary>
         [DbLinqToDo]
-        public DataLoadOptions LoadOptions
-        {
-            get;
-            set;
-        }
+        public DataLoadOptions LoadOptions { get; set; }
 
         public DbTransaction Transaction { get; set; }
 
+        /// <summary>
+        /// Runs the given reader and returns columns.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the result.</typeparam>
+        /// <param name="reader">The reader.</param>
+        /// <returns></returns>
         public IEnumerable<TResult> Translate<TResult>(DbDataReader reader)
         {
             foreach (TResult result in Translate(typeof(TResult), reader))
@@ -826,7 +854,7 @@ namespace DbLinq.Data.Linq
         [DbLinqToDo]
         public DbCommand GetCommand(IQueryable query)
         {
-            QueryProvider qp = query.Provider as QueryProvider;
+            var qp = query.Provider as QueryProvider;
             if (qp == null)
                 throw new InvalidOperationException();
 
@@ -838,7 +866,7 @@ namespace DbLinq.Data.Linq
         }
 
         [DbLinqToDo]
-        public void Refresh(System.Data.Linq.RefreshMode mode, System.Collections.IEnumerable entities)
+        public void Refresh(RefreshMode mode, IEnumerable entities)
         {
             throw new NotImplementedException();
         }

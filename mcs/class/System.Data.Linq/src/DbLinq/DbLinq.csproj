@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{7950197D-4122-49CB-9FD7-45E666BAFEC2}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -62,7 +62,7 @@
     <Compile Include="Data\Linq\ChangeSet.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseTransaction.cs" />
-    <Compile Include="Data\Linq\Database\IDbLinqCommand.cs" />
+    <Compile Include="Data\Linq\Database\ITransactionalCommand.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseConnection.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseTransaction.cs" />
@@ -77,7 +77,6 @@
     <Compile Include="Data\Linq\ITable.Extended.cs" />
     <Compile Include="Data\Linq\DataContext.cs" />
     <Compile Include="Data\Linq\DataContext.Extended.cs" />
-    <Compile Include="Data\Linq\EntityList.cs" />
     <Compile Include="Data\Linq\Identity\IdentityKey.cs" />
     <Compile Include="Data\Linq\Identity\IIdentityProvider.cs" />
     <Compile Include="Data\Linq\Identity\IIdentityReader.cs" />
@@ -115,7 +114,7 @@
     <Compile Include="Data\Linq\Sql\SqlPart.cs" />
     <Compile Include="Data\Linq\Sql\SqlStatement.cs" />
     <Compile Include="Data\Linq\Sugar\BuilderContext.cs" />
-    <Compile Include="Data\Linq\Database\Implementation\DbLinqCommand.cs" />
+    <Compile Include="Data\Linq\Database\Implementation\TransactionalCommand.cs" />
     <Compile Include="Data\Linq\Sugar\DeleteQuery.cs" />
     <Compile Include="Data\Linq\Sugar\DirectQuery.cs" />
     <Compile Include="Data\Linq\Sugar\Error.cs" />
@@ -207,8 +206,6 @@
     <Compile Include="Factory\Implementation\ReflectionObjectFactory.cs" />
     <Compile Include="Factory\IObjectFactory.cs" />
     <Compile Include="Factory\ObjectFactory.cs" />
-    <Compile Include="Data\Linq\IEntityMap.cs" />
-    <Compile Include="Data\Linq\Implementation\EntityMap.cs" />
     <Compile Include="Schema\Case.cs" />
     <Compile Include="Schema\Dbml\Adapter\ArrayAdapter.cs" />
     <Compile Include="Schema\Dbml\Adapter\CsvArrayAdapter.cs" />
@@ -230,6 +227,7 @@
     <Compile Include="Schema\Name.cs" />
     <Compile Include="Schema\SchemaName.cs" />
     <Compile Include="Schema\TableName.cs" />
+    <Compile Include="Util\DbmlExtensions.cs" />
     <Compile Include="Util\Output.cs" />
     <Compile Include="Util\IDataRecordExtensions.cs" />
     <Compile Include="Util\IDataTypeExtensions.cs" />
@@ -266,7 +264,6 @@
     <Compile Include="Vendor\IDataName.cs" />
     <Compile Include="Vendor\IDataType.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.Name.cs" />
-    <Compile Include="Vendor\Implementation\Vendor.Name.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.Columns.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.DataTableColumn.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.DataName.cs" />

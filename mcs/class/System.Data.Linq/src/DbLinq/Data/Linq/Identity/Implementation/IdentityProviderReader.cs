@@ -41,6 +41,11 @@ namespace DbLinq.Data.Linq.Identity.Implementation
     /// </summary>
     class IdentityProviderReader : IIdentityReader
     {
+        /// <summary>
+        /// Gets an object identity, where entity is an IIdentityProvider
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public IdentityKey GetIdentityKey(object entity)
         {
             return ((IIdentityProvider)entity).GetIdentity();

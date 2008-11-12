@@ -41,8 +41,12 @@ namespace DbLinq.Data.Linq.Sql
 #else
     public
 #endif
- class SqlLiteralPart : SqlPart
+    class SqlLiteralPart : SqlPart
     {
+        /// <summary>
+        /// The resulting SQL string
+        /// </summary>
+        /// <value></value>
         public override string Sql { get { return Literal; } }
 
         /// <summary>
@@ -50,6 +54,10 @@ namespace DbLinq.Data.Linq.Sql
         /// </summary>
         public string Literal { get; private set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlLiteralPart"/> class.
+        /// </summary>
+        /// <param name="literal">The literal.</param>
         public SqlLiteralPart(string literal)
         {
             Literal = literal;

@@ -2,7 +2,7 @@
 // 
 // MIT license
 //
-// Copyright (c) 2007-2008 Jiri Moudry
+// Copyright (c) 2007-2008 Jiri Moudry, Stefan Klinger
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -42,25 +42,17 @@ namespace DbLinq.Data.Linq.Mapping
     [DebuggerDisplay("MetaType for {Name}")]
     internal class AttributedMetaType : MetaType
     {
-        public AttributedMetaType(Type classType)
+        internal AttributedMetaType(Type classType)
         {
             type = classType;
 
             // associations and members
-            var associationsList = new List<MetaAssociation>();
             var dataMembersList = new List<MetaDataMember>();
             var persistentMembersList = new List<MetaDataMember>();
             var identityMembersList = new List<MetaDataMember>();
             foreach (var memberInfo in classType.GetMembers())
             {
-                var association = memberInfo.GetAttribute<AssociationAttribute>();
-                if (association != null)
-                {
-                    var dataMember = new AttributedAssociationMetaDataMember(memberInfo, association, this);
-                    var metaAssociation = new AttributedMetaAssociation(memberInfo, association, dataMember);
-                    associationsList.Add(metaAssociation);
-                    dataMember.SetAssociation(metaAssociation);
-                }
+                
                 var column = memberInfo.GetAttribute<ColumnAttribute>();
                 if (column != null)
                 {
@@ -72,21 +64,42 @@ namespace DbLinq.Data.Linq.Mapping
                         identityMembersList.Add(dataMember);
                 }
             }
-            associations = new ReadOnlyCollection<MetaAssociation>(associationsList);
             dataMembers = new ReadOnlyCollection<MetaDataMember>(dataMembersList);
-            persistentDataMembers = new ReadOnlyCollection<MetaDataMember>(persistentMembersList);
+            _persistentDataMembers = new ReadOnlyCollection<MetaDataMember>(persistentMembersList);
             identityMembers = new ReadOnlyCollection<MetaDataMember>(identityMembersList);
         }
+
+		/// <summary>
+		/// This function is used to setup associations.
+		/// It is seperated from the constructor to evade circular dependecies
+		/// </summary>
+		internal void SetupAssociations()
+		{
+			var associationsList = new List<MetaAssociation>();
+			foreach (var memberInfo in type.GetMembers())
+			{
+				var association = memberInfo.GetAttribute<AssociationAttribute>();
+				if (association != null)
+				{
+					var dataMember = new AttributedAssociationMetaDataMember(memberInfo, association, this);
+					var metaAssociation = new AttributedMetaAssociation(memberInfo, association, dataMember);
+					associationsList.Add(metaAssociation);
+					dataMember.SetAssociation(metaAssociation);
+				}
+			}
+
+			_associations = new ReadOnlyCollection<MetaAssociation>(associationsList);
+		}
 
         internal void SetMetaTable(MetaTable metaTable)
         {
             table = metaTable;
         }
 
-        private readonly ReadOnlyCollection<MetaAssociation> associations;
+        private ReadOnlyCollection<MetaAssociation> _associations;
         public override ReadOnlyCollection<MetaAssociation> Associations
         {
-            get { return associations; }
+            get { return _associations; }
         }
 
         public override bool CanInstantiate
@@ -120,7 +133,7 @@ namespace DbLinq.Data.Linq.Mapping
         {
             // TODO: optimize?
             // A tip to know the MemberInfo for the same member is not the same when declared from a class and its inheritor
-            return (from dataMember in persistentDataMembers where dataMember.Member.Name == member.Name select dataMember).SingleOrDefault();
+            return (from dataMember in _persistentDataMembers where dataMember.Member.Name == member.Name select dataMember).SingleOrDefault();
         }
 
         public override MetaType GetInheritanceType(Type baseType)
@@ -219,10 +232,10 @@ namespace DbLinq.Data.Linq.Mapping
             get { throw new NotImplementedException(); }
         }
 
-        private readonly ReadOnlyCollection<MetaDataMember> persistentDataMembers;
+    	private ReadOnlyCollection<MetaDataMember> _persistentDataMembers;
         public override ReadOnlyCollection<MetaDataMember> PersistentDataMembers
         {
-            get { return persistentDataMembers; }
+            get { return _persistentDataMembers; }
         }
 
         private MetaTable table;

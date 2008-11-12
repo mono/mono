@@ -39,8 +39,18 @@ namespace System.Data.Linq.Identity.Implementation
 namespace DbLinq.Data.Linq.Identity.Implementation
 #endif
 {
+    /// <summary>
+    /// IIdentityReaderFactory default implementation
+    /// </summary>
     internal class IdentityReaderFactory : IIdentityReaderFactory
     {
+        /// <summary>
+        /// Returns an IIdentityReader specific to the requested type
+        /// (this allows to precompile the reader)
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="dataContext"></param>
+        /// <returns></returns>
         public IIdentityReader GetReader(Type t, DataContext dataContext)
         {
             if (typeof(IIdentityProvider).IsAssignableFrom(t))

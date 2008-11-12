@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 namespace DbLinq.Schema
 {
 #if MONO_STRICT

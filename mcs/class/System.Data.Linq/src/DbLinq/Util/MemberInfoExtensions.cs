@@ -120,5 +120,26 @@ namespace DbLinq.Util
             }
             return null;
         }
+
+		/// <summary>
+		/// This function returns the type that is the "return type" of the member.
+		/// If it is a template it returns the first template parameter type.
+		/// </summary>
+		/// <param name="memberInfo">The member info.</param>
+		/// TODO: better function name
+		public static Type GetFirstInnerReturnType(this MemberInfo memberInfo)
+		{
+			var type = memberInfo.GetMemberType();
+
+			if (type == null)
+				return null;
+
+			if (type.IsGenericType)
+			{
+				return type.GetGenericArguments()[0];
+			}
+
+			return type;
+		}
     }
 }

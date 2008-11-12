@@ -30,6 +30,9 @@ namespace System.Data.Linq.SqlClient
 namespace DbLinq.Data.Linq.SqlClient
 #endif
 {
+    /// <summary>
+    /// Identifies vendor by using VendorAttribute with this type
+    /// </summary>
 #if MONO_STRICT && !MONO_STRICT_EXTRA_DB_SUPPORT
     internal
 #else

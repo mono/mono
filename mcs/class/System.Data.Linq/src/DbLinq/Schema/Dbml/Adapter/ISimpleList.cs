@@ -29,15 +29,17 @@ using System.Collections.Generic;
 
 namespace DbLinq.Schema.Dbml.Adapter
 {
+    /// <summary>
+    /// sort of light IList<>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
 #if MONO_STRICT
     internal
 #else
     public
 #endif
-        interface ISimpleList<T> : IEnumerable<T>
+    interface ISimpleList<T> : IEnumerable<T>
     {
-        // sort of light IList<>
-
         /// <summary>
         /// Items count
         /// </summary>
@@ -48,6 +50,7 @@ namespace DbLinq.Schema.Dbml.Adapter
         /// </summary>
         /// <param name="item"></param>
         void Add(T item);
+
         /// <summary>
         /// Index accessor
         /// </summary>
@@ -55,8 +58,17 @@ namespace DbLinq.Schema.Dbml.Adapter
         /// <returns></returns>
         T this[int index] { get; set; }
 
-        // extension
+        /// <summary>
+        /// Sorts using a given sorter.
+        /// </summary>
+        /// <param name="sorter">The sorter.</param>
         void Sort(IComparer<T> sorter);
+
+        /// <summary>
+        /// Finds all items matching a given predicate.
+        /// </summary>
+        /// <param name="match">The match.</param>
+        /// <returns></returns>
         List<T> FindAll(Predicate<T> match);
     }
 }

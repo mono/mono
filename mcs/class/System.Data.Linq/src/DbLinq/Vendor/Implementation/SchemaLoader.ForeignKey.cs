@@ -33,8 +33,30 @@ namespace DbLinq.Vendor.Implementation
 {
     partial class SchemaLoader
     {
+        /// <summary>
+        /// Loads the constraints.
+        /// </summary>
+        /// <param name="schema">The schema.</param>
+        /// <param name="schemaName">Name of the schema.</param>
+        /// <param name="conn">The conn.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <param name="names">The names.</param>
         protected abstract void LoadConstraints(Database schema, SchemaName schemaName, IDbConnection conn, NameFormat nameFormat, Names names);
 
+        /// <summary>
+        /// Loads the foreign key.
+        /// </summary>
+        /// <param name="schema">The schema.</param>
+        /// <param name="table">The table.</param>
+        /// <param name="columnName">Name of the column.</param>
+        /// <param name="tableName">Name of the table.</param>
+        /// <param name="tableSchema">The table schema.</param>
+        /// <param name="referencedColumnName">Name of the referenced column.</param>
+        /// <param name="referencedTableName">Name of the referenced table.</param>
+        /// <param name="referencedTableSchema">The referenced table schema.</param>
+        /// <param name="constraintName">Name of the constraint.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <param name="names">The names.</param>
         protected virtual void LoadForeignKey(Database schema, Table table, string columnName, string tableName, string tableSchema,
             string referencedColumnName, string referencedTableName, string referencedTableSchema,
             string constraintName,
@@ -87,7 +109,12 @@ namespace DbLinq.Vendor.Implementation
             }
         }
 
-        void ReportForeignKeyError(Database schema, string referencedTableFull)
+        /// <summary>
+        /// Reports a foreign key error.
+        /// </summary>
+        /// <param name="schema">The schema.</param>
+        /// <param name="referencedTableFull">The referenced table full.</param>
+        private void ReportForeignKeyError(Database schema, string referencedTableFull)
         {
             var tablesMap = schema.Tables.ToDictionary(t => t.Name.ToLower());
             var referencedTableFullL = referencedTableFull.ToLower();

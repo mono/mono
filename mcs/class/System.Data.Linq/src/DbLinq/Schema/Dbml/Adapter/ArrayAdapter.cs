@@ -123,6 +123,11 @@ namespace DbLinq.Schema.Dbml.Adapter
             SetValue(array);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ArrayAdapter&lt;T&gt;"/> class.
+        /// </summary>
+        /// <param name="o">The o.</param>
+        /// <param name="fieldName">Name of the field.</param>
         public ArrayAdapter(object o, string fieldName)
         {
             Owner = o;
@@ -131,11 +136,21 @@ namespace DbLinq.Schema.Dbml.Adapter
 
         #region IList<T> Members
 
+        /// <summary>
+        /// Returns the index of given item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns></returns>
         public int IndexOf(T item)
         {
             return GetDynamic().IndexOf(item);
         }
 
+        /// <summary>
+        /// Inserts the specified item at given index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <param name="item">The item.</param>
         public void Insert(int index, T item)
         {
             IList<T> dynamicArray = GetDynamic();
@@ -143,6 +158,10 @@ namespace DbLinq.Schema.Dbml.Adapter
             SetStatic(dynamicArray);
         }
 
+        /// <summary>
+        /// Removes at given index.
+        /// </summary>
+        /// <param name="index">The index.</param>
         public void RemoveAt(int index)
         {
             IList<T> dynamicArray = GetDynamic();
@@ -150,6 +169,10 @@ namespace DbLinq.Schema.Dbml.Adapter
             SetStatic(dynamicArray);
         }
 
+        /// <summary>
+        /// Gets or sets the <see cref="T"/> at the specified index.
+        /// </summary>
+        /// <value></value>
         public T this[int index]
         {
             get
@@ -168,6 +191,10 @@ namespace DbLinq.Schema.Dbml.Adapter
 
         #region ICollection<T> Members
 
+        /// <summary>
+        /// Append a parameter
+        /// </summary>
+        /// <param name="item"></param>
         public void Add(T item)
         {
             IList<T> dynamicArray = GetDynamic();
@@ -175,31 +202,61 @@ namespace DbLinq.Schema.Dbml.Adapter
             SetStatic(dynamicArray);
         }
 
+        /// <summary>
+        /// Clears this instance.
+        /// </summary>
         public void Clear()
         {
             SetStatic(new T[0]);
         }
 
+        /// <summary>
+        /// Determines whether [contains] [the specified item].
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns>
+        /// 	<c>true</c> if [contains] [the specified item]; otherwise, <c>false</c>.
+        /// </returns>
         public bool Contains(T item)
         {
             return GetDynamic().Contains(item);
         }
 
+        /// <summary>
+        /// Copies to array.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <param name="arrayIndex">Index of the array.</param>
         public void CopyTo(T[] array, int arrayIndex)
         {
             GetDynamic().CopyTo(array, arrayIndex);
         }
 
+        /// <summary>
+        /// Items count
+        /// </summary>
+        /// <value></value>
         public int Count
         {
             get { return GetDynamic().Count; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is read only.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is read only; otherwise, <c>false</c>.
+        /// </value>
         public bool IsReadOnly
         {
             get { return false; }
         }
 
+        /// <summary>
+        /// Removes the given item.
+        /// </summary>
+        /// <param name="item">The item.</param>
+        /// <returns></returns>
         public bool Remove(T item)
         {
             IList<T> dynamicArray = GetDynamic();
@@ -212,6 +269,11 @@ namespace DbLinq.Schema.Dbml.Adapter
 
         #region IEnumerable<T> Members
 
+        /// <summary>
+        /// Returns an enumerator to enumerate items.
+        /// </summary>
+        /// <returns>
+        /// </returns>
         public IEnumerator<T> GetEnumerator()
         {
             return GetDynamic().GetEnumerator();
@@ -221,6 +283,11 @@ namespace DbLinq.Schema.Dbml.Adapter
 
         #region IEnumerable Members
 
+        /// <summary>
+        /// Returns an enumerator to enumerate items.
+        /// </summary>
+        /// <returns>
+        /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetDynamic().GetEnumerator();
@@ -228,6 +295,10 @@ namespace DbLinq.Schema.Dbml.Adapter
 
         #endregion
 
+        /// <summary>
+        /// Sorts using the specified comparer.
+        /// </summary>
+        /// <param name="sorter">The sorter.</param>
         public void Sort(IComparer<T> sorter)
         {
             var list = GetDynamic();
@@ -235,6 +306,11 @@ namespace DbLinq.Schema.Dbml.Adapter
             SetStatic(list);
         }
 
+        /// <summary>
+        /// Finds all items matching the given predicate.
+        /// </summary>
+        /// <param name="match">The match.</param>
+        /// <returns></returns>
         public List<T> FindAll(Predicate<T> match)
         {
             return GetDynamic().FindAll(match);

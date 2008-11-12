@@ -56,6 +56,11 @@ namespace DbLinq.Data.Linq.Implementation
         /// </summary>
         public IdentityKey IdentityKey { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityTrack"/> class.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="entityState">State of the entity.</param>
         public EntityTrack(object entity, EntityState entityState)
         {
             Entity = entity;

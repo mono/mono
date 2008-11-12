@@ -45,6 +45,16 @@ namespace DbLinq.Sqlite
 
         public override System.Type DataContextType { get { return typeof(SqliteDataContext); } }
 
+        /// <summary>
+        /// Gets a usable name for the database.
+        /// </summary>
+        /// <param name="databaseName">Name of the database.</param>
+        /// <returns></returns>
+        protected override string GetDatabaseName(string databaseName)
+        {
+            return Path.GetFileNameWithoutExtension(databaseName);
+        }
+
         protected override void LoadConstraints(Database schema, SchemaName schemaName, IDbConnection conn, NameFormat nameFormat, Names names)
         {
             var constraints = ReadConstraints(conn, schemaName.DbName);

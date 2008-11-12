@@ -30,12 +30,15 @@ using DbLinq.Util;
 
 namespace DbLinq.Schema.Dbml.Adapter
 {
+    /// <summary>
+    /// Wraps a CSV string to an array
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
     public
 #endif
- class CsvArrayAdapter : ArrayAdapter<string>
+    class CsvArrayAdapter : ArrayAdapter<string>
     {
         public CsvArrayAdapter(object o, string fieldName)
             : base(o, fieldName)

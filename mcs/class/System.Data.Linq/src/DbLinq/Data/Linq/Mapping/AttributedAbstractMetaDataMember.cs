@@ -37,12 +37,16 @@ namespace DbLinq.Data.Linq.Mapping
 {
     internal abstract class AttributedAbstractMetaDataMember : MetaDataMember
     {
-        protected AttributedAbstractMetaDataMember(MemberInfo member, MetaType declaringType, MemberInfo storageMember)
-        {
-            memberInfo = member;
-            this.declaringType = declaringType;
-            this.storageMember = storageMember;
-        }
+		protected AttributedAbstractMetaDataMember(MemberInfo member, MetaType declaringType, DataAttribute attribute)
+		{
+			memberInfo = member;
+			this.declaringType = declaringType;
+			
+			if(attribute.Storage != null)
+			{
+				storageMember = member.DeclaringType.GetSingleMember(attribute.Storage);
+			}
+		}
 
         protected MemberInfo memberInfo;
         protected MetaType declaringType;

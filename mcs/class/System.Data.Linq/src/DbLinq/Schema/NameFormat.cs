@@ -23,8 +23,8 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System.Globalization;
-using DbLinq.Schema;
 
 namespace DbLinq.Schema
 {

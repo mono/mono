@@ -50,8 +50,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMetal", "VisualMetal\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMetal", "DbMetal\DbMetal.csproj", "{363FF43D-C870-4423-BE50-DAED7793A6D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLinq.Localization", "DbLinq.Localization\DbLinq.Localization.csproj", "{E636DAE5-1245-4ED1-A709-057935D20E24}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Linq", "DbLinq\System.Data.Linq.csproj", "{97305421-3071-4175-AA3C-9A432CC28121}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLinq.Ingres.Example", "..\examples\DbLinq.Ingres.Example\DbLinq.Ingres.Example.csproj", "{B784AE42-25A7-4819-8469-C901EB3635A4}"
@@ -148,11 +146,6 @@ Global
 		{363FF43D-C870-4423-BE50-DAED7793A6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{363FF43D-C870-4423-BE50-DAED7793A6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{363FF43D-C870-4423-BE50-DAED7793A6D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E636DAE5-1245-4ED1-A709-057935D20E24}.Debug - Mono Strict|Any CPU.ActiveCfg = Debug|Any CPU
-		{E636DAE5-1245-4ED1-A709-057935D20E24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E636DAE5-1245-4ED1-A709-057935D20E24}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E636DAE5-1245-4ED1-A709-057935D20E24}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E636DAE5-1245-4ED1-A709-057935D20E24}.Release|Any CPU.Build.0 = Release|Any CPU
 		{97305421-3071-4175-AA3C-9A432CC28121}.Debug - Mono Strict|Any CPU.ActiveCfg = Debug - Mono Strict|Any CPU
 		{97305421-3071-4175-AA3C-9A432CC28121}.Debug - Mono Strict|Any CPU.Build.0 = Debug - Mono Strict|Any CPU
 		{97305421-3071-4175-AA3C-9A432CC28121}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

@@ -24,10 +24,11 @@
 // 
 #endregion
 
-using DbLinq.Schema;
-
 namespace DbLinq.Schema
 {
+    /// <summary>
+    /// Allows to manipulate words
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
@@ -35,15 +36,66 @@ namespace DbLinq.Schema
 #endif
     interface INameFormatter
     {
+        /// <summary>
+        /// Gets the name of the schema.
+        /// </summary>
+        /// <param name="dbName">Name of the db.</param>
+        /// <param name="extraction">The extraction.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <returns></returns>
         SchemaName GetSchemaName(string dbName, WordsExtraction extraction, NameFormat nameFormat);
+        /// <summary>
+        /// Gets the name of the procedure.
+        /// </summary>
+        /// <param name="dbName">Name of the db.</param>
+        /// <param name="extraction">The extraction.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <returns></returns>
         ProcedureName GetProcedureName(string dbName, WordsExtraction extraction, NameFormat nameFormat);
+        /// <summary>
+        /// Gets the name of the parameter.
+        /// </summary>
+        /// <param name="dbName">Name of the db.</param>
+        /// <param name="extraction">The extraction.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <returns></returns>
         ParameterName GetParameterName(string dbName, WordsExtraction extraction, NameFormat nameFormat);
+        /// <summary>
+        /// Gets the name of the table.
+        /// </summary>
+        /// <param name="dbName">Name of the db.</param>
+        /// <param name="extraction">The extraction.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <returns></returns>
         TableName GetTableName(string dbName, WordsExtraction extraction, NameFormat nameFormat);
+        /// <summary>
+        /// Gets the name of the column.
+        /// </summary>
+        /// <param name="dbName">Name of the db.</param>
+        /// <param name="extraction">The extraction.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <returns></returns>
         ColumnName GetColumnName(string dbName, WordsExtraction extraction, NameFormat nameFormat);
+        /// <summary>
+        /// Gets the name of the association.
+        /// </summary>
+        /// <param name="dbManyName">Name of the db many.</param>
+        /// <param name="dbOneName">Name of the db one.</param>
+        /// <param name="dbConstraintName">Name of the db constraint.</param>
+        /// <param name="foreignKeyName">Name of the foreign key.</param>
+        /// <param name="extraction">The extraction.</param>
+        /// <param name="nameFormat">The name format.</param>
+        /// <returns></returns>
         AssociationName GetAssociationName(string dbManyName, string dbOneName,
                                            string dbConstraintName, string foreignKeyName,
                                             WordsExtraction extraction, NameFormat nameFormat);
-        // reformats a name by adjusting its case
+        // 
+        /// <summary>
+        /// Reformats a name by adjusting its case.
+        /// </summary>
+        /// <param name="words">The words.</param>
+        /// <param name="newCase">The new case.</param>
+        /// <returns></returns>
         string Format(string words, Case newCase);
     }
 }

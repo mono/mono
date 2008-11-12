@@ -55,17 +55,17 @@ namespace DbLinq.Data.Linq.Sugar
         /// </summary>
         public IList<ObjectInputParameterExpression> InputParameters { get; protected set; }
 
-        public override IDbLinqCommand GetCommand()
+        public override ITransactionalCommand GetCommand()
         {
-            IDbLinqCommand dbCommand = base.GetCommand(true);
+            ITransactionalCommand transactionalCommand = base.GetCommand(true);
             foreach (var inputParameter in InputParameters)
             {
-                var dbParameter = dbCommand.Command.CreateParameter();
+                var dbParameter = transactionalCommand.Command.CreateParameter();
                 dbParameter.ParameterName = DataContext.Vendor.SqlProvider.GetParameterName(inputParameter.Alias);
                 dbParameter.SetValue(inputParameter.GetValue(Target), inputParameter.ValueType);
-                dbCommand.Command.Parameters.Add(dbParameter);
+                transactionalCommand.Command.Parameters.Add(dbParameter);
             }
-            return dbCommand;
+            return transactionalCommand;
         }
 
         public object Target { get; set; }

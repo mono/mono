@@ -66,6 +66,13 @@ namespace DbLinq.Data.Linq
             return GetTable(typeof(T)) as Table<T>;
         }
 
+        /// <summary>
+        /// Calls method.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <param name="method">The method.</param>
+        /// <param name="sqlParams">The SQL params.</param>
+        /// <returns></returns>
         protected IExecuteResult ExecuteMethodCall(DataContext context, System.Reflection.MethodInfo method, params object[] sqlParams)
         {
             return _ExecuteMethodCall(context, method, sqlParams);

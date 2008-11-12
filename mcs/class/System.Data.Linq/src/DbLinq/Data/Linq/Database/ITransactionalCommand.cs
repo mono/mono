@@ -1,4 +1,4 @@
-#region MIT license
+﻿#region MIT license
 // 
 // MIT license
 //
@@ -24,14 +24,30 @@
 // 
 #endregion
 
-namespace DbLinq.Data.Linq
+using System;
+using System.Data;
+
+namespace DbLinq.Data.Linq.Database
 {
-    partial interface ITable
+    /// <summary>
+    /// Transaction-aware command
+    /// </summary>
+#if MONO_STRICT
+    internal
+#else
+    public
+#endif
+ interface ITransactionalCommand : IDisposable
     {
         /// <summary>
-        /// Cancels the delete on submit.
+        /// Gets the command.
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        void CancelDeleteOnSubmit(object entity);
+        /// <value>The command.</value>
+        IDbCommand Command { get; }
+        /// <summary>
+        /// Commits the current transaction.
+        /// throws NRE if _transaction is null. Behavior is intentional.
+        /// </summary>
+        void Commit();
     }
 }

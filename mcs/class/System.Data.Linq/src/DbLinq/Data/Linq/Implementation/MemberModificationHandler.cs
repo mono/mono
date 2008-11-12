@@ -46,6 +46,12 @@ namespace DbLinq.Data.Linq.Implementation
         private readonly IDictionary<object, IDictionary<string, object>> rawDataEntities = new Dictionary<object, IDictionary<string, object>>(new ReferenceEqualityComparer<object>());
         private readonly IDictionary<object, IDictionary<string, MemberInfo>> modifiedProperties = new Dictionary<object, IDictionary<string, MemberInfo>>(new ReferenceEqualityComparer<object>());
 
+        /// <summary>
+        /// Gets the column members.
+        /// </summary>
+        /// <param name="entityType">Type of the entity.</param>
+        /// <param name="metaModel">The meta model.</param>
+        /// <returns></returns>
         protected virtual IEnumerable<MemberInfo> GetColumnMembers(Type entityType, MetaModel metaModel)
         {
             foreach (var dataMember in metaModel.GetTable(entityType).RowType.PersistentDataMembers)
@@ -54,11 +60,18 @@ namespace DbLinq.Data.Linq.Implementation
             }
         }
 
-        protected bool IsPrimitiveType(Type t)
+        /// <summary>
+        /// Determines whether the specified type is primitive type.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>
+        /// 	<c>true</c> if the specified type is primitive type; otherwise, <c>false</c>.
+        /// </returns>
+        protected static bool IsPrimitiveType(Type type)
         {
-            if (t.IsValueType)
+            if (type.IsValueType)
                 return true;
-            if (t == typeof(string))
+            if (type == typeof(string))
                 return true;
             return false;
         }
@@ -77,7 +90,7 @@ namespace DbLinq.Data.Linq.Implementation
                 return;
             foreach (var memberInfo in GetColumnMembers(entity.GetType(), metaModel))
             {
-                object propertyValue = memberInfo.GetMemberValue(entity);
+                var propertyValue = memberInfo.GetMemberValue(entity);
                 // if it is a value, it can be stored directly
                 var memberType = memberInfo.GetMemberType();
                 if (IsPrimitiveType(memberType))
@@ -121,7 +134,7 @@ namespace DbLinq.Data.Linq.Implementation
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        private bool IsNotifying(object entity)
+        private static bool IsNotifying(object entity)
         {
             return entity is INotifyPropertyChanged
                    || entity is INotifyPropertyChanging;
@@ -286,6 +299,13 @@ namespace DbLinq.Data.Linq.Implementation
             return IsRawModified(entity, metaModel);
         }
 
+        /// <summary>
+        /// Determines whether the specified notifiying entity is modified.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns>
+        /// 	<c>true</c> if the specified notifiying entity is modified; otherwise, <c>false</c>.
+        /// </returns>
         private bool IsNotifyingModified(object entity)
         {
             lock (modifiedProperties)
@@ -294,11 +314,27 @@ namespace DbLinq.Data.Linq.Implementation
             }
         }
 
-        private bool IsPropertyModified(object p1, object p2)
+        /// <summary>
+        /// Determines whether the specified property has changed, by comparing its current and previous value.
+        /// </summary>
+        /// <param name="p1">The p1.</param>
+        /// <param name="p2">The p2.</param>
+        /// <returns>
+        /// 	<c>true</c> if the specified property has changed; otherwise, <c>false</c>.
+        /// </returns>
+        private static bool IsPropertyModified(object p1, object p2)
         {
-            return !object.Equals(p1, p2);
+            return !Equals(p1, p2);
         }
 
+        /// <summary>
+        /// Determines whether the specified raw entity has changed.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="metaModel">The meta model.</param>
+        /// <returns>
+        /// 	<c>true</c> if the specified raw entity has changed; otherwise, <c>false</c>.
+        /// </returns>
         private bool IsRawModified(object entity, MetaModel metaModel)
         {
             lock (rawDataEntities)
@@ -336,19 +372,37 @@ namespace DbLinq.Data.Linq.Implementation
             return GetRawModifiedProperties(entity, metaModel);
         }
 
+        /// <summary>
+        /// Gets all column properties.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="metaModel">The meta model.</param>
+        /// <returns></returns>
         protected IList<MemberInfo> GetAllColumnProperties(object entity, MetaModel metaModel)
         {
             if (entity == null)
-                throw new ArgumentNullException("GetAllColumnProperties(): entity must not be null");
+                throw new ArgumentNullException("entity");
             var properties = new List<MemberInfo>(GetColumnMembers(entity.GetType(), metaModel));
             return properties;
         }
 
+        /// <summary>
+        /// Gets the self declaring entity modified properties.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="metaModel">The meta model.</param>
+        /// <returns></returns>
         protected IList<MemberInfo> GetSelfDeclaringModifiedProperties(object entity, MetaModel metaModel)
         {
             return GetAllColumnProperties(entity, metaModel);
         }
 
+        /// <summary>
+        /// Gets the notifying entity modified properties.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="metaModel">The meta model.</param>
+        /// <returns></returns>
         protected IList<MemberInfo> GetNotifyingModifiedProperties(object entity, MetaModel metaModel)
         {
             lock (modifiedProperties)
@@ -361,6 +415,12 @@ namespace DbLinq.Data.Linq.Implementation
             }
         }
 
+        /// <summary>
+        /// Gets modified properties for entity, by using raw compare method.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="metaModel">The meta model.</param>
+        /// <returns></returns>
         protected IList<MemberInfo> GetRawModifiedProperties(object entity, MetaModel metaModel)
         {
             var properties = new List<MemberInfo>();
@@ -368,15 +428,17 @@ namespace DbLinq.Data.Linq.Implementation
             IDictionary<string, object> originalData;
             lock (rawDataEntities)
             {
+                // if we don't have this entity we consider all its properties as having been modified
                 if (!rawDataEntities.TryGetValue(entity, out originalData))
                     return GetAllColumnProperties(entity, metaModel);
             }
-            IDictionary<string, object> currentData = GetEntityRawData(entity, metaModel);
+            var currentData = GetEntityRawData(entity, metaModel);
 
+            // otherwise, we iterate and find what's changed
             foreach (string key in currentData.Keys)
             {
-                object currentValue = currentData[key];
-                object originalValue = originalData[key];
+                var currentValue = currentData[key];
+                var originalValue = originalData[key];
                 if (IsPropertyModified(originalValue, currentValue))
                     properties.Add(GetProperty(entity, key));
             }
@@ -384,6 +446,11 @@ namespace DbLinq.Data.Linq.Implementation
             return properties;
         }
 
+        /// <summary>
+        /// Marks the entity as not dirty.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="metaModel"></param>
         public void ClearModified(object entity, MetaModel metaModel)
         {
             if (IsNotifying(entity))
@@ -392,6 +459,10 @@ namespace DbLinq.Data.Linq.Implementation
                 ClearRawModified(entity, metaModel);
         }
 
+        /// <summary>
+        /// Sets the notifying entity as unmodified.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
         private void ClearNotifyingModified(object entity)
         {
             lock (modifiedProperties)
@@ -400,6 +471,11 @@ namespace DbLinq.Data.Linq.Implementation
             }
         }
 
+        /// <summary>
+        /// Sets the raw entity as unmodified.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="metaModel">The meta model.</param>
         private void ClearRawModified(object entity, MetaModel metaModel)
         {
             lock (rawDataEntities)
@@ -408,7 +484,13 @@ namespace DbLinq.Data.Linq.Implementation
             }
         }
 
-        private PropertyInfo GetProperty(object entity, string propertyName)
+        /// <summary>
+        /// Gets the property, given a property name.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="propertyName">Name of the property.</param>
+        /// <returns></returns>
+        private static PropertyInfo GetProperty(object entity, string propertyName)
         {
             return entity.GetType().GetProperty(propertyName);
         }

@@ -32,6 +32,9 @@ namespace System.Data.Linq.Identity
 namespace DbLinq.Data.Linq.Identity
 #endif
 {
+    /// <summary>
+    /// Provides a factory that creates IIdentityReaders
+    /// </summary>
     internal interface IIdentityReaderFactory
     {
         /// <summary>

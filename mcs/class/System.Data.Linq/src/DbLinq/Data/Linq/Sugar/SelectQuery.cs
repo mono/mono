@@ -86,7 +86,7 @@ namespace DbLinq.Data.Linq.Sugar
             ExecuteMethodName = executeMethodName;
         }
 
-        public override IDbLinqCommand GetCommand()
+        public override ITransactionalCommand GetCommand()
         {
             var dbCommand = base.GetCommand(false);
             foreach (var parameter in InputParameters)

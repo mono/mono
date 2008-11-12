@@ -29,7 +29,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Text.RegularExpressions;
 
 #if MONO_STRICT
@@ -145,6 +144,10 @@ namespace DbLinq.Vendor.Implementation
             return deleteBuilder.ToSqlStatement();
         }
 
+        /// <summary>
+        /// Gets the new line string.
+        /// </summary>
+        /// <value>The new line.</value>
         public string NewLine
         {
             get { return Environment.NewLine; }
@@ -378,51 +381,103 @@ namespace DbLinq.Vendor.Implementation
                 else return 0;
             }
         }
+        /// <summary>
+        /// Gets the literal math SQRT.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathSqrt(SqlStatement p)
         {
             return SqlStatement.Format("SQRT({0})", p);
         }
 
+        /// <summary>
+        /// Gets the literal math sign.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathSign(SqlStatement p)
         {
             return SqlStatement.Format("SIGN({0})", p);
         }
 
+        /// <summary>
+        /// Gets the literal math round.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathRound(SqlStatement p)
         {
             return SqlStatement.Format("ROUND({0})", p);
         }
 
+        /// <summary>
+        /// Gets the literal math pow.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <param name="p_2">The P_2.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathPow(SqlStatement p, SqlStatement p_2)
         {
             return SqlStatement.Format("POW({0},{1})", p, p_2);
         }
 
+        /// <summary>
+        /// Gets the literal math log.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathLog(SqlStatement p)
         {
             return SqlStatement.Format("LOG({0})", p);
         }
 
+        /// <summary>
+        /// Gets the literal math log.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <param name="p_2">The P_2.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathLog(SqlStatement p, SqlStatement p_2)
         {
             return SqlStatement.Format("LOG({0},{1})", p, p_2);
         }
 
+        /// <summary>
+        /// Gets the literal math ln.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathLn(SqlStatement p)
         {
             return SqlStatement.Format("LN({0})", p);
         }
 
+        /// <summary>
+        /// Gets the literal math floor.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathFloor(SqlStatement p)
         {
             return SqlStatement.Format("FLOOR({0})", p);
         }
 
+        /// <summary>
+        /// Gets the literal math exp.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathExp(SqlStatement p)
         {
             return SqlStatement.Format("EXP({0})", p);
         }
 
+        /// <summary>
+        /// Gets the literal math abs.
+        /// </summary>
+        /// <param name="p">The p.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMathAbs(SqlStatement p)
         {
             return SqlStatement.Format("ABS({0})", p);
@@ -445,18 +500,33 @@ namespace DbLinq.Vendor.Implementation
         }
 
 
+        /// <summary>
+        /// Gets the literal date time part.
+        /// </summary>
+        /// <param name="dateExpression">The date expression.</param>
+        /// <param name="operationType">Type of the operation.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralDateTimePart(SqlStatement dateExpression, SpecialExpressionType operationType)
         {
             return SqlStatement.Format("EXTRACT({0} FROM {1})", operationType.ToString().ToUpper(), dateExpression);
         }
 
 
+        /// <summary>
+        /// Gets the literal string index of.
+        /// </summary>
+        /// <param name="baseString">The base string.</param>
+        /// <param name="searchString">The search string.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringIndexOf(SqlStatement baseString, SqlStatement searchString, SqlStatement startIndex, SqlStatement count)
         {
             //trim left the string
             var substring = GetLiteralSubString(baseString, startIndex, count);
 
             var substringIndexOf = SqlStatement.Format("STRPOS({0},{1})", substring, searchString).ToString();
+            // TODO: the start index MUST be handled above at code generation
             var indexOf = GetLiteralAdd(substringIndexOf, startIndex);
 
             return indexOf;
@@ -479,11 +549,24 @@ namespace DbLinq.Vendor.Implementation
             return GetLiteralMultiply(GetLiteralAdd(substringIndexOf, startIndex), substringIndexOf);
         }
 
+        /// <summary>
+        /// Gets the literal string index of.
+        /// </summary>
+        /// <param name="baseString">The base string.</param>
+        /// <param name="searchString">The search string.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringIndexOf(SqlStatement baseString, SqlStatement searchString)
         {
             return SqlStatement.Format("STRPOS({0},{1})", baseString, searchString);
         }
 
+        /// <summary>
+        /// Gets the literal string remove.
+        /// </summary>
+        /// <param name="baseString">The base string.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringRemove(SqlStatement baseString, SqlStatement startIndex, SqlStatement count)
         {
             return GetLiteralStringConcat(
@@ -491,16 +574,36 @@ namespace DbLinq.Vendor.Implementation
                     GetLiteralSubString(baseString, GetLiteralAdd(startIndex, count).ToString(), GetLiteralStringLength(baseString)));
         }
 
+        /// <summary>
+        /// Gets the literal string remove.
+        /// </summary>
+        /// <param name="baseString">The base string.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringRemove(SqlStatement baseString, SqlStatement startIndex)
         {
             return GetLiteralSubString(baseString, "1", startIndex);
         }
 
+        /// <summary>
+        /// Gets the literal string replace.
+        /// </summary>
+        /// <param name="stringExpresision">The string expresision.</param>
+        /// <param name="searchString">The search string.</param>
+        /// <param name="replacementstring">The replacementstring.</param>
+        /// <returns></returns>
         protected SqlStatement GetLiteralStringReplace(SqlStatement stringExpresision, SqlStatement searchString, SqlStatement replacementstring)
         {
             return SqlStatement.Format("REPLACE({0},{1},{2})", stringExpresision, searchString, replacementstring);
         }
 
+        /// <summary>
+        /// Gets the literal string insert.
+        /// </summary>
+        /// <param name="stringExpression">The string expression.</param>
+        /// <param name="position">The position.</param>
+        /// <param name="insertString">The insert string.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringInsert(SqlStatement stringExpression, SqlStatement position, SqlStatement insertString)
         {
 
@@ -714,260 +817,548 @@ namespace DbLinq.Vendor.Implementation
             return string.Format("{0}$", nameBase);
         }
 
+        /// <summary>
+        /// Gets the literal add.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralAdd(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} + {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal add checked.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralAddChecked(SqlStatement a, SqlStatement b)
         {
             return GetLiteralAdd(a, b);
         }
 
+        /// <summary>
+        /// Gets the literal and.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralAnd(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} AND {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal and also.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralAndAlso(SqlStatement a, SqlStatement b)
         {
             return GetLiteralAnd(a, b);
         }
 
+        /// <summary>
+        /// Gets the length of the literal array.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralArrayLength(SqlStatement a, SqlStatement b)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the index of the literal array.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralArrayIndex(SqlStatement a, SqlStatement b)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the literal call.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralCall(SqlStatement a)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the literal coalesce.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralCoalesce(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("COALESCE({0}, {1})", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal conditional.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <param name="c">The c.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralConditional(SqlStatement a, SqlStatement b, SqlStatement c)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the literal convert.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="newType">The new type.</param>
+        /// <returns></returns>
         public virtual SqlStatement GetLiteralConvert(SqlStatement a, Type newType)
         {
             return a;
         }
 
+        /// <summary>
+        /// Gets the literal divide.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralDivide(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} / {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralEqual(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} = {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal exclusive or.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralExclusiveOr(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} XOR {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal greater than.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralGreaterThan(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} > {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal greater than or equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralGreaterThanOrEqual(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} >= {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal left shift.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralLeftShift(SqlStatement a, SqlStatement b)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the literal less than.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralLessThan(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} < {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal less than or equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralLessThanOrEqual(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} <= {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal modulo.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralModulo(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} % {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal multiply.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMultiply(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} * {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal multiply checked.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMultiplyChecked(SqlStatement a, SqlStatement b)
         {
             return GetLiteralMultiply(a, b);
         }
 
+        /// <summary>
+        /// Gets the literal negate.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralNegate(SqlStatement a)
         {
             return SqlStatement.Format("-{0}", a);
         }
 
+        /// <summary>
+        /// Gets the literal unary plus.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralUnaryPlus(SqlStatement a)
         {
             return SqlStatement.Format("+{0}", a);
         }
 
+        /// <summary>
+        /// Gets the literal negate checked.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralNegateChecked(SqlStatement a)
         {
             return GetLiteralNegate(a);
         }
 
+        /// <summary>
+        /// Gets the literal not.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralNot(SqlStatement a)
         {
             return SqlStatement.Format("NOT {0}", a);
         }
 
+        /// <summary>
+        /// Gets the literal not equal.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralNotEqual(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} <> {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal or.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralOr(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} OR {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal or else.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralOrElse(SqlStatement a, SqlStatement b)
         {
             return GetLiteralOr(a, b);
         }
 
+        /// <summary>
+        /// Gets the literal power.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralPower(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("POWER ({0}, {1})", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal right shift.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralRightShift(SqlStatement a, SqlStatement b)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the literal subtract.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralSubtract(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} - {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal subtract checked.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralSubtractChecked(SqlStatement a, SqlStatement b)
         {
             return GetLiteralSubtract(a, b);
         }
 
+        /// <summary>
+        /// Gets the literal is null.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralIsNull(SqlStatement a)
         {
             return SqlStatement.Format("{0} IS NULL", a);
         }
 
+        /// <summary>
+        /// Gets the literal is not null.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralIsNotNull(SqlStatement a)
         {
             return SqlStatement.Format("{0} IS NOT NULL", a);
         }
 
+        /// <summary>
+        /// Gets the literal string concat.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringConcat(SqlStatement a, SqlStatement b)
         {
             // for some vendors, it is "CONCAT(a,b)"
             return SqlStatement.Format("{0} || {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the length of the literal string.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringLength(SqlStatement a)
         {
             return SqlStatement.Format("CHARACTER_LENGTH({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal string to upper.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringToUpper(SqlStatement a)
         {
             return SqlStatement.Format("UCASE({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal string to lower.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralStringToLower(SqlStatement a)
         {
             return SqlStatement.Format("LCASE({0})", a);
         }
 
 
+        /// <summary>
+        /// Gets the literal trim.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralTrim(SqlStatement a)
         {
             return SqlStatement.Format("TRIM({0})", a);
         }
 
-        protected virtual SqlStatement GetLiteralLTrim(SqlStatement a)
+        /// <summary>
+        /// Gets the literal L trim.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
+        protected virtual SqlStatement GetLiteralLeftTrim(SqlStatement a)
         {
             return SqlStatement.Format("LTRIM({0})", a);
         }
 
-        protected virtual SqlStatement GetLiteralRTrim(SqlStatement a)
+        /// <summary>
+        /// Gets the literal R trim.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
+        protected virtual SqlStatement GetLiteralRightTrim(SqlStatement a)
         {
             return SqlStatement.Format("RTRIM({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal sub string.
+        /// </summary>
+        /// <param name="baseString">The base string.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <param name="count">The count.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralSubString(SqlStatement baseString, SqlStatement startIndex, SqlStatement count)
         {
             //in standard sql base SqlStatement index is 1 instead 0
             return SqlStatement.Format("SUBSTR({0}, {1}, {2})", baseString, startIndex, count);
         }
 
+        /// <summary>
+        /// Gets the literal sub string.
+        /// </summary>
+        /// <param name="baseString">The base string.</param>
+        /// <param name="startIndex">The start index.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralSubString(SqlStatement baseString, SqlStatement startIndex)
         {
             //in standard sql base SqlStatement index is 1 instead 0
             return SqlStatement.Format("SUBSTR({0}, {1})", baseString, startIndex);
         }
 
+        /// <summary>
+        /// Gets the literal like.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralLike(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} LIKE {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the literal count.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralCount(SqlStatement a)
         {
             return SqlStatement.Format("COUNT({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal min.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMin(SqlStatement a)
         {
             return SqlStatement.Format("MIN({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal max.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralMax(SqlStatement a)
         {
             return SqlStatement.Format("MAX({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal sum.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralSum(SqlStatement a)
         {
             return SqlStatement.Format("SUM({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal average.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralAverage(SqlStatement a)
         {
             return SqlStatement.Format("AVG({0})", a);
         }
 
+        /// <summary>
+        /// Gets the literal in.
+        /// </summary>
+        /// <param name="a">A.</param>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralIn(SqlStatement a, SqlStatement b)
         {
             return SqlStatement.Format("{0} IN {1}", a, b);
         }
 
+        /// <summary>
+        /// Gets the null literal.
+        /// </summary>
+        /// <returns></returns>
         protected virtual SqlStatement GetNullLiteral()
         {
             return "NULL";
@@ -998,11 +1389,21 @@ namespace DbLinq.Vendor.Implementation
             return SqlStatement.Format("{0} LIMIT {1} OFFSET {2}", select, limit, offset);
         }
 
+        /// <summary>
+        /// Gets the literal for a given string.
+        /// </summary>
+        /// <param name="str">The STR.</param>
+        /// <returns></returns>
         protected virtual string GetLiteral(string str)
         {
             return string.Format("'{0}'", str.Replace("'", "''"));
         }
 
+        /// <summary>
+        /// Gets the literal array.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteral(Array array)
         {
             var listItems = new List<SqlStatement>();
@@ -1048,26 +1449,55 @@ namespace DbLinq.Vendor.Implementation
             return SqlStatement.Format("GROUP BY {0}", SqlStatement.Join(", ", groupBy));
         }
 
+        /// <summary>
+        /// Gets the literal union.
+        /// </summary>
+        /// <param name="selectA">The select A.</param>
+        /// <param name="selectB">The select B.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralUnion(SqlStatement selectA, SqlStatement selectB)
         {
             return SqlStatement.Format("{0}{2}UNION{2}{1}", selectA, selectB, NewLine);
         }
 
+        /// <summary>
+        /// Gets the literal union all.
+        /// </summary>
+        /// <param name="selectA">The select A.</param>
+        /// <param name="selectB">The select B.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralUnionAll(SqlStatement selectA, SqlStatement selectB)
         {
             return SqlStatement.Format("{0}{2}UNION ALL{2}{1}", selectA, selectB, NewLine);
         }
 
+        /// <summary>
+        /// Gets the literal intersect.
+        /// </summary>
+        /// <param name="selectA">The select A.</param>
+        /// <param name="selectB">The select B.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralIntersect(SqlStatement selectA, SqlStatement selectB)
         {
             return SqlStatement.Format("{0}{2}INTERSECT{2}{1}", selectA, selectB, NewLine);
         }
 
+        /// <summary>
+        /// Gets the literal except.
+        /// </summary>
+        /// <param name="selectA">The select A.</param>
+        /// <param name="selectB">The select B.</param>
+        /// <returns></returns>
         protected virtual SqlStatement GetLiteralExcept(SqlStatement selectA, SqlStatement selectB)
         {
             return SqlStatement.Format("{0}{2}EXCEPT{2}{1}", selectA, selectB, NewLine);
         }
 
+        /// <summary>
+        /// given 'User', return '[User]' to prevent a SQL keyword conflict
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public virtual string GetSafeName(string name)
         {
             string[] nameParts = name.Split('.');
@@ -1078,6 +1508,11 @@ namespace DbLinq.Vendor.Implementation
             return string.Join(".", nameParts);
         }
 
+        /// <summary>
+        /// Gets the safe name part.
+        /// </summary>
+        /// <param name="namePart">The name part.</param>
+        /// <returns></returns>
         protected virtual string GetSafeNamePart(string namePart)
         {
             if (IsMadeSafe(namePart))
@@ -1087,6 +1522,13 @@ namespace DbLinq.Vendor.Implementation
             return MakeNameSafe(namePart);
         }
 
+        /// <summary>
+        /// Determines whether [is made safe] [the specified name part].
+        /// </summary>
+        /// <param name="namePart">The name part.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is made safe] [the specified name part]; otherwise, <c>false</c>.
+        /// </returns>
         protected virtual bool IsMadeSafe(string namePart)
         {
             var l = namePart.Length;
@@ -1095,6 +1537,13 @@ namespace DbLinq.Vendor.Implementation
             return namePart[0] == SafeNameStartQuote && namePart[l - 1] == SafeNameEndQuote;
         }
 
+        /// <summary>
+        /// Determines whether [is name case safe] [the specified name part].
+        /// </summary>
+        /// <param name="namePart">The name part.</param>
+        /// <returns>
+        /// 	<c>true</c> if [is name case safe] [the specified name part]; otherwise, <c>false</c>.
+        /// </returns>
         protected virtual bool IsNameCaseSafe(string namePart)
         {
             foreach (char c in namePart)
@@ -1105,9 +1554,22 @@ namespace DbLinq.Vendor.Implementation
             return true;
         }
 
+        /// <summary>
+        /// Gets the safe name start quote.
+        /// </summary>
+        /// <value>The safe name start quote.</value>
         protected virtual char SafeNameStartQuote { get { return '"'; } }
+        /// <summary>
+        /// Gets the safe name end quote.
+        /// </summary>
+        /// <value>The safe name end quote.</value>
         protected virtual char SafeNameEndQuote { get { return '"'; } }
 
+        /// <summary>
+        /// Makes the name safe.
+        /// </summary>
+        /// <param name="namePart">The name part.</param>
+        /// <returns></returns>
         protected virtual string MakeNameSafe(string namePart)
         {
             return namePart.Enquote(SafeNameStartQuote, SafeNameEndQuote);
@@ -1168,6 +1630,7 @@ namespace DbLinq.Vendor.Implementation
             });
         }
 
+        // TODO: remove this
         public virtual bool StringIndexStartsAtOne
         {
             get { return true; }

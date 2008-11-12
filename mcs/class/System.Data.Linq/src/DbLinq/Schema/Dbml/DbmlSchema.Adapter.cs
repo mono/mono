@@ -37,11 +37,20 @@ using DbLinq.Schema.Dbml.Adapter;
 
 namespace DbLinq.Schema.Dbml
 {
+    /// <summary>
+    /// Adataper for Database
+    /// </summary>
     partial class Database
     {
+        /// <summary>
+        /// Wraps all tables
+        /// </summary>
         [Browsable(false)]
         [XmlIgnore]
         public ISimpleList<Table> Tables;
+        /// <summary>
+        /// Wraps all stored procedures
+        /// </summary>
         [Browsable(false)]
         [XmlIgnore]
         public ISimpleList<Function> Functions;
@@ -54,6 +63,9 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for Table
+    /// </summary>
     partial class Table
     {
         public Table()
@@ -68,12 +80,21 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for Type
+    /// </summary>
     partial class Type
     {
+        /// <summary>
+        /// Wrapper for columns
+        /// </summary>
         [Browsable(false)]
         [XmlIgnore]
         public readonly ISimpleList<Column> Columns;
 
+        /// <summary>
+        /// Wrapper for associations
+        /// </summary>
         [Browsable(false)]
         [XmlIgnore]
         public readonly ISimpleList<Association> Associations;
@@ -94,8 +115,12 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for function
+    /// </summary>
     partial class Function
     {
+        // TODO: remove this attribute
         [Browsable(false)]
         [XmlIgnore]
         public bool BodyContainsSelectStatement;
@@ -151,6 +176,9 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for Association
+    /// </summary>
     partial class Association
     {
         /// <summary>
@@ -177,9 +205,16 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for Column
+    /// </summary>
     partial class Column
     {
         private INamedType extendedType;
+        /// <summary>
+        /// Extended type, for handling enum types, for example.
+        /// </summary>
+        /// <value>The type of the extended.</value>
         [Browsable(false)]
         [XmlIgnore]
         public INamedType ExtendedType
@@ -227,12 +262,19 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for Parameter
+    /// </summary>
     partial class Parameter
     {
         public Parameter()
         {
             SpecifiedPropertyUpdater.Register(this);
         }
+        /// <summary>
+        /// Gets a value indicating whether [direction in].
+        /// </summary>
+        /// <value><c>true</c> if [direction in]; otherwise, <c>false</c>.</value>
         [Browsable(false)]
         [XmlIgnore]
         public bool DirectionIn
@@ -240,6 +282,10 @@ namespace DbLinq.Schema.Dbml
             get { return Direction == ParameterDirection.In || Direction == ParameterDirection.InOut; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether [direction out].
+        /// </summary>
+        /// <value><c>true</c> if [direction out]; otherwise, <c>false</c>.</value>
         [Browsable(false)]
         [XmlIgnore]
         public bool DirectionOut
@@ -248,6 +294,9 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for Return
+    /// </summary>
     partial class Return
     {
         public Return()
@@ -256,6 +305,9 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for TableFunction
+    /// </summary>
     partial class TableFunction
     {
         public TableFunction()
@@ -264,6 +316,9 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for TableFunctionParameter
+    /// </summary>
     partial class TableFunctionParameter
     {
         public TableFunctionParameter()
@@ -272,6 +327,9 @@ namespace DbLinq.Schema.Dbml
         }
     }
 
+    /// <summary>
+    /// Adapter for TableFunctionReturn
+    /// </summary>
     partial class TableFunctionReturn
     {
         public TableFunctionReturn()

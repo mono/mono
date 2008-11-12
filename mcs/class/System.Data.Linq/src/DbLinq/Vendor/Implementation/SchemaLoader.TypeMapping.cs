@@ -23,11 +23,11 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Text.RegularExpressions;
 
 namespace DbLinq.Vendor.Implementation
@@ -46,7 +46,7 @@ namespace DbLinq.Vendor.Implementation
         /// Default IDataType implementation (see IDataType for details)
         /// </summary>
 #if MONO_STRICT
-    internal
+        internal
 #else
         public
 #endif
@@ -76,127 +76,135 @@ namespace DbLinq.Vendor.Implementation
                 if (correctTypeAndLen)
                 {
                     Console.WriteLine("experimental support for guid--");
-                    return typeof(System.Guid);
+                    return typeof(Guid);
                 }
             }
 
-
             switch (dataTypeL)
             {
-                // string
-                case "c":
-                case "char":
-                case "character":
-                case "character varying":
-                case "inet":
-                case "long":
-                case "longtext":
-                case "long varchar":
-                case "nchar":
-                case "nvarchar":
-                case "nvarchar2":
-                case "string":
-                case "text":
-                case "varchar":
-                case "varchar2":
-                    return typeof(String);
+            // string
+            case "c":
+            case "char":
+            case "character":
+            case "character varying":
+            case "inet":
+            case "long":
+            case "longtext":
+            case "long varchar":
+            case "nchar":
+            case "nvarchar":
+            case "nvarchar2":
+            case "string":
+            case "text":
+            case "varchar":
+            case "varchar2":
+                return typeof(String);
 
-                // bool
-                case "bit":
-                case "bool":
-                case "boolean":
+            // bool
+            case "bit":
+            case "bool":
+            case "boolean":
+                return typeof(Boolean);
+
+            // int8
+            case "tinyint":
+                if (dataType.Length == 1)
                     return typeof(Boolean);
-
-                // int8
-                case "tinyint":
-                    if (dataType.Length == 1)
-                        return typeof(Boolean);
+                // tinyint is supposed to be signed
+                // but we can have explicit sign
+                if (dataType.Unsigned ?? false)
                     return typeof(Byte);
+                // default case, unsigned
+                return typeof(SByte);
 
-                // int16
-                case "short":
-                case "smallint":
-                    if (dataType.Unsigned ?? false)
-                        return typeof(UInt16);
-                    return typeof(Int16);
+            // int16
+            case "short":
+            case "smallint":
+                if (dataType.Unsigned ?? false)
+                    return typeof(UInt16);
+                return typeof(Int16);
 
-                // int32
-                case "int":
-                case "integer":
-                case "mediumint":
-                    if (dataType.Unsigned ?? false)
-                        return typeof(UInt32);
-                    return typeof(Int32);
+            // int32
+            case "int":
+            case "integer":
+            case "mediumint":
+                if (dataType.Unsigned ?? false)
+                    return typeof(UInt32);
+                return typeof(Int32);
 
-                // int64
-                case "bigint":
-                    return typeof(Int64);
+            // int64
+            case "bigint":
+                return typeof(Int64);
 
-                // single
-                case "float":
-                case "float4":
-                case "real":
-                    return typeof(Single);
+            // single
+            case "float":
+            case "float4":
+            case "real":
+                return typeof(Single);
 
-                // double
-                case "double":
-                case "double precision":
-                    return typeof(Double);
+            // double
+            case "double":
+            case "double precision":
+                return typeof(Double);
 
-                // decimal
-                case "decimal":
-                case "numeric":
-                    return typeof(Decimal);
-                case "number": // special oracle type
-                    if (dataType.Precision.HasValue && (dataType.Scale ?? 0) == 0)
-                    {
-                        if (dataType.Precision.Value == 1)
-                            return typeof(Boolean);
-                        if (dataType.Precision.Value <= 4)
-                            return typeof(Int16);
-                        if (dataType.Precision.Value <= 9)
-                            return typeof(Int32);
-                        if (dataType.Precision.Value <= 19)
-                            return typeof(Int64);
-                    }
-                    return typeof(Decimal);
+            // decimal
+            case "decimal":
+            case "numeric":
+                return typeof(Decimal);
+            case "number": // special oracle type
+                if (dataType.Precision.HasValue && (dataType.Scale ?? 0) == 0)
+                {
+                    if (dataType.Precision.Value == 1)
+                        return typeof(Boolean);
+                    if (dataType.Precision.Value <= 4)
+                        return typeof(Int16);
+                    if (dataType.Precision.Value <= 9)
+                        return typeof(Int32);
+                    if (dataType.Precision.Value <= 19)
+                        return typeof(Int64);
+                }
+                return typeof(Decimal);
 
-                // time interval
-                case "interval":
-                    return typeof(TimeSpan);
+            // time interval
+            case "interval":
+                return typeof(TimeSpan);
 
-                //enum
-                case "enum":
-                    return MapEnumDbType(dataType);
+            //enum
+            case "enum":
+                return MapEnumDbType(dataType);
 
-                // date
-                case "date":
-                case "datetime":
-                case "ingresdate":
-                case "timestamp":
-                case "timestamp without time zone":
-                case "time":
-                case "time without time zone": //reported by twain_bu...@msn.com,
-                case "time with time zone":
-                    return typeof(DateTime);
+            // date
+            case "date":
+            case "datetime":
+            case "ingresdate":
+            case "timestamp":
+            case "timestamp without time zone":
+            case "time":
+            case "time without time zone": //reported by twain_bu...@msn.com,
+            case "time with time zone":
+                return typeof(DateTime);
 
-                // byte[]
-                case "blob":
-                case "bytea":
-                case "byte varying":
-                case "longblob":
-                case "long byte":
-                case "oid":
-                case "sytea":
-                case "mediumblob":
-                    return typeof(Byte[]);
+            // byte[]
+            case "blob":
+            case "bytea":
+            case "byte varying":
+            case "longblob":
+            case "long byte":
+            case "oid":
+            case "sytea":
+            case "mediumblob":
+                return typeof(Byte[]);
 
-                case "void":
-                    return null;
+            // PostgreSQL, for example has an uuid type that can be mapped as a Guid
+            case "uuid":
+                return typeof(Guid);
 
-                // if we fall to this case, we must handle the type
-                default:
-                    return typeof(UnknownType);
+            case "void":
+                return null;
+
+            // if we fall to this case, we must handle the type
+            default:
+                return typeof(UnknownType);
             }
         }
 
@@ -408,6 +416,11 @@ namespace DbLinq.Vendor.Implementation
         protected static Regex DefaultEnumDefinitionEx = new Regex(@"\s*enum\s*\((?<values>.*)\s*\)\s*", RegexOptions.Compiled);
         protected static Regex EnumValuesEx = new Regex(@"\'(?<value>\w*)\'\s*,?\s*", RegexOptions.Compiled);
 
+        /// <summary>
+        /// Maps a type to enum type, if possible.
+        /// </summary>
+        /// <param name="dataType">Type of the data.</param>
+        /// <returns></returns>
         protected virtual EnumType MapEnumDbType(IDataType dataType)
         {
             var enumType = new EnumType();

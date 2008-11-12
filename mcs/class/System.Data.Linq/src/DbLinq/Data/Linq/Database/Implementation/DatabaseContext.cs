@@ -23,6 +23,7 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System;
 using System.Data;
 using System.Data.Common;
@@ -30,6 +31,9 @@ using System.Reflection;
 
 namespace DbLinq.Data.Linq.Database.Implementation
 {
+    /// <summary>
+    /// Default database context implementation
+    /// </summary>
     internal class DatabaseContext : IDatabaseContext
     {
         private bool _connectionOwner;
@@ -40,7 +44,11 @@ namespace DbLinq.Data.Linq.Database.Implementation
             set { ChangeConnection(value, false); }
         }
 
-        private DbProviderFactory _providerFactory;
+        private readonly DbProviderFactory _providerFactory;
+        /// <summary>
+        /// Gets the provider factory.
+        /// </summary>
+        /// <value>The provider factory.</value>
         protected DbProviderFactory ProviderFactory
         {
             get
@@ -51,6 +59,11 @@ namespace DbLinq.Data.Linq.Database.Implementation
             }
         }
 
+        /// <summary>
+        /// Connects with the specified connection string.
+        /// Alters Connection property
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
         public void Connect(string connectionString)
         {
             IDbConnection connection = null;
@@ -62,12 +75,19 @@ namespace DbLinq.Data.Linq.Database.Implementation
             ChangeConnection(connection, true);
         }
 
+        /// <summary>
+        /// Disconnects this instance.
+        /// </summary>
         public void Disconnect()
         {
             if (Connection != null && _connectionOwner)
                 Connection.Close();
         }
 
+        /// <summary>
+        /// Opens a connection.
+        /// </summary>
+        /// <returns></returns>
         public IDisposable OpenConnection()
         {
             // if we don't own the connection, then it is not our business
@@ -77,29 +97,49 @@ namespace DbLinq.Data.Linq.Database.Implementation
             return new DatabaseConnection(_connection);
         }
 
+        /// <summary>
+        /// Creates a transaction.
+        /// </summary>
+        /// <returns></returns>
         public IDatabaseTransaction Transaction()
         {
             return new DatabaseTransaction(Connection);
         }
 
+        /// <summary>
+        /// Creates a command.
+        /// </summary>
+        /// <returns></returns>
         public IDbCommand CreateCommand()
         {
             IDbCommand command = Connection.CreateCommand();
             if (command.Transaction == null)
-                command.Transaction = DatabaseTransaction.CurrentDbTransaction;
+                command.Transaction = DatabaseTransaction.currentTransaction;
             return command;
         }
 
+        /// <summary>
+        /// Creates a DataAdapter.
+        /// </summary>
+        /// <returns></returns>
         public IDbDataAdapter CreateDataAdapter()
         {
             return ProviderFactory.CreateDataAdapter();
         }
 
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
         public void Dispose()
         {
             ClearConnection();
         }
 
+        /// <summary>
+        /// Sets the connection.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="owner">if set to <c>true</c> [owner].</param>
         protected void SetConnection(IDbConnection connection, bool owner)
         {
             if (connection == null)
@@ -111,22 +151,37 @@ namespace DbLinq.Data.Linq.Database.Implementation
                 _connection.Open();
         }
 
+        /// <summary>
+        /// Clears the connection.
+        /// </summary>
         protected void ClearConnection()
         {
             if (_connectionOwner && _connection != null)
                 _connection.Dispose();
         }
 
+        /// <summary>
+        /// Changes the connection.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <param name="owner">if set to <c>true</c> [owner].</param>
         protected void ChangeConnection(IDbConnection connection, bool owner)
         {
             ClearConnection();
             SetConnection(connection, owner);
         }
 
-        protected DbProviderFactory FindFactory(IDbConnection connection)
+        /// <summary>
+        /// Finds a DbProviderFactory, if possible, by AppDomain scan.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <returns></returns>
+        protected static DbProviderFactory FindFactory(IDbConnection connection)
         {
-            Assembly connectionAssembly = connection.GetType().Assembly;
-            foreach (Type testType in connectionAssembly.GetExportedTypes())
+            // we start from connection assembly
+            var connectionAssembly = connection.GetType().Assembly;
+            // then look for all types present in assembly
+            foreach (var testType in connectionAssembly.GetExportedTypes())
             {
                 if (typeof(DbProviderFactory).IsAssignableFrom(testType))
                 {

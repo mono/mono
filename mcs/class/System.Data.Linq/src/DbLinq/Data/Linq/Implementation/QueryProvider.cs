@@ -41,17 +41,46 @@ namespace System.Data.Linq.Implementation
 namespace DbLinq.Data.Linq.Implementation
 #endif
 {
+    /// <summary>
+    /// QueryProvider is used by both DataContext and Table
+    /// to build queries
+    /// It is split is two parts (non-generic and generic) for copy reasons
+    /// </summary>
     internal abstract class QueryProvider
     {
+        /// <summary>
+        /// Gets or sets the expression chain.
+        /// </summary>
+        /// <value>The expression chain.</value>
         public ExpressionChain ExpressionChain { get; set; }
+        /// <summary>
+        /// Gets or sets the type of the table.
+        /// </summary>
+        /// <value>The type of the table.</value>
         public Type TableType { get; set; }
+        /// <summary>
+        /// Gets the query.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         public abstract SelectQuery GetQuery(Expression expression);
     }
 
+    /// <summary>
+    /// QueryProvider, generic version
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     internal class QueryProvider<T> : QueryProvider, IQueryProvider, IQueryable<T>, IOrderedQueryable<T>
     {
+        /// <summary>
+        /// Holder current datancontext
+        /// </summary>
         protected readonly DataContext _dataContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueryProvider&lt;T&gt;"/> class.
+        /// </summary>
+        /// <param name="dataContext">The data context.</param>
         public QueryProvider(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -59,6 +88,13 @@ namespace DbLinq.Data.Linq.Implementation
             ExpressionChain = new ExpressionChain();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QueryProvider&lt;T&gt;"/> class.
+        /// </summary>
+        /// <param name="tableType">Type of the table.</param>
+        /// <param name="dataContext">The data context.</param>
+        /// <param name="expressionChain">The expression chain.</param>
+        /// <param name="expression">The expression.</param>
         public QueryProvider(Type tableType, DataContext dataContext, ExpressionChain expressionChain, Expression expression)
         {
             _dataContext = dataContext;
@@ -66,6 +102,16 @@ namespace DbLinq.Data.Linq.Implementation
             ExpressionChain = new ExpressionChain(expressionChain, expression);
         }
 
+        /// <summary>
+        /// Creates the query.
+        /// </summary>
+        /// <typeparam name="S"></typeparam>
+        /// <param name="t">The t.</param>
+        /// <param name="tableType">Type of the table.</param>
+        /// <param name="dataContext">The data context.</param>
+        /// <param name="expressionChain">The expression chain.</param>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         protected S CreateQuery<S>(Type t, Type tableType, DataContext dataContext, ExpressionChain expressionChain, Expression expression)
         {
             // no way to work differently
@@ -75,6 +121,11 @@ namespace DbLinq.Data.Linq.Implementation
             return queryProvider;
         }
 
+        /// <summary>
+        /// Builds the query, given a LINQ expression
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public IQueryable CreateQuery(Expression expression)
         {
             var type = expression.Type;
@@ -88,11 +139,22 @@ namespace DbLinq.Data.Linq.Implementation
             return CreateQuery<IQueryable>(type, TableType, _dataContext, ExpressionChain, expression);
         }
 
+        /// <summary>
+        /// Creates the query.
+        /// </summary>
+        /// <typeparam name="TElement">The type of the element.</typeparam>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
             return new QueryProvider<TElement>(TableType, _dataContext, ExpressionChain, expression);
         }
 
+        /// <summary>
+        /// Gets the query.
+        /// </summary>
+        /// <param name="expression">The expression.</param>
+        /// <returns></returns>
         public override SelectQuery GetQuery(Expression expression)
         {
             var expressionChain = ExpressionChain;
@@ -101,29 +163,51 @@ namespace DbLinq.Data.Linq.Implementation
             return _dataContext.QueryBuilder.GetSelectQuery(expressionChain, new QueryContext(_dataContext));
         }
 
+        /// <summary>
+        /// Runs query
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public object Execute(Expression expression)
         {
             return Execute<object>(expression);
         }
 
+        /// <summary>
+        /// Runs query
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         public TResult Execute<TResult>(Expression expression)
         {
             var query = GetQuery(expression);
             return _dataContext.QueryRunner.SelectScalar<TResult>(query);
         }
 
+        /// <summary>
+        /// Enumerates all query items
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             var enumerator = GetEnumerator();
             return enumerator;
         }
 
+        /// <summary>
+        /// Enumerates all query items
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
             var query = GetQuery(null);
             return _dataContext.QueryRunner.Select<T>(query).GetEnumerator();
         }
 
+        /// <summary>
+        /// Returns this QueryProvider as an exception
+        /// </summary>
         public Expression Expression
         {
             get { return Expression.Constant(this); }

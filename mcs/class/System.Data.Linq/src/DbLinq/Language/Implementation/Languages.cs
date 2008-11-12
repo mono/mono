@@ -23,23 +23,34 @@
 // THE SOFTWARE.
 // 
 #endregion
-using System;
+
 using System.Globalization;
 using DbLinq.Factory;
-using DbLinq.Language;
 
 namespace DbLinq.Language.Implementation
 {
+    /// <summary>
+    /// LanguageWords factory
+    /// </summary>
     internal class Languages : ILanguages
     {
+        /// <summary>
+        /// Loads the specified language related to given culture info.
+        /// </summary>
+        /// <param name="cultureInfo">The culture info.</param>
+        /// <returns></returns>
         public ILanguageWords Load(CultureInfo cultureInfo)
         {
             var objectFactory = ObjectFactory.Current;
+            // uses the factory to enumerate ILanguageWords implementations
             foreach (var languageType in objectFactory.GetImplementations(typeof(ILanguageWords)))
             {
+                // checks for instance, but doesn't load it here
+                // (loading is slow)
                 var language = (ILanguageWords)objectFactory.GetInstance(languageType, false);
                 if (language.Supports(cultureInfo))
                 {
+                    // if we have the right language, we load it
                     language.Load();
                     return language;
                 }

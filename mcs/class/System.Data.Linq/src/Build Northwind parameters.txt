@@ -1,6 +1,7 @@
 # note that databaserver can be specified in %DbLinqServer%, and is localhost by default (if not specified)
+#/code=..\examples\DbLinq.FbSql.Example\nwind\Northwind.cs  /provider=Firebird   /database="c:\program files\Firebird\Firebird_2_1\examples\nwind\Northwind.FDB"
 /code=..\examples\DbLinq.SQLite.Example\nwind\Northwind.cs /provider=Sqlite     /conn="data source=Northwind.db3"
 /code=..\examples\DbLinq.Ora.Example\nwind\Northwind.cs    /provider=Oracle     /user=Northwind
 /code=..\examples\DbLinq.Pgsql.Example\nwind\Northwind.cs  /provider=PostgreSQL
-/code=..\examples\DbLinq.Ingres.Example\nwind\Northwind.cs /provider=Ingres     
-/code=..\examples\DbLinq.MySql.Example\nwind\Northwind.cs  /provider=MySQL      
+#/code=..\examples\DbLinq.Ingres.Example\nwind\Northwind.cs /provider=Ingres     
+/code=..\examples\DbLinq.MySql.Example\nwind\Northwind.cs  /provider=MySQL 

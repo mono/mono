@@ -28,27 +28,44 @@ using System.Collections.Generic;
 
 namespace DbLinq.Factory.Implementation
 {
+    /// <summary>
+    /// Brings base mechanisms for the factory
+    /// </summary>
     internal abstract class AbstractObjectFactory: IObjectFactory
     {
+        /// <summary>
+        /// Returns an instance of a stateless class (may be a singleton)
+        /// </summary>
+        /// <typeparam name="T">class or interface</typeparam>
+        /// <returns></returns>
         public virtual T Get<T>()
         {
             return (T)GetInstance(typeof(T), false);
         }
 
-        public virtual T Get<T>(T suggestedInstance)
-        {
-            return GetInstance(suggestedInstance);
-        }
-
+        /// <summary>
+        /// Returns a new instance of the specified class (can not be a singleton)
+        /// </summary>
+        /// <typeparam name="T">class or interface</typeparam>
+        /// <returns></returns>
         public virtual T Create<T>()
         {
             return (T)GetInstance(typeof(T), true);
         }
 
+        /// <summary>
+        /// Underlying method for Get&lt;T&gt; and Create&lt;T&gt;
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="newInstanceRequired"></param>
+        /// <returns></returns>
         public abstract object GetInstance(Type t, bool newInstanceRequired);
-        
-        public abstract T GetInstance<T>(T suggestedInstance);
 
+        /// <summary>
+        /// Returns a list of types implementing the required interface
+        /// </summary>
+        /// <param name="interfaceType"></param>
+        /// <returns></returns>
         public abstract IEnumerable<Type> GetImplementations(Type interfaceType);
     }
 }

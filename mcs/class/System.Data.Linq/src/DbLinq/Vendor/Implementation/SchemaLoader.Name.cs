@@ -60,6 +60,11 @@ namespace DbLinq.Vendor.Implementation
             }
         }
 
+        /// <summary>
+        /// Gets the primary keys.
+        /// </summary>
+        /// <param name="table">The table.</param>
+        /// <returns></returns>
         protected static List<string> GetPrimaryKeys(Table table)
         {
             return (from c in table.Type.Columns where c.IsPrimaryKey select c.Name).ToList();

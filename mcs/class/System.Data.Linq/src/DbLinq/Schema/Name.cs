@@ -28,6 +28,9 @@ using System.Collections.Generic;
 
 namespace DbLinq.Schema
 {
+    /// <summary>
+    /// Base name class, with DB name and words contained
+    /// </summary>
 #if MONO_STRICT
     internal
 #else

@@ -58,6 +58,11 @@ namespace DbLinq.Data.Linq.Identity
         /// </summary>
         public IList<object> Keys { get; private set; }
 
+        /// <summary>
+        /// Determines equality between two refs
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             var other = (IdentityKey)obj;
@@ -73,6 +78,10 @@ namespace DbLinq.Data.Linq.Identity
             return true;
         }
 
+        /// <summary>
+        /// Computes hash code
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             int hash = Type.GetHashCode();
@@ -83,12 +92,22 @@ namespace DbLinq.Data.Linq.Identity
             return hash;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdentityKey"/> class.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="keys">The keys.</param>
         public IdentityKey(Type type, IEnumerable<object> keys)
         {
             Type = type;
             Keys = new List<object>(keys);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdentityKey"/> class.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <param name="keys">The keys.</param>
         public IdentityKey(Type type, params object[] keys)
         {
             Type = type;

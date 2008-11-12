@@ -23,13 +23,21 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System.Globalization;
-using DbLinq.Language;
 
 namespace DbLinq.Language
 {
+    /// <summary>
+    /// Languages factory
+    /// </summary>
     internal interface ILanguages
     {
+        /// <summary>
+        /// Loads the specified language related to given culture info.
+        /// </summary>
+        /// <param name="cultureInfo">The culture info.</param>
+        /// <returns></returns>
         ILanguageWords Load(CultureInfo cultureInfo);
     }
 }

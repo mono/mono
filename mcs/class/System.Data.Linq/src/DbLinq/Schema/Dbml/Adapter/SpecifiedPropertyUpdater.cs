@@ -34,11 +34,20 @@ namespace DbLinq.Schema.Dbml.Adapter
     /// </summary>
     internal static class SpecifiedPropertyUpdater
     {
+        /// <summary>
+        /// Registers the specified notify.
+        /// </summary>
+        /// <param name="notify">The notify.</param>
         public static void Register(INotifyPropertyChanged notify)
         {
             notify.PropertyChanged += Notify_PropertyChanged;
         }
 
+        /// <summary>
+        /// Handles the PropertyChanged event of the Notify control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.ComponentModel.PropertyChangedEventArgs"/> instance containing the event data.</param>
         private static void Notify_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             // if there is a property for us

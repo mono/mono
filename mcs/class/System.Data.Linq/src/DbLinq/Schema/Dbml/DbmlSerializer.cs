@@ -32,6 +32,9 @@ using System.Xml.Serialization;
 
 namespace DbLinq.Schema.Dbml
 {
+    /// <summary>
+    /// Serializes DBML
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
@@ -47,26 +50,38 @@ namespace DbLinq.Schema.Dbml
             }
         }
 
-        private static XmlReader OpenXml(Stream xmlStream, Stream xsdStream, IList<string> validationErrors)
+        /// <summary>
+        /// Opens the XML stream, given an XSD validation.
+        /// </summary>
+        /// <param name="xmlStream">The XML stream.</param>
+        /// <param name="xsdStream">The XSD stream.</param>
+        /// <param name="validationErrors">The validation errors.</param>
+        /// <returns></returns>
+        private static XmlReader OpenXml(Stream xmlStream, Stream xsdStream, ICollection<string> validationErrors)
         {
             validationErrors.Clear();
 
             var xmlReaderSettings = new XmlReaderSettings();
             xmlReaderSettings.Schemas.Add(null, XmlReader.Create(xsdStream));
             xmlReaderSettings.ValidationType = ValidationType.Schema;
-            xmlReaderSettings.ValidationEventHandler += delegate(object sender, ValidationEventArgs e)
-                                                            {
-                                                                validationErrors.Add(e.Message);
-                                                            };
+            xmlReaderSettings.ValidationEventHandler += ((sender, e) => validationErrors.Add(e.Message));
             var xmlValidator = XmlReader.Create(xmlStream, xmlReaderSettings);
             return xmlValidator;
         }
 
+        /// <summary>
+        /// Opens the XSD file.
+        /// </summary>
+        /// <returns></returns>
         private static Stream OpenXsd()
         {
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(DbmlSerializer), "DbmlSchema.xsd");
         }
 
+        /// <summary>
+        /// Checks if validation contains error.
+        /// </summary>
+        /// <param name="validationErrors">The validation errors.</param>
         private static void CheckValidation(IList<string> validationErrors)
         {
             if (validationErrors.Count > 0)
@@ -75,17 +90,28 @@ namespace DbLinq.Schema.Dbml
             }
         }
 
+        /// <summary>
+        /// Reads the specified XML stream for a Database schema.
+        /// </summary>
+        /// <param name="xmlStream">The XML stream.</param>
+        /// <param name="validationErrors">The validation errors.</param>
+        /// <returns></returns>
         public static Database Read(Stream xmlStream, IList<string> validationErrors)
         {
             using (Stream xsdStream = OpenXsd())
             using (XmlReader xmlReader = OpenXml(xmlStream, xsdStream, validationErrors))
             {
                 var xmlSerializer = new XmlSerializer(typeof(Database));
-                var dbml = (Dbml.Database)xmlSerializer.Deserialize(xmlReader);
+                var dbml = (Database)xmlSerializer.Deserialize(xmlReader);
                 return dbml;
             }
         }
 
+        /// <summary>
+        /// Reads the specified XML stream for a DBML schema.
+        /// </summary>
+        /// <param name="xmlStream">The XML stream.</param>
+        /// <returns></returns>
         public static Database Read(Stream xmlStream)
         {
             var validationErrors = new List<string>();
@@ -94,6 +120,11 @@ namespace DbLinq.Schema.Dbml
             return dbml;
         }
 
+        /// <summary>
+        /// Writes the specified XML stream.
+        /// </summary>
+        /// <param name="xmlStream">The XML stream.</param>
+        /// <param name="dbml">The DBML.</param>
         public static void Write(Stream xmlStream, Database dbml)
         {
             var xmlSerializer = new XmlSerializer(dbml.GetType());

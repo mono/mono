@@ -62,11 +62,6 @@ namespace DbLinq.Factory
         object GetInstance(Type t, bool newInstanceRequired);
 
         /// <summary>
-        /// allow DbMetal to suggest ConsoleLogger as preferred ILogger
-        /// </summary>
-        T GetInstance<T>(T suggestedInstance);
-
-        /// <summary>
         /// Returns a list of types implementing the required interface
         /// </summary>
         /// <param name="interfaceType"></param>

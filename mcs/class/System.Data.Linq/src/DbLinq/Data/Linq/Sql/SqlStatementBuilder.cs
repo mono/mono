@@ -88,6 +88,11 @@ namespace DbLinq.Data.Linq.Sql
                 parts.Insert(index, part);
         }
 
+        /// <summary>
+        /// Adds the part to the given parts list.
+        /// </summary>
+        /// <param name="parts">The parts.</param>
+        /// <param name="part">The part.</param>
         public static void AddPart(IList<SqlPart> parts, SqlPart part)
         {
             InsertPart(parts, parts.Count, part);
@@ -225,6 +230,13 @@ namespace DbLinq.Data.Linq.Sql
             Append((IList<SqlStatement>)newStatements);
         }
 
+        /// <summary>
+        /// Replaces the specified text, optionally ignoring the case.
+        /// The method does not replace cross-parts text
+        /// </summary>
+        /// <param name="oldText">The old text.</param>
+        /// <param name="newText">The new text.</param>
+        /// <param name="ignoreCase">if set to <c>true</c> [ignore case].</param>
         public void Replace(string oldText, string newText, bool ignoreCase)
         {
             for (int partIndex = 0; partIndex < Parts.Count; partIndex++)
@@ -241,15 +253,26 @@ namespace DbLinq.Data.Linq.Sql
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlStatementBuilder"/> class.
+        /// </summary>
         public SqlStatementBuilder()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlStatementBuilder"/> class.
+        /// </summary>
+        /// <param name="sqlStatements">The SQL statements.</param>
         public SqlStatementBuilder(params SqlStatement[] sqlStatements)
         {
             Append(sqlStatements);
         }
 
+        /// <summary>
+        /// Gets the built SqlStatement.
+        /// </summary>
+        /// <returns></returns>
         public SqlStatement ToSqlStatement()
         {
             return new SqlStatement(Parts);

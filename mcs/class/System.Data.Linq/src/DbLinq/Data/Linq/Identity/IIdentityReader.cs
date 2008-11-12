@@ -30,6 +30,9 @@ namespace System.Data.Linq.Identity
 namespace DbLinq.Data.Linq.Identity
 #endif
 {
+    /// <summary>
+    /// Allows to read identity from entity
+    /// </summary>
 #if MONO_STRICT
     internal
 #else

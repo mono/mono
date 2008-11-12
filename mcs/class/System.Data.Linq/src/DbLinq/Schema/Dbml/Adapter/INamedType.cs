@@ -26,6 +26,9 @@
 
 namespace DbLinq.Schema.Dbml.Adapter
 {
+    /// <summary>
+    /// A INamedType is a literally named type
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
@@ -33,6 +36,10 @@ namespace DbLinq.Schema.Dbml.Adapter
 #endif
     interface INamedType
     {
+        /// <summary>
+        /// Type name.
+        /// </summary>
+        /// <value>The name.</value>
         string Name { get; set; }
     }
 }

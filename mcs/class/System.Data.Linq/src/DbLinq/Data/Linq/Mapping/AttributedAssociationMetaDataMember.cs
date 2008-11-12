@@ -38,7 +38,7 @@ namespace DbLinq.Data.Linq.Mapping
     internal class AttributedAssociationMetaDataMember : AttributedAbstractMetaDataMember
     {
         public AttributedAssociationMetaDataMember(MemberInfo member, AssociationAttribute attribute, MetaType declaringType)
-            : base(member, declaringType, attribute.Storage != null ? member.DeclaringType.GetSingleMember(attribute.Storage) : null)
+            : base(member, declaringType, attribute)
         {
             associationAttribute = attribute;
         }

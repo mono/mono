@@ -31,12 +31,23 @@ namespace DbLinq.Vendor.Implementation
 {
     partial class SchemaLoader
     {
+        /// <summary>
+        /// Reads the data name and schema.
+        /// </summary>
+        /// <param name="dataRecord">The data record.</param>
+        /// <returns></returns>
         protected virtual IDataName ReadDataNameAndSchema(IDataRecord dataRecord)
         {
             var dataName = new DataName { Name = dataRecord.GetAsString(0), Schema = dataRecord.GetAsString(1) };
             return dataName;
         }
 
+        /// <summary>
+        /// Reads the tables.
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
+        /// <param name="databaseName">Name of the database.</param>
+        /// <returns></returns>
         public abstract IList<IDataName> ReadTables(IDbConnection connectionString, string databaseName);
     }
 }

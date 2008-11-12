@@ -30,6 +30,9 @@ namespace System.Data.Linq.SqlClient
 namespace DbLinq.Data.Linq.SqlClient
 #endif
 {
+    /// <summary>
+    /// Identifies vendor by using VendorAttribute with this type
+    /// </summary>
     public class Sql2000Provider
     {
     }

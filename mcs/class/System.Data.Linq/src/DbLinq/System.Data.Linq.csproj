@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{97305421-3071-4175-AA3C-9A432CC28121}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -95,15 +95,14 @@
     <Compile Include="Data\Linq\ChangeSet.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseTransaction.cs" />
-    <Compile Include="Data\Linq\Database\IDbLinqCommand.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseConnection.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseContext.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseTransaction.cs" />
-    <Compile Include="Data\Linq\Database\Implementation\DbLinqCommand.cs" />
+    <Compile Include="Data\Linq\Database\Implementation\TransactionalCommand.cs" />
+    <Compile Include="Data\Linq\Database\ITransactionalCommand.cs" />
     <Compile Include="Data\Linq\DataContext.cs" />
     <Compile Include="Data\Linq\DataLoadOptions.cs" />
     <Compile Include="Data\Linq\DBLinqExtendedAttributte.cs" />
-    <Compile Include="Data\Linq\EntityList.cs" />
     <Compile Include="Data\Linq\EntitySet.cs" />
     <Compile Include="Data\Linq\Identity\IdentityKey.cs" />
     <Compile Include="Data\Linq\Identity\IIdentityProvider.cs" />
@@ -112,10 +111,8 @@
     <Compile Include="Data\Linq\Identity\Implementation\IdentityProviderReader.cs" />
     <Compile Include="Data\Linq\Identity\Implementation\IdentityReader.cs" />
     <Compile Include="Data\Linq\Identity\Implementation\IdentityReaderFactory.cs" />
-    <Compile Include="Data\Linq\IEntityMap.cs" />
     <Compile Include="Data\Linq\IExecuteResult.cs" />
     <Compile Include="Data\Linq\IMemberModificationHandler.cs" />
-    <Compile Include="Data\Linq\Implementation\EntityMap.cs" />
     <Compile Include="Data\Linq\Implementation\EntityState.cs" />
     <Compile Include="Data\Linq\Implementation\EntityTrack.cs" />
     <Compile Include="Data\Linq\Implementation\EntityTracker.cs" />
@@ -332,7 +329,6 @@
     <Compile Include="Vendor\IDataName.cs" />
     <Compile Include="Vendor\IDataType.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.Name.cs" />
-    <Compile Include="Vendor\Implementation\Vendor.Name.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.Columns.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.DataTableColumn.cs" />
     <Compile Include="Vendor\Implementation\SchemaLoader.DataName.cs" />

@@ -23,11 +23,17 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System;
 using System.Data;
 
 namespace DbLinq.Data.Linq.Database
 {
+    /// <summary>
+    /// IDatabaseContext contains all database related information:
+    /// - connection
+    /// - creates or manage a transaction
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
@@ -37,17 +43,45 @@ namespace DbLinq.Data.Linq.Database
     {
         // there are two ways to specify a connection:
         // 1. use a provided IDbConnection
+        /// <summary>
+        /// Gets or sets the connection.
+        /// </summary>
+        /// <value>The connection.</value>
         IDbConnection Connection { set; get; }
         // 2. create our own
+        /// <summary>
+        /// Connects with the specified connection string.
+        /// Alters Connection property
+        /// </summary>
+        /// <param name="connectionString">The connection string.</param>
         void Connect(string connectionString);
+        /// <summary>
+        /// Disconnects this instance.
+        /// </summary>
         void Disconnect();
 
         // connection and transactions
+        /// <summary>
+        /// Creates a transaction.
+        /// </summary>
+        /// <returns></returns>
         IDatabaseTransaction Transaction();
+        /// <summary>
+        /// Opens a connection.
+        /// </summary>
+        /// <returns></returns>
         IDisposable OpenConnection();
 
         // factory
+        /// <summary>
+        /// Creates a command.
+        /// </summary>
+        /// <returns></returns>
         IDbCommand CreateCommand();
+        /// <summary>
+        /// Creates a DataAdapter.
+        /// </summary>
+        /// <returns></returns>
         IDbDataAdapter CreateDataAdapter();
     }
 }

@@ -26,34 +26,60 @@
 
 using System.Collections.Generic;
 using System.Globalization;
-using DbLinq.Language;
 
 namespace DbLinq.Language.Implementation
 {
+    /// <summary>
+    /// LanguagesWord implementation for no language
+    /// </summary>
     internal class NoLanguageWords : ILanguageWords
     {
+        /// <summary>
+        /// Invariant language: no singular, no plural
+        /// </summary>
+        /// <param name="plural"></param>
+        /// <returns></returns>
         public string Singularize(string plural)
         {
             return plural;
         }
 
+        /// <summary>
+        /// Invariant language: no singular, no plural
+        /// </summary>
+        /// <param name="singular"></param>
+        /// <returns></returns>
         public string Pluralize(string singular)
         {
             return singular;
         }
 
+        /// <summary>
+        /// Invariant language does not extract words
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public IList<string> GetWords(string text)
         {
             return new[] { text };
         }
 
+        /// <summary>
+        /// Returns true if the required culture is supported
+        /// </summary>
+        /// <param name="cultureInfo"></param>
+        /// <returns></returns>
         public bool Supports(CultureInfo cultureInfo)
         {
             return cultureInfo.IsNeutralCulture || cultureInfo.ThreeLetterISOLanguageName == "IVL";
         }
 
+        /// <summary>
+        /// Loads language
+        /// </summary>
         public void Load()
         {
+            // yup. Nothing here.
         }
     }
 }

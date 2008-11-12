@@ -25,6 +25,9 @@
 #endregion
 namespace DbLinq.Schema
 {
+    /// <summary>
+    /// A column maps to a property
+    /// </summary>
 #if MONO_STRICT
     internal
 #else

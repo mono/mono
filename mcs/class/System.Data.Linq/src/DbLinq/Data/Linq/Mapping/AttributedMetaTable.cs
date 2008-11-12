@@ -37,14 +37,27 @@ namespace DbLinq.Data.Linq.Mapping
     [DebuggerDisplay("MetaTable for {TableName}")]
     internal class AttributedMetaTable : MetaTable
     {
-        public AttributedMetaTable(TableAttribute attribute, MetaType type)
+        public AttributedMetaTable(TableAttribute attribute, MetaType type, MetaModel model)
         {
-            tableAttribute = attribute;
-            metaType = type;
+            _tableAttribute = attribute;
+            _metaType = type;
+        	_containingModel = model;
+
+			//If the attribute doesn't specify a table name the name of the table class is used
+			if(attribute.Name != null)
+			{
+				_tableName = attribute.Name;
+			}
+			else
+			{
+				_tableName = type.Name;
+			}
         }
 
-        private TableAttribute tableAttribute;
-        private MetaType metaType;
+        private TableAttribute _tableAttribute;
+        private MetaType _metaType;
+    	private MetaModel _containingModel;
+    	private readonly string _tableName;
 
         public override MethodInfo DeleteMethod
         {
@@ -58,17 +71,17 @@ namespace DbLinq.Data.Linq.Mapping
 
         public override MetaModel Model
         {
-            get { throw new System.NotImplementedException(); }
+            get { return _containingModel; }
         }
 
         public override MetaType RowType
         {
-            get { return metaType; }
+            get { return _metaType; }
         }
 
         public override string TableName
         {
-            get { return tableAttribute.Name; }
+            get { return _tableName; }
         }
 
         public override MethodInfo UpdateMethod

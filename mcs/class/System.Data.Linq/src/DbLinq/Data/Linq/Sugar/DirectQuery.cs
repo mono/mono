@@ -53,9 +53,9 @@ namespace DbLinq.Data.Linq.Sugar
             Parameters = parameters;
         }
 
-        public override IDbLinqCommand GetCommand()
+        public override ITransactionalCommand GetCommand()
         {
-            IDbLinqCommand command = base.GetCommand(false);
+            ITransactionalCommand command = base.GetCommand(false);
             FeedParameters(command);
             return command;
         }
@@ -66,7 +66,7 @@ namespace DbLinq.Data.Linq.Sugar
         /// <param name="dbCommand"></param>
         /// <param name="parameterNames"></param>
         /// <param name="parameterValues"></param>
-        private void FeedParameters(IDbLinqCommand command)
+        private void FeedParameters(ITransactionalCommand command)
         {
             IDbCommand dbCommand = command.Command;
             for (int parameterIndex = 0; parameterIndex < Parameters.Count; parameterIndex++)

@@ -28,22 +28,39 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
-using DbLinq.Language;
 
 namespace DbLinq.Language.Implementation
 {
+    /// <summary>
+    /// Offer base mechanisms for words based languages (== all)
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
     public
 #endif
-    abstract class AbstractWords : ILanguageWords
+ abstract class AbstractWords : ILanguageWords
     {
+        /// <summary>
+        /// Words and corresponding weights
+        /// </summary>
         protected IDictionary<string, int> WordsWeights;
+        /// <summary>
+        /// Plural forms for singular words (exceptions)
+        /// </summary>
         protected IDictionary<string, string> SingularToPlural = new Dictionary<string, string>();
+        /// <summary>
+        /// Singular froms for plural words (exceptions)
+        /// </summary>
         protected IDictionary<string, string> PluralToSingular = new Dictionary<string, string>();
 
+        /// <summary>
+        /// using English heuristics, convert 'dogs' to 'dog',
+        /// 'categories' to 'category',
+        /// 'cat' remains unchanged.
+        /// </summary>
+        /// <param name="plural"></param>
+        /// <returns></returns>
         public virtual string Singularize(string plural)
         {
             string singular;
@@ -52,6 +69,12 @@ namespace DbLinq.Language.Implementation
             return ComputeSingular(plural);
         }
 
+        /// <summary>
+        /// using English heuristics, convert 'dog' to 'dogs',
+        /// 'bass' remains unchanged.
+        /// </summary>
+        /// <param name="singular"></param>
+        /// <returns></returns>
         public virtual string Pluralize(string singular)
         {
             string plural;
@@ -60,12 +83,34 @@ namespace DbLinq.Language.Implementation
             return ComputePlural(singular);
         }
 
+        /// <summary>
+        /// Computes the singular.
+        /// </summary>
+        /// <param name="plural">The plural.</param>
+        /// <returns></returns>
         protected abstract string ComputeSingular(string plural);
+        /// <summary>
+        /// Computes the plural.
+        /// </summary>
+        /// <param name="singular">The singular.</param>
+        /// <returns></returns>
         protected abstract string ComputePlural(string singular);
 
+        /// <summary>
+        /// Returns true if the required culture is supported
+        /// </summary>
+        /// <param name="cultureInfo"></param>
+        /// <returns></returns>
         public abstract bool Supports(CultureInfo cultureInfo);
+        /// <summary>
+        /// Loads the words (operation may be slow, so it is excluded from ctor)
+        /// </summary>
         public abstract void Load();
 
+        /// <summary>
+        /// Loads the specified resource name.
+        /// </summary>
+        /// <param name="resourceName">Name of the resource.</param>
         public virtual void Load(string resourceName)
         {
             WordsWeights = new Dictionary<string, int>();
@@ -78,9 +123,11 @@ namespace DbLinq.Language.Implementation
                     while (!resourceReader.EndOfStream)
                     {
                         string word = resourceReader.ReadLine().Trim().ToLower();
+                        // comments start with a "#"
                         if (word.Length == 0 || word[0] == '#')
                             continue;
                         int count = 1;
+                        // starting a word with a "+" adds weight to it
                         while (word.StartsWith("+"))
                         {
                             count++;
@@ -88,6 +135,7 @@ namespace DbLinq.Language.Implementation
                         }
 
                         var singularPlural = word.Split(singularPluralSeparator, StringSplitOptions.RemoveEmptyEntries);
+                        // "a => b" declares a singular => plural form
                         if (singularPlural.Length > 1)
                         {
                             word = singularPlural[0].Trim();
@@ -105,11 +153,23 @@ namespace DbLinq.Language.Implementation
             }
         }
 
+        /// <summary>
+        /// Gets the standard form for word (removes mixed letters, for example).
+        /// The goal is to make it usable from dictionary.
+        /// </summary>
+        /// <param name="word">The word.</param>
+        /// <returns></returns>
         protected virtual string GetStandard(string word)
         {
             return word;
         }
 
+        /// <summary>
+        /// Gets the weight for a given word.
+        /// Actually based on dictionary info.
+        /// </summary>
+        /// <param name="word">The word.</param>
+        /// <returns></returns>
         protected int GetWeight(string word)
         {
             if (word.Length == 1) // a letter is always 1
@@ -119,40 +179,65 @@ namespace DbLinq.Language.Implementation
             return weight;
         }
 
+        /// <summary>
+        /// Tells if the specified word exists in dictionary.
+        /// </summary>
+        /// <param name="word">The word.</param>
+        /// <returns></returns>
         protected bool Exists(string word)
         {
             return GetWeight(word) > 0;
         }
 
+        /// <summary>
+        /// Context is used to speedup words recognition
+        /// </summary>
         private class Context
         {
             internal class Split
             {
-                public string Magma;
                 public IList<string> Words;
                 public double Note;
             }
 
-            public IDictionary<string, Split> Splits = new Dictionary<string, Split>();
+            public readonly IDictionary<string, Split> Splits = new Dictionary<string, Split>();
         }
 
+        /// <summary>
+        /// Extracts words from an undistinguishable letters magma
+        /// for example "shipsperunit" --&gt; "ships" "per" "unit"
+        /// </summary>
+        /// <param name="text">The text.</param>
+        /// <returns></returns>
         public virtual IList<string> GetWords(string text)
         {
-            var context = new Context();
-            IList<string> words = new List<string>();
-            int lastIndex = 0;
-            for (int index = 0; index <= text.Length; index++)
-            {
-                if (index == text.Length || !char.IsLetterOrDigit(text[index]))
-                {
-                    GetMagmaWords(text.Substring(lastIndex, index - lastIndex), words, context);
-                    lastIndex = index + 1;
-                }
-            }
+            //var context = new Context();
+            //IList<string> words = new List<string>();
+            //int lastIndex = 0;
+            //for (int index = 0; index <= text.Length; index++)
+            //{
+            //    if (index == text.Length || !char.IsLetterOrDigit(text[index]))
+            //    {
+            //        var word = text.Substring(lastIndex, index - lastIndex);
+            //        // if the word is empty, we skip it
+            //        if (!string.IsNullOrEmpty(word))
+            //            GetMagmaWords(word, words, context);
+            //        lastIndex = index + 1;
+            //    }
+            //}
+            //return words;
+            var words = new List<string>();
+            GetMagmaWords(text, words, new Context());
             return words;
         }
 
-        private void GetMagmaWords(string magma, IList<string> words, Context context)
+        /// <summary>
+        /// Gets the magma words.
+        /// </summary>
+        /// <param name="magma">The magma.</param>
+        /// <param name="words">The words.</param>
+        /// <param name="context">The context.</param>
+        private void GetMagmaWords(string magma, ICollection<string> words, Context context)
         {
             foreach (var word in GetMagmaWords(magma, context))
                 words.Add(word);
@@ -162,7 +247,8 @@ namespace DbLinq.Language.Implementation
         /// Extracts words from a "word magma" by splitting the string on every position and keep the best score.
         /// The method is recursive
         /// </summary>
-        /// <param name="magma"></param>
+        /// <param name="magma">The magma.</param>
+        /// <param name="context">The context.</param>
         /// <returns></returns>
         private IList<string> GetMagmaWords(string magma, Context context)
         {
@@ -174,7 +260,7 @@ namespace DbLinq.Language.Implementation
             IList<string> bestRight = new string[0];
             double bestNote = GetNote(bestLeft);
             if (bestNote > 0) // if we have something here, it is a full word, then don't look any further
-                return bestLeft; // note that this may break the weight... for example toothpaste always win vs +++tooth +++paste
+                return bestLeft; // that this may break the weight... for example toothpaste always win vs +++tooth +++paste
             // split and try
             for (int i = 1; i <= magma.Length - 1; i++)
             {
@@ -196,6 +282,13 @@ namespace DbLinq.Language.Implementation
             return foundWords;
         }
 
+        /// <summary>
+        /// Computes the words.
+        /// </summary>
+        /// <param name="magma">The magma.</param>
+        /// <param name="words">The words.</param>
+        /// <param name="context">The context.</param>
+        /// <returns></returns>
         private double ComputeWords(string magma, out IList<string> words, Context context)
         {
             Context.Split split;
@@ -203,7 +296,6 @@ namespace DbLinq.Language.Implementation
             {
                 split = new Context.Split
                             {
-                                Magma = magma,
                                 Words = GetMagmaWords(magma, context)
                             };
                 split.Note = GetNote(split.Words);
@@ -214,7 +306,7 @@ namespace DbLinq.Language.Implementation
         }
 
         /// <summary>
-        /// Returns a note for a list of words, with the following rules:
+        /// Returns a value for a list of words, with the following rules:
         /// - fewer is better
         /// - popular is better
         /// </summary>

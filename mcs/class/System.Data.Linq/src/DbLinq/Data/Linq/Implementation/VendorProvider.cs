@@ -58,12 +58,16 @@ namespace DbLinq.Data.Linq.Implementation
             {
                 if (!_vendorByType.TryGetValue(providerType, out vendorType))
                 {
+                    // the strategy is:
+                    // we parse the current AppDomain...
                     foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
                     {
                         foreach (var type in assembly.GetTypes())
                         {
+                            // ... then look for an IVendor implementation ...
                             if (typeof(IVendor).IsAssignableFrom(type))
                             {
+                                // then see if the attribute matches the request
                                 var vendorAttribute = type.GetAttribute<VendorAttribute>();
                                 if (vendorAttribute != null)
                                 {

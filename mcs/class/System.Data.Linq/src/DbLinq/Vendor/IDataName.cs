@@ -25,6 +25,9 @@
 #endregion
 namespace DbLinq.Vendor
 {
+    /// <summary>
+    /// Basic name in a database entity, with a name and schema
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
@@ -32,7 +35,15 @@ namespace DbLinq.Vendor
 #endif
     interface IDataName
     {
+        /// <summary>
+        /// Gets or sets the name.
+        /// </summary>
+        /// <value>The name.</value>
         string Name { get; set; }
+        /// <summary>
+        /// Gets or sets the schema.
+        /// </summary>
+        /// <value>The schema.</value>
         string Schema { get; set; }
     }
 }

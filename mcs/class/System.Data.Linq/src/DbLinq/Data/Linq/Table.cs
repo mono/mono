@@ -57,7 +57,7 @@ namespace DbLinq.Data.Linq
     /// <summary>
     /// T may be eg. class Employee or string - the output
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TEntity">The type of the entity.</typeparam>
     public sealed partial class Table<TEntity> :
             ITable,
             IQueryProvider,
@@ -71,15 +71,18 @@ namespace DbLinq.Data.Linq
         /// <summary>
         /// the parent DataContext holds our connection etc
         /// </summary>
-        public DataContext Context { get { return _context; } }
-        private readonly DataContext _context;
+        public DataContext Context { get; private set; }
 
         // QueryProvider is the running entity, running through nested Expressions
         private readonly QueryProvider<TEntity> _queryProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Table&lt;TEntity&gt;"/> class.
+        /// </summary>
+        /// <param name="parentContext">The parent context.</param>
         internal Table(DataContext parentContext)
         {
-            _context = parentContext;
+            Context = parentContext;
             _queryProvider = new QueryProvider<TEntity>(parentContext);
         }
 
@@ -95,7 +98,6 @@ namespace DbLinq.Data.Linq
         /// <summary>
         /// this is only called during Dynamic Linq
         /// </summary>
-        [Obsolete("COMPLETELY UNTESTED - Use CreateQuery<S>")]
         IQueryable IQueryProvider.CreateQuery(Expression expression)
         {
             return _queryProvider.CreateQuery(expression);
@@ -109,6 +111,11 @@ namespace DbLinq.Data.Linq
             return _queryProvider.Execute<S>(expression);
         }
 
+        /// <summary>
+        /// Executes the current expression
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <returns></returns>
         object IQueryProvider.Execute(Expression expression)
         {
             return _queryProvider.Execute(expression);
@@ -119,14 +126,18 @@ namespace DbLinq.Data.Linq
         /// </summary>
         public IEnumerator<TEntity> GetEnumerator()
         {
-            IQueryable<TEntity> queryable = this as IQueryable<TEntity>;
+            var queryable = this as IQueryable<TEntity>;
             var query = queryable.Select(t => t);
             return query.GetEnumerator();
         }
 
+        /// <summary>
+        /// Enumerates all table items
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            IEnumerator<TEntity> enumT = GetEnumerator();
+            var enumT = GetEnumerator();
             return enumT;
         }
 
@@ -135,7 +146,9 @@ namespace DbLinq.Data.Linq
             get { return _queryProvider.ElementType; }
         }
 
-
+        /// <summary>
+        /// Returns this table as an Expression
+        /// </summary>
         Expression IQueryable.Expression
         {
             get { return Expression.Constant(this); } // do not change this to _queryProvider.Expression, Sugar doesn't fully handle QueryProviders by now
@@ -277,6 +290,12 @@ namespace DbLinq.Data.Linq
 
         #endregion
 
+        /// <summary>
+        /// Gets a value indicating whether this instance is read only.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is read only; otherwise, <c>false</c>.
+        /// </value>
         public bool IsReadOnly { get { return false; } }
 
         // PC: this will probably required to recreate a new object instance with all original values
@@ -317,11 +336,6 @@ namespace DbLinq.Data.Linq
         public IBindingList GetNewBindingList()
         {
             throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
         }
 
         [DbLinqToDo]

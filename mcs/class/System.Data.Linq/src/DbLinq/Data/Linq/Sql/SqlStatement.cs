@@ -45,7 +45,7 @@ namespace DbLinq.Data.Linq.Sql
 #else
     public
 #endif
- class SqlStatement : IEnumerable<SqlPart>
+    class SqlStatement : IEnumerable<SqlPart>
     {
         private readonly List<SqlPart> parts = new List<SqlPart>();
 
@@ -68,6 +68,10 @@ namespace DbLinq.Data.Linq.Sql
             return parts.GetEnumerator();
         }
 
+        /// <summary>
+        /// Enumerates all parts
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -108,6 +112,12 @@ namespace DbLinq.Data.Linq.Sql
             return builder.ToSqlStatement();
         }
 
+        /// <summary>
+        /// Joins SqlStatements into a new SqlStatement
+        /// </summary>
+        /// <param name="sqlStatement"></param>
+        /// <param name="sqlStatements"></param>
+        /// <returns></returns>
         public static SqlStatement Join(SqlStatement sqlStatement, params SqlStatement[] sqlStatements)
         {
             return Join(sqlStatement, (IList<SqlStatement>)sqlStatements);
@@ -126,6 +136,12 @@ namespace DbLinq.Data.Linq.Sql
             return builder.ToSqlStatement();
         }
 
+        /// <summary>
+        /// Formats the specified text.
+        /// </summary>
+        /// <param name="format">The format.</param>
+        /// <param name="sqlStatements">The SQL statements.</param>
+        /// <returns></returns>
         public static SqlStatement Format(string format, params SqlStatement[] sqlStatements)
         {
             return Format(format, (IList<SqlStatement>)sqlStatements);
@@ -145,6 +161,9 @@ namespace DbLinq.Data.Linq.Sql
             return builder.ToSqlStatement();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlStatement"/> class.
+        /// </summary>
         public SqlStatement()
         {
         }
@@ -170,17 +189,29 @@ namespace DbLinq.Data.Linq.Sql
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlStatement"/> class.
+        /// </summary>
+        /// <param name="sqlParts">The SQL parts.</param>
         public SqlStatement(params SqlPart[] sqlParts)
             : this((IList<SqlPart>)sqlParts)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlStatement"/> class.
+        /// </summary>
+        /// <param name="sqlParts">The SQL parts.</param>
         public SqlStatement(IEnumerable<SqlPart> sqlParts)
         {
             foreach (var sqlPart in sqlParts)
                 SqlStatementBuilder.AddPart(parts, sqlPart);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SqlStatement"/> class.
+        /// </summary>
+        /// <param name="sql">The SQL.</param>
         public SqlStatement(string sql)
         {
             parts.Add(new SqlLiteralPart(sql));

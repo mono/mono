@@ -2,7 +2,7 @@
 // 
 // MIT license
 //
-// Copyright (c) 2007-2008 Jiri Moudry
+// Copyright (c) 2007-2008 Jiri Moudry, Stefan Klinger
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,17 +28,22 @@ using System;
 using System.Collections.Generic;
 using System.Data.Linq.Mapping;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 #if MONO_STRICT
 using System.Data.Linq;
+using DbLinq.Util;
+
 #else
 using DbLinq.Data.Linq;
 using DbLinq.Data.Linq.Mapping;
+using DbLinq.Util;
+
 #endif
 
-using DbLinq.Util;
+//Change notes:
+//removed virtual init call from constructor
+//renamed member variables to be better distinguishable from local variables
 
 #if MONO_STRICT
 namespace System.Data.Linq.Mapping
@@ -52,159 +57,117 @@ namespace DbLinq.Data.Linq.Mapping
     /// </summary>
     [DebuggerDisplay("MetaModel for {DatabaseName}")]
     internal class AttributedMetaModel : MetaModel
-    {
-        public AttributedMetaModel(Type dataContextType, MappingSource mappingSource)
+	{
+		private readonly Type _ContextType;
+
+		/// <summary>
+		/// The DataContext (or a derived type) that is used for this model.
+		/// </summary>
+		public override Type ContextType
+		{
+			get { return _ContextType; }
+		}
+
+
+		// just because of this, the whole model can not be cached efficiently, since we can not guarantee
+		// that another mapping source instance will not use the same model
+		private MappingSource _MappingSource;
+
+		/// <summary>
+		/// The mapping source used for that model.
+		/// </summary>
+		public override MappingSource MappingSource
+		{
+			get { return _MappingSource; }
+		}
+
+
+		private string _DatabaseName;
+
+		/// <summary>
+		/// Name of the database.
+		/// </summary>
+		/// <remarks>
+		/// The name of the database is the type name of the DataContext inheriting class.
+		/// If a plain DataContext is used, the database name is "DataContext".
+		/// </remarks>
+		public override string DatabaseName
+		{
+			get { return _DatabaseName; }
+		}
+
+
+		//Currently not implemented Properties
+		public override Type ProviderType
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		//This function will try to add unknown table types
+		//TODO: locking for multithreaded access, since it is not only used during init
+		private IDictionary<Type, MetaTable> _Tables = new Dictionary<Type, MetaTable>();
+
+		private IDictionary<MethodInfo, MetaFunction> _metaFunctions;
+		
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="AttributedMetaModel"/> class.
+		/// </summary>
+		/// <param name="contextType">DataContext type used.</param>
+		/// <param name="mappingSource">The mapping source.</param>
+        public AttributedMetaModel(Type contextType, MappingSource mappingSource)
         {
-            contextType = dataContextType;
-            this.mappingSource = mappingSource;
-            Load();
+            _ContextType = contextType;
+            _MappingSource = mappingSource;
+
+			DiscoverDatabaseName();
+
+			FindTables();
+            
+			//Load looks a bit useles since it is only called here
+			Load(); //TODO refactor this method
         }
 
-        protected virtual void Load()
+        private void Load()
         {
-            // global attributes
-            var database = GetDatabaseAttribute();
-            databaseName = database != null ? database.Name : null;
-
             // stored procedures
-            metaFunctions = new Dictionary<MethodInfo, MetaFunction>();
+            _metaFunctions = new Dictionary<MethodInfo, MetaFunction>();
             var functionAttributes = GetFunctionsAttributes();
             foreach (var functionPair in functionAttributes)
             {
-                metaFunctions[functionPair.Key] = new AttributedMetaFunction(functionPair.Key, functionPair.Value);
-            }
-
-            // tables
-            tables = new Dictionary<Type, MetaTable>();
-            var tableAttributes = GetTablesAttributes();
-            foreach (var tablePair in tableAttributes)
-            {
-                var type = new AttributedMetaType(tablePair.Key);
-                var table = new AttributedMetaTable(tablePair.Value, type);
-                tables[tablePair.Key] = table;
-                type.SetMetaTable(table);
-            }
-
-            // reverse associations
-            foreach (var table in GetTables())
-            {
-                foreach (var association in table.RowType.Associations)
-                {
-                    // we cast to call the SetOtherKey method
-                    var attributedAssociation = association as AttributedMetaAssociation;
-                    if (attributedAssociation != null)
-                    {
-                        var memberInfo = attributedAssociation.ThisMember.Member;
-                        var associationAttribute = memberInfo.GetAttribute<AssociationAttribute>();
-                        var memberType = memberInfo.GetMemberType();
-                        Type otherTableType;
-                        if (memberType.IsGenericType)
-                            otherTableType = memberType.GetGenericArguments()[0];
-                        else
-                            otherTableType = memberType;
-                        var otherTable = GetTable(otherTableType);
-                        // then we lookup by the attribute if we have a match
-                        MetaDataMember otherAssociationMember = null;
-                        foreach (var member in otherTableType.GetMembers())
-                        {
-                            var otherAssociationAttribute = member.GetAttribute<AssociationAttribute>();
-                            if (otherAssociationAttribute != null && otherAssociationAttribute.Name == associationAttribute.Name)
-                            {
-                                otherAssociationMember =
-                                    (from a in otherTable.RowType.Associations
-                                     where a.ThisMember.Member == member
-                                     select a.ThisMember).SingleOrDefault();
-                                if (otherAssociationMember == attributedAssociation.ThisMember)
-                                {
-                                    otherAssociationMember = null;
-                                    continue;
-                                }
-                                break;
-                            }
-                        }
-                        attributedAssociation.SetOtherKey(associationAttribute.OtherKey, table, otherTable, otherAssociationMember);
-                    }
-                }
+                _metaFunctions[functionPair.Key] = new AttributedMetaFunction(functionPair.Key, functionPair.Value);
             }
         }
 
-        protected virtual DatabaseAttribute GetDatabaseAttribute()
-        {
-            return contextType.GetAttribute<DatabaseAttribute>();
-        }
-
-        protected virtual IDictionary<MethodInfo, FunctionAttribute> GetFunctionsAttributes()
+        private IDictionary<MethodInfo, FunctionAttribute> GetFunctionsAttributes()
         {
             var functionAttributes = new Dictionary<MethodInfo, FunctionAttribute>();
-            foreach (var methodInfo in contextType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
+            foreach (var methodInfo in _ContextType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
             {
-                var function = methodInfo.GetAttribute<FunctionAttribute>();
+                var function = ReflectionExtensions.GetAttribute<FunctionAttribute>(methodInfo);
                 if (function != null)
                     functionAttributes[methodInfo] = function;
             }
             return functionAttributes;
         }
 
-        protected virtual IDictionary<Type, TableAttribute> GetTablesAttributes()
-        {
-            var tableAttributes = new Dictionary<Type, TableAttribute>();
-            // to find the tables, we list all properties/fields contained in the DataContext inheritor
-            // if the return type has a TableAttribute, then it is ours (muhahahah!)
-            foreach (var memberInfo in contextType.GetMembers(BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
-            {
-                var memberType = memberInfo.GetMemberType();
-                if (memberType == null)
-                    continue;
-                var classType = GetClassType(memberType);
-                if (classType == null)
-                    continue;
-                // if somebody someday can explain why the GetCustomAttributes(true) does not return inherited attributes, I'd be very glad to hear him
-                TableAttribute tableAttribute = null;
-                for (var testType = classType; testType != null; testType = testType.BaseType)
-                {
-                    tableAttribute = testType.GetAttribute<TableAttribute>();
-                    if (tableAttribute != null)
-                        break;
-                }
-                // finally, we have something here, keep it
-                if (tableAttribute != null)
-                    tableAttributes[classType] = tableAttribute;
-            }
-            return tableAttributes;
-        }
-
-        protected virtual Type GetClassType(Type t)
-        {
-            // for property get, it is a IQueryable<T>, so we want T
-            if (t.IsGenericType && t.GetGenericTypeDefinition() == typeof(Table<>))
-                return t.GetGenericArguments()[0];
-            // for non property get, we may also have a direct inner type, so return it directly
-            return t;
-        }
-
-        private Type contextType;
-        public override Type ContextType
-        {
-            get { return contextType; }
-        }
-
-        private string databaseName;
-        public override string DatabaseName
-        {
-            get { return databaseName; }
-        }
-
-        private IDictionary<MethodInfo, MetaFunction> metaFunctions;
+		/// <summary>
+		/// Gets the <see cref="MetaFunction"/> for the given MethodInfo.
+		/// </summary>
+		/// <param name="method">The method info for which the <see cref="MetaFunction"/> should be returned.</param>
         public override MetaFunction GetFunction(MethodInfo method)
         {
             MetaFunction metaFunction;
-            metaFunctions.TryGetValue(method, out metaFunction);
+            _metaFunctions.TryGetValue(method, out metaFunction);
             return metaFunction;
         }
 
+		/// <summary>
+		/// Returns an enumeration of all mapped functions.
+		/// </summary>
         public override IEnumerable<MetaFunction> GetFunctions()
         {
-            return metaFunctions.Values;
+            return _metaFunctions.Values;
         }
 
         public override MetaType GetMetaType(Type type)
@@ -215,32 +178,135 @@ namespace DbLinq.Data.Linq.Mapping
             return metaTable.RowType;
         }
 
-        private IDictionary<Type, MetaTable> tables;
-        public override MetaTable GetTable(Type rowType)
-        {
-            MetaTable metaTable;
-            tables.TryGetValue(rowType, out metaTable);
-            return metaTable;
-        }
+		/// <summary>
+		/// Returns the <see cref="MetaTable"/> for the given table type.
+		/// </summary>
+		/// <remarks>
+		/// If the given type is not allready mapped it tries to map it.
+		/// </remarks>
+		/// <param name="tableType"><see cref="MetaTable"/> for the table type or null if not mappable.</param>
+		public override MetaTable GetTable(Type tableType)
+		{
+			MetaTable metaTable;
+			_Tables.TryGetValue(tableType, out metaTable);
+			if (metaTable != null)
+			{
+				return metaTable;
+			}
 
+			return AddTableType(tableType);
+		}
+
+		/// <summary>
+		/// Returns an enumeration of all mapped tables.
+		/// </summary>
         public override IEnumerable<MetaTable> GetTables()
         {
-            return tables.Values;
-        }
+            return _Tables.Values;
+		}
 
-        //private Type providerType;
-        public override Type ProviderType
-        {
-            get { throw new NotImplementedException(); }
-        }
+		/// <summary>
+		/// Tries to discover the name of the database.
+		/// Database name == class name of the DataContext's most derived class used for this MetaModel.
+		/// </summary>
+		private void DiscoverDatabaseName()
+		{
+			var databaseAttribute = _ContextType.GetAttribute<DatabaseAttribute>();
+			if (databaseAttribute != null)
+			{
+				_DatabaseName = databaseAttribute.Name;
+			}
+			else //Found no DatabaseAttribute get the class name
+			{
+				_DatabaseName = _ContextType.Name;
+			}
+		}
 
-        // just because of this, the whole model can not be cached efficiently, since we can not guarantee
-        // that another mapping source instance will not use the same model
-        private MappingSource mappingSource;
-        public override MappingSource MappingSource
-        {
-            get { return mappingSource; }
-        }
+		//Discover all the tables used with this context, used for the GetTable/GetTables function
+		//Behaviour of GetTables in the Framework: STRANGE
+		//If the DataContext was a strong typed one (derived with fields for the tables),
+		//it returns a list of MetaTables for all this tables.
+		//But if you call GetTable<T> with an additional table - the table doesn't get added to this list.
+		//If you use a vanilla DataContext the list is empty at the beginning (ok no surprise here),
+		//if you call GetTable<T> here the table is added to the list.
+		//
+		//If you add to properties with the same T of Table<T> only the first gets into the list.
+		private void FindTables()
+		{
+			MemberInfo[] memberInfos = _ContextType.GetMembers(BindingFlags.GetField
+					| BindingFlags.GetProperty | BindingFlags.Static | BindingFlags.Instance
+					| BindingFlags.NonPublic | BindingFlags.Public);
 
-    }
+			//foreach (var info in memberInfos)
+			for (int i = 0; i < memberInfos.Length; ++i )
+			{
+				var info = memberInfos[i];
+
+				Type memberType = info.GetMemberType();
+
+				if (memberType == null)
+				{
+					continue;
+				}
+
+				//Ok first possible problem here - there seems to be the .net ITable/Table and the local one
+				//Same goes for the attribute types
+				//Any reason for that?
+				//looking for a table generic
+				if (memberType.IsGenericType)
+				{
+					if (memberType.GetGenericTypeDefinition() != typeof(Table<>))
+					{
+						continue;
+					}
+
+					Type argumentType = memberType.GetGenericArguments()[0];
+
+					//If the argument type is a generic parameter we are not interested
+					//Most likly it is the GetTable function
+					if (argumentType.IsGenericParameter)
+					{
+						continue;
+					}
+
+					AddTableType(argumentType);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Adds the table of the given type to the mappings.
+		/// </summary>
+		/// <remarks>
+		/// The given type must have a <see cref="TableAttribute" /> to be mappable.
+		/// </remarks>
+		/// <param name="tableType">Type of the table.</param>
+		/// <returns>
+		/// Returns the <see cref="MetaTable"/> for the given table type or null if it is not mappable.
+		/// </returns>
+		private MetaTable AddTableType(Type tableType)
+		{
+			//No need to check base types because framework implementation doesn't do this either
+			var tableAttribute = tableType.GetAttribute<TableAttribute>();
+
+			if (tableAttribute == null)
+			{
+				return null;
+			}
+
+			//First set up the table without associations
+			var metaType = new AttributedMetaType(tableType);
+			var metaTable = new AttributedMetaTable(tableAttribute, metaType, this);
+			metaType.SetMetaTable(metaTable);
+			_Tables[tableType] = metaTable;
+
+			//After that we are ready to setup table associations, need to to this late
+			//because of possible circular dependencies
+			//In worst case if SetupAssociations throws an exception we end up with a table
+			//without complete association information, but this seems to be and ok tradeoff
+			metaType.SetupAssociations();
+
+			return metaTable;
+		}
+	}
 }

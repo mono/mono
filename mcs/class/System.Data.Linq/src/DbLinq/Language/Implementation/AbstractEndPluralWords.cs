@@ -24,10 +24,11 @@
 // 
 #endregion
 
-using DbLinq.Language.Implementation;
-
 namespace DbLinq.Language.Implementation
 {
+    /// <summary>
+    /// Words with singular/plural capacity, changed in the end
+    /// </summary>
 #if MONO_STRICT
     internal
 #else
@@ -35,12 +36,25 @@ namespace DbLinq.Language.Implementation
 #endif
     abstract class AbstractEndPluralWords : AbstractWords
     {
+        /// <summary>
+        /// Corresponding singular and plural endings
+        /// </summary>
         protected class SingularPlural
         {
+            /// <summary>
+            /// Singular ending
+            /// </summary>
             public string Singular;
+            /// <summary>
+            /// Plural ending
+            /// </summary>
             public string Plural;
         }
 
+        /// <summary>
+        /// Singulars and plurals ends
+        /// </summary>
+        /// <value>The singulars plurals.</value>
         protected abstract SingularPlural[] SingularsPlurals { get; }
 
         /// <summary>
@@ -53,6 +67,7 @@ namespace DbLinq.Language.Implementation
             if (plural.Length < 2)
                 return plural;
 
+            // we run on every possible singular/plural
             foreach (SingularPlural sp in SingularsPlurals)
             {
                 string newWord = Try(plural, sp.Plural, sp.Singular);
@@ -82,11 +97,21 @@ namespace DbLinq.Language.Implementation
             return singular;
         }
 
+        /// <summary>
+        /// Tries the specified word for singular/plural.
+        /// </summary>
+        /// <param name="word">The word.</param>
+        /// <param name="ending">The ending.</param>
+        /// <param name="newEnding">The new ending.</param>
+        /// <returns></returns>
         protected string Try(string word, string ending, string newEnding)
         {
+            // if the word ends with tested end
             if (word.ToLower().EndsWith(ending))
             {
+                // then substitute old end by new end ...
                 string newWord = word.Substring(0, word.Length - ending.Length) + newEnding;
+                // ... and if the word exists, we have the right one
                 if (Exists(newWord))
                     return newWord;
             }

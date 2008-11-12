@@ -23,25 +23,33 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System;
 using System.Data;
 
 namespace DbLinq.Data.Linq.Database.Implementation
 {
+    /// <summary>
+    /// Database connection allows to open a connection if none available
+    /// </summary>
     internal class DatabaseConnection: IDisposable
     {
-        private IDbConnection _connection;
-        private bool _mustClose;
+        private readonly IDbConnection _connection;
+        private readonly bool _mustClose;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DatabaseConnection"/> class.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
         public DatabaseConnection(IDbConnection connection)
         {
             _connection = connection;
             switch (_connection.State)
             {
-            case System.Data.ConnectionState.Open:
+            case ConnectionState.Open:
                 _mustClose = false;
                 break;
-            case System.Data.ConnectionState.Closed:
+            case ConnectionState.Closed:
                 _mustClose = true;
                 break;
             default:
@@ -51,6 +59,9 @@ namespace DbLinq.Data.Linq.Database.Implementation
                 _connection.Open();
         }
 
+        /// <summary>
+        /// Disposes current connection, if owned.
+        /// </summary>
         public void Dispose()
         {
             if (_mustClose)

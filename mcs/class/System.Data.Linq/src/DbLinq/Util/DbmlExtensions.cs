@@ -1,4 +1,4 @@
-#region MIT license
+﻿#region MIT license
 // 
 // MIT license
 //
@@ -24,14 +24,38 @@
 // 
 #endregion
 
-namespace DbLinq.Data.Linq
+using System.Linq;
+using DbLinq.Schema.Dbml;
+
+namespace DbLinq.Util
 {
-    partial interface ITable
+    /// <summary>
+    /// Executes a given SQL command, with parameter and delegate
+    /// </summary>
+#if MONO_STRICT
+    internal
+#else
+    // TODO: once R# is fixed with internal extension methods problems, switch to full internal
+    public // DataCommand is used by vendors
+#endif
+    static class DbmlExtensions
     {
         /// <summary>
-        /// Cancels the delete on submit.
+        /// Returns the reverse association
         /// </summary>
-        /// <param name="entity">The entity.</param>
-        void CancelDeleteOnSubmit(object entity);
+        /// <param name="schema"></param>
+        /// <param name="association"></param>
+        /// <returns></returns>
+        public static Association GetReverseAssociation(this Database schema, Association association)
+        {
+            // we use Single() because we NEED the opposite association
+            // (and it must be here
+            var reverseTable = (from t in schema.Table where t.Type.Name == association.Type select t).Single();
+            // same thing for association
+            var reverseAssociation = (from a in reverseTable.Type.Associations
+                                      where a.Name == association.Name && a != association
+                                      select a).Single();
+            return reverseAssociation;
+        }
     }
 }

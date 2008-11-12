@@ -46,11 +46,11 @@ namespace DbLinq.Data.Linq.Sugar
     /// </summary>
     internal abstract class AbstractQuery
     {
-        public abstract IDbLinqCommand GetCommand();
+        public abstract ITransactionalCommand GetCommand();
 
-        protected IDbLinqCommand GetCommand(bool createTransaction)
+        protected ITransactionalCommand GetCommand(bool createTransaction)
         {
-            return new DbLinq.Data.Linq.Database.Implementation.DbLinqCommand(Sql.ToString(), createTransaction, DataContext);
+            return new DbLinq.Data.Linq.Database.Implementation.TransactionalCommand(Sql.ToString(), createTransaction, DataContext);
         }
 
         /// <summary>

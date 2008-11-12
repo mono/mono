@@ -41,17 +41,23 @@ namespace DbLinq.Factory
         /// </summary>
         public static IObjectFactory Current = new Implementation.ReflectionObjectFactory();
 
+        /// <summary>
+        /// Gets an instance for the given type.
+        /// May be a singleton.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T Get<T>()
         {
             return Current.Get<T>();
         }
 
-        public static T Get<T>(T suggestedInstance)
-        {
-            //return Current.Get<T>(suggestedInstance);
-            return Current.GetInstance(suggestedInstance);
-        }
-
+        /// <summary>
+        /// Creates a instance. 
+        /// Must not be a singleton.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static T Create<T>()
         {
             return Current.Create<T>();

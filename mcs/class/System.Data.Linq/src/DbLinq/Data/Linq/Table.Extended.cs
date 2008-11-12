@@ -36,26 +36,47 @@ namespace DbLinq.Data.Linq
     /// <summary>
     /// T may be eg. class Employee or string - the output
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
+    /// <typeparam name="TEntity">The type of the entity.</typeparam>
     partial class Table<TEntity>
     {
+        /// <summary>
+        /// Cancels the delete on submit.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
         public void CancelDeleteOnSubmit(TEntity entity)
         {
             Context.UnregisterDelete(entity);
         }
 
+        /// <summary>
+        /// Cancels the delete on submit.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
         void ITable.CancelDeleteOnSubmit(object entity)
         {
             Context.UnregisterDelete(entity);
         }
 
+        /// <summary>
+        /// Gets or sets the page size of the bulk insert.
+        /// </summary>
+        /// <value>The size of the bulk insert page.</value>
         public int BulkInsertPageSize { get; set; }
 
+        /// <summary>
+        /// Performs bulk insert.
+        /// </summary>
+        /// <param name="entities">The entities.</param>
         public void BulkInsert(IEnumerable<TEntity> entities)
         {
             BulkInsert(entities, BulkInsertPageSize);
         }
 
+        /// <summary>
+        /// Performs bulk insert.
+        /// </summary>
+        /// <param name="entities">The entities.</param>
+        /// <param name="pageSize">Size of the page.</param>
         public void BulkInsert(IEnumerable<TEntity> entities, int pageSize)
         {
             using (Context.DatabaseContext.OpenConnection())

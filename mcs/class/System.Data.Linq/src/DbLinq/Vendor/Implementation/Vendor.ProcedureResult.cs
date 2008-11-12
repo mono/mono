@@ -24,12 +24,6 @@
 // 
 #endregion
 
-using System.Linq;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using DbLinq.Util;
-using System.Collections.Generic;
-
 namespace DbLinq.Vendor.Implementation
 {
     partial class Vendor
@@ -44,14 +38,27 @@ namespace DbLinq.Vendor.Implementation
 #endif
         class ProcedureResult : System.Data.Linq.IExecuteResult
         {
-            object[] outParamValues;
+            readonly object[] outParamValues;
 
+            /// <summary>
+            /// Returns a parameter for given indexs.
+            /// </summary>
+            /// <param name="parameterIndex">The index of the parameter to be retrieved.</param>
+            /// <returns>
+            /// </returns>
             public object GetParameterValue(int parameterIndex)
             {
                 object value = outParamValues[parameterIndex];
                 return value;
             }
 
+            /// <summary>
+            /// Gets or set the return value.
+            /// </summary>
+            /// <value></value>
+            /// <returns>
+            /// The value or result of the executed query.
+            /// </returns>
             public object ReturnValue { get; set; }
 
             public void Dispose() { }

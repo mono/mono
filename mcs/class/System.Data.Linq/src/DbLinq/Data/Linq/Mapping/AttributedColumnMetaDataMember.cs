@@ -38,8 +38,8 @@ namespace DbLinq.Data.Linq.Mapping
     [DebuggerDisplay("MetaDataMember for {MappedName}")]
     internal class AttributedColumnMetaDataMember : AttributedAbstractMetaDataMember
     {
-        public AttributedColumnMetaDataMember(MemberInfo member, ColumnAttribute attribute, MetaType declaringType)
-            : base(member, declaringType, member.DeclaringType.GetSingleMember(attribute.Storage))
+		public AttributedColumnMetaDataMember(MemberInfo member, ColumnAttribute attribute, MetaType declaringType)
+            : base(member, declaringType, attribute)
         {
             columnAttribute = attribute;
             if (columnAttribute.Name == null)

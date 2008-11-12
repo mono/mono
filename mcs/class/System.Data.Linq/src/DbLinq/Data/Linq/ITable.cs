@@ -36,18 +36,77 @@ namespace DbLinq.Data.Linq
 {
     public partial interface ITable : IEnumerable, IQueryable
     {
+        /// <summary>
+        /// Gets the context.
+        /// </summary>
+        /// <value>The context.</value>
         DataContext Context { get; }
+        /// <summary>
+        /// Gets a value indicating whether this instance is read only.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is read only; otherwise, <c>false</c>.
+        /// </value>
         bool IsReadOnly { get; }
+        /// <summary>
+        /// Attaches the specified entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
         void Attach(object entity);
+        /// <summary>
+        /// Attaches the specified entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="asModified">if set to <c>true</c> [as modified].</param>
         void Attach(object entity, bool asModified);
+        /// <summary>
+        /// Attaches the specified entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <param name="original">The original.</param>
         void Attach(object entity, object original);
+        /// <summary>
+        /// Attaches all entities.
+        /// </summary>
+        /// <param name="entities">The entities.</param>
         void AttachAll(IEnumerable entities);
+        /// <summary>
+        /// Attaches all entites.
+        /// </summary>
+        /// <param name="entities">The entities.</param>
+        /// <param name="asModified">if set to <c>true</c> [as modified].</param>
         void AttachAll(IEnumerable entities, bool asModified);
+        /// <summary>
+        /// Marks entities as to be deleted.
+        /// </summary>
+        /// <param name="entities">The entities.</param>
         void DeleteAllOnSubmit(IEnumerable entities);
+        /// <summary>
+        /// Marks entity as to be deleted.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
         void DeleteOnSubmit(object entity);
+        /// <summary>
+        /// Gets the modified members.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
         ModifiedMemberInfo[] GetModifiedMembers(object entity);
+        /// <summary>
+        /// Gets the state of the original entity.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
         object GetOriginalEntityState(object entity);
+        /// <summary>
+        /// Marks all entities to be inserted.
+        /// </summary>
+        /// <param name="entities">The entities.</param>
         void InsertAllOnSubmit(IEnumerable entities);
+        /// <summary>
+        /// Marks entity to be inserted.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
         void InsertOnSubmit(object entity);
     }
 }

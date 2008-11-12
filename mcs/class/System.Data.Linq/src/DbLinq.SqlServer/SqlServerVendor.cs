@@ -122,7 +122,7 @@ namespace DbLinq.SqlServer
         {
             return new TypeToLoadData
             {
-                assemblyName = "System.Data.SQLite.DLL",
+                assemblyName = "System.Data.DLL",
                 className = "SqlConnection",
             };
         }

@@ -23,14 +23,12 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Linq;
-using System.Diagnostics;
 using System.Reflection;
 using System.Xml;
-using DbLinq.Util;
 
 namespace DbLinq.Factory.Implementation
 {
@@ -41,6 +39,10 @@ namespace DbLinq.Factory.Implementation
     internal class ReflectionObjectFactory : AbstractObjectFactory
     {
         private IDictionary<Type, IList<Type>> implementations;
+        /// <summary>
+        /// Gets the implementations for given Type.
+        /// </summary>
+        /// <value>The implementations.</value>
         protected IDictionary<Type, IList<Type>> Implementations
         {
             get
@@ -52,8 +54,16 @@ namespace DbLinq.Factory.Implementation
                 return implementations;
             }
         }
-        protected IDictionary<Type, object> Singletons = new Dictionary<Type, object>();
 
+        /// <summary>
+        /// Singletons table per Type
+        /// </summary>
+        protected readonly IDictionary<Type, object> Singletons = new Dictionary<Type, object>();
+
+        /// <summary>
+        /// Gets the assemblies to avoid.
+        /// </summary>
+        /// <returns></returns>
         protected virtual IList<Assembly> GetAssembliesToAvoid()
         {
             return new[]
@@ -62,11 +72,14 @@ namespace DbLinq.Factory.Implementation
                            typeof(Uri).Assembly,            // System
                            typeof(Action).Assembly,         // System.Core
                            typeof(IDbConnection).Assembly,  // System.Data
-                           //typeof(ITable).Assembly,         // System.Data.Linq
                            typeof(XmlDocument).Assembly     // System.Xml
                        };
         }
 
+        /// <summary>
+        /// Parses the app domain.
+        /// </summary>
+        /// <returns></returns>
         protected IDictionary<Type, IList<Type>> ParseAppDomain()
         {
             var interfaceImplementations = new Dictionary<Type, IList<Type>>();
@@ -81,6 +94,11 @@ namespace DbLinq.Factory.Implementation
             return interfaceImplementations;
         }
 
+        /// <summary>
+        /// Parses the specified assembly.
+        /// </summary>
+        /// <param name="assembly">The assembly.</param>
+        /// <param name="interfaceImplementations">The interface implementations.</param>
         protected virtual void Parse(Assembly assembly, IDictionary<Type, IList<Type>> interfaceImplementations)
         {
             try
@@ -107,6 +125,11 @@ namespace DbLinq.Factory.Implementation
             }
         }
 
+        /// <summary>
+        /// Gets the singleton.
+        /// </summary>
+        /// <param name="t">The t.</param>
+        /// <returns></returns>
         private object GetSingleton(Type t)
         {
             object r;
@@ -115,17 +138,11 @@ namespace DbLinq.Factory.Implementation
             return r;
         }
 
-        private object GetSingleton(Type t, object suggestedIstance)
-        {
-            object r;
-            if (!Singletons.TryGetValue(t, out r))
-            {
-                Singletons[t] = r = suggestedIstance;
-            }
-            return r;
-        }
-
-
+        /// <summary>
+        /// Gets the new instance.
+        /// </summary>
+        /// <param name="t">The t.</param>
+        /// <returns></returns>
         private object GetNewInstance(Type t)
         {
             //warning - the Activator.CreateInstance below was throwing unerported exceptions (as of 2008June).
@@ -141,12 +158,15 @@ namespace DbLinq.Factory.Implementation
                     throw new ArgumentException(string.Format("Type '{0}' has too many implementations", t));
                 return Activator.CreateInstance(types[0]);
             }
-            else
-            {
-                return Activator.CreateInstance(t);
-            }
+            return Activator.CreateInstance(t);
         }
 
+        /// <summary>
+        /// Underlying method for Get&lt;T&gt; and Create&lt;T&gt;
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="newInstanceRequired"></param>
+        /// <returns></returns>
         public override object GetInstance(Type t, bool newInstanceRequired)
         {
             if (newInstanceRequired)
@@ -154,11 +174,11 @@ namespace DbLinq.Factory.Implementation
             return GetSingleton(t);
         }
 
-        public override T GetInstance<T>(T suggestedInstance)
-        {
-            return (T)GetSingleton(typeof(T), suggestedInstance);
-        }
-
+        /// <summary>
+        /// Returns a list of types implementing the required interface
+        /// </summary>
+        /// <param name="interfaceType"></param>
+        /// <returns></returns>
         public override IEnumerable<Type> GetImplementations(Type interfaceType)
         {
             return Implementations[interfaceType];
