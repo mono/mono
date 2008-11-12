@@ -705,6 +705,7 @@ namespace Mono.Cecil.Signatures {
 			TypeReference decType = new TypeReference (name, ns, asm);
 			for (int i = 1; i < outers.Length; i++) {
 				TypeReference t = new TypeReference (outers [i], null, asm);
+				t.Module = m_reflectReader.Module;
 				t.DeclaringType = decType;
 				decType = t;
 			}

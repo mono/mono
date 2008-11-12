@@ -1,3 +1,8 @@
+2008-11-12  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Signatures/SignatureReader.cs: properly construct
+	TypeReferences when reading them from custom attributes data.
+
 2008-11-11  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs (AddTypeRef):
