@@ -1,3 +1,7 @@
+2008-11-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile: Enable AOT for the 1.1 profile.
+
 2008-11-09  William Holmes  <billholmes54@gmail.com>
 
 	* corlib_test.dll.sources: Add TextReaderTest.cs.
