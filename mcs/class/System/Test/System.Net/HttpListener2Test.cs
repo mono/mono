@@ -239,6 +239,7 @@ namespace MonoTests.System.Net {
 			Send (ns, "POST /test8/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			HttpListenerContext ctx = listener.GetContext ();
 			Send (ctx.Response.OutputStream, "%%%OK%%%");
+			ctx.Response.Close ();
 			string response = Receive (ns, 512);
 			ns.Close ();
 			listener.Close ();
@@ -405,6 +406,7 @@ namespace MonoTests.System.Net {
 			Send (ns, "RANDOM /test17/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			HttpListenerContext ctx = listener.GetContext ();
 			Send (ctx.Response.OutputStream, "%%%OK%%%");
+			ctx.Response.Close ();
 			string response = Receive (ns, 1024);
 			ns.Close ();
 			listener.Close ();
@@ -635,6 +637,7 @@ namespace MonoTests.System.Net {
 			bool timedout;
 			string response = HttpListener2Test.ReceiveWithTimeout (ns, 1024, 3000, out timedout);
 			ns.Close ();
+			listener.Close ();
 			Assert.IsFalse (timedout);
 		}
 
@@ -648,6 +651,7 @@ namespace MonoTests.System.Net {
 			StreamReader r = new StreamReader (request.InputStream);
 			string sr =r.ReadToEnd ();
 			HttpListener2Test.Send (c.Response.OutputStream, "Miguel is love");
+			c.Response.Close ();
 		}
 
 		//
