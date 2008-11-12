@@ -280,7 +280,7 @@ namespace MonoTests.Mono.Unix {
 		static Thread CreateWaitAnyThread (params UnixSignal[] usignals)
 		{
 			return new Thread (delegate () {
-				int idx = UnixSignal.WaitAny (usignals);
+				int idx = UnixSignal.WaitAny (usignals, 30000);
 				Assert.AreEqual (idx >= 0 && idx < usignals.Length, true);
 			});
 		}
