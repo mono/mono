@@ -39,21 +39,13 @@ using System.Reflection;
 namespace System.ComponentModel {
 
 #if NET_2_1
-	public class ComponentCollectionBase : System.Collections.Generic.List<IComponent>
+	public class ComponentCollection
 	{
-		protected ComponentCollectionBase InnerList {
-			get { return this; }
-		}
 	}
-#endif
+#else
 
 	[ComVisible (true)]
-	public class ComponentCollection :
-#if !NET_2_1
-		ReadOnlyCollectionBase
-#else
-		ComponentCollectionBase
-#endif
+	public class ComponentCollection : ReadOnlyCollectionBase
 	{
 		#region Constructors
 
@@ -93,5 +85,5 @@ namespace System.ComponentModel {
 		#endregion // Methods
 		
 	}
+#endif
 }
-			

@@ -32,16 +32,20 @@
 
 using System;
 using System.Runtime.InteropServices;
+#if !NET_2_1
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+#endif
 
 namespace System.ComponentModel
 {
+#if !NET_2_1
 	[ComVisible (true)]
 	[TypeConverter (typeof (ComponentConverter))]
 	[Designer ("System.ComponentModel.Design.ComponentDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[Designer ("System.Windows.Forms.Design.ComponentDocumentDesigner, " + Consts.AssemblySystem_Design, typeof (IRootDesigner))]
 	[RootDesignerSerializer ("System.ComponentModel.Design.Serialization.RootCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
+#endif
 	public interface IComponent : IDisposable
 	{
 		ISite Site { get; set; }
