@@ -7390,10 +7390,11 @@ namespace Mono.CSharp {
 				}
 
 				expr = expr_resolved;
-				Error_MemberLookupFailed (
+				member_lookup = Error_MemberLookupFailed (
 					ec.ContainerType, expr_type, expr_type, Name, null,
 					AllMemberTypes, AllBindingFlags);
-				return null;
+				if (member_lookup == null)
+					return null;
 			}
 
 			TypeExpr texpr = member_lookup as TypeExpr;
@@ -9243,7 +9244,7 @@ namespace Mono.CSharp {
 			return expr;
 		}
 
-		protected override Expression Error_MemberLookupFailed (MemberInfo[] members)
+		protected override Expression Error_MemberLookupFailed (Type type, MemberInfo[] members)
 		{
 			MemberInfo member = members [0];
 			if (member.MemberType != MemberTypes.Property && member.MemberType != MemberTypes.Field)

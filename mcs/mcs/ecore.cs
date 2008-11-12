@@ -644,6 +644,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		// TODO: [Obsolete ("Can be removed")]
 		protected static ArrayList almost_matched_members = new ArrayList (4);
 
 		//
@@ -821,42 +822,6 @@ namespace Mono.CSharp {
 						       Type queried_type, string name, string class_name,
 							   MemberTypes mt, BindingFlags bf)
 		{
-			if (almost_matched_members.Count != 0) {
-				for (int i = 0; i < almost_matched_members.Count; ++i) {
-					MemberInfo m = (MemberInfo) almost_matched_members [i];
-					for (int j = 0; j < i; ++j) {
-						if (m == almost_matched_members [j]) {
-							m = null;
-							break;
-						}
-					}
-					if (m == null)
-						continue;
-					
-					Type declaring_type = m.DeclaringType;
-					
-					Report.SymbolRelatedToPreviousError (m);
-					if (qualifier_type == null) {
-						Report.Error (38, loc, "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
-							      TypeManager.CSharpName (m.DeclaringType),
-							      TypeManager.CSharpName (container_type));
-						
-					} else if (qualifier_type != container_type &&
-						   TypeManager.IsNestedFamilyAccessible (container_type, declaring_type)) {
-						// Although a derived class can access protected members of
-						// its base class it cannot do so through an instance of the
-						// base class (CS1540).  If the qualifier_type is a base of the
-						// ec.ContainerType and the lookup succeeds with the latter one,
-						// then we are in this situation.
-						Error_CannotAccessProtected (loc, m, qualifier_type, container_type);
-					} else {
-						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
-					}
-				}
-				almost_matched_members.Clear ();
-				return null;
-			}
-
 			MemberInfo[] lookup = null;
 			if (queried_type == null) {
 				class_name = "global::";
@@ -866,9 +831,30 @@ namespace Mono.CSharp {
 					name, null);
 
 				if (lookup != null) {
-					Report.SymbolRelatedToPreviousError (lookup [0]);
-					ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (lookup [0]));
-					return Error_MemberLookupFailed (lookup);
+					Expression e = Error_MemberLookupFailed (queried_type, lookup);
+
+					//
+					// FIXME: This is still very wrong, it should be done inside
+					// OverloadResolve to do correct arguments matching.
+					// Requires MemberLookup accessiblity check removal
+					//
+					if (e == null || (mt & (MemberTypes.Method | MemberTypes.Constructor)) == 0) {
+						MemberInfo mi = lookup[0];
+						Report.SymbolRelatedToPreviousError (mi);
+						if (qualifier_type != null && container_type != null && qualifier_type != container_type &&
+							TypeManager.IsNestedFamilyAccessible (container_type, mi.DeclaringType)) {
+							// Although a derived class can access protected members of
+							// its base class it cannot do so through an instance of the
+							// base class (CS1540).  If the qualifier_type is a base of the
+							// ec.ContainerType and the lookup succeeds with the latter one,
+							// then we are in this situation.
+							Error_CannotAccessProtected (loc, mi, qualifier_type, container_type);
+						} else {
+							ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (mi));
+						}
+					}
+
+					return e;
 				}
 
 				lookup = TypeManager.MemberLookup (queried_type, null, queried_type,
@@ -901,10 +887,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return Error_MemberLookupFailed (lookup);
+			return Error_MemberLookupFailed (queried_type, lookup);
 		}
 
-		protected virtual Expression Error_MemberLookupFailed (MemberInfo[] members)
+		protected virtual Expression Error_MemberLookupFailed (Type type, MemberInfo[] members)
 		{
 			for (int i = 0; i < members.Length; ++i) {
 				if (!(members [i] is MethodBase))
@@ -912,7 +898,7 @@ namespace Mono.CSharp {
 			}
 
 			// By default propagate the closest candidates upwards
-			return new MethodGroupExpr (members, type, loc);
+			return new MethodGroupExpr (members, type, loc, true);
 		}
 
 		protected virtual void Error_NegativeArrayIndex (Location loc)
@@ -3367,6 +3353,7 @@ namespace Mono.CSharp {
 		// TODO: make private
 		public TypeArguments type_arguments;
  		bool identical_type_name;
+		bool has_inaccessible_candidates_only;
 		Type delegate_type;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Type type, Location l)
@@ -3374,6 +3361,12 @@ namespace Mono.CSharp {
 		{
 			Methods = new MethodBase [mi.Length];
 			mi.CopyTo (Methods, 0);
+		}
+
+		public MethodGroupExpr (MemberInfo[] mi, Type type, Location l, bool inacessibleCandidatesOnly)
+			: this (mi, type, l)
+		{
+			has_inaccessible_candidates_only = inacessibleCandidatesOnly;
 		}
 
 		public MethodGroupExpr (ArrayList list, Type type, Location l)
@@ -3638,10 +3631,12 @@ namespace Mono.CSharp {
 			//
 			// The two methods have equal parameter types.  Now apply tie-breaking rules
 			//
-			if (TypeManager.IsGenericMethod (best) && !TypeManager.IsGenericMethod (candidate))
-				return true;
-			if (!TypeManager.IsGenericMethod (best) && TypeManager.IsGenericMethod (candidate))
+			if (TypeManager.IsGenericMethod (best)) {
+				if (!TypeManager.IsGenericMethod (candidate))
+					return true;
+			} else if (TypeManager.IsGenericMethod (candidate)) {
 				return false;
+			}
 
 			//
 			// This handles the following cases:
@@ -4192,7 +4187,7 @@ namespace Mono.CSharp {
 					candidate_to_form [candidate] = candidate;
 				}
 
-				if (candidate_rate != 0) {
+				if (candidate_rate != 0 || has_inaccessible_candidates_only) {
 					if (msg_recorder != null)
 						msg_recorder.EndSession ();
 					continue;
@@ -4258,8 +4253,8 @@ namespace Mono.CSharp {
 									TypeManager.CSharpSignature (best_candidate));
 								return null;
 							}
-								
-							Type [] g_args = TypeManager.GetGenericArguments (best_candidate);
+
+							Type[] g_args = TypeManager.GetGenericArguments (best_candidate);
 							if (type_arguments.Count != g_args.Length) {
 								Report.SymbolRelatedToPreviousError (best_candidate);
 								Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
@@ -4273,18 +4268,28 @@ namespace Mono.CSharp {
 								return null;
 							}
 						}
-						
+
+						if (has_inaccessible_candidates_only) {
+							if (InstanceExpression != null && type != ec.ContainerType && TypeManager.IsNestedFamilyAccessible (ec.ContainerType, best_candidate.DeclaringType)) {
+								// Although a derived class can access protected members of
+								// its base class it cannot do so through an instance of the
+								// base class (CS1540).  If the qualifier_type is a base of the
+								// ec.ContainerType and the lookup succeeds with the latter one,
+								// then we are in this situation.
+								Error_CannotAccessProtected (loc, best_candidate, type, ec.ContainerType);
+							} else {
+								ErrorIsInaccesible (loc, GetSignatureForError ());
+							}
+						}
+
 						if (!VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate, cand_params, may_fail, loc))
+							return null;
+
+						if (has_inaccessible_candidates_only)
 							return null;
 					}
 				}
 
-				if (almost_matched_members.Count != 0) {
-					Error_MemberLookupFailed (ec.ContainerType, type, type, ".ctor",
-					null, MemberTypes.Constructor, AllBindingFlags);
-					return null;
-				}
-				
 				//
 				// We failed to find any method with correct argument count
 				//
