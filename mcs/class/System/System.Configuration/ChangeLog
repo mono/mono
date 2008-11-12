@@ -1,3 +1,15 @@
+2008-11-11  Atsushi Enomoto  <atsushi@xiiman.com>
+
+	Fix for bug 439943.
+	* SettingValueElement.cs : do not write value element twice.
+	* CustomizableFileSettingsProvider.cs : create "value" element
+	  instead of a document fragment so that the output from
+	  SettingValueElement could become consistent.
+	  Null binary value caused crash. Set appropriate
+	  SerializedValue for each serialization type.
+	* SettingsPropertyValue.cs : output only when the value is
+	  non-null.
+
 2008-11-05  Atsushi Enomoto  <atsushi@xiiman.com>
 
 	* SettingValueElement.cs, CustomizableFileSettingsProvider.cs :

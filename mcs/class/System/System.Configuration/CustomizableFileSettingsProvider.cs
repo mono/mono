@@ -622,16 +622,16 @@ namespace System.Configuration
 						userSection.Settings.Add (element);
 					}
 					if (element.Value.ValueXml == null)
-						element.Value.ValueXml = new XmlDocument ().CreateDocumentFragment ();
+						element.Value.ValueXml = new XmlDocument ().CreateElement ("value");
 					switch (value.Property.SerializeAs) {
 					case SettingsSerializeAs.Xml:
-						element.Value.ValueXml.InnerXml = value.SerializedValue as string;
+						element.Value.ValueXml.InnerXml = (value.SerializedValue as string) ?? string.Empty;
 						break;
 					case SettingsSerializeAs.String:
 						element.Value.ValueXml.InnerText = value.SerializedValue as string;
 						break;
 					case SettingsSerializeAs.Binary:
-						element.Value.ValueXml.InnerText = Convert.ToBase64String (value.SerializedValue as byte []);
+						element.Value.ValueXml.InnerText = value.SerializedValue != null ? Convert.ToBase64String (value.SerializedValue as byte []) : string.Empty;
 						break;
 					default:
 						throw new NotImplementedException ();
@@ -689,7 +689,21 @@ namespace System.Configuration
 
 			SettingsPropertyValue value = new SettingsPropertyValue (prop);
 			value.IsDirty = false;
-			value.SerializedValue = element.Value.ValueXml != null ? element.Value.ValueXml.InnerText : prop.DefaultValue;
+			if (element.Value.ValueXml != null) {
+				switch (value.Property.SerializeAs) {
+				case SettingsSerializeAs.Xml:
+					value.SerializedValue = element.Value.ValueXml.InnerXml;
+					break;
+				case SettingsSerializeAs.String:
+					value.SerializedValue = element.Value.ValueXml.InnerText;
+					break;
+				case SettingsSerializeAs.Binary:
+					value.SerializedValue = Convert.FromBase64String (element.Value.ValueXml.InnerText);
+					break;
+				}
+			}
+			else
+				value.SerializedValue = prop.DefaultValue;
 			try
 			{
 				if (allowOverwrite)

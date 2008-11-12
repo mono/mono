@@ -104,9 +104,7 @@ namespace System.Configuration
 		{
 			if (node == null)
 				return false;
-			writer.WriteStartElement (elementName);
 			node.WriteTo (writer);
-			writer.WriteEndElement ();
 			return true;
 		}
 #endif
