@@ -1,5 +1,7 @@
 2008-11-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile: Enable AOT for the 2.0 profile too.
+	
 	* Makefile: Enable AOT for the 1.1 profile.
 
 2008-11-09  William Holmes  <billholmes54@gmail.com>
