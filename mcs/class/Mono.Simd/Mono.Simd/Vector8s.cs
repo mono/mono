@@ -116,11 +116,11 @@ namespace Mono.Simd
 		public static unsafe Vector8s operator & (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
-			short *a = &va.v0;
-			short *b = &vb.v0;
-			short *c = &res.v0;
-			for (int i = 0; i < 8; ++i)
-				*c++ = (short)(*a++ & *b++);
+			ulong *a = (ulong*) &va.v0;
+			ulong *b = (ulong*) &vb.v0;
+			ulong *c = (ulong*) &res.v0;
+			*c++ = (ulong)(*a++ & *b++);
+			*c = (ulong)(*a & *b);
 			return res;
 		}
 
@@ -128,11 +128,11 @@ namespace Mono.Simd
 		public static unsafe Vector8s operator | (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
-			short *a = &va.v0;
-			short *b = &vb.v0;
-			short *c = &res.v0;
-			for (int i = 0; i < 8; ++i)
-				*c++ = (short)(*a++ | *b++);
+			ulong *a = (ulong*) &va.v0;
+			ulong *b = (ulong*) &vb.v0;
+			ulong *c = (ulong*) &res.v0;
+			*c++ = (ulong)(*a++ | *b++);
+			*c = (ulong)(*a | *b);
 			return res;
 		}
 
@@ -140,11 +140,11 @@ namespace Mono.Simd
 		public static unsafe Vector8s operator ^ (Vector8s va, Vector8s vb)
 		{
 			Vector8s res = new Vector8s ();
-			short *a = &va.v0;
-			short *b = &vb.v0;
-			short *c = &res.v0;
-			for (int i = 0; i < 8; ++i)
-				*c++ = (short)(*a++ ^ *b++);
+			ulong *a = (ulong*) &va.v0;
+			ulong *b = (ulong*) &vb.v0;
+			ulong *c = (ulong*) &res.v0;
+			*c++ = (ulong)(*a++ ^ *b++);
+			*c = (ulong)(*a ^ *b);
 			return res;
 		}
 
