@@ -82,6 +82,7 @@
     <Compile Include="Mono.Mozilla\AsciiString.cs" />
     <Compile Include="Mono.Mozilla\Base.cs" />
     <Compile Include="Mono.Mozilla\Callback.cs" />
+    <Compile Include="Mono.Mozilla\DOM\ContentListener.cs" />
     <Compile Include="Mono.Mozilla\DOM\DocumentEncoder.cs" />
     <Compile Include="Mono.Mozilla\DOM\DocumentType.cs" />
     <Compile Include="Mono.Mozilla\DOM\DOMImplementation.cs" />

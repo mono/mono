@@ -3,6 +3,7 @@ Assembly/AssemblyInfo.cs
 Mono.Mozilla/AsciiString.cs
 Mono.Mozilla/Base.cs
 Mono.Mozilla/Callback.cs
+Mono.Mozilla/DOM/ContentListener.cs
 Mono.Mozilla/DOM/DocumentEncoder.cs
 Mono.Mozilla/DOM/DocumentType.cs
 Mono.Mozilla/DOM/DOMImplementation.cs

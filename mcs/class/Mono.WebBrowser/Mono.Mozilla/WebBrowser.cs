@@ -149,6 +149,15 @@ namespace Mono.Mozilla
 			}
 		}
 		
+		Mono.Mozilla.DOM.ContentListener contentListener;
+		Mono.Mozilla.DOM.ContentListener ContentListener {
+			get {
+				if (contentListener == null)
+					contentListener = new Mono.Mozilla.DOM.ContentListener (this);
+				return contentListener;
+			}
+		}		
+		
 		
 		nsIServiceManager servMan;
 		internal nsIServiceManager ServiceManager {
@@ -342,6 +351,7 @@ namespace Mono.Mozilla
 		internal static object ProgressEvent = new object ();
 		internal static object ContextMenuEvent = new object ();
 		
+		internal static object NavigationRequestedEvent = new object ();
 		
 		public event NodeEventHandler KeyDown
 		{
@@ -465,6 +475,12 @@ namespace Mono.Mozilla
 		{
 			add { Events.AddHandler (ContextMenuEvent, value); }
 			remove { Events.RemoveHandler (ContextMenuEvent, value); }
+		}
+
+		public event NavigationRequestedEventHandler NavigationRequested
+		{
+			add { ContentListener.AddHandler (value); }
+			remove { ContentListener.RemoveHandler (value); }
 		}
 
 		internal static object GenericEvent = new object ();
