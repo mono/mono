@@ -222,6 +222,7 @@ namespace MonoTests.System.Net {
 			Send (ns, "POST /test7/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
 			HttpListenerContext ctx = listener.GetContext ();
 			Send (ctx.Response.OutputStream, "%%%OK%%%");
+			ctx.Response.Close ();
 			string response = Receive (ns, 1024);
 			ns.Close ();
 			listener.Close ();
