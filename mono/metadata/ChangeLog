@@ -1,3 +1,16 @@
+2008-11-13  Bill Holmes  <billholmes54@gmail.com>
+
+	* process.h : Adding method declaration for
+	  ves_icall_System_Diagnostics_Process_WaitForInputIdle_internal.
+	  
+	* process.c : Adding implementation for
+	  ves_icall_System_Diagnostics_Process_WaitForInputIdle_internal.
+	  
+	* icall-def.h : Registering ICALL Processs.WaitForInputIdle_internal
+	  to ves_icall_System_Diagnostics_Process_WaitForInputIdle_internal.
+
+	Code is contributed under MIT/X11 license.
+
 2008-11-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* appdomain.c (unload_thread_main): Clean up threadpool by
