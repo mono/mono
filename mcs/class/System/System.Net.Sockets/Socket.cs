@@ -138,11 +138,14 @@ namespace System.Net.Sockets
 			public void CheckIfThrowDelayedException ()
 			{
 				if (delayedException != null) {
+					Sock.connected = false;
 					throw delayedException;
 				}
 
-				if (error != 0)
+				if (error != 0) {
+					Sock.connected = false;
 					throw new SocketException (error);
+				}
 			}
 
 			void CompleteAllOnDispose (Queue queue)

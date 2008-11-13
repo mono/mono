@@ -1,3 +1,10 @@
+
+2008-11-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: mark the socket as not connected when there is a pending
+	error or exception about to be thrown.
+	Bug #443346 fixed.
+
 2008-09-10  Bill Holmes  <billholmes54@gmail.com>
 
 	* Socket.cs : Adding a comment to provide locations where
