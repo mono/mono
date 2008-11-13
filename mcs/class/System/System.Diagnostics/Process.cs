@@ -1284,14 +1284,22 @@ namespace System.Diagnostics {
 			return WaitForExit_internal (process_handle, ms);
 		}
 
+		/* Waits up to ms milliseconds for process 'handle' to 
+		 * wait for input.  ms can be <0 to mean wait forever.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern bool WaitForInputIdle_internal(IntPtr handle, int ms);
+
+		// The internal call is only implemented properly on Windows.
 		[MonoTODO]
 		public bool WaitForInputIdle() {
-			return(false);
+			return WaitForInputIdle (-1);
 		}
 
+		// The internal call is only implemented properly on Windows.
 		[MonoTODO]
 		public bool WaitForInputIdle(int milliseconds) {
-			return(false);
+			return WaitForInputIdle_internal (process_handle, milliseconds);
 		}
 
 		private static bool IsLocalMachine (string machineName)
