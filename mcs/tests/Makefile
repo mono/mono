@@ -64,13 +64,13 @@ endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
 TEST_PATTERN = '*test-*.cs'
-LOCAL_RUNTIME_FLAGS = --security=validil
+LOCAL_RUNTIME_FLAGS = --security=validil --verify-all
 TOPTIONS += '-il:ver-il-gmcs.xml'
 endif
 ifeq (net_1_1, $(PROFILE))
 COMPILER_NAME = mcs
 TEST_PATTERN = 'test-*.cs'
-LOCAL_RUNTIME_FLAGS = --security=validil
+LOCAL_RUNTIME_FLAGS = --security=validil --verify-all
 endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
