@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -37,14 +37,18 @@ namespace System.Web.UI.WebControls
 	{
 		public ListViewCancelEventArgs (int itemIndex, ListViewCancelMode cancelMode)
 		{
+			CancelMode = cancelMode;
+			ItemIndex = itemIndex;
 		}
 
 		public ListViewCancelMode CancelMode {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 
 		public int ItemIndex {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 	}
 }

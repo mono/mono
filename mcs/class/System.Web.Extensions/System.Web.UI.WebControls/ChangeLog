@@ -1,3 +1,17 @@
+2008-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: implemented support for Edit, Update and Delete.
+	Implemented ExtractItemValues.
+
+	* ListViewDataItem.cs, ListViewItem.cs: implemented OnBubbleEvent.
+
+	* ListViewDeletedEventArgs.cs, ListViewUpdateEventArgs.cs,
+	ListViewEditEventArgs.cs, ListViewCancelEventArgs.cs,
+	ListViewDeleteEventArgs.cs, ListViewUpdatedEventArgs.cs:
+	implemented all the properties and methods.
+
+	* HelperExtensions.cs: added
+
 2008-11-06  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: implemented the sorting capability.

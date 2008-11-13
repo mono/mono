@@ -43,6 +43,12 @@ namespace System.Web.UI.WebControls
 		
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
+			CommandEventArgs args = e as CommandEventArgs;
+			if (args != null) {
+				RaiseBubbleEvent (this, new ListViewCommandEventArgs (this, this, args));
+				return true;
+			}
+			
 			return base.OnBubbleEvent (source, e);
 		}
 		

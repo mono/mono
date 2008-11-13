@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -36,20 +36,33 @@ namespace System.Web.UI.WebControls
 {
 	public class ListViewDeleteEventArgs : CancelEventArgs
 	{
+		IOrderedDictionary _keys;
+		IOrderedDictionary _values;
+		
 		public ListViewDeleteEventArgs (int itemIndex)
 		{
+			ItemIndex = itemIndex;
 		}
 		
 		public int ItemIndex {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 		
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_keys == null)
+					_keys = new OrderedDictionary ();
+				return _keys;
+			}
 		}
 		
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_values == null)
+					_values = new OrderedDictionary ();
+				return _values;
+			}
 		}
 	}
 }

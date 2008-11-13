@@ -80,6 +80,7 @@
 ./System.Web.UI.WebControls/DataPagerFieldCommandEventArgs.cs
 ./System.Web.UI.WebControls/DataPagerField.cs
 ./System.Web.UI.WebControls/DataPagerFieldItem.cs
+./System.Web.UI.WebControls/HelperExtensions.cs
 ./System.Web.UI.WebControls/InsertItemPosition.cs
 ./System.Web.UI.WebControls/IPageableItemContainer.cs
 ./System.Web.UI.WebControls/ListViewCancelEventArgs.cs

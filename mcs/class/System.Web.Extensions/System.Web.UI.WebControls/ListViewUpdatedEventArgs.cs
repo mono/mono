@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -35,34 +35,58 @@ namespace System.Web.UI.WebControls
 {
 	public class ListViewUpdatedEventArgs : EventArgs
 	{
+		IOrderedDictionary _newValues;
+		IOrderedDictionary _oldValues;
+
+		internal ListViewUpdatedEventArgs (int affectedRows, Exception exception, IOrderedDictionary newValues, IOrderedDictionary oldValues)
+			: this (affectedRows, exception)
+		{
+			_newValues = newValues;
+			_oldValues = oldValues;
+		}
+		
 		public ListViewUpdatedEventArgs (int affectedRows, Exception exception)
 		{
+			AffectedRows = affectedRows;
+			Exception = exception;
+			ExceptionHandled = false;
+			KeepInEditMode = false;
 		}
 		
 		public int AffectedRows {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 		
 		public Exception Exception {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 		
 		public bool ExceptionHandled {
-			get { throw new NotImplementedException (); }
-			set { }
+			get;
+			set;
 		}
 		
 		public bool KeepInEditMode {
-			get { throw new NotImplementedException (); }
-			set { }
+			get;
+			set;
 		}
 		
 		public IOrderedDictionary NewValues {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_newValues == null)
+					_newValues = new OrderedDictionary ();
+				return _newValues;
+			}
 		}
 		
 		public IOrderedDictionary OldValues {
-			get { throw new NotImplementedException (); }
+			get {
+				if (_oldValues == null)
+					_oldValues = new OrderedDictionary ();
+				return _newValues;
+			}
 		}
 	}
 }
