@@ -1,3 +1,6 @@
+2008-11-13  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* RegexBugs.cs: added test for bug #443841.
 
 2008-11-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

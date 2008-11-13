@@ -404,6 +404,31 @@ namespace MonoTests.System.Text.RegularExpressions
 		}
 
 		[Test]
+		public void bug443841 ()
+		{
+			string numberString = @"[0-9]+";
+			string doubleString = string.Format (@" *[+-]? *{0}(\.{0})?([eE][+-]?{0})? *",
+				numberString);
+			string vector1To3String = string.Format (@"{0}(,{0}(,{0})?)?",
+				doubleString);
+			Regex r;
+			MatchCollection matches;
+			
+			r = new Regex (string.Format ("^{0}$", vector1To3String));
+			Assert.IsTrue (r.IsMatch ("1"), "#A1");
+			matches = r.Matches ("1");
+			Assert.AreEqual (1, matches.Count, "#A2");
+			Assert.AreEqual ("1", matches [0].Value, "#A3");
+
+			r = new Regex (string.Format ("^{0}$", vector1To3String),
+				RegexOptions.Compiled);
+			Assert.IsTrue (r.IsMatch ("1"), "#B1");
+			matches = r.Matches ("1");
+			Assert.AreEqual (1, matches.Count, "#B2");
+			Assert.AreEqual ("1", matches [0].Value, "#B3");
+		}
+
+		[Test]
 		public void CharClassWithIgnoreCase ()
 		{
 			string str = "Foobar qux";
