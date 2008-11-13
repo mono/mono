@@ -359,21 +359,13 @@ namespace Mono.Data.Tds.Protocol
 		{
 			// Check validity of the connection - a false removes
 			// the connection from the pool
-			if (!Comm.stream.CanWrite)
+			// NOTE: MS implementation will throw a connection-reset error as it will
+			// try to use the same connection
+			if (!Comm.IsConnected ())
 				return false;
-			
-			try {
-				ExecProc ("sp_reset_connection");
-				base.Reset ();
-			} catch (Exception e) {
-				System.Reflection.PropertyInfo pinfo = e.GetType ().GetProperty ("Class");
-				if (pinfo != null && pinfo.PropertyType == typeof (byte)) {
-					byte klass = (byte) pinfo.GetValue (e, null);
-					// 11 to 16 indicates error that can be fixed by the user such as 'Invalid object name'
-					if (klass < 11 || klass > 16)
-						return false;
-				}
-			}
+
+			// Set "reset-connection" bit for the next message packet
+			Comm.ResetConnection = true;
 
 			return true;
 		}

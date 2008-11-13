@@ -39,9 +39,10 @@ namespace Mono.Data.Tds.Protocol {
 	{
 		#region Fields
 
-		internal NetworkStream stream;
+		NetworkStream stream;
 		int packetSize;
 		TdsPacketType packetType = TdsPacketType.None;
+		bool connReset;
 		Encoding encoder;
 
 		string dataSource;
@@ -112,7 +113,16 @@ namespace Mono.Data.Tds.Protocol {
 				else if (timeout > 0 && !connected.WaitOne ())
 					throw Tds.CreateTimeoutException (dataSource, "Open()");
 
-				stream = new NetworkStream (socket);
+				try {
+					// MS sets these socket option
+					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
+				} catch (SocketException se) {
+					// Some platform may throw an exception, so
+					// eat all socket exception, yeaowww! 
+				}
+				
+				// Let the stream own the socket and take the pleasure of closing it
+				stream = new NetworkStream (socket, true);
 			} catch (SocketException e) {
 				throw new TdsInternalException ("Server does not exist or connection refused.", e);
 			}
@@ -327,9 +337,15 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Close ()
 		{
+			connReset = false;
 			stream.Close ();
 		}
 
+		public bool IsConnected () 
+		{
+			return !(socket.Poll (0, SelectMode.SelectRead) && socket.Available == 0);
+		}
+		
 		private void ConnectCallback (IAsyncResult ar)
 		{
 			Socket s = (Socket) ar.AsyncState;
@@ -550,19 +566,32 @@ namespace Mono.Data.Tds.Protocol {
 			}
 		}
 
+		public bool ResetConnection {
+			get { return connReset; }
+			set { connReset = value; }
+		}
+
 		public void SendPacket ()
 		{
+			// Reset connection flag is only valid for SQLBatch/RPC/DTC messages
+			if (packetType != TdsPacketType.Query && packetType != TdsPacketType.RPC)
+				connReset = false;
+			
 			SendPhysicalPacket (true);
 			nextOutBufferIndex = 0;
 			packetType = TdsPacketType.None;
+			// Reset connection-reset flag to false - as any exception would anyway close 
+			// the whole connection
+			connReset = false;
 		}
 		
 		private void SendPhysicalPacket (bool isLastSegment)
 		{
 			if (nextOutBufferIndex > headerLength || packetType == TdsPacketType.Cancel) {
+				byte status =  (byte) ((isLastSegment ? 0x01 : 0x00) | (connReset ? 0x08 : 0x00)); 
 				// packet type
 				Store (0, (byte) packetType);
-				Store (1, (byte) (isLastSegment ? 1 : 0));
+				Store (1, status);
 				Store (2, (short) nextOutBufferIndex );
 				Store (4, (byte) 0);
 				Store (5, (byte) 0);

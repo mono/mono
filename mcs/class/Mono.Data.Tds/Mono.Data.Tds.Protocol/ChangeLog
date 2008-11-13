@@ -1,3 +1,15 @@
+2008-11-13  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* TdsComm.cs (ResetConnection, IsConnected): Added a property and
+	method.  IsConnected will check for any connection-reset occurrance
+	from other end-point of the underlying socket.  ResetConnection
+	adds the "reset" bit in the Status flag field of packet header.
+	Set socket option to keep alive, whereever supported and also, let
+	the socket close along with the underlying stream.
+
+	* Tds70.cs (Reset): Use the new ResetConnection property instead
+	of executing sp_reset_connection.  Saves a round-trip.
+	
 2008-11-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Tds70.cs: Support writing negative (small)money values. Added 
