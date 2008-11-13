@@ -2792,6 +2792,32 @@ namespace MonoTests.System.Net.Sockets
 			RRCReady.WaitOne (1000, false);
 			Assert.IsTrue (RRCLastRead);
 		}
+
+		[Test]
+                public void ConnectedProperty ()
+                {
+			TcpListener listener = new TcpListener (IPAddress.Loopback, 23456);
+			listener.Start();
+
+			Socket client = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			client.Connect (IPAddress.Loopback, 23456);
+			Socket server = listener.AcceptSocket ();
+
+			try {
+				server.EndSend(server.BeginSend (new byte[10], 0, 10, SocketFlags.None, null, null));
+				client.Close ();
+				try {
+					server.EndReceive (server.BeginReceive (new byte[10], 0, 10, SocketFlags.None, null, null));
+				} catch {
+				}
+				Assert.IsTrue (!client.Connected);
+				Assert.IsTrue (!server.Connected);
+			} finally {
+				listener.Stop ();
+				client.Close ();
+				server.Close ();
+			}
+                }
 	}
 }
 

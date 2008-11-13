@@ -1,3 +1,9 @@
+
+2008-11-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SocketTest.cs: added test case based on the one in bug
+	#443346.
+
 2008-06-19  Dick Porter  <dick@ximian.com>
 
 	* SocketTest.cs: Tests for generic Send() and Receive() methods.
