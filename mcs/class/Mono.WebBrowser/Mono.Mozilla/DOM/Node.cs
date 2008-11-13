@@ -379,9 +379,12 @@ namespace Mono.Mozilla.DOM
 		{
 			return this == obj as Node;
 		}
-		
+
 		public static bool operator == (Node left, Node right)
 		{
+			if ((object)left == null || (object)right == null)
+				return false;
+
 			if (left == null || right == null)
 				return false;
 			return left.hashcode == right.hashcode; 
@@ -391,7 +394,7 @@ namespace Mono.Mozilla.DOM
 		{
 			return !(left == right);
 		}		
-		
+
 		public override int GetHashCode () 
 		{
 			return this.hashcode;

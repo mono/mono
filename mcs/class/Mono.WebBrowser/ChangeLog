@@ -1,3 +1,8 @@
+2008-11-13  Andreia Gaita <shana@jitted.com> 
+
+	* Mono.Mozilla/DOM/Node.cs, Mono.Mozilla/DOM/Window.cs: Fix equality
+	  operators
+
 2008-11-12  Andreia Gaita <shana@jitted.com> 
 
 	* Mono.WebBrowser.dll.sources, Mono.WebBrowser2K5.csproj,

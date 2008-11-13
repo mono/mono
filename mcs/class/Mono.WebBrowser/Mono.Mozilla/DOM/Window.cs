@@ -179,9 +179,12 @@ namespace Mono.Mozilla.DOM
 		{
 			return this == obj as Window;
 		}
-		
+
 		public static bool operator == (Window left, Window right)
 		{
+			if ((object)left == null || (object)right == null)
+				return false;
+
 			if (left == null || right == null)
 				return false;
 			return left.hashcode == right.hashcode; 
@@ -195,7 +198,7 @@ namespace Mono.Mozilla.DOM
 		public override int GetHashCode () {
 			return hashcode;
 		}		
-		
+
 #endregion
 
 #region Events
