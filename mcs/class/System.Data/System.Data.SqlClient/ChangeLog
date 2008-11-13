@@ -1,3 +1,7 @@
+2008-11-13  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlCommand.cs:  Reset connection when timeout occurs.
+	
 2008-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlConnection.cs (ClearPool): Added null check.

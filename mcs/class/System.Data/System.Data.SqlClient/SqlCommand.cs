@@ -453,6 +453,7 @@ namespace System.Data.SqlClient {
 			try {
 				Connection.Tds.ExecProc (sql, localParameters.MetaParameters, 0, true);
 			} catch (TdsTimeoutException ex) {
+				Connection.Tds.Reset ();
 				throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 			} catch (TdsInternalException ex) {
 				Connection.Close ();
@@ -514,6 +515,7 @@ namespace System.Data.SqlClient {
 						// 2) Somebody has an exclusive lock on Table/DB
 						// In any of these cases, don't close the connection. Let the user do it
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+						Connection.Tds.Reset ();
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -529,6 +531,7 @@ namespace System.Data.SqlClient {
 					try {
 						Connection.Tds.Execute (sql, parms, CommandTimeout, wantResults);
 					} catch (TdsTimeoutException ex) {
+						Connection.Tds.Reset ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
@@ -541,7 +544,8 @@ namespace System.Data.SqlClient {
 				try {
 					Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
 				} catch (TdsTimeoutException ex) {
-						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
+					Connection.Tds.Reset ();
+					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 				} catch (TdsInternalException ex) {
 					Connection.Close ();
 					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -563,6 +567,7 @@ namespace System.Data.SqlClient {
 				Execute (false);
 				result = Connection.Tds.RecordsAffected;
 			} catch (TdsTimeoutException e) {
+				Connection.Tds.Reset ();
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
 
@@ -614,6 +619,7 @@ namespace System.Data.SqlClient {
 						GetOutputParameters ();
 					}
 				} catch (TdsTimeoutException ex) {
+					Connection.Tds.Reset ();
 					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 				} catch (TdsInternalException ex) {
 					Connection.Close ();
@@ -633,6 +639,7 @@ namespace System.Data.SqlClient {
 			try {
 				Execute (true);
 			} catch (TdsTimeoutException e) {
+				Connection.Tds.Reset ();
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
 			}
 
@@ -836,6 +843,7 @@ namespace System.Data.SqlClient {
 										      callback,
 										      state);
 					} catch (TdsTimeoutException ex) {
+						Connection.Tds.Reset ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
@@ -850,6 +858,7 @@ namespace System.Data.SqlClient {
 						else
 							ar = Connection.Tds.BeginExecuteNonQuery (sql, parms, callback, state);
 					} catch (TdsTimeoutException ex) {
+						Connection.Tds.Reset ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
@@ -862,6 +871,7 @@ namespace System.Data.SqlClient {
 				try {
 					Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
 				} catch (TdsTimeoutException ex) {
+					Connection.Tds.Reset ();
 					throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 				} catch (TdsInternalException ex) {
 					Connection.Close ();
