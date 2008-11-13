@@ -1,3 +1,10 @@
+2008-11-13  Mark Probst  <mark.probst@gmail.com>
+
+	* filter-stack.cs: Test whether method calls with large arguments
+	work in filter clauses.
+
+	* Makefile.am: Test added.
+
 2008-11-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* async_read.cs: Open file with Read access to avoid

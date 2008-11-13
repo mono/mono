@@ -1,3 +1,8 @@
+2008-11-13  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c, cpu-ppc.md: Reserve space for the parameter area in
+	filters.
+
 2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c: Enable constructor intrinsics for all types.
