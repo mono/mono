@@ -116,6 +116,7 @@ namespace Mono.CSharp {
 
 		bool references_defined;
 		bool has_hoisted_variable;
+		bool is_undone;
 
 		public AnonymousMethodStorey (Block block, DeclSpace parent, MemberBase host, GenericMethod generic, string name)
 			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE)
@@ -456,6 +457,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsUndone {
+			get { return is_undone; }
+		}
+
 		//
 		// Mutate type dispatcher
 		//
@@ -588,6 +593,7 @@ namespace Mono.CSharp {
 		
 		public void Undo ()
 		{
+			is_undone = true;
 			if (hoisted_this != null)
 				hoisted_this.RemoveHoisting ();
 		}
@@ -1377,7 +1383,7 @@ namespace Mono.CSharp {
 
 		void ConnectReferencedStoreys ()
 		{
-			AnonymousMethodStorey storey = FindBestMethodStorey ();
+			storey = FindBestMethodStorey ();
 
 			foreach (AnonymousMethodStorey s in referenced_storeys) {
 				//
@@ -1411,7 +1417,9 @@ namespace Mono.CSharp {
 
 			int modifiers;
 			if (referenced_storeys != null || Block.HasStoreyAccess) {
-				storey = FindBestMethodStorey ();
+				if (storey == null || storey.IsUndone)
+					storey = FindBestMethodStorey ();
+
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			} else {
 				if (ec.CurrentAnonymousMethod != null)

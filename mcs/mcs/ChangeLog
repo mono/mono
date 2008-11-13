@@ -1,5 +1,11 @@
 2008-11-13  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #444271
+	* anonymous.cs: Rescan parent storeys when best candidate was
+	undone.
+
+2008-11-13  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, expression.cs, ecore.cs, cs-parser.jay: Removed
 	useless UnboundTypeExpression.
 	
