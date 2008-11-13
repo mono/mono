@@ -1,5 +1,8 @@
 2008-11-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Additional work to support AOTing synchronized methods/
+	wrappers.
+
 	* cpu-ia64.md (jmp): Increase max length.
 
 2008-11-12  Zoltan Varga  <vargaz@gmail.com>
