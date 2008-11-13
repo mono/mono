@@ -54,6 +54,11 @@
 	(update_liveness): Avoid holes in the liveness ranges of hregs if they are
 	both the source an destination of an instruction.
 
+Tue Nov 11 19:30:50 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.c, local-propagation.c, mini.c, ssa.c, ssapre.c, trace.c,
+	wapihandles.c: more portability changes.
+
 Tue Nov 11 18:56:33 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* aot-compiler.c, aliasing.c, abcremoval.c: portability changes.
