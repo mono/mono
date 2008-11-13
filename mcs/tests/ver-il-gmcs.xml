@@ -12807,6 +12807,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-49.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void DetermineLinkedCells()">
+        <size>67</size>
+      </method>
+    </type>
+    <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__0(System.Object)">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__1(System.Object)">
+        <size>13</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-5.cs">
     <type name="X">
       <method name="Void .ctor()">
