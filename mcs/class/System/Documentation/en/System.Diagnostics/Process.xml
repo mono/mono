@@ -34,7 +34,7 @@
 The Process class provides the means for interacting with the operating system processes. Once a <see cref="T:System.Diagnostics.Process" /> object has been created, it can be used to access information about the process, as well as interacting with it.
 </para>
       <para>
-   During process launching, ff the ShellExecute attribute is set to true, then files and documents that have a mime-type associated will be launched, with the operating system specific mechanism to open these files. 
+   During process launching, if the ShellExecute attribute is set to true, then files and documents that have a mime-type associated will be launched, with the operating system specific mechanism to open these files. 
 </para>
       <list type="table">
         <listheader>
