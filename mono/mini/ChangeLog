@@ -1,5 +1,9 @@
 2008-11-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Don't skip synchronized methods.
+	(encode_method_ref): Flag synchronized methods so they won't go through
+	the AOT trampoline.
+
 	* aot-compiler.c: Additional work to support AOTing synchronized methods/
 	wrappers.
 
