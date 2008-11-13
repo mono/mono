@@ -1362,11 +1362,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Expression GetSimpleName (EmitContext ec)
-		{
-			return this;
-		}
-
 		public override bool CheckAccessLevel (DeclSpace ds)
 		{
 			return ds.CheckAccessLevel (gt);

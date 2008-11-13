@@ -8981,13 +8981,6 @@ namespace Mono.CSharp {
 			return left.GetSignatureForError () + dim;
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			ComposedCast target = (ComposedCast) t;
-
-			target.left = (FullNamedExpression)left.Clone (clonectx);
-		}
-		
 		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
 		{
 			return ResolveAsBaseTerminal (ec, silent);

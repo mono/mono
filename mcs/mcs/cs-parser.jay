@@ -3495,13 +3495,7 @@ typeof_expression
 	
 typeof_type_expression
 	: type_and_void
-	  {
-		$$ = $1;
-	  }
 	| unbound_type_name
-	  {
-		$$ = new UnboundTypeExpression ((MemberName)$1, lexer.Location);
-	  }
 	| error
 	 {
 	 	Error_TypeExpected (lexer.Location);
@@ -3515,29 +3509,27 @@ unbound_type_name
 		LocatedToken lt = (LocatedToken) $1;
 		TypeArguments ta = (TypeArguments)$2;
 
-		$$ = new MemberName (lt.Value, ta, lt.Location);
+		$$ = new SimpleName (MemberName.MakeName (lt.Value, ta), lt.Location);
 	  }
 	| qualified_alias_member IDENTIFIER generic_dimension
 	  {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $2;
-		TypeArguments ta = (TypeArguments)$3;
 
-		$$ = new MemberName (new MemberName (lt1.Value, lt1.Location), lt2.Value, ta, lt2.Location);
+		$$ = new QualifiedAliasMember (lt1.Value, MemberName.MakeName (lt2.Value, (TypeArguments) $3), lt1.Location);
 	  }
 	| unbound_type_name DOT IDENTIFIER generic_dimension
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		TypeArguments ta = (TypeArguments)$4;
 		
-	  	$$ = new MemberName ((MemberName)$1, lt.Value, ta, lt.Location);
+		$$ = new MemberAccess ((Expression) $1, MemberName.MakeName (lt.Value, (TypeArguments) $4), lt.Location);		
 	  }
 	| namespace_or_type_name DOT IDENTIFIER generic_dimension
 	  {
 		LocatedToken lt = (LocatedToken) $3;
-		TypeArguments ta = (TypeArguments)$4;
-		
-	  	$$ = new MemberName ((MemberName)$1, lt.Value, ta, lt.Location);	  	
+		MemberName name = (MemberName) $1;
+
+		$$ = new MemberAccess (name.GetTypeExpression (), MemberName.MakeName (lt.Value, (TypeArguments) $4), lt.Location);		
 	  }
 	;
 	

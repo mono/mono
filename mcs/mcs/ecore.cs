@@ -2782,18 +2782,19 @@ namespace Mono.CSharp {
 
 			return e;
 		}
-		
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			// CloneTo: Nothing, we do not keep any state on this expression
-		}
 	}
 
 	/// <summary>
 	///   Represents a namespace or a type.  The name of the class was inspired by
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
-	public abstract class FullNamedExpression : Expression {
+	public abstract class FullNamedExpression : Expression
+	{
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			// Do nothing, most unresolved type expressions cannot be
+			// resolved to different type
+		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
@@ -3049,55 +3050,12 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			// CloneTo: Nothing, we do not keep any state on this expression
-		}
-
 		public override string GetSignatureForError ()
 		{
 			if (type == null)
 				return TypeManager.CSharpName (name, null);
 
 			return base.GetSignatureForError ();
-		}
-	}
-
-	/// <summary>
-	///   Represents an "unbound generic type", ie. typeof (Foo<>).
-	///   See 14.5.11.
-	/// </summary>
-	public class UnboundTypeExpression : TypeExpr
-	{
-		MemberName name;
-
-		public UnboundTypeExpression (MemberName name, Location l)
-		{
-			this.name = name;
-			loc = l;
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Expression target)
-		{
-			// Nothing to clone
-		}
-
-		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
-		{
-			Expression expr;
-			if (name.Left != null) {
-				Expression lexpr = name.Left.GetTypeExpression ();
-				expr = new MemberAccess (lexpr, name.Basename);
-			} else {
-				expr = new SimpleName (name.Basename, loc);
-			}
-
-			FullNamedExpression fne = expr.ResolveAsTypeStep (ec, false);
-			if (fne == null)
-				return null;
-
-			type = fne.Type;
-			return new TypeExpression (type, loc);
 		}
 	}
 
