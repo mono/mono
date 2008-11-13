@@ -2793,6 +2793,7 @@ namespace MonoTests.System.Net.Sockets
 			Assert.IsTrue (RRCLastRead);
 		}
 
+#if NET_2_0
 		[Test]
                 public void ConnectedProperty ()
                 {
@@ -2817,7 +2818,8 @@ namespace MonoTests.System.Net.Sockets
 				client.Close ();
 				server.Close ();
 			}
-                }
+		}
+#endif
 	}
 }
 
