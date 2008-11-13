@@ -10,6 +10,16 @@
 
 2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Kill diplicated ops OP_SHUFLEPS.
+
+	* cpu-x86.md: Same.
+
+	* mini-x86.c: Same.
+
+	* simd-intrinsics.c: Same.
+
+2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c: Enable constructor intrinsics for all types.
 
 2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
