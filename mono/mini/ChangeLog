@@ -1,5 +1,7 @@
 2008-11-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (emit_call_body): Avoid aligning call sites in AOTed code.
+
 	* tramp-x86.c (mono_arch_create_trampoline_code): Rework the return sequence
 	to preserve %eax for aot plt trampolines.
 
