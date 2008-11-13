@@ -1,3 +1,9 @@
+2008-11-11  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Tds70.cs: Support writing negative (small)money values. Added 
+	overflow check for smallmoney values. Fixes bug #428139.
+	* Tds.cs: Fixed reading negative (small)money values.
+
 2008-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TdsConnectionPool.cs: Added TdsConnectionPoolManager.GetConnection
