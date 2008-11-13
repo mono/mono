@@ -1,3 +1,9 @@
+2008-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport r118729 from HEAD.
+	
+	* RxInterpreter.cs: Fix pc computation in various opcodes. Fixes #443841.
+
 2008-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport r118484 from HEAD.
