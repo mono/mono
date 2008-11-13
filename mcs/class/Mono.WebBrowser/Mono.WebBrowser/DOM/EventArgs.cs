@@ -44,6 +44,22 @@ namespace Mono.WebBrowser.DOM
 		{
 			get { return this.node; }
 		}
+
+		public IElement Element {
+			get {
+				if (this.node is IElement)
+					return (IElement) node;
+				return null;
+			}
+		}
+
+		public IDocument Document {
+			get {
+				if (this.node is IDocument)
+					return (IDocument) node;
+				return null;
+			}
+		}
 		#endregion	// Public Instance Properties
 	}
 	

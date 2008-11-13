@@ -1,5 +1,10 @@
 2008-11-13  Andreia Gaita <shana@jitted.com> 
 
+	* Mono.Mozilla/Callback.cs, Mono.WebBrowser/DOM/EventArgs.cs: strong typing
+	  for node event arguments
+
+2008-11-13  Andreia Gaita <shana@jitted.com> 
+
 	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: Support script
 	  execution directly in the browser object
 

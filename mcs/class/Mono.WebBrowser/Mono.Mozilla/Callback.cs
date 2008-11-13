@@ -386,7 +386,8 @@ namespace Mono.Mozilla {
 			OnGeneric ("OnClientMouseOver");
 			Console.Error.WriteLine ("OnClientMouseOver");
 #endif
-			INode node = new Mono.Mozilla.DOM.Node (owner, target);
+			DOM.DOMObject helper = new DOM.DOMObject(this.owner);
+			INode node = helper.GetTypedNode  (target);
 			string key = String.Intern (node.GetHashCode () + ":mouseover");
 			EventHandler eh1 = (EventHandler) owner.DomEvents[key];
 			if (eh1 != null) {
@@ -397,7 +398,7 @@ namespace Mono.Mozilla {
 			NodeEventHandler eh = (NodeEventHandler) (owner.Events[WebBrowser.MouseEnterEvent]);
 			if (eh != null) {
 				NodeEventArgs e = new NodeEventArgs (node);
-				eh (this, e);
+				eh (node, e);
 				return true;
 			}
 			return false;
