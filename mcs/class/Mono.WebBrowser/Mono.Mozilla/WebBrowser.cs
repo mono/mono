@@ -304,6 +304,9 @@ namespace Mono.Mozilla
 
 		}
 		
+		public void ExecuteScript (string script) {
+			Base.EvalScript (this, script);
+		}
 				
 		internal void AttachEvent (INode node, string eve, EventHandler handler) {
 			string key = String.Intern (node.GetHashCode() + ":" + eve);
