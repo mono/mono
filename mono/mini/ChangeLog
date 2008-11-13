@@ -10,6 +10,10 @@
 
 2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c: Add getter support for Vector4i and Vector4ui. 
+
+2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Kill diplicated ops OP_SHUFLEPS.
 
 	* cpu-x86.md: Same.
