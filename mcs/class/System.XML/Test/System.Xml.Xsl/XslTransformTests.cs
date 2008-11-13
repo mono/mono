@@ -2243,6 +2243,7 @@ World";
 
 		[Test] // reverse case of #349375
 		[Category ("NotWorking")]
+//		[Category ("NotDotNet")]
 		public void PreserveWhitespace2 ()
 		{
 			XslCompiledTransform xslt = new XslCompiledTransform ();
@@ -2291,7 +2292,8 @@ World";
     </p>
   </l0>
 </root>")), null, sw);
-			Assert.AreEqual (@"<y><t yes-one-node="""">1</t><t not-node=""""></t></y>", sw.ToString ());
+//			Assert.AreEqual (@"<y><t yes-one-node="""">1</t><t not-node=""""></t></y>", sw.ToString ());
+			Assert.AreEqual ("\r\n  \r\n    <y><t yes-one-node=\"\">1</t><t not-node=\"\"></t></y>\r\n  \r\n", sw.ToString ());
 		}
 
 		[Test]

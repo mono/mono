@@ -44,6 +44,51 @@ using NSResolver = System.Xml.XmlNamespaceManager;
 
 namespace System.Xml.XPath
 {
+	internal static class ExpressionCache
+	{
+		static readonly Hashtable table_per_ctx = new Hashtable ();
+		static object dummy = new object ();
+
+		public static XPathExpression Get (string xpath, IStaticXsltContext ctx)
+		{
+			object ctxkey = ctx != null ? ctx : dummy;
+
+			WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
+			if (wr == null)
+				return null;
+			if (!wr.IsAlive) {
+				table_per_ctx [ctxkey] = null;
+				return null;
+			}
+			Hashtable table = (Hashtable) wr.Target;
+
+			wr = table [xpath] as WeakReference;
+			if (wr != null) {
+				if (wr.IsAlive)
+					// it may return null (as it might be GC-ed), but we don't have to worrt about it here.
+					return (XPathExpression) wr.Target;
+				table [xpath] = null;
+			}
+			return null;
+		}
+
+		public static void Set (string xpath, IStaticXsltContext ctx, XPathExpression exp)
+		{
+			object ctxkey = ctx != null ? ctx : dummy;
+
+			Hashtable table = null;
+
+			WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
+			if (wr != null && wr.IsAlive)
+				table = (Hashtable) wr.Target;
+			if (table == null) {
+				table = new Hashtable ();
+				table_per_ctx [ctxkey] = new WeakReference (table);
+			}
+			table [xpath] = new WeakReference (exp);
+		}
+	}
+
 #if XPATH_DEBUG
 	internal class CompiledExpression : Test.Xml.XPath.XPathExpression
 #else
@@ -95,6 +140,9 @@ namespace System.Xml.XPath
 			if (_sorters != null)
 				return EvaluateNodeSet (iter);
 
+#if false
+			return _expr.Evaluate (iter);
+#else
 			try {
 				return _expr.Evaluate (iter);
 			}
@@ -107,6 +155,7 @@ namespace System.Xml.XPath
 			catch (Exception e) {
 				throw new XPathException ("Error during evaluation", e);
 			}
+#endif
 		}
 		public XPathNodeIterator EvaluateNodeSet (BaseIterator iter)
 		{
@@ -452,9 +501,14 @@ namespace System.Xml.XPath
 			case XPathResultType.Any:
 			case XPathResultType.Navigator: // FIXME: It may pass not-allowed use of RTF
 				object o = Evaluate (iter);
-				BaseIterator iterResult = o as BaseIterator;
-				if (iterResult != null)
+				XPathNodeIterator xi = o as XPathNodeIterator;
+				BaseIterator iterResult = null;
+				if (xi != null) {
+					iterResult = xi as BaseIterator;
+					if (iterResult == null)
+						iterResult = new WrapperIterator (xi, iter.NamespaceManager);
 					return iterResult;
+				}
 				XPathNavigator nav = o as XPathNavigator;
 				if (nav != null) {
 					XPathNodeIterator xiter = nav.SelectChildren (XPathNodeType.All);
@@ -513,20 +567,19 @@ namespace System.Xml.XPath
 			if (type == XPathResultType.Any)
 				type = GetReturnType (result);
 
-			switch (type)
-			{
-				case XPathResultType.Number:
-					return (double)result;
-				case XPathResultType.Boolean:
-					return ((bool) result) ? 1.0 : 0.0;
-				case XPathResultType.NodeSet:
-					return XPathFunctions.ToNumber (EvaluateString (iter));
-				case XPathResultType.String:
-					return XPathFunctions.ToNumber ((string) result);
-				case XPathResultType.Navigator:
-					return XPathFunctions.ToNumber (((XPathNavigator) (result)).Value);
-				default:
-					throw new XPathException ("invalid node type");
+			switch (type) {
+			case XPathResultType.Number:
+				return (double)result;
+			case XPathResultType.Boolean:
+				return ((bool) result) ? 1.0 : 0.0;
+			case XPathResultType.NodeSet:
+				return XPathFunctions.ToNumber (EvaluateString (iter));
+			case XPathResultType.String:
+				return XPathFunctions.ToNumber ((string) result);
+			case XPathResultType.Navigator:
+				return XPathFunctions.ToNumber (((XPathNavigator) (result)).Value);
+			default:
+				throw new XPathException ("invalid node type");
 			}
 		}
 
@@ -536,26 +589,25 @@ namespace System.Xml.XPath
 			XPathResultType type = GetReturnType (iter);
 			if (type == XPathResultType.Any)
 				type = GetReturnType (result);
-			switch (type)
+			switch (type) {
+			case XPathResultType.Number:
+				double d = (double) result;
+				return XPathFunctions.ToString (d);
+			case XPathResultType.Boolean:
+				return ((bool) result) ? "true" : "false";
+			case XPathResultType.String:
+				return (string) result;
+			case XPathResultType.NodeSet:
 			{
-				case XPathResultType.Number:
-					double d = (double) result;
-					return XPathFunctions.ToString (d);
-				case XPathResultType.Boolean:
-					return ((bool) result) ? "true" : "false";
-				case XPathResultType.String:
-					return (string) result;
-				case XPathResultType.NodeSet:
-				{
-					BaseIterator iterResult = (BaseIterator) result;
-					if (iterResult == null || !iterResult.MoveNext ())
-						return "";
-					return iterResult.Current.Value;
-				}
-				case XPathResultType.Navigator:
-					return ((XPathNavigator) result).Value;
-				default:
-					throw new XPathException ("invalid node type");
+				BaseIterator iterResult = (BaseIterator) result;
+				if (iterResult == null || !iterResult.MoveNext ())
+					return "";
+				return iterResult.Current.Value;
+			}
+			case XPathResultType.Navigator:
+				return ((XPathNavigator) result).Value;
+			default:
+				throw new XPathException ("invalid node type");
 			}
 		}
 
@@ -565,33 +617,27 @@ namespace System.Xml.XPath
 			XPathResultType type = GetReturnType (iter);
 			if (type == XPathResultType.Any)
 				type = GetReturnType (result);
-			switch (type)
-			{
-				case XPathResultType.Number:
-				{
-					double num = Convert.ToDouble (result);
-					return (num != 0.0 && num != -0.0 && !Double.IsNaN (num));
-				}
-				case XPathResultType.Boolean:
-					return (bool) result;
-				case XPathResultType.String:
-					return ((string) result).Length != 0;
-				case XPathResultType.NodeSet:
-				{
-					BaseIterator iterResult = (BaseIterator) result;
-					return (iterResult != null && iterResult.MoveNext ());
-				}
-				case XPathResultType.Navigator:
-					return (((XPathNavigator) result).HasChildren);
-				default:
-					throw new XPathException ("invalid node type");
+			switch (type) {
+			case XPathResultType.Number:
+				double num = Convert.ToDouble (result);
+				return (num != 0.0 && num != -0.0 && !Double.IsNaN (num));
+			case XPathResultType.Boolean:
+				return (bool) result;
+			case XPathResultType.String:
+				return ((string) result).Length != 0;
+			case XPathResultType.NodeSet:
+				BaseIterator iterResult = (BaseIterator) result;
+				return (iterResult != null && iterResult.MoveNext ());
+			case XPathResultType.Navigator:
+				return (((XPathNavigator) result).HasChildren);
+			default:
+				throw new XPathException ("invalid node type");
 			}
 		}
 
 		public object EvaluateAs (BaseIterator iter, XPathResultType type)
 		{
-			switch (type)
-			{
+			switch (type) {
 			case XPathResultType.Boolean:
 				return EvaluateBoolean (iter);
 			case XPathResultType.NodeSet:
@@ -1182,9 +1228,10 @@ namespace System.Xml.XPath
 			// Peer and subtree optimization. see
 			// http://idealliance.org/papers/dx_xmle04/papers/02-03-02/02-03-02.html
 			BaseIterator iterLeft = left.EvaluateNodeSet (iter);
-			if (left.Peer && right.Subtree && !RequireSorting)
+			if (left.Peer && right.Subtree)
 				return new SimpleSlashIterator (iterLeft, right);
-			return new SlashIterator (iterLeft, right, RequireSorting);
+			BaseIterator si = new SlashIterator (iterLeft, right);
+			return RequireSorting ? new SortedIterator (si) : si;
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
@@ -1250,16 +1297,13 @@ namespace System.Xml.XPath
 			if (left.Peer && !left.RequireSorting)
 				il = new SimpleSlashIterator (
 					il, DescendantOrSelfStar);
-			else
-				il = new SlashIterator (il,
-					DescendantOrSelfStar,
-					left.RequireSorting);
+			else {
+				BaseIterator bb = new SlashIterator (il, DescendantOrSelfStar);
+				il = left.RequireSorting ? new SortedIterator (bb) : bb;
+			}
 
-			return new SlashIterator (
-				il,
-				right,
-				DescendantOrSelfStar.RequireSorting || right.RequireSorting
-			);
+			SlashIterator b = new SlashIterator (il, right);
+			return RequireSorting ? (BaseIterator) new SortedIterator (b) : b;
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }
@@ -1289,6 +1333,10 @@ namespace System.Xml.XPath
 		public override String ToString () { return ""; }
 		public override object Evaluate (BaseIterator iter)
 		{
+			if (iter.CurrentPosition == 0) {
+				iter = (BaseIterator) iter.Clone ();
+				iter.MoveNext ();
+			}
 			XPathNavigator navRoot = iter.Current.Clone ();
 			navRoot.MoveToRoot ();
 			return new SelfIterator (navRoot, iter.NamespaceManager);
@@ -1335,8 +1383,7 @@ namespace System.Xml.XPath
 		{
 			get
 			{
-				switch (_axis)
-				{
+				switch (_axis) {
 				case Axes.Namespace:
 					return XPathNodeType.Namespace;
 				case Axes.Attribute:
@@ -1348,71 +1395,69 @@ namespace System.Xml.XPath
 		}
 		public override string ToString ()
 		{
-			switch (_axis)
-			{
-				case Axes.Ancestor:
-					return "ancestor";
-				case Axes.AncestorOrSelf:
-					return "ancestor-or-self";
-				case Axes.Attribute:
-					return "attribute";
-				case Axes.Child:
-					return "child";
-				case Axes.Descendant:
-					return "descendant";
-				case Axes.DescendantOrSelf:
-					return "descendant-or-self";
-				case Axes.Following:
-					return "following";
-				case Axes.FollowingSibling:
-					return "following-sibling";
-				case Axes.Namespace:
-					return "namespace";
-				case Axes.Parent:
-					return "parent";
-				case Axes.Preceding:
-					return "preceding";
-				case Axes.PrecedingSibling:
-					return "preceding-sibling";
-				case Axes.Self:
-					return "self";
-				default:
-					throw new IndexOutOfRangeException ();
+			switch (_axis) {
+			case Axes.Ancestor:
+				return "ancestor";
+			case Axes.AncestorOrSelf:
+				return "ancestor-or-self";
+			case Axes.Attribute:
+				return "attribute";
+			case Axes.Child:
+				return "child";
+			case Axes.Descendant:
+				return "descendant";
+			case Axes.DescendantOrSelf:
+				return "descendant-or-self";
+			case Axes.Following:
+				return "following";
+			case Axes.FollowingSibling:
+				return "following-sibling";
+			case Axes.Namespace:
+				return "namespace";
+			case Axes.Parent:
+				return "parent";
+			case Axes.Preceding:
+				return "preceding";
+			case Axes.PrecedingSibling:
+				return "preceding-sibling";
+			case Axes.Self:
+				return "self";
+			default:
+				throw new IndexOutOfRangeException ();
 			}
 		}
 		public Axes Axis { get { return _axis; }}
-		public virtual SimpleIterator Evaluate (BaseIterator iter)
+		public BaseIterator Evaluate (BaseIterator iter)
 		{
-			switch (_axis)
-			{
-				case Axes.Ancestor:
-					return new AncestorIterator (iter);
-				case Axes.AncestorOrSelf:
-					return new AncestorOrSelfIterator (iter);
-				case Axes.Attribute:
-					return new AttributeIterator (iter);
-				case Axes.Child:
-					return new ChildIterator (iter);
-				case Axes.Descendant:
-					return new DescendantIterator (iter);
-				case Axes.DescendantOrSelf:
-					return new DescendantOrSelfIterator (iter);
-				case Axes.Following:
-					return new FollowingIterator (iter);
-				case Axes.FollowingSibling:
-					return new FollowingSiblingIterator (iter);
-				case Axes.Namespace:
-					return new NamespaceIterator (iter);
-				case Axes.Parent:
-					return new ParentIterator (iter);
-				case Axes.Preceding:
-					return new PrecedingIterator (iter);
-				case Axes.PrecedingSibling:
-					return new PrecedingSiblingIterator (iter);
-				case Axes.Self:
-					return new SelfIterator (iter);
-				default:
-					throw new IndexOutOfRangeException ();
+			switch (_axis) {
+			case Axes.Ancestor:
+				return new AncestorIterator (iter);
+			case Axes.AncestorOrSelf:
+				return new AncestorOrSelfIterator (iter);
+			case Axes.Attribute:
+				return new AttributeIterator (iter);
+			case Axes.Child:
+				return new ChildIterator (iter);
+			case Axes.Descendant:
+				return new DescendantIterator (iter);
+			case Axes.DescendantOrSelf:
+				return new DescendantOrSelfIterator (iter);
+			case Axes.Following:
+				return new FollowingIterator (iter);
+			case Axes.FollowingSibling:
+				return new FollowingSiblingIterator (iter);
+			case Axes.Namespace:
+				return new NamespaceIterator (iter);
+			case Axes.Parent:
+				return new ParentIterator (iter);
+			case Axes.Preceding:
+				return new PrecedingIterator (iter);
+			case Axes.PrecedingSibling:
+				return new PrecedingSiblingIterator (iter);
+			case Axes.Self:
+				return new SelfIterator (iter);
+			default:
+				throw new IndexOutOfRangeException ();
 			}
 		}
 	}
@@ -1428,7 +1473,7 @@ namespace System.Xml.XPath
 		public AxisSpecifier Axis { get { return _axis; }}
 		public override object Evaluate (BaseIterator iter)
 		{
-			SimpleIterator iterAxis = _axis.Evaluate (iter);
+			BaseIterator iterAxis = _axis.Evaluate (iter);
 			return new AxisIterator (iterAxis, this);
 		}
 		
@@ -1474,7 +1519,9 @@ namespace System.Xml.XPath
 				case Axes.Ancestor:
 				case Axes.AncestorOrSelf:
 				case Axes.Preceding:
+				case Axes.PrecedingSibling:
 				case Axes.Following:
+				case Axes.FollowingSibling:
 					return false;
 				default:
 					return true;
@@ -1530,50 +1577,48 @@ namespace System.Xml.XPath
 
 		private static String ToString (XPathNodeType type)
 		{
-			switch (type)
-			{
-				case XPathNodeType.Comment:
-					return "comment";
-				case XPathNodeType.Text:
-					return "text";
-				case XPathNodeType.ProcessingInstruction:
-					return "processing-instruction";
-				case XPathNodeType.All:
-				case XPathNodeType.Attribute:
-				case XPathNodeType.Element:
-				case XPathNodeType.Namespace:
-					return "node";
-				default:
-					return "node-type [" + type.ToString () + "]";
+			switch (type) {
+			case XPathNodeType.Comment:
+				return "comment";
+			case XPathNodeType.Text:
+				return "text";
+			case XPathNodeType.ProcessingInstruction:
+				return "processing-instruction";
+			case XPathNodeType.All:
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Element:
+			case XPathNodeType.Namespace:
+				return "node";
+			default:
+				return "node-type [" + type.ToString () + "]";
 			}
 		}
 
 		public override bool Match (NSResolver nsm, XPathNavigator nav)
 		{
 			XPathNodeType nodeType = nav.NodeType;
-			switch (type)
-			{
-				case XPathNodeType.All:
-					return true;
+			switch (type) {
+			case XPathNodeType.All:
+				return true;
 
-				case XPathNodeType.ProcessingInstruction:
-					if (nodeType != XPathNodeType.ProcessingInstruction)
-						return false;
-					if (_param != null && nav.Name != _param)
-						return false;
-					return true;
-				
+			case XPathNodeType.ProcessingInstruction:
+				if (nodeType != XPathNodeType.ProcessingInstruction)
+					return false;
+				if (_param != null && nav.Name != _param)
+					return false;
+				return true;
+			
+			case XPathNodeType.Text:
+				switch (nodeType) {
 				case XPathNodeType.Text:
-					switch (nodeType) {
-					case XPathNodeType.Text:
-					case XPathNodeType.Whitespace:
-					case XPathNodeType.SignificantWhitespace:
-						return true;
-					default:
-						return false;
-					}
+				case XPathNodeType.Whitespace:
+				case XPathNodeType.SignificantWhitespace:
+					return true;
 				default:
-					return type == nodeType;
+					return false;
+				}
+			default:
+				return type == nodeType;
 			}
 		}
 		
@@ -1922,7 +1967,10 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			object o = (_expr.Evaluate (iter));
-			BaseIterator predBase = o as BaseIterator;
+			XPathNodeIterator xi = o as XPathNodeIterator;
+			BaseIterator predBase = xi as BaseIterator;
+			if (predBase == null && xi != null)
+				predBase = new WrapperIterator (xi, iter.NamespaceManager);
 			if (predBase != null)
 				return new ParensIterator (predBase);
 			else
@@ -1995,33 +2043,33 @@ namespace System.Xml.XPath
 				return new ExprFunctionCall (name, args, ctx);
 			
 			switch (name.Name) {
-				case "last": return new XPathFunctionLast (args);
-				case "position": return new XPathFunctionPosition (args);
-				case "count": return new XPathFunctionCount (args);
-				case "id": return new XPathFunctionId (args);
-				case "local-name": return new XPathFunctionLocalName (args);
-				case "namespace-uri": return new XPathFunctionNamespaceUri (args);
-				case "name": return new XPathFunctionName (args);
-				case "string": return new XPathFunctionString (args);
-				case "concat": return new XPathFunctionConcat (args);
-				case "starts-with": return new XPathFunctionStartsWith (args);
-				case "contains": return new XPathFunctionContains (args);
-				case "substring-before": return new XPathFunctionSubstringBefore (args);
-				case "substring-after": return new XPathFunctionSubstringAfter (args);
-				case "substring": return new XPathFunctionSubstring (args);
-				case "string-length": return new XPathFunctionStringLength (args);
-				case "normalize-space": return new XPathFunctionNormalizeSpace (args);
-				case "translate": return new XPathFunctionTranslate (args);
-				case "boolean": return new XPathFunctionBoolean (args);
-				case "not": return new XPathFunctionNot (args);
-				case "true": return new XPathFunctionTrue (args);
-				case "false": return new XPathFunctionFalse (args);
-				case "lang": return new XPathFunctionLang (args);
-				case "number": return new XPathFunctionNumber (args);
-				case "sum": return new XPathFunctionSum (args);
-				case "floor": return new XPathFunctionFloor (args);
-				case "ceiling": return new XPathFunctionCeil (args);
-				case "round": return new XPathFunctionRound (args);
+			case "last": return new XPathFunctionLast (args);
+			case "position": return new XPathFunctionPosition (args);
+			case "count": return new XPathFunctionCount (args);
+			case "id": return new XPathFunctionId (args);
+			case "local-name": return new XPathFunctionLocalName (args);
+			case "namespace-uri": return new XPathFunctionNamespaceUri (args);
+			case "name": return new XPathFunctionName (args);
+			case "string": return new XPathFunctionString (args);
+			case "concat": return new XPathFunctionConcat (args);
+			case "starts-with": return new XPathFunctionStartsWith (args);
+			case "contains": return new XPathFunctionContains (args);
+			case "substring-before": return new XPathFunctionSubstringBefore (args);
+			case "substring-after": return new XPathFunctionSubstringAfter (args);
+			case "substring": return new XPathFunctionSubstring (args);
+			case "string-length": return new XPathFunctionStringLength (args);
+			case "normalize-space": return new XPathFunctionNormalizeSpace (args);
+			case "translate": return new XPathFunctionTranslate (args);
+			case "boolean": return new XPathFunctionBoolean (args);
+			case "not": return new XPathFunctionNot (args);
+			case "true": return new XPathFunctionTrue (args);
+			case "false": return new XPathFunctionFalse (args);
+			case "lang": return new XPathFunctionLang (args);
+			case "number": return new XPathFunctionNumber (args);
+			case "sum": return new XPathFunctionSum (args);
+			case "floor": return new XPathFunctionFloor (args);
+			case "ceiling": return new XPathFunctionCeil (args);
+			case "round": return new XPathFunctionRound (args);
 			}
 			return new ExprFunctionCall (name, args, ctx);
 		}

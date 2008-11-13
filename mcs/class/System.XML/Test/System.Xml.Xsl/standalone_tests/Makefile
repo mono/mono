@@ -14,7 +14,7 @@ RUNTIME = mono
 
 ifeq ($(PROFILE), net_2_0)
 	nunit_MONO_PATH="../../../../../class/lib/net_2_0"
-	CSCOMPILE=gmcs
+	CSCOMPILE=MONO_PATH=../../../../../class/lib/net_2_0 ../../../../../../mono/runtime/mono-wrapper ../../../../../class/lib/net_2_0/gmcs.exe
 else
 	nunit_MONO_PATH="../../../../../class/lib/net_1_1"
 	CSCOMPILE=mcs
@@ -25,7 +25,7 @@ CATALOG = testsuite/TESTS/catalog.xml
 FIXED_CATALOG = testsuite/TESTS/catalog-fixed.xml
 
 mono_wrapper_PATH="../../../../../../mono/runtime/mono-wrapper"
-NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug nunit-console.exe
+NUNIT_CONSOLE=$(mono_wrapper_PATH) --debug ./nunit-console.exe
 
 FIXTURE=MonoTests.oasis_xslt.SuiteBuilder
 CLEAN_NUNIT_FLAGS=/fixture:$(FIXTURE) /xml=TestResult.xml /include=Clean
@@ -41,7 +41,7 @@ else
 REFERENCE_RESULTS_NAME=results
 endif
 REFERENCE_RESULTS_ARCHIVE=xslt-reference-$(REFERENCE_RESULTS_NAME).tar.gz
-REFERENCE_RESULTS_URL=http://svn.myrealbox.com/source/trunk/release/test-ext/xslt-standalone/$(REFERENCE_RESULTS_ARCHIVE)
+REFERENCE_RESULTS_URL=http://anonsvn.mono-project.com/source/trunk/release/test-ext/xslt-standalone/$(REFERENCE_RESULTS_ARCHIVE)
 REFERENCE_RESULTS=$(REFERENCE_RESULTS_NAME)/timestamp
 
 test : $(TEST_PROG) $(FIXED_CATALOG) $(REFERENCE_RESULTS)
@@ -114,5 +114,5 @@ $(REFERENCE_RESULTS) : $(REFERENCE_RESULTS_ARCHIVE)
 	touch $@
 
 $(REFERENCE_RESULTS_ARCHIVE) :
-	wget $(REFERENCE_RESULTS_URL)
+	wget -O $(REFERENCE_RESULTS_ARCHIVE) $(REFERENCE_RESULTS_URL)
 

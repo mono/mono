@@ -80,8 +80,8 @@ namespace Mono.Xml.Xsl {
 //			this.outputStylesheetXmlns = true;
 			this.currentOutputUri = String.Empty;
 
-			XPathExpression exp = root.Compile (".");
-			PushNodeset (root.Select (exp, this.XPathContext));
+			PushNodeset (new SelfIterator (root, this.XPathContext));
+CurrentNodeset.MoveNext ();
 			
 			// have to evaluate the params first, as Global vars may
 			// be dependant on them
@@ -109,7 +109,7 @@ namespace Mono.Xml.Xsl {
 			PopNodeset ();
 			
 			this.PushOutput (outputtter);
-			this.ApplyTemplates (root.Select (exp, this.XPathContext), QName.Empty, null);
+			this.ApplyTemplates (new SelfIterator (root, this.XPathContext), QName.Empty, null);
 			this.PopOutput ();
 		}
 
@@ -119,7 +119,9 @@ namespace Mono.Xml.Xsl {
 
 		public CompiledStylesheet CompiledStyle { get { return compiledStyle; }}
 		public XsltArgumentList Arguments {get{return args;}}
-		
+
+		public XPathNavigator Root { get { return root; } }
+
 		public MSXslScriptManager ScriptManager {
 			get { return compiledStyle.ScriptManager; }
 		}
@@ -473,7 +475,10 @@ namespace Mono.Xml.Xsl {
 
 		public void PushNodeset (XPathNodeIterator itr)
 		{
-			nodesetStack.Add (itr);
+			BaseIterator bi = itr as BaseIterator;
+			bi = bi != null ? bi : new WrapperIterator (itr, null);
+			bi.NamespaceManager = XPathContext;
+			nodesetStack.Add (bi);
 		}
 		
 		public void PopNodeset ()
@@ -492,30 +497,66 @@ namespace Mono.Xml.Xsl {
 		public object Evaluate (XPathExpression expr)
 		{
 			XPathNodeIterator itr = CurrentNodeset;
-			return itr.Current.Evaluate (expr, itr, XPathContext);
+			BaseIterator bi = (BaseIterator) itr;
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (bi.NamespaceManager == null)
+				bi.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.Evaluate (bi);
 		}
 		
 		public string EvaluateString (XPathExpression expr)
 		{
 			XPathNodeIterator itr = CurrentNodeset;
+#if true
 			return itr.Current.EvaluateString (expr, itr, XPathContext);
+#else
+			BaseIterator bi = (BaseIterator) itr;
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (bi.NamespaceManager == null)
+				bi.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateString (bi);
+#endif
 		}
 				
 		public bool EvaluateBoolean (XPathExpression expr)
 		{
 			XPathNodeIterator itr = CurrentNodeset;
+#if true
 			return itr.Current.EvaluateBoolean (expr, itr, XPathContext);
+#else
+			BaseIterator bi = (BaseIterator) itr;
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (bi.NamespaceManager == null)
+				bi.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateBoolean (bi);
+#endif
 		}
 		
 		public double EvaluateNumber (XPathExpression expr)
 		{
 			XPathNodeIterator itr = CurrentNodeset;
+#if true
 			return itr.Current.EvaluateNumber (expr, itr, XPathContext);
+#else
+			BaseIterator bi = (BaseIterator) itr;
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (bi.NamespaceManager == null)
+				bi.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateNumber (bi);
+#endif
 		}
 		
 		public XPathNodeIterator Select (XPathExpression expr)
 		{
+#if true
 			return CurrentNodeset.Current.Select (expr, XPathContext);
+#else
+			BaseIterator bi = (BaseIterator) CurrentNodeset;
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			if (bi.NamespaceManager == null)
+				bi.NamespaceManager = cexpr.NamespaceManager;
+			return cexpr.EvaluateNodeSet (bi);
+#endif
 		}
 		
 		#endregion

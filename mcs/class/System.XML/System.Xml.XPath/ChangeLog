@@ -1,3 +1,52 @@
+2008-10-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : fix WeakReference usage for such case that it
+	  might GC-ed between .IsAlive check and .Target retrieval.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathExpression.cs, Expression.cs : Cache compiled xpath
+	  expressions so that they don't have to be parsed repeatedly.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : unindend cases that do not match our coding style.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : fixed peer & subtree requirement and reduced extra
+	  dependency on RequireSorting property.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs, Iterator.cs : simplify SlashIterator by introducing
+	  SortedIterator.
+
+2008-10-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs, Iterator.cs : ChildIterator is not a SimpleIterator
+	  now. And reduced extra clone when the context node has no child.
+
+2008-10-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Iterator.cs : now we do not seem to need clone in
+	  SimpleIterator.Current.
+
+2008-10-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigator.cs : enable EnumerableIterator with some fixes.
+	* Iterator.cs : reduce extra steps for empty simple iterator.
+
+2008-10-02  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Iterator.cs, DefaultContext.cs, XPathNavigator.cs, Expression.cs:
+	  couple of refactoring: reduced presumption on BaseIterator (it is
+	  premised in not a few places, but it might change; see
+	  EnumerableIterator in XPathNavigator.cs).
+	  Now BaseIterator.Current is always null (to clean up ambiguous
+	  implementation state). Current property is now always moved to
+	  the current node in the iterator when returned.
+
 2008-09-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DefaultContext.cs, Expression.cs: do not premise BaseIterator.

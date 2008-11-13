@@ -1,3 +1,16 @@
+2008-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformProcessor.cs : reduce BaseIterator dependency.
+
+2008-10-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GenericOutputter.cs : fix dummy namespace generation. (It might be
+	  extraneous change and might be reverted later.)
+	* XslTransformProcessor.cs : some EvaluateXxx ()changes that may
+	  be enabled later. Reduce BaseIterator dependency.
+	* XslFunctions.cs : reduce bad uses of "as" operator.
+	* XslKey.cs : Evaluate() result may be null now.
+
 2008-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltDebuggerWrapper.cs : allow public methods in debugger instance.
