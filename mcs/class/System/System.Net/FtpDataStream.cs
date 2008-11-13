@@ -22,11 +22,10 @@ namespace System.Net
 	{
 		FtpWebRequest request;
 		NetworkStream networkStream;
+		Socket socket;
 		bool disposed;
 		bool isRead;
 		int totalRead;
-
-		ManualResetEvent closewh;
 
 		internal FtpDataStream (FtpWebRequest request, Socket socket, bool isRead)
 		{
@@ -38,14 +37,13 @@ namespace System.Net
 				throw new ArgumentException ("socket");
 
 			this.request = request;
+			this.socket = socket;
 			this.networkStream = new NetworkStream (socket, true);
 			this.isRead = isRead;
 
 			if (request.EnableSsl) {
 				FtpWebRequest.ChangeToSSLSocket (ref networkStream);
 			}
-
-			closewh = new ManualResetEvent (false);
 		}
 
 		public override bool CanRead {
@@ -90,11 +88,7 @@ namespace System.Net
 
 		public override void Close ()
 		{
-			if (!disposed) {
-				networkStream.Close ();
-				request.SetTransferCompleted ();
-				((IDisposable) this).Dispose ();
-			}
+			Dispose (true);
 		}
 
 		public override void Flush ()
@@ -250,11 +244,28 @@ namespace System.Net
 				return;
 
 			disposed = true;
+			if (socket != null) {
+				try {
+					if (socket.Poll (0, SelectMode.SelectRead)) {
+						byte [] bytes = new byte [2048];
+						int nbytes;
+						do {
+							nbytes = socket.Receive (bytes);
+						} while (nbytes > 0 && socket.Poll (0, SelectMode.SelectRead));
+					}
+				} catch {
+					// Ignore
+				}
 
-			networkStream.Close ();
-			networkStream = null;
-
-			closewh.Set ();
+				try {
+					networkStream.Close ();
+				} catch {
+				}
+				networkStream = null;
+				socket = null;
+				request.SetTransferCompleted ();
+				request = null;
+			}
 		}
 
 		void CheckDisposed ()
@@ -264,13 +275,6 @@ namespace System.Net
 		}
 
 		delegate int ReadDelegate (byte [] buffer, int offset, int size);
-
-		// We need to know whether the stream has been closed
-		internal ManualResetEvent CloseWaitHandle {
-			get {
-				return closewh;
-			}
-		}
 	}
 }
 

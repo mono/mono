@@ -1,4 +1,12 @@
 
+2008-11-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpDataStream.cs: use the socket for reading until the end of a
+	stream that wasn't read entirely. Remove unused ManualResetEvent.
+	* FtpWebRequest.cs: set the file_name when downloading. Update the
+	response status after every SendCommand. Send a "OPTS utf8 on" as MS
+	does (the control cnc reader should do something with UTF8)
+
 2008-11-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebRequest.cs: if the cache level is NoCacheNoStore, don't throw
