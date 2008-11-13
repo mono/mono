@@ -1,3 +1,8 @@
+2008-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_writeout): Rework this to make it easier to add
+	further sections.
+
 2008-11-13  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c, cpu-ppc.md: Reserve space for the parameter area in
