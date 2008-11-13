@@ -1,5 +1,10 @@
 2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c (simd_intrinsic_emit_ctor): Generalize this method
+	to work with more Vector types.
+
+2008-11-13  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c (simd_intrinsic_emit_ctor): If the target is already a pointer
 	store the elemens directly instead of using and intermediate.
 
