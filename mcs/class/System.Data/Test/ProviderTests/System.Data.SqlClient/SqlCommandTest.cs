@@ -35,6 +35,9 @@ using System.Data.Common;
 using System.Data.SqlClient;
 #if NET_2_0
 using System.Data.Sql;
+#endif
+using System.Globalization;
+#if NET_2_0
 using System.Xml;
 #endif
 
@@ -49,6 +52,9 @@ namespace MonoTests.System.Data.SqlClient
 		SqlConnection conn;
 		SqlCommand cmd;
 		string connectionString = ConnectionManager.Singleton.ConnectionString;
+
+		static readonly decimal SMALLMONEY_MAX = 214748.3647m;
+		static readonly decimal SMALLMONEY_MIN = -214748.3648m;
 
 		[TearDown]
 		public void TearDown ()
@@ -1392,7 +1398,9 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.Parameters ["@fname"].Value = TestPar;
 				Assert.AreEqual(1,cmd.ExecuteNonQuery());
 			} finally {
-				DBHelper.ExecuteNonQuery (conn, DROP_TMP_SP_TEMP_INSERT_PERSON);
+				DBHelper.ExecuteNonQuery (conn, string.Format (
+					CultureInfo.InvariantCulture,
+					DROP_STORED_PROCEDURE, "#sp_temp_insert_employee"));
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_person_table");
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -1576,7 +1584,8 @@ namespace MonoTests.System.Data.SqlClient
 		public void StoredProc_ParameterTest ()
 		{
 			string create_query  = CREATE_TMP_SP_PARAM_TEST;
-			string drop_query = DROP_TMP_SP_PARAM_TEST;
+			string drop_query = string.Format (CultureInfo.InvariantCulture,
+				DROP_STORED_PROCEDURE, "#tmp_sp_param_test");
 
 			SqlConnection conn = new SqlConnection (connectionString);
 			
@@ -1669,14 +1678,11 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "decimal(10,2)"));
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
-								10.665, 10.67, 11);
-							// FIXME: NUnit 2.2.0 bug
-							/*
+								10.665, 10.67m, 11m);
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
 								0m, 0m, 0m);
-							*/
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
-								-5.657, -5.66m, -6);
+								-5.657, -5.66m, -6m);
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
@@ -1690,7 +1696,7 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
 								10.54, 10.54, 10.54);
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
-								0, 0, 0);
+								0, 0d, 0d);
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
 								-5.34, -5.34, -5.34);
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
@@ -1731,22 +1737,68 @@ namespace MonoTests.System.Data.SqlClient
 							// Test Money Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "money"));
-							// FIXME: NUnit 2.2.0 bug
-							/*
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
 								10m, 10m, 10m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
 								10.54, 10.54m, 10.54m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
 								0, 0m, 0m);
-							*/
-							/*
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
 								-5.34, -5.34m, -5.34m);
-							*/
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								5.34, 5.34m, 5.34m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-10.1234m, -10.1234m, -10.1234m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								10.1234m, 10.1234m, 10.1234m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-2000000000m, -2000000000m, -2000000000m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								2000000000m, 2000000000m, 2000000000m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.2345m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.2345m, 200000000.2345m, 200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
+
+							// rounding tests
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234561m, -200000000.2346m, -200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234551m, -200000000.2346m, -200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234541m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234561m, 200000000.2346m, 200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234551m, 200000000.2346m, 200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234541m, 200000000.2345m, 200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234461m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234451m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234441m, -200000000.2344m, -200000000.2344m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234461m, 200000000.2345m, 200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234451m, 200000000.2345m, 200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234441m, 200000000.2344m, 200000000.2344m);
+							// FIXME: we round toward even in SqlParameter.ConvertToFrameworkType
+							/*
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234550m, -200000000.2346m, -200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234550m, 200000000.2346m, 200000000.2346m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								-200000000.234450m, -200000000.2345m, -200000000.2345m);
+							rpc_helper_function (cmd, SqlDbType.Money, 0,
+								200000000.234450m, 200000000.2345m, 200000000.2345m);
+							*/
 							break;
 						case 23 :
 							// Test NChar Param
@@ -1797,23 +1849,23 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "real"));
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10m, 10m, 10m);
+								10m, 10f, 10f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10d, 10m, 10m);
+								10d, 10f, 10f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								0, 0m, 0m);
+								0, 0f, 0f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								3.54d, 3.54m, 3.54m);
+								3.54d, 3.54f, 3.54f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10, 10m, 10m);
+								10, 10f, 10f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10.5f, 10.5m, 10.5m);
+								10.5f, 10.5f, 10.5f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								3.5d, 3.5m, 3.5m);
+								3.5d, 3.5f, 3.5f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								4.54m, 4.54m, 4.54m);
+								4.54m, 4.54f, 4.54f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								-4.54m, -4.54m, -4.54m);
+								-4.54m, -4.54f, -4.54f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
 								DBNull.Value, DBNull.Value, DBNull.Value);
 							break;
@@ -1834,9 +1886,9 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "smallint"));
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
-								10, 10, 10);
+								10, (short) 10, (short) 10);
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
-								-10, -10, -10);
+								-10, (short) -10, (short) -10);
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
 								short.MaxValue, short.MaxValue,
 								short.MaxValue);
@@ -1851,8 +1903,6 @@ namespace MonoTests.System.Data.SqlClient
 							// Test SmallMoney Param
 							DBHelper.ExecuteNonQuery (conn,
 									String.Format (create_query, "smallmoney"));
-							// FIXME: NUnit 2.2.0 bug
-							/*
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
 								10.0d, 10m, 10m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
@@ -1869,9 +1919,49 @@ namespace MonoTests.System.Data.SqlClient
 								4.54m, 4.54m, 4.54m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
 								-4.54m, -4.54m, -4.54m);
-							*/
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-214748.3648m, -214748.3648m, -214748.3648m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								214748.3647m, 214748.3647m, 214748.3647m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
 								DBNull.Value, DBNull.Value, DBNull.Value);
+
+							// rounding tests
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543361m, -4.5434m, -4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543351m, -4.5434m, -4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543341m, -4.5433m, -4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543361m, 4.5434m, 4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543351m, 4.5434m, 4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543341m, 4.5433m, 4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543261m, -4.5433m, -4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543251m, -4.5433m, -4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543241m, -4.5432m, -4.5432m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543261m, 4.5433m, 4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543251m, 4.5433m, 4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543241m, 4.5432m, 4.5432m);
+							// FIXME: we round toward even in SqlParameter.ConvertToFrameworkType
+							/*
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543350m, -4.5434m, -4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543350m, 4.5434m, 4.5434m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								-4.543250m, -4.5433m, -4.5433m);
+							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
+								4.543250m, 4.5433m, 4.5433m);
+							*/
 							break;
 						case 16 :
 							// Test Text Param
@@ -1898,9 +1988,9 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 									String.Format(create_query,"tinyint"));
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
-								10.0d, 10m, 10m);
+								10.0d, (byte) 10, (byte) 10);
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
-								0, 0, 0);
+								0, (byte) 0, (byte) 0);
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
 								byte.MaxValue, byte.MaxValue, byte.MaxValue);
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
@@ -1957,9 +2047,9 @@ namespace MonoTests.System.Data.SqlClient
 							label = -2;
 							break;
 					}
-				}catch (AssertionException ex) {
+				} catch (AssertionException ex) {
 					error += String.Format (" Case {0} INCORRECT VALUE : {1}\n", label, ex.ToString ());
-				}catch (Exception ex) {
+				} catch (Exception ex) {
 					error += String.Format (" Case {0} NOT WORKING : {1}\n", label, ex.ToString ());
 				}
 
@@ -1997,11 +2087,11 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandType = CommandType.StoredProcedure;
 			using (SqlDataReader reader = cmd.ExecuteReader ()) {
 				Assert.IsTrue (reader.Read (), "#1");
-				Assert.AreEqual (expectedRead, reader.GetValue (0), "#2");
+				AreEqual (expectedRead, reader.GetValue (0), "#2");
 				Assert.IsFalse (reader.Read (), "#3");
 			}
-			Assert.AreEqual (expectedOut, param2.Value, "#4");
-			Assert.AreEqual (5, retval.Value, "#5");
+			AreEqual (expectedOut, param2.Value, "#4");
+			AreEqual (5, retval.Value, "#5");
 		}
 
 		[Test]
@@ -2137,6 +2227,108 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
+			}
+		}
+
+		[Test]
+		public void SmallMoney_Overflow_Max ()
+		{
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+
+			DBHelper.ExecuteNonQuery (conn, string.Format (
+				CultureInfo.InvariantCulture, CREATE_TMP_SP_TYPE_TEST,
+				"SMALLMONEY"));
+			//decimal overflow = 214748.36471m;
+			decimal overflow = 214748.3648m;
+
+			cmd = conn.CreateCommand ();
+			cmd.CommandText = "#tmp_sp_type_test";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter param = cmd.Parameters.Add ("@param",
+				SqlDbType.SmallMoney);
+			param.Value = overflow;
+
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#1");
+			} catch (OverflowException ex) {
+				// SqlDbType.SmallMoney overflow.  Value '214748.36471'
+				// is out of range.  Must be between -214,748.3648 and 214,748.3647
+				Assert.AreEqual (typeof (OverflowException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.InvariantCulture, "'{0}'",
+					overflow)) != -1, "#5:" + ex.Message);
+#else
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.CurrentCulture, "'{0}'",
+					overflow)) != -1, "#5:" + ex.Message);
+#endif
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.InvariantCulture, "{0:N4}",
+					SMALLMONEY_MIN)) != -1, "#6:" + ex.Message);
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.InvariantCulture, "{0:N4}",
+					SMALLMONEY_MAX)) != -1, "#7:" + ex.Message);
+			} finally {
+				DBHelper.ExecuteNonQuery (conn, string.Format (
+					CultureInfo.InvariantCulture,
+					DROP_STORED_PROCEDURE, "#tmp_sp_type_test"));
+			}
+		}
+
+		[Test]
+		public void SmallMoney_Overflow_Min ()
+		{
+			conn = new SqlConnection (connectionString);
+			conn.Open ();
+
+			DBHelper.ExecuteNonQuery (conn, string.Format (
+				CultureInfo.InvariantCulture, CREATE_TMP_SP_TYPE_TEST,
+				"SMALLMONEY"));
+			//decimal overflow = -214748.36481m;
+			decimal overflow = -214748.3649m;
+
+			cmd = conn.CreateCommand ();
+			cmd.CommandText = "#tmp_sp_type_test";
+			cmd.CommandType = CommandType.StoredProcedure;
+
+			SqlParameter param = cmd.Parameters.Add ("@param",
+				SqlDbType.SmallMoney);
+			param.Value = overflow;
+
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#1");
+			} catch (OverflowException ex) {
+				// SqlDbType.SmallMoney overflow.  Value '-214748,36481'
+				// is out of range.  Must be between -214,748.3648 and 214,748.3647
+				Assert.AreEqual (typeof (OverflowException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.InvariantCulture, "'{0}'",
+					overflow)) != -1, "#5:" + ex.Message);
+#else
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.CurrentCulture, "'{0}'",
+					overflow)) != -1, "#5:" + ex.Message);
+#endif
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.InvariantCulture, "{0:N4}",
+					SMALLMONEY_MIN)) != -1, "#6:" + ex.Message);
+				Assert.IsTrue (ex.Message.IndexOf (string.Format (
+					CultureInfo.InvariantCulture, "{0:N4}",
+					SMALLMONEY_MAX)) != -1, "#7:" + ex.Message);
+			} finally {
+				DBHelper.ExecuteNonQuery (conn, string.Format (
+					CultureInfo.InvariantCulture,
+					DROP_STORED_PROCEDURE, "#tmp_sp_type_test"));
 			}
 		}
 
@@ -2365,15 +2557,50 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (100, param0Val);
 		}
 
+		// used as workaround for bugs in NUnit 2.2.0
+		static void AreEqual (object x, object y, string msg)
+		{
+			if (x == null && y == null)
+				return;
+			if ((x == null || y == null))
+				throw new AssertionException (string.Format (CultureInfo.InvariantCulture,
+					"Expected: {0}, but was: {1}. {2}",
+					x == null ? "<null>" : x, y == null ? "<null>" : y, msg));
+
+			bool isArrayX = x.GetType ().IsArray;
+			bool isArrayY = y.GetType ().IsArray;
+
+			if (isArrayX && isArrayY) {
+				Array arrayX = (Array) x;
+				Array arrayY = (Array) y;
+
+				if (arrayX.Length != arrayY.Length)
+					throw new AssertionException (string.Format (CultureInfo.InvariantCulture,
+						"Length of arrays differs. Expected: {0}, but was: {1}. {2}",
+						arrayX.Length, arrayY.Length, msg));
+
+				for (int i = 0; i < arrayX.Length; i++) {
+					object itemX = arrayX.GetValue (i);
+					object itemY = arrayY.GetValue (i);
+					if (!itemX.Equals (itemY))
+						throw new AssertionException (string.Format (CultureInfo.InvariantCulture,
+							"Arrays differ at position {0}. Expected: {1}, but was: {2}. {3}",
+							i, itemX, itemY, msg));
+				}
+			} else if (!x.Equals (y)) {
+				throw new AssertionException (string.Format (CultureInfo.InvariantCulture,
+					"Expected: {0} ({1}), but was: {2} ({3}). {4}",
+					x, x.GetType (), y, y.GetType (), msg));
+			}
+		}
+
 		private enum Status
 		{
 			OK = 0,
 			Error = 3
 		}
 
-		private readonly string CREATE_TMP_SP_PARAM_TEST = "create procedure #tmp_sp_param_test (@param1 {0}, @param2 {0} output) as begin select @param1 set @param2=@param1 return 5 end";
-		private readonly string DROP_TMP_SP_PARAM_TEST = "drop procedure #tmp_sp_param_test";
-
+		private static readonly string CREATE_TMP_SP_PARAM_TEST = "create procedure #tmp_sp_param_test (@param1 {0}, @param2 {0} output) as begin select @param1 set @param2=@param1 return 5 end";
 		private readonly string CREATE_TMP_SP_TEMP_INSERT_PERSON = ("create procedure #sp_temp_insert_employee ( " + Environment.NewLine + 
 									    "@fname varchar (20)) " + Environment.NewLine + 
 									    "as " + Environment.NewLine + 
@@ -2384,10 +2611,12 @@ namespace MonoTests.System.Data.SqlClient
 									    "insert into employee (id, fname, dob, doj) values (@id, @fname, '1980-02-11', getdate ());" + Environment.NewLine + 
 									    "return @id;" + Environment.NewLine + 
 									    "end");
-
-		private readonly string DROP_TMP_SP_TEMP_INSERT_PERSON = ("if exists (select name from sysobjects where " + Environment.NewLine + 
-									  "name = '#sp_temp_insert_employee' and type = 'P') " + Environment.NewLine + 
-									  "drop procedure #sp_temp_insert_employee; ");
+		private static readonly string CREATE_TMP_SP_TYPE_TEST =
+			"CREATE PROCEDURE #tmp_sp_type_test " +
+			"(" +
+			"	@param {0}" +
+			") AS SELECT @param";
+		private static readonly string DROP_STORED_PROCEDURE =
+			"DROP PROCEDURE {0}";
 	}
 }
-
