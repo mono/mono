@@ -1,3 +1,7 @@
+2008-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxInterpreter.cs: Fix pc computation in various opcodes. Fixes #443841.
+
 2008-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs: Implement Reference opcode.

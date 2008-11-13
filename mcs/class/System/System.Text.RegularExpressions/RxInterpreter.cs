@@ -588,7 +588,7 @@ namespace System.Text.RegularExpressions {
 					pc += program [pc + 1] | ((int)program [pc + 2] << 8);
 					continue;
 				case RxOp.TestCharGroup:
-					char_group_end = pc + program [pc + 1] | ((int)program [pc + 2] << 8);
+					char_group_end = pc + (program [pc + 1] | ((int)program [pc + 2] << 8));
 					pc += 3;
 					continue;
 				case RxOp.String:
@@ -2145,7 +2145,7 @@ namespace System.Text.RegularExpressions {
 						pc + 11				// subexpression
 					);
 
-					int until = pc + program [pc + 1] | ((int)program [pc + 2] << 8);
+					int until = pc + (program [pc + 1] | ((int)program [pc + 2] << 8));
 					if (!EvalByteCode (until, strpos, ref res)) {
 						this.repeat = this.repeat.Previous;
 						return false;
@@ -2303,7 +2303,7 @@ namespace System.Text.RegularExpressions {
 					 */
 					bool lazy = program [pc] == (byte)RxOp.FastRepeatLazy;
 					int res = 0;
-					int tail = pc + program [pc + 1] | ((int)program [pc + 2] << 8);
+					int tail = pc + (program [pc + 1] | ((int)program [pc + 2] << 8));
  					start = ReadInt (program, pc + 3);
  					end = ReadInt (program, pc + 7);
 					//Console.WriteLine ("min: {0}, max: {1} tail: {2}", start, end, tail);
