@@ -1,3 +1,8 @@
+2008-11-13  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: added ability to reset child names to a specific
+	value, not only to 0.
+
 2008-10-29  Marek Habersack  <mhabersack@novell.com>
 
 	* StateManagedCollection.cs: IList.Remove should call this.IndexOf

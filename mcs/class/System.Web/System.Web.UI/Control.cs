@@ -584,7 +584,20 @@ namespace System.Web.UI
 
 		internal void ResetChildNames ()
 		{
-			defaultNumberID = 0;
+			ResetChildNames (-1);
+		}
+
+		internal void ResetChildNames (int value)
+		{
+			if (value < 0)
+				defaultNumberID = 0;
+			else
+				defaultNumberID = value;
+		}
+
+		internal int GetDefaultNumberID ()
+		{
+			return defaultNumberID;
 		}
 
 		string GetDefaultName ()
