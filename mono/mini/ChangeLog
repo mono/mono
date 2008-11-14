@@ -1,3 +1,8 @@
+
+Fri Nov 14 12:56:27 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: portability fixes.
+
 2008-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_magic_trampoline): Move the patching of plt
