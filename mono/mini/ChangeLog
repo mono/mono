@@ -1,3 +1,9 @@
+
+Fri Nov 14 15:39:50 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h, mini-ppc.c: avoid using the red zone as some kernels are
+	buggy and will overwrite it.
+
 2008-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Add functionality to emit local symbols to the elf writer.
