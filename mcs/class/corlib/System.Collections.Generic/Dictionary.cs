@@ -694,10 +694,31 @@ namespace System.Collections.Generic {
 			if (array.Length - index < count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
-			for (int i = 0; i < touchedSlots; i++) {
-				if ((linkSlots [i].HashCode & HASH_FLAG) != 0)
-					array.SetValue (new DictionaryEntry (keySlots [i], valueSlots [i]), index++);
+			KeyValuePair<TKey, TValue> [] pairs = array as KeyValuePair<TKey, TValue> [];
+			if (pairs != null) {
+				this.CopyTo (pairs, index);
+				return;
 			}
+
+			DictionaryEntry [] entries = array as DictionaryEntry [];
+			if (entries != null) {
+				for (int i = 0; i < touchedSlots; i++) {
+					if ((linkSlots [i].HashCode & HASH_FLAG) != 0)
+						entries [index++] = new DictionaryEntry (keySlots [i], valueSlots [i]);
+				}
+				return;
+			}
+
+			object [] objects = array as object [];
+			if (objects != null && objects.GetType () == typeof (object [])) {
+				for (int i = 0; i < touchedSlots; i++) {
+					if ((linkSlots [i].HashCode & HASH_FLAG) != 0)
+						objects [index++] = new KeyValuePair<TKey, TValue> (keySlots [i], valueSlots [i]);
+				}
+				return;
+			}
+
+			throw new ArgumentException ("Invalid array type");
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
