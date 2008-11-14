@@ -1,5 +1,7 @@
 2008-11-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* domain-internals.h (MonoDomain): Update MONO_DOMAIN_LAST_GC_TRACKED.
+
 	* reflection.c (mono_type_get_object): Special case the very common
 	void type.
 
