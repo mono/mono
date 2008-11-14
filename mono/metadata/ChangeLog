@@ -1,3 +1,11 @@
+2008-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_type_get_object): Special case the very common
+	void type.
+
+	* domain-internals.h (struct _MonoDomain): Add 'typeof_void' field to
+	hold typeof(void).
+
 2008-11-13  Bill Holmes  <billholmes54@gmail.com>
 
 	* process.h : Adding method declaration for
