@@ -1,3 +1,9 @@
+2008-11-14  Marek Habersack  <mhabersack@novell.com>
+
+	* DataBinder.cs: if Eval doesn't find the indicated property, try
+	to find an indexer property on the object and use the expression
+	value as its parameter. Fixes #444725
+
 2008-11-13  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: added ability to reset child names to a specific
