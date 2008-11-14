@@ -657,7 +657,7 @@ namespace System.Collections.Generic {
 
 		bool ICollection<KeyValuePair<TKey, TValue>>.Contains (KeyValuePair<TKey, TValue> keyValuePair)
 		{
-			return this.ContainsKey (keyValuePair.Key);
+			return ContainsKeyValuePair (keyValuePair);
 		}
 
 		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (KeyValuePair<TKey, TValue> [] array, int index)
@@ -667,7 +667,19 @@ namespace System.Collections.Generic {
 
 		bool ICollection<KeyValuePair<TKey, TValue>>.Remove (KeyValuePair<TKey, TValue> keyValuePair)
 		{
+			if (!ContainsKeyValuePair (keyValuePair))
+				return false;
+
 			return Remove (keyValuePair.Key);
+		}
+
+		bool ContainsKeyValuePair (KeyValuePair<TKey, TValue> pair)
+		{
+			TValue value;
+			if (!TryGetValue (pair.Key, out value))
+				return false;
+
+			return EqualityComparer<TValue>.Default.Equals (pair.Value, value);
 		}
 
 		void ICollection.CopyTo (Array array, int index)

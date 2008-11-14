@@ -1,3 +1,9 @@
+2008-11-14  Jb Evain  <jbevain@novell.com>
+
+	* Dictionary.cs: fix ICollection<KeyValuePair<T>>.Remove and .Contains
+	to not only check if the key exists but if the associated value is the
+	good one as well. Fixes #444768.
+
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* Dictionary.cs (Clear): Clear the linkSlots array as well, as 
