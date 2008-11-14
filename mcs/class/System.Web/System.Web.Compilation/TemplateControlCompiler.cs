@@ -602,9 +602,13 @@ namespace System.Web.Compilation
 				if (match.Success) {
 					string bindingName = match.Groups [1].Value;
 					TemplateBuilder templateBuilder = builder.ParentTemplateBuilder;
-					if (templateBuilder == null || templateBuilder.BindingDirection == BindingDirection.OneWay)
+					
+					if (templateBuilder == null)
 						throw new HttpException ("Bind expression not allowed in this context.");
-						
+
+					if (templateBuilder.BindingDirection == BindingDirection.OneWay)
+						return;
+					
 					string id = builder.attribs ["ID"] as string;
 					if (id == null)
 						throw new HttpException ("Control of type '" + builder.ControlType + "' using two-way binding on property '" + propName + "' must have an ID.");
