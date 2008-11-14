@@ -1,3 +1,8 @@
+2008-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Add functionality to emit local symbols to the elf writer.
+	Use it to emit local symbols for all methods so AOTed methods show up with
+	their full name in gdb/valgrind output.
 
 Fri Nov 14 12:56:27 CET 2008 Paolo Molaro <lupus@ximian.com>
 
