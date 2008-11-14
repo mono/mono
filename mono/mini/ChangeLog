@@ -1,4 +1,8 @@
 
+Fri Nov 14 15:54:18 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.h: portability fix.
+
 Fri Nov 14 15:39:50 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.h, mini-ppc.c: avoid using the red zone as some kernels are
