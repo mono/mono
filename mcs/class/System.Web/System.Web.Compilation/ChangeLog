@@ -1,3 +1,10 @@
+2008-11-14  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: treat Eval and Bind expressions as
+	verbatim code. The only difference between the two is that in the
+	latter case Bind is replaced with Eval in the output code. Fixes
+	bug #444725
+
 2008-10-29  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: seal the internal classes.

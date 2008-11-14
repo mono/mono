@@ -67,9 +67,9 @@ namespace System.Web.Compilation
 		
 #if NET_2_0
 		static Regex bindRegex = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		static Regex bindRegexInValue = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex bindRegexInValue = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\).*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
-		static Regex evalRegexInValue = new Regex (@"Eval\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex evalRegexInValue = new Regex (@"Eval\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\).*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		
 		public TemplateControlCompiler (TemplateControlParser parser)
 			: base (parser)
@@ -464,22 +464,16 @@ namespace System.Web.Compilation
 			return str.Substring (idx, len - idx).Trim ();
 		}
 
-		CodeMethodInvokeExpression CreateEvalInvokeExpression (Regex regex, string value, int first, int second)
+		CodeExpression CreateEvalInvokeExpression (Regex regex, string value, bool isBind)
 		{
 			Match match = regex.Match (value);
 			if (!match.Success)
 				return null;
-
-			Group secondGroup = match.Groups [second];
-			CodeMethodInvokeExpression ret = new CodeMethodInvokeExpression ();
-
-			ret.Method = new CodeMethodReferenceExpression (thisRef, "Eval");
-			ret.Parameters.Add (new CodePrimitiveExpression (match.Groups [first].Value));
-
-			if (secondGroup.Success)
-				ret.Parameters.Add (new CodePrimitiveExpression (secondGroup.Value));
-
-			return ret;
+			
+			if (isBind)
+				return new CodeSnippetExpression ("Eval" + value.Substring (4));
+			
+			return new CodeSnippetExpression (value);
 		}
 
 		string DataBoundProperty (ControlBuilder builder, Type type, string varName, string value)
@@ -493,13 +487,13 @@ namespace System.Web.Compilation
 #if NET_2_0
 			bool need_if = false;
 			if (StrUtils.StartsWith (value, "Bind", true)) {
-				valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, 1, 4);
+				valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, true);
 				if (valueExpression != null)
 					need_if = true;
 			} else
 #endif
-			if (StrUtils.StartsWith (value, "Eval", true))
-				valueExpression = CreateEvalInvokeExpression (evalRegexInValue, value, 1, 4);
+				if (StrUtils.StartsWith (value, "Eval", true))
+					valueExpression = CreateEvalInvokeExpression (evalRegexInValue, value, false);
 			
 			if (valueExpression == null)
 				valueExpression = new CodeSnippetExpression (value);
@@ -960,11 +954,11 @@ namespace System.Web.Compilation
 				CodeExpression valueExpression = null;
 #if NET_2_0
 				if (StrUtils.StartsWith (value, "Bind", true))
-					valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, 1, 4);
+					valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, true);
 				else
 #endif
 				if (StrUtils.StartsWith (value, "Eval", true))
-					valueExpression = CreateEvalInvokeExpression (evalRegexInValue, value, 1, 4);
+					valueExpression = CreateEvalInvokeExpression (evalRegexInValue, value, false);
 				
 				if (valueExpression == null && value != null && value.Trim () != String.Empty)
 					valueExpression = new CodeSnippetExpression (value);

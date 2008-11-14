@@ -73,6 +73,9 @@ namespace System.Web.UI {
 				else
 					current = GetPropertyValue (current, prop);
 
+				if (current == null)
+					current = GetIndexedPropertyValue (current, "Items[" + prop + "]");
+
 				if (dot == -1)
 					break;
 				
