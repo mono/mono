@@ -879,6 +879,41 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsTrue (enumerator.MoveNext ());
 			Assert.IsFalse (enumerator.MoveNext ());
 		}
+
+		[Test]
+		public void ICollectionOfKeyValuePairContains ()
+		{
+			var dictionary = new Dictionary<string, int> ();
+			dictionary.Add ("foo", 42);
+			dictionary.Add ("bar", 12);
+
+			var collection = dictionary as ICollection<KeyValuePair<string, int>>;
+
+			Assert.AreEqual (2, collection.Count);
+
+			Assert.IsFalse (collection.Contains (new KeyValuePair<string, int> ("baz", 13)));
+			Assert.IsFalse (collection.Contains (new KeyValuePair<string, int> ("foo", 13)));
+			Assert.IsTrue (collection.Contains (new KeyValuePair<string, int> ("foo", 42)));
+		}
+
+		[Test]
+		public void ICollectionOfKeyValuePairRemove ()
+		{
+			var dictionary = new Dictionary<string, int> ();
+			dictionary.Add ("foo", 42);
+			dictionary.Add ("bar", 12);
+
+			var collection = dictionary as ICollection<KeyValuePair<string, int>>;
+
+			Assert.AreEqual (2, collection.Count);
+
+			Assert.IsFalse (collection.Remove (new KeyValuePair<string, int> ("baz", 13)));
+			Assert.IsFalse (collection.Remove (new KeyValuePair<string, int> ("foo", 13)));
+			Assert.IsTrue (collection.Remove (new KeyValuePair<string, int> ("foo", 42)));
+
+			Assert.AreEqual (12, dictionary ["bar"]);
+			Assert.IsFalse (dictionary.ContainsKey ("foo"));
+		}
 	}
 }
 
