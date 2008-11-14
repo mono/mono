@@ -1,3 +1,10 @@
+2008-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): Move the patching of plt
+	entries out of the if (!generic_shared...) code so it is always done.
+	(mono_class_init_trampoline): Do the patching when running under valgrind
+	too, newer versions of valgrind have no problems with it.
+
 2008-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_writeout): Rework this to make it easier to add
