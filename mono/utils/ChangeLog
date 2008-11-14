@@ -1,3 +1,9 @@
+2008-11-14  Andreas Färber  <andreas.faerber@web.de>
+
+	* Makefile.am (ENABLE_DTRACE): Re-add dtrace -h flag.
+	Fixes #445074.
+	
+	Contributed under MIT/X11 license.
 
 Mon Nov 10 17:38:41 CET 2008 Paolo Molaro <lupus@ximian.com>
 
