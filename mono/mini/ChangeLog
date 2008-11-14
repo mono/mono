@@ -1,3 +1,18 @@
+2008-11-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-intrinsics.c (simd_intrinsic_emit_getter): Generalize this code
+	and make it work with vectors of element sizes 1, 2 and 4.
+
+	* simd-intrinsics.c: Enable getter for all vectors with element size
+	1, 2 or 4.
+
+	* simd-methods.h: Add the names of other getters.
+
+	* mini-ops.h: Added OP_EXTRACT_I2/U2/I1/U1.
+
+	* cpu-x86.md: Same.
+
+	* mini-x86.c: Same.
 
 Fri Nov 14 15:54:18 CET 2008 Paolo Molaro <lupus@ximian.com>
 
