@@ -4,6 +4,9 @@
 	verbatim code. The only difference between the two is that in the
 	latter case Bind is replaced with Eval in the output code. Fixes
 	bug #444725
+	If BindingDirection of the parent template builder is OneWay in
+	RegisterBindingInfo, do not throw an exception but simply do not
+	register the binding.
 
 2008-10-29  Marek Habersack  <mhabersack@novell.com>
 
