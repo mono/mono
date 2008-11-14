@@ -105,6 +105,26 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool IsRetval {
+			get { return (m_attributes & ParameterAttributes.Retval) != 0; }
+			set {
+				if (value)
+					m_attributes |= ParameterAttributes.Retval;
+				else
+					m_attributes &= ~ParameterAttributes.Retval;
+			}
+		}
+
+		public bool IsLcid {
+			get { return (m_attributes & ParameterAttributes.Lcid) != 0; }
+			set {
+				if (value)
+					m_attributes |= ParameterAttributes.Lcid;
+				else
+					m_attributes &= ~ParameterAttributes.Lcid;
+			}
+		}
+
 		public bool IsOptional {
 			get { return (m_attributes & ParameterAttributes.Optional) != 0; }
 			set {
