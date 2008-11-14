@@ -39,7 +39,74 @@ class Example {
       <Docs>
         <param name="docs">To be added.</param>
         <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <c>C:Mono.DocTest.DocAttribute(System.String)</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Field">
+      <MemberSignature Language="C#" Value="public bool Field;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>F:Mono.DocTest.DocAttribute.Field</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FlagsEnum">
+      <MemberSignature Language="C#" Value="public ConsoleModifiers FlagsEnum;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ConsoleModifiers</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>F:Mono.DocTest.DocAttribute.FlagsEnum</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="NonFlagsEnum">
+      <MemberSignature Language="C#" Value="public Mono.DocTest.Color NonFlagsEnum;" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>F:Mono.DocTest.DocAttribute.NonFlagsEnum</c>
+        </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Property">
+      <MemberSignature Language="C#" Value="public Type Property { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>
+          <c>P:Mono.DocTest.DocAttribute.Property</c>
+        </remarks>
       </Docs>
     </Member>
   </Members>

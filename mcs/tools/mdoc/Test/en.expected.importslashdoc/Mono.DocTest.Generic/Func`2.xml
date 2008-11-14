@@ -44,7 +44,7 @@
     <ReturnType>TRet</ReturnType>
     <Attributes>
       <Attribute>
-        <AttributeName>Mono.DocTest.Doc("return")</AttributeName>
+        <AttributeName>Mono.DocTest.Doc("return", Field=false)</AttributeName>
       </Attribute>
     </Attributes>
   </ReturnValue>

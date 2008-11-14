@@ -47,7 +47,34 @@ class Example {
         <member name="C:Mono.DocTest.DocAttribute(System.String)">
             <param name="docs">To be added.</param>
             <summary>To be added.</summary>
-            <remarks>To be added.</remarks>
+            <remarks>
+                <c>C:Mono.DocTest.DocAttribute(System.String)</c>
+            </remarks>
+        </member>
+        <member name="F:Mono.DocTest.DocAttribute.Field">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.DocAttribute.Field</c>
+            </remarks>
+        </member>
+        <member name="F:Mono.DocTest.DocAttribute.FlagsEnum">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.DocAttribute.FlagsEnum</c>
+            </remarks>
+        </member>
+        <member name="F:Mono.DocTest.DocAttribute.NonFlagsEnum">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>F:Mono.DocTest.DocAttribute.NonFlagsEnum</c>
+            </remarks>
+        </member>
+        <member name="P:Mono.DocTest.DocAttribute.Property">
+            <summary>To be added.</summary>
+            <value>To be added.</value>
+            <remarks>
+                <c>P:Mono.DocTest.DocAttribute.Property</c>
+            </remarks>
         </member>
         <member name="T:Mono.DocTest.DocValueType">
             <summary>Process interface</summary>

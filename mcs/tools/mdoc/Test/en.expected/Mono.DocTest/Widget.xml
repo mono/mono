@@ -221,14 +221,14 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>Mono.DocTest.Doc("normal DocAttribute")</AttributeName>
+          <AttributeName>Mono.DocTest.Doc("normal DocAttribute", Field=true)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
         <Attributes>
           <Attribute>
-            <AttributeName>Mono.DocTest.Doc("return:DocAttribute")</AttributeName>
+            <AttributeName>Mono.DocTest.Doc("return:DocAttribute", Property=typeof(Mono.DocTest.Widget))</AttributeName>
           </Attribute>
         </Attributes>
       </ReturnValue>
@@ -236,14 +236,14 @@
         <Parameter Name="c" Type="System.Char">
           <Attributes>
             <Attribute>
-              <AttributeName>Mono.DocTest.Doc("c")</AttributeName>
+              <AttributeName>Mono.DocTest.Doc("c", FlagsEnum=System.ConsoleModifiers.Alt | System.ConsoleModifiers.Control)</AttributeName>
             </Attribute>
           </Attributes>
         </Parameter>
         <Parameter Name="f" Type="System.Single&amp;" RefType="out">
           <Attributes>
             <Attribute>
-              <AttributeName>Mono.DocTest.Doc("f")</AttributeName>
+              <AttributeName>Mono.DocTest.Doc("f", NonFlagsEnum=Mono.DocTest.Color.Red)</AttributeName>
             </Attribute>
           </Attributes>
         </Parameter>

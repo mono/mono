@@ -1,3 +1,59 @@
+2008-11-14  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Don't build monodocer1.exe, and add Mono.Cecil.dll to the 
+	  list of assembly references for mdoc.exe.
+	* Mono.Documentation/monodocer.cs: Migrate from System.Reflection to
+	  Mono.Cecil.  This was done for two reasons:
+	  1. mscorlib.dll: Reflection can load only one mscorlib.dll into an
+	     AppDomain, which must be the same mscorlib.dll as the runtime
+	     version.  Thus, in order to run monodocer on mscorlib.dll v1.1,
+	     monodocer must be a .NET 1.1 application, and to document
+	     mscorlib.dll v2.0, monodocer must be a .net 2.0 app.
+	  1.a I don't think it's feasable to drop support for 
+	     mscorlib.dll v1.1.
+	  1.b This has been previously handled (so far) with conditional 
+	     compilation, but the conditional compilation is painful to
+	     maintain, and prevents use of LINQ in ongoing development.
+	  1.c .NET 4.0 will be coming out "soon" (within 2 years?), and it's
+	     possible that mono will maintain the same limitation, thus
+	     necessitating having *three* different monodocer programs to
+	     document mscorlib.dll for v1.1, v2.0, and v4.0.  Yech.
+	  2. Future directions: It would be nice to parse method/property IL
+	     bodies to determine which exceptions can be generated, thus
+	     generating <exception cref="..."/> stubs.  Even with empty stubs,
+	     I belive this would be useful within e.g. MonoDevelop to know
+	     which exceptions a method is able to generate.
+	     This cannot be done (at present) with System.Reflection, and
+	     would require Mono.Cecil.
+	  Downsides: mdoc now depends upon Mono.Cecil, which is API-unstable.
+	  This will likely also complicate execution under .NET, as Mono.Cecil
+	  would need to be XCOPY deployed into mdoc.exe's directory.
+	* Test/DocTest-v1.cs: Add additional tests for Custom Attribute
+	  generation.
+	* Test/en.expected.importslashdoc/Mono.DocTest.Generic/Func`2.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest.Generic/MyList`2.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/DocAttribute.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Widget+Direction.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml,
+	  Test/en.expected.since/Mono.DocTest.Generic/Func`2.xml,
+	  Test/en.expected.since/Mono.DocTest.Generic/MyList`2.xml,
+	  Test/en.expected.since/Mono.DocTest/DocAttribute.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget+Direction.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget.xml,
+	  Test/en.expected/Mono.DocTest.Generic/Func`2.xml,
+	  Test/en.expected/Mono.DocTest.Generic/MyList`2.xml,
+	  Test/en.expected/Mono.DocTest/DocAttribute.xml,
+	  Test/en.expected/Mono.DocTest/Widget+Direction.xml,
+	  Test/en.expected/Mono.DocTest/Widget.xml,
+	  Test/html.expected/Mono.DocTest.Generic/Func`2.html,
+	  Test/html.expected/Mono.DocTest.Generic/MyList`2.html,
+	  Test/html.expected/Mono.DocTest/DocAttribute.html,
+	  Test/html.expected/Mono.DocTest/Widget+Direction.html,
+	  Test/html.expected/Mono.DocTest/Widget.html,
+	  Test/msxdoc-expected.importslashdoc.xml: Flush -- updated output due
+	  to new custom attributes, better implemented interface detection --
+	  care of the Mono.Cecil migration -- etc.
+
 2008-11-13  Jonathan Pryor <jpryor@novell.com>
 
 	* Test/html.expected/**: Update 

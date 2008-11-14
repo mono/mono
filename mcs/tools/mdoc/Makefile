@@ -10,7 +10,8 @@ LOCAL_MCS_FLAGS = \
 	/resource:Resources/monodoc-ecma.xsd,monodoc-ecma.xsd                       \
 	/resource:Resources/overview.xsl,overview.xsl                               \
 	/resource:Resources/stylesheet.xsl,stylesheet.xsl                           \
-	/r:$(topdir)/class/lib/net_1_1/monodoc.dll
+	/r:$(topdir)/class/lib/net_1_1/monodoc.dll                                  \
+	/r:$(topdir)/class/lib/net_2_0/Mono.Cecil.dll
 
 MDOC_RESOURCES = \
 	Resources/defaulttemplate.xsl     \
@@ -37,20 +38,11 @@ $(PROGRAM) : $(MDOC_RESOURCES) $(topdir)/class/lib/net_1_1/monodoc.dll
 
 include ../../build/executable.make
 
-$(PROGRAM) : monodocer1.exe Makefile
-
-MCS1 = \
-	MONO_PATH="$(topdir)/class/lib/net_1_1$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
-	$(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/net_1_1/mcs.exe
-
-CSCOMPILE1 = $(Q_MCS) $(MCS1) $(USE_MCS_FLAGS)
+$(PROGRAM) : Makefile
 
 MONO = \
 	MONO_PATH="$(topdir)/class/lib/2.0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" \
 	$(RUNTIME) $(RUNTIME_FLAGS)
-
-monodocer1.exe : Mono.Documentation/monodocer.cs
-	$(CSCOMPILE1) -debug+ -d:NET_1_0 Mono.Documentation/monodocer.cs -out:$@ -r:Mono.GetOptions
 
 dist-local: dist-default dist-tests
 

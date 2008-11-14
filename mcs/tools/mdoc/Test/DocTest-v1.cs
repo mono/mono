@@ -76,9 +76,22 @@ namespace Mono.DocTest {
 			[Doc ("documented field")] public string field;
 		}
 		#endregion
+		/// <remarks><c>C:Mono.DocTest.DocAttribute(System.String)</c></remarks>
 		public DocAttribute (string docs)
 		{
 		}
+
+		/// <remarks><c>P:Mono.DocTest.DocAttribute.Property</c></remarks>
+		public Type Property { get; set; }
+
+		/// <remarks><c>F:Mono.DocTest.DocAttribute.Field</c></remarks>
+		public bool Field;
+
+		/// <remarks><c>F:Mono.DocTest.DocAttribute.FlagsEnum</c></remarks>
+		public ConsoleModifiers FlagsEnum;
+
+		/// <remarks><c>F:Mono.DocTest.DocAttribute.NonFlagsEnum</c></remarks>
+		public Color NonFlagsEnum;
 	}
 
 	/// <summary>Possible colors</summary>
@@ -183,6 +196,7 @@ namespace Mono.DocTest {
 		public delegate void Del (int i);
 
 		/// <remarks><c>T:Mono.DocTest.Widget.Direction</c>.</remarks>
+		[Flags]
 		public enum Direction {
 			/// <remarks><c>T:Mono.DocTest.Widget.Direction.North</c>.</remarks>
 			North,
@@ -222,9 +236,10 @@ namespace Mono.DocTest {
 		/// <param name="f">A <see cref="T:System.Single" />.</param>
 		/// <param name="v">A <see cref="T:Mono.DocTest.DocValueType" />.</param>
 		/// <remarks><c>M:Mono.DocTest.Widget.M1(System.Char,System.Signle@,Mono.DocTest.DocValueType@)</c>.</remarks>
-		[return:Doc ("return:DocAttribute")]
-		[Doc("normal DocAttribute")]
-		public void M1 ([Doc ("c")] char c, [Doc ("f")] out float f, 
+		[return:Doc ("return:DocAttribute", Property=typeof(Widget))]
+		[Doc("normal DocAttribute", Field=true)]
+		public void M1 ([Doc ("c", FlagsEnum=ConsoleModifiers.Alt | ConsoleModifiers.Control)] char c, 
+				[Doc ("f", NonFlagsEnum=Color.Red)] out float f, 
 				[Doc ("v")] ref DocValueType v) {f=0;}
 
 		/// <param name="x1">A <see cref="T:System.Int16" /> array.</param>
@@ -358,7 +373,7 @@ namespace Mono.DocTest.Generic {
 	/// <typeparam name="TRet">return type, with attributes!</typeparam>
 	/// <remarks><c>T:Mono.DocTest.Generic.Func`2</c>.</remarks>
 	[Doc ("method")]
-	[return:Doc ("return")]
+	[return:Doc ("return", Field=false)]
 	public delegate TRet Func<[Doc ("arg!")] TArg, [Doc ("ret!")] TRet> (
 			[Doc ("arg-actual")] TArg a
 	) where TArg : Exception;
