@@ -42,15 +42,19 @@ namespace System.Text.RegularExpressions {
 		public void Add (string pattern, RegexOptions options, IMachineFactory factory) {
 			lock (this) {
 				Key k = new Key (pattern, options);
-
-				while (factories.Count >= capacity) {
-					object victim = mru_list.Evict ();
-					if (victim != null)
-						factories.Remove ((Key)victim);
-				}
-				
+				Cleanup ();
 				factories[k] = factory;
 				mru_list.Use (k);
+			}
+		}
+
+		// lock must be held by the caller
+		void Cleanup ()
+		{
+			while (factories.Count >= capacity) {
+				object victim = mru_list.Evict ();
+				if (victim != null)
+					factories.Remove ((Key) victim);
 			}
 		}
 
@@ -64,6 +68,17 @@ namespace System.Text.RegularExpressions {
 			}
 
 			return null;
+		}
+
+		public int Capacity {
+			get { return capacity; }
+			set {
+				// < 0 check done in the caller (Regex.CacheSize)
+				lock (this) {
+					capacity = value;
+					Cleanup ();
+				}
+			}
 		}
 
 		private int capacity;

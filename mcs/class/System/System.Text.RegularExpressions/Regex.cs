@@ -176,21 +176,23 @@ namespace System.Text.RegularExpressions {
 			return re.Split (input);
 		}
 
-#if NET_2_0
-		[MonoTODO ("should be used somewhere ? FactoryCache ?")]
+#if !NET_2_0
+		static FactoryCache cache = new FactoryCache (15);
 		public static int CacheSize {
-			get { return cache_size; }
+			get { return cache.Capacity; }
 			set {
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ("CacheSize");
-				cache_size = value;
+
+				cache.Capacity = value;	
 			}
 		}
+#else
+		static FactoryCache cache = new FactoryCache (200);
 #endif
 
 		// private
 
-		private static FactoryCache cache = new FactoryCache (200);	// TODO put some meaningful number here
 
 		// constructors
 
@@ -228,6 +230,7 @@ namespace System.Text.RegularExpressions {
 		private void InitNewRegex () 
 		{
 			this.machineFactory = CreateMachineFactory (this.pattern, this.roptions);
+			cache.Add (this.pattern, this.roptions, this.machineFactory);
 			this.group_count = machineFactory.GroupCount;
 			this.mapping = machineFactory.Mapping;
 			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
