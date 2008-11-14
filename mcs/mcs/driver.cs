@@ -1409,6 +1409,9 @@ namespace Mono.CSharp
 				warns = value.Split (argument_value_separator);
 				foreach (string wc in warns){
 					try {
+						if (wc.Trim ().Length == 0)
+							continue;
+
 						int warn = Int32.Parse (wc);
 						if (warn < 1) {
 							throw new ArgumentOutOfRangeException("warn");

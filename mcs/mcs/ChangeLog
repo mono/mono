@@ -1,3 +1,8 @@
+2008-11-14  Jb Evain  <jbevain@novell.com>
+
+	* driver.cs: ignore empty -nowarn argument such as
+	the one in -nowarn:12,13,,.
+
 2008-11-13  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #444271
