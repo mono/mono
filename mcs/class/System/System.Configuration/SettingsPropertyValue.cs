@@ -194,7 +194,7 @@ namespace System.Configuration
 			try {
 				switch (property.SerializeAs) {
 					case SettingsSerializeAs.String:
-						if (serializedValue is string && ((string) serializedValue).Length > 0)
+						if (serializedValue is string)
 							deserializedObject = TypeDescriptor.GetConverter (property.PropertyType).ConvertFromInvariantString ((string) serializedValue);
 						break;
 #if (XML_DEP)
