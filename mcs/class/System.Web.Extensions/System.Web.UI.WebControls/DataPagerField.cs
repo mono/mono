@@ -178,13 +178,17 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		protected bool IsTrackingViewState {
+			get { return _isTrackingViewState; }
+		}
+		
 		void IStateManager.TrackViewState ()
 		{
 			TrackViewState ();
 		}
 
 		bool IStateManager.IsTrackingViewState {
-			get { return _isTrackingViewState; }
+			get { return IsTrackingViewState; }
 		}
 
 		object IStateManager.SaveViewState ()

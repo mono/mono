@@ -1,3 +1,39 @@
+2008-11-15  Marek Habersack  <mhabersack@novell.com>
+
+	* ListViewInsertEventArgs.cs: implemented the Values property.
+
+	* ListView.cs: CreateChildControls uses the Items collection to
+	store the created items.
+	InsertNewItem triggers page validation if necessary.
+	Part of InsertNewItem code refactored to DoInsert.
+	Implemented handling of the Insert and Select commands.
+
+	* TemplatePagerField.cs: implemented all the code.
+
+	* DataPager.cs: CreatePagerFields now adds the new pager field
+	control before creating data pagers in it and before binding to
+	data. This avoids situation in which the field is parentless.
+	FindPageableItemContainer now properly finds the container if it's
+	placed directly in the Page.
+	{Load,Save}ViewState don't use a Pair anymore, object array is
+	used for compatibility with MS.NET
+
+	* NumericPagerField.cs, NextPreviousPagerField.cs,
+	DataPagerFieldCommandEventArgs.cs: minor refactoring
+
+	* ListViewSelectEventArgs.cs: implemented all the code.
+
+	* ListViewInsertedEventArgs.cs: Values allocates the dictionary on
+	demand now.
+	Initialize all the properties in constructor
+
+	* DataPagerCommandEventArgs.cs: added
+
+	* DataPagerField.cs: implemented IsTrackingViewState
+
+	* DataPagerFieldItem.cs: implements the INonBindingContainer
+	interface.
+
 2008-11-13  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: implemented support for Edit, Update and Delete.

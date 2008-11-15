@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -37,11 +37,12 @@ namespace System.Web.UI.WebControls
 	{
 		public ListViewSelectEventArgs (int newSelectedIndex)
 		{
+			NewSelectedIndex = newSelectedIndex;
 		}
 		
 		public int NewSelectedIndex {
-			get { throw new NotImplementedException (); }
-			set { }
+			get;
+			set;
 		}
 	}
 }

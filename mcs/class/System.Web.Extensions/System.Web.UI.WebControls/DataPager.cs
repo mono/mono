@@ -118,11 +118,11 @@ namespace System.Web.UI.WebControls
 			
 			foreach (DataPagerField dpf in _fields) {
 				control = new DataPagerFieldItem (dpf, this);
+				controls.Add (control);
 				if (dpf.Visible) {
 					dpf.CreateDataPagers (control, _startRowIndex, _maximumRows, _totalRowCount, _fields.IndexOf (dpf));
 					control.DataBind ();
 				}
-				controls.Add (control);
 			}
 
 			_createPagerFieldsRunning = false;
@@ -145,9 +145,11 @@ namespace System.Web.UI.WebControls
 			if (page != null && !String.IsNullOrEmpty (pagedControlID)) {
 				Control ctl = null;
 				container = NamingContainer;
-				while (container != null && container != page) {
+				while (container != null) {
 					ctl = container.FindControl (pagedControlID);
 					if (ctl != null)
+						break;
+					if (container == page)
 						break;
 					container = container.NamingContainer;
 				}
@@ -211,13 +213,13 @@ namespace System.Web.UI.WebControls
 
 		protected override void LoadViewState (object savedState)
 		{
-			Pair state = savedState as Pair;
+			var state = savedState as object[];
 
-			if (state == null)
+			if (state == null || state.Length != 2)
 				return;
 
-			base.LoadViewState (state.First);
-			object myState = state.Second;
+			base.LoadViewState (state [0]);
+			object myState = state [1];
 			if (myState != null)
 				((IStateManager) Fields).LoadViewState (myState);
 		}
@@ -348,10 +350,10 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState ()
 		{
-			Pair ret = new Pair ();
-
-			ret.First = base.SaveViewState ();
-			ret.Second = _fields != null ? ((IStateManager) _fields).SaveViewState () : null;
+			var ret = new object [2];
+			
+			ret [0] = base.SaveViewState ();
+			ret [1] = _fields != null ? ((IStateManager) _fields).SaveViewState () : null;
 
 			return ret;
 		}

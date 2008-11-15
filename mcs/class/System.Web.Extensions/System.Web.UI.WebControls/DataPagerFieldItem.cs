@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls
 {
 	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class DataPagerFieldItem : Control, INamingContainer
+	public class DataPagerFieldItem : Control, INamingContainer, INonBindingContainer
 	{
 		public DataPagerFieldItem (DataPagerField field, DataPager pager)
 		{

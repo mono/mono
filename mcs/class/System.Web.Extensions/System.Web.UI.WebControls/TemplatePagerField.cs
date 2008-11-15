@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -29,6 +29,7 @@
 //
 #if NET_3_5
 using System;
+using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.UI;
@@ -39,22 +40,74 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class TemplatePagerField : DataPagerField
 	{
+		static object PagerCommandEvent = new object ();
+
+		EventHandlerList events = new EventHandlerList ();
+		
+		public event EventHandler <DataPagerCommandEventArgs> PagerCommand {
+			add { events.AddHandler (PagerCommandEvent, value); }
+			remove { events.RemoveHandler (PagerCommandEvent, value); }
+		}
+
+		[TemplateContainerAttribute(typeof(DataPagerFieldItem), BindingDirection.TwoWay)]
+		[BrowsableAttribute(false)]
+		[PersistenceModeAttribute(PersistenceMode.InnerProperty)]
+		public virtual ITemplate PagerTemplate {
+			get;
+			set;
+		}
+
 		public TemplatePagerField ()
 		{
 		}
 
-		public override void CreateDataPagers (DataPagerFieldItem container, int startRowIndex, int maximumRows,
-						       int totalRowCount, int fieldIndex)
+		protected override void CopyProperties (DataPagerField newField)
 		{
+			base.CopyProperties (newField);
+
+			var field = newField as TemplatePagerField;
+			if (field == null)
+				return;
+
+			field.PagerTemplate = PagerTemplate;
+		}
+
+		public override void CreateDataPagers (DataPagerFieldItem container, int startRowIndex, int maximumRows, int totalRowCount, int fieldIndex)
+		{
+			ITemplate pagerTemplate = PagerTemplate;
+			if (pagerTemplate == null)
+				return;
+
+			pagerTemplate.InstantiateIn (container);
 		}
 
 		protected override DataPagerField CreateField ()
 		{
-			throw new NotImplementedException ();
+			return new TemplatePagerField ();
 		}
 
 		public override void HandleEvent (CommandEventArgs e)
 		{
+			var args = e as DataPagerCommandEventArgs;
+			if (args == null)
+				return;
+			
+			DataPager pager = DataPager;
+			var eventArgs = new DataPagerCommandEventArgs (this, pager.TotalRowCount, e, args.Item);
+			OnPagerCommand (eventArgs);
+
+			int newStartRowIndex = eventArgs.NewStartRowIndex;
+			if (newStartRowIndex < 0)
+				return;
+
+			pager.SetPageProperties (newStartRowIndex, eventArgs.NewMaximumRows, true);
+		}
+
+		protected virtual void OnPagerCommand (DataPagerCommandEventArgs e)
+		{
+			EventHandler <DataPagerCommandEventArgs> eh = events [PagerCommandEvent] as EventHandler <DataPagerCommandEventArgs>;
+			if (eh != null)
+				eh (this, e);
 		}
 	}
 }

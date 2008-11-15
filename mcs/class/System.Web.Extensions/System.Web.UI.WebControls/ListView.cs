@@ -769,7 +769,7 @@ namespace System.Web.UI.WebControls
 
 		protected virtual int CreateChildControls (IEnumerable dataSource, bool dataBinding)
 		{
-			IList <ListViewDataItem> retList = Items;
+			IList <ListViewDataItem> retList = null;
 			EnsureLayoutTemplate ();
 			RemoveItems ();
 			
@@ -946,7 +946,9 @@ namespace System.Web.UI.WebControls
 				ResetChildNames (_firstIdAfterLayoutTemplate);
 			}
 			
-			List <ListViewDataItem> ret = new List <ListViewDataItem> ();
+			IList <ListViewDataItem> ret = Items;
+			ret.Clear ();
+			
 			ListViewItem lvi;
 			ListViewItem container;
 			bool needSeparator = false;
@@ -1110,40 +1112,13 @@ namespace System.Web.UI.WebControls
 			if (insertItem == null)
 				throw new InvalidOperationException ("The ListView control does not have an insert item.");
 
-			DataSourceView dsv = null;
-			ListViewInsertEventArgs eventArgs = null;
-			
-			if (IsBoundUsingDataSourceID) {
-				dsv = GetData ();
-				if (dsv == null)
-					throw new InvalidOperationException ("Missing data.");
-
-				eventArgs = new ListViewInsertEventArgs (insertItem);
-				ExtractItemValues (eventArgs.Values, insertItem, true);
-			} else
-				eventArgs = new ListViewInsertEventArgs (insertItem);
-
-			OnItemInserting (eventArgs);
-			if (!eventArgs.Cancel && IsBoundUsingDataSourceID) {
-				_lastInsertValues = eventArgs.Values;
-				dsv.Insert (_lastInsertValues, new DataSourceViewOperationCallback (InsertNewItemCallback));
+			if (causesValidation) {
+				Page page = Page;
+				if (page != null)
+					page.Validate ();
 			}
-		}
-
-		bool InsertNewItemCallback (int recordsAffected, Exception ex)
-		{
-			var eventArgs = new ListViewInsertedEventArgs (_lastInsertValues, recordsAffected, ex);
-			OnItemInserted (eventArgs);
-			_lastInsertValues = null;
-
-			if (ex != null && !eventArgs.ExceptionHandled)
-				return false;
-
-			// This will effectively reset the insert values
-			if (!eventArgs.KeepInInsertMode)
-				RequiresDataBinding = true;
-
-			return true;
+			
+			DoInsert (insertItem, causesValidation);
 		}
 		
 		protected virtual void InstantiateEmptyDataTemplate (Control container)
@@ -1308,6 +1283,10 @@ namespace System.Web.UI.WebControls
 				DoCancel (args);
 			else if (String.Compare (commandName, DataControlCommands.DeleteCommandName, StringComparison.OrdinalIgnoreCase) == 0)
 				DoDelete (args);
+			else if (String.Compare (commandName, DataControlCommands.InsertCommandName, StringComparison.OrdinalIgnoreCase) == 0)
+				DoInsert (args, causesValidation);
+			else if (String.Compare (commandName, DataControlCommands.SelectCommandName, StringComparison.OrdinalIgnoreCase) == 0)
+				DoSelect (args);
 			else if (String.Compare (commandName, DataControlCommands.UpdateCommandName, StringComparison.OrdinalIgnoreCase) == 0) {
 				if (causesValidation) {
 					Page page = Page;
@@ -1330,6 +1309,76 @@ namespace System.Web.UI.WebControls
 			return index;
 		}
 
+		void DoSelect (ListViewCommandEventArgs args)
+		{
+			ListViewDataItem item = args.Item as ListViewDataItem;
+			int index = GetItemIndex (item);
+			if (index < 0)
+				return;
+
+			var selectingArgs = new ListViewSelectEventArgs (index);
+			OnSelectedIndexChanging (selectingArgs);
+			if (selectingArgs.Cancel)
+				return;
+
+			SelectedIndex = selectingArgs.NewSelectedIndex;
+			OnSelectedIndexChanged (EventArgs.Empty);
+		}
+		
+		void DoInsert (ListViewCommandEventArgs args, bool causesValidation)
+		{
+			ListViewItem item = args.Item as ListViewItem;
+			if (item == null)
+				return;
+
+			DoInsert (item, causesValidation);
+		}
+
+		void DoInsert (ListViewItem item, bool causesValidation)
+		{
+			if (causesValidation) {
+				Page page = Page;
+				if (page != null && !page.IsValid)
+					return;
+			}
+
+			DataSourceView view;
+			ListViewInsertEventArgs insertingArgs;
+			bool usingDataSourceID = IsBoundUsingDataSourceID;
+			
+			if (usingDataSourceID) {
+				view = GetData ();
+				if (view == null)
+					throw NoDataSourceView ();
+
+				insertingArgs = new ListViewInsertEventArgs (item);
+				ExtractItemValues (insertingArgs.Values, item, true);
+			} else {
+				view = null;
+				insertingArgs = new ListViewInsertEventArgs (item);
+			}
+			
+			OnItemInserting (insertingArgs);
+			if (!usingDataSourceID || insertingArgs.Cancel)
+				return;
+			
+			_lastInsertValues = insertingArgs.Values;
+			view.Insert (_lastInsertValues, DoInsertCallback);
+		}
+
+		bool DoInsertCallback (int recordsAffected, Exception ex)
+		{
+			var insertedArgs = new ListViewInsertedEventArgs (recordsAffected, ex, _lastInsertValues);
+			OnItemInserted (insertedArgs);
+			_lastInsertValues = null;
+
+			// This will effectively reset the insert values
+			if (!insertedArgs.KeepInInsertMode)
+				RequiresDataBinding = true;
+
+			return insertedArgs.ExceptionHandled;
+		}
+		
 		void DoDelete (ListViewCommandEventArgs args)
 		{
 			ListViewDataItem item = args.Item as ListViewDataItem;

@@ -1,10 +1,10 @@
 //
-// System.Web.UI.WebControls.ListView
+// System.Web.UI.WebControls.DataPager
 //
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007-2008 Novell, Inc
+// (C) 2008 Novell, Inc
 //
 
 //
@@ -29,31 +29,47 @@
 //
 #if NET_3_5
 using System;
-using System.Collections.Specialized;
-using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls
 {
-	public class ListViewInsertEventArgs : CancelEventArgs
+	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class DataPagerCommandEventArgs : CommandEventArgs
 	{
-		IOrderedDictionary _values;
-
-		public ListViewInsertEventArgs (ListViewItem item)
-		{
-			Item = item;
+		public DataPagerFieldItem Item {
+			get;
+			private set;
 		}
-		
-		public ListViewItem Item {
+
+		public int NewMaximumRows {
+			get;
+			set;
+		}
+
+		public int NewStartRowIndex {
+			get;
+			set;
+		}
+
+		public DataPagerField PagerField {
+			get;
+			private set;
+		}
+
+		public int TotalRowCount {
 			get;
 			private set;
 		}
 		
-		public IOrderedDictionary Values {
-			get {
-				if (_values == null)
-					_values = new OrderedDictionary ();
-				return _values;
-			}
+		public DataPagerCommandEventArgs (DataPagerField pagerField, int totalRowCount, CommandEventArgs originalArgs, DataPagerFieldItem item)
+			: base (originalArgs)
+		{
+			Item = item;
+			NewMaximumRows = -1;
+			NewStartRowIndex = -1;
+			PagerField = pagerField;
+			TotalRowCount = totalRowCount;
 		}
 	}
 }

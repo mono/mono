@@ -35,18 +35,20 @@ namespace System.Web.UI.WebControls
 {
 	public class ListViewInsertedEventArgs : EventArgs
 	{
-		internal ListViewInsertedEventArgs (IOrderedDictionary values, int affectedRows, Exception exception)
+		IOrderedDictionary _values;
+		
+		internal ListViewInsertedEventArgs (int affectedRows, Exception exception, IOrderedDictionary values)
 			: this (affectedRows, exception)
 		{
-			Values = values;
-			ExceptionHandled = false;
-			KeepInInsertMode = false;
+			_values = values;
 		}
 		
 		public ListViewInsertedEventArgs (int affectedRows, Exception exception)
 		{
 			AffectedRows = affectedRows;
 			Exception = exception;
+			ExceptionHandled = false;
+			KeepInInsertMode = false;
 		}
 		
 		public int AffectedRows {
@@ -70,8 +72,11 @@ namespace System.Web.UI.WebControls
 		}
 		
 		public IOrderedDictionary Values {
-			get;
-			private set;
+			get {
+				if (_values == null)
+					_values = new OrderedDictionary ();
+				return _values;
+			}
 		}
 	}
 }

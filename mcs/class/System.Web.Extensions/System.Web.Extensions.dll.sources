@@ -76,6 +76,7 @@
 ./System.Web.UI/RegisteredScript.cs
 ./System.Web.UI/RegisteredScriptType.cs
 ./System.Web.UI.WebControls/DataPager.cs
+./System.Web.UI.WebControls/DataPagerCommandEventArgs.cs
 ./System.Web.UI.WebControls/DataPagerFieldCollection.cs
 ./System.Web.UI.WebControls/DataPagerFieldCommandEventArgs.cs
 ./System.Web.UI.WebControls/DataPagerField.cs

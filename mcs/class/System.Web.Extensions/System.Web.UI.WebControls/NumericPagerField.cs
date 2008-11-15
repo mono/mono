@@ -58,18 +58,19 @@ namespace System.Web.UI.WebControls
 			base.CopyProperties (newField);
 
 			NumericPagerField field = newField as NumericPagerField;
-			if (field != null) {
-				field.ButtonCount = ButtonCount;
-				field.ButtonType = ButtonType;
-				field.CurrentPageLabelCssClass = CurrentPageLabelCssClass;
-				field.NextPageImageUrl = NextPageImageUrl;
-				field.NextPageText = NextPageText;
-				field.NextPreviousButtonCssClass = NextPreviousButtonCssClass;
-				field.NumericButtonCssClass = NumericButtonCssClass;
-				field.PreviousPageImageUrl = PreviousPageImageUrl;
-				field.PreviousPageText = PreviousPageText;
-				field.RenderNonBreakingSpacesBetweenControls = RenderNonBreakingSpacesBetweenControls;
-			}
+			if (field == null)
+				return;
+			
+			field.ButtonCount = ButtonCount;
+			field.ButtonType = ButtonType;
+			field.CurrentPageLabelCssClass = CurrentPageLabelCssClass;
+			field.NextPageImageUrl = NextPageImageUrl;
+			field.NextPageText = NextPageText;
+			field.NextPreviousButtonCssClass = NextPreviousButtonCssClass;
+			field.NumericButtonCssClass = NumericButtonCssClass;
+			field.PreviousPageImageUrl = PreviousPageImageUrl;
+			field.PreviousPageText = PreviousPageText;
+			field.RenderNonBreakingSpacesBetweenControls = RenderNonBreakingSpacesBetweenControls;
 		}
 
 		public override void CreateDataPagers (DataPagerFieldItem container, int startRowIndex, int maximumRows, int totalRowCount, int fieldIndex)

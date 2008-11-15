@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007 Novell, Inc
+// (C) 2007-2008 Novell, Inc
 //
 
 //
@@ -40,22 +40,21 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DataPagerFieldCommandEventArgs : CommandEventArgs
 	{
-		DataPagerFieldItem _item;
-		object _commandSource;
+		public object CommandSource {
+			get;
+			private set;
+		}
+
+		public DataPagerFieldItem Item {
+			get;
+			private set;
+		}
 		
 		public DataPagerFieldCommandEventArgs (DataPagerFieldItem item, object commandSource, CommandEventArgs originalArgs)
 			: base (originalArgs)
 		{
-			_item = item;
-			_commandSource = commandSource;
-		}
-
-		public object CommandSource {
-			get { return _commandSource; }
-		}
-
-		public DataPagerFieldItem Item {
-			get { return _item; }
+			Item = item;
+			CommandSource = commandSource;
 		}
 	}
 }

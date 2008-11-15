@@ -54,22 +54,23 @@ namespace System.Web.UI.WebControls
 			base.CopyProperties (newField);
 
 			NextPreviousPagerField field = newField as NextPreviousPagerField;
-			if (field != null) {
-				field.ButtonCssClass = ButtonCssClass;
-				field.ButtonType = ButtonType;
-				field.FirstPageImageUrl = FirstPageImageUrl;
-				field.FirstPageText = FirstPageText;
-				field.LastPageImageUrl = LastPageImageUrl;
-				field.LastPageText = LastPageText;
-				field.NextPageImageUrl = NextPageImageUrl;
-				field.NextPageText = NextPageText;
-				field.PreviousPageImageUrl = PreviousPageImageUrl;
-				field.PreviousPageText = PreviousPageText;
-				field.ShowFirstPageButton = ShowFirstPageButton;
-				field.ShowLastPageButton = ShowLastPageButton;
-				field.ShowNextPageButton = ShowNextPageButton;
-				field.ShowPreviousPageButton = ShowPreviousPageButton;
-			}
+			if (field == null)
+				return;
+			
+			field.ButtonCssClass = ButtonCssClass;
+			field.ButtonType = ButtonType;
+			field.FirstPageImageUrl = FirstPageImageUrl;
+			field.FirstPageText = FirstPageText;
+			field.LastPageImageUrl = LastPageImageUrl;
+			field.LastPageText = LastPageText;
+			field.NextPageImageUrl = NextPageImageUrl;
+			field.NextPageText = NextPageText;
+			field.PreviousPageImageUrl = PreviousPageImageUrl;
+			field.PreviousPageText = PreviousPageText;
+			field.ShowFirstPageButton = ShowFirstPageButton;
+			field.ShowLastPageButton = ShowLastPageButton;
+			field.ShowNextPageButton = ShowNextPageButton;
+			field.ShowPreviousPageButton = ShowPreviousPageButton;
 		}
 
 		// What's the fieldIndex used for?
@@ -147,6 +148,7 @@ namespace System.Web.UI.WebControls
 							Button btn = new Button ();
 							btn.CommandName = commandName;
 							btn.Text = text;
+							ctl = btn;
 							break;
 
 						case ButtonType.Link:
