@@ -1,5 +1,15 @@
 2008-11-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.h: New file, contains definitions for stack unwinding.
+
+	* mini.c (mono_emit_unwind_op): New helper function to append an unwind op
+	to cfg->unwind_ops.
+	
+	* aot-compiler.c: Generalize the emitting of unwind information to use the
+	information in cfg->unwind_ops.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Emit unwind info.
+
 	* aot-compiler.c: Emit dwarf unwind information so gdb can unwind through
 	AOT method frames. Enable writing symbols for methods by default.
 
