@@ -1,3 +1,7 @@
+2008-11-14  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: Use Mono.Cecil from class/lib/net_1_1, not net_2_0.
+
 2008-11-14  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Don't build monodocer1.exe, and add Mono.Cecil.dll to the 
