@@ -681,10 +681,6 @@ namespace System {
 		[CLSCompliant (false)]
 		public static char ToChar (ushort value) 
 		{ 
-			if (value > Char.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Char.MaxValue"));
-	  
 			return (char)value; 
 		}
 
