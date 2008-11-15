@@ -200,8 +200,9 @@ namespace System.Web.UI
 		public Control BindingContainer {
 			get {
 				Control container = NamingContainer;
-				if (container != null && (container.stateMask & BINDING_CONTAINER) == 0)
+				if (container != null && container is INonBindingContainer || (stateMask & BINDING_CONTAINER) == 0)
 					container = container.BindingContainer;
+
 				return container;
 			}
 		}
@@ -576,7 +577,7 @@ namespace System.Web.UI
 			get { return (stateMask & AUTO_EVENT_WIREUP) != 0; }
 			set { SetMask (AUTO_EVENT_WIREUP, value); }
 		}
-
+		
 		internal void SetBindingContainer (bool isBC)
 		{
 			SetMask (BINDING_CONTAINER, isBC);

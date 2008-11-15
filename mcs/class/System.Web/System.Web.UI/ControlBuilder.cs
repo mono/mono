@@ -197,10 +197,14 @@ namespace System.Web.UI {
 #endif
 
 				if (cb is TemplateBuilder) {
-					Type ct =((TemplateBuilder) cb).ContainerType;
-					if (ct == null)
-						return typeof (Control);
-					return ct;
+					Type ct = ((TemplateBuilder) cb).ContainerType;
+					if (typeof (INonBindingContainer).IsAssignableFrom (ct))
+						return MyNamingContainer.BindingContainerType;
+					
+					if (ct != null)
+						return ct;
+
+					return ControlType;
 				}
 
 				return cb.ControlType;

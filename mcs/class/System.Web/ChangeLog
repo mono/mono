@@ -1,3 +1,7 @@
+2008-11-15  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added System.Web.UI/INonBindingContainer.cs
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Test/Makefile: Add doc-update target support.

@@ -1148,7 +1148,7 @@ namespace System.Web.UI.WebControls
 
 		#endregion
 
-		class BaseChangePasswordContainer : Table, INamingContainer
+			class BaseChangePasswordContainer : Table, INamingContainer, INonBindingContainer
 		{
 			protected readonly ChangePassword _owner = null;
 			TableCell _containerCell = null;
@@ -1156,7 +1156,6 @@ namespace System.Web.UI.WebControls
 			public BaseChangePasswordContainer (ChangePassword owner)
 			{
 				_owner = owner;
-				SetBindingContainer (false);
 				InitTable ();
 			}
 

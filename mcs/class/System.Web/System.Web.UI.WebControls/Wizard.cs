@@ -1476,11 +1476,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		class TableCellNamingContainer : TableCell, INamingContainer
+		class TableCellNamingContainer : TableCell, INamingContainer, INonBindingContainer
 		{
 			public TableCellNamingContainer ()
 			{
-				SetBindingContainer (false);
 			}
 		}
 
@@ -1517,7 +1516,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		class WizardHeaderCell : TableCell, INamingContainer
+		class WizardHeaderCell : TableCell, INamingContainer, INonBindingContainer
 		{
 			bool _initialized;
 
@@ -1527,7 +1526,6 @@ namespace System.Web.UI.WebControls
 			
 			public WizardHeaderCell ()
 			{
-				SetBindingContainer (false);
 			}
 			
 			public void ConfirmInitState ()
@@ -1681,7 +1679,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		internal class BaseWizardContainer : Table, INamingContainer
+		internal class BaseWizardContainer : Table, INamingContainer, INonBindingContainer
 		{
 			public TableCell InnerCell {
 				get { return Rows [0].Cells [0]; }
@@ -1689,7 +1687,6 @@ namespace System.Web.UI.WebControls
 
 			internal BaseWizardContainer ()
 			{
-				SetBindingContainer (false);
 				InitTable ();
 			}
 
@@ -1715,11 +1712,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		internal class BaseWizardNavigationContainer : Control, INamingContainer
+		internal class BaseWizardNavigationContainer : Control, INamingContainer, INonBindingContainer
 		{
 			internal BaseWizardNavigationContainer ()
 			{
-				SetBindingContainer (false);
 			}
 
 			public virtual void PrepareControlHierarchy ()

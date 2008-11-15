@@ -40,7 +40,7 @@ namespace System.Web.UI.WebControls
 #if !TARGET_JVM
 	[ControlBuilder(typeof(ContentBuilderInternal))]
 #endif
-	public class Content: Control, INamingContainer
+	public class Content: Control, INamingContainer, INonBindingContainer
 	{
 		[ThemeableAttribute (false)]
 		[DefaultValueAttribute ("")]

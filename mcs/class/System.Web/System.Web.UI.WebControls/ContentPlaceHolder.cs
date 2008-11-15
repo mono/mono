@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
                                
 	[ToolboxDataAttribute ("<;{0}:ContentPlaceHolder runat=&quot;server&quot;></{0}:ContentPlaceHolder>")]
 	[ControlBuilder(typeof(ContentPlaceHolderBuilder))] 
-	public class ContentPlaceHolder: Control, INamingContainer
+	public class ContentPlaceHolder: Control, INamingContainer, INonBindingContainer
 	{
 	}
 }

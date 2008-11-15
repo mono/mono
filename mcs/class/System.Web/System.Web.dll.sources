@@ -619,6 +619,7 @@ System.Web.UI/IHierarchyData.cs
 System.Web.UI/ImageClickEventArgs.cs
 System.Web.UI/ImageClickEventHandler.cs
 System.Web.UI/INamingContainer.cs
+System.Web.UI/INonBindingContainer.cs
 System.Web.UI/INavigateUIData.cs
 System.Web.UI/IParserAccessor.cs
 System.Web.UI/IPostBackDataHandler.cs
