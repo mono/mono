@@ -1,3 +1,8 @@
+2008-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Emit dwarf unwind information so gdb can unwind through
+	AOT method frames. Enable writing symbols for methods by default.
+
 2008-11-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c (simd_intrinsic_emit_getter): Generalize this code
