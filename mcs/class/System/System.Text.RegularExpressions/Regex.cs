@@ -176,7 +176,7 @@ namespace System.Text.RegularExpressions {
 			return re.Split (input);
 		}
 
-#if !NET_2_0
+#if NET_2_0
 		static FactoryCache cache = new FactoryCache (15);
 		public static int CacheSize {
 			get { return cache.Capacity; }
