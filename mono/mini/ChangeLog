@@ -1,4 +1,10 @@
 2008-11-17  Zoltan Varga  <vargaz@gmail.com>
+	
+	* simple-cee-ops.h simple-mini-ops.h: Removed.
+
+	* mini-ops.h *.c cpu-<ARCH>.md: Remove more unused opcodes.
+	
+2008-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* aliasing.h: Removed.
 
