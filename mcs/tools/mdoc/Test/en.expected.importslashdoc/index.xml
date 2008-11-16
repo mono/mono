@@ -35,6 +35,8 @@
       <Type Name="Func`2" DisplayName="Func&lt;TArg,TRet&gt;" Kind="Delegate" />
       <Type Name="GenericBase`1" DisplayName="GenericBase&lt;U&gt;" Kind="Class" />
       <Type Name="GenericBase`1+FooEventArgs" DisplayName="GenericBase&lt;U&gt;+FooEventArgs" Kind="Class" />
+      <Type Name="GenericBase`1+NestedCollection" DisplayName="GenericBase&lt;U&gt;+NestedCollection" Kind="Class" />
+      <Type Name="GenericBase`1+NestedCollection+Enumerator" DisplayName="GenericBase&lt;U&gt;+NestedCollection+Enumerator" Kind="Structure" />
       <Type Name="IFoo`1" DisplayName="IFoo&lt;T&gt;" Kind="Interface" />
       <Type Name="MyList`1" DisplayName="MyList&lt;T&gt;" Kind="Class" />
       <Type Name="MyList`1+Helper`2" DisplayName="MyList&lt;T&gt;+Helper&lt;U,V&gt;" Kind="Class" />

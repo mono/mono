@@ -454,6 +454,13 @@ namespace Mono.DocTest.Generic {
 
 		/// <remarks>E:Mono.DocTest.Generic.GenericBase`1.MyEvent</remarks>
 		public event EventHandler<FooEventArgs> MyEvent;
+
+		/// <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection</remarks>
+		public class NestedCollection {
+			/// <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection.Enumerator</remarks>
+			public struct Enumerator {
+			}
+		}
 	}
 	
 	/// <typeparam name="T">I'm Dying Here!</typeparam>

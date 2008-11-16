@@ -593,6 +593,18 @@ class Example {
             <summary>To be added.</summary>
             <remarks>To be added.</remarks>
         </member>
+        <member name="T:Mono.DocTest.Generic.GenericBase`1.NestedCollection">
+            <summary>To be added.</summary>
+            <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection</remarks>
+        </member>
+        <member name="C:Mono.DocTest.Generic.GenericBase`1.NestedCollection">
+            <summary>To be added.</summary>
+            <remarks>To be added.</remarks>
+        </member>
+        <member name="T:Mono.DocTest.Generic.GenericBase`1.NestedCollection.Enumerator">
+            <summary>To be added.</summary>
+            <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection.Enumerator</remarks>
+        </member>
         <member name="T:Mono.DocTest.Generic.IFoo`1">
             <typeparam name="T">T generic param</typeparam>
             <summary>To be added.</summary>

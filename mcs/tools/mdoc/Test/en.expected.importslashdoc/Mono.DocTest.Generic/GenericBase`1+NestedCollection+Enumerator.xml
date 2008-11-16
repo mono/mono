@@ -1,0 +1,19 @@
+<Type Name="GenericBase&lt;U&gt;+NestedCollection+Enumerator" FullName="Mono.DocTest.Generic.GenericBase&lt;U&gt;+NestedCollection+Enumerator">
+  <TypeSignature Language="C#" Value="public struct GenericBase&lt;U&gt;.NestedCollection.Enumerator" />
+  <AssemblyInfo>
+    <AssemblyName>DocTest</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="U" />
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ValueType</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>T:Mono.DocTest.Generic.GenericBase`1.NestedCollection.Enumerator</remarks>
+  </Docs>
+  <Members />
+</Type>

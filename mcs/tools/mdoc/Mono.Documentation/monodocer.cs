@@ -2080,7 +2080,8 @@ class MDocUpdater : MDocCommand
 		else
 			e = root.OwnerDocument.CreateElement("Attributes");
 		
-		foreach (CustomAttribute attribute in attributes) {
+		foreach (CustomAttribute attribute in attributes.Cast<CustomAttribute> ()
+				.OrderBy (ca => ca.Constructor.DeclaringType.FullName)) {
 			if (!attribute.Resolve ()) {
 				// skip?
 				Error ("warning: could not resolve type {0}.",
@@ -2425,8 +2426,11 @@ class MDocUpdater : MDocCommand
 				throw new ArgumentNullException ("type");
 			GenericParameters = new List<GenericParameter> (type.GenericParameters.Cast<GenericParameter> ());
 			List<TypeReference> declTypes = DocUtils.GetDeclaringTypes (type);
+			int maxGenArgs = DocUtils.GetGenericArgumentCount (type);
 			for (int i = 0; i < declTypes.Count - 1; ++i) {
-				int remove = DocUtils.GetGenericArgumentCount (declTypes [i]);
+				int remove = System.Math.Min (maxGenArgs, 
+						DocUtils.GetGenericArgumentCount (declTypes [i]));
+				maxGenArgs -= remove;
 				while (remove-- > 0)
 					GenericParameters.RemoveAt (0);
 			}
@@ -2593,7 +2597,9 @@ static class CecilExtensions {
 
 	public static MethodDefinition GetMethod (this TypeDefinition type, string method)
 	{
-		return type.Methods.Cast<MethodDefinition> ().Where (m => m.Name == method).First ();
+		return type.Methods.Cast<MethodDefinition> ()
+			.Where (m => m.Name == method)
+			.FirstOrDefault ();
 	}
 
 	public static IEnumerable<IMemberReference> GetDefaultMembers (this TypeReference type)
@@ -2730,7 +2736,7 @@ static class DocUtils {
 		TypeReference baseRef = type.BaseType;
 		if (baseRef == null)
 			return false;
-		return baseRef.FullName == "System.Delegate" ||
+		return !type.IsAbstract && baseRef.FullName == "System.Delegate" || // FIXME
 				baseRef.FullName == "System.MulticastDelegate";
 	}
 
