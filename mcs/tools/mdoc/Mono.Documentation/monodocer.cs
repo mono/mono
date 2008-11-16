@@ -3555,7 +3555,8 @@ class CSharpFullMemberFormatter : MemberFormatter {
 				else
 					modifiers += " override";
 		}
-		if (method.IsAbstract) // TODO && !method.DeclaringType.IsInterface)
+		TypeDefinition declDef = (TypeDefinition) method.DeclaringType;
+		if (method.IsAbstract && !declDef.IsInterface)
 			modifiers += " abstract";
 		if (method.IsFinal)
 			modifiers += " sealed";

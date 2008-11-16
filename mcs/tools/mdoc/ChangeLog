@@ -1,5 +1,16 @@
 2008-11-15  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/monodocer.cs: Properties on interfaces shouldn't
+	  have `abstract' on them.
+	* Test/DocTest-v1.cs: Add a property to an interface to check above.
+	* Test/en.expected.importslashdoc/Mono.DocTest/Widget+IMenuItem.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget+IMenuItem.xml,
+	  Test/en.expected/Mono.DocTest/Widget+IMenuItem.xml,
+	  Test/html.expected/Mono.DocTest/Widget+IMenuItem.html,
+	  Test/msxdoc-expected.importslashdoc.xml: Flush.
+
+2008-11-15  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/monodocer.cs: Fix regressions found from 
 	  `make doc-update` in corlib:
 	  - Ensure that custom attributes are sorted (they weren't before,

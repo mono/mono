@@ -408,6 +408,17 @@ class Example {
             <remarks>
                 <c>T:Mono.DocTest.Widget.IMenuItem</c>.</remarks>
         </member>
+        <member name="M:Mono.DocTest.Widget+IMenuItem.A">
+            <summary>To be added.</summary>
+            <remarks>
+                <c>M:Mono.DocTest.Widget.IMenuItem.A</c>.</remarks>
+        </member>
+        <member name="P:Mono.DocTest.Widget+IMenuItem.B">
+            <summary>To be added.</summary>
+            <value>To be added.</value>
+            <remarks>
+                <c>P:Mono.DocTest.Widget.IMenuItem.P</c>.</remarks>
+        </member>
         <member name="T:Mono.DocTest.Widget+NestedClass">
             <summary>To be added.</summary>
             <remarks>

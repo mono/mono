@@ -10,5 +10,38 @@
     <remarks>
       <c>T:Mono.DocTest.Widget.IMenuItem</c>.</remarks>
   </Docs>
-  <Members />
+  <Members>
+    <Member MemberName="A">
+      <MemberSignature Language="C#" Value="public void A ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>
+          <c>M:Mono.DocTest.Widget.IMenuItem.A</c>.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="B">
+      <MemberSignature Language="C#" Value="public int B { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>
+          <c>P:Mono.DocTest.Widget.IMenuItem.P</c>.</remarks>
+      </Docs>
+    </Member>
+  </Members>
 </Type>

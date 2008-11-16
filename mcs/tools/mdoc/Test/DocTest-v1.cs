@@ -190,7 +190,13 @@ namespace Mono.DocTest {
 		public unsafe float **ppValues;
 
 		/// <remarks><c>T:Mono.DocTest.Widget.IMenuItem</c>.</remarks>
-		public interface IMenuItem {}
+		public interface IMenuItem {
+			/// <remarks><c>M:Mono.DocTest.Widget.IMenuItem.A</c>.</remarks>
+			void A ();
+
+			/// <remarks><c>P:Mono.DocTest.Widget.IMenuItem.P</c>.</remarks>
+			int B {get; set;}
+		}
 
 		/// <remarks><c>T:Mono.DocTest.Widget.Del</c>.</remarks>
 		public delegate void Del (int i);
