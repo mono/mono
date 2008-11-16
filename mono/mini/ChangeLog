@@ -1,5 +1,24 @@
 2008-11-16  Zoltan Varga  <vargaz@gmail.com>
 
+	Remove the old JIT code.
+
+	* inssel*.brg: Removed.
+
+	* ssa.c abcremoval.c aliasing.c: Removed.
+
+	* ssa2.c: Renamed to ssa.c.
+
+	* abcremoval2.c: Renamed to abcremoval.c.
+
+	* *.c: Removed all !cfg->new_ir code.
+
+	* mini-<ARCH>.c: Removed mono_arch_call_opcode (), 
+	mono_arch_emit_this_vret_args (), and mono_arch_get_inst_for_method ().
+
+	* mini.c: Removed the old mono_method_to_ir () and all the code used by it.
+	
+2008-11-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c aot-runtime.c: Emit most of the non-table data in a structure
 	to simplify the code and cut back on the number of global symbols in the AOT
 	file.
