@@ -19,6 +19,9 @@
   </Interfaces>
   <Attributes>
     <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.All)</AttributeName>
+    </Attribute>
+    <Attribute>
       <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
     </Attribute>
     <Attribute>
@@ -26,9 +29,6 @@
     </Attribute>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.All)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

@@ -89,7 +89,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="MaxOpaqueLength">
-      <MemberSignature Language="C#" Value="public static readonly int MaxOpaqueLength = 0;" />
+      <MemberSignature Language="C#" Value="public static readonly int MaxOpaqueLength;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

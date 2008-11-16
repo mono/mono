@@ -941,7 +941,7 @@ public static void Main () {
     </Member>
     <Member MemberName="MaxValue">
       <MemberSignature Language="ILASM" Value=".field public static initOnly decimal MaxValue" />
-      <MemberSignature Language="C#" Value="public static readonly decimal MaxValue = 79228162514264337593543950335;" />
+      <MemberSignature Language="C#" Value="public static readonly decimal MaxValue;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
@@ -966,7 +966,7 @@ public static void Main () {
     </Member>
     <Member MemberName="MinusOne">
       <MemberSignature Language="ILASM" Value=".field public static initOnly decimal MinusOne" />
-      <MemberSignature Language="C#" Value="public static readonly decimal MinusOne = -1;" />
+      <MemberSignature Language="C#" Value="public static readonly decimal MinusOne;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
@@ -990,7 +990,7 @@ public static void Main () {
     </Member>
     <Member MemberName="MinValue">
       <MemberSignature Language="ILASM" Value=".field public static initOnly decimal MinValue" />
-      <MemberSignature Language="C#" Value="public static readonly decimal MinValue = -79228162514264337593543950335;" />
+      <MemberSignature Language="C#" Value="public static readonly decimal MinValue;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
@@ -1081,7 +1081,7 @@ values.</para>
     </Member>
     <Member MemberName="One">
       <MemberSignature Language="ILASM" Value=".field public static initOnly decimal One" />
-      <MemberSignature Language="C#" Value="public static readonly decimal One = 1;" />
+      <MemberSignature Language="C#" Value="public static readonly decimal One;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
@@ -3625,7 +3625,7 @@ public static void Main() {
     </Member>
     <Member MemberName="Zero">
       <MemberSignature Language="ILASM" Value=".field public static initOnly decimal Zero" />
-      <MemberSignature Language="C#" Value="public static readonly decimal Zero = 0;" />
+      <MemberSignature Language="C#" Value="public static readonly decimal Zero;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>

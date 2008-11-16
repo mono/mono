@@ -427,10 +427,10 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Obsolete("It existed for only internal use in .NET and unimplemented in mono")</AttributeName>
+          <AttributeName>System.Diagnostics.Conditional("REMOTING_PERF")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Diagnostics.Conditional("REMOTING_PERF")</AttributeName>
+          <AttributeName>System.Obsolete("It existed for only internal use in .NET and unimplemented in mono")</AttributeName>
         </Attribute>
       </Attributes>
     </Member>

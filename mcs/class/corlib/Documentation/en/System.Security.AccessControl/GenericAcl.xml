@@ -32,7 +32,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="AclRevision">
-      <MemberSignature Language="C#" Value="public static readonly byte AclRevision = 2;" />
+      <MemberSignature Language="C#" Value="public static readonly byte AclRevision;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
@@ -48,7 +48,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="AclRevisionDS">
-      <MemberSignature Language="C#" Value="public static readonly byte AclRevisionDS = 4;" />
+      <MemberSignature Language="C#" Value="public static readonly byte AclRevisionDS;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
@@ -191,7 +191,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="MaxBinaryLength">
-      <MemberSignature Language="C#" Value="public static readonly int MaxBinaryLength = 65536;" />
+      <MemberSignature Language="C#" Value="public static readonly int MaxBinaryLength;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

@@ -1,5 +1,5 @@
 <Type Name="IdentityReferenceCollection" FullName="System.Security.Principal.IdentityReferenceCollection">
-  <TypeSignature Language="C#" Value="public class IdentityReferenceCollection : System.Collections.Generic.ICollection&lt;System.Security.Principal.IdentityReference&gt;" />
+  <TypeSignature Language="C#" Value="public class IdentityReferenceCollection : System.Collections.Generic.ICollection&lt;System.Security.Principal.IdentityReference&gt;, System.Collections.Generic.IEnumerable&lt;System.Security.Principal.IdentityReference&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -10,6 +10,9 @@
   <Interfaces>
     <Interface>
       <InterfaceName>System.Collections.Generic.ICollection&lt;System.Security.Principal.IdentityReference&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;System.Security.Principal.IdentityReference&gt;</InterfaceName>
     </Interface>
   </Interfaces>
   <Attributes>

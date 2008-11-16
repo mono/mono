@@ -75,10 +75,10 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+      <AttributeName>System.Obsolete("Please use IEqualityComparer instead.")</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Obsolete("Please use IEqualityComparer instead.")</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
 </Type>

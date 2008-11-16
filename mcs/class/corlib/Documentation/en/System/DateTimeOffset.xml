@@ -598,7 +598,7 @@
       </Docs>
     </Member>
     <Member MemberName="MaxValue">
-      <MemberSignature Language="C#" Value="public static readonly DateTimeOffset MaxValue = 12/31/9999 11:59:59 PM +00:00;" />
+      <MemberSignature Language="C#" Value="public static readonly DateTimeOffset MaxValue;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -643,7 +643,7 @@
       </Docs>
     </Member>
     <Member MemberName="MinValue">
-      <MemberSignature Language="C#" Value="public static readonly DateTimeOffset MinValue = 1/1/0001 12:00:00 AM +00:00;" />
+      <MemberSignature Language="C#" Value="public static readonly DateTimeOffset MinValue;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

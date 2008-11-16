@@ -20,10 +20,10 @@
       <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.Guid("f1c3bf79-c3e4-11d3-88e7-00902754c43a")</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.Guid("f1c3bf79-c3e4-11d3-88e7-00902754c43a")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

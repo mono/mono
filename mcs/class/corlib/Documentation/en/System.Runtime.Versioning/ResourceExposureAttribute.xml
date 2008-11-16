@@ -10,10 +10,10 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.Diagnostics.Conditional("RESOURCE_ANNOTATION_WORK")</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field | System.AttributeTargets.All, Inherited=false)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Field, Inherited=false)</AttributeName>
+      <AttributeName>System.Diagnostics.Conditional("RESOURCE_ANNOTATION_WORK")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

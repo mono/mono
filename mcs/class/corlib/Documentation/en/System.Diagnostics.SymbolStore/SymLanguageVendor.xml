@@ -31,7 +31,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="Microsoft">
-      <MemberSignature Language="C#" Value="public static readonly Guid Microsoft = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid Microsoft;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>

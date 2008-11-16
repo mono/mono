@@ -31,7 +31,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="Basic">
-      <MemberSignature Language="C#" Value="public static readonly Guid Basic = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid Basic;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -48,7 +48,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="C">
-      <MemberSignature Language="C#" Value="public static readonly Guid C = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid C;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -65,7 +65,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="Cobol">
-      <MemberSignature Language="C#" Value="public static readonly Guid Cobol = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid Cobol;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -82,7 +82,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="CPlusPlus">
-      <MemberSignature Language="C#" Value="public static readonly Guid CPlusPlus = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid CPlusPlus;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -99,7 +99,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="CSharp">
-      <MemberSignature Language="C#" Value="public static readonly Guid CSharp = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid CSharp;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -116,7 +116,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="ILAssembly">
-      <MemberSignature Language="C#" Value="public static readonly Guid ILAssembly = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid ILAssembly;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -133,7 +133,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="Java">
-      <MemberSignature Language="C#" Value="public static readonly Guid Java = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid Java;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -150,7 +150,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="JScript">
-      <MemberSignature Language="C#" Value="public static readonly Guid JScript = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid JScript;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -167,7 +167,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="MCPlusPlus">
-      <MemberSignature Language="C#" Value="public static readonly Guid MCPlusPlus = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid MCPlusPlus;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -184,7 +184,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="Pascal">
-      <MemberSignature Language="C#" Value="public static readonly Guid Pascal = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid Pascal;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -201,7 +201,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="SMC">
-      <MemberSignature Language="C#" Value="public static readonly Guid SMC = 00000000-0000-0000-0000-000000000000;" />
+      <MemberSignature Language="C#" Value="public static readonly Guid SMC;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>

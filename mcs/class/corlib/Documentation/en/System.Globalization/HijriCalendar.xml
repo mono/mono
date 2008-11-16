@@ -342,7 +342,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="HijriEra">
-      <MemberSignature Language="C#" Value="public static readonly int HijriEra = 1;" />
+      <MemberSignature Language="C#" Value="public static readonly int HijriEra;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

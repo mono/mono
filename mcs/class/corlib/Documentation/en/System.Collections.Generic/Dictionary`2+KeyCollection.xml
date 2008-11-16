@@ -1,5 +1,5 @@
 <Type Name="Dictionary&lt;TKey,TValue&gt;+KeyCollection" FullName="System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;+KeyCollection">
-  <TypeSignature Language="C#" Value="public sealed class Dictionary&lt;TKey,TValue&gt;.KeyCollection : System.Collections.Generic.ICollection&lt;TKey&gt;, System.Collections.ICollection" />
+  <TypeSignature Language="C#" Value="public sealed class Dictionary&lt;TKey,TValue&gt;.KeyCollection : System.Collections.Generic.ICollection&lt;TKey&gt;, System.Collections.Generic.IEnumerable&lt;TKey&gt;, System.Collections.ICollection" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -14,6 +14,9 @@
   <Interfaces>
     <Interface>
       <InterfaceName>System.Collections.Generic.ICollection&lt;TKey&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;TKey&gt;</InterfaceName>
     </Interface>
     <Interface>
       <InterfaceName>System.Collections.ICollection</InterfaceName>
@@ -79,21 +82,20 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.KeyCollection&lt;TKey,TValue&gt;.Enumerator GetEnumerator ();" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;.KeyCollection.Enumerator GetEnumerator ();" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.KeyCollection&lt;TKey,TValue&gt;+Enumerator</ReturnType>
+        <ReturnType>System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;+KeyCollection+Enumerator</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Collections.Generic.ICollection&lt;TKey&gt;.Add">
       <MemberSignature Language="C#" Value="void ICollection&lt;TKey&gt;.Add (TKey item);" />

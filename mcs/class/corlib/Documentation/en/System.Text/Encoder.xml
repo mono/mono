@@ -133,10 +133,10 @@ public class EncoderExample
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
     </Member>
@@ -249,10 +249,10 @@ public class EncoderExample
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
     </Member>
@@ -365,10 +365,10 @@ public class EncoderExample
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
     </Member>

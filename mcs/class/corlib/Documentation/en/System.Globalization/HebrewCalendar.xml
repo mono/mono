@@ -316,7 +316,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="HebrewEra">
-      <MemberSignature Language="C#" Value="public static readonly int HebrewEra = 1;" />
+      <MemberSignature Language="C#" Value="public static readonly int HebrewEra;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

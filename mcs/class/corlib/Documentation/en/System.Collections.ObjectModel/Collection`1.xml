@@ -1,5 +1,5 @@
 <Type Name="Collection&lt;T&gt;" FullName="System.Collections.ObjectModel.Collection&lt;T&gt;">
-  <TypeSignature Language="C#" Value="public class Collection&lt;T&gt; : System.Collections.Generic.IList&lt;T&gt;, System.Collections.IList" />
+  <TypeSignature Language="C#" Value="public class Collection&lt;T&gt; : System.Collections.Generic.ICollection&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;, System.Collections.Generic.IList&lt;T&gt;, System.Collections.IList" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -11,6 +11,12 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.ICollection&lt;T&gt;</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.Collections.Generic.IEnumerable&lt;T&gt;</InterfaceName>
+    </Interface>
     <Interface>
       <InterfaceName>System.Collections.Generic.IList&lt;T&gt;</InterfaceName>
     </Interface>

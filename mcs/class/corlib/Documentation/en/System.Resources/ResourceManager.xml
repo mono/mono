@@ -306,10 +306,10 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
     </Member>
@@ -336,10 +336,10 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
     </Member>
@@ -386,7 +386,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="HeaderVersionNumber">
-      <MemberSignature Language="C#" Value="public static readonly int HeaderVersionNumber = 1;" />
+      <MemberSignature Language="C#" Value="public static readonly int HeaderVersionNumber;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -445,7 +445,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="MagicNumber">
-      <MemberSignature Language="C#" Value="public static readonly int MagicNumber = -1091581234;" />
+      <MemberSignature Language="C#" Value="public static readonly int MagicNumber;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

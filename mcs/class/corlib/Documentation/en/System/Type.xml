@@ -24,13 +24,13 @@
   </Interfaces>
   <Attributes>
     <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._Type))</AttributeName>
     </Attribute>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -6859,7 +6859,7 @@ System.Collections.Generic.Dictionary[System.String, Test]
     </Member>
     <Member MemberName="Missing">
       <MemberSignature Language="ILASM" Value=".field public static initOnly object Missing" />
-      <MemberSignature Language="C#" Value="public static readonly object Missing = null;" />
+      <MemberSignature Language="C#" Value="public static readonly object Missing;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>

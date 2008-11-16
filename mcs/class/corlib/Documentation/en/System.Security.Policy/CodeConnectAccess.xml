@@ -93,7 +93,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="DefaultPort">
-      <MemberSignature Language="C#" Value="public static readonly int DefaultPort = -3;" />
+      <MemberSignature Language="C#" Value="public static readonly int DefaultPort;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -146,7 +146,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="OriginPort">
-      <MemberSignature Language="C#" Value="public static readonly int OriginPort = -4;" />
+      <MemberSignature Language="C#" Value="public static readonly int OriginPort;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

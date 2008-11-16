@@ -9,10 +9,10 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Attributes>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.Guid("CCBD682C-73A5-4568-B8B0-C7007E11ABA2")</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.Guid("CCBD682C-73A5-4568-B8B0-C7007E11ABA2")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

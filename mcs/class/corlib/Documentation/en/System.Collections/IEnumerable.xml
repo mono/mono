@@ -10,10 +10,10 @@
   </AssemblyInfo>
   <Attributes>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.Guid("496B0ABE-CDEE-11d3-88E8-00902754C43A")</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.Guid("496B0ABE-CDEE-11d3-88E8-00902754C43A")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

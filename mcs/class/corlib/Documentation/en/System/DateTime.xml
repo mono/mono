@@ -1353,7 +1353,7 @@ instance is equal to the current instance; otherwise,
     </Member>
     <Member MemberName="MaxValue">
       <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.DateTime MaxValue" />
-      <MemberSignature Language="C#" Value="public static readonly DateTime MaxValue = 12/31/9999 11:59:59 PM;" />
+      <MemberSignature Language="C#" Value="public static readonly DateTime MaxValue;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
@@ -1432,7 +1432,7 @@ instance is equal to the current instance; otherwise,
     </Member>
     <Member MemberName="MinValue">
       <MemberSignature Language="ILASM" Value=".field public static initOnly valuetype System.DateTime MinValue" />
-      <MemberSignature Language="C#" Value="public static readonly DateTime MinValue = 1/1/0001 12:00:00 AM;" />
+      <MemberSignature Language="C#" Value="public static readonly DateTime MinValue;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>

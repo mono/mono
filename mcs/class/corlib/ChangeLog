@@ -1,3 +1,16 @@
+2008-11-15  Jonathan Pryor  <jpryor@novell.com>
+
+	* Documentation/en/**: Flush; changes due to mdoc-update 
+	  Reflection->Cecil migration.  Changes include:
+	  - Alphabetical ordering of custom attributes (these used to be in
+	    Reflection order, and Cecil uses a different ordering, so just
+	    sort them now).
+	  - Closer documentation mapping to source code (e.g. `class Foo :
+	    ICollection<Bar>, IEnumerable<Bar>` now adds IEnumerable<Bar> as
+	    an interface).
+	  - Some method have been removed (presumably because the source was
+	    altered since the last time `make doc-update` was run).
+
 2008-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (AOT_IN_PROFILES): Disable AOT for the 2.0 profile as it actually

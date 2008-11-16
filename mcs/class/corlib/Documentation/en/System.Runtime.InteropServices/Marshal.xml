@@ -2823,15 +2823,15 @@
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
     </Member>
     <Member MemberName="SystemDefaultCharSize">
-      <MemberSignature Language="C#" Value="public static readonly int SystemDefaultCharSize = 1;" />
+      <MemberSignature Language="C#" Value="public static readonly int SystemDefaultCharSize;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2848,7 +2848,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="SystemMaxDBCSCharSize">
-      <MemberSignature Language="C#" Value="public static readonly int SystemMaxDBCSCharSize = 2;" />
+      <MemberSignature Language="C#" Value="public static readonly int SystemMaxDBCSCharSize;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

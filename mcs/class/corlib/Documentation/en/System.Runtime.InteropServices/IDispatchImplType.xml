@@ -66,10 +66,10 @@
   </Members>
   <Attributes>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+      <AttributeName>System.Obsolete</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Obsolete</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
 </Type>

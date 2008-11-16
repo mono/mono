@@ -299,7 +299,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="MaxBinaryLength">
-      <MemberSignature Language="C#" Value="public static readonly int MaxBinaryLength = 0;" />
+      <MemberSignature Language="C#" Value="public static readonly int MaxBinaryLength;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -315,7 +315,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="MinBinaryLength">
-      <MemberSignature Language="C#" Value="public static readonly int MinBinaryLength = 0;" />
+      <MemberSignature Language="C#" Value="public static readonly int MinBinaryLength;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

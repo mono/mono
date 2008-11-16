@@ -10,10 +10,10 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.Diagnostics.Conditional("CODE_ANALYSIS")</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.All, AllowMultiple=true, Inherited=false)</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.All, Inherited=false, AllowMultiple=true)</AttributeName>
+      <AttributeName>System.Diagnostics.Conditional("CODE_ANALYSIS")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>

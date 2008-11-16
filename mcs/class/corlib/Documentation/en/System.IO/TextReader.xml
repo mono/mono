@@ -143,7 +143,7 @@ to reference objects that have been previously disposed in an earlier call to
     </Member>
     <Member MemberName="Null">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.IO.TextReader Null" />
-      <MemberSignature Language="C#" Value="public static readonly System.IO.TextReader Null = null;" />
+      <MemberSignature Language="C#" Value="public static readonly System.IO.TextReader Null;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.TextReader</ReturnType>

@@ -414,7 +414,7 @@
       </Docs>
     </Member>
     <Member MemberName="PersianEra">
-      <MemberSignature Language="C#" Value="public static readonly int PersianEra = 1;" />
+      <MemberSignature Language="C#" Value="public static readonly int PersianEra;" />
       <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>

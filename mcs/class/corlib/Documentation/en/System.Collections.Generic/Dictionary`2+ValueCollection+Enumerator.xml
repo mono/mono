@@ -1,5 +1,5 @@
-<Type Name="ValueCollection&lt;TKey,TValue&gt;+Enumerator" FullName="System.Collections.Generic.ValueCollection&lt;TKey,TValue&gt;+Enumerator">
-  <TypeSignature Language="C#" Value="public struct ValueCollection&lt;TKey,TValue&gt;.Enumerator : System.Collections.Generic.IEnumerator&lt;TValue&gt;" />
+<Type Name="Dictionary&lt;TKey,TValue&gt;+ValueCollection+Enumerator" FullName="System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;+ValueCollection+Enumerator">
+  <TypeSignature Language="C#" Value="public struct Dictionary&lt;TKey,TValue&gt;.ValueCollection.Enumerator : System.Collections.Generic.IEnumerator&lt;TValue&gt;" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
