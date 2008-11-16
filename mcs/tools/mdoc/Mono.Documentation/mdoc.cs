@@ -36,6 +36,7 @@ namespace Mono.Documentation {
 		{
 			subcommands = new Dictionary<string, MDocCommand> () {
 				{ "assemble",         new MDocAssembler () },
+				{ "dump-tree",        new MDocTreeDumper () },
 				{ "export-html",      new MDocToHtmlConverter () },
 				{ "export-msxdoc",    new MDocToMSXDocConverter () },
 				{ "help",             new MDocHelpCommand (this) },

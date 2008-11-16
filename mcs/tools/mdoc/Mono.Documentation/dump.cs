@@ -1,35 +1,27 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 
-namespace Monodoc {
-class Dump {
+using Monodoc;
+using Mono.Options;
 
-	static void Usage ()
-	{
-		Console.WriteLine ("Usage is: dump file.tree");
-	}
-	
-	static int Main (string [] args)
-	{
-		int argc = args.Length;
-		Tree t = null;
-		
-		for (int i = 0; i < argc; i++){
-			string arg = args [i];
-			
-			switch (arg){
-				
-			default:
-				if (t == null)
-					t = new Tree (null, arg);
-				break;
+namespace Mono.Documentation {
+
+	class MDocTreeDumper : MDocCommand {
+
+		public override void Run (IEnumerable<string> args)
+		{
+			var options = new OptionSet () {
+			};
+			List<string> files = Parse (options, args, "dump-tree", 
+					"[OPTIONS]+ FILES",
+					"Print out the nodes within the assembled .tree file FILES.");
+			if (files == null)
+				return;
+
+			foreach (var file in files) {
+				Tree t = new Tree (null, file);
+				Node.PrintTree (t);
 			}
 		}
-
-		if (t != null)
-			Node.PrintTree (t);
-
-		return 0;
 	}
-}
 }
