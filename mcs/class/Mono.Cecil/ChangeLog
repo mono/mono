@@ -1,3 +1,8 @@
+2008-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil/TypeDefinition.cs (IsValueType): Inline the call to
+	IsEnum and remove the double null check being done.
+
 2008-11-14  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ParameterAttributes.cs: add Retval and Lcid.
