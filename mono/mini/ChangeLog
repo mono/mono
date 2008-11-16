@@ -1,5 +1,7 @@
 2008-11-17  Zoltan Varga  <vargaz@gmail.com>
-	
+
+	* cpu-*.md: Remove more unused opcodes.
+
 	* simple-cee-ops.h simple-mini-ops.h: Removed.
 
 	* mini-ops.h *.c cpu-<ARCH>.md: Remove more unused opcodes.
