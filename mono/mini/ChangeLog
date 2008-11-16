@@ -1,3 +1,13 @@
+2008-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* aliasing.h: Removed.
+
+	* *.c: Remove references to aliasing.h and inssel.h.
+
+	* mini.c: Remove additional unused functions.
+
+	* mini-ops.h cpu-*.md: Remove unused opcodes.
+
 2008-11-16  Zoltan Varga  <vargaz@gmail.com>
 
 	Remove the old JIT code.
