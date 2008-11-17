@@ -135,6 +135,10 @@ namespace Mono.CSharp {
 				object res = conditionals [value];
 				if (res != null)
 					return (bool)res;
+				
+				// When conditional was undefined
+				if (conditionals.Contains (value))
+					return false;					
 			}
 
 			return RootContext.IsConditionalDefined (value);
