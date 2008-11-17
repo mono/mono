@@ -1,3 +1,10 @@
+2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-intrinsics.c (vector2l_intrinsics): CompareGreaterThan requires sse 4.2
+	and not 4.1. 
+
+	Backported from trunk.
+
 2008-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.h: Change the monitor fastpath defines to check for
