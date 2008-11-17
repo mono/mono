@@ -1,5 +1,11 @@
 2008-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (handle_delegate_ctor): Emit the address of the delegate
+	trampoline as an AOT const of the proper type instead of MONO_PATCH_INFO_ABS.
+
+	* mini.c (mono_codegen): Remove the handling of delegate trampolines, they
+	are not needed any more.
+
 	* mini.h: Remove the unused INS_LIST macros.
 
 	* mini.c (mini_method_compile): Remove a disable globalra case which is no
