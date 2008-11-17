@@ -1,5 +1,10 @@
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector2l.cs (CompareGreaterThan): This method requires sse 4.2
+	and 4.1.
+
+2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* SimdRuntime.cs (MethodAccelerationMode): Add MethodInfo
 	overload.
 
