@@ -1,3 +1,9 @@
+2008-11-17  Bill Holmes  <billholmes54@gmail.com>
+
+	* aot-compiler.c : Fix the Winx64 build.
+
+	Contributed under MIT/X11 license.
+
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-ops.h: Added OP_EXTRACT_R8/I8.
