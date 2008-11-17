@@ -462,9 +462,16 @@ namespace MonoTests.System.Reflection
 			typeof(Foo<>).GetField ("field").SetValue (null, 0);
 		}
 
+		[Test]
+		public void GetValueOnConstantOfOpenGeneric ()
+		{
+			Assert.AreEqual (10, typeof(Foo<>).GetField ("constant").GetValue (null), "#1");
+		}
+
 		public class Foo<T>
 		{
 			public static int field;
+			public const int constant = 10;
 		}
 #endif
 
