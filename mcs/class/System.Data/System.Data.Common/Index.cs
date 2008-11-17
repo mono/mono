@@ -35,8 +35,7 @@ using System.Text;
 
 namespace System.Data.Common
 {
-	enum IndexDuplicatesState
-	{
+	enum IndexDuplicatesState {
 		Unknown,
 		True,
 		False
@@ -45,8 +44,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Summary description for Index.
 	/// </summary>
-	internal class Index
-	{
+	internal class Index {
 		#region Fields
 
 		int [] _array;
@@ -62,7 +60,7 @@ namespace System.Data.Common
 		internal Index (Key key)
 		{
 			_key = key;
-			Reset();
+			Reset ();
 		}
 
 		#endregion // Constructors
@@ -75,7 +73,7 @@ namespace System.Data.Common
 
 		internal int Size {
 			get {
-				EnsureArray();
+				EnsureArray ();
 				return _size;
 			}
 		}
@@ -86,7 +84,7 @@ namespace System.Data.Common
 
 		internal int IndexToRecord (int index)
 		{
-			return index < 0 ? index : Array[index];
+			return index < 0 ? index : Array [index];
 		}
 
 		private int [] Array {
@@ -124,20 +122,20 @@ namespace System.Data.Common
 				if (!HasDuplicates)
 					return null;
 
-				ArrayList dups = new ArrayList();
+				ArrayList dups = new ArrayList ();
 
 				bool inRange = false;
 				for (int i = 0; i < Size - 1; i++) {
 					if (Key.CompareRecords (Array [i], Array [i + 1]) == 0) {
 						if (!inRange) {
-							dups.Add(Array[i]);
+							dups.Add (Array [i]);
 							inRange = true;
 						}
 
 						dups.Add (Array [i + 1]);
-					}
-					else
+					} else {
 						inRange = false;
+					}
 				}
 
 				return (int []) dups.ToArray (typeof (int));
@@ -163,7 +161,7 @@ namespace System.Data.Common
 			return list;
 		}
 
-		internal DataRow [] GetDistinctRows () 
+		internal DataRow [] GetDistinctRows ()
 		{
 			ArrayList list = new ArrayList ();
 			list.Add (Key.Table.RecordCache [Array [0]]);
@@ -177,13 +175,13 @@ namespace System.Data.Common
 			return (DataRow []) list.ToArray (typeof (DataRow));
 		}
 
-		internal void Reset()
+		internal void Reset ()
 		{
 			_array = null;
 			RebuildIndex ();
 		}
 
-		private void RebuildIndex()
+		private void RebuildIndex ()
 		{
 			// consider better capacity approximation
 			_array = new int [Key.Table.RecordCache.CurrentCapacity];
@@ -203,19 +201,19 @@ namespace System.Data.Common
 			//QuickSort(Array,0,Size-1);
 			MergeSort (Array, Size);
 		}
-		
+
 		/*
-		 * Returns record number of the record equal to the key values supplied 
+		 * Returns record number of the record equal to the key values supplied
 		 * in the meaning of index key, or -1 if no equal record found.
 		 */
 		internal int Find (object [] keys)
 		{
-			int index = FindIndex(keys);
+			int index = FindIndex (keys);
 			return IndexToRecord (index);
 		}
 
 		/*
-		 * Returns record index (location) of the record equal to the key values supplied 
+		 * Returns record index (location) of the record equal to the key values supplied
 		 * in the meaning of index key, or -1 if no equal record found.
 		 */
 		internal int FindIndex (object [] keys)
@@ -236,7 +234,7 @@ namespace System.Data.Common
 		}
 
 		/*
-		 * Returns record number of the record equal to the record supplied 
+		 * Returns record number of the record equal to the record supplied
 		 * in the meaning of index key, or -1 if no equal record found.
 		 */
 		internal int Find (int record)
@@ -246,10 +244,10 @@ namespace System.Data.Common
 		}
 
 		/*
-		 * Returns array of record numbers of the records equal equal to the key values supplied 
+		 * Returns array of record numbers of the records equal equal to the key values supplied
 		 * in the meaning of index key, or -1 if no equal record found.
 		 */
-		internal int[] FindAll (object [] keys)
+		internal int [] FindAll (object [] keys)
 		{
 			int [] indexes = FindAllIndexes (keys);
 			IndexesToRecords (indexes);
@@ -257,7 +255,7 @@ namespace System.Data.Common
 		}
 
 		/*
-		 * Returns array of indexes of the records inside the index equal equal to the key values supplied 
+		 * Returns array of indexes of the records inside the index equal equal to the key values supplied
 		 * in the meaning of index key, or -1 if no equal record found.
 		 */
 		internal int [] FindAllIndexes (object [] keys)
@@ -282,7 +280,7 @@ namespace System.Data.Common
 		}
 
 		/*
-		 * Returns array of record numbers of the records equal to the record supplied 
+		 * Returns array of record numbers of the records equal to the record supplied
 		 * in the meaning of index key, or empty list if no equal records found.
 		 */
 		internal int [] FindAll (int record)
@@ -293,14 +291,14 @@ namespace System.Data.Common
 		}
 
 		/*
-		 * Returns array of indexes of the records inside the index that equal to the record supplied 
+		 * Returns array of indexes of the records inside the index that equal to the record supplied
 		 * in the meaning of index key, or empty list if no equal records found.
 		 */
 		internal int [] FindAllIndexes (int record)
 		{
-			int index = FindIndex(record);
+			int index = FindIndex (record);
 			if (index == -1)
-				return new int[0];
+				return new int [0];
 
 			int startIndex = index++;
 			int endIndex = index;
@@ -309,18 +307,18 @@ namespace System.Data.Common
 			}
 			for (; endIndex < Size && Key.CompareRecords (Array [endIndex], record) == 0; endIndex++) {
 			}
-			
+
 			int length = endIndex - startIndex - 1;
 			int [] indexes = new int [length];
-			
+
 			for (int i = 0; i < length; i++)
 				indexes [i] = ++startIndex;
-		
+
 			return indexes;
 		}
 
 		/*
-		 * Returns index inside the array where record number of the record equal to the record supplied 
+		 * Returns index inside the array where record number of the record equal to the record supplied
 		 * in the meaning of index key is sored, or -1 if no equal record found.
 		 */
 		private int FindIndex (int record)
@@ -332,7 +330,7 @@ namespace System.Data.Common
 
 		/*
 		 * Finds exact location of the record specified
-		 */ 
+		 */
 		private int FindIndexExact (int record)
 		{
 			for (int i = 0, size = Size; i < size; i++)
@@ -375,7 +373,7 @@ namespace System.Data.Common
 					if (c1 == 0 ^ c2 == 0)
 						_hasDuplicates = IndexDuplicatesState.Unknown;
 				}
-				Remove(index);
+				Remove (index);
 			}
 		}
 
@@ -397,7 +395,7 @@ namespace System.Data.Common
 						Add (row,newRecord);
 				return;
 			}
-			
+
 			// the record will not appeare in the index after update
 			if (newRecord < 0 || !Key.CanContain (newRecord)) {
 				Delete (oldRecord);
@@ -435,7 +433,7 @@ namespace System.Data.Common
 						_hasDuplicates = IndexDuplicatesState.Unknown;
 				}
 			}
-			
+
 			if ((oldIdx == 0 && compare > 0) || (oldIdx == (Size - 1) && compare < 0) || (compare == 0)) {
 				// no need to switch cells
 				newIdx = oldIdx;
@@ -482,7 +480,7 @@ namespace System.Data.Common
 			Add(row, Key.GetRecord (row));
 		}
 
-		private void Add (DataRow row,int newRecord)
+		private void Add (DataRow row, int newRecord)
 		{
 			int newIdx;
 
@@ -514,7 +512,7 @@ namespace System.Data.Common
 			}
 		}
 
-		private void Insert (int index,int r)
+		private void Insert (int index, int r)
 		{
 			if (Array.Length == Size) {
 				int [] tmp = (Size == 0) ? new int[16] : new int[Size << 1];
@@ -536,7 +534,7 @@ namespace System.Data.Common
 			MergeSort (from, to, 0, from.Length);
 		}
 
-		private void MergeSort(int[] from, int[] to,int p, int r)
+		private void MergeSort (int [] from, int [] to, int p, int r)
 		{
 			int q = (p + r) >> 1;
 			if (q == p)
@@ -553,7 +551,7 @@ namespace System.Data.Common
 
 					if (q == r) {
 						while (p < middle)
-							to[current++] = from[p++];
+							to [current++] = from [p++];
 						break;
 					}
 				} else {
@@ -564,14 +562,14 @@ namespace System.Data.Common
 
 					if (p == middle) {
 						while (q < r)
-							to[current++] = from[q++];
+							to [current++] = from [q++];
 						break;
 					}
 				}
 			}
 		}
 
-		private void QuickSort (int [] a,int p,int r)
+		private void QuickSort (int [] a, int p, int r)
 		{
 			if (p < r) {
 				int q = Partition (a, p, r);
@@ -580,7 +578,7 @@ namespace System.Data.Common
 			}
 		}
 
-		private int Partition (int [] a,int p,int r)
+		private int Partition (int [] a, int p, int r)
 		{
 			int x = a [p];
 			int i = p - 1;
@@ -595,7 +593,7 @@ namespace System.Data.Common
 				do {
 					i++;
 				} while (Key.CompareRecords (a [i], x) < 0);
-				
+
 				if (i < j) {
 					int tmp = a [j];
 					a [j] = a [i];
@@ -606,7 +604,7 @@ namespace System.Data.Common
 			}
 		}
 
-		private int BinarySearch (int [] a, int p, int r,int b)
+		private int BinarySearch (int [] a, int p, int r, int b)
 		{
 			int i = LazyBinarySearch (a, p, r, b);
 			return (Key.CompareRecords (a [i], b) == 0) ? i : -1;
@@ -655,7 +653,7 @@ namespace System.Data.Common
 			}
 		}
 		*/
-		
+
 		#endregion // Methods
 	}
 }
