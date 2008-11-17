@@ -16,8 +16,4 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
-ifeq (win32default, $(PLATFORM)$(PROFILE))
-LIBRARY_COMPILE = MONO_PATH="$(topdir)/class/lib/$(PROFILE);$$MONO_PATH" $(INTERNAL_MCS) $(USE_MCS_FLAGS)
-endif
-
 include ../../build/library.make

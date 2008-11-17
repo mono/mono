@@ -1,3 +1,7 @@
+2008-11-17  Andreia Gaita <avidigal@novell.com>
+
+	* Makefile: Remove uneeded win32-specific hack
+
 2008-10-15  Cedric Vivier  <cedricv@neonux.com>
 
 	* SymbolWriterImpl.cs: implement `SetMethodSourceRange` using the
