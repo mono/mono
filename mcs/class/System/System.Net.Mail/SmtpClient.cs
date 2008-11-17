@@ -64,7 +64,6 @@ namespace System.Net.Mail {
 		int port;
 		int timeout = 100000;
 		ICredentialsByHost credentials;
-		bool useDefaultCredentials = false;
 		string pickupDirectoryLocation;
 		SmtpDeliveryMethod deliveryMethod;
 		bool enableSsl;
@@ -101,8 +100,6 @@ namespace System.Net.Mail {
 		}
 
 		AuthMechs authMechs = AuthMechs.None;
-		//bool canStartTLS;
-
 		Mutex mutex = new Mutex ();
 
 		#endregion // Fields
@@ -152,7 +149,7 @@ namespace System.Net.Mail {
 		#region Properties
 
 #if SECURITY_DEP
-		[MonoTODO("STARTTLS is not supported yet")]
+		[MonoTODO("Client certificates not used")]
 		public X509CertificateCollection ClientCertificates {
 			get {
 				if (clientCertificates == null)
@@ -178,9 +175,7 @@ namespace System.Net.Mail {
 			}
 		}
 
-		[MonoTODO("STARTTLS is not supported yet")]
 		public bool EnableSsl {
-			// FIXME: So... is this supposed to enable SSL port functionality? or STARTTLS? Or both?
 			get { return enableSsl; }
 			set {
 				CheckState ();
@@ -231,7 +226,7 @@ namespace System.Net.Mail {
 		}
 
 		public bool UseDefaultCredentials {
-			get { return useDefaultCredentials; }
+			get { return false; }
 			[MonoNotSupported ("no DefaultCredential support in Mono")]
 			set {
 				if (value)
@@ -405,7 +400,6 @@ namespace System.Net.Mail {
 
 		void ResetExtensions()
 		{
-//			canStartTLS = false;
 			authMechs = AuthMechs.None;
 		}
 
@@ -444,8 +438,6 @@ namespace System.Net.Mail {
 							break;
 						}
 					}
-				} else if (start.StartsWith ("STARTTLS", StringComparison.Ordinal)) {
-//					canStartTLS = true;
 				}
 			}
 		}
@@ -579,18 +571,6 @@ namespace System.Net.Mail {
 			}
 			
 			if (enableSsl) {
-#if old_comment
-				// FIXME: I get the feeling from the docs that EnableSsl is meant
-				// for using the SSL-port and not STARTTLS (or, if it includes
-				// STARTTLS... only use STARTTLS if the SSL-type in the certificate
-				// is TLS and not SSLv2 or SSLv3)
-				
-				// FIXME: even tho we have a canStartTLS flag... ignore it for now
-				// so that the STARTTLS command can throw the appropriate
-				// SmtpException if STARTTLS is unavailable
-#else
-				// SmtpClient implements STARTTLS support.
-#endif
 				InitiateSecureConnection ();
 				ResetExtensions();
 				writer = new StreamWriter (stream);

@@ -1,3 +1,8 @@
+
+2008-11-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SmtpClient.cs: remove unused variable and obsolete comment.
+
 2008-09-17  Miguel de Icaza  <miguel@novell.com>
 
 	* SmtpClient.cs: Actually set some of the headers like Priority,
