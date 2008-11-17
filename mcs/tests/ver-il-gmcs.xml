@@ -33153,6 +33153,16 @@
       </method>
     </type>
   </test>
+  <test name="test-693.cs">
+    <type name="ConstTest">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>32</size>
+      </method>
+    </type>
+  </test>
   <test name="test-7.cs">
     <type name="Mine.MyBoolean">
       <method name="Void .ctor()">
