@@ -1,5 +1,9 @@
 2008-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-s390.c mini-s390x.c: Remove !cfg->new_ir code.
+
+	* mini.h (MonoCompile): Remove new_ir flag.
+
 	* regalloc.h regalloc.c: Remove unused code.
 
 	* cpu-*.md: Remove more unused opcodes.
