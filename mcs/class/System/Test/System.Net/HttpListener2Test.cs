@@ -77,8 +77,15 @@ namespace MonoTests.System.Net {
 
 		public static MyNetworkStream CreateNS (int port)
 		{
+			return CreateNS (port, 5000);
+		}
+
+		public static MyNetworkStream CreateNS (int port, int timeout_ms)
+		{
 			Socket sock = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 			sock.Connect (new IPEndPoint (IPAddress.Loopback, port));
+			sock.SendTimeout = timeout_ms;
+			sock.ReceiveTimeout = timeout_ms;
 			return new MyNetworkStream (sock);
 		}
 
