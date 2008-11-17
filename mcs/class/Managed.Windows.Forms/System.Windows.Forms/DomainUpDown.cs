@@ -140,8 +140,6 @@ namespace System.Windows.Forms
 
 		#region	DomainUpDownItemCollection sub-class
 		public class DomainUpDownItemCollection : ArrayList {
-			internal ArrayList string_cache = new ArrayList();
-
 			#region Local Variables
 			#endregion	// Local Variables
 
@@ -163,7 +161,6 @@ namespace System.Windows.Forms
 					}
 
 					base[index] = value;
-					string_cache[index] = value.ToString();
 					OnCollectionChanged(index, 0);
 				}
 			}
@@ -175,7 +172,6 @@ namespace System.Windows.Forms
 					throw new ArgumentNullException("value", "Cannot add null values to a DomainUpDownItemCollection");
 
 				int ret = base.Add(item);
-				string_cache.Add(item.ToString());
 				OnCollectionChanged(Count - 1, +1);
 				return ret;
 			}
@@ -185,7 +181,6 @@ namespace System.Windows.Forms
 					throw new ArgumentNullException("value", "Cannot add null values to a DomainUpDownItemCollection");
 
 				base.Insert(index, item);
-				string_cache.Insert(index, item.ToString());
 				OnCollectionChanged(index, +1);
 			}
 
@@ -198,7 +193,6 @@ namespace System.Windows.Forms
 
 			public override void RemoveAt(int item) {
 				base.RemoveAt(item);
-				string_cache.RemoveAt(item);
 				OnCollectionChanged(item, -1);
 			}
 			#endregion	// Public Instance Methods
@@ -212,45 +206,19 @@ namespace System.Windows.Forms
 				}
 			}
 
-			internal void PrivSort() {
-				PrivSort(0, Count, Comparer.Default);
+			internal void PrivSort()
+			{
+				base.Sort (new ToStringSorter ());
 			}
 
-			internal void PrivSort(int index, int count, IComparer comparer) {
-				object[] base_items = null; // this will refer to the base ArrayList private _items member
-				object[] string_cache_items = null; // and this will refer to that of the string_cache
-
-				FieldInfo items_field = null;
-        
-				try {
-					items_field = typeof(ArrayList).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance);
-				}
-				catch {} // security exceptions, perhaps...
-
-				if (items_field != null) {
-					base_items = items_field.GetValue(this) as object[];
-					string_cache_items = items_field.GetValue(string_cache) as object[];
-				}
-
-				if ((base_items == null) || (string_cache_items == null)) {
-					// oh poop =/ guess we have to completely repopulate the string cache
-					base.Sort(index, count, comparer);
-
-					for (int i=0; i < count; i++)
-						string_cache[i + index] = base[i + index].ToString();
-				}
-				else {
-					// yay, this will be much faster than creating a whole bunch more items
-					Array.Sort(string_cache_items, base_items, index, count, comparer);
-
-					OnCollectionChanged(-1, 0);
+			private class ToStringSorter : IComparer
+			{
+				public int Compare (object x, object y)
+				{
+					return string.Compare (x.ToString (), y.ToString ());
 				}
 			}
-
-			internal void PrivSort(IComparer comparer) {
-				PrivSort(0, Count, comparer);
-			}
-
+			
 			internal event CollectionChangedEventHandler CollectionChanged;
 			#endregion	// Internal Methods and Events
 		}
@@ -318,7 +286,7 @@ namespace System.Windows.Forms
 
 					if (sorted) {
 						for (int i=typed_to_index; i >= 0; i--) {
-							int difference = string.Compare(prefix, 0, items.string_cache[i].ToString(), 0, prefix.Length, true);
+							int difference = string.Compare(prefix, 0, items[i].ToString(), 0, prefix.Length, true);
 
 							if (difference == 0) {
 								found = true;
@@ -331,7 +299,7 @@ namespace System.Windows.Forms
 						}
 					} else {
 						for (int i=0; i < items.Count; i++) {
-							if (0 == string.Compare(prefix, 0, items.string_cache[i].ToString(), 0, prefix.Length, true)) {
+							if (0 == string.Compare(prefix, 0, items[i].ToString(), 0, prefix.Length, true)) {
 								found = true;
 								typed_to_index = i;
 								break;
@@ -342,7 +310,7 @@ namespace System.Windows.Forms
 					ChangingText = true;
 
 					if (found)
-						Text = items.string_cache[typed_to_index].ToString();
+						Text = items[typed_to_index].ToString();
 					else
 						Text = prefix;
 
@@ -371,7 +339,7 @@ namespace System.Windows.Forms
 
 					if (sorted) {
 						for (int i=typed_to_index; i < items.Count; i++) {
-							int difference = string.Compare(prefix, 0, items.string_cache[i].ToString(), 0, prefix.Length, true);
+							int difference = string.Compare(prefix, 0, items[i].ToString(), 0, prefix.Length, true);
 
 							if (difference == 0) {
 								found = true;
@@ -384,7 +352,7 @@ namespace System.Windows.Forms
 						}
 					} else {
 						for (int i=0; i < items.Count; i++) {
-							if (0 == string.Compare(prefix, 0, items.string_cache[i].ToString(), 0, prefix.Length, true)) {
+							if (0 == string.Compare(prefix, 0, items[i].ToString(), 0, prefix.Length, true)) {
 								found = true;
 								typed_to_index = i;
 								break;
@@ -395,7 +363,7 @@ namespace System.Windows.Forms
 					ChangingText = true;
 
 					if (found) {
-						Text = items.string_cache[typed_to_index].ToString();
+						Text = items[typed_to_index].ToString();
 					} else {
 						Text = prefix;
 					}
@@ -580,7 +548,7 @@ namespace System.Windows.Forms
 		protected override void UpdateEditText() {
 			if ((selected_index >= 0) && (selected_index < items.Count)) {
 				ChangingText = true;
-				Text = items.string_cache[selected_index].ToString();
+				Text = items[selected_index].ToString();
 			}
 		}
 

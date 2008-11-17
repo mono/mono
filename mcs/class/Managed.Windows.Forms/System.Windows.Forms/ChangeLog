@@ -1,5 +1,12 @@
 2008-11-17  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DomainUpDown.cs: Remove string cache and reflection optimizations.  They
+	aren't always correct, and fixing them for every case is not worth the
+	negligible benefit they provide.
+	[Fixes bug #445713]
+
+2008-11-17  Jonathan Pobst  <monkey@jpobst.com>
+
 	* DataGridView.cs: We should never add actual cells to the RowTemplate.
 	Internally, use RowTemplateFull to give us a new row with cells.
 	* DataGridViewColumnCollection.cs: Clear Rows when we clear Columns.
