@@ -113,7 +113,7 @@ namespace Mono.Simd
 			return new Vector2l ((long)(v1.x ==  v2.x ? -1 : 0), (long)(v1.y ==  v2.y ? -1 : 0));
 		}
 
-		[Acceleration (AccelMode.SSE41)]
+		[Acceleration (AccelMode.SSE42)]
 		public static Vector2l CompareGreaterThan (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l ((long)(v1.x > v2.x ? -1 : 0), (long)(v1.y >  v2.y ? -1 : 0));
