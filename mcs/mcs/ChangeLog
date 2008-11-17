@@ -1,5 +1,11 @@
 2008-11-17  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #444678
+	* expression.cs (TryReduceConstant): Always create new constant
+	instance.
+
+2008-11-17  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #444673
 	* ecore.cs: Ignore open generic types when used as generic type
 	instance fields.

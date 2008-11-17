@@ -243,20 +243,17 @@ namespace Mono.CSharp {
 				if (expr_type == TypeManager.float_type) {
 					FloatLiteral fl = e as FloatLiteral;
 					// For better error reporting
-					if (fl != null) {
-						fl.Value = -fl.Value;
-						return fl;
-					}
+					if (fl != null)
+						return new FloatLiteral (-fl.Value, e.Location);
+
 					return new FloatConstant (-((FloatConstant)e).Value, e.Location);
 				}
 				if (expr_type == TypeManager.double_type) {
 					DoubleLiteral dl = e as DoubleLiteral;
 					// For better error reporting
-					if (dl != null) {
-						dl.Value = -dl.Value;
-						return dl;
-					}
-					
+					if (dl != null)
+						return new DoubleLiteral (-dl.Value, e.Location);
+
 					return new DoubleConstant (-((DoubleConstant)e).Value, e.Location);
 				}
 				if (expr_type == TypeManager.decimal_type)
