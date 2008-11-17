@@ -1,7 +1,8 @@
 // CS1007: Property accessor already defined
-// Line: 7
+// Line: 8
 
-class DoubleAccessorImpact {
+class DoubleAccessor
+{
 	public bool Breaker {
 		set { }
 		set { }
