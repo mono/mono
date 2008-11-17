@@ -1,5 +1,7 @@
 2008-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Remove the unused INS_LIST macros.
+
 	* mini.c (mini_method_compile): Remove a disable globalra case which is no
 	longer needed.
 
