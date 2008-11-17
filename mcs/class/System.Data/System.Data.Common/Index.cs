@@ -60,7 +60,8 @@ namespace System.Data.Common
 		internal Index (Key key)
 		{
 			_key = key;
-			Reset ();
+			RebuildIndex ();
+			// postcondition: _array != null
 		}
 
 		#endregion // Constructors
@@ -72,10 +73,7 @@ namespace System.Data.Common
 		}
 
 		internal int Size {
-			get {
-				EnsureArray ();
-				return _size;
-			}
+			get { return _size; }
 		}
 
 		internal int RefCount {
@@ -84,28 +82,18 @@ namespace System.Data.Common
 
 		internal int IndexToRecord (int index)
 		{
-			return index < 0 ? index : Array [index];
-		}
-
-		private int [] Array {
-			get {
-				EnsureArray ();
-				return _array;
-			}
+			return index < 0 ? index : _array [index];
 		}
 
 		internal bool HasDuplicates {
 			get {
-				if (_array == null || _hasDuplicates == IndexDuplicatesState.Unknown) {
-					EnsureArray ();
-					if (_hasDuplicates == IndexDuplicatesState.Unknown) {
-						// check for duplicates
-						_hasDuplicates = IndexDuplicatesState.False;
-						for (int i = 0; i < Size - 1; i++) {
-							if (Key.CompareRecords (Array [i], Array [i + 1]) == 0) {
-								_hasDuplicates = IndexDuplicatesState.True;
-								break;
-							}
+				if (_hasDuplicates == IndexDuplicatesState.Unknown) {
+					// check for duplicates
+					_hasDuplicates = IndexDuplicatesState.False;
+					for (int i = 0; i < _size - 1; i++) {
+						if (Key.CompareRecords (_array [i], _array [i + 1]) == 0) {
+							_hasDuplicates = IndexDuplicatesState.True;
+							break;
 						}
 					}
 				}
@@ -125,14 +113,14 @@ namespace System.Data.Common
 				ArrayList dups = new ArrayList ();
 
 				bool inRange = false;
-				for (int i = 0; i < Size - 1; i++) {
-					if (Key.CompareRecords (Array [i], Array [i + 1]) == 0) {
+				for (int i = 0; i < _size - 1; i++) {
+					if (Key.CompareRecords (_array [i], _array [i + 1]) == 0) {
 						if (!inRange) {
-							dups.Add (Array [i]);
+							dups.Add (_array [i]);
 							inRange = true;
 						}
 
-						dups.Add (Array [i + 1]);
+						dups.Add (_array [i + 1]);
 					} else {
 						inRange = false;
 					}
@@ -142,35 +130,29 @@ namespace System.Data.Common
 			}
 		}
 
-		private void EnsureArray ()
-		{
-			if (_array == null)
-				RebuildIndex ();
-		}
-
 		internal int [] GetAll ()
 		{
-			return Array;
+			return _array;
 		}
 
 		internal DataRow [] GetAllRows ()
 		{
-			DataRow [] list = new DataRow [Size];
-			for (int i = 0; i < Size; ++i)
-				list [i] = Key.Table.RecordCache [Array [i]];
+			DataRow [] list = new DataRow [_size];
+			for (int i = 0; i < _size; ++i)
+				list [i] = Key.Table.RecordCache [_array [i]];
 			return list;
 		}
 
 		internal DataRow [] GetDistinctRows ()
 		{
 			ArrayList list = new ArrayList ();
-			list.Add (Key.Table.RecordCache [Array [0]]);
-			int currRecord = Array [0];
-			for (int i = 1; i <  Size; ++i) {
-				if (Key.CompareRecords (currRecord, Array [i]) == 0)
+			list.Add (Key.Table.RecordCache [_array [0]]);
+			int currRecord = _array [0];
+			for (int i = 1; i <  _size; ++i) {
+				if (Key.CompareRecords (currRecord, _array [i]) == 0)
 					continue;
-				list.Add (Key.Table.RecordCache [Array [i]]);
-				currRecord = Array [i];
+				list.Add (Key.Table.RecordCache [_array [i]]);
+				currRecord = _array [i];
 			}
 			return (DataRow []) list.ToArray (typeof (DataRow));
 		}
@@ -198,8 +180,8 @@ namespace System.Data.Common
 
 		private void Sort ()
 		{
-			//QuickSort(Array,0,Size-1);
-			MergeSort (Array, Size);
+			//QuickSort(_array,0,_size-1);
+			MergeSort (_array, _size);
 		}
 
 		/*
@@ -303,9 +285,9 @@ namespace System.Data.Common
 			int startIndex = index++;
 			int endIndex = index;
 
-			for (; startIndex >= 0 && Key.CompareRecords (Array [startIndex], record) == 0; startIndex--) {
+			for (; startIndex >= 0 && Key.CompareRecords (_array [startIndex], record) == 0; startIndex--) {
 			}
-			for (; endIndex < Size && Key.CompareRecords (Array [endIndex], record) == 0; endIndex++) {
+			for (; endIndex < _size && Key.CompareRecords (_array [endIndex], record) == 0; endIndex++) {
 			}
 
 			int length = endIndex - startIndex - 1;
@@ -323,9 +305,9 @@ namespace System.Data.Common
 		 */
 		private int FindIndex (int record)
 		{
-			if (Size == 0)
+			if (_size == 0)
 				return -1;
-			return BinarySearch (Array, 0, Size - 1, record);
+			return BinarySearch (_array, 0, _size - 1, record);
 		}
 
 		/*
@@ -333,8 +315,8 @@ namespace System.Data.Common
 		 */
 		private int FindIndexExact (int record)
 		{
-			for (int i = 0, size = Size; i < size; i++)
-				if (Array [i] == record)
+			for (int i = 0, size = _size; i < size; i++)
+				if (_array [i] == record)
 					return i;
 			return -1;
 		}
@@ -345,7 +327,7 @@ namespace System.Data.Common
 		private void IndexesToRecords (int [] indexes)
 		{
 			for (int i = 0; i < indexes.Length; i++)
-				indexes [i] = Array [indexes [i]];
+				indexes [i] = _array [indexes [i]];
 		}
 
 		internal void Delete (DataRow row)
@@ -366,9 +348,9 @@ namespace System.Data.Common
 					int c2 = 1;
 
 					if (index > 0)
-						c1 = Key.CompareRecords (Array [index - 1], oldRecord);
-					if (index < Size - 1)
-						c2 = Key.CompareRecords (Array [index + 1], oldRecord);
+						c1 = Key.CompareRecords (_array [index - 1], oldRecord);
+					if (index < _size - 1)
+						c2 = Key.CompareRecords (_array [index + 1], oldRecord);
 
 					if (c1 == 0 ^ c2 == 0)
 						_hasDuplicates = IndexDuplicatesState.Unknown;
@@ -379,8 +361,8 @@ namespace System.Data.Common
 
 		private void Remove (int index)
 		{
-			if (Size > 1)
-				System.Array.Copy (Array, index + 1, Array, index,Size - index - 1);
+			if (_size > 1)
+				System.Array.Copy (_array, index + 1, _array, index, _size - index - 1);
 			_size--;
 		}
 
@@ -389,7 +371,7 @@ namespace System.Data.Common
 			bool contains = Key.ContainsVersion (oldState, oldVersion);
 			int newRecord = Key.GetRecord (row);
 			// the record did not appeared in the index before update
-			if (oldRecord == -1 || Size == 0 || !contains) {
+			if (oldRecord == -1 || _size == 0 || !contains) {
 				if (newRecord >= 0)
 					if (FindIndexExact (newRecord) < 0)
 						Add (row,newRecord);
@@ -409,14 +391,14 @@ namespace System.Data.Common
 			}
 
 			int newIdx = -1;
-			int compare = Key.CompareRecords (Array [oldIdx], newRecord);
+			int compare = Key.CompareRecords (_array [oldIdx], newRecord);
 			int start, end;
 
 			int c1 = 1;
 			int c2 = 1;
 
 			if (compare == 0) {
-				if (Array [oldIdx] == newRecord) {
+				if (_array [oldIdx] == newRecord) {
 					// we deal with the same record that didn't change
 					// in the context of current index.
 					// so , do nothing.
@@ -425,49 +407,49 @@ namespace System.Data.Common
 			} else {
 				if (_hasDuplicates == IndexDuplicatesState.True) {
 					if (oldIdx > 0)
-						c1 = Key.CompareRecords (Array [oldIdx - 1], newRecord);
-					if (oldIdx < Size - 1)
-						c2 = Key.CompareRecords (Array [oldIdx + 1], newRecord);
+						c1 = Key.CompareRecords (_array [oldIdx - 1], newRecord);
+					if (oldIdx < _size - 1)
+						c2 = Key.CompareRecords (_array [oldIdx + 1], newRecord);
 
 					if ((c1 == 0 ^ c2 == 0) && compare != 0)
 						_hasDuplicates = IndexDuplicatesState.Unknown;
 				}
 			}
 
-			if ((oldIdx == 0 && compare > 0) || (oldIdx == (Size - 1) && compare < 0) || (compare == 0)) {
+			if ((oldIdx == 0 && compare > 0) || (oldIdx == (_size - 1) && compare < 0) || (compare == 0)) {
 				// no need to switch cells
 				newIdx = oldIdx;
 			} else {
 				if (compare < 0) {
 					// search after the old place
 					start = oldIdx + 1;
-					end = Size - 1;
+					end = _size - 1;
 				} else {
 					// search before the old palce
 					start = 0;
 					end = oldIdx - 1;
 				}
 
-				newIdx = LazyBinarySearch (Array, start, end, newRecord);
+				newIdx = LazyBinarySearch (_array, start, end, newRecord);
 
 				if (oldIdx < newIdx) {
-					System.Array.Copy (Array, oldIdx + 1, Array, oldIdx, newIdx - oldIdx);
-					if (Key.CompareRecords (Array [newIdx], newRecord) > 0)
+					System.Array.Copy (_array, oldIdx + 1, _array, oldIdx, newIdx - oldIdx);
+					if (Key.CompareRecords (_array [newIdx], newRecord) > 0)
 						--newIdx;
 				} else if (oldIdx > newIdx){
-					System.Array.Copy (Array, newIdx, Array, newIdx + 1, oldIdx - newIdx);
-					if (Key.CompareRecords (Array [newIdx], newRecord) < 0)
+					System.Array.Copy (_array, newIdx, _array, newIdx + 1, oldIdx - newIdx);
+					if (Key.CompareRecords (_array [newIdx], newRecord) < 0)
 						++newIdx;
 				}
 			}
-			Array[newIdx] = newRecord;
+			_array[newIdx] = newRecord;
 
 			if (compare != 0) {
 				if (!(_hasDuplicates == IndexDuplicatesState.True)) {
 					if (newIdx > 0)
-						c1 = Key.CompareRecords (Array [newIdx - 1], newRecord);
-					if (newIdx < Size - 1)
-						c2 = Key.CompareRecords (Array [newIdx + 1], newRecord);
+						c1 = Key.CompareRecords (_array [newIdx - 1], newRecord);
+					if (newIdx < _size - 1)
+						c2 = Key.CompareRecords (_array [newIdx + 1], newRecord);
 
 					if (c1 == 0 || c2 == 0)
 						_hasDuplicates = IndexDuplicatesState.True;
@@ -487,13 +469,13 @@ namespace System.Data.Common
 			if (newRecord < 0 || !Key.CanContain (newRecord))
 				return;
 
-			if (Size == 0) {
+			if (_size == 0) {
 				newIdx = 0;
 			} else {
-				newIdx = LazyBinarySearch (Array, 0, Size - 1, newRecord);
+				newIdx = LazyBinarySearch (_array, 0, _size - 1, newRecord);
 				// if newl value is greater - insert afer old value
 				// else - insert before old value
-				if (Key.CompareRecords (Array [newIdx], newRecord) < 0)
+				if (Key.CompareRecords (_array [newIdx], newRecord) < 0)
 					newIdx++;
 			}
 
@@ -503,9 +485,9 @@ namespace System.Data.Common
 			int c2 = 1;
 			if (!(_hasDuplicates == IndexDuplicatesState.True)) {
 				if (newIdx > 0)
-					c1 = Key.CompareRecords (Array [newIdx - 1], newRecord);
-				if (newIdx < Size - 1)
-					c2 = Key.CompareRecords (Array [newIdx + 1], newRecord);
+					c1 = Key.CompareRecords (_array [newIdx - 1], newRecord);
+				if (newIdx < _size - 1)
+					c2 = Key.CompareRecords (_array [newIdx + 1], newRecord);
 
 				if (c1 == 0 || c2 == 0)
 					_hasDuplicates = IndexDuplicatesState.True;
@@ -514,15 +496,15 @@ namespace System.Data.Common
 
 		private void Insert (int index, int r)
 		{
-			if (Array.Length == Size) {
-				int [] tmp = (Size == 0) ? new int[16] : new int[Size << 1];
-				System.Array.Copy (Array, 0, tmp, 0, index);
+			if (_array.Length == _size) {
+				int [] tmp = (_size == 0) ? new int[16] : new int[_size << 1];
+				System.Array.Copy (_array, 0, tmp, 0, index);
 				tmp [index] = r;
-				System.Array.Copy (Array, index, tmp, index + 1, Size - index);
+				System.Array.Copy (_array, index, tmp, index + 1, _size - index);
 				_array = tmp;
 			} else {
-				System.Array.Copy (Array, index, Array, index + 1, Size - index);
-				Array [index] = r;
+				System.Array.Copy (_array, index, _array, index + 1, _size - index);
+				_array [index] = r;
 			}
 			_size++;
 		}
@@ -642,12 +624,12 @@ namespace System.Data.Common
 		// Prints indexes. For debugging.
 		internal void Print ()
 		{
-			for (int i=0; i < Size; i++) {
-				Console.Write ("Index {0} record {1}: ", i, Array [i]);
+			for (int i=0; i < _size; i++) {
+				Console.Write ("Index {0} record {1}: ", i, _array [i]);
 				for (int j=0; j < Key.Table.Columns.Count; j++) {
 					DataColumn col = Key.Table.Columns [j];
-					if (Array [i] >= 0)
-						Console.Write ("{0,15} ", col [Array [i]]);
+					if (_array [i] >= 0)
+						Console.Write ("{0,15} ", col [_array [i]]);
 				}
 				Console.WriteLine ();
 			}
