@@ -1,3 +1,8 @@
+2008-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.h: Change the monitor fastpath defines to check for
+	!PLATFORM_WIN32 so they work on *bsd too.
+
 2008-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* regalloc2.c (assign_spill_slots): Set cfg->rgctx_var.
