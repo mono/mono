@@ -1,5 +1,11 @@
 2008-11-17  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #444673
+	* ecore.cs: Ignore open generic types when used as generic type
+	instance fields.
+
+2008-11-17  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #445458
 	* expression.cs, cs-parser.jay: Don't crash when an expression
 	statement is null.

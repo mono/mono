@@ -4650,6 +4650,8 @@ namespace Mono.CSharp {
 		public FieldExpr (FieldInfo fi, Type genericType, Location l)
 			: this (fi, l)
 		{
+			if (TypeManager.IsGenericTypeDefinition (genericType))
+				return;
 			this.constructed_generic_type = genericType;
 		}
 
