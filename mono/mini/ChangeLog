@@ -1,5 +1,8 @@
 2008-11-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_aot_module): Disable AOT when running under
+	CAS.
+
 	* mini-amd64.h: Change the monitor fastpath defines to check for
 	!PLATFORM_WIN32 so they work on *bsd too.
 
