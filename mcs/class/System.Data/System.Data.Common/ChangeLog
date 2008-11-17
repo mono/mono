@@ -1,5 +1,13 @@
 2008-11-17  Raja R Harinath  <harinath@hurrynot.org>
 
+	Avoid allocating empty arrays.
+	* Index.cs (empty): New empty array constant.
+	(Reset): Initialize '_array' to 'empty'.
+	(RebuildIndex): Don't allocate array if it will be empty.
+	(FindAllIndexes): Use 'empty' instead of 'new int [0]'.
+
+2008-11-17  Raja R Harinath  <harinath@hurrynot.org>
+
 	* Index.cs: Remove use of Array and Size properties by taking
 	advantage of the invariant that _array is never null.
 	(EnsureArray): Remove.

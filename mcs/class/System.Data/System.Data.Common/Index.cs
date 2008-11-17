@@ -47,6 +47,8 @@ namespace System.Data.Common
 	internal class Index {
 		#region Fields
 
+		static readonly int [] empty = new int [0];
+
 		int [] _array;
 		int _size;
 		Key _key;
@@ -60,8 +62,7 @@ namespace System.Data.Common
 		internal Index (Key key)
 		{
 			_key = key;
-			RebuildIndex ();
-			// postcondition: _array != null
+			Reset ();
 		}
 
 		#endregion // Constructors
@@ -159,14 +160,20 @@ namespace System.Data.Common
 
 		internal void Reset ()
 		{
-			_array = null;
+			_array = empty;
+			_size = 0;
 			RebuildIndex ();
 		}
 
 		private void RebuildIndex ()
 		{
+			int rows_upperbound = Key.Table.RecordCache.CurrentCapacity;
+
+			if (rows_upperbound == 0)
+				return;
+
 			// consider better capacity approximation
-			_array = new int [Key.Table.RecordCache.CurrentCapacity];
+			_array = new int [rows_upperbound];
 			_size = 0;
 			foreach (DataRow row in Key.Table.Rows) {
 				int record = Key.GetRecord (row);
@@ -252,10 +259,10 @@ namespace System.Data.Common
 				for (int i = 0; i < Key.Columns.Length; i++)
 					Key.Columns [i].DataContainer [tmp] = keys [i];
 				return FindAllIndexes (tmp);
-			} catch(FormatException) {
-				return new int [0];
-			} catch(InvalidCastException) {
-				return new int [0];
+			} catch (FormatException) {
+				return empty;
+			} catch (InvalidCastException) {
+				return empty;
 			} finally {
 				Key.Table.RecordCache.DisposeRecord (tmp);
 			}
@@ -280,7 +287,7 @@ namespace System.Data.Common
 		{
 			int index = FindIndex (record);
 			if (index == -1)
-				return new int [0];
+				return empty;
 
 			int startIndex = index++;
 			int endIndex = index;
