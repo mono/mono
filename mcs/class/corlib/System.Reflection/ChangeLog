@@ -1,3 +1,10 @@
+2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoField.cs (GetValue): Don't check for open generic types if the field
+	is a constant.
+
+	Backported from trunk.
+
 2008-11-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Module.cs (ResolveMethod): Use internal method 
