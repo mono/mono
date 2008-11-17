@@ -1,3 +1,15 @@
+2008-11-18  Scott Peterson  <lunchtimemama@novell.com>
+
+	* mini-ops.h: Added OP_ROUND.
+
+	* cpu-x86.md: Added round.
+
+	* mini-x86.c: Added support for intrinsicing Math.Round (double).
+
+	* basic-math.cs: Added test_0_round to test rounding.
+
+	Contributed under MIT/X11 license.
+
 2008-11-17  Bill Holmes  <billholmes54@gmail.com>
 
 	* aot-compiler.c : Fix the Winx64 build.
