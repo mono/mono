@@ -8825,7 +8825,6 @@ namespace Mono.CSharp {
 
 		private EmptyExpressionStatement ()
 		{
-			type = TypeManager.object_type;
 			eclass = ExprClass.Value;
 			loc = Location.Null;
 		}
@@ -8842,6 +8841,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			type = TypeManager.object_type;
 			return this;
 		}
 
@@ -9232,7 +9232,7 @@ namespace Mono.CSharp {
 			//
 			Constant c = source as Constant;
 			if (c != null && c.IsDefaultInitializer (type) && target.eclass == ExprClass.Variable)
-				return EmptyExpressionStatement.Instance;
+				return EmptyExpressionStatement.Instance.DoResolve (ec);
 
 			return expr;
 		}

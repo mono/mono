@@ -4490,13 +4490,10 @@ interactive_expression_statement
 statement_expression
 	: expression
 	  {
-		Expression expr = (Expression) $1;
-		ExpressionStatement s;
-
-		s = expr as ExpressionStatement;
-
+		ExpressionStatement s = $1 as ExpressionStatement;
 		if (s == null) {
-			expr.Error_InvalidExpressionStatement ();
+			((Expression) $1).Error_InvalidExpressionStatement ();
+			s = EmptyExpressionStatement.Instance;
 		}
 
 		$$ = new StatementExpression (s);
