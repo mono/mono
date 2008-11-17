@@ -105,7 +105,8 @@ namespace System.Reflection {
 		{
 			if (!IsStatic && obj == null)
 				throw new TargetException ("Non-static field requires a target");
-			CheckGeneric ();
+			if (!IsLiteral)
+				CheckGeneric ();
 			return GetValueInternal (obj);
 		}
 
