@@ -1020,7 +1020,8 @@ namespace System.Windows.Forms {
 				   is ignored by metacity. */
 				functions |= MotifFunctions.Move | MotifFunctions.Resize | MotifFunctions.Minimize | MotifFunctions.Maximize;
 			} else if (form != null && form.FormBorderStyle == FormBorderStyle.None) {
-				functions |= MotifFunctions.All;
+				/* allow borderless window to be maximized */
+				functions |= MotifFunctions.All | MotifFunctions.Resize;
 			} else {
 				if (StyleSet (cp.Style, WindowStyles.WS_CAPTION)) {
 					functions |= MotifFunctions.Move;
