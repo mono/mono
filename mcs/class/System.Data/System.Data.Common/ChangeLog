@@ -1,3 +1,7 @@
+2008-11-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* RecordCache.cs: Reduce some extraneous nesting.
+
 2008-10-07  Daniel Morgan  <monodanmorg@yahoo.com>
 
 	* DbConnectionStringBuilder.cs: fix setting and getting

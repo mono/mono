@@ -68,26 +68,23 @@ namespace System.Data.Common
 
 		internal int NewRecord ()
 		{
-			if (_records.Count > 0) {
+			if (_records.Count > 0)
 				return (int) _records.Pop ();
-			} else {
-				DataColumnCollection cols = _table.Columns;
-				if (_nextFreeIndex >= _currentCapacity) {
-					_currentCapacity *= 2;
-					if (_currentCapacity < MIN_CACHE_SIZE) {
-						_currentCapacity = MIN_CACHE_SIZE;
-					}
-					for (int i = 0; i < cols.Count; ++i) {
-						DataColumn col = cols [i];
-						col.DataContainer.Capacity = _currentCapacity;
-					}
 
-					DataRow [] old = _rowsToRecords;
-					_rowsToRecords = _table.NewRowArray (_currentCapacity);
-					Array.Copy (old, 0, _rowsToRecords, 0, old.Length);
-				}
-				return _nextFreeIndex++;
+			DataColumnCollection cols = _table.Columns;
+			if (_nextFreeIndex >= _currentCapacity) {
+				_currentCapacity *= 2;
+				if (_currentCapacity < MIN_CACHE_SIZE)
+					_currentCapacity = MIN_CACHE_SIZE;
+
+				for (int i = 0; i < cols.Count; ++i)
+					cols [i].DataContainer.Capacity = _currentCapacity;
+
+				DataRow [] old = _rowsToRecords;
+				_rowsToRecords = _table.NewRowArray (_currentCapacity);
+				Array.Copy (old, 0, _rowsToRecords, 0, old.Length);
 			}
+			return _nextFreeIndex++;
 		}
 
 		internal void DisposeRecord (int index)
@@ -101,12 +98,12 @@ namespace System.Data.Common
 			this [index] = null;
 		}
 
+		// FIXME: This doesn't seem to be the right class to have this method
 		internal int CopyRecord (DataTable fromTable, int fromRecordIndex, int toRecordIndex)
 		{
 			int recordIndex = toRecordIndex;
-			if (toRecordIndex == -1) {
+			if (toRecordIndex == -1)
 				recordIndex = NewRecord ();
-			}
 
 			try {
 				foreach (DataColumn fromColumn in fromTable.Columns) {
@@ -124,7 +121,8 @@ namespace System.Data.Common
 			}
 		}
 
-		internal void ReadIDataRecord (int recordIndex, IDataRecord record, int[] mapping, int length)
+		// FIXME: This doesn't seem to be the right class to have this method
+		internal void ReadIDataRecord (int recordIndex, IDataRecord record, int [] mapping, int length)
 		{
 			if (mapping.Length > _table.Columns.Count)
 				throw new ArgumentException ();
