@@ -1,3 +1,9 @@
+2008-11-17  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #445464
+	* expression.cs, cs-parser.jay: Fixed typeof of non-generic type
+	inside unbound type.
+
 2008-11-14  Jb Evain  <jbevain@novell.com>
 
 	* driver.cs: ignore empty -nowarn argument such as

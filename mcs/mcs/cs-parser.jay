@@ -3518,7 +3518,7 @@ unbound_type_name
 
 		$$ = new QualifiedAliasMember (lt1.Value, MemberName.MakeName (lt2.Value, (TypeArguments) $3), lt1.Location);
 	  }
-	| unbound_type_name DOT IDENTIFIER generic_dimension
+	| unbound_type_name DOT IDENTIFIER opt_generic_dimension
 	  {
 		LocatedToken lt = (LocatedToken) $3;
 		
@@ -3531,6 +3531,11 @@ unbound_type_name
 
 		$$ = new MemberAccess (name.GetTypeExpression (), MemberName.MakeName (lt.Value, (TypeArguments) $4), lt.Location);		
 	  }
+	;
+
+opt_generic_dimension
+	: /* empty */
+	| generic_dimension
 	;
 	
 generic_dimension
