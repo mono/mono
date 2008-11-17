@@ -1,3 +1,13 @@
+2008-11-17  Bill Holmes  <billholmes54@gmail.com>
+
+	Backport of 119064 and 119081.
+
+	* marshal.h : cominterop_ccw_getfreethreadedmarshaler added to return the
+	  free threaded marshaler when QueryInterface is called on a COM callable
+	  wrapper requesting the IMarshal interface.
+
+	Code is contributed under MIT/X11 license.
+
 2008-11-13  Bill Holmes  <billholmes54@gmail.com>
 
 	Backport of r118724.
