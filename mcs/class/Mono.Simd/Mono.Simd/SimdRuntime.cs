@@ -45,6 +45,16 @@ namespace Mono.Simd
 			}
 		}
 
+		public static AccelMode MethodAccelerationMode (MethodInfo method)
+		{
+			if (method == null)
+				return AccelMode.None;
+			object[] attr = method.GetCustomAttributes (typeof (AccelerationAttribute), false);
+			if (attr.Length == 0)
+				return AccelMode.None;
+			return ((AccelerationAttribute) attr [0]).Mode;
+		}
+
 		public static AccelMode MethodAccelerationMode (Type type, String method)
 		{
 			return MethodAccelerationMode (type, method, null);
@@ -53,12 +63,7 @@ namespace Mono.Simd
 		public static AccelMode MethodAccelerationMode (Type type, String method, Type[] signature)
 		{
 			MethodInfo mi = signature == null ? type.GetMethod (method) : type.GetMethod (method, signature);
-			if (mi == null)
-				return AccelMode.None;
-			object[] attr = mi.GetCustomAttributes (typeof (AccelerationAttribute), false);
-			if (attr.Length == 0)
-				return AccelMode.None;
-			return ((AccelerationAttribute) attr [0]).Mode;
+			return MethodAccelerationMode (mi);
 		}
 
 		public static bool IsMethodAccelerated (Type type, String method)
