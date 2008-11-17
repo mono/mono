@@ -33,8 +33,6 @@ cs0737-2.cs
 cs0737.cs
 cs1041.cs # new in GMCS; grammar issue
 cs1502-2.cs
-cs1525.cs
-cs1528.cs
 cs1533.cs IGNORE
 cs1570-10.cs NO ERROR
 cs1570-11.cs NO ERROR
@@ -68,7 +66,6 @@ cs1584-2.cs NO ERROR
 cs1584-3.cs NO ERROR
 cs1584-4.cs NO ERROR
 cs1584.cs NO ERROR
-cs1586.cs
 cs1589.cs NO ERROR
 cs1590-2.cs NO ERROR
 cs1590-3.cs NO ERROR
@@ -131,10 +128,5 @@ gcs1909.cs
 gcs1910-2.cs
 gcs1910.cs
 gcs1922-2.cs
-
-# Parser
-cs1026.cs
-cs1523.cs
-
 cs1540-6.cs
 cs1540-9.cs
