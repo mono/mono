@@ -1503,6 +1503,38 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Assert.AreEqual (true, new DataGridView ().EnableHeadersVisualStyles);
 		}
+
+		[Test]
+		public void RowTemplate ()
+		{
+			DataGridView dgv = new DataGridView ();
+
+			Form f = new Form ();
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			dgv.Columns.Add ("A1", "A1");
+			Assert.AreEqual (0, dgv.RowTemplate.Cells.Count, "A1");
+			Assert.IsNull (dgv.RowTemplate.DataGridView, "A2");
+
+			dgv.Columns.Add ("A2", "A2");
+			Assert.AreEqual (0, dgv.RowTemplate.Cells.Count, "A3");
+
+			dgv.Rows.Add (3, 6);
+
+			dgv.Columns.Remove ("A1");
+
+			Assert.AreEqual (0, dgv.RowTemplate.Cells.Count, "A4");
+			Assert.AreEqual (1, dgv.Rows[0].Cells.Count, "A5");
+
+			dgv.Columns.Clear ();
+
+			Assert.AreEqual (0, dgv.RowTemplate.Cells.Count, "A6");
+			Assert.AreEqual (0, dgv.Rows.Count, "A7");
+
+			f.Close ();
+			f.Dispose ();
+		}
 	}
 	
 	[TestFixture]

@@ -1,3 +1,7 @@
+2008-11-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewTest.cs: Add a test showing how RowTemplate works.
+
 2008-11-01  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewRowCollectionTest.cs: Add some tests for bug #442181.

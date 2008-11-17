@@ -98,7 +98,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual int Add ()
 		{
-			return Add (dataGridView.RowTemplate.Clone () as DataGridViewRow);
+			return Add (dataGridView.RowTemplateFull as DataGridViewRow);
 		}
 
 		int IList.Add (object value)
@@ -185,7 +185,7 @@ namespace System.Windows.Forms
 			raiseEvent = false;
 			int result = 0;
 			for (int i = 0; i < count; i++)
-				result = Add (dataGridView.RowTemplate.Clone () as DataGridViewRow);
+				result = Add (dataGridView.RowTemplateFull as DataGridViewRow);
 			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (result - count + 1, count));
 			raiseEvent = true;
 			return result;
@@ -399,7 +399,7 @@ namespace System.Windows.Forms
 			int index = rowIndex;
 			raiseEvent = false;
 			for (int i = 0; i < count; i++)
-				Insert (index++, dataGridView.RowTemplate.Clone ());
+				Insert (index++, dataGridView.RowTemplateFull);
 			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (rowIndex, count));
 			raiseEvent = true;
 		}

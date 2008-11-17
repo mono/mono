@@ -992,7 +992,7 @@ namespace System.Windows.Forms {
 						ColumnCount = 1;
 
 					for (int i = rows.Count; i < value; i++) {
-						DataGridViewRow row = (DataGridViewRow) RowTemplate.Clone ();
+						DataGridViewRow row = (DataGridViewRow) RowTemplateFull;
 						rows.AddInternal (row, false);
 						
 						foreach (DataGridViewColumn col in columns)
@@ -1088,6 +1088,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// RowTemplate is just the row, it does not contain Cells
 		[Browsable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public DataGridViewRow RowTemplate {
@@ -1103,6 +1104,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// Take the RowTemplate, clone it, and add Cells
+		// Note this is not stored, so you don't need to Clone it
 		internal DataGridViewRow RowTemplateFull {
 			get {
 				DataGridViewRow row = (DataGridViewRow) RowTemplate.Clone ();
@@ -3603,10 +3606,8 @@ namespace System.Windows.Forms {
 		internal void OnColumnAddedInternal (DataGridViewColumnEventArgs e)
 		{
 			if (e.Column.CellTemplate != null) {
-				RowTemplate.Cells.Add ((DataGridViewCell)e.Column.CellTemplate.Clone ());
-
 				foreach (DataGridViewRow row in Rows)
-					row.Cells.Add ((DataGridViewCell)RowTemplate.Cells[RowTemplate.Cells.Count - 1].Clone ());
+					row.Cells.Add ((DataGridViewCell)e.Column.CellTemplate.Clone ());
 			}
 			
 			AutoResizeColumnsInternal ();
@@ -3745,8 +3746,6 @@ namespace System.Windows.Forms {
 		{
 			if (e.Column.CellTemplate != null) {
 				int index = e.Column.Index;
-				
-				RowTemplate.Cells.RemoveAt (index);
 
 				foreach (DataGridViewRow row in Rows)
 					row.Cells.RemoveAt (index);
@@ -5655,7 +5654,7 @@ namespace System.Windows.Forms {
 			return bounds;
 		}
 
-		private void PrepareEditingRow (bool cell_changed, bool column_changed)
+		internal void PrepareEditingRow (bool cell_changed, bool column_changed)
 		{
 			bool show = false;
 			
@@ -5745,7 +5744,7 @@ namespace System.Windows.Forms {
 			if (ColumnCount == 0)
 				return;
 				
-			DataGridViewRow row = (DataGridViewRow)RowTemplate.Clone ();
+			DataGridViewRow row = (DataGridViewRow)RowTemplateFull;
 			rows.InternalAdd (row);
 
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (element);
