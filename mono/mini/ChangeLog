@@ -1,5 +1,20 @@
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Added OP_EXTRACT_R8/I8.
+
+	* cpu-x86.md: Added extract_r8.
+
+	* mini-x86.c (mono_arch_output_basic_block): Emmit OP_EXTRACT_R8.
+	
+	* mini-x86.c: Added mono_arch_decompose_long_opts to break OP_EXTRACT_I8 into
+	a couple of OP_EXTRACT_I4.
+
+	* mini-x86.h: Define MONO_ARCH_HAVE_DECOMPOSE_LONG_OPTS if simd is enabled.
+
+	* simd-intrinsics.c: Implement getters for Vector2l/2ul/2d.
+
+2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c (vector2l_intrinsics): CompareGreaterThan requires sse 4.2
 	and not 4.1. 
 
