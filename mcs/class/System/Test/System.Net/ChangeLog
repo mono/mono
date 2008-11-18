@@ -1,4 +1,8 @@
 
+2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpListener2Test.cs: make sure we dispose the listener.
+
 2008-11-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpListener2Test.cs: (CreateNS) set a default read/write timeout

@@ -117,7 +117,7 @@ namespace MonoTests.System.Net {
 		{
 			IAsyncResult ares = listener.BeginGetContext (null, null);
 			timed_out = !ares.AsyncWaitHandle.WaitOne (timeout, false);
-			if (timed_out)
+			if (timed_out) 
 				return null;
 			return listener.EndGetContext (ares);
 		}
@@ -125,25 +125,25 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void Test1 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test1/");
-			NetworkStream ns = CreateNS (9000);
-			Send (ns, "GET / HTTP/1.1\r\n\r\n"); // No host
-			string response = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 400"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test1/")) {
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, "GET / HTTP/1.1\r\n\r\n"); // No host
+				string response = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 400"));
+			}
 		}
 
 		[Test]
 		public void Test2 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test2/");
-			NetworkStream ns = CreateNS (9000);
-			Send (ns, "GET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n"); // no prefix
-			string response = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 400"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test2/")) {
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, "GET / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n"); // no prefix
+				string response = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 400"));
+			}
 		}
 
 		[Test]
@@ -173,158 +173,158 @@ namespace MonoTests.System.Net {
 			bad.Append ('}');
 
 			foreach (char b in bad.ToString ()){
-				HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test3/");
-				NetworkStream ns = CreateNS (9000);
-				Send (ns, String.Format ("MA{0} / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n", b)); // bad method
-				
-				string response = Receive (ns, 512);
-				ns.Close ();
-				listener.Close ();
-				Assert.AreEqual (true, response.StartsWith ("HTTP/1.1 400"), String.Format ("Failed on {0}", (int) b));
+				using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test3/")) {
+					NetworkStream ns = CreateNS (9000);
+					Send (ns, String.Format ("MA{0} / HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n", b)); // bad method
+					
+					string response = Receive (ns, 512);
+					ns.Close ();
+					Assert.AreEqual (true, response.StartsWith ("HTTP/1.1 400"), String.Format ("Failed on {0}", (int) b));
+				}
 			}
 		}
 
 		[Test]
 		public void Test4 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test4/");
-			NetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test4/ HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n"); // length required
-			string response = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 411"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test4/")) {
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, "POST /test4/ HTTP/1.1\r\nHost: 127.0.0.1\r\n\r\n"); // length required
+				string response = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 411"));
+			}
 		}
 
 		[Test]
 		public void Test5 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test5/");
-			NetworkStream ns = CreateNS (9000);
-			Send (ns, "POST / HTTP/1.1\r\nHost: 127.0.0.1\r\nTransfer-Encoding: pepe\r\n\r\n"); // not implemented
-			string response = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 501"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test5/")) {
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, "POST / HTTP/1.1\r\nHost: 127.0.0.1\r\nTransfer-Encoding: pepe\r\n\r\n"); // not implemented
+				string response = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 501"));
+			}
 		}
 
 		[Test]
 		public void Test6 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test6/");
-			NetworkStream ns = CreateNS (9000);
-			 // not implemented! This is against the RFC. Should be a bad request/length required
-			Send (ns, "POST /test6/ HTTP/1.1\r\nHost: 127.0.0.1\r\nTransfer-Encoding: identity\r\n\r\n");
-			string response = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 501"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test6/")) {
+				NetworkStream ns = CreateNS (9000);
+				 // not implemented! This is against the RFC. Should be a bad request/length required
+				Send (ns, "POST /test6/ HTTP/1.1\r\nHost: 127.0.0.1\r\nTransfer-Encoding: identity\r\n\r\n");
+				string response = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 501"));
+			}
 		}
 
 		[Test]
 		public void Test7 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test7/");
-			NetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test7/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
-			HttpListenerContext ctx = listener.GetContext ();
-			Send (ctx.Response.OutputStream, "%%%OK%%%");
-			ctx.Response.Close ();
-			string response = Receive (ns, 1024);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 200"));
-			Assert.IsTrue (-1 != response.IndexOf ("Transfer-Encoding: chunked"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test7/")) {
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, "POST /test7/ HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+				HttpListenerContext ctx = listener.GetContext ();
+				Send (ctx.Response.OutputStream, "%%%OK%%%");
+				ctx.Response.Close ();
+				string response = Receive (ns, 1024);
+				ns.Close ();
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 200"));
+				Assert.IsTrue (-1 != response.IndexOf ("Transfer-Encoding: chunked"));
+			}
 		}
 
 		[Test]
 		public void Test8 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test8/");
-			NetworkStream ns = CreateNS (9000);
-			// Just like Test7, but 1.0
-			Send (ns, "POST /test8/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
-			HttpListenerContext ctx = listener.GetContext ();
-			Send (ctx.Response.OutputStream, "%%%OK%%%");
-			ctx.Response.Close ();
-			string response = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 200"));
-			Assert.IsTrue (-1 == response.IndexOf ("Transfer-Encoding: chunked"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test8/")) {
+				NetworkStream ns = CreateNS (9000);
+				// Just like Test7, but 1.0
+				Send (ns, "POST /test8/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+				HttpListenerContext ctx = listener.GetContext ();
+				Send (ctx.Response.OutputStream, "%%%OK%%%");
+				ctx.Response.Close ();
+				string response = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 200"));
+				Assert.IsTrue (-1 == response.IndexOf ("Transfer-Encoding: chunked"));
+			}
 		}
 
 		[Test]
 		public void Test9 ()
 		{
 			// 1.0 + "Transfer-Encoding: chunked"
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test9/");
-			NetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test9/ HTTP/1.0\r\nHost: 127.0.0.1\r\nTransfer-Encoding: chunked\r\n\r\n3\r\n123\r\n0\r\n\r\n");
-			bool timeout;
-			string response = ReceiveWithTimeout (ns, 512, 1000, out timeout);
-			Assert.IsFalse (timeout);
-			listener.Close ();
-			ns.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 411"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test9/")) {
+				NetworkStream ns = CreateNS (9000);
+				Send (ns, "POST /test9/ HTTP/1.0\r\nHost: 127.0.0.1\r\nTransfer-Encoding: chunked\r\n\r\n3\r\n123\r\n0\r\n\r\n");
+				bool timeout;
+				string response = ReceiveWithTimeout (ns, 512, 1000, out timeout);
+				ns.Close ();
+				Assert.IsFalse (timeout);
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 411"));
+			}
 		}
 
 		[Test]
 		public void Test10 ()
 		{
 			// Same as Test9, but now we shutdown the socket for sending.
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test10/");
-			MyNetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test10/ HTTP/1.0\r\nHost: 127.0.0.1\r\nTransfer-Encoding: chunked\r\n\r\n3\r\n123\r\n0\r\n\r\n");
-			ns.GetSocket ().Shutdown (SocketShutdown.Send);
-			bool timeout;
-			string response = ReceiveWithTimeout (ns, 512, 1000, out timeout);
-			Assert.IsFalse (timeout);
-			listener.Close ();
-			ns.Close ();
-			Assert.IsTrue (response.StartsWith ("HTTP/1.1 411"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test10/")) {
+				MyNetworkStream ns = CreateNS (9000);
+				Send (ns, "POST /test10/ HTTP/1.0\r\nHost: 127.0.0.1\r\nTransfer-Encoding: chunked\r\n\r\n3\r\n123\r\n0\r\n\r\n");
+				ns.GetSocket ().Shutdown (SocketShutdown.Send);
+				bool timeout;
+				string response = ReceiveWithTimeout (ns, 512, 1000, out timeout);
+				ns.Close ();
+				Assert.IsFalse (timeout);
+				Assert.IsTrue (response.StartsWith ("HTTP/1.1 411"));
+			}
 		}
 
 		[Test]
 		public void Test11 ()
 		{
 			// 0.9
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test11/");
-			MyNetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test11/ HTTP/0.9\r\nHost: 127.0.0.1\r\n\r\n123");
-			ns.GetSocket ().Shutdown (SocketShutdown.Send);
-			string input = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test11/")) {
+				MyNetworkStream ns = CreateNS (9000);
+				Send (ns, "POST /test11/ HTTP/0.9\r\nHost: 127.0.0.1\r\n\r\n123");
+				ns.GetSocket ().Shutdown (SocketShutdown.Send);
+				string input = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
+			}
 		}
 
 		[Test]
 		public void Test12 ()
 		{
 			// 0.9
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test12/");
-			MyNetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test12/ HTTP/0.9\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
-			ns.GetSocket ().Shutdown (SocketShutdown.Send);
-			string input = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test12/")) {
+				MyNetworkStream ns = CreateNS (9000);
+				Send (ns, "POST /test12/ HTTP/0.9\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+				ns.GetSocket ().Shutdown (SocketShutdown.Send);
+				string input = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
+			}
 		}
 
 		[Test]
 		public void Test13 ()
 		{
 			// 0.9
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test13/");
-			MyNetworkStream ns = CreateNS (9000);
-			Send (ns, "GEt /test13/ HTTP/0.9\r\nHost: 127.0.0.1\r\n\r\n");
-			ns.GetSocket ().Shutdown (SocketShutdown.Send);
-			string input = Receive (ns, 512);
-			ns.Close ();
-			listener.Close ();
-			Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test13/")) {
+				MyNetworkStream ns = CreateNS (9000);
+				Send (ns, "GEt /test13/ HTTP/0.9\r\nHost: 127.0.0.1\r\n\r\n");
+				ns.GetSocket ().Shutdown (SocketShutdown.Send);
+				string input = Receive (ns, 512);
+				ns.Close ();
+				Assert.IsTrue (input.StartsWith ("HTTP/1.1 400"));
+			}
 		}
 
 		HttpListenerRequest test14_request;
@@ -333,23 +333,24 @@ namespace MonoTests.System.Net {
 		[Test]
 		public void Test14 ()
 		{
-			HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test14/");
-			MyNetworkStream ns = CreateNS (9000);
-			Send (ns, "POST /test14/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
-			HttpListenerContext c = listener.GetContext ();
-			test14_request = c.Request;
-			test_evt = new ManualResetEvent (false);
-			Thread thread = new Thread (ReadToEnd);
-			thread.Start ();
-			if (test_evt.WaitOne (3000, false) == false) {
-				thread.Abort ();
+			using (HttpListener listener = CreateAndStartListener ("http://127.0.0.1:9000/test14/")) {
+				MyNetworkStream ns = CreateNS (9000);
+				Send (ns, "POST /test14/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
+				HttpListenerContext c = listener.GetContext ();
+				test14_request = c.Request;
+				test_evt = new ManualResetEvent (false);
+				Thread thread = new Thread (ReadToEnd);
+				thread.Start ();
+				if (test_evt.WaitOne (3000, false) == false) {
+					thread.Abort ();
+					test_evt.Close ();
+					Assert.IsTrue (false, "Timed out");
+				}
 				test_evt.Close ();
-				Assert.IsTrue (false, "Timed out");
+				c.Response.Close ();
+				ns.Close ();
+				Assert.AreEqual ("123", read_to_end, "Did not get the expected input.");
 			}
-			test_evt.Close ();
-			Assert.AreEqual ("123", read_to_end, "Did not get the expected input.");
-			c.Response.Close ();
-			ns.Close ();
 		}
 
 		string read_to_end;
