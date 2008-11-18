@@ -1,3 +1,9 @@
+2008-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c mini.c mini.h: Add a JIT debugging mode modelled after
+	a similar mode in Kaffe: When the the MONO_XDEBUG env var is set, debugging
+	info for JITted code is emitted into a shared library, loadable into gdb.
+
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
 	* Makefile.am: Changes to build PPC64.
