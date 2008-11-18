@@ -221,8 +221,8 @@ namespace Mono.CSharp {
 		{
 			if (args == null)
 				return name;
-			else
-				return name + "`" + args.Count;
+
+			return name + "`" + args.Count;
 		}
 
 		public static string MakeName (string name, int count)
