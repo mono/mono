@@ -1,3 +1,9 @@
+2008-11-18  Mark Probst  <mark.probst@gmail.com>
+
+	* include/private/gc_locks.h (test_and_set): The PPC64 case is
+	wrong, as it operates on 64 bit values, not on 32 bit ones as the
+	function requires.  The PPC32 case is sufficient.
+
 2008-09-29  Geoff Norton  <gnorton@novell.com>
 
 	* include/private/gcconfig.h: Make Darwin/ARM use mmap() instead of

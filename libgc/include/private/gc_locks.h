@@ -155,25 +155,6 @@
 #      define GC_TEST_AND_SET_DEFINED
 #    endif
 #    if defined(POWERPC)
-#     if CPP_WORDSZ == 64
-        inline static int GC_test_and_set(volatile unsigned int *addr) {
-          unsigned long oldval;
-          unsigned long temp = 1; /* locked value */
-
-          __asm__ __volatile__(
-               "1:\tldarx %0,0,%3\n"   /* load and reserve               */
-               "\tcmpdi %0, 0\n"       /* if load is                     */
-               "\tbne 2f\n"            /*   non-zero, return already set */
-               "\tstdcx. %2,0,%1\n"    /* else store conditional         */
-               "\tbne- 1b\n"           /* retry if lost reservation      */
-               "\tsync\n"              /* import barrier                 */
-               "2:\t\n"                /* oldval is zero if we set       */
-              : "=&r"(oldval), "=p"(addr)
-              : "r"(temp), "1"(addr)
-              : "cr0","memory");
-          return (int)oldval;
-        }
-#     else
         inline static int GC_test_and_set(volatile unsigned int *addr) {
           int oldval;
           int temp = 1; /* locked value */
@@ -191,7 +172,6 @@
               : "cr0","memory");
           return oldval;
         }
-#     endif
 #     define GC_TEST_AND_SET_DEFINED
       inline static void GC_clear(volatile unsigned int *addr) {
 	__asm__ __volatile__("lwsync" : : : "memory");
