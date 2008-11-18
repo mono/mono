@@ -1,6 +1,15 @@
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c, mini-ppc64.h, tramp-ppc64.c, exceptions-ppc64.c,
+	cpu-ppc64.md: Changes for PPC64.
+
+	Based on code submitted by andreas.faerber@web.de at
+	https://bugzilla.novell.com/show_bug.cgi?id=324134 under the
+	X11/MIT license.
+
+2008-11-18  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, mini-ppc64.h, tramp-ppc64.c, exceptions-ppc64.c,
 	cpu-ppc64.md: Copied from the corresponding PPC files from
 	r118846.
 
