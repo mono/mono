@@ -1,3 +1,7 @@
+2008-11-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* x86/x86-codegen.h: Add PINSR B/W/D.
+
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
 	* ppc/ppc-codegen.h: Macro for nop added.
