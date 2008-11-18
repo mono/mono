@@ -1,5 +1,7 @@
 2008-11-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_save_xdebug_info): Add support for parameters.
+	
 	* aot-compiler.c (mono_save_xdebug_info): Add preliminary support for
 	parameters.
 
