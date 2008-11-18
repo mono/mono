@@ -1,5 +1,13 @@
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
+	* ppc/ppc-codegen.h: PPC64 code generation macros.
+
+	Based on code submitted by andreas.faerber@web.de at
+	https://bugzilla.novell.com/show_bug.cgi?id=324134 under the
+	X11/MIT license.
+
+2008-11-18  Mark Probst  <mark.probst@gmail.com>
+
 	* ppc/ppc-codegen.h: A few fixes and additions.
 
 	Based on code submitted by andreas.faerber@web.de at
