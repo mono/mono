@@ -1,3 +1,9 @@
+2008-11-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* library.make (TEST_FILES): Notice filenames with ../ in the test
+	sources file, and handle them in a way suitable for the 'make
+	dist' handling of such files.
+
 2008-11-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* library.make: AOT the library after compilation if the AOT_IN_PROFILES
