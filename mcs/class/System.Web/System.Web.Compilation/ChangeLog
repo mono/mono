@@ -1,8 +1,4 @@
 
-2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* TemplateControlCompiler.cs: a corner case of the previous bug.
-
 2008-11-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AspTokenizer.cs: if there's a newline between the opening server tag

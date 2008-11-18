@@ -1271,8 +1271,6 @@ namespace System.Web.Compilation
 		
 		static Type GetContainerType (ControlBuilder builder)
 		{
-			if (builder is RootBuilder)
-				return typeof (System.Web.UI.Control);
 			Type type = builder.BindingContainerType;
 			
 #if NET_2_0
