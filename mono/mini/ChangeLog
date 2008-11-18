@@ -1,5 +1,8 @@
 2008-11-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_save_xdebug_info): Add preliminary support for
+	parameters.
+
 	* unwind.h (MonoUnwindOp): Change the 'val' to a signed type.
 
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
