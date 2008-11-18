@@ -51,7 +51,7 @@ namespace System.Text.RegularExpressions {
 		// lock must be held by the caller
 		void Cleanup ()
 		{
-			while (factories.Count >= capacity) {
+			while (factories.Count >= capacity && capacity > 0) {
 				object victim = mru_list.Evict ();
 				if (victim != null)
 					factories.Remove ((Key) victim);

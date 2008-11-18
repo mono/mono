@@ -1,4 +1,8 @@
 
+2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* cache.cs: avoid infinite loop.
+
 2008-11-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* cache.cs:
