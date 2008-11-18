@@ -38,6 +38,8 @@
 ./System.Web.Configuration/ScriptingWebServicesSectionGroup.cs
 ./System.Web.Configuration/ScriptingAuthenticationServiceSection.cs
 ./System.Web.Configuration/ScriptingProfileServiceSection.cs
+./System.Web.Query.Dynamic/DynamicClass.cs
+./System.Web.Query.Dynamic/ParseException.cs
 ./System.Web.UI/Timer.cs
 ./System.Web.UI/ProfileServiceManager.cs
 ./System.Web.UI/IScriptControl.cs

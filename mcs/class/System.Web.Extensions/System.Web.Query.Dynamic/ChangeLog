@@ -1,0 +1,6 @@
+2008-11-18  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicClass.cs: added
+
+	* ParseException.cs: added
+
