@@ -40,6 +40,8 @@ using System;
 using System.Collections;
 using System.Text;
 
+#pragma warning disable 3021
+
 namespace Mono {
 
 #if MONO_DATACONVERTER_PUBLIC
@@ -480,7 +482,8 @@ namespace Mono {
 				default:
 					throw new ArgumentException ("Invalid format for $ specifier", "description");
 				}
-				b.align = 4;
+				if (b.align == -1)
+					b.align = 4;
 				b.Add (e.GetBytes (Convert.ToString (oarg)));
 				if (add_null)
 					b.Add (new byte [n]);

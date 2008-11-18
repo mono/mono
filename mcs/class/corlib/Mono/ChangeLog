@@ -1,3 +1,12 @@
+2008-11-17  Chris Howie  <cdhowie@gmail.com>
+
+	* DataConverter.cs: Fix alignment for strings when the
+	natural-alignment parameter is used '!'.   
+
+	Disables CLS errors when not compiling with the CLS flag.
+	
+	Fixes #445867
+
 2008-03-12  Miguel de Icaza  <miguel@novell.com>
 
 	* DataConverter.cs: Fencepost bug fix from Kenneth D. Weinert
