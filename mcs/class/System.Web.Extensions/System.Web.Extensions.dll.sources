@@ -100,6 +100,7 @@
 ./System.Web.UI.WebControls/ListViewPagedDataSource.cs
 ./System.Web.UI.WebControls/ListViewSelectEventArgs.cs
 ./System.Web.UI.WebControls/ListViewSortEventArgs.cs
+./System.Web.UI.WebControls/ListViewTableCell.cs
 ./System.Web.UI.WebControls/ListViewTableRow.cs
 ./System.Web.UI.WebControls/ListViewUpdatedEventArgs.cs
 ./System.Web.UI.WebControls/ListViewUpdateEventArgs.cs

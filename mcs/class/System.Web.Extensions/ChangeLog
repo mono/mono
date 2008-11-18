@@ -1,3 +1,8 @@
+2008-11-18  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions.dll.sources: added
+	./System.Web.UI.WebControls/ListViewTableCell.cs
+
 2008-11-15  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.Extensions.dll.sources: added
