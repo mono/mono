@@ -1,3 +1,7 @@
+2008-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* freebsd-dwarf.h: Add dwarf.h header file from freebsd.
+
 2008-11-14  Andreas Färber  <andreas.faerber@web.de>
 
 	* Makefile.am (ENABLE_DTRACE): Re-add dtrace -h flag.
