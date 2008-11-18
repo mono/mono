@@ -90,6 +90,7 @@
 ./System.Web.UI.WebControls/ListViewCancelMode.cs
 ./System.Web.UI.WebControls/ListViewCommandEventArgs.cs
 ./System.Web.UI.WebControls/ListView.cs
+./System.Web.UI.WebControls/ListViewContainer.cs
 ./System.Web.UI.WebControls/ListViewDataItem.cs
 ./System.Web.UI.WebControls/ListViewDeletedEventArgs.cs
 ./System.Web.UI.WebControls/ListViewDeleteEventArgs.cs

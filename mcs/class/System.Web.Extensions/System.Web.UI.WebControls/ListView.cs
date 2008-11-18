@@ -59,6 +59,8 @@ namespace System.Web.UI.WebControls
 		const int CSTATE_SORTDIRECTION = 7;
 		const int CSTATE_SORTEXPRESSION = 8;
 		const int CSTATE_COUNT = 9;
+
+		delegate void GroupStart ();
 		
 		ITemplate _emptyDataTemplate;
 		ITemplate _emptyItemTemplate;
@@ -894,7 +896,7 @@ namespace System.Web.UI.WebControls
 	
 		protected virtual ListViewItem CreateEmptyItem ()
 		{
-			if (_emptyDataTemplate != null) {
+			if (_emptyItemTemplate != null) {
 				ListViewItem item = CreateItem (ListViewItemType.EmptyItem);
 				InstantiateEmptyItemTemplate (item);
 				OnItemCreated (new ListViewItemEventArgs (item));
@@ -1010,9 +1012,22 @@ namespace System.Web.UI.WebControls
 			int displayIndex = 0;
 			ListViewDataItem lvdi;
 			int startIndex = dataSource.StartRowIndex;
-			int numberOfGroups = (dataSource.Count / groupItemCount) - 1;
+			int dataCount = dataSource.Count;
+			int numberOfGroups = (dataCount / groupItemCount) + (dataCount % groupItemCount) - 1;
+			// This is disabled for now, until a bug in gmcs/JIT is fixed
+// 			GroupStart groupStart = () => {
+// 				if (groupItemCounter <= 0) {
+// 					groupItemCounter = groupItemCount;
+// 					currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
+// 					numberOfGroups--;
+// 					itemPosInGroup = firstItemIndexInGroup;
+// 					_groupedItemsContainerItemCount++;
+// 					needSeparator = false;
+// 				}
+// 			};
 			
 			foreach (object item in dataSource) {
+				// groupStart ();
 				if (groupItemCounter <= 0) {
 					groupItemCounter = groupItemCount;
 					currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
@@ -1021,7 +1036,6 @@ namespace System.Web.UI.WebControls
 					_groupedItemsContainerItemCount++;
 					needSeparator = false;
 				}
-
 				if (needSeparator && haveSeparatorTemplate)
 					InsertSeparatorItem (currentGroup, itemPosInGroup++);
 
@@ -1032,6 +1046,7 @@ namespace System.Web.UI.WebControls
 					needSeparator = true;
 			}
 
+			//groupStart ();
 			if (groupItemCounter <= 0) {
 				groupItemCounter = groupItemCount;
 				currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
@@ -1040,27 +1055,36 @@ namespace System.Web.UI.WebControls
 				_groupedItemsContainerItemCount++;
 				needSeparator = false;
 			}
-
+			
 			if (insertPosition == InsertItemPosition.LastItem) {
-				if (needSeparator && haveSeparatorTemplate) {
-					container = new ListViewItem ();
-					InstantiateItemSeparatorTemplate (container);
-					AddControlToContainer (container, currentGroup, itemPosInGroup++);
-					groupItemCounter--;
-				}
-
+				if (needSeparator && haveSeparatorTemplate)
+					InsertSeparatorItem (currentGroup, itemPosInGroup++);
+				
+				//groupStart ();
 				if (groupItemCounter <= 0) {
 					groupItemCounter = groupItemCount;
 					currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
 					numberOfGroups--;
 					itemPosInGroup = firstItemIndexInGroup;
 					_groupedItemsContainerItemCount++;
+					needSeparator = false;
 				}
-				
+
 				lvi = CreateInsertItem ();
 				InstantiateInsertItemTemplate (lvi);
 				AddControlToContainer (lvi, currentGroup, itemPosInGroup++);
 				groupItemCounter--;
+			}
+
+			if (groupItemCounter > 0 && _emptyItemTemplate != null) {
+				while (groupItemCounter > 0) {
+					if (haveSeparatorTemplate)
+						InsertSeparatorItem (currentGroup, itemPosInGroup++);
+					
+					lvi = CreateEmptyItem ();
+					AddControlToContainer (lvi, currentGroup, itemPosInGroup++);
+					groupItemCounter--;
+				}
 			}
 			
 			return ret;
@@ -1068,7 +1092,7 @@ namespace System.Web.UI.WebControls
 
 		Control StartNewGroup (bool needSeparator, ref int position, ref int firstItemIndexInGroup)
 		{
-			Control control = new Control ();
+			Control control = new ListViewContainer ();
 			InstantiateGroupTemplate (control);
 			Control placeholder = FindPlaceholder (ItemPlaceholderID, control);
 			if (placeholder == null)

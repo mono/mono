@@ -1,11 +1,15 @@
 2008-11-18  Marek Habersack  <mhabersack@novell.com>
 
+	* ListViewContainer.cs: added
+
 	* ListView.cs: implemented grouping support. With this ListView is
 	feature complete.
 	Refactored grouped/non-grouped rendering common code into separate
 	methods.
 	FindPlaceholder now looks for the placeholder recursively.
 	Implemented forgotten UpdateItem method.
+	Align group with empty items if there are no more data items.
+	Each group is contained within ListViewContainer.
 
 	* ListViewTableCell.cs: added
 
