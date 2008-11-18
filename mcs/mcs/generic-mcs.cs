@@ -209,19 +209,14 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class ConstructedType : TypeExpr
+	public class GenericTypeExpr : TypeExpr
 	{
-		public ConstructedType (FullNamedExpression fname, TypeArguments args, Location l)
+		public GenericTypeExpr (DeclSpace t, Location l)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public ConstructedType (Type t, TypeParameter[] type_params, Location l)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public ConstructedType (Type t, TypeArguments args, Location l)
+		public GenericTypeExpr (Type t, TypeArguments args, Location l)
 		{
 			throw new NotImplementedException ();
 		}

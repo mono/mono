@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 			if (name.IndexOf ('`') > 0) {
 				FullNamedExpression retval = Lookup (ds, SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
-					Error_TypeArgumentsCannotBeUsed (retval.Type, loc);
+					Error_TypeArgumentsCannotBeUsed (retval, loc);
 					return;
 				}
 			} else {
@@ -388,10 +388,14 @@ namespace Mono.CSharp {
 				TypeManager.CSharpName(t), TypeManager.GetNumberOfTypeArguments(t).ToString());
 		}
 
-		public static void Error_TypeArgumentsCannotBeUsed (Type t, Location loc)
+		public static void Error_TypeArgumentsCannotBeUsed (FullNamedExpression expr, Location loc)
 		{
-			Report.SymbolRelatedToPreviousError (t);
-			Error_TypeArgumentsCannotBeUsed (loc, "type", TypeManager.CSharpName (t));
+			if (expr is TypeExpr) {
+				Report.SymbolRelatedToPreviousError (expr.Type);
+				Error_TypeArgumentsCannotBeUsed (loc, "type", expr.GetSignatureForError ());
+			} else {
+				expr.Error_ExpressionCannotBeGeneric (loc);
+			}
 		}
 
 		public static void Error_TypeArgumentsCannotBeUsed (MethodBase mi, Location loc)

@@ -432,7 +432,7 @@ namespace Mono.CSharp {
 				list.Add (enumerable_type);
 
 #if GMCS_SOURCE
-				generic_enumerable_type = new ConstructedType (
+				generic_enumerable_type = new GenericTypeExpr (
 					TypeManager.generic_ienumerable_type,
 					generic_args, Location);
 				list.Add (generic_enumerable_type);
@@ -446,7 +446,7 @@ namespace Mono.CSharp {
 			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
 
 #if GMCS_SOURCE
-			generic_enumerator_type = new ConstructedType (
+			generic_enumerator_type = new GenericTypeExpr (
 				TypeManager.generic_ienumerator_type,
 				generic_args, Location);
 			list.Add (generic_enumerator_type);

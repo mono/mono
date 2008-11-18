@@ -282,7 +282,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ConstructedType ct = te as ConstructedType;
+			GenericTypeExpr ct = te as GenericTypeExpr;
 			if (ct != null) {
 				// Skip constrains check for overrides and explicit implementations
 				// TODO: they should use different overload
@@ -576,7 +576,7 @@ namespace Mono.CSharp {
 			if (e.eclass == ExprClass.Invalid)
 				throw new Exception ("Expression " + e + " ExprClass is Invalid after resolve");
 
-			if ((e.type == null) && !(e is ConstructedType))
+			if ((e.type == null) && !(e is GenericTypeExpr))
 				throw new Exception ("Expression " + e + " did not set its type after Resolve");
 
 			return e;
@@ -1180,6 +1180,12 @@ namespace Mono.CSharp {
 				Report.Error (1612, loc, "Cannot modify a value type return value of `{0}'. Consider storing the value in a temporary variable",
 					GetSignatureForError ());
 			}
+		}
+
+		public void Error_ExpressionCannotBeGeneric (Location loc)
+		{
+			Report.Error (307, loc, "The {0} `{1}' cannot be used with type arguments",
+				ExprClassName, GetSignatureForError ());
 		}
 
 		//
@@ -2462,7 +2468,7 @@ namespace Mono.CSharp {
 					if (targs != null)
 						new_args.Add (targs);
 
-					return new ConstructedType (t, new_args, loc);
+					return new GenericTypeExpr (t, new_args, loc);
 				}
 			}
 
@@ -2487,7 +2493,7 @@ namespace Mono.CSharp {
 					return nested.ResolveAsTypeStep (ec, false);
 
 				if (targs != null) {
-					ConstructedType ct = new ConstructedType (fne, targs, loc);
+					GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
 					return ct.ResolveAsTypeStep (ec, false);
 				}
 
@@ -2529,7 +2535,7 @@ namespace Mono.CSharp {
 			if (targs != null) {
 				FullNamedExpression retval = ec.DeclContainer.LookupNamespaceOrType (SimpleName.RemoveGenericArity (Name), loc, true);
 				if (retval != null) {
-					Namespace.Error_TypeArgumentsCannotBeUsed (retval.Type, loc);
+					Namespace.Error_TypeArgumentsCannotBeUsed (retval, loc);
 					return;
 				}
 			}
@@ -2603,13 +2609,6 @@ namespace Mono.CSharp {
 			if (current_block != null){
 				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
-					if (targs != null) {
-						Report.Error (307, loc,
-							      "The variable `{0}' cannot be used with type arguments",
-							      Name);
-						return null;
-					}
-
 					LocalVariableReference var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
 					if (right_side != null) {
 						return var.ResolveLValue (ec, right_side, loc);
@@ -2621,25 +2620,14 @@ namespace Mono.CSharp {
 					}
 				}
 
-				ParameterReference pref = current_block.Toplevel.GetParameterReference (Name, loc);
-				if (pref != null) {
-					if (targs != null) {
-						Report.Error (307, loc,
-							      "The variable `{0}' cannot be used with type arguments",
-							      Name);
-						return null;
-					}
+				Expression expr = current_block.Toplevel.GetParameterReference (Name, loc);
+				if (expr == null)
+					expr = current_block.Toplevel.GetTransparentIdentifier (Name);
 
-					if (right_side != null)
-						return pref.ResolveLValue (ec, right_side, loc);
-					else
-						return pref.Resolve (ec);
-				}
-
-				Expression expr = current_block.Toplevel.GetTransparentIdentifier (Name);
 				if (expr != null) {
 					if (right_side != null)
 						return expr.ResolveLValue (ec, right_side, loc);
+
 					return expr.Resolve (ec);
 				}
 			}
@@ -2721,7 +2709,7 @@ namespace Mono.CSharp {
 				if (targs == null)
 					return e;
 
-				ConstructedType ct = new ConstructedType (
+				GenericTypeExpr ct = new GenericTypeExpr (
 					e.Type, targs, loc);
 				return ct.ResolveAsTypeStep (ec, false);
 			}
@@ -3148,7 +3136,7 @@ namespace Mono.CSharp {
 					AttributeTester.Report_ObsoleteMessage (oa, left.GetSignatureForError (), loc);
 				}
 
-				ConstructedType ct = left as ConstructedType;
+				GenericTypeExpr ct = left as GenericTypeExpr;
 				if (ct != null && !ct.CheckConstraints (ec))
 					return null;
 				//

@@ -44,7 +44,7 @@ namespace Mono.CSharp.Nullable
 					"System", "Nullable`1", Kind.Struct, true);
 			}
 
-			ConstructedType ctype = new ConstructedType (TypeManager.generic_nullable_type, args, loc);
+			GenericTypeExpr ctype = new GenericTypeExpr (TypeManager.generic_nullable_type, args, loc);
 			return ctype.ResolveAsTypeTerminal (ec, false);
 		}
 

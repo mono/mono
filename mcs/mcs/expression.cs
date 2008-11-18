@@ -7301,8 +7301,6 @@ namespace Mono.CSharp {
 			this.expr = expr;
 		}
 
-		// TODO: this method has very poor performace for Enum fields and
-		// probably for other constants as well
 		Expression DoResolve (EmitContext ec, Expression right_side)
 		{
 			if (type != null)
@@ -7325,16 +7323,15 @@ namespace Mono.CSharp {
 
 			string LookupIdentifier = MemberName.MakeName (Name, targs);
 
-			if (expr_resolved is Namespace) {
-				Namespace ns = (Namespace) expr_resolved;
+			Namespace ns = expr_resolved as Namespace;
+			if (ns != null) {
 				FullNamedExpression retval = ns.Lookup (ec.DeclContainer, LookupIdentifier, loc);
-#if GMCS_SOURCE
-				if ((retval != null) && (targs != null))
-					retval = new ConstructedType (retval, targs, loc).ResolveAsTypeStep (ec, false);
-#endif
 
 				if (retval == null)
-					ns.Error_NamespaceDoesNotExist (ec.DeclContainer, loc, Name);
+					ns.Error_NamespaceDoesNotExist (ec.DeclContainer, loc, LookupIdentifier);
+				else if (targs != null)
+					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (ec, false);
+
 				return retval;
 			}
 
@@ -7410,7 +7407,7 @@ namespace Mono.CSharp {
 				}
 
 #if GMCS_SOURCE
-				ConstructedType ct = expr_resolved as ConstructedType;
+				GenericTypeExpr ct = expr_resolved as GenericTypeExpr;
 				if (ct != null) {
 					//
 					// When looking up a nested type in a generic instance
@@ -7419,7 +7416,7 @@ namespace Mono.CSharp {
 					//
 					// See gtest-172-lib.cs and gtest-172.cs for an example.
 					//
-					ct = new ConstructedType (
+					ct = new GenericTypeExpr (
 						member_lookup.Type, ct.TypeArguments, loc);
 
 					return ct.ResolveAsTypeStep (ec, false);
@@ -7471,26 +7468,26 @@ namespace Mono.CSharp {
 
 		public FullNamedExpression ResolveNamespaceOrType (IResolveContext rc, bool silent)
 		{
-			FullNamedExpression new_expr = expr.ResolveAsTypeStep (rc, silent);
+			FullNamedExpression expr_resolved = expr.ResolveAsTypeStep (rc, silent);
 
-			if (new_expr == null)
+			if (expr_resolved == null)
 				return null;
 
 			string LookupIdentifier = MemberName.MakeName (Name, targs);
 
-			if (new_expr is Namespace) {
-				Namespace ns = (Namespace) new_expr;
+			Namespace ns = expr_resolved as Namespace;
+			if (ns != null) {
 				FullNamedExpression retval = ns.Lookup (rc.DeclContainer, LookupIdentifier, loc);
-#if GMCS_SOURCE
-				if ((retval != null) && (targs != null))
-					retval = new ConstructedType (retval, targs, loc).ResolveAsTypeStep (rc, false);
-#endif
-				if (!silent && retval == null)
+
+				if (retval == null && !silent)
 					ns.Error_NamespaceDoesNotExist (rc.DeclContainer, loc, LookupIdentifier);
+				else if (targs != null)
+					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (rc, silent);
+
 				return retval;
 			}
 
-			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (rc, false);
+			TypeExpr tnew_expr = expr_resolved.ResolveAsTypeTerminal (rc, false);
 			if (tnew_expr == null)
 				return null;
 
@@ -7508,7 +7505,7 @@ namespace Mono.CSharp {
 				if (silent)
 					return null;
 
-				Error_IdentifierNotFound (rc, new_expr, LookupIdentifier);
+				Error_IdentifierNotFound (rc, expr_resolved, LookupIdentifier);
 				return null;
 			}
 
@@ -7535,7 +7532,7 @@ namespace Mono.CSharp {
 			}
 
 			if (the_args != null) {
-				ConstructedType ctype = new ConstructedType (texpr.Type, the_args, loc);
+				GenericTypeExpr ctype = new GenericTypeExpr (texpr.Type, the_args, loc);
 				return ctype.ResolveAsTypeStep (rc, false);
 			}
 #endif
@@ -7554,7 +7551,7 @@ namespace Mono.CSharp {
 				if (expr_type == null)
 					return;
 
-				Namespace.Error_TypeArgumentsCannotBeUsed (expr_type.Type, loc);
+				Namespace.Error_TypeArgumentsCannotBeUsed (expr_type, loc);
 				return;
 			}
 
@@ -9732,7 +9729,7 @@ namespace Mono.CSharp {
 			if (anonymous_type == null)
 				return null;
 
-			ConstructedType te = new ConstructedType (anonymous_type.TypeBuilder,
+			GenericTypeExpr te = new GenericTypeExpr (anonymous_type.TypeBuilder,
 				new TypeArguments (loc, t_args), loc);
 
 			return new New (te, arguments, loc).Resolve (ec);

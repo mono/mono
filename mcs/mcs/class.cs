@@ -1177,7 +1177,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			current_type = new ConstructedType (TypeBuilder, TypeParameters, Location);
+			// TODO: Very strange, why not simple make generic type from
+			// current type parameters
+			current_type = new GenericTypeExpr (this, Location);
 			current_type = current_type.ResolveAsTypeTerminal (this, false);
 			if (current_type == null) {
 				error = true;
@@ -1272,7 +1274,7 @@ namespace Mono.CSharp {
 						AttributeTester.Report_ObsoleteMessage (
 							oa, iface.GetSignatureForError (), Location);
 
-					ConstructedType ct = iface as ConstructedType;
+					GenericTypeExpr ct = iface as GenericTypeExpr;
 					if ((ct != null) && !ct.CheckConstraints (this))
 						return false;
 				}
@@ -1283,7 +1285,7 @@ namespace Mono.CSharp {
 				if (obsolete_attr != null && !IsInObsoleteScope)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location);
 
-				ConstructedType ct = base_type as ConstructedType;
+				GenericTypeExpr ct = base_type as GenericTypeExpr;
 				if ((ct != null) && !ct.CheckConstraints (this))
 					return false;
 				

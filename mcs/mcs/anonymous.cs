@@ -269,15 +269,18 @@ namespace Mono.CSharp {
 					ec.CurrentAnonymousMethod.Storey.TypeParameters :
 					ec.GenericDeclContainer.TypeParameters;
 
-				if (tparams.Length != CountTypeParameters) {
-					TypeParameter [] full = new TypeParameter [CountTypeParameters];
-					DeclSpace parent = ec.DeclContainer.Parent;
-					parent.CurrentTypeParameters.CopyTo (full, 0);
-					tparams.CopyTo (full, parent.CountTypeParameters);
-					tparams = full;
-				}
+				TypeArguments targs = new TypeArguments (Location);
 
-				storey_type_expr = new ConstructedType (TypeBuilder, tparams, Location);
+				if (tparams.Length < CountTypeParameters) {
+					TypeParameter[] parent_tparams = ec.DeclContainer.Parent.CurrentTypeParameters;
+					for (int i = 0; i < parent_tparams.Length; ++i)
+						targs.Add (new TypeParameterExpr (parent_tparams[i], Location));
+				}
+				
+				for (int i = 0; i < tparams.Length; ++i)
+					targs.Add (new TypeParameterExpr (tparams[i], Location));
+
+				storey_type_expr = new GenericTypeExpr (TypeBuilder, targs, Location);
 			} else {
 				storey_type_expr = new TypeExpression (TypeBuilder, Location);
 			}
@@ -1731,7 +1734,7 @@ namespace Mono.CSharp {
 			ToplevelBlock equals_block = new ToplevelBlock (equals.Parameters, loc);
 			TypeExpr current_type;
 			if (IsGeneric)
-				current_type = new ConstructedType (TypeBuilder, TypeParameters, loc);
+				current_type = new GenericTypeExpr (this, loc);
 			else
 				current_type = new TypeExpression (TypeBuilder, loc);
 
