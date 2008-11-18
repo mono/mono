@@ -1,3 +1,10 @@
+2008-11-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #420862
+	* XmlConstants.cs (QnUnsignedShort): Rename from QnUsigned short
+	and fix the value too.
+	* XmlSchemaWriter.cs (XmlQualifiedName): Update to changes.
+
 2008-09-27  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataView.cs: Convert into a partial class and sequester

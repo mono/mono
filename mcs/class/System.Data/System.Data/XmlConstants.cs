@@ -120,7 +120,7 @@ internal class XmlConstants
 	public static XmlQualifiedName QnSbyte = new XmlQualifiedName ("byte", XmlSchema.Namespace);
 	public static XmlQualifiedName QnFloat = new XmlQualifiedName ("float", XmlSchema.Namespace);
 	public static XmlQualifiedName QnDuration = new XmlQualifiedName ("duration", XmlSchema.Namespace);
-	public static XmlQualifiedName QnUsignedShort = new XmlQualifiedName ("usignedShort", XmlSchema.Namespace);
+	public static XmlQualifiedName QnUnsignedShort = new XmlQualifiedName ("unsignedShort", XmlSchema.Namespace);
 	public static XmlQualifiedName QnUnsignedInt = new XmlQualifiedName ("unsignedInt", XmlSchema.Namespace);
 	public static XmlQualifiedName QnUnsignedLong = new XmlQualifiedName ("unsignedLong", XmlSchema.Namespace);
 	public static XmlQualifiedName QnUri = new XmlQualifiedName ("anyURI", XmlSchema.Namespace);

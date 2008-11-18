@@ -37,6 +37,7 @@
 using NUnit.Framework;
 using System;
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.IO;
 using System.Data;
@@ -2088,6 +2089,33 @@ namespace MonoTests.System.Data
 				ds.Tables[0].Rows [0][0,DataRowVersion.Current].ToString (),
 				"deserialization after modification oes not give current values");
                 }
+
+		[Test]
+		public void Bug420862 ()
+		{
+			DataSet ds = new DataSet ("d");
+			DataTable dt = ds.Tables.Add ("t");
+			dt.Columns.Add ("c", typeof (ushort));
+
+			XmlSchema xs = XmlSchema.Read (new StringReader (ds.GetXmlSchema ()), null);
+			xs.Compile (null);
+
+			// follow the nesting of the schema in the foreach
+			foreach (XmlSchemaElement d in xs.Items) {
+				Assert.AreEqual ("d", d.Name);
+				XmlSchemaChoice dsc = (XmlSchemaChoice) ((XmlSchemaComplexType) d.SchemaType).Particle;
+				foreach (XmlSchemaElement t in dsc.Items) {
+					Assert.AreEqual ("t", t.Name);
+					XmlSchemaSequence tss = (XmlSchemaSequence) ((XmlSchemaComplexType) t.SchemaType).Particle;
+					foreach (XmlSchemaElement c in tss.Items) {
+						Assert.AreEqual ("c", c.Name);
+						Assert.AreEqual ("unsignedShort", c.SchemaTypeName.Name);
+						return;
+					}
+				}
+			}
+			Assert.Fail ();
+		}
 
                 /// <summary>
                 /// Test for testing DataSet.Clear method with foriegn key relations

@@ -1,3 +1,7 @@
+2008-11-18  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataSetTest.cs (Bug420862): New test.
+
 2008-09-16  brandin claar  <brandin.claar@gmail.com>
 
 	* BinarySerializationTest.cs (TestDefaultValues): New.

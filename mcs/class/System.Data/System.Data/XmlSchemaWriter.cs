@@ -881,7 +881,7 @@ namespace System.Data
 				case TypeCode.Double: return XmlConstants.QnDouble;
 				case TypeCode.SByte: return XmlConstants.QnSbyte;
 				case TypeCode.Single: return XmlConstants.QnFloat;
-				case TypeCode.UInt16: return XmlConstants.QnUsignedShort;
+				case TypeCode.UInt16: return XmlConstants.QnUnsignedShort;
 				case TypeCode.UInt32: return XmlConstants.QnUnsignedInt;
 				case TypeCode.UInt64: return XmlConstants.QnUnsignedLong;
 			}
