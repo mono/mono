@@ -187,7 +187,7 @@ namespace System.Web.UI {
 #endif
 		Type BindingContainerType {
 			get {
-				ControlBuilder cb = (this is TemplateBuilder) ? this : MyNamingContainer;
+				ControlBuilder cb = (this is TemplateBuilder && !(this is RootBuilder)) ? this : MyNamingContainer;
 				if (cb == null)
 					return typeof (Control);
 
