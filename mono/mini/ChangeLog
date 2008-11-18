@@ -1,3 +1,9 @@
+2008-11-18  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, mini-ppc64.h, tramp-ppc64.c, exceptions-ppc64.c,
+	cpu-ppc64.md: Copied from the corresponding PPC files from
+	r118846.
+
 2008-11-18  Scott Peterson  <lunchtimemama@novell.com>
 
 	* mini-ops.h: Added OP_ROUND.
