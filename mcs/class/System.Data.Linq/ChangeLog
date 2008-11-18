@@ -1,3 +1,7 @@
+2008-11-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r947 (XmlMappingSource).
+
 2008-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* updated to DbLinq r946 (quick fix for vendor loading).
