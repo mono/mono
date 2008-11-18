@@ -1,5 +1,11 @@
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
+	* Makefile.am: Changes to build PPC64.
+
+	* mini-arch.h: Include mini-ppc64.h on PPC64.
+
+2008-11-18  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc64.c, mini-ppc64.h, cpu-ppc64.md: Updated with changes
 	in PPC code up to r119147.
 
