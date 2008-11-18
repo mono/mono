@@ -20,6 +20,13 @@
 
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* x86/x86-codegen.h: Fix comment about the version of PCMPGTQ.
+
+	* x86/x86-codegen.h: Add movsd constant and x86_sse_alu_sd_membase_reg
+	macro.
+
+2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* x86/x86-codegen.h: Add X86_SSE_MOVHPD_MEMBASE_REG constant
 	and x86_sse_alu_pd_membase_reg/x86_sse_alu_membase_reg macros.
 
