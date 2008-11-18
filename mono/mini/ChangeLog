@@ -1,3 +1,8 @@
+2008-11-18  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, mini-ppc64.h, tramp-ppc64.c, cpu-ppc64.md: Changes
+	for PPC64.  An empty program runs now.
+
 2008-11-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c mini.c mini.h: Add a JIT debugging mode modelled after

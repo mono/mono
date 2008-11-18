@@ -1,5 +1,9 @@
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
+	* ppc/ppc-codegen.h: Macro for nop added.
+
+2008-11-18  Mark Probst  <mark.probst@gmail.com>
+
 	* ppc/ppc-codegen.h: PPC64 code generation macros.
 
 	Based on code submitted by andreas.faerber@web.de at
