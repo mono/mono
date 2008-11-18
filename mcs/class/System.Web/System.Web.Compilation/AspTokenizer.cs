@@ -48,6 +48,7 @@ namespace System.Web.Compilation
 
 	class AspTokenizer
 	{
+		static char [] lfcr = new char [] { '\n', '\r' };
 		TextReader sr;
 		int current_token;
 		StringBuilder sb, odds;
@@ -236,8 +237,12 @@ namespace System.Web.Compilation
 				}
 
 				if (inTag && current_token == '%' && "@#=".IndexOf ((char) c) != -1){
+					if (odds.Length == 0 || odds.ToString ().IndexOfAny (lfcr) < 0) {
+						sb.Append ((char) c);
+						return c;
+					}
 					sb.Append ((char) c);
-					return c;
+					continue;
 				}
 
 				if (inTag && c == '-' && sr.Peek () == '-'){
