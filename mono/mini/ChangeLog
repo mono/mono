@@ -66,6 +66,11 @@
 
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Use movsd instead of monvups
+	in OP_EXTRACT_R8 to avoid possible stack corruption.
+
+2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Added OP_EXTRACT_R8/I8.
 
 	* cpu-x86.md: Added extract_r8.
