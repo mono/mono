@@ -223,6 +223,7 @@ namespace System.Windows.Forms
 
 		protected virtual void OnCollectionChanged (CollectionChangeEventArgs e)
 		{
+			RegenerateIndexes ();
 			RegenerateSortedList ();
 			
 			if (CollectionChanged != null)
@@ -237,6 +238,12 @@ namespace System.Windows.Forms
 			get { return display_index_sorted; }
 		}
 
+		private void RegenerateIndexes ()
+		{
+			for (int i = 0; i < Count; i++)
+				this[i].SetIndex (i);
+		}
+		
 		internal void RegenerateSortedList ()
 		{
 			DataGridViewColumn[] array = (DataGridViewColumn[])base.List.ToArray (typeof (DataGridViewColumn));

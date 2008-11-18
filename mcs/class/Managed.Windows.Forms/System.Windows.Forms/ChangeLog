@@ -1,3 +1,8 @@
+2008-11-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewColumnCollection.cs: Make sure we re-index the columns after
+	the collection is modified.
+
 2008-11-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DomainUpDown.cs: Remove string cache and reflection optimizations.  They

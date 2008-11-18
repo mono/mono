@@ -1,3 +1,8 @@
+2008-11-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewColumnCollectionTest.cs: Add test to ensure we re-index
+	columns after modifying the collection.
+
 2008-11-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewTest.cs: Add a test showing how RowTemplate works.
