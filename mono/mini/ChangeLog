@@ -1,3 +1,15 @@
+2008-11-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Added OP_INSERT_I2.
+
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+	
+	* simd-intrinsics.c: Implement setter for Vector8s.
+
+	* simd-methods.h: Add the names of get setters of Vector8s.
+
 2008-11-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_save_xdebug_info): Add support for parameters.
