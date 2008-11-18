@@ -105,9 +105,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 			set {
-				if (value != null && value.Level == RequestCacheLevel.NoCacheNoStore)
-					return;
-				throw GetMustImplement ();
 			}
 		}
 #endif
