@@ -1,3 +1,10 @@
+2008-11-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile: Don't build mono-file-formats.*, mono-tools.*
+	* docs/mono-file-formats.config, docs/mono-file-formats.source, 
+	  docs/mono-tools.config, docs/mono-tools.source: Removed (now located 
+	  in mono/docs).
+
 2008-11-02  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs/Makefile (MONO_DIRS): Add Mono.Simd.
