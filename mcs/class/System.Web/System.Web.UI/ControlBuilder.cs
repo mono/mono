@@ -196,8 +196,9 @@ namespace System.Web.UI {
 					return cb.BindingContainerType;
 #endif
 
+				Type ct;
 				if (cb is TemplateBuilder) {
-					Type ct = ((TemplateBuilder) cb).ContainerType;
+					ct = ((TemplateBuilder) cb).ContainerType;
 					if (typeof (INonBindingContainer).IsAssignableFrom (ct))
 						return MyNamingContainer.BindingContainerType;
 					
@@ -205,12 +206,16 @@ namespace System.Web.UI {
 						return ct;
 
 					ct = ControlType;
-					if (typeof (INonBindingContainer).IsAssignableFrom (ct))
+					if (typeof (INonBindingContainer).IsAssignableFrom (ct) || !typeof (INamingContainer).IsAssignableFrom (ct))
 						return MyNamingContainer.BindingContainerType;
 					
-					return ControlType;
+					return ct;
 				}
-				
+
+				ct = cb.ControlType;
+				if (typeof (INonBindingContainer).IsAssignableFrom (ct) || !typeof (INamingContainer).IsAssignableFrom (ct))
+					return MyNamingContainer.BindingContainerType;
+
 				return cb.ControlType;
 			}
 		}

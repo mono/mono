@@ -1,3 +1,9 @@
+
+2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ControlBuilder.cs: make sure the binding container container is a
+	naming container.
+
 2008-11-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlBuilder.cs: make sure no control implementing the
