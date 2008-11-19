@@ -1,3 +1,7 @@
+2008-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_xdebug_info): Add locking.
+
 2008-11-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c: Implement setter for Vector8us.
