@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<monodoc>
+  <node label="Mono Development Tools" name="dev-tools" parent="tools" />
+  <source provider="man" basefile="mono-tools" path="dev-tools"/>
+</monodoc>
