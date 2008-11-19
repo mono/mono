@@ -1,3 +1,8 @@
+2008-11-19  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, cpu-ppc64.md: Fixed some opcodes.  PPC64 passes
+	basic.exe now.
+
 2008-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_save_xdebug_info): Add more parameter types.
