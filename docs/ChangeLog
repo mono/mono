@@ -1,3 +1,19 @@
+2008-11-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs.make, Makefile.am: Build mono-file-formats{.tree,.zip},
+	  mono-tool{.tree,.zip} files.
+	* mono-file-formats.config, mono-tools.config: Alter paths to man
+	  pages so that they're valid for building from mono/docs.
+	* monoapi.make: Rename to docs.make.
+
+2008-11-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs.make, Makefile.am: Build mono-file-formats{.tree,.zip},
+	  mono-tool{.tree,.zip} files.
+	* mono-file-formats.config, mono-tools.config: Alter paths to man
+	  pages so that they're valid for building from mono/docs.
+	* monoapi.make: Rename to docs.make.
+
 2008-11-01  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile.am: Clean up for srcdir != builddir.
