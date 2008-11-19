@@ -1,5 +1,8 @@
 2008-11-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_find_jit_info): Avoid reading random
+	values from the LMF. Fixes #444383.
+
 	* aot-compiler.c (mono_save_xdebug_info): Add locking.
 
 2008-11-19  Rodrigo Kumpera  <rkumpera@novell.com>
