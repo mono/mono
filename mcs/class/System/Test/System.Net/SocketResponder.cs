@@ -81,9 +81,10 @@ namespace MonoTests.System.Net
 				if (!_stopped)
 					return;
 				_stopped = false;
+				tcpListener = new TcpListener (LocalEndPoint);
+				tcpListener.Start ();
 				listenThread = new Thread (new ThreadStart (Listen));
 				listenThread.Start ();
-				Thread.Sleep (20); // allow listener to start
 			}
 		}
 
@@ -102,13 +103,15 @@ namespace MonoTests.System.Net
 
 		private void Listen ()
 		{
-			tcpListener = new TcpListener (LocalEndPoint);
-			tcpListener.Start ();
 			while (!_stopped) {
 				try {
 					Socket socket = tcpListener.AcceptSocket ();
 					socket.Send (_requestHandler (socket));
-					socket.Shutdown (SocketShutdown.Send);
+					try {
+						socket.Shutdown (SocketShutdown.Receive);
+						socket.Shutdown (SocketShutdown.Send);
+					} catch {
+					}
 					Thread.Sleep (500);
 					socket.Close ();
 				} catch (SocketException ex) {
