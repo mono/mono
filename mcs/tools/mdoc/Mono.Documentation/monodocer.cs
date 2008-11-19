@@ -202,6 +202,10 @@ class MDocUpdater : MDocCommand
 		if (assembly == null)
 			throw new InvalidOperationException("Assembly " + name + " not found.");
 
+		var r = assembly.Resolver as BaseAssemblyResolver;
+		if (r != null && name.Contains (Path.DirectorySeparatorChar)) {
+			r.AddSearchDirectory (Path.GetDirectoryName (name));
+		}
 		return assembly;
 	}
 
