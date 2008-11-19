@@ -217,10 +217,19 @@ namespace System.Web.Configuration {
 			_Configuration conf;
 
 			conf = (_Configuration) configurations [path];
+			bool store_cache = true;
+			if (conf == null && HttpContext.Current != null) {
+				string realpath = HttpContext.Current.Request.MapPath (path);
+				if (!File.Exists (realpath) && !Directory.Exists (realpath)) {
+					store_cache = false;
+				}
+			}
+
 			if (conf == null) {
 				try {
 					conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
-					configurations [path] = conf;
+					if (store_cache)
+						configurations [path] = conf;
 				} catch (Exception ex) {
 					lock (hasConfigErrorsLock) {
 						hasConfigErrors = true;
@@ -312,7 +321,11 @@ namespace System.Web.Configuration {
 #else
 			object value = null;
 #endif
-			AddSectionToCache (GetSectionCacheKey (sectionName, path), value);
+			if (configurations [path] != null) {
+				lock (sectionCache) {
+					sectionCache [GetSectionCacheKey (sectionName, path)] = value;
+				}
+			}
 			return value;
 #endif
 		}
@@ -354,6 +367,7 @@ namespace System.Web.Configuration {
 			get { return configFactory; }
 		}
 
+#if TARGET_J2EE
 		static void AddSectionToCache (string key, object section)
 		{
 			if (sectionCache [key] != null)
@@ -366,6 +380,7 @@ namespace System.Web.Configuration {
 			tmpTable.Add (key, section);
 			sectionCache = tmpTable;
 		}
+#endif
 
 		static string GetSectionCacheKey (string sectionName, string path)
 		{
