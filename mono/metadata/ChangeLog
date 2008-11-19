@@ -1,3 +1,10 @@
+
+2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: write the full path of the assembly to the .ini file
+	created when "shadow-copying"
+	Bug #446353 fixed.
+
 2008-11-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (mono_method_full_name): Stringify wrapper types even
