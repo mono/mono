@@ -1,3 +1,7 @@
+2008-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* stackframes-async.2.cs: Add a test for #444383.
+
 2008-11-13  Mark Probst  <mark.probst@gmail.com>
 
 	* filter-stack.cs: Test whether method calls with large arguments
