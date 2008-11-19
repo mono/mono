@@ -1,3 +1,7 @@
+2008-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_xdebug_info): Emit correct location info
+	for dead variables.
 
 Wed Nov 19 18:27:41 CET 2008 Paolo Molaro <lupus@ximian.com>
 
