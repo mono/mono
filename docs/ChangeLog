@@ -1,5 +1,10 @@
 2008-11-18  Jonathan Pryor  <jpryor@novell.com>
 
+	* Makefile.am (EXTRA_DIST): Add mono-file-formats{.config,.source} and
+	  mono-tools{.config,.source} (fixes the build).
+
+2008-11-18  Jonathan Pryor  <jpryor@novell.com>
+
 	* docs.make, Makefile.am: Build mono-file-formats{.tree,.zip},
 	  mono-tool{.tree,.zip} files.
 	* mono-file-formats.config, mono-tools.config: Alter paths to man

@@ -42,7 +42,11 @@ EXTRA_DIST = \
 	mini-doc.txt		\
 	mini-porting.txt	\
 	mono-api-metadata.html	\
+	mono-file-formats.config\
+	mono-file-formats.source\
 	mono_handle_d		\
+	mono-tools.config       \
+	mono-tools.source       \
 	monoapi.source		\
 	new-regalloc		\
 	object-layout		\
