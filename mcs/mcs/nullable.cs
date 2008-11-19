@@ -20,9 +20,9 @@ namespace Mono.CSharp.Nullable
 {
 	public class NullableType : TypeExpr
 	{
-		Expression underlying;
+		TypeExpr underlying;
 
-		public NullableType (Expression underlying, Location l)
+		public NullableType (TypeExpr underlying, Location l)
 		{
 			this.underlying = underlying;
 			loc = l;
@@ -36,14 +36,12 @@ namespace Mono.CSharp.Nullable
 
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
-			TypeArguments args = new TypeArguments (loc);
-			args.Add (underlying);
-
 			if (TypeManager.generic_nullable_type == null) {
 				TypeManager.generic_nullable_type = TypeManager.CoreLookupType (
 					"System", "Nullable`1", Kind.Struct, true);
 			}
 
+			TypeArguments args = new TypeArguments (underlying);
 			GenericTypeExpr ctype = new GenericTypeExpr (TypeManager.generic_nullable_type, args, loc);
 			return ctype.ResolveAsTypeTerminal (ec, false);
 		}

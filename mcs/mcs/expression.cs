@@ -7521,7 +7521,7 @@ namespace Mono.CSharp {
 					expr_type = expr_type.BaseType;
 				}
 				
-				TypeArguments new_args = new TypeArguments (loc);
+				TypeArguments new_args = new TypeArguments ();
 				foreach (Type decl in TypeManager.GetTypeArguments (expr_type))
 					new_args.Add (new TypeExpression (decl, loc));
 
@@ -8931,7 +8931,7 @@ namespace Mono.CSharp {
 			Type ltype = lexpr.Type;
 #if GMCS_SOURCE
 			if ((dim.Length > 0) && (dim [0] == '?')) {
-				TypeExpr nullable = new Nullable.NullableType (left, loc);
+				TypeExpr nullable = new Nullable.NullableType (lexpr, loc);
 				if (dim.Length > 1)
 					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
 				return nullable.ResolveAsTypeTerminal (ec, false);
@@ -9730,7 +9730,7 @@ namespace Mono.CSharp {
 				return null;
 
 			GenericTypeExpr te = new GenericTypeExpr (anonymous_type.TypeBuilder,
-				new TypeArguments (loc, t_args), loc);
+				new TypeArguments (t_args), loc);
 
 			return new New (te, arguments, loc).Resolve (ec);
 		}

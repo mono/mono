@@ -3658,7 +3658,7 @@ namespace Mono.CSharp {
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc), "Generic", loc);
 
 			string_dictionary_type = new MemberAccess (system_collections_generic, "Dictionary",
-				new TypeArguments (loc,
+				new TypeArguments (
 					new TypeExpression (TypeManager.string_type, loc),
 					new TypeExpression (TypeManager.int32_type, loc)), loc);
 #else

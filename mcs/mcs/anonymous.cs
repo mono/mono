@@ -132,7 +132,7 @@ namespace Mono.CSharp {
 			string tname = MakeName (host_name, "c", name, unique_id);
 			TypeArguments args = null;
 			if (generic != null) {
-				args = new TypeArguments (loc);
+				args = new TypeArguments ();
 				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
 					args.Add (new TypeParameterName (tparam.Name, null, loc));
 			}
@@ -269,7 +269,7 @@ namespace Mono.CSharp {
 					ec.CurrentAnonymousMethod.Storey.TypeParameters :
 					ec.GenericDeclContainer.TypeParameters;
 
-				TypeArguments targs = new TypeArguments (Location);
+				TypeArguments targs = new TypeArguments ();
 
 				if (tparams.Length < CountTypeParameters) {
 					TypeParameter[] parent_tparams = ec.DeclContainer.Parent.CurrentTypeParameters;
@@ -1655,7 +1655,7 @@ namespace Mono.CSharp {
 			// named upon properties names
 			//
 			AnonymousTypeClass a_type = new AnonymousTypeClass (parent.NamespaceEntry.SlaveDeclSpace,
-				new MemberName (name, new TypeArguments (loc, t_params), loc), parameters, loc);
+				new MemberName (name, new TypeArguments (t_params), loc), parameters, loc);
 
 			if (parameters.Count > 0)
 				a_type.SetParameterInfo (null);
@@ -1753,7 +1753,7 @@ namespace Mono.CSharp {
 
 				MemberAccess equality_comparer = new MemberAccess (new MemberAccess (
 					system_collections_generic, "EqualityComparer",
-						new TypeArguments (loc, new SimpleName (TypeParameters [i].Name, loc)), loc),
+						new TypeArguments (new SimpleName (TypeParameters [i].Name, loc)), loc),
 						"Default", loc);
 
 				ArrayList arguments_equal = new ArrayList (2);

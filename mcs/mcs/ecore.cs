@@ -2358,7 +2358,7 @@ namespace Mono.CSharp {
 		public SimpleName (string name, TypeParameter[] type_params, Location l)
 			: base (name, l)
 		{
-			targs = new TypeArguments (l);
+			targs = new TypeArguments ();
 			foreach (TypeParameter type_param in type_params)
 				targs.Add (new TypeParameterExpr (type_param, l));
 		}
@@ -2461,7 +2461,7 @@ namespace Mono.CSharp {
 
 			for (; (ds != null) && ds.IsGeneric; ds = ds.Parent) {
 				if (arg_count + ds.CountTypeParameters == gen_params.Length) {
-					TypeArguments new_args = new TypeArguments (loc);
+					TypeArguments new_args = new TypeArguments ();
 					foreach (TypeParameter param in ds.TypeParameters)
 						new_args.Add (new TypeParameterExpr (param, loc));
 
@@ -2656,6 +2656,9 @@ namespace Mono.CSharp {
 					} else if (e is EventExpr) {
 						if (((EventExpr) e).IsAccessibleFrom (ec.ContainerType))
 							break;
+					} else if (targs != null && e is TypeExpression) {
+						e = new GenericTypeExpr (e.Type, targs, loc).ResolveAsTypeStep (ec, false);
+						break;
 					} else {
 						break;
 					}
@@ -2703,15 +2706,6 @@ namespace Mono.CSharp {
 				Error_MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name,
 					ec.DeclContainer.Name, AllMemberTypes, AllBindingFlags);
 				return null;
-			}
-
-			if (e is TypeExpr) {
-				if (targs == null)
-					return e;
-
-				GenericTypeExpr ct = new GenericTypeExpr (
-					e.Type, targs, loc);
-				return ct.ResolveAsTypeStep (ec, false);
 			}
 
 			if (e is MemberExpr) {

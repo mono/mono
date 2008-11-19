@@ -288,31 +288,18 @@ namespace Mono.CSharp
 
 	public class TypeArguments
 	{
-		public readonly Location Location;
 		ArrayList args;
-		//Type[] atypes;
-		int dimension;
-		//bool has_type_args;
-		//bool created;
 		
-		public TypeArguments (Location loc)
+		public TypeArguments ()
 		{
 			args = new ArrayList ();
-			this.Location = loc;
 		}
 
-		public TypeArguments (Location loc, params Expression[] types)
+		public TypeArguments (params Expression[] types)
 		{
-			this.Location = loc;
-			this.args = new ArrayList (types);
+			args = new ArrayList (types);
 		}
 		
-		public TypeArguments (int dimension, Location loc)
-		{
-			this.dimension = dimension;
-			this.Location = loc;
-		}
-
 		public void Add (Expression type)
 		{
 		}
@@ -332,15 +319,8 @@ namespace Mono.CSharp
 
 		public int Count {
 			get {
-				if (dimension > 0)
-					return dimension;
-				else
-					return args.Count;
+				return args.Count;
 			}
-		}
-
-		public bool IsUnbound {
-			get { throw new NotImplementedException (); }
 		}
 
 		public TypeParameterName[] GetDeclarations ()

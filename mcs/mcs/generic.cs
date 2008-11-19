@@ -1064,36 +1064,25 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///   Tracks the type arguments when instantiating a generic type.  We're used in
-	///   ConstructedType.
-	/// </summary>
+	//
+	// Tracks the type arguments when instantiating a generic type. It's used
+	// by both type arguments and type parameters
+	//
 	public class TypeArguments {
-		public readonly Location Location;
 		ArrayList args;
 		Type[] atypes;
-		int dimension;
-		bool has_type_args;
 		
-		public TypeArguments (Location loc)
+		public TypeArguments ()
 		{
 			args = new ArrayList ();
-			this.Location = loc;
 		}
 
-		public TypeArguments (Location loc, params Expression[] types)
+		public TypeArguments (params FullNamedExpression[] types)
 		{
-			this.Location = loc;
 			this.args = new ArrayList (types);
 		}
-		
-		public TypeArguments (int dimension, Location loc)
-		{
-			this.dimension = dimension;
-			this.Location = loc;
-		}
 
-		public void Add (Expression type)
+		public void Add (FullNamedExpression type)
 		{
 			args.Add (type);
 		}
@@ -1119,24 +1108,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool HasTypeArguments {
-			get {
-				return has_type_args;
-			}
-		}
-
 		public int Count {
 			get {
-				if (dimension > 0)
-					return dimension;
-				else
-					return args.Count;
-			}
-		}
-
-		public bool IsUnbound {
-			get {
-				return dimension > 0;
+				return args.Count;
 			}
 		}
 
@@ -1158,41 +1132,34 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool Resolve (IResolveContext ec)
 		{
+			if (atypes != null)
+				return true;
+
 			int count = args.Count;
 			bool ok = true;
 
 			atypes = new Type [count];
 
 			for (int i = 0; i < count; i++){
-				TypeExpr te = ((Expression) args [i]).ResolveAsTypeTerminal (ec, false);
+				TypeExpr te = ((FullNamedExpression) args[i]).ResolveAsTypeTerminal (ec, false);
 				if (te == null) {
 					ok = false;
 					continue;
 				}
 
 				atypes[i] = te.Type;
-				if (te.Type.IsGenericParameter) {
-					if (te is TypeParameterExpr)
-						has_type_args = true;
-					continue;
-				}
 
 				if (te.Type.IsSealed && te.Type.IsAbstract) {
-					Report.Error (718, Location, "`{0}': static classes cannot be used as generic arguments",
+					Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
-					return false;
+					ok = false;
 				}
 
 				if (te.Type.IsPointer || TypeManager.IsSpecialType (te.Type)) {
-					Report.Error (306, Location,
+					Report.Error (306, te.Location,
 						"The type `{0}' may not be used as a type argument",
-						TypeManager.CSharpName (te.Type));
-					return false;
-				}
-
-				if (te.Type == TypeManager.void_type) {
-					Expression.Error_VoidInvalidInTheContext (Location);
-					return false;
+						te.GetSignatureForError ());
+					ok = false;
 				}
 			}
 			return ok;
@@ -1200,7 +1167,7 @@ namespace Mono.CSharp {
 
 		public TypeArguments Clone ()
 		{
-			TypeArguments copy = new TypeArguments (Location);
+			TypeArguments copy = new TypeArguments ();
 			foreach (Expression ta in args)
 				copy.args.Add (ta);
 
@@ -1244,7 +1211,7 @@ namespace Mono.CSharp {
 		{
 			open_type = gType.TypeBuilder.GetGenericTypeDefinition ();
 
-			args = new TypeArguments (l);
+			args = new TypeArguments ();
 			foreach (TypeParameter type_param in gType.TypeParameters)
 				args.Add (new TypeParameterExpr (type_param, l));
 
@@ -1275,6 +1242,9 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
+			if (eclass != ExprClass.Invalid)
+				return this;
+
 			if (!args.Resolve (ec))
 				return null;
 
@@ -1485,7 +1455,7 @@ namespace Mono.CSharp {
 			if (TypeManager.HasGenericArguments (ctype)) {
 				Type[] types = TypeManager.GetTypeArguments (ctype);
 
-				TypeArguments new_args = new TypeArguments (loc);
+				TypeArguments new_args = new TypeArguments ();
 
 				for (int i = 0; i < types.Length; i++) {
 					Type t = types [i];

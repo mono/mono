@@ -421,8 +421,7 @@ namespace Mono.CSharp {
 			iterator_type_expr = new TypeExpression (MutateType (Iterator.OriginalIteratorType), Location);
 
 #if GMCS_SOURCE
-			generic_args = new TypeArguments (Location);
-			generic_args.Add (iterator_type_expr);
+			generic_args = new TypeArguments (iterator_type_expr);
 #endif
 
 			ArrayList list = new ArrayList ();

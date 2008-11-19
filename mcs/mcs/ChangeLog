@@ -1,3 +1,9 @@
+2008-11-19  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, lambda.cs, linq.cs, iterators.cs, anonymous.cs,
+	nullable.cs, expression.cs, statement.cs, ecore.cs, cs-parser.jay
+	generic-mcs.cs: Small cleanup of TypeArguments.
+
 2008-11-18  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, iterators.cs, anonymous.cs, nullable.cs, ecore.cs,

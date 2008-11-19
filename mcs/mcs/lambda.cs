@@ -45,7 +45,7 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (expr));
 			arguments.Add (new Argument (args));
 			return CreateExpressionFactoryCall ("Lambda",
-				new TypeArguments (loc, new TypeExpression (delegate_type, loc)),
+				new TypeArguments (new TypeExpression (delegate_type, loc)),
 				arguments);
 		}
 
@@ -156,7 +156,7 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (expr));
 			arguments.Add (new Argument (args));
 			return CreateExpressionFactoryCall ("Lambda",
-				new TypeArguments (loc, new TypeExpression (type, loc)),
+				new TypeArguments (new TypeExpression (type, loc)),
 				arguments);
 		}
 	}

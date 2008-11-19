@@ -2632,21 +2632,21 @@ opt_type_argument_list
 	| OP_GENERICS_LT error
 	  {
 		Error_TypeExpected (lexer.Location);
-		$$ = new TypeArguments (lexer.Location);
+		$$ = new TypeArguments ();
 	  }
 	;
 
 type_arguments
 	: type
 	  {
-		TypeArguments type_args = new TypeArguments (lexer.Location);
-		type_args.Add ((Expression) $1);
+		TypeArguments type_args = new TypeArguments ();
+		type_args.Add ((FullNamedExpression) $1);
 		$$ = type_args;
 	  }
 	| type_arguments COMMA type
 	  {
 		TypeArguments type_args = (TypeArguments) $1;
-		type_args.Add ((Expression) $3);
+		type_args.Add ((FullNamedExpression) $3);
 		$$ = type_args;
 	  }	  
 	;
@@ -2734,14 +2734,14 @@ opt_type_parameter_list
 type_parameters
 	: type_parameter
 	  {
-		TypeArguments type_args = new TypeArguments (lexer.Location);
-		type_args.Add ((Expression)$1);
+		TypeArguments type_args = new TypeArguments ();
+		type_args.Add ((FullNamedExpression)$1);
 		$$ = type_args;
 	  }
 	| type_parameters COMMA type_parameter
 	  {
 		TypeArguments type_args = (TypeArguments) $1;
-		type_args.Add ((Expression)$3);
+		type_args.Add ((FullNamedExpression)$3);
 		$$ = type_args;
 	  }	  
 	;
@@ -3507,44 +3507,44 @@ unbound_type_name
 	: IDENTIFIER generic_dimension
 	  {  
 		LocatedToken lt = (LocatedToken) $1;
-		TypeArguments ta = (TypeArguments)$2;
 
-		$$ = new SimpleName (MemberName.MakeName (lt.Value, ta), lt.Location);
+		$$ = new SimpleName (MemberName.MakeName (lt.Value, (int)$2), lt.Location);
 	  }
 	| qualified_alias_member IDENTIFIER generic_dimension
 	  {
 		LocatedToken lt1 = (LocatedToken) $1;
 		LocatedToken lt2 = (LocatedToken) $2;
 
-		$$ = new QualifiedAliasMember (lt1.Value, MemberName.MakeName (lt2.Value, (TypeArguments) $3), lt1.Location);
+		$$ = new QualifiedAliasMember (lt1.Value, MemberName.MakeName (lt2.Value, (int) $3), lt1.Location);
 	  }
-	| unbound_type_name DOT IDENTIFIER opt_generic_dimension
+	| unbound_type_name DOT IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken) $3;
 		
-		$$ = new MemberAccess ((Expression) $1, MemberName.MakeName (lt.Value, (TypeArguments) $4), lt.Location);		
+		$$ = new MemberAccess ((Expression) $1, lt.Value, lt.Location);		
+	  }
+	| unbound_type_name DOT IDENTIFIER generic_dimension
+	  {
+		LocatedToken lt = (LocatedToken) $3;
+		
+		$$ = new MemberAccess ((Expression) $1, MemberName.MakeName (lt.Value, (int) $4), lt.Location);		
 	  }
 	| namespace_or_type_name DOT IDENTIFIER generic_dimension
 	  {
 		LocatedToken lt = (LocatedToken) $3;
 		MemberName name = (MemberName) $1;
 
-		$$ = new MemberAccess (name.GetTypeExpression (), MemberName.MakeName (lt.Value, (TypeArguments) $4), lt.Location);		
+		$$ = new MemberAccess (name.GetTypeExpression (), MemberName.MakeName (lt.Value, (int) $4), lt.Location);		
 	  }
 	;
 
-opt_generic_dimension
-	: /* empty */
-	| generic_dimension
-	;
-	
 generic_dimension
 	: GENERIC_DIMENSION
 	  {
 		if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (lexer.Location, "generics");
 
-		$$ = new TypeArguments ((int)$1, lexer.Location);
+		$$ = $1;
 	  }
 	;
 	
@@ -3644,11 +3644,11 @@ unary_expression
 cast_expression
 	: OPEN_PARENS_CAST type CLOSE_PARENS prefixed_unary_expression
 	  {
-		$$ = new Cast ((Expression) $2, (Expression) $4, GetLocation ($1));
+		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
 	  }
 	| OPEN_PARENS predefined_type CLOSE_PARENS prefixed_unary_expression
 	  {
-		$$ = new Cast ((Expression) $2, (Expression) $4, GetLocation ($1));
+		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
 	  }
 	;
 
@@ -5206,7 +5206,7 @@ first_from_clause
 		current_block = new Linq.QueryBlock (current_block, GetLocation ($1));
 		LocatedToken lt = (LocatedToken) $3;
 
-		Expression type = (Expression)$2;
+		FullNamedExpression type = (FullNamedExpression)$2;
 		current_block.AddVariable (type, lt.Value, lt.Location);
 		$$ = new Linq.QueryExpression (lt, new Linq.Cast (type, (Expression)$5));
 	  }
@@ -5226,9 +5226,9 @@ from_clause
 	  {
 		LocatedToken lt = (LocatedToken) $3;
 
-		Expression type = (Expression)$2;
+		FullNamedExpression type = (FullNamedExpression)$2;
 		current_block.AddVariable (type, lt.Value, lt.Location);
-		$$ = new Linq.SelectMany (lt, new Linq.Cast (type, (Expression)$5));
+		$$ = new Linq.SelectMany (lt, new Linq.Cast (type, (FullNamedExpression)$5));
 	  }
 	;	
 
@@ -5321,9 +5321,9 @@ join_clause
 	  {
 		Location loc = GetLocation ($1);
 		LocatedToken lt = (LocatedToken) $3;
-		current_block.AddVariable ((Expression)$2, lt.Value, lt.Location);
+		current_block.AddVariable ((FullNamedExpression)$2, lt.Value, lt.Location);
 		
-		Linq.Cast cast = new Linq.Cast ((Expression)$2, (Expression)$5);
+		Linq.Cast cast = new Linq.Cast ((FullNamedExpression)$2, (Expression)$5);
 		if ($10 == null) {
 		  	$$ = new Linq.Join (lt, cast, (Expression)$7,
 				(Expression)$9, loc);

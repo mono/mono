@@ -347,9 +347,9 @@ namespace Mono.CSharp.Linq
 	public class Cast : QueryStartClause
 	{
 		// We don't have to clone cast type
-		readonly Expression type_expr;
+		readonly FullNamedExpression type_expr;
 
-		public Cast (Expression type, Expression expr)
+		public Cast (FullNamedExpression type, Expression expr)
 			: base (expr)
 		{
 			this.type_expr = type;
@@ -357,7 +357,7 @@ namespace Mono.CSharp.Linq
 		
 		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
 		{
-			lSide = CreateQueryExpression (expr, new TypeArguments (loc, type_expr), null);
+			lSide = CreateQueryExpression (expr, new TypeArguments (type_expr), null);
 			if (next != null)
 				return next.BuildQueryClause (ec, lSide, parameter, ti);
 
