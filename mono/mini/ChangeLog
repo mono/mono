@@ -1,3 +1,7 @@
+2008-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_save_xdebug_info): Add more parameter types.
+
 2008-11-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-ops.h: Added OP_INSERT_I2.
