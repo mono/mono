@@ -237,11 +237,10 @@ namespace Mono.CSharp {
 			compile_units.Add (unit);
 		}
 
-		static public CompilationUnit[] SourceFiles {
+		// IList<CompilationUnit>
+		static public ArrayList SourceFiles {
 			get {
-				CompilationUnit[] retval = new CompilationUnit [compile_units.Count];
-				compile_units.CopyTo (retval, 0);
-				return retval;
+				return compile_units;
 			}
 		}
 

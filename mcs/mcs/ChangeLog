@@ -1,5 +1,10 @@
 2008-11-19  Marek Safar  <marek.safar@gmail.com>
 
+	* eval.cs, location.cs, driver.cs (Location.SourceFiles): Turned
+	into real property (saves 8 MB for corlib compilation).
+
+2008-11-19  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs, lambda.cs, linq.cs, iterators.cs, anonymous.cs,
 	nullable.cs, expression.cs, statement.cs, ecore.cs, cs-parser.jay
 	generic-mcs.cs: Small cleanup of TypeArguments.

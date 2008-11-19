@@ -683,12 +683,12 @@ namespace Mono.CSharp
 		{
 			Location.Initialize ();
 
-			int files_count = Location.SourceFiles.Length;
-			for (int i = 0; i < files_count; ++i) {
+			ArrayList cu = Location.SourceFiles;
+			for (int i = 0; i < cu.Count; ++i) {
 				if (tokenize) {
-					tokenize_file (Location.SourceFiles [i]);
+					tokenize_file ((CompilationUnit) cu [i]);
 				} else {
-					Parse (Location.SourceFiles [i]);
+					Parse ((CompilationUnit) cu [i]);
 				}
 			}
 		}

@@ -384,7 +384,7 @@ namespace Mono.CSharp {
 		//
 		static InputKind ToplevelOrStatement (SeekableStreamReader seekable)
 		{
-			Tokenizer tokenizer = new Tokenizer (seekable, Location.SourceFiles [0]);
+			Tokenizer tokenizer = new Tokenizer (seekable, (CompilationUnit) Location.SourceFiles [0]);
 			
 			int t = tokenizer.token ();
 			switch (t){
@@ -512,7 +512,7 @@ namespace Mono.CSharp {
 			}
 			seekable.Position = 0;
 
-			CSharpParser parser = new CSharpParser (seekable, Location.SourceFiles [0]);
+			CSharpParser parser = new CSharpParser (seekable, (CompilationUnit) Location.SourceFiles [0]);
 			parser.ErrorOutput = Report.Stderr;
 
 			if (kind == InputKind.StatementOrExpression){
