@@ -1,3 +1,9 @@
+
+Wed Nov 19 18:27:41 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: remove references to the red zone in the prolog
+	(for systems that don't support it).
+
 2008-11-19  Mark Probst  <mark.probst@gmail.com>
 
 	* cpu-ppc64.md: Fixed a few instruction lengths.
