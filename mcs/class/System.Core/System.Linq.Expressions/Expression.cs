@@ -983,6 +983,8 @@ namespace System.Linq.Expressions {
 			if (expression == null)
 				throw new ArgumentNullException ("expression");
 
+			CheckNonGenericMethod (propertyAccessor);
+
 			var prop = GetAssociatedProperty (propertyAccessor);
 			if (prop == null)
 				throw new ArgumentException ("propertyAccessor");
@@ -1905,8 +1907,16 @@ namespace System.Linq.Expressions {
 			return arguments.ToList ();
 		}
 
+		static void CheckNonGenericMethod (MethodBase method)
+		{
+			if (method.IsGenericMethodDefinition || method.ContainsGenericParameters)
+				throw new ArgumentException ("Can not used open generic methods");
+		}
+
 		static ReadOnlyCollection<Expression> CheckMethodArguments (MethodBase method, IEnumerable<Expression> args)
 		{
+			CheckNonGenericMethod (method);
+
 			var arguments = CreateArgumentList (args);
 			var parameters = method.GetParameters ();
 
@@ -2066,6 +2076,8 @@ namespace System.Linq.Expressions {
 		{
 			if (propertyAccessor == null)
 				throw new ArgumentNullException ("propertyAccessor");
+
+			CheckNonGenericMethod (propertyAccessor);
 
 			if (!propertyAccessor.IsStatic) {
 				if (expression == null)

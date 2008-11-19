@@ -1,3 +1,7 @@
+2008-11-19  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs: protect against open generic methods.
+
 2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : give us information about which type does not
