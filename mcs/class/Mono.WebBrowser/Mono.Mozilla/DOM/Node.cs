@@ -382,11 +382,12 @@ namespace Mono.Mozilla.DOM
 
 		public static bool operator == (Node left, Node right)
 		{
+			if ((object)left == (object)right)
+				return true;
+
 			if ((object)left == null || (object)right == null)
 				return false;
 
-			if (left == null || right == null)
-				return false;
 			return left.hashcode == right.hashcode; 
 		}
 
