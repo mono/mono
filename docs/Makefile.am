@@ -79,18 +79,21 @@ clean-local:
 	-rm -f $(srcdir)/deploy/* $(srcdir)/convert.exe*
 	-cd $(srcdir) && rm -f $(ASSEMBLED_DOCS)
 
-monoapi.zip : monoapi.tree
-monoapi.tree: docs.make Makefile.am toc.xml deploy/.stamp
-	cp api-style.css deploy
-	cd $(srcdir) && $(MAKE) -f $< topdir=$(mcs_topdir_from_srcdir) $@
+monoapi.zip: monoapi.tree
+	@test -f $@ || { rm -f $(srcdir)/monoapi.tree; $(MAKE) monoapi.tree; }
+monoapi.tree: docs.make Makefile.am toc.xml $(srcdir)/deploy/.stamp
+	cd $(srcdir) && cp api-style.css deploy
+	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
 
-mono-tools.zip : mono-tools.tree
-mono-tools.tree: docs.make Makefile.am deploy/.stamp
-	cd $(srcdir) && $(MAKE) -f $< topdir=$(mcs_topdir_from_srcdir) $@
+mono-tools.zip: mono-tools.tree
+	@test -f $@ || { rm -f $(srcdir)/mono-tools.tree; $(MAKE) mono-tools.tree; }
+mono-tools.tree: docs.make Makefile.am $(srcdir)/deploy/.stamp
+	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
 
-mono-file-formats.zip : mono-file-formats.tree
-mono-file-formats.tree: docs.make Makefile.am deploy/.stamp
-	cd $(srcdir) && $(MAKE) -f $< topdir=$(mcs_topdir_from_srcdir) $@
+mono-file-formats.zip: mono-file-formats.tree
+	@test -f $@ || { rm -f $(srcdir)/mono-file-formats.tree; $(MAKE) mono-file-formats.tree; }
+mono-file-formats.tree: docs.make Makefile.am $(srcdir)/deploy/.stamp
+	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
 
 $(srcdir)/deploy/.stamp: convert.exe Makefile.am
 	$(mkdir_p) $(srcdir)/html

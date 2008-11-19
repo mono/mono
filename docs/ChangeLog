@@ -1,3 +1,15 @@
+2008-11-19  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix srcdir != builddir, and add idiom for multi-output commands
+	* docs.make (monoapi.zip): Handle the case where 'monoapi.tree'
+	exists but 'monoapi.zip' doesn't.  IOW, we should rebuild
+	monoapi.zip with 'rm monoapi.zip; make'.
+	(mono-tools.zip, mono-file-formats.zip): Likewise.
+	* Makefile.am (monoapi.zip, mono-tools.zip, mono-fileformats.zip):
+	Likewise.
+	(monoapi.tree): Don't use $< in an explicit rule.
+	(mono-tools.tree, mono-file-formats.tree): Likewise.
+
 2008-11-18  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile.am (EXTRA_DIST): Add mono-file-formats{.config,.source} and
