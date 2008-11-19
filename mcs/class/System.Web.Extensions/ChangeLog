@@ -1,3 +1,11 @@
+2008-11-19  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (NUNIT_RESOURCE_FILES): added
+
+	* System.Web.Extensions_test.dll.sources: added the system.web
+	Mainsoft test suite files.
+	Added new test files.
+
 2008-11-18  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.Extensions.dll.sources: added

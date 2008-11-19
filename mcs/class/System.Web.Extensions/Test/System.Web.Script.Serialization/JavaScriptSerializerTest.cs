@@ -536,7 +536,7 @@ namespace Tests.System.Web.Script.Serialization
 		[Category ("NotDotNet")]
 		public void TestSerialize2 () {
 			JavaScriptSerializer ser = new JavaScriptSerializer ();
-			ser.Serialize ("aaa", null);
+			ser.Serialize ("aaa", (StringBuilder)null);
 		}
 
 		static readonly long InitialJavaScriptDateTicks = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;

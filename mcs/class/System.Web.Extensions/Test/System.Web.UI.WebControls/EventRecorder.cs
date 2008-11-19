@@ -35,7 +35,8 @@ using System.Reflection;
 
 namespace Tests.System.Web.UI.WebControls
 {
-	internal sealed class EventRecorder : List <string>
+	[Serializable]
+	public sealed class EventRecorder : List <string>
 	{
 		List <string> list;
 

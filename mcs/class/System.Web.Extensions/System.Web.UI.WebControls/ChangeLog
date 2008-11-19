@@ -1,3 +1,10 @@
+2008-11-19  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: added paremeter checks to AddControlToContainer.
+	CreateInsertItem must instantiate the template and call raise the
+	ItemCreated event.
+	Added parameter checks to FindPlaceholder
+
 2008-11-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ListViewContainer.cs: added

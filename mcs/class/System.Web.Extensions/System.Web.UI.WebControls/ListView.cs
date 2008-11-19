@@ -738,8 +738,12 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void AddControlToContainer (Control control, Control container, int addLocation)
 		{
-			if (control == null || container == null)
-				return;
+			if (control == null)
+				throw new ArgumentNullException ("control");
+
+			// .NET doesn't check container for null (!)
+// 			if (container == null)
+// 				throw new ArgumentNullException ("container");
 
 			Control ctl;
 
@@ -908,7 +912,14 @@ namespace System.Web.UI.WebControls
 	
 		protected virtual ListViewItem CreateInsertItem ()
 		{
+			if (_insertItemTemplate == null)
+				// .NET throws a different message, but it's incorrect so we'll use
+				// this one
+				throw new InvalidOperationException ("The ListView control '" + ID + "' does not have an InsertItemTemplate template specified.");
+			
 			ListViewItem ret = CreateItem (ListViewItemType.InsertItem);
+			InstantiateInsertItemTemplate (ret);
+			OnItemCreated (new ListViewItemEventArgs (ret));
 			InsertItem = ret;
 
 			return ret;
@@ -1003,7 +1014,6 @@ namespace System.Web.UI.WebControls
 			
 			if (insertPosition == InsertItemPosition.FirstItem) {
 				lvi = CreateInsertItem ();
-				InstantiateInsertItemTemplate (lvi);
 				AddControlToContainer (lvi, currentGroup, itemPosInGroup++);
 				groupItemCounter--;
 				needSeparator = true;
@@ -1071,7 +1081,6 @@ namespace System.Web.UI.WebControls
 				}
 
 				lvi = CreateInsertItem ();
-				InstantiateInsertItemTemplate (lvi);
 				AddControlToContainer (lvi, currentGroup, itemPosInGroup++);
 				groupItemCounter--;
 			}
@@ -1154,7 +1163,6 @@ namespace System.Web.UI.WebControls
 
 			if (insertPosition == InsertItemPosition.FirstItem) {
 				lvi = CreateInsertItem ();
-				InstantiateInsertItemTemplate (lvi);
 				AddControlToContainer (lvi, _nonGroupedItemsContainer, ipos++);
 				_nonGroupedItemsContainerItemCount++;
 				needSeparator = true;
@@ -1186,7 +1194,6 @@ namespace System.Web.UI.WebControls
 				}
 				
 				lvi = CreateInsertItem ();
-				InstantiateInsertItemTemplate (lvi);
 				AddControlToContainer (lvi, _nonGroupedItemsContainer, ipos++);
 				_nonGroupedItemsContainerItemCount++;
 			}
@@ -1267,7 +1274,8 @@ namespace System.Web.UI.WebControls
 
 		protected virtual Control FindPlaceholder (string containerID, Control container)
 		{
-			if (container == null || String.IsNullOrEmpty (containerID))
+			// .NET doesn't check whether container is null (!)
+			if (String.IsNullOrEmpty (containerID))
 				return null;
 			
 			if (container.ID == containerID)

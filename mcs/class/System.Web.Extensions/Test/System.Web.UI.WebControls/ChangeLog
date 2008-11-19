@@ -1,3 +1,16 @@
+2008-11-19  Marek Habersack  <mhabersack@novell.com>
+
+	* EventRecorder.cs: class is now serializable.
+
+	* ListViewTest.cs: use system.web Mainsoft test framework.
+	ListViewPoker is now able to record events.
+	Added wrappers for ListView protected methods to ListViewPoker,
+	Added two simple test ITemplate classes.
+	Added tests for initial values.
+	Added tests for all the methods which can be tested in a simple
+	way, without using a real asp.net page.
+	Added test for the Edit functionality.
+
 2008-10-30  Marek Habersack  <mhabersack@novell.com>
 
 	* DataPagerFieldCollectionTest.cs: created. Some basic tests for

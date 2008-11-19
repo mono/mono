@@ -1,3 +1,8 @@
+2008-11-19  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: made System.Web.Extensions_test_net_2_0 a
+	friend assembly.
+
 2008-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyInfo.cs: disable the ScriptResource attributes - we do
