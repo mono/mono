@@ -1,3 +1,9 @@
+2008-11-19  Marek Safar  <marek.safar@gmail.com>
+
+	* MonoSymbolWriter.cs, MonoSymbolTable.cs: Change always boxed
+	value type LineNumberEntry to class. It saves 19MB for corlib
+	compilation.
+
 2008-11-17  Andreia Gaita <avidigal@novell.com>
 
 	* Makefile: Remove uneeded win32-specific hack

@@ -179,7 +179,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 	}
 
-	public struct LineNumberEntry
+	public class LineNumberEntry
 	{
 		#region This is actually written to the symbol file
 		public readonly int Row;

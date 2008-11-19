@@ -280,7 +280,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			this._method = method;
 			this._ns_id = ns_id;
 
-			method_lines = new LineNumberEntry [50];
+			method_lines = new LineNumberEntry [32];
 		}
 
 		private LineNumberEntry [] method_lines;
