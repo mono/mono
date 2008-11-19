@@ -7,8 +7,6 @@ DISTFILES = \
 	compiler.txt                \
 	control-flow-analysis.txt   \
 	cs-errors.config            \
-	mono-file-formats.config    \
-	mono-tools.config           \
 	monodoc.xml                 \
 	new-anonymous-design.txt    \
 	order.txt                   \
@@ -17,8 +15,6 @@ DISTFILES = \
 
 DOC_SOURCE_FILES = \
 	lang-csharp.source          \
-	mono-tools.source           \
-	mono-file-formats.source    \
 	Mono.source                 \
 	netdocs.source              \
 	Novell.source               \
@@ -27,8 +23,6 @@ DOC_SOURCE_FILES = \
 ASSEMBLED_DOCS = \
 	cs-errors.tree cs-errors.zip      \
 	ecma334.tree ecma334.zip          \
-	mono-tools.tree mono-tools.zip    \
-	mono-file-formats.tree mono-file-formats.zip    \
 	Mono.tree Mono.zip                \
 	netdocs.tree netdocs.zip          \
 	Novell.tree Novell.zip            \
@@ -135,12 +129,4 @@ cs-errors.tree: cs-errors.config Makefile
 ecma334.zip : ecma334.tree
 ecma334.tree: Makefile
 	$(MDOC) assemble -o ecma334 -f ecmaspec ecma334
-
-mono-tools.zip : mono-tools.tree
-mono-tools.tree: mono-tools.config Makefile
-	$(MDOC) assemble -o mono-tools -f man $<
-
-mono-file-formats.zip : mono-file-formats.tree
-mono-file-formats.tree: mono-file-formats.config Makefile
-	$(MDOC) assemble -o mono-file-formats -f man $<
 
