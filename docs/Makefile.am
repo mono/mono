@@ -5,6 +5,8 @@ sources_DATA = \
 	$(ASSEMBLED_DOCS)
 
 ASSEMBLED_DOCS = \
+	mono-file-formats.tree mono-file-formats.zip  \
+	mono-tools.tree mono-tools.zip                \
 	monoapi.tree monoapi.zip
 
 EXTRA_DIST = \
@@ -18,6 +20,7 @@ EXTRA_DIST = \
 	convert.cs		\
 	current-api		\
 	deploy			\
+	docs.make		\
 	documented		\
 	embedded-api		\
 	exception-handling.txt	\
@@ -40,7 +43,6 @@ EXTRA_DIST = \
 	mini-porting.txt	\
 	mono-api-metadata.html	\
 	mono_handle_d		\
-	monoapi.make		\
 	monoapi.source		\
 	new-regalloc		\
 	object-layout		\
@@ -73,9 +75,18 @@ clean-local:
 	-rm -f $(srcdir)/deploy/* $(srcdir)/convert.exe*
 	-cd $(srcdir) && rm -f $(ASSEMBLED_DOCS)
 
-monoapi.tree monoapi.zip: monoapi.make Makefile.am toc.xml $(srcdir)/deploy/.stamp
-	cp $(srcdir)/api-style.css $(srcdir)/deploy/
-	cd $(srcdir) && $(MAKE) -f monoapi.make topdir=$(mcs_topdir_from_srcdir) assemble
+monoapi.zip : monoapi.tree
+monoapi.tree: docs.make Makefile.am toc.xml deploy/.stamp
+	cp api-style.css deploy
+	cd $(srcdir) && $(MAKE) -f $< topdir=$(mcs_topdir_from_srcdir) $@
+
+mono-tools.zip : mono-tools.tree
+mono-tools.tree: docs.make Makefile.am deploy/.stamp
+	cd $(srcdir) && $(MAKE) -f $< topdir=$(mcs_topdir_from_srcdir) $@
+
+mono-file-formats.zip : mono-file-formats.tree
+mono-file-formats.tree: docs.make Makefile.am deploy/.stamp
+	cd $(srcdir) && $(MAKE) -f $< topdir=$(mcs_topdir_from_srcdir) $@
 
 $(srcdir)/deploy/.stamp: convert.exe Makefile.am
 	$(mkdir_p) $(srcdir)/html
@@ -85,6 +96,6 @@ $(srcdir)/deploy/.stamp: convert.exe Makefile.am
 
 extract: $(srcdir)/deploy/.stamp
 
-convert.exe: monoapi.make convert.cs Makefile.am
-	cd $(srcdir) && $(MAKE) -f monoapi.make topdir=$(mcs_topdir_from_srcdir) convert.exe
+convert.exe: docs.make convert.cs Makefile.am
+	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) convert.exe
 
