@@ -138,8 +138,11 @@ namespace System.Configuration
 							    string nameAtt,
 							    string valueAtt)
 		{
-			if (region.Attributes != null && region.Attributes.Count != 0)
-				throw new ConfigurationException ("Unknown attribute", region);
+			if (region.Attributes != null && region.Attributes.Count != 0) {
+				if (region.Attributes.Count != 1 || region.Attributes[0].Name != "xmlns") {
+					throw new ConfigurationException ("Unknown attribute", region);
+				}
+			}
 
 			XmlNode keyNode;
 			XmlNode valueNode;
