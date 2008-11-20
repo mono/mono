@@ -1,5 +1,9 @@
 2008-11-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* x86/x86-codegen.h: Add X86_SSE_MOVHPD_REG_MEMBASE and renamed MOVS to MOVSD.
+
+2008-11-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* x86/x86-codegen.h: Add X86_SSE_MOVS_ reg/membase variants.
 
 	* x86/x86-codegen.h: Add x86_sse_alu_pd_reg_membase_imm.
