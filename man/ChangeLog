@@ -1,3 +1,7 @@
+2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono.1: Document env vars MONO_XDEBUG and MONO_VERBOSE_METHOD.
+
 2008-10-18  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile.am (man_MANS): Remove unpackaged files.
