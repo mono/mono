@@ -61,6 +61,8 @@ namespace Mono.WebBrowser
 		void Render (byte[] data);
 		void Render (string html);
 		void Render (string html, string uri, string contentType);
+
+		void ExecuteScript (string script);
 			
 		bool Initialized { get; }
 		IWindow Window { get; }
