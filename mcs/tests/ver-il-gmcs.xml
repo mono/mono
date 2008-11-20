@@ -1228,7 +1228,7 @@
         <size>7</size>
       </method>
       <method name="Void Test(T)">
-        <size>48</size>
+        <size>43</size>
       </method>
     </type>
     <type name="A">
@@ -1398,13 +1398,13 @@
         <size>7</size>
       </method>
       <method name="Void Simple[T](T)">
-        <size>36</size>
+        <size>31</size>
       </method>
       <method name="Void Interface[T](T)">
-        <size>13</size>
+        <size>8</size>
       </method>
       <method name="Void Class[T](T)">
-        <size>91</size>
+        <size>71</size>
       </method>
       <method name="Void Array[T](T[])">
         <size>21</size>
@@ -1713,10 +1713,10 @@
         <size>68</size>
       </method>
       <method name="Boolean Equals(ComparablePair`2)">
-        <size>83</size>
+        <size>73</size>
       </method>
       <method name="System.String ToString()">
-        <size>74</size>
+        <size>64</size>
       </method>
     </type>
   </test>
@@ -2042,7 +2042,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>184</size>
@@ -2088,7 +2088,7 @@
         <size>7</size>
       </method>
       <method name="Void AddAll[Y](Y)">
-        <size>18</size>
+        <size>13</size>
       </method>
       <method name="Void InsertAll(C.Foo`1[X])">
         <size>1</size>
@@ -3327,7 +3327,7 @@
         <size>7</size>
       </method>
       <method name="Boolean Equals(S, S)">
-        <size>50</size>
+        <size>45</size>
       </method>
     </type>
     <type name="Sequenced`1[T]">
@@ -3944,7 +3944,7 @@
   <test name="gtest-150.cs">
     <type name="Test1">
       <method name="Void Foo[T,OP](UInt32)">
-        <size>40</size>
+        <size>35</size>
       </method>
       <method name="Void Main()">
         <size>15</size>
@@ -4343,7 +4343,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -4761,7 +4761,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>126</size>
@@ -4778,7 +4778,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -5222,7 +5222,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -7070,7 +7070,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>129</size>
@@ -7238,7 +7238,7 @@
         <size>7</size>
       </method>
       <method name="ICloneable Test(S)">
-        <size>12</size>
+        <size>7</size>
       </method>
     </type>
     <type name="ConvertHelper">
@@ -7469,7 +7469,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>25</size>
@@ -8666,7 +8666,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>69</size>
@@ -10067,7 +10067,7 @@
     </type>
     <type name="S`1[T]">
       <method name="System.Object Box(Nullable`1)">
-        <size>35</size>
+        <size>30</size>
       </method>
     </type>
   </test>
@@ -12441,7 +12441,7 @@
         <size>7</size>
       </method>
       <method name="Boolean &lt;&gt;m__0()">
-        <size>192</size>
+        <size>187</size>
       </method>
     </type>
     <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
@@ -13178,7 +13178,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -15049,7 +15049,7 @@
         <size>7</size>
       </method>
       <method name="Boolean ContainsAll[U](IEnumerable`1)">
-        <size>182</size>
+        <size>177</size>
       </method>
       <method name="Boolean Contains(T)">
         <size>2</size>
@@ -16097,7 +16097,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -16157,7 +16157,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -16303,7 +16303,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -16342,7 +16342,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -27256,7 +27256,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -28835,7 +28835,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>129</size>
@@ -31800,7 +31800,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -32259,7 +32259,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -35003,7 +35003,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -35193,7 +35193,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>86</size>
@@ -35712,7 +35712,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>77</size>
@@ -35899,7 +35899,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>184</size>
@@ -35937,7 +35937,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -36022,7 +36022,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>201</size>
@@ -36523,7 +36523,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>195</size>
@@ -38180,7 +38180,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>126</size>
@@ -38197,7 +38197,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38243,7 +38243,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>173</size>
@@ -38284,7 +38284,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38304,7 +38304,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38353,7 +38353,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38406,7 +38406,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38464,7 +38464,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38484,7 +38484,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38504,7 +38504,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38524,7 +38524,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38602,7 +38602,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38649,7 +38649,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38693,7 +38693,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>621</size>
@@ -38735,7 +38735,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>126</size>
@@ -38752,7 +38752,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38807,7 +38807,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>124</size>
@@ -38840,7 +38840,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -38890,7 +38890,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -39206,7 +39206,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -39295,7 +39295,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -39315,7 +39315,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -39335,7 +39335,7 @@
         <size>7</size>
       </method>
       <method name="System.Object System.Collections.IEnumerator.get_Current()">
-        <size>12</size>
+        <size>7</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
