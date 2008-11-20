@@ -1,4 +1,9 @@
 
+2008-11-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* machine.config: in 2.0, there's no <connectionManagement> section
+	here. Bug #445991 fixed.
+
 2008-11-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DefaultWsdlHelpGenerator.aspx: use javascript instead of
