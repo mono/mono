@@ -1,3 +1,9 @@
+
+2008-11-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* PerformanceCounter.cs: add 2 workarounds for known problems. I will
+	add the corresponding test cases later.
+
 2008-11-13  Bill Holmes  <billholmes54@gmail.com>
 
 	* Process.cs : Adding an implementation for WaitForInputIdle

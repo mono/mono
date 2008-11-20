@@ -160,8 +160,10 @@ namespace System.Diagnostics {
 			if (!is_custom)
 				readOnly = true;
 			// invalid counter, need to handle out of mem
-			if (impl == IntPtr.Zero)
-				throw new InvalidOperationException ();
+
+			// TODO: reenable this
+			//if (impl == IntPtr.Zero)
+			//	throw new InvalidOperationException ();
 			changed = false;
 		}
 
@@ -328,8 +330,11 @@ namespace System.Diagnostics {
 		{
 			if (changed)
 				UpdateInfo ();
-			if (readOnly)
-				throw new InvalidOperationException ();
+			if (readOnly) {
+				// FIXME: This should really throw, but by now set this workaround in place.
+				//throw new InvalidOperationException ();
+				return 0;
+			}
 			return UpdateValue (impl, true, value);
 		}
 
