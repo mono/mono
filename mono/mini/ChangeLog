@@ -1,5 +1,15 @@
 2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Added OP_INSERTX_I4_SLOW,.
+
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+	
+	* simd-intrinsics.c (simd_intrinsic_emit_setter): Add support for Vector4i and Vector4ui.
+
+2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* cpu-x86.md: Use reasonable sizes for extractx_u2 and insertx_u1_slow.
 
 2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
