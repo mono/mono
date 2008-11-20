@@ -1,6 +1,8 @@
 sourcesdir = $(prefix)/lib/monodoc/sources
 
 sources_DATA = \
+	mono-file-formats.source \
+	mono-tools.source \
 	monoapi.source \
 	$(ASSEMBLED_DOCS)
 

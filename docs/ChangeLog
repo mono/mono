@@ -1,3 +1,8 @@
+2008-11-20  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile.am (sources_DATA): Add mono-file-formats.source,
+	  mono-tools.source.
+
 2008-11-20  Raja R Harinath  <harinath@hurrynot.org>
 
 	Remove unnecessary rebuilds of the html directory
