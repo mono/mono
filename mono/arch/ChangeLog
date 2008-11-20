@@ -1,5 +1,10 @@
 2008-11-20  Mark Probst  <mark.probst@gmail.com>
 
+	* ppc/ppc-codegen.h: Use ppc_load_reg instead of ppc_ld in
+	ppc_load_func to fix the 2 bit shift.
+
+2008-11-20  Mark Probst  <mark.probst@gmail.com>
+
 	* ppc/ppc-codegen.h: 64 bit division opcodes.
 
 	Code submitted by andreas.faerber@web.de at
