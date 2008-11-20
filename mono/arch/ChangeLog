@@ -1,3 +1,8 @@
+2008-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* arm/Makefile.am (libmonoarch_arm_la_SOURCES): Don't build tramp.c, it is only
+	used by the interpreter.
+
 2008-11-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add PEXTR B/W/D.
