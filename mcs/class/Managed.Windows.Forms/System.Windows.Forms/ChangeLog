@@ -1,5 +1,11 @@
 2008-11-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripItem.cs: Don't crash if ImageIndex or ImageKey is set to an
+	invalid value.  Just return null for the Image, and use the ImageList's
+	ImageSize for calculations.
+
+2008-11-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ComboBox.cs: Call HideWindow instead of Hide when closing the dropdown
 	through DroppedDown so the proper events get called and state gets reset.
 	[Fixes bug #446805]
