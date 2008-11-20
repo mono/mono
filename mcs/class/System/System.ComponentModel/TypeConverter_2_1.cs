@@ -26,6 +26,7 @@
 #if NET_2_1
 
 using System;
+using System.Globalization;
 
 namespace System.ComponentModel {
 
@@ -33,28 +34,45 @@ namespace System.ComponentModel {
 
 		public virtual bool CanConvertFrom (Type sourceType)
 		{
-			if (sourceType == null)
-				return false;
+			return CanConvertFrom (null, sourceType);
+		}
 
-			return sourceType == typeof (string);
+		public virtual bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		{
+			return false;
 		}
 
 		public virtual object ConvertFrom (object value)
 		{
-			return null;
+			return ConvertFrom (null, CultureInfo.CurrentCulture, value);
+		}
+
+		public virtual object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public virtual object ConvertFromString (string text)
 		{
-			return ConvertFrom (text);
+			return ConvertFrom (null, null, text);
 		}
 
 		public virtual bool CanConvertTo (Type destinationType)
+		{
+			return CanConvertTo (null, destinationType);
+		}
+
+		public virtual bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			return false;
 		}
 
 		public virtual object ConvertTo (object value, Type destinationType)
+		{
+			return ConvertTo (null, CultureInfo.CurrentCulture, value, destinationType);
+		}
+
+		public virtual object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
 			throw new NotImplementedException ();
 		}
