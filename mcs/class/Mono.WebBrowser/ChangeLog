@@ -1,3 +1,13 @@
+2008-11-20  Andreia Gaita <shana@jitted.com>
+
+	* Mono.WebBrowser.dll.sources, Mono.WebBrowser2K5.csproj,
+	  Mono.Mozilla/interfaces/nsIURIContentListener.cs,
+	  Mono.Mozilla/DOM/ContentListener.cs: New class added to listen for load
+	  requests and handle content types
+	* Mono.WebBrowser/IWebBrowser.cs, Mono.Mozilla/WebBrowser.cs: New
+	  NavigationRequested event to catch load requests
+	[Backported, r118617]
+
 2008-11-08  Andreia Gaita <shana@jitted.com> 
 
 	* Mono.WebBrowser/Manager.cs: Use new webkit backend if requested. If it

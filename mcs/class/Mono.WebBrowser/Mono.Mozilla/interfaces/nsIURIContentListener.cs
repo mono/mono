@@ -38,47 +38,35 @@ namespace Mono.Mozilla {
 	internal interface nsIURIContentListener {
 
 #region nsIURIContentListener
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int onStartURIOpen (
-				[MarshalAs (UnmanagedType.Interface)]   nsIURI aURI, out bool ret);
+		bool onStartURIOpen ([MarshalAs (UnmanagedType.Interface)]  nsIURI aURI);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int doContent (
-				[MarshalAs (UnmanagedType.LPStr)]   string aContentType,
-				   bool aIsContentPreferred,
-				[MarshalAs (UnmanagedType.Interface)]   nsIRequest aRequest,
-				[MarshalAs (UnmanagedType.Interface)]  out nsIStreamListener aContentHandler, out bool ret);
+		bool doContent ([MarshalAs (UnmanagedType.LPStr)]  string aContentType,
+				 bool aIsContentPreferred,
+				[MarshalAs (UnmanagedType.Interface)]  nsIRequest aRequest,
+				[MarshalAs (UnmanagedType.Interface)] out nsIStreamListener aContentHandler);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int isPreferred (
-				[MarshalAs (UnmanagedType.LPStr)]   string aContentType,
-				[MarshalAs (UnmanagedType.LPStr)]  ref string aDesiredContentType, out bool ret);
+		bool isPreferred ([MarshalAs (UnmanagedType.LPStr)]  string aContentType,
+				[MarshalAs (UnmanagedType.LPStr)] ref string aDesiredContentType);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int canHandleContent (
-				[MarshalAs (UnmanagedType.LPStr)]   string aContentType,
-				   bool aIsContentPreferred,
-				[MarshalAs (UnmanagedType.LPStr)]  ref string aDesiredContentType, out bool ret);
+		bool canHandleContent ([MarshalAs (UnmanagedType.LPStr)]  string aContentType,
+				 bool aIsContentPreferred,
+				[MarshalAs (UnmanagedType.LPStr)] ref string aDesiredContentType);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getLoadCookie ( out IntPtr ret);
+		[return: MarshalAs (UnmanagedType.Interface)] IntPtr getLoadCookie ();
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setLoadCookie ( IntPtr value);
+		void setLoadCookie ([MarshalAs (UnmanagedType.Interface)] IntPtr value);
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int getParentContentListener ([MarshalAs (UnmanagedType.Interface)]  out nsIURIContentListener ret);
+		[return: MarshalAs (UnmanagedType.Interface)] nsIURIContentListener getParentContentListener ();
 
-		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		int setParentContentListener ([MarshalAs (UnmanagedType.Interface)]  nsIURIContentListener value);
+		void setParentContentListener ([MarshalAs (UnmanagedType.Interface)] nsIURIContentListener value);
 
 #endregion
 	}
@@ -92,3 +80,76 @@ namespace Mono.Mozilla {
 		}
 	}
 }
+#if example
+
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Text;
+
+	internal class URIContentListener : nsIURIContentListener {
+
+#region nsIURIContentListener
+		bool nsIURIContentListener.onStartURIOpen ([MarshalAs (UnmanagedType.Interface)]  nsIURI aURI)
+		{
+			return ;
+		}
+
+
+
+		bool nsIURIContentListener.doContent ([MarshalAs (UnmanagedType.LPStr)]  string aContentType,
+				 bool aIsContentPreferred,
+				[MarshalAs (UnmanagedType.Interface)]  nsIRequest aRequest,
+				[MarshalAs (UnmanagedType.Interface)] out nsIStreamListener aContentHandler)
+		{
+			return ;
+		}
+
+
+
+		bool nsIURIContentListener.isPreferred ([MarshalAs (UnmanagedType.LPStr)]  string aContentType,
+				[MarshalAs (UnmanagedType.LPStr)] ref string aDesiredContentType)
+		{
+			return ;
+		}
+
+
+
+		bool nsIURIContentListener.canHandleContent ([MarshalAs (UnmanagedType.LPStr)]  string aContentType,
+				 bool aIsContentPreferred,
+				[MarshalAs (UnmanagedType.LPStr)] ref string aDesiredContentType)
+		{
+			return ;
+		}
+
+
+
+		[return: MarshalAs (UnmanagedType.Interface)] IntPtr nsIURIContentListener.getLoadCookie ()
+
+		{
+			return IntPtr.Zero;
+		}
+
+		void nsIURIContentListener.setLoadCookie ([MarshalAs (UnmanagedType.Interface)] IntPtr value)
+
+
+		{
+			return IntPtr.Zero;
+		}
+
+		[return: MarshalAs (UnmanagedType.Interface)] nsIURIContentListener nsIURIContentListener.getParentContentListener ()
+
+		{
+			return null;
+		}
+
+		void nsIURIContentListener.setParentContentListener ([MarshalAs (UnmanagedType.Interface)] nsIURIContentListener value)
+
+
+		{
+			return null;
+		}
+
+#endregion
+	}
+#endif
