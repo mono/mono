@@ -1,3 +1,7 @@
+2008-11-20  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: sign using winfx.pub on NET_2_1.
+
 2008-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing attributes
