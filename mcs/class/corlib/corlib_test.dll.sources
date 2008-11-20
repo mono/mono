@@ -1,5 +1,7 @@
 ../../../build/common/Consts.cs
 Microsoft.Win32/RegistryKeyTest.cs
+Mono/DataConvertTest.cs
+../Mono/DataConverter.cs
 System/ActivatorTest.cs
 System/AppDomainSetupTest.cs
 System/AppDomainTest.cs
