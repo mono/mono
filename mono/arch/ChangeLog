@@ -1,3 +1,11 @@
+2008-11-20  Mark Probst  <mark.probst@gmail.com>
+
+	* ppc/ppc-codegen.h: 64 bit division opcodes.
+
+	Code submitted by andreas.faerber@web.de at
+	https://bugzilla.novell.com/show_bug.cgi?id=324134 under the
+	X11/MIT license.
+
 2008-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/Makefile.am (libmonoarch_arm_la_SOURCES): Don't build tramp.c, it is only
