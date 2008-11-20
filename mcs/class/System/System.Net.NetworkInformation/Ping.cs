@@ -165,7 +165,7 @@ namespace System.Net.NetworkInformation {
 			return Send (address, timeout, buffer, options);
 		}
 
-		IPAddress GetNonLoopbackIP ()
+		static IPAddress GetNonLoopbackIP ()
 		{
 			foreach (IPAddress addr in Dns.GetHostByName (Dns.GetHostName ()).AddressList)
 				if (!IPAddress.IsLoopback (addr))
@@ -181,12 +181,13 @@ namespace System.Net.NetworkInformation {
 				throw new ArgumentOutOfRangeException ("timeout", "timeout must be non-negative integer");
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
+			if (buffer.Length > 65500)
+				throw new ArgumentException ("buffer");
 			// options can be null.
 
 			if (canSendPrivileged)
 				return SendPrivileged (address, timeout, buffer, options);
-			else
-				return SendUnprivileged (address, timeout, buffer, options);
+			return SendUnprivileged (address, timeout, buffer, options);
 		}
 
 		private PingReply SendPrivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
@@ -259,12 +260,14 @@ namespace System.Net.NetworkInformation {
 			ping.StartInfo.RedirectStandardOutput = true;
 			ping.StartInfo.RedirectStandardError = true;
 
+			DateTime start = DateTime.UtcNow;
 			try {
 				ping.Start ();
 
 #pragma warning disable 219
-				string stdout = ping.StandardOutput.ReadToEnd ();
-				string stderr = ping.StandardError.ReadToEnd ();
+			// No need to read stdout or stderr as long as the output is less than 4k on linux <= 2.6.11 and 65k after that
+			//	string stdout = ping.StandardOutput.ReadToEnd ();
+			//	string stderr = ping.StandardError.ReadToEnd ();
 #pragma warning restore 219
 				
 				trip_time = (long) (DateTime.Now - sentTime).TotalMilliseconds;
@@ -468,18 +471,15 @@ namespace System.Net.NetworkInformation {
 
 		private string BuildPingArgs (IPAddress address, int timeout, PingOptions options)
 		{
+			CultureInfo culture = CultureInfo.InvariantCulture;
 			StringBuilder args = new StringBuilder ();
-
-			args.AppendFormat ("-c {0} ", DefaultCount, CultureInfo.InvariantCulture);
-			args.AppendFormat ("-w {0} ", (double)timeout / 1000.0, CultureInfo.InvariantCulture);
-			args.AppendFormat ("-t {0} ", options.Ttl, CultureInfo.InvariantCulture);
-			args.Append ("-M ");
+			uint t = Convert.ToUInt32 (Math.Floor ((timeout + 1000) / 1000.0));
+			args.AppendFormat (culture, "-q -n -c {0} -w {1} -t {2} -M ", DefaultCount, t, options.Ttl);
 			args.Append (options.DontFragment ? "do " : "dont ");
 
 			args.Append (address.ToString ());
 
 			return args.ToString ();
-		
 		}
 
 	}

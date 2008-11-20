@@ -1,3 +1,10 @@
+
+2008-11-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Ping.cs: the time for the arguments of 'ping' is in seconds. Don't
+	read the output of running the command, since we trust the return
+	code.
+
 2008-10-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Ping.cs : use privileged mode for non-unix. On Windows there is
