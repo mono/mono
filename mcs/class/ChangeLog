@@ -1,3 +1,7 @@
+2008-11-20  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: add System.Xml.Linq to the net_2_1 build.
+
 2008-11-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (net_2_0_dirs): Npgsql requires .NET 2.0+ now.

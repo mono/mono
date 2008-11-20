@@ -127,6 +127,7 @@ net_2_1_dirs := \
 	System.Net		\
 	System.XML		\
 	System.Core		\
+	System.Xml.Linq	\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
 	System.ServiceModel.Web
