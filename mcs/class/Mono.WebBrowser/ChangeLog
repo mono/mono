@@ -1,5 +1,11 @@
 2008-11-20  Andreia Gaita <shana@jitted.com>
 
+	* Mono.Mozilla/DOM/Node.cs, Mono.Mozilla/DOM/Window.cs: Fix equality
+	  operators
+	  [Backported, r118684, r119336]
+
+2008-11-20  Andreia Gaita <shana@jitted.com>
+
 	* Mono.WebBrowser.dll.sources, Mono.WebBrowser2K5.csproj,
 	  Mono.Mozilla/interfaces/nsIURIContentListener.cs,
 	  Mono.Mozilla/DOM/ContentListener.cs: New class added to listen for load

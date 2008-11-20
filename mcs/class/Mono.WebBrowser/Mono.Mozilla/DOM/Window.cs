@@ -182,8 +182,12 @@ namespace Mono.Mozilla.DOM
 		
 		public static bool operator == (Window left, Window right)
 		{
-			if (left == null || right == null)
+			if ((object)left == (object)right)
+				return true;
+
+			if ((object)left == null || (object)right == null)
 				return false;
+
 			return left.hashcode == right.hashcode; 
 		}
 
