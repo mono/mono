@@ -377,6 +377,25 @@ namespace Mono.CSharp {
 			}
 		}
 
+		class DynamicFieldExpr : FieldExpr
+		{
+			readonly Field field;
+
+			public DynamicFieldExpr (Field field, Location loc)
+				: base (loc)
+			{
+				this.field = field;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				FieldInfo = field.FieldBuilder;
+				type = TypeManager.TypeToCoreType (FieldInfo.FieldType);
+				InstanceExpression = new CompilerGeneratedThis (type, Location);
+				return base.DoResolve (ec);
+			}
+		}
+
 		public readonly Iterator Iterator;
 
 		TypeExpr iterator_type_expr;
@@ -533,11 +552,11 @@ namespace Mono.CSharp {
 				type = TypeManager.system_object_expr;
 			}
 
-			MemberName name = new MemberName (left, "Current", null, Location);
+			MemberName name = new MemberName (left, "Current", Location);
 
 			ToplevelBlock get_block = new ToplevelBlock (Location);
-			get_block.AddStatement (new CurrentBlock (this, is_generic));
-
+			get_block.AddStatement (new Return (new DynamicFieldExpr (CurrentField, Location), Location));
+				
 			Accessor getter = new Accessor (get_block, 0, null, null, Location);
 
 			Property current = new Property (
@@ -555,54 +574,9 @@ namespace Mono.CSharp {
 			AddMethod (reset);
 
 			reset.Block = new ToplevelBlock (Location);
-			reset.Block.AddStatement (Create_ThrowNotSupported ());
-		}
 
-		Statement Create_ThrowNotSupported ()
-		{
 			TypeExpr ex_type = new TypeLookupExpression ("System.NotSupportedException");
-
-			return new Throw (new New (ex_type, null, Location), Location);
-		}
-
-		protected class CurrentBlock : Statement {
-			IteratorStorey host;
-			bool is_generic;
-
-			public CurrentBlock (IteratorStorey host, bool is_generic)
-			{
-				this.host = host;
-				this.is_generic = is_generic;
-				loc = host.Location;
-			}
-
-			protected override void CloneTo (CloneContext clonectx, Statement target)
-			{
-				throw new NotSupportedException ();
-			}
-
-			public override bool Resolve (EmitContext ec)
-			{
-				// We emit a 'ret', so prevent the enclosing TopLevelBlock from emitting one too
-				ec.CurrentBranching.CurrentUsageVector.Goto ();
-				return true;
-			}
-
-			protected override void DoEmit (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, host.CurrentField.FieldBuilder);
-				if (!is_generic)
-					ig.Emit (OpCodes.Box, host.CurrentField.MemberType);
-				ig.Emit (OpCodes.Ret);
-			}
-
-			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-			{
-				throw new NotSupportedException ();
-			}
+			reset.Block.AddStatement (new Throw (new New (ex_type, null, Location), Location));
 		}
 	}
 

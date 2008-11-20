@@ -1,3 +1,7 @@
+2008-11-20  Marek Safar  <marek.safar@gmail.com>
+
+	* iterators.cs, ecore.cs: Removed CurrentBlock statement.
+
 2008-11-19  Marek Safar  <marek.safar@gmail.com>
 
 	* eval.cs, location.cs, driver.cs (Location.SourceFiles): Turned

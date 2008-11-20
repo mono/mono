@@ -2130,13 +2130,14 @@ namespace Mono.CSharp {
 		{
 			base.Emit (ec);
 
-			if (child_generic_parameter != null)
-				ec.ig.Emit (OpCodes.Box, child_generic_parameter);
-
 #if GMCS_SOURCE
+			if (child_generic_parameter != null) {
+				ec.ig.Emit (OpCodes.Box, child_generic_parameter);
+			}
+
 			if (type.IsGenericParameter)
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
-			else
+			else if (child_generic_parameter == null)
 #endif
 				ec.ig.Emit (OpCodes.Castclass, type);
 		}
@@ -4621,6 +4622,11 @@ namespace Mono.CSharp {
 		
 		LocalTemporary temp;
 		bool prepared;
+		
+		protected FieldExpr (Location l)
+		{
+			loc = l;
+		}
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
