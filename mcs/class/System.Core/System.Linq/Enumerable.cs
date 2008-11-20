@@ -116,6 +116,10 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			var collection = source as ICollection<TSource>;
+			if (collection != null)
+				return collection.Count > 0;
+
 			using (var enumerator = source.GetEnumerator ())
 				return enumerator.MoveNext ();
 		}

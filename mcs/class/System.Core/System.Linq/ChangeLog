@@ -1,3 +1,7 @@
+2008-11-20  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs (Any): optimize if we're operating on an ICollection.
+
 2008-09-30  Jb Evain  <jbevain@novell.com>
 
 	* QueryableEnumerable.cs: fix ElementType.
