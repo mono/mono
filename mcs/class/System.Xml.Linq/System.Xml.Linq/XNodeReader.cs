@@ -107,7 +107,11 @@ namespace System.Xml.Linq
 			}
 		}
 
-		public override bool HasValue {
+		public
+#if !NET_2_1
+		override
+#endif
+		bool HasValue {
 			get {
 				if (attr >= 0)
 					return true;
@@ -492,7 +496,11 @@ namespace System.Xml.Linq
 			return true;
 		}
 
-		public override bool ReadAttributeValue ()
+		public
+#if !NET_2_1
+		override
+#endif
+		bool ReadAttributeValue ()
 		{
 			if (attr < 0 || attr_value)
 				return false;

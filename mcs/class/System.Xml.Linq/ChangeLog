@@ -1,3 +1,8 @@
+2008-11-19  Jb Evain  <jbevain@novell.com>
+
+	* net_2_1_raw_System.Xml.Linq.dll.sources: added
+	* Makefile: add support to build System.Xml.Linq on net_2_1.
+
 2008-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.Linq_test.dll.sources : added XStreamingElementTest.cs.
