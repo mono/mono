@@ -396,8 +396,12 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual ListViewItem EditItem {
-			get;
-			private set;
+			get {
+				IList <ListViewDataItem> items = Items;
+				if (_editIndex >= 0 && _editIndex < items.Count)
+					return items [_editIndex];
+				return null;
+			}
 		}
 	
 		[TemplateContainer (typeof (System.Web.UI.WebControls.ListViewDataItem), BindingDirection.TwoWay)]
@@ -430,6 +434,7 @@ namespace System.Web.UI.WebControls
 
 		[WebCategory ("Behavior")]
 		[DefaultValue (false)]
+		[MonoTODO ("Figure out where it is used and what's the effect of setting it to true.")]
 		public virtual bool EnableModelValidation {
 			get {
 				object o = ViewState ["EnableModelValidation"];
@@ -1251,9 +1256,8 @@ namespace System.Web.UI.WebControls
 					bt = (IBindableTemplate) _alternatingItemTemplate;
 				else
 					bt = (IBindableTemplate) _itemTemplate;
-			} else if (_insertItemTemplate != null && item.ItemType == ListViewItemType.InsertItem) {
+			} else if (_insertItemTemplate != null && item.ItemType == ListViewItemType.InsertItem)
 				bt = (IBindableTemplate) _insertItemTemplate;
-			}
 
 			if (bt == null)
 				return;
@@ -1264,11 +1268,22 @@ namespace System.Web.UI.WebControls
 
 			string[] keyNames = includePrimaryKey ? null : DataKeyNames;
 			bool haveKeyNames = keyNames != null && keyNames.Length > 0;
-			object key;
+			object key, value;
+			string s;
+			bool convertEmptyStringToNull = ConvertEmptyStringToNull;
+			
 			foreach (DictionaryEntry de in values) {
 				key = de.Key;
-				if (includePrimaryKey || (haveKeyNames && Array.IndexOf (keyNames, key) != -1))
-					itemValues [key] = de.Value;
+				if (includePrimaryKey || (haveKeyNames && Array.IndexOf (keyNames, key) != -1)) {
+					value = de.Value;
+					if (convertEmptyStringToNull) {
+						s = value as string;
+						if (s != null && s.Length == 0)
+							value = null;
+					}
+					
+					itemValues [key] = value;
+				}
 			}
 		}
 
@@ -1639,7 +1654,7 @@ namespace System.Web.UI.WebControls
 		{
 			var args = new ListViewDeletedEventArgs (affectedRows, exception, _currentDeletingItemKeys, _currentDeletingItemValues);
 			OnItemDeleted (args);
-
+			
 			EditIndex = -1;
 			RequiresDataBinding = true;
 

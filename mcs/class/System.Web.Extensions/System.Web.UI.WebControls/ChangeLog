@@ -1,3 +1,8 @@
+2008-11-20  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: implemented the EditItem property.
+	Use ConvertEmptyStringToNull in ExtractItemValues.
+
 2008-11-19  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: added paremeter checks to AddControlToContainer.

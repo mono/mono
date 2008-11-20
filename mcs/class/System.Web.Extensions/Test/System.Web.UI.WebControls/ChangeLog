@@ -1,3 +1,7 @@
+2008-11-20  Marek Habersack  <mhabersack@novell.com>
+
+	* ListViewTest.cs: added tests for several properties.
+
 2008-11-19  Marek Habersack  <mhabersack@novell.com>
 
 	* EventRecorder.cs: class is now serializable.

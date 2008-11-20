@@ -32,6 +32,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Drawing;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -219,6 +220,11 @@ namespace Tests.System.Web.UI.WebControls
 			SetPageProperties (startRowIndex, maximumRows, databind);
 		}
 
+		public bool GetRequiresDataBinding ()
+		{
+			return RequiresDataBinding;
+		}
+		
 		public int GetMaximumRowsProperty ()
 		{
 			return MaximumRows;
@@ -1032,7 +1038,7 @@ namespace Tests.System.Web.UI.WebControls
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void ListView_SetPageProperties_Parameters1 ()
 		{
-			ListViewPoker lvp = new ListViewPoker ();
+			var lvp = new ListViewPoker ();
 			lvp.DoSetPageProperties (-1, 1, false);
 		}
 
@@ -1040,8 +1046,128 @@ namespace Tests.System.Web.UI.WebControls
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void ListView_SetPageProperties_Parameters2 ()
 		{
-			ListViewPoker lvp = new ListViewPoker ();
+			var lvp = new ListViewPoker ();
 			lvp.DoSetPageProperties (0, 0, false);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_AccessKey ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.AccessKey = String.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_BackColor ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.BackColor = Color.White;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_BorderColor ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.BorderColor = Color.White;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_BorderStyle ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.BorderStyle = BorderStyle.NotSet;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_BorderWidth ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.BorderWidth = Unit.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_CssClass ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.CssClass = String.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_Font ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.Font.Bold = true;
+		}
+		
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_ForeColor ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.ForeColor = Color.White;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_Height ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.Height = Unit.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_ToolTip ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.ToolTip = String.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ListView_Width ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.Width = Unit.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ListView_EditIndex_SetInvalid ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.EditIndex = -2;
+		}
+
+		[Test]
+		public void ListView_EditIndex_Set ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.EditIndex = 0;
+			Assert.AreEqual (0, lvp.EditIndex, "#A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ListView_SelectedIndex_SetInvalid ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.SelectedIndex = -2;
+		}
+
+		[Test]
+		public void ListView_SelectedIndex_Set ()
+		{
+			var lvp = new ListViewPoker ();
+			lvp.SelectedIndex = 0;
+			Assert.AreEqual (0, lvp.SelectedIndex, "#A1");
 		}
 		
 		[Test]
