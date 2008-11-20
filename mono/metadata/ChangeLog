@@ -1,3 +1,7 @@
+2008-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Add support for MONO_TYPE_GENERICINST to some functions.
+	Fixes #444715. Fix a warning.
 
 2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
