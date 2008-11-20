@@ -2467,7 +2467,10 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		internal abstract Color ChangeBackColor (Color backColor);
+		internal virtual Color ChangeBackColor (Color backColor)
+		{
+			return backColor;
+		}
 
 		internal override bool IsInputCharInternal (char charCode)
 		{

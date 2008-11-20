@@ -1,5 +1,11 @@
 2008-11-20  Jonathan Pobst  <monkey@jpobst.com>
 
+	* TextBoxBase.cs: Provide a default implementation for ChangeBackColor.
+	Having something internal abstract isn't very nice for people who want
+	to inherit from this class.
+
+2008-11-20  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripItem.cs: Don't crash if ImageIndex or ImageKey is set to an
 	invalid value.  Just return null for the Image, and use the ImageList's
 	ImageSize for calculations.
