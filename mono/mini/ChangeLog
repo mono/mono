@@ -1,5 +1,9 @@
 2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c: Enable setters for Vector16sb.
+
+2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Added OP_EXTRACTX_U2, OP_INSERTX_U1_SLOW.
 
 	* cpu-x86.md: Same.
