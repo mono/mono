@@ -9,6 +9,10 @@
 
 2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Add tests for accessors of Vector2d.
+
+2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Added OP_INSERTX_R8_SLOW,.
 
 	* cpu-x86.md: Same.
