@@ -1,0 +1,4 @@
+2008-11-20  Marek Habersack  <mhabersack@novell.com>
+
+	* ClientFormsIdentity.cs, ClientRolePrincipal.cs,
+	ConnectivityStatus.cs: added (stubs)

@@ -1,3 +1,9 @@
+2008-11-20  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions.dll.sources: added
+	System.Web.ClientServices and System.Web.ClientServices.Providers
+	Sorted contents for easier reading and modification.
+
 2008-11-19  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (NUNIT_RESOURCE_FILES): added
