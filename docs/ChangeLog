@@ -1,3 +1,13 @@
+2008-11-20  Raja R Harinath  <harinath@hurrynot.org>
+
+	Remove unnecessary rebuilds of the html directory
+	* docs.make (monoapi.zip): Make slightly more unforgiving, by
+	using '&&' instead of ';' to sequence commands.
+	(mono-tools.zip, mono-file-formats.zip): Likewise.
+	* Makefile.am (monoapi.zip, mono-tools.zip, mono-fileformats.zip):
+	Likewise.
+	(convert.exe): Don't depend on Makefile.am or docs.make.
+
 2008-11-19  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix srcdir != builddir, and add idiom for multi-output commands
