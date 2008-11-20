@@ -1,3 +1,9 @@
+2008-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r119398.
+	
+	* pinvoke2.cs: Add a test for passing/receiving generic struct instances.
+
 2008-11-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* async_read.cs: Open file with Read access to avoid
