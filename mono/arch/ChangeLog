@@ -1,3 +1,10 @@
+2008-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r119444.
+	
+	* arm/Makefile.am (libmonoarch_arm_la_SOURCES): Don't build tramp.c, it is only
+	used by the interpreter.
+
 2008-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add store nta.
