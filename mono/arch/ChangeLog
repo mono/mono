@@ -1,3 +1,8 @@
+2008-11-21  Mark Probst  <mark.probst@gmail.com>
+
+	* ppc/ppc-codegen.h: Make ppc_is_[u]imm16() work with 64 bit
+	values.
+
 2008-11-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add X86_SSE_MOVHPD_REG_MEMBASE and renamed MOVS to MOVSD.

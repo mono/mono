@@ -1,3 +1,8 @@
+2008-11-21  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, mini-ppc64.h, cpu-ppc64.md: Several fixes.  Now
+	PPC64 passes basic-long.exe.
+
 2008-11-20  Mark Probst  <mark.probst@gmail.com>
 
 	* decompose.c: Decompose carry and overflow add on PPC64 like on
