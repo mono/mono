@@ -205,15 +205,15 @@ namespace Mono.CSharp {
 			sealed class GetEnumeratorStatement : Statement
 			{
 				IteratorStorey host;
-				Expression type;
+				IteratorMethod host_method;
 
 				Expression new_storey;
 
-				public GetEnumeratorStatement (IteratorStorey host, Expression type)
+				public GetEnumeratorStatement (IteratorStorey host, IteratorMethod host_method)
 				{
 					this.host = host;
-					this.type = type;
-					loc = host.Location;
+					this.host_method = host_method;
+					loc = host_method.Location;
 				}
 
 				protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -223,10 +223,6 @@ namespace Mono.CSharp {
 
 				public override bool Resolve (EmitContext ec)
 				{
-					type = type.ResolveAsTypeTerminal (ec, false);
-					if ((type == null) || (type.Type == null))
-						return false;
-
 					TypeExpression storey_type_expr = new TypeExpression (host.TypeBuilder, loc);
 					ArrayList init = null;
 					if (host.hoisted_this != null) {
@@ -261,7 +257,7 @@ namespace Mono.CSharp {
 
 					new_storey = new_storey.Resolve (ec);
 					if (new_storey != null)
-						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, type.Type, loc);
+						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, host_method.MemberType, loc);
 
 					if (TypeManager.int_interlocked_compare_exchange == null) {
 						Type t = TypeManager.CoreLookupType ("System.Threading", "Interlocked", Kind.Class, true);
@@ -308,7 +304,7 @@ namespace Mono.CSharp {
 			public GetEnumeratorMethod (IteratorStorey host, FullNamedExpression returnType, MemberName name)
 				: base (host, returnType, 0, name)
 			{
-				Block.AddStatement (new GetEnumeratorStatement (host, type_name));
+				Block.AddStatement (new GetEnumeratorStatement (host, this));
 			}
 		}
 
