@@ -42,20 +42,20 @@ namespace System.Windows.Forms
 	[Designer("System.Windows.Forms.Design.WebBrowserDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class WebBrowser : WebBrowserBase
 	{
-		private bool navigated; // flag indicating that at least one page has been loaded (besides the initial about:blank)
-		private bool allowNavigation; // if this is true, and navigated is also true, no other navigation is allowed
+		bool navigated = false; // flag indicating that at least one page has been loaded (besides the initial about:blank)
+		bool allowNavigation; // if this is true, and navigated is also true, no other navigation is allowed
 		
-		private bool allowWebBrowserDrop = true;
-		private bool isWebBrowserContextMenuEnabled;
-		private object objectForScripting;
-		private bool webBrowserShortcutsEnabled;
-		private bool scrollbarsEnabled;
+		bool allowWebBrowserDrop = true;
+		bool isWebBrowserContextMenuEnabled;
+		object objectForScripting;
+		bool webBrowserShortcutsEnabled;
+		bool scrollbarsEnabled;
 		
-		private WebBrowserReadyState readyState;
+		WebBrowserReadyState readyState;
 
-		private HtmlDocument document;
+		HtmlDocument document;
 		
-		private WebBrowserEncryptionLevel securityLevel;
+		WebBrowserEncryptionLevel securityLevel;
 
 		#region Public Properties
 
@@ -97,17 +97,19 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Stream DocumentStream {
 			get {
+				if (!this.navigated)
+					return null;
+
+				if (WebHost.Document == null || WebHost.Document.DocumentElement == null)
+					return null;
+
 				return WebHost.Document.DocumentElement.ContentStream;
-//				string text = this.DocumentText;
-//				StreamReader s = new StreamReader (text);
-//				return s.BaseStream;
 			}
 			set { 
 				if (this.allowNavigation && this.navigated)
 					return;
 				this.Url = new Uri ("about:blank");
-				using (StreamReader sourceReader = new StreamReader(value))
-				{
+				using (StreamReader sourceReader = new StreamReader(value)) {
 					this.DocumentText = sourceReader.ReadToEnd();
 				}
 			}
@@ -118,25 +120,35 @@ namespace System.Windows.Forms
 		public string DocumentText {
 			get { 
 				if (!this.navigated)
-					return String.Empty; 
+					return String.Empty;
+				if (WebHost.Document == null || WebHost.Document.DocumentElement == null)
+					return String.Empty;
 				return WebHost.Document.DocumentElement.OuterHTML;
 			}
-			set { 
-				WebHost.Document.DocumentElement.OuterHTML = value;
+			set {
+				if (WebHost.Document != null && WebHost.Document.DocumentElement != null)
+					WebHost.Document.DocumentElement.OuterHTML = value;
 			}
 		}
 
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentTitle {
-			get { return document.Title; }
-			private set { document.Title = value; }
+			get {
+				if (document != null)
+					return document.Title;
+				return String.Empty;
+			}
 		}
 
 		[BrowsableAttribute(false)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentType {
-			get { return document.DocType; }
+			get {
+				if (document != null)
+					return document.DocType;
+				return String.Empty;
+			}
 		}
 
 		[BrowsableAttribute(false)]
@@ -210,7 +222,11 @@ namespace System.Windows.Forms
 		[DefaultValue(null)]
 		[TypeConverter(typeof(WebBrowserUriTypeConverter))]
 		public Uri Url {
-			get { return new Uri(WebHost.Document.Url); }
+			get {
+				if (WebHost.Document != null && WebHost.Document.Url != null)
+					return new Uri (WebHost.Document.Url);
+				return null;
+			}
 			set { this.Navigate (value); }
 		}
 
