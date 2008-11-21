@@ -1,3 +1,8 @@
+2008-11-21  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.h, cpu-ppc64.md: Fixed caller/callee saved floating
+	point regs.  Now PPC64 passes basic-calls.exe.
+
 2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Add tests for accessors of Vector2l.
