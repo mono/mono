@@ -1,3 +1,8 @@
+2008-11-21  Geoff Norton  <gnorton@novell.com>
+
+	* XplatUI.cs: Ensure that we can run on .net 2.0 with mono 2.2 where
+	PlatformID.MacOSX now exists.
+
 2008-11-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* TextBoxBase.cs: Provide a default implementation for ChangeBackColor.
