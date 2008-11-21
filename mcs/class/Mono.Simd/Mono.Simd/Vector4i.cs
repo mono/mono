@@ -100,39 +100,21 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4i operator & (Vector4i v1, Vector4i v2)
+		public static Vector4i operator & (Vector4i v1, Vector4i v2)
 		{
-			Vector4i res = new Vector4i ();
-			ulong *a = (ulong*) &v1.x;
-			ulong *b = (ulong*) &v2.x;
-			ulong *c = (ulong*) &res.x;
-			*c++ = (ulong)(*a++ & *b++);
-			*c = (ulong)(*a & *b);
-			return res;
+			return new Vector4i (v1.x & v2.x, v1.y & v2.y, v1.z & v2.z, v1.w & v2.w);
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4i operator | (Vector4i v1, Vector4i v2)
+		public static Vector4i operator | (Vector4i v1, Vector4i v2)
 		{
-			Vector4i res = new Vector4i ();
-			ulong *a = (ulong*) &v1.x;
-			ulong *b = (ulong*) &v2.x;
-			ulong *c = (ulong*) &res.x;
-			*c++ = (ulong)(*a++ | *b++);
-			*c = (ulong)(*a | *b);
-			return res;
+			return new Vector4i (v1.x | v2.x, v1.y | v2.y, v1.z | v2.z, v1.w | v2.w);
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4i operator ^ (Vector4i v1, Vector4i v2)
+		public static Vector4i operator ^ (Vector4i v1, Vector4i v2)
 		{
-			Vector4i res = new Vector4i ();
-			ulong *a = (ulong*) &v1.x;
-			ulong *b = (ulong*) &v2.x;
-			ulong *c = (ulong*) &res.x;
-			*c++ = (ulong)(*a++ ^ *b++);
-			*c = (ulong)(*a ^ *b);
-			return res;
+			return new Vector4i (v1.x ^ v2.x, v1.y ^ v2.y, v1.z ^ v2.z, v1.w ^ v2.w);
 		}
 
 		[Acceleration (AccelMode.SSE2)]

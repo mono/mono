@@ -116,11 +116,13 @@ namespace Mono.Simd
 		public static unsafe Vector16b operator & (Vector16b va, Vector16b vb)
 		{
 			Vector16b res = new Vector16b ();
-			ulong *a = (ulong*) &va.v0;
-			ulong *b = (ulong*) &vb.v0;
-			ulong *c = (ulong*) &res.v0;
-			*c++ = (ulong)(*a++ & *b++);
-			*c = (ulong)(*a & *b);
+			uint *a = (uint*) &va.v0;
+			uint *b = (uint*) &vb.v0;
+			uint *c = (uint*) &res.v0;
+			*c++ = *a++ & *b++;
+			*c++ = *a++ & *b++;
+			*c++ = *a++ & *b++;
+			*c = *a & *b;
 			return res;
 		}
 
@@ -128,11 +130,13 @@ namespace Mono.Simd
 		public static unsafe Vector16b operator | (Vector16b va, Vector16b vb)
 		{
 			Vector16b res = new Vector16b ();
-			ulong *a = (ulong*) &va.v0;
-			ulong *b = (ulong*) &vb.v0;
-			ulong *c = (ulong*) &res.v0;
-			*c++ = (ulong)(*a++ | *b++);
-			*c = (ulong)(*a | *b);
+			uint *a = (uint*) &va.v0;
+			uint *b = (uint*) &vb.v0;
+			uint *c = (uint*) &res.v0;
+			*c++ = *a++ | *b++;
+			*c++ = *a++ | *b++;
+			*c++ = *a++ | *b++;
+			*c = *a | *b;
 			return res;
 		}
 
@@ -140,11 +144,13 @@ namespace Mono.Simd
 		public static unsafe Vector16b operator ^ (Vector16b va, Vector16b vb)
 		{
 			Vector16b res = new Vector16b ();
-			ulong *a = (ulong*) &va.v0;
-			ulong *b = (ulong*) &vb.v0;
-			ulong *c = (ulong*) &res.v0;
-			*c++ = (ulong)(*a++ ^ *b++);
-			*c = (ulong)(*a ^ *b);
+			uint *a = (uint*) &va.v0;
+			uint *b = (uint*) &vb.v0;
+			uint *c = (uint*) &res.v0;
+			*c++ = *a++ ^ *b++;
+			*c++ = *a++ ^ *b++;
+			*c++ = *a++ ^ *b++;
+			*c = *a ^ *b;
 			return res;
 		}
 

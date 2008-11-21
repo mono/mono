@@ -1,3 +1,8 @@
+2008-11-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector*.cs: Use 4 bytes operations for bitwise ops (& | ^)
+	as it can cause problems on some archs.
+
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector2l.cs (CompareGreaterThan): This method requires sse 4.2
