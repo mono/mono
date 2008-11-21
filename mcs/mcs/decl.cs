@@ -864,6 +864,8 @@ namespace Mono.CSharp {
 
 		protected readonly bool is_generic;
 		readonly int count_type_params;
+		protected TypeParameter[] type_params;
+		TypeParameter[] type_param_list;
 
 		//
 		// Whether we are Generic
@@ -1227,12 +1229,6 @@ namespace Mono.CSharp {
 			}
 			TypeBuilder.SetCustomAttribute (cb);
 		}
-
-		//
-		// Extensions for generics
-		//
-		protected TypeParameter[] type_params;
-		TypeParameter[] type_param_list;
 
 		TypeParameter[] initialize_type_params ()
 		{
