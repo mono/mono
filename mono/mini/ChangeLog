@@ -1,3 +1,11 @@
+2008-11-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Added OP_INSERTX_I8_SLOW,.
+
+	* mini-x86.c (mono_arch_decompose_long_opts): Decompose OP_INSERTX_I8_SLOW.
+	
+	* simd-intrinsics.c: Add support for Vector2l and Vector2ul.
+
 2008-11-21  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c, mini-ppc64.h, cpu-ppc64.md: Several fixes.  Now
