@@ -1,5 +1,11 @@
 2008-11-21  Ankit Jain  <jankit@novell.com>
 
+	* CreateItemTest.cs (CheckBuildItem): Make public.
+	* TestMessageLogger.cs:
+	* TaskBatchingTests.cs: Fix file mode.
+
+2008-11-21  Ankit Jain  <jankit@novell.com>
+
 	* CreateItemTest.cs (TestNullFields): New.
 	(CheckBuildItem): Make public, used by batching tests.
 	* MessageTest.cs (TestDefaultValues): New.

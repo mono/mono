@@ -187,7 +187,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		    CheckBuildItem (include [2], "NewItem", additional_metadata, "5", "C");
 		}
 
-		static void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
+		public static void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
 		{
 			Assert.AreEqual (name, item.Name, prefix + "#1");
 			for (int i = 0; i < metadata.GetLength (0); i ++) {
