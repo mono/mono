@@ -75,22 +75,21 @@ namespace Microsoft.Build.Tasks {
 					CompileResourceFile (sourceFile, outputFile);
 				}
 			} else {
-				IEnumerator <ITaskItem> sourceEnum, outputEnum;
-				sourceEnum = (IEnumerator <ITaskItem>) sources.GetEnumerator ();
-				outputEnum = (IEnumerator <ITaskItem>) outputResources.GetEnumerator ();
-				while (sourceEnum.MoveNext ()) {
-					outputEnum.MoveNext ();
-					string sourceFile = sourceEnum.Current.ItemSpec;
-					string outputFile = outputEnum.Current.ItemSpec;
-					if (outputFile == String.Empty) {
-						Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
-						return false;
+				for (int i = 0; i < sources.Length; i ++) {
+					string sourceFile = sources [i].ItemSpec;
+					for (int j = 0; j < outputResources.Length; j ++) {
+						string outputFile = outputResources [j].ItemSpec;
+
+						if (outputFile == String.Empty) {
+							Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
+							return false;
+						}
+						if (CompileResourceFile (sourceFile, outputFile) == false) {
+							Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
+							return false;
+						}
+						temporaryFilesWritten.Add (outputResources [j]);
 					}
-					if (CompileResourceFile (sourceFile, outputFile) == false) {
-						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
-						return false;
-					}
-					temporaryFilesWritten.Add (outputEnum.Current);
 				}
 			}
 			

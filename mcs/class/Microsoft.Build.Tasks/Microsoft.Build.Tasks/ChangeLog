@@ -1,5 +1,10 @@
 2008-11-21  Ankit Jain  <jankit@novell.com>
 
+	* GenerateResource.cs (Execute): Use for loop instead of manually
+	using enumerators.
+
+2008-11-21  Ankit Jain  <jankit@novell.com>
+
 	* CreateItem (Execute): AdditionalMetadata can be null.
 	Trim metadata values.
 	(IsExcluded): 'exclude' can be null.
