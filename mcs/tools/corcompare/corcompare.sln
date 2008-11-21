@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-diff", "mono-api-diff.csproj", "{51FD9965-3B42-41FF-ADF1-F71545F5C08E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorCompare", "CorCompare.csproj", "{B70C3661-DFA1-40EF-B1BB-F6908F853870}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-info", "mono-api-info.csproj", "{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil-2008", "..\..\mcs\class\Mono.Cecil\Mono.Cecil-2008.csproj", "{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{51FD9965-3B42-41FF-ADF1-F71545F5C08E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51FD9965-3B42-41FF-ADF1-F71545F5C08E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51FD9965-3B42-41FF-ADF1-F71545F5C08E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51FD9965-3B42-41FF-ADF1-F71545F5C08E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B70C3661-DFA1-40EF-B1BB-F6908F853870}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B70C3661-DFA1-40EF-B1BB-F6908F853870}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B70C3661-DFA1-40EF-B1BB-F6908F853870}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B70C3661-DFA1-40EF-B1BB-F6908F853870}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
