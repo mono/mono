@@ -3,7 +3,6 @@ thisdir = tools
 net_1_1_dirs := \
 	al			\
 	cilc		\
-	corcompare	\
 	culevel		\
 	ictool		\
 	mono-xsd	\

@@ -1,3 +1,7 @@
+2008-11-21  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: build corcompare only during net_2_0 now.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add mod to the build.
