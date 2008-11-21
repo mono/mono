@@ -1,3 +1,7 @@
+2008-11-21  Marek Safar  <marek.safar@gmail.com>
+
+	* const.cs: Emit decimal array constant as literal.
+
 2008-11-20  Marek Safar  <marek.safar@gmail.com>
 
 	* iterators.cs, ecore.cs: Removed CurrentBlock statement.

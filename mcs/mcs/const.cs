@@ -74,16 +74,12 @@ namespace Mono.CSharp {
 			Type ttype = MemberType;
 			if (!IsConstantTypeValid (ttype)) {
 				Error_InvalidConstantType (ttype, Location);
-				return false;
 			}
 
 			// If the constant is private then we don't need any field the
 			// value is already inlined and cannot be referenced
 			//if ((ModFlags & Modifiers.PRIVATE) != 0 && RootContext.Optimize)
 			//	return true;
-
-			while (ttype.IsArray)
-				ttype = TypeManager.GetElementType (ttype);
 
 			FieldAttributes field_attr = FieldAttributes.Static | Modifiers.FieldAttr (ModFlags);
 			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
@@ -97,7 +93,7 @@ namespace Mono.CSharp {
 			TypeManager.RegisterConstant (FieldBuilder, this);
 			Parent.MemberCache.AddMember (FieldBuilder, this);
 
-			if (ttype == TypeManager.decimal_type)
+			if ((field_attr & FieldAttributes.InitOnly) != 0)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
 					new FieldInitializer (FieldBuilder, initializer, this));
 
