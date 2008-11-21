@@ -968,6 +968,11 @@ namespace Mono.CSharp {
 			get { return (Parent != null && Parent.Parent == null); }
 		}
 
+		public virtual bool IsUnmanagedType ()
+		{
+			return false;
+		}
+
 		public virtual void CloseType ()
 		{
 			if ((caching_flags & Flags.CloseTypeCreated) == 0){

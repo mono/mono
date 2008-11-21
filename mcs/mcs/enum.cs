@@ -70,6 +70,9 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
+			if (!ResolveMemberType ())
+				return false;
+
 			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, attr);
 			Parent.MemberCache.AddMember (FieldBuilder, this);
@@ -178,6 +181,11 @@ namespace Mono.CSharp {
 		{
 			member_cache = new MemberCache (TypeManager.enum_type, this);
 			DefineContainerMembers (constants);
+			return true;
+		}
+
+		public override bool IsUnmanagedType ()
+		{
 			return true;
 		}
 

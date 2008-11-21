@@ -85,13 +85,16 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override bool Define ()
+			protected override bool ResolveMemberType ()
 			{
+				if (!base.ResolveMemberType ())
+					return false;
+
 				AnonymousMethodStorey parent = ((AnonymousMethodStorey) Parent).GetGenericStorey ();
 				if (parent != null)
-					type_name.Type = parent.MutateType (type_name.Type);
+					member_type = parent.MutateType (member_type);
 
-				return base.Define ();
+				return true;
 			}
 		}
 
@@ -1210,8 +1213,11 @@ namespace Mono.CSharp {
 				return aec;
 			}
 
-			public override bool Define ()
+			protected override bool ResolveMemberType ()
 			{
+				if (!base.ResolveMemberType ())
+					return false;
+
 				if (Storey != null && Storey.IsGeneric && Storey.HasHoistedVariables) {
 					AnonymousMethodStorey gstorey = Storey.GetGenericStorey ();
 					if (gstorey != null) {
@@ -1221,11 +1227,11 @@ namespace Mono.CSharp {
 								ptypes [i] = gstorey.MutateType (ptypes [i]);
 						}
 
-						member_type = gstorey.MutateType (ReturnType);
+						member_type = gstorey.MutateType (member_type);
 					}
 				}
 
-				return base.Define ();
+				return true;
 			}
 
 			public override void Emit ()
@@ -1878,9 +1884,10 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (base.Define ())
-				DefineOverrides ();
+			if (!base.Define ())
+				return false;
 
+			DefineOverrides ();
 			return true;
 		}
 

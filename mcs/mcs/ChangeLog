@@ -1,5 +1,11 @@
 2008-11-21  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, decl.cs, anonymous.cs, class.cs, enum.cs: Rewrote
+	member type resolve to follow normal flow, instead of random
+	property access.
+
+2008-11-21  Marek Safar  <marek.safar@gmail.com>
+
 	* iterators.cs (GetEnumeratorStatement): Re-use already resolved
 	type.
 

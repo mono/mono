@@ -1294,6 +1294,17 @@ namespace Mono.CSharp {
 					mt, bf, name, FilterWithClosure_delegate, null);
 			}
 
+			//
+			// We have to take care of arrays specially, because GetType on
+			// a TypeBuilder array will return a Type, not a TypeBuilder,
+			// and we can not call FindMembers on this type.
+			//
+			if (t.IsArray) {
+				used_cache = true;
+				return TypeHandle.ArrayType.MemberCache.FindMembers (
+					mt, bf, name, FilterWithClosure_delegate, null);
+			}
+
 			if (t.IsGenericType && !t.IsGenericTypeDefinition)
 				t = t.GetGenericTypeDefinition ();
 #else
@@ -1431,16 +1442,15 @@ namespace Mono.CSharp {
 		return t == attribute_type && t.BaseType != null || IsSubclassOf (t, attribute_type);
 	}
 	
-	static Stack unmanaged_enclosing_types = new Stack (4);
-
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
 	//
+	// mcs4: delete, DeclSpace.IsUnmanagedType is replacement
 	public static bool IsUnmanagedType (Type t)
 	{
-		// Avoid infloops in the case of: unsafe struct Foo { Foo *x; }
-		if (unmanaged_enclosing_types.Contains (t))
-			return true;
+		DeclSpace ds = TypeManager.LookupDeclSpace (t);
+		if (ds != null)
+			return ds.IsUnmanagedType ();
 
 		// builtins that are not unmanaged types
 		if (t == TypeManager.object_type || t == TypeManager.string_type)
@@ -1454,7 +1464,7 @@ namespace Mono.CSharp {
 
 		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
 		if (t.IsPointer)
-			return true;
+			return IsUnmanagedType (GetElementType (t));
 
 		// Arrays are disallowed, even if we mark them with [MarshalAs(UnmanagedType.ByValArray, ...)]
 		if (t.IsArray)
@@ -1470,37 +1480,16 @@ namespace Mono.CSharp {
 		}
 #endif
 
-		unmanaged_enclosing_types.Push (t);
-
 		bool retval = true;
-
-		if (t is TypeBuilder) {
-			TypeContainer tc = LookupTypeContainer (t);
-			if (tc.Fields != null){
-				foreach (FieldBase f in tc.Fields){
-					// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
-					if ((f.ModFlags & Modifiers.STATIC) != 0)
-						continue;
-					if (f.MemberType == null)
-						continue;
-					if (!IsUnmanagedType (f.MemberType)){
-						Report.SymbolRelatedToPreviousError (f.Location, CSharpName (t) + "." + f.Name);
-						retval = false;
-					}
-				}
-			}
-		} else {
+		{
 			FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			
 			foreach (FieldInfo f in fields){
 				if (!IsUnmanagedType (f.FieldType)){
-					Report.SymbolRelatedToPreviousError (f);
 					retval = false;
 				}
 			}
 		}
-
-		unmanaged_enclosing_types.Pop ();
 
 		return retval;
 	}
@@ -2317,6 +2306,10 @@ namespace Mono.CSharp {
 		if (IsUnmanagedType (t))
 			return true;
 
+		while (t.IsPointer)
+			t = GetElementType (t);
+
+		Report.SymbolRelatedToPreviousError (t);
 		Report.Error (208, loc, "Cannot take the address of, get the size of, or declare a pointer to a managed type `{0}'",
 			CSharpName (t));
 
@@ -3472,6 +3465,9 @@ public sealed class TypeHandle : IMemberContainer {
 			return MemberList.Empty;
 #endif
 
+#if MS_COMPATIBLE
+		type = TypeManager.DropGenericTypeArguments (type);
+#endif
 		if (mt == MemberTypes.Event)
 			members = type.GetEvents (bf | BindingFlags.DeclaredOnly);
 		else
