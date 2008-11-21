@@ -1,3 +1,9 @@
+
+Fri Nov 21 12:52:23 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: remove negative stack references in epilog
+	for platforms that don't support the red zone.
+
 2008-11-21  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.h, cpu-ppc64.md: Fixed caller/callee saved floating
