@@ -11,14 +11,14 @@ using System.IO;
 namespace Mono.Util.CorCompare {
 
 	/// <summary>
-	/// 	Handles command line arguments, and generates appropriate report(s) 
+	/// 	Handles command line arguments, and generates appropriate report(s)
 	/// 	based on those arguments
 	/// </summary>
 	/// <remarks>
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class CorCompareDriver
+	public class CorCompareDriver
 	{
 		public static void Main(string[] args) {
 			// make sure we were called with the proper usage

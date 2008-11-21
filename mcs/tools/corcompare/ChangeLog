@@ -1,3 +1,7 @@
+2008-11-21  Jb Evain  <jbevain@novell.com>
+
+	*.*: update to the cecil/corcompare version.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add doc-update target support.

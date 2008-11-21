@@ -6,11 +6,11 @@
 // (C) 2001-2002 Nick Drochak
 
 using System;
-using System.Reflection;
 using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare {
 
@@ -27,10 +27,10 @@ namespace Mono.Util.CorCompare {
 		ArrayList MissingTypes = new ArrayList();
 		ArrayList rgNamespaces = new ArrayList();
 		string strName;
-		Assembly assMono;
-		Assembly assMS;
-		Type [] rgTypesMono;
-		Type [] rgTypesMS;
+		AssemblyDefinition assMono;
+		AssemblyDefinition assMS;
+		TypeDefinitionCollection rgTypesMono;
+		TypeDefinitionCollection rgTypesMS;
 
 		protected static Hashtable htGhostTypes;
 		private static string[] rgstrGhostTypes = {"System.Object", "System.ValueType", "System.Delegate", "System.Enum"};
@@ -48,20 +48,20 @@ namespace Mono.Util.CorCompare {
 
 		public static ToDoAssembly Load (string strFileMono, string strName, string strNameMS)
 		{
-			Assembly assemblyMono = Assembly.LoadFrom (strFileMono);
-			Assembly assemblyMS = Assembly.LoadWithPartialName (strNameMS);
+			AssemblyDefinition assemblyMono = null;//TODO AssemblyDefinition.LoadFrom (strFileMono);
+			AssemblyDefinition assemblyMS = null;//TODO AssemblyDefinition.LoadWithPartialName (strNameMS);
 
 			return new ToDoAssembly (strName, assemblyMono, assemblyMS);
 		}
 
-		public ToDoAssembly (string _strName, Assembly _assMono, Assembly _assMS)
+		public ToDoAssembly (string _strName, AssemblyDefinition _assMono, AssemblyDefinition _assMS)
 		{
 			strName = _strName;
 			assMono = _assMono;
 			assMS = _assMS;
 
-			rgTypesMono = assMono.GetTypes ();
-			rgTypesMS = assMS.GetTypes ();
+			rgTypesMono = assMono.MainModule.Types;
+			rgTypesMS = assMS.MainModule.Types;
 			m_nodeStatus = new NodeStatus (_assMono, _assMS);
 		}
 
@@ -76,10 +76,10 @@ namespace Mono.Util.CorCompare {
 			get { return "assembly"; }
 		}
 
-		private Hashtable GetNamespaceMap (Type [] rgTypes)
+		private Hashtable GetNamespaceMap (TypeDefinitionCollection rgTypes)
 		{
 			Hashtable mapTypes = new Hashtable ();
-			foreach (Type t in rgTypes)
+			foreach (TypeDefinition t in rgTypes)
 			{
 				if (t != null)
 				{
@@ -89,10 +89,10 @@ namespace Mono.Util.CorCompare {
 						strName != null && strName.Length > 0 &&
 						!htGhostTypes.Contains (strName))
 					{
-						ArrayList rgContainedTypes = (ArrayList) mapTypes [strNamespace];
+						TypeDefinitionCollection rgContainedTypes = (TypeDefinitionCollection) mapTypes [strNamespace];
 						if (rgContainedTypes == null)
 						{
-							rgContainedTypes = new ArrayList ();
+							rgContainedTypes = new TypeDefinitionCollection (t.Module);
 							mapTypes [strNamespace] = rgContainedTypes;
 						}
 						rgContainedTypes.Add (t);
@@ -111,8 +111,8 @@ namespace Mono.Util.CorCompare {
 			{
 				if (strNamespaceMS != null)
 				{
-					ArrayList rgContainedTypesMS = (ArrayList) mapTypesMS [strNamespaceMS];
-					ArrayList rgContainedTypesMono = (ArrayList) mapTypesMono [strNamespaceMS];
+					TypeDefinitionCollection rgContainedTypesMS = (TypeDefinitionCollection) mapTypesMS [strNamespaceMS];
+					TypeDefinitionCollection rgContainedTypesMono = (TypeDefinitionCollection) mapTypesMono [strNamespaceMS];
 					MissingNameSpace mns = new MissingNameSpace (strNamespaceMS, rgContainedTypesMono, rgContainedTypesMS);
 					NodeStatus nsNamespace = mns.Analyze ();
 					m_nodeStatus.AddChildren (nsNamespace);
@@ -125,7 +125,7 @@ namespace Mono.Util.CorCompare {
 			{
 				if (strNamespaceMono != null)
 				{
-					ArrayList rgContainedTypesMono = (ArrayList) mapTypesMono [strNamespaceMono];
+					TypeDefinitionCollection rgContainedTypesMono = (TypeDefinitionCollection) mapTypesMono [strNamespaceMono];
 					MissingNameSpace mns = new MissingNameSpace (strNamespaceMono, rgContainedTypesMono, null);
 					NodeStatus nsNamespace = mns.Analyze ();
 					m_nodeStatus.AddChildren (nsNamespace);
@@ -135,8 +135,8 @@ namespace Mono.Util.CorCompare {
 
 			rgAttributes = new ArrayList ();
 			NodeStatus nsAttributes = MissingAttribute.AnalyzeAttributes (
-				assMono.GetCustomAttributes (true),
-				assMS.GetCustomAttributes (true),
+				assMono.CustomAttributes,
+				assMS.CustomAttributes,
 				rgAttributes);
 			m_nodeStatus.Add (nsAttributes);
 

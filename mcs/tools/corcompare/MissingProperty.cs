@@ -6,9 +6,9 @@
 // (C) 2001-2002 Nick Drochak
 
 using System;
-using System.Reflection;
 using System.Text;
 using System.Xml;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare {
 
@@ -19,12 +19,12 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class MissingProperty : MissingMember 
+	class MissingProperty : MissingMember
 	{
 		// e.g. <property name="Length" status="missing"/>
-		public MissingProperty (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
+		public MissingProperty (PropertyDefinition infoMono, PropertyDefinition infoMS) : base (infoMono, infoMS) { }
 
-		public override string Type 
+		public override string Type
 		{
 			get { return "property"; }
 		}
@@ -32,29 +32,38 @@ namespace Mono.Util.CorCompare {
 		protected MissingMethod mmGet;
 		protected MissingMethod mmSet;
 
+		public override CustomAttributeCollection GetCustomAttributes (MemberReference mref) {
+			return ((PropertyDefinition) mref).CustomAttributes;
+		}
+
+		public override Accessibility GetAccessibility (MemberReference mref) {
+			//PropertyDefinition member = (PropertyDefinition) mref;
+			return Accessibility.Public;
+		}
+
 		public override NodeStatus Analyze ()
 		{
 			m_nodeStatus = base.Analyze ();
 
-			PropertyInfo piMono = (PropertyInfo) mInfoMono;
-			PropertyInfo piMS   = (PropertyInfo) mInfoMS;
+			PropertyDefinition piMono = (PropertyDefinition) mInfoMono;
+			PropertyDefinition piMS = (PropertyDefinition) mInfoMS;
 
-			MemberInfo miGetMono, miSetMono;
+			MethodDefinition miGetMono, miSetMono;
 			if (piMono == null)
 				miGetMono = miSetMono = null;
 			else
 			{
-				miGetMono = piMono.GetGetMethod ();
-				miSetMono = piMono.GetSetMethod ();
+				miGetMono = piMono.GetMethod;
+				miSetMono = piMono.SetMethod;
 			}
 
-			MemberInfo miGetMS, miSetMS;
+			MethodDefinition miGetMS, miSetMS;
 			if (piMS == null)
 				miGetMS = miSetMS = null;
 			else
 			{
-				miGetMS = piMS.GetGetMethod ();
-				miSetMS = piMS.GetSetMethod ();
+				miGetMS = piMS.GetMethod;
+				miSetMS = piMS.SetMethod;
 			}
 
 			if (miGetMono != null || miGetMS != null)

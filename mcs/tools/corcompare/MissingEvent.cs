@@ -6,8 +6,8 @@
 // (C) 2001-2002 Nick Drochak
 
 using System;
-using System.Reflection;
 using System.Xml;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare {
 
@@ -20,7 +20,7 @@ namespace Mono.Util.CorCompare {
 	/// </remarks>
 	class MissingEvent : MissingMember {
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingEvent (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
+		public MissingEvent (EventDefinition infoMono, EventDefinition infoMS) : base (infoMono, infoMS) { }
 		MissingMethod mmAdd;
 		MissingMethod mmRemove;
 		MissingMethod mmRaise;
@@ -31,31 +31,40 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 
+		public override CustomAttributeCollection GetCustomAttributes (MemberReference mref) {
+			return ((EventDefinition) mref).CustomAttributes;
+		}
+
+		public override Accessibility GetAccessibility (MemberReference mref) {
+			//EventDefinition member = (EventDefinition) mref;
+			return Accessibility.Public;
+		}
+
 		public override NodeStatus Analyze ()
 		{
 			m_nodeStatus = base.Analyze ();
 
-			EventInfo eiMono = (EventInfo) mInfoMono;
-			EventInfo eiMS   = (EventInfo) mInfoMS;
+			EventDefinition eiMono = (EventDefinition) mInfoMono;
+			EventDefinition eiMS = (EventDefinition) mInfoMS;
 
-			MemberInfo miAddMono, miRemoveMono, miRaiseMono;
+			MethodDefinition miAddMono, miRemoveMono, miRaiseMono;
 			if (eiMono == null)
 				miAddMono = miRemoveMono = miRaiseMono = null;
 			else
 			{
-				miAddMono = eiMono.GetAddMethod ();
-				miRemoveMono = eiMono.GetRemoveMethod ();
-				miRaiseMono = eiMono.GetRaiseMethod ();
+				miAddMono = eiMono.AddMethod;
+				miRemoveMono = eiMono.RemoveMethod;
+				miRaiseMono = eiMono.InvokeMethod;
 			}
 
-			MemberInfo miAddMS, miRemoveMS, miRaiseMS;
+			MethodDefinition miAddMS, miRemoveMS, miRaiseMS;
 			if (eiMS == null)
 				miAddMS = miRemoveMS = miRaiseMS = null;
 			else
 			{
-				miAddMS = eiMS.GetAddMethod ();
-				miRemoveMS = eiMS.GetRemoveMethod ();
-				miRaiseMS = eiMS.GetRaiseMethod ();
+				miAddMS = eiMS.AddMethod;
+				miRemoveMS = eiMS.RemoveMethod;
+				miRaiseMS = eiMS.InvokeMethod;
 			}
 
 			if (miAddMono != null || miAddMS != null)

@@ -7,10 +7,11 @@
 
 using System;
 using System.Xml;
-using System.Reflection;
 using System.Collections;
+using Mono.Cecil;
+using Mono.Util.CorCompare.Cecil;
 
-namespace Mono.Util.CorCompare 
+namespace Mono.Util.CorCompare
 {
 
 	/// <summary>
@@ -24,7 +25,7 @@ namespace Mono.Util.CorCompare
 	{
 		// e.g. <class name="System.Byte" status="missing"/>
 		// e.g. <class name="System.Array" status="todo" missing="5" todo="6" complete="45">
-		Type typeMono, typeMS;
+		TypeDefinition typeMono, typeMS;
 //		ArrayList rgAttributes = new ArrayList ();
 		ArrayList rgMethods = new ArrayList ();
 		ArrayList rgProperties = new ArrayList ();
@@ -42,18 +43,18 @@ namespace Mono.Util.CorCompare
 		NodeStatus nsNestedTypes = new NodeStatus ();
 		NodeStatus nsInterfaces = new NodeStatus ();
 
-		public MissingType (Type _typeMono, Type _typeMS)
+		public MissingType (TypeDefinition _typeMono, TypeDefinition _typeMS)
 		{
 			typeMono = _typeMono;
 			typeMS = _typeMS;
 			m_nodeStatus = new NodeStatus (_typeMono, _typeMS);
 		}
 
-		public override string Name 
+		public override string Name
 		{
 			get
 			{
-				Type type = TypeInfoBest;
+				TypeDefinition type = TypeInfoBest;
 				if (type.DeclaringType != null)
 					return type.DeclaringType.Name + "+" + type.Name;
 				return type.Name;
@@ -64,7 +65,16 @@ namespace Mono.Util.CorCompare
 		{
 			get
 			{
-				Type type = TypeInfo;
+				Console.WriteLine ("For: {0} -> {1}", Name, r);
+				return r;
+			}
+
+		}
+
+		string r {
+			get {
+				TypeDefinition type = TypeInfo;
+
 				if (type.IsEnum)
 					return "enum";
 				else if (type.IsInterface)
@@ -78,12 +88,12 @@ namespace Mono.Util.CorCompare
 			}
 		}
 
-		public Type TypeInfo
+		public TypeDefinition TypeInfo
 		{
 			get { return (typeMono != null) ? typeMono : typeMS; }
 		}
 
-		public Type TypeInfoBest
+		public TypeDefinition TypeInfoBest
 		{
 			get { return (typeMS == null) ? typeMono : typeMS; }
 		}
@@ -92,88 +102,74 @@ namespace Mono.Util.CorCompare
 		{
 			get
 			{
-				Type typeBest = TypeInfoBest;
-				if (typeBest.IsEnum || typeBest.IsInterface || typeBest.IsValueType)
-					return false;
-				Type type = typeBest.BaseType;
-				while (type != null)
-				{
-					if (type.FullName == "System.Delegate")
-						return true;
-					type = type.BaseType;
-				}
-				return false;
+				return TypeHelper.IsDelegate (TypeInfoBest);
 			}
 		}
 
-		public MissingMember CreateMember (MemberInfo infoMono, MemberInfo infoMS)
+		public MissingMember CreateMember (MemberReference infoMono, MemberReference infoMS, bool add)
 		{
-			MemberTypes mt = (infoMono != null) ? infoMono.MemberType : infoMS.MemberType;
+			MemberReference mref = (infoMono != null) ? infoMono : infoMS;
 			MissingMember mm;
-			switch (mt)
+
+			if(mref.GetType().Equals(typeof(MethodDefinition)))
 			{
-				case MemberTypes.Method:
-					mm = new MissingMethod (infoMono, infoMS);
-					break;
-				case MemberTypes.Property:
-					mm = new MissingProperty (infoMono, infoMS);
-					break;
-				case MemberTypes.Event:
-					mm = new MissingEvent (infoMono, infoMS);
-					break;
-				case MemberTypes.Field:
-					mm = new MissingField (infoMono, infoMS);
-					break;
-				case MemberTypes.Constructor:
-					mm = new MissingConstructor (infoMono, infoMS);
-					break;
-				case MemberTypes.NestedType:
-					mm = new MissingNestedType (infoMono, infoMS);
-					break;
-				default:
-					throw new Exception ("Unexpected MemberType: " + mt.ToString());
+				if (((MethodDefinition) mref).IsConstructor) {
+					mm = new MissingConstructor((MethodDefinition) infoMono, (MethodDefinition) infoMS);
+					if (add) {
+						nsConstructors.AddChildren (mm.Status);
+						rgConstructors.Add (mm);
+					}
+				}
+				else {
+					mm = new MissingMethod ((MethodDefinition) infoMono, (MethodDefinition) infoMS);
+					if (add) {
+						nsMethods.AddChildren (mm.Status);
+						rgMethods.Add (mm);
+					}
+				}
 			}
+			else if (mref.GetType().Equals(typeof(PropertyDefinition)))
+			{
+				mm = new MissingProperty ((PropertyDefinition) infoMono, (PropertyDefinition) infoMS);
+				if (add) {
+					nsProperties.AddChildren (mm.Status);
+					rgProperties.Add (mm);
+				}
+			}
+			else if (mref.GetType().Equals(typeof(EventDefinition)))
+			{
+				mm = new MissingEvent ((EventDefinition) infoMono, (EventDefinition) infoMS);
+				if (add) {
+					nsEvents.AddChildren (mm.Status);
+					rgEvents.Add (mm);
+				}
+			}
+			else if (mref.GetType().Equals(typeof(FieldDefinition)))
+			{
+				mm = new MissingField ((FieldDefinition) infoMono, (FieldDefinition) infoMS);
+				if (add) {
+					nsFields.AddChildren (mm.Status);
+					rgFields.Add (mm);
+				}
+			}
+			else if (mref.GetType().Equals(typeof(TypeDefinition)) && ((TypeDefinition)mref).DeclaringType == null)//nested type
+			{
+				mm = new MissingNestedType ((TypeDefinition) infoMono, (TypeDefinition) infoMS);
+				if (add) {
+					nsNestedTypes.AddChildren (mm.Status);
+					rgNestedTypes.Add (mm);
+				}
+			}
+			else
+				throw new Exception ("Unexpected MemberType");
+
 			mm.Analyze ();
 			return mm;
 		}
 
-
-		public void AddMember (MissingMember mm)
+		public void AddMember (MemberReference infoMono, MemberReference infoMS)
 		{
-			switch (mm.Info.MemberType)
-			{
-				case MemberTypes.Method:
-					nsMethods.AddChildren (mm.Status);
-					rgMethods.Add (mm);
-					break;
-				case MemberTypes.Property:
-					nsProperties.AddChildren (mm.Status);
-					rgProperties.Add (mm);
-					break;
-				case MemberTypes.Event:
-					nsEvents.AddChildren (mm.Status);
-					rgEvents.Add (mm);
-					break;
-				case MemberTypes.Field:
-					nsFields.AddChildren (mm.Status);
-					rgFields.Add (mm);
-					break;
-				case MemberTypes.Constructor:
-					nsConstructors.AddChildren (mm.Status);
-					rgConstructors.Add (mm);
-					break;
-				case MemberTypes.NestedType:
-					nsNestedTypes.AddChildren (mm.Status);
-					rgNestedTypes.Add (mm);
-					break;
-				default:
-					throw new Exception ("Unexpected MemberType: " + mm.Info.ToString());
-			}
-		}
-
-		public void AddMember (MemberInfo infoMono, MemberInfo infoMS)
-		{
-			AddMember (CreateMember (infoMono, infoMS));
+			CreateMember (infoMono, infoMS, true);
 		}
 
 		public override XmlElement CreateXML (XmlDocument doc)
@@ -182,193 +178,128 @@ namespace Mono.Util.CorCompare
 			XmlElement eltMember;
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("methods", rgMethods, nsMethods, doc);
-			if (eltMember != null) 
+			if (eltMember != null)
 				eltClass.AppendChild (eltMember);
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("properties", rgProperties, nsProperties, doc);
-			if (eltMember != null) 
+			if (eltMember != null)
 				eltClass.AppendChild (eltMember);
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("events", rgEvents, nsEvents, doc);
-			if (eltMember != null) 
+			if (eltMember != null)
 				eltClass.AppendChild (eltMember);
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("fields", rgFields, nsFields, doc);
-			if (eltMember != null) 
+			if (eltMember != null)
 				eltClass.AppendChild (eltMember);
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("constructors", rgConstructors, nsConstructors, doc);
-			if (eltMember != null) 
+			if (eltMember != null)
 				eltClass.AppendChild (eltMember);
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("nestedTypes", rgNestedTypes, nsNestedTypes, doc);
-			if (eltMember != null) 
+			if (eltMember != null)
 				eltClass.AppendChild (eltMember);
 
 			eltMember = MissingBase.CreateMemberCollectionElement ("interfaces", rgInterfaces, nsInterfaces, doc);
-			if (eltMember != null) 
+			if (eltMember != null)
 				eltClass.AppendChild (eltMember);
 
 			return eltClass;
 		}
 
+		private static void FillMembersMap (Hashtable members, TypeDefinition type) {
+			if (type != null) {
+				foreach (PropertyDefinition p in type.Properties) {
+					if (p.DeclaringType.Equals (type)) {
+						string strName = MissingMember.GetUniqueName (p);
+						members.Add (strName, p);
+					}
+				}
+
+				foreach (EventDefinition e in type.Events) {
+					if (e.DeclaringType.Equals (type)) {
+						string strName = MissingMember.GetUniqueName (e);
+						members.Add (strName, e);
+					}
+				}
+
+				foreach (MethodDefinition c in type.Constructors) {
+					if ((c.Attributes & MethodAttributes.MemberAccessMask) != MethodAttributes.Private) {
+						string strName = MissingMember.GetUniqueName (c);
+						members.Add (strName, c);
+					}
+				}
+
+				foreach (MethodDefinition m in type.Methods) {
+					if ((m.Attributes & MethodAttributes.MemberAccessMask) != MethodAttributes.Private && m.DeclaringType.Equals (type)) {
+						string strName = MissingMember.GetUniqueName (m);
+						members.Add (strName, m);
+					}
+				}
+
+				foreach (FieldDefinition f in type.Fields) {
+					if ((f.Attributes & FieldAttributes.FieldAccessMask) != FieldAttributes.Private && f.DeclaringType.Equals (type)) {
+						string strName = MissingMember.GetUniqueName (f);
+						members.Add (strName, f);
+					}
+				}
+			}
+		}
+
 		public override NodeStatus Analyze ()
 		{
 			Hashtable htMono = new Hashtable ();
-			if (typeMono != null)
-			{
-				ArrayList rgIgnoreMono = new ArrayList ();
-				foreach (MemberInfo miMono in typeMono.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
-				{
-					if (typeMono == miMono.DeclaringType)
-					{
-						string strName = MissingMember.GetUniqueName (miMono);
-						htMono.Add (strName, miMono);
+			FillMembersMap (htMono, typeMono);
 
-						// ignore any property/event accessors
-						if (miMono.MemberType == MemberTypes.Property)
-						{
-							PropertyInfo pi = (PropertyInfo) miMono;
-							MemberInfo miGet = pi.GetGetMethod ();
-							if (miGet != null)
-								rgIgnoreMono.Add (miGet);
-							MemberInfo miSet = pi.GetSetMethod ();
-							if (miSet != null)
-								rgIgnoreMono.Add (miSet);
-						}
-						else if (miMono.MemberType == MemberTypes.Event)
-						{
-							EventInfo ei = (EventInfo) miMono;
-							MemberInfo miAdd = ei.GetAddMethod ();
-							if (miAdd != null)
-								rgIgnoreMono.Add (miAdd);
-							MemberInfo miRemove = ei.GetRemoveMethod ();
-							if (miRemove != null)
-								rgIgnoreMono.Add (miRemove);
-							MemberInfo miRaise = ei.GetRaiseMethod ();
-							if (miRaise != null)
-								rgIgnoreMono.Add (miRaise);
-						}
-					}
-				}
-				foreach (MemberInfo miIgnore in rgIgnoreMono)
-					htMono.Remove (MissingMember.GetUniqueName (miIgnore));
-			}
+			Hashtable htMS = new Hashtable ();
+			FillMembersMap (htMS, typeMS);
+
 			Hashtable htMethodsMS = new Hashtable ();
-			if (typeMS != null)
+
+			foreach (MemberReference miMS in htMS)
 			{
-				ICollection colMembersMS = typeMS.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				Hashtable htIgnoreMS = new Hashtable ();
-				foreach (MemberInfo miMS in colMembersMS)
-				{
-					// ignore any property/event accessors
-					if (miMS.MemberType == MemberTypes.Property)
-					{
-						PropertyInfo pi = (PropertyInfo) miMS;
-						MemberInfo miGet = pi.GetGetMethod ();
-						if (miGet != null)
-							htIgnoreMS.Add (miGet, miMS);
-						MemberInfo miSet = pi.GetSetMethod ();
-						if (miSet != null)
-							htIgnoreMS.Add (miSet, miMS);
-					}
-					else if (miMS.MemberType == MemberTypes.Event)
-					{
-						EventInfo ei = (EventInfo) miMS;
-						MemberInfo miAdd = ei.GetAddMethod ();
-						if (miAdd != null)
-							htIgnoreMS.Add (miAdd, miMS);
-						MemberInfo miRemove = ei.GetRemoveMethod ();
-						if (miRemove != null)
-							htIgnoreMS.Add (miRemove, miMS);
-						MemberInfo miRaise = ei.GetRaiseMethod ();
-						if (miRaise != null)
-							htIgnoreMS.Add (miRaise, miMS);
-					}
+				string strNameUnique = MissingMember.GetUniqueName (miMS);
+				MemberReference miMono = (MemberReference) htMono [strNameUnique];
+				AddMember (miMono, miMS);
+				if (miMono != null) {
+					htMono.Remove (strNameUnique);
 				}
-				foreach (MemberInfo miMS in colMembersMS)
+
+				if ( miMS is MethodDefinition && !((MethodDefinition)miMS).IsConstructor)
 				{
-					if (miMS != null && miMS.DeclaringType == typeMS && !htIgnoreMS.Contains (miMS))
-					{
-						string strNameUnique = MissingMember.GetUniqueName (miMS);
-						MemberInfo miMono = (MemberInfo) htMono [strNameUnique];
-
-						MissingMember mm = CreateMember (miMono, miMS);
-
-						bool fVisibleMS = IsVisible (miMS);
-						if (miMono == null)
-						{
-							if (fVisibleMS)
-								AddMember (mm);
-						}
-						else
-						{
-							if (miMono.MemberType != miMS.MemberType)
-							{
-								//AddMember (null, miMS);
-								//MissingMember mm2 = CreateMember (miMono, null);
-								//mm2.Status.AddWarning ("MemberType mismatch, is: '" + miMono.MemberType.ToString () + "' [should be: '" + miMS.MemberType.ToString ()+"']");
-								//AddMember (mm2);
-								mm.Status.AddWarning ("MemberType mismatch, is: '" + miMono.MemberType.ToString () + "' [should be: '" + miMS.MemberType.ToString ()+"']");
-								AddMember (mm);
-							}
-							else if (fVisibleMS || IsVisible (miMono))
-							{
-								AddMember (mm);
-							}
-
-							htMono.Remove (strNameUnique);
-						}
-
-						switch (miMS.MemberType)
-						{
-							case MemberTypes.Method:
-							{
-								string strNameMSFull = miMS.ToString ();
-								int ichMS = strNameMSFull.IndexOf (' ');
-								string strNameMS = strNameMSFull.Substring (ichMS + 1);
-								if (!htMethodsMS.Contains (strNameMS))
-									htMethodsMS.Add (strNameMSFull.Substring (ichMS + 1), miMS);
-								break;
-							}
-						}
-					}
+					string strNameMSFull = miMS.ToString ();
+					int ichMS = strNameMSFull.IndexOf (' ');
+					string strNameMS = strNameMSFull.Substring (ichMS + 1);
+					if (!htMethodsMS.Contains (strNameMS))
+						htMethodsMS.Add (strNameMSFull.Substring (ichMS + 1), miMS);
 				}
 			}
-			foreach (MemberInfo miMono in htMono.Values)
+			foreach (MemberReference miMono in htMono.Values)//ADDED MEMBERS (not found in MS)
 			{
-				if (IsVisible (miMono))
+				MissingMember mm = CreateMember (miMono, null, true);
+				if (miMono is MethodDefinition && !((MethodDefinition)miMono).IsConstructor)
 				{
-					MissingMember mm = CreateMember (miMono, null);
-					switch (miMono.MemberType)
+					string strNameMonoFull = miMono.ToString ();
+					int ichMono = strNameMonoFull.IndexOf (' ');
+					string strNameMono = strNameMonoFull.Substring (ichMono + 1);
+					MemberReference miMS = (MemberReference) htMethodsMS [strNameMono];
+					if (miMS != null)
 					{
-						case MemberTypes.Method:
-						{
-							string strNameMonoFull = miMono.ToString ();
-							int ichMono = strNameMonoFull.IndexOf (' ');
-							string strNameMono = strNameMonoFull.Substring (ichMono + 1);
-							MemberInfo miMS = (MemberInfo) htMethodsMS [strNameMono];
-							if (miMS != null)
-							{
-								string strNameMSFull = miMS.ToString ();
-								int ichMS = strNameMSFull.IndexOf (' ');
-								string strReturnTypeMS = strNameMSFull.Substring (0, ichMS);
-								string strReturnTypeMono = strNameMonoFull.Substring (0, ichMono);
-								mm.Status.AddWarning ("Return type mismatch, is: '"+strReturnTypeMono+"' [should be: '"+strReturnTypeMS+"']");
-								//Console.WriteLine ("WARNING: Return type mismatch on "+miMS.DeclaringType.FullName+"."+strNameMono+", is: '"+strReturnTypeMono+"' [should be: '"+strReturnTypeMS+"']");
-							}
-							break;
-						}
+						string strNameMSFull = miMS.ToString ();
+						int ichMS = strNameMSFull.IndexOf (' ');
+						string strReturnTypeMS = strNameMSFull.Substring (0, ichMS);
+						string strReturnTypeMono = strNameMonoFull.Substring (0, ichMono);
+						mm.Status.AddWarning ("Return type mismatch, is: '"+strReturnTypeMono+"' [should be: '"+strReturnTypeMS+"']");
 					}
-					AddMember (mm);
 				}
 			}
 
 			// compare the attributes
 			rgAttributes = new ArrayList ();
 			nsAttributes = MissingAttribute.AnalyzeAttributes (
-				(typeMono == null) ? null : typeMono.GetCustomAttributes (false),
-				(  typeMS == null) ? null :   typeMS.GetCustomAttributes (false),
+				(typeMono == null) ? null : typeMono.CustomAttributes,
+				(typeMS == null) ? null : typeMS.CustomAttributes,
 				rgAttributes);
 
 			rgInterfaces = new ArrayList ();
@@ -385,8 +316,8 @@ namespace Mono.Util.CorCompare
 
 				// compare the interfaces
 				Hashtable htInterfacesMono = new Hashtable ();
-				Type [] rgInterfacesMono = typeMono.GetInterfaces ();
-				foreach (Type ifaceMono in rgInterfacesMono)
+				InterfaceCollection rgInterfacesMono = typeMono.Interfaces;
+				foreach (TypeReference ifaceMono in rgInterfacesMono)
 				{
 					if (ifaceMono != null)
 					{
@@ -394,13 +325,13 @@ namespace Mono.Util.CorCompare
 						htInterfacesMono.Add (strName, ifaceMono);
 					}
 				}
-				Type [] rgInterfacesMS = typeMS.GetInterfaces ();
-				foreach (Type ifaceMS in rgInterfacesMS)
+				InterfaceCollection rgInterfacesMS = typeMS.Interfaces;
+				foreach (TypeReference ifaceMS in rgInterfacesMS)
 				{
 					if (ifaceMS != null)
 					{
 						string strName = ifaceMS.FullName;
-						Type ifaceMono = (Type) htInterfacesMono [strName];
+						TypeReference ifaceMono = (TypeReference) htInterfacesMono [strName];
 						MissingInterface mi = new MissingInterface (ifaceMono, ifaceMS);
 						mi.Analyze ();
 						rgInterfaces.Add (mi);
@@ -409,7 +340,7 @@ namespace Mono.Util.CorCompare
 						nsInterfaces.AddChildren (mi.Status);
 					}
 				}
-				foreach (Type ifaceMono in htInterfacesMono.Values)
+				foreach (TypeReference ifaceMono in htInterfacesMono.Values)
 				{
 					MissingInterface mi = new MissingInterface (ifaceMono, null);
 					mi.Analyze ();
@@ -420,9 +351,9 @@ namespace Mono.Util.CorCompare
 
 				// serializable attribute
 				// AddFakeAttribute (typeMono.IsSerializable, typeMS.IsSerializable, "System.SerializableAttribute");
-				AddFakeAttribute (typeMono.IsAutoLayout, typeMS.IsAutoLayout, "System.AutoLayoutAttribute");
-				AddFakeAttribute (typeMono.IsExplicitLayout, typeMS.IsExplicitLayout, "System.ExplicitLayoutAttribute");
-				AddFakeAttribute (typeMono.IsLayoutSequential, typeMS.IsLayoutSequential, "System.SequentialLayoutAttribute");
+				AddFakeAttribute ((typeMono.Attributes & TypeAttributes.LayoutMask) == TypeAttributes.AutoLayout, (typeMS.Attributes & TypeAttributes.LayoutMask) == TypeAttributes.AutoLayout, "System.AutoLayoutAttribute");
+				AddFakeAttribute ((typeMono.Attributes & TypeAttributes.LayoutMask) == TypeAttributes.ExplicitLayout, (typeMS.Attributes & TypeAttributes.LayoutMask) == TypeAttributes.ExplicitLayout, "System.ExplicitLayoutAttribute");
+				AddFakeAttribute ((typeMono.Attributes & TypeAttributes.LayoutMask) == TypeAttributes.SequentialLayout, (typeMS.Attributes & TypeAttributes.LayoutMask) == TypeAttributes.SequentialLayout, "System.SequentialLayoutAttribute");
 
 				Accessibility accessibilityMono = GetAccessibility (typeMono);
 				Accessibility accessibilityMS   = GetAccessibility (typeMS);
@@ -446,48 +377,22 @@ namespace Mono.Util.CorCompare
 			return m_nodeStatus;
 		}
 
-		static bool IsVisible (MemberInfo mi)
+		static Accessibility GetAccessibility (TypeDefinition type)
 		{
-			// this is just embarrasing, couldn't they have virtualized this?
-			switch (mi.MemberType)
-			{
-				case MemberTypes.Constructor:
-				case MemberTypes.Method:
-					return !((MethodBase) mi).IsPrivate && !((MethodBase) mi).IsFamilyAndAssembly && !((MethodBase) mi).IsAssembly;
-				case MemberTypes.Field:
-					return !((FieldInfo) mi).IsPrivate && !((FieldInfo) mi).IsFamilyAndAssembly && !((FieldInfo) mi).IsAssembly;
-				case MemberTypes.NestedType:
-					return !((Type) mi).IsNestedPrivate && !((Type) mi).IsNestedAssembly && !((Type) mi).IsNestedFamANDAssem;
-				case MemberTypes.Property:	// great, now we have to look at the methods
-					PropertyInfo pi = (PropertyInfo) mi;
-					MethodInfo miAccessor = pi.GetGetMethod ();
-					if (miAccessor == null)
-						miAccessor = pi.GetSetMethod ();
-					if (miAccessor == null)
-						return false;
-					return IsVisible (miAccessor);
-				case MemberTypes.Event:	// ditto
-					EventInfo ei = (EventInfo) mi;
-					MethodInfo eiAccessor = ei.GetAddMethod ();
-					if (eiAccessor == null)
-						eiAccessor = ei.GetRemoveMethod ();
-					if (eiAccessor == null)
-						eiAccessor = ei.GetRaiseMethod ();
-					if (eiAccessor == null)
-						return false;
-					return IsVisible (eiAccessor);
-				default:
-					throw new Exception ("Missing handler for MemberType: "+mi.MemberType.ToString ());
-			}
-		}
-
-		static Accessibility GetAccessibility (Type type)
-		{
-			if (type.IsPublic)
+			TypeAttributes maskedMVisibility = type.Attributes & TypeAttributes.VisibilityMask;
+			if (maskedMVisibility == TypeAttributes.Public)
 				return Accessibility.Public;
-			else if (type.IsNotPublic)
+			else if (maskedMVisibility == TypeAttributes.NestedAssembly)
+				return Accessibility.Assembly;
+			else if (maskedMVisibility == TypeAttributes.NestedFamORAssem)
+				return Accessibility.FamilyOrAssembly;
+			else if (maskedMVisibility == TypeAttributes.NestedFamily)
+				return Accessibility.Family;
+			else if (maskedMVisibility == TypeAttributes.NestedFamANDAssem)
+				return Accessibility.FamilyAndAssembly;
+			else if (maskedMVisibility == TypeAttributes.NestedPrivate)
 				return Accessibility.Private;
-			return MissingMember.GetAccessibility (type);
+			throw new Exception ("Unexpected error in MissingType.GetAccessibility");
 		}
 	}
 }

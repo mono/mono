@@ -6,7 +6,7 @@
 // (C) 2001-2002 Nick Drochak
 
 using System;
-using System.Reflection;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare {
 
@@ -19,7 +19,7 @@ namespace Mono.Util.CorCompare {
 	/// </remarks>
 	class MissingConstructor : MissingMethod {
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingConstructor (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
+		public MissingConstructor (MethodDefinition infoMono, MethodDefinition infoMS) : base (infoMono, infoMS) { }
 
 		public override string Type {
 			get {

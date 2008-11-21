@@ -2,15 +2,13 @@ thisdir = tools/corcompare
 SUBDIRS = 
 include ../../build/rules.make
 
-ALL_PROGRAMS = $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
+ALL_PROGRAMS = CorCompare.exe mono-api-info.exe mono-api-diff.exe transform.exe
 
-ifeq (net_1_1, $(PROFILE))
-ALL_PROGRAMS += CorCompare.exe mono-api-info.exe mono-api-diff.exe transform.exe
-endif
+CECIL = ../../class/lib/net_1_1/Mono.Cecil.dll
 
-CORCOMPARE_SOURCES = \
+COMMON_SOURCES = \
+	AssemblyResolver.cs	\
 	CompletionInfo.cs \
-	CorCompare.cs \
 	MissingAttribute.cs \
 	MissingBase.cs \
 	MissingConstructor.cs \
@@ -23,14 +21,16 @@ CORCOMPARE_SOURCES = \
 	MissingNestedType.cs \
 	MissingProperty.cs \
 	MissingType.cs \
-	ToDoAssembly.cs
+	ToDoAssembly.cs	\
+	Util.cs
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
-APIINFO_SOURCES = mono-api-info.cs
-APIDIFF_SOURCES = mono-api-diff.cs
+CORCOMPARE_SOURCES = CorCompare.cs $(COMMON_SOURCES)
+APIINFO_SOURCES = mono-api-info.cs $(COMMON_SOURCES)
+APIDIFF_SOURCES = mono-api-diff.cs $(COMMON_SOURCES)
 
-DISTFILES= $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES) cormissing.xsl mono-api.xsl transform.cs
+DISTFILES= $(COMMON_SOURCES) $(CORCOMPARE_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES) cormissing.xsl mono-api.xsl transform.cs
 
 all-local: $(ALL_PROGRAMS)
 
@@ -57,18 +57,13 @@ clean-local:
 dist-local: dist-default
 
 CorCompare.exe: $(CORCOMPARE_SOURCES)
-	$(CSCOMPILE) -out:$@ $^
+	$(CSCOMPILE) -r:$(CECIL) -out:$@ $^
 
 mono-api-diff.exe: $(APIDIFF_SOURCES)
-	$(CSCOMPILE) -out:$@ $^
+	$(CSCOMPILE) -r:$(CECIL) -out:$@ $^
 
-$(topdir)/class/lib/$(PROFILE)/mono-api-info.exe: $(APIINFO_SOURCES)
-	$(CSCOMPILE) -out:$@ $^
-
-mono-api-info.exe: $(topdir)/class/lib/$(PROFILE)/mono-api-info.exe
-	cp $< $@
-	-cp $<.mdb $@.mdb
+mono-api-info.exe: $(APIINFO_SOURCES)
+	$(CSCOMPILE) -r:$(CECIL) -out:$@ $^
 
 transform.exe: transform.cs
 	$(CSCOMPILE) -out:$@ $^
-

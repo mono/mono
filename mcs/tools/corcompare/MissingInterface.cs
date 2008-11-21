@@ -6,9 +6,9 @@
 // (C) 2002 Piers Haken
 
 using System;
-using System.Reflection;
+using Mono.Cecil;
 
-namespace Mono.Util.CorCompare 
+namespace Mono.Util.CorCompare
 {
 
 	/// <summary>
@@ -18,20 +18,20 @@ namespace Mono.Util.CorCompare
 	/// 	created by - Piers
 	/// 	created on - 10:34 AM 3/12/2002
 	/// </remarks>
-	class MissingInterface : MissingBase 
+	class MissingInterface : MissingBase
 	{
-		protected Type ifaceMono;
-		protected Type ifaceMS;
+		protected TypeReference ifaceMono;
+		protected TypeReference ifaceMS;
 
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingInterface (Type _ifaceMono, Type _ifaceMS)
+		public MissingInterface (TypeReference _ifaceMono, TypeReference _ifaceMS)
 		{
 			ifaceMono = _ifaceMono;
 			ifaceMS = _ifaceMS;
 			m_nodeStatus = new NodeStatus (ifaceMono, ifaceMS);
 		}
 
-		public override string Type 
+		public override string Type
 		{
 			get { return "interface"; }
 		}
@@ -39,7 +39,7 @@ namespace Mono.Util.CorCompare
 		{
 			get { return Interface.FullName; }
 		}
-		protected Type Interface
+		protected TypeReference Interface
 		{
 			get { return (ifaceMono != null) ? ifaceMono : ifaceMS; }
 		}

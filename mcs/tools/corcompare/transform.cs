@@ -4,14 +4,13 @@ using System.Xml.Xsl;
 
 namespace Transform
 {
-	class Transform
+	public class Transform
 	{
 		public static void Main (string [] rgstrArgs)
 		{
-			XmlDocument xml = new XmlDocument ();
-			xml.Load (rgstrArgs [0]);
+			XmlReader xml = XmlReader.Create (rgstrArgs [0]);
 
-			XslTransform xsl = new XslTransform ();
+			XslCompiledTransform xsl = new XslCompiledTransform ();
 			xsl.Load (rgstrArgs [1]);
 
 			xsl.Transform (xml, null, Console.Out);

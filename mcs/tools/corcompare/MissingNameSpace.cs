@@ -7,8 +7,8 @@
 
 using System;
 using System.Collections;
-using System.Reflection;
 using System.Xml;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare {
 
@@ -22,7 +22,7 @@ namespace Mono.Util.CorCompare {
 	class MissingNameSpace : MissingBase
 	{
 		// e.g. <namespace name="System" missing="267" todo="453" complete="21">
-		protected ArrayList rgTypesMono, rgTypesMS;
+		protected TypeDefinitionCollection rgTypesMono, rgTypesMS;
 		string strNamespace;
 		ArrayList rgTypes = new ArrayList ();
 		protected static Hashtable htGhostTypes;
@@ -39,7 +39,7 @@ namespace Mono.Util.CorCompare {
 			}
 		}
 
-		public MissingNameSpace(string nameSpace, ArrayList _rgTypesMono, ArrayList _rgTypesMS)
+		public MissingNameSpace (string nameSpace, TypeDefinitionCollection _rgTypesMono, TypeDefinitionCollection _rgTypesMS)
 		{
 			strNamespace = nameSpace;
 			rgTypesMono = _rgTypesMono;
@@ -57,7 +57,7 @@ namespace Mono.Util.CorCompare {
 			get { return null; }
 		}
 
-		public override string Name 
+		public override string Name
 		{
 			get { return strNamespace; }
 		}
@@ -78,25 +78,26 @@ namespace Mono.Util.CorCompare {
 			Hashtable htMono = new Hashtable ();
 			if (rgTypesMono != null)
 			{
-				foreach (Type t in rgTypesMono)
+				foreach (TypeDefinition t in rgTypesMono)
 				{
 					htMono.Add (t.FullName, t);
 				}
 			}
 			if (rgTypesMS != null)
 			{
-				foreach (Type t in rgTypesMS)
+				foreach (TypeDefinition t in rgTypesMS)
 				{
-					Type tMono = (Type) htMono [t.FullName];
+					TypeDefinition tMono = (TypeDefinition) htMono [t.FullName];
 					MissingType mt = null;
+					bool tIsPublic = (t.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public;
 					if (tMono == null)
 					{
-						if (t.IsPublic && !htGhostTypes.Contains (t.FullName))
+						if (tIsPublic && !htGhostTypes.Contains (t.FullName))
 							mt = new MissingType (null, t);
 					}
 					else
 					{
-						if (t.IsPublic)
+						if (tIsPublic)
 						{
 							htMono.Remove (t.FullName);
 							mt = new MissingType (tMono, t);
@@ -111,9 +112,9 @@ namespace Mono.Util.CorCompare {
 				}
 			}
 			// do any mono types that aren't in microsoft's namespace
-			foreach (Type tMono in htMono.Values)
+			foreach (TypeDefinition tMono in htMono.Values)
 			{
-				if (tMono.IsPublic)
+				if ((tMono.Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.Public)
 				{
 					MissingType tdt = new MissingType (tMono, null);
 					NodeStatus nsType = tdt.Analyze ();
@@ -134,7 +135,7 @@ namespace Mono.Util.CorCompare {
 				XmlElement eltClasses = doc.CreateElement("classes");
 				eltNameSpace.AppendChild (eltClasses);
 
-				foreach (MissingType type in rgTypes) 
+				foreach (MissingType type in rgTypes)
 				{
 					XmlElement eltClass = type.CreateXML (doc);
 					if (eltClass != null)
@@ -145,12 +146,12 @@ namespace Mono.Util.CorCompare {
 		}
 
 
-		public static ArrayList GetNamespaces(Type[] types) 
+		public static ArrayList GetNamespaces (TypeDefinitionCollection types)
 		{
 			ArrayList nsList = new ArrayList();
-			foreach (Type t in types) 
+			foreach (TypeDefinition t in types)
 			{
-				if (!nsList.Contains(t.Namespace)) 
+				if (!nsList.Contains(t.Namespace))
 				{
 					nsList.Add(t.Namespace);
 				}

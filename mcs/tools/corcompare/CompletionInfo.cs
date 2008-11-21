@@ -6,11 +6,10 @@
 // (C) 2001-2002 Piers Haken
 
 using System;
-using System.Reflection;
 using System.Xml;
 using System.Collections;
 
-namespace Mono.Util.CorCompare 
+namespace Mono.Util.CorCompare
 {
 	#region
 	public struct CompletionType

@@ -6,8 +6,8 @@
 // (C) 2001-2002 Piers Haken
 using System;
 using System.Xml;
-using System.Reflection;
 using System.Collections;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare
 {

@@ -1,7 +1,7 @@
 using System;
 using System.Xml;
-using System.Reflection;
 using System.Collections;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare
 {
@@ -16,20 +16,24 @@ namespace Mono.Util.CorCompare
 	abstract class MissingMember : MissingBase
 	{
 		// e.g. <method name="Equals" status="missing"/>
-		protected MemberInfo mInfoMono;
-		protected MemberInfo mInfoMS;
+		protected MemberReference mInfoMono;
+		protected MemberReference mInfoMS;
 
-		public MissingMember (MemberInfo infoMono, MemberInfo infoMS) 
+		public MissingMember (MemberReference infoMono, MemberReference infoMS)
 		{
 			mInfoMono = infoMono;
 			mInfoMS = infoMS;
 			m_nodeStatus = new NodeStatus (infoMono, infoMS);
 		}
 
-		public override string Name 
+		public override string Name
 		{
 			get { return Info.Name; }
 		}
+
+		public abstract CustomAttributeCollection GetCustomAttributes (MemberReference mref);
+
+		public abstract Accessibility GetAccessibility (MemberReference mref);
 
 		public override NodeStatus Analyze ()
 		{
@@ -37,8 +41,8 @@ namespace Mono.Util.CorCompare
 			{
 				rgAttributes = new ArrayList ();
 				nsAttributes = MissingAttribute.AnalyzeAttributes (
-					(mInfoMono == null) ? null : mInfoMono.GetCustomAttributes (false),
-					(mInfoMS   == null) ? null :   mInfoMS.GetCustomAttributes (false),
+					(mInfoMono == null) ? null : GetCustomAttributes (mInfoMono),
+					(mInfoMS == null) ? null : GetCustomAttributes (mInfoMS),
 					rgAttributes);
 
 				if (mInfoMono != null && mInfoMS != null)
@@ -58,7 +62,7 @@ namespace Mono.Util.CorCompare
 		/// returns the MemberInfo for this member.
 		/// if it's a missing member then the microsoft MemberInfo is returned instead
 		/// </summary>
-		public MemberInfo Info
+		public MemberReference Info
 		{
 			get { return (mInfoMono != null) ? mInfoMono : mInfoMS; }
 		}
@@ -66,73 +70,14 @@ namespace Mono.Util.CorCompare
 		/// <summary>
 		/// returns the 'best' info for this member. the 'best' info is the microsoft info, if it's available, otherwise the mono info.
 		/// </summary>
-		public MemberInfo BestInfo
+		public MemberReference BestInfo
 		{
 			get { return (mInfoMS != null) ? mInfoMS : mInfoMono; }
 		}
 
-		public static string GetUniqueName (MemberInfo mi)
+		public static string GetUniqueName (MemberReference mi)
 		{
-			return (mi.MemberType).ToString () + mi.ToString ();
-		}
-
-		public static Accessibility GetAccessibility (MemberInfo mi)
-		{
-			switch (mi.MemberType)
-			{
-				case MemberTypes.Constructor:
-				case MemberTypes.Method:
-					MethodBase mb = (MethodBase) mi;
-					if (mb.IsPublic)
-						return Accessibility.Public;
-					else if (mb.IsAssembly)
-						return Accessibility.Assembly;
-					else if (mb.IsFamilyOrAssembly)
-						return Accessibility.FamilyOrAssembly;
-					else if (mb.IsFamily)
-						return Accessibility.Family;
-					else if (mb.IsFamilyAndAssembly)
-						return Accessibility.FamilyAndAssembly;
-					else if (mb.IsPrivate)
-						return Accessibility.Private;
-					break;
-				case MemberTypes.Field:
-					FieldInfo fi = (FieldInfo) mi;
-					if (fi.IsPublic)
-						return Accessibility.Public;
-					else if (fi.IsAssembly)
-						return Accessibility.Assembly;
-					else if (fi.IsFamilyOrAssembly)
-						return Accessibility.FamilyOrAssembly;
-					else if (fi.IsFamily)
-						return Accessibility.Family;
-					else if (fi.IsFamilyAndAssembly)
-						return Accessibility.FamilyAndAssembly;
-					else if (fi.IsPrivate)
-						return Accessibility.Private;
-					break;
-				case MemberTypes.NestedType:
-					Type ti = (Type) mi;
-					if (ti.IsNestedPublic)
-						return Accessibility.Public;
-					if (ti.IsNestedAssembly)
-						return Accessibility.Assembly;
-					else if (ti.IsNestedFamORAssem)
-						return Accessibility.FamilyOrAssembly;
-					else if (ti.IsNestedFamily)
-						return Accessibility.Family;
-					else if (ti.IsNestedFamANDAssem)
-						return Accessibility.FamilyAndAssembly;
-					else if (ti.IsNestedPrivate)
-						return Accessibility.Private;
-					break;
-				case MemberTypes.Event:
-				case MemberTypes.Property:
-					return Accessibility.Public;
-				default:
-					throw new Exception ("Missing handler for MemberType: "+mi.MemberType.ToString ());
-			}
-			throw new Exception ("Invalid accessibility: "+mi.ToString ());
+			return mi.GetType().Name +  mi.Name;//(mi.MemberType).ToString () + mi.ToString ();
 		}
 	}
 }

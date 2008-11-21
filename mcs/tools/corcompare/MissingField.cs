@@ -6,7 +6,7 @@
 // (C) 2001-2002 Nick Drochak
 
 using System;
-using System.Reflection;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare {
 
@@ -19,12 +19,34 @@ namespace Mono.Util.CorCompare {
 	/// </remarks>
 	class MissingField : MissingMember {
 		// e.g. <method name="Equals" status="missing"/>
-		public MissingField (MemberInfo infoMono, MemberInfo infoMS) : base (infoMono, infoMS) {}
+		public MissingField (FieldDefinition infoMono, FieldDefinition infoMS) : base (infoMono, infoMS) { }
 
 		public override string Type {
 			get {
 				return "field";
 			}
+		}
+
+		public override CustomAttributeCollection GetCustomAttributes (MemberReference mref) {
+			return ((FieldDefinition) mref).CustomAttributes;
+		}
+
+		public override Accessibility GetAccessibility (MemberReference mref) {
+			FieldDefinition member = (FieldDefinition) mref;
+			FieldAttributes maskedMemberAccess = member.Attributes & FieldAttributes.FieldAccessMask;
+			if (maskedMemberAccess == FieldAttributes.Public)
+				return Accessibility.Public;
+			else if (maskedMemberAccess == FieldAttributes.Assembly)
+				return Accessibility.Assembly;
+			else if (maskedMemberAccess == FieldAttributes.FamORAssem)
+				return Accessibility.FamilyOrAssembly;
+			else if (maskedMemberAccess == FieldAttributes.Family)
+				return Accessibility.Family;
+			else if (maskedMemberAccess == FieldAttributes.FamANDAssem)
+				return Accessibility.FamilyAndAssembly;
+			else if (maskedMemberAccess == FieldAttributes.Private)
+				return Accessibility.Private;
+			throw new Exception ("Missing handler for Member " + mref.Name);
 		}
 
 		public override NodeStatus Analyze ()
@@ -33,15 +55,22 @@ namespace Mono.Util.CorCompare {
 
 			if (mInfoMono != null && mInfoMS != null)
 			{
-				FieldInfo fiMono = (FieldInfo) mInfoMono;
-				FieldInfo fiMS   = (FieldInfo) mInfoMS;
+				FieldDefinition fiMono = (FieldDefinition) mInfoMono;
+				FieldDefinition fiMS = (FieldDefinition) mInfoMS;
+				bool fiMonoIsNotSerialized = (fiMono.Attributes & FieldAttributes.NotSerialized) != 0;
+				bool fiMSIsNotSerialized = (fiMS.Attributes & FieldAttributes.NotSerialized) != 0;
+				bool fiMonoIsPinvokeImpl = (fiMono.Attributes & FieldAttributes.PInvokeImpl) != 0;
+				bool fiMSIsPinvokeImpl = (fiMS.Attributes & FieldAttributes.PInvokeImpl) != 0;
+				bool fiMonoIsInitOnly = (fiMono.Attributes & FieldAttributes.InitOnly) != 0;
+				bool fiMSIsInitOnly = (fiMS.Attributes & FieldAttributes.InitOnly) != 0;
 
-				AddFakeAttribute (fiMono.IsNotSerialized, fiMS.IsNotSerialized, "System.NonSerializedAttribute");
-				AddFakeAttribute (fiMono.IsPinvokeImpl, fiMS.IsPinvokeImpl, "System.PInvokeImplAttribute");
+
+				AddFakeAttribute (fiMonoIsNotSerialized, fiMSIsNotSerialized, "System.NonSerializedAttribute");
+				AddFakeAttribute (fiMonoIsPinvokeImpl, fiMSIsPinvokeImpl, "System.PInvokeImplAttribute");
 
 				AddFlagWarning (fiMono.IsStatic, fiMS.IsStatic, "static");
 				AddFlagWarning (fiMono.IsLiteral, fiMS.IsLiteral, "const");
-				AddFlagWarning (fiMono.IsInitOnly, fiMS.IsInitOnly, "readonly");
+				AddFlagWarning (fiMonoIsInitOnly, fiMSIsInitOnly, "readonly");
 
 				string strTypeMono = fiMono.FieldType.FullName;
 				string strTypeMS   =   fiMS.FieldType.FullName;
@@ -55,8 +84,8 @@ namespace Mono.Util.CorCompare {
 					if (fiMono.IsStatic && fiMS.IsStatic &&
 						fiMono.IsLiteral && fiMS.IsLiteral)
 					{
-						object objMono = fiMono.GetValue (null);
-						object objMS = fiMS.GetValue (null);
+						byte[] objMono = fiMono.InitialValue;
+						byte[] objMS = fiMS.InitialValue;
 						long lMono = Convert.ToInt64 (objMono);
 						long lMS = Convert.ToInt64 (objMS);
 

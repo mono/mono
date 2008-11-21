@@ -4,10 +4,11 @@
 //   Piers Haken (piersh@friskit.com)
 //
 // (C) 2001-2002 Piers Haken
+
 using System;
 using System.Xml;
-using System.Reflection;
 using System.Collections;
+using Mono.Cecil;
 
 namespace Mono.Util.CorCompare
 {
@@ -35,16 +36,17 @@ namespace Mono.Util.CorCompare
 			htIgnore.Add ("System.Runtime.InteropServices.GuidAttribute", null);
 			htIgnore.Add ("System.Runtime.InteropServices.InterfaceTypeAttribute", null);
 			htIgnore.Add ("System.Runtime.InteropServices.ComVisibleAttribute", null);
+			htIgnore.Add ("System.Runtime.CompilerServices.InternalsVisibleToAttribute", null);
 		}
 
-		public MissingAttribute (Object _attributeMono, Object _attributeMS) 
+		public MissingAttribute (Object _attributeMono, Object _attributeMS)
 		{
 			attributeMono = _attributeMono;
 			attributeMS = _attributeMS;
 			m_nodeStatus = new NodeStatus (attributeMono, attributeMS);
 		}
 
-		public override string Name 
+		public override string Name
 		{
 			get { return Attribute.ToString (); }
 		}
@@ -71,14 +73,14 @@ namespace Mono.Util.CorCompare
 		/// </summary>
 		/// <param name="rgAttributes">the list of attributes</param>
 		/// <returns>a map</returns>
-		public static Hashtable GetAttributeMap (Object [] rgAttributes)
+		public static Hashtable GetAttributeMap (CustomAttributeCollection rgAttributes)
 		{
 			Hashtable map = new Hashtable ();
-			foreach (Object attribute in rgAttributes)
+			foreach (CustomAttribute attribute in rgAttributes)
 			{
 				if (attribute != null)
 				{
-					string strName = attribute.ToString ();
+					string strName = attribute.Constructor.DeclaringType.FullName;
 					if (!map.Contains (strName) && !htIgnore.Contains (strName))
 						map.Add (strName, attribute);
 				}
@@ -94,7 +96,7 @@ namespace Mono.Util.CorCompare
 		/// <param name="rgAttributesMS">microsoft attributes</param>
 		/// <param name="rgAttributes">where the results are put</param>
 		/// <returns>completion info for the whole set</returns>
-		public static NodeStatus AnalyzeAttributes (Object [] rgAttributesMono, Object [] rgAttributesMS, ArrayList rgAttributes)
+		public static NodeStatus AnalyzeAttributes (CustomAttributeCollection rgAttributesMono, CustomAttributeCollection rgAttributesMS, ArrayList rgAttributes)
 		{
 			NodeStatus nodeStatus = new NodeStatus ();
 
