@@ -3,7 +3,7 @@ SUBDIRS =
 include ../../build/rules.make
 
 LIBRARY = Mono.Simd.dll
-LIB_MCS_FLAGS = -r:$(corlib) /unsafe
+LIB_MCS_FLAGS = -r:$(corlib) -r:System.Core.dll /unsafe
 TEST_MCS_FLAGS = -r:Mono.Simd.dll
 
 NO_TEST = yes
