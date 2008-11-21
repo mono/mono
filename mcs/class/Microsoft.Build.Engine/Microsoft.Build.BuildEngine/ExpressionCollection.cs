@@ -177,7 +177,7 @@ namespace Microsoft.Build.BuildEngine {
 					PropertyReference pr = (PropertyReference) o;
 					tempItems.Add (pr.ConvertToString (project));
 				} else if (o is MetadataReference) {
-					// FIXME: not handled yet
+					tempItems.Add (o);
 				} else if (o is string) {
 					tempItems.Add (o);
 				} else {
@@ -188,6 +188,11 @@ namespace Microsoft.Build.BuildEngine {
 				if (o is ItemReference) {
 					ItemReference ir = (ItemReference) o;
 					array = ir.ConvertToITaskItemArray (project);
+					if (array != null)
+						finalItems.AddRange (array);
+				} else if (o is MetadataReference) {
+					MetadataReference mr = (MetadataReference) o;
+					array = mr.ConvertToITaskItemArray (project);
 					if (array != null)
 						finalItems.AddRange (array);
 				} else if (o is string) {

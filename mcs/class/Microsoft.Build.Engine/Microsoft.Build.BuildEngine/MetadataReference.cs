@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -71,6 +72,30 @@ namespace Microsoft.Build.BuildEngine {
 		public string ConvertToString (Project project)
 		{
 			return project.GetMetadataBatched (itemName, metadataName);
+		}
+
+		public ITaskItem [] ConvertToITaskItemArray (Project project)
+		{
+			List<ITaskItem> items = new List<ITaskItem> ();
+			if (IsQualified) {
+				BuildItemGroup group;
+				if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
+					BuildItemGroupToITaskItemArray (group, items);
+			} else {
+				foreach (BuildItemGroup group in project.GetAllItemGroups ())
+					BuildItemGroupToITaskItemArray (group, items);
+			}
+
+			return items.Count == 0 ? null : items.ToArray ();
+		}
+
+		void BuildItemGroupToITaskItemArray (BuildItemGroup group, List<ITaskItem> items)
+		{
+			foreach (BuildItem item in group) {
+				if (item.HasMetadata (metadataName))
+					items.Add (new TaskItem (
+						item.GetMetadata (metadataName)));
+			}
 		}
 
 		public override string ToString ()

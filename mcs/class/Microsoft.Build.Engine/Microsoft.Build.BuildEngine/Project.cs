@@ -934,6 +934,21 @@ namespace Microsoft.Build.BuildEngine {
 			return String.Empty;
 		}
 
+		internal IEnumerable<BuildItemGroup> GetAllItemGroups ()
+		{
+			if (perBatchItemsByName == null && commonItemsByName == null)
+				foreach (BuildItemGroup group in EvaluatedItemsByName.Values)
+					yield return group;
+
+			if (perBatchItemsByName != null)
+				foreach (BuildItemGroup group in perBatchItemsByName.Values)
+					yield return group;
+
+			if (commonItemsByName != null)
+				foreach (BuildItemGroup group in commonItemsByName.Values)
+					yield return group;
+		}
+
 		T GetFirst<T> (ICollection<T> list)
 		{
 			if (list == null)

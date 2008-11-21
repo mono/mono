@@ -1,3 +1,8 @@
+2008-11-22  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestBatchedMetadataRef*): New tests for metadata
+	references.
+
 2008-11-21  Ankit Jain  <jankit@novell.com>
 
 	* BuildItemTest.cs (TestGetEvaluatedMetadata1): Add test for 'Identity'.

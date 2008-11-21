@@ -1,3 +1,10 @@
+2008-11-22  Ankit Jain  <jankit@novell.com>
+
+	* ExpressionCollection.cs (ConvertToITaskItemArray): Add support for
+	MetadataReference.
+	* MetadataReference.cs (ConvertToITaskItemArray): New.
+	* Project.cs (GetAllItemGroups): New.
+
 2008-11-21  Ankit Jain  <jankit@novell.com>
 
 	* BatchingImpl.cs: Add task batching implementation.

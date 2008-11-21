@@ -1288,6 +1288,169 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			CheckProjectBuild (project, new string [] { "1", "2", "3" }, false, new string [] { "1", "2"}, "TBPFX8");
 		}
 
+		[Test]
+		public void TestBatchedMetadataRef1 ()
+		{
+			 string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<ItemGroup>
+				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
+				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
+				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll2 Include=""B1""></Coll2>
+			</ItemGroup>
+				<Target Name=""ShowMessage"">
+					<BatchingTestTask Sources=""%(Coll1.Name)"">
+						<Output TaskParameter=""Output"" ItemName=""FinalList"" />
+					</BatchingTestTask>
+					<Message Text=""Msg: %(Coll1.Name)"" />
+				</Target>
+		 </Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			project.LoadXml (projectString);
+			Assert.IsTrue (project.Build ("ShowMessage"), "A1: Build failed");
+
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("FinalList");
+			Assert.AreEqual (3, include.Count, "A2");
+
+			Assert.AreEqual ("FinalList", include [0].Name, "A3");
+			Assert.AreEqual ("Abc", include [0].FinalItemSpec, "A4");
+
+			Assert.AreEqual ("FinalList", include [1].Name, "A5");
+			Assert.AreEqual ("Def", include [1].FinalItemSpec, "A6");
+
+			Assert.AreEqual ("FinalList", include [2].Name, "A7");
+			Assert.AreEqual ("Xyz", include [2].FinalItemSpec, "A8");
+		}
+
+		[Test]
+		public void TestBatchedMetadataRef2 ()
+		{
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<ItemGroup>
+				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
+				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
+				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll2 Include=""B1""><Name>Bar</Name></Coll2>
+			</ItemGroup>
+				<Target Name=""ShowMessage"">
+					<BatchingTestTask Sources=""%(Name)"" Strings=""@(Coll2)"">
+						<Output TaskParameter=""Output"" ItemName=""FinalList"" />
+					</BatchingTestTask>
+					<Message Text=""Msg: %(Coll1.Name)"" />
+				</Target>
+				<Target Name=""ShowMessage2"">
+					<BatchingTestTask Sources=""%(Name)"" Strings=""@(Coll1)"">
+						<Output TaskParameter=""Output"" ItemName=""FinalList2"" />
+					</BatchingTestTask>
+					<Message Text=""Msg: %(Coll1.Name)"" />
+				</Target>
+		 </Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			project.LoadXml (projectString);
+			Assert.IsTrue (project.Build ("ShowMessage"), "A1: Build failed");
+
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("FinalList");
+			Assert.AreEqual (1, include.Count, "A2");
+
+			Assert.AreEqual ("FinalList", include [0].Name, "A3");
+			Assert.AreEqual ("Bar", include [0].FinalItemSpec, "A4");
+
+			Assert.IsTrue (project.Build ("ShowMessage2"), "A1: Build failed");
+			include = project.GetEvaluatedItemsByName ("FinalList2");
+			Assert.AreEqual (3, include.Count, "A5");
+
+			Assert.AreEqual ("FinalList2", include [0].Name, "A6");
+			Assert.AreEqual ("Abc", include [0].FinalItemSpec, "A7");
+
+			Assert.AreEqual ("FinalList2", include [1].Name, "A8");
+			Assert.AreEqual ("Def", include [1].FinalItemSpec, "A9");
+
+			Assert.AreEqual ("FinalList2", include [2].Name, "A10");
+			Assert.AreEqual ("Xyz", include [2].FinalItemSpec, "A11");
+		}
+
+		[Test]
+		public void TestBatchedMetadataRef3 ()
+		{
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<ItemGroup>
+				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
+				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
+				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll2 Include=""B1""><Name>Bar</Name></Coll2>
+			</ItemGroup>
+				<Target Name=""ShowMessage"">
+					<BatchingTestTask SingleString=""%(Coll2.Name)"" >
+						<Output TaskParameter=""SingleStringOutput"" ItemName=""FinalList"" />
+					</BatchingTestTask>
+					<Message Text=""Msg: %(Coll1.Name)"" />
+				</Target>
+		 </Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			project.LoadXml (projectString);
+			Assert.IsTrue (project.Build ("ShowMessage"), "A1: Build failed");
+
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("FinalList");
+			Assert.AreEqual (1, include.Count, "A2");
+
+			Assert.AreEqual ("FinalList", include [0].Name, "A3");
+			Assert.AreEqual ("Bar", include [0].FinalItemSpec, "A4");
+
+		}
+
+		[Test]
+		public void TestBatchedMetadataRef4 ()
+		{
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<ItemGroup>
+				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
+				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
+				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll2 Include=""B1""><Name>Bar</Name></Coll2>
+			</ItemGroup>
+				<Target Name=""ShowMessage"">
+					<BatchingTestTask SingleString=""%(Coll3.Name)"" >
+						<Output TaskParameter=""SingleStringOutput"" ItemName=""FinalList"" />
+					</BatchingTestTask>
+				</Target>
+		 </Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			project.LoadXml (projectString);
+			Assert.IsTrue (project.Build ("ShowMessage"), "A1: Build failed");
+
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("FinalList");
+			Assert.AreEqual (0, include.Count, "A2");
+		}
+
+		static void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
+		{
+			Assert.AreEqual (name, item.Name, prefix + "#1");
+			for (int i = 0; i < metadata.GetLength (0); i++) {
+				string key = metadata [i, 0];
+				string val = metadata [i, 1];
+				Assert.IsTrue (item.HasMetadata (key), String.Format ("{0}#2: Expected metadata '{1}' not found", prefix, key));
+				Assert.AreEqual (val, item.GetMetadata (key), String.Format ("{0}#3: Value for metadata {1}", prefix, key));
+				Assert.AreEqual (val, item.GetEvaluatedMetadata (key), String.Format ("{0}#4: Value for evaluated metadata {1}", prefix, key));
+			}
+			Assert.AreEqual (finalItemSpec, item.FinalItemSpec, prefix + "#5");
+		}
+
 		void CheckProjectBuild (Project project, string [] targetNames, bool result, string [] outputNames, string prefix)
 		{
 			IDictionary targetOutputs = new Hashtable ();
@@ -1351,7 +1514,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				using (StreamWriter sw = new StreamWriter (fname))
 					sw.Write (projectXml);
 				project.Load (fname);
-				File.Delete (project.FullFileName);
+		                File.Delete (fname);
 			}
 
 			return project;

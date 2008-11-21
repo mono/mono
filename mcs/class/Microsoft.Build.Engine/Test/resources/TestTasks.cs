@@ -138,3 +138,48 @@ public class PublishTestTask : Task {
 		get { return DateTime.Now; }
 	}
 }
+
+public class BatchingTestTask : Task
+{
+	ITaskItem [] sources;
+	string [] output;
+	string[] strings;
+	string single_string;
+
+	public override bool Execute ()
+	{
+		return true;
+	}
+
+	public ITaskItem [] Sources
+	{
+		set {
+			sources = value;
+			output = new string [sources.Length];
+			for (int i = 0; i < sources.Length; i++)
+				output [i] = sources [i].ItemSpec; 
+		}
+	}
+
+	public string [] Strings
+	{
+		set { strings = value; }
+	}
+
+	public ITaskItem SingleString
+	{
+		set { single_string = value.ItemSpec; }
+	}
+
+	[Output]
+	public string SingleStringOutput
+	{
+		get { return single_string; }
+	}
+
+	[Output]
+	public string [] Output
+	{
+		get { return output; }
+	}
+}
