@@ -35,49 +35,6 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Tasks {
 
-	internal class TestMessageLogger : ILogger {
-		IList messages;
-		
-		public TestMessageLogger ()
-		{
-			messages = new ArrayList ();
-		}
-	
-		public LoggerVerbosity Verbosity { get { return LoggerVerbosity.Normal; } set { } }
-		
-		public string Parameters { get { return null; } set { } }
-		
-		public void Initialize (IEventSource eventSource)
-		{
-			eventSource.MessageRaised += new BuildMessageEventHandler (MessageHandler);
-		}
-		
-		public void Shutdown ()
-		{
-		}
-		
-		private void MessageHandler (object sender, BuildMessageEventArgs args)
-		{
-			if (args.Message.StartsWith ("Using") == false)
-				messages.Add (args);
-		}
-		
-		public int CheckHead (string text, MessageImportance importance)
-		{
-			BuildMessageEventArgs actual;
-		
-			if (messages.Count > 0) {
-				actual = (BuildMessageEventArgs) messages [0];
-				messages.RemoveAt (0);
-			} else
-				return 1;
-			
-			if (text == actual.Message && importance == actual.Importance)
-				return 0;
-			else
-				return 2;
-		}
-	}
 
 	[TestFixture]
 	public class MessageTest {
@@ -85,6 +42,14 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		Engine engine;
 		Project project;
 		TestMessageLogger testLogger;
+
+		[Test]
+		public void TestDefaultValues()
+		{
+			Message message = new Message();
+			Assert.AreEqual(null, message.Text, "A1");
+			Assert.AreEqual(null, message.Importance, "A2");
+		}
 		
 		[Test]
 		public void TestAssignment ()

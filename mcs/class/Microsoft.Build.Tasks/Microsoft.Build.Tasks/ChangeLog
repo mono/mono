@@ -1,3 +1,9 @@
+2008-11-21  Ankit Jain  <jankit@novell.com>
+
+	* CreateItem (Execute): AdditionalMetadata can be null.
+	Trim metadata values.
+	(IsExcluded): 'exclude' can be null.
+
 2008-10-09  Ankit Jain  <jankit@novell.com>
 
 	* CreateItem.cs (Execute): Implement.

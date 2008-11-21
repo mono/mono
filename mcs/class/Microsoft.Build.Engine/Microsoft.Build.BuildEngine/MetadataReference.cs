@@ -28,6 +28,7 @@
 #if NET_2_0
 
 using System;
+using System.Text;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -65,6 +66,19 @@ namespace Microsoft.Build.BuildEngine {
 
 		public int End {
 			get { return start + length - 1; }
+		}
+
+		public string ConvertToString (Project project)
+		{
+			return project.GetMetadataBatched (itemName, metadataName);
+		}
+
+		public override string ToString ()
+		{
+			if (IsQualified)
+				return String.Format ("%({0}.{1})", itemName, metadataName);
+			else
+				return String.Format ("%({0})", metadataName);
 		}
 	}
 }

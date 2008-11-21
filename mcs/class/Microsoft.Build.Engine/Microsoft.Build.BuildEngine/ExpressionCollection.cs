@@ -44,6 +44,10 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			objects = new ArrayList ();
 		}
+
+		public int Count {
+			get { return objects.Count; }
+		}
 		
 		public void Add (ItemReference itemReference)
 		{
@@ -130,7 +134,8 @@ namespace Microsoft.Build.BuildEngine {
 					PropertyReference pr = (PropertyReference) o;
 					sb.Append (pr.ConvertToString (project));
 				} else if (o is MetadataReference) {
-					// FIXME: we don't handle them yet
+					MetadataReference mr = (MetadataReference) o;
+					sb.Append (mr.ConvertToString (project));
 				} else {
 					throw new Exception ("Invalid type in objects collection.");
 				}

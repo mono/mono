@@ -1,3 +1,7 @@
+2008-11-21  Ankit Jain  <jankit@novell.com>
+
+	* Items.cs (TestItemsInTarget1): Remove 'NotWorking' attribute.
+
 2008-11-11  Jonathan Chambers  <joncham@gmail.com>
 
 	* Items.cs: Use Path.DirectorySeparatorChar instead of 

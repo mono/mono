@@ -73,7 +73,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 					</ItemGroup>
 					<Target Name='1'>
 						<CreateItem
-							AdditionalMetadata='a=1;b=2'
+							AdditionalMetadata='a=1; b  = 2 '
 							Include='@(A)'
 							Exclude='@(B)'
 						>
@@ -94,15 +94,14 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			BuildItemGroup include = project.GetEvaluatedItemsByName ("NewItem");
 			Assert.AreEqual (2, include.Count, "A2");
 
-			string [,] metadata = new string [,] { { "a", "1" }, { "b", "2" }, { "Sub", "fooA" } };
-			CheckBuildItem (include [0], "NewItem", metadata, "2", "A");
+			string [,] additional_metadata = new string [,] { { "a", "1" }, { "b", "2" }, { "Sub", "fooA" } };
+			CheckBuildItem (include [0], "NewItem", additional_metadata, "2", "A");
 
-			metadata = new string [,] { { "a", "1" }, { "b", "2" }, { "Sub", "fooC" } };
-			CheckBuildItem (include [1], "NewItem", metadata, "4", "B");
+			additional_metadata = new string [,] { { "a", "1" }, { "b", "2" }, { "Sub", "fooC" } };
+			CheckBuildItem (include [1], "NewItem", additional_metadata, "4", "B");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestExcludeAndCondition ()
 		{
 			Engine engine;
@@ -145,19 +144,55 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			BuildItemGroup include = project.GetEvaluatedItemsByName ("NewItem");
 			Assert.AreEqual (3, include.Count, "A2");
 
-			string [,] metadata = new string [,] { { "a", "1" }, {"b", "2"}, {"Sub", "fooA" } };
-			CheckBuildItem (include [0], "NewItem", metadata, "1", "A");
-			CheckBuildItem (include [1], "NewItem", metadata, "2", "B");
-			CheckBuildItem (include [2], "NewItem", metadata, "5", "C");
+			string [,] additional_metadata = new string [,] { { "a", "1" }, {"b", "2"}, {"Sub", "fooA" } };
+			CheckBuildItem (include [0], "NewItem", additional_metadata, "1", "A");
+			CheckBuildItem (include [1], "NewItem", additional_metadata, "2", "B");
+			CheckBuildItem (include [2], "NewItem", additional_metadata, "5", "C");
 		}
 
-		void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
+		[Test]
+		public void TestNullFields ()
+		{
+		    Engine engine;
+		    Project project;
+
+		    string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<ItemGroup>
+						<A Include='1;2;5'>
+							<Sub>fooA</Sub>
+						</A>
+					</ItemGroup>
+					<Target Name='1'>
+						<CreateItem Include='@(A)' >
+							<Output
+								TaskParameter='Include'
+								ItemName='NewItem'
+							/>
+						</CreateItem>
+					</Target>
+				</Project>";
+
+		    engine = new Engine (Consts.BinPath);
+		    project = engine.CreateNewProject ();
+		    project.LoadXml (documentString);
+		    Assert.IsTrue (project.Build ("1"), "A1, Build failed");
+
+		    BuildItemGroup include = project.GetEvaluatedItemsByName ("NewItem");
+		    Assert.AreEqual (3, include.Count, "A2");
+
+		    string [,] additional_metadata = new string [0, 0];
+		    CheckBuildItem (include [0], "NewItem", additional_metadata, "1", "A");
+		    CheckBuildItem (include [1], "NewItem", additional_metadata, "2", "B");
+		    CheckBuildItem (include [2], "NewItem", additional_metadata, "5", "C");
+		}
+
+		static void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
 		{
 			Assert.AreEqual (name, item.Name, prefix + "#1");
 			for (int i = 0; i < metadata.GetLength (0); i ++) {
 				string key = metadata [i, 0];
 				string val = metadata [i, 1];
-
 				Assert.IsTrue (item.HasMetadata (key), String.Format ("{0}#2: Expected metadata '{1}' not found", prefix, key));
 				Assert.AreEqual (val, item.GetMetadata (key), String.Format ("{0}#3: Value for metadata {1}", prefix, key));
 				Assert.AreEqual (val, item.GetEvaluatedMetadata (key), String.Format ("{0}#4: Value for evaluated metadata {1}", prefix, key));

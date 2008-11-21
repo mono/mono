@@ -332,6 +332,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			item.SetMetadata (metadataName, metadataValue);
 
 			Assert.AreEqual (metadataValue, item.GetEvaluatedMetadata (metadataName), "A2");
+			Assert.AreEqual (itemInclude, item.GetEvaluatedMetadata ("Identity"), "A3");
 		}
 
 		[Test]

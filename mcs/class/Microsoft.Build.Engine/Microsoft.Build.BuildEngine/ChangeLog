@@ -1,3 +1,18 @@
+2008-11-21  Ankit Jain  <jankit@novell.com>
+
+	* BatchingImpl.cs: Add task batching implementation.
+	* BuildItem.cs (GetEvaluatedMetadata): Handle built-in metadata names.
+	* ExpressionCollection.cs (Count): New.
+	(ConvertToString): Handle MetadataReference.
+	* ItemReference.cs (ConvertToString):
+	(ConvertToITaskItemArray): Use the batching api.
+	(ToString): New.
+	* MetadataReference.cs (ConvertToString): New.
+	(ToString): New.
+	* Project.cs: Add api for accessing batched items and metadata.
+	* TaskEngine.cs (PublishItemGroup): Don't clear existing values from
+	item group.
+
 2008-10-01  Ankit Jain  <jankit@novell.com>
 
 	* BuildEngine.cs (.ctor): Replace 'projectFile' param with 'project'.

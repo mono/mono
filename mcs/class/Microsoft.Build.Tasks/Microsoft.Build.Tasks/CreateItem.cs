@@ -50,11 +50,14 @@ namespace Microsoft.Build.Tasks {
 					continue;
 
 				output.Add (item);
+				if (AdditionalMetadata == null)
+					continue;
+
 				foreach (string metadata in AdditionalMetadata) {
 					//a=1
 					string [] parts = metadata.Split (new char [] {'='}, 2, StringSplitOptions.RemoveEmptyEntries);
 					if (parts.Length == 2)
-						item.SetMetadata (parts [0], parts [1]);
+						item.SetMetadata (parts [0].Trim (), parts [1].Trim ());
 				}
 			}
 
@@ -82,6 +85,8 @@ namespace Microsoft.Build.Tasks {
 
 		bool IsExcluded (ITaskItem eitem)
 		{
+			if (exclude == null) return false;
+
 			foreach (ITaskItem item in exclude)
 				if (String.Compare (eitem.ItemSpec, item.ItemSpec) == 0)
 					return true;

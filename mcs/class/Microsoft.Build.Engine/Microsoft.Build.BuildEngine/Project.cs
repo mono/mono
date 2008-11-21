@@ -885,6 +885,66 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		// For batching implementation
+		Dictionary<string, BuildItemGroup> perBatchItemsByName;
+		Dictionary<string, BuildItemGroup> commonItemsByName;
+
+		internal void SetBatchedItems (Dictionary<string, BuildItemGroup> perBatchItemsByName, Dictionary<string, BuildItemGroup> commonItemsByName)
+		{
+			this.perBatchItemsByName = perBatchItemsByName;
+			this.commonItemsByName = commonItemsByName;
+		}
+
+		// Honors batching
+		internal bool TryGetEvaluatedItemByNameBatched (string itemName, out BuildItemGroup group)
+		{
+			if (perBatchItemsByName == null && commonItemsByName == null)
+				return EvaluatedItemsByName.TryGetValue (itemName, out group);
+
+			if (perBatchItemsByName != null)
+				return perBatchItemsByName.TryGetValue (itemName, out group);
+
+			if (commonItemsByName != null)
+				return commonItemsByName.TryGetValue (itemName, out group);
+
+			group = null;
+			return false;
+		}
+
+		internal string GetMetadataBatched (string itemName, string metadataName)
+		{
+			BuildItemGroup group = null;
+			if (itemName == null) {
+				//unqualified, all items in a batch(bucket) have the
+				//same metadata values
+				group = GetFirst<BuildItemGroup> (perBatchItemsByName.Values);
+				if (group == null)
+					group = GetFirst<BuildItemGroup> (commonItemsByName.Values);
+			} else {
+				//qualified
+				TryGetEvaluatedItemByNameBatched (itemName, out group);
+			}
+
+			if (group != null) {
+				foreach (BuildItem item in group) {
+					if (item.HasMetadata (metadataName))
+						return item.GetMetadata (metadataName);
+				}
+			}
+			return String.Empty;
+		}
+
+		T GetFirst<T> (ICollection<T> list)
+		{
+			if (list == null)
+				return default (T);
+
+			foreach (T t in list)
+				return t;
+
+			return default (T);
+		}
+
 		public BuildPropertyGroup EvaluatedProperties {
 			get {
 				if (needToReevaluate) {

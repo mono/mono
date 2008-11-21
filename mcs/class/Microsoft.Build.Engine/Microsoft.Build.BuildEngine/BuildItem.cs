@@ -125,6 +125,11 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string GetEvaluatedMetadata (string metadataName)
 		{
+			if (ReservedNameUtils.IsReservedMetadataName (metadataName)) {
+				string metadata = ReservedNameUtils.GetReservedMetadata (FinalItemSpec, metadataName);
+				return (metadataName.ToLower () == "fullpath") ? Utilities.Escape (metadata) : metadata;
+			}
+
 			if (evaluatedMetadata.Contains (metadataName))
 				return (string) evaluatedMetadata [metadataName];
 			else

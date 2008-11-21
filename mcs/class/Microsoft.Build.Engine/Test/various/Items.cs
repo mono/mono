@@ -280,7 +280,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItemsInTarget1 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -323,7 +322,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			";
 
 			proj.LoadXml (documentString);
-			proj.Build ("1");
+			Assert.IsTrue (proj.Build ("1"), "A0, Build failed");
 
 			Assert.AreEqual ("A;B;C", proj.GetEvaluatedProperty ("P1"), "A1");
 			Assert.AreEqual ("ABC", proj.GetEvaluatedProperty ("P2"), "A2");

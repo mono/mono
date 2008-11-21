@@ -14,4 +14,6 @@ Microsoft.Build.Tasks/MessageTest.cs
 Microsoft.Build.Tasks/RemoveDirTest.cs
 Microsoft.Build.Tasks/ResolveAssemblyReferenceTest.cs
 Microsoft.Build.Tasks/TestEngine.cs
+Microsoft.Build.Tasks/TestMessageLogger.cs
+Microsoft.Build.Tasks/TaskBatchingTest.cs
 Microsoft.Build.Tasks/WarningTest.cs

@@ -1,3 +1,7 @@
+2008-11-21  Ankit Jain  <jankit@novell.com>
+
+	* BuildItemTest.cs (TestGetEvaluatedMetadata1): Add test for 'Identity'.
+
 2008-10-01  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs: Refactor BuildProjectFile tests. Add tests for loading

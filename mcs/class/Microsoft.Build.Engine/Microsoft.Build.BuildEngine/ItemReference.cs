@@ -59,18 +59,21 @@ namespace Microsoft.Build.BuildEngine {
 		
 		public string ConvertToString (Project project)
 		{
-			if (project.EvaluatedItemsByName.ContainsKey (itemName))
-				return project.EvaluatedItemsByName [itemName].ConvertToString (transform, separator);
+			BuildItemGroup group;
+			if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
+				return group.ConvertToString (transform, separator);
 			else
 				return String.Empty;
 		}
 		
 		public ITaskItem [] ConvertToITaskItemArray (Project project)
 		{
-			if (project.EvaluatedItemsByName.ContainsKey (itemName))
-				return project.EvaluatedItemsByName [itemName].ConvertToITaskItemArray (transform);
+			BuildItemGroup group;
+			if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
+				return group.ConvertToITaskItemArray (transform);
 			else
 				return null;
+
 		}
 
 		public string ItemName {
@@ -91,6 +94,12 @@ namespace Microsoft.Build.BuildEngine {
 
 		public int End {
 			get { return start + length - 1; }
+		}
+
+		public override string ToString ()
+		{
+			//FIXME: transform
+			return "@" + itemName;
 		}
 	}
 }
