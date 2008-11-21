@@ -1,3 +1,8 @@
+2008-11-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XPlatUI.cs: Take new Platform.MacOSX into account.
+	[Fixes bug #447663]
+
 2008-11-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Call HideWindow instead of Hide when closing the dropdown
