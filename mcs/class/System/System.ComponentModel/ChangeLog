@@ -1,3 +1,7 @@
+2008-11-21  Rolf Bjarne Kvinge  <rkvinge@novell.com>
+
+	* TypeConverter_2_1.cs: fix method signatures to match SL2 api.
+
 2008-11-20  Jb Evain  <jbevain@novell.com>
 
 	* TypeConverter_2_1.cs: update to SL2 api.

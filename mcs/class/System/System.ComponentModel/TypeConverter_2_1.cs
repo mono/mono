@@ -32,7 +32,7 @@ namespace System.ComponentModel {
 
 	public class TypeConverter {
 
-		public virtual bool CanConvertFrom (Type sourceType)
+		public bool CanConvertFrom (Type sourceType)
 		{
 			return CanConvertFrom (null, sourceType);
 		}
@@ -42,7 +42,7 @@ namespace System.ComponentModel {
 			return false;
 		}
 
-		public virtual object ConvertFrom (object value)
+		public object ConvertFrom (object value)
 		{
 			return ConvertFrom (null, CultureInfo.CurrentCulture, value);
 		}
@@ -52,12 +52,12 @@ namespace System.ComponentModel {
 			throw new NotImplementedException ();
 		}
 
-		public virtual object ConvertFromString (string text)
+		public object ConvertFromString (string text)
 		{
 			return ConvertFrom (null, null, text);
 		}
 
-		public virtual bool CanConvertTo (Type destinationType)
+		public bool CanConvertTo (Type destinationType)
 		{
 			return CanConvertTo (null, destinationType);
 		}
@@ -67,7 +67,7 @@ namespace System.ComponentModel {
 			return false;
 		}
 
-		public virtual object ConvertTo (object value, Type destinationType)
+		public object ConvertTo (object value, Type destinationType)
 		{
 			return ConvertTo (null, CultureInfo.CurrentCulture, value, destinationType);
 		}
@@ -77,7 +77,7 @@ namespace System.ComponentModel {
 			throw new NotImplementedException ();
 		}
 
-		public virtual string ConvertToString (object value)
+		public string ConvertToString (object value)
 		{
 			throw new NotImplementedException ();
 		}
