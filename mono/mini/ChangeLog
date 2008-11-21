@@ -1,5 +1,7 @@
 2008-11-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Correct the dreg type of OP_LOADI8_MEMBASE.
+	
 	* mini-ops.h: Correct the dreg type of a few long opcodes.
 
 	* mini-amd64.h: Applied patch from Mihai Chelaru <kefren@ngnetworks.ro>.
