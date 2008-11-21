@@ -509,7 +509,7 @@ namespace System.Windows.Forms
 				if (value) 
 					DropDownListBox ();
 				else
-					listbox_ctrl.Hide ();
+					listbox_ctrl.HideWindow ();
 			}
 		}
 
