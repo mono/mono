@@ -1,3 +1,15 @@
+2008-11-21  Andreia Gaita  <shana@jitted.com>
+
+	* Image.cs: On win32, when cloning images initialized from
+	resources, also clone the underlying stream, since it needs to stay
+	around for the life of the image (gdi doesn't clone the underlying
+	stream when cloning images, so when the gc disposes the original, it
+	will also dispose the stream, which invalidates the clone).
+
+	* Bitmap.cs: Save the underlying stream when creating bitmaps from a
+	clone under win32
+	[fixes #438886]
+
 2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Font.cs: Add comment on .ctor(Font,FontStyle) about the lack of

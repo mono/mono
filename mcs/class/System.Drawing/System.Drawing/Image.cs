@@ -811,15 +811,43 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public object Clone ()
 	{
+		if (GDIPlus.RunningOnWindows () && stream != null)
+			return CloneFromStream ();
+
 		IntPtr newimage = IntPtr.Zero;
-		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
-		GDIPlus.CheckStatus (status);			
+		Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);
+		GDIPlus.CheckStatus (status);
 
 		if (this is Bitmap)
 			return new Bitmap (newimage);
 		else
 			return new Metafile (newimage);
 	}
+
+	// On win32, when cloning images that were originally created from a stream, we need to
+	// clone both the image and the stream to make sure the gc doesn't kill it
+	// (when using MS GDI+ and IStream we must ensure the stream stays alive for all the life of the Image)
+	object CloneFromStream ()
+	{
+		byte[] bytes = new byte [stream.Length];
+		MemoryStream ms = new MemoryStream (bytes);
+		int count = (stream.Length < 4096 ? (int) stream.Length : 4096);
+		byte[] buffer = new byte[count];
+		stream.Position = 0;
+		do {
+			count = stream.Read (buffer, 0, count);
+			ms.Write (buffer, 0, count);
+		} while (count == 4096);
+
+		IntPtr newimage = IntPtr.Zero;
+		newimage = InitFromStream (ms);
+
+		if (this is Bitmap)
+			return new Bitmap (newimage, ms);
+		else
+			return new Metafile (newimage, ms);
+	}
+
 }
 
 }

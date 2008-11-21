@@ -64,6 +64,17 @@ namespace System.Drawing
 			nativeObject = ptr;
 		}
 
+		// Usually called when cloning images that need to have
+		// not only the handle saved, but also the underlying stream
+		// (when using MS GDI+ and IStream we must ensure the stream stays alive for all the life of the Image)
+		internal Bitmap(IntPtr ptr, Stream stream)
+		{
+			// under Win32 stream is owned by SD/GDI+ code
+			if (GDIPlus.RunningOnWindows ())
+				this.stream = stream;
+			nativeObject = ptr;
+		}
+
 		public Bitmap (int width, int height) : this (width, height, PixelFormat.Format32bppArgb)
 		{
 		}
