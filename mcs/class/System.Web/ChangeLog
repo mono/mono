@@ -1,3 +1,19 @@
+2008-11-21  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind1.aspx
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind2.aspx
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind3.aspx
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind4.aspx
+	Test/mainsoft/NunitWebResources/ValidPropertyBind1.aspx
+	Test/mainsoft/NunitWebResources/ValidPropertyBind2.aspx
+	Test/mainsoft/NunitWebResources/ValidPropertyBind3.aspx
+	Test/mainsoft/NunitWebResources/ValidPropertyBind4.aspx
+	Test/mainsoft/NunitWebResources/ReadWritePropertyControl.ascx
+
+	* Test/tools/web.config: disabled batch compilation and enabled
+	debugging.
+
 2008-11-15  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added System.Web.UI/INonBindingContainer.cs

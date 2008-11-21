@@ -31,11 +31,19 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Web
 {
+	[Serializable]
 	internal abstract class HtmlizedException : Exception
 	{
+		protected HtmlizedException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+		
 		protected HtmlizedException ()
 		{
 		}

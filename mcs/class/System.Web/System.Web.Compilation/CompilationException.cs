@@ -32,11 +32,14 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.CodeDom.Compiler;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 using System.Text;
 using System.Web;
 
 namespace System.Web.Compilation
 {
+	[Serializable]
 	internal class CompilationException : HtmlizedException
 	{
 		string filename;
@@ -46,6 +49,17 @@ namespace System.Web.Compilation
 		string errmsg;
 		int [] errorLines;
 
+		CompilationException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+                {
+			filename = info.GetString ("filename");
+			errors = info.GetValue ("errors", typeof (CompilerErrorCollection)) as CompilerErrorCollection;
+			results = info.GetValue ("results", typeof (CompilerResults)) as CompilerResults;
+			fileText = info.GetString ("fileText");
+			errmsg = info.GetString ("errmsg");
+			errorLines = info.GetValue ("errorLines", typeof (int[])) as int[];
+                }
+		
 		public CompilationException (string filename, CompilerErrorCollection errors, string fileText)
 		{
 			this.filename = filename;
@@ -57,6 +71,18 @@ namespace System.Web.Compilation
 			: this (filename, results != null ? results.Errors : null, fileText)
 		{
 			this.results = results;
+		}
+
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData (SerializationInfo info, StreamingContext ctx)
+		{
+			base.GetObjectData (info, ctx);
+			info.AddValue ("filename", filename);
+			info.AddValue ("errors", errors);
+			info.AddValue ("results", results);
+			info.AddValue ("fileText", fileText);
+			info.AddValue ("errmsg", errmsg);
+			info.AddValue ("errorLines", errorLines);
 		}
 		
 		public override string SourceFile {
