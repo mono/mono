@@ -188,8 +188,11 @@ namespace System.Web.UI {
 		Type BindingContainerType {
 			get {
 				ControlBuilder cb = (this is TemplateBuilder && !(this is RootBuilder)) ? this : MyNamingContainer;
-				if (cb == null)
+				if (cb == null) {
+					if (this is RootBuilder)
+						return typeof (Page);
 					return typeof (Control);
+				}
 
 #if NET_2_0
 				if (cb != this && cb is ContentBuilderInternal && !typeof (INonBindingContainer).IsAssignableFrom (cb.BindingContainerType))
@@ -205,7 +208,7 @@ namespace System.Web.UI {
 					if (ct != null)
 						return ct;
 
-					ct = ControlType;
+					ct = cb.ControlType;
 					if (typeof (INonBindingContainer).IsAssignableFrom (ct) || !typeof (INamingContainer).IsAssignableFrom (ct))
 						return MyNamingContainer.BindingContainerType;
 					
@@ -215,7 +218,7 @@ namespace System.Web.UI {
 				ct = cb.ControlType;
 				if (typeof (INonBindingContainer).IsAssignableFrom (ct) || !typeof (INamingContainer).IsAssignableFrom (ct))
 					return MyNamingContainer.BindingContainerType;
-
+				
 				return cb.ControlType;
 			}
 		}
