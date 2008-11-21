@@ -1,5 +1,9 @@
 2008-11-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c: Add support ArrayExtension intrinsics.
+
+2008-11-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c: Move bounds checking macros to ir-emit.h
 
 	* ir-emit.h: Move macros from method-to-ir.c to here.
