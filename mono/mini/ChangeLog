@@ -1,3 +1,7 @@
+2008-11-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Correct the long simd ops to use LREG.
+
 2008-11-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Correct the dreg type of OP_LOADI8_MEMBASE.
