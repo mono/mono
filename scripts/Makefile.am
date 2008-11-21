@@ -46,7 +46,6 @@ scripts_1_0_compat = \
 	ilasm1$(SCRIPT_SUFFIX)			\
 	mcs1$(SCRIPT_SUFFIX)			\
 	mkbundle1$(SCRIPT_SUFFIX)		\
-	mono-api-info1$(SCRIPT_SUFFIX)		\
 	gacutil1$(SCRIPT_SUFFIX)			\
 	monop1$(SCRIPT_SUFFIX)			\
 	resgen1$(SCRIPT_SUFFIX)			\
@@ -67,7 +66,6 @@ scripts_1_0 = \
 	mjs$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
-	mono-api-diff$(SCRIPT_SUFFIX) 		\
 	mono-xmltool$(SCRIPT_SUFFIX)		\
 	mozroots$(SCRIPT_SUFFIX)		\
 	permview$(SCRIPT_SUFFIX)		\
@@ -94,7 +92,8 @@ scripts_2_0 = \
 	mconfig$(SCRIPT_SUFFIX)			\
 	mkbundle2$(SCRIPT_SUFFIX)		\
 	mdoc$(SCRIPT_SUFFIX)                    \
-	mono-api-info2$(SCRIPT_SUFFIX) 		\
+	mono-api-diff$(SCRIPT_SUFFIX) 		\
+	mono-api-info$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
@@ -130,7 +129,6 @@ scripts_defaults = 		\
 	ilasm$(SCRIPT_SUFFIX)			\
 	gacutil$(SCRIPT_SUFFIX)			\
 	mkbundle$(SCRIPT_SUFFIX)		\
-	mono-api-info$(SCRIPT_SUFFIX)		\
 	monop$(SCRIPT_SUFFIX)			\
 	resgen$(SCRIPT_SUFFIX)			\
 	wsdl$(SCRIPT_SUFFIX)
