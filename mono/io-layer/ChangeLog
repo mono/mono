@@ -1,3 +1,8 @@
+2008-11-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* atomic.h: Applied patch from Mihai Chelaru <kefren@ngnetworks.ro>. Add
+	netbsd support.
+
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
 	* atomic.h: InterlockedExchangePointer and
