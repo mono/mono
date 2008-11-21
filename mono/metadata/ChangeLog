@@ -1,3 +1,10 @@
+2008-11-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (mono_method_get_equivalent_method): Make sure
+	method->klass->methods is inited before looping over it.
+
+	Backported from trunk.
+
 2008-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r119397.
