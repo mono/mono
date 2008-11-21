@@ -1,3 +1,11 @@
+2008-11-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ScrollBar.cs:
+	* ScrollableControl.cs: Set manually the thumb size for the
+	ScrollableControl scrollbars, so any further changes to the underneath
+	scrollbars respect the original size.
+	Fixes part of #441546.
+
 2008-11-21  Geoff Norton  <gnorton@novell.com>
 
 	* XplatUI.cs: Ensure that we can run on .net 2.0 with mono 2.2 where

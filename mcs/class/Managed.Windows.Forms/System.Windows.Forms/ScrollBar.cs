@@ -68,6 +68,7 @@ namespace System.Windows.Forms
 		private int thumb_size = 40;
 		private const int thumb_min_size = 8;
 		private const int thumb_notshown_size = 40;
+		internal bool manual_thumb_size;
 		internal bool vert;
 		internal bool implicit_control;
 		private int lastclick_pos;		// Position of the last button-down event
@@ -750,7 +751,7 @@ namespace System.Windows.Forms
 
 				if (Height < thumb_notshown_size)
 					thumb_size = 0;
-				else {
+				else if (!manual_thumb_size) {
 					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Height * per);
 
@@ -773,7 +774,7 @@ namespace System.Windows.Forms
 
 				if (Width < thumb_notshown_size)
 					thumb_size = 0;
-				else {
+				else if (!manual_thumb_size) {
 					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Width * per);
 
@@ -1383,6 +1384,14 @@ namespace System.Windows.Forms
 			timer.Interval = 50;
 			timer_type = TimerType.RepeatThumbArea;
 			timer.Enabled = true;
+		}
+
+		/* used by ScrollableControl to manually set the thumb size */
+		internal void SetThumbSize (int size)
+		{
+			int delta = vert ? thumb_area.Height : thumb_area.Width;
+			double per =  ((double) size / (double)((1 + maximum - minimum)));
+			thumb_size = 1 + (int) (delta * per);
 		}
 
     		private void UpdatePos (int newPos, bool update_thumbpos)
