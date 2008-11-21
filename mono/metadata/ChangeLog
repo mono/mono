@@ -1,3 +1,9 @@
+2008-11-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* object.c: when calling ExecuteAssembly in a newly created domain,
+	the configuration file and application base are already set up.
+	Bug #446353 take 2 fixed.
+
 2008-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Add support for MONO_TYPE_GENERICINST to some functions.
