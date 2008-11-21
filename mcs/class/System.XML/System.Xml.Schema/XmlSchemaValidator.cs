@@ -614,7 +614,7 @@ namespace System.Xml.Schema
 					throw new InvalidOperationException ("Initialize() must be called before processing validation.");
 				else
 					throw new InvalidOperationException (
-						String.Format ("Unexpected attempt to validation state transition from {0} to {1} was happened.",
+						String.Format ("Unexpected attempt to validate state transition from {0} to {1}.",
 							transition,
 							expected));
 			}
