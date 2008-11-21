@@ -910,21 +910,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public static string GetSignatureForError (TypeParameter[] tp)
-		{
-			if (tp == null || tp.Length == 0)
-				return "";
-
-			StringBuilder sb = new StringBuilder ("<");
-			for (int i = 0; i < tp.Length; ++i) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (tp[i].GetSignatureForError ());
-			}
-			sb.Append ('>');
-			return sb.ToString ();
-		}
-
 		public void InflateConstraints (Type declaring)
 		{
 			if (constraints != null)
@@ -1245,6 +1230,8 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Invalid)
 				return this;
 
+			eclass = ExprClass.Type;
+
 			if (!args.Resolve (ec))
 				return null;
 
@@ -1260,7 +1247,6 @@ namespace Mono.CSharp {
 			// Now bind the parameters
 			//
 			type = open_type.MakeGenericType (atypes);
-			eclass = ExprClass.Type;
 			return this;
 		}
 
