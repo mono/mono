@@ -306,31 +306,47 @@ namespace Mono.Cecil {
 				TypeDefinition t = (TypeDefinition) m_typeDefStack [i];
 				tdRow.FieldList = m_fieldIndex;
 				tdRow.MethodList = m_methodIndex;
-				foreach (FieldDefinition field in t.Fields)
-					VisitFieldDefinition (field);
-				foreach (MethodDefinition ctor in t.Constructors)
-					VisitMethodDefinition (ctor);
-				foreach (MethodDefinition meth in t.Methods)
-					VisitMethodDefinition (meth);
+				if (t.HasFields) {
+					foreach (FieldDefinition field in t.Fields)
+						VisitFieldDefinition (field);
+				}
+				if (t.HasConstructors) {
+					foreach (MethodDefinition ctor in t.Constructors)
+						VisitMethodDefinition (ctor);
+				}
+				if (t.HasMethods) {
+					foreach (MethodDefinition meth in t.Methods)
+						VisitMethodDefinition (meth);
+				}
 
 				if (t.HasLayoutInfo)
 					WriteLayout (t);
 			}
 
 			foreach (FieldDefinition field in m_fieldStack) {
-				VisitCustomAttributeCollection (field.CustomAttributes);
+				if (field.HasCustomAttributes)
+					VisitCustomAttributeCollection (field.CustomAttributes);
 				if (field.MarshalSpec != null)
 					VisitMarshalSpec (field.MarshalSpec);
 			}
 
 			foreach (MethodDefinition meth in m_methodStack) {
-				VisitCustomAttributeCollection (meth.ReturnType.CustomAttributes);
-				foreach (ParameterDefinition param in meth.Parameters)
-					VisitCustomAttributeCollection (param.CustomAttributes);
-				VisitGenericParameterCollection (meth.GenericParameters);
-				VisitOverrideCollection (meth.Overrides);
-				VisitCustomAttributeCollection (meth.CustomAttributes);
-				VisitSecurityDeclarationCollection (meth.SecurityDeclarations);
+				if (meth.ReturnType.HasCustomAttributes)
+					VisitCustomAttributeCollection (meth.ReturnType.CustomAttributes);
+				if (meth.HasParameters) {
+					foreach (ParameterDefinition param in meth.Parameters) {
+						if (param.HasCustomAttributes)
+							VisitCustomAttributeCollection (param.CustomAttributes);
+					}
+				}
+				if (meth.HasGenericParameters)
+					VisitGenericParameterCollection (meth.GenericParameters);
+				if (meth.HasOverrides)
+					VisitOverrideCollection (meth.Overrides);
+				if (meth.HasCustomAttributes)
+					VisitCustomAttributeCollection (meth.CustomAttributes);
+				if (meth.HasSecurityDeclarations)
+					VisitSecurityDeclarationCollection (meth.SecurityDeclarations);
 				if (meth.PInvokeInfo != null) {
 					meth.Attributes |= MethodAttributes.PInvokeImpl;
 					VisitPInvokeInfo (meth.PInvokeInfo);
@@ -814,9 +830,10 @@ namespace Mono.Cecil {
 				gpTable.Rows.Add (gpRow);
 				gp.MetadataToken = new MetadataToken (TokenType.GenericParam, (uint) gpTable.Rows.Count);
 
-				VisitCustomAttributeCollection (gp.CustomAttributes);
+				if (gp.HasCustomAttributes)
+					VisitCustomAttributeCollection (gp.CustomAttributes);
 
-				if (gp.Constraints.Count == 0)
+				if (!gp.HasConstraints)
 					continue;
 
 				GenericParamConstraintTable gpcTable = m_tableWriter.GetGenericParamConstraintTable ();
@@ -836,9 +853,12 @@ namespace Mono.Cecil {
 
 		public override void TerminateModuleDefinition (ModuleDefinition module)
 		{
-			VisitCustomAttributeCollection (module.Assembly.CustomAttributes);
-			VisitSecurityDeclarationCollection (module.Assembly.SecurityDeclarations);
-			VisitCustomAttributeCollection (module.CustomAttributes);
+			if (module.Assembly.HasCustomAttributes)
+				VisitCustomAttributeCollection (module.Assembly.CustomAttributes);
+			if (module.Assembly.HasSecurityDeclarations)
+				VisitSecurityDeclarationCollection (module.Assembly.SecurityDeclarations);
+			if (module.HasCustomAttributes)
+				VisitCustomAttributeCollection (module.CustomAttributes);
 
 			CompleteGenericTables ();
 			SortTables ();
@@ -1488,10 +1508,14 @@ namespace Mono.Cecil {
 				m_symbolWriter = SymbolStoreHelper.GetWriter (module, m_asmOutput);
 
 			foreach (TypeDefinition type in module.Types) {
-				foreach (MethodDefinition method in type.Methods)
-					WriteSymbols (method);
-				foreach (MethodDefinition ctor in type.Constructors)
-					WriteSymbols (ctor);
+				if (type.HasMethods) {
+					foreach (MethodDefinition method in type.Methods)
+						WriteSymbols (method);
+				}
+				if (type.HasConstructors) {
+					foreach (MethodDefinition ctor in type.Constructors)
+						WriteSymbols (ctor);
+				}
 			}
 
 			m_symbolWriter.Dispose ();

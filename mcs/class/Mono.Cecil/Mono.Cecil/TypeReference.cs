@@ -66,6 +66,10 @@ namespace Mono.Cecil {
 			set { m_module = value; }
 		}
 
+		public bool HasCustomAttributes {
+			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
+		}
+
 		public CustomAttributeCollection CustomAttributes {
 			get {
 				if (m_customAttrs == null)
@@ -73,6 +77,10 @@ namespace Mono.Cecil {
 
 				return m_customAttrs;
 			}
+		}
+
+		public bool HasGenericParameters {
+			get { return (m_genparams == null) ? false : (m_genparams.Count > 0); }
 		}
 
 		public GenericParameterCollection GenericParameters {

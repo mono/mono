@@ -76,6 +76,10 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool HasInterfaces {
+			get { return (m_interfaces == null) ? false : (m_interfaces.Count > 0); }
+		}
+
 		public InterfaceCollection Interfaces {
 			get {
 				if (m_interfaces == null)
@@ -83,6 +87,10 @@ namespace Mono.Cecil {
 
 				return m_interfaces;
 			}
+		}
+
+		public bool HasNestedTypes {
+			get { return (m_nestedTypes == null) ? false : (m_nestedTypes.Count > 0); }
 		}
 
 		public NestedTypeCollection NestedTypes {
@@ -94,6 +102,10 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool HasMethods {
+			get { return (m_methods == null) ? false : (m_methods.Count > 0); }
+		}
+
 		public MethodDefinitionCollection Methods {
 			get {
 				if (m_methods == null)
@@ -101,6 +113,10 @@ namespace Mono.Cecil {
 
 				return m_methods;
 			}
+		}
+
+		public bool HasConstructors {
+			get { return (m_ctors == null) ? false : (m_ctors.Count > 0); }
 		}
 
 		public ConstructorCollection Constructors {
@@ -112,6 +128,10 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool HasFields {
+			get { return (m_fields == null) ? false : (m_fields.Count > 0); }
+		}
+
 		public FieldDefinitionCollection Fields {
 			get {
 				if (m_fields == null)
@@ -119,6 +139,10 @@ namespace Mono.Cecil {
 
 				return m_fields;
 			}
+		}
+
+		public bool HasEvents {
+			get { return (m_events == null) ? false : (m_events.Count > 0); }
 		}
 
 		public EventDefinitionCollection Events {
@@ -130,6 +154,10 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool HasProperties {
+			get { return (m_properties == null) ? false : (m_properties.Count > 0); }
+		}
+
 		public PropertyDefinitionCollection Properties {
 			get {
 				if (m_properties == null)
@@ -137,6 +165,10 @@ namespace Mono.Cecil {
 
 				return m_properties;
 			}
+		}
+
+		public bool HasSecurityDeclarations {
+			get { return (m_secDecls == null) ? false : (m_secDecls.Count > 0); }
 		}
 
 		public SecurityDeclarationCollection SecurityDeclarations {
@@ -459,24 +491,42 @@ namespace Mono.Cecil {
 				nt.PackingSize = type.PackingSize;
 			}
 
-			foreach (FieldDefinition field in type.Fields)
-				nt.Fields.Add (FieldDefinition.Clone (field, context));
-			foreach (MethodDefinition ctor in type.Constructors)
-				nt.Constructors.Add (MethodDefinition.Clone (ctor, context));
-			foreach (MethodDefinition meth in type.Methods)
-				nt.Methods.Add (MethodDefinition.Clone (meth, context));
-			foreach (EventDefinition evt in type.Events)
-				nt.Events.Add (EventDefinition.Clone (evt, context));
-			foreach (PropertyDefinition prop in type.Properties)
-				nt.Properties.Add (PropertyDefinition.Clone (prop, context));
-			foreach (TypeReference intf in type.Interfaces)
-				nt.Interfaces.Add (context.Import (intf));
-			foreach (TypeDefinition nested in type.NestedTypes)
-				nt.NestedTypes.Add (Clone (nested, context));
-			foreach (CustomAttribute ca in type.CustomAttributes)
-				nt.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
-			foreach (SecurityDeclaration dec in type.SecurityDeclarations)
-				nt.SecurityDeclarations.Add (SecurityDeclaration.Clone (dec));
+			if (type.HasFields) {
+				foreach (FieldDefinition field in type.Fields)
+					nt.Fields.Add (FieldDefinition.Clone (field, context));
+			}
+			if (type.HasConstructors) {
+				foreach (MethodDefinition ctor in type.Constructors)
+					nt.Constructors.Add (MethodDefinition.Clone (ctor, context));
+			}
+			if (type.HasMethods) {
+				foreach (MethodDefinition meth in type.Methods)
+					nt.Methods.Add (MethodDefinition.Clone (meth, context));
+			}
+			if (type.HasEvents) {
+				foreach (EventDefinition evt in type.Events)
+					nt.Events.Add (EventDefinition.Clone (evt, context));
+			}
+			if (type.HasProperties) {
+				foreach (PropertyDefinition prop in type.Properties)
+					nt.Properties.Add (PropertyDefinition.Clone (prop, context));
+			}
+			if (type.HasInterfaces) {
+				foreach (TypeReference intf in type.Interfaces)
+					nt.Interfaces.Add (context.Import (intf));
+			}
+			if (type.HasNestedTypes) {
+				foreach (TypeDefinition nested in type.NestedTypes)
+					nt.NestedTypes.Add (Clone (nested, context));
+			}
+			if (type.HasCustomAttributes) {
+				foreach (CustomAttribute ca in type.CustomAttributes)
+					nt.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
+			}
+			if (type.HasSecurityDeclarations) {
+				foreach (SecurityDeclaration dec in type.SecurityDeclarations)
+					nt.SecurityDeclarations.Add (SecurityDeclaration.Clone (dec));
+			}
 
 			context.GenericContext.Type = contextType;
 

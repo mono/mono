@@ -55,12 +55,20 @@ namespace Mono.Cecil {
 			set { m_callConv = value; }
 		}
 
+		public bool HasParameters {
+			get { return (m_parameters == null) ? false : (m_parameters.Count > 0); }
+		}
+
 		public virtual ParameterDefinitionCollection Parameters {
 			get {
 				if (m_parameters == null)
 					m_parameters = new ParameterDefinitionCollection (this);
 				return m_parameters;
 			}
+		}
+
+		public bool HasGenericParameters {
+			get { return (m_genparams == null) ? false : (m_genparams.Count > 0); }
 		}
 
 		public GenericParameterCollection GenericParameters {
@@ -106,10 +114,11 @@ namespace Mono.Cecil {
 
 		public int GetSentinel ()
 		{
-			for (int i = 0; i < Parameters.Count; i++)
-				if (Parameters [i].ParameterType is SentinelType)
-					return i;
-
+			if (HasParameters) {
+				for (int i = 0; i < Parameters.Count; i++)
+					if (Parameters [i].ParameterType is SentinelType)
+						return i;
+			}
 			return -1;
 		}
 
@@ -122,14 +131,16 @@ namespace Mono.Cecil {
 			sb.Append (" ");
 			sb.Append (base.ToString ());
 			sb.Append ("(");
-			for (int i = 0; i < this.Parameters.Count; i++) {
-				if (i > 0)
-					sb.Append (",");
+			if (this.HasParameters) {
+				for (int i = 0; i < this.Parameters.Count; i++) {
+					if (i > 0)
+						sb.Append (",");
 
-				if (i == sentinel)
-					sb.Append ("...,");
+					if (i == sentinel)
+						sb.Append ("...,");
 
-				sb.Append (this.Parameters [i].ParameterType.FullName);
+					sb.Append (this.Parameters [i].ParameterType.FullName);
+				}
 			}
 			sb.Append (")");
 			return sb.ToString ();

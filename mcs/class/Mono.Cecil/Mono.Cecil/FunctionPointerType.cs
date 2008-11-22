@@ -50,6 +50,10 @@ namespace Mono.Cecil {
 			set { m_function.CallingConvention = value; }
 		}
 
+		public bool HasParameters {
+			get { return m_function.HasParameters; }
+		}
+
 		public ParameterDefinitionCollection Parameters {
 			get { return m_function.Parameters; }
 		}
@@ -81,14 +85,16 @@ namespace Mono.Cecil {
 				sb.Append (" ");
 				sb.Append (m_function.ReturnType.ReturnType.FullName);
 				sb.Append (" *(");
-				for (int i = 0; i < m_function.Parameters.Count; i++) {
-					if (i > 0)
-						sb.Append (",");
+				if (m_function.HasParameters) {
+					for (int i = 0; i < m_function.Parameters.Count; i++) {
+						if (i > 0)
+							sb.Append (",");
 
-					if (i == sentinel)
-						sb.Append ("...,");
+						if (i == sentinel)
+							sb.Append ("...,");
 
-					sb.Append (m_function.Parameters [i].ParameterType.FullName);
+						sb.Append (m_function.Parameters [i].ParameterType.FullName);
+					}
 				}
 				sb.Append (")");
 				return sb.ToString ();

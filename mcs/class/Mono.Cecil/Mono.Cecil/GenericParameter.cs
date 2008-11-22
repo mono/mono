@@ -52,6 +52,10 @@ namespace Mono.Cecil {
 			get { return m_owner; }
 		}
 
+		public bool HasConstraints {
+			get { return (m_constraints == null) ? false : (m_constraints.Count > 0); }
+		}
+
 		public ConstraintCollection Constraints {
 			get {
 				if (m_constraints == null)
@@ -199,16 +203,20 @@ namespace Mono.Cecil {
 			ngp.Position = gp.Owner.GenericParameters.IndexOf (gp);
 			ngp.Attributes = gp.Attributes;
 
-			foreach (CustomAttribute ca in gp.CustomAttributes)
-				ngp.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
+			if (gp.HasCustomAttributes) {
+				foreach (CustomAttribute ca in gp.CustomAttributes)
+					ngp.CustomAttributes.Add (CustomAttribute.Clone (ca, context));
+			}
 
 			return ngp;
 		}
 
 		static void CloneConstraints (GenericParameter gp, GenericParameter ngp, ImportContext context)
 		{
-			foreach (TypeReference constraint in gp.Constraints)
-				ngp.Constraints.Add (context.Import (constraint));
+			if (gp.HasConstraints) {
+				foreach (TypeReference constraint in gp.Constraints)
+					ngp.Constraints.Add (context.Import (constraint));
+			}
 		}
 	}
 }

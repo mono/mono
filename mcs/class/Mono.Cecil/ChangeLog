@@ -1,3 +1,30 @@
+2008-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil/GenericParameter.cs,
+	* Mono.Cecil/ICustomAttributeProvider.cs,
+	* Mono.Cecil/CallSite.cs,
+	* Mono.Cecil/IMethodSignature.cs,
+	* Mono.Cecil/FunctionPointerType.cs,
+	* Mono.Cecil/FieldDefinition.cs,
+	* Mono.Cecil/TypeReference.cs,
+	* Mono.Cecil/GenericInstanceMethod.cs,
+	* Mono.Cecil/IHasSecurity.cs,
+	* Mono.Cecil/MethodReturnType.cs,
+	* Mono.Cecil/AssemblyDefinition.cs,
+	* Mono.Cecil/TypeDefinition.cs,
+	* Mono.Cecil/MethodDefinition.cs,
+	* Mono.Cecil/EventDefinition.cs,
+	* Mono.Cecil/ModuleDefinition.cs,
+	* Mono.Cecil/MethodReference.cs,
+	* Mono.Cecil/ReflectionWriter.cs,
+	* Mono.Cecil/ParameterDefinition.cs,
+	* Mono.Cecil/PropertyDefinition.cs,
+	* Mono.Cecil/IGenericParameterProvider.cs:
+		Add boolean Has{x} properties so Cecil consumers are able
+		to avoid the lazy allocations that would be made for an 
+		empty {x}. Use the Has{x} properties inside Cecil (some 
+		cases might be missing).
+
 2008-11-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/TypeDefinition.cs (IsValueType): Inline the call to

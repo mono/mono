@@ -64,6 +64,10 @@ namespace Mono.Cecil {
 			get { return m_modules; }
 		}
 
+		public bool HasSecurityDeclarations {
+			get { return (m_secDecls == null) ? false : (m_secDecls.Count > 0); }
+		}
+
 		public SecurityDeclarationCollection SecurityDeclarations {
 			get {
 				if (m_secDecls == null)
@@ -71,6 +75,10 @@ namespace Mono.Cecil {
 
 				return m_secDecls;
 			}
+		}
+
+		public bool HasCustomAttributes {
+			get { return (m_customAttrs == null) ? false : (m_customAttrs.Count > 0); }
 		}
 
 		public CustomAttributeCollection CustomAttributes {
