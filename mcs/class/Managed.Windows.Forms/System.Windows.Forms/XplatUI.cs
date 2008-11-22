@@ -119,7 +119,7 @@ namespace System.Windows.Forms {
 
 		public static bool RunningOnUnix {
 			get {
-#if NET_2_0
+#if NET_2_0 && !MWF_ON_MSRUNTIME
 				return (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX);
 #else
 				int platform = (int) Environment.OSVersion.Platform;

@@ -1,3 +1,7 @@
+2008-11-22  Andreia Gaita  <avidigal@novell.com>
+
+	* XplatUI.cs: Only use PlatformID.MacOSX enum when not building on VS
+
 2008-11-21  Andreia Gaita  <avidigal@novell.com>
 
 	* WebBrowser.cs, HtmlDocument.cs: Fixes for #428172
