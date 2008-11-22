@@ -1,3 +1,7 @@
+2008-11-23  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added AssignCultureTest.cs
+
 2008-11-22  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks_test.dll.sources: Added AssignTargetPathTest.cs

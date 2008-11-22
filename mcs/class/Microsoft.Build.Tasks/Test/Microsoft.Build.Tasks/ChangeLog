@@ -1,3 +1,7 @@
+2008-11-23  Ankit Jain  <jankit@novell.com>
+
+	* AssignCultureTest.cs: New.
+
 2008-11-22  Ankit Jain  <jankit@novell.com>
 
 	* AssignTargetPathTest.cs: New.
