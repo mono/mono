@@ -1,5 +1,10 @@
 2008-11-22  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc64.c, tramp-ppc64.c: Small fixes.  PPC64 now runs
+	arrays.exe and basic-math.exe.
+
+2008-11-22  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc64.c, mini-ppc64.h, exceptions-ppc64.c, tramp-ppc64.c,
 	cpu-ppc64.md: Several fixes.  PPC64 now runs objects.exe.
 
