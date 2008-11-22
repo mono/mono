@@ -1,3 +1,7 @@
+2008-11-22  Ankit Jain  <jankit@novell.com>
+
+	* AssignTargetPathTest.cs: New.
+
 2008-11-21  Ankit Jain  <jankit@novell.com>
 
 	* CreateItemTest.cs (CheckBuildItem): Make public.

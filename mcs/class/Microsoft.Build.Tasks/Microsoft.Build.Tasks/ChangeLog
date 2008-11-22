@@ -1,3 +1,7 @@
+2008-11-22  Ankit Jain  <jankit@novell.com>
+
+	* AssignTargetPath.cs (Execute): Implement.
+
 2008-11-21  Ankit Jain  <jankit@novell.com>
 
 	* GenerateResource.cs (Execute): Use for loop instead of manually

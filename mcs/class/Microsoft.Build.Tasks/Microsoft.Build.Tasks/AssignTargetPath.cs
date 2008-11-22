@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 //
 // (C) 2006 Marek Sieradzki
+// Copyright 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,6 +32,7 @@
 using System;
 using System.IO;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class AssignTargetPath : TaskExtension {
@@ -42,10 +45,27 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 		
-		[MonoTODO]
 		public override bool Execute ()
 		{
-			return false;
+			assignedFiles = new ITaskItem [files.Length];
+			for (int i = 0; i < files.Length; i ++) {
+				string file = files [i].ItemSpec;
+				string afile = null;
+				//FIXME: Hack!
+				string normalized_root = Path.GetFullPath (rootFolder);
+
+				if (file.StartsWith (normalized_root)) {
+					afile = Path.GetFullPath (file).Substring (
+							normalized_root.Length);
+				} else {
+					afile = Path.GetFileName (file);
+				}
+
+				assignedFiles [i] = new TaskItem (files [i]);
+				assignedFiles [i].SetMetadata ("TargetPath", afile);
+			}
+
+			return true;
 		}
 		
 		[Output]

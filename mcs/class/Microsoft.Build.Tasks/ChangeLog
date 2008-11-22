@@ -1,3 +1,7 @@
+2008-11-22  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added AssignTargetPathTest.cs
+
 2008-11-21  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks_test.dll.sources: Added TaskBatchingTest.cs and
