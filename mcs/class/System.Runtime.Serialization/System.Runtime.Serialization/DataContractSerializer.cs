@@ -174,16 +174,6 @@ namespace System.Runtime.Serialization
 			if (known_types == null)
 				known_types= new KnownTypeCollection ();
 
-			// Ensure that everyone in the heirarchy has a DataContract/Serializable
-			// FIXME: Use TryRegister (w/o actual registration) for this?
-			//
-			// Hmm, why do we need this check? .NET does not do this check.
-			Type baseType = type;
-			while (baseType != null && baseType != typeof (object)) {
-				known_types.GetQName (baseType);
-				baseType = baseType.BaseType;
-			}
-
 			if (knownTypes != null) {
 				foreach (Type t in knownTypes)
 					known_types.TryRegister (t);
