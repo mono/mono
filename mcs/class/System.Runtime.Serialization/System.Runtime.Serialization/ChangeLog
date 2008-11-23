@@ -1,5 +1,9 @@
 2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataContractAttribute.cs : remove MonoTODO.
+
+2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs, XmlFormatterSerializer.cs,
 	  XmlFormatterDeserializer.cs, DataContractAttribute.cs,
 	  CollectionDataContractAttribute.cs, KnownTypeCollection.cs :

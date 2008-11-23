@@ -53,7 +53,6 @@ namespace System.Runtime.Serialization
 		}
 
 		// new in 3.5 SP1
-		[MonoTODO]
 		public bool IsReference { get; set; }
 	}
 }
