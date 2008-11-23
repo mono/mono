@@ -273,7 +273,7 @@ namespace Mono.Mozilla
 		
 		public void Activate ()
 		{
-			if (!created) return;
+			if (!Created) return;
 			Base.Activate (this);
 		}
 		public void Deactivate ()
