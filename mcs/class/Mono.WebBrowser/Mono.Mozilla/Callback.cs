@@ -106,7 +106,7 @@ namespace Mono.Mozilla {
 			bool _network = (state & (uint) StateFlags.IsNetwork) != 0;
 			bool _window = (state & (uint) StateFlags.IsWindow) != 0;
 
-			if (_start && _request && !calledLoadStarted) {
+			if (_start && _request && _document && !calledLoadStarted) {
 				nsIDOMWindow win;
 				progress.getDOMWindow (out win);
 				nsIChannel channel = (nsIChannel) request;
@@ -139,6 +139,17 @@ namespace Mono.Mozilla {
 			if (_document && _request && _transferring) {
 				nsIDOMWindow win;
 				progress.getDOMWindow (out win);
+				nsIChannel channel = (nsIChannel) request;
+				nsIURI uri;
+				channel.getURI (out uri);
+				if (uri == null)
+					currentUri = "about:blank";
+				else {
+					AsciiString spec = new AsciiString (String.Empty);
+					uri.getSpec (spec.Handle);
+					currentUri = spec.ToString ();
+				}
+
 				nsIDOMWindow topWin;
 				win.getTop (out topWin);
 				if (topWin == null || topWin.GetHashCode () == win.GetHashCode ()) {
@@ -148,9 +159,33 @@ namespace Mono.Mozilla {
 					if (doc != null)
 						owner.document = new Mono.Mozilla.DOM.Document (owner, doc);
 				}
+
+				LoadCommitedEventHandler eh = (LoadCommitedEventHandler) (owner.Events[WebBrowser.LoadCommitedEvent]);
+				if (eh != null) {
+					LoadCommitedEventArgs e = new LoadCommitedEventArgs (currentUri);
+					eh (this, e);
+				}
+				return;
+			}
+
+			if (_document && _request && _redirecting) {
+				nsIDOMWindow win;
+				progress.getDOMWindow (out win);
+				nsIChannel channel = (nsIChannel) request;
+				nsIURI uri;
+				channel.getURI (out uri);
+				if (uri == null)
+					currentUri = "about:blank";
+				else {
+					AsciiString spec = new AsciiString (String.Empty);
+					uri.getSpec (spec.Handle);
+					currentUri = spec.ToString ();
+				}
+				return;
 			}
 
 			if (_stop && !_request && !_document && _network && _window) {
+				calledLoadStarted = false;
 			    LoadFinishedEventHandler eh1 = (LoadFinishedEventHandler) (owner.Events[WebBrowser.LoadFinishedEvent]);
 			    if (eh1 != null) {
 
@@ -203,11 +238,6 @@ namespace Mono.Mozilla {
 #if debug
 			OnGeneric ("OnLocationChanged");
 #endif
-			LoadCommitedEventHandler eh = (LoadCommitedEventHandler) (owner.Events[WebBrowser.LoadCommitedEvent]);
-			if (eh != null) {
-				LoadCommitedEventArgs e = new LoadCommitedEventArgs (currentUri);
-				eh (this, e);
-			}
 		}
 
 		public void OnStatusChange (nsIWebProgress progress, nsIRequest request, string message, Int32 status)
