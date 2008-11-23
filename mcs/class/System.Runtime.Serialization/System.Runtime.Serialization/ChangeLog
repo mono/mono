@@ -1,3 +1,8 @@
+2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterSerializer.cs : one object could not be serialized
+	  twice in non-circular situation.
+
 2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 			Jb Evain  <jbevain@novell.com>
 

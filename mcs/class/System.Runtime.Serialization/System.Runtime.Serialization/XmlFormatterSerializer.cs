@@ -134,6 +134,7 @@ namespace System.Runtime.Serialization
 				Write_i_type (map.XmlName);
 
 			map.Serialize (graph, this);
+			objects.Remove (graph);
 		}
 	}
 }
