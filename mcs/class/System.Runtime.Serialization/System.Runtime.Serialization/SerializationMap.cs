@@ -86,6 +86,7 @@ namespace System.Runtime.Serialization
 		public readonly KnownTypeCollection KnownTypes;
 		public readonly Type RuntimeType;
 		public readonly QName XmlName;
+		public bool IsReference; // new in 3.5 SP1
 		public List<DataMemberInfo> Members;
 #if !NET_2_1
 		XmlSchemaSet schema_set;
@@ -283,6 +284,31 @@ namespace System.Runtime.Serialization
 		public virtual void Serialize (object graph,
 			XmlFormatterSerializer serializer)
 		{
+			string label = null;
+			if (IsReference) {
+				label = (string) serializer.References [graph];
+				if (label != null) {
+					serializer.Writer.WriteAttributeString ("z", "Ref", KnownTypeCollection.MSSimpleNamespace, label);
+					return;
+				}
+				label = "i" + (serializer.References.Count + 1);
+				serializer.References.Add (graph, label);
+			}
+			else if (serializer.SerializingObjects.Contains (graph))
+				throw new SerializationException (String.Format ("Circular reference of an object in the object graph was found: '{0}' of type {1}", graph, graph.GetType ()));
+			serializer.SerializingObjects.Add (graph);
+
+			if (label != null)
+				serializer.Writer.WriteAttributeString ("z", "Id", KnownTypeCollection.MSSimpleNamespace, label);
+
+			SerializeNonReference (graph, serializer);
+
+			serializer.SerializingObjects.Remove (graph);
+		}
+
+		public virtual void SerializeNonReference (object graph,
+			XmlFormatterSerializer serializer)
+		{
 			foreach (DataMemberInfo dmi in Members) {
 				FieldInfo fi = dmi.Member as FieldInfo;
 				PropertyInfo pi = fi == null ?
@@ -385,7 +411,10 @@ namespace System.Runtime.Serialization
 		{
 			Type baseType = type;
 			List <DataMemberInfo> members = new List <DataMemberInfo> ();
-			
+			object [] atts = type.GetCustomAttributes (
+				typeof (DataContractAttribute), false);
+			IsReference = atts.Length > 0 ? (((DataContractAttribute) atts [0]).IsReference) : false;
+
 			while (baseType != null) {
 				QName bqname = knownTypes.GetQName (baseType);
 					
@@ -454,9 +483,13 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
+
+			object [] atts = type.GetCustomAttributes (
+				typeof (CollectionDataContractAttribute), false);
+			IsReference = atts.Length > 0 ? (((CollectionDataContractAttribute) atts [0]).IsReference) : false;
 		}
 
-		public override void Serialize (object graph,
+		public override void SerializeNonReference (object graph,
 			XmlFormatterSerializer serializer)
 		{
 			string ns = element_qname.Namespace;

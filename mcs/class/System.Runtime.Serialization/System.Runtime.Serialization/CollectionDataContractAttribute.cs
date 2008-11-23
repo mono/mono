@@ -35,6 +35,7 @@ namespace System.Runtime.Serialization
 	public sealed class CollectionDataContractAttribute : Attribute
 	{
 		string name, ns, item_name, key_name, value_name;
+		bool is_reference;
 
 		public CollectionDataContractAttribute ()
 		{
@@ -64,6 +65,8 @@ namespace System.Runtime.Serialization
 			get { return value_name; }
 			set { value_name = value; }
 		}
+
+		public bool IsReference { get; set; } // new in 3.5 SP1
 	}
 }
 #endif

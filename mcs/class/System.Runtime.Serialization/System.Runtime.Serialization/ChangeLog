@@ -1,5 +1,12 @@
 2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs, XmlFormatterSerializer.cs,
+	  XmlFormatterDeserializer.cs, DataContractAttribute.cs,
+	  CollectionDataContractAttribute.cs, KnownTypeCollection.cs :
+	  support IsReference (new in 3.5 SP1).
+
+2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataContractSerializer.cs : remove extra type validity check.
 
 2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>

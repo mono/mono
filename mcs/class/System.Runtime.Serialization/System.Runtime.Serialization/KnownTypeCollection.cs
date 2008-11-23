@@ -449,7 +449,6 @@ namespace System.Runtime.Serialization
 			string ns = ((DataContractAttribute) atts [0]).Namespace;
 			if (ns == null)
 				ns = XmlObjectSerializer.DefaultNamespaceBase + type.Namespace;
-
 			return new QName (name, ns);
 		}
 

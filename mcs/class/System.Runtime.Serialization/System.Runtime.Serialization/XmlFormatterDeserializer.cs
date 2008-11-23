@@ -42,6 +42,11 @@ namespace System.Runtime.Serialization
 	{
 		KnownTypeCollection types;
 		IDataContractSurrogate surrogate;
+		// 3.5 SP1 supports deserialization by reference (id->obj).
+		// Though unlike XmlSerializer, it does not support forward-
+		// reference resolution i.e. a referenced object must appear
+		// before any references to it.
+		Hashtable references = new Hashtable ();
 
 		public static object Deserialize (XmlReader reader, Type type,
 			KnownTypeCollection knownTypes, IDataContractSurrogate surrogate,
@@ -84,9 +89,24 @@ namespace System.Runtime.Serialization
 			this.surrogate = surrogate;
 		}
 
+		public Hashtable References {
+			get { return references; }
+		}
+
 		// At the beginning phase, we still have to instantiate a new
 		// target object even if fromContent is true.
 		public object Deserialize (Type type, XmlReader reader)
+		{
+			string label = reader.GetAttribute ("Id", KnownTypeCollection.MSSimpleNamespace);
+			object o = DeserializeCore (type, reader);
+
+			if (label != null)
+				references.Add (label, o);
+
+			return o;
+		}
+
+		public object DeserializeCore (Type type, XmlReader reader)
 		{
 			QName graph_qname = types.GetQName (type);
 			string itype = reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
@@ -98,17 +118,33 @@ namespace System.Runtime.Serialization
 					graph_qname = new QName (itype, reader.NamespaceURI);
 			}
 
+			string label = reader.GetAttribute ("Ref", KnownTypeCollection.MSSimpleNamespace);
+			if (label != null) {
+Console.WriteLine ("Found reference: " + label);
+				object o = references [label];
+				if (o == null)
+					throw new SerializationException (String.Format ("Deserialized object with reference Id '{0}' was not found", label));
+				reader.Skip ();
+				return o;
+			}
+
 			bool isNil = reader.GetAttribute ("nil", XmlSchema.InstanceNamespace) == "true";
-			reader.ReadStartElement ();
-			if (isNil)
+
+			if (isNil) {
+				reader.Skip ();
 				if (!type.IsValueType)
 					return null;
 				else if (type.IsGenericType && type.GetGenericTypeDefinition () == typeof (Nullable<>))
 					return null;
 				else 
 					throw new SerializationException (String.Format ("Value type {0} cannot be null.", type));
+			}
+
+			reader.ReadStartElement ();
 
 			object res = DeserializeContent (graph_qname, type, reader);
+
+			reader.MoveToContent ();
 			if (reader.NodeType == XmlNodeType.EndElement)
 				reader.ReadEndElement ();
 			else if (reader.NodeType != XmlNodeType.None)

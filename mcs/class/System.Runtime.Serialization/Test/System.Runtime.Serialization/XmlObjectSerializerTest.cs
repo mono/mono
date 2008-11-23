@@ -1020,6 +1020,30 @@ namespace MonoTests.System.Runtime.Serialization
 				.ReadObject (XmlReader.Create (new StringReader (xml)));
 		}
 
+		[Test]
+		public void ReferenceSerialization ()
+		{
+			var dc = new DataContractSerializer (typeof (ReferenceWrapper));
+			var t = new ReferenceType ();
+			StringWriter sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw)) {
+				xw.WriteStartElement ("z", "root", "http://schemas.microsoft.com/2003/10/Serialization/");
+				dc.WriteObject (xw, new ReferenceWrapper () {T = t, T2 = t});
+				xw.WriteEndElement ();
+			}
+			string xml = @"<?xml version='1.0' encoding='utf-16'?><z:root xmlns:z='http://schemas.microsoft.com/2003/10/Serialization/'><ReferenceWrapper xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization'><T z:Id='i1'><F>x</F></T><T2 z:Ref='i1' /></ReferenceWrapper></z:root>";
+			Assert.AreEqual (xml.Replace ('\'', '"'), sw.ToString (), "#1");
+
+			ReferenceWrapper w;
+			using (XmlReader r = XmlReader.Create (new StringReader (xml)))
+	{
+				r.ReadStartElement ();
+				w = (ReferenceWrapper) dc.ReadObject (r);
+				r.ReadEndElement ();
+			}
+			Assert.AreEqual (w.T, w.T2, "#2");
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1251,6 +1275,22 @@ namespace MonoTests.System.Runtime.Serialization
 
 	}
 
+	[DataContract]
+	public class ReferenceWrapper
+	{
+	        [DataMember (Order = 1)]
+	        public ReferenceType T;
+
+	        [DataMember (Order = 2)]
+	        public ReferenceType T2;
+	}
+
+	[DataContract (IsReference = true)]
+	public class ReferenceType
+	{
+		[DataMember]
+		public string F = "x";
+	}
 }
 
 [DataContract]

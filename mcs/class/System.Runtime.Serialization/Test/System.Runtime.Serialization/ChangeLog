@@ -1,3 +1,7 @@
+2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : added test for IsReference = true.
+
 2008-04-17  Eyal Alaluf <eyala@mainsoft.com>
 
 	* XmlObjectSerializerTest.cs: Add test for base class with a different XML

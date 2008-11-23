@@ -50,6 +50,7 @@ namespace System.Runtime.Serialization
 		int max_items;
 
 		ArrayList objects = new ArrayList ();
+		Hashtable references = new Hashtable (); // preserve possibly referenced objects to ids. (new in 3.5 SP1)
 
 		public static void Serialize (XmlDictionaryWriter writer, object graph,
 			KnownTypeCollection types,
@@ -67,6 +68,14 @@ namespace System.Runtime.Serialization
 			this.types = types;
 			ignore_unknown = ignoreUnknown;
 			max_items = maxItems;
+		}
+
+		public ArrayList SerializingObjects {
+			get { return objects; }
+		}
+
+		public IDictionary References {
+			get { return references; }
 		}
 
 		public XmlDictionaryWriter Writer {
@@ -116,10 +125,6 @@ namespace System.Runtime.Serialization
 
 		public void SerializeNonPrimitive (Type type, object graph)
 		{
-			if (objects.Contains (graph))
-				throw new SerializationException (String.Format ("Circular reference of an object in the object graph was found: '{0}' of type {1}", graph, graph.GetType ()));
-			objects.Add (graph);
-
 			Type actualType = graph.GetType ();
 
 			SerializationMap map = types.FindUserMap (actualType);
@@ -129,12 +134,10 @@ namespace System.Runtime.Serialization
 				map = types.FindUserMap (actualType);
 //				throw new InvalidDataContractException (String.Format ("Type {0} has neither Serializable nor DataContract attributes.", type));
 			}
-
 			if (type != actualType)
 				Write_i_type (map.XmlName);
 
 			map.Serialize (graph, this);
-			objects.Remove (graph);
 		}
 	}
 }
