@@ -1,3 +1,7 @@
+2008-11-23  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c: Several fixes.  PPC64 now runs iltests.exe.
+
 2008-11-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (mono_arch_find_jit_info): Avoid reading uninitialized
