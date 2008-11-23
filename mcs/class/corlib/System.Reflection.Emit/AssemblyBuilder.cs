@@ -186,14 +186,16 @@ namespace System.Reflection.Emit
 			if (n.KeyPair != null) {
 				// full keypair is available (for signing)
 				sn = n.KeyPair.StrongName ();
-			}
-			else {
+			} else {
 				// public key is available (for delay-signing)
 				byte[] pk = n.GetPublicKey ();
 				if ((pk != null) && (pk.Length > 0)) {
 					sn = new Mono.Security.StrongName (pk);
 				}
 			}
+
+			if (sn != null)
+				flags |= (uint) AssemblyNameFlags.PublicKey;
 
 			this.corlib_internal = corlib_internal;
 
@@ -885,10 +887,16 @@ namespace System.Reflection.Emit
 				} else if (attrname == "System.Reflection.AssemblyFlagsAttribute") {
 					data = customBuilder.Data;
 					pos = 2;
-					flags = (uint) data [pos];
+					flags |= (uint) data [pos];
 					flags |= ((uint) data [pos + 1]) << 8;
 					flags |= ((uint) data [pos + 2]) << 16;
 					flags |= ((uint) data [pos + 3]) << 24;
+
+#if NET_2_0
+					// ignore PublicKey flag if assembly is not strongnamed
+					if (sn == null)
+						flags &= ~(uint) AssemblyNameFlags.PublicKey;
+#endif
 				}
 			}
 

@@ -1,3 +1,10 @@
+2008-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilder.cs: When assembly is strongnamed, then explicitly
+	set PublicKey flag. Do not allow AssemblyFlagsAttribute to overwrite
+	flags value, and ignore PublicKey flag if assembly is not strongnamed.
+	Fixes bug #432423.
+
 2008-11-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ConstructorOnTypeBuilderInst.cs (MetadataToken): Make this property

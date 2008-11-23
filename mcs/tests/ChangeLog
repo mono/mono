@@ -1,3 +1,9 @@
+2008-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* test-695.cs:
+	* test-695-2-lib.cs:
+	* test-695-3.lib.cs: Added test for bug #432423.
+
 2008-09-25  Miguel de Icaza  <miguel@novell.com>
 
 	* eval-test.cs: Update tasty test, to prevent future generations
