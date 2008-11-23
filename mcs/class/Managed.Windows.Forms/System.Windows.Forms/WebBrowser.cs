@@ -42,8 +42,7 @@ namespace System.Windows.Forms
 	[Designer("System.Windows.Forms.Design.WebBrowserDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class WebBrowser : WebBrowserBase
 	{
-		bool navigated = false; // flag indicating that at least one page has been loaded (besides the initial about:blank)
-		bool allowNavigation; // if this is true, and navigated is also true, no other navigation is allowed
+		bool allowNavigation; // if this is true, no other navigation is allowed
 		
 		bool allowWebBrowserDrop = true;
 		bool isWebBrowserContextMenuEnabled;
@@ -56,6 +55,11 @@ namespace System.Windows.Forms
 		HtmlDocument document;
 		
 		WebBrowserEncryptionLevel securityLevel;
+
+		Stream data;
+		bool isStreamSet;
+
+		string url;
 
 		#region Public Properties
 
@@ -97,21 +101,19 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public Stream DocumentStream {
 			get {
-				if (!this.navigated)
-					return null;
-
 				if (WebHost.Document == null || WebHost.Document.DocumentElement == null)
 					return null;
 
 				return WebHost.Document.DocumentElement.ContentStream;
 			}
 			set { 
-				if (this.allowNavigation && this.navigated)
+				if (this.allowNavigation)
 					return;
+
 				this.Url = new Uri ("about:blank");
-				using (StreamReader sourceReader = new StreamReader(value)) {
-					this.DocumentText = sourceReader.ReadToEnd();
-				}
+
+				data = value;
+				isStreamSet = true;
 			}
 		}
 
@@ -119,8 +121,6 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public string DocumentText {
 			get { 
-				if (!this.navigated)
-					return String.Empty;
 				if (WebHost.Document == null || WebHost.Document.DocumentElement == null)
 					return String.Empty;
 				return WebHost.Document.DocumentElement.OuterHTML;
@@ -203,12 +203,10 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool ScrollBarsEnabled {
 			get { return scrollbarsEnabled; }
-			set { 
+			set {
 				scrollbarsEnabled = value;
-				if (!scrollbarsEnabled)
-					Document.InvokeScript ("document.body.style.overflow='hidden';");
-				else
-					Document.InvokeScript ("document.body.style.overflow='auto';");
+				if (document != null)
+					SetScrollbars ();
 			}
 		}
 
@@ -223,11 +221,16 @@ namespace System.Windows.Forms
 		[TypeConverter(typeof(WebBrowserUriTypeConverter))]
 		public Uri Url {
 			get {
+				if (url != null)
+					return new Uri (url);
 				if (WebHost.Document != null && WebHost.Document.Url != null)
 					return new Uri (WebHost.Document.Url);
 				return null;
 			}
-			set { this.Navigate (value); }
+			set {
+				url = null;
+				this.Navigate (value); 
+			}
 		}
 
 		[BrowsableAttribute(false)]
@@ -582,8 +585,6 @@ namespace System.Windows.Forms
 		
 		internal override void OnWebHostLoadStarted (object sender, Mono.WebBrowser.LoadStartedEventArgs e)
 		{
-			if (!this.navigated)
-				return;
 			documentReady = false;
 			document = null;
 			readyState = WebBrowserReadyState.Loading;
@@ -593,16 +594,14 @@ namespace System.Windows.Forms
 
 		internal override void OnWebHostLoadCommited (object sender, Mono.WebBrowser.LoadCommitedEventArgs e)
 		{
-			if (!this.navigated)
-				return;
 			readyState = WebBrowserReadyState.Loaded;
+			url = e.Uri;
+			SetScrollbars ();
 			WebBrowserNavigatedEventArgs n = new WebBrowserNavigatedEventArgs (new Uri (e.Uri));
 			OnNavigated (n);
 		}
 		internal override void OnWebHostProgressChanged (object sender, Mono.WebBrowser.ProgressChangedEventArgs e)
 		{
-			if (!this.navigated)
-				return;
 			readyState = WebBrowserReadyState.Interactive;
 			WebBrowserProgressChangedEventArgs n = new WebBrowserProgressChangedEventArgs (e.Progress, e.MaxProgress);
 			OnProgressChanged (n);
@@ -610,12 +609,22 @@ namespace System.Windows.Forms
 
 		internal override void OnWebHostLoadFinished (object sender, Mono.WebBrowser.LoadFinishedEventArgs e)
 		{
+			url = null;
 			documentReady = true;
-			if (!this.navigated) {
-				this.navigated = true;
-				return;
-			}
 			readyState = WebBrowserReadyState.Complete;
+			if (isStreamSet) {
+				byte[] buffer = new byte [data.Length];
+				long len = data.Length;
+				int count = 0;
+				data.Position = 0;
+				do {
+					count = data.Read (buffer, (int) data.Position, (int) (len - data.Position));
+				} while (count > 0);
+				WebHost.Render (buffer);
+				data = null;
+				isStreamSet = false;
+			}
+			SetScrollbars ();
 			WebBrowserDocumentCompletedEventArgs n = new WebBrowserDocumentCompletedEventArgs (new Uri (e.Uri));
 			OnDocumentCompleted (n);
 		}
@@ -662,8 +671,21 @@ namespace System.Windows.Forms
             
             menu.Show(this, PointToClient(MousePosition));
 		}
+
+		internal override void OnWebHostStatusChanged (object sender, Mono.WebBrowser.StatusChangedEventArgs e) {
+			base.status = e.Message;
+			OnStatusTextChanged (null);
+		}
 		
 		#endregion
+
+
+		void SetScrollbars () {
+			if (!scrollbarsEnabled)
+				WebHost.ExecuteScript ("document.body.style.overflow='hidden';");
+			else
+				WebHost.ExecuteScript ("document.body.style.overflow='auto';");
+		}
 
 		[MonoTODO ("Stub, not implemented")]
 		[ComVisible (false)]

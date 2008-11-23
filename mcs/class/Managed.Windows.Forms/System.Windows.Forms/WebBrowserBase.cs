@@ -351,10 +351,8 @@ namespace System.Windows.Forms
 			
 			if (!suppressDialogs)
 				webHost.Alert += new Mono.WebBrowser.AlertEventHandler (OnWebHostAlert);
-			
-			webHost.StatusChanged += delegate (object sender, Mono.WebBrowser.StatusChangedEventArgs e) {
-				status = e.Message;
-			};
+
+			webHost.StatusChanged += new StatusChangedEventHandler (OnWebHostStatusChanged);
 			
 			webHost.SecurityChanged += new SecurityChangedEventHandler (OnWebHostSecurityChanged);
 			webHost.ContextMenuShown += new ContextMenuEventHandler (OnWebHostContextMenuShown);
@@ -464,6 +462,9 @@ namespace System.Windows.Forms
 		}
 		
 		internal virtual void OnWebHostContextMenuShown (object sender, ContextMenuEventArgs e) {
+		}
+
+		internal virtual void OnWebHostStatusChanged (object sender, StatusChangedEventArgs e) {
 		}
 
 		#endregion

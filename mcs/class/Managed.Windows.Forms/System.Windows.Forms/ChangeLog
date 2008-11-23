@@ -1,5 +1,13 @@
 2008-11-23  Andreia Gaita  <avidigal@novell.com>
 
+	* WebBrowser.cs, WebBrowserBase.cs: Delay loading of DocumentStream 
+	until an about:blank has been loaded (according to spec). Fix 
+	ScrollbarsEnabled to set when a document is loaded (since we use js 
+	for it). Fix url so it reflects the current loading document and not 
+	the previous one. Send StatusChanged events.
+
+2008-11-23  Andreia Gaita  <avidigal@novell.com>
+
 	* Application.cs: If a message comes in for an embedded control
 	(like webbrowser) when we're capturing the keyboard, release the
 	capture and continue.
