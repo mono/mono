@@ -1,5 +1,8 @@
 2008-11-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c(mono_save_xdebug_info): Emit complete debug info for
+	AOTed code too.
+	
 	* aot-compiler.c (mono_save_xdebug_info): Make this work with the assembly
 	writer too.
 
