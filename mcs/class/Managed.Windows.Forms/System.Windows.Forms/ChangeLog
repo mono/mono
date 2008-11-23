@@ -1,3 +1,10 @@
+2008-11-23  Andreia Gaita  <avidigal@novell.com>
+
+	* Application.cs: If a message comes in for an embedded control
+	(like webbrowser) when we're capturing the keyboard, release the
+	capture and continue.
+	[fixes #429462]
+
 2008-11-22  Andreia Gaita  <avidigal@novell.com>
 
 	* XplatUI.cs: Only use PlatformID.MacOSX enum when not building on VS

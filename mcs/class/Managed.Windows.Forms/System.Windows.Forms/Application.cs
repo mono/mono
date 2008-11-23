@@ -961,7 +961,14 @@ namespace System.Windows.Forms
 				case Msg.WM_RBUTTONDOWN:
 					if (keyboard_capture != null) {
 						Control c2 = Control.FromHandle (msg.hwnd);
-						
+
+						// the target is not a winforms control (an embedded control, perhaps), so
+						// release everything
+						if (c2 == null) {
+							ToolStripManager.FireAppClicked ();
+							goto default;
+						}
+
 						// If we clicked a ToolStrip, we have to make sure it isn't
 						// the one we are on, or any of its parents or children
 						// If we clicked off the dropped down menu, release everything
