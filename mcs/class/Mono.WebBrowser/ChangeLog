@@ -1,5 +1,11 @@
 2008-11-23  Andreia Gaita <shana@jitted.com>
 
+	* Mono.Mozilla/WebBrowser.cs: Do delayed resizing, when the resize happens 
+	before a window is created. Fix the window getter so it gets the top content
+	window if no window is focused.
+
+2008-11-23  Andreia Gaita <shana@jitted.com>
+
 	* Mono.Mozilla/Callback.cs: Send NS_BINDING_ABORTED code for a cancelled request.
 	* Mono.Mozilla/interfaces/nsIRequest.cs: Fix status type
 	[Fixes #445498]

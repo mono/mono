@@ -56,6 +56,10 @@ namespace Mono.Mozilla
 		bool streamingMode;
 		
 		internal Hashtable documents;
+
+		int width;
+		int height;
+		bool isDirty;
 		
 		public WebBrowser (Platform platform)
 		{
@@ -76,6 +80,10 @@ namespace Mono.Mozilla
 				if (!creating && !created) {
 					creating = true;
 					created = Base.Create (this);
+					if (created && isDirty) {
+						isDirty = false;
+						Base.Resize (this, width, height);
+					}
 				}
 				return created;
 			}
@@ -104,7 +112,10 @@ namespace Mono.Mozilla
 					nsIWebBrowserFocus webBrowserFocus = (nsIWebBrowserFocus) (navigation.navigation);
 					nsIDOMWindow window;
 					webBrowserFocus.getFocusedWindow (out window);
-					return new DOM.Window (this, window) as IWindow;
+					if (window == null)
+						((nsIWebBrowser) navigation.navigation).getContentDOMWindow (out window);
+					if (window != null)
+						return new DOM.Window (this, window) as IWindow;
 				}
 				return null;
 			}
@@ -284,6 +295,9 @@ namespace Mono.Mozilla
 
 		public void Resize (int width, int height)
 		{
+			this.width = width;
+			this.height = height;
+			isDirty = true;
 			if (!created) return;
 			Base.Resize (this, width, height);			
 		}
