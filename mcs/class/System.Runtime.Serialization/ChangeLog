@@ -1,3 +1,10 @@
+2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Runtime.Serialization_test.dll.soruces :
+	  remove ALL Mainsoft serialization tests that completely fail under
+	  .NET and reduce 107 test failures out of 113.
+	  They are English (language) dependent.
+
 2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 			Jb Evain  <jbevain@novell.com>
 

@@ -1,7 +1,3 @@
-System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes.cs
-System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes_mscorlib.cs
-System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes_System.cs
-System.Runtime.Serialization/DataContractSerializerTest_FrameworkTypes_System.Data.cs
 System.Runtime.Serialization/XmlObjectSerializerTest.cs
 System.Runtime.Serialization/XsdDataContractExporterTest.cs
 System.Runtime.Serialization/XsdDataContractImporterTest.cs
