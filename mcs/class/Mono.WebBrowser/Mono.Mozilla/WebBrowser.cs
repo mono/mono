@@ -38,19 +38,22 @@ namespace Mono.Mozilla
 {
 	internal class WebBrowser : IWebBrowser
 	{
-		private bool loaded;
-		private DOM.Document document;
+		bool loaded;
+		bool created = false;
+		bool creating = false;
+
+		DOM.Document document;
 		
 		internal DOM.Navigation navigation;
 		internal Platform platform;
 		internal Platform enginePlatform;
 		internal Callback callbacks;
-		private System.ComponentModel.EventHandlerList events;
-		private System.ComponentModel.EventHandlerList domEvents;
+		System.ComponentModel.EventHandlerList events;
+		System.ComponentModel.EventHandlerList domEvents;
 
-		private string statusText;
+		string statusText;
 
-		private bool streamingMode;
+		bool streamingMode;
 		
 		internal Hashtable documents;
 		
@@ -66,6 +69,16 @@ namespace Mono.Mozilla
 		{
 			loaded = Base.Bind (this, handle, width, height);
 			return loaded;
+		}
+
+		bool Created {
+			get {
+				if (!creating && !created) {
+					creating = true;
+					created = Base.Create (this);
+				}
+				return created;
+			}
 		}
 
 		public void Shutdown ()
@@ -107,6 +120,8 @@ namespace Mono.Mozilla
 
 		public INavigation Navigation {
 			get {
+				if (!Created) return null;
+
 				if (navigation == null) {
 					
 					nsIWebNavigation webNav = Base.GetWebNavigation (this);
@@ -123,6 +138,7 @@ namespace Mono.Mozilla
 		public bool Offline {
 			get {
 				bool ret;
+				if (!Created) return true;
 				IOService.getOffline (out ret);
 				return ret;
 			}
@@ -242,30 +258,35 @@ namespace Mono.Mozilla
 		#region Layout
 		public void FocusIn (FocusOption focus)
 		{
+			if (!created) return;
 			Base.Focus (this, focus);
 		}
 		public void FocusOut ()
 		{
+			if (!created) return;
 			Base.Blur (this);
 		}
 		
 		public void Activate ()
 		{
+			if (!created) return;
 			Base.Activate (this);
 		}
 		public void Deactivate ()
 		{
+			if (!created) return;
 			Base.Deactivate (this);
 		}
 
 		public void Resize (int width, int height)
 		{
+			if (!created) return;
 			Base.Resize (this, width, height);			
 		}
-		
 
 		public void Render (byte[] data)
 		{
+			if (!Created) return;
 			if (data == null)
 				throw new ArgumentNullException ("data");
 			string html = System.Text.ASCIIEncoding.UTF8.GetString (data);
@@ -274,13 +295,14 @@ namespace Mono.Mozilla
 
 		public void Render (string html)
 		{
+			if (!Created) return;
 			Render (html, "file:///", "text/html");
 		}
 
 				
 		public void Render (string html, string uri, string contentType)
 		{
-			
+			if (!Created) return;
 			nsIWebBrowserStream stream;
 			if (Navigation != null) {
 				stream = (nsIWebBrowserStream) navigation.navigation;
@@ -305,6 +327,7 @@ namespace Mono.Mozilla
 		}
 		
 		public void ExecuteScript (string script) {
+			if (!Created) return;
 			Base.EvalScript (this, script);
 		}
 				

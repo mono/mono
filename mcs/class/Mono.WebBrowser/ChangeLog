@@ -1,3 +1,10 @@
+2008-11-23  Andreia Gaita <shana@jitted.com> 
+
+	* Mono.Mozilla/Base.cs, Mono.Mozilla/WebBrowser.cs: Separate initialization 
+	in 3 stages so events can be registered before the window is actually created. 
+	The creation of the window is now done only when a user requests something
+	from the binding (like opening a window, or rendering content)
+
 2008-11-19  Andreia Gaita <shana@jitted.com> 
 
 	* Mono.Mozilla/DOM/Node.cs, Mono.Mozilla/DOM/Window.cs: Fix comparison operators
