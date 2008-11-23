@@ -1,3 +1,10 @@
+2008-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_remove_critical_edges): Split non-critical edges whose
+	source bblock ends with an OP_BR_REG.
+
+	* ratests.cs: Add a new test.
+
 2008-11-23  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c, mini-ppc64.h, tramp-ppc64.c: Disable generic code
