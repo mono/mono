@@ -1,5 +1,10 @@
 2008-11-23  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc64.c, mini-ppc64.h, tramp-ppc64.c: Disable generic code
+	sharing.  PPC64 now passes generics.exe.
+
+2008-11-23  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc64.c: Several fixes.  PPC64 now runs iltests.exe.
 
 2008-11-23  Zoltan Varga  <vargaz@gmail.com>
