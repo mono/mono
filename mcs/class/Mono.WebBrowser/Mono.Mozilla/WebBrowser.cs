@@ -39,10 +39,10 @@ namespace Mono.Mozilla
 	internal class WebBrowser : IWebBrowser
 	{
 		bool loaded;
-		bool created = false;
+		internal bool created = false;
 		bool creating = false;
 
-		DOM.Document document;
+		internal DOM.Document document;
 		
 		internal DOM.Navigation navigation;
 		internal Platform platform;
@@ -91,6 +91,7 @@ namespace Mono.Mozilla
 			this.document = null;
 			this.DomEvents.Dispose ();
 			this.domEvents = null;
+			this.documents.Clear ();
 		}
 
 		public bool Initialized {
@@ -191,7 +192,8 @@ namespace Mono.Mozilla
 				if (ioService == null) {
 					IntPtr ioServicePtr = IntPtr.Zero;
 
-					ioServicePtr = ServiceManager.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID);
+					ServiceManager.getServiceByContractID ("@mozilla.org/network/io-service;1", typeof (nsIIOService).GUID,
+						out ioServicePtr);
 					if (ioServicePtr == IntPtr.Zero)
 						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.IOService);
 
@@ -210,7 +212,8 @@ namespace Mono.Mozilla
 			get {
 				if (accessibilityService == null) {
 					IntPtr accessibilityServicePtr = IntPtr.Zero;
-					accessibilityServicePtr = ServiceManager.getServiceByContractID ("@mozilla.org/accessibilityService;1", typeof (nsIAccessibilityService).GUID);
+					ServiceManager.getServiceByContractID ("@mozilla.org/accessibilityService;1", typeof (nsIAccessibilityService).GUID,
+						out accessibilityServicePtr);
 					if (accessibilityServicePtr == IntPtr.Zero) {
 						throw new Mono.WebBrowser.Exception (Mono.WebBrowser.Exception.ErrorCodes.AccessibilityService);
 					}
@@ -231,7 +234,8 @@ namespace Mono.Mozilla
 				if (errorService == null) {
 					IntPtr errorServicePtr = IntPtr.Zero;
 
-					errorServicePtr = ServiceManager.getServiceByContractID ("@mozilla.org/xpcom/error-service;1", typeof (nsIErrorService).GUID);
+					ServiceManager.getServiceByContractID ("@mozilla.org/xpcom/error-service;1", typeof (nsIErrorService).GUID,
+						out errorServicePtr);
 					if (errorServicePtr == IntPtr.Zero)
 						return null;
 

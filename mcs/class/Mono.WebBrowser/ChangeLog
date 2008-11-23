@@ -1,5 +1,15 @@
 2008-11-23  Andreia Gaita <shana@jitted.com> 
 
+	* Mono.Mozilla/Callback.cs,
+	  Mono.Mozilla/DOM/DocumentEncoder.cs,
+	  Mono.Mozilla/DOM/HTMLElement.cs,
+	  Mono.Mozilla/WebBrowser.cs,
+	  Mono.Mozilla/interfaces/nsIServiceManager.cs:
+	  Fix ContentStream for xulrunner 1.8.
+	  Fix Document and Uri setting when loading new pages
+
+2008-11-23  Andreia Gaita <shana@jitted.com>
+
 	* Mono.Mozilla/Base.cs, Mono.Mozilla/WebBrowser.cs: Separate initialization 
 	in 3 stages so events can be registered before the window is actually created. 
 	The creation of the window is now done only when a user requests something

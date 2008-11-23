@@ -79,13 +79,24 @@ namespace Mono.Mozilla.DOM
 		{
 			// bad emulation of outerHTML since gecko doesn't support it :P
 			get {
-				control.DocEncoder.Flags = DocumentEncoderFlags.OutputRaw;
-				if (this.Equals (Owner.DocumentElement))
-					return control.DocEncoder.EncodeToString ((Document)Owner);
-				return control.DocEncoder.EncodeToString (this);					
+				try {
+					control.DocEncoder.Flags = DocumentEncoderFlags.OutputRaw;
+					if (this.Equals (Owner.DocumentElement))
+						return control.DocEncoder.EncodeToString ((Document) Owner);
+					return control.DocEncoder.EncodeToString (this);
+				} catch {
+					string tag = this.TagName;
+					string str = "<" + tag;
+					foreach (IAttribute att in this.Attributes) {
+						str += " " + att.Name + "=\"" + att.Value + "\"";
+					}
+					nsIDOMNSHTMLElement nsElem = this.node as nsIDOMNSHTMLElement;
+					nsElem.getInnerHTML (storage);
+					str += ">" + Base.StringGet (storage) + "</" + tag + ">";
+					return str;
+				}
 			}
 			set {
-				/*
 				nsIDOMDocumentRange docRange = ((Document) control.Document).XPComObject as nsIDOMDocumentRange;
 				nsIDOMRange range;
 				docRange.createRange (out range);
@@ -100,16 +111,28 @@ namespace Mono.Mozilla.DOM
 				nsIDOMNode newNode;
 				parent.replaceChild (fragment as nsIDOMNode, this.node as nsIDOMNode, out newNode);
 				this.node = newNode as Mono.Mozilla.nsIDOMHTMLElement;
-				*/
 			}
 		}
 
 		public override io.Stream ContentStream {
-			get { 
-				control.DocEncoder.Flags = DocumentEncoderFlags.OutputRaw;
-				if (this.Equals (Owner.DocumentElement))
-					return control.DocEncoder.EncodeToStream ((Document)Owner);
-				return control.DocEncoder.EncodeToStream (this);
+			get {
+				try {
+					control.DocEncoder.Flags = DocumentEncoderFlags.OutputRaw;
+					if (this.Equals (Owner.DocumentElement))
+						return control.DocEncoder.EncodeToStream ((Document) Owner);
+					return control.DocEncoder.EncodeToStream (this);
+				} catch {
+					string tag = this.TagName;
+					string str = "<" + tag;
+					foreach (IAttribute att in this.Attributes) {
+						str += " " + att.Name + "=\"" + att.Value + "\"";
+					}
+					nsIDOMNSHTMLElement nsElem = this.node as nsIDOMNSHTMLElement;
+					nsElem.getInnerHTML (storage);
+					str += ">" + Base.StringGet (storage) + "</" + tag + ">";
+					byte[] bytes = System.Text.ASCIIEncoding.UTF8.GetBytes (str);
+					return new io.MemoryStream (bytes);
+				}
 			}
 		}
 

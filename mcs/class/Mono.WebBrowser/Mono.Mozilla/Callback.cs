@@ -39,6 +39,7 @@ namespace Mono.Mozilla {
 	{
 		WebBrowser owner;
 		string currentUri;
+		bool calledLoadStarted;
 		
 		public Callback (WebBrowser owner) 
 		{
@@ -57,7 +58,10 @@ namespace Mono.Mozilla {
 
 
 		public void OnStateChange (nsIWebProgress progress, nsIRequest request, Int32 status, UInt32 state)
-		{			
+		{
+			if (!owner.created)
+				owner.created = true;
+
 #if debug
 			//OnGeneric ("OnStateChange");
 
@@ -92,45 +96,61 @@ namespace Mono.Mozilla {
 			Console.Error.WriteLine (s.ToString ());
 #endif
 
-		
-			if ((state & (uint) StateFlags.Start) != 0 && 
-				(state & (uint) StateFlags.IsRequest) != 0 &&
-				(state & (uint) StateFlags.IsDocument) != 0 &&
-			    (state & (uint) StateFlags.IsNetwork) != 0 && 
-			    (state & (uint) StateFlags.IsWindow) != 0 
-			    )
-			{
-				owner.documents.Clear ();
+			bool _start = (state & (uint) StateFlags.Start) != 0;
+			bool _negotiating = (state & (uint) StateFlags.Negotiating) != 0;
+			bool _transferring = (state & (uint) StateFlags.Transferring) != 0;
+			bool _redirecting = (state & (uint) StateFlags.Redirecting) != 0;
+			bool _stop = (state & (uint) StateFlags.Stop) != 0;
+			bool _request = (state & (uint) StateFlags.IsRequest) != 0;
+			bool _document = (state & (uint) StateFlags.IsDocument) != 0;
+			bool _network = (state & (uint) StateFlags.IsNetwork) != 0;
+			bool _window = (state & (uint) StateFlags.IsWindow) != 0;
+
+			if (_start && _request && !calledLoadStarted) {
+				nsIDOMWindow win;
+				progress.getDOMWindow (out win);
 				nsIChannel channel = (nsIChannel) request;
 				nsIURI uri;
 				channel.getURI (out uri);
 				if (uri == null)
 					currentUri = "about:blank";
 				else {
-					AsciiString spec = new AsciiString(String.Empty);
+					AsciiString spec = new AsciiString (String.Empty);
 					uri.getSpec (spec.Handle);
 					currentUri = spec.ToString ();
 				}
-				
-				LoadStartedEventHandler eh = (LoadStartedEventHandler) (owner.Events[WebBrowser.LoadStartedEvent]);
+
+				calledLoadStarted = true;
+				LoadStartedEventHandler eh = (LoadStartedEventHandler) (owner.Events [WebBrowser.LoadStartedEvent]);
 				if (eh != null) {
-					nsIDOMWindow win;
-					progress.getDOMWindow (out win);
+
 					AsciiString name = new AsciiString (String.Empty);
 					win.getName (name.Handle);
-					
+
 					LoadStartedEventArgs e = new LoadStartedEventArgs (currentUri, name.ToString ());
 					eh (this, e);
 					if (e.Cancel)
 						request.cancel (0);
 				}
+				return;
+
 			}
-				
-			if ((state & (uint) StateFlags.Stop) != 0 && 
-				(state & (uint) StateFlags.IsNetwork) != 0 &&
-				(state & (uint) StateFlags.IsWindow) != 0
-				)
-			{
+
+			if (_document && _request && _transferring) {
+				nsIDOMWindow win;
+				progress.getDOMWindow (out win);
+				nsIDOMWindow topWin;
+				win.getTop (out topWin);
+				if (topWin == null || topWin.GetHashCode () == win.GetHashCode ()) {
+					owner.Reset ();
+					nsIDOMDocument doc;
+					win.getDocument (out doc);
+					if (doc != null)
+						owner.document = new Mono.Mozilla.DOM.Document (owner, doc);
+				}
+			}
+
+			if (_stop && !_request && !_document && _network && _window) {
 			    LoadFinishedEventHandler eh1 = (LoadFinishedEventHandler) (owner.Events[WebBrowser.LoadFinishedEvent]);
 			    if (eh1 != null) {
 
@@ -140,10 +160,10 @@ namespace Mono.Mozilla {
 			        eh1 (this, e);
 
 			    }
+				return;
 			}
-			else if ((state & (uint) StateFlags.Stop) != 0 && 
-				(state & (uint) StateFlags.IsDocument) != 0)
-			{
+
+			if (_stop && !_request && _document && !_network && !_window) {
 				nsIDOMWindow win;
 				progress.getDOMWindow (out win);
 				nsIDOMDocument doc;
@@ -158,6 +178,8 @@ namespace Mono.Mozilla {
 							eh1 (this, null);
 				    }
 				}
+				calledLoadStarted = false;
+				return;
 			} 
 #if debug
 			Console.Error.WriteLine ("{0} completed", s.ToString ());

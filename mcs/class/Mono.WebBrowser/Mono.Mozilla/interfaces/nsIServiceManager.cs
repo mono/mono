@@ -42,9 +42,12 @@ namespace Mono.Mozilla {
 		IntPtr getService ([MarshalAs (UnmanagedType.LPStruct)]  Guid aClass,
 				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID);
 
+
+		[PreserveSigAttribute]
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
-		IntPtr getServiceByContractID ([MarshalAs (UnmanagedType.LPStr)]  string aContractID,
-				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID);
+		int getServiceByContractID ([MarshalAs (UnmanagedType.LPStr)]  string aContractID,
+				[MarshalAs (UnmanagedType.LPStruct)]  Guid aIID, 
+				out IntPtr ret);
 
 		[MethodImpl (MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
 		bool isServiceInstantiated ([MarshalAs (UnmanagedType.LPStruct)]  Guid aClass,
