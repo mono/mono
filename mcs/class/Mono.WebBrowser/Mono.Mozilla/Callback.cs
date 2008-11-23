@@ -130,7 +130,7 @@ namespace Mono.Mozilla {
 					LoadStartedEventArgs e = new LoadStartedEventArgs (currentUri, name.ToString ());
 					eh (this, e);
 					if (e.Cancel)
-						request.cancel (0);
+						request.cancel (2152398850); //NS_BINDING_ABORTED
 				}
 				return;
 

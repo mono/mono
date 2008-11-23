@@ -1,5 +1,11 @@
 2008-11-23  Andreia Gaita <shana@jitted.com>
 
+	* Mono.Mozilla/Callback.cs: Send NS_BINDING_ABORTED code for a cancelled request.
+	* Mono.Mozilla/interfaces/nsIRequest.cs: Fix status type
+	[Fixes #445498]
+
+2008-11-23  Andreia Gaita <shana@jitted.com>
+
 	* Mono.Mozilla/WebBrowser.cs: create the browser window when the control gets
 	activated so focus works properly
 
