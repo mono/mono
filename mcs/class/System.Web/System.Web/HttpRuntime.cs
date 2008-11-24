@@ -135,7 +135,11 @@ namespace System.Web {
 		static HttpRuntime ()
 		{
 			PlatformID pid = Environment.OSVersion.Platform;
-			runningOnWindows = ((int) pid != 128 && (int) pid != 4);
+			runningOnWindows = ((int) pid != 128
+#if NET_2_0
+					    && pid != PlatformID.Unix && pid != PlatformID.MacOSX
+#endif
+			);
 
 			if (runningOnWindows) {
 				caseInsensitive = true;
