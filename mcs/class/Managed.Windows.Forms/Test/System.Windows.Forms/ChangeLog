@@ -1,3 +1,7 @@
+2008-11-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Add test for bug #447873.
+
 2008-11-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripItemTest.cs: Add test to ensure we don't crash when
