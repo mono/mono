@@ -1,5 +1,14 @@
 2008-11-24  Jonathan Pobst  <monkey@jpobst.com>
 
+	* DataGridView.cs: Listen for a DataTable's TableCleared event so we
+	can clear ourselves when it is raised, we don't have a newrowindex
+	if we don't have any columns.
+	* DataGridViewRowCollection.cs: Ensure we always delete all the rows,
+	re-index after each delete so the NewRow will have the correct index.
+	[Fixes bug #448005]
+
+2008-11-24  Jonathan Pobst  <monkey@jpobst.com>
+
 	* Form.cs: Don't change min/max size if it is empty.
 	[Fixes bug #447873]
 

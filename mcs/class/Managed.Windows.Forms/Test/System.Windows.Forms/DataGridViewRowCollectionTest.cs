@@ -131,6 +131,24 @@ namespace MonoTests.System.Windows.Forms
 			// This was crashing in the bug
 			dgv.Sort (dgv.Columns[0], ListSortDirection.Ascending);
 		}
+		
+		[Test]  // bug #448005
+		public void ClearRows ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.Columns.Add ("A", "A");
+			dgv.Columns.Add ("A2", "A2");
+
+			dgv.Rows.Add (1, 2);
+			dgv.Rows.Add (1, 2);
+			dgv.Rows.Add (1, 2);
+			dgv.Rows.Add (1, 2);
+			dgv.Rows.Add (1, 2);
+
+			dgv.Rows.Clear ();
+
+			Assert.AreEqual (1, dgv.Rows.Count, "A1");
+		}
 	}
 }
 #endif

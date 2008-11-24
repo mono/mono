@@ -933,7 +933,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int NewRowIndex {
 			get {
-				if (!allowUserToAddRows) {
+				if (!allowUserToAddRows || ColumnCount == 0) {
 					return -1;
 				}
 				return rows.Count - 1;
@@ -5731,6 +5731,7 @@ namespace System.Windows.Forms {
 			if (list is DataView) {
 				(list as DataView).ListChanged += OnListChanged;
 				(list as DataView).Table.ColumnChanged += OnTableColumnChanged;
+				(list as DataView).Table.TableCleared += OnTableCleared;
 			}
 			
 			// Add the rows
@@ -6001,6 +6002,12 @@ namespace System.Windows.Forms {
 		}
 
 		private void OnDataSetTableChanged (object sender, CollectionChangeEventArgs e)
+		{
+			ClearBinding ();
+			DoBinding ();
+		}
+
+		private void OnTableCleared (object sender, DataTableClearEventArgs e)
 		{
 			ClearBinding ();
 			DoBinding ();

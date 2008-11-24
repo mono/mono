@@ -240,7 +240,9 @@ namespace System.Windows.Forms
 
 		public virtual void Clear ()
 		{
-			for (int i = 0; i < list.Count; i++) {
+			int total = list.Count;
+			
+			for (int i = 0; i < total; i++) {
 				DataGridViewRow row = (DataGridViewRow)list[0];
 				
 				// We can exit because the NewRow is always last
@@ -248,6 +250,7 @@ namespace System.Windows.Forms
 					break;
 					
 				list.Remove (row);
+				ReIndex ();
 			}
 		}
 

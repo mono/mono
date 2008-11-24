@@ -351,6 +351,90 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 			
 			f.Dispose();
 		}
+
+		[Test]
+		public void TestChangingDataSetAfterSettingDataSource ()
+		{
+			// Binding when AutoGenerateColumns is false
+			// and deleting rows from the dataset and DGV
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			DataSet ds = new DataSet ();
+
+			DataGridView dgv = new DataGridView ();
+			dgv.AutoGenerateColumns = false;
+			dgv.AllowUserToAddRows = false;
+
+			DataGridViewTextBoxColumn col1 = new DataGridViewTextBoxColumn ();
+			col1.DataPropertyName = "Name";
+			dgv.Columns.Add (col1);
+
+			dgv.DataSource = ds;
+			dgv.DataMember = "Muppets";
+
+			DataTable dt = ds.Tables.Add ("Muppets");
+
+			dt.Columns.Add ("ID");
+			dt.Columns.Add ("Name");
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			dt.Rows.Add (1, "Kermit");
+			dt.Rows.Add (2, "Miss Piggy");
+			dt.Rows.Add (3, "Gonzo");
+
+			Assert.AreEqual (1, dgv.ColumnCount, "A1");
+			Assert.AreEqual (3, dgv.RowCount, "A2");
+
+			dt.Rows[2].Delete ();
+			Assert.AreEqual (2, dgv.RowCount, "A3");
+
+			dgv.Rows.RemoveAt (0);
+			Assert.AreEqual (1, dgv.RowCount, "A4");
+
+			f.Dispose ();
+		}
+
+		[Test]  // bug #448005
+		public void TestClearing ()
+		{
+			// Binding to a DataSet doesn't work unless you specify DataMember
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			DataSet ds = new DataSet ();
+
+			DataTable dt = ds.Tables.Add ("Muppets");
+
+			dt.Columns.Add ("ID");
+			dt.Columns.Add ("Name");
+			dt.Columns.Add ("Sex");
+
+			dt.Rows.Add (1, "Kermit", "Male");
+			dt.Rows.Add (2, "Miss Piggy", "Female");
+			dt.Rows.Add (3, "Gonzo", "Male");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.DataSource = ds;
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			dgv.DataMember = "Muppets";
+
+			Assert.AreEqual (3, dgv.Columns.Count, "A1");
+			Assert.AreEqual (4, dgv.Rows.Count, "A2");
+			
+			ds.Tables[0].Clear ();
+			
+			Assert.AreEqual (3, dgv.Columns.Count, "A3");
+			Assert.AreEqual (1, dgv.Rows.Count, "A4");
+
+			f.Dispose ();
+		}
+
 	}
 	
 	[TestFixture]
