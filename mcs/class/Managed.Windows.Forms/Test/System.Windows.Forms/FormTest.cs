@@ -2327,6 +2327,20 @@ namespace MonoTests.System.Windows.Forms
 			
 			f.Dispose ();
 		}
+
+		[Test]
+		public void MinSizeIssue ()
+		{
+			Form f = new Form ();
+
+			f.MinimumSize = new Size (100, 100);
+
+			f.Show ();
+
+			Assert.AreEqual (new Size (300, 300), f.Size, "A1");
+
+			f.Dispose ();
+		}
 		
 		[Test]  // Bug #81582
 		[Category ("NotWorking")]

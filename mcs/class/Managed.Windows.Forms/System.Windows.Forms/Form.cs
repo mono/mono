@@ -891,10 +891,12 @@ namespace System.Windows.Forms {
 					maximum_size = value;
 
 					// If this is smaller than the min, adjust the min
-					if (maximum_size.Width <= minimum_size.Width)
-						minimum_size.Width = maximum_size.Width;
-					if (maximum_size.Height <= minimum_size.Height)
-						minimum_size.Height = maximum_size.Height;
+					if (!minimum_size.IsEmpty) {
+						if (maximum_size.Width <= minimum_size.Width)
+							minimum_size.Width = maximum_size.Width;
+						if (maximum_size.Height <= minimum_size.Height)
+							minimum_size.Height = maximum_size.Height;
+					}
 						
 					OnMaximumSizeChanged(EventArgs.Empty);
 					if (IsHandleCreated) {
@@ -1077,11 +1079,13 @@ namespace System.Windows.Forms {
 					minimum_size = value;
 
 					// If this is bigger than the max, adjust the max
-					if (minimum_size.Width >= maximum_size.Width)
-						maximum_size.Width = minimum_size.Width;
-					if (minimum_size.Height >= maximum_size.Height)
-						maximum_size.Height = minimum_size.Height;
-
+					if (!maximum_size.IsEmpty) {
+						if (minimum_size.Width >= maximum_size.Width)
+							maximum_size.Width = minimum_size.Width;
+						if (minimum_size.Height >= maximum_size.Height)
+							maximum_size.Height = minimum_size.Height;
+					}
+					
 					if ((Size.Width < value.Width) || (Size.Height < value.Height)) {
 						Size = new Size(Math.Max(Size.Width, value.Width), Math.Max(Size.Height, value.Height));
 					}

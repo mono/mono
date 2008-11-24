@@ -1,3 +1,7 @@
+2008-11-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FormTest.cs: Add test for bug #447873.
+
 2008-11-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayoutTest.cs: Add some tests from Jonathan Anderson
