@@ -99,7 +99,7 @@ namespace System.Drawing
 		static GDIPlus ()
 		{
 			int platform = (int) Environment.OSVersion.Platform;
-			if ((platform == 4) || (platform == 128)) {
+			if ((platform == 4) || (platform == 6) || (platform == 128)) {
 				if (Environment.GetEnvironmentVariable ("not_supported_MONO_MWF_USE_NEW_X11_BACKEND") != null || Environment.GetEnvironmentVariable ("MONO_MWF_MAC_FORCE_X11") != null) {
 					UseX11Drawable = true;
 				} else {
