@@ -1,3 +1,7 @@
+2008-11-24  Mark Probst  <mark.probst@gmail.com>
+
+	* basic-long.cs: New test case.
+
 2008-11-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Disable globalra for large methods for 
