@@ -1,3 +1,8 @@
+2008-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* regalloc2.c: Distinguish between use/def positions. Optimize the creation of
+	volatile intervals a bit.
+
 2008-11-24  Mark Probst  <mark.probst@gmail.com>
 
 	* basic-long.cs: New test case.
