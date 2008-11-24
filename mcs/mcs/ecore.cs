@@ -3720,7 +3720,10 @@ namespace Mono.CSharp {
 				}
 				Report.Error (1950, loc, "The best overloaded collection initalizer method `{0}' has some invalid arguments",
 					  TypeManager.CSharpSignature (method));
-			} else if (delegate_type == null) {
+			} else if (TypeManager.IsDelegateType (method.DeclaringType)) {
+				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
+					TypeManager.CSharpName (method.DeclaringType));
+			} else {
 				Report.SymbolRelatedToPreviousError (method);
 				if (emg != null) {
 					Report.Error (1928, loc,
@@ -3731,9 +3734,7 @@ namespace Mono.CSharp {
 					Report.Error (1502, loc, "The best overloaded method match for `{0}' has some invalid arguments",
 						TypeManager.CSharpSignature (method));
 				}
-			} else
-				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
-					TypeManager.CSharpName (delegate_type));
+			}
 
 			Parameter.Modifier mod = idx >= expected_par.Count ? 0 : expected_par.FixedParameters [idx].ModFlags;
 
@@ -3905,9 +3906,7 @@ namespace Mono.CSharp {
 				if (a_type != parameter)
 					return 2;
 			} else {
-				if (delegate_type != null ?
-					!Delegate.IsTypeCovariant (argument.Expr, parameter) :
-					!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
+				if (!Convert.ImplicitConversionExists (ec, argument.Expr, parameter))
 					return 2;
 			}
 
@@ -4476,6 +4475,9 @@ namespace Mono.CSharp {
 
 					continue;
 				}
+
+				if (delegate_type != null && !Delegate.IsTypeCovariant (a.Expr, pt))
+					break;
 
 				Expression conv = Convert.ImplicitConversion (ec, a.Expr, pt, loc);
 				if (conv == null)

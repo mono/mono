@@ -1,3 +1,8 @@
+2008-11-24  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs, delegate.cs: MethodGroup expressions can be applicable
+	but not verifiable.
+
 2008-11-21  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, decl.cs, anonymous.cs, class.cs, enum.cs: Rewrote
