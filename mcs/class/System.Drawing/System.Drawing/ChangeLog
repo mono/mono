@@ -1,3 +1,8 @@
+2008-11-24  Geoff Norton  <gnorton@novell.com>
+
+	* gdipFunctions.cs: Ensure that System.Drawing works on the mac as 
+	well as unix.
+
 2008-11-21  Andreia Gaita  <shana@jitted.com>
 
 	* Image.cs: On win32, when cloning images initialized from
