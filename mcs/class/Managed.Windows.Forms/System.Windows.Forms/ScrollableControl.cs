@@ -981,8 +981,7 @@ namespace System.Windows.Forms {
 			/* Manually setting the size of the thumb should be done before
 			 * the other assignments */
 			if (hscroll_visible) {
-				hscrollbar.SetThumbSize (right_edge);
-				hscrollbar.LargeChange = right_edge;
+				hscrollbar.SetManualLargeChange (right_edge);
 				hscrollbar.SmallChange = 5;
 				hscrollbar.Maximum = canvas.Width - 1;
 			} else {
@@ -993,8 +992,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (vscroll_visible) {
-				vscrollbar.SetThumbSize (bottom_edge);
-				vscrollbar.LargeChange = bottom_edge;
+				vscrollbar.SetManualLargeChange (bottom_edge);
 				vscrollbar.SmallChange = 5;
 				vscrollbar.Maximum = canvas.Height - 1;
 			} else {
@@ -1092,7 +1090,7 @@ namespace System.Windows.Forms {
 			hscrollbar.Visible = false;
 			hscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
 			hscrollbar.Height = SystemInformation.HorizontalScrollBarHeight;
-			hscrollbar.manual_thumb_size = true;
+			hscrollbar.use_manual_thumb_size = true;
 #if NET_2_0
 			hscrollbar.Scroll += new ScrollEventHandler (HandleScrollEvent);
 #endif
@@ -1101,7 +1099,7 @@ namespace System.Windows.Forms {
 			vscrollbar.Visible = false;
 			vscrollbar.ValueChanged += new EventHandler (HandleScrollBar);
 			vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
-			vscrollbar.manual_thumb_size = true;
+			vscrollbar.use_manual_thumb_size = true;
 #if NET_2_0
 			vscrollbar.Scroll += new ScrollEventHandler (HandleScrollEvent);
 #endif
