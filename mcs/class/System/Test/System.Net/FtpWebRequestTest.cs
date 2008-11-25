@@ -5,7 +5,7 @@
 //	Carlos Alberto Cortez <calberto.cortez@gmail.com>
 // 	Gonzalo Paniagua Javier <gonzalo@novell.com>
 //
-// Copyright (c) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2006,2007,2008 Novell, Inc. (http://www.novell.com)
 //
 #if NET_2_0
 using NUnit.Framework;
@@ -180,6 +180,7 @@ namespace MonoTests.System.Net
 			string uri = String.Format ("ftp://{0}:{1}/uploads/file.txt", sp.IPAddress, sp.Port);
 			try {
 				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
+				ftp.KeepAlive = false;
 				ftp.Timeout = 5000;
 				ftp.Method = WebRequestMethods.Ftp.UploadFile;
 				ftp.ContentLength = 1;
@@ -188,66 +189,124 @@ namespace MonoTests.System.Net
 				stream.WriteByte (0);
 				stream.Close ();
 				FtpWebResponse response = (FtpWebResponse) ftp.GetResponse ();
-				Assert.IsTrue ((int) response.StatusCode >= 200 && (int) response.StatusCode < 300, "#01");
-			} catch (Exception e) {
-				throw new Exception (sp.Where);
+				Assert.IsTrue ((int) response.StatusCode >= 200 && (int) response.StatusCode < 300, "UP#01");
+				response.Close ();
+			} catch (Exception) {
+				if (!String.IsNullOrEmpty (sp.Where))
+					throw new Exception (sp.Where);
+				throw;
 			} finally {
 				sp.Stop ();
 			}
 		}
 
-		class ServerPut : FtpServer {
-			public string Where = "";
+		[Test]
+		public void DownloadFile1 ()
+		{
+			ServerDownload sp = new ServerDownload ();
+			sp.Start ();
+			string uri = String.Format ("ftp://{0}:{1}/file.txt", sp.IPAddress, sp.Port);
+			try {
+				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
+				ftp.KeepAlive = false;
+				ftp.Timeout = 5000;
+				ftp.Method = WebRequestMethods.Ftp.DownloadFile;
+				ftp.UseBinary = true;
+				FtpWebResponse response = (FtpWebResponse) ftp.GetResponse ();
+				Assert.IsTrue ((int) response.StatusCode >= 100 && (int) response.StatusCode < 200, "DL#01");
+				using (Stream st = response.GetResponseStream ()) {
+				}
+				// This should be "220 Bye" or similar (no KeepAlive)
+				Assert.IsTrue ((int) response.StatusCode >= 200 && (int) response.StatusCode < 300, "DL#02");
+				response.Close ();
+			} catch (Exception) {
+				if (!String.IsNullOrEmpty (sp.Where))
+					throw new Exception (sp.Where);
+				throw;
+			} finally {
+				sp.Stop ();
+			}
+		}
 
+		class ServerDownload : FtpServer {
 			protected override void Run ()
 			{
 				Socket client = control.Accept ();
 				NetworkStream ns = new NetworkStream (client, false);
 				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
-				writer.WriteLine ("220 Welcome to the jungle");
-				writer.Flush ();
-				StreamReader reader = new StreamReader (ns, Encoding.ASCII);
+				StreamReader reader = new StreamReader (ns, Encoding.UTF8);
+				if (!DoAnonymousLogin (writer, reader)) {
+					client.Close ();
+					return;
+				}
+
+				if (!DoInitialDialog (writer, reader, "/home/someuser", "/home/someuser/")) {
+					client.Close ();
+					return;
+				}
+
 				string str = reader.ReadLine ();
-				if (!str.StartsWith ("USER ")) {
-					Where = "USER";
+				if (str != "PASV") {
+					Where = "PASV";
 					client.Close ();
 					return;
 				}
-				writer.WriteLine ("331 Say 'Mellon'");
+
+				IPEndPoint end_data = (IPEndPoint) data.LocalEndPoint;
+				byte [] addr_bytes = end_data.Address.GetAddressBytes ();
+				byte [] port = new byte [2];
+				port[0] = (byte) ((end_data.Port >> 8) & 255);
+				port[1] = (byte) (end_data.Port & 255);
+				StringBuilder sb = new StringBuilder ("227 Passive (");
+				foreach (byte b in addr_bytes) {
+					sb.AppendFormat ("{0},", b);	
+				}
+				sb.AppendFormat ("{0},", port [0]);	
+				sb.AppendFormat ("{0})", port [1]);	
+				writer.WriteLine (sb.ToString ());
 				writer.Flush ();
+
 				str = reader.ReadLine ();
-				if (!str.StartsWith ("PASS ")) {
-					Where = "PASS";
+				if (str != "RETR file.txt") {
+					Where = "RETR - " + str;
 					client.Close ();
 					return;
 				}
-				writer.WriteLine ("230 Logged in");
+				writer.WriteLine ("150 Opening BINARY mode data connection for blah (n bytes)");
 				writer.Flush ();
-				str = reader.ReadLine ();
-				if (!str.StartsWith ("PWD")) {
-					Where = "PWD";
+
+				Socket data_cnc = data.Accept ();
+				byte [] dontcare = new byte [1];
+				data_cnc.Receive (dontcare, 1, SocketFlags.None);
+				data_cnc.Close ();
+				writer.WriteLine ("226 File send Ok");
+				writer.Flush ();
+				if (!EndConversation (writer, reader)) {
 					client.Close ();
 					return;
 				}
-				writer.WriteLine ("257 \"/home/someuser\"");
-				writer.Flush ();
-				str = reader.ReadLine ();
-				if (str != ("CWD /home/someuser/uploads/")) {
-					Where = "CWD - " + str;
+				client.Close ();
+			}
+		}
+
+		class ServerPut : FtpServer {
+			protected override void Run ()
+			{
+				Socket client = control.Accept ();
+				NetworkStream ns = new NetworkStream (client, false);
+				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
+				StreamReader reader = new StreamReader (ns, Encoding.UTF8);
+				if (!DoAnonymousLogin (writer, reader)) {
 					client.Close ();
 					return;
 				}
-				writer.WriteLine ("250 Directory changed");
-				writer.Flush ();
-				str = reader.ReadLine ();
-				if (str != ("TYPE I")) {
-					Where = "TYPE - " + str;
+
+				if (!DoInitialDialog (writer, reader, "/home/someuser", "/home/someuser/uploads/")) {
 					client.Close ();
 					return;
 				}
-				writer.WriteLine ("200 Switching to binary mode");
-				writer.Flush ();
-				str = reader.ReadLine ();
+
+				string str = reader.ReadLine ();
 				if (str != "PASV") {
 					Where = "PASV";
 					client.Close ();
@@ -283,25 +342,19 @@ namespace MonoTests.System.Net
 				data_cnc.Close ();
 				writer.WriteLine ("226 File received Ok");
 				writer.Flush ();
-				str = reader.ReadLine ();
-				if (str != "QUIT") {
-					Where = "QUIT";
+				if (!EndConversation (writer, reader)) {
 					client.Close ();
 					return;
 				}
-				writer.WriteLine ("220 Bye");
-				writer.Flush ();
-				Thread.Sleep (250);
 				client.Close ();
 			}
 		}
 
-		abstract class FtpServer
-		{
+		abstract class FtpServer {
 			protected Socket control;
 			protected Socket data;
-			protected Exception error;
 			protected ManualResetEvent evt;
+			public string Where = "";
 
 			public FtpServer ()
 			{
@@ -326,6 +379,74 @@ namespace MonoTests.System.Net
 				data.Close ();
 				control.Close ();
 			}
+
+			// PWD, CWD and TYPE I (type could be moved out of here)
+			protected bool DoInitialDialog (StreamWriter writer, StreamReader reader, string pwd, string cwd)
+			{
+				string str = reader.ReadLine ();
+				if (!str.StartsWith ("OPTS utf8 on")) {
+					Where = "OPTS utf8 - " + str;
+					return false;
+				}
+				writer.WriteLine ("200 Always in UTF8 mode"); // vsftpd
+				writer.Flush ();
+				str = reader.ReadLine ();
+				if (!str.StartsWith ("PWD")) {
+					Where = "PWD - " + str;
+					return false;
+				}
+				writer.WriteLine ("257 \"{0}\"", pwd);
+				writer.Flush ();
+				str = reader.ReadLine ();
+				if (str != ("CWD " + cwd)) {
+					Where = "CWD - " + str;
+					return false;
+				}
+				writer.WriteLine ("250 Directory changed");
+				writer.Flush ();
+				str = reader.ReadLine ();
+				if (str != ("TYPE I")) {
+					Where = "TYPE - " + str;
+					return false;
+				}
+				writer.WriteLine ("200 Switching to binary mode");
+				writer.Flush ();
+				return true;
+			}
+
+			protected bool EndConversation (StreamWriter writer, StreamReader reader)
+			{
+				string str = reader.ReadLine ();
+				if (str != "QUIT") {
+					Where = "QUIT";
+					return false;
+				}
+				writer.WriteLine ("220 Bye");
+				writer.Flush ();
+				Thread.Sleep (250);
+				return true;
+			}
+
+			protected bool DoAnonymousLogin (StreamWriter writer, StreamReader reader)
+			{
+				writer.WriteLine ("220 Welcome to the jungle");
+				writer.Flush ();
+				string str = reader.ReadLine ();
+				if (!str.StartsWith ("USER ")) {
+					Where = "USER";
+					return false;
+				}
+				writer.WriteLine ("331 Say 'Mellon'");
+				writer.Flush ();
+				str = reader.ReadLine ();
+				if (!str.StartsWith ("PASS ")) {
+					Where = "PASS";
+					return false;
+				}
+				writer.WriteLine ("230 Logged in");
+				writer.Flush ();
+				return true;
+			}
 			
 			public IPAddress IPAddress {
 				get { return ((IPEndPoint) control.LocalEndPoint).Address; }
@@ -335,13 +456,8 @@ namespace MonoTests.System.Net
 				get { return ((IPEndPoint) control.LocalEndPoint).Port; }
 			}
 
-			public Exception Error { 
-				get { return error; }
-			}
-
 			protected abstract void Run ();
 		}
-
 	}
 }
 
