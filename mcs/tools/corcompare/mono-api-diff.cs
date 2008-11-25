@@ -28,8 +28,7 @@ namespace Mono.AssemblyCompare
 			XMLAssembly mono = CreateXMLAssembly (args [1]);
 			XmlDocument doc = ms.CompareAndGetDocument (mono);
 
-			XmlTextWriter writer = new XmlTextWriter (Console.Out);
-			writer.Formatting = Formatting.Indented;
+			var writer = new WellFormedXmlWriter (new XmlTextWriter (Console.Out) { Formatting = Formatting.Indented });
 			doc.WriteTo (writer);
 
 			return 0;

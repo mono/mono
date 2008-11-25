@@ -1,5 +1,5 @@
 thisdir = tools/corcompare
-SUBDIRS = 
+SUBDIRS =
 include ../../build/rules.make
 
 ALL_PROGRAMS = CorCompare.exe mono-api-info.exe mono-api-diff.exe transform.exe
@@ -22,7 +22,8 @@ COMMON_SOURCES = \
 	MissingProperty.cs \
 	MissingType.cs \
 	ToDoAssembly.cs	\
-	Util.cs
+	Util.cs	\
+	WellFormedXmlWriter.cs
 
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
