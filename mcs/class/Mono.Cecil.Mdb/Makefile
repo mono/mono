@@ -9,4 +9,8 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:Mono.Cecil.dll /d:CECIL -keyfile:$(LIBRARY_SNK)
 
 NO_TEST = yes
 
+ifneq (net_1_1, $(PROFILE))
+NO_INSTALL = yes
+endif
+
 include ../../build/library.make
