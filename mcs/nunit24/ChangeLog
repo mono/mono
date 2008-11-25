@@ -1,0 +1,8 @@
+2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : remove nonexistent distfiles.
+
+2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* import NUnit 2.4.8 to replace with fresh version.
+
