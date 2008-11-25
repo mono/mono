@@ -1,3 +1,8 @@
+2008-11-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Consts.cs.in: Update Silverlight's FxFileVersion to final
+	  version number of Silverlight 2.
+
 2008-08-20  Jb Evain  <jbevain@novell.com>
 
 	* Consts.cs.in: add NET_3_0 case for wcf.
