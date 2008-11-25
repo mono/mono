@@ -1,3 +1,8 @@
+
+2008-11-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* pedump.c: initialize perf. counters. Fixes a segv.
+
 2008-11-25  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c
