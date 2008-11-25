@@ -476,18 +476,22 @@ namespace Mono.CSharp {
 		public static MethodBase VerifyMethod (Type container_type, Type delegate_type,
 						       MethodGroupExpr old_mg, MethodBase mb)
 		{
+			bool is_method_definition = mb.IsGenericMethodDefinition;
+			
 			MethodInfo invoke_mb = GetInvokeMethod (container_type, delegate_type);
 			if (invoke_mb == null)
 				return null;
+				
+			if (is_method_definition)
+				invoke_mb = (MethodInfo) TypeManager.DropGenericMethodArguments (invoke_mb);
 
 			AParametersCollection invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
 #if GMCS_SOURCE
-			if (old_mg.type_arguments == null &&
+			if (!is_method_definition && old_mg.type_arguments == null &&
 			    !TypeManager.InferTypeArguments (invoke_pd, ref mb))
 				return null;
 #endif
-
 			AParametersCollection pd = TypeManager.GetParameterData (mb);
 
 			if (invoke_pd.Count != pd.Count)
@@ -507,14 +511,13 @@ namespace Mono.CSharp {
 				if (invoke_pd_type_mod != pd_type_mod)
 					return null;
 
-				if (invoke_pd_type == pd_type)
+				if (TypeManager.IsEqual (invoke_pd_type, pd_type))
 					continue;
 
-				//if (!IsTypeCovariant (invoke_pd_type, pd_type))
-				//	return null;
+				if (IsTypeCovariant (new EmptyExpression (invoke_pd_type), pd_type))
+					continue;
 
-				if (RootContext.Version == LanguageVersion.ISO_1)
-					return null;
+				return null;
 			}
 
 			Type invoke_mb_retval = ((MethodInfo) invoke_mb).ReturnType;
