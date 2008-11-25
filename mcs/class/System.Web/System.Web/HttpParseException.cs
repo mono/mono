@@ -52,9 +52,16 @@ namespace System.Web {
 			this.virtualPath = virtualPath;
 			this.line = line;
 		}
-
+		
 #if NET_2_0
-
+		HttpParseException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+                {
+			line = info.GetInt32 ("_line");
+			virtualPath = info.GetString ("_virtualPath");
+			errors = info.GetValue ("_parserErrors", typeof (ParserErrorCollection)) as ParserErrorCollection;
+                }
+		
 		public HttpParseException (): this ("External component has thrown an exception")
 		{
 		}

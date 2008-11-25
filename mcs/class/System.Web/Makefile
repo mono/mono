@@ -143,6 +143,15 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/RedirectOnError.aspx \
 	Test/mainsoft/NunitWebResources/TestCapability.browser \
 	Test/mainsoft/NunitWebResources/PageWithAdapter.aspx \
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind1.aspx \
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind2.aspx \
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind3.aspx \
+	Test/mainsoft/NunitWebResources/InvalidPropertyBind4.aspx \
+	Test/mainsoft/NunitWebResources/ValidPropertyBind1.aspx \
+	Test/mainsoft/NunitWebResources/ValidPropertyBind2.aspx \
+	Test/mainsoft/NunitWebResources/ValidPropertyBind3.aspx \
+	Test/mainsoft/NunitWebResources/ValidPropertyBind4.aspx \
+	Test/mainsoft/NunitWebResources/ReadWritePropertyControl.ascx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml \
 	Test/mainsoft/NunitWebResources/TemplateControlParsingTest.aspx
 

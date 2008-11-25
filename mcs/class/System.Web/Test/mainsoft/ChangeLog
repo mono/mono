@@ -1,3 +1,23 @@
+2008-11-21  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWebResources/WebLogin.config,
+	NunitWebResources/WebControl.config: disabled batch compilation.
+
+	* NunitWebResources/WebMapping.config: enabled debugging and
+	disabled batch compilation.
+
+	* NunitWebResources/InvalidPropertyBind1.aspx,
+	NunitWebResources/InvalidPropertyBind2.aspx,
+	NunitWebResources/InvalidPropertyBind3.aspx,
+	NunitWebResources/InvalidPropertyBind4.aspx,
+	NunitWebResources/ValidPropertyBind1.aspx,
+	NunitWebResources/ValidPropertyBind2.aspx,
+	NunitWebResources/ValidPropertyBind3.aspx,
+	NunitWebResources/ValidPropertyBind4.aspx,
+	NunitWebResources/ReadWritePropertyControl.ascx: added
+
+	* MainsoftWebApp20/Web.config: disabled batch compilation
+
 2008-10-09  Marek Habersack  <mhabersack@novell.com>
 
 	* NunitWebResources/TemplateControlParsingTest.aspx: added
