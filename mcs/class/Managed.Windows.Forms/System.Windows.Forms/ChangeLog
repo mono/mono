@@ -1,3 +1,11 @@
+2008-11-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ScrollableControl.cs: When scrolling, don't invalidate the entire
+	area, and call to XplatUIX11.ScrollWindow instead. This is exactly
+	what .Net does: copy the visible area, and only invalidate the part of
+	the area that wasn't visible before scrolling.
+	Fixes #441738.
+
 2008-11-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Listen for a DataTable's TableCleared event so we

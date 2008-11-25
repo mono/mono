@@ -1129,9 +1129,7 @@ namespace System.Windows.Forms {
 			scroll_position.X += XOffset;
 			scroll_position.Y += YOffset;
 
-			// Should we call XplatUI.ScrollWindow??? If so, we need to position our windows by other means above
-			// Since we're already causing a redraw above
-			Invalidate(false);
+			XplatUI.ScrollWindow (Handle, ClientRectangle, -XOffset, -YOffset, false);
 			ResumeLayout(false);
 		}
 		#endregion	// Internal & Private Methods
