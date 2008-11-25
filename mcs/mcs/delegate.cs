@@ -476,7 +476,7 @@ namespace Mono.CSharp {
 		public static MethodBase VerifyMethod (Type container_type, Type delegate_type,
 						       MethodGroupExpr old_mg, MethodBase mb)
 		{
-			bool is_method_definition = mb.IsGenericMethodDefinition;
+			bool is_method_definition = TypeManager.IsGenericMethodDefinition (mb);
 			
 			MethodInfo invoke_mb = GetInvokeMethod (container_type, delegate_type);
 			if (invoke_mb == null)
