@@ -1,3 +1,9 @@
+2008-11-21  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: in BindingContainerType if builder is a
+	RootBuilder and no naming container is found, return typeof
+	(Page). In the TemplateBuilder case return cb.ControlType, not
+	this.ControlType.
 
 2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

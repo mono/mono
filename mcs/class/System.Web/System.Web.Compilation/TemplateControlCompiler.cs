@@ -67,9 +67,9 @@ namespace System.Web.Compilation
 		
 #if NET_2_0
 		static Regex bindRegex = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		static Regex bindRegexInValue = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\).*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex bindRegexInValue = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
-		static Regex evalRegexInValue = new Regex (@"Eval\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\).*", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static Regex evalRegexInValue = new Regex (@"(.*)Eval\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		
 		public TemplateControlCompiler (TemplateControlParser parser)
 			: base (parser)
@@ -467,15 +467,38 @@ namespace System.Web.Compilation
 		CodeExpression CreateEvalInvokeExpression (Regex regex, string value, bool isBind)
 		{
 			Match match = regex.Match (value);
-			if (!match.Success)
+			if (!match.Success) {
+#if NET_2_0
+				if (isBind)
+					throw new HttpParseException ("Bind invocation wasn't formatted properly.");
+#endif
 				return null;
+			}
 			
+			string sanitizedSnippet;
 			if (isBind)
-				return new CodeSnippetExpression ("Eval" + value.Substring (4));
+				sanitizedSnippet = SanitizeBindCall (match);
+			else
+				sanitizedSnippet = value;
 			
-			return new CodeSnippetExpression (value);
+			return new CodeSnippetExpression (sanitizedSnippet);
 		}
 
+		string SanitizeBindCall (Match match)
+		{
+			GroupCollection groups = match.Groups;
+			StringBuilder sb = new StringBuilder ("Eval(\"" + groups [1] + "\"");
+			Group second = groups [2];
+			if (second != null) {
+				string v = second.Value;
+				if (v != null && v.Length > 0)
+					sb.Append (",\"" + second + "\"");
+			}
+			
+			sb.Append (")");
+			return sb.ToString ();
+		}
+		
 		string DataBoundProperty (ControlBuilder builder, Type type, string varName, string value)
 		{
 			value = TrimDB (value, true);
