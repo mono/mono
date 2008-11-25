@@ -1,11 +1,11 @@
 thisdir := .
 
-SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors docs
+SUBDIRS := build jay mcs class nunit24 ilasm tools tests
 
 basic_SUBDIRS := build jay mcs class
 net_1_1_bootstrap_SUBDIRS := build jay mcs class ilasm tools
 net_2_0_bootstrap_SUBDIRS := build jay mcs class ilasm tools
-net_2_0_SUBDIRS := build jay mcs class nunit20 ilasm tools tests errors docs
+net_2_0_SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors
 net_2_1_bootstrap_SUBDIRS := build mcs class
 net_2_1_raw_SUBDIRS := build mcs class tools
 net_2_1_SUBDIRS := tools tests errors
