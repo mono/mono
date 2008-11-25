@@ -537,6 +537,42 @@ namespace System.Net
 			}
 		}
 
+		string GetRemoteFolderPath (Uri uri)
+		{
+			string result;
+			string local_path = Uri.UnescapeDataString (uri.LocalPath);
+			if (initial_path == null) {
+				result = local_path;
+			} else {
+				if (local_path [0] == '/')
+					local_path = local_path.Substring (1);
+				Uri initial = new Uri (initial_path);
+				result = new Uri (initial, local_path).LocalPath;
+			}
+
+			int last = result.LastIndexOf ('/');
+			if (last == -1)
+				return null;
+
+			return result.Substring (0, last + 1);
+		}
+
+		void CWDAndSetFileName (Uri uri)
+		{
+			string remote_folder = GetRemoteFolderPath (uri);
+			FtpStatus status;
+			if (remote_folder != null) {
+				status = SendCommand (ChangeDir, remote_folder);
+				if ((int) status.StatusCode < 200 || (int) status.StatusCode >= 300)
+					throw CreateExceptionFromResponse (status);
+
+				int last = uri.LocalPath.LastIndexOf ('/');
+				if (last >= 0) {
+					file_name = Uri.UnescapeDataString (uri.LocalPath.Substring (last + 1));
+				}
+			}
+		}
+
 		void ProcessMethod ()
 		{
 			State = RequestState.Connecting;
@@ -548,6 +584,10 @@ namespace System.Net
 			switch (method) {
 			// Open data connection and receive data
 			case WebRequestMethods.Ftp.DownloadFile:
+				CWDAndSetFileName (requestUri);
+				SetType ();
+				DownloadData ();
+				break;
 			case WebRequestMethods.Ftp.ListDirectory:
 			case WebRequestMethods.Ftp.ListDirectoryDetails:
 				SetType ();
@@ -557,18 +597,7 @@ namespace System.Net
 			case WebRequestMethods.Ftp.AppendFile:
 			case WebRequestMethods.Ftp.UploadFile:
 			case WebRequestMethods.Ftp.UploadFileWithUniqueName:
-				string remote_folder = GetRemoteFolderPath (requestUri);
-				FtpStatus status;
-				if (remote_folder != null) {
-					status = SendCommand (ChangeDir, remote_folder);
-
-					if ((int) status.StatusCode < 200 || (int) status.StatusCode >= 300)
-						throw CreateExceptionFromResponse (status);
-					int last = requestUri.LocalPath.LastIndexOf ('/');
-					if (last >= 0) {
-						file_name = Uri.UnescapeDataString (requestUri.LocalPath.Substring (last + 1));
-					}
-				}
+				CWDAndSetFileName (requestUri);
 				SetType ();
 				UploadData ();
 				break;
@@ -675,7 +704,6 @@ namespace System.Net
 				break;
 			}
 
-			ftpResponse.UpdateStatus (status);
 			State = RequestState.Finished;
 		}
 
@@ -748,7 +776,9 @@ namespace System.Net
 			State = RequestState.Authenticating;
 
 			Authenticate ();
-			FtpStatus status = SendCommand (WebRequestMethods.Ftp.PrintWorkingDirectory);
+			FtpStatus status = SendCommand ("OPTS", "utf8", "on");
+			// ignore status for OPTS
+			status = SendCommand (WebRequestMethods.Ftp.PrintWorkingDirectory);
 			initial_path = GetInitialPath (status);
 		}
 
@@ -756,7 +786,8 @@ namespace System.Net
 		{
 			int s = (int) status.StatusCode;
 			if (s < 200 || s > 300 || status.StatusDescription.Length <= 4)
-				return null;
+				throw new WebException ("Error getting current directory: " + status.StatusDescription, null,
+						WebExceptionStatus.UnknownError, null);
 
 			string msg = status.StatusDescription.Substring (4);
 			if (msg [0] == '"')
@@ -842,9 +873,7 @@ namespace System.Net
 
 			State = RequestState.Finished;
 			FtpStatus status = GetResponseStatus ();
-
 			ftpResponse.UpdateStatus (status);
-			
 			if(!keepAlive)
 				CloseConnection ();
 		}
@@ -895,25 +924,6 @@ namespace System.Net
 			}
 
 			return sock;
-		}
-
-		string GetRemoteFolderPath (Uri uri)
-		{
-			string result;
-			string local_path = Uri.UnescapeDataString (uri.LocalPath);
-			if (initial_path == null) {
-				result = local_path;
-			} else {
-				if (local_path [0] == '/')
-					local_path = local_path.Substring (1);
-				Uri initial = new Uri (initial_path);
-				result = new Uri (initial, local_path).LocalPath;
-			}
-
-			int last = result.LastIndexOf ('/');
-			if (last == -1)
-				return null;
-			return result.Substring (0, last + 1);
 		}
 
 		void OpenDataConnection ()
@@ -1033,7 +1043,10 @@ namespace System.Net
 			if(!waitResponse)
 				return null;
 			
-			return GetResponseStatus ();
+			FtpStatus result = GetResponseStatus ();
+			if (ftpResponse != null)
+				ftpResponse.UpdateStatus (result);
+			return result;
 		}
 
 		internal static FtpStatus ServiceNotAvailable ()
