@@ -192,7 +192,7 @@ namespace System.Web.UI {
 					return typeof (Control);
 
 #if NET_2_0
-				if (cb != this && cb is ContentBuilderInternal)
+				if (cb != this && cb is ContentBuilderInternal && !typeof (INonBindingContainer).IsAssignableFrom (cb.BindingContainerType))
 					return cb.BindingContainerType;
 #endif
 
@@ -204,9 +204,13 @@ namespace System.Web.UI {
 					if (ct != null)
 						return ct;
 
+					ct = ControlType;
+					if (typeof (INonBindingContainer).IsAssignableFrom (ct))
+						return MyNamingContainer.BindingContainerType;
+					
 					return ControlType;
 				}
-
+				
 				return cb.ControlType;
 			}
 		}

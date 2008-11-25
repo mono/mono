@@ -1,3 +1,7 @@
+2008-11-18  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: make sure no control implementing the
+	INonBindingContainer can be returned from BindingContainerType.
 
 2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
