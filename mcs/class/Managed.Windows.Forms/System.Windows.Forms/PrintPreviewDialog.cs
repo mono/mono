@@ -100,7 +100,7 @@ namespace System.Windows.Forms {
 			pageUpDown = new NumericUpDown();
 
 			toolbar.ImageList = image_list;
-			toolbar.Size = new Size(792, 43);
+			toolbar.Size = new Size(792, 26);
 			toolbar.Dock = DockStyle.Top;
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.ShowToolTips = true;
