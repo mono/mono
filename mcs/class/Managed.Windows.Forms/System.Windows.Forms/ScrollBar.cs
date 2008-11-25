@@ -69,7 +69,7 @@ namespace System.Windows.Forms
 		private const int thumb_min_size = 8;
 		private const int thumb_notshown_size = 40;
 		internal bool use_manual_thumb_size;
-		private int manual_thumb_size;
+		internal int manual_thumb_size;
 		internal bool vert;
 		internal bool implicit_control;
 		private int lastclick_pos;		// Position of the last button-down event
@@ -750,6 +750,8 @@ namespace System.Windows.Forms
 
 		private void CalcThumbArea ()
 		{
+			int lchange = use_manual_thumb_size ? manual_thumb_size : LargeChange;
+
 			// Thumb area
 			if (vert) {
 
@@ -760,8 +762,8 @@ namespace System.Windows.Forms
 
 				if (Height < thumb_notshown_size)
 					thumb_size = 0;
-				else if (!use_manual_thumb_size) {
-					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
+				else {
+					double per =  ((double) lchange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Height * per);
 
 					if (thumb_size < thumb_min_size)
@@ -772,8 +774,7 @@ namespace System.Windows.Forms
 						thumb_size = 17;
 				}
 
-				int large_change = use_manual_thumb_size ? manual_thumb_size : LargeChange;
-				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - large_change) + 1));
+				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - lchange) + 1));
 
 			} else	{
 
@@ -784,8 +785,8 @@ namespace System.Windows.Forms
 
 				if (Width < thumb_notshown_size)
 					thumb_size = 0;
-				else if (!use_manual_thumb_size) {
-					double per =  ((double) this.LargeChange / (double)((1 + maximum - minimum)));
+				else {
+					double per =  ((double) lchange / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Width * per);
 
 					if (thumb_size < thumb_min_size)
@@ -796,8 +797,7 @@ namespace System.Windows.Forms
 						thumb_size = 17;
 				}
 
-				int large_change = use_manual_thumb_size ? manual_thumb_size : LargeChange;
-				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - large_change) + 1));
+				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - lchange) + 1));
 			}
 		}
 
@@ -1395,17 +1395,6 @@ namespace System.Windows.Forms
 			timer.Interval = 50;
 			timer_type = TimerType.RepeatThumbArea;
 			timer.Enabled = true;
-		}
-
-		/* used by ScrollableControl to manually set the thumb size as well
-		 * as the LargeChange value */
-		internal void SetManualLargeChange (int size)
-		{
-			int delta = vert ? thumb_area.Height : thumb_area.Width;
-			double per =  ((double) size / (double)((1 + maximum - minimum)));
-			thumb_size = 1 + (int) (delta * per);
-
-			LargeChange = manual_thumb_size = size;
 		}
 
     		private void UpdatePos (int newPos, bool update_thumbpos)

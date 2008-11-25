@@ -1,3 +1,12 @@
+2008-11-24  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* Scrollbar.cs:
+	* ScrollableControl.cs: Simplify the code to manually set the size of
+	the thum area, avoiding duplication of code, and also preserving the
+	right value for different code paths - this can happen when size
+	changes are made to the scrollbar after setting LargeChange, Maximum
+	or related properties for the ScrollBar.
+
 2008-11-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ScrollableControl.cs: When scrolling, don't invalidate the entire

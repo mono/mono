@@ -981,7 +981,8 @@ namespace System.Windows.Forms {
 			/* Manually setting the size of the thumb should be done before
 			 * the other assignments */
 			if (hscroll_visible) {
-				hscrollbar.SetManualLargeChange (right_edge);
+				hscrollbar.manual_thumb_size = right_edge;
+				hscrollbar.LargeChange = right_edge;
 				hscrollbar.SmallChange = 5;
 				hscrollbar.Maximum = canvas.Width - 1;
 			} else {
@@ -992,7 +993,8 @@ namespace System.Windows.Forms {
 			}
 
 			if (vscroll_visible) {
-				vscrollbar.SetManualLargeChange (bottom_edge);
+				vscrollbar.manual_thumb_size = bottom_edge;
+				vscrollbar.LargeChange = bottom_edge;
 				vscrollbar.SmallChange = 5;
 				vscrollbar.Maximum = canvas.Height - 1;
 			} else {
