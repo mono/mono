@@ -1,6 +1,12 @@
 2008-11-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #447027
+	* anonymous.cs (HoistedVariable): Cache also outer access to deal
+	with context variables stored as expression instances.
+
+2008-11-25  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #447027
 	* delegate.cs: Fixed delegate VerifyMethod logic.
 
 2008-11-24  Marek Safar  <marek.safar@gmail.com>

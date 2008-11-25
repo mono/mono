@@ -641,6 +641,7 @@ namespace Mono.CSharp {
 		protected readonly AnonymousMethodStorey storey;
 		protected Field field;
 		Hashtable cached_inner_access; // TODO: Hashtable is too heavyweight
+		FieldExpr cached_outer_access;
 
 		protected HoistedVariable (AnonymousMethodStorey storey, string name, Type type)
 		{
@@ -670,17 +671,20 @@ namespace Mono.CSharp {
 		protected FieldExpr GetFieldExpression (EmitContext ec)
 		{
 			if (ec.CurrentAnonymousMethod == null || ec.CurrentAnonymousMethod.Storey == null) {
+				if (cached_outer_access != null)
+					return cached_outer_access;
+
 				//
 				// When setting top-level hoisted variable in generic storey
 				// change storey generic types to method generic types (VAR -> MVAR)
 				//
-				FieldExpr outer_access = storey.MemberName.IsGeneric ?
+				cached_outer_access = storey.MemberName.IsGeneric ?
 					new FieldExpr (field.FieldBuilder, storey.Instance.Type, field.Location) :
 					new FieldExpr (field.FieldBuilder, field.Location);
 
-				outer_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
-				outer_access.Resolve (ec);
-				return outer_access;
+				cached_outer_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
+				cached_outer_access.Resolve (ec);
+				return cached_outer_access;
 			}
 
 			FieldExpr inner_access;
