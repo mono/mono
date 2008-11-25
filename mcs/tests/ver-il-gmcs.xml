@@ -13053,6 +13053,44 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-51.cs">
+    <type name="Driver">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void P(Int32, Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Repro()">
+        <size>100</size>
+      </method>
+    </type>
+    <type name="Bla">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Driver+&lt;Repro&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>35</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-6.cs">
     <type name="X">
       <method name="Void .ctor()">
