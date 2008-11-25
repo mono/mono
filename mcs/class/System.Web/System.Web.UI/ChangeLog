@@ -1,3 +1,21 @@
+2008-11-25  Marek Habersack  <mhabersack@novell.com>
+
+	* RootBuilder.cs: use new API in AspComponentFoundry to retrieve
+	registered control type.
+
+	* TemplateControlParser.cs: AddControlImports () removed. Its
+	functionality is now implemented in ControlBuilder.AddChild in a
+	more elegant, fine grained and correct way.
+
+	* TemplateParser.cs: replaced some "" with String.Empty
+
+	* ControlBuilder.cs: AddChild now adds an import for child's
+	namespace if the control being added has been registered in the
+	web.config file. Possible fix for #447896 and #447898
+
+	* PageParser.cs, MasterPageParser.cs: do not call
+	AddControlImports, it no longer exists.
+
 2008-11-21  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlBuilder.cs: in BindingContainerType if builder is a

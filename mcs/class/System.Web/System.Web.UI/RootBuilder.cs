@@ -121,53 +121,27 @@ namespace System.Web.UI {
 			if (tagName == null)
 				throw new ArgumentNullException ("tagName");
 
-			string prefix;
-			string cname;
-			int colon = tagName.IndexOf (':');
-			if (colon != -1) {
-				if (colon == 0)
-					throw new Exception ("Empty TagPrefix is not valid");
-
-				if (colon + 1 == tagName.Length)
-					return null;
-
-				prefix = tagName.Substring (0, colon);
-				cname = tagName.Substring (colon + 1);
-			} else {
-				prefix = "";
-				cname = tagName;
-			}
+			AspComponent component = foundry.GetComponent (tagName);
 			
-			Type t;
+			if (component != null) {
 #if NET_2_0
-			string tSource;
-			bool tFromConfig;
-			t = foundry.GetComponentType (prefix, cname, out tSource, out tFromConfig);
-#else
-			t = foundry.GetComponentType (prefix, cname);
-#endif
-			
-			if (t != null) {
-#if NET_2_0
-				if (tSource != null && tSource.Length > 0) {
+				if (!String.IsNullOrEmpty (component.Source)) {
 					TemplateParser parser = Parser;
 
-					if (tFromConfig) {
+					if (component.FromConfig) {
 						string parserDir = parser.BaseVirtualDir;
-						VirtualPath vp = new VirtualPath (tSource);
+						VirtualPath vp = new VirtualPath (component.Source);
 
 						if (parserDir == vp.Directory)
 							throw new ParseException (parser.Location,
 										  String.Format ("The page '{0}' cannot use the user control '{1}', because it is registered in web.config and lives in the same directory as the page.", parser.VirtualPath, vp.Absolute));
 						
-						Parser.AddDependency (tSource);
+						Parser.AddDependency (component.Source);
 					}
 				}
 #endif
-				return t;
-			}
-			
-			else if (prefix != "")
+				return component.Type;
+			} else if (component != null && component.Prefix != String.Empty)
 				throw new Exception ("Unknown server tag '" + tagName + "'");
 			
 			return LookupHtmlControls (tagName, attribs);

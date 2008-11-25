@@ -34,6 +34,7 @@ System.Web/CapabilitiesLoader.cs
 System.Web/BrowserCapabilities.cs
 System.Web.Compilation/ApplicationFileBuildProvider.cs
 System.Web.Compilation/AppSettingsExpressionBuilder.cs
+System.Web.Compilation/AspComponent.cs
 System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/AppCodeCompiler.cs
 System.Web.Compilation/AppResourceFileInfo.cs

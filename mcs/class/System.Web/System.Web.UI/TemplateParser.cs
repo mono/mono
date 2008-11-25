@@ -487,7 +487,7 @@ namespace System.Web.UI {
 
 		internal virtual void AddDependency (string filename)
 		{
-			if (filename == "")
+			if (filename == null || filename == String.Empty)
 				return;
 
 			if (dependencies == null)
@@ -499,7 +499,7 @@ namespace System.Web.UI {
 		
 		internal virtual void AddAssembly (Assembly assembly, bool fullPath)
 		{
-			if (assembly.Location == "")
+			if (assembly == null || assembly.Location == String.Empty)
 				return;
 
 			if (anames == null)

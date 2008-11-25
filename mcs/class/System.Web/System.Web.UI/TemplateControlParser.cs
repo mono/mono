@@ -60,24 +60,6 @@ namespace System.Web.UI {
 			LoadConfigDefaults ();
 		}
 		
-#if NET_2_0
-		internal void AddControlImports ()
-		{
-			PagesSection ps = PagesConfig;
-			TagPrefixCollection controls = ps != null ? ps.Controls : null;
-
-			if (controls == null || controls.Count == 0)
-				return;
-
-			foreach (TagPrefixInfo tpi in controls) {
-				if (String.IsNullOrEmpty (tpi.Namespace))
-					continue;
-
-				AddImport (tpi.Namespace);
-			}
-		}
-#endif
-		
 		internal override void LoadConfigDefaults ()
 		{
 			base.LoadConfigDefaults ();
