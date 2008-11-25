@@ -195,7 +195,7 @@ test-local: $(test_assemblies)
 run-test-local: run-test-lib
 run-test-ondotnet-local: run-test-ondotnet-lib
 
-TEST_HARNESS_EXCLUDES = /exclude:NotWorking,ValueAdd,CAS,InetAccess
+TEST_HARNESS_EXCLUDES = -exclude=NotWorking,ValueAdd,CAS,InetAccess
 TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:NotDotNet,CAS
 
 ifdef TEST_HARNESS_VERBOSE
@@ -204,8 +204,8 @@ TEST_HARNESS_OUTPUT_ONDOTNET = /labels
 TEST_HARNESS_POSTPROC = :
 TEST_HARNESS_POSTPROC_ONDOTNET = :
 else
-TEST_HARNESS_OUTPUT = /output:TestResult-$(PROFILE).log
-TEST_HARNESS_OUTPUT_ONDOTNET = /output:TestResult-ondotnet-$(PROFILE).log
+TEST_HARNESS_OUTPUT = -output=TestResult-$(PROFILE).log
+TEST_HARNESS_OUTPUT_ONDOTNET = -output=TestResult-ondotnet-$(PROFILE).log
 TEST_HARNESS_POSTPROC = (echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'
 TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).log) | sed '1,/^Tests run: /d'
 endif
@@ -217,12 +217,12 @@ endif
 ## FIXME: i18n problem in the 'sed' command below
 run-test-lib: test-local
 	ok=:; \
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) /xml:TestResult-$(PROFILE).xml $(test_assemblies) $(FIXTURE_ARG) || ok=false; \
+	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) || ok=false; \
 	$(TEST_HARNESS_POSTPROC) ; $$ok
 
 run-test-ondotnet-lib: test-local
 	ok=:; \
-	$(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(TEST_HARNESS_OUTPUT_ONDOTNET) /xml:TestResult-ondotnet-$(PROFILE).xml $(test_assemblies) || ok=false; \
+	$(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(TEST_HARNESS_OUTPUT_ONDOTNET) -xml=TestResult-ondotnet-$(PROFILE).xml || ok=false; \
 	$(TEST_HARNESS_POSTPROC_ONDOTNET) ; $$ok
 endif
 

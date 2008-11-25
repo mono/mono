@@ -138,8 +138,8 @@ CLEAN_FILES = $(test_lib).config
 ifeq (net_2_0, $(PROFILE))
 pkits_files := $(wildcard Test/System.Security.Cryptography.X509Certificates/pkits/hint)
 ifndef pkits_files
-TEST_HARNESS_EXCLUDES = /exclude:NotWorking,ValueAdd,CAS,InetAccess,PKITS
-TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:NotDotNet,CAS,PKITS
+TEST_HARNESS_EXCLUDES = -exclude=NotWorking,ValueAdd,CAS,InetAccess,PKITS
+TEST_HARNESS_EXCLUDES_ONDOTNET = -exclude=NotDotNet,CAS,PKITS
 endif
 endif
 
