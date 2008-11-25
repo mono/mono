@@ -1,3 +1,10 @@
+2008-11-25  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c
+	(mono_debugger_runtime_invoke): Return the exception object if an
+	exception was thrown.  Visual Studio displays the exception object
+	in the locals window.
+
 2008-11-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline): Don't return a
