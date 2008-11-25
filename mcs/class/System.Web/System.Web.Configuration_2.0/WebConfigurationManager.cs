@@ -321,7 +321,7 @@ namespace System.Web.Configuration {
 #else
 			object value = null;
 #endif
-			if (configurations [path] != null) {
+			if (path != null && configurations [path] != null) {
 				lock (sectionCache) {
 					sectionCache [GetSectionCacheKey (sectionName, path)] = value;
 				}
