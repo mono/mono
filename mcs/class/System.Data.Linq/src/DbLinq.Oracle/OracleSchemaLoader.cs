@@ -84,7 +84,7 @@ namespace DbLinq.Oracle
 
                 }
                 // custom type, this is a trigger
-                else if (constraint.ConstraintType == "T")
+                else if (constraint.ConstraintType == "T" && constraint.ColumnName != null)
                 {
                     var column = table.Type.Columns.Where(c => c.Name == constraint.ColumnName).First();
                     column.Expression = constraint.Expression;

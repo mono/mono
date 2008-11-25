@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DbLinq.Util;
 
 #if MONO_STRICT
 namespace System.Data.Linq.Sugar.Implementation
@@ -64,7 +65,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             }
         }
 
-        private readonly IDictionary<ExpressionChain, SelectQuery> selectQueries = new Dictionary<ExpressionChain, SelectQuery>();
+        private readonly IDictionary<ExpressionChain, SelectQuery> selectQueries = new Dictionary<ExpressionChain, SelectQuery>((IEqualityComparer<ExpressionChain>) new ExpressionChainEqualityComparer());
         private readonly IDictionary<TableReaderSignature, Delegate> tableReaders = new Dictionary<TableReaderSignature, Delegate>();
 
         public SelectQuery GetFromSelectCache(ExpressionChain expressions)

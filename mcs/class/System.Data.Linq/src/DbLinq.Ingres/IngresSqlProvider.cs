@@ -86,8 +86,8 @@ namespace DbLinq.Ingres
 
         public override SqlStatement GetLiteralLimit(SqlStatement select, SqlStatement limit, SqlStatement offset, SqlStatement offsetAndLimit)
         {
-            // TODO: this is for you, Thomas...
-            throw new NotImplementedException("OFFSET clause is not supported on Ingres");
+            // Ingres 9.2 and above support offset clauses now
+            return SqlStatement.Format("{0} OFFSET {1}", GetLiteralLimit(select, limit), offset);
         }
 
         public override string GetParameterName(string nameBase)
@@ -98,6 +98,12 @@ namespace DbLinq.Ingres
         protected override bool IsNameCaseSafe(string dbName)
         {
             return dbName == dbName.ToLower();
+        }
+
+        protected override SqlStatement GetLiteralStringConcat(SqlStatement a, SqlStatement b)
+        {
+            // This needs to be bracketed in case subsequent functions are called upon it
+            return SqlStatement.Format("({0} || {1})", a, b);
         }
     }
 }

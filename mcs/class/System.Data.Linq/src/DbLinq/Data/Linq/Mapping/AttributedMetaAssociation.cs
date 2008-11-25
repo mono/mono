@@ -48,6 +48,7 @@ namespace DbLinq.Data.Linq.Mapping
             _memberInfo = member;
             _associationAttribute = attribute;
             _thisMember = metaDataMember;
+            _otherMember = metaDataMember; // see https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=376669
 
         	SetupRelationship();
         }
@@ -180,7 +181,7 @@ namespace DbLinq.Data.Linq.Mapping
 
         public override MetaType OtherType
         {
-            get { return _thisMember.DeclaringType; }
+            get { return _otherMember.DeclaringType; }
         }
 
         private ReadOnlyCollection<MetaDataMember> _thisKey;

@@ -78,7 +78,7 @@ namespace DbLinq.Data.Linq.Sugar
                 return false;
             for (int expressionIndex = 0; expressionIndex < Expressions.Count; expressionIndex++)
             {
-                if (!ReferenceEquals(Expressions[expressionIndex], other.Expressions[expressionIndex]))
+                if (!Expressions[expressionIndex].Equals(other.Expressions[expressionIndex]))
                     return false;
             }
             return true;
@@ -88,7 +88,11 @@ namespace DbLinq.Data.Linq.Sugar
         {
             int hash = 0;
             foreach (var expression in Expressions)
-                hash ^= expression.GetHashCode();
+            {
+                hash <<= 10;
+                hash ^= (int)expression.NodeType;
+                hash ^= expression.Type.GetHashCode();
+            }
             return hash;
         }
 

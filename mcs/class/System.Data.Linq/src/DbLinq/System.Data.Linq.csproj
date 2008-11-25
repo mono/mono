@@ -301,6 +301,8 @@
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlHelpers.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlMethods.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\SqlProvider.cs" />
+    <Compile Include="Util\ExpressionChainEqualityComparer.cs" />
+    <Compile Include="Util\ExpressionEqualityComparer.cs" />
     <Compile Include="Util\IDataRecordExtensions.cs" />
     <Compile Include="Util\IDataTypeExtensions.cs" />
     <Compile Include="Language\ILanguages.cs" />

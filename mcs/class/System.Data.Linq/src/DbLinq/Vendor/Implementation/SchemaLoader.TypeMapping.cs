@@ -98,6 +98,10 @@ namespace DbLinq.Vendor.Implementation
             case "text":
             case "varchar":
             case "varchar2":
+            case "clob":    // oracle type
+            case "nclob":   // oracle type
+            case "rowid":   // oracle type
+            case "urowid":  // oracle type
                 return typeof(String);
 
             // bool
@@ -140,11 +144,13 @@ namespace DbLinq.Vendor.Implementation
             case "float":
             case "float4":
             case "real":
+            case "binary_float":   // oracle type
                 return typeof(Single);
 
             // double
             case "double":
             case "double precision":
+            case "binary_double":  // oracle type
                 return typeof(Double);
 
             // decimal
@@ -193,6 +199,8 @@ namespace DbLinq.Vendor.Implementation
             case "oid":
             case "sytea":
             case "mediumblob":
+            case "raw":       // oracle type
+            case "long raw":  // oracle type
                 return typeof(Byte[]);
 
             // PostgreSQL, for example has an uuid type that can be mapped as a Guid

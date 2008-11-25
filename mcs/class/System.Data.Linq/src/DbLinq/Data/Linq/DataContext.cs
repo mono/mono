@@ -517,55 +517,58 @@ namespace DbLinq.Data.Linq
         private void SetEntitySetsQueries(object entity)
         {
             IList<MemberInfo> properties = DataMapper.GetEntitySetAssociations(entity.GetType());
-            IList<MemberInfo> thisPKs = DataMapper.GetPrimaryKeys(Mapping.GetTable(entity.GetType()));
+            
+            if (properties.Any()) {
+                IList<MemberInfo> thisPKs = DataMapper.GetPrimaryKeys(Mapping.GetTable(entity.GetType()));
 
-            if (thisPKs.Count > 1 && properties.Any())
-                throw new NotSupportedException("Multiple keys object not supported yet.");
+                if (thisPKs.Count > 1)
+                    throw new NotSupportedException("Multiple keys object not supported yet.");
 
-            object primaryKeyValue = (thisPKs.First() as PropertyInfo).GetValue(entity, null);
-
-
-            foreach (PropertyInfo prop in properties)
-            {
-                //example of entitySet: Employee.EmployeeTerritories
-                var associationInfo = prop.GetAttribute<AssociationAttribute>();
-                Type otherTableType = prop.PropertyType.GetGenericArguments().First();
-
-                //other table:EmployeeTerritories
-                var otherTable = GetTable(otherTableType);
-                //other table member:EmployeeTerritories.EmployeeID
-                var otherTableMember = otherTableType.GetProperty(associationInfo.OtherKey);
+                object primaryKeyValue = (thisPKs.First() as PropertyInfo).GetValue(entity, null);
 
 
-                ParameterExpression p = Expression.Parameter(otherTableType, "other");
-                Expression predicate;
-                if (!(otherTableMember.PropertyType.IsNullable()))
+                foreach (PropertyInfo prop in properties)
                 {
-                    predicate = Expression.Equal(Expression.MakeMemberAccess(p, otherTableMember),
-                                                                Expression.Constant(primaryKeyValue));
+                    //example of entitySet: Employee.EmployeeTerritories
+                    var associationInfo = prop.GetAttribute<AssociationAttribute>();
+                    Type otherTableType = prop.PropertyType.GetGenericArguments().First();
+
+                    //other table:EmployeeTerritories
+                    var otherTable = GetTable(otherTableType);
+                    //other table member:EmployeeTerritories.EmployeeID
+                    var otherTableMember = otherTableType.GetProperty(associationInfo.OtherKey);
+
+
+                    ParameterExpression p = Expression.Parameter(otherTableType, "other");
+                    Expression predicate;
+                    if (!(otherTableMember.PropertyType.IsNullable()))
+                    {
+                        predicate = Expression.Equal(Expression.MakeMemberAccess(p, otherTableMember),
+                                                                    Expression.Constant(primaryKeyValue));
+                    }
+                    else
+                    {
+                        var ValueProperty = otherTableMember.PropertyType.GetProperty("Value");
+                        predicate = Expression.Equal(Expression.MakeMemberAccess(
+                                                                    Expression.MakeMemberAccess(p, otherTableMember),
+                                                                    ValueProperty),
+                                                                 Expression.Constant(primaryKeyValue));
+                    }
+
+                    var query = GetOtherTableQuery(predicate, p, otherTableType, otherTable);
+
+                    var entitySetValue = prop.GetValue(entity, null);
+
+                    if (entitySetValue == null)
+                    {
+                        entitySetValue = Activator.CreateInstance(prop.PropertyType);
+                        prop.SetValue(entity, entitySetValue, null);
+                    }
+
+                    var setSourceMethod = entitySetValue.GetType().GetMethod("SetSource");
+                    setSourceMethod.Invoke(entitySetValue, new[] { query });
+                    //employee.EmployeeTerritories.SetSource(Table[EmployeesTerritories].Where(other=>other.employeeID="WARTH"))
                 }
-                else
-                {
-                    var ValueProperty = otherTableMember.PropertyType.GetProperty("Value");
-                    predicate = Expression.Equal(Expression.MakeMemberAccess(
-                                                                Expression.MakeMemberAccess(p, otherTableMember),
-                                                                ValueProperty),
-                                                             Expression.Constant(primaryKeyValue));
-                }
-
-                var query = GetOtherTableQuery(predicate, p, otherTableType, otherTable);
-
-                var entitySetValue = prop.GetValue(entity, null);
-
-                if (entitySetValue == null)
-                {
-                    entitySetValue = Activator.CreateInstance(prop.PropertyType);
-                    prop.SetValue(entity, entitySetValue, null);
-                }
-
-                var setSourceMethod = entitySetValue.GetType().GetMethod("SetSource");
-                setSourceMethod.Invoke(entitySetValue, new[] { query });
-                //employee.EmployeeTerritories.SetSource(Table[EmployeesTerritories].Where(other=>other.employeeID="WARTH"))
             }
         }
 

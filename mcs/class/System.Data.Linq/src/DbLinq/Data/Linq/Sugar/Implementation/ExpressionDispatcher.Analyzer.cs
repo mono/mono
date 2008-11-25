@@ -149,6 +149,19 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             return AnalyzeCall(expression.Method, newParameters.ToList(), builderContext);
         }
 
+        enum DateTimePart
+        {
+            Yeah,
+            Month,
+            Day,
+            Hour,
+            Minute,
+            Second,
+            Millisecond,
+            Microsecond,
+            Nanosecond
+        }
+
         /// <summary>
         /// Analyzes method call
         /// </summary>
@@ -161,6 +174,36 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             // all methods to handle are listed here:
             // ms-help://MS.VSCC.v90/MS.MSDNQTR.v90.en/fxref_system.core/html/2a54ce9d-76f2-81e2-95bb-59740c85386b.htm
             string methodName = method.Name;
+            if (method.DeclaringType == typeof(System.Data.Linq.SqlClient.SqlMethods))
+            {
+                switch (methodName)
+                {
+                    case "Like":
+                        if (parameters.Count == 3)
+                            throw new NotImplementedException();
+                        return AnalyzeLike(parameters[0], null, parameters[1], null, builderContext);
+                    case "DateDiffDay":
+                        return AnalyzeSqlDateDiff(DateTimePart.Day, parameters, builderContext);
+                    case "DateDiffHour":
+                        return AnalyzeSqlDateDiff(DateTimePart.Hour, parameters, builderContext);
+                    case "DateDiffMicrosecond":
+                        return AnalyzeSqlDateDiff(DateTimePart.Microsecond, parameters, builderContext);
+                    case "DateDiffMillisecond":
+                        return AnalyzeSqlDateDiff(DateTimePart.Millisecond, parameters, builderContext);
+                    case "DateDiffMinute":
+                        return AnalyzeSqlDateDiff(DateTimePart.Minute, parameters, builderContext);
+                    case "DateDiffMonth":
+                        return AnalyzeSqlDateDiff(DateTimePart.Month, parameters, builderContext);
+                    case "DateDiffNanosecond":
+                        return AnalyzeSqlDateDiff(DateTimePart.Nanosecond, parameters, builderContext);
+                    case "DateDiffSecond":
+                        return AnalyzeSqlDateDiff(DateTimePart.Second, parameters, builderContext);
+                    case "DateDiffYeah":
+                        return AnalyzeSqlDateDiff(DateTimePart.Yeah, parameters, builderContext);
+                    default:
+                        throw Error.BadArgument("S0134: Implement QueryMethod '{0}'", methodName);
+                }
+            }
             switch (methodName)
             {
                 case "Select":
@@ -266,6 +309,51 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 default:
                     throw Error.BadArgument("S0133: Implement QueryMethod '{0}'", methodName);
             }
+        }
+
+        static readonly MethodInfo dateTimeHasValue = typeof(DateTime?).GetProperty("HasValue").GetGetMethod();
+        static readonly MethodInfo dateTimeOffsetHasValue = typeof(DateTimeOffset?).GetProperty("HasValue").GetGetMethod();
+        static readonly MethodInfo dateTimeValue = typeof(DateTime?).GetProperty("Value").GetGetMethod();
+        static readonly MethodInfo dateTimeOffsetValue = typeof(DateTimeOffset?).GetProperty("Value").GetGetMethod();
+        static readonly ConstructorInfo nintctr = typeof(int?).GetConstructors()[0];
+
+        static MethodInfo GetPropertyGetterForDatePart(Type t, DateTimePart p)
+        {
+            switch (p)
+            {
+                case DateTimePart.Day: return t.GetProperty("Day").GetGetMethod();
+                case DateTimePart.Hour: return t.GetProperty("Hour").GetGetMethod();
+                case DateTimePart.Microsecond: return t.GetProperty("Microsecond").GetGetMethod();
+                case DateTimePart.Millisecond: return t.GetProperty("Millisecond").GetGetMethod();
+                case DateTimePart.Minute: return t.GetProperty("Minute").GetGetMethod();
+                case DateTimePart.Month: return t.GetProperty("Month").GetGetMethod();
+                case DateTimePart.Nanosecond: return t.GetProperty("Nanosecond").GetGetMethod();
+                case DateTimePart.Second: return t.GetProperty("Second").GetGetMethod();
+                case DateTimePart.Yeah: return t.GetProperty("Yeah").GetGetMethod();
+            }
+            throw new NotImplementedException();
+        }
+
+        private Expression AnalyzeSqlDateDiff(DateTimePart part, IList<Expression> parameters, BuilderContext builderContext)
+        {
+            Expression l = parameters[0], r = parameters [1];
+            Type valueType = l.Type.IsNullable() ? (l.Type == typeof(DateTime?) ? typeof(DateTime) : typeof(DateTimeOffset)) : l.Type;
+            MethodInfo p = GetPropertyGetterForDatePart(valueType, part);
+            if (l.Type.IsNullable())
+            {
+                MethodInfo hasValue = l.Type == typeof(DateTime?) ? dateTimeHasValue : dateTimeOffsetHasValue;
+                MethodInfo value = l.Type == typeof(DateTime?) ? dateTimeValue : dateTimeOffsetValue;
+//                Console.WriteLine("!!!! {0}, {1}", Expression.Subtract(Expression.Property(Expression.Property(l, value), p), Expression.Property(Expression.Property(r, value), p)).Type, Expression.New(int?).Type);
+                return Expression.Condition(
+                    Expression.AndAlso(Expression.Property(l, hasValue), Expression.Property(r, hasValue)),
+                    Expression.New (nintctr,
+                        Expression.Subtract(
+                            Expression.Property(Expression.Property (l, value), p),
+                            Expression.Property(Expression.Property (r, value), p))),
+                    Expression.Convert (Expression.Constant (null), typeof (int?)));
+            }
+            else
+                return Expression.Subtract(Expression.Property(l, p), Expression.Property(r, p));
         }
 
         private Expression AnalyzeStringInsert(IList<Expression> parameters, BuilderContext builderContext)

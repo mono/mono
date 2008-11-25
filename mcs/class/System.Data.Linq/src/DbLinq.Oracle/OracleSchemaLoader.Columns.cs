@@ -52,12 +52,19 @@ namespace DbLinq.Oracle
         protected override IList<IDataTableColumn> ReadColumns(IDbConnection connectionString, string databaseName)
         {
             const string sql = @"
-SELECT owner, table_name, column_name, data_type, data_length, data_precision, data_scale, nullable
+SELECT owner, table_name, column_name, 
+  case when data_type like 'TIMESTAMP%' then 'TIMESTAMP'
+       when data_type like 'INTERVAL%' then 'INTERVAL'
+  else data_type
+  end data_type , 
+    data_length, data_precision, data_scale, nullable
 FROM all_tab_columns
 WHERE table_name NOT LIKE '%$%' 
     AND table_name NOT LIKE 'LOGMNR%' 
     AND table_name NOT LIKE 'MVIEW%' 
     AND table_name NOT IN ('SQLPLUS_PRODUCT_PROFILE','HELP', 'PRODUCT_PRIVS')
+    -- skip nested table columns
+    AND data_type_owner is null
     AND lower(owner) = :owner
 ORDER BY table_name, column_id";
 

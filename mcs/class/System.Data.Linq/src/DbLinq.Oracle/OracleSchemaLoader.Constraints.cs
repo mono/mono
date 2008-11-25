@@ -63,7 +63,7 @@ namespace DbLinq.Oracle
             return constraint;
         }
 
-        private static Regex TriggerMatch1 = new Regex(@".*SELECT\s+(?<exp>\S+)\s+INTO\s+\:new.(?<col>\S+)\s+FROM\s+DUAL.*",
+        private static Regex TriggerMatch1 = new Regex(@".*SELECT\s+(?<exp>\S+.*)\s+INTO\s+\:new.(?<col>\S+)\s+FROM\s+DUAL.*",
             RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         protected bool MatchTrigger(Regex regex, string fullText, out string expression, out string column)

@@ -228,6 +228,8 @@
     <Compile Include="Schema\SchemaName.cs" />
     <Compile Include="Schema\TableName.cs" />
     <Compile Include="Util\DbmlExtensions.cs" />
+    <Compile Include="Util\ExpressionChainEqualityComparer.cs" />
+    <Compile Include="Util\ExpressionEqualityComparer.cs" />
     <Compile Include="Util\Output.cs" />
     <Compile Include="Util\IDataRecordExtensions.cs" />
     <Compile Include="Util\IDataTypeExtensions.cs" />

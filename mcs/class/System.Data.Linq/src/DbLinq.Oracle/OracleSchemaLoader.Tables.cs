@@ -41,7 +41,12 @@ FROM all_tables
 WHERE table_name NOT LIKE '%$%' 
 AND table_name NOT LIKE 'LOGMNR%' 
 AND table_name NOT IN ('SQLPLUS_PRODUCT_PROFILE','HELP')
-and lower(owner) = :owner";
+and lower(owner) = :owner
+UNION
+SELECT view_name, owner
+FROM all_views
+WHERE lower(owner) = :owner
+";
 
             return DataCommand.Find<IDataName>(connectionString, sql, ":owner", databaseName.ToLower(), ReadDataNameAndSchema);
         }

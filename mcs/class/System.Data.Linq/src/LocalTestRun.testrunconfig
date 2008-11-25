@@ -1,5 +1,22 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <TestRunConfiguration name="Local Test Run" id="4bf8ab57-0a3e-42e7-8cf7-3cb20d6d9ec5" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2006">
   <Description>This is a default test run configuration for a local test run.</Description>
-  <TestTypeSpecific />
+  <CodeCoverage enabled="true" keyFile="DbLinq.snk">
+    <Regular>
+      <CodeCoverageItem binaryFile="DbLinq\bin\DbLinq.dll" pdbFile="DbLinq\bin\DbLinq.pdb" instrumentInPlace="true" />
+    </Regular>
+  </CodeCoverage>
+  <TestTypeSpecific>
+    <WebTestRunConfiguration testTypeId="4e7599fa-5ecb-43e9-a887-cd63cf72d207">
+      <Browser name="Internet Explorer 7.0">
+        <Headers>
+          <Header name="User-Agent" value="Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)" />
+          <Header name="Accept" value="*/*" />
+          <Header name="Accept-Language" value="{{$IEAcceptLanguage}}" />
+          <Header name="Accept-Encoding" value="GZIP" />
+        </Headers>
+      </Browser>
+      <Network Name="LAN" BandwidthInKbps="0" />
+    </WebTestRunConfiguration>
+  </TestTypeSpecific>
 </TestRunConfiguration>

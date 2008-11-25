@@ -234,6 +234,8 @@ src/DbLinq/System.Data.Linq/System.Data.Linq.SqlClient/SqlMethods.cs
 src/DbLinq/System.Data.Linq/System.Data.Linq.SqlClient/SqlProvider.cs
 src/DbLinq/Util/DataCommand.cs
 src/DbLinq/Util/DbmlExtensions.cs
+src/DbLinq/Util/ExpressionEqualityComparer.cs
+src/DbLinq/Util/ExpressionChainEqualityComparer.cs
 src/DbLinq/Util/IDataRecordExtensions.cs
 src/DbLinq/Util/IDataTypeExtensions.cs
 src/DbLinq/Util/IDbDataParameterExtensions.cs
