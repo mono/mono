@@ -1,5 +1,10 @@
 2008-11-24  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-trampolines.c (mono_delegate_trampoline): Don't return a
+	ftnptr.
+
+2008-11-24  Mark Probst  <mark.probst@gmail.com>
+
 	* marshal.c (mono_type_native_stack_size): MONO_TYPE_I and
 	MONO_TYPE_U are sizeof (gpointer), too.
 
