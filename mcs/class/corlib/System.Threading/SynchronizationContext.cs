@@ -51,7 +51,13 @@ namespace System.Threading
 		
 		public static SynchronizationContext Current
 		{
-			get { return currentContext; }
+			get {
+#if NET_2_1
+				if (currentContext == null)
+					currentContext = new SynchronizationContext ();
+#endif
+				return currentContext;
+			}
 		}
 
 		public virtual SynchronizationContext CreateCopy ()
@@ -74,7 +80,16 @@ namespace System.Threading
 		
 		public virtual void Post (SendOrPostCallback d, object state)
 		{
+#if NET_2_1
+			// WARNING: This is a horrible hack that short-circuites the SynchronizationContext
+			// logic for moonlight until we finish our Dispatcher implementation.  This is only
+			// put in place so that we can run moon-unit in the interim.
+			Console.WriteLine ("WARNING: SynchronizationContext short-circuited to UI thread hack.");
+			callback = (GSourceFunc) delegate (IntPtr ctx) { d(state); return false; };
+			g_idle_add (callback, IntPtr.Zero);
+#else
 			ThreadPool.QueueUserWorkItem (new WaitCallback (d), state);
+#endif
 		}
 		
 		public virtual void Send (SendOrPostCallback d, object state)
@@ -109,6 +124,15 @@ namespace System.Threading
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_1
+		GSourceFunc callback;
+
+                public delegate bool GSourceFunc (IntPtr data);
+
+                [DllImport ("moon")]
+                static extern uint g_idle_add (GSourceFunc callback, IntPtr data);
+#endif
 	}
 }
 

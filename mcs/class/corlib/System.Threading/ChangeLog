@@ -1,3 +1,9 @@
+2008-11-25  Geoff Norton  <gnorton@novell.com>
+
+	* SynchronizationContext.cs: A temporary horrible hack to SyncContext
+	to hard-wire all calls back to the main thread (moonlight-only) so that
+	we can use our unit test harness.  This will be fixed for 2.1 when we
+	implement Dispatcher properly.
 
 2008-10-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
