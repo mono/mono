@@ -1,5 +1,9 @@
 2008-11-25  Mark Mason   <mmason@upwardaccess.com>
 
+	* aot-compiler.c: MIPS to use ELF writer
+
+2008-11-25  Mark Mason   <mmason@upwardaccess.com>
+
 	* mini-codegen.c: remove MIPS specific assert.
 
 2008-11-25  Mark Probst  <mark.probst@gmail.com>
