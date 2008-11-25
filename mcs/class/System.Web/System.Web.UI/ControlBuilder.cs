@@ -267,13 +267,34 @@ namespace System.Web.UI {
 		{
 			if (children == null)
 				children = new ArrayList ();
-			
+
 			children.Add (child);
-			if (child is TemplateBuilder) {
+			ControlBuilder cb = child as ControlBuilder;
+			if (cb != null && cb is TemplateBuilder) {
 				if (templateChildren == null)
 					templateChildren = new ArrayList ();
 				templateChildren.Add (child);
 			}
+
+#if NET_2_0
+			if (parser == null)
+				return;
+			
+			string tag = cb != null ? cb.TagName : null;
+			if (String.IsNullOrEmpty (tag))
+				return;
+
+			RootBuilder rb = Root;
+			AspComponentFoundry foundry = rb != null ? rb.Foundry : null;
+			if (foundry == null)
+				return;
+			AspComponent component = foundry.GetComponent (tag);
+			if (component == null || !component.FromConfig)
+				return;
+			
+			parser.AddImport (component.Namespace);
+			parser.AddDependency (component.Source);
+#endif
 		}
 		
 		public virtual bool AllowWhitespaceLiterals ()

@@ -44,7 +44,30 @@ namespace System.Web.Compilation
 	internal class AspComponentFoundry
 	{
 		Hashtable foundries;
+#if NET_2_0
+		Dictionary <string, AspComponent> components;
+#else
+		Hashtable components;
+#endif
 
+#if NET_2_0
+		Dictionary <string, AspComponent> Components {
+			get {
+				if (components == null)
+					components = new Dictionary <string, AspComponent> (StringComparer.OrdinalIgnoreCase);
+				return components;
+			}
+		}
+#else
+		Hashtable Components {
+			get {
+				if (components == null)
+					components = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant, CaseInsensitiveComparer.DefaultInvariant);
+				return components;
+			}
+		}
+#endif
+		
 		public AspComponentFoundry ()
 		{
 #if NET_2_0
@@ -63,42 +86,55 @@ namespace System.Web.Compilation
 #endif
 		}
 
-		public Type GetComponentType (string foundryName, string tag)
+		public AspComponent GetComponent (string tagName)
 		{
-			string source;
-			bool fromConfig;
-
-			return GetComponentType (foundryName, tag, out source, out fromConfig);
-		}
-		
-		public Type GetComponentType (string foundryName, string tag, out string source, out bool fromConfig)
-		{
-			source = null;
-			fromConfig = false;
-			object o = foundries [foundryName];
+			if (tagName == null || tagName.Length == 0)
+				return null;
 			
+			if (components != null) {
+#if NET_2_0
+				AspComponent ret;
+				if (components.TryGetValue (tagName, out ret))
+					return ret;
+#else
+				if (components.Contains (tagName))
+					return components [tagName] as AspComponent;
+#endif
+			}
+
+			string foundryName, tag;
+			int colon = tagName.IndexOf (':');
+			if (colon > -1) {
+				if (colon == 0)
+					throw new Exception ("Empty TagPrefix is not valid.");
+				if (colon + 1 == tagName.Length)
+					return null;
+				foundryName = tagName.Substring (0, colon);
+				tag = tagName.Substring (colon + 1);
+			} else {
+				foundryName = String.Empty;
+				tag = tagName;
+			}
+			
+			object o = foundries [foundryName];			
 			if (o == null)
 				return null;
 
 			Foundry foundry = o as Foundry;
-			if (foundry != null) {
-				fromConfig = foundry.FromConfig;
-				return foundry.GetType (tag, out source);
-			}
+			if (foundry != null)
+				return CreateComponent (foundry, tagName, foundryName, tag);
 			
 			ArrayList af = o as ArrayList;
 			if (af == null)
 				return null;
 
-			Type t = null;
+			AspComponent component = null;
 			Exception e = null;
 			foreach (Foundry f in af) {
 				try {
-					t = f.GetType (tag, out source);
-					if (t != null) {
-						fromConfig = f.FromConfig;
-						return t;
-					}
+					component = CreateComponent (f, tagName, foundryName, tag);
+					if (component != null)
+						return component;
 				} catch (Exception ex) {
 					e = ex;
 				}
@@ -110,6 +146,25 @@ namespace System.Web.Compilation
 			return null;
 		}
 
+		AspComponent CreateComponent (Foundry foundry, string tagName, string prefix, string tag)
+		{
+			string source, ns;
+			Type type;
+
+			type = foundry.GetType (tag, out source, out ns);
+			if (type == null)
+				return null;
+			
+			AspComponent ret = new AspComponent (type, ns, prefix, source, foundry.FromConfig);
+#if NET_2_0
+			Dictionary <string, AspComponent> components = Components;
+#else
+			Hashtable components = Components;
+#endif
+			components.Add (tagName, ret);
+			return ret;
+		}
+		
 		public void RegisterFoundry (string foundryName, Assembly assembly, string nameSpace)
 		{
 			RegisterFoundry (foundryName, assembly, nameSpace, false);
@@ -261,7 +316,7 @@ namespace System.Web.Compilation
 				set { _fromConfig = value; }
 			}
 			
-			public abstract Type GetType (string componentName, out string source);
+			public abstract Type GetType (string componentName, out string source, out string ns);
 		}
 		
 
@@ -290,9 +345,10 @@ namespace System.Web.Compilation
 				this.type = type;
 			}
 
-			public override Type GetType (string componentName, out string source)
+			public override Type GetType (string componentName, out string source, out string ns)
 			{
 				source = null;
+				ns = null;
 				if (0 != String.Compare (componentName, tagName, true))
 					return null;
 
@@ -370,9 +426,11 @@ namespace System.Web.Compilation
 			}
 #endif
 			
-			public override Type GetType (string componentName, out string source)
+			public override Type GetType (string componentName, out string source, out string ns)
 			{
 				source = null;
+				ns = nameSpace;
+				
 #if NET_2_0
 				if (assembly == null && assemblyName != null)
 					assembly = GetAssemblyByName (assemblyName, true);
@@ -469,23 +527,23 @@ namespace System.Web.Compilation
 				tagnames.Add (tagName, foundry);
 			}
 
-			public override Type GetType (string componentName, out string source)
+			public override Type GetType (string componentName, out string source, out string ns)
 			{
 				source = null;
+				ns = null;
 				Type type = null;
 				Foundry foundry = tagnames [componentName] as Foundry;
 				if (foundry != null)
-					return foundry.GetType (componentName, out source);
+					return foundry.GetType (componentName, out source, out ns);
 
 				if (assemblyFoundry != null) {
 					try {
-						type = assemblyFoundry.GetType (componentName, out source);
+						type = assemblyFoundry.GetType (componentName, out source, out ns);
 						return type;
 					} catch { }
 				}
 
-				string msg = String.Format ("Type {0} not registered for prefix {1}",
-							    componentName, tagPrefix);
+				string msg = String.Format ("Type {0} not registered for prefix {1}", componentName, tagPrefix);
 				throw new ApplicationException (msg);
 			}
 		}
