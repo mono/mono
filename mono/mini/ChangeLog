@@ -1,3 +1,8 @@
+2008-11-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, mini-ppc64.h, tramp-ppc64.c, cpu-ppc64.md: Several
+	fixes.  PPC64 now passes most of the runtime regressions.
+
 2008-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* regalloc2.c: Distinguish between use/def positions. Optimize the creation of
