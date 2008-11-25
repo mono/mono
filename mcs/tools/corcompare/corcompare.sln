@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CorCompare", "CorCompare.cs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mono-api-info", "mono-api-info.csproj", "{6446D5E1-8F4E-4692-8EF3-B1D4CA290ECF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil-2008", "..\..\mcs\class\Mono.Cecil\Mono.Cecil-2008.csproj", "{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil-2008", "..\..\class\Mono.Cecil\Mono.Cecil-2008.csproj", "{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

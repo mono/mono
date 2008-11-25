@@ -55,9 +55,10 @@
     <Compile Include="mono-api-info.cs" />
     <Compile Include="ToDoAssembly.cs" />
     <Compile Include="Util.cs" />
+    <Compile Include="WellFormedXmlWriter.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\mcs\class\Mono.Cecil\Mono.Cecil-2008.csproj">
+    <ProjectReference Include="..\..\class\Mono.Cecil\Mono.Cecil-2008.csproj">
       <Project>{D8F63DFF-5230-43E4-9AB2-DA6E721A1FAE}</Project>
       <Name>Mono.Cecil-2008</Name>
     </ProjectReference>
