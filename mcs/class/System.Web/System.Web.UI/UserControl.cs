@@ -53,7 +53,7 @@ namespace System.Web.UI {
 #endif
 	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor
 #if NET_2_0
-	, INamingContainer, IFilterResolutionService
+		, INamingContainer, IFilterResolutionService, INonBindingContainer
 #endif
 	{
 #if NET_2_0

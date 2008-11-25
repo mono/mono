@@ -34,7 +34,7 @@ using System.Text;
 
 namespace System.Web.UI.WebControls
 {
-	public class FormViewPagerRow : FormViewRow, INamingContainer
+	public class FormViewPagerRow : FormViewRow, INamingContainer, INonBindingContainer
 	{
 		public FormViewPagerRow (
 			int rowIndex,
@@ -43,7 +43,6 @@ namespace System.Web.UI.WebControls
 		)
 			:base (rowIndex, rowType, rowState)
 		{
-			SetBindingContainer (false);
 		}
 	}
 }

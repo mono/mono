@@ -1,3 +1,20 @@
+2008-11-15  Marek Habersack  <mhabersack@novell.com>
+
+	* INonBindingContainer.cs: added
+
+	* Control.cs: BindingContainer now checks if a control implements
+	INonBindingContainer interface in addition to the
+	BINDING_CONTAINER mask check.
+
+	* UserControl.cs: implements INonBindingContainer
+
+	* ControlBuilder.cs: use the new INonBindingContainer interface to
+	determine the binding container type in the BindingContainerType
+	property. If TemplateBuilder's ContainerType implements that
+	interface, the NamingContainer is queried for the binding
+	container type. If ContainerType is null, we return our own
+	ControlType (if we're TemplateBuilder)
+
 2008-11-14  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBinder.cs: if Eval doesn't find the indicated property, try
