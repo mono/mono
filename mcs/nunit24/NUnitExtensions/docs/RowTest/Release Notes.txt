@@ -1,0 +1,48 @@
+Version 1.2.2 - (2008-03-27)
+----------------------------
+
+* null cannot be used as argument on .NET Framework 1.1. A new enum value SpecialValue.Null can be
+  used instead. If the RowTest addin finds this value as argument the value will be translated to
+  null.
+* Fixed Bug: Common NUnit attributes like Category, Description etc. don't work for RowTest
+  methods.
+
+
+Version 1.2.1 - (2008-02-17)
+----------------------------
+
+* Fixed Bug: SetUp and TearDown are not called on RowTestSuite.
+* Created new Test project for functional tests and reorganized samples.
+
+
+Version 1.2.0 - (2008-01-29)
+----------------------------
+
+* Added build for .NET Framework 1.1.
+* Assemblies are now strongly named.
+* Added ExceptionMessage property to the [Row] attribute. It can be used to specify the
+  message of an expected exception.
+* Added TestName property to the [Row] attribute. It is used to provide a custom name
+  of the test. If TestName is null or empty the method name will be used.
+* Fixed Bug: TestFixtureSetUp and TestFixtureTearDown are not called on the RowTest
+  TestSuite.
+* Fixed Bug: When a TestFixture contains both RowTests and normal unit tests the row tests
+  are not alphabetically ordered.
+
+
+Version 1.1.0 - (2007-10-27)
+----------------------------
+
+* Added ExpectedException property to the [Row] attribute. It can be used to specify
+  which type of exception to expect when the given data is passed to the test.
+* The [Row] attribute accepts now null values.
+* Removed dependency from assembly NUnitExtension.RowTest.AddIn to NUnitExtension.RowTest.
+
+
+Version 1.0.0 - (2007-08-17)
+----------------------------
+
+Initial release.
+
+* Data-driven tests can be marked with the [RowTest] attribute.
+* Data for a RowTest can be specified by using the [Row] attribute.
