@@ -69,7 +69,7 @@ namespace System.Data.Common {
 		public object Current {
 			get { 
 				reader.GetValues (values);
-				return new DbDataRecord (schema, values); 
+				return new DbDataRecordImpl (schema, values); 
 			}
 		}
 
