@@ -11131,6 +11131,77 @@
       </method>
     </type>
   </test>
+  <test name="gtest-426.cs">
+    <type name="OverloadTest.MyClass`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Method(MyInterface`1)">
+        <size>20</size>
+      </method>
+      <method name="Boolean Method(System.Action`1[T])">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="OverloadTest.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-427.cs">
+    <type name="T">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Test()">
+        <size>19</size>
+      </method>
+      <method name="Void Attach(EventHandler)">
+        <size>2</size>
+      </method>
+      <method name="Void Attach(EventHandler`1[System.String])">
+        <size>1</size>
+      </method>
+      <method name="Void OnClick(System.String)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="EventHandler">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Object, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="EventHandler`1[T]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -33170,6 +33241,27 @@
       </method>
       <method name="Int32 Main()">
         <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-695.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>53</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>680</size>
+      </method>
+      <method name="System.String get_BaseDirectory()">
+        <size>28</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
