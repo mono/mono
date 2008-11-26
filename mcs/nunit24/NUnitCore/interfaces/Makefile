@@ -14,7 +14,7 @@ install-local: install-symlink
 uninstall-local: uninstall-symlink
 endif
 
-EXTRA_DISTFILES = nunit.core.dll.csproj nunit.core.dll_VS2005.csproj
+EXTRA_DISTFILES = nunit.core.interfaces.dll.csproj nunit.core.interfaces.dll_VS2005.csproj
 
 include ../../../build/library.make
 
