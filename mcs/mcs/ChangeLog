@@ -1,3 +1,9 @@
+2008-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #449005
+	* nullable.cs (EmitEquality): Disable optimization for user operator
+	operands.
+
 2008-11-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #447027

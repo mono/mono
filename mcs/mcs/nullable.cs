@@ -726,6 +726,9 @@ namespace Mono.CSharp.Nullable
 			if (user_operator != null)
 				return false;
 
+			if (left is UserCast || right is UserCast)
+				return false;
+
 			Label dissimilar_label = ig.DefineLabel ();
 			Label end_label = ig.DefineLabel ();
 
