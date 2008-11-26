@@ -34,6 +34,13 @@ namespace NUnit.Util
 						shadowCopyPath = Path.Combine( Path.GetTempPath(), @"nunit20\ShadowCopyCache" );
 					else
 						shadowCopyPath = Environment.ExpandEnvironmentVariables(shadowCopyPath);
+
+					// FIXME: we know that in the config file we have %temp%...
+					if( shadowCopyPath.IndexOf ( "%temp%\\" ) != -1) {
+						shadowCopyPath = shadowCopyPath.Replace( "%temp%\\", Path.GetTempPath() );
+						if ( Path.DirectorySeparatorChar == '/' )
+							shadowCopyPath = shadowCopyPath.Replace ( '\\', '/' );
+					}
 				}
 
 				return shadowCopyPath;
