@@ -1,5 +1,9 @@
 2008-11-26  Mark Probst  <mark.probst@gmail.com>
 
+	* vararg2.cs: Forgot to add at last commit.
+
+2008-11-26  Mark Probst  <mark.probst@gmail.com>
+
 	* vararg2.cs: Test for sub-word sized variable arguments.
 
 	* Makefile.am: Test added.
