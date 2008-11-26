@@ -1,5 +1,10 @@
 2008-11-25  Mark Mason   <mmason@upwardaccess.com>
 
+	* cpu-mips.md: added jump_table
+	* mini-mips.c: added jump_table. Eliminate compare-imm when lowering. Remove dead function.		
+
+2008-11-25  Mark Mason   <mmason@upwardaccess.com>
+
 	* mini-mips.c, mini-mips.h, tramp-mips.c, cpu-mips.md: Initial upgrade of MIPS port to new IR.
 
 2008-11-25  Mark Mason   <mmason@upwardaccess.com>
