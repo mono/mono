@@ -514,8 +514,8 @@ namespace System.Web {
 				return ret;
 			
 			if (AppGlobalResourcesAssembly == null)
-				throw new MissingManifestResourceException ();
-			
+				return null;
+
 			return GetResourceObject ("Resources." + classKey, resourceKey, culture, AppGlobalResourcesAssembly);
 		}
 
