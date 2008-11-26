@@ -3091,6 +3091,14 @@ PublicKeyToken=b77a5c561934e089"));
 			}
 
 		}
+ 
+ 		[Test]
+ 		public void TypeNameStartsWithSpace ()
+		{
+			Type t1 = Type.GetType ("System.Type, mscorlib");
+			Type t2 = Type.GetType (" System.Type, mscorlib");
+			Assert.AreEqual (t1, t2);
+		}
 
 		static bool ContainsProperty (PropertyInfo [] props, string name)
 		{

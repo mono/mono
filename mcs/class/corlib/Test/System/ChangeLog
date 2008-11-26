@@ -1,3 +1,8 @@
+
+2008-11-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TypeTest.cs: new test for Type.GetType.
+
 2008-11-06  Bill Holmes  <billholmes54@gmail.com>
 
 	* TypeTest.cs: TypeGetMemberReturnTypeTest added to check that the
