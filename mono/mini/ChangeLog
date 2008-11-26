@@ -1,5 +1,9 @@
 2008-11-25  Mark Mason   <mmason@upwardaccess.com>
 
+	* mini-ops.h: corrected a handful of MIPS opcodes.
+
+2008-11-25  Mark Mason   <mmason@upwardaccess.com>
+
 	* aot-compiler.c: MIPS to use ELF writer
 
 2008-11-25  Mark Mason   <mmason@upwardaccess.com>
