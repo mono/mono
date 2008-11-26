@@ -1,6 +1,11 @@
 
 2008-11-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* reflection.c: (_mono_reflection_parse_type) skip leading spaces in
+	the type name (test added in corlib).
+
+2008-11-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* pedump.c: initialize perf. counters. Fixes a segv.
 
 2008-11-25  Martin Baulig  <martin@ximian.com>
