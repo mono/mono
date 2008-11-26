@@ -1,5 +1,13 @@
 2008-11-26  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c (mini_emit_inst_for_method): Small fix: we're
+	using the new atomic add ops now.
+
+	* mini-ppc64.c, mini-ppc64.h, cpu-ppc64.md: Implemented atomic
+	add.
+
+2008-11-26  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc64.c: Several fixes.
 
 2008-11-25  Mark Mason   <mmason@upwardaccess.com>
