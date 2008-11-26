@@ -1,5 +1,9 @@
 2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConsoleClient/nunit-console-exe/Makefile : more :(
+
+2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConsoleClient/nunit-console/Makefile : here this time :(
 
 2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
