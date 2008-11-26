@@ -5,9 +5,7 @@ SUBDIRS = NUnitFramework/framework NUnitCore/interfaces NUnitCore/core \
 	ConsoleRunner/nunit-console ConsoleRunner/nunit-console-exe
 include ../build/rules.make
 
-DISTFILES = license.rtf nunit.sln nunit_VS2005.sln nunit.snk \
-	NUnitExtensions/docs/RowTest/License.txt \
-	"NUnitExtensions/docs/RowTest/Release Notes.txt"
+DISTFILES = license.rtf nunit.sln nunit_VS2005.sln nunit.snk
 
 all-local install-local test-local run-test-local run-test-ondotnet-local clean-local uninstall-local doc-update-local:
 

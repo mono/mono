@@ -1,5 +1,10 @@
 2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile, NUnitExtensions/docs :
+	  well, just remove those extra empty stuff.
+
+2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : more fix extra distfiles (whitespace in filename).
 
 2005-11-25  Atsushi Enomoto  <atsushi@ximian.com>
