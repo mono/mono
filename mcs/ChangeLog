@@ -1,3 +1,8 @@
+2008-11-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : I happened to remove errors and docs which
+	  used to be broken.
+
 2008-11-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : replace nunit20 with nunit24.
