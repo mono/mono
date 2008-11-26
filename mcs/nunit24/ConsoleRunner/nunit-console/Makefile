@@ -11,7 +11,7 @@ LOCAL_MCS_FLAGS= \
 	/d:MONO /d:StronglyNamedAssembly
 NO_TEST = yo
 
-EXTRA_DISTFILES = nunit-console-runner.dll.csproj
+EXTRA_DISTFILES = nunit-console.csproj nunit-console_VS2005.csproj
 
 ifeq (net_2_0, $(PROFILE))
 NO_INSTALL = yes
