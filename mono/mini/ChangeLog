@@ -1,3 +1,7 @@
+2008-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Remove unused mono_normalize_opcodes () function.
+
 2008-11-26  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mini_emit_inst_for_method): Small fix: we're
