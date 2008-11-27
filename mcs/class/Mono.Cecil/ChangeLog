@@ -1,3 +1,8 @@
+2008-11-27  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ExternTypeCollection.cs: don't attach types as they
+	are already attached to the current module.
+
 2008-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/GenericParameter.cs,
@@ -21,8 +26,8 @@
 	* Mono.Cecil/PropertyDefinition.cs,
 	* Mono.Cecil/IGenericParameterProvider.cs:
 		Add boolean Has{x} properties so Cecil consumers are able
-		to avoid the lazy allocations that would be made for an 
-		empty {x}. Use the Has{x} properties inside Cecil (some 
+		to avoid the lazy allocations that would be made for an
+		empty {x}. Use the Has{x} properties inside Cecil (some
 		cases might be missing).
 
 2008-11-16  Sebastien Pouliot  <sebastien@ximian.com>

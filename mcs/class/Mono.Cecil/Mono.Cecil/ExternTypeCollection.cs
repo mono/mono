@@ -93,16 +93,11 @@ namespace Mono.Cecil {
 			if (value == null)
 				throw new ArgumentNullException ("value");
 
-			Attach (value);
-
 			this.BaseAdd (value.FullName, value);
 		}
 
 		public void Clear ()
 		{
-			foreach (TypeReference item in this)
-				Detach (item);
-
 			this.BaseClear ();
 		}
 
@@ -125,16 +120,12 @@ namespace Mono.Cecil {
 		public void Remove (TypeReference value)
 		{
 			this.BaseRemove (value.FullName);
-
-			Detach (value);
 		}
 
 		public void RemoveAt (int index)
 		{
 			TypeReference item = this [index];
 			Remove (item);
-
-			Detach (item);
 		}
 
 		public void CopyTo (Array ary, int index)
@@ -196,19 +187,6 @@ namespace Mono.Cecil {
 		{
 			Check (value);
 			Remove (value as TypeReference);
-		}
-
-		void Detach (TypeReference type)
-		{
-			type.Module = null;
-		}
-
-		void Attach (TypeReference type)
-		{
-			if (type.Module != null)
-				throw new ReflectionException ("Type is already attached, clone it instead");
-
-			type.Module = m_container;
 		}
 	}
 }
