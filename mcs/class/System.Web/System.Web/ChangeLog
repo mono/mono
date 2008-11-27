@@ -1,3 +1,8 @@
+
+2008-11-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpContext.cs: MS does not throw. They just return null.
+
 2008-11-24  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: take PlatformID.MacOSX into account when
