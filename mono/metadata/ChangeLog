@@ -1,3 +1,7 @@
+2008-11-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (generic_array_methods): Release the linked list.
+
 2008-11-27  Mark Probst  <mark.probst@gmail.com>
 
 	* marshal.c (mono_string_builder_to_utf8): Fixed a wrong
