@@ -1029,20 +1029,7 @@ namespace System.Web.UI.WebControls
 			int startIndex = dataSource.StartRowIndex;
 			int dataCount = dataSource.Count;
 			int numberOfGroups = (dataCount / groupItemCount) + (dataCount % groupItemCount) - 1;
-			// This is disabled for now, until a bug in gmcs/JIT is fixed
-// 			GroupStart groupStart = () => {
-// 				if (groupItemCounter <= 0) {
-// 					groupItemCounter = groupItemCount;
-// 					currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
-// 					numberOfGroups--;
-// 					itemPosInGroup = firstItemIndexInGroup;
-// 					_groupedItemsContainerItemCount++;
-// 					needSeparator = false;
-// 				}
-// 			};
-			
-			foreach (object item in dataSource) {
-				// groupStart ();
+			GroupStart groupStart = () => {
 				if (groupItemCounter <= 0) {
 					groupItemCounter = groupItemCount;
 					currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
@@ -1051,6 +1038,10 @@ namespace System.Web.UI.WebControls
 					_groupedItemsContainerItemCount++;
 					needSeparator = false;
 				}
+			};
+			
+			foreach (object item in dataSource) {
+				groupStart ();
 				if (needSeparator && haveSeparatorTemplate)
 					InsertSeparatorItem (currentGroup, itemPosInGroup++);
 
@@ -1061,30 +1052,12 @@ namespace System.Web.UI.WebControls
 					needSeparator = true;
 			}
 
-			//groupStart ();
-			if (groupItemCounter <= 0) {
-				groupItemCounter = groupItemCount;
-				currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
-				numberOfGroups--;
-				itemPosInGroup = firstItemIndexInGroup;
-				_groupedItemsContainerItemCount++;
-				needSeparator = false;
-			}
-			
+			groupStart ();			
 			if (insertPosition == InsertItemPosition.LastItem) {
 				if (needSeparator && haveSeparatorTemplate)
 					InsertSeparatorItem (currentGroup, itemPosInGroup++);
 				
-				//groupStart ();
-				if (groupItemCounter <= 0) {
-					groupItemCounter = groupItemCount;
-					currentGroup = StartNewGroup (numberOfGroups >= 1, ref gpos, ref firstItemIndexInGroup);
-					numberOfGroups--;
-					itemPosInGroup = firstItemIndexInGroup;
-					_groupedItemsContainerItemCount++;
-					needSeparator = false;
-				}
-
+				groupStart ();
 				lvi = CreateInsertItem ();
 				AddControlToContainer (lvi, currentGroup, itemPosInGroup++);
 				groupItemCounter--;
@@ -1633,8 +1606,9 @@ namespace System.Web.UI.WebControls
 
 			if (usingDataSourceID) {
 				DataKeyArray dka = DataKeys;
-				if (index > dka.Count)
+				if (index < dka.Count)
 					dka [index].Values.CopyTo (deletingArgs.Keys);
+				
 				ExtractItemValues (deletingArgs.Values, item, true);
 			}
 			OnItemDeleting (deletingArgs);
@@ -1683,7 +1657,7 @@ namespace System.Web.UI.WebControls
 			var updatingArgs = new ListViewUpdateEventArgs (index);
 			if (usingDataSourceID) {
 				DataKeyArray dka = DataKeys;
-				if (index > dka.Count)
+				if (index < dka.Count)
 					dka [index].Values.CopyTo (updatingArgs.Keys);
 
 				CurrentEditOldValues.CopyTo (updatingArgs.OldValues);

@@ -1,3 +1,11 @@
+2008-11-27  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: fixes in DoUpdate and DoDelete - check must be made
+	that the requested item index is _smaller_ than the number of
+	keys, not _bigger_.
+	Enable using the lambda expression in CreateItemsInGroups - the
+	gmcs bug preventing that was fixed.
+
 2008-11-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: implemented the EditItem property.
