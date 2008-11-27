@@ -1,3 +1,7 @@
+2008-11-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Add tests for Get/SetVector.
+
 2008-11-27  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: Removed g_slist_append_mempool().  Now in
