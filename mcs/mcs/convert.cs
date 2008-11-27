@@ -20,22 +20,8 @@ namespace Mono.CSharp {
 	//
 	// A container class for all the conversion operations
 	//
-	public class Convert {
+	static class Convert {
 #if GMCS_SOURCE
-		static bool TypeParameter_to_Null (Type target_type)
-		{
-			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (target_type);
-			if (gc == null)
-				return false;
-
-			if (gc.HasReferenceTypeConstraint)
-				return true;
-			if (gc.HasClassConstraint && !TypeManager.IsValueType (gc.ClassConstraint))
-				return true;
-
-			return false;
-		}
-
 		static Type TypeParam_EffectiveBaseType (GenericConstraints gc)
 		{
 			ArrayList list = new ArrayList ();
@@ -390,7 +376,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static public bool ImplicitBoxingConversionExists (Expression expr, Type target_type,
+		public static bool ImplicitBoxingConversionExists (Expression expr, Type target_type,
 								   out bool use_class_cast)
 		{
 			Type expr_type = expr.Type;
@@ -463,149 +449,150 @@ namespace Mono.CSharp {
 		///   expr is the expression to convert, returns a new expression of type
 		///   target_type or null if an implicit conversion is not possible.
 		/// </summary>
-		static public Expression ImplicitNumericConversion (Expression expr,
-								    Type target_type)
+		public static Expression ImplicitNumericConversion (Expression expr, Type target_type)
 		{
-			Type expr_type = expr.Type;
-			Type real_target_type = target_type;
+			return ImplicitNumericConversion (expr, expr.Type, target_type);
+		}
 
+		static Expression ImplicitNumericConversion (Expression expr, Type expr_type, Type target_type)
+		{
 			if (expr_type == TypeManager.sbyte_type){
 				//
 				// From sbyte to short, int, long, float, double, decimal
 				//
-				if (real_target_type == TypeManager.int32_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.short_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.int32_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (target_type == TypeManager.int64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.short_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.byte_type){
 				//
 				// From byte to short, ushort, int, uint, long, ulong, float, double, decimal
 				//
-				if (real_target_type == TypeManager.int32_type || real_target_type == TypeManager.uint32_type ||
-				    real_target_type == TypeManager.short_type || real_target_type == TypeManager.ushort_type)
-					return EmptyCast.Create (expr, target_type);
+				if (target_type == TypeManager.int32_type || target_type == TypeManager.uint32_type ||
+				    target_type == TypeManager.short_type || target_type == TypeManager.ushort_type)
+					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
 
-				if (real_target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.uint64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.int64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 
 			} else if (expr_type == TypeManager.short_type){
 				//
 				// From short to int, long, float, double, decimal
 				//
-				if (real_target_type == TypeManager.int32_type)
-					return EmptyCast.Create (expr, target_type);
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.int32_type)
+					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
+				if (target_type == TypeManager.int64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 
 			} else if (expr_type == TypeManager.ushort_type){
 				//
 				// From ushort to int, uint, long, ulong, float, double, decimal
 				//
-				if (real_target_type == TypeManager.int32_type || real_target_type == TypeManager.uint32_type)
-					return EmptyCast.Create (expr, target_type);
+				if (target_type == TypeManager.int32_type || target_type == TypeManager.uint32_type)
+					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
 				
-				if (real_target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.uint64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.int64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.int32_type){
 				//
 				// From int to long, float, double, decimal
 				//
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.int64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.uint32_type){
 				//
 				// From uint to long, ulong, float, double, decimal
 				//
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (real_target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.int64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.uint64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.int64_type){
 				//
 				// From long/ulong to float, double
 				//
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.uint64_type){
 				//
 				// From ulong to float, double
 				//
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un), target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.char_type){
 				//
 				// From char to ushort, int, uint, long, ulong, float, double, decimal
 				//
-				if ((real_target_type == TypeManager.ushort_type) ||
-				    (real_target_type == TypeManager.int32_type) ||
-				    (real_target_type == TypeManager.uint32_type))
-					return EmptyCast.Create (expr, target_type);
-				if (real_target_type == TypeManager.uint64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
-				if (real_target_type == TypeManager.int64_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
-				if (real_target_type == TypeManager.float_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
-				if (real_target_type == TypeManager.decimal_type)
-					return new CastToDecimal (expr);
+				if ((target_type == TypeManager.ushort_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.uint32_type))
+					return expr == null ? EmptyExpression.Null : EmptyCast.Create (expr, target_type);
+				if (target_type == TypeManager.uint64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.int64_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.float_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.decimal_type)
+					return expr == null ? EmptyExpression.Null : new CastToDecimal (expr);
 			} else if (expr_type == TypeManager.float_type){
 				//
 				// float to double
 				//
-				if (real_target_type == TypeManager.double_type)
-					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.double_type)
+					return expr == null ? EmptyExpression.Null : new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
 			}
 
 			return null;
@@ -617,15 +604,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
-#if GMCS_SOURCE
 			if (expr is NullLiteral) {
-				if (TypeManager.IsGenericParameter (target_type))
-					return TypeParameter_to_Null (target_type);
-
-				if (TypeManager.IsNullableType (target_type))
-					return true;
+				return ((NullLiteral)expr).ConvertImplicitly (target_type) != null;
 			}
-#endif
+
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
@@ -689,112 +671,9 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEqual (expr_type, target_type))
 				return true;
 
-
 			// First numeric conversions
-
-			if (expr_type == TypeManager.sbyte_type){
-				//
-				// From sbyte to short, int, long, float, double, decimal
-				//
-				if ((target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type)  ||
-				    (target_type == TypeManager.short_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.byte_type){
-				//
-				// From byte to short, ushort, int, uint, long, ulong, float, double, decimal
-				//
-				if ((target_type == TypeManager.short_type) ||
-				    (target_type == TypeManager.ushort_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.short_type){
-				//
-				// From short to int, long, double, float, decimal 
-				//
-				if ((target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.ushort_type){
-				//
-				// From ushort to int, uint, long, ulong, double, float, decimal
-				//
-				if ((target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.int32_type){
-				//
-				// From int to long, double, float, decimal
-				//
-				if ((target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.uint32_type){
-				//
-				// From uint to long, ulong, double, float, decimal
-				//
-				if ((target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if ((expr_type == TypeManager.uint64_type) ||
-				   (expr_type == TypeManager.int64_type)) {
-				//
-				// From long/ulong to double, float, decimal
-				//
-				if ((target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.char_type){
-				//
-				// From char to ushort, int, uint, ulong, long, float, double, decimal
-				//
-				if ((target_type == TypeManager.ushort_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.float_type){
-				//
-				// float to double
-				//
-				if (target_type == TypeManager.double_type)
-					return true;
-			}
+			if (ImplicitNumericConversion (null, expr_type, target_type) != null)
+				return true;
 
 			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
@@ -1355,7 +1234,7 @@ namespace Mono.CSharp {
 					return c;
 			}
 
-			e = ImplicitNumericConversion (expr, target_type);
+			e = ImplicitNumericConversion (expr, expr_type, target_type);
 			if (e != null)
 				return e;
 

@@ -1,5 +1,9 @@
 2008-11-27  Marek Safar  <marek.safar@gmail.com>
 
+	* convert.cs, literal.cs: More Convert cleanup is needed.
+
+2008-11-27  Marek Safar  <marek.safar@gmail.com>
+
 	* decl.cs, class.cs: Fixed misleading error message.
 
 2008-11-26  Marek Safar  <marek.safar@gmail.com>
