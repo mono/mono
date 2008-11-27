@@ -1,3 +1,8 @@
+2008-11-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileInfo.cs: Change ToString (in 2.1) not to return the full path
+	of the filename (since it's not SecurityCritical).
+
 2008-11-09  William Holmes  <billholmes54@gmail.com>
 
 	* TextReader.cs : Adding the NullTextReader as a private class to
