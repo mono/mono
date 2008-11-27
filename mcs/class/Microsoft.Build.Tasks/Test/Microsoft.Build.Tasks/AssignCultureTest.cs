@@ -76,10 +76,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 			if (OS == OsType.Unix) {
 				CheckItems (new string [] {"./foo.resx", "bar/foo.resx", "foo.fr.resx", "dir/abc.en.resx", "foo.bar.resx",
 					"sample.txt", "bar/sample.txt", "sample.it.png", "dir/sample.en.png", "sample.inv.txt"},
+					new string [] {null, null, "fr", "en", null, null, null, "it", "en", null},
 					"AssignedFiles", "A2");
 			} else if (OS == OsType.Windows) {
 				CheckItems (new string [] {".\\foo.resx", @"bar\foo.resx", "foo.fr.resx", @"dir\abc.en.resx", "foo.bar.resx",
 					"sample.txt", @"bar\sample.txt", "sample.it.png", @"dir\sample.en.png", "sample.inv.txt"},
+					new string [] { null, null, "fr", "en", null, null, null, "it", "en", null },
 					"AssignedFiles", "A2");
 			}
 		}
@@ -92,9 +94,11 @@ namespace MonoTests.Microsoft.Build.Tasks
 			//AssignedFilesWithCulture
 			if (OS == OsType.Unix) {
 				CheckItems (new string [] { "foo.fr.resx", "dir/abc.en.resx", "sample.it.png", "dir/sample.en.png" },
+					new string [] {"fr", "en", "it", "en"},
 					"AssignedFilesWithCulture", "A2");
 			} else if (OS == OsType.Windows) {
 				CheckItems (new string [] { "foo.fr.resx", @"dir\abc.en.resx", "sample.it.png", @"dir\sample.en.png" },
+					new string [] { "fr", "en", "it", "en" },
 					"AssignedFilesWithCulture", "A2");
 			}
 		}
@@ -107,10 +111,10 @@ namespace MonoTests.Microsoft.Build.Tasks
 			//AssignedFilesWithNoCulture
 			if (OS == OsType.Unix) {
 				CheckItems (new string [] { "./foo.resx", "bar/foo.resx", "foo.bar.resx", "sample.txt", "bar/sample.txt", "sample.inv.txt"},
-					"AssignedFilesWithNoCulture", "A2");
+					null, "AssignedFilesWithNoCulture", "A2");
 			} else if (OS == OsType.Windows) {
 				CheckItems (new string [] { ".\\foo.resx", @"bar\foo.resx", "foo.bar.resx", "sample.txt", @"bar\sample.txt", "sample.inv.txt"},
-					"AssignedFilesWithNoCulture", "A2");
+					null, "AssignedFilesWithNoCulture", "A2");
 			}
 		}
 
@@ -123,10 +127,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 			if (OS == OsType.Unix) {
 				CheckItems (new string [] { "./foo.resx", "bar/foo.resx", "foo.resx", "dir/abc.resx", "foo.bar.resx",
 					"sample.txt", "bar/sample.txt", "sample.png", "dir/sample.png", "sample.inv.txt"},
+					new string [] { null, null, "fr", "en", null, null, null, "it", "en", null },
 					"CultureNeutralAssignedFiles", "A2");
 			} else if (OS == OsType.Windows) {
 				CheckItems (new string [] { ".\\foo.resx", @"bar\foo.resx", "foo.resx", @"dir\abc.resx", "foo.bar.resx",
 					"sample.txt", @"bar\sample.txt", "sample.png", @"dir\sample.png", "sample.inv.txt"},
+					new string [] { null, null, "fr", "en", null, null, null, "it", "en", null },
 					"CultureNeutralAssignedFiles", "A2");
 			}
 		}
@@ -138,7 +144,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 			Assert.IsTrue (project.Build ("1"), "A1 : Error in building");
 		}
 
-		void CheckItems (string [] values, string itemlist_name, string prefix)
+		void CheckItems (string [] values, string [] cultures, string itemlist_name, string prefix)
 		{
 			BuildItemGroup group = project.GetEvaluatedItemsByName (itemlist_name);
 			Assert.AreEqual (values.Length, group.Count, prefix + "#1");
@@ -146,6 +152,9 @@ namespace MonoTests.Microsoft.Build.Tasks
 				Assert.AreEqual (values [i], group [i].FinalItemSpec, prefix + "#2");
 				Assert.IsTrue (group [i].HasMetadata ("Child"), prefix + "#3");
 				Assert.AreEqual ("ChildValue", group [i].GetMetadata ("Child"), prefix + "#4");
+				Assert.AreEqual (cultures != null && cultures [i] != null, group [i].HasMetadata ("Culture"), prefix + "#5");
+				if (cultures != null && cultures [i] != null)
+					Assert.AreEqual (cultures [i], group [i].GetMetadata ("Culture"), prefix + "#6");
 			}
 		}
 

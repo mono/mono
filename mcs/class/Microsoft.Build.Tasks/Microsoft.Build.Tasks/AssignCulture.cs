@@ -51,31 +51,38 @@ namespace Microsoft.Build.Tasks {
 		
 		public override bool Execute ()
 		{
-			assignedFiles = new ITaskItem [files.Length];
-			Array.Copy (files, assignedFiles, files.Length);
-
+			List<ITaskItem> all_files = new List<ITaskItem> ();
 			List<ITaskItem> with_culture = new List<ITaskItem> ();
 			List<ITaskItem> no_culture = new List<ITaskItem> ();
 			List<ITaskItem> culture_neutral = new List<ITaskItem> ();
 
-			foreach (ITaskItem item in assignedFiles) {
+			foreach (ITaskItem item in files) {
 				string only_filename, culture, extn;
 
 				if (TrySplitResourceName (item.ItemSpec, out only_filename, out culture, out extn)) {
 					//valid culture found
-					with_culture.Add (item);
+					ITaskItem new_item = new TaskItem (item);
+					new_item.SetMetadata ("Culture", culture);
+					all_files.Add (new_item);
 
-					ITaskItem c_neutral_item = new TaskItem (item);
-					c_neutral_item.ItemSpec = only_filename + "." + extn;
-					culture_neutral.Add (c_neutral_item);
+					new_item = new TaskItem (item);
+					new_item.SetMetadata ("Culture", culture);
+					with_culture.Add (new_item);
+
+					new_item = new TaskItem (item);
+					new_item.SetMetadata ("Culture", culture);
+					new_item.ItemSpec = only_filename + "." + extn;
+					culture_neutral.Add (new_item);
 				} else {
 					//No valid culture
 
+					all_files.Add (item);
 					no_culture.Add (item);
 					culture_neutral.Add (item);
 				}
 			}
 
+			assignedFiles = all_files.ToArray ();
 			assignedFilesWithCulture = with_culture.ToArray ();
 			assignedFilesWithNoCulture = no_culture.ToArray ();
 			cultureNeutralAssignedFiles = culture_neutral.ToArray ();
@@ -112,7 +119,7 @@ namespace Microsoft.Build.Tasks {
 		//Given a filename like foo.it.resx, splits it into - foo, it, resx
 		//Returns true only if a valid culture is found
 		//Note: hand-written as this can get called lotsa times
-		static bool TrySplitResourceName (string fname, out string only_filename, out string culture, out string extn)
+		internal static bool TrySplitResourceName (string fname, out string only_filename, out string culture, out string extn)
 		{
 			only_filename = culture = extn = null;
 

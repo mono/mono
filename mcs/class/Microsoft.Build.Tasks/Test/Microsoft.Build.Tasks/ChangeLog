@@ -1,3 +1,7 @@
+2008-11-27  Ankit Jain  <jankit@novell.com>
+
+	* AssignCultureTest.cs: Add tests for "Culture" metadata.
+
 2008-11-23  Ankit Jain  <jankit@novell.com>
 
 	* AssignCultureTest.cs: New.

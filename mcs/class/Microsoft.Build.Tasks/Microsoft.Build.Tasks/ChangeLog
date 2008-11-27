@@ -1,3 +1,7 @@
+2008-11-27  Ankit Jain  <jankit@novell.com>
+
+	* AssignCulture.cs (Execute): Emit "Culture" metadata also.
+
 2008-11-23  Ankit Jain  <jankit@novell.com>
 
 	* AssignCulture.cs (Execute): Implement.
