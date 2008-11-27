@@ -1,3 +1,11 @@
+2008-11-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* simd-intrinsics.c (mono_emit_vector_ldelema): Extract the element
+	size properly and make the bounds check optional.
+
+	* simd-intrinsics.c (emit_array_extension_intrinsics): Add support
+	for SetVector and IsAligned.
+
 2008-11-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Remove unused mono_normalize_opcodes () function.
