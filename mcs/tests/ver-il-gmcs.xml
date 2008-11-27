@@ -11202,6 +11202,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-428.cs">
+    <type name="CInt">
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+      <method name="CInt op_Implicit(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Int32 op_Implicit(CInt)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Klass">
+      <method name="Void .ctor(Nullable`1)">
+        <size>14</size>
+      </method>
+      <method name="Nullable`1 get_Value()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>183</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
