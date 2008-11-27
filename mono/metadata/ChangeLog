@@ -1,3 +1,11 @@
+2008-11-27  Mark Probst  <mark.probst@gmail.com>
+
+	* mempool.c, mempool-internals.h: Added g_slist_append_mempool()
+	from mini/mini.c.
+
+	* generic-sharing.c: Allocate the method template slists from the
+	image mempool so it doesn't leak.
+
 2008-11-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (generic_array_methods): Release the linked list.
