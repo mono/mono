@@ -349,14 +349,21 @@ namespace Mono.CSharp {
 				}
 			} else {
 				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN | Modifiers.PARTIAL)) == 0) {
-					if (RootContext.Version >= LanguageVersion.LINQ && this is Property.PropertyMethod &&
-						!(this is Indexer.GetIndexerMethod || this is Indexer.SetIndexerMethod)) {
-						Report.Error (840, Location, "`{0}' must have a body because it is not marked abstract or extern. The property can be automatically implemented when you define both accessors",
-						              GetSignatureForError ());
-					} else {
-						Report.Error (501, Location, "`{0}' must have a body because it is not marked abstract, extern, or partial",
-						              GetSignatureForError ());
+					if (RootContext.Version >= LanguageVersion.LINQ) {
+						Property.PropertyMethod pm = this as Property.PropertyMethod;
+						if (pm is Indexer.GetIndexerMethod || pm is Indexer.SetIndexerMethod)
+							pm = null;
+
+						if (pm != null && (pm.Property.Get.IsDummy || pm.Property.Set.IsDummy)) {
+							Report.Error (840, Location,
+								"`{0}' must have a body because it is not marked abstract or extern. The property can be automatically implemented when you define both accessors",
+								GetSignatureForError ());
+							return false;
+						}
 					}
+
+					Report.Error (501, Location, "`{0}' must have a body because it is not marked abstract, extern, or partial",
+					              GetSignatureForError ());
 					return false;
 				}
 			}

@@ -5045,7 +5045,7 @@ namespace Mono.CSharp {
 				declaring_type = container.TypeBuilder;
 
 			if (implementing != null && member.IsExplicitImpl) {
-				container.TypeBuilder.DefineMethodOverride (builder, implementing);
+					container.TypeBuilder.DefineMethodOverride (builder, implementing);
 			}
 
 			TypeManager.AddMethod (builder, method);
@@ -6398,10 +6398,15 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			public bool HasCustomAccessModifier
-			{
+			public bool HasCustomAccessModifier {
 				get {
 					return (ModFlags & Modifiers.PROPERTY_CUSTOM) != 0;
+				}
+			}
+
+			public PropertyBase Property {
+				get {
+					return method;
 				}
 			}
 

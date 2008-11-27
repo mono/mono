@@ -1,3 +1,7 @@
+2008-11-27  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs, class.cs: Fixed misleading error message.
+
 2008-11-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #449005
