@@ -1,4 +1,8 @@
-2008-11-11  Andrés G. Aragoneses  <aaragoneses@novell.com>
+2008-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: here is another nunit24 option breakage.
+
+2008-11-11  Andres G. Aragoneses  <aaragoneses@novell.com>
 
 	* Application.cs: After UIA assembly is successfully loaded,
 	dump any exception that happens on initialization to stderr.
@@ -850,7 +854,7 @@
 	* resources/, System.Windows.Forms.dll.resources, Makefile:
 	  Add user-home Tango icon in various sizes.
 
-2006-09-05  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
+2006-09-05  KornAcl PA!l  <kornelpal@hotmail.com>
 
 	* Makefile: Removed CODEPAGE as now UTF-8 is the default.
 
@@ -1013,7 +1017,7 @@
 
 	* System.Windows.Forms_test.dll.sources: Added System.Resources/CultureTest.cs
 
-2005-11-12  Pedro MartÃ­nez JuliÃ¡  <pedromj@gmail.com>
+2005-11-12  Pedro MartA-nez JuliA!  <pedromj@gmail.com>
 
 	* System.Windows.Forms_test.dll.sources: Added DataGridViewElementTest.cs
 	DataGridViewBandTest.cs DataGridViewCellTest.cs
@@ -1061,7 +1065,7 @@
 
 	* System.Windows.Forms_test.dll.sources : Added Common.cs
 
-2005-09-27  KornÃ©l PÃ¡l  <kornelpal@hotmail.com>
+2005-09-27  KornAcl PA!l  <kornelpal@hotmail.com>
 
 	* Makefile: Replaced /codepage with CODEPAGE.
 
