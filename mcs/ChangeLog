@@ -1,5 +1,10 @@
 2008-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* docs/Makefile: remove nunit docs that do not exist (and I don't
+	  think such docs for private mono use should be provided).
+
+2008-11-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : I happened to remove errors and docs which
 	  used to be broken.
 

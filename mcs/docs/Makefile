@@ -25,8 +25,7 @@ ASSEMBLED_DOCS = \
 	ecma334.tree ecma334.zip          \
 	Mono.tree Mono.zip                \
 	netdocs.tree netdocs.zip          \
-	Novell.tree Novell.zip            \
-	nunit-docs.tree nunit-docs.zip
+	Novell.tree Novell.zip            
 
 MONODOC_SOURCES_INSTALL_FILES = \
 	$(ASSEMBLED_DOCS)             \
