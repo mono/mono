@@ -1,5 +1,10 @@
 2008-11-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c (emit_array_extension_intrinsics): Add support
+	for Set/GetVector aligned versions.
+
+2008-11-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Add tests for Get/SetVector.
 
 2008-11-27  Mark Probst  <mark.probst@gmail.com>
