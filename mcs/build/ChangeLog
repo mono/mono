@@ -2,6 +2,8 @@
 
 	* library.make (FIXTURE_ARG): /parameter:value syntax is not
 	supported in nunit 2.4
+	(TESTNAME_ARG): added support for the nunit-console -run
+	parameter, so that individual tests can be ran.
 
 2008-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
