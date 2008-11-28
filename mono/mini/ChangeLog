@@ -1,5 +1,10 @@
 2008-11-28  Mark Mason   <mmason@upwardaccess.com>
 
+	* method-to-ir.c, mini-trampolines.c: protect IMG code with #ifdef MONO_ARCH_HAVE_IMT to fix compile errors.
+	* mini-mips.c: Fixup stackframe assignments after allocation of spillvars.
+	* mini-mips.h: disable IMT
+	* tramp-mips.c (mono_arch_get_vcall_slot): fix offset extraction
+	
 2008-11-28  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c, mini-ppc64.h: Don't emulate long ops.
