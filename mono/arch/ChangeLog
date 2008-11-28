@@ -1,3 +1,8 @@
+2008-11-28  Mark Probst  <mark.probst@gmail.com>
+
+	* ppc/ppc-codegen.h: #define for the maximum length of a load
+	sequence.
+
 2008-11-21  Mark Probst  <mark.probst@gmail.com>
 
 	* ppc/ppc-codegen.h: Make ppc_is_[u]imm16() work with 64 bit

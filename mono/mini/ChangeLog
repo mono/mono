@@ -1,5 +1,10 @@
 2008-11-28  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc64.c, mini-ppc64.h: Enable generalized IMT thunks and
+	make them work.
+
+2008-11-28  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc64.h, tramp-ppc64.c: Make generic code sharing work.
 
 2008-11-28  Mark Mason   <mmason@upwardaccess.com>

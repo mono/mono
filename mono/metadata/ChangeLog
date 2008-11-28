@@ -1,5 +1,10 @@
 2008-11-28  Mark Probst  <mark.probst@gmail.com>
 
+	* object.c: Don't put function descriptors into generalized IMT
+	thunks.
+
+2008-11-28  Mark Probst  <mark.probst@gmail.com>
+
 	* class.c: Enable generic code sharing on PPC64.
 
 2008-11-27  Mark Probst  <mark.probst@gmail.com>
