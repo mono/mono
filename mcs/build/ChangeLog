@@ -1,3 +1,8 @@
+2008-11-28  Marek Habersack  <mhabersack@novell.com>
+
+	* library.make (FIXTURE_ARG): /parameter:value syntax is not
+	supported in nunit 2.4
+
 2008-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* library.make : another nunit20 to kill :(

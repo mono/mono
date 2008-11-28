@@ -211,7 +211,7 @@ TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).lo
 endif
 
 ifdef FIXTURE
-FIXTURE_ARG = /fixture:MonoTests.$(FIXTURE)
+FIXTURE_ARG = -fixture=MonoTests.$(FIXTURE)
 endif
 
 ## FIXME: i18n problem in the 'sed' command below
