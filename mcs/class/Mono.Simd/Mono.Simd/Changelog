@@ -1,5 +1,10 @@
 2008-11-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ArrayExtensions.cs: Add aligned Get/SetVector variants for
+	all vector types.
+
+2008-11-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ArrayExtensions.cs: Add Get/SetVector variants for
 	all vector types.
 

@@ -223,6 +223,199 @@ namespace Mono.Simd
 				array [offset + i] = val [i];
 		}
 
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector2d GetVectorAligned (this double[] array, int offset)
+		{
+			return new Vector2d (array [offset], array [offset + 1]);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector2l GetVectorAligned (this long[] array, int offset)
+		{
+			return new Vector2l (array [offset], array [offset + 1]);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector2ul GetVectorAligned (this ulong[] array, int offset)
+		{
+			return new Vector2ul (array [offset], array [offset + 1]);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector4f GetVectorAligned (this float[] array, int offset)
+		{
+			return new Vector4f (array [offset], array [offset + 1], array [offset + 2], array [offset + 3]);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector4i GetVectorAligned (this int[] array, int offset)
+		{
+			return new Vector4i (array [offset], array [offset + 1], array [offset + 2], array [offset + 3]);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector4ui GetVectorAligned (this uint[] array, int offset)
+		{
+			return new Vector4ui (array [offset], array [offset + 1], array [offset + 2], array [offset + 3]);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector8s GetVectorAligned (this short[] array, int offset)
+		{
+			if (offset < 0 || offset > array.Length - 8)
+				throw new IndexOutOfRangeException ();
+			unsafe {
+				fixed (void *ptr = &array[0]) {
+					return *(Vector8s*)ptr;
+				}
+			}
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector8us GetVectorAligned (this ushort[] array, int offset)
+		{
+			if (offset < 0 || offset > array.Length - 8)
+				throw new IndexOutOfRangeException ();
+			unsafe {
+				fixed (void *ptr = &array[0]) {
+					return *(Vector8us*)ptr;
+				}
+			}
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector16sb GetVectorAligned (this sbyte[] array, int offset)
+		{
+			if (offset < 0 || offset > array.Length - 16)
+				throw new IndexOutOfRangeException ();
+			unsafe {
+				fixed (void *ptr = &array[0]) {
+					return *(Vector16sb*)ptr;
+				}
+			}
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static Vector16b GetVectorAligned (this byte[] array, int offset)
+		{
+			if (offset < 0 || offset > array.Length - 16)
+				throw new IndexOutOfRangeException ();
+			unsafe {
+				fixed (void *ptr = &array[0]) {
+					return *(Vector16b*)ptr;
+				}
+			}
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this double[] array, Vector2d val, int offset)
+		{
+			array [offset + 0] = val.X;
+			array [offset + 1] = val.Y;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this long[] array, Vector2l val, int offset)
+		{
+			array [offset + 0] = val.X;
+			array [offset + 1] = val.Y;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this ulong[] array, Vector2ul val, int offset)
+		{
+			array [offset + 0] = val.X;
+			array [offset + 1] = val.Y;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this float[] array, Vector4f val, int offset)
+		{
+			array [offset + 0] = val.X;
+			array [offset + 1] = val.Y;
+			array [offset + 2] = val.Z;
+			array [offset + 3] = val.W;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this int[] array, Vector4i val, int offset)
+		{
+			array [offset + 0] = val.X;
+			array [offset + 1] = val.Y;
+			array [offset + 2] = val.Z;
+			array [offset + 3] = val.W;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this uint[] array, Vector4ui val, int offset)
+		{
+			array [offset + 0] = val.X;
+			array [offset + 1] = val.Y;
+			array [offset + 2] = val.Z;
+			array [offset + 3] = val.W;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this short[] array, Vector8s val, int offset)
+		{
+			array [offset + 0] = val.V0;
+			array [offset + 1] = val.V1;
+			array [offset + 2] = val.V2;
+			array [offset + 3] = val.V3;
+			array [offset + 4] = val.V4;
+			array [offset + 5] = val.V5;
+			array [offset + 6] = val.V6;
+			array [offset + 7] = val.V7;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this ushort[] array, Vector8us val, int offset)
+		{
+			array [offset + 0] = val.V0;
+			array [offset + 1] = val.V1;
+			array [offset + 2] = val.V2;
+			array [offset + 3] = val.V3;
+			array [offset + 4] = val.V4;
+			array [offset + 5] = val.V5;
+			array [offset + 6] = val.V6;
+			array [offset + 7] = val.V7;
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this sbyte[] array, Vector16sb val, int offset)
+		{
+			for (int i = 0; i < 16; ++i)
+				array [offset + i] = val [i];
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		[CLSCompliant(false)]
+		public static void SetVectorAligned (this byte[] array, Vector16b val, int offset)
+		{
+			for (int i = 0; i < 16; ++i)
+				array [offset + i] = val [i];
+		}
+
 		public static bool IsAligned<T> (this T[] vect, int index) where T : struct
 		{
 			return false;
