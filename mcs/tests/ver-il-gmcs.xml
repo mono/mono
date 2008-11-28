@@ -3611,7 +3611,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>975</size>
+        <size>846</size>
       </method>
     </type>
   </test>
@@ -3621,7 +3621,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>1416</size>
+        <size>1330</size>
       </method>
     </type>
   </test>
@@ -3749,7 +3749,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>131</size>
+        <size>90</size>
       </method>
     </type>
   </test>
@@ -8006,7 +8006,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>61</size>
+        <size>22</size>
       </method>
       <method name="System.String Test2(Nullable`1)">
         <size>6</size>
@@ -11228,6 +11228,32 @@
       </method>
       <method name="Int32 Main()">
         <size>183</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-429.cs">
+    <type name="CInt">
+      <method name="Void .ctor(Int32)">
+        <size>8</size>
+      </method>
+      <method name="CInt op_Implicit(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Int32 op_Implicit(CInt)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Klass">
+      <method name="Void .ctor(Nullable`1)">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="MainClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>36</size>
       </method>
     </type>
   </test>
@@ -14575,7 +14601,7 @@
         <size>64</size>
       </method>
       <method name="Void NewArrayInitTest_3()">
-        <size>151</size>
+        <size>136</size>
       </method>
       <method name="Void NewArrayInitTest_4()">
         <size>120</size>
