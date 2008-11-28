@@ -1,3 +1,7 @@
+2008-11-28  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c: Patch the RGCTX fetch trampoline correctly.
+
 2008-11-28  Mark Mason   <mmason@upwardaccess.com>
 
 	* mini-mips.c (mono_arch_emit_call): adding missing conversion to fp single when passing in integer arg register.
