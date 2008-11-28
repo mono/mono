@@ -41,6 +41,7 @@ DISTFILES = \
 	corcompare-api.xsl		\
 	executable.make			\
 	library.make			\
+	nunit-summary.xsl		\
 	rules.make			\
 	$(COMMON_SRCS:%=common/%)	\
 	$(PLATFORMS:%=platforms/%.make) $(PROFILES:%=profiles/%.make)

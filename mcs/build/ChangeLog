@@ -1,5 +1,9 @@
 2008-11-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : ugh, ok another dist pain.
+
+2008-11-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* nunit-summary.xsl : copied from nunit resource (summary.xslt)
 	* library.make : put transformation result from TestResult-*.xml
 	  into TestResult-*.log as we used to do.
