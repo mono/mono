@@ -1,3 +1,7 @@
+2008-11-28  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, exceptions-ppc64.c: Several fixes.
+
 2008-11-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (handle_isinst): Use PCONST instead of ICONST for
