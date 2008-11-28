@@ -1,3 +1,9 @@
+2008-11-28  Marek Habersack  <mhabersack@novell.com>
+
+	* DataBinder.cs: do the proper thing in Eval when a non-indexed
+	property is requested on an object and not found. In that case try
+	to use the Items property.
+
 2008-11-25  Marek Habersack  <mhabersack@novell.com>
 
 	* RootBuilder.cs: use new API in AspComponentFoundry to retrieve
