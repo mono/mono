@@ -443,6 +443,45 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		static Expression ImplicitNulableConversion (EmitContext ec, Expression expr, Type target_type)
+		{
+			Type expr_type = expr.Type;
+
+			//
+			// From null to any nullable type
+			//
+			if (expr_type == TypeManager.null_type)
+				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
+
+			Type target = TypeManager.GetTypeArguments (target_type)[0];
+			Expression e;
+
+			// S? -> T?
+			if (TypeManager.IsNullableType (expr_type)) {
+				Type etype = TypeManager.GetTypeArguments (expr_type)[0];
+
+				if (ec == null)
+					return ImplicitConversionExists (ec, new EmptyExpression (etype), target) ? EmptyExpression.Null : null;
+
+				Expression unwrap = Nullable.Unwrap.Create (expr);
+				e = ImplicitConversion (ec, unwrap, target, expr.Location);
+				if (e == null)
+					return null;
+
+				return new Nullable.Lifted (e, unwrap, target_type).Resolve (ec);
+			}
+
+			// S -> T?
+			if (ec == null)
+				return ImplicitConversionExists (ec, expr, target) ? EmptyExpression.Null : null;
+
+			e = ImplicitConversion (ec, expr, target, expr.Location);
+			if (e != null)
+				return Nullable.Wrap.Create (e, target_type);
+
+			return null;
+		}
+
 		/// <summary>
 		///   Implicit Numeric Conversions.
 		///
@@ -637,21 +676,6 @@ namespace Mono.CSharp {
 		public static bool ImplicitStandardConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
-#if GMCS_SOURCE
-			if (TypeManager.IsNullableType (target_type)) {
-				// if implicit standard conversion S -> T exists, S -> T? and S? -> T? also exists
-				target_type = TypeManager.GetTypeArguments (target_type) [0];
-
-				// S? -> T?
-				if (TypeManager.IsNullableType (expr_type)) {
-					EmptyExpression new_expr = EmptyExpression.Grab ();
-					new_expr.SetType (TypeManager.GetTypeArguments (expr_type) [0]);
-					bool retval = ImplicitStandardConversionExists (new_expr, target_type);
-					EmptyExpression.Release (new_expr);
-					return retval;
-				}
-			}
-#endif
 			if (expr_type == TypeManager.void_type)
 				return false;
 
@@ -670,6 +694,9 @@ namespace Mono.CSharp {
 			//Console.WriteLine ("{0} -> {1} ?", expr_type, target_type);
 			if (TypeManager.IsEqual (expr_type, target_type))
 				return true;
+
+			if (TypeManager.IsNullableType (target_type))
+				return ImplicitNulableConversion (null, expr, target_type) != null;
 
 			// First numeric conversions
 			if (ImplicitNumericConversion (null, expr_type, target_type) != null)
@@ -1163,33 +1190,6 @@ namespace Mono.CSharp {
 
 		static Expression ImplicitConversionStandard (EmitContext ec, Expression expr, Type target_type, Location loc, bool explicit_cast)
 		{
-			Type expr_type = expr.Type;
-			Expression e;
-			
-#if GMCS_SOURCE
-			if (TypeManager.IsNullableType (target_type)) {
-				//
-				// From null to any nullable type
-				//
-				if (expr_type == TypeManager.null_type)
-					return Nullable.LiftedNull.Create (target_type, loc);
-				
-				Type target = TypeManager.GetTypeArguments (target_type) [0];
-
-				if (TypeManager.IsNullableType (expr_type)) {
-					Type etype = TypeManager.GetTypeArguments (expr_type) [0];
-					if (TypeManager.IsEqual (etype, target))
-						return expr;
-
-					return new Nullable.LiftedConversion (
-						expr, target_type, false, false, loc).Resolve (ec);
-				} else {
-					e = ImplicitConversion (ec, expr, target, loc);
-					if (e != null)
-						return Nullable.Wrap.Create (e, target_type);
-				}
-			}
-#endif
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
 					return null;
@@ -1206,11 +1206,17 @@ namespace Mono.CSharp {
 				}
 			}
 
+			Type expr_type = expr.Type;
+			Expression e;
+
 			if (expr_type.Equals (target_type)) {
 				if (expr_type != TypeManager.null_type && expr_type != TypeManager.anonymous_method_type)
 					return expr;
 				return null;
 			}
+
+			if (TypeManager.IsNullableType (target_type))
+				return ImplicitNulableConversion (ec, expr, target_type);
 
 			//
 			// Attempt to do the implicit constant expression conversions
@@ -1858,15 +1864,21 @@ namespace Mono.CSharp {
 		static public Expression ExplicitConversion (EmitContext ec, Expression expr,
 			Type target_type, Location loc)
 		{
-			Expression e;
+			Expression e = ExplicitConversionCore (ec, expr, target_type, loc);
+			if (e != null)
+				return e;
+
 #if GMCS_SOURCE
 			Type expr_type = expr.Type;
 			if (TypeManager.IsNullableType (target_type)) {
 				if (TypeManager.IsNullableType (expr_type)) {
-					e = new Nullable.LiftedConversion (
-						expr, target_type, false, true, loc).Resolve (ec);
-					if (e != null)
-						return e;
+					Type target = TypeManager.GetTypeArguments (target_type)[0];
+					Expression unwrap = Nullable.Unwrap.Create (expr);
+					e = ExplicitConversion (ec, unwrap, target, expr.Location);
+					if (e == null)
+						return null;
+
+					return new Nullable.Lifted (e, unwrap, target_type).Resolve (ec);
 				} else if (expr_type == TypeManager.object_type) {
 					return new UnboxCast (expr, target_type);
 				} else {
@@ -1889,9 +1901,6 @@ namespace Mono.CSharp {
 				return e;
 			}
 #endif
-			e = ExplicitConversionCore (ec, expr, target_type, loc);
-			if (e != null)
-				return e;
 			
 			e = ExplicitUserConversion (ec, expr, target_type, loc);
 			if (e != null)

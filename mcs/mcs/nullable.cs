@@ -95,33 +95,43 @@ namespace Mono.CSharp.Nullable
 		{
 			this.expr = expr;
 			this.loc = expr.Location;
+
+			info = new NullableInfo (expr.Type);
+			type = info.UnderlyingType;
+			eclass = expr.eclass;
+		}
+
+		public static Expression Create (Expression expr)
+		{
+			//
+			// Avoid unwraping and wraping of same type
+			//
+			Wrap wrap = expr as Wrap;
+			if (wrap != null)
+				return wrap.Child;
+
+			return Create (expr, null);
 		}
 
 		public static Unwrap Create (Expression expr, EmitContext ec)
 		{
-			return new Unwrap (expr).Resolve (ec) as Unwrap;
+			return new Unwrap (expr);
 		}
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
 			return expr.CreateExpressionTree (ec);
-		}			
+		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (expr == null)
-				return null;
-
-			info = new NullableInfo (expr.Type);
-			type = info.UnderlyingType;
-			eclass = expr.eclass;
 			return this;
 		}
-		
+
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			return DoResolve (ec);
-		}			
+		}
 
 		public override void Emit (EmitContext ec)
 		{
@@ -275,6 +285,21 @@ namespace Mono.CSharp.Nullable
 			eclass = ExprClass.Value;
 		}
 
+		public Expression Child {
+			get { return child; }
+		}
+
+		public override Expression CreateExpressionTree (EmitContext ec)
+		{
+			TypeCast child_cast = child as TypeCast;
+			if (child_cast != null) {
+				child.Type = type;
+				return child_cast.CreateExpressionTree (ec);
+			}
+
+			return base.CreateExpressionTree (ec);
+		}
+
 		public static Expression Create (Expression expr, Type type)
 		{
 			//
@@ -347,56 +372,46 @@ namespace Mono.CSharp.Nullable
 		}
 	}
 
-	public abstract class Lifted : Expression, IMemoryLocation
+	public class Lifted : Expression, IMemoryLocation
 	{
-		Expression expr, underlying, wrap, null_value;
+		Expression expr, wrap, null_value;
 		Unwrap unwrap;
 
-		protected Lifted (Expression expr, Location loc)
+		public Lifted (Expression expr, Unwrap unwrap, Type type)
 		{
 			this.expr = expr;
-			this.loc = loc;
+			this.unwrap = unwrap;
+			this.loc = expr.Location;
+			this.type = type;
+		}
+
+		public Lifted (Expression expr, Expression unwrap, Type type)
+			: this (expr, unwrap as Unwrap, type)
+		{
 		}
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			ArrayList args = new ArrayList (2);
-			args.Add (new Argument (expr.CreateExpressionTree (ec)));
-			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
-			return CreateExpressionFactoryCall ("Convert", args);
+			return wrap.CreateExpressionTree (ec);
 		}			
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			expr = expr.Resolve (ec);
-			if (expr == null)
-				return null;
-
-			unwrap = Unwrap.Create (expr, ec);
-			if (unwrap == null)
-				return null;
-
-			underlying = ResolveUnderlying (unwrap, ec);
-			if (underlying == null)
-				return null;
-
-			TypeExpr target_type = new NullableType (underlying.Type, loc);
-			target_type = target_type.ResolveAsTypeTerminal (ec, false);
-			if (target_type == null)
-				return null;
-
-			wrap = Wrap.Create (underlying, target_type.Type);
+			wrap = Wrap.Create (expr, type);
 			if (wrap == null)
 				return null;
 
-			null_value = LiftedNull.Create (wrap.Type, loc);
+			//
+			// It's null when lifted conversion is transparent
+			//
+			if (unwrap == null)
+				return wrap;
 
-			type = wrap.Type;
+			null_value = LiftedNull.Create (type, loc);
+
 			eclass = ExprClass.Value;
 			return this;
 		}
-
-		protected abstract Expression ResolveUnderlying (Expression unwrap, EmitContext ec);
 
 		public override void Emit (EmitContext ec)
 		{
@@ -419,39 +434,6 @@ namespace Mono.CSharp.Nullable
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			unwrap.AddressOf (ec, mode);
-		}
-	}
-
-	public class LiftedConversion : Lifted
-	{
-		public readonly bool IsUser;
-		public readonly bool IsExplicit;
-		public readonly Type TargetType;
-
-		public LiftedConversion (Expression expr, Type target_type, bool is_user,
-					 bool is_explicit, Location loc)
-			: base (expr, loc)
-		{
-			this.IsUser = is_user;
-			this.IsExplicit = is_explicit;
-			this.TargetType = target_type;
-		}
-
-		protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
-		{
-			Type type = TypeManager.GetTypeArguments (TargetType) [0];
-
-			if (IsUser) {
-				if (IsExplicit)
-					return Convert.ExplicitUserConversion (ec, unwrap, type, loc);
-				else
-					return Convert.ImplicitUserConversion (ec, unwrap, type, loc);
-			} else {
-				if (IsExplicit)
-					return Convert.ExplicitConversion (ec, unwrap, type, loc);
-				else
-					return Convert.ImplicitConversion (ec, unwrap, type, loc);
-			}
 		}
 	}
 
