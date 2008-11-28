@@ -63,19 +63,27 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("expression");
 
 			object current = container;
-
+			object previous;
+			
 			while (current != null) {
 				int dot = expression.IndexOf ('.');
 				int size = (dot == -1) ? expression.Length : dot;
 				string prop = expression.Substring (0, size);
+				
 				if (prop.IndexOf ('[') != -1)
 					current = GetIndexedPropertyValue (current, prop);
-				else
+				else {
+					previous = current;
 					current = GetPropertyValue (current, prop);
-
-				if (current == null)
-					current = GetIndexedPropertyValue (current, "Items[" + prop + "]");
-
+					if (current == null && previous != null) {
+						try {
+							current = GetIndexedPropertyValue (previous, "Items[" + prop + "]");
+						} catch (ArgumentOutOfRangeException) {
+							current = null;
+						}
+					}
+				}
+				
 				if (dot == -1)
 					break;
 				
