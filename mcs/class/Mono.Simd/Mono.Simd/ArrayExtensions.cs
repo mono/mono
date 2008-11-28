@@ -418,7 +418,8 @@ namespace Mono.Simd
 
 		public static bool IsAligned<T> (this T[] vect, int index) where T : struct
 		{
-			return false;
+			int size = Marshal.SizeOf (typeof (T));
+			return size * index % 16 == 0;
 		}
 	}
 }
