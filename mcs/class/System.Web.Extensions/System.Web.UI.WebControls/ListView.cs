@@ -619,7 +619,7 @@ namespace System.Web.UI.WebControls
 
 				DataKeyArray dataKeys = DataKeys;
 				int selIndex = SelectedIndex;
-				if (selIndex > -1 || selIndex < dataKeys.Count)
+				if (selIndex > -1 && selIndex < dataKeys.Count)
 					return dataKeys [selIndex];
 
 				return null;

@@ -1,3 +1,8 @@
+2008-11-28  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: use the _correct_ operator when checking whether
+	selected item index is within the data keys range.
+
 2008-11-27  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: fixes in DoUpdate and DoDelete - check must be made
