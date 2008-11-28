@@ -11257,6 +11257,24 @@
       </method>
     </type>
   </test>
+  <test name="gtest-430.cs">
+    <type name="Tmp">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Driver">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Nullable`1 get_Prop()">
+        <size>42</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>42</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -14145,7 +14163,7 @@
         <size>170</size>
       </method>
       <method name="Void ConditionTest_2()">
-        <size>316</size>
+        <size>301</size>
       </method>
       <method name="Void ConditionTest_3()">
         <size>179</size>
