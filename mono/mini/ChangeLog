@@ -1,3 +1,9 @@
+2008-11-28  Mark Mason   <mmason@upwardaccess.com>
+
+	* mini-mips.c (mono_arch_emit_call): adding missing conversion to fp single when passing in integer arg register.
+	* mini-mips.c (mips_adjust_stackframe): compensate for spill-down logic.
+	* mini-ops.h: correct selected mips opcode entries
+	
 2008-11-28  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c, mini-ppc64.h: Enable generalized IMT thunks and
