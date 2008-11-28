@@ -1,5 +1,10 @@
 2008-11-28  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs, generics.cs: Fixed crash when type arguments fail to
+	resolve.
+
+2008-11-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #449005
 	* convert.cs, nullable.cs: Use only one implicit nullable
 	conversion.

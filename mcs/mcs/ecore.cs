@@ -2744,7 +2744,9 @@ namespace Mono.CSharp {
 					return null;
 
 				if (targs != null) {
-					targs.Resolve (ec);
+					if (!targs.Resolve (ec))
+						return null;
+
 					me.SetTypeArguments (targs);
 				}
 

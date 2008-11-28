@@ -1118,7 +1118,7 @@ namespace Mono.CSharp {
 		public bool Resolve (IResolveContext ec)
 		{
 			if (atypes != null)
-				return true;
+				return atypes.Length != 0;
 
 			int count = args.Count;
 			bool ok = true;
@@ -1147,6 +1147,10 @@ namespace Mono.CSharp {
 					ok = false;
 				}
 			}
+
+			if (!ok)
+				atypes = Type.EmptyTypes;
+
 			return ok;
 		}
 
