@@ -53,7 +53,7 @@ LIB_MCS_FLAGS = \
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES_DIST) 
+EXTRA_DISTFILES = $(RESOURCE_FILES_DIST) $(NUNIT_RESOURCE_FILES)
 
 include ../../build/library.make
 
