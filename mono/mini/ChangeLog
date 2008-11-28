@@ -1,3 +1,5 @@
+2008-11-28  Mark Mason   <mmason@upwardaccess.com>
+
 2008-11-28  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c, mini-ppc64.h: Don't emulate long ops.
