@@ -1,3 +1,8 @@
+2008-11-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_isinst): Use PCONST instead of ICONST for
+	consistency.
+
 2008-11-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c (emit_array_extension_intrinsics): Add support
