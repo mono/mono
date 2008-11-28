@@ -1,3 +1,9 @@
+2008-11-28  Mark Mason   <mmason@upwardaccess.com>
+
+	* mini-ops.h: updated more MIPS opcodes
+	* mini-mips.c: FP compare/branch working again, clean up last of CEE_ -> OP_ mappings
+	* cpu-mips.md: Added MIPS versions of new FP compare/branch opcodes.
+	
 2008-11-28  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c: Patch the RGCTX fetch trampoline correctly.
