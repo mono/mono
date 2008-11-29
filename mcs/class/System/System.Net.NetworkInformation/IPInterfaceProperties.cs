@@ -28,7 +28,9 @@
 //
 #if NET_2_0
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 
 namespace System.Net.NetworkInformation {
 	public abstract class IPInterfaceProperties {
@@ -56,6 +58,9 @@ namespace System.Net.NetworkInformation {
 		IPv4InterfaceProperties ipv4iface_properties;
 		LinuxNetworkInterface iface;
 		List <IPAddress> addresses;
+		IPAddressCollection dns_servers;
+		string dns_suffix;
+		DateTime last_parse;
 		
 		public LinuxIPInterfaceProperties (LinuxNetworkInterface iface, List <IPAddress> addresses)
 		{
@@ -74,6 +79,50 @@ namespace System.Net.NetworkInformation {
 		public override IPv6InterfaceProperties GetIPv6Properties ()
 		{
 			throw new NotImplementedException ();
+		}
+
+
+		static Regex ns = new Regex (@"\s*nameserver\s+(?<address>.*)");
+		static Regex search = new Regex (@"\s*search\s+(?<domain>.*)");
+		void ParseResolvConf ()
+		{
+			try {
+				DateTime wt = File.GetLastWriteTime ("/etc/resolv.conf");
+				if (wt <= last_parse)
+					return;
+
+				last_parse = wt;
+				dns_suffix = "";
+				dns_servers = new IPAddressCollection ();
+				using (StreamReader reader = new StreamReader ("/etc/resolv.conf")) {
+					string str;
+					string line;
+					while ((line = reader.ReadLine ()) != null) {
+						line = line.Trim ();
+						if (line.Length == 0 || line [0] == '#')
+							continue;
+						Match match = ns.Match (line);
+						if (match.Success) {
+							try {
+								str = match.Groups ["address"].Value;
+								str = str.Trim ();
+								dns_servers.Add (IPAddress.Parse (str));
+							} catch {
+							}
+						} else {
+							match = search.Match (line);
+							if (match.Success) {
+								str = match.Groups ["domain"].Value;
+								string [] parts = str.Split (',');
+								dns_suffix = parts [0].Trim ();
+							}
+						}
+					}
+				}
+			} catch {
+			} finally {
+				dns_servers.SetReadOnly ();
+			}
 		}
 
 		public override IPAddressInformationCollection AnycastAddresses {
@@ -96,23 +145,25 @@ namespace System.Net.NetworkInformation {
 				// There are lots of different DHCP clients
 				// that all store their configuration differently.
 				// I'm not sure what to do here.
-				return new IPAddressCollection ();
+				IPAddressCollection coll = new IPAddressCollection ();
+				coll.SetReadOnly ();
+				return coll;
 			}
 		}
 
 		[MonoTODO ("Always returns an empty collection.")]
 		public override IPAddressCollection DnsAddresses {
 			get {
-				// XXX: Parse /etc/resolv.conf, I suppose.
-				return new IPAddressCollection ();
+				ParseResolvConf ();
+				return dns_servers;
 			}
 		}
 
 		[MonoTODO ("Does not return anything.")]
 		public override string DnsSuffix {
 			get {
-				// XXX: Also parse resolv.conf?
-				return String.Empty;
+				ParseResolvConf ();
+				return dns_suffix;
 			}
 		}
 

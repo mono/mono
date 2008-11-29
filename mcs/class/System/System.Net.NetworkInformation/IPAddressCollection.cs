@@ -35,10 +35,16 @@ using System.Runtime.InteropServices;
 
 namespace System.Net.NetworkInformation {
 	public class IPAddressCollection : ICollection<IPAddress>, IEnumerable<IPAddress>, IEnumerable {
-		List<IPAddress> list = new List<IPAddress> ();
+		IList <IPAddress> list = new List<IPAddress> ();
 
 		protected internal IPAddressCollection ()
 		{
+		}
+
+		internal void SetReadOnly ()
+		{
+			if (!IsReadOnly)
+				list = ((List<IPAddress>) list).AsReadOnly ();
 		}
 
 		public virtual void Add (IPAddress address)
@@ -87,7 +93,7 @@ namespace System.Net.NetworkInformation {
 		}
 
 		public virtual bool IsReadOnly {
-			get { return true; }
+			get { return list.IsReadOnly; }
 		}
 
 		public virtual IPAddress this [int index] {

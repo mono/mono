@@ -381,11 +381,11 @@ namespace System.Net.NetworkInformation {
 			}
 		}
 
+		[MonoTODO ("Parse dmesg?")]
 		public override long Speed {
 			get {
-				// What are the units?
-				// In Linux there is no information about the device speed, maybe only for modems?
-				throw new NotImplementedException ();
+				// Bits/s
+				return 1000000;
 			}
 		}
 		
