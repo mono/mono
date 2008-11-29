@@ -33376,6 +33376,24 @@
       </method>
     </type>
   </test>
+  <test name="test-696.cs">
+    <type name="S">
+      <method name="Void f(S)">
+        <size>1</size>
+      </method>
+      <method name="S op_Implicit(C)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+    </type>
+  </test>
   <test name="test-7.cs">
     <type name="Mine.MyBoolean">
       <method name="Void .ctor()">

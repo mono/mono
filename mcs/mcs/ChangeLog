@@ -1,3 +1,10 @@
+2008-11-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix build break in System.Data_test
+	* convert.cs (ImplicitConversionExists): Move NullLiteral
+	conversions ...
+	(ImplicitStandardConversionExists): ... here.
+
 2008-11-28  Marek Safar  <marek.safar@gmail.com>
 
 	* literal.cs: Emit correctly explicit null to nullable cast.
