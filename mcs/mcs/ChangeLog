@@ -1,5 +1,14 @@
 2008-11-29  Raja R Harinath  <harinath@hurrynot.org>
 
+	Add tripwire for implicit conversion bugs
+	* ecore.cs (MethodGroupExpr.Error_ArgumentCountWrong): New helper
+	for CS1501 error.
+	(MethodGroupExpr.OverloadResolve): Add sanity check between
+	IsApplicable and VerifyArgumentsCompat.
+	(VerifyArgumentsCompat): Report CS1501 where appropriate.
+
+2008-11-29  Raja R Harinath  <harinath@hurrynot.org>
+
 	Fix build break in System.Data_test
 	* convert.cs (ImplicitConversionExists): Move NullLiteral
 	conversions ...

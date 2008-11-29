@@ -3774,6 +3774,12 @@ namespace Mono.CSharp {
 			Report.Error (428, loc, "Cannot convert method group `{0}' to non-delegate type `{1}'. Consider using parentheses to invoke the method",
 				Name, TypeManager.CSharpName (target));
 		}
+
+		void Error_ArgumentCountWrong (int arg_count)
+		{
+			Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
+				      Name, arg_count.ToString ());
+		}
 		
 		protected virtual int GetApplicableParametersCount (MethodBase method, AParametersCollection parameters)
 		{
@@ -4229,6 +4235,8 @@ namespace Mono.CSharp {
 
 						if (has_inaccessible_candidates_only)
 							return null;
+
+						throw new InternalErrorException ("VerifyArgumentsCompat didn't find any problem with rejected candidate " + best_candidate);
 					}
 				}
 
@@ -4241,8 +4249,7 @@ namespace Mono.CSharp {
 						"The type `{0}' does not contain a constructor that takes `{1}' arguments",
 						TypeManager.CSharpName (type), arg_count);
 				} else {
-					Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
-						Name, arg_count.ToString ());
+					Error_ArgumentCountWrong (arg_count);
 				}
                                 
 				return null;
@@ -4501,45 +4508,53 @@ namespace Mono.CSharp {
 				a.Expr = conv;
 			}
 
+			if (a_idx != arg_count) {
+				if (!may_fail && Report.Errors == errors) {
+					if (CustomErrorHandler != null)
+						CustomErrorHandler.NoExactMatch (ec, best_candidate);
+					else
+						Error_InvalidArguments (ec, loc, a_pos, method, a, pd, pt);
+				}
+				return false;
+			}
+
 			//
 			// Fill not provided arguments required by params modifier
 			//
-			if (params_initializers == null && pd.HasParams && arg_count < pd.Count && a_idx + 1 == pd.Count) {
+			int param_count = GetApplicableParametersCount (method, pd);
+			if (params_initializers == null && pd.HasParams && arg_count + 1 == param_count) {
 				if (arguments == null)
 					arguments = new ArrayList (1);
 
-				pt = pd.Types [GetApplicableParametersCount (method, pd) - 1];
+				pt = pd.Types [param_count - 1];
 				pt = TypeManager.GetElementType (pt);
 				has_unsafe_arg |= pt.IsPointer;
 				params_initializers = new ArrayList (0);
 			}
 
-			if (a_idx == arg_count) {
-				//
-				// Append an array argument with all params arguments
-				//
-				if (params_initializers != null) {
-					arguments.Add (new Argument (
-						new ArrayCreation (new TypeExpression (pt, loc), "[]",
-						params_initializers, loc).Resolve (ec)));
-				}
-
-				if (has_unsafe_arg && !ec.InUnsafe) {
-					if (!may_fail)
-						UnsafeError (loc);
-					return false;
-				}
-
-				return true;
+			//
+			// Append an array argument with all params arguments
+			//
+			if (params_initializers != null) {
+				arguments.Add (new Argument (
+						       new ArrayCreation (new TypeExpression (pt, loc), "[]",
+									  params_initializers, loc).Resolve (ec)));
+				arg_count++;
 			}
 
-			if (!may_fail && Report.Errors == errors) {
-				if (CustomErrorHandler != null)
-					CustomErrorHandler.NoExactMatch (ec, best_candidate);
-				else
-					Error_InvalidArguments (ec, loc, a_pos, method, a, pd, pt);
+			if (arg_count < param_count) {
+				if (!may_fail)
+					Error_ArgumentCountWrong (arg_count);
+				return false;
 			}
-			return false;
+
+			if (has_unsafe_arg && !ec.InUnsafe) {
+				if (!may_fail)
+					UnsafeError (loc);
+				return false;
+			}
+
+			return true;
 		}
 	}
 
