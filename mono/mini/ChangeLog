@@ -1,3 +1,9 @@
+2008-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r120273.
+	
+	* mini.h aot-runtime.c: Fix building with DISABLE_AOT.
+
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* simd-intrinsics.c (vector2l_intrinsics): CompareGreaterThan requires sse 4.2
