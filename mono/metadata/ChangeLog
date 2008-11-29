@@ -1,3 +1,10 @@
+2008-11-29  Kornél Pál  <kornelpal@gmail.com>
+
+	* coree.c (MonoFixupExe): Use sizeof(IMAGE_BASE_RELOCATION) instead of
+	IMAGE_SIZEOF_BASE_RELOCATION as newer Vista SDKs no longer define the latter.
+
+	Contributed under MIT/X11 license.
+
 2008-11-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_fields): Don't copy MonoType::attrs as
