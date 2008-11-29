@@ -1,3 +1,9 @@
+2008-11-29  Miguel De Icaza  <miguel@novell.com>
+
+	* NetworkInterface.cs: Do not throw an exception when scanning
+	external kernel information that might cause problems.   The
+	application should not crash just trying to fetch interfaces from
+	the system. 
 
 2008-11-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

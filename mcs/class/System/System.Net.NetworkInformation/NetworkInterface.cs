@@ -180,8 +180,11 @@ namespace System.Net.NetworkInformation {
 							address = new IPAddress (sockaddr.sin_addr);
 						} else if (sockaddr.sin_family == AF_PACKET) {
 							sockaddr_ll sockaddrll = (sockaddr_ll) Marshal.PtrToStructure (addr.ifa_addr, typeof (sockaddr_ll));
-							if (((int)sockaddrll.sll_halen) > sockaddrll.sll_addr.Length)
-								throw new SystemException("Bad hardware address length");
+							if (((int)sockaddrll.sll_halen) > sockaddrll.sll_addr.Length){
+								Console.Error.WriteLine ("Got a bad hardware address length for an AF_PACKET {0} {1}",
+											 sockaddrll.sll_halen, sockaddrll.sll_addr.Length);
+								continue;
+							}
 							
 							macAddress = new byte [(int) sockaddrll.sll_halen];
 							Array.Copy (sockaddrll.sll_addr, 0, macAddress, 0, macAddress.Length);
