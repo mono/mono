@@ -50,8 +50,13 @@ namespace Cairo {
 				surfaces [surface] = this;
 			}
 		}
+		
+		[Obsolete ("Use ImageSurface (byte[] data, Cairo.Format format, int width, int height, int stride)")]
+		public ImageSurface (ref byte[] data, Cairo.Format format, int width, int height, int stride) :this (data, format, width, height, stride)
+		{
+		}
 
-		public ImageSurface (ref byte[] data, Cairo.Format format, int width, int height, int stride)
+		public ImageSurface (byte[] data, Cairo.Format format, int width, int height, int stride)
 		{
 			surface = NativeMethods.cairo_image_surface_create_for_data (data, format, width, height, stride);
 			lock (surfaces.SyncRoot){

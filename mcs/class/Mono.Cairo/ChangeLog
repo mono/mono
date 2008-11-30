@@ -1,3 +1,8 @@
+2008-11-30 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* Mono.Cairo/ImageSurface.cs: Fixes ImageSurface constructor signature.
+        Data param should not be ref since the data is not modified.
+
 2008-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cairo/Context.cs,
