@@ -4188,11 +4188,12 @@ namespace System.Windows.Forms {
 			}
 
 			if (hitTest.Type == DataGridViewHitTestType.Cell) {
+				row = rows [hitTest.RowIndex];
+				cell = row.Cells [hitTest.ColumnIndex];
+				SetCurrentCellAddressCore (cell.ColumnIndex, cell.RowIndex, false, true, true);
 				cellBounds = GetCellDisplayRectangle (hitTest.ColumnIndex, hitTest.RowIndex, false);
 				OnCellMouseDown (new DataGridViewCellMouseEventArgs (hitTest.ColumnIndex, hitTest.RowIndex, e.X - cellBounds.X, e.Y - cellBounds.Y, e));
 				OnCellClick (new DataGridViewCellEventArgs (hitTest.ColumnIndex, hitTest.RowIndex));
-				row = rows [hitTest.RowIndex];
-				cell = row.Cells [hitTest.ColumnIndex];
 			}
 			
 			DoSelectionOnMouseDown (hitTest);
@@ -4206,7 +4207,6 @@ namespace System.Windows.Forms {
 				return;
 			}
 			
-			SetCurrentCellAddressCore (cell.ColumnIndex, cell.RowIndex, false, true, true);
 			Invalidate();
 			return;
 		}

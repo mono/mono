@@ -1,5 +1,9 @@
 2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Set the current cell before raising CellClick.
+
+2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Cleanup MoveCurrentCell to not fire any CellEnter, 
 	CellLeave events as this is already done in SetCurrentCellAddressCore.
 
