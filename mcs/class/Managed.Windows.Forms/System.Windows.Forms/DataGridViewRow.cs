@@ -39,7 +39,6 @@ namespace System.Windows.Forms
 		private AccessibleObject accessibilityObject;
 		private DataGridViewCellCollection cells;
 		private ContextMenuStrip contextMenuStrip;
-		private object dataBoundItem;
 		private int dividerHeight;
 		private string errorText;
 		private DataGridViewRowHeaderCell headerCell;
@@ -56,7 +55,6 @@ namespace System.Windows.Forms
 			headerCell = new DataGridViewRowHeaderCell();
 			headerCell.SetOwningRow (this);
 			accessibilityObject = new AccessibleObject ();
-			dataBoundItem = null;
 			SetState (DataGridViewElementStates.Visible);
 		}
 
@@ -92,7 +90,15 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public object DataBoundItem {
-			get { return dataBoundItem; }
+			get {
+				if (base.DataGridView != null) {
+					CurrencyManager data = DataGridView.BindingContext[DataGridView.DataSource] as CurrencyManager;
+					if (data != null) {
+						return data.List[base.Index];
+					}
+				}
+				return null;
+			}
 		}
 
 		[Browsable (true)]
