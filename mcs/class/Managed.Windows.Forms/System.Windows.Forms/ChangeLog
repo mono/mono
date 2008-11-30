@@ -1,3 +1,10 @@
+2008-11-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MenuAPI.cs: Add a Menu.SelectedItem null check when navigating the
+	menus using the arrow keys. Also when handling the left arrow key, don't 
+	assign the current menu to the parent one, if the parent is null.
+	Fixes #446392.
+
 2008-11-24  Everaldo Canuto  <ecanuto@novell.com>
 
 	* PrintPreviewDialog.cs: Fix toolbar size, height must be 26. Fixes bug

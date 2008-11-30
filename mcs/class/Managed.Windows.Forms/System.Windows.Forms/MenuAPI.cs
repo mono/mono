@@ -740,7 +740,7 @@ namespace System.Windows.Forms {
 						SelectItem (item, item.MenuItems [0], false);
 						CurrentMenu = item;
 					}
-				} else if (CurrentMenu.SelectedItem.IsPopup) {
+				} else if (CurrentMenu.SelectedItem != null && CurrentMenu.SelectedItem.IsPopup) {
 					item = CurrentMenu.SelectedItem;
 					ShowSubPopup (CurrentMenu, item);
 					SelectItem (item, item.MenuItems [0], false);
@@ -782,7 +782,8 @@ namespace System.Windows.Forms {
 					}
 				} else {
 					HideSubPopups (CurrentMenu, TopMenu);
-					CurrentMenu = CurrentMenu.parent_menu;
+					if (CurrentMenu.parent_menu != null)
+						CurrentMenu = CurrentMenu.parent_menu;
 				}
 				break;
 
