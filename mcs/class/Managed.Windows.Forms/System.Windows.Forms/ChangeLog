@@ -1,5 +1,10 @@
 2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: After the data is bound PerformLayout, so that 
+	the columns get autosized.
+
+2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Move all currentCell setting code into 
 	one central place - SetCurrentCellAddressCore. That way the 
 	current cell is properly updated when programatically set.

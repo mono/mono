@@ -5867,6 +5867,7 @@ namespace System.Windows.Forms {
 				OnDataBindingComplete (new DataGridViewBindingCompleteEventArgs (ListChangedType.Reset));
 			}
 
+			PerformLayout();
 			Invalidate ();
 		}
 		
