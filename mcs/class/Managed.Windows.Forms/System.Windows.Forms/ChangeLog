@@ -1,5 +1,11 @@
 2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Set the minimum size for the columns to be the 
+	width of their header, so that the columns don't get squashed 
+	all together.
+
+2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: After the data is bound PerformLayout, so that 
 	the columns get autosized.
 

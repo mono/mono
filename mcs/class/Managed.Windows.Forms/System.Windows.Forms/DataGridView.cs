@@ -5594,7 +5594,8 @@ namespace System.Windows.Forms {
 			case DataGridViewAutoSizeColumnMode.AllCells:
 			case DataGridViewAutoSizeColumnMode.DisplayedCells:
 			case DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader:
-				size  = CalculateColumnCellWidth (columnIndex, col.InheritedAutoSizeMode);
+				size  = Math.Max (CalculateColumnCellWidth (columnIndex, col.InheritedAutoSizeMode), 
+						  col.HeaderCell.ContentBounds.Width);
 				break;
 			case DataGridViewAutoSizeColumnMode.ColumnHeader:
 				size = col.HeaderCell.ContentBounds.Width;
