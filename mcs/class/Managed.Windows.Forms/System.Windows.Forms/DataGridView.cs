@@ -671,9 +671,7 @@ namespace System.Windows.Forms {
 				if (value.DataGridView != this) {
 					throw new ArgumentException("The cell is not in this DataGridView.");
 				}
-				currentCell = value;
-				currentRow = currentCell.OwningRow;
-				UpdateBindingPosition(currentRow.Index);
+				SetCurrentCellAddressCore (value.ColumnIndex, value.RowIndex, false, true, false);
 			}
 		}
 
@@ -684,7 +682,11 @@ namespace System.Windows.Forms {
 
 		[Browsable (false)]
 		public DataGridViewRow CurrentRow {
-			get { return currentRow; }
+			get { 
+				if (currentCell != null)
+					return currentCell.OwningRow;
+				return null;
+			}
 		}
 
 		[DefaultValue ("")]
@@ -4204,20 +4206,7 @@ namespace System.Windows.Forms {
 				return;
 			}
 			
-			if (cell == currentCell) {
-				BeginEdit (true);
-				return;
-			} else if (currentCell != null) {
-				EndEdit ();
-				OnCellLeave (new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
-			}
-
-			if (SetCurrentCellAddressCore (cell.ColumnIndex, cell.RowIndex, false, true, true)) {
-				OnCurrentCellChanged (EventArgs.Empty);
-				OnCellEnter (new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
-				if (editMode == DataGridViewEditMode.EditOnEnter)
-					BeginEdit (true);
-			}
+			SetCurrentCellAddressCore (cell.ColumnIndex, cell.RowIndex, false, true, true);
 			Invalidate();
 			return;
 		}
@@ -5313,7 +5302,7 @@ namespace System.Windows.Forms {
 			base.SetBoundsCore(x, y, width, height, specified);
 		}
 
-		[MonoTODO ("Does not use validateCurrentCell or throughMouseClick")]
+		[MonoTODO ("Does not use validateCurrentCell")]
 		protected virtual bool SetCurrentCellAddressCore (int columnIndex, int rowIndex, bool setAnchorCellAddress, bool validateCurrentCell, bool throughMouseClick)
 		{
 			if ((columnIndex < 0 || columnIndex > Columns.Count - 1) && rowIndex != -1)
@@ -5334,11 +5323,26 @@ namespace System.Windows.Forms {
 			if (setAnchorCellAddress)
 				anchor_cell = new Point (columnIndex, rowIndex);
 
+			DataGridViewCell oldCell = CurrentCell;
+			currentCell = cell;
 			currentCellAddress = new Point (columnIndex, rowIndex);
-			CurrentCell = cell;
-			
-			OnCurrentCellChanged (EventArgs.Empty);
-			
+			if (currentCell != oldCell) {
+				if (oldCell != null) {
+					EndEdit ();
+					OnCellLeave (new DataGridViewCellEventArgs(oldCell.ColumnIndex, oldCell.RowIndex));
+					OnRowLeave (new DataGridViewCellEventArgs (oldCell.ColumnIndex, oldCell.RowIndex));
+				}
+				UpdateBindingPosition (currentCell.RowIndex);
+				OnRowEnter (new DataGridViewCellEventArgs (cell.ColumnIndex, cell.RowIndex));
+				OnCellEnter (new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
+				OnCurrentCellChanged (EventArgs.Empty);
+				if (throughMouseClick && editMode == DataGridViewEditMode.EditOnEnter)
+					BeginEdit (true);
+			} else {
+				if (throughMouseClick)
+					BeginEdit (true);
+			}
+
 			return true;
 		}
 
