@@ -1,5 +1,10 @@
 2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Update the CurrencyManager.Position, so that 
+	when a BindingSource is used BindingSource.Current will be correct.
+
+2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* GroupBoxRenderer.cs: Fix when VisualStyles disabled:
 	   - No caption text is drawn because Color.Empty is used.
 	   - Fix top and height off by 1.

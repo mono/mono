@@ -673,6 +673,7 @@ namespace System.Windows.Forms {
 				}
 				currentCell = value;
 				currentRow = currentCell.OwningRow;
+				UpdateBindingPosition(currentRow.Index);
 			}
 		}
 
@@ -4208,18 +4209,24 @@ namespace System.Windows.Forms {
 				return;
 			} else if (currentCell != null) {
 				EndEdit ();
-				OnCellLeave(new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
+				OnCellLeave (new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
 			}
-			currentCell = cell;
-			currentCellAddress = new Point (currentCell.ColumnIndex, currentCell.RowIndex);
-			currentRow = cell.OwningRow;
-			OnCurrentCellChanged(EventArgs.Empty);
-			OnCellEnter(new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
-			if (editMode == DataGridViewEditMode.EditOnEnter) {
-				BeginEdit (true);
+
+			if (SetCurrentCellAddressCore (cell.ColumnIndex, cell.RowIndex, false, true, true)) {
+				OnCurrentCellChanged (EventArgs.Empty);
+				OnCellEnter (new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
+				if (editMode == DataGridViewEditMode.EditOnEnter)
+					BeginEdit (true);
 			}
 			Invalidate();
 			return;
+		}
+
+		private void UpdateBindingPosition (int position)
+		{
+			BindingSource source = dataSource as BindingSource;
+			if (source != null && source.CurrencyManager != null)
+				source.CurrencyManager.Position = position;
 		}
 
 		protected override void OnMouseEnter (EventArgs e)
