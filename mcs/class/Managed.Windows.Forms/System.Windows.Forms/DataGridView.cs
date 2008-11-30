@@ -671,7 +671,8 @@ namespace System.Windows.Forms {
 				if (value.DataGridView != this) {
 					throw new ArgumentException("The cell is not in this DataGridView.");
 				}
-				SetCurrentCellAddressCore (value.ColumnIndex, value.RowIndex, false, true, false);
+
+				MoveCurrentCell (0, 0, true, false, false, false);
 			}
 		}
 
@@ -5328,7 +5329,8 @@ namespace System.Windows.Forms {
 			currentCellAddress = new Point (columnIndex, rowIndex);
 			if (currentCell != oldCell) {
 				if (oldCell != null) {
-					EndEdit ();
+					if (currentCell.IsInEditMode)
+						EndEdit ();
 					OnCellLeave (new DataGridViewCellEventArgs(oldCell.ColumnIndex, oldCell.RowIndex));
 					OnRowLeave (new DataGridViewCellEventArgs (oldCell.ColumnIndex, oldCell.RowIndex));
 				}
@@ -5868,6 +5870,8 @@ namespace System.Windows.Forms {
 				OnDataBindingComplete (new DataGridViewBindingCompleteEventArgs (ListChangedType.Reset));
 			}
 
+			if (Rows.Count > 0 && Columns.Count > 0)
+				MoveCurrentCell (0, 0, true, false, false, false);
 			PerformLayout();
 			Invalidate ();
 		}
