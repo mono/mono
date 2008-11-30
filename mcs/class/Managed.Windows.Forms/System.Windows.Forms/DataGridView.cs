@@ -5904,15 +5904,6 @@ namespace System.Windows.Forms {
 			else if (mode == DataGridViewSelectionMode.ColumnHeaderSelect)
 				mode = DataGridViewSelectionMode.CellSelect;
 			
-			// End edit if the old cell was editing, and fire CellLeave for the old cell
-			if (currentCell != null) {
-				OnCellLeave (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
-					
-				if (currentCell.IsInEditMode)
-					EndEdit ();
-			}
-			
-			// Move CurrentCell
 			SetCurrentCellAddressCore (x, y, true, false, false);
 			
 			// If the current cell isn't visible, scroll to it
@@ -5977,9 +5968,6 @@ namespace System.Windows.Forms {
 					SetSelectedColumnCore (x, true);
 					break;
 			}
-			
-			// Raise CellEnter
-			OnCellEnter (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			
 			Invalidate ();
 		}
