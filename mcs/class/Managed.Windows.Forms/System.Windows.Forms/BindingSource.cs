@@ -284,7 +284,9 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public object Current {
 			get {
-				return currency_manager.Current;
+				if (currency_manager.Count > 0)
+					return currency_manager.Current;
+				return null;
 			}
 		}
 
