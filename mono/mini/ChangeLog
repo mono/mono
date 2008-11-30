@@ -1,3 +1,8 @@
+2008-11-29  Mark Mason   <mmason@upwardaccess.com>
+
+	* cpu-mips.md: fix length on int_rem_un
+	* mini-mips.c (mips_stackframe_adjust): fix insertion of spillvars region in MIPS stackframes.
+	
 2008-11-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h aot-runtime.c: Fix building with DISABLE_AOT.
