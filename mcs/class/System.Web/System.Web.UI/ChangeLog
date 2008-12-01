@@ -1,3 +1,10 @@
+2008-12-01  Marek Habersack  <mhabersack@novell.com>
+
+	* MasterPage.cs: use List <string> for ContentPlaceHolders instead
+	of ArrayList.
+	CreateMasterPage now directly accesses the ContentPlaceHolders as
+	it is now a list of strings.
+
 2008-11-28  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBinder.cs: do the proper thing in Eval when a non-indexed

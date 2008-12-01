@@ -66,11 +66,21 @@ namespace System.Web.Compilation
 		internal static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
 		
 #if NET_2_0
+		List <string> masterPageContentPlaceHolders;
 		static Regex bindRegex = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		static Regex bindRegexInValue = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
 		static Regex evalRegexInValue = new Regex (@"(.*)Eval\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)(.*)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-		
+
+#if NET_2_0
+		List <string> MasterPageContentPlaceHolders {
+			get {
+				if (masterPageContentPlaceHolders == null)
+					masterPageContentPlaceHolders = new List <string> ();
+				return masterPageContentPlaceHolders;
+			}
+		}
+#endif
 		public TemplateControlCompiler (TemplateControlParser parser)
 			: base (parser)
 		{
@@ -316,23 +326,26 @@ namespace System.Web.Compilation
 				
 #if NET_2_0
 				if (typeof (ContentPlaceHolder).IsAssignableFrom (type)) {
-					CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (thisRef, "ContentPlaceHolders");
-					CodeMethodInvokeExpression addPlaceholder = new CodeMethodInvokeExpression (prop, "Add");
-					addPlaceholder.Parameters.Add (ctrlVar);
-					method.Statements.Add (addPlaceholder);
-
+					List <string> placeHolderIds = MasterPageContentPlaceHolders;
+					string cphID = builder.ID;
+					
+					if (!placeHolderIds.Contains (cphID))
+						placeHolderIds.Add (cphID);
 
 					CodeConditionStatement condStatement;
 
 					// Add the __Template_* field
-					CodeMemberField fld = new CodeMemberField (typeof (ITemplate), "__Template_" + builder.ID);
+					string templateField = "__Template_" + cphID;
+					CodeMemberField fld = new CodeMemberField (typeof (ITemplate), templateField);
 					fld.Attributes = MemberAttributes.Private;
 					mainClass.Members.Add (fld);
 
 					CodeFieldReferenceExpression templateID = new CodeFieldReferenceExpression ();
 					templateID.TargetObject = thisRef;
-					templateID.FieldName = "__Template_" + builder.ID;
+					templateID.FieldName = templateField;
 
+					CreateContentPlaceHolderTemplateProperty (templateField, "Template_" + cphID);
+					
 					// if ((this.ContentTemplates != null)) {
 					// 	this.__Template_$builder.ID = ((System.Web.UI.ITemplate)(this.ContentTemplates["$builder.ID"]));
 					// }
@@ -343,7 +356,7 @@ namespace System.Web.Compilation
 
 					CodeIndexerExpression indexer = new CodeIndexerExpression ();
 					indexer.TargetObject = new CodePropertyReferenceExpression (thisRef, "ContentTemplates");
-					indexer.Indices.Add (new CodePrimitiveExpression (builder.ID));
+					indexer.Indices.Add (new CodePrimitiveExpression (cphID));
 
 					assign = new CodeAssignStatement ();
 					assign.Left = templateID;
@@ -1535,6 +1548,30 @@ namespace System.Web.Compilation
 			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
 				builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 		}
+
+#if NET_2_0
+		protected override void AddStatementsToConstructor (CodeConstructor ctor)
+		{
+			if (masterPageContentPlaceHolders == null || masterPageContentPlaceHolders.Count == 0)
+				return;
+			
+			var ilist = new CodeVariableDeclarationStatement ();
+			ilist.Name = "__contentPlaceHolders";
+			ilist.Type = new CodeTypeReference (typeof (IList));
+			ilist.InitExpression = new CodePropertyReferenceExpression (thisRef, "ContentPlaceHolders");
+			
+			var ilistRef = new CodeVariableReferenceExpression ("__contentPlaceHolders");
+			CodeStatementCollection statements = ctor.Statements;
+			statements.Add (ilist);
+
+			CodeMethodInvokeExpression mcall;
+			foreach (string id in masterPageContentPlaceHolders) {
+				mcall = new CodeMethodInvokeExpression (ilistRef, "Add");
+				mcall.Parameters.Add (new CodePrimitiveExpression (id));
+				statements.Add (mcall);
+			}
+		}
+#endif
 		
 		protected internal override void CreateMethods ()
 		{
@@ -1659,6 +1696,37 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (prop);
 		}
 
+#if NET_2_0
+		void CreateContentPlaceHolderTemplateProperty (string backingField, string name)
+		{
+			CodeMemberProperty prop = new CodeMemberProperty ();
+			prop.Type = new CodeTypeReference (typeof (ITemplate));
+			prop.Name = name;
+			prop.Attributes = MemberAttributes.Public;
+
+			var ret = new CodeMethodReturnStatement ();
+			var fldRef = new CodeFieldReferenceExpression (thisRef, backingField);
+			ret.Expression = fldRef;
+			prop.GetStatements.Add (ret);
+			prop.SetStatements.Add (new CodeAssignStatement (fldRef, new CodePropertySetValueReferenceExpression ()));
+
+			prop.CustomAttributes.Add (new CodeAttributeDeclaration ("TemplateContainer", new CodeAttributeArgument [] {
+						new CodeAttributeArgument (new CodeTypeOfExpression (new CodeTypeReference (typeof (MasterPage))))
+					}
+				)
+			);
+
+			var enumValueRef = new CodeFieldReferenceExpression (new CodeTypeReferenceExpression (typeof (TemplateInstance)), "Single");
+			prop.CustomAttributes.Add (new CodeAttributeDeclaration ("TemplateInstanceAttribute", new CodeAttributeArgument [] {
+						new CodeAttributeArgument (enumValueRef)
+					}
+				)
+			);
+
+			mainClass.Members.Add (prop);
+		}
+#endif
+		
 		void CreateAutoHandlers ()
 		{
 			// Create AutoHandlers property
