@@ -1,3 +1,10 @@
+2008-12-01 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* unverifiable_boxed_type_not_compatible_with_string.il:
+	* unverifiable_boxed_type_not_compatible_with_valuetype.il:
+	* unverifiable_ret_with_boxed_value_on_stack.il: Regression tests
+	for #448560.
+
 2008-09-03 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* strict_native_int_converts_to_unamanged_pointer.cs: It turns
