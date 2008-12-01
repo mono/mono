@@ -672,7 +672,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentException("The cell is not in this DataGridView.");
 				}
 
-				MoveCurrentCell (0, 0, true, false, false, false);
+				MoveCurrentCell (0, 0, true, false, false, true);
 			}
 		}
 
@@ -5485,7 +5485,7 @@ namespace System.Windows.Forms {
 			if (Rows.Count == 0)
 				return;
 				
-			first_row_index = Rows.Count - DisplayedRowCount (false) + 1;
+			first_row_index = Rows.Count - DisplayedRowCount (false);
 			Invalidate ();
 			OnScroll (e);
 		}
@@ -5917,6 +5917,8 @@ namespace System.Windows.Forms {
 
 		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift, bool scroll)
 		{
+			SetCurrentCellAddressCore (x, y, true, false, false);
+
 			bool full_row_selected = Rows.SharedRow(CurrentCellAddress.Y).Selected;
 			bool full_col_selected = Columns[CurrentCellAddress.X].Selected;
 			
@@ -5934,8 +5936,6 @@ namespace System.Windows.Forms {
 				mode = DataGridViewSelectionMode.FullColumnSelect;
 			else if (mode == DataGridViewSelectionMode.ColumnHeaderSelect)
 				mode = DataGridViewSelectionMode.CellSelect;
-			
-			SetCurrentCellAddressCore (x, y, true, false, false);
 			
 			// If the current cell isn't visible, scroll to it
 			if (scroll) {
@@ -5967,13 +5967,13 @@ namespace System.Windows.Forms {
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta_y);
 					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
-				} else if (disp_y > first_row_index + DisplayedRowCount (false) - 2) {
+				} else if (disp_y > first_row_index + DisplayedRowCount (false) - 1) {
 					int delta_y = 0;
 					
 					if (disp_y == Rows.Count - 1)
 						delta_y = verticalScrollBar.Maximum - verticalScrollBar.Value;
 					else
-						for (int i = first_row_index + DisplayedRowCount (false) - 2; i < disp_y; i++)
+						for (int i = first_row_index + DisplayedRowCount (false) - 1; i < disp_y; i++)
 							delta_y += GetRowInternal (i).Height;
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value + delta_y);
