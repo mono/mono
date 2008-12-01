@@ -1,3 +1,13 @@
+2008-12-01  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c:
+	- ProfilerThreadStack: added "last_written_frame" and "written_frames"
+	fields to keep track of the call stacks actually written, so that we
+	can "replay" the full call stack at the beginning of each event block
+	(which allows the decoder to read blocks in random order and still see
+	all the call stacks correctly).
+	- gc_event: Fixed event creation sequence.
+	- Improved event logging (debugging) code.
+
 2008-11-04  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c:
 	Make sure that stack sections can be fully reconstructed even reading
