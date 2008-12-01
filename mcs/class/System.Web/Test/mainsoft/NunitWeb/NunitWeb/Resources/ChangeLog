@@ -1,3 +1,7 @@
+2008-12-01  Marek Habersack  <mhabersack@novell.com>
+
+	* Web.mono.config: added ASP.NET AJAX 1.0 configuration entries
+
 2008-11-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Web.config, Web.mono.config: disabled batch compilation.
