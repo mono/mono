@@ -4791,7 +4791,20 @@ namespace System.Windows.Forms {
 			if (eh != null) eh (this, e);
 		}
 
-		protected internal virtual void OnRowsRemoved (DataGridViewRowsRemovedEventArgs e)
+		internal void OnRowsRemovedInternal (DataGridViewRowsRemovedEventArgs e)
+		{
+			if (selected_rows != null)
+				selected_rows.InternalClear ();
+			if (selected_columns != null)
+				selected_columns.InternalClear ();
+
+			if (Rows.Count > 0 && Columns.Count > 0)
+				SetSelectedCellCore (0, Math.Min (e.RowIndex, Rows.Count - 1), true);
+			Invalidate ();
+			OnRowsRemoved (e);
+		}
+
+		protected virtual void OnRowsRemoved (DataGridViewRowsRemovedEventArgs e)
 		{
 			DataGridViewRowsRemovedEventHandler eh = (DataGridViewRowsRemovedEventHandler)(Events [RowsRemovedEvent]);
 			if (eh != null) eh (this, e);
@@ -4959,14 +4972,6 @@ namespace System.Windows.Forms {
 					Rows.RemoveAt (row.Index);
 			}
 
-			if (selected_rows != null)
-				selected_rows.InternalClear ();
-			if (selected_columns != null)
-				selected_columns.InternalClear ();
-
-			SetSelectedCellCore (0, Math.Min (index, Rows.Count - 1), true);
-			Invalidate ();
-			
 			return true;
 		}
 

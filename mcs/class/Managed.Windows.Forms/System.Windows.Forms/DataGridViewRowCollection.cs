@@ -459,7 +459,7 @@ namespace System.Windows.Forms
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
-			DataGridView.OnRowsRemoved (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
+			DataGridView.OnRowsRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 		}
 
 		internal virtual void RemoveInternal (DataGridViewRow dataGridViewRow)
@@ -467,7 +467,7 @@ namespace System.Windows.Forms
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
-			DataGridView.OnRowsRemoved (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
+			DataGridView.OnRowsRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 		}
 		
 		public virtual void RemoveAt (int index)
