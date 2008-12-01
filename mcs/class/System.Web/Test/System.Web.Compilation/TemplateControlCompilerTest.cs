@@ -62,6 +62,8 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ValidPropertyBind3.aspx", "ValidPropertyBind3.aspx");
 			WebTest.CopyResource (GetType (), "ValidPropertyBind4.aspx", "ValidPropertyBind4.aspx");
 			WebTest.CopyResource (GetType (), "ReadWritePropertyControl.ascx", "ReadWritePropertyControl.ascx");
+			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.aspx", "ContentPlaceHolderInTemplate.aspx");
+			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.master", "ContentPlaceHolderInTemplate.master");
 #endif
 		}
 		
@@ -76,6 +78,13 @@ namespace MonoTests.System.Web.Compilation {
 		}
 
 #if NET_2_0
+		// Test for bug #449970
+		[Test]
+		public void MasterPageContentPlaceHolderInTemplate ()
+		{
+			new WebTest ("ContentPlaceHolderInTemplate.aspx").Run ();
+		}
+		
 		[Test]
 		[ExpectedException (typeof (CompilationException))]
 		public void InvalidPropertyBindTest1 ()
