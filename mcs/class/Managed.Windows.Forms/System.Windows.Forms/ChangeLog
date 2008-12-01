@@ -1,5 +1,11 @@
 2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Invalidate after the current row/column seletion 
+	chagnes.
+	[Fixes bug #438434]
+
+2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Refresh the data if the data list is reset, etc.
 
 2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>

@@ -5374,6 +5374,8 @@ namespace System.Windows.Forms {
 			} else if (selected && !selected_columns.Contains (col)) {
 				selected_columns.InternalAdd (col);
 			}
+
+			Invalidate();
 		}
 
 		internal void SetSelectedRowCoreInternal (int rowIndex, bool selected) {
@@ -5393,6 +5395,8 @@ namespace System.Windows.Forms {
 			} else if (selected && !selected_rows.Contains (row)) {
 				selected_rows.InternalAdd (row);
 			}
+
+			Invalidate();
 		}
 
 		protected override void WndProc (ref Message m)
