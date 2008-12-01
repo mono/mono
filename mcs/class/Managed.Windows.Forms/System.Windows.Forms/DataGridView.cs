@@ -6014,6 +6014,10 @@ namespace System.Windows.Forms {
 				case ListChangedType.ItemDeleted:
 					Rows.RemoveAt (args.NewIndex);
 					break;
+				default:
+					ClearBinding ();
+					DoBinding ();
+					break;
 			}
 			
 			Invalidate ();

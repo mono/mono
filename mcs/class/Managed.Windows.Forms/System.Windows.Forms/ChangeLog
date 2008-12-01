@@ -1,5 +1,9 @@
 2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Refresh the data if the data list is reset, etc.
+
+2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Handle datasource state changes:
 	   - IBindingList - list changes
 	   - BindingSource - list changed and datasource changes
