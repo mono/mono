@@ -1,5 +1,10 @@
 2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fix my previous commit to actually update what it 
+	was supposed to.
+
+2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Ensure that when a row is removed the all the 
 	current row/column/cell get updated. Fixes multiple exceptions.
 

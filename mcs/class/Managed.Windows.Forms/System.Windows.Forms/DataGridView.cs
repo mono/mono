@@ -4798,8 +4798,9 @@ namespace System.Windows.Forms {
 			if (selected_columns != null)
 				selected_columns.InternalClear ();
 
-			if (Rows.Count > 0 && Columns.Count > 0)
-				SetSelectedCellCore (0, Math.Min (e.RowIndex, Rows.Count - 1), true);
+			if (Rows.Count > 0 && Columns.Count > 0 && currentCell != null && 
+			    currentCell.RowIndex >= e.RowIndex)
+				MoveCurrentCell (0, Math.Min (e.RowIndex, Rows.Count - 2), true, false, false, true);
 			Invalidate ();
 			OnRowsRemoved (e);
 		}
