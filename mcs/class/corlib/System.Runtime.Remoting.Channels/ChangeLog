@@ -1,3 +1,8 @@
+2008-12-01  Kornél Pál  <kornelpal@gmail.com>
+
+	* CrossAppDomainChannel.cs: Make _ContextID an object that fixes bug #422491.
+	  Credits to Robert Jordan and Steffen Enni.
+
 2008-07-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* IChannelReceiver.cs:
