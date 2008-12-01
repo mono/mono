@@ -55,7 +55,7 @@ namespace Mono.Cecil {
 			set { m_callConv = value; }
 		}
 
-		public bool HasParameters {
+		public virtual bool HasParameters {
 			get { return (m_parameters == null) ? false : (m_parameters.Count > 0); }
 		}
 

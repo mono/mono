@@ -1,3 +1,12 @@
+2008-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil/MethodReference.cs: Make HasParameters virtual
+	* Mono.Cecil/MethodSpecification.cs: Override HasParameters to make 
+	sure we're tracking the same object as the Parameters property does.
+	* Mono.Cecil/PropertyDefinition.cs: Implement HasParameters based on
+	the GetMethod, SetMethod or its own parameter collection.
+	* Mono.Cecil/PropertyReference.cs: Add abstract HasParameters property
+
 2008-11-27  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ExternTypeCollection.cs: don't attach types as they

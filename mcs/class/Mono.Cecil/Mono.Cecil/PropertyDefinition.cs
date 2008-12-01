@@ -62,6 +62,19 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public override bool HasParameters {
+			get {
+				if (m_getMeth != null)
+					return m_getMeth.HasParameters;
+				else if (m_setMeth != null)
+					return m_setMeth.HasParameters;
+				else if (m_parameters == null)
+					return false;
+				else
+					return m_parameters.Count > 0;
+			}
+		}
+
 		public override ParameterDefinitionCollection Parameters {
 			get {
 				if (this.GetMethod != null)

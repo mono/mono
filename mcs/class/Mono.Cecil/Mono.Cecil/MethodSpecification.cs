@@ -69,6 +69,10 @@ namespace Mono.Cecil {
 			set { throw new InvalidOperationException (); }
 		}
 
+		public override bool HasParameters {
+			get { return m_elementMethod.HasParameters; }
+		}
+
 		public override ParameterDefinitionCollection Parameters {
 			get { return m_elementMethod.Parameters; }
 		}

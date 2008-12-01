@@ -38,6 +38,10 @@ namespace Mono.Cecil {
 			set { m_propertyType = value; }
 		}
 
+		public abstract bool HasParameters {
+			get;
+		}
+
 		public abstract ParameterDefinitionCollection Parameters {
 			get;
 		}
