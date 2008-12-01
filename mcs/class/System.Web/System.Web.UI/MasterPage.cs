@@ -50,7 +50,7 @@ namespace System.Web.UI
 	{
 		Hashtable definedContentTemplates = new Hashtable ();
 		Hashtable templates = new Hashtable ();
-		ArrayList placeholders = new ArrayList ();
+		List <string> placeholders;
 		string parentMasterPageFile = null;
 		MasterPage parentMasterPage;
 
@@ -67,7 +67,11 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected internal IList ContentPlaceHolders {
-			get { return placeholders; }
+			get {
+				if (placeholders == null)
+					placeholders = new List <string> ();
+				return placeholders;
+			}
 		}
 		
 		[Browsable (false)]
@@ -119,33 +123,15 @@ namespace System.Web.UI
 			masterPage.Page = owner.Page;
 			masterPage.InitializeAsUserControlInternal ();
 
-			if (contentTemplateCollection != null) {
-				Dictionary <string, bool> phids = null;
-				ContentPlaceHolder cph;
-				string id;
-				foreach (object ph in masterPage.placeholders) {
-					cph = ph as ContentPlaceHolder;
-					if (cph == null)
-						continue;
-					if (phids == null)
-						phids = new Dictionary <string, bool> ();
-				
-					id = cph.ID;
-					if (phids.ContainsKey (id))
-						continue;
-				
-					phids.Add (id, true);
-				}			
-	
+			List <string> placeholders = masterPage.placeholders;
+			if (contentTemplateCollection != null && placeholders != null && placeholders.Count > 0) {
 				foreach (string templateName in contentTemplateCollection.Keys) {
-					if (phids != null && !phids.ContainsKey (templateName)) {
-						phids = null;
+					if (!placeholders.Contains (templateName)) {
 						throw new HttpException (
 							String.Format ("Cannot find ContentPlaceHolder '{0}' in the master page '{1}'",
 								       templateName, masterPageFile));
 					}
 				}
-				phids = null;
 			}
 
 			return masterPage;

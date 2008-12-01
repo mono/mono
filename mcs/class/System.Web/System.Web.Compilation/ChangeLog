@@ -1,3 +1,18 @@
+2008-12-01  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: instead of adding ContentPlaceHolder
+	instances to the ContentPlaceHolders collection when the
+	placeholder is instantiated in the control build method, collect
+	the ids and store them in ContentPlaceHolders inside the
+	constructor. Fixes bug #449970
+	For each content placeholder generate a public virtual property
+	named "Template_PLACEHOLDERID", this is compatible with what .NET
+	does.
+
+	* BaseCompiler.cs: added new virtual method,
+	AddStatementsToConstructor, which is called just before
+	CreateConstructor returns.
+
 2008-11-25  Marek Habersack  <mhabersack@novell.com>
 
 	* AspComponentFoundry.cs: GetComponentType methods replaced with

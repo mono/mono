@@ -361,8 +361,12 @@ namespace System.Web.Compilation
 			if (trueStmt != null)
 				cond.TrueStatements.AddRange (trueStmt);
 			cond.TrueStatements.Add (assign);
-			
 			ctor.Statements.Add (cond);
+			AddStatementsToConstructor (ctor);
+		}
+
+		protected virtual void AddStatementsToConstructor (CodeConstructor ctor)
+		{
 		}
 		
 		void AddScripts ()
