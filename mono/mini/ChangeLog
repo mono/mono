@@ -1,3 +1,9 @@
+2008-12-01  Mark Mason   <mmason@upwardaccess.com>
+
+	* mini-ops.h: updated MIPS opcodes
+	* mini-mips.c: decompose long opts
+	* mini-mips.h: decompose long opts
+	
 2008-11-29  Mark Mason   <mmason@upwardaccess.com>
 
 	* cpu-mips.md: fix length on int_rem_un
