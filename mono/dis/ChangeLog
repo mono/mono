@@ -1,3 +1,8 @@
+2008-12-01  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* main.c (get_uninitialized_data_type): Make crappy static analyzers happy.
+
+	Backported from trunk.
 
 2008-10-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
