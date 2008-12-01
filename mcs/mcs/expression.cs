@@ -1372,10 +1372,10 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 
 			if (do_isinst)
-				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
+				ig.Emit (OpCodes.Isinst, type);
 
 #if GMCS_SOURCE
-			if (TypeManager.IsNullableType (type))
+			if (TypeManager.IsGenericParameter (type) || TypeManager.IsNullableType (type))
 				ig.Emit (OpCodes.Unbox_Any, type);
 #endif
 		}

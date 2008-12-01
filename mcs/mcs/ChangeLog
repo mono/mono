@@ -1,3 +1,9 @@
+2008-12-01  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #448560
+	* expression.cs (As): Box any generic type arguments to be
+	verifiable.
+
 2008-11-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	Add tripwire for implicit conversion bugs
