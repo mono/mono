@@ -1,5 +1,7 @@
 2008-12-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-<ARCH>.h: Kill MONO_ARCH_HAVE_NORMALIZE_OPCODES define.
+
 	* genmdesc.c genmdesc.pl mini.h: Don't put the CEE_ opcodes into the
 	cpu description tables, they can't occur in cpu-<ARCH>.md.
 
