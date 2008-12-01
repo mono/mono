@@ -1,5 +1,8 @@
 2008-12-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* genmdesc.c genmdesc.pl mini.h: Don't put the CEE_ opcodes into the
+	cpu description tables, they can't occur in cpu-<ARCH>.md.
+
 	* method-to-ir.c (mono_method_to_ir): Set the type of the value pushed on
 	the stack in CEE_LDFLDA. Fixes #450542.
 
