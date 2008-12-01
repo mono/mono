@@ -5747,10 +5747,16 @@ namespace System.Windows.Forms {
 				(list as DataView).Table.ColumnChanged += OnTableColumnChanged;
 				(list as DataView).Table.TableCleared += OnTableCleared;
 			}
-			
+
 			// Add the rows
 			foreach (object element in list)
 				AddBoundRow (element);
+		}
+
+		private void OnBindingSourceDataSourceChanged (object sender, EventArgs args)
+		{
+			ClearBinding();
+			DoBinding();
 		}
 
 		private void AddBoundRow (object element)
@@ -5831,6 +5837,11 @@ namespace System.Windows.Forms {
 					(dataSource as DataView).Table.ColumnChanged -= OnTableColumnChanged;
 				} else if (dataSource is DataTable)
 					((dataSource as IListSource).GetList () as DataView).ListChanged -= OnListChanged;
+
+				if (dataSource is IBindingList)
+					(dataSource as IBindingList).ListChanged -= OnListChanged;
+				if (dataSource is BindingSource)
+					(dataSource as BindingSource).DataSourceChanged -= OnBindingSourceDataSourceChanged;
 			}
 		}
 		
@@ -5855,17 +5866,17 @@ namespace System.Windows.Forms {
 					(value as DataSet).Tables.CollectionChanged += OnDataSetTableChanged;
 					value = (value as DataSet).Tables[dataMember];
 				}
+				
 				if (value is BindingSource)
-					value = (value as BindingSource).List;
-					
-				if (value is IList)
+					BindBindingSource (value as BindingSource);
+				else if (value is IBindingListView)
+					BindIBindingListView (value as IBindingListView);
+				else if (value is IBindingList)
+					BindIBindingList (value as IBindingList);
+				else if (value is IList)
 					BindIList (value as IList);
 				else if (value is IListSource)
 					BindIListSource (value as IListSource);
-				else if (value is IBindingList)
-					BindIBindingList (value as IBindingList);
-				else if (value is IBindingListView)
-					BindIBindingListView (value as IBindingListView);
 
 				OnDataBindingComplete (new DataGridViewBindingCompleteEventArgs (ListChangedType.Reset));
 			}
@@ -5876,12 +5887,20 @@ namespace System.Windows.Forms {
 			Invalidate ();
 		}
 		
+		private void BindBindingSource (BindingSource bindingSource)
+		{
+			BindIList (bindingSource.List);
+			bindingSource.ListChanged += OnBindingSourceDataSourceChanged;
+			bindingSource.DataSourceChanged += OnBindingSourceDataSourceChanged;
+		}
+
 		private void BindIListSource (IListSource list) {
-			BindIList(list.GetList());
+			BindIList (list.GetList());
 		}
 
 		private void BindIBindingList (IBindingList list) {
-			BindIList(list);
+			BindIList (list);
+			list.ListChanged += OnListChanged;
 		}
 
 		private void BindIBindingListView (IBindingListView list) {
@@ -5990,7 +6009,7 @@ namespace System.Windows.Forms {
 		{
 			switch (args.ListChangedType) {
 				case ListChangedType.ItemAdded:
-					AddBoundRow ((sender as DataView)[args.NewIndex]);
+					AddBoundRow ((sender as IBindingList)[args.NewIndex]);
 					break;
 				case ListChangedType.ItemDeleted:
 					Rows.RemoveAt (args.NewIndex);

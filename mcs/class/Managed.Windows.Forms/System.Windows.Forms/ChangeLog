@@ -1,3 +1,9 @@
+2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Handle datasource state changes:
+	   - IBindingList - list changes
+	   - BindingSource - list changed and datasource changes
+
 2008-11-30  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Select the first cell when databound. 
