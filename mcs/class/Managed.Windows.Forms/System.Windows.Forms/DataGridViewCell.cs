@@ -325,10 +325,11 @@ namespace System.Windows.Forms {
 				return false;
 			}
 			set {
+				selected = value;
+
 				if (value != ((State & DataGridViewElementStates.Selected) != 0)) {
 					SetState(State ^ DataGridViewElementStates.Selected);
 				}
-				selected = value;
 				
 				// If our row is selected, unselect it and select
 				// the first cell in it that isn't us
@@ -419,6 +420,12 @@ namespace System.Windows.Forms {
 				
 				return rowVisible && colVisible;
 			}
+		}
+
+		internal override void SetState (DataGridViewElementStates state) {
+			base.SetState (state);
+			if (DataGridView != null)
+				DataGridView.OnCellStateChangedInternal (new DataGridViewCellStateChangedEventArgs (this, state));
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

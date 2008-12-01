@@ -3539,6 +3539,10 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
+		internal void OnCellStateChangedInternal (DataGridViewCellStateChangedEventArgs e) {
+			this.OnCellStateChanged (e);
+		}
+
 		protected virtual void OnCellStateChanged (DataGridViewCellStateChangedEventArgs e)
 		{
 			DataGridViewCellStateChangedEventHandler eh = (DataGridViewCellStateChangedEventHandler)(Events [CellStateChangedEvent]);

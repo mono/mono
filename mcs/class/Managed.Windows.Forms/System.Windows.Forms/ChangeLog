@@ -1,5 +1,12 @@
 2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs, DataGridViewCell.cs: Fire CellStateChanged events.
+	* DataGridViewCell.cs: Set the cell as selected prior to setting the 
+	new state.
+	[Fixes issue 1 in bug #443560]
+
+2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Invalidate after the current row/column seletion 
 	chagnes.
 	[Fixes bug #438434]
