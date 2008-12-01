@@ -1,3 +1,11 @@
+2008-12-01  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Mono.Cecil.Signatures/CustomAttrib.cs: Define reusable Empty 
+	arrays for both FixedArg and NamedArg.
+	* Mono.Cecil.Signatures/SignatureReader.cs: Avoid creating empty
+	ParameterDefinitionCollection on constructors. Use the new Empty
+	arrays when possible.
+
 2008-12-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/MethodReference.cs: Make HasParameters virtual

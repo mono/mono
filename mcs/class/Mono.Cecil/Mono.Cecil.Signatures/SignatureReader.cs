@@ -617,8 +617,8 @@ namespace Mono.Cecil.Signatures {
 		{
 			CustomAttrib ca = new CustomAttrib (ctor);
 			if (data.Length == 0) {
-				ca.FixedArgs = new CustomAttrib.FixedArg [0];
-				ca.NamedArgs = new CustomAttrib.NamedArg [0];
+				ca.FixedArgs = CustomAttrib.FixedArg.Empty;
+				ca.NamedArgs = CustomAttrib.NamedArg.Empty;
 				return ca;
 			}
 
@@ -628,10 +628,14 @@ namespace Mono.Cecil.Signatures {
 			if (ca.Prolog != CustomAttrib.StdProlog)
 				throw new MetadataFormatException ("Non standard prolog for custom attribute");
 
-			ca.FixedArgs = new CustomAttrib.FixedArg [ctor.Parameters.Count];
-			for (int i = 0; i < ca.FixedArgs.Length && read; i++)
-				ca.FixedArgs [i] = ReadFixedArg (data, br,
-					ctor.Parameters [i].ParameterType, ref read, resolve);
+			if (ctor.HasParameters) {
+				ca.FixedArgs = new CustomAttrib.FixedArg [ctor.Parameters.Count];
+				for (int i = 0; i < ca.FixedArgs.Length && read; i++)
+					ca.FixedArgs [i] = ReadFixedArg (data, br,
+						ctor.Parameters [i].ParameterType, ref read, resolve);
+			} else {
+				ca.FixedArgs = CustomAttrib.FixedArg.Empty;
+			}
 
 			if (br.BaseStream.Position == br.BaseStream.Length)
 				read = false;
@@ -642,9 +646,13 @@ namespace Mono.Cecil.Signatures {
 			}
 
 			ca.NumNamed = br.ReadUInt16 ();
-			ca.NamedArgs = new CustomAttrib.NamedArg [ca.NumNamed];
-			for (int i = 0; i < ca.NumNamed && read; i++)
-				ca.NamedArgs [i] = ReadNamedArg (data, br, ref read, resolve);
+			if (ca.NumNamed > 0) {
+				ca.NamedArgs = new CustomAttrib.NamedArg [ca.NumNamed];
+				for (int i = 0; i < ca.NumNamed && read; i++)
+					ca.NamedArgs [i] = ReadNamedArg (data, br, ref read, resolve);
+			} else {
+				ca.NamedArgs = CustomAttrib.NamedArg.Empty;
+			}
 
 			ca.Read = read;
 			return ca;

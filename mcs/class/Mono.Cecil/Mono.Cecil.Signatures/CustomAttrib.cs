@@ -52,6 +52,8 @@ namespace Mono.Cecil.Signatures {
 			public bool SzArray;
 			public uint NumElem;
 			public Elem [] Elems;
+
+			internal static FixedArg [] Empty = new FixedArg [0];
 		}
 
 		public struct Elem {
@@ -75,6 +77,8 @@ namespace Mono.Cecil.Signatures {
 			public ElementType FieldOrPropType;
 			public string FieldOrPropName;
 			public FixedArg FixedArg;
+
+			internal static NamedArg [] Empty = new NamedArg [0];
 		}
 	}
 }
