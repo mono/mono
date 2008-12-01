@@ -1,5 +1,10 @@
 2008-12-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Rename the function names for the binary and asm writers
+	so they can coexist in the same process. Rework the xdebug code to use the
+	asm writer. This avoids the need to call into the runtime to dump the
+	debugging info. Add more debugging info for types.
+
 	* mini-<ARCH>.h: Kill MONO_ARCH_HAVE_NORMALIZE_OPCODES define.
 
 	* genmdesc.c genmdesc.pl mini.h: Don't put the CEE_ opcodes into the
