@@ -1,3 +1,17 @@
+2008-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_compatible_boxed_valuetype): Rewrite function to work properly with
+	targets that require strict compatibility between the types.
+
+	* verify.c (verify_stack_type_compatibility_full): Boxed values are not compatible
+	to unboxed types. All cases that this is true are checked by is_compatible_boxed_valuetype.
+	Kill the strict argument and create a new one valuetype_must_be_boxed.
+
+	* verify.c (verify_delegate_compatibility): Use verify_stack_type_compatibility_full to
+	state that all valuetypes must be boxed.
+
+	Fixes #448560.
+
 2008-11-29  Kornél Pál  <kornelpal@gmail.com>
 
 	* coree.c (MonoFixupExe): Use sizeof(IMAGE_BASE_RELOCATION) instead of
