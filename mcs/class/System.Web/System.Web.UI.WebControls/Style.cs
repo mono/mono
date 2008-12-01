@@ -487,32 +487,33 @@ namespace System.Web.UI.WebControls {
 
 			if (CheckBit ((int) Style.Styles.FontAll)) {
 				// Fonts are a bit weird
-				if (fontinfo.Name != string.Empty) {
-					s = fontinfo.Names[0];
-					for (int i = 1; i < fontinfo.Names.Length; i++)
-						s += "," + fontinfo.Names[i];
+				FontInfo font = Font;
+				if (font.Name != string.Empty) {
+					s = font.Names[0];
+					for (int i = 1; i < font.Names.Length; i++)
+						s += "," + font.Names[i];
 					writer.AddStyleAttribute (HtmlTextWriterStyle.FontFamily, s);
 				}
 
-				if (fontinfo.Bold)
+				if (font.Bold)
 					writer.AddStyleAttribute (HtmlTextWriterStyle.FontWeight, "bold");
 
-				if (fontinfo.Italic)
+				if (font.Italic)
 					writer.AddStyleAttribute (HtmlTextWriterStyle.FontStyle, "italic");
 
-				if (!fontinfo.Size.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize, fontinfo.Size.ToString());
+				if (!font.Size.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize, font.Size.ToString());
 
 				// These styles are munged into a attribute decoration
 				s = string.Empty;
 
-				if (fontinfo.Overline)
+				if (font.Overline)
 					s += "overline ";
 
-				if (fontinfo.Strikeout)
+				if (font.Strikeout)
 					s += "line-through ";
 
-				if (fontinfo.Underline)
+				if (font.Underline)
 					s += "underline ";
 
 				s = (s != "") ? s : AlwaysRenderTextDecoration ? "none" : "";
