@@ -45,6 +45,12 @@ install-local: end-install
 clean-local:
 	rm -f $(OUTPUT_FILES) tune.stamp tune.stampt
 
+uninstall-local:
+
+dist-local: dist-default
+
+test-local run-test-local run-test-ondotnet-local:
+
 TUNER_FLAGS = -d $(WORKING_DIR) -o $(OUTPUT_DIR)	\
 	-l none		\
 	-c link		\
