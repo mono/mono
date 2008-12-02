@@ -1,3 +1,10 @@
+2008-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r120543.
+	
+	* mini-trampolines.c (mono_magic_trampoline): Add some debugging code to help
+	diagnose an assertion failure.
+
 2008-11-29  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r120273.
