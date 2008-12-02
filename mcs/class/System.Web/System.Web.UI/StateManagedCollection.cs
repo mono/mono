@@ -113,7 +113,6 @@ namespace System.Web.UI {
 			object t;
 			
 			saveEverything = indices == null;
-
 			if (saveEverything) {
 				items.Clear ();
 
@@ -260,7 +259,6 @@ namespace System.Web.UI {
 			if (isTrackingViewState) {
 				((IStateManager) value).TrackViewState ();
 				SetDirtyObject (value);
-				SetDirty ();
 			}
 			
 			OnInsert (-1, value);
@@ -275,7 +273,6 @@ namespace System.Web.UI {
 			OnValidate(value);
 			if (isTrackingViewState) {
 				((IStateManager) value).TrackViewState ();
-				SetDirtyObject (value);
 				SetDirty ();
 			}
 			
@@ -363,7 +360,6 @@ namespace System.Web.UI {
 				OnValidate (value);
 				if (isTrackingViewState) {
 					((IStateManager) value).TrackViewState ();
-					SetDirtyObject (value);
 					SetDirty ();
 				}
 				
