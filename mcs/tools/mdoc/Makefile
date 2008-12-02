@@ -79,50 +79,50 @@ Test/DocTest.dll-v2:
 check-monodocer-update: mdoc.exe
 	find Test/en.expected -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) mdoc.exe update -o Test/en.expected Test/DocTest.dll
+	$(MONO) mdoc.exe update --exceptions -o Test/en.expected Test/DocTest.dll
 
 check-monodocer: mdoc.exe
 	-rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) mdoc.exe update -o Test/en.actual Test/DocTest.dll
+	$(MONO) mdoc.exe update --exceptions -o Test/en.actual Test/DocTest.dll
 	diff --exclude=.svn -rup Test/en.expected Test/en.actual
-	$(MONO) mdoc.exe update -o Test/en.actual Test/DocTest.dll 
+	$(MONO) mdoc.exe update --exceptions -o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected Test/en.actual
 
 check-monodocer-since-update: mdoc.exe
 	find Test/en.expected.since -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) mdoc.exe update -o Test/en.expected.since Test/DocTest.dll 
+	$(MONO) mdoc.exe update --exceptions -o Test/en.expected.since Test/DocTest.dll 
 	$(MAKE) Test/DocTest.dll-v2
-	$(MONO) mdoc.exe update --since="Version 2.0" \
+	$(MONO) mdoc.exe update --exceptions --since="Version 2.0" \
 		-o Test/en.expected.since Test/DocTest.dll 
 
 check-monodocer-since: mdoc.exe
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) mdoc.exe update -o Test/en.actual Test/DocTest.dll 
+	$(MONO) mdoc.exe update --exceptions -o Test/en.actual Test/DocTest.dll 
 	$(MAKE) Test/DocTest.dll-v2
-	$(MONO) mdoc.exe update --since="Version 2.0" \
+	$(MONO) mdoc.exe update --exceptions --since="Version 2.0" \
 		-o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected.since Test/en.actual
 
 check-monodocer-importslashdoc-update: mdoc.exe
 	find Test/en.expected.importslashdoc -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1 TEST_CSCFLAGS=-doc:Test/DocTest.xml
-	$(MONO) mdoc.exe update -i Test/DocTest.xml \
+	$(MONO) mdoc.exe update --exceptions -i Test/DocTest.xml \
 		-o Test/en.expected.importslashdoc Test/DocTest.dll 
 
 check-monodocer-importslashdoc: mdoc.exe
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1 TEST_CSCFLAGS=-doc:Test/DocTest.xml
-	$(MONO) mdoc.exe update -i Test/DocTest.xml \
+	$(MONO) mdoc.exe update --exceptions -i Test/DocTest.xml \
 		-o Test/en.actual Test/DocTest.dll 
 	diff --exclude=.svn -rup Test/en.expected.importslashdoc Test/en.actual
 
 check-monodocer-importecmadoc-update: mdoc.exe
 	find Test/en.expected.importecmadoc -name \*.xml -exec rm "{}" \;
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) mdoc.exe update -i Test/TestEcmaDocs.xml \
+	$(MONO) mdoc.exe update --exceptions -i Test/TestEcmaDocs.xml \
 		'--type=System.Action`1' --type=System.AsyncCallback \
 		--type=System.Environment --type=System.Array \
 		-o Test/en.expected.importecmadoc Test/DocTest.dll 
@@ -130,7 +130,7 @@ check-monodocer-importecmadoc-update: mdoc.exe
 check-monodocer-importecmadoc: mdoc.exe
 	rm -Rf Test/en.actual
 	$(MAKE) Test/DocTest.dll-v1
-	$(MONO) mdoc.exe update -i Test/TestEcmaDocs.xml \
+	$(MONO) mdoc.exe update --exceptions -i Test/TestEcmaDocs.xml \
 		'--type=System.Action`1' --type=System.AsyncCallback \
 		--type=System.Environment --type=System.Array \
 		-o Test/en.actual Test/DocTest.dll 

@@ -1,23 +1,24 @@
---- DocTest-v1.cs	2007-10-28 20:10:26.000000000 -0400
-+++ DocTest.cs	2007-12-10 13:29:32.000000000 -0500
-@@ -1,6 +1,9 @@
- using System;
+--- DocTest-v1.cs	2008-12-02 10:38:46.000000000 -0500
++++ DocTest.cs	2008-12-02 11:28:55.000000000 -0500
+@@ -2,6 +2,9 @@
  using System.Collections;
  using System.Collections.Generic;
+ using System.Linq;
 +using System.Reflection;
 +
 +[assembly: AssemblyVersion ("2.0.0.0")]
  
- namespace System {
- 	/* 
-@@ -37,15 +40,7 @@
+ public class NoNamespace {}
+ 
+@@ -43,16 +46,7 @@
  		{
- 			return null;
+ 			throw new InvalidOperationException ();
  		}
 -
 -		// ECMA docs *incorrectly* document parameter -- skip
 -		public static void Resize<T> (ref T[] array, int newSize)
 -		{
+-			throw new Exception ();
 -		}
  	}
 -
@@ -26,7 +27,7 @@
  }
  
  namespace Mono.DocTest {
-@@ -279,6 +274,9 @@
+@@ -397,6 +391,9 @@
  		/// <remarks><c>M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}.Helper{``1,``2})</c>.</remarks>
  		public void UseHelper<T,U,V> (Generic.MyList<T>.Helper<U,V> helper) {}
  	}
@@ -36,12 +37,12 @@
  }
  
  namespace Mono.DocTest.Generic {
-@@ -294,6 +292,8 @@
+@@ -471,6 +468,8 @@
  			return default(U);
  		}
  
 +		public void AddedInVersion0_1_0_0 () {}
 +
- 		/// <param name="list">Insert description here</param>
- 		/// <remarks><c>M:Mono.DocTest.GenericBase`1.op_Explicit(Mono.DocTest.GenericBase{`0})~`0</c></remarks>
- 		/// <returns>The default value for <typeparamref name="U"/>.</returns>
+ 		/// <remarks><c>F:Mono.DocTest.GenericBase`1.StaticField1</c></remarks>
+ 		public static readonly GenericBase<U> StaticField1 = new GenericBase<U> ();
+ 

@@ -94,6 +94,8 @@
         <summary>To be added.</summary>
         <remarks>
           <c>E:Mono.DocTest.Widget.AnEvent</c>.</remarks>
+        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+        <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="AnotherEvent">
@@ -109,6 +111,8 @@
         <summary>To be added.</summary>
         <remarks>
           <c>E:Mono.DocTest.Widget.AnotherEvent</c>.</remarks>
+        <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+        <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
       </Docs>
     </Member>
     <Member MemberName="array1">

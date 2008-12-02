@@ -38,6 +38,7 @@ class MDocUpdaterOptions
 	public bool pretty = true;
 	public string since;
 	public bool show_exceptions;
+	public bool exceptions = false;
 }
 
 class MDocUpdater : MDocCommand
@@ -48,7 +49,7 @@ class MDocUpdater : MDocCommand
 	
 	static bool nooverrides = true, delete = false, ignoremembers = false;
 	static bool pretty = false;
-	static bool show_exceptions = false;
+	static bool show_exceptions = false, exceptions = false;
 	
 	static int additions = 0, deletions = 0;
 
@@ -91,6 +92,9 @@ class MDocUpdater : MDocCommand
 			{ "type=",
 			  "Only update documentation for {TYPE}.",
 				v => opts.type.Add (v) },
+			{ "exceptions",
+			  "Document potential exceptions that members can generate.",
+				v => opts.exceptions = v != null },
 		};
 		opts.assembly = Parse (p, args, "update", 
 				"[OPTIONS]+ ASSEMBLIES",
@@ -113,6 +117,7 @@ class MDocUpdater : MDocCommand
 		pretty = opts.pretty;
 		since = opts.since;
 		show_exceptions = opts.show_exceptions;
+		exceptions = opts.exceptions;
 
 		try {
 			// PARSE BASIC OPTIONS AND LOAD THE ASSEMBLY TO DOCUMENT
@@ -188,7 +193,7 @@ class MDocUpdater : MDocCommand
 
 	private static new void Error (string format, params object[] args)
 	{
-		Console.Error.Write ("monodocer: ");
+		Console.Error.Write ("mdoc: ");
 		Console.Error.WriteLine (format, args);
 	}
 	
@@ -651,9 +656,21 @@ class MDocUpdater : MDocCommand
 	}
 
 	class AttributeNameComparer : XmlNodeComparer {
+		string attribute;
+
+		public AttributeNameComparer ()
+			: this ("Name")
+		{
+		}
+
+		public AttributeNameComparer (string attribute)
+		{
+			this.attribute = attribute;
+		}
+
 		public override int Compare (XmlNode x, XmlNode y)
 		{
-			return x.Attributes ["Name"].Value.CompareTo (y.Attributes ["Name"].Value);
+			return x.Attributes [attribute].Value.CompareTo (y.Attributes [attribute].Value);
 		}
 	}
 	
@@ -1738,6 +1755,10 @@ class MDocUpdater : MDocCommand
 		if (addremarks)
 			WriteElementInitialText(e, "remarks", "To be added.");
 
+		if (exceptions && info.Member != null) {
+			UpdateExceptions (e, info.Member);
+		}
+
 		if (info.EcmaDocs != null) {
 			XmlReader r = info.EcmaDocs;
 			int depth = r.Depth;
@@ -1867,7 +1888,7 @@ class MDocUpdater : MDocCommand
 	}
 
 	static readonly string[] DocsNodeOrder = {
-		"typeparam", "param", "summary", "returns", "value", "remarks",
+		"typeparam", "param", "summary", "returns", "value", "remarks", "exception",
 	};
 
 	private static void OrderDocsNodes (XmlNode docs, XmlNodeList children)
@@ -1990,6 +2011,26 @@ class MDocUpdater : MDocCommand
 		foreach (XmlElement paramref in docs.SelectNodes (".//paramref"))
 			if (paramref.GetAttribute ("name").Trim () == existingName)
 				paramref.SetAttribute ("name", newName);
+	}
+
+	private static void UpdateExceptions (XmlNode docs, IMemberReference member)
+	{
+		foreach (var source in new ExceptionLookup ()[member]) {
+			string cref = slashdocFormatter.GetDeclaration (source.Exception);
+			var node = docs.SelectSingleNode ("exception[@cref='" + cref + "']");
+			if (node != null)
+				continue;
+			XmlElement e = docs.OwnerDocument.CreateElement ("exception");
+			e.SetAttribute ("cref", cref);
+			e.InnerXml = "To be added; from: <see cref=\"" + 
+				string.Join ("\" />, <see cref=\"", 
+						source.Sources.Select (m => slashdocFormatter.GetDeclaration (m))
+						.ToArray ()) +
+				"\" />";
+			docs.AppendChild (e);
+		}
+		SortXmlNodes (docs, docs.SelectNodes ("exception"), 
+				new AttributeNameComparer ("cref"));
 	}
 
 	private static void NormalizeWhitespace(XmlElement e) {
@@ -2596,14 +2637,29 @@ static class CecilExtensions {
 
 	public static IMemberReference GetMember (this TypeDefinition type, string member)
 	{
-		return GetMembers (type, member).FirstOrDefault ();
+		return GetMembers (type, member).EnsureZeroOrOne ();
+	}
+
+	static T EnsureZeroOrOne<T> (this IEnumerable<T> source)
+	{
+		if (source.Count () > 1)
+			throw new InvalidOperationException ("too many matches");
+		return source.FirstOrDefault ();
+	}
+
+	static T EnsureOne<T> (this IEnumerable<T> source)
+	{
+		if (source.Count () > 1)
+			throw new InvalidOperationException ("too many matches: " +
+					string.Join ("; ", source.Select (e => e.ToString ()).ToArray ()));
+		return source.First ();
 	}
 
 	public static MethodDefinition GetMethod (this TypeDefinition type, string method)
 	{
 		return type.Methods.Cast<MethodDefinition> ()
 			.Where (m => m.Name == method)
-			.FirstOrDefault ();
+			.EnsureZeroOrOne ();
 	}
 
 	public static IEnumerable<IMemberReference> GetDefaultMembers (this TypeReference type)
@@ -2631,8 +2687,8 @@ static class CecilExtensions {
 	public static TypeDefinition GetType (this AssemblyDefinition assembly, string type)
 	{
 		return GetTypes (assembly)
-				.Where (td => td.FullName == type)
-				.FirstOrDefault ();
+			.Where (td => td.FullName == type)
+			.EnsureZeroOrOne ();
 	}
 
 	public static bool IsGenericType (this TypeReference type)
@@ -2643,6 +2699,126 @@ static class CecilExtensions {
 	public static bool IsGenericMethod (this MethodReference method)
 	{
 		return method.GenericParameters.Count > 0;
+	}
+
+	public static IMemberReference GetDefinition (this IMemberReference member)
+	{
+		EventReference er = member as EventReference;
+		if (er != null)
+			return GetEventDefinition (er);
+		FieldReference fr = member as FieldReference;
+		if (fr != null)
+			return GetFieldDefinition (fr);
+		MethodReference mr = member as MethodReference;
+		if (mr != null)
+			return GetMethodDefinition (mr);
+		PropertyReference pr = member as PropertyReference;
+		if (pr != null)
+			return GetPropertyDefinition (pr);
+		TypeReference tr = member as TypeReference;
+		if (tr != null)
+			return GetTypeDefinition (tr);
+		throw new NotSupportedException ("Cannot find definition for " + member.ToString ());
+	}
+
+	public static EventDefinition GetEventDefinition (this EventReference ev)
+	{
+		EventDefinition evDef = ev as EventDefinition;
+		if (evDef != null)
+			return evDef;
+		return (EventDefinition) ev.DeclaringType.GetTypeDefinition ()
+			.GetMember (ev.Name);
+	}
+
+	public static FieldDefinition GetFieldDefinition (this FieldReference field)
+	{
+		FieldDefinition fieldDef = field as FieldDefinition;
+		if (fieldDef != null)
+			return fieldDef;
+		return (FieldDefinition) field.DeclaringType.GetTypeDefinition ()
+			.GetMember (field.Name);
+	}
+
+	public static MethodDefinition GetMethodDefinition (this MethodReference method)
+	{
+		MethodDefinition methodDef = method as MethodDefinition;
+		if (methodDef != null)
+			return methodDef;
+		method = method.GetOriginalMethod ();
+		return method.DeclaringType.GetTypeDefinition ()
+			.GetMembers (method.Name).OfType<MethodDefinition> ()
+			.Where (m => 
+					AreSame (method.ReturnType.ReturnType, m.ReturnType.ReturnType) &&
+					AreSame (method.Parameters, m.Parameters))
+			.EnsureOne ();
+	}
+
+	static bool AreSame (ParameterDefinitionCollection a, ParameterDefinitionCollection b)
+	{
+		if (a.Count != b.Count)
+			return false;
+
+		if (a.Count == 0)
+			return true;
+
+		for (int i = 0; i < a.Count; i++) {
+			if (!AreSame (a [i].ParameterType, b [i].ParameterType))
+				return false;
+		}
+
+		return true;
+	}
+
+	static bool AreSame (TypeReference a, TypeReference b)
+	{
+		while (a is TypeSpecification || b is TypeSpecification) {
+			if (a.GetType () != b.GetType ())
+				return false;
+
+			IGenericInstance ga = a as IGenericInstance;
+			IGenericInstance gb = b as IGenericInstance;
+
+			a = ((TypeSpecification) a).ElementType;
+			b = ((TypeSpecification) b).ElementType;
+
+			if (ga != null && gb != null) {
+				if (ga.GenericArguments.Count != gb.GenericArguments.Count) {
+					return false;
+				}
+				for (int i = 0; i < ga.GenericArguments.Count; ++i) {
+					if (!AreSame (ga.GenericArguments [i], gb.GenericArguments [i]))
+						return false;
+				}
+			}
+		}
+
+		GenericParameter pa = (a as GenericParameter);
+		GenericParameter pb = (b as GenericParameter);
+		if ((pa != null) || (pb != null)) {
+			if (a.GetType () != b.GetType ())
+				return false;
+
+			return pa.Position == pb.Position;
+		}
+
+		return a.FullName == b.FullName;
+	}
+
+	public static PropertyDefinition GetPropertyDefinition (this PropertyReference property)
+	{
+		PropertyDefinition propertyDef = property as PropertyDefinition;
+		if (propertyDef != null)
+			return propertyDef;
+		return (PropertyDefinition) property.DeclaringType.GetTypeDefinition ()
+			.GetMembers (property.Name).OfType<PropertyDefinition> ()
+			.Where (p => p.PropertyType.FullName == property.PropertyType.FullName &&
+					AreSame (property.Parameters, p.Parameters))
+			.EnsureOne ();
+	}
+
+	public static TypeDefinition GetTypeDefinition (this TypeReference type)
+	{
+		return DocUtils.GetTypeDefinition (type);
 	}
 }
 
@@ -2767,23 +2943,21 @@ static class DocUtils {
 	public static TypeDefinition GetTypeDefinition (TypeReference type)
 	{
 		// Remove generic instantiation info (so string comparison below works)
-		if (type is TypeSpecification)
-			type = type.GetOriginalType ();
+		type = type.GetOriginalType ();
 		TypeDefinition typeDef = type as TypeDefinition;
-		if (typeDef == null && type.Module != null) {
-			AssemblyNameReference r = type.Module.AssemblyReferences.Cast<AssemblyNameReference> ()
-					.Where (anr => anr.Name == type.Scope.Name)
-					.FirstOrDefault ();
-			if (r != null) {
-				AssemblyDefinition ad = type.Module.Assembly.Resolver.Resolve (r);
-				if (ad != null) {
-					typeDef = ad.GetTypes()
-						.Where (t => t.FullName == type.FullName)
-						.FirstOrDefault ();
-				}
-			}
+		if (typeDef != null)
+			return typeDef;
+
+		AssemblyNameReference reference = type.Scope as AssemblyNameReference;
+		if (reference != null) {
+			AssemblyDefinition ad = type.Module.Assembly.Resolver.Resolve (reference);
+			if (ad != null && (typeDef = ad.MainModule.Types [type.FullName]) != null)
+				return typeDef;
 		}
-		return typeDef;
+		ModuleDefinition module = type.Scope as ModuleDefinition;
+		if (module != null && (typeDef = module.Types [type.FullName]) != null)
+			return typeDef;
+		return null;
 	}
 
 	public static IEnumerable<TypeReference> GetUserImplementedInterfaces (TypeDefinition type)
@@ -2900,18 +3074,18 @@ public abstract class MemberFormatter {
 		TypeReference type = member as TypeReference;
 		if (type != null)
 			return GetTypeName (type);
-		MethodDefinition method  = member as MethodDefinition;
-		if (method != null && method.IsConstructor)
+		MethodReference method  = member as MethodReference;
+		if (method != null && method.Name == ".ctor") // method.IsConstructor
 			return GetConstructorName (method);
 		if (method != null)
 			return GetMethodName (method);
-		PropertyDefinition prop = member as PropertyDefinition;
+		PropertyReference prop = member as PropertyReference;
 		if (prop != null)
 			return GetPropertyName (prop);
-		FieldDefinition field = member as FieldDefinition;
+		FieldReference field = member as FieldReference;
 		if (field != null)
 			return GetFieldName (field);
-		EventDefinition e = member as EventDefinition;
+		EventReference e = member as EventReference;
 		if (e != null)
 			return GetEventName (e);
 		throw new NotSupportedException ("Can't handle: " +
@@ -3062,33 +3236,35 @@ public abstract class MemberFormatter {
 		return buf;
 	}
 
-	protected virtual string GetConstructorName (MethodDefinition constructor)
+	protected virtual string GetConstructorName (MethodReference constructor)
 	{
 		return constructor.Name;
 	}
 
-	protected virtual string GetMethodName (MethodDefinition method)
+	protected virtual string GetMethodName (MethodReference method)
 	{
 		return method.Name;
 	}
 
-	protected virtual string GetPropertyName (PropertyDefinition property)
+	protected virtual string GetPropertyName (PropertyReference property)
 	{
 		return property.Name;
 	}
 
-	protected virtual string GetFieldName (FieldDefinition field)
+	protected virtual string GetFieldName (FieldReference field)
 	{
 		return field.Name;
 	}
 
-	protected virtual string GetEventName (EventDefinition e)
+	protected virtual string GetEventName (EventReference e)
 	{
 		return e.Name;
 	}
 
 	public virtual string GetDeclaration (IMemberReference member)
 	{
+		if (member == null)
+			throw new ArgumentNullException ("member");
 		TypeDefinition type = member as TypeDefinition;
 		if (type != null)
 			return GetTypeDeclaration (type);
@@ -3713,7 +3889,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 	private bool AddTypeCount = true;
 
 	private TypeReference genDeclType;
-	private MethodDefinition genDeclMethod;
+	private MethodReference genDeclMethod;
 
 	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
 	{
@@ -3804,20 +3980,21 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return base.GetDeclaration (member);
 	}
 
-	protected override string GetConstructorName (MethodDefinition constructor)
+	protected override string GetConstructorName (MethodReference constructor)
 	{
 		return GetMethodDefinitionName (constructor, "#ctor");
 	}
 
-	protected override string GetMethodName (MethodDefinition method)
+	protected override string GetMethodName (MethodReference method)
 	{
 		string name = null;
-		if (!DocUtils.IsExplicitlyImplemented (method))
+		MethodDefinition methodDef = method as MethodDefinition;
+		if (methodDef == null || !DocUtils.IsExplicitlyImplemented (methodDef))
 			name = method.Name;
 		else {
 			TypeReference iface;
 			MethodReference ifaceMethod;
-			DocUtils.GetInfoForExplicitlyImplementedMethod (method, out iface, out ifaceMethod);
+			DocUtils.GetInfoForExplicitlyImplementedMethod (methodDef, out iface, out ifaceMethod);
 			AddTypeCount = false;
 			name = GetTypeName (iface) + "." + ifaceMethod.Name;
 			AddTypeCount = true;
@@ -3825,7 +4002,7 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return GetMethodDefinitionName (method, name);
 	}
 
-	private string GetMethodDefinitionName (MethodDefinition method, string name)
+	private string GetMethodDefinitionName (MethodReference method, string name)
 	{
 		StringBuilder buf = new StringBuilder ();
 		buf.Append (GetTypeName (method.DeclaringType));
@@ -3837,11 +4014,15 @@ class SlashDocMemberFormatter : MemberFormatter {
 				buf.Append ("``").Append (genArgs.Count);
 		}
 		ParameterDefinitionCollection parameters = method.Parameters;
-		genDeclType = method.DeclaringType;
-		genDeclMethod = method;
-		AppendParameters (buf, method.DeclaringType.GenericParameters, parameters);
-		genDeclType = null;
-		genDeclMethod = null;
+		try {
+			genDeclType   = method.DeclaringType;
+			genDeclMethod = method;
+			AppendParameters (buf, method.DeclaringType.GenericParameters, parameters);
+		}
+		finally {
+			genDeclType   = null;
+			genDeclMethod = null;
+		}
 		return buf.ToString ();
 	}
 
@@ -3869,14 +4050,15 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return buf;
 	}
 
-	protected override string GetPropertyName (PropertyDefinition property)
+	protected override string GetPropertyName (PropertyReference property)
 	{
 		string name = null;
 
-		MethodDefinition method = property.GetMethod;
-		if (method == null)
-			method = property.SetMethod;
-		if (!DocUtils.IsExplicitlyImplemented (method))
+		PropertyDefinition propertyDef = property as PropertyDefinition;
+		MethodDefinition method = null;
+		if (propertyDef != null)
+			method = propertyDef.GetMethod ?? propertyDef.SetMethod;
+		if (method != null && !DocUtils.IsExplicitlyImplemented (method))
 			name = property.Name;
 		else {
 			TypeReference iface;
@@ -3910,13 +4092,13 @@ class SlashDocMemberFormatter : MemberFormatter {
 		return buf.ToString ();
 	}
 
-	protected override string GetFieldName (FieldDefinition field)
+	protected override string GetFieldName (FieldReference field)
 	{
 		return string.Format ("{0}.{1}",
 			GetName (field.DeclaringType), field.Name);
 	}
 
-	protected override string GetEventName (EventDefinition e)
+	protected override string GetEventName (EventReference e)
 	{
 		return string.Format ("{0}.{1}",
 			GetName (e.DeclaringType), e.Name);

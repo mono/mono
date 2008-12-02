@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class NoNamespace {}
 
@@ -25,7 +26,7 @@ namespace System {
 		/// </remarks>
 		public static string GetFolderPath (SpecialFolder folder)
 		{
-			return null;
+			throw new NotSupportedException ();
 		}
 	}
 
@@ -34,18 +35,19 @@ namespace System {
 		// the ECMA docs have a different return type than .NET -- skip.
 		public static System.Collections.ObjectModel.ReadOnlyCollection<T> AsReadOnly<T> (T[] array)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		// ECMA docs use <T,U> instead of <TInput,TOutput> --> map them.
 		public static TOutput[] ConvertAll<TInput, TOutput> (TInput[] array, Converter<TInput, TOutput> converter)
 		{
-			return null;
+			throw new InvalidOperationException ();
 		}
 
 		// ECMA docs *incorrectly* document parameter -- skip
 		public static void Resize<T> (ref T[] array, int newSize)
 		{
+			throw new Exception ();
 		}
 	}
 
@@ -79,6 +81,8 @@ namespace Mono.DocTest {
 		/// <remarks><c>C:Mono.DocTest.DocAttribute(System.String)</c></remarks>
 		public DocAttribute (string docs)
 		{
+			if (docs == null)
+				throw new ArgumentNullException ("docs");
 		}
 
 		/// <remarks><c>P:Mono.DocTest.DocAttribute.Property</c></remarks>
@@ -121,7 +125,12 @@ namespace Mono.DocTest {
 
 		/// <param name="i">A <see cref="T:System.Int32" />.</param>
 		/// <remarks><see cref="M:Mono.DocTest.DocValueType.M(System.Int32)"/>.</remarks>
-		public void M (int i) {}
+		public void M (int i)
+		{
+			if ((new Random().Next() % 2) == 0)
+				throw new SystemException ();
+			throw new ApplicationException ();
+		}
 	}
 
 	/// <remarks><c>T:Mono.DocTest.Widget</c>.</remarks>
@@ -351,16 +360,35 @@ namespace Mono.DocTest {
 		///  <para><c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})</c>.</para>
 		/// <para><see cref="M:System.Collections.Generic.List{System.Int32}.Remove(`0)" /></para>
 		/// </remarks>
-		public void Process (List<int> list) {}
+		public void Process (List<int> list)
+		{
+			// Bug: only creation is looked for, so this generates an <exception/>
+			// node:
+			new Exception ();
+
+			// Bug? We only look at "static" types, so we can't follow
+			// delegates/interface calls:
+			Func<int, int> a = x => {throw new InvalidOperationException ();};
+			a (1);
+		}
 
 		/// <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{System.Int32}}" />.</param>
 		/// <remarks><c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})</c>.</remarks>
-		public void Process (List<Predicate<int>> list) {}
+		public void Process (List<Predicate<int>> list)
+		{
+			if (list == null)
+				throw new ArgumentNullException ("list");
+			Process<int> (list);
+		}
 
 		/// <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{``0}}" />.</param>
 		/// <typeparam name="T">Something Else</typeparam>
 		/// <remarks><c>M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})</c>.</remarks>
-		public void Process<T> (List<Predicate<T>> list) {}
+		public void Process<T> (List<Predicate<T>> list)
+		{
+			if (list.Any (p => p == null))
+				throw new ArgumentException ("predicate null");
+		}
 
 		/// <param name="helper">A <see cref="T:Mono.DocTest.Generic.MyList{``0}.Helper{``1,``2}" />.</param>
 		/// <typeparam name="T"><c>T</c></typeparam>

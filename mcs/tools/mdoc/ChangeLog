@@ -1,3 +1,48 @@
+2008-12-02  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Add --exceptions to `mdoc update` invocations to test
+	  <exception/> generation.
+	* mdoc.exe.sources: Add Mono.Documentation/exceptions.cs to the build.
+	* Mono.Documentation/exceptions.cs: Added; searches through the
+	  callgraph of an IMemberReference, recording which exception types
+	  are created (and where they're created from).
+	* Mono.Documentation/monodocer.cs: Generate <exception/> elements.
+	* Test/DocTest-v1.cs: Modify some methods so that exceptions are
+	  emitted (thus testing <exception/> generation).
+	* Test/DocTest-v2.patch: Update (so patch(1) doesn't complain).
+	* Test/en.expected.importecmadoc/System/Array.xml,
+	  Test/en.expected.importecmadoc/System/Environment.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest.Generic/GenericBase`1.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/DocAttribute.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/DocValueType.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/UseLists.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Widget.xml,
+	  Test/en.expected.importslashdoc/System/Array.xml,
+	  Test/en.expected.importslashdoc/System/Environment.xml,
+	  Test/en.expected.since/Mono.DocTest.Generic/GenericBase`1.xml,
+	  Test/en.expected.since/Mono.DocTest/DocAttribute.xml,
+	  Test/en.expected.since/Mono.DocTest/DocValueType.xml,
+	  Test/en.expected.since/Mono.DocTest/UseLists.xml,
+	  Test/en.expected.since/Mono.DocTest/Widget.xml,
+	  Test/en.expected.since/System/Array.xml,
+	  Test/en.expected.since/System/Environment.xml,
+	  Test/en.expected/Mono.DocTest.Generic/GenericBase`1.xml,
+	  Test/en.expected/Mono.DocTest/DocAttribute.xml,
+	  Test/en.expected/Mono.DocTest/DocValueType.xml,
+	  Test/en.expected/Mono.DocTest/UseLists.xml,
+	  Test/en.expected/Mono.DocTest/Widget.xml,
+	  Test/en.expected/System/Array.xml,
+	  Test/en.expected/System/Environment.xml,
+	  Test/html.expected/Mono.DocTest.Generic/GenericBase`1.html,
+	  Test/html.expected/Mono.DocTest/DocAttribute.html,
+	  Test/html.expected/Mono.DocTest/DocValueType.html,
+	  Test/html.expected/Mono.DocTest/UseLists.html,
+	  Test/html.expected/Mono.DocTest/Widget.html,
+	  Test/html.expected/System/Array.html,
+	  Test/html.expected/System/Environment.html,
+	  Test/msxdoc-expected.importslashdoc.xml: Flush; adds <exception/>
+	  elements (and/or HTML-rendered output of <exception/> elements).
+
 2008-11-19  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Add the assembly's directory to

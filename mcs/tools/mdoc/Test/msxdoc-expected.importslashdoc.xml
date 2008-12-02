@@ -50,6 +50,7 @@ class Example {
             <remarks>
                 <c>C:Mono.DocTest.DocAttribute(System.String)</c>
             </remarks>
+            <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:Mono.DocTest.DocAttribute.#ctor(System.String)" /></exception>
         </member>
         <member name="F:Mono.DocTest.DocAttribute.Field">
             <summary>To be added.</summary>
@@ -86,6 +87,8 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" />.</remarks>
+            <exception cref="T:System.ApplicationException">To be added; from: <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
+            <exception cref="T:System.SystemException">To be added; from: <see cref="M:Mono.DocTest.DocValueType.M(System.Int32)" /></exception>
         </member>
         <member name="F:Mono.DocTest.DocValueType.total">
             <summary>To be added.</summary>
@@ -130,12 +133,15 @@ class Example {
                     <see cref="M:System.Collections.Generic.List{System.Int32}.Remove(`0)" />
                 </para>
             </remarks>
+            <exception cref="T:System.Exception">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})">
             <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{System.Int32}}" />.</param>
             <summary>To be added.</summary>
             <remarks>
                 <c>M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})</c>.</remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Predicate{System.Int32}})" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})">
             <typeparam name="T">Something Else</typeparam>
@@ -143,6 +149,8 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <c>M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})</c>.</remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:Mono.DocTest.UseLists.Process``1(System.Collections.Generic.List{System.Predicate{``0}})" /></exception>
+            <exception cref="T:System.ArgumentNullException">To be added; from: <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" />, <see cref="M:System.Linq.Check.SourceAndPredicate(System.Object,System.Object)" /></exception>
         </member>
         <member name="M:Mono.DocTest.UseLists.UseHelper``3(Mono.DocTest.Generic.MyList{``0}+Helper{``1,``2})">
             <typeparam name="T">To be added.</typeparam>
@@ -196,11 +204,15 @@ class Example {
             <summary>To be added.</summary>
             <remarks>
                 <c>E:Mono.DocTest.Widget.AnEvent</c>.</remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
         </member>
         <member name="E:Mono.DocTest.Widget.AnotherEvent">
             <summary>To be added.</summary>
             <remarks>
                 <c>E:Mono.DocTest.Widget.AnotherEvent</c>.</remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
         </member>
         <member name="F:Mono.DocTest.Widget.array1">
             <summary>To be added.</summary>
@@ -581,6 +593,8 @@ class Example {
         <member name="E:Mono.DocTest.Generic.GenericBase`1.MyEvent">
             <summary>To be added.</summary>
             <remarks>E:Mono.DocTest.Generic.GenericBase`1.MyEvent</remarks>
+            <exception cref="T:System.ArgumentException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
+            <exception cref="T:System.MulticastNotSupportedException">To be added; from: <see cref="M:System.Delegate.Combine(System.Delegate,System.Delegate)" />, <see cref="M:System.Delegate.CombineImpl(System.Delegate)" /></exception>
         </member>
         <member name="M:Mono.DocTest.Generic.GenericBase`1.op_Explicit(`0Mono`0.`0DocTest`0.`0Generic`0.`0GenericBase`0{`0U`0})~`0U`0">
             <param name="list">Insert description here</param>
@@ -842,6 +856,7 @@ class Example {
             <summary>To be added.</summary>
             <returns>To be added.</returns>
             <remarks>To be added.</remarks>
+            <exception cref="T:System.NotImplementedException">To be added; from: <see cref="M:System.Array.AsReadOnly``1(``0[])" /></exception>
         </member>
         <member name="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})">
             <typeparam name="TInput">To be added.</typeparam>
@@ -851,6 +866,7 @@ class Example {
             <summary>To be added.</summary>
             <returns>To be added.</returns>
             <remarks>To be added.</remarks>
+            <exception cref="T:System.InvalidOperationException">To be added; from: <see cref="M:System.Array.ConvertAll``2(``0[],System.Converter{``0,``1})" /></exception>
         </member>
         <member name="M:System.Array.Resize``1(``0[]@,System.Int32)">
             <typeparam name="T">To be added.</typeparam>
@@ -858,6 +874,7 @@ class Example {
             <param name="newSize">To be added.</param>
             <summary>To be added.</summary>
             <remarks>To be added.</remarks>
+            <exception cref="T:System.Exception">To be added; from: <see cref="M:System.Array.Resize``1(``0[]@,System.Int32)" /></exception>
         </member>
         <member name="T:System.AsyncCallback">
             <param name="ar">To be added.</param>
@@ -879,6 +896,7 @@ class Example {
             <remarks>
                 <c>M:System.Environment.GetFolderPath(System.Environment+SpecialFolder)</c>
             </remarks>
+            <exception cref="T:System.NotSupportedException">To be added; from: <see cref="M:System.Environment.GetFolderPath(System.Environment.SpecialFolder)" /></exception>
         </member>
         <member name="T:System.Environment+SpecialFolder">
             <summary>To be added.</summary>
