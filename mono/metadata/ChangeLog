@@ -1,3 +1,7 @@
+2008-12-02  Mark Probst  <mark.probst@gmail.com>
+
+	* socket-io.c: 64 bit big-endian fixes.
+
 2008-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (is_compatible_boxed_valuetype): Rewrite function to work properly with
