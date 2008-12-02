@@ -1,3 +1,11 @@
+2008-12-02  Jonathan Pobst  <monkey@jpobst.com>
+
+	* PaintEventArgsTest.cs: Tests were failing due to being dependent
+	on the order in which the tests were running, which changed when we
+	did nunit 2.2->2.4.  Modified tests to not use global Graphics contexts,
+	and to dispose the Graphics like they were relying on the
+	GraphicsDispose () test to do.
+
 2008-11-24  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewDataBindingTest.cs: Flush and add test for bug #448005.

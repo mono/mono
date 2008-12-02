@@ -90,6 +90,10 @@ namespace MonoTests.System.Windows.Forms {
 #endif
 		public void IDisposable_IDispose ()
 		{
+			Bitmap bmp = new Bitmap (1, 1);
+			Graphics default_graphics = Graphics.FromImage (bmp);
+			Rectangle default_rect = new Rectangle (Int32.MinValue, Int32.MinValue, Int32.MaxValue, Int32.MaxValue);
+
 			PaintEventArgs pea = new PaintEventArgs (default_graphics, default_rect);
 			(pea as IDisposable).Dispose ();
 			// uho, under 2.0 we not really disposing the stuff - it means it's not ours to dispose!
@@ -127,7 +131,12 @@ namespace MonoTests.System.Windows.Forms {
 		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_True ()
 		{
+			Bitmap bmp = new Bitmap (1, 1);
+			Graphics default_graphics = Graphics.FromImage (bmp);
+			Rectangle default_rect = new Rectangle (Int32.MinValue, Int32.MinValue, Int32.MaxValue, Int32.MaxValue);
+
 			PaintEventArgsTester pea = new PaintEventArgsTester (default_graphics, default_rect);
+			pea.Graphics.Dispose ();
 			pea.DisposeBool (true);
 			Assert.IsTrue (pea.Graphics.Transform.IsIdentity, "Graphics.Transform");
 		}
@@ -140,7 +149,12 @@ namespace MonoTests.System.Windows.Forms {
 		[ExpectedException (typeof (ArgumentException))]
 		public void Dispose_False ()
 		{
+			Bitmap bmp = new Bitmap (1, 1);
+			Graphics default_graphics = Graphics.FromImage (bmp);
+			Rectangle default_rect = new Rectangle (Int32.MinValue, Int32.MinValue, Int32.MaxValue, Int32.MaxValue);
+
 			PaintEventArgsTester pea = new PaintEventArgsTester (default_graphics, default_rect);
+			pea.Graphics.Dispose ();
 			pea.DisposeBool (false);
 			Assert.IsTrue (pea.Graphics.Transform.IsIdentity, "Graphics.Transform");
 		}
