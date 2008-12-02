@@ -1,3 +1,8 @@
+2008-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): Add some debugging code to help
+	diagnose an assertion failure.
+
 2008-12-02  Mark Probst  <mark.probst@gmail.com>
 
 	* tramp-ppc64.c (mono_arch_create_rgctx_lazy_fetch_trampoline):
