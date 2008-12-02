@@ -600,7 +600,7 @@ namespace Mono.CSharp {
 							} else if (!candidate.IsPublic) {
 								Report.Error (737, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' in not public",
-									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
+									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate, true));
 							} else {
 								Report.Error (738, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",
