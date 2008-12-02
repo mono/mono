@@ -1,3 +1,9 @@
+2008-12-02  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile: Build additional directories (Npgsql,
+	  System.Configuration.Install, System.Design, System.Runtime.Remoting,
+	  System.Runtime.Serialization.Formatters.Soap); shorten entries.
+
 2008-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* docs/Makefile: remove nunit docs that do not exist (and I don't

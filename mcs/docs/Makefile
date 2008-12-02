@@ -55,41 +55,49 @@ uninstall-local:
 	-rm -f $(MONODOC_INSTALL_DIR)/monodoc.xml
 	-rm -f $(addprefix $(MONODOC_INSTALL_DIR)/sources/,$(MONODOC_SOURCES_INSTALL_FILES))
 
+classdir = $(topdir)/class
+doc_en   = Documentation/en
+
 NETDOCS_DIRS = \
-	$(topdir)/class/corlib/Documentation/en                       \
-	$(topdir)/class/System/Documentation/en                       \
-	$(topdir)/class/System.Core/Documentation/en                  \
-	$(topdir)/class/System.XML/Documentation/en                   \
-	$(topdir)/class/System.Web/Documentation/en                   \
-	$(topdir)/class/System.Web.Services/Documentation/en          \
-	$(topdir)/class/System.Data/Documentation/en                  \
-	$(topdir)/class/System.DirectoryServices/Documentation/en     \
-	$(topdir)/class/System.Drawing/Documentation/en               \
-	$(topdir)/class/System.Security/Documentation/en              \
-	$(topdir)/class/Microsoft.Build.Framework/Documentation/en    \
-	$(topdir)/class/Microsoft.Build.Engine/Documentation/en       \
-	$(topdir)/class/Microsoft.Build.Utilities/Documentation/en
+	$(classdir)/corlib/$(doc_en)                                        \
+	$(classdir)/Microsoft.Build.Engine/$(doc_en)                        \
+	$(classdir)/Microsoft.Build.Framework/$(doc_en)                     \
+	$(classdir)/Microsoft.Build.Utilities/$(doc_en)                     \
+	$(classdir)/System.Configuration.Install/$(doc_en)                  \
+	$(classdir)/System.Core/$(doc_en)                                   \
+	$(classdir)/System.Data/$(doc_en)                                   \
+	$(classdir)/System.Design/$(doc_en)                                 \
+	$(classdir)/System.DirectoryServices/$(doc_en)                      \
+	$(classdir)/System.Drawing/$(doc_en)                                \
+	$(classdir)/System.Runtime.Remoting/$(doc_en)                       \
+	$(classdir)/System.Runtime.Serialization.Formatters.Soap/$(doc_en)  \
+	$(classdir)/System.Security/$(doc_en)                               \
+	$(classdir)/System.Web.Services/$(doc_en)                           \
+	$(classdir)/System.Web/$(doc_en)                                    \
+	$(classdir)/System.XML/$(doc_en)                                    \
+	$(classdir)/System/$(doc_en)                                        \
 
 MONO_DIRS = \
-	$(topdir)/class/Commons.Xml.Relaxng/Documentation/en          \
-	$(topdir)/class/Mono.Cairo/Documentation/en                   \
-	$(topdir)/class/Mono.Data.SqliteClient/Documentation/en       \
-	$(topdir)/class/Mono.GetOptions/Documentation/en              \
-	$(topdir)/class/Mono.Options/Documentation/en                 \
-	$(topdir)/class/Mono.Posix/Documentation/en                   \
-	$(topdir)/class/Mono.Security.Win32/Documentation/en          \
-	$(topdir)/class/Mono.Security/Documentation/en                \
-	$(topdir)/class/Mono.Simd/Documentation/en		      \
+	$(classdir)/Commons.Xml.Relaxng/$(doc_en)          \
+	$(classdir)/Mono.Cairo/$(doc_en)                   \
+	$(classdir)/Mono.Data.SqliteClient/$(doc_en)       \
+	$(classdir)/Mono.GetOptions/$(doc_en)              \
+	$(classdir)/Mono.Options/$(doc_en)                 \
+	$(classdir)/Mono.Posix/$(doc_en)                   \
+	$(classdir)/Mono.Security.Win32/$(doc_en)          \
+	$(classdir)/Mono.Security/$(doc_en)                \
+	$(classdir)/Mono.Simd/$(doc_en)                    \
+	$(classdir)/Npgsql/$(doc_en)                       \
 	$(topdir)/tools/csharplib/en
 
 NOVELL_DIRS = \
 	$(topdir)/class/Novell.Directory.Ldap/Documentation/en
 
 NUNIT_DIRS = \
-	$(topdir)/nunit20/core/Documentation/en       \
-	$(topdir)/nunit20/framework/Documentation/en  \
-	$(topdir)/nunit20/mocks/Documentation/en      \
-	$(topdir)/nunit20/util/Documentation/en
+	$(topdir)/nunit20/core/$(doc_en)       \
+	$(topdir)/nunit20/framework/$(doc_en)  \
+	$(topdir)/nunit20/mocks/$(doc_en)      \
+	$(topdir)/nunit20/util/$(doc_en)
 
 build-documentation: $(ASSEMBLED_DOCS)
 
