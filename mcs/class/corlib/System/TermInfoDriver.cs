@@ -1347,7 +1347,8 @@ namespace System {
 			// These were missing
 			AddStringMapping (TermInfoStrings.KeyDc);
 			AddStringMapping (TermInfoStrings.KeyIc);
-			
+
+			rootmap.AddMapping (TermInfoStrings.KeyBackspace, new byte [] { verase });
 			rootmap.Sort ();
 			initKeys = true;
 		}

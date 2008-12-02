@@ -1,3 +1,13 @@
+2008-11-28  Miguel De Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs: Also register a mapping to make verase be the
+	backspace key.  Funny thing: verase was fetched from the termios,
+	but it was *never* actually used in this file.
+
+	VSUSP and VINTR are likewise ignored.   Must ponder this.
+
+	This makes the backspace key in MacOS work on interactive
+	applications.
 
 2008-11-06  Bill Holmes  <billholmes54@gmail.com>
 
