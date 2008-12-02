@@ -1,5 +1,17 @@
 2008-12-01  Mark Mason   <mmason@upwardaccess.com>
 
+	* cpu-mips.md: remove mips_xori
+
+	* mini-ops.h:  remove mips_xori
+
+	* mini-mips.h: replace OP_MIPS_XORI with OP_IXOR
+
+	* mini-mips.c (mono_arch_decompose_long_opts): Add ladd_imm, lsub, lsub_imm, lneg, lsub_ovf, lsub_ovf_un.
+	
+	* mini-mips.c (mono_arch_lowering_pass, mono_arch_output_basic_block): fix IXOR handling
+	
+2008-12-01  Mark Mason   <mmason@upwardaccess.com>
+
 	* cpu-mips.md: fix instruction lengths.
 
 	* mini-mips.h: define MONO_ARCH_NO_IOV_CHECK
