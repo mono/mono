@@ -1,3 +1,11 @@
+2008-12-02  Marek Habersack  <mhabersack@novell.com>
+
+	* Web.config: added ASP.NET AJAX 1.0 configuration entries
+	* Web.config.1.1: copied from the last revision before the above
+	changes, so that 1.1 tests don't fail.
+	* Web.mono.config.1.1: copied from revision before the AJAX
+	changes below, so that 1.1 tests don't fail.
+
 2008-12-01  Marek Habersack  <mhabersack@novell.com>
 
 	* Web.mono.config: added ASP.NET AJAX 1.0 configuration entries

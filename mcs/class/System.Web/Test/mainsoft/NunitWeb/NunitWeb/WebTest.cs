@@ -520,7 +520,11 @@ namespace MonoTests.SystemWeb.Framework
 				"MonoTests.SystemWeb.Framework.Resources.My.master",
 				"My.master");
 #else
+#if NET_2_0
 			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
+#else
+			CopyResource (typeof (WebTest), "Web.mono.config.1.1", "Web.config");
+#endif
 			CopyResource (typeof (WebTest), "MyPage.aspx", "MyPage.aspx");
 			CopyResource (typeof (WebTest), "MyPage.aspx.cs", "MyPage.aspx.cs");
 			CopyResource (typeof (WebTest), "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
