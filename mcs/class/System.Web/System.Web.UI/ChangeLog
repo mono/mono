@@ -1,5 +1,9 @@
 2008-12-02  Marek Habersack  <mhabersack@novell.com>
 
+	* DataBinder.cs: when Eval attempts to find Items [] in the
+	container, catch and ignore all exceptions - the null returned
+	from GetPropertyValue may be a legitimate return value.
+
 	* StateManagedCollection.cs: adding an item to the collection does
 	not call SetDirty as an item is added, thus not affecting the
 	indexes of its predecessors. Fixes bug #443100

@@ -78,7 +78,9 @@ namespace System.Web.UI {
 					if (current == null && previous != null) {
 						try {
 							current = GetIndexedPropertyValue (previous, "Items[" + prop + "]");
-						} catch (ArgumentOutOfRangeException) {
+						} catch (Exception) {
+							// This is just ugly, it has to be coded
+							// in some better way.
 							current = null;
 						}
 					}
