@@ -6,6 +6,7 @@
 //   Dick Porter (dick@ximian.com)
 //   Jackson Harper (jackson@ximian.com)
 //   Lluis Sanchez Gual (lluis@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2004-2008 Novell, Inc (http://www.novell.com)
 // Copyright 2003, Ximian, Inc.
@@ -56,7 +57,7 @@ namespace System.Threading {
 	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 	public class ReaderWriterLockSlim : IDisposable {
 		// Are we on a multiprocessor?
-		static bool smp;
+		static readonly bool smp;
 		
 		// Lock specifiation for myLock:  This lock protects exactly the local fields associted
 		// instance of MyReaderWriterLock.  It does NOT protect the memory associted with the
@@ -65,7 +66,7 @@ namespace System.Threading {
 
 		// Who owns the lock owners > 0 => readers
 		// owners = -1 means there is one writer, Owners must be >= -1.  
-		internal int owners;
+		int owners;
 		Thread upgradable_thread;
 		
 		// These variables allow use to avoid Setting events (which is expensive) if we don't have to. 
@@ -78,24 +79,30 @@ namespace System.Threading {
 		EventWaitHandle readEvent;     // threads waiting to aquire a read lock go here (will be released in bulk)
 		EventWaitHandle upgradeEvent;  // thread waiting to upgrade a read lock to a write lock go here (at most one)
 
-		int lock_owner;
+		//int lock_owner;
 
 		// Only set if we are a recursive lock
-		Dictionary<int,int> reader_locks;
+		//Dictionary<int,int> reader_locks;
+
+		readonly LockRecursionPolicy recursionPolicy;
+		bool is_disposed;
 		
 		static ReaderWriterLockSlim ()
 		{
 			smp = Environment.ProcessorCount > 1;
 		}
 		
-		public ReaderWriterLockSlim () : this (LockRecursionPolicy.NoRecursion)
+		public ReaderWriterLockSlim ()
 		{
+			// NoRecursion (0) is the default value
 		}
 
 		public ReaderWriterLockSlim (LockRecursionPolicy recursionPolicy)
 		{
+			this.recursionPolicy = recursionPolicy;
+			
 			if (recursionPolicy != LockRecursionPolicy.NoRecursion){
-				reader_locks = new Dictionary<int,int> ();
+				//reader_locks = new Dictionary<int,int> ();
 				throw new NotImplementedException ("recursionPolicy != NoRecursion not currently implemented");
 			}
 		}
@@ -107,6 +114,12 @@ namespace System.Threading {
 
 		public bool TryEnterReadLock (int millisecondsTimeout)
 		{
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+			
+			if (is_disposed)
+				throw new ObjectDisposedException (null);
+			
 			EnterMyLock ();
 			
 			while (true){
@@ -222,8 +235,7 @@ namespace System.Threading {
 
 		public bool TryEnterWriteLock (TimeSpan timeout)
 		{
-			int ms = CheckTimeout (timeout);
-			return TryEnterWriteLock (ms);
+			return TryEnterWriteLock (CheckTimeout (timeout));
 		}
 
 		public void ExitWriteLock ()
@@ -236,16 +248,16 @@ namespace System.Threading {
 			ExitAndWakeUpAppropriateWaiters ();
 		}
 
-		public void EnterUpgradableReadLock ()
+		public void EnterUpgradeableReadLock ()
 		{
-			TryEnterUpgradableReadLock (-1);
+			TryEnterUpgradeableReadLock (-1);
 		}
 
 		//
 		// Taking the Upgradable read lock is like taking a read lock
 		// but we limit it to a single upgradable at a time.
 		//
-		public bool TryEnterUpgradableReadLock (int millisecondsTimeout)
+		public bool TryEnterUpgradeableReadLock (int millisecondsTimeout)
 		{
 			EnterMyLock ();
 			while (true){
@@ -275,10 +287,9 @@ namespace System.Threading {
 			return true;
 		}
 
-		public bool TryEnterUpgradableReadLock (TimeSpan timeout)
+		public bool TryEnterUpgradeableReadLock (TimeSpan timeout)
 		{
-			int ms = CheckTimeout (timeout);
-			return TryEnterUpgradableReadLock (ms);
+			return TryEnterUpgradeableReadLock (CheckTimeout (timeout));
 		}
 	       
 		public void ExitUpgradeableReadLock ()
@@ -292,7 +303,51 @@ namespace System.Threading {
 
 		public void Dispose ()
 		{
-			throw new NotImplementedException ();
+			is_disposed = true;
+		}
+
+		public bool IsReadLockHeld {
+			get { throw new NotImplementedException (); }
+		}
+		
+		public bool IsWriteLockHeld {
+			get { throw new NotImplementedException (); }
+		}
+		
+		public bool IsUpgradeableReadLockHeld {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int CurrentReadCount {
+			get { throw new NotImplementedException (); }
+		}
+		
+		public int RecursiveReadCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int RecursiveUpgradeCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int RecursiveWriteCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int WaitingReadCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int WaitingUpgradeCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int WaitingWriteCount {
+			get { throw new NotImplementedException (); }
+		}
+
+		public LockRecursionPolicy RecursionPolicy {
+			get { return recursionPolicy; }
 		}
 		
 #region Private methods
@@ -406,14 +461,13 @@ namespace System.Threading {
 			return waitSuccessful;
 		}
 		
-		int CheckTimeout (TimeSpan timeout)
+		static int CheckTimeout (TimeSpan timeout)
 		{
-			int ms = (int) timeout.TotalMilliseconds;
-
-			if (ms < -1)
-				throw new ArgumentOutOfRangeException ("timeout",
-						"Number must be either non-negative or -1");
-			return ms;
+			try {
+				return checked((int) timeout.TotalMilliseconds);
+			} catch (System.OverflowException) {
+				throw new ArgumentOutOfRangeException ("timeout");				
+			}
 		}
 #endregion
 	}
