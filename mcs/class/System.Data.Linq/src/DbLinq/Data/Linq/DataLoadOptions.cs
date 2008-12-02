@@ -100,8 +100,37 @@ using DbLinq.Util;
         {
             // TODO: ensure we have an EntitySet<>
             var memberInfo = ReflectionUtility.GetMemberInfo(expression);
+            if (memberInfo == null)
+                throw new InvalidOperationException("The argument expression must be a property access or a field access where the target object is the parameter");
             if (!eagerLoading.Contains(memberInfo))
+            {
+                VerifyMemberAccessCycles(memberInfo);
                 eagerLoading.Add(memberInfo);
+            }
+        }
+
+        private void VerifyMemberAccessCycles(MemberInfo member)
+        {
+            var mt = GetMemberEntityType (member);
+            var d = member.DeclaringType;
+            foreach (var m in eagerLoading)
+            {
+                if (m.DeclaringType == mt && GetMemberEntityType (m) == d)
+                    throw new InvalidOperationException("Illegal cycles are detected in the argument expression among other eager-loading expressions");
+            }
+        }
+
+        private Type GetMemberEntityType(MemberInfo member)
+        {
+            var mt = member.GetMemberType();
+            if (mt.IsGenericType)
+            {
+                if (mt.GetGenericTypeDefinition() == typeof(System.Data.Linq.EntitySet<>))
+                    mt = mt.GetGenericArguments()[0];
+                else if (mt.GetGenericTypeDefinition() == typeof(System.Data.Linq.EntityRef<>))
+                    mt = mt.GetGenericArguments()[0];
+            }
+            return mt;
         }
 
         /// <summary>

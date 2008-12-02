@@ -201,7 +201,7 @@ namespace DbLinq.Data.Linq
         public void Clear()
         {
             while (sourceAsList.Count > 0)
-                OnRemove(sourceAsList [0]);
+                Remove(sourceAsList [0]);
             Source = Enumerable.Empty<TEntity>();
         }
 

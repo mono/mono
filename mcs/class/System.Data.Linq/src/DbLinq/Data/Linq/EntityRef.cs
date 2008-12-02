@@ -54,7 +54,6 @@ namespace DbLinq.Data.Linq
             hasLoadedOrAssignedValue = true;
         }
 
-        [DbLinqToDo]
         public EntityRef(IEnumerable<TEntity> source)
         {
             this.source = source;
@@ -64,9 +63,14 @@ namespace DbLinq.Data.Linq
 
         public EntityRef(EntityRef<TEntity> entityRef)
         {
-            this.source = null;
-            this.entity = entityRef.Entity;
-            hasLoadedOrAssignedValue = true;
+            this.entity = entityRef.entity;
+            if (entityRef.entity == null && entityRef.source is ICloneable)
+            {
+                source = (IEnumerable<TEntity>)((ICloneable)entityRef.source).Clone();
+            }
+            else
+                source = null;
+            hasLoadedOrAssignedValue = entityRef.hasLoadedOrAssignedValue;
         }
 
         public TEntity Entity
