@@ -1,3 +1,11 @@
+2008-12-02  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-ppc64.c (mono_arch_create_rgctx_lazy_fetch_trampoline):
+	Fix trampoline size.
+
+	* mini-ppc64.c, mini-ppc64.h, cpu-ppc64.md: A few floating point
+	conversion opcodes are implemented natively instead via emulation.
+
 2008-12-01  Mark Mason   <mmason@upwardaccess.com>
 
 	* cpu-mips.md: remove mips_xori
