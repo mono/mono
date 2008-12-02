@@ -56,7 +56,7 @@ net_2_0_dirs := \
 	csharplib
 
 net_2_1_dirs := \
-	compiler-tester	\
+	compiler-tester
 
 net_1_1_bootstrap_SUBDIRS = gacutil security resgen culevel
 net_1_1_SUBDIRS := $(net_1_1_dirs)
