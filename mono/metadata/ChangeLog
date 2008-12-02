@@ -1,3 +1,14 @@
+2008-12-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mempool.c (mono_backtrace): Take the number of allocated bytes as argument.
+	Make the stack depth fixed. Ensure proper argument passing to the backtrace
+	funtions. Finally, use a lock to produce well ordered output.
+
+	The lock looks silly, as all calls to the corlib mempool should be guarded
+	with the loader lock, but for some reason this fact doesn't help. 
+
+	* mempool.c (mono_mempool_alloc0): Add support for TRACE_ALLOCATIONS.
+
 2008-12-02  Mark Probst  <mark.probst@gmail.com>
 
 	* socket-io.c: 64 bit big-endian fixes.
