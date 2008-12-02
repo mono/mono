@@ -1,0 +1,5 @@
+2008-12-01  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: re-use the tuning logic that previously was defined
+	in mcs/tools/tuner. We're now building the net_2_1 tuned libraries
+	from here exclusively.

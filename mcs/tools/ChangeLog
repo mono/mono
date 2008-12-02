@@ -1,3 +1,8 @@
+2008-12-01  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: build the tuner library during the net_1_1 profile. The
+	tuning of the net_2_1 assemblies now takes place in moon.
+
 2008-11-21  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: build corcompare only during net_2_0 now.

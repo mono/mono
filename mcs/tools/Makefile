@@ -56,14 +56,14 @@ net_2_0_dirs := \
 	csharplib
 
 net_2_1_dirs := \
-	compiler-tester
+	compiler-tester	\
 
 net_1_1_bootstrap_SUBDIRS = gacutil security resgen culevel
 net_1_1_SUBDIRS := $(net_1_1_dirs)
 net_2_0_bootstrap_SUBDIRS = resgen
 net_2_0_SUBDIRS := $(net_2_0_dirs)
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
-net_2_1_SUBDIRS := $(net_2_1_dirs) tuner
+net_2_1_SUBDIRS := $(net_2_1_dirs) moon
 
 SUBDIRS = $(net_1_1_dirs) $(net_2_0_dirs) $(net_2_1_dirs)
 
