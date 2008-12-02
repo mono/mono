@@ -1,3 +1,10 @@
+2008-12-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: Add support to RichTextFormat by reading it as ascii
+	text and then let the underneath users of IDataObject interpret and
+	parse by themselves. 
+	Fixes #439251.
+
 2008-12-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fix my previous commit to actually update what it 

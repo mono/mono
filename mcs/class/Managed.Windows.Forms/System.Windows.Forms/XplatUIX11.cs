@@ -206,6 +206,7 @@ namespace System.Windows.Forms {
 		//private static IntPtr DIB;
 		private static IntPtr OEMTEXT;
 		private static IntPtr UNICODETEXT;
+		private static IntPtr RICHTEXTFORMAT;
 		private static IntPtr TARGETS;
 
 		// mouse hover message generation
@@ -618,6 +619,7 @@ namespace System.Windows.Forms {
 				"PRIMARY",
 				"COMPOUND_TEXT",
 				"UTF8_STRING",
+				"RICHTEXTFORMAT",
 				"TARGETS",
 				"_SWF_AsyncAtom",
 				"_SWF_PostMessageAtom",
@@ -692,6 +694,7 @@ namespace System.Windows.Forms {
 			PRIMARY = atoms [off++];
 			OEMTEXT = atoms [off++];
 			UNICODETEXT = atoms [off++];
+			RICHTEXTFORMAT = atoms [off++];
 			TARGETS = atoms [off++];
 			AsyncAtom = atoms [off++];
 			PostAtom = atoms [off++];
@@ -1247,7 +1250,8 @@ namespace System.Windows.Forms {
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
 				} else if (property == UNICODETEXT) {
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
-				}
+				} else if (property == RICHTEXTFORMAT)
+					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
 
 				XFree(prop);
 			}
@@ -1700,6 +1704,7 @@ namespace System.Windows.Forms {
 							atoms[atom_count++] = (int)Atom.XA_STRING;
 							atoms[atom_count++] = (int)OEMTEXT;
 							atoms[atom_count++] = (int)UNICODETEXT;
+							atoms[atom_count++] = (int)RICHTEXTFORMAT;
 						} else if (Clipboard.Item is Image) {
 							atoms[atom_count++] = (int)Atom.XA_PIXMAP;
 							atoms[atom_count++] = (int)Atom.XA_BITMAP;
@@ -1714,7 +1719,9 @@ namespace System.Windows.Forms {
 
 						buflen = 0;
 
-						if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING) {
+						// The RTF spec mentions that ascii is enough to contain it
+						if (xevent.SelectionRequestEvent.target == (IntPtr)Atom.XA_STRING ||
+								xevent.SelectionRequestEvent.target == (IntPtr)RICHTEXTFORMAT) {
 							Byte[] bytes;
 
 							bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Item);
@@ -2603,6 +2610,7 @@ namespace System.Windows.Forms {
 			//else if (format == "EnhancedMetafile" ) return 14;
 			//else if (format == "FileDrop" ) return 15;
 			//else if (format == "Locale" ) return 16;
+			else if (format == "Rich Text Format") return RICHTEXTFORMAT.ToInt32 ();
 
 			return XInternAtom(DisplayHandle, format, false).ToInt32();
 		}
