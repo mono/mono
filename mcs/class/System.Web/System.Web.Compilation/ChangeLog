@@ -1,3 +1,9 @@
+
+2008-12-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AspParser.cs: reset to the next character in a partial match in case
+	of failure. Fixes bug #314688.
+
 2008-12-01  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: instead of adding ContentPlaceHolder
