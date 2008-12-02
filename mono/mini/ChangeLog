@@ -1,5 +1,11 @@
 2008-12-02  Martin Baulig  <martin@ximian.com>
 
+	* method-to-ir.c (mono_method_to_ir): Disable debugging
+	information for the init locals block to make the debugger stop
+	after all locals have been initalized.
+
+2008-12-02  Martin Baulig  <martin@ximian.com>
+
 	* mini.c (mini_method_compile): Disable MONO_OPT_DEADCE when
 	running inside the debugger.
 
