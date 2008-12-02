@@ -27,9 +27,7 @@ TUNER_LIBRARIES =	\
 
 TUNER_MASTERS = $(TUNER_LIBRARIES:%=masterinfos/%.info)
 
-LOCAL_MCS_FLAGS = -r:$(LINKER) -r:Mono.Cecil.dll
-
-DISTFILES = $(TUNER_SOURCES) $(TUNER_DESCS) $(TUNER_MASTERS)
+DISTFILES = $(TUNER_DESCS) $(TUNER_MASTERS)
 
 WORKING_DIR = $(topdir)/class/lib/net_2_1_raw
 OUTPUT_DIR = $(topdir)/class/lib/net_2_1
@@ -99,9 +97,6 @@ inst-%: $(OUTPUT_DIR)/%
 
 gac-%: $(OUTPUT_DIR)/%.dll
 	$(GACUTIL) /i $(OUTPUT_DIR)/$*.dll /f /root $(DESTDIR)$(mono_libdir) /package 2.1
-
-Mono.Tuner.dll: $(TUNER_SOURCES)
-	$(CSCOMPILE) /out:Mono.Tuner.dll /t:library $(TUNER_SOURCES)
 
 retune:
 	rm -f tune.stamp && $(MAKE) tune.stamp
