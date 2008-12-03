@@ -305,14 +305,19 @@ namespace System.Web {
 				NoParamsInvoker npi = new NoParamsInvoker (app, method);
 				evt.AddEventHandler (target, npi.FakeDelegate);
 			} else {
-				evt.AddEventHandler (target, Delegate.CreateDelegate (
-							     evt.EventHandlerType, app,
+				if (method.IsStatic) {
+					evt.AddEventHandler (target, Delegate.CreateDelegate (
+						evt.EventHandlerType, method));
+				} else {
+					evt.AddEventHandler (target, Delegate.CreateDelegate (
+								     evt.EventHandlerType, app,
 #if NET_2_0
-							     method
+								     method
 #else
-							     method.Name
+								     method.Name
 #endif
-						     ));
+							     ));
+				}
 			}
 			
 		}

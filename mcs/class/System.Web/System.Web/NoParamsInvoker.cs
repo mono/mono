@@ -40,7 +40,11 @@ namespace System.Web
 
 		public NoParamsInvoker (object o, MethodInfo method)
 		{
-			 real = (NoParamsDelegate) Delegate.CreateDelegate (
+			if (method.IsStatic)
+				real = (NoParamsDelegate) Delegate.CreateDelegate (
+					typeof (NoParamsDelegate), method);
+			else
+				real = (NoParamsDelegate) Delegate.CreateDelegate (
 #if NET_2_0
 						typeof (NoParamsDelegate), o, method);
 #else
