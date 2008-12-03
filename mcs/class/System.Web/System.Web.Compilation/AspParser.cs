@@ -414,6 +414,10 @@ namespace System.Web.Compilation
 			}
 
 			end = end.ToLower (CultureInfo.InvariantCulture);
+			int repeated = 0;
+			for (int k = 0; k < end.Length; k++)
+				if (end [0] == end [k])
+					repeated++;
 			
 			while (token != Token.EOF){
 				if (Char.ToLower ((char) token, CultureInfo.InvariantCulture) == end [i]){
@@ -423,6 +427,11 @@ namespace System.Web.Compilation
 					token = tokenizer.get_token ();
 					continue;
 				} else if (i > 0) {
+					if (repeated > 1 && i == repeated && (char) token == end [0]) {
+						vb_text.Append ((char) token);
+						token = tokenizer.get_token ();
+						continue;
+					}
 					vb_text.Append (tmp.ToString ());
 					tmp.Remove (0, tmp.Length);
 					i = 0;
