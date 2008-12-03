@@ -36,6 +36,27 @@ namespace MonoTests.System.Net.Sockets {
 
 #if NET_2_0
 		[Test]
+		public void CloseInReceive ()
+		{
+			UdpClient client = new UdpClient (50000);
+			new Thread(delegate() {
+				Thread.Sleep(2000);
+				client.Close();
+				}).Start();
+
+			bool got_exc = false;
+			IPEndPoint ep = new IPEndPoint (IPAddress.Any, 0);
+			try {
+				client.Receive(ref ep);
+			} catch (SocketException) {
+				got_exc = true;
+			} finally {
+				client.Close ();
+			}
+			Assert.IsTrue (got_exc);
+		}
+
+		[Test]
 		public void JoinMulticastGroup ()
 		{
 			UdpClient client = new UdpClient ();

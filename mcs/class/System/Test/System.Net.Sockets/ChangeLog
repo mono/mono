@@ -1,4 +1,8 @@
 
+2008-12-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* UdpClientTest.cs: test closing a UDP socket while receiving.
+
 2008-11-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SocketTest.cs: added test case based on the one in bug
