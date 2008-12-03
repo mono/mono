@@ -1,3 +1,8 @@
+2008-12-03  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, namespace.cs, driver.cs: Allow ExtensionAttribute
+	to be imported from any assembly.
+
 2008-11-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #447027

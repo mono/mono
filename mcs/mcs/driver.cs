@@ -1607,20 +1607,6 @@ namespace Mono.CSharp
 			ProcessDefaultConfig ();
 
 			//
-			// Load assemblies required
-			//
-			if (timestamps)
-				ShowTime ("Loading references");
-			LoadReferences ();
-			
-			if (timestamps)
-				ShowTime ("   References loaded");
-			
-			if (Report.Errors > 0){
-				return false;
-			}
-
-			//
 			// Quick hack
 			//
 			if (output_file == null){
@@ -1653,12 +1639,23 @@ namespace Mono.CSharp
 
 			RootNamespace.Global.AddModuleReference (CodeGen.Module.Builder);
 
+			//
+			// Load assemblies required
+			//
+			if (timestamps)
+				ShowTime ("Loading references");
+
+			LoadReferences ();
+			
 			if (modules.Count > 0) {
 				foreach (string module in modules)
 					LoadModule (module);
 			}
 			
-			if (!TypeManager.InitCoreTypes ())
+			if (timestamps)
+				ShowTime ("References loaded");
+			
+			if (!TypeManager.InitCoreTypes () || Report.Errors > 0)
 				return false;
 
 			TypeManager.InitOptionalCoreTypes ();
