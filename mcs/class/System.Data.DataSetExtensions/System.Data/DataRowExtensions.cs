@@ -43,8 +43,15 @@ namespace System.Data
 		public static T Field<T> (this DataRow row, int columnIndex, DataRowVersion version)
 		{
 			object ret = row [columnIndex, version];
-			if (ret == DBNull.Value)
-				throw new StrongTypingException ("Cannot get strong typed value since it is DB null.", null);
+			if (ret == DBNull.Value) {
+				Type type = typeof (T);
+				Type genericTypeDef = type.IsGenericType ? type.GetGenericTypeDefinition () : null;
+				if (!type.IsValueType || genericTypeDef != null && genericTypeDef == typeof (Nullable <>))
+					return default (T);
+				
+				throw new StrongTypingException ("Cannot get strong typed value since it is DB null. Please use a nullable type.", null);
+			}
+			
 			return (T) ret;
 		}
 
