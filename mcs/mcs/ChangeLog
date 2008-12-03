@@ -1,5 +1,10 @@
 2008-12-03  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, namespace.cs, driver.cs: Allow ExtensionAttribute
+	to be imported from any assembly.
+
+2008-12-03  Marek Safar  <marek.safar@gmail.com>
+
 	* parameter.cs, lambda.cs, linq.cs, iterators.cs, anonymous.cs
 	statement.cs, class.cs, cs-parser.jay: Removed duplicate parameters
 	from anonymous method and lambda expression.

@@ -62,17 +62,6 @@ namespace Mono.CSharp {
 					return;
 			}
 
-			// How to test whether attribute exists without loading the assembly :-(
-#if NET_2_1
-			const string SystemCore = "System.Core, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e"; 
-#else
-			const string SystemCore = "System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"; 
-#endif
- 			if (TypeManager.extension_attribute_type == null &&
- 				a.FullName == SystemCore) {
- 				TypeManager.extension_attribute_type = a.GetType("System.Runtime.CompilerServices.ExtensionAttribute");
- 			}
-
 			int top = referenced_assemblies.Length;
 			Assembly [] n = new Assembly [top + 1];
 			referenced_assemblies.CopyTo (n, 0);
@@ -103,6 +92,12 @@ namespace Mono.CSharp {
 
 		public static void ComputeNamespaces ()
 		{
+			//
+			// Do very early lookup because type is required when we cache
+			// imported extension types in ComputeNamespaces
+			//
+			TypeManager.extension_attribute_type = TypeManager.CoreLookupType ("System.Runtime.CompilerServices", "ExtensionAttribute", Kind.Class, false);
+			
 			foreach (RootNamespace rn in root_namespaces.Values) {
 				foreach (Assembly a in rn.referenced_assemblies) {
 					try {

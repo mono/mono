@@ -1143,7 +1143,7 @@ namespace Mono.CSharp {
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute", Kind.Class, false);
 
 		// New in .NET 3.5
-		extension_attribute_type = CoreLookupType ("System.Runtime.CompilerServices", "ExtensionAttribute", Kind.Class, false);
+		// Note: extension_attribute_type is already loaded
 		expression_type = CoreLookupType ("System.Linq.Expressions", "Expression`1", Kind.Class, false);
 
 		if (!RootContext.StdLib) {
