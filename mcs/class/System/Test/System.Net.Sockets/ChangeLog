@@ -1,3 +1,8 @@
+
+2008-12-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* UdpClientTest.cs: test closing a UDP socket while receiving.
+
 2008-06-19  Dick Porter  <dick@ximian.com>
 
 	* SocketTest.cs: Tests for generic Send() and Receive() methods.
