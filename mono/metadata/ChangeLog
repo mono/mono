@@ -1,3 +1,11 @@
+2008-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_method_get_header): Do most of the work outside the
+	loader lock, to avoid assembly load hook deadlocks.
+
+	* metadata.c (mono_metadata_parse_mh_full): Use finer-grained locking.
+	(mono_metadata_parse_type_full): Ditto.
+
 2008-12-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mempool.c (mono_backtrace): Take the number of allocated bytes as argument.
