@@ -187,7 +187,7 @@ namespace Mono.CSharp {
 			{
 				this.host = host;
 
-				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, null, Location);
+				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, Parameters.EmptyReadOnlyParameters, Location);
 			}
 
 			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
@@ -346,7 +346,7 @@ namespace Mono.CSharp {
 			{
 				host.AddMethod (this);
 
-				Block = new ToplevelBlock (host.Iterator.Container, null, Location);
+				Block = new ToplevelBlock (host.Iterator.Container, Parameters.EmptyReadOnlyParameters, Location);
 				Block.AddStatement (new DisposeMethodStatement (host.Iterator));
 			}
 		}

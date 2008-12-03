@@ -1,3 +1,9 @@
+2008-12-03  Marek Safar  <marek.safar@gmail.com>
+
+	* parameter.cs, lambda.cs, linq.cs, iterators.cs, anonymous.cs
+	statement.cs, class.cs, cs-parser.jay: Removed duplicate parameters
+	from anonymous method and lambda expression.
+
 2008-12-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #448560

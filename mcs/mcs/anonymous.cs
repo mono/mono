@@ -829,13 +829,11 @@ namespace Mono.CSharp {
 	//
 	public class AnonymousMethodExpression : Expression
 	{
-		public readonly Parameters Parameters;
 		ListDictionary compatibles;
 		public ToplevelBlock Block;
 
-		public AnonymousMethodExpression (Parameters parameters, Location loc)
+		public AnonymousMethodExpression (Location loc)
 		{
-			this.Parameters = parameters;
 			this.loc = loc;
 			this.compatibles = new ListDictionary ();
 		}
@@ -848,8 +846,12 @@ namespace Mono.CSharp {
 
 		public virtual bool HasExplicitParameters {
 			get {
-				return Parameters != null;
+				return Parameters != Parameters.Undefined;
 			}
+		}
+		
+		public Parameters Parameters {
+			get { return Block.Parameters; }
 		}
 
 		//
@@ -1075,7 +1077,7 @@ namespace Mono.CSharp {
 		{
 			AParametersCollection delegate_parameters = TypeManager.GetDelegateParameters (delegate_type);
 
-			if (Parameters == null) {
+			if (Parameters == Parameters.Undefined) {
 				//
 				// We provide a set of inaccessible parameters
 				//

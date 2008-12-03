@@ -2590,7 +2590,7 @@ namespace Mono.CSharp {
 				Location);
 			
 			AddConstructor (c);
-			c.Block = new ToplevelBlock (null, Location);
+			c.Block = new ToplevelBlock (Parameters.EmptyReadOnlyParameters, Location);
 		}
 
 		public override bool Define ()
@@ -6697,7 +6697,7 @@ namespace Mono.CSharp {
 			((TypeContainer)Parent).PartialContainer.AddField (field);
 
 			// Make get block
-			get_block.Block = new ToplevelBlock (block, null, Location);
+			get_block.Block = new ToplevelBlock (block, Parameters.EmptyReadOnlyParameters, Location);
 			Return r = new Return (new SimpleName(field.Name, Location), Location);
 			get_block.Block.AddStatement (r);
 			get_block.ModFlags |= Modifiers.COMPILER_GENERATED;

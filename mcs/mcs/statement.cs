@@ -2651,7 +2651,7 @@ namespace Mono.CSharp {
 		{
 			this.Toplevel = this;
 
-			this.parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
+			this.parameters = parameters;
 			this.Parent = parent;
 			if (parent != null)
 				parent.AddAnonymousChild (this);
@@ -2660,7 +2660,8 @@ namespace Mono.CSharp {
 				ProcessParameters ();
 		}
 
-		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
+		public ToplevelBlock (Location loc)
+			: this (null, (Flags) 0, Parameters.EmptyReadOnlyParameters, loc)
 		{
 		}
 

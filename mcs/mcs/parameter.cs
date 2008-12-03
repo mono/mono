@@ -843,6 +843,9 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Parameters : AParametersCollection {
 		public static readonly Parameters EmptyReadOnlyParameters = new Parameters ();
+		
+		// Used by C# 2.0 delegates
+		public static readonly Parameters Undefined = new Parameters ();
 
 		private Parameters ()
 		{

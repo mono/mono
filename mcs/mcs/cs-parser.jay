@@ -1732,7 +1732,7 @@ get_accessor_declaration
 		// If this is not the case, then current_local_parameters has already
 		// been set in indexer_declaration
 		if (parsing_indexer == false)
-			current_local_parameters = null;
+			current_local_parameters = Parameters.EmptyReadOnlyParameters;
 		else 
 			current_local_parameters = indexer_parameters;
 		lexer.PropertyParsing = false;
@@ -2161,6 +2161,8 @@ destructor_declaration
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.NotAllowed;
 		}
+		
+		current_local_parameters = Parameters.EmptyReadOnlyParameters;
 	  }
 	  IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
@@ -2179,6 +2181,8 @@ destructor_declaration
 			d.Block = (ToplevelBlock) $8;
 			current_container.AddMethod (d);
 		}
+
+		current_local_parameters = null;
 	  }
 	;
 
@@ -3602,7 +3606,10 @@ anonymous_method_expression
 	;
 
 opt_anonymous_method_signature
-	: /* empty */			{ $$ = null; } 
+	: 
+	  {
+		$$ = Parameters.Undefined;
+	  } 
 	| anonymous_method_signature
 	;
 
@@ -5901,8 +5908,8 @@ start_anonymous (bool lambda, Parameters parameters, Location loc)
 	current_local_parameters = parameters;
 
 	current_anonymous_method = lambda 
-		? new LambdaExpression (parameters, loc) 
-		: new AnonymousMethodExpression (parameters, loc);
+		? new LambdaExpression (loc) 
+		: new AnonymousMethodExpression (loc);
 
 	// Force the next block to be created as a ToplevelBlock
 	parsing_anonymous_method = true;
