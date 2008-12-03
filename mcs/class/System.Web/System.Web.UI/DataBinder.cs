@@ -63,8 +63,6 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("expression");
 
 			object current = container;
-			object previous;
-			
 			while (current != null) {
 				int dot = expression.IndexOf ('.');
 				int size = (dot == -1) ? expression.Length : dot;
@@ -72,19 +70,8 @@ namespace System.Web.UI {
 				
 				if (prop.IndexOf ('[') != -1)
 					current = GetIndexedPropertyValue (current, prop);
-				else {
-					previous = current;
+				else
 					current = GetPropertyValue (current, prop);
-					if (current == null && previous != null) {
-						try {
-							current = GetIndexedPropertyValue (previous, "Items[" + prop + "]");
-						} catch (Exception) {
-							// This is just ugly, it has to be coded
-							// in some better way.
-							current = null;
-						}
-					}
-				}
 				
 				if (dot == -1)
 					break;
@@ -145,7 +132,7 @@ namespace System.Web.UI {
 			string property = null;
 			if (openIdx > 0) {
 				property = expr.Substring (0, openIdx);
-				if (property != null && property != String.Empty)
+				if (property != null && property.Length > 0)
 					container = GetPropertyValue (container, property);
 			}
 
@@ -153,6 +140,8 @@ namespace System.Web.UI {
                                 return null;
 
 			if (container is System.Collections.IList) {
+				if (is_string)
+					throw new ArgumentException (expr + " cannot be indexed with a string.");
 				IList l = (IList) container;
 				return l [intVal];
 			}
