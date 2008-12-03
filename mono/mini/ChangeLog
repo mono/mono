@@ -1,3 +1,8 @@
+2008-12-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Fix tests to work under ppc.
+	Remove tests for methods that will be removed.
+
 2008-12-03  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Handle ldtoken of an open
