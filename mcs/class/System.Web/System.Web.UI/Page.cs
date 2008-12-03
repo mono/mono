@@ -664,7 +664,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	public string Title {
 		get {
 			if (_title == null) {
-				if (htmlHeader != null)
+				if (htmlHeader != null && htmlHeader.Title != null)
 					return htmlHeader.Title;
 				return String.Empty;
 			}
