@@ -356,6 +356,7 @@ System.Web.UI/ControlCas.cs
 System.Web.UI/ControlCollectionCas.cs
 System.Web.UI/CssStyleCollectionCas.cs
 System.Web.UI/DataBinderCas.cs
+System.Web.UI/DataBinderTest.cs
 System.Web.UI/DataBindingCas.cs
 System.Web.UI/DataBindingCollectionCas.cs
 System.Web.UI/DataBindingHandlerAttributeCas.cs

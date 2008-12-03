@@ -1,3 +1,7 @@
+2008-12-03  Marek Habersack  <mhabersack@novell.com>
+
+	* DataBinderTest.cs: added
+
 2008-10-17  Marek Habersack  <mhabersack@novell.com>
 
 	* PageTest.cs: use a custom version of HtmlInputHidden control to
