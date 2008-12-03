@@ -1,3 +1,8 @@
+2008-12-03  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Handle ldtoken of an open
+	generic type (via a typedef or typeref) correctly.
+
 2008-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_magic_trampoline): Add some debugging code to help
