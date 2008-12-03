@@ -309,16 +309,7 @@ namespace System.Net.Sockets
 		{
 			CheckDisposed ();
 
-			// Bug 45633: the spec states that we should block until a datagram arrives:
-			// remove the 512 hardcoded value.
-
-			// Block until we get it.
-			socket.Poll (-1, SelectMode.SelectRead);
-			
-			byte [] recBuffer;
-			int available = socket.Available;
-
-			recBuffer = new byte [available];
+			byte [] recBuffer = new byte [65536]; // Max. size
 			EndPoint endPoint = new IPEndPoint (IPAddress.Any, 0);
 			int dataRead = socket.ReceiveFrom (recBuffer, ref endPoint);
 			if (dataRead < recBuffer.Length)
