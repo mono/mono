@@ -1,3 +1,9 @@
+2008-12-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-property-hash.c (mono_property_hash_destroy): Release
+	the root hashtable as well.
+
+	Backported from trunk.
 
 Mon Nov 10 17:38:41 CET 2008 Paolo Molaro <lupus@ximian.com>
 
