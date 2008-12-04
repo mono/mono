@@ -1,3 +1,7 @@
+2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector2/4/8*.cs: Remove ExtractByteMask.
+
 2008-11-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ArrayExtensions.cs (IsAligned): Add a sensible default

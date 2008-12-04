@@ -257,15 +257,6 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe int ExtractByteMask (Vector8us va) {
-			int res = 0;
-			byte *a = (byte*)&va;
-			for (int i = 0; i < 16; ++i)
-				res |= (*a++ & 0x80) >> 7 << i;
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us ShuffleHigh (Vector8us va, ShuffleSel sel)
 		{
 			ushort *ptr = ((ushort*)&va) + 4;

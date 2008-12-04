@@ -117,15 +117,6 @@ namespace Mono.Simd
 			return new Vector2l ((long)((ulong)(v1.x) >> amount), (long)((ulong)(v1.y) >> amount));
 		}
 
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe long ExtractByteMask (Vector2l va) {
-			int res = 0;
-			byte *a = (byte*)&va;
-			for (int i = 0; i < 16; ++i)
-				res |= (*a++ & 0x80) >> 7 << i;
-			return res;
-		}
-
 		[Acceleration (AccelMode.SSE41)]
 		public static Vector2l CompareEqual (Vector2l v1, Vector2l v2)
 		{

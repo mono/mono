@@ -154,15 +154,6 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
-		public static unsafe int ExtractByteMask (Vector4ui va) {
-			int res = 0;
-			byte *a = (byte*)&va;
-			for (int i = 0; i < 16; ++i)
-				res |= (*a++ & 0x80) >> 7 << i;
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector4ui Shuffle (Vector4ui v1, ShuffleSel sel)
 		{
 			uint *ptr = (uint*)&v1;
