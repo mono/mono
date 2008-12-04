@@ -1,3 +1,7 @@
+2008-12-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Resurrect full-aot support.
+
 2008-12-04  Mark Mason   <mmason@upwardaccess.com>
 
 	* mini-mips.c (mono_arch_lowering_pass): handle OP_COMPARE and OP_ICOMPARE
