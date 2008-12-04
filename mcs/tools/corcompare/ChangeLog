@@ -1,3 +1,7 @@
+2008-12-04  Jb Evain  <jbevain@novell.com>
+
+	* mono-api-diff.cs: update mono-api-diff wrt to the format changes.
+
 2008-11-25  Atsushi Enomoto  <atsushi@ximian.com>
             Jb Evain  <jbevain@novell.com>
 

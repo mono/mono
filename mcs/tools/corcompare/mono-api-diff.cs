@@ -623,7 +623,7 @@ namespace Mono.AssemblyCompare
 		string layout;
 		XMLAttributes attributes;
 		XMLInterfaces interfaces;
-		XMLGenericTypeConstraints genericConstraints;
+		XMLGenericParameters genericParameters;
 		XMLFields fields;
 		XMLConstructors constructors;
 		XMLProperties properties;
@@ -677,9 +677,9 @@ namespace Mono.AssemblyCompare
 				child = child.NextSibling;
 			}
 
-			if (child != null && child.Name == "generic-type-constraints") {
-				genericConstraints = new XMLGenericTypeConstraints ();
-				genericConstraints.LoadData (child);
+			if (child != null && child.Name == "generic-parameters") {
+				genericParameters = new XMLGenericParameters ();
+				genericParameters.LoadData (child);
 				child = child.NextSibling;
 			}
 
@@ -777,12 +777,12 @@ namespace Mono.AssemblyCompare
 				counters.AddPartialToPartial (interfaces.Counters);
 			}
 
-			if (genericConstraints != null || oclass.genericConstraints != null) {
-				if (genericConstraints == null)
-					genericConstraints = new XMLGenericTypeConstraints ();
+			if (genericParameters != null || oclass.genericParameters != null) {
+				if (genericParameters == null)
+					genericParameters = new XMLGenericParameters ();
 
-				genericConstraints.CompareTo (doc, parent, oclass.genericConstraints);
-				counters.AddPartialToPartial (genericConstraints.Counters);
+				genericParameters.CompareTo (doc, parent, oclass.genericParameters);
+				counters.AddPartialToPartial (genericParameters.Counters);
 			}
 
 			if (fields != null || oclass.fields != null) {
@@ -1176,44 +1176,39 @@ namespace Mono.AssemblyCompare
 		}
 	}
 
-	abstract class XMLGenericGroup : XMLNameGroup
+	class XMLGenericParameters : XMLNameGroup
 	{
 		string attributes;
+		XMLGenericParameterConstraints constraints;
+
+		public override string GroupName {
+			get { return "generic-parameters"; }
+		}
+
+		public override string Name {
+			get { return "generic-parameters"; }
+		}
 
 		protected override void LoadExtraData (string name, XmlNode node)
 		{
-			attributes = ((XmlElement) node).GetAttribute ("generic-attribute");
-		}
+			attributes = ((XmlElement) node).GetAttribute ("attributes");
 
-		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
-		{
-			base.CompareToInner (name, parent, other);
-
-			XMLGenericGroup g = (XMLGenericGroup) other;
-			if (attributes != g.attributes)
-				AddWarning (parent, "Incorrect generic attributes: '{0}' != '{1}'", attributes, g.attributes);
+			var child = node.FirstChild;
+			if (child != null && child.Name == "generic-parameter-constraints") {
+				constraints = new XMLGenericParameterConstraints ();
+				constraints.LoadData (child);
+			}
 		}
 	}
 
-	class XMLGenericTypeConstraints : XMLGenericGroup
+	class XMLGenericParameterConstraints : XMLNameGroup
 	{
 		public override string GroupName {
-			get { return "generic-type-constraints"; }
+			get { return "generic-parameter-constraints"; }
 		}
 
 		public override string Name {
-			get { return "generic-type-constraint"; }
-		}
-	}
-
-	class XMLGenericMethodConstraints : XMLGenericGroup
-	{
-		public override string GroupName {
-			get { return "generic-method-constraints"; }
-		}
-
-		public override string Name {
-			get { return "generic-method-constraint"; }
+			get { return "generic-parameter-constraint"; }
 		}
 	}
 
@@ -1577,7 +1572,7 @@ namespace Mono.AssemblyCompare
 	{
 		Hashtable returnTypes;
 		Hashtable parameters;
-		Hashtable genericConstraints;
+		Hashtable genericParameters;
 		Hashtable signatureFlags;
 
 		[Flags]
@@ -1623,13 +1618,14 @@ namespace Mono.AssemblyCompare
 				parameters[name] = parms;
 			}
 
-			XmlNode genericNode = node.SelectSingleNode ("generic-method-constraints");
+			XmlNode genericNode = node.SelectSingleNode ("generic-parameters");
 			if (genericNode != null) {
-				if (genericConstraints == null)
-					genericConstraints = new Hashtable ();
-				XMLGenericMethodConstraints csts = new XMLGenericMethodConstraints ();
-				csts.LoadData (genericNode);
-				genericConstraints [name] = csts;
+				if (genericParameters == null)
+					genericParameters = new Hashtable ();
+
+				XMLGenericParameters gparams = new XMLGenericParameters ();
+				gparams.LoadData (genericNode);
+				genericParameters [name] = gparams;
 			}
 
 			base.LoadExtraData (name, node);
