@@ -1,3 +1,12 @@
+2008-12-04  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r120756.
+	
+	* aot-compiler.c (add_wrappers): Add pinvoke wrappers.
+
+	* mini.c (mono_resolve_patch_target): Allow pinvoke methods in 
+	MONO_PATCH_INFO_ICALL_ADDR.
+
 2008-12-03  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r120589.
