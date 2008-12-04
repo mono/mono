@@ -1,5 +1,9 @@
 2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Add tests for new methods.
+
+2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c: Add support for operator == and !=
 	on Vector4(u)i.
 
