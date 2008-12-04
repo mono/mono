@@ -1,5 +1,12 @@
 2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrinsics.c: Add support for operator == and !=
+	on Vector4(u)i.
+
+	* simd-methods.h: Add SN_op_Inequality and SN_op_Equality.
+
+2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c: Remove ExtractByteMask intrinsics.
 
 2008-12-04  Zoltan Varga  <vargaz@gmail.com>
