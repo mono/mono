@@ -1,5 +1,10 @@
 2008-12-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Add pinvoke wrappers.
+
+	* mini.c (mono_resolve_patch_target): Allow pinvoke methods in 
+	MONO_PATCH_INFO_ICALL_ADDR.
+
 	* aot-runtime.c (MonoAotFileInfo): Correct order of fields.
 
 	* aot-compiler.c: Resurrect full-aot support.
