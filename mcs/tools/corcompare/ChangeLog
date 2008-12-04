@@ -1,5 +1,9 @@
 2008-12-04  Jb Evain  <jbevain@novell.com>
 
+	* Remove CorCompare.exe sources.
+
+2008-12-04  Jb Evain  <jbevain@novell.com>
+
 	* Makefile: don't build CorCompare.exe anymore as it's not even
 	used.
 
