@@ -1,5 +1,7 @@
 2008-12-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (MonoAotFileInfo): Correct order of fields.
+
 	* aot-compiler.c: Resurrect full-aot support.
 
 2008-12-04  Mark Mason   <mmason@upwardaccess.com>
