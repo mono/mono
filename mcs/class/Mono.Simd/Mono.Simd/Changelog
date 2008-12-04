@@ -1,5 +1,9 @@
 2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector4(u)i.cs: Add operator == and !=.
+
+2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector2/4/8*.cs: Remove ExtractByteMask.
 
 2008-11-28  Rodrigo Kumpera  <rkumpera@novell.com>

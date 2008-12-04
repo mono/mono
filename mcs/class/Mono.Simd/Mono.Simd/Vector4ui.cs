@@ -119,6 +119,18 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public static bool operator ==(Vector4ui v1, Vector4ui v2)
+		{
+			return v1.x == v2.x && v1.y == v2.y && v1.z == v2.z && v1.w == v2.w;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static bool operator !=(Vector4ui v1, Vector4ui v2)
+		{
+			return v1.x != v2.x || v1.y != v2.y || v1.z != v2.z || v1.w != v2.w;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector4ui UnpackLow (Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (v1.x, v2.x, v1.y, v2.y);
