@@ -650,7 +650,6 @@ namespace Mono.AssemblyInfo
 		{
 			base.AddExtraData (p, memberDefenition);
 			PropertyDefinition prop = (PropertyDefinition) memberDefenition;
-			TypeReference t = prop.PropertyType;
 			AddAttribute (p, "ptype", Utils.CleanupTypeName (prop.PropertyType));
 			MethodDefinition _get = prop.GetMethod;
 			MethodDefinition _set = prop.SetMethod;
@@ -751,19 +750,6 @@ namespace Mono.AssemblyInfo
 			string parms = Parameters.GetSignature (method.Parameters);
 
 			return string.Format ("{0}({1})", name, parms);
-		}
-
-		static string GetGenericParametersSignature (IGenericParameterProvider provider)
-		{
-			var signature = new StringBuilder ();
-			for (int i = 0; i < provider.GenericParameters.Count; i++) {
-				if (i > 0)
-					signature.Append (",");
-
-				signature.Append (provider.GenericParameters [i].Name);
-			}
-
-			return signature.ToString ();
 		}
 
 		protected override string GetMemberAttributes (MemberReference memberDefenition)
