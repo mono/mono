@@ -1,5 +1,9 @@
 2008-12-04  Mark Mason   <mmason@upwardaccess.com>
 
+	* mini-mips.c (mono_arch_lowering_pass): handle OP_COMPARE and OP_ICOMPARE
+	
+2008-12-04  Mark Mason   <mmason@upwardaccess.com>
+
 	* mini-mips.c (mono_arch_output_basic_block): fix OP_IREM_UN code generation
 	
 2008-12-03  Rodrigo Kumpera  <rkumpera@novell.com>
