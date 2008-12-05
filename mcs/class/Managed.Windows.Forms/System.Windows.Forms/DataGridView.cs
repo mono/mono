@@ -2356,16 +2356,25 @@ namespace System.Windows.Forms {
 			return result;
 		}
 
-		[MonoTODO ("Always includes partial rows")]
 		public int DisplayedRowCount (bool includePartialRow)
 		{
 			int result = 0;
-			
-			for (int i = first_row_index; i < Rows.Count; i++)
-				if (Rows[i].Displayed)
+			int rowTop = 0;
+
+			if (ColumnHeadersVisible)
+				rowTop += ColumnHeadersHeight;
+
+			for (int index = first_row_index; index < Rows.Count; index++) {
+				DataGridViewRow row = GetRowInternal (index);
+				if (rowTop + row.Height < ClientSize.Height) {
 					result++;
-				else
+					rowTop += row.Height;
+				} else {
+					if (includePartialRow)
+						result++;
 					break;
+				}
+			}
 					
 			return result;
 		}
@@ -5472,12 +5481,14 @@ namespace System.Windows.Forms {
 		internal void OnVScrollBarScroll (object sender, ScrollEventArgs e)
 		{
 			verticalScrollingOffset = e.NewValue;
+			if (Rows.Count == 0)
+				return;
+
 			int top = 0;
 			
 			for (int index = 0; index < Rows.Count; index++) {
 				DataGridViewRow row = Rows[index];
-				
-				if (e.NewValue <= top + row.Height) {
+				if (e.NewValue < top + row.Height) {
 					if (first_row_index != index) {
 						first_row_index = index;
 						Invalidate ();
@@ -5490,9 +5501,6 @@ namespace System.Windows.Forms {
 				top += row.Height;
 			}
 			
-			if (Rows.Count == 0)
-				return;
-				
 			first_row_index = Rows.Count - DisplayedRowCount (false);
 			Invalidate ();
 			OnScroll (e);
@@ -5963,10 +5971,10 @@ namespace System.Windows.Forms {
 				}
 
 				int disp_y = y;
+				int displayedRowsCount = DisplayedRowCount (false);
+				int delta_y = 0;
 
 				if (disp_y < first_row_index) {
-					int delta_y = 0;
-
 					if (disp_y == 0)
 						delta_y = verticalScrollBar.Value;
 					else
@@ -5975,13 +5983,11 @@ namespace System.Windows.Forms {
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta_y);
 					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
-				} else if (disp_y > first_row_index + DisplayedRowCount (false) - 1) {
-					int delta_y = 0;
-					
+				} else if (disp_y > first_row_index + displayedRowsCount - 1) {
 					if (disp_y == Rows.Count - 1)
 						delta_y = verticalScrollBar.Maximum - verticalScrollBar.Value;
 					else
-						for (int i = first_row_index + DisplayedRowCount (false) - 1; i < disp_y; i++)
+						for (int i = first_row_index + displayedRowsCount - 1; i < disp_y; i++)
 							delta_y += GetRowInternal (i).Height;
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value + delta_y);

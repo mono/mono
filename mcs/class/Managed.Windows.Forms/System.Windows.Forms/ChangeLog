@@ -1,5 +1,15 @@
 2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fix scrolling and selection of cells/rows prior
+	to the control being drawn for the first time by:
+	   - Implement DisplayedRowsCount to not rely on the control being
+	   already painted. Also added support for the partial row flag.
+	   - Fix scrolling to take into account partial rows and scroll to
+	   them.
+	[Fixes bug #456527]
+
+2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Do not reset the CurrentCell when the handle is
 	created if the user has already set it.
 
