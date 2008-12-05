@@ -78,21 +78,9 @@ class MDocUpdater : MDocCommand
 
 		opts.type = new List<string> ();
 		var p = new OptionSet () {
-			{ "o|out=",
-				"Root {DIRECTORY} to generate/update documentation.",
-				v => opts.path = v },
-			{ "i|import=", 
-				"Import documentation from {FILE}.",
-				v => opts.import = v },
 			{ "delete",
 				"Delete removed members from the XML files.",
 				v => opts.delete = v != null },
-			{ "since=",
-				"Manually specify the assembly {VERSION} that new members were added in.",
-				v => opts.since = v },
-			{ "type=",
-			  "Only update documentation for {TYPE}.",
-				v => opts.type.Add (v) },
 			{ "exceptions:",
 			  "Document potential exceptions that members can generate.  {SOURCES} " +
 				"is a comma-separated list of:\n" +
@@ -102,6 +90,18 @@ class MDocUpdater : MDocCommand
 				"If nothing is specified, then only exceptions from the member will " +
 				"be listed.",
 				v => opts.exceptions = ParseExceptionLocations (v) },
+			{ "i|import=", 
+				"Import documentation from {FILE}.",
+				v => opts.import = v },
+			{ "o|out=",
+				"Root {DIRECTORY} to generate/update documentation.",
+				v => opts.path = v },
+			{ "since=",
+				"Manually specify the assembly {VERSION} that new members were added in.",
+				v => opts.since = v },
+			{ "type=",
+			  "Only update documentation for {TYPE}.",
+				v => opts.type.Add (v) },
 		};
 		opts.assembly = Parse (p, args, "update", 
 				"[OPTIONS]+ ASSEMBLIES",
@@ -109,7 +109,7 @@ class MDocUpdater : MDocCommand
 		if (opts.assembly == null)
 			return;
 		if (opts.assembly.Count == 0)
-			Error ("No assemblies specified.");
+			base.Error ("No assemblies specified.");
 
 		Run (opts);
 		opts.name = ""; // remove warning about unused member
@@ -142,74 +142,58 @@ class MDocUpdater : MDocCommand
 		show_exceptions = opts.show_exceptions;
 		exceptions = opts.exceptions;
 
-		try {
-			// PARSE BASIC OPTIONS AND LOAD THE ASSEMBLY TO DOCUMENT
-			
-			if (opts.path == null)
-				throw new InvalidOperationException("The path option is required.");
-			
-			srcPath = opts.path;
-
-			if (opts.type != null && opts.type.Count > 0 && opts.@namespace != null)
-				throw new InvalidOperationException("You cannot specify both 'type' and 'namespace'.");
-			
-			if (opts.assembly == null)
-				throw new InvalidOperationException("The assembly option is required.");
-				
-			assemblies = opts.assembly.Select (a => LoadAssembly (a)).ToList ();
-
-			if (opts.import != null && ecmadocs == null && slashdocs == null) {
-				try {
-					XmlReader r = new XmlTextReader (opts.import);
-					if (r.Read ()) {
-						while (r.NodeType != XmlNodeType.Element) {
-							if (!r.Read ())
-								throw new Exception ("Unable to read XML file: " + 
-										opts.import);
-						}
-						if (r.LocalName == "doc") {
-							slashdocs = new XmlDocument();
-							slashdocs.Load (opts.import);
-						}
-						else if (r.LocalName == "Libraries") {
-							ecmadocs = new XmlTextReader (opts.import);
-						}
-						else
-							throw new Exception ("Unsupported XML format within " + opts.import);
-					}
-					r.Close ();
-				} catch (Exception e) {
-					Error ("Could not load XML file: {0}", e.Message);
-					Environment.ExitCode = 1;
-					return;
-				}
-			}
-			
-			// PERFORM THE UPDATES
-			
-			string dest_dir = opts.updateto != null ? opts.updateto : opts.path;
-			if (opts.type != null && opts.type.Count > 0)
-				DoUpdateTypes(opts.path, opts.type, dest_dir);
-			else if (opts.@namespace != null)
-				DoUpdateNS (opts.@namespace, Path.Combine (opts.path, opts.@namespace),
-						Path.Combine (dest_dir, opts.@namespace));
-			else
-				DoUpdateAssemblies(opts.path, dest_dir);
+		// PARSE BASIC OPTIONS AND LOAD THE ASSEMBLY TO DOCUMENT
 		
-		} catch (InvalidOperationException error) {
-			Error (opts.show_exceptions ? error.ToString () : error.Message);
-			Environment.ExitCode = 1;
-			return;
-			
-		} catch (System.IO.IOException error) {
-			Error (opts.show_exceptions ? error.ToString () : error.Message);
-			Environment.ExitCode = 1;
-			return;
+		if (opts.path == null)
+			throw new InvalidOperationException("The --out option is required.");
+		
+		srcPath = opts.path;
 
-		} catch (Exception error) {
-			Error (opts.show_exceptions ? error.ToString () : error.Message);
-			Environment.ExitCode = 1;
+		if (opts.type != null && opts.type.Count > 0 && opts.@namespace != null)
+			throw new InvalidOperationException("You cannot specify both 'type' and 'namespace'.");
+		
+		if (opts.assembly == null)
+			throw new InvalidOperationException("The assembly option is required.");
+			
+		assemblies = opts.assembly.Select (a => LoadAssembly (a)).ToList ();
+
+		if (opts.import != null && ecmadocs == null && slashdocs == null) {
+			try {
+				XmlReader r = new XmlTextReader (opts.import);
+				if (r.Read ()) {
+					while (r.NodeType != XmlNodeType.Element) {
+						if (!r.Read ())
+							throw new Exception ("Unable to read XML file: " + 
+									opts.import);
+					}
+					if (r.LocalName == "doc") {
+						slashdocs = new XmlDocument();
+						slashdocs.Load (opts.import);
+					}
+					else if (r.LocalName == "Libraries") {
+						ecmadocs = new XmlTextReader (opts.import);
+					}
+					else
+						throw new Exception ("Unsupported XML format within " + opts.import);
+				}
+				r.Close ();
+			} catch (Exception e) {
+				Error ("Could not load XML file: {0}", e.Message);
+				Environment.ExitCode = 1;
+				return;
+			}
 		}
+		
+		// PERFORM THE UPDATES
+		
+		string dest_dir = opts.updateto != null ? opts.updateto : opts.path;
+		if (opts.type != null && opts.type.Count > 0)
+			DoUpdateTypes(opts.path, opts.type, dest_dir);
+		else if (opts.@namespace != null)
+			DoUpdateNS (opts.@namespace, Path.Combine (opts.path, opts.@namespace),
+					Path.Combine (dest_dir, opts.@namespace));
+		else
+			DoUpdateAssemblies(opts.path, dest_dir);
 
 		Console.WriteLine("Members Added: {0}, Members Deleted: {1}", additions, deletions);
 	}

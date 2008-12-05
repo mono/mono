@@ -1,3 +1,14 @@
+2008-12-05  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs, Mono.Documentation/monodocs2html.cs: 
+	  Reorder parameters to be in sorted order, so `mdoc help COMMAND` 
+	  parameters are sorted.
+	* Mono.Documentation/monodocer.cs: Remove try/catch in
+	  MDocUpdater.Run(MDocUpdaterOptions), so that any generated exceptions
+	  will be handled within mdoc itself (thus allowing the normal 
+	  "See `mdoc help' for more information." message).  Improve some
+	  error messages so they're more useful.
+
 2008-12-04  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Specify --exceptions=all in mdoc-update invocations.
