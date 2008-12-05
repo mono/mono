@@ -1,5 +1,8 @@
 2008-12-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Transform aotconst+calli into a direct
+	call.
+
 	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Rework the code
 	a bit to also restore %rax.
 
