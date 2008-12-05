@@ -34,6 +34,14 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace Mono.Documentation {
+
+	[Flags]
+	public enum ExceptionLocations {
+		Member              = 0x0,
+		Assembly            = 0x1,
+		DependentAssemblies = 0x2,
+		All = Assembly | DependentAssemblies
+	}
 	 
 	public class ExceptionSources {
 		internal ExceptionSources (TypeReference exception)
@@ -56,6 +64,13 @@ namespace Mono.Documentation {
 		// xdoc(MemberRef) -> xdoc(TypeRef) -> ExceptionSource
 		//   where ExceptionSource.Exception == xdoc(TypeRef)
 		Dictionary<string, Dictionary<string, ExceptionSources>> db = new Dictionary<string, Dictionary<string, ExceptionSources>> ();
+
+		ExceptionLocations locations;
+
+		public ExceptionLookup (ExceptionLocations locations)
+		{
+			this.locations = locations;
+		}
 
 		public IEnumerable<ExceptionSources> this [IMemberReference member] {
 			get {
@@ -106,15 +121,23 @@ namespace Mono.Documentation {
 		{
 			for (int i = 0; i < body.Instructions.Count; ++i) {
 				Instruction instruction = body.Instructions [i];
-				Console.WriteLine ("#\topcode={0}; operand={1}", instruction.OpCode, instruction.Operand);
 				switch (instruction.OpCode.Code) {
 					case Code.Call:
 					case Code.Callvirt: {
-						IEnumerable<ExceptionSources> memberExceptions = this [(IMemberReference) instruction.Operand];
-						AddExceptions (body, instruction, 
-								memberExceptions.Select (es => es.Exception),
-								memberExceptions.SelectMany (es => es.Sources),
-								exceptions);
+						if ((locations & ExceptionLocations.Assembly) == 0 && 
+								(locations & ExceptionLocations.DependentAssemblies) == 0)
+							break;
+						IMemberReference memberRef = ((IMemberReference) instruction.Operand);
+						if (((locations & ExceptionLocations.Assembly) != 0 && 
+									body.Method.DeclaringType.Scope.Name == memberRef.DeclaringType.Scope.Name) ||
+								((locations & ExceptionLocations.DependentAssemblies) != 0 && 
+									body.Method.DeclaringType.Scope.Name != memberRef.DeclaringType.Scope.Name)) {
+							IEnumerable<ExceptionSources> memberExceptions = this [memberRef];
+							AddExceptions (body, instruction, 
+									memberExceptions.Select (es => es.Exception),
+									memberExceptions.SelectMany (es => es.Sources),
+									exceptions);
+						}
 						break;
 					}
 					case Code.Newobj: {

@@ -38,7 +38,7 @@ class MDocUpdaterOptions
 	public bool pretty = true;
 	public string since;
 	public bool show_exceptions;
-	public bool exceptions = false;
+	public ExceptionLocations? exceptions;
 }
 
 class MDocUpdater : MDocCommand
@@ -49,7 +49,8 @@ class MDocUpdater : MDocCommand
 	
 	static bool nooverrides = true, delete = false, ignoremembers = false;
 	static bool pretty = false;
-	static bool show_exceptions = false, exceptions = false;
+	static bool show_exceptions = false;
+	static ExceptionLocations? exceptions;
 	
 	static int additions = 0, deletions = 0;
 
@@ -87,14 +88,20 @@ class MDocUpdater : MDocCommand
 				"Delete removed members from the XML files.",
 				v => opts.delete = v != null },
 			{ "since=",
-				"Manually specify the assembly version that new members were added in.",
+				"Manually specify the assembly {VERSION} that new members were added in.",
 				v => opts.since = v },
 			{ "type=",
 			  "Only update documentation for {TYPE}.",
 				v => opts.type.Add (v) },
-			{ "exceptions",
-			  "Document potential exceptions that members can generate.",
-				v => opts.exceptions = v != null },
+			{ "exceptions:",
+			  "Document potential exceptions that members can generate.  {SOURCES} " +
+				"is a comma-separated list of:\n" +
+				"  asm      Method calls in same assembly\n" +
+				"  depasm   Method calls in dependent assemblies\n" +
+				"  all      Record all possible exceptions\n" +
+				"If nothing is specified, then only exceptions from the member will " +
+				"be listed.",
+				v => opts.exceptions = ParseExceptionLocations (v) },
 		};
 		opts.assembly = Parse (p, args, "update", 
 				"[OPTIONS]+ ASSEMBLIES",
@@ -106,6 +113,22 @@ class MDocUpdater : MDocCommand
 
 		Run (opts);
 		opts.name = ""; // remove warning about unused member
+	}
+
+	static ExceptionLocations ParseExceptionLocations (string s)
+	{
+		ExceptionLocations loc = ExceptionLocations.Member;
+		if (s == null)
+			return loc;
+		foreach (var type in s.Split (',')) {
+			switch (type) {
+				case "asm":     loc |= ExceptionLocations.Assembly; break;
+				case "depasm":  loc |= ExceptionLocations.DependentAssemblies; break;
+				case "all":     loc = ExceptionLocations.All; break;
+				default:        throw new NotSupportedException ("Unsupported --exceptions value: " + type);
+			}
+		}
+		return loc;
 	}
 
 	static void Run (MDocUpdaterOptions opts)
@@ -1755,7 +1778,7 @@ class MDocUpdater : MDocCommand
 		if (addremarks)
 			WriteElementInitialText(e, "remarks", "To be added.");
 
-		if (exceptions && info.Member != null) {
+		if (exceptions.HasValue && info.Member != null) {
 			UpdateExceptions (e, info.Member);
 		}
 
@@ -2015,7 +2038,7 @@ class MDocUpdater : MDocCommand
 
 	private static void UpdateExceptions (XmlNode docs, IMemberReference member)
 	{
-		foreach (var source in new ExceptionLookup ()[member]) {
+		foreach (var source in new ExceptionLookup (exceptions.Value)[member]) {
 			string cref = slashdocFormatter.GetDeclaration (source.Exception);
 			var node = docs.SelectSingleNode ("exception[@cref='" + cref + "']");
 			if (node != null)

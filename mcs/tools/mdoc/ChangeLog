@@ -1,3 +1,13 @@
+2008-12-04  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Specify --exceptions=all in mdoc-update invocations.
+	* exceptions.cs: Add support for documenting a *subset* of all
+	  possible exceptions.  Subsets include: the member itself, the member
+	  and methods it calls that are in the same assembly, and all possible
+	  methods across all assemblies.
+	* monodocer.cs: Allow --exceptions to take a SOURCES argument, to
+	  control which location sources will be searched for exceptions.
+
 2008-12-02  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Add --exceptions to `mdoc update` invocations to test
