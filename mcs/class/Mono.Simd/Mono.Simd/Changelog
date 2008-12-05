@@ -1,5 +1,9 @@
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Vector16(s)b.cs: Add operator == and !=.
+
+2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Vector8(u)s.cs: Add operator == and !=.
 
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>

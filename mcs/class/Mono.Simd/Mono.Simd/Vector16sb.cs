@@ -156,6 +156,28 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public unsafe static bool operator ==(Vector16sb va, Vector16sb vb)
+		{
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			for (int i = 0; i < 16; ++i)
+				if (*a++ != *b++)
+					return false;
+			return true;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public unsafe static bool operator !=(Vector16sb va, Vector16sb vb)
+		{
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			for (int i = 0; i < 16; ++i)
+				if (*a++ != *b++)
+					return true;
+			return false;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector16sb UnpackLow (Vector16sb va, Vector16sb vb)
 		{
 			return new Vector16sb (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3, va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
