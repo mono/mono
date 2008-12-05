@@ -1,3 +1,7 @@
+2008-12-05  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c: Some simple merges from mini-ppc64.c.
+
 2008-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* ssa.c (mono_ssa_compute): Only add an implicit reference at start for
