@@ -83,14 +83,15 @@ namespace Mono.Data.Tds.Protocol
 
 			StringBuilder result = new StringBuilder ();
 			foreach (TdsMetaParameter p in Parameters) {
-				string includeAt = "@";
-				if (p.ParameterName [0] == '@')
-					includeAt = string.Empty;
+				string parameterName = p.ParameterName;
+				if (parameterName [0] == '@') {
+					parameterName = parameterName.Substring (1);
+				}
 				if (p.Direction != TdsParameterDirection.ReturnValue) {
 					if (result.Length > 0)
 						result.Append (", ");
 					if (p.Direction == TdsParameterDirection.InputOutput)
-						result.Append (String.Format("{0}{1}={1} output", includeAt, p.ParameterName));
+						result.AppendFormat ("@{0}={0} output", parameterName);
 					else
 						result.Append (FormatParameter (p));
 				}
@@ -396,8 +397,14 @@ namespace Mono.Data.Tds.Protocol
 				foreach (TdsMetaParameter param in parameters) {
 					if (param.Direction == TdsParameterDirection.ReturnValue) 
 						continue;
-					Comm.Append ( (byte) param.ParameterName.Length );
-					Comm.Append (param.ParameterName);
+					string pname = param.ParameterName;
+					if (pname != null && pname.Length > 0 && pname [0] == '@') {
+						Comm.Append ( (byte) pname.Length);
+						Comm.Append (pname);
+					} else {
+						Comm.Append ( (byte) (pname.Length + 1));
+						Comm.Append ("@" + pname);
+					}
 					short status = 0; // unused
 					if (param.Direction != TdsParameterDirection.Input)
 						status |= 0x01; // output
@@ -525,11 +532,12 @@ namespace Mono.Data.Tds.Protocol
 
 		private string FormatParameter (TdsMetaParameter parameter)
 		{
-			string includeAt = "@";
-			if (parameter.ParameterName [0] == '@')
-				includeAt = string.Empty;
+			string parameterName = parameter.ParameterName;
+			if (parameterName [0] == '@') {
+				parameterName = parameterName.Substring (1);
+			}
 			if (parameter.Direction == TdsParameterDirection.Output)
-				return String.Format ("{0}{1}={1} output", includeAt, parameter.ParameterName);
+				return String.Format ("@{0}={0} output", parameterName);
 			if (parameter.Value == null || parameter.Value == DBNull.Value)
 				return parameter.ParameterName + "=NULL";
 
@@ -586,7 +594,7 @@ namespace Mono.Data.Tds.Protocol
 				break;
 			}
 
-			return includeAt + parameter.ParameterName + "=" + value;
+			return "@" + parameterName + "=" + value;
 		}
 
 		public override string Prepare (string commandText, TdsMetaParameterCollection parameters)
