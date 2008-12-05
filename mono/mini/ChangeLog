@@ -1,3 +1,9 @@
+2008-12-04  Mark Mason   <mmason@upwardaccess.com>
+
+	* mini-mips.c: introduce USE_LDC_SDC: use ldc1/sdc1 to load/store doubles, disabled by default
+	
+	* mini-mips.c (mono_arch_emit_outarg_vt): fix offset calculation for memcpy in structure passing.
+	
 2008-12-05  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc64.c, mini-ppc64.h, exceptions-ppc64.c, tramp-ppc64.c:
