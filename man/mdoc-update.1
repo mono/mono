@@ -51,6 +51,88 @@ are no \fI//AssemblyVersion\fR elements for a given \fI<Type>\fR or
 \fI<Member/>\fR, then the \fI<Type>\fR will be renamed and/or the 
 \fI<Member/>\fR will be removed.
 .TP
+\fB\-\-exceptions\fR[=\fISOURCES\fR]
+EXPERIMENTAL.  This is not 100% reliable, but is intended to serve as an aid
+for documentation writers.
+.Sp
+Inspect member bodies to determine what exceptions can be generated from the
+member.
+.Sp
+\fISOURCES\fR is an optional comma-separated list of the following sources
+that should be searched for exceptions:
+.Sp
+.nf
+        all     Find exceptions created in the member itself, 
+                  references to members in the same assembly, 
+                  and references to members in dependent 
+                  assemblies.
+        asm     Find exceptions created in the member itself and
+                  references to members within the same assembly
+                  as the member.
+        depasm  Find exceptions created in the member itself and
+                  references to members within dependent 
+                  assemblies.
+.fi
+.Sp
+If \fISOURCES\fR isn't provided (the default), then only exceptions created 
+within the member itself will be documented.
+.Sp
+LIMITATIONS: Exception searching is currently implemented by looking for the
+exception types that are explicitly created based on the known compile-time
+types.  This has the following limitations:
+.RS
+.ne 8
+.TP
+.B *
+This will not find exceptions which are implicit to the IL, such as
+NullReferenceException and IndexOutOfRangeException.
+.TP
+.B *
+This will find exceptions which are \fInot\fR thrown, e.g.
+.nf
+
+    public void CreateAnException ()
+    {
+        Exception e = new Exception ();
+    }
+
+.fi
+.TP
+.B *
+This will not "follow" delegate and interface calls:
+.nf
+
+    public void UsesDelegates ()
+    {
+        Func<int, int> a = x => {throw new Exception ();};
+        a (4);
+    }
+
+.fi
+The function \fIUsesDelegates()\fR won't have any exceptions documented.
+.TP
+.B *
+This will find exceptions which "cannot happen", such as
+ArgumentNullExceptions for arguments which are "known" to be non-null:
+.nf
+
+    public void A ()
+    {
+        B ("this parameter isn't null");
+    }
+
+    public void B (string s)
+    {
+        if (s == null)
+            throw new ArgumentNullException ("s");
+    }
+
+.fi
+For the above, if \fB--exceptions=asm\fR is provided then \fIA()\fR will be
+documented as throwing an ArgumentNullException, which cannot happen.
+.ne
+.RE
+.TP
 \fB\-i\fR, \fB\-\-import\fR=\fIFILE\fR
 Import documentation found within \fIFILE\fR.
 .Sp
@@ -60,6 +142,15 @@ Import documentation found within \fIFILE\fR.
 Place the generated stubs into \fIDIRECTORY\fR.
 .Sp
 When updating documentation, \fIDIRECTORY\fR is also the source directory.
+.TP
+\fB\-\-since\fR=\fIVERSION\fR
+When \fIupdating\fR documentation for an assembly, if a type or member is
+encountered which didn't exist in the previous version of the assembly a
+\fB<since version="\fR\fIVERSION\fR\fB"/>\fR element will be inserted.
+.TP
+\fB\-\-type\fR=\fITYPE\fR
+Only update documentation for the type \fITYPE\fR.
+.TP
 .B \-h, \-?, \-\-help
 Display a help message and exit.
 .SH SEE ALSO
