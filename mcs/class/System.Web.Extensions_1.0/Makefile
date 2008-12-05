@@ -34,7 +34,6 @@ LIB_MCS_FLAGS = \
 	-define:SYSTEM_WEB_EXTENSIONS	\
 	-r:$(corlib)	 		\
 	-r:System.dll 			\
-	-r:System.Core.dll		\
 	-r:System.Drawing.dll 		\
 	-r:System.Data.dll		\
 	-r:System.Xml.dll		\
