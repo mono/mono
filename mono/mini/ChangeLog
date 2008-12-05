@@ -1,3 +1,9 @@
+2008-12-05  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc64.c, mini-ppc64.h, exceptions-ppc64.c, tramp-ppc64.c:
+	Removed FIRST/LAST_[GF]REG macros, to make merging PPC64 with PPC
+	code easier.
+
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Tests for operator == and != on Vector4f.
