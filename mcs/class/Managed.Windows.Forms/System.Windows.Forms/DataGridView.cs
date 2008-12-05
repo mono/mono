@@ -668,11 +668,13 @@ namespace System.Windows.Forms {
 				/// to the data cache, or the new cell is in a hidden
 				/// row.
 				/////////////////////////////////////////////////////
-				if (value.DataGridView != this) {
+				if (value.DataGridView != this)
 					throw new ArgumentException("The cell is not in this DataGridView.");
-				}
 
-				MoveCurrentCell (0, 0, true, false, false, true);
+				if (value != null)
+					MoveCurrentCell (value.OwningColumn.Index, value.OwningRow.Index, true, false, false, true);
+				else
+					MoveCurrentCell (-1, -1, true, false, false, true);
 			}
 		}
 

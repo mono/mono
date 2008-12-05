@@ -1,3 +1,7 @@
+2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Fix CurrentCell to actually select the cell.
+
 2008-12-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: Add support to RichTextFormat by reading it as ascii
