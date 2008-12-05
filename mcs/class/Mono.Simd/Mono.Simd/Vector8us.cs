@@ -179,6 +179,28 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public unsafe static bool operator ==(Vector8us va, Vector8us vb)
+		{
+			ushort *a = &va.v0;
+			ushort *b = &vb.v0;
+			for (int i = 0; i < 8; ++i)
+				if (*a++ != *b++)
+					return false;
+			return true;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public unsafe static bool operator !=(Vector8us va, Vector8us vb)
+		{
+			ushort *a = &va.v0;
+			ushort *b = &vb.v0;
+			for (int i = 0; i < 8; ++i)
+				if (*a++ != *b++)
+					return true;
+			return false;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8us UnpackLow (Vector8us va, Vector8us vb)
 		{
 			return new Vector8us (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3);
