@@ -1,3 +1,8 @@
+2008-12-05  Brad Taylor  <brad@getcoded.net>
+
+	* MonthCalendar.cs: Add UIA specific events so that we can know when
+	the selection changes, and when MaxSelectedCount changes.
+
 2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Cleanup rows_displayed out of OnPaint. It's not 

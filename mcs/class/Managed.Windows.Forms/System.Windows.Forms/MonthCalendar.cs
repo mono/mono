@@ -413,6 +413,7 @@ namespace System.Windows.Forms {
 			
 				if (max_selection_count != value) {
 					max_selection_count = value;
+					this.OnUIAMaxSelectionCountChanged ();
 				}
 			}
 			get {
@@ -547,6 +548,7 @@ namespace System.Windows.Forms {
 					SelectionRange.End = value;
 					this.InvalidateDateRange (new SelectionRange (old_end, SelectionRange.End));
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+					this.OnUIASelectionChanged ();
 				}
 			}
 			get {
@@ -613,6 +615,7 @@ namespace System.Windows.Forms {
 						this.InvalidateDateRange (new_range);
 					// raise date changed event
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+					this.OnUIASelectionChanged ();
 				}
 			}
 			get {
@@ -643,6 +646,7 @@ namespace System.Windows.Forms {
 					
 					this.Invalidate ();
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+					this.OnUIASelectionChanged ();
 				}
 			}
 			get {
@@ -2424,5 +2428,36 @@ namespace System.Windows.Forms {
 		}
 
 		#endregion 	// inner classes
+
+		#region UIA Framework: Methods, Properties and Events
+
+		static object UIAMaxSelectionCountChangedEvent = new object ();
+		static object UIASelectionChangedEvent = new object ();
+
+		internal event EventHandler UIAMaxSelectionCountChanged {
+			add { Events.AddHandler (UIAMaxSelectionCountChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAMaxSelectionCountChangedEvent, value); }
+		}
+
+		internal event EventHandler UIASelectionChanged {
+			add { Events.AddHandler (UIASelectionChangedEvent, value); }
+			remove { Events.RemoveHandler (UIASelectionChangedEvent, value); }
+		}
+
+		private void OnUIAMaxSelectionCountChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAMaxSelectionCountChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		private void OnUIASelectionChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIASelectionChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		#endregion
 	}
 }
