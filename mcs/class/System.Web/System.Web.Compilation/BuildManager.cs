@@ -1008,7 +1008,9 @@ namespace System.Web.Compilation {
 			if (dothrow)
 				throw new HttpException (404, "The file '" + virtualPath + "' does not exist.");
 		}
-		
+
+		const int ticketLockTimeout = 20000;
+		const int ticketLockAttempts = 3;
 		static void BuildAssembly (VirtualPath virtualPath)
 		{
 			AssertVirtualPathExists (virtualPath);
@@ -1016,6 +1018,7 @@ namespace System.Web.Compilation {
 			
 			object ticket;
 			bool acquired;
+			bool locked = false;
 			string virtualDir = virtualPath.Directory;
 			BuildKind buildKind = BuildKind.Unknown;
 			bool kindPushed = false;
@@ -1023,7 +1026,16 @@ namespace System.Web.Compilation {
 			
 			acquired = AcquireCompilationTicket (virtualDir, out ticket);
 			try {
-				Monitor.Enter (ticket);
+				int attempts = ticketLockAttempts;
+				while (attempts-- > 0) {
+					if (Monitor.TryEnter (ticket, ticketLockTimeout)) {
+						locked = true;
+						break;
+					}
+				}
+				if (!locked)
+					throw new HttpException (500, "Failed to acquire compilation lock for virtual path '" + virtualPath + "'.");
+				
 				lock (buildCacheLock) {
 					if (buildCache.ContainsKey (vpAbsolute))
 						return;
@@ -1118,10 +1130,12 @@ namespace System.Web.Compilation {
 						recursiveBuilds.Pop ();
 					}
 				}
-				
-				Monitor.Exit (ticket);
-				if (acquired)
-					ReleaseCompilationTicket (virtualDir);
+
+				if (locked) {
+					Monitor.Exit (ticket);
+					if (acquired)
+						ReleaseCompilationTicket (virtualDir);
+				}
 			}
 		}
 

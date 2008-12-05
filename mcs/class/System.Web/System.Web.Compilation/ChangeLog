@@ -1,3 +1,10 @@
+2008-12-05  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: attempt to enter the compilation critical
+	section with a timeout up to 3 times before giving up. This avoids
+	deadlocks in situations where there are two virtual directores
+	each containing user controls referencing user controls from the
+	other directory.
 
 2008-12-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
