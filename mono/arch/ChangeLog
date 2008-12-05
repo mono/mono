@@ -1,3 +1,8 @@
+2008-12-05  Mark Probst  <mark.probst@gmail.com>
+
+	* ppc/ppc-codegen.h: Added ppc_load_func for PPC32.  Added
+	ppc_load/store_multiple_regs and ppc_compare_reg_imm.
+
 2008-12-02  Mark Probst  <mark.probst@gmail.com>
 
 	* ppc/ppc-codegen.h: Opcodes for floating point conversions from

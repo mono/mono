@@ -1,3 +1,12 @@
+2008-12-05  Mark Probst  <mark.probst@gmail.com>
+
+	* tramp-ppc.c, mini-ppc.c, mini-ppc.h: Merged tramp-ppc.c with
+	tramp-ppc64.c.
+
+	* Makefile.am: Use tramp-ppc.c instead of tramp-ppc64.c.
+
+	* tramp-ppc64.c: Removed.
+
 2008-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_generic_instances): Skip non-generic classes in
