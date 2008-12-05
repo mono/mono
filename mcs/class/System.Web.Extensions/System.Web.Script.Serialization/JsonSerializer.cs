@@ -101,7 +101,7 @@ namespace System.Web.Script.Serialization
 				throw new ArgumentException ("Recursion limit has been exceeded while serializing object of type '{0}'", obj != null ? obj.GetType ().ToString () : "[null]");
 
 			if (obj == null || DBNull.Value.Equals (obj)) {
-				output.AppendCount (maxJsonLength, "null");
+				StringBuilderExtensions.AppendCount (output, maxJsonLength, "null");
 				return;
 			}
 
@@ -111,7 +111,7 @@ namespace System.Web.Script.Serialization
 				IDictionary <string, object> result = jsc.Serialize (obj, serializer);
 
 				if (result == null) {
-					output.AppendCount (maxJsonLength, "null");
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, "null");
 					return;
 				}
 
@@ -291,7 +291,7 @@ namespace System.Web.Script.Serialization
 		
 		void SerializeArbitraryObject (StringBuilder output, object obj, Type type)
 		{
-			output.AppendCount (maxJsonLength, "{");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "{");
 
 			bool first = true;
 			if (typeResolver != null) {
@@ -322,27 +322,27 @@ namespace System.Web.Script.Serialization
 					first = false;
 			}
 
-			output.AppendCount (maxJsonLength, "}");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "}");
 		}
 		
 		void SerializeEnumerable (StringBuilder output, IEnumerable enumerable)
 		{
-			output.AppendCount (maxJsonLength, "[");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "[");
 			bool first = true;
 			foreach (object value in enumerable) {
 				if (!first)
-					output.AppendCount (maxJsonLength, ',');
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, ',');
 				SerializeValue (value, output);
 				if (first)
 					first = false;
 			}
 			
-			output.AppendCount (maxJsonLength, "]");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "]");
 		}
 		
 		void SerializeDictionary (StringBuilder output, IDictionary dict)
 		{
-			output.AppendCount (maxJsonLength, "{");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "{");
 			bool first = true;
 			string key;
 			
@@ -352,12 +352,12 @@ namespace System.Web.Script.Serialization
 					first = false;
 			}
 			
-			output.AppendCount (maxJsonLength, "}");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "}");
 		}
 
 		void SerializeGenericDictionary <TKey, TValue> (StringBuilder output, IDictionary <TKey, TValue> dict)
 		{
-			output.AppendCount (maxJsonLength, "{");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "{");
 			bool first = true;
 			string key;
 			
@@ -367,7 +367,7 @@ namespace System.Web.Script.Serialization
 					first = false;
 			}
 			
-			output.AppendCount (maxJsonLength, "}");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "}");
 		}
 
 		void WriteDictionaryEntry (StringBuilder output, bool skipComma, string key, object value)
@@ -376,10 +376,10 @@ namespace System.Web.Script.Serialization
 				throw new InvalidOperationException ("Only dictionaries with keys convertible to string are supported.");
 			
 			if (!skipComma)
-				output.AppendCount (maxJsonLength, ',');
+				StringBuilderExtensions.AppendCount (output, maxJsonLength, ',');
 
 			WriteValue (output, key);
-			output.AppendCount (maxJsonLength, ':');
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, ':');
 			SerializeValue (value, output);
 		}
 
@@ -387,35 +387,35 @@ namespace System.Web.Script.Serialization
 		{
 			switch (typeCode) {
 				case TypeCode.SByte:
-					output.AppendCount (maxJsonLength, (sbyte)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (sbyte)value);
 					return;
 					
                                 case TypeCode.Int16:
-					output.AppendCount (maxJsonLength, (short)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (short)value);
 					return;
 					
                                 case TypeCode.UInt16:
-					output.AppendCount (maxJsonLength, (ushort)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (ushort)value);
 					return;
 					
                                 case TypeCode.Int32:
-					output.AppendCount (maxJsonLength, (int)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (int)value);
 					return;
 					
                                 case TypeCode.Byte:
-					output.AppendCount (maxJsonLength, (byte)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (byte)value);
 					return;
 					
                                 case TypeCode.UInt32:
-					output.AppendCount (maxJsonLength, (uint)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (uint)value);
 					return;
 					
                                 case TypeCode.Int64:
-					output.AppendCount (maxJsonLength, (long)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (long)value);
 					return;
 					
                                 case TypeCode.UInt64:
-					output.AppendCount (maxJsonLength, (ulong)value);
+					StringBuilderExtensions.AppendCount (output, maxJsonLength, (ulong)value);
 					return;
 
 				default:
@@ -425,12 +425,12 @@ namespace System.Web.Script.Serialization
 
 		void WriteValue (StringBuilder output, float value)
 		{
-			output.AppendCount (maxJsonLength, value.ToString ("r"));
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r"));
 		}
 
 		void WriteValue (StringBuilder output, double value)
 		{
-			output.AppendCount (maxJsonLength, value.ToString ("r"));
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString ("r"));
 		}
 		
 		void WriteValue (StringBuilder output, Guid value)
@@ -451,23 +451,23 @@ namespace System.Web.Script.Serialization
 				value = MinimumJavaScriptDate;
 
 			long ticks = (value.Ticks - InitialJavaScriptDateTicks) / (long)10000;
-			output.AppendCount (maxJsonLength, "\"\\/Date(" + ticks + ")\\/\"");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "\"\\/Date(" + ticks + ")\\/\"");
 		}
 		
 		void WriteValue (StringBuilder output, IConvertible value)
 		{
-			output.AppendCount (maxJsonLength, value.ToString (CultureInfo.InvariantCulture));
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value.ToString (CultureInfo.InvariantCulture));
 		}
 		
 		void WriteValue (StringBuilder output, bool value)
 		{
-			output.AppendCount (maxJsonLength, value ? "true" : "false");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, value ? "true" : "false");
 		}
 		
 		void WriteValue (StringBuilder output, char value)
 		{
 			if (value == '\0') {
-				output.AppendCount (maxJsonLength, "null");
+				StringBuilderExtensions.AppendCount (output, maxJsonLength, "null");
 				return;
 			}
 			
@@ -477,11 +477,11 @@ namespace System.Web.Script.Serialization
 		void WriteValue (StringBuilder output, string value)
 		{
 			if (String.IsNullOrEmpty (value)) {
-				output.AppendCount (maxJsonLength, "\"\"");
+				StringBuilderExtensions.AppendCount (output, maxJsonLength, "\"\"");
 				return;
 			}
 			
-			output.AppendCount (maxJsonLength, "\"");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "\"");
 
 			char c;
 			for (int i = 0; i < value.Length; i++) {
@@ -489,50 +489,50 @@ namespace System.Web.Script.Serialization
 
 				switch (c) {
 					case '\t':
-						output.AppendCount (maxJsonLength, @"\t");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\t");
 						break;
 					case '\n':
-						output.AppendCount (maxJsonLength, @"\n");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\n");
 						break;
 					case '\r':
-						output.AppendCount (maxJsonLength, @"\r");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\r");
 						break;
 					case '\f':
-						output.AppendCount (maxJsonLength, @"\f");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\f");
 						break;
 					case '\b':
-						output.AppendCount (maxJsonLength, @"\b");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\b");
 						break;
 					case '<':
-						output.AppendCount (maxJsonLength, @"\u003c");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\u003c");
 						break;
 					case '>':
-						output.AppendCount (maxJsonLength, @"\u003e");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\u003e");
 						break;
 					case '"':
-						output.AppendCount (maxJsonLength, "\\\"");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, "\\\"");
 						break;
 					case '\'':
-						output.AppendCount (maxJsonLength, @"\u0027");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\u0027");
 						break;
 					case '\\':
-						output.AppendCount (maxJsonLength, @"\\");
+						StringBuilderExtensions.AppendCount (output, maxJsonLength, @"\\");
 						break;
 					default:
 						if (c > '\u001f')
-							output.AppendCount (maxJsonLength, c);
+							StringBuilderExtensions.AppendCount (output, maxJsonLength, c);
 						else {
 							output.Append("\\u00");
 							int intVal = (int) c;
-							output.AppendCount (maxJsonLength, (char) ('0' + (intVal >> 4)));
+							StringBuilderExtensions.AppendCount (output, maxJsonLength, (char) ('0' + (intVal >> 4)));
 							intVal &= 0xf;
-							output.AppendCount (maxJsonLength, (char) (intVal < 10 ? '0' + intVal : 'a' + (intVal - 10)));
+							StringBuilderExtensions.AppendCount (output, maxJsonLength, (char) (intVal < 10 ? '0' + intVal : 'a' + (intVal - 10)));
 						}
 						break;
 				}
 			}
 			
-			output.AppendCount (maxJsonLength, "\"");
+			StringBuilderExtensions.AppendCount (output, maxJsonLength, "\"");
 		}
 	}
 }

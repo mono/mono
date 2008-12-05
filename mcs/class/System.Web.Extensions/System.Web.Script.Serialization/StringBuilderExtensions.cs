@@ -39,133 +39,133 @@ namespace System.Web.Script.Serialization
 				throw new InvalidOperationException ("Maximum length exceeded.");
 		}
 		
-		public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, char[] value) 
+		public static StringBuilder AppendCount (StringBuilder sb, int maxCount, char[] value) 
                 {
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 } 
                 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, string value) 
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, string value) 
                 {
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, bool value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, bool value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
                 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, byte value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, byte value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, decimal value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, decimal value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, double value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, double value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, short value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, short value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, int value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, int value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-		public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, long value)
+		public static StringBuilder AppendCount (StringBuilder sb, int maxCount, long value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, object value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, object value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, sbyte value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, sbyte value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, float value) 
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, float value) 
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, ushort value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, ushort value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }       
                 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, uint value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, uint value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, ulong value)
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, ulong value)
 		{
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, char value) 
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, char value) 
                 {
 			StringBuilder ret = sb.Append (value);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, char value, int repeatCount) 
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, char value, int repeatCount) 
                 {
 			StringBuilder ret = sb.Append (value, repeatCount);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, char[] value, int startIndex, int charCount ) 
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, char[] value, int startIndex, int charCount ) 
                 {
 			StringBuilder ret = sb.Append (value, startIndex, charCount);
 			CheckCount (sb, maxCount);
 			return ret;
                 }
 
-                public static StringBuilder AppendCount (this StringBuilder sb, int maxCount, string value, int startIndex, int count) 
+                public static StringBuilder AppendCount (StringBuilder sb, int maxCount, string value, int startIndex, int count) 
                 {
 			StringBuilder ret = sb.Append (value, startIndex, count);
 			CheckCount (sb, maxCount);
