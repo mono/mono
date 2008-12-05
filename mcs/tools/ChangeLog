@@ -1,3 +1,13 @@
+2008-12-05  Jb Evain  <jbevain@novell.com>
+
+	* tuner/Mono.Tuner/RemoveSerialization.cs
+	* tuner/Mono.Tuner/PrintStatus.cs
+	* tuner/Mono.Tuner/AdjustVisibility.cs
+	* tuner/Mono.Tuner/InjectAttributes.cs
+	* tuner/Mono.Tuner/CheckVisibility.cs:
+		do not tune the assemblies that the linker doesn't
+		consider for actual linking.
+
 2008-12-01  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: build the tuner library during the net_1_1 profile. The
