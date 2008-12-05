@@ -4507,7 +4507,6 @@ namespace System.Windows.Forms {
 			gridWidth = rowHeadersVisible ? rowHeadersWidth : 0;
 			gridHeight = 0;
 			
-			int rows_displayed = 0;
 			int first_row_height = Rows.Count > 0 ? Rows[Math.Min (Rows.Count - 1, first_row_index)].Height : 0;
 //			int room_left = this.Height;
 			
@@ -4547,9 +4546,7 @@ namespace System.Windows.Forms {
 				bounds.Y += bounds.Height;
 				bounds.X = BorderWidth;
 				
-				if (bounds.Y < ClientSize.Height - (horizontalScrollBar.Visible ? horizontalScrollBar.Height : 0))
-					rows_displayed++;
-				else
+				if (bounds.Y >= ClientSize.Height - (horizontalScrollBar.Visible ? horizontalScrollBar.Height : 0))
 					break;
 					
 				gridHeight += row.Height;

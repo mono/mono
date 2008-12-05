@@ -1,5 +1,10 @@
 2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Cleanup rows_displayed out of OnPaint. It's not 
+	used for anything.
+
+2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Fix scrolling and selection of cells/rows prior
 	to the control being drawn for the first time by:
 	   - Implement DisplayedRowsCount to not rely on the control being
