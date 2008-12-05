@@ -194,7 +194,10 @@ echo-warning:
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.Web.Extensions.dll -doc:$(test_lib:.dll=.xml)  -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml)  -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%)
+ifeq (net_2_0, $(PROFILE))
+TEST_MCS_FLAGS += -r:System.Web.Extensions.dll
+endif
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1) $(TEST_RESOURCE_FILES) UplevelHelperDefinitions.xml $(RESX_DIST) \
 		  SQLiteProviders_DatabaseSchema.sql
