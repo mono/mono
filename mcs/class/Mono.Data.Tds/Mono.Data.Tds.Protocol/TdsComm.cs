@@ -116,7 +116,7 @@ namespace Mono.Data.Tds.Protocol {
 				try {
 					// MS sets these socket option
 					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
-				} catch (SocketException se) {
+				} catch (SocketException) {
 					// Some platform may throw an exception, so
 					// eat all socket exception, yeaowww! 
 				}
