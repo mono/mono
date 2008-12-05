@@ -1,3 +1,8 @@
+2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Documentation/en/Mono.Simd/Vector*.xml: Removed references to
+	ExtractByteMask.
+
 2008-11-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Makefile: Add reference to System.Core so we can

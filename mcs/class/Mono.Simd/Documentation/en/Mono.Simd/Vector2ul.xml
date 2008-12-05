@@ -78,30 +78,6 @@
         <remarks>Equal components get the UInt64.MaxValue, unequal components get the zero value.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="ExtractByteMask">
-      <MemberSignature Language="C#" Value="public static int ExtractByteMask (Mono.Simd.Vector2ul va);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>Mono.Simd.Acceleration(Mono.Simd.AccelMode.SSE2)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="va" Type="Mono.Simd.Vector2ul" />
-      </Parameters>
-      <Docs>
-        <param name="va">Vector.</param>
-        <summary>Extracts a byte mask from the vector.</summary>
-        <returns>An integer with the low 16 bits representing the mask.</returns>
-        <remarks>This returns a 16-bit value where each bit is formed from the most significant bit of each byte.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="LoadAligned">
       <MemberSignature Language="C#" Value="public static Mono.Simd.Vector2ul LoadAligned (ref Mono.Simd.Vector2ul v);" />
       <MemberType>Method</MemberType>
