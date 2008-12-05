@@ -1,5 +1,10 @@
 2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Do not reset the CurrentCell when the handle is
+	created if the user has already set it.
+
+2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Fix CurrentCell to actually select the cell.
 
 2008-12-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>

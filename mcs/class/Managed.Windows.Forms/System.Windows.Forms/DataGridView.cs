@@ -3917,7 +3917,7 @@ namespace System.Windows.Forms {
 		{
 			base.OnHandleCreated(e);
 			
-			if (Rows.Count > 0 && Columns.Count > 0)
+			if (CurrentCell == null && Rows.Count > 0 && Columns.Count > 0)
 				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, false);
 		}
 
