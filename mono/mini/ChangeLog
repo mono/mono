@@ -1,5 +1,9 @@
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Tests for operator == and != on Vector4f.
+
+2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c (simd_intrinsic_emit_equality): Adapt to support Vector4f.
 
 	* simd-intrinsics.c: Kill useless enum.
