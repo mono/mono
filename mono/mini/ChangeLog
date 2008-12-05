@@ -1,5 +1,16 @@
 2008-12-05  Mark Probst  <mark.probst@gmail.com>
 
+	* exceptions-ppc.c: Merged with exceptions-ppc64.c.
+
+	* mini-ppc.c, mini-ppc.h: Remove PPC_STACK_ALIGNMENT and use
+	MONO_ARCH_FRAME_ALIGNMENT.  Struct for PPC64 function descriptors.
+
+	* exceptions-ppc64.c: Removed.
+
+	* Makefile.am: Use exceptions-ppc.c instead of exceptions-ppc64.c.
+
+2008-12-05  Mark Probst  <mark.probst@gmail.com>
+
 	* tramp-ppc.c, mini-ppc.c, mini-ppc.h: Merged tramp-ppc.c with
 	tramp-ppc64.c.
 
