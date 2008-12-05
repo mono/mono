@@ -76,6 +76,10 @@
 
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Tests for operator == and != on  Vector8us and Vector16b.
+
+2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* simd-intrinsics.c: Add support for operator == and != to Vector8(u)s and Vector16(s)b.
 
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
