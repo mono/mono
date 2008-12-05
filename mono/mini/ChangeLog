@@ -1,3 +1,12 @@
+2008-12-05  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.h: Merged mini-ppc64.h with mini-ppc.h.
+
+	* exceptions-ppc64.c, tramp-ppc64.c, mini-arch.h, Makefile.am: Use
+	mini-ppc.h instead of mini-ppc64.h.
+
+	* mini-ppc64.h: Removed.
+
 2008-12-04  Mark Mason   <mmason@upwardaccess.com>
 
 	* mini-mips.c: introduce USE_LDC_SDC: use ldc1/sdc1 to load/store doubles, disabled by default
