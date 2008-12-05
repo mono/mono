@@ -1,3 +1,13 @@
+2008-12-05  Marek Habersack  <mhabersack@novell.com>
+
+	* JsonSerializer.cs: StringBuilder extension methods aren't used
+	anymore, changed to calls to static methods in
+	StringBuilderExtensions.
+
+	* StringBuilderExtensions.cs: cannot use extension methods here
+	because this file is also used in the version 1.0 build which
+	doesn't reference System.Core
+
 2008-10-22  Marek Habersack  <mhabersack@novell.com>
 
 	* JsonDeserializer.cs: object can contain more than one unquoted
