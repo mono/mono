@@ -1,3 +1,8 @@
+2008-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Rework the code
+	a bit to also restore %rax.
+
 2008-12-05  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c: Some simple merges from mini-ppc64.c.
