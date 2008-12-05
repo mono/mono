@@ -1,5 +1,11 @@
 2008-12-04  Mark Mason   <mmason@upwardaccess.com>
 
+	* mini-mips.c: ifdef protect automatic promotions of R4 to R8.
+	
+	* mini-mips.c (mono_arch_emit_setret): handle R4 case with FCONV_TO_R4 instead of FMOVE
+
+2008-12-04  Mark Mason   <mmason@upwardaccess.com>
+
 	* mini-mips.c (mono_arch_output_basic_block): fix codegen for OP_OR_IMM/OP_IOR_IMM
 	
 2008-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
