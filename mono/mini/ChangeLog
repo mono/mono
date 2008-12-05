@@ -1,3 +1,8 @@
+2008-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_instances): Skip non-generic classes in
+	the TYPESPEC table.
+
 2008-12-05  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.h: Merged mini-ppc64.h with mini-ppc.h.
