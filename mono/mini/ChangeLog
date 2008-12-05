@@ -1,5 +1,10 @@
 2008-12-04  Mark Mason   <mmason@upwardaccess.com>
 
+	* cpu-mips.md: add long_conv_to_ovf_i4_2
+	* mini-mips.c: update/add various _OVF_ opcodes to fix test failures
+
+2008-12-04  Mark Mason   <mmason@upwardaccess.com>
+
 	* mini-mips.c: ifdef protect automatic promotions of R4 to R8.
 	
 	* mini-mips.c (mono_arch_emit_setret): handle R4 case with FCONV_TO_R4 instead of FMOVE
