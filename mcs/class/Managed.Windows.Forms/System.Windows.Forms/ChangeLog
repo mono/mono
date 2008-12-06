@@ -1,5 +1,11 @@
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Sorting fixes:
+	   - Be strict when sorting is enabled.
+	   - If there is a data source delegate the sorting request.
+
+2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* Binding.cs: When converting the data also try with the destination 
 	type typeconverter. This indirectly adds support for Nullable types 
 	in our databinding layer.

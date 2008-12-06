@@ -2916,40 +2916,46 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException ("dataGridViewColumn");
 			if (dataGridViewColumn.DataGridView != this)
 				throw new ArgumentException ("dataGridViewColumn");
-			// XXX: This is thrown too much, disable for now..
-			//if (DataSource != null && !dataGridViewColumn.IsDataBound)
-			//        throw new ArgumentException ("dataGridViewColumn");
-			//if (VirtualMode && !dataGridViewColumn.IsDataBound)
-			//        throw new InvalidOperationException ();
+
+			if (!EndEdit ())
+				return;
 
 			if (SortedColumn != null)
 				SortedColumn.HeaderCell.SortGlyphDirection = SortOrder.None;
 
-			EndEdit ();
-			
-			// Figure out if this is a numeric sort or text sort
-			bool is_numeric = true;
-			double n;
-			
-			foreach (DataGridViewRow row in Rows) {
-				object val = row.Cells[dataGridViewColumn.Index].Value;
-				
-				if (val != null && !double.TryParse (val.ToString (), out n)) {
-					is_numeric = false;
-					break;
-				}
-			}
-			
-			ColumnSorter sorter = new ColumnSorter (dataGridViewColumn, direction, is_numeric);
-			Rows.Sort (sorter);
-
 			sortedColumn = dataGridViewColumn;
-			sortOrder = (SortOrder)direction + 1;
+			sortOrder = direction == ListSortDirection.Ascending ? SortOrder.Ascending : SortOrder.Descending;
+			
+			if (Rows.Count == 0)
+				return;
 
-			dataGridViewColumn.HeaderCell.SortGlyphDirection = (SortOrder)direction + 1;
+			IBindingList bindingList = DataSource as IBindingList;
+			if (dataGridViewColumn.IsDataBound) {
+				if (bindingList != null && bindingList.SupportsSorting) {
+					CurrencyManager currencyManager = (CurrencyManager) this.BindingContext[DataSource];
+					bindingList.ApplySort (currencyManager.GetItemProperties()[dataGridViewColumn.DataPropertyName], direction);
+					dataGridViewColumn.HeaderCell.SortGlyphDirection = sortOrder;
+				}
+			} else {
+				// Figure out if this is a numeric sort or text sort
+				bool is_numeric = true;
+				double n;
+				
+				foreach (DataGridViewRow row in Rows) {
+					object val = row.Cells[dataGridViewColumn.Index].Value;
+					
+					if (val != null && !double.TryParse (val.ToString (), out n)) {
+						is_numeric = false;
+						break;
+					}
+				}
+				
+				ColumnSorter sorter = new ColumnSorter (dataGridViewColumn, direction, is_numeric);
+				Rows.Sort (sorter);
+				dataGridViewColumn.HeaderCell.SortGlyphDirection = sortOrder;
+			}
 
 			Invalidate ();
-
 			OnSorted (EventArgs.Empty);
 		}
 		
