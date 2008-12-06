@@ -655,6 +655,10 @@ namespace MonoTests.System.ComponentModel
 #endif
 			Assert.IsTrue (TypeDescriptor.GetConverter (typeof (Component)) is ComponentConverter, "#29");
 			Assert.IsTrue (TypeDescriptor.GetConverter (new Component()) is ComponentConverter, "#30");
+
+#if NET_2_0
+			Assert.AreEqual (typeof (NullableConverter), TypeDescriptor.GetConverter (typeof (int?)).GetType (), "#31");
+#endif
 		}
 		
 		[Test]

@@ -377,7 +377,10 @@ public sealed class TypeDescriptor
 	private static Type FindDefaultConverterType (Type type)
 	{
 		Type converterType = null;
-
+#if NET_2_0
+		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+			return typeof(NullableConverter);
+#endif
 		// Is there a default converter
 		foreach (DictionaryEntry entry in DefaultConverters) {
 			if ((Type)entry.Key == type)

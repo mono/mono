@@ -1,5 +1,9 @@
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* TypeDescriptor.cs: Added support for NullableConverter.
+
+2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* NullableConverter.cs: Implemented.
 
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
