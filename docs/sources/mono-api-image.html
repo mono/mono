@@ -1,7 +1,8 @@
 <h2>Image Manipulation</h2>
 
 	<p>Images are the component of assemblies that actually hold
-	the CIL code in the extended PE/COFF file. 
+	the CIL code and <a href="mono-api-metadata.html">metadata</a>
+	in the extended PE/COFF file.
 
 <h3>Synopsis</h3>
 
@@ -23,7 +24,8 @@ typedef enum {
 
 	<p>Images are the actual elements in the runtime that contain
 	the actual code being executed. 
-	
+
+<a name="cil_image_open"/>
 <h3>Opening and closing MonoImages</h3>
 
 <h4><a name="api:mono_image_open">mono_image_open</a></h4>

@@ -1,47 +1,650 @@
-<h3>Metadata Loader Locking</h3>
+<h1>Metadata Reading</h1>
 
-	<p>The locking functions here are used by code in class.c and
-	metadata.c to lock access to the shared hashtables inside the
-	MonoImage
+	<p>The Metadata API gives developers low-level access to the
+	information encoded in CLI modules: type and
+	methods definitions encoded in metadata as well as access to
+	the CIL code and embedded resources.
+
+	<p>Managed developers access this information using either the
+	System.Reflection API or a library
+	like <a href="http://www.mono-project.com/Cecil">Cecil</a>.
+
+	<p>To start using the Metadata API it is necessary
+	to <a href="mono-api-assembly.html#cil_assembly_load">open an
+	assembly</a> or a CIL image (a .dll or .exe file) using one of
+	the
+	<a href="mono-api-image.html#cil_image_open">CIL image
+	opening</a> API calls.
+
+<h2>Metadata Heaps</h2>
+
+	<p>ECMA CLI images contain four heaps that store different
+	kinds of information, these are:
+
+	<ul>
+		<li>GUID heap (called #GUID) contains 128-bit GUIDs,
+		you can get pointer to a GUID value by
+		calling <a href="#api:mono_metadata_guid_heap">mono_metadata_guid_heap</a>.
+
+		<li>User string heap (called #US), it contains user
+		visible strings, you can fetch a string from this heap
+		by calling
+		<a href="#api:mono_metadata_user_string">mono_metadata_user_string</a>.
+
+		<li>Blob heap (called #blob), it contains binary
+		blobs of data, you can get a blob
+		by <a href="#api:mono_metadata_blob_heap">mono_metadata_blob_heap</a>.
+		You can determine the size of the blob using
+		the <a href="#api:mono_metadata_decode_blob_size">mono_metadata_decode_blob_size</a>. 
 	
-<h4><a name="api:mono_loader_lock">mono_loader_lock</a></h4>
-<h4><a name="api:mono_loader_unlock">mono_loader_unlock</a></h4>
+	</ul>
 
-<h3>Metadata access API</h3>
+	<p>The ECMA file format also has an extra section called the
+	"#~" stream, this stream is the one that holds the metadata
+	tables.   There is a high-level API to get access to the
+	contents of this API, described in the
+	section <a href="#metadata-tables">Metadata Tables</a>.
+	
+<h4><a name="api:mono_metadata_guid_heap">mono_metadata_guid_heap</a></h4>
+<h4><a name="api:mono_metadata_string_heap">mono_metadata_string_heap</a></h4>
+<h4><a name="api:mono_metadata_blob_heap">mono_metadata_blob_heap</a></h4>
+<h4><a name="api:mono_metadata_user_string">mono_metadata_user_string</a></h4>
+<h4><a name="api:mono_metadata_decode_blob_size">mono_metadata_decode_blob_size</a></h4>
+
+<a name="metadata-tables"/>
+<h2>Metadata Tables</h2>
+
+	<p>Metadata is encoded in a number of tables included on every
+	CIL image.   These tables contain type definitions, member
+	definitions and so on, these constants are defined in the ECMA 335
+	specification Partition II section 22.   The following table
+	shows the C constants defined in the Mono runtime and how they
+	map to the equivalent ECMA CLI metadata table:
+
+	<center>
+	<table border=1>
+	  <thead>
+	    <td>
+	       <b>ECMA CLI Table Name</b>
+	    </td>
+	    <td>
+	    <b>C Constant Name</b>
+	    </td>
+	    <td>
+	       <b>Table Schema (Array Size + Columns Constants)</b>
+	    </td>
+	  </thead>
+<td>Assembly</td><td>MONO_TABLE_ASSEMBLY</td><td>
+Array size: 
+MONO_ASSEMBLY_SIZE
+<ul>
+	<li>MONO_ASSEMBLY_HASH_ALG
+	<li>MONO_ASSEMBLY_MAJOR_VERSION
+	<li>MONO_ASSEMBLY_MINOR_VERSION
+	<li>MONO_ASSEMBLY_BUILD_NUMBER
+	<li>MONO_ASSEMBLY_REV_NUMBER
+	<li>MONO_ASSEMBLY_FLAGS
+	<li>MONO_ASSEMBLY_PUBLIC_KEY
+	<li>MONO_ASSEMBLY_NAME
+	<li>MONO_ASSEMBLY_CULTURE
+</ul>
+</td>
+</tr>
+
+<td>AssemblyOS</td><td>MONO_TABLE_ASSEMBLYOS</td><td>
+Array size: 
+MONO_ASSEMBLYOS_SIZE
+<ul>
+	<li>MONO_ASSEMBLYOS_PLATFORM
+	<li>MONO_ASSEMBLYOS_MAJOR_VERSION
+	<li>MONO_ASSEMBLYOS_MINOR_VERSION
+</ul>
+</td>
+</tr>
+
+<td>AssemblyProcessor</td><td>MONO_TABLE_ASSEMBLYPROCESSOR</td><td>Array
+size: MONO_ASSEMBLYPROCESSOR_SIZE
+<ul>
+	<li>MONO_ASSEMBLY_PROCESSOR
+</ul>
+</td>
+</tr>
+
+<td>AssemblyRef</td><td>MONO_TABLE_ASSEMBLYREF</td><td>
+Array size: 
+MONO_ASSEMBLYREF_SIZE
+<ul>
+	<li>MONO_ASSEMBLYREF_MAJOR_VERSION
+	<li>MONO_ASSEMBLYREF_MINOR_VERSION
+	<li>MONO_ASSEMBLYREF_BUILD_NUMBER
+	<li>MONO_ASSEMBLYREF_REV_NUMBER
+	<li>MONO_ASSEMBLYREF_FLAGS
+	<li>MONO_ASSEMBLYREF_PUBLIC_KEY
+	<li>MONO_ASSEMBLYREF_NAME
+	<li>MONO_ASSEMBLYREF_CULTURE
+	<li>MONO_ASSEMBLYREF_HASH_VALUE
+</ul>
+</td>
+</tr>
+
+<td>AssemblyRefProcessor</td><td>MONO_TABLE_ASSEMBLYREFPROCESSOR</td><td>Array
+size: MONO_ASSEMBLYREFPROC_SIZE
+<ul>
+	<li>MONO_ASSEMBLYREFPROC_PROCESSOR
+	<li>MONO_ASSEMBLYREFPROC_ASSEMBLYREF
+</ul>
+</td>
+</tr>
+
+<td>AssemblyRefOS</td><td>MONO_TABLE_ASSEMBLYREFOS</td><td>
+Array size: 
+	<li>MONO_ASSEMBLYREFOS_SIZE
+<ul>
+	<li>MONO_ASSEMBLYREFOS_PLATFORM
+	<li>MONO_ASSEMBLYREFOS_MAJOR_VERSION
+	<li>MONO_ASSEMBLYREFOS_MINOR_VERSION
+	<li>MONO_ASSEMBLYREFOS_ASSEMBLYREF
+</ul>
+</td>
+</tr>
+
+<td>ClassLayout</td><td>MONO_TABLE_CLASSLAYOUT</td><td>
+Array size: 
+MONO_CLASSLAYOUT_SIZE
+<ul>
+	<li>MONO_CLASS_LAYOUT_PACKING_SIZE
+	<li>MONO_CLASS_LAYOUT_CLASS_SIZE
+	<li>MONO_CLASS_LAYOUT_PARENT
+</ul>
+</td>
+</tr>
+
+<td>Constant</td><td>MONO_TABLE_CONSTANT</td><td>
+Array size: 
+MONO_CONSTANT_SIZE
+<ul>
+	<li>MONO_CONSTANT_TYPE
+	<li>MONO_CONSTANT_PADDING
+	<li>MONO_CONSTANT_PARENT
+	<li>MONO_CONSTANT_VALUE
+</ul>
+</td>
+</tr>
+
+<td>CustomAttribute</td><td>MONO_TABLE_CUSTOMATTRIBUTE</td><td>
+Array size:
+MONO_CUSTOM_ATTR_SIZE
+<ul>
+	<li>MONO_CUSTOM_ATTR_PARENT
+	<li>MONO_CUSTOM_ATTR_TYPE
+	<li>MONO_CUSTOM_ATTR_VALUE
+</ul>
+</td>
+</tr>
+
+<td>DeclSecurity</td><td>MONO_TABLE_DECLSECURITY</td><td>
+Array size: 
+MONO_DECL_SECURITY_SIZE
+<ul>
+	<li>MONO_DECL_SECURITY_ACTION
+	<li>MONO_DECL_SECURITY_PARENT
+	<li>MONO_DECL_SECURITY_PERMISSIONSET
+</ul>
+</td>
+</tr>
+
+<td>EventMap</td><td>MONO_TABLE_EVENTMAP</td><td>
+Array size: 
+MONO_EVENT_MAP_SIZE
+<ul>
+	<li>MONO_EVENT_MAP_PARENT
+	<li>MONO_EVENT_MAP_EVENTLIST
+</ul>
+</td>
+</tr>
+
+<td>EventPtr</td><td>MONO_TABLE_EVENT_POINTER</td><td>
+Array size: 
+MONO_EVENT_POINTER_SIZE
+<ul>
+	<li>MONO_EVENT_POINTER_EVENT
+</ul>
+</td>
+</tr>
+
+<td>Event</td><td>MONO_TABLE_EVENT</td><td>
+Array size:  MONO_EVENT_SIZE
+<ul>
+	<li>MONO_EVENT_FLAGS
+	<li>MONO_EVENT_NAME
+	<li>MONO_EVENT_TYPE
+</ul>
+</td>
+</tr>
+
+<td>ExportedType</td><td>MONO_TABLE_EXPORTEDTYPE</td><td>
+Array size: 
+MONO_EXPORTEDTYPE_SIZE
+<ul>
+	<li>MONO_EXP_TYPE_FLAGS
+	<li>MONO_EXP_TYPE_TYPEDEF
+	<li>MONO_EXP_TYPE_NAME
+	<li>MONO_EXP_TYPE_NAMESPACE
+	<li>MONO_EXP_TYPE_IMPLEMENTATION
+</ul>
+</td>
+</tr>
+
+<td>Field</td><td>MONO_TABLE_FIELD</td><td>
+Array size:  MONO_FIELD_SIZE
+<ul>
+	<li>MONO_FIELD_FLAGS
+	<li>MONO_FIELD_NAME
+	<li>MONO_FIELD_SIGNATURE
+</ul>
+</td>
+</tr>
+
+<td>FieldLayoutt</td><td>MONO_TABLE_FIELDLAYOUT</td><td>
+Array size: 
+MONO_FIELDLAYOUT_SIZE
+<ul>
+	<li>MONO_FIELD_LAYOUT_OFFSET
+	<li>MONO_FIELD_LAYOUT_FIELD
+</ul>
+</td>
+</tr>
+
+<td>FieldMarshal</td><td>MONO_TABLE_FIELDMARSHAL</td><td>
+Array size: 
+MONO_FIELD_MARSHAL_SIZE
+<ul>
+	<li>MONO_FIELD_MARSHAL_PARENT
+	<li>MONO_FIELD_MARSHAL_NATIVE_TYPE
+</ul>
+</td>
+</tr>
+
+<td>FieldPtr</td><td>MONO_TABLE_FIELD_POINTER</td><td>
+Array size: 
+MONO_FIELD_POINTER_SIZE
+<ul>
+	<li>MONO_FIELD_POINTER_FIELD
+</ul>
+</td>
+</tr>
+
+<td>FieldRVA</td><td>MONO_TABLE_FIELDRVA</td><td>
+Array size: 
+MONO_FIELDRVA_SIZE
+<ul>
+	<li>MONO_FIELD_RVA_RVA
+	<li>MONO_FIELD_RVA_FIELD
+</ul>
+</td>
+</tr>
+
+<td>File</td><td>MONO_TABLE_FILE</td><td>
+Array size:  MONO_FILE_SIZE
+<ul>
+	<li>MONO_FILE_FLAGS
+	<li>MONO_FILE_NAME
+	<li>MONO_FILE_HASH_VALUE
+</ul>
+</td>
+</tr>
+
+<td>GenericParam</td><td>MONO_TABLE_GENERICPARAM</td><td>
+Array size: 
+MONO_GENERICPARAM_SIZE
+<ul>
+	<li>MONO_GENERICPARAM_NUMBER
+	<li>MONO_GENERICPARAM_FLAGS
+	<li>MONO_GENERICPARAM_OWNER
+	<li>MONO_GENERICPARAM_NAME
+</ul>
+</td>
+</tr>
+
+<td>GenericParamConstraint</td><td>MONO_TABLE_GENERICPARAMCONSTRAINT</td><td>Array
+size: MONO_GENERICPARAMCONSTRAINT_SIZE
+<ul>
+	<li>MONO_GENPARCONSTRAINT_GENERICPAR
+	<li>MONO_GENPARCONSTRAINT_CONSTRAINT
+</ul>
+</td>
+
+<tr>
+<td>ImplMap</td><td>MONO_TABLE_IMPLMAP</td><td>
+Array size: 
+MONO_IMPLMAP_SIZE
+<ul>
+	<li>MONO_IMPLMAP_FLAGS
+	<li>MONO_IMPLMAP_MEMBER
+	<li>MONO_IMPLMAP_NAME
+	<li>MONO_IMPLMAP_SCOPE
+</ul>
+</td>
+</tr>
+
+
+<td>InterfaceImpl</td><td>MONO_TABLE_INTERFACEIMPL</td><td>
+Array size: 
+	<li>MONO_INTERFACEIMPL_SIZE
+<ul>
+	<li>MONO_INTERFACEIMPL_CLASS
+	<li>MONO_INTERFACEIMPL_INTERFACE
+</ul>
+</td>
+</tr>
+
+
+<td>ManifestResource</td><td>MONO_TABLE_MANIFESTRESOURCE</td><td>Array
+size: MONO_MANIFESTRESOURCE_SIZE
+<ul>
+	<li>MONO_MANIFEST_OFFSET
+	<li>MONO_MANIFEST_FLAGS
+	<li>MONO_MANIFEST_NAME
+	<li>MONO_MANIFEST_IMPLEMENTATION
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>MemberRef</td><td>MONO_TABLE_MEMBERREF</td><td>
+Array size: 
+MONO_MEMBERREF_SIZE
+<ul>
+	<li>MONO_MEMBERREF_CLASS
+	<li>MONO_MEMBERREF_NAME
+	<li>MONO_MEMBERREF_SIGNATURE
+</ul>
+</td>
+</tr>
+
+<td>MethodImpl</td><td>MONO_TABLE_METHODIMPL</td><td>
+Array size: 
+MONO_METHODIMPL_SIZE
+<ul>
+	<li>MONO_METHODIMPL_CLASS
+	<li>MONO_METHODIMPL_BODY
+	<li>MONO_METHODIMPL_DECLARATION
+</ul>
+</td>
+</tr>
+
+
+<td>MethodSpec</td><td>MONO_TABLE_METHODSPEC</td><td>
+Array size: 
+MONO_METHODSPEC_SIZE
+<ul>
+	<li>MONO_METHODSPEC_METHOD
+	<li>MONO_METHODSPEC_SIGNATURE
+</ul>
+</td>
+</tr>
+<tr>
+<td>MethodSemantics</td><td>MONO_TABLE_METHODSEMANTICS</td><td>Array
+size: MONO_METHOD_SEMA_SIZE
+<ul>
+	<li>MONO_METHOD_SEMA_SEMANTICS
+	<li>MONO_METHOD_SEMA_METHOD
+	<li>MONO_METHOD_SEMA_ASSOCIATION
+</ul>
+</td>
+</tr>
+
+<td>Moduleref</td><td>MONO_TABLE_MODULEREF</td><td>
+Array size: 
+MONO_MODULEREF_SIZE
+<ul>
+	<li>MONO_MODULEREF_NAME
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>Module</td><td>MONO_TABLE_MODULE</td><td>
+Array size: 
+MONO_MODULE_SIZE
+<br>
+Columns:
+<ul>
+	<li>MONO_MODULE_GENERATION
+	<li>MONO_MODULE_NAME
+	<li>MONO_MODULE_MVID
+	<li>MONO_MODULE_ENC
+	<li>MONO_MODULE_ENCBASE
+</ul>
+</td>
+</tr>
+
+<td>TypeRef</td><td>MONO_TABLE_TYPEREF</td><td>
+Array size: 
+MONO_TYPEREF_SIZE
+<ul>
+	<li>MONO_TYPEREF_SCOPE
+	<li>MONO_TYPEREF_NAME
+	<li>MONO_TYPEREF_NAMESPACE
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>MethodPtr</td><td>MONO_TABLE_METHOD_POINTER</td><td>
+Array size: 
+MONO_METHOD_POINTER_SIZE
+<ul>
+	<li>MONO_METHOD_POINTER_METHOD
+</ul>
+</td>
+</tr>
+
+<td>Method</td><td>MONO_TABLE_METHOD</td><td>
+Array size: 
+MONO_METHOD_SIZE
+<ul>
+	<li>MONO_METHOD_RVA
+	<li>MONO_METHOD_IMPLFLAGS
+	<li>MONO_METHOD_FLAGS
+	<li>MONO_METHOD_NAME
+	<li>MONO_METHOD_SIGNATURE
+	<li>MONO_METHOD_PARAMLIST
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>NestedClass</td><td>MONO_TABLE_NESTEDCLASS</td><td>
+Array size: 
+MONO_NESTEDCLASS_SIZE
+<ul>
+	<li>MONO_NESTED_CLASS_NESTED
+	<li>MONO_NESTED_CLASS_ENCLOSING
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>ParamPtr</td><td>MONO_TABLE_PARAM_POINTER</td><td>
+Array size: 
+MONO_PARAM_POINTER_SIZE
+<ul>
+	<li>MONO_PARAM_POINTER_PARAM
+</ul>
+</td>
+</tr>
+
+<td>Param</td><td>MONO_TABLE_PARAM</td><td>
+Array size:  MONO_PARAM_SIZE
+<ul>
+	<li>MONO_PARAM_FLAGS
+	<li>MONO_PARAM_SEQUENCE
+	<li>MONO_PARAM_NAME
+</ul>
+</td>
+</tr>
+
+<td>PropertyMap</td><td>MONO_TABLE_PROPERTYMAP</td><td>
+Array size: 
+MONO_PROPERTY_MAP_SIZE
+<ul>
+	<li>MONO_PROPERTY_MAP_PARENT
+	<li>MONO_PROPERTY_MAP_PROPERTY_LIST
+</ul>
+</td>
+</tr>
+
+<td>PropertyPtr</td><td>MONO_TABLE_PROPERTY_POINTER</td><td>Array
+size: MONO_PROPERTY_POINTER_SIZE
+<ul>
+	<li>MONO_PROPERTY_POINTER_PROPERTY
+</ul>
+</td>
+</tr>
+
+<td>Property</td><td>MONO_TABLE_PROPERTY</td><td>
+Array size: 
+MONO_PROPERTY_SIZE
+<ul>
+	<li>MONO_PROPERTY_FLAGS
+	<li>MONO_PROPERTY_NAME
+	<li>MONO_PROPERTY_TYPE
+</ul>
+</td>
+</tr>
+<tr>
+<td>StandaloneSig</td><td>MONO_TABLE_STANDALONESIG</td><td>
+Array size: 
+	<li>MONO_STAND_ALONE_SIGNATURE_SIZE
+<ul>
+	<li>MONO_STAND_ALONE_SIGNATURE
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>TypeDef</td><td>MONO_TABLE_TYPEDEF</td><td>
+Array size: 
+MONO_TYPEDEF_SIZE
+<ul>
+	<li>MONO_TYPEDEF_FLAGS
+	<li>MONO_TYPEDEF_NAME
+	<li>MONO_TYPEDEF_NAMESPACE
+	<li>MONO_TYPEDEF_EXTENDS
+	<li>MONO_TYPEDEF_FIELD_LIST
+	<li>MONO_TYPEDEF_METHOD_LIST
+</ul>
+</td>
+</tr>
+
+<tr>
+<td>TypeSpec</td><td>MONO_TABLE_TYPESPEC</td><td>
+Array size: 
+MONO_TYPESPEC_SIZE
+<ul>
+	<li>MONO_TYPESPEC_SIGNATURE
+</ul>
+</td>
+</tr>
+
+	</table>
+	</center>
+
+	<p>Each table can contain zero or more rows, you must call the
+	<a href="#api:mono_metadata_table_rows">mono_metadata_table_rows</a>
+	to obtain the number of rows in a table, and then you can
+	extract individual row values by using
+	the <a href="#api:mono_metadata_decode_row">mono_metadata_decode_row</a>
+	or
+	the <a href="#api:mono_metadata_decode_row_col">mono_metadata_decode_row_col</a>.
+	When decoding rows you must provide an guint32 array large
+	enough to hold as many columns as the table contains.
+	
+	<p>The metadata tables are stored in the MonoImage, you obtain
+	a pointer to the MonoTableInfo by calling
+	the <a href="#api:mono_image_get_table_info">mono_image_get_table_info</a>
+	and then you can scan those tables, for example:
+
+	<pre class="prettyprint">
+	/*
+	 * Dumps a few fields from the AssemblyRef table
+	 */
+	void DumpAssemblyRefs (MonoImage *image)
+	{
+		/* Get a pointer to the AssemblyRef metadata table */
+		MonoTableInfo *t = mono_image_get_table_info (image, MONO_TABLE_ASSEMBLYREF);
+
+		/* Fetch the number of rows available in the table */
+		int rows = mono_table_info_get_rows (t);
+		int i;
+
+		/* For each row, print some of its values */
+		for (i = 0; i &lt; rows; i++){
+			/* Space where we extract one row from the metadata table */
+			guint32 cols [MONO_ASSEMBLYREF_SIZE];
+
+			/* Extract the row into the array cols */
+			mono_metadata_decode_row (t, i, cols, MONO_ASSEMBLYREF_SIZE);
+
+			fprintf (output, "%d: Version=%d.%d.%d.%d\n\tName=%s\n", i + 1,
+                        	cols [MONO_ASSEMBLYREF_MAJOR_VERSION],
+                        	cols [MONO_ASSEMBLYREF_MINOR_VERSION],
+                        	cols [MONO_ASSEMBLYREF_BUILD_NUMBER],
+                        	cols [MONO_ASSEMBLYREF_REV_NUMBER],
+                        	mono_metadata_string_heap (image, cols [MONO_ASSEMBLYREF_NAME]));
+		}
+	}
+	</pre>
+
+	<p>The above program shows the following output when ran on
+	the C# compiler:
+
+	<pre>
+	1: Version=1.0.5000.0
+		Name=mscorlib
+	2: Version=1.0.5000.0
+		Name=System
+	3: Version=1.0.5000.0
+		Name=System.Xml
+	</pre>
+
+	<p>
+
+<h3>Metadata Tables API</h3>
+
+	<p>These are the APIs for dealing with tables:
+
+<h4><a name="api:mono_image_get_table_info">mono_image_get_table_info</a></h4>
+<h4><a name="api:mono_image_get_table_rows">mono_image_get_table_rows</a></h4>
+<h4><a name="api:mono_metadata_get_table">mono_metadata_get_table</a></h4>
+<h4><a name="api:mono_meta_table_name">mono_meta_table_name</a></h4>
+<h4><a name="api:mono_metadata_decode_row_col">mono_metadata_decode_row_col</a></h4>
+<h4><a name="api:mono_metadata_decode_row">mono_metadata_decode_row</a></h4>
+<h4><a name="api:mono_metadata_compute_size">mono_metadata_compute_size</a></h4>
+<h4><a name="api:mono_metadata_custom_attrs_from_index">mono_metadata_custom_attrs_from_index</a></h4>
+<h4><a name="api:mono_metadata_decode_signed_value">mono_metadata_decode_signed_value</a></h4>
+<h4><a name="api:mono_metadata_decode_value">mono_metadata_decode_value</a></h4>
+<h4><a name="api:mono_metadata_encode_value">mono_metadata_encode_value</a></h4>
+	
+<h2>Metadata access API</h2>
 
 	<p>This is the low-level API for accessing the metadata
 	images.
 	
 <h4><a name="api:mono_cli_rva_image_map">mono_cli_rva_image_map</a></h4>
 <h4><a name="api:mono_pe_file_open">mono_pe_file_open</a></h4> 
-<h4><a name="api:mono_meta_table_name">mono_meta_table_name</a></h4>
-<h4><a name="api:mono_metadata_blob_heap">mono_metadata_blob_heap</a></h4>
-<h4><a name="api:mono_metadata_compute_size">mono_metadata_compute_size</a></h4>
-<h4><a name="api:mono_metadata_custom_attrs_from_index">mono_metadata_custom_attrs_from_index</a></h4>
-<h4><a name="api:mono_metadata_decode_blob_size">mono_metadata_decode_blob_size</a></h4>
-<h4><a name="api:mono_metadata_decode_row_col">mono_metadata_decode_row_col</a></h4>
-<h4><a name="api:mono_metadata_decode_row">mono_metadata_decode_row</a></h4>
-<h4><a name="api:mono_metadata_decode_signed_value">mono_metadata_decode_signed_value</a></h4>
-<h4><a name="api:mono_metadata_decode_value">mono_metadata_decode_value</a></h4>
-<h4><a name="api:mono_metadata_encode_value">mono_metadata_encode_value</a></h4>
 <h4><a name="api:mono_metadata_events_from_typedef">mono_metadata_events_from_typedef</a></h4>
 <h4><a name="api:mono_metadata_field_info">mono_metadata_field_info</a></h4>
 <h4><a name="api:mono_metadata_free_array">mono_metadata_free_array</a></h4>
 <h4><a name="api:mono_metadata_free_marshal_spec">mono_metadata_free_marshal_spec</a></h4>
 <h4><a name="api:mono_metadata_free_mh">mono_metadata_free_mh</a></h4>
 <h4><a name="api:mono_metadata_free_type">mono_metadata_free_type</a></h4>
-<h4><a name="api:mono_metadata_generic_inst_equal">mono_metadata_generic_inst_equal</a></h4>
-<h4><a name="api:mono_metadata_generic_inst_hash">mono_metadata_generic_inst_hash</a></h4>
-<h4><a name="api:mono_metadata_generic_inst_is_valuetype">mono_metadata_generic_inst_is_valuetype</a></h4>
-<h4><a name="api:mono_metadata_generic_method_equal">mono_metadata_generic_method_equal</a></h4>
 <h4><a name="api:mono_metadata_get_constant_index">mono_metadata_get_constant_index</a></h4>
 <h4><a name="api:mono_metadata_get_marshal_info">mono_metadata_get_marshal_info</a></h4>
-<h4><a name="api:mono_metadata_get_table">mono_metadata_get_table</a></h4>
-<h4><a name="api:mono_metadata_guid_heap">mono_metadata_guid_heap</a></h4>
 <h4><a name="api:mono_metadata_implmap_from_method">mono_metadata_implmap_from_method</a></h4>
 <h4><a name="api:mono_metadata_interfaces_from_typedef_full">mono_metadata_interfaces_from_typedef_full</a></h4>
 <h4><a name="api:mono_metadata_interfaces_from_typedef">mono_metadata_interfaces_from_typedef</a></h4>
-<h4><a name="api:mono_metadata_load_generic_params">mono_metadata_load_generic_params</a></h4>
 <h4><a name="api:mono_metadata_locate">mono_metadata_locate</a></h4>
 <h4><a name="api:mono_metadata_locate_token">mono_metadata_locate_token</a></h4>
 <h4><a name="api:mono_metadata_methods_from_event">mono_metadata_methods_from_event</a></h4>
@@ -49,8 +652,17 @@
 <h4><a name="api:mono_metadata_nested_in_typedef">mono_metadata_nested_in_typedef</a></h4>
 <h4><a name="api:mono_metadata_nesting_typedef">mono_metadata_nesting_typedef</a></h4>
 <h4><a name="api:mono_metadata_packing_from_typedef">mono_metadata_packing_from_typedef</a></h4>
-<h4><a name="api:mono_metadata_parse_array_full">mono_metadata_parse_array_full</a></h4>
-<h4><a name="api:mono_metadata_parse_array">mono_metadata_parse_array</a></h4>
+<h4><a name="api:mono_metadata_properties_from_typedef">mono_metadata_properties_from_typedef</a></h4>
+<h4><a name="api:mono_metadata_token_from_dor">mono_metadata_token_from_dor</a></h4>
+<h4><a name="api:mono_metadata_typedef_from_field">mono_metadata_typedef_from_field</a></h4>
+<h4><a name="api:mono_metadata_typedef_from_method">mono_metadata_typedef_from_method</a></h4>
+<h4><a name="api:mono_metadata_type_equal">mono_metadata_type_equal</a></h4>
+<h4><a name="api:mono_metadata_type_hash">mono_metadata_type_hash</a></h4>
+<h4><a name="api:mono_metadata_declsec_from_index">mono_metadata_declsec_from_index</a></h4>
+<h4><a name="api:mono_metadata_free_method_signature">mono_metadata_free_method_signature</a></h4>
+
+<h3>Retrieving Objects from Tokens</h3>
+
 <h4><a name="api:mono_metadata_parse_custom_mod">mono_metadata_parse_custom_mod</a></h4>
 <h4><a name="api:mono_metadata_parse_field_type">mono_metadata_parse_field_type</a></h4>
 <h4><a name="api:mono_metadata_parse_marshal_spec">mono_metadata_parse_marshal_spec</a></h4>
@@ -64,25 +676,29 @@
 <h4><a name="api:mono_metadata_parse_typedef_or_ref">mono_metadata_parse_typedef_or_ref</a></h4>
 <h4><a name="api:mono_metadata_parse_type_full">mono_metadata_parse_type_full</a></h4>
 <h4><a name="api:mono_metadata_parse_type">mono_metadata_parse_type</a></h4>
-<h4><a name="api:mono_metadata_properties_from_typedef">mono_metadata_properties_from_typedef</a></h4>
-<h4><a name="api:mono_metadata_string_heap">mono_metadata_string_heap</a></h4>
-<h4><a name="api:mono_metadata_token_from_dor">mono_metadata_token_from_dor</a></h4>
-<h4><a name="api:mono_metadata_typedef_from_field">mono_metadata_typedef_from_field</a></h4>
-<h4><a name="api:mono_metadata_typedef_from_method">mono_metadata_typedef_from_method</a></h4>
-<h4><a name="api:mono_metadata_type_equal">mono_metadata_type_equal</a></h4>
-<h4><a name="api:mono_metadata_type_hash">mono_metadata_type_hash</a></h4>
-<h4><a name="api:mono_metadata_user_string">mono_metadata_user_string</a></h4>
-<h4><a name="api:mono_metadata_declsec_from_index">mono_metadata_declsec_from_index</a></h4>
-<h4><a name="api:mono_metadata_free_method_signature">mono_metadata_free_method_signature</a></h4>
 
-<h3>Generics Support</h3>
+<h2>Metadata Loader Locking</h2>
+
+	<p>The locking functions here are used by code in class.c and
+	metadata.c to lock access to the shared hashtables inside the
+	MonoImage.
+	
+<h4><a name="api:mono_loader_lock">mono_loader_lock</a></h4>
+<h4><a name="api:mono_loader_unlock">mono_loader_unlock</a></h4>
+
+<h2>Generics Support</h2>
 
 <h4><a name="api:mono_metadata_generic_class_is_valuetype">mono_metadata_generic_class_is_valuetype</a></h4> 
 <h4><a name="api:mono_metadata_has_generic_params">mono_metadata_has_generic_params</a></h4> 
 <h4><a name="api:mono_metadata_inflate_generic_inst">mono_metadata_inflate_generic_inst</a></h4> 
 <h4><a name="api:mono_metadata_parse_generic_inst">mono_metadata_parse_generic_inst</a></h4> 
+<h4><a name="api:mono_metadata_generic_inst_equal">mono_metadata_generic_inst_equal</a></h4>
+<h4><a name="api:mono_metadata_generic_inst_hash">mono_metadata_generic_inst_hash</a></h4>
+<h4><a name="api:mono_metadata_load_generic_params">mono_metadata_load_generic_params</a></h4>
+<h4><a name="api:mono_metadata_generic_inst_is_valuetype">mono_metadata_generic_inst_is_valuetype</a></h4>
+<h4><a name="api:mono_metadata_generic_method_equal">mono_metadata_generic_method_equal</a></h4>
 
-<h3>Tokens</h3>
+<h2>Tokens</h2>
 
 <h4><a name="api:mono_ldtoken">mono_ldtoken</a></h4>
 <h4><a name="api:mono_lookup_dynamic_token">mono_lookup_dynamic_token</a></h4>
@@ -90,25 +706,12 @@
 <h4><a name="api:mono_exception_from_token">mono_exception_from_token</a></h4> 
 <h4><a name="api:mono_create_jit_trampoline_from_token">mono_create_jit_trampoline_from_token</a></h4> 
 
-<h3>Working with signatures</h3>
-
-<h4><a name="api:mono_signature_explicit_this">mono_signature_explicit_this</a></h4>
-<h4><a name="api:mono_signature_get_call_conv">mono_signature_get_call_conv</a></h4>
-<h4><a name="api:mono_signature_get_desc">mono_signature_get_desc</a></h4>
-<h4><a name="api:mono_signature_get_param_count">mono_signature_get_param_count</a></h4>
-<h4><a name="api:mono_signature_get_params">mono_signature_get_params</a></h4>
-<h4><a name="api:mono_signature_get_return_type">mono_signature_get_return_type</a></h4>
-<h4><a name="api:mono_signature_hash">mono_signature_hash</a></h4>
-<h4><a name="api:mono_signature_is_instance">mono_signature_is_instance</a></h4>
-<h4><a name="api:mono_signature_vararg_start">mono_signature_vararg_start</a></h4>
-
-
-<h3>OpCodes</h3>
+<h2>OpCodes</h2>
 
 <h4><a name="api:mono_opcode_name">mono_opcode_name</a></h4>
 <h4><a name="api:mono_opcode_value">mono_opcode_value</a></h4>
 
-<h3>Metadata Loading Errors</h3>
+<h2>Metadata Loading Errors</h2>
 
 	<p>The routines in this section are used to cope with errors
 	during metadata loading.  Errors in metadata handling can
