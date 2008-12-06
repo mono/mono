@@ -190,9 +190,8 @@ namespace System.Windows.Forms {
 				if (list is IBindingListView)
 					((IBindingListView)list).Filter = filter;
 			}
-
-			if (raise_list_changed_events)
-				OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1));
+			
+			ResetBindings (true);
 		}
 
 		void IBindingListChangedHandler (object o, ListChangedEventArgs args)

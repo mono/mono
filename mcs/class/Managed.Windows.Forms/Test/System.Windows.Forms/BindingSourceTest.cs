@@ -1802,7 +1802,6 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ListChanged_DataSourceSet ()
 		{
 			IBindingList bindinglist = new BindingList<string> ();

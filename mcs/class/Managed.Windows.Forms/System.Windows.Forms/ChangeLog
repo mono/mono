@@ -1,5 +1,9 @@
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* BindingSource.cs: Reset the bindings. Fixes a NotWorking test.
+
+2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Send WM_HELP only to the focused window.
 
 2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
