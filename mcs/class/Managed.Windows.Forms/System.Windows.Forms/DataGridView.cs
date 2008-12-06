@@ -5342,16 +5342,17 @@ namespace System.Windows.Forms {
 			if (setAnchorCellAddress)
 				anchor_cell = new Point (columnIndex, rowIndex);
 
-			DataGridViewCell oldCell = CurrentCell;
-			currentCell = cell;
-			currentCellAddress = new Point (columnIndex, rowIndex);
-			if (currentCell != oldCell) {
-				if (oldCell != null) {
+			if (cell != currentCell) {
+				if (currentCell != null) {
 					if (currentCell.IsInEditMode)
 						EndEdit ();
-					OnCellLeave (new DataGridViewCellEventArgs(oldCell.ColumnIndex, oldCell.RowIndex));
-					OnRowLeave (new DataGridViewCellEventArgs (oldCell.ColumnIndex, oldCell.RowIndex));
+					OnCellLeave (new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
+					OnRowLeave (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 				}
+
+				currentCell = cell;
+				currentCellAddress = new Point (columnIndex, rowIndex);
+
 				UpdateBindingPosition (currentCell.RowIndex);
 				OnRowEnter (new DataGridViewCellEventArgs (cell.ColumnIndex, cell.RowIndex));
 				OnCellEnter (new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));

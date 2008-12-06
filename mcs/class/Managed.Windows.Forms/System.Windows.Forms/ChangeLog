@@ -1,5 +1,10 @@
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fix the cell editing by delaying the currentCell 
+	setting to after EndEdit is called for the old cell.
+
+2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* BindingSource.cs: Reset the bindings. Fixes a NotWorking test.
 
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
