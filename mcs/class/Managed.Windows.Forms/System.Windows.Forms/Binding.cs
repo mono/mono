@@ -414,7 +414,7 @@ namespace System.Windows.Forms {
 
 		void PushData (bool force)
 		{
-			if (manager == null || manager.IsSuspended || manager.Count == 0 || manager.Current == null)
+			if (manager == null || manager.IsSuspended || manager.Count == 0 || manager.Position == -1)
 				return;
 #if NET_2_0
 			if (!force && control_update_mode == ControlUpdateMode.Never)

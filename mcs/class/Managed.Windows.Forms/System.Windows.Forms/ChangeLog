@@ -1,3 +1,14 @@
+2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CurrencyManager.cs: Fix exceptions when resetting the data source 
+	for the same time (e.g. in ComboBox): 
+	   - Do not set the list position if we are still transferring data
+	   - When resetting the list firstly push the data then update the 
+	   binding.
+	* Binding.cs: Check BindingManager.Position == -1 instead of 
+	BindingManager.Current == null in order to avoid unexpected 
+	exceptions.
+
 2008-12-05  Brad Taylor  <brad@getcoded.net>
 
 	* MonthCalendar.cs: Add UIA specific events so that we can know when

@@ -362,12 +362,8 @@ namespace System.Windows.Forms {
 		private void UpdateItem ()
 		{
 			// Probably should be validating or something here
-			if (listposition != -1) {
-			}
-			else if (list.Count > 0) {
-
+			if (!transfering_data && listposition == -1 && list.Count > 0) {
 				listposition = 0;
-				
 				BeginEdit ();
 			}
 		}
@@ -468,10 +464,9 @@ namespace System.Windows.Forms {
 					OnItemChanged (new ItemChangedEventArgs (e.NewIndex));
 				}
 				break;
-			default:
-				PushData ();
-				OnItemChanged (new ItemChangedEventArgs (-1));
-				//				UpdateIsBinding ();
+			case ListChangedType.Reset:
+				PushData();
+				UpdateIsBinding();
 				break;
 			}
 #if NET_2_0
