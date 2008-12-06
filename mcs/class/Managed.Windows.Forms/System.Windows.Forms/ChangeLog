@@ -1,3 +1,7 @@
+2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* XplatUIX11.cs: Send WM_HELP only to the focused window.
+
 2008-12-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CurrencyManager.cs: Fix exceptions when resetting the data source 
