@@ -1,5 +1,10 @@
 2008-12-05  Mark Mason   <mmason@upwardaccess.com>
 
+	* mini-mips.c (mono_arch_lowering_pass): handle OP_IMUL_IMM as well
+	(mono_arch_output_basic_block): fix OP_LOCALLOC code generation
+	
+2008-12-05  Mark Mason   <mmason@upwardaccess.com>
+
 	* mini-mips.c: cleanup warnings
 	(mono_arch_lowering_pass): handle OP_LOCALLOC_IMM
 	(mips_adjust_stackframe): handle case of taking the address of stack locals
