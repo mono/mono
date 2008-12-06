@@ -607,6 +607,10 @@ namespace System.Windows.Forms {
 			if (converter != null && converter.CanConvertTo (data_type))
 				return converter.ConvertTo (data, data_type);
 
+			converter = TypeDescriptor.GetConverter (data_type);
+			if (converter != null && converter.CanConvertFrom (data.GetType()))
+				return converter.ConvertFrom (data);
+
 			if (data is IConvertible) {
 				object res = Convert.ChangeType (data, data_type);
 				if (data_type.IsInstanceOfType (res))

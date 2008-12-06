@@ -1,5 +1,11 @@
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* Binding.cs: When converting the data also try with the destination 
+	type typeconverter. This indirectly adds support for Nullable types 
+	in our databinding layer.
+
+2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: When cell editing is finished focus back the 
 	DataGridView. Fixes keyboard navigation post-editing.
 
