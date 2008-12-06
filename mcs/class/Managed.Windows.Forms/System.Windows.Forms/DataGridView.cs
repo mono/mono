@@ -2398,6 +2398,7 @@ namespace System.Windows.Forms {
 				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			}
 			
+			Focus ();
 			return true;
 		}
 
