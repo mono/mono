@@ -1,5 +1,9 @@
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* BindingSourceTest.cs: Sort_IBindingListView passes now.
+
+2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* BindingSourceTest.cs: ListChanged_DataSourceSet passes now.
 
 2008-12-02  Jonathan Pobst  <monkey@jpobst.com>

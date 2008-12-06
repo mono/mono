@@ -381,9 +381,7 @@ namespace MonoTests.System.Windows.Forms.DataBinding {
 			}
 		}
 
-		// Not working by now due to a bug in DataView
 		[Test]
-		[Category ("NotWorking")]
 		public void Sort_IBindingListView ()
 		{
 			BindingSource source = new BindingSource ();
