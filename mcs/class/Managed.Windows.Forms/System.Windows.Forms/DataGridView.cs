@@ -2285,9 +2285,13 @@ namespace System.Windows.Forms {
 				// Show the editing control
 				EditingControlInternal.Visible = true;
 
-				// Allow editing control to set focus as needed
-				(EditingControlInternal as IDataGridViewEditingControl).PrepareEditingControlForEdit (selectAll);
-				
+				IDataGridViewEditingControl dgvEditingControl = (IDataGridViewEditingControl) EditingControlInternal;
+				if (dgvEditingControl != null) {
+					dgvEditingControl.EditingControlDataGridView = this;
+					dgvEditingControl.EditingControlRowIndex = currentCell.OwningRow.Index;
+					dgvEditingControl.ApplyCellStyleToEditingControl (style);
+					dgvEditingControl.PrepareEditingControlForEdit (selectAll);
+				}
 				return true;
 			}
 

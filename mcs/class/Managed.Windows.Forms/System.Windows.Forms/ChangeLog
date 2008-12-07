@@ -1,3 +1,8 @@
+2008-12-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Fix our support for IDataGridViewEditingControl.
+	[Fixes bug #457112]
+
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Sorting fixes:
