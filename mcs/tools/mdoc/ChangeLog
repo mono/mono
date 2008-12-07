@@ -1,3 +1,12 @@
+2008-12-06  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Remove "exception" from DocsNodeOrder
+	  so that <exception/> elements aren't grouped together.  This causes
+	  `make doc-update` to result in ~0 changes in ../../class/corlib.
+	  Change the sorting of --exceptions-generated <exception/> nodes so
+	  that namespaces are taken into consideration, thus "properly"
+	  grouping types by namespaces, as I'd usually expect...
+
 2008-12-05  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs, Mono.Documentation/monodocs2html.cs: 

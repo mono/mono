@@ -1895,7 +1895,7 @@ class MDocUpdater : MDocCommand
 	}
 
 	static readonly string[] DocsNodeOrder = {
-		"typeparam", "param", "summary", "returns", "value", "remarks", "exception",
+		"typeparam", "param", "summary", "returns", "value", "remarks",
 	};
 
 	private static void OrderDocsNodes (XmlNode docs, XmlNodeList children)
@@ -2020,6 +2020,34 @@ class MDocUpdater : MDocCommand
 				paramref.SetAttribute ("name", newName);
 	}
 
+	class CrefComparer : XmlNodeComparer {
+
+		public CrefComparer ()
+		{
+		}
+
+		public override int Compare (XmlNode x, XmlNode y)
+		{
+			string xType = x.Attributes ["cref"].Value;
+			string yType = y.Attributes ["cref"].Value;
+			string xNamespace = GetNamespace (xType);
+			string yNamespace = GetNamespace (yType);
+
+			int c = xNamespace.CompareTo (yNamespace);
+			if (c != 0)
+				return c;
+			return xType.CompareTo (yType);
+		}
+
+		static string GetNamespace (string type)
+		{
+			int n = type.LastIndexOf ('.');
+			if (n >= 0)
+				return type.Substring (0, n);
+			return string.Empty;
+		}
+	}
+	
 	private static void UpdateExceptions (XmlNode docs, IMemberReference member)
 	{
 		foreach (var source in new ExceptionLookup (exceptions.Value)[member]) {
@@ -2037,7 +2065,7 @@ class MDocUpdater : MDocCommand
 			docs.AppendChild (e);
 		}
 		SortXmlNodes (docs, docs.SelectNodes ("exception"), 
-				new AttributeNameComparer ("cref"));
+				new CrefComparer ());
 	}
 
 	private static void NormalizeWhitespace(XmlElement e) {
