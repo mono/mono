@@ -1,5 +1,9 @@
 2008-12-07  Mark Mason   <mmason@upwardaccess.com>
 
+	* mini-mips.c (mono_arch_emit_call): narrow float arguments when passing as args.
+	
+2008-12-07  Mark Mason   <mmason@upwardaccess.com>
+
 	* mini-mips.c (mono_arch_lowering_pass): don't handle OP_ICONV_TO_R* or OP_R*CONST
 	(mono_arch_emit_setret): use OP_MIPS_CVTSD to return SP floats
 	(mono_arch_output_basic_block): simplify FP load/store, handle OP_MIPS_FBLT_UN
