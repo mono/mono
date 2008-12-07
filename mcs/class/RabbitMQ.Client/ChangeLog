@@ -1,3 +1,8 @@
+2008-12-07  Michael BArker  <mike@middlesoft.co.uk>
+
+	* Makefile:  Removed apigen, bootstrap and spec.  The code for
+	the generated interfaces is added to source control.
+
 2008-10-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	(This ChangeLog is for Mono integration.)

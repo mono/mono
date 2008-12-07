@@ -67,10 +67,18 @@ namespace Mono.Messaging.RabbitMQ {
 		private static readonly string USE_AUTHENTICATION_KEY = "UseAuthentication";
 		private static readonly string USE_DEAD_LETTER_QUEUE_KEY = "UseDeadLetterQueue";
 		private static readonly string USE_ENCRYPTION_KEY = "UseEncryption";
+		private static readonly string TRANSACTION_ID_KEY = "TrandactionId";
 		
 		private static readonly int PERSISTENT_DELIVERY_MODE = 2;
 		
-		public static IMessageBuilder WriteMessage (IModel ch, IMessage msg)
+		private readonly RabbitMQMessagingProvider provider;
+		
+		public MessageFactory (RabbitMQMessagingProvider provider)
+		{
+			this.provider = provider;
+		}
+		
+		public IMessageBuilder WriteMessage (IModel ch, IMessage msg)
 		{
 			BasicMessageBuilder mb = new BasicMessageBuilder (ch);
 			mb.Properties.MessageId = msg.Id;
@@ -103,6 +111,7 @@ namespace Mono.Messaging.RabbitMQ {
 			headers[SENDER_CERTIFICATE_KEY] = msg.SenderCertificate;
 			headers[TIME_TO_BE_RECEIVED_KEY] = msg.TimeToBeReceived.Ticks;
 			headers[TIME_TO_REACH_QUEUE_KEY] = msg.TimeToReachQueue.Ticks;
+			SetValue (headers, TRANSACTION_ID_KEY, msg.TransactionId);
 			headers[USE_AUTHENTICATION_KEY] = msg.UseAuthentication;
 			headers[USE_DEAD_LETTER_QUEUE_KEY] = msg.UseDeadLetterQueue;
 			headers[USE_ENCRYPTION_KEY] = msg.UseEncryption;
@@ -122,7 +131,7 @@ namespace Mono.Messaging.RabbitMQ {
 				headers[name] = val;
 		}
 		
-		public static IMessage ReadMessage (QueueReference destination, BasicDeliverEventArgs result)
+		public IMessage ReadMessage (QueueReference destination, BasicDeliverEventArgs result)
 		{
 			/*
 			if (destination == null)
@@ -133,22 +142,24 @@ namespace Mono.Messaging.RabbitMQ {
 			MessageBase msg = new MessageBase ();
 			Stream s = new MemoryStream ();
 			s.Write (result.Body, 0, result.Body.Length);
-			Console.WriteLine ("Body.Length Out {0}", result.Body.Length);
 			DateTime arrivedTime = DateTime.Now;
 			IDictionary headers = result.BasicProperties.Headers;
 			long senderVersion = (long) headers[SENDER_VERSION_KEY];
 			string sourceMachine = GetString (headers, SOURCE_MACHINE_KEY);
 			DateTime sentTime = AmqpTimestampToDateTime (result.BasicProperties.Timestamp);
+			string transactionId = GetString (headers, TRANSACTION_ID_KEY);
 			msg.SetDeliveryInfo (Acknowledgment.None,
 			                     arrivedTime,
-			                     new RabbitMQMessageQueue (destination),
+			                     new RabbitMQMessageQueue (provider,
+			                                               destination,
+			                                               true),
 			                     result.BasicProperties.MessageId,
 			                     MessageType.Normal,
 			                     new byte[0],
 			                     senderVersion,
 			                     sentTime,
 			                     sourceMachine,
-			                     null);
+			                     transactionId);
 			msg.CorrelationId = result.BasicProperties.CorrelationId;
 			msg.BodyStream = s;
 			msg.BodyType = (int) result.BasicProperties.Headers[BODY_TYPE_KEY];
@@ -156,8 +167,12 @@ namespace Mono.Messaging.RabbitMQ {
 				Enum.ToObject (typeof (AcknowledgeTypes), 
 				               headers[ACKNOWLEDGE_TYPE_KEY]);
 			string adminQueuePath = GetString (headers, ADMINISTRATION_QUEUE_KEY);
-			if (adminQueuePath != null)
-				msg.AdministrationQueue = new RabbitMQMessageQueue (QueueReference.Parse (adminQueuePath));
+			if (adminQueuePath != null) {
+				QueueReference qRef = QueueReference.Parse (adminQueuePath);
+				msg.AdministrationQueue = new RabbitMQMessageQueue (provider,
+				                                                    qRef,
+				                                                    true);
+			}
 			msg.AppSpecific = (int) headers[APP_SPECIFIC_KEY];
 			msg.AuthenticationProviderName = GetString (headers, AUTHENTICATION_PROVIDER_NAME_KEY);
 			msg.AuthenticationProviderType = (CryptographicProviderType) Enum.ToObject (typeof (CryptographicProviderType), headers[AUTHENTICATION_PROVIDER_TYPE_KEY]);
@@ -172,7 +187,7 @@ namespace Mono.Messaging.RabbitMQ {
 			msg.Priority = (MessagePriority) Enum.ToObject (typeof (MessagePriority), result.BasicProperties.Priority);
 			msg.Recoverable = result.BasicProperties.DeliveryMode == PERSISTENT_DELIVERY_MODE;
 			if (result.BasicProperties.ReplyTo != null)
-				msg.ResponseQueue = new RabbitMQMessageQueue (QueueReference.Parse (result.BasicProperties.ReplyTo));
+				msg.ResponseQueue = new RabbitMQMessageQueue (provider, QueueReference.Parse (result.BasicProperties.ReplyTo), true);
 			msg.SenderCertificate = (byte[]) headers[SENDER_CERTIFICATE_KEY];
 			msg.TimeToBeReceived = new TimeSpan((long) headers[TIME_TO_BE_RECEIVED_KEY]);
 			msg.TimeToReachQueue = new TimeSpan((long) headers[TIME_TO_REACH_QUEUE_KEY]);

@@ -1,3 +1,25 @@
+2008-12-07  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueue.cs:  Throw MessageUnavailableException when there are
+	no messages.
+
+2008-11-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueue.cs:  Added selector support for ReceiveBy{Id,CorrelationId}
+	and support for MessageQueueTransactionType, currently only None and Single
+	are supported.  Added PeekBy{Id,CorrelationId} methods.
+	* MessageFactory.cs:  Made read/write message methods non-static and requires
+	the MessagingProvider as a constructor parameter.
+
+2008-11-02  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueueTransaction.cs: New, Handles transactional delivery
+	by maintaining the transaction context.
+	* RabbitMQMessageQueue.cs: Added support for transactions, purging, deleting
+	and refactored some of the methods to improve the code reuse.
+	* RabbitMQMessagingProvider.cs:  Added methods for queue deletion and
+	creating transactions.
+
 2008-10-26  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageFactory.cs:  Support all properties defined in the 1.1 version of

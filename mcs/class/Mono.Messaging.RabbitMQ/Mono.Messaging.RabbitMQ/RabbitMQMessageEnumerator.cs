@@ -43,13 +43,16 @@ namespace Mono.Messaging.RabbitMQ {
 
 	public class RabbitMQMessageEnumerator : IMessageEnumerator {
 		
+		private readonly MessageFactory helper;
 		private readonly QueueReference qRef;
 		private IConnection cn = null;
 		private BasicDeliverEventArgs current = null;
 		private IModel model = null;
 		private Subscription subscription = null;
 		
-		public RabbitMQMessageEnumerator (QueueReference qRef) {
+		public RabbitMQMessageEnumerator (MessageFactory helper,
+		                                  QueueReference qRef) {
+			this.helper = helper;
 			this.qRef = qRef;
 		}
 		
@@ -140,9 +143,19 @@ namespace Mono.Messaging.RabbitMQ {
 			return msg;
 		}
 		
+		public IMessage RemoveCurrent (IMessageQueueTransaction transaction)
+		{
+			throw new NotSupportedException ("Unable to remove messages within a transaction");
+		}
+		
+		public IMessage RemoveCurrent (MessageQueueTransactionType transactionType)
+		{
+			throw new NotSupportedException ("Unable to remove messages within a transaction");
+		}
+		
 		private IMessage CreateMessage (BasicDeliverEventArgs result)
 		{
-			return MessageFactory.ReadMessage (qRef, result);
+			return helper.ReadMessage (qRef, result);
 		}
 
 	}

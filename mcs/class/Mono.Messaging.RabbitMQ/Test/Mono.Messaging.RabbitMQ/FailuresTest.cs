@@ -1,8 +1,8 @@
 //
-// Mono.Messaging
+// Test.Mono.Messaging.RabbitMQ
 //
 // Authors:
-//		Michael Barker (mike@middlesoft.co.uk)
+//	  Michael Barker (mike@middlesoft.co.uk)
 //
 // (C) 2008 Michael Barker
 //
@@ -29,35 +29,38 @@
 //
 
 using System;
-using System.Collections;
-using System.ComponentModel;
+using System.Messaging;
+using System.Reflection;
+using System.Threading;
+using System.Text.RegularExpressions;
 
-namespace Mono.Messaging {
+using NUnit.Framework;
 
-	public interface IMessageEnumerator : IDisposable {
-	
-		IMessage Current { get; }
+namespace MonoTests.Mono.Messaging.RabbitMQ
+{
+	[TestFixture]
+	public class FailuresTest {
+
+		[Test]
+		[ExpectedException (typeof (MessageQueueException))]
+		public void SendWithPathNotSet ()
+		{
+			MessageQueue q = new MessageQueue ();
+			Message m = new Message ("foobar", new BinaryMessageFormatter ());
+			
+			q.Send (m);
+		}
 		
-		void Close();
-
-		void Dispose(bool disposing);
-
-		bool MoveNext();
+		[Test]
+		[ExpectedException (typeof (MessageQueueException))]
+		public void SendInTransactionWithPathNotSet ()
+		{
+			MessageQueue q = new MessageQueue ();
+			Message m = new Message ("foobar", new BinaryMessageFormatter ());
+			MessageQueueTransaction tx = new MessageQueueTransaction ();
+			
+			q.Send (m, tx);
+		}
 		
-		//bool MoveNext(TimeSpan timeout);
-
-		IMessage RemoveCurrent();
-
-		IMessage RemoveCurrent(IMessageQueueTransaction transaction);
-
-		IMessage RemoveCurrent(MessageQueueTransactionType transactionType);
-
-		//IMessage RemoveCurrent(TimeSpan timeout);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transaction);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType);
-
 	}
-
 }

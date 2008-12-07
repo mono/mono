@@ -1,3 +1,39 @@
+2008-12-06  Michael Barker  <mike@middlesoft.co.uk>
+
+	* AdminTest.cs:  Updated to run against MS.NET
+	* BasicMessagingTest.cs:  Updated to run against MS.NET
+	* FailuresTest.cs:  Updated to run against MS.NET
+	* MessageEnumeratorTest.cs:  Updated to run against MS.NET
+	* MQUtil.cs:  Updated to run against MS.NET
+	* PeekTest.cs:  Updated to run against MS.NET
+	* SelectorTest.cs:  Updated to run against MS.NET
+	* TransactionMessagingTest.cs:  Updated to run against MS.NET
+
+2008-12-01  Michael Barker  <mike@middlesoft.co.uk>
+
+	* AdminTest.cs:  Added tests for queue discovery methods.
+
+2008-11-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* TransactionMessagingTest.cs:  Added tests for all methods that the
+	transaction type argument, currently only Single is supported.  Added methods
+	with transactions and timeout.
+	* PeekTest.cs:  Added PeekBy{Id,CorrelationId} tests.
+
+2008-11-09  Michael Barker  <mike@middlesoft.co.uk>
+
+	* SelectorTest.cs:  New, tests for ReceiveByXYZ() methods
+
+2008-11-04  Michael Barker  <mike@middlesoft.co.uk>
+
+	* PeekTest.cs:  New, tests for peeking at messages.
+
+2008-11-02  Michael Barker  <mike@middlesoft.co.uk>
+
+	* TransactionMessagingTest.cs: New, tests for transactional messaging.
+	* FailuresTest.cs: New, tests for exceptions.
+	* AdminTest.cs: New, tests for administration functions.
+
 2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
 
 	* BasicMessagingTest.cs: New

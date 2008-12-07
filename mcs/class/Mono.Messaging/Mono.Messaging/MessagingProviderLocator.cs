@@ -34,6 +34,9 @@ namespace Mono.Messaging
 {
 	public class MessagingProviderLocator 
 	{
+		private static IMessagingProvider provider = null;
+		private static readonly object syncObj = new object();
+		
 		public static IMessagingProvider GetProvider ()
 		{
 			//Assembly a = Assembly.Load("Mono.Messaging.RabbitMQ.dll");
@@ -41,17 +44,21 @@ namespace Mono.Messaging
 			
 			//foreach (type in ts)
 			//	Console.WriteLine (type.GetName ());
-			
-			Type t = Type.GetType ("Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider, Mono.Messaging.RabbitMQ");
-			if (t == null)
-				throw new Exception ("Can't find class");
-			ConstructorInfo ci = t.GetConstructor (
-				BindingFlags.Public | BindingFlags.Instance, 
-						Type.DefaultBinder, new Type[0],
-						new ParameterModifier[0]);
-			if (ci == null)
-				throw new Exception ("Can't find constructor");
-			return (IMessagingProvider) ci.Invoke (new object[0]);
+			lock (syncObj) {
+				if (provider == null) {
+					Type t = Type.GetType ("Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider, Mono.Messaging.RabbitMQ");
+					if (t == null)
+						throw new Exception ("Can't find class");
+					ConstructorInfo ci = t.GetConstructor (
+						BindingFlags.Public | BindingFlags.Instance, 
+								Type.DefaultBinder, new Type[0],
+								new ParameterModifier[0]);
+					if (ci == null)
+						throw new Exception ("Can't find constructor");
+					provider = (IMessagingProvider) ci.Invoke (new object[0]);
+				}
+			}
+			return provider;
 		}
 	}
 }

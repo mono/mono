@@ -107,9 +107,63 @@ namespace Mono.Messaging {
 			get; set;
 		}
 		
+		void Close ();
+		
+		void Purge ();
+		
 		void Send (IMessage message);
 		
+		void Send (IMessage message, IMessageQueueTransaction transaction);
+		
+		void Send (IMessage message, MessageQueueTransactionType transactionType);
+		
+		IMessage Peek ();
+		
+		IMessage Peek (TimeSpan timeout);
+		
+		IMessage PeekById (string id);
+		
+		IMessage PeekById (string id, TimeSpan timeout);
+		
+		IMessage PeekByCorrelationId (string correlationId);
+		
+		IMessage PeekByCorrelationId (string correlationId, TimeSpan timeout);
+		
 		IMessage Receive ();
+		
+		IMessage Receive (TimeSpan timeout);
+		
+		IMessage Receive (IMessageQueueTransaction transaction);
+		
+		IMessage Receive (TimeSpan timeout, IMessageQueueTransaction transaction);
+		
+		IMessage Receive (MessageQueueTransactionType transactionType);
+		
+		IMessage Receive (TimeSpan timeout, MessageQueueTransactionType transactionType);
+		
+		IMessage ReceiveById (string id);
+		
+		IMessage ReceiveById (string id, TimeSpan timeout);
+		
+		IMessage ReceiveById (string id, IMessageQueueTransaction transaction);
+		
+		IMessage ReceiveById (string id, MessageQueueTransactionType transactionType);
+		
+		IMessage ReceiveById (string id, TimeSpan timeout, IMessageQueueTransaction transaction);
+		
+		IMessage ReceiveById (string id, TimeSpan timeout, MessageQueueTransactionType transactionType);
+			
+		IMessage ReceiveByCorrelationId (string correlationId);
+		
+		IMessage ReceiveByCorrelationId (string correlationId, TimeSpan timeout);
+		
+		IMessage ReceiveByCorrelationId (string correlationId, IMessageQueueTransaction transaction);
+		
+		IMessage ReceiveByCorrelationId (string correlationId, MessageQueueTransactionType transactionType);
+		
+		IMessage ReceiveByCorrelationId (string correlationId, TimeSpan timeout, IMessageQueueTransaction transaction);
+			
+		IMessage ReceiveByCorrelationId (string correlationId, TimeSpan timeout, MessageQueueTransactionType transactionType);
 		
 		IMessageEnumerator GetMessageEnumerator ();
 	}

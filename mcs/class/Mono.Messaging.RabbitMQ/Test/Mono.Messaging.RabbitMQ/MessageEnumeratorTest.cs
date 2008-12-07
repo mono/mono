@@ -31,22 +31,22 @@
 using System;
 using System.Messaging;
 
-using Mono.Messaging;
-using Mono.Messaging.RabbitMQ;
+//using Mono.Messaging;
+//using Mono.Messaging.RabbitMQ;
 
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Messsaging.RabbitMQ
+namespace MonoTests.Mono.Messaging.RabbitMQ
 {
 	[TestFixture]
 	public class MessageEnumeratorTest {
 		
-		private readonly String qName = "testq2";
+		private readonly String qName = @".\private$\testq2";
 		
 		private void SendMessage (string s) {
-			MessageQueue mq = new MessageQueue (qName);
+			MessageQueue mq = MQUtil.GetQueue (qName);
 			Message m = new Message (s, new BinaryMessageFormatter ());
-			m.CorrelationId = "foo";
+			m.CorrelationId = Guid.NewGuid () + "\\0";
 			mq.Send (m);
 		}
 		
@@ -58,7 +58,7 @@ namespace MonoTests.Mono.Messsaging.RabbitMQ
 			SendMessage ("message 3");
 			SendMessage ("message 4");
 			
-			MessageQueue mq0 = new MessageQueue (qName);
+			MessageQueue mq0 = MQUtil.GetQueue (qName);
 			MessageEnumerator me0 = mq0.GetMessageEnumerator ();
 			
 			me0.MoveNext ();
@@ -72,7 +72,7 @@ namespace MonoTests.Mono.Messsaging.RabbitMQ
 			me0.Dispose ();
 			mq0.Dispose ();
 			
-			MessageQueue mq1 = new MessageQueue (qName);
+			MessageQueue mq1 = MQUtil.GetQueue (qName);
 			MessageEnumerator me1 = mq1.GetMessageEnumerator ();
 			
 			me1.MoveNext();
@@ -83,6 +83,33 @@ namespace MonoTests.Mono.Messsaging.RabbitMQ
 			m1.Formatter = new BinaryMessageFormatter ();
 			Console.WriteLine ("{0}", m1.Body);
 			Assert.AreEqual ("message 4", (String) m1.Body, "body incorrect");
+			
+			mq1.Purge ();
+			MessageQueue.Delete (qName);
+		}
+		
+		//[Test]
+		// Not supported with AMQP
+		public void RemoveMessageWithTx ()
+		{
+			MessageQueue q = MQUtil.GetQueue ("testq3");
+			
+			q.Formatter = new BinaryMessageFormatter ();
+			q.Send ("foo1");
+			q.Send ("foo2");
+			
+			MessageEnumerator me1 = q.GetMessageEnumerator ();
+			MessageQueueTransaction tx = new MessageQueueTransaction ();
+			me1.MoveNext ();
+			Message m1 = me1.Current;
+			me1.RemoveCurrent (tx);
+			tx.Commit ();
+			me1.Close ();
+			
+			MessageEnumerator me2 = q.GetMessageEnumerator ();
+			Assert.IsTrue (me1.MoveNext ());
+			me2.RemoveCurrent ();
+			Assert.IsFalse (me2.MoveNext ());
 		}
 	}
 }

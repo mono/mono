@@ -29,6 +29,10 @@
 //
 
 using System;
+using System.Collections;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 using Mono.Messaging;
 
@@ -36,26 +40,113 @@ namespace Mono.Messaging.RabbitMQ {
 
 	public class RabbitMQMessagingProvider : IMessagingProvider {
 		
-		public bool Exists (QueueReference qRef)
+		private volatile uint txCounter = 0;
+		private readonly uint localIp;
+		private static readonly string DEFAULT_REALM = "/data";
+		
+		public RabbitMQMessagingProvider()
 		{
-			// In AMQP all queues exist, because they are declared rather
-			// than created.
-			return true;
+			localIp = GetLocalIP ();
 		}
 		
-		public IMessageQueue GetMessageQueue ()
+		private static uint GetLocalIP ()
 		{
-			return new RabbitMQMessageQueue ();
-		}
-		
-		public IMessageQueue CreateMessageQueue (QueueReference qRef)
-		{
-			return new RabbitMQMessageQueue (qRef);
+			//IPHostEntry host = Dns.GetHostEntry (Dns.GetHostName ());
+			String strHostName = Dns.GetHostName ();
+			IPHostEntry ipEntry = Dns.GetHostByName (strHostName);
+			foreach (IPAddress ip in ipEntry.AddressList) {
+				if (AddressFamily.InterNetwork == ip.AddressFamily) {
+					byte[] addr = ip.GetAddressBytes ();
+					uint localIP = 0;
+					for (int i = 0; i < 4 && i < addr.Length; i++) {
+						localIP += (uint) (addr[i] << 8 * (3 - i));
+					}
+					return localIP;
+				}
+			}
+			return 0;
 		}
 		
 		public IMessage CreateMessage ()
 		{
 			return new MessageBase ();
 		}
+		
+		public IMessageQueueTransaction CreateMessageQueueTransaction ()
+		{
+			string txId = localIp.ToString () + (++txCounter).ToString (); 
+			return new RabbitMQMessageQueueTransaction (txId);
+		}
+		
+		public void DeleteQueue (QueueReference qRef)
+		{
+			RabbitMQMessageQueue.Delete (DEFAULT_REALM, qRef);
+		}
+		
+		private readonly IDictionary queues = new Hashtable ();
+		private readonly ReaderWriterLock qLock = new ReaderWriterLock ();
+		private const int TIMEOUT = 15000;
+		
+		public IMessageQueue[] GetPublicQueues ()
+		{
+			IMessageQueue[] qs;
+			qLock.AcquireReaderLock (TIMEOUT);
+			try {
+				ICollection qCollection = queues.Values;
+				qs = new IMessageQueue[qCollection.Count];
+				qCollection.CopyTo (qs, 0);
+				return qs;
+			} finally {
+				qLock.ReleaseReaderLock ();
+			}
+		}
+		
+		public bool Exists (QueueReference qRef)
+		{
+			qLock.AcquireReaderLock (TIMEOUT);
+			try {
+				return queues.Contains (qRef);
+			} finally {
+				qLock.ReleaseReaderLock ();
+			}
+		}
+		
+		public IMessageQueue CreateMessageQueue (QueueReference qRef,
+		                                         bool transactional)
+		{
+			qLock.AcquireWriterLock (TIMEOUT);
+			try {
+				IMessageQueue mq = new RabbitMQMessageQueue (this, qRef,
+				                                             transactional);
+				queues[qRef] = mq;
+				return mq;
+			} finally {
+				qLock.ReleaseWriterLock ();
+			}
+		}
+
+		public IMessageQueue GetMessageQueue (QueueReference qRef)
+		{
+			qLock.AcquireReaderLock (TIMEOUT);
+			try {
+				if (queues.Contains (qRef))
+					return (IMessageQueue) queues[qRef];
+				else {
+					LockCookie lc = qLock.UpgradeToWriterLock (TIMEOUT);
+					try {
+						IMessageQueue mq = new RabbitMQMessageQueue (this, qRef,
+						                                             false);
+						queues[qRef] = mq;
+						return mq;
+					} finally {
+						qLock.DowngradeFromWriterLock (ref lc);
+					}
+				}
+			} finally {
+				qLock.ReleaseReaderLock ();
+			}
+		}
+		
+
 	}
 }

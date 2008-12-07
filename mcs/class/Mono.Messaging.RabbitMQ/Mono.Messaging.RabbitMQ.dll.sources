@@ -4,5 +4,6 @@
 ./Mono.Messaging.RabbitMQ/MessageFactory.cs
 ./Mono.Messaging.RabbitMQ/RabbitMQMessageEnumerator.cs
 ./Mono.Messaging.RabbitMQ/RabbitMQMessageQueue.cs
+./Mono.Messaging.RabbitMQ/RabbitMQMessageQueueTransaction.cs
 ./Mono.Messaging.RabbitMQ/RabbitMQMessagingProvider.cs
 

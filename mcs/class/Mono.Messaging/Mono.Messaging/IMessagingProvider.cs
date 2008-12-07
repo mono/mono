@@ -34,11 +34,18 @@ namespace Mono.Messaging {
 		
 		bool Exists (QueueReference qRef);
 		
-		IMessageQueue CreateMessageQueue (QueueReference qRef);
+		IMessageQueue CreateMessageQueue (QueueReference qRef,
+		                                  bool transactional);
 		
-		IMessageQueue GetMessageQueue ();
+		IMessageQueue GetMessageQueue (QueueReference qRef);
 
 		IMessage CreateMessage ();
+		
+		IMessageQueueTransaction CreateMessageQueueTransaction ();
+
+		void DeleteQueue (QueueReference qRef);
+		
+		IMessageQueue[] GetPublicQueues ();
 	}
 
 }

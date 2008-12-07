@@ -29,35 +29,19 @@
 //
 
 using System;
-using System.Collections;
 using System.ComponentModel;
 
 namespace Mono.Messaging {
 
-	public interface IMessageEnumerator : IDisposable {
+	public interface IMessageQueueTransaction : IDisposable {
 	
-		IMessage Current { get; }
+		MessageQueueTransactionStatus Status { get; }
 		
-		void Close();
-
-		void Dispose(bool disposing);
-
-		bool MoveNext();
+		void Abort ();
 		
-		//bool MoveNext(TimeSpan timeout);
-
-		IMessage RemoveCurrent();
-
-		IMessage RemoveCurrent(IMessageQueueTransaction transaction);
-
-		IMessage RemoveCurrent(MessageQueueTransactionType transactionType);
-
-		//IMessage RemoveCurrent(TimeSpan timeout);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transaction);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType);
-
+		void Begin ();
+		
+		void Commit ();
 	}
 
 }

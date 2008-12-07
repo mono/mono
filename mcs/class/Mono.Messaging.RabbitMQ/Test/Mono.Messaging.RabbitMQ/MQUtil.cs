@@ -1,8 +1,8 @@
 //
-// Mono.Messaging
+// Test.Mono.Messaging.RabbitMQ
 //
 // Authors:
-//		Michael Barker (mike@middlesoft.co.uk)
+//	  Michael Barker (mike@middlesoft.co.uk)
 //
 // (C) 2008 Michael Barker
 //
@@ -29,35 +29,39 @@
 //
 
 using System;
-using System.Collections;
-using System.ComponentModel;
+using System.Messaging;
 
-namespace Mono.Messaging {
-
-	public interface IMessageEnumerator : IDisposable {
-	
-		IMessage Current { get; }
+namespace MonoTests.Mono.Messaging.RabbitMQ
+{
+	public class MQUtil
+	{
+		public static MessageQueue GetQueue (string path)
+		{
+			return GetQueue (path, false);
+		}
 		
-		void Close();
-
-		void Dispose(bool disposing);
-
-		bool MoveNext();
+		public static MessageQueue GetQueue (string path, bool isTransactional)
+		{
+			return GetQueue (path, isTransactional,
+			                 new BinaryMessageFormatter ());
+		}
 		
-		//bool MoveNext(TimeSpan timeout);
-
-		IMessage RemoveCurrent();
-
-		IMessage RemoveCurrent(IMessageQueueTransaction transaction);
-
-		IMessage RemoveCurrent(MessageQueueTransactionType transactionType);
-
-		//IMessage RemoveCurrent(TimeSpan timeout);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transaction);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType);
-
+		public static MessageQueue GetQueue (string path, IMessageFormatter formatter)
+		{
+			return GetQueue (path, false, formatter);
+		}
+		
+		public static MessageQueue GetQueue (string path, bool isTransactional, 
+		                                     IMessageFormatter formatter)
+		{
+			MessageQueue q;
+			if (MessageQueue.Exists (path)) {
+				q = new MessageQueue (path);
+			} else {
+				q = MessageQueue.Create (path, isTransactional);
+			}
+			q.Formatter = formatter;
+			return q;
+		}		
 	}
-
 }

@@ -1,10 +1,10 @@
 //
-// Mono.Messaging
+// System.Messaging
 //
 // Authors:
-//		Michael Barker (mike@middlesoft.co.uk)
+//      Michael Barker (mike@middlesoft.co.uk)
 //
-// (C) 2008 Michael Barker
+//	(C) Ximian, Inc.  http://www.ximian.com
 //
 
 //
@@ -27,37 +27,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
-using System.Collections;
-using System.ComponentModel;
 
-namespace Mono.Messaging {
-
-	public interface IMessageEnumerator : IDisposable {
-	
-		IMessage Current { get; }
-		
-		void Close();
-
-		void Dispose(bool disposing);
-
-		bool MoveNext();
-		
-		//bool MoveNext(TimeSpan timeout);
-
-		IMessage RemoveCurrent();
-
-		IMessage RemoveCurrent(IMessageQueueTransaction transaction);
-
-		IMessage RemoveCurrent(MessageQueueTransactionType transactionType);
-
-		//IMessage RemoveCurrent(TimeSpan timeout);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transaction);
-
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType);
-
+namespace Mono.Messaging 
+{
+	[Serializable]
+	public enum MessageQueueTransactionType 
+	{
+		Automatic = 1,
+		None = 0,
+		Single = 3
 	}
-
 }

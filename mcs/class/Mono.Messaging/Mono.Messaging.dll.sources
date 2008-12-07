@@ -10,11 +10,15 @@
 ./Mono.Messaging/HashAlgorithm.cs
 ./Mono.Messaging/IMessagingProvider.cs
 ./Mono.Messaging/IMessageEnumerator.cs
+./Mono.Messaging/IMessageQueueTransaction.cs
 ./Mono.Messaging/IMessageQueue.cs
 ./Mono.Messaging/IMessage.cs
 ./Mono.Messaging/MessageBase.cs
 ./Mono.Messaging/MessagePriority.cs
+./Mono.Messaging/MessageQueueTransactionStatus.cs
+./Mono.Messaging/MessageQueueTransactionType.cs
 ./Mono.Messaging/MessageType.cs
+./Mono.Messaging/MessageUnavailableException.cs
 ./Mono.Messaging/MessagingProviderLocator.cs
 ./Mono.Messaging/MonoMessagingException.cs
 ./Mono.Messaging/QueueReference.cs

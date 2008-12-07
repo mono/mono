@@ -42,7 +42,7 @@ namespace Mono.Messaging {
 		DateTime arrivedTime;
 		bool attachSenderId = true;
 		bool authenticated;
-		string authenticationProviderName = "Microsoft Base Cryptographic Provider version 1.0";
+		string authenticationProviderName = "Microsoft Base Cryptographic Provider, Ver. 1.0";
 		CryptographicProviderType authenticationProviderType 
 			= CryptographicProviderType.RsaFull;
 		Stream bodyStream;
@@ -56,7 +56,7 @@ namespace Mono.Messaging {
 			= EncryptionAlgorithm.Rc2;
 		byte[] extension = new byte[0];
 		HashAlgorithm hashAlgorithm = HashAlgorithm.Sha;
-		string id = Guid.Empty.ToString ();
+		string id = Guid.Empty.ToString () + "\\0";
 		bool isFirstInTransaction = false;
 		bool isLastInTransaction = false;
 		string label = "";
@@ -71,7 +71,7 @@ namespace Mono.Messaging {
 		string sourceMachine;
 		TimeSpan timeToBeReceived;
 		TimeSpan timeToReachQueue;
-		string transactionId;
+		string transactionId = "";
 		IMessageQueue transactionStatusQueue;
 		bool useAuthentication;
 		bool useDeadLetterQueue;
@@ -162,7 +162,7 @@ namespace Mono.Messaging {
 			get { return destinationSymmetricKey; }
 			set { 
 				if (value == null)
-					throw new ArgumentException ("DestinationSymmetricKey can not be null");
+					throw new ArgumentNullException ("DestinationSymmetricKey can not be null");
 				destinationSymmetricKey = value;
 			}
 		}
@@ -171,7 +171,7 @@ namespace Mono.Messaging {
 			get { return digitalSignature; }
 			set {
 				if (value == null)
-					throw new ArgumentException ("DigitalSignature can not be null");
+					throw new ArgumentNullException ("DigitalSignature can not be null");
 				digitalSignature = value;
 			}
 		}
@@ -185,7 +185,7 @@ namespace Mono.Messaging {
 			get { return extension; }
 			set {
 				if (value == null)
-					throw new ArgumentException ("Extension can not be null");
+					throw new ArgumentNullException ("Extension can not be null");
 				extension = value;
 			}
 		}
@@ -197,21 +197,21 @@ namespace Mono.Messaging {
 
 		public string Id {
 			get { 
-				CheckDelivered ();
+				//CheckDelivered ();
 				return id;
 			}
 		}
 
 		public bool IsFirstInTransaction {
 			get { 
-				CheckDelivered ();
+				//CheckDelivered ();
 				return isFirstInTransaction;
 			}
 		}
 
 		public bool IsLastInTransaction {
 			get { 
-				CheckDelivered ();
+				//CheckDelivered ();
 				return isLastInTransaction;
 			}
 		}
@@ -288,7 +288,7 @@ namespace Mono.Messaging {
 
 		public string TransactionId {
 			get {  
-				CheckDelivered ();
+				//CheckDelivered ();
 				return transactionId;
 			}
 		}

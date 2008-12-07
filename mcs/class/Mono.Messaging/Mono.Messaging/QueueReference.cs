@@ -59,7 +59,12 @@ namespace Mono.Messaging
 		}
 		
 		public string Queue {
-			get { return queue; }
+			get { 
+				if (isPrivate)
+					return @"private$\" + queue;
+				else
+					return queue;
+			}
 		}
 		
 		public bool IsPrivate {
@@ -97,6 +102,11 @@ namespace Mono.Messaging
 				&& queue == other.queue;
 		}
 		
+		public override int GetHashCode ()
+		{
+			return queue == null ? 0 : queue.GetHashCode () + host.GetHashCode ();
+		}
+		
 		public static QueueReference Parse (string path)
 		{
 			string trimedPath = RemoveLeadingSlashes (path);
@@ -115,7 +125,7 @@ namespace Mono.Messaging
 		
 		public static bool IsPrivateStr (string s)
 		{
-			return "$private" == s.ToLower ();
+			return "private$" == s.ToLower ();
 		}
 		
 		public static string RemoveLeadingSlashes (string s)

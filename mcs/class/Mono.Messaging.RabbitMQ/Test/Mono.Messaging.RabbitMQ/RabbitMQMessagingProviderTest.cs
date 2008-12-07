@@ -35,7 +35,7 @@ using Mono.Messaging.RabbitMQ;
 
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Messsaging.RabbitMQ
+namespace MonoTests.Mono.Messaging.RabbitMQ
 {
 	[TestFixture]
 	public class RabbitMQMessagingProviderTest {
@@ -52,7 +52,7 @@ namespace MonoTests.Mono.Messsaging.RabbitMQ
 		public void GetMessageQueue ()
 		{
 			IMessagingProvider p = new RabbitMQMessagingProvider ();
-			IMessageQueue q = p.GetMessageQueue ();
+			IMessageQueue q = p.CreateMessageQueue (QueueReference.DEFAULT, true);
 			Assert.IsNotNull (q);   
 		}
 		
