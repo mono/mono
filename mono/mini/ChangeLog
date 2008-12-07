@@ -1,3 +1,8 @@
+2008-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c: New file, move the unwind info encoding functions here from
+	aot-compiler.c, so they could be used at runtime too.
+
 2008-12-05  Mark Mason   <mmason@upwardaccess.com>
 
 	* mini-mips.c (mono_arch_lowering_pass): handle OP_IMUL_IMM as well
