@@ -1,5 +1,11 @@
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewRow.cs: Prevent an exception on a not yet databound grid, 
+	where datasource is null.
+	[Fixes exception reported in bug 441240]
+
+2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: EndEdit validation fixes.
 
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
