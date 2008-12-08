@@ -32,8 +32,8 @@ namespace Mono.Simd
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
 	public struct Vector2l
 	{
-		private long x;
-		private long y;
+		internal long x;
+		internal long y;
 
 		public long X { get { return x; } set { x = value; } }
 		public long Y { get { return y; } set { y = value; } }
@@ -97,36 +97,6 @@ namespace Mono.Simd
 		public static Vector2l operator ^ (Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.x ^ v2.x, v1.y ^ v2.y);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static Vector2l UnpackLow (Vector2l v1, Vector2l v2)
-		{
-			return new Vector2l (v1.x, v2.x);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static Vector2l UnpackHigh (Vector2l v1, Vector2l v2)
-		{
-			return new Vector2l (v1.y, v2.y);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector2l LogicalRightShift (Vector2l v1, int amount)
-		{
-			return new Vector2l ((long)((ulong)(v1.x) >> amount), (long)((ulong)(v1.y) >> amount));
-		}
-
-		[Acceleration (AccelMode.SSE41)]
-		public static Vector2l CompareEqual (Vector2l v1, Vector2l v2)
-		{
-			return new Vector2l ((long)(v1.x ==  v2.x ? -1 : 0), (long)(v1.y ==  v2.y ? -1 : 0));
-		}
-
-		[Acceleration (AccelMode.SSE42)]
-		public static Vector2l CompareGreaterThan (Vector2l v1, Vector2l v2)
-		{
-			return new Vector2l ((long)(v1.x > v2.x ? -1 : 0), (long)(v1.y >  v2.y ? -1 : 0));
 		}
 
 		[Acceleration (AccelMode.SSE1)]

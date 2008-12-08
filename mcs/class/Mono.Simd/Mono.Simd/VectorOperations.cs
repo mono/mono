@@ -60,6 +60,12 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector2l LogicalRightShift (this Vector2l v1, int amount)
+		{
+			return new Vector2l ((long)((ulong)(v1.x) >> amount), (long)((ulong)(v1.y) >> amount));
+		}
+
 		/* ==== Math operations ==== */
 
 		[Acceleration (AccelMode.SSE1)]
@@ -181,6 +187,12 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE41)]
+		public static Vector2l CompareEqual (this Vector2l v1, Vector2l v2)
+		{
+			return new Vector2l ((long)(v1.x ==  v2.x ? -1 : 0), (long)(v1.y ==  v2.y ? -1 : 0));
+		}
+
 		/*Same as a < b. */
 		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareLessThan (this Vector4f v1, Vector4f v2)
@@ -227,6 +239,12 @@ namespace Mono.Simd
 			*c++ = v1.x <= v2.x ? -1 : 0;
 			*c = v1.y <= v2.y ? -1 : 0;
 			return res;
+		}
+
+		[Acceleration (AccelMode.SSE42)]
+		public static Vector2l CompareGreaterThan (this Vector2l v1, Vector2l v2)
+		{
+			return new Vector2l ((long)(v1.x > v2.x ? -1 : 0), (long)(v1.y >  v2.y ? -1 : 0));
 		}
 
 		/*Same float.IsNaN (a) || float.IsNaN (b). */
@@ -392,6 +410,18 @@ namespace Mono.Simd
 		public static Vector4f DuplicateHigh (this Vector4f v1)
 		{
 			return new Vector4f (v1.y, v1.y, v1.w, v1.w);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static Vector2l UnpackLow (this Vector2l v1, Vector2l v2)
+		{
+			return new Vector2l (v1.x, v2.x);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static Vector2l UnpackHigh (this Vector2l v1, Vector2l v2)
+		{
+			return new Vector2l (v1.y, v2.y);
 		}
 
 		[Acceleration (AccelMode.SSE2)]
