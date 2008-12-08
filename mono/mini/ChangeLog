@@ -1,3 +1,7 @@
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* basic-simd.cs: Fix method names for Vector4f.
+
 2008-12-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_print_thread_dump): Mark threadpool threads
