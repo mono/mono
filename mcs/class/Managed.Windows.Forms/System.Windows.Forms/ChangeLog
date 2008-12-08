@@ -1,5 +1,9 @@
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewComboBoxCell.cs: Implement data binding support.
+
+2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Use the CurrencyManager to update the data source 
 	binding position instead of casting the data sourcde to BindingSource.
 	This enables position updating for other type of data sources.
