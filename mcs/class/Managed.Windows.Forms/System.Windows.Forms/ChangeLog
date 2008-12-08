@@ -1,5 +1,10 @@
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Implement NotifyCurrentCellDirty, so that it no 
+	longer throws a NotImplementedException.
+
+2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Set EditingControlFormattedValue when preparing an 
 	IDataGridViewEditingControl for editing.
 

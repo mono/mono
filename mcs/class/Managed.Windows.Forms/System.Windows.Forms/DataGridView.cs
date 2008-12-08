@@ -2845,7 +2845,8 @@ namespace System.Windows.Forms {
 		}
 
 		public virtual void NotifyCurrentCellDirty (bool dirty) {
-			throw new NotImplementedException();
+			if (currentCell != null)
+				InvalidateCell (currentCell);
 		}
 
 		public bool RefreshEdit ()
