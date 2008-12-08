@@ -1,3 +1,11 @@
+2008-12-04  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r120749.
+	
+	* marshal.c (mono_marshal_emit_native_wrapper): Add AOT support for pinvoke
+	wrappers by emitting the function address using a CEE_MONO_ICALL_ADDR 
+	instruction instead of a pointer constant.
+
 2008-10-13  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r115696.
