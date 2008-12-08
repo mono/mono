@@ -4240,9 +4240,11 @@ namespace System.Windows.Forms {
 
 		private void UpdateBindingPosition (int position)
 		{
-			BindingSource source = dataSource as BindingSource;
-			if (source != null && source.CurrencyManager != null)
-				source.CurrencyManager.Position = position;
+			if (DataSource != null && BindingContext != null) {
+				CurrencyManager currencyManager = this.BindingContext[DataSource] as CurrencyManager;
+				if (currencyManager != null)
+					currencyManager.Position = position;
+			}
 		}
 
 		protected override void OnMouseEnter (EventArgs e)
