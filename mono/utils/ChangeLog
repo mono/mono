@@ -1,3 +1,10 @@
+2008-12-08  Kornél Pál  <kornelpal@gmail.com>
+
+	* mono-time.c (mono_100ns_ticks, PLATFORM_WIN32): Use GetSystemTimeAsFileTime
+	with ULARGE_INTEGER that is more efficient.
+
+	Contributed under MIT/X11 license.
+
 2008-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-property-hash.c (mono_property_hash_destroy): Release
