@@ -1,5 +1,9 @@
 2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : it was wrong fix.
+
+2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : add docs/specs directory, to workaround build breakage.
 
 2008-12-07  Michael BArker  <mike@middlesoft.co.uk>
