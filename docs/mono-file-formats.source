@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
 <monodoc>
-  <node label="Mono File Formats" name="mono-formats" parent="formats" />
-  <source provider="man" basefile="mono-file-formats" path="mono-formats"/>
+  <source provider="man" basefile="mono-file-formats" path="man"/>
 </monodoc>

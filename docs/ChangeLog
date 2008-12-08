@@ -1,3 +1,8 @@
+2008-12-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* mono-file-formats.source, mono-tools.source: Place these under the
+	  new "Commands and Files" node, and remove nay intermediate nodes.
+
 2008-11-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile.am (sources_DATA): Add mono-file-formats.source,
