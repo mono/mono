@@ -88,8 +88,52 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s LogicalRightShift (this Vector8s va, int amount)
+		{
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*b++ = (short)((ushort)(*a++) >> amount);
+			return res;
+		}
+
 
 		/* ==== Math operations ==== */
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s AddWithSaturation (this Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short) System.Math.Max (System.Math.Min (*a++ + *b++, short.MaxValue), short.MinValue); 
+			return res;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s SubtractWithSaturation (this Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short) System.Math.Max (System.Math.Min (*a++ - *b++, short.MaxValue), short.MinValue); ;
+			return res;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s MultiplyStoreHigh (this Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short)((int)*a++ * (int)*b++ >> 16);
+			return res;
+		}
 
 		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f Sqrt (this Vector4f v1)
@@ -143,6 +187,17 @@ namespace Mono.Simd
 			return new Vector4ui (System.Math.Max (v1.x, v2.x), System.Math.Max (v1.y, v2.y), System.Math.Max (v1.z, v2.z), System.Math.Max (v1.w, v2.w));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s Max (this Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short) System.Math.Max (*a++, *b++);
+			return res;
+		}
+
 		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f Min (this Vector4f v1, Vector4f v2)
 		{
@@ -169,6 +224,17 @@ namespace Mono.Simd
 		public static Vector4ui Min (this Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (System.Math.Min (v1.x, v2.x), System.Math.Min (v1.y, v2.y), System.Math.Min (v1.z, v2.z), System.Math.Min (v1.w, v2.w));
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s Min (this Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short) System.Math.Min (*a++, *b++);
+			return res;
 		}
 
 
@@ -259,6 +325,17 @@ namespace Mono.Simd
 			return new Vector4ui ((uint)(v1.x ==  v2.x ? -1 : 0), (uint)(v1.y ==  v2.y ? -1 : 0), (uint)(v1.z ==  v2.z ? -1 : 0), (uint)(v1.w ==  v2.w ? -1 : 0));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s CompareEqual (this Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short) (*a++ == *b++ ? -1 : 0);
+			return res;
+		}
+
 		/*Same as a < b. */
 		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareLessThan (this Vector4f v1, Vector4f v2)
@@ -317,6 +394,17 @@ namespace Mono.Simd
 		public static Vector4i CompareGreaterThan (this Vector4i v1, Vector4i v2)
 		{
 			return new Vector4i ((int)(v1.x > v2.x ? -1 : 0), (int)(v1.y >  v2.y ? -1 : 0), (int)(v1.z >  v2.z ? -1 : 0), (int)(v1.w >  v2.w ? -1 : 0));
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s CompareGreaterThan (this Vector8s va, Vector8s vb) {
+			Vector8s res = new Vector8s ();
+			short *a = &va.v0;
+			short *b = &vb.v0;
+			short *c = &res.v0;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (short) (*a++ > *b++ ? -1 : 0);
+			return res;
 		}
 
 		/*Same float.IsNaN (a) || float.IsNaN (b). */
@@ -509,6 +597,12 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s UnpackLow (this Vector8s va, Vector8s vb)
+		{
+			return new Vector8s (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l UnpackHigh (this Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.y, v2.y);
@@ -530,6 +624,12 @@ namespace Mono.Simd
 		public static Vector4ui UnpackHigh (this Vector4ui v1, Vector4ui v2)
 		{
 			return new Vector4ui (v1.z, v2.z, v1.w, v2.w);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s UnpackHigh (this Vector8s va, Vector8s vb)
+		{
+			return new Vector8s (va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -556,6 +656,22 @@ namespace Mono.Simd
 			return new Vector4ui (*(ptr + ((idx >> 0) & 0x3)),*(ptr + ((idx >> 2) & 0x3)),*(ptr + ((idx >> 4) & 0x3)),*(ptr + ((idx >> 6) & 0x3)));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s ShuffleHigh (this Vector8s va, ShuffleSel sel)
+		{
+			short *ptr = ((short*)&va) + 4;
+			int idx = (int)sel;
+			return new Vector8s (va.v0, va.v1, va.v2, va.v3, *(ptr + ((idx >> 0) & 0x3)), *(ptr + ((idx >> 2) & 0x3)), *(ptr + ((idx >> 4) & 0x3)), *(ptr + ((idx >> 6) & 0x3)));
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s ShuffleLow (this Vector8s va, ShuffleSel sel)
+		{
+			short *ptr = ((short*)&va);
+			int idx = (int)sel;
+			return new Vector8s (*(ptr + ((idx >> 0) & 0x3)), *(ptr + ((idx >> 2) & 0x3)), *(ptr + ((idx >> 4) & 0x3)), *(ptr + ((idx >> 6) & 0x3)), va.v4, va.v5, va.v6, va.v7);
+		}
+
 		[CLSCompliant(false)]
 		[Acceleration (AccelMode.SSE41)]
 		public static unsafe Vector8us PackWithUnsignedSaturation (this Vector4i va, Vector4i vb) {
@@ -570,6 +686,20 @@ namespace Mono.Simd
 			return res;
 		}
 
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16b PackWithUnsignedSaturation (this Vector8s va, Vector8s vb) {
+			Vector16b res = new Vector16b ();
+			short *a = (short*)&va;
+			short *b = (short*)&vb;
+			byte *c = (byte*)&res;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (byte)System.Math.Max (0, System.Math.Min ((int)*a++, byte.MaxValue));
+			for (int i = 0; i < 8; ++i)
+				*c++ = (byte)System.Math.Max (0, System.Math.Min ((int)*b++, byte.MaxValue));
+			return res;
+		}
+
 		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s PackWithSignedSaturation (this Vector4i va, Vector4i vb) {
 			Vector8s res = new Vector8s ();
@@ -580,6 +710,20 @@ namespace Mono.Simd
 				*c++ = (short)System.Math.Max (System.Math.Min ((int)*a++, short.MaxValue), short.MinValue);
 			for (int i = 0; i < 4; ++i)
 				*c++ = (short)System.Math.Max (System.Math.Min ((int)*b++, short.MaxValue), short.MinValue);
+			return res;
+		}
+
+		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16sb PackWithSignedSaturation (this Vector8s va, Vector8s vb) {
+			Vector16sb res = new Vector16sb ();
+			short *a = (short*)&va;
+			short *b = (short*)&vb;
+			sbyte *c = (sbyte*)&res;
+			for (int i = 0; i < 8; ++i)
+				*c++ = (sbyte)System.Math.Max (System.Math.Min ((int)*a++, sbyte.MaxValue), sbyte.MinValue);
+			for (int i = 0; i < 8; ++i)
+				*c++ = (sbyte)System.Math.Max (System.Math.Min ((int)*b++, sbyte.MaxValue), sbyte.MinValue);
 			return res;
 		}
 
