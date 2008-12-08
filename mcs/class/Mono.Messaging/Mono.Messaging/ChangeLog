@@ -1,0 +1,56 @@
+2008-12-07  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageUnavailableException.cs:  Specific exception for messages not being
+	available on the queue.
+	* QueueReference.cs:  Change queue name to return "private$" as required.
+
+2008-11-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* IMessageQueue.cs:  Added support for MessageQueueTransactionType, 
+	ReceiveBy{Id,CorrelationId} and PeekBy{Id,CorrelationId} methods.
+
+2008-11-09  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueueTransactionType.cs:  New, copy of 
+	System.Messaging.MessageQueueTransactionStatus.cs
+
+2008-11-02  Michael Barker  <mike@middlesoft.co.uk>
+
+	* IMessageQueueTransaction.cs: New, interface for supporting transactions
+	* MessageQueueTransactionStatus.cs: New, straight copy of the class from
+	System.Messaging
+	* IMessageQueue.cs: Added methods for transactional delivery and purging
+	queues.
+	* IMessageQueueProvider.cs: Added method for creating transactions and
+	deleting queues.
+
+2008-10-26  Michael Barker  <mike@middlesoft.co.uk>
+
+	* ConnectionException.cs:  Added support for InnerExceptions
+	* MessageBase.cs:  Added check for delivered messages and throwing exceptions
+	for appropriate properties.  Add null argument checks for some byte[]
+	properties.
+	* IMessage.cs:  Added SentTime to the list of delivery properties.
+
+2008-10-12  Michael Barker  <mike@middlesoft.co.uk>
+
+	* IMessageEnumerator.cs: New
+
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+
+	* AcknowledgeTypes.cs: New
+	* Acknowledgment.cs: New
+	* ConnectionException.cs: New
+	* CryptographicProviderType.cs: New
+	* EncryptionAlgorithm.cs: New
+	* EncryptionRequired.cs: New
+	* HashAlgorithm.cs: New
+	* IMessage.cs: New
+	* IMessageQueue.cs: New
+	* IMessagingProvider.cs: New
+	* MessageBase.cs: New
+	* MessagePriority.cs: New
+	* MessageType.cs: New
+	* MessagingProviderLocator.cs: New
+	* MonoMessagingException.cs: New
+	* QueueReference.cs: New

@@ -1,0 +1,7 @@
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Assembly: New
+	* Test: New
+	* Makefile: New
+	* Mono.Messaging.dll.sources: New
+	* Mono.Messaging_test.dll.sources: New
