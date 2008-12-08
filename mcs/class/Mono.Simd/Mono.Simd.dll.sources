@@ -15,4 +15,5 @@ Mono.Simd/Vector8us.cs
 Mono.Simd/Vector8s.cs
 Mono.Simd/Vector16b.cs
 Mono.Simd/Vector16sb.cs
+Mono.Simd/VectorOperations.cs
 

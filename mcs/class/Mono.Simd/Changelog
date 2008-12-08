@@ -1,3 +1,7 @@
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Mono.Simd.dll.sources: Added VectorOperations.cs
+
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Documentation/en/Mono.Simd/Vector*.xml: Removed references to

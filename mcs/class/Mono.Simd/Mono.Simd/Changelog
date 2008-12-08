@@ -1,3 +1,11 @@
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* VectorOperations.cs: New file with extension methods
+	for Vector*. Added methods from Vector4f.
+
+	* Vector4f.cs: Remove methods that are now in
+	VectorOperations.
+
 2008-12-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector16(s)b.cs: Add operator == and !=.
