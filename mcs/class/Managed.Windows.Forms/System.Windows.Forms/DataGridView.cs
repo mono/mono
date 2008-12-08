@@ -2232,7 +2232,7 @@ namespace System.Windows.Forms {
 		public virtual bool BeginEdit (bool selectAll) {
 			if (currentCell == null || currentCell.IsInEditMode)
 				return false;
-			
+
 			if (currentCell.RowIndex >= 0) {
 				if ((currentCell.InheritedState & DataGridViewElementStates.ReadOnly) == DataGridViewElementStates.ReadOnly) {
 					return false;
@@ -2354,10 +2354,12 @@ namespace System.Windows.Forms {
 						InternalOnDataError (args);
 						if (args.ThrowException)
 							throw exc;
+						return false;
 					}
 				}
 			}
-			return false;
+
+			return true;
 		}
 
 		[MonoTODO ("Always includes partial columns")]
@@ -2405,24 +2407,26 @@ namespace System.Windows.Forms {
 		[MonoTODO ("Does not use context parameter")]
 		public bool EndEdit (DataGridViewDataErrorContexts context)
 		{
-			if (currentCell != null && currentCell.IsInEditMode) {
+			if (currentCell == null || !currentCell.IsInEditMode)
+				return true;
+
+			if (EditingControl != null) {
+				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
+				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
+				if (!CommitEdit (context)) {
+					EditingControl.Focus ();
+					return false;
+				}
+				currentCell.DetachEditingControl ();	
+			} else if (currentCell is IDataGridViewEditingCell) {
+				currentCell.Value = (currentCell as IDataGridViewEditingCell).EditingCellFormattedValue;
 				if (!CommitEdit (context))
 					return false;
-
-				if (EditingControl != null) {
-					IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
-					currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
-					currentCell.SetIsInEditMode (false);
-					currentCell.DetachEditingControl ();	
-				} else if (currentCell is IDataGridViewEditingCell) {
-					currentCell.Value = (currentCell as IDataGridViewEditingCell).EditingCellFormattedValue;
-					currentCell.SetIsInEditMode (false);
-				}
-
-				new_row_commited = true;
-				OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			}
-			
+
+			currentCell.SetIsInEditMode (false);
+			new_row_commited = true;
+			OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			Focus ();
 			return true;
 		}
@@ -4192,6 +4196,9 @@ namespace System.Windows.Forms {
 		{
 			base.OnMouseDown(e);
 			
+			if (!EndEdit ())
+				return;
+
 			HitTestInfo hitTest = HitTest(e.X, e.Y);
 			
 			DataGridViewCell cell = null;
@@ -4199,8 +4206,6 @@ namespace System.Windows.Forms {
 			Rectangle cellBounds;
 
 			if (hitTest.Type == DataGridViewHitTestType.ColumnHeader && MouseOverColumnResize (hitTest.ColumnIndex, e.X)) {
-				if (!EndEdit())
-					return;
 				if (e.Clicks == 2) {
 					AutoResizeColumn (hitTest.ColumnIndex);
 					return;
@@ -4215,8 +4220,6 @@ namespace System.Windows.Forms {
 			}
 
 			if (hitTest.Type == DataGridViewHitTestType.RowHeader && MouseOverRowResize (hitTest.RowIndex, e.Y)) {
-				if (!EndEdit())
-					return;
 				if (e.Clicks == 2) {
 					AutoResizeRow (hitTest.RowIndex);
 					return;
@@ -5368,18 +5371,17 @@ namespace System.Windows.Forms {
 			if (cell != null && !cell.Visible)
 				throw new InvalidOperationException ("cell is not visible");
 				
-			if (setAnchorCellAddress)
-				anchor_cell = new Point (columnIndex, rowIndex);
-
 			if (cell != currentCell) {
 				if (currentCell != null) {
-					if (currentCell.IsInEditMode)
-						EndEdit ();
+					if (currentCell.IsInEditMode && !EndEdit ())
+						return false;
 					OnCellLeave (new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
 					OnRowLeave (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 				}
 
 				currentCell = cell;
+				if (setAnchorCellAddress)
+					anchor_cell = new Point (columnIndex, rowIndex);
 				currentCellAddress = new Point (columnIndex, rowIndex);
 
 				UpdateBindingPosition (currentCell.RowIndex);
@@ -5960,7 +5962,8 @@ namespace System.Windows.Forms {
 
 		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift, bool scroll)
 		{
-			SetCurrentCellAddressCore (x, y, true, false, false);
+			if (!SetCurrentCellAddressCore (x, y, true, false, false))
+				return;
 
 			bool full_row_selected = Rows.SharedRow(CurrentCellAddress.Y).Selected;
 			bool full_col_selected = Columns[CurrentCellAddress.X].Selected;
