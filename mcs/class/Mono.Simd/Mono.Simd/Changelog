@@ -1,5 +1,11 @@
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* VectorOperations.cs: Move methods from Vector8us.
+
+	* Vector8us.cs: Same.
+
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* VectorOperations.cs: Move methods from Vector8s.
 
 	* Vector8s.cs: Same.
