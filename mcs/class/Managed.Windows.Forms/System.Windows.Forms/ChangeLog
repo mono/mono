@@ -1,5 +1,10 @@
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewCheckBoxCell.cs: Fix to make it work. Wrong value was 
+	casted to CheckState causing InvalidCastExceptions.
+
+2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Fix the DataGridViewEditMode.EditOnEnter behavior 
 	to not depend on the item being clicked.
 

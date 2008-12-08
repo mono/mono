@@ -386,7 +386,7 @@ namespace System.Windows.Forms {
 
 			if ((CheckState)value == CheckState.Unchecked)
 				state = (CheckBoxState)check_state;
-			else if ((CheckState)editingCellFormattedValue == CheckState.Checked)
+			else if ((CheckState)value == CheckState.Checked)
 				state = (CheckBoxState)((int)check_state + 4);
 			else if (threeState)
 				state = (CheckBoxState)((int)check_state + 8);
