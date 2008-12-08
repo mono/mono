@@ -1,3 +1,7 @@
+2008-12-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpServerUtility.cs: when Execute finishes, clear
+	Request.QueryStringRaw. Backport of r121010 by Vladimir Krasnov.
 
 2008-11-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
