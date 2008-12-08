@@ -61,6 +61,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ValidPropertyBind2.aspx", "ValidPropertyBind2.aspx");
 			WebTest.CopyResource (GetType (), "ValidPropertyBind3.aspx", "ValidPropertyBind3.aspx");
 			WebTest.CopyResource (GetType (), "ValidPropertyBind4.aspx", "ValidPropertyBind4.aspx");
+			WebTest.CopyResource (GetType (), "ValidPropertyBind5.aspx", "ValidPropertyBind5.aspx");
 			WebTest.CopyResource (GetType (), "ReadWritePropertyControl.ascx", "ReadWritePropertyControl.ascx");
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.aspx", "ContentPlaceHolderInTemplate.aspx");
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.master", "ContentPlaceHolderInTemplate.master");
@@ -135,6 +136,12 @@ namespace MonoTests.System.Web.Compilation {
 		public void ValidPropertyBindTest4 ()
 		{
 			new WebTest ("ValidPropertyBind4.aspx").Run ();
+		}
+
+		[Test]
+		public void ValidPropertyBindTest5 ()
+		{
+			new WebTest ("ValidPropertyBind5.aspx").Run ();
 		}
 #endif
 		
