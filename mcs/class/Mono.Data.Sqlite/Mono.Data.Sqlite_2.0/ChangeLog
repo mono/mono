@@ -1,3 +1,10 @@
+2008-12-08  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r120995.
+	
+	* SQLite3.cs: Avoid IntPtr.ToInt32 () to convert between IntPtr's and integers
+	since it is not 64 bit safe. Fixes #457038.
+
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SqliteDataSourceEnumerator.cs: Replace a few Type.GetType by typeof

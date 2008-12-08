@@ -472,9 +472,11 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
-      if (nCopied > 0)
-        Marshal.Copy((IntPtr)(ptr.ToInt32() + nDataOffset), bDest, nStart, nCopied);
-      else nCopied = 0;
+	  unsafe {
+		  if (nCopied > 0)
+			  Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
+		  else nCopied = 0;
+	  }
 
       return nCopied;
     }
@@ -551,9 +553,11 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
-      if (nCopied > 0)
-        Marshal.Copy((IntPtr)(ptr.ToInt32() + nDataOffset), bDest, nStart, nCopied);
-      else nCopied = 0;
+	  unsafe {
+		  if (nCopied > 0)
+			  Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
+		  else nCopied = 0;
+	  }
 
       return nCopied;
     }
