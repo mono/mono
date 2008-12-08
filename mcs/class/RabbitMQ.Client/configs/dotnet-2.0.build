@@ -1,0 +1,6 @@
+<!-- NAnt build file. -*- nxml -*- -->
+<project>
+  <property name="target.framework" value="net-2.0" />
+  <property name="debug" value="true"/>
+  <property name="python.exec" value="python.exe"/>
+</project>

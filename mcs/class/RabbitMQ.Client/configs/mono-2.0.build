@@ -1,0 +1,7 @@
+<!-- NAnt build file. -*- nxml -*- -->
+<project>
+  <property name="target.framework" value="mono-2.0" />
+  <property name="debug" value="true"/>
+  <property name="msbuild" value="xbuild"/>
+  <property name="python.exec" value="python"/>
+</project>
