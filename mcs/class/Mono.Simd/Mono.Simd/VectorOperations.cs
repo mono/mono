@@ -66,6 +66,18 @@ namespace Mono.Simd
 			return new Vector2l ((long)((ulong)(v1.x) >> amount), (long)((ulong)(v1.y) >> amount));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4i LogicalRightShift (this Vector4i v1, int amount)
+		{
+			Vector4i res = new Vector4i ();
+			int *a = &v1.x;
+			int *b = &res.x;
+			for (int i = 0; i < 4; ++i)
+				*b++ = (int)((uint)(*a++) >> amount);
+			return res;
+		}
+
+
 		/* ==== Math operations ==== */
 
 		[Acceleration (AccelMode.SSE1)]
@@ -108,6 +120,12 @@ namespace Mono.Simd
 								System.Math.Max (v1.y, v2.y));
 		}
 
+		[Acceleration (AccelMode.SSE41)]
+		public static Vector4i Max (this Vector4i v1, Vector4i v2)
+		{
+			return new Vector4i (System.Math.Max (v1.x, v2.x), System.Math.Max (v1.y, v2.y), System.Math.Max (v1.z, v2.z), System.Math.Max (v1.w, v2.w));
+		}
+
 		[Acceleration (AccelMode.SSE1)]
 		public static Vector4f Min (this Vector4f v1, Vector4f v2)
 		{
@@ -122,6 +140,12 @@ namespace Mono.Simd
 		{
 			return new Vector2d (System.Math.Min (v1.x, v2.x),
 								System.Math.Min (v1.y, v2.y));
+		}
+
+		[Acceleration (AccelMode.SSE41)]
+		public static Vector4i Min (this Vector4i v1, Vector4i v2)
+		{
+			return new Vector4i (System.Math.Min (v1.x, v2.x), System.Math.Min (v1.y, v2.y), System.Math.Min (v1.z, v2.z), System.Math.Min (v1.w, v2.w));
 		}
 
 		/* ==== Horizontal operations ==== */
@@ -199,6 +223,12 @@ namespace Mono.Simd
 			return new Vector2ul ((ulong)(v1.x ==  v2.x ? -1 : 0), (ulong)(v1.y ==  v2.y ? -1 : 0));
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static Vector4i CompareEqual (this Vector4i v1, Vector4i v2)
+		{
+			return new Vector4i ((int)(v1.x ==  v2.x ? -1 : 0), (int)(v1.y ==  v2.y ? -1 : 0), (int)(v1.z ==  v2.z ? -1 : 0), (int)(v1.w ==  v2.w ? -1 : 0));
+		}
+
 		/*Same as a < b. */
 		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareLessThan (this Vector4f v1, Vector4f v2)
@@ -251,6 +281,12 @@ namespace Mono.Simd
 		public static Vector2l CompareGreaterThan (this Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l ((long)(v1.x > v2.x ? -1 : 0), (long)(v1.y >  v2.y ? -1 : 0));
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static Vector4i CompareGreaterThan (this Vector4i v1, Vector4i v2)
+		{
+			return new Vector4i ((int)(v1.x > v2.x ? -1 : 0), (int)(v1.y >  v2.y ? -1 : 0), (int)(v1.z >  v2.z ? -1 : 0), (int)(v1.w >  v2.w ? -1 : 0));
 		}
 
 		/*Same float.IsNaN (a) || float.IsNaN (b). */
@@ -429,7 +465,13 @@ namespace Mono.Simd
 		{
 			return new Vector2ul (v1.x, v2.x);
 		}
-	
+
+		[Acceleration (AccelMode.SSE2)]
+		public static Vector4i UnpackLow (this Vector4i v1, Vector4i v2)
+		{
+			return new Vector4i (v1.x, v2.x, v1.y, v2.y);
+		}
+
 		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l UnpackHigh (this Vector2l v1, Vector2l v2)
 		{
@@ -443,11 +485,53 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public static Vector4i UnpackHigh (this Vector4i v1, Vector4i v2)
+		{
+			return new Vector4i (v1.z, v2.z, v1.w, v2.w);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector4f Shuffle (this Vector4f v1, ShuffleSel sel)
 		{
 			float *ptr = (float*)&v1;
 			int idx = (int)sel;
 			return new Vector4f (*(ptr + ((idx >> 0) & 0x3)),*(ptr + ((idx >> 2) & 0x3)),*(ptr + ((idx >> 4) & 0x3)),*(ptr + ((idx >> 6) & 0x3)));
 		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector4i Shuffle (this Vector4i v1, ShuffleSel sel)
+		{
+			int *ptr = (int*)&v1;
+			int idx = (int)sel;
+			return new Vector4i (*(ptr + ((idx >> 0) & 0x3)),*(ptr + ((idx >> 2) & 0x3)),*(ptr + ((idx >> 4) & 0x3)),*(ptr + ((idx >> 6) & 0x3)));
+		}
+
+		[CLSCompliant(false)]
+		[Acceleration (AccelMode.SSE41)]
+		public static unsafe Vector8us PackWithUnsignedSaturation (this Vector4i va, Vector4i vb) {
+			Vector8us res = new Vector8us ();
+			int *a = (int*)&va;
+			int *b = (int*)&vb;
+			ushort *c = (ushort*)&res;
+			for (int i = 0; i < 4; ++i)
+				*c++ = (ushort)System.Math.Max (0, System.Math.Min (*a++, ushort.MaxValue));
+			for (int i = 0; i < 4; ++i)
+				*c++ = (ushort)System.Math.Max (0, System.Math.Min (*b++, ushort.MaxValue));
+			return res;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector8s PackWithSignedSaturation (this Vector4i va, Vector4i vb) {
+			Vector8s res = new Vector8s ();
+			int *a = (int*)&va;
+			int *b = (int*)&vb;
+			short *c = (short*)&res;
+			for (int i = 0; i < 4; ++i)
+				*c++ = (short)System.Math.Max (System.Math.Min ((int)*a++, short.MaxValue), short.MinValue);
+			for (int i = 0; i < 4; ++i)
+				*c++ = (short)System.Math.Max (System.Math.Min ((int)*b++, short.MaxValue), short.MinValue);
+			return res;
+		}
+
 	}
 }
