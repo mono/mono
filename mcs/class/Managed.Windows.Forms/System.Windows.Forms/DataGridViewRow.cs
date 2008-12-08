@@ -93,7 +93,7 @@ namespace System.Windows.Forms
 			get {
 				if (base.DataGridView != null) {
 					CurrencyManager data = DataGridView.BindingContext[DataGridView.DataSource] as CurrencyManager;
-					if (data != null) {
+					if (data != null && data.List.Count > base.Index) {
 						return data.List[base.Index];
 					}
 				}

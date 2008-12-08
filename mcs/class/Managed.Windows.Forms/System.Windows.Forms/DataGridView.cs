@@ -2337,12 +2337,26 @@ namespace System.Windows.Forms {
 
 		public bool CommitEdit (DataGridViewDataErrorContexts context)
 		{
-			if (currentCell != null && currentCell.IsInEditMode) {
-				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
-				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
-				return true;
+			if (currentCell != null && currentCell.OwningRow.DataBoundItem != null) {
+				Object ob = currentCell.OwningRow.DataBoundItem;
+				PropertyDescriptor property = TypeDescriptor.GetProperties (ob)[currentCell.OwningColumn.DataPropertyName];
+				if (property != null && !property.IsReadOnly) {
+					try {
+						object value = currentCell.Value;
+						if (property.Converter != null && 
+						    property.Converter.CanConvertFrom (value.GetType()))
+							value = property.Converter.ConvertFrom (value);
+						property.SetValue (ob, value);
+						return true;
+					} catch (Exception exc) {
+						DataGridViewDataErrorEventArgs args = new DataGridViewDataErrorEventArgs (exc, currentCell.ColumnIndex, 
+															  currentCell.RowIndex, context);
+						InternalOnDataError (args);
+						if (args.ThrowException)
+							throw exc;
+					}
+				}
 			}
-			
 			return false;
 		}
 
@@ -2385,7 +2399,16 @@ namespace System.Windows.Forms {
 
 		public bool EndEdit ()
 		{
+			return EndEdit (DataGridViewDataErrorContexts.Commit);
+		}
+
+		[MonoTODO ("Does not use context parameter")]
+		public bool EndEdit (DataGridViewDataErrorContexts context)
+		{
 			if (currentCell != null && currentCell.IsInEditMode) {
+				if (!CommitEdit (context))
+					return false;
+
 				if (EditingControl != null) {
 					IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
 					currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
@@ -2402,12 +2425,6 @@ namespace System.Windows.Forms {
 			
 			Focus ();
 			return true;
-		}
-
-		[MonoTODO ("Does not use context parameter")]
-		public bool EndEdit (DataGridViewDataErrorContexts context)
-		{
-			return EndEdit ();
 		}
 
 		public int GetCellCount (DataGridViewElementStates includeFilter) {
@@ -4182,8 +4199,9 @@ namespace System.Windows.Forms {
 			Rectangle cellBounds;
 
 			if (hitTest.Type == DataGridViewHitTestType.ColumnHeader && MouseOverColumnResize (hitTest.ColumnIndex, e.X)) {
+				if (!EndEdit())
+					return;
 				if (e.Clicks == 2) {
-					EndEdit ();
 					AutoResizeColumn (hitTest.ColumnIndex);
 					return;
 				}
@@ -4192,14 +4210,14 @@ namespace System.Windows.Forms {
 				column_resize_active = true;
 				resize_band_start = e.X;
 				resize_band_delta = 0;
-				EndEdit ();
 				DrawVerticalResizeLine (resize_band_start);
 				return;
 			}
 
 			if (hitTest.Type == DataGridViewHitTestType.RowHeader && MouseOverRowResize (hitTest.RowIndex, e.Y)) {
+				if (!EndEdit())
+					return;
 				if (e.Clicks == 2) {
-					EndEdit ();
 					AutoResizeRow (hitTest.RowIndex);
 					return;
 				}
@@ -4208,7 +4226,6 @@ namespace System.Windows.Forms {
 				row_resize_active = true;
 				resize_band_start = e.Y;
 				resize_band_delta = 0;
-				EndEdit ();
 				DrawHorizontalResizeLine (resize_band_start);
 				return;
 			}

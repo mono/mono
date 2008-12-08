@@ -1,3 +1,9 @@
+2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: This is the cool patch that adds support for 
+	actually updating the data in the databinding backend after editing. 
+	With bonus firing and handling the DataError event.
+
 2008-12-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Line.cs: When calculating the text tags's Shift value, store it as
