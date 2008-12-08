@@ -182,10 +182,14 @@ namespace System.Web {
 					asyncHandler.EndProcessRequest (ar);
 				}
 			} finally {
-				if (oldQuery != null && oldQuery != "" && oldQuery != request.QueryStringRaw) {
-					oldQuery = oldQuery.Substring (1); // Ignore initial '?'
-					request.QueryStringRaw = oldQuery; // which is added here.
+				if (oldQuery != request.QueryStringRaw) {
+					if (oldQuery != null && oldQuery.Length > 0) {
+						oldQuery = oldQuery.Substring (1); // Ignore initial '?'
+						request.QueryStringRaw = oldQuery; // which is added here.
+					} else
+						request.QueryStringRaw = String.Empty;
 				}
+				
 				response.SetTextWriter (previous);
 				if (!preserveForm)
 					request.SetForm (oldForm);
