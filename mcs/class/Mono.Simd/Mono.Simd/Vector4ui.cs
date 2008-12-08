@@ -33,10 +33,10 @@ namespace Mono.Simd
 	[CLSCompliant(false)]
 	public struct Vector4ui
 	{
-		private uint x;
-		private uint y;
-		private uint z;
-		private uint w;
+		internal uint x;
+		internal uint y;
+		internal uint z;
+		internal uint w;
 
 		public uint X { get { return x; } set { x = value; } }
 		public uint Y { get { return y; } set { y = value; } }
@@ -128,83 +128,6 @@ namespace Mono.Simd
 		public static bool operator !=(Vector4ui v1, Vector4ui v2)
 		{
 			return v1.x != v2.x || v1.y != v2.y || v1.z != v2.z || v1.w != v2.w;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4ui UnpackLow (Vector4ui v1, Vector4ui v2)
-		{
-			return new Vector4ui (v1.x, v2.x, v1.y, v2.y);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4ui UnpackHigh (Vector4ui v1, Vector4ui v2)
-		{
-			return new Vector4ui (v1.z, v2.z, v1.w, v2.w);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4ui ArithmeticRightShift (Vector4ui v1, int amount)
-		{
-			Vector4ui res = new Vector4ui ();
-			uint *a = &v1.x;
-			uint *b = &res.x;
-			for (int i = 0; i < 4; ++i)
-				*b++ = (uint)((int)(*a++) >> amount);
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE41)]
-		public static unsafe Vector4ui Max (Vector4ui v1, Vector4ui v2)
-		{
-			return new Vector4ui (System.Math.Max (v1.x, v2.x), System.Math.Max (v1.y, v2.y), System.Math.Max (v1.z, v2.z), System.Math.Max (v1.w, v2.w));
-		}
-
-		[Acceleration (AccelMode.SSE41)]
-		public static unsafe Vector4ui Min (Vector4ui v1, Vector4ui v2)
-		{
-			return new Vector4ui (System.Math.Min (v1.x, v2.x), System.Math.Min (v1.y, v2.y), System.Math.Min (v1.z, v2.z), System.Math.Min (v1.w, v2.w));
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4ui Shuffle (Vector4ui v1, ShuffleSel sel)
-		{
-			uint *ptr = (uint*)&v1;
-			int idx = (int)sel;
-			return new Vector4ui (*(ptr + ((idx >> 0) & 0x3)),*(ptr + ((idx >> 2) & 0x3)),*(ptr + ((idx >> 4) & 0x3)),*(ptr + ((idx >> 6) & 0x3)));
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector4ui CompareEqual (Vector4ui v1, Vector4ui v2)
-		{
-			return new Vector4ui ((uint)(v1.x ==  v2.x ? -1 : 0), (uint)(v1.y ==  v2.y ? -1 : 0), (uint)(v1.z ==  v2.z ? -1 : 0), (uint)(v1.w ==  v2.w ? -1 : 0));
-		}
-
-		/* This function performs a packusdw, which treats the source as a signed value */
-		[Acceleration (AccelMode.SSE41)]
-		public static unsafe Vector8us SignedPackWithUnsignedSaturation (Vector4ui va, Vector4ui vb) {
-			Vector8us res = new Vector8us ();
-			int *a = (int*)&va;
-			int *b = (int*)&vb;
-			ushort *c = (ushort*)&res;
-			for (int i = 0; i < 4; ++i)
-				*c++ = (ushort)System.Math.Max (0, System.Math.Min (*a++, ushort.MaxValue));
-			for (int i = 0; i < 4; ++i)
-				*c++ = (ushort)System.Math.Max (0, System.Math.Min (*b++, ushort.MaxValue));
-			return res;
-		}
-
-		/* This function performs a packssdw, which treats the source as a signed value*/
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector8s SignedPackWithSignedSaturation (Vector4ui va, Vector4ui vb) {
-			Vector8s res = new Vector8s ();
-			int *a = (int*)&va;
-			int *b = (int*)&vb;
-			short *c = (short*)&res;
-			for (int i = 0; i < 4; ++i)
-				*c++ = (short)System.Math.Max (System.Math.Min ((int)*a++, short.MaxValue), short.MinValue);
-			for (int i = 0; i < 4; ++i)
-				*c++ = (short)System.Math.Max (System.Math.Min ((int)*b++, short.MaxValue), short.MinValue);
-			return res;
 		}
 
 		[Acceleration (AccelMode.SSE1)]
