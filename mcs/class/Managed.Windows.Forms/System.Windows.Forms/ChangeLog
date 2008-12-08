@@ -1,3 +1,10 @@
+2008-12-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Line.cs: When calculating the text tags's Shift value, store it as
+	pixels instead of points. This way we can actually handle different
+	fonts in the same RichTextBox, as well as the right size of the caret.
+	Fixes part of #351938.
+
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCheckBoxCell.cs: Fix to make it work. Wrong value was 
