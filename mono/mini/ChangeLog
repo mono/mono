@@ -1,5 +1,9 @@
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Fix method names for Vector16sb.
+
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* basic-simd.cs: Fix method names for Vector8us.
 	
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
