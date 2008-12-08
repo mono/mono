@@ -193,6 +193,12 @@ namespace Mono.Simd
 			return new Vector2l ((long)(v1.x ==  v2.x ? -1 : 0), (long)(v1.y ==  v2.y ? -1 : 0));
 		}
 
+		[Acceleration (AccelMode.SSE41)]
+		public static Vector2ul CompareEqual (this Vector2ul v1, Vector2ul v2)
+		{
+			return new Vector2ul ((ulong)(v1.x ==  v2.x ? -1 : 0), (ulong)(v1.y ==  v2.y ? -1 : 0));
+		}
+
 		/*Same as a < b. */
 		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareLessThan (this Vector4f v1, Vector4f v2)
@@ -419,9 +425,21 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public static Vector2ul UnpackLow (this Vector2ul v1, Vector2ul v2)
+		{
+			return new Vector2ul (v1.x, v2.x);
+		}
+	
+		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l UnpackHigh (this Vector2l v1, Vector2l v2)
 		{
 			return new Vector2l (v1.y, v2.y);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static Vector2ul UnpackHigh (this Vector2ul v1, Vector2ul v2)
+		{
+			return new Vector2ul (v1.y, v2.y);
 		}
 
 		[Acceleration (AccelMode.SSE2)]

@@ -33,8 +33,8 @@ namespace Mono.Simd
 	[CLSCompliant(false)]
 	public struct Vector2ul
 	{
-		private ulong x;
-		private ulong y;
+		internal ulong x;
+		internal ulong y;
 
 		public ulong X { get { return x; } set { x = value; } }
 		public ulong Y { get { return y; } set { y = value; } }
@@ -104,24 +104,6 @@ namespace Mono.Simd
 		public static Vector2ul operator ^ (Vector2ul v1, Vector2ul v2)
 		{
 			return new Vector2ul (v1.x ^ v2.x, v1.y ^ v2.y);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static Vector2ul UnpackLow (Vector2ul v1, Vector2ul v2)
-		{
-			return new Vector2ul (v1.x, v2.x);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static Vector2ul UnpackHigh (Vector2ul v1, Vector2ul v2)
-		{
-			return new Vector2ul (v1.y, v2.y);
-		}
-
-		[Acceleration (AccelMode.SSE41)]
-		public static Vector2ul CompareEqual (Vector2ul v1, Vector2ul v2)
-		{
-			return new Vector2ul ((ulong)(v1.x ==  v2.x ? -1 : 0), (ulong)(v1.y ==  v2.y ? -1 : 0));
 		}
 
 		[Acceleration (AccelMode.SSE1)]

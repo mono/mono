@@ -1,5 +1,11 @@
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* VectorOperations.cs: Move methods from Vector2ul.
+
+	* Vector2ul.cs: Same.
+
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* VectorOperations.cs: Move methods from Vector2l.
 
 	* Vector2l.cs: Same.
