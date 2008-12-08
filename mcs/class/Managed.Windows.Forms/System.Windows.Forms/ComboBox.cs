@@ -1039,13 +1039,14 @@ namespace System.Windows.Forms
 			if (DataManager == null)
 				return;
 
+			SelectedIndex = DataManager.Position;
+
 			if (selected_index != -1 && DropDownStyle != ComboBoxStyle.DropDownList)
 				SetControlText (GetItemText (Items [selected_index]), true);
 
 			if (!IsHandleCreated)
 				return;
 
-			SelectedIndex = DataManager.Position;
 			Invalidate ();
 		}
 

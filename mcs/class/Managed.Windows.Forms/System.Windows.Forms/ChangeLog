@@ -1,3 +1,8 @@
+2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ComboBox.cs: Update the SelectedIndex before updating the Text 
+	in OnDisplayMemberChanged.
+
 2008-12-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fix our support for IDataGridViewEditingControl.
