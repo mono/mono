@@ -1,5 +1,9 @@
 2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : revert previous one and retry before I revert everything.
+
+2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : actually RabbitMQ.Client is under wrong build practice :(
 
 2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>

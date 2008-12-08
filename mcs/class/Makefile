@@ -77,7 +77,7 @@ common_dirs := \
 	Novell.Directory.Ldap		\
 	Mono.Security.Win32		\
 	System.DirectoryServices	\
-	RabbitMQ.Client/src/client	\
+	RabbitMQ.Client			\
 	Mono.Messaging			\
 	System.Messaging	        \
 	Mono.Messaging.RabbitMQ		\
