@@ -98,17 +98,24 @@ namespace System.Messaging
 			IMessage iMsg = delegateEnumerator.RemoveCurrent ();
 			if (iMsg == null)
 				return null;
-			return new Message (iMsg);
+			return new Message (iMsg, null, formatter);
 		}
-		[MonoTODO]
-		public Message RemoveCurrent(MessageQueueTransaction transaction)
+
+		public Message RemoveCurrent (MessageQueueTransaction transaction)
 		{
-			throw new NotImplementedException();
+			
+			IMessage iMsg = delegateEnumerator.RemoveCurrent (transaction.DelegateTx);
+			if (iMsg == null)
+				return null;
+			return new Message (iMsg, null, formatter);
 		}
-		[MonoTODO]
+
 		public Message RemoveCurrent(MessageQueueTransactionType transactionType)
 		{
-			throw new NotImplementedException();
+			IMessage iMsg = delegateEnumerator.RemoveCurrent ((Mono.Messaging.MessageQueueTransactionType) transactionType);
+			if (iMsg == null)
+				return null;
+			return new Message (iMsg, null, formatter);
 		}
 		[MonoTODO]
 		public Message RemoveCurrent(TimeSpan timeout)

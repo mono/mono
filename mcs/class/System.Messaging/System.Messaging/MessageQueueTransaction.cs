@@ -30,82 +30,76 @@
 //
 using System;
 
+using Mono.Messaging;
+
 namespace System.Messaging 
 {
 
 	// TODO: have to comply with 'This type is safe for multithreaded operations'
 	public class MessageQueueTransaction : IDisposable 
 	{
-        // To avoid multiple disposals
-        private bool disposed = false;
+		private readonly IMessageQueueTransaction delegateTx;
+		private readonly object syncObj = new object ();
+		private bool isDisposed = false;
 
-		public MessageQueueTransaction()
+		public MessageQueueTransaction () : this (GetMessageQueueTransaction ())
 		{
-			status = MessageQueueTransactionStatus.Initialized;
 		}
 		
-		MessageQueueTransactionStatus status;
+		internal MessageQueueTransaction (IMessageQueueTransaction delegateTx)
+		{
+			this.delegateTx = delegateTx;
+		}
 		
 		public MessageQueueTransactionStatus Status 
 		{
-			get { return status; }
+			get { 
+				return (MessageQueueTransactionStatus) delegateTx.Status;
+			}
+		}
+		
+		internal IMessageQueueTransaction DelegateTx {
+			get { return delegateTx; }
+		}
+		
+		private static IMessageQueueTransaction GetMessageQueueTransaction ()
+		{
+			return MessagingProviderLocator.GetProvider ().CreateMessageQueueTransaction ();
 		}
 			
-		[MonoTODO]
-		public void Abort()
+		public void Abort ()
 		{
-			if (status != MessageQueueTransactionStatus.Pending)
-				throw new InvalidOperationException();
-			status = MessageQueueTransactionStatus.Aborted;
-			throw new NotImplementedException();
+			delegateTx.Abort ();
 		}
 		
-		[MonoTODO]
-		public void Begin()
+		public void Begin ()
 		{
-			if (status != MessageQueueTransactionStatus.Initialized)
-				throw new InvalidOperationException();
-			status = MessageQueueTransactionStatus.Pending;
-			throw new NotImplementedException();
+			delegateTx.Begin ();
 		}
 		
-		[MonoTODO]
-		public void Commit()
+		public void Commit ()
 		{
-			if (status != MessageQueueTransactionStatus.Pending)
-				throw new InvalidOperationException();
-			status = MessageQueueTransactionStatus.Committed;
-			throw new NotImplementedException();
+			delegateTx.Commit ();
 		}
 
-		public virtual void Dispose()
+		public void Dispose ()
 		{
-			if (status == MessageQueueTransactionStatus.Pending)
-				Abort();
-            // Do this only at the first time
-            if (!this.disposed)
-				Dispose(true);
-            disposed = true;         
-            // Take this object off the finalization queue 
-            GC.SuppressFinalize(this);
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 		
-		[MonoTODO]
-		protected virtual void Dispose(bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
-			//if (disposing)
-			//  free managed resources, by calling dispose on them
-
-			// free external resources
-			throw new NotImplementedException();
+			lock (syncObj) {
+				if (!isDisposed && disposing) {
+					delegateTx.Dispose ();
+				}
+			}
 		}
 		
 		~MessageQueueTransaction()
 		{
- 		 	if (status == MessageQueueTransactionStatus.Pending)
-				Abort();
-           	if (!this.disposed)
-				Dispose(false);
+			Dispose ();
 		}
 	}
 }
