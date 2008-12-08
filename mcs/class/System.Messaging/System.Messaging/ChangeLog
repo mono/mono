@@ -1,3 +1,42 @@
+2008-11-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueue.cs:  Added support for MessageQueueTransactionType methods, 
+	ReceiveBy{Id,CorrelationId} and PeekBy{Id,CorrelationId} methods.
+
+2008-11-02  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueue.cs:  Added implementation for deleting, purging, sending with
+	labels and message transactions.
+
+2008-10-27  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueueTransaction.cs:  Delegated all methods to IMessageQueueTransaction
+	from Mono.Messaging.
+
+2008-10-12  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueue.cs:  Implemented GetMessageEnumerator().
+	* MessageEnumerator.cs:  Implemented, delegate most work to Mono.Messaging.
+	* Message.cs:  Removed [MonoTODO] and small style fix.
+
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+	
+	* IMessageFormatter.cs: Added internal enum for body types.
+	* XmlMessageFormatter.cs: Implemented read/write methods.
+	* BinaryMessageFormatter.cs: Implemented read/write methods.
+	* Message.cs: Implemented formatter support.
+	* MessageQueue.cs: Implemented Send and Receive methods.  Implemented
+	formatter support.
+	* MessageQueueException.cs: Added custom error messages.
+	
+
+2008-09-09  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Message.cs: Change properties to delegate to IMessage.  Added internal
+	constructor.
+	* MessageQueue.cs: Change properties to delegate to IMessageQueue.  Added 
+	internal constructor.  Removed private constructor.
+	
 2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MessageQueuePermission.cs: Implemented enough TODO so compilers can

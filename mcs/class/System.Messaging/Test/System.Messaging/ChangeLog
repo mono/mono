@@ -1,3 +1,17 @@
+2008-09-29  Michael Barker <mike@middlesoft.co.uk>
+
+	* BinaryMessageFormatter.cs: New
+
+2008-09-10  Michael Barker  <mike@middlesoft.co.uk>
+
+	* XMLMessageFormatterTest.cs: New
+	* TestUtils.cs: New, utility method for creating Messages.
+	
+2008-09-09  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageTest.cs: New
+	* MessageQueueTest.cs: New
+	
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MessageQueuePermissionAttributeTest.cs: Removed *Choice security 

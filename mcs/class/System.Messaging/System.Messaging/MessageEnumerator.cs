@@ -31,31 +31,43 @@
 using System;
 using System.Collections;
 
+using Mono.Messaging;
+
 namespace System.Messaging 
 {
 	public class MessageEnumerator: MarshalByRefObject, IEnumerator, IDisposable 
 	{
-		[MonoTODO]
-		internal MessageEnumerator (MessageQueue owner)
+		private IMessageEnumerator delegateEnumerator;
+		private IMessageFormatter formatter;
+		
+		internal MessageEnumerator (IMessageEnumerator delegateEnumerator, IMessageFormatter formatter)
 		{
+			this.delegateEnumerator = delegateEnumerator;
+			this.formatter = formatter;
 		}
 
-		public Message Current {		
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+		public Message Current {
+			get {
+				IMessage iMsg = delegateEnumerator.Current;
+				if (iMsg == null)
+					return null;
+				
+				return new Message (iMsg, null, formatter);
+			}
 		}
+		
 		object IEnumerator.Current {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return Current; }
 		}
+		
 		public IntPtr CursorHandle {
 			[MonoTODO]
 			get {throw new NotImplementedException();}
 		}
-		[MonoTODO]
+
 		public void Close()
 		{
-			throw new NotImplementedException();
+			delegateEnumerator.Close ();
 		}
 
 		public void Dispose()
@@ -66,33 +78,44 @@ namespace System.Messaging
 
 		protected virtual void Dispose(bool disposing)
 		{
+			delegateEnumerator.Dispose ();
 			Close();
 		}
 
-		[MonoTODO]
+
 		public bool MoveNext()
 		{
-			throw new NotImplementedException();
+			return delegateEnumerator.MoveNext ();
 		}
 		[MonoTODO]
 		public bool MoveNext(TimeSpan timeout)
 		{
 			throw new NotImplementedException();
 		}
-		[MonoTODO]
+
 		public Message RemoveCurrent()
 		{
-			throw new NotImplementedException();
+			IMessage iMsg = delegateEnumerator.RemoveCurrent ();
+			if (iMsg == null)
+				return null;
+			return new Message (iMsg, null, formatter);
 		}
-		[MonoTODO]
-		public Message RemoveCurrent(MessageQueueTransaction transaction)
+
+		public Message RemoveCurrent (MessageQueueTransaction transaction)
 		{
-			throw new NotImplementedException();
+			
+			IMessage iMsg = delegateEnumerator.RemoveCurrent (transaction.DelegateTx);
+			if (iMsg == null)
+				return null;
+			return new Message (iMsg, null, formatter);
 		}
-		[MonoTODO]
+
 		public Message RemoveCurrent(MessageQueueTransactionType transactionType)
 		{
-			throw new NotImplementedException();
+			IMessage iMsg = delegateEnumerator.RemoveCurrent ((Mono.Messaging.MessageQueueTransactionType) transactionType);
+			if (iMsg == null)
+				return null;
+			return new Message (iMsg, null, formatter);
 		}
 		[MonoTODO]
 		public Message RemoveCurrent(TimeSpan timeout)

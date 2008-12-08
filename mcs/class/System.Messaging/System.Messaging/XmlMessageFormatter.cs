@@ -32,33 +32,36 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
+using System.Xml.Serialization;
+
 
 namespace System.Messaging 
 {
 	public class XmlMessageFormatter: IMessageFormatter, ICloneable 
 	{
-		[MonoTODO]
+		private ArrayList targetTypes = new ArrayList ();		
+	
 		public XmlMessageFormatter()
 		{
 		}
 		
-		[MonoTODO]
-		public XmlMessageFormatter(string[] targetTypeNames)
+		public XmlMessageFormatter(string[] targetTypeNames) : this (GetTypesFromNames (targetTypeNames))
 		{
-			initializeFromNames(targetTypeNames);
 		}
 		
-		[MonoTODO]
 		public XmlMessageFormatter(Type[] targetTypes)
 		{
-			this.targetTypes = targetTypes;
+			this.targetTypes = new ArrayList (targetTypes);
 		}
 
-		private Type[] targetTypes = null;
-		
-		[MonoTODO]
-		private void initializeFromNames(string[] targetTypeNames)
+		private static Type[] GetTypesFromNames(string[] targetTypeNames)
 		{
+			Type[] ts = new Type[targetTypeNames.Length];
+			for (int i = 0; i < targetTypeNames.Length; i++)
+				ts[i] = Type.GetType (targetTypeNames[i]);
+			
+			return ts;
 		}
 
 		[MessagingDescription ("XmlMsgTargetTypeNames")]
@@ -69,12 +72,12 @@ namespace System.Messaging
 				if (targetTypes == null)
 					return null;
 					
-				ArrayList listOfNames = new ArrayList();
-				foreach(Type type in targetTypes)
-					listOfNames.Add(type.FullName);
-				return (string[])listOfNames.ToArray(typeof(string));
+				ArrayList listOfNames = new ArrayList (targetTypes.Count);
+				foreach (Type type in targetTypes)
+					listOfNames.Add (type.FullName);
+				return (string[]) listOfNames.ToArray (typeof (string));
 			}
-			set { initializeFromNames(value); }
+			set { TargetTypes = GetTypesFromNames (value); }
 		}
 
 		[Browsable (false)]
@@ -82,31 +85,60 @@ namespace System.Messaging
 		[MessagingDescription ("XmlMsgTargetTypes")]
 		public Type[] TargetTypes
 		{
-			get {return this.targetTypes;}
-			set {targetTypes = value;}
+			get { return (Type[]) targetTypes.ToArray (typeof (Type)); }
+			set { targetTypes = new ArrayList (value); }
 		}
 		
 		[MonoTODO]
 		public bool CanRead(Message message)
 		{
+			// Need an implementation of XmlNodeReader.
 			throw new NotImplementedException();
 		}
 		
 		public object Clone()
 		{
-			return new XmlMessageFormatter((Type[])targetTypes.Clone());
+			return new XmlMessageFormatter((Type[])TargetTypes.Clone());
 		}
 		
-		[MonoTODO]
+		private void AddType (Type t)
+		{
+			targetTypes.Add (t);
+		}
+				
 		public object Read(Message message)
 		{
-			throw new NotImplementedException();
+			message.BodyStream.Seek (0, SeekOrigin.Begin);
+			object result = null;
+			foreach (Type t in targetTypes) {
+				XmlSerializer serializer = new XmlSerializer (t);
+				try {
+					return serializer.Deserialize (message.BodyStream);
+				} catch (InvalidOperationException e) {
+					Console.WriteLine (e);
+				}
+			}
+			string error = "Unable to deserialize message body.  Type is not one of: " 
+				+ String.Join (",", TargetTypeNames);
+			throw new InvalidOperationException (error);
 		}
 		
-		[MonoTODO]
 		public void Write(Message message, object obj)
 		{
-			throw new NotImplementedException();
+			if (message == null)
+				throw new ArgumentNullException ();
+				
+			Stream stream = message.BodyStream;
+			if (stream == null) {
+				stream = new MemoryStream ();
+				message.BodyStream = stream;
+			}
+
+			XmlSerializer serializer = new XmlSerializer (obj.GetType ());
+			serializer.Serialize (stream, obj);
+
+			message.BodyType = (int) FormatterTypes.Xml;
+			AddType (obj.GetType ());
 		}
 	}
 }

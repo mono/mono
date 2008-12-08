@@ -40,11 +40,18 @@ namespace System.Messaging
 	{
 		private MessageQueueErrorCode _messageQueueErrorCode;
 
-		internal MessageQueueException(MessageQueueErrorCode messageQueueErrorCode)
+		internal MessageQueueException(MessageQueueErrorCode messageQueueErrorCode, 
+		                               String message) : base (message)
+		
 		{
 			_messageQueueErrorCode = messageQueueErrorCode;
 		}
 
+		internal MessageQueueException(MessageQueueErrorCode messageQueueErrorCode) 
+			: this (messageQueueErrorCode, "UnknownError")
+		{
+		}
+		
 		protected MessageQueueException (SerializationInfo info, StreamingContext context) : base(info, context)
 		{
 			_messageQueueErrorCode = (MessageQueueErrorCode) info.GetInt32 ("NativeErrorCode");
@@ -59,7 +66,7 @@ namespace System.Messaging
 		[MonoTODO]
 		public override string Message 
 		{
-			get { return TranslateCodeToDescription(); }
+			get { return base.Message; }
 		}
 		
 		public MessageQueueErrorCode MessageQueueErrorCode 

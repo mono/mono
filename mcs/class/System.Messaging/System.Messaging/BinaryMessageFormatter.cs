@@ -26,12 +26,14 @@
 // Authors:
 //      Peter Van Isacker (sclytrack@planetinternet.be)
 //      Rafael Teixeira   (rafaelteixeirabr@hotmail.com)
+//      Michael Barker    (mike@middlesoft.co.uk)
 //
 // (C) 2003 Peter Van Isacker
 //
 
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -80,6 +82,7 @@ namespace System.Messaging
 		{
 			if (message == null)
 				throw new ArgumentNullException ();
+				
 			return message.BodyStream.CanRead;
 		}
 
@@ -88,7 +91,8 @@ namespace System.Messaging
 		{
 			if (message == null)
 				throw new ArgumentNullException ();
-
+			
+			message.BodyStream.Seek (0, SeekOrigin.Begin);
 			return _formatter.Deserialize (message.BodyStream);
 		}
 
@@ -97,8 +101,15 @@ namespace System.Messaging
 		{
 			if (message == null)
 				throw new ArgumentNullException ();
-
-			_formatter.Serialize (message.BodyStream, obj);
+				
+			Stream stream = message.BodyStream;
+			if (stream == null) {
+				stream = new MemoryStream ();
+				message.BodyStream = stream;
+			}
+			
+			message.BodyType = 768;
+			_formatter.Serialize (stream, obj);
 		}
 
 		public object Clone ()
