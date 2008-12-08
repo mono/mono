@@ -1,3 +1,11 @@
+2008-12-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/monodoc.xml: Rename the "File Formats" node to "Commands and
+	  Files", so that ~all man pages can be under the same node.
+	* docs/lang-csharp.source: Since C# is the only current language, move
+	  the child nodes "up" a node so we have "Languages/C# Compiler Error
+	  Reference" and "Languages/C# Language Specification" nodes.
+
 2008-12-02  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs/Makefile: Build additional directories (Npgsql,

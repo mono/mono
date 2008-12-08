@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <monodoc>
-  <node label="C#" name="lang-c#" parent="languages">
-    <node label="C# Compiler Error Reference" name="cs-errors"/>
-    <node label="C# Language Specification" name="ecmaspec"/>
-  </node>
+  <node label="C# Compiler Error Reference" name="cs-errors" parent="languages"/>
+  <node label="C# Language Specification" name="ecmaspec" parent="languages"/>
   <source provider="error" basefile="cs-errors" path="cs-errors"/>
   <source provider="ecmaspec" basefile="ecma334" path="ecmaspec"/>
 </monodoc>
