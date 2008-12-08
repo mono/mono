@@ -1,5 +1,11 @@
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* VectorOperations.cs: Move methods from Vector16b.
+
+	* Vector16b.cs: Same.
+
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* VectorOperations.cs: Move methods from Vector16sb.
 
 	* Vector16sb.cs: Same.

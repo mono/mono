@@ -32,7 +32,7 @@ namespace Mono.Simd
 	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
 	public struct Vector16b
 	{
-		private byte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
+		internal byte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
 		public Vector16b (byte v0, byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8, byte v9, byte v10, byte v11, byte v12, byte v13, byte v14, byte v15)
 		{
 			this.v0 = v0;
@@ -174,113 +174,6 @@ namespace Mono.Simd
 				if (*a++ != *b++)
 					return true;
 			return false;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b UnpackLow (Vector16b va, Vector16b vb)
-		{
-			return new Vector16b (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3, va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b UnpackHigh (Vector16b va, Vector16b vb)
-		{
-			return new Vector16b (va.v8, vb.v8, va.v9, vb.v9, va.v10, vb.v10, va.v11, vb.v11, va.v12, vb.v12, va.v13, vb.v13, va.v14, vb.v14, va.v15, vb.v15);
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b AddWithSaturation (Vector16b va, Vector16b vb) {
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*c++ = (byte) System.Math.Min (*a++ + *b++, byte.MaxValue);
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b SubtractWithSaturation (Vector16b va, Vector16b vb) {
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*c++ = (byte) System.Math.Max (*a++ - *b++, 0);
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b Average (Vector16b va, Vector16b vb) {
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*c++ = (byte) ((*a++ + *b++ + 1) >> 1);
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b Max (Vector16b va, Vector16b vb) {
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*c++ = (byte) System.Math.Max(*a++, *b++);
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b Min (Vector16b va, Vector16b vb) {
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*c++ = (byte) System.Math.Min(*a++, *b++);
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe int ExtractByteMask (Vector16b va) {
-			int res = 0;
-			byte *a = (byte*)&va;
-			for (int i = 0; i < 16; ++i)
-				res |= (*a++ & 0x80) >> 7 << i;
-			return res;
-		}
-
-		[CLSCompliant(false)]
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector8us SumOfAbsoluteDifferences (Vector16b va, Vector16sb vb) {
-			Vector8us res = new Vector8us ();
-			byte *a = &va.v0;
-			sbyte *b = (sbyte*)&vb;
-
-			int tmp = 0;
-			for (int i = 0; i < 8; ++i)
-				tmp += System.Math.Abs ((int)*a++ - (int)*b++);
-			res.V0 = (ushort)tmp;
-
-			tmp = 0;
-			for (int i = 0; i < 8; ++i)
-				tmp += System.Math.Abs ((int)*a++ - (int)*b++);
-			res.V4 = (ushort)tmp;
-
-			return res;
-		}
-
-		[Acceleration (AccelMode.SSE2)]
-		public static unsafe Vector16b CompareEqual (Vector16b va, Vector16b vb) {
-			Vector16b res = new Vector16b ();
-			byte *a = &va.v0;
-			byte *b = &vb.v0;
-			byte *c = &res.v0;
-			for (int i = 0; i < 16; ++i)
-				*c++ = (byte) (*a++ == *b++ ? -1 : 0);
-			return res;
 		}
 
 		[Acceleration (AccelMode.SSE1)]
