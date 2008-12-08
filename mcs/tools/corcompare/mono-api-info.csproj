@@ -39,21 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyResolver.cs" />
-    <Compile Include="CompletionInfo.cs" />
-    <Compile Include="MissingAttribute.cs" />
-    <Compile Include="MissingBase.cs" />
-    <Compile Include="MissingConstructor.cs" />
-    <Compile Include="MissingEvent.cs" />
-    <Compile Include="MissingField.cs" />
-    <Compile Include="MissingInterface.cs" />
-    <Compile Include="MissingMember.cs" />
-    <Compile Include="MissingMethod.cs" />
-    <Compile Include="MissingNameSpace.cs" />
-    <Compile Include="MissingNestedType.cs" />
-    <Compile Include="MissingProperty.cs" />
-    <Compile Include="MissingType.cs" />
     <Compile Include="mono-api-info.cs" />
-    <Compile Include="ToDoAssembly.cs" />
     <Compile Include="Util.cs" />
     <Compile Include="WellFormedXmlWriter.cs" />
   </ItemGroup>
