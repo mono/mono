@@ -110,6 +110,15 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe int ExtractByteMask (this Vector16sb va) {
+			int res = 0;
+			sbyte *a = (sbyte*)&va;
+			for (int i = 0; i < 16; ++i)
+				res |= (*a++ & 0x80) >> 7 << i;
+			return res;
+		}
+
 
 		/* ==== Math operations ==== */
 
@@ -136,6 +145,17 @@ namespace Mono.Simd
 		}
 
 		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16sb AddWithSaturation (this Vector16sb va, Vector16sb vb) {
+			Vector16sb res = new Vector16sb ();
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			sbyte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (sbyte) System.Math.Max (System.Math.Min (*a++ + *b++, sbyte.MaxValue), sbyte.MinValue);
+			return res;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
 		public static unsafe Vector8s SubtractWithSaturation (this Vector8s va, Vector8s vb) {
 			Vector8s res = new Vector8s ();
 			short *a = &va.v0;
@@ -154,6 +174,17 @@ namespace Mono.Simd
 			ushort *c = &res.v0;
 			for (int i = 0; i < 8; ++i)
 				*c++ = (ushort) System.Math.Max (*a++ - *b++, 0);
+			return res;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16sb SubtractWithSaturation (this Vector16sb va, Vector16sb vb) {
+			Vector16sb res = new Vector16sb ();
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			sbyte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (sbyte) System.Math.Max (System.Math.Min (*a++ - *b++, sbyte.MaxValue), sbyte.MinValue);
 			return res;
 		}
 
@@ -273,6 +304,17 @@ namespace Mono.Simd
 								System.Math.Min (v1.w, v2.w));
 		}
 
+		[Acceleration (AccelMode.SSE41)]
+		public static unsafe Vector16sb Max (this Vector16sb va, Vector16sb vb) {
+			Vector16sb res = new Vector16sb ();
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			sbyte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (sbyte) System.Math.Max (*a++, *b++);
+			return res;
+		}
+
 		[Acceleration (AccelMode.SSE2)]
 		public static Vector2d Min (this Vector2d v1, Vector2d v2)
 		{
@@ -313,6 +355,18 @@ namespace Mono.Simd
 				*c++ = (ushort) System.Math.Min (*a++, *b++);
 			return res;
 		}
+
+		[Acceleration (AccelMode.SSE41)]
+		public static unsafe Vector16sb Min (this Vector16sb va, Vector16sb vb) {
+			Vector16sb res = new Vector16sb ();
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			sbyte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (sbyte) System.Math.Min(*a++, *b++);
+			return res;
+		}
+
 
 		/* ==== Horizontal operations ==== */
 
@@ -423,6 +477,17 @@ namespace Mono.Simd
 			return res;
 		}
 
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16sb CompareEqual (this Vector16sb va, Vector16sb vb) {
+			Vector16sb res = new Vector16sb ();
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			sbyte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (sbyte) (*a++ == *b++ ? -1 : 0);
+			return res;
+		}
+
 		/*Same as a < b. */
 		[Acceleration (AccelMode.SSE1)]
 		public unsafe static Vector4f CompareLessThan (this Vector4f v1, Vector4f v2)
@@ -491,6 +556,17 @@ namespace Mono.Simd
 			short *c = &res.v0;
 			for (int i = 0; i < 8; ++i)
 				*c++ = (short) (*a++ > *b++ ? -1 : 0);
+			return res;
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16sb CompareGreaterThan (this Vector16sb va, Vector16sb vb) {
+			Vector16sb res = new Vector16sb ();
+			sbyte *a = &va.v0;
+			sbyte *b = &vb.v0;
+			sbyte *c = &res.v0;
+			for (int i = 0; i < 16; ++i)
+				*c++ = (sbyte) (*a++ > *b++ ? -1 : 0);
 			return res;
 		}
 
@@ -694,7 +770,13 @@ namespace Mono.Simd
 		{
 			return new Vector8us (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3);
 		}
-	
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16sb UnpackLow (this Vector16sb va, Vector16sb vb)
+		{
+			return new Vector16sb (va.v0, vb.v0, va.v1, vb.v1, va.v2, vb.v2, va.v3, vb.v3, va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
+		}
+
 		[Acceleration (AccelMode.SSE2)]
 		public static Vector2l UnpackHigh (this Vector2l v1, Vector2l v2)
 		{
@@ -729,6 +811,12 @@ namespace Mono.Simd
 		public static unsafe Vector8us UnpackHigh (this Vector8us va, Vector8us vb)
 		{
 			return new Vector8us (va.v4, vb.v4, va.v5, vb.v5, va.v6, vb.v6, va.v7, vb.v7);
+		}
+
+		[Acceleration (AccelMode.SSE2)]
+		public static unsafe Vector16sb UnpackHigh (this Vector16sb va, Vector16sb vb)
+		{
+			return new Vector16sb (va.v8, vb.v8, va.v9, vb.v9, va.v10, vb.v10, va.v11, vb.v11, va.v12, vb.v12, va.v13, vb.v13, va.v14, vb.v14, va.v15, vb.v15);
 		}
 
 		[Acceleration (AccelMode.SSE2)]
