@@ -1,3 +1,10 @@
+2008-12-08  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r120999.
+	
+	* mini-exceptions.c (mono_print_thread_dump): Mark threadpool threads
+	as such. Fixes #456669.
+
 2008-12-04  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r120756.
