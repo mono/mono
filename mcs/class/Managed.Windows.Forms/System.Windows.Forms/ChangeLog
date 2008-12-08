@@ -1,5 +1,10 @@
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Set EditingControlFormattedValue when preparing an 
+	IDataGridViewEditingControl for editing.
+
+2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewComboBoxCell.cs: Implement data binding support.
 
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>

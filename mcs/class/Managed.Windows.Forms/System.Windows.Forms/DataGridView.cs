@@ -2291,6 +2291,7 @@ namespace System.Windows.Forms {
 					dgvEditingControl.EditingControlRowIndex = currentCell.OwningRow.Index;
 					dgvEditingControl.ApplyCellStyleToEditingControl (style);
 					dgvEditingControl.PrepareEditingControlForEdit (selectAll);
+					dgvEditingControl.EditingControlFormattedValue = currentCell.EditedFormattedValue;
 				}
 				return true;
 			}
@@ -2338,7 +2339,6 @@ namespace System.Windows.Forms {
 		{
 			if (currentCell != null && currentCell.IsInEditMode) {
 				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
-				ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
 				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
 				return true;
 			}
@@ -2388,9 +2388,7 @@ namespace System.Windows.Forms {
 			if (currentCell != null && currentCell.IsInEditMode) {
 				if (EditingControl != null) {
 					IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
-					ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
 					currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
-					
 					currentCell.SetIsInEditMode (false);
 					currentCell.DetachEditingControl ();	
 				} else if (currentCell is IDataGridViewEditingCell) {
