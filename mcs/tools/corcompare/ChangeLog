@@ -1,5 +1,13 @@
 2008-12-08  Jb Evain  <jbevain@novell.com>
 
+	* Util.cs
+	* WellFormedXmlWriter.cs
+	* mono-api-diff.cs
+	* AssemblyResolver.cs
+	* mono-api-info.cs: normalize namespaces.
+
+2008-12-08  Jb Evain  <jbevain@novell.com>
+
 	* Metadata.cs
 	* CecilMetadata.cs
 	* CompareContext.cs

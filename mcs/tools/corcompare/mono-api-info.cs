@@ -18,9 +18,8 @@ using System.Xml;
 
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Util.CorCompare.Cecil;
 
-namespace Mono.AssemblyInfo
+namespace CorCompare
 {
 	public class Driver
 	{

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil;
 
-namespace Mono.Util.CorCompare.Cecil {
+using GuiCompare;
+
+namespace CorCompare {
 
 	static class TypeHelper {
 
@@ -12,7 +14,7 @@ namespace Mono.Util.CorCompare.Cecil {
 		internal static bool IsPublic (TypeReference typeref)
 		{
 			if (typeref == null)
-				throw new ArgumentException ("typeref must not be null");
+				throw new ArgumentNullException ("typeref");
 
 			TypeDefinition td = Resolve (typeref);
 			return td.IsPublic;
