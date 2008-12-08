@@ -1,3 +1,8 @@
+2008-12-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_print_thread_dump): Mark threadpool threads
+	as such. Fixes #456669.
+
 2008-12-07  Mark Mason   <mmason@upwardaccess.com>
 
 	* mini-mips.c (mono_arch_emit_call): narrow float arguments when passing as args.
