@@ -1,5 +1,9 @@
 2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile : actually RabbitMQ.Client is under wrong build practice :(
+
+2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : add new sys.messaging implementation.
 
 2008-11-20  Jb Evain  <jbevain@novell.com>
