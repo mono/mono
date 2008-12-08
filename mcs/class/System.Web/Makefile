@@ -152,6 +152,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ValidPropertyBind2.aspx \
 	Test/mainsoft/NunitWebResources/ValidPropertyBind3.aspx \
 	Test/mainsoft/NunitWebResources/ValidPropertyBind4.aspx \
+	Test/mainsoft/NunitWebResources/ValidPropertyBind5.aspx \
 	Test/mainsoft/NunitWebResources/ReadWritePropertyControl.ascx \
 	Test/mainsoft/MainsoftWebTest/nunitweb_config.xml \
 	Test/mainsoft/NunitWebResources/TemplateControlParsingTest.aspx \

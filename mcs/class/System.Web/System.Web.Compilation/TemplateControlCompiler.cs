@@ -67,6 +67,8 @@ namespace System.Web.Compilation
 		
 #if NET_2_0
 		List <string> masterPageContentPlaceHolders;
+		// When modifying those, make sure to look at the SanitizeBindCall to make sure it
+		// picks up correct groups.
 		static Regex bindRegex = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		static Regex bindRegexInValue = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 #endif
@@ -501,7 +503,7 @@ namespace System.Web.Compilation
 		{
 			GroupCollection groups = match.Groups;
 			StringBuilder sb = new StringBuilder ("Eval(\"" + groups [1] + "\"");
-			Group second = groups [2];
+			Group second = groups [4];
 			if (second != null) {
 				string v = second.Value;
 				if (v != null && v.Length > 0)
