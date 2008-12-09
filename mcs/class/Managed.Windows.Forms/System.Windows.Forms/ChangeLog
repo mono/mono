@@ -1,3 +1,8 @@
+2008-12-09  Sandy Armstrong  <sanfordarmstrong@gmail.com>
+
+	* TreeView.cs: Expose ScrollBars as internal properties, for use by UIA
+	framework.  Fixes bug #457678.
+
 2008-12-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewRow.cs: Prevent an exception on a not yet databound grid, 

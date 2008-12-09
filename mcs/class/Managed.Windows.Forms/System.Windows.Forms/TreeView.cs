@@ -688,6 +688,19 @@ namespace System.Windows.Forms {
 #endif
 		#endregion	// Public Instance Properties
 
+		#region UIA Framework Properties
+
+#if NET_2_0
+		internal ScrollBar UIAHScrollBar {
+			get { return hbar; }
+		}
+		
+		internal ScrollBar UIAVScrollBar {
+			get { return vbar; }
+		}
+#endif
+		#endregion	// UIA Framework Properties
+
 		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
 			get {
