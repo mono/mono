@@ -1,3 +1,7 @@
+2008-12-08  Mark Mason   <mmason@upwardaccess.com>
+
+	* exceptions-mips.c (mono_arch_find_jit_info): init new_ctx with ctx, dont' call setup_context.
+	
 2008-12-08  Geoff Norton  <gnorton@novell.com>
 
 	* tramp-amd64.c: r120895 stores RAX, so we need to increase the window
