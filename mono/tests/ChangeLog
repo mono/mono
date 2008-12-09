@@ -1,3 +1,9 @@
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug457574.il: New regression test.
+
+	* Makefile.am: Test added.
+
 2008-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* stack-overflow.cs (foo): Prevent the large local variable from being
