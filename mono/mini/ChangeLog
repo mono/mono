@@ -1,3 +1,8 @@
+2008-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_exception_debug_info): Acquire the domain
+	lock when calling mono_domain_alloc (). Hopefully fixes #415608.
+
 2008-12-09  Mark Mason   <mmason@upwardaccess.com>
 
 	* cpu-mips.md: fix ckfinite length
