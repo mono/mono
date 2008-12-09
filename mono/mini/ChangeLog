@@ -1,3 +1,11 @@
+2008-12-09  Mark Mason   <mmason@upwardaccess.com>
+
+	* cpu-mips.md: fix ckfinite length
+
+	* mini-mips.c: at least recognize n32 ABI when used (not yet supported)
+	(mono_arch_lowering_pass): cleanup, rearrange for clarity
+	(mono_arch_output_basic_block): implement OP_CKFINITE, add more asserts
+	
 2008-12-08  Mark Mason   <mmason@upwardaccess.com>
 
 	* exceptions-mips.c (mono_arch_find_jit_info): init new_ctx with ctx, dont' call setup_context.
