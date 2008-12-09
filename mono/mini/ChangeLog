@@ -1,3 +1,7 @@
+2008-12-09  Mark Mason   <mmason@upwardaccess.com>
+
+	* mini-mips.c (mono_arch_output_basic_block): use mfc1/lwc1 instead of mfc1d/ldc1
+	
 2008-12-09  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini.c (mini_cleanup) : Adding a call to cominterop_release_all_rcws 
