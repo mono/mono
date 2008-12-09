@@ -1,9 +1,13 @@
+2008-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.h: Fix a warning.
+
 2008-12-09  Bill Holmes  <billholmes54@gmail.com>
 
 	* marshal.c : Adding cominterop_release_all_rcws to release all
 	  runtime callable wrappers held by the runtime.
 
-	* marshal.h : Adding deceleration  for cominterop_release_all_rcws.
+	* marshal.h : Adding declaration for cominterop_release_all_rcws.
 	  
 	Code is contributed under MIT/X11 license.
 
