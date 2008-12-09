@@ -1,3 +1,11 @@
+2008-12-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: When saving the contents as a plain text, don't add
+	a new line for every Line structure, since the data in Document
+	already contains the new line characters. This avoids duplicated new
+	lines using the Save methods.
+	Fixes #445618.
+
 2008-12-09  Sandy Armstrong  <sanfordarmstrong@gmail.com>
 
 	* TreeView.cs: Expose ScrollBars as internal properties, for use by UIA
