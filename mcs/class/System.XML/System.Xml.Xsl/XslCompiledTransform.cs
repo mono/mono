@@ -221,12 +221,12 @@ namespace System.Xml.Xsl
 
 		public void Load (XmlReader stylesheet, XsltSettings settings, XmlResolver resolver)
 		{
-			Load (new XPathDocument (stylesheet).CreateNavigator (), settings, resolver);
+			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), settings, resolver);
 		}
 
 		public void Load (string stylesheet, XsltSettings settings, XmlResolver resolver)
 		{
-			Load (new XPathDocument (stylesheet).CreateNavigator (), settings, resolver);
+			Load (new XPathDocument (stylesheet, XmlSpace.Preserve).CreateNavigator (), settings, resolver);
 		}
 
 		private void Load (XPathNavigator stylesheet,

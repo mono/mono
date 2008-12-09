@@ -1,3 +1,8 @@
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledTransform.cs : Fixed bug #450797, patch by Jonathan
+	  Anderson. Preserve whitespace-only text in xsl:text.
+
 2008-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransform.cs : add pretty simple printing debugger.
