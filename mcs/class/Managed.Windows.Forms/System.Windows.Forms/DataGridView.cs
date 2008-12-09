@@ -4815,6 +4815,7 @@ namespace System.Windows.Forms {
 
 		internal void OnRowsAddedInternal (DataGridViewRowsAddedEventArgs e)
 		{
+			AutoResizeColumnsInternal ();
 			Invalidate ();
 			OnRowsAdded (e);
 		}

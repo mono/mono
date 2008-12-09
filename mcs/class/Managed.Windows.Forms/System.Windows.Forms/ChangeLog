@@ -1,3 +1,8 @@
+2008-12-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Refresh column sizes when new rows are added.
+	[Fixes bug #457050]
+
 2008-12-09  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 	* RichTextBox.cs: When parsing the contents of a rtf file, don't call
 	Split to create a line - we are already doing this, by _adding_ a new
