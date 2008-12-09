@@ -1,3 +1,10 @@
+2008-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* branch-opts.c (remove_block_if_useless): Use MONO_IS_BRANCH_OP instead of checking
+	for the many branch ops. The original check miss OP_BR_REG.
+
+	Fixes #457574.
+	
 2008-12-09  Mark Mason   <mmason@upwardaccess.com>
 
 	* mini-mips.h mini-mips.c exceptions-mips.c tramp-mips.c: first round of changes necessary to eventually support n32.
