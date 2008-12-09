@@ -1,3 +1,8 @@
+2008-12-08  Geoff Norton  <gnorton@novell.com>
+
+	* tramp-amd64.c: r120895 stores RAX, so we need to increase the window
+	size by 8 bytes as well.
+
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Fix method names for Vector16b.
