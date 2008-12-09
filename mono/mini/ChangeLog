@@ -1,5 +1,12 @@
 2008-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* branch-opts.c (remove_block_if_useless): Extract fall through detection
+	code to mono_bb_is_fall_through.
+	
+	* branch-opts.c (mono_remove_critical_edges): Same.
+
+2008-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ssa.c (fold_ins): branch opt can kill dummy switch ops so we can't
 	expect that an OP_BR_REG will be there.
 
