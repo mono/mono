@@ -1083,9 +1083,11 @@ decode_exception_debug_info (MonoAotModule *aot_module, MonoDomain *domain,
 
 	/* Exception table */
 	if (header && header->num_clauses) {
+		mono_domain_lock (domain);
 		jinfo = 
 			mono_mempool_alloc0 (domain->mp, sizeof (MonoJitInfo) + (sizeof (MonoJitExceptionInfo) * header->num_clauses));
 		jinfo->num_clauses = header->num_clauses;
+		mono_domain_unlock (domain);
 
 		for (i = 0; i < header->num_clauses; ++i) {
 			MonoExceptionClause *ec = &header->clauses [i];				
@@ -1104,8 +1106,11 @@ decode_exception_debug_info (MonoAotModule *aot_module, MonoDomain *domain,
 			ei->handler_start = code + decode_value (p, &p);
 		}
 	}
-	else
+	else {
+		mono_domain_lock (domain);
 		jinfo = mono_mempool_alloc0 (domain->mp, sizeof (MonoJitInfo));
+		mono_domain_unlock (domain);
+	}
 
 	jinfo->code_size = code_len;
 	jinfo->used_regs = used_int_regs;
