@@ -543,7 +543,7 @@ namespace System.Xml.XPath
 
 		public DescendantIterator (BaseIterator iter) : base (iter) {}
 
-		private DescendantIterator (DescendantIterator other) : base (other)
+		private DescendantIterator (DescendantIterator other) : base (other, true)
 		{
 			_depth = other._depth;
 			_finished = other._finished;

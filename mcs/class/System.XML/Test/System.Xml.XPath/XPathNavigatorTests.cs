@@ -427,6 +427,22 @@ namespace MonoTests.System.Xml
 			AssertEquals ("#2", true, nav.Matches ("text()"));
 		}
 
+		[Test]
+		public void Bug456103 ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root><X/></root>");
+
+			XPathNavigator nav = doc.DocumentElement.CreateNavigator ();
+			// ".//*" does not reproduce the bug.
+			var i = nav.Select ("descendant::*");
+
+			// without this call to get_Count() the bug does not reproduce.
+			AssertEquals ("#1", 1, i.Count);
+
+			Assert ("#2", i.MoveNext ());
+		}
+
 #if NET_2_0
 		[Test]
 		public void ValueAsBoolean ()
