@@ -1,5 +1,12 @@
 2008-12-09  Bill Holmes  <billholmes54@gmail.com>
 
+	* mini.c (mini_cleanup) : Adding a call to cominterop_release_all_rcws 
+	  to release all runtime callable wrappers held by the runtime.
+
+	Contributed under MIT/X11 license.
+
+2008-12-09  Bill Holmes  <billholmes54@gmail.com>
+
 	* tramp-amd64.c (mono_arch_create_trampoline_code_full) : Increase the code size for
 	  for Winx64.
 
@@ -18065,6 +18072,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 
