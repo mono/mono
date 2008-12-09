@@ -485,6 +485,49 @@ namespace MonoTests.System.Xml
 			}
 		}
 
+		[Test]
+		public void ValidateMixedInsideXsdAny ()
+		{
+			string xml = @"<root xmlns='urn:foo'>
+  <X><Z>text</Z></X>
+  <Y><X><Z>text</Z></X></Y>
+</root>";
+			string xsd = @"
+<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'
+  targetNamespace='urn:foo' xmlns='urn:foo'>
+    <xs:complexType name='root-type'>
+      <xs:sequence><xs:element ref='X' /><xs:element ref='Y' /></xs:sequence>
+    </xs:complexType>
+    <xs:complexType name='X-type'>
+      <xs:choice minOccurs='1' maxOccurs='unbounded'>
+        <xs:any processContents='skip'/>
+      </xs:choice>
+    </xs:complexType>
+    <xs:complexType name='Y-type'>
+      <xs:sequence><xs:element ref='X' /></xs:sequence>
+    </xs:complexType>
+  <xs:element name='root' type='root-type' />
+  <xs:element name='X' type='X-type' />
+  <xs:element name='Y' type='Y-type' />
+</xs:schema>";
+			XmlTextReader xtr = new XmlTextReader (new StringReader (xml));
+			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+			XmlReader xsr = new XmlTextReader (new StringReader (xsd));
+			xvr.Schemas.Add (XmlSchema.Read (xsr, null));
+			while (!xvr.EOF)
+				xvr.Read ();
+#if NET_2_0
+			xtr = new XmlTextReader (new StringReader (xml));
+			xsr = new XmlTextReader (new StringReader (xsd));
+			var s = new XmlReaderSettings ();
+			s.Schemas.Add (XmlSchema.Read (xsr, null));
+			s.ValidationType = ValidationType.Schema;
+			XmlReader xvr2 = XmlReader.Create (xtr, s);
+			while (!xvr2.EOF)
+				xvr2.Read ();
+#endif
+		}
+
 #if NET_2_0
 		[Test]
 		public void WhitespaceAndElementOnly ()

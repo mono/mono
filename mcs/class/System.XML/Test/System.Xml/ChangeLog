@@ -1,3 +1,8 @@
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlValidatingReaderTests.cs : added test for validating mixed
+	  element under xs:any.
+
 2008-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : another Subtree+EmptyElement case.

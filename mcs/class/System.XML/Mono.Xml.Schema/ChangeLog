@@ -1,3 +1,8 @@
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : skip text validation under xs:any.
+	  Fixed part of bug #449512.
+
 2008-10-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs : use internal attribute datatype

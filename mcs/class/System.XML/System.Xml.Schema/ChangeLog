@@ -1,3 +1,7 @@
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : skip text validation under xs:any.
+
 2008-10-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : add internal attribute datatype

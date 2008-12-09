@@ -527,6 +527,9 @@ namespace System.Xml.Schema
 			if (schemas.Count == 0)
 				return;
 
+			if (skipValidationDepth >= 0 && depth > skipValidationDepth)
+				return;
+
 			ComplexType ct = Context.ActualType as ComplexType;
 			if (ct != null) {
 				switch (ct.ContentType) {

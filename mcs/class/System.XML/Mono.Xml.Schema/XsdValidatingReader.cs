@@ -1625,15 +1625,18 @@ namespace Mono.Xml.Schema
 			case XmlNodeType.SignificantWhitespace:
 			case XmlNodeType.Whitespace:
 			case XmlNodeType.Text:
+				if (skipValidationDepth >= 0 && reader.Depth > skipValidationDepth)
+					break;
+
 				ComplexType ct = Context.ActualType as ComplexType;
 				if (ct != null) {
 					switch (ct.ContentType) {
 					case XmlSchemaContentType.ElementOnly:
 						if (reader.NodeType != XmlNodeType.Whitespace)
-							HandleError ("Not allowed character content is found (current content model is element-only).");
+							HandleError (String.Format ("Not allowed character content is found (current content model '{0}' is element-only).", ct.QualifiedName));
 						break;
 					case XmlSchemaContentType.Empty:
-						HandleError ("Not allowed character content is found (current element content model is empty).");
+						HandleError (String.Format ("Not allowed character content is found (current element content model '{0}' is empty).", ct.QualifiedName));
 						break;
 					}
 				}
