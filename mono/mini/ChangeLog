@@ -1,3 +1,7 @@
+2008-12-09  Mark Mason   <mmason@upwardaccess.com>
+
+	* mini-mips.h mini-mips.c exceptions-mips.c tramp-mips.c: first round of changes necessary to eventually support n32.
+
 2008-12-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_method): Avoid calling decode_exception_debug_info
