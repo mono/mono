@@ -41,7 +41,7 @@ namespace System.Diagnostics {
 	{
 
 		// keep the same order of fields: this is used in metadata/mono-perfcounters.c
-		private string help;
+		private string help = String.Empty;
 		private string name;
 		private PerformanceCounterType type;
 

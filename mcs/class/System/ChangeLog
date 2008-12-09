@@ -1,3 +1,7 @@
+2008-12-09  Christian Hergert <christian.hergert@gmail.com>
+
+	* System_test.dll.sources: Addded CounterCreationDataTest.cs
+
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* System_test.dll.sources: Addded NullableConverterTest.cs

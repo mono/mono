@@ -1,3 +1,8 @@
+2008-12-09  Christian Hergert <christian.hergert@gmail.com>
+
+	* System.Diagnostics/CounterCreationDataTest.cs: New test to verify
+	that CounterHelp defaults to String.Empty.
+
 2007-12-04  Arina Itkes <arinai@mainsoft.com>
 
 	* System_test.dll.sources : added RegexReplaceTests.cs

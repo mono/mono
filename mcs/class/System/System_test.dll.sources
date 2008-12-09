@@ -184,6 +184,7 @@ System.Diagnostics/PerformanceCounterPermissionAttributeTest.cs
 System.Diagnostics/PerformanceCounterPermissionTest.cs
 System.Diagnostics/ProcessStartInfoTest.cs
 System.Diagnostics/ProcessTest.cs
+System.Diagnostics/CounterCreationDataTest.cs
 System.IO/FileSystemWatcherTest.cs
 System.IO.Compression/DeflateStreamTest.cs
 System.IO.Compression/GzipStreamTest.cs
