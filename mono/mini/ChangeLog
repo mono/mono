@@ -1,5 +1,12 @@
 2008-12-09  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r121150.
+	
+	* aot-runtime.c (load_method): Avoid calling decode_exception_debug_info
+	while holding the aot lock.
+
+2008-12-09  Zoltan Varga  <vargaz@gmail.com>
+
 	Backport of r121103.
 	
 	* aot-runtime.c (decode_exception_debug_info): Acquire the domain
