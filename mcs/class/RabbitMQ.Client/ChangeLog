@@ -1,3 +1,7 @@
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : sigh, there was missing extension.
+
 2008-12-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : I find SUBDIRS almost dumb. another attempt.
