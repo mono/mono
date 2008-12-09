@@ -1,5 +1,9 @@
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: those paths are all wrong!
+
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile: huh, more messy sources.
 
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
