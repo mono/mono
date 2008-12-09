@@ -1,0 +1,33 @@
+<wsdl:definitions 
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:impl="urn:myservice" 
+    xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="urn:myservice">
+    <wsdl:message name="getVersionStringResponse1">
+        <wsdl:part name="getVersionStringReturn" type="xsd:string" />
+    </wsdl:message>
+    <wsdl:message name="getVersionStringRequest1">
+        <wsdl:part name="developerKey" type="xsd:string" />
+    </wsdl:message>
+    <wsdl:portType name="MyServiceAxisAdapter">
+        <wsdl:operation name="getVersionString" parameterOrder="developerKey">
+            <wsdl:input message="impl:getVersionStringRequest1"
+name="getVersionStringRequest1" />
+            <wsdl:output message="impl:getVersionStringResponse1"
+name="getVersionStringResponse1" />
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MyServiceSoapBinding" type="impl:MyServiceAxisAdapter">
+        <wsdlsoap:binding style="rpc"
+transport="http://schemas.xmlsoap.org/soap/http" />
+    </wsdl:binding>
+
+    <wsdl:service name="MyServiceAxisAdapterService">
+        <wsdl:port binding="impl:MyServiceSoapBinding" name="MyService">
+            <wsdlsoap:address location="https://my-url.com/services/MyService"
+/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
+

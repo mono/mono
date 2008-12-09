@@ -1,3 +1,8 @@
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* 443095.wsdl, WebServicesInteroperabilityTest.cs : added
+	  new test for R2305 checker.
+
 2008-07-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebServicesInteroperabilityTest.cs : new test. wsdl with <import>

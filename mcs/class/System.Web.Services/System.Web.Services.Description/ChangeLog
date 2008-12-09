@@ -1,3 +1,8 @@
+2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicProfileChecker.cs : reimplemented R2305 that turned out to
+	  be wrong on fixing bug #443095 (fixed).
+
 2008-10-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicProfileChecker.cs : use indexer instead of Add() for

@@ -415,23 +415,23 @@ namespace System.Web.Services.Description
 		void CheckR2305 (ConformanceCheckContext ctx, Operation value)
 		{
 			string [] order = value.ParameterOrder;
-			if (order == null || order.Length == 0)
-				return;
-			bool omitted = false;
-			bool violation = false;
-			for (int i = 0; i < value.Messages.Count; i++) {
-				OperationMessage msg = value.Messages [i];
-				if (msg.Name == null) {
-					if (omitted)
-						violation = true;
-					else
-						omitted = true;
+			ServiceDescription sd = value.PortType.ServiceDescription;
+			Message omitted = null;
+			foreach (OperationMessage m in value.Messages) {
+				Message msg = sd.Messages [m.Name];
+				if (msg == null)
+					continue; // it is doubtful, but R2305 is not to check such cases anyways.
+				foreach (MessagePart p in msg.Parts) {
+					if (Array.IndexOf (order, p.Name) >= 0)
+						continue;
+					if (omitted == null) {
+						omitted = msg;
+						continue;
+					}
+					ctx.ReportRuleViolation (value, BasicProfileRules.R2305);
+					return;
 				}
-				else if (order [omitted ? i - 1 : i] != msg.Name)
-					violation = true;
 			}
-			if (violation)
-				ctx.ReportRuleViolation (value, BasicProfileRules.R2305);
 		}
 
 		public override void Check (ConformanceCheckContext ctx, OperationMessage value) { }

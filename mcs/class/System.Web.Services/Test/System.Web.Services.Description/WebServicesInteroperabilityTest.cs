@@ -33,6 +33,15 @@ namespace MonoTests.System.Web.Services.Description
 				WsiProfiles.BasicProfile1_1,
 				ServiceDescription.Read ("Test/System.Web.Services.Description/check-import.wsdl"), bc);
 		}
+
+		[Test]
+		public void CheckR2305_1 () // bug #443095
+		{
+			BasicProfileViolationCollection bc = new BasicProfileViolationCollection ();
+			WebServicesInteroperability.CheckConformance (
+				WsiProfiles.BasicProfile1_1,
+				ServiceDescription.Read ("Test/System.Web.Services.Description/443095.wsdl"), bc);
+		}
 	}
 }
 
