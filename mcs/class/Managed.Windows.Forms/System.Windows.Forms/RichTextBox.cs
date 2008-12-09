@@ -1766,7 +1766,6 @@ namespace System.Windows.Forms {
 							FormatSpecified.Font | FormatSpecified.Color);
 				}
 				if (newline) {
-					document.Split (line, rtf_cursor_x + length);
 					line = document.GetLine (rtf_cursor_y);
 					line.ending = LineEnding.Rich;
 

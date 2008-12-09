@@ -1,3 +1,11 @@
+2008-12-09  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+	* RichTextBox.cs: When parsing the contents of a rtf file, don't call
+	Split to create a line - we are already doing this, by _adding_ a new
+	one when rtf_cursor_x is 0 (this field gets this value just after we
+	receive the newline param as true). This avoids having a proportional number
+	of empty lines in the end of the rich text box.
+	Fixes #396664.
+
 2008-12-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichTextBox.cs: When saving the contents as a plain text, don't add
