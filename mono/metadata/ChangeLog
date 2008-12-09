@@ -1,3 +1,11 @@
+2008-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_image_alloc_lock): New helper function.
+	(mono_image_alloc0_lock): Ditto.
+
+	* metadata.c: Use the alloc_lock () helper functions for allocating
+	memory from the image mempool.
+
 2008-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_from_generic_parameter): Document it's
