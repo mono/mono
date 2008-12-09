@@ -22,7 +22,7 @@
 
 	* System.Windows.Forms.dll.resources: Removed unused dialog-*.png images.
 
-2008-09-18  Mike Gorse <<mgorse@novell.com>
+2008-09-18  Mike Gorse <mgorse@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added IKeyFilter.cs.
 
