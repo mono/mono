@@ -1,3 +1,10 @@
+2008-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r121103.
+	
+	* aot-runtime.c (decode_exception_debug_info): Acquire the domain
+	lock when calling mono_domain_alloc (). Hopefully fixes #415608.
+
 2008-12-08  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r120999.
