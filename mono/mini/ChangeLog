@@ -1,3 +1,8 @@
+2008-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_method): Avoid calling decode_exception_debug_info
+	while holding the aot lock.
+
 2008-12-09  Mark Mason   <mmason@upwardaccess.com>
 
 	* mini-mips.c (mono_arch_output_basic_block): use mfc1/lwc1 instead of mfc1d/ldc1
