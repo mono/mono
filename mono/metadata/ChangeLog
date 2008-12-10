@@ -1,5 +1,12 @@
 2008-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	class.c (mono_class_setup_fields): It working on an inflated class
+	first check if the generic definition did init with success.
+
+	Fixes #445361.
+
+2008-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	pedump.c (main): Fix a warning.
 
 2008-12-10  Bill Holmes  <billholmes54@gmail.com>
