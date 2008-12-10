@@ -1,6 +1,14 @@
+2008-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c (build_nursery_fragments): Clear nursery_next/nursery_frag_real_end.
+
+	* sgen-gc.c (check_object): New debugging helper function.
+
+	* object.c: Fix calls to mono_value_copy_array ().
+
 2008-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	class.c (mono_class_setup_fields): It working on an inflated class
+	class.c (mono_class_setup_fields): If working on an inflated class
 	first check if the generic definition did init with success.
 
 	Fixes #445361.
