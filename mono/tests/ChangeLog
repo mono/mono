@@ -1,5 +1,11 @@
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* bug445361.il: New regression test.
+
+	* Makefile.am: Test added.
+
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* bug457574.il: New regression test.
 
 	* Makefile.am: Test added.
