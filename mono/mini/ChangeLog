@@ -1,3 +1,13 @@
+2008-12-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c: Merged with mini-ppc64.c.
+
+	* mini-ppc.h: Define PPC_MINIMAL_PARAM_AREA_SIZE on all targets.
+
+	* Makefile.am: Use the same sources for PPC and PPC64.
+
+	* mini-ppc64.c: Removed.
+
 2008-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* branch-opts.c (remove_block_if_useless): Extract fall through detection

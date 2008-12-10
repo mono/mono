@@ -1,3 +1,8 @@
+2008-12-10  Mark Probst  <mark.probst@gmail.com>
+
+	* ppc/ppc-codegen.h: A few new macros for the final PPC/PPC64
+	merge.
+
 2008-12-05  Mark Probst  <mark.probst@gmail.com>
 
 	* ppc/ppc-codegen.h: ppc_load_func must use ppc_load_sequence.
