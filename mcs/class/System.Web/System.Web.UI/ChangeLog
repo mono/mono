@@ -1,3 +1,18 @@
+2008-12-10  Marek Habersack  <mhabersack@novell.com>
+
+	* MasterPageParser.cs: do not compile anything while
+	parsing. MasterType virtual path is not compiled, but stored for
+	later. It is compiled when the MasterType property is requested
+	from within MasterPageCompiler.
+
+	* PageParser.cs: do not compile anything while
+	parsing. MasterPageFile, MasterType and PreviousPageType virtual
+	paths aren't compiled but checked for existence and stored for
+	later. Actual compilation happens when the MasterType and
+	PreviousPageType are requested from within PageCompiler.
+
+	* BaseParser.cs: added a new helper method, ThrowParseFileNotFound.
+
 2008-12-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBinder.cs: clean up Eval for good this time.

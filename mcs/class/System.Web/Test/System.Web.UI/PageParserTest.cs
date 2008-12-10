@@ -1,11 +1,10 @@
 //
-// System.Web.Compilation.MasterPageCompiler
+// Tests for System.Web.UI.PageParser
 //
 // Authors:
-//	Joel W. Reed (joelwreed@gmail.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
-//
-
+// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,44 +25,31 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_2_0
-
+using NUnit.Framework;
 using System;
-using System.CodeDom;
+using System.Web;
+using System.Web.Compilation;
 using System.Web.UI;
+using MonoTests.SystemWeb.Framework;
 
-namespace System.Web.Compilation
+namespace MonoTests.System.Web.UI
 {
-	class MasterPageCompiler : UserControlCompiler
+	[TestFixture]
+	public class PageParserTest
 	{
-		MasterPageParser parser;
-
-		public MasterPageCompiler (MasterPageParser parser)
-			: base (parser)
+		[TestFixtureSetUp]
+		public void SetupTest ()
 		{
-			this.parser = parser;
+			WebTest.CopyResource (GetType (), "MissingMasterFile.aspx", "MissingMasterFile.aspx");
 		}
-
-		protected internal override void CreateMethods ()
+		
+		[Test]
+		[ExpectedException (typeof (ParseException))]
+		public void MissingMasterFile ()
 		{
-			base.CreateMethods ();
-
-			Type type = parser.MasterType;
-			if (type != null) {
-				CodeMemberProperty mprop = new CodeMemberProperty ();
-				mprop.Name = "Master";
-				mprop.Type = new CodeTypeReference (parser.MasterType);
-				mprop.Attributes = MemberAttributes.Public | MemberAttributes.New;
-				CodeExpression prop = new CodePropertyReferenceExpression (new CodeBaseReferenceExpression (), "Master");
-				prop = new CodeCastExpression (parser.MasterType, prop);
-				mprop.GetStatements.Add (new CodeMethodReturnStatement (prop));
-				mainClass.Members.Add (mprop);
-				AddReferencedAssembly (type.Assembly);
-			}
+			new WebTest ("MissingMasterFile.aspx").Run ();
 		}
 	}
 }
-
 #endif
-

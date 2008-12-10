@@ -1,3 +1,17 @@
+2008-12-10  Marek Habersack  <mhabersack@novell.com>
+
+	* ParseException.cs: made serializable.
+
+	* PageCompiler.cs: CreateStronglyTypedProperty calls
+	AddReferencedAssembly to add type's assembly to the unit's
+	references after the typed property has been created.
+
+	* BaseCompiler.cs: added a new helper method,
+	AddReferencedAssembly to be used whenever an assembly location
+	needs to be added to the compilation unit's list after the parsing
+	is done (e.g. when processing PreviousPageType or MasterPageType
+	properties in PageParser)
+
 2008-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: use the correct regex match group

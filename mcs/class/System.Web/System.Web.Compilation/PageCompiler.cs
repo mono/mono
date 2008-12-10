@@ -398,6 +398,8 @@ namespace System.Web.Compilation
 				partialClass.Members.Add (mprop);
 			else
 				mainClass.Members.Add (mprop);
+
+			AddReferencedAssembly (type.Assembly);
 		}
 #endif
 		

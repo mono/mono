@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Web;
 using System.Web.Compilation;
+using System.Web.Hosting;
 using System.Web.Util;
 
 namespace System.Web.UI
@@ -43,6 +44,7 @@ namespace System.Web.UI
 	internal sealed class MasterPageParser: UserControlParser
 	{
 		Type masterType;
+		string masterTypeVirtualPath;
 		List <string> contentPlaceHolderIds;
 		string cacheEntryName;
 		
@@ -95,8 +97,11 @@ namespace System.Web.UI
 						ThrowParseException ("Could not load type '" + type + "'.");
 				} else {
 					string path = GetString (atts, "VirtualPath", null);
-					if (path != null) {
-						masterType = BuildManager.GetCompiledType (path);
+					if (!String.IsNullOrEmpty (path)) {
+						if (!HostingEnvironment.VirtualPathProvider.FileExists (path))
+							ThrowParseFileNotFound (path);
+						
+						masterTypeVirtualPath = path;
 						AddDependency (path);
 					} else
 						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");
@@ -118,7 +123,12 @@ namespace System.Web.UI
 		}
 		
 		internal Type MasterType {
-			get { return masterType; }
+			get {
+				if (masterType == null && !String.IsNullOrEmpty (masterTypeVirtualPath))
+					masterType = BuildManager.GetCompiledType (masterTypeVirtualPath);
+				
+				return masterType;
+			}
 		}
 
 		internal override string DefaultBaseTypeName {

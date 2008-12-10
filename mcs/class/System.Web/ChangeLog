@@ -1,3 +1,10 @@
+2008-12-10  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWebResources/MissingMasterFile.aspx
+
+	* System.Web_test.dll.sources: added System.Web.UI/PageParserTest.cs
+
 2008-12-03  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web_test.dll.sources: added System.Web.UI/DataBinderTest.cs

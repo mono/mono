@@ -30,14 +30,22 @@
 
 using System;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Web.Compilation
 {
+	[Serializable]
 	internal class ParseException : HtmlizedException
 	{
 		ILocation location;
 		string fileText;
 
+		ParseException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+                {
+                }
+		
 		public ParseException (ILocation location, string message)
 			: this (location, message, null)
 		{
@@ -109,6 +117,12 @@ namespace System.Web.Compilation
 
 		public override bool ErrorLinesPaired {
 			get { return true; }
+		}
+
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData (SerializationInfo info, StreamingContext ctx)
+		{
+			base.GetObjectData (info, ctx);
 		}
 	}
 }

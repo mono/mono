@@ -72,6 +72,17 @@ namespace System.Web.Compilation
 			this.parser = parser;
 		}
 
+		protected void AddReferencedAssembly (Assembly asm)
+		{
+			if (unit == null || asm == null)
+				return;
+
+			StringCollection refAsm = unit.ReferencedAssemblies;
+			string asmLocation = asm.Location;
+			if (!refAsm.Contains (asmLocation))
+				refAsm.Add (asmLocation);
+		}
+		
 		internal CodeStatement AddLinePragma (CodeExpression expression, ControlBuilder builder)
 		{
 			return AddLinePragma (new CodeExpressionStatement (expression), builder);

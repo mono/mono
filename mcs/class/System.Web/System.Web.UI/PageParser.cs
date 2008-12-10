@@ -34,6 +34,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.Web.Hosting;
 using System.Web.Util;
 using System.IO;
 
@@ -65,6 +66,7 @@ namespace System.Web.UI
 		int asyncTimeout = -1;
 		string masterPage;
 		Type masterType;
+		string masterVirtualPath;
 		string title;
 		string theme;
 		string styleSheetTheme;
@@ -73,6 +75,7 @@ namespace System.Web.UI
 		int maxPageStateFieldLength = -1;
 		string pageParserFilter = String.Empty;
 		Type previousPageType;
+		string previousPageVirtualPath;
 #endif
 
 		public PageParser ()
@@ -367,9 +370,9 @@ namespace System.Web.UI
 			
 			masterPage = GetString (atts, "MasterPageFile", masterPage);
 			
-			// Make sure the page exists
 			if (!String.IsNullOrEmpty (masterPage)) {
-				BuildManager.GetCompiledType (masterPage);
+				if (!HostingEnvironment.VirtualPathProvider.FileExists (masterPage))
+					ThrowParseFileNotFound (masterPage);
 				AddDependency (masterPage);
 			}
 			
@@ -409,18 +412,24 @@ namespace System.Web.UI
 					type = LoadType (typeName);
 					if (type == null)
 						ThrowParseException (String.Format ("Could not load type '{0}'.", typeName));
-				} else if (virtualPath != null) {
-					string mappedPath = MapPath (virtualPath);
 					if (isMasterType)
-						type = masterType = BuildManager.GetCompiledType (virtualPath);
+						masterType = type;
 					else
-						type = previousPageType = GetCompiledPageType (virtualPath, mappedPath,
-											       HttpContext.Current);
-				} else
-					ThrowParseException (
-						String.Format ("The {0} directive must have either a TypeName or a VirtualPath attribute.", directive));
+						previousPageType = type;
+				} else if (!String.IsNullOrEmpty (virtualPath)) {
+					if (!HostingEnvironment.VirtualPathProvider.FileExists (virtualPath))
+						ThrowParseFileNotFound (virtualPath);
 
-				AddAssembly (type.Assembly, true);
+					AddDependency (virtualPath);
+					if (isMasterType)
+						masterVirtualPath = virtualPath;
+					else
+						previousPageVirtualPath = virtualPath;
+				} else
+					ThrowParseException (String.Format ("The {0} directive must have either a TypeName or a VirtualPath attribute.", directive));
+
+				if (type != null)
+					AddAssembly (type.Assembly, true);
 			} else
 				base.AddDirective (directive, atts);
 		}
@@ -561,7 +570,12 @@ namespace System.Web.UI
 		}
 		
 		internal Type MasterType {
-			get { return masterType; }
+			get {
+				if (masterType == null && !String.IsNullOrEmpty (masterVirtualPath))
+					masterType = BuildManager.GetCompiledType (masterVirtualPath);
+				
+				return masterType;
+			}
 		}
 
 		internal string Title {
@@ -585,7 +599,14 @@ namespace System.Web.UI
 		}
 
 		internal Type PreviousPageType {
-			get { return previousPageType; }
+			get {
+				if (previousPageType == null && !String.IsNullOrEmpty (previousPageVirtualPath)) {
+					string mappedPath = MapPath (previousPageVirtualPath);
+					previousPageType = GetCompiledPageType (previousPageVirtualPath, mappedPath, HttpContext.Current);
+				}
+				
+				return previousPageType;
+			}
 		}
 #endif
 	}
