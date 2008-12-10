@@ -1082,8 +1082,8 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0 ,87, 98, 0, 0, 0, 0});
 		BinaryReader reader = new BinaryReader (stream);
 		try {
-			AssertEquals ("test#01", 1.89131277973112E-307, reader.ReadDouble ());
-			AssertEquals ("test#02", 1.2024538023802E+111, reader.ReadDouble ());	
+			AssertEquals ("test#01", 1.8913127797311212E-307d, reader.ReadDouble ());
+			AssertEquals ("test#02", 1.2024538023802026E+111d, reader.ReadDouble ());	
 		} finally {
 			reader.Close ();
 			stream.Close ();
@@ -1236,8 +1236,8 @@ namespace MonoTests.System.IO
 		MemoryStream stream = new MemoryStream (new byte [] {65, 200, 0, 0, 0, 1, 2, 3, 4});
 		BinaryReader reader = new BinaryReader (stream);
 		try {
-			AssertEquals ("test#01", 7.183757E-41, reader.ReadSingle ());
-			AssertEquals ("test#01", 3.820471E-37, reader.ReadSingle ());
+			AssertEquals ("test#01", 7.18375658E-41F, reader.ReadSingle ());
+			AssertEquals ("test#02", 3.82047143E-37F, reader.ReadSingle ());
 		} finally {
 			reader.Close ();
 			stream.Close ();

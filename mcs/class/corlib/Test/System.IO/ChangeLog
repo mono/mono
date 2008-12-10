@@ -1,3 +1,7 @@
+2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryReaderTest.cs : fix tests that are also failing under .NET
+	  (Exposed by nunit24).
 
 2008-11-09 William Holmes <billholmes54@gmail.com>
 
