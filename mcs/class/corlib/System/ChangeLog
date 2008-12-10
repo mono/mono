@@ -1,3 +1,11 @@
+2008-12-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* Variant.cs (SetValue):   Changing the behavior for COM object in 
+	  VARIANTs to match MS.  Also adding support for BStrWrapper, 
+	  UnknownWrapper, and DispatchWrapper.
+
+	Contributed under MIT/X11 license.
+
 2008-11-28  Miguel De Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs: Also register a mapping to make verase be the
