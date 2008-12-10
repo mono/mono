@@ -1,3 +1,13 @@
+2008-12-11  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseCompiler.cs: added a new method, InitializeType, to be
+	overriden in child classes when any class initialization needs to
+	be performed before methods, constructors and fields are created.
+
+	* TemplateControlCompiler.cs: if the parser has any custom
+	controls registered, compile them here - in the InitializeType
+	method.
+
 2008-12-10  Marek Habersack  <mhabersack@novell.com>
 
 	* ParseException.cs: made serializable.

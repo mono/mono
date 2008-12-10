@@ -1585,6 +1585,24 @@ namespace System.Web.Compilation
 		}
 
 #if NET_2_0
+		protected override void InitializeType ()
+		{
+			List <string> registeredTagNames = parser.RegisteredTagNames;
+			RootBuilder rb = parser.RootBuilder;
+			if (rb == null || registeredTagNames == null || registeredTagNames.Count == 0)
+				return;
+
+			AspComponent component;
+			foreach (string tagName in registeredTagNames) {
+				component = rb.Foundry.GetComponent (tagName);
+				if (component == null || component.Type == null) // unlikely
+					throw new HttpException ("Custom control '" + tagName + "' cannot be found.");
+				if (!(typeof (UserControl).IsAssignableFrom (component.Type)))
+					throw new ParseException (parser.Location, "Type '" + component.Type.ToString () + "' does not derive from 'System.Web.UI.UserControl'.");
+				AddReferencedAssembly (component.Type.Assembly);
+			}
+		}
+		
 		void CallBaseFrameworkInitialize (CodeMemberMethod method)
 		{
 			CodeBaseReferenceExpression baseRef = new CodeBaseReferenceExpression ();

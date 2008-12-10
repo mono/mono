@@ -281,7 +281,8 @@ namespace System.Web.Compilation
 			// Late-bound generators specifics (as for MonoBASIC/VB.NET)
 			unit.UserData["RequireVariableDeclaration"] = parser.ExplicitOn;
 			unit.UserData["AllowLateBound"] = !parser.StrictOn;
-			
+
+			InitializeType ();
 			AddInterfaces ();
 			AddClassAttributes ();
 			CreateStaticFields ();
@@ -302,6 +303,9 @@ namespace System.Web.Compilation
 			return new CodeFieldReferenceExpression (
 				new CodeTypeReferenceExpression (mainClassTypeRef), fieldName);
 		}
+
+		protected virtual void InitializeType ()
+		{}
 		
 		protected virtual void CreateStaticFields ()
 		{
