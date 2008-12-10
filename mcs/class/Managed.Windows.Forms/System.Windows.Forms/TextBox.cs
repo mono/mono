@@ -135,14 +135,9 @@ namespace System.Windows.Forms {
 
 		private void ShowAutoCompleteListBox (bool is_backspace)
 		{
-			if (auto_complete_mode == AutoCompleteMode.None || auto_complete_source == AutoCompleteSource.None)
-				return;
-
 			// 
 			// We only support CustomSource by now
 			//
-			if (auto_complete_source != AutoCompleteSource.CustomSource)
-				return;
 
 			IList source;
 			if (auto_complete_cb_source == null)
@@ -207,6 +202,20 @@ namespace System.Windows.Forms {
 		{
 			if (auto_complete_listbox != null)
 				auto_complete_listbox.HideListBox (false);
+		}
+
+		bool IsAutoCompleteAvailable {
+			get {
+				if (auto_complete_source == AutoCompleteSource.None || auto_complete_mode == AutoCompleteMode.None)
+					return false;
+
+				// We only support CustomSource by now
+				if (auto_complete_source != AutoCompleteSource.CustomSource || auto_complete_custom_source == null ||
+						auto_complete_custom_source.Count == 0)
+					return false;
+
+				return true;
+			}
 		}
 
 		internal ComboBox AutoCompleteInternalSource {
@@ -640,8 +649,7 @@ namespace System.Windows.Forms {
 			switch ((Msg)m.Msg) {
 #if NET_2_0
 				case Msg.WM_KEYDOWN:
-					if (auto_complete_mode == AutoCompleteMode.None ||
-						auto_complete_source != AutoCompleteSource.CustomSource)
+					if (!IsAutoCompleteAvailable)
 						break;
 
 					Keys key_data = (Keys)m.WParam.ToInt32 ();
@@ -669,8 +677,7 @@ namespace System.Windows.Forms {
 					}
 					break;
 				case Msg.WM_CHAR:
-					if (auto_complete_mode == AutoCompleteMode.None ||
-						auto_complete_source != AutoCompleteSource.CustomSource)
+					if (!IsAutoCompleteAvailable)
 						break;
 
 					bool is_backspace = m.WParam.ToInt32 () == 8;
