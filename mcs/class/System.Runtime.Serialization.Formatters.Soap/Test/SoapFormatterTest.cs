@@ -223,7 +223,7 @@ namespace MonoTests.System.Runtime.Serialization.Formatters.Soap {
 			objReturn = Serialize(1);
 			Assertion.AssertEquals("#int32", objReturn, 1);
 			objReturn = Serialize((Single)0.1234);
-			Assertion.AssertEquals("#Single", objReturn, 0.1234);
+			Assertion.AssertEquals("#Single", objReturn, 0.123400003f);
 			objReturn = Serialize((Double)1234567890.0987654321);
 			Assertion.AssertEquals("#iDouble", objReturn, 1234567890.0987654321);
 			objReturn = Serialize(true);
