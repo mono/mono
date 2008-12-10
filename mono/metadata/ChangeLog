@@ -1,3 +1,25 @@
+2008-12-10  Bill Holmes  <billholmes54@gmail.com>
+
+	* object-internals.h : Adding a definition for 
+	  MonoReflectionComVisibleAttribute.
+
+	* marshal.c (cominterop_com_visible) :  Method added to check the 
+	  ComVisible attribute of a class.
+
+	* marshal.c (cominterop_raise_hr_exception, cominterop_get_interface) :  
+	  cominterop_raise_hr_exception added to consolidate common code 
+	  to raise hr exceptions.
+
+	* marshal.c (cominterop_can_support_dispatch) :  Method added to determine 
+	  if a managed class should support IDispatch.
+
+	* marshal.c 
+	  (cominterop_get_idispatch_for_objec, cominterop_ccw_queryinterfacet) :  
+	  Added additional checks for managed object when getting 
+	  an IDispatch interface.
+
+	Code is contributed under MIT/X11 license.
+
 2008-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	pedump.c (main): Handle mono_get_method () returning NULL. 
