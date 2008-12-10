@@ -1,3 +1,15 @@
+2008-12-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ssa.c (fold_ins): branch opt can kill dummy switch ops so we can't
+	expect that an OP_BR_REG will be there.
+
+	* branch-opts.c (remove_block_if_useless): Use MONO_IS_BRANCH_OP instead of checking
+	for the many branch ops. The original check miss OP_BR_REG.
+
+	Fixes #457574.
+
+	Backported from trunk r121173 and r121175
+
 2008-12-09  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r121150.

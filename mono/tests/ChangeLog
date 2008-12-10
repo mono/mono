@@ -1,3 +1,11 @@
+2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug457574.il: New regression test.
+
+	* Makefile.am: Test added.
+
+	Backported from trunk r121174.
+
 2008-12-03  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r120589.
