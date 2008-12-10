@@ -74,7 +74,7 @@ namespace MonoTests.System.Drawing.Drawing2D {
 			Assert.AreEqual (1, elements[1], 0.1, "matrix.1");
 			Assert.AreEqual (-1, elements[2], 0.1, "matrix.2");
 			Assert.AreEqual (1, elements[3], 0.1, "matrix.3");
-			Assert.AreEqual (16, elements[4], "matrix.4");
+			Assert.AreEqual (15.999999f, elements[4], "matrix.4");
 			Assert.AreEqual (-16, elements[5], "matrix.5");
 		}
 

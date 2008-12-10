@@ -1,3 +1,9 @@
+2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* LinearGradientBrushTest.cs, GraphicsPathTest.cs,
+	  TestMatrix.cs : fix tests wrt rounding that were failing on .NET
+	  too (exposed by nunit24).
+
 2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GraphicsPathIteratorTest.cs: New. Add some (incomplete) unit 

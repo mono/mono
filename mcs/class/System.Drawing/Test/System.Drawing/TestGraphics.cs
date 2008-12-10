@@ -434,8 +434,8 @@ namespace MonoTests.System.Drawing {
 			g.TranslateTransform (12.22f, 10.10f);
 			RectangleF bounds = g.Clip.GetBounds (g);
 			Compare ("translate", bounds, g.ClipBounds);
-			AssertEquals ("translate.X", -12.22, bounds.X);
-			AssertEquals ("translate.Y", -10.10, bounds.Y);
+			AssertEquals ("translate.X", -12.2200003f, bounds.X);
+			AssertEquals ("translate.Y", -10.1000004f, bounds.Y);
 			AssertEquals ("translate.Width", 16, bounds.Width);
 			AssertEquals ("translate.Height", 16, bounds.Height);
 			float[] elements = g.Transform.Elements;
@@ -443,8 +443,8 @@ namespace MonoTests.System.Drawing {
 			AssertEquals ("translate.1", 0, elements[1]);
 			AssertEquals ("translate.2", 0, elements[2]);
 			AssertEquals ("translate.3", 1, elements[3]);
-			AssertEquals ("translate.4", 12.22, elements[4]);
-			AssertEquals ("translate.5", 10.10, elements[5]);
+			AssertEquals ("translate.4", 12.2200003f, elements[4]);
+			AssertEquals ("translate.5", 10.1000004f, elements[5]);
 
 			g.ResetTransform ();
 			bounds = g.Clip.GetBounds (g);
@@ -1045,6 +1045,7 @@ namespace MonoTests.System.Drawing {
 		}
 
 		[Test] // bug #355141
+		[Category ("CAS")]
 		public void FromHwnd_Zero ()
 		{
 			Graphics g = Graphics.FromHwnd (IntPtr.Zero);
@@ -2401,9 +2402,9 @@ namespace MonoTests.System.Drawing {
 					Assert.AreEqual (1, regions.Length, "Far.Region");
 					RectangleF far = regions[0].GetBounds (g);
 
-					Assert.IsTrue (near.X < center.X, "near-center/X"); // ???
+					Assert.IsTrue (near.X == center.X, "near-center/X"); // ???
 					Assert.IsTrue (near.Y < center.Y, "near-center/Y");
-					Assert.IsTrue (near.Width > center.Width, "near-center/Width"); // ???
+					Assert.IsTrue (near.Width == center.Width, "near-center/Width"); // ???
 					Assert.AreEqual (near.Height, center.Height, 0.1, "near-center/Height");
 
 					Assert.AreEqual (center.X, far.X, 0.1, "center-far/X");
@@ -2682,7 +2683,7 @@ namespace MonoTests.System.Drawing {
 					RectangleF rvcb = g.VisibleClipBounds;
 					Assert.AreEqual (0, rvcb.X, "rvcb.X");
 					Assert.AreEqual (-100, rvcb.Y, "rvcb.Y");
-					Assert.AreEqual (50, rvcb.Width, "rvcb.Width");
+					Assert.AreEqual (50.0000038f, rvcb.Width, "rvcb.Width");
 					Assert.AreEqual (100, rvcb.Height, "rvcb.Height");
 				}
 			}
