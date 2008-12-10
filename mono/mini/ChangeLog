@@ -1,3 +1,8 @@
+2008-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (compile_all_methods_thread_main): Handle failure of
+	mono_get_method ().
+
 2008-12-10  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c: Merged with mini-ppc64.c.
