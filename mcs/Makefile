@@ -24,7 +24,6 @@ centum_tests := \
 	class/System.Design					\
 	class/System.DirectoryServices		\
 	class/System.Drawing				\
-	class/System.Messaging					\
 	class/System.Runtime.Remoting				\
 	class/System.Runtime.Serialization.Formatters.Soap	\
 	class/System.Security					\

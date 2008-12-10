@@ -1,3 +1,8 @@
+2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : remove sys.messaging from CENTUM_TESTS. It has never
+	  been supported, and now, it's heavily developed.
+
 2008-12-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* docs/monodoc.xml: Rename the "File Formats" node to "Commands and
