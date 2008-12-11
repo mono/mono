@@ -1,3 +1,9 @@
+2008-12-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall.c: make Assembly.GetExecutingAssembly work properly when
+	reflection is used to invoke the method.
+	Bug #321781 fixed.
+
 2008-12-11  Mark Probst  <mark.probst@gmail.com>
 
 	* metadata/generic-sharing.c: Look for constraints in all type
