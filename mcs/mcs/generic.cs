@@ -1647,9 +1647,9 @@ namespace Mono.CSharp {
 			string[] snames = new string [names.Length];
 			for (int i = 0; i < names.Length; i++) {
 				string type_argument_name = names[i].Name;
-				Parameter p = parameters.GetParameterByName (type_argument_name);
-				if (p != null) {
-					Error_ParameterNameCollision (p.Location, type_argument_name, "method parameter");
+				int idx = parameters.GetParameterIndexByName (type_argument_name);
+				if (idx >= 0) {
+					Error_ParameterNameCollision (parameters [i].Location, type_argument_name, "method parameter");
 					return false;
 				}
 				

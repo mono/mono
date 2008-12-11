@@ -4369,12 +4369,10 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class ParameterReference : VariableReference {
 		readonly ToplevelParameterInfo pi;
-		readonly ToplevelBlock referenced;
 
-		public ParameterReference (ToplevelBlock referenced, ToplevelParameterInfo pi, Location loc)
+		public ParameterReference (ToplevelParameterInfo pi, Location loc)
 		{
 			this.pi = pi;
-			this.referenced = referenced;
 			this.loc = loc;
 		}
 
@@ -4447,24 +4445,38 @@ namespace Mono.CSharp {
 			if (am == null)
 				return true;
 
-			ToplevelBlock declared = pi.Block;
-			if (declared != referenced) {
-				if (IsRef) {
-					Report.Error (1628, loc,
-						"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `out' modifier",
-						Name, am.ContainerType);
-					return false;
+			Block b = ec.CurrentBlock;
+			while (b != null) {
+				IParameterData[] p = b.Toplevel.Parameters.FixedParameters;
+				for (int i = 0; i < p.Length; ++i) {
+					if (p [i] != Parameter)
+						continue;
+
+					//
+					// Skip closest anonymous method parameters
+					//
+					if (b == ec.CurrentBlock && !am.IsIterator)
+						return true;
+
+					if (IsRef) {
+						Report.Error (1628, loc,
+							"Parameter `{0}' cannot be used inside `{1}' when using `ref' or `out' modifier",
+							Name, am.ContainerType);
+					}
+
+					b = null;
+					break;
 				}
-			} else {
-				if (!am.IsIterator)
-					return true;
+
+				if (b != null)
+					b = b.Toplevel.Parent;
 			}
 
-			if (ec.IsVariableCapturingRequired) {
-				if (pi.Parameter.HasAddressTaken)
-					AnonymousMethodExpression.Error_AddressOfCapturedVar (this, loc);
+			if (pi.Parameter.HasAddressTaken)
+				AnonymousMethodExpression.Error_AddressOfCapturedVar (this, loc);
 
-				AnonymousMethodStorey storey = declared.CreateAnonymousMethodStorey (ec);
+			if (ec.IsVariableCapturingRequired) {
+				AnonymousMethodStorey storey = pi.Block.CreateAnonymousMethodStorey (ec);
 				storey.CaptureParameter (ec, this);
 			}
 
@@ -4482,7 +4494,7 @@ namespace Mono.CSharp {
 			if (pr == null)
 				return false;
 
-			return Name == pr.Name && referenced == pr.referenced;
+			return Name == pr.Name;
 		}
 		
 		protected override void CloneTo (CloneContext clonectx, Expression target)

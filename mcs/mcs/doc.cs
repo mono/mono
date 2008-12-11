@@ -893,11 +893,10 @@ namespace Mono.CSharp {
 		{
 			Hashtable paramTags = new Hashtable ();
 			foreach (XmlElement pelem in el.SelectNodes ("param")) {
-				int i;
 				string xname = pelem.GetAttribute ("name");
 				if (xname.Length == 0)
 					continue; // really? but MS looks doing so
-				if (xname != "" && mc.Parameters.GetParameterByName (xname, out i) == null)
+				if (xname != "" && mc.Parameters.GetParameterIndexByName (xname) < 0)
 					Report.Warning (1572, 2, mc.Location, "XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",
 						mc.GetSignatureForError (), xname);
 				else if (paramTags [xname] != null)

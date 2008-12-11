@@ -1,3 +1,8 @@
+2008-12-11  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, parameter.cs, expression.cs, statement.cs, doc.cs:
+	ParameterReference refactoring.
+
 2008-12-03  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, namespace.cs, driver.cs: Allow ExtensionAttribute

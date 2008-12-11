@@ -1817,7 +1817,7 @@ namespace Mono.CSharp {
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
 				if (Explicit == vi.Block.Explicit) {
-					if (type == Linq.ImplicitQueryParameter.ImplicitType.Instance && type == vi.Type)
+					if (type is Linq.ImplicitQueryParameter.ImplicitType && type == vi.Type)
 						Error_AlreadyDeclared (l, name);
 					else
 						Error_AlreadyDeclared (l, name, null);
@@ -1827,11 +1827,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ToplevelParameterInfo pi = Toplevel.GetParameterInfo (name);
-			if (pi != null) {
-				Report.SymbolRelatedToPreviousError (pi.Location, name);
-				Error_AlreadyDeclared (loc, name,
-					pi.Block == Toplevel ? "method argument" : "parent or current");
+			Expression e = Toplevel.GetParameterReference (name, Location.Null);
+			if (e != null) {
+				//Report.SymbolRelatedToPreviousError (pi.Parameter.Location, name);
+				Error_AlreadyDeclared (loc, name, "parent or current");
 				return null;
 			}
 			
@@ -2717,11 +2716,13 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				ToplevelParameterInfo pi = Parent == null ? null : Parent.Toplevel.GetParameterInfo (name);
-				if (pi != null) {
-					Report.SymbolRelatedToPreviousError (pi.Location, name);
-					Error_AlreadyDeclared (loc, name, "parent or current");
-					continue;
+				if (Parent != null) {
+					Expression e = Parent.Toplevel.GetParameterReference (name, loc);
+					if (e != null) {
+						//Report.SymbolRelatedToPreviousError (pi.Location, name);
+						Error_AlreadyDeclared (loc, name, "parent or current");
+						continue;
+					}
 				}
 
 				AddKnownVariable (name, parameter_info [i]);
@@ -2785,21 +2786,22 @@ namespace Mono.CSharp {
 		// Returns a `ParameterReference' for the given name, or null if there
 		// is no such parameter
 		//
-		public ParameterReference GetParameterReference (string name, Location loc)
+		public Expression GetParameterReference (string name, Location loc)
 		{
-			ToplevelParameterInfo p = GetParameterInfo (name);
-			return p == null ? null : new ParameterReference (this, p, loc);
+			for (ToplevelBlock t = this; t != null; t = t.Container) {
+				Expression expr = t.GetParameterReferenceExpression (name, loc);
+				if (expr != null)
+					return expr;
+			}
+
+			return null;
 		}
 
-		public ToplevelParameterInfo GetParameterInfo (string name)
+		Expression GetParameterReferenceExpression (string name, Location loc)
 		{
-			int idx;
-			for (ToplevelBlock t = this; t != null; t = t.Container) {
-				Parameter par = t.Parameters.GetParameterByName (name, out idx);
-				if (par != null)
-					return t.parameter_info [idx];
-			}
-			return null;
+			int idx = parameters.GetParameterIndexByName (name);
+			return idx < 0 ?
+				null : new ParameterReference (parameter_info[idx], loc);
 		}
 
 		// <summary>
