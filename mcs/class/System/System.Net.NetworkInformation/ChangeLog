@@ -1,3 +1,10 @@
+
+2008-12-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Ping.cs: close the socket in SendPrivileged. Use Buffer.BlockCopy
+	instead of Array.Copy. Return IPStatus.Unknown instead of throwing an
+	exception for unknown status codes received.
+
 2008-11-29  Miguel De Icaza  <miguel@novell.com>
 
 	* NetworkInterface.cs: Do not throw an exception when scanning

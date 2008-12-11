@@ -196,51 +196,52 @@ namespace System.Net.NetworkInformation {
 			IPEndPoint client = new IPEndPoint (GetNonLoopbackIP (), 0);
 
 			// FIXME: support IPv6
-			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp);
-			if (options != null) {
-				s.DontFragment = options.DontFragment;
-				s.Ttl = (short) options.Ttl;
-			}
-			s.SendTimeout = timeout;
-			s.ReceiveTimeout = timeout;
-			// not sure why Identifier = 0 is unacceptable ...
-			IcmpMessage send = new IcmpMessage (8, 0, identifier, 0, buffer);
-			byte [] bytes = send.GetBytes ();
-			s.SendBufferSize = bytes.Length;
-			s.SendTo (bytes, bytes.Length, SocketFlags.None, target);
-
-			DateTime sentTime = DateTime.Now;
-
-			// receive
-			bytes = new byte [100];
-			do {
-				try {
-					EndPoint endpoint = client;
-					int rc = s.ReceiveFrom (bytes, 100, SocketFlags.None, ref endpoint);
-					long rtt = (long) (DateTime.Now - sentTime).TotalMilliseconds;
-					int headerLength = (bytes [0] & 0xF) << 2;
-					int bodyLength = rc - headerLength;
-
-					if (!((IPEndPoint) endpoint).Address.Equals (target.Address)) // Ping reply to different request. discard it.
-						continue;
-
-					IcmpMessage recv = new IcmpMessage (bytes, headerLength, bodyLength);
-					if (recv.Identifier != identifier)
-						continue; // ping reply to different request. discard it.
-
-					return new PingReply (address, recv.Data, options, rtt, recv.IPStatus);
-				} catch (SocketException ex) {
-					IPStatus stat;
-					switch (ex.SocketErrorCode) {
-					case SocketError.TimedOut:
-						stat = IPStatus.TimedOut;
-						break;
-					default:
-						throw new NotSupportedException (String.Format ("Unexpected socket error during ping request: {0}", ex.SocketErrorCode));
-					}
-					return new PingReply (null, new byte [0], options, 0, stat);
+			using (Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp)) {
+				if (options != null) {
+					s.DontFragment = options.DontFragment;
+					s.Ttl = (short) options.Ttl;
 				}
-			} while (true);
+				s.SendTimeout = timeout;
+				s.ReceiveTimeout = timeout;
+				// not sure why Identifier = 0 is unacceptable ...
+				IcmpMessage send = new IcmpMessage (8, 0, identifier, 0, buffer);
+				byte [] bytes = send.GetBytes ();
+				s.SendBufferSize = bytes.Length;
+				s.SendTo (bytes, bytes.Length, SocketFlags.None, target);
+
+				DateTime sentTime = DateTime.Now;
+
+				// receive
+				bytes = new byte [100];
+				do {
+					try {
+						EndPoint endpoint = client;
+						int rc = s.ReceiveFrom (bytes, 100, SocketFlags.None, ref endpoint);
+						long rtt = (long) (DateTime.Now - sentTime).TotalMilliseconds;
+						int headerLength = (bytes [0] & 0xF) << 2;
+						int bodyLength = rc - headerLength;
+
+						if (!((IPEndPoint) endpoint).Address.Equals (target.Address)) // Ping reply to different request. discard it.
+							continue;
+
+						IcmpMessage recv = new IcmpMessage (bytes, headerLength, bodyLength);
+						if (recv.Identifier != identifier)
+							continue; // ping reply to different request. discard it.
+
+						return new PingReply (address, recv.Data, options, rtt, recv.IPStatus);
+					} catch (SocketException ex) {
+						IPStatus stat;
+						switch (ex.SocketErrorCode) {
+						case SocketError.TimedOut:
+							stat = IPStatus.TimedOut;
+							break;
+						default:
+							throw new NotSupportedException (String.Format ("Unexpected socket error during ping request: {0}", ex.SocketErrorCode));
+						}
+						return new PingReply (null, new byte [0], options, 0, stat);
+					}
+				} while (true);
+			}
 		}
 
 		private PingReply SendUnprivileged (IPAddress address, int timeout, byte [] buffer, PingOptions options)
@@ -368,7 +369,7 @@ namespace System.Net.NetworkInformation {
 			public IcmpMessage (byte [] bytes, int offset, int size)
 			{
 				this.bytes = new byte [size];
-				Array.Copy (bytes, offset, this.bytes, 0, size);
+				Buffer.BlockCopy (bytes, offset, this.bytes, 0, size);
 			}
 
 			// to be sent
@@ -381,7 +382,7 @@ namespace System.Net.NetworkInformation {
 				bytes [5] = (byte) ((int) identifier >> 8);
 				bytes [6] = (byte) (sequence & 0xFF);
 				bytes [7] = (byte) ((int) sequence >> 8);
-				Array.Copy (data, 0, bytes, 8, data.Length);
+				Buffer.BlockCopy (data, 0, bytes, 8, data.Length);
 
 				ushort checksum = ComputeChecksum (bytes);
 				bytes [2] = (byte) (checksum & 0xFF);
@@ -407,7 +408,7 @@ namespace System.Net.NetworkInformation {
 			public byte [] Data {
 				get {
 					byte [] data = new byte [bytes.Length - 8];
-					Array.Copy (bytes, 0, data, 0, data.Length);
+					Buffer.BlockCopy (bytes, 0, data, 0, data.Length);
 					return data;
 				}
 			}
@@ -464,7 +465,8 @@ namespace System.Net.NetworkInformation {
 					case 4:
 						return IPStatus.SourceQuench;
 					}
-					throw new NotSupportedException (String.Format ("Unexpected pair of ICMP message type and code: type is {0} and code is {1}", Type, Code));
+					return IPStatus.Unknown;
+					//throw new NotSupportedException (String.Format ("Unexpected pair of ICMP message type and code: type is {0} and code is {1}", Type, Code));
 				}
 			}
 		}
