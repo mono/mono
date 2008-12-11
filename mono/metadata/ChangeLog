@@ -1,3 +1,7 @@
+2008-12-11  Mark Probst  <mark.probst@gmail.com>
+
+	* metadata/generic-sharing.c: Look for constraints in all type
+	arguments, not just the first one.
 
 2008-12-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

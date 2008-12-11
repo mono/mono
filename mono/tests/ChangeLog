@@ -1,3 +1,10 @@
+2008-12-11  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-marshalbyref.2.cs: Test for calls to marshal-by-ref
+	objects.
+
+	* Makefile.am: Test added.
+
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug445361.il: New regression test.
