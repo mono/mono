@@ -1,5 +1,8 @@
 2008-12-11  Marek Habersack  <mhabersack@novell.com>
 
+	* MasterPageParser.cs: check if masterType is null before using it
+	in AddDirective.
+
 	* TemplateParser.cs: in the 2.0 profile when a custom control is
 	registered, do not compile it right away but store the tag name in
 	a registry to be compiled at a later stage.

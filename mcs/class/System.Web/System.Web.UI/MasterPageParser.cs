@@ -106,7 +106,8 @@ namespace System.Web.UI
 					} else
 						ThrowParseException ("The MasterType directive must have either a TypeName or a VirtualPath attribute.");
 				}
-				AddAssembly (masterType.Assembly, true);
+				if (masterType != null)
+					AddAssembly (masterType.Assembly, true);
 			}
 			else
 				base.AddDirective (directive, atts);
