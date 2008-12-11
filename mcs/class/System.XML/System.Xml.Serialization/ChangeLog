@@ -1,3 +1,8 @@
+
+2008-12-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* XmlSerializer.cs: updated to work with shadowcopy fixes.
+
 2008-11-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeData.cs : do not reject ICollection<T> for not implementing

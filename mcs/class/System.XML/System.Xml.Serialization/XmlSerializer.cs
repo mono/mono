@@ -743,8 +743,9 @@ namespace System.Xml.Serialization
 			
 			foreach (Type rtype in gen.ReferencedTypes)
 			{
-				if (!cp.ReferencedAssemblies.Contains (rtype.Assembly.Location))
-					cp.ReferencedAssemblies.Add (rtype.Assembly.Location);
+				string path = new Uri (rtype.Assembly.CodeBase).LocalPath;
+				if (!cp.ReferencedAssemblies.Contains (path))
+					cp.ReferencedAssemblies.Add (path);
 			}
 				
 			if (!cp.ReferencedAssemblies.Contains ("System.dll"))
