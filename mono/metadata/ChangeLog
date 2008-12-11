@@ -1,3 +1,10 @@
+
+2008-12-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: return the correct CodeBase for an Assembly instance
+	that was loaded from the shadow-copy directories.
+	Bug #458190 fixed.
+
 2008-12-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (build_nursery_fragments): Clear nursery_next/nursery_frag_real_end.
