@@ -853,14 +853,14 @@ namespace System.Windows.Forms
 			
 			if (RejectInputOnFirstFailure) {
 				if (overwrite) {
-					provider.Replace (input, SelectionStart, SelectionStart + SelectionLength, out testPosition, out resultHint);
+					provider.Replace (input, SelectionStart, SelectionStart + input.Length - 1, out testPosition, out resultHint);
 				} else {
 					provider.InsertAt (input, SelectionStart);
 				}
 			} else {
 				while (!result && input.Length > 0) {
 					if (overwrite) {
-						result = provider.Replace (input, SelectionStart, SelectionStart + input.Length, out testPosition, out resultHint);
+						result = provider.Replace (input, SelectionStart, SelectionStart + input.Length - 1, out testPosition, out resultHint);
 					} else {
 						result = provider.InsertAt (input, SelectionStart, out testPosition, out resultHint);
 					}

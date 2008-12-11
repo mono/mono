@@ -1,3 +1,12 @@
+2008-12-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextBox.cs: MaskedTextService.Replace doesn't expect the
+	length of the text, but the end position, so we need to substract 1 to
+	have a valid value. Also, in the same InputText method, don't use
+	SelectionLength as the length of the text, since the selected text
+	could actually be empty, but we need to set the value anyway.
+	Fixes #457370.
+
 2008-12-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBox.cs: Don't do any auto complete task if the custom source is
