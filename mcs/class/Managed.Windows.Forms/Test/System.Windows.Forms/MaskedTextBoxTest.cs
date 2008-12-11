@@ -209,6 +209,24 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("1bc", mtb.Text, "#T6");
 			mtb.Dispose ();
 		}
+
+		[Test]
+		public void TextTest2 ()
+		{
+			MaskedTextBox mtb;
+
+			mtb = new MaskedTextBox ();
+			mtb.Mask = "99 99";
+
+			mtb.Text = "23 34";
+			Assert.AreEqual ("23 34", mtb.Text, "#T1");
+
+			mtb.RejectInputOnFirstFailure = true;
+			mtb.Text = "23 34";
+			Assert.AreEqual ("23 34", mtb.Text, "#T2");
+
+			mtb.Dispose ();
+		}
 		
 		[Test]
 		public void SkipLiteralsTest ()

@@ -1,3 +1,8 @@
+2008-12-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextBoxTest.cs: New test for the Text property.
+	By Andrus Moor (kobruleht2 at hot.ee).
+
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* BindingSourceTest.cs: Sort_IBindingListView passes now.
