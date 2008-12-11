@@ -8,7 +8,6 @@ Assembly/AssemblyInfo.cs
 ../Managed.Windows.Forms/System.Resources/ResXDataNode.cs
 ../Managed.Windows.Forms/System.Resources/ResXNullRef.cs
 System.Web.Configuration_2.0/CapabilitiesBuild.cs
-System.Web.Configuration_2.0/CapabilitiesChecksum.cs
 System.Web.Configuration_2.0/CapabilitiesResult.cs
 System.Web.Configuration_2.0/ICapabilitiesProcess.cs
 System.Web.Configuration_2.0/nBrowser/Result.cs
