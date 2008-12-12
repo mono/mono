@@ -480,6 +480,52 @@
 	at this point, so the only parts which require changing are
 	the arch dependent files.
 
+* Function descriptors
 
+	Some ABIs, like those for IA64 and PPC64, don't use direct
+	function pointers, but so called function descriptors.  A
+	function descriptor is a short data structure which contains
+	at least a pointer to the code of the function and a pointer
+	to a GOT/TOC, which needs to be loaded into a specific
+	register prior to jumping to the function.  Global variables
+	and large constants are accessed through that register.
 
-	
+	Mono does not need function descriptors for the JITted code,
+	but we need to handle them when calling unmanaged code and we
+	need to create them when passing managed code to unmanaged
+	code.
+
+	mono_create_ftnptr() creates a function descriptor for a piece
+	of generated code within a specific domain.
+
+	mono_get_addr_from_ftnptr() returns the pointer to the native
+	code in a function descriptor.  Never use this function to
+	generate a jump to a function without loading the GOT/TOC
+	register unless the function descriptor was created by
+	mono_create_ftnptr().
+
+	See the sources for IA64 and PPC64 on when to create and when
+	to dereference function descriptors.  On PPC64 function
+	descriptors for various generated helper functions (in
+	exceptions-ppc.c and tramp-ppc.c) are generated in front of
+	the code they refer to (see ppc_create_pre_code_ftnptr()).  On
+	IA64 they are created separately.
+
+* Emulated opcodes
+
+	Mini has code for emulating quite a few opcodes, most notably
+	operations on longs, int/float conversions and atomic
+	operations.  If an architecture wishes such an opcode to be
+	emulated, mini produces icalls instead of those opcodes.  This
+	should only be considered when the operation cannot be
+	implemented efficiently and thus the overhead occured by the
+	icall is not relatively large.  Emulation of operations is
+	controlled by #defines in the arch header, but the naming is
+	not consistent.  They usually start with MONO_ARCH_EMULATE_,
+	MONO_ARCH_NO_EMULATE_ and MONO_ARCH_HAVE_.
+
+* Generic code sharing
+
+	Generic code sharing is optional.  See the file
+	"generic-sharing" for information on how to support it on an
+	architecture.

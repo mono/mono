@@ -1,3 +1,8 @@
+2008-12-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-porting.txt: Added some details about function descriptors
+	and emulated opcodes.
+
 2008-12-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* mono-file-formats.source, mono-tools.source: Place these under the
