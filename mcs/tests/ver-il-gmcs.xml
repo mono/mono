@@ -17767,6 +17767,73 @@
       </method>
     </type>
   </test>
+  <test name="gtest-linq-16.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void Test_1(Int32)">
+        <size>27</size>
+      </method>
+      <method name="Void Test_2()">
+        <size>31</size>
+      </method>
+      <method name="System.Func`1[System.Collections.Generic.IEnumerable`1[System.Int32]] &lt;Test_2&gt;m__1(Int32)">
+        <size>26</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;a&gt;__T,&lt;b&gt;__T]">
+      <method name="Void .ctor(&lt;a&gt;__T, &lt;b&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;a&gt;__T get_a()">
+        <size>7</size>
+      </method>
+      <method name="&lt;b&gt;__T get_b()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test_1&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable`1 &lt;&gt;m__0()">
+        <size>67</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__3(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__4(&lt;&gt;__AnonType0`2[System.Int32,System.Int32])">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test_2&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IEnumerable`1 &lt;&gt;m__2()">
+        <size>67</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;&gt;m__5(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__6(&lt;&gt;__AnonType0`2[System.Int32,System.Int32])">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-var-04.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -37760,6 +37827,58 @@
       </method>
       <method name="Void &lt;&gt;m__0()">
         <size>8</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-86.cs">
+    <type name="Bug.A">
+      <method name="Void .ctor()">
+        <size>54</size>
+      </method>
+      <method name="Void Test()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Bug.B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_Event(Bug.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_Event(Bug.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Int32 get_Prop()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Prop(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Bug.EventHandler">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Bug.A+&lt;A&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>24</size>
       </method>
     </type>
   </test>
