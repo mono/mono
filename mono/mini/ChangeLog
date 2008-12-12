@@ -1,3 +1,7 @@
+2008-12-12  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* driver.c: Sync --help-trace with man page (EXPR,EXPR).
+
 2008-12-12  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.h, exceptions-ppc.c, tramp-ppc.c: Create function
