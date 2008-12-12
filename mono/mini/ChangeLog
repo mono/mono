@@ -1,3 +1,8 @@
+2008-12-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.h, exceptions-ppc.c, tramp-ppc.c: Create function
+	descriptors for helper functions directly in front of the code.
+
 2008-12-11  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Removed an unnecessary assertion.
