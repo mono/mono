@@ -2,7 +2,8 @@
 /*
 Used to determine Browser Capabilities by the Browsers UserAgent String and related
 Browser supplied Headers.
-Copyright (C) 2002-Present  Owen Brady (Ocean at xvision.com)
+Copyright (C) 2002-Present  Owen Brady (Ocean at owenbrady dot net) 
+and Dean Brettle (dean at brettle dot com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy 
 of this software and associated documentation files (the "Software"), to deal

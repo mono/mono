@@ -1,3 +1,11 @@
+2008-12-11  Dean Brettle  <dean@brettle.com>
+
+	* System.Web.dll.sources: deleted
+	System.Web.Configuration_2.0/CapabilitiesChecksum.cs
+	
+	* Makefile (RESOURCE_FILES_2): deleted
+	System.Web.Configuration_2.0/RandomRoboBotKeywords.txt
+
 2008-12-03  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web_test.dll.sources: added System.Web.UI/DataBinderTest.cs

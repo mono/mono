@@ -2,7 +2,8 @@
 /*
 Used to determine Browser Capabilities by the Browsers UserAgent String and related
 Browser supplied Headers.
-Copyright (C) 2002-Present  Owen Brady (Ocean at xvision.com)
+Copyright (C) 2002-Present  Owen Brady (Ocean at owenbrady dot net) 
+and Dean Brettle (dean at brettle dot com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy 
 of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +31,6 @@ namespace System.Web.Configuration
 
 	internal abstract class CapabilitiesBuild : ICapabilitiesProcess
 	{
-		/// <summary>
-		/// A list of all headers, that the Browser Detective Code will possibly access.
-		/// </summary>
-		System.Collections.ObjectModel.Collection<string> AllPossibleheaders;
 		/// <summary>
 		/// 
 		/// </summary>
@@ -77,45 +74,6 @@ namespace System.Web.Configuration
 		/// <param name="initialCapabilities"></param>
 		/// <returns></returns>
 		public abstract System.Web.Configuration.CapabilitiesResult Process(System.Collections.Specialized.NameValueCollection header, System.Collections.IDictionary initialCapabilities);
-		/// <summary>
-		/// Creates a Checksum from the Header values used by the Browser Detection System.
-		/// </summary>
-		/// <param name="header">List of Header name/value pairs</param>
-		/// <returns>checksum value to be used for caching/duplicate checks</returns>
-		public virtual string HeaderChecksum(System.Collections.Specialized.NameValueCollection header)
-		{
-			if (AllPossibleheaders == null)
-			{
-				AllPossibleheaders = this.HeaderNames(new System.Collections.ObjectModel.Collection<string>());
-			}
-			System.IO.MemoryStream stream = new System.IO.MemoryStream();
-			System.IO.StreamWriter writer = new System.IO.StreamWriter(stream, System.Text.Encoding.Default);
-
-			for (int i = 0;i <= AllPossibleheaders.Count - 1;i++)
-			{
-				if (String.IsNullOrEmpty(header[AllPossibleheaders[i]]) == false)
-				{
-					writer.WriteLine(header[AllPossibleheaders[i]]);
-				}
-			}
-			writer.Flush();
-			byte[] array = stream.ToArray();
-			writer.Close();
-			return CapabilitiesChecksum.BuildChecksum(array);
-		}
-		/// <summary>
-		/// Provides a Method to Load the Browser Detection class with a default Data file that is
-		/// embeded in the dll.
-		/// </summary>
-		public abstract void LoadDefaultEmbeddedResource();
-
-		public virtual string DataFileVersion
-		{
-			get
-			{
-				return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			}
-		}
 	}
 }
 #endif

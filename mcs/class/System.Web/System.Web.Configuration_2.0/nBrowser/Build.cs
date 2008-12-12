@@ -2,7 +2,8 @@
 /*
 Used to determine Browser Capabilities by the Browsers UserAgent String and related
 Browser supplied Headers.
-Copyright (C) 2002-Present  Owen Brady (Ocean at xvision.com)
+Copyright (C) 2002-Present  Owen Brady (Ocean at owenbrady dot net) 
+and Dean Brettle (dean at brettle dot com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy 
 of this software and associated documentation files (the "Software"), to deal
@@ -325,21 +326,6 @@ namespace System.Web.Configuration.nBrowser
 		protected override System.Collections.ObjectModel.Collection<string> HeaderNames(System.Collections.ObjectModel.Collection<string> list)
 		{
 			return this.Browser().HeaderNames(list);
-		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
-		public override void LoadDefaultEmbeddedResource()
-		{
-			System.Reflection.Assembly asm = System.Reflection.Assembly.GetExecutingAssembly();
-			System.IO.Stream CP;
-			CP = asm.GetManifestResourceStream("System.Web.Configuration.Resources.CodeProject.browser");
-			System.Xml.XmlDocument Doc = new System.Xml.XmlDocument();
-			Doc.Load(CP);
-			CP.Close();
-
-			this.AddBrowserFile(Doc, "System.Web.Configuration.Resources.CodeProject.browser");
 		}
 	}
 }
