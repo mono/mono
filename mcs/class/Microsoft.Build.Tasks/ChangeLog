@@ -1,3 +1,8 @@
+2008-12-12  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added
+	CreateCSharpManifestResourceNameTest.cs
+
 2008-11-23  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks_test.dll.sources: Added AssignCultureTest.cs

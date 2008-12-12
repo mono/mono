@@ -1,3 +1,7 @@
+2008-12-12  Ankit Jain  <jankit@novell.com>
+
+	* CreateCSharpManifestResourceNameTest.cs: New.
+
 2008-11-27  Ankit Jain  <jankit@novell.com>
 
 	* AssignCultureTest.cs: Add tests for "Culture" metadata.

@@ -30,6 +30,7 @@
 using System;
 using System.IO;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public abstract class CreateManifestResourceName : TaskExtension {
@@ -42,10 +43,41 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 		
-		[MonoTODO]
 		public override bool Execute ()
 		{
-			return false;
+			manifestResourceNames = new ITaskItem [resourceFiles.Length];
+			for (int i = 0; i < resourceFiles.Length; i ++) {
+				ITaskItem item = resourceFiles [i];
+				string filename = item.ItemSpec;
+
+				Stream binaryStream = null;
+				try {
+					string dependentUponFileName = item.GetMetadata ("DependentUpon");
+					if (!String.IsNullOrEmpty (dependentUponFileName)) {
+						dependentUponFileName = Path.Combine (Path.GetDirectoryName (
+									filename), dependentUponFileName);
+						if (!File.Exists (dependentUponFileName)) {
+							Log.LogError ("Unable to create resource name for '{0}'," +
+									"as dependent file {1} was not found.",
+									filename, dependentUponFileName);
+							return false;
+						}
+
+						binaryStream = new FileStream (dependentUponFileName, FileMode.Open,
+								FileAccess.Read);
+					}
+
+					manifestResourceNames [i] = new TaskItem (item);
+					manifestResourceNames [i].ItemSpec = CreateManifestName (
+								filename, null, rootNamespace,
+								dependentUponFileName, binaryStream);
+				} finally {
+					if (binaryStream != null)
+						binaryStream.Close ();
+				}
+			}
+
+			return true;
 		}
 		
 		[MonoTODO]
@@ -62,20 +94,17 @@ namespace Microsoft.Build.Tasks {
 		
 		protected abstract bool	IsSourceFile (string fileName);
 		
-		[MonoTODO]
 		[Output]
 		public ITaskItem[] ManifestResourceNames {
 			get { return manifestResourceNames; }
 		}
 		
-		[MonoTODO]
 		[Required]
 		public ITaskItem[] ResourceFiles {
 			get { return resourceFiles; }
 			set { resourceFiles = value; }
 		}
 		
-		[MonoTODO]
 		public string RootNamespace {
 			get { return rootNamespace; }
 			set { rootNamespace = value; }

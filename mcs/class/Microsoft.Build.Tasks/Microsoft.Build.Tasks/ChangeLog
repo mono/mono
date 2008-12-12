@@ -1,3 +1,8 @@
+2008-12-12  Ankit Jain  <jankit@novell.com>
+
+	* CreateManifestResourceName.cs: Implement.
+	* CreateCSharpManifestResourceName.cs: Implement.
+
 2008-11-27  Ankit Jain  <jankit@novell.com>
 
 	* AssignCulture.cs (Execute): Emit "Culture" metadata also.
