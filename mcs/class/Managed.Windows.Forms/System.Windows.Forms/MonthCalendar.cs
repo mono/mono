@@ -380,8 +380,15 @@ namespace System.Windows.Forms {
 #endif
 				}
 
-				if (max_date != value) {
-					max_date = value;
+				if (max_date == value)
+					return;
+					
+				max_date = value;
+
+				if (max_date < selection_range.Start || max_date < selection_range.End) {
+					DateTime start = max_date < selection_range.Start ? max_date : selection_range.Start;
+					DateTime end = max_date < selection_range.End ? max_date : selection_range.End;
+					SelectionRange = new SelectionRange (start, end);
 				}
 			}
 			get {
@@ -453,8 +460,15 @@ namespace System.Windows.Forms {
 #endif
 				}
 
-				if (max_date != value) {
-					min_date = value;
+				if (min_date == value)
+					return;
+
+				min_date = value;
+
+				if (min_date > selection_range.Start || min_date > selection_range.End) {
+					DateTime start = min_date > selection_range.Start ? min_date : selection_range.Start;
+					DateTime end = min_date > selection_range.End ? min_date : selection_range.End;
+					SelectionRange = new SelectionRange (start, end);
 				}
 			}
 			get {

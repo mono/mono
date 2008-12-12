@@ -1,3 +1,9 @@
+2008-12-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MonthCalendar.cs: When setting MaxDate/MinDate, adjust the selected
+	range to contain only dates within the new possible range.
+	Fixes part of #417961.
+
 2008-12-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MaskedTextBox.cs: MaskedTextService.Replace doesn't expect the
