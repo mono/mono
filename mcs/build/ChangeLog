@@ -1,3 +1,8 @@
+2008-12-12  Raja R Harinath  <harinath@hurrynot.org>
+
+	* rules.make (topdir): Don't use $(shell ...).
+	Reported by Jonathan Chambers.
+
 2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* library.make : enable FIXTURE and TESTNAME on run-test-ondotnet.

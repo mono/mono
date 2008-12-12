@@ -7,11 +7,16 @@
 # If you need to edit this file, that's a bug; email
 # peter@newton.cx about it.
 
-# Some more variables. The leading period in the sed expression prevents
-# thisdir = . from being changed into '..' for the toplevel directory.
+empty :=
+space := $(empty) $(empty)
 
-dots := $(shell echo $(thisdir) |sed -e 's,[^./][^/]*,..,g')
-topdir := $(dots)
+# given $(thisdir), we compute the path to the top directory
+#
+# split_path = $(filter-out .,$(subst /,$(space),$(1)))
+# make_path = ./$(subst $(space),/,$(1))
+# dotdottify = $(patsubst %,..,$(1))
+# topdir = $(call make_path,$(call dotdottify,$(call split_path,$(thisdir))))
+topdir := ./$(subst $(space),/,$(patsubst %,..,$(filter-out .,$(subst /,$(space),$(thisdir)))))
 
 VERSION = 0.93
 
