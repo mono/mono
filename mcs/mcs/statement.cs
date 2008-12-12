@@ -1965,7 +1965,7 @@ namespace Mono.CSharp {
 		// It should be used by expressions which require to
 		// register a statement during resolve process.
 		//
-		public void AddScopeStatement (StatementExpression s)
+		public void AddScopeStatement (Statement s)
 		{
 			if (scope_initializers == null)
 				scope_initializers = new ArrayList ();
@@ -2316,7 +2316,7 @@ namespace Mono.CSharp {
 				SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
 
 				using (ec.Set (EmitContext.Flags.OmitDebuggingInfo)) {
-					foreach (StatementExpression s in scope_initializers)
+					foreach (Statement s in scope_initializers)
 						s.Emit (ec);
 				}
 
@@ -2489,7 +2489,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (am_storey != null)
-				am_storey.EmitHoistedVariables (ec);
+				am_storey.EmitStoreyInstantiation (ec);
 
 			bool emit_debug_info = SymbolWriter.HasSymbolWriter && Parent != null && !(am_storey is IteratorStorey);
 			if (emit_debug_info)
@@ -2542,9 +2542,13 @@ namespace Mono.CSharp {
 			//
 			// Discard an anonymous method storey when this block has no hoisted variables
 			//
-			if (am_storey != null && !am_storey.HasHoistedVariables) {
-				am_storey.Undo ();
-				am_storey = null;
+			if (am_storey != null)  {
+				if (am_storey.HasHoistedVariables) {
+					AddScopeStatement (new AnonymousMethodStorey.Initializer (am_storey));
+				} else {
+					am_storey.Undo ();
+					am_storey = null;
+				}
 			}
 
 			return ok;

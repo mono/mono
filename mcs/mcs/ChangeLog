@@ -1,3 +1,9 @@
+2008-12-12  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #457489
+	* anonymous.cs, statement.cs: Split anonymous storey instantiation
+	and initialization to capture scope initializers correctly.
+
 2008-12-11  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, parameter.cs, expression.cs, statement.cs, doc.cs:

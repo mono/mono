@@ -77,7 +77,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class HoistedGenericField : Field
+		sealed class HoistedGenericField : Field
 		{
 			public HoistedGenericField (DeclSpace parent, FullNamedExpression type, int mod, string name,
 				  Attributes attrs, Location loc)
@@ -95,6 +95,31 @@ namespace Mono.CSharp {
 					member_type = parent.MutateType (member_type);
 
 				return true;
+			}
+		}
+
+		public sealed class Initializer : Statement
+		{
+			readonly AnonymousMethodStorey storey;
+
+			public Initializer (AnonymousMethodStorey storey)
+			{
+				this.storey = storey;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				storey.EmitHoistedFieldsInitialization (ec);
+			}
+
+			protected override void CloneTo (CloneContext clonectx, Statement target)
+			{
+				// Nothing to clone
+			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				// Nothing to mutate
 			}
 		}
 
@@ -241,7 +266,7 @@ namespace Mono.CSharp {
 		//
 		// Initializes all hoisted variables
 		//
-		public void EmitHoistedVariables (EmitContext ec)
+		public void EmitStoreyInstantiation (EmitContext ec)
 		{
 			// There can be only one instance variable for each storey type
 			if (Instance != null)
@@ -295,8 +320,6 @@ namespace Mono.CSharp {
 			Instance.Store (ec);
 
 			SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
-
-			EmitHoistedFieldsInitialization (ec);
 
 			SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
 		}
