@@ -1,3 +1,24 @@
+2008-12-12  Owen Brady <Ocean@owenbrady.net>
+
+	* nBrowser/File.cs, nBrowser/Identification.cs, nBrowser/Node.cs, nBrowser/NodeTypes.cs,
+	nBrowser/Result.cs, nBrowser/Build.cs, nBrowser/Exception.cs, CapabilitiesBuild.cs, 
+	CapabilitiesResult.cs: Updated Copyright information to include updated contact information.
+	
+	* nBrowser/Build.cs: Removed LoadDefaultEmbeddedResource function, the embeded resource
+	it is referring too was never included in Mono. And was designed for a free standing 
+	browser identification libary.
+
+	* nBrowser/Exception.cs: Removed Compile Attributes and related comments which were left
+	in from the original free standing browser libary.
+	
+	* CapabilitiesBuild.cs: Removed Header Checksum related coding since it is not required
+	for the Mono implementation.
+
+	* CapabilitiesResult.cs: Updated Copyright information to include updated contact information. 
+	Removed functions which were designed to make use of features of a embeded browser file which
+	is not present in Mono.
+	
+	* CapabilitiesChecksum.cs, RandomRoboBotKeywords.txt: Deleted
 
 2008-11-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

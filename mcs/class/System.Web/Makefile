@@ -64,7 +64,6 @@ RESOURCE_FILES_2 = \
 	resources/transparent.gif \
 	resources/webform.js \
 	resources/WebUIValidation_2.0.js \
-	System.Web.Configuration_2.0/RandomRoboBotKeywords.txt \
 	System.Web.UI.WebControls/GridView.js \
 	System.Web.UI.WebControls/DetailsView.js \
 	System.Web.UI.WebControls/TreeView.js \
