@@ -1,3 +1,7 @@
+2008-12-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c tramp-arm.c: Fix calls to mono_arch_flush_icache.
+
 2008-12-12  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* driver.c: Sync --help-trace with man page (EXPR,EXPR).
