@@ -1,3 +1,10 @@
+2008-12-12  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* MonthCalendar.cs: When modifying either AnnuallyBoldedDates,
+	MonthlyBoldedDates or BoldedDates call UpdateBoldedDates, to
+	effectively repaint the control.
+	Fixes the remaining bits of #417961.
+
 2008-12-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MonthCalendar.cs: When setting MaxDate/MinDate, adjust the selected

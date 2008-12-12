@@ -213,6 +213,8 @@ namespace System.Windows.Forms {
 					annually_bolded_dates.Clear ();
 					annually_bolded_dates.AddRange (value);
 				}
+
+				UpdateBoldedDates ();
 			}
 			get {
 				if (annually_bolded_dates == null || annually_bolded_dates.Count == 0) {
@@ -268,6 +270,8 @@ namespace System.Windows.Forms {
 					bolded_dates.Clear ();
 					bolded_dates.AddRange (value);
 				}
+
+				UpdateBoldedDates ();
 			}
 			get {
 				if (bolded_dates == null || bolded_dates.Count == 0) 
@@ -486,6 +490,8 @@ namespace System.Windows.Forms {
 					monthly_bolded_dates.Clear ();
 					monthly_bolded_dates.AddRange (value);
 				}
+
+				UpdateBoldedDates ();
 			}
 			get {
 				if (monthly_bolded_dates == null || monthly_bolded_dates.Count == 0) 
