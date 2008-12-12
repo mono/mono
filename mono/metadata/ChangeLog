@@ -1,3 +1,7 @@
+2008-12-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-perfcounters.c: avoid warning.
+
 2008-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (ensure_runtime_vtable): Work on generic instances and
