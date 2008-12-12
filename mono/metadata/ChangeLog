@@ -1,3 +1,8 @@
+2008-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c: Add code to sanity check the vtable after setup_vtable_general
+	has done it's work.
+
 2008-12-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* icall.c: make Assembly.GetExecutingAssembly work properly when
@@ -25,7 +30,7 @@
 
 2008-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	class.c (mono_class_setup_fields): If working on an inflated class
+	* class.c (mono_class_setup_fields): If working on an inflated class
 	first check if the generic definition did init with success.
 
 	Fixes #445361.
