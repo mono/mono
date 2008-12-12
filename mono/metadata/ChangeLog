@@ -1,5 +1,13 @@
 2008-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (ensure_runtime_vtable): Work on generic instances and
+	make sure all interfaces have MonoClass::interface_id set.
+
+	* reflection.c (ensure_generic_class_runtime_vtable): Ensure the
+	method table is property set.
+
+2008-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: New function mono_class_setup_interface_id that setup
 	MonoClass::interface_id if needed.
 
