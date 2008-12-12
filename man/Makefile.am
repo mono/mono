@@ -48,7 +48,6 @@ man_MANS = \
 	sn.1                  \
 	soapsuds.1            \
 	sqlsharp.1            \
-	vbnc.1                \
 	wsdl.1                \
 	xsd.1
 
