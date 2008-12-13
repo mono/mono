@@ -1,3 +1,9 @@
+
+2008-12-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SqlParameter.cs: use the underlying type when inferring the type for
+	enumerations.
+
 2008-11-13  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlCommand.cs: When a timeout exception occurs, reset the

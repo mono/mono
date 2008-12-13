@@ -460,7 +460,8 @@ namespace System.Data.SqlClient {
 			}
 
 			Type type = value.GetType ();
-			string exception = String.Format ("The parameter data type of {0} is invalid.", type.Name);
+			if (type.IsEnum)
+				type = Enum.GetUnderlyingType (type);
 
 			switch (type.FullName) {
 			case "System.Int64":
@@ -520,7 +521,7 @@ namespace System.Data.SqlClient {
 				SetSqlDbType (SqlDbType.Variant); 
 				break;
 			default:
-				throw new ArgumentException (exception);
+				throw new ArgumentException (String.Format ("The parameter data type of {0} is invalid.", type.FullName));
 			}
 		}
 
