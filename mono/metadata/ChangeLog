@@ -1,3 +1,7 @@
+2008-12-12 Mark Mason <mmason@upwardaccess.com>
+
+	* metadata.c (mono_type_stack_size_internal): If SIZEOF_REGISTER > SIZEOF_VOID_P then use SIZEOF_REGISTER as the size and alignment of the stack slots.
+	
 2008-12-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-perfcounters.c: avoid warning.
