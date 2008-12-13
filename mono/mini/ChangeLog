@@ -1,4 +1,18 @@
 2008-12-12  Mark Mason	<mmason@upwardaccess.com>
+	
+	* method-to-ir.c: replace SIZEOF_VOID_P with SIZEOF_REGISTER where needed.
+	
+	* mini-mips.c: first pass n32 code generation.
+
+	* mini-mips.h: datatypes and defines for n32 support.
+
+	* exceptions-mips.c: first pass n32 code generation.
+	
+	* tramp-mips.c: first pass n32 code generation.
+	
+	* cpu-mips.md: add long_ opcodes.
+	
+2008-12-12  Mark Mason	<mmason@upwardaccess.com>
 
 	* liveness.c: replace SIZEOF_VOID_P with SIZEOF_REGISTER where needed.
 
