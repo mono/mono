@@ -1,3 +1,9 @@
+2008-12-15  Mario Carrion <mcarrion@novell.com>
+
+	* ControlTest.cs: New test added: AccessibilityPropertiesTest to test
+	accessibility properties: AccessibleName, AccessibleDescription, 
+	AccessibleDefaultActionDescription and AccessibleRole.
+
 2008-12-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MaskedTextBoxTest.cs: New test for the Text property.

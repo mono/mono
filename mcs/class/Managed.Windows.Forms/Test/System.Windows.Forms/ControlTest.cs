@@ -348,6 +348,35 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		[Test]
+		public void AccessibilityPropertiesTest ()
+		{
+			MockControl c = new MockControl ();
+
+			Assert.IsNull (c.AccessibleName, "AccessibleName");
+			Assert.IsNull (c.AccessibleDescription, "AccessibleDescription");
+			Assert.IsNull (c.AccessibleDefaultActionDescription, "AccessibleDefaultActionDescription");
+			Assert.IsNotNull (c.AccessibleRole, "AccessibleRole");
+
+			string accessible_name = "Accessible Name";
+			c.AccessibleName = accessible_name;
+			Assert.AreEqual (accessible_name, c.AccessibleName, "AccessibleName");
+
+			string accessible_description = "Accessible Description";
+			c.AccessibleDescription = accessible_description;
+			Assert.AreEqual (accessible_description, c.AccessibleDescription, "AccessibleDescription");
+
+			string accessible_default_action_description = "Accessible Default Action Description";
+			c.AccessibleDefaultActionDescription = accessible_default_action_description;
+			Assert.AreEqual (accessible_default_action_description, c.AccessibleDefaultActionDescription, "AccessibleDefaultActionDescription");
+
+			Assert.AreEqual (AccessibleRole.Default, c.AccessibleRole, "AccessibleRole");
+			c.AccessibleRole = AccessibleRole.Pane;
+			Assert.AreEqual (AccessibleRole.Pane, c.AccessibleRole, "AccessibleRole.Pane");
+			c.AccessibleRole = AccessibleRole.Dialog;
+			Assert.AreEqual (AccessibleRole.Dialog, c.AccessibleRole, "AccessibleRole.Dialog");
+		}
+
 		private class ControlDisposeTester : Control
 		{
 			public void InvokeCreateHandle ()
