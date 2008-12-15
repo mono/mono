@@ -1,3 +1,9 @@
+2008-12-15  Mario Carrion  <mcarrion@novell.com>
+
+	* Control.cs: Accessibility properties instantiate AccessibilityObject when
+	needed.
+	[Fixes Bug #459223]
+
 2008-12-15  Brad Taylor  <brad@getcoded.net>
 
 	* ToolStripItem.cs: Add a UIA specific event for listening for when a
