@@ -930,6 +930,7 @@ namespace System.Windows.Forms
 					
 				this.Invalidate ();
 				this.Parent.NotifySelectedChanged (this);
+				OnUIASelectionChanged ();
 			}
 		}
 
@@ -1121,6 +1122,7 @@ namespace System.Windows.Forms
 				this.is_selected = false;
 				this.is_pressed = false;
 				this.Invalidate ();
+				OnUIASelectionChanged ();
 			}
 
 			EventHandler eh = (EventHandler)(Events [MouseLeaveEvent]);
@@ -1660,6 +1662,7 @@ namespace System.Windows.Forms
 			if (is_selected) {
 				this.is_selected = false;
 				this.Invalidate ();
+				OnUIASelectionChanged ();
 			}
 		}
 		
@@ -1944,6 +1947,24 @@ namespace System.Windows.Forms
 		{
 			OnDragOver (dragEvent);
 		}
+		#endregion
+
+		#region UIA Framework: Methods, Properties and Events
+
+		static object UIASelectionChangedEvent = new object ();
+
+		internal event EventHandler UIASelectionChanged {
+			add { Events.AddHandler (UIASelectionChangedEvent, value); }
+			remove { Events.RemoveHandler (UIASelectionChangedEvent, value); }
+		}
+
+		internal void OnUIASelectionChanged ()
+		{
+			EventHandler eh = (EventHandler)(Events [UIASelectionChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+		
 		#endregion
 
 		[ComVisible (true)]

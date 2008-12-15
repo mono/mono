@@ -1,3 +1,8 @@
+2008-12-15  Brad Taylor  <brad@getcoded.net>
+
+	* ToolStripItem.cs: Add a UIA specific event for listening for when a
+	ToolStripItem becomes selected or deselected.
+
 2008-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MonthCalendar.cs: Select the date in MouseDown, not in MouseUp, as
