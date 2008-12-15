@@ -1,0 +1,4 @@
+Name: System.Web.Extensions
+Description: System.Web.Extensions ASP.NET 2.0 add-on
+Version: 1.0.61025.0
+Libs: -r:@prefix@/lib/mono/gac/System.Web.Extensions/1.0.61025.0__31bf3856ad364e35/System.Web.Extensions.dll
