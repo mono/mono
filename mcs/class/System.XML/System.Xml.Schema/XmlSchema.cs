@@ -653,10 +653,6 @@ namespace System.Xml.Schema
 		{
 			ValidationId = CompilationId;
 
-			// Firstly Element needs to be filled their substitution group info
-			foreach (XmlSchemaElement elem in Elements.Values)
-				elem.FillSubstitutionElementInfo ();
-
 			// Validate
 			foreach (XmlSchemaAttribute attr in Attributes.Values)
 				errorCount += attr.Validate (handler, this);

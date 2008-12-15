@@ -193,6 +193,22 @@ type=""xsd:string"" use=""required""/>
 			schemas.Add (XmlSchema.Read (new StringReader (schema2), null));
 			schemas.Compile ();
 		}
+
+		[Test]
+		public void ImportSubstitutionGroupDBR ()
+		{
+			// This bug happened when
+			// 1) a schema imports another schema,
+			// 2) there is a substitutionGroup which is involved in
+			//    complexContent schema conformance check, and
+			// 3) the included schema is already added to XmlSchemaSet.
+			XmlSchemaSet xss = new XmlSchemaSet ();
+			xss.Add (null, "Test/XmlFiles/xsd/import-subst-dbr-base.xsd");
+			xss.Add (null, "Test/XmlFiles/xsd/import-subst-dbr-ext.xsd");
+			// should not result in lack of substitutionGroup
+			// (and conformance error as its result)
+			xss.Compile ();
+		}
 	}
 }
 #endif

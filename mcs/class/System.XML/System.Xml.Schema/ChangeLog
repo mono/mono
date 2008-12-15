@@ -1,3 +1,10 @@
+2008-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchema.cs, XmlSchemaSet.cs : move substitutionGroup processing
+	  from validation phase to post-subset-collection phase. It caused
+	  inconsistent substitutionGroup processing among import and
+	  schemaSet.Schemas(). Fixed possible XBRL schema processing.
+
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : skip text validation under xs:any.

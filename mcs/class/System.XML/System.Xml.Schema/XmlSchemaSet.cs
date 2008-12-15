@@ -203,6 +203,16 @@ namespace System.Xml.Schema
 			foreach (XmlSchema schema in al)
 				if (!schema.IsCompiled)
 					schema.CompileSubset (ValidationEventHandler, this, xmlResolver, handledUris);
+
+			// Process substitutionGroup first, as this process
+			// involves both substituted and substituting elements
+			// and hence it needs to be done before actual
+			// validation (by current design of conformance checker).
+			foreach (XmlSchema schema in al)
+				foreach (XmlSchemaElement elem in schema.Elements.Values)
+					elem.FillSubstitutionElementInfo ();
+
+
 			foreach (XmlSchema schema in al)
 				schema.Validate (ValidationEventHandler);
 
