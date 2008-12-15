@@ -9,8 +9,6 @@
  */
 #include "mini.h"
 
-#ifndef DISABLE_JIT
-
 int
 mono_is_power_of_two (guint32 val)
 {
@@ -24,6 +22,8 @@ mono_is_power_of_two (guint32 val)
 		return -1;
 	return i;
 }
+
+#ifndef DISABLE_JIT
 
 #define FOLD_BINOP(name,op)	\
 	case name:	\

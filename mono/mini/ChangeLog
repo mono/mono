@@ -1,3 +1,7 @@
+2008-12-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* cfold.c: Move mono_is_power_of_two outside of DISABLE_JIT.
+
 2008-12-12  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r121457.
