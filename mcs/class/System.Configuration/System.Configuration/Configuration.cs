@@ -278,9 +278,9 @@ namespace System.Configuration {
 			
 			string xml = data as string;
 			sec.RawXml = xml;
-			sec.Reset (parentSection);
-
-			if (xml != null && xml == data) {
+			
+			if (!String.IsNullOrEmpty (xml) && xml == data) {
+				sec.Reset (parentSection);
 				XmlTextReader r = new ConfigXmlTextReader (new StringReader (xml), FilePath);
 				sec.DeserializeSection (r);
 				r.Close ();

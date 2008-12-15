@@ -1,3 +1,9 @@
+2008-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Configuration.cs: do not reset empty sections - it results in
+	the elements from the parent sections being re-added to the
+	current section with their default values which, in turn, can lead
+	to duplicate keys being added to the collections in some cases.
 
 2008-11-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
