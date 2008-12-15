@@ -1,0 +1,12 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:foo" xmlns:x="urn:foo">
+
+<xs:element name="foo" />
+
+<xs:complexType name="mybase">
+  <xs:choice>
+    <xs:element ref="x:foo" />
+  </xs:choice>
+</xs:complexType>
+
+</xs:schema>

@@ -1,3 +1,8 @@
+2008-12-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* import-subst-dbr-base.xsd, import-subst-dbr-ext.xsd :
+	  new test files.
+
 2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* 422581.xsd, 422581.xml : new files.

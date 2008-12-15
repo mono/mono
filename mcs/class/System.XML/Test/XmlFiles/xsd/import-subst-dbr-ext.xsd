@@ -1,0 +1,18 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="urn:bar" xmlns:x="urn:foo" xmlns:y="urn:bar">
+
+<xs:import namespace="urn:foo" schemaLocation="import-subst-dbr-base.xsd" />
+
+<xs:element name="bar" substitutionGroup="x:foo" />
+
+<xs:complexType name="myderived">
+  <xs:complexContent>
+    <xs:restriction base="x:mybase">
+      <xs:choice>
+        <xs:element ref="y:bar" />
+      </xs:choice>
+    </xs:restriction>
+  </xs:complexContent>
+</xs:complexType>
+
+</xs:schema>
