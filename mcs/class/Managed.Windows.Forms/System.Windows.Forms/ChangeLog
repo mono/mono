@@ -1,3 +1,10 @@
+2008-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MonthCalendar.cs: Select the date in MouseDown, not in MouseUp, as
+	.net does. Use the date in the point of the mouse move coords as the
+	new range as well, if the left button of the mouse is being pressed.
+	Fixes #364914.
+
 2008-12-12  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* MonthCalendar.cs: When modifying either AnnuallyBoldedDates,

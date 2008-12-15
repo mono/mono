@@ -1872,16 +1872,6 @@ namespace System.Windows.Forms {
 			IsYearGoingUp = false;
 			is_mouse_moving_year = false;
 			
-			HitTestInfo hti = this.HitTest (this.PointToClient (MousePosition));
-			switch (hti.HitArea) {
-			case HitArea.PrevMonthDate:
-			case HitArea.NextMonthDate:
-			case HitArea.Date:
-				this.SelectDate (clicked_date);
-				this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
-				break;
-			}
-
 			// invalidate the next monthbutton
 			if (this.is_next_clicked) {
 				this.Invalidate(
@@ -1961,6 +1951,10 @@ namespace System.Windows.Forms {
 					}
 
 					if (prev_clicked != clicked_date) {
+						// select date after updating click_state and clicked_date
+						SelectDate (clicked_date);
+						OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+
 						Rectangle invalid = Rectangle.Union (prev_rect, clicked_rect);
 						Invalidate (invalid);
 					}
@@ -2014,6 +2008,11 @@ namespace System.Windows.Forms {
 				case HitArea.PrevMonthDate:
 				case HitArea.NextMonthDate:
 					DoDateMouseDown (hti);
+
+					// select date before updating click_state
+					SelectDate (clicked_date);
+					OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+
 					// leave clicked state blank if drop down window
 					if (owner == null) {
 						click_state [0] = true;
@@ -2022,6 +2021,7 @@ namespace System.Windows.Forms {
 						click_state [1] = false;
 						click_state [2] = false;
 					}
+
 					break;
 				case HitArea.TitleMonth:
 					month_title_click_location = hti.Point;
