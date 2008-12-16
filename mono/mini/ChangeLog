@@ -1,3 +1,11 @@
+2008-11-29  Martin Baulig  <martin@ximian.com>
+
+	Backport of r120260.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Check
+	mono_debug_using_mono_debugger() in addition to the
+	`no_gdb_backtrace' flag in the `MonoDebugOptions'.
+
 2008-12-14  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r120389.
