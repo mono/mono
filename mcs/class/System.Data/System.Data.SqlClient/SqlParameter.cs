@@ -39,6 +39,7 @@
 using Mono.Data.Tds;
 using Mono.Data.Tds.Protocol;
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -76,10 +77,55 @@ namespace System.Data.SqlClient {
 		string xmlSchemaCollectionOwningSchema = String.Empty;
 		string xmlSchemaCollectionName = String.Empty;
 #endif
+		static Hashtable type_mapping;
 
 		#endregion // Fields
 
 		#region Constructors
+
+		static SqlParameter ()
+		{
+			type_mapping = new Hashtable ();
+			type_mapping.Add (typeof (long), SqlDbType.BigInt);
+			type_mapping.Add (typeof (SqlTypes.SqlInt64), SqlDbType.BigInt);
+
+			type_mapping.Add (typeof (bool), SqlDbType.Bit);
+			type_mapping.Add (typeof (SqlTypes.SqlBoolean), SqlDbType.Bit);
+
+			type_mapping.Add (typeof (string), SqlDbType.NVarChar);
+			type_mapping.Add (typeof (SqlTypes.SqlString), SqlDbType.NVarChar);
+
+			type_mapping.Add (typeof (DateTime), SqlDbType.DateTime);
+			type_mapping.Add (typeof (SqlTypes.SqlDateTime), SqlDbType.DateTime);
+
+			type_mapping.Add (typeof (decimal), SqlDbType.Decimal);
+			type_mapping.Add (typeof (SqlTypes.SqlDecimal), SqlDbType.Decimal);
+
+			type_mapping.Add (typeof (double), SqlDbType.Float);
+			type_mapping.Add (typeof (SqlTypes.SqlDouble), SqlDbType.Float);
+
+			type_mapping.Add (typeof (byte []), SqlDbType.VarBinary);
+			type_mapping.Add (typeof (SqlTypes.SqlBinary), SqlDbType.VarBinary);
+
+			type_mapping.Add (typeof (byte), SqlDbType.TinyInt);
+			type_mapping.Add (typeof (SqlTypes.SqlByte), SqlDbType.TinyInt);
+
+			type_mapping.Add (typeof (int), SqlDbType.Int);
+			type_mapping.Add (typeof (SqlTypes.SqlInt32), SqlDbType.Int);
+
+			type_mapping.Add (typeof (float), SqlDbType.Real);
+			type_mapping.Add (typeof (SqlTypes.SqlSingle), SqlDbType.Real);
+
+			type_mapping.Add (typeof (short), SqlDbType.SmallInt);
+			type_mapping.Add (typeof (SqlTypes.SqlInt16), SqlDbType.SmallInt);
+
+			type_mapping.Add (typeof (Guid), SqlDbType.UniqueIdentifier);
+			type_mapping.Add (typeof (SqlTypes.SqlGuid), SqlDbType.UniqueIdentifier);
+
+			type_mapping.Add (typeof (SqlTypes.SqlMoney), SqlDbType.Money);
+
+			type_mapping.Add (typeof (object), SqlDbType.Variant);
+		}
 
 		public SqlParameter () 
 			: this (String.Empty, SqlDbType.NVarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
@@ -452,7 +498,7 @@ namespace System.Data.SqlClient {
 
 		// If the value is set without the DbType/SqlDbType being set, then we
 		// infer type information.
-		private void InferSqlType (object value)
+		void InferSqlType (object value)
 		{
 			if (value == null || value == DBNull.Value) {
 				SetSqlDbType (SqlDbType.NVarChar);
@@ -460,69 +506,10 @@ namespace System.Data.SqlClient {
 			}
 
 			Type type = value.GetType ();
-			if (type.IsEnum)
-				type = Enum.GetUnderlyingType (type);
-
-			switch (type.FullName) {
-			case "System.Int64":
-			case "System.Data.SqlTypes.SqlInt64":
-				SetSqlDbType (SqlDbType.BigInt);
-				break;
-			case "System.Boolean":
-			case "System.Data.SqlTypes.SqlBoolean":
-				SetSqlDbType (SqlDbType.Bit);
-				break;
-			case "System.String":
-			case "System.Data.SqlTypes.SqlString":
-				SetSqlDbType (SqlDbType.NVarChar);
-				break;
-			case "System.DateTime":
-			case "System.Data.SqlTypes.SqlDateTime":
-				SetSqlDbType (SqlDbType.DateTime);
-				break;
-			case "System.Decimal":
-			case "System.Data.SqlTypes.SqlDecimal":
-				SetSqlDbType (SqlDbType.Decimal);
-				break;
-			case "System.Double":
-			case "System.Data.SqlTypes.SqlDouble":
-				SetSqlDbType (SqlDbType.Float);
-				break;
-			case "System.Byte[]":
-			case "System.Data.SqlTypes.SqlBinary":
-				SetSqlDbType (SqlDbType.VarBinary);
-				break;
-			case "System.Byte":
-			case "System.Data.SqlTypes.SqlByte":
-				SetSqlDbType (SqlDbType.TinyInt);
-				break;
-			case "System.Int32":
-			case "System.Data.SqlTypes.SqlInt32":
-				SetSqlDbType (SqlDbType.Int);
-				break;
-			case "System.Single":
-			case "System.Data.SqlTypes.Single":
-				SetSqlDbType (SqlDbType.Real);
-				break;
-			case "System.Int16":
-			case "System.Data.SqlTypes.SqlInt16":
-				SetSqlDbType (SqlDbType.SmallInt);
-				break;
-			case "System.Guid":
-			case "System.Data.SqlTypes.SqlGuid":
-				SetSqlDbType (SqlDbType.UniqueIdentifier);
-				break;
-			case "System.Money":
-			case "System.SmallMoney":
-			case "System.Data.SqlTypes.SqlMoney":
-				SetSqlDbType (SqlDbType.Money);
-				break;
-			case "System.Object":
-				SetSqlDbType (SqlDbType.Variant); 
-				break;
-			default:
+			object t = type_mapping [type];
+			if (t == null)
 				throw new ArgumentException (String.Format ("The parameter data type of {0} is invalid.", type.FullName));
-			}
+			SetSqlDbType ((SqlDbType) t);
 		}
 
 		// When the DbType is set, we also set the SqlDbType, as well as the SQL Server
@@ -530,8 +517,6 @@ namespace System.Data.SqlClient {
 		// to an SqlDbType, throw an exception.
 		private void SetDbType (DbType type)
 		{
-			string exception = String.Format ("No mapping exists from DbType {0} to a known SqlDbType.", type);
-
 			switch (type) {
 			case DbType.AnsiString:
 				MetaParameter.TypeName = "varchar";
@@ -612,6 +597,7 @@ namespace System.Data.SqlClient {
 				sqlDbType = SqlDbType.DateTime;
 				break;
 			default:
+				string exception = String.Format ("No mapping exists from DbType {0} to a known SqlDbType.", type);
 				throw new ArgumentException (exception);
 			}
 			dbType = type;
@@ -704,8 +690,6 @@ namespace System.Data.SqlClient {
 		// to a DbType, throw an exception.
 		internal void SetSqlDbType (SqlDbType type)
 		{
-			string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
-
 			switch (type) {
 			case SqlDbType.BigInt:
 				MetaParameter.TypeName = "bigint";
@@ -813,6 +797,7 @@ namespace System.Data.SqlClient {
 				dbType = DbType.Object;
 				break;
 			default:
+				string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
 				throw new ArgumentException (exception);
 			}
 			sqlDbType = type;
@@ -823,40 +808,70 @@ namespace System.Data.SqlClient {
 			return ParameterName;
 		}
 
-		private object SqlTypeToFrameworkType (object value)
+		object SqlTypeToFrameworkType (object value)
 		{
-			if (! (value is INullable)) // if the value is not SqlType
+			if (!(value is INullable)) // if the value is not SqlType
 				return ConvertToFrameworkType (value);
 
+			Type type = value.GetType ();
 			// Map to .net type, as Mono TDS respects only types from .net
-			switch (value.GetType ().FullName) {
-			case "System.Data.SqlTypes.SqlBinary":
-				return ( (SqlBinary) value).Value;
-			case "System.Data.SqlTypes.SqlBoolean":
-				return ( (SqlBoolean) value).Value;
-			case "System.Data.SqlTypes.SqlByte":
-				return ( (SqlByte) value).Value;
-			case "System.Data.SqlTypes.SqlDateTime":
-				return ( (SqlDateTime) value).Value;
-			case "System.Data.SqlTypes.SqlDecimal":
-				return ( (SqlDecimal) value).Value;
-			case "System.Data.SqlTypes.SqlDouble":
-				return ( (SqlDouble) value).Value;
-			case "System.Data.SqlTypes.SqlGuid":
-				return ( (SqlGuid) value).Value;
-			case "System.Data.SqlTypes.SqlInt16":
-				return ( (SqlInt16) value).Value;
-			case "System.Data.SqlTypes.SqlInt32 ":
-				return ( (SqlInt32 ) value).Value;
-			case "System.Data.SqlTypes.SqlInt64":
-				return ( (SqlInt64) value).Value;
-			case "System.Data.SqlTypes.SqlMoney":
-				return ( (SqlMoney) value).Value;
-			case "System.Data.SqlTypes.SqlSingle":
-				return ( (SqlSingle) value).Value;
-			case "System.Data.SqlTypes.SqlString":
-				return ( (SqlString) value).Value;
+
+			if (typeof (SqlString) == type) {
+				return ((SqlString) value).Value;
 			}
+
+			if (typeof (SqlInt16) == type) {
+				return ((SqlInt16) value).Value;
+			}
+
+			if (typeof (SqlInt32) == type) {
+				return ((SqlInt32) value).Value;
+			}
+
+			if (typeof (SqlDateTime) == type) {
+				return ((SqlDateTime) value).Value;
+			}
+
+			if (typeof (SqlInt64) == type) {
+				return ((SqlInt64) value).Value;
+			}
+
+			if (typeof (SqlBinary) == type) {
+				return ((SqlBinary) value).Value;
+			}
+
+			if (typeof (SqlBoolean) == type) {
+				return ((SqlBoolean) value).Value;
+			}
+
+			if (typeof (SqlByte) == type) {
+				return ((SqlByte) value).Value;
+			}
+
+			if (typeof (SqlDecimal) == type) {
+				return ((SqlDecimal) value).Value;
+			}
+
+			if (typeof (SqlDouble) == type) {
+				return ((SqlDouble) value).Value;
+			}
+
+			if (typeof (SqlGuid) == type) {
+				return ((SqlGuid) value).Value;
+			}
+
+			if (typeof (SqlMoney) == type) {
+				return ((SqlMoney) value).Value;
+			}
+
+			if (typeof (SqlMoney) == type) {
+				return ((SqlMoney) value).Value;
+			}
+
+			if (typeof (SqlSingle) == type) {
+				return ((SqlSingle) value).Value;
+			}
+
 			return value;
 		}
 

@@ -1,4 +1,10 @@
 
+2008-12-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SqlParameter.cs: don't allocate error strings until the error
+	actually happens. Compare types instead of strings. Use a Hashtable
+	for type mappings.
+
 2008-12-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SqlParameter.cs: use the underlying type when inferring the type for
