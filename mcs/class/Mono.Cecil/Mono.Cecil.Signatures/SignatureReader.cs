@@ -450,9 +450,12 @@ namespace Mono.Cecil.Signatures {
 				p.TypedByRef = false;
 				p.ByRef = false;
 
-				p.CustomMods = ReadCustomMods (data, start, out start);
+				start = curs;
 
-				p.Type = ReadType (data, curs, out start);
+				if (p.CustomMods == null || p.CustomMods.Length == 0)
+					p.CustomMods = ReadCustomMods (data, start, out start);
+
+				p.Type = ReadType (data, start, out start);
 				break;
 			}
 			return p;
