@@ -8,10 +8,12 @@ namespace Bug
 		{
 			var dingus = new B ();
 
-			dingus.Event += delegate {
+			EventHandler a = delegate {
 				int prop = dingus.Prop;
 				Test ();
 			};
+			
+			a ();
 		}
 
 		void Test ()
@@ -20,6 +22,7 @@ namespace Bug
 
 		public static int Main ()
 		{
+			new A ();
 			return 0;
 		}
 	}
@@ -30,9 +33,7 @@ namespace Bug
 		{
 		}
 
-		public int Prop { get; set; }
-
-		public event EventHandler Event;
+		public int Prop { get { return 1; } }
 	}
 
 	public delegate void EventHandler ();

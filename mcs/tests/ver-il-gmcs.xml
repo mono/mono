@@ -37833,30 +37833,21 @@
   <test name="test-anon-86.cs">
     <type name="Bug.A">
       <method name="Void .ctor()">
-        <size>54</size>
+        <size>50</size>
       </method>
       <method name="Void Test()">
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>2</size>
+        <size>8</size>
       </method>
     </type>
     <type name="Bug.B">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void add_Event(Bug.EventHandler)">
-        <size>24</size>
-      </method>
-      <method name="Void remove_Event(Bug.EventHandler)">
-        <size>24</size>
-      </method>
       <method name="Int32 get_Prop()">
-        <size>7</size>
-      </method>
-      <method name="Void set_Prop(Int32)">
-        <size>8</size>
+        <size>2</size>
       </method>
     </type>
     <type name="Bug.EventHandler">
@@ -37879,6 +37870,49 @@
       </method>
       <method name="Void &lt;&gt;m__0()">
         <size>24</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-87.cs">
+    <type name="Bug.AA">
+      <method name="Void .ctor(BB)">
+        <size>51</size>
+      </method>
+      <method name="Void TestMe()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Bug.BB">
+      <method name="Void .ctor(String)">
+        <size>18</size>
+      </method>
+      <method name="Void Foo()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Bug.D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Bug.AA+&lt;AA&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>23</size>
       </method>
     </type>
   </test>
