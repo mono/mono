@@ -1,3 +1,9 @@
+2008-12-16  Mark Mason	<mmason@upwardaccess.com>
+
+	* mini.h: Allow MonoInst 'p' field to alias with the low-order bits of the 'const_val' fields correctly on big-endian systems when SIZEOF_VOID_P < SIZEOF_REGISTER
+
+	* ir-emit.h: Change SIZEOF_VOID_P to SIZEOF_REGISTER, init instruction through inst_c* fields instead of inst_p* fields in case sizeof(inst_p) < sizeof(inst_c)
+	
 2008-12-15  Mark Mason	<mmason@upwardaccess.com>
 	
 	* trace.c (mono_trace_enter_method): correctly handle arguments smaller than the stack slot size on big endian systems.
