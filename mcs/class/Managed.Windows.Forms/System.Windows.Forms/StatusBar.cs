@@ -744,7 +744,14 @@ namespace System.Windows.Forms {
 			}
 
 			public virtual void Remove (StatusBarPanel value) {
+				int index = IndexOf (value);
 				panels.Remove (value);
+
+#if NET_2_0
+				// UIA Framework Event: Panel Removed
+				if (index >= 0)
+					OnUIACollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, index));
+#endif
 			}
 
 			public virtual void RemoveAt (int index) {

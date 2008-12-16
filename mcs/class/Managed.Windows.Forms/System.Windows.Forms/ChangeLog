@@ -1,3 +1,7 @@
+2008-12-15  Mike Gorse  <mgorse@novell.com>
+
+	* StatusBar.cs: Send OnUIACollectionChanged in Remove().
+
 2008-12-15  Mario Carrion  <mcarrion@novell.com>
 
 	* Control.cs: Accessibility properties instantiate AccessibilityObject when
