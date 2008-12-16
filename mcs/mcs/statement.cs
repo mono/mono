@@ -2544,7 +2544,7 @@ namespace Mono.CSharp {
 			//
 			if (am_storey != null)  {
 				if (am_storey.HasHoistedVariables) {
-					AddScopeStatement (new AnonymousMethodStorey.Initializer (am_storey));
+					AddScopeStatement (new AnonymousMethodStorey.ThisInitializer (am_storey));
 				} else {
 					am_storey.Undo ();
 					am_storey = null;

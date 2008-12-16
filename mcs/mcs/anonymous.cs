@@ -98,18 +98,26 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public sealed class Initializer : Statement
+		//
+		// Needed to delay hoisted _this_ initialization. When an anonymous
+		// method is used inside ctor and _this_ is hoisted, base ctor has to
+		// be called first, otherwise _this_ will be initialized with 
+		// uninitialized value.
+		//
+		public sealed class ThisInitializer : Statement
 		{
 			readonly AnonymousMethodStorey storey;
 
-			public Initializer (AnonymousMethodStorey storey)
+			public ThisInitializer (AnonymousMethodStorey storey)
 			{
 				this.storey = storey;
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				storey.EmitHoistedFieldsInitialization (ec);
+				if (storey.hoisted_this != null) {
+					storey.hoisted_this.EmitHoistingAssignment (ec);
+				}
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -277,6 +285,7 @@ namespace Mono.CSharp {
 			//
 			if (!HasHoistedVariables) {
 				hoisted_this.RemoveHoisting ();
+				hoisted_this = null;
 				return;
 			}
 
@@ -319,8 +328,9 @@ namespace Mono.CSharp {
 			Instance = new LocalTemporary (storey_type_expr.Type);
 			Instance.Store (ec);
 
-			SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
+			EmitHoistedFieldsInitialization (ec);
 
+			SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
 			SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
 		}
 
@@ -354,10 +364,6 @@ namespace Mono.CSharp {
 
 			if (hoisted_params != null) {
 				EmitHoistedParameters (ec, hoisted_params);
-			}
-
-			if (hoisted_this != null) {
-				hoisted_this.EmitHoistingAssignment (ec);
 			}
 
 			ec.CurrentAnonymousMethod = ae;
@@ -483,6 +489,12 @@ namespace Mono.CSharp {
 			}
 			set {
 				has_hoisted_variable = value;
+			}
+		}
+
+		public bool HasHoistedThis {
+			get {
+				return hoisted_this != null;
 			}
 		}
 

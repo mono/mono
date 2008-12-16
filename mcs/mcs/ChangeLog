@@ -1,3 +1,9 @@
+2008-12-16  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #459221
+	* anonymous.cs, statement.cs: Delay only captured this
+	initialization.
+
 2008-12-12  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #457489
