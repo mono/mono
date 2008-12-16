@@ -1,3 +1,8 @@
+2008-12-16  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationHost.cs: IsDefinitionAllowed should treat
+	configPath == "~" as the root application path.
+
 2008-12-11  Owen Brady <Ocean@owenbrady.net>
 
 	* nBrowser/File.cs, nBrowser/Identification.cs, nBrowser/Node.cs, nBrowser/NodeTypes.cs,

@@ -355,8 +355,11 @@ namespace System.Web.Configuration
 					return configPath == MachinePath || configPath == MachineWebPath;
 				case ConfigurationAllowDefinition.MachineToWebRoot:
 				case ConfigurationAllowDefinition.MachineToApplication:
-					return configPath == MachinePath || configPath == MachineWebPath || configPath == "/" ||
-						configPath == HttpRuntime.AppDomainAppVirtualPath;
+					return (String.Compare (configPath, MachinePath, StringComparison.Ordinal) == 0) ||
+						(String.Compare (configPath, MachineWebPath, StringComparison.Ordinal) == 0) ||
+						(String.Compare (configPath, "/", StringComparison.Ordinal) == 0) ||
+						(String.Compare (configPath, "~", StringComparison.Ordinal) == 0) ||
+						(String.Compare (configPath, HttpRuntime.AppDomainAppVirtualPath) == 0);
 				default:
 					return true;
 			}
