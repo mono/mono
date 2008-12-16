@@ -1,4 +1,12 @@
-2008-12-02  Martin Baulig  <martin@ximian.com>
+2008-12-16  Martin Baulig  <martin@ximian.com>
+
+	Backport of r120438.
+
+	* method-to-ir.c (mono_method_to_ir): Disable debugging
+	information for the init locals block to make the debugger stop
+	after all locals have been initalized.
+
+2008-12-16  Martin Baulig  <martin@ximian.com>
 
 	Backport of r120419.
 
