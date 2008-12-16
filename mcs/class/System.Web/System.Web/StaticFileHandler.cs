@@ -38,17 +38,9 @@ namespace System.Web
 {
 	class StaticFileHandler : IHttpHandler
 	{
-		static bool runningWindows = RunningOnWindows ();
-
-		static bool RunningOnWindows ()
-		{
-			int pid = (int)Environment.OSVersion.Platform;
-			return (pid != 4 && pid != 128);
-		}
-
 		static bool ValidFileName (string fileName)
 		{
-			if (!runningWindows)
+			if (!HttpRuntime.RunningOnWindows)
 				return true;
 
 			if (fileName == null || fileName.Length == 0)
