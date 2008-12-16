@@ -1,3 +1,7 @@
+2008-12-16  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: use the monolinker.exe from the profile directory.
+
 2008-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* repl.cs: Fix regression, quit when requested.

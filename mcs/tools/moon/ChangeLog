@@ -1,3 +1,7 @@
+2008-12-16  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: use the monolinker.exe from the profile directory.
+
 2008-12-01  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: re-use the tuning logic that previously was defined

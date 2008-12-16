@@ -6,7 +6,7 @@ sn = $(topdir)/class/lib/net_1_1_bootstrap/sn.exe
 SN = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(sn)
 SNFLAGS = -q -R
 
-LINKER = ../linker/monolinker.exe
+LINKER = $(topdir)/class/lib/net_1_1/monolinker.exe
 
 TUNER_DESCS =	\
 	Descriptors/mscorlib.xml	\
