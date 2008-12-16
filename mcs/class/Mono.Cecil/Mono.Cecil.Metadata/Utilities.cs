@@ -43,7 +43,7 @@ namespace Mono.Cecil.Metadata {
 
 		public static int ReadCompressedInteger (byte [] data, int pos, out int start)
 		{
-			int integer = 0;
+			int integer;
 			start = pos;
 			if ((data [pos] & 0x80) == 0) {
 				integer = data [pos];
@@ -60,6 +60,24 @@ namespace Mono.Cecil.Metadata {
 				start += 4;
 			}
 			return integer;
+		}
+
+		public static int ReadCompressedSignedInteger (byte [] data, int pos, out int start)
+		{
+			int integer = ReadCompressedInteger (data, pos, out start) >> 1;
+			if ((integer & 1) == 0)
+				return integer;
+
+			if (integer < 0x40)
+				return integer - 0x40;
+
+			if (integer < 0x2000)
+				return integer - 0x2000;
+
+			if (integer < 0x10000000)
+				return integer - 0x10000000;
+
+			return integer - 0x20000000;
 		}
 
 		public static int WriteCompressedInteger (BinaryWriter writer, int value)
