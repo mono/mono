@@ -1,3 +1,7 @@
+2008-12-15  Mark Mason	<mmason@upwardaccess.com>
+	
+	* trace.c (mono_trace_enter_method): correctly handle arguments smaller than the stack slot size on big endian systems.
+	
 2008-12-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c (mono_analyze_liveness): Avoid eliminating the 'this' var in
