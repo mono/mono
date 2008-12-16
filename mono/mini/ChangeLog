@@ -1,5 +1,14 @@
 2008-12-14  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r120389.
+	
+	* method-to-ir.c (mono_method_to_ir): Set the type of the value pushed on
+	the stack in CEE_LDFLDA. Fixes #450542.
+
+	* generics.cs: Add a new test.
+
+2008-12-14  Zoltan Varga  <vargaz@gmail.com>
+	
 	Backport of r121496.
 	
 	* liveness.c (mono_analyze_liveness): Avoid eliminating the 'this' var in
