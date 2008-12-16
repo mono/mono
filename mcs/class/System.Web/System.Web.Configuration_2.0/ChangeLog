@@ -19,17 +19,6 @@
 	is not present in Mono.
 	
 	* CapabilitiesChecksum.cs, RandomRoboBotKeywords.txt: Deleted
-
-2008-11-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* WebConfigurationManager.cs: fix nullref.
-
-2008-11-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* WebConfigurationManager.cs: don't keep configuration sections for
-	files that don't exist on disk.
-	Bug #443569 fixed.
-
 2008-10-21  Marek Habersack  <mhabersack@novell.com>
 
 	* CapabilitiesChecksum.cs: implement Hex and MapToHex more efficiently.
