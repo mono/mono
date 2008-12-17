@@ -1,3 +1,26 @@
+2008-12-17  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c (ves_icall_System_Environment_get_Platform): For
+	compatibility reasons for existing client code we will keep
+	returning 4 for a while.   
+
+	For how long will depend on the documentation being updated, and
+	for us to give client code a chance to be updated.
+
+	This reverts the original decison on #433108 since we did not
+	catch roughly 33 instances of the broken code in our own source
+	code base, we did not catch failures on the buildbots, and QA did
+	not bring this as a problem.
+
+	Only today I found some customer's code breaking due to our own
+	class libraries not being fully updated and tracked it down to
+	this change.  I am reverting it because if we could not even get
+	our story straight in our own code base, how can we hope that our
+	end user code be fixed?
+
+	As of this morning, our Wiki page that documents how to detect
+	Unix had not been fixed.    
+
 2008-12-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (inflated_method_in_image): Add a workaround for #458168.
