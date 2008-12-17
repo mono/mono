@@ -1,3 +1,8 @@
+2008-12-18  Veerapuram Varadhan  <vvaradhan@novell.com>
+        
+	* OciDefineHandle.cs (GetValue): Use connection's environment
+	handle instead of Parent handle.
+	
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* OciDefineHandle.cs,

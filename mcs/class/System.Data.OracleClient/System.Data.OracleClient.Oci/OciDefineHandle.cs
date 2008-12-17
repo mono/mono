@@ -458,7 +458,7 @@ namespace System.Data.OracleClient.Oci
                                         return Decimal.Parse (String.Copy ((string) tmp), formatProvider);
 				break;
 			case OciDataType.TimeStamp:
-				return dateTimeDesc.GetDateTime (Parent.Parent, dateTimeDesc.ErrorHandle);
+				return dateTimeDesc.GetDateTime (conn.Environment, dateTimeDesc.ErrorHandle);
 			case OciDataType.Date:
 				return UnpackDate ();
 			case OciDataType.Raw:
