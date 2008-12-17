@@ -1,4 +1,8 @@
 2008-12-17  Mark Mason	<mmason@upwardaccess.com>
+
+	* exceptions-mips.c (mono_arch_find_jit_info): decode sd instructions as well when looking for registers.
+	
+2008-12-17  Mark Mason	<mmason@upwardaccess.com>
 	
 	* mini-mips.c (mono_arch_output_basic_block): OP_JUMP_TABLE stores patch type in inst_c1, not inst_i1.
 	
