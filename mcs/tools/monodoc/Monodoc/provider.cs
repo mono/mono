@@ -1432,7 +1432,7 @@ public class RootTree : Tree {
 	static bool IsUnix {
 		get {
 			int p = (int) Environment.OSVersion.Platform;
-			return ((p == 4) || (p == 128));
+			return ((p == 4) || (p == 128) || (p == 6));
                 }
         }
 

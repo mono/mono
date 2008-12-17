@@ -444,11 +444,9 @@ namespace System.ServiceProcess
 
 		private static ServiceControllerImpl CreateServiceControllerImpl (ServiceController serviceController)
 		{
-#if NET_2_0
-			if (Environment.OSVersion.Platform == PlatformID.Unix) {
-#else
-			if ((int) Environment.OSVersion.Platform == 128) {
-#endif
+			int p = (int) Environment.OSVersion.Platform;
+
+			if (p == 4 || p == 128 || p == 6){
 				return new UnixServiceController (serviceController);
 			} else {
 				return new Win32ServiceController (serviceController);

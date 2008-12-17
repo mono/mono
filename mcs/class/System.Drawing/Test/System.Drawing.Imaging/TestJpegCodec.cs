@@ -47,7 +47,7 @@ namespace MonoTests.System.Drawing.Imaging {
 			string s;
 
 			int p = (int) Environment.OSVersion.Platform;
-			if ((p == 4) || (p == 128))
+			if ((p == 4) || (p == 128) || (p == 6))
 				s = "-unix";
 			else
 				s = "-windows";

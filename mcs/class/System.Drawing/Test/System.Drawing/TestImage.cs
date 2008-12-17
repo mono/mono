@@ -189,7 +189,7 @@ namespace MonoTests.System.Drawing{
 				int p = (int) Environment.OSVersion.Platform;
 				// libgdiplus (UNIX) doesn't lazy load the image so the
 				// stream may be freed (and this exception will never occur)
-				if ((p == 4) || (p == 128))
+				if ((p == 4) || (p == 128) || (p == 6))
 					throw;
 			}
 		}

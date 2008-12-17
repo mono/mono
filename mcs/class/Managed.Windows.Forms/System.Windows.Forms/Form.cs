@@ -1545,7 +1545,8 @@ namespace System.Windows.Forms {
 				//only do this when on Windows, since X behaves weirdly otherwise
 				//modal windows appear below their parent/owner/ancestor.
 				//(confirmed on several window managers, so it's not a wm bug).
-				bool is_unix = ((int) Environment.OSVersion.Platform) == 128 || ((int) Environment.OSVersion.Platform == 4);
+				int p = (int) Environment.OSVersion.Platform;
+				bool is_unix = (p == 128) || (p == 4) || (p == 6);
 				if ((VisibleInternal && (is_changing_visible_state == 0 || is_unix)) || this.IsRecreating)
 					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 

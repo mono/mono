@@ -1151,7 +1151,7 @@ namespace System.Data.OracleClient.Oci
 		#region AllocateClear
 
 		private static bool IsUnix =
-		(int) Environment.OSVersion.Platform == 4 || (int) Environment.OSVersion.Platform == 128;
+			(int) Environment.OSVersion.Platform == 4 || (int) Environment.OSVersion.Platform == 128 || (int) Environment.OSVersion.Platform == 6;
 
 		[DllImport("libc")]
 		private static extern IntPtr calloc (int nmemb, int size);

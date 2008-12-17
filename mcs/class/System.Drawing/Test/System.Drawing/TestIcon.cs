@@ -547,11 +547,9 @@ namespace MonoTests.System.Drawing {
 
 		private static bool RunningOnUnix {
 			get {
-#if NET_2_0
-				return Environment.OSVersion.Platform == PlatformID.Unix;
-#else
-				return (int) Environment.OSVersion.Platform == 128;
-#endif
+				int p = (int) Environment.OSVersion.Platform;
+
+				return (p == 4) || (p == 6) || (p == 128);
 			}
 		}
 	}

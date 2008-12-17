@@ -287,7 +287,10 @@ namespace System.Security.Principal {
 		}
 #endif
 		private static bool IsPosix {
-			get { return ((int) Environment.Platform == 128) || ((int)Environment.Platform == 4); }
+			get {
+				int p = (int) Environment.Platform;
+				return (p == 128) || (p == 4) || (p == 6);
+			}
 		}
 
 		private void SetToken (IntPtr token) 

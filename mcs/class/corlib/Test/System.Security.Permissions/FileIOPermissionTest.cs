@@ -71,7 +71,7 @@ namespace MonoTests.System.Security.Permissions {
 			filename = Path.GetTempFileName ();
 
 			int os = (int) Environment.OSVersion.Platform;
-			unix = ((os == 4) || (os == 128));
+			unix = ((os == 4) || (os == 128) || (os == 6));
 
 			p = null;
 			pathsInPermission = null;

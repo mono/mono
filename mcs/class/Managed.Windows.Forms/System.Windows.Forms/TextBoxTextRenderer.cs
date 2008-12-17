@@ -49,7 +49,7 @@ namespace System.Windows.Forms
 			// Another option would be to put Pango here for Linux.
 			int platform = (int)Environment.OSVersion.Platform;
 			
-			if (platform == 4 || platform == 128)
+			if (platform == 4 || platform == 128 || platform == 6)
 				use_textrenderer = false;
 			else
 				use_textrenderer = true;

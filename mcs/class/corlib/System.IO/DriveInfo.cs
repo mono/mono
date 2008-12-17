@@ -258,7 +258,7 @@ namespace System.IO {
 		{
 			int platform = (int) Environment.Platform;
 
-			if (platform == 4 || platform == 128)
+			if (platform == 4 || platform == 128 || platform == 6)
 				return UnixGetDrives ();
 			else
 				return WindowsGetDrives ();

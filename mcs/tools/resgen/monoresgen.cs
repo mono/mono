@@ -294,7 +294,7 @@ the output file name (if not set).";
 			// check for Unix platforms - see FAQ for more details
 			// http://www.mono-project.com/FAQ:_Technical#How_to_detect_the_execution_platform_.3F
 			int platform = (int) Environment.OSVersion.Platform;
-			return ((platform == 4) || (platform == 128));
+			return ((platform == 4) || (platform == 128) || (platform == 6));
 		}
 	}
 

@@ -520,7 +520,7 @@ namespace System.IO.Ports
 			List<string> serial_ports = new List<string>();
 			
 			// Are we on Unix?
-			if (p == 4 || p == 128) {
+			if (p == 4 || p == 128 || p == 6) {
 				string[] ttys = Directory.GetFiles("/dev/", "tty*");
 				foreach (string dev in ttys) {
 					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB"))
