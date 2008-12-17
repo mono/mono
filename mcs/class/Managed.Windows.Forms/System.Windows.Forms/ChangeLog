@@ -1,3 +1,10 @@
+2008-12-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: In MultiColumn mode don't use top_index to calculate the
+	y coord, since it's useless in this case, and we need to rely only on
+	the number of rows and ItemHeight to compute this value.
+	Fixes part of #257471.
+
 2008-12-15  Mike Gorse  <mgorse@novell.com>
 
 	* StatusBar.cs: Send OnUIACollectionChanged in Remove().
