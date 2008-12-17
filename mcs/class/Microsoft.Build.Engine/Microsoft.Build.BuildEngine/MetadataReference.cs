@@ -80,21 +80,25 @@ namespace Microsoft.Build.BuildEngine {
 			if (IsQualified) {
 				BuildItemGroup group;
 				if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
-					BuildItemGroupToITaskItemArray (group, items);
+					BuildItemGroupToITaskItemArray (group, items, true);
 			} else {
 				foreach (BuildItemGroup group in project.GetAllItemGroups ())
-					BuildItemGroupToITaskItemArray (group, items);
+					BuildItemGroupToITaskItemArray (group, items, false);
 			}
 
 			return items.Count == 0 ? null : items.ToArray ();
 		}
 
-		void BuildItemGroupToITaskItemArray (BuildItemGroup group, List<ITaskItem> items)
+		//@only_one: useful for batched case, single value of metadata required
+		void BuildItemGroupToITaskItemArray (BuildItemGroup group, List<ITaskItem> items, bool only_one)
 		{
 			foreach (BuildItem item in group) {
-				if (item.HasMetadata (metadataName))
-					items.Add (new TaskItem (
-						item.GetMetadata (metadataName)));
+				if (!item.HasMetadata (metadataName))
+					continue;
+
+				items.Add (new TaskItem (item.GetMetadata (metadataName)));
+				if (only_one)
+					break;
 			}
 		}
 

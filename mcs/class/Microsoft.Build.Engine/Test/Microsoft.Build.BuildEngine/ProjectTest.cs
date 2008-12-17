@@ -1291,12 +1291,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestBatchedMetadataRef1 ()
 		{
+			//test for multiple items with same metadata also
 			 string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
 			<ItemGroup>
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
 				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll1 Include=""A4""><Name>Xyz</Name></Coll1>
 				<Coll2 Include=""B1""></Coll2>
 			</ItemGroup>
 				<Target Name=""ShowMessage"">
