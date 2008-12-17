@@ -326,10 +326,9 @@ namespace CorCompare
 
 			AttributeData.OutputAttributes (document, nclass, GetCustomAttributes(type));
 
-			var interfaces = TypeHelper.GetInterfaces (type);
 			XmlNode ifaces = null;
 
-			foreach (TypeReference iface in interfaces) {
+			foreach (TypeReference iface in  TypeHelper.GetInterfaces (type)) {
 				if (!TypeHelper.IsPublic (iface))
 					// we're only interested in public interfaces
 					continue;
