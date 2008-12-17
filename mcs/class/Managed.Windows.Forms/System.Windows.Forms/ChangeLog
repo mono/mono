@@ -1,3 +1,8 @@
+2008-12-17  Mike Gorse  <mgorse@novell.com>
+
+	* ListView.cs, ListViewItem.cs: Send OnUIAFocusedItemChanged if an
+	  item's Focused property is set.
+
 2008-12-17  Sandy Armstrong  <sanfordarmstrong@gmail.com>
 
 	* TreeView.cs:
