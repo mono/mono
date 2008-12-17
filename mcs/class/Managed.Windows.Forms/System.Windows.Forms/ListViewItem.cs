@@ -1223,6 +1223,8 @@ namespace System.Windows.Forms
 			
 			#region Public Constructors
 			public ListViewSubItem ()
+				: this (null, string.Empty, Color.Empty,
+					Color.Empty, null)
 			{
 			}
 

@@ -1,3 +1,10 @@
+2008-12-17  Bill Holmes  <billholmes54@gmail.com>
+
+	* ListViewItem.cs (ListViewSubItem.ctor): Initalizing the 
+	  SubItemStyle member field. 
+
+	Contributed under MIT/X11 license.
+
 2008-12-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: In MultiColumn mode don't use top_index to calculate the

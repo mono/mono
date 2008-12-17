@@ -1,3 +1,7 @@
+2008-12-17  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ListViewItemTest.cs: Add test for empty constructor.
+
 2008-12-15  Mario Carrion <mcarrion@novell.com>
 
 	* ControlTest.cs: New test added: AccessibilityPropertiesTest to test
