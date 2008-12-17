@@ -1,3 +1,10 @@
+2008-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile.am, vbnc.1: Remove vbnc.1. It's living in the
+	  mono-basic module now.
+
+	  [Backport of r121406.]
+
 2008-10-18  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile.am (man_MANS): Remove unpackaged files.
