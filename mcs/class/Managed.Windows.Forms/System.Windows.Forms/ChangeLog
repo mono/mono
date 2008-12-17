@@ -1,3 +1,11 @@
+2008-12-17  Sandy Armstrong  <sanfordarmstrong@gmail.com>
+
+	* TreeView.cs:
+	* TreeNode.cs:
+	* TreeNodeCollection.cs: Add events for UIA support:
+	UIACheckBoxesChanged, UIALabelEditChanged, UIANodeTextChanged, and
+	UIACollectionChanged.
+
 2008-12-17  Bill Holmes  <billholmes54@gmail.com>
 
 	* ListViewItem.cs (ListViewSubItem.ctor): Initalizing the 

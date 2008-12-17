@@ -204,6 +204,10 @@ namespace System.Windows.Forms {
 					root_node.CollapseAllUncheck ();
 
 				Invalidate ();
+#if NET_2_0
+				// UIA Framework Event: CheckBoxes Changed
+				OnUIACheckBoxesChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -323,7 +327,13 @@ namespace System.Windows.Forms {
 		[DefaultValue(false)]
 		public bool LabelEdit {
 			get { return label_edit; }
-			set { label_edit = value; }
+			set {
+				label_edit = value;
+#if NET_2_0
+				// UIA Framework Event: LabelEdit Changed
+				OnUIALabelEditChanged (EventArgs.Empty);
+#endif
+			}
 		}
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
@@ -2453,6 +2463,71 @@ namespace System.Windows.Forms {
 			add { base.TextChanged += value; }
 			remove { base.TextChanged -= value; }
 		}
+
+		#region UIA Framework Events
+#if NET_2_0
+		static object UIACheckBoxesChangedEvent = new object ();
+
+		internal event EventHandler UIACheckBoxesChanged {
+			add { Events.AddHandler (UIACheckBoxesChangedEvent, value); }
+			remove { Events.RemoveHandler (UIACheckBoxesChangedEvent, value); }
+		}
+
+		internal void OnUIACheckBoxesChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIACheckBoxesChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+
+		static object UIALabelEditChangedEvent = new object ();
+
+		internal event EventHandler UIALabelEditChanged {
+			add { Events.AddHandler (UIALabelEditChangedEvent, value); }
+			remove { Events.RemoveHandler (UIALabelEditChangedEvent, value); }
+		}
+
+		internal void OnUIALabelEditChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIALabelEditChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		static object UIANodeTextChangedEvent = new object ();
+
+		internal event TreeViewEventHandler UIANodeTextChanged {
+			add { Events.AddHandler (UIANodeTextChangedEvent, value); }
+			remove { Events.RemoveHandler (UIANodeTextChangedEvent, value); }
+		}
+
+		internal void OnUIANodeTextChanged (TreeViewEventArgs e)
+		{
+			TreeViewEventHandler eh =
+				(TreeViewEventHandler) Events [UIANodeTextChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		static object UIACollectionChangedEvent = new object ();
+
+		internal event CollectionChangeEventHandler UIACollectionChanged {
+			add { Events.AddHandler (UIACollectionChangedEvent, value); }
+			remove { Events.RemoveHandler (UIACollectionChangedEvent, value); }
+		}
+
+		internal void OnUIACollectionChanged (object sender, CollectionChangeEventArgs e)
+		{
+			CollectionChangeEventHandler eh =
+				(CollectionChangeEventHandler) Events [UIACollectionChangedEvent];
+			if (eh != null) {
+				if (sender == root_node)
+					sender = this;
+				eh (sender, e);
+			}
+		}
+#endif
+		#endregion	// UIA Framework Events
 		#endregion	// Events
 	}
 }
