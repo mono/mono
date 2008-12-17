@@ -300,6 +300,19 @@ namespace MonoTests.System.Collections.Generic {
 			Assert.IsFalse (set.SetEquals (other5));
 		}
 
+		[Test]
+		public void TestCopyToFull ()
+		{
+			var data = new [] {1, 2, 3, 4};
+
+			var set = new HashSet<int> (data);
+
+			var res = new int [set.Count];
+			set.CopyTo (res, 0);
+
+			AssertContainsOnly (res, data);
+		}
+
 		static void AssertContainsOnly<T> (IEnumerable<T> result, IEnumerable<T> data)
 		{
 			Assert.AreEqual (result.Count (), data.Count ());
