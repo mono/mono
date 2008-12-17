@@ -1,3 +1,7 @@
+2008-12-17  Jb Evain  <jbevain@novell.com>
+
+	* mono-api-info.cs: don't add Finalizers to the api definition.
+
 2008-12-08  Jb Evain  <jbevain@novell.com>
 
 	* Util.cs
@@ -404,7 +408,7 @@
 2003-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CorCompare.exe.sources: not needed now.
-	
+
 	* Makefile: updated to build the 3 exes we have now.
 
 	* mono-api-info.cs: new program. Given an assembly name, it generates
