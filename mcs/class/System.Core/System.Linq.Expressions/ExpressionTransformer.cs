@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Roei Erez (roeie@mainsoft.com)
+//  Jb Evain (jbevain@novell.com)
 //
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
@@ -29,7 +30,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace System.Linq.Expressions {
@@ -202,22 +202,28 @@ namespace System.Linq.Expressions {
 			return VisitList<Expression> (list, Visit);
 		}
 
-		private ReadOnlyCollection<T> VisitList<T> (ReadOnlyCollection<T> list, Func<T,T> selector) where T :class
+		ReadOnlyCollection<T> VisitList<T> (ReadOnlyCollection<T> original, Func<T, T> selector) where T :class
 		{
-			int index = 0;
-			T [] arr = null;
-			foreach (T e in list) {
-				T visited = selector (e);
-				if (visited != e || arr != null) {
-					if (arr == null)
-						arr = new T [list.Count];
-					arr [index] = visited;
+			List<T> list = null;
+
+			for (int i = 0; i < original.Count; i++) {
+				var element = selector (original [i]);
+
+				if (list != null) {
+					list.Add (element);
+					continue;
 				}
-				index++;
+
+				if (!EqualityComparer<T>.Default.Equals (element, original [i])) {
+					list = new List<T> (original.Count);
+					for (int j = 0; j < i; j++)
+						list.Add (original [j]);
+
+					list.Add(element);
+				}
 			}
-			if (arr != null)
-				return arr.ToReadOnlyCollection ();
-			return list;
+
+			return list != null ? list.ToReadOnlyCollection () : original;
 		}
 
 		protected virtual MemberAssignment VisitMemberAssignment (MemberAssignment assignment)
