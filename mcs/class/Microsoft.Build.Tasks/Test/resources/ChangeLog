@@ -1,0 +1,3 @@
+2008-12-18  Ankit Jain  <jankit@novell.com>
+
+	* Sample.cs: Required for CreateCSharpManifestResourceName tests.
