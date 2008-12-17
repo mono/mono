@@ -185,7 +185,7 @@ namespace System.Collections.Generic {
 			if (array.Length - index < count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
-			for (int i = 0; i < table.Length && index < count; i++) {
+			for (int i = 0; i < table.Length && index <= count; i++) {
 				int current = table [i] - 1;
 				while (current != NO_SLOT) {
 					array [index++] = slots [current];
