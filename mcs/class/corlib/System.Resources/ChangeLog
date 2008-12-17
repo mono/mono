@@ -1,3 +1,9 @@
+
+2008-12-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ResourceManager.cs: cache ResourceSets instead of loading them from
+	their assembly every time they are needed.
+
 2008-08-11  Larry Ewing  <lewing@novell.com>
 
 	* ResourceReader.cs: fix reading/writing beyond the end of the

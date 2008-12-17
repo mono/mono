@@ -46,6 +46,7 @@ namespace System.Resources
 #endif
 	public class ResourceManager
 	{
+		static Hashtable ResourceCache = new Hashtable (); 
 		public static readonly int HeaderVersionNumber = 1;
 		public static readonly int MagicNumber = unchecked ((int) 0xBEEFCACE);
 
@@ -69,6 +70,29 @@ namespace System.Resources
 		private UltimateResourceFallbackLocation fallbackLocation;
 #endif
 		
+		static Hashtable GetResourceSets (Assembly assembly, string basename)
+		{
+			lock (ResourceCache) {
+				string key = String.Empty;
+				if (assembly != null) {
+					key = assembly.FullName;
+				} else {
+					key = basename.GetHashCode ().ToString () + "@@";
+				}
+				if (basename != null && basename != String.Empty) {
+					key += "!" + basename;
+				} else {
+					key += "!" + key.GetHashCode ();
+				}
+				Hashtable tbl = ResourceCache [key] as Hashtable;
+				if (tbl == null) {
+					tbl = Hashtable.Synchronized (new Hashtable ());
+					ResourceCache [key] = tbl;
+				}
+				return tbl;
+			}
+		}
+
 		// constructors
 		protected ResourceManager ()
 		{
@@ -80,9 +104,9 @@ namespace System.Resources
 				throw new ArgumentNullException ("resourceSource");
 
 			this.resourceSource = resourceSource;
-			ResourceSets = new Hashtable();
 			BaseNameField = resourceSource.Name;
 			MainAssembly = resourceSource.Assembly;
+			ResourceSets = GetResourceSets (MainAssembly, BaseNameField);
 			neutral_culture = GetNeutralResourcesLanguage (MainAssembly);
 		}
 
@@ -93,9 +117,9 @@ namespace System.Resources
 			if (assembly == null)
 				throw new ArgumentNullException ("assembly");
 			
-			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
+			ResourceSets = GetResourceSets (MainAssembly, BaseNameField);
 #if ONLY_1_1
 			CheckBaseName ();
 #endif
@@ -121,9 +145,9 @@ namespace System.Resources
 			if (assembly == null)
 				throw new ArgumentNullException ("assembly");
 
-			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			MainAssembly = assembly;
+			ResourceSets = GetResourceSets (MainAssembly, BaseNameField);
 #if ONLY_1_1
 			CheckBaseName ();
 #endif
@@ -139,13 +163,13 @@ namespace System.Resources
 			if (resourceDir == null)
 				throw new ArgumentNullException("resourceDir");
 
-			ResourceSets = new Hashtable ();
 			BaseNameField = baseName;
 			this.resourceDir = resourceDir;
 #if ONLY_1_1
 			CheckBaseName ();
 #endif
 			resourceSetType = CheckResourceSetType (usingResourceSet, false);
+			ResourceSets = GetResourceSets (MainAssembly, BaseNameField);
 		}
 		
 		public static ResourceManager CreateFileBasedResourceManager (string baseName,
