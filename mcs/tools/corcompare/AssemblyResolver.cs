@@ -28,34 +28,37 @@
 
 using System;
 using System.Collections;
+using System.IO;
 
 using Mono.Cecil;
 
 namespace GuiCompare {
 
-	public class AssemblyResolver : BaseAssemblyResolver {
+	public class AssemblyResolver : IAssemblyResolver {
 
-		Hashtable _assemblies;
-
-		public IDictionary AssemblyCache {
-			get { return _assemblies; }
-		}
+		DefaultAssemblyResolver resolver = new DefaultAssemblyResolver ();
 
 		public AssemblyResolver ()
 		{
-			_assemblies = new Hashtable ();
 		}
 
-		public override AssemblyDefinition Resolve (AssemblyNameReference name)
+		public AssemblyDefinition Resolve (string fullName)
 		{
-			AssemblyDefinition asm = (AssemblyDefinition) _assemblies [name.Name];
-			if (asm == null) {
-				asm = base.Resolve (name);
-				asm.Resolver = this;
-				_assemblies [name.Name] = asm;
-			}
+			if (File.Exists (fullName))
+				return ProcessFile (fullName);
 
-			return asm;
+			return resolver.Resolve (fullName);
+		}
+
+		AssemblyDefinition ProcessFile (string file)
+		{
+			resolver.AddSearchDirectory (Path.GetDirectoryName (file));
+			return AssemblyFactory.GetAssembly (file);
+		}
+
+		public AssemblyDefinition Resolve (AssemblyNameReference name)
+		{
+			return resolver.Resolve (name);
 		}
 
 		public TypeDefinition Resolve (TypeReference type)
@@ -214,12 +217,6 @@ namespace GuiCompare {
 			}
 
 			return a.FullName == b.FullName;
-		}
-
-		public void CacheAssembly (AssemblyDefinition assembly)
-		{
-			_assemblies [assembly.Name.FullName] = assembly;
-			assembly.Resolver = this;
 		}
 	}
 }
