@@ -77,19 +77,17 @@ namespace Microsoft.Build.Tasks {
 			} else {
 				for (int i = 0; i < sources.Length; i ++) {
 					string sourceFile = sources [i].ItemSpec;
-					for (int j = 0; j < outputResources.Length; j ++) {
-						string outputFile = outputResources [j].ItemSpec;
+					string outputFile = outputResources [i].ItemSpec;
 
-						if (outputFile == String.Empty) {
-							Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
-							return false;
-						}
-						if (CompileResourceFile (sourceFile, outputFile) == false) {
-							Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
-							return false;
-						}
-						temporaryFilesWritten.Add (outputResources [j]);
+					if (outputFile == String.Empty) {
+						Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
+						return false;
 					}
+					if (CompileResourceFile (sourceFile, outputFile) == false) {
+						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
+						return false;
+					}
+					temporaryFilesWritten.Add (outputResources [i]);
 				}
 			}
 			
@@ -140,6 +138,7 @@ namespace Microsoft.Build.Tasks {
 			IResourceReader reader;
 			IResourceWriter writer;
 
+			Log.LogMessage ("Compiling resource file '{0}' into '{1}'", sname, dname);
 			try {
 				source = new FileStream (sname, FileMode.Open, FileAccess.Read);
 

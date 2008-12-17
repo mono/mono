@@ -1,3 +1,8 @@
+2008-12-17  Ankit Jain  <jankit@novell.com>
+
+	* GenerateResource.cs (Execute): Items in 'OutputResources' correspond to
+	items in 'Sources', handle correctly.
+
 2008-12-12  Ankit Jain  <jankit@novell.com>
 
 	* CreateManifestResourceName.cs: Implement.
