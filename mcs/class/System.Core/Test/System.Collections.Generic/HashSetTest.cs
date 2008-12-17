@@ -313,6 +313,28 @@ namespace MonoTests.System.Collections.Generic {
 			AssertContainsOnly (res, data);
 		}
 
+		[Test]
+		public void TestCopyToEmpty ()
+		{
+			var set = new HashSet<int> ();
+
+			var res = new int [0];
+			set.CopyTo (res, 0);
+		}
+
+		[Test]
+		public void TestCopyToPrecise ()
+		{
+			var set = new HashSet<int> ();
+			set.Add (42);
+
+			var dest = new int [12];
+
+			set.CopyTo (dest, 6, 1);
+
+			Assert.AreEqual (42, dest [6]);
+		}
+
 		static void AssertContainsOnly<T> (IEnumerable<T> result, IEnumerable<T> data)
 		{
 			Assert.AreEqual (result.Count (), data.Count ());
