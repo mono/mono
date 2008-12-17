@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'ftools'
 
 $gac = 'C:/WINDOWS/assembly/GAC_MSIL'
@@ -225,7 +227,7 @@ end
 delete("*.tar.gz")
 
 process("1.1", $net_1_1, [$fx1])
-#process("2.0", $net_2_0, [$fx2])
+process("2.0", $net_2_0, [$fx2])
 process("3.0", $net_3_0, [$fx3_0, $fx2])
 process("3.5", $net_3_5, [$fx3_5, $fx2])
 process("SL2", $sl_2_0, [$sl2_0])
