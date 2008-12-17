@@ -74,7 +74,8 @@ namespace Microsoft.Build.Tasks {
 								File.GetLastWriteTime (destinationFile))
 								continue;
 						}
-						File.Copy (sourceFile, destinationFile);
+						Log.LogMessage ("Copying file from '{0}' to '{1}'", sourceFile, destinationFile);
+						File.Copy (sourceFile, destinationFile, true);
 						temporaryCopiedFiles.Add (source.Current);
 					}
 					
@@ -101,7 +102,8 @@ namespace Microsoft.Build.Tasks {
 								File.GetLastWriteTime (destinationFile))
 								continue;
 						}
-						File.Copy (sourceFile, destinationFile);
+						Log.LogMessage ("Copying file from '{0}' to '{1}'", sourceFile, destinationFile);
+						File.Copy (sourceFile, destinationFile, true);
 						temporaryCopiedFiles.Add (source.Current);
 					}
 				} else {
@@ -162,6 +164,7 @@ namespace Microsoft.Build.Tasks {
 				sourceFiles = value;
 			}
 		}
+
 	}
 }
 

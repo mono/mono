@@ -1,5 +1,9 @@
 2008-12-17  Ankit Jain  <jankit@novell.com>
 
+	* Copy.cs: Always overwrite destination files.
+
+2008-12-17  Ankit Jain  <jankit@novell.com>
+
 	* GenerateResource.cs (Execute): Items in 'OutputResources' correspond to
 	items in 'Sources', handle correctly.
 
