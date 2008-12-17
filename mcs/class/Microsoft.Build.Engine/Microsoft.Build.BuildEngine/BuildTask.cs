@@ -92,7 +92,8 @@ namespace Microsoft.Build.BuildEngine {
 				taskEngine = new TaskEngine (parentTarget.Project);		
 				taskEngine.Prepare (InitializeTask (), this.taskElement, GetParameters (), this.Type);
 				result = taskEngine.Execute ();
-				taskEngine.PublishOutput ();
+				if (result)
+					taskEngine.PublishOutput ();
 			// FIXME: it should be logged (exception)
 			} catch (Exception e) {
 				Console.Error.WriteLine (e);
