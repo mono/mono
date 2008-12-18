@@ -70,7 +70,7 @@ namespace Mono.Web.Util
 		{
 			_mappingFile = Path.Combine (Path.GetDirectoryName (RuntimeEnvironment.SystemConfigurationFile), settingsMapFileName);
 			PlatformID pid = Environment.OSVersion.Platform;
-			_runningOnWindows = ((int) pid != 128 && (int) pid != 4);
+			_runningOnWindows = ((int) pid != 128 && (int) pid != 4 && (int) pid != 6);
 
 		}
 
