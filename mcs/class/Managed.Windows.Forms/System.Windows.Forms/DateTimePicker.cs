@@ -318,6 +318,8 @@ namespace System.Windows.Forms {
 						for (int i = 0; i < part_data.Length; i++)
 							part_data [i].Selected = false;
 						Invalidate (date_area_rect);
+						OnUIAChecked ();
+						OnUIASelectionChanged ();
 					}
 				}
 			}
@@ -431,6 +433,7 @@ namespace System.Windows.Forms {
 						// invalidate the value inside this control
 						this.Invalidate (date_area_rect);
 					}
+					OnUIAMaximumChanged ();
 				}
 			}
 			get {
@@ -486,6 +489,7 @@ namespace System.Windows.Forms {
 						// invalidate the value inside this control
 						this.Invalidate (date_area_rect);
 					}
+					OnUIAMinimumChanged ();
 				}
 			}
 			get {
@@ -543,6 +547,7 @@ namespace System.Windows.Forms {
 					show_check_box = value;
 					// invalidate the value inside this control
 					this.Invalidate (date_area_rect);
+					OnUIAShowCheckBoxChanged ();
 				}
 			}
 			get {
@@ -558,6 +563,7 @@ namespace System.Windows.Forms {
 					show_up_down = value;
 					// need to invalidate the whole control
 					this.Invalidate ();
+					OnUIAShowUpDownChanged ();
 				}
 			}
 			get {
@@ -1270,7 +1276,7 @@ namespace System.Windows.Forms {
 			return -1;
 		}
 
-		private void IncrementSelectedPart(int delta)
+		internal void IncrementSelectedPart(int delta)
 		{
 			int selected_index = GetSelectedPartIndex();
 
@@ -1322,8 +1328,20 @@ namespace System.Windows.Forms {
 					break;
 			}
 		}
+		
+		internal void SelectPart (int index)
+		{
+			is_checkbox_selected = false;
+			for (int i = 0; i < part_data.Length; i++)
+			{
+				part_data[i].Selected = (i == index);
+			}
 
-		private void SelectNextPart()
+			Invalidate ();
+			OnUIASelectionChanged ();
+		}
+
+		internal void SelectNextPart()
 		{
 			int selected_index;
 			if (is_checkbox_selected) {
@@ -1373,9 +1391,10 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			OnUIASelectionChanged ();
 		}
 
-		private void SelectPreviousPart()
+		internal void SelectPreviousPart()
 		{
 			if (is_checkbox_selected)
 			{
@@ -1427,6 +1446,8 @@ namespace System.Windows.Forms {
 					}
 				}
 			}
+
+			OnUIASelectionChanged ();
 		}
 
 		// raised by key down events.
@@ -1562,7 +1583,7 @@ namespace System.Windows.Forms {
 		}
 
 		// set the specified part of the date to the specified value
-		private void SetPart (int value, DateTimePart dt_part)
+		internal void SetPart (int value, DateTimePart dt_part)
 		{
 			switch (dt_part)
 			{
@@ -1646,6 +1667,7 @@ namespace System.Windows.Forms {
 				Rectangle invalidate_rect = Rectangle.Ceiling (part_data [selected_index].drawing_rectangle);
 				invalidate_rect.Inflate (2, 2);
 				Invalidate (invalidate_rect);
+				OnUIASelectionChanged ();
 			}
 			else if (is_checkbox_selected)
 			{
@@ -1731,11 +1753,7 @@ namespace System.Windows.Forms {
 					updown_timer.Enabled = true;
 				}
 			} else if (is_drop_down_visible == false && drop_down_arrow_rect.Contains (e.X, e.Y)) {
-				is_drop_down_visible = true;
-				if (!Checked)
-					Checked = true;
-				Invalidate (drop_down_arrow_rect);
-				DropDownMonthCalendar ();
+				DropDownButtonClicked ();
     			} else {
     				// mouse down on this control anywhere else collapses it
     				if (is_drop_down_visible) {    				
@@ -1760,13 +1778,28 @@ namespace System.Windows.Forms {
 						if (old != part_data [i].Selected) 
 							invalidate_afterwards = true;
 					}
-					if (invalidate_afterwards)
+					if (invalidate_afterwards) {
 						Invalidate ();
+						OnUIASelectionChanged ();
+					}
 				}
 				
 			}
 		}
 		
+		internal void DropDownButtonClicked ()
+		{
+			if (!is_drop_down_visible) {
+				is_drop_down_visible = true;
+				if (!Checked)
+					Checked = true;
+				Invalidate (drop_down_arrow_rect);
+				DropDownMonthCalendar ();
+			} else {
+				HideMonthCalendar ();
+				this.Focus ();
+			}
+		}
 		
 		// paint this control now
 		private void PaintHandler (object sender, PaintEventArgs pe) {
@@ -1939,5 +1972,89 @@ namespace System.Windows.Forms {
 		}
 		
 		#endregion		
+
+	
+		#region UIA Framework: Methods, Properties and Events
+
+		static object UIAMinimumChangedEvent = new object ();
+		static object UIAMaximumChangedEvent = new object ();
+		static object UIASelectionChangedEvent = new object ();
+		static object UIACheckedEvent = new object ();
+		static object UIAShowCheckBoxChangedEvent = new object ();
+		static object UIAShowUpDownChangedEvent = new object ();
+
+		internal event EventHandler UIAMinimumChanged {
+			add { Events.AddHandler (UIAMinimumChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAMinimumChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAMaximumChanged {
+			add { Events.AddHandler (UIAMinimumChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAMinimumChangedEvent, value); }
+		}
+
+		internal event EventHandler UIASelectionChanged {
+			add { Events.AddHandler (UIASelectionChangedEvent, value); }
+			remove { Events.RemoveHandler (UIASelectionChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAChecked {
+			add { Events.AddHandler (UIACheckedEvent, value); }
+			remove { Events.RemoveHandler (UIACheckedEvent, value); }
+		}
+
+		internal event EventHandler UIAShowCheckBoxChanged {
+			add { Events.AddHandler (UIAShowCheckBoxChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAShowCheckBoxChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAShowUpDownChanged {
+			add { Events.AddHandler (UIAShowUpDownChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAShowUpDownChangedEvent, value); }
+		}
+
+		internal void OnUIAMinimumChanged ()
+		{
+			EventHandler eh = (EventHandler)(Events [UIAMinimumChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIAMaximumChanged ()
+		{
+			EventHandler eh = (EventHandler)(Events [UIAMaximumChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIASelectionChanged ()
+		{
+			EventHandler eh = (EventHandler)(Events [UIASelectionChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIAChecked ()
+		{
+			EventHandler eh = (EventHandler)(Events [UIACheckedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIAShowCheckBoxChanged ()
+		{
+			EventHandler eh = (EventHandler)(Events [UIAShowCheckBoxChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIAShowUpDownChanged ()
+		{
+			EventHandler eh = (EventHandler)(Events [UIAShowUpDownChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+		
+		#endregion
 	}
 }

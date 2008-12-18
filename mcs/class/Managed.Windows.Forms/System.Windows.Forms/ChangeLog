@@ -1,3 +1,8 @@
+2008-12-18  Brad Taylor  <brad@getcoded.net>
+
+	* DateTimePicker.cs: Add a few UIA specific events, and a couple
+	internal methods useful for UIA.
+
 2008-12-18  Mario Carrion <mcarrion@novell.com>
 
 	* ListBox.cs: Fixed GetItemRectangle when MultiColumn is true.
