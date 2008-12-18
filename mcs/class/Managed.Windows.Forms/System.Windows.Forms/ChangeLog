@@ -1,3 +1,8 @@
+2008-12-18  Mario Carrion <mcarrion@novell.com>
+
+	* ListBox.cs: Fixed GetItemRectangle when MultiColumn is true.
+	[Fixes Bug #455752]
+
 2008-12-17  Mike Gorse  <mgorse@novell.com>
 
 	* ListView.cs, ListViewItem.cs: Send OnUIAFocusedItemChanged if an

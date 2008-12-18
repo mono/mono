@@ -870,8 +870,11 @@ namespace System.Windows.Forms
 
 			if (MultiColumn) {
 				int col = index / RowCount;
-				rect.Y = (index % RowCount) * ItemHeight;
-				rect.X = col * ColumnWidthInternal;
+				int y = index;
+				if (y < 0) // We convert it to valid positive value 
+					y += RowCount * (top_index / RowCount);
+				rect.Y = (y % RowCount) * ItemHeight;
+				rect.X = (col - (top_index / RowCount)) * ColumnWidthInternal;
 				rect.Height = ItemHeight;
 				rect.Width = ColumnWidthInternal;
 			} else {
