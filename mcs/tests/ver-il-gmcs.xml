@@ -11285,6 +11285,37 @@
       </method>
     </type>
   </test>
+  <test name="gtest-432.cs">
+    <type name="Test.Bar`2[T,U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void DoSomething[V]()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Test.Baz">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void GetInTroubleHere()">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-433.cs">
+    <type name="M">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>37</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -17831,6 +17862,27 @@
       </method>
       <method name="Int32 &lt;&gt;m__6(&lt;&gt;__AnonType0`2[System.Int32,System.Int32])">
         <size>14</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-linq-17.cs">
+    <type name="TestGroupBy">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>190</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__0(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1(Int32)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
