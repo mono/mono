@@ -1,5 +1,10 @@
 2008-12-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #460229
+	* cs-tokenizer.cs: Ignore wrongly placed BOM markers.
+
+2008-12-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #459952
 	* decl.cs, namespace.cs: Use common CheckAccessLevel.
 

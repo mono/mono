@@ -2416,8 +2416,20 @@ namespace Mono.CSharp
 				case '\v':
 				case 0xa0:
 				case 0:
+				case 0xFEFF:	// Ignore BOM anywhere in the file
 					continue;
 
+/*				This is required for compatibility with .NET
+				case 0xEF:
+					if (peek_char () == 0xBB) {
+						PushPosition ();
+						get_char ();
+						if (get_char () == 0xBF)
+							continue;
+						PopPosition ();
+					}
+					break;
+*/
 				case '\r':
 					if (peek_char () != '\n')
 						advance_line ();
@@ -2792,7 +2804,7 @@ namespace Mono.CSharp
 				error_details = ((char)c).ToString ();
 				return Token.ERROR;
 			}
-
+			
 			return Token.EOF;
 		}
 
