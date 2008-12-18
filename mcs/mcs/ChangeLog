@@ -1,3 +1,9 @@
+2008-12-18  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #457087
+	* generic.cs: Don't crash when constraint comes from type
+	declaration.
+
 2008-12-16  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #459221

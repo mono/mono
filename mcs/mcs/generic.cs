@@ -1463,7 +1463,12 @@ namespace Mono.CSharp {
 				ctype = ct.Type;
 			} else if (ctype.IsGenericParameter) {
 				int pos = ctype.GenericParameterPosition;
-				ctype = atypes [pos];
+				if (ctype.DeclaringMethod == null) {
+					// FIXME: Implement
+					return true;
+				} else {				
+					ctype = atypes [pos];
+				}
 			}
 
 			if (Convert.ImplicitStandardConversionExists (expr, ctype))
