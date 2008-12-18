@@ -1040,7 +1040,7 @@ namespace Mono.CSharp {
 		
 		public bool CheckAccessLevel (Type check_type)
 		{
-			TypeBuilder tb = TypeBuilder;
+			Type tb = TypeBuilder;
 #if GMCS_SOURCE
 			if (this is GenericMethod) {
 				tb = Parent.TypeBuilder;
@@ -1055,6 +1055,11 @@ namespace Mono.CSharp {
 			check_type = TypeManager.DropGenericTypeArguments (check_type);
 			if (check_type == tb)
 				return true;
+
+			// TODO: When called from LocalUsingAliasEntry tb is null
+			// because we are in RootDeclSpace
+			if (tb == null)
+				tb = typeof (RootDeclSpace);
 
 			//
 			// Broken Microsoft runtime, return public for arrays, no matter what 

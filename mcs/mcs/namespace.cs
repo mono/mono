@@ -680,7 +680,7 @@ namespace Mono.CSharp {
 		}
 
 		class LocalUsingAliasEntry : UsingAliasEntry {
-			Expression resolved;
+			FullNamedExpression resolved;
 			MemberName value;
 
 			public LocalUsingAliasEntry (string alias, MemberName name, Location loc)
@@ -692,7 +692,7 @@ namespace Mono.CSharp {
 			public override FullNamedExpression Resolve (IResolveContext rc)
 			{
 				if (resolved != null || value == null)
-					return (FullNamedExpression)resolved;
+					return resolved;
 
 				resolved = value.GetTypeExpression ().ResolveAsTypeStep (rc, false);
 				if (resolved == null) {
@@ -700,18 +700,15 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				// FIXME: This is quite wrong, the accessibility is not global
-				if (resolved.Type != null) {
-					TypeAttributes attr = resolved.Type.Attributes & TypeAttributes.VisibilityMask;
-					if (attr == TypeAttributes.NestedPrivate || attr == TypeAttributes.NestedFamily ||
-					 	((attr == TypeAttributes.NestedFamORAssem || attr == TypeAttributes.NestedAssembly) && 
-						TypeManager.LookupDeclSpace (resolved.Type) == null)) {
+				TypeExpr te = resolved as TypeExpr;
+				if (te != null) {
+					if (!te.CheckAccessLevel (rc.DeclContainer)) {
+						Report.SymbolRelatedToPreviousError (te.Type);
 						Expression.ErrorIsInaccesible (resolved.Location, resolved.GetSignatureForError ());
-						return null;
 					}
 				}
 
-				return (FullNamedExpression)resolved;
+				return resolved;
 			}
 
 			public override string ToString ()
