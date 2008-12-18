@@ -424,7 +424,7 @@ namespace System.Resources
 			}
 
 			if (set != null)
-				ResourceSets.Add (culture, set);
+				ResourceSets [culture] = set;
 			else
 				nonExistentResourceSets [culture] = culture;
 
