@@ -1,3 +1,8 @@
+
+Thu Dec 18 16:35:22 CET 2008 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: deal with the mmap failing when loading an image.
+
 2008-12-17  Geoff Norton  <gnorton@novell.com>
 
         * threadpool.c: Ensure that the io_queue_lock is initialized
