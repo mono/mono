@@ -1613,17 +1613,16 @@ namespace Mono.CSharp {
 				return ExplicitTypeParameterConversion (source, source_type, target_type);
 
 			//
-			// From object to any reference type
+			// From object to any reference type or value type (unboxing)
 			//
-			if (source_type == TypeManager.object_type && !target_is_value_type)
-				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
+			if (source_type == TypeManager.object_type)
+				return source == null ? EmptyExpression.Null :
+					target_is_value_type ? (Expression) new UnboxCast (source, target_type) : new ClassCast (source, target_type);
 
 			//
-			// Unboxing conversion.
+			// Unboxing conversion from the types object and System.ValueType to any non-nullable-value-type
 			//
-			if (((source_type == TypeManager.enum_type &&
-				!(source is TypeCast)) ||
-				source_type == TypeManager.value_type) && target_is_value_type)
+			if (source_type == TypeManager.value_type && target_is_value_type)
 				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
@@ -1650,6 +1649,10 @@ namespace Mono.CSharp {
 					if (target_type.IsClass)
 						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 
+					//
+					// Unboxing conversion from any interface-type to any non-nullable-value-type that
+					// implements the interface-type
+					//
 					return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 				}
 
@@ -1729,12 +1732,6 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			//
-			// Unboxing conversions; only object types can be convertible to enum
-			//
-			if (expr_type == TypeManager.object_type && target_type.IsValueType)
-				return new UnboxCast (expr, target_type);
-
 			if (TypeManager.IsEnumType (expr_type)) {
 				Expression underlying = EmptyCast.Create (expr, TypeManager.GetEnumUnderlyingType (expr_type));
 				expr = ExplicitConversionCore (ec, underlying, target_type, loc);
@@ -1745,6 +1742,9 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.IsEnumType (target_type)){
+				//
+				// Type System.Enum can be unboxed to any enum-type
+				//
 				if (expr_type == TypeManager.enum_type)
 					return new UnboxCast (expr, target_type);
 

@@ -1,5 +1,10 @@
 2008-12-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #459630
+	* convert.cs: Enum to valuetype conversion is not allowed.
+
+2008-12-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #457087
 	* generic.cs: Don't crash when constraint comes from type
 	declaration.
