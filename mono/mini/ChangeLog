@@ -1,3 +1,17 @@
+2008-12-18  Mark Mason	<mmason@upwardaccess.com>
+	
+	* method-to-ir.c: use SIZEOF_REGISTER instead of SIZEOF_VOID_P or sizeof(gpointer) when appropriate.
+
+	* mini.h: Move typedef to mgreg_t up above include of mini-arch.h
+
+	* local-propogation.c: use SIZEOF_REGISTER instead of SIZEOF_VOID_P when appropriate
+
+	* cpu-mips.md: correct lengths for certain long_ opcodes.
+
+	* mini-mips.h: Only emulate long operations when SIZEOF_REGISTER==4. Add missing func decl.
+
+	* mini-mips.c: Add support for more long operations. Fix issues with stack frame layout for n32 (still not perfect yet). Add mips_emit_load_const().
+	
 2008-12-17  Mark Mason	<mmason@upwardaccess.com>
 
 	* exceptions-mips.c (mono_arch_find_jit_info): decode sd instructions as well when looking for registers.
