@@ -634,9 +634,7 @@ namespace System
 		{
 			return String.Compare (value, this, comparisonType) == 0;
 		}
-#endif
 
-#if NET_2_1
 		public static int Compare (string strA, string strB, CultureInfo culture, CompareOptions options)
 		{
 			if (culture == null)

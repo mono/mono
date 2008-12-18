@@ -1,3 +1,8 @@
+2008-12-18  Jb Evain  <jbevain@novell.com>
+
+	* String.cs: the Compare methods that were specific to SL2 are now
+	also in .net 2/3.5 sp1.
+
 2008-12-10  Bill Holmes  <billholmes54@gmail.com>
 
 	* Variant.cs (SetValue):   Changing the behavior for COM object in 
