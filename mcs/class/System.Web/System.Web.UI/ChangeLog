@@ -1,3 +1,10 @@
+2008-12-18  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlBuilder.cs: BindingContainerType returns typeof (Page)
+	only when the current object is a RootBuilder and it's been
+	created for a page parser. Otherwise it returns typeof
+	(Control). Fixes bug #456305
+
 2008-12-03  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBinder.cs: clean up Eval for good this time.

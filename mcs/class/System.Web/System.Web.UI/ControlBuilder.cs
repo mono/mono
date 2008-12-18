@@ -53,6 +53,7 @@ namespace System.Web.UI {
 
 		ControlBuilder myNamingContainer;
 		TemplateParser parser;
+		Type parserType;
 		internal ControlBuilder parentBuilder;
 		Type type;	       
 		string tagName;
@@ -93,6 +94,7 @@ namespace System.Web.UI {
 
 		{
 			this.parser = parser;
+			this.parserType = parser != null ? parser.GetType () : null;
 			this.parentBuilder = parentBuilder;
 			this.type = type;
 			this.tagName = tagName;
@@ -188,9 +190,11 @@ namespace System.Web.UI {
 		Type BindingContainerType {
 			get {
 				ControlBuilder cb = (this is TemplateBuilder && !(this is RootBuilder)) ? this : MyNamingContainer;
+				
 				if (cb == null) {
-					if (this is RootBuilder)
+					if (this is RootBuilder && parserType == typeof (PageParser)) 
 						return typeof (Page);
+					
 					return typeof (Control);
 				}
 
@@ -211,7 +215,7 @@ namespace System.Web.UI {
 					ct = cb.ControlType;
 					if (typeof (INonBindingContainer).IsAssignableFrom (ct) || !typeof (INamingContainer).IsAssignableFrom (ct))
 						return MyNamingContainer.BindingContainerType;
-					
+
 					return ct;
 				}
 
