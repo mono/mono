@@ -8,6 +8,7 @@
 //
 
 using NUnit.Framework;
+using NUnit.Framework.SyntaxHelpers;
 using System;
 using System.Text;
 using System.Threading;
@@ -18,6 +19,101 @@ namespace MonoTests.Mono.Unix {
 
 	[TestFixture]
 	public class UnixSignalTest {
+
+		// helper method to create a thread waiting on a UnixSignal
+		static Thread CreateWaitSignalThread (UnixSignal signal, int timeout)
+		{
+			Thread t1 = new Thread(delegate() {
+						DateTime start = DateTime.Now;
+						bool r = signal.WaitOne (timeout, false);
+						DateTime end = DateTime.Now;
+						Assert.AreEqual (signal.Count, 1);
+						Assert.AreEqual (r, true);
+						if ((end - start) > new TimeSpan (0, 0, timeout/1000))
+							throw new InvalidOperationException ("Signal slept too long");
+					});
+			return t1;
+		}
+
+		// helper method to create a two-thread test
+		static void MultiThreadTest (UnixSignal signal, int timeout, ThreadStart tstart)
+		{
+			Thread t1 = CreateWaitSignalThread (signal, timeout);
+			Thread t2 = new Thread (tstart);
+			t1.Start ();
+			t2.Start ();
+			t1.Join ();
+			t2.Join ();
+		}
+
+		[Test]
+		public void TestSignumProperty ()
+		{
+			UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
+			Assert.That (signal1.Signum, Is.EqualTo (Signum.SIGSEGV));
+		}
+	
+		[Test]
+		public void TestRealTimeCstor ()
+		{
+			RealTimeSignum rts = new RealTimeSignum (0);
+			using (UnixSignal s = new UnixSignal (rts))
+			{
+				Assert.That(s.IsRealTimeSignal);
+				Assert.That(s.RealTimeSignum, Is.EqualTo (rts));
+			}
+		}
+
+		[Test]
+		[ExpectedException]
+		public void TestSignumPropertyThrows ()
+		{
+			UnixSignal signal1 = new UnixSignal (new RealTimeSignum (0));
+			Signum s = signal1.Signum;
+		}
+
+		[Test]
+		public void TestRealTimeSignumProperty ()
+		{
+			RealTimeSignum rts = new RealTimeSignum (0);
+			UnixSignal signal1 = new UnixSignal (rts);
+			Assert.That (signal1.RealTimeSignum, Is.EqualTo (rts));
+		}
+	
+		[Test]
+		[ExpectedException]
+		public void TestRealTimePropertyThrows ()
+		{
+			UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
+			RealTimeSignum s = signal1.RealTimeSignum;
+		}
+
+		[Test]
+		public void TestRaiseRTMINSignal ()
+		{
+			RealTimeSignum rts = new RealTimeSignum (0);
+			using (UnixSignal signal = new UnixSignal (rts))
+			{
+				MultiThreadTest (signal, 5000, delegate() {
+					Thread.Sleep (1000);
+					Stdlib.raise (rts);
+					});
+			}
+		}
+
+		[Test]
+		public void TestRaiseRTMINPlusOneSignal ()
+		{
+			RealTimeSignum rts = new RealTimeSignum (1);
+			using (UnixSignal signal = new UnixSignal (rts))
+			{
+				MultiThreadTest (signal, 5000, delegate() {
+					Thread.Sleep(1000);
+					Stdlib.raise(rts);
+					});
+			}
+		}
+
 		[Test]
 		public void TestRaise ()
 		{

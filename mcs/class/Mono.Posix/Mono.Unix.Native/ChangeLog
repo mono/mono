@@ -1,3 +1,14 @@
+2008-12-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* NativeConvert.cs: Add FromRealTimeSignum(), ToRealTimeSignum().
+	  Patch thanks to tim.jenks@realtimeworlds.com.
+	* RealTimeSignum.cs: Added; structure which represents a real-time
+	  signal, a value V such that V >= SIGRTMIN and V <= SIGRTMAX.
+	  Patch thanks to tim.jenks@realtimeworlds.com.
+	* Stdlib.cs: Add SetSignalAction() and raise() overloads which accept
+	  a RealTimeSignum instance.
+	  Patch thanks to tim.jenks@realtimeworlds.com.
+
 2008-10-15  Jonathan Pryor  <jpryor@novell.com>
 
 	* Syscall.cs: [Map] Flock, add Timespec, bind nanosleep(2).

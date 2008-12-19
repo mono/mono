@@ -3,6 +3,7 @@
 //
 // Authors:
 //   Jonathan Pryor (jpryor@novell.com)
+//   Tim Jenks (tim.jenks@realtimeworlds.com)
 //
 // (C) 2008 Novell, Inc.
 //
@@ -33,16 +34,24 @@ using System.Threading;
 using Mono.Unix.Native;
 
 namespace Mono.Unix {
+
 	public class UnixSignal : WaitHandle {
-		private Signum signum;
+		private int signum;
 		private IntPtr signal_info;
 
 		public UnixSignal (Signum signum)
 		{
-			this.signum = signum;
-			// ensure signum is a valid signal
-			int _signum = NativeConvert.FromSignum (signum);
-			this.signal_info = install (_signum);
+			this.signum = NativeConvert.FromSignum (signum);
+			this.signal_info = install (this.signum);
+			if (this.signal_info == IntPtr.Zero) {
+				throw new ArgumentException ("Unable to handle signal", "signum");
+			}
+		}
+
+		public UnixSignal (Mono.Unix.Native.RealTimeSignum rtsig)
+		{
+			signum = NativeConvert.FromRealTimeSignum (rtsig);
+			this.signal_info = install (this.signum);
 			if (this.signal_info == IntPtr.Zero) {
 				throw new ArgumentException ("Unable to handle signal", "signum");
 			}
@@ -50,8 +59,27 @@ namespace Mono.Unix {
 
 		public Signum Signum {
 			get {
+				if (IsRealTimeSignal)
+					throw new InvalidOperationException ("This signal is a RealTimeSignum");
+				return NativeConvert.ToSignum (signum); 
+			}
+		}
+
+		public RealTimeSignum RealTimeSignum {
+			get {
+				if (!IsRealTimeSignal)
+					throw new InvalidOperationException ("This signal is not a RealTimeSignum");
+				return NativeConvert.ToRealTimeSignum (signum-GetSIGRTMIN ());
+			}
+		}
+
+		public bool IsRealTimeSignal {
+			get {
 				AssertValid ();
-				return signum; 
+				int sigrtmin = GetSIGRTMIN ();
+				if (sigrtmin == -1)
+					return false;
+				return signum >= sigrtmin;
 			}
 		}
 
@@ -66,6 +94,14 @@ namespace Mono.Unix {
 		[DllImport (Stdlib.MPH, CallingConvention=CallingConvention.Cdecl,
 				EntryPoint="Mono_Unix_UnixSignal_WaitAny")]
 		private static extern int WaitAny (IntPtr[] infos, int count, int timeout);
+
+		[DllImport (Stdlib.MPH, CallingConvention=CallingConvention.Cdecl,
+                                EntryPoint="Mono_Posix_SIGRTMIN")]
+		internal static extern int GetSIGRTMIN ();
+
+		[DllImport (Stdlib.MPH, CallingConvention=CallingConvention.Cdecl,
+                                EntryPoint="Mono_Posix_SIGRTMAX")]
+		internal static extern int GetSIGRTMAX ();
 
 		private void AssertValid ()
 		{

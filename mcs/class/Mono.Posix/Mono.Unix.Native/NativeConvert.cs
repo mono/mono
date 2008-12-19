@@ -18,6 +18,24 @@ namespace Mono.Unix.Native {
 		// Non-generated exports
 		//
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromRealTimeSignum")]
+		private static extern int FromRealTimeSignum (Int32 offset, out Int32 rval);
+
+		// convert a realtime signal to os signal
+		public static int FromRealTimeSignum (RealTimeSignum sig)
+		{
+			int sigNum;
+			if (FromRealTimeSignum (sig.Offset, out sigNum) == -1)
+				ThrowArgumentException (sig.Offset);
+			return sigNum;
+		}
+
+		// convert an offset to an rt signum
+		public static RealTimeSignum ToRealTimeSignum (int offset)
+		{
+			return new RealTimeSignum (offset);
+		}
+
 		// convert from octal representation.
 		public static FilePermissions FromOctalPermissionString (string value)
 		{

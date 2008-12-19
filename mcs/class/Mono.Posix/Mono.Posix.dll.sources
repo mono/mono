@@ -34,6 +34,7 @@
 ./Mono.Unix.Native/MapAttribute.cs
 ./Mono.Unix.Native/NativeConvert.cs
 ./Mono.Unix.Native/NativeConvert.generated.cs
+./Mono.Unix.Native/RealTimeSignum.cs
 ./Mono.Unix.Native/Stdlib.cs
 ./Mono.Unix.Native/Syscall.cs
 ./Mono.Unix.Native/TypeAttributes.cs

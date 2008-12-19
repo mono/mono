@@ -504,6 +504,16 @@ namespace Mono.Unix.Native {
 
 		public static int SetSignalAction (Signum signal, SignalAction action)
 		{
+			return SetSignalAction (NativeConvert.FromSignum (signal), action);
+		}
+
+		public static int SetSignalAction (RealTimeSignum rts, SignalAction action)
+		{
+			return SetSignalAction (NativeConvert.FromRealTimeSignum (rts), action);
+		}
+		
+		private static int SetSignalAction (int signum, SignalAction action)
+		{
 			IntPtr handler = IntPtr.Zero;
 			switch (action) {
 				case SignalAction.Default:
@@ -518,7 +528,7 @@ namespace Mono.Unix.Native {
 				default:
 					throw new ArgumentException ("Invalid action value.", "action");
 			}
-			IntPtr r = sys_signal (NativeConvert.FromSignum (signal), handler);
+			IntPtr r = sys_signal (signum, handler);
 			if (r == _SIG_ERR)
 				return -1;
 			return 0;
@@ -530,8 +540,12 @@ namespace Mono.Unix.Native {
 		[CLSCompliant (false)]
 		public static int raise (Signum sig)
 		{
-			int _sig = NativeConvert.FromSignum (sig);
-			return sys_raise (_sig);
+			return sys_raise (NativeConvert.FromSignum (sig));
+		}
+
+		public static int raise (RealTimeSignum rts)
+		{
+			return sys_raise (NativeConvert.FromRealTimeSignum (rts));
 		}
 
 		//
