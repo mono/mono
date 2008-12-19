@@ -54,6 +54,37 @@ Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void *handler)
 	_h (signum);
 }
 
+int Mono_Posix_SIGRTMIN (void)
+{
+#ifdef SIGRTMIN
+	return SIGRTMIN;
+#else /* def SIGRTMIN */
+	return -1;
+#endif /* ndef SIGRTMIN */
+}
+
+int Mono_Posix_SIGRTMAX (void)
+{
+#ifdef SIGRTMAX
+	return SIGRTMAX;
+#else /* def SIGRTMAX */
+	return -1;
+#endif /* ndef SIGRTMAX */
+}
+
+int Mono_Posix_FromRealTimeSignum (int offset, int *r)
+{
+   *r = 0;
+#if defined (SIGRTMIN) && defined (SIGRTMAX)
+   if ((offset < 0) || (SIGRTMIN > SIGRTMAX - offset))
+	return -1;
+   *r = SIGRTMIN+offset;
+   return 0;
+#else
+   return -1;
+#endif
+}
+
 #ifndef PLATFORM_WIN32
 
 #ifdef WAPI_ATOMIC_ASM
@@ -109,7 +140,7 @@ Mono_Unix_UnixSignal_install (int sig)
 	int i, mr;
 	signal_info* h = NULL; 
 	int have_handler = 0;
-	void* handler;
+	void* handler = NULL;
 
 	mr = pthread_mutex_lock (&signals_mutex);
 	if (mr != 0) {

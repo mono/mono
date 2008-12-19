@@ -1,3 +1,10 @@
+2008-12-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* map.h: Flush.
+	* signal.c: Add Mono_Posix_SIGRTMIN(), Mono_Posix_SIGRTMAX(),
+	  Mono_Posix_FromRealTimeSignum().
+	  Patch thanks to tim.jenks@realtimeworlds.com.
+
 2008-11-06  Alan McGovern  <amcgovern@novell.com>
 
 	* Makefile.am: Missed out on a header file for minizip
