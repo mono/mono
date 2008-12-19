@@ -276,11 +276,7 @@ namespace System.Xml
 
 		public virtual string LookupNamespace (string prefix)
 		{
-#if NET_2_0
 			return LookupNamespace (prefix, false);
-#else
-			return LookupNamespace (prefix, true);
-#endif
 		}
 
 		internal virtual string LookupNamespace (string prefix, bool atomizedNames)

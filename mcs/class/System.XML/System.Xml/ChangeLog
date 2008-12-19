@@ -1,3 +1,8 @@
+2008-12-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNamespaceManager.cs : namespace lookup failed for non-atomic
+	  string in 1.1 profile. Fixed 1.0 part of #379139.
+
 2008-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : remove unused file.
