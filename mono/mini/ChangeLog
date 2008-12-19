@@ -1,3 +1,8 @@
+2008-12-19  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-exceptions.c (get_exception_catch_class): Corrected an
+	overly strict assertion.
+
 2008-12-18  Mark Mason	<mmason@upwardaccess.com>
 	
 	* method-to-ir.c: use SIZEOF_REGISTER instead of SIZEOF_VOID_P or sizeof(gpointer) when appropriate.

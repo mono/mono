@@ -1,3 +1,7 @@
+2008-12-19  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c, class-internals.h: Made
+	mono_class_has_parent_and_ignore_generics() non-static.
 
 Thu Dec 18 16:35:22 CET 2008 Paolo Molaro <lupus@ximian.com>
 
