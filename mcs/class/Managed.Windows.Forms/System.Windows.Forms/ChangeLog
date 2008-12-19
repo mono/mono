@@ -1,3 +1,8 @@
+2008-12-19  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* X11DesktopColors.cs: Since r121873 we don't need gtk a11y checks here,
+	it has been moved to the bridge.
+
 2008-12-18  Brad Taylor  <brad@getcoded.net>
 
 	* DateTimePicker.cs: Add a few UIA specific events, and a couple

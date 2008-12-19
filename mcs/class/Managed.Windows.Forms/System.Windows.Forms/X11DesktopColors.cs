@@ -149,23 +149,7 @@ namespace System.Windows.Forms {
 
 		static void GtkInit ()
 		{
-#if NET_2_0
-			// NOTE: SetEnvironmentVariable not available in 1.x
-			// Prevent ATK bridge initalization, as it causes
-			// conflicts with the UIA<->ATK bridge.
-			// A better solution would probably be to get these
-			// values out-of-process.  See details/discussion here:
-			// https://bugzilla.novell.com/show_bug.cgi?id=375987
-			string gtk_modules_env_var = "GTK_MODULES";
-			string gtk_modules_env_var_content = Environment.GetEnvironmentVariable (gtk_modules_env_var);
-			Environment.SetEnvironmentVariable (gtk_modules_env_var, string.Empty);
-#endif
-
 			gtk_init_check (IntPtr.Zero, IntPtr.Zero);
-
-#if NET_2_0
-			Environment.SetEnvironmentVariable (gtk_modules_env_var, gtk_modules_env_var_content);
-#endif
 		}
 		#endregion	// Constructors
 
