@@ -442,8 +442,10 @@ namespace System.Net {
 					status_code == 413 || status_code == 414 || status_code == 500 ||
 					status_code == 503);
 
-			if (conn_close == false)
+			if (conn_close == false) {
 				conn_close = (context.Request.Headers ["connection"] == "close");
+				conn_close |= (v <= HttpVersion.Version10);
+			}
 
 			// They sent both KeepAlive: true and Connection: close!?
 			if (!keep_alive || conn_close)

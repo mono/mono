@@ -121,7 +121,11 @@ namespace System.Net {
 		{
 			if (buffer == null)
 				buffer = new byte [BufferSize];
-			stream.BeginRead (buffer, 0, BufferSize, OnRead, this);
+			try {
+				stream.BeginRead (buffer, 0, BufferSize, OnRead, this);
+			} catch {
+				sock.Close (); // stream disposed
+			}
 		}
 
 		public RequestStream GetRequestStream (bool chunked, long contentlength)
@@ -161,7 +165,7 @@ namespace System.Net {
 				nread = stream.EndRead (ares);
 				ms.Write (buffer, 0, nread);
 			} catch (Exception e) {
-				Console.WriteLine (e);
+				//Console.WriteLine (e);
 				if (ms.Length > 0)
 					SendError ();
 				sock.Close ();

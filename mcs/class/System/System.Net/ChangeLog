@@ -1,4 +1,11 @@
 
+2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpConnection.cs: remove CWL. When reusing, BeginReadRequest might
+	throw if the client closes.
+	* HttpListenerResponse.cs: close the connection for 1.0 clients.
+
+	Backported from HEAD. Fixes bug #459432.
 2008-11-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpDataStream.cs: use the socket for reading until the end of a
