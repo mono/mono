@@ -1,3 +1,8 @@
+2008-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicProfileChecker.cs : /definitions/message/part could omit
+	  name attribute and it should not cause null key error.
+
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicProfileChecker.cs : reimplemented R2305 that turned out to

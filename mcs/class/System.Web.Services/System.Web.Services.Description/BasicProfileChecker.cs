@@ -418,6 +418,8 @@ namespace System.Web.Services.Description
 			ServiceDescription sd = value.PortType.ServiceDescription;
 			Message omitted = null;
 			foreach (OperationMessage m in value.Messages) {
+				if (m.Name == null)
+					continue; // it is doubtful, but R2305 is not to check such cases anyways.
 				Message msg = sd.Messages [m.Name];
 				if (msg == null)
 					continue; // it is doubtful, but R2305 is not to check such cases anyways.
