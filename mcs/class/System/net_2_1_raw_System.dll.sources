@@ -41,6 +41,7 @@ System.ComponentModel/EditorBrowsableAttribute.cs
 System.ComponentModel/EditorBrowsableState.cs
 System.ComponentModel/IContainer.cs
 System.ComponentModel/IComponent.cs
+System.ComponentModel/IEditableObject.cs
 System.ComponentModel/INotifyPropertyChanged.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ITypeDescriptorContext.cs

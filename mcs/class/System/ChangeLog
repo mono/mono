@@ -1,3 +1,7 @@
+2008-12-19  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* net_2_1_raw_System.dll.sources: Added IEditableObject.cs
+
 2008-12-09  Christian Hergert <christian.hergert@gmail.com>
 
 	* System_test.dll.sources: Addded CounterCreationDataTest.cs
