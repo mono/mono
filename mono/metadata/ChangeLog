@@ -1,3 +1,13 @@
+2008-12-19  Bill Holmes  <billholmes54@gmail.com>
+
+	* icall-def.h : Adding an internal call definition for 
+	  System.Environment.internalBroadcastSettingChange.
+
+	* icall.c : Adding a Windows only implementation to broadcast a 
+	  WM_SETTINGCHANGE when an environment variable has changed.
+
+	Code is contributed under MIT/X11 license.
+
 2008-12-19  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, class-internals.h: Made
