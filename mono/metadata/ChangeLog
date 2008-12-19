@@ -1,3 +1,10 @@
+2008-12-19  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r121292.
+
+	* metadata/generic-sharing.c: Look for constraints in all type
+	arguments, not just the first one.
+
 2008-12-17  Geoff Norton  <gnorton@novell.com>
 
 	* threadpool.c: Ensure that the io_queue_lock is initialized
