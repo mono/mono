@@ -10,6 +10,7 @@ $fx2 = File.join $fx, "v2.0.50727"
 $fx3_0 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/v3.0'
 $fx3_5 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/v3.5'
 $sl2_0 = 'C:/Program Files/Microsoft Silverlight/2.0.31005.0'
+$sl2_0sdk = 'C:/Program Files/Microsoft SDKs/Silverlight/v2.0/Libraries/Client/'
 
 $net_1_1 = [
 	"mscorlib",
@@ -157,6 +158,10 @@ $sl_2_0 = [
 	"System.ServiceModel",
 	"System.Windows.Browser",
 	"System.Xml",
+	"",
+	"System.Xml.Linq",
+	"System.Windows.Controls",
+	"System.Windows.Controls.Data",
 ]
 
 def locate(assembly, fxs = nil)
@@ -230,4 +235,4 @@ process("1.1", $net_1_1, [$fx1])
 process("2.0", $net_2_0, [$fx2])
 process("3.0", $net_3_0, [$fx3_0, $fx2])
 process("3.5", $net_3_5, [$fx3_5, $fx2])
-process("SL2", $sl_2_0, [$sl2_0])
+process("SL2", $sl_2_0, [$sl2_0, $sl2_0sdk])
