@@ -1,3 +1,9 @@
+2008-12-19  Bill Holmes  <billholmes54@gmail.com>
+
+	* processes.c (get_module_name) : adjust size for unicode characters.
+
+	Code is contributed under MIT/X11 license.
+
 2008-11-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* atomic.h: Applied patch from Mihai Chelaru <kefren@ngnetworks.ro>. Add
