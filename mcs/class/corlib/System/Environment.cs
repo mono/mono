@@ -557,6 +557,9 @@ namespace System {
 			return GetLogicalDrivesInternal ();
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private static extern void internalBroadcastSettingChange ();
+
 #if NET_2_0
 		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
 		{
@@ -568,14 +571,16 @@ namespace System {
 				if (!IsRunningOnWindows)
 					return null;
 				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.LocalMachine.OpenSubKey (@"SYSTEM\CurrentControlSet\Control\Session Manager\Environment")) {
-					return env.GetValue (variable).ToString ();
+					object regvalue = env.GetValue (variable);
+					return (regvalue == null) ? null : regvalue.ToString ();
 				}
 			case EnvironmentVariableTarget.User:
 				new EnvironmentPermission (PermissionState.Unrestricted).Demand ();
 				if (!IsRunningOnWindows)
 					return null;
 				using (Microsoft.Win32.RegistryKey env = Microsoft.Win32.Registry.CurrentUser.OpenSubKey ("Environment", false)) {
-					return env.GetValue (variable).ToString ();
+					object regvalue = env.GetValue (variable);
+					return (regvalue == null) ? null : regvalue.ToString ();
 				}
 			default:
 				throw new ArgumentException ("target");
@@ -645,6 +650,7 @@ namespace System {
 						env.DeleteValue (variable, false);
 					else
 						env.SetValue (variable, value);
+					internalBroadcastSettingChange ();
 				}
 				break;
 			case EnvironmentVariableTarget.User:
@@ -655,6 +661,7 @@ namespace System {
 						env.DeleteValue (variable, false);
 					else
 						env.SetValue (variable, value);
+					internalBroadcastSettingChange ();
 				}
 				break;
 			default:

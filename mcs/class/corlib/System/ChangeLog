@@ -1,3 +1,14 @@
+2008-12-19  Bill Holmes  <billholmes54@gmail.com>
+
+	* Environment.cs (GetEnvironmentVariable) :  Avoiding an nre if 
+	  the variable is not set.
+
+	* Environment.cs (SetEnvironmentVariable) : Adding a call to 
+	  internalBroadcastSettingChange to notify Windows that an environment 
+	  variable has changed.
+
+	Contributed under MIT/X11 license.
+
 2008-12-18  Jb Evain  <jbevain@novell.com>
 
 	* String.cs: the Compare methods that were specific to SL2 are now
