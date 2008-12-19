@@ -1,3 +1,7 @@
+2008-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTDValidatingReader.cs : remove unused file.
+
 2008-11-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs : simply call ClearValueBuffer() on each Read().
