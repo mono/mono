@@ -1,5 +1,10 @@
 2008-12-19  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-exceptions.c (get_exception_catch_class): Removed overly
+	strict assertion.
+
+2008-12-19  Mark Probst  <mark.probst@gmail.com>
+
 	Backport of r121292.
 
 	* method-to-ir.c: Removed an unnecessary assertion.

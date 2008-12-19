@@ -1,5 +1,11 @@
 2008-12-19  Mark Probst  <mark.probst@gmail.com>
 
+	* bug-459285.2.cs: New generic sharing test.
+
+	* Makefile.am: Test added.
+
+2008-12-19  Mark Probst  <mark.probst@gmail.com>
+
 	Backport of r121292.
 
 	* generic-marshalbyref.2.cs: Test for calls to marshal-by-ref
