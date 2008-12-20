@@ -813,7 +813,6 @@ namespace Novell.Directory.Ldap
 			catch (System.Net.Sockets.SocketException se)
 			{
 				// Unable to connect to server host:port
-				freeWriteSemaphore(semId); 
 				sock = null;
 				socket = null;
 				throw new LdapException(ExceptionMessages.CONNECTION_ERROR, new System.Object[] { host, port }, LdapException.CONNECT_ERROR, null, se);
@@ -821,7 +820,6 @@ namespace Novell.Directory.Ldap
 				catch (System.IO.IOException ioe)
 				{
 					// Unable to connect to server host:port
-				freeWriteSemaphore(semId);
 				sock = null;
 				socket = null;
 					throw new LdapException(ExceptionMessages.CONNECTION_ERROR, new System.Object[]{host, port}, LdapException.CONNECT_ERROR, null, ioe);

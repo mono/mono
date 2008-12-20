@@ -21,8 +21,6 @@ LIB_MCS_FLAGS = \
 	$(RESX_RES:%=/res:%)
 endif
 
-NO_TEST = yes
-
 include ../../build/library.make
 
 RESULTCODE_MESSAGES = Novell.Directory.Ldap.Utilclass/ResultCodeMessages.resources
