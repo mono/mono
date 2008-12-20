@@ -1,6 +1,11 @@
 
 2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* SqlParameter.cs: I removed these 2 lines I added 2 patches ago in
+	the previous patch...
+
+2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* SqlConnection.cs: close the connection on error.
 
 2008-12-16 Gonzalo Paniagua Javier <gonzalo@novell.com>

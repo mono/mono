@@ -506,6 +506,8 @@ namespace System.Data.SqlClient {
 			}
 
 			Type type = value.GetType ();
+			if (type.IsEnum)
+				type = Enum.GetUnderlyingType (type);
 			object t = type_mapping [type];
 			if (t == null)
 				throw new ArgumentException (String.Format ("The parameter data type of {0} is invalid.", type.FullName));
