@@ -1,3 +1,9 @@
+2008-12-20  Jeroen Asselman <jeroen-novel@asselman.com>
+
+	* Connection.cs: Apply patch from #436775, there is no need to
+	free the semaphores both in the catch clauses as well as the
+	finally clause.
+
 2006-12-28  Jon Larimer <jlarimer@gmail.com>
 
 	* Connection.cs: Add a try/finally section to release the
