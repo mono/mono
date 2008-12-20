@@ -3039,19 +3039,29 @@ namespace System.Net.Sockets
 		internal int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags,
 						   ref EndPoint remote_end)
 		{
+			int error;
+			return ReceiveFrom_nochecks_exc (buf, offset, size, flags, ref remote_end, true, out error);
+		}
+
+		internal int ReceiveFrom_nochecks_exc (byte [] buf, int offset, int size, SocketFlags flags,
+						   ref EndPoint remote_end, bool throwOnError, out int error)
+		{
 			SocketAddress sockaddr = remote_end.Serialize();
-			int cnt, error;
-
-			cnt = RecvFrom_internal (socket, buf, offset, size, flags, ref sockaddr, out error);
-
+			int cnt = RecvFrom_internal (socket, buf, offset, size, flags, ref sockaddr, out error);
 			SocketError err = (SocketError) error;
 			if (err != 0) {
 				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
 					connected = false;
-				else if (err == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException ((int) SocketError.TimedOut, "Operation timed out");
+				else if (err == SocketError.WouldBlock && blocking) { // This might happen when ReceiveTimeout is set
+					if (throwOnError)	
+						throw new SocketException ((int) SocketError.TimedOut, "Operation timed out");
+					error = (int) SocketError.TimedOut;
+					return 0;
+				}
 
-				throw new SocketException (error);
+				if (throwOnError)
+					throw new SocketException (error);
+				return 0;
 			}
 
 			connected = true;

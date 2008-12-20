@@ -1,6 +1,11 @@
 
 2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* Socket.cs: add a new ReceiveFrom_nocheck that does not throw an
+	exception in case of error.
+
+2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* Socket.cs: if Blocking is set, translate a WouldBlock into a
 	TimedOut.
 
