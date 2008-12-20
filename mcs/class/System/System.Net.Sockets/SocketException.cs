@@ -76,6 +76,12 @@ namespace System.Net.Sockets
 				return (SocketError) NativeErrorCode;
 			}
 		}
+
+		public override string Message {
+			get {
+				return base.Message;
+			}
+		}
 #endif
 
 	}

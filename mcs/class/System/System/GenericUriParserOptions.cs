@@ -43,10 +43,8 @@ namespace System {
 		DontConvertPathBackslashes = 64,
 		DontCompressPath = 128,
 		DontUnescapePathDotsAndSlashes = 256,
-#if NET_2_1
 		Idn = 512,
 		IriParsing = 1024
-#endif
 	}
 }
 

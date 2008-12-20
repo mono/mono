@@ -101,7 +101,7 @@ namespace System.Net.Sockets
 				GC.SuppressFinalize (this);
 		}		
 
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 		}

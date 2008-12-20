@@ -1,3 +1,9 @@
+2008-12-20  Miguel de Icaza  <miguel@novell.com>
+
+	* SocketException.cs: Add missing API.
+
+	* SocketAsyncEventArgs.cs (Dispose): this has to be a public
+	member according to the specs.
 
 2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

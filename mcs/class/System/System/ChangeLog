@@ -1,3 +1,8 @@
+2008-12-20  Miguel de Icaza  <miguel@novell.com>
+
+	* GenericUriParserOptions.cs: Idn and IriParsing are now part of
+	.NET 
+
 2008-09-16  Miguel de Icaza  <miguel@novell.com>
 
 	* Uri.cs (TryCreate): Implement one of the TryCreate methods
