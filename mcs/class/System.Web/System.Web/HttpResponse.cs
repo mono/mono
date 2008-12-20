@@ -993,19 +993,28 @@ namespace System.Web {
 		{
 			TransmitFile (vf, false);
 		}
-		
+
+		const int bufLen = 65535;
 		internal void TransmitFile (VirtualFile vf, bool final_flush)
 		{
 			if (vf == null)
 				throw new ArgumentNullException ("vf");
 
+			if (vf is DefaultVirtualFile) {
+				TransmitFile (HostingEnvironment.MapPath (vf.VirtualPath), final_flush);
+				return;
+			}
+			
+			byte[] buf = new byte [bufLen];
 			using (Stream s = vf.Open ()) {
-				long len = s.Length;
-				byte[] buf = new byte [len];
-				int readBytes = s.Read (buf, 0, (int) len);
-				output_stream.Write (buf, 0, readBytes);
-				output_stream.ApplyFilter (final_flush);
-				Flush (final_flush);
+				int readBytes;
+				while ((readBytes = s.Read (buf, 0, bufLen)) > 0) {
+					output_stream.Write (buf, 0, readBytes);
+					output_stream.ApplyFilter (final_flush);
+					Flush (false);
+				}
+				if (final_flush)
+					Flush (true);
 			}
 		}
 #endif
