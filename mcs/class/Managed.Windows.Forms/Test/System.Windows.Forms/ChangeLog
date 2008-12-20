@@ -1,3 +1,8 @@
+2008-12-19  Mario Carrion <mcarrion@novell.com>
+
+	* ControlTest.cs: Reverted r121558: Removed 
+	AccessibilityPropertiesTest.
+
 2008-12-17  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ListViewItemTest.cs: Add test for empty constructor.
