@@ -1,3 +1,8 @@
+2008-10-04  Robert Jordan  <robertj@gmx.net>
+
+	* ServerIdentity.cs (DisposeServerObject):
+	Notify TrackingServices about server's disconnection.
+
 2008-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RemotingConfiguration.cs : use ordinal comparison in config paths.

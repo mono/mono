@@ -34,6 +34,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Contexts;
 using System.Runtime.Remoting.Lifetime;
 using System.Runtime.Remoting.Proxies;
+using System.Runtime.Remoting.Services;
 
 namespace System.Runtime.Remoting
 {
@@ -143,9 +144,11 @@ namespace System.Runtime.Remoting
 			// object is marshalled again.
 			
 			if (_serverObject != null) {
+				MarshalByRefObject obj = _serverObject;
 				_serverObject.ObjectIdentity = null;
 				_serverObject = null;
 				_serverSink = null;
+				TrackingServices.NotifyDisconnectedObject (obj);
 			}
 		}
 	}
