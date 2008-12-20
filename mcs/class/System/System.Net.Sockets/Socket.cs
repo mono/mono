@@ -3049,7 +3049,7 @@ namespace System.Net.Sockets
 				if (err != SocketError.WouldBlock && err != SocketError.InProgress)
 					connected = false;
 				else if (err == SocketError.WouldBlock && blocking) // This might happen when ReceiveTimeout is set
-					throw new SocketException (error, "Operation timed out.");
+					throw new SocketException ((int) SocketError.TimedOut, "Operation timed out");
 
 				throw new SocketException (error);
 			}

@@ -1,4 +1,9 @@
 
+2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: if Blocking is set, translate a WouldBlock into a
+	TimedOut.
+
 2008-12-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* UdpClient.cs: don't Poll() in Receive(), the call to ReceiveFrom
