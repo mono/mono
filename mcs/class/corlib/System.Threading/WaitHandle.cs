@@ -353,6 +353,24 @@ namespace System.Threading
 			if (disposed || safe_wait_handle == null)
 				throw new ObjectDisposedException (GetType ().FullName);
 		}
+
+		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout)
+		{
+			CheckArray (waitHandles, true);
+			return WaitAll_internal (waitHandles, millisecondsTimeout, false);
+		}
+
+		public static bool WaitAll(WaitHandle[] waitHandles, TimeSpan timeout)
+		{
+			CheckArray (waitHandles, true);
+			long ms = (long) timeout.TotalMilliseconds;
+			
+			if (ms < -1 || ms > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("timeout");
+
+			return (WaitAll_internal (waitHandles, (int) ms, false));
+		}
+		
 #else
 		private IntPtr os_handle = InvalidHandle;
 		

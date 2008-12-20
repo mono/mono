@@ -1,3 +1,7 @@
+2008-12-20  Miguel de Icaza  <miguel@novell.com>
+
+	* WaitHandle.cs: Add two overloads that were introduced in 3.5.
+
 2008-11-25  Geoff Norton  <gnorton@novell.com>
 
 	* SynchronizationContext.cs: A temporary horrible hack to SyncContext
