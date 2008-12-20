@@ -214,32 +214,29 @@ namespace System.Net.NetworkInformation {
 				// receive
 				bytes = new byte [100];
 				do {
-					try {
-						EndPoint endpoint = client;
-						int rc = s.ReceiveFrom (bytes, 100, SocketFlags.None, ref endpoint);
-						long rtt = (long) (DateTime.Now - sentTime).TotalMilliseconds;
-						int headerLength = (bytes [0] & 0xF) << 2;
-						int bodyLength = rc - headerLength;
+					EndPoint endpoint = client;
+					int error = 0;
+					int rc = s.ReceiveFrom_nochecks_exc (bytes, 0, 100, SocketFlags.None,
+							ref endpoint, false, out error);
 
-						if (!((IPEndPoint) endpoint).Address.Equals (target.Address)) // Ping reply to different request. discard it.
-							continue;
-
-						IcmpMessage recv = new IcmpMessage (bytes, headerLength, bodyLength);
-						if (recv.Identifier != identifier)
-							continue; // ping reply to different request. discard it.
-
-						return new PingReply (address, recv.Data, options, rtt, recv.IPStatus);
-					} catch (SocketException ex) {
-						IPStatus stat;
-						switch (ex.SocketErrorCode) {
-						case SocketError.TimedOut:
-							stat = IPStatus.TimedOut;
-							break;
-						default:
-							throw new NotSupportedException (String.Format ("Unexpected socket error during ping request: {0}", ex.SocketErrorCode));
+					if (error != 0) {
+						if (error == (int) SocketError.TimedOut) {
+							return new PingReply (null, new byte [0], options, 0, IPStatus.TimedOut);
 						}
-						return new PingReply (null, new byte [0], options, 0, stat);
+						throw new NotSupportedException (String.Format ("Unexpected socket error during ping request: {0}", error));
 					}
+					long rtt = (long) (DateTime.Now - sentTime).TotalMilliseconds;
+					int headerLength = (bytes [0] & 0xF) << 2;
+					int bodyLength = rc - headerLength;
+
+					if (!((IPEndPoint) endpoint).Address.Equals (target.Address)) // Ping reply to different request. discard it.
+						continue;
+
+					IcmpMessage recv = new IcmpMessage (bytes, headerLength, bodyLength);
+					if (recv.Identifier != identifier)
+						continue; // ping reply to different request. discard it.
+
+					return new PingReply (address, recv.Data, options, rtt, recv.IPStatus);
 				} while (true);
 			}
 		}

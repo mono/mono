@@ -1,4 +1,9 @@
 
+2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Ping.cs: use the new internal method in Socket to avoid having to
+	throw exceptions when there's a timeout.
+
 2008-12-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Ping.cs: close the socket in SendPrivileged. Use Buffer.BlockCopy
