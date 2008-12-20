@@ -1,5 +1,9 @@
 2008-12-19  Jonathan Pryor  <jpryor@novell.com>
 
+	* signal.c: Improve error checking within Mono_Posix_FromRealTimeSignum.
+
+2008-12-19  Jonathan Pryor  <jpryor@novell.com>
+
 	* map.h: Flush.
 	* signal.c: Add Mono_Posix_SIGRTMIN(), Mono_Posix_SIGRTMAX(),
 	  Mono_Posix_FromRealTimeSignum().

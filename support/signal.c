@@ -74,15 +74,24 @@ int Mono_Posix_SIGRTMAX (void)
 
 int Mono_Posix_FromRealTimeSignum (int offset, int *r)
 {
-   *r = 0;
+	if (NULL == r) {
+		errno = EINVAL;
+		return -1;
+	}
+	*r = 0;
 #if defined (SIGRTMIN) && defined (SIGRTMAX)
-   if ((offset < 0) || (SIGRTMIN > SIGRTMAX - offset))
+	if ((offset < 0) || (SIGRTMIN > SIGRTMAX - offset)) {
+		errno = EINVAL;
+		return -1;
+	}
+	*r = SIGRTMIN+offset;
+	return 0;
+#else /* defined (SIGRTMIN) && defined (SIGRTMAX) */
+# ifdef ENOSYS
+	errno = ENOSYS;
+# endif /* ENOSYS */
 	return -1;
-   *r = SIGRTMIN+offset;
-   return 0;
-#else
-   return -1;
-#endif
+#endif /* defined (SIGRTMIN) && defined (SIGRTMAX) */
 }
 
 #ifndef PLATFORM_WIN32
