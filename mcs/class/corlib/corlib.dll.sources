@@ -640,6 +640,7 @@ System.Runtime.InteropServices/_SignatureHelper.cs
 System.Runtime.InteropServices/_Thread.cs
 System.Runtime.InteropServices/_Type.cs
 System.Runtime.InteropServices/_TypeBuilder.cs
+System.Runtime.InteropServices/AllowReversePInvokeCallsAttribute.cs
 System.Runtime.InteropServices/ArrayWithOffset.cs
 System.Runtime.InteropServices/AssemblyRegistrationFlags.cs
 System.Runtime.InteropServices/AutomationProxyAttribute.cs
