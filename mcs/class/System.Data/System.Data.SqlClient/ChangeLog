@@ -1,4 +1,8 @@
 
+2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SqlConnection.cs: close the connection on error.
+
 2008-12-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SqlParameter.cs: don't allocate error strings until the error
