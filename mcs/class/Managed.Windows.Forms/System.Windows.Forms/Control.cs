@@ -2120,7 +2120,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				AccessibilityObject.default_action = value;
+				if (accessibility_object != null)
+					AccessibilityObject.default_action = value;
 			}
 		}
 
@@ -2136,7 +2137,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				AccessibilityObject.description = value;
+				if (accessibility_object != null)
+					AccessibilityObject.description = value;
 			}
 		}
 
@@ -2152,7 +2154,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				AccessibilityObject.Name = value;
+				if (accessibility_object != null)
+					AccessibilityObject.Name = value;
 			}
 		}
 
@@ -2167,7 +2170,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				AccessibilityObject.role = value;
+				if (accessibility_object != null)
+					AccessibilityObject.role = value;
 			}
 		}
 

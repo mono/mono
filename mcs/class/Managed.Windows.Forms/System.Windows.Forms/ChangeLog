@@ -1,3 +1,7 @@
+2008-12-19  Mario Carrion  <mcarrion@novell.com>
+
+	* Control.cs: Reverted r121561. 
+
 2008-12-19  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* X11DesktopColors.cs: Since r121873 we don't need gtk a11y checks here,
