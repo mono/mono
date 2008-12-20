@@ -1,3 +1,8 @@
+2008-12-20  Miguel de Icaza  <miguel@novell.com>
+
+	* FileStream.cs: Found while debugging webcompare, we should add
+	Obsoletes to the FileStream constructors that take IntPtrs.
+
 2008-11-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileInfo.cs: Change ToString (in 2.1) not to return the full path

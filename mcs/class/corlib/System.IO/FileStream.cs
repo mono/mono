@@ -54,27 +54,19 @@ namespace System.IO
 	{
 		// construct from handle
 		
-#if NET_2_0_SAFEFILEHANDLE_ENABLED
 		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access) instead")]
-#endif
 		public FileStream (IntPtr handle, FileAccess access)
 			: this (handle, access, true, DefaultBufferSize, false) {}
 
-#if NET_2_0_SAFEFILEHANDLE_ENABLED
 		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access) instead")]
-#endif
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle)
 			: this (handle, access, ownsHandle, DefaultBufferSize, false) {}
 		
-#if NET_2_0_SAFEFILEHANDLE_ENABLED
 		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access, int bufferSize) instead")]
-#endif
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize)
 			: this (handle, access, ownsHandle, bufferSize, false) {}
 
-#if NET_2_0_SAFEFILEHANDLE_ENABLED
 		[Obsolete ("Use FileStream(SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync) instead")]
-#endif
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
 			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
 
