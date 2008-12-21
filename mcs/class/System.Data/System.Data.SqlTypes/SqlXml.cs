@@ -97,8 +97,11 @@ namespace System.Data.SqlTypes
 				notNull = false;
 				xmlValue = null;
 			} else {
-				value.MoveToContent ();
-				xmlValue = value.ReadOuterXml();
+				if (value.Read ()) {
+					value.MoveToContent ();
+					xmlValue = value.ReadOuterXml();
+				} else 
+					xmlValue = String.Empty;
 				notNull = true;
 			}
 		}
@@ -129,10 +132,12 @@ namespace System.Data.SqlTypes
 
 		public XmlReader CreateReader ()
 		{
-			if (notNull)
-				return XmlTextReader.Create (new StringReader (xmlValue));
-			else
-				return null; 
+			if (notNull) {
+			   	XmlReaderSettings xs = new XmlReaderSettings ();
+				xs.ConformanceLevel = ConformanceLevel.Fragment;
+				return XmlTextReader.Create (new StringReader (xmlValue), xs);
+			} else
+				throw new SqlNullValueException (); 
 		}
 
 		[MonoTODO]
