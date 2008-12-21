@@ -1,3 +1,11 @@
+2008-12-21  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlXml.cs (CreateReader): Better use
+	ConformanceLevel.Fragment while creating the reader as column
+	values are not really Xml documents.  Also, throw
+	SqlNullValueException when data is null.
+	(.ctor): Take good care of empty XmlReaders.
+	
 2008-09-24  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlXml.cs (.ctor): Use unicode encoding instead of ASCII.
