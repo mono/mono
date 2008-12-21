@@ -1,3 +1,7 @@
+2008-12-21  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* System.Data_test.dll.sources: Add the new SqlXmlTest.cs
+	
 2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.SqlClient/SqlConnectionStringBuilder.cs: modified -

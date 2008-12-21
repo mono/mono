@@ -1,3 +1,7 @@
+2008-12-21  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlXmlTest.cs:  Tests for SqlXml type.  New addition.
+	
 2008-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SqlBooleanTest.cs : oops, was running wrong test harness. Fixed it.
