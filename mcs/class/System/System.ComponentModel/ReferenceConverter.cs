@@ -101,7 +101,7 @@ namespace System.ComponentModel
 					referenceName = referenceService.GetName (value);
 	
 				// try 2 - Component by name
-				if (String.IsNullOrEmpty (referenceName) && value is IComponent) {
+				if ((referenceName == null || referenceName.Length == 0) && value is IComponent) {
 					IComponent component = (IComponent) value;
 					if (component.Site != null && component.Site.Name != null)
 						referenceName = component.Site.Name;
