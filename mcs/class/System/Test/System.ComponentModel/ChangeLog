@@ -1,3 +1,7 @@
+2008-12-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ReferenceConverterTest.cs: Added.
+
 2008-12-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* TypeDescriptorTests.cs: Added a test for the NullableConverter support.
