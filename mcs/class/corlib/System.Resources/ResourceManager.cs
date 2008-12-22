@@ -47,6 +47,7 @@ namespace System.Resources
 	public class ResourceManager
 	{
 		static Hashtable ResourceCache = new Hashtable (); 
+		static Hashtable NonExistent = Hashtable.Synchronized (new Hashtable ());
 		public static readonly int HeaderVersionNumber = 1;
 		public static readonly int MagicNumber = unchecked ((int) 0xBEEFCACE);
 
@@ -61,7 +62,6 @@ namespace System.Resources
 		private String resourceDir;
 
 		// Contains cultures which have no resource sets
-		private Hashtable nonExistentResourceSets;
 		
 		/* Recursing through culture parents stops here */
 		private CultureInfo neutral_culture;
@@ -339,11 +339,7 @@ namespace System.Resources
 			if (set != null)
 				return set;
 
-			// Cache lookup failures
-			if (nonExistentResourceSets == null)
-				nonExistentResourceSets = new Hashtable();
-
-			if (nonExistentResourceSets.Contains (culture))
+			if (NonExistent.Contains (culture))
 				return null;
 
 			if (MainAssembly != null) {
@@ -426,7 +422,7 @@ namespace System.Resources
 			if (set != null)
 				ResourceSets [culture] = set;
 			else
-				nonExistentResourceSets [culture] = culture;
+				NonExistent [culture] = culture;
 
 			return set;
 		}

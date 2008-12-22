@@ -1,4 +1,8 @@
 
+2008-12-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ResourceManager.cs: cache negative results too.
+
 2008-12-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ResourceManager.cs: avoid duplication of keys if more than one
