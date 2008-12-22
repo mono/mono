@@ -449,16 +449,10 @@ namespace System.Configuration {
 			if (String.IsNullOrEmpty (streamName))
 				return true;
 
-			Stream stream = null;
-			
-			// FIXME: we should remove this kind of hack that
-			// hides the actual error
-			try {
-				stream = system.Host.OpenStreamForRead (streamName);
-			} catch (Exception) {
+			if (!File.Exists (streamName))
 				return false;
-			}
 
+			Stream stream = stream = system.Host.OpenStreamForRead (streamName);
 			using (XmlTextReader reader = new ConfigXmlTextReader (stream, streamName)) {
 				ReadConfigFile (reader, streamName);
 			}

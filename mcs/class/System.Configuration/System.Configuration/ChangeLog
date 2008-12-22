@@ -1,4 +1,10 @@
 
+2008-12-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Configuration.cs: don't try to open the file if we know it does not
+	exist. Also, don't hide the actual exception in case there's a problem
+	opening the configuration file.
+
 2008-11-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ConfigurationManager.cs: the config file name is arbitrary.
