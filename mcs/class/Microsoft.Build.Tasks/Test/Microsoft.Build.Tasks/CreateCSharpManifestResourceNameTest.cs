@@ -160,18 +160,26 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 			Engine engine = new Engine (Consts.BinPath);
 			Project project = engine.CreateNewProject ();
-			Console.WriteLine (projectText);
-			project.LoadXml (projectText);
-			Assert.IsTrue (project.Build ("1"), "A1, Error building");
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
 
-			BuildItemGroup group = project.GetEvaluatedItemsByName ("ResourceNames");
-			Assert.AreEqual (names.Length, group.Count, "A2");
-			for (int i = 0; i <= files.GetUpperBound (0); i++) {
-				Assert.AreEqual (names [i], group [i].FinalItemSpec, "A3 #" + (i + 1));
-				if (files [i, 1] != null)
-					Assert.IsTrue (group [i].HasMetadata ("LogicalName"), "A4 #" + (i + 1));
-				if (files [i, 2] != null)
-					Assert.IsTrue (group [i].HasMetadata ("DependentUpon"), "A5 #" + (i + 1));
+			project.LoadXml (projectText);
+			try {
+				Assert.IsTrue (project.Build ("1"), "A1, Error building");
+
+				BuildItemGroup group = project.GetEvaluatedItemsByName ("ResourceNames");
+				Assert.AreEqual (names.Length, group.Count, "A2");
+				for (int i = 0; i <= files.GetUpperBound (0); i++) {
+					Assert.AreEqual (names [i], group [i].FinalItemSpec, "A3 #" + (i + 1));
+					if (files [i, 1] != null)
+						Assert.IsTrue (group [i].HasMetadata ("LogicalName"), "A4 #" + (i + 1));
+					if (files [i, 2] != null)
+						Assert.IsTrue (group [i].HasMetadata ("DependentUpon"), "A5 #" + (i + 1));
+				}
+			} catch (Exception) {
+				Console.WriteLine (projectText);
+				testLogger.DumpMessages ();
+				throw;
 			}
 		}
 

@@ -1,3 +1,9 @@
+2008-12-22  Ankit Jain  <jankit@novell.com>
+
+	* TestMessageLogger.cs: Listen for errors and warnings also.
+	* CreateCSharpManifestResourceNameTest.cs: Emit helpful info when tests
+	fail.
+
 2008-12-12  Ankit Jain  <jankit@novell.com>
 
 	* CreateCSharpManifestResourceNameTest.cs: New.

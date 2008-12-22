@@ -8,10 +8,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 	internal class TestMessageLogger : ILogger
 	{
 		List<BuildMessageEventArgs> messages;
+		List<BuildEventArgs> errorsAndWarnings;
 
 		public TestMessageLogger ()
 		{
 			messages = new List<BuildMessageEventArgs> ();
+			errorsAndWarnings = new List<BuildEventArgs> ();
 		}
 
 		public int Count
@@ -26,6 +28,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void Initialize (IEventSource eventSource)
 		{
 			eventSource.MessageRaised += new BuildMessageEventHandler (MessageHandler);
+			eventSource.ErrorRaised += new BuildErrorEventHandler (ErrorHandler);
+			eventSource.WarningRaised += new BuildWarningEventHandler (WarningHandler);
 		}
 
 		public void Shutdown ()
@@ -36,6 +40,16 @@ namespace MonoTests.Microsoft.Build.Tasks
 		{
 			if (args.Message.StartsWith ("Using") == false)
 				messages.Add (args);
+		}
+
+		private void ErrorHandler (object sender, BuildEventArgs args)
+		{
+			errorsAndWarnings.Add (args);
+		}
+
+		private void WarningHandler (object sender, BuildEventArgs args)
+		{
+			errorsAndWarnings.Add (args);
 		}
 
 		public int CheckHead (string text, MessageImportance importance)
@@ -88,6 +102,9 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		public void DumpMessages ()
 		{
+			foreach (BuildEventArgs arg in errorsAndWarnings)
+				Console.WriteLine ("{0} {1}", (arg is BuildErrorEventArgs) ? "Err:" : "Warn:", arg.Message);
+
 			foreach (BuildMessageEventArgs arg in messages)
 				Console.WriteLine ("Msg: {0}", arg.Message);
 		}
