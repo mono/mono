@@ -99,7 +99,7 @@ namespace System.Windows.Forms
 				// part of the bounds as height, they use it as the bottom, so the boxes are drawn in completely different
 				// places.  Rather than emulate this bug, we do it correctly.  After googling for a while, I don't think
 				// anyone has ever actually used this class for anything, so it should be fine.  :)
-				Rectangle new_bounds = new Rectangle (bounds.Left, bounds.Top + (int)(font_size.Height / 2) - 1, bounds.Width, bounds.Height - (int)(font_size.Height / 2) + 1);
+				Rectangle new_bounds = new Rectangle (bounds.Left, bounds.Top + (int)(font_size.Height / 2), bounds.Width, bounds.Height - (int)(font_size.Height / 2));
 				
 				// Don't paint over the background where we are going to put the text
 				Region old_clip = g.Clip;
@@ -109,8 +109,11 @@ namespace System.Windows.Forms
 				
 				g.Clip = old_clip;
 
-				if (groupBoxText != String.Empty)
+				if (groupBoxText != String.Empty) {
+					if (textColor == Color.Empty)
+						textColor = SystemColors.ControlText;
 					TextRenderer.DrawText (g, groupBoxText, font, new Point (bounds.Left + 8, bounds.Top), textColor, flags);
+				}
 			}
 		}
 
