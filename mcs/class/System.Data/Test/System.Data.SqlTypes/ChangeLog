@@ -1,3 +1,7 @@
+2008-12-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlXmlTest.cs:  Available only in 2.0 and above
+	
 2008-12-21  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlXmlTest.cs:  Tests for SqlXml type.  New addition.
