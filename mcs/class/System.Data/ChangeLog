@@ -1,3 +1,7 @@
+2008-12-22  Ankit Jain  <jankit@novell.com>
+
+	* System.Data_test.dll.sources: Fix typo in SqlXmlTest.cs
+
 2008-08-27  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* System.Data.SqlClient/SqlConnectionStringBuilder.cs: modified -
