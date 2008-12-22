@@ -103,10 +103,10 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void DumpMessages ()
 		{
 			foreach (BuildEventArgs arg in errorsAndWarnings)
-				Console.Error.WriteLine ("{0} {1}", (arg is BuildErrorEventArgs) ? "Err:" : "Warn:", arg.Message);
+				Console.WriteLine ("{0} {1}", (arg is BuildErrorEventArgs) ? "Err:" : "Warn:", arg.Message);
 
 			foreach (BuildMessageEventArgs arg in messages)
-				Console.Error.WriteLine ("Msg: {0}", arg.Message);
+				Console.WriteLine ("Msg: {0}", arg.Message);
 		}
 	}
 

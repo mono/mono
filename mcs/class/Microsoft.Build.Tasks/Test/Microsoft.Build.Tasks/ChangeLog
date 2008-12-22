@@ -2,6 +2,13 @@
 
 	* TestMessageLogger.cs: Emit debug messages to stderr.
 	* CreateCSharpManifestResourceNameTest.cs: Likewise.
+	Revert last patch, don't emit to stderr, monobuild emits
+	the log contents now.
+
+2008-12-22  Ankit Jain  <jankit@novell.com>
+
+	* TestMessageLogger.cs: Emit debug messages to stderr.
+	* CreateCSharpManifestResourceNameTest.cs: Likewise.
 
 2008-12-22  Ankit Jain  <jankit@novell.com>
 
