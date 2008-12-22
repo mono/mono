@@ -1,25 +1,25 @@
-<Type Name="OptionSet" FullName="NDesk.Options.OptionSet">
-  <TypeSignature Language="C#" Value="public class OptionSet : System.Collections.ObjectModel.KeyedCollection&lt;string,NDesk.Options.Option&gt;" />
+<Type Name="OptionSet" FullName="Mono.Options.OptionSet">
+  <TypeSignature Language="C#" Value="public class OptionSet : System.Collections.ObjectModel.KeyedCollection&lt;string,Mono.Options.Option&gt;" />
   <AssemblyInfo>
-    <AssemblyName>NDesk.Options</AssemblyName>
+    <AssemblyName>Mono.Options</AssemblyName>
     <AssemblyVersion>0.2.0.0</AssemblyVersion>
     <AssemblyVersion>0.2.1.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>
     All public static members of this type are safe for multithreaded
     operations.  The 
-    <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable&lt;System.String&gt;)" />
+    <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable&lt;System.String&gt;)" />
     instance method is thread-safe if no concurrent modifying methods are
     invoked 
-    (<see cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />,
-    <see cref="M:System.Collections.ObjectModel.Collection{NDesk.Options.Option}.Remove(``0)" />,
+    (<see cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />,
+    <see cref="M:System.Collections.ObjectModel.Collection{Mono.Options.Option}.Remove(``0)" />,
     etc.).
   </ThreadingSafetyStatement>
   <Base>
-    <BaseTypeName>System.Collections.ObjectModel.KeyedCollection&lt;System.String,NDesk.Options.Option&gt;</BaseTypeName>
+    <BaseTypeName>System.Collections.ObjectModel.KeyedCollection&lt;System.String,Mono.Options.Option&gt;</BaseTypeName>
     <BaseTypeArguments>
       <BaseTypeArgument TypeParamName="TKey">System.String</BaseTypeArgument>
-      <BaseTypeArgument TypeParamName="TItem">NDesk.Options.Option</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="TItem">Mono.Options.Option</BaseTypeArgument>
     </BaseTypeArguments>
   </Base>
   <Interfaces />
@@ -32,35 +32,35 @@
         A common requirement for command-line programs is option parsing.  
         The command line consists of a sequence of 
         <paramref name="arguments" />.  
-        <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+        <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
         parses this argument
         sequence, invoking actions of registered 
-        <see cref="T:NDesk.Options.Option" />s when a sequence of arguments 
-        matching the <see cref="T:NDesk.Options.Option" />s requirements are
-        encountered.  <see cref="T:NDesk.Options.Option" />'s are registered 
-        with <see cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+        <see cref="T:Mono.Options.Option" />s when a sequence of arguments 
+        matching the <see cref="T:Mono.Options.Option" />s requirements are
+        encountered.  <see cref="T:Mono.Options.Option" />'s are registered 
+        with <see cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
         and its overloads.
       </para>
       <para>
-        <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />,
+        <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />,
         returns a 
         <see cref="T:System.Collections.Generic.List{System.String}" /> of all
         arguments which were not matched by a registered
-        <see cref="T:NDesk.Options.Option" />.
+        <see cref="T:Mono.Options.Option" />.
       </para>
       <para>
         Three conditions must be met for a sequence of arguments to be
-        considered as a match for an <see cref="T:NDesk.Options.Option" />:
+        considered as a match for an <see cref="T:Mono.Options.Option" />:
       </para>
       <list type="bullet">
         <item>
           <term>
           The <paramref name="name" /> must be matched.  An 
-          <see cref="T:NDesk.Options.Option" /> has one or more names, as
-          returned from <see cref="M:NDesk.Options.Option.GetNames" />.
+          <see cref="T:Mono.Options.Option" /> has one or more names, as
+          returned from <see cref="M:Mono.Options.Option.GetNames" />.
           Matched names must start with a <paramref name="flag" /> 
           (even though the flag is not part of the
-          <see cref="P:NDesk.Options.Option.Prototype" />): <c>-</c>, 
+          <see cref="P:Mono.Options.Option.Prototype" />): <c>-</c>, 
           <c>--</c>, or <c>/</c>.
           There are several different name matching algorithms:
           <list type="bullet"><item><term><para><paramref name="Simple" /> names are matched when the argument
@@ -87,13 +87,13 @@
                 the flag is <c>-</c>, and the first character matches a
                 registered option.  Any number of (single-character) boolean 
                 options may be bundled in this fashion, and at most one
-                <see cref="F:NDesk.Options.OptionValueType.Optional" /> or
-                <see cref="F:NDesk.Options.OptionValueType.Required" /> option 
+                <see cref="F:Mono.Options.OptionValueType.Optional" /> or
+                <see cref="F:Mono.Options.OptionValueType.Required" /> option 
                 (which will use all remaining characters within the argument
                 as a value).
               </para><para>
                 Examples: <c>-xvfinput-file</c> could match the boolean 
-                <see cref="T:NDesk.Options.Option" />s <c>x</c> and <c>v</c>
+                <see cref="T:Mono.Options.Option" />s <c>x</c> and <c>v</c>
                 and the value-accepting option <c>f</c>, which will get the
                 value <c>input-file</c>.  (Other interpretations are also
                 possible, depending upon which options are registered.)
@@ -103,7 +103,7 @@
                   arguments which are not handled by any of the above matching
                   algorithms.  The default handler is designated by the name
                   <c>&lt;&gt;</c> (which may be an alias for another named
-                  <see cref="T:NDesk.Options.Option" />).
+                  <see cref="T:Mono.Options.Option" />).
                 </para><para>
                   Default handlers are useful for argument runs -- sequences
                   of arguments that are not related to each other but are
@@ -115,14 +115,14 @@
                   process <c>FileC</c> with <c>--format=man</c> in effect.
                 </para><para>
                   See 
-                  <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+                  <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
                   for additional details regarding default option handlers.
                 </para></term></item></list></term>
         </item>
         <item>
           <term>
           The <paramref name="type" /> must be matched.  
-          <see cref="P:NDesk.Options.Option.OptionValueType" /> specifies the
+          <see cref="P:Mono.Options.Option.OptionValueType" /> specifies the
           option's type.  See below for more information.
         </term>
         </item>
@@ -132,20 +132,20 @@
           option takes any values is dependent upon the option's type
           (previous bullet), but the number of values the option either
           accepts or requires is specified by the
-          <see cref="P:NDesk.Options.Option.MaxValueCount" /> property.
+          <see cref="P:Mono.Options.Option.MaxValueCount" /> property.
         </term>
         </item>
       </list>
       <para>
-        There are three types of <see cref="T:NDesk.Options.Option" />s that
+        There are three types of <see cref="T:Mono.Options.Option" />s that
         can be parsed:
       </para>
       <list type="number">
         <item>
           <term>
           Boolean options, which correspond to a 
-          <see cref="P:NDesk.Options.Option.OptionValueType" /> value of
-          <see cref="F:NDesk.Options.OptionValueType.None" />.
+          <see cref="P:Mono.Options.Option.OptionValueType" /> value of
+          <see cref="F:Mono.Options.OptionValueType.None" />.
           When a matching argument is encountered, their registered
           action is invoked immediately.  The <see cref="T:System.Action`1" />
           value will be non-<see langword="default(T)" /> if the value is true,
@@ -158,8 +158,8 @@
           <term>
             <para>
             Optional value options, which correspond to a 
-            <see cref="P:NDesk.Options.Option.OptionValueType" /> value of
-            <see cref="F:NDesk.Options.OptionValueType.Optional" />.
+            <see cref="P:Mono.Options.Option.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.Optional" />.
             Optional value options are not "greedy"; they will only get their
             value only from the current argument.  If the value is not present, 
             <see langword="default(T)" /> is provided to their corresponding
@@ -177,8 +177,8 @@
           <term>
             <para>
             Required value options, which correspond to a 
-            <see cref="P:NDesk.Options.Option.OptionValueType" /> value of
-            <see cref="F:NDesk.Options.OptionValueType.Required" />.
+            <see cref="P:Mono.Options.Option.OptionValueType" /> value of
+            <see cref="F:Mono.Options.OptionValueType.Required" />.
             Required value options are "greedy" -- if the value is not found
             within the current argument, the following argument(s) will be used to
             supply the value(s).  Once enough values have been parsed, 
@@ -190,8 +190,8 @@
           </para>
             <para>
             If no value can be found, an 
-            <see cref="T:NDesk.Options.OptionException" /> is thrown from
-            <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />.
+            <see cref="T:Mono.Options.OptionException" /> is thrown from
+            <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />.
           </para>
           </term>
         </item>
@@ -210,7 +210,7 @@
         </list>
         <para>
           During the <paramref name="initialization" /> phase, new
-          <see cref="T:NDesk.Options.Option" /> instances are created and
+          <see cref="T:Mono.Options.Option" /> instances are created and
           associated with an action to perform when the <c>Option</c>
           requirements are met (e.g. when a required value has been
           encountered).  This phase is not thread safe.
@@ -221,8 +221,8 @@
   { "option-a", v =&gt; { /* action to perform */ } },
 };</code>
         <para>
-          There are three ways to add <see cref="T:NDesk.Options.Option" />s
-          to the <see cref="T:NDesk.Options.OptionSet" />:
+          There are three ways to add <see cref="T:Mono.Options.Option" />s
+          to the <see cref="T:Mono.Options.OptionSet" />:
         </para>
         <list type="number">
           <item>
@@ -233,18 +233,18 @@
           <item>
             <term>
             Explicitly by calling
-            <see cref="M:NDesk.Options.OptionSet.Add(System.String,System.Action{System.String})" />
+            <see cref="M:Mono.Options.OptionSet.Add(System.String,System.Action{System.String})" />
             and the other <c>Add</c> overloads.
           </term>
           </item>
           <item>
             <term>
-            By creating a new subclass of <see cref="T:NDesk.Options.Option" />
+            By creating a new subclass of <see cref="T:Mono.Options.Option" />
             and adding it via 
-            <see cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />.
+            <see cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />.
             This is not recommended, but is available if you require more
             direct option handling than the default 
-            <see cref="T:NDesk.Options.Option" /> implementation provides.
+            <see cref="T:Mono.Options.Option" /> implementation provides.
           </term>
           </item>
         </list>
@@ -254,12 +254,12 @@
           is enumerated, looking for arguments which match a registered option,
           and invoking the corresponding action when an option and associated
           (optional) value is encountered.  During this phase, the 
-          <see cref="T:NDesk.Options.OptionSet" /> instance itself is thread
+          <see cref="T:Mono.Options.OptionSet" /> instance itself is thread
           safe, but full thread safety depends upon thread-safety of the
           registered actions.  Any option-like strings for names that haven't
           been registered, e.g. <c>--this-was-never-registered=false</c>, and
           all arguments that are not used as option values are returned from 
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           or processed by the default handler <c>&lt;&gt;</c>, if registered.
         </para>
         <code lang="C#">List&lt;string&gt; extra = p.Parse (new string[]{"-option-a"});</code>
@@ -272,12 +272,12 @@
         <list type="bullet">
           <item>
             <term>
-              <see cref="M:NDesk.Options.OptionSet.Parse(System.String,NDesk.Options.OptionContext)" />
+              <see cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
             </term>
           </item>
           <item>
             <term>
-              <see cref="M:NDesk.Options.OptionSet.CreateOptionContext" />
+              <see cref="M:Mono.Options.OptionSet.CreateOptionContext" />
             </term>
           </item>
         </list>
@@ -286,11 +286,11 @@
     <example>
       <para>
         The following example demonstrates some simple usage of 
-        <see cref="T:NDesk.Options.OptionSet" />.
+        <see cref="T:Mono.Options.OptionSet" />.
       </para>
       <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	static int verbosity;
@@ -403,7 +403,7 @@ Try `greet --help' for more information.
       <para>
         Notice how the output produced by <c>--help</c> uses the
         descriptions provided during <c>OptionSet</c> initialization.
-        Notice that the <see cref="T:NDesk.Options.Option" /> requiring a 
+        Notice that the <see cref="T:Mono.Options.Option" /> requiring a 
         value (<c>n|name=</c>) can use multiple different forms of invocation,
         including: 
         <c>-n value</c>, 
@@ -437,7 +437,7 @@ Try `greet --help' for more information.
       <code lang="C#" src="examples/bundling.cs">using System;
 using System.Linq;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	public static void Main (string[] args)
@@ -622,15 +622,15 @@ Options:
         <item>
           <term>
           A key/value parser is provided, to show the use of custom 
-          <see cref="T:NDesk.Options.OptionContext" /> and
-          <see cref="T:NDesk.Options.Option" /> subclasses.
+          <see cref="T:Mono.Options.OptionContext" /> and
+          <see cref="T:Mono.Options.Option" /> subclasses.
         </term>
         </item>
       </list>
       <code lang="C#" src="examples/subclass.cs">// Case-Insensitive and Concatenating OptionSet
 using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class DemoOptionSet : OptionSet {
 	protected override void InsertItem (int index, Option item)
@@ -826,17 +826,17 @@ Key: a\b\c=d\e\f
       <Docs>
         <summary>
           Creates and initializes a new 
-          <see cref="T:NDesk.Options.OptionSet" /> class instance.
+          <see cref="T:Mono.Options.OptionSet" /> class instance.
         </summary>
         <remarks>
           <para>
             This constructor causes the created 
-            <see cref="T:NDesk.Options.OptionSet" /> instance to perform no
+            <see cref="T:Mono.Options.OptionSet" /> instance to perform no
             translation of string messages; consequently, no localization is
             performed.
           </para>
         </remarks>
-        <altmember cref="C:NDesk.Options.OptionSet(System.Converter{System.String,System.String})" />
+        <altmember cref="C:Mono.Options.OptionSet(System.Converter{System.String,System.String})" />
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -856,25 +856,25 @@ Key: a\b\c=d\e\f
         </param>
         <summary>
           Creates and initializes a new 
-          <see cref="T:NDesk.Options.OptionSet" /> class instance.
+          <see cref="T:Mono.Options.OptionSet" /> class instance.
         </summary>
         <remarks>
           <para>
             This constructor initializes the 
-            <see cref="P:NDesk.Options.OptionSet.MessageLocalizer" /> property
+            <see cref="P:Mono.Options.OptionSet.MessageLocalizer" /> property
             of the new instance using <paramref name="localizer" />.
           </para>
           <para>
             Use this constructor when you want to perform some form of
             localization or internationalization on text strings generated
-            from the <see cref="T:NDesk.Options.OptionSet" /> class.
+            from the <see cref="T:Mono.Options.OptionSet" /> class.
             Generated strings include:
           </para>
           <list type="bullet">
             <item>
               <term>
-              The <see cref="P:NDesk.Options.Option.Description" /> written by
-              <see cref="M:NDesk.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />,
+              The <see cref="P:Mono.Options.Option.Description" /> written by
+              <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />,
               but not the option names themselves.
             </term>
             </item>
@@ -890,14 +890,14 @@ Key: a\b\c=d\e\f
             See the following example, which demonstrates how different
             localizers alter the program output.
           </para>
-          <code lang="C#" src="examples/localization.cs">// Localization with NDesk.Options.OptionSet.
+          <code lang="C#" src="examples/localization.cs">// Localization with Mono.Options.OptionSet.
 //
 // Compile as:
-//   gmcs -r:Mono.Posix.dll -r:NDesk.Options.dll code-localization.cs
+//   gmcs -r:Mono.Posix.dll -r:Mono.Options.dll code-localization.cs
 using System;
 using System.IO;
 using Mono.Unix;
-using NDesk.Options;
+using Mono.Options;
 
 class LocalizationDemo {
 	public static void Main (string[] args)
@@ -948,7 +948,7 @@ class LocalizationDemo {
 		if (help)
 			p.WriteOptionDescriptions (Console.Out);
 		if (version)
-			Console.WriteLine ("NDesk.Options Localizer Demo 1.0");
+			Console.WriteLine ("Mono.Options Localizer Demo 1.0");
 		if (verbose &gt; 0)
 			Console.WriteLine ("Message level: {0}", verbose);
 	}
@@ -961,21 +961,21 @@ class LocalizationDemo {
   -v, --verbose              increase message verbosity.
   -n=VALUE                   must be an int
   -V, --version              output version information and exit.
-NDesk.Options Localizer Demo 1.0
+Mono.Options Localizer Demo 1.0
 
 $ LANGUAGE=es mono localization.exe --with-gettext --help --version
   -h, -?, --help             A mostrar este mensaje y salir.
   -v, --verbose              Aumento mensaje verbosidad.
   -n=VALUE                   Debe ser un int
   -V, --version              Salida de información de versión y sale.
-NDesk.Options Localizer Demo 1.0
+Mono.Options Localizer Demo 1.0
 
 $ mono localization.exe --with-hello --help --version
   -h, -?, --help             hello:show this message and exit.
   -v, --verbose              hello:increase message verbosity.
   -nhello:=VALUE             hello:must be an int
   -V, --version              hello:output version information and exit.
-NDesk.Options Localizer Demo 1.0
+Mono.Options Localizer Demo 1.0
 
 $ mono localization.exe -n not-an-int
 localization: Could not convert string `not-an-int' to type Int32 for option `-n'.
@@ -1010,42 +1010,42 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add (NDesk.Options.Option option);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (Mono.Options.Option option);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="option" Type="NDesk.Options.Option" />
+        <Parameter Name="option" Type="Mono.Options.Option" />
       </Parameters>
       <Docs>
         <param name="option">
-          The <see cref="T:NDesk.Options.Option" /> to register.
+          The <see cref="T:Mono.Options.Option" /> to register.
         </param>
         <summary>
           Registers <paramref name="option" /> so that any options matching
-          <see cref="M:NDesk.Options.Option.GetNames" /> will be treated
+          <see cref="M:Mono.Options.Option.GetNames" /> will be treated
           specially by 
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />.
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
           Registers each option name returned by 
-          <see cref="M:NDesk.Options.Option.GetNames" />, ensuring that any
+          <see cref="M:Mono.Options.Option.GetNames" />, ensuring that any
           option with a matching name will be handled by the 
           <paramref name="option" /> instance.
         </remarks>
         <exception cref="T:System.ArgumentException">
           <paramref name="option" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="option" /> is <see langword="null" />.
@@ -1053,54 +1053,54 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add (string prototype, NDesk.Options.OptionAction&lt;string,string&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, Mono.Options.OptionAction&lt;string,string&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
-        <Parameter Name="action" Type="NDesk.Options.OptionAction&lt;System.String,System.String&gt;" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
         <param name="prototype">
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="action">
-          A <see cref="T:NDesk.Options.OptionAction{System.String,System.String}" />
+          A <see cref="T:Mono.Options.OptionAction{System.String,System.String}" />
           to invoke when an option is parsed.
         </param>
         <summary>
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
           Calls 
-          <see cref="M:NDesk.Options.OptionSet.Add(System.String,System.String,NDesk.Options.OptionAction{System.String,System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Add(System.String,System.String,Mono.Options.OptionAction{System.String,System.String})" />
           with a <paramref name="description" /> value of 
           <see langword="null" />.
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(System.String,System.String,NDesk.Options.OptionAction{System.String,System.String})" />
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(System.String,System.String,Mono.Options.OptionAction{System.String,System.String})" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
         <exception cref="T:System.ArgumentException">
           <paramref name="prototype" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1112,14 +1112,14 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add (string prototype, Action&lt;string&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, Action&lt;string&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -1130,7 +1130,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="action">
@@ -1141,25 +1141,25 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
           Calls 
-          <see cref="M:NDesk.Options.OptionSet.Add(System.String,System.String,System.Action{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Add(System.String,System.String,System.Action{System.String})" />
           with a <paramref name="description" /> value of 
           <see langword="null" />.
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(System.String,System.String,System.Action{System.String})" />
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(System.String,System.String,System.Action{System.String})" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
         <exception cref="T:System.ArgumentException">
           <paramref name="prototype" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1171,45 +1171,45 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add (string prototype, string description, NDesk.Options.OptionAction&lt;string,string&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, string description, Mono.Options.OptionAction&lt;string,string&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
         <Parameter Name="description" Type="System.String" />
-        <Parameter Name="action" Type="NDesk.Options.OptionAction&lt;System.String,System.String&gt;" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
         <param name="prototype">
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="description">
           A <see cref="T:System.String" /> to be used to initialize
-          the <see cref="P:NDesk.Options.Option.Description" /> property.
+          the <see cref="P:Mono.Options.Option.Description" /> property.
         </param>
         <param name="action">
-          A <see cref="T:NDesk.Options.OptionAction{System.String,System.String}" />
+          A <see cref="T:Mono.Options.OptionAction{System.String,System.String}" />
           to invoke when an option is parsed.
         </param>
         <summary>
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
@@ -1219,16 +1219,16 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           </para>
           <block subset="none" type="note">
             If <paramref name="prototype" /> specifies a 
-            <see cref="F:NDesk.Options.OptionValueType.Optional" /> option,
+            <see cref="F:Mono.Options.OptionValueType.Optional" /> option,
             then it's possible that both the key and the value will be
             <see langword="null" /> in the callback function.
           </block>
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
         <exception cref="T:System.ArgumentException">
           <paramref name="prototype" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1240,14 +1240,14 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add (string prototype, string description, Action&lt;string&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add (string prototype, string description, Action&lt;string&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -1259,12 +1259,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="description">
           A <see cref="T:System.String" /> containing to used to initialize
-          the <see cref="P:NDesk.Options.Option.Description" /> property.
+          the <see cref="P:Mono.Options.Option.Description" /> property.
         </param>
         <param name="action">
           A <see cref="T:System.Action{System.String}" />
@@ -1274,20 +1274,20 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
         <exception cref="T:System.ArgumentException">
           <paramref name="option" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1299,14 +1299,14 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="Add&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add&lt;T&gt; (string prototype, Action&lt;T&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;T&gt; (string prototype, Action&lt;T&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -1321,7 +1321,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="action">
@@ -1332,25 +1332,25 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
           Calls 
-          <see cref="M:NDesk.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
+          <see cref="M:Mono.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
           with a <paramref name="description" /> value of 
           <see langword="null" />.
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
-        <altmember cref="M:NDesk.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
         <exception cref="T:System.ArgumentException">
           <paramref name="option" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
       </Docs>
       <TypeParameters>
@@ -1358,14 +1358,14 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </TypeParameters>
     </Member>
     <Member MemberName="Add&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add&lt;T&gt; (string prototype, string description, Action&lt;T&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;T&gt; (string prototype, string description, Action&lt;T&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
@@ -1381,12 +1381,12 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="description">
           A <see cref="T:System.String" /> containing to used to initialize
-          the <see cref="P:NDesk.Options.Option.Description" /> property.
+          the <see cref="P:Mono.Options.Option.Description" /> property.
         </param>
         <param name="action">
           A <see cref="T:System.Action{``0}" />
@@ -1396,11 +1396,11 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
@@ -1426,17 +1426,17 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           <block subset="none" type="note">
             <para>
               If <paramref name="prototype" /> specifies an
-              <see cref="F:NDesk.Options.OptionValueType.Optional" /> value
+              <see cref="F:Mono.Options.OptionValueType.Optional" /> value
               and the value is not provided, then <c>default(T)</c> is
               provided as the value to <paramref name="action" />.
             </para>
           </block>
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
         <exception cref="T:System.ArgumentException">
           <paramref name="option" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1451,18 +1451,18 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </TypeParameters>
     </Member>
     <Member MemberName="Add&lt;TKey,TValue&gt;">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add&lt;TKey,TValue&gt; (string prototype, NDesk.Options.OptionAction&lt;TKey,TValue&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;TKey,TValue&gt; (string prototype, Mono.Options.OptionAction&lt;TKey,TValue&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
-        <Parameter Name="action" Type="NDesk.Options.OptionAction&lt;TKey,TValue&gt;" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;TKey,TValue&gt;" />
       </Parameters>
       <Docs>
         <typeparam name="TKey">
@@ -1477,36 +1477,36 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="action">
-          A <see cref="T:NDesk.Options.OptionAction{TKey,TValue}" />
+          A <see cref="T:Mono.Options.OptionAction{TKey,TValue}" />
           to invoke when an option is parsed.
         </param>
         <summary>
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
           Calls 
-          <see cref="M:NDesk.Options.OptionSet.Add``2(System.String,System.String,NDesk.Options.OptionAction{``0,``1})" />
+          <see cref="M:Mono.Options.OptionSet.Add``2(System.String,System.String,Mono.Options.OptionAction{``0,``1})" />
           with a <paramref name="description" /> value of 
           <see langword="null" />.
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
-        <altmember cref="M:NDesk.Options.OptionSet.Add``2(System.String,System.String,NDesk.Options.OptionAction{``0,``1})" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add``2(System.String,System.String,Mono.Options.OptionAction{``0,``1})" />
         <exception cref="T:System.ArgumentException">
           <paramref name="prototype" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1522,19 +1522,19 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </TypeParameters>
     </Member>
     <Member MemberName="Add&lt;TKey,TValue&gt;">
-      <MemberSignature Language="C#" Value="public NDesk.Options.OptionSet Add&lt;TKey,TValue&gt; (string prototype, string description, NDesk.Options.OptionAction&lt;TKey,TValue&gt; action);" />
+      <MemberSignature Language="C#" Value="public Mono.Options.OptionSet Add&lt;TKey,TValue&gt; (string prototype, string description, Mono.Options.OptionAction&lt;TKey,TValue&gt; action);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionSet</ReturnType>
+        <ReturnType>Mono.Options.OptionSet</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="prototype" Type="System.String" />
         <Parameter Name="description" Type="System.String" />
-        <Parameter Name="action" Type="NDesk.Options.OptionAction&lt;TKey,TValue&gt;" />
+        <Parameter Name="action" Type="Mono.Options.OptionAction&lt;TKey,TValue&gt;" />
       </Parameters>
       <Docs>
         <typeparam name="TKey">
@@ -1549,26 +1549,26 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           A <see cref="T:System.String" /> containing all option aliases to
           register, an (optional) type specifier, and an (optional) value
           separator list; see 
-          <see cref="C:NDesk.Options.Option(System.String,System.String,System.Int32)" />
+          <see cref="C:Mono.Options.Option(System.String,System.String,System.Int32)" />
           for details.
         </param>
         <param name="description">
           A <see cref="T:System.String" /> to be used to initialize
-          the <see cref="P:NDesk.Options.Option.Description" /> property.
+          the <see cref="P:Mono.Options.Option.Description" /> property.
         </param>
         <param name="action">
-          A <see cref="T:NDesk.Options.OptionAction{TKey,TValue}" />
+          A <see cref="T:Mono.Options.OptionAction{TKey,TValue}" />
           to invoke when an option is parsed.
         </param>
         <summary>
           Registers each alias within <paramref name="prototype" /> so that any 
           options matching the aliases in <paramref name="prototype" /> will be
           handled by <paramref name="action" /> during any subsequent
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           calls.
         </summary>
         <returns>
-          The current <see cref="T:NDesk.Options.OptionSet" /> instance.
+          The current <see cref="T:Mono.Options.OptionSet" /> instance.
           This is to permit method chaining.
         </returns>
         <remarks>
@@ -1579,18 +1579,18 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           <block subset="none" type="note">
             <para>
               If <paramref name="prototype" /> specifies an
-              <see cref="F:NDesk.Options.OptionValueType.Optional" /> value
+              <see cref="F:Mono.Options.OptionValueType.Optional" /> value
               and the value is not provided, then <c>default(TKey)</c> and
               <c>default(TValue)</c> may be provided as the values to
               <paramref name="action" />.
             </para>
           </block>
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+        <altmember cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
         <exception cref="T:System.ArgumentException">
           <paramref name="prototype" /> has an alias (as returned from
-          <see cref="M:NDesk.Options.Option.GetNames" />) that conflicts with
-          a previously registered <see cref="T:NDesk.Options.Option" />.
+          <see cref="M:Mono.Options.Option.GetNames" />) that conflicts with
+          a previously registered <see cref="T:Mono.Options.Option" />.
         </exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -1606,45 +1606,45 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </TypeParameters>
     </Member>
     <Member MemberName="CreateOptionContext">
-      <MemberSignature Language="C#" Value="protected virtual NDesk.Options.OptionContext CreateOptionContext ();" />
+      <MemberSignature Language="C#" Value="protected virtual Mono.Options.OptionContext CreateOptionContext ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.OptionContext</ReturnType>
+        <ReturnType>Mono.Options.OptionContext</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
         <summary>
-          Creates an <see cref="T:NDesk.Options.OptionContext" /> instance.
+          Creates an <see cref="T:Mono.Options.OptionContext" /> instance.
         </summary>
         <returns>
-          A <see cref="T:NDesk.Options.OptionContext" /> instance to be used
+          A <see cref="T:Mono.Options.OptionContext" /> instance to be used
           when parsing all options during the current
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           call.
         </returns>
         <remarks>
           <block subset="none" type="overrides">
             <para>
               This method can be overridden if
-              <see cref="M:NDesk.Options.OptionSet.Parse(System.String,NDesk.Options.OptionContext)" />
+              <see cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
               is overridden and requires access to an 
-              <see cref="T:NDesk.Options.OptionContext" /> subclass to store
+              <see cref="T:Mono.Options.OptionContext" /> subclass to store
               additional information during the current 
-              <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+              <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
               invocation.
             </para>
           </block>
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
-        <altmember cref="M:NDesk.Options.OptionSet.Parse(System.String,NDesk.Options.OptionContext)" />
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
       </Docs>
     </Member>
     <Member MemberName="GetKeyForItem">
-      <MemberSignature Language="C#" Value="protected override string GetKeyForItem (NDesk.Options.Option item);" />
+      <MemberSignature Language="C#" Value="protected override string GetKeyForItem (Mono.Options.Option item);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
@@ -1653,54 +1653,54 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="item" Type="NDesk.Options.Option" />
+        <Parameter Name="item" Type="Mono.Options.Option" />
       </Parameters>
       <Docs>
         <param name="item">
-          An <see cref="T:NDesk.Options.Option" /> to return the key of.
+          An <see cref="T:Mono.Options.Option" /> to return the key of.
         </param>
         <summary>
           Returns <c><paramref name="item" />.GetNames()[0]</c>.
         </summary>
         <returns>
           A <see cref="T:System.String" /> containing the first alias returned
-          by <see cref="M:NDesk.Options.Option.GetNames" />.
+          by <see cref="M:Mono.Options.Option.GetNames" />.
         </returns>
         <remarks>
           <para>
             This is to support the 
-            <see cref="T:System.Collections.ObjectModel.KeyedCollection{System.String,NDesk.Options.Option}" />
+            <see cref="T:System.Collections.ObjectModel.KeyedCollection{System.String,Mono.Options.Option}" />
             infrastructure.  
-            <see cref="T:System.Collections.ObjectModel.KeyedCollection{System.String,NDesk.Options.Option}" />
+            <see cref="T:System.Collections.ObjectModel.KeyedCollection{System.String,Mono.Options.Option}" />
             assumes only one key per item, so we arbitrarily choose the first
             item in the option alias list.
           </para>
           <block subset="none" type="note">
             All aliases returned by 
-            <see cref="M:NDesk.Options.Option.GetNames" /> are still
+            <see cref="M:Mono.Options.Option.GetNames" /> are still
             registered with 
-            <see cref="T:System.Collections.ObjectModel.KeyedCollection{System.String,NDesk.Options.Option}" />
+            <see cref="T:System.Collections.ObjectModel.KeyedCollection{System.String,Mono.Options.Option}" />
             even though 
-            <see cref="M:NDesk.Options.OptionSet.GetKeyForItem(NDesk.Options.Option)" />
+            <see cref="M:Mono.Options.OptionSet.GetKeyForItem(Mono.Options.Option)" />
             will never return them.  Consequently, 
-            <see cref="M:System.Collections.ObjectModel.KeyedCollection{System.String,NDesk.Options.Option}.Contains(`0)" />
+            <see cref="M:System.Collections.ObjectModel.KeyedCollection{System.String,Mono.Options.Option}.Contains(`0)" />
             and
-            <see cref="P:System.Collections.ObjectModel.KeyedCollection{System.String,NDesk.Options.Option}.Item(`0)" />
+            <see cref="P:System.Collections.ObjectModel.KeyedCollection{System.String,Mono.Options.Option}.Item(`0)" />
             will both correctly use all aliases returned by 
-            <see cref="M:NDesk.Options.Option.GetNames" />.
+            <see cref="M:Mono.Options.Option.GetNames" />.
           </block>
         </remarks>
       </Docs>
     </Member>
     <Member MemberName="GetOptionForName">
-      <MemberSignature Language="C#" Value="protected NDesk.Options.Option GetOptionForName (string option);" />
+      <MemberSignature Language="C#" Value="protected Mono.Options.Option GetOptionForName (string option);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
         <AssemblyVersion>0.2.1.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>NDesk.Options.Option</ReturnType>
+        <ReturnType>Mono.Options.Option</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="option" Type="System.String" />
@@ -1716,11 +1716,11 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           lookup.
         </param>
         <summary>
-          Looks up the <see cref="T:NDesk.Options.Option" /> registered to
+          Looks up the <see cref="T:Mono.Options.Option" /> registered to
           handle the option name <paramref name="option" />.
         </summary>
         <returns>
-          The <see cref="T:NDesk.Options.Option" /> instance registered to
+          The <see cref="T:Mono.Options.Option" /> instance registered to
           handle the option name <paramref name="option" />.
           If there is no registered handler for <paramref name="option" />,
           then <see langword="null" /> is returned.
@@ -1729,10 +1729,10 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           <para>
             Subclasses can use this function to perform 
             <paramref name="option" /> lookup when overriding
-            <see cref="M:NDesk.Options.OptionSet.Parse(System.String,NDesk.Options.OptionContext)" />.
+            <see cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />.
           </para>
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.Parse(System.String,NDesk.Options.OptionContext)" />
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="option" /> is <see langword="null" />.
         </exception>
@@ -1774,7 +1774,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           valid flag if the method returns <see langword="true" />.
           No lookup is made to determine that flag has been registered via a 
           prior call to 
-          <see cref="M:NDesk.Options.OptionSet.Add(NDesk.Options.Option)" />
+          <see cref="M:Mono.Options.OptionSet.Add(Mono.Options.Option)" />
           or related overload.
         </param>
         <param name="sep">
@@ -1811,7 +1811,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <remarks>
           <para>
             Subclasses can call this method from their 
-            <see cref="M:NDesk.Options.OptionSet.Parse(System.String,NDesk.Options.OptionContext)" />
+            <see cref="M:Mono.Options.OptionSet.Parse(System.String,Mono.Options.OptionContext)" />
             method to determine whether a given string is an option, and to
             split the option up for further processing.
           </para>
@@ -1831,7 +1831,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
-      <MemberSignature Language="C#" Value="protected override void InsertItem (int index, NDesk.Options.Option item);" />
+      <MemberSignature Language="C#" Value="protected override void InsertItem (int index, Mono.Options.Option item);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
@@ -1842,7 +1842,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="item" Type="NDesk.Options.Option" />
+        <Parameter Name="item" Type="Mono.Options.Option" />
       </Parameters>
       <Docs>
         <param name="index">
@@ -1850,7 +1850,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           <paramref name="item" /> into.
         </param>
         <param name="item">
-          The <see cref="T:NDesk.Options.Option" /> to insert.
+          The <see cref="T:Mono.Options.Option" /> to insert.
         </param>
         <summary>
           Inserts <paramref name="item" /> at the specified 
@@ -1880,13 +1880,13 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         </value>
         <remarks>
           <para>
-            <see cref="T:NDesk.Options.Option" /> subclasses can use this
+            <see cref="T:Mono.Options.Option" /> subclasses can use this
             property 
-            (via <see cref="P:NDesk.Options.OptionContext.OptionSet" />) to
+            (via <see cref="P:Mono.Options.OptionContext.OptionSet" />) to
             perform message localization for their own exception messages.
           </para>
         </remarks>
-        <altmember cref="C:NDesk.Options.OptionSet(System.Converter{System.String,System.String})" />
+        <altmember cref="C:Mono.Options.OptionSet(System.Converter{System.String,System.String})" />
       </Docs>
     </Member>
     <Member MemberName="Parse">
@@ -1952,9 +1952,9 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
             instead of needing to use <c>ls -lF ./-l</c>.
           </para>
         </remarks>
-        <exception cref="T:NDesk.Options.OptionException">
+        <exception cref="T:Mono.Options.OptionException">
           <para>
-            A value was not found for an <see cref="T:NDesk.Options.Option" />
+            A value was not found for an <see cref="T:Mono.Options.Option" />
             requiring a value.
           </para>
           <para>-or-</para>
@@ -1966,7 +1966,7 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
           <para>
             An exception was generated when trying to convert the value to the
             type <typeparamref name="T" />, for options added with
-            <see cref="M:NDesk.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
+            <see cref="M:Mono.Options.OptionSet.Add``1(System.String,System.String,System.Action{``0})" />
             and related methods.  The originating exception is provided via
             the <see cref="P:System.Exception.InnerException" /> property.
           </para>
@@ -1974,11 +1974,11 @@ localization: hello:Could not convert string `not-an-int' to type Int32 for opti
         <example>
           <para>
             The following example demonstrates some simple usage of 
-            <see cref="T:NDesk.Options.OptionSet" />.
+            <see cref="T:Mono.Options.OptionSet" />.
           </para>
           <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	static int verbosity;
@@ -2058,7 +2058,7 @@ class Test {
       </Docs>
     </Member>
     <Member MemberName="Parse">
-      <MemberSignature Language="C#" Value="protected virtual bool Parse (string argument, NDesk.Options.OptionContext c);" />
+      <MemberSignature Language="C#" Value="protected virtual bool Parse (string argument, Mono.Options.OptionContext c);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
@@ -2069,7 +2069,7 @@ class Test {
       </ReturnValue>
       <Parameters>
         <Parameter Name="argument" Type="System.String" />
-        <Parameter Name="c" Type="NDesk.Options.OptionContext" />
+        <Parameter Name="c" Type="Mono.Options.OptionContext" />
       </Parameters>
       <Docs>
         <param name="argument">
@@ -2077,19 +2077,19 @@ class Test {
           parse.
         </param>
         <param name="c">
-          A <see cref="T:NDesk.Options.OptionContext" /> containing the
+          A <see cref="T:Mono.Options.OptionContext" /> containing the
           current parser context.
         </param>
         <summary>
           Parses <paramref name="argument" /> and invokes
-          <see cref="M:NDesk.Options.Option.Invoke(NDesk.Options.OptionContext)" /> 
+          <see cref="M:Mono.Options.Option.Invoke(Mono.Options.OptionContext)" /> 
           if appropriate.
         </summary>
         <returns>
           A <see cref="T:System.Boolean" /> specifying whether or not
           <paramref name="argument" /> was handled.
           If <see langword="false" />, then
-          <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+          <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
           will return <paramref name="argument" /> as an unhandled option.
         </returns>
         <remarks>
@@ -2097,7 +2097,7 @@ class Test {
             This method is called for each <see cref="T:System.String" />
             within the <see cref="T:System.Collections.Generic.IEnumerable{System.String}" />
             provided to 
-            <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />,
+            <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />,
             which thus gives this method a chance to parse a single option, or
             chain together multiple options to form a single option (as is
             necessary when an option and its value are separated, e.g. with
@@ -2106,19 +2106,19 @@ class Test {
           <block subset="none" type="behaviors">
             <para>
               The default implementation will check 
-              <see cref="P:NDesk.Options.OptionContext.Option" />, which is
-              assumed to be a <see cref="T:NDesk.Options.Option" /> in need of
+              <see cref="P:Mono.Options.OptionContext.Option" />, which is
+              assumed to be a <see cref="T:Mono.Options.Option" /> in need of
               a value.  If 
-              <see cref="P:NDesk.Options.OptionContext.Option" /> is 
+              <see cref="P:Mono.Options.OptionContext.Option" /> is 
               non-<see langword="null" />, then <paramref name="argument" />
               is 
-              <see cref="M:NDesk.Options.OptionValueCollection.Add(System.String)" />ed
-              to <see cref="P:NDesk.Options.OptionContext.OptionValues" /> and
-              <see cref="M:NDesk.Options.Option.Invoke(NDesk.Options.OptionContext)" />
+              <see cref="M:Mono.Options.OptionValueCollection.Add(System.String)" />ed
+              to <see cref="P:Mono.Options.OptionContext.OptionValues" /> and
+              <see cref="M:Mono.Options.Option.Invoke(Mono.Options.OptionContext)" />
               is invoked.
             </para>
             <para>
-              Next, <see cref="M:NDesk.Options.OptionSet.GetOptionParts(System.String,System.String@,System.String@,System.String@,System.String@)" />
+              Next, <see cref="M:Mono.Options.OptionSet.GetOptionParts(System.String,System.String@,System.String@,System.String@,System.String@)" />
               is invoked.  If <c>GetOptionParts</c> returns 
               <see langword="false" />, then <see langword="false" /> is
               returned from <c>Parse</c>.
@@ -2137,19 +2137,19 @@ class Test {
             <para>
               Inheriting types can override this method if they want to
               customize the per-option parsing within the containing
-              <see cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+              <see cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
               invocation.
             </para>
             <para>
               Inheriting types should consider overriding 
-              <see cref="M:NDesk.Options.OptionSet.CreateOptionContext" />
+              <see cref="M:Mono.Options.OptionSet.CreateOptionContext" />
               if they want to store extra information for use and retrieval
               during each <c>Parse</c> invocation.
             </para>
           </block>
         </remarks>
-        <altmember cref="M:NDesk.Options.OptionSet.CreateOptionContext" />
-        <altmember cref="M:NDesk.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
+        <altmember cref="M:Mono.Options.OptionSet.CreateOptionContext" />
+        <altmember cref="M:Mono.Options.OptionSet.Parse(System.Collections.Generic.IEnumerable{System.String})" />
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">
@@ -2168,10 +2168,10 @@ class Test {
       <Docs>
         <param name="index">
           A <see cref="T:System.Int32" /> containing the index of the 
-          <see cref="T:NDesk.Options.Option" /> to remove.
+          <see cref="T:Mono.Options.Option" /> to remove.
         </param>
         <summary>
-          Removes the <see cref="T:NDesk.Options.Option" /> at the specified
+          Removes the <see cref="T:Mono.Options.Option" /> at the specified
           <paramref name="index" />.
         </summary>
         <remarks>
@@ -2179,7 +2179,7 @@ class Test {
       </Docs>
     </Member>
     <Member MemberName="SetItem">
-      <MemberSignature Language="C#" Value="protected override void SetItem (int index, NDesk.Options.Option item);" />
+      <MemberSignature Language="C#" Value="protected override void SetItem (int index, Mono.Options.Option item);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.2.0.0</AssemblyVersion>
@@ -2190,19 +2190,19 @@ class Test {
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="item" Type="NDesk.Options.Option" />
+        <Parameter Name="item" Type="Mono.Options.Option" />
       </Parameters>
       <Docs>
         <param name="index">
           A <see cref="T:System.Int32" /> containing the index of the 
-          <see cref="T:NDesk.Options.Option" /> to change.
+          <see cref="T:Mono.Options.Option" /> to change.
         </param>
         <param name="item">
-          The new <see cref="T:NDesk.Options.Option" /> to set at
+          The new <see cref="T:Mono.Options.Option" /> to set at
           <paramref name="index" />.
         </param>
         <summary>
-          Removes the current <see cref="T:NDesk.Options.Option" /> at 
+          Removes the current <see cref="T:Mono.Options.Option" /> at 
           <paramref name="index" /> and sets <paramref name="item" /> 
           as the value for the <paramref name="index" /> value.
         </summary>
@@ -2229,18 +2229,18 @@ class Test {
           descriptions to.
         </param>
         <summary>
-          Writes <see cref="T:NDesk.Options.Option" /> documentation to 
+          Writes <see cref="T:Mono.Options.Option" /> documentation to 
           <paramref name="o" />.
         </summary>
         <remarks>
           <para>
-            For each <see cref="T:NDesk.Options.Option" /> previously added to
+            For each <see cref="T:Mono.Options.Option" /> previously added to
             the current instance, this method writes out a comma-separated
-            list of all <see cref="M:NDesk.Options.Option.GetNames" />
-            followed by the <see cref="P:NDesk.Options.Option.Description" />.
+            list of all <see cref="M:Mono.Options.Option.GetNames" />
+            followed by the <see cref="P:Mono.Options.Option.Description" />.
           </para>
           <para>
-            The <see cref="P:NDesk.Options.Option.Description" /> is
+            The <see cref="P:Mono.Options.Option.Description" /> is
             automatically wrapped so that output will flow nicely across
             multiple lines.  Wrapping is preferred at explicit embedded 
             newline characters (<c>\n</c>) or spaces, but words will be split
@@ -2252,10 +2252,10 @@ class Test {
             <c>[=VALUE]</c> appended to their last name.
             The <c>VALUE</c> string can be changed by using a format
             specifier-like string within the 
-            <see cref="P:NDesk.Options.Option.Description" />.
+            <see cref="P:Mono.Options.Option.Description" />.
           </para>
           <para>
-            For <see cref="T:NDesk.Options.Option" />s accepting one value,
+            For <see cref="T:Mono.Options.Option" />s accepting one value,
             the string <c>{VALUE}</c> or <c>{0:VALUE}</c> can be used to
             explicitly provide the value name.  For <c>Option</c>s accepting
             more than one value, the leading number is used to specify which
@@ -2265,13 +2265,13 @@ class Test {
         <example>
           <para>
             The following example initializes a
-            <see cref="T:NDesk.Options.OptionSet" /> instance to accept a
+            <see cref="T:Mono.Options.OptionSet" /> instance to accept a
             variety of parameters and provides a description for each
             parameter:
           </para>
           <code lang="C#" src="examples/greet.cs">using System;
 using System.Collections.Generic;
-using NDesk.Options;
+using Mono.Options;
 
 class Test {
 	static int verbosity;
@@ -2350,8 +2350,8 @@ class Test {
           <para>
             Notice that when the above program is invoked with the
             <c>--help</c> parameter, 
-            <see cref="M:NDesk.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />
-            is used to generate the <see cref="T:NDesk.Options.Option" />
+            <see cref="M:Mono.Options.OptionSet.WriteOptionDescriptions(System.IO.TextWriter)" />
+            is used to generate the <see cref="T:Mono.Options.Option" />
             description, that the <c>--repeat</c> description spans
             multiple lines, and that format specifiers such as <c>{NAME}</c>
             are used to provide a description for the option value:

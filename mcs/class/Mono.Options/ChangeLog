@@ -1,5 +1,10 @@
 2008-10-22  Jonathan Pryor  <jpryor@novell.com>
 
+	* Documentation/en/**/*.xml: s/NDesk.Options/Mono.Options/g (How'd I
+	  miss this earlier?).
+
+2008-10-22  Jonathan Pryor  <jpryor@novell.com>
+
 	* Documentation/en/Mono.Options/OptionSet.xml: Document the support for
 	  nullable types.
 
