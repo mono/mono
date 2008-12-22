@@ -1019,20 +1019,69 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (c.Created, "A1");
 		}
 
+		class CustomA11yEnabledControl : Control {
+			public CustomA11yEnabledControl () : base() { }
+			protected override AccessibleObject CreateAccessibilityInstance () { return new CustomAccessibleObject (this); }
+
+			class CustomAccessibleObject : ControlAccessibleObject {
+				public CustomAccessibleObject (CustomA11yEnabledControl control) : base(control) { }
+				public override string Name { get { return "custom name"; } }
+				public override string DefaultAction { get { return "custom default action"; } }
+				public override string Description { get { return "custom description"; } }
+				public override AccessibleRole Role { get { return AccessibleRole.Alert; } }
+			}
+		}
+
 		[Test]
-		[Category ("NotWorking")]
 		public void CreatedAccessibilityTest ()
 		{
-			Control c = new Control ();
-			Assert.IsFalse (c.Created, "A1");
+			CustomA11yEnabledControl c = new CustomA11yEnabledControl ();
+			Assert.IsFalse(c.Created, "A1");
 
-			Helper.TestAccessibility(c, null, null, null, AccessibleRole.Default);
+			// Tests default values
 
-			Assert.IsTrue (c.Created, "A2");
+			Assert.AreEqual (null, c.AccessibleDefaultActionDescription, "A2.0");
+			Assert.IsFalse(c.IsHandleCreated, "A2.1");
+
+			Assert.AreEqual (null, c.AccessibleDescription, "A3.0");
+			Assert.IsFalse(c.IsHandleCreated, "A3.1");
+
+			Assert.AreEqual (null, c.AccessibleName, "A4.0");
+			Assert.IsFalse(c.IsHandleCreated, "A4.1");
+
+			Assert.AreEqual (AccessibleRole.Default, c.AccessibleRole, "A5.0");
+			Assert.IsFalse(c.IsHandleCreated, "A5.1");
+
+			object o = c.AccessibilityObject;
+			Assert.IsTrue(c.IsHandleCreated, "A6");
+
+			// Tests to confirm that:
+			// - calling Control.AccessibleXXXXX is not returning AccessibleObject.XXXXX
+			// - Handle is not Created when calling Control.AccessibleXXXXX
+			c = new CustomA11yEnabledControl ();
+
+ 			string accessibleDefaultActionDescription = "default action description";
+			c.AccessibleDefaultActionDescription = accessibleDefaultActionDescription;
+			Assert.IsFalse (c.IsHandleCreated, "A7.0");
+			Assert.AreEqual (accessibleDefaultActionDescription, c.AccessibleDefaultActionDescription, "A7.1");
+
+			string accessibleDescription = "accessible description";
+			c.AccessibleDescription = accessibleDescription;
+			Assert.IsFalse (c.IsHandleCreated, "A8.0");
+			Assert.AreEqual (accessibleDescription, c.AccessibleDescription, "A8.1");
+
+			string accessibleName = "accessible name";
+			c.AccessibleName = accessibleName;
+			Assert.IsFalse (c.IsHandleCreated, "A9.0");
+			Assert.AreEqual (accessibleName, c.AccessibleName, "A9.1");
+
+			AccessibleRole accessibleRole = AccessibleRole.Diagram;
+			c.AccessibleRole = accessibleRole;
+			Assert.AreEqual (accessibleRole, c.AccessibleRole, "A10.0");
+			Assert.IsFalse (c.IsHandleCreated, "A10.1");
 
 			c.Dispose ();
-
-			Assert.IsFalse (c.Created, "A3");
+			Assert.IsFalse (c.Created, "A11");
 		}
 
 		[Test]

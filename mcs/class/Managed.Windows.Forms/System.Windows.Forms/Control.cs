@@ -130,12 +130,18 @@ namespace System.Windows.Forms
 		// to be categorized...
 		ControlCollection       child_controls; // our children
 		Control                 parent; // our parent control
-		AccessibleObject        accessibility_object; // object that contains accessibility information about our control
 		BindingContext          binding_context;
 		RightToLeft             right_to_left; // drawing direction for control
 		ContextMenu             context_menu; // Context menu associated with the control
 		internal bool		use_compatible_text_rendering;
 		private bool		use_wait_cursor;
+
+		//accessibility
+		string accessible_name;
+		string accessible_description;
+		string accessible_default_action;
+		AccessibleRole accessible_role = AccessibleRole.Default;
+		AccessibleObject accessibility_object; // object that contains accessibility information about our control
 
 		// double buffering
 		DoubleBuffer            backbuffer;
@@ -2113,15 +2119,11 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public string AccessibleDefaultActionDescription {
 			get {
-				if (accessibility_object != null)
-					return accessibility_object.default_action;
-				else
-					return null;
+				return accessible_default_action;
 			}
 
 			set {
-				if (accessibility_object != null)
-					AccessibilityObject.default_action = value;
+				accessible_default_action = value;
 			}
 		}
 
@@ -2130,15 +2132,11 @@ namespace System.Windows.Forms
 		[MWFCategory("Accessibility")]
 		public string AccessibleDescription {
 			get {
-				if (accessibility_object != null)
-					return accessibility_object.description;
-				else
-					return null;
+				return accessible_description;
 			}
 
 			set {
-				if (accessibility_object != null)
-					AccessibilityObject.description = value;
+				accessible_description = value;
 			}
 		}
 
@@ -2147,15 +2145,11 @@ namespace System.Windows.Forms
 		[MWFCategory("Accessibility")]
 		public string AccessibleName {
 			get {
-				if (accessibility_object != null)
-					return accessibility_object.Name;
-				else
-					return null;
+				return accessible_name;
 			}
 
 			set {
-				if (accessibility_object != null)
-					AccessibilityObject.Name = value;
+				accessible_name = value;
 			}
 		}
 
@@ -2163,15 +2157,11 @@ namespace System.Windows.Forms
 		[MWFDescription("Role of the control"), MWFCategory("Accessibility")]
 		public AccessibleRole AccessibleRole {
 			get {
-				if (accessibility_object != null)
-					return accessibility_object.role;
-				else
-					return AccessibleRole.Default;
+				return accessible_role;
 			}
 
 			set {
-				if (accessibility_object != null)
-					AccessibilityObject.role = value;
+				accessible_role = value;
 			}
 		}
 

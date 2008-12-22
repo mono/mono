@@ -1,3 +1,8 @@
+2008-12-22  Mario Carrion <mcarrion@novell.com>
+
+	* ControlTest.cs: CreatedAccessibilityTest enabled, testing
+	handle creation and custom accessibility implementation.
+
 2008-12-19  Mario Carrion <mcarrion@novell.com>
 
 	* ControlTest.cs: Reverted r121558: Removed 

@@ -1,3 +1,8 @@
+2008-12-22  Mario Carrion  <mcarrion@novell.com>
+
+	* Control.cs: AccessibleXXXX properties don't return 
+	AccessibleObject.XXXX, instead a local referece is returned.
+
 2008-12-22  Neville Gao  <nevillegao@gmail.com>
 
 	* PrintPreviewControl.cs: Added internal properties to support
