@@ -177,7 +177,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 						Assert.IsTrue (group [i].HasMetadata ("DependentUpon"), "A5 #" + (i + 1));
 				}
 			} catch (Exception) {
-				Console.WriteLine (projectText);
+				Console.Error.WriteLine (projectText);
 				testLogger.DumpMessages ();
 				throw;
 			}

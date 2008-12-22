@@ -1,5 +1,10 @@
 2008-12-22  Ankit Jain  <jankit@novell.com>
 
+	* TestMessageLogger.cs: Emit debug messages to stderr.
+	* CreateCSharpManifestResourceNameTest.cs: Likewise.
+
+2008-12-22  Ankit Jain  <jankit@novell.com>
+
 	* TestMessageLogger.cs: Listen for errors and warnings also.
 	* CreateCSharpManifestResourceNameTest.cs: Emit helpful info when tests
 	fail.
