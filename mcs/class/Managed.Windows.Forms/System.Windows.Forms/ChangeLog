@@ -1,3 +1,9 @@
+2008-12-22  Neville Gao  <nevillegao@gmail.com>
+
+	* PrintPreviewControl.cs: Added internal properties to support
+	accessibility.
+	[Fixes Bug #459699]
+
 2008-12-19  Mario Carrion  <mcarrion@novell.com>
 
 	* Control.cs: Reverted r121561. 
@@ -693,7 +699,7 @@
 	the item's location into account.
 	[Fixes bug #437683]
 
-2008-10-24  Neville Gao <nevillegao@gmail.com>
+2008-10-24  Neville Gao  <nevillegao@gmail.com>
 
 	* NumericUpDown.cs: Control enabled to support accessibility.
 	[Fiexes bug #438135]
@@ -819,7 +825,7 @@
 	text location.
 	Fixes #435105.
 
-2008-10-17  Neville Gao <nevillegao@gmail.com>
+2008-10-17  Neville Gao  <nevillegao@gmail.com>
 
 	* StatusBarPanel.cs: Control enabled to support accessibility.
 	[Fixes bug #435988]
@@ -1264,7 +1270,7 @@
 	hlaustralia.com.au).
 	Fixes #425360.
 
-2008-09-23  Neville Gao <nevillegao@gmail.com>
+2008-09-23  Neville Gao  <nevillegao@gmail.com>
 
 	* StatusBar.cs: Add UIA event in AddInternal () to support accessibility.
 	[Fixes bug #419079]
@@ -1797,7 +1803,7 @@
 	  properties.
 	  [Fixes bug #418684]
 
-2008-09-03  Neville Gao <nevillegao@gmail.com>
+2008-09-03  Neville Gao  <nevillegao@gmail.com>
 
 	* StatusBar.cs: Control enabled to support accessibility.
 	[Fixes bug #419079]

@@ -303,6 +303,18 @@ namespace System.Windows.Forms {
 		internal int vbar_value;
 		internal int hbar_value;
 
+		#region UIA Framework Property
+#if NET_2_0
+		internal ScrollBar UIAVScrollBar {
+			get { return vbar; }
+		}
+
+		internal ScrollBar UIAHScrollBar {
+			get { return hbar; }
+		}
+#endif
+		#endregion
+
 		private void VScrollBarValueChanged (object sender, EventArgs e)
 		{
 			int pixels;
