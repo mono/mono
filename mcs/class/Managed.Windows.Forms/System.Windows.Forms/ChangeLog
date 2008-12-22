@@ -1,3 +1,8 @@
+2008-12-22  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripMenuItem.cs: Guard against an NRE.
+	[Fixes bug #457110]
+
 2008-12-22  Mario Carrion  <mcarrion@novell.com>
 
 	* Control.cs: AccessibleXXXX properties don't return 

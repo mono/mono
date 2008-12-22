@@ -244,8 +244,12 @@ namespace System.Windows.Forms
 			if (this.OwnerItem is ToolStripDropDownItem)
 				(this.OwnerItem as ToolStripDropDownItem).OnDropDownItemClicked (new ToolStripItemClickedEventArgs (this));
 
-			if (this.IsOnDropDown)
-				this.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+			if (this.IsOnDropDown) {
+				ToolStrip ts = this.GetTopLevelToolStrip ();
+				
+				if (ts != null)
+					ts.Dismiss (ToolStripDropDownCloseReason.ItemClicked);
+			}
 
 			if (this.IsMdiWindowListEntry) {
 				this.mdi_client_form.MdiParent.MdiContainer.ActivateChild (this.mdi_client_form);
