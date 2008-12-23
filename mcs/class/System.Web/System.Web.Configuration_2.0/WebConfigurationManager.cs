@@ -290,7 +290,20 @@ namespace System.Web.Configuration {
 			if (cachedSection != null)
 				return cachedSection;
 
-			_Configuration c = OpenWebConfiguration (path);
+			string configPath;
+			if (String.Compare (path, HttpRuntime.AppDomainAppVirtualPath, StringComparison.Ordinal) == 0)
+				configPath = path;
+			else {
+				int len = path != null ? path.Length : 0;
+				if (len == 0)
+					configPath = path;
+				else if (path [len - 1] == '/')
+					configPath = path;
+				else
+					configPath = VirtualPathUtility.GetDirectory (path, false);
+			}
+			
+			_Configuration c = OpenWebConfiguration (configPath);
 			ConfigurationSection section = c.GetSection (sectionName);
 
 			if (section == null)
@@ -319,7 +332,8 @@ namespace System.Web.Configuration {
 
 		static string GetCurrentPath (HttpContext ctx)
 		{
-			return (ctx != null && ctx.Request != null) ? ctx.Request.Path : HttpRuntime.AppDomainAppVirtualPath;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+			return req != null ? req.Path : HttpRuntime.AppDomainAppVirtualPath;
 		}
 
 		internal static void RemoveConfigurationFromCache (HttpContext ctx)

@@ -1,3 +1,9 @@
+2008-12-23  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added Test/mainsoft/NunitWebResources/CustomSectionEmptyCollection.aspx
+
+	* System.Web_test.dll.sources: added mainsoft/NunitWeb/NunitWeb/CustomSection.cs
+
 2008-12-12  Dean Brettle  <dean@brettle.com>
 
 	* System.Web.dll.sources: deleted

@@ -1,3 +1,9 @@
+2008-12-23  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWeb/Makefile (NunitWeb.dll): added NunitWeb/CustomSection.cs
+
+	* NunitWebResources/CustomSectionEmptyCollection.aspx: added
+
 2008-12-10  Marek Habersack  <mhabersack@novell.com>
 
 	* NunitWebResources/MissingMasterFile.aspx: added

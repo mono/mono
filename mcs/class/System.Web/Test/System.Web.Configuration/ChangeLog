@@ -1,3 +1,7 @@
+2008-12-23  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManagerTest.cs: added new test.
+
 2007-11-23  Marek Habersack  <mhabersack@novell.com>
 
 	* CacheSectionTest.cs: modified to match the new MS.NET defaults.

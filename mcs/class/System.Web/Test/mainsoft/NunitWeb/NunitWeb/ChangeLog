@@ -1,3 +1,8 @@
+2008-12-23  Marek Habersack  <mhabersack@novell.com>
+
+	* CustomSection.cs: added. Implementation of custom configuration
+	elements for WebConfigurationManager tests.
+
 2008-12-02  Marek Habersack  <mhabersack@novell.com>
 
 	* WebTest.cs: for 1.1, copy the Web.mono.config.1.1 resource

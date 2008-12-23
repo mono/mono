@@ -1,3 +1,8 @@
+2008-12-23  Marek Habersack  <mhabersack@novell.com>
+
+	* Web.mono.config: added CustomTags section definition, used in
+	WebConfiguratioManager tests.
+
 2008-12-02  Marek Habersack  <mhabersack@novell.com>
 
 	* Web.config: added ASP.NET AJAX 1.0 configuration entries

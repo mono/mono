@@ -1,3 +1,12 @@
+2008-12-23  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: GetSection should call
+	OpenWebConfiguration using the actual directory path, not a file
+	path. If it fails to do so, System.Configuration may treat the
+	top-level Web.config file as a child one which, in turn, in
+	certain circumstances will lead to duplicate keys inserted in
+	collections.
+
 2008-12-16  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: IsDefinitionAllowed should treat

@@ -52,6 +52,12 @@ namespace MonoTests.System.Web.Configuration {
 			WebTest.Unload ();
 		}
 
+		[SetUp]
+		public void TestSetUp ()
+		{
+			WebTest.CopyResource (GetType (), "CustomSectionEmptyCollection.aspx", "CustomSectionEmptyCollection.aspx");
+		}
+		
 		[Test]
 		[Category ("NotWorking")]
 		public void OpenMachineConfiguration_1 ()
@@ -212,6 +218,13 @@ namespace MonoTests.System.Web.Configuration {
 		{
 			Assert.IsNotNull (WebConfigurationManager.AppSettings, "A1");
 			Assert.IsNotNull (WebConfigurationManager.ConnectionStrings, "A2");
+		}
+
+		[Test]
+		public void CustomSectionEmptyCollection ()
+		{
+			WebTest t = new WebTest ("CustomSectionEmptyCollection.aspx");
+			t.Run ();
 		}
 	}
 }
