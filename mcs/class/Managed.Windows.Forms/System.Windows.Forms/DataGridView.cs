@@ -5541,6 +5541,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal void OnColumnCollectionChanged (object sender, CollectionChangeEventArgs e) {
+			ReBind ();
 			switch (e.Action) {
 				case CollectionChangeAction.Add:
 					OnColumnAddedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
@@ -5809,8 +5810,7 @@ namespace System.Windows.Forms {
 
 		private void OnBindingSourceDataSourceChanged (object sender, EventArgs args)
 		{
-			ClearBinding();
-			DoBinding();
+			ReBind ();
 		}
 
 		private void AddBoundRow (object element)
@@ -6068,8 +6068,7 @@ namespace System.Windows.Forms {
 					Rows.RemoveAt (args.NewIndex);
 					break;
 				default:
-					ClearBinding ();
-					DoBinding ();
+					ReBind ();
 					break;
 			}
 			
@@ -6078,23 +6077,20 @@ namespace System.Windows.Forms {
 		
 		private void OnTableColumnChanged (object sender, DataColumnChangeEventArgs e)
 		{
-			ClearBinding ();
-			DoBinding ();
+			ReBind ();
 		}
 
 		private void OnDataSetTableChanged (object sender, CollectionChangeEventArgs e)
 		{
-			ClearBinding ();
-			DoBinding ();
+			ReBind ();
 		}
 
 		private void OnTableCleared (object sender, DataTableClearEventArgs e)
 		{
-			ClearBinding ();
-			DoBinding ();
+			ReBind ();
 		}
 
-		internal void ReBind ()
+		private void ReBind ()
 		{
 			ClearBinding ();
 			DoBinding ();

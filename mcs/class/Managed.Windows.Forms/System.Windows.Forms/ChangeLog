@@ -1,3 +1,12 @@
+2008-12-23  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: 
+	   - Make ReBind private and refactor various calls to call ReBind 
+	   instead of ClearBinding/DoBinding
+	   - Rebind when the column collection changes
+	* DataGridViewColumnCollection.cs: 
+	   - Leave the rebinding on change to be handled by the DataGridView.
+
 2008-12-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridView.cs: Add a ReBind convenience method.
