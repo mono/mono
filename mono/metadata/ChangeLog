@@ -1,3 +1,12 @@
+2008-12-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r122035.
+
+ 	* marshal.c (mono_marshal_emit_managed_wrapper): Handle char
+ 	return value.
+ 
+ 	Fixes #461867.
+
 2008-12-19  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r121292.
