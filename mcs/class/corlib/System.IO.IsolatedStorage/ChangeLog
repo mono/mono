@@ -1,3 +1,9 @@
+2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Use Url as the default evidence type when
+	null is supplied.
+	[Fix bug #430932]
+
 2008-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MoonIsolatedStorageFile.cs: Add application and iste specific 
