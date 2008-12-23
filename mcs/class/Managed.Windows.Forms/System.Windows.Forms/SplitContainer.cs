@@ -130,6 +130,24 @@ namespace System.Windows.Forms
 		}
 		#endregion
 
+		#region UIA Framework Events
+#if NET_2_0
+		static object UIACanResizeChangedEvent = new object ();
+
+		internal event EventHandler UIACanResizeChanged {
+			add { Events.AddHandler (UIACanResizeChangedEvent, value); }
+			remove { Events.RemoveHandler (UIACanResizeChangedEvent, value); }
+		}
+
+		internal void OnUIACanResizeChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIACanResizeChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion
+
 		#region Public Constructors
 		public SplitContainer ()
 		{
@@ -313,6 +331,12 @@ namespace System.Windows.Forms
 				if (panel1_collapsed != value) {
 					this.panel1_collapsed = value;
 					panel1.Visible = !value;
+
+#if NET_2_0
+					// UIA Framework Event: CanResize Changed
+					OnUIACanResizeChanged (EventArgs.Empty);
+#endif
+
 					PerformLayout ();
 				}
 			}
@@ -339,6 +363,12 @@ namespace System.Windows.Forms
 				if (panel2_collapsed != value) {
 					this.panel2_collapsed = value;
 					panel2.Visible = !value;
+
+#if NET_2_0
+					// UIA Framework Event: CanResize Changed
+					OnUIACanResizeChanged (EventArgs.Empty);
+#endif
+
 					PerformLayout ();
 				}
 			}

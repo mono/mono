@@ -1,3 +1,9 @@
+2008-12-23  Neville Gao  <nevillegao@gmail.com>
+
+	* StatusBar.cs: Modified argument variable.
+	* SplitContainer.cs: Control enabled to support accessibility.
+	[Fixes Bug #455950]
+
 2008-12-22  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripMenuItem.cs: Guard against an NRE.

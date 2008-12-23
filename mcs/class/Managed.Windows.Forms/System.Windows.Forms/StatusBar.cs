@@ -552,12 +552,12 @@ namespace System.Windows.Forms {
 				remove { owner.Events.RemoveHandler (UIACollectionChangedEvent, value); }
 			}
 			
-			internal void OnUIACollectionChanged (CollectionChangeEventArgs args)
+			internal void OnUIACollectionChanged (CollectionChangeEventArgs e)
 			{
 				CollectionChangeEventHandler eh
 					= (CollectionChangeEventHandler) owner.Events [UIACollectionChangedEvent];
 				if (eh != null)
-					eh (owner, args);
+					eh (owner, e);
 			}
 #endif
 			#endregion
