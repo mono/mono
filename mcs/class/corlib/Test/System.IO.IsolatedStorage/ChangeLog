@@ -1,3 +1,8 @@
+2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFileTest.cs: Add test case when null values are used
+	in GetStore. Fix bug #430932
+
 2008-04-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFileTest.cs: Add test cases for creating sub-

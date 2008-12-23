@@ -492,5 +492,14 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			isf.CreateDirectory ("subdir/subdir2");
 			isf.DeleteDirectory ("subdir");
 		}
+
+		[Test]
+		public void GetStore_NullTypes ()
+		{
+			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Roaming | IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain;
+			IsolatedStorageFile isf = IsolatedStorageFile.GetStore (scope, null, null);
+			Assert.AreEqual (typeof (Url), isf.AssemblyIdentity.GetType (), "AssemblyIdentity");
+			Assert.AreEqual (typeof (Url), isf.DomainIdentity.GetType (), "DomainIdentity");
+		}
 	}
 }
