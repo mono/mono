@@ -25,7 +25,7 @@ namespace MonoTests.Mono.Security.Authenticode {
 	// cert2spc cert1.cer cacert.cer cacrl.crl ... output.spc
 	
 	[TestFixture]
-	public class SoftwarePublisherCertificateFileTest : Assertion {
+	public class SoftwarePublisherCertificateFileTest {
 	
 		static byte[] certonly = { 
 		0x30, 0x82, 0x03, 0x1E, 0x06, 0x09, 0x2A, 0x86, 0x48, 0x86, 0xF7, 0x0D, 
@@ -381,32 +381,6 @@ namespace MonoTests.Mono.Security.Authenticode {
 		0x77, 0xEF, 0xEC, 0x17, 0x92, 0xC7, 0xD6, 0xCD, 0xE1, 0x2A, 0x2E, 0xE7, 
 		0xF3, 0xED, 0x7F, 0x66, 0x86, 0x31, 0x00 };
 	
-		// because most crypto stuff works with byte[] buffers
-		static public void AssertEquals (string msg, byte[] array1, byte[] array2) 
-		{
-			if ((array1 == null) && (array2 == null))
-				return;
-			if (array1 == null)
-				Fail (msg + " -> First array is NULL");
-			if (array2 == null)
-				Fail (msg + " -> Second array is NULL");
-	
-			bool a = (array1.Length == array2.Length);
-			if (a) {
-				for (int i = 0; i < array1.Length; i++) {
-					if (array1 [i] != array2 [i]) {
-						a = false;
-						break;
-					}
-				}
-			}
-			if (array1.Length > 0) {
-				msg += " -> Expected " + BitConverter.ToString (array1, 0);
-				msg += " is different than " + BitConverter.ToString (array2, 0);
-			}
-			Assert (msg, a);
-		}
-	
 		private const string testfile = "test.spc";
 	
 		[TearDown]
@@ -415,74 +389,117 @@ namespace MonoTests.Mono.Security.Authenticode {
 			File.Delete (testfile);
 		}
 	
-		private void WriteBuffer (byte[] buffer) 
+		private void WriteBuffer (byte[] buffer, bool base64, bool unicode, bool pem) 
 		{
-			FileStream fs = File.Create (testfile);
-			fs.Write (buffer, 0, buffer.Length);
-			fs.Close ();
+			byte[] data = buffer;
+			if (base64) {
+				string s = Convert.ToBase64String (buffer);
+				if (unicode) {
+					data = Encoding.Unicode.GetBytes (s);
+				} else if (pem) {
+					string b64pem = "-----BEGIN PKCS7-----\n" + s + "\n-----END PKCS7-----";
+					data = Encoding.ASCII.GetBytes (b64pem);
+			using (FileStream fs = File.Create ("bad.pem")) {
+				fs.Write (data, 0, data.Length);
+			}
+				} else {
+					data = Encoding.ASCII.GetBytes (s);
+				}
+			}
+
+			using (FileStream fs = File.Create (testfile)) {
+				fs.Write (data, 0, data.Length);
+			}
 		}
 	
 		[Test]
-		public void ReadCertificateOnly () 
+		public void ReadCertificateOnly_Binary () 
 		{
-			WriteBuffer (certonly);
+			WriteBuffer (certonly, false, false, false);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
-			AssertEquals ("certonly.Certificates", 1, spc.Certificates.Count);
-			AssertEquals ("certonly.Crl", 0, spc.Crls.Count);
+			Assert.AreEqual (1, spc.Certificates.Count, "certonly.Certificates");
+			Assert.AreEqual (0, spc.Crls.Count, "certonly.Crl");
+		}
+
+		[Test]
+		public void ReadCertificateOnly_Base64 () 
+		{
+			WriteBuffer (certonly, true, false, false);
+			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
+			Assert.AreEqual (1, spc.Certificates.Count, "certonly.Certificates");
+			Assert.AreEqual (0, spc.Crls.Count, "certonly.Crl");
+		}
+
+		[Test]
+		public void ReadCertificateOnly_Base64Unicode () 
+		{
+			WriteBuffer (certonly, true, true, false);
+			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
+			Assert.AreEqual (1, spc.Certificates.Count, "certonly.Certificates");
+			Assert.AreEqual (0, spc.Crls.Count, "certonly.Crl");
+		}
+
+		[Test]
+		public void ReadCertificateOnly_PEM () 
+		{
+			WriteBuffer (certonly, true, false, true);
+			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
+			Assert.AreEqual (1, spc.Certificates.Count, "certonly.Certificates");
+			Assert.AreEqual (0, spc.Crls.Count, "certonly.Crl");
 		}
 	
 		[Test]
 		public void CompareCertificateOnly () 
 		{
-			WriteBuffer (certonly);
+			WriteBuffer (certonly, false, false, false);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			SoftwarePublisherCertificate newspc = new SoftwarePublisherCertificate ();
 			newspc.Certificates.Add (spc.Certificates [0]);
 			byte[] newcertonly = newspc.GetBytes ();
-			AssertEquals ("certonly.compare", certonly, newcertonly);
+			Assert.AreEqual (certonly, newcertonly, "certonly.compare");
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newcertonly);
-			AssertEquals ("certonly.Certificates", 1, newerspc.Certificates.Count);
-			AssertEquals ("certonly.Crl", 0, newerspc.Crls.Count);
+			Assert.AreEqual (1, newerspc.Certificates.Count, "certonly.Certificates");
+			Assert.AreEqual (0, newerspc.Crls.Count, "certonly.Crl");
 		}
 	
 		[Test]
 		public void ReadCRLOnly () 
 		{
-			WriteBuffer (crlonly);
+			WriteBuffer (crlonly, false, false, false);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
-			AssertEquals ("crlonly.Certificates", 0, spc.Certificates.Count);
-			AssertEquals ("crlonly.Crl", 1, spc.Crls.Count);
+			Assert.AreEqual (0, spc.Certificates.Count, "crlonly.Certificates");
+			Assert.AreEqual (1, spc.Crls.Count, "crlonly.Crl");
 		}
 	
 		[Test]
 		public void CompareCRLOnly () 
 		{
-			WriteBuffer (crlonly);
+			WriteBuffer (crlonly, false, false, false);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			SoftwarePublisherCertificate newspc = new SoftwarePublisherCertificate ();
 			newspc.Crls.Add (spc.Crls [0]);
 			byte[] newcrlonly = newspc.GetBytes ();
-			AssertEquals ("crlonly.compare", crlonly, newcrlonly);
+			Assert.AreEqual (crlonly, newcrlonly, "crlonly.compare");
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newcrlonly);
-			AssertEquals ("crlonly.Certificates", 0, newerspc.Certificates.Count);
-			AssertEquals ("crlonly.Crl", 1, newerspc.Crls.Count);
+			Assert.AreEqual (0, newerspc.Certificates.Count, "crlonly.Certificates");
+			Assert.AreEqual (1, newerspc.Crls.Count, "crlonly.Crl");
 		}
 	
 		[Test]
 		public void ReadNavy () 
 		{
-			WriteBuffer (navy);
+			WriteBuffer (navy, false, false, false);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
-			AssertEquals ("navy.Certificates", 3, spc.Certificates.Count);
-			AssertEquals ("navy.Crl", 2, spc.Crls.Count);
+			Assert.AreEqual (3, spc.Certificates.Count, "navy.Certificates");
+			Assert.AreEqual (2, spc.Crls.Count, "navy.Crl");
 		}
 	
 		[Test]
 		public void CompareReadNavy () 
 		{
-			WriteBuffer (navy);
+			WriteBuffer (navy, false, false, false);
 			SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (testfile);
 			SoftwarePublisherCertificate newspc = new SoftwarePublisherCertificate ();
 			foreach (MSX.X509Certificate x in spc.Certificates)
@@ -490,11 +507,11 @@ namespace MonoTests.Mono.Security.Authenticode {
 			foreach (byte[] crl in spc.Crls)
 				newspc.Crls.Add (crl);
 			byte[] newnavy = newspc.GetBytes ();
-			AssertEquals ("navy.compare", navy, newnavy);
+			Assert.AreEqual (navy, newnavy, "navy.compare");
 	
 			SoftwarePublisherCertificate newerspc = new SoftwarePublisherCertificate (newnavy);
-			AssertEquals ("navy.Certificates", 3, newerspc.Certificates.Count);
-			AssertEquals ("navy.Crl", 2, newerspc.Crls.Count);
+			Assert.AreEqual (3, newerspc.Certificates.Count, "navy.Certificates");
+			Assert.AreEqual (2, newerspc.Crls.Count, "navy.Crl");
 		}
 		
 		[Test]

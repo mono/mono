@@ -1,3 +1,8 @@
+2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SoftwarePublisherCertificateTest.cs: Update test syntax to nunit
+	2.2. Test more cases like base64, unicode base64 and PEM base64.
+
 2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrivateKeyTest.cs: Fixed SaltWithoutPassword test to always use 
