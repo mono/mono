@@ -1,3 +1,8 @@
+2008-12-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ReferenceConverter.cs: Implemented.
+	[Fixes bug #381435]
+
 2008-09-08  Jonathan Pobst  <monkey@jpobst.com>
 
 	* BackgroundWorker.cs: If the user sets Cancel to true, but then

@@ -141,6 +141,7 @@ System.ComponentModel/MaskedTextProviderTest.cs
 System.ComponentModel/NestedContainerTest.cs
 System.ComponentModel/PropertyDescriptorCollectionTests.cs
 System.ComponentModel/PropertyDescriptorTests.cs
+System.ComponentModel/ReferenceConverterTest.cs
 System.ComponentModel/SByteConverterTests.cs
 System.ComponentModel/SingleConverterTests.cs
 System.ComponentModel/ToolboxItemAttributeTests.cs

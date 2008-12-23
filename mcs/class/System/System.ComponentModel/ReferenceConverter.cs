@@ -32,20 +32,24 @@
 
 using System.Globalization;
 using System.Collections;
+using System.ComponentModel.Design;
 
 namespace System.ComponentModel
 {
 	public class ReferenceConverter : TypeConverter
 	{
 
+		private Type reference_type;
+
 		public ReferenceConverter (Type type)
 		{
+			reference_type = type;
 		}
 
 		public override bool CanConvertFrom (ITypeDescriptorContext context,
 						     Type sourceType)
 		{
-			if (sourceType == typeof (string))
+			if (context != null && sourceType == typeof (string))
 				return true;
 			return base.CanConvertFrom (context, sourceType);
 		}
@@ -57,10 +61,23 @@ namespace System.ComponentModel
 			if (!(value is string))
 				return base.ConvertFrom(context, culture, value);
 			
-			if (((string)value) == "(none)")
-				return null;
 			
-			// There must be something else to do here...
+			if (context != null) {
+				object reference = null;
+				// try 1 - IReferenceService
+				IReferenceService referenceService = context.GetService (typeof (IReferenceService)) as IReferenceService;
+				if (referenceService != null)
+					reference = referenceService.GetReference ((string)value);
+
+				// try 2 - Component by name
+				if (reference == null) {
+					if (context.Container != null && context.Container.Components != null)
+						reference = context.Container.Components[(string)value];
+				}
+
+				return reference;
+			}
+
 			return null;
 		}
 
@@ -75,13 +92,52 @@ namespace System.ComponentModel
 			if (value == null)
 				return "(none)";
 			
-			return String.Empty;
+			string referenceName = String.Empty;
+
+			if (context != null) {
+				// try 1 - IReferenceService
+				IReferenceService referenceService = context.GetService (typeof (IReferenceService)) as IReferenceService;
+				if (referenceService != null)
+					referenceName = referenceService.GetName (value);
+	
+				// try 2 - Component by name
+				if ((referenceName == null || referenceName.Length == 0) && value is IComponent) {
+					IComponent component = (IComponent) value;
+					if (component.Site != null && component.Site.Name != null)
+						referenceName = component.Site.Name;
+				}
+			}
+
+			return referenceName;
 		}
 
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 		{
 			ArrayList values = new ArrayList ();
-			values.Add (null);
+
+			if (context != null) {
+				IReferenceService referenceService = context.GetService (typeof (IReferenceService)) as IReferenceService;
+				if (referenceService != null) {
+					foreach (object reference in referenceService.GetReferences (reference_type)) {
+						if (IsValueAllowed (context, reference)) {
+							values.Add (reference);
+						}
+					}
+				} else {
+					if (context.Container != null && context.Container.Components != null) {
+						foreach (object component in context.Container.Components) {
+							// avoid duplicate null values here
+							if (component != null && 
+							    IsValueAllowed (context, component) &&
+							    reference_type.IsInstanceOfType (component))
+								values.Add (component);
+						}
+					}
+				}
+
+				values.Add (null);
+			}
+
 			return new StandardValuesCollection (values);
 		}
 

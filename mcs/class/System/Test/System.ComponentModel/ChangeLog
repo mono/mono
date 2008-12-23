@@ -1,3 +1,7 @@
+2008-12-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ReferenceConverterTest.cs: Added.
+
 2008-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeDescriptorTests.cs:

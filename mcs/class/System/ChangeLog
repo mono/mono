@@ -1,3 +1,7 @@
+2008-12-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* System_test.dll.sources: Added ReferenceConverterTest.cs.
+
 
 2008-11-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
