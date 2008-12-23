@@ -1,3 +1,10 @@
+2008-12-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_marshal_emit_managed_wrapper): Handle char
+	return value.
+
+	Fixes #461867.
+
 2008-12-19  Bill Holmes  <billholmes54@gmail.com>
 
 	* icall-def.h : Adding an internal call definition for 
