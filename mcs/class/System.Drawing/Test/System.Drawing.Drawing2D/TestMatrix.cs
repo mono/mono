@@ -274,10 +274,10 @@ namespace MonoTests.System.Drawing.Drawing2D
 			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
 			matrix.Rotate (180);
 
-			AssertEquals ("H#1", -10.0f, matrix.Elements[0]);
-			AssertEquals ("H#2", -20, matrix.Elements[1]);
-			AssertEquals ("H#3", -30.0000019f, matrix.Elements[2]);
-			AssertEquals ("H#4", -40.0000038f, matrix.Elements[3]);
+			AssertEquals ("H#1", -10.0f, matrix.Elements[0], 0.0001);
+			AssertEquals ("H#2", -20, matrix.Elements[1], 0.0001);
+			AssertEquals ("H#3", -30.0000019f, matrix.Elements[2], 0.0001);
+			AssertEquals ("H#4", -40.0000038f, matrix.Elements[3], 0.0001);
 			AssertEquals ("H#5", 50, matrix.Elements[4]);
 			AssertEquals ("H#6", 60, matrix.Elements[5]);
 		}
@@ -291,12 +291,12 @@ namespace MonoTests.System.Drawing.Drawing2D
 			matrix.Rotate (45);
 			Assert ("+45.!IsIdentity", !matrix.IsIdentity);
 			float[] elements = matrix.Elements;
-			AssertEquals ("45#1", 0.707106769f, elements[0]);
-			AssertEquals ("45#2", 0.707106769f, elements[1]);
-			AssertEquals ("45#3", -0.707106829f, elements[2]);
-			AssertEquals ("45#4", 0.707106769f, elements[3]);
-			AssertEquals ("45#5", 0, elements[4]);
-			AssertEquals ("45#6", 0, elements[5]);
+			AssertEquals ("45#1", 0.707106769f, elements[0], 0.0001);
+			AssertEquals ("45#2", 0.707106769f, elements[1], 0.0001);
+			AssertEquals ("45#3", -0.707106829f, elements[2], 0.0001);
+			AssertEquals ("45#4", 0.707106769f, elements[3], 0.0001);
+			AssertEquals ("45#5", 0, elements[4], 0.001f);
+			AssertEquals ("45#6", 0, elements[5], 0.001f);
 
 			matrix.Rotate (135);
 			Assert ("+135.!IsIdentity", !matrix.IsIdentity);

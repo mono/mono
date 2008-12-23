@@ -1,3 +1,9 @@
+2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GraphicsPathTest.cs, LinearGradientBrushTest.cs, TestMatrix.cs:
+	Add delta when comparing floating point values since there can be
+	small differences between different platforms.
+
 2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LinearGradientBrushTest.cs, GraphicsPathTest.cs,

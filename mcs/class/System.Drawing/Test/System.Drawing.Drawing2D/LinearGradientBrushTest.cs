@@ -70,12 +70,12 @@ namespace MonoTests.System.Drawing.Drawing2D {
 		private void CheckDefaultMatrix (Matrix matrix)
 		{
 			float[] elements = matrix.Elements;
-			Assert.AreEqual (1, elements[0], 0.1, "matrix.0");
-			Assert.AreEqual (1, elements[1], 0.1, "matrix.1");
-			Assert.AreEqual (-1, elements[2], 0.1, "matrix.2");
-			Assert.AreEqual (1, elements[3], 0.1, "matrix.3");
-			Assert.AreEqual (15.999999f, elements[4], "matrix.4");
-			Assert.AreEqual (-16, elements[5], "matrix.5");
+			Assert.AreEqual (1.0f, elements[0], 0.1, "matrix.0");
+			Assert.AreEqual (1.0f, elements[1], 0.1, "matrix.1");
+			Assert.AreEqual (-1.0f, elements[2], 0.1, "matrix.2");
+			Assert.AreEqual (1.0f, elements[3], 0.1, "matrix.3");
+			Assert.AreEqual (16.0f, elements[4], 0.1, "matrix.4");
+			Assert.AreEqual (-16.0f, elements[5], 0.1, "matrix.5");
 		}
 
 		private void CheckBrushAt45 (LinearGradientBrush lgb)

@@ -236,22 +236,22 @@ namespace MonoTests.System.Drawing.Drawing2D {
 
 			// GetBounds (well GdipGetPathWorldBounds) isn't implemented
 			RectangleF rect = path.GetBounds ();
-			Assert.AreEqual (2.99962401f, rect.X, "Bounds.X");
-			Assert.AreEqual (2.01370716f, rect.Y, "Bounds.Y");
+			Assert.AreEqual (2.99962401f, rect.X, Delta, "Bounds.X");
+			Assert.AreEqual (2.01370716f, rect.Y, Delta, "Bounds.Y");
 			Assert.AreEqual (0f, rect.Width, Delta, "Bounds.Width");
 			Assert.AreEqual (0.0137047768f, rect.Height, "Bounds.Height");
 
-			Assert.AreEqual (2.99990582f, path.PathData.Points[0].X, "Points[0].X");
-			Assert.AreEqual (2.01370716f, path.PathPoints[0].Y, "Points[0].Y");
+			Assert.AreEqual (2.99990582f, path.PathData.Points[0].X, Delta, "Points[0].X");
+			Assert.AreEqual (2.01370716f, path.PathPoints[0].Y, Delta, "Points[0].Y");
 			Assert.AreEqual (0, path.PathData.Types[0], "Types[0]");
-			Assert.AreEqual (2.99984312f, path.PathData.Points[1].X, "Points[1].X");
-			Assert.AreEqual (2.018276f, path.PathPoints[1].Y, "Points[1].Y");
+			Assert.AreEqual (2.99984312f, path.PathData.Points[1].X, Delta, "Points[1].X");
+			Assert.AreEqual (2.018276f, path.PathPoints[1].Y, Delta, "Points[1].Y");
 			Assert.AreEqual (3, path.PathTypes[1], "Types[1]");
-			Assert.AreEqual (2.99974918f, path.PathData.Points[2].X, "Points[2].X");
-			Assert.AreEqual (2.02284455f, path.PathPoints[2].Y, "Points[2].Y");
+			Assert.AreEqual (2.99974918f, path.PathData.Points[2].X, Delta, "Points[2].X");
+			Assert.AreEqual (2.02284455f, path.PathPoints[2].Y, Delta, "Points[2].Y");
 			Assert.AreEqual (3, path.PathData.Types[2], "Types[2]");
-			Assert.AreEqual (2.999624f, path.PathData.Points[3].X, "Points[3].X");
-			Assert.AreEqual (2.027412f, path.PathPoints[3].Y, "Points[3].Y");
+			Assert.AreEqual (2.999624f, path.PathData.Points[3].X, Delta, "Points[3].X");
+			Assert.AreEqual (2.027412f, path.PathPoints[3].Y, Delta, "Points[3].Y");
 			Assert.AreEqual (3, path.PathTypes[3], "Types[3]");
 		}
 
