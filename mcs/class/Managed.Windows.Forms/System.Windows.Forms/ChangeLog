@@ -1,3 +1,9 @@
+2008-12-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridView.cs: Add a ReBind convenience method.
+	* DataGridViewColumnCollection.cs: Rebind when a column is added.
+	[Fixes bug #462019]
+
 2008-12-23  Neville Gao  <nevillegao@gmail.com>
 
 	* StatusBar.cs: Modified argument variable.

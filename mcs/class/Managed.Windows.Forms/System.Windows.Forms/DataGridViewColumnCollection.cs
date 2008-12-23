@@ -225,7 +225,9 @@ namespace System.Windows.Forms
 		{
 			RegenerateIndexes ();
 			RegenerateSortedList ();
-			
+
+			dataGridView.ReBind ();
+
 			if (CollectionChanged != null)
 				CollectionChanged(this, e);
 		}

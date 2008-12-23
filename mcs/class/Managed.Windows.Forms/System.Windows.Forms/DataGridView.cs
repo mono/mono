@@ -6094,6 +6094,12 @@ namespace System.Windows.Forms {
 			DoBinding ();
 		}
 
+		internal void ReBind ()
+		{
+			ClearBinding ();
+			DoBinding ();
+		}
+		
 		private bool MouseOverColumnResize (int col, int mousex)
 		{
 			if (!allowUserToResizeColumns)

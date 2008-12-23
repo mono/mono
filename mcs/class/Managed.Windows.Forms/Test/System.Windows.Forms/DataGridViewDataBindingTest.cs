@@ -435,6 +435,44 @@ namespace MonoTests.System.Windows.Forms.DataGridViewBindingTest
 			f.Dispose ();
 		}
 
+		[Test]  // bug #462019
+		public void TestCreatingColumnsAfterBind ()
+		{
+			// When columns are added, we need to rebind.
+			Form f = new Form ();
+			f.ShowInTaskbar = false;
+
+			DataSet ds = new DataSet ();
+
+			DataTable dt = ds.Tables.Add ("Muppets");
+
+			dt.Columns.Add ("ID");
+			dt.Columns.Add ("Name");
+			dt.Columns.Add ("Sex");
+
+			dt.Rows.Add (1, "Kermit", "Male");
+			dt.Rows.Add (2, "Miss Piggy", "Female");
+			dt.Rows.Add (3, "Gonzo", "Male");
+
+			DataGridView dgv = new DataGridView ();
+			dgv.AutoGenerateColumns = false;
+			dgv.AllowUserToAddRows = false;
+			dgv.DataSource = ds;
+			dgv.DataMember = "Muppets";
+
+			f.Controls.Add (dgv);
+			f.Show ();
+
+			Assert.AreEqual (0, dgv.Rows.Count, "A1");
+			
+			DataGridViewColumn col = new DataGridViewTextBoxColumn ();
+			col.DataPropertyName = "ID";
+			dgv.Columns.Add (col);
+
+			Assert.AreEqual (3, dgv.Rows.Count, "A1");
+
+			f.Dispose ();
+		}
 	}
 	
 	[TestFixture]

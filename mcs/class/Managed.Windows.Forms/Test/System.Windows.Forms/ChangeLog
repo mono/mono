@@ -1,3 +1,7 @@
+2008-12-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataGridViewDataBindingTest.cs: Add test for bug #462019.
+
 2008-12-22  Mario Carrion <mcarrion@novell.com>
 
 	* ControlTest.cs: CreatedAccessibilityTest enabled, testing
