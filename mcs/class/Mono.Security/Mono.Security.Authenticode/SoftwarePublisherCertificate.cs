@@ -6,9 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004,2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +32,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 
 using Mono.Security;
@@ -97,14 +96,12 @@ namespace Mono.Security.Authenticode {
 				return null;
 
 			if (data [0] != 0x30) {
-				// this isn't an ASN.1 SEQUENCE (so not legal)
-				if (data [1] == 0x00) {
-					// this could be base64/unicode (e.g. VeriSign)
-					data = Convert.FromBase64String (Encoding.Unicode.GetString (data));
+				// this isn't an ASN.1 SEQUENCE (so not legal), check for PEM/base64 encoding
+				try {
+					data = PEM (data);
 				}
-				else {
-					// default to base64/ascii
-					data = Convert.FromBase64String (Encoding.ASCII.GetString (data));
+				catch (Exception ex) {
+					throw new CryptographicException ("Invalid encoding", ex);
 				}
 			}
 #if DEBUG
@@ -114,6 +111,19 @@ namespace Mono.Security.Authenticode {
 			}
 #endif
 			return new SoftwarePublisherCertificate (data);
+		}
+
+		const string header = "-----BEGIN PKCS7-----";
+		const string footer = "-----END PKCS7-----";
+
+		static byte[] PEM (byte[] data) 
+		{
+			// this could be base64/unicode (e.g. VeriSign) otherwise default to ASCII
+			string pem = (data [1] == 0x00) ? Encoding.Unicode.GetString (data) : Encoding.ASCII.GetString (data);
+			int start = pem.IndexOf (header) + header.Length;
+			int end = pem.IndexOf (footer, start);
+			string base64 = ((start == -1) || (end == -1)) ? pem : pem.Substring (start, (end - start));
+			return Convert.FromBase64String (base64);
 		}
 	}
 }

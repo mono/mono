@@ -1,3 +1,9 @@
+2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SoftwarePublisherCertificate.cs: Support PKCS7 files that with 
+	PEM headers around the base64 content.
+	[Fix bug #457658]
+
 2008-05-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeFormatter.cs: Throw an NotSupportedException if we're
