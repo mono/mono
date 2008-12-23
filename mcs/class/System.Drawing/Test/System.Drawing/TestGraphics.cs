@@ -5,7 +5,7 @@
 //   Jordi Mas, jordi@ximian.com
 //   Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005-2007 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -2459,6 +2459,80 @@ namespace MonoTests.System.Drawing {
 			}
 		}
 
+		static CharacterRange [] ranges = new CharacterRange [] {
+                    new CharacterRange (0, 1),
+                    new CharacterRange (1, 1),
+                    new CharacterRange (2, 1)
+                };
+
+		Region [] Measure (Graphics gfx, RectangleF rect)
+		{
+			using (StringFormat format = StringFormat.GenericTypographic) {
+				format.SetMeasurableCharacterRanges (ranges);
+
+				using (Font font = new Font (FontFamily.GenericSerif, 11.0f)) {
+					return gfx.MeasureCharacterRanges ("abc", font, rect, format);
+				}
+			}
+		}
+
+		[Test]
+		public void Measure ()
+		{
+			using (Graphics gfx = Graphics.FromImage (new Bitmap (1, 1))) {
+				Region [] zero = Measure (gfx, new RectangleF (0, 0, 0, 0));
+				Assert.AreEqual (3, zero.Length, "zero.Length");
+
+				Region [] small = Measure (gfx, new RectangleF (0, 0, 100, 100));
+				Assert.AreEqual (3, small.Length, "small.Length");
+				for (int i = 0; i < 3; i++ ) {
+					RectangleF zb = zero [i].GetBounds (gfx);
+					RectangleF sb = small [i].GetBounds (gfx);
+					Assert.AreEqual (sb.X, zb.X, "sx" + i.ToString ());
+					Assert.AreEqual (sb.Y, zb.Y, "sy" + i.ToString ());
+					Assert.AreEqual (sb.Width, zb.Width, "sw" + i.ToString ());
+					Assert.AreEqual (sb.Height, zb.Height, "sh" + i.ToString ());
+				}
+
+				Region [] max = Measure (gfx, new RectangleF (0, 0, Single.MaxValue, Single.MaxValue));
+				Assert.AreEqual (3, max.Length, "empty.Length");
+				for (int i = 0; i < 3; i++) {
+					RectangleF zb = zero [i].GetBounds (gfx);
+					RectangleF mb = max [i].GetBounds (gfx);
+					Assert.AreEqual (mb.X, zb.X, "mx" + i.ToString ());
+					Assert.AreEqual (mb.Y, zb.Y, "my" + i.ToString ());
+					Assert.AreEqual (mb.Width, zb.Width, "mw" + i.ToString ());
+					Assert.AreEqual (mb.Height, zb.Height, "mh" + i.ToString ());
+				}
+			}
+		}
+
+		[Test]
+		public void MeasureLimits ()
+		{
+			using (Graphics gfx = Graphics.FromImage (new Bitmap (1, 1))) {
+				Region [] min = Measure (gfx, new RectangleF (0, 0, Single.MinValue, Single.MinValue));
+				Assert.AreEqual (3, min.Length, "origin.Length");
+				for (int i = 0; i < 3; i++) {
+					RectangleF mb = min [i].GetBounds (gfx);
+					Assert.AreEqual (-4194304.0f, mb.X, "minx" + i.ToString ());
+					Assert.AreEqual (-4194304.0f, mb.Y, "miny" + i.ToString ());
+					Assert.AreEqual (8388608.0f, mb.Width, "minw" + i.ToString ());
+					Assert.AreEqual (8388608.0f, mb.Height, "minh" + i.ToString ());
+				}
+
+				Region [] neg = Measure (gfx, new RectangleF (0, 0, -20, -20));
+				Assert.AreEqual (3, neg.Length, "neg.Length");
+				for (int i = 0; i < 3; i++) {
+					RectangleF mb = neg [i].GetBounds (gfx);
+					Assert.AreEqual (-4194304.0f, mb.X, "minx" + i.ToString ());
+					Assert.AreEqual (-4194304.0f, mb.Y, "miny" + i.ToString ());
+					Assert.AreEqual (8388608.0f, mb.Width, "minw" + i.ToString ());
+					Assert.AreEqual (8388608.0f, mb.Height, "minh" + i.ToString ());
+				}
+			}
+		}
+
 		[Test]
 		public void DrawString_EndlessLoop_Bug77699 ()
 		{
@@ -2683,7 +2757,7 @@ namespace MonoTests.System.Drawing {
 					RectangleF rvcb = g.VisibleClipBounds;
 					Assert.AreEqual (0, rvcb.X, "rvcb.X");
 					Assert.AreEqual (-100, rvcb.Y, "rvcb.Y");
-					Assert.AreEqual (50.0000038f, rvcb.Width, "rvcb.Width");
+					Assert.AreEqual (50.0f, rvcb.Width, 0.0001, "rvcb.Width");
 					Assert.AreEqual (100, rvcb.Height, "rvcb.Height");
 				}
 			}

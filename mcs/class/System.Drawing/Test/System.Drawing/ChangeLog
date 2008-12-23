@@ -1,3 +1,9 @@
+2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GDIPlusTest.cs: Add MeasureCharacterRanges test cases around bug
+	#449971 and add a few delta for FP comparison.
+	* TestGraphics.cs: Add a few delta for FP comparison.
+
 2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TestGraphics.cs, GDIPlusTest.cs : fix tests wrt rounding that
