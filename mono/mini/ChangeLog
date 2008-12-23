@@ -1,5 +1,13 @@
 2008-12-23  Mark Probst  <mark.probst@gmail.com>
 
+	Backport of r122034.
+
+	* mini-ppc.c (mono_arch_build_imt_thunk): Save and restore r11.
+	Clobbering it is not allowed because the caller might use it as
+	the vtable register in the interface call.
+
+2008-12-23  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-exceptions.c (get_exception_catch_class): Removed another
 	overly strict assertion.  Fixes #461198.
 
