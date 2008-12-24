@@ -34,7 +34,7 @@ using System.ComponentModel;
 namespace Mono.Messaging {
 
 	public interface IMessageQueue {
-	
+		
 		bool Authenticate {
 			get; set;
 		}
@@ -158,14 +158,42 @@ namespace Mono.Messaging {
 		IMessage ReceiveByCorrelationId (string correlationId, TimeSpan timeout);
 		
 		IMessage ReceiveByCorrelationId (string correlationId, IMessageQueueTransaction transaction);
-		
+
 		IMessage ReceiveByCorrelationId (string correlationId, MessageQueueTransactionType transactionType);
 		
 		IMessage ReceiveByCorrelationId (string correlationId, TimeSpan timeout, IMessageQueueTransaction transaction);
 			
 		IMessage ReceiveByCorrelationId (string correlationId, TimeSpan timeout, MessageQueueTransactionType transactionType);
 		
+		IAsyncResult BeginPeek ();
+
+		IAsyncResult BeginPeek (TimeSpan timeout);
+
+		IAsyncResult BeginPeek (TimeSpan timeout, object stateObject);
+
+		IAsyncResult BeginPeek (TimeSpan timeout, object stateObject, AsyncCallback callback);
+		
+		IMessage EndPeek (IAsyncResult asyncResult);
+		
+		IAsyncResult BeginReceive ();
+
+		IAsyncResult BeginReceive (TimeSpan timeout);
+
+		IAsyncResult BeginReceive (TimeSpan timeout, object stateObject);
+
+		IAsyncResult BeginReceive (TimeSpan timeout, object stateObject, AsyncCallback callback);
+		
+		IMessage EndReceive (IAsyncResult asyncResult);
+		
 		IMessageEnumerator GetMessageEnumerator ();
+
+		event CompletedEventHandler PeekCompleted;
+		
+		event CompletedEventHandler ReceiveCompleted;
+		
+		void SendReceiveCompleted (IAsyncResult result);
+		
+		void SendPeekCompleted (IAsyncResult result);
 	}
 
 }

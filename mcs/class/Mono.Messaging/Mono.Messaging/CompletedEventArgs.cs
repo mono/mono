@@ -4,7 +4,7 @@
 // Authors:
 //	  Michael Barker (mike@middlesoft.co.uk)
 //
-//	(C) Ximian, Inc.  http://www.ximian.com
+// (C) 2008 Michael Barker
 //
 
 //
@@ -14,7 +14,7 @@
 // without limitation the rights to use, copy, modify, merge, publish,
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:(
+// the following conditions:
 // 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
@@ -27,39 +27,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Reflection;
 
-namespace Mono.Messaging 
+using System;
+
+namespace Mono.Messaging
 {
-	public class MessagingProviderLocator 
+	public class CompletedEventArgs : EventArgs 
 	{
-		private static IMessagingProvider provider = null;
-		private static readonly object syncObj = new object();
-		public static readonly TimeSpan InfiniteTimeout = TimeSpan.MaxValue;
-	
-		public static IMessagingProvider GetProvider ()
+		private IAsyncResult _result;
+
+		public CompletedEventArgs(IAsyncResult result)
 		{
-			//Assembly a = Assembly.Load("Mono.Messaging.RabbitMQ.dll");
-			//Type[] ts = a.GetTypes ();
-			
-			//foreach (type in ts)
-			//	Console.WriteLine (type.GetName ());
-			lock (syncObj) {
-				if (provider == null) {
-					Type t = Type.GetType ("Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider, Mono.Messaging.RabbitMQ");
-					if (t == null)
-						throw new Exception ("Can't find class");
-					ConstructorInfo ci = t.GetConstructor (
-						BindingFlags.Public | BindingFlags.Instance, 
-								Type.DefaultBinder, new Type[0],
-								new ParameterModifier[0]);
-					if (ci == null)
-						throw new Exception ("Can't find constructor");
-					provider = (IMessagingProvider) ci.Invoke (new object[0]);
-				}
-			}
-			return provider;
+			_result = result;
+		}
+
+		public IAsyncResult AsyncResult
+		{
+			get { return _result; }
+			set { _result = value; }
 		}
 	}
 }

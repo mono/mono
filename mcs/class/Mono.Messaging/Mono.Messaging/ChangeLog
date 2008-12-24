@@ -1,3 +1,13 @@
+2008-12-21  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueueBase.cs:  Added optional base class that provide async
+	messaging support.
+	* CompletedEventArgs.cs:  Added for events on async methods.
+	* CompletedEventHandler.cs:  Added for events on async methods.
+	* IMessageQueue.cs:  Added method and event signatures for async messaging.
+	* MessagingProviderLocator.cs:  Added constant for InfiniteTimeout.
+	* QueueReference.cs:  Remove unecessary logging.
+
 2008-12-07  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageUnavailableException.cs:  Specific exception for messages not being

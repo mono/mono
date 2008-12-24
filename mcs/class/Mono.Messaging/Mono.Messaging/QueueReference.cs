@@ -84,7 +84,6 @@ namespace Mono.Messaging
 
 		public override bool Equals (object other)
 		{
-			Console.Write("Equals Called\n");
 			if (other == null)
 				return false;
 			else if (typeof (QueueReference) != other.GetType ())
