@@ -34,6 +34,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Messaging.Design;
+using System.Threading;
 
 using Mono.Messaging;
 
@@ -49,7 +50,7 @@ namespace System.Messaging
 		#region Fields
 
 		public static readonly long InfiniteQueueSize;
-		public static readonly TimeSpan InfiniteTimeout;
+		public static readonly TimeSpan InfiniteTimeout = MessagingProviderLocator.InfiniteTimeout;
 		private IMessageFormatter formatter;
 		private MessagePropertyFilter messageReadPropertyFilter = new MessagePropertyFilter ();
 		private readonly IMessageQueue delegateQueue;
@@ -76,6 +77,7 @@ namespace System.Messaging
 		{
 			this.delegateQueue = delegateQueue;
 			formatter = new XmlMessageFormatter ();
+			delegateQueue.PeekCompleted += new CompletedEventHandler (DelegatePeekCompleted);
 		}
 
 		#endregion //Constructor
@@ -372,47 +374,46 @@ namespace System.Messaging
 
 		#region Methods
 
-		[MonoTODO]
 		public IAsyncResult BeginPeek ()
 		{
-			throw new NotImplementedException ();
+			return delegateQueue.BeginPeek ();
 		}
-		[MonoTODO]
+
 		public IAsyncResult BeginPeek (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			return delegateQueue.BeginPeek (timeout);
 		}
-		[MonoTODO]
+
 		public IAsyncResult BeginPeek (TimeSpan timeout, object stateObject)
 		{
-			throw new NotImplementedException ();
+			return delegateQueue.BeginPeek (timeout, stateObject);
 		}
-		[MonoTODO]
+
 		public IAsyncResult BeginPeek (TimeSpan timeout,
 									  object stateObject,
 									  AsyncCallback callback)
 		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
+			return delegateQueue.BeginPeek (timeout, stateObject, callback);
+		}		
+
 		public IAsyncResult BeginReceive ()
 		{
-			throw new NotImplementedException ();
+			return delegateQueue.BeginReceive ();
 		}
-		[MonoTODO]
+
 		public IAsyncResult BeginReceive (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			return delegateQueue.BeginReceive (timeout);
 		}
-		[MonoTODO]
+
 		public IAsyncResult BeginReceive (TimeSpan timeout, object stateObject)
 		{
-			throw new NotImplementedException ();
+			return delegateQueue.BeginReceive (timeout, stateObject);
 		}
-		[MonoTODO]
+
 		public IAsyncResult BeginReceive (TimeSpan timeout, object stateObject, AsyncCallback callback)
 		{
-			throw new NotImplementedException ();
+			return delegateQueue.BeginReceive (timeout, stateObject, callback);
 		}
 		[MonoTODO]
 		public static void ClearConnectionCache ()
@@ -445,15 +446,47 @@ namespace System.Messaging
 			QueueReference qRef = QueueReference.Parse (path);
 			MessagingProviderLocator.GetProvider ().DeleteQueue (qRef);
 		}
-		[MonoTODO]
+
 		public Message EndPeek (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			if (asyncResult == null)
+				throw new ArgumentNullException ();
+			
+			try {				
+				IMessage iMsg = delegateQueue.EndPeek (asyncResult);
+				if (iMsg == null)
+					return null;
+				
+				return new Message (iMsg, null, Formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}
 		}
-		[MonoTODO]
+		
 		public Message EndReceive (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			if (asyncResult == null)
+				throw new ArgumentNullException ();
+			
+			try {				
+				IMessage iMsg = delegateQueue.EndReceive (asyncResult);
+				if (iMsg == null)
+					return null;
+				
+				return new Message (iMsg, null, Formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}
 		}
 
 		public static bool Exists (string path)
@@ -1120,13 +1153,29 @@ namespace System.Messaging
 
 		#endregion //Methods
 
-		//TODO: Use these events.
-
 		[MessagingDescription ("MQ_PeekCompleted")]
 		public event PeekCompletedEventHandler PeekCompleted;
+		
+		private void DelegatePeekCompleted (object sender, CompletedEventArgs args)
+		{
+			if (PeekCompleted == null)
+				return;
+			
+			PeekCompletedEventArgs newArgs = new PeekCompletedEventArgs (this, args.AsyncResult);			
+			PeekCompleted (sender, newArgs);
+		}
 
 		[MessagingDescription ("MQ_ReceiveCompleted")]
 		public event ReceiveCompletedEventHandler ReceiveCompleted;
+		
+		private void DelegateReceiveCompleted (object sender, CompletedEventArgs args)
+		{
+			if (ReceiveCompleted == null)
+				return;
+			
+			ReceiveCompletedEventArgs newArgs = new ReceiveCompletedEventArgs (this, args.AsyncResult);			
+			ReceiveCompleted (sender, newArgs);
+		}
 		
 		private static IMessageQueue GetMessageQueue (string path)
 		{
@@ -1153,6 +1202,6 @@ namespace System.Messaging
 		private static bool Exists (QueueReference qRef)
 		{
 			return MessagingProviderLocator.GetProvider ().Exists (qRef);
-		}
+		}		
 	}
 }

@@ -1,3 +1,9 @@
+2008-12-20  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueue.cs:  Added implementation for async methods: BeginReceive,
+	BeginPeek, EndReceive and EndPeek.  Set up event handlers to propagate
+	Asycn ReceiveCompleted/PeekCompleted events to System.Messaging API users.
+	
 2008-11-23  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageQueue.cs:  Added support for MessageQueueTransactionType methods, 
