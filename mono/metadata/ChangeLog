@@ -1,3 +1,20 @@
+2008-12-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.c (mono_runtime_invoke_array): Don't assert with
+	byref nullable types.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): To handle
+	byref nullables we unbox the object and store it on the
+	stack. 
+	We can't use the boxed object since it is the T of Nullable<T>
+	and the boxed representation of a nullable it's underlying type
+	or null.
+	We could cheat and create a boxed nullable and use the same
+	machinery of other byref VTs but this feels like a hack and
+	using the stack has the bonus of reducing heap pressure.
+
+	Fixes #461941.
+
 2008-12-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* marshal.c (mono_marshal_emit_managed_wrapper): Handle char
