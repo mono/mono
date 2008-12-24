@@ -1,3 +1,10 @@
+2008-12-24  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sealed-virtual.2.cs: Test case for final generic
+	methods.
+
+	* Makefile.am: Test added.
+
 2008-12-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-461941.cs: New regression test.

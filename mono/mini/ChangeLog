@@ -1,3 +1,11 @@
+2008-12-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.h: New macro for checking whether a method is final,
+	i.e. whether the method or its class is marked final.
+
+	* method-to-ir.c: Use the new macro for all final-checks
+	consistently.  Fixes the crash in the System.ServiceModel tests.
+
 2008-12-23  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-exceptions.c (get_exception_catch_class): Corrected another
