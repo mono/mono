@@ -1942,6 +1942,7 @@ namespace System.Windows.Forms {
 						return DateTimePart.DayName;
 					case "M":
 					case "MM":
+					case "MMMM":
 						return DateTimePart.Month;
 					case "y":
 					case "yy":

@@ -1,3 +1,8 @@
+2008-12-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DateTimePicker.cs: Handle the "MMMM" month format.
+	Fixes #459674.
+
 2008-12-23  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: 
