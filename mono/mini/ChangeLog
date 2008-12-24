@@ -1,3 +1,7 @@
+2008-12-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c (mono_arch_build_imt_thunk): Fix the build.
+
 2008-12-23  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r122034.
