@@ -1,8 +1,12 @@
+2008-12-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-461941.cs: New regression test.
+
+	* Makefile.am: Test added.
+
 2008-12-23  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-461198.2.cs: New generic sharing test.
-
-	* Makefile.am: Test added.
 
 2008-12-23  Rodrigo Kumpera  <rkumpera@novell.com>
 
