@@ -81,7 +81,6 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			
 			Message m1 = me1.Current;
 			m1.Formatter = new BinaryMessageFormatter ();
-			Console.WriteLine ("{0}", m1.Body);
 			Assert.AreEqual ("message 4", (String) m1.Body, "body incorrect");
 			
 			mq1.Purge ();

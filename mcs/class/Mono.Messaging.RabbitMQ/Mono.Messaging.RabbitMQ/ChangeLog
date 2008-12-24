@@ -1,3 +1,8 @@
+2008-12-22  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueue.cs:  Changed to extend MessageQueueBase to make use
+	of default asynchronous Receive/Peek methods.
+
 2008-12-07  Michael Barker  <mike@middlesoft.co.uk>
 
 	* RabbitMQMessageQueue.cs:  Throw MessageUnavailableException when there are

@@ -43,7 +43,7 @@ using RabbitMQ.Util;
 
 namespace Mono.Messaging.RabbitMQ {
 
-	public class RabbitMQMessageQueue : IMessageQueue {
+	public class RabbitMQMessageQueue : MessageQueueBase, IMessageQueue {
 		
 		private bool authenticate = false;
 		private short basePriority = 0;
@@ -82,6 +82,10 @@ namespace Mono.Messaging.RabbitMQ {
 			this.realm = realm;
 			this.qRef = qRef;
 			this.transactional = transactional;
+		}
+		
+		protected override IMessageQueue Queue {
+			get { return this; }
 		}
 
 		public bool Authenticate {
@@ -324,29 +328,11 @@ namespace Mono.Messaging.RabbitMQ {
 		public IMessage Peek (TimeSpan timeout)
 		{
 			return Run (Peeker (timeout));
-//			ConnectionFactory cf = new ConnectionFactory ();
-//
-//			using (IConnection cn = cf.CreateConnection (QRef.Host)) {
-//				using (IModel ch = cn.CreateModel ()) {
-//					if (timeout == TimeSpan.MaxValue) {
-//						return Receive (ch, -1, false);
-//					} else {
-//						return Receive (ch, (int) timeout.TotalMilliseconds, false);
-//					}
-//				}
-//			}
 		}
 		
 		public IMessage PeekById (string id)
 		{
 			return Run (Peeker (ById (id)));
-//			ConnectionFactory cf = new ConnectionFactory ();
-//
-//			using (IConnection cn = cf.CreateConnection (QRef.Host)) {
-//				using (IModel ch = cn.CreateModel ()) {
-//					return Receive (ch, 500, true, new IdMatcher (id).MatchById);
-//				}
-//			}
 		}
 
 		public IMessage PeekById (string id, TimeSpan timeout)
@@ -357,14 +343,6 @@ namespace Mono.Messaging.RabbitMQ {
 		public IMessage PeekByCorrelationId (string id)
 		{
 			return Run (Peeker (ByCorrelationId (id)));
-//			ConnectionFactory cf = new ConnectionFactory ();
-//
-//			using (IConnection cn = cf.CreateConnection (QRef.Host)) {
-//				using (IModel ch = cn.CreateModel ()) {
-//					return Receive (ch, 500, false, 
-//					                new CorrelationIdMatcher (id).MatchById);
-//				}
-//			}
 		}
 
 		public IMessage PeekByCorrelationId (string id, TimeSpan timeout)
@@ -694,8 +672,6 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private IMessage Receive (IModel model, int timeout, bool doAck)
 		{
-			Console.WriteLine ("{0}, {1}", timeout, doAck);
-			
 			ushort ticket = model.AccessRequest (realm);
 			string finalName = model.QueueDeclare (ticket, QRef.Queue, false);
 			
@@ -715,8 +691,6 @@ namespace Mono.Messaging.RabbitMQ {
 		private IMessage Receive (IModel model, int timeout, 
 		                          bool doAck, IsMatch matcher)
 		{
-			Console.WriteLine ("{0}, {1}", timeout, doAck);
-			
 			ushort ticket = model.AccessRequest (realm);
 			string finalName = model.QueueDeclare (ticket, QRef.Queue, false);
 			

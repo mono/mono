@@ -7,3 +7,5 @@ Mono.Messaging.RabbitMQ/MessageEnumeratorTest.cs
 Mono.Messaging.RabbitMQ/PeekTest.cs
 Mono.Messaging.RabbitMQ/TransactionMessagingTest.cs
 Mono.Messaging.RabbitMQ/SelectorTest.cs
+Mono.Messaging.RabbitMQ/AsyncReceiveTest.cs
+Mono.Messaging.RabbitMQ/AsyncPeekTest.cs

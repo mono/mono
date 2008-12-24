@@ -1,3 +1,9 @@
+2008-12-20  Michael Barker  <mike@middlesoft.co.uk>
+
+	* AsyncReceiveTest.cs:  New, tests for Asynchronous Receive methods.
+	* AsyncPeekTest.cs:  New, tests for Asynchronous Peek methods.
+	* MessageQueueEnumeratorTest.cs:  Removed unecesary logging.
+
 2008-12-06  Michael Barker  <mike@middlesoft.co.uk>
 
 	* AdminTest.cs:  Updated to run against MS.NET
