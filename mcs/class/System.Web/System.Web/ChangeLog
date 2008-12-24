@@ -1,3 +1,8 @@
+2008-12-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: watch for changes to web.config also
+	in the subdirectories.
+
 2008-12-20  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: the code in TransmitFile (VirtualFile, bool)

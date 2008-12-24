@@ -457,9 +457,9 @@ namespace System.Web {
 
 					WatchLocationForRestart("Global.asax");
 					WatchLocationForRestart("global.asax");
-					WatchLocationForRestart("Web.config");
-					WatchLocationForRestart("web.config");
-					WatchLocationForRestart("Web.Config");
+					WatchLocationForRestart(String.Empty, "Web.config", true);
+					WatchLocationForRestart(String.Empty, "web.config", true);
+					WatchLocationForRestart(String.Empty, "Web.Config", true);
 					needs_init = false;
 #if NET_2_0
 				} catch (Exception) {
@@ -586,7 +586,7 @@ namespace System.Web {
 			physicalPath = Path.Combine(physicalPath, virtualPath);
 			bool isDir = Directory.Exists(physicalPath);
 			bool isFile = isDir ? false : File.Exists(physicalPath);
-			
+
 			if (isDir || isFile) {
 				// create the watcher
 				FileSystemEventHandler fseh = new FileSystemEventHandler(OnFileChanged);
