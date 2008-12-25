@@ -1744,7 +1744,7 @@ namespace System.Web {
 			
 			if (path.IndexOf (":\\") != 1 && !path.StartsWith ("\\\\"))
 				return path;
-			return path.Substring (path.LastIndexOf ("\\") + 1);
+			return path.Substring (path.LastIndexOf ('\\') + 1);
 		}
 	}
 #endregion
