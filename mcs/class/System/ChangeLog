@@ -1,3 +1,17 @@
+2008-12-25   Leszek Ciesielski <skolima@gmail.com>
+
+	* System.Diagnostics/Process.cs: Raise the
+	Process.OutputDataReceived and Process.ErrorDataReceived with null
+	arguments at the end.   This is the documented behavior:
+
+	http://msdn.microsoft.com/en-us/library/system.diagnostics.datareceivedeventargs.data.aspx
+
+	And CruiseControl.NET depended on this.   Bug #459450.
+	
+	* Microsoft.CSharp/CSharpCodeCompiler.cs: Fix the code, as it
+	depened on the previous broken behavior.
+	
+
 2008-12-22  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* System_test.dll.sources: Added ReferenceConverterTest.cs.

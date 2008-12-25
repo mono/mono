@@ -721,5 +721,59 @@ namespace MonoTests.System.Diagnostics
 		}
 
 		int bytesRead = -1;
+
+#if NET_2_0
+// Not technically a 2.0 only test, but I use lambdas, so I need gmcs
+
+		[Test]
+		// This was for bug #459450
+		public void TestEventRaising ()
+		{
+			EventWaitHandle errorClosed = new ManualResetEvent(false);
+			EventWaitHandle outClosed = new ManualResetEvent(false);
+			EventWaitHandle exited = new ManualResetEvent(false);
+
+			Process p = new Process();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.RedirectStandardOutput = true;
+			p.StartInfo.RedirectStandardError = true;
+			p.StartInfo.RedirectStandardInput = false;
+			p.OutputDataReceived += (object sender, DataReceivedEventArgs e) => {
+				if (e.Data == null) {
+					outClosed.Set();
+				}
+			};
+			
+			p.ErrorDataReceived += (object sender, DataReceivedEventArgs e) => {
+				if (e.Data == null) {
+					errorClosed.Set();
+				}
+			};
+			
+			p.Exited += (object sender, EventArgs e) => {
+				exited.Set ();
+			};
+			
+			p.EnableRaisingEvents = true;
+
+			if (RunningOnUnix){
+				p.StartInfo.FileName = "/bin/ls";
+				p.StartInfo.Arguments = "/";
+			} else {
+				p.StartInfo.FileName = "help";
+				p.StartInfo.Arguments = "";
+			}
+
+			p.Start();
+
+			p.BeginErrorReadLine();
+			p.BeginOutputReadLine();
+
+			Console.WriteLine("started, waiting for handles");
+			bool r = WaitHandle.WaitAll(new WaitHandle[] { errorClosed, outClosed, exited }, 10000, false);
+
+			Assert.AreEqual (true, r, "Null Argument Events Raised");
+		}
+#endif
 	}
 }

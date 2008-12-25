@@ -1,3 +1,7 @@
+2008-12-25  Miguel de Icaza  <miguel@novell.com>
+
+	* ProcessTest.cs: Created a test case from bug 459450.
+
 2008-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* EventLogTest.cs: Fixed compiler warning.
