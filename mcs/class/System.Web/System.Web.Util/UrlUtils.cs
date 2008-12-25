@@ -118,7 +118,7 @@ namespace System.Web.Util {
 			if (rlength == 0)
 				return "";
 
-			relPath = relPath.Replace ("\\", "/");
+			relPath = relPath.Replace ('\\', '/');
 			if (IsRooted (relPath))
 				return Canonic (relPath);
 
