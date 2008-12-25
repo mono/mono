@@ -202,7 +202,7 @@ namespace System.Web.UI {
 				    parms [1].ParameterType != typeof (EventArgs)))
 				    continue;
 
-				int pos = methodName.IndexOf ("_");
+				int pos = methodName.IndexOf ('_');
 				string eventName = methodName.Substring (pos + 1);
 				EventInfo evt = type.GetEvent (eventName);
 				if (evt == null) {
