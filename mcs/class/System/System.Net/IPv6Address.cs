@@ -194,7 +194,7 @@ namespace System.Net {
 			// Is there an ipv4 address at the end?
 			//
 			bool ipv4 = false;
-			int pos2 = ipString.LastIndexOf (":");
+			int pos2 = ipString.LastIndexOf (':');
 			if (pos2 == -1)
 				return false;
 
