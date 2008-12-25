@@ -89,11 +89,11 @@ namespace System.Data.Common
 				string parm = "";
                                 foreach (string key in dictionary.Keys) {
 					string val = dictionary [key].ToString (); 		
-					bool dquoteFound = (val.IndexOf ("\"") > -1);
-					bool squoteFound = (val.IndexOf ("\'") > -1);
-					bool semicolonFound = (val.IndexOf (";") > -1);
-					bool equalFound = (val.IndexOf ("=") > -1);
-					bool braceFound = (val.IndexOf ("{") > -1 || val.IndexOf ("}") > -1);
+					bool dquoteFound = (val.IndexOf ('\"') > -1);
+					bool squoteFound = (val.IndexOf ('\'') > -1);
+					bool semicolonFound = (val.IndexOf (';') > -1);
+					bool equalFound = (val.IndexOf ('=') > -1);
+					bool braceFound = (val.IndexOf ('{') > -1 || val.IndexOf ('}') > -1);
 					if (dquoteFound && squoteFound)
 						parm = "\"" + val.Replace ("\"", "\"\"") + "\"";
 					else if (squoteFound || braceFound || equalFound || semicolonFound)
