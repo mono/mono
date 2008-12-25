@@ -579,11 +579,11 @@ namespace System.Data.SqlClient
 			bool success = true;
 
 			int idx = 0;
-			if ((idx = theDataSource.IndexOf (",")) > -1) {
+			if ((idx = theDataSource.IndexOf (',')) > -1) {
 				theServerName = theDataSource.Substring (0, idx);
 				string p = theDataSource.Substring (idx + 1);
 				thePort = Int32.Parse (p);
-			} else if ((idx = theDataSource.IndexOf ("\\")) > -1) {
+			} else if ((idx = theDataSource.IndexOf ('\\')) > -1) {
 				theServerName = theDataSource.Substring (0, idx);
 				theInstanceName = theDataSource.Substring (idx + 1);
 
