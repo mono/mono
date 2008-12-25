@@ -275,7 +275,7 @@ namespace System.Web.Configuration
 			throw new HttpException ("Invalid virtual directory: " + virtualPath);
 		}
 
-		string GetWebConfigFileName (string dir)
+		internal static string GetWebConfigFileName (string dir)
 		{
 #if TARGET_J2EE
 			DirectoryInfo d = GetCaseSensitiveExistingDirectory (new DirectoryInfo (dir));

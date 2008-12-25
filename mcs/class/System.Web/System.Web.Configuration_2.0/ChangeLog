@@ -1,3 +1,14 @@
+2008-12-24  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: A better version of the previous
+	GetSection fix. Right now the method searches for directories
+	containing web.config and uses them, if found, to open the web
+	configuration. If no web.config is found, web configuration is
+	opened for the root application directory.
+
+	* WebConfigurationHost.cs: made GetWebConfigFileName internal
+	static, so that code can be reused from WebConfigurationManager.
+
 2008-12-23  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: GetSection should call

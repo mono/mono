@@ -41,6 +41,7 @@ using System.Xml;
 using System.Configuration;
 using System.Configuration.Internal;
 using _Configuration = System.Configuration.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Configuration {
 
@@ -50,6 +51,7 @@ namespace System.Web.Configuration {
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
 		static Hashtable sectionCache = new Hashtable (StringComparer.OrdinalIgnoreCase);
+		static Hashtable configPaths = Hashtable.Synchronized (new Hashtable ());
 #else
 		const string AppSettingsKey = "WebConfigurationManager.AppSettings";
 		static internal IInternalConfigConfigurationFactory configFactory
@@ -112,6 +114,28 @@ namespace System.Web.Configuration {
 			set
 			{
 				AppDomain.CurrentDomain.SetData ("sectionCache", value);
+			}
+		}
+
+		static internal Hashtable configPaths
+		{
+			get{
+				Hashtable table = (Hashtable)AppDomain.CurrentDomain.GetData("WebConfigurationManager.configPaths");
+				if (table == null){
+					lock (AppDomain.CurrentDomain){
+						object initialized = AppDomain.CurrentDomain.GetData("WebConfigurationManager.configPaths.initialized");
+						if (initialized == null){
+							table = Hashtable.Synchronized (new Hashtable (StringComparer.OrdinalIgnoreCase));
+							configPaths = table;
+						}
+					}
+				}
+				return table != null ? table : configPaths;
+
+			}
+			set{
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configPaths", value);
+				AppDomain.CurrentDomain.SetData("WebConfigurationManager.configPaths.initialized", true);
 			}
 		}
 #endif
@@ -291,19 +315,17 @@ namespace System.Web.Configuration {
 				return cachedSection;
 
 			string configPath;
-			if (String.Compare (path, HttpRuntime.AppDomainAppVirtualPath, StringComparison.Ordinal) == 0)
+			if (String.Compare (path, HttpRuntime.AppDomainAppVirtualPath, StringComparison.Ordinal) == 0) {
 				configPath = path;
-			else {
+			} else {
 				int len = path != null ? path.Length : 0;
 				if (len == 0)
 					configPath = path;
-				else if (path [len - 1] == '/')
-					configPath = path;
-				else
-					configPath = VirtualPathUtility.GetDirectory (path, false);
+				else 
+					configPath = FindWebConfig (path);
 			}
-			
-			_Configuration c = OpenWebConfiguration (configPath);
+
+		       _Configuration c = OpenWebConfiguration (configPath);
 			ConfigurationSection section = c.GetSection (sectionName);
 
 			if (section == null)
@@ -330,6 +352,76 @@ namespace System.Web.Configuration {
 #endif
 		}
 
+		static string MapPath (HttpRequest req, string virtualPath)
+		{
+			if (req != null)
+				return req.MapPath (virtualPath);
+
+			string appRoot = HttpRuntime.AppDomainAppVirtualPath;
+			if (!String.IsNullOrEmpty (appRoot) && virtualPath.StartsWith (appRoot, StringComparison.Ordinal)) {
+				if (String.Compare (virtualPath, appRoot, StringComparison.Ordinal) == 0)
+					return HttpRuntime.AppDomainAppPath;
+				return UrlUtils.Combine (HttpRuntime.AppDomainAppPath, virtualPath.Substring (appRoot.Length));
+			}
+			
+			return null;
+		}
+
+		static string GetParentDir (string rootPath, string curPath)
+		{
+			int len = curPath.Length - 1;
+			if (len > 0 && curPath [len] == '/')
+				curPath = curPath.Substring (0, len);
+
+			if (String.Compare (curPath, rootPath, StringComparison.Ordinal) == 0)
+				return null;
+			
+			int idx = curPath.LastIndexOf ('/');
+			if (idx == -1)
+				return curPath;
+
+			if (idx == 0)
+				return "/";
+			
+			return curPath.Substring (0, idx);
+		}
+		
+		static string FindWebConfig (string path)
+		{
+			string curPath = configPaths [path] as string;
+			if (curPath != null)
+				return curPath;
+			
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+			if (req == null)
+				return path;
+
+			curPath = path;
+			string rootPath = HttpRuntime.AppDomainAppVirtualPath;
+			string physPath;
+
+			while (String.Compare (curPath, rootPath, StringComparison.Ordinal) != 0) {
+				physPath = MapPath (req, curPath);
+				if (physPath == null) {
+					curPath = rootPath;
+					break;
+				}
+				
+				if (WebConfigurationHost.GetWebConfigFileName (physPath) != null)
+					break;
+				
+				curPath = GetParentDir (rootPath, curPath);
+				if (curPath == null) {
+					curPath = rootPath;
+					break;
+				}
+			}
+
+			configPaths [path] = curPath;
+			return curPath;
+		}
+		
 		static string GetCurrentPath (HttpContext ctx)
 		{
 			HttpRequest req = ctx != null ? ctx.Request : null;
