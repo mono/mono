@@ -119,7 +119,7 @@ namespace System.Web.Security {
 		{
 			if (p == null)
 				throw new ArgumentNullException (pName);
-			if (p.Length == 0 || p.Length > length || p.IndexOf (",") != -1)
+			if (p.Length == 0 || p.Length > length || p.IndexOf (',') != -1)
 				throw new ArgumentException (String.Format ("invalid format for {0}", pName));
 		}
 
@@ -226,7 +226,7 @@ namespace System.Web.Security {
 			if (pwdAnswer != null) pwdAnswer = pwdAnswer.Trim ();
 
 			/* some initial validation */
-			if (username == null || username.Length == 0 || username.Length > 256 || username.IndexOf (",") != -1) {
+			if (username == null || username.Length == 0 || username.Length > 256 || username.IndexOf (',') != -1) {
 				status = MembershipCreateStatus.InvalidUserName;
 				return null;
 			}

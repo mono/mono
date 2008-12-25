@@ -97,7 +97,7 @@ namespace System.Web.Security
 					throw new ArgumentNullException ("null element in usernames array");
 				if (h.ContainsKey (u))
 					throw new ArgumentException ("duplicate element in usernames array");
-				if (u.Length == 0 || u.Length > 256 || u.IndexOf (",") != -1)
+				if (u.Length == 0 || u.Length > 256 || u.IndexOf (',') != -1)
 					throw new ArgumentException ("element in usernames array in illegal format");
 				h.Add (u, u);
 			}
@@ -108,7 +108,7 @@ namespace System.Web.Security
 					throw new ArgumentNullException ("null element in rolenames array");
 				if (h.ContainsKey (r))
 					throw new ArgumentException ("duplicate element in rolenames array");
-				if (r.Length == 0 || r.Length > 256 || r.IndexOf (",") != -1)
+				if (r.Length == 0 || r.Length > 256 || r.IndexOf (',') != -1)
 					throw new ArgumentException ("element in rolenames array in illegal format");
 				h.Add (r, r);
 			} 
@@ -145,7 +145,7 @@ namespace System.Web.Security
 			if (rolename == null)
 				throw new ArgumentNullException ("rolename");
 
-			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (",") != -1)
+			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (',') != -1)
 				throw new ArgumentException ("rolename is in invalid format");
 
 			using (DbConnection connection = CreateConnection ()) {
@@ -173,7 +173,7 @@ namespace System.Web.Security
 			if (rolename == null)
 				throw new ArgumentNullException ("rolename");
 
-			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (",") != -1)
+			if (rolename.Length == 0 || rolename.Length > 256 || rolename.IndexOf (',') != -1)
 				throw new ArgumentException ("rolename is in invalid format");
 
 			using (DbConnection connection = CreateConnection ()) {
@@ -207,7 +207,7 @@ namespace System.Web.Security
 				throw new ArgumentNullException ("roleName");
 			if (usernameToMatch == null)
 				throw new ArgumentNullException ("usernameToMatch");
-			if (roleName.Length == 0 || roleName.Length > 256 || roleName.IndexOf (",") != -1)
+			if (roleName.Length == 0 || roleName.Length > 256 || roleName.IndexOf (',') != -1)
 				throw new ArgumentException ("roleName is in invalid format");
 			if (usernameToMatch.Length == 0 || usernameToMatch.Length > 256)
 				throw new ArgumentException ("usernameToMatch is in invalid format");
@@ -360,7 +360,7 @@ namespace System.Web.Security
 					throw new ArgumentNullException ("null element in usernames array");
 				if (h.ContainsKey (u))
 					throw new ArgumentException ("duplicate element in usernames array");
-				if (u.Length == 0 || u.Length > 256 || u.IndexOf (",") != -1)
+				if (u.Length == 0 || u.Length > 256 || u.IndexOf (',') != -1)
 					throw new ArgumentException ("element in usernames array in illegal format");
 				h.Add (u, u);
 			}
@@ -371,7 +371,7 @@ namespace System.Web.Security
 					throw new ArgumentNullException ("null element in rolenames array");
 				if (h.ContainsKey (r))
 					throw new ArgumentException ("duplicate element in rolenames array");
-				if (r.Length == 0 || r.Length > 256 || r.IndexOf (",") != -1)
+				if (r.Length == 0 || r.Length > 256 || r.IndexOf (',') != -1)
 					throw new ArgumentException ("element in rolenames array in illegal format");
 				h.Add (r, r);
 			} 
