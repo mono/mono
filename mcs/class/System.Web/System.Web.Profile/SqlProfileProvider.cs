@@ -84,7 +84,7 @@ namespace System.Web.Profile
 				if (pi.UserName == null)
 					throw new ArgumentNullException ("element in profiles collection is null");
 
-				if (pi.UserName.Length == 0 || pi.UserName.Length > 256 || pi.UserName.IndexOf (",") != -1)
+				if (pi.UserName.Length == 0 || pi.UserName.Length > 256 || pi.UserName.IndexOf (',') != -1)
 					throw new ArgumentException ("element in profiles collection in illegal format");
 
 				usernames [i++] = pi.UserName;
@@ -103,7 +103,7 @@ namespace System.Web.Profile
 				if (username == null)
 					throw new ArgumentNullException ("element in usernames array is null");
 
-				if (username.Length == 0 || username.Length > 256 || username.IndexOf (",") != -1)
+				if (username.Length == 0 || username.Length > 256 || username.IndexOf (',') != -1)
 					throw new ArgumentException ("element in usernames array in illegal format");
 
 				if (users.ContainsKey(username))
@@ -420,7 +420,7 @@ namespace System.Web.Profile
 		{
 			if (p == null)
 				throw new ArgumentNullException (pName);
-			if (p.Length == 0 || p.Length > length || p.IndexOf (",") != -1)
+			if (p.Length == 0 || p.Length > length || p.IndexOf (',') != -1)
 				throw new ArgumentException (String.Concat ("invalid format for ", pName));
 		}
 		
