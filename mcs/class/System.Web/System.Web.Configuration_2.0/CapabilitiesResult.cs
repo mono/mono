@@ -65,7 +65,7 @@ namespace System.Web.Configuration
 		
 		internal virtual string Replace(string item)
 		{
-			if (item.IndexOf("$") > -1)
+			if (item.IndexOf('$') > -1)
 			{
 				//nasty hack to convert regular expression replacement text into  Capability item
 				//which we can use to replace with the actual values they are looking for.
@@ -84,7 +84,7 @@ namespace System.Web.Configuration
 					}
 				}
 			}
-			if (item.IndexOf("%") > -1)
+			if (item.IndexOf('%') > -1)
 			{
 				//nasty hack to convert regular expression replacement text into  Capability item
 				//which we can use to replace with the actual values they are looking for.
