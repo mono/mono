@@ -731,7 +731,7 @@ namespace System.Web.Compilation
 			if (hyphen == -1)
 				return false;
 
-			string prop_field = id.Replace ("-", ".");
+			string prop_field = id.Replace ('-', '.');
 			string [] parts = prop_field.Split (new char [] {'.'});
 			int length = parts.Length;
 			
