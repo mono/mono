@@ -669,7 +669,7 @@ namespace System.Web.Configuration.nBrowser
 					//and only the newest one (most recent matches) are the ones
 					//we want to insert.
 					//----------------------------------------------------------------------
-					for (int a = matchList.Count - 1; a >= 0 && v != null && v.Length > 0 &&  v.IndexOf("$") > -1; a--)
+					for (int a = matchList.Count - 1; a >= 0 && v != null && v.Length > 0 &&  v.IndexOf('$') > -1; a--)
 					{
 						// Don't do substitution if the match has no groups or was a nonMatch
 						if (matchList[a].Groups.Count == 0 || !matchList[a].Success)
@@ -680,7 +680,7 @@ namespace System.Web.Configuration.nBrowser
 					//----------------------------------------------------------------------
 					//Checks to make sure we extract the result we where looking for.
 					//----------------------------------------------------------------------
-					if (v.IndexOf("$") > -1 || v.IndexOf("%") > -1)
+					if (v.IndexOf('$') > -1 || v.IndexOf('%') > -1)
 					{
 						//----------------------------------------------------------------------
 						//Microsoft has a nasty habbit of using capability items in regular expressions
