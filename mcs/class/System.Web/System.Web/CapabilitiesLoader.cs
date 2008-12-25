@@ -73,7 +73,7 @@ namespace System.Web
 				this.pattern = this.pattern.Replace (")", "\\)");
 				this.pattern = this.pattern.Replace ("[", "\\[");
 				this.pattern = this.pattern.Replace ("]", "\\]");
-				this.pattern = this.pattern.Replace ("?", ".");
+				this.pattern = this.pattern.Replace ('?', '.');
 				this.pattern = this.pattern.Replace ("*", ".*");
 			}
 		}
