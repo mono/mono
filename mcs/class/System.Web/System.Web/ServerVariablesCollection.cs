@@ -59,7 +59,7 @@ namespace System.Web
 			//
 			if (standard){
 				sb.Append ("HTTP_");
-				sb.Append (key.ToUpper (CultureInfo.InvariantCulture).Replace ("-", "_"));
+				sb.Append (key.ToUpper (CultureInfo.InvariantCulture).Replace ('-', '_'));
 				sb.Append (":");
 			} else {
 				sb.Append (key);
