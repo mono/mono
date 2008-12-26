@@ -1,3 +1,10 @@
+2008-12-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (get_implicit_generic_array_interfaces): If the internal
+	enumerator is an interface inflate System.Object instead of itself.
+
+	Fixes #461261.
+
 2008-12-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c (mono_runtime_invoke_array): Don't assert with
