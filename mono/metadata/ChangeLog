@@ -1,5 +1,10 @@
 2008-12-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (get_implicit_generic_array_interfaces): Extract common
+	code to a helper function making it a lot easier on the eyes.
+
+2008-12-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (get_implicit_generic_array_interfaces): If the internal
 	enumerator is an interface inflate System.Object instead of itself.
 
