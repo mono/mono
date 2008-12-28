@@ -1921,7 +1921,7 @@ namespace Mono.CSharp {
 						if (cb != null && filter (cb, criteria) == true) {
 							if (members == null)
 								members = new ArrayList ();
-							
+
 							members.Add (cb);
 						}
 					}
@@ -3384,6 +3384,7 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.OVERRIDE) != 0){
 				if (!(base_method.IsAbstract || base_method.IsVirtual)){
+					Report.SymbolRelatedToPreviousError (base_method);
 					Report.Error (506, Location,
 						"`{0}': cannot override inherited member `{1}' because it is not marked virtual, abstract or override",
 						 GetSignatureForError (), TypeManager.CSharpSignature (base_method));
@@ -3742,7 +3743,7 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			if (GenericMethod != null) {
 				MethodBuilder = Parent.TypeBuilder.DefineMethod (GetFullName (MemberName), flags);
-				if (!GenericMethod.Define (MethodBuilder))
+				if (!GenericMethod.Define (this))
 					return false;
 			}
 #endif

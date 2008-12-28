@@ -915,8 +915,7 @@ namespace Mono.CSharp {
 					if (base_name != parameters [j].Name)
 						continue;
 
-					Report.Error (100, parameters [i].Location,
-						"The parameter name `{0}' is a duplicate", base_name);
+					ErrorDuplicateName (parameters [i]);
 					i = j;
 				}
 			}
@@ -982,6 +981,11 @@ namespace Mono.CSharp {
 			Parameters parameters = new Parameters (all_params, all_types);
 			parameters.has_params = userParams.has_params;
 			return parameters;
+		}
+
+		protected virtual void ErrorDuplicateName (Parameter p)
+		{
+			Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
 		}
 
 		/// <summary>
@@ -1086,8 +1090,9 @@ namespace Mono.CSharp {
 		{
 			Parameters p = (Parameters) MemberwiseClone ();
 
+			p.parameters = new IParameterData [parameters.Length];
 			for (int i = 0; i < Count; ++i)
-				p.FixedParameters [i] = this [i].Clone ();
+				p.parameters [i] = this [i].Clone ();
 
 			return p;
 		}

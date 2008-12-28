@@ -1,3 +1,11 @@
+2008-12-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bugs #460847, #460772, #458049, #457339, #447807
+	* generic.cs, parameter.cs, lambda.cs, linq.cs, anonymous.cs
+	statement.cs, ecore.cs, class.cs, delegate.cs, flowanalysis.cs
+	cs-parser.jay, driver.cs: LINQ implementation upgrade to deal with
+	user lambdas used inside query clauses.
+
 2008-12-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #460229

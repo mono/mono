@@ -1089,7 +1089,7 @@ namespace Mono.CSharp {
 					am = CreateExpressionTree (ec, delegate_type);
 
 				if (!ec.IsInProbingMode)
-					compatibles.Add (type, am);
+					compatibles.Add (type, am == null ? EmptyExpression.Null : am);
 
 				return am;
 			} catch (Exception e) {
@@ -1667,6 +1667,20 @@ namespace Mono.CSharp {
 	//
 	public class AnonymousTypeClass : CompilerGeneratedClass
 	{
+		sealed class AnonymousParameters : Parameters
+		{
+			public AnonymousParameters (params Parameter[] parameters)
+				: base (parameters)
+			{
+			}
+
+			protected override void ErrorDuplicateName (Parameter p)
+			{
+				Report.Error (833, p.Location, "`{0}': An anonymous type cannot have multiple properties with the same name",
+					p.Name);
+			}
+		}
+
 		static int types_counter;
 		public const string ClassNamePrefix = "<>__AnonType";
 		public const string SignatureForError = "anonymous type";
@@ -1708,7 +1722,7 @@ namespace Mono.CSharp {
 				a_type.SetParameterInfo (null);
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
-				null, new Parameters (ctor_params), null, loc);
+				null, new AnonymousParameters (ctor_params), null, loc);
 			c.Block = new ToplevelBlock (c.Parameters, loc);
 
 			// 
@@ -1723,8 +1737,6 @@ namespace Mono.CSharp {
 
 				if (!a_type.AddField (f)) {
 					error = true;
-					Report.Error (833, p.Location, "`{0}': An anonymous type cannot have multiple properties with the same name",
-						p.Name);
 					continue;
 				}
 

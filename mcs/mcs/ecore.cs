@@ -2328,6 +2328,18 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override bool Equals (object obj)
+		{
+			ATypeNameExpression atne = obj as ATypeNameExpression;
+			return atne != null && atne.Name == Name &&
+				(targs == null || targs.Equals (atne.targs));
+		}
+
+		public override int GetHashCode ()
+		{
+			return Name.GetHashCode ();
+		}
+
 		public override string GetSignatureForError ()
 		{
 			if (targs != null) {
@@ -2622,9 +2634,6 @@ namespace Mono.CSharp {
 				}
 
 				Expression expr = current_block.Toplevel.GetParameterReference (Name, loc);
-				if (expr == null)
-					expr = current_block.Toplevel.GetTransparentIdentifier (Name);
-
 				if (expr != null) {
 					if (right_side != null)
 						return expr.ResolveLValue (ec, right_side, loc);
@@ -3287,6 +3296,7 @@ namespace Mono.CSharp {
 	{
 		public interface IErrorHandler
 		{
+			bool AmbiguousCall (MethodBase ambiguous);
 			bool NoExactMatch (EmitContext ec, MethodBase method);
 		}
 
@@ -3706,6 +3716,16 @@ namespace Mono.CSharp {
 		public virtual void EmitCall (EmitContext ec, ArrayList arguments)
 		{
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, best_candidate, arguments, loc);			
+		}
+
+		void Error_AmbiguousCall (MethodBase ambiguous)
+		{
+			if (CustomErrorHandler != null && CustomErrorHandler.AmbiguousCall (ambiguous))
+				return;
+
+			Report.SymbolRelatedToPreviousError (best_candidate);
+			Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
+				TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate));
 		}
 
 		protected virtual void Error_InvalidArguments (EmitContext ec, Location loc, int idx, MethodBase method,
@@ -4185,10 +4205,8 @@ namespace Mono.CSharp {
 				// return error info about the closest match
 				//
 				if (best_candidate != null) {
-					if (CustomErrorHandler != null) {
-						if (CustomErrorHandler.NoExactMatch (ec, best_candidate))
-							return null;
-					}
+					if (CustomErrorHandler != null && CustomErrorHandler.NoExactMatch (ec, best_candidate))
+						return null;
 
 					AParametersCollection pd = TypeManager.GetParameterData (best_candidate);
 					bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
@@ -4351,9 +4369,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ambiguous != null) {
-				Report.SymbolRelatedToPreviousError (best_candidate);
-				Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
-					TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate));
+				Error_AmbiguousCall (ambiguous);
 				return this;
 			}
 
@@ -5457,7 +5473,7 @@ namespace Mono.CSharp {
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			if (right_side == EmptyExpression.OutAccess) {
-				if (ec.CurrentBlock.Toplevel.GetTransparentIdentifier (PropertyInfo.Name) != null) {
+				if (ec.CurrentBlock.Toplevel.GetParameterReference (PropertyInfo.Name, loc) is MemberAccess) {
 					Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
 					    PropertyInfo.Name);
 				} else {
@@ -5481,7 +5497,7 @@ namespace Mono.CSharp {
 				if (getter == null)
 					return null;
 
-				if (ec.CurrentBlock.Toplevel.GetTransparentIdentifier (PropertyInfo.Name) != null) {
+				if (ec.CurrentBlock.Toplevel.GetParameterReference (PropertyInfo.Name, loc) is MemberAccess) {
 					Report.Error (1947, loc, "A range variable `{0}' cannot be assigned to. Consider using `let' clause to store the value",
 						PropertyInfo.Name);
 				} else {

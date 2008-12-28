@@ -1646,7 +1646,7 @@ namespace Mono.CSharp {
 		///   Define and resolve the type parameters.
 		///   We're called from Method.Define().
 		/// </summary>
-		public bool Define (MethodBuilder mb)
+		public bool Define (MethodOrOperator m)
 		{
 			TypeParameterName[] names = MemberName.TypeArguments.GetDeclarations ();
 			string[] snames = new string [names.Length];
@@ -1654,14 +1654,18 @@ namespace Mono.CSharp {
 				string type_argument_name = names[i].Name;
 				int idx = parameters.GetParameterIndexByName (type_argument_name);
 				if (idx >= 0) {
-					Error_ParameterNameCollision (parameters [i].Location, type_argument_name, "method parameter");
-					return false;
+					Block b = m.Block;
+					if (b == null)
+						b = new Block (null);
+
+					b.Error_AlreadyDeclaredTypeParameter (parameters [i].Location,
+						type_argument_name, "method parameter");
 				}
 				
 				snames[i] = type_argument_name;
 			}
 
-			GenericTypeParameterBuilder[] gen_params = mb.DefineGenericParameters (snames);
+			GenericTypeParameterBuilder[] gen_params = m.MethodBuilder.DefineGenericParameters (snames);
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
 
@@ -1674,12 +1678,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}
-
-		internal static void Error_ParameterNameCollision (Location loc, string name, string collisionWith)
-		{
-			Report.Error (412, loc, "The type parameter name `{0}' is the same as `{1}'",
-				name, collisionWith);
 		}
 
 		/// <summary>

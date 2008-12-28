@@ -423,10 +423,11 @@ namespace Mono.CSharp {
 			}
 #endif
 			Delegate d = TypeManager.LookupDelegate (delegate_type);
+			MethodInfo invoke;
 			if (d != null) {
 #if GMCS_SOURCE
 				if (g_args != null) {
-					MethodInfo invoke = TypeBuilder.GetMethod (dt, d.InvokeBuilder);
+					invoke = TypeBuilder.GetMethod (dt, d.InvokeBuilder);
 #if MS_COMPATIBLE
 					Parameters p = (Parameters) d.Parameters.InflateTypes (g_args, g_args);
 					TypeManager.RegisterMethod (invoke, p);
@@ -447,7 +448,17 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return (MethodInfo) mg.Methods[0];
+			invoke = (MethodInfo) mg.Methods[0];
+#if MS_COMPATIBLE
+			if (g_args != null) {
+				AParametersCollection p = TypeManager.GetParameterData (invoke);
+				p = p.InflateTypes (g_args, g_args);
+				TypeManager.RegisterMethod (invoke, p);
+				return invoke;
+			}
+#endif
+
+			return invoke;
 		}
 
 		//
@@ -866,6 +877,11 @@ namespace Mono.CSharp {
 
 			Error_ConversionFailed (ec, method, null);
 			return true;
+		}
+
+		public bool AmbiguousCall (MethodBase ambiguous)
+		{
+			return false;
 		}
 
 		#endregion

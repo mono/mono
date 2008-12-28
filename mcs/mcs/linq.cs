@@ -20,28 +20,24 @@ namespace Mono.CSharp.Linq
 	//
 	//
 
-	public class QueryExpression : AQueryClause
+	class QueryExpression : AQueryClause
 	{
-		LocatedToken variable;
-
-		public QueryExpression (LocatedToken variable, AQueryClause query)
-			: base (null, query.Location)
+		public QueryExpression (Block block, AQueryClause query)
+			: base (null, null, query.Location)
 		{
-			this.variable = variable;
 			this.next = query;
 		}
 
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parentParameter, TransparentIdentifiersScope ti)
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide)
 		{
-			Parameter p = CreateBlockParameter (variable);
-			return next.BuildQueryClause (ec, lSide, p, ti);
+			return next.BuildQueryClause (ec, lSide);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			int counter = TransparentParameter.Counter;
+			int counter = QueryBlock.TransparentParameter.Counter;
 
-			Expression e = BuildQueryClause (ec, null, null, null);
+			Expression e = BuildQueryClause (ec, null);
 			e = e.Resolve (ec);
 
 			//
@@ -49,7 +45,7 @@ namespace Mono.CSharp.Linq
 			// identifier anonymous types are created only once
 			//
 			if (ec.IsInProbingMode)
-				TransparentParameter.Counter = counter;
+				QueryBlock.TransparentParameter.Counter = counter;
 
 			return e;
 		}
@@ -59,7 +55,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public abstract class AQueryClause : Expression
+	abstract class AQueryClause : Expression
 	{
 		class QueryExpressionAccess : MemberAccess
 		{
@@ -97,6 +93,15 @@ namespace Mono.CSharp.Linq
 				return rmg;
 			}
 
+			public bool AmbiguousCall (MethodBase ambiguous)
+			{
+				Report.SymbolRelatedToPreviousError ((MethodInfo) mg);
+				Report.SymbolRelatedToPreviousError (ambiguous);
+				Report.Error (1940, loc, "Ambiguous implementation of the query pattern `{0}' for source type `{1}'",
+					mg.Name, mg.InstanceExpression.GetSignatureForError ());
+				return true;
+			}
+
 			public bool NoExactMatch (EmitContext ec, MethodBase method)
 			{
 #if GMCS_SOURCE				
@@ -123,9 +128,15 @@ namespace Mono.CSharp.Linq
 				if (!method.IsGenericMethod)
 					return false;
 
-				Report.Error (1942, loc, "Type inference failed to infer type argument for `{0}' clause. " +
-					"Try specifying the type argument explicitly",
-					mg.Name.ToLower ());
+				if (mg.Name == "SelectMany") {
+					Report.Error (1943, loc,
+						"An expression type is incorrect in a subsequent `from' clause in a query expression with source type `{0}'",
+						((Argument) Arguments [0]).GetSignatureForError ());
+				} else {
+					Report.Error (1942, loc,
+						"An expression type in `{0}' clause is incorrect. Type inference failed in the call to `{1}'",
+						mg.Name.ToLower (), mg.Name);
+				}
 				return true;
 #else
 				return false;
@@ -133,11 +144,14 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
+		// TODO: protected
 		public AQueryClause next;
-		/*protected*/ public Expression expr;
+		public Expression expr;
+		protected ToplevelBlock block;
 
-		protected AQueryClause (Expression expr, Location loc)
+		protected AQueryClause (ToplevelBlock block, Expression expr, Location loc)
 		{
+			this.block = block;
 			this.expr = expr;
 			this.loc = loc;
 		}
@@ -147,9 +161,12 @@ namespace Mono.CSharp.Linq
 			AQueryClause t = (AQueryClause) target;
 			if (expr != null)
 				t.expr = expr.Clone (clonectx);
-			
+
+			if (block != null)
+				t.block = (ToplevelBlock) block.Clone (clonectx);
+
 			if (next != null)
-				t.next = (AQueryClause)next.Clone (clonectx);
+				t.next = (AQueryClause) next.Clone (clonectx);
 		}
 
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -163,27 +180,33 @@ namespace Mono.CSharp.Linq
 			return expr.DoResolve (ec);
 		}
 
-		public virtual Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
+		public virtual Expression BuildQueryClause (EmitContext ec, Expression lSide)
 		{
-			ArrayList args = new ArrayList (1);
-			args.Add (CreateSelectorArgument (ec, expr, parameter, ti));
+			ArrayList args;
+			CreateArguments (ec, out args);
 			lSide = CreateQueryExpression (lSide, args);
 			if (next != null) {
 				Select s = next as Select;
-				if (s == null || s.IsRequired (parameter))
-					return next.BuildQueryClause (ec, lSide, parameter, ti);
+				if (s == null || s.IsRequired)
+					return next.BuildQueryClause (ec, lSide);
 					
 				// Skip transparent select clause if any clause follows
 				if (next.next != null)
-					return next.next.BuildQueryClause (ec, lSide, parameter, ti);
+					return next.next.BuildQueryClause (ec, lSide);
 			}
 
 			return lSide;
 		}
 
-		protected static Parameter CreateBlockParameter (LocatedToken li)
+		protected virtual void CreateArguments (EmitContext ec, out ArrayList args)
 		{
-			return new ImplicitQueryParameter (li);
+			args = new ArrayList (2);
+
+			LambdaExpression selector = new LambdaExpression (loc);
+			selector.Block = block;
+			selector.Block.AddStatement (new ContextualReturn (expr));
+
+			args.Add (new Argument (selector));
 		}
 
 		protected Invocation CreateQueryExpression (Expression lSide, ArrayList arguments)
@@ -196,22 +219,6 @@ namespace Mono.CSharp.Linq
 		{
 			return new QueryExpressionInvocation (
 				new QueryExpressionAccess (lSide, MethodName, typeArguments, loc), arguments);
-		}
-
-		protected Argument CreateSelectorArgument (EmitContext ec, Expression expr, Parameter parameter, TransparentIdentifiersScope ti)
-		{
-			return CreateSelectorArgument (ec, expr, new Parameter [] { parameter }, ti);
-		}
-
-		protected Argument CreateSelectorArgument (EmitContext ec, Expression expr, Parameter[] parameters, TransparentIdentifiersScope ti)
-		{
-			Parameters p = new Parameters (parameters);
-
-			LambdaExpression selector = new LambdaExpression (loc);
-			selector.Block = new SelectorBlock (ec.CurrentBlock, p, ti, loc);
-			selector.Block.AddStatement (new ContextualReturn (expr));
-
-			return new Argument (selector);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -242,100 +249,51 @@ namespace Mono.CSharp.Linq
 	//
 	// A query clause with an identifier (range variable)
 	//
-	public abstract class ARangeVariableQueryClause : AQueryClause
+	abstract class ARangeVariableQueryClause : AQueryClause
 	{
-		LocatedToken variable;
-		protected Expression element_selector;
-
-		protected ARangeVariableQueryClause (LocatedToken variable, Expression expr, Location loc)
-			: base (expr, loc)
+		sealed class RangeAnonymousTypeParameter : AnonymousTypeParameter
 		{
-			this.variable = variable;
-		}
-
-		protected virtual void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
-			ref Parameter parameter, TransparentIdentifiersScope ti)
-		{
-			args.Add (CreateSelectorArgument (ec, expr, parentParameter, ti));
-			args.Add (CreateSelectorArgument (ec, element_selector,
-				new Parameter [] { parentParameter, parameter }, ti));
-		}
-
-		//
-		// Customization for range variables which not only creates a lambda expression but
-		// also builds a chain of range varible pairs
-		//
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parentParameter, TransparentIdentifiersScope ti)
-		{
-			Parameter parameter = CreateBlockParameter (variable);
-
-			if (next != null) {
-				//
-				// Builds transparent identifiers, each identifier includes its parent
-				// type at index 0, and new value at index 1. This is not valid for the
-				// first one which includes two values directly.
-				//
-				ArrayList transp_args = new ArrayList (2);
-				transp_args.Add (new AnonymousTypeParameter (parentParameter));
-				transp_args.Add (CreateAnonymousTypeVariable (parameter));
-				element_selector = new AnonymousTypeDeclaration (transp_args, (TypeContainer) ec.TypeContainer, loc);
+			public RangeAnonymousTypeParameter (Expression initializer, LocatedToken parameter)
+				: base (initializer, parameter.Value, parameter.Location)
+			{
 			}
 
-			ArrayList args = new ArrayList ();
-			AddSelectorArguments (ec, args, parentParameter, ref parameter, ti);
-
-			lSide = CreateQueryExpression (lSide, args);
-			if (next != null) {
-				//
-				// Parameter identifiers go to the scope
-				//
-				string[] identifiers;
-				if (ti == null) {
-					identifiers = new string [] { parentParameter.Name, parameter.Name };
-				} else {
-					identifiers = new string [] { parameter.Name };
-				}
-
-				TransparentParameter tp = new TransparentParameter (loc);
-				return next.BuildQueryClause (ec, lSide, tp,
-					new TransparentIdentifiersScope (ti, tp, identifiers));
+			protected override void Error_InvalidInitializer (string initializer)
+			{
+				Report.Error (1932, loc, "A range variable `{0}' cannot be initialized with `{1}'",
+					Name, initializer);
 			}
+		}
 
-			return lSide;
-		}
-		
-		protected override void CloneTo (CloneContext clonectx, Expression target)
+		protected ARangeVariableQueryClause (ToplevelBlock block, Expression expr)
+			: base (block, expr, expr.Location)
 		{
-			ARangeVariableQueryClause t = (ARangeVariableQueryClause) target;
-			if (element_selector != null)
-				t.element_selector = element_selector.Clone (clonectx);
-			base.CloneTo (clonectx, t);
 		}
-		
-		//
-		// For transparent identifiers, creates an instance of variable expression
-		//
-		protected virtual AnonymousTypeParameter CreateAnonymousTypeVariable (Parameter parameter)
+
+		protected static Expression CreateRangeVariableType (ToplevelBlock block, TypeContainer container, LocatedToken name, Expression init)
 		{
-			return new AnonymousTypeParameter (parameter);
+			ArrayList args = new ArrayList (2);
+			args.Add (new AnonymousTypeParameter (block.Parameters [0]));
+			args.Add (new RangeAnonymousTypeParameter (init, name));
+			return new AnonymousTypeDeclaration (args, container, name.Location);
 		}
 	}
 
-	public class QueryStartClause : AQueryClause
+	class QueryStartClause : AQueryClause
 	{
 		public QueryStartClause (Expression expr)
-			: base (expr, expr.Location)
+			: base (null, expr, expr.Location)
 		{
 		}
 
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide)
 		{
-			return next.BuildQueryClause (ec, expr, parameter, ti);
+			return next.BuildQueryClause (ec, expr);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expression e = BuildQueryClause (ec, null, null, null);
+			Expression e = BuildQueryClause (ec, null);
 			return e.Resolve (ec);
 		}
 
@@ -344,7 +302,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class Cast : QueryStartClause
+	class Cast : QueryStartClause
 	{
 		// We don't have to clone cast type
 		readonly FullNamedExpression type_expr;
@@ -355,11 +313,11 @@ namespace Mono.CSharp.Linq
 			this.type_expr = type;
 		}
 		
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
+		public override Expression BuildQueryClause (EmitContext ec, Expression lSide)
 		{
 			lSide = CreateQueryExpression (expr, new TypeArguments (type_expr), null);
 			if (next != null)
-				return next.BuildQueryClause (ec, lSide, parameter, ti);
+				return next.BuildQueryClause (ec, lSide);
 
 			return lSide;
 		}
@@ -369,36 +327,43 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class GroupBy : AQueryClause
+	class GroupBy : AQueryClause
 	{
 		Expression element_selector;
+		ToplevelBlock element_block;
 		
-		public GroupBy (Expression elementSelector, Expression keySelector, Location loc)
-			: base (keySelector, loc)
+		public GroupBy (ToplevelBlock block, Expression elementSelector, ToplevelBlock elementBlock, Expression keySelector, Location loc)
+			: base (block, keySelector, loc)
 		{
-			this.element_selector = elementSelector;
+			//
+			// Optimizes clauses like `group A by A'
+			//
+			if (!elementSelector.Equals (keySelector)) {
+				this.element_selector = elementSelector;
+				this.element_block = elementBlock;
+			}
 		}
 
-		public override Expression BuildQueryClause (EmitContext ec, Expression lSide, Parameter parameter, TransparentIdentifiersScope ti)
+		protected override void CreateArguments (EmitContext ec, out ArrayList args)
 		{
-			ArrayList args = new ArrayList (2);
-			args.Add (CreateSelectorArgument (ec, expr, parameter, ti));
+			base.CreateArguments (ec, out args);
 
-			// A query can be optimized when selector is not group by specific
-			if (!element_selector.Equals (lSide))
-				args.Add (CreateSelectorArgument (ec, element_selector, parameter, ti));
-
-			lSide = CreateQueryExpression (lSide, args);
-			if (next != null)
-				return next.BuildQueryClause (ec, lSide, parameter, ti);
-
-			return lSide;
+			if (element_selector != null) {
+				LambdaExpression lambda = new LambdaExpression (element_selector.Location);
+				lambda.Block = element_block;
+				lambda.Block.AddStatement (new ContextualReturn (element_selector));
+				args.Add (new Argument (lambda));
+			}
 		}
-	
+
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			GroupBy t = (GroupBy) target;
-			t.element_selector = element_selector.Clone (clonectx);
+			if (element_selector != null) {
+				t.element_selector = element_selector.Clone (clonectx);
+				t.element_block = (ToplevelBlock) element_block.Clone (clonectx);
+			}
+
 			base.CloneTo (clonectx, t);
 		}
 
@@ -407,87 +372,85 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class Join : ARangeVariableQueryClause
+	class Join : ARangeVariableQueryClause
 	{
-		Expression projection;
-		Expression inner_selector, outer_selector;
+		readonly LocatedToken lt;
+		ToplevelBlock inner_selector, outer_selector;
 
-		public Join (LocatedToken variable, Expression inner, Expression outerSelector, Expression innerSelector, Location loc)
-			: base (variable, inner, loc)
+		public Join (ToplevelBlock block, LocatedToken lt, Expression inner, ToplevelBlock outerSelector, ToplevelBlock innerSelector, Location loc)
+			: base (block, inner)
 		{
+			this.lt = lt;
 			this.outer_selector = outerSelector;
 			this.inner_selector = innerSelector;
 		}
 
-		protected override void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
-			ref Parameter parameter, TransparentIdentifiersScope ti)
+		protected override void CreateArguments (EmitContext ec, out ArrayList args)
 		{
-			args.Add (new Argument (expr));
-			args.Add (CreateSelectorArgument (ec, outer_selector, parentParameter, ti));
-			args.Add (CreateSelectorArgument (ec, inner_selector, parameter, ti));
+			args = new ArrayList (4);
 
-			parameter = CreateResultSelectorParameter (parameter);
-			if (projection == null) {
-				ArrayList join_args = new ArrayList (2);
-				join_args.Add (new AnonymousTypeParameter (parentParameter));
-				join_args.Add (new AnonymousTypeParameter (parameter));
-				projection = new AnonymousTypeDeclaration (join_args, (TypeContainer) ec.TypeContainer, loc);
+			args.Add (new Argument (expr));
+
+			LambdaExpression lambda = new LambdaExpression (outer_selector.StartLocation);
+			lambda.Block = outer_selector;
+			args.Add (new Argument (lambda));
+
+			lambda = new LambdaExpression (inner_selector.StartLocation);
+			lambda.Block = inner_selector;
+			args.Add (new Argument (lambda));
+
+			Expression result_selector_expr;
+			LocatedToken into_variable = GetIntoVariable ();
+			//
+			// When select follows use is as result selector
+			//
+			if (next is Select) {
+				result_selector_expr = next.expr;
+				next = next.next;
+			} else {
+				result_selector_expr = CreateRangeVariableType (block, (TypeContainer) ec.TypeContainer, into_variable,
+					new SimpleName (into_variable.Value, into_variable.Location));
 			}
 
-			args.Add (CreateSelectorArgument (ec, projection,
-				new Parameter [] { parentParameter, parameter }, ti));
+			LambdaExpression result_selector = new LambdaExpression (lt.Location);
+			result_selector.Block = new QueryBlock (block.Parent, block.Parameters, into_variable, block.StartLocation);
+			result_selector.Block.AddStatement (new ContextualReturn (result_selector_expr));
+
+			args.Add (new Argument (result_selector));
 		}
-	
+
+		protected virtual LocatedToken GetIntoVariable ()
+		{
+			return lt;
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression target)
 		{
 			Join t = (Join) target;
-			t.projection = projection.Clone (clonectx);
-			t.inner_selector = inner_selector.Clone (clonectx);
-			t.outer_selector = outer_selector.Clone (clonectx);
+			t.inner_selector = (ToplevelBlock) inner_selector.Clone (clonectx);
+			t.outer_selector = (ToplevelBlock) outer_selector.Clone (clonectx);
 			base.CloneTo (clonectx, t);
 		}	
-
-		protected virtual Parameter CreateResultSelectorParameter (Parameter parameter)
-		{
-			return parameter;
-		}
-
-		public override AQueryClause Next {
-			set {
-				// Use select as join projection
-				if (value is Select) {
-					projection = value.expr;
-					next = value.next;
-					return;
-				}
-
-				base.Next = value;
-			}
-		}
 
 		protected override string MethodName {
 			get { return "Join"; }
 		}
 	}
 
-	public class GroupJoin : Join
+	class GroupJoin : Join
 	{
-		readonly LocatedToken into_variable;
+		readonly LocatedToken into;
 
-		public GroupJoin (LocatedToken variable, Expression inner, Expression outerSelector, Expression innerSelector,
-			LocatedToken into, Location loc)
-			: base (variable, inner, outerSelector, innerSelector, loc)
+		public GroupJoin (ToplevelBlock block, LocatedToken lt, Expression inner,
+			ToplevelBlock outerSelector, ToplevelBlock innerSelector, LocatedToken into, Location loc)
+			: base (block, lt, inner, outerSelector, innerSelector, loc)
 		{
-			this.into_variable = into;
+			this.into = into;
 		}
 
-		protected override Parameter CreateResultSelectorParameter (Parameter parameter)
+		protected override LocatedToken GetIntoVariable ()
 		{
-			//
-			// into variable is used as result selector and it's passed as
-			// transparent identifiers to the next clause
-			//
-			return CreateBlockParameter (into_variable);
+			return into;
 		}
 
 		protected override string MethodName {
@@ -495,52 +458,11 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class Let : ARangeVariableQueryClause
+	class Let : ARangeVariableQueryClause
 	{
-		class RangeAnonymousTypeParameter : AnonymousTypeParameter
+		public Let (ToplevelBlock block, TypeContainer container, LocatedToken identifier, Expression expr)
+			: base (block, CreateRangeVariableType (block, container, identifier, expr))
 		{
-			readonly Parameter parameter;
-
-			public RangeAnonymousTypeParameter (Expression initializer, Parameter parameter)
-				: base (initializer, parameter.Name, parameter.Location)
-			{
-				this.parameter = parameter;
-			}
-
-			public override Expression DoResolve (EmitContext ec)
-			{
-				Expression e = base.DoResolve (ec);
-				if (e != null) {
-					//
-					// Spread resolved initializer type
-					//
-					((ImplicitLambdaParameter) parameter).Type = type;
-				}
-
-				return e;
-			}
-
-			protected override void Error_InvalidInitializer (string initializer)
-			{
-				Report.Error (1932, loc, "A range variable `{0}' cannot be initialized with `{1}'",
-					Name, initializer);
-			}			
-		}
-
-		public Let (LocatedToken variable, Expression expr, Location loc)
-			: base (variable, expr, loc)
-		{
-		}
-
-		protected override void AddSelectorArguments (EmitContext ec, ArrayList args, Parameter parentParameter,
-			ref Parameter parameter, TransparentIdentifiersScope ti)
-		{
-			args.Add (CreateSelectorArgument (ec, element_selector, parentParameter, ti));
-		}
-
-		protected override AnonymousTypeParameter CreateAnonymousTypeVariable (Parameter parameter)
-		{
-			return new RangeAnonymousTypeParameter (expr, parameter);
 		}
 
 		protected override string MethodName {
@@ -548,10 +470,10 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class Select : AQueryClause
+	class Select : AQueryClause
 	{
-		public Select (Expression expr, Location loc)
-			: base (expr, loc)
+		public Select (ToplevelBlock block, Expression expr, Location loc)
+			: base (block, expr, loc)
 		{
 		}
 		
@@ -559,13 +481,14 @@ namespace Mono.CSharp.Linq
 		// For queries like `from a orderby a select a'
 		// the projection is transparent and select clause can be safely removed 
 		//
-		public bool IsRequired (Parameter parameter)
-		{
-			SimpleName sn = expr as SimpleName;
-			if (sn == null)
-				return true;
+		public bool IsRequired {
+			get {
+				SimpleName sn = expr as SimpleName;
+				if (sn == null)
+					return true;
 
-			return sn.Name != parameter.Name;
+				return sn.Name != block.Parameters[0].Name;
+			}
 		}
 
 		protected override string MethodName {
@@ -573,34 +496,47 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class SelectMany : ARangeVariableQueryClause
+	class SelectMany : ARangeVariableQueryClause
 	{
-		public SelectMany (LocatedToken variable, Expression expr)
-			: base (variable, expr, expr.Location)
+		LocatedToken lt;
+
+		public SelectMany (ToplevelBlock block, LocatedToken lt, Expression expr)
+			: base (block, expr)
 		{
+			this.lt = lt;
+		}
+
+		protected override void CreateArguments (EmitContext ec, out ArrayList args)
+		{
+			base.CreateArguments (ec, out args);
+
+			Expression result_selector_expr;
+			//
+			// When select follow use is as result selector
+			//
+			if (next is Select) {
+				result_selector_expr = next.expr;
+				next = next.next;
+			} else {
+				result_selector_expr = CreateRangeVariableType (block, (TypeContainer)ec.TypeContainer, lt, new SimpleName (lt.Value, lt.Location));
+			}
+
+			LambdaExpression result_selector = new LambdaExpression (lt.Location);
+			result_selector.Block = new QueryBlock (block.Parent, block.Parameters, lt, block.StartLocation);
+			result_selector.Block.AddStatement (new ContextualReturn (result_selector_expr));
+
+			args.Add (new Argument (result_selector));
 		}
 
 		protected override string MethodName {
 			get { return "SelectMany"; }
 		}
-
-		public override AQueryClause Next {
-			set {
-				element_selector = value.expr;
-
-				// Can be optimized as SelectMany element selector
-				if (value is Select)
-					return;
-
-				next = value;
-			}
-		}
 	}
 
-	public class Where : AQueryClause
+	class Where : AQueryClause
 	{
-		public Where (Expression expr, Location loc)
-			: base (expr, loc)
+		public Where (ToplevelBlock block, Expression expr, Location loc)
+			: base (block, expr, loc)
 		{
 		}
 
@@ -609,10 +545,10 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class OrderByAscending : AQueryClause
+	class OrderByAscending : AQueryClause
 	{
-		public OrderByAscending (Expression expr)
-			: base (expr, expr.Location)
+		public OrderByAscending (ToplevelBlock block,Expression expr)
+			: base (block, expr, expr.Location)
 		{
 		}
 
@@ -621,10 +557,10 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class OrderByDescending : AQueryClause
+	class OrderByDescending : AQueryClause
 	{
-		public OrderByDescending (Expression expr)
-			: base (expr, expr.Location)
+		public OrderByDescending (ToplevelBlock block, Expression expr)
+			: base (block, expr, expr.Location)
 		{
 		}
 
@@ -633,10 +569,10 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class ThenByAscending : OrderByAscending
+	class ThenByAscending : OrderByAscending
 	{
-		public ThenByAscending (Expression expr)
-			: base (expr)
+		public ThenByAscending (ToplevelBlock block, Expression expr)
+			: base (block, expr)
 		{
 		}
 
@@ -645,10 +581,10 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	public class ThenByDescending : OrderByDescending
+	class ThenByDescending : OrderByDescending
 	{
-		public ThenByDescending (Expression expr)
-			: base (expr)
+		public ThenByDescending (ToplevelBlock block, Expression expr)
+			: base (block, expr)
 		{
 		}
 
@@ -657,169 +593,110 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class ImplicitQueryParameter : ImplicitLambdaParameter
+	//
+	// Implicit query block
+	//
+	class QueryBlock : ToplevelBlock
 	{
-		public sealed class ImplicitType : Expression
+		//
+		// Transparent parameters are used to package up the intermediate results
+		// and pass them onto next clause
+		//
+		public sealed class TransparentParameter : ImplicitLambdaParameter
 		{
-			public static ImplicitType Instance = new ImplicitType ();
+			public static int Counter;
+			const string ParameterNamePrefix = "<>__TranspIdent";
 
-			private ImplicitType ()
+			public readonly Parameters Parent;
+			public readonly string Identifier;
+
+			public TransparentParameter (Parameters parent, LocatedToken identifier)
+				: base (ParameterNamePrefix + Counter++, identifier.Location)
+			{
+				Parent = parent;
+				Identifier = identifier.Value;
+			}
+
+			public static void Reset ()
+			{
+				Counter = 0;
+			}
+		}
+
+		public sealed class ImplicitQueryParameter : ImplicitLambdaParameter
+		{
+			public ImplicitQueryParameter (string name, Location loc)
+				: base (name, loc)
 			{
 			}
-
-			protected override void CloneTo (CloneContext clonectx, Expression target)
-			{
-				// Nothing to clone
-			}
-
-			public override Expression CreateExpressionTree (EmitContext ec)
-			{
-				throw new NotSupportedException ();
-			}
-
-			public override Expression DoResolve (EmitContext ec)
-			{
-				throw new NotSupportedException ();
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				throw new NotSupportedException ();
-			}
-
-			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-			{
-				throw new NotSupportedException ();
-			}
 		}
 
-		public ImplicitQueryParameter (LocatedToken variable)
-			: base (variable.Value, variable.Location)
+		public QueryBlock (Block parent, LocatedToken lt, Location start)
+			: base (parent, new Parameters (new ImplicitQueryParameter (lt.Value, lt.Location)), start)
+		{
+			if (parent != null)
+				base.CheckParentConflictName (parent.Toplevel, lt.Value, lt.Location);
+		}
+
+		public QueryBlock (Block parent, Parameters parameters, LocatedToken lt, Location start)
+			: base (parent, new Parameters (parameters [0].Clone (), new ImplicitQueryParameter (lt.Value, lt.Location)), start)
 		{
 		}
-	}
 
-	//
-	// Transparent parameters are used to package up the intermediate results
-	// and pass them onto next clause
-	//
-	public class TransparentParameter : ImplicitLambdaParameter
-	{
-		public static int Counter;
-		const string ParameterNamePrefix = "<>__TranspIdent";
-
-		public TransparentParameter (Location loc)
-			: base (ParameterNamePrefix + Counter++, loc)
-		{
-		}
-	}
-
-	//
-	// Transparent identifiers are stored in nested anonymous types, each type can contain
-	// up to 2 identifiers or 1 identifier and parent type.
-	//
-	public class TransparentIdentifiersScope
-	{
-		readonly string [] identifiers;
-		readonly TransparentIdentifiersScope parent;
-		readonly TransparentParameter parameter;
-
-		public TransparentIdentifiersScope (TransparentIdentifiersScope parent,
-			TransparentParameter parameter, string [] identifiers)
-		{
-			this.parent = parent;
-			this.parameter = parameter;
-			this.identifiers = identifiers;
-		}
-
-		public MemberAccess GetIdentifier (string name)
-		{
-			TransparentIdentifiersScope ident = FindIdentifier (name);
-			if (ident == null)
-				return null;
-
-			return new MemberAccess (CreateIdentifierNestingExpression (ident), name);
-		}
-
-		TransparentIdentifiersScope FindIdentifier (string name)
-		{
-			foreach (string s in identifiers) {
-				if (s == name)
-					return this;
-			}
-
-			if (parent == null)
-				return null;
-
-			return parent.FindIdentifier (name);
-		}
-
-		Expression CreateIdentifierNestingExpression (TransparentIdentifiersScope end)
-		{
-			Expression expr = new SimpleName (parameter.Name, parameter.Location);
-			TransparentIdentifiersScope current = this;
-			while (current != end)
-			{
-				current = current.parent;
-				expr = new MemberAccess (expr, current.parameter.Name);
-			}
-
-			return expr;
-		}
-	}
-
-	//
-	// Lambda expression block which contains transparent identifiers
-	//
-	class SelectorBlock : ToplevelBlock
-	{
-		readonly TransparentIdentifiersScope transparent_identifiers;
-
-		public SelectorBlock (Block block, Parameters parameters, 
-			TransparentIdentifiersScope transparentIdentifiers, Location loc)
-			: base (block, parameters, loc)
-		{
-			this.transparent_identifiers = transparentIdentifiers;
-		}
-
-		public override Expression GetTransparentIdentifier (string name)
-		{
-			Expression expr = null;
-			if (transparent_identifiers != null)
-				expr = transparent_identifiers.GetIdentifier (name);
-
-			if (expr != null || Container == null)
-				return expr;
-			
-			return Container.GetTransparentIdentifier (name);
-		}
-	}
-
-	//
-	// This block is actually never used, it is used by parser only
-	//
-	public class QueryBlock : ExplicitBlock
-	{
 		public QueryBlock (Block parent, Location start)
-			: base (parent, start, Location.Null)
+			: base (parent, parent.Toplevel.Parameters.Clone (), start)
 		{
-			range_variables = new System.Collections.Specialized.HybridDictionary ();
 		}
 
-		protected override void AddVariable (LocalInfo li)
+		public void AddTransparentParameter (LocatedToken name)
 		{
-			string name = li.Name;
-			if (range_variables.Contains (name)) {
-				LocalInfo conflict = (LocalInfo) range_variables [name];
-				Report.SymbolRelatedToPreviousError (conflict.Location, name);
-				Error_AlreadyDeclared (li.Location, name);
-				return;
+			base.CheckParentConflictName (this, name.Value, name.Location);
+
+			parameters = new Parameters (new TransparentParameter (parameters, name));
+		}
+
+		protected override bool CheckParentConflictName (ToplevelBlock block, string name, Location l)
+		{
+			return true;
+		}
+
+		// 
+		// Query parameter reference can include transparent parameters
+		//
+		protected override Expression GetParameterReferenceExpression (string name, Location loc)
+		{
+			Expression expr = base.GetParameterReferenceExpression (name, loc);
+			if (expr != null)
+				return expr;
+
+			TransparentParameter tp = parameters [0] as TransparentParameter;
+			while (tp != null) {
+				if (tp.Identifier == name)
+					break;
+
+				TransparentParameter tp_next = tp.Parent [0] as TransparentParameter;
+				if (tp_next == null) {
+					if (tp.Parent.GetParameterIndexByName (name) >= 0)
+						break;
+				}
+
+				tp = tp_next;
 			}
 
-			range_variables.Add (name, li);
-			Explicit.AddKnownVariable (name, li);
+			if (tp != null) {
+				expr = new SimpleName (parameters[0].Name, loc);
+				TransparentParameter tp_cursor = (TransparentParameter) parameters[0];
+				while (tp_cursor != tp) {
+					tp_cursor = (TransparentParameter) tp_cursor.Parent[0];
+					expr = new MemberAccess (expr, tp_cursor.Name);
+				}
+
+				return new MemberAccess (expr, name);
+			}
+
+			return null;
 		}
-		
+
 		protected override void Error_AlreadyDeclared (Location loc, string var, string reason)
 		{
 			Report.Error (1931, loc, "A range variable `{0}' conflicts with a previous declaration of `{0}'",
@@ -832,7 +709,7 @@ namespace Mono.CSharp.Linq
 				var);		
 		}
 		
-		protected override void Error_AlreadyDeclaredTypeParameter (Location loc, string name)
+		public override void Error_AlreadyDeclaredTypeParameter (Location loc, string name, string conflict)
 		{
 			Report.Error (1948, loc, "A range variable `{0}' conflicts with a method type parameter",
 				name);

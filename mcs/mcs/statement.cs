@@ -1559,7 +1559,6 @@ namespace Mono.CSharp {
 		// Keeps track of (name, type) pairs
 		//
 		IDictionary variables;
-		protected IDictionary range_variables;
 
 		//
 		// Keeps track of constants
@@ -1811,34 +1810,45 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public LocalInfo AddVariable (Expression type, string name, Location l)
+		protected virtual bool CheckParentConflictName (ToplevelBlock block, string name, Location l)
 		{
 			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
 				Report.SymbolRelatedToPreviousError (vi.Location, name);
 				if (Explicit == vi.Block.Explicit) {
-					if (type is Linq.ImplicitQueryParameter.ImplicitType && type == vi.Type)
-						Error_AlreadyDeclared (l, name);
-					else
-						Error_AlreadyDeclared (l, name, null);
+					Error_AlreadyDeclared (l, name, null);
 				} else {
-					Error_AlreadyDeclared (l, name, "parent");
+					Error_AlreadyDeclared (l, name, this is ToplevelBlock ?
+						"parent or current" : "parent");
 				}
-				return null;
+				return false;
 			}
 
-			Expression e = Toplevel.GetParameterReference (name, Location.Null);
-			if (e != null) {
-				//Report.SymbolRelatedToPreviousError (pi.Parameter.Location, name);
-				Error_AlreadyDeclared (loc, name, "parent or current");
-				return null;
+			if (block != null) {
+				Expression e = block.GetParameterReference (name, Location.Null);
+				if (e != null) {
+					ParameterReference pr = e as ParameterReference;
+					if (this is Linq.QueryBlock && (pr != null && pr.Parameter is Linq.QueryBlock.ImplicitQueryParameter || e is MemberAccess))
+						Error_AlreadyDeclared (loc, name);
+					else
+						Error_AlreadyDeclared (loc, name, "parent or current");
+					return false;
+				}
 			}
-			
+
+			return true;
+		}
+
+		public LocalInfo AddVariable (Expression type, string name, Location l)
+		{
+			if (!CheckParentConflictName (Toplevel, name, l))
+				return null;
+
 			if (Toplevel.GenericMethod != null) {
 				foreach (TypeParameter tp in Toplevel.GenericMethod.CurrentTypeParameters) {
 					if (tp.Name == name) {
 						Report.SymbolRelatedToPreviousError (tp);
-						Error_AlreadyDeclaredTypeParameter (loc, name);
+						Error_AlreadyDeclaredTypeParameter (loc, name, "local variable");
 						return null;
 					}
 				}
@@ -1851,7 +1861,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			vi = new LocalInfo (type, name, this, l);
+			LocalInfo vi = new LocalInfo (type, name, this, l);
 			AddVariable (vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
@@ -1885,9 +1895,10 @@ namespace Mono.CSharp {
 				"A local variable named `{0}' is already defined in this scope", name);
 		}
 					
-		protected virtual void Error_AlreadyDeclaredTypeParameter (Location loc, string name)
+		public virtual void Error_AlreadyDeclaredTypeParameter (Location loc, string name, string conflict)
 		{
-			GenericMethod.Error_ParameterNameCollision (loc, name, "local variable");
+			Report.Error (412, loc, "The type parameter name `{0}' is the same as `{1}'",
+				name, conflict);
 		}					
 
 		public bool AddConstant (Expression type, string name, Expression value, Location l)
@@ -1929,12 +1940,6 @@ namespace Mono.CSharp {
 			for (Block b = this; b != null; b = b.Parent) {
 				if (b.variables != null) {
 					ret = (LocalInfo) b.variables [name];
-					if (ret != null)
-						return ret;
-				}
-
-				if (b.range_variables != null) {
-					ret = (LocalInfo) b.range_variables [name];
 					if (ret != null)
 						return ret;
 				}
@@ -2600,7 +2605,7 @@ namespace Mono.CSharp {
 	public class ToplevelBlock : ExplicitBlock {
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
-		Parameters parameters;
+		protected Parameters parameters;
 		ToplevelParameterInfo[] parameter_info;
 		LocalInfo this_variable;
 
@@ -2696,15 +2701,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual Expression GetTransparentIdentifier (string name)
-		{
-			return null;
-		}
-
 		void ProcessParameters ()
 		{
 			int n = parameters.Count;
 			parameter_info = new ToplevelParameterInfo [n];
+			ToplevelBlock top_parent = Parent == null ? null : Parent.Toplevel;
 			for (int i = 0; i < n; ++i) {
 				parameter_info [i] = new ToplevelParameterInfo (this, i);
 
@@ -2713,23 +2714,8 @@ namespace Mono.CSharp {
 					continue;
 
 				string name = p.Name;
-				LocalInfo vi = GetLocalInfo (name);
-				if (vi != null) {
-					Report.SymbolRelatedToPreviousError (vi.Location, name);
-					Error_AlreadyDeclared (loc, name, "parent or current");
-					continue;
-				}
-
-				if (Parent != null) {
-					Expression e = Parent.Toplevel.GetParameterReference (name, loc);
-					if (e != null) {
-						//Report.SymbolRelatedToPreviousError (pi.Location, name);
-						Error_AlreadyDeclared (loc, name, "parent or current");
-						continue;
-					}
-				}
-
-				AddKnownVariable (name, parameter_info [i]);
+				if (CheckParentConflictName (top_parent, name, loc))
+					AddKnownVariable (name, parameter_info [i]);
 			}
 
 			// mark this block as "used" so that we create local declarations in a sub-block
@@ -2787,8 +2773,8 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns a `ParameterReference' for the given name, or null if there
-		// is no such parameter
+		// Returns a parameter reference expression for the given name,
+		// or null if there is no such parameter
 		//
 		public Expression GetParameterReference (string name, Location loc)
 		{
@@ -2801,11 +2787,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		Expression GetParameterReferenceExpression (string name, Location loc)
+		protected virtual Expression GetParameterReferenceExpression (string name, Location loc)
 		{
 			int idx = parameters.GetParameterIndexByName (name);
 			return idx < 0 ?
-				null : new ParameterReference (parameter_info[idx], loc);
+				null : new ParameterReference (parameter_info [idx], loc);
 		}
 
 		// <summary>

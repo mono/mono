@@ -2004,6 +2004,7 @@ namespace Mono.CSharp
 			AnonymousMethodStorey.Reset ();
 			SymbolWriter.Reset ();
 			Switch.Reset ();
+			Linq.QueryBlock.TransparentParameter.Reset ();
 		}
 
 	}

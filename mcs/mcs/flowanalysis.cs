@@ -1610,7 +1610,9 @@ namespace Mono.CSharp
 		public bool this [int index] {
 			get {
 				if (index >= Count)
-					throw new ArgumentOutOfRangeException ();
+					// FIXME: Disabled due to missing anonymous method flow analysis
+					// throw new ArgumentOutOfRangeException ();
+					return true; 
 
 				if (vector != null)
 					return vector [index];
