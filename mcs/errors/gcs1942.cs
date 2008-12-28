@@ -1,6 +1,5 @@
-// CS1942: Type inference failed to infer type argument for `select' clause. Try specifying the type argument explicitly
-// Line: 13
-
+// CS1942: An expression type in `select' clause is incorrect. Type inference failed in the call to `Select'
+// Line: 12
 
 using System;
 using System.Linq;
