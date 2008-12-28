@@ -16681,7 +16681,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>2076</size>
+        <size>2008</size>
       </method>
       <method name="Void Foo(Int32, Boolean)">
         <size>11</size>
@@ -16726,26 +16726,6 @@
         <size>7</size>
       </method>
       <method name="&lt;l&gt;__T get_l()">
-        <size>7</size>
-      </method>
-      <method name="Boolean Equals(System.Object)">
-        <size>69</size>
-      </method>
-      <method name="Int32 GetHashCode()">
-        <size>86</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>108</size>
-      </method>
-    </type>
-    <type name="&lt;&gt;__AnonType2`2[&lt;&lt;&gt;__TranspIdent2&gt;__T,&lt;l2&gt;__T]">
-      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent2&gt;__T, &lt;l2&gt;__T)">
-        <size>21</size>
-      </method>
-      <method name="&lt;&lt;&gt;__TranspIdent2&gt;__T get_&lt;&gt;__TranspIdent2()">
-        <size>7</size>
-      </method>
-      <method name="&lt;l2&gt;__T get_l2()">
         <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)">
@@ -16825,61 +16805,10 @@
       <method name="Int32 &lt;Main&gt;m__C(Int32)">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__D(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__E(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__F(ITest)">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__10(Int32, ITest)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__11(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__12(ITest)">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__13(Int32, ITest)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__14(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__15(ITest)">
-        <size>7</size>
-      </method>
-      <method name="&lt;&gt;__AnonType0`2[System.Int32,from.ITest] &lt;Main&gt;m__16(Int32, ITest)">
-        <size>8</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__17(&lt;&gt;__AnonType0`2[System.Int32,from.ITest])">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__18(ITest)">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__19(&lt;&gt;__AnonType0`2[System.Int32,from.ITest], ITest)">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__1A(Int32)">
-        <size>2</size>
-      </method>
       <method name="Int32 &lt;Main&gt;m__1B(Int32)">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__1C(Int32, IEnumerable`1)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__1D(Int32)">
-        <size>2</size>
-      </method>
       <method name="Int32 &lt;Main&gt;m__1E(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__1F(Int32, IEnumerable`1)">
         <size>2</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__20(Int32)">
@@ -16888,81 +16817,146 @@
       <method name="Int32 &lt;Main&gt;m__21(Int32)">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__22(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__23(Int32)">
-        <size>2</size>
-      </method>
-      <method name="IGrouping`2 &lt;Main&gt;m__24(IGrouping`2)">
-        <size>2</size>
-      </method>
       <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__25(Int32)">
         <size>10</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__26(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__D(ITest)">
         <size>7</size>
       </method>
-      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__27(Int32)">
+      <method name="Int32 &lt;Main&gt;m__E(Int32, ITest)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__F(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__10(ITest)">
+        <size>7</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__11(Int32, ITest)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__12(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__13(ITest)">
+        <size>7</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,from.ITest] &lt;Main&gt;m__14(Int32, ITest)">
+        <size>8</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__15(&lt;&gt;__AnonType0`2[System.Int32,from.ITest])">
+        <size>7</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__16(ITest)">
+        <size>7</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__17(&lt;&gt;__AnonType0`2[System.Int32,from.ITest], ITest)">
+        <size>7</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__18(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__19(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1A(Int32, IEnumerable`1)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1C(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1D(Int32, IEnumerable`1)">
+        <size>2</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__1F(Int32)">
+        <size>2</size>
+      </method>
+      <method name="IGrouping`2 &lt;Main&gt;m__22(IGrouping`2)">
+        <size>2</size>
+      </method>
+      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__23(Int32)">
         <size>10</size>
       </method>
-      <method name="&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__28(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__24(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])">
+        <size>7</size>
+      </method>
+      <method name="&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__26(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])">
         <size>15</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__29(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__27(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])">
         <size>12</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2A(Int32)">
+      <method name="Int32 &lt;Main&gt;m__28(Int32)">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2B(Int32)">
+      <method name="Int32 &lt;Main&gt;m__29(Int32)">
         <size>2</size>
       </method>
-      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__2D(IGrouping`2, Int32)">
+      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__2B(IGrouping`2, Int32)">
         <size>8</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2E(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__2C(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__2F(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__2D(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
         <size>7</size>
       </method>
-      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__31(IGrouping`2, Int32)">
+      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__2F(IGrouping`2, Int32)">
         <size>8</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__32(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__30(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__33(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__31(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
         <size>7</size>
       </method>
-      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__35(IGrouping`2, Int32)">
+      <method name="&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__33(IGrouping`2, Int32)">
         <size>8</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__36(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__34(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__37(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
+      <method name="Int32 &lt;Main&gt;m__35(&lt;&gt;__AnonType3`2[System.Linq.IGrouping`2[System.Int32,System.Int32],System.Int32])">
         <size>7</size>
       </method>
-      <method name="IGrouping`2 &lt;Main&gt;m__38(IGrouping`2)">
+      <method name="IGrouping`2 &lt;Main&gt;m__36(IGrouping`2)">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__39(Int32)">
+      <method name="Int32 &lt;Main&gt;m__37(Int32)">
         <size>2</size>
       </method>
-      <method name="Int32 &lt;Main&gt;m__3A(Int32)">
+      <method name="Int32 &lt;Main&gt;m__38(Int32)">
         <size>2</size>
       </method>
     </type>
+    <type name="&lt;&gt;__AnonType2`2[&lt;&lt;&gt;__TranspIdent8&gt;__T,&lt;l2&gt;__T]">
+      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent8&gt;__T, &lt;l2&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;&lt;&gt;__TranspIdent8&gt;__T get_&lt;&gt;__TranspIdent8()">
+        <size>7</size>
+      </method>
+      <method name="&lt;l2&gt;__T get_l2()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
     <type name="from.C+&lt;Main&gt;c__AnonStorey0">
-      <method name="IEnumerable`1 &lt;&gt;m__2C(IGrouping`2)">
+      <method name="IEnumerable`1 &lt;&gt;m__2A(IGrouping`2)">
         <size>7</size>
       </method>
-      <method name="IEnumerable`1 &lt;&gt;m__30(IGrouping`2)">
+      <method name="IEnumerable`1 &lt;&gt;m__2E(IGrouping`2)">
         <size>7</size>
       </method>
-      <method name="IEnumerable`1 &lt;&gt;m__34(IGrouping`2)">
+      <method name="IEnumerable`1 &lt;&gt;m__32(IGrouping`2)">
         <size>7</size>
       </method>
     </type>
@@ -17149,26 +17143,6 @@
         <size>108</size>
       </method>
     </type>
-    <type name="&lt;&gt;__AnonType1`2[&lt;&lt;&gt;__TranspIdent8&gt;__T,&lt;v&gt;__T]">
-      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent8&gt;__T, &lt;v&gt;__T)">
-        <size>21</size>
-      </method>
-      <method name="&lt;&lt;&gt;__TranspIdent8&gt;__T get_&lt;&gt;__TranspIdent8()">
-        <size>7</size>
-      </method>
-      <method name="&lt;v&gt;__T get_v()">
-        <size>7</size>
-      </method>
-      <method name="Boolean Equals(System.Object)">
-        <size>69</size>
-      </method>
-      <method name="Int32 GetHashCode()">
-        <size>86</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>108</size>
-      </method>
-    </type>
     <type name="Let">
       <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__0(Int32)">
         <size>10</size>
@@ -17189,6 +17163,26 @@
         <size>7</size>
       </method>
     </type>
+    <type name="&lt;&gt;__AnonType1`2[&lt;&lt;&gt;__TranspIdent1&gt;__T,&lt;v&gt;__T]">
+      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent1&gt;__T, &lt;v&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;&lt;&gt;__TranspIdent1&gt;__T get_&lt;&gt;__TranspIdent1()">
+        <size>7</size>
+      </method>
+      <method name="&lt;v&gt;__T get_v()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-linq-07.cs">
     <type name="SelectMany">
@@ -17207,26 +17201,6 @@
         <size>7</size>
       </method>
       <method name="&lt;i2&gt;__T get_i2()">
-        <size>7</size>
-      </method>
-      <method name="Boolean Equals(System.Object)">
-        <size>69</size>
-      </method>
-      <method name="Int32 GetHashCode()">
-        <size>86</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>108</size>
-      </method>
-    </type>
-    <type name="&lt;&gt;__AnonType1`2[&lt;&lt;&gt;__TranspIdent10&gt;__T,&lt;i3&gt;__T]">
-      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent10&gt;__T, &lt;i3&gt;__T)">
-        <size>21</size>
-      </method>
-      <method name="&lt;&lt;&gt;__TranspIdent10&gt;__T get_&lt;&gt;__TranspIdent10()">
-        <size>7</size>
-      </method>
-      <method name="&lt;i3&gt;__T get_i3()">
         <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)">
@@ -17300,6 +17274,26 @@
       </method>
       <method name="&lt;&gt;__AnonType0`2[System.Int32,System.String] &lt;Main&gt;m__A(Int32, System.String)">
         <size>8</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType1`2[&lt;&lt;&gt;__TranspIdent1&gt;__T,&lt;i3&gt;__T]">
+      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent1&gt;__T, &lt;i3&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;&lt;&gt;__TranspIdent1&gt;__T get_&lt;&gt;__TranspIdent1()">
+        <size>7</size>
+      </method>
+      <method name="&lt;i3&gt;__T get_i3()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
       </method>
     </type>
   </test>
@@ -17871,18 +17865,270 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>190</size>
+        <size>161</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0(Int32)">
-        <size>2</size>
-      </method>
-      <method name="Int32 &lt;Main&gt;m__1(Int32)">
         <size>2</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-linq-18.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Test(System.Func`2[System.Int32,System.Boolean])">
+        <size>2</size>
+      </method>
+      <method name="Boolean Test2(System.Func`2[System.Int32,System.Int32])">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>652</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Boolean] &lt;Main&gt;m__0(Int32)">
+        <size>42</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__1(&lt;&gt;__AnonType0`2[System.Int32,System.Boolean])">
+        <size>11</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__2(&lt;&gt;__AnonType0`2[System.Int32,System.Boolean])">
+        <size>31</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__3(Int32)">
+        <size>31</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__4(Int32)">
+        <size>31</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__5(Int32)">
+        <size>31</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__6(Int32)">
+        <size>31</size>
+      </method>
+      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Int32] &lt;Main&gt;m__7(Int32)">
+        <size>10</size>
+      </method>
+      <method name="&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32] &lt;Main&gt;m__8(&lt;&gt;__AnonType1`2[System.Int32,System.Int32])">
+        <size>15</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__9(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])">
+        <size>31</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__A(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])">
+        <size>15</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__B(&lt;&gt;__AnonType2`2[&lt;&gt;__AnonType1`2[System.Int32,System.Int32],System.Int32])">
+        <size>12</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;ck&gt;__T,&lt;xy&gt;__T]">
+      <method name="Void .ctor(&lt;ck&gt;__T, &lt;xy&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;ck&gt;__T get_ck()">
+        <size>7</size>
+      </method>
+      <method name="&lt;xy&gt;__T get_xy()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType1`2[&lt;i&gt;__T,&lt;l&gt;__T]">
+      <method name="Void .ctor(&lt;i&gt;__T, &lt;l&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;i&gt;__T get_i()">
+        <size>7</size>
+      </method>
+      <method name="&lt;l&gt;__T get_l()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey3">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey4">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey5">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey6">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Boolean &lt;Main&gt;m__C(Int32)">
+        <size>31</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__D(Int32)">
+        <size>31</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__E(Int32, Int32)">
+        <size>2</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__F(Int32)">
+        <size>31</size>
+      </method>
+      <method name="Boolean &lt;Main&gt;m__10(Int32)">
+        <size>31</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__11(Int32, IEnumerable`1)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType2`2[&lt;&lt;&gt;__TranspIdent1&gt;__T,&lt;g&gt;__T]">
+      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent1&gt;__T, &lt;g&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;&lt;&gt;__TranspIdent1&gt;__T get_&lt;&gt;__TranspIdent1()">
+        <size>7</size>
+      </method>
+      <method name="&lt;g&gt;__T get_g()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
+      <method name="Boolean &lt;&gt;m__12(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey1">
+      <method name="Boolean &lt;&gt;m__13(Int32)">
+        <size>15</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey2">
+      <method name="Boolean &lt;&gt;m__14(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey3">
+      <method name="Boolean &lt;&gt;m__15(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey4">
+      <method name="Int32 &lt;&gt;m__16(Int32)">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey5">
+      <method name="Int32 &lt;&gt;m__17(Int32)">
+        <size>9</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey6">
+      <method name="Boolean &lt;&gt;m__18(Int32)">
+        <size>20</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey7">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__19(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey8">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__1A(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey9">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__1B(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStoreyA">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__1C(Int32)">
+        <size>10</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-linq-19.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>45</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Char &lt;Test&gt;m__0(Char)">
+        <size>2</size>
       </method>
     </type>
   </test>
