@@ -1,3 +1,8 @@
+2008-12-29  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Remove a bogus ReBind call, which was causing 
+	recursive rebinding.
+
 2008-12-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DateTimePicker.cs: Handle the "MMMM" month format.

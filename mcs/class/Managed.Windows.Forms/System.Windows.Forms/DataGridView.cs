@@ -5541,7 +5541,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal void OnColumnCollectionChanged (object sender, CollectionChangeEventArgs e) {
-			ReBind ();
 			switch (e.Action) {
 				case CollectionChangeAction.Add:
 					OnColumnAddedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
@@ -5934,7 +5933,6 @@ namespace System.Windows.Forms {
 
 				OnDataBindingComplete (new DataGridViewBindingCompleteEventArgs (ListChangedType.Reset));
 			}
-
 			if (Rows.Count > 0 && Columns.Count > 0)
 				MoveCurrentCell (0, 0, true, false, false, false);
 			PerformLayout();
