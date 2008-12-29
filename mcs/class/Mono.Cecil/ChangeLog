@@ -1,3 +1,8 @@
+2008-12-29  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Mono.Cecil/MethodReturnType.cs: Override ToString so we can, by
+	default, display something useful about the return type.
+
 2008-12-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/GenericInstanceMethod.cs,
