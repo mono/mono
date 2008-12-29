@@ -1,3 +1,7 @@
+2008-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlDbType: Added Date and Time (2.0 only).
+
 2008-11-18  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix #420862

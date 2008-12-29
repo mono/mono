@@ -65,10 +65,12 @@ namespace System.Data
 		TinyInt = 20,
 		VarBinary = 21,
 		VarChar = 22,
+		Variant = 23,
 #if NET_2_0
 		Xml = 25,
 		Udt = 29,
+		Date = 31,
+		Time = 32
 #endif
-		Variant = 23
 	}
 }
