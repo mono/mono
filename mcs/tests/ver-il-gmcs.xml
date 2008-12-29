@@ -13791,6 +13791,49 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anontype-11.cs">
+    <type name="Alpha">
+      <method name="Void .ctor(String)">
+        <size>14</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Beta">
+      <method name="Void .ctor(String)">
+        <size>14</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>49</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;First&gt;__T,&lt;Second&gt;__T]">
+      <method name="Void .ctor(&lt;First&gt;__T, &lt;Second&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;First&gt;__T get_First()">
+        <size>7</size>
+      </method>
+      <method name="&lt;Second&gt;__T get_Second()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>108</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-autoproperty-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -15848,6 +15891,16 @@
       </method>
       <method name="Int32 Main()">
         <size>8</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-exmethod-23.cs">
+    <type name="T">
+      <method name="Void A(System.String, Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
       </method>
     </type>
   </test>
@@ -33776,6 +33829,16 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-698.cs">
+    <type name="test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>12</size>
       </method>
     </type>
   </test>
