@@ -43,6 +43,10 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool HasGenericArguments { 
+			get { return m_genArgs == null ? false : m_genArgs.Count > 0; }
+		}
+
 		public override bool IsValueType {
 			get { return m_isValueType; }
 			set { m_isValueType = value; }

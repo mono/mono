@@ -42,6 +42,10 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public bool HasGenericArguments { 
+			get { return m_genArgs == null ? false : m_genArgs.Count > 0; }
+		}
+
 		public GenericInstanceMethod (MethodReference elemMethod) : base (elemMethod)
 		{
 		}

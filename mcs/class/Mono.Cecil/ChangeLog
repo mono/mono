@@ -1,3 +1,10 @@
+2008-12-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil/GenericInstanceMethod.cs,
+	* Mono.Cecil/GenericInstanceType.cs,
+	* Mono.Cecil/IGenericInstance.cs: Introduce HasGenericArguments into
+	the interface and implement it inside GenericInstance[Method|Type]
+
 2008-12-16  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Signatures/SignatureReader.cs: fix reading of wrong
