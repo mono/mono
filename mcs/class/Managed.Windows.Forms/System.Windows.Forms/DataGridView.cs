@@ -5389,7 +5389,7 @@ namespace System.Windows.Forms {
 				OnRowEnter (new DataGridViewCellEventArgs (cell.ColumnIndex, cell.RowIndex));
 				OnCellEnter (new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
 				OnCurrentCellChanged (EventArgs.Empty);
-				if (throughMouseClick || editMode == DataGridViewEditMode.EditOnEnter)
+				if (editMode == DataGridViewEditMode.EditOnEnter)
 					BeginEdit (true);
 			} else {
 				if (throughMouseClick)

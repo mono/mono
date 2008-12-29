@@ -1,3 +1,9 @@
+2008-12-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: If a new cell is selected edit mode should be 
+	immediately enabled only if EditOnEnter is set. Whether the mouse 
+	or not was used to select the cell is irrelevant.
+
 2008-12-29  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Remove a bogus ReBind call, which was causing 
