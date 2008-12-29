@@ -1313,7 +1313,7 @@ namespace System.Windows.Forms {
 					SetPart(Value.Minute + delta, dt_part);
 					break;
 				case DateTimePart.Month:
-					SetPart(Value.Month + delta, dt_part);
+					SetPart (Value.Month + delta, dt_part, true);
 					break;
 				case DateTimePart.Seconds:
 					SetPart(Value.Second + delta, dt_part);
@@ -1582,8 +1582,13 @@ namespace System.Windows.Forms {
 				Invalidate (date_area_rect);
 		}
 
-		// set the specified part of the date to the specified value
 		internal void SetPart (int value, DateTimePart dt_part)
+		{
+			SetPart (value, dt_part, false);
+		}
+
+		// set the specified part of the date to the specified value
+		internal void SetPart (int value, DateTimePart dt_part, bool adjust)
 		{
 			switch (dt_part)
 			{
@@ -1621,18 +1626,27 @@ namespace System.Windows.Forms {
 						Value = new DateTime(Value.Year, Value.Month, value, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
 					break;
 				case DateTimePart.Month:
-					if (value == 0)
-						value = 12;
-						
+					DateTime date = Value;
+
+					if (adjust) {
+						if (value == 0) {
+							date = date.AddYears (-1);
+							value = 12;
+						} else if (value == 13) {
+							date = date.AddYears (1);
+							value = 1;
+						}
+					}
+
 					if (value >= 1 && value <= 12) {
 						// if we move from say december to november with days on 31, we must
 						// remap to the maximum number of days
-						int days_in_new_month = DateTime.DaysInMonth (Value.Year, value);
+						int days_in_new_month = DateTime.DaysInMonth (date.Year, value);
 						
-						if (Value.Day > days_in_new_month)
-							Value = new DateTime (Value.Year, value, days_in_new_month, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+						if (date.Day > days_in_new_month)
+							Value = new DateTime (date.Year, value, days_in_new_month, date.Hour, date.Minute, date.Second, date.Millisecond);
 						else
-							Value = new DateTime (Value.Year, value, Value.Day, Value.Hour, Value.Minute, Value.Second, Value.Millisecond);
+							Value = new DateTime (date.Year, value, date.Day, date.Hour, date.Minute, date.Second, date.Millisecond);
 					}
 					break;
 				case DateTimePart.Year:
