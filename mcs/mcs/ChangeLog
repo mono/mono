@@ -1,3 +1,8 @@
+2008-12-29  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #450782
+	* ecore.cs: Consider more variables of form V.I to be fixed.
+
 2008-12-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #457087

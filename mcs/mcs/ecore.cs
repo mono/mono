@@ -4971,7 +4971,11 @@ namespace Mono.CSharp {
 				// A variable of the form V.I is fixed when V is a fixed variable of a struct type
 				//
 				IVariableReference variable = InstanceExpression as IVariableReference;
-				return variable != null && InstanceExpression.Type.IsValueType && variable.IsFixed;
+				if (variable != null)
+					return InstanceExpression.Type.IsValueType && variable.IsFixed;
+
+				IFixedExpression fe = InstanceExpression as IFixedExpression;
+				return fe != null && fe.IsFixed;
 			}
 		}
 
