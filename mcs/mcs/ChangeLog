@@ -1,3 +1,8 @@
+2008-12-29  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #460712
+	* typemanager.cs: Core types could be imported.
+
 2008-12-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bugs #460847, #460772, #458049, #457339, #447807

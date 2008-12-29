@@ -870,20 +870,8 @@ namespace Mono.CSharp {
 	//
 	public static Type CoreLookupType (string ns_name, string name, Kind type_kind, bool required)
 	{
-		Expression expr;
-		if (RootContext.StdLib) {
-			Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
-			expr = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
-		} else {
-			if (!required)
-				Report.DisableReporting ();
-
-			TypeLookupExpression tle = new TypeLookupExpression (ns_name + "." + name);
-			expr = tle.ResolveAsTypeTerminal (RootContext.ToplevelTypes, false);
-
-			if (!required)
-				Report.EnableReporting ();
-		}
+		Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
+		Expression expr = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
 
 		if (expr == null) {
 			if (required) {
