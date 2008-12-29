@@ -1,3 +1,11 @@
+2008-12-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Mono.Cecil.Cil/MethodBody.cs: Add HasExceptionHandlers, 
+	HasVariables and HasScopes to avoid creating empty collections 
+	inside Cecil. There is no HasInstruction because there's always
+	something if MethodDefinition.HasBody is true (i.e. a MethodBody
+	exists). 
+
 2008-12-29  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Mono.Cecil/MethodReturnType.cs: Override ToString so we can, by
