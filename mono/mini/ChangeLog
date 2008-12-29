@@ -1,3 +1,9 @@
+2008-12-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c: Check jit_tls->class_cast_from instead of class_cast_to
+	since only the former is nulled out after a successful cast. This prevents
+	crashes with rethrown exceptions when using --debug=casts.
+
 2008-12-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.h: New macro for checking whether a method is final,
