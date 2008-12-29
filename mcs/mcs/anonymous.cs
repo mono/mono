@@ -1839,7 +1839,10 @@ namespace Mono.CSharp {
 			// hash ^= hash >> 17;
 			// hash += hash << 5;
 
-			ToplevelBlock hashcode_block = new ToplevelBlock (loc);
+			ToplevelBlock hashcode_top = new ToplevelBlock (loc);
+			Block hashcode_block = new Block (hashcode_top);
+			hashcode_top.AddStatement (new Unchecked (hashcode_block));
+
 			hashcode_block.AddVariable (TypeManager.system_int32_expr, "hash", loc);
 			LocalVariableReference hash_variable = new LocalVariableReference (hashcode_block, "hash", loc);
 			hashcode_block.AddStatement (new StatementExpression (
@@ -1862,7 +1865,7 @@ namespace Mono.CSharp {
 					new Binary (Binary.Operator.LeftShift, hash_variable, new IntConstant (5, loc)))));
 
 			hashcode_block.AddStatement (new Return (hash_variable, loc));
-			hashcode.Block = hashcode_block;
+			hashcode.Block = hashcode_top;
 			hashcode.Define ();
 			AddMethod (hashcode);
 

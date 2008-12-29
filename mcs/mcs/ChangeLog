@@ -1,5 +1,11 @@
 2008-12-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #462622
+	* anonymous.cs: Resolve anonymous type GetHashCode in unchecked
+	context.
+
+2008-12-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #450782
 	* ecore.cs: Consider more variables of form V.I to be fixed.
 
