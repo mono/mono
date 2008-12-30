@@ -1,3 +1,7 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DBConcurrencyExceptionTest.cs: Added .ctor and Row(Count) tests.
+
 2008-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataTableTest.cs: Allow NFIFromBug55978 test to pass when MONO_PATH
@@ -5,7 +9,6 @@
 	* BinarySerializationTest.cs: Change culture for culture-sensitive
 	tests.
 	* DataColumnTest2.cs: Change culture for culture-sensitive tests.
-
 
 2008-11-18  Raja R Harinath  <harinath@hurrynot.org>
 

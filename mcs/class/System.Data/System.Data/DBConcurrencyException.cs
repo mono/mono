@@ -37,15 +37,16 @@ namespace System.Data
 	[Serializable]
 	public sealed class DBConcurrencyException : SystemException
 	{
-		DataRow row;
+		DataRow [] rows;
 
 		#region Constructors
 
-#if NET_1_1
-		public DBConcurrencyException () : base ()
+		public DBConcurrencyException ()
+#if NET_2_0
+			: base ("Concurrency violation.")
+#endif
 		{
 		}
-#endif
 
 		public DBConcurrencyException (string message)
 			: base (message)
@@ -58,11 +59,15 @@ namespace System.Data
 		}
 
 #if NET_2_0
-		public DBConcurrencyException (string message, Exception inner, DataRow[] dataRows)
+		public
+#else
+		internal
+#endif
+		DBConcurrencyException (string message, Exception inner, DataRow[] dataRows)
 			: base (message, inner)
 		{
+			rows = dataRows;
 		}
-#endif
 
 		private DBConcurrencyException (SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
@@ -73,14 +78,21 @@ namespace System.Data
 		#region Properties
 
 		public DataRow Row {
-			get { return row; }
-			set { row = value;} // setting the row has no effect
+			get {
+				if (rows != null)
+					return rows [0];
+				return null;
+			}
+			set { rows = new DataRow [] { value };}
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public int RowCount {
-			get { throw new NotImplementedException (); }
+			get {
+				if (rows != null)
+					return rows.Length;
+				return 0;
+			}
 		}
 #endif
 

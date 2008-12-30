@@ -55,6 +55,7 @@ System.Data/DataViewTest.cs
 System.Data/DataViewTest2.cs
 System.Data/DataViewTest_IBindingList.cs
 System.Data/DataViewTest_IBindingListView.cs
+System.Data/DBConcurrencyExceptionTest.cs
 System.Data/ForeignKeyConstraintTest.cs
 System.Data/ForeignKeyConstraintTest2.cs
 System.Data/MonkeyDataSet.cs

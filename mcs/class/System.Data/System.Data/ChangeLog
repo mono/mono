@@ -1,3 +1,9 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DBConcurrencyException.cs: Marked .ctor taking DataRow [] as
+	internal so we can use it on the 1.0 profile (internally). Implemented
+	RowCount.
+
 2008-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlDbType: Added Date and Time (2.0 only).
