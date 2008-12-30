@@ -1,3 +1,10 @@
+2008-12-30  Raja R Harinath  <harinath@hurrynot.org>
+
+	Mildly rewrite duplicate-inferring logic.
+	* Index.cs (IndexDuplicateState): Remove.
+	(_hasDuplicates): Remove.  Replace by ...
+	(know_have_duplicates, know_no_duplicates): ... these.
+
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbCommandBuilder.cs: When CatalogSeparator or SchemaSeparator are

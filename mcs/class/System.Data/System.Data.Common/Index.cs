@@ -35,12 +35,6 @@ using System.Text;
 
 namespace System.Data.Common
 {
-	enum IndexDuplicatesState {
-		Unknown,
-		True,
-		False
-	}
-
 	/// <summary>
 	/// Summary description for Index.
 	/// </summary>
@@ -53,7 +47,9 @@ namespace System.Data.Common
 		int _size;
 		Key _key;
 		int _refCount;
-		IndexDuplicatesState _hasDuplicates;
+
+		// Implement a tri-state, with the property that 'know_no_duplicates' has meaning only when '!know_have_duplicates'
+		bool know_have_duplicates, know_no_duplicates;
 
 		#endregion // Fields
 
@@ -88,17 +84,16 @@ namespace System.Data.Common
 
 		internal bool HasDuplicates {
 			get {
-				if (_hasDuplicates == IndexDuplicatesState.Unknown) {
-					// check for duplicates
-					_hasDuplicates = IndexDuplicatesState.False;
+				if (!know_have_duplicates && !know_no_duplicates) {
 					for (int i = 0; i < _size - 1; i++) {
 						if (Key.CompareRecords (_array [i], _array [i + 1]) == 0) {
-							_hasDuplicates = IndexDuplicatesState.True;
+							know_have_duplicates = true;
 							break;
 						}
 					}
+					know_no_duplicates = !know_have_duplicates;
 				}
-				return (_hasDuplicates == IndexDuplicatesState.True);
+				return know_have_duplicates;
 			}
 		}
 
@@ -180,9 +175,9 @@ namespace System.Data.Common
 				if (record != -1)
 					_array [_size++] = record;
 			}
-			_hasDuplicates = IndexDuplicatesState.False;
-			// Note : MergeSort may update hasDuplicates to True
+			know_have_duplicates = know_no_duplicates = false;
 			Sort ();
+			know_no_duplicates = !know_have_duplicates;
 		}
 
 		private void Sort ()
@@ -350,7 +345,7 @@ namespace System.Data.Common
 
 			int index = FindIndexExact (oldRecord);
 			if (index != -1) {
-				if (_hasDuplicates == IndexDuplicatesState.True) {
+				if (know_have_duplicates) {
 					int c1 = 1;
 					int c2 = 1;
 
@@ -360,7 +355,7 @@ namespace System.Data.Common
 						c2 = Key.CompareRecords (_array [index + 1], oldRecord);
 
 					if (c1 == 0 ^ c2 == 0)
-						_hasDuplicates = IndexDuplicatesState.Unknown;
+						know_have_duplicates = know_no_duplicates = false;
 				}
 				Remove (index);
 			}
@@ -412,14 +407,14 @@ namespace System.Data.Common
 					return;
 				}
 			} else {
-				if (_hasDuplicates == IndexDuplicatesState.True) {
+				if (know_have_duplicates) {
 					if (oldIdx > 0)
 						c1 = Key.CompareRecords (_array [oldIdx - 1], newRecord);
 					if (oldIdx < _size - 1)
 						c2 = Key.CompareRecords (_array [oldIdx + 1], newRecord);
 
 					if ((c1 == 0 ^ c2 == 0) && compare != 0)
-						_hasDuplicates = IndexDuplicatesState.Unknown;
+						know_have_duplicates = know_no_duplicates = false;
 				}
 			}
 
@@ -452,14 +447,14 @@ namespace System.Data.Common
 			_array[newIdx] = newRecord;
 
 			if (compare != 0) {
-				if (!(_hasDuplicates == IndexDuplicatesState.True)) {
+				if (!know_have_duplicates) {
 					if (newIdx > 0)
 						c1 = Key.CompareRecords (_array [newIdx - 1], newRecord);
 					if (newIdx < _size - 1)
 						c2 = Key.CompareRecords (_array [newIdx + 1], newRecord);
 
 					if (c1 == 0 || c2 == 0)
-						_hasDuplicates = IndexDuplicatesState.True;
+						know_have_duplicates = true;
 				}
 			}
 		}
@@ -490,21 +485,21 @@ namespace System.Data.Common
 
 			int c1 = 1;
 			int c2 = 1;
-			if (!(_hasDuplicates == IndexDuplicatesState.True)) {
+			if (!know_have_duplicates) {
 				if (newIdx > 0)
 					c1 = Key.CompareRecords (_array [newIdx - 1], newRecord);
 				if (newIdx < _size - 1)
 					c2 = Key.CompareRecords (_array [newIdx + 1], newRecord);
 
 				if (c1 == 0 || c2 == 0)
-					_hasDuplicates = IndexDuplicatesState.True;
+					know_have_duplicates = true;
 			}
 		}
 
 		private void Insert (int index, int r)
 		{
 			if (_array.Length == _size) {
-				int [] tmp = (_size == 0) ? new int[16] : new int[_size << 1];
+				int [] tmp = (_size == 0) ? new int [16] : new int [_size << 1];
 				System.Array.Copy (_array, 0, tmp, 0, index);
 				tmp [index] = r;
 				System.Array.Copy (_array, index, tmp, index + 1, _size - index);
@@ -545,7 +540,7 @@ namespace System.Data.Common
 					}
 				} else {
 					if (res == 0)
-						_hasDuplicates = IndexDuplicatesState.True;
+						know_have_duplicates = true;
 
 					to [current++] = from [p++];
 
