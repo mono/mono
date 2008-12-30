@@ -31,15 +31,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
-using System.Xml;
 using System.Data;
 using System.Data.SqlTypes;
 #if NET_2_0
-using System.Xml.Serialization;
 using System.IO;
+#endif
+using System.Xml;
+#if NET_2_0
+using System.Xml.Serialization;
 #endif 
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Data.SqlTypes
 {
@@ -47,7 +50,7 @@ namespace MonoTests.System.Data.SqlTypes
 	public class SqlInt32Test
 	{
 		[Test]
-		public void Create ()  
+		public void Create ()
 		{
 			SqlInt32 foo = new SqlInt32 (5);
 			Assert.AreEqual ((int)foo, 5, "Test explicit cast to int");
@@ -58,7 +61,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			int a = 5;
 			int b = 7;
-			
+
 			SqlInt32 x;
 			SqlInt32 y;
 			SqlInt32 z;
@@ -76,7 +79,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			int a = 5;
 			int b = 7;
-						
+
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 y = new SqlInt32 (b);
 			SqlInt32 z = x & y;
@@ -90,7 +93,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			int a = 5;
 			int b = 7;
-			
+
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 y = new SqlInt32 (b);
 			SqlInt32 z = x | y;
@@ -104,7 +107,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			int a = 5;
 			int b = 7;
-			
+
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 y = new SqlInt32 (b);
 			SqlInt32 z = x / y;
@@ -118,7 +121,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			SqlInt32 x;
 			SqlInt32 y;
-			
+
 			// Case 1: either is SqlInt32.Null
 			x = SqlInt32.Null;
 			y = new SqlInt32 (5);
@@ -148,7 +151,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			SqlInt32 x;
 			SqlInt32 y;
-			
+
 			// Case 1: either is SqlInt32.Null
 			x = SqlInt32.Null;
 			y = new SqlInt32 (5);
@@ -178,7 +181,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			SqlInt32 x;
 			SqlInt32 y;
-			
+
 			// Case 1: either is SqlInt32.Null
 			x = SqlInt32.Null;
 			y = new SqlInt32 (5);
@@ -214,7 +217,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			SqlInt32 x;
 			SqlInt32 y;
-			
+
 			// Case 1: either is SqlInt32.Null
 			x = SqlInt32.Null;
 			y = new SqlInt32 (5);
@@ -244,7 +247,7 @@ namespace MonoTests.System.Data.SqlTypes
 		{
 			SqlInt32 x;
 			SqlInt32 y;
-			
+
 			// Case 1: either is SqlInt32.Null
 			x = SqlInt32.Null;
 			y = new SqlInt32 (5);
@@ -276,11 +279,11 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-		public void Mod () 
+		public void Mod ()
 		{
 			int a = 5;
 			int b = 7;
-			
+
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 y = new SqlInt32 (b);
 			SqlInt32 z = x % y;
@@ -289,22 +292,23 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (z.Value, a % b, "Modulus function does not work correctly");
 		}
 
-		#if NET_2_0
+#if NET_2_0
 		[Test]
-                public void Modulus () 
-                {
-                        int a = 50;
-                        int b = 7;
-                        SqlInt32 x = new SqlInt32 (a);
-                        SqlInt32 y = new SqlInt32 (b);
-                        SqlInt32 z = x % y;
-                        Assert.AreEqual (z.Value, a % b, "Modulus operator does not work correctly");	                    z = SqlInt32.Modulus (x, y);
-                        Assert.AreEqual (z.Value, a % b, "Modulus function does not work correctly");                  }
-                                                                                                    		    #endif		
-
+		public void Modulus ()
+		{
+			int a = 50;
+			int b = 7;
+			SqlInt32 x = new SqlInt32 (a);
+			SqlInt32 y = new SqlInt32 (b);
+			SqlInt32 z = x % y;
+			Assert.AreEqual (z.Value, a % b, "Modulus operator does not work correctly");
+			z = SqlInt32.Modulus (x, y);
+			Assert.AreEqual (z.Value, a % b, "Modulus function does not work correctly");
+		}
+#endif
 
 		[Test]
-		public void Multiply () 
+		public void Multiply ()
 		{
 			int a = 5;
 			int b = 7;
@@ -318,7 +322,7 @@ namespace MonoTests.System.Data.SqlTypes
 		}
 
 		[Test]
-		public void NotEquals () 
+		public void NotEquals ()
 		{
 			SqlInt32 x;
 			SqlInt32 y;
@@ -337,32 +341,32 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (x != y, SqlBoolean.True, "Not Equals operator does not return true when x != y.");
 			Assert.AreEqual (SqlInt32.NotEquals (x, y), SqlBoolean.True, "Not Equals function does not return true when x != y.");
 		}
-	
+
 		[Test]
-		public void OnesComplement () 
+		public void OnesComplement ()
 		{
 			int a = 5;
-			
+
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 z = ~x;
 			Assert.AreEqual (z.Value, ~a, "Ones Complement operator does not work correctly");
 			z = SqlInt32.OnesComplement (x);
 			Assert.AreEqual (z.Value, ~a, "Ones Complement function does not work correctly");
 		}
-		
+
 		[Test]
 		public void IsNullProperty ()
 		{
 			SqlInt32 n = SqlInt32.Null;
 			Assert.IsTrue (n.IsNull, "Null is not defined correctly");
 		}
-	
+
 		[Test]
 		public void Subtract () 
 		{
 			int a = 7;
 			int b = 5;
-			
+
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 y = new SqlInt32 (b);
 			SqlInt32 z = x - y;
@@ -444,13 +448,13 @@ namespace MonoTests.System.Data.SqlTypes
 			x = new SqlInt32 (27);
 			Assert.AreEqual (x.ToSqlSingle ().Value, (float)27, "SqlInt32 (27) -> SqlSingle does not yield a value of 27");
 		}
-	
+
 		[Test]
-		public void Xor () 
+		public void Xor ()
 		{
 			int a = 5;
 			int b = 7;
-			
+
 			SqlInt32 x = new SqlInt32 (a);
 			SqlInt32 y = new SqlInt32 (b);
 			SqlInt32 z = x ^ y;
@@ -458,7 +462,7 @@ namespace MonoTests.System.Data.SqlTypes
 			z = SqlInt32.Xor (x, y);
 			Assert.AreEqual (z.Value, a ^ b, "Xor function does not work correctly");
 		}
-			
+
 #if NET_2_0
 		[Test]
 		public void GetXsdTypeTest ()
@@ -487,14 +491,12 @@ namespace MonoTests.System.Data.SqlTypes
 			ser.Serialize (xw, test);
 
 			// Assert.AreEqual (xml, sw.ToString (), unit_test_id);
-			Console.WriteLine ("{0} - Got: {1}", unit_test_id, sw.ToString ());
 
 			sr = new StringReader (xml);
 			xr = new XmlTextReader (sr);
 			test1 = (SqlInt32)ser.Deserialize (xr);
 
 			Assert.AreEqual (testval, test1.Value, unit_test_id);
-			Console.WriteLine ("{0} - Got: {1}", unit_test_id, test1.Value);
 		}
 
 		[Test]
@@ -509,12 +511,12 @@ namespace MonoTests.System.Data.SqlTypes
 
 			ReadWriteXmlTestInternal (xml1, test1, "BA01");
 			ReadWriteXmlTestInternal (xml2, test2, "BA02");
-		
+
 			try {
-				ReadWriteXmlTestInternal (xml3, test3, "BA03");
-					Assert.Fail ("BA03");
-                        } catch(Exception e) {
-                                Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
+				ReadWriteXmlTestInternal (xml3, test3, "#BA03");
+				Assert.Fail ("BA03");
+			} catch (FormatException e) {
+				Assert.AreEqual (typeof (FormatException), e.GetType (), "#BA03");
 			}
 		}
 #endif

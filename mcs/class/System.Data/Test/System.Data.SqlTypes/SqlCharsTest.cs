@@ -44,12 +44,21 @@ using System.Xml.Serialization;
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
-        public class SqlCharsTest
+	public class SqlCharsTest
 	{
+		private CultureInfo originalCulture;
+
 		[SetUp]
 		public void SetUp ()
 		{
+			originalCulture = Thread.CurrentThread.CurrentCulture;
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = originalCulture;
 		}
 
 		// Test constructor
@@ -87,6 +96,7 @@ namespace MonoTests.System.Data.SqlTypes
 				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "Should throw ArgumentOutOfRangeException");
 			}
 		}
+
 		[Test]
 		public void SqlCharsLength ()
 		{
@@ -109,6 +119,7 @@ namespace MonoTests.System.Data.SqlTypes
 			chars = new SqlChars (b);
 			Assert.AreEqual (chars.Length, 10, "#3 Should be 10");
 		}
+
 		[Test]
 		public void SqlCharsMaxLength ()
 		{
@@ -121,6 +132,7 @@ namespace MonoTests.System.Data.SqlTypes
 			chars = new SqlChars (b);
 			Assert.AreEqual (chars.MaxLength, 10, "#3 Should return 10");
 		}
+
 		[Test]
 		public void SqlCharsNull ()
 		{
@@ -128,6 +140,7 @@ namespace MonoTests.System.Data.SqlTypes
 			SqlChars chars = SqlChars.Null;
 			Assert.AreEqual (chars.IsNull, true, "#1 Should return true");
 		}
+
 		[Test]
 		public void SqlCharsStorage ()
 		{
@@ -150,6 +163,7 @@ namespace MonoTests.System.Data.SqlTypes
 			chars = new SqlChars (b);
 			Assert.AreEqual (chars.Storage, StorageState.Buffer, "#3 Should be StorageState.Buffer");
 		}
+
 		[Test]
 		public void SqlCharsValue ()
 		{
@@ -161,6 +175,7 @@ namespace MonoTests.System.Data.SqlTypes
 			Assert.AreEqual (b1 [0], 0, "#2 Should be same");
 			Assert.AreEqual (b2 [0], '1', "#3 Should be same");
 		}
+
 		[Test]
 		public void SqlCharsSetLength ()
 		{
@@ -189,6 +204,7 @@ namespace MonoTests.System.Data.SqlTypes
 			chars.SetLength (2);
 			Assert.AreEqual (chars.Length, 2, "#2 Should be same");
 		}
+
 		[Test]
 		public void SqlCharsSetNull ()
 		{
@@ -232,14 +248,12 @@ namespace MonoTests.System.Data.SqlTypes
 			ser.Serialize (xw, test);
 
 			Assert.AreEqual (xml, sw.ToString (), unit_test_id);
-			Console.WriteLine ("{0} - Got: {1}", unit_test_id, sw.ToString ());
 
 			sr = new StringReader (xml);
 			xr = new XmlTextReader (sr);
 			test1 = (SqlString)ser.Deserialize (xr);
 
 			Assert.AreEqual (testval, test1.Value, unit_test_id);
-			Console.WriteLine ("{0} - Got: {1}", unit_test_id, test1.Value);
 		}
 
 		[Test]
@@ -265,13 +279,13 @@ namespace MonoTests.System.Data.SqlTypes
 			chars.Read (0, c2, 0, (int) chars.Length);
 			Assert.AreEqual (chars.Value [5], c2 [5], "#1 Should be equal");
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Read_NullBufferTest ()
-		{			
+		{
 			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-			SqlChars chars = new SqlChars (c1);			
+			SqlChars chars = new SqlChars (c1);
 			char [] c2 = null;
 			
 			chars.Read (0, c2, 0, 10);
@@ -281,9 +295,9 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Read_InvalidCountTest1 ()
-		{			
+		{
 			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-			SqlChars chars = new SqlChars (c1);			
+			SqlChars chars = new SqlChars (c1);
 			char [] c2 = new char [5]; 
 
 			chars.Read (0, c2, 0, 10);
@@ -293,9 +307,9 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Read_NegativeOffsetTest ()
-		{			
+		{
 			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-			SqlChars chars = new SqlChars (c1);			
+			SqlChars chars = new SqlChars (c1);
 			char [] c2 = new char [5];
 			
 			chars.Read (-1, c2, 0, 4);
@@ -305,9 +319,9 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Read_NegativeOffsetInBufferTest ()
-		{			
+		{
 			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-			SqlChars chars = new SqlChars (c1);			
+			SqlChars chars = new SqlChars (c1);
 			char [] c2 = new char [5];
 			
 			chars.Read (0, c2, -1, 4);
@@ -317,11 +331,11 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Read_InvalidOffsetInBufferTest ()
-		{			
+		{
 			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-			SqlChars chars = new SqlChars (c1);			
+			SqlChars chars = new SqlChars (c1);
 			char [] c2 = new char [5];
-			
+
 			chars.Read (0, c2, 8, 4);
 			Assert.Fail ("#6 Should throw ArgumentOutOfRangeException");
 		}
@@ -329,7 +343,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		[ExpectedException (typeof (SqlNullValueException))]
 		public void Read_NullInstanceValueTest ()
-		{			
+		{
 			char [] c2 = new char [5];
 			SqlChars chars = new SqlChars ();
 			
@@ -340,7 +354,7 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		public void Read_SuccessTest2 ()
 		{
-			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };			
+			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
 			SqlChars chars = new SqlChars (c1);
 			char [] c2 = new char [10];
 			
@@ -352,20 +366,20 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Read_NullBufferAndInstanceValueTest ()
-		{			
+		{
 			char [] c2 = null;
 			SqlChars chars = new SqlChars ();
 			
 			chars.Read (0, c2, 8, 4);
 			Assert.Fail ("#10 Should throw ArgumentNullException");
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Read_NegativeCountTest ()
-		{			
+		{
 			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-			SqlChars chars = new SqlChars (c1);			
+			SqlChars chars = new SqlChars (c1);
 			char [] c2 = new char [5];
 			
 			chars.Read (0, c2, 0, -1);
@@ -375,15 +389,15 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Read_InvalidCountTest2 ()
-		{			
+		{
 			char [] c1 = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-			SqlChars chars = new SqlChars (c1);			
+			SqlChars chars = new SqlChars (c1);
 			char [] c2 = new char [5]; 
 
 			chars.Read (0, c2, 3, 4);
 			Assert.Fail ("#12 Should throw ArgumentOutOfRangeException");
 		}
-		
+
 		[Test]
 		public void Write_SuccessTest1 ()
 		{
@@ -394,7 +408,7 @@ namespace MonoTests.System.Data.SqlTypes
 			chars.Write (0, c1, 0, (int) c1.Length);
 			Assert.AreEqual (chars.Value [0], c1 [0], "#1 Should be same");
 		}
-		
+
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Write_NegativeOffsetTest ()

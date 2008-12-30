@@ -1,3 +1,13 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlDecimalTest.cs
+	* SqlInt32Test.cs
+	* SqlCharsTest.cs
+	* SqlInt16Test.cs
+	* SqlInt64Test.cs
+	* SqlDoubleTest.cs: Change spaces to tabs, and remove extra tabs.
+	Restore original culture on teardown. Removed CWLs.
+
 2008-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlStringTest.cs: Change spaces to tabs. Restore original culture
