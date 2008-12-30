@@ -1,3 +1,9 @@
+2008-12-31  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Do not autogenerate duplicate column for a 
+	data member that has already problematically been assigned one.
+	[Fixes bug #457305]
+
 2008-12-30  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ProfessionalColorTable.cs: Better detection of user's theme.

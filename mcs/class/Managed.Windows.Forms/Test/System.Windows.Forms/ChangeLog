@@ -1,3 +1,7 @@
+2008-12-31  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewTest.cs: Add a test for bug #457305.
+
 2008-12-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DataGridViewDataBindingTest.cs: Add test for bug #462019.
