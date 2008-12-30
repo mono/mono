@@ -1,3 +1,7 @@
+2008-12-30  Ankit Jain  <jankit@novell.com>
+
+	* library.make (TEST_HARNESS_OUTPUT*): Fix /labels switch.
+
 2008-12-12  Raja R Harinath  <harinath@hurrynot.org>
 
 	* rules.make (topdir): Don't use $(shell ...).
