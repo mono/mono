@@ -349,16 +349,25 @@ namespace Mono.Data.Tds.Protocol
 				return StreamLength;
 
 			if (fieldIndex < StreamIndex)
-				throw new InvalidOperationException ("field index less than stream pos");
+				throw new InvalidOperationException (string.Format (
+					"Attempting to read at index '{0}' is not " +
+					"allowed as this is less than the current " +
+					"position. You must read from index '{1}' " +
+					"or greater.", fieldIndex, StreamIndex));
 
 			if (fieldIndex >= (StreamLength + StreamIndex))
 				return 0;
 
-			// Skip to the index
-			Comm.Skip ((int) (fieldIndex - StreamIndex));
+			// determine number of bytes to skip
+			int skip = (int) (fieldIndex - StreamIndex);
+			// skip bytes
+			Comm.Skip (skip);
+			// update the current position
 			StreamIndex += (fieldIndex - StreamIndex);
+			// update the remaining length
+			StreamLength -= skip;
 
-			// Load the reqd amt of bytes	
+			// Load the reqd amt of bytes
 			int loadlen = (int) ((size > StreamLength) ? StreamLength : size);
 			byte[] arr = Comm.GetBytes (loadlen, true);
 

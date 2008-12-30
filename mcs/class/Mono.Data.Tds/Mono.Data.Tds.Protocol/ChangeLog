@@ -1,3 +1,8 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Tds.cs (LoadData): Improve exception message when attempting to
+	read before the current position. Update the remaining length of the
+	stream when skipping bytes.
 
 2008-12-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
