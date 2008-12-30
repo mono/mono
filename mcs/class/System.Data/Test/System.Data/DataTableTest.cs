@@ -4072,7 +4072,8 @@ namespace MonoTests.System.Data
 		[Test]
 		public void NFIFromBug55978 ()
 		{
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = AppDomain.CreateDomain ("testdomain", null,
+				AppDomain.CurrentDomain.SetupInformation);
 			AppDomainsAndFormatInfo test = new AppDomainsAndFormatInfo ();
 			test.Remote ();
 			domain.DoCallBack (new CrossAppDomainDelegate (test.Remote));
