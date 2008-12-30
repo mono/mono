@@ -1,3 +1,8 @@
+2008-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlStringTest.cs: Change spaces to tabs. Restore original culture
+	on teardown. Enable commented-out tests. Removed CWLs.
+
 2008-12-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlXmlTest.cs:  Available only in 2.0 and above
