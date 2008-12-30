@@ -1,3 +1,13 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbCommandBuilder.cs: Return a zero-length string when QuotePrefix or
+	QuoteSuffix are not set (or are set to null). Changing QuotePrefix or
+	QuoteSuffix after a command has been generated should result in an
+	InvalidOperationException.
+	* DbConnectionStringBuilder.cs: Added support for ODBC rules. Major
+	rewrite fixing many compatibility issues, and improving support for
+	connectionstring formats/characters.
+
 2008-11-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DbDataRecord.cs : it is abstract, so create different impl. class.

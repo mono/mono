@@ -51,8 +51,10 @@ namespace System.Data.Odbc
 		#region Fields
 
 		private OdbcDataAdapter _adapter;
+#if ONLY_1_1
 		private string 			_quotePrefix;
 		private string 			_quoteSuffix;
+#endif
 
 		private DataTable		_schema;
 		private string			_tableName;
@@ -70,8 +72,6 @@ namespace System.Data.Odbc
 		
 		public OdbcCommandBuilder ()
 		{
-			_quotePrefix = string.Empty;
-			_quoteSuffix = string.Empty;
 		}
 
 		public OdbcCommandBuilder (OdbcDataAdapter adapter)
@@ -145,19 +145,22 @@ namespace System.Data.Odbc
 			}
 		}
 
+#if ONLY_1_1
 		[BrowsableAttribute (false)]
 		[OdbcDescriptionAttribute ("The prefix string wrapped around sql objects")]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if ONLY_1_1
-		public
-#else
-		new
-#endif
-		string QuotePrefix {
+		public string QuotePrefix {
 			get {
+				if (_quotePrefix == null)
+					return string.Empty;
 				return _quotePrefix;
 			}
 			set {
+				if (IsCommandGenerated)
+					throw new InvalidOperationException (
+						"QuotePrefix cannot be set after " +
+						"an Insert, Update or Delete command " +
+						"has been generated.");
 				_quotePrefix = value;
 			}
 		}
@@ -165,19 +168,22 @@ namespace System.Data.Odbc
 		[BrowsableAttribute (false)]
 		[OdbcDescriptionAttribute ("The suffix string wrapped around sql objects")]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
-#if ONLY_1_1
-		public
-#else
-		new
-#endif // NET_2_0
-		string QuoteSuffix {
+		public string QuoteSuffix {
 			get {
+				if (_quoteSuffix == null)
+					return string.Empty;
 				return _quoteSuffix;
 			}
 			set {
+				if (IsCommandGenerated)
+					throw new InvalidOperationException (
+						"QuoteSuffix cannot be set after " +
+						"an Insert, Update or Delete command " +
+						"has been generated.");
 				_quoteSuffix = value;
 			}
 		}
+#endif
 
 		#endregion // Properties
 
@@ -208,7 +214,7 @@ namespace System.Data.Odbc
 				if (_deleteCommand != null)
 					_deleteCommand.Dispose ();
 				if (_schema != null)
-					_insertCommand.Dispose ();
+					_schema.Dispose ();
 
 				_insertCommand = null;
 				_updateCommand = null;
@@ -221,10 +227,9 @@ namespace System.Data.Odbc
 		private bool IsUpdatable (DataRow schemaRow)
 		{
 			if ( (! schemaRow.IsNull ("IsAutoIncrement") && (bool) schemaRow ["IsAutoIncrement"])
-			     || (! schemaRow.IsNull ("IsHidden") && (bool) schemaRow ["IsHidden"])
-			     || (! schemaRow.IsNull ("IsExpression") && (bool) schemaRow ["IsExpression"])
 			     || (! schemaRow.IsNull ("IsRowVersion") && (bool) schemaRow ["IsRowVersion"])
 			     || (! schemaRow.IsNull ("IsReadOnly") && (bool) schemaRow ["IsReadOnly"])
+			     || (schemaRow.IsNull ("BaseTableName") || ((string) schemaRow ["BaseTableName"]).Length == 0)
 			     )
 				return false;
 			return true;
@@ -253,23 +258,18 @@ namespace System.Data.Odbc
 		/*
 		 * creates where clause for optimistic concurrency
 		 */
-		private string CreateOptWhereClause (OdbcCommand command, bool option)
+		private string CreateOptWhereClause (OdbcCommand command, int paramCount)
 		{
 			string [] whereClause = new string [Schema.Rows.Count];
 
-			int count = 0;
+			int partCount = 0;
 
 			foreach (DataRow schemaRow in Schema.Rows) {
 				// exclude non updatable columns
 				if (! IsUpdatable (schemaRow))
 					continue;
 
-				string columnName = null;
-				if (option)
-					columnName = GetColumnName (schemaRow);
-				else
-					columnName = String.Format ("@p{0}", count);
-				
+				string columnName = GetColumnName (schemaRow);
 				if (columnName == String.Empty)
 					throw new InvalidOperationException ("Cannot form delete command. Column name is missing!");
 
@@ -278,19 +278,33 @@ namespace System.Data.Odbc
 				int 	length 	   = schemaRow.IsNull ("ColumnSize") ? -1 : (int) schemaRow ["ColumnSize"];
 
 				if (allowNull) {
-					whereClause [count] = String.Format ("((? = 1 AND {0} IS NULL) OR ({0} = ?))",
-									      columnName);
-					AddParameter (command, columnName, sqlDbType, length, columnName, DataRowVersion.Original);
-					AddParameter (command, columnName, sqlDbType, length, columnName, DataRowVersion.Original);
+					whereClause [partCount++] = String.Format ("((? = 1 AND {0} IS NULL) OR ({0} = ?))",
+						GetQuotedString (columnName));
+					OdbcParameter nullParam = AddParameter (
+						command,
+						GetParameterName (++paramCount),
+						OdbcType.Int,
+						length,
+#if NET_2_0
+						columnName,
+#else
+						string.Empty,
+#endif
+						DataRowVersion.Original);
+					nullParam.Value = 1;
+					AddParameter (command, GetParameterName (++paramCount),
+						sqlDbType, length, columnName,
+						DataRowVersion.Original);
 				} else {
-					whereClause [count] = String.Format ( "({0} = ?)", columnName);
-					AddParameter (command, columnName, sqlDbType, length, columnName, DataRowVersion.Original);
+					whereClause [partCount++] = String.Format ("({0} = ?)",
+						GetQuotedString (columnName));
+					AddParameter (command, GetParameterName (++paramCount),
+						sqlDbType, length, columnName,
+						DataRowVersion.Original);
 				}
-
-				count++;
 			}
 
-			return String.Join (" AND ", whereClause, 0, count);
+			return String.Join (" AND ", whereClause, 0, partCount);
 		}
 
 		private void CreateNewCommand (ref OdbcCommand command)
@@ -310,8 +324,8 @@ namespace System.Data.Odbc
 		private OdbcCommand CreateInsertCommand (bool option)
 		{
 			CreateNewCommand (ref _insertCommand);
-			
-			string query = String.Format ("INSERT INTO {0}", QuoteIdentifier (TableName));
+
+			string query = String.Format ("INSERT INTO {0}", GetQuotedString (TableName));
 			string [] columns = new string [Schema.Rows.Count];
 			string [] values  = new string [Schema.Rows.Count];
 
@@ -322,31 +336,36 @@ namespace System.Data.Odbc
 				if (! IsUpdatable (schemaRow))
 					continue;
 
-				string columnName = null;
-				
-				if (option)
-					columnName = GetColumnName (schemaRow);
-				else
-					columnName = String.Format ("@p{0}", count); 
-				
+				string columnName = GetColumnName (schemaRow);
 				if (columnName == String.Empty)
 					throw new InvalidOperationException ("Cannot form insert command. Column name is missing!");
 
 				// create column string & value string
-				columns [count] = QuoteIdentifier(columnName);
+				columns [count] = GetQuotedString (columnName);
 				values [count++] = "?";
 
 				// create parameter and add
 				OdbcType sqlDbType = schemaRow.IsNull ("ProviderType") ? OdbcType.VarChar : (OdbcType) schemaRow ["ProviderType"];
 				int length = schemaRow.IsNull ("ColumnSize") ? -1 : (int) schemaRow ["ColumnSize"];
 
-				AddParameter (_insertCommand, columnName, sqlDbType, length, columnName, DataRowVersion.Current);
+				AddParameter (_insertCommand, GetParameterName (count),
+					sqlDbType, length, columnName, DataRowVersion.Current);
 			}
 
-			query = String.Format ("{0} ({1}) VALUES ({2})", 
-					       query, 
-					       String.Join (", ", columns, 0, count),
-					       String.Join (", ", values, 0, count) );
+			query = String.Format (
+#if NET_2_0
+				"{0} ({1}) VALUES ({2})", 
+#else
+				"{0}( {1} ) VALUES ( {2} )", 
+#endif
+				query, 
+#if NET_2_0
+				String.Join (", ", columns, 0, count),
+				String.Join (", ", values, 0, count));
+#else
+				String.Join (" , ", columns, 0, count),
+				String.Join (" , ", values, 0, count));
+#endif
 			_insertCommand.CommandText = query;
 			return _insertCommand;
 		}
@@ -385,7 +404,7 @@ namespace System.Data.Odbc
 		{
 			CreateNewCommand (ref _updateCommand);
 
-			string query = String.Format ("UPDATE {0} SET", QuoteIdentifier (TableName));
+			string query = String.Format ("UPDATE {0} SET", GetQuotedString (TableName));
 			string [] setClause = new string [Schema.Rows.Count];
 
 			int count = 0;
@@ -395,12 +414,7 @@ namespace System.Data.Odbc
 				if (! IsUpdatable (schemaRow))
 					continue;
 
-				string columnName = null; 
-				if (option)
-					columnName = GetColumnName (schemaRow);
-				else
-					columnName = String.Format ("@p{0}", count);
-				
+				string columnName = GetColumnName (schemaRow);
 				if (columnName == String.Empty)
 					throw new InvalidOperationException ("Cannot form update command. Column name is missing!");
 
@@ -408,19 +422,28 @@ namespace System.Data.Odbc
 				int length = schemaRow.IsNull ("ColumnSize") ? -1 : (int) schemaRow ["ColumnSize"];
 
 				// create column = value string
-				setClause [count] = String.Format ("{0} = ?", QuoteIdentifier(columnName));
-				AddParameter (_updateCommand, columnName, sqlDbType, length, columnName, DataRowVersion.Current);
-				count++;
+				setClause [count++] = String.Format ("{0} = ?", GetQuotedString (columnName));
+				AddParameter (_updateCommand, GetParameterName (count),
+					sqlDbType, length, columnName, DataRowVersion.Current);
 			}
 
 			// create where clause. odbc uses positional parameters. so where class
 			// is created seperate from the above loop.
-			string whereClause = CreateOptWhereClause (_updateCommand, option);
+			string whereClause = CreateOptWhereClause (_updateCommand, count);
 			
-			query = String.Format ("{0} {1} WHERE ({2})", 
-					       query, 
-					       String.Join (", ", setClause, 0, count),
-					       whereClause);
+			query = String.Format (
+#if NET_2_0
+				"{0} {1} WHERE ({2})",
+#else
+				"{0} {1} WHERE ( {2} )",
+#endif
+				query,
+#if NET_2_0
+				String.Join (", ", setClause, 0, count),
+#else
+				String.Join (" , ", setClause, 0, count),
+#endif
+				whereClause);
 			_updateCommand.CommandText = query;
 			return _updateCommand;
 		}
@@ -459,10 +482,23 @@ namespace System.Data.Odbc
 		{
 			CreateNewCommand (ref _deleteCommand);
 
-			string query = String.Format ("DELETE FROM {0}", QuoteIdentifier (TableName));
-			string whereClause = CreateOptWhereClause (_deleteCommand, option);
+			string query = String.Format (
+#if NET_2_0
+				"DELETE FROM {0}",
+#else
+				"DELETE FROM  {0}",
+#endif
+				GetQuotedString (TableName));
+			string whereClause = CreateOptWhereClause (_deleteCommand, 0);
 			
-			query = String.Format ("{0} WHERE ({1})", query, whereClause);
+			query = String.Format (
+#if NET_2_0
+				"{0} WHERE ({1})",
+#else
+				"{0} WHERE ( {1} )",
+#endif
+				query,
+				whereClause);
 			_deleteCommand.CommandText = query;
 			return _deleteCommand;
 		}
@@ -528,6 +564,19 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
+		protected override
+#endif
+		string GetParameterName (int parameterOrdinal)
+		{
+#if NET_2_0
+			return String.Format ("p{0}", parameterOrdinal);
+#else
+			return String.Format ("@p{0}", parameterOrdinal);
+#endif
+		}
+
+
+#if NET_2_0
 		protected override void ApplyParameterInfo (DbParameter parameter,
 		                                            DataRow row,
 		                                            StatementType statementType,
@@ -540,11 +589,6 @@ namespace System.Data.Odbc
 			if (row ["NumericScale"] != DBNull.Value)
 				odbcParam.Scale = byte.Parse (row ["NumericScale"].ToString ());
 			odbcParam.DbType = (DbType) row ["ProviderType"];
-		}
-
-		protected override string GetParameterName (int parameterOrdinal)
-		{
-			return String.Format("@p{0}", parameterOrdinal);
 		}
 
 		protected override string GetParameterName (string parameterName)
@@ -570,26 +614,32 @@ namespace System.Data.Odbc
 
 			((OdbcDataAdapter) adapter).RowUpdating += rowUpdatingHandler;
 		}
-#endif // NET_2_0
 
-#if NET_2_0
-		public override
-#else
-		private
-#endif
-		string QuoteIdentifier (string unquotedIdentifier)
+		public override string QuoteIdentifier (string unquotedIdentifier)
 		{
-			if (unquotedIdentifier == null || unquotedIdentifier.Length == 0)
-				return unquotedIdentifier;
-			return String.Format ("{0}{1}{2}", QuotePrefix, 
-				unquotedIdentifier, QuoteSuffix);
+			return QuoteIdentifier (unquotedIdentifier, null);
 		}
 
-#if NET_2_0
-		// FIXME:  Not sure what the extra "connection" param does!
 		public string QuoteIdentifier (string unquotedIdentifier, OdbcConnection connection)
 		{
-			return QuoteIdentifier (unquotedIdentifier);
+			if (unquotedIdentifier == null)
+				throw new ArgumentNullException ("unquotedIdentifier");
+
+			string prefix = QuotePrefix;
+			string suffix = QuoteSuffix;
+
+			if (QuotePrefix.Length == 0) {
+				if (connection == null)
+					throw new InvalidOperationException (
+						"An open connection is required if "
+						+ "QuotePrefix is not set.");
+				prefix = suffix = GetQuoteCharacter (connection);
+			}
+
+			if (prefix.Length > 0 || prefix != " ")
+				return String.Format ("{0}{1}{2}", prefix,
+					unquotedIdentifier, suffix);
+			return unquotedIdentifier;
 		}
 
 		public string UnquoteIdentifier (string quotedIdentifier, OdbcConnection connection)
@@ -633,6 +683,31 @@ namespace System.Data.Odbc
 				args.Status = UpdateStatus.ErrorsOccurred;
 			}
 		}
+
+		string GetQuotedString (string unquotedIdentifier)
+		{
+			string prefix = QuotePrefix;
+			string suffix = QuoteSuffix;
+
+			if (prefix.Length == 0 && suffix.Length == 0)
+				return unquotedIdentifier;
+
+			return String.Format ("{0}{1}{2}", prefix,
+				unquotedIdentifier, suffix);
+		}
+
+		bool IsCommandGenerated {
+			get {
+				return (_insertCommand != null || _updateCommand != null || _deleteCommand != null);
+			}
+		}
+
+#if NET_2_0
+		string GetQuoteCharacter (OdbcConnection conn)
+		{
+			return conn.GetInfo (OdbcInfo.IdentifierQuoteChar);
+		}
+#endif
 
 		#endregion // Methods
 	}

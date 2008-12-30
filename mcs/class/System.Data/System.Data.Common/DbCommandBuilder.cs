@@ -100,13 +100,23 @@ namespace System.Data.Common {
 			get { return GetQuotedString (_tableName); }
 		}
 
+		bool IsCommandGenerated {
+			get {
+				return (_insertCommand != null || _updateCommand != null || _deleteCommand != null);
+			}
+		}
+
 		private string GetQuotedString (string value)
 		{
 			if (value == String.Empty || value == null)
 				return value;
-			if (_quotePrefix == String.Empty && _quoteSuffix == String.Empty)
+
+			string prefix = QuotePrefix;
+			string suffix = QuoteSuffix;
+
+			if (prefix.Length == 0 && suffix.Length == 0)
 				return value;
-			return String.Format ("{0}{1}{2}", _quotePrefix, value, _quoteSuffix);
+			return String.Format ("{0}{1}{2}", prefix, value, suffix);
 		}
 
 		private void BuildInformation (DataTable schemaTable)
@@ -407,14 +417,36 @@ namespace System.Data.Common {
 
 		[DefaultValue ("")]
 		public virtual string QuotePrefix {
-			get { return _quotePrefix; }
-			set { if (value != null) _quotePrefix = value; }
+			get {
+				if (_quotePrefix == null)
+					return string.Empty;
+				return _quotePrefix;
+			}
+			set {
+				if (IsCommandGenerated)
+					throw new InvalidOperationException (
+						"QuotePrefix cannot be set after " +
+						"an Insert, Update or Delete command " +
+						"has been generated.");
+				_quotePrefix = value;
+			}
 		}
 
 		[DefaultValue ("")]
 		public virtual string QuoteSuffix {
-			get { return _quoteSuffix; }
-			set {  if (value != null) _quoteSuffix = value; }
+			get {
+				if (_quoteSuffix == null)
+					return string.Empty;
+				return _quoteSuffix;
+			}
+			set {
+				if (IsCommandGenerated)
+					throw new InvalidOperationException (
+						"QuoteSuffix cannot be set after " +
+						"an Insert, Update or Delete command " +
+						"has been generated.");
+				_quoteSuffix = value;
+			}
 		}
 
 		[DefaultValue (".")]

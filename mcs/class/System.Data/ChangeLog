@@ -1,3 +1,8 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Data_test.dll.sources: Added OdbcCommandBuilderTest.cs,
+	OdbcConnectionStringBuilderTest.cs and DbCommandBuilderTest.cs.
+
 2008-12-22  Ankit Jain  <jankit@novell.com>
 
 	* System.Data_test.dll.sources: Fix typo in SqlXmlTest.cs

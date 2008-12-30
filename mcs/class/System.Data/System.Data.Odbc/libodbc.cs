@@ -77,7 +77,8 @@ namespace System.Data.Odbc
 		DriverName = 6,
 		DriverVersion = 7,
 		DatabaseName = 16,
-		DbmsVersion = 18
+		DbmsVersion = 18,
+		IdentifierQuoteChar = 29
 	}
 
 	internal enum OdbcInputOutputDirection : short

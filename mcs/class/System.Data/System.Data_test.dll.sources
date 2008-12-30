@@ -87,11 +87,14 @@ System.Data.Common/DataColumnMappingCollectionTest.cs
 System.Data.Common/DataTableMappingCollectionTest.cs
 System.Data.Common/DBDataPermissionAttributeTest.cs
 System.Data.Common/DBDataPermissionTest.cs
+System.Data.Common/DbCommandBuilderTest.cs
 System.Data.Common/DbConnectionStringBuilderTest.cs
 System.Data.Common/DbDataAdapterTest.cs
 System.Data.Common/DbProviderFactoriesConfigurationHandlerTest.cs
 System.Data.Common/DbTransactionTest.cs
+System.Data.Odbc/OdbcCommandBuilderTest.cs
 System.Data.Odbc/OdbcCommandTest.cs
+System.Data.Odbc/OdbcConnectionStringBuilderTest.cs
 System.Data.Odbc/OdbcConnectionTest.cs
 System.Data.Odbc/OdbcDataAdapterTest.cs
 System.Data.Odbc/OdbcMetaDataCollectionNamesTest.cs

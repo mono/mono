@@ -1,3 +1,10 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbCommandBuilderTest.cs: Added tests for QuotePrefix and
+	QuoteSuffix.
+	* DbConnectionStringBuilderTest.cs: Added tests for both odbc and
+	non-odbc rules.
+
 2008-10-07  Daniel Morgan  <monodanmorg@yahoo.com>
 
 	* DbConnectionStringBuilderTest.cs: add tests

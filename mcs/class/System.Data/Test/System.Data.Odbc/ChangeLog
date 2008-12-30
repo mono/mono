@@ -1,3 +1,11 @@
+2008-12-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcCommandBuilderTest.cs: Added tests for QuotePrefix and
+	QuoteSuffix. Added tests for QuoteIdentifier (some still marked
+	NotWorking).
+	* OdbcConnectionStringBuilderTest.cs: Moved from ProviderTests.
+	Added and improved tests.
+
 2008-08-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OdbcParameterTest.cs (OdbcTypeTest): Added test case for Binary

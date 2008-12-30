@@ -1,3 +1,16 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* libodbc.cs: Add IdentifierQuoteChar to OdbcInfo.
+	* OdbcCommandBuilder.cs: Return a zero-length string when QuotePrefix
+	or QuoteSuffix are not set (or are set to null). Changing QuotePrefix
+	or QuoteSuffix after a command has been generated should result in an
+	InvalidOperationException. Implemented support for obtaining
+	character(s) for quoting identifiers from specified connection.
+	Modified generated SQL to match MS.
+	* OdbcConnectionStringBuilder.cs: Improved special casing of Driver
+	and Dsn keywords. Re-use implemenation of DbConnectionStringBuilder.
+	Improved argument checks to match MS.
+
 2008-10-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* OdbcDataReader.cs: apply patch from Steve ? that fixes bug #433741.
