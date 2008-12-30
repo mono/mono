@@ -682,18 +682,35 @@ namespace MonoTests.System.Data
 			conn = new SqlConnection (connectionString);
 			string database = conn.Database;
 
+			SqlCommand cmd;
+
 			// Test if database property is updated when a query changes database
 			conn.Open ();
-			SqlCommand cmd = new SqlCommand ("use [master]" , conn);
+			cmd = new SqlCommand ("use [master]" , conn);
 			cmd.ExecuteNonQuery ();
 			Assert.AreEqual ("master", conn.Database, "#1");
+
+			// ensure we're really in the expected database
+			cmd.CommandText = "SELECT name FROM sys.databases WHERE name = 'master'";
+			using (SqlDataReader dr = cmd.ExecuteReader ()) {
+				Assert.IsTrue (dr.Read (), "#2");
+			}
+
 			conn.Close ();
-			Assert.AreEqual (database, conn.Database, "#2");
+			Assert.AreEqual (database, conn.Database, "#3");
 
 			// Test if the database property is reset on re-opening the connection
 			conn.ConnectionString = connectionString;
 			conn.Open ();
-			Assert.AreEqual (database, conn.Database, "#3");
+			Assert.AreEqual (database, conn.Database, "#4");
+
+			// ensure we're really in the expected database
+			cmd.CommandText = "SELECT fname FROM employee WHERE id = 2";
+			using (SqlDataReader dr = cmd.ExecuteReader ()) {
+				Assert.IsTrue (dr.Read (), "#5");
+				Assert.AreEqual ("ramesh", dr.GetValue (0), "#6");
+			}
+
 			conn.Close ();
 		}
 
