@@ -1,5 +1,18 @@
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OdbcColumn.cs: Treat OdbcType.Numeric as decimal.
+	* OdbcConnection.cs: Keep (weak) list of commands to allow us to
+	dispose them (and free their corresponding statement handles) when
+	the connection is closed. Fixed bug #341743.
+	* OdbcCommand.cs: Add internal Unlink method that is invoked when the
+	OdbcConnection is disposed, and which frees the statement handle.
+	Modified ExecuteNonQuery helper to take CommandBehavior and rename
+	freeHandle argument to createReader. Added CommandBehavior argument
+	to ExecSQL. Added FreeStatement overload that takes an option to not
+	perform an unlink. Fixes bug #3417434.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* libodbc.cs: Add IdentifierQuoteChar to OdbcInfo.
 	* OdbcCommandBuilder.cs: Return a zero-length string when QuotePrefix
 	or QuoteSuffix are not set (or are set to null). Changing QuotePrefix

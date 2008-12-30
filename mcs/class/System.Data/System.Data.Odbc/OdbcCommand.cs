@@ -107,7 +107,6 @@ namespace System.Data.Odbc
 		internal IntPtr hStmt {
 			get { return hstmt; }
 		}
-		
 
 		[OdbcCategory ("Data")]
 		[DefaultValue ("")]
@@ -125,7 +124,9 @@ namespace System.Data.Odbc
 				return commandText;
 			}
 			set {
+#if NET_2_0
 				prepared = false;
+#endif
 				commandText = value;
 			}
 		}
@@ -198,7 +199,6 @@ namespace System.Data.Odbc
 				designTimeVisible = value;
 			}
 		}
-
 
 		[OdbcCategory ("Data")]
 		[OdbcDescriptionAttribute ("The parameters collection")]
@@ -291,7 +291,7 @@ namespace System.Data.Odbc
 				}
 			}
 		}
-		#else
+#else
 		protected override DbTransaction DbTransaction {
 			get { return transaction; }
 			set { transaction = (OdbcTransaction) value; }
@@ -334,11 +334,19 @@ namespace System.Data.Odbc
 			return new OdbcParameter ();
 		}
 
+		internal void Unlink ()
+		{
+			if (disposed)
+				return;
+
+			FreeStatement (false);
+		}
+
 		protected override void Dispose (bool disposing)
 		{
 			if (disposed)
 				return;
-			
+
 			FreeStatement (); // free handles
 			Connection = null;
 			Transaction = null;
@@ -351,6 +359,8 @@ namespace System.Data.Odbc
 
 			if (hstmt != IntPtr.Zero)
 				FreeStatement ();
+			else
+				Connection.Link (this);
 
 			ret = libodbc.SQLAllocHandle (OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
 			if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
@@ -359,11 +369,21 @@ namespace System.Data.Odbc
 			return hstmt;
 		}
 
-		private void FreeStatement ()
+		void FreeStatement ()
 		{
+			FreeStatement (true);
+		}
+
+		private void FreeStatement (bool unlink)
+		{
+			prepared = false;
+
 			if (hstmt == IntPtr.Zero)
 				return;
-			
+
+			if (unlink)
+				Connection.Unlink (this);
+
 			// free previously allocated handle.
 			OdbcReturn ret = libodbc.SQLFreeStmt (hstmt, libodbc.SQLFreeStmtOptions.Close);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo))
@@ -375,16 +395,15 @@ namespace System.Data.Odbc
 			hstmt = IntPtr.Zero;
 		}
 		
-		private void ExecSQL (string sql)
+		private void ExecSQL (CommandBehavior behavior, bool createReader, string sql)
 		{
 			OdbcReturn ret;
-			if (! prepared && Parameters.Count <= 0) {
 
+			if (!prepared && Parameters.Count == 0) {
 				ReAllocStatment ();
-				
+
 				ret = libodbc.SQLExecDirect (hstmt, sql, libodbc.SQL_NTS);
-				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo) &&
-				    (ret != OdbcReturn.NoData))
+				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo) && (ret != OdbcReturn.NoData))
 					throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 				return;
 			}
@@ -410,10 +429,10 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		int ExecuteNonQuery ()
 		{
-			return ExecuteNonQuery (true);
+			return ExecuteNonQuery (CommandBehavior.Default, false);
 		}
 
-		private int ExecuteNonQuery (bool freeHandle) 
+		private int ExecuteNonQuery (CommandBehavior behavior, bool createReader)
 		{
 			int records = 0;
 			if (Connection == null)
@@ -421,8 +440,7 @@ namespace System.Data.Odbc
 			if (Connection.State == ConnectionState.Closed)
 				throw new InvalidOperationException ("Connection state is closed");
 			// FIXME: a third check is mentioned in .NET docs
-
-			ExecSQL(CommandText);
+			ExecSQL (behavior, createReader, CommandText);
 
 			// .NET documentation says that except for INSERT, UPDATE and
 			// DELETE  where the return value is the number of rows affected
@@ -436,7 +454,7 @@ namespace System.Data.Odbc
 			} else
 				records = -1;
 
-			if (freeHandle && !prepared)
+			if (!createReader && !prepared)
 				FreeStatement ();
 			
 			return records;
@@ -494,7 +512,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			int recordsAffected = ExecuteNonQuery(false);
+			int recordsAffected = ExecuteNonQuery(behavior, true);
 			OdbcDataReader dataReader = new OdbcDataReader (this, behavior, recordsAffected);
 			return dataReader;
 		}

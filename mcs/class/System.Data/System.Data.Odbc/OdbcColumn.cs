@@ -88,8 +88,8 @@ namespace System.Data.Odbc
 					case OdbcType.SmallDateTime:
 						return typeof (DateTime);
 					case OdbcType.Decimal:
-						return typeof (Decimal);
 					case OdbcType.Numeric:
+						return typeof (Decimal);
 					case OdbcType.Double:
 						return typeof (Double);
 					case OdbcType.Int:

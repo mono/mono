@@ -29,6 +29,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
@@ -56,6 +58,7 @@ namespace System.Data.Odbc
 		IntPtr henv = IntPtr.Zero;
 		IntPtr hdbc = IntPtr.Zero;
 		bool disposed;
+		ArrayList linkedCommands;
 
 		#endregion
 
@@ -258,6 +261,19 @@ namespace System.Data.Odbc
 		{
 			OdbcReturn ret = OdbcReturn.Error;
 			if (State == ConnectionState.Open) {
+				// close any associated commands
+				if (linkedCommands != null) {
+					for (int i = 0; i < linkedCommands.Count; i++) {
+						WeakReference wr = (WeakReference) linkedCommands [i];
+						if (wr == null)
+							continue;
+						OdbcCommand c = (OdbcCommand) wr.Target;
+						if (c != null)
+							c.Unlink ();
+					}
+					linkedCommands = null;
+				}
+
 				// disconnect
 				ret = libodbc.SQLDisconnect (hdbc);
 				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
@@ -562,6 +578,30 @@ namespace System.Data.Odbc
 		static string RemoveTrailingNullChar (string value)
 		{
 			return value.TrimEnd ('\0');
+		}
+
+		internal void Link (OdbcCommand cmd)
+		{
+			if (linkedCommands == null)
+				linkedCommands = new ArrayList ();
+			linkedCommands.Add (new WeakReference (cmd));
+		}
+
+		internal void Unlink (OdbcCommand cmd)
+		{
+			if (linkedCommands == null)
+				return;
+
+			for (int i = 0; i < linkedCommands.Count; i++) {
+				WeakReference wr = (WeakReference) linkedCommands [i];
+				if (wr == null)
+					continue;
+				OdbcCommand c = (OdbcCommand) wr.Target;
+				if (c == cmd) {
+					linkedCommands [i] = null;
+					break;
+				}
+			}
 		}
 
 		#endregion

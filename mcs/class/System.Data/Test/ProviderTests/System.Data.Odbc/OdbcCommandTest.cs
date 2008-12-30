@@ -113,6 +113,30 @@ namespace MonoTests.System.Data
 			}
 		}
 
+		[Test]
+		public void bug341743 ()
+		{
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
+			OdbcCommand cmd = null;
+			try {
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT 'a'";
+				cmd.ExecuteNonQuery ();
+
+				conn.Dispose ();
+
+				Assert.AreSame (conn, cmd.Connection, "#1");
+				cmd.Dispose ();
+				Assert.IsNull (cmd.Connection, "#2");
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
 		/// <summary>
                 /// Test ExecuteNonQuery
                 /// </summary>

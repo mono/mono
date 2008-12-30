@@ -1,3 +1,7 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcCommandTest.cs: Added test for bug #341743.
+
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcParameterTest.cs: Fixed compilation on 1.0 profile.
