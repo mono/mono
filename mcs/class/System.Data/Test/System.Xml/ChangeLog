@@ -1,3 +1,8 @@
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlDataDocumentTest.cs: Change spaces to tabs. Removed CWLs.
+	Restore original culture on teardown.
+
 2006-12-05  Raja R Harinath  <rharinath@novell.com>
 
 	* XmlDataDocumentTest.cs: Modernize.

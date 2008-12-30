@@ -32,27 +32,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
 using System.Data;
-using System.Xml;
-using System.Xml.XPath;
+using System.Globalization;
 using System.IO;
 using System.Threading;
-using System.Globalization;
+using System.Xml;
+using System.Xml.XPath;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Data.Xml
 {
 	[TestFixture]
-        public class XmlDataDocumentTest : DataSetAssertion {
+	public class XmlDataDocumentTest : DataSetAssertion {
 
 		static string EOL = "\n";
 
+		private CultureInfo originalCulture;
+
 		[SetUp]
-                public void GetReady() 
-                {
-                	Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
-                }
+		public void SetUp ()
+		{
+			originalCulture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = originalCulture;
+		}
 
 		[Test]
 		public void NewInstance ()
@@ -150,8 +160,7 @@ namespace MonoTests.System.Data.Xml
 			
 			Set.EnforceConstraints = false;
 			Element.FirstChild.InnerText = "64";
-			Assert.AreEqual ("64", doc.DataSet.Tables [0].Rows [1] [0], "test#06");			
-
+			Assert.AreEqual ("64", doc.DataSet.Tables [0].Rows [1] [0], "test#06");
 		}
 		
 		[Test]
@@ -183,59 +192,58 @@ namespace MonoTests.System.Data.Xml
 			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			doc.Load ("Test/System.Xml/region.xml");
 			
-			XmlElement Element = doc.CreateElement ("prefix", "localname", "namespaceURI"); 			
+			XmlElement Element = doc.CreateElement ("prefix", "localname", "namespaceURI");
 			Assert.AreEqual ("prefix", Element.Prefix, "test#01");
 			Assert.AreEqual ("localname", Element.LocalName, "test#02");
 			Assert.AreEqual ("namespaceURI", Element.NamespaceURI, "test#03");
 			doc.ImportNode (Element, false);
 			
-                        TextWriter text = new StringWriter ();
+			TextWriter text = new StringWriter ();
+			doc.Save(text);
 
-                        doc.Save(text);
-
-			string substring = "";
+			string substring = string.Empty;
 			string TextString = text.ToString ();
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-			
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("<Root>") != -1, "test#05");
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "test#06");
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("<Root>") != -1, "test#05");
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>1</RegionID>") != -1, "test#07");
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "test#06");
+
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>1</RegionID>") != -1, "test#07");
 
 			for (int i = 0; i < 26; i++) {
-	                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-        	                TextString = TextString.Substring (TextString.IndexOf("\n") + 1);				
+				substring = TextString.Substring (0, TextString.IndexOf("\n"));
+				TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 			}
-			
-                        substring = TextString.Substring (0, TextString.Length);                        
-                        Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "test#08");
+
+			substring = TextString.Substring (0, TextString.Length);
+			Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "test#08");
 		}
-	
+
 		[Test]
 		public void CreateElement2 ()
 		{
 			XmlDataDocument doc = new XmlDataDocument ();
 			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			doc.Load ("Test/System.Xml/region.xml");
-			
-			XmlElement Element = doc.CreateElement ("ElementName"); 			
-			Assert.AreEqual ("", Element.Prefix, "test#01");
+
+			XmlElement Element = doc.CreateElement ("ElementName");
+			Assert.AreEqual (string.Empty, Element.Prefix, "test#01");
 			Assert.AreEqual ("ElementName", Element.LocalName, "test#02");
-			Assert.AreEqual ("", Element.NamespaceURI, "test#03");
-			
+			Assert.AreEqual (string.Empty, Element.NamespaceURI, "test#03");
+
 			Element = doc.CreateElement ("prefix:ElementName");
 			Assert.AreEqual ("prefix", Element.Prefix, "test#04");
 			Assert.AreEqual ("ElementName", Element.LocalName, "test#05");
-			Assert.AreEqual ("", Element.NamespaceURI, "test#06");
+			Assert.AreEqual (string.Empty, Element.NamespaceURI, "test#06");
 		}
 
 		[Test]
@@ -245,8 +253,8 @@ namespace MonoTests.System.Data.Xml
 			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			doc.Load ("Test/System.Xml/region.xml");
 			
-			XmlElement Element = doc.CreateElement ("ElementName", "namespace"); 			
-			Assert.AreEqual ("", Element.Prefix, "test#01");
+			XmlElement Element = doc.CreateElement ("ElementName", "namespace");
+			Assert.AreEqual (string.Empty, Element.Prefix, "test#01");
 			Assert.AreEqual ("ElementName", Element.LocalName, "test#02");
 			Assert.AreEqual ("namespace", Element.NamespaceURI, "test#03");
 			
@@ -255,10 +263,10 @@ namespace MonoTests.System.Data.Xml
 			Assert.AreEqual ("ElementName", Element.LocalName, "test#05");
 			Assert.AreEqual ("namespace", Element.NamespaceURI, "test#06");
 		}
-		
+
 		[Test]
 		public void Navigator ()
-		{	
+		{
 			XmlDataDocument doc = new XmlDataDocument ();
 			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			doc.Load ("Test/System.Xml/region.xml");
@@ -269,10 +277,10 @@ namespace MonoTests.System.Data.Xml
 			Nav.MoveToFirstChild ();
 
 			Assert.AreEqual ("Root", Nav.Name.ToString (), "test#01");
-			Assert.AreEqual ("", Nav.NamespaceURI.ToString (), "test#02");
+			Assert.AreEqual (string.Empty, Nav.NamespaceURI.ToString (), "test#02");
 			Assert.AreEqual ("False", Nav.IsEmptyElement.ToString (), "test#03");
 			Assert.AreEqual ("Element", Nav.NodeType.ToString (), "test#04");
-			Assert.AreEqual ("", Nav.Prefix, "test#05");
+			Assert.AreEqual (string.Empty, Nav.Prefix, "test#05");
 			
 			Nav.MoveToFirstChild ();
 			Nav.MoveToNext ();
@@ -283,494 +291,486 @@ namespace MonoTests.System.Data.Xml
 			Assert.AreEqual ("2", Nav.Value, "test#08");
 			Nav.MoveToRoot ();
 			Assert.AreEqual ("Root", Nav.NodeType.ToString (), "test#09");
-			
 		}
 
-                // Test constructor
+		// Test constructor
 		[Test]
-                public void Test1()
-                {
+		public void Test1()
+		{
+			//Create an XmlDataDocument.
+			XmlDataDocument doc = new XmlDataDocument();
 
-                             //Create an XmlDataDocument.
-                        XmlDataDocument doc = new XmlDataDocument();
-
-                        //Load the schema file.
-                        doc.DataSet.ReadXmlSchema("Test/System.Xml/store.xsd"); 
-			Console.WriteLine ("books: " + doc.DataSet.Tables.Count);
-                        //Load the XML data.
-                        doc.Load("Test/System.Xml/2books.xml");
+			//Load the schema file.
+			doc.DataSet.ReadXmlSchema("Test/System.Xml/store.xsd"); 
+			//Load the XML data.
+			doc.Load("Test/System.Xml/2books.xml");
 			
-                        //Update the price on the first book using the DataSet methods.
-                        DataTable books = doc.DataSet.Tables["book"];
-			Console.WriteLine ("books: " + doc.DataSet.Tables [0].TableName);
-                        books.Rows[0]["price"] = "12.95";  
+			//Update the price on the first book using the DataSet methods.
+			DataTable books = doc.DataSet.Tables["book"];
+			books.Rows[0]["price"] = "12.95";
 			
-                        //string outstring = "";
-                        TextWriter text = new StringWriter ();
+			//string outstring = "";
+			TextWriter text = new StringWriter ();
 			text.NewLine = "\n";
-                        doc.Save(text);
+			doc.Save(text);
 
-                        //str.Read (bytes, 0, (int)str.Length);
-                        //String OutString = new String (bytes);
-			
-                        string TextString = text.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);                	
-                        Assert.IsTrue (substring.IndexOf ("<?xml version=\"1.0\" encoding=\"utf-16\"?>") == 0, "#A01");
+			//str.Read (bytes, 0, (int)str.Length);
+			//String OutString = new String (bytes);
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("<!--sample XML fragment-->") != -1, "#A02");
+			string TextString = text.ToString ();
+			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("<?xml version=\"1.0\" encoding=\"utf-16\"?>") == 0, "#A01");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("<bookstore>") != -1, "#A03");
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <book genre=\"novel\" ISBN=\"10-861003-324\">") != -1, "#A04");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("<!--sample XML fragment-->") != -1, "#A02");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <title>The Handmaid's Tale</title>") != -1, "#A05");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("<bookstore>") != -1, "#A03");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <book genre=\"novel\" ISBN=\"10-861003-324\">") != -1, "#A04");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("    <price>12.95</price>", substring, "#A06");
-                	
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </book>") != -1, "#A07");
-                	
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <book genre=\"novel\" ISBN=\"1-861001-57-5\">") != -1, "#A08");
-                	
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <title>Pride And Prejudice</title>") != -1, "#A09");
-                        
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <price>24.95</price>") != -1, "#A10");
-                        
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </book>") != -1, "#A11");
-                        
-                        substring = TextString;
-                        Assert.IsTrue (substring.IndexOf ("</bookstore>") != -1, "#A12");
-			
-                }
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <title>The Handmaid's Tale</title>") != -1, "#A05");
 
-                // Test public fields
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("    <price>12.95</price>", substring, "#A06");
+
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </book>") != -1, "#A07");
+
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <book genre=\"novel\" ISBN=\"1-861001-57-5\">") != -1, "#A08");
+
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <title>Pride And Prejudice</title>") != -1, "#A09");
+
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <price>24.95</price>") != -1, "#A10");
+
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </book>") != -1, "#A11");
+
+			substring = TextString;
+			Assert.IsTrue (substring.IndexOf ("</bookstore>") != -1, "#A12");
+		}
+
+		// Test public fields
 		[Test]
-                public void Test2()
-                {
-                        DataSet RegionDS = new DataSet ();
-                        DataRow RegionRow;
-                        RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
+		public void Test2()
+		{
+			DataSet RegionDS = new DataSet ();
+			DataRow RegionRow;
+			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			Assert.AreEqual (1, RegionDS.Tables.Count, "Was read correct?");
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load("Test/System.Xml/region.xml" );
+			DataDoc.Load("Test/System.Xml/region.xml" );
 
+			RegionRow = RegionDS.Tables[0].Rows[0];
 
-                        RegionRow = RegionDS.Tables[0].Rows[0];
-			
-                        RegionDS.AcceptChanges ();
-                        RegionRow["RegionDescription"] = "Reeeeeaalllly Far East!";
-			
-                        RegionDS.AcceptChanges ();
-			
-                        TextWriter text = new StringWriter ();
+			RegionDS.AcceptChanges ();
+			RegionRow["RegionDescription"] = "Reeeeeaalllly Far East!";
+			RegionDS.AcceptChanges ();
+
+			TextWriter text = new StringWriter ();
 			text.NewLine = "\n";
-                        DataDoc.Save (text);
-                        string TextString = text.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        
+			DataDoc.Save (text);
+			string TextString = text.ToString ();
+			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+
 			//Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\" standalone=\"yes\"?>", substring, "#B01");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("<Root>", substring, "#B02");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("<Root>", substring, "#B02");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B03");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B03");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>1</RegionID>") != -1, "#B04");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>1</RegionID>") != -1, "#B04");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("    <RegionDescription>Reeeeeaalllly Far East!</RegionDescription>", substring, "#B05");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("    <RegionDescription>Reeeeeaalllly Far East!</RegionDescription>", substring, "#B05");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B06");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B06");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B07");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B07");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>2</RegionID>") != -1, "#B08");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>2</RegionID>") != -1, "#B08");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Western") != -1, "#B09");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Western") != -1, "#B09");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#B10");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#B10");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B11");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B11");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B12");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B12");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>3</RegionID>") != -1, "#B13");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>3</RegionID>") != -1, "#B13");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Northern") != -1, "#B14");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Northern") != -1, "#B14");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#B15");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#B15");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B16");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B16");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B17");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#B17");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>4</RegionID>") != -1, "#B18");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>4</RegionID>") != -1, "#B18");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Southern") != -1, "#B19");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Southern") != -1, "#B19");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#B20");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#B20");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B21");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#B21");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#B22");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#B22");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#B23");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#B23");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#B24");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#B24");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#B25");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#B25");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#B26");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#B26");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#B27");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#B27");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#B28");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#B28");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#B29");
-                }
-                
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#B29");
+		}
+
 		[Test]
-                public void Test3()
-                {
-                	XmlDataDocument DataDoc = new XmlDataDocument ();
-                	DataSet dataset = DataDoc.DataSet;
-                	dataset.ReadXmlSchema ("Test/System.Xml/region.xsd");
-                        DataDoc.Load("Test/System.Xml/region.xml" );
+		public void Test3()
+		{
+			XmlDataDocument DataDoc = new XmlDataDocument ();
+			DataSet dataset = DataDoc.DataSet;
+			dataset.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			DataDoc.Load("Test/System.Xml/region.xml" );
 
 			DataDoc.GetElementsByTagName ("Region") [0].RemoveAll ();
 
-                        TextWriter text = new StringWriter ();
+			TextWriter text = new StringWriter ();
 			text.NewLine = "\n";
 			dataset.WriteXml (text);
-                        //DataDoc.Save (text);
-                        string TextString = text.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			//DataDoc.Save (text);
+			string TextString = text.ToString ();
+			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 
-                        Assert.IsTrue (substring.IndexOf ("<Root>") != -1, "#C01");
+			Assert.IsTrue (substring.IndexOf ("<Root>") != -1, "#C01");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("  <Region />", substring, "#C02");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("  <Region />", substring, "#C02");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("  <Region>", substring, "#C03");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("  <Region>", substring, "#C03");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("    <RegionID>2</RegionID>", substring, "#C04");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("    <RegionID>2</RegionID>", substring, "#C04");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// Regardless of NewLine value, original xml contains CR
 			// (but in the context of XML spec, it should be normalized)
-                        Assert.AreEqual ("    <RegionDescription>Western\r", substring, "#C05");
-                        
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#C06");
+			Assert.AreEqual ("    <RegionDescription>Western\r", substring, "#C05");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("  </Region>", substring, "#C07");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#C06");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#C08");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("  </Region>", substring, "#C07");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>3</RegionID>") != -1, "#C09");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#C08");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>3</RegionID>") != -1, "#C09");
+
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// Regardless of NewLine value, original xml contains CR
 			// (but in the context of XML spec, it should be normalized)
-                        Assert.AreEqual ("    <RegionDescription>Northern\r", substring, "#C10");
+			Assert.AreEqual ("    <RegionDescription>Northern\r", substring, "#C10");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#C11");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#C11");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#C12");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#C12");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#C13");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#C13");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>4</RegionID>") != -1, "#C14");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>4</RegionID>") != -1, "#C14");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Southern") != -1, "#C15");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Southern") != -1, "#C15");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#C16");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#C16");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#C17");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#C17");
 
-                        substring = TextString.Substring (0, TextString.Length);
-                        Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#C18");
-
-                }
+			substring = TextString.Substring (0, TextString.Length);
+			Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#C18");
+		}
 
 		[Test]
 		public void Test4 ()
 		{
-                        DataSet RegionDS = new DataSet ();
-			
-                        RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
-                        XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load ("Test/System.Xml/region.xml");
+			DataSet RegionDS = new DataSet ();
+
+			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
+			DataDoc.Load ("Test/System.Xml/region.xml");
 			Assert.IsTrue (RegionDS.EnforceConstraints);
 			DataTable table = DataDoc.DataSet.Tables ["Region"];
 			DataRow newRow = table.NewRow ();
 			newRow [0] = "new row";
 			newRow [1] = "new description";
-			
-			table.Rows.Add (newRow);			
-			
-                        TextWriter text = new StringWriter ();
+
+			table.Rows.Add (newRow);
+
+			TextWriter text = new StringWriter ();
 			text.NewLine = "\n";
-                        DataDoc.Save (text);
-                        string TextString = text.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			DataDoc.Save (text);
+			string TextString = text.ToString ();
+			string substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("<Root>") != -1, "#F02");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("<Root>") != -1, "#F02");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F03");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F03");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>1</RegionID>") != -1, "#F04");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>1</RegionID>") != -1, "#F04");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// Regardless of NewLine value, original xml contains CR
 			// (but in the context of XML spec, it should be normalized)
-                        Assert.AreEqual ("    <RegionDescription>Eastern\r", substring, "#F05");
+			Assert.AreEqual ("    <RegionDescription>Eastern\r", substring, "#F05");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.AreEqual ("   </RegionDescription>", substring, "#F06");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.AreEqual ("   </RegionDescription>", substring, "#F06");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F07");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F07");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F08");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F08");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>2</RegionID>") != -1, "#F09");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>2</RegionID>") != -1, "#F09");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Western") != -1, "#F10");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Western") != -1, "#F10");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#F11");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#F11");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F12");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F12");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F13");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F13");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>3</RegionID>") != -1, "#F14");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>3</RegionID>") != -1, "#F14");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Northern") != -1, "#F15");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>Northern") != -1, "#F15");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#F16");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#F16");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F17");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F17");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F18");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F18");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>4</RegionID>") != -1, "#F19");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>4</RegionID>") != -1, "#F19");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
 			// Regardless of NewLine value, original xml contains CR
 			// (but in the context of XML spec, it should be normalized)
-                        Assert.AreEqual ("    <RegionDescription>Southern\r", substring, "#F20");
+			Assert.AreEqual ("    <RegionDescription>Southern\r", substring, "#F20");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#F21");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("   </RegionDescription>") != -1, "#F21");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F22");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F22");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#F23");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#F23");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#F24");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#F24");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#F25");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#F25");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#F26");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#F26");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#F27");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <MoreData>") != -1, "#F27");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#F28");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column1>12</Column1>") != -1, "#F28");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#F29");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <Column2>Hi There</Column2>") != -1, "#F29");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#F30");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </MoreData>") != -1, "#F30");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F31");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#F31");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>new row</RegionID>") != -1, "#F32");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>new row</RegionID>") != -1, "#F32");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>new description</RegionDescription>") != -1, "#F33");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>new description</RegionDescription>") != -1, "#F33");
 
-                        substring = TextString.Substring (0, TextString.IndexOf(EOL));
-                        TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F34");
+			substring = TextString.Substring (0, TextString.IndexOf(EOL));
+			TextString = TextString.Substring (TextString.IndexOf(EOL) + EOL.Length);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#F34");
 
-                        substring = TextString.Substring (0, TextString.Length);
-                        Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#F35");
+			substring = TextString.Substring (0, TextString.Length);
+			Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#F35");
 		}
 
-		[Test]		
+		[Test]
 		public void Test5 ()
 		{
-                        DataSet RegionDS = new DataSet ();
-			
-                        RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
-                        XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
-                        DataDoc.Load("Test/System.Xml/region.xml" );
+			DataSet RegionDS = new DataSet ();
+
+			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
+			DataDoc.Load("Test/System.Xml/region.xml" );
 			try {
 				DataDoc.DocumentElement.AppendChild (DataDoc.DocumentElement.FirstChild);
 				Assert.Fail ("#G01");
-			} catch (Exception e) {
+			} catch (InvalidOperationException e) {
 				Assert.AreEqual (typeof (InvalidOperationException), e.GetType (), "#G02");
 				Assert.AreEqual ("Please set DataSet.EnforceConstraints == false before trying to edit " +
 					              "XmlDataDocument using XML operations.", e.Message, "#G03");
@@ -784,50 +784,49 @@ namespace MonoTests.System.Data.Xml
 			newNode.AppendChild (newChildNode);
 			newNode.AppendChild (newChildNode2);
 			DataDoc.DocumentElement.AppendChild (newNode);
-                        TextWriter text = new StringWriter ();
+			TextWriter text = new StringWriter ();
 			
-                        //DataDoc.Save (text);
+			//DataDoc.Save (text);
 			DataDoc.DataSet.WriteXml(text);
-                        string TextString = text.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			string TextString = text.ToString ();
+			string substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 			
 			for (int i = 0; i < 21; i++) {
 				substring = TextString.Substring (0, TextString.IndexOf("\n"));
 				TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 			}
-                        Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#G04");
-			
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>64</RegionID>") != -1, "#G05");
-			
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionDescription>test node</RegionDescription>") != -1, "#G06");
-			
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#G07");
-			
-                        substring = TextString.Substring (0, TextString.Length);
-                        Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#G08");
+			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#G04");
 
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>64</RegionID>") != -1, "#G05");
+
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("    <RegionDescription>test node</RegionDescription>") != -1, "#G06");
+
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#G07");
+
+			substring = TextString.Substring (0, TextString.Length);
+			Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#G08");
 		}
-		
+
 		[Test]
 		public void Test6 ()
 		{
 			DataSet RegionDS = new DataSet ();
-			
+
 			RegionDS.ReadXmlSchema ("Test/System.Xml/region.xsd");
 			XmlDataDocument DataDoc = new XmlDataDocument (RegionDS);
 			DataDoc.Load("Test/System.Xml/region.xml" );
 			DataDoc.DataSet.EnforceConstraints = false;
-			
+
 			XmlElement newNode = DataDoc.CreateElement ("Region");
 			XmlElement newChildNode = DataDoc.CreateElement ("RegionID");
-			
+
 			newChildNode.InnerText = "64";
 			XmlElement newChildNode2 = null;
 			try {
@@ -836,78 +835,75 @@ namespace MonoTests.System.Data.Xml
 			} catch (XmlException) {
 			}
 			newChildNode2 = DataDoc.CreateElement ("something_else");
-			
+
 			newChildNode2.InnerText = "test node";
-			
+
 			newNode.AppendChild (newChildNode);
 			newNode.AppendChild (newChildNode2);
 			DataDoc.DocumentElement.AppendChild (newNode);
 			
-                        TextWriter text = new StringWriter ();
+			TextWriter text = new StringWriter ();
 			
-                        //DataDoc.Save (text);
+			//DataDoc.Save (text);
 			DataDoc.DataSet.WriteXml(text);
-                        string TextString = text.ToString ();
-                        string substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			string TextString = text.ToString ();
+			string substring = TextString.Substring (0, TextString.IndexOf("\n") - 1);
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 			
 			for (int i = 0; i < 21; i++) {
 				substring = TextString.Substring (0, TextString.IndexOf("\n"));
 				TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
 			}
-                        
+
 			Assert.IsTrue (substring.IndexOf ("  <Region>") != -1, "#H03");
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n"));
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("    <RegionID>64</RegionID>") != -1, "#H04");
+			substring = TextString.Substring (0, TextString.IndexOf("\n"));
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("    <RegionID>64</RegionID>") != -1, "#H04");
 
-                        substring = TextString.Substring (0, TextString.IndexOf("\n") );
-                        TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
-                        Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#H05");
+			substring = TextString.Substring (0, TextString.IndexOf("\n") );
+			TextString = TextString.Substring (TextString.IndexOf("\n") + 1);
+			Assert.IsTrue (substring.IndexOf ("  </Region>") != -1, "#H05");
 
-                        substring = TextString.Substring (0, TextString.Length);
-                        Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#H06");
-			
-			
+			substring = TextString.Substring (0, TextString.Length);
+			Assert.IsTrue (substring.IndexOf ("</Root>") != -1, "#H06");
 		}
 
 		[Test]
-                public void GetElementFromRow ()
-                {
-                	XmlDataDocument doc = new XmlDataDocument ();
-                	doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-                	doc.Load ("Test/System.Xml/region.xml");
-                	DataTable table = doc.DataSet.Tables ["Region"];
-                	
-                	XmlElement element = doc.GetElementFromRow (table.Rows [2]);
-                	Assert.AreEqual ("Region", element.Name, "#D01");
-                	Assert.AreEqual ("3", element ["RegionID"].InnerText, "#D02");
-                	
-                	try {
-                		element = doc.GetElementFromRow (table.Rows [4]);
-                		Assert.Fail ("#D03");
-                	} catch (Exception e) {
-                		Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "#D04");
-                		Assert.AreEqual ("There is no row at position 4.", e.Message, "#D05");
-                	}
-                }
-                
+		public void GetElementFromRow ()
+		{
+			XmlDataDocument doc = new XmlDataDocument ();
+			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			doc.Load ("Test/System.Xml/region.xml");
+			DataTable table = doc.DataSet.Tables ["Region"];
+
+			XmlElement element = doc.GetElementFromRow (table.Rows [2]);
+			Assert.AreEqual ("Region", element.Name, "#D01");
+			Assert.AreEqual ("3", element ["RegionID"].InnerText, "#D02");
+
+			try {
+				element = doc.GetElementFromRow (table.Rows [4]);
+				Assert.Fail ("#D03");
+			} catch (IndexOutOfRangeException e) {
+				Assert.AreEqual (typeof (IndexOutOfRangeException), e.GetType (), "#D04");
+				Assert.AreEqual ("There is no row at position 4.", e.Message, "#D05");
+			}
+		}
+
 		[Test]
-                public void GetRowFromElement ()
-                {
-                	XmlDataDocument doc = new XmlDataDocument ();
-                	doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
-                	doc.Load ("Test/System.Xml/region.xml");
+		public void GetRowFromElement ()
+		{
+			XmlDataDocument doc = new XmlDataDocument ();
+			doc.DataSet.ReadXmlSchema ("Test/System.Xml/region.xsd");
+			doc.Load ("Test/System.Xml/region.xml");
 			XmlElement root = doc.DocumentElement;
 
-        		DataRow row = doc.GetRowFromElement((XmlElement)root.FirstChild);
-			
-                	Assert.AreEqual ("1", row [0], "#E01");
+			DataRow row = doc.GetRowFromElement((XmlElement)root.FirstChild);
 
-                	row = doc.GetRowFromElement((XmlElement)root.ChildNodes [2]);
-                	Assert.AreEqual ("3", row [0], "#E02");
-			
-                }
-        }
+			Assert.AreEqual ("1", row [0], "#E01");
+
+			row = doc.GetRowFromElement((XmlElement)root.ChildNodes [2]);
+			Assert.AreEqual ("3", row [0], "#E02");
+		}
+	}
 }
