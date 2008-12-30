@@ -1,5 +1,9 @@
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OdbcCommandBuilderTest.cs: Added tests for properties.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* OdbcCommandBuilder.cs: Added test for ConflictOption default value.
 
 2008-12-29  Gert Driesen  <drieseng@users.sourceforge.net>

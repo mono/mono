@@ -38,6 +38,82 @@ namespace MonoTests.System.Data.Odbc
 	[TestFixture]
 	public class OdbcCommandBuilderTest
 	{
+#if NET_2_0
+		[Test]
+		public void CatalogLocationTest ()
+		{
+			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
+			Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
+			cb.CatalogLocation = CatalogLocation.End;
+			Assert.AreEqual (CatalogLocation.End, cb.CatalogLocation, "#2");
+		}
+
+		[Test]
+		public void CatalogLocation_Value_Invalid ()
+		{
+			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
+			cb.CatalogLocation = CatalogLocation.End;
+			try {
+				cb.CatalogLocation = (CatalogLocation) 666;
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// The CatalogLocation enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("CatalogLocation") != -1, "#5:" + ex.Message);
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#6:" + ex.Message);
+			}
+			Assert.AreEqual (CatalogLocation.End, cb.CatalogLocation, "#6");
+		}
+
+		[Test]
+		public void CatalogSeparator ()
+		{
+			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
+			Assert.AreEqual (".", cb.CatalogSeparator, "#1");
+			cb.CatalogSeparator = "a";
+			Assert.AreEqual ("a", cb.CatalogSeparator, "#2");
+			cb.CatalogSeparator = null;
+			Assert.AreEqual (".", cb.CatalogSeparator, "#3");
+			cb.CatalogSeparator = "b";
+			Assert.AreEqual ("b", cb.CatalogSeparator, "#4");
+			cb.CatalogSeparator = string.Empty;
+			Assert.AreEqual (".", cb.CatalogSeparator, "#5");
+			cb.CatalogSeparator = " ";
+			Assert.AreEqual (" ", cb.CatalogSeparator, "#6");
+		}
+
+		[Test]
+		public void ConflictOptionTest ()
+		{
+			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
+			Assert.AreEqual (ConflictOption.CompareAllSearchableValues, cb.ConflictOption, "#1");
+			cb.ConflictOption = ConflictOption.CompareRowVersion;
+			Assert.AreEqual (ConflictOption.CompareRowVersion, cb.ConflictOption, "#2");
+		}
+
+		[Test]
+		public void ConflictOption_Value_Invalid ()
+		{
+			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
+			cb.ConflictOption = ConflictOption.CompareRowVersion;
+			try {
+				cb.ConflictOption = (ConflictOption) 666;
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException ex) {
+				// The ConflictOption enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ConflictOption") != -1, "#5:" + ex.Message);
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#6:" + ex.Message);
+				Assert.AreEqual ("ConflictOption", ex.ParamName, "#7");
+			}
+			Assert.AreEqual (ConflictOption.CompareRowVersion, cb.ConflictOption, "#8");
+		}
+#endif
+
 		[Test]
 		public void QuotePrefix ()
 		{
@@ -68,6 +144,8 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreEqual ("'\"", cb.QuoteSuffix, "#4");
 			cb.QuoteSuffix = string.Empty;
 			Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#5");
+			cb.QuoteSuffix = " ";
+			Assert.AreEqual (" ", cb.QuoteSuffix, "#6");
 		}
 
 #if NET_2_0
@@ -306,13 +384,20 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test]
-		public void DefaultPropertiesTest ()
+		public void SchemaSeparator ()
 		{
 			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
-			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
-			Assert.AreEqual (ConflictOption.CompareAllSearchableValues, cb.ConflictOption, "#3");
-			Assert.AreEqual (".", cb.SchemaSeparator, "#4");
-			Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
+			Assert.AreEqual (".", cb.SchemaSeparator, "#1");
+			cb.SchemaSeparator = "a";
+			Assert.AreEqual ("a", cb.SchemaSeparator, "#2");
+			cb.SchemaSeparator = null;
+			Assert.AreEqual (".", cb.SchemaSeparator, "#3");
+			cb.SchemaSeparator = "b";
+			Assert.AreEqual ("b", cb.SchemaSeparator, "#4");
+			cb.SchemaSeparator = string.Empty;
+			Assert.AreEqual (".", cb.SchemaSeparator, "#5");
+			cb.SchemaSeparator = " ";
+			Assert.AreEqual (" ", cb.SchemaSeparator, "#6");
 		}
 #endif
 	}

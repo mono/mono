@@ -1,5 +1,9 @@
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DbCommandBuilderTest.cs: Added tests for properties.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DbCommandBuilderTest.cs: Added tests for QuotePrefix and
 	QuoteSuffix.
 	* DbConnectionStringBuilderTest.cs: Added tests for both odbc and

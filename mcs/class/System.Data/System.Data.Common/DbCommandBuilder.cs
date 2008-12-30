@@ -34,43 +34,39 @@
 
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
 using System.Text;
 
 namespace System.Data.Common {
 	public abstract class DbCommandBuilder : Component
 	{
-		bool _setAllValues = false;
-		bool _disposed = false;
+		bool _setAllValues;
+		bool _disposed;
 
 		DataTable _dbSchemaTable;
-		DbDataAdapter _dbDataAdapter = null;
+		DbDataAdapter _dbDataAdapter;
 		private CatalogLocation _catalogLocation = CatalogLocation.Start;
 		private ConflictOption _conflictOption = ConflictOption.CompareAllSearchableValues;
 
 		private string _tableName;
-		private string _catalogSeperator = ".";
+		private string _catalogSeparator;
 		private string _quotePrefix;
 		private string _quoteSuffix;
-		private string _schemaSeperator = ".";
-		private DbCommand _dbCommand = null;
-
-		// Used to construct WHERE clauses
-		static readonly string clause1 = "({0} = 1 AND {1} IS NULL)";
-		static readonly string clause2 = "({0} = {1})";
+		private string _schemaSeparator;
+		private DbCommand _dbCommand;
 
 		DbCommand _deleteCommand;
 		DbCommand _insertCommand;
 		DbCommand _updateCommand;
 
-		#region Constructors
+		static readonly string SEPARATOR_DEFAULT = ".";
+		// Used to construct WHERE clauses
+		static readonly string clause1 = "({0} = 1 AND {1} IS NULL)";
+		static readonly string clause2 = "({0} = {1})";
 
 		protected DbCommandBuilder ()
 		{
 		}
-
-		#endregion // Constructors
-
-		#region Properties
 
 		private void BuildCache (bool closeConnection)
 		{
@@ -393,19 +389,31 @@ namespace System.Data.Common {
 		[DefaultValue (CatalogLocation.Start)]
 		public virtual CatalogLocation CatalogLocation {
 			get { return _catalogLocation; }
-			set { _catalogLocation = value; }
+			set {
+				CheckEnumValue (typeof (CatalogLocation),
+					(int) value);
+				_catalogLocation = value;
+			}
 		}
 
 		[DefaultValue (".")]
 		public virtual string CatalogSeparator {
-			get { return _catalogSeperator; }
-			set { if (value != null) _catalogSeperator = value; }
+			get {
+				if (_catalogSeparator == null || _catalogSeparator.Length == 0)
+					return SEPARATOR_DEFAULT;
+				return _catalogSeparator;
+			}
+			set { _catalogSeparator = value; }
 		}
 
 		[DefaultValue (ConflictOption.CompareAllSearchableValues)]
 		public virtual ConflictOption ConflictOption {
 			get { return _conflictOption; }
-			set { _conflictOption = value; }
+			set {
+				CheckEnumValue (typeof (ConflictOption),
+					(int) value);
+				_conflictOption = value;
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -451,15 +459,19 @@ namespace System.Data.Common {
 
 		[DefaultValue (".")]
 		public virtual string SchemaSeparator {
-			get { return _schemaSeperator; }
-			set {  if (value != null) _schemaSeperator = value; }
+			get {
+				if (_schemaSeparator == null || _schemaSeparator.Length == 0)
+					return SEPARATOR_DEFAULT;
+				return _schemaSeparator;
+			}
+			set { _schemaSeparator = value; }
 		}
 
 		[DefaultValue (false)]
 		public bool SetAllValues {
 			get { return _setAllValues; }
 			set { _setAllValues = value; }
-		}		
+		}
 
 		private DbCommand SourceCommand {
 			get {
@@ -468,9 +480,6 @@ namespace System.Data.Common {
 				return null;
 			}
 		}
-		#endregion // Properties
-
-		#region Methods
 
 		protected abstract void ApplyParameterInfo (DbParameter parameter, 
 							    DataRow row, 
@@ -622,7 +631,17 @@ namespace System.Data.Common {
 				return rdr.GetSchemaTable ();
 		}
 
-		#endregion // Methods
+		static void CheckEnumValue (Type type, int value)
+		{
+			if (Enum.IsDefined (type, value))
+				return;
+
+			string typename = type.Name;
+			string msg = string.Format (CultureInfo.CurrentCulture,
+				"Value {0} is not valid for {1}.", value,
+				typename);
+			throw new ArgumentOutOfRangeException (typename, msg);
+		}
 	}
 }
 

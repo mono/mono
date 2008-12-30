@@ -1,5 +1,12 @@
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DbCommandBuilder.cs: When CatalogSeparator or SchemaSeparator are
+	not set (or explicitly set to null or empty string), then return
+	default separator character. Added value check for CatalogLocation and
+	ConflictOption. Removed regions.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DbCommandBuilder.cs: Fixed default value for ConflicOption.
 
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
