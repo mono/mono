@@ -71,6 +71,7 @@ namespace System.Windows.Forms.VisualStyles
 		string VisualStyleInformationCopyright { get; }
 		string VisualStyleInformationDescription { get; }
 		string VisualStyleInformationDisplayName { get; }
+		string VisualStyleInformationFileName { get; }
 		bool VisualStyleInformationIsSupportedByOS { get; }
 		int VisualStyleInformationMinimumColorDepth { get; }
 		string VisualStyleInformationSize { get; }

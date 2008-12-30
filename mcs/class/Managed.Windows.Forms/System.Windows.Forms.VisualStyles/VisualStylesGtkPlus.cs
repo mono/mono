@@ -1128,7 +1128,13 @@ namespace System.Windows.Forms.VisualStyles
 				return null;
 			}
 		}
-		public bool VisualStyleInformationIsSupportedByOS {
+		public string VisualStyleInformationFileName {
+			get {
+				return null;
+			}
+		}
+		public bool VisualStyleInformationIsSupportedByOS
+		{
 			get {
 				return true;
 			}

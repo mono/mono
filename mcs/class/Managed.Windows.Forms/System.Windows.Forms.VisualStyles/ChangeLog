@@ -1,3 +1,9 @@
+2008-12-30  Jonathan Pobst  <monkey@jpobst.com>
+
+	* IVisualStyle.cs, VisualStylesGtkPlus.cs, VisualStylesNative.cs:
+	Add way to get style filename.
+	[Fixes bug #462766]
+
 2008-09-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* VisualStyleElement.cs: Fixed Header.Item.Normal value.

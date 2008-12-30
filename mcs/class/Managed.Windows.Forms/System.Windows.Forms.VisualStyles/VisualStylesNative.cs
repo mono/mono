@@ -343,6 +343,16 @@ namespace System.Windows.Forms.VisualStyles
 				return GetData ("DISPLAYNAME");
 			}
 		}
+		public string VisualStyleInformationFileName {
+			get {
+				Text.StringBuilder ThemeName = new Text.StringBuilder (260);
+				Text.StringBuilder ColorName = new Text.StringBuilder (260);
+				Text.StringBuilder SizeName = new Text.StringBuilder (260);
+				UXTheme.GetCurrentThemeName (ThemeName, ThemeName.Capacity, ColorName, ColorName.Capacity, SizeName, SizeName.Capacity);
+
+				return ThemeName.ToString ();
+			}
+		}
 		static string GetData (string propertyName)
 		{
 			Text.StringBuilder ThemeName = new Text.StringBuilder (260);
