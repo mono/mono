@@ -1,5 +1,10 @@
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlXmlTest.cs: Minor improvements to tests. Marked tests as
+	NotWorking/NotDotNet to fix test failures on MS.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlDecimalTest.cs
 	* SqlInt32Test.cs
 	* SqlCharsTest.cs

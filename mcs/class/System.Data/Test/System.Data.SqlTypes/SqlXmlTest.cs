@@ -29,90 +29,144 @@
 //
 
 #if NET_2_0
-using NUnit.Framework;
 using System;
-using System.Xml;
 using System.Data.SqlTypes;
-using System.Threading;
 using System.Globalization;
-using System.Text;
-using System.Xml.Serialization;
 using System.IO;
+using System.Text;
+using System.Threading;
+using System.Xml;
+using System.Xml.Serialization;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
-    public class SqlXmlTest
+	public class SqlXmlTest
 	{
+		private CultureInfo originalCulture;
 
 		[SetUp]
 		public void SetUp ()
 		{
-	              Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+			originalCulture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
 		}
-                // Test constructor
-		[Test]
-		public void SqlXml_ctor_StreamTest()
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = originalCulture;
+		}
+
+		[Test] // .ctor (Stream)
+		[Category ("NotWorking")]
+		public void Constructor2_Stream_ASCII ()
+		{
+			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
+			MemoryStream stream = new MemoryStream (Encoding.ASCII.GetBytes (xmlStr));
+			SqlXml xmlSql = new SqlXml (stream);
+			Assert.IsFalse (xmlSql.IsNull, "#1");
+			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
+		}
+
+		// Test constructor
+		[Test] // .ctor (Stream)
+		[Category ("NotDotNet")] // Name cannot begin with the '.' character, hexadecimal value 0x00. Line 1, position 2
+		public void Constructor2_Stream_Unicode ()
 		{
 			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
 			MemoryStream stream = new MemoryStream (Encoding.Unicode.GetBytes (xmlStr));
 			SqlXml xmlSql = new SqlXml (stream);
-			
-			Assert.AreEqual (xmlStr, xmlSql.Value, "#A01");			
+			Assert.IsFalse (xmlSql.IsNull, "#1");
+			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
+		}
+
+		[Test] // .ctor (Stream)
+		[Category ("NotWorking")]
+		public void Constructor2_Stream_UTF8 ()
+		{
+			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
+			MemoryStream stream = new MemoryStream (Encoding.UTF8.GetBytes (xmlStr));
+			SqlXml xmlSql = new SqlXml (stream);
+			Assert.IsFalse (xmlSql.IsNull, "#1");
+			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
+		}
+
+		[Test] // .ctor (Stream)
+		public void Constructor2_Stream_Empty ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			SqlXml xmlSql = new SqlXml (ms);
+			Assert.IsFalse (xmlSql.IsNull, "#1");
+			Assert.AreEqual (string.Empty, xmlSql.Value, "#2");
 		}
 
 		[Test]
-		public void SqlXml_ctor_XmlReaderTest()
+		public void Constructor2_Stream_Null ()
+		{
+			SqlXml xmlSql = new SqlXml ((Stream) null);
+			Assert.IsTrue (xmlSql.IsNull, "#1");
+
+			try {
+				string value = xmlSql.Value;
+				Assert.Fail ("#2:" + value);
+			} catch (SqlNullValueException) {
+			}
+		}
+
+		[Test] // .ctor (XmlReader)
+		public void Constructor3 ()
 		{
 			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
 			XmlReader xrdr = new XmlTextReader (new StringReader (xmlStr));
 			SqlXml xmlSql = new SqlXml (xrdr);
-			
-			Assert.AreEqual (xmlStr, xmlSql.Value, "#A02");			
+			Assert.IsFalse (xmlSql.IsNull, "#1");
+			Assert.AreEqual (xmlStr, xmlSql.Value, "#2");
 		}
 
-		[Test]
-		public void SqlXml_ctor_ZeroLengthStreamTest()
-		{
-			MemoryStream ms = new MemoryStream ();
-			SqlXml xmlSql = new SqlXml (ms);
-			
-			Assert.AreEqual (false, xmlSql.IsNull, "#A03");			
-		}
-
-		[Test]
-		public void SqlXml_ctor_ZeroLengthXmlReaderTest()
+		[Test] // .ctor (XmlReader)
+		public void Constructor3_XmlReader_Empty ()
 		{
 			XmlReaderSettings xs = new XmlReaderSettings ();
 			xs.ConformanceLevel = ConformanceLevel.Fragment;
 			XmlReader xrdr = XmlReader.Create (new StringReader (String.Empty), xs);
 			SqlXml xmlSql = new SqlXml (xrdr);
-			
-			Assert.AreEqual (false, xmlSql.IsNull, "#A04");			
+			Assert.IsFalse (xmlSql.IsNull, "#1");
+			Assert.AreEqual (string.Empty, xmlSql.Value, "#2");
 		}
 
 		[Test]
-		[ExpectedException (typeof (SqlNullValueException))]
-		public void SqlXml_getValue_ZeroLengthStreamTest()
+		public void Constructor3_XmlReader_Null ()
 		{
-			MemoryStream ms = null;
-			SqlXml xmlSql = new SqlXml (ms);
-			
-			string str = xmlSql.Value;
+			SqlXml xmlSql = new SqlXml ((XmlReader) null);
+			Assert.IsTrue (xmlSql.IsNull, "#1");
+
+			try {
+				string value = xmlSql.Value;
+				Assert.Fail ("#2:" + value);
+			} catch (SqlNullValueException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (SqlNullValueException))]
-		public void SqlXml_getValue_ZeroLengthXmlReaderTest()
+		[Category ("NotWorking")]
+		public void CreateReader_Stream_ASCII ()
 		{
-			XmlReader xrdr = null;
-			SqlXml xmlSql = new SqlXml (xrdr);
+			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
+			MemoryStream stream = new MemoryStream (Encoding.ASCII.GetBytes (xmlStr));
+			SqlXml xmlSql = new SqlXml (stream);
+
+			XmlReader xrdr = xmlSql.CreateReader ();
+			xrdr.MoveToContent ();
 			
-			string str = xmlSql.Value;
+			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#1");
 		}
 
 		[Test]
-		public void SqlXml_fromStream_CreateReaderTest()
+		[Category ("NotDotNet")] // Name cannot begin with the '.' character, hexadecimal value 0x00. Line 1, position 2
+		public void CreateReader_Stream_Unicode ()
 		{
 			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
 			MemoryStream stream = new MemoryStream (Encoding.Unicode.GetBytes (xmlStr));
@@ -121,7 +175,21 @@ namespace MonoTests.System.Data.SqlTypes
 			XmlReader xrdr = xmlSql.CreateReader ();
 			xrdr.MoveToContent ();
 			
-			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#A05");			
+			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#A05");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CreateReader_Stream_UTF8 ()
+		{
+			string xmlStr = "<Employee><FirstName>Varadhan</FirstName><LastName>Veerapuram</LastName></Employee>";
+			MemoryStream stream = new MemoryStream (Encoding.UTF8.GetBytes (xmlStr));
+			SqlXml xmlSql = new SqlXml (stream);
+
+			XmlReader xrdr = xmlSql.CreateReader ();
+			xrdr.MoveToContent ();
+			
+			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#1");
 		}
 
 		[Test]
@@ -134,7 +202,7 @@ namespace MonoTests.System.Data.SqlTypes
 			XmlReader xrdr = xmlSql.CreateReader ();
 			xrdr.MoveToContent ();
 			
-			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#A06");			
+			Assert.AreEqual (xmlStr, xrdr.ReadOuterXml(), "#A06");
 		}
 
 		[Test]
@@ -145,7 +213,7 @@ namespace MonoTests.System.Data.SqlTypes
 
 			XmlReader xrdr = xmlSql.CreateReader ();
 
-			Assert.AreEqual (false, xrdr.Read(), "#A07");			
+			Assert.AreEqual (false, xrdr.Read(), "#A07");
 		}
 
 		[Test]
@@ -159,40 +227,41 @@ namespace MonoTests.System.Data.SqlTypes
 
 			XmlReader xrdr = xmlSql.CreateReader ();
 
-			Assert.AreEqual (false, xrdr.Read(), "#A07");			
+			Assert.AreEqual (false, xrdr.Read(), "#A07");
 		}
 
 		[Test]
-		[ExpectedException (typeof (XmlException))]
 		public void SqlXml_fromZeroLengthXmlReader_CreateReaderTest()
 		{
 			XmlReader rdr = new XmlTextReader (new StringReader (String.Empty));
-			SqlXml xmlSql = new SqlXml (rdr);
-
-			XmlReader xrdr = xmlSql.CreateReader ();
-
-			Assert.AreEqual (false, xrdr.Read(), "#A07");			
+			try {
+				new SqlXml (rdr);
+				Assert.Fail ("#1");
+			} catch (XmlException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (SqlNullValueException))]
-		public void SqlXml_fromNullStream_CreateReaderTest()
+		public void CreateReader_Stream_Null ()
 		{
-			MemoryStream stream = null;
-			SqlXml xmlSql = new SqlXml (stream);
-
-			XmlReader xrdr = xmlSql.CreateReader ();
+			SqlXml xmlSql = new SqlXml ((Stream) null);
+			try {
+				xmlSql.CreateReader ();
+				Assert.Fail ("#1");
+			} catch (SqlNullValueException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (SqlNullValueException))]
-		public void SqlXml_fromNullXmlReader_CreateReaderTest()
+		public void CreateReader_XmlReader_Null ()
 		{
-			XmlReader rdr = null;
-			SqlXml xmlSql = new SqlXml (rdr);
-
-			XmlReader xrdr = xmlSql.CreateReader ();
+			SqlXml xmlSql = new SqlXml ((XmlReader) null);
+			try {
+				xmlSql.CreateReader ();
+				Assert.Fail ("#1");
+			} catch (SqlNullValueException) {
+			}
 		}
 	}
 }
-#endif 
+#endif
