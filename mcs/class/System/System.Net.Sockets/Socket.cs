@@ -1381,7 +1381,7 @@ namespace System.Net.Sockets
 		
 		// Creates a new system socket, returning the handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static IntPtr Accept_internal(IntPtr sock, out int error);
+		private extern static IntPtr Accept_internal(IntPtr sock, out int error, bool blocking);
 
 		Thread blocking_thread;
 		public Socket Accept() {
@@ -1392,7 +1392,7 @@ namespace System.Net.Sockets
 			IntPtr sock = (IntPtr) (-1);
 			blocking_thread = Thread.CurrentThread;
 			try {
-				sock = Accept_internal(socket, out error);
+				sock = Accept_internal(socket, out error, blocking);
 			} catch (ThreadAbortException) {
 				if (disposed) {
 #if !NET_2_1
@@ -1425,7 +1425,7 @@ namespace System.Net.Sockets
 			blocking_thread = Thread.CurrentThread;
 			
 			try {
-				sock = Accept_internal (socket, out error);
+				sock = Accept_internal (socket, out error, blocking);
 			} catch (ThreadAbortException) {
 				if (disposed) {
 #if !NET_2_1

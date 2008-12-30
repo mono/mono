@@ -1,3 +1,10 @@
+2008-12-30  Bill Holmes  <billholmes54@gmail.com>
+
+	* Socket.cs (Accept_internal) :  Changing the signature to pass 
+	  the blocking state.
+
+	Code is contributed under MIT/X11 license.
+
 2008-12-20  Miguel de Icaza  <miguel@novell.com>
 
 	* SocketException.cs: Add missing API.
