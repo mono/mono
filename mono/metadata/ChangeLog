@@ -1,3 +1,21 @@
+2008-12-30  Bill Holmes  <billholmes54@gmail.com>
+
+	* socket-io.h : Changing the signature of
+	  ves_icall_System_Net_Sockets_Socket_Accept_internal to pass
+	  the blocking state.
+
+	* icall-def.h :  Changing the signature of
+	  System.Net.Sockets.Socket.Accept_internal to pass the blocking state.
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Accept_internal) :
+	  For Windows only.  Avoid blocking when calling accept by
+	  querying for a connection via select.  The loop also queries
+	  the thread state every 1000 micro seconds for the thread
+	  stop state.  This will avoid the process hanging on shutdown
+	  when using a TcpChannel that is never connected to.
+
+	Code is contributed under MIT/X11 license.
+
 2008-12-30  Marek Safar  <marek.safar@gmail.com>
 
 	* tabledefs.h: Add METHOD_ATTRIBUTE_CHECK_ACCESS_ON_OVERRIDE.
