@@ -1,3 +1,10 @@
+2008-12-30  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestBatchedMetadataRef[23]): Modify to check for
+	multiple items with same metadata value, incase of unqualified metadata
+	references.
+	Track changes in BatchingTestTask.
+
 2008-12-17  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestBatchedMetadataRef1): Modify to check for multiple

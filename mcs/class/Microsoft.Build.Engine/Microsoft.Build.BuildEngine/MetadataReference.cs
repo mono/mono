@@ -78,28 +78,47 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			List<ITaskItem> items = new List<ITaskItem> ();
 			if (IsQualified) {
+				// Bucket would have item lists with same metadata values,
+				// so just get the value from the first item
 				BuildItemGroup group;
 				if (project.TryGetEvaluatedItemByNameBatched (itemName, out group))
-					BuildItemGroupToITaskItemArray (group, items, true);
+					BuildItemGroupToITaskItems (group, items, true);
 			} else {
+				// Get unique metadata values from _all_ item lists
 				foreach (BuildItemGroup group in project.GetAllItemGroups ())
-					BuildItemGroupToITaskItemArray (group, items, false);
+					BuildItemGroupToITaskItems (group, items, false);
 			}
 
 			return items.Count == 0 ? null : items.ToArray ();
 		}
 
-		//@only_one: useful for batched case, single value of metadata required
-		void BuildItemGroupToITaskItemArray (BuildItemGroup group, List<ITaskItem> items, bool only_one)
+		// Gets metadata values from build item @group and adds as ITaskItem
+		// objects to @items
+		// @only_one: Batched case, all item lists would have same metadata values,
+		//	      just return first one
+		void BuildItemGroupToITaskItems (BuildItemGroup group, List<ITaskItem> items, bool only_one)
 		{
 			foreach (BuildItem item in group) {
 				if (!item.HasMetadata (metadataName))
 					continue;
 
-				items.Add (new TaskItem (item.GetMetadata (metadataName)));
+				string metadata = item.GetMetadata (metadataName);
+				if (HasTaskItem (items, metadata))
+					//return only unique metadata values
+					continue;
+
+				items.Add (new TaskItem (metadata));
 				if (only_one)
 					break;
 			}
+		}
+
+		private bool HasTaskItem (List<ITaskItem> items, string itemspec)
+		{
+			foreach (ITaskItem task_item in items)
+				if (task_item.ItemSpec == itemspec)
+					return true;
+			return false;
 		}
 
 		public override string ToString ()

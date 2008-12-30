@@ -166,9 +166,14 @@ public class BatchingTestTask : Task
 		set { strings = value; }
 	}
 
-	public ITaskItem SingleString
+	public ITaskItem SingleTaskItem
 	{
 		set { single_string = value.ItemSpec; }
+	}
+
+	public string SingleString
+	{
+		set { single_string = value; }
 	}
 
 	[Output]
@@ -182,4 +187,11 @@ public class BatchingTestTask : Task
 	{
 		get { return output; }
 	}
+
+	[Output]
+	public string [] StringsOutput
+	{
+		get { return strings; }
+	}
 }
+

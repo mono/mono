@@ -1,3 +1,8 @@
+2008-12-30  Ankit Jain  <jankit@novell.com>
+
+	* TestTasks.cs (BatchingTestTask): Add specific properties
+	for string and string[].
+
 2008-11-22  Ankit Jain  <jankit@novell.com>
 
 	* TestTasks.cs (BatchingTestTask): New.

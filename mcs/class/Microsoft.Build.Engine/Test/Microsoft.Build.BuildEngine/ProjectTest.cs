@@ -1337,7 +1337,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
 				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll1 Include=""A4""><Name>Abc</Name></Coll1>
 				<Coll2 Include=""B1""><Name>Bar</Name></Coll2>
+				<Coll2 Include=""B2""><Name>Bar</Name></Coll2>
 			</ItemGroup>
 				<Target Name=""ShowMessage"">
 					<BatchingTestTask Sources=""%(Name)"" Strings=""@(Coll2)"">
@@ -1388,10 +1390,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
 				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
 				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll1 Include=""A4""><Name>Abc</Name></Coll1>
 				<Coll2 Include=""B1""><Name>Bar</Name></Coll2>
+				<Coll2 Include=""B2""><Name>Bar</Name></Coll2>
 			</ItemGroup>
 				<Target Name=""ShowMessage"">
-					<BatchingTestTask SingleString=""%(Coll2.Name)"" >
+					<BatchingTestTask SingleTaskItem=""%(Coll2.Name)"" >
 						<Output TaskParameter=""SingleStringOutput"" ItemName=""FinalList"" />
 					</BatchingTestTask>
 					<Message Text=""Msg: %(Coll1.Name)"" />
@@ -1424,7 +1428,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				<Coll2 Include=""B1""><Name>Bar</Name></Coll2>
 			</ItemGroup>
 				<Target Name=""ShowMessage"">
-					<BatchingTestTask SingleString=""%(Coll3.Name)"" >
+					<BatchingTestTask SingleTaskItem=""%(Coll3.Name)"" >
 						<Output TaskParameter=""SingleStringOutput"" ItemName=""FinalList"" />
 					</BatchingTestTask>
 				</Target>
