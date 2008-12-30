@@ -278,13 +278,13 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public bool IsCheckAccessOnOverride {
-			get { return (m_attributes & MethodAttributes.CheckAccessOnOverride) != 0; }
+		public bool IsStrict {
+			get { return (m_attributes & MethodAttributes.Strict) != 0; }
 			set {
 				if (value)
-					m_attributes |= MethodAttributes.CheckAccessOnOverride;
+					m_attributes |= MethodAttributes.Strict;
 				else
-					m_attributes &= ~MethodAttributes.CheckAccessOnOverride;
+					m_attributes &= ~MethodAttributes.Strict;
 			}
 		}
 

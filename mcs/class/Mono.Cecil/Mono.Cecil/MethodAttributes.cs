@@ -50,7 +50,7 @@ namespace Mono.Cecil {
 		ReuseSlot			= 0x0000,	// Method reuses existing slot in vtable
 		NewSlot				= 0x0100,	// Method always gets a new slot in the vtable
 
-		CheckAccessOnOverride = 0x0200,   // Method can only be overriden if also accessible
+		Strict 				= 0x0200,   // Method can only be overriden if also accessible
 		Abstract			= 0x0400,	// Method does not provide an implementation
 		SpecialName			= 0x0800,	// Method is special
 
