@@ -9,6 +9,7 @@ public class Test
 		Test t = new Test ();
 		t.Test_1 (t);
 		t.Test_2<int> (1);
+		t.Test_3<Test> (1);
 	}
 
 	public void Test_1<T> (T t) where T : Test
@@ -30,5 +31,17 @@ public class Test
 		};
 		
 		d ();
+	}
+	
+	public T Test_3<T> (object o) where T : class
+	{
+		bool b;
+		T t2 = null;
+		D d = delegate () {
+			t2 = o as T;
+		};
+		
+		d ();
+		return t2;
 	}
 }

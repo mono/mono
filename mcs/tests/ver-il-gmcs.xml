@@ -12647,7 +12647,7 @@
         <size>33</size>
       </method>
       <method name="Void Main()">
-        <size>26</size>
+        <size>39</size>
       </method>
     </type>
     <type name="Test+D">
@@ -12678,6 +12678,19 @@
       </method>
       <method name="Void &lt;&gt;m__1()">
         <size>85</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="T Test_3[T](System.Object)">
+        <size>46</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Test_3&gt;c__AnonStorey2`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__2()">
+        <size>23</size>
       </method>
     </type>
   </test>
