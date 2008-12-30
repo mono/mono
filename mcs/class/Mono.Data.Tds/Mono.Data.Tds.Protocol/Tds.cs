@@ -350,10 +350,11 @@ namespace Mono.Data.Tds.Protocol
 
 			if (fieldIndex < StreamIndex)
 				throw new InvalidOperationException (string.Format (
-					"Attempting to read at index '{0}' is not " +
-					"allowed as this is less than the current " +
-					"position. You must read from index '{1}' " +
-					"or greater.", fieldIndex, StreamIndex));
+					"Attempting to read at dataIndex '{0}' is " +
+					"not allowed as this is less than the " +
+					"current position. You must read from " +
+					"dataIndex '{1}' or greater.",
+					fieldIndex, StreamIndex));
 
 			if (fieldIndex >= (StreamLength + StreamIndex))
 				return 0;
