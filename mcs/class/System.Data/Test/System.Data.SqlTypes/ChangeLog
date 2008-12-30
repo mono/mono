@@ -2,6 +2,7 @@
 
 	* SqlStringTest.cs: Change spaces to tabs. Restore original culture
 	on teardown. Enable commented-out tests. Removed CWLs.
+	* SqlGuidTest.cs: Fixed line endings.
 
 2008-12-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
