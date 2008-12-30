@@ -2,6 +2,10 @@
 
 	* DataTableTest.cs: Allow NFIFromBug55978 test to pass when MONO_PATH
 	is not set.
+	* BinarySerializationTest.cs: Change culture for culture-sensitive
+	tests.
+	* DataColumnTest2.cs: Change culture for culture-sensitive tests.
+
 
 2008-11-18  Raja R Harinath  <harinath@hurrynot.org>
 

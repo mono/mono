@@ -1,16 +1,35 @@
+#if NET_2_0
+
 using System;
 using System.Data;
+using System.Data.Common;
+using System.Globalization;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using System.Data.Common;
+using System.Threading;
+
 using NUnit.Framework;
 
 [TestFixture]
 public class BinarySerializationTest
 {
-#if NET_2_0
+	private CultureInfo originalCulture;
+
+	[SetUp]
+	public void SetUp ()
+	{
+		originalCulture = Thread.CurrentThread.CurrentCulture;
+		Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+	}
+
+	[TearDown]
+	public void TearDown ()
+	{
+		Thread.CurrentThread.CurrentCulture = originalCulture;
+	}
+
 	[Test]
 	public void RemotingFormatDataTableTest ()
 	{
@@ -741,5 +760,6 @@ public class BinarySerializationTest
 		for (int i = 0; i < ds.Relations.Count; i++)
 			Assert.AreEqual (ds.Relations [i].RelationName, ds.Relations [i].RelationName, "#9 Relation : {0} differs", ds.Relations [i]);
 	}
-#endif
 }
+
+#endif

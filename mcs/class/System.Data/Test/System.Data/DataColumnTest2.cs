@@ -26,16 +26,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using NUnit.Framework;
 using System;
 using System.ComponentModel;
 using System.Data;
+using System.Globalization;
+using System.Threading;
+
 using MonoTests.System.Data.Utils;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Data
 {
-	[TestFixture] public class DataColumnTest2
+	[TestFixture]
+	public class DataColumnTest2
 	{
+		private CultureInfo originalCulture;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			originalCulture = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Thread.CurrentThread.CurrentCulture = originalCulture;
+		}
+
 		[Test] public void AllowDBNull()
 		{
 			DataTable dt = new DataTable();
