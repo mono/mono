@@ -45,7 +45,7 @@ namespace System.Data.Common {
 		DataTable _dbSchemaTable;
 		DbDataAdapter _dbDataAdapter = null;
 		private CatalogLocation _catalogLocation = CatalogLocation.Start;
-		private ConflictOption _conflictOption;
+		private ConflictOption _conflictOption = ConflictOption.CompareAllSearchableValues;
 
 		private string _tableName;
 		private string _catalogSeperator = ".";

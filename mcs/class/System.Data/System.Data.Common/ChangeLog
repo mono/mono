@@ -1,5 +1,9 @@
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DbCommandBuilder.cs: Fixed default value for ConflicOption.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DbCommandBuilder.cs: Return a zero-length string when QuotePrefix or
 	QuoteSuffix are not set (or are set to null). Changing QuotePrefix or
 	QuoteSuffix after a command has been generated should result in an

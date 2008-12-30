@@ -310,7 +310,7 @@ namespace MonoTests.System.Data.Odbc
 		{
 			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
 			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
-			//Assert.AreEqual ("", cb.DecimalSeparator, "#3");
+			Assert.AreEqual (ConflictOption.CompareAllSearchableValues, cb.ConflictOption, "#3");
 			Assert.AreEqual (".", cb.SchemaSeparator, "#4");
 			Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
 		}
