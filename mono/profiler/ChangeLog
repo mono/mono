@@ -1,3 +1,14 @@
+2008-12-30  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c:
+	- profiler_executable_memory_region_destroy: fixed memory region
+	unloading.
+	- executable_file_add_region_reference: likewise.
+	- executable_file_close: likewise.
+	- executable_file_open: fixed file name handling.
+	- parse_map_line: likewise.
+	- scan_process_regions: likewise.
+	- statistical_call_chain: exit loop if the writer thread is busy.
+
 2008-12-11  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c:
 	- executable_file_open: Proper remember of already opened files.
