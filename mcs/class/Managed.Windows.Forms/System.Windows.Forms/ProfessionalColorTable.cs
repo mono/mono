@@ -614,12 +614,12 @@ namespace System.Windows.Forms
 		
 		private ColorSchemes GetCurrentStyle ()
 		{
-			string style_file = VisualStylesEngine.Instance.VisualStyleInformationFileName;
-			
-			if (!VisualStyleInformation.IsEnabledByUser || string.IsNullOrEmpty (style_file))
+			if (!VisualStyleInformation.IsEnabledByUser || string.IsNullOrEmpty (VisualStylesEngine.Instance.VisualStyleInformationFileName))
+
+
 				return ColorSchemes.Classic;
 			else {
-				switch (System.IO.Path.GetFileNameWithoutExtension (style_file).ToLowerInvariant ()) {
+				switch (System.IO.Path.GetFileNameWithoutExtension (VisualStylesEngine.Instance.VisualStyleInformationFileName).ToLowerInvariant ()) {
 					case "aero":
 						return ColorSchemes.Aero;
 					case "royale":
