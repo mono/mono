@@ -45,19 +45,75 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetInsertCommandTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcCommand cmd = null;
+
 			try {
-				string selectQuery = "select id, lname from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
-				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
-				OdbcCommand cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO employee (@p0, @p1) VALUES (?, ?)",
-						cmd.CommandText, "#2");
+				OdbcCommandBuilder cb;
+				
+				cb = new OdbcCommandBuilder (da);
+				cmd = cb.GetInsertCommand ();
+#if NET_2_0
+				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
+						cmd.CommandText, "#A1");
+#else
+				Assert.AreEqual ("INSERT INTO employee( id , lname ) VALUES ( ? , ? )",
+						cmd.CommandText, "#A1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#A2");
+				AssertInsertParameters (cmd, "#A3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuotePrefix = "\"";
+
+				cmd = cb.GetInsertCommand ();
+#if NET_2_0
+				Assert.AreEqual ("INSERT INTO \"employee (\"id, \"lname) VALUES (?, ?)",
+						cmd.CommandText, "#B1");
+#else
+				Assert.AreEqual ("INSERT INTO \"employee( \"id , \"lname ) VALUES ( ? , ? )",
+						cmd.CommandText, "#B1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#B2");
+				AssertInsertParameters (cmd, "#B3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuoteSuffix = "´";
+
+				cmd = cb.GetInsertCommand ();
+#if NET_2_0
+				Assert.AreEqual ("INSERT INTO employee´ (id´, lname´) VALUES (?, ?)",
+						cmd.CommandText, "#C1");
+#else
+				Assert.AreEqual ("INSERT INTO employee´( id´ , lname´ ) VALUES ( ? , ? )",
+						cmd.CommandText, "#C1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#C2");
+				AssertInsertParameters (cmd, "#C3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuotePrefix = "\"";
+				cb.QuoteSuffix = "´";
+
+				cmd = cb.GetInsertCommand ();
+#if NET_2_0
+				Assert.AreEqual ("INSERT INTO \"employee´ (\"id´, \"lname´) VALUES (?, ?)",
+						cmd.CommandText, "#D1");
+#else
+				Assert.AreEqual ("INSERT INTO \"employee´( \"id´ , \"lname´ ) VALUES ( ? , ? )",
+						cmd.CommandText, "#D1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#D2");
+				AssertInsertParameters (cmd, "#D3:");
 			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
@@ -65,19 +121,33 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetInsertCommandTestWithExpression ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			if (ConnectionManager.Singleton.Engine.Type == EngineType.MySQL)
+				Assert.Ignore ("Schema info from MySQL is incomplete");
+
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcCommand cmd = null;
+
 			try {
-				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
-				OdbcCommand cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO employee (@p0, @p1) VALUES (?, ?)",
-						cmd.CommandText, "#2");
+				cmd = cb.GetInsertCommand ();
+#if NET_2_0
+				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
+						cmd.CommandText, "#1");
+#else
+				Assert.AreEqual ("INSERT INTO employee( id , lname ) VALUES ( ? , ? )",
+						cmd.CommandText, "#1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#2");
+				AssertInsertParameters (cmd, "#3:");
 			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
@@ -85,62 +155,134 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetUpdateCommandTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			using (conn) {
-				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcCommand cmd = null;
+
+			try {
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
-				OdbcCommand cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE employee SET @p0 = ?, @p1 = ? WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (@p1 = ?)))",
-						cmd.CommandText, "#2");
-				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+				cmd = cb.GetUpdateCommand ();
+#if NET_2_0
+				Assert.AreEqual ("UPDATE employee SET id = ?, lname = ? WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+						cmd.CommandText, "#A1");
+#else
+				Assert.AreEqual ("UPDATE employee SET id = ? , lname = ? WHERE ( (id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)) )",
+						cmd.CommandText, "#A1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#A2");
+				AssertUpdateParameters (cmd, "#A3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuotePrefix = "\"";
+
+				cmd = cb.GetUpdateCommand ();
+#if NET_2_0
+				Assert.AreEqual ("UPDATE \"employee SET \"id = ?, \"lname = ? WHERE ((\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)))",
+						cmd.CommandText, "#B1");
+#else
+				Assert.AreEqual ("UPDATE \"employee SET \"id = ? , \"lname = ? WHERE ( (\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)) )",
+						cmd.CommandText, "#B1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#B2");
+				AssertUpdateParameters (cmd, "#B3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuoteSuffix = "´";
+
+				cmd = cb.GetUpdateCommand ();
+#if NET_2_0
+				Assert.AreEqual ("UPDATE employee´ SET id´ = ?, lname´ = ? WHERE ((id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)))",
+						cmd.CommandText, "#C1");
+#else
+				Assert.AreEqual ("UPDATE employee´ SET id´ = ? , lname´ = ? WHERE ( (id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)) )",
+						cmd.CommandText, "#C1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#C2");
+				AssertUpdateParameters (cmd, "#C3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuotePrefix = "\"";
+				cb.QuoteSuffix = "´";
+
+				cmd = cb.GetUpdateCommand ();
+#if NET_2_0
+				Assert.AreEqual ("UPDATE \"employee´ SET \"id´ = ?, \"lname´ = ? WHERE ((\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)))",
+						cmd.CommandText, "#D1");
+#else
+				Assert.AreEqual ("UPDATE \"employee´ SET \"id´ = ? , \"lname´ = ? WHERE ( (\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)) )",
+						cmd.CommandText, "#D1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#D2");
+				AssertUpdateParameters (cmd, "#D3:");
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (DBConcurrencyException))]
+		[Ignore ("FIXME: Auto SQL generation during Update requires a valid SelectCommand")]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
 			try {
-				string selectQuery = "select id, lname from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				Assert.IsNotNull (cb);
+
 				DataRow [] rows = ds.Tables [0].Select ("id=1");
 				rows [0] [0] = 6660; // non existent 
 				ds.Tables [0].AcceptChanges (); // moves 6660 to original value
 				rows [0] [0] = 1; // moves 6660 as search key into db table
-				da.Update (rows);
+
+				try {
+					da.Update (rows);
+					Assert.Fail ("#1");
+				} catch (DBConcurrencyException ex) {
+					// Concurrency violation: the UpdateCommand
+					// affected 0 records
+					Assert.AreEqual (typeof (DBConcurrencyException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreSame (rows [0], ex.Row, "#5");
+#if NET_2_0
+					Assert.AreEqual (1, ex.RowCount, "#6");
+#endif
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 #if NET_2_0
-
 		[Test]
 		public void GetInsertCommandTest_option_true ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
 			try {
-				string selectQuery = "select id, lname from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetInsertCommand (true);
 				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
-						cmd.CommandText, "#2");
+						cmd.CommandText, "#1");
+				Assert.AreSame (conn, cmd.Connection, "#2");
+				AssertInsertParameters (cmd, "#3:");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -149,18 +291,20 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetInsertCommandTest_option_false ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
 			try {
-				string selectQuery = "select id, lname from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetInsertCommand (false);
-				Assert.AreEqual ("INSERT INTO employee (@p0, @p1) VALUES (?, ?)",
-						cmd.CommandText, "#2");
+				Assert.AreEqual ("INSERT INTO employee (id, lname) VALUES (?, ?)",
+						cmd.CommandText, "#1");
+				Assert.AreSame (conn, cmd.Connection, "#2");
+				AssertInsertParameters (cmd, "#3:");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -169,56 +313,64 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetUpdateCommandTest_option_true ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			using (conn) {
-				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			try {
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetUpdateCommand (true);
 				Assert.AreEqual ("UPDATE employee SET id = ?, lname = ? WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
-						cmd.CommandText, "#2");
-				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+						cmd.CommandText, "#1");
+				Assert.AreSame (conn, cmd.Connection, "#2");
+				AssertUpdateParameters (cmd, "#3:");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetUpdateCommandTest_option_false ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
-			using (conn) {
-				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			try {
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetUpdateCommand (false);
-				Assert.AreEqual ("UPDATE employee SET @p0 = ?, @p1 = ? WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (lname = ?)))",
-						cmd.CommandText, "#2");
-				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
+				Assert.AreEqual ("UPDATE employee SET id = ?, lname = ? WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+						cmd.CommandText, "#1");
+				Assert.AreSame (conn, cmd.Connection, "#2");
+				AssertUpdateParameters (cmd, "#3:");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetDeleteCommandTest_option_true ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
 			try {
-				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetDeleteCommand (true);
 				Assert.AreEqual ("DELETE FROM employee WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
-						cmd.CommandText, "#2");
+						cmd.CommandText, "#1");
+				Assert.AreSame (conn, cmd.Connection, "#2");
+				AssertDeleteParameters (cmd, "#3:");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -227,73 +379,521 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetDeleteCommandTest_option_false ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
 			try {
-				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
 				OdbcCommand cmd = cb.GetDeleteCommand (false);
-				Assert.AreEqual ("DELETE FROM employee WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (@p1 = ?)))",
-						cmd.CommandText, "#2");
+				Assert.AreEqual ("DELETE FROM employee WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+						cmd.CommandText, "#1");
+				Assert.AreSame (conn, cmd.Connection, "#2");
+				AssertDeleteParameters (cmd, "#3:");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-#endif		
+#endif
+
 		[Test]
 		public void GetDeleteCommandTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			OdbcCommand cmd = null;
+
 			try {
-				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 1";
-				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, (OdbcConnection) conn);
+				string selectQuery = "select id, lname, id+1 as next_id from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
-				OdbcCommand cmd = cb.GetDeleteCommand ();
-				Assert.AreEqual ("DELETE FROM employee WHERE ((@p0 = ?) AND ((? = 1 AND @p1 IS NULL) OR (@p1 = ?)))",
-						cmd.CommandText, "#2");
+				cmd = cb.GetDeleteCommand ();
+
+#if NET_2_0
+				Assert.AreEqual ("DELETE FROM employee WHERE ((id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)))",
+						cmd.CommandText, "#A1");
+#else
+				Assert.AreEqual ("DELETE FROM  employee WHERE ( (id = ?) AND ((? = 1 AND lname IS NULL) OR (lname = ?)) )",
+						cmd.CommandText, "#A1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#A2");
+				AssertDeleteParameters (cmd, "#A3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuotePrefix = "\"";
+
+				cmd = cb.GetDeleteCommand ();
+#if NET_2_0
+				Assert.AreEqual ("DELETE FROM \"employee WHERE ((\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)))",
+						cmd.CommandText, "#B1");
+#else
+				Assert.AreEqual ("DELETE FROM  \"employee WHERE ( (\"id = ?) AND ((? = 1 AND \"lname IS NULL) OR (\"lname = ?)) )",
+						cmd.CommandText, "#B1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#B2");
+				AssertDeleteParameters (cmd, "#B3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuoteSuffix = "´";
+
+				cmd = cb.GetDeleteCommand ();
+#if NET_2_0
+				Assert.AreEqual ("DELETE FROM employee´ WHERE ((id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)))",
+						cmd.CommandText, "#C1");
+#else
+				Assert.AreEqual ("DELETE FROM  employee´ WHERE ( (id´ = ?) AND ((? = 1 AND lname´ IS NULL) OR (lname´ = ?)) )",
+						cmd.CommandText, "#C1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#C2");
+				AssertDeleteParameters (cmd, "#C3:");
+
+				cb = new OdbcCommandBuilder (da);
+				cb.QuotePrefix = "\"";
+				cb.QuoteSuffix = "´";
+
+				cmd = cb.GetDeleteCommand ();
+#if NET_2_0
+				Assert.AreEqual ("DELETE FROM \"employee´ WHERE ((\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)))",
+						cmd.CommandText, "#D1");
+#else
+				Assert.AreEqual ("DELETE FROM  \"employee´ WHERE ( (\"id´ = ?) AND ((? = 1 AND \"lname´ IS NULL) OR (\"lname´ = ?)) )",
+						cmd.CommandText, "#D1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#D2");
+				AssertDeleteParameters (cmd, "#D3:");
 			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
-		public void DefaultPropertiesTest ()
-		{
-			OdbcCommandBuilder cb = new OdbcCommandBuilder ();
-#if NET_1_0
-			Assert.AreEqual (ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
-			Assert.AreEqual ("", cb.QuotePrefix, "#5");
-			Assert.AreEqual ("", cb.QuoteSuffix, "#6");
+#if NET_2_0
+		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
 #endif
-#if NET_2_0				
-			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
-			//Assert.AreEqual ("", cb.DecimalSeparator, "#3");
-			Assert.AreEqual (".", cb.SchemaSeparator, "#4");
-			Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+		public void QuotePrefix_DeleteCommand_Generated ()
+		{
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+
+			OdbcCommand cmd = null;
+
 			try {
-				conn.Open ();
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				cmd = cb.GetDeleteCommand ();
+				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#1");
+				try {
+					cb.QuotePrefix = "";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException ex) {
+					// The QuotePrefix and QuoteSuffix properties
+					// cannot be changed once an Insert, Update, or
+					// Delete command has been generated
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+				}
+				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#6");
+				cb.RefreshSchema ();
+				cb.QuotePrefix = "";
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
+#endif
+		public void QuotePrefix_InsertCommand_Generated ()
+		{
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+
+			OdbcCommand cmd = null;
+
+			try {
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				cmd = cb.GetInsertCommand ();
+				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#1");
+				try {
+					cb.QuotePrefix = "";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException ex) {
+					// The QuotePrefix and QuoteSuffix properties
+					// cannot be changed once an Insert, Update, or
+					// Delete command has been generated
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+				}
+				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#6");
+				cb.RefreshSchema ();
+				cb.QuotePrefix = "";
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
+#endif
+		public void QuotePrefix_UpdateCommand_Generated ()
+		{
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+
+			OdbcCommand cmd = null;
+
+			try {
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				cmd = cb.GetUpdateCommand ();
+				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#1");
+				try {
+					cb.QuotePrefix = "";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException ex) {
+					// The QuotePrefix and QuoteSuffix properties
+					// cannot be changed once an Insert, Update, or
+					// Delete command has been generated
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+				}
+				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#6");
+				cb.RefreshSchema ();
+				cb.QuotePrefix = "";
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
+#endif
+		public void QuoteSuffix_DeleteCommand_Generated ()
+		{
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+
+			OdbcCommand cmd = null;
+
+			try {
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				cmd = cb.GetDeleteCommand ();
+				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#1");
+				try {
+					cb.QuoteSuffix = "";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException ex) {
+					// The QuotePrefix and QuoteSuffix properties
+					// cannot be changed once an Insert, Update, or
+					// Delete command has been generated
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+				}
+				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#6");
+				cb.RefreshSchema ();
+				cb.QuoteSuffix = "";
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
+#endif
+		public void QuoteSuffix_InsertCommand_Generated ()
+		{
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+
+			OdbcCommand cmd = null;
+
+			try {
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				cmd = cb.GetInsertCommand ();
+				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#1");
+				try {
+					cb.QuoteSuffix = "";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException ex) {
+					// The QuotePrefix and QuoteSuffix properties
+					// cannot be changed once an Insert, Update, or
+					// Delete command has been generated
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+				}
+				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#6");
+				cb.RefreshSchema ();
+				cb.QuoteSuffix = "";
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+		[Test]
+#if NET_2_0
+		[Ignore ("QuoteSuffix and QuotePrefix are now in DbCommandBuilder, while commands are in implementation classes. Result: we cannot perform this check until we refactor this.")]
+#endif
+		public void QuoteSuffix_UpdateCommand_Generated ()
+		{
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+
+			OdbcCommand cmd = null;
+
+			try {
+				string selectQuery = "select id, lname from employee where id = 3";
+				OdbcDataAdapter da = new OdbcDataAdapter (selectQuery, conn);
+				DataSet ds = new DataSet ();
+				da.Fill (ds, "IntTest");
+
+				OdbcCommandBuilder cb = new OdbcCommandBuilder (da);
+				cmd = cb.GetUpdateCommand ();
+				Assert.AreEqual (string.Empty, cb.QuoteSuffix, "#1");
+				try {
+					cb.QuoteSuffix = "";
+					Assert.Fail ("#2");
+				} catch (InvalidOperationException ex) {
+					// The QuotePrefix and QuoteSuffix properties
+					// cannot be changed once an Insert, Update, or
+					// Delete command has been generated
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+				}
+				Assert.AreEqual (string.Empty, cb.QuotePrefix, "#6");
+				cb.RefreshSchema ();
+				cb.QuoteSuffix = "";
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+#if NET_2_0
+		[Test] // QuoteIdentifier (String, OdbcConnection)
+		public void QuoteIdentifier2 ()
+		{
+			OdbcCommandBuilder cb;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
+			string quote_char = ConnectionManager.Singleton.Engine.QuoteCharacter;
+
+			try {
 				cb = new OdbcCommandBuilder ();
-				Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest"), "#7");
-				Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\""), "#8");
-				conn.Close ();
+				Assert.AreEqual (quote_char + "mono" + quote_char, cb.QuoteIdentifier ("mono", conn), "#A1");
+				Assert.AreEqual (quote_char + "Z" + quote_char, cb.QuoteIdentifier ("Z", conn), "#A2");
+				Assert.AreEqual (quote_char + "abc" + quote_char, cb.QuoteIdentifier ("abc", conn), "#A3");
+				Assert.AreEqual (quote_char + quote_char, cb.QuoteIdentifier (string.Empty, conn), "#A4");
+				Assert.AreEqual (quote_char + " " + quote_char, cb.QuoteIdentifier (" ", conn), "#A5");
+				Assert.AreEqual (quote_char + "\r" + quote_char, cb.QuoteIdentifier ("\r", conn), "#A6");
+				cb.QuoteSuffix = "def";
+				Assert.AreEqual (quote_char + "mono" + quote_char, cb.QuoteIdentifier ("mono", conn), "#A7");
+				Assert.AreEqual (quote_char + "Z" + quote_char, cb.QuoteIdentifier ("Z", conn), "#A8");
+				Assert.AreEqual (quote_char + "abc" + quote_char, cb.QuoteIdentifier ("abc", conn), "#A9");
+				Assert.AreEqual (quote_char + quote_char, cb.QuoteIdentifier (string.Empty, conn), "#A10");
+				Assert.AreEqual (quote_char + " " + quote_char, cb.QuoteIdentifier (" ", conn), "#A11");
+				Assert.AreEqual (quote_char + "\r" + quote_char, cb.QuoteIdentifier ("\r", conn), "#A12");
+
+				cb = new OdbcCommandBuilder ();
+				cb.QuotePrefix = "abc";
+				Assert.AreEqual ("abcmono", cb.QuoteIdentifier ("mono", conn), "#B1");
+				Assert.AreEqual ("abcZ", cb.QuoteIdentifier ("Z", conn), "#B2");
+				Assert.AreEqual ("abcabc", cb.QuoteIdentifier ("abc", conn), "#B3");
+				Assert.AreEqual ("abc", cb.QuoteIdentifier (string.Empty, conn), "#B4");
+				Assert.AreEqual ("abc ", cb.QuoteIdentifier (" ", conn), "#B5");
+				Assert.AreEqual ("abc\r", cb.QuoteIdentifier ("\r", conn), "#B6");
+				cb.QuoteSuffix = "def";
+				Assert.AreEqual ("abcmonodef", cb.QuoteIdentifier ("mono", conn), "#B7");
+				Assert.AreEqual ("abcZdef", cb.QuoteIdentifier ("Z", conn), "#B8");
+				Assert.AreEqual ("abcabcdef", cb.QuoteIdentifier ("abc", conn), "#B9");
+				Assert.AreEqual ("abcdef", cb.QuoteIdentifier (string.Empty, conn), "#B10");
+				Assert.AreEqual ("abc def", cb.QuoteIdentifier (" ", conn), "#B11");
+				Assert.AreEqual ("abc\rdef", cb.QuoteIdentifier ("\r", conn), "#B12");
+
+				cb.QuotePrefix = string.Empty;
+
+				cb = new OdbcCommandBuilder ();
+				cb.QuotePrefix = "X";
+				Assert.AreEqual ("Xmono", cb.QuoteIdentifier ("mono", conn), "#D1");
+				Assert.AreEqual ("XZ", cb.QuoteIdentifier ("Z", conn), "#D2");
+				Assert.AreEqual ("XX", cb.QuoteIdentifier ("X", conn), "#D3");
+				Assert.AreEqual ("X", cb.QuoteIdentifier (string.Empty, conn), "#D4");
+				Assert.AreEqual ("X ", cb.QuoteIdentifier (" ", conn), "#D5");
+				Assert.AreEqual ("X\r", cb.QuoteIdentifier ("\r", conn), "#D6");
+				cb.QuoteSuffix = " ";
+				Assert.AreEqual ("Xmono ", cb.QuoteIdentifier ("mono", conn), "#D7");
+				Assert.AreEqual ("XZ ", cb.QuoteIdentifier ("Z", conn), "#D8");
+				Assert.AreEqual ("XX ", cb.QuoteIdentifier ("X", conn), "#D9");
+				Assert.AreEqual ("X ", cb.QuoteIdentifier (string.Empty, conn), "#D10");
+				Assert.AreEqual ("X   ", cb.QuoteIdentifier (" ", conn), "#D11");
+				Assert.AreEqual ("X\r ", cb.QuoteIdentifier ("\r", conn), "#D12");
+
+				cb = new OdbcCommandBuilder ();
+				cb.QuotePrefix = " ";
+				Assert.AreEqual ("mono", cb.QuoteIdentifier ("mono", conn), "#E1");
+				Assert.AreEqual ("Z", cb.QuoteIdentifier ("Z", conn), "#E2");
+				Assert.AreEqual ("abc", cb.QuoteIdentifier ("abc", conn), "#E3");
+				Assert.AreEqual (string.Empty, cb.QuoteIdentifier (string.Empty, conn), "#E4");
+				Assert.AreEqual (" ", cb.QuoteIdentifier (" ", conn), "#E5");
+				Assert.AreEqual ("\r", cb.QuoteIdentifier ("\r", conn), "#E6");
+				cb.QuoteSuffix = "def";
+				Assert.AreEqual ("mono", cb.QuoteIdentifier ("mono", conn), "#E7");
+				Assert.AreEqual ("Z", cb.QuoteIdentifier ("Z", conn), "#E8");
+				Assert.AreEqual ("abc", cb.QuoteIdentifier ("abc", conn), "#E9");
+				Assert.AreEqual (string.Empty, cb.QuoteIdentifier (string.Empty, conn), "#E10");
+				Assert.AreEqual (" ", cb.QuoteIdentifier (" ", conn), "#E11");
+				Assert.AreEqual ("\r", cb.QuoteIdentifier ("\r", conn), "#E12");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
-			// FIXME: test SetAllValues
-#endif // NET_2_0
+		}
+#endif
+
+		void AssertInsertParameters (OdbcCommand cmd, string prefix)
+		{
+			Assert.AreEqual (2, cmd.Parameters.Count, prefix + "Count");
+			Assert.AreEqual (DbType.Int32, cmd.Parameters [0].DbType, prefix + "DbType (0)");
+#if NET_2_0
+			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
+#else
+			Assert.AreEqual ("@p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
+#endif
+			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
+			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
+			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [1].DbType, prefix + "DbType (1)");
+#if NET_2_0
+			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
+#else
+			Assert.AreEqual ("@p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
+#endif
+			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
+			Assert.IsNull (cmd.Parameters [1].Value, prefix + "Value (1)");
 		}
 
+		void AssertUpdateParameters (OdbcCommand cmd, string prefix)
+		{
+			Assert.AreEqual (5, cmd.Parameters.Count, prefix + "Count");
+			Assert.AreEqual (DbType.Int32, cmd.Parameters [0].DbType, prefix + "DbType (0)");
+#if NET_2_0
+			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
+#else
+			Assert.AreEqual ("@p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
+#endif
+			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
+			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
+			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [1].DbType, prefix + "DbType (1)");
+#if NET_2_0
+			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
+#else
+			Assert.AreEqual ("@p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
+#endif
+			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
+			Assert.IsNull (cmd.Parameters [1].Value, prefix + "Value (1)");
+			Assert.AreEqual (DbType.Int32, cmd.Parameters [2].DbType, prefix + "DbType (2)");
+#if NET_2_0
+			Assert.AreEqual ("p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
+#else
+			Assert.AreEqual ("@p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
+#endif
+			Assert.AreEqual ("id", cmd.Parameters [2].SourceColumn, prefix + "SourceColumn (2)");
+			Assert.IsNull (cmd.Parameters [2].Value, prefix + "Value (2)");
+			Assert.AreEqual (DbType.Int32, cmd.Parameters [3].DbType, prefix + "DbType (3)");
+#if NET_2_0
+			Assert.AreEqual ("p4", cmd.Parameters [3].ParameterName, prefix + "ParameterName (3)");
+			Assert.AreEqual ("lname", cmd.Parameters [3].SourceColumn, prefix + "SourceColumn (3)");
+#else
+			Assert.AreEqual ("@p4", cmd.Parameters [3].ParameterName, prefix + "ParameterName (3)");
+			Assert.AreEqual (string.Empty, cmd.Parameters [3].SourceColumn, prefix + "SourceColumn (3)");
+#endif
+			Assert.AreEqual (1, cmd.Parameters [3].Value, prefix + "Value (3)");
+			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [4].DbType, prefix + "DbType (4)");
+#if NET_2_0
+			Assert.AreEqual ("p5", cmd.Parameters [4].ParameterName, prefix + "ParameterName (4)");
+#else
+			Assert.AreEqual ("@p5", cmd.Parameters [4].ParameterName, prefix + "ParameterName (4)");
+#endif
+			Assert.AreEqual ("lname", cmd.Parameters [4].SourceColumn, prefix + "SourceColumn (4)");
+			Assert.IsNull (cmd.Parameters [4].Value, prefix + "Value (4)");
+		}
+
+		void AssertDeleteParameters (OdbcCommand cmd, string prefix)
+		{
+			Assert.AreEqual (3, cmd.Parameters.Count, prefix + "Count");
+			Assert.AreEqual (DbType.Int32, cmd.Parameters [0].DbType, prefix + "DbType (0)");
+#if NET_2_0
+			Assert.AreEqual ("p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
+#else
+			Assert.AreEqual ("@p1", cmd.Parameters [0].ParameterName, prefix + "ParameterName (0)");
+#endif
+			Assert.AreEqual ("id", cmd.Parameters [0].SourceColumn, prefix + "SourceColumn (0)");
+			Assert.IsNull (cmd.Parameters [0].Value, prefix + "Value (0)");
+			Assert.AreEqual (DbType.Int32, cmd.Parameters [1].DbType, prefix + "DbType (1)");
+#if NET_2_0
+			Assert.AreEqual ("p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
+			Assert.AreEqual ("lname", cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
+#else
+			Assert.AreEqual ("@p2", cmd.Parameters [1].ParameterName, prefix + "ParameterName (1)");
+			Assert.AreEqual (string.Empty, cmd.Parameters [1].SourceColumn, prefix + "SourceColumn (1)");
+#endif
+			Assert.AreEqual (1, cmd.Parameters [1].Value, prefix + "Value (1)");
+			Assert.AreEqual (DbType.AnsiString, cmd.Parameters [2].DbType, prefix + "DbType (2)");
+#if NET_2_0
+			Assert.AreEqual ("p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
+#else
+			Assert.AreEqual ("@p3", cmd.Parameters [2].ParameterName, prefix + "ParameterName (2)");
+#endif
+			Assert.AreEqual ("lname", cmd.Parameters [2].SourceColumn, prefix + "SourceColumn (2)");
+			Assert.IsNull (cmd.Parameters [2].Value, prefix + "Value (2)");
+		}
+
+		// FIXME: test SetAllValues
 		// FIXME:  Add tests for examining RowError
 		// FIXME: Add test for ContinueUpdateOnError property
-
 	}
 }

@@ -39,7 +39,7 @@ drop table if exists binary_family;
 
 create table binary_family (
 	id int PRIMARY KEY NOT NULL,
-	type_binary binary NULL,
+	type_binary binary (8) NULL,
 	type_varbinary varbinary (255) NULL,
 	type_blob blob NULL,
 	type_tinyblob tinyblob NULL,
@@ -47,10 +47,36 @@ create table binary_family (
 	type_longblob_image longblob NULL);
 //
 
-insert into binary_family values (1, '555555', '0123456789012345678901234567890123456789012345678901234567890123456789', '66666666', '777777', '888888', '999999');
---insert into binary_family values (2,
---insert into binary_family values (3,
-insert into binary_family values (4,null,null,null,null,null,null);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	1,
+	'5',
+	'0123456789012345678901234567890123456789012345678901234567890123456789', 
+	'66666666',
+	'777777', 
+	'888888',
+	'999999'
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	2,
+	'03423051',
+	'098765432101234', 
+	'06660666',
+	'077077', 
+	'088088',
+	'099099'
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	3,
+	'',
+	'', 
+	'',
+	'', 
+	'',
+	''
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	4,null,null,null,null,null,null);
+go
 //
 
 -- =================================== END OBJECT BINARY_FAMILY ========================

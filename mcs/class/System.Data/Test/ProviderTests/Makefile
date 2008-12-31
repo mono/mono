@@ -2,36 +2,50 @@ thisdir=class/System.Data/Test/ProviderTests
 
 include ../../../../build/rules.make
 
-LIB_MCS_FLAGS += /r:System.Data,System.Data.OracleClient,ByteFX.Data,Npgsql,System,System.Xml,nunit.framework,Mono.Data,Mono.Data.SybaseClient
+LIB_MCS_FLAGS += /r:System.Data,System.Data.OracleClient,System,System.Xml,nunit.framework
 
-DATABASE=sql92
+ifeq (net_1_0, $(PROFILE))
+LIB_MCS_FLAGS += /r:Mono.Data.dll
+endif
+ifeq (net_1_1, $(PROFILE))
+LIB_MCS_FLAGS += /r:Mono.Data.dll
+else
+LIB_MCS_FLAGS += /r:System.Configuration.dll
+endif
+
+DATABASE=sqlserver
+ifndef CONNECTION
+ifndef PROVIDER_TESTS_CONNECTION
+CONNECTION=sqlserver-tds
+export PROVIDER_TESTS_CONNECTION=$(CONNECTION)
+endif
+else
+export PROVIDER_TESTS_CONNECTION=$(CONNECTION)
+endif
 
 LIBRARY = System.Data.Connected.Tests.dll
 NO_INSTALL=yes
 NO_SIGN_ASSEMBLY=yes
 
-
-${LIBRARY}:
+${LIBRARY}: clean-local
+	cp app-$(PROFILE).config $(LIBRARY).config
 	$(CSCOMPILE) $(LIB_MCS_FLAGS) /target:library /out:$@ /debug @$(LIBRARY).sources
 
+all-local: ${LIBRARY}
 
 run-test-local: run-test-db
 run-test-db: ${LIBRARY} 
 ifdef OSQLCMD
 	$(OSQLCMD) sql/$(DATABASE).sql
 endif
-	cp app-$(PROFILE).config $(LIBRARY).config
-	unlink conn_string || :
-	ln -s $(DATABASE).config conn_string
 	ok=:; \
 	$(TEST_RUNTIME) $(TEST_HARNESS) $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) /output:TestResult-$(PROFILE).log /include=$(DATABASE) /xml:TestResult-$(PROFILE).xml $< || ok=false; \
 	sed '1,/^Tests run: /d' TestResult-$(PROFILE).log; \
 	$$ok
 
-
 test-local: run-test-db
 
-CLEAN_FILES = *.exe *.dll *.log ${LIBRARY}.config *.mdb TestResult*.xml conn_string
+CLEAN_FILES = *.exe *.dll *.log ${LIBRARY}.config *.mdb TestResult*.xml
 
 clean-local:
-	rm $(CLEAN_FILES) || :
+	-rm -f $(CLEAN_FILES) || :

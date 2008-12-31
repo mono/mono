@@ -42,7 +42,7 @@ go
 
 create table binary_family (
 	id int PRIMARY KEY NOT NULL,
-	type_binary binary NULL,
+	type_binary binary (8) NULL,
 	type_varbinary varbinary (255) NULL,
 	type_blob image NULL,
 	type_tinyblob image NULL,
@@ -52,12 +52,35 @@ create table binary_family (
 grant all on binary_family to monotester
 go
 
-insert into binary_family values (1, convert (binary, '555555'), convert (varbinary, '0123456789012345678901234567890123456789012345678901234567890123456789'), 
-					convert (image, '66666666'), convert (image, '777777'), 
-					convert (image, '888888'), convert (image, '999999'))
---insert into binary_family values (2,
---insert into binary_family values (3,
-insert into binary_family values (4,null,null,null,null,null,null)
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	1,
+	convert (binary, '5'),
+	convert (varbinary, '0123456789012345678901234567890123456789012345678901234567890123456789'), 
+	convert (image, '66666666'),
+	convert (image, '777777'), 
+	convert (image, '888888'),
+	convert (image, '999999')
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	2,
+	convert (binary, '03423051'),
+	convert (varbinary, '98765432101234'), 
+	convert (image, '06666666'),
+	convert (image, '077077'), 
+	convert (image, '088088'),
+	convert (image, '099099')
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	3,
+	convert (binary, ''),
+	convert (varbinary, ''), 
+	convert (image, ''),
+	convert (image, ''), 
+	convert (image, ''),
+	convert (image, '')
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	4,null,null,null,null,null,null);
 go
 
 -- =================================== END OBJECT BINARY_FAMILY ========================

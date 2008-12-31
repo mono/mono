@@ -1,4 +1,4 @@
-/*
+﻿/*
 =========================================================================================
 MySQL_5.sql
 Author: Amit Biswas (amit@amitbiswas.com)
@@ -9,9 +9,8 @@ have been changed either to fix bugs or to comply with MySQL Server 5.0
 
 Changes:
 --------
-In numeric_family, the column type_tinyint cannot store the value 255, hence changed it to 127
-Reason: tinyint takes 1 byte and stores from -128 to 127 (http://dev.mysql.com/doc/refman/5.0/en/numeric-types.html)
-(ERROR: Out of range value adjusted for column 'type_tinyint')
+In numeric_family, the unsigned attribute was added to column type_tinyint to allow it to store the value 255,
+Reason: tinyint is normally signed and stores from -128 to 127 (http://dev.mysql.com/doc/refman/5.0/en/numeric-types.html)
 
 In numeric_family, the column type_double was declared as float NULL which cannot store the value 1.79E+308, hence it changed it to float (53)
 Reason: MySQL supports the optional precision specification but the precision value is used only
@@ -50,23 +49,30 @@ drop table if exists numeric_family;
 
 
 create table `numeric_family` (
-	`id` int PRIMARY KEY NOT NULL,
+	`id` int NOT NULL,
 	`type_bit` bit NULL,
-	`type_tinyint` tinyint NULL,
+	`type_tinyint` tinyint unsigned NULL,
 	`type_smallint` smallint NULL,
 	`type_int` int NULL,
 	`type_bigint` bigint NULL,
-	`type_decimal` decimal (38, 0) NULL,
-	`type_numeric` numeric (38, 0) NULL,
+	`type_decimal1` decimal (38, 0) NULL,
+	`type_decimal2` decimal (10, 3) NULL,
+	`type_numeric1` numeric (38, 0) NULL,
+	`type_numeric2` numeric (10, 3) NULL,
 	`type_money` numeric (38,0) NULL,
 	`type_smallmoney` numeric (12,0) NULL,
-  `type_float` real NULL,
-  `type_double` float (53));
+  `type_float` float(24) NULL,
+  `type_double` float (53) NULL,
+  `type_autoincrement` int PRIMARY KEY AUTO_INCREMENT NOT NULL);
 
-insert into `numeric_family` values (1,1,127,32767,2147483647,9223372036854775807,1000,1000,922337203685477.5807,214748.3647,3.40E+38,1.79E+308);
-insert into `numeric_family` values (2,0,0,-32768,-2147483648,-9223372036854775808,-1000,-1000,-922337203685477.5808,-214748.3648,-3.40E+38,-1.79E+308);
-insert into `numeric_family` values (3,0,0,0,0,0,0,0,0,0,0,0);
-insert into `numeric_family` values (4,null,null,null,null,null,null,null,null,null,null,null);
+insert into numeric_family (id, type_bit, type_tinyint, type_smallint, type_int, type_bigint, type_decimal1, type_decimal2, type_numeric1, type_numeric2, type_money, type_smallmoney, type_float, type_double)
+	values (1, 1, 255, 32767, 2147483647, 9223372036854775807, 1000, 4456.432, 1000, 4456.432, 922337203685477.5807, 214748.3647, 3.40E+38, 1.79E+308);
+insert into numeric_family (id, type_bit, type_tinyint, type_smallint, type_int, type_bigint, type_decimal1, type_decimal2, type_numeric1, type_numeric2, type_money, type_smallmoney, type_float, type_double)
+	values (2, 0, 0, -32768, -2147483648, -9223372036854775808, -1000, -4456.432, -1000, -4456.432, -922337203685477.5808, -214748.3648, -3.40E+38, -1.79E+308);
+insert into numeric_family (id, type_bit, type_tinyint, type_smallint, type_int, type_bigint, type_decimal1, type_decimal2, type_numeric1, type_numeric2, type_money, type_smallmoney, type_float, type_double)
+	values (3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+insert into numeric_family (id, type_bit, type_tinyint, type_smallint, type_int, type_bigint, type_decimal1, type_decimal2, type_numeric1, type_numeric2, type_money, type_smallmoney, type_float, type_double)
+	values (4, null, null, null, null, null, null, null, null, null, null, null, null, null);
 
 /*
 -- =================================== END OBJECT NUMERIC_FAMILY ========================
@@ -88,11 +94,35 @@ create table `binary_family` (
 	`type_mediumblob` mediumblob NULL,
 	`type_longblob_image` longblob NULL);
 
-insert into `binary_family` values (1, '555555', '0123456789012345678901234567890123456789012345678901234567890123456789', '66666666', '777777', '888888', '999999');
-/* --insert into binary_family values (2,
---insert into binary_family values (3,
-*/
-insert into `binary_family` values (4,null,null,null,null,null,null);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	1,
+	'5',
+	0x303132333435363738393031323334353637383930313233343536373839004453, 
+	0x3256004422,
+	0x3A56004422, 
+	0x2B87002233,
+	0x4D84002332
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	2,
+	0x0033340033303531,
+	0x003938373635003332313031323334, 
+	0x0066066697006606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066697066606669706660666970666066698,
+	0x0056334422, 
+	0x0087342233,
+	0x0084352332
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	3,
+	'',
+	'', 
+	'',
+	'', 
+	'',
+	''
+);
+insert into binary_family (id, type_binary, type_varbinary, type_blob, type_tinyblob, type_mediumblob, type_longblob_image) values (
+	4,null,null,null,null,null,null);
 
 /*
 -- =================================== END OBJECT BINARY_FAMILY ========================
@@ -107,16 +137,19 @@ drop table if exists string_family;
 
 create table `string_family` (
 	`id` int PRIMARY KEY NOT NULL,
-      `type_char` char(10) NULL,
-      `type_varchar` varchar(10) NULL,
-      `type_text` text NULL,
-      `type_ntext` longtext NULL);
+	`type_char` char(10) NULL,
+	`type_nchar` char(10) CHARACTER SET ucs2 COLLATE ucs2_general_ci NULL,
+	`type_varchar` varchar(10) NULL,
+	`type_nvarchar` varchar(10) CHARACTER SET ucs2 COLLATE ucs2_general_ci NULL,
+	`type_text` text NULL,
+	`type_ntext` longtext CHARACTER SET ucs2 COLLATE ucs2_general_ci NULL);
 
 grant all privileges on string_family to monotester;
 
-insert into `string_family` values (1,"char","varchar","text","ntext");
-insert into `string_family` values (2, '0123456789','varchar' ,'longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext ','ntext');
-insert into `string_family` values (4,null,null,null,null);
+insert into string_family values (1, 'char', 'nchभाr', 'varchar', 'nvभारतr', 'text', 'ntभाxt');
+insert into string_family values (2, '0123456789', '0123456789', 'varchar ', 'nvभारतr ', 'longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext ', 'ntभाxt ');
+insert into string_family values (3, '', '', '', '', '', '');
+insert into string_family values (4, null, null, null, null, null, null);
 
 /*
 -- =================================== END OBJECT STRING_FAMILY ========================
@@ -132,12 +165,14 @@ drop table if exists datetime_family;
 create table `datetime_family` (
         `id` int PRIMARY KEY NOT NULL,
         `type_smalldatetime` timestamp NULL,
-        `type_datetime` datetime NULL);
+        `type_datetime` datetime NULL,
+        `type_time` time NULL,
+        `type_date` date NULL);
 
 grant all privileges on datetime_family to monotester;
 
-insert into `datetime_family` values (1,'2037-12-31 23:59:00','9999-12-31 23:59:59.997');
-insert into `datetime_family` values (4,null,null);
+insert into `datetime_family` values (1,'2037-12-31 23:59:00','9999-12-31 23:59:59.997','23:58:59.953','9999-12-31');
+insert into `datetime_family` values (4,null,null,null,null);
 
 /*
 -- =================================== END OBJECT DATETIME_FAMILY========================
@@ -187,8 +222,7 @@ drop procedure if exists sp_get_age
 //
 create procedure sp_get_age (fname varchar (50), OUT age int)
 begin
-	select age = datediff (day, dob, getdate ()) from employee where fname like fname;
-  /* you can also use SELECT ..... INTO age */
+  select age=datediff (`dob`, now()) from `employee` where `fname` like fname;
 end
 //
 /*

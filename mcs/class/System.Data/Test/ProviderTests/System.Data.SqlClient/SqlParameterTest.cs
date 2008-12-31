@@ -65,29 +65,440 @@ namespace MonoTests.System.Data.SqlClient
 			// assigned. The Type should be inferred everytime Value is assigned
 			// If value is null or DBNull, then the current Type should be reset to NVarChar.
 			SqlParameter param = new SqlParameter ();
-			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.String, param.DbType, "#A1");
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#A2");
 			param.Value = DBNull.Value;
-			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#2");
+			Assert.AreEqual (DbType.String, param.DbType, "#A3");
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#A4");
 			param.Value = 1;
-			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#3");
+			Assert.AreEqual (DbType.Int32, param.DbType, "#A5");
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#A6");
 			param.Value = DBNull.Value;
-			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#4");
+#if NET_2_0
+			Assert.AreEqual (DbType.String, param.DbType, "#A7");
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#A8");
+#else
+			Assert.AreEqual (DbType.Int32, param.DbType, "#A7");
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#A8");
+#endif
 			param.Value = null;
-			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#5");
+#if NET_2_0
+			Assert.AreEqual (DbType.String, param.DbType, "#A9");
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#A10");
+#else
+			Assert.AreEqual (DbType.Int32, param.DbType, "#A9");
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#A10");
+#endif
+			param.Value = DateTime.Now;
+			Assert.AreEqual (DbType.DateTime, param.DbType, "#A11");
+			Assert.AreEqual (SqlDbType.DateTime, param.SqlDbType, "#A12");
+			param.Value = null;
+#if NET_2_0
+			Assert.AreEqual (DbType.String, param.DbType, "#A13");
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#A14");
+#else
+			Assert.AreEqual (DbType.DateTime, param.DbType, "#A13");
+			Assert.AreEqual (SqlDbType.DateTime, param.SqlDbType, "#A14");
+#endif
 
-			//If Type is set, then the Type should not inferred from the value 
-			//assigned.
+			// If DbType is set, then the SqlDbType should not be
+			// inferred from the value assigned.
 			SqlParameter param1 = new SqlParameter ();
-			param1.DbType = DbType.String; 
-			Assert.AreEqual (SqlDbType.NVarChar, param1.SqlDbType, "#6");
+			param1.DbType = DbType.String;
+			Assert.AreEqual (SqlDbType.NVarChar, param1.SqlDbType, "#B1");
 			param1.Value = 1;
-			Assert.AreEqual (SqlDbType.NVarChar, param1.SqlDbType, "#7");
+			Assert.AreEqual (SqlDbType.NVarChar, param1.SqlDbType, "#B2");
 
+			// If SqlDbType is set, then the DbType should not be
+			// inferred from the value assigned.
 			SqlParameter param2 = new SqlParameter ();
 			param2.SqlDbType = SqlDbType.NVarChar;
-			Assert.AreEqual (SqlDbType.NVarChar, param2.SqlDbType, "#8");
+			Assert.AreEqual (SqlDbType.NVarChar, param2.SqlDbType, "#C1");
 			param2.Value = 1;
-			Assert.AreEqual (SqlDbType.NVarChar, param2.SqlDbType, "#9");
+			Assert.AreEqual (SqlDbType.NVarChar, param2.SqlDbType, "#C2");
+		}
+
+		[Test]
+		public void InferType_Boolean ()
+		{
+			Boolean value;
+			SqlParameter param;
+			
+			value = false;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Bit, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.Boolean, param.DbType, "#A2");
+
+			value = true;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Bit, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.Boolean, param.DbType, "#B2");
+		}
+
+		[Test]
+		public void InferType_Byte ()
+		{
+			Byte value = 0x0a;
+
+			SqlParameter param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.TinyInt, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.Byte, param.DbType, "#2");
+		}
+
+		[Test]
+		public void InferType_ByteArray ()
+		{
+			Byte [] value = new Byte [] { 0x0a, 0x0d };
+
+			SqlParameter param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.VarBinary, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.Binary, param.DbType, "#2");
+		}
+
+		[Test]
+		public void InferType_Char ()
+		{
+			Char value = Char.MaxValue;
+
+			SqlParameter param = new SqlParameter ();
+#if NET_2_0
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.String, param.DbType, "#2");
+#else
+			try {
+				param.Value = value;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The parameter data type of Char is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
+
+		[Test]
+		public void InferType_CharArray ()
+		{
+			Char [] value = new Char [] { 'A', 'X' };
+
+			SqlParameter param = new SqlParameter ();
+#if NET_2_0
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.String, param.DbType, "#2");
+#else
+			try {
+				param.Value = value;
+				Assert.Fail ("#1");
+			} catch (FormatException) {
+				// appears to be bug in .NET 1.1 while constructing
+				// exception message
+			} catch (ArgumentException ex) {
+				// The parameter data type of Char[] is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
+		}
+
+		[Test]
+		public void InferType_DateTime ()
+		{
+			DateTime value;
+			SqlParameter param;
+
+			value = DateTime.Now;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.DateTime, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.DateTime, param.DbType, "#A2");
+
+			value = DateTime.Now;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.DateTime, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.DateTime, param.DbType, "#B2");
+
+			value = new DateTime (1973, 8, 13);
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.DateTime, param.SqlDbType, "#C1");
+			Assert.AreEqual (DbType.DateTime, param.DbType, "#C2");
+		}
+
+		[Test]
+		public void InferType_Decimal ()
+		{
+			Decimal value;
+			SqlParameter param;
+			
+			value = Decimal.MaxValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Decimal, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.Decimal, param.DbType, "#A2");
+
+			value = Decimal.MinValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Decimal, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.Decimal, param.DbType, "#B2");
+
+			value = 214748.364m;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Decimal, param.SqlDbType, "#C1");
+			Assert.AreEqual (DbType.Decimal, param.DbType, "#C2");
+		}
+
+		[Test]
+		public void InferType_Double ()
+		{
+			Double value;
+			SqlParameter param;
+			
+			value = Double.MaxValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Float, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.Double, param.DbType, "#A2");
+
+			value = Double.MinValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Float, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.Double, param.DbType, "#B2");
+
+			value = 0d;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Float, param.SqlDbType, "#C1");
+			Assert.AreEqual (DbType.Double, param.DbType, "#C2");
+		}
+
+		[Test]
+		public void InferType_Enum ()
+		{
+			SqlParameter param;
+
+			param = new SqlParameter ();
+			param.Value = ByteEnum.A;
+			Assert.AreEqual (SqlDbType.TinyInt, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.Byte, param.DbType, "#A2");
+
+			param = new SqlParameter ();
+			param.Value = Int64Enum.A;
+			Assert.AreEqual (SqlDbType.BigInt, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.Int64, param.DbType, "#B2");
+		}
+
+		[Test]
+		public void InferType_Guid ()
+		{
+			Guid value = Guid.NewGuid ();
+
+			SqlParameter param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.UniqueIdentifier, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.Guid, param.DbType, "#2");
+		}
+
+		[Test]
+		public void InferType_Int16 ()
+		{
+			Int16 value;
+			SqlParameter param;
+			
+			value = Int16.MaxValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.SmallInt, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.Int16, param.DbType, "#A2");
+
+			value = Int16.MinValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.SmallInt, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.Int16, param.DbType, "#B2");
+
+			value = (Int16) 0;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.SmallInt, param.SqlDbType, "#C1");
+			Assert.AreEqual (DbType.Int16, param.DbType, "#C2");
+		}
+
+		[Test]
+		public void InferType_Int32 ()
+		{
+			Int32 value;
+			SqlParameter param;
+			
+			value = Int32.MaxValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.Int32, param.DbType, "#A2");
+
+			value = Int32.MinValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.Int32, param.DbType, "#B2");
+
+			value = 0;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#C1");
+			Assert.AreEqual (DbType.Int32, param.DbType, "#C2");
+		}
+
+		[Test]
+		public void InferType_Int64 ()
+		{
+			Int64 value;
+			SqlParameter param;
+			
+			value = Int64.MaxValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.BigInt, param.SqlDbType, "#A1");
+			Assert.AreEqual (DbType.Int64, param.DbType, "#A2");
+
+			value = Int64.MinValue;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.BigInt, param.SqlDbType, "#B1");
+			Assert.AreEqual (DbType.Int64, param.DbType, "#B2");
+
+			value = 0L;
+			param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.BigInt, param.SqlDbType, "#C1");
+			Assert.AreEqual (DbType.Int64, param.DbType, "#C2");
+		}
+
+		[Test]
+		public void InferType_Invalid ()
+		{
+			object [] notsupported = new object [] {
+				UInt16.MaxValue,
+				UInt32.MaxValue,
+				UInt64.MaxValue,
+				SByte.MaxValue,
+				new SqlParameter ()
+			};
+
+			SqlParameter param = new SqlParameter ();
+
+			for (int i = 0; i < notsupported.Length; i++) {
+#if NET_2_0
+				param.Value = notsupported [i];
+				try {
+					SqlDbType type = param.SqlDbType;
+					Assert.Fail ("#A1:" + i + " (" + type + ")");
+				} catch (ArgumentException ex) {
+					// The parameter data type of ... is invalid
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+					Assert.IsNull (ex.ParamName, "#A5");
+				}
+
+				try {
+					DbType type = param.DbType;
+					Assert.Fail ("#B1:" + i + " (" + type + ")");
+				} catch (ArgumentException ex) {
+					// The parameter data type of ... is invalid
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+					Assert.IsNull (ex.ParamName, "#B5");
+				}
+#else
+				try {
+					param.Value = notsupported [i];
+					Assert.Fail ("#A1:" + i);
+				} catch (FormatException) {
+					// appears to be bug in .NET 1.1 while
+					// constructing exception message
+				} catch (ArgumentException ex) {
+					// The parameter data type of ... is invalid
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+					Assert.IsNull (ex.ParamName, "#A5");
+				}
+#endif
+			}
+		}
+
+		[Test]
+		public void InferType_Object ()
+		{
+			Object value = new Object ();
+
+			SqlParameter param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Variant, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.Object, param.DbType, "#2");
+		}
+
+		[Test]
+		public void InferType_Single ()
+		{
+			Single value = Single.MaxValue;
+
+			SqlParameter param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Real, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.Single, param.DbType, "#2");
+		}
+
+		[Test]
+		public void InferType_String ()
+		{
+			String value = "some text";
+
+			SqlParameter param = new SqlParameter ();
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.NVarChar, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.String, param.DbType, "#2");
+		}
+
+		[Test]
+		public void InferType_TimeSpan ()
+		{
+			TimeSpan value = new TimeSpan (4, 6, 23);
+
+			SqlParameter param = new SqlParameter ();
+#if NET_2_0
+			param.Value = value;
+			Assert.AreEqual (SqlDbType.Time, param.SqlDbType, "#1");
+			Assert.AreEqual (DbType.Time, param.DbType, "#2");
+#else
+			try {
+				param.Value = value;
+				Assert.Fail ("#1");
+			} catch (FormatException) {
+				// appears to be bug in .NET 1.1 while constructing
+				// exception message
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
 		}
 
 		[Test]
@@ -110,9 +521,13 @@ namespace MonoTests.System.Data.SqlClient
 
 			p2.Value = DBNull.Value;
 			Assert.AreEqual (DBNull.Value, p2.Value, "#11 Value of the parameter must be DBNull.Value");
+#if NET_2_0
 			Assert.AreEqual (SqlDbType.NVarChar, p2.SqlDbType, "#12 parameters without any value or null value must have SqlDbtype as NVarChar");
 			Assert.AreEqual (DbType.String, p2.DbType, "#13 parameters without any value or null value must have DbType as String");
-
+#else
+			Assert.AreEqual (SqlDbType.Int, p2.SqlDbType, "#12 parameter must have SqlDbtype as Int");
+			Assert.AreEqual (DbType.Int32, p2.DbType, "#13 parameter must have Dbtype as Int32");
+#endif
 		}
 
 		//testcase for #82170
@@ -437,8 +852,20 @@ namespace MonoTests.System.Data.SqlClient
 			p1.Value = longstring.Substring (0, 20);
 			cmd.ExecuteNonQuery ();
 			Assert.AreEqual (20, cmd1.ExecuteScalar (), "#PSCT1");
-			cmd.Dispose ();			
+			cmd.Dispose ();
 			cmd1.Dispose ();
+		}
+
+		private enum ByteEnum : byte
+		{
+			A = 0x0a,
+			B = 0x0d
+		}
+
+		private enum Int64Enum : long
+		{
+			A = long.MinValue,
+			B = long.MaxValue
 		}
 	}
 }

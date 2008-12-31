@@ -258,22 +258,37 @@ namespace MonoTests.System.Data
 				SqlCommandBuilder cb = new SqlCommandBuilder (adapter);
 
 				SqlCommand updateCommand = cb.GetUpdateCommand (true);
-				Assert.AreEqual (5, updateCommand.Parameters.Count, "#1");
-				Assert.AreEqual (SqlDbType.VarChar, updateCommand.Parameters ["@type_varchar"].SqlDbType, "#2");
+				Assert.AreEqual (5, updateCommand.Parameters.Count, "#A1");
+				Assert.AreEqual (SqlDbType.VarChar, updateCommand.Parameters ["@type_varchar"].SqlDbType, "#A2");
 				// FIXME: NotWorking
-				//Assert.AreEqual (1, updateCommand.Parameters ["@type_char"].Value, "#3");
+				//Assert.AreEqual (1, updateCommand.Parameters ["@type_char"].Value, "#A3");
 
 				SqlCommand delCommand = cb.GetDeleteCommand (true);
-				Assert.AreEqual (3, delCommand.Parameters.Count, "#4");
-				Assert.AreEqual (SqlDbType.Int, delCommand.Parameters ["@type_varchar"].SqlDbType, "#5");
-				Assert.AreEqual (1, delCommand.Parameters ["@type_varchar"].Value, "#6");
+				Assert.AreEqual (3, delCommand.Parameters.Count, "#B");
+				Assert.AreEqual (DbType.Int32, delCommand.Parameters [0].DbType, "#B: DbType (0)");
+				Assert.AreEqual ("@Original_id", delCommand.Parameters [0].ParameterName, "#B: ParameterName (0)");
+				Assert.AreEqual ("id", delCommand.Parameters [0].SourceColumn, "#B: SourceColumn (0)");
+				Assert.AreEqual (SqlDbType.Int, delCommand.Parameters [0].SqlDbType, "#B: SqlDbType (0)");
+				Assert.IsNull (delCommand.Parameters [0].Value, "#B: Value (0)");
+
+				Assert.AreEqual (DbType.Int32, delCommand.Parameters [1].DbType, "#B: DbType (1)");
+				Assert.AreEqual ("@IsNull_type_varchar", delCommand.Parameters [1].ParameterName, "#B: ParameterName (1)");
+				Assert.AreEqual ("type_varchar", delCommand.Parameters [1].SourceColumn, "#B: SourceColumn (1)");
+				Assert.AreEqual (SqlDbType.Int, delCommand.Parameters [1].SqlDbType, "#B: SqlDbType (1)");
+				Assert.AreEqual (1, delCommand.Parameters [1].Value, "#B: Value (1)");
+
+				Assert.AreEqual (DbType.AnsiString, delCommand.Parameters [2].DbType, "#B: DbType (2)");
+				Assert.AreEqual ("@Original_type_varchar", delCommand.Parameters [2].ParameterName, "#B: ParameterName (2)");
+				Assert.AreEqual ("type_varchar", delCommand.Parameters [2].SourceColumn, "#B: SourceColumn (2)");
+				Assert.AreEqual (SqlDbType.VarChar, delCommand.Parameters [2].SqlDbType, "#B: SqlDbType (2)");
+				Assert.IsNull (delCommand.Parameters [2].Value, "#B: Value (2)");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-#endif		
+#endif
+
 		[Test]
-		[ExpectedException (typeof (DBConcurrencyException))]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
 		{
 			try {
@@ -283,21 +298,35 @@ namespace MonoTests.System.Data
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
+				Assert.IsNotNull (cb);
+
 				DataRow [] rows = ds.Tables [0].Select ("id=1");
 				rows [0] [0] = 6660; // non existent 
 				ds.Tables [0].AcceptChanges (); // moves 6660 to original value
 				rows [0] [0] = 1; // moves 6660 as search key into db table
-				da.Update (rows);
+				try {
+					da.Update (rows);
+					Assert.Fail ("#1");
+				} catch (DBConcurrencyException ex) {
+					// Concurrency violation: the UpdateCommand
+					// affected 0 of the expected 1 records
+					Assert.AreEqual (typeof (DBConcurrencyException), ex.GetType (), "#3");
+					Assert.IsNull (ex.InnerException, "#4");
+					Assert.IsNotNull (ex.Message, "#5");
+					Assert.AreSame (rows [0], ex.Row, "#6");
+#if NET_2_0
+					Assert.AreEqual (1, ex.RowCount, "#7");
+#endif
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (DBConcurrencyException))]
 		public void GetDeleteCommandDBConcurrencyExceptionTest ()
 		{
 			try {
@@ -307,14 +336,29 @@ namespace MonoTests.System.Data
 				SqlDataAdapter da = new SqlDataAdapter (selectQuery, (SqlConnection) conn);
 				DataSet ds = new DataSet ();
 				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count, "#1 atleast one table should be filled");
+				Assert.AreEqual (1, ds.Tables.Count);
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
+				Assert.IsNotNull (cb);
+
 				DataRow [] rows = ds.Tables [0].Select ("id=1");
 				rows [0] [0] = 6660; // non existent 
 				ds.Tables [0].AcceptChanges (); // moves 6660 to original value
 				rows [0].Delete ();  // moves 6660 as search key into db table
-				da.Update (rows);
+				try {
+					da.Update (rows);
+					Assert.Fail ("#1");
+				} catch (DBConcurrencyException ex) {
+					// Concurrency violation: the DeleteCommand
+					// affected 0 of the expected 1 records
+					Assert.AreEqual (typeof (DBConcurrencyException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreSame (rows [0], ex.Row, "#5");
+#if NET_2_0
+					Assert.AreEqual (1, ex.RowCount, "#6");
+#endif
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -418,7 +462,7 @@ namespace MonoTests.System.Data
 				SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 				SqlCommand cmd = new SqlCommand ();
 
-				cmd.CommandText = "[dbo].[sp_326182]";
+				cmd.CommandText = "sp_326182";
 				cmd.CommandType = CommandType.StoredProcedure;
 				cmd.CommandTimeout = 90;
 				cmd.Connection =  conn;

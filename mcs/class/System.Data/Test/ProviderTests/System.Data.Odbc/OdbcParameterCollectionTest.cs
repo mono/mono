@@ -48,30 +48,32 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void ParameterLengthTrimTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand cmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand cmd = conn.CreateCommand ();
 				cmd.CommandType = CommandType.Text;
 				cmd.CommandText = "SELECT count(*) FROM employee WHERE fname=?";
-															     
-				OdbcParameter param = cmd.Parameters.Add("@fname", OdbcType.Text, 15);
+
+				OdbcParameter param = cmd.Parameters.Add("@fname", OdbcType.VarChar, 15);
 				param.Value = DateTime.Now.ToString ();
 				Assert.AreEqual (15, param.Size, "#1");
-				Convert.ToInt32(cmd.ExecuteScalar());
+				Assert.AreEqual (0, cmd.ExecuteScalar(), "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
-                }
-                
+		}
+
 #if NET_2_0
 		[Test]
 		public void InsertTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -107,7 +109,7 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		/// <remarks>
 		/// Inserting parameters in between the collection should not
 		/// overwrite the existing parameters
@@ -115,10 +117,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void InsertNoOverwriteTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -145,14 +148,15 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void InsertNullTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -161,24 +165,23 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.Insert (1, null);
+					Assert.Fail ("Expected exception ArgumentNullException was not thrown");
 				} catch (ArgumentNullException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter after Insert failed");
-					return;
-				} 
-				Assert.Fail ("Expected exception ArgumentNullException was not thrown");
-					
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void InsertEmptyTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -186,25 +189,25 @@ namespace MonoTests.System.Data.Odbc
 
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
-					OdbcCmd.Parameters.Insert (1, "");
+					OdbcCmd.Parameters.Insert (1, string.Empty);
+					Assert.Fail ("Expected exception InvalidCastException was not thrown");
 				} catch (InvalidCastException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter after Insert failed");
-					return;
-				} 
-				Assert.Fail ("Expected exception InvalidCastException was not thrown");
+				}
 					
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void InsertAlreadyContainedParameterTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -216,23 +219,23 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#2 The collection must contain 2 parameters");
 				try {
 					OdbcCmd.Parameters.Insert (2, p2Age); //p2Age is already contained
+					Assert.Fail ("Expected exception ArgumentException not thrown");
 				} catch (ArgumentException) {
 					Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#3 The collection must contain 2 parameters after Insert failed");
-					return;
-				} 
-				Assert.Fail ("Expected exception ArgumentException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void InsertArgumentGreaterThanCountTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -241,24 +244,23 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.Insert (OdbcCmd.Parameters.Count + 1, p2Age); //Inserting with wrong index
+					Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
 				} catch (ArgumentOutOfRangeException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only 1 parameter after Insert failed");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
-
 		[Test]
 		public void InsertNegativeArgumentTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -267,23 +269,23 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.Insert (-3, p2Age); //Insert with negative index
+					Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
 				} catch (ArgumentOutOfRangeException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only 1 parameter after Insert failed");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void InsertNonOdbcParameterTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -292,12 +294,10 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.Insert (1, 4);
+					Assert.Fail ("Expected exception InvalidCastException was not thrown");
 				} catch (InvalidCastException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only 1 parameter after Insert failed");
-					return;
-				} 
-				Assert.Fail ("Expected exception InvalidCastException was not thrown");
-				
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -307,10 +307,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void AddRangeTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -343,10 +344,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void AddRangeParameterAlreadyContainedTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				OdbcParameter p1Lname = OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -360,11 +362,10 @@ namespace MonoTests.System.Data.Odbc
 				paramArray [2] = p3Tmp;
 				try {
 					OdbcCmd.Parameters.AddRange (paramArray);
+					Assert.Fail ("Expected Exception ArgumentException not thrown");
 				} catch (ArgumentException){
 					Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#2 The collection must contain excatly 2 elements after AddRange failed for the third element");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -376,10 +377,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void AddRangeArgumentNullExceptionTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -393,27 +395,27 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.AddRange (paramArray);
+					Assert.Fail ("Expected Exception ArgumentNullException not thrown");
 				} catch (ArgumentNullException){
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 If any of the parameters in the range is null, none of them should be added");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentNullException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void AddRangeParameterContainedInAnotherCollTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
-				OdbcCommand OdbcCmd2 = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd2 = conn.CreateCommand ();
 				OdbcCmd2.CommandType = CommandType.Text;
 				OdbcCmd2.CommandText = "SELECT lname FROM employee WHERE fname=? AND age=?";
 
@@ -429,24 +431,24 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (0, OdbcCmd2.Parameters.Count, "#2 Initialization error, the parameter collection of OdbcCmd2 should not contain any parameters");
 				try {
 					OdbcCmd2.Parameters.AddRange (paramArray);
+					Assert.Fail ("Expected Exception ArgumentException not thrown");
 				} catch (ArgumentException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#3 The parameter collection of OdbcCmd should not change");
 					Assert.AreEqual (1, OdbcCmd2.Parameters.Count, "#4 All the elements before the invalid element must be added to the collection of OdbcCmd2");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void AddRangeMultiDimensionalArrayTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -470,14 +472,15 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void AddRangeArrayValuesArgumentNullExceptionTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -493,16 +496,14 @@ namespace MonoTests.System.Data.Odbc
 				paramArray [1, 1] = p5Tmp;
 				try {
 					OdbcCmd.Parameters.AddRange (paramArray);
+					Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
 				} catch (ArgumentNullException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 None of the elememts must be added if any one of them is null");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-
 
 		//<remarks>
 		//Tests all the three overloads of Contains
@@ -510,10 +511,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void ContainsTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				OdbcParameter p1Lname = OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -533,14 +535,15 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void ContainsNonOdbcParameterTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -548,24 +551,23 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 The collection must contain only one parameter");
 				try{
 					Assert.IsFalse (OdbcCmd.Parameters.Contains (4), "#2 Contains must return false for non-odbcParameter arguments");
+					Assert.Fail ("Expected Exception InvalidCastException not thrown");
 				} catch (InvalidCastException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#3 The collection must contain only one parameter");
-					return;
-				} 
-				Assert.Fail ("Expected Exception InvalidCastException not thrown");
-				
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void ContainsCaseSensitivityTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -584,11 +586,12 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void ContainsNotMineTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd1 = (OdbcCommand) conn.CreateCommand ();
-				OdbcCommand OdbcCmd2 = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd1 = conn.CreateCommand ();
+				OdbcCommand OdbcCmd2 = conn.CreateCommand ();
 				OdbcCmd1.CommandType = CommandType.Text;
 				OdbcCmd1.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				OdbcCmd2.CommandType = CommandType.Text;
@@ -596,7 +599,7 @@ namespace MonoTests.System.Data.Odbc
 
 				OdbcParameter p1 = OdbcCmd1.Parameters.Add ("@lname", OdbcType.Text, 15);
 				OdbcParameter p2 = OdbcCmd2.Parameters.Add ("@lname", OdbcType.Text, 15);
-				
+
 				Assert.IsTrue (OdbcCmd1.Parameters.Contains (p1));
 				Assert.IsFalse (OdbcCmd1.Parameters.Contains (p2));
 			} finally {
@@ -607,10 +610,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void IndexOfTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				OdbcParameter p1Lname = OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -628,19 +632,19 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ((Object)p2Age), "#8 second parameter passed as Object did not return index 1");
 				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf ((Object)p3Tmp), "#9 non-existing parameter passed as Object did not return index -1");
 				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf ((Object)null), "#10 null parameter passed as Object should return index -1");
-				
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void IndexOfCaseSensitivityTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -655,14 +659,15 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void IndexOfNonOdbcParameterTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -670,12 +675,10 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 The collection must contain only one parameter");
 				try{
 					Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (4), "#2 IndexOf must return -1 for non-odbcParameter arguments");
+					Assert.Fail ("Expected Exception InvalidCastException not thrown");
 				} catch (InvalidCastException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#3 The collection must contain only one parameter");
-					return;
-				} 
-				Assert.Fail ("Expected Exception InvalidCastException not thrown");
-				
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -684,10 +687,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void CopyToTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -711,10 +715,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void CopyToArgumentExceptionTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -724,14 +729,13 @@ namespace MonoTests.System.Data.Odbc
 				OdbcParameter [] DestinationParamArray = new OdbcParameter [4];
 				try{
 					OdbcCmd.Parameters.CopyTo (DestinationParamArray, 3); //starting at 3, thus the second element will be at index 4
+					Assert.Fail ("Expected Exception ArgumentException not thrown");
 				} catch (ArgumentException) {
 					Assert.AreEqual (null, DestinationParamArray [0], "#2 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [1], "#3 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [2], "#4 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [3], "#5 The DestinationParamArray must remain un-initialized");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -740,10 +744,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void CopyToMultiDimensionalArrayTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -754,14 +759,13 @@ namespace MonoTests.System.Data.Odbc
 
 				try{
 					OdbcCmd.Parameters.CopyTo (DestinationParamArray, 1); //DestinationParamArray is multi Dimensional
+					Assert.Fail ("Expected Exception ArgumentException not thrown");
 				} catch (ArgumentException) {
 					Assert.AreEqual (null, DestinationParamArray [0, 0], "#2 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [0, 1], "#3 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [1, 2], "#4 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [1, 3], "#5 The DestinationParamArray must remain un-initialized");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -770,10 +774,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void CopyToLowerBoundCheckTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
@@ -783,14 +788,13 @@ namespace MonoTests.System.Data.Odbc
 				OdbcParameter [] DestinationParamArray = new OdbcParameter [4];
 				try {
 					OdbcCmd.Parameters.CopyTo (DestinationParamArray, -1); //index must be >= 0
+					Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
 				} catch (ArgumentOutOfRangeException) {
 					Assert.AreEqual (null, DestinationParamArray [0], "#2 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [1], "#3 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [2], "#4 The DestinationParamArray must remain un-initialized");
 					Assert.AreEqual (null, DestinationParamArray [3], "#5 The DestinationParamArray must remain un-initialized");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentOutOfRangeException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -799,10 +803,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void DuplicateParameterNameTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -826,14 +831,15 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void RemoveTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -846,27 +852,27 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void RemoveNullTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.Remove (null);
+					Assert.Fail ("Expected exception ArgumentNullException was not thrown");
 				} catch (ArgumentNullException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter");
-					return;
-				} 
-				Assert.Fail ("Expected exception ArgumentNullException was not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -875,60 +881,61 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void RemoveEmptyTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
-					OdbcCmd.Parameters.Remove ("");
+					OdbcCmd.Parameters.Remove (string.Empty);
+					Assert.Fail ("Expected exception InvalidCastException was not thrown");
 				} catch (InvalidCastException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter");
-					return;
-				} 
-				Assert.Fail ("Expected exception InvalidCastException was not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void RemoveNonOdbcParameterTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.Remove (4);
+					Assert.Fail ("Expected exception InvalidCastException was not thrown");
 				} catch (InvalidCastException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain only one parameter");
-					return;
-				} 
-				Assert.Fail ("Expected exception InvalidCastException was not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void RemoveNonExistingParameterTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -940,27 +947,27 @@ namespace MonoTests.System.Data.Odbc
 				Assert.AreEqual (0, OdbcCmd.Parameters.Count, "#2 Collection should not contain any parameters");
 				try {
 					OdbcCmd.Parameters.Remove (p1Lname);
+					Assert.Fail ("Expected exception ArgumentException not thrown");
 				} catch (ArgumentException) {
 					Assert.AreEqual (0, OdbcCmd.Parameters.Count, "#3 The collection should not contain any parameters");
-					return;
-				} 
-				Assert.Fail ("Expected exception ArgumentException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void RemoveParameterContainedInAnotherCollTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
-				OdbcCommand OdbcCmd2 = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd2 = conn.CreateCommand ();
 				OdbcCmd2.CommandType = CommandType.Text;
 				OdbcCmd2.CommandText = "SELECT lname FROM employee WHERE fname=? AND age=?";
 
@@ -969,17 +976,16 @@ namespace MonoTests.System.Data.Odbc
 				
 				/*OdbcParameter p3 = */OdbcCmd2.Parameters.Add ("@p3", OdbcType.Text, 15);
 				/*OdbcParameter p4 = */OdbcCmd2.Parameters.Add ("@p4", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#5 The parameter collection of OdbcCmd should contain 2 parameters");
 				Assert.AreEqual (2, OdbcCmd2.Parameters.Count, "#6 The parameter collection of OdbcCmd2 should contain 2 parameters");
 				try {
 					OdbcCmd2.Parameters.Remove (p1);
+					Assert.Fail ("Expected Exception ArgumentException not thrown");
 				} catch (ArgumentException) {
 					Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#5 The parameter collection of OdbcCmd should contain 2 parameters");
 					Assert.AreEqual (2, OdbcCmd2.Parameters.Count, "#6 The parameter collection of OdbcCmd2 should contain 2 parameters");
-					return;
-				} 
-				Assert.Fail ("Expected Exception ArgumentException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -988,10 +994,11 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void RemoveAtTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
@@ -999,21 +1006,21 @@ namespace MonoTests.System.Data.Odbc
 				OdbcParameter p2Age = OdbcCmd.Parameters.Add ("@age", OdbcType.Int, 2);
 				OdbcParameter p3Tmp = OdbcCmd.Parameters.Add ("@p3Tmp", OdbcType.Text, 15);
 				OdbcParameter p4Tmp = OdbcCmd.Parameters.Add ("@p4Tmp", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (4, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				
 				Assert.AreEqual (true, OdbcCmd.Parameters.Contains(p1Lname), "#2 the collection does not contain p1Lname");
 				Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p1Lname), "#3 p1Lname is not at index 0");
-				
+
 				//remove the first parameter
-				OdbcCmd.Parameters.RemoveAt (0);				
+				OdbcCmd.Parameters.RemoveAt (0);
 				Assert.AreEqual (3, OdbcCmd.Parameters.Count, "#4 Collection should contain only 3 parameters");
 				Assert.AreEqual (false, OdbcCmd.Parameters.Contains(p1Lname), "#5 the collection should not contain p1Lname");
 				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf(p1Lname), "#6 the collection should not contain p1Lname");
 				Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p2Age), "#7 p2Age should now be at index 0");
 				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf(p3Tmp), "#8 p3Tmp should now be at index 1");
 				Assert.AreEqual (2, OdbcCmd.Parameters.IndexOf(p4Tmp), "#9 p4Tmp should now be at index 2");
-				
+
 				//remove the last parameter
 				OdbcCmd.Parameters.RemoveAt (OdbcCmd.Parameters.Count-1);
 				Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#10 Collection should contain only 2 parameters");
@@ -1025,29 +1032,29 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void RemoveAtOutOfRangeIndexTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
 				OdbcParameter p1Lname = OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.RemoveAt (9);
+					Assert.Fail ("Expected exception IndexOutOfRangeException not thrown");
 				} catch (IndexOutOfRangeException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain 1 parameter");
 					Assert.AreEqual (true, OdbcCmd.Parameters.Contains(p1Lname), "#3 the collection does not contain p1Lname");
 					Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p1Lname), "#4 p1Lname is not at index 0");
-					return;
-				} 
-				Assert.Fail ("Expected exception IndexOutOfRangeException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -1056,25 +1063,25 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void RemoveAtNegativeIndexTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
 				OdbcParameter p1Lname = OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.RemoveAt (-1);
+					Assert.Fail ("Expected exception IndexOutOfRangeException not thrown");
 				} catch (IndexOutOfRangeException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain 1 parameter");
 					Assert.AreEqual (true, OdbcCmd.Parameters.Contains(p1Lname), "#3 the collection does not contain p1Lname");
 					Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p1Lname), "#4 p1Lname is not at index 0");
-					return;
-				} 
-				Assert.Fail ("Expected exception IndexOutOfRangeException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -1083,37 +1090,38 @@ namespace MonoTests.System.Data.Odbc
 		[Test]
 		public void RemoveAtBoundaryTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
 				OdbcParameter p1Lname = OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
-				
+
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 				try {
 					OdbcCmd.Parameters.RemoveAt (OdbcCmd.Parameters.Count);
+					Assert.Fail ("Expected exception IndexOutOfRangeException not thrown");
 				} catch (IndexOutOfRangeException) {
 					Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#2 The collection must contain 1 parameter");
 					Assert.AreEqual (true, OdbcCmd.Parameters.Contains(p1Lname), "#3 the collection does not contain p1Lname");
 					Assert.AreEqual (0, OdbcCmd.Parameters.IndexOf(p1Lname), "#4 p1Lname is not at index 0");
-					return;
-				} 
-				Assert.Fail ("Expected exception IndexOutOfRangeException not thrown");
+				}
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void AddWithValueTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 				
@@ -1121,119 +1129,119 @@ namespace MonoTests.System.Data.Odbc
 				OdbcParameter rt = null; //to check return type
 				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");				
 				
-		                rt = OdbcCmd.Parameters.AddWithValue ("@P2", "Param2");
-		                Assert.AreEqual (typeof(OdbcParameter), rt.GetType(), "#1a AddWithValue didnt retuen type OdbcParameter");
-		                Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#2 AddWithValue failed for valid parameter name and value");
-		                Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("@P2"), "#3 collection does not contain @P2");
-		                Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ("@P2"), "#4 Index of added parameter must be 1");
-		                Assert.AreEqual ("Param2", OdbcCmd.Parameters["@P2"].Value, "#5 Value of added parameter must be Param2");
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[1].OdbcType, "#6 Parameters with null value must be of type NVarChar");
-		                
-		                OdbcCmd.Parameters.AddWithValue ("@P2", "Param2ReAdded"); //adding again
-		                Assert.AreEqual (3, OdbcCmd.Parameters.Count, "#7 AddWithValue must append at the end of the collection even for same parameter names");
-		                Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("@P2"), "#8 collection does not contain @P2");
-		                Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ("@P2"), "#9 Index of @P2 must be 1");
-		                Assert.AreEqual ("Param2", OdbcCmd.Parameters["@P2"].Value, "#10 Value of added parameter must be Param2");
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters["@P2"].OdbcType, "#11 Parameters with null value must be of type NVarChar");
+				rt = OdbcCmd.Parameters.AddWithValue ("@P2", "Param2");
+				Assert.AreEqual (typeof(OdbcParameter), rt.GetType(), "#1a AddWithValue didnt retuen type OdbcParameter");
+				Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#2 AddWithValue failed for valid parameter name and value");
+				Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("@P2"), "#3 collection does not contain @P2");
+				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ("@P2"), "#4 Index of added parameter must be 1");
+				Assert.AreEqual ("Param2", OdbcCmd.Parameters["@P2"].Value, "#5 Value of added parameter must be Param2");
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[1].OdbcType, "#6 Parameters with null value must be of type NVarChar");
 
-		                //Two different parameters with same name but at different positions ie 1 and 2
-		                Assert.AreEqual ("@P2",OdbcCmd.Parameters[1].ParameterName, "#12 The parameter at index 1 must be @P2");
-		                Assert.AreEqual ("@P2",OdbcCmd.Parameters[2].ParameterName, "#13 The parameter at index 2 must be @P2");
+				OdbcCmd.Parameters.AddWithValue ("@P2", "Param2ReAdded"); //adding again
+				Assert.AreEqual (3, OdbcCmd.Parameters.Count, "#7 AddWithValue must append at the end of the collection even for same parameter names");
+				Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("@P2"), "#8 collection does not contain @P2");
+				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf ("@P2"), "#9 Index of @P2 must be 1");
+				Assert.AreEqual ("Param2", OdbcCmd.Parameters["@P2"].Value, "#10 Value of added parameter must be Param2");
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters["@P2"].OdbcType, "#11 Parameters with null value must be of type NVarChar");
 
-		                //Confirming the parameters by checking their values
-		                Assert.AreEqual ("Param2",OdbcCmd.Parameters[1].Value, "#14The parameter at index 1 must have value Param2");
-		                Assert.AreEqual ("Param2ReAdded",OdbcCmd.Parameters[2].Value, "#15The parameter at index 2 must have value Param2ReAdded");
-		              
-		                //Testing for null values
-		                OdbcCmd.Parameters.AddWithValue (null, null);
-		                Assert.AreEqual (4, OdbcCmd.Parameters.Count, "#16 AddWithValue must accept null parameter names and null values");
-		                Assert.AreEqual (false, OdbcCmd.Parameters.Contains (null), "#17 AddWithValue must return false for Contains (null)");
-		                Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (null), "#18 AddWithValue must return -1 for IndexOf (null)");
-		                Assert.AreEqual (null, OdbcCmd.Parameters["Parameter1"].Value, "#19 Value of added parameter must be null");
-		                Assert.AreEqual ("Parameter1",OdbcCmd.Parameters[3].ParameterName, "#20 The parameter at index 3 must be Parameter1");
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[3].OdbcType, "#21 Parameters with null value must be of type NVarChar");
+				//Two different parameters with same name but at different positions ie 1 and 2
+				Assert.AreEqual ("@P2",OdbcCmd.Parameters[1].ParameterName, "#12 The parameter at index 1 must be @P2");
+				Assert.AreEqual ("@P2",OdbcCmd.Parameters[2].ParameterName, "#13 The parameter at index 2 must be @P2");
 
-		                OdbcCmd.Parameters.AddWithValue (null, null); //adding another null parameter
-		                Assert.AreEqual (5, OdbcCmd.Parameters.Count, "#22 AddWithValue must accept null parameter names and null values");
-		                Assert.AreEqual (false, OdbcCmd.Parameters.Contains (null), "#23 AddWithValue must return false for Contains (null)");
-		                Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (null), "#24 AddWithValue must return -1 for IndexOf (null)");
-		                Assert.AreEqual (null, OdbcCmd.Parameters["Parameter2"].Value, "#25 Value of added parameter must be null");
-		                Assert.AreEqual ("Parameter2",OdbcCmd.Parameters[4].ParameterName, "#26 The parameter at index 1 must be Parameter2");
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[4].OdbcType, "#27 Parameters with null value must be of type NVarChar");
+				//Confirming the parameters by checking their values
+				Assert.AreEqual ("Param2",OdbcCmd.Parameters[1].Value, "#14The parameter at index 1 must have value Param2");
+				Assert.AreEqual ("Param2ReAdded",OdbcCmd.Parameters[2].Value, "#15The parameter at index 2 must have value Param2ReAdded");
 
-						//Testing for empty strings
-		                OdbcCmd.Parameters.AddWithValue ("", ""); //adding empty parameter
-		                Assert.AreEqual (6, OdbcCmd.Parameters.Count, "#28 AddWithValue must accept empty names and empty values");
-		                Assert.AreEqual (false, OdbcCmd.Parameters.Contains (""), "#29 AddWithValue must return false for Contains ('')");
-		                Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (""), "#30 AddWithValue must return -1 for IndexOf ('')");
-		                Assert.AreEqual ("Parameter3",OdbcCmd.Parameters[5].ParameterName, "#31 The parameter at index 5 must be Parameter3");      
-		                Assert.AreEqual ("",OdbcCmd.Parameters[5].Value, "#32 The parameter at index 5 must have value as empty string");      
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[5].OdbcType, "#33 Parameters with null value must be of type NVarChar");
-		                
-		                OdbcCmd.Parameters.AddWithValue ("", ""); //adding another empty parameter
-		                Assert.AreEqual (7, OdbcCmd.Parameters.Count, "#34 AddWithValue must accept empty names and empty values");
-		                Assert.AreEqual (false, OdbcCmd.Parameters.Contains (""), "#35 AddWithValue must return false for Contains ('')");
-		                Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (""), "#36 AddWithValue must return -1 for IndexOf ('')");
-		                Assert.AreEqual ("Parameter4",OdbcCmd.Parameters[6].ParameterName, "#37 The parameter at index 6 must have name as Parameter4");
-		                Assert.AreEqual ("",OdbcCmd.Parameters[6].Value, "#38 The parameter at index 6 must have value as empty string");                                                    
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[6].OdbcType, "#39 Parameters with null value must be of type NVarChar");
-		                
-		                OdbcCmd.Parameters.AddWithValue ("foo", null);
-		                Assert.AreEqual (8, OdbcCmd.Parameters.Count, "#40 AddWithValue must accept string names and null values");
-		                Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("foo"), "#41 AddWithValue must return true for Contains ('foo')");
-		                Assert.AreEqual (7, OdbcCmd.Parameters.IndexOf ("foo"), "#42 AddWithValue must return 7 for IndexOf ('foo')");
-		                Assert.AreEqual ("foo",OdbcCmd.Parameters[7].ParameterName, "#43 The parameter at index 7 must have name foo");
-		                Assert.AreEqual (null,OdbcCmd.Parameters[7].Value, "#44 The parameter at index 7 must have value as null");                                                    
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[7].OdbcType, "#45 Parameters with null value must be of type NVarChar");
-		                
-		                OdbcCmd.Parameters.AddWithValue (null, 2);
-		                Assert.AreEqual (9, OdbcCmd.Parameters.Count, "#46 AddWithValue must accept empty names and empty values");
-		                Assert.AreEqual (false, OdbcCmd.Parameters.Contains (null), "#47 AddWithValue must return false for Contains (null)");
-		                Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (null), "#48 AddWithValue must return -1 for IndexOf ('')");
-		                Assert.AreEqual ("Parameter5",OdbcCmd.Parameters[8].ParameterName, "#49 The parameter at index 8 must have name as Parameter5");
-		                Assert.AreEqual (2,OdbcCmd.Parameters[8].Value, "#50 The parameter at index 8 must have value as 2");                                                    
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[8].OdbcType, "#51 Parameter must be of type NVarChar");
-						
+				//Testing for null values
+				OdbcCmd.Parameters.AddWithValue (null, null);
+				Assert.AreEqual (4, OdbcCmd.Parameters.Count, "#16 AddWithValue must accept null parameter names and null values");
+				Assert.AreEqual (false, OdbcCmd.Parameters.Contains (null), "#17 AddWithValue must return false for Contains (null)");
+				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (null), "#18 AddWithValue must return -1 for IndexOf (null)");
+				Assert.AreEqual (null, OdbcCmd.Parameters["Parameter1"].Value, "#19 Value of added parameter must be null");
+				Assert.AreEqual ("Parameter1",OdbcCmd.Parameters[3].ParameterName, "#20 The parameter at index 3 must be Parameter1");
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[3].OdbcType, "#21 Parameters with null value must be of type NVarChar");
+
+				OdbcCmd.Parameters.AddWithValue (null, null); //adding another null parameter
+				Assert.AreEqual (5, OdbcCmd.Parameters.Count, "#22 AddWithValue must accept null parameter names and null values");
+				Assert.AreEqual (false, OdbcCmd.Parameters.Contains (null), "#23 AddWithValue must return false for Contains (null)");
+				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (null), "#24 AddWithValue must return -1 for IndexOf (null)");
+				Assert.AreEqual (null, OdbcCmd.Parameters["Parameter2"].Value, "#25 Value of added parameter must be null");
+				Assert.AreEqual ("Parameter2",OdbcCmd.Parameters[4].ParameterName, "#26 The parameter at index 1 must be Parameter2");
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[4].OdbcType, "#27 Parameters with null value must be of type NVarChar");
+
+				//Testing for empty strings
+				OdbcCmd.Parameters.AddWithValue ("", ""); //adding empty parameter
+				Assert.AreEqual (6, OdbcCmd.Parameters.Count, "#28 AddWithValue must accept empty names and empty values");
+				Assert.AreEqual (false, OdbcCmd.Parameters.Contains (""), "#29 AddWithValue must return false for Contains ('')");
+				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (""), "#30 AddWithValue must return -1 for IndexOf ('')");
+				Assert.AreEqual ("Parameter3",OdbcCmd.Parameters[5].ParameterName, "#31 The parameter at index 5 must be Parameter3");      
+				Assert.AreEqual ("",OdbcCmd.Parameters[5].Value, "#32 The parameter at index 5 must have value as empty string");      
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[5].OdbcType, "#33 Parameters with null value must be of type NVarChar");
+
+				OdbcCmd.Parameters.AddWithValue ("", ""); //adding another empty parameter
+				Assert.AreEqual (7, OdbcCmd.Parameters.Count, "#34 AddWithValue must accept empty names and empty values");
+				Assert.AreEqual (false, OdbcCmd.Parameters.Contains (""), "#35 AddWithValue must return false for Contains ('')");
+				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (""), "#36 AddWithValue must return -1 for IndexOf ('')");
+				Assert.AreEqual ("Parameter4",OdbcCmd.Parameters[6].ParameterName, "#37 The parameter at index 6 must have name as Parameter4");
+				Assert.AreEqual ("",OdbcCmd.Parameters[6].Value, "#38 The parameter at index 6 must have value as empty string");                                                    
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[6].OdbcType, "#39 Parameters with null value must be of type NVarChar");
+
+				OdbcCmd.Parameters.AddWithValue ("foo", null);
+				Assert.AreEqual (8, OdbcCmd.Parameters.Count, "#40 AddWithValue must accept string names and null values");
+				Assert.AreEqual (true, OdbcCmd.Parameters.Contains ("foo"), "#41 AddWithValue must return true for Contains ('foo')");
+				Assert.AreEqual (7, OdbcCmd.Parameters.IndexOf ("foo"), "#42 AddWithValue must return 7 for IndexOf ('foo')");
+				Assert.AreEqual ("foo",OdbcCmd.Parameters[7].ParameterName, "#43 The parameter at index 7 must have name foo");
+				Assert.AreEqual (null,OdbcCmd.Parameters[7].Value, "#44 The parameter at index 7 must have value as null");                                                    
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[7].OdbcType, "#45 Parameters with null value must be of type NVarChar");
+
+				OdbcCmd.Parameters.AddWithValue (null, 2);
+				Assert.AreEqual (9, OdbcCmd.Parameters.Count, "#46 AddWithValue must accept empty names and empty values");
+				Assert.AreEqual (false, OdbcCmd.Parameters.Contains (null), "#47 AddWithValue must return false for Contains (null)");
+				Assert.AreEqual (-1, OdbcCmd.Parameters.IndexOf (null), "#48 AddWithValue must return -1 for IndexOf ('')");
+				Assert.AreEqual ("Parameter5",OdbcCmd.Parameters[8].ParameterName, "#49 The parameter at index 8 must have name as Parameter5");
+				Assert.AreEqual (2,OdbcCmd.Parameters[8].Value, "#50 The parameter at index 8 must have value as 2");                                                    
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[8].OdbcType, "#51 Parameter must be of type NVarChar");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		
+
 		[Test]
 		public void DefaultNamesAndValuesTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand OdbcCmd = (OdbcCommand) conn.CreateCommand ();
+				OdbcCommand OdbcCmd = conn.CreateCommand ();
 				OdbcCmd.CommandType = CommandType.Text;
 				OdbcCmd.CommandText = "SELECT fname FROM employee WHERE lname=? AND age=?";
 
 				/*OdbcParameter p1Lname = */OdbcCmd.Parameters.Add ("@lname", OdbcType.Text, 15);
-		                Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
+				Assert.AreEqual (1, OdbcCmd.Parameters.Count, "#1 Initialization error, the collection does not contain desired no. of parameters");
 
-		                OdbcParameter p2Age = new OdbcParameter ();
-		                OdbcParameter p3Tmp = new OdbcParameter ();
+				OdbcParameter p2Age = new OdbcParameter ();
+				OdbcParameter p3Tmp = new OdbcParameter ();
 
 				OdbcCmd.Parameters.Add (p2Age);
-		                Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#2 The collection must contain 2 parameters");
-		                Assert.AreEqual (true, OdbcCmd.Parameters.Contains (p2Age), "#3 Collection does not contain p2Age");
-		                Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf (p2Age), "#4 Index of p2Age must be 1");
-		                Assert.AreEqual (null, OdbcCmd.Parameters[1].Value, "#5 Value of added parameter must be null");
-		                Assert.AreEqual ("Parameter1",OdbcCmd.Parameters[1].ParameterName, "#6 The parameter must have a default name");
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[1].OdbcType, "#7 Parameters with null value must be of type NVarChar");
+				Assert.AreEqual (2, OdbcCmd.Parameters.Count, "#2 The collection must contain 2 parameters");
+				Assert.AreEqual (true, OdbcCmd.Parameters.Contains (p2Age), "#3 Collection does not contain p2Age");
+				Assert.AreEqual (1, OdbcCmd.Parameters.IndexOf (p2Age), "#4 Index of p2Age must be 1");
+				Assert.AreEqual (null, OdbcCmd.Parameters[1].Value, "#5 Value of added parameter must be null");
+				Assert.AreEqual ("Parameter1",OdbcCmd.Parameters[1].ParameterName, "#6 The parameter must have a default name");
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[1].OdbcType, "#7 Parameters with null value must be of type NVarChar");
 
-		                OdbcCmd.Parameters.Insert (2,p3Tmp);
-		                Assert.AreEqual (3, OdbcCmd.Parameters.Count, "#8 The collection must contain 3 parameters");
-		                Assert.AreEqual (true, OdbcCmd.Parameters.Contains (p3Tmp), "#9 Collection does not contain p3Tmp");
-		                Assert.AreEqual (2, OdbcCmd.Parameters.IndexOf (p3Tmp), "#10 Index of p3Tmp must be 2");
-		                Assert.AreEqual (null, OdbcCmd.Parameters[2].Value, "#11 Value of added parameter must be null");
-		                Assert.AreEqual ("Parameter2",OdbcCmd.Parameters[2].ParameterName, "#12 The parameter must have a default name");
-		                Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[2].OdbcType, "#13 Parameters with null value must be of type NVarChar");
+				OdbcCmd.Parameters.Insert (2,p3Tmp);
+				Assert.AreEqual (3, OdbcCmd.Parameters.Count, "#8 The collection must contain 3 parameters");
+				Assert.AreEqual (true, OdbcCmd.Parameters.Contains (p3Tmp), "#9 Collection does not contain p3Tmp");
+				Assert.AreEqual (2, OdbcCmd.Parameters.IndexOf (p3Tmp), "#10 Index of p3Tmp must be 2");
+				Assert.AreEqual (null, OdbcCmd.Parameters[2].Value, "#11 Value of added parameter must be null");
+				Assert.AreEqual ("Parameter2",OdbcCmd.Parameters[2].ParameterName, "#12 The parameter must have a default name");
+				Assert.AreEqual (OdbcType.NVarChar,OdbcCmd.Parameters[2].OdbcType, "#13 Parameters with null value must be of type NVarChar");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-#endif                
+#endif
 	}
 }

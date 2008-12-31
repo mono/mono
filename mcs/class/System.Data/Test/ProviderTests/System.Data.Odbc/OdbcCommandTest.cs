@@ -42,13 +42,31 @@ namespace MonoTests.System.Data
 	[Category ("odbc")]
 	public class OdbcCommandTest
 	{
+		OdbcConnection conn;
+		OdbcCommand cmd;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+			cmd = conn.CreateCommand ();
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (cmd != null)
+				cmd.Dispose ();
+			ConnectionManager.Singleton.CloseConnection ();
+		}
+
 		[Test]
 		public void PrepareAndExecuteTest ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			OdbcDataReader reader = null;
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				
 				string tableName = DBHelper.GetRandomName ("PAE", 3);
 				try {
 					// setup table
@@ -59,7 +77,7 @@ namespace MonoTests.System.Data
 					DBHelper.ExecuteNonQuery (conn, query);
 
 					query = String.Format ("INSERT INTO {0} values (?, ?)", tableName);
-					OdbcCommand cmd = (OdbcCommand) conn.CreateCommand ();
+					cmd = conn.CreateCommand ();
 					cmd.CommandText = query;
 					cmd.Prepare ();
 
@@ -72,109 +90,238 @@ namespace MonoTests.System.Data
 					param1.Value = 2;
 					param2.Value = 6;
 					cmd.ExecuteNonQuery ();
-					
-					cmd.CommandText = "select * from " + tableName;
-					cmd.Parameters.Clear ();
-					
-					OdbcDataReader reader = cmd.ExecuteReader ();
-					int count = 0;
-					while (reader.Read ()){
-						count++;
-					}
+
+					cmd.CommandText = "select id, small_id from " + tableName + " order by id asc";
+					reader = cmd.ExecuteReader ();
+
+#if NET_2_0
+					Assert.IsTrue (reader.Read (), "#A1");
+					Assert.AreEqual (1, reader.GetValue (0), "#A2");
+					Assert.AreEqual (5, reader.GetValue (1), "#A3");
+					Assert.IsTrue (reader.Read (), "#A4");
+					Assert.AreEqual (2, reader.GetValue (0), "#A5");
+					Assert.AreEqual (6, reader.GetValue (1), "#A6");
+					Assert.IsFalse (reader.Read (), "#A7");
+#else
+					// in .NET 1.x, changing the CommandText
+					// does not reset prepared state
+					Assert.IsFalse (reader.Read (), "#A1");
+#endif
 					reader.Close ();
-					Assert.AreEqual (2, count, "#1");
+					cmd.Dispose ();
+
+					cmd = conn.CreateCommand ();
+					cmd.CommandText = "select id, small_id from " + tableName + " order by id asc";
+
+					reader = cmd.ExecuteReader ();
+					Assert.IsTrue (reader.Read (), "#B1");
+					Assert.AreEqual (1, reader.GetValue (0), "#B2");
+					Assert.AreEqual (5, reader.GetValue (1), "#B3");
+					Assert.IsTrue (reader.Read (), "#B4");
+					Assert.AreEqual (2, reader.GetValue (0), "#B5");
+					Assert.AreEqual (6, reader.GetValue (1), "#B6");
+#if NET_2_0
+					Assert.IsFalse (reader.Read (), "#B7");
+#else
+					Assert.IsTrue (reader.Read (), "#B7");
+					Assert.AreEqual (2, reader.GetValue (0), "#B8");
+					Assert.AreEqual (6, reader.GetValue (1), "#B9");
+#endif
 				} finally {
 					DBHelper.ExecuteNonQuery (conn, "DROP TABLE " + tableName);
 				}
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				if (reader != null)
+					reader.Close ();
 			}
 		}
 
 		/// <summary>
-                /// Test String parameters to ODBC Command
-                /// </summary>
-                [Test]
-                public void ExecuteStringParameterTest()
-                {
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+		/// Test String parameters to ODBC Command
+		/// </summary>
+		[Test]
+		public void ExecuteStringParameterTest()
+		{
+			cmd.CommandText = "select count(*) from employee where fname=?;";
+			string colvalue = "suresh";
+			OdbcParameter param = cmd.Parameters.Add("@un", OdbcType.VarChar);
+			param.Value = colvalue;
+			int count =  Convert.ToInt32 (cmd.ExecuteScalar ());
+			Assert.AreEqual (1, count, "#1 String parameter not passed correctly");
+		}
+
+		/// <summary>
+		/// Test ExecuteNonQuery
+		/// </summary>
+		[Test]
+		public void ExecuteNonQueryTest ()
+		{
+			int ret;
+
+			cmd.CommandType = CommandType.Text;
+			cmd.CommandText = "select count(*) from employee where id <= ?;";
+			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
+			ret = cmd.ExecuteNonQuery ();
+#if NET_2_0
+			switch (ConnectionManager.Singleton.Engine.Type) {
+			case EngineType.SQLServer:
+				Assert.AreEqual (-1, ret, "#1");
+				break;
+			case EngineType.MySQL:
+				Assert.AreEqual (1, ret, "#1");
+				break;
+			default:
+				Assert.Fail ("Engine type not supported.");
+				break;
+			}
+#else
+			Assert.AreEqual (-1, ret,  "#1");
+#endif
+
+			cmd = conn.CreateCommand ();
+			cmd.CommandType = CommandType.Text;
+			cmd.CommandText = "select * from employee where id <= ?;";
+			cmd.Parameters.Add ("@un", OdbcType.Int).Value = 3;
+			ret = cmd.ExecuteNonQuery ();
+#if NET_2_0
+			switch (ConnectionManager.Singleton.Engine.Type) {
+			case EngineType.SQLServer:
+				Assert.AreEqual (-1, ret, "#2");
+				break;
+			case EngineType.MySQL:
+				Assert.AreEqual (3, ret, "#2");
+				break;
+			default:
+				Assert.Fail ("Engine type not supported.");
+				break;
+			}
+#else
+			Assert.AreEqual (-1, ret, "#2");
+#endif
+
+			cmd = conn.CreateCommand ();
+			cmd.CommandType = CommandType.Text;
+			cmd.CommandText = "select * from employee where id <= 3;";
+			ret = cmd.ExecuteNonQuery ();
+#if NET_2_0
+			switch (ConnectionManager.Singleton.Engine.Type) {
+			case EngineType.SQLServer:
+				Assert.AreEqual (-1, ret, "#3");
+				break;
+			case EngineType.MySQL:
+				Assert.AreEqual (3, ret, "#3");
+				break;
+			default:
+				Assert.Fail ("Engine type not supported.");
+				break;
+			}
+#else
+			Assert.AreEqual (-1, ret, "#3");
+#endif
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand dbcmd = (OdbcCommand) conn.CreateCommand ();
-				dbcmd.CommandType = CommandType.Text;
-				dbcmd.CommandText = "select count(*) from employee where fname=?;";
-				string colvalue = "suresh";
-				OdbcParameter param = dbcmd.Parameters.Add("@un", OdbcType.VarChar);
-				param.Value = colvalue;
-				int count =  Convert.ToInt32 (dbcmd.ExecuteScalar ());
-				Assert.AreEqual (1, count, "#1 String parameter not passed correctly");
+				// insert
+				cmd = conn.CreateCommand ();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "insert into employee (id, fname, dob, doj) values " +
+					" (6001, 'tttt', '1999-01-22', '2005-02-11');";
+				ret = cmd.ExecuteNonQuery ();
+				Assert.AreEqual (1, ret, "#4");
+
+				cmd = conn.CreateCommand ();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "insert into employee (id, fname, dob, doj) values " +
+					" (?, 'tttt', '1999-01-22', '2005-02-11');";
+				cmd.Parameters.Add (new OdbcParameter ("id", OdbcType.Int));
+				cmd.Parameters [0].Value = 6002;
+				cmd.Prepare ();
+				ret = cmd.ExecuteNonQuery ();
+				Assert.AreEqual (1, ret, "#5");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				// delete
+				cmd = (OdbcCommand) conn.CreateCommand ();
+				cmd.CommandType = CommandType.Text;
+				cmd.CommandText = "delete from employee where id > 6000";
+				ret = cmd.ExecuteNonQuery ();
+				Assert.AreEqual (2, ret, "#6");
 			}
 		}
 
 		[Test]
-		public void bug341743 ()
+		public void ExecuteNonQuery_Query_Invalid ()
 		{
-			OdbcConnection conn = (OdbcConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
-			OdbcCommand cmd = null;
+			cmd.CommandText = "select id1 from numeric_family"; ;
 			try {
-				cmd = conn.CreateCommand ();
-				cmd.CommandText = "SELECT 'a'";
 				cmd.ExecuteNonQuery ();
-
-				conn.Dispose ();
-
-				Assert.AreSame (conn, cmd.Connection, "#1");
-				cmd.Dispose ();
-				Assert.IsNull (cmd.Connection, "#2");
-			} finally {
-				if (cmd != null)
-					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
+				Assert.Fail ("#A1");
+			} catch (OdbcException ex) {
+				// Invalid column name 'id1'
+				Assert.AreEqual (typeof (OdbcException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A5");
 			}
+
+			// ensure connection is not closed after error
+
+			int result;
+
+			cmd.CommandText = "INSERT INTO numeric_family (id, type_int) VALUES (6100, 200)";
+			result = cmd.ExecuteNonQuery ();
+			Assert.AreEqual (1, result, "#B1");
+
+			cmd.CommandText = "DELETE FROM numeric_family WHERE id = 6100";
+			result = cmd.ExecuteNonQuery ();
+			Assert.AreEqual (1, result, "#B1");
 		}
 
-		/// <summary>
-                /// Test ExecuteNonQuery
-                /// </summary>
-                [Test]
-                public void ExecuteNonQueryTest ()
-                {
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+		[Test]
+		public void Dispose ()
+		{
+			OdbcTransaction trans = null;
+
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				OdbcCommand dbcmd = (OdbcCommand) conn.CreateCommand ();
-				dbcmd.CommandType = CommandType.Text;
-				dbcmd.CommandText = "select count(*) from employee where id <= ?;";
-				int value = 3;
-				dbcmd.Parameters.Add("@un", OdbcType.Int).Value = value;
-				int ret = dbcmd.ExecuteNonQuery();
-				Assert.AreEqual (-1, ret,  "#1 ExecuteNonQuery not working");
+				trans = conn.BeginTransaction ();
 
-				try {
-					// insert
-					dbcmd = (OdbcCommand) conn.CreateCommand ();
-					dbcmd.CommandType = CommandType.Text;
-					dbcmd.CommandText = "insert into employee (id, fname, dob, doj) values " +
-						" (6001, 'tttt', '1999-01-22', '2005-02-11');";
-					ret = dbcmd.ExecuteNonQuery();
-					Assert.AreEqual (1, ret, "#2 ExecuteNonQuery not working");
-				} finally {
-					// delete
-					dbcmd = (OdbcCommand) conn.CreateCommand ();
-					dbcmd.CommandType = CommandType.Text;
-					dbcmd.CommandText = "delete from employee where id > 6000";
-					ret = dbcmd.ExecuteNonQuery();
-					Assert.AreEqual (true, ret > 0, "#3 ExecuteNonQuery for deletion not working");
-				}
-				
+				cmd.CommandText = "SELECT 'a'";
+				cmd.CommandTimeout = 67;
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.DesignTimeVisible = false;
+				cmd.Parameters.Add (new OdbcParameter ());
+				cmd.Transaction = trans;
+				cmd.UpdatedRowSource = UpdateRowSource.OutputParameters;
+
+				cmd.Dispose ();
+
+#if NET_2_0
+				Assert.AreEqual (string.Empty, cmd.CommandText, "#1");
+#else
+				Assert.AreEqual ("SELECT 'a'", cmd.CommandText, "#1");
+#endif
+				Assert.AreEqual (67, cmd.CommandTimeout, "#2");
+				Assert.AreEqual (CommandType.StoredProcedure, cmd.CommandType, "#3");
+				Assert.IsNull (cmd.Connection, "#4");
+				Assert.IsFalse (cmd.DesignTimeVisible, "#5");
+				Assert.IsNotNull (cmd.Parameters, "#6");
+				Assert.AreEqual (0, cmd.Parameters.Count, "#7");
+				Assert.IsNull (cmd.Transaction, "#8");
+				Assert.AreEqual (UpdateRowSource.OutputParameters, cmd.UpdatedRowSource, "#9");
 			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
+				if (trans != null)
+					trans.Rollback ();
 			}
 		}
 
+		[Test] // bug #341743
+		public void Dispose_Connection_Disposed ()
+		{
+			cmd.CommandText = "SELECT 'a'";
+			cmd.ExecuteNonQuery ();
+
+			conn.Dispose ();
+
+			Assert.AreSame (conn, cmd.Connection, "#1");
+			cmd.Dispose ();
+			Assert.IsNull (cmd.Connection, "#2");
+		}
 	}
 }

@@ -34,14 +34,12 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Data.Odbc
 {
-
-        [TestFixture]
-        [Category ("odbc")]
-        public class OdbcDataAdapterTest
+	[TestFixture]
+	[Category ("odbc")]
+	public class OdbcDataAdapterTest
 	{
-	  
 		[Test]
-		public void FillTest () 
+		public void FillTest ()
 		{
 			IDbConnection conn = ConnectionManager.Singleton.Connection;
 			try {
@@ -75,6 +73,7 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+
 		[Test]
 		public void InsertUtf8Test ()
 		{
@@ -101,12 +100,15 @@ namespace MonoTests.System.Data.Odbc
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
-		private int DoExecuteNonQuery (OdbcConnection conn, string sql) {
+
+		private int DoExecuteNonQuery (OdbcConnection conn, string sql)
+		{
 			OdbcCommand cmd = new OdbcCommand (sql, conn);
 			return cmd.ExecuteNonQuery ();
 		}
 
-		private int DoExecuteScalar (OdbcConnection conn, string sql) {
+		private int DoExecuteScalar (OdbcConnection conn, string sql)
+		{
 			OdbcCommand cmd = new OdbcCommand (sql, conn);
 			object value = cmd.ExecuteScalar ();
 			return (int) Convert.ChangeType (value, typeof (int));

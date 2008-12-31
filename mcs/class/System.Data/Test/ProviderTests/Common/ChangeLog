@@ -1,3 +1,16 @@
+2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConnectionConfig.cs:  Holds information on a specific connection and
+	corresponding engine to test.
+	* EngineConfig.cs: Holds information on the capabilities and behavior
+	of an RDBMS engine.
+	* EngineType.cs: Defines different database engines supported by the
+	provider tests.
+	* ConnectionManager.cs: Use DbProviderFactory and DbConnection
+	on 2.0 profile. Added support for new Connection/Engine configuration.
+	* ProviderTestsConfigurationHandler.cs: IConfigurationSectionHandler
+	for the ProviderTests section.
+
 2008-07-28  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConnectionManager.cs: Fixed exception message. Code formatting.

@@ -142,23 +142,47 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
+		[Test] // bug #341743
+		public void Dispose_Connection_Disposed ()
+		{
+			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
+			IDbCommand cmd = null;
+			try {
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT 'a'";
+				cmd.ExecuteNonQuery ();
+
+				conn.Dispose ();
+
+				Assert.AreSame (conn, cmd.Connection, "#1");
+				cmd.Dispose ();
+				Assert.AreSame (conn, cmd.Connection, "#2");
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
 		[Test]
 		public void ExecuteScalar ()
 		{
 			conn = new SqlConnection (connectionString);
-			cmd = new SqlCommand ("" , conn);
+			cmd = new SqlCommand ("", conn);
 			cmd.CommandText = "Select count(*) from numeric_family where id<=4";
 
 			// Check the Return value for a Correct Query 
 			object result = 0;
 			conn.Open ();
 			result = cmd.ExecuteScalar ();
-			Assert.AreEqual (4, (int)result, "#A1 Query Result returned is incorrect");
+			Assert.AreEqual (4, (int) result, "#A1 Query Result returned is incorrect");
 
 			cmd.CommandText = "select id , type_bit from numeric_family order by id asc";
 			result = Convert.ToInt32 (cmd.ExecuteScalar ());
 			Assert.AreEqual (1, result,
-				"#A2 ExecuteScalar Should return (1,1) the result set" );
+				"#A2 ExecuteScalar Should return (1,1) the result set");
 
 			cmd.CommandText = "select id from numeric_family where id=-1";
 			result = cmd.ExecuteScalar ();
@@ -185,17 +209,17 @@ namespace MonoTests.System.Data.SqlClient
 			int int_value = 20;
 			string string_value = "output value changed";
 			string return_value = "first column of first rowset";
-			
-			cmd.CommandText = 
-				"create procedure #tmp_executescalar_outparams "+
-				" (@p1 int, @p2 int out, @p3 varchar(200) out) "+
+
+			cmd.CommandText =
+				"create procedure #tmp_executescalar_outparams " +
+				" (@p1 int, @p2 int out, @p3 varchar(200) out) " +
 				"as " +
-				"select '" + return_value + "' as 'col1', @p1 as 'col2' "+
-				"set @p2 = @p2 * 2 "+
-				"set @p3 = N'" + string_value + "' "+
-				"select 'second rowset' as 'col1', 2 as 'col2' "+
+				"select '" + return_value + "' as 'col1', @p1 as 'col2' " +
+				"set @p2 = @p2 * 2 " +
+				"set @p3 = N'" + string_value + "' " +
+				"select 'second rowset' as 'col1', 2 as 'col2' " +
 				"return 1";
-			
+
 			cmd.CommandType = CommandType.Text;
 			cmd.ExecuteNonQuery ();
 
@@ -416,11 +440,11 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.CommandText += "update numeric_family set type_int=10 where id=100";
 				result = cmd.ExecuteNonQuery ();
 				Assert.AreEqual (1, result, "#A4 One row shud be updated");
-				
+
 				cmd.CommandText = "Delete from numeric_family where id=100";
 				result = cmd.ExecuteNonQuery ();
 				Assert.AreEqual (1, result, "#A5 One row shud be deleted");
-			}finally {
+			} finally {
 				trans.Dispose ();
 			}
 
@@ -511,19 +535,29 @@ namespace MonoTests.System.Data.SqlClient
 
 			try {
 				cmd.ExecuteNonQuery ();
-				Assert.Fail ("#1");
+				Assert.Fail ("#A1");
 			} catch (SqlException ex) {
 				// Invalid column name 'id1'
-				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#2");
-				Assert.AreEqual ((byte) 16, ex.Class, "#3");
-				Assert.IsNull (ex.InnerException, "#4");
-				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("'id1'") != -1, "#6");
-				Assert.AreEqual (207, ex.Number, "#7");
-				Assert.AreEqual ((byte) 1, ex.State, "#8");
-			} finally {
-				conn.Close ();
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#A2");
+				Assert.AreEqual ((byte) 16, ex.Class, "#A3");
+				Assert.IsNull (ex.InnerException, "#A4");
+				Assert.IsNotNull (ex.Message, "#A5");
+				Assert.IsTrue (ex.Message.IndexOf ("'id1'") != -1, "#A6");
+				Assert.AreEqual (207, ex.Number, "#A7");
+				Assert.AreEqual ((byte) 1, ex.State, "#A8");
 			}
+
+			// ensure connection is not closed after error
+
+			int result;
+
+			cmd.CommandText = "INSERT INTO numeric_family (id, type_int) VALUES (6100, 200)";
+			result = cmd.ExecuteNonQuery ();
+			Assert.AreEqual (1, result, "#B1");
+
+			cmd.CommandText = "DELETE FROM numeric_family WHERE id = 6100";
+			result = cmd.ExecuteNonQuery ();
+			Assert.AreEqual (1, result, "#B1");
 		}
 
 		[Test]
@@ -831,18 +865,18 @@ namespace MonoTests.System.Data.SqlClient
 			cmd = new SqlCommand ();
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
-			
+
 			cmd.CommandText = "Select id from numeric_family where id=@ID";
 			cmd.Connection = conn;
 
 			// Test if Parameters are correctly populated 
 			cmd.Parameters.Clear ();
 			cmd.Parameters.Add ("@ID", SqlDbType.TinyInt);
-			cmd.Parameters["@ID"].Value = 2;
+			cmd.Parameters ["@ID"].Value = 2;
 			cmd.Prepare ();
 			Assert.AreEqual (2, cmd.ExecuteScalar (), "#3 Prepared Stmt not working");
 
-			cmd.Parameters[0].Value = 3;
+			cmd.Parameters [0].Value = 3;
 			Assert.AreEqual (3, cmd.ExecuteScalar (), "#4 Prep Stmt not working");
 			conn.Close ();
 		}
@@ -853,7 +887,7 @@ namespace MonoTests.System.Data.SqlClient
 			cmd = new SqlCommand ();
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
-			
+
 			cmd.CommandText = "Select id from numeric_family where id=@ID";
 			cmd.Connection = conn;
 
@@ -880,7 +914,7 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText = "select type_varchar from string_family where type_varchar=@p1";
 			cmd.Parameters.Clear ();
 			cmd.Parameters.Add ("@p1", SqlDbType.VarChar);
-			cmd.Parameters["@p1"].Value = "afasasadadada";
+			cmd.Parameters ["@p1"].Value = "afasasadadada";
 			try {
 				cmd.Prepare ();
 				Assert.Fail ("#B1");
@@ -893,7 +927,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNotNull (ex.Message, "#B4");
 			}
 
- 			// Test Exception is not thrown for Stored Procs 
+			// Test Exception is not thrown for Stored Procs 
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.CommandText = "ABFSDSFSF";
 			cmd.Prepare ();
@@ -1146,7 +1180,7 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.Connection = null;
 				Assert.IsNull (cmd.Connection, "#D1");
 				Assert.AreSame (trans, cmd.Transaction, "#D2");
-			}finally {
+			} finally {
 				if (trans != null)
 					trans.Dispose ();
 				if (connA != null)
@@ -1381,28 +1415,121 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void ExecuteNonQueryTempProcedureTest ()
+		public void ExecuteNonQuery_StoredProcedure ()
 		{
+			SqlParameter param;
+			SqlCommand cmd = null;
+			SqlDataReader dr = null;
+			SqlParameter idParam;
+			SqlParameter dojParam;
+
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			conn.Open ();
+
+			// parameters with leading '@'
 			try {
-				ConnectionManager.Singleton.OpenConnection ();
 				// create temp sp here, should normally be created in Setup of test 
-				// case, but cannot be done right now because of ug #68978
+				// case, but cannot be done right now because of bug #68978
 				DBHelper.ExecuteNonQuery (conn, CREATE_TMP_SP_TEMP_INSERT_PERSON);
-				SqlCommand cmd = new SqlCommand();
-				cmd.Connection = conn;
+
+				cmd = conn.CreateCommand ();
 				cmd.CommandText = "#sp_temp_insert_employee";
 				cmd.CommandType = CommandType.StoredProcedure;
-				Object TestPar = "test";
-				cmd.Parameters.Add("@fname", SqlDbType.VarChar);
-				cmd.Parameters ["@fname"].Value = TestPar;
-				Assert.AreEqual(1,cmd.ExecuteNonQuery());
+				param = cmd.Parameters.Add ("@fname", SqlDbType.VarChar);
+				param.Value = "testA";
+				dojParam = cmd.Parameters.Add ("@doj", SqlDbType.DateTime);
+				dojParam.Direction = ParameterDirection.Output;
+				param = cmd.Parameters.Add ("@dob", SqlDbType.DateTime);
+				param.Value = new DateTime (2004, 8, 20);
+				idParam = cmd.Parameters.Add ("@id", SqlDbType.Int);
+				idParam.Direction = ParameterDirection.ReturnValue;
+
+				Assert.AreEqual (1, cmd.ExecuteNonQuery (), "#A1");
+				cmd.Dispose ();
+
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = "select fname, dob, doj from employee where id = @id";
+				param = cmd.Parameters.Add ("@id", SqlDbType.Int);
+				param.Value = idParam.Value;
+
+				dr = cmd.ExecuteReader ();
+				Assert.IsTrue (dr.Read (), "#A2");
+				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#A3");
+				Assert.AreEqual ("testA", dr.GetValue (0), "#A4");
+				Assert.AreEqual (typeof (DateTime), dr.GetFieldType (1), "#A5");
+				Assert.AreEqual (new DateTime (2004, 8, 20), dr.GetValue (1), "#A6");
+				Assert.AreEqual (typeof (DateTime), dr.GetFieldType (2), "#A7");
+				Assert.AreEqual (dojParam.Value, dr.GetValue (2), "#A8");
+				Assert.IsFalse (dr.Read (), "#A9");
+				cmd.Dispose ();
+				dr.Close ();
 			} finally {
-				DBHelper.ExecuteNonQuery (conn, string.Format (
-					CultureInfo.InvariantCulture,
-					DROP_STORED_PROCEDURE, "#sp_temp_insert_employee"));
-				DBHelper.ExecuteSimpleSP (conn, "sp_clean_person_table");
-				ConnectionManager.Singleton.CloseConnection ();
+				if (cmd != null)
+					cmd.Dispose ();
+				if (dr != null)
+					dr.Close ();
+				DBHelper.ExecuteNonQuery (conn, DROP_TMP_SP_TEMP_INSERT_PERSON);
+				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+				conn.Close ();
+			}
+
+			conn.Open ();
+
+			// parameters without leading '@'
+			try {
+				// create temp sp here, should normally be created in Setup of test 
+				// case, but cannot be done right now because of bug #68978
+				DBHelper.ExecuteNonQuery (conn, CREATE_TMP_SP_TEMP_INSERT_PERSON);
+
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = "#sp_temp_insert_employee";
+				cmd.CommandType = CommandType.StoredProcedure;
+				param = cmd.Parameters.Add ("fname", SqlDbType.VarChar);
+				param.Value = "testB";
+				dojParam = cmd.Parameters.Add ("doj", SqlDbType.DateTime);
+				dojParam.Direction = ParameterDirection.Output;
+				param = cmd.Parameters.Add ("dob", SqlDbType.DateTime);
+				param.Value = new DateTime (2004, 8, 20);
+				idParam = cmd.Parameters.Add ("id", SqlDbType.Int);
+				idParam.Direction = ParameterDirection.ReturnValue;
+
+#if NET_2_0
+				Assert.AreEqual (1, cmd.ExecuteNonQuery (), "#B1");
+				cmd.Dispose ();
+
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = "select fname, dob, doj from employee where id = @id";
+				param = cmd.Parameters.Add ("id", SqlDbType.Int);
+				param.Value = idParam.Value;
+
+				dr = cmd.ExecuteReader ();
+				Assert.IsTrue (dr.Read (), "#B2");
+				Assert.AreEqual (typeof (string), dr.GetFieldType (0), "#B3");
+				Assert.AreEqual ("testB", dr.GetValue (0), "#B4");
+				Assert.AreEqual (typeof (DateTime), dr.GetFieldType (1), "#B5");
+				Assert.AreEqual (new DateTime (2004, 8, 20), dr.GetValue (1), "#B6");
+				Assert.AreEqual (typeof (DateTime), dr.GetFieldType (2), "#B7");
+				Assert.AreEqual (dojParam.Value, dr.GetValue (2), "#B8");
+				Assert.IsFalse (dr.Read (), "#B9");
+				cmd.Dispose ();
+				dr.Close ();
+#else
+				try {
+					cmd.ExecuteNonQuery ();
+					Assert.Fail ("#B1");
+				} catch (SqlException ex) {
+					// Procedure or Function '#sp_temp_insert_employee'
+					// expects parameter '@fname', which was not supplied
+				}
+#endif
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				if (dr != null)
+					dr.Close ();
+				DBHelper.ExecuteNonQuery (conn, DROP_TMP_SP_TEMP_INSERT_PERSON);
+				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+				conn.Close ();
 			}
 		}
 
@@ -1414,14 +1541,14 @@ namespace MonoTests.System.Data.SqlClient
 			using (conn) {
 				conn.Open ();
 				SqlCommand cmd = conn.CreateCommand ();
-				String value =  new String ('a', 10000);
+				String value = new String ('a', 10000);
 				cmd.CommandText = String.Format ("Select '{0}'", value);
 				cmd.ExecuteNonQuery ();
 			}
 		}
 
 		[Test] // bug #319598
-		public void LongStoredProcTest()
+		public void LongStoredProcTest ()
 		{
 			SqlConnection conn = new SqlConnection (
 							connectionString + ";Pooling=false");
@@ -1430,7 +1557,7 @@ namespace MonoTests.System.Data.SqlClient
 				/*int size = conn.PacketSize;*/
 				SqlCommand cmd = conn.CreateCommand ();
 				// create a temp stored proc
-				cmd.CommandText  = "Create Procedure #sp_tmp_long_params ";
+				cmd.CommandText = "Create Procedure #sp_tmp_long_params ";
 				cmd.CommandText += "@p1 nvarchar (4000), ";
 				cmd.CommandText += "@p2 nvarchar (4000), ";
 				cmd.CommandText += "@p3 nvarchar (4000), ";
@@ -1446,21 +1573,21 @@ namespace MonoTests.System.Data.SqlClient
 				cmd.CommandType = CommandType.StoredProcedure;
 				cmd.CommandText = "#sp_tmp_long_params";
 
-				String value =  new String ('a', 4000);
+				String value = new String ('a', 4000);
 				SqlParameter p1 = new SqlParameter ("@p1",
-							SqlDbType.NVarChar,4000);
+							SqlDbType.NVarChar, 4000);
 				p1.Value = value;
 
 				SqlParameter p2 = new SqlParameter ("@p2",
-							SqlDbType.NVarChar,4000);
+							SqlDbType.NVarChar, 4000);
 				p2.Value = value;
 
 				SqlParameter p3 = new SqlParameter ("@p3",
-							SqlDbType.NVarChar,4000);
+							SqlDbType.NVarChar, 4000);
 				p3.Value = value;
 
 				SqlParameter p4 = new SqlParameter ("@p4",
-							SqlDbType.NVarChar,4000);
+							SqlDbType.NVarChar, 4000);
 				p4.Direction = ParameterDirection.Output;
 
 				// for now, name shud be @RETURN_VALUE  
@@ -1488,7 +1615,7 @@ namespace MonoTests.System.Data.SqlClient
 				conn.Open ();
 				SqlCommand cmd = conn.CreateCommand ();
 				cmd.CommandText = "select * from datetime_family where type_datetime=@p1";
-				cmd.Parameters.Add ("@p1", SqlDbType.DateTime).Value= "10-10-2005";
+				cmd.Parameters.Add ("@p1", SqlDbType.DateTime).Value = "10-10-2005";
 				// shudnt cause and exception
 				SqlDataReader rdr = cmd.ExecuteReader ();
 				rdr.Close ();
@@ -1507,31 +1634,31 @@ namespace MonoTests.System.Data.SqlClient
 				ConnectionManager.Singleton.OpenConnection ();
 				// create temp sp here, should normally be created in Setup of test 
 				// case, but cannot be done right now because of ug #68978
-				DBHelper.ExecuteNonQuery (conn, "CREATE PROCEDURE #Bug66630 (" 
+				DBHelper.ExecuteNonQuery (conn, "CREATE PROCEDURE #Bug66630 ("
 							  + "@Status smallint = 7"
 							  + ")"
 							  + "AS" + Environment.NewLine
 							  + "BEGIN" + Environment.NewLine
 							  + "SELECT CAST(5 AS int), @Status" + Environment.NewLine
 							  + "END");
-				
-				SqlCommand cmd = new SqlCommand("#Bug66630", conn);
-				cmd.CommandType = CommandType.StoredProcedure;
-				cmd.Parameters.Add("@Status", SqlDbType.Int).Value = Status.Error;
 
-				using (SqlDataReader dr = cmd.ExecuteReader()) {
+				SqlCommand cmd = new SqlCommand ("#Bug66630", conn);
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.Parameters.Add ("@Status", SqlDbType.Int).Value = Status.Error;
+
+				using (SqlDataReader dr = cmd.ExecuteReader ()) {
 					// one record should be returned
-					Assert.IsTrue(dr.Read(), "EnumParameterTest#1");
+					Assert.IsTrue (dr.Read (), "EnumParameterTest#1");
 					// we should get two field in the result
-					Assert.AreEqual(2, dr.FieldCount, "EnumParameterTest#2");
+					Assert.AreEqual (2, dr.FieldCount, "EnumParameterTest#2");
 					// field 1
-					Assert.AreEqual("int", dr.GetDataTypeName(0), "EnumParameterTest#3");
-					Assert.AreEqual(5, dr.GetInt32(0), "EnumParameterTest#4");
+					Assert.AreEqual ("int", dr.GetDataTypeName (0), "EnumParameterTest#3");
+					Assert.AreEqual (5, dr.GetInt32 (0), "EnumParameterTest#4");
 					// field 2
-					Assert.AreEqual("smallint", dr.GetDataTypeName(1), "EnumParameterTest#5");
-					Assert.AreEqual((short) Status.Error, dr.GetInt16(1), "EnumParameterTest#6");
+					Assert.AreEqual ("smallint", dr.GetDataTypeName (1), "EnumParameterTest#5");
+					Assert.AreEqual ((short) Status.Error, dr.GetInt16 (1), "EnumParameterTest#6");
 					// only one record should be returned
-					Assert.IsFalse(dr.Read(), "EnumParameterTest#7");
+					Assert.IsFalse (dr.Read (), "EnumParameterTest#7");
 				}
 			} finally {
 				DBHelper.ExecuteNonQuery (conn, "if exists (select name from sysobjects " +
@@ -1546,7 +1673,7 @@ namespace MonoTests.System.Data.SqlClient
 		{
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
-			
+
 			SqlTransaction trans = conn.BeginTransaction ();
 
 			cmd = new SqlCommand ();
@@ -1568,35 +1695,33 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText = query;
 			conn.Open ();
 			cmd.ExecuteNonQuery ();
-	
+
 			cmd.CommandType = CommandType.StoredProcedure;
 			cmd.CommandText = "#tmp_sp_proc";
-			using (SqlDataReader reader = cmd.ExecuteReader()) {
+			using (SqlDataReader reader = cmd.ExecuteReader ()) {
 				if (reader.Read ())
-					Assert.AreEqual ("data", reader.GetString(0),"#1");
+					Assert.AreEqual ("data", reader.GetString (0), "#1");
 				else
 					Assert.Fail ("#2 Select shud return data");
 			}
 			conn.Close ();
 		}
-	
+
 		[Test]
 		public void StoredProc_ParameterTest ()
 		{
-			string create_query  = CREATE_TMP_SP_PARAM_TEST;
-			string drop_query = string.Format (CultureInfo.InvariantCulture,
-				DROP_STORED_PROCEDURE, "#tmp_sp_param_test");
+			string create_query = CREATE_TMP_SP_PARAM_TEST;
 
 			SqlConnection conn = new SqlConnection (connectionString);
-			
 			conn.Open ();
+
 			SqlCommand cmd = conn.CreateCommand ();
 			int label = 0;
 			string error = string.Empty;
 			while (label != -1) {
 				try {
 					switch (label) {
-						case 0 :
+						case 0:
 							// Test BigInt Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "bigint"));
@@ -1610,7 +1735,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 1 :
+						case 1:
 							// Test Binary Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "binary(5)"));
@@ -1628,7 +1753,7 @@ namespace MonoTests.System.Data.SqlClient
 								new byte [] { 0, 0, 0, 0, 0 },
 								new byte [] { 0, 0 });
 							break;
-						case 2 :
+						case 2:
 							// Test Bit Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "bit"));
@@ -1640,7 +1765,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 3 :
+						case 3:
 							// Testing Char
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "char(10)"));
@@ -1659,7 +1784,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 4 :
+						case 4:
 							// Testing DateTime
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "datetime"));
@@ -1673,7 +1798,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 5 :
+						case 5:
 							// Test Decimal Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "decimal(10,2)"));
@@ -1687,7 +1812,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 6 :
+						case 6:
 							// Test Float Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "float"));
@@ -1703,7 +1828,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 7 :
+						case 7:
 							// Testing Image
 							/* NOT WORKING
 							   DBHelper.ExecuteNonQuery (conn,
@@ -1713,7 +1838,7 @@ namespace MonoTests.System.Data.SqlClient
 							   rpc_helper_function (cmd, SqlDbType.Image, 0, );
 							   /* NOT WORKING*/
 							break;
-						case 8 :
+						case 8:
 							// Test Integer Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "int"));
@@ -1733,7 +1858,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 9 :
+						case 9:
 							// Test Money Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "money"));
@@ -1800,7 +1925,7 @@ namespace MonoTests.System.Data.SqlClient
 								200000000.234450m, 200000000.2345m, 200000000.2345m);
 							*/
 							break;
-						case 23 :
+						case 23:
 							// Test NChar Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "nchar(10)"));
@@ -1819,7 +1944,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value);
 							*/
 							break;
-						case 10 :
+						case 10:
 							// Test NText Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "ntext"));
@@ -1829,7 +1954,7 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.NText, 0, null);
 							*/
 							break;
-						case 11 :
+						case 11:
 							// Test NVarChar Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "nvarchar(10)"));
@@ -1844,7 +1969,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value, DBNull.Value);
 							*/
 							break;
-						case 12 :
+						case 12:
 							// Test Real Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "real"));
@@ -1869,7 +1994,7 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
 								DBNull.Value, DBNull.Value, DBNull.Value);
 							break;
-						case 13 :
+						case 13:
 							// Test SmallDateTime Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "smalldatetime"));
@@ -1881,7 +2006,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 14 :
+						case 14:
 							// Test SmallInt Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "smallint"));
@@ -1899,7 +2024,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value, DBNull.Value,
 								DBNull.Value);
 							break;
-						case 15 :
+						case 15:
 							// Test SmallMoney Param
 							DBHelper.ExecuteNonQuery (conn,
 									String.Format (create_query, "smallmoney"));
@@ -1963,7 +2088,7 @@ namespace MonoTests.System.Data.SqlClient
 								4.543250m, 4.5433m, 4.5433m);
 							*/
 							break;
-						case 16 :
+						case 16:
 							// Test Text Param
 							DBHelper.ExecuteNonQuery (conn,
 									String.Format (create_query, "text"));
@@ -1973,7 +2098,7 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.Text, 0, null);
 							*/
 							break;
-						case 17 :
+						case 17:
 							// Test TimeStamp Param
 							/* NOT WORKING
 							   DBHelper.ExecuteNonQuery (conn,
@@ -1983,10 +2108,10 @@ namespace MonoTests.System.Data.SqlClient
 							   rpc_helper_function (cmd, SqlDbType.TimeStamp, 0, null);
 							 */
 							break;
-						case 18 :
+						case 18:
 							// Test TinyInt Param
 							DBHelper.ExecuteNonQuery (conn,
-									String.Format(create_query,"tinyint"));
+									String.Format (create_query, "tinyint"));
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
 								10.0d, (byte) 10, (byte) 10);
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
@@ -1996,7 +2121,7 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
 								byte.MinValue, byte.MinValue, byte.MinValue);
 							break;
-						case 19 :
+						case 19:
 							// Test UniqueIdentifier Param
 							/*
 							DBHelper.ExecuteNonQuery (conn,
@@ -2005,7 +2130,7 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.UniqueIdentifier, 0, null);
 							*/
 							break;
-						case 20 :
+						case 20:
 							// Test VarBinary Param
 							/* NOT WORKING
 							   DBHelper.ExecuteNonQuery (conn,
@@ -2015,10 +2140,10 @@ namespace MonoTests.System.Data.SqlClient
 							   rpc_helper_function (cmd, SqlDbType.VarBinary, 0, null);
 							 */
 							break;
-						case 21 :
+						case 21:
 							// Test Varchar Param
 							DBHelper.ExecuteNonQuery (conn,
-									String.Format(create_query,"varchar(10)"));
+									String.Format (create_query, "varchar(10)"));
 							rpc_helper_function (cmd, SqlDbType.VarChar, 7,
 								"VarChar", "VarChar", "VarChar");
 							rpc_helper_function (cmd, SqlDbType.VarChar, 5,
@@ -2033,7 +2158,7 @@ namespace MonoTests.System.Data.SqlClient
 								DBNull.Value);
 							*/
 							break;
-						case 22 :
+						case 22:
 							// Test Variant Param
 							/* NOT WORKING
 							   DBHelper.ExecuteNonQuery (conn,
@@ -2043,7 +2168,7 @@ namespace MonoTests.System.Data.SqlClient
 							   rpc_helper_function (cmd, SqlDbType.Variant, 0, null);
 							 */
 							break;
-						default :
+						default:
 							label = -2;
 							break;
 					}
@@ -2055,7 +2180,9 @@ namespace MonoTests.System.Data.SqlClient
 
 				label++;
 				if (label != -1)
-					DBHelper.ExecuteNonQuery (conn, drop_query);
+					DBHelper.ExecuteNonQuery (conn, string.Format (
+						CultureInfo.InvariantCulture,
+						DROP_STORED_PROCEDURE, "#tmp_sp_param_test"));
 			}
 
 			if (error.Length != 0)
@@ -2090,8 +2217,9 @@ namespace MonoTests.System.Data.SqlClient
 				AreEqual (expectedRead, reader.GetValue (0), "#2");
 				Assert.IsFalse (reader.Read (), "#3");
 			}
+
 			AreEqual (expectedOut, param2.Value, "#4");
-			AreEqual (5, retval.Value, "#5");
+			Assert.AreEqual (5, retval.Value, "#5");
 		}
 
 		[Test]
@@ -2411,23 +2539,23 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					string sql = "SELECT * FROM employee";
 					command.CommandText = sql;
-					reader = command.ExecuteReader();
+					reader = command.ExecuteReader ();
 				} finally {
-					command.Dispose();
+					command.Dispose ();
 				}
-				while (reader.Read());
+				while (reader.Read ()) ;
 			} finally {
-				reader.Dispose();
+				reader.Dispose ();
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
-		private void bug326182_OutputParamMixupTestCommon (int paramOrder, 
-		                                                   out int param0Val,
-		                                                   out int param1Val,
-		                                                   out int param2Val,
-		                                                   out int param3Val,
-		                                                   out int rvalVal)
+		private void bug326182_OutputParamMixupTestCommon (int paramOrder,
+								   out int param0Val,
+								   out int param1Val,
+								   out int param2Val,
+								   out int param3Val,
+								   out int rvalVal)
 		{
 			try {
 				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
@@ -2436,8 +2564,8 @@ namespace MonoTests.System.Data.SqlClient
 						"@param0 int out," + Environment.NewLine +
 						"@param1 int out," + Environment.NewLine +
 						"@param2 int out," + Environment.NewLine +
-						"@param3 int out" + Environment.NewLine + 
-						")" + Environment.NewLine + 
+						"@param3 int out" + Environment.NewLine +
+						")" + Environment.NewLine +
 						"as" + Environment.NewLine +
 						"set @param0 = 100" + Environment.NewLine +
 						"set @param1 = 101" + Environment.NewLine +
@@ -2451,23 +2579,23 @@ namespace MonoTests.System.Data.SqlClient
 					SqlParameter param2 = new SqlParameter ("@param2", SqlDbType.Int);
 					SqlParameter param3 = new SqlParameter ("@param3", SqlDbType.Int);
 					SqlParameter rval = new SqlParameter ("@RETURN_VALUE", SqlDbType.Int);
-					
-					cmd = new SqlCommand();
+
+					cmd = new SqlCommand ();
 					cmd.CommandText = create_proc;
 					cmd.CommandType = CommandType.Text;
 					cmd.Connection = conn;
 					cmd.CommandTimeout = 90;
 					cmd.ExecuteNonQuery ();
-					
+
 					cmd.CommandText = "dbo.[#sp_326182]";
 					cmd.CommandType = CommandType.StoredProcedure;
-					
+
 					param0.Direction = ParameterDirection.Output;
 					param1.Direction = ParameterDirection.Output;
 					param2.Direction = ParameterDirection.Output;
 					param3.Direction = ParameterDirection.Output;
 					rval.Direction = ParameterDirection.ReturnValue;
-					
+
 					switch (paramOrder) {
 					case 1: cmd.Parameters.Add (param0);
 						cmd.Parameters.Add (param1);
@@ -2488,23 +2616,23 @@ namespace MonoTests.System.Data.SqlClient
 						cmd.Parameters.Add (rval);
 						break;
 					}
-					
+
 					cmd.ExecuteNonQuery ();
-					
+
 					/* Copy the param values to variables, just in case if 
 					 * tests fail, we don't want the created sp to exist */
-					param3Val = (int)cmd.Parameters["@param3"].Value;
-					param1Val = (int)cmd.Parameters["@param1"].Value;
-					rvalVal = (int)cmd.Parameters["@RETURN_VALUE"].Value;
-					param2Val = (int)cmd.Parameters["@param2"].Value;
-					param0Val = (int)cmd.Parameters["@param0"].Value;
+					param3Val = (int) cmd.Parameters ["@param3"].Value;
+					param1Val = (int) cmd.Parameters ["@param1"].Value;
+					rvalVal = (int) cmd.Parameters ["@RETURN_VALUE"].Value;
+					param2Val = (int) cmd.Parameters ["@param2"].Value;
+					param0Val = (int) cmd.Parameters ["@param0"].Value;
 				} finally {
 					/* Delete the created stored procedure */
 					cmd = conn.CreateCommand ();
 					cmd.CommandText = "drop procedure #sp_326182";
 					cmd.ExecuteNonQuery ();
 
-					cmd.Dispose();
+					cmd.Dispose ();
 					cmd = null;
 				}
 			} finally {
@@ -2512,16 +2640,16 @@ namespace MonoTests.System.Data.SqlClient
 				conn = null;
 			}
 		}
-		
+
 		[Test]
 		public void bug326182_OutputParamMixupTest_Normal ()
 		{
 			int param0Val, param1Val, param2Val, param3Val, rvalVal;
-			
+
 			//param0Val = param1Val = param2Val = param3Val = rvalVal = 0;
-			
-			bug326182_OutputParamMixupTestCommon (0, out param0Val, out param1Val, 
-			                                      out param2Val, out param3Val, out rvalVal);
+
+			bug326182_OutputParamMixupTestCommon (0, out param0Val, out param1Val,
+							      out param2Val, out param3Val, out rvalVal);
 			Assert.AreEqual (103, param3Val);
 			Assert.AreEqual (101, param1Val);
 			Assert.AreEqual (2, rvalVal);
@@ -2533,9 +2661,9 @@ namespace MonoTests.System.Data.SqlClient
 		public void bug326182_OutputParamMixupTest_RValInBetween ()
 		{
 			int param0Val, param1Val, param2Val, param3Val, rvalVal;
-			
-			bug326182_OutputParamMixupTestCommon (1, out param0Val, out param1Val, 
-			                                      out param2Val, out param3Val, out rvalVal);
+
+			bug326182_OutputParamMixupTestCommon (1, out param0Val, out param1Val,
+							      out param2Val, out param3Val, out rvalVal);
 			Assert.AreEqual (103, param3Val);
 			Assert.AreEqual (101, param1Val);
 			Assert.AreEqual (2, rvalVal);
@@ -2547,9 +2675,9 @@ namespace MonoTests.System.Data.SqlClient
 		public void bug326182_OutputParamMixupTest_RValFirst ()
 		{
 			int param0Val, param1Val, param2Val, param3Val, rvalVal;
-			
-			bug326182_OutputParamMixupTestCommon (2, out param0Val, out param1Val, 
-			                                      out param2Val, out param3Val, out rvalVal);
+
+			bug326182_OutputParamMixupTestCommon (2, out param0Val, out param1Val,
+							      out param2Val, out param3Val, out rvalVal);
 			Assert.AreEqual (103, param3Val);
 			Assert.AreEqual (101, param1Val);
 			Assert.AreEqual (2, rvalVal);
@@ -2600,17 +2728,27 @@ namespace MonoTests.System.Data.SqlClient
 			Error = 3
 		}
 
-		private static readonly string CREATE_TMP_SP_PARAM_TEST = "create procedure #tmp_sp_param_test (@param1 {0}, @param2 {0} output) as begin select @param1 set @param2=@param1 return 5 end";
-		private readonly string CREATE_TMP_SP_TEMP_INSERT_PERSON = ("create procedure #sp_temp_insert_employee ( " + Environment.NewLine + 
-									    "@fname varchar (20)) " + Environment.NewLine + 
-									    "as " + Environment.NewLine + 
-									    "begin" + Environment.NewLine + 
-									    "declare @id int;" + Environment.NewLine + 
-									    "select @id = max (id) from employee;" + Environment.NewLine + 
-									    "set @id = @id + 6000 + 1;" + Environment.NewLine + 
-									    "insert into employee (id, fname, dob, doj) values (@id, @fname, '1980-02-11', getdate ());" + Environment.NewLine + 
-									    "return @id;" + Environment.NewLine + 
+		private readonly string CREATE_TMP_SP_PARAM_TEST = "create procedure #tmp_sp_param_test (@param1 {0}, @param2 {0} output) as begin select @param1 set @param2=@param1 return 5 end";
+
+		private readonly string CREATE_TMP_SP_TEMP_INSERT_PERSON = ("create procedure #sp_temp_insert_employee ( " + Environment.NewLine +
+									    "@fname varchar (20), " + Environment.NewLine +
+									    "@dob datetime, " + Environment.NewLine +
+									    "@doj datetime output " + Environment.NewLine +
+									    ") " + Environment.NewLine +
+									    "as " + Environment.NewLine +
+									    "begin" + Environment.NewLine +
+									    "declare @id int;" + Environment.NewLine +
+									    "select @id = max (id) from employee;" + Environment.NewLine +
+									    "set @id = @id + 6000 + 1;" + Environment.NewLine +
+									    "set @doj = getdate();" + Environment.NewLine +
+									    "insert into employee (id, fname, dob, doj) values (@id, @fname, @dob, @doj);" + Environment.NewLine +
+									    "return @id;" + Environment.NewLine +
 									    "end");
+
+		private readonly string DROP_TMP_SP_TEMP_INSERT_PERSON = ("if exists (select name from sysobjects where " + Environment.NewLine +
+									  "name = '#sp_temp_insert_employee' and type = 'P') " + Environment.NewLine +
+									  "drop procedure #sp_temp_insert_employee; ");
+
 		private static readonly string CREATE_TMP_SP_TYPE_TEST =
 			"CREATE PROCEDURE #tmp_sp_type_test " +
 			"(" +

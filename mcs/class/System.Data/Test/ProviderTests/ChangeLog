@@ -1,3 +1,20 @@
+2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* app-default.config: Renamed to app-net_1_1.config, and added
+	providerTests section.
+	* app-net_2.0.config: Added providerTests section and removed
+	mono.data section.
+	* Makefile: Added support for CONNECTION variable and corresponding
+	PROVIDER_TESTS_CONNECTION environment variable. Always rebuild test
+	assembly since we have no dependency check for sources in place.
+	Only add reference to Mono.Data on 1.1 profile. Added reference to
+	System.Configuration on 2.0 profile.
+	* sqlserver.config: Merged into app-*.config.
+	* odbc.config: Merged into app-*.config.
+	* System.Data.Connected.Tests.dll.sources: Added ConnectionConfig.cs,
+	EngineConfig.cs, EngineType.cs, ProviderTestsConfigurationHandler.cs
+	and DbDataReaderTest.cs. Removed OdbcConnectionStringBuilderTest.cs.
+
 2007-06-21  Nagappan A  <anagappan@novell.com>
 
 	* System.Data.Connected.Tests.dll.sources: Added

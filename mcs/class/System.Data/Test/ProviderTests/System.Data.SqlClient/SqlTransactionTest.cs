@@ -63,7 +63,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Commit ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			SqlConnection connA = null;
 			SqlConnection connB = null;
@@ -186,7 +187,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Commit_Reader_Open ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			SqlCommand cmd;
 
@@ -340,7 +342,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Commit_Transaction_Rolledback ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -447,7 +450,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Connection_Transaction_Rolledback ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
@@ -572,7 +576,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Dispose_Reader_Open ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -690,7 +695,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void IsolationLevel_Transaction_Rolledback ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
@@ -899,7 +905,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback ()
 		public void Rollback1_Reader_Open ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			SqlCommand cmd;
 
@@ -1035,7 +1042,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback ()
 		public void Rollback1_Transaction_Rolledback ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -1108,7 +1116,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback (String)
 		public void Rollback2 ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			string sql;
 			SqlCommand cmd = null;
@@ -1293,7 +1302,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback (String)
 		public void Rollback2_Reader_Open ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			SqlCommand cmd;
 
@@ -1388,7 +1398,8 @@ namespace MonoTests.System.Data.SqlClient
 		public void Rollback2_Transaction_Disposed ()
 		{
 #if NET_2_0
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 #endif
 
 			try {
@@ -1432,7 +1443,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback (String)
 		public void Rollback2_Transaction_Rolledback ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -1531,7 +1543,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback (String)
 		public void Rollback2_TransactionName_Empty ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
@@ -1557,7 +1570,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // Rollback (String)
 		public void Rollback2_TransactionName_Null ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			conn = new SqlConnection (connectionString);
 			conn.Open ();
@@ -1756,7 +1770,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Save_Reader_Open ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			SqlCommand cmd;
 
@@ -1848,7 +1863,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Save_Transaction_Disposed ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -1891,7 +1907,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Save_Transaction_Rolledback ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -1950,7 +1967,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Save_TransactionName_Empty ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -2001,7 +2019,8 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void Save_TransactionName_Null ()
 		{
-			Assert.Ignore ("NotWorking");
+			if (RunningOnMono)
+				Assert.Ignore ("NotWorking");
 
 			try {
 				conn = new SqlConnection (connectionString);
@@ -2048,6 +2067,13 @@ namespace MonoTests.System.Data.SqlClient
 				conn = new SqlConnection (connectionString);
 				conn.Open ();
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_employee_table");
+			}
+		}
+
+		static bool RunningOnMono {
+			get
+			{
+				return (Type.GetType ("System.MonoType", false) != null);
 			}
 		}
 	}

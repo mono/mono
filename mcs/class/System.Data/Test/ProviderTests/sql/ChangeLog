@@ -1,3 +1,15 @@
+2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MySQL_5.sql: Added numeric and decimal colums with different
+	precision and scale. Added more rows to binary_family. Added
+	nchar and nvarchar columns to string_family, and added extra
+	data. Added time and date columns to datetime_family.
+	* sqlserver.sql: Added numeric and decimal colums with different
+	precision and scale. Added timestamp column and more rows to
+	binary_family. Added nchar and nvarchar columns to string_family,
+	and added extra data. Added sp_326182 stored procedure.
+	* sybase.sql: Added more rows to binary_family.
+
 2007-06-06  Nagappan A  <anagappan@novell.com>
 
 	* MySQL_5.sql: Fixed EOL and extra spaces.

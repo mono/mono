@@ -1,3 +1,13 @@
+2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataReaderTest.cs: Added tests that were previously part of
+	SqlClient tests but apply to all families. Improved existing
+	tests.
+	* DbDataReaderTest.cs: Added GetProviderSpecificValues error check
+	 tests.
+	* IDbCommandTest.cs: Added ExecuteNonQuery tests for empty CommandText.
+	Added test for bug #462947.
+
 2007-07-31  Nagappan A  <anagappan@novell.com>
 
 	* IDbCommandTest.cs (ExecuteScalarTest): SqlClient and Odbc

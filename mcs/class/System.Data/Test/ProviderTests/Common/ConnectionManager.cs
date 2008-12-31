@@ -31,16 +31,26 @@
 using System;
 using System.Configuration;
 using System.Data;
+#if NET_2_0
+using System.Data.Common;
+#endif
 
+#if ONLY_1_1
 using Mono.Data;
+#endif
 
 namespace MonoTests.System.Data
 {
 	public class ConnectionManager
 	{
 		private static ConnectionManager Instance;
+#if NET_2_0
+		private DbConnection _connection;
+#else
 		private IDbConnection _connection;
+#endif
 		private string _connectionString;
+		private EngineConfig _engine;
 
 		static ConnectionManager () 
 		{
@@ -49,18 +59,50 @@ namespace MonoTests.System.Data
 
 		private ConnectionManager ()
 		{
-			string connectionString = ConfigurationSettings.AppSettings ["ConnString"];
-			if (connectionString == null || connectionString.Equals (String.Empty))
-				throw new ArgumentException ("Connection string is not set!");
-			_connection = ProviderFactory.CreateConnectionFromConfig ("ConnString");
-			_connectionString = Connection.ConnectionString;
+			string connection_name = Environment.GetEnvironmentVariable ("PROVIDER_TESTS_CONNECTION");
+			if (connection_name == null || connection_name.Length == 0)
+				throw new ArgumentException ("PROVIDER_TESTS_CONNECTION environment variable is not set.");
+
+			ConnectionConfig [] connections = (ConnectionConfig [])
+#if NET_2_0
+				ConfigurationManager.GetSection ("providerTests");
+#else
+				ConfigurationSettings.GetConfig ("providerTests");
+#endif
+			foreach (ConnectionConfig connConfig in connections) {
+				if (connConfig.Name != connection_name)
+					continue;
+
+				_connectionString = connConfig.ConnectionString;
+#if NET_2_0
+				DbProviderFactory factory = DbProviderFactories.GetFactory (
+					connConfig.Factory);
+				_connection = factory.CreateConnection ();
+				_connection.ConnectionString = _connectionString;
+#else
+				_connection = ProviderFactory.CreateConnection (
+					string.Concat ("factory=", connConfig.Factory,
+						";", _connectionString));
+#endif
+				_connectionString = _connection.ConnectionString;
+				_engine = connConfig.Engine;
+				return;
+			}
+
+			throw new ArgumentException ("Connection '" + connection_name + "' not found.");
 		}
 
 		public static ConnectionManager Singleton {
 			get {return Instance;}
 		}
 
-		public IDbConnection Connection {
+		public
+#if NET_2_0
+		DbConnection
+#else
+		IDbConnection
+#endif
+		Connection {
 			get {return _connection;}
 		}
 
@@ -68,10 +110,12 @@ namespace MonoTests.System.Data
 			get {return _connectionString;}
 		}
 
+		internal EngineConfig Engine {
+			get { return _engine; }
+		}
+
 		public void OpenConnection ()
 		{
-			if (_connection == null)
-				_connection = ProviderFactory.CreateConnectionFromConfig ("ConnString");
 			if (!(_connection.State == ConnectionState.Closed || _connection.State == ConnectionState.Broken))
 				_connection.Close ();
 			_connection.ConnectionString = _connectionString;
@@ -83,6 +127,5 @@ namespace MonoTests.System.Data
 			if (_connection != null && _connection.State != ConnectionState.Closed)
 				_connection.Close ();
 		}
-		
 	}
 }

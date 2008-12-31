@@ -1,3 +1,24 @@
+2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandBuilderTest.cs: Improve Get*Command tests.
+	* SqlCommandTest.cs: Added test for bug #341743. Added test
+	for connection state after executing invalid SQL. Improved
+	stored procedure test to check behavior with and without
+	leading '@' for parameter names. Minor formatting changes.
+	* SqlConnectionTest.cs: Split up connection string errors
+	test.
+	* SqlDataReaderTest.cs: Improved GetInt64Test. Improved and
+	added GetBytes tests. Added GetSqlValues and HasRows tests.
+	Added GetSchemaTable test. Improved GetProviderSpecificFieldType
+	tests.
+	* SqlParameterTest.cs: Improved ParameterType test. Added
+	type inferrence tests.
+	* SqlTransactionTest.cs: Allow not working tests to run on MS.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlConnectionTest.cs: Improve Database test.
+
 2008-11-11  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandTest.cs: Added (SMALL)MONEY rounding tests.

@@ -1,3 +1,18 @@
+2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcCommandBuilderTest.cs: Improved GetDeleteCommand,
+	GetInsertCommand and GetUpdateCommand tests. Added QuotePrefix,
+	QuoteSuffix and QuoteIdentifier tests.
+	* OdbcCommandTest.cs: Improved existing tests. Added
+	ExecuteNonQuery and Dispose tests.
+	* OdbcConnectionStringBuilderTest.cs: Moved to System.Data
+	test suite.
+	* OdbcDataAdapterTest.cs: Removed extra whitespace.
+	* OdbcDataReaderTest.cs: Added GetBytes and GetSchemaTable
+	tests.
+	* OdbcParameterCollectionTest.cs: Improve existing tests.
+	* OdbcParameterTest.cs: Added tests for several data types.
+
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcCommandTest.cs: Added test for bug #341743.
