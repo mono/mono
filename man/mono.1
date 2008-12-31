@@ -548,7 +548,7 @@ repository.
 .PP
 This profiler is activated passing the \fB--profile=logging\fR option to
 the mono runtime, and is controlled attaching further options, like
-\fB--profile=logging:stat\fR for doing statistical profiling (multiple
+\fB--profile=logging:statistical\fR for doing statistical profiling (multiple
 options are separated by commas).
 .PP
 As a quick primer, here are a few examples of the most common usage modes:
@@ -557,32 +557,70 @@ To write the resulting data to "mydata.mprof" (defaults to statistical
 profiling):
 .nf
 
-	mono --profile=logging:o=mydata.mprof program.exe
+	mono --profile=logging:output=mydata.mprof program.exe
 .fi
 .PP
 To perform statistical profiling, inspecting call chains up to depth 8:
 .nf
 
-	mono --profile=logging:s=8 program.exe
+	mono --profile=logging:statistical=8 program.exe
 .fi
 .PP
-To profile allocations with caller method attribution:
+To profile allocations (by default the call stack will be analized for
+each allocation, producing detailed caller method attribution infornation):
 .nf
 
-	mono --profile=logging:a,ts program.exe
+	mono --profile=logging:allocations program.exe
 .fi
 .PP
-To profile garbage collection activity (collection time and objects freed
-at each collection):
+To profile garbage collection activity at a high level (collection time and objects freed
+at each collection for each class are reported, but heap snapshots are not saved to disk):
 .nf
 
-	mono --profile=logging:g,as program.exe
+	mono --profile=logging:allocations-summary program.exe
 .fi
+.PP
+To perform heap profiling taking heap snapshots:
+.nf
+
+	mono --profile=logging:heap=all program.exe
+	mono --profile=logging:heap=<signal> program.exe
+.fi
+
+If "all" is specified, a heap snapshot is taken at each collection.
+If, instead, a signal name or number is given (one of SIGUSR1, SIGUSR2 and
+SIGPROF, remembering that SIGPROF is not compatible with the statistical
+profiler), a garbage collection is forced and a snapshot is taken every
+time the signal is received.
+Heap profiling also enables full allocation profiling (with call stacks),
+and each allocation can be related to its corresponding object in the
+snapshots, enabling investigations like "find all objects of a given class
+allocated by a given method and still live at a given collection, and then
+find all objects referencing them".
+
 .PP
 Then you would need to invoke the decoder \fImprof-decoder(1)\fR
-on the output file to see the profiling results.
+on the output file to see the profiling results, or to examine heap
+snapshots and allocations in detail \fImprof-heap-viewer(1)\fR.
+
 .PP
-These are all the available oprions, organized by category:
+The operating modes described above are the default ones, and are sufficient
+to use the profiler.
+.PP
+To further customize the profiler behavior there are more options, described
+below.
+These options can be individually enabled and disabled prefixing them with
+an (optional) '+' character or a '-' character.
+For instance, the "allocations" option by default records also the full call
+stack at each allocation.
+If only the caller is wanted, one should use "allocations,-save-allocation-stack",
+or to disable call tracking completely (making the profiler less intrusive)
+"allocations,-save-allocation-caller,-save-allocation-stack".
+In practice the "allocation" option by default behaves like
+"allocations,save-allocation-caller,save-allocation-stack", but the user can
+tune this to his needs.
+.PP
+These are all the available options, organized by category:
 .PP
 \fBExecution profiling modes\fR
 .RS
@@ -618,18 +656,20 @@ will use the stack data).
 .TP
 \fIallocations\fR, \fIalloc\fR or \fIa\fR
 Collect information about each allocation (object class and size).
-If combined with the "ts" option, for each allocation the profiler will
-also show the responsible method (and also correctly dintinguish allocations
-performed during JIT time).
-These information are also available when combining  the "a" and "c" options,
-but since "c" is much more intrusive "ts" should be preferred.
+By default this also implies "+save-allocation-caller" and
+"+save-allocation-stack".
+.TP
+\fIsave-allocation-caller\fR, \fIsac\fR
+Save the direct caller of each allocation. The profiler filters out wrapper
+methods, and also recognizes if the allocation has been performed by the
+runtime while jitting a method.
 .TP
 \fIsave-allocation-stack\fR, \fIsas\fR
-Save the execution stack at each allocation. While the "ts" option saves the
-direct caller, this one records the whole stack trace. Note that for technical
-reasons the decoder will correctly ignore wrapper methods only using the data
-saved by the "ts" option (the stack traces still contain all the wrappers).
-Anyway the "ts" and "sas" options can be combined, and the decoder will
+Save the full managed execution stack at each allocation.
+While the "sac" option saves the direct caller, this one records the whole
+stack trace.
+Note that in the call stack the wrapper methods are not filtered out.
+Anyway the "sac" and "sas" options can be combined, and the decoder will
 attribute the allocation to the correct method even if the wrapper is at the
 top of the stack trace.
 .TP
