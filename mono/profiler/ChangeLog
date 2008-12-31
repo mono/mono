@@ -1,3 +1,27 @@
+2008-12-31  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: make the profiler like r122287 on trunk.
+	- ProfilerThreadStack: added "last_written_frame" and "written_frames"
+	fields to keep track of the call stacks actually written, so that we
+	can "replay" the full call stack at the beginning of each event block
+	(which allows the decoder to read blocks in random order and still see
+	all the call stacks correctly).
+	- gc_event: Fixed event creation sequence.
+	- Improved event logging (debugging) code.
+	- Added defaults to command line options.
+	- executable_file_open: Proper remember of already opened files.
+	- ProfilerStatisticalData: use unsigned values so the index never
+	trips over and becomes negative.
+	- statistical_call_chain, statistical_hit: likewise.
+	- profiler_executable_memory_region_destroy: fixed memory region
+	unloading.
+	- executable_file_add_region_reference: likewise.
+	- executable_file_close: likewise.
+	- executable_file_open: fixed file name handling.
+	- parse_map_line: likewise.
+	- scan_process_regions: likewise.
+	- statistical_call_chain: exit loop if the writer thread is busy.
+	* mono-profiler-logging.c: added "save-allocation-caller" option.
+
 2008-11-04  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c:
 	Make sure that stack sections can be fully reconstructed even reading
