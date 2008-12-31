@@ -1,3 +1,9 @@
+2008-12-31  Massimiliano Mantione  <massi@ximian.com>
+
+	* mono.1: Updated the profiler documentation, removing the "ts"
+	option (it does not exist anymore) and explaining the defaults for
+	allocation and heap profiling.
+
 2008-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile.am, vbnc.1: Remove vbnc.1. It's living in the
