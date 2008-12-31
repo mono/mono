@@ -1,3 +1,8 @@
+2008-12-31  Geoff Norton  <gnorton@novell.com>
+
+	* mini-ppc.c: The prolog size allocated can be too small for darwin
+	ppc32 under certain circumstances.  Also fix a small logic bug.
+
 2008-12-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_jit_compile_method_inner): Avoid holding the domain lock
