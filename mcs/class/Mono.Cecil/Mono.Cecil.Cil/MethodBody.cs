@@ -82,47 +82,25 @@ namespace Mono.Cecil.Cil {
 			get { return m_instructions; }
 		}
 
-		public bool HasExceptionHandlers {
-			get { return m_exceptions != null && m_exceptions.Count > 0; }
-		}
-
 		public ExceptionHandlerCollection ExceptionHandlers {
-			get {
-				if (m_exceptions == null)
-					m_exceptions = new ExceptionHandlerCollection (this);
-				return m_exceptions;
-			}
-		}
-
-		public bool HasVariables {
-			get { return m_variables != null && m_variables.Count > 0; }
+			get { return m_exceptions; }
 		}
 
 		public VariableDefinitionCollection Variables {
-			get {
-				if (m_variables == null)
-					m_variables = new VariableDefinitionCollection (this);
-				return m_variables;
-			}
-		}
-
-		public bool HasScopes {
-			get { return m_scopes != null && m_scopes.Count > 0; }
+			get { return m_variables; }
 		}
 
 		public ScopeCollection Scopes {
-			get {
-				if (m_scopes == null)
-					m_scopes = new ScopeCollection (this);
-				return m_scopes; 
-			}
+			get { return m_scopes; }
 		}
 
 		public MethodBody (MethodDefinition meth)
 		{
 			m_method = meth;
-			// there is always a RET instruction (if a body is present)
 			m_instructions = new InstructionCollection (this);
+			m_exceptions = new ExceptionHandlerCollection (this);
+			m_variables = new VariableDefinitionCollection (this);
+			m_scopes = new ScopeCollection (this);
 		}
 
 		internal static Instruction GetInstruction (MethodBody oldBody, MethodBody newBody, Instruction i)
@@ -143,12 +121,10 @@ namespace Mono.Cecil.Cil {
 
 			CilWorker worker = nb.CilWorker;
 
-			if (body.HasVariables) {
-				foreach (VariableDefinition var in body.Variables)
-					nb.Variables.Add (new VariableDefinition (
-						var.Name, var.Index, parent,
-						context.Import (var.VariableType)));
-			}
+			foreach (VariableDefinition var in body.Variables)
+				nb.Variables.Add (new VariableDefinition (
+					var.Name, var.Index, parent,
+					context.Import (var.VariableType)));
 
 			foreach (Instruction instr in body.Instructions) {
 				Instruction ni = new Instruction (instr.OpCode);
@@ -212,9 +188,6 @@ namespace Mono.Cecil.Cil {
 				} else if (instr.OpCode.OperandType == OperandType.ShortInlineBrTarget || instr.OpCode.OperandType == OperandType.InlineBrTarget)
 					instr.Operand = GetInstruction (body, nb, (Instruction) oldi.Operand);
 			}
-
-			if (!body.HasExceptionHandlers)
-				return nb;
 
 			foreach (ExceptionHandler eh in body.ExceptionHandlers) {
 				ExceptionHandler neh = new ExceptionHandler (eh.Type);
@@ -609,13 +582,10 @@ namespace Mono.Cecil.Cil {
 		public void Accept (ICodeVisitor visitor)
 		{
 			visitor.VisitMethodBody (this);
-			if (HasVariables)
-				m_variables.Accept (visitor);
+			m_variables.Accept (visitor);
 			m_instructions.Accept (visitor);
-			if (HasExceptionHandlers)
-				m_exceptions.Accept (visitor);
-			if (HasScopes)
-				m_scopes.Accept (visitor);
+			m_exceptions.Accept (visitor);
+			m_scopes.Accept (visitor);
 
 			visitor.TerminateMethodBody (this);
 		}
