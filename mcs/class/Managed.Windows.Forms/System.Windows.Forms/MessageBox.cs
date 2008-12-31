@@ -44,7 +44,7 @@ namespace System.Windows.Forms
 		#region Private MessageBoxForm class
 #if NET_2_0 // UIA Framework
 		internal class MessageBoxForm : Form
-#elif
+#else
 		private class MessageBoxForm : Form
 #endif
 		{
