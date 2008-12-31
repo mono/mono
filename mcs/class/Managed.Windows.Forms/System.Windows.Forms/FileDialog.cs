@@ -1485,7 +1485,14 @@ namespace System.Windows.Forms
 					return popupButtonState;
 				}
 			}
-			
+#if NET_2_0
+			#region UIA Framework Members
+			internal void PerformClick ()
+			{
+				OnClick (EventArgs.Empty);
+			}
+			#endregion
+#endif
 			protected override void OnPaint (PaintEventArgs pe)
 			{
 				Draw (pe);
@@ -1854,6 +1861,14 @@ namespace System.Windows.Forms
 					return imageList;
 				}
 			}
+#if NET_2_0
+			#region UIA Framework Members
+			public override string ToString ()
+			{
+				return name;
+			}
+			#endregion
+#endif
 		}
 		#endregion
 		

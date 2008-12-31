@@ -1,3 +1,8 @@
+2008-12-31  Sandy Armstrong  <sanfordarmstrong@gmail.com>
+
+	* FileDialog.cs: Add PopupButtonPanel.PopupButton.PerformClick method
+	and DirComboBox.DirComboBoxItem.ToString override for UIA support.
+
 2008-12-31  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Do not autogenerate duplicate column for a 
