@@ -1,3 +1,8 @@
+2008-12-31  Mario Carrion  <mcarrion@novell.com>
+
+	* MessageBox.cs: UIA support: new properties: UIAMessage, 
+	UIAMessageRectangle and UIAIconRectangle.
+
 2008-12-31  Sandy Armstrong  <sanfordarmstrong@gmail.com>
 
 	* FileDialog.cs: Add PopupButtonPanel.PopupButton.PerformClick method

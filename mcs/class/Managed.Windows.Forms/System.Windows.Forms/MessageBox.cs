@@ -42,7 +42,11 @@ namespace System.Windows.Forms
 	public class MessageBox
 	{
 		#region Private MessageBoxForm class
+#if NET_2_0 // UIA Framework
+		internal class MessageBoxForm : Form
+#elif
 		private class MessageBoxForm : Form
+#endif
 		{
 			#region MessageBoxFrom Local Variables
 			const int space_border = 10;
@@ -525,6 +529,36 @@ namespace System.Windows.Forms
 				this.Close ();
 			}
 			#endregion
+
+#if NET_2_0
+		
+			#region UIA Framework: Methods, Properties and Events
+
+			internal string UIAMessage {
+				get { return msgbox_text; }
+			}
+
+			internal Rectangle UIAMessageRectangle {
+				get { 
+					return new Rectangle ((int) text_rect.X,
+					                      (int) text_rect.Y, 
+					                      (int) text_rect.Width, 
+					                      (int) text_rect.Height); 
+				}
+			}
+
+			internal Rectangle UIAIconRectangle {
+				get { 
+					return new Rectangle (space_border, 
+					                      space_border, 
+					                      icon_image.Width, 
+					                      icon_image.Height);
+				}
+			}
+
+			#endregion
+
+#endif
 		}
 		#endregion	// Private MessageBoxForm class
 
