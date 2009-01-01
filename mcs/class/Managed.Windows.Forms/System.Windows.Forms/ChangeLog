@@ -1,5 +1,10 @@
 2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Multiple fixes to handle last column/row removal 
+	and cell movement after that instead of throwing exceptions.
+
+2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewCellCollection.cs: When cells are removed the column 
 	indices become invalid if the cell is not the last one and have to 
 	be refreshed.

@@ -4845,9 +4845,17 @@ namespace System.Windows.Forms {
 			if (selected_columns != null)
 				selected_columns.InternalClear ();
 
-			if (Rows.Count > 0 && Columns.Count > 0 && currentCell != null && 
-			    currentCell.RowIndex >= e.RowIndex)
-				MoveCurrentCell (0, Math.Min (e.RowIndex, Rows.Count - 2), true, false, false, true);
+			if (Rows.Count == 0) {
+				MoveCurrentCell (-1, -1, true, false, false, true);
+			} else if (Columns.Count == 0) {
+				MoveCurrentCell (-1, -1, true, false, false, true);
+			} else {
+				int nextRowIndex = e.RowIndex;
+				if (nextRowIndex >= Rows.Count)
+					nextRowIndex = Rows.Count - 1;
+				MoveCurrentCell (0, nextRowIndex, true, false, false, true);
+			}
+
 			Invalidate ();
 			OnRowsRemoved (e);
 		}
@@ -5378,6 +5386,17 @@ namespace System.Windows.Forms {
 			if (cell != null && !cell.Visible)
 				throw new InvalidOperationException ("cell is not visible");
 				
+			// Always update the current cell address property
+			// If the row has moved it would be out of date.
+			if (currentCell != null) {
+				if (setAnchorCellAddress) {
+					anchor_cell.X = currentCell.ColumnIndex;
+					anchor_cell.Y = currentCell.RowIndex;
+				}
+				currentCellAddress.X = currentCell.ColumnIndex;
+				currentCellAddress.Y = currentCell.RowIndex;
+			}
+
 			if (cell != currentCell) {
 				if (currentCell != null) {
 					if (currentCell.IsInEditMode && !EndEdit ())
@@ -5391,14 +5410,16 @@ namespace System.Windows.Forms {
 					anchor_cell = new Point (columnIndex, rowIndex);
 				currentCellAddress = new Point (columnIndex, rowIndex);
 
-				UpdateBindingPosition (currentCell.RowIndex);
-				OnRowEnter (new DataGridViewCellEventArgs (cell.ColumnIndex, cell.RowIndex));
-				OnCellEnter (new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
+				if (cell != null) {
+					UpdateBindingPosition (cell.RowIndex);
+					OnRowEnter (new DataGridViewCellEventArgs (cell.ColumnIndex, cell.RowIndex));
+					OnCellEnter (new DataGridViewCellEventArgs(cell.ColumnIndex, cell.RowIndex));
+				}
 				OnCurrentCellChanged (EventArgs.Empty);
-				if (editMode == DataGridViewEditMode.EditOnEnter)
+				if (cell != null && editMode == DataGridViewEditMode.EditOnEnter)
 					BeginEdit (true);
 			} else {
-				if (throughMouseClick)
+				if (cell != null && throughMouseClick)
 					BeginEdit (true);
 			}
 
@@ -5753,8 +5774,6 @@ namespace System.Windows.Forms {
 					Rows.AddInternal (editing_row, false);
 				}
 			}
-				
-			
 		}
 		
 		internal DataGridViewRow EditingRow {
@@ -5862,8 +5881,14 @@ namespace System.Windows.Forms {
 		
 		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift, bool scroll)
 		{
-			if (!SetCurrentCellAddressCore (x, y, true, false, false))
+			if (!SetCurrentCellAddressCore (x, y, true, false, false)) {
+				ClearSelection ();
 				return;
+			}
+			if (x == -1 && y == -1) {
+				ClearSelection ();
+				return;
+			}
 
 			bool full_row_selected = Rows.SharedRow(CurrentCellAddress.Y).Selected;
 			bool full_col_selected = Columns[CurrentCellAddress.X].Selected;
