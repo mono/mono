@@ -1,5 +1,13 @@
 2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Rewrite the DataBinding layer:
+	   - Get rid off all BindingSource/IBindingList/DataSet/DataTable 
+	   specific code.
+	   - Get rid off the per DataSource type column autogeneration code.
+	   - Use the CurrencyManager for everything that is DataBinding related.
+
+2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* CurrencyManager.cs: Do not fire duplicate ListChanged events.
 
 2008-12-31  Ivan N. Zlatev  <contact@i-nz.net>
