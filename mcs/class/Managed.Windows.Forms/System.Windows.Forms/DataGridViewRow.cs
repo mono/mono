@@ -92,8 +92,8 @@ namespace System.Windows.Forms
 		public object DataBoundItem {
 			get {
 				if (base.DataGridView != null && DataGridView.DataManager != null) {
-					if (DataGridView.DataManager.List.Count > base.Index)
-						return DataGridView.DataManager.List[base.Index];
+					if (DataGridView.DataManager.Count > base.Index)
+						return DataGridView.DataManager[base.Index];
 				}
 				return null;
 			}

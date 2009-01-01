@@ -1,5 +1,10 @@
 2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewRow.cs: Access the indexer of the data manager directly 
+	instead of the internal list.
+
+2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewCell.cs, DataGridView.cs, DataGridViewCheckBoxCell.cs: 
 	Rewrite the value getting, setting, parsing, formatting logic:
 	   - If data-bound value get/set should actually get and set from the 
