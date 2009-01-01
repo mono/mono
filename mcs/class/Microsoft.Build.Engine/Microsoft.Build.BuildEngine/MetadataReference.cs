@@ -34,7 +34,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class MetadataReference {
+	internal class MetadataReference : IReference {
 	
 		string		itemName;
 		string		metadataName;

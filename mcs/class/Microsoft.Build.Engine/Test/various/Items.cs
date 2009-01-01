@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 //
 // (C) 2006 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.IO;
+using System.Text;
 using System.Xml;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
@@ -40,7 +42,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			string str = String.Empty;
 			if (big == null)
 				return str;
-			
+
 			foreach (BuildItem bi in big) {
 				if (str == String.Empty)
 					str = bi.FinalItemSpec;
@@ -49,6 +51,30 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			}
 			
 			return str;
+		}
+
+		private void CheckItems (Project proj, string name, string prefix, params string [] values)
+		{
+			BuildItemGroup big = proj.GetEvaluatedItemsByName (name);
+			if (big == null) {
+				Assert.Fail ("{0}: Item corresponding '{1}' not found.", prefix, name);
+				return;
+			}
+
+			if (values.Length != big.Count) {
+				Console.Write ("Expected> ");
+				foreach (string s in values)
+					Console.Write ("{0}|", s);
+				Console.WriteLine ();
+				Console.Write ("Actual> ");
+				foreach (BuildItem item in big)
+					Console.Write ("{0}|", item.FinalItemSpec);
+				Console.WriteLine ();
+				Assert.AreEqual (values.Length, big.Count, String.Format ("{0}: Number of items", prefix));
+			}
+			for (int i = 0; i < values.Length; i ++)
+				Assert.AreEqual (values [i], big [i].FinalItemSpec,
+					String.Format ("{0}: Item named {1}, numbered {2}", prefix, name, i));
 		}
 
 		[Test]
@@ -73,14 +99,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			";
 
 			proj.LoadXml (documentString);
-			Assert.AreEqual ("A", GetItems (proj, "Item0"), "A1");
-			Assert.AreEqual ("A;B;C", GetItems (proj, "Item1"), "A2");
-			Assert.AreEqual ("A;B;C;A;D", GetItems (proj, "Item2"), "A3");
-			Assert.AreEqual ("B;C;D", GetItems (proj, "Item3"), "A4");
-			Assert.AreEqual ("Q", GetItems (proj, "Item4"), "A5");
-			Assert.AreEqual (String.Empty, GetItems (proj, "Item5"), "A6");
-			Assert.AreEqual ("D", GetItems (proj, "Item6"), "A7");
-			Assert.AreEqual (String.Empty, GetItems (proj, "Item7"), "A8");
+			CheckItems (proj, "Item0", "A1", "A");
+			CheckItems (proj, "Item1", "A2", "A", "B", "C");
+			CheckItems (proj, "Item2", "A3", "A", "B", "C", "A", "D");
+			CheckItems (proj, "Item3", "A4", "B", "C", "D");
+			CheckItems (proj, "Item4", "A5", "Q");
+			CheckItems (proj, "Item5", "A6");
+			CheckItems (proj, "Item6", "A7", "D");
+			CheckItems (proj, "Item7", "A8");
 		}
 
 		[Test]
@@ -101,8 +127,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 
-			Assert.AreEqual ("A-B-C", GetItems (proj, "Item2"), "A1");
-			Assert.AreEqual ("AxxBxxC", GetItems (proj, "Item3"), "A2");
+			CheckItems (proj, "Item2", "A1", "A-B-C");
+			CheckItems (proj, "Item3", "A2", "AxxBxxC");
 		}
 
 		[Test]
@@ -122,7 +148,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 
-			Assert.AreEqual ("A-B-C", GetItems (proj, "Item2"), "A1");
+			CheckItems (proj, "Item2", "A1", "A-B-C");
 		}
 	
 
@@ -148,12 +174,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 
-			Assert.AreEqual ("A;B;C", GetItems (proj, "ItemT1"), "A1");
-			Assert.AreEqual ("AA;BB;CC", GetItems (proj, "ItemT2"), "A2");
-			Assert.AreEqual ("(-A-);(-B-);(-C-)", GetItems (proj, "ItemT3"), "A3");
-			Assert.AreEqual (".txt;.txt;.zip;.zip", GetItems (proj, "ItemT4"), "A4");
-			Assert.AreEqual (string.Format ("B{0}.txt;C{0}.txt;B{0}.zip;C{0}.zip", Path.DirectorySeparatorChar), GetItems (proj, "ItemT5"), "A5");
+			CheckItems (proj, "ItemT1", "A1", "A", "B", "C");
+			CheckItems (proj, "ItemT2", "A2", "AA", "BB", "CC");
+			CheckItems (proj, "ItemT3", "A3", "(-A-)", "(-B-)", "(-C-)");
+			CheckItems (proj, "ItemT4", "A4", ".txt", ".txt", ".zip", ".zip");
+			CheckItems (proj, "ItemT5", "A5", "B/.txt", "C/.txt", "B/.zip", "C/.zip");
 		}
+
 		[Test]
 		[Category ("NotWorking")]
 		public void TestItems5 ()
@@ -172,7 +199,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 
-			Assert.AreEqual (@"A\X/B;A\X/C;B\X/B;B\X/C", GetItems (proj, "ItemT"), "A1");
+			CheckItems (proj, "ItemT", "A1", @"A\X/B", @"A\X/C", @"B\X/B", @"B\X/C");
 		}
 
 		[Test]
@@ -202,12 +229,12 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 
 			proj.LoadXml (documentString);
 
-			Assert.AreEqual ("%(A.B)", GetItems (proj, "Item2"), "A1");
-			Assert.AreEqual (String.Empty, GetItems (proj, "Item3"), "A2");
-			Assert.AreEqual ("AABAC", GetItems (proj, "Item4"), "A3");
-			Assert.AreEqual ("A%(A)B%(A)C", GetItems (proj, "Item5"), "A4");
-			Assert.AreEqual ("A@(A)B@(A)C", GetItems (proj, "Item6"), "A6");
-			Assert.AreEqual ("A;B;C", GetItems (proj, "Item7"), "A6");
+			CheckItems (proj, "Item2", "A1", "%(A.B)");
+			CheckItems (proj, "Item3", "A2");
+			CheckItems (proj, "Item4", "A3", "AABAC");
+			CheckItems (proj, "Item5", "A4", "A%(A)B%(A)C");
+			CheckItems (proj, "Item6", "A6", "A@(A)B@(A)C");
+			CheckItems (proj, "Item7", "A6", "A", "B", "C");
 		}
 
 		[Test]
@@ -329,8 +356,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.AreEqual ("A@(A)B@(A)C", proj.GetEvaluatedProperty ("P3"), "A3");
 			Assert.AreEqual ("AABAC", proj.GetEvaluatedProperty ("P4"), "A4");
 			Assert.AreEqual ("@(A,'ABC')", proj.GetEvaluatedProperty ("P5"), "A5");
-			Assert.AreEqual ("A;B;C", GetItems (proj, "I1"), "A6");
-			Assert.AreEqual ("A A;B B;C C", GetItems (proj, "I2"), "A7");
+			CheckItems (proj, "I1", "A6", "A", "B", "C");
+			CheckItems (proj, "I2", "A7", "A A", "B B", "C C");
 		}
 
 		[Test]
@@ -360,7 +387,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItemsInTarget3 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -372,55 +398,315 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 					<PropertyGroup>
 						<A>A</A>
 						<B>A;B</B>
-						<C>A;</C>
+						<C>A;;</C>
 					</PropertyGroup>
 					<ItemGroup>
 						<A Include='A;B;C' />
-					</ItemGroup>
+					</ItemGroup>";
 
-					<Target Name='1'>
-						<StringTestTask Array='$(A)$(A)'>
-							<Output TaskParameter='Array' ItemName='I0' />
-						</StringTestTask>
-						<StringTestTask Array='$(B)$(B)'>
-							<Output TaskParameter='Array' ItemName='I1' />
-						</StringTestTask>
-						<StringTestTask Array='$(C)'>
-							<Output TaskParameter='Array' ItemName='I2' />
-						</StringTestTask>
-						<StringTestTask Array='$(C)$(C)'>
-							<Output TaskParameter='Array' ItemName='I3' />
-						</StringTestTask>
-
-						<StringTestTask Array='@(A);$(C)'>
-							<Output TaskParameter='Array' ItemName='I4' />
-						</StringTestTask>
-						<StringTestTask Array='@(A);A;B;C'>
-							<Output TaskParameter='Array' ItemName='I5' />
-						</StringTestTask>
-					</Target>
-				</Project>
-			";
+			documentString += CreateTargetFragment ("StringTestTask", "Array", "Array", "I",
+					new string [] {
+						"$(A)$(A)",
+						"$(B)$(B)",
+						"$(C)",
+						"$(C)$(C)",
+						"@(A);$(C)",
+						"@(A);A;B;C",
+						"Foo;@(A)",
+						"@(A);Foo"
+					}) + "</Project>";
 
 			proj.LoadXml (documentString);
-			proj.Build ("1");
+			Assert.IsTrue (proj.Build ("1"), "Build failed");
 
-			Assert.AreEqual ("AA", GetItems (proj, "I0"), "A1");
-			Assert.AreEqual ("A;BA;B", GetItems (proj, "I1"), "A2");
-			Assert.AreEqual (3, proj.GetEvaluatedItemsByName ("I1").Count, "A3");
-			Assert.AreEqual ("A", GetItems (proj, "I2"), "A4");
-			Assert.AreEqual (1, proj.GetEvaluatedItemsByName ("I2").Count, "A5");
-			Assert.AreEqual ("A;A", GetItems (proj, "I3"), "A6");
-			Assert.AreEqual (2, proj.GetEvaluatedItemsByName ("I3").Count, "A7");
-
-			Assert.AreEqual ("A;B;C;A", GetItems (proj, "I4"), "A8");
-			Assert.AreEqual (4, proj.GetEvaluatedItemsByName ("I4").Count, "A9");
-			Assert.AreEqual ("A;B;C;A;B;C", GetItems (proj, "I5"), "A10");
-			Assert.AreEqual (6, proj.GetEvaluatedItemsByName ("I5").Count, "A11");
+			CheckItems (proj, "I0", "A0", "AA");
+			CheckItems (proj, "I1", "A1", "A", "BA", "B");
+			CheckItems (proj, "I2", "A2", "A");
+			CheckItems (proj, "I3", "A3", "A", "A");
+			CheckItems (proj, "I4", "A4", "A", "B", "C", "A");
+			CheckItems (proj, "I5", "A5", "A", "B", "C", "A", "B", "C");
+			CheckItems (proj, "I6", "A6", "Foo", "A", "B", "C");
+			CheckItems (proj, "I7", "A7", "A", "B", "C", "Foo");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		//Test with ITaskItem[]
+		public void TestItemsInTarget3a ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<PropertyGroup>
+						<A>A</A>
+						<B>A;B</B>
+						<C>A;;</C>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A;B;C' />
+						<B Include='Foo;' />
+					</ItemGroup>";
+
+			documentString += CreateTargetFragment ("BatchingTestTask", "Sources", "Output", "I",
+					new string [] {
+						"$(A)$(A)",
+						"$(B)$(B)",
+						"$(C)",
+						"$(C)$(C)",
+						"$(C)   $(C)",
+						"  $(C)   Foo    $(C)  Bar ; $(B)   ",
+						"@(A);$(C)",
+						"@(A);A;B;C",
+					}) + "</Project>";
+
+
+			proj.LoadXml (documentString);
+			Assert.IsTrue (proj.Build ("1"), "Build failed");
+
+			CheckItems (proj, "I0", "A0", "AA");
+			CheckItems (proj, "I1", "A1", "A", "BA", "B");
+			CheckItems (proj, "I2", "A2", "A");
+			CheckItems (proj, "I3", "A3", "A", "A");
+			CheckItems (proj, "I4", "A4", "A", "A");
+			CheckItems (proj, "I5", "A5", "A", "Foo    A", "Bar", "A", "B");
+			CheckItems (proj, "I6", "A6", "A", "B", "C", "A");
+			CheckItems (proj, "I7", "A7", "A", "B", "C", "A", "B", "C");
+		}
+
+		[Test]
+		//Test with string[]
+		public void TestItemsInTarget3b ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<PropertyGroup>
+						<A>A</A>
+						<B>A;B</B>
+						<C>A;;</C>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A;B;;;C' />
+					</ItemGroup>";
+
+			documentString += CreateTargetFragment ("BatchingTestTask", "Strings", "StringsOutput", "I",
+					new string [] {
+						"$(A)$(A)",
+						"$(B)$(B)",
+						"$(C)",
+						"$(C)$(C)",
+						"$(C) $(C) $(C)Bar$(C)",
+						"@(A);$(C)",
+						"@(A);A;B;C"
+					}) + "</Project>";
+
+			proj.LoadXml (documentString);
+			Assert.IsTrue (proj.Build ("1"), "Build failed");
+
+			CheckItems (proj, "I0", "A0", "AA");
+			CheckItems (proj, "I1", "A1", "A", "BA", "B");
+			CheckItems (proj, "I2", "A2", "A");
+			CheckItems (proj, "I3", "A3", "A", "A");
+			CheckItems (proj, "I4", "A4", "A", "A", "A", "BarA");
+			CheckItems (proj, "I5", "A5", "A", "B", "C", "A");
+			CheckItems (proj, "I6", "A6", "A", "B", "C", "A", "B", "C");
+		}
+
+		[Test]
+		//Test with string
+		public void TestItemsInTarget3c ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<PropertyGroup>
+						<A>A</A>
+						<B>A;B</B>
+						<C>A;;</C>
+						<D>$(C);Foo</D>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A;B;;;C' />
+					</ItemGroup>";
+
+			documentString += CreateTargetFragment ("BatchingTestTask", "SingleString", "SingleStringOutput", "I",
+					new string [] {
+						"$(A)$(A)",
+						"$(B)$(B)",
+						"$(C)",
+						"$(C)$(C)",
+						"$(C) $(C)",
+						"@(A);$(C)",
+						"@(A);A;B;C",
+						"@(A) $(C) @(A)"
+					}) + "</Project>";
+
+			proj.LoadXml (documentString);
+			Assert.IsTrue (proj.Build ("1"), "Build failed");
+
+			BuildProperty bp = proj.EvaluatedProperties ["D"];
+			Assert.AreEqual ("$(C);Foo", bp.Value, "B0");
+			Assert.AreEqual ("A;;;Foo", bp.FinalValue, "B1");
+
+			bp = proj.EvaluatedProperties ["C"];
+			Assert.AreEqual ("A;;", bp.Value, "B3");
+			Assert.AreEqual ("A;;", bp.FinalValue, "B4");
+
+			CheckItems (proj, "I0", "A0", "AA");
+			CheckItems (proj, "I1", "A1", "A;BA;B");
+			CheckItems (proj, "I2", "A2", "A;;");
+			CheckItems (proj, "I3", "A3", "A;;A;;");
+			CheckItems (proj, "I4", "A4", "A;; A;;");
+			CheckItems (proj, "I5", "A5", "A;B;C;A;;");
+			CheckItems (proj, "I6", "A6", "A;B;C;A;B;C");
+			CheckItems (proj, "I7", "A7", "A;B;C A;; A;B;C");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError1 ()
+		{
+			CheckSingleTaskItemProject ("$(B)$(B)");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError2 ()
+		{
+			CheckSingleTaskItemProject ("$(C)$(C)");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError3 ()
+		{
+			CheckSingleTaskItemProject ("$(C) $(C)");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError4 ()
+		{
+			CheckSingleTaskItemProject ("@(A)");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError5 ()
+		{
+			CheckSingleTaskItemProject ("@(A);$(C))");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError6 ()
+		{
+			CheckSingleTaskItemProject ("@(A);A;B;C");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError7 ()
+		{
+			CheckSingleTaskItemProject ("@(Item1)$(C)");
+		}
+
+		[Test]
+		public void TestSingleTaskItemError8 ()
+		{
+			CheckSingleTaskItemProject ("$(B).foo");
+		}
+
+		[Test]
+		public void TestSingleTaskItem1 ()
+		{
+			Project proj = BuildProjectForSingleTaskItem ("$(D)$(C)");
+			CheckItems (proj, "I0", "A0", "A");
+		}
+
+		[Test]
+		public void TestSingleTaskItem2 ()
+		{
+			Project proj = BuildProjectForSingleTaskItem ("@(Item1)");
+			CheckItems (proj, "I0", "A0", "F");
+		}
+
+		[Test]
+		public void TestSingleTaskItem3 ()
+		{
+			Project proj = BuildProjectForSingleTaskItem ("$(A).foo");
+			CheckItems (proj, "I0", "A0", "A.foo");
+		}
+
+		[Test]
+		public void TestSingleTaskItem4 ()
+		{
+			Project proj = BuildProjectForSingleTaskItem ("$(C)");
+			CheckItems (proj, "I0", "A0", "A");
+		}
+
+		void CheckSingleTaskItemProject (string expression)
+		{
+			string documentString = CreateProjectForSingleTaskItem (expression);
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			proj.LoadXml (documentString);
+			Assert.IsFalse (proj.Build ("1"), "Build should've failed");
+		}
+
+		Project BuildProjectForSingleTaskItem (string expression)
+		{
+			string documentString = CreateProjectForSingleTaskItem (expression);
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			proj.LoadXml (documentString);
+			Assert.IsTrue (proj.Build ("1"), "Build failed");
+
+			return proj;
+		}
+
+		string CreateProjectForSingleTaskItem (string expression)
+		{
+			return @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<PropertyGroup>
+						<A>A</A>
+						<B>A;B</B>
+						<C>A;;</C>
+						<D></D>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A;B;C' />
+						<Item1 Include='F' />
+					</ItemGroup>
+
+					<Target Name='1'>
+						<BatchingTestTask SingleTaskItem='" + expression + @"'>
+							<Output TaskParameter='SingleStringOutput' ItemName='I0' />
+						</BatchingTestTask>
+					</Target>
+				</Project>";
+		}
+
+		string CreateTargetFragment (string taskname, string task_param_in, string task_param_out, string item_prefix,
+				string [] args)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("<Target Name='1'>");
+			for (int i = 0; i < args.Length; i ++) {
+				sb.AppendFormat ("<{0} {1}='{2}'>\n", taskname, task_param_in, args [i]);
+				sb.AppendFormat ("\t<Output TaskParameter='{0}' ItemName='{1}{2}' />\n", task_param_out, item_prefix, i);
+				sb.AppendFormat ("</{0}>\n", taskname);
+			}
+			sb.Append ("</Target>");
+
+			return sb.ToString ();
+		}
+
+		[Test]
 		public void TestItemsInTarget4 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -445,7 +731,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItemsInTarget5 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -470,7 +755,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestItemsInTarget6 ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -496,5 +780,29 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 			Assert.IsFalse (proj.Build ("1"));
 		}
+
+		[Test]
+		public void TestItemsInTarget7 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+					<ItemGroup>
+						<A Include='A;B;C' />
+						<B Include='Foo;' />
+					</ItemGroup>
+					<Target Name='1'>
+						<BatchingTestTask SingleTaskItem='Bar%(B.Identity)@(A)' />
+					</Target>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+			Assert.IsFalse (proj.Build ("1"));
+		}
+
 	}
 }

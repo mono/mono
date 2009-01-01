@@ -115,7 +115,7 @@ namespace Microsoft.Build.BuildEngine {
 			BuildProperty evaluated = new BuildProperty (Name, Value);
 
 			Expression exp = new Expression ();
-			exp.Parse (Value, false);
+			exp.Parse (Value, false, false);
 			evaluated.finalValue = (string) exp.ConvertTo (parentProject, typeof (string));
 
 			parentProject.EvaluatedProperties.AddProperty (evaluated);

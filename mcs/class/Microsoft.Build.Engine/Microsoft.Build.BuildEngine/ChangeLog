@@ -1,3 +1,26 @@
+2009-01-01  Ankit Jain  <jankit@novell.com>
+
+	* IReference.cs: New. Interface for Item/Metadata/PropertyReference.
+	* ChangeType (ToBuildItemGroup): Add 'split' param.
+	Track api changes.
+	* Expression.cs (Parse): Add a new overload with a 'split' param.
+	* ExpressionCollection.cs (Add): Add new overload for IReference,
+	remove the ones for Item/Metadata/PropertyReference.
+	(ConvertToArray): Implement correctly.
+	(ConvertToString): Track api changes.
+	(ConvertToITaskItem): Implement with ConvertToITaskItemArray.
+	(ConvertToITaskItemArray): Implement support for concat'ing expressions.
+	(AddItemsToArray): New.
+	(ConvertToITaskItemArrayFromString): Refactor a bit.
+	(ThrowCantConcatError): New.
+	* ItemReference.cs: Update.
+	* MetadataReference.cs: Update.
+	* PropertyReference.cs (ConvertToITaskItemArray): Implement.
+	(GetValue): New.
+	* BuildPropertyGroup.cs: Track api changes.
+	* TaskEngine.cs (PublishOutput): Improve exception message.
+	* Project.cs (DoLoad): Improve exception message. Add a null check.
+
 2008-12-30  Ankit Jain  <jankit@novell.com>
 
 	* MetadataReference.cs (BuildItemGroupToITaskItems): Return unique

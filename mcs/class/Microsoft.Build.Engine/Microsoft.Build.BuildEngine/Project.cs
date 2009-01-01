@@ -645,9 +645,11 @@ namespace Microsoft.Build.BuildEngine {
 				ProcessXml ();
 				ParentEngine.AddLoadedProject (this);
 			} catch (Exception e) {
-				throw new InvalidProjectFileException (e.Message, e);
+				throw new InvalidProjectFileException (String.Format ("{0}: {1}",
+							fullFileName, e.Message), e);
 			} finally {
-				textReader.Close ();
+				if (textReader != null)
+					textReader.Close ();
 			}
 		}
 

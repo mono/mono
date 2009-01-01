@@ -50,10 +50,21 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void Parse (string expression, bool allowItems)
 		{
+			Parse (expression, allowItems, true);
+		}
+
+		// @split: Split on ';'
+		//	   Eg. Property values don't need to be split
+		public void Parse (string expression, bool allowItems, bool split)
+		{
 			expression = expression.Replace ('/', Path.DirectorySeparatorChar);
 			expression = expression.Replace ('\\', Path.DirectorySeparatorChar);
 		
-			string [] parts = expression.Split (new char [] {';'}, StringSplitOptions.RemoveEmptyEntries);
+			string [] parts;
+			if (split)
+				parts = expression.Split (new char [] {';'}, StringSplitOptions.RemoveEmptyEntries);
+			else
+				parts = new string [] { expression };
 
 			List <ArrayList> p1 = new List <ArrayList> (parts.Length);
 			List <ArrayList> p2 = new List <ArrayList> (parts.Length);
@@ -101,12 +112,8 @@ namespace Microsoft.Build.BuildEngine {
 				foreach (object o in lists [i]) {
 					if (o is string)
 						expressionCollection.Add (Utilities.Unescape ((string) o));
-					else if (o is ItemReference)
-						expressionCollection.Add ((ItemReference) o);
-					else if (o is PropertyReference)
-						expressionCollection.Add ((PropertyReference) o);
-					else if (o is MetadataReference)
-						expressionCollection.Add ((MetadataReference) o);
+					else if (o is IReference)
+						expressionCollection.Add ((IReference) o);
 				}
 				if (i < lists.Count - 1)
 					expressionCollection.Add (";");

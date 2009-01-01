@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 // 
 // (C) 2006 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -49,19 +51,9 @@ namespace Microsoft.Build.BuildEngine {
 			get { return objects.Count; }
 		}
 		
-		public void Add (ItemReference itemReference)
+		public void Add (IReference reference)
 		{
-			objects.Add (itemReference);
-		}
-		
-		public void Add (MetadataReference metadataReference)
-		{
-			objects.Add (metadataReference);
-		}
-		
-		public void Add (PropertyReference propertyReference)
-		{
-			objects.Add (propertyReference);
+			objects.Add (reference);
 		}
 		
 		public void Add (string s)
@@ -97,14 +89,15 @@ namespace Microsoft.Build.BuildEngine {
 
 		object ConvertToArray (Project project, Type type)
 		{
-			string [] rawTable = ConvertToString (project).Split (';');
+			ITaskItem[] items = ConvertToITaskItemArray (project);
 
-			Array arr = Array.CreateInstance (type.GetElementType (), rawTable.Length);
-			for (int i = 0; i < arr.Length; i++)
-				arr.SetValue (ConvertToObject (rawTable [i], type.GetElementType ()), i);
+			Type element_type = type.GetElementType ();
+			Array arr = Array.CreateInstance (element_type, items.Length);
+			for (int i = 0; i < arr.Length; i ++)
+				arr.SetValue (ConvertToObject (items [i].ItemSpec, element_type), i);
 			return arr;
 		}
-		
+
 		object ConvertToObject (string raw, Type type)
 		{
 			if (type == typeof (bool))
@@ -120,25 +113,23 @@ namespace Microsoft.Build.BuildEngine {
 			else
 				throw new Exception (String.Format ("Unknown type: {0}", type.ToString ()));
 		}
+
 		string ConvertToString (Project project)
 		{
 			StringBuilder sb = new StringBuilder ();
 			
 			foreach (object o in objects) {
-				if (o is string) {
-					sb.Append ((string) o);
-				} else if (o is ItemReference) {
-					ItemReference ir = (ItemReference) o;
-					sb.Append (ir.ConvertToString (project));
-				} else if (o is PropertyReference) {
-					PropertyReference pr = (PropertyReference) o;
-					sb.Append (pr.ConvertToString (project));
-				} else if (o is MetadataReference) {
-					MetadataReference mr = (MetadataReference) o;
-					sb.Append (mr.ConvertToString (project));
-				} else {
-					throw new Exception ("Invalid type in objects collection.");
+				string s = o as string;
+				if (s != null) {
+					sb.Append (s);
+					continue;
 				}
+
+				IReference br = o as IReference;
+				if (br != null)
+					sb.Append (br.ConvertToString (project));
+				else
+					throw new Exception ("BUG: Invalid type in objects collection.");
 			}
 			return sb.ToString ();
 		}
@@ -149,75 +140,124 @@ namespace Microsoft.Build.BuildEngine {
 			
 			if (objects == null)
 				throw new Exception ("Cannot cast empty expression to ITaskItem.");
-			
-			if (objects [0] is ItemReference) {
-				ItemReference ir = (ItemReference) objects [0];
-				ITaskItem[] array = ir.ConvertToITaskItemArray (project);
-				if (array.Length == 1) {
-					return array [0];
-				} else {
-					throw new Exception ("TaskItem array too long");
-				}
-			} else {
-				item = new TaskItem (ConvertToString (project));
-				return item;
-			}
+
+			ITaskItem[] items = ConvertToITaskItemArray (project);
+			if (items.Length != 1)
+				//FIXME: msbuild gives better errors
+				throw new Exception (String.Format ("Too many items: {0}", items.Length));
+
+			return items [0];
 		}
 		
+		// Concat rules (deduced)
+		// - ItemRef can concat only with a string ';' or PropertyRef ending in ';'
+		// - MetadataRef can concat with anything other than ItemRef
+		// - PropertyRef cannot be right after a ItemRef
+		//   PropertyRef concats if it doesn't end in ';'
+		// - string cannot concat with ItemRef unless it is ';'.
+		//   string concats if it ends in ';'
 		ITaskItem[] ConvertToITaskItemArray (Project project)
 		{
 			List <ITaskItem> finalItems = new List <ITaskItem> ();
-			ArrayList tempItems = new ArrayList ();
-			ITaskItem[] array;
 			
+			object prev = null;
+			bool prev_can_concat = false;
+
 			foreach (object o in objects) {
+				bool can_concat = prev_can_concat;
+
+				string str = o as string;
+				if (str != null) {
+					if (str != ";" && prev != null && prev is ItemReference)
+						ThrowCantConcatError (prev, str);
+
+					prev_can_concat = !(str.Length > 0 && str [str.Length - 1] == ';') && str.Trim ().Length > 0;
+					AddItemsToArray (finalItems,
+							ConvertToITaskItemArrayFromString (str),
+							can_concat);
+					prev = o;
+					continue;
+				}
+
+				IReference br = o as IReference;
+				if (br == null)
+					throw new Exception ("BUG: Invalid type in objects collection.");
+
 				if (o is ItemReference) {
-					tempItems.Add (o);
+					if (prev != null && !(prev is string && (string)prev == ";"))
+						ThrowCantConcatError (prev, br);
+
+					prev_can_concat = true;
+				} else if (o is MetadataReference) {
+					if (prev != null && prev is ItemReference)
+						ThrowCantConcatError (prev, br);
+
+					prev_can_concat = true;
 				} else if (o is PropertyReference) {
-					PropertyReference pr = (PropertyReference) o;
-					tempItems.Add (pr.ConvertToString (project));
-				} else if (o is MetadataReference) {
-					tempItems.Add (o);
-				} else if (o is string) {
-					tempItems.Add (o);
-				} else {
-					throw new Exception ("Invalid type in objects collection.");
+					if (prev != null && prev is ItemReference)
+						ThrowCantConcatError (prev, br);
+
+					string value = ((PropertyReference) o).GetValue (project);
+					prev_can_concat = !(value.Length > 0 && value [value.Length - 1] == ';');
 				}
+
+				AddItemsToArray (finalItems, br.ConvertToITaskItemArray (project), can_concat);
+
+				prev = o;
 			}
-			foreach (object o in tempItems) {
-				if (o is ItemReference) {
-					ItemReference ir = (ItemReference) o;
-					array = ir.ConvertToITaskItemArray (project);
-					if (array != null)
-						finalItems.AddRange (array);
-				} else if (o is MetadataReference) {
-					MetadataReference mr = (MetadataReference) o;
-					array = mr.ConvertToITaskItemArray (project);
-					if (array != null)
-						finalItems.AddRange (array);
-				} else if (o is string) {
-					string s = (string) o;
-					array = ConvertToITaskItemArrayFromString (project, s);
-					finalItems.AddRange (array);
-				} else {
-					throw new Exception ("Invalid type in tempItems collection.");
-				}
+
+			// Trim and Remove empty items
+			List<ITaskItem> toRemove = new List<ITaskItem> ();
+			for (int i = 0; i < finalItems.Count; i ++) {
+				string s = finalItems [i].ItemSpec.Trim ();
+				if (s.Length == 0)
+					toRemove.Add (finalItems [i]);
+				else
+					finalItems [i].ItemSpec = s;
 			}
+			foreach (ITaskItem ti in toRemove)
+				finalItems.Remove (ti);
 			
 			return finalItems.ToArray ();
 		}
+
+		// concat's first item in @items to last item in @list if @concat is true
+		// else just adds all @items to @list
+		void AddItemsToArray (List<ITaskItem> list, ITaskItem[] items, bool concat)
+		{
+			if (items == null || items.Length == 0)
+				return;
+
+			int start_index = 1;
+			if (concat && list.Count > 0)
+				list [list.Count - 1].ItemSpec += items [0].ItemSpec;
+			else
+				start_index = 0;
+
+			for (int i = start_index; i < items.Length; i ++)
+				list.Add (items [i]);
+		}
 		
-		ITaskItem [] ConvertToITaskItemArrayFromString (Project project, string source)
+		ITaskItem [] ConvertToITaskItemArrayFromString (string source)
 		{
 			List <ITaskItem> items = new List <ITaskItem> ();
-			string [] splitSource = source.Split (';');
-			foreach (string s in splitSource) {
-				if (s != String.Empty) {
-					items.Add (new TaskItem (s));
-				}
-			}
+			string [] splitSource = source.Split (new char [] {';'},
+					StringSplitOptions.RemoveEmptyEntries);
+
+			foreach (string s in splitSource)
+				items.Add (new TaskItem (s));
+
 			return items.ToArray ();
 		}
+
+		void ThrowCantConcatError (object first, object second)
+		{
+			throw new Exception (String.Format (
+					"Can't concatenate Item list with other strings where an item list is " +
+					"expected ('{0}', '{1}'). Use semi colon to separate items.",
+					first.ToString (), second.ToString ()));
+		}
+
 	}
 }
 

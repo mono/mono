@@ -32,7 +32,7 @@ using System.Collections;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class ItemReference {
+	internal class ItemReference : IReference {
 	
 		string		itemName;
 		Expression	transform;

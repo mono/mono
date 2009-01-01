@@ -41,6 +41,7 @@ Microsoft.Build.BuildEngine/ImportCollection.cs
 Microsoft.Build.BuildEngine/ImportedProject.cs
 Microsoft.Build.BuildEngine/InternalLoggerException.cs
 Microsoft.Build.BuildEngine/InvalidProjectFileException.cs
+Microsoft.Build.BuildEngine/IReference.cs
 Microsoft.Build.BuildEngine/ItemReference.cs
 Microsoft.Build.BuildEngine/MetadataReference.cs
 Microsoft.Build.BuildEngine/Project.cs

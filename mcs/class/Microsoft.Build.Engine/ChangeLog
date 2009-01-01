@@ -1,3 +1,7 @@
+2009-01-01  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Engine.dll.sources: Add IReference.cs
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Documentation/**: Flush updated documentation.

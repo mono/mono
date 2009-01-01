@@ -56,22 +56,6 @@ namespace Microsoft.Build.BuildEngine {
 				output = o.ToString ();
 
 			}
-			/*if (type == typeof (bool)) {
-				bool t = (bool) o;
-				output =  t.ToString (); 
-			} else if (type == typeof (string)) {
-				string t = (string) o;
-				output =  t.ToString ();
-			} else if (type == typeof (DateTime)) {
-				DateTime t = (DateTime) o;
-				output =  t.ToString ();
-			} else if (type == typeof (int)) {
-				int t = (int) o;
-				output =  t.ToString ();
-			} else if (type == typeof (uint)) {
-				uint t = (uint) o;
-				output =  t.ToString ();
-			}*/
 			return output;
 		}
 
@@ -130,20 +114,25 @@ namespace Microsoft.Build.BuildEngine {
 				foreach (ITaskItem i in (ITaskItem []) o)
 					big.AddItem (name, i);
 			} else if (t.IsArray) {
-				return ToBuildItemGroup (name, ToString ((object []) o, t));
+				return ToBuildItemGroup (name, ToString ((object []) o, t), true);
 			} else {
-				return ToBuildItemGroup (name, ToString (o));
+				return ToBuildItemGroup (name, ToString (o), false);
 			}
 
 			return big;
 		}
 		
-		static BuildItemGroup ToBuildItemGroup (string name, string items)
+		static BuildItemGroup ToBuildItemGroup (string name, string items, bool split)
 		{
-			string [] splitItems = items.Split (';');
 			BuildItemGroup big = new BuildItemGroup ();
-			foreach (string item in splitItems)
-				big.AddItem (name, new TaskItem (item));
+			if (split) {
+				string [] splitItems = items.Split (';');
+				foreach (string item in splitItems)
+					big.AddItem (name, new TaskItem (item));
+			} else {
+				big.AddItem (name, new TaskItem (items));
+			}
+
 			return big;
 		}
 		

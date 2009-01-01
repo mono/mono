@@ -29,11 +29,12 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class PropertyReference {
+	internal class PropertyReference : IReference {
 		
 		string	name;
 		int	start;
@@ -49,12 +50,30 @@ namespace Microsoft.Build.BuildEngine {
 		public string ConvertToString (Project project)
 		{
 			BuildProperty bp = project.EvaluatedProperties [name];
-			
 			return bp != null ? bp.FinalValue : String.Empty;
+		}
+
+		public ITaskItem[] ConvertToITaskItemArray (Project project)
+		{
+			BuildProperty bp = project.EvaluatedProperties [name];
+			if (bp != null) {
+				List<ITaskItem> list = new List<ITaskItem> ();
+				foreach (string s in bp.FinalValue.Split (new char[] {';'}, StringSplitOptions.RemoveEmptyEntries))
+					list.Add (new TaskItem (s));
+				return list.ToArray ();
+			}
+			else
+				return null;
 		}
 		
 		public string Name {
 			get { return name; }
+		}
+
+		public string GetValue (Project project)
+		{
+			BuildProperty bp = project.EvaluatedProperties [name];
+			return bp == null ? String.Empty : bp.Value;
 		}
 
 		public int Start {
@@ -63,6 +82,11 @@ namespace Microsoft.Build.BuildEngine {
 
 		public int End {
 			get { return start + length - 1; }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("$({0})", name);
 		}
 	}
 }
