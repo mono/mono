@@ -1,5 +1,9 @@
 2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Remove a leftover Console.WriteLine.
+
+2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewRow.cs: Access the indexer of the data manager directly 
 	instead of the internal list.
 

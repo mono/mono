@@ -2359,7 +2359,6 @@ namespace System.Windows.Forms {
 				currentCell.Value = currentCell.ParseFormattedValue (currentCell.EditedFormattedValue, 
 										     currentCell.InheritedStyle, null, null);
 			} catch (Exception e) {
-				Console.WriteLine (e);
 				DataGridViewDataErrorEventArgs args = new DataGridViewDataErrorEventArgs (e, currentCell.ColumnIndex, currentCell.RowIndex, 
 													  DataGridViewDataErrorContexts.Commit);
 				OnDataError (false, args);
