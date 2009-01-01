@@ -183,6 +183,7 @@ namespace System.Windows.Forms
 		public virtual void Remove (DataGridViewCell cell)
 		{
 			base.List.Remove (cell);
+			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (
 				CollectionChangeAction.Remove, cell));
 		}
@@ -191,8 +192,15 @@ namespace System.Windows.Forms
 		{
 			DataGridViewCell cell = this [index];
 			base.List.RemoveAt (index);
+			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (
 				CollectionChangeAction.Remove, cell));
+		}
+
+		private void ReIndex ()
+		{
+			for (int i = 0; i < base.List.Count; i++)
+				this[i].SetColumnIndex (i);
 		}
 
 		protected override ArrayList List {
