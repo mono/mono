@@ -5,6 +5,7 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
 //   Atsushi Enomoto (atsushi@ximian.com)
+//   Ivan N. Zlatev (contact@i-nz.net)
 //
 // (C) Ximian, Inc. 2002
 // Copyright (C) Tim Coleman, 2002
@@ -192,9 +193,19 @@ namespace System.Data
 
 		private void SetDataSet (DataSet ds)
 		{
+			if (dataSet != null) {
+				dataSet.Tables.CollectionChanged -= new CollectionChangeEventHandler (TableCollectionChanged);
+				dataSet.Relations.CollectionChanged -= new CollectionChangeEventHandler (RelationCollectionChanged);
+			}
+
 			dataSet = ds;
 			settings = new DataViewSettingCollection (this);
 			xml = BuildSettingString ();
+
+			if (dataSet != null) {
+				dataSet.Tables.CollectionChanged += new CollectionChangeEventHandler (TableCollectionChanged);
+				dataSet.Relations.CollectionChanged += new CollectionChangeEventHandler (RelationCollectionChanged);
+			}
 		}
 
 		private void ParseSettingString (string source)
@@ -416,23 +427,28 @@ namespace System.Data
 
 		protected virtual void RelationCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
-			ListChangedEventArgs args;
-
-			if (e.Action == CollectionChangeAction.Remove) {
-				args = null;
-			} else if (e.Action == CollectionChangeAction.Refresh) {
-				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorChanged, null);
-			} else if (e.Action == CollectionChangeAction.Add) {
-				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorAdded, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
-			} else {
-				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorDeleted, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
-			}
-
-			this.OnListChanged(args);
+			this.OnListChanged (CollectionToListChangeEventArgs (e));
 		}
 
 		protected virtual void TableCollectionChanged (object sender, CollectionChangeEventArgs e)
 		{
+			this.OnListChanged (CollectionToListChangeEventArgs (e));
+		}
+
+		private ListChangedEventArgs CollectionToListChangeEventArgs (CollectionChangeEventArgs e)
+		{
+			ListChangedEventArgs args;
+
+			if (e.Action == CollectionChangeAction.Remove)
+				args = null;
+			else if (e.Action == CollectionChangeAction.Refresh)
+				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorChanged, null);
+			else if (e.Action == CollectionChangeAction.Add)
+				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorAdded, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
+			else
+				args = new ListChangedEventArgs(ListChangedType.PropertyDescriptorDeleted, new DataRelationPropertyDescriptor(((DataRelation) e.Element)));
+
+			return args;
 		}
 
 		#endregion // Methods

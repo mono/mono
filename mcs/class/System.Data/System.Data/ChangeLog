@@ -1,3 +1,8 @@
+2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataViewManager.cs: Hookup to the table/relations changed events and 
+	raise ListChanged events accordingly.
+
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DBConcurrencyException.cs: Marked .ctor taking DataRow [] as
