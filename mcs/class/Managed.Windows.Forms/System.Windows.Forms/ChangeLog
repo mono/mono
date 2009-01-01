@@ -1,3 +1,9 @@
+2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewCellCollection.cs: When cells are removed the column 
+	indices become invalid if the cell is not the last one and have to 
+	be refreshed.
+
 2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Return false in CommitEdit if there was an error.
