@@ -394,11 +394,12 @@ namespace System.Windows.Forms {
 		{
 			switch (e.ListChangedType) {
 			case ListChangedType.PropertyDescriptorAdded:
-				OnMetaDataChanged (EventArgs.Empty);
-				break;
 			case ListChangedType.PropertyDescriptorDeleted:
 			case ListChangedType.PropertyDescriptorChanged:
 				OnMetaDataChanged (EventArgs.Empty);
+#if NET_2_0
+				OnListChanged (e);
+#endif
 				break;
 			case ListChangedType.ItemDeleted:
 				if (list.Count == 0) {
@@ -423,6 +424,9 @@ namespace System.Windows.Forms {
 				}
 
 				OnItemChanged (new ItemChangedEventArgs (-1));
+#if NET_2_0
+				OnListChanged (e);
+#endif
 				break;
 			case ListChangedType.ItemAdded:
 				if (list.Count == 1) {
@@ -434,7 +438,8 @@ namespace System.Windows.Forms {
 					UpdateIsBinding ();
 #else
 					OnItemChanged (new ItemChangedEventArgs (-1));
-#endif
+					OnListChanged (e);
+#endif					 	
 				}
 				else {
 #if NET_2_0
@@ -463,15 +468,23 @@ namespace System.Windows.Forms {
 #endif
 					OnItemChanged (new ItemChangedEventArgs (e.NewIndex));
 				}
+#if NET_2_0
+				OnListChanged (e);
+#endif					 	
 				break;
 			case ListChangedType.Reset:
 				PushData();
 				UpdateIsBinding();
+#if NET_2_0	
+				OnListChanged (e);
+#endif
+				break;
+			default:
+#if NET_2_0
+				OnListChanged (e);
+#endif
 				break;
 			}
-#if NET_2_0
-			OnListChanged (e);
-#endif
 		}
 
 #if NET_2_0
