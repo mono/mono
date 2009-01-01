@@ -21,6 +21,7 @@
 //
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
+//	Ivan N. Zlatev  <contact@i-nz.net>
 //
 
 
@@ -50,8 +51,8 @@ namespace System.Windows.Forms {
 		private DataGridViewCellStyle style;
 		private object tag;
 		private string toolTipText;
-		internal object valuex;
-		internal Type valueType;
+		private object valuex;
+		private Type valueType;
 
 		protected DataGridViewCell ()
 		{
@@ -162,19 +163,9 @@ namespace System.Windows.Forms {
 			get {
 				if (DataGridView == null)
 					return null;
-					
+				
 				DataGridViewCellStyle style = InheritedStyle;
-
-				TypeConverter source = null;
-				TypeConverter dest = null;
-				
-				if (ValueType != null)
-					source = TypeDescriptor.GetConverter (ValueType);
-					
-				if (FormattedValueType != null)
-					dest = TypeDescriptor.GetConverter (FormattedValueType);
-				
-				return GetFormattedValue (Value, RowIndex, ref style, source, dest, DataGridViewDataErrorContexts.Formatting);
+				return GetFormattedValue (Value, RowIndex, ref style, null, null, DataGridViewDataErrorContexts.Formatting);
 			}
 		}
 
@@ -688,20 +679,19 @@ namespace System.Windows.Forms {
 				throw new ArgumentException ("formattedValue is null.");
 			if (ValueType == null)
 				throw new FormatException ("valuetype is null");
-			if (formattedValue.GetType () != FormattedValueType)
+			if (!FormattedValueType.IsAssignableFrom (formattedValue.GetType ()))
 				throw new ArgumentException ("formattedValue is not of formattedValueType.");
 			
-			// If formatted is null, return raw null value
-			if (formattedValue == cellStyle.NullValue)
-				return cellStyle.DataSourceNullValue;
-				
-			// Convert the formatted value to a string
-			string s = formattedValueTypeConverter.ConvertToString (formattedValue);
-			
-			// Convert the string to the raw value
-			object o = valueTypeConverter.ConvertFromString (s);
-			
-			return o;
+			if (formattedValueTypeConverter == null)
+				formattedValueTypeConverter = FormattedValueTypeConverter;
+			if (valueTypeConverter == null)
+				valueTypeConverter = ValueTypeConverter;
+
+			if (valueTypeConverter != null && valueTypeConverter.CanConvertFrom (FormattedValueType))
+				return valueTypeConverter.ConvertFrom (formattedValue);
+			if (formattedValueTypeConverter != null && formattedValueTypeConverter.CanConvertTo (ValueType))
+				return formattedValueTypeConverter.ConvertTo (formattedValue, ValueType);
+			return Convert.ChangeType (formattedValue, ValueType);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -870,7 +860,7 @@ namespace System.Windows.Forms {
 				
 			if (rowIndex < 0 || rowIndex >= DataGridView.RowCount)
 				throw new ArgumentOutOfRangeException ("rowIndex");
-				
+
 			// Give the user a chance to custom format
 			if (!(this is DataGridViewRowHeaderCell)) {
 				DataGridViewCellFormattingEventArgs e = new DataGridViewCellFormattingEventArgs (ColumnIndex, rowIndex, value, FormattedValueType, cellStyle);
@@ -883,22 +873,17 @@ namespace System.Windows.Forms {
 				value = e.Value;
 			}
 			
-			// Try to use Format/FormatProvider
-			IFormattable formattable = value as IFormattable;
+			if (formattedValueTypeConverter == null)
+				formattedValueTypeConverter = FormattedValueTypeConverter;
+			if (valueTypeConverter == null)
+				valueTypeConverter = ValueTypeConverter;
 
-			if (formattable != null && cellStyle != null)
-				return formattable.ToString (cellStyle.Format, cellStyle.FormatProvider);
-			
-			// Try to use the value type coverter
 			if (valueTypeConverter != null && valueTypeConverter.CanConvertTo (FormattedValueType))
 				return valueTypeConverter.ConvertTo (value, FormattedValueType);
-			
-			// Try to use the formatted value type coverter
 			if (formattedValueTypeConverter != null && formattedValueTypeConverter.CanConvertFrom (ValueType))
 				return formattedValueTypeConverter.ConvertFrom (value);
-			
-			// Now what? Give up?
-			return value;
+
+			return Convert.ChangeType (value, FormattedValueType);
 		}
 
 		protected virtual Size GetPreferredSize (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex, Size constraintSize)
@@ -915,19 +900,50 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual object GetValue (int rowIndex) {
-			
-			if (DataGridView != null && (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count))
+			if (DataGridView == null)
+				return null;
+
+			if (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count)
 				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
 				
-			if (DataGridView != null) {
-				DataGridViewCellValueEventArgs dgvcvea = new DataGridViewCellValueEventArgs (columnIndex, rowIndex);
-				DataGridView.OnCellValueNeeded (dgvcvea);
-				
-				if (dgvcvea.Value != null)
-					return dgvcvea.Value;
-			}
+			if (DataProperty != null)
+				return DataProperty.GetValue (OwningRow.DataBoundItem);
 			
-			return valuex;
+			if (valuex != null)
+				return valuex;
+
+			DataGridViewCellValueEventArgs dgvcvea = new DataGridViewCellValueEventArgs (columnIndex, rowIndex);
+			DataGridView.OnCellValueNeeded (dgvcvea);
+			return dgvcvea.Value;
+		}
+		
+		private PropertyDescriptor DataProperty {
+			get {
+				if (OwningColumn != null && !String.IsNullOrEmpty (OwningColumn.DataPropertyName) && 
+				    OwningRow != null && OwningRow.DataBoundItem != null)
+					return TypeDescriptor.GetProperties (OwningRow.DataBoundItem)[OwningColumn.DataPropertyName];
+				return null;
+			}
+		}
+
+		private TypeConverter FormattedValueTypeConverter {
+			get {
+				if (FormattedValueType != null)
+					return TypeDescriptor.GetConverter (FormattedValueType);
+				return null;
+			}
+		}
+
+		private TypeConverter ValueTypeConverter {
+			get {
+				if (DataProperty != null && DataProperty.Converter != null)
+					return DataProperty.Converter;
+				if (Value != null)
+					return TypeDescriptor.GetConverter (Value);
+				if (ValueType != null)
+					return TypeDescriptor.GetConverter (ValueType);
+				return null;
+			}
 		}
 
 		protected virtual bool KeyDownUnsharesRow (KeyEventArgs e, int rowIndex)
@@ -1270,10 +1286,16 @@ namespace System.Windows.Forms {
 			pea.Paint (pea.ClipBounds, pea.PaintParts);
 		}
 		
-		protected virtual bool SetValue (int rowIndex, object value) {
-			if (valuex != value) {
+		protected virtual bool SetValue (int rowIndex, object value)
+		{
+			object oldValue = this.Value;
+
+			if (DataProperty != null && !DataProperty.IsReadOnly)
+				DataProperty.SetValue (OwningRow.DataBoundItem, value);
+			else
 				valuex = value;
-					
+
+			if (oldValue != value) {
 				RaiseCellValueChanged (new DataGridViewCellEventArgs (ColumnIndex, RowIndex));
 				
 				// Set this dirty flag back to false

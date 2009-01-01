@@ -2352,28 +2352,20 @@ namespace System.Windows.Forms {
 
 		public bool CommitEdit (DataGridViewDataErrorContexts context)
 		{
-			if (currentCell != null && currentCell.OwningRow.DataBoundItem != null) {
-				Object ob = currentCell.OwningRow.DataBoundItem;
-				PropertyDescriptor property = TypeDescriptor.GetProperties (ob)[currentCell.OwningColumn.DataPropertyName];
-				if (property != null && !property.IsReadOnly) {
-					try {
-						object value = currentCell.Value;
-						if (property.Converter != null && 
-						    property.Converter.CanConvertFrom (value.GetType()))
-							value = property.Converter.ConvertFrom (value);
-						property.SetValue (ob, value);
-						return true;
-					} catch (Exception exc) {
-						DataGridViewDataErrorEventArgs args = new DataGridViewDataErrorEventArgs (exc, currentCell.ColumnIndex, 
-															  currentCell.RowIndex, context);
-						InternalOnDataError (args);
-						if (args.ThrowException)
-							throw exc;
-						return false;
-					}
-				}
-			}
+			if (currentCell == null)
+				return true;
 
+			try {
+				currentCell.Value = currentCell.ParseFormattedValue (currentCell.EditedFormattedValue, 
+										     currentCell.InheritedStyle, null, null);
+			} catch (Exception e) {
+				Console.WriteLine (e);
+				DataGridViewDataErrorEventArgs args = new DataGridViewDataErrorEventArgs (e, currentCell.ColumnIndex, currentCell.RowIndex, 
+													  DataGridViewDataErrorContexts.Commit);
+				OnDataError (false, args);
+				if (args.ThrowException)
+					throw e;
+			}
 			return true;
 		}
 
@@ -2425,18 +2417,10 @@ namespace System.Windows.Forms {
 			if (currentCell == null || !currentCell.IsInEditMode)
 				return true;
 
-			if (EditingControl != null) {
-				IDataGridViewEditingControl ctrl = EditingControl as IDataGridViewEditingControl;
-				currentCell.Value = ctrl.GetEditingControlFormattedValue (DataGridViewDataErrorContexts.Commit);
-				if (!CommitEdit (context)) {
+			if (!CommitEdit (context)) {
+				if (EditingControl != null)
 					EditingControl.Focus ();
-					return false;
-				}
-				currentCell.DetachEditingControl ();	
-			} else if (currentCell is IDataGridViewEditingCell) {
-				currentCell.Value = (currentCell as IDataGridViewEditingCell).EditingCellFormattedValue;
-				if (!CommitEdit (context))
-					return false;
+				return false;
 			}
 
 			currentCell.SetIsInEditMode (false);
@@ -5799,8 +5783,8 @@ namespace System.Windows.Forms {
 				if (cell == null)
 					continue;
 					
-				cell.valuex = property.GetValue (element);
-				cell.valueType = property.PropertyType;
+				cell.Value = property.GetValue (element);
+				cell.ValueType = property.PropertyType;
 			}
 		}
 		
@@ -6106,7 +6090,7 @@ namespace System.Windows.Forms {
 				DataGridViewRow row2 = (DataGridViewRow)y;
 
 				if (row1.Cells[column].ValueType == typeof (DateTime) && row2.Cells[column].ValueType == typeof (DateTime))
-					return DateTime.Compare ((DateTime)row1.Cells[column].valuex, (DateTime)row2.Cells[column].valuex) * direction;
+					return DateTime.Compare ((DateTime)row1.Cells[column].Value, (DateTime)row2.Cells[column].Value) * direction;
 
 				object val1 = row1.Cells[column].FormattedValue;
 				object val2 = row2.Cells[column].FormattedValue;

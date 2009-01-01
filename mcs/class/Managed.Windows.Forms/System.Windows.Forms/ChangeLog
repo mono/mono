@@ -1,5 +1,17 @@
 2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewCell.cs, DataGridView.cs, DataGridViewCheckBoxCell.cs: 
+	Rewrite the value getting, setting, parsing, formatting logic:
+	   - If data-bound value get/set should actually get and set from the 
+	     data source.
+	   - Make proper usage of TypeConverters for value parsing/formatting.
+	   - Raise DataError if setting the new value fails.
+	   - Get rid off the internal valueType field and get/set the ValueType 
+	   property instead.
+	[Fixes bug #462051]
+
+2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Rewrite the DataBinding layer:
 	   - Get rid off all BindingSource/IBindingList/DataSet/DataTable 
 	   specific code.

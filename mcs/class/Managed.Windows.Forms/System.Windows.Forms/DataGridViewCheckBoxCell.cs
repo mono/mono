@@ -55,7 +55,7 @@ namespace System.Windows.Forms {
 			indeterminateValue = null;
 			threeState = false;
 			trueValue = null;
-			valueType = null;
+			ValueType = null;
 		}
 
 		public DataGridViewCheckBoxCell (bool threeState) : this()
@@ -131,7 +131,7 @@ namespace System.Windows.Forms {
 
 		public override Type ValueType {
 			get {
-				if (valueType == null) {
+				if (base.ValueType == null) {
 					if (OwningColumn != null && OwningColumn.ValueType != null) {
 						return OwningColumn.ValueType;
 					}
@@ -140,9 +140,9 @@ namespace System.Windows.Forms {
 					}
 					return typeof(Boolean);
 				}
-				return valueType;
+				return base.ValueType;
 			}
-			set { valueType = value; }
+			set { base.ValueType = value; }
 		}
 
 		public override object Clone ()
@@ -155,7 +155,7 @@ namespace System.Windows.Forms {
 			cell.indeterminateValue = this.indeterminateValue;
 			cell.threeState = this.threeState;
 			cell.trueValue = this.trueValue;
-			cell.valueType = this.valueType;
+			cell.ValueType = this.ValueType;
 			return cell;
 		}
 
@@ -406,7 +406,7 @@ namespace System.Windows.Forms {
 			if (editingCellValueChanged)
 				current_obj = editingCellFormattedValue;
 			else
-				current_obj = valuex;
+				current_obj = Value;
 
 			if (current_obj == null)
 				cs = CheckState.Indeterminate;
