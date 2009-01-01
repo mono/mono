@@ -733,6 +733,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal CurrencyManager DataManager {
+			get {
+				if (DataSource != null && BindingContext != null)
+					return (CurrencyManager) this.BindingContext[DataSource];
+				return null;
+			}
+		}
+
 		[AmbientValue (null)]
 		public DataGridViewCellStyle DefaultCellStyle {
 			get { return defaultCellStyle; }
@@ -2957,8 +2965,7 @@ namespace System.Windows.Forms {
 			IBindingList bindingList = DataSource as IBindingList;
 			if (dataGridViewColumn.IsDataBound) {
 				if (bindingList != null && bindingList.SupportsSorting) {
-					CurrencyManager currencyManager = (CurrencyManager) this.BindingContext[DataSource];
-					bindingList.ApplySort (currencyManager.GetItemProperties()[dataGridViewColumn.DataPropertyName], direction);
+					bindingList.ApplySort (DataManager.GetItemProperties()[dataGridViewColumn.DataPropertyName], direction);
 					dataGridViewColumn.HeaderCell.SortGlyphDirection = sortOrder;
 				}
 			} else {
@@ -4266,11 +4273,8 @@ namespace System.Windows.Forms {
 
 		private void UpdateBindingPosition (int position)
 		{
-			if (DataSource != null && BindingContext != null) {
-				CurrencyManager currencyManager = this.BindingContext[DataSource] as CurrencyManager;
-				if (currencyManager != null)
-					currencyManager.Position = position;
-			}
+			if (DataManager != null)
+				DataManager.Position = position;
 		}
 
 		protected override void OnMouseEnter (EventArgs e)

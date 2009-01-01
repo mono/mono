@@ -91,11 +91,9 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public object DataBoundItem {
 			get {
-				if (base.DataGridView != null && DataGridView.DataSource != null) {
-					CurrencyManager data = DataGridView.BindingContext[DataGridView.DataSource] as CurrencyManager;
-					if (data != null && data.List.Count > base.Index) {
-						return data.List[base.Index];
-					}
+				if (base.DataGridView != null && DataGridView.DataManager != null) {
+					if (DataGridView.DataManager.List.Count > base.Index)
+						return DataGridView.DataManager.List[base.Index];
 				}
 				return null;
 			}
