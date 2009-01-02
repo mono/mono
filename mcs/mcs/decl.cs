@@ -922,6 +922,9 @@ namespace Mono.CSharp {
 				return true;
 			}
 
+			if ((mc.ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+				return true;
+
 			if (symbol.EnableOverloadChecks (mc))
 				return true;
 

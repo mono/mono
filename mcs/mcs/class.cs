@@ -6688,28 +6688,6 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		void CreateAutomaticProperty (Block block, Accessor get_block, Accessor set_block)
-		{
-			// Make the field
-			Field field = new Field (
-				Parent, type_name,
-				Modifiers.BACKING_FIELD | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
-			    new MemberName ("<" + Name + ">k__BackingField", Location), null);
-			((TypeContainer)Parent).PartialContainer.AddField (field);
-
-			// Make get block
-			get_block.Block = new ToplevelBlock (block, Parameters.EmptyReadOnlyParameters, Location);
-			Return r = new Return (new SimpleName(field.Name, Location), Location);
-			get_block.Block.AddStatement (r);
-			get_block.ModFlags |= Modifiers.COMPILER_GENERATED;
-
-			// Make set block
-			set_block.Block = new ToplevelBlock (block, set_block.Parameters, Location);
-			Assign a = new SimpleAssign (new SimpleName (field.Name, Location), new SimpleName ("value", Location));
-			set_block.Block.AddStatement (new StatementExpression(a));
-			set_block.ModFlags |= Modifiers.COMPILER_GENERATED;
-		}
-
 		public Property (DeclSpace parent, FullNamedExpression type, int mod,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first)
@@ -6725,15 +6703,6 @@ namespace Mono.CSharp {
 				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs, define_set_first)
 		{
-			if (!IsInterface && (mod & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
-				get_block != null && get_block.Block == null &&
-				set_block != null && set_block.Block == null) {
-				if (RootContext.Version <= LanguageVersion.ISO_2)
-					Report.FeatureIsNotAvailable (Location, "automatically implemented properties");
-				
-				CreateAutomaticProperty (current_block, get_block, set_block);
-			}
-
 			if (get_block == null)
 				Get = new GetMethod (this);
 			else
@@ -6743,6 +6712,39 @@ namespace Mono.CSharp {
 				Set = new SetMethod (this);
 			else
 				Set = new SetMethod (this, set_block);
+
+			if (!IsInterface && (mod & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0 &&
+				get_block != null && get_block.Block == null &&
+				set_block != null && set_block.Block == null) {
+				if (RootContext.Version <= LanguageVersion.ISO_2)
+					Report.FeatureIsNotAvailable (Location, "automatically implemented properties");
+
+				Get.ModFlags |= Modifiers.COMPILER_GENERATED;
+				Set.ModFlags |= Modifiers.COMPILER_GENERATED;
+			}
+		}
+
+		void CreateAutomaticProperty ()
+		{
+			// Create backing field
+			Field field = new Field (
+				Parent, type_name,
+				Modifiers.BACKING_FIELD | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				new MemberName ("<" + GetFullName (MemberName) + ">k__BackingField", Location), null);
+			if (!field.Define ())
+				return;
+
+			Parent.PartialContainer.AddField (field);
+
+			// Create get block
+			Get.Block = new ToplevelBlock (Parameters.EmptyReadOnlyParameters, Location);
+			Return r = new Return (new SimpleName (field.Name, Location), Location);
+			Get.Block.AddStatement (r);
+
+			// Create set block
+			Set.Block = new ToplevelBlock (Set.ParameterInfo, Location);
+			Assign a = new SimpleAssign (new SimpleName (field.Name, Location), new SimpleName ("value", Location));
+			Set.Block.AddStatement (new StatementExpression (a));
 		}
 
 		public override bool Define ()
@@ -6751,6 +6753,9 @@ namespace Mono.CSharp {
 				return false;
 
 			flags |= MethodAttributes.HideBySig | MethodAttributes.SpecialName;
+
+			if ((Get.ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+				CreateAutomaticProperty ();
 
 			if (!DefineAccessors ())
 				return false;

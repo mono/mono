@@ -1,5 +1,11 @@
 2009-01-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #462950
+	* class.cs, decl.cs: Use full explicit name when defining automatic
+	property backing field.
+
+2009-01-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #462592
 	* pending.cs: Emit type arguments for generic proxy method.
 
