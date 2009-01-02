@@ -1,5 +1,10 @@
 2009-01-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #463196
+	* expression.cs: Fixed enum to null comparison.
+
+2009-01-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #463121
 	* nullable.cs: Fixed nullable user equality operator comparison.
 
