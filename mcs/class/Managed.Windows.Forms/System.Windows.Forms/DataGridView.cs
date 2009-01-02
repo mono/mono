@@ -4633,13 +4633,19 @@ namespace System.Windows.Forms {
 					horizontalScrollBar.Minimum = 0;
 					horizontalScrollBar.Maximum = gridWidth;
 					horizontalScrollBar.SmallChange = Columns[first_col_index].Width;
-					horizontalScrollBar.LargeChange = ClientSize.Width - rowHeadersWidth;
+					int largeChange = ClientSize.Width - rowHeadersWidth;
+					if (largeChange <= 0)
+						largeChange = ClientSize.Width;
+					horizontalScrollBar.LargeChange = largeChange;
 				}
 				if (verticalVisible) {
 					verticalScrollBar.Minimum = 0;
 					verticalScrollBar.Maximum = gridHeight;
 					verticalScrollBar.SmallChange = first_row_height + 1;
-					verticalScrollBar.LargeChange = ClientSize.Height - columnHeadersHeight;
+					int largeChange = ClientSize.Height - columnHeadersHeight;
+					if (largeChange <= 0)
+						largeChange = ClientSize.Height;
+					verticalScrollBar.LargeChange = largeChange;
 				}
 			}
 
