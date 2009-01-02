@@ -1143,6 +1143,13 @@ class Tester
 		Assert (true, e13.Compile ().Invoke (MyEnum.Value_2));
 		Assert (false, e13.Compile ().Invoke (0));
 	}
+	
+	void EqualTest_14 ()
+	{
+		Expression<Func<MyEnum, bool>> e = (a) => a == null;
+		AssertNodeType (e, ExpressionType.Equal);
+		Assert (false, e.Compile ().Invoke (MyEnum.Value_1));
+	}
 
 	void EqualTestDelegate ()
 	{

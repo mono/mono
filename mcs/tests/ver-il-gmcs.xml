@@ -11346,6 +11346,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-436.cs">
+    <type name="SomeClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -15261,6 +15271,11 @@
       </method>
       <method name="Int16 op_Implicit(MyTypeImplicitOnly)">
         <size>8</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void EqualTest_14()">
+        <size>101</size>
       </method>
     </type>
   </test>
