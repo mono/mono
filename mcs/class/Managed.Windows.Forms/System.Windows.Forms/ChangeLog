@@ -1,5 +1,11 @@
 2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fix column sorting for columns containing null 
+	values. A "null" value is not always "null" (e.g could be String.Empty) 
+	and thus parsing numeric types throwed an exception for "null" values.
+
+2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Detach the editing control when the edit is 
 	finished.
 

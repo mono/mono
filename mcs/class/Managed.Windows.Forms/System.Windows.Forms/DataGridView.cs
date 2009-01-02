@@ -6120,12 +6120,14 @@ namespace System.Windows.Forms {
 
 				object val1 = row1.Cells[column].FormattedValue;
 				object val2 = row2.Cells[column].FormattedValue;
+				object val1NullValue = row1.Cells[column].InheritedStyle.NullValue;
+				object val2NullValue = row2.Cells[column].InheritedStyle.NullValue;
 
-				if (val1 == null && val2 == null)
+				if (val1 == val1NullValue && val2 == val2NullValue)
 					return 0;
-				if (val1 == null)
+				if (val1 == val1NullValue)
 					return direction;
-				if (val2 == null)
+				if (val2 == val2NullValue)
 					return -1 * direction;
 
 				if (numeric_sort)
