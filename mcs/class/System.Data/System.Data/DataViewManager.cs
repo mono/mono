@@ -114,13 +114,11 @@ namespace System.Data
 		}
 
 		bool ICollection.IsSynchronized {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		object ICollection.SyncRoot {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return this; }
 		}
 
 		bool IList.IsFixedSize {
@@ -143,48 +141,39 @@ namespace System.Data
 		}
 
 		bool IBindingList.AllowEdit {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		bool IBindingList.AllowNew {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		bool IBindingList.AllowRemove {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		bool IBindingList.IsSorted {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { throw new NotSupportedException (); }
 		}
 
 		ListSortDirection IBindingList.SortDirection {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { throw new NotSupportedException (); }
 		}
 
 		PropertyDescriptor IBindingList.SortProperty {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { throw new NotSupportedException (); }
 		}
 
 		bool IBindingList.SupportsChangeNotification {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
 
 		bool IBindingList.SupportsSearching {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		bool IBindingList.SupportsSorting {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		#endregion // Properties
@@ -305,94 +294,81 @@ namespace System.Data
 			}
 		}
 
-		[MonoTODO]
 		void IBindingList.AddIndex (PropertyDescriptor property)
 		{
-			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		object IBindingList.AddNew ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 	
-		[MonoTODO]
 		void IBindingList.ApplySort (PropertyDescriptor property, ListSortDirection direction)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 	
-		[MonoTODO]
 		int IBindingList.Find (PropertyDescriptor property, object key)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 	
-		[MonoTODO]
 		void IBindingList.RemoveIndex (PropertyDescriptor property)
 		{
-			throw new NotImplementedException ();
 		}
 	
-		[MonoTODO]
 		void IBindingList.RemoveSort ()
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException ();
 		}
 	
-		[MonoTODO]
 		void ICollection.CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			array.SetValue (descriptor, index);
 		}
 	
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			DataViewManagerListItemTypeDescriptor[] array = new DataViewManagerListItemTypeDescriptor[((ICollection)this).Count];
+			((ICollection)this).CopyTo (array, 0);
+			return array.GetEnumerator ();
 		}
 	
-		[MonoTODO]
 		int IList.Add (object value)
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Not modifiable");
 		}
 	
-		[MonoTODO]
 		void IList.Clear ()
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Not modifiable");
 		}
 	
-		[MonoTODO]
 		bool IList.Contains (object value)
 		{
-			throw new NotImplementedException ();
+			return value == descriptor;
 		}
 	
-		[MonoTODO]
 		int IList.IndexOf (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == descriptor)
+				return 0;
+			return -1;
 		}
 	
-		[MonoTODO]
 		void IList.Insert (int index, object value)
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Not modifiable");
 		}
 	
-		[MonoTODO]
 		void IList.Remove (object value)
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Not modifiable");
 		}
 	
-		[MonoTODO]
 		void IList.RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			throw new ArgumentException ("Not modifiable");
 		}
 	
 		[MonoLimitation("Supported only empty list of listAccessors")]

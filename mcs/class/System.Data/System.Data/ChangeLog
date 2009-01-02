@@ -1,3 +1,8 @@
+2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataViewManager.cs: Implement all MonoTODO. Fixes the WinForms 
+	DataBinding unit tests.
+
 2009-01-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataViewManager.cs: Hookup to the table/relations changed events and 
