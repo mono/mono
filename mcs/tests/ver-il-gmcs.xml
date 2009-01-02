@@ -14018,6 +14018,43 @@
       </method>
     </type>
   </test>
+  <test name="gtest-autoproperty-06.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="B I&lt;B&gt;.get_Prop()">
+        <size>7</size>
+      </method>
+      <method name="Void I&lt;B&gt;.set_Prop(B)">
+        <size>8</size>
+      </method>
+      <method name="A I&lt;A&gt;.get_Prop()">
+        <size>7</size>
+      </method>
+      <method name="Void I&lt;A&gt;.set_Prop(A)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-collectioninit-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
