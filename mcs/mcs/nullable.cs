@@ -824,10 +824,10 @@ namespace Mono.CSharp.Nullable
 
 			if ((Oper & Operator.ComparisonMask) != 0) {
 				//
-				// Emit true when equality operator both operands are null
-				// or inequality operator operands has only one null
+				// Emit true when equality operator both operands are same
+				// or inequality operator operands are not
 				//
-				if ((Oper == Operator.Equality && left_unwrap != null && right_unwrap != null) ||
+				if ((Oper == Operator.Equality && left_unwrap == right_unwrap) ||
 					(Oper == Operator.Inequality && left_unwrap != right_unwrap))
 					ig.Emit (OpCodes.Ldc_I4_1);
 				else

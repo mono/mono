@@ -1,5 +1,10 @@
 2009-01-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #463121
+	* nullable.cs: Fixed nullable user quality operator comparison.
+
+2009-01-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #462592
 	* pending.cs: Emit type arguments for generic proxy method.
 
