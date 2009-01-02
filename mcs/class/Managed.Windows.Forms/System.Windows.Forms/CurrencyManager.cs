@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
+// 	Ivan N. Zlatev (contact@i-nz.net)
 //
 
 using System;
@@ -166,17 +167,35 @@ namespace System.Windows.Forms {
 			}
                 }
 
-                // XXX this needs re-addressing once DataViewManager.AllowNew is implemented
-                internal bool CanAddRows {
+                internal bool AllowNew {
                 	get {
 				/* if we're readonly, don't even bother checking if we can add new rows */
 				if (list.IsReadOnly)
 					return false;
 
-				if (list is IBindingList) {
-					return true;
-					//return ((IBindingList)list).AllowNew;
-				}
+				if (list is IBindingList)
+					return ((IBindingList)list).AllowNew;
+
+				return false;
+			}
+		}
+
+		internal bool AllowRemove {
+			get {
+				if (list.IsReadOnly)
+					return false;
+
+				if (list is IBindingList)
+					return ((IBindingList)list).AllowRemove;
+
+				return false;
+			}
+		}
+
+		internal bool AllowEdit {
+			get {
+				if (list is IBindingList)
+					return ((IBindingList)list).AllowEdit;
 
 				return false;
 			}

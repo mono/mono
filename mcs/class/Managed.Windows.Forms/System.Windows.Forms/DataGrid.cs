@@ -522,7 +522,7 @@ namespace System.Windows.Forms
 						}
 					}
 
-					if (value.RowNumber == RowsCount && !ListManager.CanAddRows)
+					if (value.RowNumber == RowsCount && !ListManager.AllowNew)
 						value.RowNumber --;
 				}
 
@@ -532,7 +532,7 @@ namespace System.Windows.Forms
 
 				EnsureCellVisibility (value);
 
-				if (CurrentRow == RowsCount && ListManager.CanAddRows) {
+				if (CurrentRow == RowsCount && ListManager.AllowNew) {
 					cursor_in_add_row = true;
 					add_row_changed = false;
 					AddNewRow ();
@@ -935,7 +935,7 @@ namespace System.Windows.Forms
 
 		internal bool ShowEditRow {
 			get {
-				if (ListManager != null && !ListManager.CanAddRows)
+				if (ListManager != null && !ListManager.AllowNew)
 					return false;
 
 				return !_readonly;

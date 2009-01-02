@@ -1,5 +1,15 @@
 2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CurrencyManager.cs, DataGrid.cs: 
+	   - Rename CanAddRows to AllowNew. The CurrencyManager has no 
+	   concept of "rows".
+	   - Add two more internal properties AllowRemove and AllowEdit.
+	* DataGridView.cs: Refactor in a data-bound situation AllowUserToAddRows, 
+	AllowUserToDeleteRows and cell ReadOnly state to be also checked against the 
+	CurrencyManager data source.
+
+2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Fix crashes caused by assigning negative values to 
 	ScrollBar.LargeIncrement when the ClientSize.Width/Height is less than 
 	the column/row heights/widths.
