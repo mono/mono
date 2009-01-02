@@ -1,3 +1,7 @@
+2009-01-02  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TestBitmap.cs: Add test cases for SetResolution
+
 2009-01-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PenTest.cs: Fix test case not to use a color that is "destroyed" 

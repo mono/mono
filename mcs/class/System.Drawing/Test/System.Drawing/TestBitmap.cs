@@ -1655,6 +1655,60 @@ namespace MonoTests.System.Drawing {
 		{
 			new Bitmap (typeof (Bitmap), null);
 		}
+
+		private void SetResolution (float x, float y)
+		{
+			using (Bitmap bmp = new Bitmap (1, 1)) {
+				bmp.SetResolution (x, y);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetResolution_Zero ()
+		{
+			SetResolution (0.0f, 0.0f);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetResolution_Negative_X ()
+		{
+			SetResolution (-1.0f, 1.0f);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetResolution_Negative_Y ()
+		{
+			SetResolution (1.0f, -1.0f);
+		}
+
+		[Test]
+		public void SetResolution_MaxValue ()
+		{
+			SetResolution (Single.MaxValue, Single.MaxValue);
+		}
+
+		[Test]
+		public void SetResolution_PositiveInfinity ()
+		{
+			SetResolution (Single.PositiveInfinity, Single.PositiveInfinity);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetResolution_NaN ()
+		{
+			SetResolution (Single.NaN, Single.NaN);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void SetResolution_NegativeInfinity ()
+		{
+			SetResolution (Single.NegativeInfinity, Single.NegativeInfinity);
+		}
 	}
 
 	[TestFixture]
