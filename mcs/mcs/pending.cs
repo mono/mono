@@ -472,23 +472,32 @@ namespace Mono.CSharp {
 		void DefineProxy (Type iface, MethodInfo base_method, MethodInfo iface_method,
 				  AParametersCollection param)
 		{
-			MethodBuilder proxy;
+			// TODO: Handle nested iface names
+			string proxy_name = SimpleName.RemoveGenericArity (iface.FullName) + "." + iface_method.Name;
 
-			string proxy_name = SimpleName.RemoveGenericArity (iface.Name) + '.' + iface_method.Name;
-
-			proxy = container.TypeBuilder.DefineMethod (
+			MethodBuilder proxy = container.TypeBuilder.DefineMethod (
 				proxy_name,
 				MethodAttributes.HideBySig |
 				MethodAttributes.NewSlot |
+				MethodAttributes.CheckAccessOnOverride |
 				MethodAttributes.Virtual,
 				CallingConventions.Standard | CallingConventions.HasThis,
 				base_method.ReturnType, param.GetEmitTypes ());
 
-			AParametersCollection pd = TypeManager.GetParameterData (iface_method);
-			proxy.DefineParameter (0, ParameterAttributes.None, "");
-			for (int i = 0; i < pd.Count; i++) {
-				string name = pd.FixedParameters [i].Name;
-				ParameterAttributes attr = Parameters.GetParameterAttribute (pd.FixedParameters [i].ModFlags);
+#if GMCS_SOURCE
+			Type[] gargs = iface_method.GetGenericArguments ();
+			if (gargs.Length > 0) {
+				string[] gnames = new string[gargs.Length];
+				for (int i = 0; i < gargs.Length; ++i)
+					gnames[i] = gargs[i].Name;
+
+				proxy.DefineGenericParameters (gnames);
+			}
+#endif
+
+			for (int i = 0; i < param.Count; i++) {
+				string name = param.FixedParameters [i].Name;
+				ParameterAttributes attr = Parameters.GetParameterAttribute (param.FixedParameters [i].ModFlags);
 				proxy.DefineParameter (i + 1, attr, name);
 			}
 

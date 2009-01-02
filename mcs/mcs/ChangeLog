@@ -1,3 +1,8 @@
+2009-01-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #462592
+	* pending.cs: Emit type arguments for generic proxy method.
+
 2008-12-30  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs (As): Mutate all type arguments.
