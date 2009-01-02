@@ -1,3 +1,9 @@
+2009-01-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PenTest.cs: Fix test case not to use a color that is "destroyed" 
+	by another unit test. The nunit update changed the order in which 
+	the test cases are executed.
+
 2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GDIPlusTest.cs: Add MeasureCharacterRanges test cases around bug
