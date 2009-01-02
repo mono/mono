@@ -900,10 +900,7 @@ namespace System.Windows.Forms {
 		}
 
 		protected virtual object GetValue (int rowIndex) {
-			if (DataGridView == null)
-				return null;
-
-			if (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count)
+			if (DataGridView != null && (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count))
 				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
 				
 			if (DataProperty != null)
@@ -913,7 +910,8 @@ namespace System.Windows.Forms {
 				return valuex;
 
 			DataGridViewCellValueEventArgs dgvcvea = new DataGridViewCellValueEventArgs (columnIndex, rowIndex);
-			DataGridView.OnCellValueNeeded (dgvcvea);
+			if (DataGridView != null)
+				DataGridView.OnCellValueNeeded (dgvcvea);
 			return dgvcvea.Value;
 		}
 		

@@ -1,3 +1,8 @@
+2009-01-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewCell.cs: We should return a value even if we are not bound 
+	to a DataGridView.
+
 2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* CurrencyManager.cs, DataGrid.cs: 
