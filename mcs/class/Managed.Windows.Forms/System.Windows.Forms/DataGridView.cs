@@ -2424,6 +2424,7 @@ namespace System.Windows.Forms {
 			}
 
 			currentCell.SetIsInEditMode (false);
+			currentCell.DetachEditingControl ();
 			new_row_commited = true;
 			OnCellEndEdit (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 			Focus ();

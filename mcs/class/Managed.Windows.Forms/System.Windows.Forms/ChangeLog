@@ -1,5 +1,10 @@
 2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Detach the editing control when the edit is 
+	finished.
+
+2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Multiple fixes to handle last column/row removal 
 	and cell movement after that instead of throwing exceptions.
 
