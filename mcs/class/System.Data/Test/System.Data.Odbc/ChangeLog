@@ -1,3 +1,7 @@
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcCommandBuilderTest.cs: Enabled test for QuoteIdentifier.
+
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcCommandBuilderTest.cs: Added tests for properties.

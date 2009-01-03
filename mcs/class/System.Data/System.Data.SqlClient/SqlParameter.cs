@@ -460,7 +460,10 @@ namespace System.Data.SqlClient {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Object SqlValue { 
 			get { return sqlValue; }
-			set { sqlValue = value; }
+			set {
+				Value = value;
+				sqlValue = value;
+			}
 		}
 	
 		public override bool SourceColumnNullMapping {

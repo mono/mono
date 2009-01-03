@@ -737,7 +737,8 @@ namespace System.Data.Common
 					// if the execute does not effect any rows we throw an exception.
 					if (tmp == 0)
 						throw new DBConcurrencyException("Concurrency violation: the " + 
-							commandName +"Command affected 0 records.");
+							commandName +"Command affected 0 records.", null,
+							new DataRow [] { row });
 					updateCount += tmp;
 
 					if (command.UpdatedRowSource == UpdateRowSource.Both ||

@@ -1,3 +1,11 @@
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandBuilderTest.cs: Added tests for CatalogLocation,
+	CatalogSeparator, ConflictOption, QuoteIdentifier, QuotePrefix,
+	QuoteSuffix  and SchemaSeparator.
+	* SqlParameterTest.cs: Moved existing tests from ProviderTests
+	to increase their visibility. Added tests for type inference.
+
 2008-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlConnectionTest.cs: Added test for null check in ClearPool.

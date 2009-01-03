@@ -111,6 +111,7 @@ System.Data.OleDb/OleDbParameterCollectionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.OleDb/OleDbPermissionTest.cs
 System.Data.Sql/SqlNotificationRequestTest.cs
+System.Data.SqlClient/SqlCommandBuilderTest.cs
 System.Data.SqlClient/SqlCommandTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs
 System.Data.SqlClient/SqlConnectionStringBuilderTest.cs
@@ -118,4 +119,5 @@ System.Data.SqlClient/SqlClientMetaDataCollectionNamesTest.cs
 System.Data.SqlClient/SqlClientPermissionAttributeTest.cs
 System.Data.SqlClient/SqlClientPermissionTest.cs
 System.Data.SqlClient/SqlDataAdapterTest.cs
+System.Data.SqlClient/SqlParameterTest.cs
 Mono.Data.SqlExpressions/DataColumnExpressionTest.cs

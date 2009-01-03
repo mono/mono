@@ -150,31 +150,30 @@ namespace MonoTests.System.Data.Odbc
 
 #if NET_2_0
 		[Test] // QuoteIdentifier (String)
-		[Category ("NotWorking")]
 		public void QuoteIdentifier1 ()
 		{
 			OdbcCommandBuilder cb;
 		
 			cb = new OdbcCommandBuilder ();
-			cb.QuotePrefix = "abc";
-			Assert.AreEqual ("abcmono", cb.QuoteIdentifier ("mono"), "#A1");
-			Assert.AreEqual ("abc", cb.QuoteIdentifier (string.Empty), "#A2");
-			Assert.AreEqual ("abcZ", cb.QuoteIdentifier ("Z"), "#A3");
-			Assert.AreEqual ("abcabc", cb.QuoteIdentifier ("abc"), "#A4");
-			cb.QuoteSuffix = "def";
-			Assert.AreEqual ("abcmonodef", cb.QuoteIdentifier ("mono"), "#A5");
-			Assert.AreEqual ("abcdef", cb.QuoteIdentifier (string.Empty), "#A6");
-			Assert.AreEqual ("abcZdef", cb.QuoteIdentifier ("Z"), "#A7");
-			Assert.AreEqual ("abcabcdef", cb.QuoteIdentifier ("abc"), "#A8");
+			cb.QuotePrefix = "aBc";
+			Assert.AreEqual ("aBcmoAbCno", cb.QuoteIdentifier ("moAbCno"), "#A1");
+			Assert.AreEqual ("aBc", cb.QuoteIdentifier (string.Empty), "#A2");
+			Assert.AreEqual ("aBcZ", cb.QuoteIdentifier ("Z"), "#A3");
+			Assert.AreEqual ("aBcabc", cb.QuoteIdentifier ("abc"), "#A4");
+			cb.QuoteSuffix = "deF";
+			Assert.AreEqual ("aBcmodEfnodeF", cb.QuoteIdentifier ("modEfno"), "#A5");
+			Assert.AreEqual ("aBcdeF", cb.QuoteIdentifier (string.Empty), "#A6");
+			Assert.AreEqual ("aBcZdeF", cb.QuoteIdentifier ("Z"), "#A7");
+			Assert.AreEqual ("aBcabcdeF", cb.QuoteIdentifier ("abc"), "#A8");
 
 			cb = new OdbcCommandBuilder ();
 			cb.QuotePrefix = "X";
-			Assert.AreEqual ("Xmono", cb.QuoteIdentifier ("mono"), "#B1");
+			Assert.AreEqual ("XmoXno", cb.QuoteIdentifier ("moXno"), "#B1");
 			Assert.AreEqual ("X", cb.QuoteIdentifier (string.Empty), "#B2");
 			Assert.AreEqual ("XZ", cb.QuoteIdentifier ("Z"), "#B3");
 			Assert.AreEqual ("XX", cb.QuoteIdentifier ("X"), "#B4");
 			cb.QuoteSuffix = " ";
-			Assert.AreEqual ("Xmono ", cb.QuoteIdentifier ("mono"), "#B5");
+			Assert.AreEqual ("Xmo  no ", cb.QuoteIdentifier ("mo no"), "#B5");
 			Assert.AreEqual ("X ", cb.QuoteIdentifier (string.Empty), "#B6");
 			Assert.AreEqual ("XZ ", cb.QuoteIdentifier ("Z"), "#B7");
 			Assert.AreEqual ("X   ", cb.QuoteIdentifier (" "), "#B8");
@@ -184,10 +183,21 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreEqual ("mono", cb.QuoteIdentifier ("mono"), "#C1");
 			Assert.AreEqual (string.Empty, cb.QuoteIdentifier (string.Empty), "#C2");
 			Assert.AreEqual ("Z", cb.QuoteIdentifier ("Z"), "#C3");
-			cb.QuoteSuffix = "def";
-			Assert.AreEqual ("mono", cb.QuoteIdentifier ("mono"), "#C4");
+			cb.QuoteSuffix = "dEf";
+			Assert.AreEqual ("modefno", cb.QuoteIdentifier ("modefno"), "#C4");
 			Assert.AreEqual (string.Empty, cb.QuoteIdentifier (string.Empty), "#C5");
 			Assert.AreEqual ("Z", cb.QuoteIdentifier ("Z"), "#C6");
+
+			cb = new OdbcCommandBuilder ();
+			cb.QuotePrefix = "  ";
+			Assert.AreEqual ("  mono", cb.QuoteIdentifier ("mono"), "#D1");
+			Assert.AreEqual ("  ", cb.QuoteIdentifier (string.Empty), "#D2");
+			Assert.AreEqual ("  Z", cb.QuoteIdentifier ("Z"), "#D3");
+			cb.QuoteSuffix = "dEf";
+			Assert.AreEqual ("  moDeFnodEf", cb.QuoteIdentifier ("moDeFno"), "#D4");
+			Assert.AreEqual ("  modEfdEfnodEf", cb.QuoteIdentifier ("modEfno"), "#D5");
+			Assert.AreEqual ("  dEf", cb.QuoteIdentifier (string.Empty), "#D6");
+			Assert.AreEqual ("  ZdEf", cb.QuoteIdentifier ("Z"), "#D7");
 		}
 
 		[Test] // QuoteIdentifier (String)
@@ -222,7 +232,6 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test] // QuoteIdentifier (String, OdbcConnection)
-		[Category ("NotWorking")]
 		public void QuoteIdentifier2_Connection_Null ()
 		{
 			OdbcCommandBuilder cb;
@@ -302,7 +311,6 @@ namespace MonoTests.System.Data.Odbc
 		}
 
 		[Test] // QuoteIdentifier (String, OdbcConnection)
-		[Category ("NotWorking")]
 		public void QuoteIdentifier2_Connection_Closed ()
 		{
 			OdbcCommandBuilder cb;

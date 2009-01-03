@@ -113,6 +113,29 @@ namespace MonoTests.System.Data.Common
 			Assert.AreEqual (ConflictOption.CompareRowVersion, cb.ConflictOption, "#8");
 		}
 
+		[Test] // QuoteIdentifier (String)
+		public void QuoteIdentifier ()
+		{
+			MyCommandBuilder cb = new MyCommandBuilder ();
+			try {
+				cb.QuoteIdentifier ((string) null);
+				Assert.Fail ("#A1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.AreEqual ((new NotSupportedException ()).Message, ex.Message, "#A4");
+			}
+
+			try {
+				cb.QuoteIdentifier ("mono");
+				Assert.Fail ("#B1");
+			} catch (NotSupportedException ex) {
+				Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.AreEqual ((new NotSupportedException ()).Message, ex.Message, "#B4");
+			}
+		}
+
 		[Test]
 		public void QuotePrefix ()
 		{

@@ -1,3 +1,9 @@
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbCommandBuilder.cs (QuoteIdentifier): Throw NotSupportedException.
+	* DbDataAdapter.cs (Update): Add row causing concurrency violation
+	to DBConcurrencyException.
+
 2008-12-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	Mildly rewrite duplicate-inferring logic.

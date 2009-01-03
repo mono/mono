@@ -1,3 +1,8 @@
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System.Data_test.dll.sources: Added SqlCommandBuilderTest.cs
+	and SqlParameterTest.cs.
+
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data_test.dll.sources: Added DBConcurrencyExceptionTest.cs.

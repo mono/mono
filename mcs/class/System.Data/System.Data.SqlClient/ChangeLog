@@ -1,3 +1,12 @@
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandBuilder.cs: Added missing checks for QuotePrefix and
+	QuoteSuffix on 2.0 profile, and return a zero-length string if
+	not set (or set to null) on 1.0 profile. Do not allow the value
+	of CatalogSeparator and SchemaSeparator to be changed from '.'.
+	Modified generated SQL to match MS. Added implementation for
+	QuoteIdenfifier. Modified parameters to match MS.
+	* SqlParameter.cs (SqlValue): Keep Value in sync.
 
 2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

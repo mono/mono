@@ -567,10 +567,7 @@ namespace System.Data.Common {
 
 		public virtual string QuoteIdentifier (string unquotedIdentifier)
 		{
-			if (unquotedIdentifier == null) {
-				throw new ArgumentNullException("Unquoted identifier parameter cannot be null");
-			}
-			return String.Format ("{0}{1}{2}", this.QuotePrefix, unquotedIdentifier, this.QuoteSuffix);
+			throw new NotSupportedException ();
 		}
 
 		public virtual string UnquoteIdentifier (string quotedIdentifier)

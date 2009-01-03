@@ -636,9 +636,15 @@ namespace System.Data.Odbc
 				prefix = suffix = GetQuoteCharacter (connection);
 			}
 
-			if (prefix.Length > 0 || prefix != " ")
-				return String.Format ("{0}{1}{2}", prefix,
-					unquotedIdentifier, suffix);
+			if (prefix.Length > 0 && prefix != " ") {
+				string escaped;
+				if (suffix.Length > 0)
+					escaped = unquotedIdentifier.Replace (
+						suffix, suffix + suffix);
+				else
+					escaped = unquotedIdentifier;
+				return string.Concat (prefix, escaped, suffix);
+			}
 			return unquotedIdentifier;
 		}
 
