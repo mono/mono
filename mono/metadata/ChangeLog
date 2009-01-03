@@ -1,3 +1,20 @@
+2009-01-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (get_implicit_generic_array_interfaces): Extract valuetype
+	interfaces calculation to fill_valuetype_array_derived_types.
+
+	* class.c (get_implicit_generic_array_interfaces): Valuetypes need IList /
+	ICollection / IEnumerator interfaces for their extra twin type - sbyte for byte
+	for example.
+
+	* class.c (get_implicit_generic_array_interfaces): InternalEnumerator gets
+	interfaces for valuetypes if needed.	
+
+	* class.c (fill_valuetype_array_derived_types): Enums should have interfaces
+	for their basetype as well. Types are array expanded if rank is > 0.
+
+	Fixes #400716.
+
 2008-12-30  Bill Holmes  <billholmes54@gmail.com>
 
 	* socket-io.h : Changing the signature of
