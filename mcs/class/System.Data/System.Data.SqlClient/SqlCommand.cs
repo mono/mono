@@ -514,8 +514,8 @@ namespace System.Data.SqlClient {
 						// 1) Network is down/server is down/not reachable
 						// 2) Somebody has an exclusive lock on Table/DB
 						// In any of these cases, don't close the connection. Let the user do it
-						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 						Connection.Tds.Reset ();
+						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
 					} catch (TdsInternalException ex) {
 						Connection.Close ();
 						throw SqlException.FromTdsInternalException ((TdsInternalException) ex);
@@ -590,7 +590,6 @@ namespace System.Data.SqlClient {
 				Tds.SequentialAccess = true;
 			Execute (true);
 			Connection.DataReader = new SqlDataReader (this);
-			
 			return Connection.DataReader;
 		}
 
@@ -757,7 +756,7 @@ namespace System.Data.SqlClient {
 			if (Connection.State != ConnectionState.Open)
 				throw new InvalidOperationException (String.Format ("{0} requires an open connection to continue. This connection is closed.", method));
 			if (CommandText.Length == 0)
-				throw new InvalidOperationException ("The command text for this Command has not been set.");
+				throw new InvalidOperationException (String.Format ("{0}: CommandText has not been set for this Command.", method));
 			if (Connection.DataReader != null)
 				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
 			if (Connection.XmlReader != null)
