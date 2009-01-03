@@ -1,5 +1,9 @@
 2009-01-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (get_implicit_generic_array_interfaces): Improve debugging code.
+	
+2009-01-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (get_implicit_generic_array_interfaces): Extract valuetype
 	interfaces calculation to fill_valuetype_array_derived_types.
 
