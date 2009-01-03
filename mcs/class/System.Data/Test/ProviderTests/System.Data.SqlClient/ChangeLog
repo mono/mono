@@ -1,3 +1,17 @@
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandBuilderTest.cs: Improve Get*Command tests.
+	* SqlCommandTest.cs: Fixed warning.
+	* SqlConnectionTest.cs: Removed unused property.
+	* SqlDataReaderTest.cs: Enabled GetChars test on 1.0
+	profile. Added GetValues test. Added and improved
+	GetSqlValue tests. Improved HasRows and NextResult
+	tests. Added GetFieldType tests. Added big batch of
+	schema-related tests.
+	* SqlParameterTest.cs: Moved disconnected tests to
+	System.Data test suite. Improved test for bug
+	#382635. Added test for failed conversion to SQL type.
+
 2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandBuilderTest.cs: Improve Get*Command tests.

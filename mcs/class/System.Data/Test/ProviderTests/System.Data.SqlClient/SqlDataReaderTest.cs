@@ -878,12 +878,6 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void GetChars ()
 		{
-#if ONLY_1_1
-			// FIXME
-			if (RunningOnMono)
-				Assert.Ignore ("HANGS!!!");
-#endif
-
 			cmd.CommandText = "Select type_char, type_varchar,type_text, type_ntext ";
 			cmd.CommandText += "from string_family where id=1";
 			reader = cmd.ExecuteReader ();
@@ -1058,19 +1052,6 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void GetSqlValueTest ()
-		{
-			cmd.CommandText = "Select id, type_tinyint, null from numeric_family where id=1";
-			reader = cmd.ExecuteReader ();
-			reader.Read ();
-
-			Assert.AreEqual ((byte)255, ((SqlByte) reader.GetSqlValue(1)).Value, "#1");
-			//Assert.AreEqual (DBNull.Value, reader.GetSqlValue(2), "#2");
-
-			reader.Close ();
-		}
-
-		[Test]
 		public void GetValuesTest ()
 		{
 			cmd.CommandText = "Select 10,20,30 from numeric_family where id=1";
@@ -1094,6 +1075,120 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.IsNull (arr[3], "#4 Only 3 objects shud be copied");
 
 			reader.Close ();
+		}
+
+		[Test]
+		public void GetValues_Values_Null ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				Assert.IsTrue (rdr.Read ());
+
+				try {
+					rdr.GetValues ((object []) null);
+					Assert.Fail ("#1");
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("values", ex.ParamName, "#5");
+				}
+			}
+		}
+
+		[Test]
+		public void GetSqlValue ()
+		{
+			cmd.CommandText = "Select id, type_tinyint, null from numeric_family where id=1";
+			reader = cmd.ExecuteReader ();
+			reader.Read ();
+
+			Assert.AreEqual ((byte) 255, ((SqlByte) reader.GetSqlValue (1)).Value, "#1");
+			//Assert.AreEqual (DBNull.Value, reader.GetSqlValue(2), "#2");
+
+			reader.Close ();
+		}
+
+		[Test]
+		public void GetSqlValue_Index_Invalid ()
+		{
+			cmd.CommandText = "Select id, type_tinyint, null from numeric_family where id=1";
+			reader = cmd.ExecuteReader ();
+			reader.Read ();
+
+			try {
+				reader.GetSqlValue (-1);
+				Assert.Fail ("#A1");
+			} catch (IndexOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+			}
+
+			try {
+				reader.GetSqlValue (3);
+				Assert.Fail ("#B1");
+			} catch (IndexOutOfRangeException ex) {
+				// Index was outside the bounds of the array
+				Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+			}
+		}
+
+		[Test]
+		public void GetSqlValue_Reader_Closed ()
+		{
+			SqlCommand cmd = conn.CreateCommand ();
+			cmd.CommandText = "SELECT * FROM employee";
+			using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+				rdr.Read ();
+				rdr.Close ();
+				try {
+					rdr.GetSqlValue (-1);
+					Assert.Fail ("#1");
+				} catch (InvalidOperationException ex) {
+					// Invalid attempt to call MetaData
+					// when reader is closed
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			}
+		}
+
+		[Test]
+		public void GetSqlValue_Reader_NoData ()
+		{
+			SqlCommand cmd = conn.CreateCommand ();
+			cmd.CommandText = "SELECT * FROM employee where id = 6666";
+			using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+				try {
+					rdr.GetSqlValue (-1);
+					Assert.Fail ("#A1");
+				} catch (InvalidOperationException ex) {
+					// Invalid attempt to read when no data
+					// is present
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				Assert.IsFalse (rdr.Read (), "#B");
+
+				try {
+					rdr.GetSqlValue (-1);
+					Assert.Fail ("#C1");
+				} catch (InvalidOperationException ex) {
+					// Invalid attempt to read when no data
+					// is present
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+					Assert.IsNull (ex.InnerException, "#C3");
+					Assert.IsNotNull (ex.Message, "#C4");
+				}
+			}
 		}
 
 		[Test]
@@ -1161,17 +1256,17 @@ namespace MonoTests.System.Data.SqlClient
 					Assert.IsNotNull (ex.Message, "#A4");
 				}
 
-				Assert.IsFalse (rdr.Read (), "B");
+				Assert.IsFalse (rdr.Read (), "#B");
 
 				try {
 					rdr.GetSqlValues (null);
-					Assert.Fail ("#B1");
+					Assert.Fail ("#C1");
 				} catch (InvalidOperationException ex) {
 					// Invalid attempt to read when no data
 					// is present
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
-					Assert.IsNull (ex.InnerException, "#B3");
-					Assert.IsNotNull (ex.Message, "#B4");
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+					Assert.IsNull (ex.InnerException, "#C3");
+					Assert.IsNotNull (ex.Message, "#C4");
 				}
 			}
 		}
@@ -1205,45 +1300,127 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					rdr.GetValue (0);
 					Assert.Fail ("#A2");
-				} catch (InvalidOperationException ex) {
-					// Invalid attempt to read when no data
-					// is present
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A3");
-					Assert.IsNull (ex.InnerException, "#A4");
-					Assert.IsNotNull (ex.Message, "#A5");
+				} catch (InvalidOperationException) {
 				}
-
-				Assert.IsTrue (rdr.HasRows, "#B1");
-				Assert.IsTrue (rdr.Read (), "#B2");
-				Assert.AreEqual (1, rdr.GetValue (0), "#B3");
-				Assert.IsTrue (rdr.HasRows, "#B4");
-				Assert.IsTrue (rdr.Read (), "#B5");
-				Assert.AreEqual (2, rdr.GetValue (0), "#B6");
-				Assert.IsTrue (rdr.HasRows, "#B7");
-				Assert.IsFalse (rdr.Read (), "#B8");
-				Assert.IsTrue (rdr.HasRows, "#B9");
-				Assert.IsFalse (rdr.NextResult (), "#B10");
-				Assert.IsFalse (rdr.HasRows, "#B11");
+				Assert.IsTrue (rdr.HasRows, "#A3");
+				Assert.IsTrue (rdr.Read (), "#A4");
+				Assert.AreEqual (1, rdr.GetValue (0), "#A5");
+				Assert.IsTrue (rdr.HasRows, "#A6");
+				Assert.AreEqual (1, rdr.GetValue (0), "#A7");
+				Assert.IsTrue (rdr.Read (), "#A8");
+				Assert.AreEqual (2, rdr.GetValue (0), "#A9");
+				Assert.IsTrue (rdr.HasRows, "#A10");
+				Assert.IsFalse (rdr.Read (), "#A11");
+				Assert.IsTrue (rdr.HasRows, "#A12");
+				Assert.IsFalse (rdr.NextResult (), "#A13");
+				Assert.IsFalse (rdr.HasRows, "#A14");
 			}
 
 			cmd.CommandText = "SELECT id FROM employee WHERE id = 666";
 			using (SqlDataReader rdr = cmd.ExecuteReader ()) {
-				Assert.IsFalse (rdr.HasRows, "#C1");
-				Assert.IsFalse (rdr.Read (), "#C2");
+				Assert.IsFalse (rdr.HasRows, "#B1");
+				Assert.IsFalse (rdr.Read (), "#B2");
 			}
 
 			cmd.CommandText = "SELECT id FROM employee WHERE id = 666; SELECT 3";
 			using (SqlDataReader rdr = cmd.ExecuteReader ()) {
-				Assert.IsFalse (rdr.HasRows, "#D1");
-				Assert.IsFalse (rdr.Read (), "#D2");
-				Assert.IsFalse (rdr.HasRows, "#D3");
-				Assert.IsTrue (rdr.NextResult (), "#D4");
-				Assert.IsTrue (rdr.HasRows, "#D5");
-				Assert.IsTrue (rdr.Read (), "#D6");
-				Assert.AreEqual (3, rdr.GetValue (0), "#D7");
-				Assert.IsTrue (rdr.HasRows, "#D8");
-				Assert.IsFalse (rdr.Read (), "#D9");
-				Assert.IsTrue (rdr.HasRows, "#D10");
+				Assert.IsFalse (rdr.HasRows, "#C1");
+				Assert.IsFalse (rdr.Read (), "#C2");
+				Assert.IsFalse (rdr.HasRows, "#C3");
+				Assert.IsTrue (rdr.NextResult (), "#C4");
+				Assert.IsTrue (rdr.HasRows, "#C5");
+				try {
+					rdr.GetValue (0);
+					Assert.Fail ("#C6");
+				} catch (InvalidOperationException) {
+				}
+				Assert.IsTrue (rdr.Read (), "#C7");
+				Assert.AreEqual (3, rdr.GetValue (0), "#C8");
+				Assert.IsTrue (rdr.HasRows, "#C9");
+				Assert.AreEqual (3, rdr.GetValue (0), "#C10");
+				Assert.IsFalse (rdr.Read (), "#C11");
+				Assert.IsTrue (rdr.HasRows, "#C12");
+				try {
+					rdr.GetValue (0);
+					Assert.Fail ("#C13");
+				} catch (InvalidOperationException) {
+				}
+				Assert.IsFalse (rdr.NextResult (), "#C14");
+				Assert.IsFalse (rdr.HasRows, "#C15");
+				Assert.IsFalse (rdr.Read (), "#C16");
+				Assert.IsFalse (rdr.HasRows, "#C17");
+			}
+
+			cmd.CommandText = "SELECT id FROM employee WHERE id = 1; SELECT 3";
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.SingleResult)) {
+				Assert.IsTrue (rdr.HasRows, "#D1");
+				Assert.IsTrue (rdr.Read (), "#D2");
+				Assert.IsTrue (rdr.HasRows, "#D3");
+				Assert.IsFalse (rdr.NextResult (), "#D4");
+				Assert.IsFalse (rdr.HasRows, "#D5");
+				Assert.IsFalse (rdr.Read (), "#D6");
+				Assert.IsFalse (rdr.HasRows, "#D7");
+			}
+
+			cmd.CommandText = "SELECT id FROM employee WHERE id = 666; SELECT 3";
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.SingleResult)) {
+				Assert.IsFalse (rdr.HasRows, "#E1");
+				Assert.IsFalse (rdr.Read (), "#E2");
+				Assert.IsFalse (rdr.HasRows, "#E3");
+				Assert.IsFalse (rdr.NextResult (), "#E4");
+				Assert.IsFalse (rdr.HasRows, "#E5");
+				Assert.IsFalse (rdr.Read (), "#E6");
+				Assert.IsFalse (rdr.HasRows, "#E7");
+			}
+
+			cmd.CommandText = "SELECT id FROM employee WHERE id = 1; SELECT 3";
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.SchemaOnly)) {
+				Assert.IsFalse (rdr.HasRows, "#F1");
+				try {
+					rdr.GetValue (0);
+					Assert.Fail ("#F2");
+				} catch (InvalidOperationException) {
+				}
+				Assert.IsFalse (rdr.Read (), "#F3");
+				try {
+					rdr.GetValue (0);
+					Assert.Fail ("#F4");
+				} catch (InvalidOperationException) {
+				}
+				Assert.IsFalse (rdr.HasRows, "#F5");
+				try {
+					rdr.GetValue (0);
+					Assert.Fail ("#F6");
+				} catch (InvalidOperationException) {
+				}
+				Assert.IsTrue (rdr.NextResult (), "#F7");
+				try {
+					rdr.GetValue (0);
+					Assert.Fail ("#F8");
+				} catch (InvalidOperationException) {
+				}
+				Assert.IsFalse (rdr.HasRows, "#F9");
+				Assert.IsFalse (rdr.Read (), "#F10");
+				Assert.IsFalse (rdr.HasRows, "#F11");
+				Assert.IsFalse (rdr.NextResult (), "#F12");
+				Assert.IsFalse (rdr.HasRows, "#F13");
+				Assert.IsFalse (rdr.Read (), "#F14");
+				Assert.IsFalse (rdr.HasRows, "#F15");
+			}
+
+			cmd.CommandText = "SELECT id FROM employee WHERE id = 666; SELECT 3";
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.SchemaOnly)) {
+				Assert.IsFalse (rdr.HasRows, "#G1");
+				Assert.IsFalse (rdr.Read (), "#G2");
+				Assert.IsFalse (rdr.HasRows, "#G3");
+				Assert.IsTrue (rdr.NextResult (), "#G4");
+				Assert.IsFalse (rdr.HasRows, "#G5");
+				Assert.IsFalse (rdr.Read (), "#G6");
+				Assert.IsFalse (rdr.HasRows, "#G7");
+				Assert.IsFalse (rdr.NextResult (), "#G8");
+				Assert.IsFalse (rdr.HasRows, "#G9");
+				Assert.IsFalse (rdr.Read (), "#G10");
+				Assert.IsFalse (rdr.HasRows, "#G11");
 			}
 		}
 
@@ -1324,7 +1501,7 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void NextResultTest ()
+		public void NextResult ()
 		{
 			cmd.CommandText = "Select id from numeric_family where id=1";
 			reader = cmd.ExecuteReader ();
@@ -1334,18 +1511,40 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.CommandText = "select id from numeric_family where id=1;";
 			cmd.CommandText += "select type_bit from numeric_family where id=2;";
 			reader = cmd.ExecuteReader ();
-			Assert.IsTrue (reader.NextResult (), "#2");
-			Assert.IsFalse (reader.NextResult (), "#3");
-			reader.Close ();
-
+			Assert.IsTrue (reader.NextResult (), "#B1");
+			Assert.IsTrue (reader.Read (), "#B2");
+			Assert.IsFalse (reader.NextResult (), "#B3");
 			try {
-				reader.NextResult ();
-				Assert.Fail ("#4 Exception shud be thrown : Reader is closed");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(InvalidOperationException), e.GetType (),
-					"#5 Incorrect Exception : " + e);
+				reader.GetValue (0);
+				Assert.Fail ("#B3");
+			} catch (InvalidOperationException) {
+			}
+			Assert.IsFalse (reader.Read (), "#B4");
+			try {
+				reader.GetValue (0);
+				Assert.Fail ("#B5");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
+		public void NextResult_Reader_Close ()
+		{
+			SqlCommand cmd = conn.CreateCommand ();
+			cmd.CommandText = "SELECT * FROM employee";
+			using (SqlDataReader rdr = cmd.ExecuteReader ()) {
+				rdr.Read ();
+				rdr.Close ();
+				try {
+					rdr.NextResult ();
+					Assert.Fail ("#1");
+				} catch (InvalidOperationException ex) {
+					// Invalid attempt to NextResult when
+					// reader is closed
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
 			}
 		}
 
@@ -2033,22 +2232,269 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void GetFieldTypeTest ()
+		public void GetFieldType_BigInt ()
 		{
-			cmd.CommandText = "Select id , type_tinyint, 10 , null from numeric_family where id=1";
-			reader = cmd.ExecuteReader ();
+			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
 
-			Assert.AreEqual ("tinyint", reader.GetDataTypeName(1), "#1");
-			Assert.AreEqual ("int", reader.GetDataTypeName(2) , "#2");
-			Assert.AreEqual ("int", reader.GetDataTypeName(3), "#3");
-			try {
-				reader.GetDataTypeName (10);
-				Assert.Fail ("#4 Exception shud be thrown");
-			}catch (AssertionException e) {
-				throw e;
-			}catch (Exception e) {
-				Assert.AreEqual (typeof(IndexOutOfRangeException), e.GetType(),
-					"#5 Incorrect Exception : " + e);
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (long), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Binary ()
+		{
+			cmd.CommandText = "SELECT type_binary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Bit ()
+		{
+			cmd.CommandText = "SELECT type_bit FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (bool), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Char ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Date ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void GetFieldType_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (DateTime), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Decimal ()
+		{
+			cmd.CommandText = "SELECT type_decimal1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (decimal), rdr.GetFieldType (0));
+			}
+
+			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (decimal), rdr.GetFieldType (0));
+			}
+
+			cmd.CommandText = "SELECT type_numeric1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (decimal), rdr.GetFieldType (0));
+			}
+
+			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (decimal), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Float ()
+		{
+			cmd.CommandText = "SELECT type_double FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (double), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Image ()
+		{
+			cmd.CommandText = "SELECT type_tinyblob FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Int ()
+		{
+			cmd.CommandText = "SELECT type_int FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Money ()
+		{
+			cmd.CommandText = "SELECT type_money FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (decimal), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_NChar ()
+		{
+			cmd.CommandText = "SELECT type_nchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_NText ()
+		{
+			cmd.CommandText = "SELECT type_ntext FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_NVarChar ()
+		{
+			cmd.CommandText = "SELECT type_nvarchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Real ()
+		{
+			cmd.CommandText = "SELECT type_float FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0));
+			}
+
+		}
+
+		[Test]
+		public void GetFieldType_SmallDateTime ()
+		{
+			cmd.CommandText = "SELECT type_smalldatetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (DateTime), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_SmallInt ()
+		{
+			cmd.CommandText = "SELECT type_smallint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_SmallMoney ()
+		{
+			cmd.CommandText = "SELECT type_smallmoney FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (decimal), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Text ()
+		{
+			cmd.CommandText = "SELECT type_text FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Time ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void GetFieldType_Timestamp ()
+		{
+			cmd.CommandText = "SELECT type_timestamp FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_TinyInt ()
+		{
+			cmd.CommandText = "SELECT type_tinyint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_Udt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void GetFieldType_UniqueIdentifier ()
+		{
+			cmd.CommandText = "SELECT type_guid FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (Guid), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_VarBinary ()
+		{
+			cmd.CommandText = "SELECT type_varbinary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0));
+			}
+		}
+
+		[Test]
+		public void GetFieldType_VarChar ()
+		{
+			cmd.CommandText = "SELECT type_varchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0));
 			}
 		}
 
@@ -2231,6 +2677,24 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		public void GetProviderSpecificValues_Values_Null ()
+		{
+			cmd.CommandText = "SELECT * FROM employee";
+			reader = cmd.ExecuteReader ();
+			reader.Read ();
+
+			try {
+				reader.GetProviderSpecificValues (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("values", ex.ParamName, "#5");
+			}
+		}
+
+		[Test]
 		public void GetProviderSpecificValuesSmallArrayTest ()
 		{
 			using (SqlConnection conn = new SqlConnection (connectionString)) {
@@ -2370,5 +2834,2153 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 #endif
+	}
+
+	[TestFixture]
+	[Category ("sqlserver")]
+	public class SqlDataReaderSchemaTest
+	{
+		SqlConnection conn;
+		SqlCommand cmd;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+			cmd = conn.CreateCommand ();
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (cmd != null)
+				cmd.Dispose ();
+			ConnectionManager.Singleton.CloseConnection ();
+		}
+
+		[Test]
+		public void ColumnSize_BigInt ()
+		{
+			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				// we only support TDS 7.0, which returns bigint data values as decimal(19,0)
+				if (RunningOnMono)
+					Assert.AreEqual (17, row ["ColumnSize"], "Value");
+				else
+					Assert.AreEqual (8, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Binary ()
+		{
+			cmd.CommandText = "SELECT type_binary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (8, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Bit ()
+		{
+			cmd.CommandText = "SELECT type_bit FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (1, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Char ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (10, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Date ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ColumnSize_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (8, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Decimal ()
+		{
+			cmd.CommandText = "SELECT type_decimal1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "#A:IsNull");
+				Assert.AreEqual (17, row ["ColumnSize"], "#A:Value");
+			}
+
+			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "#B:IsNull");
+				Assert.AreEqual (17, row ["ColumnSize"], "#B:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "#C:IsNull");
+				Assert.AreEqual (17, row ["ColumnSize"], "#C:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "#D:IsNull");
+				Assert.AreEqual (17, row ["ColumnSize"], "#D:Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Float ()
+		{
+			cmd.CommandText = "SELECT type_double FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (8, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Image ()
+		{
+			cmd.CommandText = "SELECT type_tinyblob FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (int.MaxValue, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Int ()
+		{
+			cmd.CommandText = "SELECT type_int FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (4, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Money ()
+		{
+			cmd.CommandText = "SELECT type_money FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (8, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_NChar ()
+		{
+			cmd.CommandText = "SELECT type_nchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (10, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_NText ()
+		{
+			cmd.CommandText = "SELECT type_ntext FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (1073741823, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_NVarChar ()
+		{
+			cmd.CommandText = "SELECT type_nvarchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (10, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Real ()
+		{
+			cmd.CommandText = "SELECT type_float FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (4, row ["ColumnSize"], "Value");
+			}
+
+		}
+
+		[Test]
+		public void ColumnSize_SmallDateTime ()
+		{
+			cmd.CommandText = "SELECT type_smalldatetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (4, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_SmallInt ()
+		{
+			cmd.CommandText = "SELECT type_smallint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (2, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_SmallMoney ()
+		{
+			cmd.CommandText = "SELECT type_smallmoney FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (4, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Text ()
+		{
+			cmd.CommandText = "SELECT type_text FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (2147483647, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Time ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ColumnSize_Timestamp ()
+		{
+			cmd.CommandText = "SELECT type_timestamp FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (8, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_TinyInt ()
+		{
+			cmd.CommandText = "SELECT type_tinyint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (1, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_Udt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ColumnSize_UniqueIdentifier ()
+		{
+			cmd.CommandText = "SELECT type_guid FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (16, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_VarBinary ()
+		{
+			cmd.CommandText = "SELECT type_varbinary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (255, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void ColumnSize_VarChar ()
+		{
+			cmd.CommandText = "SELECT type_varchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
+				Assert.AreEqual (10, row ["ColumnSize"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_BigInt ()
+		{
+			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (long), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Binary ()
+		{
+			cmd.CommandText = "SELECT type_binary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (byte []), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Bit ()
+		{
+			cmd.CommandText = "SELECT type_bit FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (bool), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Char ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (string), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Date ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void DataType_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (DateTime), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Decimal ()
+		{
+			cmd.CommandText = "SELECT type_decimal1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "#A:IsNull");
+				Assert.AreEqual (typeof (decimal), row ["DataType"], "#A:Value");
+			}
+
+			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "#B:IsNull");
+				Assert.AreEqual (typeof (decimal), row ["DataType"], "#B:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "#C:IsNull");
+				Assert.AreEqual (typeof (decimal), row ["DataType"], "#C:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "#D:IsNull");
+				Assert.AreEqual (typeof (decimal), row ["DataType"], "#D:Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Float ()
+		{
+			cmd.CommandText = "SELECT type_double FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (double), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Image ()
+		{
+			cmd.CommandText = "SELECT type_tinyblob FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (byte []), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Int ()
+		{
+			cmd.CommandText = "SELECT type_int FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (int), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Money ()
+		{
+			cmd.CommandText = "SELECT type_money FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (decimal), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_NChar ()
+		{
+			cmd.CommandText = "SELECT type_nchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (string), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_NText ()
+		{
+			cmd.CommandText = "SELECT type_ntext FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (string), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_NVarChar ()
+		{
+			cmd.CommandText = "SELECT type_nvarchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (string), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Real ()
+		{
+			cmd.CommandText = "SELECT type_float FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (float), row ["DataType"], "Value");
+			}
+
+		}
+
+		[Test]
+		public void DataType_SmallDateTime ()
+		{
+			cmd.CommandText = "SELECT type_smalldatetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (DateTime), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_SmallInt ()
+		{
+			cmd.CommandText = "SELECT type_smallint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (short), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_SmallMoney ()
+		{
+			cmd.CommandText = "SELECT type_smallmoney FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (decimal), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Text ()
+		{
+			cmd.CommandText = "SELECT type_text FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (string), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Time ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void DataType_Timestamp ()
+		{
+			cmd.CommandText = "SELECT type_timestamp FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (byte []), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_TinyInt ()
+		{
+			cmd.CommandText = "SELECT type_tinyint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (byte), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_Udt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void DataType_UniqueIdentifier ()
+		{
+			cmd.CommandText = "SELECT type_guid FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (Guid), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_VarBinary ()
+		{
+			cmd.CommandText = "SELECT type_varbinary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (byte []), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void DataType_VarChar ()
+		{
+			cmd.CommandText = "SELECT type_varchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("DataType"), "IsNull");
+				Assert.AreEqual (typeof (string), row ["DataType"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_BigInt ()
+		{
+			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Binary ()
+		{
+			cmd.CommandText = "SELECT type_binary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Bit ()
+		{
+			cmd.CommandText = "SELECT type_bit FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Char ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Date ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void IsLong_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Decimal ()
+		{
+			cmd.CommandText = "SELECT type_decimal1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "#A:IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "#A:Value");
+			}
+
+			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "#B:IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "#B:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "#C:IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "#C:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "#D:IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "#D:Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Float ()
+		{
+			cmd.CommandText = "SELECT type_double FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Image ()
+		{
+			cmd.CommandText = "SELECT type_tinyblob FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (true, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Int ()
+		{
+			cmd.CommandText = "SELECT type_int FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Money ()
+		{
+			cmd.CommandText = "SELECT type_money FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_NChar ()
+		{
+			cmd.CommandText = "SELECT type_nchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_NText ()
+		{
+			cmd.CommandText = "SELECT type_ntext FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (true, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_NVarChar ()
+		{
+			cmd.CommandText = "SELECT type_nvarchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Real ()
+		{
+			cmd.CommandText = "SELECT type_float FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+
+		}
+
+		[Test]
+		public void IsLong_SmallDateTime ()
+		{
+			cmd.CommandText = "SELECT type_smalldatetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_SmallInt ()
+		{
+			cmd.CommandText = "SELECT type_smallint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_SmallMoney ()
+		{
+			cmd.CommandText = "SELECT type_smallmoney FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Text ()
+		{
+			cmd.CommandText = "SELECT type_text FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (true, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Time ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void IsLong_Timestamp ()
+		{
+			cmd.CommandText = "SELECT type_timestamp FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_TinyInt ()
+		{
+			cmd.CommandText = "SELECT type_tinyint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_Udt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void IsLong_UniqueIdentifier ()
+		{
+			cmd.CommandText = "SELECT type_guid FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_VarBinary ()
+		{
+			cmd.CommandText = "SELECT type_varbinary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void IsLong_VarChar ()
+		{
+			cmd.CommandText = "SELECT type_varchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("IsLong"), "IsNull");
+				Assert.AreEqual (false, row ["IsLong"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_BigInt ()
+		{
+			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (19, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Binary ()
+		{
+			cmd.CommandText = "SELECT type_binary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Bit ()
+		{
+			cmd.CommandText = "SELECT type_bit FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Char ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Date ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericPrecision_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (23, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Decimal ()
+		{
+			cmd.CommandText = "SELECT type_decimal1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "#A:IsNull");
+				Assert.AreEqual (38, row ["NumericPrecision"], "#A:Value");
+			}
+
+			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "#B:IsNull");
+				Assert.AreEqual (10, row ["NumericPrecision"], "#B:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "#C:IsNull");
+				Assert.AreEqual (38, row ["NumericPrecision"], "#C:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "#D:IsNull");
+				Assert.AreEqual (10, row ["NumericPrecision"], "#D:Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Float ()
+		{
+			cmd.CommandText = "SELECT type_double FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (15, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Image ()
+		{
+			cmd.CommandText = "SELECT type_tinyblob FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Int ()
+		{
+			cmd.CommandText = "SELECT type_int FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (10, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Money ()
+		{
+			cmd.CommandText = "SELECT type_money FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (19, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_NChar ()
+		{
+			cmd.CommandText = "SELECT type_nchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_NText ()
+		{
+			cmd.CommandText = "SELECT type_ntext FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_NVarChar ()
+		{
+			cmd.CommandText = "SELECT type_nvarchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Real ()
+		{
+			cmd.CommandText = "SELECT type_float FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (7, row ["NumericPrecision"], "Value");
+			}
+
+		}
+
+		[Test]
+		public void NumericPrecision_SmallDateTime ()
+		{
+			cmd.CommandText = "SELECT type_smalldatetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (16, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_SmallInt ()
+		{
+			cmd.CommandText = "SELECT type_smallint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (5, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_SmallMoney ()
+		{
+			cmd.CommandText = "SELECT type_smallmoney FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (10, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Text ()
+		{
+			cmd.CommandText = "SELECT type_text FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Time ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericPrecision_Timestamp ()
+		{
+			cmd.CommandText = "SELECT type_timestamp FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_TinyInt ()
+		{
+			cmd.CommandText = "SELECT type_tinyint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (3, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Udt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericPrecision_UniqueIdentifier ()
+		{
+			cmd.CommandText = "SELECT type_guid FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_VarBinary ()
+		{
+			cmd.CommandText = "SELECT type_varbinary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_VarChar ()
+		{
+			cmd.CommandText = "SELECT type_varchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
+				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericPrecision_Variant ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericPrecision_Xml ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericScale_BigInt ()
+		{
+			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				// we only support TDS 7.0, which returns bigint data values as decimal(19,0)
+				if (RunningOnMono)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Binary ()
+		{
+			cmd.CommandText = "SELECT type_binary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Bit ()
+		{
+			cmd.CommandText = "SELECT type_bit FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Char ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Date ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericScale_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (3, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Decimal ()
+		{
+			cmd.CommandText = "SELECT type_decimal1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "#A:IsNull");
+				Assert.AreEqual (0, row ["NumericScale"], "#A:Value");
+			}
+
+			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "#B:IsNull");
+				Assert.AreEqual (3, row ["NumericScale"], "#B:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "#C:IsNull");
+				Assert.AreEqual (0, row ["NumericScale"], "#C:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "#D:IsNull");
+				Assert.AreEqual (3, row ["NumericScale"], "#D:Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Float ()
+		{
+			cmd.CommandText = "SELECT type_double FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Image ()
+		{
+			cmd.CommandText = "SELECT type_tinyblob FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Int ()
+		{
+			cmd.CommandText = "SELECT type_int FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Money ()
+		{
+			cmd.CommandText = "SELECT type_money FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_NChar ()
+		{
+			cmd.CommandText = "SELECT type_nchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_NText ()
+		{
+			cmd.CommandText = "SELECT type_ntext FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_NVarChar ()
+		{
+			cmd.CommandText = "SELECT type_nvarchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Real ()
+		{
+			cmd.CommandText = "SELECT type_float FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+
+		}
+
+		[Test]
+		public void NumericScale_SmallDateTime ()
+		{
+			cmd.CommandText = "SELECT type_smalldatetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (0, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_SmallInt ()
+		{
+			cmd.CommandText = "SELECT type_smallint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_SmallMoney ()
+		{
+			cmd.CommandText = "SELECT type_smallmoney FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Text ()
+		{
+			cmd.CommandText = "SELECT type_text FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Time ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericScale_Timestamp ()
+		{
+			cmd.CommandText = "SELECT type_timestamp FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_TinyInt ()
+		{
+			cmd.CommandText = "SELECT type_tinyint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Udt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericScale_UniqueIdentifier ()
+		{
+			cmd.CommandText = "SELECT type_guid FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_VarBinary ()
+		{
+			cmd.CommandText = "SELECT type_varbinary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_VarChar ()
+		{
+			cmd.CommandText = "SELECT type_varchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
+				Assert.AreEqual (255, row ["NumericScale"], "Value");
+			}
+		}
+
+		[Test]
+		public void NumericScale_Variant ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void NumericScale_Xml ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ProviderType_BigInt ()
+		{
+			cmd.CommandText = "SELECT type_bigint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (0, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Binary ()
+		{
+			cmd.CommandText = "SELECT type_binary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (1, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Bit ()
+		{
+			cmd.CommandText = "SELECT type_bit FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (2, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Char ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (3, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Date ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ProviderType_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (4, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Decimal ()
+		{
+			cmd.CommandText = "SELECT type_decimal1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "#A:IsNull");
+				Assert.AreEqual (5, row ["ProviderType"], "#A:Value");
+			}
+
+			cmd.CommandText = "SELECT type_decimal2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "#B:IsNull");
+				Assert.AreEqual (5, row ["ProviderType"], "#B:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric1 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "#C:IsNull");
+				Assert.AreEqual (5, row ["ProviderType"], "#C:Value");
+			}
+
+			cmd.CommandText = "SELECT type_numeric2 FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "#D:IsNull");
+				Assert.AreEqual (5, row ["ProviderType"], "#D:Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Float ()
+		{
+			cmd.CommandText = "SELECT type_double FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (6, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Image ()
+		{
+			cmd.CommandText = "SELECT type_tinyblob FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (7, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Int ()
+		{
+			cmd.CommandText = "SELECT type_int FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (8, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Money ()
+		{
+			cmd.CommandText = "SELECT type_money FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (9, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_NChar ()
+		{
+			cmd.CommandText = "SELECT type_nchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (10, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_NText ()
+		{
+			cmd.CommandText = "SELECT type_ntext FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (11, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_NVarChar ()
+		{
+			cmd.CommandText = "SELECT type_nvarchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (12, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Real ()
+		{
+			cmd.CommandText = "SELECT type_float FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (13, row ["ProviderType"], "Value");
+			}
+
+		}
+
+		[Test]
+		public void ProviderType_SmallDateTime ()
+		{
+			cmd.CommandText = "SELECT type_smalldatetime FROM datetime_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (15, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_SmallInt ()
+		{
+			cmd.CommandText = "SELECT type_smallint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (16, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_SmallMoney ()
+		{
+			cmd.CommandText = "SELECT type_smallmoney FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (17, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Text ()
+		{
+			cmd.CommandText = "SELECT type_text FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (18, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Time ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ProviderType_Timestamp ()
+		{
+			cmd.CommandText = "SELECT type_timestamp FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				// we currently consider timestamp as binary (due to TDS 7.0?)
+				if (RunningOnMono)
+					Assert.AreEqual (1, row ["ProviderType"], "Value");
+				else
+					Assert.AreEqual (19, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_TinyInt ()
+		{
+			cmd.CommandText = "SELECT type_tinyint FROM numeric_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (20, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Udt ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ProviderType_UniqueIdentifier ()
+		{
+			cmd.CommandText = "SELECT type_guid FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (14, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_VarBinary ()
+		{
+			cmd.CommandText = "SELECT type_varbinary FROM binary_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (21, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_VarChar ()
+		{
+			cmd.CommandText = "SELECT type_varchar FROM string_family WHERE id = 1";
+
+			using (SqlDataReader rdr = cmd.ExecuteReader (CommandBehavior.KeyInfo)) {
+				DataTable schemaTable = rdr.GetSchemaTable ();
+				DataRow row = schemaTable.Rows [0];
+				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
+				Assert.AreEqual (22, row ["ProviderType"], "Value");
+			}
+		}
+
+		[Test]
+		public void ProviderType_Variant ()
+		{
+			// TODO
+		}
+
+		[Test]
+		public void ProviderType_Xml ()
+		{
+			// TODO
+		}
+
+		static bool RunningOnMono {
+			get {
+				return (Type.GetType ("System.MonoType", false) != null);
+			}
+		}
 	}
 }

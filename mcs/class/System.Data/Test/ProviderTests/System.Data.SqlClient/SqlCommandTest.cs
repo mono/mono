@@ -1517,7 +1517,7 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					cmd.ExecuteNonQuery ();
 					Assert.Fail ("#B1");
-				} catch (SqlException ex) {
+				} catch (SqlException) {
 					// Procedure or Function '#sp_temp_insert_employee'
 					// expects parameter '@fname', which was not supplied
 				}

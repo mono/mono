@@ -824,12 +824,6 @@ namespace MonoTests.System.Data
 			return connection_count;
 		}
 #endif
-
-		static bool RunningOnMono {
-			get {
-				return (Type.GetType ("System.MonoType", false) != null);
-			}
-		}
 	}
 
 #if NET_2_0
