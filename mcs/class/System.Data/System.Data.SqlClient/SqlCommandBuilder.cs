@@ -348,11 +348,13 @@ namespace System.Data.SqlClient
 #if ONLY_1_1
 					parameter.IsNullable = allowNull;
 #endif
-					parameter.SourceColumn = sourceColumnName;
 #if NET_2_0
+					parameter.SourceColumn = sourceColumnName;
 					parameter.SourceColumnNullMapping = true;
-#endif
 					parameter.SourceVersion = DataRowVersion.Original;
+#else
+					parameter.SourceVersion = DataRowVersion.Current;
+#endif
 #if NET_2_0
 					parameter.SqlValue = new SqlInt32 (1);
 #else
@@ -552,11 +554,13 @@ namespace System.Data.SqlClient
 #if ONLY_1_1
 					parameter.IsNullable = allowNull;
 #endif
-					parameter.SourceColumn = sourceColumnName;
 #if NET_2_0
+					parameter.SourceColumn = sourceColumnName;
 					parameter.SourceColumnNullMapping = true;
-#endif
 					parameter.SourceVersion = DataRowVersion.Original;
+#else
+					parameter.SourceVersion = DataRowVersion.Current;
+#endif
 #if NET_2_0
 					parameter.SqlValue = new SqlInt32 (1);
 #else
@@ -800,19 +804,15 @@ namespace System.Data.SqlClient
 			return true;
 		}
 
+		public
 #if NET_2_0
 		new
-#else
-		public
 #endif
-		void RefreshSchema () 
+		void RefreshSchema ()
 		{
 			// FIXME: "Figure out what else needs to be cleaned up when we refresh."
 			tableName = String.Empty;
 			dbSchemaTable = null;
-			CreateNewCommand (ref deleteCommand);
-			CreateNewCommand (ref updateCommand);
-			CreateNewCommand (ref insertCommand);
 		}
 
 #if NET_2_0
@@ -844,8 +844,6 @@ namespace System.Data.SqlClient
 				if (val < byte.MaxValue && val >= byte.MinValue)
 					sqlParam.Scale = (byte) val;
 			}
-
-			Console.WriteLine ("SIZE=" + sqlParam.Size);
 		}
 
 #if NET_2_0

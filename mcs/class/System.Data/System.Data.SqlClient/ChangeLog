@@ -1,5 +1,13 @@
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlCommandBuilder.cs: Only set SourceColumn for null check
+	parameters on the 2.0 profile, and set SourceVersion to
+	Current on 1.0 profile. Changed accessibility of RefreshSchema
+	to public, and do not immediately create commands. Removed
+	CWL.
+
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlParameter.cs: When setting ParameterName or sourceName to
 	null, use a zero-length string instead. On 1.0 profile, only
 	infer type from value if value is not null or DBNull. Store
