@@ -156,6 +156,126 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void GetChars_Index_Invalid ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				Assert.IsTrue (rdr.Read ());
+
+				try {
+					rdr.GetChars (-1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#A1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				try {
+					rdr.GetChars (1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#B1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (rdr.Read ());
+
+				try {
+					rdr.GetChars (-1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#C1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#C2");
+					Assert.IsNull (ex.InnerException, "#C3");
+					Assert.IsNotNull (ex.Message, "#C4");
+				}
+
+				try {
+					rdr.GetChars (1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#D1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#D2");
+					Assert.IsNull (ex.InnerException, "#D3");
+					Assert.IsNotNull (ex.Message, "#D4");
+				}
+			}
+		}
+
+		[Test]
+		public void GetChars_Reader_Closed ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				Assert.IsTrue (rdr.Read ());
+				rdr.Close ();
+
+				try {
+					rdr.GetChars (-1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#A1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (rdr.Read ());
+				rdr.Close ();
+
+				try {
+					rdr.GetChars (-1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#B1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			}
+		}
+
+		[Test]
+		public void GetChars_Reader_NoData ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 666";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				try {
+					rdr.GetChars (-1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#A1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				Assert.IsFalse (rdr.Read (), "#B");
+
+				try {
+					rdr.GetChars (-1, 0, (char []) null, 0, 0);
+					Assert.Fail ("#C1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+					Assert.IsNull (ex.InnerException, "#C3");
+					Assert.IsNotNull (ex.Message, "#C4");
+				}
+			}
+		}
+
+		[Test]
 		public void GetDataTypeName ()
 		{
 			IDataReader reader = null;
@@ -197,14 +317,22 @@ namespace MonoTests.System.Data
 
 				try {
 					reader.GetDataTypeName (-1);
-					Assert.Fail ("#1");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#A1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
 				}
 
 				try {
 					reader.GetDataTypeName (6);
-					Assert.Fail ("#2");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#B1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
 				}
 			} finally {
 				if (reader != null)
@@ -264,14 +392,22 @@ namespace MonoTests.System.Data
 				reader = cmd.ExecuteReader ();
 				try {
 					reader.GetFieldType (-1);
-					Assert.Fail ("#1");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#A1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
 				}
 
 				try {
 					reader.GetFieldType (6);
-					Assert.Fail ("#1");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#B1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
 				}
 			} finally {
 				if (reader != null)
@@ -333,14 +469,22 @@ namespace MonoTests.System.Data
 				reader = cmd.ExecuteReader ();
 				try {
 					reader.GetName (-1);
-					Assert.Fail ("#1");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#A1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
 				}
 
 				try {
 					reader.GetName (6);
-					Assert.Fail ("#2");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#B1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
 				}
 			} finally {
 				if (reader != null)
@@ -383,9 +527,9 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (0, reader.GetOrdinal ("id"), "#1");
 				Assert.AreEqual (1, reader.GetOrdinal ("fname"), "#2");
 				Assert.AreEqual (2, reader.GetOrdinal ("lname"), "#3");
-				Assert.AreEqual (3, reader.GetOrdinal ("dob"), "#4");
+				Assert.AreEqual (3, reader.GetOrdinal ("doB"), "#4");
 				Assert.AreEqual (4, reader.GetOrdinal ("doj"), "#5");
-				Assert.AreEqual (5, reader.GetOrdinal ("email"), "#6");
+				Assert.AreEqual (5, reader.GetOrdinal ("EmaiL"), "#6");
 				Assert.AreEqual (0, reader.GetOrdinal ("iD"), "#7");
 				Assert.AreEqual (5, reader.GetOrdinal ("eMail"), "#8");
 			} finally {
@@ -404,14 +548,22 @@ namespace MonoTests.System.Data
 				reader = cmd.ExecuteReader ();
 				try {
 					reader.GetOrdinal ("non_existing_column");
-					Assert.Fail ("#1");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#A1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
 				}
 
 				try {
 					reader.GetOrdinal (string.Empty);
-					Assert.Fail ("#2");
-				} catch (IndexOutOfRangeException) {
+					Assert.Fail ("#B1");
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
 				}
 			} finally {
 				if (reader != null)
@@ -445,24 +597,36 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetOrdinal_Reader_Closed ()
 		{
-			IDataReader reader = null;
+			cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
 
-			try {
-				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
-				reader = cmd.ExecuteReader ();
-				reader.Close ();
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				rdr.Close ();
+
 				try {
-					reader.GetOrdinal ("does_not_exist");
-					Assert.Fail ("#1");
+					rdr.GetOrdinal (null);
+					Assert.Fail ("#A1");
 				} catch (InvalidOperationException ex) {
 					// No data exists for the row/column
-					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
 				}
-			} finally {
-				if (reader != null)
-					reader.Close ();
+			}
+		}
+
+		[Test]
+		public void GetOrdinal_Reader_NoData ()
+		{
+			cmd.CommandText = "SELECT * FROM employee WHERE id = 666";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				Assert.AreEqual (0, rdr.GetOrdinal ("id"), "#A1");
+				Assert.AreEqual (5, rdr.GetOrdinal ("eMail"), "#A2");
+
+				Assert.IsFalse (rdr.Read (), "#B");
+
+				Assert.AreEqual (2, rdr.GetOrdinal ("lname"), "#C1");
+				Assert.AreEqual (3, rdr.GetOrdinal ("dob"), "#C2");
 			}
 		}
 
@@ -608,6 +772,57 @@ namespace MonoTests.System.Data
 				Assert.IsTrue (reader.Read (), "#1");
 				byte b = reader.GetByte (0);
 				Assert.AreEqual (255, b, "#2");
+			}
+		}
+
+		[Test]
+		public void GetValue_Reader_Closed ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read ());
+				reader.Close ();
+
+				try {
+					reader.GetValue (-1);
+					Assert.Fail ("#1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			}
+		}
+
+		[Test]
+		public void GetValue_Reader_NoData ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 666";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				try {
+					rdr.GetValue (-1);
+					Assert.Fail ("#A1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				Assert.IsFalse (rdr.Read (), "#B");
+
+				try {
+					rdr.GetValue (-1);
+					Assert.Fail ("#C1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+					Assert.IsNull (ex.InnerException, "#C3");
+					Assert.IsNotNull (ex.Message, "#C4");
+				}
 			}
 		}
 
@@ -915,6 +1130,57 @@ namespace MonoTests.System.Data
 					/* FIXME: we always set it to false */
 					if (schemaTable.Columns.Contains ("IsIdentity"))
 						Assert.IsTrue ((bool) schemaTable.Rows [0] ["IsIdentity"], "#2");
+				}
+			}
+		}
+
+		[Test]
+		public void GetValues_Reader_Closed ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				Assert.IsTrue (rdr.Read ());
+				rdr.Close ();
+
+				try {
+					rdr.GetValues ((object []) null);
+					Assert.Fail ("#1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			}
+		}
+
+		[Test]
+		public void GetValues_Reader_NoData ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 666";
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				try {
+					rdr.GetValues ((object []) null);
+					Assert.Fail ("#A1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				Assert.IsFalse (rdr.Read (), "#B");
+
+				try {
+					rdr.GetValues ((object []) null);
+					Assert.Fail ("#C1");
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+					Assert.IsNull (ex.InnerException, "#C3");
+					Assert.IsNotNull (ex.Message, "#C4");
 				}
 			}
 		}

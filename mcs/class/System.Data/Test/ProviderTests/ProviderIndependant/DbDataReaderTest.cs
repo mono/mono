@@ -109,37 +109,13 @@ namespace MonoTests.System.Data
 
 			try {
 				rdr.GetProviderSpecificValues (null);
-				Assert.Fail ("#B1");
+				Assert.Fail ("#C1");
 			} catch (InvalidOperationException ex) {
 				// Invalid attempt to read when no data
 				// is present
-				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-			}
-		}
-
-		[Test]
-		public void GetProviderSpecificValues_Values_Null ()
-		{
-			cmd.CommandText = "SELECT * FROM employee";
-			rdr = cmd.ExecuteReader ();
-			rdr.Read ();
-
-			try {
-				rdr.GetProviderSpecificValues (null);
-				Assert.Fail ("#1");
-			} catch (ArgumentNullException ex) {
-				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.AreEqual ("values", ex.ParamName, "#5");
-			}
-		}
-
-		static bool RunningOnMono {
-			get {
-				return (Type.GetType ("System.MonoType", false) != null);
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
 			}
 		}
 	}
