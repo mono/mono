@@ -1,5 +1,14 @@
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlParameter.cs: When setting ParameterName or sourceName to
+	null, use a zero-length string instead. On 1.0 profile, only
+	infer type from value if value is not null or DBNull. Store
+	raw value in TdsMetadataParameter, and use delegate to convert
+	it to framework type (when necessary). Improve implementation
+	of SqlValue (still needs lots of work).
+
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandBuilder.cs: Added missing checks for QuotePrefix and
 	QuoteSuffix on 2.0 profile, and return a zero-length string if
 	not set (or set to null) on 1.0 profile. Do not allow the value

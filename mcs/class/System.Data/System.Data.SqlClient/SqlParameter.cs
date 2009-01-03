@@ -60,7 +60,7 @@ namespace System.Data.SqlClient {
 
 		TdsMetaParameter metaParameter;
 
-		SqlParameterCollection container = null;
+		SqlParameterCollection container;
 		DbType dbType;
 		ParameterDirection direction = ParameterDirection.Input;
 		bool isTypeSet;
@@ -71,12 +71,14 @@ namespace System.Data.SqlClient {
 		SqlCompareOptions compareInfo;
 		int localeId;
 		Object sqlValue;
+		bool isDirty;
 #if NET_2_0
 		bool sourceColumnNullMapping;
 		string xmlSchemaCollectionDatabase = String.Empty;
 		string xmlSchemaCollectionOwningSchema = String.Empty;
 		string xmlSchemaCollectionName = String.Empty;
 #endif
+
 		static Hashtable type_mapping;
 
 		#endregion // Fields
@@ -133,21 +135,23 @@ namespace System.Data.SqlClient {
 			isTypeSet = false;
 		}
 
-		public SqlParameter (string parameterName, object value) 
+		public SqlParameter (string parameterName, object value)
 		{
- 			metaParameter = new TdsMetaParameter (parameterName, value);
- 			InferSqlType (value);
- 			metaParameter.Value =  SqlTypeToFrameworkType (value);
+			if (parameterName == null)
+				parameterName = string.Empty;
+			metaParameter = new TdsMetaParameter (parameterName, GetFrameworkValue);
+			metaParameter.RawValue = value;
+			InferSqlType (value);
 			sourceVersion = DataRowVersion.Current;
 		}
 		
 		public SqlParameter (string parameterName, SqlDbType dbType) 
-			: this (parameterName, dbType, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
+			: this (parameterName, dbType, 0, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Current, null)
 		{
 		}
 
 		public SqlParameter (string parameterName, SqlDbType dbType, int size) 
-			: this (parameterName, dbType, size, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
+			: this (parameterName, dbType, size, ParameterDirection.Input, false, 0, 0, null, DataRowVersion.Current, null)
 		{
 		}
 		
@@ -156,16 +160,19 @@ namespace System.Data.SqlClient {
 		{
 		}
 		
-		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
 		{
+			if (parameterName == null)
+				parameterName = string.Empty;
+
 			metaParameter = new TdsMetaParameter (parameterName, size, 
 							      isNullable, precision, 
-							      scale, 
-							      value);
+							      scale,
+							      GetFrameworkValue);
+			metaParameter.RawValue = value;
 			if (dbType != SqlDbType.Variant) 
 				SqlDbType = dbType;
-			metaParameter.Value = SqlTypeToFrameworkType (value);
 			Direction = direction;
 			SourceColumn = sourceColumn;
 			SourceVersion = sourceVersion;
@@ -260,8 +267,9 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 	 	DbType DbType {
 			get { return dbType; }
-			set { 
-				SetDbType (value); 
+			set {
+				SetDbType (value);
+				isDirty = true;
 				isTypeSet = true;
 			}
 		}
@@ -278,13 +286,13 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-	 ParameterDirection Direction {
+		ParameterDirection Direction {
 			get { return direction; }
 			set { 
 				direction = value; 
 				switch( direction ) {
 					case ParameterDirection.Output:
-					MetaParameter.Direction = TdsParameterDirection.Output;
+						MetaParameter.Direction = TdsParameterDirection.Output;
 						break;
 					case ParameterDirection.InputOutput:
 						MetaParameter.Direction = TdsParameterDirection.InputOutput;
@@ -340,7 +348,11 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		string ParameterName {
 			get { return metaParameter.ParameterName; }
-			set { metaParameter.ParameterName = value; }
+			set {
+				if (value == null)
+					value = string.Empty;
+				metaParameter.ParameterName = value;
+			}
 		}
 
 		[DefaultValue (0)]
@@ -374,7 +386,10 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		int Size {
 			get { return metaParameter.Size; }
-			set { metaParameter.Size = value; }
+			set {
+				isDirty = true;
+				metaParameter.Size = value;
+			}
 		}
 
 #if ONLY_1_0 || ONLY_1_1
@@ -387,7 +402,11 @@ namespace System.Data.SqlClient {
 		override
 #endif // NET_2_0
 		string SourceColumn {
-			get { return sourceColumn; }
+			get {
+				if (sourceColumn == null)
+					return string.Empty;
+				return sourceColumn;
+			}
 			set { sourceColumn = value; }
 		}
 
@@ -416,8 +435,9 @@ namespace System.Data.SqlClient {
 #endif
 		public SqlDbType SqlDbType {
 			get { return sqlDbType; }
-			set { 
-				SetSqlDbType (value); 
+			set {
+				SetSqlDbType (value);
+				isDirty = true;
 				isTypeSet = true;
 			}
 		}
@@ -435,11 +455,18 @@ namespace System.Data.SqlClient {
 		override
 #endif // NET_2_0
 		object Value {
-			get { return metaParameter.Value; }
+			get { return metaParameter.RawValue; }
 			set {
-				if (!isTypeSet)
+				if (!isTypeSet) {
+#if NET_2_0
 					InferSqlType (value);
-				metaParameter.Value = SqlTypeToFrameworkType (value);
+#else
+					if (value != null && value != DBNull.Value)
+						InferSqlType (value);
+#endif
+				}
+				isDirty = true;
+				metaParameter.RawValue = value;
 			}
 		}
 
@@ -458,11 +485,13 @@ namespace System.Data.SqlClient {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public Object SqlValue { 
+		public Object SqlValue {
 			get { return sqlValue; }
 			set {
-				Value = value;
 				sqlValue = value;
+				if (value is INullable)
+					value = SqlTypeToFrameworkType (value);
+				Value = value;
 			}
 		}
 	
@@ -803,7 +832,7 @@ namespace System.Data.SqlClient {
 				break;
 			default:
 				string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
-				throw new ArgumentException (exception);
+				throw new ArgumentOutOfRangeException ("SqlDbType", exception);
 			}
 			sqlDbType = type;
 		}
@@ -811,6 +840,19 @@ namespace System.Data.SqlClient {
 		public override string ToString() 
 		{
 			return ParameterName;
+		}
+
+		object GetFrameworkValue (object rawValue, out bool updated)
+		{
+			object tdsValue;
+
+			updated = isDirty;
+			if (isDirty) {
+				tdsValue = SqlTypeToFrameworkType (rawValue);
+				isDirty = false;
+			} else
+				tdsValue = null;
+			return tdsValue;
 		}
 
 		object SqlTypeToFrameworkType (object value)
@@ -938,12 +980,12 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		public override void ResetDbType ()
 		{
-			InferSqlType (metaParameter.Value);
+			InferSqlType (Value);
 		}
 
 		public void ResetSqlDbType ()
 		{
-			InferSqlType (metaParameter.Value);
+			InferSqlType (Value);
 		}
 #endif // NET_2_0
 
