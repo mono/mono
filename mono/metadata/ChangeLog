@@ -1,3 +1,10 @@
+2008-11-27  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r120164.
+	
+	* marshal.c (mono_string_builder_to_utf8): Fixed a wrong
+	invocation to g_utf16_to_utf8().
+
 2008-12-04  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r120749.
