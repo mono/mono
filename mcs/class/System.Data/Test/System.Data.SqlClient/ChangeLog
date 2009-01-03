@@ -1,5 +1,12 @@
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlParameterTest.cs: Added .ctor tests. Improved 
+	ParameterType and ResetDbType tests. Added ParameterName,
+	SourceColumn and Value tests. Partially enable SqlValue
+	test.
+
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandBuilderTest.cs: Added tests for CatalogLocation,
 	CatalogSeparator, ConflictOption, QuoteIdentifier, QuotePrefix,
 	QuoteSuffix  and SchemaSeparator.
