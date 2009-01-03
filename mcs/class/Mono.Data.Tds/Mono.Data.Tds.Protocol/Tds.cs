@@ -406,7 +406,7 @@ namespace Mono.Data.Tds.Protocol
 
 		internal protected void InitExec () 
 		{
-			// clean up 
+			// clean up
 			moreResults = true;
 			doneProc = false;
 			messages.Clear ();
@@ -441,7 +441,7 @@ namespace Mono.Data.Tds.Protocol
 		{
 			comm.StartPacket (TdsPacketType.Logoff);
 			comm.Append ((byte) 0);
-			comm.SendPacket ();	
+			comm.SendPacket ();
 			comm.Close ();
 			connected = false;
 		}
@@ -706,7 +706,7 @@ namespace Mono.Data.Tds.Protocol
 			if (colType == null)
 				throw new ArgumentNullException ("colType");
 #endif
-			switch (colType) {				
+			switch (colType) {
 			case TdsColumnType.IntN :
 				if (outParam)
 					comm.Skip (1);
@@ -1236,6 +1236,18 @@ namespace Mono.Data.Tds.Protocol
 		internal bool IsLargeType (TdsColumnType columnType)
 		{
 			return ((byte) columnType > 128);
+		}
+
+		protected bool IsWideType (TdsColumnType columnType)
+		{
+			switch (columnType) {
+			case TdsColumnType.NChar:
+			case TdsColumnType.NText:
+			case TdsColumnType.NVarChar:
+				return true;
+			default:
+				return false;
+			}
 		}
 
 		internal static bool IsFixedSizeColumn (TdsColumnType columnType)

@@ -1,5 +1,12 @@
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* Tds.cs: Added IsWideType method.
+	* Tds70.cs: Fixed columnsize for unicode columns. Set precision
+	and scale for non-decimal/numeric column.
+	* TdsColumnType.cs: Adds tds names as comment.
+
+2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* Tds.cs (LoadData): Improve exception message when attempting to
 	read before the current position. Update the remaining length of the
 	stream when skipping bytes.

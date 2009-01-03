@@ -6,12 +6,12 @@
 //   Diego Caravana (diego@toth.it)
 //   Sebastien Pouliot (sebastien@ximian.com)
 //   Daniel Morgan (danielmorgan@verizon.net)
+//   Gert Driesen (drieseng@users.sourceforge.net)
 //
 // Copyright (C) 2002 Tim Coleman
 // Portions (C) 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Daniel Morgan
 //
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -633,9 +633,7 @@ namespace Mono.Data.Tds.Protocol
 				bool autoIncrement = (flagData[2] & 0x10) > 0;
 				bool isIdentity = (flagData[2] & 0x10) > 0;
 
-				TdsColumnType columnType = (TdsColumnType) (Comm.GetByte () & 0xff);
-				if ((byte) columnType == 0xef)
-					columnType = TdsColumnType.NChar;
+				TdsColumnType columnType = (TdsColumnType) ((Comm.GetByte () & 0xff));
 
 				byte xColumnType = 0;
 				if (IsLargeType (columnType)) {
@@ -657,23 +655,18 @@ namespace Mono.Data.Tds.Protocol
 				else
 					columnSize = Comm.GetByte () & 0xff;
 
+				if (IsWideType ((TdsColumnType) columnType))
+					columnSize /= 2;
+
 				byte precision = 0;
 				byte scale = 0;
 
-				switch (columnType) {
-				case TdsColumnType.NText:
-				case TdsColumnType.NChar:
-				case TdsColumnType.NVarChar:
-					columnSize /= 2;
-					break;
-				case TdsColumnType.Decimal:
-				case TdsColumnType.Numeric:
-				  /*
-					Comm.Skip (1);
-				  */
+				if (columnType == TdsColumnType.Decimal || columnType == TdsColumnType.Numeric) {
 					precision = Comm.GetByte ();
 					scale = Comm.GetByte ();
-					break;
+				} else {
+					precision = GetPrecision (columnType, columnSize);
+					scale = GetScale (columnType, columnSize);
 				}
 
 				string columnName = Comm.GetString (Comm.GetByte ());
@@ -732,6 +725,136 @@ namespace Mono.Data.Tds.Protocol
 					}
 				}
 			}
+		}
+
+		byte GetScale (TdsColumnType type, int columnSize)
+		{
+			switch (type) {
+			case TdsColumnType.DateTime:
+				return 0x03;
+			case TdsColumnType.DateTime4:
+				return 0x00;
+			case TdsColumnType.DateTimeN:
+				switch (columnSize) {
+				case 4:
+					return 0x00;
+				case 8:
+					return 0x03;
+				}
+				break;
+			default:
+				return 0xff;
+			}
+
+			throw new NotSupportedException (string.Format (
+				CultureInfo.InvariantCulture,
+				"Fixed scale not defined for column " +
+				"type '{0}' with size {1}.", type, columnSize));
+		}
+
+		byte GetPrecision (TdsColumnType type, int columnSize)
+		{
+			switch (type) {
+			case TdsColumnType.Binary:
+				return 0xff;
+			case TdsColumnType.Bit:
+				return 0xff;
+			case TdsColumnType.Char:
+				return 0xff;
+			case TdsColumnType.DateTime:
+				return 0x17;
+			case TdsColumnType.DateTime4:
+				return 0x10;
+			case TdsColumnType.DateTimeN:
+				switch (columnSize) {
+				case 4:
+					return 0x10;
+				case 8:
+					return 0x17;
+				}
+				break;
+			case TdsColumnType.Real:
+				return 0x07;
+			case TdsColumnType.Float8:
+				return 0x0f;
+			case TdsColumnType.FloatN:
+				switch (columnSize) {
+				case 4:
+					return 0x07;
+				case 8:
+					return 0x0f;
+				}
+				break;
+			case TdsColumnType.Image:
+				return 0xff;
+			case TdsColumnType.Int1:
+				return 0x03;
+			case TdsColumnType.Int2:
+				return 0x05;
+			case TdsColumnType.Int4:
+				return 0x0a;
+			case TdsColumnType.IntN:
+				switch (columnSize) {
+				case 1:
+					return 0x03;
+				case 2:
+					return 0x05;
+				case 4:
+					return 0x0a;
+				}
+				break;
+			case TdsColumnType.Void:
+				return 0x01;
+			case TdsColumnType.Text:
+				return 0xff;
+			case TdsColumnType.UniqueIdentifier:
+				return 0xff;
+			case TdsColumnType.VarBinary:
+				return 0xff;
+			case TdsColumnType.VarChar:
+				return 0xff;
+			case TdsColumnType.Money:
+				return 19;
+			case TdsColumnType.NText:
+				return 0xff;
+			case TdsColumnType.NVarChar:
+				return 0xff;
+			case TdsColumnType.BitN:
+				return 0xff;
+			case TdsColumnType.MoneyN:
+				switch (columnSize) {
+				case 4:
+					return 0x0a;
+				case 8:
+					return 0x13;
+				}
+				break;
+			case TdsColumnType.Money4:
+				return 0x0a;
+			case TdsColumnType.NChar:
+				return 0xff;
+			case TdsColumnType.BigBinary:
+				return 0xff;
+			case TdsColumnType.BigVarBinary:
+				return 0xff;
+			case TdsColumnType.BigVarChar:
+				return 0xff;
+			case TdsColumnType.BigNVarChar:
+				return 0xff;
+			case TdsColumnType.BigChar:
+				return 0xff;
+			case TdsColumnType.SmallMoney:
+				return 0x0a;
+			case TdsColumnType.Variant:
+				return 0xff;
+			case TdsColumnType.BigInt:
+				return 0xff;
+			}
+
+			throw new NotSupportedException (string.Format (
+				CultureInfo.InvariantCulture,
+				"Fixed precision not defined for column " +
+				"type '{0}' with size {1}.", type, columnSize));
 		}
 
 		#endregion // Methods
