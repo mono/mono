@@ -1,3 +1,7 @@
+2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_emit_rgctx_calli): Fix a warning.
+
 2008-12-31  Geoff Norton  <gnorton@novell.com>
 
 	* mini-ppc.c: The prolog size allocated can be too small for darwin
