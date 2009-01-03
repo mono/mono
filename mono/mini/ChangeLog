@@ -1,5 +1,17 @@
 2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-ops.h: Add a definition of XPHI.
+
+	* mini.h (MONO_IS_PHI): Make is aware of simd instrincs. 
+
+	* ssa.c (op_phi_to_move): Handle XPHI.
+
+	* ssa.c (mono_ssa_compute): Generate a XPHI for simd intrinsics instead of VPHI.
+
+	Fixes #462457
+
+2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c (mono_emit_rgctx_calli): Fix a warning.
 
 2008-12-31  Geoff Norton  <gnorton@novell.com>
