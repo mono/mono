@@ -1,5 +1,11 @@
 2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Backport of r122364.
+
+	* basic-simd.cs: Add a regression test for #462457.
+
+2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Backport of r122363.
 
 	* mini-ops.h: Add a definition of XPHI.
