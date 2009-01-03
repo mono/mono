@@ -1,5 +1,9 @@
 2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Add a regression test for #462457.
+
+2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Add a definition of XPHI.
 
 	* mini.h (MONO_IS_PHI): Make is aware of simd instrincs. 
