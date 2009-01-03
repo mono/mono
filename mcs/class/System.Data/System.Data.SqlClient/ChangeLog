@@ -1,5 +1,17 @@
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlDataReader.cs: Removed unused dataTypeNames, and
+	unnecessary initializations. Added missing reader state
+	and row state checks. Fixed implementation of HasRows.
+	Modified type of DataType to object on 1.0 profile for
+	compatibility with .NET 1.x. Do not mark (Big)VarBinary
+	or ((Big)Binary as long, as unit tests show that IsLong
+	is for wide (unicode) data types. Fixed type data for
+	SmallDateTime and SmallMoney data types. Improved support
+	for bigint data type (using TDS 7.0).
+
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommand.cs: Moved connection reset before the throw.
 	Improved exception message.
 
