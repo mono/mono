@@ -1,7 +1,15 @@
+2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TdsMetaParameter.cs: Define delegate for performing conversion for
+	retrieving value as framework type from SqlParameter. Store both raw
+	value as converted/resized value to allow us to perform lazy
+	conversion. Only resize value if value or size were updated. Avoid
+	double casting in ResizeValue.
+
 2008-05-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
-	** Fixes Bug#382635
-	* TdsMetaParameter.cs (set_Value): Truncate the value to thespecified size.
+	* TdsMetaParameter.cs (set_Value): Truncate the value to the
+	specified size. Fixes bug #382635.
 
 2007-07-24  Nagappan A  <anagappan@novell.com>
 

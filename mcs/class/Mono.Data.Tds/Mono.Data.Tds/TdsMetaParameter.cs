@@ -33,6 +33,8 @@ using System;
 using System.Text;
 
 namespace Mono.Data.Tds {
+	public delegate object FrameworkValueGetter (object rawValue, out bool updated);
+
 	public class TdsMetaParameter
 	{
 		#region Fields
@@ -47,12 +49,21 @@ namespace Mono.Data.Tds {
 		bool isNullable;
 		object value;
 		bool isVariableSizeType;
+		FrameworkValueGetter frameworkValueGetter;
+		object rawValue;
+		bool isUpdated;
 
 		#endregion // Fields
 
 		public TdsMetaParameter (string name, object value)
 			: this (name, String.Empty, value)
 		{
+		}
+
+		public TdsMetaParameter (string name, FrameworkValueGetter valueGetter)
+			: this (name, String.Empty, null)
+		{
+			frameworkValueGetter = valueGetter;
 		}
 
 		public TdsMetaParameter (string name, string typeName, object value)
@@ -71,6 +82,16 @@ namespace Mono.Data.Tds {
 			Precision = precision;
 			Scale = scale;
 			Value = value;
+		}
+
+		public TdsMetaParameter (string name, int size, bool isNullable, byte precision, byte scale, FrameworkValueGetter valueGetter)
+		{
+			ParameterName = name;
+			Size = size;
+			IsNullable = isNullable;
+			Precision = precision;
+			Scale = scale;
+			frameworkValueGetter = valueGetter;
 		}
 
 		#region Properties
@@ -96,38 +117,31 @@ namespace Mono.Data.Tds {
 		}
 
 		public object Value {
-			get { return value; }
-			set { 
-				if (value == DBNull.Value || value == null) {
-					this.value = value;
-					return;
+			get {
+				if (frameworkValueGetter != null) {
+					bool updated;
+					object newValue = frameworkValueGetter (rawValue, out updated);
+					if (updated) {
+						value = newValue;
+						isUpdated = true;
+					}
 				}
 
-				// if size is set, truncate the value to specified size
-				if (value.GetType () == typeof (string)) {
-					int len = ((string)value).Length;
-					
-					if ((TypeName == "nvarchar" || 
-					     TypeName == "nchar") 
-					    && isSizeSet && size > 0 && len > size) {
-						this.value = ((string)value).Substring (0, size);
-					} else {
-						this.value = value;
-					}
-				} else if (value.GetType () == typeof (byte[])) {
-					int len = ((byte[])value).Length;
-					
-					if (isSizeSet && size > 0 && len > size ) {
-						byte [] tmpVal = new byte [size];
-						Array.Copy (((byte[]) value), ((byte[]) this.value), size);
-						this.value = tmpVal;
-					} else {
-						this.value = value;
-					}
-				} else {
-					this.value = value;
+				if (isUpdated) {
+					value = ResizeValue (value);
+					isUpdated = false;
 				}
+				return value;
 			}
+			set {
+				rawValue = this.value = value;
+				isUpdated = true;
+			}
+		}
+
+		public object RawValue {
+			get { return rawValue; }
+			set { rawValue = value; }
 		}
 
 		public byte Precision {
@@ -152,7 +166,8 @@ namespace Mono.Data.Tds {
 		public int Size {
 			get { return GetSize (); }
 			set {
-				size = value; 
+				size = value;
+				isUpdated = true;
 				isSizeSet = true;
 			}
 		}
@@ -166,6 +181,32 @@ namespace Mono.Data.Tds {
 		#endregion // Properties
 
 		#region Methods
+
+		object ResizeValue (object newValue)
+		{
+			if (newValue == DBNull.Value || newValue == null)
+				return newValue;
+
+			if (!isSizeSet || size == 0)
+				return newValue;
+
+			// if size is set, truncate the value to specified size
+			string text = newValue as string;
+			if (text != null) {
+				if (TypeName == "nvarchar" || TypeName == "nchar") {
+					if (text.Length > size)
+						return text.Substring (0, size);
+				}
+			} else if (newValue.GetType () == typeof (byte [])) {
+				byte [] buffer = (byte []) newValue;
+				if (buffer.Length > size) {
+					byte [] tmpVal = new byte [size];
+					Array.Copy (buffer, tmpVal, size);
+					return tmpVal;
+				}
+			}
+			return newValue;
+		}
 
 		internal string Prepare ()
 		{
