@@ -35,6 +35,7 @@ using System.Data.Odbc;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Globalization;
+using System.Text;
 
 using Mono.Data;
 
@@ -827,17 +828,1003 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void GetValueBinaryTest ()
+		public void GetValue_Type_Binary ()
 		{
-			cmd.CommandText = "select type_binary from binary_family where id = 1";
-			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
-				Assert.IsTrue (reader.Read (), "#1");
-				object ob = reader.GetValue (0);
-				Assert.IsNotNull (ob, "#2");
-				Assert.AreEqual (typeof (byte []), ob.GetType (), "#3");
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_binary from binary_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = new byte [] { 0x35, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00 };
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#A5");
+
+				expected = new byte [] { 0x00, 0x33, 0x34, 0x00,
+					0x33, 0x30, 0x35, 0x31 };
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#B5");
+
+				expected = new byte [8];
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (DBNull.Value, value, "#D4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = new byte [] { 0x35, 0x00, 0x00, 0x00,
+					0x00, 0x00, 0x00, 0x00 };
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#E5");
+
+				expected = new byte [] { 0x00, 0x33, 0x34, 0x00,
+					0x33, 0x30, 0x35, 0x31 };
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#F5");
+
+				expected = new byte [8];
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#H5");
 			}
 		}
-		
+
+		[Test]
+		public void GetValue_Type_Image ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_blob from binary_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = new byte [] { 0x32, 0x56, 0x00,
+					0x44, 0x22 };
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#A5");
+
+				expected = long_bytes;
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#B5");
+
+				expected = new byte [0];
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (DBNull.Value, value, "#D4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = new byte [] { 0x32, 0x56, 0x00,
+					0x44, 0x22 };
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#E5");
+
+				expected = long_bytes;
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#F5");
+
+				expected = new byte [0];
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_Integer ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_int from numeric_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = int.MaxValue;
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#A5");
+
+				expected = int.MinValue;
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#B5");
+
+				expected = 0;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (DBNull.Value, value, "#D4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = int.MaxValue;
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#E5");
+
+				expected = int.MinValue;
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#F5");
+
+				expected = 0;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (int), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_NText ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_ntext from string_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = "nt\u092d\u093ext";
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#A5");
+
+				expected = "nt\u092d\u093ext ";
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#B5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = "nt\u092d\u093ext";
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#E5");
+
+				expected = "nt\u092d\u093ext ";
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#F5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_NVarChar ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_nvarchar from string_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = "nv\u092d\u093e\u0930\u0924r";
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#A5");
+
+				expected = "nv\u092d\u093e\u0930\u0924r ";
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#B5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = "nv\u092d\u093e\u0930\u0924r";
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#E5");
+
+				expected = "nv\u092d\u093e\u0930\u0924r ";
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#F5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_Real ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_float from numeric_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = 3.40E+38F;
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#A5");
+
+				expected = -3.40E+38F;
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#B5");
+
+				expected = 0F;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = 3.40E+38F;
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#E5");
+
+				expected = -3.40E+38F;
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#F5");
+
+				expected = 0F;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (float), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_SmallDateTime ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_smalldatetime from datetime_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = DateTime.Parse ("2037-12-31 23:59:00");
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (DateTime), rdr.GetFieldType (0), "#A5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (DateTime), rdr.GetFieldType (0), "#B5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = DateTime.Parse ("2037-12-31 23:59:00");
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (DateTime), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (DateTime), rdr.GetFieldType (0), "#D5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_SmallInt ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_smallint from numeric_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = short.MaxValue;
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#A5");
+
+				expected = short.MinValue;
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#B5");
+
+				expected = (short) 0;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = short.MaxValue;
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#E5");
+
+				expected = short.MinValue;
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#F5");
+
+				expected = (short) 0;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (short), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_Text ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_text from string_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = "text";
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#A5");
+
+				StringBuilder sb = new StringBuilder ();
+				for (int i = 0; i < 30; i++)
+					sb.Append ("longtext ");
+				expected = sb.ToString ();
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#B5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = "text";
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#E5");
+
+				StringBuilder sb = new StringBuilder ();
+				for (int i = 0; i < 30; i++)
+					sb.Append ("longtext ");
+				expected = sb.ToString ();
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#F5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_TinyInt ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_tinyint from numeric_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = byte.MaxValue;
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#A5");
+
+				expected = byte.MinValue;
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#B5");
+
+				expected = (byte) 0x00;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = byte.MaxValue;
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#E5");
+
+				expected = byte.MinValue;
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#F5");
+
+				expected = (byte) 0x00;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (byte), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_VarBinary ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_varbinary from binary_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = new byte [] { 0x30, 0x31, 0x32, 0x33,
+					0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+					0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+					0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34,
+					0x35, 0x36, 0x37, 0x38, 0x39, 0x00, 0x44,
+					0x53};
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#A5");
+
+				expected = new byte [] { 0x00, 0x39, 0x38, 0x37,
+					0x36, 0x35, 0x00, 0x33, 0x32, 0x31, 0x30,
+					0x31, 0x32, 0x33, 0x34 };
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#B5");
+
+				expected = new byte [0];
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (DBNull.Value, value, "#D4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = new byte [] { 0x30, 0x31, 0x32, 0x33,
+					0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30,
+					0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+					0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34,
+					0x35, 0x36, 0x37, 0x38, 0x39, 0x00, 0x44,
+					0x53};
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#E5");
+
+				expected = new byte [] { 0x00, 0x39, 0x38, 0x37,
+					0x36, 0x35, 0x00, 0x33, 0x32, 0x31, 0x30,
+					0x31, 0x32, 0x33, 0x34 };
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#F5");
+
+				expected = new byte [0];
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
+		[Test]
+		public void GetValue_Type_VarChar ()
+		{
+			object value;
+			object expected;
+
+			cmd.CommandText = "select type_varchar from string_family order by id asc";
+			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = "varchar";
+
+				Assert.IsTrue (rdr.Read (), "#A1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#A2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#A3");
+				Assert.AreEqual (expected, value, "#A4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#A5");
+
+				expected = "varchar ";
+
+				Assert.IsTrue (rdr.Read (), "#B1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#B2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#B3");
+				Assert.AreEqual (expected, value, "#B4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#B5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#C1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#C2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#C3");
+				Assert.AreEqual (expected, value, "#C4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#C5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#D1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#D2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#D3");
+				Assert.AreEqual (expected, value, "#D4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#D5");
+			}
+
+			using (IDataReader rdr = cmd.ExecuteReader ()) {
+				expected = "varchar";
+
+				Assert.IsTrue (rdr.Read (), "#E1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#E2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#E3");
+				Assert.AreEqual (expected, value, "#E4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#E5");
+
+				expected = "varchar ";
+
+				Assert.IsTrue (rdr.Read (), "#F1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#F2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#F3");
+				Assert.AreEqual (expected, value, "#F4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#F5");
+
+				expected = string.Empty;
+
+				Assert.IsTrue (rdr.Read (), "#G1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#G2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#G3");
+				Assert.AreEqual (expected, value, "#G4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#G5");
+
+				expected = DBNull.Value;
+
+				Assert.IsTrue (rdr.Read (), "#H1");
+				value = rdr.GetValue (0);
+				Assert.IsNotNull (value, "#H2");
+				Assert.AreEqual (expected.GetType (), value.GetType (), "#H3");
+				Assert.AreEqual (expected, value, "#H4");
+				Assert.AreEqual (typeof (string), rdr.GetFieldType (0), "#H5");
+			}
+		}
+
 		[Test]
 		public void GetBytes ()
 		{
@@ -878,6 +1865,7 @@ namespace MonoTests.System.Data
 				long ret = 0;
 				long count = 0;
 				byte [] val = new byte [totalsize];
+
 				do {
 					ret = reader.GetBytes (0, offset, val, offset,
 						(int) Math.Min (buffsize, totalsize - count));
@@ -963,16 +1951,10 @@ namespace MonoTests.System.Data
 		{
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id in (1,2,3,4) order by id";
 
-			conn.Close ();
-			conn = ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
-				Console.WriteLine ("A");
 				Assert.IsTrue (reader.Read (), "#A1");
-				Console.WriteLine ("B");
 				Assert.AreEqual (5, reader.GetBytes (0, 0, null, 0, 0), "#A2");
-				Console.WriteLine ("C");
+
 				Assert.IsTrue (reader.Read (), "#B1");
 				Assert.AreEqual (275, reader.GetBytes (0, 0, null, 0, 0), "#B2");
 
@@ -998,6 +1980,114 @@ namespace MonoTests.System.Data
 #endif
 				} else {
 					Assert.AreEqual (-1, reader.GetBytes (0, 0, null, 0, 0), "#D2");
+				}
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (reader.Read (), "#E1");
+				Assert.AreEqual (5, reader.GetBytes (0, 5, null, 3, 4), "#E2");
+
+				Assert.IsTrue (reader.Read (), "#F1");
+				Assert.AreEqual (275, reader.GetBytes (0, 5, null, 3, 4), "#F2");
+
+				Assert.IsTrue (reader.Read (), "#G1");
+				Assert.AreEqual (0, reader.GetBytes (0, 5, null, 3, 4), "#G2");
+
+				Assert.IsTrue (reader.Read (), "#H1");
+				if (conn is SqlConnection) {
+#if NET_2_0
+					try {
+						reader.GetBytes (0, 5, null, 3, 4);
+						Assert.Fail ("#H2");
+					} catch (SqlNullValueException ex) {
+						// Data is Null. This method or
+						// property cannot be called on
+						// Null values
+						Assert.AreEqual (typeof (SqlNullValueException), ex.GetType (), "#H3");
+						Assert.IsNull (ex.InnerException, "#H4");
+						Assert.IsNotNull (ex.Message, "#H5");
+					}
+#else
+					Assert.AreEqual (0, reader.GetBytes (0, 5, null, 3, 4), "#H2");
+#endif
+				} else {
+					Assert.AreEqual (-1, reader.GetBytes (0, 5, null, 3, 4), "#H2");
+				}
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read (), "#I1");
+				Assert.AreEqual (5, reader.GetBytes (0, 0, null, 0, 0), "#I2");
+
+				Assert.IsTrue (reader.Read (), "#J1");
+				Assert.AreEqual (275, reader.GetBytes (0, 0, null, 0, 0), "#J2");
+
+				Assert.IsTrue (reader.Read (), "#K1");
+				Assert.AreEqual (0, reader.GetBytes (0, 0, null, 0, 0), "#K2");
+
+				Assert.IsTrue (reader.Read (), "#L1");
+				if (conn is SqlConnection) {
+					try {
+						reader.GetBytes (0, 0, null, 0, 0);
+						Assert.Fail ("#L2");
+					} catch (SqlNullValueException ex) {
+						// Data is Null. This method or
+						// property cannot be called on
+						// Null values
+						Assert.AreEqual (typeof (SqlNullValueException), ex.GetType (), "#L3");
+						Assert.IsNull (ex.InnerException, "#L4");
+						Assert.IsNotNull (ex.Message, "#L5");
+					}
+				} else {
+					if (RunningOnMono)
+						Assert.AreEqual (-1, reader.GetBytes (0, 0, null, 0, 0), "#L2");
+					else {
+						try {
+							reader.GetBytes (0, 0, null, 0, 0);
+							Assert.Fail ("#L2");
+						} catch (InvalidCastException) {
+							// Unable to cast object of type
+							// 'System.DBNull' to type 'System.Byte[]'
+						}
+					}
+				}
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read (), "#M1");
+				Assert.AreEqual (5, reader.GetBytes (0, 5, null, 3, 4), "#M2");
+
+				Assert.IsTrue (reader.Read (), "#N1");
+				Assert.AreEqual (275, reader.GetBytes (0, 5, null, 3, 4), "#N2");
+
+				Assert.IsTrue (reader.Read (), "#O1");
+				Assert.AreEqual (0, reader.GetBytes (0, 5, null, 3, 4), "#O2");
+
+				Assert.IsTrue (reader.Read (), "#P1");
+				if (conn is SqlConnection) {
+					try {
+						reader.GetBytes (0, 5, null, 3, 4);
+						Assert.Fail ("#P2");
+					} catch (SqlNullValueException ex) {
+						// Data is Null. This method or
+						// property cannot be called on
+						// Null values
+						Assert.AreEqual (typeof (SqlNullValueException), ex.GetType (), "#P3");
+						Assert.IsNull (ex.InnerException, "#P4");
+						Assert.IsNotNull (ex.Message, "#P5");
+					}
+				} else {
+					if (RunningOnMono)
+						Assert.AreEqual (-1, reader.GetBytes (0, 0, null, 0, 0), "#L2");
+					else {
+						try {
+							reader.GetBytes (0, 0, null, 0, 0);
+							Assert.Fail ("#L2");
+						} catch (InvalidCastException) {
+							// Unable to cast object of type
+							// 'System.DBNull' to type 'System.Byte[]'
+						}
+					}
 				}
 			}
 		}

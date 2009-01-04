@@ -1,5 +1,10 @@
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DataReaderTest.cs: Added tests for GetValue. Improved test
+	for GetBytes.
+
+2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* DataReaderTest.cs: Added tests for GetChars, GetOrdinal,
 	GetValue and GetValues. Improved existing tests.
 	* DbDataReaderTest.cs: Moved GetProviderSpecificValue test
