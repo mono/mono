@@ -1,3 +1,11 @@
+2009-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_if_conversion): Use branch->inst_true_bb/inst_false_bb
+	instead of bblock->out_bb [0]/[1], the two might not be the same. Fixes
+	#463357.
+
+	* iltests.il.in: Add a regression test.
+
 2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-codegen.c (mono_print_ins_index): Pretty print XPHI and VPHI.
