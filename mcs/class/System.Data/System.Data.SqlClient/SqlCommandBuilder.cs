@@ -813,6 +813,9 @@ namespace System.Data.SqlClient
 			// FIXME: "Figure out what else needs to be cleaned up when we refresh."
 			tableName = String.Empty;
 			dbSchemaTable = null;
+			deleteCommand = null;
+			insertCommand = null;
+			updateCommand = null;
 		}
 
 #if NET_2_0

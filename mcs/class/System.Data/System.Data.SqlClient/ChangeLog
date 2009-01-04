@@ -1,3 +1,7 @@
+2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandBuilder.cs (RefreshSchema): Clear commands.
+
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlDataReader.cs: Removed unused dataTypeNames, and
