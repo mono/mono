@@ -260,9 +260,9 @@ namespace Mono.Data.Tds.Protocol
 		public long GetSequentialColumnValue (int colIndex, long fieldIndex, byte[] buffer, int bufferIndex, int size) 
 		{
 			if (colIndex < StreamColumnIndex)
-				throw new InvalidOperationException ("Invalid attempt tp read from column ordinal" + colIndex); 
+				throw new InvalidOperationException ("Invalid attempt to read from column ordinal" + colIndex);
 			try {
-				if (colIndex != StreamColumnIndex) 
+				if (colIndex != StreamColumnIndex)
 					SkipToColumnIndex (colIndex);
 
 				if (!LoadInProgress) {
@@ -272,10 +272,9 @@ namespace Mono.Data.Tds.Protocol
 					BeginLoad ((TdsColumnType)Columns[colIndex]["ColumnType"]);
 #endif
 				}
-				
-				if (buffer == null) {
+
+				if (buffer == null)
 					return StreamLength;
-				}
 				return LoadData (fieldIndex, buffer, bufferIndex, size);
 			} catch (IOException ex) {
 				connected = false;
@@ -300,6 +299,7 @@ namespace Mono.Data.Tds.Protocol
 			if (colType == null)
 				throw new ArgumentNullException ("colType");
 #endif
+
 			switch (colType) {
 			case TdsColumnType.Text :
 			case TdsColumnType.NText:
@@ -307,6 +307,10 @@ namespace Mono.Data.Tds.Protocol
 				if (Comm.GetByte () != 0) {
 					Comm.Skip (24);
 					StreamLength = Comm.GetTdsInt ();
+				} else {
+					// use -2 to indicate that we're dealing
+					// with a NULL value
+					StreamLength = -2;
 				}
 				break;
 			case TdsColumnType.BigVarChar:
@@ -888,7 +892,7 @@ namespace Mono.Data.Tds.Protocol
 
 			if (tdsVersion == TdsVersion.tds70) {
 				len = comm.GetTdsShort ();
-				if (len != 0xffff && len > 0)
+				if (len != 0xffff && len >= 0)
 					result = comm.GetBytes (len, true);
 			} else {
 				len = (comm.GetByte () & 0xff);

@@ -1,3 +1,9 @@
+2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Tds.cs: Support detecting NULL value when sequentially reading
+	text/ntext/image column. Fixed typo in exception message in
+	GetSequentialColumnValue. Support reading zero-length binary data.
+
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Tds.cs: Added IsWideType method.
