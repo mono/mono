@@ -316,36 +316,36 @@ namespace System.Windows.Forms
 		{
 			try
 			{
-				bool isNull = (bindingSource == null);
+				bool is_source_available = bindingSource != null;
 				initFlag = true;
 				//changingText = true;
 
 				if (addNewItem != null)
-					addNewItem.Enabled = isNull ? addNewItem.Enabled : this.bindingSource.AllowNew;
+					addNewItem.Enabled = is_source_available && bindingSource.AllowNew;
 
 				if (moveFirstItem != null)
-					moveFirstItem.Enabled = isNull ? moveFirstItem.Enabled : bindingSource.Position > 0;
+					moveFirstItem.Enabled = is_source_available && bindingSource.Position > 0;
 
 				if (moveLastItem != null)
-					moveLastItem.Enabled = isNull ? moveLastItem.Enabled : bindingSource.Position < (bindingSource.Count - 1);
+					moveLastItem.Enabled = is_source_available && bindingSource.Position < (bindingSource.Count - 1);
 
 				if (moveNextItem != null)
-					moveNextItem.Enabled = isNull ? moveNextItem.Enabled : bindingSource.Position < (bindingSource.Count - 1);
+					moveNextItem.Enabled = is_source_available && bindingSource.Position < (bindingSource.Count - 1);
 
 				if (movePreviousItem != null)
-					movePreviousItem.Enabled = isNull ? movePreviousItem.Enabled : bindingSource.Position > 0;
+					movePreviousItem.Enabled = is_source_available && bindingSource.Position > 0;
 
 				if (deleteItem != null)
-					deleteItem.Enabled = isNull ? deleteItem.Enabled : (bindingSource.Count != 0 && bindingSource.AllowRemove);
+					deleteItem.Enabled = is_source_available && (bindingSource.Count != 0 && bindingSource.AllowRemove);
 
 				if (countItem != null) {
-					countItem.Text = string.Format(countItemFormat, isNull ? 0 : bindingSource.Count);
-					countItem.Enabled = !isNull && bindingSource.Count > 0;
+					countItem.Text = string.Format(countItemFormat, is_source_available ? bindingSource.Count : 0);
+					countItem.Enabled = is_source_available && bindingSource.Count > 0;
 				}
 
 				if (positionItem != null) {
-					positionItem.Text = string.Format("{0}", isNull ? 0 : bindingSource.Position + 1);
-					positionItem.Enabled = !isNull && bindingSource.Count > 0;
+					positionItem.Text = string.Format("{0}", is_source_available? bindingSource.Position + 1 : 0);
+					positionItem.Enabled = is_source_available && bindingSource.Count > 0;
 				}
 			}
 			finally

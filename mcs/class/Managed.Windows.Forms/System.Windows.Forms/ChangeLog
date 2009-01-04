@@ -1,3 +1,8 @@
+2009-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* BindingNavigator.cs: Properly enable/disable the toolstrip buttons,
+	based on whether the binding source is availble or not. Fixes #463008.
+
 2009-01-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCell.cs: We should return a value even if we are not bound 
