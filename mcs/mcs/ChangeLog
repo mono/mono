@@ -1,3 +1,8 @@
+2009-01-04  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #463415
+	* generic.cs: Use right index for RemoveDependentTypes.
+
 2009-01-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #463196

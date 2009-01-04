@@ -2799,10 +2799,11 @@ namespace Mono.CSharp {
 			return LowerBoundInference (e.Type, t) * 2;
 		}
 
-		static void RemoveDependentTypes (ArrayList types, Type returnType)
+		void RemoveDependentTypes (ArrayList types, Type returnType)
 		{
-			if (returnType.IsGenericParameter) {
-				types [returnType.GenericParameterPosition] = null;
+			int idx = IsUnfixed (returnType);
+			if (idx >= 0) {
+				types [idx] = null;
 				return;
 			}
 
