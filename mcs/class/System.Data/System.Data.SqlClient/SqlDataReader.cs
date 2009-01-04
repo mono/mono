@@ -43,6 +43,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlTypes;
+using System.Globalization;
 using System.Xml;
 
 namespace System.Data.SqlClient
@@ -275,6 +276,31 @@ namespace System.Data.SqlClient
 				out dbType, out fieldType, out isLong,
 				out typeName);
 			return fieldType;
+		}
+
+		SqlDbType GetSchemaRowDbType (int ordinal)
+		{
+			int csize;
+			short precision, scale;
+			TdsColumnType ctype;
+			TdsDataColumn column;
+
+			if (ordinal < 0 || ordinal >= command.Tds.Columns.Count)
+				throw new IndexOutOfRangeException ();
+
+			column = command.Tds.Columns [ordinal];
+#if NET_2_0
+			ctype = (TdsColumnType) column.ColumnType;
+			csize = (int) column.ColumnSize;
+			precision = (short) (column.NumericPrecision ?? 0);
+			scale = (short) (column.NumericScale ?? 0);
+#else
+			ctype = (TdsColumnType) column ["ColumnType"];
+			csize = (int) column ["ColumnSize"];
+			precision = (short) ((byte) column ["NumericPrecision"]);
+			scale = (short) ((byte) column ["NumericScale"]);
+#endif
+			return GetSchemaRowDbType (ctype, csize, precision, scale);
 		}
 
 		private SqlDbType GetSchemaRowDbType (TdsColumnType ctype, int csize, short precision, short scale)
@@ -543,10 +569,13 @@ namespace System.Data.SqlClient
 				try {
 					long len = ((Tds)command.Tds).GetSequentialColumnValue (i, dataIndex, buffer, bufferIndex, length);
 					if (len == -1)
-						throw new InvalidCastException ("Invalid attempt to GetBytes on column "
-										+ "'" + command.Tds.Columns[i]["ColumnName"] +
-										"'." + "The GetBytes function"
-										+ " can only be used on columns of type Text, NText, or Image");
+						throw CreateGetBytesOnInvalidColumnTypeException (i);
+					if (len == -2)
+#if NET_2_0
+						throw new SqlNullValueException ();
+#else
+						return 0;
+#endif
 					return len;
 				} catch (TdsInternalException ex) {
 					command.Connection.Close ();
@@ -556,10 +585,39 @@ namespace System.Data.SqlClient
 
 			object value = GetValue (i);
 			if (!(value is byte [])) {
-				if (value is DBNull) throw new SqlNullValueException ();
-				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
+				SqlDbType type = GetSchemaRowDbType (i);
+				switch (type) {
+				case SqlDbType.Image:
+					if (value is DBNull)
+						throw new SqlNullValueException ();
+					break;
+				case SqlDbType.Text:
+#if NET_2_0
+					string text = value as string;
+					if (text != null)
+						value = Encoding.Default.GetBytes (text);
+					else
+						value = null;
+					break;
+#else
+					throw new InvalidCastException ();
+#endif
+				case SqlDbType.NText:
+#if NET_2_0
+					string ntext = value as string;
+					if (ntext != null)
+						value = Encoding.Unicode.GetBytes (ntext);
+					else
+						value = null;
+					break;
+#else
+					throw new InvalidCastException ();
+#endif
+				default:
+					throw CreateGetBytesOnInvalidColumnTypeException (i);
+				}
 			}
-			
+
 			if (buffer == null)
 				return ((byte []) value).Length; // Return length of data
 
@@ -581,12 +639,7 @@ namespace System.Data.SqlClient
 #endif // NET_2_0
 		char GetChar (int i)
 		{
-			object value = GetValue (i);
-			if (!(value is char)) {
-				if (value is DBNull) throw new SqlNullValueException ();
-				throw new InvalidCastException ("Type is " + value.GetType ().ToString ());
-			}
-			return (char) value;
+			throw new NotSupportedException ();
 		}
 
 		public
@@ -1204,22 +1257,7 @@ namespace System.Data.SqlClient
 
 			object value = GetValue (i);
 
-			column = command.Tds.Columns [i];
-#if NET_2_0
-			ctype = (TdsColumnType) column.ColumnType;
-			csize = (int) column.ColumnSize;
-			precision = (short) (column.NumericPrecision ?? 0);
-			scale = (short) (column.NumericScale ?? 0);
-#else
-			ctype = (TdsColumnType) column ["ColumnType"];
-			csize = (int) column ["ColumnSize"];
-			precision = (short) ((byte) column ["NumericPrecision"]);
-			scale = (short) ((byte) column ["NumericScale"]);
-#endif
-
-			SqlDbType type = GetSchemaRowDbType (ctype, csize,
-				precision, scale);
-
+			SqlDbType type = GetSchemaRowDbType (i);
 			switch (type) {
 			case SqlDbType.BigInt:
 				if (value == DBNull.Value)
@@ -1497,6 +1535,16 @@ namespace System.Data.SqlClient
 		{
 			if (!readResult || !haveRead || !readResultUsed)
 				throw new InvalidOperationException ("No data available.");
+		}
+
+		InvalidCastException CreateGetBytesOnInvalidColumnTypeException (int ordinal)
+		{
+			string message = string.Format (CultureInfo.InvariantCulture,
+				"Invalid attempt to GetBytes on column '{0}'." +
+				"The GetBytes function can only be used on " +
+				"columns of type Text, NText, or Image.",
+				GetName (ordinal));
+			return new InvalidCastException (message);
 		}
 
 #if NET_2_0

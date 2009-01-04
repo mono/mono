@@ -1,5 +1,15 @@
 2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SqlDataReader.cs: Added GetSchemaRowDbType overload for
+	getting sql type of a given column (identified using its
+	ordinal). Modified GetBytes to throw SqlNullValueException
+	(2.0 profile) or return 0 (1.0 profile) when reading bytes
+	sequentially. Added support for non-sequentially reading
+	text and ntext columns using GetBytes. Modified GetChar
+	to throw a NotSupportedException to match MS.
+
+2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SqlCommandBuilder.cs (RefreshSchema): Clear commands.
 
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
