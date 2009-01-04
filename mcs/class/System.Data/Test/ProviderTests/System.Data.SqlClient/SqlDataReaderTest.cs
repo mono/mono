@@ -464,9 +464,12 @@ namespace MonoTests.System.Data.SqlClient
 			}
 #else
 			try {
-				reader.GetBytes (0,0,null,0,0);
+				reader.GetBytes (0, 0, null, 0, 0);
 				Assert.Fail ("#1");
-			}catch (InvalidCastException) {
+			}catch (InvalidCastException ex) {
+				Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#4");
 			} finally {
 				reader.Close ();
 			}
@@ -807,6 +810,7 @@ namespace MonoTests.System.Data.SqlClient
 				int offset = 0;
 				long ret = 0;
 				long count = 0;
+
 				do {
 					ret = reader.GetBytes (0, offset, val, offset, 50);
 					offset += (int) ret;
@@ -819,10 +823,10 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void GetBytes_Binary ()
+		public void GetBytes_Type_Binary ()
 		{
-			cmd.CommandText = "Select type_binary,type_varbinary,type_blob ";
-			cmd.CommandText += "from binary_family where id=1";
+			cmd.CommandText = "Select type_binary, type_varbinary, " +
+				"type_blob from binary_family where id = 1";
 			reader = cmd.ExecuteReader ();
 			reader.Read ();
 			byte[] binary = (byte[])reader.GetValue (0);
@@ -873,6 +877,282 @@ namespace MonoTests.System.Data.SqlClient
 			}
 			Assert.AreEqual (0, reader.GetBytes (0, len+10, null, 0, 0));
 			reader.Close ();
+		}
+
+		[Test]
+		public void GetBytes_Type_DateTime ()
+		{
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family where id = 1";
+
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (reader.Read ());
+
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#A1");
+				} catch (InvalidCastException ex) {
+					// Invalid attempt to GetBytes on column
+					// 'type_datetime'.
+					// The GetBytes function can only be used
+					// on columns of type Text, NText, or Image
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+					Assert.IsTrue (ex.Message.IndexOf ("'type_datetime'") != -1, "#A5:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("GetBytes") != -1, "#A6:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Text") != -1, "#A7:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("NText") != -1, "#A8:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Image") != -1, "#A9:" + ex.Message);
+				}
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read ());
+
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#B1");
+				} catch (InvalidCastException ex) {
+					// Invalid attempt to GetBytes on column
+					// 'type_datetime'.
+					// The GetBytes function can only be used
+					// on columns of type Text, NText, or Image
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+					Assert.IsTrue (ex.Message.IndexOf ("'type_datetime'") != -1, "#B5:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("GetBytes") != -1, "#B6:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Text") != -1, "#B7:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("NText") != -1, "#B8:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Image") != -1, "#B9:" + ex.Message);
+				}
+			}
+
+			cmd.CommandText = "SELECT type_datetime FROM datetime_family where id = 4";
+
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (reader.Read ());
+
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#C1");
+				} catch (InvalidCastException ex) {
+					// Invalid attempt to GetBytes on column
+					// 'type_datetime'.
+					// The GetBytes function can only be used
+					// on columns of type Text, NText, or Image
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#C2");
+					Assert.IsNull (ex.InnerException, "#C3");
+					Assert.IsNotNull (ex.Message, "#C4");
+					Assert.IsTrue (ex.Message.IndexOf ("'type_datetime'") != -1, "#C5:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("GetBytes") != -1, "#C6:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Text") != -1, "#C7:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("NText") != -1, "#C8:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Image") != -1, "#C9:" + ex.Message);
+				}
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read ());
+
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#D1");
+				} catch (InvalidCastException ex) {
+					// Invalid attempt to GetBytes on column
+					// 'type_datetime'.
+					// The GetBytes function can only be used
+					// on columns of type Text, NText, or Image
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#D2");
+					Assert.IsNull (ex.InnerException, "#D3");
+					Assert.IsNotNull (ex.Message, "#D4");
+					Assert.IsTrue (ex.Message.IndexOf ("'type_datetime'") != -1, "#D5:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("GetBytes") != -1, "#D6:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Text") != -1, "#D7:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("NText") != -1, "#D8:" + ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("Image") != -1, "#D9:" + ex.Message);
+				}
+			}
+		}
+
+		[Test]
+		public void GetBytes_Type_Text ()
+		{
+			long len;
+			byte [] buffer;
+			byte [] expected;
+
+			cmd.CommandText = "SELECT type_text FROM string_family order by id asc";
+
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				expected = new byte [] { 0x74, 0x65, 0x78,
+					0x74 };
+
+				Assert.IsTrue (reader.Read (), "#A1");
+				len = reader.GetBytes (0, 0, null, 0, 0);
+				Assert.AreEqual (4, len, "#A2");
+				buffer = new byte [len];
+				len = reader.GetBytes (0, 0, buffer, 0, (int) len);
+				Assert.AreEqual (4, len, "#A3");
+				Assert.AreEqual (expected, buffer, "#A4");
+
+				expected = new byte [] { 0x00, 0x00, 0x6f, 0x6e,
+					0x67, 0x00 };
+
+				Assert.IsTrue (reader.Read (), "#B1");
+				len = reader.GetBytes (0, 0, null, 0, 0);
+				Assert.AreEqual (270, len, "#B2");
+				buffer = new byte [6];
+				len = reader.GetBytes (0, 1, buffer, 2, 3);
+				Assert.AreEqual (3, len, "#B3");
+				Assert.AreEqual (expected, buffer, "#B4");
+
+				expected = new byte [0];
+
+				Assert.IsTrue (reader.Read (), "#C1");
+				len = reader.GetBytes (0, 0, null, 0, 0);
+				Assert.AreEqual (0, len, "#C2");
+				buffer = new byte [len];
+				len = reader.GetBytes (0, 0, buffer, 0, 0);
+				Assert.AreEqual (0, len, "#C3");
+				Assert.AreEqual (expected, buffer, "#C4");
+
+				Assert.IsTrue (reader.Read (), "#D1");
+#if NET_2_0
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#D2");
+				} catch (SqlNullValueException) {
+				}
+#else
+				len = reader.GetBytes (0, 0, null, 0, 0);
+				Assert.AreEqual (0, len, "#D2");
+#endif
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				expected = new byte [] { 0x74, 0x65, 0x78,
+					0x74 };
+
+				Assert.IsTrue (reader.Read (), "#E1");
+#if NET_2_0
+				len = reader.GetBytes (0, 0, null, 0, 0);
+				Assert.AreEqual (4, len, "#E2");
+				buffer = new byte [len];
+				len = reader.GetBytes (0, 0, buffer, 0, (int) len);
+				Assert.AreEqual (4, len, "#E3");
+				Assert.AreEqual (expected, buffer, "#E4");
+#else
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#E2");
+				} catch (InvalidCastException ex) {
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#E3");
+					Assert.IsNull (ex.InnerException, "#E4");
+					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#E5");
+				}
+#endif
+
+				expected = new byte [] { 0x00, 0x00, 0x6f, 0x6e,
+					0x67, 0x00 };
+
+				Assert.IsTrue (reader.Read (), "#F1");
+#if NET_2_0
+				len = reader.GetBytes (0, 0, null, 0, 0);
+				Assert.AreEqual (270, len, "#F2");
+				buffer = new byte [6];
+				len = reader.GetBytes (0, 1, buffer, 2, 3);
+				Assert.AreEqual (3, len, "#F3");
+				Assert.AreEqual (expected, buffer, "#F4");
+#else
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#F2");
+				} catch (InvalidCastException ex) {
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#F3");
+					Assert.IsNull (ex.InnerException, "#F4");
+					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#F5");
+				}
+#endif
+
+				expected = new byte [0];
+
+				Assert.IsTrue (reader.Read (), "#G1");
+#if NET_2_0
+				len = reader.GetBytes (0, 0, null, 0, 0);
+				Assert.AreEqual (0, len, "#G2");
+				buffer = new byte [len];
+				len = reader.GetBytes (0, 0, buffer, 0, 0);
+				Assert.AreEqual (0, len, "#G3");
+				Assert.AreEqual (expected, buffer, "#G4");
+#else
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#G2");
+				} catch (InvalidCastException ex) {
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#G3");
+					Assert.IsNull (ex.InnerException, "#G4");
+					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#G5");
+				}
+#endif
+
+				Assert.IsTrue (reader.Read (), "#H1");
+#if NET_2_0
+				try {
+					reader.GetBytes (0, 0, new byte [0], 0, 0);
+					Assert.Fail ("#H2");
+				} catch (NullReferenceException) {
+				}
+				try {
+					reader.GetBytes (0, 0, null, 0, 0);
+					Assert.Fail ("#H3");
+				} catch (NullReferenceException) {
+				}
+#else
+				try {
+					reader.GetBytes (0, 0, null, 0, 3);
+					Assert.Fail ("#H2");
+				} catch (InvalidCastException ex) {
+					Assert.AreEqual (typeof (InvalidCastException), ex.GetType (), "#H3");
+					Assert.IsNull (ex.InnerException, "#H4");
+					Assert.AreEqual ((new InvalidCastException ()).Message, ex.Message, "#H5");
+				}
+#endif
+			}
+		}
+
+		[Test]
+		public void GetChar ()
+		{
+			cmd.CommandText = "SELECT type_char FROM string_family where id = 1";
+
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (reader.Read ());
+
+				try {
+					reader.GetChar (0);
+					Assert.Fail ("#A1");
+				} catch (NotSupportedException ex) {
+					Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+					Assert.AreEqual ((new NotSupportedException ()).Message, ex.Message, "#A5");
+				}
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read ());
+
+				try {
+					reader.GetChar (0);
+					Assert.Fail ("#B1");
+				} catch (NotSupportedException ex) {
+					Assert.AreEqual (typeof (NotSupportedException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+					Assert.AreEqual ((new NotSupportedException ()).Message, ex.Message, "#B5");
+				}
+			}
 		}
 
 		[Test]

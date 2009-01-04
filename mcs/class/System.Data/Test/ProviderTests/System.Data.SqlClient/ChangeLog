@@ -1,3 +1,9 @@
+2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandBuilderTest.cs: Improved tests to also check
+	behavior of RefreshSchema.
+	* SqlDataReaderTest.cs: Added tests for GetBytes.
+
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandBuilderTest.cs: Improve Get*Command tests.

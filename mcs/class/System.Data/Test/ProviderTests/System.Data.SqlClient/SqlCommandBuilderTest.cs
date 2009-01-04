@@ -76,11 +76,11 @@ namespace MonoTests.System.Data
 #endif
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertInsertParameters (cmd, false, "#A3:");
+				Assert.AreSame (cmd, cb.GetInsertCommand (), "#A4");
 
-				cb = new SqlCommandBuilder (da);
+				cb.RefreshSchema ();
 				cb.QuotePrefix = "\"";
 				cmd = cb.GetInsertCommand ();
-
 #if NET_2_0
 				Assert.AreEqual ("INSERT INTO \"employee] (\"id], " +
 					"\"fname], \"lname]) VALUES (@p1, @p2, @p3)",
@@ -92,8 +92,9 @@ namespace MonoTests.System.Data
 #endif
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertInsertParameters (cmd, false, "#B3:");
+				Assert.AreSame (cmd, cb.GetInsertCommand (), "#B4");
 
-				cb = new SqlCommandBuilder (da);
+				cb.RefreshSchema ();
 #if NET_2_0
 				cb.QuoteSuffix = "\"";
 #else
@@ -101,36 +102,17 @@ namespace MonoTests.System.Data
 #endif
 				cmd = cb.GetInsertCommand ();
 #if NET_2_0
-				Assert.AreEqual ("INSERT INTO [employee\" ([id\", "
-					+ "[fname\", [lname\") VALUES (@p1, @p2, @p3)",
+				Assert.AreEqual ("INSERT INTO \"employee\" (\"id\", "
+					+ "\"fname\", \"lname\") VALUES (@p1, @p2, @p3)",
 					cmd.CommandText, "#C1");
 #else
-				Assert.AreEqual ("INSERT INTO employee´( id´ , " +
-					"fname´ , lname´ ) VALUES ( @p1 , @p2 , @p3 )",
+				Assert.AreEqual ("INSERT INTO \"employee´( \"id´ , " +
+					"\"fname´ , \"lname´ ) VALUES ( @p1 , @p2 , @p3 )",
 					cmd.CommandText, "#C1");
 #endif
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertInsertParameters (cmd, false, "#C3");
-
-				cb = new SqlCommandBuilder (da);
-				cb.QuotePrefix = "\"";
-#if NET_2_0
-				cb.QuoteSuffix = "\"";
-#else
-				cb.QuoteSuffix = "´";
-#endif
-				cmd = cb.GetInsertCommand ();
-#if NET_2_0
-				Assert.AreEqual ("INSERT INTO \"employee\" (\"id\", " +
-					"\"fname\", \"lname\") VALUES (@p1, @p2, @p3)",
-					cmd.CommandText, "#D1");
-#else
-				Assert.AreEqual ("INSERT INTO \"employee´( \"id´ , " +
-					"\"fname´ , \"lname´ ) VALUES ( @p1 , @p2 , @p3 )",
-					cmd.CommandText, "#D1");
-#endif
-				Assert.AreSame (conn, cmd.Connection, "#D2");
-				AssertInsertParameters (cmd, false, "#D3:");
+				Assert.AreSame (cmd, cb.GetInsertCommand (), "#C4");
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
@@ -254,17 +236,64 @@ namespace MonoTests.System.Data
 					"[fname] = @p2, [lname] = @p3 WHERE (([id] = @p4) " +
 					"AND ([fname] = @p5) AND ((@p6 = 1 " +
 					"AND [lname] IS NULL) OR ([lname] = @p7)))",
-					cmd.CommandText, "#1");
+					cmd.CommandText, "#A1");
 #else
 				Assert.AreEqual ("UPDATE employee SET id = @p1 , " +
 					"fname = @p2 , lname = @p3 WHERE ( (id = @p4) " +
 					"AND ((@p5 = 1 AND fname IS NULL) OR " +
 					"(fname = @p6)) AND ((@p7 = 1 AND " +
 					"lname IS NULL) OR (lname = @p8)) )",
-					cmd.CommandText, "#1");
+					cmd.CommandText, "#A1");
 #endif
-				Assert.AreSame (conn, cmd.Connection, "#2");
-				AssertUpdateParameters (cmd, false, "#3:");
+				Assert.AreSame (conn, cmd.Connection, "#A2");
+				AssertUpdateParameters (cmd, false, "#A3:");
+				Assert.AreSame (cmd, cb.GetUpdateCommand (), "#A4");
+
+				cb.RefreshSchema ();
+				cb.QuotePrefix = "\"";
+				cmd = cb.GetUpdateCommand ();
+#if NET_2_0
+				Assert.AreEqual ("UPDATE \"employee] SET \"id] = @p1, " +
+					"\"fname] = @p2, \"lname] = @p3 WHERE ((\"id] = @p4) " +
+					"AND (\"fname] = @p5) AND ((@p6 = 1 " +
+					"AND \"lname] IS NULL) OR (\"lname] = @p7)))",
+					cmd.CommandText, "#B1");
+#else
+				Assert.AreEqual ("UPDATE \"employee SET \"id = @p1 , " +
+					"\"fname = @p2 , \"lname = @p3 WHERE ( (\"id = @p4) " +
+					"AND ((@p5 = 1 AND \"fname IS NULL) OR " +
+					"(\"fname = @p6)) AND ((@p7 = 1 AND " +
+					"\"lname IS NULL) OR (\"lname = @p8)) )",
+					cmd.CommandText, "#B1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#B2");
+				AssertUpdateParameters (cmd, false, "#B3:");
+				Assert.AreSame (cmd, cb.GetUpdateCommand (), "#B4");
+
+				cb.RefreshSchema ();
+#if NET_2_0
+				cb.QuoteSuffix = "\"";
+#else
+				cb.QuoteSuffix = "´";
+#endif
+				cmd = cb.GetUpdateCommand ();
+#if NET_2_0
+				Assert.AreEqual ("UPDATE \"employee\" SET \"id\" = @p1, " +
+					"\"fname\" = @p2, \"lname\" = @p3 WHERE ((\"id\" = @p4) " +
+					"AND (\"fname\" = @p5) AND ((@p6 = 1 " +
+					"AND \"lname\" IS NULL) OR (\"lname\" = @p7)))",
+					cmd.CommandText, "#C1");
+#else
+				Assert.AreEqual ("UPDATE \"employee´ SET \"id´ = @p1 , " +
+					"\"fname´ = @p2 , \"lname´ = @p3 WHERE ( (\"id´ = @p4) " +
+					"AND ((@p5 = 1 AND \"fname´ IS NULL) OR " +
+					"(\"fname´ = @p6)) AND ((@p7 = 1 AND " +
+					"\"lname´ IS NULL) OR (\"lname´ = @p8)) )",
+					cmd.CommandText, "#C1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#C2");
+				AssertUpdateParameters (cmd, false, "#C3:");
+				Assert.AreSame (cmd, cb.GetUpdateCommand (), "#C4");
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
@@ -622,16 +651,61 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("DELETE FROM [employee] WHERE " +
 					"(([id] = @p1) AND ([fname] = @p2) AND " +
 					"((@p3 = 1 AND [lname] IS NULL) OR " +
-					"([lname] = @p4)))", cmd.CommandText, "#1");
+					"([lname] = @p4)))", cmd.CommandText, "#A1");
 #else
 				Assert.AreEqual ("DELETE FROM  employee WHERE ( " +
 					"(id = @p1) AND ((@p2 = 1 AND fname IS NULL) " +
 					"OR (fname = @p3)) AND ((@p4 = 1 AND " +
 					"lname IS NULL) OR (lname = @p5)) )",
-					cmd.CommandText, "#1");
+					cmd.CommandText, "#A1");
 #endif
-				Assert.AreSame (conn, cmd.Connection, "#2");
-				AssertDeleteParameters (cmd, false, "#3:");
+				Assert.AreSame (conn, cmd.Connection, "#A2");
+				AssertDeleteParameters (cmd, false, "#A3:");
+				Assert.AreSame (cmd, cb.GetDeleteCommand (), "#A4");
+
+				cb.RefreshSchema ();
+				cb.QuotePrefix = "\"";
+				cmd = cb.GetDeleteCommand ();
+
+#if NET_2_0
+				Assert.AreEqual ("DELETE FROM \"employee] WHERE " +
+					"((\"id] = @p1) AND (\"fname] = @p2) AND " +
+					"((@p3 = 1 AND \"lname] IS NULL) OR " +
+					"(\"lname] = @p4)))", cmd.CommandText, "#B1");
+#else
+				Assert.AreEqual ("DELETE FROM  \"employee WHERE ( " +
+					"(\"id = @p1) AND ((@p2 = 1 AND \"fname IS NULL) " +
+					"OR (\"fname = @p3)) AND ((@p4 = 1 AND " +
+					"\"lname IS NULL) OR (\"lname = @p5)) )",
+					cmd.CommandText, "#B1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#B2");
+				AssertDeleteParameters (cmd, false, "#B3:");
+				Assert.AreSame (cmd, cb.GetDeleteCommand (), "#B4");
+
+				cb.RefreshSchema ();
+#if NET_2_0
+				cb.QuoteSuffix = "\"";
+#else
+				cb.QuoteSuffix = "´";
+#endif
+				cmd = cb.GetDeleteCommand ();
+
+#if NET_2_0
+				Assert.AreEqual ("DELETE FROM \"employee\" WHERE " +
+					"((\"id\" = @p1) AND (\"fname\" = @p2) AND " +
+					"((@p3 = 1 AND \"lname\" IS NULL) OR " +
+					"(\"lname\" = @p4)))", cmd.CommandText, "#C1");
+#else
+				Assert.AreEqual ("DELETE FROM  \"employee´ WHERE ( " +
+					"(\"id´ = @p1) AND ((@p2 = 1 AND \"fname´ IS NULL) " +
+					"OR (\"fname´ = @p3)) AND ((@p4 = 1 AND " +
+					"\"lname´ IS NULL) OR (\"lname´ = @p5)) )",
+					cmd.CommandText, "#C1");
+#endif
+				Assert.AreSame (conn, cmd.Connection, "#C2");
+				AssertDeleteParameters (cmd, false, "#C3:");
+				Assert.AreSame (cmd, cb.GetDeleteCommand (), "#C4");
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
@@ -734,6 +808,7 @@ namespace MonoTests.System.Data
 					"@Original_lname)))", cmd.CommandText, "#A1");
 				Assert.AreSame (conn, cmd.Connection, "#A2");
 				AssertDeleteParameters (cmd, true, "#A3:");
+				Assert.AreSame (cmd, cb.GetDeleteCommand (true), "#A4");
 
 				cmd = cb.GetDeleteCommand (false);
 				Assert.AreEqual ("DELETE FROM [employee] WHERE " +
@@ -743,6 +818,7 @@ namespace MonoTests.System.Data
 					"@Original_lname)))", cmd.CommandText, "#B1");
 				Assert.AreSame (conn, cmd.Connection, "#B2");
 				AssertDeleteParameters (cmd, true, "#B3:");
+				Assert.AreSame (cmd, cb.GetDeleteCommand (false), "#B4");
 
 				cb = new SqlCommandBuilder (da);
 				cmd = cb.GetDeleteCommand (false);
@@ -752,6 +828,7 @@ namespace MonoTests.System.Data
 					"([lname] = @p4)))", cmd.CommandText, "#C1");
 				Assert.AreSame (conn, cmd.Connection, "#C2");
 				AssertDeleteParameters (cmd, false, "#C3:");
+				Assert.AreSame (cmd, cb.GetDeleteCommand (false), "#C4");
 
 				cmd = cb.GetDeleteCommand (true);
 				Assert.AreEqual ("DELETE FROM [employee] WHERE " +
@@ -761,7 +838,7 @@ namespace MonoTests.System.Data
 					"@Original_lname)))", cmd.CommandText, "#D1");
 				Assert.AreSame (conn, cmd.Connection, "#D2");
 				AssertDeleteParameters (cmd, true, "#D3:");
-
+				Assert.AreSame (cmd, cb.GetDeleteCommand (false), "#D4");
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
