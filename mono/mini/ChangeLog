@@ -1,5 +1,8 @@
 2009-01-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* branch-opts.c (mono_if_conversion): Fix an assert introduced by the last
+	change.
+	
 	* branch-opts.c (mono_if_conversion): Use branch->inst_true_bb/inst_false_bb
 	instead of bblock->out_bb [0]/[1], the two might not be the same. Fixes
 	#463357.
