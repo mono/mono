@@ -33959,6 +33959,19 @@
       </method>
     </type>
   </test>
+  <test name="test-699.cs">
+    <type name="D">
+      <method name="Void .ctor(String)">
+        <size>25</size>
+      </method>
+      <method name="System.String get_message()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-7.cs">
     <type name="Mine.MyBoolean">
       <method name="Void .ctor()">
