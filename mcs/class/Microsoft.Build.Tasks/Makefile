@@ -24,7 +24,7 @@ TEST_MCS_FLAGS = \
 	/r:Microsoft.Build.Tasks.dll		\
 	/r:Microsoft.Build.Utilities.dll
 
-EXTRA_DISTFILES = Test/resources/test.cs
+EXTRA_DISTFILES = Test/resources/test.cs Test/resources/Sample.cs
 
 test-local: Test/resources/test.dll
 
