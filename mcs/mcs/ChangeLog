@@ -1,5 +1,10 @@
 2009-01-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #457257
+	* decl.cs: Fixed incorrect member declaring type comparison.
+
+2009-01-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #460896
 	* driver.cs: Handle /RES resources as embeddable.
 

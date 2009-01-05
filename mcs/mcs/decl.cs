@@ -2406,7 +2406,7 @@ namespace Mono.CSharp {
 						//
 						// Check for assembly methods
 						//
-						if (mi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
+						if (fi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
 							continue;
 						break;
 					}
