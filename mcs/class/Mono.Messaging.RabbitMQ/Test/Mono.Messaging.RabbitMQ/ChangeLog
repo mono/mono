@@ -1,3 +1,8 @@
+2009-01-03  Michael Barker  <mike@middlesoft.co.uk>
+
+	* AsyncPeekTest.cs:  Added test for handling exceptions aysnchronously.
+	* AsyncReceiveTest.cs:  Added test for handling exceptions aysnchronously.
+
 2008-12-20  Michael Barker  <mike@middlesoft.co.uk>
 
 	* AsyncReceiveTest.cs:  New, tests for Asynchronous Receive methods.

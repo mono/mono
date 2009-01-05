@@ -126,5 +126,15 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			Assert.AreEqual ("foo", result.AsyncState, "State not passed properly");
 			Assert.IsTrue (success, "Callback not run");
 		}
+		
+		[Test]
+		[ExpectedException (typeof (MessageQueueException))]
+		public void BeginReceiveWithException()
+		{
+			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-5");
+			IAsyncResult result = q.BeginReceive (new TimeSpan (0, 0, 2));
+			result.AsyncWaitHandle.WaitOne ();
+			Message rMsg = q.EndReceive (result);
+		}		
 	}
 }

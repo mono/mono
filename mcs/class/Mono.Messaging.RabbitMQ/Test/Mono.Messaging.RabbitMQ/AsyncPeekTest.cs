@@ -62,7 +62,8 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			Message rMsg = q.EndPeek (result);
 			Assert.AreEqual (body, rMsg.Body, "Async Send Failed, bodies not equal");
 			Assert.IsTrue (eventCalled, "Handle Message not called");
-			q.Purge ();
+			
+			Assert.IsNotNull (q.Receive (), "Message not peeked");
 		}
 		
 		[Test]
@@ -79,7 +80,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			Message rMsg = q.EndPeek (result);
 			Assert.AreEqual (body, rMsg.Body, "Async Send Failed, bodies not equal");
 			
-			q.Purge ();
+			Assert.IsNotNull (q.Receive (), "Message not peeked");
 		}
 		
 		[Test]
@@ -97,7 +98,7 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			Assert.AreEqual (body, rMsg.Body, "Async Send Failed, bodies not equal");
 			Assert.AreEqual ("foo", result.AsyncState, "State not passed properly");
 			
-			q.Purge ();
+			Assert.IsNotNull (q.Receive (), "Message not peeked");
 		}
 		
 		private bool success = false;
@@ -123,7 +124,17 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			Assert.AreEqual ("foo", result.AsyncState, "State not passed properly");
 			Assert.IsTrue (success, "Callback not run");
 			
-			q.Purge ();			
+			Assert.IsNotNull (q.Receive (), "Message not peeked");
 		}
+		
+		[Test]
+		[ExpectedException (typeof (MessageQueueException))]
+		public void BeginPeekWithException()
+		{
+			MessageQueue q = MQUtil.GetQueue (@".\private$\async-peek-5");
+			IAsyncResult result = q.BeginPeek (new TimeSpan (0, 0, 2));
+			result.AsyncWaitHandle.WaitOne ();
+			Message rMsg = q.EndPeek (result);
+		}		
 	}
 }

@@ -162,6 +162,7 @@ namespace Mono.Messaging
 			protected IMessage message;
 			protected readonly TimeSpan timeout;
 			protected readonly AsyncCallback callback;
+			protected MonoMessagingException ex = null;
 			
 			public AsyncResultBase (object asyncState,
 			                        IMessageQueue q,
@@ -195,7 +196,12 @@ namespace Mono.Messaging
 			}
 			
 			internal IMessage Message {
-				get { return message; }
+				get { 
+					if (ex != null)
+						throw new MonoMessagingException ("Asynchronous Wrapped Exception", ex);
+				
+					return message;
+				}
 			}
 			
 			protected abstract IMessage GetMessage ();
@@ -204,10 +210,14 @@ namespace Mono.Messaging
 			
 			private void run ()
 			{
-				message = GetMessage ();					
-				isCompleted = true;
-				callback (this);
-				SendCompletedEvent (this);
+				try {
+					message = GetMessage ();					
+					isCompleted = true;
+					callback (this);
+					SendCompletedEvent (this);
+				} catch (MonoMessagingException ex) {
+					this.ex = ex;
+				}
 			}
 		}
 		

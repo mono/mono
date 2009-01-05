@@ -1,3 +1,7 @@
+2009-01-03  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageQueueBase.cs:  Added support for handling exception asynchronously.
+
 2008-12-21  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageQueueBase.cs:  Added optional base class that provide async
