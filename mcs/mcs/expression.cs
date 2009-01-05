@@ -1445,13 +1445,13 @@ namespace Mono.CSharp {
 		protected override string OperatorName {
 			get { return "as"; }
 		}
-
+/*
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);
 			base.MutateHoistedGenericType (storey);
 		}
-	
+*/	
 		public override bool GetAttributableValue (EmitContext ec, Type value_type, out object value)
 		{
 			return expr.GetAttributableValue (ec, value_type, out value);
