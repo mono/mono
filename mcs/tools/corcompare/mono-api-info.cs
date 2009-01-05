@@ -806,10 +806,6 @@ namespace CorCompare
 			if (mbase.IsStatic)
 				AddAttribute (p, "static", "true");
 
-			//if (!(member is MethodInfo))
-			//    return;
-
-			//MethodInfo method = (MethodInfo) member;
 			string rettype = Utils.CleanupTypeName (mbase.ReturnType.ReturnType);
 			if (rettype != "System.Void" || !mbase.IsConstructor)
 				AddAttribute (p, "returntype", (rettype));
@@ -1177,7 +1173,7 @@ namespace CorCompare
 				string modifier;
 				if ((info.Attributes & ParameterAttributes.In) != 0)
 					modifier = "in";
-				else if (((int)info.Attributes & 0x8) != 0) // retval
+				else if ((info.Attributes & ParameterAttributes.Retval) != 0)
 					modifier = "ref";
 				else if ((info.Attributes & ParameterAttributes.Out) != 0)
 					modifier = "out";
