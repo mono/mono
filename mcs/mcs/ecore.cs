@@ -4243,6 +4243,7 @@ namespace Mono.CSharp {
 								// then we are in this situation.
 								Error_CannotAccessProtected (loc, best_candidate, type, ec.ContainerType);
 							} else {
+								Report.SymbolRelatedToPreviousError (best_candidate);
 								ErrorIsInaccesible (loc, GetSignatureForError ());
 							}
 						}
