@@ -684,7 +684,8 @@ namespace CorCompare
 			}
 
 			string parms = Parameters.GetSignature (methods [0].Parameters);
-			AddAttribute (p, "params", parms);
+			if (!string.IsNullOrEmpty (parms))
+				AddAttribute (p, "params", parms);
 
 			MethodData data = new MethodData (document, p, methods);
 			//data.NoMemberAttributes = true;

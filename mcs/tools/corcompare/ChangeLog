@@ -1,3 +1,7 @@
+2009-01-05  Jb Evain  <jbevain@novell.com>
+
+	* mono-api-info.cs: don't emit empty attributes on properties.
+
 2008-12-17  Jb Evain  <jbevain@novell.com>
 
 	* mono-api-info.cs: don't add Finalizers to the api definition.
