@@ -1,5 +1,10 @@
 2009-01-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #416109
+	* decl.cs: Issue correct CLSAttribute warning location.
+
+2009-01-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #456775
 	* attribute.cs: Use attribute owner scope when resolving attribute
 	arguments.

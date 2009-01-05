@@ -736,24 +736,31 @@ namespace Mono.CSharp {
 		{
 			if (!IsClsComplianceRequired ()) {
 				if (HasClsCompliantAttribute && Report.WarningLevel >= 2) {
-					if (!IsExposedFromAssembly ())
-						Report.Warning (3019, 2, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
-					if (!CodeGen.Assembly.IsClsCompliant)
-						Report.Warning (3021, 2, Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
+					if (!IsExposedFromAssembly ()) {
+						Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+						Report.Warning (3019, 2, a.Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
+					}
+
+					if (!CodeGen.Assembly.IsClsCompliant) {
+						Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+						Report.Warning (3021, 2, a.Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
+					}
 				}
 				return false;
 			}
 
 			if (HasClsCompliantAttribute) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null && !CodeGen.Assembly.IsClsCompliant) {
-					Report.Warning (3014, 1, Location,
+					Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+					Report.Warning (3014, 1, a.Location,
 						"`{0}' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant",
 						GetSignatureForError ());
 					return false;
 				}
 
 				if (!Parent.IsClsComplianceRequired ()) {
-					Report.Warning (3018, 1, Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
+					Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+					Report.Warning (3018, 1, a.Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
 						GetSignatureForError (), Parent.GetSignatureForError ());
 					return false;
 				}
