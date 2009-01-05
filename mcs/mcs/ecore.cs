@@ -2713,9 +2713,8 @@ namespace Mono.CSharp {
 					almost_matched_members = almost_matched;
 				if (almost_matched_type == null)
 					almost_matched_type = ec.ContainerType;
-				Error_MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name,
+				return Error_MemberLookupFailed (ec.ContainerType, null, almost_matched_type, Name,
 					ec.DeclContainer.Name, AllMemberTypes, AllBindingFlags);
-				return null;
 			}
 
 			if (e is MemberExpr) {

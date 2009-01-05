@@ -1,5 +1,10 @@
 2009-01-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #462515
+	* ecore.cs: Report inacessible members upwards.
+
+2009-01-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #463190, #463192
 	* decl.cs, namespace.cs: Also import internal extension classes.
 
