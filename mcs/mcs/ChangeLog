@@ -1,5 +1,10 @@
 2009-01-05  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #460896
+	* driver.cs: Handle /RES resources as embeddable.
+
+2009-01-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #462515
 	* ecore.cs: Report inacessible members upwards.
 

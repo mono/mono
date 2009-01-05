@@ -1228,7 +1228,7 @@ namespace Mono.CSharp
 				if (embedded_resources == null)
 					embedded_resources = new Resources ();
 
-				bool embeded = arg.StartsWith ("/r");
+				bool embeded = arg [1] == 'r' || arg [1] == 'R';
 				string[] s = value.Split (argument_value_separator);
 				switch (s.Length) {
 				case 1:
