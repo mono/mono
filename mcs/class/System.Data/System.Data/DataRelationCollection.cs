@@ -47,10 +47,7 @@ namespace System.Data {
 		 "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	[DefaultEvent ("CollectionChanged")]
 	[DefaultProperty ("Table")]
-#if !NET_2_0
-	[Serializable]
-#endif
-	public abstract class DataRelationCollection : InternalDataCollectionBase {
+	public abstract partial class DataRelationCollection : InternalDataCollectionBase {
 		/// <summary>
 		/// Summary description for DataTableRelationCollection.
 		/// </summary>
@@ -490,13 +487,6 @@ namespace System.Data {
 				Add (relation);
 		}
 
-#if NET_2_0
-		public void CopyTo (DataRelation [] array, int index)
-		{
-			CopyTo ((Array) array, index);
-		}
-#endif
-
 		internal virtual void PostAddRange ()
 		{
 		}
@@ -637,4 +627,17 @@ namespace System.Data {
 
 		#endregion
 	}
+
+#if !NET_2_0
+	[Serializable]
+	partial class DataRelationCollection {
+	}
+#else
+	partial class DataRelationCollection {
+		public void CopyTo (DataRelation [] array, int index)
+		{
+			CopyTo ((Array) array, index);
+		}
+	}
+#endif
 }

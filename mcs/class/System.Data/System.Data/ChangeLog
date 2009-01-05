@@ -1,5 +1,8 @@
 2009-01-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	* DataRelationCollection.cs: Sequester NET_2_0 and NET_1_1
+	specific code into separate parts.
+
 	* DataTableCollection.cs (BinarySerialize_Schema): New.
 	(BinarySerialize_Data): Likewise.  Carved out of ...
 	* DataSet.cs (BinarySerialize): ... this.
