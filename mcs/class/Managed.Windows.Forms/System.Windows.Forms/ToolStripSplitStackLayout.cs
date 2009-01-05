@@ -87,6 +87,7 @@ namespace System.Windows.Forms
 			int toolstrip_width = bounds.Width;
 			int i = 0;
 			bool can_overflow = ts.CanOverflow & !(ts is MenuStrip) & !(ts is StatusStrip);
+			bool need_overflow = false;
 			
 			foreach (ToolStripItem tsi in ts.Items) {
 				overflow[i] = tsi.Overflow;
@@ -95,10 +96,19 @@ namespace System.Windows.Forms
 				if (!tsi.Available)
 					placement[i] = ToolStripItemPlacement.None;
 				total_width += placement[i] == ToolStripItemPlacement.Main ? widths[i] : 0;
+				
+				if (placement[i] == ToolStripItemPlacement.Overflow)
+					need_overflow = true;
 				i++;
 			}
-			
-			ts.OverflowButton.Visible = false;
+
+			// This is needed for a button set to Overflow = Always
+			if (need_overflow) {
+				ts.OverflowButton.Visible = true;
+				ts.OverflowButton.SetBounds (new Rectangle (ts.Width - 16, 0, 16, ts.Height));
+				toolstrip_width -= ts.OverflowButton.Width;
+			} else
+				ts.OverflowButton.Visible = false;
 			
 			while (total_width > toolstrip_width) {
 				// If we can overflow, get our overflow button setup, and subtract it's width

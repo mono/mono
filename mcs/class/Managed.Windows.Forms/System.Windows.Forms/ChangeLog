@@ -1,3 +1,9 @@
+2009-01-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripSplitStackLayout.cs: Enable the overflow button if any
+	of the buttons are set to Overflow = Always.
+	[Fixes bug #463013]
+
 2009-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* BindingNavigator.cs: Properly enable/disable the toolstrip buttons,
