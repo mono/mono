@@ -353,12 +353,6 @@ namespace CorCompare
 			if (fields.Length > 0) {
 				Array.Sort (fields, MemberReferenceComparer.Default);
 				FieldData fd = new FieldData (document, nclass, fields);
-				// Special case for enum fields
-				// TODO:Special case for enum fields
-				//if (classType == "enum") {
-				//    string etype = fields [0].GetType ().ToString ();
-				//    AddAttribute (nclass, "enumtype", etype);
-				//}
 				members.Add (fd);
 			}
 
