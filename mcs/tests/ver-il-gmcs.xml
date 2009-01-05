@@ -15999,6 +15999,26 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-24.cs">
+    <type name="Bar">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-exmethod-25.cs">
+    <type name="Bar">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
