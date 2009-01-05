@@ -360,6 +360,14 @@ namespace CorCompare
 				members.Add (fd);
 			}
 
+			if (type.IsEnum) {
+				var value_type = GetEnumValueField (type);
+				if (value_type == null)
+					throw new NotSupportedException ();
+
+				AddAttribute (nclass, "enumtype", Utils.CleanupTypeName (value_type.FieldType));
+			}
+
 			MethodDefinition [] ctors = GetConstructors (type);
 			if (ctors.Length > 0) {
 				Array.Sort (ctors, MemberReferenceComparer.Default);
@@ -411,6 +419,15 @@ namespace CorCompare
 					td.DoOutput ();
 				}
 			}
+		}
+
+		static FieldReference GetEnumValueField (TypeDefinition type)
+		{
+			foreach (FieldDefinition field in type.Fields)
+				if (field.IsSpecialName && field.Name == "value__")
+					return field;
+
+			return null;
 		}
 
 		protected override string GetMemberAttributes (MemberReference member)
