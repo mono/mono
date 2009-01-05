@@ -1,5 +1,8 @@
 2009-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* branch-opts.c (mono_if_conversion): Fix another assert introduced by
+	the last change.
+
 	Backport of r122452.
 	
 	* mini.c (mono_allocate_stack_slots_full2): Use mono_class_from_mono_type
