@@ -1626,22 +1626,10 @@ namespace System.Data
 			si.AddValue ("DataSet.LocaleLCID", Locale.LCID);
 			si.AddValue ("DataSet.EnforceConstraints", EnforceConstraints);
 			si.AddValue ("DataSet.ExtendedProperties", properties, typeof (PropertyCollection));
-			si.AddValue ("DataSet.Tables.Count", Tables.Count);
-			for (int i = 0; i < Tables.Count; i++) {
-				DataTable dt = Tables[i];
-				MemoryStream ms = new MemoryStream ();
-				BinaryFormatter bf = new BinaryFormatter ();
-				bf.Serialize (ms, dt);
-				byte [] serializedStream = ms.ToArray ();
-				ms.Close ();
-				si.AddValue ("DataSet.Tables_" + i, serializedStream, typeof (Byte[]));
-				for (int j = 0; j < dt.Columns.Count; j++) {
-					si.AddValue ("DataTable_" + i + ".DataColumn_" + j + ".Expression",
-						     dt.Columns[j].Expression);
-				}
-				dt.dataSet = this;
-				dt.BinarySerialize (si, "DataTable_" + i + ".");
-			}
+
+			Tables.BinarySerialize_Schema (si);
+			Tables.BinarySerialize_Data (si);
+
 			ArrayList relationList = new ArrayList ();
 			for (int j = 0; j < Relations.Count; j++)
 			{

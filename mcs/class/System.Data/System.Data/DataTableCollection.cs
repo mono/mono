@@ -36,6 +36,9 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Data
 {
@@ -442,6 +445,36 @@ namespace System.Data
 		public void CopyTo (DataTable [] array, int index)
 		{
 			CopyTo ((Array) array, index);
+		}
+
+		internal void BinarySerialize_Schema (SerializationInfo si)
+		{
+			si.AddValue ("DataSet.Tables.Count", Count);
+			for (int i = 0; i < Count; i++) {
+				DataTable dt = (DataTable) List [i];
+
+				if (dt.dataSet != dataSet)
+					throw new SystemException ("Internal Error: inconsistent DataTable");
+
+				MemoryStream ms = new MemoryStream ();
+				BinaryFormatter bf = new BinaryFormatter ();
+				bf.Serialize (ms, dt);
+				byte [] serializedStream = ms.ToArray ();
+				ms.Close ();
+				si.AddValue ("DataSet.Tables_" + i, serializedStream, typeof (Byte []));
+			}
+		}
+
+		internal void BinarySerialize_Data (SerializationInfo si)
+		{
+			for (int i = 0; i < Count; i++) {
+				DataTable dt = (DataTable) List [i];
+				for (int j = 0; j < dt.Columns.Count; j++) {
+					si.AddValue ("DataTable_" + i + ".DataColumn_" + j + ".Expression",
+						     dt.Columns[j].Expression);
+				}
+				dt.BinarySerialize (si, "DataTable_" + i + ".");
+			}
 		}
 	}
 #else
