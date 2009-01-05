@@ -1,3 +1,10 @@
+2009-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (find_method): When searching the interfaces of a class
+	check the transitive closure of implemented interfaces.
+
+	Fixes #463303.
+
 2009-01-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (get_implicit_generic_array_interfaces): Improve debugging code.
