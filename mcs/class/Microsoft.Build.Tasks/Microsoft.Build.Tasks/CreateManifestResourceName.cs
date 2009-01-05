@@ -54,8 +54,8 @@ namespace Microsoft.Build.Tasks {
 				try {
 					string dependentUponFileName = item.GetMetadata ("DependentUpon");
 					if (!String.IsNullOrEmpty (dependentUponFileName)) {
-						dependentUponFileName = Path.Combine (Path.GetDirectoryName (
-									filename), dependentUponFileName);
+						dependentUponFileName = Path.GetFullPath (Path.Combine (Path.GetDirectoryName (
+									filename), dependentUponFileName));
 						if (!File.Exists (dependentUponFileName)) {
 							Log.LogError ("Unable to create resource name for '{0}'," +
 									"as dependent file {1} was not found.",
