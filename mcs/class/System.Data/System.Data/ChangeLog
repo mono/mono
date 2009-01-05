@@ -1,3 +1,8 @@
+2009-01-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataTableCollection.cs: Sequester NET_2_0 and NET_1_1 specific
+	code into separate parts.
+
 2009-01-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataViewManager.cs: Implement all MonoTODO. Fixes the WinForms 
