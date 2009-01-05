@@ -1,5 +1,8 @@
 2009-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_flush_icache): Applied patch from Riku Voipio 
+	<novell@kos.to>. Fix cache flush on kernels without OLDABI compat option.
+
 	* aot-compiler.c (emit_plt): Fix ARM build.
 
 2009-01-04  Zoltan Varga  <vargaz@gmail.com>
