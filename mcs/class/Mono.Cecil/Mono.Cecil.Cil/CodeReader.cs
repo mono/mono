@@ -71,7 +71,8 @@ namespace Mono.Cecil.Cil {
 				methBody.CodeSize = br.ReadInt32 ();
 				methBody.LocalVarToken = br.ReadInt32 ();
 				body.InitLocals = (fatflags & (int) MethodHeader.InitLocals) != 0;
-				VisitVariableDefinitionCollection (methBody.Variables);
+				if (methBody.LocalVarToken != 0)
+					VisitVariableDefinitionCollection (methBody.Variables);
 				ReadCilBody (methBody, br);
 				if ((fatflags & (int) MethodHeader.MoreSects) != 0)
 					ReadSection (methBody, br);
