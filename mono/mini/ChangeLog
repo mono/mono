@@ -1,3 +1,10 @@
+2009-01-05  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c (mono_arch_get_vcall_slot) : Handle an additional instruction
+	  pattern. 
+
+	Contributed under MIT/X11 license.
+
 2009-01-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_allocate_stack_slots_full2): Use mono_class_from_mono_type
