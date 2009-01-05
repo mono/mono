@@ -9925,12 +9925,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="IList IObjectContainer.Query()">
-        <size>7</size>
-      </method>
-      <method name="IList`1 IObjectContainer.Query(IList`1, IList`1)">
-        <size>9</size>
-      </method>
     </type>
     <type name="Db4objects.Db4o.Internal.M">
       <method name="Void .ctor()">
@@ -9938,6 +9932,14 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+    <type name="Db4objects.Db4o.Internal.ExternalObjectContainer">
+      <method name="IList Db4objects.Db4o.IObjectContainer.Query()">
+        <size>7</size>
+      </method>
+      <method name="IList`1 Db4objects.Db4o.IObjectContainer.Query[Extent](IList`1, IList`1)">
+        <size>9</size>
       </method>
     </type>
   </test>
@@ -25075,9 +25077,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void IB.Add(Boolean, Boolean, UInt32, Boolean)">
-        <size>12</size>
-      </method>
     </type>
     <type name="FLMID.Bugs.BoolOne.Test">
       <method name="Void .ctor()">
@@ -25085,6 +25084,11 @@
       </method>
       <method name="Int32 Main(System.String[])">
         <size>34</size>
+      </method>
+    </type>
+    <type name="FLMID.Bugs.BoolOne.B">
+      <method name="Void FLMID.Bugs.BoolOne.IB.Add(Boolean, Boolean, UInt32, Boolean)">
+        <size>12</size>
       </method>
     </type>
   </test>
