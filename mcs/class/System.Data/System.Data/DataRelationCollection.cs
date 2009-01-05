@@ -39,6 +39,8 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 
+using System.Runtime.Serialization;
+
 namespace System.Data {
 	/// <summary>
 	/// Represents the collection of DataRelation objects for this DataSet.
@@ -51,7 +53,7 @@ namespace System.Data {
 		/// <summary>
 		/// Summary description for DataTableRelationCollection.
 		/// </summary>
-		internal class DataSetRelationCollection : DataRelationCollection {
+		internal partial class DataSetRelationCollection : DataRelationCollection {
 			private DataSet dataSet;
 			DataRelation [] mostRecentRelations;
 
@@ -637,6 +639,32 @@ namespace System.Data {
 		public void CopyTo (DataRelation [] array, int index)
 		{
 			CopyTo ((Array) array, index);
+		}
+
+		internal void BinarySerialize (SerializationInfo si)
+		{
+			ArrayList l = new ArrayList ();
+			for (int j = 0; j < Count; j++) {
+				DataRelation dr = (DataRelation) List [j];
+				ArrayList tmp = new ArrayList ();
+				tmp.Add (dr.RelationName);
+
+				// FIXME: Handle multi-column relations
+				int [] rep = new int [2];
+				DataTable dt = dr.ParentTable;
+				rep [0] = dt.DataSet.Tables.IndexOf (dt);
+				rep [1] = dt.Columns.IndexOf (dr.ParentColumns [0]);
+				tmp.Add (rep);
+				rep = new int [2];
+				dt = dr.ChildTable;
+				rep [0] = dt.DataSet.Tables.IndexOf (dt);
+				rep [1] = dt.Columns.IndexOf (dr.ChildColumns [0]);
+				tmp.Add (rep);
+				tmp.Add (false); // FIXME
+				tmp.Add (null); // FIXME
+				l.Add (tmp);
+			}
+			si.AddValue ("DataSet.Relations", l, typeof (ArrayList));
 		}
 	}
 #endif

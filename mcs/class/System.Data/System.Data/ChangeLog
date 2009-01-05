@@ -1,3 +1,8 @@
+2009-01-05  Raja R Harinath  <harinath@hurrynot.org>
+
+	* DataRelationCollection.cs (BinarySerialize): New.  Carved out of ...
+	* DataSet.cs (BinarySerialize): ... this.
+
 2009-01-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataRelationCollection.cs: Sequester NET_2_0 and NET_1_1

@@ -1630,27 +1630,7 @@ namespace System.Data
 			Tables.BinarySerialize_Schema (si);
 			Tables.BinarySerialize_Data (si);
 
-			ArrayList relationList = new ArrayList ();
-			for (int j = 0; j < Relations.Count; j++)
-			{
-				DataRelation dr = Relations[j];
-				ArrayList tmpArrayList = new ArrayList ();
-				tmpArrayList.Add (dr.RelationName);
-				Array relationArray = new int [2];
-				DataTable dt = dr.ParentTable;
-				relationArray.SetValue (Tables.IndexOf (dt), 0);
-				relationArray.SetValue (dt.Columns.IndexOf (Relations[j].ParentColumns [0]), 1);
-				tmpArrayList.Add (relationArray);
-				relationArray = new int [2];
-				dt = dr.ChildTable;
-				relationArray.SetValue (Tables.IndexOf (dt), 0);
-				relationArray.SetValue (dt.Columns.IndexOf (Relations [j].ChildColumns [0]), 1);
-				tmpArrayList.Add (relationArray);
-				tmpArrayList.Add (false); // FIXME
-				tmpArrayList.Add (null); // FIXME
-				relationList.Add (tmpArrayList);
-			}
-			si.AddValue ("DataSet.Relations", relationList, typeof (ArrayList));
+			Relations.BinarySerialize (si);
 		}
 
 		void BinaryDeserialize (SerializationInfo info)
