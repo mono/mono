@@ -168,19 +168,22 @@ namespace Mono.CSharp {
  			bool contains_extension_methods = TypeManager.extension_attribute_type != null &&
  					assembly.IsDefined(TypeManager.extension_attribute_type, false);
  
- 			if (get_namespaces_method != null && !contains_extension_methods) {
+ 			if (get_namespaces_method != null) {
   				string [] namespaces = (string []) get_namespaces_method.Invoke (assembly, null);
   				foreach (string ns in namespaces)
  					RegisterNamespace (ns);
-  				return;
+
+				if (!contains_extension_methods)
+					return;
   			}
-  
- 			foreach (Type t in assembly.GetExportedTypes ()) {
+
+ 			foreach (Type t in assembly.GetTypes ()) {
  				if ((t.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
  					contains_extension_methods && t.IsDefined (TypeManager.extension_attribute_type, false))
  					RegisterExtensionMethodClass (t);
- 				else
- 					RegisterNamespace (t.Namespace);
+
+				if (get_namespaces_method == null)
+					RegisterNamespace (t.Namespace);
  			}
   		}
 

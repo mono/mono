@@ -2303,15 +2303,22 @@ namespace Mono.CSharp {
 				return null;
 
 			EntryType entry_type = EntryType.Static | EntryType.Method | EntryType.NotExtensionMethod;
-			if (publicOnly) {
-				entry_type |= EntryType.Public;
-			}
 			EntryType found_entry_type = entry_type & ~EntryType.NotExtensionMethod;
 
 			ArrayList candidates = null;
 			foreach (CacheEntry entry in entries) {
 				if ((entry.EntryType & entry_type) == found_entry_type) {
 					MethodBase mb = (MethodBase)entry.Member;
+
+					// Simple accessibility check
+					if ((entry.EntryType & EntryType.Public) == 0 && publicOnly) {
+						MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
+						if (ma != MethodAttributes.Assembly && ma != MethodAttributes.FamORAssem)
+							continue;
+						
+						if (!TypeManager.IsThisOrFriendAssembly (mb.DeclaringType.Assembly))
+							continue;
+					}
 
 					IMethodData md = TypeManager.GetMethod (mb);
 					AParametersCollection pd = md == null ?

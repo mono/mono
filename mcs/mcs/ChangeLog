@@ -1,3 +1,8 @@
+2009-01-05  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #463190, #463192
+	* decl.cs, namespace.cs: Also import internal extension classes.
+
 2009-01-04  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #463415
