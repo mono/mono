@@ -1,5 +1,11 @@
 2009-01-05  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r122452.
+
+	* mini.c (mono_allocate_stack_slots_full2): Use mono_class_from_mono_type
+	instead of directly accessing type->data.klass. Fixes #462016.
+	(mono_allocate_stack_slots_full): Ditto.
+	
 	Backport of r122416.
 	
 	* mini-arm.c (mono_arch_flush_icache): Applied patch from Riku Voipio 
