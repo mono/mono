@@ -1,5 +1,10 @@
 2009-01-05  Jb Evain  <jbevain@novell.com>
 
+	* mono-api-info.cs: output custom attributes for generic parameters
+	as well.
+
+2009-01-05  Jb Evain  <jbevain@novell.com>
+
 	* mono-api-info.cs: specify an `enumtype` attribute to describe
 	enumeration underlyin types.
 

@@ -260,6 +260,8 @@ namespace CorCompare
 				nparam.SetAttribute ("name", gp.Name);
 				nparam.SetAttribute ("attributes", ((int) gp.Attributes).ToString ());
 
+				AttributeData.OutputAttributes (document, nparam, gp.CustomAttributes);
+
 				ngeneric.AppendChild (nparam);
 
 				var constraints = gp.Constraints;
