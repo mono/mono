@@ -126,6 +126,19 @@ namespace Mono.Cecil {
 			return p;
 		}
 
+		TypeReference AdjustReference (TypeReference type, TypeReference reference)
+		{
+			if (type.IsValueType && !reference.IsValueType)
+				reference.IsValueType = true;
+
+			if (type.HasGenericParameters) {
+				for (int i = reference.GenericParameters.Count; i < type.GenericParameters.Count; i++)
+					reference.GenericParameters.Add (new GenericParameter (i, reference));
+			}
+
+			return reference;
+		}
+
 		public virtual TypeReference ImportTypeReference (TypeReference t, ImportContext context)
 		{
 			if (t.Module == m_module)
@@ -139,7 +152,7 @@ namespace Mono.Cecil {
 
 			TypeReference type = m_module.TypeReferences [t.FullName];
 			if (type != null)
-				return type;
+				return AdjustReference (t, type);
 
 			AssemblyNameReference asm;
 			if (t.Scope is AssemblyNameReference)

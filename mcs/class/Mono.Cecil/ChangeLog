@@ -1,17 +1,23 @@
+2009-01-05  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionHelper.cs
+	* Mono.Cecil/DefaultImporter.cs:
+		Adjust references's generic parameter count on import.
+
 2009-01-05  Sebastien Pouliot  <sebastien at ximian.com>
 
 	* CodeReader.cs: Do not call VisitVariableDefinitionCollection
 	unless LocalVarToken is different from zero.
 	* CodeWriter.cs: Use HasVariables and HasExceptionHandlers.
-	Write zero, not TokenType.Signature, for LocalVarToken if no 
+	Write zero, not TokenType.Signature, for LocalVarToken if no
 	variable is defined. That should fix the problem with unsign
-	* Mono.Cecil.Cil/MethodBody.cs: Add HasExceptionHandlers, 
-	HasVariables and HasScopes to avoid creating empty collections 
+	* Mono.Cecil.Cil/MethodBody.cs: Add HasExceptionHandlers,
+	HasVariables and HasScopes to avoid creating empty collections
 	inside Cecil. There is no HasInstruction because there's always
 	something if MethodDefinition.HasBody is true (i.e. a MethodBody
 	exists). [re-apply r1222198]
 
-2008-12-29  Sebastien Pouliot  <sebastien@ximian.com> 
+2008-12-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Cecil/MethodReturnType.cs: Override ToString so we can, by
 	default, display something useful about the return type.

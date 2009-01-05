@@ -209,6 +209,20 @@ namespace Mono.Cecil {
 			return elementType;
 		}
 
+		TypeReference AdjustReference (Type type, TypeReference reference)
+		{
+			if (type.IsValueType && !reference.IsValueType)
+				reference.IsValueType = true;
+
+			if (IsGenericTypeDefinition (type)) {
+				Type [] parameters = GetGenericArguments (type);
+				for (int i = reference.GenericParameters.Count; i < parameters.Length; i++)
+					reference.GenericParameters.Add (new GenericParameter (i, reference));
+			}
+
+			return reference;
+		}
+
 		public TypeReference ImportSystemType (Type t, ImportContext context)
 		{
 			if (t.HasElementType || IsGenericTypeSpec (t))
@@ -218,12 +232,8 @@ namespace Mono.Cecil {
 				return GetGenericParameter (t, context);
 
 			TypeReference type = m_module.TypeReferences [GetTypeSignature (t)];
-			if (type != null) {
-				if (t.IsValueType && !type.IsValueType)
-					type.IsValueType = true;
-
-				return type;
-			}
+			if (type != null)
+				return AdjustReference (t, type);
 
 			AssemblyNameReference asm = ImportAssembly (t.Assembly);
 			if (t.DeclaringType != null) {
