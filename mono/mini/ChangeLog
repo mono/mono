@@ -1,3 +1,7 @@
+2009-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_plt): Fix ARM build.
+
 2009-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_if_conversion): Optimize this using ins->prev.
