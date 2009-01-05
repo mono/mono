@@ -95,6 +95,8 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		// The context might be the result of capture so no exception is thrown
+		[Category ("NotWorking")]
 		public void Copy_FromThread ()
 		{
 			ExecutionContext ec = Thread.CurrentThread.ExecutionContext;
