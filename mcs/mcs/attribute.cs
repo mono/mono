@@ -384,8 +384,8 @@ namespace Mono.CSharp {
 			if (ds == null)
 				ds = owner.ResolveContext.DeclContainer;
 			
-			EmitContext ec = new EmitContext (owner.ResolveContext, ds, owner.ResolveContext.DeclContainer,
-				Location, null, typeof (Attribute), owner.ResolveContext.DeclContainer.ModFlags, false);
+			EmitContext ec = new EmitContext (owner.ResolveContext, ds, ds,
+				Location, null, typeof (Attribute), ds.ModFlags, false);
 			ec.IsAnonymousMethodAllowed = false;
 
 			ConstructorInfo ctor = ResolveConstructor (ec);
