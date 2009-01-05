@@ -459,7 +459,16 @@ namespace System.Windows.Forms
 		[DefaultValue(true)]
 		public bool ColumnHeadersVisible {
 			get { return grid_style.ColumnHeadersVisible; }
-			set { grid_style.ColumnHeadersVisible = value; }
+			set { 
+				if (grid_style.ColumnHeadersVisible != value) {
+					grid_style.ColumnHeadersVisible = value; 
+
+#if NET_2_0
+					// UIA Framework: To keep track of header
+					OnUIAColumnHeadersVisibleChanged ();
+#endif
+				}
+			}
 		}
 
 		bool setting_current_cell;
@@ -711,8 +720,17 @@ namespace System.Windows.Forms
 		public object this [int rowIndex, int columnIndex] {
 			get { return CurrentTableStyle.GridColumnStyles[columnIndex].GetColumnValueAtRow (ListManager,
 													  rowIndex); }
-			set { CurrentTableStyle.GridColumnStyles[columnIndex].SetColumnValueAtRow (ListManager,
-												   rowIndex, value); }
+			set { 
+				CurrentTableStyle.GridColumnStyles[columnIndex].SetColumnValueAtRow (ListManager,
+												     rowIndex, value); 
+
+#if NET_2_0
+				// UIA Framework: Raising changes in datasource.
+				OnUIAGridCellChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh,
+				                                                     new DataGridCell (rowIndex,
+ 				                                                                       columnIndex)));
+#endif
+			}
 		}
 
 		public Color LinkColor {
@@ -2080,10 +2098,22 @@ namespace System.Windows.Forms
 			if (selected_rows.Count == 0)
 				selection_start = row;
 
+#if NET_2_0
+			// UIA Framework: To raise event only when selecting
+			bool wasSelected = rows [row].IsSelected;
+#endif
+
 			selected_rows[row] = true;
 			rows[row].IsSelected = true;
 
 			InvalidateRow (row);
+
+#if NET_2_0
+			// UIA Framework:
+			if (!wasSelected)
+				OnUIASelectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Add, row));
+#endif
+
 		}
 
 		public void SetDataBinding (object dataSource, string dataMember)
@@ -2167,9 +2197,20 @@ namespace System.Windows.Forms
 
 		public void UnSelect (int row)
 		{
+#if NET_2_0
+			// UIA Framework: To raise event only when unselecting 
+			bool wasSelected = rows  [row].IsSelected;
+
+#endif
 			rows[row].IsSelected = false;
 			selected_rows.Remove (row);
 			InvalidateRow (row);
+
+#if NET_2_0
+			// UIA Framework: Raises selection event
+			if (!wasSelected)
+				OnUIASelectionChangedEvent (new CollectionChangeEventArgs (CollectionChangeAction.Remove, row));
+#endif
 		}
 		#endregion	// Public Instance Methods
 
@@ -2364,10 +2405,24 @@ namespace System.Windows.Forms
 					new_rows[i].VerticalOffset = new_rows[i-1].VerticalOffset + new_rows[i-1].Height;
 			}
 
+#if NET_2_0
+			// UIA Framework event: Updates collection list depending on binding
+			CollectionChangeAction action = CollectionChangeAction.Refresh;
+			if (rows != null) {
+				if (new_rows.Length - rows.Length > 0)
+					action = CollectionChangeAction.Add;
+				else
+					action = CollectionChangeAction.Remove;
+			}
+#endif
 			rows = new_rows;
 
 			if (recalc)
 				CalcAreasAndInvalidate ();
+#if NET_2_0
+			// UIA Framework event: Row added/removed 
+			OnUIACollectionChangedEvent (new CollectionChangeEventArgs (action, -1));
+#endif 
 		}
 
 		internal void UpdateRowsFrom (DataGridRelationshipRow row)
@@ -3238,5 +3293,103 @@ namespace System.Windows.Forms
 		#endregion Instance Properties
 
 		#endregion // Code originally in DataGridDrawingLogic.cs
+
+#if NET_2_0
+		
+		#region UIA Framework: Methods, Properties and Events
+		
+		static object UIACollectionChangedEvent = new object ();
+		static object UIASelectionChangedEvent = new object ();
+		static object UIAColumnHeadersVisibleChangedEvent = new object ();
+		static object UIAGridCellChangedEvent = new object ();
+
+		internal ScrollBar UIAHScrollBar {
+			get { return horiz_scrollbar; }
+		}
+
+		internal ScrollBar UIAVScrollBar {
+			get { return vert_scrollbar; }
+		}
+
+		internal DataGridTableStyle UIACurrentTableStyle {
+			get { return current_style; }
+		}
+
+		internal int UIASelectedRows {
+			get { return selected_rows.Count; }
+		}
+
+		internal Rectangle UIAColumnHeadersArea {
+			get { return ColumnHeadersArea; }
+		}
+
+		internal Rectangle UIACaptionArea {
+			get { return caption_area; }
+		}
+
+		internal Rectangle UIACellsArea {
+			get { return cells_area; }
+		}
+
+		internal int UIARowHeight {
+			get { return RowHeight; }
+		}
+
+		internal event CollectionChangeEventHandler UIACollectionChanged {
+			add { Events.AddHandler (UIACollectionChangedEvent, value); }
+			remove { Events.RemoveHandler (UIACollectionChangedEvent, value); }
+		}
+
+		internal event CollectionChangeEventHandler UIASelectionChanged {
+			add { Events.AddHandler (UIASelectionChangedEvent, value); }
+			remove { Events.RemoveHandler (UIASelectionChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAColumnHeadersVisibleChanged {
+			add { Events.AddHandler (UIAColumnHeadersVisibleChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAColumnHeadersVisibleChangedEvent, value); }
+		}
+
+		internal event CollectionChangeEventHandler UIAGridCellChanged {
+			add { Events.AddHandler (UIAGridCellChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAGridCellChangedEvent, value); }
+		}
+
+		internal void OnUIACollectionChangedEvent (CollectionChangeEventArgs args)
+		{
+			CollectionChangeEventHandler eh
+				= (CollectionChangeEventHandler) Events [UIACollectionChangedEvent];
+			if (eh != null)
+				eh (this, args);
+		}
+
+		internal void OnUIASelectionChangedEvent (CollectionChangeEventArgs args)
+		{
+			CollectionChangeEventHandler eh
+				= (CollectionChangeEventHandler) Events [UIASelectionChangedEvent];
+			if (eh != null)
+				eh (this, args);
+		}
+
+		internal void OnUIAColumnHeadersVisibleChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAColumnHeadersVisibleChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIAGridCellChanged (CollectionChangeEventArgs args)
+		{
+			Console.WriteLine ("OnUIAGridCellChanged: {0}", GetType ());
+			CollectionChangeEventHandler eh
+				= (CollectionChangeEventHandler) Events [UIAGridCellChangedEvent];
+			if (eh != null)
+				eh (this, args);
+		}
+
+		#endregion // UIA Framework: Methods, Properties and Events
+
+#endif
+
 	}
 }
