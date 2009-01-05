@@ -1,3 +1,9 @@
+2009-01-05  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r122421.
+	
+	* configure.in: Disable sigaltstack on freebsd as it doesn't seem to work.
+
 2008-10-22  Zoltan Varga  <vargaz@gmail.com>
 
 	Merge r116796 from HEAD.
