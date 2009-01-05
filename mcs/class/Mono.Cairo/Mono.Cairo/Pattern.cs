@@ -116,7 +116,13 @@ namespace Cairo {
 		{
 			get { return NativeMethods.cairo_pattern_status (pattern); }
 		}
-		
+
+		public Extend Extend
+		{
+			get { return NativeMethods.cairo_pattern_get_extend (pattern); }
+			set { NativeMethods.cairo_pattern_set_extend (pattern, value); }
+		}
+	
                 public Matrix Matrix {
                         set { 
 				NativeMethods.cairo_pattern_set_matrix (pattern, value);
