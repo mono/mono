@@ -1,8 +1,13 @@
 2009-01-06 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_iface_constant_with_parent_implementing_it.il:
+	Regression test for #461200.
+
+2009-01-06 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_array_compat_with_bonds_and_sizes.il:
 	* valid_array_compat_with_bounds.il:
-	* valid_array_compat_with_sizes.il: Regrression tests for 
+	* valid_array_compat_with_sizes.il: Regression tests for 
 	#461200.
 
 2009-01-06 Rodrigo Kumpera <rkumpera@novell.com>
