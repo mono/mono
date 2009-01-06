@@ -34098,6 +34098,19 @@
       </method>
     </type>
   </test>
+  <test name="test-701.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="UInt16 ToUint16()">
+        <size>6</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-71.cs">
     <type name="X">
       <method name="Void .ctor()">
