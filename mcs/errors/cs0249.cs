@@ -1,8 +1,7 @@
-// cs0249.cs: Do not override object.Finalize. Instead, provide a destructor
+// CS0249: Do not override `object.Finalize()'. Use destructor syntax instead
 // Line: 5
 
 class Sample {
         protected override void Finalize() {}
 		static void Main () {}
 }
-
