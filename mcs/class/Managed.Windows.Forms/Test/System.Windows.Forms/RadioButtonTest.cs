@@ -40,8 +40,49 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsFalse (rButton1.TabStop, "#T3");
 		}
 
+		[Test]
+		public void CheckedTest ()
+		{
+			RadioButton rb = new RadioButton ();
+
+			Assert.AreEqual (false, rb.TabStop, "#A1");
+			Assert.AreEqual (false, rb.Checked, "#A2");
+
+			rb.Checked = true;
+
+			Assert.AreEqual (true, rb.TabStop, "#B1");
+			Assert.AreEqual (true, rb.Checked, "#B2");
+
+			rb.Checked = false;
+
+			Assert.AreEqual (false, rb.TabStop, "#C1");
+			Assert.AreEqual (false, rb.Checked, "#C2");
+
+			// RadioButton is NOT checked, but since it is the only
+			// RadioButton instance in Form, when it gets selected (Form.Show)
+			// it should acquire the focus
+			Form f = new Form ();
+			f.Controls.Add (rb);
+			rb.CheckedChanged += new EventHandler (rb_checked_changed);
+			event_received = false;
+
+			f.ActiveControl = rb;
+			f.Show ();
+
+			Assert.AreEqual (true, event_received, "#D1");
+			Assert.AreEqual (true, rb.Checked, "#D2");
+			Assert.AreEqual (true, rb.TabStop, "#D3");
+
+			f.Dispose ();
+		}
+
 		bool event_received = false;
 		void rb_tabstop_changed (object sender, EventArgs e)
+		{
+			event_received = true;
+		}
+
+		void rb_checked_changed (object sender, EventArgs e)
 		{
 			event_received = true;
 		}
@@ -52,6 +93,7 @@ namespace MonoTests.System.Windows.Forms
 			RadioButton rb = new RadioButton ();
 
 			rb.TabStopChanged += new EventHandler (rb_tabstop_changed);
+			event_received = false;
 
 			rb.TabStop = true;
 
