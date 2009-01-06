@@ -1,5 +1,12 @@
 2009-01-06 Rodrigo Kumpera <rkumpera@novell.com>
 
+	* valid_array_compat_with_bonds_and_sizes.il:
+	* valid_array_compat_with_bounds.il:
+	* valid_array_compat_with_sizes.il: Regrression tests for 
+	#461200.
+
+2009-01-06 Rodrigo Kumpera <rkumpera@novell.com>
+
 	* valid_ceq_with_boxed_vt.il: Regression test for #461200.
 
 2008-12-01 Rodrigo Kumpera <rkumpera@novell.com>
