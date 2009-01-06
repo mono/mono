@@ -1,3 +1,11 @@
+2009-01-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_methodref_token): Add an extra create_typespec parameter to
+	control if a methodspec should be created for the generic method definition from external assemblies.
+	Caching of methodspec is done using the handleref hash table.
+
+	Fixes #462592.
+
 2009-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (find_method): When searching the interfaces of a class
