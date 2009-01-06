@@ -133,6 +133,39 @@ documented as throwing an ArgumentNullException, which cannot happen.
 .ne
 .RE
 .TP
+\fB\-f\fR=\fIFLAG\fR
+Specify a flag to alter behavior.  Valid flags include:
+.RS
+.ne 8
+.TP
+.B no-assembly-versions
+See the \fB-fno-assembly-versions\fR documentation, below.
+.ne
+.RE
+.TP
+\fB\-fno-assembly-versions\fR
+Do not generate \fI/Type/AssemblyInfo/AssemblyVersion\fR and
+\fI/Type/Members/Member/AssemblyInfo\fR elements.
+.Sp
+This is useful to prevent "churn" during updates.  Normally, if a type or
+member hasn't changed but the assembly version has changed, then all types and
+members will be updated to include a new \fI//AssemblyVersion\fR element, thus
+increasing the amount of changes that need review before committing (assuming
+all changes are actually reviewed before commit).
+.Sp
+WARNING: This \fIwill\fR interact badly with the \fB--delete\fR option, as
+\fB--delete\fR uses the \fI//AssemblyVersion\fR elements to track version
+changes.  Thus, if you have a member which is present in an early assembly
+version and is removed in a subsequent assembly version, such as
+\fISystem.Text.UTF8Encoding.GetBytes(string)\fR (which is present in .NET 1.0
+but not in .NET 2.0), then the member will be removed when the
+\fB--delete -fno-assembly-versions\fR options are specified, the member was
+present in an earlier version of the assembly, and the current version of the
+assembly does not contain the member.
+.Sp
+Consequently, this option should \fIonly\fR be specified if types and members
+will \fInever\fR be removed from an assembly.
+.TP
 \fB\-i\fR, \fB\-\-import\fR=\fIFILE\fR
 Import documentation found within \fIFILE\fR.
 .Sp
