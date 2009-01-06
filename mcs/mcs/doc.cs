@@ -87,7 +87,7 @@ namespace Mono.CSharp {
 					p.GenerateDocComment (t);
 
 			if (t.Methods != null)
-				foreach (Method m in t.Methods)
+				foreach (MethodOrOperator m in t.Methods)
 					m.GenerateDocComment (t);
 
 			if (t.Operators != null)

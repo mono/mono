@@ -1519,7 +1519,6 @@ namespace Mono.CSharp {
 			BlockUsed = 2,
 			VariablesInitialized = 4,
 			HasRet = 8,
-			IsDestructor = 16,
 			Unsafe = 32,
 			IsIterator = 64,
 			HasStoreyAccess	= 128
@@ -1597,6 +1596,20 @@ namespace Mono.CSharp {
 		public Block (Block parent, Location start, Location end)
 			: this (parent, (Flags) 0, start, end)
 		{ }
+
+		//
+		// Useful when TopLevel block is downgraded to normal block
+		//
+		public Block (ToplevelBlock parent, ToplevelBlock source)
+			: this (parent, source.flags, source.StartLocation, source.EndLocation)
+		{
+			statements = source.statements;
+			children = source.children;
+			labels = source.labels;
+			variables = source.variables;
+			constants = source.constants;
+			switch_block = source.switch_block;
+		}
 
 		public Block (Block parent, Flags flags, Location start, Location end)
 		{
@@ -1995,15 +2008,6 @@ namespace Mono.CSharp {
 
 		public bool HasRet {
 			get { return (flags & Flags.HasRet) != 0; }
-		}
-
-		public bool IsDestructor {
-			get { return (flags & Flags.IsDestructor) != 0; }
-		}
-
-		public void SetDestructor ()
-		{
-			flags |= Flags.IsDestructor;
 		}
 
 		public int AssignableSlots {
@@ -2748,16 +2752,10 @@ namespace Mono.CSharp {
 		//
 		public IteratorStorey ChangeToIterator (Iterator iterator, ToplevelBlock source)
 		{
-			// Create block with original statements
-			ExplicitBlock iter_block = new ExplicitBlock (this, flags, StartLocation, EndLocation);
 			IsIterator = true;
 
-			// TODO: Change to iter_block.statements = statements;
-			foreach (Statement stmt in source.statements)
-				iter_block.AddStatement (stmt);
-			labels = source.labels;
-			
-			AddStatement (new IteratorStatement (iterator, iter_block));
+			// Creates block with original statements
+			AddStatement (new IteratorStatement (iterator, new Block (this, source)));
 
 			source.statements = new ArrayList (1);
 			source.AddStatement (new Return (iterator, iterator.Location));

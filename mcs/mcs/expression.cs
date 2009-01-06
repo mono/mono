@@ -4851,7 +4851,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (Arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == "Finalize") {
+			if (Arguments == null && method.DeclaringType == TypeManager.object_type && method.Name == Destructor.MetadataName) {
 				if (mg.IsBase)
 					Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
 				else

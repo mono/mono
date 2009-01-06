@@ -139,9 +139,9 @@ namespace Mono.CSharp {
 	class IteratorStatement : Statement
 	{
 		Iterator iterator;
-		ExplicitBlock original_block;
+		Block original_block;
 
-		public IteratorStatement (Iterator iterator, ExplicitBlock original_block)
+		public IteratorStatement (Iterator iterator, Block original_block)
 		{
 			this.iterator = iterator;
 			this.original_block = original_block;

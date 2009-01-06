@@ -388,8 +388,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (((Parent.ModFlags & Modifiers.SEALED) != 0) &&
-				((ModFlags & Modifiers.OVERRIDE) == 0) && (Name != "Finalize")) {
+			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.OVERRIDE) == 0 &&
+				!(this is Destructor)) {
 				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class",
 					GetSignatureForError ());
 				return;

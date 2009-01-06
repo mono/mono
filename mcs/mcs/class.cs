@@ -406,7 +406,7 @@ namespace Mono.CSharp {
 
 		}
 		
-		public void AddMethod (Method method)
+		public void AddMethod (MethodOrOperator method)
 		{
 			if (!AddToContainer (method, method.MemberName.Basename))
 				return;
@@ -1720,7 +1720,7 @@ namespace Mono.CSharp {
 				if (methods != null) {
 					int len = methods.Count;
 					for (int i = 0; i < len; i++) {
-						Method m = (Method) methods [i];
+						MethodOrOperator m = (MethodOrOperator) methods [i];
 						
 						if ((m.ModFlags & modflags) == 0)
 							continue;
@@ -2142,7 +2142,7 @@ namespace Mono.CSharp {
 
 			if (methods != null) {
 				for (int i = 0; i < methods.Count; ++i)
-					((Method) methods [i]).Emit ();
+					((MethodOrOperator) methods [i]).Emit ();
 			}
 			
 			if (fields != null)
@@ -3425,7 +3425,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.NEW) == 0) {
-				if ((ModFlags & Modifiers.OVERRIDE) == 0 && Name != "Finalize") {
+				if ((ModFlags & Modifiers.OVERRIDE) == 0) {
 					ModFlags |= Modifiers.NEW;
 					Report.SymbolRelatedToPreviousError (base_method);
 					if (!IsInterface && (base_method.IsVirtual || base_method.IsAbstract)) {
@@ -3844,7 +3844,13 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (MethodData != null)
+				MethodData.Emit (Parent);
+
 			base.Emit ();
+
+			Block = null;
+			MethodData = null;
 		}
 
 		protected void Error_ConditionalAttributeIsNotValid ()
@@ -3897,21 +3903,6 @@ namespace Mono.CSharp {
 			get {
 				return MemberName;
 			}
-		}
-
-		protected override bool CheckBase ()
-		{
-			if (!base.CheckBase ())
-				return false;
-
-			// TODO: Destructor should derive from MethodCore
-			if (base_method != null && (ModFlags & Modifiers.OVERRIDE) != 0 && Name == "Finalize" &&
-				base_method.DeclaringType == TypeManager.object_type && !(this is Destructor)) {
-				Report.Error (249, Location, "Do not override object.Finalize. Instead, provide a destructor");
-				return false;
-			}
-
-			return true;
 		}
 
 		/// <summary>
@@ -4173,22 +4164,34 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		protected override bool CheckBase ()
+		{
+			if (!base.CheckBase ())
+				return false;
+
+			if (base_method != null && (ModFlags & Modifiers.OVERRIDE) != 0 && Name == Destructor.MetadataName) {
+				Report.Error (249, Location, "Do not override `{0}'. Use destructor syntax instead",
+					TypeManager.CSharpSignature (base_method));
+			}
+
+			return true;
+		}
+
 		//
 		// Creates the type
 		//
 		public override bool Define ()
 		{
+			if (type_name == TypeManager.system_void_expr && Parameters.IsEmpty && Name == Destructor.MetadataName) {
+				Report.Warning (465, 1, Location, "Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
+			}
+
 			if (!base.Define ())
 				return false;
 
 			if (RootContext.StdLib && TypeManager.IsSpecialType (ReturnType)) {
 				Error1599 (Location, ReturnType);
 				return false;
-			}
-
-			if (ReturnType == TypeManager.void_type && Parameters.Count == 0 && 
-				Name == "Finalize" && !(this is Destructor)) {
-				Report.Warning (465, 1, Location, "Introducing a 'Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
 
 			if (base_method != null && (ModFlags & Modifiers.NEW) == 0) {
@@ -4282,7 +4285,6 @@ namespace Mono.CSharp {
 					Report.Error (759, Location, "A partial method `{0}' implementation is missing a partial method declaration",
 						GetSignatureForError ());
 
-				MethodData.Emit (Parent);
 				base.Emit ();
 				
 #if GMCS_SOURCE				
@@ -4290,8 +4292,6 @@ namespace Mono.CSharp {
 					MethodBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
 #endif
 
-				Block = null;
-				MethodData = null;
 			} catch {
 				Console.WriteLine ("Internal compiler error at {0}: exception caught while emitting {1}",
 						   Location, MethodBuilder);
@@ -5128,77 +5128,31 @@ namespace Mono.CSharp {
 
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
-			//
-			// Handle destructors specially
-			//
-			// FIXME: This code generates buggy code
-			//
-			if (member is Destructor)
-				EmitDestructor (ec, block);
-			else
-				ec.EmitTopBlock (method, block);
+			ec.EmitTopBlock (method, block);
 
 			if (source != null) {
 				method.EmitExtraSymbolInfo (source);
 				source.CloseMethod ();
 			}
 		}
-
-		void EmitDestructor (EmitContext ec, ToplevelBlock block)
-		{
-			ILGenerator ig = ec.ig;
-			
-			Label finish = ig.DefineLabel ();
-
-			block.SetDestructor ();
-			
-			ig.BeginExceptionBlock ();
-			ec.ReturnLabel = finish;
-			ec.HasReturnLabel = true;
-			ec.EmitTopBlock (method, block);
-			
-			// ig.MarkLabel (finish);
-			ig.BeginFinallyBlock ();
-			
-			if (ec.ContainerType.BaseType != null) {
-				Expression member_lookup = Expression.MemberLookup (
-					ec.ContainerType.BaseType, null, ec.ContainerType.BaseType,
-					"Finalize", MemberTypes.Method, Expression.AllBindingFlags, method.Location);
-
-				if (member_lookup != null){
-					MethodGroupExpr base_destructor = ((MethodGroupExpr) member_lookup);
-				
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Call, (MethodInfo) base_destructor.Methods [0]);
-				}
-			}
-			
-			ig.EndExceptionBlock ();
-			//ig.MarkLabel (ec.ReturnLabel);
-			ig.Emit (OpCodes.Ret);
-		}
 	}
 
-	// TODO: Should derive from MethodCore
-	public class Destructor : Method
+	public class Destructor : MethodOrOperator
 	{
 		const int AllowedModifiers =
 			Modifiers.UNSAFE |
 			Modifiers.EXTERN;
 
-		static string[] attribute_targets = new string [] { "method" };
+		static readonly string[] attribute_targets = new string [] { "method" };
 
-		public Destructor (DeclSpace parent, FullNamedExpression return_type, int mod,
-				   string name, Parameters parameters, Attributes attrs,
-				   Location l)
-			: base (parent, return_type, mod, AllowedModifiers, new MemberName (name, l),
-				parameters, attrs)
+		public static readonly string MetadataName = "Finalize";
+
+		public Destructor (DeclSpace parent, int mod, Parameters parameters, Attributes attrs, Location l)
+			: base (parent, null, TypeManager.system_void_expr, mod, AllowedModifiers,
+				new MemberName (MetadataName, l), attrs, parameters)
 		{
 			ModFlags &= ~Modifiers.PRIVATE;
-			if (!RootContext.StdLib && parent.Name == "System.Object")
-				ModFlags |= Modifiers.PROTECTED | Modifiers.VIRTUAL;
-			else
-				ModFlags |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
+			ModFlags |= Modifiers.PROTECTED;
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
@@ -5211,9 +5165,53 @@ namespace Mono.CSharp {
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
+		protected override bool CheckBase ()
+		{
+			flags |= MethodAttributes.Virtual;
+
+			if (!base.CheckBase ())
+				return false;
+
+			if (Parent.PartialContainer.BaseCache == null)
+				return true;
+
+			Type base_type = Parent.PartialContainer.BaseCache.Container.Type;
+			if (base_type != null && Block != null) {
+				MethodGroupExpr method_expr = Expression.MethodLookup (Parent.TypeBuilder, base_type, MetadataName, Location);
+				if (method_expr == null)
+					throw new NotImplementedException ();
+
+				method_expr.IsBase = true;
+				method_expr.InstanceExpression = new CompilerGeneratedThis (Parent.TypeBuilder, Location);
+
+				ToplevelBlock new_block = new ToplevelBlock (Block.StartLocation);
+				new_block.EndLocation = Block.EndLocation;
+
+				Block finaly_block = new ExplicitBlock (new_block, Location, Location);
+				Block try_block = new Block (new_block, block);
+
+				//
+				// 0-size arguments to avoid CS0250 error
+				// TODO: Should use AddScopeStatement or something else which emits correct
+				// debugger scope
+				//
+				finaly_block.AddStatement (new StatementExpression (new Invocation (method_expr, new ArrayList (0))));
+				new_block.AddStatement (new TryFinally (try_block, finaly_block, Location));
+
+				block = new_block;
+			}
+
+			return true;
+		}
+
 		public override string GetSignatureForError ()
 		{
 			return Parent.GetSignatureForError () + ".~" + Parent.MemberName.Name + "()";
+		}
+
+		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
+		{
+			return null;
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -7883,33 +7881,6 @@ namespace Mono.CSharp {
 
 			flags |= MethodAttributes.SpecialName | MethodAttributes.HideBySig;
 			return true;
-		}
-		
-		public override void Emit ()
-		{
-			base.Emit ();
-
-			Parameters.ApplyAttributes (MethodBuilder);
-
-			//
-			// abstract or extern methods have no bodies
-			//
-			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
-				return;
-			
-			EmitContext ec;
-			if ((flags & MethodAttributes.PinvokeImpl) == 0)
-				ec = CreateEmitContext (Parent, MethodBuilder.GetILGenerator ());
-			else
-				ec = CreateEmitContext (Parent, null);
-			
-			SourceMethod source = SourceMethod.Create (Parent, MethodBuilder, Block);
-			ec.EmitTopBlock (this, Block);
-
-			if (source != null)
-				source.CloseMethod ();
-
-			Block = null;
 		}
 
 		// Operator cannot be override

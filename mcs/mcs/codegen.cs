@@ -869,9 +869,7 @@ namespace Mono.CSharp {
 				// this case.
 				//
 
-				if ((block != null) && block.IsDestructor) {
-					// Nothing to do; S.R.E automatically emits a leave.
-				} else if (HasReturnLabel || !unreachable) {
+				if (HasReturnLabel || !unreachable) {
 					if (return_type != TypeManager.void_type)
 						ig.Emit (OpCodes.Ldloc, TemporaryReturn ());
 					ig.Emit (OpCodes.Ret);

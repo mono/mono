@@ -2168,7 +2168,7 @@ destructor_declaration
 		
 		current_local_parameters = Parameters.EmptyReadOnlyParameters;
 	  }
-	  IDENTIFIER OPEN_PARENS CLOSE_PARENS block
+	  IDENTIFIER OPEN_PARENS CLOSE_PARENS method_body
 	  {
 		LocatedToken lt = (LocatedToken) $5;
 		if (lt.Value != current_container.MemberName.Name){
@@ -2176,8 +2176,7 @@ destructor_declaration
 		} else if (current_container.Kind != Kind.Class){
 			Report.Error (575, lt.Location, "Only class types can contain destructor");
 		} else {
-			Method d = new Destructor (
-				current_class, TypeManager.system_void_expr, (int) $2, "Finalize", 
+			Destructor d = new Destructor (current_class, (int) $2,
 				Parameters.EmptyReadOnlyParameters, (Attributes) $1, lt.Location);
 			if (RootContext.Documentation != null)
 				d.DocComment = ConsumeStoredComment ();
