@@ -64,7 +64,9 @@ namespace Microsoft.Build.BuildEngine {
 				BuildPropertyGroup bpg = new BuildPropertyGroup ();
 				if (globalProperties != null)
 					foreach (DictionaryEntry de in globalProperties)
-						bpg.AddNewProperty ((string) de.Key, (string) de.Value);
+						bpg.AddProperty (new BuildProperty (
+							(string) de.Key, (string) de.Value,
+							PropertyType.Global));
 				return engine.BuildProjectFile (projectFileName,
 					targetNames, bpg, targetOutputs);
 			}

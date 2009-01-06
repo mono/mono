@@ -66,7 +66,8 @@ namespace Microsoft.Build.Tasks {
 				Directory.SetCurrentDirectory (Path.GetDirectoryName (filename));
 				outputs = new Hashtable ();
 
-				result = BuildEngine.BuildProjectFile (filename, targets, null, outputs);
+				Dictionary<string, string> global_properties = SplitPropertiesToDictionary ();
+				result = BuildEngine.BuildProjectFile (filename, targets, global_properties, outputs);
 
 				if (result) {
 					foreach (DictionaryEntry de in outputs) {
@@ -128,6 +129,30 @@ namespace Microsoft.Build.Tasks {
 			get { return targets; }
 			set { targets = value; }
 		}
+
+		Dictionary<string, string> SplitPropertiesToDictionary ()
+		{
+			if (properties == null)
+				return null;
+
+			Dictionary<string, string> global_properties = new Dictionary<string, string> ();
+			foreach (string kvpair in properties) {
+				if (String.IsNullOrEmpty (kvpair))
+					continue;
+
+				string [] parts = kvpair.Trim ().Split ('=');
+				if (parts.Length != 2) {
+					//FIXME: Log the error and .. ?
+					Console.WriteLine ("Invalid key/value pairs in Properties, ignoring.");
+					continue;
+				}
+
+				global_properties.Add (parts [0], parts [1]);
+			}
+
+			return global_properties;
+		}
+
 	}
 }
 

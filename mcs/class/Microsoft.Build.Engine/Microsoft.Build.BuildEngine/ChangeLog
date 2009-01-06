@@ -1,5 +1,12 @@
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
+	* BuildEngine.cs (BuildProjectFile): Use AddProperty method to specify
+	the property type also.
+	* MSBuild.cs (Execute): Parse 'Properties' task param to set global
+	properties.
+
+2009-01-06  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs (Build): Correctly handle null targetNames argument.
 
 2009-01-06  Ankit Jain  <jankit@novell.com>
