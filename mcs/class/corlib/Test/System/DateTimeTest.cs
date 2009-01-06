@@ -2372,6 +2372,20 @@ namespace MonoTests.System
 			DateTimeStyles illegal = DateTimeStyles.AssumeLocal | DateTimeStyles.AssumeUniversal;
 			DateTime.ParseExact ("", "", null, illegal);
 		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void TrailingDot ()
+		{
+			DateTime.ParseExact ("12:00:00", "HH:mm:ss.", null);
+		}
+
+		[Test]
+		public void TrailingFlexibleMilliseconds ()
+		{
+			// bug #444103.
+			DateTime.ParseExact ("12:00:00", "HH:mm:ss.FFFFFFF", null);
+		}
 #endif
 	}
 }

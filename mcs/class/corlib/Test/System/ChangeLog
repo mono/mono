@@ -1,3 +1,7 @@
+2009-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : added test for parsing no-millisecond time
+	  with optional millisecond designator.
 
 2008-11-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

@@ -1654,6 +1654,11 @@ namespace System
 			}
 
 #if NET_2_0
+			if (pos + 1 < len && chars [pos] == '.' && chars [pos + 1] == 'F') {
+				pos++;
+				while (pos < len && chars [pos] == 'F') // '.FFF....' can be mapped to nothing. See bug #444103
+					pos++;
+			}
 			while (pos < len && chars [pos] == 'K') // 'K' can be mapped to nothing
 				pos++;
 #endif
