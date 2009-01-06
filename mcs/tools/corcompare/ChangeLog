@@ -1,3 +1,8 @@
+2009-01-06  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: only build mono-api-info, as mono-api-diff and transform
+	are not used anymore.
+
 2009-01-05  Jb Evain  <jbevain@novell.com>
 
 	* mono-api-info.cs: output custom attributes for generic parameters

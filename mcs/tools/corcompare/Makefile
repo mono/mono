@@ -2,7 +2,7 @@ thisdir = tools/corcompare
 SUBDIRS =
 include ../../build/rules.make
 
-ALL_PROGRAMS = mono-api-info.exe mono-api-diff.exe transform.exe
+ALL_PROGRAMS = mono-api-info.exe
 
 CECIL = ../../class/lib/net_1_1/Mono.Cecil.dll
 
@@ -14,9 +14,8 @@ COMMON_SOURCES = \
 PROGRAM_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
 APIINFO_SOURCES = mono-api-info.cs $(COMMON_SOURCES)
-APIDIFF_SOURCES = mono-api-diff.cs $(COMMON_SOURCES)
 
-DISTFILES= $(COMMON_SOURCES) $(APIINFO_SOURCES) $(APIDIFF_SOURCES) cormissing.xsl mono-api.xsl transform.cs
+DISTFILES= $(COMMON_SOURCES) $(APIINFO_SOURCES)
 
 all-local: $(ALL_PROGRAMS)
 
@@ -42,11 +41,5 @@ clean-local:
 
 dist-local: dist-default
 
-mono-api-diff.exe: $(APIDIFF_SOURCES)
-	$(CSCOMPILE) -r:$(CECIL) -out:$@ $^
-
 mono-api-info.exe: $(APIINFO_SOURCES)
 	$(CSCOMPILE) -r:$(CECIL) -out:$@ $^
-
-transform.exe: transform.cs
-	$(CSCOMPILE) -out:$@ $^
