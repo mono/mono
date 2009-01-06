@@ -1,5 +1,11 @@
 2009-01-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (is_array_type_compatible): Ignore bounds and sizes when checking array compatibility.
+
+	Fixes part of #463294.
+
+2009-01-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (stack_slot_is_complex_type_not_reference_type): Check if the type
 	is a boxed complex as well.
 
