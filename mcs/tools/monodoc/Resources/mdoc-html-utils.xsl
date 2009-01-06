@@ -49,7 +49,6 @@
 			</xsl:call-template>
 			<xsl:text>:Summary</xsl:text>
 		</xsl:attribute>
-		<xsl:apply-templates select="Docs/since" />
 		<!-- summary -->
 		<xsl:apply-templates select="Docs/summary" mode="notoppara"/>
 		<xsl:apply-templates select="Docs/summary" mode="editlink"/>
@@ -354,13 +353,6 @@
 
 	<xsl:template name="CreateMemberOverview">
 		<xsl:param name="implemented" />
-
-		<xsl:if test="Docs/since">
-			<xsl:apply-templates select="Docs/since" />
-		</xsl:if>
-		<xsl:if test="not(Docs/since)">
-			<xsl:apply-templates select="/Type/Docs/since" />
-		</xsl:if>
 
 		<p class="Summary">
 			<xsl:apply-templates select="Docs/summary" mode="notoppara"/>
@@ -800,25 +792,45 @@
 			</xsl:for-each>
 		</xsl:if>
 
-		<xsl:if test="count(AssemblyInfo/AssemblyVersion) &gt; 0">
-			<xsl:call-template name="CreateH4Section">
-				<xsl:with-param name="name" select="'Requirements'"/>
-				<xsl:with-param name="child-id" select="concat ($linkid, ':Version Information')" />
-				<xsl:with-param name="content">
-					<b>Namespace: </b><xsl:value-of select="substring(/Type/@FullName, 1, string-length(/Type/@FullName) - string-length(/Type/@Name) - 1)" /><br />
+		<xsl:call-template name="CreateH4Section">
+			<xsl:with-param name="name" select="'Requirements'"/>
+			<xsl:with-param name="child-id" select="concat ($linkid, ':Version Information')" />
+			<xsl:with-param name="content">
+				<b>Namespace: </b><xsl:value-of select="substring(/Type/@FullName, 1, string-length(/Type/@FullName) - string-length(/Type/@Name) - 1)" />
+				<xsl:if test="count(/Type/AssemblyInfo/AssemblyName) &gt; 0">
+					<br />
 					<b>Assembly: </b>
-						<xsl:value-of select="/Type/AssemblyInfo/AssemblyName" />
-						<xsl:text> (in </xsl:text>
-						<xsl:value-of select="/Type/AssemblyInfo/AssemblyName" />
-						<xsl:text>.dll)</xsl:text><br/>
+					<xsl:value-of select="/Type/AssemblyInfo/AssemblyName" />
+					<xsl:text> (in </xsl:text>
+					<xsl:value-of select="/Type/AssemblyInfo/AssemblyName" />
+					<xsl:text>.dll)</xsl:text>
+				</xsl:if>
+				<xsl:if test="count(AssemblyInfo/AssemblyVersion) &gt; 0">
+					<br />
 					<b>Assembly Versions: </b>
 					<xsl:for-each select="AssemblyInfo/AssemblyVersion">
 						<xsl:if test="not(position()=1)">, </xsl:if>
 							<xsl:value-of select="."/>
 					</xsl:for-each>
-				</xsl:with-param>
-			</xsl:call-template>
-		</xsl:if>
+				</xsl:if>
+				<xsl:if test="count(Docs/since) &gt; 0">
+					<br />
+					<b>Since: </b>
+					<xsl:for-each select="Docs/since">
+						<xsl:if test="not(position()=1)">; </xsl:if>
+							<xsl:value-of select="@version"/>
+					</xsl:for-each>
+				</xsl:if>
+				<xsl:if test="count(Docs/since)=0 and count(/Type/Docs/since) &gt; 0">
+					<br />
+					<b>Since: </b>
+					<xsl:for-each select="/Type/Docs/since">
+						<xsl:if test="not(position()=1)">; </xsl:if>
+							<xsl:value-of select="@version"/>
+					</xsl:for-each>
+				</xsl:if>
+			</xsl:with-param>
+		</xsl:call-template>
 	</xsl:template>
 
 	

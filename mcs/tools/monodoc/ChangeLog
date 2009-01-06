@@ -1,3 +1,17 @@
+2009-01-05  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile: Fix $(the_lib) dependencies so that monodoc.dll is rebuilt
+	  when one of Resources/* is modified.
+	* Resources/mdoc-html-utils.xsl: Rework the Requirements block so that
+	  it doesn't require //AssemblyInfo or //AssemblyVersion.  This allows
+	  `mdoc update -fno-assembly-versions ...`-produced XML to still
+	  produce HTML with a Requirements section (skipping the Assembly
+	  Versions block but generating the Namespace and Assembly blocks).
+	  Change the behavior of //since generation so that instead of
+	  printing out a note before the method summary, a Since block is added
+	  to the Requirements section, and the Since block contains the
+	  //since/@version text.  All this to make Mike Kestner happier. :-)
+
 2008-10-29  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Monodoc/xhtml-provider.cs: Use HelpSource.Message(), not 

@@ -68,7 +68,7 @@ LIB_MCS_FLAGS = \
 
 include ../../build/library.make
 
-$(the_lib): Makefile
+$(the_lib): Makefile $(RESOURCE_FILES)
 
 all-local: $(the_lib).config
 
