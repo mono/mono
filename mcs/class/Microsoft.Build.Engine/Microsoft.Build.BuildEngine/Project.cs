@@ -227,8 +227,9 @@ namespace Microsoft.Build.BuildEngine {
 		public bool Build (string targetName)
 		{
 			if (targetName == null)
-				return false;
-			return Build (new string [1] { targetName });
+				return Build ((string[]) null);
+			else
+				return Build (new string [1] { targetName });
 		}
 		
 		[MonoTODO ("Not tested")]
@@ -250,14 +251,11 @@ namespace Microsoft.Build.BuildEngine {
 				   BuildSettings buildFlags)
 		
 		{
-			if (targetNames == null)
-				return false;
-
 			CheckUnloaded ();
 			ParentEngine.StartBuild ();
 			NeedToReevaluate ();
 			
-			if (targetNames.Length == 0) {
+			if (targetNames == null || targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0)
 					targetNames = defaultTargets;
 				else if (firstTargetName != null)
@@ -265,6 +263,9 @@ namespace Microsoft.Build.BuildEngine {
 				else
 					return false;
 			}
+
+			if (targetNames == null || targetNames.Length == 0)
+				return false;
 			
 			foreach (string target in targetNames) {
 				if (target == null)

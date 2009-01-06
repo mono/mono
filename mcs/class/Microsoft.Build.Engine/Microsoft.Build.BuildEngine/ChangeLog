@@ -1,5 +1,9 @@
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
+	* Project.cs (Build): Correctly handle null targetNames argument.
+
+2009-01-06  Ankit Jain  <jankit@novell.com>
+
 	* Engine.cs (LogProjectStarted): Add a null check.
 
 2009-01-01  Ankit Jain  <jankit@novell.com>
