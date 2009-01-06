@@ -1,3 +1,13 @@
+2009-01-05  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Add -fno-member-assembly-info,
+	  which remove /Type/Members/Member/AssemblyInfo elements.
+	  Requested by Mike Kestner.
+	  Warning: this option will break automatic version tracking, so if a
+	  member is present in e.g. v1.0 and is removed in e.g. v2.0, 
+	  the //Member element will be removed entirely when updating the
+	  documentation against the 2.0 assembly.  Use with care.
+
 2008-12-06  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Remove "exception" from DocsNodeOrder

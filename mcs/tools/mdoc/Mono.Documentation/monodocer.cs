@@ -33,6 +33,7 @@ class MDocUpdaterOptions
 	public bool overrides = true;
 	public bool ignoremembers = false;
 	public bool ignore_extra_docs = false;
+	public bool no_member_assembly_info = false;
 	public string name;
 	public string import;
 	public bool pretty = true;
@@ -50,6 +51,7 @@ class MDocUpdater : MDocCommand
 	static bool nooverrides = true, delete = false, ignoremembers = false;
 	static bool pretty = false;
 	static bool show_exceptions = false;
+	static bool no_member_assembly_info;
 	static ExceptionLocations? exceptions;
 	
 	static int additions = 0, deletions = 0;
@@ -90,6 +92,12 @@ class MDocUpdater : MDocCommand
 				"If nothing is specified, then only exceptions from the member will " +
 				"be listed.",
 				v => opts.exceptions = ParseExceptionLocations (v) },
+			{ "fno-member-assembly-info",
+				"Do not generate /Type/Members/Member/AssemblyInfo elements.",
+				v => opts.no_member_assembly_info = v != null },
+			{ "f=",
+				"Specify a {FLAG} to alter behavior.",
+				v => {throw new Exception ("Unsupported flag `" + v + "'.");} },
 			{ "i|import=", 
 				"Import documentation from {FILE}.",
 				v => opts.import = v },
@@ -141,6 +149,7 @@ class MDocUpdater : MDocCommand
 		since = opts.since;
 		show_exceptions = opts.show_exceptions;
 		exceptions = opts.exceptions;
+		no_member_assembly_info = opts.no_member_assembly_info;
 
 		// PARSE BASIC OPTIONS AND LOAD THE ASSEMBLY TO DOCUMENT
 		
@@ -1522,7 +1531,12 @@ class MDocUpdater : MDocCommand
 
 		WriteElementText(me, "MemberType", GetMemberType(mi));
 		
-		UpdateAssemblyVersions(me, mi, true);
+		if (!no_member_assembly_info) {
+			UpdateAssemblyVersions (me, mi, true);
+		}
+		else {
+			ClearElement (me, "AssemblyInfo");
+		}
 		ICustomAttributeProvider p = mi as ICustomAttributeProvider;
 		if (p != null)
 			MakeAttributes (me, p.CustomAttributes, false);
