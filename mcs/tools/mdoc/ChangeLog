@@ -1,5 +1,17 @@
 2009-01-05  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/mdoc.cs: `mdoc' (no arguments) shouldn't print an
+	  index out of range error.  Fix.
+	* Mono.Documentation/monodocer.cs: Rename -fno-member-assembly-info to
+	  -fno-assembly-versions, which prevents generation of //AssemblyVersion
+	  elements.  This suffers the same warning as -fno-member-assembly-info,
+	  so don't use unless you can guarantee that no members will 
+	  ever be removed from your public API. :-)
+	  Clean up -f handling so that -f:no-assembly-versions will work as
+	  expected.
+
+2009-01-05  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/monodocer.cs: Add -fno-member-assembly-info,
 	  which remove /Type/Members/Member/AssemblyInfo elements.
 	  Requested by Mike Kestner.

@@ -33,7 +33,7 @@ class MDocUpdaterOptions
 	public bool overrides = true;
 	public bool ignoremembers = false;
 	public bool ignore_extra_docs = false;
-	public bool no_member_assembly_info = false;
+	public bool no_assembly_versions = false;
 	public string name;
 	public string import;
 	public bool pretty = true;
@@ -51,7 +51,7 @@ class MDocUpdater : MDocCommand
 	static bool nooverrides = true, delete = false, ignoremembers = false;
 	static bool pretty = false;
 	static bool show_exceptions = false;
-	static bool no_member_assembly_info;
+	static bool no_assembly_versions;
 	static ExceptionLocations? exceptions;
 	
 	static int additions = 0, deletions = 0;
@@ -92,12 +92,20 @@ class MDocUpdater : MDocCommand
 				"If nothing is specified, then only exceptions from the member will " +
 				"be listed.",
 				v => opts.exceptions = ParseExceptionLocations (v) },
-			{ "fno-member-assembly-info",
-				"Do not generate /Type/Members/Member/AssemblyInfo elements.",
-				v => opts.no_member_assembly_info = v != null },
 			{ "f=",
-				"Specify a {FLAG} to alter behavior.",
-				v => {throw new Exception ("Unsupported flag `" + v + "'.");} },
+				"Specify a {FLAG} to alter behavior.  See later -f* options for available flags.",
+				v => {
+					switch (v) {
+						case "no-assembly-versions":
+							opts.no_assembly_versions = true;
+							break;
+						default:
+							throw new Exception ("Unsupported flag `" + v + "'.");
+					}
+				} },
+			{ "fno-assembly-versions",
+				"Do not generate //AssemblyVersion elements.",
+				v => opts.no_assembly_versions = v != null },
 			{ "i|import=", 
 				"Import documentation from {FILE}.",
 				v => opts.import = v },
@@ -149,7 +157,7 @@ class MDocUpdater : MDocCommand
 		since = opts.since;
 		show_exceptions = opts.show_exceptions;
 		exceptions = opts.exceptions;
-		no_member_assembly_info = opts.no_member_assembly_info;
+		no_assembly_versions = opts.no_assembly_versions;
 
 		// PARSE BASIC OPTIONS AND LOAD THE ASSEMBLY TO DOCUMENT
 		
@@ -1415,7 +1423,14 @@ class MDocUpdater : MDocCommand
 		
 		XmlElement ass = WriteElement(root, "AssemblyInfo");
 		WriteElementText(ass, "AssemblyName", type.Module.Assembly.Name.Name);
-		UpdateAssemblyVersions(root, type, true);
+		if (!no_assembly_versions) {
+			UpdateAssemblyVersions (root, type, true);
+		}
+		else {
+			var versions = ass.SelectNodes ("AssemblyVersion").Cast<XmlNode> ().ToList ();
+			foreach (var version in versions)
+				ass.RemoveChild (version);
+		}
 		if (!string.IsNullOrEmpty (type.Module.Assembly.Name.Culture))
 			WriteElementText(ass, "AssemblyCulture", type.Module.Assembly.Name.Culture);
 		else
@@ -1531,7 +1546,7 @@ class MDocUpdater : MDocCommand
 
 		WriteElementText(me, "MemberType", GetMemberType(mi));
 		
-		if (!no_member_assembly_info) {
+		if (!no_assembly_versions) {
 			UpdateAssemblyVersions (me, mi, true);
 		}
 		else {

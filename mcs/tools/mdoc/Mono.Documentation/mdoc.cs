@@ -60,7 +60,8 @@ namespace Mono.Documentation {
 				return;
 			}
 			if (extra.Count == 0) {
-				new MDocHelpCommand (this).Run (null);
+				Console.WriteLine ("Use `mdoc help' for usage.");
+				return;
 			}
 			if (showHelp) {
 				extra.Add ("--help");
