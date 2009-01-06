@@ -8,6 +8,7 @@ LIB_MCS_FLAGS = /r:System.dll \
 		/r:Mono.Messaging.dll \
 		/r:RabbitMQ.Client
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 \
+	/r:nunit.mocks.dll
 
 include ../../build/library.make

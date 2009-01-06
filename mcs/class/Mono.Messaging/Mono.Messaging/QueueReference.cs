@@ -41,6 +41,7 @@ namespace Mono.Messaging
 		private readonly string queue;
 		public static readonly string LOCALHOST = ".";
 		public static readonly QueueReference DEFAULT = new QueueReference (LOCALHOST, null, false);
+		private static readonly string PRIVATE_STR = "private$";
 
 		public QueueReference (string host, string queue, bool isPrivate)
 		{
@@ -61,7 +62,7 @@ namespace Mono.Messaging
 		public string Queue {
 			get { 
 				if (isPrivate)
-					return @"private$\" + queue;
+					return PRIVATE_STR + @"\" + queue;
 				else
 					return queue;
 			}
@@ -124,7 +125,7 @@ namespace Mono.Messaging
 		
 		public static bool IsPrivateStr (string s)
 		{
-			return "private$" == s.ToLower ();
+			return PRIVATE_STR == s.ToLower ();
 		}
 		
 		public static string RemoveLeadingSlashes (string s)
@@ -138,7 +139,7 @@ namespace Mono.Messaging
 		public override string ToString ()
 		{
 			if (IsPrivate) {
-				return Host + "\\$private\\" + Queue;
+				return Host + "\\" + PRIVATE_STR + "\\" + queue;
 			} else {
 				return Host + "\\" + Queue;
 			}

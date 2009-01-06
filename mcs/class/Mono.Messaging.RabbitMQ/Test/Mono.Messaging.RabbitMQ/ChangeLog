@@ -1,3 +1,8 @@
+2009-01-05  Michael Barker  <mike@middlesoft.co.uk>
+
+	* BinaryMessageFormatter.cs, XMLMessageFormatterTest.cs, TestUtils.cs, 
+	MessageTest.cs:  Moved in from System.Messaging namespace.
+
 2009-01-03  Michael Barker  <mike@middlesoft.co.uk>
 
 	* AsyncPeekTest.cs:  Added test for handling exceptions aysnchronously.

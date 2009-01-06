@@ -1,3 +1,9 @@
+2009-01-05  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Makefile: Added nunit.mocks to test build
+	* Mono.Messaging.RabbitMQ_test.dll.sources:  Added additional formatter
+	tests.
+
 2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
 
 	* AssemblyInfo.cs: New

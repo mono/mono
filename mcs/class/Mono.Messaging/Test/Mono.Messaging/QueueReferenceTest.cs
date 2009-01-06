@@ -55,10 +55,10 @@ namespace MonoTests.Mono.Messsaging
 			Assert.AreEqual (3, s.Length, "Fail");
 			Assert.AreEqual (".", s[0], "Fail");
 		
-			QueueReference qr0 = QueueReference.Parse (@"\\host\$private\myqueue");
+			QueueReference qr0 = QueueReference.Parse (@"\\host\private$\myqueue");
 			Assert.AreEqual ("host", qr0.Host);
 			Assert.AreEqual (true, qr0.IsPrivate);
-			Assert.AreEqual ("myqueue", qr0.Queue);
+			Assert.AreEqual (@"private$\myqueue", qr0.Queue);
 			
 			QueueReference qr1 = QueueReference.Parse (@"\\host\myqueue");
 			Assert.AreEqual ("host", qr1.Host);
@@ -66,7 +66,7 @@ namespace MonoTests.Mono.Messsaging
 			Assert.AreEqual ("myqueue", qr1.Queue);
 			
 			QueueReference qr2 = QueueReference.Parse ("myqueue");
-			Assert.AreEqual (QueueReference.LOCALHOST, qr2.Host);
+			Assert.AreEqual ("localhost", qr2.Host);
 			Assert.AreEqual (false, qr2.IsPrivate);
 			Assert.AreEqual ("myqueue", qr2.Queue);			
 		}

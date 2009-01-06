@@ -52,8 +52,8 @@ namespace MonoTests.Mono.Messaging {
 					"AdministrationQueue default should be null");
 			Assert.AreEqual (0, m.AppSpecific, "AppSpecific default should be 0");
 			Assert.AreEqual (true, m.AttachSenderId, "AttachSenderId default should be true");
-			Assert.AreEqual ("", m.AuthenticationProviderName, 
-					"AuthenticationProviderName should default to \"\"");
+			Assert.AreEqual ("Microsoft Base Cryptographic Provider, Ver. 1.0", m.AuthenticationProviderName, 
+					"AuthenticationProviderName should default to \"Microsoft Base Cryptographic Provider, Ver. 1.0\"");
 			Assert.AreEqual (System.Messaging.CryptographicProviderType.RsaFull, 
 					m.AuthenticationProviderType, 
 					"AuthenticationProviderType should default to RsaFull");
@@ -71,7 +71,7 @@ namespace MonoTests.Mono.Messaging {
 					"Extension should default to an empty array");
 			Assert.AreEqual (System.Messaging.HashAlgorithm.Sha, m.HashAlgorithm, 
 					"HashAlgorithm should default to Sha");
-			Assert.AreEqual (Guid.Empty.ToString (), m.Id, "Id should default to Guid.Empty");
+			Assert.AreEqual (Guid.Empty.ToString () + "\\0", m.Id, "Id should default to Guid.Empty");
 			Assert.AreEqual ("", m.Label, "Label should default to \"\"");
 			Assert.AreEqual (false, m.IsFirstInTransaction, "IsFirstInTransaction should default to false");
 			Assert.AreEqual (false, m.IsLastInTransaction, "IsLastInTransaction should default to false");
