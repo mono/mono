@@ -1,5 +1,9 @@
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
+	* ProjectTest.cs (TestInitialTargets): New.
+
+2009-01-06  Ankit Jain  <jankit@novell.com>
+
 	* EngineTest.cs: Update tests for null targetNames argument to
 	project.Build
 

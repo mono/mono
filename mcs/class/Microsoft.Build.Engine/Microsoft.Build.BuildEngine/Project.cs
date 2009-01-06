@@ -58,7 +58,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool				isValidated;
 		BuildItemGroupCollection	itemGroups;
 		ImportCollection		imports;
-		string				initialTargets;
+		string[]			initialTargets;
 		Dictionary <string, BuildItemGroup> last_item_group_containing;
 		bool				needToReevaluate;
 		Engine				parentEngine;
@@ -70,6 +70,7 @@ namespace Microsoft.Build.BuildEngine {
 		UsingTaskCollection		usingTasks;
 		XmlDocument			xmlDocument;
 		bool				unloaded;
+		bool				initialTargetsBuilt;
 
 		static XmlNamespaceManager	manager;
 		static string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
@@ -264,24 +265,38 @@ namespace Microsoft.Build.BuildEngine {
 					return false;
 			}
 
-			if (targetNames == null || targetNames.Length == 0)
-				return false;
-			
-			foreach (string target in targetNames) {
-				if (target == null)
-					throw new ArgumentException ("targetNames cannot contain null strings");
-
-				if (!targets.Exists (target))
-					// FIXME: test if it's logged
-					return false;
-				
-				if (!targets [target].Build ())
-					return false;
-
-				if (targetOutputs != null)
-					targetOutputs.Add (target, targets [target].Outputs);
+			if (!initialTargetsBuilt && initialTargets != null && initialTargets.Length > 0) {
+				foreach (string target in initialTargets) {
+					if (!BuildTarget (target.Trim (), targetOutputs))
+						return false;
+				}
+				initialTargetsBuilt = true;
 			}
+
+			foreach (string target in targetNames)
+				if (!BuildTarget (target.Trim (), targetOutputs))
+					return false;
 				
+			return true;
+		}
+
+		bool BuildTarget (string target, IDictionary targetOutputs)
+		{
+			if (target == null)
+				throw new ArgumentException ("targetNames cannot contain null strings");
+
+			if (!targets.Exists (target)) {
+				//FIXME: Log this!
+				Console.WriteLine ("Target named '{0}' not found in the project.", target);
+				return false;
+			}
+
+			if (!targets [target].Build ())
+				return false;
+
+			if (targetOutputs != null)
+				targetOutputs.Add (target, targets [target].Outputs);
+
 			return true;
 		}
 
@@ -678,12 +693,29 @@ namespace Microsoft.Build.BuildEngine {
 			else
 				defaultTargets = new string [0];
 			
+			ProcessProjectAttributes (xmlDocument.DocumentElement.Attributes);
 			ProcessElements (xmlDocument.DocumentElement, null);
 			
 			isDirty = false;
 			Evaluate ();
 		}
-		
+
+		void ProcessProjectAttributes (XmlAttributeCollection attributes)
+		{
+			foreach (XmlAttribute attr in attributes) {
+				switch (attr.Name) {
+				case "InitialTargets":
+					initialTargets = attr.Value.Split (new char [] {';'},
+							StringSplitOptions.RemoveEmptyEntries);
+					break;
+				case "DefaultTargets":
+					defaultTargets = attr.Value.Split (new char [] {';'},
+							StringSplitOptions.RemoveEmptyEntries);
+					break;
+				}
+			}
+		}
+
 		internal void ProcessElements (XmlElement rootElement, ImportedProject ip)
 		{
 			foreach (XmlNode xn in rootElement.ChildNodes) {
@@ -842,7 +874,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			set {
 				xmlDocument.DocumentElement.SetAttribute ("DefaultTargets", value);
-				defaultTargets = value.Split (';');
+				defaultTargets = value.Split (new char [] {';'}, StringSplitOptions.RemoveEmptyEntries);
 			}
 		}
 
@@ -1010,8 +1042,13 @@ namespace Microsoft.Build.BuildEngine {
 		}
 		
 		public string InitialTargets {
-			get { return initialTargets; }
-			set { initialTargets = value; }
+			get {
+				return xmlDocument.DocumentElement.GetAttribute ("InitialTargets");
+			}
+			set {
+				xmlDocument.DocumentElement.SetAttribute ("InitialTargets", value);
+				initialTargets = value.Split (new char [] {';'}, StringSplitOptions.RemoveEmptyEntries);
+			}
 		}
 
 		public Engine ParentEngine {

@@ -26,3 +26,4 @@ various/EvaluationOrder.cs
 various/Items.cs
 various/ProjectElement.cs
 various/Properties.cs
+../../Microsoft.Build.Tasks/Test/Microsoft.Build.Tasks/TestMessageLogger.cs

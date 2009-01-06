@@ -1444,6 +1444,37 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (0, include.Count, "A2");
 		}
 
+		[Test]
+		public void TestInitialTargets ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			project.LoadXml (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" InitialTargets=""pre  "">
+				<Target Name=""boo"">
+					<Message Text=""Executing boo target""/>
+				</Target>
+				<Target Name=""pre"">
+					<Message Text=""Executing pre target""/>
+				</Target>
+			</Project>");
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			try {
+				Assert.IsTrue (project.Build (), "Build failed");
+
+				Assert.AreEqual (0, logger.CheckHead ("Executing pre target", MessageImportance.Normal), "A1");
+				Assert.AreEqual (0, logger.CheckHead ("Executing boo target", MessageImportance.Normal), "A2");
+				Assert.AreEqual (0, logger.Count, "A3");
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
 		static void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)
 		{
 			Assert.AreEqual (name, item.Name, prefix + "#1");
