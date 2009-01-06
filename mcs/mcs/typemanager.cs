@@ -642,13 +642,13 @@ namespace Mono.CSharp {
 				return name;
 			}
 
+			if (name [0] == AnonymousTypeClass.ClassNamePrefix [0] && name.StartsWith (AnonymousTypeClass.ClassNamePrefix))
+				return AnonymousTypeClass.SignatureForError;
+
 			int idx = name.IndexOfAny (elements, 10);
 			if (idx > 0)
 				return CSharpName (name.Substring (0, idx), type) + name.Substring (idx);
 		}
-
-		if (name [0] == AnonymousTypeClass.ClassNamePrefix [0] && name.StartsWith (AnonymousTypeClass.ClassNamePrefix))
-			return AnonymousTypeClass.SignatureForError;
 
 		return name.Replace ('+', '.');
 	}
