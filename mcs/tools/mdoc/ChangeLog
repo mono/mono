@@ -1,5 +1,10 @@
 2009-01-05  Jonathan Pryor <jpryor@novell.com>
 
+	* Makefile: Fix $(PROGRAM) dependencies so that mdoc.exe is rebuilt
+	  when one of the dependent ../monodoc/Resources/* files is changed.
+
+2009-01-05  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/mdoc.cs: `mdoc' (no arguments) shouldn't print an
 	  index out of range error.  Fix.
 	* Mono.Documentation/monodocer.cs: Rename -fno-member-assembly-info to

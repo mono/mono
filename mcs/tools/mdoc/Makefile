@@ -13,6 +13,11 @@ LOCAL_MCS_FLAGS = \
 	/r:$(topdir)/class/lib/net_1_1/monodoc.dll                                  \
 	/r:$(topdir)/class/lib/net_1_1/Mono.Cecil.dll
 
+MONODOC_RESOURCES = \
+	../monodoc/Resources/mdoc-html-utils.xsl    \
+	../monodoc/Resources/mdoc-sections-css.xsl  \
+	../monodoc/Resources/mono-ecma-css.xsl
+
 MDOC_RESOURCES = \
 	Resources/defaulttemplate.xsl     \
 	Resources/monodoc-ecma.xsd        \
@@ -34,7 +39,7 @@ EXTRA_DISTFILES = \
 
 PROGRAM = mdoc.exe
 
-$(PROGRAM) : $(MDOC_RESOURCES) $(topdir)/class/lib/net_1_1/monodoc.dll
+$(PROGRAM) : $(MDOC_RESOURCES) $(MONODOC_RESOURCES) $(topdir)/class/lib/net_1_1/monodoc.dll
 
 include ../../build/executable.make
 
