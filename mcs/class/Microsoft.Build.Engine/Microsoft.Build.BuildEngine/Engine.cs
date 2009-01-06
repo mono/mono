@@ -291,7 +291,7 @@ namespace Microsoft.Build.BuildEngine {
 		void LogProjectStarted (Project project, string [] targetNames)
 		{
 			ProjectStartedEventArgs psea;
-			if (targetNames.Length == 0) {
+			if (targetNames == null || targetNames.Length == 0) {
 				if (project.DefaultTargets != String.Empty)
 					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName,
 						project.DefaultTargets, null, null);
