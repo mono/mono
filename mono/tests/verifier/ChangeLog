@@ -1,3 +1,7 @@
+2009-01-06 Rodrigo Kumpera <rkumpera@novell.com>
+
+	* valid_ceq_with_boxed_vt.il: Regression test for #461200.
+
 2008-12-01 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* unverifiable_boxed_type_not_compatible_with_string.il:
