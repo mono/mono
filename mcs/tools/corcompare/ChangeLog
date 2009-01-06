@@ -1,5 +1,13 @@
 2009-01-06  Jb Evain  <jbevain@novell.com>
 
+	* transform.cs
+	* cormissing.xsl
+	* mono-api.xsl
+	* mono-api-diff.cs:
+		remove deprecated code.
+
+2009-01-06  Jb Evain  <jbevain@novell.com>
+
 	* Makefile: only build mono-api-info, as mono-api-diff and transform
 	are not used anymore.
 
