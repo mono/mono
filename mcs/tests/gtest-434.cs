@@ -20,9 +20,8 @@ namespace testcase
 			if (m.Attributes != (MethodAttributes.PrivateScope | MethodAttributes.Virtual | MethodAttributes.HideBySig | MethodAttributes.VtableLayoutMask | MethodAttributes.CheckAccessOnOverride))
 				return 1;
 
-			// FIXME: SRE bug
-			//IInitializationExpression expression = new Init ();
-			//expression.AddRegistry<string> (11);
+			IInitializationExpression expression = new Init ();
+			expression.AddRegistry<string> (11);
 			return 0;
 		}
 	}
