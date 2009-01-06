@@ -1,5 +1,12 @@
 2009-01-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (stack_slot_is_complex_type_not_reference_type): Check if the type
+	is a boxed complex as well.
+
+	Fixes part of #463294.
+
+2009-01-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_image_get_methodref_token): Add an extra create_typespec parameter to
 	control if a methodspec should be created for the generic method definition from external assemblies.
 	Caching of methodspec is done using the handleref hash table.
