@@ -1,3 +1,8 @@
+2009-01-05  Michael Barker  <mike@middlesoft.co.uk>
+
+	* BinaryMessageFormatter.cs, XMLMessageFormatterTest.cs, TestUtils.cs, 
+	MessageTest.cs:  Moved to Mono.Messaging.RabbitMQ namespace.
+
 2008-09-29  Michael Barker <mike@middlesoft.co.uk>
 
 	* BinaryMessageFormatter.cs: New

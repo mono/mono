@@ -1,5 +1,1 @@
-System.Messaging/BinaryMessageFormatterTest.cs
 System.Messaging/MessageQueuePermissionAttributeTest.cs
-System.Messaging/MessageTest.cs
-System.Messaging/TestUtils.cs
-System.Messaging/XmlMessageFormatterTest.cs

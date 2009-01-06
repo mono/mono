@@ -107,7 +107,7 @@ namespace System.Messaging
 				stream = new MemoryStream ();
 				message.BodyStream = stream;
 			}
-			
+
 			message.BodyType = 768;
 			_formatter.Serialize (stream, obj);
 		}
