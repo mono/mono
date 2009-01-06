@@ -114,10 +114,40 @@ namespace System.Windows.Forms {
 			radiobutton_alignment = ContentAlignment.MiddleLeft;
 			TextAlign = ContentAlignment.MiddleLeft;
 			TabStop = false;
+
+			GotFocus += new EventHandler (GotFocusHandler);
 		}
 		#endregion	// Public Constructors
 
 		#region Private Methods
+
+		// if we get focus, and no RadioButton in the parent control is
+		// checked, mark Checked as true for us
+		private void GotFocusHandler (object o, EventArgs args)
+		{
+			// if we are already checked, no need to check the other controls
+			if (!auto_check || Checked)
+				return;
+
+			bool is_any_selected = false;
+			Control c = Parent;
+			if (c != null) {
+				for (int i = 0; i < c.Controls.Count; i++) {
+					RadioButton rb = c.Controls [i] as RadioButton;
+					if (rb == null || !rb.auto_check)
+						continue;
+
+					if (rb.check_state == CheckState.Checked) {
+						is_any_selected = true;
+						break;
+					}
+				}
+			}
+
+			if (!is_any_selected)
+				Checked = true;
+		}
+
 		private void UpdateSiblings() {
 			Control	c;
 
@@ -245,6 +275,7 @@ namespace System.Windows.Forms {
 					Invalidate();
 					OnCheckedChanged(EventArgs.Empty);
 				} else if (!value && (check_state != CheckState.Unchecked)) {
+					TabStop = false;
 					check_state = CheckState.Unchecked;
 					Invalidate();
 					OnCheckedChanged(EventArgs.Empty);

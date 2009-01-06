@@ -1,3 +1,10 @@
+2009-01-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RadioButton.cs: Setting Checked to false should set TabStop to stop
+	as well. Also, when we get the focus and no other RadioButton is
+	selected in the parent control, we should mark ourselves as Checked.
+	Fixes part of #463028.
+
 2009-01-05  Mario Carrion <mcarrion@novell.com>
 
 	* DataGrid.cs: UIA suppport. internal events: 
