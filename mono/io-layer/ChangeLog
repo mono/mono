@@ -1,3 +1,8 @@
+2009-01-07  Geoff Norton  <gnorton@novell.com>
+
+	* processes.c: Properly implement support for Process.Modules on OSX.
+	Fixes OSX on nunit 2.4
+
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* io.c (GetCurrentDirectory): Avoid calling g_get_current_dir straight
