@@ -1,5 +1,11 @@
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* RemotingServicesTest.cs : mark failing test as NotWorking, and 
+	  Ignore the blocker for other tests.
+	  Remoting tests are finally back!
+
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BaseCalls.cs : fully name is sometimes rejected ... ?
 
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>

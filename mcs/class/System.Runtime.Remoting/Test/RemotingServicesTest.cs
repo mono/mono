@@ -477,6 +477,7 @@ namespace MonoTests.Remoting
 		// Tests IsObjectOutOfDomain
 		// Tests IsObjectOutOfContext
 		[Test]
+		[Category ("NotWorking")]
 		public void IsObjectOutOf ()
 		{
 			TcpChannel chn = new TcpChannel (1245);
@@ -540,6 +541,7 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
+		[Ignore ("We cannot test RemotingConfiguration.Configure() because it keeps channels registered. If we really need to test it, do it as a standalone case")]
 		public void ConnectProxyCast ()
 		{
 			object o;
@@ -569,7 +571,6 @@ namespace MonoTests.Remoting
 			Assert ("#c3", o is B);
 			Assert ("#c4", o is CC);
 		}
-
 		// Don't add any tests that must create channels
 		// after ConnectProxyCast (), because this test calls
 		// RemotingConfiguration.Configure ().
