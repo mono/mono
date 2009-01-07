@@ -1,3 +1,10 @@
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* file-io.c (ves_icall_System_IO_MonoIO_GetCurrentDirectory): Properly check the
+	return value of GetCurrentDirectory and expand the buffer if needed.
+
+	Fixes #459094.
+
 2009-10-07 Tom Hindle  <tom_hindle@sil.org>
 
 	* marshal.c (GetIUnknownForObjectInternal, GetIUnknownForObjectInternal) : 
