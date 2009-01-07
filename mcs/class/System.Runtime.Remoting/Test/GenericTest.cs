@@ -159,7 +159,7 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
-		[Category ("NotWorking")] // disabled as it got not working by NUnit upgrade to 2.4.8
+		[Ignore ("disabled as it got not working by NUnit upgrade to 2.4.8 (applies to .NET too)")]
 		public void TestTcpChannel ()
 		{
 			RunTests (GetRemObjectTcp <Server<object>> ());

@@ -1,5 +1,10 @@
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* GenericTest.cs : change from NotWorking to Ignore which also fails
+	  and blocks further tests under .NET.
+
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpBugTests.cs : mark some tests as [Ignore] as they are blocker
 	  to other http tests. Make sure to unregister HTTP channel.
 
