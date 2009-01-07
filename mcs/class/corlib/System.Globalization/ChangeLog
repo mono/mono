@@ -1,3 +1,8 @@
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfo.cs : Fixed bug #462957. With empty target string it
+	  should always return 0.
+
 2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfo.cs : applied patch by Robert Jordan,

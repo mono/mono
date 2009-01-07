@@ -635,6 +635,9 @@ namespace System.Globalization
 			if(count<0 || (source.Length - startIndex) < count) {
 				throw new ArgumentOutOfRangeException ("count");
 			}
+			if(value.Length==0) {
+				return(0);
+			}
 			if(count==0) {
 				return(-1);
 			}

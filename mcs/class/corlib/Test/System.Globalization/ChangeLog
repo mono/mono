@@ -1,3 +1,7 @@
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : added test for #462957.
+
 2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfoTest.cs : added test for bug #402128.

@@ -1003,6 +1003,7 @@ public class CompareInfoTest : Assertion
 		if (!doTest)
 			return;
 
+		AssertIndexOf ("#0", 0, "", "", CompareOptions.None);
 		AssertIndexOf ("#1", -1, "ABC", "1", CompareOptions.None);
 		AssertIndexOf ("#2", 2, "ABCABC", "c", CompareOptions.IgnoreCase);
 		AssertIndexOf ("#3", 1, "ABCABC", "\uFF22", CompareOptions.IgnoreCase | CompareOptions.IgnoreWidth);
