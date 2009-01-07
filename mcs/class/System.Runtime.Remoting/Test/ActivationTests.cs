@@ -37,7 +37,7 @@ namespace MonoTests.Remoting
 				ChannelServices.RegisterChannel (tcp);
 				ChannelServices.RegisterChannel (http);
 			
-				AppDomain domain = AppDomain.CreateDomain ("testdomain_activation");
+				AppDomain domain = BaseCallTest.CreateDomain ("testdomain_activation");
 				server = (ActivationServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.ActivationServer");
 				
 				RemotingConfiguration.RegisterActivatedClientType (typeof(CaObject1), "tcp://localhost:9433");

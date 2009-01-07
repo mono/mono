@@ -45,7 +45,7 @@ namespace MonoTests.Remoting
 		
 		protected override int CreateServer ()
 		{
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = BaseCallTest.CreateDomain ("testdomain");
 			server = (CrossDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.CrossDomainServer");
 			return server.GetDomId ();
 		}
@@ -73,7 +73,7 @@ namespace MonoTests.Remoting
 		
 		protected override int CreateServer ()
 		{
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = BaseCallTest.CreateDomain ("testdomain");
 			server = (CrossDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.CrossDomainServer");
 			return server.GetDomId ();
 		}
@@ -101,7 +101,7 @@ namespace MonoTests.Remoting
 		
 		protected override int CreateServer ()
 		{
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = BaseCallTest.CreateDomain ("testdomain");
 			server = (CrossDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.CrossDomainServer");
 			return server.GetDomId ();
 		}
@@ -129,7 +129,7 @@ namespace MonoTests.Remoting
 		
 		protected override int CreateServer ()
 		{
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = BaseCallTest.CreateDomain ("testdomain");
 			server = (CrossDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.CrossDomainServer");
 			return server.GetDomId ();
 		}

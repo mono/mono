@@ -106,7 +106,7 @@ namespace MonoTests.Remoting.Http
 		[TestFixtureSetUp]
 		public void Start ()
 		{
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = BaseCallTest.CreateDomain ("testdomain");
 			server = (Server) domain.CreateInstanceAndUnwrap
 				(typeof (Server).Assembly.FullName, typeof (Server).FullName);
 			server.Start ();
@@ -178,7 +178,7 @@ namespace MonoTests.Remoting.Http
 		[TestFixtureSetUp]
 		public void Start ()
 		{
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = BaseCallTest.CreateDomain ("testdomain");
 			server = (Server) domain.CreateInstanceAndUnwrap
 				(typeof (Server).Assembly.FullName, typeof (Server).FullName);
 			server.Start ();

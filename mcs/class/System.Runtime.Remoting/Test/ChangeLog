@@ -1,3 +1,12 @@
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GenericTest.cs, HttpServerChannelTests.cs, ActivationTests.cs,
+	  BaseCalls.cs, CrossDomainCalls.cs, HttpBugTests.cs,
+	  ContextsTest.cs : explicitly set applicationBasePath to load
+	  the test assembly itself. It reduces hundreds of test failures
+	  under .NET and upgraded NUnit.
+	  Marked some tests as NotWorking (due to nunit upgrade).
+
 2008-09-24  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* HttpServerChannelTests.cs: Don't check for a chunked response from 

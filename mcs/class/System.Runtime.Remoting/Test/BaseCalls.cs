@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -43,13 +44,19 @@ namespace MonoTests.Remoting
 			ShutdownServer ();
 		}
 
+		public static AppDomain CreateDomain (string friendlyName)
+		{
+			// return AppDomain.CreateDomain (friendlyName);
+			return AppDomain.CreateDomain (friendlyName, null, System.IO.Directory.GetCurrentDirectory (), ".", false);
+		}
+
 		protected virtual int CreateServer ()
 		{
 			ChannelManager cm = CreateChannelManager ();
 			chs = cm.CreateClientChannel ();
 			ChannelServices.RegisterChannel (chs);
 
-			AppDomain domain = AppDomain.CreateDomain ("testdomain");
+			AppDomain domain = BaseCallTest.CreateDomain ("testdomain");
 			server = (CallsDomainServer) domain.CreateInstanceAndUnwrap(GetType().Assembly.FullName,"MonoTests.Remoting.CallsDomainServer");
 			remoteUris = server.Start (cm);
 			return server.GetDomId ();
