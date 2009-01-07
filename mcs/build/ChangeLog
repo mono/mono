@@ -1,3 +1,10 @@
+2009-01-07  Geoff Norton  <gnorton@novell.com>
+
+	* library.make: Allow platform specific exclude tags from the
+	test harness suite.
+	* darwin.make: Add to the build and add a new NotOnMac test
+	category
+
 2008-12-30  Ankit Jain  <jankit@novell.com>
 
 	* library.make (TEST_HARNESS_OUTPUT*): Fix /labels switch.
