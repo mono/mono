@@ -1,3 +1,9 @@
+
+2009-01-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TcpClient.cs: use IPv6Any when the family is IPv6.
+	Bug #462688 fixed.
+
 2008-12-30  Bill Holmes  <billholmes54@gmail.com>
 
 	* Socket.cs (Accept_internal) :  Changing the signature to pass 

@@ -84,7 +84,10 @@ namespace System.Net.Sockets
 			}
 			
 			Init (family);
-			client.Bind (new IPEndPoint (IPAddress.Any, 0));
+			IPAddress any = IPAddress.Any;
+			if (family == AddressFamily.InterNetworkV6)
+				any = IPAddress.IPv6Any;
+			client.Bind (new IPEndPoint (any, 0));
 		}
 #endif
 		
