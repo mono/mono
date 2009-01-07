@@ -3380,7 +3380,6 @@ namespace System.Windows.Forms
 
 		internal void OnUIAGridCellChanged (CollectionChangeEventArgs args)
 		{
-			Console.WriteLine ("OnUIAGridCellChanged: {0}", GetType ());
 			CollectionChangeEventHandler eh
 				= (CollectionChangeEventHandler) Events [UIAGridCellChangedEvent];
 			if (eh != null)
