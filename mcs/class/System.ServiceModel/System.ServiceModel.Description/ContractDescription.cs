@@ -121,6 +121,7 @@ namespace System.ServiceModel.Description
 
 		public string Name {
 			get { return name; }
+			set { name = value; }
 		}
 
 		public string Namespace {

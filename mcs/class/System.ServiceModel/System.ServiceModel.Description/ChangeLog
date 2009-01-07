@@ -1,3 +1,7 @@
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescription.cs : fix by corcompare.
+
 2008-05-28  Noam Lampert <noaml@mainsoft.com>
 	* ContractDescriptionGenerator.cs: Allow services to implement more than one contract.
 	  
