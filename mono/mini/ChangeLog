@@ -1,3 +1,10 @@
+2009-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of 122702.
+	
+	* mini-arm.c (mono_arch_flush_icache): Use __GNUC_PREREQ instead of checking
+	__GNUC_MINOR__ which can break when the major version changes.
+
 2009-01-05  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r122452.
