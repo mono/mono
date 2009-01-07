@@ -1,3 +1,8 @@
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientUtilities/util/Services/DomainManager.cs :
+	  quick workaround to fix test runner on OSX, by Geoff Norton.
+
 2005-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* App.config, nunit-console.exe.config,

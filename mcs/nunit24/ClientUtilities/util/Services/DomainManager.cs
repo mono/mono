@@ -101,6 +101,7 @@ namespace NUnit.Util
 			assemblyResolver.AddFile( typeof( NUnit.Core.RemoteTestRunner ).Assembly.Location );
 			assemblyResolver.AddFile( typeof( NUnit.Core.ITest ).Assembly.Location );
 
+if ((int) Environment.OSVersion.Platform != 6) { // Mono workaround for nunit on OSX breakage.
 // No reference to extensions, so we do it a different way
             string moduleName = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
             string nunitDirPath = Path.GetDirectoryName(moduleName);
@@ -110,6 +111,7 @@ namespace NUnit.Util
 
             string addinsDirPath = Path.Combine(nunitDirPath, "addins");
             assemblyResolver.AddDirectory( addinsDirPath );
+}
 
 			// HACK: Only pass down our AddinRegistry one level so that tests of NUnit
 			// itself start without any addins defined.
