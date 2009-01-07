@@ -1,3 +1,13 @@
+2009-01-07  Bill Holmes  <billholmes54@gmail.com>
+
+	* mini-amd64.c : Adding code to save/restore non-volatile registers
+	   on Winx64.
+
+	* exceptions-amd64.c : Adding code to save/restore non-volatile 
+	  registers on Winx64.
+
+	Contributed under MIT/X11 license.
+
 2009-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_flush_icache): Use __GNUC_PREREQ instead of checking
