@@ -86,12 +86,16 @@ namespace Mono.Simd
 		Replace Shuffle with less bug prone methods
 */
 
-	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
 	public struct Vector4f
 	{
+		[ FieldOffset(0) ]
 		internal float x;
+		[ FieldOffset(4) ]
 		internal float y;
+		[ FieldOffset(8) ]
 		internal float z;
+		[ FieldOffset(12) ]
 		internal float w;
 
 		public float X { get { return x; } set { x = value; } }

@@ -1,3 +1,8 @@
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector*.cs: Use explicit layout to avoid the runtime
+	miscalculating the size of vector types.
+
 2008-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* VectorOperations.cs: Move methods from Vector16b.

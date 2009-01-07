@@ -31,10 +31,12 @@ using System.Runtime.InteropServices;
 namespace Mono.Simd
 {
 
-	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
 	public struct Vector2d
 	{
+		[ FieldOffset(0) ]
 		internal double x;
+		[ FieldOffset(8) ]
 		internal double y;
 
 		public double X { get { return x; } set { x = value; } }
