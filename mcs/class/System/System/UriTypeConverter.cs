@@ -29,7 +29,9 @@
 #if NET_2_0
 
 using System.ComponentModel;
+#if !NET_2_1
 using System.ComponentModel.Design.Serialization;
+#endif
 using System.Globalization;
 using System.Reflection;
 
@@ -48,7 +50,11 @@ namespace System {
 				return true;
 			if (type == typeof (Uri))
 				return true;
+#if NET_2_1
+			return false;
+#else
 			return (type == typeof (InstanceDescriptor));
+#endif
 		}
 
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
@@ -81,12 +87,12 @@ namespace System {
 			string s = (value as string);
 			if (s != null)
 				return new Uri (s, UriKind.RelativeOrAbsolute);
-
+#if !NET_2_1
 			InstanceDescriptor id = (value as InstanceDescriptor);
 			if (id != null) {
 				return id.Invoke ();
 			}
-
+#endif
 			return base.ConvertFrom (context, culture, value);
 		}
 
@@ -101,15 +107,18 @@ namespace System {
 					return uri.ToString ();
 				if (destinationType == typeof (Uri))
 					return uri;
+#if !NET_2_1
 				if (destinationType == typeof (InstanceDescriptor)) {
 					ConstructorInfo ci = typeof (Uri).GetConstructor (new Type [2] { typeof (string), typeof (UriKind) });
 					return new InstanceDescriptor (ci , new object [] { uri.ToString (), uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative });
 				}
+#endif
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
 
+#if !NET_2_1
 		public override bool IsValid (ITypeDescriptorContext context, object value)
 		{
 			if (value == null)
@@ -119,6 +128,7 @@ namespace System {
 			// from it. However all strings seems to be accepted (see unit tests)
 			return ((value is string) || (value is Uri));
 		}
+#endif
 	}
 }
 

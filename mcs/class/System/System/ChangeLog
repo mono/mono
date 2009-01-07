@@ -1,3 +1,8 @@
+2009-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UriTypeConverter.cs: Customize for NET_2_1 since this type is 
+	not part of System.Windows.dll anymore
+
 2008-12-20  Miguel de Icaza  <miguel@novell.com>
 
 	* GenericUriParserOptions.cs: Idn and IriParsing are now part of
