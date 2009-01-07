@@ -1,3 +1,7 @@
+2009-01-07  Geoff Norton  <gnorton@novell.com>
+
+	* helpers.c:  Allow mono -v -v -v to work on darwin.
+
 2009-01-05  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c (mono_arch_get_vcall_slot) : Handle an additional instruction
