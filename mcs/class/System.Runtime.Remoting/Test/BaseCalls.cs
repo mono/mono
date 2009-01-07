@@ -47,7 +47,7 @@ namespace MonoTests.Remoting
 		public static AppDomain CreateDomain (string friendlyName)
 		{
 			// return AppDomain.CreateDomain (friendlyName);
-			return AppDomain.CreateDomain (friendlyName, null, System.IO.Directory.GetCurrentDirectory (), ".", false);
+			return AppDomain.CreateDomain (friendlyName, null, Directory.GetCurrentDirectory (), ".", false);
 		}
 
 		protected virtual int CreateServer ()

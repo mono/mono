@@ -1,5 +1,9 @@
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BaseCalls.cs : fully name is sometimes rejected ... ?
+
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* GenericTest.cs : change from NotWorking to Ignore which also fails
 	  and blocks further tests under .NET.
 
