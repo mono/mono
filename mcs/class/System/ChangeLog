@@ -1,3 +1,8 @@
+2009-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.dll.sources: Add System/UriTypeConverter.cs to
+	NET_2_1 build.
+
 2009-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* Makefile: Respect platform specific test harness exclusions.
