@@ -347,7 +347,7 @@ namespace System.Reflection.Emit
 #endif
 					throw new InvalidOperationException (
 									     String.Format ("Method '{0}.{1}' does not have a method body.",
-											    DeclaringType.Name, Name));
+											    DeclaringType.FullName, Name));
 			}
 			if (ilgen != null)
 				ilgen.label_fixup ();
