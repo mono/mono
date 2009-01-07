@@ -32,6 +32,7 @@
 
 using System;
 using System.Configuration;
+using System.Reflection;
 using System.Web.Security;
 
 namespace System.Web.Configuration
@@ -76,7 +77,9 @@ namespace System.Web.Configuration
 					/* XXX should we throw here? */
 					continue;
 				}
-				IHttpModule module = (IHttpModule) Activator.CreateInstance (type);
+				IHttpModule module = (IHttpModule) Activator.CreateInstance (type,
+											     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+											     null, null, null);
 				module.Init (app);
 				coll.AddModule (item.Name, module);
 			}

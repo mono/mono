@@ -269,7 +269,9 @@ namespace System.Web.Configuration
 				if (type == null)
 					type = LoadType (Type);
 
-				instance = Activator.CreateInstance (type);
+				instance = Activator.CreateInstance (type,
+								     BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+								     null, null, null);
 			} 
 			
 			return instance;

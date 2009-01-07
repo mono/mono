@@ -1,3 +1,11 @@
+2009-01-07  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpModulesSection.cs: allow for modules with non-public
+	constructors. Fises bug #463971
+
+	* HttpHandlerAction.cs: allow for handlers with non-public
+	constructors. Fixes bug #463971
+
 2008-12-24  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: A better version of the previous
