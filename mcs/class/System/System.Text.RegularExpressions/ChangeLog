@@ -1,3 +1,7 @@
+2009-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* RxInterpreter.cs: Add support for constant strings in anchors. Fixes
+	#464135.
 
 2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
