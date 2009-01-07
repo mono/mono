@@ -1,5 +1,10 @@
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* file-io.c (ves_icall_System_IO_MonoIO_GetCurrentDirectory): Double check the
+	return value of GetCurrentDirectory to never access unitialized memory.
+
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* file-io.c (ves_icall_System_IO_MonoIO_GetCurrentDirectory): Properly check the
 	return value of GetCurrentDirectory and expand the buffer if needed.
 
