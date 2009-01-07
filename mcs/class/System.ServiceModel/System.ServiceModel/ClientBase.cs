@@ -273,5 +273,290 @@ namespace System.ServiceModel
 		}
 
 		#endregion
+
+#if NET_2_1
+		protected class ChannelBase<T> : IClientChannel, IOutputChannel, IRequestChannel where T : class
+		{
+			ClientBase<T> client;
+
+			protected ChannelBase (ClientBase<T> client)
+			{
+				this.client = client;
+			}
+
+			[MonoTODO]
+			protected IAsyncResult BeginInvoke (string methodName, object [] args, AsyncCallback callback, object state)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			protected object EndInvoke (string methodName, object [] args, IAsyncResult result)
+			{
+				throw new NotImplementedException ();
+			}
+
+			#region ICommunicationObject
+
+			IAsyncResult ICommunicationObject.BeginClose (AsyncCallback callback, object state)
+			{
+				return client.InnerChannel.BeginClose (callback, state);
+			}
+
+			IAsyncResult ICommunicationObject.BeginClose (TimeSpan timeout, AsyncCallback callback, object state)
+			{
+				return client.InnerChannel.BeginClose (timeout, callback, state);
+			}
+
+			void ICommunicationObject.Close ()
+			{
+				client.InnerChannel.Close ();
+			}
+
+			void ICommunicationObject.Close (TimeSpan timeout)
+			{
+				client.InnerChannel.Close (timeout);
+			}
+
+			IAsyncResult ICommunicationObject.BeginOpen (AsyncCallback callback, object state)
+			{
+				return client.InnerChannel.BeginOpen (callback, state);
+			}
+
+			IAsyncResult ICommunicationObject.BeginOpen (TimeSpan timeout, AsyncCallback callback, object state)
+			{
+				return client.InnerChannel.BeginOpen (timeout, callback, state);
+			}
+
+			void ICommunicationObject.Open ()
+			{
+				client.InnerChannel.Open ();
+			}
+
+			void ICommunicationObject.Open (TimeSpan timeout)
+			{
+				client.InnerChannel.Open (timeout);
+			}
+
+			void ICommunicationObject.Abort ()
+			{
+				client.InnerChannel.Abort ();
+			}
+
+			void ICommunicationObject.EndClose (IAsyncResult result)
+			{
+				client.InnerChannel.EndClose (result);
+			}
+
+			void ICommunicationObject.EndOpen (IAsyncResult result)
+			{
+				client.InnerChannel.EndOpen (result);
+			}
+
+			CommunicationState ICommunicationObject.State {
+				get { return client.InnerChannel.State; }
+			}
+
+			event EventHandler ICommunicationObject.Opened {
+				add { client.InnerChannel.Opened += value; }
+				remove { client.InnerChannel.Opened -= value; }
+			}
+
+			event EventHandler ICommunicationObject.Opening {
+				add { client.InnerChannel.Opening += value; }
+				remove { client.InnerChannel.Opening -= value; }
+			}
+
+			event EventHandler ICommunicationObject.Closed {
+				add { client.InnerChannel.Closed += value; }
+				remove { client.InnerChannel.Closed -= value; }
+			}
+
+			event EventHandler ICommunicationObject.Closing {
+				add { client.InnerChannel.Closing += value; }
+				remove { client.InnerChannel.Closing -= value; }
+			}
+
+			event EventHandler ICommunicationObject.Faulted {
+				add { client.InnerChannel.Faulted += value; }
+				remove { client.InnerChannel.Faulted -= value; }
+			}
+
+			#endregion
+
+			#region IClientChannel
+
+			[MonoTODO]
+			public bool AllowInitializationUI {
+				get { return client.InnerChannel.AllowInitializationUI; }
+				set { client.InnerChannel.AllowInitializationUI = value; }
+			}
+
+			[MonoTODO]
+			public bool DidInteractiveInitialization {
+				get { return client.InnerChannel.DidInteractiveInitialization; }
+			}
+
+			public Uri Via {
+				get { return client.InnerChannel.Via; }
+			}
+
+			[MonoTODO]
+			public IAsyncResult BeginDisplayInitializationUI (
+				AsyncCallback callback, object state)
+			{
+				return client.InnerChannel.BeginDisplayInitializationUI (callback, state);
+			}
+
+			[MonoTODO]
+			public void EndDisplayInitializationUI (
+				IAsyncResult result)
+			{
+				client.InnerChannel.EndDisplayInitializationUI (result);
+			}
+
+			[MonoTODO]
+			public void DisplayInitializationUI ()
+			{
+				client.InnerChannel.DisplayInitializationUI ();
+			}
+
+			public void Dispose ()
+			{
+				client.InnerChannel.Dispose ();
+			}
+
+			public event EventHandler<UnknownMessageReceivedEventArgs> UnknownMessageReceived {
+				add { client.InnerChannel.UnknownMessageReceived += value; }
+				remove { client.InnerChannel.UnknownMessageReceived -= value; }
+			}
+
+			#endregion
+
+			#region IContextChannel
+
+			[MonoTODO]
+			public bool AllowOutputBatching {
+				get { return client.InnerChannel.AllowOutputBatching; }
+
+				set { client.InnerChannel.AllowOutputBatching = value; }
+			}
+
+			[MonoTODO]
+			public IInputSession InputSession {
+				get { return client.InnerChannel.InputSession; }
+			}
+
+			[MonoTODO]
+			public EndpointAddress LocalAddress {
+				get { return client.InnerChannel.LocalAddress; }
+			}
+
+			[MonoTODO]
+			public TimeSpan OperationTimeout {
+				get { return client.InnerChannel.OperationTimeout; }
+				set { client.InnerChannel.OperationTimeout = value; }
+			}
+
+			[MonoTODO]
+			public IOutputSession OutputSession {
+				get { return client.InnerChannel.OutputSession; }
+			}
+
+			[MonoTODO]
+			public EndpointAddress RemoteAddress {
+				get { return client.InnerChannel.RemoteAddress; }
+			}
+
+			[MonoTODO]
+			public string SessionId {
+				get { return client.InnerChannel.SessionId; }
+			}
+
+			#endregion
+
+
+			[MonoTODO]
+			IAsyncResult IRequestChannel.BeginRequest (Message message, AsyncCallback callback, object state)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			IAsyncResult IRequestChannel.BeginRequest (Message message, TimeSpan timeout, AsyncCallback callback, object state)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			Message IRequestChannel.EndRequest (IAsyncResult result)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			Message IRequestChannel.Request (Message message)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			Message IRequestChannel.Request (Message message, TimeSpan timeout)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			EndpointAddress IRequestChannel.RemoteAddress {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			Uri IRequestChannel.Via {
+				get { throw new NotImplementedException (); }
+			}
+
+			[MonoTODO]
+			IAsyncResult IOutputChannel.BeginSend (Message message, AsyncCallback callback, object state)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			IAsyncResult IOutputChannel.BeginSend (Message message, TimeSpan timeout, AsyncCallback callback, object state)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IOutputChannel.EndSend (IAsyncResult result)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IOutputChannel.Send (Message message)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			void IOutputChannel.Send (Message message, TimeSpan timeout)
+			{
+				throw new NotImplementedException ();
+			}
+
+			[MonoTODO]
+			IExtensionCollection<IContextChannel> IExtensibleObject<IContextChannel>.Extensions {
+				get { return client.InnerChannel.Extensions; }
+			}
+
+			[MonoTODO]
+			TProperty IChannel.GetProperty<TProperty> ()
+			{
+				return client.InnerChannel.GetProperty<TProperty> ();
+			}
+		}
+#endif
 	}
 }
