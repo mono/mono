@@ -29,10 +29,41 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
-	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[StructLayout(LayoutKind.Explicit, Pack = 1, Size = 16)]
 	public struct Vector16b
 	{
-		private byte v0, v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15;
+		[ FieldOffset(0) ]
+		internal byte v0;
+		[ FieldOffset(1) ]
+		internal byte v1;
+		[ FieldOffset(2) ]
+		internal byte v2;
+		[ FieldOffset(3) ]
+		internal byte v3;
+		[ FieldOffset(4) ]
+		internal byte v4;
+		[ FieldOffset(5) ]
+		internal byte v5;
+		[ FieldOffset(6) ]
+		internal byte v6;
+		[ FieldOffset(7) ]
+		internal byte v7;
+		[ FieldOffset(8) ]
+		internal byte v8;
+		[ FieldOffset(9) ]
+		internal byte v9;
+		[ FieldOffset(10) ]
+		internal byte v10;
+		[ FieldOffset(11) ]
+		internal byte v11;
+		[ FieldOffset(12) ]
+		internal byte v12;
+		[ FieldOffset(13) ]
+		internal byte v13;
+		[ FieldOffset(14) ]
+		internal byte v14;
+		[ FieldOffset(15) ]
+		internal byte v15;
 		public Vector16b (byte v0, byte v1, byte v2, byte v3, byte v4, byte v5, byte v6, byte v7, byte v8, byte v9, byte v10, byte v11, byte v12, byte v13, byte v14, byte v15)
 		{
 			this.v0 = v0;

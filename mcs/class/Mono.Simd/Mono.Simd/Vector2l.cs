@@ -29,11 +29,13 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
-	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
 	public struct Vector2l
 	{
-		private long x;
-		private long y;
+		[ FieldOffset(0) ]
+		internal long x;
+		[ FieldOffset(8) ]
+		internal long y;
 
 		public long X { get { return x; } set { x = value; } }
 		public long Y { get { return y; } set { y = value; } }

@@ -1,3 +1,10 @@
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector*.cs: Use explicit layout to avoid the runtime
+	miscalculating the size of vector types.
+
+	Backported from trunk.
+
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector2l.cs (CompareGreaterThan): This method requires sse 4.2

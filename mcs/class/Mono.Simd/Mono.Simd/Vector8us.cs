@@ -29,11 +29,27 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
-	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
 	[CLSCompliant(false)]
 	public struct Vector8us
 	{
-		private ushort v0, v1, v2, v3, v4, v5, v6, v7;
+		[ FieldOffset(0) ]
+		internal ushort v0;
+		[ FieldOffset(2) ]
+		internal ushort v1;
+		[ FieldOffset(4) ]
+		internal ushort v2;
+		[ FieldOffset(6) ]
+		internal ushort v3;
+		[ FieldOffset(8) ]
+		internal ushort v4;
+		[ FieldOffset(10) ]
+		internal ushort v5;
+		[ FieldOffset(12) ]
+		internal ushort v6;
+		[ FieldOffset(14) ]
+		internal ushort v7;
+
 		public Vector8us (ushort v0, ushort v1, ushort v2, ushort v3, ushort v4, ushort v5, ushort v6, ushort v7)
 		{
 			this.v0 = v0;

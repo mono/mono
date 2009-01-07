@@ -29,13 +29,17 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
-	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
 	public struct Vector4i
 	{
-		private int x;
-		private int y;
-		private int z;
-		private int w;
+		[ FieldOffset(0) ]
+		internal int x;
+		[ FieldOffset(4) ]
+		internal int y;
+		[ FieldOffset(8) ]
+		internal int z;
+		[ FieldOffset(12) ]
+		internal int w;
 
 		public int X { get { return x; } set { x = value; } }
 		public int Y { get { return y; } set { y = value; } }

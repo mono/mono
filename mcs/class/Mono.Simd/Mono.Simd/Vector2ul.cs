@@ -29,12 +29,14 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Simd
 {
-	[StructLayout(LayoutKind.Sequential, Pack = 0, Size = 16)]
+	[StructLayout(LayoutKind.Explicit, Pack = 0, Size = 16)]
 	[CLSCompliant(false)]
 	public struct Vector2ul
 	{
-		private ulong x;
-		private ulong y;
+		[ FieldOffset(0) ]
+		internal ulong x;
+		[ FieldOffset(8) ]
+		internal ulong y;
 
 		public ulong X { get { return x; } set { x = value; } }
 		public ulong Y { get { return y; } set { y = value; } }
