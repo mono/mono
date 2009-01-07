@@ -270,9 +270,9 @@ namespace System.Windows.Forms {
 
 			set {
 				if (value && (check_state != CheckState.Checked)) {
-					UpdateSiblings();
 					check_state = CheckState.Checked;
 					Invalidate();
+					UpdateSiblings();
 					OnCheckedChanged(EventArgs.Empty);
 				} else if (!value && (check_state != CheckState.Unchecked)) {
 					TabStop = false;
