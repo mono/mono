@@ -1,3 +1,11 @@
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r122672 - r122675.
+
+	* io.c (GetCurrentDirectory): Avoid calling g_get_current_dir straight
+	away as it doesn't handle ENAMETOOLONG correctly. As a bonus we avoid
+	allocating memory in the common path.
+
 2009-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* processes.c: Only use open -W on OSX 10.5+.  Patch from

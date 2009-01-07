@@ -1,5 +1,17 @@
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Backport of r122672 - r122675.
+
+	* file-io.c (ves_icall_System_IO_MonoIO_GetCurrentDirectory): Double check the
+	return value of GetCurrentDirectory to never access unitialized memory.
+
+	* file-io.c (ves_icall_System_IO_MonoIO_GetCurrentDirectory): Properly check the
+	return value of GetCurrentDirectory and expand the buffer if needed.
+
+	Fixes #459094.
+
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Backport of r122579 - r122585.
 
 	* verify.c (mono_class_interface_implements_interface): Verify parents as we can't rely on

@@ -1,3 +1,11 @@
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r122672 - r122675.
+
+	* bug-459094	.cs: New regression test.
+
+	* Makefile.am: Test added.
+
 2008-12-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r122134.
