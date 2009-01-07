@@ -1,3 +1,10 @@
+2009-01-07  Kornél Pál  <kornelpal@gmail.com>
+
+	* DefaultWsdlHelpGenerator.aspx: Move <script> at the end of <head> that
+	  will make Visual Studio recognize the web service disco reference.
+
+	Contributed under MIT/X11 license.
+
 2008-12-03  Marek Habersack  <mhabersack@novell.com>
 
 	* machine.config: rename serviceModelHostingEnvironment to

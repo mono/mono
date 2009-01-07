@@ -34,73 +34,6 @@
 <%@ Page debug="true" %>
 
 <html>
-<script language="javascript" type="text/javascript">
-var req;
-function getXML (command, url, qs) {
-	if (url == "" || url.substring (0, 4) != "http")
-		return;
-	
-	var post_data = null;
-	req = getReq ();
-	req.onreadystatechange = stateChange;
-	if (command == "GET") {
-		url = url + "?" + qs;
-	} else {
-		post_data = qs;
-	}
-	req.open (command, url,  true); 
-	if (command == "POST")
-		req.setRequestHeader ("Content-Type", "application/x-www-form-urlencoded");
-	req.send (post_data); 
-}
-
-function stateChange () {
-	if (req.readyState == 4) {
-		var node = document.getElementById("testresult_div");
-		var text = "";
-		if (req.status == 200) {
-			node.innerHTML = "<div class='code-xml'>" + formatXml (req.responseText) + "</div>";
-		} else {
-			var ht = "<b style='color: red'>" + formatXml (req.status + " - " + req.statusText) + "</b>";
-			if (req.responseText != "")
-				ht = ht + "\n<div class='code-xml'>" + formatXml (req.responseText) + "</div>";
-			node.innerHTML = ht;
-					
-		}
-	}
-}
-
-function formatXml (text)
-{	
-	var re = / /g;
-	text = text.replace (re, "&nbsp;");
-
-	re = /\t/g;
-	text = text.replace (re, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-	
-	re = /\<\s*(\/?)\s*(.*?)\s*(\/?)\s*\>/g;
-	text = text.replace (re,"{blue:&lt;$1}{maroon:$2}{blue:$3&gt;}");
-	
-	re = /{(\w*):(.*?)}/g;
-	text = text.replace (re,"<span style='color:$1'>$2</span>");
-
-	re = /"(.*?)"/g;
-	text = text.replace (re,"\"<span style='color:purple'>$1</span>\"");
-
-	re = /\r\n|\r|\n/g;
-	text = text.replace (re, "<br/>");
-	
-	return text;
-}
-
-function getReq () {
-	if (window.XMLHttpRequest) {
-		return new XMLHttpRequest();     // Firefox, Safari, ...
-	} else if (window.ActiveXObject) {
-		return new ActiveXObject("Microsoft.XMLHTTP");
-	}
-}
-</script>
 <script language="C#" runat="server">
 
 ServiceDescriptionCollection descriptions;
@@ -1615,7 +1548,73 @@ public class HtmlSampleGenerator: SampleGenerator
 		A:hover { color: blue }
     </style>
 	
-<script>
+<script language="javascript" type="text/javascript">
+var req;
+function getXML (command, url, qs) {
+	if (url == "" || url.substring (0, 4) != "http")
+		return;
+	
+	var post_data = null;
+	req = getReq ();
+	req.onreadystatechange = stateChange;
+	if (command == "GET") {
+		url = url + "?" + qs;
+	} else {
+		post_data = qs;
+	}
+	req.open (command, url,  true); 
+	if (command == "POST")
+		req.setRequestHeader ("Content-Type", "application/x-www-form-urlencoded");
+	req.send (post_data); 
+}
+
+function stateChange () {
+	if (req.readyState == 4) {
+		var node = document.getElementById("testresult_div");
+		var text = "";
+		if (req.status == 200) {
+			node.innerHTML = "<div class='code-xml'>" + formatXml (req.responseText) + "</div>";
+		} else {
+			var ht = "<b style='color: red'>" + formatXml (req.status + " - " + req.statusText) + "</b>";
+			if (req.responseText != "")
+				ht = ht + "\n<div class='code-xml'>" + formatXml (req.responseText) + "</div>";
+			node.innerHTML = ht;
+					
+		}
+	}
+}
+
+function formatXml (text)
+{	
+	var re = / /g;
+	text = text.replace (re, "&nbsp;");
+
+	re = /\t/g;
+	text = text.replace (re, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+	
+	re = /\<\s*(\/?)\s*(.*?)\s*(\/?)\s*\>/g;
+	text = text.replace (re,"{blue:&lt;$1}{maroon:$2}{blue:$3&gt;}");
+	
+	re = /{(\w*):(.*?)}/g;
+	text = text.replace (re,"<span style='color:$1'>$2</span>");
+
+	re = /"(.*?)"/g;
+	text = text.replace (re,"\"<span style='color:purple'>$1</span>\"");
+
+	re = /\r\n|\r|\n/g;
+	text = text.replace (re, "<br/>");
+	
+	return text;
+}
+
+function getReq () {
+	if (window.XMLHttpRequest) {
+		return new XMLHttpRequest();     // Firefox, Safari, ...
+	} else if (window.ActiveXObject) {
+		return new ActiveXObject("Microsoft.XMLHTTP");
+	}
+}
+
 function clearForm ()
 {
 	document.getElementById("testFormResult").style.display="none";
