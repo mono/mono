@@ -267,6 +267,7 @@ namespace MonoTests.Mono.Unix {
 		const int StormCount = 100000;
 
 		[Test]
+		[Category("NotOnMac")] // OSX signal storming will not deliver every one
 		public void TestRaiseStorm ()
 		{
 			UnixSignal[] usignals = CreateSignals (signals);
@@ -318,6 +319,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category("NotOnMac")] // OSX signal storming will not deliver every one
 		public void TestAddRemove ()
 		{
 			UnixSignal[] usignals = CreateSignals (signals);
@@ -352,6 +354,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category("NotOnMac")] // OSX signal storming will not deliver every one
 		public void TestWaitAny ()
 		{
 			UnixSignal[] usignals = CreateSignals (signals);

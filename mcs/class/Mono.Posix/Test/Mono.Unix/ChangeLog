@@ -1,3 +1,8 @@
+2009-01-07  Geoff Norton  <gnorton@novell.com>
+
+	* UnixSignalTest.cs: Disable the tests that storm signals on OSX.
+	(They wont work)
+
 2008-11-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixSignalTest.cs: Add tests for RealTimeSignum constructors,
