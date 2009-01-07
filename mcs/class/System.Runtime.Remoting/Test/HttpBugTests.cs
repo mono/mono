@@ -14,7 +14,8 @@ namespace MonoTests.Remoting.Http
 	public class Bug324362
 	{
 		[Test]
-		[Category ("NotWorking")] // the assertion fails, and if it's removed, there's an exception
+//		[Category ("NotWorking")] // the assertion fails, and if it's removed, there's an exception
+		[Ignore ("This test somehow keeps http channel registered and then blocks any further http tests working. This also happens under .NET, so this test itself is wrong with nunit 2.4.8.")]
 		public void Test ()
 		{
 			new HttpChannel (8086);
@@ -93,6 +94,7 @@ namespace MonoTests.Remoting.Http
 		Server server;
 		
 		[Test]
+		[Ignore ("This test somehow keeps http channel registered and then blocks any further http tests working. This also happens under .NET, so this test itself is wrong with nunit 2.4.8.")]
 		public void Main ()
 		{
 			Foo foo = (Foo) Activator.GetObject (typeof (Foo),
@@ -167,12 +169,16 @@ namespace MonoTests.Remoting.Http
 		public void Main ()
 		{
 			channel = new HttpChannel (0);
+			try {
 			ChannelServices.RegisterChannel (channel);
 			MarshalByRefObject obj = (MarshalByRefObject) RemotingServices.Connect (
 				typeof (IFactorial),
 				"http://localhost:60000/MyEndPoint");
 			IFactorial cal = (IFactorial) obj;
 			Assert.AreEqual (cal.CalculateFactorial (4), 24); 
+			} finally {
+			ChannelServices.UnregisterChannel (channel);
+			}
 		}
 		
 		[TestFixtureSetUp]

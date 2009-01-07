@@ -1,5 +1,10 @@
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpBugTests.cs : mark some tests as [Ignore] as they are blocker
+	  to other http tests. Make sure to unregister HTTP channel.
+
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* GenericTest.cs, HttpServerChannelTests.cs, ActivationTests.cs,
 	  BaseCalls.cs, CrossDomainCalls.cs, HttpBugTests.cs,
 	  ContextsTest.cs : explicitly set applicationBasePath to load
