@@ -600,6 +600,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("NotOnMac")] // DontFragment doesn't work on Mac
 		public void DontFragmentChangeTcp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -628,6 +629,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("NotOnMac")] // DontFragment doesn't work on Mac
 		public void DontFragmentChangeUdp ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1100,6 +1102,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category ("NotOnMac")] // Mac doesn't throw when overflowing the ttl
 		public void TtlChangeOverflow ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -1892,6 +1895,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("NotOnMac")] // MacOSX will block attempting to connect to 127.0.0.4 causing the test to fail
 		public void BeginConnectMultiple ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
@@ -2337,6 +2341,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 		
 		[Test]
+		[Category ("NotOnMac")] // MacOSX trashes the fd after the failed connect attempt to 127.0.0.4
 		public void ConnectMultiple ()
 		{
 			Socket sock = new Socket (AddressFamily.InterNetwork,
