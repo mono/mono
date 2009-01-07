@@ -1,3 +1,8 @@
+2009-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_flush_icache): Use __GNUC_PREREQ instead of checking
+	__GNUC_MINOR__ which can break when the major version changes.
+
 2009-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Add tests for usage of the sizeof opcode.
