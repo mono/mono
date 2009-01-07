@@ -1,3 +1,10 @@
+2009-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r122700.
+	
+	* RxInterpreter.cs: Add support for constant strings in anchors. Fixes
+	#464135.
+
 2008-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport r118729 from HEAD.

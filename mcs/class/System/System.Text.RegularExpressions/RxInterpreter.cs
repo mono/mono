@@ -414,14 +414,34 @@ namespace System.Text.RegularExpressions {
 					}
 					return false;
 				case RxOp.Anchor:
-					length = program [pc + 3] | ((int)program [pc + 4] << 8);
-					pc += program [pc + 1] | ((int)program [pc + 2] << 8);
+					int skip = program [pc + 1] | ((int)program [pc + 2] << 8);
+					int anch_offset = program [pc + 3] | ((int)program [pc + 4] << 8);
 
-					RxOp anch_op = (RxOp)(program[pc] & 0x00ff);
+					/*
+					 * In the general case, we have to evaluate the bytecode
+					 * starting at pc + skip, however the optimizer emits some
+					 * special cases, whose bytecode begins at pc + 5.
+					 */
+					int anch_pc = pc + 5;
+					RxOp anch_op = (RxOp)(program[anch_pc] & 0x00ff);
 
-					// Optimize some common cases
+					bool spec_anch = false;
 
-					if (anch_op == RxOp.StartOfString) {
+					// FIXME: Add more special cases from interpreter.cs
+					if (anch_op == RxOp.String || anch_op == RxOp.StringIgnoreCase) {
+						if (pc + skip == anch_pc + 2 + program [anch_pc + 1] + 1) {
+							// Anchor
+							//	String
+							//	True
+							spec_anch = true;
+							if (trace_rx)
+								Console.WriteLine ("  string anchor at {0}, offset {1}", anch_pc, anch_offset);
+						}
+					}
+
+					pc += skip;
+
+					if ((RxOp)program [pc] == RxOp.StartOfString) {
 						if (strpos == 0) {
 							int res = strpos;
 							if (groups.Length > 1) {
@@ -439,12 +459,26 @@ namespace System.Text.RegularExpressions {
 						return false;
 					}
 
-					// FIXME: Add more special cases from interpreter.cs
-
 					// it's important to test also the end of the string
 					// position for things like: "" =~ /$/
 					end = string_end + 1;
 					while (strpos < end) {
+						if (spec_anch) {
+							if (anch_op == RxOp.String || anch_op == RxOp.StringIgnoreCase) {
+								/* 
+								 * This means the match must contain a given
+								 * string at a constant position, so we can skip 
+								 * forward until the string matches. This is a win if
+								 * the rest of the regex 
+								 * has a complex positive lookbehind for example.
+								 */
+								int tmp_res = strpos;
+								if (!EvalByteCode (anch_pc, strpos + anch_offset, ref tmp_res)) {
+									strpos ++;
+									continue;
+								}
+							}
+						}
 						int res = strpos;
 						if (groups.Length > 1) {
 							ResetGroups ();
