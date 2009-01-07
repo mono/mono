@@ -46,7 +46,9 @@ namespace System.ServiceModel
 			set { Thread.SetData (Thread.GetNamedDataSlot (operation_context_name), value); }
 		}
 
+#if !NET_2_1
 		EndpointDispatcher dispatcher;
+#endif
 		IContextChannel channel;
 		RequestContext request_ctx;
 		ExtensionCollection<OperationContext> extensions;
@@ -67,11 +69,6 @@ namespace System.ServiceModel
 			get { return channel; }
 		}
 
-		public EndpointDispatcher EndpointDispatcher {
-			get { return dispatcher; }
-			set { dispatcher = value; }
-		}
-
 		public IExtensionCollection<OperationContext> Extensions {
 			get {
 				if (extensions == null)
@@ -80,6 +77,12 @@ namespace System.ServiceModel
 			}
 		}
 
+
+#if !NET_2_1
+		public EndpointDispatcher EndpointDispatcher {
+			get { return dispatcher; }
+			set { dispatcher = value; }
+		}
 		public bool HasSupportingTokens {
 			get { return SupportingTokens != null ? SupportingTokens.Count > 0 : false; }
 		}
@@ -87,6 +90,7 @@ namespace System.ServiceModel
 		public ServiceHostBase Host {
 			get { return dispatcher != null ? dispatcher.ChannelDispatcher.Host : null; }
 		}
+#endif
 
 		public MessageHeaders IncomingMessageHeaders {
 			get { return request_ctx != null ? request_ctx.RequestMessage.Headers : null; }
@@ -136,13 +140,14 @@ namespace System.ServiceModel
 			set { request_ctx = value; }
 		}
 
-		public ServiceSecurityContext ServiceSecurityContext {
-			get { return IncomingMessageProperties != null ? IncomingMessageProperties.Security.ServiceSecurityContext : null; }
-		}
-
 		[MonoTODO]
 		public string SessionId {
 			get { throw new NotImplementedException (); }
+		}
+
+#if !NET_2_1
+		public ServiceSecurityContext ServiceSecurityContext {
+			get { return IncomingMessageProperties != null ? IncomingMessageProperties.Security.ServiceSecurityContext : null; }
 		}
 
 		public ICollection<SupportingTokenSpecification> SupportingTokens {
@@ -168,6 +173,7 @@ namespace System.ServiceModel
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		internal Message IncomingMessage {
 			get {

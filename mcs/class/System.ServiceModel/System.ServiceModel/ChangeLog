@@ -1,3 +1,7 @@
+2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationContext.cs : changes to include this in net_2_1_raw.
+
 2008-05-28  Noam Lampert <noaml@mainsoft.com>
 	* ServiceHost.cs: Allow services to implement more than one contract.
 

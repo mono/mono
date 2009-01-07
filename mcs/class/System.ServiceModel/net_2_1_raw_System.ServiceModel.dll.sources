@@ -188,6 +188,8 @@ System.ServiceModel/MessageHeaderException.cs
 System.ServiceModel/MessageHeader_1.cs
 System.ServiceModel/MessageParameterAttribute.cs
 System.ServiceModel/MessagePropertyAttribute.cs
+System.ServiceModel/OperationContext.cs
+System.ServiceModel/OperationContextScope.cs
 System.ServiceModel/OperationContractAttribute.cs
 System.ServiceModel/ProtocolException.cs
 System.ServiceModel/QuotaExceededException.cs
