@@ -15,6 +15,8 @@ using System.Threading;
 namespace  MonoTests.System.Transactions {
 
 	[TestFixture]
+	// https://bugzilla.novell.com/show_bug.cgi?id=463999
+	[Category ("NotWorking")]
 	public class AsyncTest {
 
 		[SetUp]
