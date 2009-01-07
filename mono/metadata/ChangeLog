@@ -1,3 +1,10 @@
+2009-01-07  Geoff Norton  <gnorton@novell.com>
+
+	* socket-io.c: ioctlsocket(FIONREAD) returns the size of the UDP header as well on 
+	darwin.  Use getsockopt SO_NREAD instead to get the right values for TCP and UDP.
+	ai_canonname can be null in some cases on darwin, where the runtime assumes it will 
+	be the value of the ip buffer.
+
 2009-01-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_class_interface_implements_interface): Verify parents as we can't rely on
