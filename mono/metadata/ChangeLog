@@ -1,3 +1,21 @@
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r122579 - r122585.
+
+	* verify.c (mono_class_interface_implements_interface): Verify parents as we can't rely on
+	interfaces_packed here.
+
+	Fixes part of #463294.
+
+	* verify.c (is_array_type_compatible): Ignore bounds and sizes when checking array compatibility.
+
+	Fixes part of #463294.
+
+	* verify.c (stack_slot_is_complex_type_not_reference_type): Check if the type
+	is a boxed complex as well.
+
+	Fixes part of #463294.
+
 2008-11-27  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r120164.

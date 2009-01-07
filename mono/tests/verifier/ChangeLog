@@ -1,3 +1,17 @@
+2009-01-07 Rodrigo Kumpera <rkumpera@novell.com>
+
+	Backport of r122579 - r122585.
+
+	* valid_iface_constant_with_parent_implementing_it.il:
+	Regression test for #461200.
+
+	* valid_array_compat_with_bonds_and_sizes.il:
+	* valid_array_compat_with_bounds.il:
+	* valid_array_compat_with_sizes.il: Regression tests for 
+	#461200.
+
+	* valid_ceq_with_boxed_vt.il: Regression test for #461200.
+
 2008-09-03 Rodrigo Kumpera <rkumpera@novell.com>
 
 	* strict_native_int_converts_to_unamanged_pointer.cs: It turns
