@@ -1,3 +1,9 @@
+2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-459094.cs: New regression test.
+
+	* Makefile.am: Test added.
+
 2009-01-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-462592.cs: New regression test.
