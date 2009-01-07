@@ -1,3 +1,7 @@
+2009-01-07  Geoff Norton  <gnorton@novell.com>
+
+	* Makefile: Respect platform specific test harness exclusions.
+
 2008-12-25   Leszek Ciesielski <skolima@gmail.com>
 
 	* System.Diagnostics/Process.cs: Raise the
