@@ -1,3 +1,8 @@
+2009-01-08  Miguel de Icaza  <miguel@novell.com>
+
+	* appdomain.c: Initialize the mono_strtod_mutex here, thanks to
+	Robert Jordan for pointing this out.
+
 2009-01-07  Miguel de Icaza  <miguel@novell.com>
 
 	* icall.c: Wrap calls to mono_strtod in CriticalSection
