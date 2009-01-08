@@ -1,3 +1,11 @@
+2009-01-09  Marek Habersack  <mhabersack@novell.com>
+
+	* Cache.cs: System.Threading.Timer.Change takes a long, not an
+	int. The maximum value of sliding expiration is 365 days
+	(31536000000ms) which fits within the value range of long. The
+	previous cast to int might yield negative values in certain
+	situations which was the reason for bug #464221. Fixes bug #464221
+
 2008-10-21  Marek Habersack  <mhabersack@novell.com>
 
 	* OutputCacheModule.cs: seal the class.
