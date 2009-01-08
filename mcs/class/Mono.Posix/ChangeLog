@@ -1,3 +1,7 @@
+2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Documentation/en/*: Updated the documentation	for RT signals.
+
 2008-12-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* Mono.Posix.dll.sources: Add Mono.Unix.Native/RealTimeSignum.cs.

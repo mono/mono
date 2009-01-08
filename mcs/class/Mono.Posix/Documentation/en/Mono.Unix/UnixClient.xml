@@ -71,7 +71,7 @@
       </AssemblyInfo>
     </Member>
     <Member MemberName="Client">
-      <MemberSignature Language="C#" Value="protected System.Net.Sockets.Socket Client { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.Sockets.Socket Client { set; get; }" />
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.Socket</ReturnType>

@@ -82,6 +82,7 @@
       <Type Name="Pollfd" Kind="Structure" />
       <Type Name="PosixFadviseAdvice" Kind="Enumeration" />
       <Type Name="PosixMadviseAdvice" Kind="Enumeration" />
+      <Type Name="RealTimeSignum" Kind="Structure" />
       <Type Name="SeekFlags" Kind="Enumeration" />
       <Type Name="SignalAction" Kind="Enumeration" />
       <Type Name="SignalHandler" Kind="Delegate" />

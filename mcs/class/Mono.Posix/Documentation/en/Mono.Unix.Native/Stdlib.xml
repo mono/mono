@@ -2056,6 +2056,26 @@ Use printf (string) instead.")</AttributeName>
       </AssemblyInfo>
     </Member>
     <Member MemberName="raise">
+      <MemberSignature Language="C#" Value="public static int raise (Mono.Unix.Native.RealTimeSignum rts);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rts" Type="Mono.Unix.Native.RealTimeSignum" />
+      </Parameters>
+      <Docs>
+        <param name="rts">A realtime signal to send to the current process.</param>
+        <summary>Send a realtime signal to the current process.</summary>
+        <returns>The <c>raise</c>() function returns the value 0 if successful; otherwise the value -1 is returned and <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" /> indicates the error.
+        </returns>
+        <remarks>The <c>raise</c>() function sends the signal <paramref name="sig" /> to the current process.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="raise">
       <MemberSignature Language="C#" Value="public static int raise (Mono.Unix.Native.Signum sig);" />
       <MemberType>Method</MemberType>
       <ReturnValue>
@@ -2309,6 +2329,92 @@ Use printf (string) instead.")</AttributeName>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="SetSignalAction">
+      <MemberSignature Language="C#" Value="public static int SetSignalAction (Mono.Unix.Native.RealTimeSignum rts, Mono.Unix.Native.SignalAction action);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="rts" Type="Mono.Unix.Native.RealTimeSignum" />
+        <Parameter Name="action" Type="Mono.Unix.Native.SignalAction" />
+      </Parameters>
+      <Docs>
+        <param name="rts">To be added.</param>
+        <param name="action">
+          A <see cref="T:Mono.Unix.Native.SignalAction" /> specifying what to
+          do when the <paramref name="signum" /> signal is emitted.
+        </param>
+        <summary>
+          Specifies what should happen when a signal is emitted.
+        </summary>
+        <returns>
+          <para>
+            A <see cref="T:System.Int32" />; if equal to <c>0</c>, the call
+            was successful.  <c>-1</c> is returned on failure, and sets 
+            <see cref="M:Mono.Unix.Native.Stdlib.GetLastError" />
+            to indicate the error.
+          </para>
+          <block subset="none" type="usage">
+            <para>
+              Possible errors include:
+            </para>
+            <list type="table">
+              <listheader>
+                <term>
+                  Error
+                </term>
+                <description>
+                  Details
+                </description>
+              </listheader>
+              <item>
+                <term>
+                  <see cref="F:Mono.Unix.Native.Errno.EINVAL" />
+                </term>
+                <description>
+                  <para>
+                    <paramref name="signum" /> is invalid.
+                  </para>
+                </description>
+              </item>
+            </list>
+          </block>
+        </returns>
+        <remarks>
+          <para>
+            This is the safer, restricted form of 
+            <see cref="M:Mono.Unix.Native.Stdlib.signal(Mono.Unix.Native.RealTimeSignum,Mono.Unix.Native.SignalHandler)" />.
+            While <c>signal</c>(2) permits an arbitrary method to be set as
+            the signal handler, this method permits specifying only the
+            default, ignore, or error handlers.
+          </para>
+          <block subset="none" type="behaviors">
+            <para>
+              If <paramref name="action" /> is
+              <see cref="F:Mono.Unix.Native.SignalAction.Default" />, then
+              this method is equivalent to 
+              <c>signal(<paramref name="signum" />, SIG_DFL)</c>.
+            </para>
+            <para>
+              If <paramref name="action" /> is
+              <see cref="F:Mono.Unix.Native.SignalAction.Ignore" />, then
+              this method is equivalent to 
+              <c>signal(<paramref name="signum" />, SIG_IGN)</c>.
+            </para>
+            <para>
+              If <paramref name="action" /> is
+              <see cref="F:Mono.Unix.Native.SignalAction.Error" />, then
+              this method is equivalent to 
+              <c>signal(<paramref name="signum" />, SIG_ERR)</c>.
+            </para>
+          </block>
+        </remarks>
+      </Docs>
     </Member>
     <Member MemberName="SetSignalAction">
       <MemberSignature Language="C#" Value="public static int SetSignalAction (Mono.Unix.Native.Signum signal, Mono.Unix.Native.SignalAction action);" />

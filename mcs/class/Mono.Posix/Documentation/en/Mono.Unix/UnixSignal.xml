@@ -122,6 +122,52 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UnixSignal (Mono.Unix.Native.RealTimeSignum rtsig);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="rtsig" Type="Mono.Unix.Native.RealTimeSignum" />
+      </Parameters>
+      <Docs>
+        <param name="rtsig">
+          A <see cref="T:Mono.Unix.Native.RealTimeSignum" /> value specifying which
+          Unix realtime signal this instance should count.
+		</param>
+        <summary>
+          Creates and initializes a <see cref="T:Mono.Unix.UnixSignal" />
+          class instance.
+		</summary>
+        <remarks>
+          <para>
+            This constructor initializes the 
+            <see cref="P:Mono.Unix.UnixSignal.RealTimeSignum" /> property of the new
+            instance using <paramref name="signum" />.
+          </para>
+          <para>
+            Once this constructor completes execution, all signal emissions
+            between the completion of the constructor and the invocation of
+            <see cref="M:System.Threading.WaitHandle.Close" /> will be
+            counted, updating the <see cref="M:Mono.Unix.UnixSignal.Count" />
+            property.
+          </para>		
+          <para>
+            Realtime signal registration has the constraint that it cannot override signals
+			registered from outside of Mono.Posix.
+			This constraint exists because the underlying aplication and runtime can use some
+			signals to implement some specific feature.
+          </para>
+		</remarks>
+        <exception cref="T:System.ArgumentException">
+          The internal signal handler could not be registered or the signal was registered outside of Mono.Posix.
+        </exception>
+        <exception cref="T:System.ArgumentOutOfRangeException">
+          <paramref name="signum" /> is not a valid signal value.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UnixSignal (Mono.Unix.Native.Signum signum);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
@@ -249,6 +295,26 @@
         </remarks>
       </Docs>
     </Member>
+    <Member MemberName="IsRealTimeSignal">
+      <MemberSignature Language="C#" Value="public bool IsRealTimeSignal { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          Returns <see langword="true" /> if the registered signal is realtime.
+		</summary>
+        <value>
+          A <see cref="T:System.Boolean" /> specifying whether or not the registered
+          signal is realtime.
+		</value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
     <Member MemberName="IsSet">
       <MemberSignature Language="C#" Value="public bool IsSet { get; }" />
       <MemberType>Property</MemberType>
@@ -270,6 +336,38 @@
         </value>
         <remarks>
         </remarks>
+        <exception cref="T:System.ObjectDisposedException">
+          The current instance has already been disposed.
+        </exception>
+      </Docs>
+    </Member>
+    <Member MemberName="RealTimeSignum">
+      <MemberSignature Language="C#" Value="public Mono.Unix.Native.RealTimeSignum RealTimeSignum { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.RealTimeSignum</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>
+          The RealTime Unix signal this instance is counting
+		</summary>
+        <value>
+          A <see cref="T:Mono.Unix.Native.RealTimeSignum" /> value specifying which
+          RealTime Unix signal this instance is counting.
+		</value>
+        <remarks>
+          <para>
+            This value is set in the 
+            <see cref="C:Mono.Unix.UnixSignal(Mono.Unix.Native.RealTimeSignum)" />
+            constructor.
+          </para>
+        </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          The current instance is registered for a non-realtime signal.
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
           The current instance has already been disposed.
         </exception>
@@ -337,6 +435,9 @@
             constructor.
           </para>
         </remarks>
+        <exception cref="T:System.InvalidOperationException">
+          The current instance is registered for a realtime signal.
+        </exception>
         <exception cref="T:System.ObjectDisposedException">
           The current instance has already been disposed.
         </exception>

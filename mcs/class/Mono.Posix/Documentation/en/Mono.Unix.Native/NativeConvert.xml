@@ -647,6 +647,26 @@ class Test
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
     </Member>
+    <Member MemberName="FromRealTimeSignum">
+      <MemberSignature Language="C#" Value="public static int FromRealTimeSignum (Mono.Unix.Native.RealTimeSignum sig);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="sig" Type="Mono.Unix.Native.RealTimeSignum" />
+      </Parameters>
+      <Docs>
+        <param name="sig">The signal to convert from.</param>
+        <summary>Converts a <see cref="T:Mono.Unix.Native.RealTimeSignum" /> 
+          to an OS-specific value.</summary>
+        <returns>The equivalent OS-specific value.</returns>
+        <remarks></remarks>
+      </Docs>
+    </Member>
     <Member MemberName="FromSeekFlags">
       <MemberSignature Language="C#" Value="public static short FromSeekFlags (Mono.Unix.Native.SeekFlags value);" />
       <MemberType>Method</MemberType>
@@ -1741,6 +1761,25 @@ class Test
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+    </Member>
+    <Member MemberName="ToRealTimeSignum">
+      <MemberSignature Language="C#" Value="public static Mono.Unix.Native.RealTimeSignum ToRealTimeSignum (int offset);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Unix.Native.RealTimeSignum</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="offset" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="offset">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="ToSeekFlags">
       <MemberSignature Language="C#" Value="public static Mono.Unix.Native.SeekFlags ToSeekFlags (short value);" />
