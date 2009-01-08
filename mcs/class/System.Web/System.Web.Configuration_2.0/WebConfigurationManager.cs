@@ -388,7 +388,19 @@ namespace System.Web.Configuration {
 		
 		static string FindWebConfig (string path)
 		{
-			string curPath = configPaths [path] as string;
+			if (String.IsNullOrEmpty (path))
+				return path;
+
+			string dir;
+			if (path [path.Length - 1] == '/')
+				dir = path;
+			else {
+				dir = VirtualPathUtility.GetDirectory (path);
+				if (dir == null)
+					return path;
+			}
+			
+			string curPath = configPaths [dir] as string;
 			if (curPath != null)
 				return curPath;
 			
@@ -418,7 +430,7 @@ namespace System.Web.Configuration {
 				}
 			}
 
-			configPaths [path] = curPath;
+			configPaths [dir] = curPath;
 			return curPath;
 		}
 		
