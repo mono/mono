@@ -1,3 +1,7 @@
+2009-01-08  Geoff Norton  <gnorton@novell.com>
+
+	* Makefile: Add darwin.make to the make dist target as well
+
 2009-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* library.make: Allow platform specific exclude tags from the
