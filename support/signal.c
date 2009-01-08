@@ -29,6 +29,8 @@ G_BEGIN_DECLS
 typedef void (*mph_sighandler_t)(int);
 typedef struct Mono_Unix_UnixSignal_SignalInfo signal_info;
 
+static int count_handlers (int signum);
+
 void*
 Mono_Posix_Stdlib_SIG_DFL (void)
 {
@@ -156,6 +158,19 @@ Mono_Unix_UnixSignal_install (int sig)
 		errno = mr;
 		return NULL;
 	}
+
+#if defined (SIGRTMIN) && defined (SIGRTMAX)
+	/*The runtime uses some rt signals for itself so it's important to not override them.*/
+	if (sig >= SIGRTMIN && sig <= SIGRTMAX && count_handlers (sig) == 0) {
+		struct sigaction sinfo;
+		sigaction (sig, NULL, &sinfo);
+		if (sinfo.sa_handler != SIG_DFL || (void*)sinfo.sa_sigaction != (void*)SIG_DFL) {
+			pthread_mutex_unlock (&signals_mutex);
+			errno = EADDRINUSE;
+			return NULL;
+		}
+	}
+#endif /*defined (SIGRTMIN) && defined (SIGRTMAX)*/
 
 	for (i = 0; i < NUM_SIGNALS; ++i) {
 		if (h == NULL && signals [i].signum == 0) {

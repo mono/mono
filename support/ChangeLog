@@ -1,3 +1,8 @@
+2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* signal.c: Don't allow registration of a realtime signal to happen
+	if it was already registered outside of Mono.Posix.
+
 2008-12-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* signal.c: Improve error checking within Mono_Posix_FromRealTimeSignum.
