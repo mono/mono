@@ -107,7 +107,9 @@ namespace System.Web.Caching
 
 				if (it.SlidingExpiration != NoSlidingExpiration) {
 					it.AbsoluteExpiration = DateTime.Now + it.SlidingExpiration;
-					it.Timer.Change ((int)it.SlidingExpiration.TotalMilliseconds, Timeout.Infinite);
+					// Cast to long is ok since we know that sliding expiration
+					// is less than 365 days (31536000000ms)
+					it.Timer.Change ((long)it.SlidingExpiration.TotalMilliseconds, Timeout.Infinite);
 				} else if (DateTime.Now >= it.AbsoluteExpiration) {
 					Remove (key, CacheItemRemovedReason.Expired, false);
 					return null;
