@@ -1,3 +1,8 @@
+2009-01-07  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c: Wrap calls to mono_strtod in CriticalSection
+	invocations when using eglib, to work around #464316.
+
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* file-io.c (ves_icall_System_IO_MonoIO_GetCurrentDirectory): Double check the
