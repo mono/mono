@@ -52,7 +52,10 @@ namespace Mono.Unix {
 		{
 			signum = NativeConvert.FromRealTimeSignum (rtsig);
 			this.signal_info = install (this.signum);
+			Native.Errno err = Native.Stdlib.GetLastError ();
 			if (this.signal_info == IntPtr.Zero) {
+				if (err == Native.Errno.EADDRINUSE)
+					throw new ArgumentException ("Signal registered outside of Mono.Posix", "signum");
 				throw new ArgumentException ("Unable to handle signal", "signum");
 			}
 		}
@@ -84,7 +87,7 @@ namespace Mono.Unix {
 		}
 
 		[DllImport (Stdlib.MPH, CallingConvention=CallingConvention.Cdecl,
-				EntryPoint="Mono_Unix_UnixSignal_install")]
+				EntryPoint="Mono_Unix_UnixSignal_install", SetLastError=true)]
 		private static extern IntPtr install (int signum);
 
 		[DllImport (Stdlib.MPH, CallingConvention=CallingConvention.Cdecl,

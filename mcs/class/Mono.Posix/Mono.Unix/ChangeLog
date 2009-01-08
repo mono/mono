@@ -1,3 +1,8 @@
+2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* UnixSignal.cs: Check if realtime signal install failed with 
+	EADDRINUSE due to the signal been used by outside of Mono.Posix.
+
 2008-12-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixSignal.cs: Allow RealTimeSignums to be used in addition to
