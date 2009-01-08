@@ -104,14 +104,50 @@ namespace MonoTests.Mono.Unix {
 		[Test]
 		public void TestRaiseRTMINPlusOneSignal ()
 		{
-			RealTimeSignum rts = new RealTimeSignum (1);
-			using (UnixSignal signal = new UnixSignal (rts))
-			{
-				MultiThreadTest (signal, 5000, delegate() {
-					Thread.Sleep(1000);
-					Stdlib.raise(rts);
-					});
+			/*this number is a guestimate, but it's ok*/
+			for (int i = 1; i < 10; ++i) {
+				RealTimeSignum rts = new RealTimeSignum (i);
+				UnixSignal signal;
+				try {
+					signal  = new UnixSignal (rts);
+				} catch (ArgumentException) { /*skip the ones that are unavailable*/
+					continue;
+				}
+				using (signal)
+				{
+					MultiThreadTest (signal, 5000, delegate() {
+						Thread.Sleep(1000);
+						Stdlib.raise(rts);
+						});
+				}
+				return;
 			}
+			Assert.IsTrue (false, "#1 No available RT signal");
+		}
+
+		[Test]
+		public void TestCanRegisterRTSignalMultipleTimes ()
+		{
+			/*this number is a guestimate, but it's ok*/
+			for (int i = 1; i < 10; ++i) {
+				RealTimeSignum rts = new RealTimeSignum (i);
+				UnixSignal signal;
+				try {
+					signal  = new UnixSignal (rts);
+				} catch (ArgumentException) { /*skip the ones that are unavailable*/
+					continue;
+				}
+				try {
+					using (UnixSignal signal2 =  new UnixSignal (rts))
+					{
+						//ok
+						return;
+					}
+				} catch (ArgumentException) { /*skip the ones that are unavailable*/
+						Assert.IsTrue (false, "#1 Could not register second signal handler");
+				}
+			}
+			Assert.IsTrue (false, "#2 No available RT signal");
 		}
 
 		[Test]

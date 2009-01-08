@@ -1,3 +1,10 @@
+2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* UnixSignalTest.cs: Fix the RealTimeSignum constructor
+	tests to take into account the fact that some signals might be
+	in used by the runtime. Added a test for multiple registration
+	of a rt signal.
+
 2009-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* UnixSignalTest.cs: Disable the tests that storm signals on OSX.
