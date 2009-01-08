@@ -1,3 +1,8 @@
+2009-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Fix the check for the mscorlib ldstr 
+	optimization. Fixes #464520.
+
 2009-01-07  Bill Holmes  <billholmes54@gmail.com>
 
 	* mini-amd64.c : Adding code to save/restore non-volatile registers
