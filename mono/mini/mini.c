@@ -6985,7 +6985,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						MonoInst *iargs [2];
 						int temp;
 
-						if (cfg->method->klass->image == mono_defaults.corlib) {
+						if (image == mono_defaults.corlib) {
 							/* 
 							 * Avoid relocations and save some code size by using a 
 							 * version of helper_ldstr specialized to mscorlib.
