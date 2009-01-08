@@ -1,3 +1,8 @@
+2008-12-19  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-dl.c (mono_dl_open): Do not crash if the platform does not
+	support dlopen.
+
 2008-12-08  Kornél Pál  <kornelpal@gmail.com>
 
 	* mono-time.c (mono_100ns_ticks, PLATFORM_WIN32): Use GetSystemTimeAsFileTime
