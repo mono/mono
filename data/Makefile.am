@@ -7,7 +7,8 @@ EXTRA_DIST =  	\
 	browscap.ini mono.supp mono.d README \
 	mono.pc.in mint.pc.in dotnet.pc.in dotnet35.pc.in wcf.pc.in monodoc.pc.in \
 	mono-nunit.pc.in mono-cairo.pc.in mono-options.pc.in cecil.pc.in smcs.pc.in \
-	mono-lineeditor.pc.in system.web.extensions_1.0.pc.in system.web.extensions.design_1.0.pc.in
+	mono-lineeditor.pc.in system.web.extensions_1.0.pc.in system.web.extensions.design_1.0.pc.in\
+	dtrace-prelink.sh
 
 pkgconfigdir = $(libdir)/pkgconfig
 
