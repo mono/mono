@@ -848,6 +848,10 @@ namespace System.Windows.Forms
 			get { return textbox_ctrl; }
 		}
 
+		internal ComboListBox UIAComboListBox {
+			get { return listbox_ctrl; }
+		}
+
 		#endregion UIA Framework Properties
 
 		#region Public Methods
@@ -2327,6 +2331,22 @@ namespace System.Windows.Forms
 				NextPage,
 				PreviousPage,
 			}
+
+			#region UIA Framework: Properties
+
+			internal int UIATopItem {
+				get { return top_item; }
+			}
+			
+			internal int UIALastItem {
+				get { return last_item; }
+			}
+
+			internal ScrollBar UIAVScrollBar {
+				get { return vscrollbar_ctrl; }
+			}
+
+			#endregion
 			
 			class VScrollBarLB : VScrollBar
 			{

@@ -1,3 +1,7 @@
+2009-01-08  Brad Taylor  <brad@getcoded.net>
+
+	* ComboBox.cs: Expose a few private fields as internal UIA properties.
+
 2009-01-07  Mario Carrion <mcarrion@novell.com>
 	
 	* DataGrid.cs: CWL removed.
