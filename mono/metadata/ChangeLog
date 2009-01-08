@@ -1,5 +1,14 @@
 2009-01-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* gc.c (mono_gc_init): Wait for finalizer thread to init on windows as
+	well. Otherwise the shutdown deadlock that happens on unix will can happen
+	as well.
+	If the main thread code finishes too fast it's possible that the finalizer
+	thread won't have executed yet, won't record itself as the finalizer thread
+	and the shutdown sequence will wait on it forever.
+
+2009-01-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* threads.c (mono_thread_current): Make THREAD_DEBUG work on windows
 	with MSVC.
 
