@@ -1952,6 +1952,34 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void ReadContentStringOnEndElement ()
+		{
+			XmlReader xr = XmlReader.Create (new StringReader ("<a>test</a>"));
+			xr.Read ();
+			xr.Read ();
+			xr.Read ();
+			AssertEquals (String.Empty, xr.ReadContentAsString ()); // does not fail, unlike at Element!
+		}
+
+		[Test]
+		public void ReadContentStringOnPI ()
+		{
+			XmlReader xr = XmlReader.Create (new StringReader ("<?pi ?><a>test</a>"));
+			xr.Read ();
+			AssertEquals (String.Empty, xr.ReadContentAsString ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))] // unlike ReadContentAsString()
+		public void ReadElementContentStringOnPI ()
+		{
+			XmlReader xr = XmlReader.Create (new StringReader ("<?pi ?><a>test</a>"));
+			xr.Read ();
+			AssertEquals (XmlNodeType.ProcessingInstruction, xr.NodeType);
+			xr.ReadElementContentAsString ();
+		}
+
+		[Test]
 		[ExpectedException (typeof (XmlException))]
 		public void ReadElementContentStringMixedContent ()
 		{

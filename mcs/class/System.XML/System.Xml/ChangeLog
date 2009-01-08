@@ -1,3 +1,8 @@
+2009-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : ReadContentAsString() does not reject non-elements.
+	  ReadElementContentAsString() rejects non-content nodes.
+
 2008-12-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlNamespaceManager.cs : namespace lookup failed for non-atomic

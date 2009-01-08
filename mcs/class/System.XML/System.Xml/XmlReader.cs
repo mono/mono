@@ -901,8 +901,10 @@ namespace System.Xml
 				case XmlNodeType.Whitespace:
 				case XmlNodeType.CDATA:
 					break;
-				default:
+				case XmlNodeType.Element:
 					throw new InvalidOperationException (String.Format ("Node type {0} is not supported in this operation.{1}", NodeType, GetLocation ()));
+				default:
+					return String.Empty;
 				}
 			}
 
@@ -1076,6 +1078,9 @@ namespace System.Xml
 		public virtual string ReadElementContentAsString ()
 		{
 			bool isEmpty = IsEmptyElement;
+			// unlike ReadStartElement() it rejects non-content nodes (this check is done before MoveToContent())
+			if (NodeType != XmlNodeType.Element)
+				throw new InvalidOperationException (String.Format ("'{0}' is an element node.", NodeType));
 			ReadStartElement ();
 			if (isEmpty)
 				return String.Empty;
@@ -1150,6 +1155,9 @@ namespace System.Xml
 		public virtual string ReadElementContentAsString (string localName, string namespaceURI)
 		{
 			bool isEmpty = IsEmptyElement;
+			// unlike ReadStartElement() it rejects non-content nodes (this check is done before MoveToContent())
+			if (NodeType != XmlNodeType.Element)
+				throw new InvalidOperationException (String.Format ("'{0}' is an element node.", NodeType));
 			ReadStartElement (localName, namespaceURI);
 			if (isEmpty)
 				return String.Empty;
