@@ -124,7 +124,7 @@ namespace System.Web.Configuration {
 				if (type == null)
 					type = LoadType (TypeName);
 
-				instance = Activator.CreateInstance (type);
+				instance = Activator.CreateInstance (type, true);
 			} 
 			
 			return instance;
