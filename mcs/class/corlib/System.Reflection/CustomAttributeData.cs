@@ -95,7 +95,7 @@ namespace System.Reflection {
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			sb.Append ("[" + ctorInfo.DeclaringType.Name + " (");
+			sb.Append ("[" + ctorInfo.DeclaringType.FullName + "(");
 			for (int i = 0; i < ctorArgs.Count; i++) {
 				sb.Append (ctorArgs [i].ToString ());
 				if (i + 1 < ctorArgs.Count)

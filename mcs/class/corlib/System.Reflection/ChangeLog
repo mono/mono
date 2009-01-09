@@ -1,3 +1,11 @@
+2009-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r122907.
+	
+	* CustomAttributeData.cs (ToString): Applied patch from Leszek Ciesielski
+	<skolima@gmail.com>. Use DeclaringType.FullName instead of DeclaringType.Name.
+	Fixes #464830.
+
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoField.cs (GetValue): Don't check for open generic types if the field
