@@ -1,3 +1,13 @@
+2009-01-09  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: RewritePath now treats relative and absolute
+	file paths with more care. If a path is of the ~/file.aspx form,
+	then the ~/ part is removed and the rest is combined with the base
+	virtual path. If the file path is of the ~ or /file.aspx forms,
+	then it is combined verbatim with the base virtual path. Fixes bug
+	#463964
+	Make sure the path returned from HttpRequest.BaseVirtualPath
+	contains the trailing slash before combining. Fixes bug #463964
 
 2008-12-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
