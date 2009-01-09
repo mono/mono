@@ -1,3 +1,7 @@
+2009-01-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* gc.c (mono_gc_init): Fix the comments about deadlock on windows.
+
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Upgrade dtrace-prelink.sh location.
