@@ -1,5 +1,13 @@
 2009-01-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Initial skeleton of the metadata verifier.
+
+	* pedump.c: Add support for the metadata verifier.
+
+	* verify-internal.h: Export the whole assembly metadata verifier function.
+
+2009-01-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* gc.c (mono_gc_init): Fix the comments about deadlock on windows.
 
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
