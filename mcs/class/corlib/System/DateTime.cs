@@ -885,77 +885,106 @@ namespace System
 
 		public static DateTime Parse (string s, IFormatProvider provider, DateTimeStyles styles)
 		{
-			
-			const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
-#if !NET_2_0
-			const string argumentYearRangeExceptionMessage = "Valid values are between 1 and 9999, inclusive.";
-#endif
-			
 			if (s == null)
 				throw new ArgumentNullException ("s");
+
+			DateTime res;
+			Exception exception = null;
+			if (!CoreParse (s, provider, styles, out res, true, ref exception))
+				throw exception;
+			
+			return res;
+		}
+
+		const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
+		
+		public static bool CoreParse (string s, IFormatProvider provider, DateTimeStyles styles,
+					      out DateTime result, bool setExceptionOnError, ref Exception exception)
+		{
 			if (provider == null)
 				provider = CultureInfo.CurrentCulture;
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 
-			bool longYear = false;
-			DateTime result;
 			// Try first all the combinations of ParseAllDateFormats & ParseTimeFormats
-			string[] allDateFormats = YearMonthDayFormats (dfi);
+			string[] allDateFormats = YearMonthDayFormats (dfi, setExceptionOnError, ref exception);
+			if (allDateFormats == null){
+				result = MinValue;
+				return false;
+			}
+					
+			bool longYear = false;
 			for (int i = 0; i < allDateFormats.Length; i++) {
 				string firstPart = allDateFormats [i];
 				bool incompleteFormat = false;
 				if (_DoParse (s, firstPart, "", false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
-					return result;
+					return true;
+
 				if (!incompleteFormat)
 					continue;
 
 				for (int j = 0; j < ParseTimeFormats.Length; j++) {
 					if (_DoParse (s, firstPart, ParseTimeFormats [j], false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
-						return result;
+						return true;
 				}
 			}
-			string[] monthDayFormats = IsDayBeforeMonth (dfi) ? DayMonthShortFormats : MonthDayShortFormats;
+
+			//
+			// Month day formats
+			//
+			int dayIndex = dfi.MonthDayPattern.IndexOf('d');
+			int monthIndex = dfi.MonthDayPattern.IndexOf('M');
+			if (dayIndex == -1 || monthIndex == -1){
+				result = MinValue;
+				if (setExceptionOnError)
+					exception = new FormatException (Locale.GetText("Order of month and date is not defined by {0}", dfi.MonthDayPattern));
+				return false;
+			}
+			bool is_day_before_month = dayIndex < monthIndex;
+			string[] monthDayFormats = is_day_before_month ? DayMonthShortFormats : MonthDayShortFormats;
 			for (int i = 0; i < monthDayFormats.Length; i++) {
 				bool incompleteFormat = false;
 				if (_DoParse (s, monthDayFormats[i], "", false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
-					return result;
+					return true;
 			}
+			
 			for (int j = 0; j < ParseTimeFormats.Length; j++) {
 				string firstPart = ParseTimeFormats [j];
 				bool incompleteFormat = false;
 				if (_DoParse (s, firstPart, "", false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
-					return result;
+					return true;
 				if (!incompleteFormat)
 					continue;
 
 				for (int i = 0; i < monthDayFormats.Length; i++) {
 					if (_DoParse (s, firstPart, monthDayFormats [i], false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
-						return result;
+						return true;
 				}
 				for (int i = 0; i < allDateFormats.Length; i++) {
 					string dateFormat = allDateFormats [i];
 					if (dateFormat[dateFormat.Length - 1] == 'T')
 						continue; // T formats must be before the time part
 					if (_DoParse (s, firstPart, dateFormat, false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
-						return result;
+						return true;
 				}
 			}
 
 			// Try as a last resort all the patterns
-			if (ParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, false, ref longYear))
-				return result;
+			if (ParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, false, ref longYear, setExceptionOnError, ref exception))
+				return true;
 
+			if (!setExceptionOnError)
+				return false;
+			
 #if NET_2_0
-			// .NET does not throw an ArgumentOutOfRangeException, but .NET 1.1 does.
-			throw new FormatException (formatExceptionMessage);
+			// .NET 2.x does not throw an ArgumentOutOfRangeException, but .NET 1.1 does.
+			exception = new FormatException (formatExceptionMessage);
 #else
-			if (longYear) {
-				throw new ArgumentOutOfRangeException ("year",
-					argumentYearRangeExceptionMessage);
-			}
-
-			throw new FormatException (formatExceptionMessage);
+			if (longYear)
+				exception = new ArgumentOutOfRangeException ("year", "Valid values are between 1 and 9999, inclusive.");
+			else 
+				exception = new FormatException (formatExceptionMessage);
 #endif
+			return false;
 		}
 
 		public static DateTime ParseExact (string s, string format, IFormatProvider provider)
@@ -963,39 +992,38 @@ namespace System
 			return ParseExact (s, format, provider, DateTimeStyles.None);
 		}
 
-		private static bool IsDayBeforeMonth (DateTimeFormatInfo dfi)
-		{
-			int dayIndex = dfi.MonthDayPattern.IndexOf('d');
-			int monthIndex = dfi.MonthDayPattern.IndexOf('M');
-			if (dayIndex == -1 || monthIndex == -1)
-				throw new FormatException (Locale.GetText("Order of month and date is not defined by {0}", dfi.MonthDayPattern));
-
-			return dayIndex < monthIndex;
-		}
-
-		private static string[] YearMonthDayFormats (DateTimeFormatInfo dfi)
+		private static string[] YearMonthDayFormats (DateTimeFormatInfo dfi, bool setExceptionOnError, ref Exception exc)
 		{
 			int dayIndex = dfi.ShortDatePattern.IndexOf('d');
 			int monthIndex = dfi.ShortDatePattern.IndexOf('M');
 			int yearIndex = dfi.ShortDatePattern.IndexOf('y');
-			if (dayIndex == -1 || monthIndex == -1 || yearIndex == -1)
-				throw new FormatException (Locale.GetText("Order of year, month and date is not defined by {0}", dfi.ShortDatePattern));
+			if (dayIndex == -1 || monthIndex == -1 || yearIndex == -1){
+				if (setExceptionOnError)
+					exc = new FormatException (Locale.GetText("Order of year, month and date is not defined by {0}", dfi.ShortDatePattern));
+				return null;
+			}
 
 			if (yearIndex < monthIndex)
 				if (monthIndex < dayIndex)
 					return ParseYearMonthDayFormats;
 				else if (yearIndex < dayIndex)
 					return ParseYearDayMonthFormats;
-				else
+				else {
 					// The year cannot be between the date and the month
-					throw new FormatException (Locale.GetText("Order of date, year and month defined by {0} is not supported", dfi.ShortDatePattern));
+					if (setExceptionOnError)
+						exc = new FormatException (Locale.GetText("Order of date, year and month defined by {0} is not supported", dfi.ShortDatePattern));
+					return null;
+				}
 			else if (dayIndex < monthIndex)
 				return ParseDayMonthYearFormats;
 			else if (dayIndex < yearIndex)
 				return ParseMonthDayYearFormats;
-			else
+			else {
 				// The year cannot be between the month and the date
-				throw new FormatException (Locale.GetText("Order of month, year and date defined by {0} is not supported", dfi.ShortDatePattern));
+				if (setExceptionOnError)
+					exc = new FormatException (Locale.GetText("Order of month, year and date defined by {0} is not supported", dfi.ShortDatePattern));
+				return null;
+			}
 		}
 
 		private static int _ParseNumber (string s, int valuePos,
@@ -1807,8 +1835,9 @@ namespace System
 
 			DateTime result;
 			bool longYear = false;
-			if (!ParseExact (s, formats, dfi, style, out result, true, ref longYear))
-				throw new FormatException ();
+			Exception e = null;
+			if (!ParseExact (s, formats, dfi, style, out result, true, ref longYear, true, ref e))
+				throw e;
 			return result;
 		}		
 
@@ -1827,24 +1856,28 @@ namespace System
 
 		public static bool TryParse (string s, out DateTime result)
 		{
-			try {
-				result = Parse (s);
-			} catch {
-				result = MinValue;
-				return false;
+			if (s != null){
+				try {
+					Exception exception = null;
+
+					return CoreParse (s, null, DateTimeStyles.AllowWhiteSpaces, out result, false, ref exception);
+				} catch { }
 			}
-			return true;
+			result = MinValue;
+			return false;
 		}
 		
 		public static bool TryParse (string s, IFormatProvider provider, DateTimeStyles styles, out DateTime result)
 		{
-			try {
-				result = Parse (s, provider, styles);
-			} catch {
-				result = MinValue;
-				return false;
-			}
-			return true;
+			if (s != null){
+				try {
+					Exception exception = null;
+					
+					return CoreParse (s, provider, styles, out result, false, ref exception);
+				} catch {}
+			} 
+			result = MinValue;
+			return false;
 		}
 		
 		public static bool TryParseExact (string s, string format,
@@ -1853,7 +1886,6 @@ namespace System
 						  out DateTime result)
 		{
 			string[] formats;
-
 			formats = new string [1];
 			formats[0] = format;
 
@@ -1868,13 +1900,15 @@ namespace System
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 
 			bool longYear = false;
-			return ParseExact (s, formats, dfi, style, out result, true, ref longYear);
+			Exception e = null;
+			return ParseExact (s, formats, dfi, style, out result, true, ref longYear, false, ref e);
 		}
 #endif
 
 		private static bool ParseExact (string s, string [] formats,
-			DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret,
-			bool exact, ref bool longYear)
+						DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret,
+						bool exact, ref bool longYear,
+						bool setExceptionOnError, ref Exception exception)
 		{
 			int i;
 			bool incompleteFormat = false;
@@ -1883,13 +1917,16 @@ namespace System
 				DateTime result;
 				string format = formats[i];
 				if (format == null || format == String.Empty)
-					throw new FormatException ("Invalid Format String");
+					break;
 
 				if (_DoParse (s, formats[i], null, exact, out result, dfi, style, false, ref incompleteFormat, ref longYear)) {
 					ret = result;
 					return true;
 				}
 			}
+
+			if (setExceptionOnError)
+				exception = new FormatException ("Invalid format string");
 			ret = DateTime.MinValue;
 			return false;
 		}

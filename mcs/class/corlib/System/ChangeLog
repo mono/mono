@@ -1,3 +1,9 @@
+2009-01-09  Miguel de Icaza  <miguel@novell.com>
+
+	* DateTime.cs: Implement TryParse in a way that will not depend on
+	the try/catch statement.   The try/catch statement is still there
+	*just in case*, I might have missed some codepaths.
+
 2009-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : when ".FF..." is specified, allow milliseconds-less
