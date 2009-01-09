@@ -1,3 +1,7 @@
+2009-01-08  Geoff Norton  <gnorton@novell.com>
+
+	* processes.c: Fix the osx version check to properly detect 10.5 v 10.4
+
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r122672 - r122675.
