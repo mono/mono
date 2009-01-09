@@ -78,7 +78,7 @@ namespace System.Windows.Forms {
 			set {
 				if (value < 0)
 					value = 0;
-				if (value == list.Count)
+				if (value >= list.Count)
 					value = list.Count - 1;
 				if (listposition == value)
 					return;

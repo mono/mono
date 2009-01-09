@@ -1,5 +1,10 @@
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* CurrencyManager.cs: Even if Position is set to a greater value than the 
+	list count reset it to position of the last item.
+
+2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* BindingSource.cs: AddNew doesn't set index/add_pending for IBindingList. 
 	Fix that in order to make CancelNew to work.
 
