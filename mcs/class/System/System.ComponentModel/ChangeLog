@@ -1,3 +1,8 @@
+2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* BindingList.cs: Add calls InsertItem which raises OnListChanged, so 
+	don't raise a duplicate OnListChanged in AddNewCore.
+
 2008-12-22  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ReferenceConverter.cs: Implemented.

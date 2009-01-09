@@ -181,9 +181,6 @@ namespace System.ComponentModel {
 			Add (new_obj);
 			pending_add_index = IndexOf (new_obj);
 			add_pending = true;
-
-			if (raise_list_changed_events)
-				OnListChanged (new ListChangedEventArgs (ListChangedType.ItemAdded, pending_add_index));
 			
 			return new_obj;
 		}
