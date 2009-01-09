@@ -1,3 +1,8 @@
+2009-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c handles.c threads-internal.h: Implement alertable waits without
+	polling.
+
 2009-01-08  Geoff Norton  <gnorton@novell.com>
 
 	* processes.c: Fix the osx version check to properly detect 10.5 v 10.4
