@@ -1,3 +1,7 @@
+2009-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Update dtrace-prelink.sh location.
+
 2009-01-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Fix the check for the mscorlib ldstr 
