@@ -1,5 +1,9 @@
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Track the Position in the CurrencyManager.
+
+2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Implement data-bound new item editing/addition.
 	* DataGridViewRowCollection.cs: Make it possible for us to internally 
 	remove the edit row.
