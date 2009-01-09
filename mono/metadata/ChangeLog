@@ -1,3 +1,9 @@
+2009-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* threadpool.c (async_invoke_thread): Handle the wait function returning
+	WAIT_IO_COMPLETION as well.
+	(async_invoke_io_thread): Ditto.
+
 2009-01-09  Bill Holmes  <billholmes54@gmail.com>
 
 	* threads.c: Fixing the Windows build.
