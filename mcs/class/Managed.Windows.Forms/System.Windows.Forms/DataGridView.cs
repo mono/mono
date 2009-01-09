@@ -120,7 +120,7 @@ namespace System.Windows.Forms {
 		private Control editingControl;
 		private bool new_row_commited = true;
 		private bool is_autogenerating_columns = false;
-		private bool in_binding_context_changed = false;
+		private bool is_binding = false;
 		
 		// These are used to implement selection behaviour with SHIFT pressed.
 		private int selected_row = -1;
@@ -709,12 +709,9 @@ namespace System.Windows.Forms {
 			get { return dataMember; }
 			set {
 				if (dataMember != value) {
-					ClearBinding ();
-					
 					dataMember = value;
+					ReBind ();
 					OnDataMemberChanged(EventArgs.Empty);
-					
-					DoBinding ();
 				}
 			}
 		}
@@ -734,12 +731,9 @@ namespace System.Windows.Forms {
 				if (!(value == null || value is IList || value is IListSource || value is IBindingList || value is IBindingListView))
 					throw new NotSupportedException ("Type cannot be bound.");
 					
-				ClearBinding ();
-				
 				dataSource = value;
+				ReBind ();
 				OnDataSourceChanged (EventArgs.Empty);
-				
-				DoBinding ();
 			}
 		}
 
@@ -3358,11 +3352,7 @@ namespace System.Windows.Forms {
 		protected override void OnBindingContextChanged (EventArgs e)
 		{
 			base.OnBindingContextChanged(e);
-			if (!in_binding_context_changed) {
-				in_binding_context_changed = true;
-				ReBind();
-				in_binding_context_changed = true;
-			}
+			ReBind();
 		}
 
 		protected virtual void OnBorderStyleChanged (EventArgs e)
@@ -6027,8 +6017,12 @@ namespace System.Windows.Forms {
 
 		private void ReBind ()
 		{
-			ClearBinding ();
-			DoBinding ();
+			if (!is_binding) {
+				is_binding = true;
+				ClearBinding ();
+				DoBinding ();
+				is_binding = false;
+			}
 		}
 		
 		private bool MouseOverColumnResize (int col, int mousex)

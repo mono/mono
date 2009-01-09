@@ -1,3 +1,10 @@
+2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Requesting the CurrencyManager for the first time can 
+	lead to unexpected OnBindingContextChanged calls and recursive rebinding. 
+	Fix that.
+	[Fixes bug #464493]
+
 2009-01-08  Brad Taylor  <brad@getcoded.net>
 
 	* ComboBox.cs: Expose a few private fields as internal UIA properties.
