@@ -56,7 +56,7 @@ namespace System.Web.UI
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context, string type)
 		{
 			Context = context;
-			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 			InputFile = inputFile;
 			SetBaseType (type);
 			AddApplicationAssembly ();
@@ -71,7 +71,7 @@ namespace System.Web.UI
 		internal UserControlParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
 			Context = context;
-			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 
 			if (String.IsNullOrEmpty (inputFile)) {
 				HttpRequest req = context != null ? context.Request : null;
@@ -90,7 +90,7 @@ namespace System.Web.UI
 			Context = context;
 
 			string fpath = context.Request.FilePath;
-			BaseVirtualDir = UrlUtils.GetDirectory (fpath);
+			BaseVirtualDir = VirtualPathUtility.GetDirectory (fpath, false);
 
 			// We're probably being called by ParseControl - let's use the requested
 			// control's path plus unique suffix as our input file, since that's the

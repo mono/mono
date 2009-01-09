@@ -86,7 +86,7 @@ namespace System.Web.UI
 		internal PageParser (string virtualPath, string inputFile, HttpContext context)
 		{
 			Context = context;
-			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 			InputFile = inputFile;
 			SetBaseType (null);
 			AddApplicationAssembly ();
@@ -105,7 +105,7 @@ namespace System.Web.UI
 		internal PageParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
 			Context = context;
-			BaseVirtualDir = UrlUtils.GetDirectory (virtualPath);
+			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 			Reader = reader;
 			if (String.IsNullOrEmpty (inputFile)) {
 				HttpRequest req = context != null ? context.Request : null;

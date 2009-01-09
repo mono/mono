@@ -1,3 +1,7 @@
+2009-01-09  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseParser.cs, PageParser.cs, UserControlParser.cs: use
+	VirtualPathUtility.GetDirectory instead of UrlUtils.GetDirectory.
 
 2008-12-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

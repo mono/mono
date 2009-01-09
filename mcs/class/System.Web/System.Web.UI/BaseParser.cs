@@ -137,12 +137,12 @@ namespace System.Web.UI
 		internal virtual string BaseVirtualDir {
 			get {
 				if (baseVDir == null)
-					baseVDir = UrlUtils.GetDirectory (context.Request.FilePath);
-
+					baseVDir = VirtualPathUtility.GetDirectory (context.Request.FilePath);
+				
 				return baseVDir;
 			}
 
-			set { 
+			set {
 				if (VirtualPathUtility.IsRooted (value))
 					baseVDir = VirtualPathUtility.ToAbsolute (value);
 				else
