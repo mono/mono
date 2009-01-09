@@ -1,3 +1,9 @@
+2009-01-09  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Special case 0-length receive requests in the
+	BeginAccept overloads that wait for data, so they behave as the
+	non-waiting version.  Seems to match MS behaviour, fixes bug
+	464201.
 
 2009-01-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

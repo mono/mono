@@ -371,18 +371,24 @@ namespace System.Net.Sockets
 					return;
 				}
 
+				/* It seems the MS runtime
+				 * special-cases 0-length requested
+				 * receive data.  See bug 464201.
+				 */
 				int total = 0;
-				try {
-					SocketError error;
+				if (result.Size > 0) {
+					try {
+						SocketError error;
 					
-					total = acc_socket.Receive_nochecks (result.Buffer,
-									     result.Offset,
-									     result.Size,
-									     result.SockFlags,
-									     out error);
-				} catch (Exception e) {
-					result.Complete (e);
-					return;
+						total = acc_socket.Receive_nochecks (result.Buffer,
+										     result.Offset,
+										     result.Size,
+										     result.SockFlags,
+										     out error);
+					} catch (Exception e) {
+						result.Complete (e);
+						return;
+					}
 				}
 
 				result.Complete (acc_socket, total);
