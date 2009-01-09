@@ -395,7 +395,7 @@ namespace System.Web.Configuration {
 			if (path [path.Length - 1] == '/')
 				dir = path;
 			else {
-				dir = VirtualPathUtility.GetDirectory (path);
+				dir = VirtualPathUtility.GetDirectory (path, false);
 				if (dir == null)
 					return path;
 			}
