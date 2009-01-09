@@ -287,6 +287,9 @@ namespace System.Windows.Forms {
 
 		protected override void OnContentClick (DataGridViewCellEventArgs e)
 		{
+			if (ReadOnly)
+				return;
+
 			if (!IsInEditMode)
 				DataGridView.BeginEdit (false);
 				
@@ -316,7 +319,7 @@ namespace System.Windows.Forms {
 		protected override void OnKeyDown (KeyEventArgs e, int rowIndex)
 		{
 			// when activated by the SPACE key, this method updates the cell's user interface
-			if ((e.KeyData & Keys.Space) == Keys.Space) {
+			if (!ReadOnly && (e.KeyData & Keys.Space) == Keys.Space) {
 				check_state = PushButtonState.Pressed;
 				DataGridView.InvalidateCell (this);
 			}
@@ -325,7 +328,7 @@ namespace System.Windows.Forms {
 		protected override void OnKeyUp (KeyEventArgs e, int rowIndex)
 		{
 			// when activated by the SPACE key, this method updates the cell's user interface
-			if ((e.KeyData & Keys.Space) == Keys.Space) {
+			if (!ReadOnly && (e.KeyData & Keys.Space) == Keys.Space) {
 				check_state = PushButtonState.Normal;
 				DataGridView.InvalidateCell (this);
 			}
@@ -333,7 +336,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnLeave (int rowIndex, bool throughMouseClick)
 		{
-			if (check_state != PushButtonState.Normal) {
+			if (!ReadOnly && check_state != PushButtonState.Normal) {
 				check_state = PushButtonState.Normal;
 				DataGridView.InvalidateCell (this);
 			}
@@ -342,7 +345,7 @@ namespace System.Windows.Forms {
 		protected override void OnMouseDown (DataGridViewCellMouseEventArgs e)
 		{
 			// if activated by depresing the left mouse button, this method updates the cell's user interface
-			if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
+			if (!ReadOnly && (e.Button & MouseButtons.Left) == MouseButtons.Left) {
 				check_state = PushButtonState.Pressed;
 				DataGridView.InvalidateCell (this);
 			}
@@ -351,7 +354,7 @@ namespace System.Windows.Forms {
 		protected override void OnMouseLeave (int rowIndex)
 		{
 			// if the cell's button is not in its normal state, this method causes the cell's user interface to be updated.
-			if (check_state != PushButtonState.Normal) {
+			if (!ReadOnly && check_state != PushButtonState.Normal) {
 				check_state = PushButtonState.Normal;
 				DataGridView.InvalidateCell (this);
 			}
@@ -359,7 +362,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseMove (DataGridViewCellMouseEventArgs e)
 		{
-			if (check_state != PushButtonState.Normal && check_state != PushButtonState.Hot) {
+			if (!ReadOnly && check_state != PushButtonState.Normal && check_state != PushButtonState.Hot) {
 				check_state = PushButtonState.Hot;
 				DataGridView.InvalidateCell (this);
 			}
@@ -368,7 +371,7 @@ namespace System.Windows.Forms {
 		protected override void OnMouseUp (DataGridViewCellMouseEventArgs e)
 		{
 			// if activated by the left mouse button, this method updates the cell's user interface
-			if ((e.Button & MouseButtons.Left) == MouseButtons.Left) {
+			if (!ReadOnly && (e.Button & MouseButtons.Left) == MouseButtons.Left) {
 				check_state = PushButtonState.Normal;
 				DataGridView.InvalidateCell (this);
 			}

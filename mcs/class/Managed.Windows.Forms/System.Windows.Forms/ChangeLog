@@ -1,5 +1,9 @@
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewCheckBoxCell.cs: Respect the ReadOnly state of the Cell.
+
+2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Track the Position in the CurrencyManager.
 
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
