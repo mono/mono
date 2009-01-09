@@ -1,3 +1,10 @@
+2009-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r122804.
+	
+	* method-to-ir.c (mono_method_to_ir): Fix the check for the mscorlib ldstr 
+	optimization. Fixes #464520.
+
 2009-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of 122702.
