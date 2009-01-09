@@ -624,10 +624,8 @@ namespace System.Windows.Forms {
 		{
 			if (!AllowEdit)
 				throw new InvalidOperationException ("Item cannot be added to a read-only or fixed-size list.");
-			if (!AllowNew || (!item_has_default_ctor && !IsAddingNewHandled)) 
-				throw new InvalidOperationException ("AddNew cannot be called on '" + item_type.Name +
-						", since it does not have a public default ctor. Set AllowNew to true " +
-						", handling AddingNew and creating the appropriate object.");
+			if (!AllowNew) 
+				throw new InvalidOperationException ("AddNew is set to false.");
 
 			EndEdit ();
 

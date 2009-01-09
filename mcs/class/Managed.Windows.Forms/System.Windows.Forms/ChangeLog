@@ -1,3 +1,8 @@
+2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* BindingSource.cs: When adding a new item try to delegate to the internal 
+	list first before throwing an exception.
+
 2009-01-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When setting the text and adjusting the top_item, do it
