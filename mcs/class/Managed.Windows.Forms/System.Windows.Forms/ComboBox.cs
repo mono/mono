@@ -1887,7 +1887,10 @@ namespace System.Windows.Forms
 			// when there is no scrollbar
 			
 			if (listbox_ctrl != null) {
-				listbox_ctrl.SetTopItem (item);
+				if (listbox_ctrl.FirstVisibleItem () + listbox_ctrl.page_size < item ||
+					item < listbox_ctrl.FirstVisibleItem ())
+					listbox_ctrl.SetTopItem (item);
+
 				listbox_ctrl.HighlightedIndex = item;
 			}
 
