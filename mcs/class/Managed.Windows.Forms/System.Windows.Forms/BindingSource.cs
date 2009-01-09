@@ -636,9 +636,12 @@ namespace System.Windows.Forms {
 			if (new_object != null) {
 				if (!item_type.IsAssignableFrom (new_object.GetType ()))
 					throw new InvalidOperationException ("Objects added to the list must all be of the same type.");
-			} else if (list is IBindingList)
-				return ((IBindingList)list).AddNew ();
-			else if (!item_has_default_ctor)
+			} else if (list is IBindingList) {
+				object newObj = ((IBindingList)list).AddNew ();
+				add_pending = true;
+				pending_add_index = list.IndexOf (newObj);
+				return newObj;
+			} else if (!item_has_default_ctor)
 				throw new InvalidOperationException ("AddNew cannot be called on '" + item_type.Name +
 						", since it does not have a public default ctor. Set AllowNew to true " +
 						", handling AddingNew and creating the appropriate object.");
