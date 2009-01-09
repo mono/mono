@@ -1,3 +1,10 @@
+2009-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (signal_thread_state_change): Call wapi_interrupt_thread () to
+	interrupt a wait.
+	(mono_thread_execute_interruption): Call wapi_clear_interruption () to enable
+	the thread to wait again.
+
 2009-01-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Initial skeleton of the metadata verifier.
