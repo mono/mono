@@ -1,3 +1,9 @@
+2009-01-09  Bill Holmes  <billholmes54@gmail.com>
+
+	* threads.c: Fixing the Windows build.
+
+	Code is contributed under MIT/X11 license.
+
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (signal_thread_state_change): Call wapi_interrupt_thread () to
