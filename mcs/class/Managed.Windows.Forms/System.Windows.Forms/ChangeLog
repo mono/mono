@@ -1,5 +1,12 @@
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Implement data-bound new item editing/addition.
+	* DataGridViewRowCollection.cs: Make it possible for us to internally 
+	remove the edit row.
+	[Fixes bugs #457107, #457308, #325240]
+
+2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* CurrencyManager.cs: Even if Position is set to a greater value than the 
 	list count reset it to position of the last item.
 

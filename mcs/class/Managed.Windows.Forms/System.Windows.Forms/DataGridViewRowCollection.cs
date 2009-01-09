@@ -477,6 +477,13 @@ namespace System.Windows.Forms
 			Remove (row);
 		}
 
+		internal void RemoveAtInternal (int index)
+		{
+			DataGridViewRow row = this [index];
+			
+			RemoveInternal (row);
+		}
+
 		public DataGridViewRow SharedRow (int rowIndex)
 		{
 			return (DataGridViewRow) list [rowIndex];
