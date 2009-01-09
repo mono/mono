@@ -1,5 +1,10 @@
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (_wapi_thread_apc_pending): Check for thread->wait_handle ==
+	INTERRUPTION_REQUESTED_HANDLE too.
+	(wapi_interrupt_thread): Rework the comments, the thread is no longer
+	required to call QueueUserAPC to make the wait functions return.
+
 	* handles.c: Rework the way the global signal stuff is handled: instead of
 	allocating a separate mutex/condvar pair for it, allocate a normal handle.
 	This way, it can reuse the alertable waiting code, allowing 
