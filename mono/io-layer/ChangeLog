@@ -1,3 +1,7 @@
+2009-01-09  Miguel de Icaza  <miguel@novell.com>
+
+	* messages.c: Eliminate a warning.
+	
 	Incorporate a few patches from Paolo:
 	
 2009-01-09  Paolo Molaro (lupus@ximian.com)
