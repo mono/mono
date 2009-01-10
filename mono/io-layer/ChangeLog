@@ -1,5 +1,11 @@
-	Incorporate a few patches from Paolo:
+	Incorporate a few patches from Paolo, slightly modified:
 	
+2009-01-09  Miguel de Icaza  <miguel@novell.com>
+
+	* handles.c (_wapi_handle_check_share): On non-Linux systems, do
+	not even compile in the code that scans for /proc/fd, and go
+	directly to the fallback function.
+
 2009-01-09  Paolo Molaro (lupus@ximian.com)
 
 	* handles.c: Do not include some header files in platforms that
