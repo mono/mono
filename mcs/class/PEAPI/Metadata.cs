@@ -72,7 +72,7 @@ namespace PEAPI {
 		Family, FamOrAssem, Public, Static = 0x0010, PublicStatic = 0x16, 
 		Final = 0x0020, PublicStaticFinal = 0x36, Virtual = 0x0040, 
 		PrivateVirtual, PublicVirtual = 0x0046, HideBySig = 0x0080, 
-		NewSlot = 0x0100, Abstract = 0x0400, SpecialName = 0x0800,
+		NewSlot = 0x0100, Strict = 0x200, Abstract = 0x0400, SpecialName = 0x0800,
 		RTSpecialName = 0x1000, SpecialRTSpecialName = 0x1800, 
 		HasSecurity = 0x4000, RequireSecObject = 0x8000}
 
