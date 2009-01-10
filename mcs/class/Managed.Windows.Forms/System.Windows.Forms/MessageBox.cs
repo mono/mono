@@ -551,8 +551,8 @@ namespace System.Windows.Forms
 				get { 
 					return new Rectangle (space_border, 
 					                      space_border, 
-					                      icon_image.Width, 
-					                      icon_image.Height);
+							      icon_image == null ? -1 : icon_image.Width, 
+							      icon_image == null ? -1 : icon_image.Height);
 				}
 			}
 
