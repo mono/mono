@@ -1,3 +1,7 @@
+2009-01-09  Miguel de Icaza  <miguel@novell.com>
+
+	* Add support for `strict' in .method declaration
+
 2008-02-21  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #363587

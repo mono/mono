@@ -312,6 +312,7 @@ namespace Mono.ILASM {
 %token K_FAMILY
 %token K_INITONLY
 %token K_RTSPECIALNAME
+%token K_STRICT
 %token K_SPECIALNAME
 %token K_ASSEMBLY
 %token K_FAMANDASSEM
@@ -1919,6 +1920,7 @@ meth_attr		: /* EMPTY */                   { $$ = new MethAttr (); }
 			| meth_attr K_REQSECOBJ         { $$ = (MethAttr) $1 | MethAttr.RequireSecObject; }
 			| meth_attr K_SPECIALNAME       { $$ = (MethAttr) $1 | MethAttr.SpecialName; }
 			| meth_attr K_RTSPECIALNAME     { $$ = (MethAttr) $1 | MethAttr.RTSpecialName; }
+			| meth_attr K_STRICT            { $$ = (MethAttr) $1 | MethAttr.Strict; }
                         | meth_attr K_COMPILERCONTROLLED { /* Do nothing */ }
 			| meth_attr K_UNMANAGEDEXP      
 			| meth_attr K_PINVOKEIMPL OPEN_PARENS comp_qstring K_AS
