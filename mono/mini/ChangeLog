@@ -1,3 +1,7 @@
+2009-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Fix the build.
+
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Update dtrace-prelink.sh location.
