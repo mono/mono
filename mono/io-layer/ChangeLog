@@ -1,4 +1,12 @@
-2009-01-09  Miguel de Icaza  <miguel@novell.com>
+	Incorporate a few patches from Paolo:
+	
+2009-01-09  Paolo Molaro (lupus@ximian.com)
+
+	* error.c: On some platforms that do not define these variables,
+	do not use them.
+
+	* security.c, io-private.h: Only include some headers if they
+	exist on the system
 
 	* sockets.c, sockets.h: do not import on this header files that
 	are only consumed internally in sockets.c.
