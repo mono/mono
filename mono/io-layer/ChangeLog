@@ -1,8 +1,13 @@
+	Incorporate a few patches from Paolo:
+	
+2009-01-09  Paolo Molaro (lupus@ximian.com)
+
+	* handles.c: Do not include some header files in platforms that
+	lack it.
+
 2009-01-09  Miguel de Icaza  <miguel@novell.com>
 
 	* messages.c: Eliminate a warning.
-	
-	Incorporate a few patches from Paolo:
 	
 2009-01-09  Paolo Molaro (lupus@ximian.com)
 
