@@ -1,3 +1,8 @@
+2009-01-09  Miguel de Icaza  <miguel@novell.com>
+
+	* sockets.c, sockets.h: do not import on this header files that
+	are only consumed internally in sockets.c.
+
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (_wapi_thread_apc_pending): Check for thread->wait_handle ==
