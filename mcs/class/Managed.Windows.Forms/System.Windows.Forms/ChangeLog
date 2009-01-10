@@ -1,3 +1,7 @@
+2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewComboBoxCell.cs: Implement/Fix the data binding.
+
 2008-01-09  Mario Carrion  <mcarrion@novell.com>
 
 	* MessageBox.cs: Fixed internal UIAIconRectangle property.

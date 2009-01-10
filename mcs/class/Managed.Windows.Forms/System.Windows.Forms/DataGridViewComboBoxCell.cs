@@ -127,15 +127,14 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public virtual ObjectCollection Items {
 			get {
-				items.Clear ();
-
-				if (DataGridView != null && DataGridView.BindingContext != null && 
-				    DataGridView.DataSource != null) {
-					CurrencyManager manager = DataGridView.BindingContext[DataGridView.DataSource] as CurrencyManager;
-					if (manager != null) {
-						items.AddRange (manager.List);
+				if (DataGridView != null && DataGridView.BindingContext != null 
+				    && DataSource != null && !String.IsNullOrEmpty (ValueMember)) {
+					items.Clear ();
+					CurrencyManager dataManager = (CurrencyManager) DataGridView.BindingContext[DataSource];
+					if (dataManager != null && dataManager.Count > 0) {
+						foreach (object item in dataManager.List)
+							items.Add (item);
 					}
-					
 				}
 
 				return items;
@@ -209,8 +208,8 @@ namespace System.Windows.Forms {
 			editingControl.Items.Clear();
 			editingControl.SelectedIndex = -1;
 
-			if (DataGridView.DataSource != null) {
-				editingControl.DataSource = DataGridView.DataSource;
+			if (DataSource != null) {
+				editingControl.DataSource = DataSource;
 				editingControl.ValueMember = ValueMember;
 				editingControl.DisplayMember = DisplayMember;
 			} else {
