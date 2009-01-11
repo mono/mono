@@ -1,3 +1,15 @@
+2009-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Emit debug info for
+	trampolines.
+
+	* aot-compiler.c (mono_save_trampoline_xdebug_info): New function to emit
+	debug+unwind info for trampolines.
+
+	* mini.c (mono_create_unwind_op): New helper function.
+
+	* unwind.h: Add macros for emitting unwind ops without a MonoCompile.
+
 2009-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Fix the build.
