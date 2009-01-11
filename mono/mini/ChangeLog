@@ -1,5 +1,7 @@
 2009-01-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* TestDriver.cs: Add an --iter argument to run tests multiple times.
+
 	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Emit debug info for
 	trampolines.
 
