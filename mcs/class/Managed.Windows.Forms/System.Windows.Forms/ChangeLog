@@ -1,5 +1,10 @@
 2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Preserve the column index. Fixes a regression 
+	introduced by the data binding position tracking code.
+
+2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: If the bottom of the row matches the client height 
 	do not regard the row as partially visible. Fixes the weird scrolling 
 	when there is no scrollbar.

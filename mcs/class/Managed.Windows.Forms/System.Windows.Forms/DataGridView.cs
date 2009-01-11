@@ -4856,7 +4856,8 @@ namespace System.Windows.Forms {
 				int nextRowIndex = e.RowIndex;
 				if (nextRowIndex >= Rows.Count)
 					nextRowIndex = Rows.Count - 1;
-				MoveCurrentCell (0, nextRowIndex, true, false, false, true);
+				MoveCurrentCell (currentCell != null ? currentCell.ColumnIndex : 0, nextRowIndex, 
+						 true, false, false, true);
 			}
 
 			Invalidate ();
@@ -4924,8 +4925,9 @@ namespace System.Windows.Forms {
 			new_row_editing = true;
 			PrepareEditingRow (false, false);
 			if (DataManager != null)
-				DataManager.AddNew ();
-			MoveCurrentCell (currentColumnIndex, NewRowIndex, true, false, false, true);
+				DataManager.AddNew (); // will raise OnListPositionChanged
+			else
+				MoveCurrentCell (currentColumnIndex, NewRowIndex, true, false, false, true);
 
 			e = new DataGridViewRowEventArgs (Rows[NewRowIndex]);
 			DataGridViewRowEventHandler eh = (DataGridViewRowEventHandler)(Events [UserAddedRowEvent]);
@@ -6041,8 +6043,8 @@ namespace System.Windows.Forms {
 		
 		private void OnListPositionChanged (object sender, EventArgs args)
 		{
-			if (Rows.Count > 0 && Columns.Count > 0)
-				MoveCurrentCell (DataManager.Position == -1 ? -1 : 0, DataManager.Position, 
+			if (Rows.Count > 0 && Columns.Count > 0 && DataManager.Position != -1)
+				MoveCurrentCell (currentCell != null ? currentCell.ColumnIndex : 0, DataManager.Position, 
 						 true, false, false, true);
 			else
 				MoveCurrentCell (-1, -1, true, false, false, true);
