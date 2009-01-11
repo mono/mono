@@ -190,6 +190,7 @@ namespace System.Windows.Forms {
 			columnHeadersVisible = true;
 			columns = CreateColumnsInstance();
 			columns.CollectionChanged += OnColumnCollectionChanged;
+			currentCellAddress = new Point (-1, -1);
 			dataMember = String.Empty;
 			defaultCellStyle = new DataGridViewCellStyle();
 			defaultCellStyle.BackColor = SystemColors.Window;
@@ -5921,6 +5922,9 @@ namespace System.Windows.Forms {
 		
 		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift, bool scroll)
 		{
+			if (x == -1 || y == -1)
+				x = y = -1;
+
 			if (!SetCurrentCellAddressCore (x, y, true, false, false)) {
 				ClearSelection ();
 				return;
@@ -6014,6 +6018,8 @@ namespace System.Windows.Forms {
 		
 		private int ColumnIndexToDisplayIndex (int index)
 		{
+			if (index == -1)
+				return index;
 			return Columns[index].DisplayIndex;
 		}
 		

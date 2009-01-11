@@ -1,5 +1,14 @@
 2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fix crashes when shortcut keys are pressed, but 
+	there are no cells:
+	   - CurrentCellAddress should be -1, -1 and not 0, 0.
+	   - Be tolerant and fall back to clearing the current cell if either 
+	   column or row is -1 in MoveCurrentCell.
+	   - Misc. more -1 checks.
+
+2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Preserve the column index. Fixes a regression 
 	introduced by the data binding position tracking code.
 
