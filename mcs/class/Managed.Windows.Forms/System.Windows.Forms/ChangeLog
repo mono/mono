@@ -1,5 +1,11 @@
 2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: If the bottom of the row matches the client height 
+	do not regard the row as partially visible. Fixes the weird scrolling 
+	when there is no scrollbar.
+
+2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewComboBoxCell.cs: Implement/Fix the data binding.
 
 2008-01-09  Mario Carrion  <mcarrion@novell.com>

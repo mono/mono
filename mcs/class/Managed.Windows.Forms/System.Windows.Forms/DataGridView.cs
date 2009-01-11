@@ -2388,7 +2388,7 @@ namespace System.Windows.Forms {
 
 			for (int index = first_row_index; index < Rows.Count; index++) {
 				DataGridViewRow row = GetRowInternal (index);
-				if (rowTop + row.Height < ClientSize.Height) {
+				if (rowTop + row.Height <= ClientSize.Height) {
 					result++;
 					rowTop += row.Height;
 				} else {
