@@ -41,15 +41,34 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
-		[MonoTODO]
+		[MonoTODO ("verify implementation")]
 		public override IPermission CreatePermission ()
 		{
-			throw new NotImplementedException ();
+			NetworkInformationAccess a = NetworkInformationAccess.None;
+			switch (Access) {
+			case "Read":
+				a = NetworkInformationAccess.Read;
+				break;
+			case "Full":
+				a = NetworkInformationAccess.Read | NetworkInformationAccess.Ping;
+				break;
+			}
+			return new NetworkInformationPermission (a);
 		}
 
 		public string Access {
 			get { return access; }
-			set { access = value; }
+			set {
+				switch (access) {
+				case "Read":
+				case "Full":
+				case "None":
+					break;
+				default:
+					throw new ArgumentException ("Only 'Read', 'Full' and 'None' are allowed");
+				}
+				access = value; 
+			}
 		}
 	}
 }

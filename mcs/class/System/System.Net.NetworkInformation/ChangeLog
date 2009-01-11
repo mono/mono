@@ -1,3 +1,8 @@
+2009-01-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetworkInformationPermission.cs,
+	  NetworkInformationPermissionAttribute.cs : implement some,
+	  otherwise it blocks compilation.
 
 2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

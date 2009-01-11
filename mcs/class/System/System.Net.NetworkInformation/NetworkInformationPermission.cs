@@ -33,6 +33,8 @@ using System.Security.Permissions;
 namespace System.Net.NetworkInformation {
 	[Serializable]
 	public sealed class NetworkInformationPermission : CodeAccessPermission, IUnrestrictedPermission {
+		private const int version = 1;
+
 		[MonoTODO]
 		public NetworkInformationPermission (PermissionState state)
 		{
@@ -80,7 +82,11 @@ namespace System.Net.NetworkInformation {
 		[MonoTODO]
 		public override SecurityElement ToXml ()
 		{
-			return null;
+			SecurityElement se = PermissionHelper.Element (typeof (NetworkInformationPermission), version);
+
+			// FIXME: add fields
+
+			return se;
 		}
 
 		[MonoTODO]
