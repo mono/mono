@@ -1,0 +1,6 @@
+2009-01-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* initial checkin. Stubs and some implemented code for all 2.0 types.
+	  I'm not going to implement this assembly, it's just for stub to
+	  make it possible to build some applications that depend on this
+	  assembly. Feel free to implement it.

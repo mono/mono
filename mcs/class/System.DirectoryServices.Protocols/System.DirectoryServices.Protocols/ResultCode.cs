@@ -1,0 +1,80 @@
+//
+// ResultCode.cs
+//
+// Author:
+//   Atsushi Enomoto  <atsushi@ximian.com>
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+using System;
+using System.Linq;
+
+namespace System.DirectoryServices.Protocols
+{
+	public enum ResultCode
+	{
+		Success,
+		OperationsError,
+		ProtocolError,
+		TimeLimitExceeded,
+		SizeLimitExceeded,
+		CompareFalse,
+		CompareTrue,
+		AuthMethodNotSupported,
+		StrongAuthRequired,
+		ReferralV2,
+		Referral,
+		AdminLimitExceeded,
+		UnavailableCriticalExtension,
+		ConfidentialityRequired,
+		SaslBindInProgress,
+		NoSuchAttribute = 16,
+		UndefinedAttributeType,
+		InappropriateMatching,
+		ConstraintViolation,
+		AttributeOrValueExists,
+		InvalidAttributeSyntax,
+		NoSuchObject = 32,
+		AliasProblem,
+		InvalidDNSyntax,
+		AliasDereferencingProblem = 36,
+		InappropriateAuthentication = 48,
+		InsufficientAccessRights = 50,
+		Busy,
+		Unavailable,
+		UnwillingToPerform,
+		LoopDetect,
+		SortControlMissing = 60,
+		OffsetRangeError,
+		NamingViolation = 64,
+		ObjectClassViolation,
+		NotAllowedOnNonLeaf,
+		NotAllowedOnRdn,
+		EntryAlreadyExists,
+		ObjectClassModificationsProhibited,
+		ResultsTooLarge,
+		AffectsMultipleDsas,
+		VirtualListViewError = 76,
+		Other = 80
+	}
+}

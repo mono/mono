@@ -1,0 +1,4 @@
+2009-01-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, System.DirectoryServices.Protocols.dll.sources :
+	  initial checkin.
