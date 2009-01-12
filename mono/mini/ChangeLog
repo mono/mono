@@ -1,3 +1,9 @@
+2009-01-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Call mono_xdebug_init ().
+
+	* aot-compiler.c (mono_xdebug_init): Make this non-static.
+
 2009-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* TestDriver.cs: Add an --iter argument to run tests multiple times.
