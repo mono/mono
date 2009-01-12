@@ -45,6 +45,19 @@
 
 	* processes.c: Fix the osx version check to properly detect 10.5 v 10.4
 
+2009-01-08  Christian Prochnow  <cproch@seculogix.de>
+
+	* types.h: added WapiULargeInteger.
+
+	* uglify.h: added ULARGE_INTEGER, PULARGE_INTEGER.
+
+	* io.h: added WapiDriveType, added method declarations
+	for GetDiskFreeSpaceEx and GetDriveType
+
+	* io.c: added GetDiskFreeSpaceEx() to query disk size
+	and free space via statvfs or statfs system call.
+	added GetDriveType to query drive type via /etc/mtab or /etc/mnttab.
+
 2009-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* processes.c: Properly implement support for Process.Modules on OSX.

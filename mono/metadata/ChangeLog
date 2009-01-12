@@ -95,6 +95,12 @@
 	* appdomain.c: Initialize the mono_strtod_mutex here, thanks to
 	Robert Jordan for pointing this out.
 
+2009-01-08  Christian Prochnow  <cproch@seculogix.de>
+
+	* icall.c
+	* icall-def.h: added internal calls ves_icall_System_IO_DriveInfo_GetDiskFreeSpace,
+	ves_icall_System_IO_DriveInfo_GetDriveType.
+
 2009-01-07  Miguel de Icaza  <miguel@novell.com>
 
 	* icall.c: Wrap calls to mono_strtod in CriticalSection
