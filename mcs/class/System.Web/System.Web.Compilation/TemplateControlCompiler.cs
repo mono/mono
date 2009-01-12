@@ -462,7 +462,7 @@ namespace System.Web.Compilation
 
 				CodeMethodInvokeExpression expr;
 				expr = new CodeMethodInvokeExpression (methodRef, new CodePrimitiveExpression (str));
-				builder.renderMethod.Statements.Add (AddLinePragma (expr, builder));
+				builder.renderMethod.Statements.Add (expr);
 			}
 		}
 
