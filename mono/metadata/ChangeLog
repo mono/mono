@@ -6,6 +6,36 @@
 
 	* metadata-verify.c: Add lfanew verification.
 
+2009-01-12  Jb Evain  <jbevain@novell.com>
+
+	* tabldefs.h: rename METHOD_ATTRIBUTE_CHECK_ACCESS_ON_OVERRIDE to
+	METHOD_ATTRIBUTE_STRICT to match the ECMA terminology.
+
+2009-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* socket-io.c: Fix the build.
+
+	* environment.c: Fix an #ifdef.
+
+2009-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* threadpool.c (async_invoke_thread): Handle the wait function returning
+	WAIT_IO_COMPLETION as well.
+	(async_invoke_io_thread): Ditto.
+
+2009-01-09  Bill Holmes  <billholmes54@gmail.com>
+
+	* threads.c: Fixing the Windows build.
+
+	Code is contributed under MIT/X11 license.
+
+2009-01-09  Zoltan Varga  <vargaz@gmail.com>
+ 
+	* threads.c (signal_thread_state_change): Call wapi_interrupt_thread () to
+	interrupt a wait.
+	(mono_thread_execute_interruption): Call wapi_clear_interruption () to enable
+	the thread to wait again.
+
 2009-01-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Initial skeleton of the metadata verifier.
