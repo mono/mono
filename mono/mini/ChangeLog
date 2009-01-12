@@ -1,5 +1,11 @@
 2009-01-12  Mark Probst  <mark.probst@gmail.com>
 
+	* mini.c, mini.h: lookup_generic_method() is now
+	mono_domain_lookup_shared_generic() and uses the jit_code_hash,
+	making the shared_generics_hash obsolete.
+
+2009-01-12  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-ppc.c, exceptions-ppc.c, cpu-ppc.md, cpu-ppc64.md: Don't
 	use the red zone.  Make room on the stack first and then use it,
 	not the other way around.

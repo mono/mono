@@ -1,3 +1,8 @@
+2009-01-12  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, domain-internals.h: Remove the shared_generics_hash
+	and its lookup functions.
+
 2009-01-12  Bill Holmes  <billholmes54@gmail.com>
 
 	* socket-io.c:  Fixing the MSVC build. 
