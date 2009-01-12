@@ -1,3 +1,9 @@
+2009-01-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c, exceptions-ppc.c, cpu-ppc.md, cpu-ppc64.md: Don't
+	use the red zone.  Make room on the stack first and then use it,
+	not the other way around.
+
 2009-01-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_init): Call mono_xdebug_init ().
