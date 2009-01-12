@@ -1,4 +1,9 @@
 
+2009-01-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequest.cs: now deleting a file works when we're not in the
+	root directory.
+
 2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* IPAddress.cs: avoid throwing when parsing a subnet.
