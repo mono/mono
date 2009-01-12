@@ -228,6 +228,65 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		public void DeleteFile1 ()
+		{
+			ServerDeleteFile sp = new ServerDeleteFile ();
+			sp.Start ();
+			string uri = String.Format ("ftp://{0}:{1}/file.txt", sp.IPAddress, sp.Port);
+			try {
+				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
+				Console.WriteLine (ftp.RequestUri);
+				ftp.KeepAlive = false;
+				ftp.Timeout = 5000;
+				ftp.Method = WebRequestMethods.Ftp.DeleteFile;
+				ftp.UseBinary = true;
+				FtpWebResponse response = (FtpWebResponse) ftp.GetResponse ();
+				Assert.IsTrue ((int) response.StatusCode >= 200 && (int) response.StatusCode < 300, "DF#01");
+				response.Close ();
+			} catch (Exception e) {
+				Console.WriteLine (e);
+				if (!String.IsNullOrEmpty (sp.Where))
+					throw new Exception (sp.Where);
+				throw;
+			} finally {
+				sp.Stop ();
+			}
+		}
+
+		class ServerDeleteFile : FtpServer {
+			protected override void Run ()
+			{
+				Socket client = control.Accept ();
+				NetworkStream ns = new NetworkStream (client, false);
+				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
+				StreamReader reader = new StreamReader (ns, Encoding.UTF8);
+				if (!DoAnonymousLogin (writer, reader)) {
+					client.Close ();
+					return;
+				}
+
+				if (!DoInitialDialog (writer, reader, "/home/someuser", "/home/someuser/")) {
+					client.Close ();
+					return;
+				}
+
+				string str = reader.ReadLine ();
+				if (str.Trim () != "DELE file.txt") {
+					Where = "DELE - " + str;
+					client.Close ();
+					return;
+				}
+				writer.WriteLine ("250 Delete operation successful");
+				writer.Flush ();
+				if (!EndConversation (writer, reader)) {
+					client.Close ();
+					return;
+				}
+				client.Close ();
+			}
+		}
+
 		class ServerDownload : FtpServer {
 			protected override void Run ()
 			{
