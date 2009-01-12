@@ -1,3 +1,10 @@
+2009-01-12  Bill Holmes  <billholmes54@gmail.com>
+
+	* Variant.cs (GetValue):  Handling the NULL IDispatch 
+	  and IUnknown case.
+
+	Contributed under MIT/X11 license.
+
 2009-01-09  Miguel de Icaza  <miguel@novell.com>
 
 	* DateTime.cs: Implement TryParse in a way that will not depend on

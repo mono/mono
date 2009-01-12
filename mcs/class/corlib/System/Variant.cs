@@ -246,7 +246,8 @@ namespace System
 				break;
 			case VarEnum.VT_UNKNOWN:
 			case VarEnum.VT_DISPATCH:
-				obj = Marshal.GetObjectForIUnknown(pdispVal);
+				if (pdispVal != IntPtr.Zero)
+					obj = Marshal.GetObjectForIUnknown(pdispVal);
 				break;
 			}
 			return obj;
