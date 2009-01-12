@@ -2181,6 +2181,8 @@ namespace System.Windows.Forms {
 
 				Invalidate (invalid);
 			} else {
+				Invalidate (highlighted_node.Bounds);
+
 				highlighted_node = focused_node;
 				selected_node = focused_node;
 			}
