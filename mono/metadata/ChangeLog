@@ -1,3 +1,9 @@
+2009-01-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_synchronized_wrapper): Make the 
+	initialization of the various _method variables thread safe. Fixes
+	#465377.
+
 2009-01-12  Mark Probst  <mark.probst@gmail.com>
 
 	* domain.c, domain-internals.h: Remove the shared_generics_hash
