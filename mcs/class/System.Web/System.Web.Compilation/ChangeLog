@@ -1,3 +1,13 @@
+2009-01-12  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: the LiteralStringControlBuilder
+	class is now used to track the location of the plain strings being
+	output to the generated code. Fixes bug #461214
+
+	* AspGenerator.cs: AppendLiteralString is called with the current
+	parser location as one of its parameters in FlushText (). Fixes
+	bug #461214
+
 2008-12-11  Marek Habersack  <mhabersack@novell.com>
 
 	* BaseCompiler.cs: added a new method, InitializeType, to be

@@ -1,5 +1,10 @@
 2009-01-12  Marek Habersack  <mhabersack@novell.com>
 
+	* LiteralStringControlBuilder.cs: added. Fixes bug #461214
+
+	* ControlBuilder.cs: added location tracking for literal string
+	children. Fixes bug #461214
+
 	* TemplateParser.cs: line pragmas are on by default. Fixes bug
 	#460479
 

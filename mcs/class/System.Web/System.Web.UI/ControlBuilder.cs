@@ -266,12 +266,17 @@ namespace System.Web.UI {
 		internal bool ChildrenAsProperties {
 			get { return childrenAsProperties; }
 		}
-
-		void AddChild (object child)
+		
+		void AddChild (object child, ILocation location)
 		{
 			if (children == null)
 				children = new ArrayList ();
 
+			if (child is string) {
+				children.Add (new LiteralStringControlBuilder ((string)child, location));
+				return;
+			}
+			
 			children.Add (child);
 			ControlBuilder cb = child as ControlBuilder;
 			if (cb != null && cb is TemplateBuilder) {
@@ -308,6 +313,11 @@ namespace System.Web.UI {
 
 		public virtual void AppendLiteralString (string s)
 		{
+			AppendLiteralString (s, null);
+		}
+
+		internal void AppendLiteralString (string s, ILocation location)
+		{
 			if (s == null || s.Length == 0)
 				return;
 
@@ -328,7 +338,7 @@ namespace System.Web.UI {
 			if (HtmlDecodeLiterals ())
 				s = HttpUtility.HtmlDecode (s);
 
-			AddChild (s);
+			AddChild (s, location);
 		}
 
 		public virtual void AppendSubBuilder (ControlBuilder subBuilder)
@@ -346,7 +356,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			AddChild (subBuilder);
+			AddChild (subBuilder, null);
 		}
 
 		void AppendToProperty (ControlBuilder subBuilder)
@@ -359,7 +369,7 @@ namespace System.Web.UI {
 				return;
 			}
 
-			AddChild (subBuilder);
+			AddChild (subBuilder, null);
 		}
 
 		void AppendCode (ControlBuilder subBuilder)
@@ -370,7 +380,7 @@ namespace System.Web.UI {
 			if (typeof (CodeRenderBuilder) == subBuilder.GetType ())
 				hasAspCode = true;
 
-			AddChild (subBuilder);
+			AddChild (subBuilder, null);
 		}
 
 		public virtual void CloseControl ()
