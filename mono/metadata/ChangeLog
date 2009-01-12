@@ -1,5 +1,7 @@
 2009-01-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c: Implement scanning of the alloc_pinned objects.
+
 	* marshal.c (mono_marshal_get_synchronized_wrapper): Make the 
 	initialization of the various _method variables thread safe. Fixes
 	#465377.
