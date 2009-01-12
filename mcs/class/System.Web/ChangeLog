@@ -1,8 +1,3 @@
-2009-01-12  Marek Habersack  <mhabersack@novell.com>
-
-	* System.Web.dll.sources: added
-	System.Web.UI/LiteralStringControlBuilder.cs
-
 2008-12-23  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added Test/mainsoft/NunitWebResources/CustomSectionEmptyCollection.aspx

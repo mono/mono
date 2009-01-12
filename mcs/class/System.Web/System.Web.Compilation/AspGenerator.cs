@@ -588,7 +588,7 @@ namespace System.Web.Compilation
 				throw new ParseException (location, "Content not valid for application file.");
 
 			ControlBuilder current = stack.Builder;
-			current.AppendLiteralString (t, location);
+			current.AppendLiteralString (t);
 			if (current.NeedsTagInnerText ()) {
 				tagInnerText.Append (t);
 			}

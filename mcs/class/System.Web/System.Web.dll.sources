@@ -641,7 +641,6 @@ System.Web.UI/KeyedList.cs
 System.Web.UI/KeyedListEnumerator.cs
 System.Web.UI/ListSourceHelper.cs
 System.Web.UI/LiteralControl.cs
-System.Web.UI/LiteralStringControlBuilder.cs
 System.Web.UI/LosFormatter.cs
 System.Web.UI/MasterPage.cs
 System.Web.UI/MasterPageControlBuilder.cs
