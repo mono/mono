@@ -82,9 +82,9 @@ namespace System.Web.UI {
 		string compilerOptions;
 		string language;
 		bool implicitLanguage;
-		bool strictOn = false;
-		bool explicitOn = false;
-		bool linePragmasOn = false;
+		bool strictOn ;
+		bool explicitOn;
+		bool linePragmasOn = true;
 		bool output_cache;
 		int oc_duration;
 		string oc_header, oc_custom, oc_param, oc_controls;
@@ -599,8 +599,6 @@ namespace System.Web.UI {
 			explicitOn = GetBool (atts, "Explicit", compConfig.Explicit);
 			if (atts.ContainsKey ("LinePragmas"))
 				linePragmasOn = GetBool (atts, "LinePragmas", false);
-			else
-				linePragmasOn = true;
 			
 			string inherits = GetString (atts, "Inherits", null);
 #if NET_2_0
