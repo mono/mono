@@ -1,3 +1,8 @@
+2009-01-12  Jb Evain  <jbevain@novell.com>
+
+	* tabldefs.h: rename METHOD_ATTRIBUTE_CHECK_ACCESS_ON_OVERRIDE to
+	METHOD_ATTRIBUTE_STRICT to match the ECMA terminology.
+
 2009-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* socket-io.c: Fix the build.
