@@ -73,6 +73,8 @@ namespace System.Windows.Forms {
 		private bool		is_year_going_down;
 		private bool		is_mouse_moving_year;
 		private int		year_moving_count;
+		private bool 		date_selected_event_pending;
+
 #if NET_2_0
 		bool			right_to_left_layout;
 #endif
@@ -1928,7 +1930,6 @@ namespace System.Windows.Forms {
 			updown_timer.Enabled = true;
 		}
 
-
 		// occurs when mouse moves around control, used for selection
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
 			HitTestInfo hti = this.HitTest (e.X, e.Y);
@@ -1953,7 +1954,7 @@ namespace System.Windows.Forms {
 					if (prev_clicked != clicked_date) {
 						// select date after updating click_state and clicked_date
 						SelectDate (clicked_date);
-						OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+						date_selected_event_pending = true;
 
 						Rectangle invalid = Rectangle.Union (prev_rect, clicked_rect);
 						Invalidate (invalid);
@@ -2011,7 +2012,7 @@ namespace System.Windows.Forms {
 
 					// select date before updating click_state
 					SelectDate (clicked_date);
-					OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+					date_selected_event_pending = true;
 
 					// leave clicked state blank if drop down window
 					if (owner == null) {
@@ -2211,6 +2212,11 @@ namespace System.Windows.Forms {
 			click_state [2] = false;
 			// do the regulare mouseup stuff
 			this.DoMouseUp ();
+
+			if (date_selected_event_pending) {
+				OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
+				date_selected_event_pending = false;
+			}
 		}
 
 		// raised by any key up events
