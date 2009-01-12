@@ -1,4 +1,8 @@
 
+2009-01-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequestTest.cs: test deleting a file.
+
 2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpListener2Test.cs: make sure we dispose the listener.
