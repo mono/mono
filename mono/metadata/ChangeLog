@@ -1,5 +1,10 @@
 2009-01-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c (scan_from_remsets): Clear the global remset of pointers which
+	no longer point to the nursery.
+
+	* sgen-gc.c: Add a few comments/FIXMEs.
+	
 	* sgen-gc.c: Implement scanning of the alloc_pinned objects.
 
 	* marshal.c (mono_marshal_get_synchronized_wrapper): Make the 
