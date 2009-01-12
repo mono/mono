@@ -1,5 +1,10 @@
 2009-01-12  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c: Don't stop sharing of generic methods with catch
+	clauses - we already handle those.
+
+2009-01-12  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c, mini.h: lookup_generic_method() is now
 	mono_domain_lookup_shared_generic() and uses the jit_code_hash,
 	making the shared_generics_hash obsolete.
