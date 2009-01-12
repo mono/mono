@@ -57,12 +57,12 @@ namespace System.Web.Security {
 		
 		void ICollection.CopyTo (Array array, int index)
 		{
-			store.CopyTo (array, index);
+			store.Values.CopyTo (array, index);
 		}
 		
 		public void CopyTo (MembershipUser[] array, int index)
 		{
-			store.CopyTo (array, index);
+			store.Values.CopyTo (array, index);
 		}
 		
 		public IEnumerator GetEnumerator ()
