@@ -1,3 +1,9 @@
+2009-01-12  Bill Holmes  <billholmes54@gmail.com>
+
+	* socket-io.c:  Fixing the MSVC build. 
+
+	Code is contributed under MIT/X11 license.
+
 2009-01-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add pe header watermark verification.
