@@ -608,6 +608,8 @@ namespace System.Net
 			case WebRequestMethods.Ftp.MakeDirectory:
 			case WebRequestMethods.Ftp.Rename:
 			case WebRequestMethods.Ftp.DeleteFile:
+				CWDAndSetFileName (requestUri);
+				SetType ();
 				ProcessSimpleMethod ();
 				break;
 			default: // What to do here?
@@ -644,7 +646,7 @@ namespace System.Net
 			if (method == WebRequestMethods.Ftp.Rename)
 				method = RenameFromCommand;
 			
-			status = SendCommand (method, requestUri.LocalPath);
+			status = SendCommand (method, file_name);
 
 			ftpResponse.Stream = new EmptyStream ();
 			
@@ -699,8 +701,9 @@ namespace System.Net
 					throw CreateExceptionFromResponse (status);
 				break;
 			case WebRequestMethods.Ftp.DeleteFile:
-				if (status.StatusCode != FtpStatusCode.FileActionOK) 
+				if (status.StatusCode != FtpStatusCode.FileActionOK)  {
 					throw CreateExceptionFromResponse (status);
+				}
 				break;
 			}
 
@@ -911,7 +914,7 @@ namespace System.Net
 			}
 
 			IPEndPoint ep = (IPEndPoint) sock.LocalEndPoint;
-			string ipString = ep.Address.ToString ().Replace (".", ",");
+			string ipString = ep.Address.ToString ().Replace ('.', ',');
 			int h1 = ep.Port >> 8; // ep.Port / 256
 			int h2 = ep.Port % 256;
 
