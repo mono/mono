@@ -1,5 +1,13 @@
 2008-12-16  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r123092.
+	
+	* marshal.c (mono_marshal_get_synchronized_wrapper): Make the 
+	initialization of the various _method variables thread safe. Fixes
+	#465377.
+	
+2009-01-12  Zoltan Varga  <vargaz@gmail.com>
+
 	* class.c (mono_class_get_fields): Handle loading errors.
 
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
