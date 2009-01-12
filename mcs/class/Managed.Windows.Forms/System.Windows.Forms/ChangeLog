@@ -1,3 +1,13 @@
+2009-01-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Separate some scroll logic: setting SelectedIndex, as
+	well as -in DropDown and Simple modes- writing in the textbox should
+	try to set the requested item as the top one, but navigating with the
+	keyboard and handling mouse selection don't need that behaviour. Also,
+	when resetting selected_index handling key press events, reset
+	ComboListBox.HighlightIndex. 
+	Fixes the remaining bits of #464188.
+
 2009-01-11  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fix crashes when shortcut keys are pressed, but 

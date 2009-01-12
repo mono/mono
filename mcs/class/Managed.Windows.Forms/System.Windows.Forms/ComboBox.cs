@@ -59,6 +59,7 @@ namespace System.Windows.Forms
 		private ComboListBox listbox_ctrl;
 		private ComboTextBox textbox_ctrl;
 		private bool process_textchanged_event = true;
+		private bool process_texchanged_autoscroll = true;
 		private bool item_height_specified;
 		private int item_height;
 		private int requested_height = -1;
@@ -666,29 +667,7 @@ namespace System.Windows.Forms
 		public override int SelectedIndex {
 			get { return selected_index; }
 			set {
-				if (selected_index == value)
-					return;
-
-				if (value <= -2 || value >= Items.Count)
-					throw new ArgumentOutOfRangeException ("SelectedIndex");
-				selected_index = value;
-
-				if (dropdown_style != ComboBoxStyle.DropDownList) {
-					if (value == -1)
-						SetControlText (string.Empty, false);
-					else
-						SetControlText (GetItemText (Items [value]), false);
-				}
-
-				if (DropDownStyle == ComboBoxStyle.DropDownList)
-					Invalidate ();
-
-				if (listbox_ctrl != null)
-					listbox_ctrl.HighlightedIndex = value;
-
-				OnSelectedValueChanged (new EventArgs ());
-				OnSelectedIndexChanged (new EventArgs ());
-				OnSelectedItemChanged (new EventArgs ());
+				SetSelectedIndex (value, false);
 			}
 		}
 
@@ -1673,6 +1652,10 @@ namespace System.Windows.Forms
 			if (Items.Count == 0)
 				return;
 
+			// for keyboard navigation, we have to do our own scroll, since
+			// the default behaviour for the SelectedIndex property is a little different,
+			// setting the selected index in the top always
+
 			int offset;
 			switch (e.KeyCode) 
 			{
@@ -1700,7 +1683,7 @@ namespace System.Windows.Forms
 					if (offset < 1)
 						offset = 1;
 
-					SelectedIndex = Math.Max (SelectedIndex - offset, 0);
+					SetSelectedIndex (Math.Max (SelectedIndex - offset, 0), true);
 
 					if (DroppedDown)
 						if (SelectedIndex < listbox_ctrl.FirstVisibleItem ())
@@ -1718,7 +1701,7 @@ namespace System.Windows.Forms
 					if (offset < 1)
 						offset = 1;
 
-					SelectedIndex = Math.Min (SelectedIndex + offset, Items.Count - 1);
+					SetSelectedIndex (Math.Min (SelectedIndex + offset, Items.Count - 1), true);
 
 					if (DroppedDown)
 						if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
@@ -1742,7 +1725,7 @@ namespace System.Windows.Forms
 					break;
 				case Keys.End:
 					if (dropdown_style == ComboBoxStyle.DropDownList) {
-						SelectedIndex = Items.Count - 1;
+						SetSelectedIndex (Items.Count - 1, true);
 
 						if (DroppedDown)
 							if (SelectedIndex >= listbox_ctrl.LastVisibleItem ())
@@ -1755,6 +1738,34 @@ namespace System.Windows.Forms
 			}
 		}
 
+		void SetSelectedIndex (int value, bool supressAutoScroll)
+		{
+			if (selected_index == value)
+				return;
+
+			if (value <= -2 || value >= Items.Count)
+				throw new ArgumentOutOfRangeException ("SelectedIndex");
+
+			selected_index = value;
+
+			if (dropdown_style != ComboBoxStyle.DropDownList) {
+				if (value == -1)
+					SetControlText (string.Empty, false, supressAutoScroll);
+				else
+					SetControlText (GetItemText (Items [value]), false, supressAutoScroll);
+			}
+
+			if (DropDownStyle == ComboBoxStyle.DropDownList)
+				Invalidate ();
+
+			if (listbox_ctrl != null)
+				listbox_ctrl.HighlightedIndex = value;
+
+			OnSelectedValueChanged (EventArgs.Empty);
+			OnSelectedIndexChanged (EventArgs.Empty);
+			OnSelectedItemChanged (EventArgs.Empty);
+		}
+
 		// If no item is currently selected, and an item is found matching the text 
 		// in the textbox, then selected that item.  Otherwise the item at the given 
 		// index is selected.
@@ -1764,9 +1775,9 @@ namespace System.Windows.Forms
 			if (SelectedIndex == -1 && Text.Length != 0)
 				match = FindStringCaseInsensitive(Text);
 			if (match != -1)
-				SelectedIndex = match;
+				SetSelectedIndex (match, true);
 			else
-				SelectedIndex = index;
+				SetSelectedIndex (index, true);
 		}
 		
 		void OnMouseDownCB (object sender, MouseEventArgs e)
@@ -1882,16 +1893,10 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			// TODO:  THIS IS BROKEN-ISH
-			// I don't think we should hilight, and setting the top item does weirdness
-			// when there is no scrollbar
-			
 			if (listbox_ctrl != null) {
-				if (listbox_ctrl.FirstVisibleItem () + listbox_ctrl.page_size < item ||
-					item < listbox_ctrl.FirstVisibleItem ())
-					listbox_ctrl.SetTopItem (item);
-
-				listbox_ctrl.HighlightedIndex = item;
+				// Set as top item
+				if (process_texchanged_autoscroll)
+					listbox_ctrl.EnsureTop (item);
 			}
 
 			base.Text = textbox_ctrl.Text;
@@ -1900,16 +1905,26 @@ namespace System.Windows.Forms
 		private void OnTextKeyPress (object sender, KeyPressEventArgs e)
 		{
 			selected_index = -1;
+			if (listbox_ctrl != null)
+				listbox_ctrl.HighlightedIndex = -1;
 		}
 
 		internal void SetControlText (string s, bool suppressTextChanged)
 		{
+			SetControlText (s, suppressTextChanged, false);
+		}
+
+		internal void SetControlText (string s, bool suppressTextChanged, bool supressAutoScroll)
+		{
 			if (suppressTextChanged)
 				process_textchanged_event = false;
+			if (supressAutoScroll)
+				process_texchanged_autoscroll = false;
 				
 			textbox_ctrl.Text = s;
 			textbox_ctrl.SelectAll ();
 			process_textchanged_event = true;
+			process_texchanged_autoscroll = true;
 		}
 		
 		void UpdateComboBoxBounds ()
@@ -2650,7 +2665,23 @@ namespace System.Windows.Forms
 			{
 				return top_item;
 			}
-			
+
+			public void EnsureTop (int item)
+			{
+				if (owner.Items.Count == 0)
+					return;
+				if (vscrollbar_ctrl == null || !vscrollbar_ctrl.Visible)
+					return;
+
+				int max = vscrollbar_ctrl.Maximum - page_size + 1;
+				if (item > max)
+					item = max;
+				else if (item < vscrollbar_ctrl.Minimum)
+					item = vscrollbar_ctrl.Minimum;
+
+				vscrollbar_ctrl.Value = item;
+			}
+
 			bool scrollbar_grabbed = false;
 
 			bool InScrollBar {
@@ -2706,7 +2737,7 @@ namespace System.Windows.Forms
 
 				bool is_change = owner.SelectedIndex != index;
 				
-				owner.SelectedIndex = index;
+				owner.SetSelectedIndex (index, true);
 				owner.OnSelectionChangeCommitted (new EventArgs ());
 				
 				// If the user selected the already selected item, SelectedIndex
