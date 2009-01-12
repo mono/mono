@@ -1,3 +1,9 @@
+2009-01-08  Christian Prochnow  <cproch@seculogix.de>
+
+	* DriveInfo.cs: Added GetDiskFreeSpaceInternal
+	to query drive size and free space.
+	Added GetDriveTypeInternal to query type of drive.
+
 2008-12-20  Miguel de Icaza  <miguel@novell.com>
 
 	* FileStream.cs: Found while debugging webcompare, we should add
