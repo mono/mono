@@ -1,3 +1,8 @@
+2009-01-12  Jb Evain  <jbevain@novell.com>
+
+	* RxInterpreter.cs: set trace_rx to false for NET_2_1.
+	* Regex.cs: set old_rx to false for NET_2_1.
+
 2009-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxInterpreter.cs: Add support for constant strings in anchors. Fixes

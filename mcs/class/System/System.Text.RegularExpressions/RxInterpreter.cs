@@ -30,7 +30,12 @@ namespace System.Text.RegularExpressions {
 		RepeatContext deep;		// points to the most-nested repeat context
 
 		/* The readonly ensures the JIT can optimize out if (trace_rx) statements */
-		public static readonly bool trace_rx = Environment.GetEnvironmentVariable ("MONO_TRACE_RX") != null;
+		public static readonly bool trace_rx =
+#if !NET_2_1
+			Environment.GetEnvironmentVariable ("MONO_TRACE_RX") != null;
+#else
+			false;
+#endif
 
 		// private classes
 

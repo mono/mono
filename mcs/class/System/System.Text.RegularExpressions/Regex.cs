@@ -236,7 +236,12 @@ namespace System.Text.RegularExpressions {
 			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
 		}
 
-		static readonly bool old_rx = Environment.GetEnvironmentVariable ("MONO_OLD_RX") != null;
+		static readonly bool old_rx =
+#if !NET_2_1
+			Environment.GetEnvironmentVariable ("MONO_OLD_RX") != null;
+#else
+			false;
+#endif
 
 		private static IMachineFactory CreateMachineFactory (string pattern, RegexOptions options) 
 		{
