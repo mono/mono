@@ -1,3 +1,7 @@
+2009-01-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Add pe header watermark verification.
+
 2009-01-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add lfanew verification.
