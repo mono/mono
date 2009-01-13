@@ -96,12 +96,12 @@ namespace System.Web.Compilation
 			ILocation location = null;
 
 			if (!(builder is CodeRenderBuilder))
-				location = builder.location;
+				location = builder.Location;
 			
 			if (location != null)
 				return AddLinePragma (statement, location);
 			else
-				return AddLinePragma (statement, builder.line, builder.fileName);
+				return AddLinePragma (statement, builder.Line, builder.FileName);
 		}
 
 		internal CodeStatement AddLinePragma (CodeStatement statement, ILocation location)
@@ -140,12 +140,12 @@ namespace System.Web.Compilation
 			if (builder == null || member == null)
 				return member;
 
-			ILocation location = builder.location;
+			ILocation location = builder.Location;
 			
 			if (location != null)
 				return AddLinePragma (member, location);
 			else
-				return AddLinePragma (member, builder.line, builder.fileName);
+				return AddLinePragma (member, builder.Line, builder.FileName);
 		}
 		
 		internal CodeTypeMember AddLinePragma (CodeTypeMember member, ILocation location)

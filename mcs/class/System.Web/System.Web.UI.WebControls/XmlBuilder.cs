@@ -66,11 +66,11 @@ namespace System.Web.UI.WebControls
 			try {
 				doc.LoadXml (text);
 			} catch (XmlException xmle) {
-				Location newloc = new Location (location);
+				Location newloc = new Location (Location);
 				if (xmle.LineNumber >= 0)
 					newloc.BeginLine += xmle.LineNumber - 1;
 
-				location = newloc;
+				Location = newloc;
 				throw;
 			}
 

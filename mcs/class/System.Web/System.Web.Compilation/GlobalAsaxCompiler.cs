@@ -91,7 +91,7 @@ namespace System.Web.Compilation
 					CreateApplicationOrSessionPropertyForObject (tag.Type, tag.ObjectID,
 										     true, false);
 				} else {
-					throw new ParseException (tag.location, "Invalid scope: " + tag.Scope);
+					throw new ParseException (tag.Location, "Invalid scope: " + tag.Scope);
 				}
 			}
 		}

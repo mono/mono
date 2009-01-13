@@ -1,3 +1,11 @@
+2009-01-13  Marek Habersack  <mhabersack@novell.com>
+
+	* CodeBuilder.cs, RootBuilder.cs, CollectionBuilder.cs: updates
+	related to ControlBuilder cleanup.
+
+	* ControlBuilder.cs: code cleanup - no field should be visible
+	outside the class unless it's a constant or a read-only field.
+
 2009-01-12  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: line pragmas are on by default. Fixes bug

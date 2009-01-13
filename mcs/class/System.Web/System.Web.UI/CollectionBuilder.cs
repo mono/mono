@@ -66,10 +66,10 @@ namespace System.Web.UI
 		{			
 			base.Init (parser, parentBuilder, type, tagName, id, attribs);
 
-			PropertyInfo prop = parentBuilder.ControlType.GetProperty (tagName, flagsNoCase);
+			PropertyInfo prop = parentBuilder.ControlType.GetProperty (tagName, FlagsNoCase);
 			SetControlType (prop.PropertyType);
 
-			MemberInfo[] mems = ControlType.GetMember ("Item", MemberTypes.Property, flagsNoCase & ~BindingFlags.IgnoreCase);
+			MemberInfo[] mems = ControlType.GetMember ("Item", MemberTypes.Property, FlagsNoCase & ~BindingFlags.IgnoreCase);
 			if (mems.Length > 0)
 				prop = (PropertyInfo) mems [0];
 			else

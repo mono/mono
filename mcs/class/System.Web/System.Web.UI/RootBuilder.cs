@@ -110,9 +110,9 @@ namespace System.Web.UI {
 		public RootBuilder (TemplateParser parser)
 		{
 			foundry = new AspComponentFoundry ();
-			line = 1;
+			Line = 1;
 			if (parser != null)
-				fileName = parser.InputFile;
+				FileName = parser.InputFile;
 			Init (parser, null, null, null, null, null);
 		}
 

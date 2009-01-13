@@ -291,7 +291,7 @@ namespace System.Web.Compilation
 #endif
 
 				if (stack.Count > 1 && pstack.Count == 0)
-					throw new ParseException (stack.Builder.location,
+					throw new ParseException (stack.Builder.Location,
 								  "Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
 			} finally {
 				if (reader != null)
@@ -393,7 +393,7 @@ namespace System.Web.Compilation
 			string i = new string ('\t', indent);
 			Console.Write (i);
 			Console.WriteLine ("b: {0} id: {1} type: {2} parent: {3}",
-					   builder, builder.ID, builder.ControlType, builder.parentBuilder);
+					   builder, builder.ID, builder.ControlType, builder.ParentBuilder);
 
 			if (builder.Children != null)
 			foreach (object o in builder.Children) {
@@ -686,7 +686,7 @@ namespace System.Web.Compilation
 				throw new ParseException (Location, "Only Content controls are allowed directly in a content page that contains Content controls.");
 #endif
 			
-			builder.location = location;
+			builder.Location = location;
 			builder.ID = htable ["id"] as string;
 			if (typeof (HtmlForm).IsAssignableFrom (builder.ControlType)) {
 				if (inForm)
@@ -807,7 +807,7 @@ namespace System.Web.Compilation
 				try { 
 					current.SetTagInnerText (tagInnerText.ToString ());
 				} catch (Exception e) {
-					throw new ParseException (current.location, e.Message, e);
+					throw new ParseException (current.Location, e.Message, e);
 				}
 
 				tagInnerText.Length = 0;

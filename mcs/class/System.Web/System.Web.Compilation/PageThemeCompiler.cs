@@ -148,8 +148,8 @@ namespace System.Web.Compilation
 
 			mainClass.Members.Add (method);
 
-			builder.method = method;
-			builder.methodStatements = method.Statements;
+			builder.Method = method;
+			builder.MethodStatements = method.Statements;
 
 			method.ReturnType = new CodeTypeReference (typeof (Control));
 
@@ -196,7 +196,7 @@ namespace System.Web.Compilation
 				}
 			}
 
-			builder.method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
+			builder.Method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
 		}
 
 		protected override void AddClassAttributes ()
@@ -223,7 +223,7 @@ namespace System.Web.Compilation
 						continue;
 					
 					string id = b.ID;
-					string skinId = b.attribs != null ? b.attribs["skinid"] as string : null;
+					string skinId = b.Attributes != null ? b.Attributes["skinid"] as string : null;
 					if (skinId == null)
 						skinId = "";
 

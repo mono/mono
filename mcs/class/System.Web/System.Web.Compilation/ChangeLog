@@ -1,3 +1,9 @@
+2009-01-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs, AspGenerator.cs, BaseCompiler.cs,
+	GlobalAsaxCompiler.cs, PageThemeCompiler.cs: updates related to
+	ControlBuilder cleanup.
+
 2009-01-12  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: do not generate #line pragmas for

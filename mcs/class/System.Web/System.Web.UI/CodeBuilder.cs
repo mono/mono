@@ -41,9 +41,9 @@ namespace System.Web.UI
 		{
 			this.code = code;
 			this.isAssign = isAssign;
-			this.line = location.BeginLine;
-			this.fileName = location.Filename;
-			this.location = location;
+			this.Line = location.BeginLine;
+			this.FileName = location.Filename;
+			this.Location = location;
 		}
 
 		internal override object CreateInstance ()
