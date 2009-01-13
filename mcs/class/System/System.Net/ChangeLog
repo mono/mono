@@ -1,5 +1,10 @@
 2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebRequest.cs: keepAlive is of no use here.
+	Fixes bug #465613.
+
+2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpConnection.cs: we were not writing the headers for 0-length
 	responses.
 	* WebConnectionStream.cs: for 204/304 responses with an explicit
