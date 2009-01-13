@@ -1,3 +1,11 @@
+2009-01-13  Dean Brettle  <dean@brettle.com>
+
+	* HttpApplicationFactory.cs: if there are any *.browser files in
+	App_Data/Mono_Machine_Browsers/, use those instead of the default
+	machine browser files.  This allows app developers to workaround
+	limitations with Mono's default browser files without causing
+	incompatibilities with MS's implementation.
+
 2009-01-09  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: RewritePath now treats relative and absolute
