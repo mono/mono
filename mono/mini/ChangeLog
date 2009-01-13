@@ -1,3 +1,8 @@
+2009-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (SIG_HANDLER_SIGNATURE): Avoid crashes when the current thread or
+	domain is not set. Fixes #465864.
+
 2009-01-12  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Don't stop sharing of generic methods with catch
