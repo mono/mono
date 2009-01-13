@@ -1,3 +1,9 @@
+
+2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: include sys/socket.h. Fixes compilation on FreeBSD.
+	Patch from Makoto Kishimoto.
+
 2009-01-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (mono_gc_make_descr_from_bitmap): Handle large bitmaps by 
