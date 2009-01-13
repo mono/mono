@@ -1403,7 +1403,7 @@ namespace System.Diagnostics {
 						completed = true;
 						if (wait_handle != null)
 							wait_handle.Set ();
-						Flush (true);
+						FlushLast ();
 						return;
 					}
 
@@ -1421,6 +1421,16 @@ namespace System.Diagnostics {
 				}
 			}
 
+			void FlushLast ()
+			{
+				Flush (true);
+				if (err_out) {
+					process.OnOutputDataReceived (null);
+				} else {
+					process.OnErrorDataReceived (null);
+				}
+			}
+			
 			void Flush (bool last)
 			{
 				if (sb.Length == 0 ||
