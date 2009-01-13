@@ -1,3 +1,7 @@
+2009-01-12  Geoff Norton  <gnorton@novell.com>
+
+	* ClientBase.cs: Added a few delegates missing from ChannelBase
+
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientBase.cs : added ChannelBase class inside.

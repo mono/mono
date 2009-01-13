@@ -43,6 +43,9 @@ namespace System.ServiceModel
 		ClientRuntimeChannel inner_channel;
 		CommunicationState state;
 
+		protected delegate IAsyncResult BeginOperationDelegate (object[] inValues, AsyncCallback asyncCallback, object state);
+		protected delegate object[] EndOperationDelegate (IAsyncResult result);
+
 		protected ClientBase ()
 			: this (initialContxt)
 		{
