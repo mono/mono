@@ -1,3 +1,9 @@
+2009-01-13  Jb Evain  <jbevain@novell.com>
+
+	* EncoderTest.cs: Make sure we can get an encoder for a custom
+	encoding.
+	* DecoderTest.cs: ditto.
+
 2008-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF7EncodingTest.cs : added test for broken GetCharCount() case.

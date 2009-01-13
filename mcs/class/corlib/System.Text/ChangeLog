@@ -1,3 +1,8 @@
+2009-01-13  Jb Evain  <jbevain@novell.com>
+
+	* Encoding.cs: when creating a ForwardingEncoder or a
+	ForwardingDecoder, don't crash if the Encoding doesn't
+	provide an EncoderFallback or a DecoderFallback.
 
 Mon Oct 6 09:46:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 

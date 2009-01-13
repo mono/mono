@@ -55,6 +55,48 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (625, charsUsed, "#2");
 			Assert.AreEqual (625, bytesUsed, "#3");
 		}
+
+
+		[Test]
+		public void CustomEncodingGetDecoder ()
+		{
+			var encoding = new CustomEncoding ();
+			var decoder = encoding.GetDecoder ();
+			Assert.IsNotNull (decoder);
+		}
+
+		class CustomEncoding : Encoding {
+
+			public override int GetByteCount (char [] chars, int index, int count)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override int GetBytes (char [] chars, int charIndex, int charCount, byte [] bytes, int byteIndex)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override int GetCharCount (byte [] bytes, int index, int count)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override int GetChars (byte [] bytes, int byteIndex, int byteCount, char [] chars, int charIndex)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override int GetMaxByteCount (int charCount)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override int GetMaxCharCount (int byteCount)
+			{
+				throw new NotSupportedException ();
+			}
+		}
 #endif
 	}
 }

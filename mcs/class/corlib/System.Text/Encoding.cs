@@ -1099,7 +1099,9 @@ public abstract class Encoding
 		{
 			encoding = enc;
 #if NET_2_0
-			Fallback = encoding.DecoderFallback;
+			DecoderFallback fallback = encoding.DecoderFallback;
+			if (fallback != null)
+				Fallback = fallback;
 #endif
 		}
 
@@ -1127,7 +1129,9 @@ public abstract class Encoding
 		{
 			encoding = enc;
 #if NET_2_0
-			Fallback = encoding.EncoderFallback;
+			EncoderFallback fallback = encoding.EncoderFallback;
+			if (fallback != null)
+				Fallback = fallback;
 #endif
 		}
 
