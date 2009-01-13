@@ -1,3 +1,8 @@
+2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Uri.cs: avoid throwing exceptions when checking for the host name
+	type.
+
 2009-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UriTypeConverter.cs: Customize for NET_2_1 since this type is 

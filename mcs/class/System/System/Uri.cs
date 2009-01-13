@@ -703,27 +703,30 @@ namespace System {
 			if (IsDomainAddress (name))
 				return UriHostNameType.Dns;				
 				
-			try {
-				IPv6Address.Parse (name);
+			IPv6Address addr;
+			if (IPv6Address.TryParse (name, out addr))
 				return UriHostNameType.IPv6;
-			} catch (FormatException) {}
 			
 			return UriHostNameType.Unknown;
 		}
 		
 		internal static bool IsIPv4Address (string name)
-		{		
+		{
 			string [] captures = name.Split (new char [] {'.'});
 			if (captures.Length != 4)
 				return false;
+
 			for (int i = 0; i < 4; i++) {
-				try {
-					int d = Int32.Parse (captures [i], CultureInfo.InvariantCulture);
-					if (d < 0 || d > 255)
-						return false;
-				} catch (Exception) {
+				int length;
+
+				length = captures [i].Length;
+				if (length == 0)
 					return false;
-				}
+				uint number;
+				if (!UInt32.TryParse (captures [i], out number))
+					return false;
+				if (number > 255)
+					return false;
 			}
 			return true;
 		}			
