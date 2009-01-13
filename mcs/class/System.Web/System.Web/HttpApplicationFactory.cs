@@ -81,6 +81,8 @@ namespace System.Web {
 #if NET_2_0
 		static bool app_disabled = false;
 		static string[] app_browsers_files = new string[0];
+		static string[] default_machine_browsers_files = new string[0];
+		static string[] app_mono_machine_browsers_files = new string[0];
 #endif
 		Stack available = new Stack ();
 		Stack available_for_end = new Stack ();
@@ -421,6 +423,23 @@ namespace System.Web {
 					AppCodeCompiler acc = new AppCodeCompiler ();
 					acc.Compile ();
 
+					// Get the default machine *.browser files.
+					string default_machine_browsers_path = Path.Combine (HttpRuntime.MachineConfigurationDirectory, "Browsers");
+					default_machine_browsers_files = new string[0];
+					if (Directory.Exists (default_machine_browsers_path)) {
+						default_machine_browsers_files 
+							= Directory.GetFiles (default_machine_browsers_path, "*.browser");
+					}
+					
+					// Note whether there are any App_Data/Mono_Machine_Browsers/*.browser files.  If there
+					// are we will be using them instead of the default machine *.browser files.
+					string app_mono_machine_browsers_path = Path.Combine (Path.Combine (physical_app_path, "App_Data"), "Mono_Machine_Browsers");
+					app_mono_machine_browsers_files = new string[0];
+					if (Directory.Exists (app_mono_machine_browsers_path)) {
+						app_mono_machine_browsers_files 
+							= Directory.GetFiles (app_mono_machine_browsers_path, "*.browser");
+					}
+						
 					// Note whether there are any App_Browsers/*.browser files.  If there
 					// are we will be using *.browser files for sniffing in addition to browscap.ini
 					string app_browsers_path = Path.Combine (physical_app_path, "App_Browsers");
@@ -616,13 +635,12 @@ namespace System.Web {
 				lock (capabilities_processor_lock) {
 					if (capabilities_processor == null) {
 						capabilities_processor = new System.Web.Configuration.nBrowser.Build();
-						string machine_browsers_path = Path.Combine (HttpRuntime.MachineConfigurationDirectory, "Browsers");
-						if (Directory.Exists (machine_browsers_path)) {
-							string[] machine_browsers_files 
-								= Directory.GetFiles (machine_browsers_path, "*.browser");
-							foreach (string f in machine_browsers_files) {
-								capabilities_processor.AddBrowserFile(f);
-							}
+						string[] machine_browsers_files = app_mono_machine_browsers_files;
+						if (machine_browsers_files.Length == 0)	{
+							machine_browsers_files = default_machine_browsers_files;
+						}
+						foreach (string f in machine_browsers_files) {
+							capabilities_processor.AddBrowserFile(f);
 						}
 						foreach (string f in app_browsers_files) {
 							capabilities_processor.AddBrowserFile(f);

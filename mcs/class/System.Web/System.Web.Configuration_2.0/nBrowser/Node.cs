@@ -470,6 +470,12 @@ namespace System.Web.Configuration.nBrowser
 				{
 					ProcessSampleHeaders(xmlNode.ChildNodes[a]);
 				}
+				
+				if (Id == "default" && (Identification == null || Identification.Length == 0))
+				{
+					Identification = new Identification[1];
+					Identification[0] = new System.Web.Configuration.nBrowser.Identification(true, "header", "User-Agent", ".");
+				}
 			}
 		}
 		/// <summary>
@@ -756,7 +762,7 @@ namespace System.Web.Configuration.nBrowser
 			}
 			if (Identification == null || Identification.Length == 0)
 			{
-				throw new nBrowser.Exception("Missing Identification Section where one is required");
+				throw new nBrowser.Exception(String.Format("Missing Identification Section where one is required (Id={0}, RefID={1})", Id, RefId));
 			}
 			if (header == null)
 			{
