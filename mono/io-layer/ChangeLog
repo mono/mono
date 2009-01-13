@@ -33,11 +33,6 @@
 	(wapi_interrupt_thread): Rework the comments, the thread is no longer
 	required to call QueueUserAPC to make the wait functions return.
 
-	* handles.c: Rework the way the global signal stuff is handled: instead of
-	allocating a separate mutex/condvar pair for it, allocate a normal handle.
-	This way, it can reuse the alertable waiting code, allowing 
-	WaitForMultipleObject to work without polling.
-
 	* threads.c handles.c threads-internal.h: Implement alertable waits without
 	polling.
 
