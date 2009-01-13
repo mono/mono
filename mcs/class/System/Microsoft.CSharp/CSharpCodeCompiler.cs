@@ -303,9 +303,11 @@ namespace Mono.CSharp
 #if NET_2_0
 		void McsStderrDataReceived (object sender, DataReceivedEventArgs args)
 		{
-			mcsOutMutex.WaitOne ();
-			mcsOutput.Add (args.Data);
-			mcsOutMutex.ReleaseMutex ();
+			if (args.Data != null) {
+				mcsOutMutex.WaitOne ();
+				mcsOutput.Add (args.Data);
+				mcsOutMutex.ReleaseMutex ();
+			}
 		}		
 
 		private static string BuildArgs(CompilerParameters options,string[] fileNames, IDictionary <string, string> providerOptions)
