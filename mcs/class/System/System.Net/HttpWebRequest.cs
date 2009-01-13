@@ -646,7 +646,7 @@ namespace System.Net
 			if (method == null)
 				throw new ProtocolViolationException ("Method is null.");
 
-			if (putpost && ((!keepAlive || (contentLength == -1 && !sendChunked)) && !allowBuffering))
+			if (putpost && contentLength == -1 && !sendChunked && !allowBuffering)
 				throw new ProtocolViolationException ("Content-Length not set");
 
 			string transferEncoding = TransferEncoding;
