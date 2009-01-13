@@ -160,8 +160,10 @@ namespace System.Net
 
 		internal void ForceCompletion ()
 		{
-			nextReadCalled = true;
-			cnc.NextRead ();
+			if (!nextReadCalled) {
+				nextReadCalled = true;
+				cnc.NextRead ();
+			}
 		}
 		
 		internal void CheckComplete ()
