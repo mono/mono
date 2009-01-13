@@ -1,3 +1,7 @@
+2009-01-12  Geoff Norton  <gnorton@novell.com>
+
+	* WebClient_2.1.cs: SL2 webclient supports BaseAddress.
+
 2008-10-16  Jb Evain  <jbevain@novell.com>
 
 	* WebHeaderCollection_2_1.cs: update to SL2 api.

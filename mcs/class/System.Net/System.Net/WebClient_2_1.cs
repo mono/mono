@@ -81,8 +81,8 @@ namespace System.Net
 //		ICredentials credentials;
 //		WebHeaderCollection headers;
 //		WebHeaderCollection responseHeaders;
-//		Uri baseAddress;
-//		string baseString;
+		Uri baseAddress;
+		string baseString;
 //		NameValueCollection queryString;
 		bool is_busy, async;
 		Thread async_thread;
@@ -107,25 +107,25 @@ namespace System.Net
 //		
 //		// Properties
 //		
-//		public string BaseAddress {
-//			get {
-//				if (baseString == null) {
-//					if (baseAddress == null)
-//						return "";
-//				}
-//
-//				baseString = baseAddress.ToString ();
-//				return baseString;
-//			}
-//			
-//			set {
-//				if (value == null || value == "") {
-//					baseAddress = null;
-//				} else {
-//					baseAddress = new Uri (value);
-//				}
-//			}
-//		}
+		public string BaseAddress {
+			get {
+				if (baseString == null) {
+					if (baseAddress == null)
+						return "";
+				}
+
+				baseString = baseAddress.ToString ();
+				return baseString;
+			}
+			
+			set {
+				if (value == null || value == "") {
+					baseAddress = null;
+				} else {
+					baseAddress = new Uri (value);
+				}
+			}
+		}
 //
 //#if NET_2_0
 //		static Exception GetMustImplement ()
@@ -864,7 +864,7 @@ namespace System.Net
 //		
 		WebRequest SetupRequest (Uri uri)
 		{
-			WebRequest request = WebRequest.Create (uri);
+			WebRequest request = WebRequest.Create (baseAddress != null ? new Uri (baseAddress, uri) : uri);
 //			if (Proxy != null)
 //				request.Proxy = Proxy;
 //			request.Credentials = credentials;
