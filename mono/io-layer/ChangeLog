@@ -1,6 +1,15 @@
-	Incorporate a few patches from Paolo, slightly modified:
+2009-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	Reapply r122913, this time handling processes by falling back to polling.
 	
+	* handles.c: Rework the way the global signal stuff is handled: instead of
+	allocating a separate mutex/condvar pair for it, allocate a normal handle.
+	This way, it can reuse the alertable waiting code, allowing 
+	WaitForMultipleObject to work without polling.
+
 2009-01-09  Miguel de Icaza  <miguel@novell.com>
+
+	Incorporate a few patches from Paolo, slightly modified:	
 
 	* handles.c (_wapi_handle_check_share): On non-Linux systems, do
 	not even compile in the code that scans for /proc/fd, and go
