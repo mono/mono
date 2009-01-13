@@ -723,8 +723,16 @@ namespace System {
 				if (length == 0)
 					return false;
 				uint number;
+#if NET_2_0
 				if (!UInt32.TryParse (captures [i], out number))
 					return false;
+#else
+				try {
+					number = UInt32.Parse (captures [i]);
+				} catch (Exception) {
+					return false;
+				}
+#endif
 				if (number > 255)
 					return false;
 			}

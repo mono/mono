@@ -1,3 +1,7 @@
+2009-01-13  Stephane Delcroix  <sdelcroix@novell.com>
+
+	* Uri.cs: Fix the previous patch for 1.0 profile
+
 2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Uri.cs: avoid throwing exceptions when checking for the host name
