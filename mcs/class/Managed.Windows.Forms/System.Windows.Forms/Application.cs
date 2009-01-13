@@ -172,62 +172,43 @@ namespace System.Windows.Forms
 		#region Private Methods
 
 #if NET_2_0
+		
 		private static void InitializeUIAutomation ()
 		{
-			// Initialize the UIAutomationWinforms FormListener
-			// class, which signs up for the PreRun and FormAdded
-			// events so that it can provide a11y support for MWF.
-			string uia_winforms_assembly = "UIAutomationWinforms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f4ceacb585d99812";
-			string listener_type_name = string.Empty;
-			string init_method_name = "Initialize";
+			// Initialize the UIAutomationWinforms Global class,
+			// which create some listeners which subscribe to internal
+			// MWF events so that it can provide a11y support for MWF
+			const string UIA_WINFORMS_ASSEMBLY = 
+			  "UIAutomationWinforms, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f4ceacb585d99812";
 			MethodInfo init_method;
-			
 			Assembly mwf_providers = null;
 			try {
-				mwf_providers = Assembly.Load (uia_winforms_assembly);
+				mwf_providers = Assembly.Load (UIA_WINFORMS_ASSEMBLY);
 			} catch { }
 			
 			if (mwf_providers == null)
 				return;
-			
+
+			const string UIA_WINFORMS_TYPE     = "Mono.UIAutomation.Winforms.Global";
+			const string UIA_WINFORMS_METHOD   = "Initialize";
 			try {
-				//FormListener
-				listener_type_name = "Mono.UIAutomation.Winforms.FormListener";
-				Type listener_type = mwf_providers.GetType (listener_type_name, false);
-				if (listener_type != null) {
-					init_method = listener_type.GetMethod (init_method_name, BindingFlags.Static | BindingFlags.Public);
+				Type global_type = mwf_providers.GetType (UIA_WINFORMS_TYPE, false);
+				if (global_type != null) {
+					init_method = global_type.GetMethod (UIA_WINFORMS_METHOD, 
+					                                     BindingFlags.Static | 
+					                                     BindingFlags.Public);
 					if (init_method != null)
 						init_method.Invoke (null, new object [] {});
+					else
+						throw new Exception (String.Format ("Method {0} not found in type {1}.",
+						                                    UIA_WINFORMS_METHOD, UIA_WINFORMS_TYPE));
 				}
-				//ToolTipListener
-				listener_type_name = "Mono.UIAutomation.Winforms.ToolTipListener";
-				listener_type = mwf_providers.GetType (listener_type_name, false);
-				if (listener_type != null) {
-					init_method = listener_type.GetMethod (init_method_name, BindingFlags.Static | BindingFlags.Public);
-					if (init_method != null)
-						init_method.Invoke (null, new object [] {});
-				}
-				//HelpProviderListener
-				listener_type_name = "Mono.UIAutomation.Winforms.HelpProviderListener";
-				listener_type = mwf_providers.GetType (listener_type_name, false);
-				if (listener_type != null) {
-					init_method = listener_type.GetMethod (init_method_name, BindingFlags.Static | BindingFlags.Public);
-					if (init_method != null)
-						init_method.Invoke (null, new object [] {});
-				}
-				//ErrorProviderListener
-				listener_type_name = "Mono.UIAutomation.Winforms.ErrorProviderListener";
-				listener_type = mwf_providers.GetType (listener_type_name, false);
-				if (listener_type != null) {
-					init_method = listener_type.GetMethod (init_method_name, BindingFlags.Static | BindingFlags.Public);
-					if (init_method != null)
-						init_method.Invoke (null, new object [] {});
-				}
+				else
+					throw new Exception (String.Format ("Type {0} not found in assembly {1}.",
+					                                    UIA_WINFORMS_TYPE, UIA_WINFORMS_ASSEMBLY));
 			} catch (Exception ex) {
 				Console.Error.WriteLine ("Error setting up UIA: " + ex);
 			}
-
-
 		}
 #endif
 		
@@ -767,6 +748,7 @@ namespace System.Windows.Forms
 			// before the main loop begins.
 			if (PreRun != null)
 				PreRun (null, EventArgs.Empty);
+			
 			// If a sync context hasn't been created by now, create
 			// a default one
 			if (SynchronizationContext.Current == null)

@@ -1,3 +1,8 @@
+2009-01-13  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* Application.cs: Simplify UIA initialization, reducing it from 4 to 1
+	reflection calls. This requires UIAutomationWinforms r123213.
+
 2009-01-12  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* MonthCalendar.cs: Detect selection changes in MouseDown/MouseMove
