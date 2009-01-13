@@ -1,3 +1,9 @@
+2009-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c (mono_gc_make_descr_from_bitmap): Handle large bitmaps by 
+	encoding them as ROOT_DESC_COMPLEX.
+	(precisely_scan_objects_from): Implement support for ROOT_DESC_COMPLEX.
+
 2009-01-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (scan_from_remsets): Clear the global remset of pointers which
