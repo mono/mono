@@ -304,8 +304,8 @@ namespace System.Net {
 
 		public void Close ()
 		{
-			if (o_stream != null) {
-				Stream st = o_stream;
+			if (sock != null) {
+				Stream st = GetResponseStream ();
 				st.Close ();
 				o_stream = null;
 			}

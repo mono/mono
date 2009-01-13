@@ -1,4 +1,12 @@
 
+2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpConnection.cs: we were not writing the headers for 0-length
+	responses.
+	* WebConnectionStream.cs: for 204/304 responses with an explicit
+	content-length of 0, release the socket only once.
+	Fixes bug #465638.
+
 2009-01-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: now deleting a file works when we're not in the
