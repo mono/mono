@@ -1,5 +1,7 @@
 2009-01-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_image_get_generic_param_info): Use MOVING_GC_REGISTER.
+
 	* marshal.c: Avoid setting the exception clauses after a method has been entered 
 	into the wrapper caches. Fixes #465700.
 
