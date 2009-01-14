@@ -1,3 +1,10 @@
+2009-01-14  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ListView.cs: New internal property to know the inner array's length of
+	the location of items, in order to avoid a try-catch strategy for the
+	case when this array has not been resized yet (for reference, look at
+	r123288). r: jpobst
+
 2009-01-13  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* Application.cs: Simplify UIA initialization, reducing it from 4 to 1

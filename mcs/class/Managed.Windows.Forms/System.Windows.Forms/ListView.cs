@@ -6315,6 +6315,11 @@ namespace System.Windows.Forms
 			return group.HeaderBounds;
 		}
 
+		internal int UIAItemsLocationLength
+		{
+			get { return items_location.Length; }
+		}
+
 		private void OnUIACheckBoxesChanged ()
 		{
 			EventHandler eh = (EventHandler) Events [UIACheckBoxesChangedEvent];
