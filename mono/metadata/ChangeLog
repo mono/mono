@@ -1,5 +1,9 @@
 2009-01-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add pe header machine field verification.
+	
+2009-01-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Add pe header size verification.
 
 2009-01-14  Zoltan Varga  <vargaz@gmail.com>
