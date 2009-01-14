@@ -1,3 +1,9 @@
+2009-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c: Fix warnings. Optimize copy_object () a bit. Split pinned/
+	non-pinned roots into separate hashes to avoid having to traverse them
+	in functions which are only interested in one kind.
+
 2009-01-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add pe header machine field verification.
