@@ -1,3 +1,9 @@
+2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Tds70.cs: send the leading '@' for parameters that do not have one.
+	Fixes bug #466071.
+	Thanks to William Shallum.
+
 2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Tds.cs: Support detecting NULL value when sequentially reading
