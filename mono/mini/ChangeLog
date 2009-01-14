@@ -1,3 +1,11 @@
+2009-01-14  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r123349.
+
+	* method-to-ir.c: Handle delegate invocation optimization earlier,
+	otherwise it would be handled (much more slowly) by the
+	final/sealed optimization.
+
 2009-01-08  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r122804.
