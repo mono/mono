@@ -34,6 +34,7 @@ using System.CodeDom.Compiler;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.Hosting;
@@ -419,6 +420,82 @@ namespace System.Web.Compilation
 			throw new ParseException (location, message);
 		}
 
+		// KLUDGE WARNING!!
+		//
+		// The code below (ProcessTagsInAttributes, ParseAttributeTag) serves the purpose to work
+		// around a limitation of the current asp.net parser which is unable to parse server
+		// controls inside client tag attributes. Since the architecture of the current
+		// parser does not allow for clean solution of this problem, hence the kludge
+		// below. It will be gone as soon as the parser is rewritten.
+		//
+		// The kludge supports only self-closing tags inside attributes.
+		//
+		// KLUDGE WARNING!!
+		static readonly Regex runatServer=new Regex (@"<[\w:\.]+.*?runat=[""']?server[""']?.*?/>",
+							     RegexOptions.Compiled | RegexOptions.Singleline |
+							     RegexOptions.Multiline | RegexOptions.IgnoreCase);
+		bool ProcessTagsInAttributes (ILocation location, string tagid, TagAttributes attributes, TagType type)
+		{
+			if (attributes == null || attributes.Count == 0)
+				return false;
+			
+			Match match;
+			Group group;
+			string value;
+			bool retval = false;
+			int index, length;
+			StringBuilder sb = new StringBuilder ();
+
+			sb.AppendFormat ("\t<{0}", tagid);
+			foreach (string key in attributes.Keys) {
+				value = attributes [key] as string;
+				if (value == null || value.Length < 16) // optimization
+					continue;
+				
+				match = runatServer.Match (attributes [key] as string);
+				if (!match.Success) {
+					sb.AppendFormat (" {0}=\"{1}\"", key, value);
+					continue;
+				}
+				if (sb.Length > 0) {
+					TextParsed (location, sb.ToString ());
+					sb.Length = 0;
+				}
+				
+				retval = true;
+				group = match.Groups [0];
+				index = group.Index;
+				length = group.Length;
+				
+				if (index > 0)
+					TextParsed (location, String.Format (" {0}=\"{1}", key, value.Substring (0, index)));
+				FlushText ();				
+				ParseAttributeTag (group.Value);
+				if (index + length < value.Length)
+					TextParsed (location, value.Substring (index + length) + "\"");
+			}
+			if (type == TagType.SelfClosing)
+				sb.Append ("/>");
+			else
+				sb.Append (">");
+
+			if (retval && sb.Length > 0)
+				TextParsed (location, sb.ToString ());
+			
+			return retval;
+		}
+
+		void ParseAttributeTag (string code)
+		{
+			AspParser parser = new AspParser ("@@attribute_tag@@", new StringReader (code));
+			parser.Error += new ParseErrorHandler (ParseError);
+			parser.TagParsed += new TagParsedHandler (TagParsed);
+			parser.TextParsed += new TextParsedHandler (TextParsed);
+			parser.Parse ();
+			if (text.Length > 0)
+				FlushText ();
+		}
+		
 		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 		{
 			this.location = new Location (location);
@@ -439,13 +516,13 @@ namespace System.Web.Compilation
 			lastTag = tagtype;
 			switch (tagtype) {
 			case TagType.Directive:
-				if (tagid == "")
+				if (tagid.Length == 0)
 					tagid = tparser.DefaultDirectiveName;
 
 				tparser.AddDirective (tagid, attributes.GetDictionary (null));
 				break;
 			case TagType.Tag:
-				if (ProcessTag (tagid, attributes, tagtype)) {
+				if (ProcessTag (location, tagid, attributes, tagtype)) {
 					useOtherTags = true;
 					break;
 				}
@@ -455,7 +532,11 @@ namespace System.Web.Compilation
 					stack.Builder.OtherTags.Add (tagid);
 				}
 
-				TextParsed (location, location.PlainText);
+				{
+					string plainText = location.PlainText;
+					if (!ProcessTagsInAttributes (location, tagid, attributes, TagType.Tag))
+						TextParsed (location, plainText);
+				}
 				break;
 			case TagType.Close:
 				bool notServer = (useOtherTags && TryRemoveTag (tagid, stack.Builder.OtherTags));
@@ -466,8 +547,10 @@ namespace System.Web.Compilation
 				break;
 			case TagType.SelfClosing:
 				int count = stack.Count;
-				if (!ProcessTag (tagid, attributes, tagtype)) {
-					TextParsed (location, location.PlainText);
+				if (!ProcessTag (location, tagid, attributes, tagtype)) {
+					string plainText = location.PlainText;
+					if (!ProcessTagsInAttributes (location, tagid, attributes, TagType.SelfClosing))
+						TextParsed (location, plainText);
 				} else if (stack.Count != count) {
 					CloseControl (tagid);
 				}
@@ -644,7 +727,7 @@ namespace System.Web.Compilation
 		}
 #endif
 		
-		bool ProcessTag (string tagid, TagAttributes atts, TagType tagtype)
+		bool ProcessTag (ILocation location, string tagid, TagAttributes atts, TagType tagtype)
 		{
 			if (isApplication) {
 				if (String.Compare (tagid, "object", true, CultureInfo.InvariantCulture) != 0)

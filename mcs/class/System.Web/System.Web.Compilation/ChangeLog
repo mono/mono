@@ -1,3 +1,9 @@
+2009-01-14  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: implemented a work around which allows the
+	server controls embedded in client tag attributes to be parsed and
+	compiled.
+
 2009-01-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs, AspGenerator.cs, BaseCompiler.cs,
