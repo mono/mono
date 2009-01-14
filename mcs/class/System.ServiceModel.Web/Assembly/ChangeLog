@@ -1,3 +1,7 @@
+2009-01-14  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: fix the public key for the NET_2_1 case.
+
 2007-12-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AssemblyInfo.cs: updated version.
