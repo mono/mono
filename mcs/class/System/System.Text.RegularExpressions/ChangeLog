@@ -1,3 +1,12 @@
+2009-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r123417.
+	
+	* CILCompiler.cs: Avoid throwing exceptions for a few more unhandled opcodes.
+	Implement the reverse/ignorecase versions of Reference. Fix the reverse
+	version of Bitmap. Error out if a Jump opcode jumps outside the current
+	pc range. This works around #466151.
+
 2009-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r122700.
