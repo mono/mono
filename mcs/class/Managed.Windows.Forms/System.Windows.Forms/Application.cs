@@ -740,15 +740,18 @@ namespace System.Windows.Forms
 			Run (new ApplicationContext (mainForm));
 		}
 
+#if NET_2_0
+		internal static void FirePreRun ()
+		{
+			EventHandler handler = PreRun;
+			if (handler != null)
+				PreRun (null, EventArgs.Empty);
+		}
+#endif
+
 		public static void Run (ApplicationContext context)
 		{
 #if NET_2_0
-			// Signal that the Application loop is about to run.
-			// This allows UIA to initialize a11y support for MWF
-			// before the main loop begins.
-			if (PreRun != null)
-				PreRun (null, EventArgs.Empty);
-			
 			// If a sync context hasn't been created by now, create
 			// a default one
 			if (SynchronizationContext.Current == null)

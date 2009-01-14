@@ -1,5 +1,13 @@
 2009-01-14  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
+	* XplatUI.cs:
+	* Application.cs: Move the PreRun event fire to the end of the XplatUI
+	static ctor (we don't move the PreRun event to this class because its
+	usage would cause the call to the static ctor). This way we can get
+	a11y support for dialogs that run without App.Run.
+
+2009-01-14  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
 	* ListView.cs: New internal property to know the inner array's length of
 	the location of items, in order to avoid a try-catch strategy for the
 	case when this array has not been resized yet (for reference, look at
