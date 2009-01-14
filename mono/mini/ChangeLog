@@ -1,3 +1,9 @@
+2009-01-14  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: Handle delegate invocation optimization earlier,
+	otherwise it would be handled (much more slowly) by the
+	final/sealed optimization.
+
 2009-01-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (SIG_HANDLER_SIGNATURE): Avoid crashes when the current thread or
