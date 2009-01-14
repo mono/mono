@@ -1,3 +1,7 @@
+2009-01-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.Xml.dll.sources: Add NamespaceHandling
+
 2008-08-19  Jb Evain  <jbevain@novell.com>
 
 	* net_2_1_raw_System.Xml.dll.sources: add new files.
