@@ -344,7 +344,6 @@ namespace MonoTests.System.Net
 #if TARGET_JVM
 		[Category("NotWorking")]
 #endif
-		[Ignore ("Fails randomly. Need to do more debugging.")]
 		public void AllowAutoRedirect ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
