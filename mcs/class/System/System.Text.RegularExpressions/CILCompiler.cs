@@ -205,6 +205,10 @@ namespace System.Text.RegularExpressions {
 			return l;
 		}
 
+		private int GetILOffset (ILGenerator ilgen) {
+			return (int)typeof (ILGenerator).GetField ("code_len", BindingFlags.Instance|BindingFlags.NonPublic).GetValue (ilgen);
+		}
+
 		/*
 		 * Emit IL code for a sequence of opcodes between pc and end_pc. If there is a
 		 * match, set strpos (Arg 1) to the position after the match, then 
@@ -238,8 +242,9 @@ namespace System.Text.RegularExpressions {
 				if (generic_ops.ContainsKey (pc))
 					op = (RxOp)generic_ops [pc];
 
-				if (trace_compile)
-					Console.WriteLine ("compiling {0} pc={1} end_pc={2}", op, pc, end_pc);
+				if (trace_compile) {
+					Console.WriteLine ("compiling {0} pc={1} end_pc={2}, il_offset=0x{3:x}", op, pc, end_pc, GetILOffset (ilgen));
+				}
 
 				if (labels != null) {
 					Label l;
@@ -429,7 +434,7 @@ namespace System.Text.RegularExpressions {
 
 						// Fail
 						ilgen.MarkLabel (new_frame.label_fail);
-						//  strpos = old_strpos +- 1;
+						//  strpos = old_strpos +/- 1;
 						ilgen.Emit (OpCodes.Ldloc, local_old_strpos);
 						ilgen.Emit (OpCodes.Ldc_I4_1);
 						if (reverse)
@@ -809,15 +814,25 @@ namespace System.Text.RegularExpressions {
 					Label l1 = ilgen.DefineLabel ();
 					Label l2 = ilgen.DefineLabel ();
 					Label l_match = ilgen.DefineLabel ();
-					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Ldarg_0);
-					ilgen.Emit (OpCodes.Ldfld, fi_string_end);
-					ilgen.Emit (OpCodes.Bge, l1);
+					if (reverse) {
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldc_I4_0);
+						ilgen.Emit (OpCodes.Ble, l1);
+					} else {
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldfld, fi_string_end);
+						ilgen.Emit (OpCodes.Bge, l1);
+					}
 					//  int c = str [strpos];
 					LocalBuilder local_c = ilgen.DeclareLocal (typeof (int));
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldfld, fi_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
+					if (reverse) {
+						ilgen.Emit (OpCodes.Ldc_I4_1);
+						ilgen.Emit (OpCodes.Sub);
+					}
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 					ilgen.Emit (OpCodes.Conv_I4);
 					if (ignore)
@@ -1047,6 +1062,13 @@ namespace System.Text.RegularExpressions {
 				}
 				case RxOp.Jump: {
 					int target_pc = pc + ReadShort (program, pc + 1);
+					if (target_pc > end_pc)
+						/* 
+						 * This breaks the our code generation logic, see
+						 * https://bugzilla.novell.com/show_bug.cgi?id=466151
+						 * for an example.
+						 */
+						return null;
 					if (trace_compile)
 						Console.WriteLine ("\tjump target: {0}", target_pc);
 					if (labels == null)
@@ -1415,6 +1437,13 @@ namespace System.Text.RegularExpressions {
 						l_loop_body = ilgen.DefineLabel ();
 						ilgen.MarkLabel (l_loop_body);
 
+						if (RxInterpreter.trace_rx) {
+							ilgen.Emit (OpCodes.Ldstr, "matching tail at: {0}");
+							ilgen.Emit (OpCodes.Ldarg_1);
+							ilgen.Emit (OpCodes.Box, typeof (int));
+							ilgen.Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type [] { typeof (string), typeof (object) }));
+						}
+
 						//  if (EvalByteCode (tail, strpos, ref res)) {
 						new_frame = new Frame (ilgen);
 						m = EmitEvalMethodBody (m, ilgen, new_frame, program, tail, end_pc, false, false, out out_pc);
@@ -1423,6 +1452,14 @@ namespace System.Text.RegularExpressions {
 
 						// Success:
 						ilgen.MarkLabel (new_frame.label_pass);
+
+						if (RxInterpreter.trace_rx) {
+							ilgen.Emit (OpCodes.Ldstr, "tail matched at: {0}");
+							ilgen.Emit (OpCodes.Ldarg_1);
+							ilgen.Emit (OpCodes.Box, typeof (int));
+							ilgen.Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type [] { typeof (string), typeof (object) }));
+						}
+
 						//	stack.Count = old_stack_size;
 						ilgen.Emit (OpCodes.Ldarg_0);
 						ilgen.Emit (OpCodes.Ldflda, fi_stack);
@@ -1433,6 +1470,14 @@ namespace System.Text.RegularExpressions {
 
 						// Fail:
 						ilgen.MarkLabel (new_frame.label_fail);
+
+						if (RxInterpreter.trace_rx) {
+							ilgen.Emit (OpCodes.Ldstr, "tail failed to match at: {0}");
+							ilgen.Emit (OpCodes.Ldarg_1);
+							ilgen.Emit (OpCodes.Box, typeof (int));
+							ilgen.Emit (OpCodes.Call, typeof (Console).GetMethod ("WriteLine", new Type [] { typeof (string), typeof (object) }));
+						}
+
 						//  if (stack.Count == old_stack_size)
 						//		return false;
 						ilgen.Emit (OpCodes.Ldarg_0);
@@ -1662,7 +1707,11 @@ namespace System.Text.RegularExpressions {
 						pc++;
 					break;
 				}
-				case RxOp.Reference:
+				case RxOp.Reference: {
+					OpFlags flags = (OpFlags)op_flags [pc];
+					bool ignore = (flags & OpFlags.IgnoreCase) > 0;
+					bool reverse = (flags & OpFlags.RightToLeft) > 0;
+
 					//length = GetLastDefined (program [pc + 1] | ((int)program [pc + 2] << 8));
 					LocalBuilder loc_length = ilgen.DeclareLocal (typeof (int));
 					ilgen.Emit (OpCodes.Ldarg_0);
@@ -1689,14 +1738,27 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldelema, typeof (Mark));
 					ilgen.Emit (OpCodes.Call, GetMethod (typeof (Mark), "get_Length", ref mi_mark_get_length));
 					ilgen.Emit (OpCodes.Stloc, loc_length);
-					//if (strpos + length > string_end)
-					//  return false;
-					ilgen.Emit (OpCodes.Ldarg_1);
-					ilgen.Emit (OpCodes.Ldloc, loc_length);
-					ilgen.Emit (OpCodes.Add);
-					ilgen.Emit (OpCodes.Ldarg_0);
-					ilgen.Emit (OpCodes.Ldfld, fi_string_end);
-					ilgen.Emit (OpCodes.Bgt, frame.label_fail);
+					if (reverse) {
+						//ptr -= length;
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldloc, loc_length);
+						ilgen.Emit (OpCodes.Sub);
+						ilgen.Emit (OpCodes.Starg, 1);
+						//if (ptr < 0)
+						//goto Fail;
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldc_I4_0);
+						ilgen.Emit (OpCodes.Blt, frame.label_fail);
+					} else {
+						//if (strpos + length > string_end)
+						//  return false;
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldloc, loc_length);
+						ilgen.Emit (OpCodes.Add);
+						ilgen.Emit (OpCodes.Ldarg_0);
+						ilgen.Emit (OpCodes.Ldfld, fi_string_end);
+						ilgen.Emit (OpCodes.Bgt, frame.label_fail);
+					}
 
 					LocalBuilder local_str = ilgen.DeclareLocal (typeof (string));
 					ilgen.Emit (OpCodes.Ldarg_0);
@@ -1719,9 +1781,13 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldloc, local_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
+					if (ignore)
+						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
 					ilgen.Emit (OpCodes.Ldloc, local_str);
 					ilgen.Emit (OpCodes.Ldloc, loc_start);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
+					if (ignore)
+						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
 					ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 					// strpos++;
 					ilgen.Emit (OpCodes.Ldarg_1);
@@ -1738,10 +1804,21 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Ldloc, loc_start);
 					ilgen.Emit (OpCodes.Ldloc, loc_end);
 					ilgen.Emit (OpCodes.Blt, l_loop_body);
+
+					if (reverse) {
+						//ptr -= length;
+						ilgen.Emit (OpCodes.Ldarg_1);
+						ilgen.Emit (OpCodes.Ldloc, loc_length);
+						ilgen.Emit (OpCodes.Sub);
+						ilgen.Emit (OpCodes.Starg, 1);
+					}
+
 					pc += 3;
 					break;
+				}
 				case RxOp.Repeat:
 				case RxOp.RepeatLazy:
+				case RxOp.IfDefined:
 					// FIXME:
 					if (RxInterpreter.trace_rx || trace_compile)
 						Console.WriteLine ("Opcode " + op + " not supported.");

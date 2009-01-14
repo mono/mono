@@ -598,12 +598,7 @@ namespace System.Text.RegularExpressions {
 		{
 			if (gid > ushort.MaxValue)
 				throw new NotSupportedException ();
-			int offset = 0;
-			if (ignore)
-				offset += 1;
-			if (reverse)
-				offset += 2;
-			Emit ((RxOp)((int)RxOp.Reference + offset));
+			EmitOpIgnoreReverse (RxOp.Reference, ignore, reverse);
 			Emit ((ushort)gid);
 		}
 
