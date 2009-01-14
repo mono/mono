@@ -21,6 +21,11 @@
 
 2009-01-13  Geoff Norton  <gnorton@novell.com>
 
+	* appdomain.c|h: Expose mono_domain_unload to the embedding api so that 
+	AppDomains created on the native side can be cleaned up on the native side.
+
+2009-01-13  Geoff Norton  <gnorton@novell.com>
+
 	* appdomain.c: Ensure that we call mono_context_init for the embedding api
 	as well as the managed api.
 
