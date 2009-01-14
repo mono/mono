@@ -47,34 +47,35 @@ namespace System.ServiceModel.Channels
 			get { return channel; }
 		}
 
-		[MonoTODO]
 		public void PropagateChannelParameters (IChannel innerChannel)
 		{
-			throw new NotImplementedException ();
+			if (innerChannel == null)
+				throw new ArgumentNullException ("innerChannel");
+			var pc = innerChannel.GetProperty<ChannelParameterCollection> ();
+			if (pc == null)
+				throw new ArgumentException (String.Format ("The argument channel (of type '{0}') does not have ChannelParameterCollection property.", innerChannel.GetType ()));
+			foreach (var p in this)
+				pc.Add (p);
 		}
 
-		[MonoTODO]
 		protected override void ClearItems ()
 		{
-			throw new NotImplementedException ();
+			base.ClearItems ();
 		}
 
-		[MonoTODO]
 		protected override void InsertItem (int index, object item)
 		{
-			throw new NotImplementedException ();
+			base.InsertItem (index, item);
 		}
 
-		[MonoTODO]
 		protected override void RemoveItem (int index)
 		{
-			throw new NotImplementedException ();
+			base.RemoveItem (index);
 		}
 
-		[MonoTODO]
 		protected override void SetItem (int index, object item)
 		{
-			throw new NotImplementedException ();
+			base.SetItem (index, item);
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2009-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelParameterCollection.cs : implement, rather than NIE.
+
 2008-05-22  Noam Lampert <noaml@mainsoft.com>
 
 	* MessageFault.cs: Correctly serialize ExceptionDetails. Expose SimpleMessageFault to allow
