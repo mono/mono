@@ -1,5 +1,8 @@
 2009-01-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (ALLOC_REFENTRY): Don't allocate the ReflectionEntry structures
+	using the GC, they don't contain references.
+
 	* domain.c (mono_domain_create): Create ldstr_table using MONO_HASH_KEY_VALUE_GC.
 
 2009-01-13  Geoff Norton  <gnorton@novell.com>
