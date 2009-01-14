@@ -1,3 +1,7 @@
+2009-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_domain_create): Create ldstr_table using MONO_HASH_KEY_VALUE_GC.
+
 2009-01-13  Geoff Norton  <gnorton@novell.com>
 
 	* appdomain.c: Ensure that we call mono_context_init for the embedding api
