@@ -1181,7 +1181,6 @@ namespace System.Net
 			WebException wexc = null;
 			try {
 				webResponse = new HttpWebResponse (actualUri, method, data, cookieContainer);
-				haveResponse = true;
 			} catch (Exception e) {
 				wexc = new WebException (e.Message, e, WebExceptionStatus.ProtocolError, null); 
 				if (data.stream != null)
@@ -1197,6 +1196,12 @@ namespace System.Net
 			}
 
 			WebAsyncResult r = asyncRead;
+			if (r == null && webResponse != null) {
+				// This is a forced completion (302, 204)...
+				r = new WebAsyncResult (null, null);
+				r.SetCompleted (false, webResponse);
+			}
+
 			if (r != null) {
 				if (wexc != null) {
 					r.SetCompleted (false, wexc);
@@ -1222,6 +1227,7 @@ namespace System.Net
 						if (writeStream != null)
 							writeStream.KillBuffer ();
 
+						haveResponse = true;
 						r.SetCompleted (false, webResponse);
 						r.DoCallback ();
 					} else {

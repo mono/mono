@@ -1,3 +1,10 @@
+2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: create a result from the response when
+	*GetResponse() has not been called yet and we have already received
+	all the data.
+	Fixes bug #464013.
+
 2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: keepAlive is of no use here.
