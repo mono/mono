@@ -1,5 +1,7 @@
 2009-01-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* RegexTrial.cs: Run all tests with the CIL Compiler too.
+
 	* RegexBugs.cs: Add a test for #466151.
 
 2008-11-13  Gert Driesen  <drieseng@users.sourceforge.net>

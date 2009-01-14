@@ -33,32 +33,35 @@ namespace MonoTests.System.Text.RegularExpressions {
 		{
 			string result;
 
-			try {
-				Regex re = new Regex (pattern, options);
-				Match m = re.Match (input);
+			for (int compiled = 0; compiled < 2; ++compiled) {
+				RegexOptions real_options = (compiled == 1) ? (options | RegexOptions.Compiled) : options;
+				try {
+					Regex re = new Regex (pattern, real_options);
+					Match m = re.Match (input);
 
-				if (m.Success) {
-					result = "Pass.";
+					if (m.Success) {
+						result = "Pass.";
+					
+						for (int i = 0; i < m.Groups.Count; ++ i) {
+							Group group = m.Groups [i];
 
-					for (int i = 0; i < m.Groups.Count; ++ i) {
-						Group group = m.Groups [i];
-
-						result += " Group[" + i + "]=";
-						foreach (Capture cap in group.Captures)
-							result += "(" + cap.Index + "," + cap.Length + ")";
+							result += " Group[" + i + "]=";
+							foreach (Capture cap in group.Captures)
+								result += "(" + cap.Index + "," + cap.Length + ")";
+						}
+					} else {
+						result = "Fail.";
 					}
-				} else {
-					result = "Fail.";
 				}
-			}
-			catch (Exception e) {
-				error = e.Message + "\n" + e.StackTrace + "\n\n";
+				catch (Exception e) {
+					error = e.Message + "\n" + e.StackTrace + "\n\n";
 
-				result = "Error.";
-			}
+					result = "Error.";
+				}
 
-			Assert.AreEqual (expected, result,
-					 "Matching input '{0}' against pattern '{1}' with options '{2}'", input, pattern, options);
+				Assert.AreEqual (expected, result,
+								 "Matching input '{0}' against pattern '{1}' with options '{2}'", input, pattern, real_options);
+			}
 		}
 	}
 
