@@ -167,24 +167,21 @@ namespace System.ServiceModel
 			get { return InnerChannel.State; }
 		}
 
-		[MonoTODO]
 		public void Abort ()
 		{
 			InnerChannel.Abort ();
 		}
 
-		[MonoTODO]
 		public void Close ()
 		{
 			InnerChannel.Close ();
 		}
 
-		[MonoTODO]
 		public void DisplayInitializationUI ()
 		{
+			InnerChannel.DisplayInitializationUI ();
 		}
 
-		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
 			Close ();

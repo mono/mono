@@ -1,3 +1,8 @@
+2009-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientBase.cs, ClientRuntimeChannel.cs : added support for
+	  interactive channel initializers.
+
 2009-01-12  Geoff Norton  <gnorton@novell.com>
 
 	* ClientBase.cs: Added a few delegates missing from ChannelBase

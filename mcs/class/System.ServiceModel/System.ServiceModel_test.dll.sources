@@ -108,6 +108,7 @@ System.ServiceModel/BasicHttpBindingTest.cs
 System.ServiceModel/ChannelFactoryTest.cs
 System.ServiceModel/ChannelFactory_1Test.cs
 System.ServiceModel/ClientBaseTest.cs
+System.ServiceModel/ClientBase_InteractiveChannelInitializerTest.cs
 System.ServiceModel/ClientCredentialsSecurityTokenManagerTest.cs
 System.ServiceModel/CommonUseCases.cs
 System.ServiceModel/EndpointAddress10Test.cs

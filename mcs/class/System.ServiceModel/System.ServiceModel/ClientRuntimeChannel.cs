@@ -31,6 +31,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Security;
+using System.Threading;
 
 namespace System.ServiceModel
 {
@@ -57,6 +58,9 @@ namespace System.ServiceModel
 			this.runtime = runtime;
 			this.factory = factory;
 			_processDelegate = new ProcessDelegate (Process);
+
+			// default values
+			AllowInitializationUI = true;
 		}
 
 		public ClientRuntime Runtime {
@@ -65,39 +69,146 @@ namespace System.ServiceModel
 
 		#region IClientChannel
 
-		[MonoTODO]
-		public bool AllowInitializationUI {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		bool did_interactive_initialization;
 
-		[MonoTODO]
+		public bool AllowInitializationUI { get; set; }
+
 		public bool DidInteractiveInitialization {
-			get { throw new NotImplementedException (); }
+			get { return did_interactive_initialization; }
 		}
 
 		public Uri Via {
 			get { return runtime.Via; }
 		}
 
-		[MonoTODO]
+		class DelegatingWaitHandle : WaitHandle
+		{
+			public DelegatingWaitHandle (IAsyncResult [] results)
+			{
+				this.results = results;
+			}
+
+			IAsyncResult [] results;
+
+			protected override void Dispose (bool disposing)
+			{
+				if (disposing)
+					foreach (var r in results)
+						r.AsyncWaitHandle.Close ();
+			}
+
+			public override bool WaitOne ()
+			{
+				foreach (var r in results)
+					r.AsyncWaitHandle.WaitOne ();
+				return true;
+			}
+
+			public override bool WaitOne (int millisecondsTimeout)
+			{
+				return WaitOne (millisecondsTimeout, false);
+			}
+
+			WaitHandle [] ResultWaitHandles {
+				get {
+					var arr = new WaitHandle [results.Length];
+					for (int i = 0; i < arr.Length; i++)
+						arr [i] = results [i].AsyncWaitHandle;
+					return arr;
+				}
+			}
+
+			public override bool WaitOne (int millisecondsTimeout, bool exitContext)
+			{
+				return WaitHandle.WaitAll (ResultWaitHandles, millisecondsTimeout, exitContext);
+			}
+
+			public override bool WaitOne (TimeSpan timeout, bool exitContext)
+			{
+				return WaitHandle.WaitAll (ResultWaitHandles, timeout, exitContext);
+			}
+		}
+
+		class DisplayUIAsyncResult : IAsyncResult
+		{
+			public DisplayUIAsyncResult (IAsyncResult [] results)
+			{
+				this.results = results;
+			}
+
+			IAsyncResult [] results;
+
+			internal IAsyncResult [] Results {
+				get { return results; }
+			}
+
+			public object AsyncState {
+				get { return null; }
+			}
+
+			WaitHandle wait_handle;
+
+			public WaitHandle AsyncWaitHandle {
+				get {
+					if (wait_handle == null)
+						wait_handle = new DelegatingWaitHandle (results);
+					return wait_handle;
+				}
+			}
+
+			public bool CompletedSynchronously {
+				get {
+					foreach (var r in results)
+						if (!r.CompletedSynchronously)
+							return false;
+					return true;
+				}
+			}
+			public bool IsCompleted {
+				get {
+					foreach (var r in results)
+						if (!r.IsCompleted)
+							return false;
+					return true;
+				}
+			}
+		}
+
 		public IAsyncResult BeginDisplayInitializationUI (
 			AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			OnInitializationUI ();
+			IAsyncResult [] arr = new IAsyncResult [runtime.InteractiveChannelInitializers.Count];
+			int i = 0;
+			foreach (var init in runtime.InteractiveChannelInitializers)
+				arr [i++] = init.BeginDisplayInitializationUI (this, callback, state);
+			return new DisplayUIAsyncResult (arr);
 		}
 
-		[MonoTODO]
 		public void EndDisplayInitializationUI (
 			IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			DisplayUIAsyncResult r = (DisplayUIAsyncResult) result;
+			int i = 0;
+			foreach (var init in runtime.InteractiveChannelInitializers)
+				init.EndDisplayInitializationUI (r.Results [i++]);
+
+			did_interactive_initialization = true;
 		}
 
-		[MonoTODO]
 		public void DisplayInitializationUI ()
 		{
-			throw new NotImplementedException ();
+			OnInitializationUI ();
+			foreach (var init in runtime.InteractiveChannelInitializers)
+				init.EndDisplayInitializationUI (init.BeginDisplayInitializationUI (this, null, null));
+
+			did_interactive_initialization = true;
+		}
+
+		void OnInitializationUI ()
+		{
+			if (!AllowInitializationUI && runtime.InteractiveChannelInitializers.Count > 0)
+				throw new InvalidOperationException ("AllowInitializationUI is set to false but the client runtime contains one or more InteractiveChannelInitializers.");
 		}
 
 		public void Dispose ()
@@ -192,6 +303,8 @@ namespace System.ServiceModel
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
+			if (runtime.InteractiveChannelInitializers.Count > 0 && !DidInteractiveInitialization)
+				throw new InvalidOperationException ("The client runtime is assigned interactive channel initializers, and in such case DisplayInitializationUI must be called before the channel is opened.");
 		}
 
 		// IChannel
@@ -221,6 +334,8 @@ namespace System.ServiceModel
 
 		public object Process (MethodBase method, string operationName, object [] parameters)
 		{
+			if (AllowInitializationUI)
+				DisplayInitializationUI ();
 			OperationDescription od = SelectOperation (method, operationName, parameters);
 			if (!od.IsOneWay)
 				return Request (od, parameters);

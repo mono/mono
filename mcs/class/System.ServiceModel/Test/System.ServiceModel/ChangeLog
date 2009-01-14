@@ -1,3 +1,8 @@
+2009-01-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientBase_InteractiveChannelInitializerTest.cs : new test, for
+	  IInteractiveChannelInitializers support in ClientBase<T>.
+
 2008-05-22  Roei Erez  <roeie@mainsoft.com>
 	* fix ContractDescription.GetContract implementation
 	* Refactor Request processing

@@ -1,3 +1,8 @@
+2009-01-14  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources :
+	  added ClientBase_InteractiveChannelInitializerTest.cs.
+
 2009-01-07  Astushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.dll.sources : add OperationContext
