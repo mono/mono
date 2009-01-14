@@ -745,7 +745,7 @@ namespace System.Windows.Forms
 		{
 			EventHandler handler = PreRun;
 			if (handler != null)
-				PreRun (null, EventArgs.Empty);
+				handler (null, EventArgs.Empty);
 		}
 #endif
 

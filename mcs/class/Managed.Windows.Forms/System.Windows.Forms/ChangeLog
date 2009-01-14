@@ -1,5 +1,10 @@
 2009-01-14  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
+	* Application.cs: Oops, launch the copied handler of PreRun instead of
+	the global one (gendarme would bark otherwise). (Improving r123375)
+
+2009-01-14  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
 	* XplatUI.cs:
 	* Application.cs: Move the PreRun event fire to the end of the XplatUI
 	static ctor (we don't move the PreRun event to this class because its
