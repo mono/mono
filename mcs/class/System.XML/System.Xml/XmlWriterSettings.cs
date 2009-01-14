@@ -145,6 +145,10 @@ namespace System.Xml
 			get { return outputMethod; }
 			//set { outputMethod = value; }
 		}
+#if NET_2_1
+		[MonoTODO]
+		public NamespaceHandling NamespaceHandling { get; set; }
+#endif
 	}
 }
 

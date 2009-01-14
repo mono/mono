@@ -1,3 +1,10 @@
+2009-01-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NamespaceHandling.cs: New. Enum for Silverlight 2. Microsoft's 
+	System.Xml.Linq.dll (often bundled in XAP files) needs it (or we 
+	throw a TypeLoadException).
+	* XmlWriterSettings.cs: Add SL2 specific NamespaceHandling property
+
 2009-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : ReadContentAsString() does not reject non-elements.
