@@ -1,3 +1,8 @@
+2009-01-14  Geoff Norton  <gnorton@novell.com>
+
+	* supportw.c: Use unsigned int instead of uint, as its more portable.
+	Fixes compilation issue on Mac OSX.
+
 2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* signal.c: Don't allow registration of a realtime signal to happen
