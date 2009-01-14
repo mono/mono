@@ -783,6 +783,7 @@ System.ServiceModel/ClientCredentialsSecurityTokenManager.cs
 System.ServiceModel/ClientProxyGenerator.cs
 System.ServiceModel/ClientRuntimeChannel.cs
 System.ServiceModel/CommunicationException.cs
+System.ServiceModel/CommunicationObjectAbortedException.cs
 System.ServiceModel/CommunicationObjectFaultedException.cs
 System.ServiceModel/Constants.cs
 System.ServiceModel/DataContractFormatAttribute.cs
@@ -860,6 +861,8 @@ System.ServiceModel/QuotaExceededException.cs
 System.ServiceModel/ReliableMessagingVersion.cs
 System.ServiceModel/ReliableSession.cs
 System.ServiceModel/RsaEndpointIdentity.cs
+System.ServiceModel/ServerTooBusyException.cs
+System.ServiceModel/ServiceActivationException.cs
 System.ServiceModel/ServiceAuthorizationManager.cs
 System.ServiceModel/ServiceBehaviorAttribute.cs
 System.ServiceModel/ServiceContractAttribute.cs

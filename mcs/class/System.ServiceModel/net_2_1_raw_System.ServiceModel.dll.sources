@@ -155,6 +155,7 @@ System.ServiceModel/ClientBase.cs
 System.ServiceModel/ClientProxyGenerator.cs
 System.ServiceModel/ClientRuntimeChannel.cs
 System.ServiceModel/CommunicationException.cs
+System.ServiceModel/CommunicationObjectAbortedException.cs
 System.ServiceModel/CommunicationObjectFaultedException.cs
 System.ServiceModel/Constants.cs
 System.ServiceModel/DataContractFormatAttribute.cs
@@ -193,7 +194,10 @@ System.ServiceModel/OperationContextScope.cs
 System.ServiceModel/OperationContractAttribute.cs
 System.ServiceModel/ProtocolException.cs
 System.ServiceModel/QuotaExceededException.cs
+System.ServiceModel/ServerTooBusyException.cs
+System.ServiceModel/ServiceActivationException.cs
 System.ServiceModel/ServiceContractAttribute.cs
+System.ServiceModel/ServiceKnownTypeAttribute.cs
 System.ServiceModel/TransferMode.cs
 System.ServiceModel/UnknownMessageReceivedEventArgs.cs
 System.ServiceModel/UriSchemeKeyedCollection.cs

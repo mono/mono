@@ -1,5 +1,11 @@
 2009-01-14  Astushi Enomoto  <atsushi@ximian.com>
 
+	* System.ServiceModel.dll.sources,
+	  net_2_1_raw_System.ServiceModel.dll.sources :
+	  added missing exception types (corcompare work).
+
+2009-01-14  Astushi Enomoto  <atsushi@ximian.com>
+
 	* System.ServiceModel_test.dll.sources :
 	  added ClientBase_InteractiveChannelInitializerTest.cs.
 
