@@ -550,7 +550,8 @@ namespace MonoTests.System.Text.RegularExpressions
 		};
 
 		static RegexTrial[] trials = {
-			new RegexTrial (@"^[^.\d]*(\d+)(?:\D+(\d+))?", RegexOptions.None, "MD 9.18", "Pass. Group[0]=(0,7) Group[1]=(3,1) Group[2]=(5,2)")
+			new RegexTrial (@"^[^.\d]*(\d+)(?:\D+(\d+))?", RegexOptions.None, "MD 9.18", "Pass. Group[0]=(0,7) Group[1]=(3,1) Group[2]=(5,2)"),
+            new RegexTrial (@"(.*:|.*)(DirName)", RegexOptions.Compiled, "/home/homedir/DirName", "Pass. Group[0]=(0,21) Group[1]=(0,14) Group[2]=(14,7)")
 	    };
 	}
 }

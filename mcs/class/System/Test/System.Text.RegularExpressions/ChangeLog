@@ -1,3 +1,7 @@
+2009-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* RegexBugs.cs: Add a test for #466151.
+
 2008-11-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* RegexBugs.cs: added test for bug #443841.
