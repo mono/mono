@@ -1,3 +1,12 @@
+2009-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* handles-private.h (_wapi_handle_set_signal_state): Set the signalled state
+	of the handle while locking the global signal cond mutex.
+
+	* wait.c (WaitForMultipleObjectsEx): Check the signalled state of handles
+	inside the critical section before waiting, otherwise we could go to waiting
+	even when the handles are already signalled.
+
 2009-01-13  Zoltan Varga  <vargaz@gmail.com>
 
 	Reapply r122913, this time handling processes by falling back to polling.
