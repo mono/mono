@@ -1,3 +1,8 @@
+2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TdsMetaParameter.cs: set_RawValue now calls set_Value so that
+	'isUpdated' is set.
+
 2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TdsMetaParameter.cs: Define delegate for performing conversion for

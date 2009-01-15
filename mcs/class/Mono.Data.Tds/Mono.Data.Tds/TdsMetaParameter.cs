@@ -141,7 +141,7 @@ namespace Mono.Data.Tds {
 
 		public object RawValue {
 			get { return rawValue; }
-			set { rawValue = value; }
+			set { Value = value; }
 		}
 
 		public byte Precision {
