@@ -1,5 +1,11 @@
 2009-01-15  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #466634
+	* statement.cs: Add reference for nested storey when only this
+	is captured.
+
+2009-01-15  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #466474
 	* codegen.cs: Emit SecurityPermissionAttribute when -unsafe option
 	was specified.

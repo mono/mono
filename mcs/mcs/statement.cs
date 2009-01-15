@@ -2509,6 +2509,14 @@ namespace Mono.CSharp {
 			//
 			if (am_storey != null) {
 				if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null) {
+					if (am_storey.OriginalSourceBlock.Explicit.HasCapturedThis) {
+						ExplicitBlock parent = Toplevel.Parent.Explicit;
+						while (parent.am_storey == null)
+							parent = parent.Parent.Explicit;
+
+						am_storey.AddParentStoreyReference (parent.am_storey);
+					}
+
 					am_storey.ChangeParentStorey (ec.CurrentAnonymousMethod.Storey);
 				}
 
@@ -2521,8 +2529,8 @@ namespace Mono.CSharp {
 				if (ref_blocks != null) {
 					foreach (ExplicitBlock ref_block in ref_blocks) {
 						for (ExplicitBlock b = ref_block.Explicit; b != this; b = b.Parent.Explicit) {
-						    if (b.am_storey != null) {
-						        b.am_storey.AddParentStoreyReference (am_storey);
+							if (b.am_storey != null) {
+								b.am_storey.AddParentStoreyReference (am_storey);
 
 								// Stop propagation inside same top block
 								if (b.Toplevel == Toplevel)
