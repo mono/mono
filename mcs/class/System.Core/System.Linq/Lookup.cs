@@ -40,7 +40,7 @@ namespace System.Linq {
 
 		internal Lookup (Dictionary<TKey, List<TElement>> groups)
 		{
-			this.groups = new Dictionary<TKey, IGrouping<TKey, TElement>> ();
+			this.groups = new Dictionary<TKey, IGrouping<TKey, TElement>> (groups.Comparer);
 			foreach (KeyValuePair<TKey, List<TElement>> group in groups)
 				this.groups.Add (group.Key, new Grouping<TKey, TElement> (group.Key, group.Value));
 		}
