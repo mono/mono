@@ -1149,6 +1149,33 @@ namespace Mono.CSharp {
 			runtime_compatibility_attr_type = TypeManager.CoreLookupType (
 				"System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute", Kind.Class, false);
 
+			if (RootContext.Unsafe) {
+				//
+				// Emits [assembly: SecurityPermissionAttribute (SecurityAction.RequestMinimum, SkipVerification = true)]
+				// when -unsafe option was specified
+				//
+				
+				Location loc = Location.Null;
+
+				MemberAccess system_security_permissions = new MemberAccess (new MemberAccess (
+					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Security", loc), "Permissions", loc);
+
+				ArrayList pos = new ArrayList (1);
+				pos.Add (new Argument (new MemberAccess (new MemberAccess (system_security_permissions, "SecurityAction", loc), "RequestMinimum")));
+
+				ArrayList named = new ArrayList (1);
+				named.Add (new DictionaryEntry ("SkipVerification", new Argument (new BoolLiteral (true, loc))));
+
+				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (null, null, null), "assembly", system_security_permissions,
+					"SecurityPermissionAttribute", new object[] { pos, named }, loc, false);
+				g.AttachTo (this);
+
+				if (g.Resolve () != null) {
+					declarative_security = new ListDictionary ();
+					g.ExtractSecurityPermissionSet (declarative_security);
+				}
+			}
+
 			if (OptAttributes == null)
 				return;
 

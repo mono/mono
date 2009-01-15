@@ -1,5 +1,11 @@
 2009-01-15  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #466474
+	* codegen.cs: Emit SecurityPermissionAttribute when -unsafe option
+	was specified.
+
+2009-01-15  Marek Safar  <marek.safar@gmail.com>
+
 	* iterators.cs, anonymous.cs, expression.cs, statement.cs, ecore.cs:
 	Fixed nested stories parent referencing process. Also fixes #463985.
 
