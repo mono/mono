@@ -1,5 +1,5 @@
 ﻿//
-// EnumerableTest.cs
+// LookupTest.cs
 //
 // Author:
 //   Jb Evain (jbevain@novell.com)
@@ -57,7 +57,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LookupIgnoreCase ()
 		{
 			var lookup = GetColors ().ToLookup (
