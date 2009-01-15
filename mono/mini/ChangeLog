@@ -1,3 +1,10 @@
+2009-01-15  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c: mono_domain_lookup_shared_generic() takes an open method
+	and doesn't check whether it's sharable, like it was before
+	removing the shared generics hash.  This brings IronPython
+	performance back to what it was before that change.
+
 2009-01-14  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Handle delegate invocation optimization earlier,
