@@ -188,10 +188,7 @@ namespace System
 					vt = (short)VarEnum.VT_DISPATCH;
 					return;
 				}
-				catch (Exception)
-				{
-
-				}
+				catch { }
 				try 
 				{
 					vt = (short)VarEnum.VT_UNKNOWN;
