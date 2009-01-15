@@ -333,6 +333,7 @@ using System; using System.Net; namespace MonoHttp {
 					sock = null;
 					try {
 						s.Shutdown (SocketShutdown.Both);
+					} catch {
 					} finally {
 						s.Close ();
 					}
