@@ -1,3 +1,9 @@
+2009-01-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpListenerRequest.cs: always initialize 'version'.
+	* HttpConnection.cs: the socket might already be disconnected when
+	shutting down.
+
 2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnectionStream.cs: if the buffer has been killed, return -1 for
