@@ -1,3 +1,8 @@
+2009-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-hash.c: Rewrite the SGEN specific parts to use a user defined
+	marker function instead of registering each GC node as a hash root.
+
 2009-01-08  Bill Holmes  <billholmes54@gmail.com>
 
 	* mono-dl.c (mono_dl_open): Fix the MSVC build.
