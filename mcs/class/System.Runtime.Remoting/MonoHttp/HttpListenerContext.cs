@@ -88,7 +88,7 @@ using System; using System.Net; namespace MonoHttp {
 			if (header == null || header.Length < 2)
 				return;
 
-			string [] authenticationData = header.Substring (header.IndexOf (":")+1).Split (new char [] {' '});
+			string [] authenticationData = header.Substring (header.IndexOf (':') + 1).Split (new char [] {' '});
 
 			if (string.Compare (authenticationData [0], "basic", true) == 0) {
 				user = ParseBasicAuthentication (authenticationData [1]);
@@ -107,7 +107,7 @@ using System; using System.Net; namespace MonoHttp {
 				// The format is DOMAIN\username:password
 				// Domain is optional
 
-				pos = authString.IndexOf (":");
+				pos = authString.IndexOf (':');
 	
 				// parse the password off the end
 				password = authString.Substring (pos+1);
@@ -116,7 +116,7 @@ using System; using System.Net; namespace MonoHttp {
 				authString = authString.Substring (0, pos);
 	
 				// check if there is a domain
-				pos = authString.IndexOf ("\\");
+				pos = authString.IndexOf ('\\');
 	
 				if (pos > 0) {
 					//domain = authString.Substring (0, pos);

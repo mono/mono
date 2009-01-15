@@ -36,6 +36,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System; using System.Net; namespace MonoHttp {
 	// FIXME: Does this buffer the response until Close?
+	// Update: we send a single packet for the first non-chunked Write
 	// What happens when we set content-length to X and write X-1 bytes then close?
 	// what if we don't set content-length at all?
 	class ResponseStream : Stream
@@ -79,15 +80,34 @@ using System; using System.Net; namespace MonoHttp {
 		{
 			if (disposed == false) {
 				disposed = true;
-				if (response.HeadersSent == false)
-					response.SendHeaders (true);
-
-				if (response.SendChunked && !trailer_sent) {
-					WriteChunkSize (0, true);
+				byte [] bytes = null;
+				MemoryStream ms = GetHeaders (true);
+				bool chunked = response.SendChunked;
+				if (ms != null) {
+					long start = ms.Position;
+					if (chunked && !trailer_sent) {
+						bytes = GetChunkSizeBytes (0, true);
+						ms.Position = ms.Length;
+						ms.Write (bytes, 0, bytes.Length);
+					}
+					InternalWrite (ms.GetBuffer (), (int) start, (int) (ms.Length - start));
+					trailer_sent = true;
+				} else if (chunked && !trailer_sent) {
+					bytes = GetChunkSizeBytes (0, true);
+					InternalWrite (bytes, 0, bytes.Length);
 					trailer_sent = true;
 				}
 				response.Close ();
 			}
+		}
+
+		MemoryStream GetHeaders (bool closing)
+		{
+			if (response.HeadersSent)
+				return null;
+			MemoryStream ms = new MemoryStream ();
+			response.SendHeaders (closing, ms);
+			return ms;
 		}
 
 		public override void Flush ()
@@ -95,11 +115,10 @@ using System; using System.Net; namespace MonoHttp {
 		}
 
 		static byte [] crlf = new byte [] { 13, 10 };
-		void WriteChunkSize (int size, bool final)
+		static byte [] GetChunkSizeBytes (int size, bool final)
 		{
 			string str = String.Format ("{0:x}\r\n{1}", size, final ? "\r\n" : "");
-			byte [] b = Encoding.ASCII.GetBytes (str);
-			stream.Write (b, 0, b.Length);
+			return Encoding.ASCII.GetBytes (str);
 		}
 
 		internal void InternalWrite (byte [] buffer, int offset, int count)
@@ -118,19 +137,33 @@ using System; using System.Net; namespace MonoHttp {
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (response.HeadersSent == false)
-				response.SendHeaders (false);
-
+			byte [] bytes = null;
+			MemoryStream ms = GetHeaders (false);
 			bool chunked = response.SendChunked;
-			try {
-				if (chunked)
-					WriteChunkSize (count, false);
-			} catch { }
-			InternalWrite (buffer, offset, count);
-			try {
-				if (chunked)
-					stream.Write (crlf, 0, 2);
-			} catch { }
+			if (ms != null) {
+				long start = ms.Position; // After the possible preamble for the encoding
+				ms.Position = ms.Length;
+				if (chunked) {
+					bytes = GetChunkSizeBytes (count, false);
+					ms.Write (bytes, 0, bytes.Length);
+				}
+
+				int new_count = Math.Min (count, 16384 - (int) ms.Position + (int) start);
+				ms.Write (buffer, offset, new_count);
+				count -= new_count;
+				offset += new_count;
+				InternalWrite (ms.GetBuffer (), (int) start, (int) (ms.Length - start));
+				ms.SetLength (0);
+				ms.Capacity = 0; // 'dispose' the buffer in ms.
+			} else if (chunked) {
+				bytes = GetChunkSizeBytes (count, false);
+				InternalWrite (bytes, 0, bytes.Length);
+			}
+
+			if (count > 0)
+				InternalWrite (buffer, offset, count);
+			if (chunked)
+				InternalWrite (crlf, 0, 2);
 		}
 
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int count,
@@ -139,13 +172,25 @@ using System; using System.Net; namespace MonoHttp {
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
-			if (response.HeadersSent == false)
-				response.SendHeaders (false);
+			byte [] bytes = null;
+			MemoryStream ms = GetHeaders (false);
+			bool chunked = response.SendChunked;
+			if (ms != null) {
+				long start = ms.Position;
+				ms.Position = ms.Length;
+				if (chunked) {
+					bytes = GetChunkSizeBytes (count, false);
+					ms.Write (bytes, 0, bytes.Length);
+				}
+				ms.Write (buffer, offset, count);
+				buffer = ms.GetBuffer ();
+				offset = (int) start;
+				count = (int) (ms.Position - start);
+			} else if (chunked) {
+				bytes = GetChunkSizeBytes (count, false);
+				InternalWrite (bytes, 0, bytes.Length);
+			}
 
-			try {
-				if (response.SendChunked)
-					WriteChunkSize (count, false);
-			} catch { }
 			return stream.BeginWrite (buffer, offset, count, cback, state);
 		}
 
