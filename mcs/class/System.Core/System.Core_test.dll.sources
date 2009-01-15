@@ -5,6 +5,7 @@ System.Collections.Generic/HashSetTest.cs
 System.Linq/EnumerableTest.cs
 System.Linq/EnumerableMoreTest.cs
 System.Linq/EnumerableAsQueryableTest.cs
+System.Linq/LookupTest.cs
 System.Linq.Expressions/ExpressionTest.cs
 System.Linq.Expressions/ExpressionTest_Add.cs
 System.Linq.Expressions/ExpressionTest_AddChecked.cs
