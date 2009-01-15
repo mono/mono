@@ -49,6 +49,10 @@ namespace System.Linq
 			public static readonly Func<T, bool> Always = (t) => true;
 		}
 
+		class Function<T> {
+			public static readonly Func<T, T> Identity = (t) => t;
+		}
+
 		#region Aggregate
 
 		public static TSource Aggregate<TSource> (this IEnumerable<TSource> source, Func<TSource, TSource, TSource> func)
@@ -2167,16 +2171,7 @@ namespace System.Linq
 		public static Dictionary<TKey, TSource> ToDictionary<TSource, TKey> (this IEnumerable<TSource> source,
 				Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			Check.SourceAndKeySelector (source, keySelector);
-
-			if (comparer == null)
-				comparer = EqualityComparer<TKey>.Default;
-
-			var dict = new Dictionary<TKey, TSource> (comparer);
-			foreach (var e in source)
-				dict.Add (keySelector (e), e);
-
-			return dict;
+			return ToDictionary<TSource, TKey, TSource> (source, keySelector, Function<TSource>.Identity, comparer);
 		}
 
 		#endregion
@@ -2194,7 +2189,7 @@ namespace System.Linq
 
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
 		{
-			return ToLookup<TSource, TKey, TSource> (source, keySelector, element => element, null);
+			return ToLookup<TSource, TKey, TSource> (source, keySelector, Function<TSource>.Identity, null);
 		}
 
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source,
