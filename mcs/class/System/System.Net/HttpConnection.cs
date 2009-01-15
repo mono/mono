@@ -324,6 +324,7 @@ namespace System.Net {
 					sock = null;
 					try {
 						s.Shutdown (SocketShutdown.Both);
+					} catch {
 					} finally {
 						s.Close ();
 					}
