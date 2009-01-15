@@ -107,6 +107,7 @@
     <Compile Include="System.Linq\EnumerableAsQueryableTest.cs" />
     <Compile Include="System.Linq\EnumerableMoreTest.cs" />
     <Compile Include="System.Linq\EnumerableTest.cs" />
+    <Compile Include="System.Linq\LookupTest.cs" />
     <Compile Include="System.Linq\QueryableProviderTest.cs" />
     <Compile Include="System.Linq\QueryableTest.cs" />
     <Compile Include="System\TimeZoneInfo.AdjustmentRuleTest.cs" />
