@@ -1,3 +1,8 @@
+2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnectionStream.cs: if the buffer has been killed, return -1 for
+	its length. Fixes regression in System.Runtime.Remoting.
+
 2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: keepAlive is of no use here.
