@@ -1,3 +1,7 @@
+2009-01-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Add pe optional header verification.
+
 2009-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c: Add support for user defined marker functions, used by
