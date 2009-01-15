@@ -4032,7 +4032,7 @@ namespace Mono.CSharp {
 		LocalTemporary temp;
 
 		#region Abstract
-		public abstract HoistedVariable HoistedVariable { get; }
+		public abstract HoistedVariable GetHoistedVariable (EmitContext ec);
 		public abstract bool IsFixed { get; }
 		public abstract bool IsRef { get; }
 		public abstract string Name { get; }
@@ -4051,8 +4051,9 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			if (IsHoistedEmitRequired (ec)) {
-				HoistedVariable.AddressOf (ec, mode);
+			HoistedVariable hv = GetHoistedVariable (ec);
+			if (hv != null) {
+				hv.AddressOf (ec, mode);
 				return;
 			}
 
@@ -4084,8 +4085,9 @@ namespace Mono.CSharp {
 		{
 			Report.Debug (64, "VARIABLE EMIT", this, Variable, type, IsRef, loc);
 
-			if (IsHoistedEmitRequired (ec)) {
-				HoistedVariable.Emit (ec, leave_copy);
+			HoistedVariable hv = GetHoistedVariable (ec);
+			if (hv != null) {
+				hv.Emit (ec, leave_copy);
 				return;
 			}
 
@@ -4112,8 +4114,9 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy,
 					bool prepare_for_load)
 		{
-			if (IsHoistedEmitRequired (ec)) {
-				HoistedVariable.EmitAssign (ec, source, leave_copy, prepare_for_load);
+			HoistedVariable hv = GetHoistedVariable (ec);
+			if (hv != null) {
+				hv.EmitAssign (ec, source, leave_copy, prepare_for_load);
 				return;
 			}
 
@@ -4151,15 +4154,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsHoisted {
-			get { return HoistedVariable != null; }
-		}
-
-		protected virtual bool IsHoistedEmitRequired (EmitContext ec)
-		{
-			//
-			// Default implementation return true when there is a hosted variable
-			//
-			return HoistedVariable != null;
+			get { return GetHoistedVariable (null) != null; }
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -4201,8 +4196,9 @@ namespace Mono.CSharp {
 			get { return local_info.VariableInfo; }
 		}
 
-		public override HoistedVariable HoistedVariable {
-			get { return local_info.HoistedVariableReference; }
+		public override HoistedVariable GetHoistedVariable (EmitContext ec)
+		{
+			return local_info.HoistedVariableReference;
 		}
 
 		//		
@@ -4386,8 +4382,9 @@ namespace Mono.CSharp {
 			get { return pi.Parameter.ModFlags == Parameter.Modifier.OUT; }
 		}
 
-		public override HoistedVariable HoistedVariable {
-			get { return pi.Parameter.HoistedVariableReference; }
+		public override HoistedVariable GetHoistedVariable (EmitContext ec)
+		{
+			return pi.Parameter.HoistedVariableReference;
 		}
 
 		//
@@ -4506,8 +4503,9 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			if (IsHoistedEmitRequired (ec))
-				return HoistedVariable.CreateExpressionTree (ec);
+			HoistedVariable hv = GetHoistedVariable (ec);
+			if (hv != null)
+				return hv.CreateExpressionTree (ec);
 
 			return Parameter.ExpressionTreeVariableReference ();
 		}
@@ -6531,8 +6529,9 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override HoistedVariable HoistedVariable {
-			get { return null; }
+		public override HoistedVariable GetHoistedVariable (EmitContext ec)
+		{
+			return null;
 		}
 	}
 	
@@ -6585,17 +6584,25 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		protected override bool IsHoistedEmitRequired (EmitContext ec)
+		public override HoistedVariable GetHoistedVariable (EmitContext ec)
 		{
-			//
-			// Handle 'this' differently, it cannot be assigned hence
-			// when we are not inside anonymous method we can emit direct access 
-			//
-			return ec.CurrentAnonymousMethod != null && base.IsHoistedEmitRequired (ec);
-		}
+			// Is null when probing IsHoisted
+			if (ec == null)
+				return null;
 
-		public override HoistedVariable HoistedVariable {
-			get { return TopToplevelBlock.HoistedThisVariable; }
+			if (ec.CurrentAnonymousMethod == null)
+				return null;
+
+			AnonymousMethodStorey storey = ec.CurrentAnonymousMethod.Storey;
+			while (storey != null) {
+				AnonymousMethodStorey temp = storey.Parent as AnonymousMethodStorey;
+				if (temp == null)
+					return storey.HoistedThis;
+
+				storey = temp;
+			}
+
+			return null;
 		}
 
 		public override bool IsRef {
@@ -6604,15 +6611,6 @@ namespace Mono.CSharp {
 
 		protected override ILocalVariable Variable {
 			get { return ThisVariable.Instance; }
-		}
-
-		// TODO: Move to ToplevelBlock
-		ToplevelBlock TopToplevelBlock {
-			get {
-				ToplevelBlock tl = block.Toplevel;
-				while (tl.Parent != null) tl = tl.Parent.Toplevel;
-				return tl;
-			}
 		}
 
 		public static bool IsThisAvailable (EmitContext ec)
@@ -6658,24 +6656,8 @@ namespace Mono.CSharp {
 					variable_info = block.Toplevel.ThisVariable.VariableInfo;
 
 				AnonymousExpression am = ec.CurrentAnonymousMethod;
-				if (am != null) {
-					//
-					// this is hoisted to very top level block
-					//
-					if (ec.IsVariableCapturingRequired) {
-						//
-						// TODO: it should be optimized, see test-anon-75.cs
-						//
-						// `this' variable has its own scope which is mostly empty
-						// and causes creation of extraneous storey references.
-						// Also it's hard to remove `this' dependencies when we Undo
-						// this access.
-						//
-						AnonymousMethodStorey scope = TopToplevelBlock.Explicit.CreateAnonymousMethodStorey (ec);
-						if (HoistedVariable == null) {
-							TopToplevelBlock.HoistedThisVariable = scope.CaptureThis (ec, this);
-						}
-					}
+				if (am != null && ec.IsVariableCapturingRequired) {
+					am.SetHasThisAccess ();
 				}
 			}
 			
@@ -6762,11 +6744,6 @@ namespace Mono.CSharp {
 			This target = (This) t;
 
 			target.block = clonectx.LookupBlock (block);
-		}
-
-		public void RemoveHoisting ()
-		{
-			TopToplevelBlock.HoistedThisVariable = null;
 		}
 
 		public override void SetHasAddressTaken ()

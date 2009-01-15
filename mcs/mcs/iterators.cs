@@ -416,7 +416,6 @@ namespace Mono.CSharp {
 			  iterator.OriginalMethod as MemberBase, iterator.GenericMethod, "Iterator")
 		{
 			this.Iterator = iterator;
-			HasHoistedVariables = true;
 		}
 
 		public Field PC {
@@ -616,11 +615,6 @@ namespace Mono.CSharp {
 			Uninitialized = -2,
 			After = -1,
 			Start = 0
-		}
-
-		public override void AddStoreyReference (AnonymousMethodStorey storey)
-		{
-			// do nothing
 		}
 
 		public void EmitYieldBreak (ILGenerator ig, bool unwind_protect)

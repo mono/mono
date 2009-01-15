@@ -5883,8 +5883,9 @@ namespace Mono.CSharp {
 			EmitAssign (ec, source, false, false);
 		}
 
-		public override HoistedVariable HoistedVariable {
-			get { return li.HoistedVariableReference; }
+		public override HoistedVariable GetHoistedVariable (EmitContext ec)
+		{
+			return li.HoistedVariableReference;
 		}
 
 		public override bool IsFixed {

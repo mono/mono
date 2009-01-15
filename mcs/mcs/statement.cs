@@ -1519,9 +1519,10 @@ namespace Mono.CSharp {
 			BlockUsed = 2,
 			VariablesInitialized = 4,
 			HasRet = 8,
-			Unsafe = 32,
-			IsIterator = 64,
-			HasStoreyAccess	= 128
+			Unsafe = 16,
+			IsIterator = 32,
+			HasCapturedVariable = 64,
+			HasCapturedThis = 128
 		}
 		protected Flags flags;
 
@@ -2464,7 +2465,6 @@ namespace Mono.CSharp {
 			// When referencing a variable in iterator storey from children anonymous method
 			//
 			if (Toplevel.am_storey is IteratorStorey) {
-				ec.CurrentAnonymousMethod.AddStoreyReference (Toplevel.am_storey);
 				return Toplevel.am_storey;
 			}
 
@@ -2479,19 +2479,11 @@ namespace Mono.CSharp {
 				GenericMethod gm = mc == null ? null : mc.GenericMethod;
 
 				//
-				// Create anonymous method storey for this block
+				// Creates anonymous method storey for this block
 				//
 				am_storey = new AnonymousMethodStorey (this, ec.TypeContainer, mc, gm, "AnonStorey");
 			}
 
-			//
-			// Creates a link between this block and the anonymous method
-			//
-			// An anonymous method can reference variables from any outer block, but they are
-			// hoisted in their own ExplicitBlock. When more than one block is referenced we
-			// need to create another link between those variable storeys
-			//
-			ec.CurrentAnonymousMethod.AddStoreyReference (am_storey);
 			return am_storey;
 		}
 
@@ -2521,9 +2513,27 @@ namespace Mono.CSharp {
 				}
 
 				am_storey.DefineType ();
-				am_storey.ResolveType ();				
+				am_storey.ResolveType ();
 				am_storey.Define ();
 				am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
+
+				ArrayList ref_blocks = am_storey.ReferencesFromChildrenBlock;
+				if (ref_blocks != null) {
+					foreach (ExplicitBlock ref_block in ref_blocks) {
+						for (ExplicitBlock b = ref_block.Explicit; b != this; b = b.Parent.Explicit) {
+						    if (b.am_storey != null) {
+						        b.am_storey.AddParentStoreyReference (am_storey);
+
+								// Stop propagation inside same top block
+								if (b.Toplevel == Toplevel)
+									break;
+
+								b = b.Toplevel;
+						    }
+							b.HasCapturedVariable = true;
+						}
+					}
+				}
 			}
 
 			base.EmitMeta (ec);
@@ -2534,33 +2544,16 @@ namespace Mono.CSharp {
 			return known_variables == null ? null : (IKnownVariable) known_variables [name];
 		}
 
-		public void PropagateStoreyReference (AnonymousMethodStorey s)
+		public bool HasCapturedThis
 		{
-			if (Parent != null && am_storey != s) {
-				if (am_storey != null)
-					am_storey.AddParentStoreyReference (s);
-
-				Parent.Explicit.PropagateStoreyReference (s);
-			}
+			set { flags = value ? flags | Flags.HasCapturedThis : flags & ~Flags.HasCapturedThis; }
+			get { return (flags & Flags.HasCapturedThis) != 0; }
 		}
 
-		public override bool Resolve (EmitContext ec)
+		public bool HasCapturedVariable
 		{
-			bool ok = base.Resolve (ec);
-
-			//
-			// Discard an anonymous method storey when this block has no hoisted variables
-			//
-			if (am_storey != null)  {
-				if (am_storey.HasHoistedVariables) {
-					AddScopeStatement (new AnonymousMethodStorey.ThisInitializer (am_storey));
-				} else {
-					am_storey.Undo ();
-					am_storey = null;
-				}
-			}
-
-			return ok;
+			set { flags = value ? flags | Flags.HasCapturedVariable : flags & ~Flags.HasCapturedVariable; }
+			get { return (flags & Flags.HasCapturedVariable) != 0; }
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -2624,11 +2617,6 @@ namespace Mono.CSharp {
 
 		public GenericMethod GenericMethod {
 			get { return generic; }
-		}
-
-		public bool HasStoreyAccess {
-			set { flags = value ? flags | Flags.HasStoreyAccess : flags & ~Flags.HasStoreyAccess; }
-			get { return (flags & Flags.HasStoreyAccess) != 0;  }
 		}
 
 		public ToplevelBlock Container {
