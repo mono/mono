@@ -128,12 +128,17 @@ namespace Mono.Data.Tds.Protocol
 			int count = 0;
 			if (Parameters != null) {
 				foreach (TdsMetaParameter p in Parameters) {
+					string parameterName = p.ParameterName;
+					if (parameterName [0] == '@') {
+						parameterName = parameterName.Substring (1);
+					}
+
 					if (p.Direction != TdsParameterDirection.Input) {
 						if (count == 0)
 							select.Append ("select ");
 						else
 							select.Append (", ");
-						select.Append (p.ParameterName);
+						select.Append ("@" + parameterName);
 							
 						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
 
@@ -141,14 +146,12 @@ namespace Mono.Data.Tds.Protocol
 							if (p.Direction == TdsParameterDirection.InputOutput)
 								set.Append (String.Format ("set {0}\n", FormatParameter(p)));
 							else
-								set.Append (String.Format ("set {0}=NULL\n", p.ParameterName));
+								set.Append (String.Format ("set @{0}=NULL\n", parameterName));
 						}
 					
-						count += 1;
-					}
-					
-					if (p.Direction == TdsParameterDirection.ReturnValue)
-						exec = p.ParameterName + "=";
+						count++;
+					} else if (p.Direction == TdsParameterDirection.ReturnValue)
+						exec = "@" + parameterName + "=";
 				}
 			}
 			exec = "exec " + exec;
