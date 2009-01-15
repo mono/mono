@@ -150,7 +150,8 @@ namespace Mono.Data.Tds.Protocol
 						}
 					
 						count++;
-					} else if (p.Direction == TdsParameterDirection.ReturnValue)
+					}
+					if (p.Direction == TdsParameterDirection.ReturnValue)
 						exec = "@" + parameterName + "=";
 				}
 			}

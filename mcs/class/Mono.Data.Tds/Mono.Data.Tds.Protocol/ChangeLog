@@ -1,5 +1,9 @@
 2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* Tds70.cs: fix my mistake in the previous patch.
+
+2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* Tds70.cs: more '@' handling.
 
 2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
