@@ -2194,24 +2194,13 @@ namespace System.Linq
 
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
 		{
-			return ToLookup<TSource, TKey> (source, keySelector, null);
+			return ToLookup<TSource, TKey, TSource> (source, keySelector, element => element, null);
 		}
 
 		public static ILookup<TKey, TSource> ToLookup<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			Check.SourceAndKeySelector (source, keySelector);
-
-			var dictionary = new Dictionary<TKey, List<TSource>> (comparer ?? EqualityComparer<TKey>.Default);
-			foreach (TSource element in source) {
-				TKey key = keySelector (element);
-				if (key == null)
-					throw new ArgumentNullException ();
-				if (!dictionary.ContainsKey (key))
-					dictionary.Add (key, new List<TSource> ());
-				dictionary [key].Add (element);
-			}
-			return new Lookup<TKey, TSource> (dictionary);
+			return ToLookup<TSource, TKey, TSource> (source, keySelector, element => element, comparer);
 		}
 
 		public static ILookup<TKey, TElement> ToLookup<TSource, TKey, TElement> (this IEnumerable<TSource> source,
@@ -2225,15 +2214,21 @@ namespace System.Linq
 		{
 			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
-			Dictionary<TKey, List<TElement>> dictionary = new Dictionary<TKey, List<TElement>> (comparer ?? EqualityComparer<TKey>.Default);
-			foreach (TSource element in source) {
-				TKey key = keySelector (element);
+			var dictionary = new Dictionary<TKey, List<TElement>> (comparer ?? EqualityComparer<TKey>.Default);
+			foreach (var element in source) {
+				var key = keySelector (element);
 				if (key == null)
-					throw new ArgumentNullException ();
-				if (!dictionary.ContainsKey (key))
-					dictionary.Add (key, new List<TElement> ());
-				dictionary [key].Add (elementSelector (element));
+					throw new ArgumentNullException ("key");
+
+				List<TElement> list;
+				if (!dictionary.TryGetValue (key, out list)) {
+					list = new List<TElement> ();
+					dictionary.Add (key, list);
+				}
+
+				list.Add (elementSelector (element));
 			}
+
 			return new Lookup<TKey, TElement> (dictionary);
 		}
 

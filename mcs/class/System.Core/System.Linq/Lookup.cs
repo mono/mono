@@ -4,6 +4,7 @@
 // Authors:
 //	Alejandro Serrano "Serras" (trupill@yahoo.es)
 //	Marek Safar  <marek.safar@gmail.com>
+//	Jb Evain  <jbevain@novell.com>
 //
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
@@ -38,32 +39,30 @@ namespace System.Linq {
 
 		Dictionary<TKey, IGrouping<TKey, TElement>> groups;
 
-		internal Lookup (Dictionary<TKey, List<TElement>> groups)
+		public int Count {
+			get { return groups.Count; }
+		}
+
+		public IEnumerable<TElement> this [TKey key] {
+			get { return groups [key]; }
+		}
+
+		internal Lookup (Dictionary<TKey, List<TElement>> lookup)
 		{
-			this.groups = new Dictionary<TKey, IGrouping<TKey, TElement>> (groups.Comparer);
-			foreach (KeyValuePair<TKey, List<TElement>> group in groups)
-				this.groups.Add (group.Key, new Grouping<TKey, TElement> (group.Key, group.Value));
+			groups = new Dictionary<TKey, IGrouping<TKey, TElement>> (lookup.Comparer);
+			foreach (var slot in lookup)
+				groups.Add (slot.Key, new Grouping<TKey, TElement> (slot.Key, slot.Value));
 		}
 
 		public IEnumerable<TResult> ApplyResultSelector<TResult> (Func<TKey, IEnumerable<TElement>, TResult> selector)
 		{
-			foreach (IGrouping<TKey, TElement> group in groups.Values)
+			foreach (var group in groups.Values)
 				yield return selector (group.Key, group);
-		}
-
-		public int Count
-		{
-			get { return groups.Count; }
 		}
 
 		public bool Contains (TKey key)
 		{
 			return groups.ContainsKey (key);
-		}
-
-		public IEnumerable<TElement> this [TKey key]
-		{
-			get { return groups [key]; }
 		}
 
 		public IEnumerator<IGrouping<TKey, TElement>> GetEnumerator ()
