@@ -12353,7 +12353,7 @@
         <size>1</size>
       </method>
       <method name="Void Test[T](T)">
-        <size>59</size>
+        <size>46</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
@@ -12391,18 +12391,11 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey1`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1[T]">
       <method name="Simple &lt;&gt;m__0()">
-        <size>72</size>
+        <size>55</size>
       </method>
     </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey2`1[T]">
+    <type name="X+&lt;Test&gt;c__AnonStorey0`1+&lt;Test&gt;c__AnonStorey1`1[T]">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -12666,7 +12659,7 @@
         <size>7</size>
       </method>
       <method name="Boolean &lt;&gt;m__0()">
-        <size>187</size>
+        <size>194</size>
       </method>
     </type>
     <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
@@ -12792,7 +12785,7 @@
         <size>7</size>
       </method>
       <method name="Void Test1[R](R, Int32)">
-        <size>157</size>
+        <size>150</size>
       </method>
       <method name="Void Run()">
         <size>13</size>
@@ -13083,15 +13076,12 @@
         <size>1</size>
       </method>
       <method name="Void DetermineLinkedCells()">
-        <size>67</size>
+        <size>74</size>
       </method>
     </type>
     <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
-      </method>
-      <method name="Boolean &lt;&gt;m__0(System.Object)">
-        <size>13</size>
       </method>
     </type>
     <type name="Test+&lt;DetermineLinkedCells&gt;c__AnonStorey1">
@@ -13100,6 +13090,9 @@
       </method>
       <method name="Boolean &lt;&gt;m__1(System.Object)">
         <size>13</size>
+      </method>
+      <method name="Boolean &lt;&gt;m__0(System.Object)">
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -13186,7 +13179,7 @@
         <size>1</size>
       </method>
       <method name="Void FailsToCompile()">
-        <size>32</size>
+        <size>19</size>
       </method>
     </type>
     <type name="SomeGenericClass`1+SomeHandlerType[SomeType]">
@@ -13207,16 +13200,15 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>49</size>
+    </type>
+    <type name="SomeGenericClass`1[SomeType]">
+      <method name="Void &lt;FailsToCompile&gt;m__0()">
+        <size>44</size>
       </method>
     </type>
-    <type name="SomeGenericClass`1+&lt;FailsToCompile&gt;c__AnonStorey0+&lt;FailsToCompile&gt;c__AnonStorey1[SomeType]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
+    <type name="SomeGenericClass`1+&lt;FailsToCompile&gt;c__AnonStorey0[SomeType]">
       <method name="Void &lt;&gt;m__1()">
-        <size>23</size>
+        <size>18</size>
       </method>
     </type>
   </test>
@@ -15121,43 +15113,9 @@
       <method name="Boolean &lt;Main&gt;m__9(Boolean)">
         <size>5</size>
       </method>
-    </type>
-    <type name="Tester+&lt;ConvertTest_9&gt;c__AnonStorey5">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest&gt;c__AnonStorey6">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_3&gt;c__AnonStorey7">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_4&gt;c__AnonStorey8">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_6&gt;c__AnonStorey9">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester">
       <method name="Void NewArrayInitTest_5()">
         <size>158</size>
       </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStoreyA">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester">
       <method name="Void ConditionTest_5()">
         <size>107</size>
       </method>
@@ -15276,6 +15234,36 @@
     <type name="Tester">
       <method name="Void EqualTest_14()">
         <size>101</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;ConvertTest_9&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_3&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_4&gt;c__AnonStorey3">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_6&gt;c__AnonStorey4">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStorey5">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -15410,7 +15398,7 @@
         <size>7</size>
       </method>
       <method name="Boolean ContainsAll[U](IEnumerable`1)">
-        <size>177</size>
+        <size>184</size>
       </method>
       <method name="Boolean Contains(T)">
         <size>2</size>
@@ -15424,7 +15412,7 @@
         <size>44</size>
       </method>
     </type>
-    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
+    <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1[T,U]">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -29168,7 +29156,7 @@
         <size>14</size>
       </method>
       <method name="Void Leak(Boolean, Int32)">
-        <size>78</size>
+        <size>85</size>
       </method>
     </type>
     <type name="Program">
@@ -29198,7 +29186,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>23</size>
+        <size>18</size>
       </method>
       <method name="Void &lt;&gt;m__1()">
         <size>68</size>
@@ -35015,7 +35003,7 @@
         <size>7</size>
       </method>
       <method name="Void Test()">
-        <size>118</size>
+        <size>105</size>
       </method>
       <method name="Int32 Main()">
         <size>66</size>
@@ -35035,14 +35023,6 @@
         <size>0</size>
       </method>
     </type>
-    <type name="S+&lt;Test&gt;c__AnonStorey2">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>86</size>
-      </method>
-    </type>
     <type name="S+&lt;Test&gt;c__AnonStorey1">
       <method name="Void .ctor()">
         <size>7</size>
@@ -35051,6 +35031,11 @@
     <type name="S+&lt;Test&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="S+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__0()">
+        <size>76</size>
       </method>
     </type>
   </test>
@@ -36612,7 +36597,7 @@
         <size>1</size>
       </method>
       <method name="Void Test(Int32)">
-        <size>150</size>
+        <size>158</size>
       </method>
     </type>
     <type name="X">
@@ -36642,7 +36627,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>50</size>
+        <size>45</size>
       </method>
     </type>
     <type name="World+&lt;Test&gt;c__AnonStorey0">
@@ -36665,7 +36650,7 @@
         <size>1</size>
       </method>
       <method name="Void Test(Int32)">
-        <size>226</size>
+        <size>197</size>
       </method>
     </type>
     <type name="X">
@@ -36694,14 +36679,6 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void &lt;&gt;m__0()">
-        <size>78</size>
-      </method>
-    </type>
-    <type name="World+&lt;Test&gt;c__AnonStorey3">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
     </type>
     <type name="World+&lt;Test&gt;c__AnonStorey2">
       <method name="Void .ctor()">
@@ -36711,6 +36688,9 @@
     <type name="World+&lt;Test&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>63</size>
       </method>
     </type>
   </test>
@@ -37085,7 +37065,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>351</size>
+        <size>344</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -37130,7 +37110,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>538</size>
+        <size>515</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -37180,7 +37160,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test(Int32)">
-        <size>588</size>
+        <size>567</size>
       </method>
       <method name="Int32 Main()">
         <size>46</size>
@@ -37240,7 +37220,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Test()">
-        <size>351</size>
+        <size>333</size>
       </method>
       <method name="Int32 Main()">
         <size>59</size>
@@ -37265,15 +37245,10 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>181</size>
+        <size>166</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="X+&lt;Test&gt;c__AnonStorey2">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -37844,7 +37819,7 @@
         <size>1</size>
       </method>
       <method name="Void TestMe()">
-        <size>167</size>
+        <size>154</size>
       </method>
       <method name="Boolean &lt;TestMe&gt;m__0()">
         <size>2</size>
@@ -37872,11 +37847,6 @@
         <size>14</size>
       </method>
     </type>
-    <type name="Test+&lt;TestMe&gt;c__AnonStorey2">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
     <type name="Test+&lt;TestMe&gt;c__AnonStorey1">
       <method name="Void .ctor()">
         <size>7</size>
@@ -37884,7 +37854,7 @@
     </type>
     <type name="Test+&lt;TestMe&gt;c__AnonStorey0">
       <method name="Boolean &lt;&gt;m__1()">
-        <size>59</size>
+        <size>54</size>
       </method>
     </type>
   </test>
@@ -38100,7 +38070,7 @@
         <size>20</size>
       </method>
       <method name="Int32 Test()">
-        <size>40</size>
+        <size>27</size>
       </method>
       <method name="Int32 Foo2(C+Cmd2)">
         <size>7</size>
@@ -38137,23 +38107,20 @@
         <size>0</size>
       </method>
     </type>
-    <type name="C+&lt;Test&gt;c__AnonStorey0">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 &lt;&gt;m__0()">
-        <size>50</size>
+    <type name="C">
+      <method name="Int32 &lt;Test&gt;m__0()">
+        <size>45</size>
       </method>
     </type>
-    <type name="C+&lt;Test&gt;c__AnonStorey0+&lt;Test&gt;c__AnonStorey2">
+    <type name="C+&lt;Test&gt;c__AnonStorey1">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__1()">
-        <size>49</size>
+        <size>44</size>
       </method>
     </type>
-    <type name="C+&lt;Test&gt;c__AnonStorey0+&lt;Test&gt;c__AnonStorey2+&lt;Test&gt;c__AnonStorey1">
+    <type name="C+&lt;Test&gt;c__AnonStorey1+&lt;Test&gt;c__AnonStorey0">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -38447,6 +38414,169 @@
       </method>
       <method name="Void &lt;&gt;m__0()">
         <size>23</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-88.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void Test()">
+        <size>102</size>
+      </method>
+    </type>
+    <type name="C+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__2()">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>69</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()">
+        <size>8</size>
+      </method>
+      <method name="Void &lt;&gt;m__4()">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey2+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__3()">
+        <size>20</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-89.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="System.Object get_GdkWindow()">
+        <size>2</size>
+      </method>
+      <method name="Void set_GdkWindow(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void Invoke(C+D)">
+        <size>1</size>
+      </method>
+      <method name="Void Test()">
+        <size>69</size>
+      </method>
+    </type>
+    <type name="C+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>108</size>
+      </method>
+      <method name="Void &lt;&gt;m__3()">
+        <size>29</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()">
+        <size>18</size>
+      </method>
+      <method name="Void &lt;&gt;m__2()">
+        <size>49</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-90.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void Foo()">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="C+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>66</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__AnonStorey0+&lt;Foo&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Foo&gt;c__AnonStorey0+&lt;Foo&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()">
+        <size>32</size>
       </method>
     </type>
   </test>
