@@ -495,6 +495,31 @@ namespace MonoTests.System
 			Assert.AreEqual (expected, relativeUri.OriginalString, msg + "3");
 			Assert.IsFalse (relativeUri.UserEscaped, msg + "4");
 		}
+
+		[Test]
+		public void DontCheckHostWithCustomParsers ()
+		{
+			UriParser.Register (new TolerantUriParser (), "assembly", 0);
+			try {
+				new Uri ("assembly://Spring.Core, Version=1.2.0.20001, Culture=neutral, "
+					+ "PublicKeyToken=null/Spring.Objects.Factory.Xml/spring-objects-1.1.xsd");
+			} catch (UriFormatException) {
+				Assert.Fail ("Spring Uri is expected to work.");
+			}
+		}
+
+		private class TolerantUriParser : GenericUriParser
+		{
+			private const GenericUriParserOptions DefaultOptions
+				= GenericUriParserOptions.Default
+				| GenericUriParserOptions.GenericAuthority
+				| GenericUriParserOptions.AllowEmptyAuthority;
+			
+			public TolerantUriParser()
+							: base(DefaultOptions)
+			{
+			}
+		}
 	}
 }
 

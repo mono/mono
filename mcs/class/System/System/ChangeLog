@@ -1,3 +1,8 @@
+2009-15-01  Leeszek Ciesielski <skolima@gmail.com>
+
+	* Uri.cs: Use registered UriParser when a custom schema is passed
+	Fixes 464235, but is a bit of a hack
+
 2009-01-13  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* Uri.cs: Fix the previous patch for 1.0 profile

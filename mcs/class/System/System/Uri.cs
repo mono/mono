@@ -1540,8 +1540,19 @@ namespace System {
 				else
 					badhost = true;
 			}
-			if (badhost) 
+#if NET_2_0
+			if (badhost && (Parser is DefaultUriParser || Parser == null))
 				return Locale.GetText ("Invalid URI: The hostname could not be parsed. (" + host + ")");
+
+			UriFormatException ex = null;
+			if (Parser != null)
+				Parser.InitializeAndValidate (this, out ex);
+			if (ex != null)
+				return ex.Message;
+#else
+			if (badhost)
+				return Locale.GetText ("Invalid URI: The hostname could not be parsed. (" + host + ")");
+#endif
 
 			if ((scheme != Uri.UriSchemeMailto) &&
 					(scheme != Uri.UriSchemeNews) &&

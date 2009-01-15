@@ -1,3 +1,7 @@
+2009-15-01  Leszek Ciesielski <skolima@gmail.com>
+
+	* UriTest3.cs: test for bug #464235
+
 2008-03-12  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* UriTest.cs: test for bug #363320
