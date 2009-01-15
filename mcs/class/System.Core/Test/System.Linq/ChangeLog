@@ -1,3 +1,7 @@
+2009-01-15  Jb Evain  <jbevain@novell.com>
+
+	* LookupTest.cs: new tests.
+
 2008-09-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EnumerableTest.cs: Add test case for Average with nullable long.
