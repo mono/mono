@@ -50,6 +50,7 @@ namespace System.Json
 					c = PeekChar ();
 					if (c != ',')
 						break;
+					ReadChar ();
 					continue;
 				}
 				if (ReadChar () != ']')

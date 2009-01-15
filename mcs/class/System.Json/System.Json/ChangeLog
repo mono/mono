@@ -1,3 +1,7 @@
+2009-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : consume ',' between items in an array.
+
 2008-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonObject.cs, JsonValue.cs : SL2b2 updates.
