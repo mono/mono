@@ -1,3 +1,7 @@
+2009-01-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Add pe nt header verification.
+	
 2009-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc.c: Fix a few warnings when using SGEN.
