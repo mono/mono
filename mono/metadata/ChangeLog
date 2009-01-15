@@ -1,3 +1,8 @@
+2009-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c: Add support for user defined marker functions, used by
+	MonoGHashTable to avoid registering a GC root for every hash node.
+
 2009-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c: Fix warnings. Optimize copy_object () a bit. Split pinned/
