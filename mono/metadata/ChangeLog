@@ -1,5 +1,8 @@
 2009-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c: Add support for allocating a nursery at an aligned address, to
+	speed up ptr-in-nursery checks.
+
 	* threads.c (mono_threads_abort_appdomain_threads): Abort threads outside the
 	threads_lock () to prevent deadlocks.
 
