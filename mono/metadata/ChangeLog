@@ -1,5 +1,8 @@
 2009-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.c (mono_threads_abort_appdomain_threads): Abort threads outside the
+	threads_lock () to prevent deadlocks.
+
 	* sgen-gc.c gc-internal.h: Add a new root type root-with-wbarrier, which
 	does not need to be scanned during minor collections, since writes to it
 	must use write barriers.
