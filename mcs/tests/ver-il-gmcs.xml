@@ -38580,6 +38580,57 @@
       </method>
     </type>
   </test>
+  <test name="test-anon-91.cs">
+    <type name="A">
+      <method name="Void .ctor(Int32)">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>12</size>
+      </method>
+      <method name="Void SelectCommand(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Test()">
+        <size>66</size>
+      </method>
+    </type>
+    <type name="C+D">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0()">
+        <size>109</size>
+      </method>
+    </type>
+    <type name="C+&lt;Test&gt;c__AnonStorey0+&lt;Test&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()">
+        <size>23</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void .ctor()">

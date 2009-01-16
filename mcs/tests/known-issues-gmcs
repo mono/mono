@@ -9,6 +9,7 @@ test-539.cs IGNORE	# In 2.0 profile, RuntimeCompatilityAttribute is added by def
 
 gtest-230.cs
 gtest-344.cs
+gtest-437.cs
 
 gtest-etree-07.cs
 
