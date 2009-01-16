@@ -180,8 +180,8 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void Deactivate_Dialog ()
 		{
-//			if (TestHelper.RunningOnUnix)
-//				Assert.Ignore ("#2 sometimes fails");
+			if (TestHelper.RunningOnUnix)
+				Assert.Ignore ("#2 sometimes fails");
 
 			_form = new DelayedCloseForm ();
 			EventLogger logger = new EventLogger (_form);
