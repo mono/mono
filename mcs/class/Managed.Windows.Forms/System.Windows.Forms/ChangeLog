@@ -1,3 +1,12 @@
+2009-01-16  Carlos Alberto Cortez <calberto.cortez@ggmail.com>
+
+	* X11Structs.cs:
+	* XplatUIX11.cs: Properly encode/decode the unicode strings we
+	store/retrieve in the Clipboard. Also, since we try to convert the
+	data to different formats, separate the source and the result of
+	it, so we can always fallback to the original and don't mix wrong
+	conversions.
+
 2009-01-16  Mike Gorse  <mgorse@novell.com>
 
 	* TextControl.cs: Add UIASelectionChanged event.

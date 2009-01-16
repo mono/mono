@@ -1249,7 +1249,7 @@ namespace System.Windows.Forms {
 				} else if (property == OEMTEXT) {
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
 				} else if (property == UNICODETEXT) {
-					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
+					Clipboard.Item = Marshal.PtrToStringUni (prop, Encoding.Unicode.GetMaxCharCount ((int)nitems));
 				} else if (property == RICHTEXTFORMAT)
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
 
@@ -1724,7 +1724,7 @@ namespace System.Windows.Forms {
 								xevent.SelectionRequestEvent.target == (IntPtr)RICHTEXTFORMAT) {
 							Byte[] bytes;
 
-							bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Item);
+							bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Source);
 							buffer = Marshal.AllocHGlobal(bytes.Length);
 							buflen = bytes.Length;
 
@@ -1733,14 +1733,19 @@ namespace System.Windows.Forms {
 							}
 						} else if (xevent.SelectionRequestEvent.target == OEMTEXT) {
 							// FIXME - this should encode into ISO2022
-							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
+							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Source);
 							while (Marshal.ReadByte(buffer, buflen) != 0) {
 								buflen++;
 							}
 						} else if (xevent.SelectionRequestEvent.target == UNICODETEXT) {
-							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
-							while (Marshal.ReadByte(buffer, buflen) != 0) {
-								buflen++;
+							Byte [] bytes;
+
+							bytes = Encoding.Unicode.GetBytes ((string)Clipboard.Source);
+							buffer = Marshal.AllocHGlobal (bytes.Length);
+							buflen = bytes.Length;
+
+							for (int i = 0; i < buflen; i++) {
+								Marshal.WriteByte (buffer, i, bytes [i]);
 							}
 						} else {
 							buffer = IntPtr.Zero;
@@ -1781,6 +1786,7 @@ namespace System.Windows.Forms {
 							TranslatePropertyToClipboard(xevent.SelectionEvent.property);
 						} else {
 							Clipboard.Item = null;
+							Clipboard.Source = null;
 						}
 					} else {
 						Dnd.HandleSelectionNotifyEvent (ref xevent);
@@ -2635,6 +2641,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void ClipboardStore(IntPtr handle, object obj, int type, XplatUI.ObjectToClipboard converter) {
+			Clipboard.Source = obj;
 			Clipboard.Item = obj;
 			Clipboard.Type = type;
 			Clipboard.Converter = converter;

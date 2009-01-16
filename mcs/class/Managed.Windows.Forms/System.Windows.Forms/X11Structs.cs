@@ -1479,6 +1479,7 @@ namespace System.Windows.Forms {
 	}
 
 	internal struct ClipboardStruct {
+		internal object		Source;
 		internal object		Item;			// Object on the clipboard
 		internal object		Type;			// Type if object on the clipboard
 		internal ArrayList	Formats;		// list of formats available in the clipboard
