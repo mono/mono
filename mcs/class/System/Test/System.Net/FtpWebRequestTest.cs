@@ -254,6 +254,95 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		public void ListDirectory1 ()
+		{
+			ServerListDirectory sp = new ServerListDirectory ();
+			sp.Start ();
+			string uri = String.Format ("ftp://{0}:{1}/somedir/", sp.IPAddress, sp.Port);
+			try {
+				FtpWebRequest ftp = (FtpWebRequest) WebRequest.Create (uri);
+				Console.WriteLine (ftp.RequestUri);
+				ftp.KeepAlive = false;
+				ftp.Timeout = 5000;
+				ftp.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+				ftp.UseBinary = true;
+				using (FtpWebResponse response = (FtpWebResponse) ftp.GetResponse ()) {
+					StreamReader reader = new StreamReader (response.GetResponseStream ());
+					string result = reader.ReadToEnd ();
+					Assert.IsTrue ((int) response.StatusCode >= 200 && (int) response.StatusCode < 300, "DF#01");
+				}
+			} catch (Exception e) {
+				Console.WriteLine (e);
+				if (!String.IsNullOrEmpty (sp.Where))
+					throw new Exception (sp.Where);
+				throw;
+			} finally {
+				sp.Stop ();
+			}
+		}
+
+		class ServerListDirectory : FtpServer {
+			protected override void Run ()
+			{
+				Socket client = control.Accept ();
+				NetworkStream ns = new NetworkStream (client, false);
+				StreamWriter writer = new StreamWriter (ns, Encoding.ASCII);
+				StreamReader reader = new StreamReader (ns, Encoding.UTF8);
+				if (!DoAnonymousLogin (writer, reader)) {
+					client.Close ();
+					return;
+				}
+
+				if (!DoInitialDialog (writer, reader, "/home/someuser", "/home/someuser/somedir/")) {
+					client.Close ();
+					return;
+				}
+
+				string str = reader.ReadLine ();
+				if (str != "PASV") {
+					Where = "PASV";
+					client.Close ();
+					return;
+				}
+
+				IPEndPoint end_data = (IPEndPoint) data.LocalEndPoint;
+				byte [] addr_bytes = end_data.Address.GetAddressBytes ();
+				byte [] port = new byte [2];
+				port[0] = (byte) ((end_data.Port >> 8) & 255);
+				port[1] = (byte) (end_data.Port & 255);
+				StringBuilder sb = new StringBuilder ("227 Passive (");
+				foreach (byte b in addr_bytes) {
+					sb.AppendFormat ("{0},", b);	
+				}
+				sb.AppendFormat ("{0},", port [0]);	
+				sb.AppendFormat ("{0})", port [1]);	
+				writer.WriteLine (sb.ToString ());
+				writer.Flush ();
+
+				str = reader.ReadLine ();
+				if (str != "LIST") {
+					Where = "LIST - '" + str + "'";
+					client.Close ();
+					return;
+				}
+				writer.WriteLine ("150 Here comes the directory listing");
+				writer.Flush ();
+
+				Socket data_cnc = data.Accept ();
+				byte [] dontcare = Encoding.ASCII.GetBytes ("drwxr-xr-x    2 ftp      ftp          4096 Oct 27 20:17 tests");
+				data_cnc.Send (dontcare, 1, SocketFlags.None);
+				data_cnc.Close ();
+				writer.WriteLine ("226 Directory send Ok");
+				writer.Flush ();
+				if (!EndConversation (writer, reader)) {
+					client.Close ();
+					return;
+				}
+				client.Close ();
+			}
+		}
+
 		class ServerDeleteFile : FtpServer {
 			protected override void Run ()
 			{

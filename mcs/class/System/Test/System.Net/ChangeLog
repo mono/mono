@@ -1,4 +1,9 @@
 
+2009-01-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequestTest.cs: add directory listing test when the $HOME is
+	not /.
+
 2009-01-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequestTest.cs: test deleting a file.
