@@ -1,3 +1,8 @@
+2009-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-hash.c: Change the roots to use write barriers when running with
+	SGEN, to avoid scanning all the hash nodes at every minor collection.
+
 2009-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-hash.c: Rewrite the SGEN specific parts to use a user defined
