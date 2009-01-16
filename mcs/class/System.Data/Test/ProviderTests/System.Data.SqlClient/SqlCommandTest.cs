@@ -2557,41 +2557,22 @@ namespace MonoTests.System.Data.SqlClient
 			try {
 				conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 				ConnectionManager.Singleton.OpenConnection ();
-				string create_proc = "CREATE procedure #sp_326182 ( " + Environment.NewLine +
-						"@param0 int out," + Environment.NewLine +
-						"@param1 int out," + Environment.NewLine +
-						"@param2 int out," + Environment.NewLine +
-						"@param3 int out" + Environment.NewLine +
-						")" + Environment.NewLine +
-						"as" + Environment.NewLine +
-						"set @param0 = 100" + Environment.NewLine +
-						"set @param1 = 101" + Environment.NewLine +
-						"set @param2 = 102" + Environment.NewLine +
-						"set @param3 = 103" + Environment.NewLine +
-						"return 2";
 
 				try {
 					SqlParameter param0 = new SqlParameter ("@param0", SqlDbType.Int);
-					SqlParameter param1 = new SqlParameter ("@param1", SqlDbType.Int);
-					SqlParameter param2 = new SqlParameter ("@param2", SqlDbType.Int);
-					SqlParameter param3 = new SqlParameter ("@param3", SqlDbType.Int);
-					SqlParameter rval = new SqlParameter ("@RETURN_VALUE", SqlDbType.Int);
-
-					cmd = new SqlCommand ();
-					cmd.CommandText = create_proc;
-					cmd.CommandType = CommandType.Text;
-					cmd.Connection = conn;
-					cmd.CommandTimeout = 90;
-					cmd.ExecuteNonQuery ();
-
-					cmd.CommandText = "dbo.[#sp_326182]";
-					cmd.CommandType = CommandType.StoredProcedure;
-
 					param0.Direction = ParameterDirection.Output;
+					SqlParameter param1 = new SqlParameter ("@param1", SqlDbType.Int);
 					param1.Direction = ParameterDirection.Output;
+					SqlParameter param2 = new SqlParameter ("@param2", SqlDbType.Int);
 					param2.Direction = ParameterDirection.Output;
+					SqlParameter param3 = new SqlParameter ("@param3", SqlDbType.Int);
 					param3.Direction = ParameterDirection.Output;
+					SqlParameter rval = new SqlParameter ("@RETURN_VALUE", SqlDbType.Int);
 					rval.Direction = ParameterDirection.ReturnValue;
+
+					cmd = conn.CreateCommand ();
+					cmd.CommandText = "dbo.[sp_326182a]";
+					cmd.CommandType = CommandType.StoredProcedure;
 
 					switch (paramOrder) {
 					case 1: cmd.Parameters.Add (param0);
@@ -2624,11 +2605,6 @@ namespace MonoTests.System.Data.SqlClient
 					param2Val = (int) cmd.Parameters ["@param2"].Value;
 					param0Val = (int) cmd.Parameters ["@param0"].Value;
 				} finally {
-					/* Delete the created stored procedure */
-					cmd = conn.CreateCommand ();
-					cmd.CommandText = "drop procedure #sp_326182";
-					cmd.ExecuteNonQuery ();
-
 					cmd.Dispose ();
 					cmd = null;
 				}
