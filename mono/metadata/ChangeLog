@@ -1,3 +1,9 @@
+2009-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c gc-internal.h: Add a new root type root-with-wbarrier, which
+	does not need to be scanned during minor collections, since writes to it
+	must use write barriers.
+
 2009-01-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add pe nt header verification.
