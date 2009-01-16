@@ -1,3 +1,7 @@
+2009-01-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataColumnTest.cs : try a string comparison fix.
+
 2008-12-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DBConcurrencyExceptionTest.cs: Added .ctor and Row(Count) tests.

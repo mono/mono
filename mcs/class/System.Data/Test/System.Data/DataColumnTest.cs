@@ -534,8 +534,8 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("60", T.Rows [60] [3], "#E2");
 
 			C.Expression = "stdev (Child.age)";
-			Assert.AreEqual ((1.4142135623731).ToString (), T.Rows [0] [3], "#F1");
-			Assert.AreEqual ((1.4142135623731).ToString (), T.Rows [60] [3], "#F2");
+			Assert.AreEqual ((1.4142135623731).ToString (T.Locale), T.Rows [0] [3], "#F1");
+			Assert.AreEqual ((1.4142135623731).ToString (T.Locale), T.Rows [60] [3], "#F2");
 
 			C.Expression = "var (Child.age)";
 			Assert.AreEqual ("2", T.Rows [0] [3], "#G1");
