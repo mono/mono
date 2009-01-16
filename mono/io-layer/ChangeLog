@@ -1,3 +1,19 @@
+2009-01-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* handles.c (_wapi_handle_timedwait_signal_handle): Don't use the
+	set_wait_handle/clear_wait_handle machinery for alertable waits in
+	case of non-alertable waits.
+
+	Non-alertable waits must continue and wait on the cond as this will
+	release the lock. Otherwise this will cause a deadlock as anyone trying
+	to pulse the cond will block trying to acquire the said lock because
+	the thread in non-alertable wait will be busy looping in WaitForSingleObjectEx
+	or similar function, never releasing the lock.
+
+	Thou this fixes quite a few of the hangs introduced by non-pooling alertable
+	waits, the long term plan is to verify if all non-alertable waits really need
+	to be as such.
+
 2009-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* handles-private.h (_wapi_handle_set_signal_state): Set the signalled state
