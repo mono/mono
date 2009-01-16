@@ -1,3 +1,8 @@
+2009-01-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequest.cs: adjust to the correct directory when listing too.
+	Fixes bug #466530.
+
 2009-01-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpListenerRequest.cs: always initialize 'version'.

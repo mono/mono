@@ -580,25 +580,20 @@ namespace System.Net
 			ResolveHost ();
 
 			OpenControlConnection ();
+			CWDAndSetFileName (requestUri);
+			SetType ();
 
 			switch (method) {
 			// Open data connection and receive data
 			case WebRequestMethods.Ftp.DownloadFile:
-				CWDAndSetFileName (requestUri);
-				SetType ();
-				DownloadData ();
-				break;
 			case WebRequestMethods.Ftp.ListDirectory:
 			case WebRequestMethods.Ftp.ListDirectoryDetails:
-				SetType ();
 				DownloadData ();
 				break;
 			// Open data connection and send data
 			case WebRequestMethods.Ftp.AppendFile:
 			case WebRequestMethods.Ftp.UploadFile:
 			case WebRequestMethods.Ftp.UploadFileWithUniqueName:
-				CWDAndSetFileName (requestUri);
-				SetType ();
 				UploadData ();
 				break;
 			// Get info from control connection
@@ -608,8 +603,6 @@ namespace System.Net
 			case WebRequestMethods.Ftp.MakeDirectory:
 			case WebRequestMethods.Ftp.Rename:
 			case WebRequestMethods.Ftp.DeleteFile:
-				CWDAndSetFileName (requestUri);
-				SetType ();
 				ProcessSimpleMethod ();
 				break;
 			default: // What to do here?
@@ -935,7 +928,8 @@ namespace System.Net
 			
 			Socket s = InitDataConnection ();
 
-			if(method != WebRequestMethods.Ftp.UploadFileWithUniqueName) {
+			if (method != WebRequestMethods.Ftp.ListDirectory && method != WebRequestMethods.Ftp.ListDirectoryDetails &&
+			    method != WebRequestMethods.Ftp.UploadFileWithUniqueName) {
 				status = SendCommand (method, file_name);
 			} else {
 				status = SendCommand (method);
