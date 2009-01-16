@@ -659,11 +659,18 @@ namespace System.Windows.Forms {
 
 		private void SetSelectionVisible (bool value)
 		{
+#if NET_2_0
+			bool old_selection_visible = selection_visible;
+#endif
 			selection_visible = value;
 
 			// cursor and selection are enemies, we can't have both in the same room at the same time
 			if (owner.IsHandleCreated && !owner.show_caret_w_selection)
 				XplatUI.CaretVisible (owner.Handle, !selection_visible);
+#if NET_2_0
+			if (UIASelectionChanged != null && (selection_visible || old_selection_visible))
+				UIASelectionChanged (this, EventArgs.Empty);
+#endif
 		}
 
 		private void DecrementLines(int line_no) {
@@ -4007,6 +4014,9 @@ namespace System.Windows.Forms {
 		internal event EventHandler WidthChanged;
 		internal event EventHandler HeightChanged;
 		internal event EventHandler LengthChanged;
+#if NET_2_0
+		internal event EventHandler UIASelectionChanged;
+#endif
 		#endregion	// Events
 
 		#region Administrative

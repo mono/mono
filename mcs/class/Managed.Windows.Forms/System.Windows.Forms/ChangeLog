@@ -1,3 +1,7 @@
+2009-01-16  Mike Gorse  <mgorse@novell.com>
+
+	* TextControl.cs: Add UIASelectionChanged event.
+
 2009-01-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Forward the first key events to the editing control.
@@ -80,6 +84,7 @@
 
 	* MessageBox.cs: Fixed internal UIAIconRectangle property.
 
+>>>>>>> .r123393
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCheckBoxCell.cs: Respect the ReadOnly state of the Cell.
