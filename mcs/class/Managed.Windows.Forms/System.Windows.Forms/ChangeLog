@@ -1,3 +1,8 @@
+2009-01-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Forward the first key events to the editing control.
+	[Fixes bug #457307]
+
 2009-01-14  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* Application.cs: Oops, launch the copied handler of PreRun instead of
