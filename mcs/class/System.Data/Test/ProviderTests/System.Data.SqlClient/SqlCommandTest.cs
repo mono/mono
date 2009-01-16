@@ -476,11 +476,8 @@ namespace MonoTests.System.Data.SqlClient
 			p1.Value = int_value;
 			cmd.Parameters.Add (p1);
 
-			SqlParameter p2 = new SqlParameter ();
-			p2.ParameterName = "@p2";
+			SqlParameter p2 = new SqlParameter ("@p2", int_value);
 			p2.Direction = ParameterDirection.InputOutput;
-			p2.DbType = DbType.Int32;
-			p2.Value = int_value;
 			cmd.Parameters.Add (p2);
 
 			SqlParameter p3 = new SqlParameter ();
@@ -491,8 +488,8 @@ namespace MonoTests.System.Data.SqlClient
 			cmd.Parameters.Add (p3);
 
 			cmd.ExecuteNonQuery ();
-			Assert.AreEqual (int_value * 2, p2.Value, "#B1 ExecuteNonQuery should fill the parameter collection with the outputted values");
-			Assert.AreEqual (string_value, p3.Value, "#B2 ExecuteNonQuery should fill the parameter collection with the outputted values");
+			Assert.AreEqual (int_value * 2, p2.Value, "#B1");
+			Assert.AreEqual (string_value, p3.Value, "#B2");
 		}
 
 		[Test]
