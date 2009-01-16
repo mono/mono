@@ -1,3 +1,9 @@
+
+Fri Jan 16 15:21:21 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: tweaks from malc (OV-Soft) to fix the size of the
+	trampoline code. Include ucontext.h only if available.
+
 2009-01-15  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c: mono_domain_lookup_shared_generic() takes an open method
