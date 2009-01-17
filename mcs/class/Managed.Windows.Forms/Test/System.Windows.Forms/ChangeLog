@@ -1,3 +1,7 @@
+2009-01-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ClipboardTest.cs: New tests file.
+
 2009-01-16  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FormEventTest.cs: Disable failing test that was enabled in r118455.
