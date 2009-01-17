@@ -33,7 +33,7 @@ using System;
 using System.Text;
 
 namespace Mono.Data.Tds {
-	public delegate object FrameworkValueGetter (object rawValue, out bool updated);
+	public delegate object FrameworkValueGetter (object rawValue, ref bool updated);
 
 	public class TdsMetaParameter
 	{
@@ -119,12 +119,9 @@ namespace Mono.Data.Tds {
 		public object Value {
 			get {
 				if (frameworkValueGetter != null) {
-					bool updated;
-					object newValue = frameworkValueGetter (rawValue, out updated);
-					if (updated) {
+					object newValue = frameworkValueGetter (rawValue, ref isUpdated);
+					if (isUpdated)
 						value = newValue;
-						isUpdated = true;
-					}
 				}
 
 				if (isUpdated) {

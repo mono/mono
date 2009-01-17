@@ -1,3 +1,8 @@
+2009-01-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TdsMetaParameter.cs: Modified signature of delegate to also allow
+	conversion to be triggered by changes in TdsMetaParameter.
+
 2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TdsMetaParameter.cs: set_RawValue now calls set_Value so that
