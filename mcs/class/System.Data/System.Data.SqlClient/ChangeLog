@@ -1,3 +1,16 @@
+2009-01-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlParameter.cs: Renamed isDirty to typeChanged; it is now now only
+	used to indicate whether the type of the parameter has been updated.
+	Changed signature of 'updated' argument in GetFrameworkValue to ref
+	to match delegate in Mono.Data.Tds, and convert value if either the
+	type has been changed or if the 'updated' argument is true (which -
+	for now - means the value or size changed in TdsMetaParameter).
+	Various fixes for derived parameters:
+	- parameter_type 2 means InputOutput parameter, while 3 means Output;
+	- Only set precision and scale is type is decimal.
+	- When type has variable size, then also set Size.
+
 2009-01-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlDataReader.cs: Added GetSchemaRowDbType overload for

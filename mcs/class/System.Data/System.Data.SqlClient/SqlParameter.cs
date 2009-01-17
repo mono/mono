@@ -71,7 +71,7 @@ namespace System.Data.SqlClient {
 		SqlCompareOptions compareInfo;
 		int localeId;
 		Object sqlValue;
-		bool isDirty;
+		bool typeChanged;
 #if NET_2_0
 		bool sourceColumnNullMapping;
 		string xmlSchemaCollectionDatabase = String.Empty;
@@ -192,24 +192,22 @@ namespace System.Data.SqlClient {
 		// This constructor is used internally to construct a
 		// SqlParameter.  The value array comes from sp_procedure_params_rowset.
 		// This is in SqlCommand.DeriveParameters.
+		//
+		// http://social.msdn.microsoft.com/forums/en-US/transactsql/thread/900756fd-3980-48e3-ae59-a15d7fc15b4c/
 		internal SqlParameter (object[] dbValues) 
-			: this (dbValues [3].ToString (), String.Empty)
+			: this (dbValues [3].ToString (), (object) null)
 		{
-			Precision = 0;
-			Scale = 0;
-			Direction = ParameterDirection.Input;
+			ParameterName = (string) dbValues [3];
 
-			ParameterName = (string) dbValues[3];
-
-			switch ((short) dbValues[5]) {
+			switch ((short) dbValues [5]) {
 			case 1:
 				Direction = ParameterDirection.Input;
 				break;
 			case 2:
-				Direction = ParameterDirection.Output;
+				Direction = ParameterDirection.InputOutput;
 				break;
 			case 3:
-				Direction = ParameterDirection.InputOutput;
+				Direction = ParameterDirection.Output;
 				break;
 			case 4:
 				Direction = ParameterDirection.ReturnValue;
@@ -218,16 +216,20 @@ namespace System.Data.SqlClient {
 				Direction = ParameterDirection.Input;
 				break;
 			}
-			IsNullable = (dbValues [8] != null && 
-				dbValues [8] != DBNull.Value) ? (bool) dbValues [8] : false;
-
-			if (dbValues [12] != null && dbValues [12] != DBNull.Value)
-				Precision = (byte) ((short) dbValues [12]);
-
-			if (dbValues [13] != null && dbValues [13] != DBNull.Value)
-				Scale = (byte) ( (short) dbValues [13]);
 
 			SetDbTypeName ((string) dbValues [16]);
+
+			if (MetaParameter.IsVariableSizeType) {
+				if (dbValues [10] != DBNull.Value)
+					Size = (int) dbValues [10];
+			}
+
+			if (SqlDbType == SqlDbType.Decimal) {
+				if (dbValues [12] != null && dbValues [12] != DBNull.Value)
+					Precision = (byte) ((short) dbValues [12]);
+				if (dbValues [13] != null && dbValues [13] != DBNull.Value)
+					Scale = (byte) ((short) dbValues [13]);
+			}
 		}
 
 		#endregion // Constructors
@@ -269,7 +271,7 @@ namespace System.Data.SqlClient {
 			get { return dbType; }
 			set {
 				SetDbType (value);
-				isDirty = true;
+				typeChanged = true;
 				isTypeSet = true;
 			}
 		}
@@ -386,10 +388,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 		int Size {
 			get { return metaParameter.Size; }
-			set {
-				isDirty = true;
-				metaParameter.Size = value;
-			}
+			set { metaParameter.Size = value; }
 		}
 
 #if ONLY_1_0 || ONLY_1_1
@@ -437,7 +436,7 @@ namespace System.Data.SqlClient {
 			get { return sqlDbType; }
 			set {
 				SetSqlDbType (value);
-				isDirty = true;
+				typeChanged = true;
 				isTypeSet = true;
 			}
 		}
@@ -465,7 +464,6 @@ namespace System.Data.SqlClient {
 						InferSqlType (value);
 #endif
 				}
-				isDirty = true;
 				metaParameter.RawValue = value;
 			}
 		}
@@ -842,14 +840,14 @@ namespace System.Data.SqlClient {
 			return ParameterName;
 		}
 
-		object GetFrameworkValue (object rawValue, out bool updated)
+		object GetFrameworkValue (object rawValue, ref bool updated)
 		{
 			object tdsValue;
 
-			updated = isDirty;
-			if (isDirty) {
+			updated = typeChanged || updated;
+			if (updated) {
 				tdsValue = SqlTypeToFrameworkType (rawValue);
-				isDirty = false;
+				typeChanged = false;
 			} else
 				tdsValue = null;
 			return tdsValue;
