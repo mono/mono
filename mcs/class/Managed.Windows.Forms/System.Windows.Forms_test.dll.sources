@@ -15,6 +15,7 @@ System.Windows.Forms/CheckBoxEventTest.cs
 System.Windows.Forms/CheckBoxTest.cs
 System.Windows.Forms/CheckedListBoxEventTest.cs
 System.Windows.Forms/CheckedListBoxTest.cs
+System.Windows.Forms/ClipboardTest.cs
 System.Windows.Forms/ColumnClickEventArgsTest.cs
 System.Windows.Forms/ColumnHeaderTest.cs
 System.Windows.Forms/ColumnStyleTest.cs
