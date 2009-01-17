@@ -213,13 +213,13 @@ grant execute on sp_get_age to monotester;
 
 -- =================================== END OBJECT EMPLOYEE ============================
 
--- SP : sp_326182
+-- SP : sp_326182a
 if exists (select name from sysobjects where
-	name = 'sp_326182' and type = 'P')
-	drop procedure sp_326182;
+	name = 'sp_326182a' and type = 'P')
+	drop procedure sp_326182a;
 go
 
-CREATE procedure sp_326182 (
+CREATE procedure sp_326182a (
 	@param0 int out,
 	@param1 int out,
 	@param2 int out,
@@ -234,4 +234,23 @@ begin
 end
 go
 
-grant execute on sp_get_age to monotester;
+grant execute on sp_326182a to monotester;
+
+-- SP: sp_326182b
+
+if exists (select name from sysobjects where
+	name = 'sp_326182b' and type = 'P')
+	drop procedure sp_326182b;
+go
+
+CREATE procedure sp_326182b (
+	@param0 int = 9,
+	@param1 decimal (5, 2) out)
+as
+begin
+	set @param1 = (@param0 + 2)
+	return 666
+end
+go
+
+grant execute on sp_326182b to monotester;
