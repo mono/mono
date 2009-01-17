@@ -1,3 +1,7 @@
+2009-01-17  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: use appropriate public key for the NET_2_1 profile.
+
 2008-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing attributes
