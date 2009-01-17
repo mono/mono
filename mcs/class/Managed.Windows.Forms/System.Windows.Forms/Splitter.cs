@@ -256,7 +256,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private int MaxSize {
+		internal int MaxSize {
 			get {
 				if (this.Parent == null)
 					return 0;

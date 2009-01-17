@@ -1,3 +1,7 @@
+2009-01-16  Mike Gorse  <mgorse@novell.com>
+
+	* Splitter.cs: Make MaxSize internal so that UIA code can use it.
+
 2009-01-16  Mario Carrion <mcarrion@novell.com>
 
 	* ColumnHeader.cs: UIA Support: raising internal event UIATextChanged 
@@ -94,11 +98,10 @@
 
 	* DataGridViewComboBoxCell.cs: Implement/Fix the data binding.
 
-2008-01-09  Mario Carrion  <mcarrion@novell.com>
+2009-01-09  Mario Carrion  <mcarrion@novell.com>
 
 	* MessageBox.cs: Fixed internal UIAIconRectangle property.
 
->>>>>>> .r123393
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCheckBoxCell.cs: Respect the ReadOnly state of the Cell.
