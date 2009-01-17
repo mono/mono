@@ -245,10 +245,11 @@ go
 
 CREATE procedure sp_326182b (
 	@param0 int = 9,
-	@param1 decimal (5, 2) out)
+	@param1 decimal (5, 2) out,
+	@param2 varchar (12))
 as
 begin
-	set @param1 = (@param0 + 2)
+	set @param1 = (@param0 + @param1 + 2)
 	return 666
 end
 go
