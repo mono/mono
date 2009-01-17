@@ -1398,7 +1398,7 @@
         <size>7</size>
       </method>
       <method name="Void Simple[T](T)">
-        <size>31</size>
+        <size>36</size>
       </method>
       <method name="Void Interface[T](T)">
         <size>8</size>
@@ -7238,7 +7238,7 @@
         <size>7</size>
       </method>
       <method name="ICloneable Test(S)">
-        <size>7</size>
+        <size>12</size>
       </method>
     </type>
     <type name="ConvertHelper">
