@@ -976,20 +976,61 @@ namespace MonoTests.System.Data
 		[Test]
 		public void DeriveParameters ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
+			SqlConnection conn;
 			SqlCommand cmd = null;
+
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
 
 			try {
 				cmd = conn.CreateCommand ();
-				cmd.CommandText = "sp_326182";
+				cmd.CommandText = "sp_326182a";
 				cmd.CommandType = CommandType.StoredProcedure;
 				cmd.CommandTimeout = 90;
-				cmd.Connection =  conn;
-				
+				cmd.Parameters.Add ("dummy", SqlDbType.Image, 5);
+
 				SqlCommandBuilder.DeriveParameters (cmd);
-				Assert.AreEqual (5, cmd.Parameters.Count, "#4");
+				Assert.AreEqual (5, cmd.Parameters.Count, "#A1");
+
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = "sp_326182b";
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.CommandTimeout = 90;
+				cmd.Parameters.Add ("dummy", SqlDbType.Image, 5);
+
+				SqlCommandBuilder.DeriveParameters (cmd);
+				Assert.AreEqual (3, cmd.Parameters.Count, "#A");
+
+				Assert.AreEqual (ParameterDirection.ReturnValue, cmd.Parameters [0].Direction, "#B:Direction");
+				Assert.IsFalse (cmd.Parameters [0].IsNullable, "#B:IsNullable");
+				Assert.AreEqual ("@RETURN_VALUE", cmd.Parameters [0].ParameterName, "#B:ParameterName");
+				//Assert.AreEqual (0, cmd.Parameters [0].Precision, "#B:Precision");
+				Assert.AreEqual (0, cmd.Parameters [0].Scale, "#B:Scale");
+				Assert.AreEqual (SqlDbType.Int, cmd.Parameters [0].SqlDbType, "#B:SqlDbType");
+				Assert.IsNull (cmd.Parameters [0].Value, "#B:Value");
+
+				Assert.AreEqual (ParameterDirection.Input, cmd.Parameters [1].Direction, "#C:Direction");
+				//Assert.IsFalse (cmd.Parameters [1].IsNullable, "#C:IsNullable");
+				Assert.AreEqual ("@param0", cmd.Parameters [1].ParameterName, "#C:ParameterName");
+				//Assert.AreEqual (0, cmd.Parameters [1].Precision, "#C:Precision");
+				Assert.AreEqual (0, cmd.Parameters [1].Scale, "#C:Scale");
+				Assert.AreEqual (SqlDbType.Int, cmd.Parameters [1].SqlDbType, "#C:SqlDbType");
+				Assert.IsNull (cmd.Parameters [1].Value, "#C:Value");
+
+				//Assert.AreEqual (ParameterDirection.InputOutput, cmd.Parameters [2].Direction, "#D:Direction");
+				//Assert.IsFalse (cmd.Parameters [2].IsNullable, "#D:IsNullable");
+				Assert.AreEqual ("@param1", cmd.Parameters [2].ParameterName, "#D:ParameterName");
+				Assert.AreEqual (5, cmd.Parameters [2].Precision, "#D:Precision");
+				Assert.AreEqual (2, cmd.Parameters [2].Scale, "#D:Scale");
+				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters [2].SqlDbType, "#D:SqlDbType");
+				Assert.IsNull (cmd.Parameters [2].Value, "#D:Value");
+
+				cmd.Parameters ["@param0"].Value = 5;
+				cmd.Parameters ["@param1"].Value = 4;
+				cmd.ExecuteNonQuery ();
+				Assert.AreEqual (666, cmd.Parameters ["@RETURN_VALUE"].Value, "#E1");
+				Assert.AreEqual (5, cmd.Parameters ["@param0"].Value, "#E2");
+				Assert.AreEqual (7m, cmd.Parameters ["@param1"].Value, "#E3");
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
