@@ -1,5 +1,9 @@
 2009-01-17  Geoff Norton  <gnorton@novell.com>
 
+	* image.c: Avoid trying to walk the reference table of dynamic assemblies.
+
+2009-01-17  Geoff Norton  <gnorton@novell.com>
+
 	* image.c: When unloading the image->references table, there can be gaps
 	in it.  Ensure that we iterate every entry to avoid leaking assembly references
 	when unloading an appdomain.
