@@ -33,6 +33,7 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class ClipboardTest
 	{
+#if NET_2_0
 		[Test]
 		public void TextTest ()
 		{
@@ -43,6 +44,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (true, Clipboard.ContainsText (TextDataFormat.UnicodeText), "#A1");
 			Assert.AreEqual (text, Clipboard.GetText (TextDataFormat.UnicodeText), "#A2");
 		}
+#endif
 	}
 }
 

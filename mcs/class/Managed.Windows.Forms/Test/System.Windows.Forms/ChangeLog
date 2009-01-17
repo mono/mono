@@ -1,5 +1,10 @@
 2009-01-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ClipboardTest.cs: Ouch, I am an idiot - the members used in the new
+	file are 2.0.
+
+2009-01-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ClipboardTest.cs: New tests file.
 
 2009-01-16  Jonathan Pobst  <monkey@jpobst.com>
