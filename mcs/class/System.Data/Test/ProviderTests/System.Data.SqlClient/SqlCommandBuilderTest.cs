@@ -978,6 +978,7 @@ namespace MonoTests.System.Data
 		{
 			SqlConnection conn;
 			SqlCommand cmd = null;
+			SqlParameter param;
 
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
@@ -999,38 +1000,56 @@ namespace MonoTests.System.Data
 				cmd.Parameters.Add ("dummy", SqlDbType.Image, 5);
 
 				SqlCommandBuilder.DeriveParameters (cmd);
-				Assert.AreEqual (3, cmd.Parameters.Count, "#A");
+				Assert.AreEqual (4, cmd.Parameters.Count, "#A");
 
-				Assert.AreEqual (ParameterDirection.ReturnValue, cmd.Parameters [0].Direction, "#B:Direction");
-				Assert.IsFalse (cmd.Parameters [0].IsNullable, "#B:IsNullable");
-				Assert.AreEqual ("@RETURN_VALUE", cmd.Parameters [0].ParameterName, "#B:ParameterName");
-				//Assert.AreEqual (0, cmd.Parameters [0].Precision, "#B:Precision");
-				Assert.AreEqual (0, cmd.Parameters [0].Scale, "#B:Scale");
-				Assert.AreEqual (SqlDbType.Int, cmd.Parameters [0].SqlDbType, "#B:SqlDbType");
-				Assert.IsNull (cmd.Parameters [0].Value, "#B:Value");
+				param = cmd.Parameters [0];
+				Assert.AreEqual (ParameterDirection.ReturnValue, param.Direction, "#B:Direction");
+				Assert.IsFalse (param.IsNullable, "#B:IsNullable");
+				Assert.AreEqual ("@RETURN_VALUE", param.ParameterName, "#B:ParameterName");
+				Assert.AreEqual (0, param.Precision, "#B:Precision");
+				Assert.AreEqual (0, param.Scale, "#B:Scale");
+				//Assert.AreEqual (0, param.Size, "#B:Size");
+				Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#B:SqlDbType");
+				Assert.IsNull (param.Value, "#B:Value");
 
-				Assert.AreEqual (ParameterDirection.Input, cmd.Parameters [1].Direction, "#C:Direction");
-				//Assert.IsFalse (cmd.Parameters [1].IsNullable, "#C:IsNullable");
-				Assert.AreEqual ("@param0", cmd.Parameters [1].ParameterName, "#C:ParameterName");
-				//Assert.AreEqual (0, cmd.Parameters [1].Precision, "#C:Precision");
-				Assert.AreEqual (0, cmd.Parameters [1].Scale, "#C:Scale");
-				Assert.AreEqual (SqlDbType.Int, cmd.Parameters [1].SqlDbType, "#C:SqlDbType");
-				Assert.IsNull (cmd.Parameters [1].Value, "#C:Value");
+				param = cmd.Parameters [1];
+				Assert.AreEqual (ParameterDirection.Input, param.Direction, "#C:Direction");
+				Assert.IsFalse (param.IsNullable, "#C:IsNullable");
+				Assert.AreEqual ("@param0", param.ParameterName, "#C:ParameterName");
+				Assert.AreEqual (0, param.Precision, "#C:Precision");
+				Assert.AreEqual (0, param.Scale, "#C:Scale");
+				//Assert.AreEqual (0, param.Size, "#C:Size");
+				Assert.AreEqual (SqlDbType.Int, param.SqlDbType, "#C:SqlDbType");
+				Assert.IsNull (param.Value, "#C:Value");
 
-				//Assert.AreEqual (ParameterDirection.InputOutput, cmd.Parameters [2].Direction, "#D:Direction");
-				//Assert.IsFalse (cmd.Parameters [2].IsNullable, "#D:IsNullable");
-				Assert.AreEqual ("@param1", cmd.Parameters [2].ParameterName, "#D:ParameterName");
-				Assert.AreEqual (5, cmd.Parameters [2].Precision, "#D:Precision");
-				Assert.AreEqual (2, cmd.Parameters [2].Scale, "#D:Scale");
-				Assert.AreEqual (SqlDbType.Decimal, cmd.Parameters [2].SqlDbType, "#D:SqlDbType");
-				Assert.IsNull (cmd.Parameters [2].Value, "#D:Value");
+				param = cmd.Parameters [2];
+				Assert.AreEqual (ParameterDirection.InputOutput, param.Direction, "#D:Direction");
+				Assert.IsFalse (param.IsNullable, "#D:IsNullable");
+				Assert.AreEqual ("@param1", param.ParameterName, "#D:ParameterName");
+				Assert.AreEqual (5, param.Precision, "#D:Precision");
+				Assert.AreEqual (3, param.Scale, "#D:Scale");
+				//Assert.AreEqual (0, param.Size, "#D:Size");
+				Assert.AreEqual (SqlDbType.Decimal, param.SqlDbType, "#D:SqlDbType");
+				Assert.IsNull (param.Value, "#D:Value");
+
+				param = cmd.Parameters [3];
+				Assert.AreEqual (ParameterDirection.Input, param.Direction, "#E:Direction");
+				Assert.IsFalse (param.IsNullable, "#E:IsNullable");
+				Assert.AreEqual ("@param2", param.ParameterName, "#E:ParameterName");
+				Assert.AreEqual (0, param.Precision, "#E:Precision");
+				Assert.AreEqual (0, param.Scale, "#E:Scale");
+				Assert.AreEqual (12, param.Size, "#E:Size");
+				Assert.AreEqual (SqlDbType.VarChar, param.SqlDbType, "#E:SqlDbType");
+				Assert.IsNull (param.Value, "#E:Value");
 
 				cmd.Parameters ["@param0"].Value = 5;
-				cmd.Parameters ["@param1"].Value = 4;
+				cmd.Parameters ["@param1"].Value = 4.000m;
+				cmd.Parameters ["@param2"].Value = DBNull.Value;
 				cmd.ExecuteNonQuery ();
-				Assert.AreEqual (666, cmd.Parameters ["@RETURN_VALUE"].Value, "#E1");
-				Assert.AreEqual (5, cmd.Parameters ["@param0"].Value, "#E2");
-				Assert.AreEqual (7m, cmd.Parameters ["@param1"].Value, "#E3");
+				Assert.AreEqual (666, cmd.Parameters ["@RETURN_VALUE"].Value, "#F1");
+				Assert.AreEqual (5, cmd.Parameters ["@param0"].Value, "#F2");
+				Assert.AreEqual (11m, cmd.Parameters ["@param1"].Value, "#F3");
+				Assert.AreEqual (DBNull.Value, cmd.Parameters ["@param2"].Value, "#F4");
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();

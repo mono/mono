@@ -1724,19 +1724,20 @@ namespace MonoTests.System.Data.SqlClient
 								String.Format (create_query, "bigint"));
 							rpc_helper_function (cmd, SqlDbType.BigInt, 0,
 								Int64.MaxValue, Int64.MaxValue,
-								Int64.MaxValue);
+								Int64.MaxValue, Int64.MaxValue);
 							rpc_helper_function (cmd, SqlDbType.BigInt, 0,
 								Int64.MinValue, Int64.MinValue,
-								Int64.MinValue);
+								Int64.MinValue, Int64.MinValue);
 							rpc_helper_function (cmd, SqlDbType.BigInt, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 1:
 							// Test Binary Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "binary(5)"));
 							rpc_helper_function (cmd, SqlDbType.Binary, 5,
+								new byte [] { 1, 2, 3, 4, 5 },
 								new byte [] { 1, 2, 3, 4, 5 },
 								new byte [] { 1, 2, 3, 4, 5 },
 								new byte [] { 1, 2, 3, 4, 5 });
@@ -1748,6 +1749,7 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.Binary, 2,
 								new byte [0],
 								new byte [] { 0, 0, 0, 0, 0 },
+								new byte [] { 0, 0 },
 								new byte [] { 0, 0 });
 							break;
 						case 2:
@@ -1755,12 +1757,12 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "bit"));
 							rpc_helper_function (cmd, SqlDbType.Bit, 0,
-								true, true, true);
+								true, true, true, true);
 							rpc_helper_function (cmd, SqlDbType.Bit, 0,
-								false, false, false);
+								false, false, false, false);
 							rpc_helper_function (cmd, SqlDbType.Bit, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 3:
 							// Testing Char
@@ -1768,7 +1770,7 @@ namespace MonoTests.System.Data.SqlClient
 								String.Format (create_query, "char(10)"));
 							rpc_helper_function (cmd, SqlDbType.Char, 10,
 								"characters", "characters",
-								"characters");
+								"characters", "characters");
 							/*
 							rpc_helper_function (cmd, SqlDbType.Char, 3,
 								"characters", "cha       ",
@@ -1779,7 +1781,7 @@ namespace MonoTests.System.Data.SqlClient
 							*/
 							rpc_helper_function (cmd, SqlDbType.Char, 5,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 4:
 							// Testing DateTime
@@ -1787,43 +1789,60 @@ namespace MonoTests.System.Data.SqlClient
 								String.Format (create_query, "datetime"));
 							rpc_helper_function (cmd, SqlDbType.DateTime, 0, "2079-06-06 23:59:00",
 								new DateTime (2079, 6, 6, 23, 59, 0),
+								new DateTime (2079, 6, 6, 23, 59, 0),
 								new DateTime (2079, 6, 6, 23, 59, 0));
 							rpc_helper_function (cmd, SqlDbType.DateTime, 0, "2009-04-12 10:39:45",
+								new DateTime (2009, 4, 12, 10, 39, 45),
 								new DateTime (2009, 4, 12, 10, 39, 45),
 								new DateTime (2009, 4, 12, 10, 39, 45));
 							rpc_helper_function (cmd, SqlDbType.DateTime, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 5:
 							// Test Decimal Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "decimal(10,2)"));
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
-								10.665, 10.67m, 11m);
+								10.665m, 10.67m, 11m, 10.67m);
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
-								0m, 0m, 0m);
+								0m, 0m, 0m, 0m);
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
-								-5.657, -5.66m, -6m);
+								-5.657m, -5.66m, -6m, -5.66m);
 							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
+
+							// conversion
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
+								AttributeTargets.Constructor,
+								32.0m, 32m, 32m);
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
+								4.325f, 4.33m, 4m, 4.33m);
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
+								10.0d, 10.00m, 10m, 10m);
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
+								10.665d, 10.67m, 11m, 10.67m);
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
+								-5.657d, -5.66m, -6m, -5.66m);
+							rpc_helper_function (cmd, SqlDbType.Decimal, 0,
+								4, 4m, 4m, 4m);
 							break;
 						case 6:
 							// Test Float Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "float"));
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
-								10.0, 10.0, 10.0);
+								10.0, 10.0, 10.0, 10.0);
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
-								10.54, 10.54, 10.54);
+								10.54, 10.54, 10.54, 10.54);
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
-								0, 0d, 0d);
+								0, 0d, 0d, 0d);
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
-								-5.34, -5.34, -5.34);
+								-5.34, -5.34, -5.34, -5.34);
 							rpc_helper_function (cmd, SqlDbType.Float, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 7:
 							// Testing Image
@@ -1840,76 +1859,94 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "int"));
 							rpc_helper_function (cmd, SqlDbType.Int, 0,
-								10, 10, 10);
+								10, 10, 10, 10);
 							rpc_helper_function (cmd, SqlDbType.Int, 0,
-								0, 0, 0);
+								0, 0, 0, 0);
 							rpc_helper_function (cmd, SqlDbType.Int, 0,
-								-5, -5, -5);
+								-5, -5, -5, -5);
 							rpc_helper_function (cmd, SqlDbType.Int, 0,
 								int.MaxValue, int.MaxValue,
-								int.MaxValue);
+								int.MaxValue, int.MaxValue);
 							rpc_helper_function (cmd, SqlDbType.Int, 0,
 								int.MinValue, int.MinValue,
-								int.MinValue);
+								int.MinValue, int.MinValue);
 							rpc_helper_function (cmd, SqlDbType.Int, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 9:
 							// Test Money Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "money"));
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								10m, 10m, 10m);
+								10m, 10m, 10m, 10m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								10.54, 10.54m, 10.54m);
+								10.54, 10.54m, 10.54m, 10.54m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								0, 0m, 0m);
+								0, 0m, 0m, 0m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-5.34, -5.34m, -5.34m);
+								-5.34, -5.34m, -5.34m, -5.34m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								5.34, 5.34m, 5.34m);
+								5.34, 5.34m, 5.34m, 5.34m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-10.1234m, -10.1234m, -10.1234m);
+								-10.1234m, -10.1234m, -10.1234m,
+								-10.1234m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								10.1234m, 10.1234m, 10.1234m);
+								10.1234m, 10.1234m, 10.1234m,
+								10.1234m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-2000000000m, -2000000000m, -2000000000m);
+								-2000000000m, -2000000000m,
+								-2000000000m, -2000000000m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								2000000000m, 2000000000m, 2000000000m);
+								2000000000m, 2000000000m,
+								2000000000m, 2000000000m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.2345m, -200000000.2345m, -200000000.2345m);
+								-200000000.2345m, -200000000.2345m,
+								-200000000.2345m, -200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.2345m, 200000000.2345m, 200000000.2345m);
+								200000000.2345m, 200000000.2345m,
+								200000000.2345m, 200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 
 							// rounding tests
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.234561m, -200000000.2346m, -200000000.2346m);
+								-200000000.234561m, -200000000.2346m,
+								-200000000.2346m, -200000000.2346m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.234551m, -200000000.2346m, -200000000.2346m);
+								-200000000.234551m, -200000000.2346m,
+								-200000000.2346m, -200000000.2346m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.234541m, -200000000.2345m, -200000000.2345m);
+								-200000000.234541m, -200000000.2345m,
+								-200000000.2345m, -200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.234561m, 200000000.2346m, 200000000.2346m);
+								200000000.234561m, 200000000.2346m,
+								200000000.2346m, 200000000.2346m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.234551m, 200000000.2346m, 200000000.2346m);
+								200000000.234551m, 200000000.2346m,
+								200000000.2346m, 200000000.2346m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.234541m, 200000000.2345m, 200000000.2345m);
+								200000000.234541m, 200000000.2345m,
+								200000000.2345m, 200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.234461m, -200000000.2345m, -200000000.2345m);
+								-200000000.234461m, -200000000.2345m,
+								-200000000.2345m, -200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.234451m, -200000000.2345m, -200000000.2345m);
+								-200000000.234451m, -200000000.2345m,
+								-200000000.2345m, -200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								-200000000.234441m, -200000000.2344m, -200000000.2344m);
+								-200000000.234441m, -200000000.2344m,
+								-200000000.2344m, -200000000.2344m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.234461m, 200000000.2345m, 200000000.2345m);
+								200000000.234461m, 200000000.2345m,
+								200000000.2345m, 200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.234451m, 200000000.2345m, 200000000.2345m);
+								200000000.234451m, 200000000.2345m,
+								200000000.2345m, 200000000.2345m);
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
-								200000000.234441m, 200000000.2344m, 200000000.2344m);
+								200000000.234441m, 200000000.2344m,
+								200000000.2344m, 200000000.2344m);
 							// FIXME: we round toward even in SqlParameter.ConvertToFrameworkType
 							/*
 							rpc_helper_function (cmd, SqlDbType.Money, 0,
@@ -1928,13 +1965,13 @@ namespace MonoTests.System.Data.SqlClient
 								String.Format (create_query, "nchar(10)"));
 							rpc_helper_function (cmd, SqlDbType.NChar, 10,
 								"characters", "characters",
-								"characters");
+								"characters", "characters");
 							rpc_helper_function (cmd, SqlDbType.NChar, 3,
 								"characters", "cha       ",
-								"cha");
+								"cha", "cha");
 							rpc_helper_function (cmd, SqlDbType.NChar, 3,
 								string.Empty, "          ",
-								"   ");
+								"   ", "   ");
 							/*
 							rpc_helper_function (cmd, SqlDbType.NChar, 5,
 								DBNull.Value, DBNull.Value,
@@ -1956,9 +1993,10 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "nvarchar(10)"));
 							rpc_helper_function (cmd, SqlDbType.NVarChar, 10,
-								"nvarchar", "nvarchar", "nvarchar");
+								"nvarchar", "nvarchar", "nvarchar",
+								"nvarchar");
 							rpc_helper_function (cmd, SqlDbType.NVarChar, 3,
-								"nvarchar", "nva", "nva");
+								"nvarchar", "nva", "nva", "nva");
 							/*
 							rpc_helper_function (cmd, SqlDbType.NVarChar, 10,
 								string.Empty, string.Empty, string.Empty);
@@ -1971,25 +2009,26 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "real"));
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10m, 10f, 10f);
+								10m, 10f, 10f, 10f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10d, 10f, 10f);
+								10d, 10f, 10f, 10f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								0, 0f, 0f);
+								0, 0f, 0f, 0f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								3.54d, 3.54f, 3.54f);
+								3.54d, 3.54f, 3.54f, 3.54f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10, 10f, 10f);
+								10, 10f, 10f, 10f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								10.5f, 10.5f, 10.5f);
+								10.5f, 10.5f, 10.5f, 10.5f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								3.5d, 3.5f, 3.5f);
+								3.5d, 3.5f, 3.5f, 3.5f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								4.54m, 4.54f, 4.54f);
+								4.54m, 4.54f, 4.54f, 4.54f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								-4.54m, -4.54f, -4.54f);
+								-4.54m, -4.54f, -4.54f, -4.54f);
 							rpc_helper_function (cmd, SqlDbType.Real, 0,
-								DBNull.Value, DBNull.Value, DBNull.Value);
+								DBNull.Value, DBNull.Value,
+								DBNull.Value, DBNull.Value);
 							break;
 						case 13:
 							// Test SmallDateTime Param
@@ -1998,81 +2037,86 @@ namespace MonoTests.System.Data.SqlClient
 							rpc_helper_function (cmd, SqlDbType.SmallDateTime, 0,
 								"6/6/2079 11:59:00 PM",
 								new DateTime (2079, 6, 6, 23, 59, 0),
+								new DateTime (2079, 6, 6, 23, 59, 0),
 								new DateTime (2079, 6, 6, 23, 59, 0));
 							rpc_helper_function (cmd, SqlDbType.SmallDateTime, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 14:
 							// Test SmallInt Param
 							DBHelper.ExecuteNonQuery (conn,
 								String.Format (create_query, "smallint"));
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
-								10, (short) 10, (short) 10);
+								10, (short) 10, (short) 10, (short) 10);
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
-								-10, (short) -10, (short) -10);
+								-10, (short) -10, (short) -10,
+								(short) -10);
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
 								short.MaxValue, short.MaxValue,
-								short.MaxValue);
+								short.MaxValue, short.MaxValue);
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
 								short.MinValue, short.MinValue,
-								short.MinValue);
+								short.MinValue, short.MinValue);
 							rpc_helper_function (cmd, SqlDbType.SmallInt, 0,
 								DBNull.Value, DBNull.Value,
-								DBNull.Value);
+								DBNull.Value, DBNull.Value);
 							break;
 						case 15:
 							// Test SmallMoney Param
 							DBHelper.ExecuteNonQuery (conn,
 									String.Format (create_query, "smallmoney"));
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								10.0d, 10m, 10m);
+								10.0d, 10m, 10m, 10m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								0, 0m, 0m);
+								0, 0m, 0m, 0m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								3.54d, 3.54m, 3.54m);
+								3.54d, 3.54m, 3.54m, 3.54m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								10, 10m, 10m);
+								10, 10m, 10m, 10m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								10.5f, 10.5m, 10.5m);
+								10.5f, 10.5m, 10.5m, 10.5m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								3.5d, 3.5m, 3.5m);
+								3.5d, 3.5m, 3.5m, 3.5m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.54m, 4.54m, 4.54m);
+								4.54m, 4.54m, 4.54m, 4.54m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.54m, -4.54m, -4.54m);
+								-4.54m, -4.54m, -4.54m, -4.54m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-214748.3648m, -214748.3648m, -214748.3648m);
+								-214748.3648m, -214748.3648m,
+								-214748.3648m, -214748.3648m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								214748.3647m, 214748.3647m, 214748.3647m);
+								214748.3647m, 214748.3647m, 214748.3647m,
+								214748.3647m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								DBNull.Value, DBNull.Value, DBNull.Value);
+								DBNull.Value, DBNull.Value, DBNull.Value,
+								DBNull.Value);
 
 							// rounding tests
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.543361m, -4.5434m, -4.5434m);
+								-4.543361m, -4.5434m, -4.5434m, -4.5434m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.543351m, -4.5434m, -4.5434m);
+								-4.543351m, -4.5434m, -4.5434m, -4.5434m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.543341m, -4.5433m, -4.5433m);
+								-4.543341m, -4.5433m, -4.5433m, -4.5433m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.543361m, 4.5434m, 4.5434m);
+								4.543361m, 4.5434m, 4.5434m, 4.5434m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.543351m, 4.5434m, 4.5434m);
+								4.543351m, 4.5434m, 4.5434m, 4.5434m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.543341m, 4.5433m, 4.5433m);
+								4.543341m, 4.5433m, 4.5433m, 4.5433m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.543261m, -4.5433m, -4.5433m);
+								-4.543261m, -4.5433m, -4.5433m, -4.5433m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.543251m, -4.5433m, -4.5433m);
+								-4.543251m, -4.5433m, -4.5433m, -4.5433m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								-4.543241m, -4.5432m, -4.5432m);
+								-4.543241m, -4.5432m, -4.5432m, -4.5432m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.543261m, 4.5433m, 4.5433m);
+								4.543261m, 4.5433m, 4.5433m, 4.5433m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.543251m, 4.5433m, 4.5433m);
+								4.543251m, 4.5433m, 4.5433m, 4.5433m);
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
-								4.543241m, 4.5432m, 4.5432m);
+								4.543241m, 4.5432m, 4.5432m, 4.5432m);
 							// FIXME: we round toward even in SqlParameter.ConvertToFrameworkType
 							/*
 							rpc_helper_function (cmd, SqlDbType.SmallMoney, 0,
@@ -2110,13 +2154,16 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 									String.Format (create_query, "tinyint"));
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
-								10.0d, (byte) 10, (byte) 10);
+								10.0d, (byte) 10, (byte) 10,
+								(byte) 10);
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
-								0, (byte) 0, (byte) 0);
+								0, (byte) 0, (byte) 0, (byte) 0);
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
-								byte.MaxValue, byte.MaxValue, byte.MaxValue);
+								byte.MaxValue, byte.MaxValue,
+								byte.MaxValue, byte.MaxValue);
 							rpc_helper_function (cmd, SqlDbType.TinyInt, 0,
-								byte.MinValue, byte.MinValue, byte.MinValue);
+								byte.MinValue, byte.MinValue,
+								byte.MinValue, byte.MinValue);
 							break;
 						case 19:
 							// Test UniqueIdentifier Param
@@ -2142,9 +2189,10 @@ namespace MonoTests.System.Data.SqlClient
 							DBHelper.ExecuteNonQuery (conn,
 									String.Format (create_query, "varchar(10)"));
 							rpc_helper_function (cmd, SqlDbType.VarChar, 7,
-								"VarChar", "VarChar", "VarChar");
+								"VarChar", "VarChar", "VarChar",
+								"VarChar");
 							rpc_helper_function (cmd, SqlDbType.VarChar, 5,
-								"Var", "Var", "Var");
+								"Var", "Var", "Var", "Var");
 							/*
 							rpc_helper_function (cmd, SqlDbType.VarChar, 3,
 								"Varchar", "Var", "Var");
@@ -2186,26 +2234,30 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.Fail (error);
 		}
 
-		private void rpc_helper_function (SqlCommand cmd, SqlDbType type, int size, object input, object expectedRead, object expectedOut)
+		private void rpc_helper_function (SqlCommand cmd, SqlDbType type, int size, object input, object expectedRead, object expectedOut, object expectedInOut)
 		{
 			cmd.Parameters.Clear ();
-			SqlParameter param1;
-			SqlParameter param2;
+			SqlParameter param1, param2, param3;
 			if (size != 0) {
 				param1 = new SqlParameter ("@param1", type, size);
 				param2 = new SqlParameter ("@param2", type, size);
+				param3 = new SqlParameter ("@param3", type, size);
 			} else {
 				param1 = new SqlParameter ("@param1", type);
 				param2 = new SqlParameter ("@param2", type);
+				param3 = new SqlParameter ("@param3", type);
 			}
 
 			SqlParameter retval = new SqlParameter ("retval", SqlDbType.Int);
 			param1.Value = input;
 			param1.Direction = ParameterDirection.Input;
 			param2.Direction = ParameterDirection.Output;
+			param3.Direction = ParameterDirection.InputOutput;
+			param3.Value = input;
 			retval.Direction = ParameterDirection.ReturnValue;
 			cmd.Parameters.Add (param1);
 			cmd.Parameters.Add (param2);
+			cmd.Parameters.Add (param3);
 			cmd.Parameters.Add (retval);
 			cmd.CommandText = "#tmp_sp_param_test";
 			cmd.CommandType = CommandType.StoredProcedure;
@@ -2216,7 +2268,8 @@ namespace MonoTests.System.Data.SqlClient
 			}
 
 			AreEqual (expectedOut, param2.Value, "#4");
-			Assert.AreEqual (5, retval.Value, "#5");
+			AreEqual (expectedInOut, param3.Value, "#5");
+			Assert.AreEqual (5, retval.Value, "#6");
 		}
 
 		[Test]
@@ -2701,7 +2754,17 @@ namespace MonoTests.System.Data.SqlClient
 			Error = 3
 		}
 
-		private readonly string CREATE_TMP_SP_PARAM_TEST = "create procedure #tmp_sp_param_test (@param1 {0}, @param2 {0} output) as begin select @param1 set @param2=@param1 return 5 end";
+		private readonly string CREATE_TMP_SP_PARAM_TEST =
+			"CREATE PROCEDURE #tmp_sp_param_test (" + Environment.NewLine +
+			"	@param1 {0}," + Environment.NewLine +
+			"	@param2 {0} output," + Environment.NewLine +
+			"	@param3 {0} output)" + Environment.NewLine +
+			"AS" + Environment.NewLine +
+			"BEGIN" + Environment.NewLine +
+			"	SELECT @param1" + Environment.NewLine +
+			"	SET @param2=@param1" + Environment.NewLine +
+			"	RETURN 5" + Environment.NewLine +
+			"END";
 
 		private readonly string CREATE_TMP_SP_TEMP_INSERT_PERSON = ("create procedure #sp_temp_insert_employee ( " + Environment.NewLine +
 									    "@fname varchar (20), " + Environment.NewLine +
