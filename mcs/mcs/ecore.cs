@@ -2108,22 +2108,17 @@ namespace Mono.CSharp {
 	///   to the class requested
 	/// </summary>
 	public sealed class ClassCast : TypeCast {
-		Type child_generic_parameter;
-
+		readonly bool forced;
+		
 		public ClassCast (Expression child, Type return_type)
 			: base (child, return_type)
-			
 		{
-			if (TypeManager.IsGenericParameter (child.Type))
-				child_generic_parameter = child.Type;
 		}
-
-		public override Expression DoResolve (EmitContext ec)
+		
+		public ClassCast (Expression child, Type return_type, bool forced)
+			: base (child, return_type)
 		{
-			// This should never be invoked, we are born in fully
-			// initialized state.
-
-			return this;
+			this.forced = forced;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -2131,24 +2126,20 @@ namespace Mono.CSharp {
 			base.Emit (ec);
 
 #if GMCS_SOURCE
-			if (child_generic_parameter != null) {
-				ec.ig.Emit (OpCodes.Box, child_generic_parameter);
-			}
-
-			if (type.IsGenericParameter)
+			bool gen = TypeManager.IsGenericParameter (child.Type);
+			if (gen)
+				ec.ig.Emit (OpCodes.Box, child.Type);
+			
+			if (type.IsGenericParameter) {
 				ec.ig.Emit (OpCodes.Unbox_Any, type);
-			else if (child_generic_parameter == null)
+				return;
+			}
+			
+			if (gen && !forced)
+				return;
 #endif
-				ec.ig.Emit (OpCodes.Castclass, type);
-		}
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			type = storey.MutateType (type);
-			if (child_generic_parameter != null)
-				child_generic_parameter = storey.MutateGenericArgument (child_generic_parameter);
-
- 			base.MutateHoistedGenericType (storey);
+			
+			ec.ig.Emit (OpCodes.Castclass, type);
 		}
 	}
 

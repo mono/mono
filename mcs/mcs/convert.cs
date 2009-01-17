@@ -207,12 +207,12 @@ namespace Mono.CSharp {
 						continue;
 
 					if (TypeManager.IsSubclassOf (source_type, iface))
-						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
+						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type, true);
 				}
 			}
 
 			if (target_type.IsInterface)
-				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
+				return source == null ? EmptyExpression.Null : new ClassCast (source, target_type, true);
 #endif
 			return null;
 		}
