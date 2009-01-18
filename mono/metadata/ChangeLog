@@ -1,3 +1,12 @@
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_InternalExecute): Add write barriers.
+
+	* marshal.c (mono_marshal_get_write_barrier): Remove, this is now done in
+	the GC code.
+
+	* sgen-gc.c: Implement write barriers in IL code.
+
 2009-01-17  Geoff Norton  <gnorton@novell.com>
 
 	* image.c: Avoid trying to walk the reference table of dynamic assemblies.
