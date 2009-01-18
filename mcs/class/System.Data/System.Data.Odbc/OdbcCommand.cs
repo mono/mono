@@ -141,7 +141,16 @@ namespace System.Data.Odbc
 #endif
 		int CommandTimeout {
 			get { return timeout; }
-			set { timeout = value; }
+			set {
+				if (value < 0)
+#if NET_2_0
+					throw new ArgumentException ("The property value assigned is less than 0.",
+						"CommandTimeout");
+#else
+					throw new ArgumentException ("The property value assigned is less than 0.");
+#endif
+				timeout = value;
+			}
 		}
 
 		[OdbcCategory ("Data")]
@@ -154,7 +163,10 @@ namespace System.Data.Odbc
 #endif
 		CommandType CommandType {
 			get { return commandType; }
-			set { commandType = value; }
+			set {
+				ExceptionHelper.CheckEnumValue (typeof (CommandType), value);
+				commandType = value;
+			}
 		}
 
 #if ONLY_1_1
@@ -163,12 +175,8 @@ namespace System.Data.Odbc
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OdbcConnection Connection {
-			get {
-				return connection;
-			}
-			set {
-				connection = value;
-			}
+			get { return connection; }
+			set { connection = value; }
 		}
 #endif // ONLY_1_1
 
@@ -192,12 +200,8 @@ namespace System.Data.Odbc
 		override
 #endif
 		bool DesignTimeVisible {
-			get {
-				return designTimeVisible;
-			}
-			set {
-				designTimeVisible = value;
-			}
+			get { return designTimeVisible; }
+			set { designTimeVisible = value; }
 		}
 
 		[OdbcCategory ("Data")]
@@ -225,12 +229,8 @@ namespace System.Data.Odbc
 		new
 #endif // NET_2_0
 		OdbcTransaction Transaction {
-			get {
-				return transaction;
-			}
-			set {
-				transaction = value;
-			}
+			get { return transaction; }
+			set { transaction = value; }
 		}
 
 		[OdbcCategory ("Behavior")]
@@ -241,12 +241,11 @@ namespace System.Data.Odbc
 		override
 #endif
 		UpdateRowSource UpdatedRowSource {
-				get {
-					return updateRowSource;
-				}
-				set {
-					updateRowSource = value;
-				}
+			get { return updateRowSource; }
+			set {
+				ExceptionHelper.CheckEnumValue (typeof (UpdateRowSource), value);
+				updateRowSource = value;
+			}
 		}
 
 #if NET_2_0
@@ -259,18 +258,12 @@ namespace System.Data.Odbc
 
 #if ONLY_1_1
 		IDbConnection IDbCommand.Connection {
-			get {
-				return Connection;
-			}
-			set {
-				Connection = (OdbcConnection) value;
-			}
+			get { return Connection; }
+			set { Connection = (OdbcConnection) value; }
 		}
 
 		IDataParameterCollection IDbCommand.Parameters {
-			get {
-				return Parameters;
-			}
+			get { return Parameters; }
 		}
 #else
 		protected override DbParameterCollection DbParameterCollection {
@@ -280,9 +273,7 @@ namespace System.Data.Odbc
 
 #if ONLY_1_1
 		IDbTransaction IDbCommand.Transaction {
-			get {
-				return (IDbTransaction) Transaction;
-			}
+			get { return (IDbTransaction) Transaction; }
 			set {
 				if (value is OdbcTransaction) {
 					Transaction = (OdbcTransaction) value;
@@ -348,8 +339,12 @@ namespace System.Data.Odbc
 				return;
 
 			FreeStatement (); // free handles
+#if NET_2_0
+			CommandText = null;
+#endif
 			Connection = null;
 			Transaction = null;
+			Parameters.Clear ();
 			disposed = true;
 		}
 
@@ -403,7 +398,7 @@ namespace System.Data.Odbc
 				ReAllocStatment ();
 
 				ret = libodbc.SQLExecDirect (hstmt, sql, libodbc.SQL_NTS);
-				if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo) && (ret != OdbcReturn.NoData))
+				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo && ret != OdbcReturn.NoData)
 					throw connection.CreateOdbcException (OdbcHandleType.Stmt, hstmt);
 				return;
 			}
@@ -429,17 +424,22 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		int ExecuteNonQuery ()
 		{
-			return ExecuteNonQuery (CommandBehavior.Default, false);
+			return ExecuteNonQuery ("ExecuteNonQuery", CommandBehavior.Default, false);
 		}
 
-		private int ExecuteNonQuery (CommandBehavior behavior, bool createReader)
+		private int ExecuteNonQuery (string method, CommandBehavior behavior, bool createReader)
 		{
 			int records = 0;
 			if (Connection == null)
-				throw new InvalidOperationException ("No open connection");
+				throw new InvalidOperationException (string.Format (
+					"{0}: Connection is not set.", method));
 			if (Connection.State == ConnectionState.Closed)
-				throw new InvalidOperationException ("Connection state is closed");
-			// FIXME: a third check is mentioned in .NET docs
+				throw new InvalidOperationException (string.Format (
+					"{0}: Connection state is closed", method));
+			if (CommandText.Length == 0)
+				throw new InvalidOperationException (string.Format (
+					"{0}: CommandText is not set.", method));
+
 			ExecSQL (behavior, createReader, CommandText);
 
 			// .NET documentation says that except for INSERT, UPDATE and
@@ -512,7 +512,12 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			int recordsAffected = ExecuteNonQuery(behavior, true);
+			return ExecuteReader ("ExecuteReader", behavior);
+		}
+
+		OdbcDataReader ExecuteReader (string method, CommandBehavior behavior)
+		{
+			int recordsAffected = ExecuteNonQuery (method, behavior, true);
 			OdbcDataReader dataReader = new OdbcDataReader (this, behavior, recordsAffected);
 			return dataReader;
 		}
@@ -531,7 +536,8 @@ namespace System.Data.Odbc
 		object ExecuteScalar ()
 		{
 			object val = null;
-			OdbcDataReader reader = ExecuteReader();
+			OdbcDataReader reader = ExecuteReader ("ExecuteScalar",
+				CommandBehavior.Default);
 			try {
 				if (reader.Read ())
 					val = reader [0];

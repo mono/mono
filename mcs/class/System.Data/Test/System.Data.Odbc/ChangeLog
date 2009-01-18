@@ -1,3 +1,10 @@
+2009-01-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OdbcCommandTest.cs: Added tests for CommandTimeout,
+	UpdatedRowSource, Dispose and ResetCommandTimeout. Added
+	ExecuteNonQuery/ExecuteReader/ExecuteScalar tests for a connection
+	that is not initialized or closed.
+
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcCommandBuilderTest.cs: Enabled test for QuoteIdentifier.

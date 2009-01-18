@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Data;
 using System.Data.Odbc;
 
@@ -56,7 +57,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreEqual (UpdateRowSource.Both, cmd.UpdatedRowSource, "#11");
 		}
 
-		[Test] // OdbcCommand (string)
+		[Test] // OdbcCommand (String)
 		public void Constructor2 ()
 		{
 			OdbcCommand cmd = new OdbcCommand (COMMAND_TEXT);
@@ -86,7 +87,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreEqual (UpdateRowSource.Both, cmd.UpdatedRowSource, "#B11");
 		}
 
-		[Test] // OdbcCommand (string, OdbcConnection)
+		[Test] // OdbcCommand (String, OdbcConnection)
 		public void Constructor3 ()
 		{
 			OdbcConnection conn = new OdbcConnection ();
@@ -132,7 +133,7 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreEqual (UpdateRowSource.Both, cmd.UpdatedRowSource, "#C11");
 		}
 
-		[Test] // OdbcCommand (string, OdbcConnection, OdbcTransaction)
+		[Test] // OdbcCommand (String, OdbcConnection, OdbcTransaction)
 		public void Constructor4 ()
 		{
 			OdbcConnection conn = new OdbcConnection ();
@@ -190,6 +191,265 @@ namespace MonoTests.System.Data.Odbc
 			Assert.AreSame (COMMAND_TEXT, cmd.CommandText, "#3");
 			cmd.CommandText = string.Empty;
 			Assert.AreEqual (string.Empty, cmd.CommandText, "#4");
+		}
+
+		[Test]
+		public void CommandTimeout ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			cmd.CommandTimeout = 10;
+			Assert.AreEqual (10, cmd.CommandTimeout, "#1");
+			cmd.CommandTimeout = 25;
+			Assert.AreEqual (25, cmd.CommandTimeout, "#2");
+			cmd.CommandTimeout = 0;
+			Assert.AreEqual (0, cmd.CommandTimeout, "#3");
+		}
+
+		[Test]
+		public void CommandTimeout_Value_Negative ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			try {
+				cmd.CommandTimeout = -1;
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// Invalid CommandTimeout value -1; the value must be >= 0
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+#if NET_2_0
+				Assert.AreEqual ("CommandTimeout", ex.ParamName, "#5");
+#else
+				Assert.IsNull (ex.ParamName, "#5");
+#endif
+			}
+		}
+
+		[Test]
+		public void CommandType_Value_Invalid ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			try {
+				cmd.CommandType = (CommandType) (666);
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// The CommandType enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5:" + ex.Message);
+				Assert.AreEqual ("CommandType", ex.ParamName, "#6");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// The CommandType enumeration value, 666, is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("666") != -1, "#5:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#6");
+			}
+#endif
+		}
+
+		[Test]
+		public void Dispose ()
+		{
+			OdbcConnection conn = new OdbcConnection ();
+			OdbcCommand cmd = null;
+
+			try {
+				cmd = conn.CreateCommand ();
+				cmd.CommandText = "SELECT 'a'";
+				cmd.CommandTimeout = 67;
+				cmd.CommandType = CommandType.StoredProcedure;
+				cmd.DesignTimeVisible = false;
+				cmd.Parameters.Add (new OdbcParameter ());
+				cmd.UpdatedRowSource = UpdateRowSource.OutputParameters;
+
+				cmd.Dispose ();
+
+#if NET_2_0
+				Assert.AreEqual (string.Empty, cmd.CommandText, "CommandText");
+#else
+				Assert.AreEqual ("SELECT 'a'", cmd.CommandText, "CommandText");
+#endif
+				Assert.AreEqual (67, cmd.CommandTimeout, "CommandTimeout");
+				Assert.AreEqual (CommandType.StoredProcedure, cmd.CommandType, "CommandType");
+				Assert.IsNull (cmd.Connection, "Connection");
+				Assert.IsFalse (cmd.DesignTimeVisible, "DesignTimeVisible");
+				Assert.IsNotNull (cmd.Parameters, "Parameters#1");
+				Assert.AreEqual (0, cmd.Parameters.Count, "Parameters#2");
+				Assert.IsNull (cmd.Transaction, "Transaction");
+				Assert.AreEqual (UpdateRowSource.OutputParameters, cmd.UpdatedRowSource, "UpdatedRowSource");
+			} finally {
+				if (cmd != null)
+					cmd.Dispose ();
+				conn.Dispose ();
+			}
+		}
+
+		[Test]
+		public void ExecuteNonQuery_Connection_Closed ()
+		{
+			OdbcConnection cn = new OdbcConnection ();
+			OdbcCommand cmd = new OdbcCommand (COMMAND_TEXT, cn);
+			try {
+				cmd.ExecuteNonQuery ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteNonQuery requires an open and available
+				// Connection. The connection's current state is
+				// closed.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#5:" + ex.Message);
+			}
+		}
+
+		[Test]
+		public void ExecuteNonQuery_Connection_Null ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			cmd.CommandText = COMMAND_TEXT;
+
+			try {
+				cmd.ExecuteNonQuery ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteNonQuery: Connection property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#5:" + ex.Message);
+			}
+		}
+
+		[Test]
+		public void ExecuteReader_Connection_Closed ()
+		{
+			OdbcConnection cn = new OdbcConnection ();
+			OdbcCommand cmd = new OdbcCommand (COMMAND_TEXT, cn);
+			try {
+				cmd.ExecuteReader ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteNonQuery requires an open and available
+				// Connection. The connection's current state is
+				// closed.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteReader") != -1, "#5:" + ex.Message);
+			}
+		}
+
+		[Test]
+		public void ExecuteReader_Connection_Null ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			cmd.CommandText = COMMAND_TEXT;
+
+			try {
+				cmd.ExecuteReader ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteNonQuery: Connection property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteReader") != -1, "#5:" + ex.Message);
+			}
+		}
+
+		[Test]
+		public void ExecuteScalar_Connection_Closed ()
+		{
+			OdbcConnection cn = new OdbcConnection ();
+			OdbcCommand cmd = new OdbcCommand (COMMAND_TEXT, cn);
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteNonQuery requires an open and available
+				// Connection. The connection's current state is
+				// closed.
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteScalar") != -1, "#5:" + ex.Message);
+			}
+		}
+
+		[Test]
+		public void ExecuteScalar_Connection_Null ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			cmd.CommandText = COMMAND_TEXT;
+
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteNonQuery: Connection property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsTrue (ex.Message.IndexOf ("ExecuteScalar") != -1, "#5:" + ex.Message);
+			}
+		}
+
+		[Test]
+		public void ResetCommandTimeout ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			cmd.CommandTimeout = 50;
+			Assert.AreEqual (cmd.CommandTimeout, 50, "#1");
+			cmd.ResetCommandTimeout ();
+			Assert.AreEqual (cmd.CommandTimeout, 30, "#2");
+		}
+
+		[Test]
+		public void UpdatedRowSource ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			cmd.UpdatedRowSource = UpdateRowSource.None;
+			Assert.AreEqual (UpdateRowSource.None, cmd.UpdatedRowSource, "#1");
+			cmd.UpdatedRowSource = UpdateRowSource.OutputParameters;
+			Assert.AreEqual (UpdateRowSource.OutputParameters, cmd.UpdatedRowSource, "#2");
+		}
+
+		[Test]
+		public void UpdatedRowSource_Value_Invalid ()
+		{
+			OdbcCommand cmd = new OdbcCommand ();
+			try {
+				cmd.UpdatedRowSource = (UpdateRowSource) 666;
+				Assert.Fail ("#1");
+#if NET_2_0
+			} catch (ArgumentOutOfRangeException ex) {
+				// The UpdateRowSource enumeration value,666,
+				// is invalid
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("UpdateRowSource", ex.ParamName, "#5");
+			}
+#else
+			} catch (ArgumentException ex) {
+				// The UpdateRowSource enumeration value, 666,
+				// is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNull (ex.ParamName, "#5");
+			}
+#endif
 		}
 	}
 }
