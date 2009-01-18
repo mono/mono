@@ -1,5 +1,8 @@
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_flush_icache): Applied patch from Koushik Dutta
+	(koush@koushikdutta.com). Implement this for android.
+
 	* helpers.c (mono_disassemble_code): Avoid assembler errors if the id
 	begins with a digit.
 
