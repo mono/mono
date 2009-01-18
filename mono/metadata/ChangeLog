@@ -1,5 +1,10 @@
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* socket-io.c: Applied patch from Koushik Dutta
+	(koush@koushikdutta.com). Disable IPV6 when running under android.
+
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
 	* icall.c (ves_icall_InternalExecute): Add write barriers.
 
 	* marshal.c (mono_marshal_get_write_barrier): Remove, this is now done in
