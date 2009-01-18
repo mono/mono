@@ -1,3 +1,8 @@
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* io.c (GetDiskFreeSpaceEx): Applied patch from Koushik Dutta
+	(koush@koushikdutta.com). Disable this on android.
+
 2009-01-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* handles.c (_wapi_handle_timedwait_signal_handle): Don't use the
