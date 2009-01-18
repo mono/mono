@@ -1,5 +1,16 @@
 2009-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r123201.
+	
+	* marshal.c: Avoid setting the exception clauses after a method has been entered 
+	into the wrapper caches. Fixes #465700.
+
+	* method-builder.c (mono_mb_set_clauses): New function to set the clauses of the
+	method builder.
+	(mono_mb_create_method): Set the clauses from the method builder.
+
+2009-01-16  Zoltan Varga  <vargaz@gmail.com>
+
 	Backport of r123642.
 	
 	* threads.c (mono_threads_abort_appdomain_threads): Abort threads outside the
