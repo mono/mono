@@ -1,5 +1,8 @@
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* helpers.c (mono_disassemble_code): Avoid assembler errors if the id
+	begins with a digit.
+
 	* method-to-ir.c: Call mono_gc_get_write_barrier () instead of
 	mono_marshal_get_write_barrier ().
 
