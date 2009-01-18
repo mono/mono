@@ -1,5 +1,8 @@
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* attach.c: Applied patch from Koushik Dutta (koush@koushikdutta.com). 
+	Fix compilation under android.
+	
 	* sgen-gc.c: Instead of scanning gray objects after all roots have been 
 	processed, scan them directly after they are copied, to achieve better locality
 	and cache usage.
