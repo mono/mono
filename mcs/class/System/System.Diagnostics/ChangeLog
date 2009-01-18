@@ -1,3 +1,8 @@
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* Process.cs: Avoid closing the duplicated process handle in
+	ProcessWaitHandle, it is done automatically by the WaitHandle.Dispose ().
+	Fixes #464628.
 
 2008-12-09 Christian Hergert <christian.hergert@gmail.com>
 

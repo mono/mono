@@ -1665,27 +1665,9 @@ namespace System.Diagnostics {
 				// Need to keep a reference to this handle,
 				// in case the Process object is collected
 				Handle = ProcessHandle_duplicate (handle);
-			}
 
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			private extern static void ProcessHandle_close (IntPtr handle);
-			
-			private bool disposed = false;
-			
-			protected override void Dispose (bool explicitDisposing)
-			{
-				if (this.disposed == false) {
-					this.disposed = true;
-					
-					ProcessHandle_close (Handle);
-					Handle = IntPtr.Zero;
-				}
-				base.Dispose (explicitDisposing);
-			}
-
-			~ProcessWaitHandle ()
-			{
-				Dispose (false);
+				// When the wait handle is disposed, the duplicated handle will be
+				// closed, so no need to override dispose (bug #464628).
 			}
 		}
 	}
