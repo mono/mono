@@ -110,6 +110,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		int FieldCount {
 			get {
+				if (IsClosed)
+					throw new InvalidOperationException ("The reader is closed.");
 				return cols.Length;
 			}
 		}
@@ -130,16 +132,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		object this [string value] {
 			get {
-				int pos;
-
-				if (currentRow == -1)
-					throw new InvalidOperationException ();
-
-				pos = ColIndex (value);
-				
-				if (pos == -1)
-					throw new IndexOutOfRangeException ();
-
+				int pos = GetOrdinal (value);
 				return this [pos];
 			}
 		}
@@ -150,7 +143,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		object this [int i] {
 			get {
-				return (object) GetValue (i);
+				return GetValue (i);
 			}
 		}
 
@@ -280,6 +273,11 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
+			if (IsClosed)
+				throw new InvalidOperationException ("Reader is not open.");
+			if (currentRow == -1)
+				throw new InvalidOperationException ("No data available.");
+
 			OdbcReturn ret = OdbcReturn.Error;
 			bool copyBuffer = false;
 			int returnVal = 0, outsize = 0;
@@ -323,12 +321,19 @@ namespace System.Data.Odbc
 			}
 
 			if (copyBuffer) {
-				int j = 0;
-				while (tbuff [j] != libodbc.C_NULL) {
-					buffer [bufferIndex + j] = tbuff [j];
-					j++;
+				if (outsize == (int) OdbcLengthIndicator.NoTotal) {
+					int j = 0;
+					while (tbuff [j] != libodbc.C_NULL) {
+						buffer [bufferIndex + j] = tbuff [j];
+						j++;
+					}
+					returnVal = j;
+				} else {
+					int read_bytes = Math.Min (outsize, length);
+					for (int j = 0; j < read_bytes; j++)
+						buffer [bufferIndex + j] = tbuff [j];
+					returnVal = read_bytes;
 				}
-				returnVal = j;
 			}
 			return returnVal;
 		}
@@ -350,6 +355,12 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
+			if (currentRow == -1)
+				throw new InvalidOperationException ("No data available.");
+			if (i < 0 || i >= FieldCount)
+				throw new IndexOutOfRangeException ();
 			throw new NotImplementedException ();
 		}
 
@@ -372,6 +383,10 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string GetDataTypeName (int i)
 		{
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
+			if (i < 0 || i >= FieldCount)
+				throw new IndexOutOfRangeException ();
 			return GetColumnAttributeStr (i + 1, FieldIdentifier.TypeName);
 		}
 
@@ -413,6 +428,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		Type GetFieldType (int i)
 		{
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
 			return GetColumn (i).DataType;
 		}
 
@@ -468,6 +485,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		string GetName (int i)
 		{
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
 			return GetColumn (i).ColumnName;
 		}
 
@@ -477,12 +496,15 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		int GetOrdinal (string value)
 		{
-			int i = ColIndex (value);
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
+			if (value == null)
+				throw new ArgumentNullException ("fieldName");
 
+			int i = ColIndex (value);
 			if (i == -1)
 				throw new IndexOutOfRangeException ();
-			else
-				return i;
+			return i;
 		}
 
 		[MonoTODO]
@@ -492,6 +514,9 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		DataTable GetSchemaTable ()
 		{
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
+
 			// FIXME : 
 			// * Map OdbcType to System.Type and assign to DataType.
 			//   This will eliminate the need for IsStringType in
@@ -632,9 +657,10 @@ namespace System.Data.Odbc
 #endif // NET_2_0
 		object GetValue (int i)
 		{
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
 			if (currentRow == -1)
-				throw new IndexOutOfRangeException ();
-
+				throw new InvalidOperationException ("No data available.");
 			if (i > cols.Length-1 || i < 0)
 				throw new IndexOutOfRangeException ();
 
@@ -786,13 +812,15 @@ namespace System.Data.Odbc
 						ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, bufsize, ref outsize);
 						if (ret == OdbcReturn.Error)
 							break;
-						if (ret != OdbcReturn.NoData && outsize!=-1) {
+						if (ret != OdbcReturn.NoData && outsize != -1) {
 							if (outsize < bufsize) {
-								byte[] tmparr = new byte [outsize];
+								byte [] tmparr = new byte [outsize];
 								Array.Copy (buffer, 0, tmparr, 0, outsize);
 								al.AddRange (tmparr);
 							} else
 								al.AddRange (buffer);
+						} else {
+							break;
 						}
 					} while (ret != OdbcReturn.NoData);
 					DataValue = al.ToArray (typeof (byte));
@@ -833,6 +861,11 @@ namespace System.Data.Odbc
 		int GetValues (object [] values)
 		{
 			int numValues = 0;
+
+			if (IsClosed)
+				throw new InvalidOperationException ("The reader is closed.");
+			if (currentRow == -1)
+				throw new InvalidOperationException ("No data available.");
 
 			// copy values
 			for (int i = 0; i < values.Length; i++) {

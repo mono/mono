@@ -1,5 +1,10 @@
 2009-01-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* OdbcDataReader.cs: Fixed GetBytes with limited length. Added reader
+	state and argument checks.
+
+2009-01-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* OdbcCommand.cs: Do not allow negative CommandTimeout. Reject invalid
 	value for CommandType and UpdatedRowSource. In Dispose, clear
 	CommandText (2.0 only) and Parameters. Include method that is being
