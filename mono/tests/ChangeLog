@@ -1,3 +1,7 @@
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal9.cs: Change a test to be compatible with MS.NET.
+
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-459094.cs: New regression test.
