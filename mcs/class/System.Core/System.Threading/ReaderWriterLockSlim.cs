@@ -56,6 +56,12 @@ namespace System.Threading {
 	[HostProtectionAttribute(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
 	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 	public class ReaderWriterLockSlim : IDisposable {
+		sealed class LockDetails
+		{
+			public int ThreadId;
+			public int ReadLocks;
+		}
+
 		// Are we on a multiprocessor?
 		static readonly bool smp;
 		
@@ -68,6 +74,7 @@ namespace System.Threading {
 		// owners = -1 means there is one writer, Owners must be >= -1.  
 		int owners;
 		Thread upgradable_thread;
+		Thread write_thread;
 		
 		// These variables allow use to avoid Setting events (which is expensive) if we don't have to. 
 		uint numWriteWaiters;        // maximum number of threads that can be doing a WaitOne on the writeEvent 
@@ -85,7 +92,7 @@ namespace System.Threading {
 		//Dictionary<int,int> reader_locks;
 
 		readonly LockRecursionPolicy recursionPolicy;
-		bool is_disposed;
+		LockDetails[] read_locks = new LockDetails [8];
 		
 		static ReaderWriterLockSlim ()
 		{
@@ -117,10 +124,20 @@ namespace System.Threading {
 			if (millisecondsTimeout < Timeout.Infinite)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
 			
-			if (is_disposed)
+			if (read_locks == null)
 				throw new ObjectDisposedException (null);
-			
+
+			if (Thread.CurrentThread == write_thread)
+				throw new LockRecursionException ("Read lock cannot be acquired while write lock is held");
+
 			EnterMyLock ();
+
+			LockDetails ld = GetReadLockDetails (Thread.CurrentThread.ManagedThreadId, true);
+			if (ld.ReadLocks != 0) {
+				ExitMyLock ();
+				throw new LockRecursionException ("Recursive read lock can only be aquired in SupportsRecursion mode");
+			}
+			++ld.ReadLocks;
 			
 			while (true){
 				// Easy case, no contention
@@ -153,8 +170,7 @@ namespace System.Threading {
 
 		public bool TryEnterReadLock (TimeSpan timeout)
 		{
-			int ms = CheckTimeout (timeout);
-			return TryEnterReadLock (ms);
+			return TryEnterReadLock (CheckTimeout (timeout));
 		}
 
 		//
@@ -163,8 +179,15 @@ namespace System.Threading {
 		public void ExitReadLock ()
 		{
 			EnterMyLock ();
-			Debug.Assert(owners > 0, "ReleasingReaderLock: releasing lock and no read lock taken");
+
+			if (owners < 1) {
+				ExitMyLock ();
+				throw new SynchronizationLockException ("Releasing lock and no read lock taken");
+			}
+
 			--owners;
+			--GetReadLockDetails (Thread.CurrentThread.ManagedThreadId, false).ReadLocks;
+
 			ExitAndWakeUpAppropriateWaiters ();
 		}
 
@@ -175,19 +198,36 @@ namespace System.Threading {
 		
 		public bool TryEnterWriteLock (int millisecondsTimeout)
 		{
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
+			if (read_locks == null)
+				throw new ObjectDisposedException (null);
+
+			if (IsWriteLockHeld)
+				throw new LockRecursionException ();
+
 			EnterMyLock ();
+
+			LockDetails ld = GetReadLockDetails (Thread.CurrentThread.ManagedThreadId, false);
+			if (ld != null && ld.ReadLocks > 0) {
+				ExitMyLock ();
+				throw new LockRecursionException ("Write lock cannot be acquired while read lock is held");
+			}
 
 			while (true){
 				// There is no contention, we are done
 				if (owners == 0){
 					// Indicate that we have a writer
 					owners = -1;
+					write_thread = Thread.CurrentThread;
 					break;
 				}
 
 				// If we are the thread that took the Upgradable read lock
 				if (owners == 1 && upgradable_thread == Thread.CurrentThread){
 					owners = -1;
+					write_thread = Thread.CurrentThread;
 					break;
 				}
 
@@ -241,9 +281,14 @@ namespace System.Threading {
 		public void ExitWriteLock ()
 		{
 			EnterMyLock ();
-			Debug.Assert (owners == -1, "Calling ReleaseWriterLock when no write lock is held");
-			Debug.Assert (numUpgradeWaiters > 0);
-			upgradable_thread = null;
+
+			if (owners != -1) {
+				ExitMyLock ();
+				throw new SynchronizationLockException ("Calling ExitWriterLock when no write lock is held");
+			}
+
+			//Debug.Assert (numUpgradeWaiters > 0);
+			write_thread = upgradable_thread = null;
 			owners = 0;
 			ExitAndWakeUpAppropriateWaiters ();
 		}
@@ -259,6 +304,18 @@ namespace System.Threading {
 		//
 		public bool TryEnterUpgradeableReadLock (int millisecondsTimeout)
 		{
+			if (millisecondsTimeout < Timeout.Infinite)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
+			if (read_locks == null)
+				throw new ObjectDisposedException (null);
+
+			if (IsUpgradeableReadLockHeld)
+				throw new LockRecursionException ();
+
+			if (IsWriteLockHeld)
+				throw new LockRecursionException ();
+
 			EnterMyLock ();
 			while (true){
 				if (owners == 0 && numWriteWaiters == 0 && upgradable_thread == null){
@@ -303,47 +360,53 @@ namespace System.Threading {
 
 		public void Dispose ()
 		{
-			is_disposed = true;
+			read_locks = null;
 		}
 
 		public bool IsReadLockHeld {
-			get { throw new NotImplementedException (); }
+			get { return RecursiveReadCount != 0; }
 		}
 		
 		public bool IsWriteLockHeld {
-			get { throw new NotImplementedException (); }
+			get { return RecursiveWriteCount != 0; }
 		}
 		
 		public bool IsUpgradeableReadLockHeld {
-			get { throw new NotImplementedException (); }
+			get { return RecursiveUpgradeCount != 0; }
 		}
 
 		public int CurrentReadCount {
-			get { throw new NotImplementedException (); }
+			get { return owners & 0xFFFFFFF; }
 		}
 		
 		public int RecursiveReadCount {
-			get { throw new NotImplementedException (); }
+			get {
+				EnterMyLock ();
+				LockDetails ld = GetReadLockDetails (Thread.CurrentThread.ManagedThreadId, false);
+				int count = ld == null ? 0 : ld.ReadLocks;
+				ExitMyLock ();
+				return count;
+			}
 		}
 
 		public int RecursiveUpgradeCount {
-			get { throw new NotImplementedException (); }
+			get { return upgradable_thread == Thread.CurrentThread ? 1 : 0; }
 		}
 
 		public int RecursiveWriteCount {
-			get { throw new NotImplementedException (); }
+			get { return write_thread == Thread.CurrentThread ? 1 : 0; }
 		}
 
 		public int WaitingReadCount {
-			get { throw new NotImplementedException (); }
+			get { return (int) numReadWaiters; }
 		}
 
 		public int WaitingUpgradeCount {
-			get { throw new NotImplementedException (); }
+			get { return (int) numUpgradeWaiters; }
 		}
 
 		public int WaitingWriteCount {
-			get { throw new NotImplementedException (); }
+			get { return (int) numWriteWaiters; }
 		}
 
 		public LockRecursionPolicy RecursionPolicy {
@@ -468,6 +531,30 @@ namespace System.Threading {
 			} catch (System.OverflowException) {
 				throw new ArgumentOutOfRangeException ("timeout");				
 			}
+		}
+
+		LockDetails GetReadLockDetails (int threadId, bool create)
+		{
+			int i;
+			LockDetails ld;
+			for (i = 0; i < read_locks.Length; ++i) {
+				ld = read_locks [i];
+				if (ld == null)
+					break;
+
+				if (ld.ThreadId == threadId)
+					return ld;
+			}
+
+			if (!create)
+				return null;
+
+			if (i == read_locks.Length)
+				Array.Resize (ref read_locks, read_locks.Length * 2);
+				
+			ld = read_locks [i] = new LockDetails ();
+			ld.ThreadId = threadId;
+			return ld;
 		}
 #endregion
 	}
