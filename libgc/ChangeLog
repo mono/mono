@@ -1,3 +1,8 @@
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gcconfig.h: Applied patch from Koushik Dutta
+	(koush@koushikdutta.com). Define SEARCH_FOR_DATA_START for android.
+
 2008-11-18  Mark Probst  <mark.probst@gmail.com>
 
 	* include/private/gc_locks.h (test_and_set): The PPC64 case is

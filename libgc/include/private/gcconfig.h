@@ -1868,6 +1868,8 @@
 #	     include <features.h>
 #	     if defined(__GLIBC__) && __GLIBC__ >= 2
 #		 define SEARCH_FOR_DATA_START
+#	     elif defined(PLATFORM_ANDROID)
+#		 define SEARCH_FOR_DATA_START
 #	     else
      	         extern char **__environ;
 #                define DATASTART ((ptr_t)(&__environ))
