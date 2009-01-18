@@ -1,3 +1,11 @@
+2009-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mini_thread_cleanup): Don't cleanup TLS storage if the
+	thread been cleaned up is not the same currently in execution.
+
+	Fixes appdomain-unload crashes on windows, osx and linux variants
+	without the __thread keyword.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_flush_icache): Applied patch from Koushik Dutta
