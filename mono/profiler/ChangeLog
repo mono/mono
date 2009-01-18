@@ -1,3 +1,12 @@
+2009-01-18  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Bug fixing.
+	- profiler_executable_memory_region_destroy: fixed a cut&paste mistake
+	causing a double free.
+	- executable_file_open: allow the code to look at all files, and fix
+	building of "files->new_files" list.
+	- executable_file_free: set "file->section_regions" to NULL when
+	freeing it (for safety).
+
 2008-12-31  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: added "save-allocation-caller" option.
 
