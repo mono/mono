@@ -1,3 +1,8 @@
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-mmap.c: Applied patch from Koushik Dutta
+	(koush@koushikdutta.com). Add an #ifdef HAVE_SHM_OPEN.
+
 2009-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-hash.c: Change the roots to use write barriers when running with
