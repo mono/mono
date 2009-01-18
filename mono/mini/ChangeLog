@@ -1,4 +1,11 @@
-2009-01-14  Mark Probst  <mark.probst@gmail.com>
+2009-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r123258.
+	
+	* mini.c (SIG_HANDLER_SIGNATURE): Avoid crashes when the current thread or
+	domain is not set. Fixes #465864.
+
+2009-01-12  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r123349.
 
