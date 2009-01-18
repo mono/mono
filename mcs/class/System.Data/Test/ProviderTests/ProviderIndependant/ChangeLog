@@ -1,3 +1,10 @@
+2009-01-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataReaderTest.cs: Added indexer tests. Added/improved GetBytes
+	tests.
+	* IDbCommandTest.cs: Added test for ExecuteReader with CommandText
+	that is not initialized. Improved ExecuteScalar test.
+
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataReaderTest.cs: Added tests for GetValue. Improved test

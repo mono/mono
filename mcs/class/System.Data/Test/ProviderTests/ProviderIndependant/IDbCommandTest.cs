@@ -73,7 +73,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
-				Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#A5:" + ex.Message);
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteNonQuery"), "#A5:" + ex.Message);
 			}
 
 			cmd.CommandText = string.Empty;
@@ -87,7 +87,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#B5:" + ex.Message);
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteNonQuery"), "#B5:" + ex.Message);
 			}
 
 			cmd.CommandText = null;
@@ -101,7 +101,51 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
 				Assert.IsNull (ex.InnerException, "#C3");
 				Assert.IsNotNull (ex.Message, "#C4");
-				Assert.IsTrue (ex.Message.IndexOf ("ExecuteNonQuery") != -1, "#C5:" + ex.Message);
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteNonQuery"), "#C5:" + ex.Message);
+			}
+		}
+
+		[Test]
+		public void ExecuteReader_CommandText_Empty ()
+		{
+			try {
+				cmd.ExecuteReader ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteReader: CommandText property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#A5:" + ex.Message);
+			}
+
+			cmd.CommandText = string.Empty;
+
+			try {
+				cmd.ExecuteReader ();
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteReader: CommandText property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#B5:" + ex.Message);
+			}
+
+			cmd.CommandText = null;
+
+			try {
+				cmd.ExecuteReader ();
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteReader: CommandText property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#C5:" + ex.Message);
 			}
 		}
 
@@ -155,12 +199,17 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void ExecuteScalarTest ()
+		public void ExecuteScalar ()
 		{
 			cmd.CommandText = "select count(*) from employee where id < 3";
 			Assert.AreEqual (2, (int) Convert.ChangeType (cmd.ExecuteScalar (),
 								      typeof (int)),
-					 "#1 there should be 2 records");
+					 "#1");
+			cmd.Dispose ();
+
+			cmd = conn.CreateCommand ();
+			cmd.CommandText = "select id from employee where id = 666";
+			Assert.IsNull (cmd.ExecuteScalar (), "#2");
 		}
 	}
 }

@@ -540,7 +540,7 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		public void GetOrdinal_Name_DoesNotExist ()
+		public void GetOrdinal_Name_NotFound ()
 		{
 			IDataReader reader = null;
 
@@ -683,6 +683,292 @@ namespace MonoTests.System.Data
 			cmd.CommandText = "SELECT type_tinyint from numeric_family"; ;
 			using (IDataReader reader = cmd.ExecuteReader ()) {
 				Assert.AreEqual ("type_tinyint", reader.GetName (0), "#1");
+			}
+		}
+
+		[Test] // this [Int32]
+		public void Indexer1 ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = cmd.ExecuteReader ();
+				Assert.IsTrue (reader.Read ());
+				Assert.AreEqual (1, reader [0], "#0");
+				Assert.AreEqual ("suresh", reader [1], "#1");
+				Assert.AreEqual ("kumar", reader [2], "#2");
+				Assert.AreEqual (new DateTime (1978, 8, 22), reader [3], "#3");
+				Assert.AreEqual (new DateTime (2001, 3, 12), reader [4], "#4");
+				Assert.AreEqual ("suresh@gmail.com", reader [5], "#5");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [Int32]
+		public void Indexer1_Reader_Closed ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "select fname from employee";
+				reader = cmd.ExecuteReader ();
+				reader.Read ();
+				reader.Close ();
+
+				try {
+					object value = reader [0];
+					Assert.Fail ("#A1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				reader = cmd.ExecuteReader ();
+				reader.Close ();
+
+				try {
+					object value = reader [0];
+					Assert.Fail ("#B1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [Int32]
+		public void Indexer1_Reader_NoData ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "select fname from employee WHERE lname='kumar'";
+				reader = cmd.ExecuteReader ();
+				try {
+					object value = reader [0];
+					Assert.Fail ("#A1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				Assert.IsTrue (reader.Read ());
+				Assert.IsFalse (reader.Read ());
+
+				try {
+					object value = reader [0];
+					Assert.Fail ("#B1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [Int32]
+		public void Indexer1_Value_Invalid ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "select fname from employee";
+				reader = cmd.ExecuteReader ();
+				Assert.IsTrue (reader.Read ());
+				try {
+					object value = reader [-1];
+					Assert.Fail ("#A1:" + value);
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				try {
+					object value = reader [1];
+					Assert.Fail ("#B1:" + value);
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [String]
+		public void Indexer2 ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "SELECT * FROM employee WHERE lname='kumar'";
+				reader = cmd.ExecuteReader ();
+				Assert.IsTrue (reader.Read ());
+				Assert.AreEqual (1, reader ["id"], "id");
+				Assert.AreEqual ("suresh", reader ["fname"], "fname");
+				Assert.AreEqual ("kumar", reader ["lname"], "lname");
+				Assert.AreEqual (new DateTime (1978, 8, 22), reader ["doB"], "doB");
+				Assert.AreEqual (new DateTime (2001, 3, 12), reader ["doj"], "doj");
+				Assert.AreEqual ("suresh@gmail.com", reader ["EmaiL"], "EmaiL");
+				Assert.AreEqual (1, reader ["iD"], "iD");
+				Assert.AreEqual ("suresh@gmail.com", reader ["eMail"], "eMail");
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [String]
+		public void Indexer2_Reader_Closed ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "select fname from employee";
+				reader = cmd.ExecuteReader ();
+				reader.Read ();
+				reader.Close ();
+
+				try {
+					object value = reader ["fname"];
+					Assert.Fail ("#A1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				reader = cmd.ExecuteReader ();
+				reader.Close ();
+
+				try {
+					object value = reader ["fname"];
+					Assert.Fail ("#B1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [String]
+		public void Indexer2_Reader_NoData ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "select fname from employee WHERE lname='kumar'";
+				reader = cmd.ExecuteReader ();
+
+				try {
+					object value = reader ["fname"];
+					Assert.Fail ("#A1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				Assert.IsTrue (reader.Read ());
+				Assert.IsFalse (reader.Read ());
+
+				try {
+					object value = reader ["fname"];
+					Assert.Fail ("#B1:" + value);
+				} catch (InvalidOperationException ex) {
+					// No data exists for the row/column
+					Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [String]
+		public void Indexer2_Value_NotFound ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "select fname from employee";
+				reader = cmd.ExecuteReader ();
+				Assert.IsTrue (reader.Read ());
+				try {
+					object value = reader ["address"];
+					Assert.Fail ("#A1:" + value);
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#A2");
+					Assert.IsNull (ex.InnerException, "#A3");
+					Assert.IsNotNull (ex.Message, "#A4");
+				}
+
+				try {
+					object value = reader [string.Empty];
+					Assert.Fail ("#B1:" + value);
+				} catch (IndexOutOfRangeException ex) {
+					// Index was outside the bounds of the array
+					Assert.AreEqual (typeof (IndexOutOfRangeException), ex.GetType (), "#B2");
+					Assert.IsNull (ex.InnerException, "#B3");
+					Assert.IsNotNull (ex.Message, "#B4");
+				}
+			} finally {
+				if (reader != null)
+					reader.Close ();
+			}
+		}
+
+		[Test] // this [String]
+		public void Indexer2_Value_Null ()
+		{
+			IDataReader reader = null;
+
+			try {
+				cmd.CommandText = "select fname from employee";
+				reader = cmd.ExecuteReader ();
+				try {
+					object value = reader [(string) null];
+					Assert.Fail ("#1:" + value);
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.AreEqual ("fieldName", ex.ParamName, "#5");
+				}
+			} finally {
+				if (reader != null)
+					reader.Close ();
 			}
 		}
 
@@ -1828,12 +2114,10 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetBytes ()
 		{
+			byte [] expected = new byte [] { 0x32, 0x56, 0x00, 0x44, 0x22 };
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
-			CommandBehavior behavior;
-
-			behavior = CommandBehavior.SingleResult | CommandBehavior.SequentialAccess;
-			using (IDataReader reader = cmd.ExecuteReader (behavior)) {
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (reader.Read (), "#A1");
 
 				// Get By Parts for the column blob
@@ -1850,12 +2134,11 @@ namespace MonoTests.System.Data
 					count += ret;
 				} while (count < totalsize);
 
-				Assert.AreEqual (5, count, "#A2");
-				Assert.AreEqual (new byte [] { 0x32, 0x56, 0x00, 0x44, 0x22 }, val, "#A3");
+				Assert.AreEqual (expected.Length, count, "#A2");
+				Assert.AreEqual (expected, val, "#A3");
 			}
 
-			behavior = CommandBehavior.SingleResult;
-			using (IDataReader reader = cmd.ExecuteReader (behavior)) {
+			using (IDataReader reader = cmd.ExecuteReader ()) {
 				Assert.IsTrue (reader.Read (), "#B1");
 
 				// Get By Parts for the column blob
@@ -1873,20 +2156,40 @@ namespace MonoTests.System.Data
 					count += ret;
 				} while (count < totalsize);
 
-				Assert.AreEqual (5, count, "#B2");
-				Assert.AreEqual (new byte [] { 0x32, 0x56, 0x00, 0x44, 0x22 }, val, "#B3");
+				Assert.AreEqual (expected.Length, count, "#B2");
+				Assert.AreEqual (expected, val, "#B3");
 			}
 
-			behavior = CommandBehavior.SingleResult;
-			using (IDataReader reader = cmd.ExecuteReader (behavior)) {
-				Assert.IsTrue (reader.Read (), "#D1");
+			// buffer size > (buffer offset + length) > remaining data
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (reader.Read ());
 
 				long totalsize = reader.GetBytes (0, 0, null, 0, 0);
+				byte [] val = new byte [totalsize + 5];
+				int buffer_offset = 3;
 
-				byte [] val = new byte [totalsize];
-				long ret = reader.GetBytes (0, 0L, val, 0, (int) (totalsize * 2));
-				Assert.AreEqual (totalsize, ret, "#D2");
-				Assert.AreEqual (new byte [] { 0x32, 0x56, 0x00, 0x44, 0x22 }, val, "#D3");
+				long ret = reader.GetBytes (0, 0, val, buffer_offset, (int) totalsize);
+				Assert.AreEqual (expected.Length, ret, "#C1");
+				for (int i = 0; i < buffer_offset; i++)
+					Assert.AreEqual (0x00, val [i], "#C2:" + i);
+				for (int i = 0; i < totalsize; i++)
+					Assert.AreEqual (expected [i], val [buffer_offset + i], "#C3:" + i);
+			}
+
+			// buffer size > (buffer offset + length) > remaining data
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read ());
+
+				long totalsize = reader.GetBytes (0, 0, null, 0, 0);
+				byte [] val = new byte [totalsize + 5];
+				int buffer_offset = 3;
+
+				long ret = reader.GetBytes (0, 0, val, buffer_offset, (int) totalsize);
+				Assert.AreEqual (expected.Length, ret, "#D1");
+				for (int i = 0; i < buffer_offset; i++)
+					Assert.AreEqual (0x00, val [i], "#D2:" + i);
+				for (int i = 0; i < totalsize; i++)
+					Assert.AreEqual (expected [i], val [buffer_offset + i], "#D3:" + i);
 			}
 
 			/* FIXME: dataIndex is currently ignored */
@@ -1985,7 +2288,7 @@ namespace MonoTests.System.Data
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (reader.Read (), "#E1");
-				Assert.AreEqual (5, reader.GetBytes (0, 5, null, 3, 4), "#E2");
+				Assert.AreEqual (5, reader.GetBytes (0, 5, null, 3, 8), "#E2");
 
 				Assert.IsTrue (reader.Read (), "#F1");
 				Assert.AreEqual (275, reader.GetBytes (0, 5, null, 3, 4), "#F2");
@@ -2055,7 +2358,7 @@ namespace MonoTests.System.Data
 
 			using (IDataReader reader = cmd.ExecuteReader ()) {
 				Assert.IsTrue (reader.Read (), "#M1");
-				Assert.AreEqual (5, reader.GetBytes (0, 5, null, 3, 4), "#M2");
+				Assert.AreEqual (5, reader.GetBytes (0, 5, null, 3, 8), "#M2");
 
 				Assert.IsTrue (reader.Read (), "#N1");
 				Assert.AreEqual (275, reader.GetBytes (0, 5, null, 3, 4), "#N2");
@@ -2089,6 +2392,48 @@ namespace MonoTests.System.Data
 						}
 					}
 				}
+			}
+		}
+
+		[Test]
+		public void GetBytes_DataIndex_Overflow ()
+		{
+			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 2";
+
+			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
+				Assert.IsTrue (reader.Read ());
+
+				long totalsize = reader.GetBytes (0, 0, null, 0, 0);
+				byte [] val = new byte [totalsize * 2];
+				long ret;
+
+				// dataIndex > total size, length = 0
+				ret = reader.GetBytes (0, totalsize + 5, val, 0, 0);
+				Assert.AreEqual (0, ret, "#C1");
+				// dataIndex > total size, length < total size
+				ret = reader.GetBytes (0, totalsize + 5, val, 0, 5);
+				Assert.AreEqual (0, ret, "#C2");
+				// dataIndex > total size, length > total size
+				ret = reader.GetBytes (0, totalsize + 5, val, 0, (int) (totalsize + 5));
+				Assert.AreEqual (0, ret, "#C3");
+			}
+
+			using (IDataReader reader = cmd.ExecuteReader ()) {
+				Assert.IsTrue (reader.Read ());
+
+				long totalsize = reader.GetBytes (0, 0, null, 0, 0);
+				byte [] val = new byte [totalsize * 2];
+				long ret;
+
+				// dataIndex > total size, length = 0
+				ret = reader.GetBytes (0, totalsize + 5, val, 0, 0);
+				Assert.AreEqual (0, ret, "#B1");
+				// dataIndex > total size, length < total size
+				ret = reader.GetBytes (0, totalsize + 5, val, 0, 5);
+				Assert.AreEqual (0, ret, "#B2");
+				// dataIndex > total size, length > total size
+				ret = reader.GetBytes (0, totalsize + 5, val, 0, (int) (totalsize + 5));
+				Assert.AreEqual (0, ret, "#B3");
 			}
 		}
 
