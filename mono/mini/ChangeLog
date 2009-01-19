@@ -1,3 +1,13 @@
+2009-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r123754.
+
+	* mini.c (mini_thread_cleanup): Don't cleanup TLS storage if the
+	thread been cleaned up is not the same currently in execution.
+
+	Fixes appdomain-unload crashes on windows, osx and linux variants
+	without the __thread keyword.
+
 2009-01-13  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r123258.
