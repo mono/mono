@@ -1,3 +1,10 @@
+2009-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r123812.
+	
+	* loader.c (search_in_array_class): Call mono_class_setup_methods () before
+	accessing klass->methods. Fixes #467385.
+
 2009-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r123201.
