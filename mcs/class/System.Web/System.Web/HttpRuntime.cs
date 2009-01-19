@@ -359,6 +359,7 @@ namespace System.Web {
 			context.Request.ReleaseResources ();
 			context.Response.ReleaseResources ();
 			HttpContext.Current = null;
+			HttpApplication.requests_total_counter.Increment ();
 			
 			return true;
 		}
@@ -633,6 +634,7 @@ namespace System.Web {
 			wr.SendResponseFromMemory (contentBytes, contentBytes.Length);
 			wr.FlushResponse (true);
 			wr.CloseConnection ();
+			HttpApplication.requests_total_counter.Increment ();
 		}
 
 		//
@@ -651,6 +653,7 @@ namespace System.Web {
 			wr.SendResponseFromMemory (contentBytes, contentBytes.Length);
 			wr.FlushResponse (true);
 			wr.CloseConnection ();
+			HttpApplication.requests_total_counter.Increment ();
 		}
 
 #if NET_2_0 

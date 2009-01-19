@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Web.Configuration;
@@ -45,6 +46,7 @@ namespace System.Web
 		Queue queue;
 		bool disposing;
 		Exception initialException;
+		PerformanceCounter requestsQueuedCounter;
 		
 		public QueueManager ()
 		{
@@ -82,6 +84,9 @@ namespace System.Web
 
 			if (initialException == null && ex != null)
 				initialException = ex;
+
+			requestsQueuedCounter = new PerformanceCounter ("ASP.NET", "Requests Queued");
+			requestsQueuedCounter.RawValue = 0;
 		}
 
 		public bool HasException {
@@ -137,6 +142,7 @@ namespace System.Web
 		{
 			if (queue.Count < queueLimit) {
 				queue.Enqueue (wr);
+				requestsQueuedCounter.Increment ();
 				return;
 			}
 
@@ -145,8 +151,11 @@ namespace System.Web
 
 		HttpWorkerRequest Dequeue ()
 		{
-			if (queue.Count > 0)
-				return (HttpWorkerRequest) queue.Dequeue ();
+			if (queue.Count > 0) {
+				HttpWorkerRequest request = (HttpWorkerRequest) queue.Dequeue ();
+				requestsQueuedCounter.Decrement ();
+				return request;
+			}
 
 			return null;
 		}

@@ -1,3 +1,9 @@
+2009-01-19  Christian Hergert  <christian.hergert@gmail.com>
+
+	* QueueManager.cs: Implement requests queued performance counter.
+	* HttpRuntime.cs: Implement requests total counter.
+	* HttpApplication.cs: Implement requests total counter.
+
 2009-01-13  Dean Brettle  <dean@brettle.com>
 
 	* HttpApplicationFactory.cs: if there are any *.browser files in

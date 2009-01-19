@@ -66,6 +66,7 @@ using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Security.Permissions;
@@ -91,6 +92,11 @@ namespace System.Web {
 	{
 		static readonly object disposedEvent = new object ();
 		static readonly object errorEvent = new object ();
+		
+		// we do this static rather than per HttpApplication because
+		// mono's perfcounters use the counter instance parameter for
+		// the process to access shared memory.
+		internal static PerformanceCounter requests_total_counter = new PerformanceCounter ("ASP.NET", "Requests Total");
 		
 		internal static readonly string [] BinDirs = {"Bin", "bin"};
 		object this_lock = new object();
@@ -1113,6 +1119,8 @@ namespace System.Web {
 				begin_iar.Complete ();
 			else
 				done.Set ();
+
+			requests_total_counter.Increment ();
 		}
 		
 		//
