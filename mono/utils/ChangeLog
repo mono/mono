@@ -1,3 +1,10 @@
+2009-01-19  Bill Holmes  <billholmes54@gmail.com>
+
+	* mono-path.c (mono_path_canonicalize): Adding support for UNC
+	   paths on Windows.
+
+	Contributed under MIT/X11 license.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-mmap.c: Applied patch from Koushik Dutta
