@@ -1,3 +1,7 @@
+2009-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il.in: Add a test for #467385.
+
 2009-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mini_thread_cleanup): Don't cleanup TLS storage if the
