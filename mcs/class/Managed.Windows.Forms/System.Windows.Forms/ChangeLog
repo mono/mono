@@ -1,3 +1,10 @@
+2009-01-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBox.cs: When removing an item and the last item is selected,
+	remove it from the selection, and if selection mode is One try to
+	select the new last item.
+	Fixes #465422.
+
 2009-01-16  Mike Gorse  <mgorse@novell.com>
 
 	* Splitter.cs: Make MaxSize internal so that UIA code can use it.

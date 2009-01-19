@@ -2706,8 +2706,7 @@ namespace System.Windows.Forms
 				//UIA Framework element removed
 				object removed = object_items [index];
 #endif
-
-				owner.selected_indices.Remove (index);
+				UpdateSelection (index);
 				object_items.RemoveAt (index);
 				owner.CollectionChanged ();
 				
@@ -2733,6 +2732,28 @@ namespace System.Windows.Forms
 #endif
 
 				return cnt;
+			}
+
+			// we receive the index to be removed
+			void UpdateSelection (int removed_index)
+			{
+				owner.selected_indices.Remove (removed_index);
+
+				if (owner.selection_mode != SelectionMode.None) {
+					int last_idx = object_items.Count - 1;
+
+					// if the last item was selected, remove it from selection,
+					// since it will become invalid after the removal
+					if (owner.selected_indices.Contains (last_idx)) {
+						owner.selected_indices.Remove (last_idx);
+
+						// in SelectionMode.One try to put the selection on the new last item
+						int new_idx = last_idx - 1;
+						if (owner.selection_mode == SelectionMode.One && new_idx > -1)
+							owner.selected_indices.Add (new_idx);
+					}
+				}
+
 			}
 
 			internal void Sort ()
