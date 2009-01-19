@@ -1,3 +1,7 @@
+2009-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CodeModule.cs : use DefineDynamicModule() which is avaiable in 2.1.
+
 2008-07-05  Eyal Alaluf <eyala@mainsoft.com>
 
 	* CodeGenerationHelper.cs: Correctly handle enum underlying types.

@@ -1,3 +1,8 @@
+2009-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientProxyGenerator.cs : fix reflection-based GetConstructor()
+	  so that it can work in 2.1 profile (.ctor is made internal).
+
 2009-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServerTooBusyException.cs, CommunicationObjectAbortedException.cs,

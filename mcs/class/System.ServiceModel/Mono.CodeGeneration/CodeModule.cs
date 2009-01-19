@@ -40,7 +40,7 @@ namespace Mono.CodeGeneration
 			AssemblyName myAsmName = new AssemblyName();
 			myAsmName.Name = name;
 			AssemblyBuilder myAsmBuilder = myDomain.DefineDynamicAssembly (myAsmName, AssemblyBuilderAccess.RunAndSave);
-			module = myAsmBuilder.DefineDynamicModule (name, name + ".dll");
+			module = myAsmBuilder.DefineDynamicModule (name);
 		}
 		
 		public static CodeModule Shared

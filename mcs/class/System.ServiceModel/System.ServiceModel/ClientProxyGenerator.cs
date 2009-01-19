@@ -60,7 +60,8 @@ namespace System.ServiceModel
 			CodeMethod ctor = c.CreateConstructor (
 				MethodAttributes.Public, ctorargs);
 			CodeBuilder b = ctor.CodeBuilder;
-			MethodBase baseCtor = typeof (ClientRuntimeChannel).GetConstructor (ctorargs);
+			MethodBase baseCtor = typeof (ClientRuntimeChannel).GetConstructors (
+				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance) [0];
 			if (baseCtor == null) throw new Exception ("INTERNAL ERROR: ClientRuntimeChannel#.ctor(ClientRuntime,ChannelFactory) does not exist.");
 			b.Call (
 				ctor.GetThis (),
