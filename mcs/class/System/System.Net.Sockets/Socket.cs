@@ -1334,7 +1334,7 @@ namespace System.Net.Sockets
 				if (config != null)
 					ipv6Supported = config.Ipv6.Enabled ? -1 : 0;
 #else
-				NetConfig config = (NetConfig)System.Configuration.ConfigurationSettings.GetConfig("system.net/settings");
+				NetConfig config = System.Configuration.ConfigurationSettings.GetConfig("system.net/settings") as NetConfig;
 				if (config != null)
 					ipv6Supported = config.ipv6Enabled ? -1 : 0;
 #endif
@@ -1345,7 +1345,9 @@ namespace System.Net.Sockets
 						tmp.Close();
 
 						ipv6Supported = 1;
-					} catch { }
+					} catch {
+						ipv6Supported = 0;
+					}
 				}
 			}
 		}
