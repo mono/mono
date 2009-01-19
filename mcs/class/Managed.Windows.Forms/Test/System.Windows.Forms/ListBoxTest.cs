@@ -60,6 +60,49 @@ namespace MonoTests.System.Windows.Forms
 			base.TearDown ();
 		}
 
+		[Test] // bug #465422
+		public void RemoveLast ()
+		{
+			listBox.Items.Clear ();
+
+			for (int i = 0; i < 3; i++)
+				listBox.Items.Add (i.ToString ());
+
+			// need to create control to actually test the invalidation
+			listBox.CreateControl ();
+
+			// select last - then remove an item that is *not* the last,
+			// so basically the selection is invalidated implicitly
+			listBox.SelectedIndex = 2;
+			listBox.Items.RemoveAt (1);
+			Assert.AreEqual (1, listBox.SelectedIndex, "#A1");
+
+			listBox.SelectedIndex = 0;
+			Assert.AreEqual (0, listBox.SelectedIndex, "#B1");
+
+			// 
+			// MultiSelection
+			//
+			listBox.ClearSelected ();
+			listBox.Items.Clear ();
+			for (int i = 0; i < 3; i++)
+				listBox.Items.Add (i.ToString ());
+
+			listBox.SelectionMode = SelectionMode.MultiSimple;
+
+			listBox.SetSelected (0, true);
+			listBox.SetSelected (2, true);
+
+			Assert.AreEqual (true, listBox.GetSelected (0), "#C1");
+			Assert.AreEqual (false, listBox.GetSelected (1), "#C2");
+			Assert.AreEqual (true, listBox.GetSelected (2), "#C3");
+
+			listBox.Items.RemoveAt (2);
+			Assert.AreEqual (true, listBox.GetSelected (0), "#D1");
+			Assert.AreEqual (false, listBox.GetSelected (1), "#D2");
+			Assert.AreEqual (1, listBox.SelectedIndices.Count, "#D3");
+		}
+
 		[Test]
 		public void ListBoxPropertyTest ()
 		{

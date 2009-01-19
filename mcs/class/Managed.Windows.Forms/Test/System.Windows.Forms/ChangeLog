@@ -1,3 +1,7 @@
+2009-01-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBoxTest.cs: New test for RemoveAt and selection.
+
 2009-01-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ClipboardTest.cs: Ouch, I am an idiot - the members used in the new
