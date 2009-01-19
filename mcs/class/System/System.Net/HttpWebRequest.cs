@@ -538,15 +538,10 @@ namespace System.Net
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public override bool UseDefaultCredentials
 		{
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
-			}
+			get { return CredentialCache.DefaultCredentials == Credentials; }
+			set { Credentials = value ? CredentialCache.DefaultCredentials : null; }
 		}
 #endif
 		
