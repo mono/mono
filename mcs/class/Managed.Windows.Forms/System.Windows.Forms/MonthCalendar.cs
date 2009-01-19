@@ -1626,8 +1626,9 @@ namespace System.Windows.Forms {
 		// attempts to add the date to the selection without throwing exception
 		private void SelectDate (DateTime date) {
 			// try and add the new date to the selction range
+			SelectionRange range = null;
 			if (is_shift_pressed || (click_state [0])) {
-				SelectionRange range = new SelectionRange (first_select_start_date, date);
+				range = new SelectionRange (first_select_start_date, date);
 				if (range.Start.AddDays (MaxSelectionCount-1) < range.End) {
 					// okay the date is beyond what is allowed, lets set the maximum we can
 					if (range.Start != first_select_start_date) {
@@ -1636,13 +1637,16 @@ namespace System.Windows.Forms {
 						range.End = range.Start.AddDays (MaxSelectionCount-1);
 					}
 				}
-				SelectionRange = range;
 			} else {
 				if (date >= MinDate && date <= MaxDate) {
-					SelectionRange = new SelectionRange (date, date);
+					range = new SelectionRange (date, date);
 					first_select_start_date = date;
 				}
 			}
+				
+			// Only set if we re actually getting a different range (avoid an extra DateChanged event)
+			if (range != null && range.Start != selection_range.Start || range.End != selection_range.End)
+				SelectionRange = range;
 		}
 
 		// gets the week of the year

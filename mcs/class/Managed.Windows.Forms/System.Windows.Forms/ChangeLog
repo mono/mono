@@ -1,3 +1,13 @@
+2009-01-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MonthCalendar.cs: When handling the selection changes using the
+	mouse, don't set SelectionRange if the selection range didn't actually
+	change. This matters because, even if we set the range to the same
+	previous range, an extra DateChanged event is fired. Just to be clear:
+	SelectionRage property doesn't check whether the new value is
+	different to the previous one (by ref equals doesn't work here).
+	Fixes other bits of #364914.
+
 2009-01-19  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* MonthCalendar.cs: Remove the extra OnDateChanged call when handling
