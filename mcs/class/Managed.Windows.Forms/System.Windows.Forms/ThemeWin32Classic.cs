@@ -3499,16 +3499,6 @@ namespace System.Windows.Forms
 					brush_text,
 					rect_text, string_format);
 				
-				if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
-					string str = item.GetShortCutText ();
-					Rectangle rect = rect_text;
-					rect.X = item.XTab;
-					rect.Width -= item.XTab;
-
-					e.Graphics.DrawString (str, e.Font, brush_text,
-						rect, string_format_menu_shortcut);
-				}
-				
 				if (item.MenuBar) {
 					Border3DStyle border_style = Border3DStyle.Adjust;
 					if ((item.Status & DrawItemState.HotLight) != 0)
@@ -3524,9 +3514,29 @@ namespace System.Windows.Forms
 					e.Graphics.DrawString (item.Text, e.Font, Brushes.White, 
 							       new RectangleF(rect_text.X + 1, rect_text.Y + 1, rect_text.Width, rect_text.Height),
 							       string_format);
+
 				}
 				
 				e.Graphics.DrawString (item.Text, e.Font, ResPool.GetSolidBrush(ColorGrayText), rect_text, string_format);
+			}
+
+			if (!item.MenuBar && item.Shortcut != Shortcut.None && item.ShowShortcut) {
+				string str = item.GetShortCutText ();
+				Rectangle rect = rect_text;
+				rect.X = item.XTab;
+				rect.Width -= item.XTab;
+
+				if (item.Enabled) {
+					e.Graphics.DrawString (str, e.Font, brush_text, rect, string_format_menu_shortcut);
+				} else {
+					if ((item.Status & DrawItemState.Selected) != DrawItemState.Selected) {
+						e.Graphics.DrawString (str, e.Font, Brushes.White, 
+								       new RectangleF(rect.X + 1, rect.Y + 1, rect.Width, rect_text.Height),
+								       string_format_menu_shortcut);
+
+					}
+					e.Graphics.DrawString (str, e.Font, ResPool.GetSolidBrush(ColorGrayText), rect, string_format_menu_shortcut);
+				}
 			}
 
 			/* Draw arrow */

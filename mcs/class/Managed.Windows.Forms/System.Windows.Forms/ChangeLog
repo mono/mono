@@ -1,5 +1,10 @@
 2009-01-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* ThemeWin32Classic.cs: Draw the menu item shortcut even if the menu 
+	item is disabled.
+
+2009-01-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* MenuAPI.cs: Do not handle shortcuts if the menu item is disabled.
 	[Fixes bug #467285]
 
