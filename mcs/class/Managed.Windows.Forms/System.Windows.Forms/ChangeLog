@@ -1,3 +1,14 @@
+2009-01-19  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* MonthCalendar.cs: Remove the extra OnDateChanged call when handling
+	selection using the keyboard, since we are already firing this event
+	when setting SelectionRange. Also don't set SelectionRange if the
+	previous and the new value are the same (the property, just as .net
+	does, doesn't check whether the previous value and the new one are the
+	same). This saves us from firing OnDateChanged event if the selection
+	range didn't change actually.
+	Fixes the remaining bits of #364914.
+
 2009-01-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: When removing an item and the last item is selected,

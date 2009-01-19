@@ -1617,7 +1617,10 @@ namespace System.Windows.Forms {
 					range.End = range.Start.AddDays (MaxSelectionCount-1);
 				}
 			}
-			this.SelectionRange = range;
+
+			// Avoid re-setting SelectionRange to the same value and fire an extra DateChanged event
+			if (range.Start != selection_range.Start || range.End != selection_range.End)
+				SelectionRange = range;
 		}
 
 		// attempts to add the date to the selection without throwing exception
@@ -2097,7 +2100,6 @@ namespace System.Windows.Forms {
 							DateTime date = GetFirstDateInMonth (this.SelectionStart);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.End:
@@ -2112,7 +2114,6 @@ namespace System.Windows.Forms {
 							DateTime date = GetLastDateInMonth (this.SelectionStart);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.PageUp:
@@ -2123,7 +2124,6 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddMonths (-1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.PageDown:
@@ -2134,7 +2134,6 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddMonths (1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.Up:
@@ -2145,7 +2144,6 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (-7);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.Down:
@@ -2156,7 +2154,6 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (7);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.Left:
@@ -2167,7 +2164,6 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (-1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.Right:
@@ -2178,7 +2174,6 @@ namespace System.Windows.Forms {
 							DateTime date = this.SelectionStart.AddDays (1);
 							this.SetSelectionRange (date, date);
 						}
-						this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 						e.Handled = true;
 						break;
 					case Keys.F4:
