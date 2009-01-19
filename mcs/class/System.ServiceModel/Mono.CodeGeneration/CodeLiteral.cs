@@ -22,6 +22,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -60,7 +61,7 @@ namespace Mono.CodeGeneration
 			}
 			
 			if (value is Enum)
-				value = Convert.ChangeType (value, (value.GetType().UnderlyingSystemType));
+				value = Convert.ChangeType (value, (value.GetType().UnderlyingSystemType), CultureInfo.InvariantCulture);
 			
 			if (value is Type) {
 				gen.Emit (OpCodes.Ldtoken, (Type)value);
