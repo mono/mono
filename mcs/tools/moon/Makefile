@@ -11,7 +11,8 @@ LINKER = $(topdir)/class/lib/net_1_1/monolinker.exe
 TUNER_DESCS =	\
 	Descriptors/mscorlib.xml	\
 	Descriptors/smcs.xml	\
-	Descriptors/System.xml
+	Descriptors/System.xml	\
+	Descriptors/System.ServiceModel.xml
 
 TUNER_LIBRARIES =	\
 	mscorlib	\
