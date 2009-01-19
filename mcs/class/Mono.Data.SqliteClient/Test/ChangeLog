@@ -1,3 +1,8 @@
+2009-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* SqliteCommandUnitTests.cs: Fix test ordering issues with the new nunit
+	version by marking Create () as [SetUp] instead of [Test].
+
 2007-01-16  Nagappan A  <anagappan@novell.com>
 
 	* SqliteDataAdapterUnitTests.cs (GetSchemaTable): Type casted to

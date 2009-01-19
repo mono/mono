@@ -25,7 +25,7 @@ namespace MonoTests.Mono.Data.SqliteClient
 		{
 		}
 		
-		[Test]
+		[SetUp]
 		public void Create()
 		{
 			try
@@ -36,7 +36,7 @@ namespace MonoTests.Mono.Data.SqliteClient
 					// We want to start with a fresh db for each full run
 					// The database is created on the first open()
 					File.Delete(_uri);
-
+					_conn = new SqliteConnection (_connectionString);
 				}
 			}
 			catch(Exception e)
