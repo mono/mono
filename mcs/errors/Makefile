@@ -50,6 +50,8 @@ ifdef VALID_PROFILE
 
 test-local: $(TEST_SUPPORT_FILES)
 
+check: run-test-local
+
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
 
