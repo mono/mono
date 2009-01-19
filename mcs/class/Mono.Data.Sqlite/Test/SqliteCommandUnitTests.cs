@@ -24,8 +24,8 @@ namespace MonoTests.Mono.Data.Sqlite
 		public SqliteCommandUnitTests()
 		{
 		}
-		
-		[Test]
+
+		[SetUp]
 		public void Create()
 		{
 			try
