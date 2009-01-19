@@ -1,3 +1,10 @@
+2009-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r123756.
+	
+	* marshal.c (emit_marshal_custom): Avoid calling MarshalNativeToManaged
+	for byval arguments without an [Out] attribute. Fixes #467212.
+
 2009-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r123642.
