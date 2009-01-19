@@ -27,9 +27,11 @@
 //
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Threading;
 
 namespace System.ServiceModel
 {
@@ -182,6 +184,34 @@ namespace System.ServiceModel
 			InnerChannel.DisplayInitializationUI ();
 		}
 
+#if NET_2_1
+		IAsyncResult delegate_async;
+
+		protected void InvokeAsync (BeginOperationDelegate beginOperationDelegate,
+			object [] inValues, EndOperationDelegate endOperationDelegate,
+			SendOrPostCallback operationCompletedCallback, object userState)
+		{
+			if (beginOperationDelegate == null)
+				throw new ArgumentNullException ("beginOperationDelegate");
+			if (endOperationDelegate == null)
+				throw new ArgumentNullException ("endOperationDelegate");
+			if (delegate_async != null)
+				throw new InvalidOperationException ("Another async operation is in progress");
+
+			var bw = new BackgroundWorker ();
+			bw.DoWork += delegate (object o, DoWorkEventArgs e) {
+				delegate_async = beginOperationDelegate (inValues, null, userState);
+			};
+			bw.RunWorkerCompleted += delegate (object o, RunWorkerCompletedEventArgs e) {
+				var ret = endOperationDelegate (delegate_async);
+				if (operationCompletedCallback != null)
+					operationCompletedCallback (ret);
+				delegate_async = null;
+			};
+			bw.RunWorkerAsync ();
+		}
+#endif
+		
 		void IDisposable.Dispose ()
 		{
 			Close ();
