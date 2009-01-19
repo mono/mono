@@ -83,7 +83,28 @@ namespace Mono.Simd
 			this.v12 = v12;
 			this.v13 = v13;
 			this.v14 = v14;
-			this.v15 = v15;		}
+			this.v15 = v15;
+		}
+		
+		public Vector16sb (sbyte sb)
+		{
+			this.v0 = sb;
+			this.v1 = sb;
+			this.v2 = sb;
+			this.v3 = sb;
+			this.v4 = sb;
+			this.v5 = sb;
+			this.v6 = sb;
+			this.v7 = sb;
+			this.v8 = sb;
+			this.v9 = sb;
+			this.v10 = sb;
+			this.v11 = sb;
+			this.v12 = sb;
+			this.v13 = sb;
+			this.v14 = sb;
+			this.v15 = sb;
+		}
 
 		public sbyte V0 { get { return v0; } set { v0 = value; } }
 		public sbyte V1 { get { return v1; } set { v1 = value; } }
@@ -101,6 +122,21 @@ namespace Mono.Simd
 		public sbyte V13 { get { return v13; } set { v13 = value; } }
 		public sbyte V14 { get { return v14; } set { v14 = value; } }
 		public sbyte V15 { get { return v15; } set { v15 = value; } }
+
+		public static Vector16sb One
+		{
+			get { return new Vector16sb (1); }
+		}
+
+		public static Vector16sb Zero
+		{
+			get { return new Vector16sb (0); }
+		}
+
+		public static Vector16sb MinusOne
+		{
+			get { return new Vector16sb (-1); }
+		}
 
 		[System.Runtime.CompilerServices.IndexerName ("Component")]
 		public unsafe sbyte this [int index]
@@ -342,6 +378,14 @@ namespace Mono.Simd
 		[CLSCompliant(false)]
 		public static unsafe void PrefetchNonTemporal (Vector16sb *res)
 		{
+		}
+		
+		public override string ToString()
+		{
+			return "<" + v0 + ", " + v1 + ", " + v2 + ", " + v3 + ", " +
+					v4 + ", " + v5 + ", " + v6 + ", " + v7 + ", " + 
+					+ v8 + ", " + v9 + ", " + v10 + ", " + v11 + ", " +
+					v12 + ", " + v13 + ", " + v14 + ", " + v15 + ">"; 
 		}
 	}
 }

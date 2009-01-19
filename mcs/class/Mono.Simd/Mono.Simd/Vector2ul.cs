@@ -41,6 +41,16 @@ namespace Mono.Simd
 		public ulong X { get { return x; } set { x = value; } }
 		public ulong Y { get { return y; } set { y = value; } }
 
+		public static Vector2ul One
+		{
+			get { return new Vector2ul (1); }
+		}
+
+		public static Vector2ul Zero
+		{
+			get { return new Vector2ul (0); }
+		}
+
 		[System.Runtime.CompilerServices.IndexerName ("Component")]
 		public unsafe ulong this [int index]
 		{
@@ -64,6 +74,12 @@ namespace Mono.Simd
 		{
 			this.x = x;
 			this.y = y;
+		}
+		
+		public Vector2ul (ulong ul)
+		{
+			this.x = ul;
+			this.y = ul;
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -242,5 +258,10 @@ namespace Mono.Simd
 		public static unsafe void PrefetchNonTemporal (Vector2ul *res)
 		{
 		}
+		public override string ToString()
+		{
+			return "<" + x + ", " + y + ">"; 
+		}
+		
 	}
 }

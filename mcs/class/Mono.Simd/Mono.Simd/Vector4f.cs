@@ -103,6 +103,31 @@ namespace Mono.Simd
 		public float Z { get { return z; } set { z = value; } }
 		public float W { get { return w; } set { w = value; } }
 
+		public static Vector4f Pi 
+		{
+			get { return new Vector4f ((float)System.Math.PI); }
+		}
+
+		public static Vector4f E 
+		{
+			get { return new Vector4f ((float)System.Math.E); }
+		}
+
+		public  static Vector4f One 
+		{
+			get { return new Vector4f (1); }
+		}
+
+		public  static Vector4f Zero 
+		{
+			get { return new Vector4f (0); }
+		}
+
+		public  static Vector4f MinusOne 
+		{
+			get { return new Vector4f (-1); }
+		}
+
 		[System.Runtime.CompilerServices.IndexerName ("Component")]
 		public unsafe float this [int index]
 		{
@@ -128,6 +153,14 @@ namespace Mono.Simd
 			this.y = y;
 			this.z = z;
 			this.w = w;
+		}
+		
+		public Vector4f (float f)
+		{
+			this.x = f;
+			this.y = f;
+			this.z = f;
+			this.w = f;
 		}
 
 		[Acceleration (AccelMode.SSE1)]
@@ -347,6 +380,11 @@ namespace Mono.Simd
 		[CLSCompliant(false)]
 		public static unsafe void PrefetchNonTemporal (Vector4f *res)
 		{
+		}
+		
+		public override string ToString()
+		{
+			return "<" + x + ", " + y + ", " + z + ", " + w + ">"; 
 		}
 	}
 }

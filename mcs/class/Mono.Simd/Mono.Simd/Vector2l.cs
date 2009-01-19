@@ -40,6 +40,21 @@ namespace Mono.Simd
 		public long X { get { return x; } set { x = value; } }
 		public long Y { get { return y; } set { y = value; } }
 
+		public static Vector2l One
+		{
+			get { return new Vector2l (1); }
+		}
+
+		public static Vector2l Zero
+		{
+			get { return new Vector2l (0); }
+		}
+
+		public static Vector2l MinusOne
+		{
+			get { return new Vector2l (-1); }
+		}
+
 		[System.Runtime.CompilerServices.IndexerName ("Component")]
 		public unsafe long this [int index]
 		{
@@ -63,6 +78,12 @@ namespace Mono.Simd
 		{
 			this.x = x;
 			this.y = y;
+		}
+
+		public Vector2l (long l)
+		{
+			this.x = l;
+			this.y = l;
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -240,6 +261,11 @@ namespace Mono.Simd
 		[CLSCompliant(false)]
 		public static unsafe void PrefetchNonTemporal (Vector2l *res)
 		{
+		}
+		
+		public override string ToString()
+		{
+			return "<" + x + ", " + y + ">"; 
 		}
 	}
 }

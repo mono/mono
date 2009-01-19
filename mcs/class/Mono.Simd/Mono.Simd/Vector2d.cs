@@ -42,6 +42,31 @@ namespace Mono.Simd
 		public double X { get { return x; } set { x = value; } }
 		public double Y { get { return y; } set { y = value; } }
 
+		public static Vector2d Pi 
+		{
+			get { return new Vector2d (System.Math.PI); }
+		}
+
+		public static Vector2d E 
+		{
+			get { return new Vector2d (System.Math.E); }
+		}
+
+		public  static Vector2d One 
+		{
+			get { return new Vector2d (1); }
+		}
+
+		public  static Vector2d Zero 
+		{
+			get { return new Vector2d (0); }
+		}
+
+		public  static Vector2d MinusOne 
+		{
+			get { return new Vector2d (-1); }
+		}
+
 		[System.Runtime.CompilerServices.IndexerName ("Component")]
 		public unsafe double this [int index]
 		{
@@ -65,6 +90,12 @@ namespace Mono.Simd
 		{
 			this.x = x;
 			this.y = y;
+		}
+
+		public Vector2d (double d)
+		{
+			this.x = d;
+			this.y = d;
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -273,6 +304,11 @@ namespace Mono.Simd
 		[CLSCompliant(false)]
 		public static unsafe void PrefetchNonTemporal (Vector2d *res)
 		{
+		}
+		
+		public override string ToString()
+		{
+			return "<" + x + ", " + y + ">"; 
 		}
 	}
 }

@@ -47,6 +47,16 @@ namespace Mono.Simd
 		public uint Z { get { return z; } set { z = value; } }
 		public uint W { get { return w; } set { w = value; } }
 
+		public static Vector4ui Identity
+		{
+			get { return  new Vector4ui (1); }
+		}
+
+		public static Vector4ui Zero
+		{
+			get { return  new Vector4ui (0); }
+		}
+
 		[System.Runtime.CompilerServices.IndexerName ("Component")]
 		public unsafe uint this [int index]
 		{
@@ -72,6 +82,14 @@ namespace Mono.Simd
 			this.y = y;
 			this.z = z;
 			this.w = w;
+		}
+		
+		public Vector4ui (uint ui)
+		{
+			this.x = ui;
+			this.y = ui;
+			this.z = ui;
+			this.w = ui;
 		}
 
 		[Acceleration (AccelMode.SSE2)]
@@ -267,6 +285,11 @@ namespace Mono.Simd
 		[CLSCompliant(false)]
 		public static unsafe void PrefetchNonTemporal (Vector4ui *res)
 		{
+		}
+		
+		public override string ToString()
+		{
+			return "<" + x + ", " + y + ", " + z + ", " + w + ">"; 
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2009-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector*.cs: Add ToString, single element constructors
+	and some helper constants.
+
 2009-01-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Vector*.cs: Use explicit layout to avoid the runtime

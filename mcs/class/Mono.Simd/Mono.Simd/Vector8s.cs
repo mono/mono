@@ -60,6 +60,18 @@ namespace Mono.Simd
 			this.v6 = v6;
 			this.v7 = v7;
 		}
+		
+		public Vector8s (short s)
+		{
+			this.v0 = s;
+			this.v1 = s;
+			this.v2 = s;
+			this.v3 = s;
+			this.v4 = s;
+			this.v5 = s;
+			this.v6 = s;
+			this.v7 = s;
+		}
 
 		public short V0 { get { return v0; } set { v0 = value; } }
 		public short V1 { get { return v1; } set { v1 = value; } }
@@ -69,6 +81,21 @@ namespace Mono.Simd
 		public short V5 { get { return v5; } set { v5 = value; } }
 		public short V6 { get { return v6; } set { v6 = value; } }
 		public short V7 { get { return v7; } set { v7 = value; } }
+
+		public static Vector8s Identity
+		{
+			get { return  new Vector8s (1); }
+		}
+
+		public static Vector8s Zero
+		{
+			get { return  new Vector8s (0); }
+		}
+
+		public static Vector8s MinusOne
+		{
+			get { return new Vector8s (-1); }
+		}
 
 		[System.Runtime.CompilerServices.IndexerName ("Component")]
 		public unsafe short this [int index]
@@ -351,6 +378,12 @@ namespace Mono.Simd
 		[CLSCompliant(false)]
 		public static unsafe void PrefetchNonTemporal (Vector8s *res)
 		{
+		}
+		
+		public override string ToString()
+		{
+			return "<" + v0 + ", " + v1 + ", " + v2 + ", " + v3 + ", " +
+					v4 + ", " + v5 + ", " + v6 + ", " + v7 + ">"; 
 		}
 	}
 }
