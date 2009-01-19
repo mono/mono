@@ -1,3 +1,13 @@
+2009-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-ops.h: Added OP_EXPAND_*
+
+	* cpu-x86.md: Same.
+
+	* mini-x86.c (mono_arch_output_basic_block): Same.
+	
+	* simd-intrinsics.c (simd_intrinsic_emit_setter): Add support for single element constructors.
+
 2009-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* iltests.il.in: Add a test for #467385.
