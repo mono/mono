@@ -1,5 +1,9 @@
 2009-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-simd.cs: Tests for the new constructors. 
+
+2009-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-ops.h: Added OP_EXPAND_*
 
 	* cpu-x86.md: Same.
