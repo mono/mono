@@ -1,5 +1,12 @@
 2009-01-19  Christian Hergert  <christian.hergert@gmail.com>
 
+	* object.c (mono_raise_exception): Remove call to InterlockedIncrement
+	as it is performed elsewhere.
+
+	Code is contributed under MIT/X11 license
+
+2009-01-19  Christian Hergert  <christian.hergert@gmail.com>
+
 	* mono-perfcounters-def.h: Add counters for asp.net requests total and
 	requests queued.
 	* object.c (mono_raise_exception): Increment the exceptions total
