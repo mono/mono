@@ -1,3 +1,7 @@
+2009-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* x86/x86-codegen.h: Add x86_movd_xreg_membase.
+
 2008-12-19  Mark Probst  <mark.probst@gmail.com>
 
 	* ppc/ppc-codegen.h: Fixed the argument order for lwzu in
