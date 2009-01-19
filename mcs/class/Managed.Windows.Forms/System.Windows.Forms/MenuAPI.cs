@@ -665,7 +665,7 @@ namespace System.Windows.Forms {
 		bool ProcessShortcut (Keys keyData)
 		{
 			MenuItem item = shortcuts [(int)keyData] as MenuItem;
-			if (item == null)
+			if (item == null || !item.Enabled)
 				return false;
 
 			if (active)
