@@ -1,3 +1,8 @@
+2009-01-20  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: made internals visible to
+	System.Web.Extensions_test_net_2_0.dll
+
 2008-01-07  Dean Brettle <dean@brettle.com> 
 
 	* AssemblyInfo.cs: made InternalsVisibleTo System.Web.test_net_2_0.dll
