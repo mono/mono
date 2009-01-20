@@ -1,3 +1,10 @@
+2009-01-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* threads.c: Add wapi_current_thread_desc that produces
+	a string representation of the current thread state.
+
+	* threads.h: Export wapi_current_thread_desc.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* io.c (GetDiskFreeSpaceEx): Applied patch from Koushik Dutta
