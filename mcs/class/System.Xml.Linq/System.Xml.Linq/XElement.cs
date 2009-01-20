@@ -549,7 +549,19 @@ namespace System.Xml.Linq
 
 		public override void WriteTo (XmlWriter w)
 		{
-			w.WriteStartElement (name.LocalName, name.Namespace.NamespaceName);
+			// some people expect the same prefix output as in input,
+			// in the loss of performance... see bug #466423.
+			string prefix = name.NamespaceName.Length > 0 ? w.LookupPrefix (name.Namespace.NamespaceName) : String.Empty;
+			foreach (XAttribute a in Attributes ()) {
+				if (a.IsNamespaceDeclaration && a.Value == name.Namespace.NamespaceName) {
+					if (a.Name.Namespace == XNamespace.Xmlns)
+						prefix = a.Name.LocalName;
+					// otherwise xmlns="..."
+					break;
+				}
+			}
+
+			w.WriteStartElement (null, name.LocalName, name.Namespace.NamespaceName);
 
 			foreach (XAttribute a in Attributes ()) {
 				if (a.IsNamespaceDeclaration) {

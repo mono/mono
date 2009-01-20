@@ -1,5 +1,10 @@
 2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XElement.cs : iterate all attributes and see if there is
+	  applicable ns prefix for current element. Fixed bug #466423.
+
+2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XDocument.cs : fix wrong indentation handling.
 
 2008-11-19  Jb Evain  <jbevain@novell.com>

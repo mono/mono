@@ -1,3 +1,7 @@
+2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs : added test for bug #466423.
+
 2008-06-12  Nestor Salceda  <nestor.salceda@gmail.com>
 
 	* XTextTest.cs: added test for bug #401325.

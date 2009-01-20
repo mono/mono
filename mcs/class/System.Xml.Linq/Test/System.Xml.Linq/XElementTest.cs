@@ -514,5 +514,17 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual ("<e1 a=\"v\" />", e1.ToString (), "#1");
 			Assert.AreEqual ("<e2 a=\"v\" />", e2.ToString (), "#2");
 		}
+
+		[Test]
+		public void SavePreservePrefixes ()
+		{
+			var x = XDocument.Parse (@"
+			<xxx:a xmlns:xxx='http://www.foobar.com'>
+    <xxx:b>blah blah blah</xxx:b>
+</xxx:a>");
+			StringWriter sw = new StringWriter ();
+			x.Save (sw, SaveOptions.DisableFormatting);
+			Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?><xxx:a xmlns:xxx=""http://www.foobar.com""><xxx:b>blah blah blah</xxx:b></xxx:a>", sw.ToString ());
+		}
 	}
 }
