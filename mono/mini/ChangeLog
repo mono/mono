@@ -1,3 +1,8 @@
+2009-01-20  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-exceptions.c (mono_print_thread_dump): Add information
+	about the thread state using wapi_current_thread_desc.
+
 2009-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Tests for the new constructors. 
