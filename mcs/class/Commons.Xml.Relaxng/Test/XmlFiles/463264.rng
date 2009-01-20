@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+  <start>
+    <element name="root">
+      <element name="v1">
+        <data type="mytype" datatypeLibrary="http://tempuri.org/mytypes" />
+      </element>
+      <element name="v2">
+        <data type="int" />
+      </element>
+    </element>
+  </start>
+</grammar>
+

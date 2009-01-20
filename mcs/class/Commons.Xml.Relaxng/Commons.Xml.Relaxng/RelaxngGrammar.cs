@@ -56,8 +56,6 @@ namespace Commons.Xml.Relaxng
 		RelaxngGrammarContentList includes = new RelaxngGrammarContentList ();
 		RelaxngGrammarContentList divs = new RelaxngGrammarContentList ();
 
-		RelaxngDatatypeProvider provider;
-
 		// compiled fields.
 		RdpPattern startPattern;
 
@@ -114,8 +112,8 @@ namespace Commons.Xml.Relaxng
 		}
 
 		internal RelaxngDatatypeProvider Provider {
-			get { return parentGrammar != null ? parentGrammar.Provider : provider; }
-			set { provider = value; }
+			get { return (base.DataProvider == null) ? (parentGrammar != null ? parentGrammar.Provider : base.DataProvider) : base.DataProvider; }
+			set { base.DataProvider = value; }
 		}
 
 		public override RelaxngPatternType PatternType {

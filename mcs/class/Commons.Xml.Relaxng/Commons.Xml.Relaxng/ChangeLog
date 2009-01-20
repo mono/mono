@@ -1,3 +1,8 @@
+2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngGrammar.cs : fix confused use of datatype provider property.
+	  Fixed bug #463264. Based on the patch by Mark Junker.
+
 2008-11-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngPattern.cs : handle inherited default namespace in compact 

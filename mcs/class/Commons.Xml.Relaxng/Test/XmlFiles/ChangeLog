@@ -1,3 +1,7 @@
+2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 463264.rng : new test file.
+
 2008-11-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* include-default-namespace.rnc,
