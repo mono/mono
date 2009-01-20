@@ -1,3 +1,9 @@
+2009-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* IPAddress.cs: handle sign extension for the high byte when using the
+	byte[] ctor for an IPv4 address.
+	Fixes bug #467472.
+
 2009-01-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: adjust to the correct directory when listing too.
