@@ -1,3 +1,11 @@
+2009-01-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: When handling mouse up event, check whether
+	highlighted_node is null or not - usually it should be non-null
+	alwaays, since the mouse down handler sets it, but some externa
+	operations, such TreeNodeCollection.Clear, could set it to null.
+	Fixes #438650.
+
 2009-01-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ThemeWin32Classic.cs: Draw the menu item shortcut even if the menu 

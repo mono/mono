@@ -2169,19 +2169,23 @@ namespace System.Windows.Forms {
 				focused_node = highlighted_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
 
-				if (prev_focused_node != null) {
-					invalid = Rectangle.Union (Bloat (prev_focused_node.Bounds),
-							Bloat (prev_highlighted_node.Bounds));
-				} else {
-					invalid = Bloat (prev_highlighted_node.Bounds);
+				if (prev_highlighted_node != null) {
+					if (prev_focused_node != null) {
+						invalid = Rectangle.Union (Bloat (prev_focused_node.Bounds),
+								Bloat (prev_highlighted_node.Bounds));
+					} else {
+						invalid = Bloat (prev_highlighted_node.Bounds);
+					}
+
+					invalid.X = 0;
+					invalid.Width = ViewportRectangle.Width;
+
+					Invalidate (invalid);
 				}
 
-				invalid.X = 0;
-				invalid.Width = ViewportRectangle.Width;
-
-				Invalidate (invalid);
 			} else {
-				Invalidate (highlighted_node.Bounds);
+				if (highlighted_node != null)
+					Invalidate (highlighted_node.Bounds);
 
 				highlighted_node = focused_node;
 				selected_node = focused_node;
