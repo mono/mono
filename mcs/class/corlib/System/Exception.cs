@@ -54,6 +54,8 @@ namespace System
 	{
 #pragma warning disable 169, 649
 		#region Sync with object-internals.h
+		/* Stores the IPs and the generic sharing infos
+		   (vtable/MRGCTX) of the frames. */
 		IntPtr [] trace_ips;
 		Exception inner_exception;
 		internal string message;
