@@ -1,3 +1,8 @@
+2009-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_delegate_trampoline): Revert the change which
+	added a mono_get_addr_from_ftnptr () as it breaks the ia64 build.
+
 2009-01-20  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Do generic sharing for array constructors.
