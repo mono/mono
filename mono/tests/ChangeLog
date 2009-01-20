@@ -1,3 +1,12 @@
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r123917.
+
+	* generic-stack-traces.2.cs: Generic sharing test for stack
+	traces.
+
+	* Makefile.am: Test added.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal9.cs: Change a test to be compatible with MS.NET.

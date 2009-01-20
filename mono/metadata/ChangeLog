@@ -1,3 +1,13 @@
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r123917.
+
+	* class.c (mono_class_has_parent_and_ignore_generics),
+	class-internals.h: Made non-static.
+
+	* object-internals.h (struct _MonoException): Added a comment
+	explaining the new use of trace_ips.
+
 2009-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r123812.
