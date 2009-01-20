@@ -1,4 +1,5 @@
 RdpPatternTests.cs
+RelaxngDatatypeProviderTests.cs
 RelaxngReaderTests.cs
 RelaxngValidatingReaderTests.cs
 XsdDatatypeTests.cs

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://tempuri.org/mytypes">
+  <start>
+    <element name="root">
+      <element name="v2">
+        <data type="int" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+          <param name="minExclusive">0</param>
+          <param name="maxExclusive">10</param>
+        </data>
+      </element>
+      <element name="v1">
+        <data type="mytype" />
+      </element>
+    </element>
+  </start>
+</grammar>

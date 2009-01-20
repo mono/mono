@@ -9,6 +9,7 @@ using System;
 using System.IO;
 using System.Xml;
 using Commons.Xml.Relaxng;
+using Commons.Xml.Relaxng.XmlSchema;
 using NUnit.Framework;
 
 namespace MonoTests.Commons.Xml.Relaxng
@@ -19,19 +20,36 @@ namespace MonoTests.Commons.Xml.Relaxng
 		[Test]
 		public void CustomTypeProvider ()
 		{
-			var datatypeLibrary = new RelaxngMergedProvider ();
-
-			datatypeLibrary [MyRngTypeProvider.Namespace] = new MyRngTypeProvider();
-			datatypeLibrary ["http://www.w3.org/2001/XMLSchema-datatypes"] = XsdDatatypeProvider.Instance;
-			datatypeLibrary [System.Xml.Schema.XmlSchema.Namespace] = XsdDatatypeProvider.Instance;
-			datatypeLibrary [String.Empty] = RelaxngMergedProvider.DefaultProvider [string.Empty];
-
+			var datatypeLibrary = SetupMyDataProvider ();
 			XmlDocument xml = new XmlDocument ();
 			xml.LoadXml ("<root> <v1>mytype</v1> <v2>1</v2> </root>");
 			XmlDocument schemaXml = ReadDoc ("Test/XmlFiles/463264.rng");
 			XmlReader reader = new RelaxngValidatingReader (new XmlNodeReader (xml), new XmlNodeReader (schemaXml), datatypeLibrary);
 			while (reader.Read ())
 				;
+		}
+
+		[Test]
+		public void Bug463267 ()
+		{
+			var datatypeLibrary = SetupMyDataProvider ();
+			XmlDocument xml = new XmlDocument ();
+			xml.LoadXml ("<root> <v2>1</v2> <v1>mytype</v1> </root>");
+			XmlDocument schemaXml = ReadDoc ("Test/XmlFiles/463267.rng");
+			XmlReader reader = new RelaxngValidatingReader (new XmlNodeReader (xml), new XmlNodeReader (schemaXml), datatypeLibrary);
+			while (reader.Read ())
+				;
+		}
+
+		RelaxngDatatypeProvider SetupMyDataProvider ()
+		{
+			var datatypeLibrary = new RelaxngMergedProvider ();
+
+			datatypeLibrary [MyRngTypeProvider.Namespace] = new MyRngTypeProvider();
+			datatypeLibrary ["http://www.w3.org/2001/XMLSchema-datatypes"] = XsdDatatypeProvider.Instance;
+			datatypeLibrary [System.Xml.Schema.XmlSchema.Namespace] = XsdDatatypeProvider.Instance;
+			datatypeLibrary [String.Empty] = RelaxngMergedProvider.DefaultProvider [string.Empty];
+			return datatypeLibrary;
 		}
 
 		XmlDocument ReadDoc (string s)

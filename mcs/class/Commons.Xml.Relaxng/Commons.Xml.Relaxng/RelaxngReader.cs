@@ -60,6 +60,7 @@ namespace Commons.Xml.Relaxng
 		Stack nsStack = new Stack ();
 		Stack datatypeLibraryStack = new Stack ();
 		XmlResolver resolver;
+		bool skipExternal = true;
 //		ArrayList annotationNamespaces = new ArrayList ();
 
 		// ctor
@@ -120,13 +121,14 @@ namespace Commons.Xml.Relaxng
 			bool skipRead = false;
 			bool b = false;
 			bool loop = true;
-			if (IsEmptyElement) { // this should be done here
+			MoveToElement ();
+			if (IsEmptyElement || NodeType == XmlNodeType.EndElement) { // this should be done here
 				nsStack.Pop ();
 				datatypeLibraryStack.Pop ();
 			}
 			do {
 				if (!skipRead)
-					Reader.Read ();
+					b = Reader.Read ();
 				else
 					skipRead = false;
 				switch (NodeType) {
@@ -143,13 +145,19 @@ namespace Commons.Xml.Relaxng
 					else
 						loop = false;
 					break;
-				default:
+				case XmlNodeType.Element:
+				case XmlNodeType.EndElement:
+					if (!skipExternal)
+						goto default;
 					if (NamespaceURI != RelaxngGrammar.NamespaceURI) {
 						Reader.Skip ();
 						skipRead = true;
 					}
 					else
 						loop = false;
+					break;
+				default:
+					loop = false;
 					break;
 				}
 			} while (!Reader.EOF && loop);
@@ -180,11 +188,6 @@ namespace Commons.Xml.Relaxng
 				}
 				else
 					datatypeLibraryStack.Push (DatatypeLibrary);
-				break;
-
-			case XmlNodeType.EndElement:
-				nsStack.Pop ();
-				datatypeLibraryStack.Pop ();
 				break;
 			}
 
@@ -956,6 +959,14 @@ namespace Commons.Xml.Relaxng
 			RelaxngNotAllowed na = new RelaxngNotAllowed ();
 			FillLocation (na);
 			return na;
+		}
+
+		public override string ReadString ()
+		{
+			skipExternal = false;
+			string s = base.ReadString ();
+			skipExternal = true;
+			return s;
 		}
 	}
 }

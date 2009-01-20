@@ -1,5 +1,10 @@
 2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngReader.cs : fixed wrong text skip and ns/datatypeLibrary
+	  stack pop. Fixed bug #463267.
+
+2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngGrammar.cs : fix confused use of datatype provider property.
 	  Fixed bug #463264. Based on the patch by Mark Junker.
 

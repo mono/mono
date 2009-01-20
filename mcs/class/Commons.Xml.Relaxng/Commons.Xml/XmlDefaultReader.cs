@@ -211,6 +211,7 @@ namespace Commons.Xml
 			return Reader.Read ();
 		}
 
+/*
 		public override string ReadString ()
 		{
 			return reader.ReadString ();
@@ -225,6 +226,7 @@ namespace Commons.Xml
 		{
 			return reader.ReadOuterXml ();
 		}
+*/
 
 		public override string LookupNamespace (string prefix)
 		{

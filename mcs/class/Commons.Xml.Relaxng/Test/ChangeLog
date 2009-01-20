@@ -1,5 +1,10 @@
 2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngDatatypeProviderTests.cs : new test, based on bug #463267
+	  by Mark Junker.
+
+2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngDatatypeProviderTests.cs : new test, based on bug #463264
 	  by Mark Junker.
 

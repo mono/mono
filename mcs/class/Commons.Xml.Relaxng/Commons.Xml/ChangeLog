@@ -1,3 +1,8 @@
+2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDefaultReader.cs : remove bogus overrides that blocks normal
+	  Read(). It was a design flaw in .NET.
+
 2004-06-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDefaultReader.cs : Added novell's license (avoid confusion).

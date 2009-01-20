@@ -1,3 +1,8 @@
+2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Commons.Xml.Relaxng_test.dll.sources : forgot to add
+	  RelaxngDatatypeProviderTests.cs.
+
 2008-11-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Makefile: what a messy EXTRA_DISTFILES.
