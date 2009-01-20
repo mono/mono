@@ -153,7 +153,7 @@ namespace System.Net {
 				m_Family = AddressFamily.InterNetworkV6;
 				m_ScopeId = 0;
 			} else {
-				m_Address = (address [3] << 24) + (address [2] << 16) +
+				m_Address = ((uint) address [3] << 24) + (address [2] << 16) +
 					(address [1] << 8) + address [0];
 			}
 		}
