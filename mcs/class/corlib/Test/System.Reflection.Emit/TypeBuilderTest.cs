@@ -47,6 +47,10 @@ namespace MonoTests.System.Reflection.Emit
 	{
 	}
 
+	public class Gen<T> {
+		public static T field = default(T);
+	}
+
 	[TestFixture]
 	public class TypeBuilderTest
 	{
@@ -10100,6 +10104,67 @@ namespace MonoTests.System.Reflection.Emit
 			t.MakeGenericType (typeof (double)).GetMethods ();
 		}
 #endif
+
+		[Test]
+		public void TestGenericFieldAccess () // bug #467415
+		{
+			AssemblyName asmName = new AssemblyName("DemoMethodBuilder1");
+			AppDomain domain = AppDomain.CurrentDomain;
+			AssemblyBuilder demoAssembly =
+				domain.DefineDynamicAssembly(asmName,
+						AssemblyBuilderAccess.RunAndSave);
+
+			// Define the module that contains the code. For an
+			// assembly with one module, the module name is the
+			// assembly name plus a file extension.
+			ModuleBuilder demoModule =
+				demoAssembly.DefineDynamicModule(asmName.Name,
+						asmName.Name+".dll");
+
+			TypeBuilder demoType =
+				demoModule.DefineType("DemoType", TypeAttributes.Public);
+
+			MethodBuilder factory =
+				demoType.DefineMethod("Factory",
+						MethodAttributes.Public | MethodAttributes.Static);
+
+			string[] typeParameterNames = {"T"};
+			GenericTypeParameterBuilder[] typeParameters =
+				factory.DefineGenericParameters(typeParameterNames);
+
+			GenericTypeParameterBuilder T = typeParameters[0];
+
+			Type[] parms = {};
+			factory.SetParameters(parms);
+
+			factory.SetReturnType(T);
+
+			ILGenerator ilgen = factory.GetILGenerator();
+
+			Type G = typeof(Gen<>);
+			Type GT = G.MakeGenericType (T);
+			FieldInfo GF = G.GetField("field");
+			FieldInfo GTF = TypeBuilder.GetField(GT, GF);
+
+			ilgen.Emit(OpCodes.Ldsfld, GTF);
+			ilgen.Emit(OpCodes.Ret);
+
+			// Complete the type.
+			Type dt = demoType.CreateType();
+			// Save the assembly, so it can be examined with Ildasm.exe.
+			//demoAssembly.Save(asmName.Name+".dll");
+
+			MethodInfo m = dt.GetMethod("Factory");
+			MethodInfo bound = m.MakeGenericMethod(typeof(int));
+
+			// Display a string representing the bound method.
+			//Console.WriteLine(bound);
+
+			object[] parameters = {};
+			int result = (int)(bound.Invoke(null, parameters));
+
+			Assert.AreEqual (0, result, "#1");
+		}
 
 		static MethodInfo GetMethodByName (MethodInfo [] methods, string name)
 		{
