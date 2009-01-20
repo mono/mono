@@ -1,3 +1,8 @@
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
+	* reflection.c (resolve_object): For fields, inflate the class and
+	then get the field in the inflated class.
+
 2009-01-20  Mark Probst  <mark.probst@gmail.com>
 
 	* object-internals.h (struct _MonoException): Added a comment
