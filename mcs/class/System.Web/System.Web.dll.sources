@@ -1044,6 +1044,7 @@ System.Web.UI.WebControls/StringArrayConverter.cs
 System.Web.UI.WebControls/Style.cs
 System.Web.UI.WebControls/SubMenuStyleCollection.cs
 System.Web.UI.WebControls/SubMenuStyle.cs
+System.Web.UI.WebControls/Substitution.cs
 System.Web.UI.WebControls/TableCaptionAlign.cs
 System.Web.UI.WebControls/TableCellCollection.cs
 System.Web.UI.WebControls/TableCellControlBuilder.cs
