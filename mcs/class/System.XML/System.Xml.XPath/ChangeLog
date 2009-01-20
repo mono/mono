@@ -1,3 +1,8 @@
+2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : give up sortless iterator optimization.
+	  Fixed bug #443490.
+
 2008-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Iterator.cs : DescendantIterator.Clone() was not cloning current

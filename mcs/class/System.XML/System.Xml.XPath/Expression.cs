@@ -1302,8 +1302,10 @@ namespace System.Xml.XPath
 				il = left.RequireSorting ? new SortedIterator (bb) : bb;
 			}
 
+			// FIXME: there could be chances to introduce sort-less
+			// iterator, but no one could do it yet.
 			SlashIterator b = new SlashIterator (il, right);
-			return RequireSorting ? (BaseIterator) new SortedIterator (b) : b;
+			return new SortedIterator (b);
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }

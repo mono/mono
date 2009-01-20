@@ -302,5 +302,18 @@ namespace MonoTests.System.Xml.XPath
 			XmlNode attr = doc.CreateAttribute ("b");
 			attr.SelectSingleNode ("//*[@id='foo']");
 		}
+
+		[Test]
+		public void Bug443490 ()
+		{
+			string xml = "<foo xmlns='urn:foo'><bar><div id='e1'> <div id='e1.1'> <div id='e1.1.1'> <div id='e1.1.1.1'> <div id='e1.1.1.1.1'/> </div> <div id='e1.1.1.2'/> </div> </div> </div></bar></foo>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XmlNamespaceManager ns = new XmlNamespaceManager (doc.NameTable);
+			ns.AddNamespace ("_", "urn:foo");
+			string xpath = "//_:div//_:div//_:div";
+			var nodes = doc.SelectNodes (xpath, ns);
+			AssertEquals (4, nodes.Count);
+		}
 	}
 }
