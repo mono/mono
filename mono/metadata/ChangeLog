@@ -1,3 +1,10 @@
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r123917.
+
+	* object-internals.h (struct _MonoException): Added a comment
+	explaining the new use of trace_ips.
+
 2009-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (inflated_signature_in_image): Call signature_in_image as well.
