@@ -1,5 +1,12 @@
 2009-01-20  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-stack-traces.2.cs: Generic sharing test for stack
+	traces.
+
+	* Makefile.am: Test added.
+
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-system-arrays.2.cs: Generic sharing test case for
 	arrays.
 

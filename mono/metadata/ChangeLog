@@ -1,5 +1,10 @@
 2009-01-20  Mark Probst  <mark.probst@gmail.com>
 
+	* object-internals.h (struct _MonoException): Added a comment
+	explaining the new use of trace_ips.
+
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-sharing.c (inflate_other_data): Inflate array methods
 	correctly.
 

@@ -1,3 +1,12 @@
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: Force the vtable variable in shared generic code
+	for the case that they might show up on a stack trace where they
+	are needed.
+
+	* mini-exceptions.c: Save and use generic sharing info as well as
+	IP in stack traces to resolve shared generic instantiations.
+
 2009-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline): Revert the change which
