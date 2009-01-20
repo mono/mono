@@ -1,3 +1,10 @@
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-system-arrays.2.cs: Generic sharing test case for
+	arrays.
+
+	* Makefile.am: Test added.
+
 2009-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* test-runner.cs: Avoid closing a stream which is still being written to.

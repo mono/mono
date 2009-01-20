@@ -1,3 +1,7 @@
+2009-01-20  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: Do generic sharing for array constructors.
+
 2009-01-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-exceptions.c (mono_print_thread_dump): Add information
