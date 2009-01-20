@@ -354,8 +354,8 @@ namespace System.Xml
 					return 0;
 			}
 
-			bool consumeToEnd = false;
-			while (!consumeToEnd && textCache.Length < length) {
+			bool loop = true;
+			while (loop && textCache.Length < length) {
 				switch (reader.NodeType) {
 				case XmlNodeType.Text:
 				case XmlNodeType.CDATA:
@@ -370,12 +370,15 @@ namespace System.Xml
 							Read ();
 							break;
 						default:
-							consumeToEnd = true;
+							loop = false;
 							break;
 						}
 					}
 					textCache.Append (reader.Value);
 					hasCache = true;
+					break;
+				default:
+					loop = false;
 					break;
 				}
 			}
@@ -386,7 +389,7 @@ namespace System.Xml
 			string str = textCache.ToString (0, min);
 			textCache.Remove (0, str.Length);
 			str.CopyTo (0, buffer, offset, str.Length);
-			if (min < length)
+			if (min < length && loop)
 				return min + ReadValueChunk (buffer, offset + min, length - min);
 			else
 				return min;

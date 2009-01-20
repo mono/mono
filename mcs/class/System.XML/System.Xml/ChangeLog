@@ -1,3 +1,8 @@
+2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReaderBinarySupport.cs : do not hang in the middle of reading
+	  byte chunk at some node types. Fixed bug #464229.
+
 2009-01-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NamespaceHandling.cs: New. Enum for Silverlight 2. Microsoft's 
