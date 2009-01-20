@@ -1,3 +1,7 @@
+2009-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* test-runner.cs: Avoid closing a stream which is still being written to.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal9.cs: Change a test to be compatible with MS.NET.
