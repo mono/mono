@@ -493,6 +493,32 @@ public class IPAddressTest
 
 #if NET_2_0
 	[Test]
+	public void FromBytes1 ()
+	{
+		byte[] val1 = new byte[4];
+		val1[0] = 82;
+		val1[1] = 165;
+		val1[2] = 240;
+		val1[3] = 134;
+		CompareIPs (val1, "82.165.240.134");
+
+		byte[] val2 = new byte[4];
+		val2[0] = 123;
+		val2[1] = 124;
+		val2[2] = 125;
+		val2[3] = 126;
+		CompareIPs (val2, "123.124.125.126");
+	}
+
+	void CompareIPs (byte [] bytes, string address)
+	{
+		IPAddress ip = new IPAddress (bytes);
+		IPAddress ip2 = IPAddress.Parse (address);
+		Assert.IsTrue (ip2.Equals (ip), "#A-" + address);
+		Assert.IsTrue (ip.Equals (ip2), "#B-" + address);
+	}
+
+	[Test]
 	public void TryParse_IpString_Null ()
 	{
 		IPAddress i;
