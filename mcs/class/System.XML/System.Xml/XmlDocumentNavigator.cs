@@ -628,6 +628,8 @@ namespace System.Xml
 		{
 			XmlAttribute attr = node as XmlAttribute;
 			XmlNode tmp = attr != null ? attr.OwnerElement : node;
+			if (tmp == null)
+				return; // i.e. attr has null OwnerElement.
 			for (XmlNode tmp2 = GetParentNode (tmp); tmp2 != null; tmp2 = GetParentNode (tmp2))
 				tmp = tmp2;
 			node = tmp;

@@ -1,5 +1,10 @@
 2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDocumentNavigator.cs : in some corner cases an attribute
+	  may have null OwnerElement. Fixed bug #458245.
+
+2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReaderBinarySupport.cs : do not hang in the middle of reading
 	  byte chunk at some node types. Fixed bug #464229.
 

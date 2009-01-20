@@ -293,5 +293,14 @@ namespace MonoTests.System.Xml.XPath
 			AssertEquals ("bar", ans [0].Name);
 			AssertEquals ("baz", ans [1].Name);
 		}
+
+		[Test] // bug #458245
+		public void SelectFromDetachedAttribute ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<a></a>");
+			XmlNode attr = doc.CreateAttribute ("b");
+			attr.SelectSingleNode ("//*[@id='foo']");
+		}
 	}
 }
