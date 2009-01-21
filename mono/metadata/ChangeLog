@@ -1,3 +1,24 @@
+2009-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* domain-internals.h: Add new appdomain state MONO_APPDOMAIN_UNLOADING_START
+	which signals that the unloading has started but all appdomain services must
+	remain operational.
+
+	* appdomain.c (mono_domain_unload): The initial state for unloading now
+	is unloading_start and we switch to unloading after the managed call to
+	AppDomain::DomainUnload has finished.
+
+	The new unloading state has to be created because managed code in the
+	DomainUnload event can depend on things like the threadpool still working.
+	The domain must remain fully functional while the event executes.
+
+	This shown as an issue due to Process::WaitForExit, which waits for
+	async reads of stdout and stderr to complete. Since those are processed
+	in the threadpool the code deadlocks because the DomainUnload callback 
+	waits for the async read finished event, which should have been set by a
+	threadpool job but has been discarded due to the domain been in unload
+	state.
+
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
 	* metadata.c (mono_metadata_generic_param_equal): Owner as well as
