@@ -130,6 +130,7 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+		[Ignore ("NUNIT 2.4 issue - temporarily disabled")]
 		public void RemoveRecognizedAttribute ()
 		{
 			// ensure we add it
