@@ -2903,141 +2903,51 @@ namespace Mono.CSharp {
 		}
 	}
 
-	/// <summary>
-	///   Used to create types from a fully qualified name.  These are just used
-	///   by the parser to setup the core types.  A TypeLookupExpression is always
-	///   classified as a type.
-	/// </summary>
+	//
+	// Used to create types from a fully qualified name.  These are just used
+	// by the parser to setup the core types.
+	//
 	public sealed class TypeLookupExpression : TypeExpr {
+		readonly string ns_name;
 		readonly string name;
 		
-		public TypeLookupExpression (string name)
+		public TypeLookupExpression (string ns, string name)
 		{
 			this.name = name;
+			this.ns_name = ns;
 			eclass = ExprClass.Type;
 		}
 
 		public override TypeExpr ResolveAsTypeTerminal (IResolveContext ec, bool silent)
 		{
-			// It's null for corlib compilation only
-			if (type == null)
-				return DoResolveAsTypeStep (ec);
+			//
+			// It's null only during mscorlib bootstrap when DefineType
+			// nees to resolve base type of same type
+			//
+			// For instance struct Char : IComparable<char>
+			//
+			// TODO: it could be removed when Resolve starts to use 
+			// DeclSpace instead of Type
+			//
+			if (type == null) {
+				Namespace ns = RootNamespace.Global.GetNamespace (ns_name, false);
+				FullNamedExpression fne = ns.Lookup (null, name, loc);
+				if (fne != null)
+					type = fne.Type;
+			}
 
 			return this;
 		}
 
-		private class UnexpectedType
-		{
-		}
-
-		// This performes recursive type lookup, providing support for generic types.
-		// For example, given the type:
-		//
-		// System.Collections.Generic.KeyValuePair`2[[System.Int32],[System.String]]
-		//
-		// The types will be checked in the following order:
-		//                                                                             _
-		// System                                                                       |
-		// System.Collections                                                           |
-		// System.Collections.Generic                                                   |
-		//                        _                                                     |
-		//     System              | recursive call 1                                   |
-		//     System.Int32       _|                                                    | main method call
-		//                        _                                                     |
-		//     System              | recursive call 2                                   |
-		//     System.String      _|                                                    |
-		//                                                                              |
-		// System.Collections.Generic.KeyValuePair`2[[System.Int32],[System.String]]   _|
-		//
-		private Type TypeLookup (IResolveContext ec, string name)
-		{
-			int index = 0;
-			int dot = 0;
-			bool done = false;
-			FullNamedExpression resolved = null;
-			Type type = null;
-			Type recursive_type = null;
-			while (index < name.Length) {
-				if (name[index] == '[') {
-					int open = index;
-					int braces = 1;
-					do {
-						index++;
-						if (name[index] == '[')
-							braces++;
-						else if (name[index] == ']')
-							braces--;
-					} while (braces > 0);
-					recursive_type = TypeLookup (ec, name.Substring (open + 1, index - open - 1));
-					if (recursive_type == null || (recursive_type == typeof(UnexpectedType)))
-						return recursive_type;
-				}
-				else {
-					if (name[index] == ',')
-						done = true;
-					else if ((name[index] == '.' && !done) || (index == name.Length && name[0] != '[')) {
-						string substring = name.Substring(dot, index - dot);
-
-						if (resolved == null)
-							resolved = RootNamespace.Global.Lookup (ec.DeclContainer, substring, Location.Null);
-						else if (resolved is Namespace)
-						    resolved = (resolved as Namespace).Lookup (ec.DeclContainer, substring, Location.Null);
-						else if (type != null)
-							type = TypeManager.GetNestedType (type, substring);
-						else
-							return null;
-
-						if (resolved == null)
-							return null;
-						else if (type == null && resolved is TypeExpr)
-							type = resolved.Type;
-
-						dot = index + 1;
-					}
-				}
-				index++;
-			}
-			if (name[0] != '[') {
-				string substring = name.Substring(dot, index - dot);
-
-				if (type != null)
-					return TypeManager.GetNestedType (type, substring);
-				
-				if (resolved != null) {
-					resolved = (resolved as Namespace).Lookup (ec.DeclContainer, substring, Location.Null);
-					if (resolved is TypeExpr)
-						return resolved.Type;
-					
-					if (resolved == null)
-						return null;
-					
-					resolved.Error_UnexpectedKind (ec.DeclContainer, "type", loc);
-					return typeof (UnexpectedType);
-				}
-				else
-					return null;
-			}
-			else
-				return recursive_type;
-			}
-
 		protected override TypeExpr DoResolveAsTypeStep (IResolveContext ec)
 		{
-			Type t = TypeLookup (ec, name);
-			if (t == null) {
-				NamespaceEntry.Error_NamespaceNotFound (loc, name);
-				return null;
-			}
-			if (t == typeof(UnexpectedType))
-				return null;
-			type = t;
 			return this;
 		}
 
 		public override string GetSignatureForError ()
 		{
 			if (type == null)
-				return TypeManager.CSharpName (name, null);
+				return TypeManager.CSharpName (ns_name + "." + name, null);
 
 			return base.GetSignatureForError ();
 		}

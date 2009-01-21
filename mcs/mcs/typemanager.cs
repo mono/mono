@@ -249,24 +249,24 @@ namespace Mono.CSharp {
 	//
 	static void InitExpressionTypes ()
 	{
-		system_object_expr  = new TypeLookupExpression ("System.Object");
-		system_string_expr  = new TypeLookupExpression ("System.String");
-		system_boolean_expr = new TypeLookupExpression ("System.Boolean");
-		system_decimal_expr = new TypeLookupExpression ("System.Decimal");
-		system_single_expr  = new TypeLookupExpression ("System.Single");
-		system_double_expr  = new TypeLookupExpression ("System.Double");
-		system_sbyte_expr   = new TypeLookupExpression ("System.SByte");
-		system_byte_expr    = new TypeLookupExpression ("System.Byte");
-		system_int16_expr   = new TypeLookupExpression ("System.Int16");
-		system_uint16_expr  = new TypeLookupExpression ("System.UInt16");
-		system_int32_expr   = new TypeLookupExpression ("System.Int32");
-		system_uint32_expr  = new TypeLookupExpression ("System.UInt32");
-		system_int64_expr   = new TypeLookupExpression ("System.Int64");
-		system_uint64_expr  = new TypeLookupExpression ("System.UInt64");
-		system_char_expr    = new TypeLookupExpression ("System.Char");
-		system_void_expr    = new TypeLookupExpression ("System.Void");
-		system_valuetype_expr  = new TypeLookupExpression ("System.ValueType");
-		system_intptr_expr  = new TypeLookupExpression ("System.IntPtr");
+		system_object_expr  = new TypeLookupExpression ("System", "Object");
+		system_string_expr  = new TypeLookupExpression ("System", "String");
+		system_boolean_expr = new TypeLookupExpression ("System", "Boolean");
+		system_decimal_expr = new TypeLookupExpression ("System", "Decimal");
+		system_single_expr  = new TypeLookupExpression ("System", "Single");
+		system_double_expr  = new TypeLookupExpression ("System", "Double");
+		system_sbyte_expr   = new TypeLookupExpression ("System", "SByte");
+		system_byte_expr    = new TypeLookupExpression ("System", "Byte");
+		system_int16_expr   = new TypeLookupExpression ("System", "Int16");
+		system_uint16_expr  = new TypeLookupExpression ("System", "UInt16");
+		system_int32_expr   = new TypeLookupExpression ("System", "Int32");
+		system_uint32_expr  = new TypeLookupExpression ("System", "UInt32");
+		system_int64_expr   = new TypeLookupExpression ("System", "Int64");
+		system_uint64_expr  = new TypeLookupExpression ("System", "UInt64");
+		system_char_expr    = new TypeLookupExpression ("System", "Char");
+		system_void_expr    = new TypeLookupExpression ("System", "Void");
+		system_valuetype_expr  = new TypeLookupExpression ("System", "ValueType");
+		system_intptr_expr  = new TypeLookupExpression ("System", "IntPtr");
 	}
 
 	static TypeManager ()
@@ -996,13 +996,21 @@ namespace Mono.CSharp {
 		attribute_type = CoreLookupType ("System", "Attribute", Kind.Class, true);
 
 		int32_type    = CoreLookupType ("System", "Int32", Kind.Struct, true);
+		system_int32_expr.Type = int32_type;
 		int64_type    = CoreLookupType ("System", "Int64", Kind.Struct, true);
-		uint32_type   = CoreLookupType ("System", "UInt32", Kind.Struct, true); 
-		uint64_type   = CoreLookupType ("System", "UInt64", Kind.Struct, true); 
+		system_int64_expr.Type = int64_type;
+		uint32_type   = CoreLookupType ("System", "UInt32", Kind.Struct, true);
+		system_uint32_expr.Type = uint32_type;
+		uint64_type   = CoreLookupType ("System", "UInt64", Kind.Struct, true);
+		system_uint64_expr.Type = uint64_type;
 		byte_type     = CoreLookupType ("System", "Byte", Kind.Struct, true);
+		system_byte_expr.Type = byte_type;
 		sbyte_type    = CoreLookupType ("System", "SByte", Kind.Struct, true);
+		system_sbyte_expr.Type = sbyte_type;
 		short_type    = CoreLookupType ("System", "Int16", Kind.Struct, true);
+		system_int16_expr.Type = short_type;
 		ushort_type   = CoreLookupType ("System", "UInt16", Kind.Struct, true);
+		system_uint16_expr.Type = ushort_type;
 
 		ienumerator_type     = CoreLookupType ("System.Collections", "IEnumerator", Kind.Interface, true);
 		ienumerable_type     = CoreLookupType ("System.Collections", "IEnumerable", Kind.Interface, true);
@@ -1012,12 +1020,19 @@ namespace Mono.CSharp {
 		generic_ienumerator_type = CoreLookupType ("System.Collections.Generic", "IEnumerator`1", Kind.Interface, false);
 
 		char_type     = CoreLookupType ("System", "Char", Kind.Struct, true);
+		system_char_expr.Type = char_type;
 		string_type   = CoreLookupType ("System", "String", Kind.Class, true);
+		system_string_expr.Type = string_type;
 		float_type    = CoreLookupType ("System", "Single", Kind.Struct, true);
+		system_single_expr.Type = float_type;
 		double_type   = CoreLookupType ("System", "Double", Kind.Struct, true);
+		system_double_expr.Type = double_type;
 		decimal_type  = CoreLookupType ("System", "Decimal", Kind.Struct, true);
+		system_decimal_expr.Type = decimal_type;
 		bool_type     = CoreLookupType ("System", "Boolean", Kind.Struct, true);
+		system_boolean_expr.Type = bool_type;
 		intptr_type = CoreLookupType ("System", "IntPtr", Kind.Struct, true);
+		system_intptr_expr.Type = intptr_type;
 		uintptr_type = CoreLookupType ("System", "UIntPtr", Kind.Struct, true);
 
 		multicast_delegate_type = CoreLookupType ("System", "MulticastDelegate", Kind.Class, true);
@@ -1026,6 +1041,7 @@ namespace Mono.CSharp {
 		enum_type	= CoreLookupType ("System", "Enum", Kind.Class, true);
 		array_type	= CoreLookupType ("System", "Array", Kind.Class, true);
 		void_type	= CoreLookupType ("System", "Void", Kind.Struct, true);
+		system_void_expr.Type = void_type;
 		type_type	= CoreLookupType ("System", "Type", Kind.Class, true);
 		exception_type = CoreLookupType ("System", "Exception", Kind.Class, true);
 
@@ -1043,22 +1059,6 @@ namespace Mono.CSharp {
 	//
 	public static void InitOptionalCoreTypes ()
 	{
-		system_string_expr.Type = string_type;
-		system_boolean_expr.Type = bool_type;
-		system_decimal_expr.Type = decimal_type;
-		system_single_expr.Type = float_type;
-		system_double_expr.Type = double_type;
-		system_sbyte_expr.Type = sbyte_type;
-		system_byte_expr.Type = byte_type;
-		system_int16_expr.Type = short_type;
-		system_uint16_expr.Type = ushort_type;
-		system_int32_expr.Type = int32_type;
-		system_uint32_expr.Type = uint32_type;
-		system_int64_expr.Type = int64_type;
-		system_uint64_expr.Type = uint64_type;
-		system_char_expr.Type = char_type;
-		system_void_expr.Type = void_type;
-
 		//
 		// These are only used for compare purposes
 		//

@@ -570,8 +570,11 @@ namespace Mono.CSharp {
 
 			reset.Block = new ToplevelBlock (Location);
 
-			TypeExpr ex_type = new TypeLookupExpression ("System.NotSupportedException");
-			reset.Block.AddStatement (new Throw (new New (ex_type, null, Location), Location));
+			Type ex_type = TypeManager.CoreLookupType ("System", "NotSupportedException", Kind.Class, true);
+			if (ex_type == null)
+				return;
+
+			reset.Block.AddStatement (new Throw (new New (new TypeExpression (ex_type, Location), null, Location), Location));
 		}
 	}
 
