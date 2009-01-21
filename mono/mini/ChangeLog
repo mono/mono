@@ -1,3 +1,8 @@
+2009-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_alloc): Avoid generic instances in the
+	out_of_line optimization.
+
 2009-01-21  Martin Baulig  <martin@ximian.com>
 
 	* mini.h
