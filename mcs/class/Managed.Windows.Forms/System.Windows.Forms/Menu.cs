@@ -49,6 +49,7 @@ namespace System.Windows.Forms
 		internal IntPtr menu_handle = IntPtr.Zero;
 		internal Menu parent_menu = null;
 		System.Drawing.Rectangle rect;
+		// UIA Framework Note: Used to keep track of expanded menus
 		internal Control Wnd;
 		internal MenuTracker tracker;
 
@@ -134,6 +135,7 @@ namespace System.Windows.Forms
 
 		#region Private Properties
 
+		// UIA Framework Note: Used to obtain menu bounds
 		internal System.Drawing.Rectangle Rect {
 			get { return rect; }
 		}
@@ -331,6 +333,7 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 		static object MenuChangedEvent = new object ();
 
+		// UIA Framework Note: Used to track changes in MenuItemCollection
 		internal event EventHandler MenuChanged {
 			add { Events.AddHandler (MenuChangedEvent, value); }
 			remove { Events.RemoveHandler (MenuChangedEvent, value); }
