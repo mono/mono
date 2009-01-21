@@ -1,3 +1,10 @@
+2009-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* appdomain-unload-callback.cs: New test for the AppDomain::DomainUnload
+	deadlock.
+
+	* Makefile.am: Test added.
+
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-467456.cs: New test case.
