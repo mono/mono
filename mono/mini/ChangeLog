@@ -1,3 +1,15 @@
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c (mono_arch_delegate_invoke_impl): Return function
+	descriptors.
+
+	* mini-trampolines.c (mono_delegate_trampoline): Remove the PPC64
+	special case and handle mono_arch_delegate_invoke_impl() returning
+	function descriptors.
+
+	* tramp-ppc.c (mono_arch_create_trampoline_code): Delegate
+	trampolines return function descriptors, too.
+
 2009-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (handle_alloc): Avoid generic instances in the
