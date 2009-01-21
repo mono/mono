@@ -163,6 +163,15 @@ namespace Mono.Data.Tds.Protocol {
 			return ret;
 		}
 
+		public void SendIfFull ()
+		{
+			if (nextOutBufferIndex == outBufferLength) {
+				SendPhysicalPacket (false);
+				nextOutBufferIndex = headerLength;
+			}
+		}
+
+
 		public void Append (object o)
 		{
 			if (o == null || o == DBNull.Value) {
@@ -213,10 +222,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (byte b)
 		{
-			if (nextOutBufferIndex == outBufferLength) {
-				SendPhysicalPacket (false);
-				nextOutBufferIndex = headerLength;
-			}
+			SendIfFull ();
 			Store (nextOutBufferIndex, b);
 			nextOutBufferIndex++;
 		}	
@@ -246,40 +252,69 @@ namespace Mono.Data.Tds.Protocol {
 		public void Append (byte[] b)
 		{
 			Append (b, b.Length, (byte) 0);
-		}		
+		}
 
+		
 		public void Append (byte[] b, int len, byte pad)
 		{
-			int i = 0;
-			for ( ; i < b.Length && i < len; i++)
-			    Append (b[i]);
+			int bufBytesToCopy = System.Math.Min (b.Length, len);
+			int padBytesToCopy = len - bufBytesToCopy;
+			int bufPos = 0;
 
-			for ( ; i < len; i++)
-			    Append (pad);
-		}	
+			/* copy out of our input buffer in the largest chunks possible *
+			 * at a time. limited only by the buffer size for our outgoing *
+			 * packets.                                                    */
+
+			while (bufBytesToCopy > 0)
+			{
+				SendIfFull ();
+
+				int availBytes = outBufferLength - nextOutBufferIndex;
+				int bufSize = System.Math.Min (availBytes, bufBytesToCopy);
+
+				Buffer.BlockCopy (b, bufPos, outBuffer, nextOutBufferIndex, bufSize);
+
+				nextOutBufferIndex += bufSize;
+				bufBytesToCopy -= bufSize;
+				bufPos += bufSize;
+			}
+
+			while (padBytesToCopy > 0)
+			{
+				SendIfFull ();
+
+				int availBytes = outBufferLength - nextOutBufferIndex;
+				int bufSize = System.Math.Min (availBytes, padBytesToCopy);
+
+				for (int i = 0; i < bufSize; i++)
+					outBuffer [nextOutBufferIndex++] = pad;
+
+				padBytesToCopy -= bufSize;
+			}
+		}
 
 		public void Append (short s)
 		{
 			if(!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes(s)));
+				Append (Swap (BitConverter.GetBytes(s)), sizeof(short), (byte)0);
 			else 
-				Append (BitConverter.GetBytes (s));
+				Append (BitConverter.GetBytes (s), sizeof(short), (byte)0);
 		}
 
 		public void Append (ushort s)
 		{
 			if(!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes(s)));
+				Append (Swap (BitConverter.GetBytes(s)), sizeof(short), (byte)0);
 			else 
-				Append (BitConverter.GetBytes (s));
+				Append (BitConverter.GetBytes (s), sizeof(short), (byte)0);
 		}
 
 		public void Append (int i)
 		{
 			if(!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes(i)));
+				Append (Swap (BitConverter.GetBytes(i)), sizeof(int), (byte)0);
 			else
-				Append (BitConverter.GetBytes (i));
+				Append (BitConverter.GetBytes (i), sizeof(int), (byte)0);
 		}
 
 		public void Append (string s)
@@ -308,25 +343,25 @@ namespace Mono.Data.Tds.Protocol {
 		public void Append (double value)
 		{
 			if (!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes (value)));
+				Append (Swap (BitConverter.GetBytes (value)), sizeof(double), (byte)0);
 			else
-				Append (BitConverter.GetBytes (value));
+				Append (BitConverter.GetBytes (value), sizeof(double), (byte)0);
 		}
 
 		public void Append (float value)
 		{
 			if (!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes (value)));
+				Append (Swap (BitConverter.GetBytes (value)), sizeof(float), (byte)0);
 			else
-				Append (BitConverter.GetBytes (value));
+				Append (BitConverter.GetBytes (value), sizeof(float), (byte)0);
 		}
 
 		public void Append (long l)
 		{
 			if (!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes (l)));
+				Append (Swap (BitConverter.GetBytes (l)), sizeof(long), (byte)0);
 			else
-				Append (BitConverter.GetBytes (l));
+				Append (BitConverter.GetBytes (l), sizeof(long), (byte)0);
 		}
 
 		public void Append (decimal d, int bytes)
