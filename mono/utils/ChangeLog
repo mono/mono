@@ -1,3 +1,9 @@
+2009-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-mmap.c: Applied patch from Koushik Dutta
+	(koush@koushikdutta.com). Rework the #ifdefs so Android could use the mmap
+	implementation.
+
 2009-01-19  Bill Holmes  <billholmes54@gmail.com>
 
 	* mono-path.c (mono_path_canonicalize): Adding support for UNC
