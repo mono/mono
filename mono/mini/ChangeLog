@@ -1,3 +1,16 @@
+2009-01-21  Martin Baulig  <martin@ximian.com>
+
+	* mini.h
+	(MonoCompile): Added `disable_deadce_vars' to disable removing
+	unused variables.
+
+	* mini.c
+	(mini_method_compile): Set `cfg->disable_deadce_vars' when running
+	inside the debugger.
+
+	* liveness.c (mono_analyze_liveness): Don't remove any unused
+	variables if `cfg->disable_deadce_vars' is set.
+
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Only apply exception constructor optimization if
