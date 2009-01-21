@@ -1,0 +1,24 @@
+2006-10-19  Ankit Jain  <jankit@novell.com>
+
+	* Driver.cs: Try to use HTTP GET to get wsdl, if it fails then try
+	ws-mex.
+	* Makefile: Add reference to System.Web.Services.dll
+
+2006-06-27  Ankit Jain  <jankit@novell.com>
+
+	* Copy of client-proxy-generator.
+	* Driver.cs: Hacked to use fetch metadata from a url.
+
+2006-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README : added, as this tool exists only in mono.
+
+2006-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommandLineOptions.cs : set "" for default Namespace value.
+
+2006-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommandLineOptions.cs, Driver.cs, Makefile,
+	  client-proxy-gen.exe.sources :
+	  new files for convenient client proxy generator *from contract Type*.
