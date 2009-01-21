@@ -105,7 +105,7 @@ namespace Mono.Data.Tds.Protocol {
 			try {
 				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				IAsyncResult ares = socket.BeginConnect (endPoint, null, null);
-				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout * 1000))
+				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout * 1000, false))
 					throw Tds.CreateTimeoutException (dataSource, "Open()");
 				socket.EndConnect (ares);
 				try {
