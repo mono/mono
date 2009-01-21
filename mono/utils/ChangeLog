@@ -1,3 +1,10 @@
+2008-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r123968.
+	
+	* freebsd-elf_common.h (struct): Use uint32_t instead of 
+	u_int32_t to fix the build on opensolaris.
+
 2008-12-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-property-hash.c (mono_property_hash_destroy): Release
