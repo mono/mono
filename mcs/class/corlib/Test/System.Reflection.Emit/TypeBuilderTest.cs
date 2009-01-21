@@ -47,9 +47,11 @@ namespace MonoTests.System.Reflection.Emit
 	{
 	}
 
+#if NET_2_0
 	public class Gen<T> {
 		public static T field = default(T);
 	}
+#endif
 
 	[TestFixture]
 	public class TypeBuilderTest
@@ -10103,7 +10105,6 @@ namespace MonoTests.System.Reflection.Emit
 			t.MakeGenericType (typeof (int)).GetMethods ();
 			t.MakeGenericType (typeof (double)).GetMethods ();
 		}
-#endif
 
 		[Test]
 		public void TestGenericFieldAccess () // bug #467415
@@ -10165,6 +10166,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreEqual (0, result, "#1");
 		}
+#endif
 
 		static MethodInfo GetMethodByName (MethodInfo [] methods, string name)
 		{
