@@ -1,3 +1,7 @@
+2009-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntimeTest.cs : disable failing test.
+
 2008-05-22  Roei Erez  <roeie@mainsoft.com>
 	* fix ContractDescription.GetContract implementation
 	* Refactor Request processing

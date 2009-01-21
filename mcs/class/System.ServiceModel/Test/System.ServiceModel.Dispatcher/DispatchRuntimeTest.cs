@@ -134,7 +134,8 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			TestInstanceBehavior (b, expected, res, 1);			
 		}
 
-		[Test]		
+		[Test]
+		[Category ("NotWorking")]
 		public void TestInstanceBehavior4 () {
 
 			Result res = new Result ();

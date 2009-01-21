@@ -83,6 +83,7 @@ namespace MonoTests.Features.Serialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestNullableInt() {
 			int? x1 = Client.NullableInt(3);
 			Assert.AreEqual(x1,4,"TestNullableInt(3)==4");
@@ -91,6 +92,7 @@ namespace MonoTests.Features.Serialization
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestNullableFloat () {
 			float? x1 = Client.NullableFloat ((float)1.5);
 			Assert.AreEqual (x1, 2.5, "TestNullableFloat(1.5)==2.5");
