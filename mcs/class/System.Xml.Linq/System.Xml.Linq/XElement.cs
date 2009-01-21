@@ -561,7 +561,7 @@ namespace System.Xml.Linq
 				}
 			}
 
-			w.WriteStartElement (null, name.LocalName, name.Namespace.NamespaceName);
+			w.WriteStartElement (prefix, name.LocalName, name.Namespace.NamespaceName);
 
 			foreach (XAttribute a in Attributes ()) {
 				if (a.IsNamespaceDeclaration) {
