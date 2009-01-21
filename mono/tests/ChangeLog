@@ -1,5 +1,11 @@
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
+	* bug-467456.cs: New test case.
+
+	* Makefile.am: Test added.
+
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
 	* generic-unloading.2.cs, generic-unloading-sub.2.cs: Test case
 	for unloading images whose MonoGenericInst's are still in use.
 

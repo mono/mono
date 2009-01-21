@@ -1,3 +1,9 @@
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: Only apply exception constructor optimization if
+	the the method actually belongs to an exception class.  Fixes
+	#467456.
+
 2009-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_delegate_trampoline): Put back the previous
