@@ -1,5 +1,13 @@
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
+	Backport of r124028.
+
+	* bug-467456.cs: New test case.
+
+	* Makefile.am: Test added.
+
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
 	Backport of r124022.
 
 	* generic-unloading.2.cs, generic-unloading-sub.2.cs: Test case
