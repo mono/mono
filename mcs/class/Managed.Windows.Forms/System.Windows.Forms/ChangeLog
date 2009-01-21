@@ -1,3 +1,11 @@
+2209-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: In CollapseAll, set vbar to the maximum value, instead
+	of trying to set as top node the highest parent of the previous top
+	node. Moving to the bottom of the TreeView after a call to CollapseAll
+	is exactly what .net does. This should avoid some nasty issue when
+	CollapseAll is called and we don't need the vertical scroll bar.
+
 2009-01-21  Mario Carrion <mcarrion@novell.com>
 
 	* Form.cs: UIA Support: Internal events added: UIAWindowStateChanged

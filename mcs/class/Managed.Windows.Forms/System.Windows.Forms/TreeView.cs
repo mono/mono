@@ -806,19 +806,12 @@ namespace System.Windows.Forms {
 		
 		public void CollapseAll ()
 		{
-			TreeNode walk = TopNode;
-			
-			if (walk == null)
-				return;
-				
-			while (walk.parent != root_node)
-				walk = walk.parent;
-
 			BeginUpdate ();
 			root_node.CollapseAll ();
 			EndUpdate ();
 
-			SetTop (walk);
+			if (vbar.VisibleInternal)
+				vbar.Value = vbar.Maximum - VisibleCount + 1;
 		}
 
 		public TreeNode GetNodeAt (Point pt) {
