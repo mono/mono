@@ -53,7 +53,8 @@ namespace Mono.ServiceContractTool
 			MetadataSet metadata = null;
 
 			// For now only assemblyPath is supported.
-			foreach (string arg in co.RemainingArguments) {
+			foreach (string arg_ in co.RemainingArguments) {
+				string arg = File.Exists (arg_) ? Path.GetFullPath (arg_) : arg_;
 				Uri uri = null;
 				if (Uri.TryCreate (arg, UriKind.Absolute, out uri)) {
 					metadata = ResolveWithDisco (arg);

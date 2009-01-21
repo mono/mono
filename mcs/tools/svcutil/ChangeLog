@@ -1,3 +1,7 @@
+2009-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : handle relative file path.
+
 2006-10-19  Ankit Jain  <jankit@novell.com>
 
 	* Driver.cs: Try to use HTTP GET to get wsdl, if it fails then try
