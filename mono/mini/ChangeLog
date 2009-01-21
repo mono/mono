@@ -1,3 +1,10 @@
+2009-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r124092.
+	
+	* method-to-ir.c (handle_alloc): Avoid generic instances in the
+	out_of_line optimization.
+
 2009-01-21  Martin Baulig  <martin@ximian.com>
 
 	Backport or r124060.
