@@ -1,3 +1,9 @@
+2009-01-21  Mike Gorse  <mgorse@novell.com>
+
+	* TrackBar.cs: Backported R124116: Make LargeIncrement/Decrement
+	  internal so that UIA can use them.
+	  Added UIAValueParamChangedEvent.
+
 2009-01-21  Mario Carrion <mcarrion@novell.com>
 	
 	* Form.cs: Backported r124064: UIA Support: Internal events 
