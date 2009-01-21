@@ -1,3 +1,8 @@
+2009-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TdsComm.cs: no need for the ManualResetEvent or the timeout instance
+	variables.
+
 2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Tds70.cs: fix my mistake in the previous patch.

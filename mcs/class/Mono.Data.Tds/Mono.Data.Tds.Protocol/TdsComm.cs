@@ -47,7 +47,6 @@ namespace Mono.Data.Tds.Protocol {
 
 		string dataSource;
 		int commandTimeout;
-		int connectionTimeout;
 
 		byte[] outBuffer;
 		int outBufferLength;
@@ -68,8 +67,6 @@ namespace Mono.Data.Tds.Protocol {
 		Socket socket;
 		TdsVersion tdsVersion;
 
-		ManualResetEvent connected = new ManualResetEvent (false);
-		
 		#endregion // Fields
 		
 		#region Constructors
@@ -79,7 +76,6 @@ namespace Mono.Data.Tds.Protocol {
 			this.packetSize = packetSize;
 			this.tdsVersion = tdsVersion;
 			this.dataSource = dataSource;
-			this.connectionTimeout = timeout;
 
 			outBuffer = new byte[packetSize];
 			inBuffer = new byte[packetSize];
@@ -90,8 +86,6 @@ namespace Mono.Data.Tds.Protocol {
 			IPEndPoint endPoint;
 			
 			try {
-				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
 #if NET_2_0
 				IPAddress ip;
 				if(IPAddress.TryParse(this.dataSource, out ip)) {
@@ -104,15 +98,16 @@ namespace Mono.Data.Tds.Protocol {
 				IPHostEntry hostEntry = Dns.Resolve (this.dataSource);
 				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 #endif
+			} catch (SocketException e) {
+				throw new TdsInternalException ("Server does not exist or connection refused.", e);
+			}
 
-				connected.Reset ();
-				socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
-
-				if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
+			try {
+				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				IAsyncResult ares = socket.BeginConnect (endPoint, null, null);
+				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout * 1000))
 					throw Tds.CreateTimeoutException (dataSource, "Open()");
-				else if (timeout > 0 && !connected.WaitOne ())
-					throw Tds.CreateTimeoutException (dataSource, "Open()");
-
+				socket.EndConnect (ares);
 				try {
 					// MS sets these socket option
 					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
@@ -124,8 +119,17 @@ namespace Mono.Data.Tds.Protocol {
 				// Let the stream own the socket and take the pleasure of closing it
 				stream = new NetworkStream (socket, true);
 			} catch (SocketException e) {
+				if (socket != null) {
+					try {
+						Socket s = socket;
+						socket = null;
+						s.Close ();
+					} catch {}
+				}
 				throw new TdsInternalException ("Server does not exist or connection refused.", e);
 			}
+			if (!socket.Connected)
+				throw new TdsInternalException ("Server does not exist or connection refused.", null);
 		}
 		
 		#endregion // Constructors
@@ -158,6 +162,7 @@ namespace Mono.Data.Tds.Protocol {
 
 			return ret;
 		}
+
 		public void Append (object o)
 		{
 			if (o == null || o == DBNull.Value) {
@@ -338,23 +343,15 @@ namespace Mono.Data.Tds.Protocol {
 		public void Close ()
 		{
 			connReset = false;
+			socket = null;
 			stream.Close ();
 		}
 
 		public bool IsConnected () 
 		{
-			return !(socket.Poll (0, SelectMode.SelectRead) && socket.Available == 0);
+			return socket != null && socket.Connected && !(socket.Poll (0, SelectMode.SelectRead) && socket.Available == 0);
 		}
 		
-		private void ConnectCallback (IAsyncResult ar)
-		{
-			Socket s = (Socket) ar.AsyncState;
-			if (Poll (s, connectionTimeout, SelectMode.SelectWrite)) {
-				socket.EndConnect (ar);
-				connected.Set ();
-			}		
-		}
-
 		public byte GetByte ()
 		{
 			byte result;
