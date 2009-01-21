@@ -1,3 +1,9 @@
+2009-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): In the generic instance
+	optimization, set method->slot for abstract virtual methods. Fixes part of
+	#467834.
+
 2009-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* domain-internals.h: Add new appdomain state MONO_APPDOMAIN_UNLOADING_START
