@@ -1,5 +1,10 @@
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
+	* metadata.c (mono_metadata_generic_param_equal): Owner as well as
+	image must match.
+
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
 	* reflection.c (resolve_object): For fields, inflate the class and
 	then get the field in the inflated class.
 

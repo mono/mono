@@ -1,3 +1,10 @@
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-unloading.2.cs, generic-unloading-sub.2.cs: Test case
+	for unloading images whose MonoGenericInst's are still in use.
+
+	* Makefile.am: Test added.
+
 2009-01-20  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-stack-traces.2.cs: Generic sharing test for stack
