@@ -1,3 +1,8 @@
+2009-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializerMessageContractImporter.cs :
+	  some refactoring. Process all schemas, including those in WSDLs.
+
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescription.cs : fix by corcompare.

@@ -36,6 +36,7 @@ using System.Xml.Schema;
 using System.Xml.Serialization;
 
 using QName = System.Xml.XmlQualifiedName;
+using WSDL = System.Web.Services.Description.ServiceDescription;
 
 namespace System.ServiceModel.Description
 {
@@ -63,6 +64,57 @@ namespace System.ServiceModel.Description
 			if (!enabled)
 				return;
 
+			if (importer == null)
+				throw new ArgumentNullException ("importer");
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			if (this.importer != null || this.context != null)
+				throw new SystemException ("INTERNAL ERROR: unexpected recursion of ImportContract method call");
+
+			this.importer = importer;
+			this.context = context;
+			try {
+				DoImportContract ();
+			} finally {
+				this.importer = null;
+				this.context = null;
+			}
+		}
+
+		WsdlImporter importer;
+		WsdlContractConversionContext context;
+		XmlSchemaImporter schema_importer_;
+		XmlSchemaImporter schema_importer {
+			get {
+				if (schema_importer_ != null)
+					return schema_importer_;
+				schema_importer_ = new XmlSchemaImporter (xml_schemas);
+				return schema_importer_;
+			}
+		}
+
+		XmlSchemas xml_schemas_;
+		XmlSchemas xml_schemas {
+			get {
+				if (xml_schemas_ != null)
+					return xml_schemas_;
+				xml_schemas_ = new XmlSchemas ();
+
+				foreach (WSDL wsdl in importer.WsdlDocuments)
+					foreach (XmlSchema schema in wsdl.Types.Schemas)
+						xml_schemas_.Add (schema);
+
+				foreach (XmlSchema schema in importer.XmlSchemas.Schemas ())
+					xml_schemas_.Add (schema);
+
+				xml_schemas_.Compile (null, true);
+
+				return xml_schemas_;
+			}
+		}
+
+		void DoImportContract ()
+		{
 			PortType port_type = context.WsdlPortType;
 			ContractDescription contract = context.Contract;
 			int i, j;
@@ -86,7 +138,7 @@ namespace System.ServiceModel.Description
 						//ReturnValue
 						msg = port_type.ServiceDescription.Messages [opmsg.Message.Name];
 						
-						resolveMessage (msg, msgdescr.Body, parts, importer);
+						resolveMessage (msg, msgdescr.Body, parts);
 						if (parts.Count > 0) {
 							msgdescr.Body.ReturnValue = parts [0];
 							parts.Clear ();
@@ -97,7 +149,7 @@ namespace System.ServiceModel.Description
 					/* OperationInput */
 					
 					/* Parts, MessagePartDescription */
-					resolveMessage (msg, msgdescr.Body, parts, importer);
+					resolveMessage (msg, msgdescr.Body, parts);
 					foreach (MessagePartDescription p in parts)
 						msgdescr.Body.Parts.Add (p);
 					parts.Clear ();
@@ -111,31 +163,25 @@ namespace System.ServiceModel.Description
 
 		}
 
-		void resolveMessage (Message msg, MessageBodyDescription body, List<MessagePartDescription> parts, WsdlImporter importer)
+		void resolveMessage (Message msg, MessageBodyDescription body, List<MessagePartDescription> parts)
 		{
 			foreach (MessagePart part in msg.Parts) {
 				if (part.Name == "parameters") {
 					if (!part.Element.IsEmpty) {
 						body.WrapperName = part.Element.Name;
-						resolveElement (part.Element, parts, importer, body.WrapperNamespace);
+						resolveElement (part.Element, parts, body.WrapperNamespace);
 					} else {
 						body.WrapperName = part.Type.Name;
-						resolveType (part.Type, parts, importer, body.WrapperNamespace);
+						resolveType (part.Type, parts, body.WrapperNamespace);
 					}
 				}
 				//FIXME: non-parameters?
 			}
 		}
 		
-		void resolveElement (QName qname, List<MessagePartDescription> parts, WsdlImporter importer, string ns)
+		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
 		{
-			XmlSchemas xss = new XmlSchemas ();
-			foreach (XmlSchema schema in importer.XmlSchemas.Schemas ())
-				xss.Add (schema);
-			XmlSchemaImporter schema_importer = new XmlSchemaImporter (xss);
-
-			importer.XmlSchemas.Compile ();
-			XmlSchemaElement element = (XmlSchemaElement) importer.XmlSchemas.GlobalElements [qname];
+			XmlSchemaElement element = (XmlSchemaElement) xml_schemas.Find (qname, typeof (XmlSchemaElement));
 			if (element == null)
 				//FIXME: What to do here?
 				throw new Exception ("Could not resolve : " + qname.ToString ());
@@ -143,7 +189,7 @@ namespace System.ServiceModel.Description
 			resolveParticle (schema_importer, element, parts, ns, 2);
 		}
 
-		void resolveType (QName qname, List<MessagePartDescription> parts, WsdlImporter importer, string ns)
+		void resolveType (QName qname, List<MessagePartDescription> parts, string ns)
 		{
 			/*foreach (XmlSchema xs in importer.Schemas)
 				if (xs.Types [qname] != null)
