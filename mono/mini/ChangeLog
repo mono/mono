@@ -1,3 +1,10 @@
+2009-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r123989.
+	
+	* mini-trampolines.c (mono_delegate_trampoline): Put back the previous
+	change inside a #ifdef __mono_ppc64__.
+
 2009-01-20  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r123917.
