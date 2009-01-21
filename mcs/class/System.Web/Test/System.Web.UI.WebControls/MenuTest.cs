@@ -869,6 +869,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Ignore ("NUNIT 2.4 issue - temporarily disabled")]
 		public void Menu_DefaultRender ()
 		{
 		        string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (_DefaultRender)).Run ();
