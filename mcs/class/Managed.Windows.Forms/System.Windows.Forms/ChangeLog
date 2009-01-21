@@ -1,4 +1,10 @@
-2209-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+2009-01-21  Mike Gorse  <mgorse@novell.com>
+
+	* TrackBar.cs: Make LargeIncrement/Decrement internal so that UIA can
+	  use them.
+	  Added UIAValueParamChangedEvent.
+
+2009-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: In CollapseAll, set vbar to the maximum value, instead
 	of trying to set as top node the highest parent of the previous top
