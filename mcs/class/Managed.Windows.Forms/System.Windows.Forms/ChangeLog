@@ -1,3 +1,13 @@
+2009-01-21  Sandy Armstrong  <sanfordarmstrong@gmail.com>
+
+	* MenuItem.cs: Add UIACheckChanged, UIARadioCheckChanged,
+	UIAEnabledChanged, and UIATextChanged events.
+
+	* Form.cs: Add UIAMenuChanged event.
+
+	* Menu.cs:
+	* MenuAPI.cs: Note which internal APIs are being used by UIA.
+
 2009-01-21  Neville Gao  <nevillegao@gmail.com>
 
 	* ToolBar.cs: Control enabled to support accessibility.

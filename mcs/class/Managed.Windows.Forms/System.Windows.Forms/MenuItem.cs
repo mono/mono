@@ -65,6 +65,7 @@ namespace System.Windows.Forms
 		private int menuheight;
 		private bool menubar;
 		private MenuMerge mergetype;
+		// UIA Framework Note: Used to obtain item bounds
 		internal Rectangle bounds;
 		
 		public MenuItem (): base (null)
@@ -167,6 +168,66 @@ namespace System.Windows.Forms
 			add { Events.AddHandler (SelectEvent, value); }
 			remove { Events.RemoveHandler (SelectEvent, value); }
 		}
+		
+		#region UIA Framework Events
+#if NET_2_0
+		static object UIACheckedChangedEvent = new object ();
+
+		internal event EventHandler UIACheckedChanged {
+			add { Events.AddHandler (UIACheckedChangedEvent, value); }
+			remove { Events.RemoveHandler (UIACheckedChangedEvent, value); }
+		}
+
+		internal void OnUIACheckedChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIACheckedChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		static object UIARadioCheckChangedEvent = new object ();
+
+		internal event EventHandler UIARadioCheckChanged {
+			add { Events.AddHandler (UIARadioCheckChangedEvent, value); }
+			remove { Events.RemoveHandler (UIARadioCheckChangedEvent, value); }
+		}
+
+		internal void OnUIARadioCheckChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIARadioCheckChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		static object UIAEnabledChangedEvent = new object ();
+
+		internal event EventHandler UIAEnabledChanged {
+			add { Events.AddHandler (UIAEnabledChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAEnabledChangedEvent, value); }
+		}
+
+		internal void OnUIAEnabledChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIAEnabledChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		static object UIATextChangedEvent = new object ();
+
+		internal event EventHandler UIATextChanged {
+			add { Events.AddHandler (UIATextChangedEvent, value); }
+			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
+		}
+
+		internal void OnUIATextChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIATextChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion
 		#endregion // Events
 
 		#region Public Properties
@@ -188,7 +249,16 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool Checked {
 			get { return checked_; }
-			set { checked_ = value; }
+			set {
+				if (checked_ == value)
+					return;
+				
+				checked_ = value;
+#if NET_2_0
+				// UIA Framework Event: Checked Changed
+				OnUIACheckedChanged (EventArgs.Empty);
+#endif
+			}
 		}
 
 		[DefaultValue(false)]
@@ -206,6 +276,10 @@ namespace System.Windows.Forms
 					return;
 					
 				enabled = value;
+#if NET_2_0
+				// UIA Framework Event: Enabled Changed
+				OnUIAEnabledChanged (EventArgs.Empty);
+#endif
 				Invalidate ();
 			}
 		}
@@ -283,7 +357,16 @@ namespace System.Windows.Forms
 		[DefaultValue(false)]
 		public bool RadioCheck {
 			get { return radiocheck; }
-			set { radiocheck = value; }
+			set {
+				if (radiocheck == value)
+					return;
+				
+				radiocheck = value;
+#if NET_2_0
+				// UIA Framework Event: Checked Changed
+				OnUIARadioCheckChanged (EventArgs.Empty);
+#endif
+			}
 		}
 
 		[DefaultValue(Shortcut.None)]
@@ -316,6 +399,10 @@ namespace System.Windows.Forms
 					separator = true;
 				else
 					separator = false;
+#if NET_2_0
+				// UIA Framework Event: Text Changed
+				OnUIATextChanged (EventArgs.Empty);
+#endif
 
 				ProcessMnemonic ();
 				Invalidate ();

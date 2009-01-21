@@ -999,6 +999,10 @@ namespace System.Windows.Forms {
 						}
 					} else
 						UpdateBounds ();
+#if NET_2_0
+					// UIA Framework Event: Menu Changed
+					OnUIAMenuChanged (EventArgs.Empty);
+#endif
 				}
 			}
 		}
@@ -3284,6 +3288,24 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 #endif
+
+		#region UIA Framework Events
+#if NET_2_0
+		static object UIAMenuChangedEvent = new object ();
+
+		internal event EventHandler UIAMenuChanged {
+			add { Events.AddHandler (UIAMenuChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAMenuChangedEvent, value); }
+		}
+
+		internal void OnUIAMenuChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler) Events [UIAMenuChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion	// UIA Framework Events
 		#endregion	// Events
 	}
 }

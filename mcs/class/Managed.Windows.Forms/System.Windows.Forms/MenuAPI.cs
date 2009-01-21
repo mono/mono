@@ -35,6 +35,7 @@ namespace System.Windows.Forms {
 		When writing this code the Wine project was of great help to
 		understand the logic behind some Win32 issues. Thanks to them. Jordi,
 	*/
+	// UIA Framework Note: This class used by UIA for its mouse action methods.
 	internal class MenuTracker {
 
 		internal bool active;
@@ -136,6 +137,7 @@ namespace System.Windows.Forms {
 			return item;
 		}
 
+		// UIA Framework Note: Used to expand/collapse MenuItems
 		public bool OnMouseDown (MouseEventArgs args)
 		{
 			MenuItem item = GetItemAtXY (args.X, args.Y);
@@ -167,6 +169,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		// UIA Framework Note: Used to select MenuItems
 		public void OnMotion (MouseEventArgs args)
 		{
 			// Windows helpfully sends us MOUSEMOVE messages when any key is pressed.
@@ -214,6 +217,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		// UIA Framework Note: Used to expand/collapse MenuItems
 		public void OnMouseUp (MouseEventArgs args)
 		{
 			/* mouse down dont comes from menu */
