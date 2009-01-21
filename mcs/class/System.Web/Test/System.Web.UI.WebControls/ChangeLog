@@ -1,3 +1,8 @@
+2009-01-21  Marek Habersack  <mhabersack@novell.com>
+
+	* MenuTest.cs: temporarily disabled the Menu_DefaultRender test
+	(Nunit 2.4 issue).
+
 2008-10-08  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlParameterTest.cs: added a test for ControlParameter

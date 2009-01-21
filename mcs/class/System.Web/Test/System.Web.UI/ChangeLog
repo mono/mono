@@ -1,3 +1,8 @@
+2009-01-21  Marek Habersack  <mhabersack@novell.com>
+
+	* XhtmlTextWriterTest.cs: temporarily disabled the
+	RemoveRecognizedAttribute test (Nunit 2.4 issue).
+
 2008-12-10  Marek Habersack  <mhabersack@novell.com>
 
 	* PageParserTest.cs: added
