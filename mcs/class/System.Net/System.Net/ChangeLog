@@ -1,3 +1,7 @@
+2009-01-21  Chris Toshok  <toshok@ximian.com>
+
+	* WebClient_2_1.cs: add 1 method back in, CancelAsync.
+
 2009-01-12  Geoff Norton  <gnorton@novell.com>
 
 	* WebClient_2.1.cs: SL2 webclient supports BaseAddress.

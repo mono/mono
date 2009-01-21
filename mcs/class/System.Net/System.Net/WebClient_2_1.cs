@@ -1013,24 +1013,24 @@ namespace System.Net
 //		}
 //
 //#if NET_2_0
-//		public void CancelAsync ()
-//		{
-//			lock (this){
-//				if (async_thread == null)
-//					return;
-//
-//				//
-//				// We first flag things as done, in case the Interrupt hangs
-//				// or the thread decides to hang in some other way inside the
-//				// event handlers, or if we are stuck somewhere else.  This
-//				// ensures that the WebClient object is reusable immediately
-//				//
-//				Thread t = async_thread;
-//				CompleteAsync ();
-//				t.Interrupt ();
-//			}
-//		}
-//
+		public void CancelAsync ()
+		{
+			lock (this){
+				if (async_thread == null)
+					return;
+
+				//
+				// We first flag things as done, in case the Interrupt hangs
+				// or the thread decides to hang in some other way inside the
+				// event handlers, or if we are stuck somewhere else.  This
+				// ensures that the WebClient object is reusable immediately
+				//
+				Thread t = async_thread;
+				CompleteAsync ();
+				t.Interrupt ();
+			}
+		}
+
 		void CompleteAsync ()
 		{
 			lock (this){
