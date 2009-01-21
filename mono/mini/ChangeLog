@@ -1,5 +1,8 @@
 2009-01-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Check for methods which cannot be
+	encoded inside RGCTX_FETCH patches as well.
+
 	* mini-exceptions.c (mono_print_thread_dump): Fix the windows
 	build.
 
