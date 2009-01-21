@@ -1,5 +1,8 @@
 2009-01-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_delegate_trampoline): Put back the previous
+	change inside a #ifdef __mono_ppc64__.
+
 	* aot-compiler.c (compile_method): Remove the previous limitation.
 
 	* method-to-ir.c (method-to-ir.c): Add support for the constrained prefix
