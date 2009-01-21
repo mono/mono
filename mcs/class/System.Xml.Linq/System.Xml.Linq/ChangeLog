@@ -1,3 +1,8 @@
+2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElement.cs : oops, experimental code remained and caused test
+	  failure.
+
 2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElement.cs : iterate all attributes and see if there is
