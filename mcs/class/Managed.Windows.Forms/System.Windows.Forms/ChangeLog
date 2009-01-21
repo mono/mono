@@ -1,3 +1,8 @@
+2009-01-21  Mario Carrion <mcarrion@novell.com>
+
+	* Form.cs: UIA Support: Internal events added: UIAWindowStateChanged
+	and UIATopMostChanged.
+
 2009-01-21  Sandy Armstrong  <sanfordarmstrong@gmail.com>
 
 	* MenuItem.cs: Add UIACheckChanged, UIARadioCheckChanged,

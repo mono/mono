@@ -1315,6 +1315,11 @@ namespace System.Windows.Forms {
 					topmost = value;
 					if (IsHandleCreated)
 						XplatUI.SetTopmost(window.Handle, value);
+
+#if NET_2_0
+					// UIA Framework: Raises internal event
+					OnUIATopMostChanged ();
+#endif
 				}
 			}
 		}
@@ -1370,6 +1375,13 @@ namespace System.Windows.Forms {
 
 					XplatUI.SetWindowState(Handle, value);
 				}
+
+#if NET_2_0
+				// UIA Framework: Raises internal event
+				if (old_state != window_state) 
+					OnUIAWindowStateChanged ();
+#endif
+
 			}
 		}
 
@@ -3292,10 +3304,22 @@ namespace System.Windows.Forms {
 		#region UIA Framework Events
 #if NET_2_0
 		static object UIAMenuChangedEvent = new object ();
+		static object UIATopMostChangedEvent = new object ();
+		static object UIAWindowStateChangedEvent = new object ();
 
 		internal event EventHandler UIAMenuChanged {
 			add { Events.AddHandler (UIAMenuChangedEvent, value); }
 			remove { Events.RemoveHandler (UIAMenuChangedEvent, value); }
+		}
+
+		internal event EventHandler UIATopMostChanged {
+			add { Events.AddHandler (UIATopMostChangedEvent, value); }
+			remove { Events.RemoveHandler (UIATopMostChangedEvent, value); }
+		}
+
+		internal event EventHandler UIAWindowStateChanged {
+			add { Events.AddHandler (UIAWindowStateChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAWindowStateChangedEvent, value); }
 		}
 
 		internal void OnUIAMenuChanged (EventArgs e)
@@ -3303,6 +3327,20 @@ namespace System.Windows.Forms {
 			EventHandler eh = (EventHandler) Events [UIAMenuChangedEvent];
 			if (eh != null)
 				eh (this, e);
+		}
+
+		internal void OnUIATopMostChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIATopMostChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal void OnUIAWindowStateChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAWindowStateChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 #endif
 		#endregion	// UIA Framework Events
