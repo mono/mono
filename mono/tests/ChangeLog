@@ -1,3 +1,12 @@
+2009-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r124059.
+
+	* appdomain-unload-callback.cs: New test for the AppDomain::DomainUnload
+	deadlock.
+
+	* Makefile.am: Test added.
+
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r124028.
