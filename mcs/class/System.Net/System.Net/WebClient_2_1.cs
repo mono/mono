@@ -263,7 +263,7 @@ namespace System.Net
 				asyncresult.AsyncWaitHandle.WaitOne ();
 				WebResponse response = request.EndGetResponse (asyncresult);
 				Stream st = ProcessResponse (response);
-				return ReadAll (st, (int) response.ContentLength, userToken);
+				return ReadAll (st, (int) st.Length, userToken);
 			} catch (ThreadInterruptedException){
 				if (request != null)
 					request.Abort ();

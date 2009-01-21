@@ -1,3 +1,8 @@
+2009-01-21  Jb Evain  <jbevain@novell.com>
+
+	* System.Net/WebClient_2_1.cs: use the length of the stream
+	instead of the ContentLength that is different for gzipped stream.
+
 2008-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Net.dll.sources: Add new security-socket related files.
