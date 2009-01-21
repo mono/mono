@@ -1,3 +1,10 @@
+2009-01-21  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r123959.
+
+	* TypeBuilderTest.cs: Add test for fields in dynamic generic
+	classes.
+
 2008-11-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ConstructorOnTypeBuilderInstTest.cs: Add test for
