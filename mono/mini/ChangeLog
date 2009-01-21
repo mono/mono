@@ -1,8 +1,13 @@
 2009-01-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Remove the previous limitation.
+
+	* method-to-ir.c (method-to-ir.c): Add support for the constrained prefix
+	on type variables in AOTed code.
+	
 	* aot-compiler.c (compile_method): Skip generic methods having type 
 	constraints on their generic parameters.
-	
+
 	* aot-compiler.c (compile_method): Check for methods which cannot be
 	encoded inside RGCTX_FETCH patches as well.
 
