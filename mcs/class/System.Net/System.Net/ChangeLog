@@ -1,3 +1,9 @@
+2009-01-21  Geoff Norton  <gnorton@novell.com>
+
+	* WebClient_2_1.cs: Make the ManualResetEvent local to the callback
+	because a WebClient can be reused causing a wait-handle race here
+	allowing a delegate to get collected causing a crash.
+
 2009-01-21  Chris Toshok  <toshok@ximian.com>
 
 	* WebClient_2_1.cs: add 1 method back in, CancelAsync.

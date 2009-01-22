@@ -1421,13 +1421,13 @@ namespace System.Net
 			}
 		}
 		
-		private ManualResetEvent wait_event = new ManualResetEvent (false);
 		private object callback_args;
 
 		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
 		{
 			CompleteAsync ();
 			if (OpenReadCompleted != null) {
+				ManualResetEvent wait_event = new ManualResetEvent (false);
 				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) { OpenReadCompleted (this, (OpenReadCompletedEventArgs) callback_args); wait_event.Set (); return false; };
 				callback_args = args;
 
@@ -1447,6 +1447,7 @@ namespace System.Net
 		{
 			CompleteAsync ();
 			if (DownloadStringCompleted != null) {
+				ManualResetEvent wait_event = new ManualResetEvent (false);
 				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) { DownloadStringCompleted (this, (DownloadStringCompletedEventArgs) callback_args); wait_event.Set (); return false; };
 				callback_args = args;
 
