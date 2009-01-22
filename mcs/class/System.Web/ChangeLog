@@ -10,6 +10,9 @@
 	Added the DEVEL define, which defines DEVEL on the mcs command
 	line. This is used to conditionally compile development helper code in
 	System.Web.Util.FileUtils (and possibly other stuff later on)
+	If NO_SYSTEMCORE_DEP is defined System.Web.dll will not be linked
+	with System.Core.dll and BuildManager will use ReaderWriterLock
+	instead of ReaderWriterLockSlim.
 
 2009-01-20  Marek Habersack  <mhabersack@novell.com>
 

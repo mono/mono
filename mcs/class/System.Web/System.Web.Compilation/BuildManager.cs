@@ -80,7 +80,8 @@ namespace System.Web.Compilation {
 
 #if SYSTEMCORE_DEP
 		static ReaderWriterLockSlim buildCacheLock;
-		//static ReaderWriterLock buildCacheLock;
+#else
+		static ReaderWriterLock buildCacheLock;
 #endif
 		static ulong recursionDepth;
 		
@@ -133,7 +134,8 @@ namespace System.Web.Compilation {
 			buildCache = new Dictionary <string, BuildManagerCacheItem> (comparer);
 #if SYSTEMCORE_DEP
 			buildCacheLock = new ReaderWriterLockSlim ();
-			//buildCacheLock = new ReaderWriterLock ();
+#else
+			buildCacheLock = new ReaderWriterLock ();
 #endif
 			referencedAssemblies = new List <Assembly> ();
 			recursionDepth = 0;
@@ -480,7 +482,8 @@ namespace System.Web.Compilation {
 			try {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
-				//buildCacheLock.AcquireWriterLock (0);
+#else
+				buildCacheLock.AcquireWriterLock (0);
 #endif
 				locked = true;
 				if (compiledAssembly != null)
@@ -493,12 +496,13 @@ namespace System.Web.Compilation {
 					StoreInCache (bp, compiledAssembly, results);
 				}
 			} finally {
-#if SYSTEMCORE_DEP
 				if (locked) {
+#if SYSTEMCORE_DEP
 					buildCacheLock.ExitWriteLock ();
-					//buildCacheLock.ReleaseWriterLock ();
-				}
+#else
+					buildCacheLock.ReleaseWriterLock ();
 #endif
+				}
 			}
 		}
 		
@@ -533,16 +537,19 @@ namespace System.Web.Compilation {
 			try {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterReadLock ();
-				//buildCacheLock.AcquireReaderLock (0);
+#else
+				buildCacheLock.AcquireReaderLock (0);
 #endif
 				locked = true;
 				return GetCachedItemNoLock (vp);
 			} finally {
+				if (locked) {
 #if SYSTEMCORE_DEP
-				if (locked)
 					buildCacheLock.ExitReadLock ();
-				//buildCacheLock.ReleaseReaderLock ();
+#else
+					buildCacheLock.ReleaseReaderLock ();
 #endif
+				}
 			}
 		}
 
@@ -849,7 +856,8 @@ namespace System.Web.Compilation {
 			try {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
-				//buildCacheLock.AcquireWriterLock (0);
+#else
+				buildCacheLock.AcquireWriterLock (0);
 #endif
 				locked = true;
 
@@ -858,12 +866,13 @@ namespace System.Web.Compilation {
 					OnEntryRemoved (virtualPath);
 				}
 			} finally {
-#if SYSTEMCORE_DEP
 				if (locked) {
+#if SYSTEMCORE_DEP
 					buildCacheLock.ExitWriteLock ();
-					//buildCacheLock.ReleaseWriterLock ();
-				}
+#else
+					buildCacheLock.ReleaseWriterLock ();
 #endif
+				}
 			}
 		}
 		
