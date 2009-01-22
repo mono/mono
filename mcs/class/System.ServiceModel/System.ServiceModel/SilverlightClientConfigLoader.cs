@@ -43,47 +43,12 @@ namespace System.ServiceModel
 
 	internal class SilverlightClientConfigLoader
 	{
-		public static void Main (string [] args)
-		{
-			var reader = XmlReader.Create (args [0]);
-			var cfg = new SilverlightClientConfigLoader ().Load (reader);
-			var se = cfg.GetServiceEndpointConfiguration (null);
-			Console.WriteLine (se.Binding);
-			Console.WriteLine (se.Address);
-		}
-
 		public SilverlightClientConfiguration Load (XmlReader reader)
 		{
 			var ret = new SilverlightClientConfiguration ();
 			ret.Bindings = new BindingsConfiguration ();
 			ret.Client = new ClientConfiguration ();
 
-			/*
-			var doc = XDocument.Load (reader);
-
-			var cfg = doc.Element (XName.Get ("configuration"));
-			if (cfg == null)
-				throw new XmlException ("element 'configuration' is not found");
-			var sm = cfg.Element (XName.Get ("system.serviceModel"));
-			if (sm == null)
-				throw new XmlException ("element 'system.serviceModel' is not found");
-			var binding = sm.Element (XName.Get ("bindings"));
-			if (binding == null)
-				throw new XmlException ("element 'bindings' is not found");
-			var basicHttp = binding.Element (XName.Get ("basicHttpBinding"));
-			if (basicHttp == null)
-				throw new XmlException ("element 'basicHttpBinding' is not found");
-			var client = sm.Element (XName.Get ("client"));
-			if (client == null)
-				throw new XmlException ("element 'client' is not found");
-
-			foreach (var http in basicHttp.Elements ("binding"))
-				ret.Bindings.BasicHttpBinding.Add (ReadBasicHttpBinding (http));
-			foreach (var endpoint in client.Elements ("endpoint"))
-				ret.Client.Endpoints.Add (ReadEndpoint (endpoint));
-
-			return ret;
-			*/
 			reader.MoveToContent ();
 			if (reader.IsEmptyElement)
 				return ret;
@@ -106,7 +71,6 @@ namespace System.ServiceModel
 					}
 					switch (reader.LocalName) {
 					case "bindings":
-Console.WriteLine ("{0} {1} {2}", reader.NodeType, reader.LocalName, reader.IsEmptyElement);
 						reader.ReadStartElement ();
 						for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 							if (reader.NodeType != XmlNodeType.Element ||
@@ -193,42 +157,6 @@ Console.WriteLine ("{0} {1} {2}", reader.NodeType, reader.LocalName, reader.IsEm
 			return e;
 		}
 
-		/*
-		BasicHttpBindingConfiguration ReadBasicHttpBinding (XElement binding)
-		{
-			XAttribute a;
-			var b = new BasicHttpBindingConfiguration ();
-			if ((a = binding.Attribute ("maxBufferPoolSize")) != null)
-				b.MaxBufferPoolSize = XmlConvert.ToInt32 (a.Value);
-			if ((a = binding.Attribute ("maxBufferSize")) != null)
-				b.MaxBufferSize = XmlConvert.ToInt32 (a.Value);
-			if ((a = binding.Attribute ("maxReceivedMessageSize")) != null)
-				b.MaxReceivedMessageSize = XmlConvert.ToInt32 (a.Value);
-			if ((a = binding.Attribute ("textEncoding")) != null)
-				b.TextEncoding = Encoding.GetEncoding (a.Value);
-			var s = binding.Element ("security");
-			if (s != null && (a = s.Attribute ("mode")) != null)
-				b.Security.Mode = (BasicHttpSecurityMode) Enum.Parse (typeof (BasicHttpSecurityMode), a.Value, false);
-
-			return b;
-		}
-
-		EndpointConfiguration ReadEndpoint (XElement endpoint)
-		{
-			XAttribute a;
-			var e = new EndpointConfiguration ();
-			if ((a = endpoint.Attribute ("name")) != null)
-				e.Name = a.Value;
-			if ((a = endpoint.Attribute ("address")) != null)
-				e.Address = new Uri (a.Value);
-			if ((a = endpoint.Attribute ("bindingConfiguration")) != null)
-				e.BindingConfiguration = a.Value;
-			if ((a = endpoint.Attribute ("contract")) != null)
-				e.Contract = a.Value;
-			return e;
-		}
-		*/
-
 		public class SilverlightClientConfiguration
 		{
 			public SilverlightClientConfiguration ()
@@ -254,7 +182,7 @@ Console.WriteLine ("{0} {1} {2}", reader.NodeType, reader.LocalName, reader.IsEm
 					throw new InvalidOperationException ("Endpoint configuration can be acquired only after loading is done.");
 
 				foreach (var e in Client.Endpoints)
-					if (e.Name == name)
+					if (e.Name == name || name == "*")
 						return e;
 				return Client.Endpoints [0];
 			}
