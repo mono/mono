@@ -1,5 +1,9 @@
 2009-01-22  Jb Evain  <jbevain@novell.com>
 
+	* SortSequenceContext.cs: make sort stable.
+
+2009-01-22  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs (Sum): check the sum operations for possible overfows.
 
 2009-01-22  Jb Evain  <jbevain@novell.com>
