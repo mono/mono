@@ -59,8 +59,12 @@ namespace System.Linq {
 		{
 			int comparison = comparer.Compare (keys [first_index], keys [second_index]);
 
-			if (comparison == 0 && child_context != null)
-				return child_context.Compare (first_index, second_index);
+			if (comparison == 0) {
+				if (child_context != null)
+					return child_context.Compare (first_index, second_index);
+				else
+					comparison = first_index - second_index;
+			}
 
 			return direction == SortDirection.Descending ? -comparison : comparison;
 		}
