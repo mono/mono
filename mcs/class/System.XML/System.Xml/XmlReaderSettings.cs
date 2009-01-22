@@ -90,15 +90,17 @@ namespace System.Xml
 			lineNumberOffset = 0;
 			linePositionOffset = 0;
 			prohibitDtd = true;
-#if !NET_2_1
+#if NET_2_1
+			xmlResolver = new XmlXapResolver ();
+#else
 			schemas = null;
 			schemasNeedsInitialization = true;
 			validationFlags =
 				XsValidationFlags.ProcessIdentityConstraints |
 				XsValidationFlags.AllowXmlAttributes;
 			validationType = ValidationType.None;
-#endif
 			xmlResolver = new XmlUrlResolver ();
+#endif
 		}
 
 		public bool CheckCharacters {

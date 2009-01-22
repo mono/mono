@@ -1,3 +1,8 @@
+2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlXapResolver.cs : new in 2.1.
+	* XmlReaderSettings.cs : use above.
+
 2009-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : in some corner cases an attribute
