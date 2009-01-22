@@ -236,6 +236,10 @@ ifdef MONO_TRACE
 LIB_MCS_FLAGS += -define:TRACE -define:MONO_TRACE
 endif
 
+ifdef DEVEL
+LIB_MCS_FLAGS += -define:DEVEL
+endif
+
 $(the_lib): $(RESX_RES) $(RESOURCE_FILES2) $(RESOURCE_FILES_1)
 
 $(RESX_RES): %.resources: %.resx
