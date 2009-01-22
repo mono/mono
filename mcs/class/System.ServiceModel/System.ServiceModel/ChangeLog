@@ -1,5 +1,13 @@
 2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SilverlightClientConfigLoader.cs : in Silverlight, there is
+	  "ServiceReference.ClientConfig" which is used to resolve service
+	  endpoint configuration. It is to consume that file.
+	* ChannelFactory.cs : use above in SL.
+	* ClientBase.cs : rename some misleading param names.
+
+2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactory.cs : some code comment.
 	* ClientBase.cs : remove some todos.
 	* ClientRuntimeChannel.cs : hack some session properties.

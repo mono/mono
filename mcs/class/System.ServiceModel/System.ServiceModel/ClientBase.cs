@@ -53,8 +53,8 @@ namespace System.ServiceModel
 		{
 		}
 
-		protected ClientBase (string configname)
-			: this (initialContxt, configname)
+		protected ClientBase (string endpointConfigurationName)
+			: this (initialContxt, endpointConfigurationName)
 		{
 		}
 
@@ -63,13 +63,13 @@ namespace System.ServiceModel
 		{
 		}
 
-		protected ClientBase (string configname, EndpointAddress remoteAddress)
-			: this (initialContxt, configname, remoteAddress)
+		protected ClientBase (string endpointConfigurationName, EndpointAddress remoteAddress)
+			: this (initialContxt, endpointConfigurationName, remoteAddress)
 		{
 		}
 
-		protected ClientBase (string configname, string remoteAddress)
-			: this (initialContxt, configname, remoteAddress)
+		protected ClientBase (string endpointConfigurationName, string remoteAddress)
+			: this (initialContxt, endpointConfigurationName, remoteAddress)
 		{
 		}
 
@@ -78,40 +78,40 @@ namespace System.ServiceModel
 		{
 		}
 
-		protected ClientBase (InstanceContext instance, string configname)
+		protected ClientBase (InstanceContext instance, string endpointConfigurationName)
 		{
 			if (instance == null)
 				throw new ArgumentNullException ("instanceContext");
-			if (configname == null)
-				throw new ArgumentNullException ("configurationName");
+			if (endpointConfigurationName == null)
+				throw new ArgumentNullException ("endpointConfigurationName");
 
-			Initialize (instance, configname, null);
+			Initialize (instance, endpointConfigurationName, null);
 		}
 
 		protected ClientBase (InstanceContext instance,
-			string configname, EndpointAddress remoteAddress)
+			string endpointConfigurationName, EndpointAddress remoteAddress)
 		{
 			if (instance == null)
 				throw new ArgumentNullException ("instanceContext");
-			if (configname == null)
-				throw new ArgumentNullException ("configurationName");
+			if (endpointConfigurationName == null)
+				throw new ArgumentNullException ("endpointConfigurationName");
 			if (remoteAddress == null)
 				throw new ArgumentNullException ("remoteAddress");
 
-			Initialize (instance, configname, remoteAddress);
+			Initialize (instance, endpointConfigurationName, remoteAddress);
 		}
 
 		protected ClientBase (InstanceContext instance,
-			string configname, string remoteAddress)
+			string endpointConfigurationName, string remoteAddress)
 		{
 			if (instance == null)
 				throw new ArgumentNullException ("instanceContext");
 			if (remoteAddress == null)
 				throw new ArgumentNullException ("endpointAddress");
-			if (configname == null)
-				throw new ArgumentNullException ("configurationname");
+			if (endpointConfigurationName == null)
+				throw new ArgumentNullException ("endpointConfigurationName");
 
-			Initialize (instance, configname, new EndpointAddress (remoteAddress));
+			Initialize (instance, endpointConfigurationName, new EndpointAddress (remoteAddress));
 		}
 
 		protected ClientBase (InstanceContext instance,
@@ -128,9 +128,9 @@ namespace System.ServiceModel
 		}
 
 		void Initialize (InstanceContext instance,
-			string configName, EndpointAddress remoteAddress)
+			string endpointConfigurationName, EndpointAddress remoteAddress)
 		{
-			factory = new ChannelFactory<TChannel> (configName, remoteAddress);
+			factory = new ChannelFactory<TChannel> (endpointConfigurationName, remoteAddress);
 		}
 
 		void Initialize (InstanceContext instance,

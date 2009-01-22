@@ -32,6 +32,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Configuration;
 using System.ServiceModel.Configuration;
+using System.Xml;
 
 namespace System.ServiceModel
 {
@@ -67,9 +68,22 @@ namespace System.ServiceModel
 
 		protected virtual void ApplyConfiguration (string endpointConfig)
 		{
-#if !NET_2_1
 			if (endpointConfig == null)
 				return;
+
+#if NET_2_1
+			try {
+				// It should automatically use XmlXapResolver
+				var cfg = new SilverlightClientConfigLoader ().Load (XmlReader.Create ("ServiceReference.ClientConfig"));
+				var se = cfg.GetServiceEndpointConfiguration (endpointConfig);
+				if (se.Binding != null && Endpoint.Binding == null)
+					Endpoint.Binding = se.Binding;
+				if (se.Address != null && Endpoint.Address == null)
+					Endpoint.Address = se.Address;
+			} catch (Exception) {
+				// ignore it.
+			}
+#else
 
 			string contractName = Endpoint.Contract.ConfigurationName;
 			ClientSection client = (ClientSection) ConfigurationManager.GetSection ("system.serviceModel/client");

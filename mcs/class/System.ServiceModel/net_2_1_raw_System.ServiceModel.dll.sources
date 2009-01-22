@@ -198,6 +198,7 @@ System.ServiceModel/ServerTooBusyException.cs
 System.ServiceModel/ServiceActivationException.cs
 System.ServiceModel/ServiceContractAttribute.cs
 System.ServiceModel/ServiceKnownTypeAttribute.cs
+System.ServiceModel/SilverlightClientConfigLoader.cs
 System.ServiceModel/TransferMode.cs
 System.ServiceModel/UnknownMessageReceivedEventArgs.cs
 System.ServiceModel/UriSchemeKeyedCollection.cs
