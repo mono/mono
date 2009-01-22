@@ -176,9 +176,7 @@ namespace System.Web.Compilation
 			if (vdir == null)
 				return;
 			
-			string vdirPath = vdir.VirtualPath;
 			BuildProvider bp;
-			string bpPath;
 			List <string> deps;
 			var dirs = new List <string> ();
 			string fileVirtualPath;
