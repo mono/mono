@@ -112,6 +112,10 @@ namespace System.ServiceModel
 		[MonoTODO]
 		protected virtual IChannelFactory CreateFactory ()
 		{
+			// FIXME: 
+			// This should be implemented to return IChannelFactory<IRequestChannel> etc.
+			// ClientRuntimeChannel should not implement channel
+			// creation by itself but should delegate it to this.
 			throw new NotImplementedException ();
 		}
 

@@ -416,13 +416,11 @@ namespace System.ServiceModel
 
 			#region IClientChannel
 
-			[MonoTODO]
 			public bool AllowInitializationUI {
 				get { return client.InnerChannel.AllowInitializationUI; }
 				set { client.InnerChannel.AllowInitializationUI = value; }
 			}
 
-			[MonoTODO]
 			public bool DidInteractiveInitialization {
 				get { return client.InnerChannel.DidInteractiveInitialization; }
 			}
@@ -431,21 +429,18 @@ namespace System.ServiceModel
 				get { return client.InnerChannel.Via; }
 			}
 
-			[MonoTODO]
 			public IAsyncResult BeginDisplayInitializationUI (
 				AsyncCallback callback, object state)
 			{
 				return client.InnerChannel.BeginDisplayInitializationUI (callback, state);
 			}
 
-			[MonoTODO]
 			public void EndDisplayInitializationUI (
 				IAsyncResult result)
 			{
 				client.InnerChannel.EndDisplayInitializationUI (result);
 			}
 
-			[MonoTODO]
 			public void DisplayInitializationUI ()
 			{
 				client.InnerChannel.DisplayInitializationUI ();

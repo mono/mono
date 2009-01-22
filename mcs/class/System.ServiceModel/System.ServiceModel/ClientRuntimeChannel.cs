@@ -230,7 +230,11 @@ namespace System.ServiceModel
 
 		[MonoTODO]
 		public IInputSession InputSession {
-			get { throw new NotImplementedException (); }
+			get {
+				ISessionChannel<IInputSession> ch = request_channel as ISessionChannel<IInputSession>;
+				ch = ch ?? output_channel as ISessionChannel<IInputSession>;
+				return ch != null ? ch.Session : null;
+			}
 		}
 
 		[MonoTODO]
@@ -246,7 +250,11 @@ namespace System.ServiceModel
 
 		[MonoTODO]
 		public IOutputSession OutputSession {
-			get { throw new NotImplementedException (); }
+			get {
+				ISessionChannel<IOutputSession> ch = request_channel as ISessionChannel<IOutputSession>;
+				ch = ch ?? output_channel as ISessionChannel<IOutputSession>;
+				return ch != null ? ch.Session : null;
+			}
 		}
 
 		[MonoTODO]

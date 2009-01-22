@@ -1,3 +1,9 @@
+2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory.cs : some code comment.
+	* ClientBase.cs : remove some todos.
+	* ClientRuntimeChannel.cs : hack some session properties.
+
 2009-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientBase.cs : implement InvokeAsync(). Not sure if it works yet.
