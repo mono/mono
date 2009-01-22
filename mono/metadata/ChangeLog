@@ -1,3 +1,11 @@
+2009-01-23  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r124266.
+	
+	* metadata.c (mono_metadata_load_generic_params): Initialize the 
+	MonoGenericParam structure using memset so the image field is initialized
+	as well.
+
 2009-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r123812.
