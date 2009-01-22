@@ -281,8 +281,10 @@ namespace System.ServiceModel.Description
 				XmlSchemaSimpleType simple = elem.ElementSchemaType as XmlSchemaSimpleType;
 				msg_part = new MessagePartDescription (
 						elem.Name, ns);
-				if (elem.SchemaTypeName.Namespace != XmlSchema.Namespace)
-					msg_part.XmlTypeMapping = schema_importer.ImportTypeMapping (elem.SchemaTypeName);
+				if (elem.SchemaType != null)
+					msg_part.XmlTypeMapping = schema_importer.ImportTypeMapping (elem.QualifiedName);
+				else
+					msg_part.XmlTypeMapping = schema_importer.ImportSchemaType (elem.SchemaTypeName);
 				msg_part.TypeName = new QName (GetCLRTypeName (elem.SchemaTypeName), "");
 				parts.Add (msg_part);
 
@@ -296,7 +298,10 @@ namespace System.ServiceModel.Description
 
 			//depth <= 0
 			msg_part = new MessagePartDescription (elem.Name, ns);
-			msg_part.XmlTypeMapping = schema_importer.ImportTypeMapping (elem.SchemaTypeName);
+			if (elem.SchemaType != null)
+				msg_part.XmlTypeMapping = schema_importer.ImportTypeMapping (elem.QualifiedName);
+			else
+				msg_part.XmlTypeMapping = schema_importer.ImportSchemaType (elem.SchemaTypeName);
 			msg_part.TypeName = elem.SchemaTypeName;
 
 			parts.Add (msg_part);

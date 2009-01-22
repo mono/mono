@@ -1,3 +1,9 @@
+2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializerMessageContractImporter.cs :
+	  for such an element that does not contain schema type but has a
+	  type reference, use ImportSchemaType().
+
 2009-01-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractSerializerMessageContractImporter.cs :
