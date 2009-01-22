@@ -1,3 +1,8 @@
+2009-01-22  Alan McGovern  <amcgovern@novell.com>
+
+	* MessageHeaders.cs : List<T>.RemoveAll(Predicate<T>) doesn't exist in Silverlight.
+	Rewrite to avoid usage of it.
+
 2009-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelParameterCollection.cs : implement, rather than NIE.
