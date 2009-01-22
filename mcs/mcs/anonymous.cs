@@ -1745,7 +1745,7 @@ namespace Mono.CSharp {
 				new QualifiedAliasMember ("global", "System", loc), "Collections", loc), "Generic", loc);
 
 			Expression rs_equals = null;
-			Expression string_concat = new StringConstant ("<empty type>", loc);
+			Expression string_concat = new StringConstant ("{", loc);
 			Expression rs_hashcode = new IntConstant (-2128831035, loc);
 			for (int i = 0; i < parameters.Count; ++i) {
 				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
@@ -1777,13 +1777,15 @@ namespace Mono.CSharp {
 					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc)),
 					new Invocation (new MemberAccess (
 						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
-					new StringConstant ("<null>", loc));
+					new StringConstant (string.Empty, loc));
 
 				if (rs_equals == null) {
 					rs_equals = field_equal;
 					string_concat = new Binary (Binary.Operator.Addition,
-						new StringConstant (p.Name + " = ", loc),
-						field_to_string);
+						string_concat,
+						new Binary (Binary.Operator.Addition,
+							new StringConstant (" " + p.Name + " = ", loc),
+							field_to_string));
 					continue;
 				}
 
@@ -1798,6 +1800,10 @@ namespace Mono.CSharp {
 
 				rs_equals = new Binary (Binary.Operator.LogicalAnd, rs_equals, field_equal);
 			}
+
+			string_concat = new Binary (Binary.Operator.Addition,
+				string_concat,
+				new StringConstant (" }", loc));
 
 			//
 			// Equals (object obj) override
