@@ -1,3 +1,8 @@
+2009-01-22  Jb Evain  <jbevain@novell.com>
+
+	* gtest-anontype-05.cs: update according to lastest changes in gmcs
+	to match was csc outputs. Also add new cases to check.
+
 2008-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* test-695.cs:

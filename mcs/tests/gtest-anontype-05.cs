@@ -35,12 +35,26 @@ public class Test
 		Console.WriteLine (v1);
 		Console.WriteLine (v3);
 		
-		if (v1.ToString () != "Name = Scott, Age = 21")
+		if (v1.ToString () != "{ Name = Scott, Age = 21 }")
 			return 6;
 			
-		if (v3.ToString () != "Name = <null>, Age = 33")
+		if (v3.ToString () != "{ Name = , Age = 33 }")
 			return 7;
-		
+
+		var v4 = new {};
+
+		if (v4.ToString () != "{ }")
+			return 8;
+
+		var v5 = new { Foo = "Bar" };
+		var v6 = new { Foo = Null () };
+
+		if (v5.ToString () != "{ Foo = Bar }")
+			return 9;
+
+		if (v6.ToString () != "{ Foo =  }")
+			return 10;
+
 		return 0;
 	}
 }
