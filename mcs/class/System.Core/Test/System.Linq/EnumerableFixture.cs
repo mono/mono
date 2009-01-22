@@ -1232,7 +1232,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void OrderBy_KeySelector_DataWithDuplicateKeys_YieldsStablySortedData ()
 		{
 			var data = new []
@@ -1266,7 +1265,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ThenBy_KeySelector_DataWithDuplicateKeys_YieldsStablySortedData ()
 		{
 			var data = new []
