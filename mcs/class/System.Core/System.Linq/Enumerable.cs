@@ -935,6 +935,14 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			var collection = source as ICollection<TSource>;
+			if (collection != null && collection.Count == 0)
+				throw new InvalidOperationException ();
+
+			var list = source as IList<TSource>;
+			if (list != null)
+				return list [list.Count - 1];
+
 			return source.Last (PredicateOf<TSource>.Always, Fallback.Throw);
 		}
 
