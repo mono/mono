@@ -203,14 +203,6 @@ namespace System.Web.Compilation {
 			units.CopyTo (result, 0);
 			return result;
 		}
-
-// 		internal List <CodeCompileUnit> Units {
-// 			get {
-// 				if (units == null)
-// 					units = new List <CodeCompileUnit> ();
-// 				return units;
-// 			}
-// 		}
 		
 		internal Dictionary <string, List <CompileUnitPartialType>> PartialTypes {
 			get {
