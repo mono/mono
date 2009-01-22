@@ -993,7 +993,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Last_IntegerListOptimization_ReturnsLastElementWithoutEnumerating ()
 		{
 			var source = new NonEnumerableList<int> (new [] { 1, 2, 3 });
@@ -1002,7 +1001,6 @@ namespace MonoTests.System.Linq {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void Last_EmptyIntegerListOptimization_ThrowsInvalidOperationException ()
 		{
 			new NonEnumerableList<int> ().Last ();

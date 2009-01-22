@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F902A50D-6156-4935-A1AC-E82DF0EB83D3}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -105,6 +105,7 @@
     <Compile Include="System.Linq.Expressions\ExpressionTest_UnaryPlus.cs" />
     <Compile Include="System.Linq.Expressions\ExpressionTest_Utils.cs" />
     <Compile Include="System.Linq\EnumerableAsQueryableTest.cs" />
+    <Compile Include="System.Linq\EnumerableFixture.cs" />
     <Compile Include="System.Linq\EnumerableMoreTest.cs" />
     <Compile Include="System.Linq\EnumerableTest.cs" />
     <Compile Include="System.Linq\LookupTest.cs" />
