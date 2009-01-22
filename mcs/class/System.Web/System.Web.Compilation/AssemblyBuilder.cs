@@ -46,7 +46,7 @@ using System.Web.Util;
 using System.Web.Hosting;
 
 namespace System.Web.Compilation {
-	internal class CompileUnitPartialType
+	class CompileUnitPartialType
 	{
 		public readonly CodeCompileUnit Unit;
 		public readonly CodeNamespace ParentNamespace;
@@ -79,7 +79,20 @@ namespace System.Web.Compilation {
 		}
 	}
 	
-	public class AssemblyBuilder {
+	public class AssemblyBuilder
+	{
+		struct CodeUnit
+		{
+			public readonly BuildProvider BuildProvider;
+			public readonly CodeCompileUnit Unit;
+
+			public CodeUnit (BuildProvider bp, CodeCompileUnit unit)
+			{
+				this.BuildProvider = bp;
+				this.Unit = unit;
+			}
+		}
+		
 		const string DEFAULT_ASSEMBLY_BASE_NAME = "App_Web_";
 		const int COPY_BUFFER_SIZE = 8192;
 		
@@ -90,7 +103,8 @@ namespace System.Web.Compilation {
 
 		Dictionary <string, bool> code_files;
 		Dictionary <string, List <CompileUnitPartialType>> partial_types;
-		List <CodeCompileUnit> units;
+		Dictionary <string, BuildProvider> path_to_buildprovider;
+		List <CodeUnit> units;
 		List <string> source_files;
 		List <Assembly> referenced_assemblies;
 		Dictionary <string, string> resource_files;
@@ -116,7 +130,7 @@ namespace System.Web.Compilation {
 			this.provider = provider;
 			this.outputFilesPrefix = assemblyBaseName ?? DEFAULT_ASSEMBLY_BASE_NAME;
 			
-			units = new List <CodeCompileUnit> ();
+			units = new List <CodeUnit> ();
 
 			CompilationSection section;
 			if (virtualPath != null)
@@ -183,20 +197,20 @@ namespace System.Web.Compilation {
 			set { parameters = value; }
 		}
 		
-		internal CodeCompileUnit [] GetUnitsAsArray ()
+		CodeUnit[] GetUnitsAsArray ()
 		{
-			CodeCompileUnit [] result = new CodeCompileUnit [units.Count];
+			CodeUnit[] result = new CodeUnit [units.Count];
 			units.CopyTo (result, 0);
 			return result;
 		}
 
-		internal List <CodeCompileUnit> Units {
-			get {
-				if (units == null)
-					units = new List <CodeCompileUnit> ();
-				return units;
-			}
-		}
+// 		internal List <CodeCompileUnit> Units {
+// 			get {
+// 				if (units == null)
+// 					units = new List <CodeCompileUnit> ();
+// 				return units;
+// 			}
+// 		}
 		
 		internal Dictionary <string, List <CompileUnitPartialType>> PartialTypes {
 			get {
@@ -230,6 +244,18 @@ namespace System.Web.Compilation {
 			}
 		}
 
+		internal BuildProvider GetBuildProviderForPhysicalFilePath (string path)
+		{
+			if (String.IsNullOrEmpty (path) || path_to_buildprovider == null || path_to_buildprovider.Count == 0)
+				return null;
+
+			BuildProvider ret;
+			if (path_to_buildprovider.TryGetValue (path, out ret))
+				return ret;
+
+			return null;
+		}
+		
 		public void AddAssemblyReference (Assembly a)
 		{
 			if (a == null)
@@ -288,9 +314,9 @@ namespace System.Web.Compilation {
 		{
 			if (compileUnit == null)
 				throw new ArgumentNullException ("compileUnit");
-			units.Add (CheckForPartialTypes (compileUnit));
+			units.Add (CheckForPartialTypes (new CodeUnit (null, compileUnit)));
 		}
-		
+				
 		public void AddCodeCompileUnit (BuildProvider buildProvider, CodeCompileUnit compileUnit)
 		{
 			if (buildProvider == null)
@@ -299,9 +325,20 @@ namespace System.Web.Compilation {
 			if (compileUnit == null)
 				throw new ArgumentNullException ("compileUnit");
 
-			units.Add (CheckForPartialTypes (compileUnit));
+			units.Add (CheckForPartialTypes (new CodeUnit (buildProvider, compileUnit)));
 		}
 
+		void AddPathToBuilderMap (string path, BuildProvider bp)
+		{
+			if (path_to_buildprovider == null)
+				path_to_buildprovider = new Dictionary <string, BuildProvider> ();
+
+			if (path_to_buildprovider.ContainsKey (path))
+				return;
+
+			path_to_buildprovider.Add (path, bp);
+		}
+		
 		public TextWriter CreateCodeFile (BuildProvider buildProvider)
 		{
 			if (buildProvider == null)
@@ -310,6 +347,7 @@ namespace System.Web.Compilation {
 			// Generate a file name with the correct source language extension
 			string filename = GetTempFilePhysicalPath (provider.FileExtension);
 			SourceFiles.Add (filename);
+			AddPathToBuilderMap (filename, buildProvider);
 			return new StreamWriter (File.OpenWrite (filename));
 		}
 
@@ -348,6 +386,9 @@ namespace System.Web.Compilation {
 				CopyFile (vf.Open (), filename);
 			} else
 				CopyFile (path, filename);
+
+			if (bp != null)
+				AddPathToBuilderMap (filename, bp);
 			
 			SourceFiles.Add (filename);
 		}
@@ -410,18 +451,15 @@ namespace System.Web.Compilation {
 			}
 		}
 		
-		CodeCompileUnit CheckForPartialTypes (CodeCompileUnit compileUnit)
+		CodeUnit CheckForPartialTypes (CodeUnit codeUnit)
 		{
-			if (compileUnit == null)
-				return null;
-
 			CodeTypeDeclarationCollection types;
 			CompileUnitPartialType partialType;
 			string partialTypeName;
 			List <CompileUnitPartialType> tmp;
 			Dictionary <string, List <CompileUnitPartialType>> partialTypes = PartialTypes;
 			
-			foreach (CodeNamespace ns in compileUnit.Namespaces) {
+			foreach (CodeNamespace ns in codeUnit.Unit.Namespaces) {
 				if (ns == null)
 					continue;
 				types = ns.Types;
@@ -433,7 +471,7 @@ namespace System.Web.Compilation {
 						continue;
 
 					if (type.IsPartial) {
-						partialType = new CompileUnitPartialType (compileUnit, ns, type);
+						partialType = new CompileUnitPartialType (codeUnit.Unit, ns, type);
 						partialTypeName = partialType.TypeName;
 						
 						if (!partialTypes.TryGetValue (partialTypeName, out tmp)) {
@@ -445,7 +483,7 @@ namespace System.Web.Compilation {
 				}
 			}
 						
-			return compileUnit;
+			return codeUnit;
 		}
 		
 		void ProcessPartialTypes ()
@@ -537,7 +575,7 @@ namespace System.Web.Compilation {
 			ProcessPartialTypes ();
 			
 			CompilerResults results;
-			CodeCompileUnit [] units = GetUnitsAsArray ();
+			CodeUnit [] units = GetUnitsAsArray ();
 
 			// Since we may have some source files and some code
 			// units, we generate code from all of them and then
@@ -553,11 +591,11 @@ namespace System.Web.Compilation {
 			string filename;
 			StreamWriter sw = null;
 			
-			foreach (CodeCompileUnit unit in units) {
+			foreach (CodeUnit unit in units) {
 				filename = GetTempFilePhysicalPath (provider.FileExtension);
 				try {
 					sw = new StreamWriter (File.OpenWrite (filename), Encoding.UTF8);
-					provider.GenerateCodeFromCompileUnit (unit, sw, null);
+					provider.GenerateCodeFromCompileUnit (unit.Unit, sw, null);
 					files.Add (filename);
 				} catch {
 					throw;
@@ -567,6 +605,9 @@ namespace System.Web.Compilation {
 						sw.Close ();
 					}
 				}
+
+				if (unit.BuildProvider != null)
+					AddPathToBuilderMap (filename, unit.BuildProvider);
 			}
 
 			foreach (KeyValuePair <string, string> de in resources)

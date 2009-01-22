@@ -35,13 +35,218 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Hosting;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
 	internal abstract class TemplateBuildProvider : GenericBuildProvider <TemplateParser>
 	{
+		delegate void ExtractDirectiveDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp);
+		
+		static Regex directiveRegex = new Regex (@"<%\s*@(\s*(?<attrname>\w[\w:]*(?=\W))(\s*(?<equal>=)\s*""(?<attrval>[^""]*)""|\s*(?<equal>=)\s*'(?<attrval>[^']*)'|\s*(?<equal>=)\s*(?<attrval>[^\s%>]*)|(?<equal>)(?<attrval>\s*?)))*\s*?%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+		static SortedDictionary <string, ExtractDirectiveDependencies> directiveAttributes;
+		static char[] directiveValueTrimChars = {' ', '\t', '\r', '\n', '"', '\''};
+
+		List <string> dependencies;
+		string compilationLanguage;
+		
+		internal override string LanguageName {
+			get {
+				if (String.IsNullOrEmpty (compilationLanguage)) {
+					ExtractDependencies ();
+					if (String.IsNullOrEmpty (compilationLanguage))
+						compilationLanguage = base.LanguageName;
+				}
+				
+				return compilationLanguage;
+			}
+		}
+		
+		static TemplateBuildProvider ()
+		{
+			directiveAttributes = new SortedDictionary <string, ExtractDirectiveDependencies> (StringComparer.InvariantCultureIgnoreCase);
+			directiveAttributes.Add ("Control", ExtractLanguage);
+			directiveAttributes.Add ("Master", ExtractPageOrMasterDependencies);
+			directiveAttributes.Add ("MasterType", ExtractPreviousPageTypeOrMasterTypeDependencies);
+			directiveAttributes.Add ("Page", ExtractPageOrMasterDependencies);
+			directiveAttributes.Add ("PreviousPageType", ExtractPreviousPageTypeOrMasterTypeDependencies);
+			directiveAttributes.Add ("Reference", ExtractReferenceDependencies);
+			directiveAttributes.Add ("Register", ExtractRegisterDependencies);
+			directiveAttributes.Add ("WebHandler", ExtractLanguage);
+			directiveAttributes.Add ("WebService", ExtractLanguage);
+		}
+
+		static string ExtractDirectiveAttribute (string baseDirectory, string name, CaptureCollection names, CaptureCollection values)
+		{
+			return ExtractDirectiveAttribute (baseDirectory, name, names, values, true);
+		}
+		
+		static string ExtractDirectiveAttribute (string baseDirectory, string name, CaptureCollection names, CaptureCollection values, bool isPath)
+		{
+			if (names.Count == 0)
+				return String.Empty;
+
+			int index = 0;
+			int valuesCount = values.Count;
+			foreach (Capture c in names) {
+				if (String.Compare (c.Value, name, StringComparison.OrdinalIgnoreCase) != 0) {
+					index++;
+					continue;
+				}
+				
+				if (index > valuesCount)
+					return String.Empty;
+
+				if (isPath)
+					return new VirtualPath (values [index].Value.Trim (directiveValueTrimChars), baseDirectory).Absolute;
+				else
+					return values [index].Value.Trim ();
+			}
+
+			return String.Empty;
+		}
+
+		static void ExtractLanguage (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
+		{
+			string value = ExtractDirectiveAttribute (baseDirectory, "Language", names, values, false);
+			if (String.IsNullOrEmpty (value))
+				return;
+
+			bp.compilationLanguage = value;
+		}
+		
+		static void ExtractPageOrMasterDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
+		{
+			string value = ExtractDirectiveAttribute (baseDirectory, "MasterPageFile", names, values);
+			if (String.IsNullOrEmpty (value))
+				return;
+
+			if (bp.dependencies.Contains (value))
+				return;
+
+			bp.dependencies.Add (value);
+		}
+
+		static void ExtractRegisterDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
+		{
+			string src = ExtractDirectiveAttribute (baseDirectory, "Src", names, values);
+			if (String.IsNullOrEmpty (src))
+				return;
+			
+			string value = ExtractDirectiveAttribute (baseDirectory, "TagName", names, values);
+			if (String.IsNullOrEmpty (value))
+				return;
+
+			value = ExtractDirectiveAttribute (baseDirectory, "TagPrefix", names, values);
+			if (String.IsNullOrEmpty (value))
+				return;
+
+			if (bp.dependencies.Contains (src))
+				return;
+
+			bp.dependencies.Add (src);
+		}
+
+		static void ExtractPreviousPageTypeOrMasterTypeDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
+		{
+			string value = ExtractDirectiveAttribute (baseDirectory, "VirtualPath", names, values);
+			if (String.IsNullOrEmpty (value))
+				return;
+
+			if (bp.dependencies.Contains (value))
+				return;
+
+			bp.dependencies.Add (value);
+		}
+
+		static void ExtractReferenceDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
+		{
+			string control = ExtractDirectiveAttribute (baseDirectory, "Control", names, values);
+			string virtualPath = ExtractDirectiveAttribute (baseDirectory, "VirtualPath", names, values);
+			bool controlEmpty = String.IsNullOrEmpty (control);
+			bool virtualPathEmpty = String.IsNullOrEmpty (virtualPath);
+
+			if ((controlEmpty && virtualPathEmpty) || (!controlEmpty && !virtualPathEmpty))
+				return;
+
+			string value;
+			if (controlEmpty)
+				value = virtualPath;
+			else
+				value = control;
+
+			if (bp.dependencies.Contains (value))
+				return;
+
+			bp.dependencies.Add (value);
+		}
+		
+		internal override List <string> ExtractDependencies ()
+		{
+			if (dependencies != null) {
+				if (dependencies.Count == 0)
+					return null;
+				return dependencies;
+			}
+
+			string vpath = VirtualPath;
+			if (String.IsNullOrEmpty (vpath))
+				return null;
+
+			VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
+			if (!vpp.FileExists (vpath))
+				return null;
+			
+			VirtualFile vf = vpp.GetFile (vpath);
+			if (vf == null)
+				return null;
+
+			string input;
+			using (Stream st = vf.Open ()) {
+				if (st == null || !st.CanRead)
+					return null;
+				
+				using (StreamReader sr = new StreamReader (st, WebEncoding.FileEncoding)) {
+					input = sr.ReadToEnd ();
+				}
+			}
+					
+			if (String.IsNullOrEmpty (input))
+				return null;
+
+			MatchCollection matches = directiveRegex.Matches (input);
+			if (matches == null || matches.Count == 0)
+				return null;
+			
+			dependencies = new List <string> ();
+			CaptureCollection ccNames;
+			GroupCollection groups;
+			string directiveName;
+			ExtractDirectiveDependencies edd;
+			string baseDirectory = VirtualPathUtility.GetDirectory (vpath);
+			
+			foreach (Match match in matches) {
+				groups = match.Groups;
+				if (groups.Count < 6)
+					continue;
+				
+				ccNames = groups [3].Captures;
+				directiveName = ccNames [0].Value;
+				if (!directiveAttributes.TryGetValue (directiveName, out edd))
+					continue;
+				edd (baseDirectory, ccNames, groups [5].Captures, this);
+			}
+
+			if (dependencies.Count == 0)
+				return null;
+
+			return dependencies;
+		}
+		
 		protected override string GetClassType (BaseCompiler compiler, TemplateParser parser)
 		{
 			if (compiler != null)

@@ -1,0 +1,439 @@
+//
+// System.Web.Compilation.BuildManagerDirectoryBuilder
+//
+// Authors:
+//      Marek Habersack (mhabersack@novell.com)
+//
+// (C) 2008 Novell, Inc (http://www.novell.com)
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
+#if NET_2_0
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Web;
+using System.Web.Configuration;
+using System.Web.Hosting;
+using System.Web.Util;
+
+namespace System.Web.Compilation
+{
+	sealed class BuildManagerDirectoryBuilder
+	{
+		sealed class BuildProviderItem
+		{
+			public BuildProvider Provider;
+			public int ListIndex;
+			public int ParentIndex;
+			
+			public BuildProviderItem (BuildProvider bp, int listIndex, int parentIndex)
+			{
+				this.Provider = bp;
+				this.ListIndex = listIndex;
+				this.ParentIndex = parentIndex;
+			}
+		}
+		
+		readonly VirtualPath virtualPath;
+		readonly string virtualPathDirectory;
+		CompilationSection compilationSection;
+		Dictionary <string, BuildProvider> buildProviders;
+		Dictionary <string, Type> codeDomProviders;
+		IEqualityComparer <string> dictionaryComparer;
+		StringComparison stringComparer;
+		VirtualPathProvider vpp;
+		
+		CompilationSection CompilationSection {
+			get {
+				if (compilationSection == null)
+					compilationSection = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath.Original) as CompilationSection;
+				return compilationSection;
+			}
+		}
+		
+		public BuildManagerDirectoryBuilder (VirtualPath virtualPath)
+		{
+			if (virtualPath == null)
+				throw new ArgumentNullException ("virtualPath");
+
+			this.vpp = HostingEnvironment.VirtualPathProvider;
+			this.virtualPath = virtualPath;
+			this.virtualPathDirectory = VirtualPathUtility.GetDirectory (virtualPath.Absolute);
+			if (HttpRuntime.CaseInsensitive) {
+				this.stringComparer = StringComparison.OrdinalIgnoreCase;
+				this.dictionaryComparer = StringComparer.OrdinalIgnoreCase;
+			} else {
+				this.stringComparer = StringComparison.Ordinal;
+				this.dictionaryComparer = StringComparer.Ordinal;
+			}
+		}
+
+		// TODO: add support for fake paths
+		public List <BuildProviderGroup> Build (bool single)
+		{
+			if (StrUtils.StartsWith (virtualPath.AppRelative, "~/App_Themes/")) {
+				var ret = new List <BuildProviderGroup> ();
+				var themebp = new ThemeDirectoryBuildProvider ();
+				themebp.SetVirtualPath (virtualPath);
+
+				var group = new BuildProviderGroup ();
+				group.AddProvider (themebp);
+				ret.Add (group);
+				
+				return ret;
+			}
+			
+			CompilationSection section = CompilationSection;
+			BuildProviderCollection bpcoll = section != null ? section.BuildProviders : null;
+			
+			if (bpcoll == null || bpcoll.Count == 0)
+				return null;
+
+			if (single) {
+				AddVirtualFile (GetVirtualFile (virtualPath.Absolute), bpcoll);
+			} else {
+				var cache = new Dictionary <string, bool> (dictionaryComparer);
+				AddVirtualDir (GetVirtualDirectory (virtualPath.Absolute), bpcoll, cache);
+				cache = null;
+			}
+
+			if (buildProviders == null || buildProviders.Count == 0)
+				return null;
+			
+			var buildProviderGroups = new List <BuildProviderGroup> ();
+			foreach (BuildProvider bp in buildProviders.Values)
+				AssignToGroup (bp, buildProviderGroups);
+
+			if (buildProviderGroups == null || buildProviderGroups.Count == 0) {
+				buildProviderGroups = null;
+				return null;
+			}
+			
+			// We need to reverse the order, so that the build happens from the least
+			// dependant assemblies to the most dependant ones, more or less.
+			buildProviderGroups.Reverse ();
+			
+// 			Console.WriteLine ("groups:");
+// 			int i = 1;
+// 			foreach (BuildProviderGroup group in buildProviderGroups) {
+// 				Console.WriteLine ("\t{0} ({1}):", i++, group.NamePrefix);
+// 				foreach (BuildProvider bp in group)
+// 					Console.WriteLine ("\t\t{0}", bp.VirtualPath);
+// 			}
+			
+			return buildProviderGroups;
+		}
+		
+		bool AddBuildProvider (BuildProvider buildProvider)
+		{
+			if (buildProviders == null)
+				buildProviders = new Dictionary <string, BuildProvider> (dictionaryComparer);
+			
+			string bpPath = buildProvider.VirtualPath;
+			if (buildProviders.ContainsKey (bpPath))
+				return false;
+
+			buildProviders.Add (bpPath, buildProvider);
+			AddCodeDomProvider (buildProvider);
+			return true;
+		}
+
+		void AddCodeDomProvider (BuildProvider buildProvider)
+		{
+			if (codeDomProviders == null)
+				codeDomProviders = new Dictionary <string, Type> (dictionaryComparer);
+
+			string language = buildProvider.LanguageName;
+			if (String.IsNullOrEmpty (language))
+				return;
+			
+			if (codeDomProviders.ContainsKey (language))
+				return;
+
+			CompilerType ct = BuildManager.GetDefaultCompilerTypeForLanguage (language, CompilationSection, false);
+			Type type = ct != null ? ct.CodeDomProviderType : null;
+			if (type == null)
+				return;
+			
+			codeDomProviders.Add (language, type);
+		}
+		
+		void AddVirtualDir (VirtualDirectory vdir, BuildProviderCollection bpcoll, Dictionary <string, bool> cache)
+		{
+			if (vdir == null)
+				return;
+			
+			string vdirPath = vdir.VirtualPath;
+			BuildProvider bp;
+			string bpPath;
+			List <string> deps;
+			var dirs = new List <string> ();
+			string fileVirtualPath;
+			
+			foreach (VirtualFile file in vdir.Files) {
+				fileVirtualPath = file.VirtualPath;
+				if (BuildManager.IgnoreVirtualPath (fileVirtualPath))
+					continue;
+				
+				bp = GetBuildProvider (fileVirtualPath, bpcoll);
+				if (bp == null)
+					continue;
+				if (!AddBuildProvider (bp))
+					continue;
+				
+				deps = bp.ExtractDependencies ();
+				if (deps == null)
+					continue;
+
+				string depDir;
+				dirs.Clear ();
+				foreach (string dep in deps) {
+					depDir = VirtualPathUtility.GetDirectory (dep); // dependencies are assumed to contain absolute paths
+					if (cache.ContainsKey (depDir))
+						continue;
+					AddVirtualDir (GetVirtualDirectory (dep), bpcoll, cache);
+				}
+			}
+		}
+
+		void AddVirtualFile (VirtualFile file, BuildProviderCollection bpcoll)
+		{
+			if (file == null || BuildManager.IgnoreVirtualPath (file.VirtualPath))
+				return;
+			
+			BuildProvider bp = GetBuildProvider (file.VirtualPath, bpcoll);
+			if (bp == null)
+				return;
+			AddBuildProvider (bp);
+		}
+		
+		VirtualDirectory GetVirtualDirectory (string virtualPath)
+		{
+			if (!vpp.DirectoryExists (VirtualPathUtility.GetDirectory (virtualPath)))
+				return null;
+			
+			return vpp.GetDirectory (virtualPath);
+		}
+
+		VirtualFile GetVirtualFile (string virtualPath)
+		{
+			if (!vpp.FileExists (virtualPath))
+				return null;
+			
+			return vpp.GetFile (virtualPath);
+		}
+		
+		void AssignToGroup (BuildProvider buildProvider, List <BuildProviderGroup> groups)
+		{
+			if (IsDependencyCycle (buildProvider))
+				throw new HttpException ("Dependency cycles are not suppported: " + buildProvider.VirtualPath);
+
+			BuildProviderGroup myGroup = null;
+			string bpVirtualPath = buildProvider.VirtualPath;
+			string bpPath = VirtualPathUtility.GetDirectory (bpVirtualPath);
+			bool canAdd;
+			Type bpCodeDomType;
+
+			if (BuildManager.HasCachedItemNoLock (buildProvider.VirtualPath))
+				return;
+			
+			if (!codeDomProviders.TryGetValue (buildProvider.LanguageName, out bpCodeDomType))
+				bpCodeDomType = null;
+
+			if (buildProvider is ApplicationFileBuildProvider || buildProvider is ThemeDirectoryBuildProvider) {
+				// global.asax and theme directory go into their own assemblies
+				myGroup = new BuildProviderGroup ();
+				myGroup.Standalone = true;
+				InsertGroup (myGroup, groups);
+			} else {
+				foreach (BuildProviderGroup group in groups) {
+					if (group.Standalone)
+						continue;
+					
+					if (group.Count == 0) {
+						myGroup = group;
+						break;
+					}
+
+					canAdd = true;
+					foreach (BuildProvider bp in group) {
+						if (IsDependency (buildProvider, bp)) {
+							canAdd = false;
+							break;
+						}
+					
+						// There should be one assembly per virtual dir
+						if (String.Compare (bpPath, VirtualPathUtility.GetDirectory (bp.VirtualPath), stringComparer) != 0) {
+							canAdd = false;
+							break;
+						}
+
+						// Different languages go to different assemblies
+						if (bpCodeDomType != null) {
+							Type type;
+							if (codeDomProviders.TryGetValue (bp.LanguageName, out type)) {
+								if (type != bpCodeDomType) {
+									canAdd = false;
+									break;
+								}
+							}
+						}
+					}
+
+					if (!canAdd)
+						continue;
+
+					myGroup = group;
+					break;
+				}
+				
+				if (myGroup == null) {
+					myGroup = new BuildProviderGroup ();
+					InsertGroup (myGroup, groups);
+				}
+			}
+			
+			myGroup.AddProvider (buildProvider);
+			if (String.Compare (bpPath, virtualPathDirectory, stringComparer) == 0)
+				myGroup.Master = true;
+		}
+
+		void InsertGroup (BuildProviderGroup group, List <BuildProviderGroup> groups)
+		{
+			if (group.Application) {
+				groups.Insert (groups.Count - 1, group);
+				return;
+			}
+
+			int index;
+			if (group.Standalone)
+				index = groups.FindLastIndex (SkipApplicationGroup);
+			else
+				index = groups.FindLastIndex (SkipStandaloneGroups);
+
+			if (index == -1)
+				groups.Add (group);
+			else
+				groups.Insert (index == 0 ? 0 : index - 1, group);
+		}
+
+		static bool SkipStandaloneGroups (BuildProviderGroup group)
+		{
+			if (group == null)
+				return false;
+			
+			return group.Standalone;
+		}
+
+		static bool SkipApplicationGroup (BuildProviderGroup group)
+		{
+			if (group == null)
+				return false;
+
+			return group.Application;
+		}
+		
+		bool IsDependency (BuildProvider bp1, BuildProvider bp2)
+		{
+			List <string> deps = bp1.ExtractDependencies ();
+			if (deps == null)
+				return false;
+			
+			if (deps.Contains (bp2.VirtualPath))
+				return true;
+
+			BuildProvider bp;
+			// It won't loop forever as by the time this method is called, we are sure there are no cycles
+			foreach (string dep in deps) {
+				if (!buildProviders.TryGetValue (dep, out bp))
+					continue;
+
+				if (IsDependency (bp, bp2))
+					return true;
+			}
+			
+			return false;
+		}
+		
+		bool IsDependencyCycle (BuildProvider buildProvider)
+		{
+			var cache = new Dictionary <BuildProvider, bool> ();
+			cache.Add (buildProvider, true);
+			return IsDependencyCycle (cache, buildProvider.ExtractDependencies ());
+		}
+
+		bool IsDependencyCycle (Dictionary <BuildProvider, bool> cache, List <string> deps)
+		{
+			if (deps == null)
+				return false;
+
+			BuildProvider bp;
+			foreach (string s in deps) {
+				if (!buildProviders.TryGetValue (s, out bp))
+					continue;
+				if (cache.ContainsKey (bp))
+					return true;
+				cache.Add (bp, true);
+				if (IsDependencyCycle (cache, bp.ExtractDependencies ()))
+					return true;
+				cache.Remove (bp);
+			}
+			
+			return false;
+		}
+		
+		public static BuildProvider GetBuildProvider (string virtualPath, BuildProviderCollection coll)
+		{
+			if (String.IsNullOrEmpty (virtualPath) || coll == null)
+				return null;
+			
+			string extension = VirtualPathUtility.GetExtension (virtualPath);
+			BuildProvider bp = coll.GetProviderForExtension (extension);
+			if (bp == null) {
+				VirtualPath vp = new VirtualPath (virtualPath);
+				if (String.Compare (extension, ".asax", StringComparison.OrdinalIgnoreCase) == 0)
+					bp = new ApplicationFileBuildProvider ();
+				else if (StrUtils.StartsWith (vp.AppRelative, "~/App_Themes/"))
+					bp = new ThemeDirectoryBuildProvider ();
+
+				if (bp != null)
+					bp.SetVirtualPath (vp);
+				
+				return bp;
+			}
+			
+			object[] attrs = bp.GetType ().GetCustomAttributes (typeof (BuildProviderAppliesToAttribute), true);
+			if (attrs == null || attrs.Length == 0)
+				return bp;
+
+			BuildProviderAppliesTo appliesTo = ((BuildProviderAppliesToAttribute)attrs [0]).AppliesTo;
+			if ((appliesTo & BuildProviderAppliesTo.Web) == 0)
+				return null;
+
+			bp.SetVirtualPath (new VirtualPath (virtualPath));
+			return bp;
+		}
+	}
+}
+#endif

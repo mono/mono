@@ -84,7 +84,7 @@ namespace System.Web.Compilation
 			info.AddValue ("errmsg", errmsg);
 			info.AddValue ("errorLines", errorLines);
 		}
-		
+
 		public override string SourceFile {
 			get {
 				if (errors == null || errors.Count == 0)
@@ -163,7 +163,10 @@ namespace System.Web.Compilation
 				return results.Output;
 			}
 		}
-			
+
+		public CompilerResults Results {
+			get { return results; }
+		}
 	}
 }
 

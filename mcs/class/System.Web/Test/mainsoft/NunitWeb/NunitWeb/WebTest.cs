@@ -259,6 +259,10 @@ namespace MonoTests.SystemWeb.Framework
 			: this ()
 		{
 			Request.Url = url;
+#if NET_2_0
+			global::System.Web.Compilation.BuildManager.suppressDebugModeMessages = true;
+			global::System.Web.Compilation.BuildManager.suppressAutoRestart = true;
+#endif
 		}
 
 		/// <summary>

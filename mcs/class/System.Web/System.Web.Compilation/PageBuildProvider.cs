@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006 Novell, Inc (http://www.novell.com)
+// (C) 2006-2008 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -34,6 +35,7 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Web.UI;
@@ -47,7 +49,7 @@ namespace System.Web.Compilation {
 		public PageBuildProvider()
 		{
 		}
-
+		
 		protected override TextReader SpecialOpenReader (string virtualPath, out string physicalPath)
 		{
 			// We need this hack to support out-of-application wsdl helpers

@@ -38,7 +38,7 @@ using System.Reflection;
 using System.Web;
 
 namespace System.Web.Compilation {
-	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web|BuildProviderAppliesTo.Code)]
+	[BuildProviderAppliesTo (BuildProviderAppliesTo.Code)]
 	sealed class XsdBuildProvider : BuildProvider {
 		public XsdBuildProvider()
 		{

@@ -39,6 +39,7 @@ using System.Web.UI;
 
 namespace System.Web.Compilation
 {
+	[BuildProviderAppliesTo (BuildProviderAppliesTo.Web)]
 	internal class ApplicationFileBuildProvider : TemplateBuildProvider
 	{
 		protected override BaseCompiler CreateCompiler (TemplateParser parser)
