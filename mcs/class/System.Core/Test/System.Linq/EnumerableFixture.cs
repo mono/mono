@@ -1700,7 +1700,6 @@ namespace MonoTests.System.Linq {
 
 		[Test]
 		[ExpectedException (typeof (OverflowException))]
-		[Category ("NotWorking")]
 		public void Sum_SumOfArgumentsCausesOverflow_ThrowsOverflowException ()
 		{
 			var source = Read (new [] { int.MaxValue - 1, 2 });
@@ -1727,7 +1726,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Sum_NullableFloats_ReturnsSum ()
 		{
 			Assert.That (Read (new float? [] { 1F, 2F, 3F, null }).Sum (), Is.EqualTo (6));
@@ -1740,7 +1738,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Sum_NullableDoubles_ReturnsSum ()
 		{
 			Assert.That (Read (new double? [] { 1, 2, 3, null }).Sum (), Is.EqualTo (6));
@@ -1753,21 +1750,18 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Sum_NullableDecimals_ReturnsSum ()
 		{
 			Assert.That (Read (new decimal? [] { 1m, 2m, 3m, null }).Sum (), Is.EqualTo (6));
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Sum_NullableLongs_ReturnsSum ()
 		{
 			Assert.That (Read (new long? [] { 1L, 2L, 3L, null }).Sum (), Is.EqualTo (6));
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Sum_NullableIntsAsArguments_ReturnsCorrectSum ()
 		{
 			var source = Read (new int? [] { 1, 2, null });
