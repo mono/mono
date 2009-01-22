@@ -132,15 +132,7 @@ namespace System.Web.Compilation
 			
 			// We need to reverse the order, so that the build happens from the least
 			// dependant assemblies to the most dependant ones, more or less.
-			buildProviderGroups.Reverse ();
-			
-// 			Console.WriteLine ("groups:");
-// 			int i = 1;
-// 			foreach (BuildProviderGroup group in buildProviderGroups) {
-// 				Console.WriteLine ("\t{0} ({1}):", i++, group.NamePrefix);
-// 				foreach (BuildProvider bp in group)
-// 					Console.WriteLine ("\t\t{0}", bp.VirtualPath);
-// 			}
+			buildProviderGroups.Reverse ();			
 			
 			return buildProviderGroups;
 		}
