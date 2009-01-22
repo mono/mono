@@ -1440,6 +1440,7 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void SelectMany_CollectionSelectorArgResultSelectorArg_ArrayOfPetOwner_ResultContainsElementForEachPetAPetOwnerHas ()
 		{
 			var petOwners = Read (new []
