@@ -1,3 +1,8 @@
+2009-01-22  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fetch the generic
+	info from the (correct) context.
+
 2009-01-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* unwind.c (mono_unwind_frame): Remove a stray g_free ().
