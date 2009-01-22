@@ -1479,7 +1479,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SequenceEqual_EqualSequences_ReturnsTrue ()
 		{
 			var source = Read (new [] { 1, 2, 3 });
@@ -1488,7 +1487,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SequenceEqual_DifferentSequences_ReturnsFalse ()
 		{
 			var source = Read (new [] { 1, 2, 3 });
@@ -1497,7 +1495,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SequenceEqual_LongerSecondSequence_ReturnsFalse ()
 		{
 			var source = Read (new [] { 1, 2, 3 });
@@ -1506,7 +1503,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SequenceEqual_ShorterSecondSequence_ReturnsFalse ()
 		{
 			var first = Read (new [] { 1, 2, 3, 4 });
@@ -1515,7 +1511,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SequenceEqual_FloatsWithTolerantComparer_ComparerIsUsed ()
 		{
 			var source = Read (new [] { 1f, 2f, 3f });
