@@ -13498,7 +13498,7 @@
         <size>63</size>
       </method>
       <method name="System.String ToString()">
-        <size>57</size>
+        <size>67</size>
       </method>
     </type>
   </test>
@@ -13536,7 +13536,7 @@
         <size>63</size>
       </method>
       <method name="System.String ToString()">
-        <size>57</size>
+        <size>67</size>
       </method>
     </type>
   </test>
@@ -13566,7 +13566,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
   </test>
@@ -13596,7 +13596,7 @@
         <size>63</size>
       </method>
       <method name="System.String ToString()">
-        <size>57</size>
+        <size>67</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;Foo&gt;__T,&lt;Baz&gt;__T]">
@@ -13616,7 +13616,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
   </test>
@@ -13654,7 +13654,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
   </test>
@@ -13698,7 +13698,7 @@
         <size>132</size>
       </method>
       <method name="System.String ToString()">
-        <size>240</size>
+        <size>258</size>
       </method>
     </type>
   </test>
@@ -13711,7 +13711,7 @@
         <size>2</size>
       </method>
       <method name="Int32 Main()">
-        <size>184</size>
+        <size>287</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;Name&gt;__T,&lt;Age&gt;__T]">
@@ -13731,7 +13731,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;Age&gt;__T,&lt;Name&gt;__T]">
@@ -13751,7 +13751,38 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>15</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>40</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType3`1[&lt;Foo&gt;__T]">
+      <method name="Void .ctor(&lt;Foo&gt;__T)">
+        <size>14</size>
+      </method>
+      <method name="&lt;Foo&gt;__T get_Foo()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>67</size>
       </method>
     </type>
   </test>
@@ -13781,7 +13812,7 @@
         <size>63</size>
       </method>
       <method name="System.String ToString()">
-        <size>57</size>
+        <size>67</size>
       </method>
     </type>
   </test>
@@ -13832,7 +13863,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
   </test>
@@ -13875,7 +13906,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
   </test>
@@ -15079,7 +15110,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="Tester">
@@ -16871,7 +16902,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;i&gt;__T,&lt;l&gt;__T]">
@@ -16891,7 +16922,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType3`2[&lt;i9&gt;__T,&lt;i&gt;__T]">
@@ -16911,7 +16942,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="from.C">
@@ -17102,7 +17133,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="from.C+&lt;Main&gt;c__AnonStorey0">
@@ -17296,7 +17327,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="Let">
@@ -17336,7 +17367,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
   </test>
@@ -17366,7 +17397,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType2`3[&lt;pp&gt;__T,&lt;i1&gt;__T,&lt;i3&gt;__T]">
@@ -17389,7 +17420,7 @@
         <size>109</size>
       </method>
       <method name="System.String ToString()">
-        <size>183</size>
+        <size>199</size>
       </method>
     </type>
     <type name="SelectMany+&lt;Main&gt;c__AnonStorey0">
@@ -17449,7 +17480,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
   </test>
@@ -17510,7 +17541,7 @@
         <size>63</size>
       </method>
       <method name="System.String ToString()">
-        <size>57</size>
+        <size>67</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;a&gt;__T,&lt;b&gt;__T]">
@@ -17530,7 +17561,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="Join">
@@ -17620,7 +17651,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;a&gt;__T,&lt;b&gt;__T]">
@@ -17640,7 +17671,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="GroupJoin">
@@ -17730,7 +17761,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;type&gt;__T,&lt;x&gt;__T]">
@@ -17750,7 +17781,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="NestedQuery">
@@ -17983,7 +18014,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="C+&lt;Test_1&gt;c__AnonStorey0">
@@ -18101,7 +18132,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType1`2[&lt;i&gt;__T,&lt;l&gt;__T]">
@@ -18121,7 +18152,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -18201,7 +18232,7 @@
         <size>86</size>
       </method>
       <method name="System.String ToString()">
-        <size>108</size>
+        <size>142</size>
       </method>
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
