@@ -1,3 +1,9 @@
+2009-01-21  Neville Gao  <nevillegao@gmail.com>
+
+	* ToolBar.cs: Backported r124045: Control enabled to support
+	accessibility. Added UIACollectionChangedEvent.
+	[Fixes Bug #455950]
+
 2009-01-21  Mike Gorse  <mgorse@novell.com>
 
 	* TrackBar.cs: Backported R124116: Make LargeIncrement/Decrement
