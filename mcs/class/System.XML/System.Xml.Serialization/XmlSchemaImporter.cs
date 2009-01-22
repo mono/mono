@@ -355,22 +355,23 @@ namespace System.Xml.Serialization
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public XmlTypeMapping ImportSchemaType (XmlQualifiedName typeName)
 		{
-			throw new NotImplementedException ();
+			return ImportSchemaType (typeName, typeof (object));
 		}
 		
-		[MonoTODO]
 		public XmlTypeMapping ImportSchemaType (XmlQualifiedName typeName, Type baseType)
 		{
-			throw new NotImplementedException ();
+			return ImportSchemaType (typeName, typeof (object), false);
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("baseType and baseTypeCanBeIndirect are ignored")]
 		public XmlTypeMapping ImportSchemaType (XmlQualifiedName typeName, Type baseType, bool baseTypeCanBeIndirect)
 		{
-			throw new NotImplementedException ();
+			XmlSchemaType stype =
+				(XmlSchemaType) schemas.Find (typeName, typeof (XmlSchemaComplexType)) ??
+				(XmlSchemaType) schemas.Find (typeName, typeof (XmlSchemaSimpleType));
+			return ImportTypeCommon (typeName, typeName, stype, true);
 		}
 #endif
 		
@@ -449,7 +450,14 @@ namespace System.Xml.Serialization
 			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
 			if (!LocateElement (elem, out qname, out stype))
 				throw new InvalidOperationException (String.Format ("'{0}' is missing.", name));
-			
+			return ImportTypeCommon (name, qname, stype, elem.IsNillable);
+		}
+
+		// FIXME: name and qname are confusing. Rename one either
+		// (name is in schema itself, qname is for actual processing.
+		//  For example simple types have qname as in xsd namespace.)
+		private XmlTypeMapping ImportTypeCommon (XmlQualifiedName name, XmlQualifiedName qname, XmlSchemaType stype, bool isNullable)
+		{
 			if (stype == null) {
 				if (qname == anyType) {
 					// Importing anyType.
@@ -473,7 +481,7 @@ namespace System.Xml.Serialization
 			
 			map = CreateTypeMapping (qname, SchemaTypes.Class, name);
 			map.Documentation = GetDocumentation (stype);
-			map.IsNullable = elem.IsNillable;
+			map.IsNullable = isNullable;
 			RegisterMapFixup (map, qname, (XmlSchemaComplexType)stype);
 			
 			BuildPendingMaps ();
