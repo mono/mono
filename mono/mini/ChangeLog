@@ -1,3 +1,7 @@
+2009-01-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): When using xdebug, disable freeing of domains.
+
 2009-01-21  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c (mono_arch_delegate_invoke_impl): Return function
