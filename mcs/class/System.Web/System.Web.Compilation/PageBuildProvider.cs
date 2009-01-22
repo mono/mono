@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006-2008 Novell, Inc (http://www.novell.com)
+// (C) 2006-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -35,7 +35,6 @@ using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Web.UI;

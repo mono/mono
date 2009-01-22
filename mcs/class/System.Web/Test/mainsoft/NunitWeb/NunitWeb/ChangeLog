@@ -1,3 +1,8 @@
+2009-01-22  Marek Habersack  <mhabersack@novell.com>
+
+	* WebTest.cs: Run () sets the internal field
+	BuildManager.suppressDebugModeMessages to true.
+
 2008-12-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* CustomSection.cs: Only enable in the 2.0 profile.

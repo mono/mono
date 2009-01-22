@@ -1,3 +1,16 @@
+2009-01-22  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.dll.sources: added
+	System.Web.Compilation/BuildManagerCacheItem.cs,
+	System.Web.Compilation/BuildManagerDirectoryBuilder.cs,
+	System.Web.Compilation/BuildProviderGroup.cs
+
+	* Makefile (SYSTEMCORE_DEP): added. Defines SYSTEMCORE_DEP on the
+	mcs command line when System.Core is present.
+	Added the DEVEL define, which defines DEVEL on the mcs command
+	line. This is used to conditionally compile development helper code in
+	System.Web.Util.FileUtils (and possibly other stuff later on)
+
 2009-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added System.Web.UI.WebControls/Substitution.cs

@@ -1,3 +1,9 @@
+2009-01-22  Marek Habersack  <mhabersack@novell.com>
+
+	* Web.mono.config: added numRecompilesBeforeAppRestart attribute
+	to the compilation element, set to 100000, to avoid appdomain
+	restarts during tests.
+
 2008-12-23  Marek Habersack  <mhabersack@novell.com>
 
 	* Web.mono.config: added CustomTags section definition, used in

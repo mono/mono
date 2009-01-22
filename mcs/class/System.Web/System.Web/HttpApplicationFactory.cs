@@ -473,7 +473,7 @@ namespace System.Web {
 						app_type = typeof (System.Web.HttpApplication);
 						app_state = new HttpApplicationState ();
 					}
-					
+
 					WatchLocationForRestart("Global.asax");
 					WatchLocationForRestart("global.asax");
 					WatchLocationForRestart(String.Empty, "Web.config", true);

@@ -1,3 +1,7 @@
+2009-01-22  Marek Habersack  <mhabersack@novell.com>
+
+	* FileUtils.cs: added two conditionally compiled methods (they
+	require DEVEL to be defined) which output lines to a log file.
 
 2008-12-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
