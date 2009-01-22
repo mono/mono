@@ -36,8 +36,15 @@ namespace System.Xml
 {
 	public class XmlXapResolver : XmlResolver
 	{
-		static readonly MethodInfo method = Type.GetType ("System.Windows.Application, System.Windows.dll").GetMethod ("GetResourceStream", new Type [0]);
-		static readonly PropertyInfo property = Type.GetType ("System.Windows.Resources, System.Windows.dll").GetProperty ("Stream");
+		static readonly MethodInfo method;
+		static readonly PropertyInfo property;
+		static XmlXapResolver ()
+		{
+			var at = Type.GetType ("System.Windows.Application, System.Windows, Version=2.0.5.0, Culture=neutral", true); // , PublicKeyToken=7cec85d7bea7798e
+			method = at.GetMethod ("GetResourceStream", new Type [] {typeof (Uri)});
+			var rt = Type.GetType ("System.Windows.Resources.StreamResourceInfo, System.Windows, Version=2.0.5.0, Culture=neutral", true);
+			property = rt.GetProperty ("Stream");
+		}
 
 		// FIXME: remove this compromised part when this class got working
 		XmlUrlResolver url_resolver = new XmlUrlResolver ();
@@ -47,8 +54,12 @@ namespace System.Xml
 			try {
 				if (ofObjectToReturn != typeof (Stream))
 					throw new NotSupportedException (String.Format ("Not supported entity type '{0}'", ofObjectToReturn));
-				return property.GetValue (method.Invoke (null, new object [] {absoluteUri}), new object [0]);
-			} catch {
+				var sri = method.Invoke (null, new object [] {absoluteUri});
+				if (sri == null)
+					throw new ArgumentException (String.Format ("Resource '{0}' not found", absoluteUri));
+				return property.GetValue (sri, new object [0]);
+			} catch (Exception ex) {
+Console.WriteLine ("!!!!! GetEntity FAILED: " + ex);
 				return url_resolver.GetEntity (absoluteUri, role, ofObjectToReturn);
 			}
 		}

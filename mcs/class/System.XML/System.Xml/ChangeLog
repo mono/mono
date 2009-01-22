@@ -1,5 +1,12 @@
 2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlXapResolver.cs : fix assembly qualified names,
+	  and give detailed errors.
+	* XmlResolver.cs : in 2.1 do not resolve relative Uri
+	  to absolute.
+
+2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlXapResolver.cs : new in 2.1.
 	* XmlReaderSettings.cs : use above.
 

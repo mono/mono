@@ -59,11 +59,11 @@ namespace System.Xml
 					relativeUri.StartsWith ("file:"))
 					return new Uri (relativeUri);
 				else
-					// extraneous "/a" is required because current Uri stuff 
-					// seems ignorant of difference between "." and "./". 
-					// I'd be appleciate if it is fixed with better solution.
+#if NET_2_1
+					return new Uri (relativeUri, UriKind.RelativeOrAbsolute);
+#else
 					return new Uri (Path.GetFullPath (relativeUri));
-//					return new Uri (new Uri (Path.GetFullPath ("./a")), EscapeRelativeUriBody (relativeUri));
+#endif
 			}
 
 			if (relativeUri == null)
