@@ -1,3 +1,8 @@
+2009-01-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* Stopwatch.cs: Reorder the calculations in Elapsed and ElapsedMilliseconds
+	to avoid overflow. Fixes #468570. Patch by Yoni Shalom <silver83@gmail.com>.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* Process.cs: Avoid closing the duplicated process handle in
