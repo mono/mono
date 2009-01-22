@@ -224,7 +224,7 @@ namespace System.Runtime.Serialization
 			case TypeCode.Boolean:
 				return XmlConvert.ToString ((bool) obj);
 			case TypeCode.Byte:
-				return XmlConvert.ToString ((byte) obj);
+				return XmlConvert.ToString ((int)((byte) obj));
 			case TypeCode.Char:
 				return XmlConvert.ToString ((uint) (char) obj);
 			case TypeCode.DateTime:
