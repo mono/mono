@@ -1,3 +1,12 @@
+2009-01-22  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r124246.
+
+	* generic-stack-traces2.2.cs: Another generic sharing test for
+	stack traces.
+
+	* Makefile.am: Test added.
+
 2009-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r124059.

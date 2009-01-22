@@ -1,3 +1,10 @@
+2009-01-22  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r124246.
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fetch the generic
+	info from the (correct) context.
+
 2009-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r124092.
