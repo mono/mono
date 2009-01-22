@@ -75,9 +75,8 @@ namespace System.Web.Compilation {
 
 		static int buildCount;
 		
-		// These two are here _only_ for the purpose of unit tests!
+		// This is here _only_ for the purpose of unit tests!
 		internal static bool suppressDebugModeMessages;
-		internal static bool suppressAutoRestart;
 
 #if SYSTEMCORE_DEP
 		static ReaderWriterLockSlim buildCacheLock;
@@ -203,7 +202,7 @@ namespace System.Web.Compilation {
 		{
 			AssertVirtualPathExists (vp);
 
-			CompilationSection cs = CompilationConfig;			
+			CompilationSection cs = CompilationConfig;
 			lock (bigCompilationLock) {
 				if (HasCachedItemNoLock (vp.Absolute))
 					return;
@@ -214,10 +213,11 @@ namespace System.Web.Compilation {
 				recursionDepth++;
 				try {
 					BuildInner (vp, cs != null ? cs.Debug : false);
-					buildCount++;
+					if (recursionDepth <= 1)
+						buildCount++;
 
 					// See http://support.microsoft.com/kb/319947
-					if (!suppressAutoRestart && buildCount > cs.NumRecompilesBeforeAppRestart)
+					if (buildCount > cs.NumRecompilesBeforeAppRestart)
 						HttpRuntime.UnloadAppDomain ();
 				} finally {
 					recursionDepth--;
@@ -602,7 +602,7 @@ namespace System.Web.Compilation {
 				ReferenceAssemblyInCompilation (bmci);
 				return bmci.Type;
 			}
-					
+
 			return null;
 		}
 
