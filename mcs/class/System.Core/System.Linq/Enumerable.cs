@@ -1855,21 +1855,21 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return Sum<int, int> (source, (a, b) => a + b);
+			return Sum<int, int> (source, (a, b) => checked (a + b));
 		}
 
 		public static int? Sum (this IEnumerable<int?> source)
 		{
 			Check.Source (source);
 
-			return source.SumNullable<int?, int?> (0, (a, b) => a.HasValue ? a + b : a);
+			return source.SumNullable<int?, int?> (0, (total, element) => element.HasValue ? checked (total + element) : total);
 		}
 
 		public static int Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Sum<TSource, int> (source, (a, b) => a + selector (b));
+			return Sum<TSource, int> (source, (a, b) => checked (a + selector (b)));
 		}
 
 		public static int? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, int?> selector)
@@ -1878,7 +1878,7 @@ namespace System.Linq
 
 			return source.SumNullable<TSource, int?> (0, (a, b) => {
 				var value = selector (b);
-				return value.HasValue ? a + value.Value : a;
+				return value.HasValue ? checked (a + value.Value) : a;
 			});
 		}
 
@@ -1886,21 +1886,21 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return Sum<long, long> (source, (a, b) => a + b);
+			return Sum<long, long> (source, (a, b) => checked (a + b));
 		}
 
 		public static long? Sum (this IEnumerable<long?> source)
 		{
 			Check.Source (source);
 
-			return source.SumNullable<long?, long?> (0, (a, b) => a.HasValue ? a + b : a);
+			return source.SumNullable<long?, long?> (0, (total, element) => element.HasValue ? checked (total + element) : total);
 		}
 
 		public static long Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, long> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Sum<TSource, long> (source, (a, b) => a + selector (b));
+			return Sum<TSource, long> (source, (a, b) => checked (a + selector (b)));
 		}
 
 		public static long? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, long?> selector)
@@ -1909,7 +1909,7 @@ namespace System.Linq
 
 			return source.SumNullable<TSource, long?> (0, (a, b) => {
 				var value = selector (b);
-				return value.HasValue ? a + value.Value : a;
+				return value.HasValue ? checked (a + value.Value) : a;
 			});
 		}
 
@@ -1917,21 +1917,21 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return Sum<double, double> (source, (a, b) => a + b);
+			return Sum<double, double> (source, (a, b) => checked (a + b));
 		}
 
 		public static double? Sum (this IEnumerable<double?> source)
 		{
 			Check.Source (source);
 
-			return source.SumNullable<double?, double?> (0, (a, b) => a.HasValue ? a + b : a);
+			return source.SumNullable<double?, double?> (0, (total, element) => element.HasValue ? checked (total + element) : total);
 		}
 
 		public static double Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, double> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Sum<TSource, double> (source, (a, b) => a + selector (b));
+			return Sum<TSource, double> (source, (a, b) => checked (a + selector (b)));
 		}
 
 		public static double? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, double?> selector)
@@ -1940,7 +1940,7 @@ namespace System.Linq
 
 			return source.SumNullable<TSource, double?> (0, (a, b) => {
 				var value = selector (b);
-				return value.HasValue ? a + value.Value : a;
+				return value.HasValue ? checked (a + value.Value) : a;
 			});
 		}
 
@@ -1948,21 +1948,21 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return Sum<float, float> (source, (a, b) => a + b);
+			return Sum<float, float> (source, (a, b) => checked (a + b));
 		}
 
 		public static float? Sum (this IEnumerable<float?> source)
 		{
 			Check.Source (source);
 
-			return source.SumNullable<float?, float?> (0, (a, b) => a.HasValue ? a + b : a);
+			return source.SumNullable<float?, float?> (0, (total, element) => element.HasValue ? checked (total + element) : total);
 		}
 
 		public static float Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, float> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Sum<TSource, float> (source, (a, b) => a + selector (b));
+			return Sum<TSource, float> (source, (a, b) => checked (a + selector (b)));
 		}
 
 		public static float? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, float?> selector)
@@ -1971,7 +1971,7 @@ namespace System.Linq
 
 			return source.SumNullable<TSource, float?> (0, (a, b) => {
 				var value = selector (b);
-				return value.HasValue ? a + value.Value : a;
+				return value.HasValue ? checked (a + value.Value) : a;
 			});
 		}
 
@@ -1979,21 +1979,21 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return Sum<decimal, decimal> (source, (a, b) => a + b);
+			return Sum<decimal, decimal> (source, (a, b) => checked (a + b));
 		}
 
 		public static decimal? Sum (this IEnumerable<decimal?> source)
 		{
 			Check.Source (source);
 
-			return source.SumNullable<decimal?, decimal?> (0, (a, b) => a.HasValue ? a + b : a);
+			return source.SumNullable<decimal?, decimal?> (0, (total, element) => element.HasValue ? checked (total + element) : total);
 		}
 
 		public static decimal Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal> selector)
 		{
 			Check.SourceAndSelector (source, selector);
 
-			return Sum<TSource, decimal> (source, (a, b) => a + selector (b));
+			return Sum<TSource, decimal> (source, (a, b) => checked (a + selector (b)));
 		}
 
 		public static decimal? Sum<TSource> (this IEnumerable<TSource> source, Func<TSource, decimal?> selector)
@@ -2002,7 +2002,7 @@ namespace System.Linq
 
 			return source.SumNullable<TSource, decimal?> (0, (a, b) => {
 				var value = selector (b);
-				return value.HasValue ? a + value.Value : a;
+				return value.HasValue ? checked (a + value.Value) : a;
 			});
 		}
 
