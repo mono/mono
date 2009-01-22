@@ -1,5 +1,9 @@
 2009-01-22  Jb Evain  <jbevain@novell.com>
 
+	* Enumerable.cs (SequenceEqual): make sure we dispose enumerators.
+
+2009-01-22  Jb Evain  <jbevain@novell.com>
+
 	* Enumerable.cs: optimize Last for lists.
 
 2009-01-15  Jb Evain  <jbevain@novell.com>

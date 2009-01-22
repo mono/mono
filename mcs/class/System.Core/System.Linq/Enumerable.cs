@@ -2251,18 +2251,20 @@ namespace System.Linq
 			if (comparer == null)
 				comparer = EqualityComparer<TSource>.Default;
 
-			var first_enumerator = first.GetEnumerator ();
-			var second_enumerator = second.GetEnumerator ();
+			using (var first_enumerator = first.GetEnumerator ()) {
+				using (var second_enumerator = second.GetEnumerator ()) {
 
-			while (first_enumerator.MoveNext ()) {
-				if (!second_enumerator.MoveNext ())
-					return false;
+					while (first_enumerator.MoveNext ()) {
+						if (!second_enumerator.MoveNext ())
+							return false;
 
-				if (!comparer.Equals (first_enumerator.Current, second_enumerator.Current))
-					return false;
+						if (!comparer.Equals (first_enumerator.Current, second_enumerator.Current))
+							return false;
+					}
+
+					return !second_enumerator.MoveNext ();
+				}
 			}
-
-			return !second_enumerator.MoveNext ();
 		}
 
 		#endregion
