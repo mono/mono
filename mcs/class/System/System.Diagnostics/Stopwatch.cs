@@ -66,7 +66,8 @@ namespace System.Diagnostics
 			get {
 				if (IsHighResolution) {
 					// convert our ticks to TimeSpace ticks, 100 nano second units
-					return TimeSpan.FromTicks ((long)(TimeSpan.TicksPerSecond * ElapsedTicks / Frequency));
+					// using two divisions helps avoid overflow
+					return TimeSpan.FromTicks ((long)(ElapsedTicks / (Frequency / TimeSpan.TicksPerSecond)));
 				}
 				else {
 					return TimeSpan.FromTicks (ElapsedTicks); 
@@ -78,7 +79,7 @@ namespace System.Diagnostics
 			get { 
 				checked {
 					if (IsHighResolution) {
-						return (long)(1000 * ElapsedTicks / Frequency);
+						return (long)(ElapsedTicks / (Frequency / 1000));
 					}
 					else {
 						return (long) Elapsed.TotalMilliseconds;
