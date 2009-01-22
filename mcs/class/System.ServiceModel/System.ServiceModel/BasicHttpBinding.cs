@@ -200,7 +200,9 @@ namespace System.ServiceModel
 			if (MessageEncoding == WSMessageEncoding.Text) {
 				TextMessageEncodingBindingElement tm = new TextMessageEncodingBindingElement (
 					MessageVersion.CreateVersion (EnvelopeVersion, AddressingVersion.None), TextEncoding);
+#if !NET_2_1
 				ReaderQuotas.CopyTo (tm.ReaderQuotas);
+#endif
 				return tm;
 			}
 			else
