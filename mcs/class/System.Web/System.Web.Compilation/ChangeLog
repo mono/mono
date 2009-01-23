@@ -1,3 +1,10 @@
+2009-01-23  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: if dependencyCache already contains the virtual
+	path, replace its corresponding file set (in AddToCache). This can
+	happen only if the requested virtual path compilation resulted in
+	errors and the compilation has been retried. Fixes bug #462681
+
 2009-01-14  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: implemented a work around which allows the

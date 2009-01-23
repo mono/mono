@@ -1227,7 +1227,10 @@ namespace System.Web.Compilation {
 				}
 
 				dep = new CacheDependency (files.ToArray ());
-				dependencyCache.Add (virtualPath, files);
+				if (dependencyCache.ContainsKey (virtualPath))
+					dependencyCache [virtualPath] = files;
+				else
+					dependencyCache.Add (virtualPath, files);
 			} else
 				dep = null;
 			
