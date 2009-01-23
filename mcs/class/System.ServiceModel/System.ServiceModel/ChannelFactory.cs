@@ -74,7 +74,7 @@ namespace System.ServiceModel
 #if NET_2_1
 			try {
 				// It should automatically use XmlXapResolver
-				var cfg = new SilverlightClientConfigLoader ().Load (XmlReader.Create ("ServiceReference.ClientConfig"));
+				var cfg = new SilverlightClientConfigLoader ().Load (XmlReader.Create ("ServiceReferences.ClientConfig"));
 				var se = cfg.GetServiceEndpointConfiguration (endpointConfig);
 				if (se.Binding != null && Endpoint.Binding == null)
 					Endpoint.Binding = se.Binding;
