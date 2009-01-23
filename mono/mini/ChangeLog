@@ -1,3 +1,8 @@
+2009-01-23  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c (mono_arch_context_get_int_reg): Allow access to the
+	stack pointer (r1).
+
 2009-01-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c aot-runtime.c: Treat delegate-invoke wrappers similarly to
