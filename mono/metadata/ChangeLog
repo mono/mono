@@ -1,3 +1,8 @@
+2009-01-23  Mark Probst  <mark.probst@gmail.com>
+
+	* metadata.c (mono_metadata_generic_param_equal): Only compare the
+	image if the owner is NULL.  Fixes the AOT failures.
+
 2009-01-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_load_generic_params): Initialize the 
