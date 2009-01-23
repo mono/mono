@@ -1,3 +1,11 @@
+2009-01-23  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r124022 and r124301.
+
+	* metadata.c (mono_metadata_generic_param_equal): Owner as well as
+	image must match.  Only compare the image if the owner is NULL.
+	Fixes the AOT failures.
+
 2009-01-23  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r124268.
