@@ -415,22 +415,20 @@ namespace System.Web.UI {
 
 		public virtual void RenderBeginTag (string tagName)
 		{
-			if (!OnTagRender (tagName, GetTagKey (tagName)))
-				return;
+			bool ignore = !OnTagRender (tagName, GetTagKey (tagName));
 
 			PushEndTag (tagName);
-
+			TagIgnore = ignore;
 			DoBeginTag ();
 		}
 
 		public virtual void RenderBeginTag (HtmlTextWriterTag tagKey)
 		{
-			if (!OnTagRender (GetTagName (tagKey), tagKey))
-				return;
+			bool ignore = !OnTagRender (GetTagName (tagKey), tagKey);
 
 			PushEndTag (tagKey);
-
 			DoBeginTag ();
+			TagIgnore = ignore;
 		}
 
 		void WriteIfNotNull (string s)
@@ -443,25 +441,27 @@ namespace System.Web.UI {
 		void DoBeginTag ()
 		{
 			WriteIfNotNull (RenderBeforeTag ());
-			WriteBeginTag (TagName);
-			FilterAttributes ();
+			if (!TagIgnore) {
+				WriteBeginTag (TagName);
+				FilterAttributes ();
 
-			HtmlTextWriterTag key = (int) TagKey < tags.Length ? TagKey : HtmlTextWriterTag.Unknown;
+				HtmlTextWriterTag key = (int) TagKey < tags.Length ? TagKey : HtmlTextWriterTag.Unknown;
 
-			switch (tags [(int) key].tag_type) {
-				case TagType.Inline:
-					Write (TagRightChar);
-					break;
-				case TagType.Block:
-					Write (TagRightChar);
-					WriteLine ();
-					Indent++;
-					break;
-				case TagType.SelfClosing:
-					Write (SelfClosingTagEnd);
-					break;
+				switch (tags [(int) key].tag_type) {
+					case TagType.Inline:
+						Write (TagRightChar);
+						break;
+					case TagType.Block:
+						Write (TagRightChar);
+						WriteLine ();
+						Indent++;
+						break;
+					case TagType.SelfClosing:
+						Write (SelfClosingTagEnd);
+						break;
+				}
 			}
-
+			
 			// FIXME what do i do for self close here?
 			WriteIfNotNull (RenderBeforeContent ());
 		}
@@ -469,25 +469,29 @@ namespace System.Web.UI {
 
 		public virtual void RenderEndTag ()
 		{
+			
 			// FIXME what do i do for self close here?
 			WriteIfNotNull (RenderAfterContent ());
 
-			HtmlTextWriterTag key = (int) TagKey < tags.Length ? TagKey : HtmlTextWriterTag.Unknown;
+			if (!TagIgnore) {
+				HtmlTextWriterTag key = (int) TagKey < tags.Length ? TagKey : HtmlTextWriterTag.Unknown;
 
-			switch (tags [(int) key].tag_type) {
-				case TagType.Inline:
-					WriteEndTag (TagName);
-					break;
-				case TagType.Block:
-					Indent--;
-					WriteLineNoTabs ("");
-					WriteEndTag (TagName);
+				switch (tags [(int) key].tag_type) {
+					case TagType.Inline:
+						WriteEndTag (TagName);
+						break;
+					case TagType.Block:
+						Indent--;
+						WriteLineNoTabs ("");
+						WriteEndTag (TagName);
 
-					break;
-				case TagType.SelfClosing:
-					// NADA
-					break;
+						break;
+					case TagType.SelfClosing:
+						// NADA
+						break;
+				}
 			}
+			
 			WriteIfNotNull (RenderAfterTag ());
 
 			PopEndTag ();
@@ -805,7 +809,22 @@ namespace System.Web.UI {
 			}
 		}
 
+		bool TagIgnore {
+			get {
+				if (tagstack_pos == -1)
+					throw new InvalidOperationException ();
 
+				return tagstack [tagstack_pos].ignore;
+			}
+
+			set {
+				if (tagstack_pos == -1)
+					throw new InvalidOperationException ();
+				
+				tagstack [tagstack_pos].ignore = value;
+			}
+		}
+		
 		TextWriter b;
 		string tab_string;
 		bool newline;
@@ -828,6 +847,7 @@ namespace System.Web.UI {
 		AddedTag {
 			public string name;
 			public HtmlTextWriterTag key;
+			public bool ignore;
 		}
 
 #if TARGET_JVM
