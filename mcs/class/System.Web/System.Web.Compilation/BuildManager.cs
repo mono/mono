@@ -483,7 +483,7 @@ namespace System.Web.Compilation {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
 #else
-				buildCacheLock.AcquireWriterLock (0);
+				buildCacheLock.AcquireWriterLock (-1);
 #endif
 				locked = true;
 				if (compiledAssembly != null)
@@ -538,7 +538,7 @@ namespace System.Web.Compilation {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterReadLock ();
 #else
-				buildCacheLock.AcquireReaderLock (0);
+				buildCacheLock.AcquireReaderLock (-1);
 #endif
 				locked = true;
 				return GetCachedItemNoLock (vp);
@@ -857,7 +857,7 @@ namespace System.Web.Compilation {
 #if SYSTEMCORE_DEP
 				buildCacheLock.EnterWriteLock ();
 #else
-				buildCacheLock.AcquireWriterLock (0);
+				buildCacheLock.AcquireWriterLock (-1);
 #endif
 				locked = true;
 
