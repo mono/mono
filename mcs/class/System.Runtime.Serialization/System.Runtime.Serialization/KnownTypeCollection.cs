@@ -246,7 +246,7 @@ namespace System.Runtime.Serialization
 			case TypeCode.String:
 				return (string) obj;
 			case TypeCode.UInt16:
-				return XmlConvert.ToString ((ushort) obj);
+				return XmlConvert.ToString ((int) (ushort) obj);
 			case TypeCode.UInt32:
 				return XmlConvert.ToString ((uint) obj);
 			case TypeCode.UInt64:

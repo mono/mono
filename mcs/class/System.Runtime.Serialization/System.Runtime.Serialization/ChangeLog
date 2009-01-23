@@ -1,3 +1,8 @@
+2009-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : similar fix to the previous one,
+	  on uint16.
+
 2009-01-22  Alan McGovern  <amcgovern@novell.com>
 
 	* KnownTypeCollection.cs : The byte overload doesn't exist in
