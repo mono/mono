@@ -728,7 +728,7 @@ namespace Mono.CSharp {
 	{
 		if (t.IsArray) {
 			string dimension = t.Name.Substring (t.Name.LastIndexOf ('['));
-			return GetFullName (t.GetElementType ()) + dimension;
+			return GetFullName (GetElementType (t)) + dimension;
 		}
 
 		if (IsNullableType (t) && !t.IsGenericTypeDefinition) {
@@ -1495,12 +1495,20 @@ namespace Mono.CSharp {
 			return constraints.IsReferenceType;
 		}
 
-		return !t.IsValueType;
+		return !IsStruct (t) && !IsEnumType (t);
 	}			
 		
 	public static bool IsValueType (Type t)
 	{
-		return t.IsValueType || IsGenericParameter (t);
+		if (TypeManager.IsGenericParameter (t)) {
+			GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
+			if (constraints == null)
+				return false;
+
+			return constraints.IsValueType;
+		}
+
+		return IsStruct (t) || IsEnumType (t);
 	}
 
 	public static bool IsStruct (Type t)
@@ -2390,11 +2398,11 @@ namespace Mono.CSharp {
 			if (a.GetArrayRank () != b.GetArrayRank ())
 				return false;
 
-			return IsSignatureEqual (a.GetElementType (), b.GetElementType ());
+			return IsSignatureEqual (GetElementType (a), GetElementType (b));
 		}
 
 		if (a.IsByRef && b.IsByRef)
-			return IsSignatureEqual (a.GetElementType (), b.GetElementType ());
+			return IsSignatureEqual (GetElementType (a), GetElementType (b));
 
 #if GMCS_SOURCE
 		if (a.IsGenericType && b.IsGenericType) {
@@ -2599,7 +2607,7 @@ namespace Mono.CSharp {
 		if (a.IsArray && b.IsArray) {
 			if (a.GetArrayRank () != b.GetArrayRank ())
 				return false;
-			return IsEqual (a.GetElementType (), b.GetElementType ());
+			return IsEqual (GetElementType (a), GetElementType (b));
 		}
 
 		if (a.IsByRef && b.IsByRef)

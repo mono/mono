@@ -994,7 +994,7 @@ namespace Mono.CSharp {
 					if (!TypeManager.HasElementType (itype))
 						continue;
 					
-					if (!TypeManager.IsGenericParameter (itype.GetElementType ()))
+					if (!TypeManager.IsGenericParameter (TypeManager.GetElementType (itype)))
 					    continue;
 				}
 				type_inference.ExactInference (Parameters.Types [i], itype);

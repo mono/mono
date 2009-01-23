@@ -3082,7 +3082,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (InstanceExpression.Type.IsValueType) {
+			if (TypeManager.IsValueType (InstanceExpression.Type)) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
 				} else {
@@ -3800,7 +3800,7 @@ namespace Mono.CSharp {
 
 				if (score != 0 && (p_mod & Parameter.Modifier.PARAMS) != 0 && delegate_type == null) {
 					// It can be applicable in expanded form
-					score = IsArgumentCompatible (ec, a_mod, a, 0, pt.GetElementType ());
+					score = IsArgumentCompatible (ec, a_mod, a, 0, TypeManager.GetElementType (pt));
 					if (score == 0)
 						params_expanded_form = true;
 				}
@@ -3825,11 +3825,11 @@ namespace Mono.CSharp {
 			//
 			if (arg_mod != 0 || param_mod != 0) {
 				if (TypeManager.HasElementType (parameter))
-					parameter = parameter.GetElementType ();
+					parameter = TypeManager.GetElementType (parameter);
 
 				Type a_type = argument.Type;
 				if (TypeManager.HasElementType (a_type))
-					a_type = a_type.GetElementType ();
+					a_type = TypeManager.GetElementType (a_type);
 
 				if (a_type != parameter)
 					return 2;

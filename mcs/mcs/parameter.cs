@@ -326,7 +326,7 @@ namespace Mono.CSharp {
 				}
 
 				if (parameter_type == TypeManager.object_type ||
-				    (val == null && !TypeManager.IsValueType (parameter_type)) ||
+				    (val == null && !TypeManager.IsGenericParameter (parameter_type) && TypeManager.IsReferenceType (parameter_type)) ||
 				    (val != null && TypeManager.TypeToCoreType (val.GetType ()) == parameter_type))
 					builder.SetConstant (val);
 				else

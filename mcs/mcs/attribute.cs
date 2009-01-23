@@ -1559,8 +1559,8 @@ namespace Mono.CSharp {
 				Type bType = types_b [i];
 
 				if (aType.IsArray && bType.IsArray) {
-					Type a_el_type = aType.GetElementType ();
-					Type b_el_type = bType.GetElementType ();
+					Type a_el_type = TypeManager.GetElementType (aType);
+					Type b_el_type = TypeManager.GetElementType (bType);
 					if (aType.GetArrayRank () != bType.GetArrayRank () && a_el_type == b_el_type) {
 						result = Result.RefOutArrayError;
 						continue;

@@ -2580,9 +2580,9 @@ namespace Mono.CSharp {
 
 			if (RootContext.Version >= LanguageVersion.ISO_2 &&
 				((TypeManager.IsNullableType (left.Type) && (right is NullLiteral || TypeManager.IsNullableType (right.Type) || TypeManager.IsValueType (right.Type))) ||
-				(left.Type.IsValueType && right is NullLiteral) ||
+				(TypeManager.IsValueType (left.Type) && right is NullLiteral) ||
 				(TypeManager.IsNullableType (right.Type) && (left is NullLiteral || TypeManager.IsNullableType (left.Type) || TypeManager.IsValueType (left.Type))) ||
-				(right.Type.IsValueType && left is NullLiteral)))
+				(TypeManager.IsValueType (right.Type) && left is NullLiteral)))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
 			return DoResolveCore (ec, left, right);
@@ -5021,12 +5021,12 @@ namespace Mono.CSharp {
 					//
 					// Push the instance expression
 					//
-					if (TypeManager.IsValueType (iexpr_type)) {
+					if (TypeManager.IsValueType (iexpr_type) || TypeManager.IsGenericParameter (iexpr_type)) {
 						//
 						// Special case: calls to a function declared in a 
 						// reference-type with a value-type argument need
 						// to have their value boxed.
-						if (decl_type.IsValueType ||
+						if (TypeManager.IsStruct (decl_type) ||
 						    TypeManager.IsGenericParameter (iexpr_type)) {
 							//
 							// If the expression implements IMemoryLocation, then

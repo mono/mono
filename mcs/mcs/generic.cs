@@ -1764,7 +1764,7 @@ namespace Mono.CSharp {
 				// become equal.
 				//
 				while (b.IsArray) {
-					b = b.GetElementType ();
+					b = GetElementType (b);
 					if (a.Equals (b))
 						return false;
 				}
@@ -1832,8 +1832,8 @@ namespace Mono.CSharp {
 				if (a.GetArrayRank () != b.GetArrayRank ())
 					return false;
 			
-				a = a.GetElementType ();
-				b = b.GetElementType ();
+				a = GetElementType (a);
+				b = GetElementType (b);
 
 				return MayBecomeEqualGenericTypes (a, b, class_inferred, method_inferred);
 			}
@@ -2063,7 +2063,7 @@ namespace Mono.CSharp {
 					if (at.GetArrayRank () != pt.GetArrayRank ())
 						return false;
 
-					return UnifyType (pt.GetElementType (), at.GetElementType (), inferred);
+					return UnifyType (TypeManager.GetElementType (pt), TypeManager.GetElementType (at), inferred);
 				}
 
 				if (!pt.IsGenericType)

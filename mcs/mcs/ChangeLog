@@ -1,5 +1,11 @@
 2009-01-23  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, generic.cs, parameter.cs, decl.cs, anonymous.cs,
+	expression.cs, report.cs, ecore.cs, attribute.cs: Use common 
+	GetElementType and HasElementType. IsValueType clean up.
+
+2009-01-23  Marek Safar  <marek.safar@gmail.com>
+
 	* nullable.cs: Use common EmitCall.
 	
 	* expression.cs: Emit constraint. for virtual calls only.

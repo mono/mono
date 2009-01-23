@@ -1076,7 +1076,7 @@ namespace Mono.CSharp {
 			// the accessibility is for their underlying class, and they return 
 			// NonPublic visibility for pointers
 			//
-			if (check_type.IsArray || check_type.IsPointer)
+			if (TypeManager.HasElementType (check_type))
 				return CheckAccessLevel (TypeManager.GetElementType (check_type));
 
 			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;

@@ -715,7 +715,7 @@ namespace Mono.CSharp {
 				DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
 				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));
 			} else if (TypeManager.HasElementType (type)) {
-				SymbolRelatedToPreviousError (type.GetElementType ());
+				SymbolRelatedToPreviousError (TypeManager.GetElementType (type));
 			} else {
 				SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
 			}
