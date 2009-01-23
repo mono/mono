@@ -697,12 +697,14 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public virtual void PositionEditingControl (bool setLocation, bool setSize, Rectangle cellBounds, Rectangle cellClip, DataGridViewCellStyle cellStyle, bool singleVerticalBorderAdded, bool singleHorizontalBorderAdded, bool isFirstDisplayedColumn, bool isFirstDisplayedRow)
 		{
-			if (setLocation && setSize)
-				DataGridView.EditingControl.Bounds = cellBounds;
-			else if (setLocation)
-				DataGridView.EditingControl.Location = cellBounds.Location;	
-			else if (setSize)
-				DataGridView.EditingControl.Size = cellBounds.Size;
+			if (DataGridView.EditingControl != null) {
+				if (setLocation && setSize)
+					DataGridView.EditingControl.Bounds = cellBounds;
+				else if (setLocation)
+					DataGridView.EditingControl.Location = cellBounds.Location;	
+				else if (setSize)
+					DataGridView.EditingControl.Size = cellBounds.Size;
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

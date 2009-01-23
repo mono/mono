@@ -2295,7 +2295,8 @@ namespace System.Windows.Forms {
 				cell.PositionEditingControl (true, true, this.GetCellDisplayRectangle (cell.ColumnIndex, cell.RowIndex, false), bounds, style, false, false, (columns [cell.ColumnIndex].DisplayIndex == 0), (cell.RowIndex == 0));
 
 				// Show the editing control
-				EditingControlInternal.Visible = true;
+				if (EditingControlInternal != null)
+					EditingControlInternal.Visible = true;
 
 				IDataGridViewEditingControl dgvEditingControl = (IDataGridViewEditingControl) EditingControlInternal;
 				if (dgvEditingControl != null) {
@@ -5180,7 +5181,7 @@ namespace System.Windows.Forms {
 			if (cell != null) {
 				if (cell.KeyEntersEditMode (new KeyEventArgs ((Keys)m.WParam.ToInt32 ())))
 					BeginEdit (true);
-				if (EditingControl != null && (Msg)m.Msg == Msg.WM_KEYDOWN || (Msg)m.Msg == Msg.WM_CHAR)
+				if (EditingControl != null && ((Msg)m.Msg == Msg.WM_KEYDOWN || (Msg)m.Msg == Msg.WM_CHAR))
 					XplatUI.SendMessage (EditingControl.Handle, (Msg)m.Msg, m.WParam, m.LParam);
 			}
 
