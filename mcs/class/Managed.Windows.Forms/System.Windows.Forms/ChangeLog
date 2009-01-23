@@ -1,3 +1,8 @@
+2009-01-23  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Fix new row adding/editing in the non-databound 
+	scenario.
+
 2009-01-21  Mike Gorse  <mgorse@novell.com>
 
 	* TrackBar.cs: Make LargeIncrement/Decrement internal so that UIA can
