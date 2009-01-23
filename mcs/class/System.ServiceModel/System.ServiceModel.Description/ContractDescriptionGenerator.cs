@@ -244,7 +244,8 @@ namespace System.ServiceModel.Description
 			// If the argument is only one and has [MessageContract]
 			// then infer it as a typed messsage
 			if (isRequest) {
-				mca = plist.Length != 1 ? null :
+				int len = mi.Name.StartsWith ("Begin", StringComparison.Ordinal) ? 3 : 1;
+				mca = plist.Length != len ? null :
 					GetMessageContractAttribute (plist [0].ParameterType);
 				if (mca != null)
 					messageType = plist [0].ParameterType;
