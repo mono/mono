@@ -357,12 +357,7 @@ namespace Mono.CSharp {
 		// Public Field, used to track which method is the public entry
 		// point.
 		//
-		static public MethodInfo EntryPoint;
-
-                //
-                // Track the location of the entry point.
-                //
-                static public Location EntryPointLocation;
+		static public Method EntryPoint;
 
 		//
 		// These are used to generate unique names on the structs and fields.

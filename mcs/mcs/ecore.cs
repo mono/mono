@@ -1100,7 +1100,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldind_Ref);
 				else
 					LoadFromPtr (ig, TypeManager.GetEnumUnderlyingType (t));
-			} else if (t.IsValueType || TypeManager.IsGenericParameter (t))
+			} else if (TypeManager.IsStruct (t) || TypeManager.IsGenericParameter (t))
 				ig.Emit (OpCodes.Ldobj, t);
 			else if (t.IsPointer)
 				ig.Emit (OpCodes.Ldind_I);
@@ -1131,7 +1131,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Stind_I1);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stind_I);
-			else if (type.IsValueType || TypeManager.IsGenericParameter (type))
+			else if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
 				ig.Emit (OpCodes.Stobj, type);
 			else
 				ig.Emit (OpCodes.Stind_Ref);
@@ -1807,7 +1807,7 @@ namespace Mono.CSharp {
 		{
 			// boxing is side-effectful, since it involves runtime checks, except when boxing to Object or ValueType
 			// so, we need to emit the box+pop instructions in most cases
-			if (child.Type.IsValueType &&
+			if (TypeManager.IsStruct (child.Type) &&
 			    (type == TypeManager.object_type || type == TypeManager.value_type))
 				child.EmitSideEffect (ec);
 			else
@@ -2836,7 +2836,7 @@ namespace Mono.CSharp {
 		}
 
 		public virtual bool IsValueType {
-			get { return Type.IsValueType; }
+			get { return TypeManager.IsStruct (Type); }
 		}
 
 		public virtual bool IsInterface {
@@ -4787,7 +4787,7 @@ namespace Mono.CSharp {
 			if (var != null && var.VariableInfo != null)
 				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
-			bool lvalue_instance = !FieldInfo.IsStatic && FieldInfo.DeclaringType.IsValueType;
+			bool lvalue_instance = !FieldInfo.IsStatic && TypeManager.IsValueType (FieldInfo.DeclaringType);
 			bool out_access = right_side == EmptyExpression.OutAccess || right_side == EmptyExpression.LValueMemberOutAccess;
 
 			Expression e = DoResolve (ec, lvalue_instance, out_access);
@@ -4835,7 +4835,7 @@ namespace Mono.CSharp {
 
 		bool is_marshal_by_ref ()
 		{
-			return !IsStatic && Type.IsValueType && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type);
+			return !IsStatic && TypeManager.IsStruct (Type) && TypeManager.mbr_type != null && TypeManager.IsSubclassOf (DeclaringType, TypeManager.mbr_type);
 		}
 
 		public override void CheckMarshalByRefAccess (EmitContext ec)
@@ -4859,7 +4859,7 @@ namespace Mono.CSharp {
 				//
 				IVariableReference variable = InstanceExpression as IVariableReference;
 				if (variable != null)
-					return InstanceExpression.Type.IsValueType && variable.IsFixed;
+					return TypeManager.IsStruct (InstanceExpression.Type) && variable.IsFixed;
 
 				IFixedExpression fe = InstanceExpression as IFixedExpression;
 				return fe != null && fe.IsFixed;
@@ -5432,7 +5432,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			if (!InstanceResolve (ec, PropertyInfo.DeclaringType.IsValueType, must_do_cs1540_check))
+			if (!InstanceResolve (ec, TypeManager.IsStruct (PropertyInfo.DeclaringType), must_do_cs1540_check))
 				return null;
 			
 			//

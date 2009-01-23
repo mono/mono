@@ -966,7 +966,7 @@ namespace Mono.CSharp {
 						// TODO: pi can be null
 						PropertyInfo pi = orig_assembly_type.GetProperty (emited_pi.Name);
 
-						object old_instance = pi.PropertyType.IsEnum ?
+						object old_instance = TypeManager.IsEnumType (pi.PropertyType) ?
 							System.Enum.ToObject (pi.PropertyType, prop_values_arr [i]) :
 							prop_values_arr [i];
 
@@ -1616,7 +1616,7 @@ namespace Mono.CSharp {
 		public static IFixedBuffer GetFixedBuffer (FieldInfo fi)
 		{
 			// Fixed buffer helper type is generated as value type
-			if (!fi.FieldType.IsValueType)
+			if (TypeManager.IsReferenceType (fi.FieldType))
 				return null;
 
 			FieldBase fb = TypeManager.GetField (fi);

@@ -1741,7 +1741,7 @@ namespace Mono.CSharp
 			}
 
 			if (RootContext.NeedsEntryPoint) {
-				MethodInfo ep = RootContext.EntryPoint;
+				Method ep = RootContext.EntryPoint;
 
 				if (ep == null) {
 					if (RootContext.MainClass != null) {
@@ -1766,7 +1766,7 @@ namespace Mono.CSharp
 					return false;
 				}
 
-				CodeGen.Assembly.Builder.SetEntryPoint (ep, k);
+				CodeGen.Assembly.Builder.SetEntryPoint (ep.MethodBuilder, k);
 			} else if (RootContext.MainClass != null) {
 				Report.Error (2017, "Cannot specify -main if building a module or library");
 			}

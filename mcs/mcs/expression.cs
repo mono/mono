@@ -1270,7 +1270,7 @@ namespace Mono.CSharp {
 				t_is_nullable = true;
 			}
 
-			if (t.IsValueType) {
+			if (TypeManager.IsStruct (t)) {
 				if (d == t) {
 					//
 					// D and T are the same value types but D can be null
@@ -1298,7 +1298,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsGenericParameter (t))
 					return ResolveGenericParameter (d, t);
 
-				if (d.IsValueType) {
+				if (TypeManager.IsStruct (d)) {
 					bool temp;
 					if (Convert.ImplicitBoxingConversionExists (expr, t, out temp))
 						return CreateConstantResult (true);
@@ -1324,10 +1324,10 @@ namespace Mono.CSharp {
 #if GMCS_SOURCE
 			GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
 			if (constraints != null) {
-				if (constraints.IsReferenceType && d.IsValueType)
+				if (constraints.IsReferenceType && TypeManager.IsStruct (d))
 					return CreateConstantResult (false);
 
-				if (constraints.IsValueType && !d.IsValueType)
+				if (constraints.IsValueType && !TypeManager.IsStruct (d))
 					return CreateConstantResult (TypeManager.IsEqual (d, t));
 			}
 
@@ -2894,7 +2894,7 @@ namespace Mono.CSharp {
 					return null;
 			} else if (l.IsInterface) {
 				l = TypeManager.object_type;
-			} else if (l.IsValueType) {
+			} else if (TypeManager.IsStruct (l)) {
 				return null;
 			}
 
@@ -2904,7 +2904,7 @@ namespace Mono.CSharp {
 					return null;
 			} else if (r.IsInterface) {
 				r = TypeManager.object_type;
-			} else if (r.IsValueType) {
+			} else if (TypeManager.IsStruct (r)) {
 				return null;
 			}
 
@@ -5008,7 +5008,7 @@ namespace Mono.CSharp {
 			bool is_static = method.IsStatic;
 			if (!is_static){
 				this_call = instance_expr is This;
-				if (decl_type.IsValueType || (!this_call && instance_expr.Type.IsValueType))
+				if (TypeManager.IsStruct (decl_type) || TypeManager.IsEnumType (decl_type) || (!this_call && TypeManager.IsStruct (instance_expr.Type)))
 					struct_call = true;
 
 				//
@@ -5443,7 +5443,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			bool is_struct = type.IsValueType;
+			bool is_struct = TypeManager.IsStruct (type);
 			eclass = ExprClass.Value;
 
 			//
@@ -5632,7 +5632,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (!type.IsValueType){
+			if (!TypeManager.IsStruct (type)){
 				//
 				// We throw an exception.  So far, I believe we only need to support
 				// value types:
@@ -6279,7 +6279,7 @@ namespace Mono.CSharp {
 					// If we are dealing with a struct, get the
 					// address of it, so we can store it.
 					//
-					if ((dims == 1) && etype.IsValueType &&
+					if ((dims == 1) && TypeManager.IsStruct (etype) &&
 					    (!TypeManager.IsBuiltinOrEnum (etype) ||
 					     etype == TypeManager.decimal_type)) {
 
@@ -6669,7 +6669,7 @@ namespace Mono.CSharp {
 		//
 		public override void CheckMarshalByRefAccess (EmitContext ec)
 		{
-			if ((variable_info != null) && !(type.IsValueType && ec.OmitStructFlowAnalysis) &&
+			if ((variable_info != null) && !(TypeManager.IsStruct (type) && ec.OmitStructFlowAnalysis) &&
 			    !variable_info.IsAssigned (ec)) {
 				Error (188, "The `this' object cannot be used before all of its " +
 				       "fields are assigned to");
@@ -7812,7 +7812,7 @@ namespace Mono.CSharp {
 			if (type.IsPointer)
 				return MakePointerAccess (ec, type);
 
-			if (Expr.eclass != ExprClass.Variable && type.IsValueType)
+			if (Expr.eclass != ExprClass.Variable && TypeManager.IsStruct (type))
 				Error_CannotModifyIntermediateExpressionValue (ec);
 
 			return (new IndexerAccess (this, loc)).DoResolveLValue (ec, right_side);
@@ -7943,7 +7943,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldelem_I);
 			else if (TypeManager.IsEnumType (type)){
 				EmitLoadOpcode (ig, TypeManager.GetEnumUnderlyingType (type), rank);
-			} else if (type.IsValueType){
+			} else if (TypeManager.IsStruct (type)){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
 #if GMCS_SOURCE
@@ -7990,7 +7990,7 @@ namespace Mono.CSharp {
                                 has_type_arg = true;
 				is_stobj = true;
                                 return OpCodes.Stobj;
-			} else if (t.IsValueType) {
+			} else if (TypeManager.IsStruct (t)) {
 				has_type_arg = true;
 				is_stobj = true;
 				return OpCodes.Stobj;

@@ -4016,7 +4016,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (expr.Type.IsValueType){
+			if (!TypeManager.IsReferenceType (expr.Type)){
 				Report.Error (185, loc,
 					      "`{0}' is not a reference type as required by the lock statement",
 					      TypeManager.CSharpName (expr.Type));
@@ -4878,7 +4878,7 @@ namespace Mono.CSharp {
 		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (!expr_type.IsValueType) {
+			if (!TypeManager.IsStruct (expr_type)) {
 				Label skip = ig.DefineLabel ();
 				local_copy.Emit (ec);
 				ig.Emit (OpCodes.Brfalse, skip);
@@ -4999,7 +4999,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (!var.Type.IsValueType) {
+			if (!TypeManager.IsStruct (var.Type)) {
 				Label skip = ig.DefineLabel ();
 				var.Emit (ec);
 				ig.Emit (OpCodes.Brfalse, skip);
@@ -5792,7 +5792,7 @@ namespace Mono.CSharp {
 			{
 				ILGenerator ig = ec.ig;
 
-				if (enumerator_type.IsValueType) {
+				if (TypeManager.IsStruct (enumerator_type)) {
 					MethodInfo mi = FetchMethodDispose (enumerator_type);
 					if (mi != null) {
 						enumerator.AddressOf (ec, AddressOp.Load);

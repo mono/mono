@@ -105,13 +105,10 @@ namespace Mono.CSharp {
 			if (TypeManager.IsBuiltinOrEnum (t))
 				return true;
 
-			if (t.IsPointer || t.IsValueType)
-				return false;
-			
-			if (TypeManager.IsGenericParameter (t))
+			if (TypeManager.IsGenericParameter (t) || t.IsPointer)
 				return false;
 
-			return true;
+			return TypeManager.IsReferenceType (t);
 		}
 
 		/// <summary>
@@ -187,7 +184,13 @@ namespace Mono.CSharp {
 
 		public static void Error_InvalidConstantType (Type t, Location loc)
 		{
-			Report.Error (283, loc, "The type `{0}' cannot be declared const", TypeManager.CSharpName (t));
+			if (TypeManager.IsGenericParameter (t)) {
+				Report.Error (1959, loc,
+					"Type parameter `{0}' cannot be declared const", TypeManager.CSharpName (t));
+			} else {
+				Report.Error (283, loc,
+					"The type `{0}' cannot be declared const", TypeManager.CSharpName (t));
+			}
 		}
 
 		#region IConstant Members

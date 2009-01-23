@@ -621,7 +621,7 @@ namespace Mono.CSharp {
 				// If a previous value was set, nullify it, so that we do
 				// not leak memory
 				if (old != null){
-					if (old.FieldType.IsValueType){
+					if (TypeManager.IsStruct (old.FieldType)){
 						//
 						// TODO: Clear fields for structs
 						//

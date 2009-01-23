@@ -1283,7 +1283,7 @@ namespace Mono.CSharp {
 		}
 
 		public override bool IsValueType {
-			get { return open_type.IsValueType; }
+			get { return TypeManager.IsStruct (open_type); }
 		}
 
 		public override bool IsInterface {
@@ -1370,7 +1370,7 @@ namespace Mono.CSharp {
 				if (!atype.IsGenericType)
 #endif
 				is_class = atype.IsClass || atype.IsInterface;
-				is_struct = atype.IsValueType && !TypeManager.IsNullableType (atype);
+				is_struct = TypeManager.IsValueType (atype) && !TypeManager.IsNullableType (atype);
 			}
 
 			//
@@ -1421,7 +1421,7 @@ namespace Mono.CSharp {
 			if (!gc.HasConstructorConstraint)
 				return true;
 
-			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
+			if (TypeManager.IsBuiltinType (atype) || TypeManager.IsValueType (atype))
 				return true;
 
 			if (HasDefaultConstructor (atype))

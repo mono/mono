@@ -268,7 +268,7 @@ namespace Mono.CSharp {
 		//
 		public static bool ImplicitReferenceConversionExists (Expression expr, Type target_type)
 		{
-			if (target_type.IsValueType)
+			if (TypeManager.IsStruct (target_type))
 				return false;
 
 			Type expr_type = expr.Type;
@@ -405,13 +405,13 @@ namespace Mono.CSharp {
 				//
 				// From any enum-type to the type System.Enum.
 				//
-				if (expr_type.IsEnum)
+				if (TypeManager.IsEnumType (expr_type))
 					return true;
 				//
 				// From any nullable-type with an underlying enum-type to the type System.Enum
 				//
 				if (TypeManager.IsNullableType (expr_type))
-					return TypeManager.GetTypeArguments (expr_type) [0].IsEnum;
+					return TypeManager.IsEnumType (TypeManager.GetTypeArguments (expr_type) [0]);
 			}
 
 			if (TypeManager.IsSubclassOf (expr_type, target_type)) {
@@ -1598,7 +1598,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Expression ExplicitReferenceConversion (Expression source, Type source_type, Type target_type)
 		{
-			bool target_is_value_type = target_type.IsValueType;
+			bool target_is_value_type = TypeManager.IsStruct (target_type);
 
 			//
 			// From object to a generic parameter

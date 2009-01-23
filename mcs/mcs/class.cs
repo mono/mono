@@ -4067,11 +4067,11 @@ namespace Mono.CSharp {
 			return base.GetSignatureForError () + Parameters.GetSignatureForError ();
 		}
 
-		void Error_DuplicateEntryPoint (MethodInfo b, Location location)
+		static void Error_DuplicateEntryPoint (Method b)
 		{
-			Report.Error (17, location,
+			Report.Error (17, b.Location,
 				"Program `{0}' has more than one entry point defined: `{1}'",
-				CodeGen.FileName, TypeManager.CSharpSignature(b));
+				CodeGen.FileName, b.GetSignatureForError ());
 		}
 
 		bool IsEntryPoint ()
@@ -4248,12 +4248,11 @@ namespace Mono.CSharp {
 							IMethodData md = TypeManager.GetMethod (MethodBuilder);
 							md.SetMemberIsUsed ();
 
-							RootContext.EntryPoint = MethodBuilder;
-							RootContext.EntryPointLocation = Location;
+							RootContext.EntryPoint = this;
 						}
 					} else {
-						Error_DuplicateEntryPoint (RootContext.EntryPoint, RootContext.EntryPointLocation);
-						Error_DuplicateEntryPoint (MethodBuilder, Location);
+						Error_DuplicateEntryPoint (RootContext.EntryPoint);
+						Error_DuplicateEntryPoint (this);
 					}
 				} else {
 					Report.Warning (28, 4, Location, "`{0}' has the wrong signature to be an entry point",
@@ -4396,7 +4395,7 @@ namespace Mono.CSharp {
 					return true;
 
 				type = ec.ContainerType.BaseType;
-				if (ec.ContainerType.IsValueType) {
+				if (TypeManager.IsStruct (ec.ContainerType)) {
 					Report.Error (522, loc,
 						"`{0}': Struct constructors cannot call base constructors", TypeManager.CSharpSignature (caller_builder));
 					return false;
@@ -4408,7 +4407,7 @@ namespace Mono.CSharp {
 				//
 				// struct D { public D (int a) : this () {}
 				//
-				if (ec.ContainerType.IsValueType && argument_list == null)
+				if (TypeManager.IsStruct (ec.ContainerType) && argument_list == null)
 					return true;
 				
 				type = ec.ContainerType;
@@ -5809,14 +5808,14 @@ namespace Mono.CSharp {
 			if (TypeManager.IsReferenceType (MemberType))
 				return true;
 
-			if (MemberType.IsEnum)
-				return true;
-
 			if (MemberType == TypeManager.bool_type || MemberType == TypeManager.char_type ||
 				MemberType == TypeManager.sbyte_type || MemberType == TypeManager.byte_type ||
 				MemberType == TypeManager.short_type || MemberType == TypeManager.ushort_type ||
 				MemberType == TypeManager.int32_type || MemberType == TypeManager.uint32_type ||
 				MemberType == TypeManager.float_type)
+				return true;
+
+			if (TypeManager.IsEnumType (MemberType))
 				return true;
 
 			return false;

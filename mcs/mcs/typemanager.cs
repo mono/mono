@@ -1502,6 +1502,11 @@ namespace Mono.CSharp {
 	{
 		return t.IsValueType || IsGenericParameter (t);
 	}
+
+	public static bool IsStruct (Type t)
+	{
+		return t.BaseType == value_type && t != enum_type && t.IsSealed;
+	}
 	
 	public static bool IsInterfaceType (Type t)
 	{
@@ -2841,7 +2846,7 @@ namespace Mono.CSharp {
 		if (!IsNullableType (t))
 			return false;
 
-		return GetTypeArguments (t) [0].IsValueType;
+		return IsValueType (GetTypeArguments (t) [0]);
 #else
 		return false;
 #endif

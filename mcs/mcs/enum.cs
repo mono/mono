@@ -61,7 +61,7 @@ namespace Mono.CSharp {
 			return (t == TypeManager.int32_type || t == TypeManager.uint32_type || t == TypeManager.int64_type ||
 				t == TypeManager.byte_type || t == TypeManager.sbyte_type || t == TypeManager.short_type ||
 				t == TypeManager.ushort_type || t == TypeManager.uint64_type || t == TypeManager.char_type ||
-				t.IsEnum);
+				TypeManager.IsEnumType (t));
 		}
 
 		public object Value {

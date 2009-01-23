@@ -1,3 +1,10 @@
+2009-01-23  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, generic.cs, eval.cs, convert.cs, const.cs, 
+	expression.cs, statement.cs, rootcontext.cs, ecore.cs, class.cs,
+	driver.cs, attribute.cs, enum.cs: Split IsValueType and IsStruct
+	checks.
+
 2009-01-22  Jb Evain  <jbevain@novell.com>
 
 	* anonymous.cs: make anonymous types' ToString implementation
