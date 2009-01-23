@@ -1,3 +1,9 @@
+2009-01-23  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlTextWriter.cs: if OnTagRender returns false when called from
+	RenderBeginTag, push the tag to the stack regardless, and ignore
+	it in DoBeginTag and RenderEndTag. Fixes bug #463634
+
 2009-01-13  Marek Habersack  <mhabersack@novell.com>
 
 	* CodeBuilder.cs, RootBuilder.cs, CollectionBuilder.cs: updates
