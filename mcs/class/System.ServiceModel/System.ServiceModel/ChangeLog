@@ -1,5 +1,9 @@
 2009-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs : added another missing type.
+
+2009-01-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactory.cs : fix wrong file reference.
 
 2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>

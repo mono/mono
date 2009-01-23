@@ -305,6 +305,17 @@ namespace System.ServiceModel
 		#endregion
 
 #if NET_2_1
+		protected class InvokeAsyncCompletedEventArgs : AsyncCompletedEventArgs
+		{
+			internal InvokeAsyncCompletedEventArgs (object [] results, Exception error, bool cancelled, object userState)
+				: base (error, cancelled, userState)
+			{
+				Results = results;
+			}
+
+			public object [] Results { get; private set; }
+		}
+
 		protected class ChannelBase<T> : IClientChannel, IOutputChannel, IRequestChannel where T : class
 		{
 			ClientBase<T> client;
