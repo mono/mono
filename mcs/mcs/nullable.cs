@@ -136,22 +136,19 @@ namespace Mono.CSharp.Nullable
 		public override void Emit (EmitContext ec)
 		{
 			Store (ec);
-			AddressOf (ec, AddressOp.LoadStore);
-			ec.ig.EmitCall (OpCodes.Call, info.Value, null);
+			Invocation.EmitCall (ec, false, this, info.Value, null, loc);
 		}
 
 		public void EmitCheck (EmitContext ec)
 		{
 			Store (ec);
-			AddressOf (ec, AddressOp.LoadStore);
-			ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
+			Invocation.EmitCall (ec, false, this, info.HasValue, null, loc);
 		}
 
 		public void EmitGetValueOrDefault (EmitContext ec)
 		{
 			Store (ec);
-			AddressOf (ec, AddressOp.LoadStore);
-			ec.ig.EmitCall (OpCodes.Call, info.GetValueOrDefault, null);
+			Invocation.EmitCall (ec, false, this, info.GetValueOrDefault, null, loc);
 		}
 
 		public override bool Equals (object obj)

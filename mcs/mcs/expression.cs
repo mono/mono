@@ -5071,16 +5071,17 @@ namespace Mono.CSharp {
 			if (!omit_args)
 				EmitArguments (ec, Arguments, dup_args, this_arg);
 
-#if GMCS_SOURCE
-			if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
-				ig.Emit (OpCodes.Constrained, instance_expr.Type);
-#endif
-
 			OpCode call_op;
-			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual))
+			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual)) {
 				call_op = OpCodes.Call;
-			else
+			} else {
 				call_op = OpCodes.Callvirt;
+				
+#if GMCS_SOURCE
+				if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
+					ig.Emit (OpCodes.Constrained, instance_expr.Type);
+#endif
+			}
 
 			if ((method.CallingConvention & CallingConventions.VarArgs) != 0) {
 				Type[] varargs_types = GetVarargsTypes (method, Arguments);
