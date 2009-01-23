@@ -1,3 +1,10 @@
+2009-01-23  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r124339.
+
+	* mini-ppc.c (mono_arch_context_get_int_reg): Allow access to the
+	stack pointer (r1).
+
 2009-01-22  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r124246.
