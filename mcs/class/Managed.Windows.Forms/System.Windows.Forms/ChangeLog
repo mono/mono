@@ -1,3 +1,8 @@
+2009-01-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStrip.cs: Switch from foreach to for, in case the collection
+	somehow changes while enumerating it.
+
 2009-01-23  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs, DataGridViewCell.cs: Fix crashes when there is no 

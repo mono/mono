@@ -974,7 +974,9 @@ namespace System.Windows.Forms
 			this.OnPaintGrip (e);
 
 			// Make each item draw itself
-			foreach (ToolStripItem tsi in this.displayed_items) {
+			for (int i = 0; i < displayed_items.Count; i++) {
+				ToolStripItem tsi = displayed_items[i];
+				
 				if (tsi.Visible) {
 					e.Graphics.TranslateTransform (tsi.Bounds.Left, tsi.Bounds.Top);
 					tsi.FireEvent (e, ToolStripItemEventType.Paint);
