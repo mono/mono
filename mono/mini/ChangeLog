@@ -1,3 +1,10 @@
+2009-01-23  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r124337.
+	
+	* aot-compiler.c aot-runtime.c: Treat delegate-invoke wrappers similarly to
+	runtime-invoke wrappers, since they are also shared based on signature.
+
 2009-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r123754.

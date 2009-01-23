@@ -1600,6 +1600,10 @@ mono_aot_get_method (MonoDomain *domain, MonoMethod *method)
 			char *tmpsig = mono_signature_get_desc (mono_method_signature (method), TRUE);
 			full_name = g_strdup_printf ("(wrapper runtime-invoke):%s (%s)", method->name, tmpsig);
 			g_free (tmpsig);
+		} else if (method->wrapper_type == MONO_WRAPPER_DELEGATE_INVOKE) {
+			char *tmpsig = mono_signature_get_desc (mono_method_signature (method), TRUE);
+			full_name = g_strdup_printf ("(wrapper delegate-invoke):%s (%s)", method->name, tmpsig);
+			g_free (tmpsig);
 		} else {
 			full_name = mono_method_full_name (method, TRUE);
 		}
