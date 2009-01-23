@@ -1,3 +1,8 @@
+2009-01-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c aot-runtime.c: Treat delegate-invoke wrappers similarly to
+	runtime-invoke wrappers, since they are also shared based on signature.
+
 2009-01-22  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-exceptions.c (ves_icall_get_frame_info): Fetch the generic
