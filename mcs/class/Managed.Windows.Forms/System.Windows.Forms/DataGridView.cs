@@ -2328,7 +2328,8 @@ namespace System.Windows.Forms {
 						DataManager.CancelCurrentEdit ();
 
 					new_row_editing = false;
-					PrepareEditingRow (true, false);
+					PrepareEditingRow (false, false);
+					MoveCurrentCell (currentCell.ColumnIndex, NewRowIndex, true, false, false, true);
 					OnUserDeletedRow (new DataGridViewRowEventArgs (EditingRow));
 				}
 			}
@@ -2427,7 +2428,9 @@ namespace System.Windows.Forms {
 			Focus ();
 			if (currentCell.RowIndex == NewRowIndex) {
 				new_row_editing = false;
-				PrepareEditingRow (false, false);
+				editing_row = null; // editing row becomes a real row
+				PrepareEditingRow (true, false); // add a new editing row
+				MoveCurrentCell (currentCell.ColumnIndex, NewRowIndex, true, false, false, true);
 			}
 			return true;
 		}
@@ -4825,6 +4828,9 @@ namespace System.Windows.Forms {
 
 		internal void OnRowsAddedInternal (DataGridViewRowsAddedEventArgs e)
 		{
+			// if the very first row has just been added
+			if (Rows.Count == 1 && Columns.Count > 0)
+				MoveCurrentCell (0, 0, true, false, false, true);
 			AutoResizeColumnsInternal ();
 			Invalidate ();
 			OnRowsAdded (e);
@@ -4920,15 +4926,17 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnUserAddedRow (DataGridViewRowEventArgs e)
 		{
-			// Switch the current editing row with a real
-			int newRowIndex = NewRowIndex;
-			int currentColumnIndex = currentCell != null ? currentCell.ColumnIndex : 0;
-			new_row_editing = true;
 			PrepareEditingRow (false, false);
-			if (DataManager != null)
+
+			new_row_editing = true;
+			if (DataManager != null) {
+				// Switch the current editing row with a real one
+				if (editing_row != null) {
+					Rows.RemoveInternal (editing_row);
+					editing_row = null;
+				}
 				DataManager.AddNew (); // will raise OnListPositionChanged
-			else
-				MoveCurrentCell (currentColumnIndex, NewRowIndex, true, false, false, true);
+			}
 
 			e = new DataGridViewRowEventArgs (Rows[NewRowIndex]);
 			DataGridViewRowEventHandler eh = (DataGridViewRowEventHandler)(Events [UserAddedRowEvent]);
@@ -5412,10 +5420,12 @@ namespace System.Windows.Forms {
 
 			if (cell != currentCell) {
 				if (currentCell != null) {
-					if (currentCell.IsInEditMode && !EndEdit ())
-						return false;
-					else if (currentCell.RowIndex == NewRowIndex && new_row_editing)
-						CancelEdit ();
+					if (currentCell.IsInEditMode) {
+						if (!EndEdit ())
+							return false;
+						else if (currentCell.RowIndex == NewRowIndex && new_row_editing)
+							CancelEdit ();
+					}
 					OnCellLeave (new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
 					OnRowLeave (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
 				}
@@ -5776,13 +5786,8 @@ namespace System.Windows.Forms {
 
 		internal void PrepareEditingRow (bool cell_changed, bool column_changed)
 		{
-			if (new_row_editing) {
-				if (editing_row != null) {
-					Rows.RemoveInternal (editing_row);
-					editing_row = null;
-				}
+			if (new_row_editing)
 				return;
-			}
 
 			bool show = false;
 			
