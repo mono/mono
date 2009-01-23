@@ -35,6 +35,10 @@ namespace Mono.CSharp
 		public bool IsReferenceType { 
 			get { throw new NotSupportedException (); }
 		}
+		
+		public bool IsValueType { 
+			get { throw new NotSupportedException (); }
+		}		
 	}
 
 	public class Constraints : GenericConstraints
