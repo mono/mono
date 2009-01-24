@@ -62,10 +62,14 @@ namespace System.Reflection.Emit {
 		}
 	}
 	internal struct ILExceptionInfo {
+#pragma warning disable 169
+#pragma warning disable 414
 		ILExceptionBlock[] handlers;
 		internal int start;
 		int len;
 		internal Label end;
+#pragma warning restore 169
+#pragma warning restore 414
 
 		internal int NumHandlers ()
 		{

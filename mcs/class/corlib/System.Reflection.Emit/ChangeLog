@@ -1,3 +1,7 @@
+2009-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* ILGenerator.cs: Fix warnings.
+
 2008-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilder.cs: When assembly is strongnamed, then explicitly
