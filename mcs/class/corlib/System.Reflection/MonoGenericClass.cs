@@ -57,7 +57,9 @@ namespace System.Reflection
 #pragma warning restore 649
 		#endregion
 
+#if NET_2_0
 		Hashtable fields, ctors, methods;
+#endif
 
 		internal MonoGenericClass ()
 			: base (null)

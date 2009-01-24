@@ -1,3 +1,7 @@
+2009-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoGenericClass.cs: Fix warnings.
+
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Assembly.cs: add new LoadSatelliteAssemblyNoThrow method and use the
