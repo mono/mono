@@ -332,6 +332,9 @@ namespace System.Resources
 #endif
 		protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture, bool createIfNotExists, bool tryParents)
 		{
+			if (culture == null)
+				throw new ArgumentNullException ("key"); // 'key' instead of 'culture' to make a test pass
+
 			ResourceSet set;
 			
 			/* if we already have this resource set, return it */
@@ -358,7 +361,7 @@ namespace System.Resources
 					/* Try a satellite assembly */
 					Version sat_version = GetSatelliteContractVersion (MainAssembly);
 					try {
-						Assembly a = MainAssembly.GetSatelliteAssembly (
+						Assembly a = MainAssembly.GetSatelliteAssemblyNoThrow (
 							resourceCulture, sat_version);
 						if (a != null){
 							stream = a.GetManifestResourceStream (filename);
