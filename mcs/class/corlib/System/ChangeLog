@@ -1,3 +1,8 @@
+2009-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* Variant.cs ApplicationIdentity.cs ActivationContext.cs Environment.cs
+	AppDomain.cs: Fix warnings.
+
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AppDomain.cs: LoadAssembly() returns null instead of throwing now.

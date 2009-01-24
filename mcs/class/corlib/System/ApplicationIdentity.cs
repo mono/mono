@@ -38,7 +38,10 @@ namespace System {
 	public sealed class ApplicationIdentity: ISerializable {
 
 		private string _fullName;
+		// FIXME:
+        #pragma warning disable 649
 		private string _codeBase;
+        #pragma warning restore 649
 
 		public ApplicationIdentity (string applicationIdentityFullName)
 		{

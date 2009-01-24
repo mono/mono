@@ -557,10 +557,10 @@ namespace System {
 			return GetLogicalDrivesInternal ();
 		}
 
+#if NET_2_0
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void internalBroadcastSettingChange ();
 
-#if NET_2_0
 		public static string GetEnvironmentVariable (string variable, EnvironmentVariableTarget target)
 		{
 			switch (target) {

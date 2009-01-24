@@ -42,7 +42,10 @@ namespace System {
 			StoreBounded
 		}
 
+		// FIXME:
+        #pragma warning disable 649
 		private ContextForm _form;
+        #pragma warning restore 649
 		private ApplicationIdentity _appid;
 		private bool _disposed;
 

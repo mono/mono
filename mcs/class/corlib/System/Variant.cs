@@ -265,7 +265,9 @@ namespace System
 	[StructLayout(LayoutKind.Sequential)]
 	internal unsafe struct BRECORD
 	{
+        #pragma warning disable 169
 		IntPtr pvRecord;
 		IntPtr pRecInfo;
+        #pragma warning restore 169
 	}
 }
