@@ -1,5 +1,7 @@
 2009-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* SignatureHelper.cs: Fix warnings.
+
 	* ILGenerator.cs: Fix warnings.
 
 2008-11-23  Gert Driesen  <drieseng@users.sourceforge.net>

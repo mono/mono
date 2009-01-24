@@ -58,8 +58,10 @@ namespace System.Reflection.Emit {
 		private Type returnType;
 		private CallingConventions callConv;
 		private CallingConvention unmanagedCallConv;
+#pragma warning disable 649
 		private Type[][] modreqs;
 		private Type[][] modopts;
+#pragma warning restore 649
 
 		internal SignatureHelper (ModuleBuilder module, SignatureHelperType type)
 		{
