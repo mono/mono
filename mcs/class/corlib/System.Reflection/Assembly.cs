@@ -445,13 +445,35 @@ namespace System.Reflection {
 
 			aname.CultureInfo = culture;
 			aname.Name = aname.Name + ".resources";
-			try {
-				return Load (aname);
-			} catch (Exception) {
-				// Try the assembly directory
-				string fullName = Path.Combine (Path.GetDirectoryName (Location), Path.Combine (culture.Name, aname.Name + ".dll"));
-				return LoadFrom (fullName);
-			}
+			Assembly assembly = AppDomain.CurrentDomain.LoadSatellite (aname);
+			if (assembly != null)
+				return assembly;
+
+			// Try the assembly directory
+			string fullName = Path.Combine (Path.GetDirectoryName (Location), Path.Combine (culture.Name, aname.Name + ".dll"));
+			return LoadFrom (fullName);
+		}
+
+		internal Assembly GetSatelliteAssemblyNoThrow (CultureInfo culture, Version version)
+		{
+			if (culture == null)
+				throw new ArgumentException ("culture");
+
+			AssemblyName aname = GetName (true);
+			if (version != null)
+				aname.Version = version;
+
+			aname.CultureInfo = culture;
+			aname.Name = aname.Name + ".resources";
+			Assembly assembly = AppDomain.CurrentDomain.LoadSatellite (aname);
+			if (assembly != null)
+				return assembly;
+
+			// Try the assembly directory
+			string fullName = Path.Combine (Path.GetDirectoryName (Location), Path.Combine (culture.Name, aname.Name + ".dll"));
+			if (!File.Exists (fullName))
+				return null;
+			return LoadFrom (fullName);
 		}
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

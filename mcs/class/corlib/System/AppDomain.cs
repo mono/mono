@@ -573,6 +573,17 @@ namespace System {
 			return Load (assemblyRef, null);
 		}
 
+		internal Assembly LoadSatellite (AssemblyName assemblyRef)
+		{
+			if (assemblyRef == null)
+				throw new ArgumentNullException ("assemblyRef");
+
+			Assembly result = LoadAssembly (assemblyRef.FullName, null, false);
+			if (result == null)
+				throw new FileNotFoundException (null, assemblyRef.Name);
+			return result;
+		}
+
 		public Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			if (assemblyRef == null)
@@ -585,16 +596,13 @@ namespace System {
 					throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
 			}
 
-			FileNotFoundException exc = null;
-			try {
-				return LoadAssembly (assemblyRef.FullName, assemblySecurity, false);
-			} catch (FileNotFoundException e) {
-				if (assemblyRef.CodeBase == null)
-					throw;
-				exc = e;
-			}
+			Assembly assembly = LoadAssembly (assemblyRef.FullName, assemblySecurity, false);
+			if (assembly != null)
+				return assembly;
 
-			Assembly assembly = null;
+			if (assemblyRef.CodeBase == null)
+				throw new FileNotFoundException (null, assemblyRef.Name);
+
 			string cb = assemblyRef.CodeBase;
 			if (cb.ToLower (CultureInfo.InvariantCulture).StartsWith ("file://"))
 				cb = new Mono.Security.Uri (cb).LocalPath;
@@ -602,27 +610,27 @@ namespace System {
 			try {
 				assembly = Assembly.LoadFrom (cb, assemblySecurity);
 			} catch {
-				throw exc;
+				throw new FileNotFoundException (null, assemblyRef.Name);
 			}
 			AssemblyName aname = assembly.GetName ();
 			// Name, version, culture, publickeytoken. Anything else?
 			if (assemblyRef.Name != aname.Name)
-				throw exc;
+				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			if (assemblyRef.Version != new Version () && assemblyRef.Version != aname.Version)
-				throw exc;
+				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			if (assemblyRef.CultureInfo != null && assemblyRef.CultureInfo.Equals (aname))
-				throw exc;
+				throw new FileNotFoundException (null, assemblyRef.Name);
 
 			byte [] pt = assemblyRef.GetPublicKeyToken ();
 			if (pt != null) {
 				byte [] loaded_pt = aname.GetPublicKeyToken ();
 				if (loaded_pt == null || (pt.Length != loaded_pt.Length))
-					throw exc;
+					throw new FileNotFoundException (null, assemblyRef.Name);
 				for (int i = pt.Length - 1; i >= 0; i--)
 					if (loaded_pt [i] != pt [i])
-						throw exc;
+						throw new FileNotFoundException (null, assemblyRef.Name);
 			}
 			return assembly;
 		}
@@ -645,7 +653,10 @@ namespace System {
 			if (assemblyString.Length == 0)
 				throw new ArgumentException ("assemblyString cannot have zero length");
 
-			return LoadAssembly (assemblyString, assemblySecurity, refonly);
+			Assembly assembly = LoadAssembly (assemblyString, assemblySecurity, refonly);
+			if (assembly == null)
+				throw new FileNotFoundException (null, assemblyString);
+			return assembly;
 		}
 
 		public Assembly Load (byte[] rawAssembly)

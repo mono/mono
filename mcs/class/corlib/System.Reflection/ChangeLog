@@ -1,3 +1,8 @@
+2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Assembly.cs: LoadAssembly() returns null instead of throwing now.
+	Add new LoadSatelliteAssemblyNoThrow method.
+
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* CustomAttributeData.cs (ToString): Applied patch from Leszek Ciesielski

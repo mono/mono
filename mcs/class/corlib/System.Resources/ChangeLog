@@ -1,3 +1,7 @@
+2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ResourceManager.cs: don't throw every time we try to load a resource
+	satellite assembly that does not exist.
 
 2008-12-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
