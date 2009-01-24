@@ -302,10 +302,6 @@ namespace System.Data.SqlClient
 
 		private void ErrorHandler (object sender, TdsInternalErrorMessageEventArgs e)
 		{
-			try {
-				Close ();
-			} catch {
-			}
 			throw new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State);
 		}
 
@@ -428,15 +424,12 @@ namespace System.Data.SqlClient
 			if (tds != null && tds.IsConnected) {
 				if (pooling && tds.Pooling) {
 					if (pool != null) {
-#if NET_2_0
-						pool.ReleaseConnection (ref tds);
-#else
 						pool.ReleaseConnection (tds);
-#endif
 						pool = null;
 					}
-				}else
-					if(tds != null) tds.Disconnect ();
+				} else {
+					tds.Disconnect ();
+				}
 			}
 
 			if (tds != null) {
@@ -1693,15 +1686,13 @@ namespace System.Data.SqlClient
 
 		public static void ClearAllPools ()
 		{
-#if NET_2_0
-			IDictionary <string, TdsConnectionPool> pools = SqlConnection.sqlConnectionPools.GetConnectionPool ();
-#else
-			Hashtable pools = SqlConnection.sqlConnectionPools.GetConnectionPool ();
-#endif
+			// FIXME: locking
+			IDictionary pools = SqlConnection.sqlConnectionPools.GetConnectionPool ();
 			foreach (TdsConnectionPool pool in pools.Values) {
 				if (pool != null)
 					pool.ResetConnectionPool ();
 			}
+			pools.Clear ();
 		}
 
 		public static void ClearPool (SqlConnection connection)
@@ -1709,9 +1700,9 @@ namespace System.Data.SqlClient
 			if (connection == null)
 				throw new ArgumentNullException ("connection");
 
+			// FIXME: locking
 			if (connection.pooling) {
-				TdsConnectionPool pool = sqlConnectionPools.GetConnectionPool (
-					connection.ConnectionString);
+				TdsConnectionPool pool = sqlConnectionPools.GetConnectionPool (connection.ConnectionString);
 				if (pool != null)
 					pool.ResetConnectionPool ();
 			}
