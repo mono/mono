@@ -1,3 +1,8 @@
+2009-01-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpApplicationFactory.cs: set/reset the context for the application
+	when creating/disposing. Dispose() out of the lock.
+
 2009-01-24  Marek Habersack  <mhabersack@novell.com>
 
 	* XmlSiteMapProvider.cs: if a nested sitemap is used (via the
