@@ -437,7 +437,7 @@ namespace System.Web.Compilation
 #endif
 				string typeName = String.Concat (nameSpace, ".", componentName);
 				if (assembly != null)
-					return assembly.GetType (typeName, true, true);
+					return assembly.GetType (typeName, false, true);
 
 #if NET_2_0
 				IList tla = BuildManager.TopLevelAssemblies;
