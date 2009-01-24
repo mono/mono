@@ -1,3 +1,8 @@
+2009-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_get_vcall_slot): Handle yet another
+	code sequence which matches a non-virtual call.
+
 2009-01-23  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c (mono_arch_context_get_int_reg): Allow access to the
