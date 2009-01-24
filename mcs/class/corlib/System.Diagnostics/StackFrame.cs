@@ -49,14 +49,18 @@ namespace System.Diagnostics {
         public class StackFrame {
 
                 public const int OFFSET_UNKNOWN = -1;
-                
-                private int ilOffset = OFFSET_UNKNOWN;
-                private int nativeOffset = OFFSET_UNKNOWN;
-                private MethodBase methodBase;
-                private string fileName;
-                private int lineNumber;
-                private int columnNumber;
+
+		#region Keep in sync with object-internals.h
+		private int ilOffset = OFFSET_UNKNOWN;
+		private int nativeOffset = OFFSET_UNKNOWN;
+		private MethodBase methodBase;
+		private string fileName;
+		private int lineNumber;
+		private int columnNumber;
+        #pragma warning disable 649
 		private string internalMethodName;
+		#pragma warning restore 649
+		#endregion
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool get_frame_info (int skip, bool needFileInfo, out MethodBase method,

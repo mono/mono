@@ -1,3 +1,7 @@
+2009-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* StackFrame.cs: Fix warnings.
+
 2008-10-20  Cedric Vivier  <cedricv@neonux.com>
 
 	* Debugger.cs: Implement Debugger.IsAttached
