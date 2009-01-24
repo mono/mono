@@ -1,5 +1,11 @@
 2009-01-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpResponse.cs: make sure config is not null here.
+	* HttpApplication.cs: add a timer (-d:PIPELINE_TIMER) for the pipeline.
+	Handle timeouts for OutputPage() too.
+
+2009-01-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpApplicationFactory.cs: set/reset the context for the application
 	when creating/disposing. Dispose() out of the lock.
 

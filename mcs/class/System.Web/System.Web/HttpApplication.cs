@@ -1097,6 +1097,9 @@ namespace System.Web {
 
 			try {
 				OutputPage ();
+			} catch (ThreadAbortException taex) {
+				ProcessError (taex);
+				Thread.ResetAbort ();
 			} catch (Exception e) {
 				Console.WriteLine ("Internal error: OutputPage threw an exception " + e);
 			} finally {
@@ -1122,7 +1125,48 @@ namespace System.Web {
 
 			requests_total_counter.Increment ();
 		}
-		
+
+		class Tim {
+			string name;
+			DateTime start;
+
+			public Tim () {
+			}
+
+			public Tim (string name) {
+				this.name = name;
+			}
+
+			public string Name {
+				get { return name; }
+				set { name = value; }
+			}
+
+			public void Start () {
+				start = DateTime.UtcNow;
+			}
+
+			public void Stop () {
+				Console.WriteLine ("{0}: {1}ms", name, (DateTime.UtcNow - start).TotalMilliseconds);
+			}
+		}
+
+		Tim tim;
+		[Conditional ("PIPELINE_TIMER")]
+		void StartTimer (string name)
+		{
+			if (tim == null)
+				tim = new Tim ();
+			tim.Name = name;
+			tim.Start ();
+		}
+
+		[Conditional ("PIPELINE_TIMER")]
+		void StopTimer ()
+		{
+			tim.Stop ();
+		}
+
 		//
 		// Events fired as described in `Http Runtime Support, HttpModules,
 		// Handling Public Events'
@@ -1133,56 +1177,75 @@ namespace System.Web {
 			if (stop_processing)
 				yield return true;
 
+			StartTimer ("BeginRequest");
 			eventHandler = Events [BeginRequestEvent];
 			if (eventHandler != null) {
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			}
+			StopTimer ();
 			
+			StartTimer ("AuthenticateRequest");
 			eventHandler = Events [AuthenticateRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 
+			StartTimer ("DefaultAuthentication");
 			if (DefaultAuthentication != null)
 				foreach (bool stop in RunHooks (DefaultAuthentication))
 					yield return stop;
+			StopTimer ();
 
 #if NET_2_0
+			StartTimer ("PostAuthenticateRequest");
 			eventHandler = Events [PostAuthenticateRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 #endif
+			StartTimer ("AuthorizeRequest");
 			eventHandler = Events [AuthorizeRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 #if NET_2_0
+			StartTimer ("PostAuthorizeRequest");
 			eventHandler = Events [PostAuthorizeRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 #endif
 
+			StartTimer ("ResolveRequestCache");
 			eventHandler = Events [ResolveRequestCacheEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 
 #if NET_2_0
+			StartTimer ("PostResolveRequestCache");
 			eventHandler = Events [PostResolveRequestCacheEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 
+			StartTimer ("MapRequestHandler");
 			// As per http://msdn2.microsoft.com/en-us/library/bb470252(VS.90).aspx
 			eventHandler = Events [MapRequestHandlerEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 #endif
 			
+			StartTimer ("GetHandler");
 			// Obtain the handler for the request.
 			IHttpHandler handler = null;
 			try {
@@ -1208,28 +1271,35 @@ namespace System.Web {
 				ProcessError (e);
 			}
 
+			StopTimer ();
 			if (stop_processing)
 				yield return true;
 
 #if NET_2_0
+			StartTimer ("PostMapRequestHandler");
 			eventHandler = Events [PostMapRequestHandlerEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 #endif
 
+			StartTimer ("AcquireRequestState");
 			eventHandler = Events [AcquireRequestStateEvent];
 			if (eventHandler != null){
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			}
+			StopTimer ();
 			
 #if NET_2_0
+			StartTimer ("PostAcquireRequestState");
 			eventHandler = Events [PostAcquireRequestStateEvent];
 			if (eventHandler != null){
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			}
+			StopTimer ();
 #endif
 			
 			//
@@ -1237,11 +1307,13 @@ namespace System.Web {
 			// ReleaseRequestState, so the code below jumps to
 			// `release:' to guarantee it rather than yielding.
 			//
+			StartTimer ("PreRequestHandlerExecute");
 			eventHandler = Events [PreRequestHandlerExecuteEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					if (stop)
 						goto release;
+			StopTimer ();
 			
 				
 #if TARGET_J2EE
@@ -1258,6 +1330,7 @@ namespace System.Web {
 			}
 #endif
 
+			StartTimer ("ProcessRequest");
 			try {
 				context.BeginTimeoutPossible ();
 				if (handler != null){
@@ -1282,6 +1355,7 @@ namespace System.Web {
 				in_begin = false;
 				context.EndTimeoutPossible ();
 			}
+			StopTimer ();
 #if TARGET_J2EE
 			if (doProcessHandler) {
 				yield return false;
@@ -1295,13 +1369,16 @@ namespace System.Web {
 			
 			// These are executed after the application has returned
 			
+			StartTimer ("PostRequestHandlerExecute");
 			eventHandler = Events [PostRequestHandlerExecuteEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					if (stop)
 						goto release;
+			StopTimer ();
 			
 		release:
+			StartTimer ("ReleaseRequestState");
 			eventHandler = Events [ReleaseRequestStateEvent];
 			if (eventHandler != null){
 #pragma warning disable 219
@@ -1313,42 +1390,57 @@ namespace System.Web {
 				}
 #pragma warning restore 219
 			}
+			StopTimer ();
 			
 			if (stop_processing)
 				yield return true;
 
 #if NET_2_0
+			StartTimer ("PostReleaseRequestState");
 			eventHandler = Events [PostReleaseRequestStateEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 #endif
 
+			StartTimer ("Filter");
 			if (context.Error == null)
 				context.Response.DoFilter (true);
+			StopTimer ();
 
+			StartTimer ("UpdateRequestCache");
 			eventHandler = Events [UpdateRequestCacheEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 
 #if NET_2_0
+			StartTimer ("PostUpdateRequestCache");
 			eventHandler = Events [PostUpdateRequestCacheEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 
+			StartTimer ("LogRequest");
 			eventHandler = Events [LogRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 
+			StartTimer ("PostLogRequest");
 			eventHandler = Events [PostLogRequestEvent];
 			if (eventHandler != null)
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
+			StopTimer ();
 #endif
+			StartTimer ("PipelineDone");
 			PipelineDone ();
+			StopTimer ();
 		}
 
 
@@ -1503,7 +1595,7 @@ namespace System.Web {
 				return ret;
 			
 #if NET_2_0
-			HttpHandlersSection	httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
+			HttpHandlersSection httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
 			ret = httpHandlersSection.LocateHandler (verb, url);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");

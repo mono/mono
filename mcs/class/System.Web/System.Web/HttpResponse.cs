@@ -111,7 +111,7 @@ namespace System.Web {
 #else
 			HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
 #endif
-			if (config.EnableVersionHeader) {
+			if (config != null && config.EnableVersionHeader) {
 				string version = Environment.Version.ToString (3);
 				version_header = new UnknownResponseHeader ("X-AspNet-Version", version);
 			}
