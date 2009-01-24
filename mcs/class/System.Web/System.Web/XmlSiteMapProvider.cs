@@ -51,8 +51,9 @@ namespace System.Web
 		
 		bool building;
 		string file;
+		string fileVirtualPath;
 		SiteMapNode root = null;
-		FileSystemWatcher watcher;
+		List <FileSystemWatcher> watchers;
 		Dictionary <string, bool> _childProvidersPresent;
 		List <SiteMapProvider> _childProviders;
 		
@@ -106,12 +107,16 @@ namespace System.Web
 			ChildProviders.Add (smp);
 		}
 		
-		XmlNode FindStartingNode (string file, out bool enableLocalization)
+		XmlNode FindStartingNode (string file, string virtualPath, out bool enableLocalization)
 		{
 			if (String.Compare (Path.GetExtension (file), ".sitemap", stringComparison) != 0)
 				throw new InvalidOperationException (
 					String.Format ("The file {0} has an invalid extension, only .sitemap files are allowed in XmlSiteMapProvider.",
-						       Path.GetFileName (file)));
+						       String.IsNullOrEmpty (virtualPath) ? Path.GetFileName (file) : virtualPath));
+			if (!File.Exists (file))
+				throw new InvalidOperationException (
+					String.Format ("The file '{0}' required by XmlSiteMapProvider does not exist.",
+						       String.IsNullOrEmpty (virtualPath) ? Path.GetFileName (file) : virtualPath));
 			
 			XmlDocument d = new XmlDocument ();
 			d.Load (file);
@@ -145,7 +150,7 @@ namespace System.Web
 						return root;
 
 					bool enableLocalization;
-					XmlNode node = FindStartingNode (file, out enableLocalization);
+					XmlNode node = FindStartingNode (file, fileVirtualPath, out enableLocalization);
 					EnableLocalization = enableLocalization;
 					SiteMapNode builtRoot = BuildSiteMapRecursive (node, EnableLocalization);
 
@@ -262,9 +267,13 @@ namespace System.Web
 				
 				return root;
 			} else if (siteMapFile != null) {
+				if (file.Length == 0)
+					throw new InvalidOperationException ("The 'siteMapFile' attribute cannot be an empty string.");
+				string realPath = HttpContext.Current.Request.MapPath (siteMapFile);
 				bool enableLocalization;
-				XmlNode node = FindStartingNode (HttpContext.Current.Request.MapPath (siteMapFile),
-								 out enableLocalization);
+				XmlNode node = FindStartingNode (realPath, siteMapFile, out enableLocalization);
+
+				CreateWatcher (realPath);
 				return BuildSiteMapRecursive (node, enableLocalization);
 			} else {
 				string url = GetOptionalAttribute (xmlNode, "url");
@@ -333,8 +342,11 @@ namespace System.Web
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
-				watcher.Dispose ();
+			if (disposing) {
+				foreach (FileSystemWatcher watcher in watchers)
+					watcher.Dispose ();
+				watchers = null;
+			}
 		}
 
 		public void Dispose ()
@@ -375,30 +387,39 @@ namespace System.Web
 		public override void Initialize (string name, NameValueCollection attributes)
 		{
 			base.Initialize (name, attributes);
-			file = attributes ["siteMapFile"];
-			if (String.IsNullOrEmpty (file))
+			fileVirtualPath = attributes ["siteMapFile"];
+			if (String.IsNullOrEmpty (fileVirtualPath))
 				throw new ArgumentException ("The siteMapFile attribute must be specified on the XmlSiteMapProvider.");
 
 			HttpContext ctx = HttpContext.Current;
 			HttpRequest req = ctx != null ? ctx.Request : null;
 			
 			if (req != null)
-				file = req.MapPath (file, HttpRuntime.AppDomainAppVirtualPath, false);
+				file = req.MapPath (fileVirtualPath, HttpRuntime.AppDomainAppVirtualPath, false);
 			else
 				throw new InvalidOperationException ("Request is missing - cannot map paths.");
 
 			if (File.Exists (file)) {
 				ResourceKey = Path.GetFileName (file);
-				
-				watcher = new FileSystemWatcher ();
-				watcher.NotifyFilter |= NotifyFilters.Size;
-				watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
-				watcher.Filter = Path.GetFileName (file);
-				watcher.Changed += new FileSystemEventHandler (OnFileChanged);
-				watcher.EnableRaisingEvents = true;
+				CreateWatcher (file);
 			}
 		}
 
+		void CreateWatcher (string file)
+		{
+			var watcher = new FileSystemWatcher ();
+			watcher.NotifyFilter |= NotifyFilters.Size;
+			watcher.Path = Path.GetFullPath (Path.GetDirectoryName (file));
+			watcher.Filter = Path.GetFileName (file);
+			watcher.Changed += new FileSystemEventHandler (OnFileChanged);
+			watcher.EnableRaisingEvents = true;
+
+			if (watchers == null)
+				watchers = new List <FileSystemWatcher> ();
+			
+			watchers.Add (watcher);
+		}
+		
 		protected override void RemoveNode (SiteMapNode node)
 		{
 			base.RemoveNode (node);
