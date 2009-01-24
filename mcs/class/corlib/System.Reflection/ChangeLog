@@ -1,7 +1,7 @@
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
-	* Assembly.cs: LoadAssembly() returns null instead of throwing now.
-	Add new LoadSatelliteAssemblyNoThrow method.
+	* Assembly.cs: add new LoadSatelliteAssemblyNoThrow method and use the
+	new LoadSatellite() in AppDomain.
 
 2009-01-09  Zoltan Varga  <vargaz@gmail.com>
 
