@@ -1,3 +1,7 @@
+2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Mono.Data.SybaseClient/SybaseConnection.cs: adapt to changes in TdsConnectionPool.
+
 2008-09-06  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* Mono.Data.SybaseClient/SybaseClientFactory.cs:

@@ -47,7 +47,6 @@ namespace Mono.Data.Tds.Protocol {
 
 		string dataSource;
 		int commandTimeout;
-		int connectionTimeout;
 
 		byte[] outBuffer;
 		int outBufferLength;
@@ -68,8 +67,6 @@ namespace Mono.Data.Tds.Protocol {
 		Socket socket;
 		TdsVersion tdsVersion;
 
-		ManualResetEvent connected = new ManualResetEvent (false);
-		
 		#endregion // Fields
 		
 		#region Constructors
@@ -79,7 +76,6 @@ namespace Mono.Data.Tds.Protocol {
 			this.packetSize = packetSize;
 			this.tdsVersion = tdsVersion;
 			this.dataSource = dataSource;
-			this.connectionTimeout = timeout;
 
 			outBuffer = new byte[packetSize];
 			inBuffer = new byte[packetSize];
@@ -90,8 +86,6 @@ namespace Mono.Data.Tds.Protocol {
 			IPEndPoint endPoint;
 			
 			try {
-				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
 #if NET_2_0
 				IPAddress ip;
 				if(IPAddress.TryParse(this.dataSource, out ip)) {
@@ -104,15 +98,16 @@ namespace Mono.Data.Tds.Protocol {
 				IPHostEntry hostEntry = Dns.Resolve (this.dataSource);
 				endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
 #endif
+			} catch (SocketException e) {
+				throw new TdsInternalException ("Server does not exist or connection refused.", e);
+			}
 
-				connected.Reset ();
-				socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
-
-				if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
+			try {
+				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+				IAsyncResult ares = socket.BeginConnect (endPoint, null, null);
+				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout * 1000, false))
 					throw Tds.CreateTimeoutException (dataSource, "Open()");
-				else if (timeout > 0 && !connected.WaitOne ())
-					throw Tds.CreateTimeoutException (dataSource, "Open()");
-
+				socket.EndConnect (ares);
 				try {
 					// MS sets these socket option
 					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
@@ -124,8 +119,17 @@ namespace Mono.Data.Tds.Protocol {
 				// Let the stream own the socket and take the pleasure of closing it
 				stream = new NetworkStream (socket, true);
 			} catch (SocketException e) {
+				if (socket != null) {
+					try {
+						Socket s = socket;
+						socket = null;
+						s.Close ();
+					} catch {}
+				}
 				throw new TdsInternalException ("Server does not exist or connection refused.", e);
 			}
+			if (!socket.Connected)
+				throw new TdsInternalException ("Server does not exist or connection refused.", null);
 		}
 		
 		#endregion // Constructors
@@ -158,6 +162,16 @@ namespace Mono.Data.Tds.Protocol {
 
 			return ret;
 		}
+
+		public void SendIfFull ()
+		{
+			if (nextOutBufferIndex == outBufferLength) {
+				SendPhysicalPacket (false);
+				nextOutBufferIndex = headerLength;
+			}
+		}
+
+
 		public void Append (object o)
 		{
 			if (o == null || o == DBNull.Value) {
@@ -208,10 +222,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (byte b)
 		{
-			if (nextOutBufferIndex == outBufferLength) {
-				SendPhysicalPacket (false);
-				nextOutBufferIndex = headerLength;
-			}
+			SendIfFull ();
 			Store (nextOutBufferIndex, b);
 			nextOutBufferIndex++;
 		}	
@@ -241,40 +252,69 @@ namespace Mono.Data.Tds.Protocol {
 		public void Append (byte[] b)
 		{
 			Append (b, b.Length, (byte) 0);
-		}		
+		}
 
+		
 		public void Append (byte[] b, int len, byte pad)
 		{
-			int i = 0;
-			for ( ; i < b.Length && i < len; i++)
-			    Append (b[i]);
+			int bufBytesToCopy = System.Math.Min (b.Length, len);
+			int padBytesToCopy = len - bufBytesToCopy;
+			int bufPos = 0;
 
-			for ( ; i < len; i++)
-			    Append (pad);
-		}	
+			/* copy out of our input buffer in the largest chunks possible *
+			 * at a time. limited only by the buffer size for our outgoing *
+			 * packets.                                                    */
+
+			while (bufBytesToCopy > 0)
+			{
+				SendIfFull ();
+
+				int availBytes = outBufferLength - nextOutBufferIndex;
+				int bufSize = System.Math.Min (availBytes, bufBytesToCopy);
+
+				Buffer.BlockCopy (b, bufPos, outBuffer, nextOutBufferIndex, bufSize);
+
+				nextOutBufferIndex += bufSize;
+				bufBytesToCopy -= bufSize;
+				bufPos += bufSize;
+			}
+
+			while (padBytesToCopy > 0)
+			{
+				SendIfFull ();
+
+				int availBytes = outBufferLength - nextOutBufferIndex;
+				int bufSize = System.Math.Min (availBytes, padBytesToCopy);
+
+				for (int i = 0; i < bufSize; i++)
+					outBuffer [nextOutBufferIndex++] = pad;
+
+				padBytesToCopy -= bufSize;
+			}
+		}
 
 		public void Append (short s)
 		{
 			if(!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes(s)));
+				Append (Swap (BitConverter.GetBytes(s)), sizeof(short), (byte)0);
 			else 
-				Append (BitConverter.GetBytes (s));
+				Append (BitConverter.GetBytes (s), sizeof(short), (byte)0);
 		}
 
 		public void Append (ushort s)
 		{
 			if(!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes(s)));
+				Append (Swap (BitConverter.GetBytes(s)), sizeof(short), (byte)0);
 			else 
-				Append (BitConverter.GetBytes (s));
+				Append (BitConverter.GetBytes (s), sizeof(short), (byte)0);
 		}
 
 		public void Append (int i)
 		{
 			if(!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes(i)));
+				Append (Swap (BitConverter.GetBytes(i)), sizeof(int), (byte)0);
 			else
-				Append (BitConverter.GetBytes (i));
+				Append (BitConverter.GetBytes (i), sizeof(int), (byte)0);
 		}
 
 		public void Append (string s)
@@ -303,25 +343,25 @@ namespace Mono.Data.Tds.Protocol {
 		public void Append (double value)
 		{
 			if (!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes (value)));
+				Append (Swap (BitConverter.GetBytes (value)), sizeof(double), (byte)0);
 			else
-				Append (BitConverter.GetBytes (value));
+				Append (BitConverter.GetBytes (value), sizeof(double), (byte)0);
 		}
 
 		public void Append (float value)
 		{
 			if (!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes (value)));
+				Append (Swap (BitConverter.GetBytes (value)), sizeof(float), (byte)0);
 			else
-				Append (BitConverter.GetBytes (value));
+				Append (BitConverter.GetBytes (value), sizeof(float), (byte)0);
 		}
 
 		public void Append (long l)
 		{
 			if (!BitConverter.IsLittleEndian)
-				Append (Swap (BitConverter.GetBytes (l)));
+				Append (Swap (BitConverter.GetBytes (l)), sizeof(long), (byte)0);
 			else
-				Append (BitConverter.GetBytes (l));
+				Append (BitConverter.GetBytes (l), sizeof(long), (byte)0);
 		}
 
 		public void Append (decimal d, int bytes)
@@ -338,23 +378,15 @@ namespace Mono.Data.Tds.Protocol {
 		public void Close ()
 		{
 			connReset = false;
+			socket = null;
 			stream.Close ();
 		}
 
 		public bool IsConnected () 
 		{
-			return !(socket.Poll (0, SelectMode.SelectRead) && socket.Available == 0);
+			return socket != null && socket.Connected && !(socket.Poll (0, SelectMode.SelectRead) && socket.Available == 0);
 		}
 		
-		private void ConnectCallback (IAsyncResult ar)
-		{
-			Socket s = (Socket) ar.AsyncState;
-			if (Poll (s, connectionTimeout, SelectMode.SelectWrite)) {
-				socket.EndConnect (ar);
-				connected.Set ();
-			}		
-		}
-
 		public byte GetByte ()
 		{
 			byte result;

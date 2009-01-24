@@ -284,11 +284,7 @@ namespace Mono.Data.SybaseClient {
 
 			if (tds != null && tds.IsConnected) {
 				if (pooling && tds.Pooling) {
-#if NET_2_0
-					if(pool != null) pool.ReleaseConnection (ref tds);
-#else
 					if(pool != null) pool.ReleaseConnection (tds);
-#endif
 				}else
 					if(tds != null) tds.Disconnect ();
 			}
