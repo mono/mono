@@ -521,7 +521,7 @@ namespace System.Web {
 						foreach (string dir in HttpApplication.BinDirs)
 							WatchLocationForRestart (dir, "*.dll");
 #if NET_2_0
-									// Restart if the App_* directories are created...
+						// Restart if the App_* directories are created...
 			                        WatchLocationForRestart (".", "App_Code");
 			                        WatchLocationForRestart (".", "App_Browsers");
 			                        WatchLocationForRestart (".", "App_GlobalResources");
@@ -541,11 +541,16 @@ namespace System.Web {
 				if (factory.available.Count > 0) {
 					app = (HttpApplication) factory.available.Pop ();
 					app.RequestCompleted = false;
+					context.ApplicationInstance = app;
+					app.SetContext (context);
 					return app;
 				}
 			}
 			
-			return (HttpApplication) Activator.CreateInstance (factory.app_type, true);
+			app = (HttpApplication) Activator.CreateInstance (factory.app_type, true);
+			context.ApplicationInstance = app;
+			app.SetContext (context);
+			return app;
 		}
 
 		// The lock is in InvokeSessionEnd
@@ -563,24 +568,32 @@ namespace System.Web {
 
 		internal static void RecycleForSessionEnd (HttpApplication app)
 		{
+			bool dispose = false;
 			HttpApplicationFactory factory = theFactory;
 			lock (factory.available_for_end) {
 				if (factory.available_for_end.Count < 32)
 					factory.available_for_end.Push (app);
 				else
-					app.Dispose ();
+					dispose = true;
 			}
+			if (dispose)
+				app.Dispose ();
 		}
 
 		internal static void Recycle (HttpApplication app)
 		{
+			bool dispose = false;
 			HttpApplicationFactory factory = theFactory;
 			lock (factory.available) {
-				if (factory.available.Count < 32)
+				if (factory.available.Count < 32) {
+					app.SetContext (null);
 					factory.available.Push (app);
-				else
-					app.Dispose ();
+				} else {
+					dispose = true;
+				}
 			}
+			if (dispose)
+				app.Dispose ();
 		}
 
 		internal static bool ContextAvailable {
