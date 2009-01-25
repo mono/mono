@@ -1,5 +1,7 @@
 2009-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Implement OP_TLS_GET on arm eabi linux.
+	
 	* mini-arm.c (mono_arch_emit_prolog): Add an inlined version of 
 	mono_get_lmf_addr () on arm eabi linux.
 
