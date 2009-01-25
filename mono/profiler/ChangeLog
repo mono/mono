@@ -1,3 +1,18 @@
+2009-01-25  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Bug fixing.
+	The issue is that while reading /proc/self/maps is can happen that
+	the last regions (typically [vsyscall] and [vsdo]) are reported more
+	than once (or anyway are read more than once, even when usng the plain
+	"read" call with no buffering), and I found no workaround for this.
+	So the code must be careful and throw away the duplicates.
+	- restore_old_regions: work starting from the new regions instead of
+	the old ones.
+	- sort_regions: introduce a "throw away the duplicates" pass.
+	- fix_region_references: added a pass to make sure that the elf files
+	always reference the new regions and not the old ones.
+	- refresh_memory_regions: call "sort_regions" before
+	"restore_old_regions" so we know we have no duplicates.
+
 2009-01-18  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Bug fixing.
 	- profiler_executable_memory_region_destroy: fixed a cut&paste mistake
