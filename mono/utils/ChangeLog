@@ -1,3 +1,7 @@
+2009-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Add ARM Linux support.
+
 2009-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-mmap.c: Applied patch from Koushik Dutta
