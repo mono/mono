@@ -1,5 +1,14 @@
 2009-01-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_get_domain_intrinsic): New helper function.
+	(mono_get_thread_intrinsic): Ditto.
+
+	* mini-arm.c mini-ia64.c: Use the new helper functions.
+	
+	* method-to-ir.c (mono_method_to_ir): Fix the comment for
+	the last constrained_call change, since it is needed in the non-AOT
+	case as well.
+
 	* mini-arm.c: Implement OP_TLS_GET on arm eabi linux.
 	
 	* mini-arm.c (mono_arch_emit_prolog): Add an inlined version of 
