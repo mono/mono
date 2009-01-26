@@ -4828,7 +4828,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 				} else {
-					if (iexpr == null) {
+					if (iexpr == null || iexpr == EmptyExpression.Null) {
 						SimpleName.Error_ObjectRefRequired (ec, loc, mg.GetSignatureForError ());
 					}
 				}

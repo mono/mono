@@ -1,5 +1,9 @@
 2009-01-26  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Check for null instance methodgroup expression.
+
+2009-01-26  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #469244
 	* cs-tokenizer.cs, cs-parser.jay: Fixed parsing of nullable type
 	instance inside a conditional expression.
