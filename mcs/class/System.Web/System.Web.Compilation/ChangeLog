@@ -1,5 +1,8 @@
 2009-01-26  Marek Habersack  <mhabersack@novell.com>
 
+	* BuildManagerDirectoryBuilder.cs: added support for fake virtual
+	paths.
+
 	* CompilationException.cs: added a Message override to make error
 	messages more useful.
 

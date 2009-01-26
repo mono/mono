@@ -89,26 +89,29 @@ namespace System.Web.Compilation
 			}
 		}
 
-		// TODO: add support for fake paths
 		public List <BuildProviderGroup> Build (bool single)
 		{
 			if (StrUtils.StartsWith (virtualPath.AppRelative, "~/App_Themes/")) {
-				var ret = new List <BuildProviderGroup> ();
 				var themebp = new ThemeDirectoryBuildProvider ();
 				themebp.SetVirtualPath (virtualPath);
-
-				var group = new BuildProviderGroup ();
-				group.AddProvider (themebp);
-				ret.Add (group);
 				
-				return ret;
+				return GetSingleBuildProviderGroup (themebp);
 			}
-			
+
 			CompilationSection section = CompilationSection;
 			BuildProviderCollection bpcoll = section != null ? section.BuildProviders : null;
-			
+
 			if (bpcoll == null || bpcoll.Count == 0)
 				return null;
+			
+			if (StrUtils.StartsWith (virtualPath.Original, BuildManager.FAKE_VIRTUAL_PATH_PREFIX)) {
+				BuildProvider bp = GetBuildProvider (virtualPath.Original, bpcoll);
+
+				if (bp == null)
+					return null;
+
+				return GetSingleBuildProviderGroup (bp);
+			}
 
 			if (single) {
 				AddVirtualFile (GetVirtualFile (virtualPath.Absolute), bpcoll);
@@ -206,7 +209,7 @@ namespace System.Web.Compilation
 				}
 			}
 		}
-
+		
 		void AddVirtualFile (VirtualFile file, BuildProviderCollection bpcoll)
 		{
 			if (file == null || BuildManager.IgnoreVirtualPath (file.VirtualPath))
@@ -216,6 +219,16 @@ namespace System.Web.Compilation
 			if (bp == null)
 				return;
 			AddBuildProvider (bp);
+		}
+
+		List <BuildProviderGroup> GetSingleBuildProviderGroup (BuildProvider bp)
+		{
+			var ret = new List <BuildProviderGroup> ();
+			var group = new BuildProviderGroup ();
+			group.AddProvider (bp);
+			ret.Add (group);
+
+			return ret;
 		}
 		
 		VirtualDirectory GetVirtualDirectory (string virtualPath)
