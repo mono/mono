@@ -78,6 +78,10 @@ mono_exceptions_init (void)
 	throw_exception_func = mono_arch_get_throw_exception ();
 	rethrow_exception_func = mono_arch_get_rethrow_exception ();
 #endif
+
+#ifdef MONO_ARCH_HAVE_EXCEPTIONS_INIT
+	mono_arch_exceptions_init ();
+#endif
 }
 
 gpointer

@@ -1044,6 +1044,13 @@ mono_arch_notify_pending_exc (void)
 	*(gpointer*)(lmf->rsp - 8) = get_throw_pending_exception ();
 }
 
+void
+mono_arch_exceptions_init (void)
+{
+	/* Call this to avoid initialization races */
+	get_throw_pending_exception ();
+}
+
 #ifdef PLATFORM_WIN32
 
 /*
