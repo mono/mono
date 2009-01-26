@@ -1,3 +1,8 @@
+2009-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* data/config.xml: added a definition for .NET 3.5 AJAX entries
+	(feature AJAX) and moved the 1.0 entries to feature AJAX1.
+
 2008-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* data/config.xml : add sections for DynamicData feature.
