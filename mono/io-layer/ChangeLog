@@ -1,5 +1,10 @@
 2009-01-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* critical-sections.h (Enter/LeaveCriticalSection): Show
+	helpfull warning messages before crashing.
+
+2009-01-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* handles-private.h (_wapi_handle_set_signal_state): Show
 	helpfull warning messages before crashing.
 
