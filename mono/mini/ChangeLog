@@ -1,3 +1,8 @@
+2009-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390x.c: Remove a stray declaration of emit_sig_cookie () to fix
+	the s390x build.
+
 2009-01-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* unwind.c (mono_unwind_cleanup): Don't crash if cached_info is NULL.
