@@ -1,5 +1,7 @@
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c (mono_unwind_frame): Use <= instead of < for the loop exit check.
+
 	* mini.c (mini_init): Call mono_unwind_init ().
 	(mini_cleanup): Call mono_unwind_cleanup ().
 
