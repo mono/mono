@@ -1,3 +1,8 @@
+2009-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* CompilationException.cs: added a Message override to make error
+	messages more useful.
+
 2009-01-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AspComponentFoundry.cs: no need to throw. Caller handles a null

@@ -84,7 +84,11 @@ namespace System.Web.Compilation
 			info.AddValue ("errmsg", errmsg);
 			info.AddValue ("errorLines", errorLines);
 		}
-		
+
+		public override string Message {
+			get { return ErrorMessage; }
+		}
+				
 		public override string SourceFile {
 			get {
 				if (errors == null || errors.Count == 0)
