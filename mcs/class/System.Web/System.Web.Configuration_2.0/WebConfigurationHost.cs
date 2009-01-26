@@ -216,6 +216,11 @@ namespace System.Web.Configuration
 		
 		public string MapPath (string virtualPath)
 		{
+			if (!String.IsNullOrEmpty (virtualPath)) {
+				if (virtualPath.StartsWith (System.Web.Compilation.BuildManager.FAKE_VIRTUAL_PATH_PREFIX, StringComparison.Ordinal))
+					return HttpRuntime.AppDomainAppPath;
+			}
+			
 			if (map != null)
 				return MapPathFromMapper (virtualPath);
 			else if (HttpContext.Current != null && HttpContext.Current.Request != null)

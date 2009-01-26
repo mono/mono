@@ -1,3 +1,9 @@
+2009-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationHost.cs: when an attempt to map a fake virtual
+	path is made, MapPath returns the aplication physical root
+	directory. Fixes bug #463950
+
 2008-01-09  Dean Brettle  <dean@brettle.com>
 
 	* nBrowser/Node.cs: Fixed compatibility bug where <identification> sections were required
