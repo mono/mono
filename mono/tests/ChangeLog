@@ -1,3 +1,7 @@
+2009-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add a test for #469135.
+
 2009-01-22  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-stack-traces2.2.cs: Another generic sharing test for
