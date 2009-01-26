@@ -534,6 +534,8 @@ namespace System.Windows.Forms
 		public TreeNode NextVisibleNode {
 			get {
 				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
+				o.MoveNext (); // move to the node itself
+
 				if (!o.MoveNext ())
 					return null;
 				TreeNode c = o.CurrentNode;
@@ -607,6 +609,8 @@ namespace System.Windows.Forms
 		public TreeNode PrevVisibleNode {
 			get {
 				OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (this);
+				o.MovePrevious (); // move to the node itself
+
 				if (!o.MovePrevious ())
 					return null;
 				TreeNode c = o.CurrentNode;

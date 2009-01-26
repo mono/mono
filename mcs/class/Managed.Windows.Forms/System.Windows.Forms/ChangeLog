@@ -1,3 +1,12 @@
+2009-01-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNode.cs: NextVisibleNode and PrevVisibleNode properties don't
+	take into account the fact that OpenTreeNodeEnumerator needs to call
+	MoveNext/MovePrevious to actually put the passed node as the one
+	retrieved in Current. This way this property should work as really
+	expected in .net.
+	Fixes part of #467225.
+
 2000-01-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: When calculating the scrollbars, don't use
