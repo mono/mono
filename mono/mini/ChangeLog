@@ -1,5 +1,8 @@
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c: Add functions for managing a set of unwind info entries, allowing
+	unwind info to be shared between methods.
+
 	* mini-amd64.c (mono_arch_emit_prolog): Emit unwind info for the registers
 	saved in the LMF.
 
