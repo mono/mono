@@ -1,5 +1,9 @@
 2009-01-26  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Do not clear the rows if we are not databound.
+
+2009-01-26  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Do not be too smart about selecting the first cell 
 	when the first row is added as this is not what MS does. Fixes the 
 	failing unit tests.
