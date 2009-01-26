@@ -1,3 +1,18 @@
+2000-01-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeView.cs: When calculating the scrollbars, don't use
+	TreeNode.Bounds, since it still can have the values of the previous
+	-and now invalid- layout -which depends on TreeView.skipped_nodes, and
+	could not have been updated as well-, and use the actual number of
+	visible number of nodes to compute the height needed to contain all
+	the nodes. Also reset the value of vbar to 0 when disabled - this way
+	we make sure that, when re-enabled, it will update the visible area of
+	the treeview, even if the previous value before disabling it is the
+	same as now. Finally don't do anything for the vbar.ValueChanged
+	handler - for the case wheer we manually set the value but don't the
+	vbar is disabled already.
+	Fixes part of #467225.
+
 2009-01-23  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStrip.cs: Switch from foreach to for, in case the collection
