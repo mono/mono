@@ -10827,6 +10827,11 @@
         <size>7</size>
       </method>
     </type>
+    <type name="ConditionalParsing">
+      <method name="Void Test_8(DateTime)">
+        <size>38</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-410.cs">
     <type name="Program">

@@ -69,6 +69,11 @@ public class ConditionalParsing
 		object a = (S?[]) o;
 	}
 
+	void Test_8 (DateTime value)
+	{
+		var	_endDate = value > DateTime.MinValue ? new DateTime ? (value) : null;
+	}
+
 	public static void Main ()
 	{
 	}
