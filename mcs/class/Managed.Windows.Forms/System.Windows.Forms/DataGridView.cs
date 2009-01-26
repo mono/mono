@@ -4829,9 +4829,6 @@ namespace System.Windows.Forms {
 
 		internal void OnRowsAddedInternal (DataGridViewRowsAddedEventArgs e)
 		{
-			// if the very first row has just been added
-			if (Rows.Count == 1 && Columns.Count > 0)
-				MoveCurrentCell (0, 0, true, false, false, true);
 			AutoResizeColumnsInternal ();
 			Invalidate ();
 			OnRowsAdded (e);
