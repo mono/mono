@@ -862,10 +862,18 @@ namespace System.Web.UI
 			return sb.ToString ();
 		}
 
-		void RegisterServiceReference (Control control, ServiceReference serviceReference) {
+		void RegisterServiceReference (Control control, ServiceReference serviceReference)
+		{
 			if (serviceReference.InlineScript) {
 				string url = control.ResolveUrl (serviceReference.Path);
-				LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (WebServiceParser.GetCompiledType (url, Context), url);
+				Type type = WebServiceParser.GetCompiledType (url, Context);
+				if (type != null) {
+					object[] attributes = type.GetCustomAttributes (typeof (ScriptServiceAttribute), true);
+					if (attributes.Length == 0)
+						throw new InvalidOperationException ("Only Web services with a [ScriptService] attribute on the class definition can be called from script.");
+				}
+				
+				LogicalTypeInfo logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (type, url);
 				RegisterClientScriptBlock (control, typeof (ScriptManager), url, logicalTypeInfo.Proxy, true);
 			}
 			else {
@@ -873,6 +881,8 @@ namespace System.Web.UI
 				string pathInfo = "/js.invoke";
 #else
 				string pathInfo = "/js";
+				if (IsDebuggingEnabled)
+					pathInfo += "debug";
 #endif
 				string url = String.Concat (control.ResolveClientUrl (serviceReference.Path), pathInfo);
 				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);

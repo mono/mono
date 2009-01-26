@@ -36,7 +36,11 @@ namespace System.Web.Script.Services
 	sealed class ClientProxyHandler : IHttpHandler
 	{
 		readonly LogicalTypeInfo _logicalTypeInfo;
-		public ClientProxyHandler (Type type, string filePath) {
+		readonly Type _type;
+		
+		public ClientProxyHandler (Type type, string filePath)
+		{
+			_type = type;
 			_logicalTypeInfo = LogicalTypeInfo.GetLogicalTypeInfo (type, filePath);
 		}
 		#region IHttpHandler Members
@@ -45,8 +49,15 @@ namespace System.Web.Script.Services
 			get { return false; }
 		}
 
-		public void ProcessRequest (HttpContext context) {
+		public void ProcessRequest (HttpContext context)
+		{
 			HttpResponse response = context.Response;
+			object[] attributes = _type.GetCustomAttributes (typeof (ScriptServiceAttribute), true);
+			if (attributes.Length == 0) {
+				response.ContentType = "text/html";
+				throw new InvalidOperationException ("Only Web services with a [ScriptService] attribute on the class definition can be called from script.");
+			}
+			
 			response.ContentType = "application/x-javascript";
 			response.Cache.SetExpires (DateTime.Now.AddYears (1));
 			response.Cache.SetValidUntilExpires (true);

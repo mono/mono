@@ -1,3 +1,10 @@
+2009-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptManager.cs: before registering script service reference
+	check if the service type is decorated with the [ScriptService]
+	custom attribute. Only such service types can be called from
+	client JavaScript.
+
 2008-10-02  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptManager.cs: reverting revision 114552 since the real bug
