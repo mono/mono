@@ -1,3 +1,10 @@
+2009-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* ClientProxyHandler.cs: before generating the proxy check if the
+	service type is decorated with the [ScriptService] custom
+	attribute. Only such service types can be called from client
+	JavaScript.
+
 2008-09-23  Marek Habersack  <mhabersack@novell.com>
 
 	* LogicalTypeInfo.cs: do not use
