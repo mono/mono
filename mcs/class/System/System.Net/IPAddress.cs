@@ -269,8 +269,14 @@ namespace System.Net {
 								return null;
 						}
 					}
-					else
+					else {
+#if NET_2_0
+						if (!Int64.TryParse (subnet, NumberStyles.None, null, out val))
+							return null;
+#else
 						val = long.Parse (subnet, NumberStyles.None);
+#endif
+					}
 
 					if (i == (ips.Length - 1)) 
 						i = 3;

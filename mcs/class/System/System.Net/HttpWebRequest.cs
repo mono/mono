@@ -538,15 +538,10 @@ namespace System.Net
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public override bool UseDefaultCredentials
 		{
-			get {
-				throw GetMustImplement ();
-			}
-			set {
-				throw GetMustImplement ();
-			}
+			get { return CredentialCache.DefaultCredentials == Credentials; }
+			set { Credentials = value ? CredentialCache.DefaultCredentials : null; }
 		}
 #endif
 		
@@ -732,7 +727,7 @@ namespace System.Net
 
 		void CheckIfForceWrite ()
 		{
-			if (writeStream == null || contentLength < 0 || !InternalAllowBuffering)
+			if (writeStream == null || writeStream.RequestWritten|| contentLength < 0 || !InternalAllowBuffering)
 				return;
 
 			// This will write the POST/PUT if the write stream already has the expected
@@ -750,10 +745,10 @@ namespace System.Net
 			}
 
 			CommonChecks (send);
-			Monitor.Enter (this);
+			Monitor.Enter (locker);
 			getResponseCalled = true;
 			if (asyncRead != null && !haveResponse) {
-				Monitor.Exit (this);
+				Monitor.Exit (locker);
 				throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
 							"method while a previous call is still in progress.");
 			}
@@ -765,12 +760,16 @@ namespace System.Net
 			if (haveResponse) {
 				if (webResponse != null) {
 					Exception saved = saved_exc;
-					Monitor.Exit (this);
+					Monitor.Exit (locker);
 					if (saved == null) {
 						aread.SetCompleted (true, webResponse);
 					} else {
 						aread.SetCompleted (true, saved);
 					}
+					aread.DoCallback ();
+					return aread;
+				} else if (saved_exc != null) {
+					aread.SetCompleted (true, saved_exc);
 					aread.DoCallback ();
 					return aread;
 				}
@@ -783,7 +782,7 @@ namespace System.Net
 				abortHandler = servicePoint.SendRequest (this, connectionGroup);
 			}
 
-			Monitor.Exit (this);
+			Monitor.Exit (locker);
 			return aread;
 		}
 		
@@ -1172,6 +1171,7 @@ namespace System.Net
 
 		internal void SetResponseData (WebConnectionData data)
 		{
+			lock (locker) {
 			if (aborted) {
 				if (data.stream != null)
 					data.stream.Close ();
@@ -1181,7 +1181,6 @@ namespace System.Net
 			WebException wexc = null;
 			try {
 				webResponse = new HttpWebResponse (actualUri, method, data, cookieContainer);
-				haveResponse = true;
 			} catch (Exception e) {
 				wexc = new WebException (e.Message, e, WebExceptionStatus.ProtocolError, null); 
 				if (data.stream != null)
@@ -1197,6 +1196,15 @@ namespace System.Net
 			}
 
 			WebAsyncResult r = asyncRead;
+
+			bool forced = false;
+			if (r == null && webResponse != null) {
+				// This is a forced completion (302, 204)...
+				forced = true;
+				r = new WebAsyncResult (null, null);
+				r.SetCompleted (false, webResponse);
+			}
+
 			if (r != null) {
 				if (wexc != null) {
 					r.SetCompleted (false, wexc);
@@ -1222,6 +1230,7 @@ namespace System.Net
 						if (writeStream != null)
 							writeStream.KillBuffer ();
 
+						haveResponse = true;
 						r.SetCompleted (false, webResponse);
 						r.DoCallback ();
 					} else {
@@ -1239,15 +1248,24 @@ namespace System.Net
 						abortHandler = servicePoint.SendRequest (this, connectionGroup);
 					}
 				} catch (WebException wexc2) {
+					if (forced) {
+						saved_exc = wexc2;
+						haveResponse = true;
+					}
 					r.SetCompleted (false, wexc2);
 					r.DoCallback ();
 					return;
 				} catch (Exception ex) {
 					wexc = new WebException (ex.Message, ex, WebExceptionStatus.ProtocolError, null); 
+					if (forced) {
+						saved_exc = wexc;
+						haveResponse = true;
+					}
 					r.SetCompleted (false, wexc);
 					r.DoCallback ();
 					return;
 				}
+			}
 			}
 		}
 

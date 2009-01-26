@@ -1,8 +1,20 @@
+2009-01-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: added locking in SetResponseData for the case
+	when we get an error response before BeginGetResponse has been
+	called.
+
 2009-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* IPAddress.cs: handle sign extension for the high byte when using the
 	byte[] ctor for an IPv4 address.
 	Fixes bug #467472.
+
+2009-01-19  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpWebRequest.cs: implemented the UseDefaultCredentials
+	property, patch from Florian Maetschke <f.maetschke@tu-bs.de>,
+	thanks!
 
 2009-01-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
@@ -19,6 +31,13 @@
 
 	* WebConnectionStream.cs: if the buffer has been killed, return -1 for
 	its length. Fixes regression in System.Runtime.Remoting.
+
+2009-01-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: create a result from the response when
+	*GetResponse() has not been called yet and we have already received
+	all the data.
+	Fixes bug #464013.
 
 2009-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
@@ -38,13 +57,16 @@
 	* FtpWebRequest.cs: now deleting a file works when we're not in the
 	root directory.
 
+2008-12-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* IPAddress.cs: avoid throwing when parsing a subnet.
+
 2008-11-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpConnection.cs: remove CWL. When reusing, BeginReadRequest might
 	throw if the client closes.
 	* HttpListenerResponse.cs: close the connection for 1.0 clients.
 
-	Backported from HEAD. Fixes bug #459432.
 2008-11-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpDataStream.cs: use the socket for reading until the end of a
