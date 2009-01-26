@@ -4734,7 +4734,9 @@ namespace Mono.CSharp {
 				Type resolved_type = c.CatchType;
 				for (int ii = 0; ii < last_index; ++ii) {
 					if (resolved_type == prev_catches [ii] || TypeManager.IsSubclassOf (resolved_type, prev_catches [ii])) {
-						Report.Error (160, c.loc, "A previous catch clause already catches all exceptions of this or a super type `{0}'", prev_catches [ii].FullName);
+						Report.Error (160, c.loc,
+							"A previous catch clause already catches all exceptions of this or a super type `{0}'",
+							TypeManager.CSharpName (prev_catches [ii]));
 						ok = false;
 					}
 				}
