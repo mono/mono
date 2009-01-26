@@ -1,3 +1,7 @@
+2009-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_INST_NEW): Remove duplicate setting of cil_code.
+
 2009-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_get_domain_intrinsic): New helper function.
