@@ -1,3 +1,9 @@
+2009-01-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: added locking in SetResponseData for the case
+	when we get an error response before BeginGetResponse has been
+	called.
+
 2009-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* IPAddress.cs: handle sign extension for the high byte when using the
