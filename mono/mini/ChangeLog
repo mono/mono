@@ -1,5 +1,11 @@
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_exceptions_init): Call 
+	get_throw_pending_exception () to avoid initialization races.
+
+	* mini-exceptions.c (mono_exceptions_init): Call an arch specific
+	mono_arch_exceptions_init () function.
+
 	* mini.h (MONO_INST_NEW): Remove duplicate setting of cil_code.
 
 2009-01-25  Zoltan Varga  <vargaz@gmail.com>
