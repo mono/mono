@@ -1,3 +1,13 @@
+2009-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_load_type_info): Fill out info->min_align.
+	(mono_class_native_size): Use klass->marshal_info->min_align instead of
+	klass->min_align, since klass->min_align contains the managed alignment,
+	while the native alignment can be different, like for longs on x86.
+	Fixes #469135.
+
+	* class-internals.h (MonoMarshalType): Add a min_align field.
+
 2009-01-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* assembly.c (mono_assembly_try_decode_skip_verification): Add a hack to check
