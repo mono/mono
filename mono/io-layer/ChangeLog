@@ -1,3 +1,8 @@
+2009-01-26  Jeffrey Stedfast  <fejj@novell.com>
+
+	* mono-mutex.[c,h]: Removed GPLv2 copyright notice which should
+	not have been there.
+
 2009-01-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* threads.c: Add wapi_current_thread_desc that produces
