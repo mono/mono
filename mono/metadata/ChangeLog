@@ -1,3 +1,8 @@
+2009-01-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* assembly.c (mono_assembly_try_decode_skip_verification): Add a hack to check
+	the 1.0 format.
+
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* domain-internals.h (struct _MonoJitInfo): Add a 'from_aot' field plus
