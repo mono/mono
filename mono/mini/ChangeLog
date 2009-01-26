@@ -1,5 +1,8 @@
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Call mono_unwind_init ().
+	(mini_cleanup): Call mono_unwind_cleanup ().
+
 	* unwind.c: Add functions for managing a set of unwind info entries, allowing
 	unwind info to be shared between methods.
 
