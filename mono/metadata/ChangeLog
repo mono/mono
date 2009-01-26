@@ -1,5 +1,8 @@
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* domain-internals.h (struct _MonoJitInfo): Add a 'from_aot' field plus
+	some comments about the usage of the used_regs field.
+
 	* marshal.c (emit_marshal_ptr): Allow pointers to blittable structures.
 	Fixes #469217.
 
