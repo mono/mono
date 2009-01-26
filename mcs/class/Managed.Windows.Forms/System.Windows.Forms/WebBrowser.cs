@@ -48,7 +48,7 @@ namespace System.Windows.Forms
 		bool isWebBrowserContextMenuEnabled;
 		object objectForScripting;
 		bool webBrowserShortcutsEnabled;
-		bool scrollbarsEnabled;
+		bool scrollbarsEnabled = true;
 		
 		WebBrowserReadyState readyState;
 

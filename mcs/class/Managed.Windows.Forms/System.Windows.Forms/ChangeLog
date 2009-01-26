@@ -1,3 +1,9 @@
+2009-01-26  Andreia Gaita  <avidigal@novell.com>
+
+	* WebBrowser.cs: fix initial value of ScrollbarsEnabled, so they
+	won't be disabled by default.
+	Fixes #468690
+
 2009-01-26  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Do not clear the rows if we are not databound.
