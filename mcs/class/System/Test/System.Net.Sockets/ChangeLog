@@ -1,3 +1,8 @@
+2009-01-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SocketTest.cs:
+	(TestSelect1) avoid RST by reading the bytes from the client.
+
 2009-01-07  Geoff Norton  <gnorton@novell.com>
 
 	* SocketTest.cs: Disable some tests on the Mac that rely on socket
