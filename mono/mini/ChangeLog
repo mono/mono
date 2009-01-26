@@ -1,5 +1,12 @@
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r124582.
+
+	* mini-s390x.c: Remove a stray declaration of emit_sig_cookie () to fix
+	the s390x build.
+
+2009-01-26  Zoltan Varga  <vargaz@gmail.com>
+
 	Backport of r124456.
 
 	* exceptions-amd64.c (mono_arch_exceptions_init): Call 
