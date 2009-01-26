@@ -1,3 +1,8 @@
+2009-01-26  Rolf Bjarne Kvinge  <rkvinge@novell.com>
+
+	* WebClient_2_1.cs: Ensure we don't let exceptions go to native code.
+	* HttpWebRequest_2_1.cs: Add AllowReadStreamBuffering.
+
 2009-01-21  Geoff Norton  <gnorton@novell.com>
 
 	* WebClient_2_1.cs: Make the ManualResetEvent local to the callback

@@ -1448,7 +1448,18 @@ namespace System.Net
 			CompleteAsync ();
 			if (DownloadStringCompleted != null) {
 				ManualResetEvent wait_event = new ManualResetEvent (false);
-				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) { DownloadStringCompleted (this, (DownloadStringCompletedEventArgs) callback_args); wait_event.Set (); return false; };
+				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) 
+				{
+					try {
+						DownloadStringCompleted (this, (DownloadStringCompletedEventArgs) callback_args);
+						wait_event.Set ();
+					} catch (Exception ex) {
+						Console.WriteLine ("Unhandled exception: {0}", ex);
+					} catch {
+						Console.WriteLine ("Unhandled exception.");
+					}
+					return false;
+				};
 				callback_args = args;
 
 				g_idle_add (callback, IntPtr.Zero);

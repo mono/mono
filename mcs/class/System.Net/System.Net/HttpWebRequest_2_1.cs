@@ -38,6 +38,10 @@ namespace System.Net {
 	public abstract class HttpWebRequest : WebRequest {
 
 		public abstract bool HaveResponse { get; }
+		public virtual bool AllowReadStreamBuffering {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
 	}
 }
 
