@@ -1,5 +1,8 @@
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_prolog): Emit unwind info for the registers
+	saved in the LMF.
+
 	* exceptions-amd64.c (mono_arch_exceptions_init): Call 
 	get_throw_pending_exception () to avoid initialization races.
 
