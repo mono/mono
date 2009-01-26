@@ -13255,6 +13255,37 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-52.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+B[T]">
+      <method name="Void .ctor()">
+        <size>18</size>
+      </method>
+      <method name="Void W[R](System.String, System.Func`2[T,R])">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="A`1+B+&lt;W&gt;c__AnonStorey0`1[T,R]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0(T[])">
+        <size>55</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-6.cs">
     <type name="X">
       <method name="Void .ctor()">
