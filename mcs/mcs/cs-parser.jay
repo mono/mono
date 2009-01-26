@@ -3265,49 +3265,60 @@ post_decrement_expression
 	;
 
 object_or_delegate_creation_expression
-	: NEW simple_type open_parens_any opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
+	: new_expr_start open_parens_any opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
 	  {
-		if ($6 != null) {
+		if ($5 != null) {
 			if (RootContext.Version <= LanguageVersion.ISO_2)
 				Report.FeatureIsNotAvailable (GetLocation ($1), "object initializers");
 				
-			$$ = new NewInitialize ((Expression) $2, (ArrayList) $4, (CollectionOrObjectInitializers) $6, (Location) $1);
+			$$ = new NewInitialize ((Expression) $1, (ArrayList) $3, (CollectionOrObjectInitializers) $5, GetLocation ($1));
 		}
 		else
-			$$ = new New ((Expression) $2, (ArrayList) $4, (Location) $1);
+			$$ = new New ((Expression) $1, (ArrayList) $3, GetLocation ($1));
 	  }
-	| NEW simple_type object_or_collection_initializer
+	| new_expr_start object_or_collection_initializer
 	  {
 		if (RootContext.Version <= LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "collection initializers");
 	  
-		$$ = new NewInitialize ((Expression) $2, null, (CollectionOrObjectInitializers) $3, (Location) $1);
+		$$ = new NewInitialize ((Expression) $1, null, (CollectionOrObjectInitializers) $2, GetLocation ($1));
 	  }
 	;
 
-
 array_creation_expression
-	: NEW simple_type OPEN_BRACKET expression_list CLOSE_BRACKET 
+	: new_expr_start OPEN_BRACKET expression_list CLOSE_BRACKET 
 	  opt_rank_specifier	// shift/reduce on OPEN_BRACE
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((FullNamedExpression) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, (Location) $1);
+		$$ = new ArrayCreation ((FullNamedExpression) $1, (ArrayList) $3, (string) $5, (ArrayList) $6, GetLocation ($1));
 	  }
-	| NEW simple_type rank_specifiers opt_array_initializer
+	| new_expr_start rank_specifiers opt_array_initializer
 	  {
-	  	if ($4 == null)
+	  	if ($3 == null)
 	  		Report.Error (1586, GetLocation ($1), "Array creation must have array size or array initializer");
 
-		$$ = new ArrayCreation ((FullNamedExpression) $2, (string) $3, (ArrayList) $4, (Location) $1);
+		$$ = new ArrayCreation ((FullNamedExpression) $1, (string) $2, (ArrayList) $3, GetLocation ($1));
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
-		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, (Location) $1);
+		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, GetLocation ($1));
 	  }
-	| NEW simple_type error
+	| new_expr_start error
 	  {
-		Report.Error (1526, (Location) $1, "A new expression requires () or [] after type");
+		Report.Error (1526, GetLocation ($1), "A new expression requires () or [] after type");
 		$$ = null;
+	  }
+	;
+
+new_expr_start
+	: NEW
+	  {
+		++lexer.parsing_type;
+	  }
+	  simple_type
+	  {
+		--lexer.parsing_type;
+		$$ = $3;
 	  }
 	;
 

@@ -1,3 +1,9 @@
+2009-01-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #469244
+	* cs-tokenizer.cs, cs-parser.jay: Fixed parsing of nullable type
+	instance inside a conditional expression.
+
 2009-01-23  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, generic.cs, parameter.cs, decl.cs, anonymous.cs,

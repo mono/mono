@@ -53,6 +53,11 @@ namespace Mono.CSharp
 		public int parsing_block;
 		internal int query_parsing;
 		
+		// 
+		// When parsing type only, useful for ambiguous nullable types
+		//
+		public int parsing_type;
+		
 		//
 		// Set when parsing generic declaration (type or method header)
 		//
@@ -871,7 +876,7 @@ namespace Mono.CSharp
 		//
 		int TokenizePossibleNullableType ()
 		{
-			if (parsing_block == 0)
+			if (parsing_block == 0 || parsing_type > 0)
 				return Token.INTERR_NULLABLE;
 
 			int d = peek_char ();
@@ -898,6 +903,7 @@ namespace Mono.CSharp
 			}
 
 			PushPosition ();
+			current_token = Token.NONE;
 			int next_token;
 			switch (xtoken ()) {
 			case Token.LITERAL_INTEGER:
@@ -910,6 +916,7 @@ namespace Mono.CSharp
 			case Token.FALSE:
 			case Token.NULL:
 			case Token.THIS:
+			case Token.NEW:
 				next_token = Token.INTERR;
 				break;
 				
