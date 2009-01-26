@@ -223,6 +223,9 @@ namespace MonoTests.System.Net.Sockets
 				Socket.Select (list, empty, empty, -1);
 				Assertion.AssertEquals ("#05", 0, empty.Count);
 				Assertion.AssertEquals ("#06", 1, list.Count);
+				// Need to read the 10 bytes from the client to avoid a RST
+				byte [] bytes = new byte [10];
+				acc.Receive (bytes);
 			} finally {
 				if (acc != null)
 					acc.Close ();
