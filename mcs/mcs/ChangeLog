@@ -1,5 +1,11 @@
 2009-01-26  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #469019
+	* anonymous.cs: Use all parent type parameters when instantiating
+	nested generic storey.
+
+2009-01-26  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Check for null instance methodgroup expression.
 
 2009-01-26  Marek Safar  <marek.safar@gmail.com>

@@ -301,7 +301,7 @@ namespace Mono.CSharp {
 				TypeArguments targs = new TypeArguments ();
 
 				if (tparams.Length < CountTypeParameters) {
-					TypeParameter[] parent_tparams = ec.DeclContainer.Parent.CurrentTypeParameters;
+					TypeParameter[] parent_tparams = ec.DeclContainer.Parent.PartialContainer.TypeParameters;
 					for (int i = 0; i < parent_tparams.Length; ++i)
 						targs.Add (new TypeParameterExpr (parent_tparams[i], Location));
 				}
