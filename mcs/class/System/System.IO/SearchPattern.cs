@@ -51,9 +51,23 @@ namespace System.IO {
 		// so we need a overload in here for the Kqueue watcher
 		public bool IsMatch (string text, bool ignorecase)
 		{
-			if (!hasWildcard)
-				return (String.Compare (pattern, text, ignorecase) == 0);
-
+			if (!hasWildcard) {
+				bool match = String.Compare (pattern, text, ignorecase) == 0;
+				if (match)
+					return true;
+				
+				// This is a special case for FSW. It needs to match e.g. subdir/file.txt
+				// when the pattern is "file.txt"
+				int idx = text.LastIndexOf ('/');
+				if (idx == -1)
+					return false;
+				idx++;
+				if (idx == text.Length)
+					return false;
+				
+				return (String.Compare (pattern, text.Substring (idx), ignorecase) == 0);
+			}
+			
 			return Match (ops, text, 0);
 		}
 

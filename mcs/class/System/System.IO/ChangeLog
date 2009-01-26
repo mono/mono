@@ -1,3 +1,12 @@
+2009-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* SearchPattern.cs: make IsMatch work for situations when there is
+	no wildcard in the pattern, but a subdirectory match is being
+	tested, e.g. pattern == "file.txt" and text ==
+	"subdir/file.txt". Lack of support for this has been causing
+	watching for changes to ASP.NET's web.config in subdirectories to
+	fail.
+
 2008-11-06  Jonathan Chambers  <joncham@gmail.com>
 
 	* MonoIO.cs : Add DuplicateHandle.
