@@ -1,3 +1,10 @@
+2009-01-27  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (emit_stloc_ir): Only apply the reg-reg move
+	optimization if the top of stack is the last instruction in the
+	bblock.  Otherwise it might have been used after its definition.
+	Fixes #469742.
+
 2009-01-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_magic_trampoline): Print out the caller
