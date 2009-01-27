@@ -233,8 +233,10 @@ namespace System.Net.NetworkInformation {
 						continue;
 
 					IcmpMessage recv = new IcmpMessage (bytes, headerLength, bodyLength);
-					if (recv.Identifier != identifier)
-						continue; // ping reply to different request. discard it.
+
+					/* discard ping reply to different request or echo requests if running on same host. */
+					if (recv.Identifier != identifier || recv.Type == 8)
+						continue; 
 
 					return new PingReply (address, recv.Data, options, rtt, recv.IPStatus);
 				} while (true);
@@ -461,6 +463,8 @@ namespace System.Net.NetworkInformation {
 						return IPStatus.ParameterProblem;
 					case 4:
 						return IPStatus.SourceQuench;
+					case 8:
+						return IPStatus.Success;
 					}
 					return IPStatus.Unknown;
 					//throw new NotSupportedException (String.Format ("Unexpected pair of ICMP message type and code: type is {0} and code is {1}", Type, Code));
