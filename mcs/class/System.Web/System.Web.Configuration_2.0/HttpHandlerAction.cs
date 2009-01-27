@@ -39,6 +39,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 using System.Web.Util;
 
@@ -127,8 +128,6 @@ namespace System.Web.Configuration
 
 		string cached_verb = null;
 		string[] cached_verbs;
-		Dictionary<string, bool> cachedMatches = new Dictionary<string, bool> ();
-		Object pathMatchesLock = new Object ();
 
 		string[] SplitVerbs ()
 		{
@@ -173,91 +172,93 @@ namespace System.Web.Configuration
 
 		internal bool PathMatches (string pathToMatch)
 		{
-			if (cachedMatches.ContainsKey (pathToMatch))
-				return cachedMatches [pathToMatch];
+			if (String.IsNullOrEmpty (pathToMatch))
+				return false;
+			
+			bool result = false;
+			string[] handlerPaths = Path.Split (',');
+			int slash = pathToMatch.LastIndexOf ('/');
+			string origPathToMatch = pathToMatch;
+			string noLeadingSlashPathToMatch = null;
+			
+			if (slash != -1)
+				pathToMatch = pathToMatch.Substring (slash);
 
-			lock (pathMatchesLock)
+			SearchPattern sp = null;
+			foreach (string handlerPath in handlerPaths)
 			{
-				if (cachedMatches.ContainsKey (pathToMatch))
-					return cachedMatches [pathToMatch];
-
-				bool result = false;
-				string[] handlerPaths = Path.Split (',');
-				int slash = pathToMatch.LastIndexOf ('/');
-				string origPathToMatch = pathToMatch;
-				if (slash != -1)
-					pathToMatch = pathToMatch.Substring (slash);
-
-				foreach (string handlerPath in handlerPaths)
-				{
-					if (handlerPath == "*")
-					{
-						result = true;
-						break;
-					}
-
-					string matchExact = null;
-					string endsWith = null;
-					Regex regEx = null;
-
-					if (handlerPath.Length > 0)
-					{
-						if (handlerPath [0] == '*' && (handlerPath.IndexOf ('*', 1) == -1))
-							endsWith = handlerPath.Substring (1);
-
-						if (handlerPath.IndexOf ('*') == -1)
-							if (handlerPath [0] != '/')
-							{
-								HttpContext ctx = HttpContext.Current;
-								HttpRequest req = ctx != null ? ctx.Request : null;
-								string vpath = req != null ? req.BaseVirtualDir : HttpRuntime.AppDomainAppVirtualPath;
-
-								if (vpath == "/")
-									vpath = String.Empty;
-
-								matchExact = String.Concat (vpath, "/", handlerPath);
-							}
-					}
-
-					if (matchExact != null)
-					{
-						result = matchExact.Length == origPathToMatch.Length && StrUtils.EndsWith (origPathToMatch, matchExact, true);
-						if (result == true)
-							break;
-						else
-							continue;
-					}
-					else if (endsWith != null)
-					{
-						result = StrUtils.EndsWith (pathToMatch, endsWith, true);
-						if (result == true)
-							break;
-						else
-							continue;
-					}
-
-					if (handlerPath != "*")
-					{
-						string expr = handlerPath.Replace (".", "\\.").Replace ("?", "\\?").Replace ("*", ".*");
-						if (expr.Length > 0 && expr [0] == '/')
-							expr = expr.Substring (1);
-
-						expr += "\\z";
-						regEx = new Regex (expr, RegexOptions.IgnoreCase);
-
-						if (regEx.IsMatch (origPathToMatch))
-						{
-							result = true;
-							break;
-						}
-					}
+				if (handlerPath.Length == 0)
+					continue;
+				
+				if (handlerPath == "*") {
+					result = true;
+					break;
 				}
 
-				if (!cachedMatches.ContainsKey (origPathToMatch))
-					cachedMatches.Add (origPathToMatch, result);
+				string matchExact = null;
+				string endsWith = null;
 
-				return result;
+				if (handlerPath.Length > 0)
+				{
+					if (handlerPath [0] == '*' && (handlerPath.IndexOf ('*', 1) == -1))
+						endsWith = handlerPath.Substring (1);
+
+					if (handlerPath.IndexOf ('*') == -1)
+						if (handlerPath [0] != '/')
+						{
+							HttpContext ctx = HttpContext.Current;
+							HttpRequest req = ctx != null ? ctx.Request : null;
+							string vpath = req != null ? req.BaseVirtualDir : HttpRuntime.AppDomainAppVirtualPath;
+
+							if (vpath == "/")
+								vpath = String.Empty;
+
+							matchExact = String.Concat (vpath, "/", handlerPath);
+						}
+				}
+
+				if (matchExact != null)
+				{
+					result = matchExact.Length == origPathToMatch.Length && StrUtils.EndsWith (origPathToMatch, matchExact, true);
+					if (result == true)
+						break;
+					else
+						continue;
+				}
+				else if (endsWith != null)
+				{
+					result = StrUtils.EndsWith (pathToMatch, endsWith, true);
+					if (result == true)
+						break;
+					else
+						continue;
+				}
+
+				string pattern;
+				if (handlerPath [0] == '/')
+					pattern = handlerPath.Substring (1);
+				else
+					pattern = handlerPath;
+
+				if (sp == null)
+					sp = new SearchPattern (pattern, true);
+				else
+					sp.SetPattern (pattern, true);
+
+				if (noLeadingSlashPathToMatch == null) {
+					if (origPathToMatch [0] == '/')
+						noLeadingSlashPathToMatch = origPathToMatch.Substring (1);
+					else
+						noLeadingSlashPathToMatch = origPathToMatch;
+				}
+					
+				if (sp.IsMatch (noLeadingSlashPathToMatch)) {
+					result = true;
+					break;
+				}
 			}
+			
+			return result;
 		}
 
 		// Loads the handler, possibly delay-loaded.
