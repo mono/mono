@@ -1422,8 +1422,8 @@ namespace System.Windows.Forms {
 					//
 					if (in_doevents ||
 					    (Application.MWFThread.Current.Context != null && 
-					     Application.MWFThread.Current.Context.MainForm != null && 
-					     Application.MWFThread.Current.Context.MainForm.IsLoaded)) {
+					     (Application.MWFThread.Current.Context.MainForm == null || 
+					      Application.MWFThread.Current.Context.MainForm.IsLoaded))) {
 						timer.Busy = true;
 						timer.Update (now);
 						timer.FireTick ();
