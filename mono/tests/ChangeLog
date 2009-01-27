@@ -1,3 +1,11 @@
+2009-01-27  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r124712.
+
+	* bug469742.2.il: New test.
+
+	* Makefile.am: Test added.
+
 2009-01-22  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r124246.
