@@ -1,3 +1,10 @@
+2009-01-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpHandlerAction.cs: removed the matches cache, it doesn't
+	improve matters here in 99% of the cases.
+	Regexps are no longer used to match handler paths, SearchPattern
+	is used instead.
+
 2009-01-26  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: when an attempt to map a fake virtual
