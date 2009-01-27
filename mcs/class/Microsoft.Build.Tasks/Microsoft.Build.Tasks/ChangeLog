@@ -1,3 +1,7 @@
+2009-01-27  Ankit Jain  <jankit@novell.com>
+
+	* Delete.cs (Execute): Skip non-existant files.
+
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
 	* CreateManifestResourceName.cs (Execute): Use full path, also helps
