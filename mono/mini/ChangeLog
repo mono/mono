@@ -1,3 +1,8 @@
+2009-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c: Fix the android build, which doesn't have
+	__aeabi_read_tp.
+
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390x.c: Remove a stray declaration of emit_sig_cookie () to fix
