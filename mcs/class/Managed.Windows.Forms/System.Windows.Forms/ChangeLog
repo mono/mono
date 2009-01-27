@@ -1,3 +1,9 @@
+2009-01-27  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* XplatUIX11.cs: Fire Timer.Tick even if there is no MainForm for the 
+	current context.
+	[Fixes bug #469239]
+
 2009-01-26  Andreia Gaita  <avidigal@novell.com>
 
 	* WebBrowser.cs: fix initial value of ScrollbarsEnabled, so they
