@@ -735,6 +735,9 @@ namespace System {
 		
 		public override int GetHashCode()
 		{
+			Type t = UnderlyingSystemType;
+			if (t != null && t != this)
+				return t.GetHashCode ();
 			return (int)_impl.Value;
 		}
 

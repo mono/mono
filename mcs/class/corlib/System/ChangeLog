@@ -1,3 +1,7 @@
+2009-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs (GetHashCode): Work on UnderlyingSystemType. Fixes #467229.
+
 2009-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* Variant.cs ApplicationIdentity.cs ActivationContext.cs Environment.cs
