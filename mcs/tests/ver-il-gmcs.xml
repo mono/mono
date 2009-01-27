@@ -3211,7 +3211,7 @@
         <size>7</size>
       </method>
       <method name="Void DoNothing[T]()">
-        <size>3</size>
+        <size>8</size>
       </method>
     </type>
     <type name="Slow.Program">
@@ -5632,7 +5632,7 @@
         <size>7</size>
       </method>
       <method name="T QueryInterface[T](System.Object)">
-        <size>35</size>
+        <size>45</size>
       </method>
     </type>
     <type name="Driver">
@@ -11361,6 +11361,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-438.cs">
+    <type name="Tests">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="ServiceType GetService[ServiceType](System.Object[])">
+        <size>17</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>19</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -11856,7 +11869,7 @@
         <size>53</size>
       </method>
       <method name="T MakeSomething[T]()">
-        <size>2</size>
+        <size>7</size>
       </method>
       <method name="Int32 Main()">
         <size>10</size>
@@ -12720,7 +12733,7 @@
     </type>
     <type name="Test">
       <method name="T Test_3[T](System.Object)">
-        <size>46</size>
+        <size>51</size>
       </method>
     </type>
     <type name="Test+&lt;Test_3&gt;c__AnonStorey2`1[T]">
