@@ -1,3 +1,8 @@
+2009-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Type_EqualsInternal): For user-defined types,
+	return TRUE if the two type objects are the same.
+
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_load_type_info): Fill out info->min_align.
