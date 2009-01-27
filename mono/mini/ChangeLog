@@ -1,5 +1,8 @@
 2009-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): Print out the caller
+	method as well when get_vcall_slot () fails to match a code sequence.
+
 	* mini-arm.c: Fix the android build, which doesn't have
 	__aeabi_read_tp.
 
