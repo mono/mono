@@ -1,3 +1,7 @@
+2009-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add a test for #467229.
+
 2009-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : added test for parsing no-millisecond time

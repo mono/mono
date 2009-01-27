@@ -3062,6 +3062,20 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual(1, tArgs[1].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
 			Assert.AreEqual(1, mArgs[0].GetCustomAttributes (typeof (DocAttribute), true).Length, "#1");
 		}
+
+	[Test]
+	public void EqualsUserType () {
+		UserType2 t1 = new UserType2(null);
+		UserType2 t2 = new UserType2(t1);
+		Assert.IsTrue (t1.Equals(t2));
+	}
+
+	[Test]
+	public void GetHashCodeUserType () {
+		UserType2 t1 = new UserType2(null);
+		UserType2 t2 = new UserType2(t1);
+		Assert.AreEqual (42, t2.GetHashCode());
+	}
 #endif
 
 		[Test]
@@ -3416,7 +3430,7 @@ PublicKeyToken=b77a5c561934e089"));
 #if NET_2_0
 	class UserType : Type
 	{
-		private Type type;
+		protected Type type;
 	
 		public UserType(Type type) {
 			this.type = type;
@@ -3589,6 +3603,20 @@ PublicKeyToken=b77a5c561934e089"));
 							 string[] namedParameters)
 		{
 			throw new NotSupportedException();
+		}
+	}
+
+    class UserType2 : UserType {
+		public UserType2 (Type type) : base (type) {
+		}
+
+		public override Type UnderlyingSystemType { get { return this.type ?? this; } }
+
+		public override int GetHashCode()
+		{
+			if (type == null)
+				return 42;
+			return type.GetHashCode();
 		}
 	}
 #endif
