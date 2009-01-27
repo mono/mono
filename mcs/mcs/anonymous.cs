@@ -105,20 +105,18 @@ namespace Mono.CSharp {
 		// be called first, otherwise _this_ will be initialized with 
 		// uninitialized value.
 		//
-		public sealed class ThisInitializer : Statement
+		sealed class ThisInitializer : Statement
 		{
-			readonly AnonymousMethodStorey storey;
+			readonly HoistedThis hoisted_this;
 
-			public ThisInitializer (AnonymousMethodStorey storey)
+			public ThisInitializer (HoistedThis hoisted_this)
 			{
-				this.storey = storey;
+				this.hoisted_this = hoisted_this;
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				if (storey.hoisted_this != null) {
-					storey.hoisted_this.EmitHoistingAssignment (ec);
-				}
+				hoisted_this.EmitHoistingAssignment (ec);
 			}
 
 			protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -353,7 +351,7 @@ namespace Mono.CSharp {
 			//
 			if (OriginalSourceBlock.Explicit.HasCapturedThis && !(Parent is AnonymousMethodStorey)) {
 				AddCapturedThisField (ec);
-				hoisted_this.EmitHoistingAssignment (ec);
+				OriginalSourceBlock.AddScopeStatement (new ThisInitializer (hoisted_this));
 			}
 
 			//
