@@ -1,3 +1,8 @@
+2009-01-27  Marek Safar  <marek.safar@gmail.com>
+
+	* anonymous.cs: Fixed recent regression when initializing captured 
+	this.
+
 2009-01-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #469019
