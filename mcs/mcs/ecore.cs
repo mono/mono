@@ -1613,11 +1613,23 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
+			
+#if GMCS_SOURCE
+			// Only to make verifier happy
+			if (TypeManager.IsGenericParameter (type) && child.IsNull)
+				ec.ig.Emit (OpCodes.Unbox_Any, type);
+#endif
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
 		{
 			child.EmitBranchable (ec, label, on_true);
+
+#if GMCS_SOURCE
+			// Only to make verifier happy
+			if (TypeManager.IsGenericParameter (type) && child.IsNull)
+				ec.ig.Emit (OpCodes.Unbox_Any, type);
+#endif
 		}
 
 		public override void EmitSideEffect (EmitContext ec)

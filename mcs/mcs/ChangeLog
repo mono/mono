@@ -1,5 +1,11 @@
 2009-01-27  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #324319
+	* ecore.cs: Explicitly type null when assigning to type argument to
+	make pass verifier check.
+
+2009-01-27  Marek Safar  <marek.safar@gmail.com>
+
 	* anonymous.cs: Fixed recent regression when initializing captured 
 	this.
 
