@@ -45,6 +45,7 @@ namespace System.Collections.Generic {
 		const int INITIAL_SIZE = 10;
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
 		const int NO_SLOT = -1;
+		const int HASH_FLAG = -2147483648;
 
 		struct Link {
 			public int HashCode;
@@ -136,7 +137,8 @@ namespace System.Collections.Generic {
 			generation = 0;
 		}
 
-		void InitArrays (int size) {
+		void InitArrays (int size)
+		{
 			table = new int [size];
 
 			links = new Link [size];
@@ -185,13 +187,9 @@ namespace System.Collections.Generic {
 			if (array.Length - index < count)
 				throw new ArgumentException ("Destination array cannot hold the requested elements!");
 
-			for (int i = 0, items = 0; i < table.Length && items < count; i++) {
-				int current = table [i] - 1;
-				while (current != NO_SLOT) {
-					array [index++] = slots [current];
-					current = links [current].Next;
-					items++;
-				}
+			for (int i = 0, items = 0; i < touched && items < count; i++) {
+				if (GetLinkHashCode (i) != 0)
+					array [index++] = slots [i];
 			}
 		}
 
@@ -206,7 +204,7 @@ namespace System.Collections.Generic {
 			for (int i = 0; i < table.Length; i++) {
 				int current = table [i] - 1;
 				while (current != NO_SLOT) {
-					int hashCode = newLinks [current].HashCode = comparer.GetHashCode (slots [current]);
+					int hashCode = newLinks [current].HashCode = GetItemHashCode (slots [current]);
 					int index = (hashCode & int.MaxValue) % newSize;
 					newLinks [current].Next = newTable [index] - 1;
 					newTable [index] = current + 1;
@@ -225,9 +223,19 @@ namespace System.Collections.Generic {
 			threshold = (int) (newSize * DEFAULT_LOAD_FACTOR);
 		}
 
+		int GetLinkHashCode (int index)
+		{
+			return links [index].HashCode & HASH_FLAG;
+		}
+
+		int GetItemHashCode (T item)
+		{
+			return comparer.GetHashCode (item) | HASH_FLAG;
+		}
+
 		public bool Add (T item)
 		{
-			int hashCode = comparer.GetHashCode (item);
+			int hashCode = GetItemHashCode (item);
 			int index = (hashCode & int.MaxValue) % table.Length;
 
 			if (SlotsContainsAt (index, hashCode, item))
@@ -267,9 +275,10 @@ namespace System.Collections.Generic {
 		public void Clear ()
 		{
 			count = 0;
-			// clear the hash table and the slots
+
 			Array.Clear (table, 0, table.Length);
 			Array.Clear (slots, 0, slots.Length);
+			Array.Clear (links, 0, links.Length);
 
 			// empty the "empty slots chain"
 			empty_slot = NO_SLOT;
@@ -280,7 +289,7 @@ namespace System.Collections.Generic {
 
 		public bool Contains (T item)
 		{
-			int hashCode = comparer.GetHashCode (item);
+			int hashCode = GetItemHashCode (item);
 			int index = (hashCode & int.MaxValue) % table.Length;
 
 			return SlotsContainsAt (index, hashCode, item);
@@ -289,7 +298,7 @@ namespace System.Collections.Generic {
 		public bool Remove (T item)
 		{
 			// get first item of linked list corresponding to given key
-			int hashCode = comparer.GetHashCode (item);
+			int hashCode = GetItemHashCode (item);
 			int index = (hashCode & int.MaxValue) % table.Length;
 			int current = table [index] - 1;
 
@@ -327,6 +336,7 @@ namespace System.Collections.Generic {
 			empty_slot = current;
 
 			// clear slot
+			links [current].HashCode = 0;
 			slots [current] = default (T);
 
 			generation++;
@@ -566,7 +576,7 @@ namespace System.Collections.Generic {
 		public struct Enumerator : IEnumerator<T>, IDisposable {
 
 			HashSet<T> hashset;
-			int index, current;
+			int current;
 			int stamp;
 
 			internal Enumerator (HashSet<T> hashset)
@@ -574,7 +584,6 @@ namespace System.Collections.Generic {
 				this.hashset = hashset;
 				this.stamp = hashset.generation;
 
-				index = -1;
 				current = NO_SLOT;
 			}
 
@@ -582,19 +591,11 @@ namespace System.Collections.Generic {
 			{
 				CheckState ();
 
-				do {
-					if (current != NO_SLOT) {
-						current = hashset.links [current].Next;
-						continue;
-					}
+				while (current < hashset.touched)
+					if (hashset.GetLinkHashCode (++current) != 0)
+						return true;
 
-					if (index + 1 >= hashset.table.Length)
-						return false;
-
-					current = hashset.table [++index] - 1;;
-				} while (current == NO_SLOT);
-
-				return true;
+				return false;
 			}
 
 			public T Current {
@@ -611,7 +612,6 @@ namespace System.Collections.Generic {
 
 			void IEnumerator.Reset ()
 			{
-				index = -1;
 				current = NO_SLOT;
 			}
 
@@ -632,7 +632,7 @@ namespace System.Collections.Generic {
 			{
 				CheckState ();
 
-				if (current == NO_SLOT)
+				if (current == NO_SLOT || current >= hashset.touched)
 					throw new InvalidOperationException ("Current is not valid");
 			}
 		}

@@ -1,3 +1,8 @@
+2009-01-27  Jb Evain  <jbevain@novell.com>
+
+	* HashSet.cs: use Paolo's trick to return items in insertion order
+	when possible.
+
 2008-12-17  Jb Evain  <jbevain@novell.com>
 
 	* HashSet.cs (CopyTo): fix logic.
