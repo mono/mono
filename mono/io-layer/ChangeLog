@@ -1,3 +1,7 @@
+2009-01-26  Jeffrey Stedfast  <fejj@novell.com>
+
+	* mono-mutex.[c,h]: Removed GPLv2 copyright notice which should
+	not have been there.
 
 Fri Oct 17 15:23:00 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
