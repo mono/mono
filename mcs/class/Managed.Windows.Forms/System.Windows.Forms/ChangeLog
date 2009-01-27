@@ -1,5 +1,9 @@
 2009-01-27  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fix a NRE when setting the CurrentCell to null.
+
+2009-01-27  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* XplatUIX11.cs: Fire Timer.Tick even if there is no MainForm for the 
 	current context.
 	[Fixes bug #469239]
