@@ -875,6 +875,9 @@ namespace System.Windows.Forms {
 				value = e.Value;
 			}
 			
+			if (FormattedValueType == typeof(string) && value is IFormattable && !String.IsNullOrEmpty (cellStyle.Format))
+				return ((IFormattable) value).ToString (cellStyle.Format, cellStyle.FormatProvider);
+
 			if (formattedValueTypeConverter == null)
 				formattedValueTypeConverter = FormattedValueTypeConverter;
 			if (valueTypeConverter == null)

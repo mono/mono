@@ -1,5 +1,11 @@
 2009-01-28  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewCell.cs: Format strings according to the supplied 
+	CellStyle.Format.
+	[Fixes bug #470384]
+
+2009-01-28  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Reset the hover cell if it gets moved due to row(s) 
 	addition or removal. Fixes multiple crashes in OnMouseMove.
 
