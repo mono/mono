@@ -556,6 +556,9 @@ System.Web.UI/EmptyControlCollection.cs
 System.Web.UI/ExpressionBindingCollection.cs
 System.Web.UI/ExpressionBinding.cs
 System.Web.UI/ExtractTemplateValuesMethod.cs
+System.Web.UI/FileLevelUserControlBuilder.cs
+System.Web.UI/FileLevelControlBuilderAttribute.cs
+System.Web.UI/FileLevelPageControlBuilder.cs
 System.Web.UI/FilterableAttribute.cs
 System.Web.UI/HiddenFieldPageStatePersister.cs
 System.Web.UI/HierarchicalDataSourceControl.cs
