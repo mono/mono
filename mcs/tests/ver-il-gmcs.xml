@@ -10856,6 +10856,9 @@
       <method name="Void Test_8(DateTime)">
         <size>38</size>
       </method>
+      <method name="Void Test_9()">
+        <size>43</size>
+      </method>
     </type>
   </test>
   <test name="gtest-410.cs">

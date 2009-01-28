@@ -73,6 +73,13 @@ public class ConditionalParsing
 	{
 		var	_endDate = value > DateTime.MinValue ? new DateTime ? (value) : null;
 	}
+	
+	void Test_9 ()
+	{
+		bool b = (1 == 2);
+		bool c = (1 == 1);
+		string a = (b ? (c ? "#" : "#") : "");
+	}
 
 	public static void Main ()
 	{
