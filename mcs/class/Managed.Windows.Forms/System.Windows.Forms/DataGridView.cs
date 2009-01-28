@@ -4828,6 +4828,8 @@ namespace System.Windows.Forms {
 
 		internal void OnRowsAddedInternal (DataGridViewRowsAddedEventArgs e)
 		{
+			if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
+				hover_cell = null;
 			AutoResizeColumnsInternal ();
 			Invalidate ();
 			OnRowsAdded (e);
@@ -4854,14 +4856,18 @@ namespace System.Windows.Forms {
 
 			if (Rows.Count == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
+				hover_cell = null;
 			} else if (Columns.Count == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
+				hover_cell = null;
 			} else {
 				int nextRowIndex = e.RowIndex;
 				if (nextRowIndex >= Rows.Count)
 					nextRowIndex = Rows.Count - 1;
 				MoveCurrentCell (currentCell != null ? currentCell.ColumnIndex : 0, nextRowIndex, 
 						 true, false, false, true);
+				if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
+					hover_cell = null;
 			}
 
 			Invalidate ();
