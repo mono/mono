@@ -1,3 +1,10 @@
+2009-01-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	Avoid some MonoType allocations
+	* reflection.c (mono_reflection_initialize_generic_parameter):
+	Reuse MonoType from param->pklass rather than allocating one.
+	(mono_dynamic_image_free): Update to changes.
+
 2009-01-28  Raja R Harinath  <harinath@hurrynot.org>
 
 	Rearrange some code to improve consistency
