@@ -1,3 +1,8 @@
+2009-01-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Reset the hover cell if it gets moved due to row(s) 
+	addition or removal. Fixes multiple crashes in OnMouseMove.
+
 2009-01-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fix a NRE when setting the CurrentCell to null.
