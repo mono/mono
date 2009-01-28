@@ -1,3 +1,12 @@
+2009-01-28  Raja R Harinath  <harinath@hurrynot.org>
+
+	Avoid some allocations
+	* class-internals.h (_MonoGenericInst::type_argv): Convert from
+	pointer to tail array to avoid extra allocation.
+	* metadata.c (free_generic_inst): Update to changes.
+	(mono_metadata_get_generic_inst): Likewise.  Use alloca instead of
+	on-stack struct.
+
 2009-01-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Type_EqualsInternal): For user-defined types,
