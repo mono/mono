@@ -16,18 +16,13 @@ namespace CorCompare {
 			if (typeref == null)
 				throw new ArgumentNullException ("typeref");
 
-			TypeDefinition td = Resolve (typeref);
+			TypeDefinition td = typeref.Resolve ();
 			return td.IsPublic;
 		}
 
 		internal static bool IsDelegate (TypeReference typeref)
 		{
 			return IsDerivedFrom (typeref, "System.MulticastDelegate");
-		}
-
-		static TypeDefinition Resolve (TypeReference reference)
-		{
-			return Resolver.Resolve (reference);
 		}
 
 		internal static bool IsDerivedFrom (TypeReference type, string derivedFrom)
@@ -41,7 +36,7 @@ namespace CorCompare {
 
 		internal static IEnumerable<TypeDefinition> WalkHierarchy (TypeReference type)
 		{
-			for (var def = Resolve (type); def != null; def = GetBaseType (def))
+			for (var def = type.Resolve (); def != null; def = GetBaseType (def))
 				yield return def;
 		}
 
@@ -61,7 +56,7 @@ namespace CorCompare {
 			if (child.BaseType == null)
 				return null;
 
-			return Resolve (child.BaseType);
+			return child.BaseType.Resolve ();
 		}
 
 		internal static bool IsPublic (CustomAttribute att)
@@ -76,7 +71,7 @@ namespace CorCompare {
 
 		internal static TypeDefinition GetTypeDefinition (CustomAttribute att)
 		{
-			return Resolve (att.Constructor.DeclaringType);
+			return att.Constructor.DeclaringType.Resolve ();
 		}
 	}
 }

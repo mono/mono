@@ -966,7 +966,7 @@ namespace CorCompare
 
 			PopulateMapping (mapping, attribute);
 
-			var constructor = TypeHelper.Resolver.Resolve (attribute.Constructor);
+			var constructor = attribute.Constructor.Resolve ();
 			if (constructor == null || constructor.Parameters.Count == 0)
 				return mapping;
 
@@ -1070,7 +1070,7 @@ namespace CorCompare
 
 		static object GetArgumentValue (TypeReference reference, object value)
 		{
-			var type = TypeHelper.Resolver.Resolve (reference);
+			var type = reference.Resolve ();
 			if (type == null)
 				return value;
 
