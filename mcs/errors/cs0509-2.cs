@@ -1,4 +1,4 @@
-// cs0509-2.cs: `InstanceClass': cannot derive from sealed class `E'
+// CS0509: `InstanceClass': cannot derive from sealed type `E'
 // Line: 6
 
 public enum E {}

@@ -1,5 +1,6 @@
-// cs0509.cs: `X': cannot derive from sealed class `V'
-// Line: 7
+// CS0509: `X': cannot derive from sealed type `V'
+// Line: 8
+
 struct V {
 	int v;
 }
