@@ -149,6 +149,9 @@ namespace System.Web {
 		
 		Hashtable GetApplicationTypeEvents (Type type)
 		{
+			if (app_event_handlers != null)
+					return app_event_handlers;
+			
 			lock (this_lock) {
 				if (app_event_handlers != null)
 					return app_event_handlers;
@@ -179,6 +182,9 @@ namespace System.Web {
 
 		Hashtable GetApplicationTypeEvents (HttpApplication app)
 		{
+			if (app_event_handlers != null)
+				return app_event_handlers;
+			
 			lock (this_lock) {
 				if (app_event_handlers != null)
 					return app_event_handlers;
@@ -393,6 +399,9 @@ namespace System.Web {
 		
 		void InitType (HttpContext context)
 		{
+			if (!needs_init)
+				return;
+			
 			lock (this_lock) {
 				if (!needs_init)
 					return;
