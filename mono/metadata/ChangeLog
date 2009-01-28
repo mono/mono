@@ -1,3 +1,9 @@
+2009-01-28  Raja R Harinath  <harinath@hurrynot.org>
+
+	Rearrange some code to improve consistency
+	* reflection.c (mono_reflection_setup_generic_class): Move body ...
+	(mono_reflection_initialize_generic_parameter): ... here.
+
 2009-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* generic-sharing.c (has_constraints): Enable gshared for methods/classes
