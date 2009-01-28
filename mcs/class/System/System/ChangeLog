@@ -1,3 +1,10 @@
+2009-01-28  Bill Holmes  <billholmes54@gmail.com>
+
+	* Uri.cs (IsWellFormedUriString):  Changing IsWellFormedUriString
+	  to not throw an exception but return false instead. 
+
+	Contributed under MIT/X11 license.
+
 2009-15-01  Leeszek Ciesielski <skolima@gmail.com>
 
 	* Uri.cs: Use registered UriParser when a custom schema is passed
