@@ -2810,7 +2810,7 @@ namespace Mono.CSharp {
 						Report.Error (709, Location, "`{0}': Cannot derive from static class `{1}'",
 							GetSignatureForError (), TypeManager.CSharpName (base_class.Type));
 					} else {
-						Report.Error (509, Location, "`{0}': cannot derive from sealed class `{1}'",
+						Report.Error (509, Location, "`{0}': cannot derive from sealed type `{1}'",
 							GetSignatureForError (), TypeManager.CSharpName (base_class.Type));
 					}
 					return ifaces;
