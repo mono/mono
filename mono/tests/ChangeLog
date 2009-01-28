@@ -1,3 +1,8 @@
+2009-01-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-marshalbyref.2.cs: Also do the test for a class without type
+	constraints.
+
 2009-01-27  Mark Probst  <mark.probst@gmail.com>
 
 	* bug469742.2.il: New test.
