@@ -1992,8 +1992,18 @@ namespace System {
 		{
 			if (uriString == null)
 				return false;
-			Uri uri = new Uri (uriString, uriKind);
-			return uri.IsWellFormedOriginalString ();
+
+			if (uriKind != UriKind.RelativeOrAbsolute &&
+				uriKind != UriKind.Absolute &&
+				uriKind != UriKind.Relative) {
+				string msg = Locale.GetText ("Invalid UriKind value '{0}'.", uriKind);
+                                throw new ArgumentException ("uriKind", msg);
+			}
+
+			Uri uri;
+			if (Uri.TryCreate (uriString, uriKind, out uri))
+				return uri.IsWellFormedOriginalString ();
+			return false;
 		}
 
 		public static bool TryCreate (string uriString, UriKind uriKind, out Uri result)
