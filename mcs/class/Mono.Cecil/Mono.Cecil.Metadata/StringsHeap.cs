@@ -54,18 +54,21 @@ namespace Mono.Cecil.Metadata {
 
 		string ReadStringAt (uint index)
 		{
-			if (index > Data.Length - 1)
+			byte [] data = this.Data;
+			int heap_length = data.Length;
+
+			if (index > heap_length - 1)
 				return string.Empty;
 
 			int length = 0;
-			for (int i = (int) index; i < Data.Length; i++) {
-				if (Data [i] == 0)
+			for (int i = (int) index; i < heap_length; i++) {
+				if (data [i] == 0)
 					break;
 
 				length++;
 			}
 
-			return Encoding.UTF8.GetString (Data, (int) index, length);
+			return Encoding.UTF8.GetString (data, (int) index, length);
 		}
 
 		public override void Accept (IMetadataVisitor visitor)
