@@ -162,6 +162,7 @@ namespace Microsoft.Build.BuildEngine {
 					       string itemName)
 		{
 			BuildItemGroup newItems = ChangeType.ToBuildItemGroup (o, propertyInfo.PropertyType, itemName);
+			newItems.ParentProject = parentProject;
 			
 			if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
 				BuildItemGroup big = parentProject.EvaluatedItemsByName [itemName];

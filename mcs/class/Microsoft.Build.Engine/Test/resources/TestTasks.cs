@@ -193,5 +193,13 @@ public class BatchingTestTask : Task
 	{
 		get { return strings; }
 	}
+
+	[Output]
+	public ITaskItem [] TaskItemsOutput
+	{
+		get { return sources; }
+		set { sources = value; }
+	}
+
 }
 

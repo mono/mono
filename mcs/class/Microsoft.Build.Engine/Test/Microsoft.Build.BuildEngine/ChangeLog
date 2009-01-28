@@ -1,3 +1,7 @@
+2009-01-29  Ankit Jain  <jankit@novell.com>
+
+	* BuildItemTest.cs (TestBuildItemTransform): New.
+
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestInitialTargets): New.

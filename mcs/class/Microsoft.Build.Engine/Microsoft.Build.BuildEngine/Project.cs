@@ -319,7 +319,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedItemsByName.ContainsKey (itemName))
 				return evaluatedItemsByName [itemName];
 			else
-				return new BuildItemGroup ();
+				return new BuildItemGroup (this);
 		}
 
 		public BuildItemGroup GetEvaluatedItemsByNameIgnoringCondition (string itemName)
@@ -332,7 +332,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedItemsByNameIgnoringCondition.ContainsKey (itemName))
 				return evaluatedItemsByNameIgnoringCondition [itemName];
 			else
-				return new BuildItemGroup ();
+				return new BuildItemGroup (this);
 		}
 
 		public string GetEvaluatedProperty (string propertyName)
@@ -426,7 +426,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (itemToRemove == null)
 				throw new ArgumentNullException ("itemToRemove");
 
-			if (!itemToRemove.FromXml && !itemToRemove.HasParent)
+			if (!itemToRemove.FromXml && !itemToRemove.HasParentItem)
 				throw new InvalidOperationException ("The object passed in is not part of the project.");
 
 			BuildItemGroup big = itemToRemove.ParentItemGroup;

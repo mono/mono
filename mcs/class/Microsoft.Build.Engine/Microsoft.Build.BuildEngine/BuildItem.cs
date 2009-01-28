@@ -41,7 +41,7 @@ using Mono.XBuild.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	public class BuildItem {
 
-		BuildItemGroup	child_items;
+		List<BuildItem> child_items;
 		XmlElement	itemElement;
 		string		finalItemSpec;
 		bool		isImported;
@@ -82,10 +82,10 @@ namespace Microsoft.Build.BuildEngine {
 			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
-		
+
 		internal BuildItem (XmlElement itemElement, BuildItemGroup parentItemGroup)
 		{
-			child_items = new BuildItemGroup ();
+			child_items = new List<BuildItem> ();
 			isImported = parentItemGroup.IsImported;
 			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
@@ -102,7 +102,7 @@ namespace Microsoft.Build.BuildEngine {
 			isImported = parent.isImported;
 			name = parent.Name;
 			parent_item = parent;
-			parent_item.child_items.AddItem (this);
+			parent_item.child_items.Add (this);
 			parent_item_group = parent.parent_item_group;
 			unevaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.unevaluatedMetadata);
 			evaluatedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable (parent.evaluatedMetadata);
@@ -169,7 +169,7 @@ namespace Microsoft.Build.BuildEngine {
 					XmlNode node = itemElement [metadataName];
 					itemElement.RemoveChild (node);
 				}
-			} else if (HasParent) {
+			} else if (HasParentItem) {
 				if (parent_item.child_items.Count > 1)
 					SplitParentItem ();
 				parent_item.RemoveMetadata (metadataName);
@@ -198,7 +198,7 @@ namespace Microsoft.Build.BuildEngine {
 				throw new ArgumentException (String.Format ("\"{0}\" is a reserved item meta-data, and cannot be modified or deleted.",
 					metadataName));
 
-			if (treatMetadataValueAsLiteral && !HasParent)
+			if (treatMetadataValueAsLiteral && !HasParentItem)
 				metadataValue = Utilities.Escape (metadataValue);
 
 			if (FromXml) {
@@ -209,12 +209,12 @@ namespace Microsoft.Build.BuildEngine {
 					itemElement.AppendChild (element);
 				} else
 					element.InnerText = metadataValue;
-			} else if (HasParent) {
+			} else if (HasParentItem) {
 				if (parent_item.child_items.Count > 1)
 					SplitParentItem ();
 				parent_item.SetMetadata (metadataName, metadataValue, treatMetadataValueAsLiteral);
 			}
-			if (FromXml || HasParent) {
+			if (FromXml || HasParentItem) {
 				parent_item_group.ParentProject.MarkProjectAsDirty ();
 				parent_item_group.ParentProject.NeedToReevaluate ();
 			}
@@ -330,7 +330,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			if (FromXml)
 				itemElement.ParentNode.RemoveChild (itemElement);
-			else if (HasParent) {
+			else if (HasParentItem) {
 				if (parent_item.child_items.Count > 1)
 					SplitParentItem ();
 				parent_item.Detach ();
@@ -388,7 +388,7 @@ namespace Microsoft.Build.BuildEngine {
 			parent.itemElement.ParentNode.InsertAfter (newElement, insertAfter);
 
 			newParent = new BuildItem (newElement, parent.parent_item_group);
-			newParent.child_items.AddItem (child);
+			newParent.child_items.Add (child);
 			child.parent_item = newParent;
 
 			return newParent;
@@ -404,7 +404,7 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				if (FromXml)
 					itemElement.SetAttribute ("Condition", value);
-				else if (!HasParent)
+				else if (!HasParentItem)
 					throw new InvalidOperationException ("Cannot set a condition on an object not represented by an XML element in the project file.");
 			}
 		}
@@ -432,7 +432,7 @@ namespace Microsoft.Build.BuildEngine {
 			get {
 				if (FromXml)
 					return itemElement.GetAttribute ("Include");
-				else if (HasParent)
+				else if (HasParentItem)
 					return parent_item.Include;
 				else
 					return itemInclude;
@@ -440,7 +440,7 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				if (FromXml)
 					itemElement.SetAttribute ("Include", value);
-				else if (HasParent) {
+				else if (HasParentItem) {
 					if (parent_item.child_items.Count > 1)
 						SplitParentItem ();
 					parent_item.Include = value;
@@ -457,7 +457,7 @@ namespace Microsoft.Build.BuildEngine {
 			get {
 				if (FromXml)
 					return itemElement.Name;
-				else if (HasParent)
+				else if (HasParentItem)
 					return parent_item.Name;
 				else
 					return name;
@@ -471,7 +471,7 @@ namespace Microsoft.Build.BuildEngine {
 						newElement.AppendChild (xe.Clone ());
 					itemElement.ParentNode.ReplaceChild (newElement, itemElement);
 					itemElement = newElement;
-				} else if (HasParent) {
+				} else if (HasParentItem) {
 					if (parent_item.child_items.Count > 1)
 						SplitParentItem ();
 					parent_item.Name = value;
@@ -484,7 +484,7 @@ namespace Microsoft.Build.BuildEngine {
 			get { return itemElement != null; }
 		}
 		
-		internal bool HasParent {
+		internal bool HasParentItem {
 			get { return parent_item != null; }
 		}
 
@@ -494,6 +494,7 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal BuildItemGroup ParentItemGroup {
 			get { return parent_item_group; }
+			set { parent_item_group = value; }
 		}
 	}
 }

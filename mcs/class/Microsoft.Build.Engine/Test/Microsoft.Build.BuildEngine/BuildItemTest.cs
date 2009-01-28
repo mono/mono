@@ -802,5 +802,50 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.ItemGroups.CopyTo (groups, 0);
 			Assert.AreEqual (1, groups [0].Count, "A3");
 		}
+
+		[Test]
+		public void TestBuildItemTransform ()
+		{
+			string projectText = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+
+				<ItemGroup>
+					<Foo Include='abc'/>
+					<Foo Include='def'/>
+				</ItemGroup>
+				<PropertyGroup>
+					<FooProp>PropValue/</FooProp>
+				</PropertyGroup>
+
+				<Target Name=""main"">
+					<CreateItem Include=""@(Foo)"">
+						<Output TaskParameter =""Include"" ItemName=""SyntheticFoo""/>
+					</CreateItem>
+
+					<BatchingTestTask
+						TaskItemsOutput=""@(SyntheticFoo->'$(FooProp)%(Identity).txt')"">
+						<Output TaskParameter='TaskItemsOutput' ItemName='I0' />
+					</BatchingTestTask>
+				</Target>
+			</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+			Project project = engine.CreateNewProject ();
+			project.LoadXml (projectText);
+
+			bool result = project.Build ("main");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			BuildItemGroup grp = project.GetEvaluatedItemsByName ("I0");
+			Assert.AreEqual (2, grp.Count, "A1");
+			Assert.AreEqual ("PropValue/abc.txt", grp [0].FinalItemSpec, "A2");
+			Assert.AreEqual ("PropValue/def.txt", grp [1].FinalItemSpec, "A3");
+		}
 	}
 }
