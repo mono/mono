@@ -1,10 +1,12 @@
-// Compiler options: /target:library
-
 using System;
 
 public abstract class ConfigurationElement
 {
 	protected ConfigurationElement ()
+	{
+	}
+	
+	public static void Main ()
 	{
 	}
 }

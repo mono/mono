@@ -9360,6 +9360,31 @@
       </method>
     </type>
   </test>
+  <test name="gtest-344.cs">
+    <type name="ConfigurationElement">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="CustomConfigurationElement">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="CustomConfigurationElementCollection">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseCollection`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-345.cs">
     <type name="ShiftReduceParser`2[TokenValueType,TokenLocationType]">
       <method name="Void .ctor()">
