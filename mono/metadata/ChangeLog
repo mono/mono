@@ -1,5 +1,8 @@
 2009-01-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* generic-sharing.c (has_constraints): Enable gshared for methods/classes
+	with type constraints as an experiment.
+
 	* boehm-gc.c (on_gc_notification): Update mono_stats.
 
 2009-01-28  Raja R Harinath  <harinath@hurrynot.org>
