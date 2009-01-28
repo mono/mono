@@ -1828,25 +1828,22 @@ namespace System.Windows.Forms {
 
 			bool vert = false;
 			bool horz = false;
-			int height = -1;
+			int height = 0;
 			int width = -1;
 
+			int item_height = ActualItemHeight;
 			if (scrollable) {
 				OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
 				
 				while (walk.MoveNext ()) {
 					int r = walk.CurrentNode.Bounds.Right;
-					int b = walk.CurrentNode.Bounds.Bottom;
-
 					if (r > width)
 						width = r;
-					if (b > height)
-						height = b;
+
+					height += item_height;
 				}
 
-				// Remove scroll adjustments
-				if (nodes.Count > 0)
-					height -= nodes [0].Bounds.Top;
+				height -= item_height; // root_node adjustment
 				width += hbar_offset;
 
 				if (height > ClientRectangle.Height) {
@@ -1892,6 +1889,7 @@ namespace System.Windows.Forms {
 				skipped_nodes = 0;
 				RecalculateVisibleOrder (root_node);
 				vbar.Visible = false;
+				vbar.Value = 0;
 				vbar_bounds_set = false;
 			}
 
@@ -1944,6 +1942,9 @@ namespace System.Windows.Forms {
 
 		private void SetVScrollPos (int pos, TreeNode new_top)
 		{
+			if (!vbar.VisibleInternal)
+				return;
+
 			if (pos < 0)
 				pos = 0;
 
