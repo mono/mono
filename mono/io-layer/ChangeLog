@@ -1,3 +1,11 @@
+2009-01-16  Miguel de Icaza  <miguel@novell.com>
+
+	* sockets.c (WSASend): Fix memory leak, and optimize for the case
+	with 1 segment. 
+
+	This should really use writev or sendmsg to use the kernel
+	scatter/gather facility instead of emulating it by copying buffers.
+
 2009-01-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* critical-sections.h (Enter/LeaveCriticalSection): Show
