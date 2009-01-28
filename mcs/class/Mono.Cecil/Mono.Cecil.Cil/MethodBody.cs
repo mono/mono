@@ -114,7 +114,7 @@ namespace Mono.Cecil.Cil {
 			get {
 				if (m_scopes == null)
 					m_scopes = new ScopeCollection (this);
-				return m_scopes; 
+				return m_scopes;
 			}
 		}
 
