@@ -43,7 +43,7 @@ namespace Mono.Cecil {
 			}
 		}
 
-		public bool HasGenericArguments { 
+		public bool HasGenericArguments {
 			get { return m_genArgs == null ? false : m_genArgs.Count > 0; }
 		}
 
