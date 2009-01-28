@@ -59,6 +59,7 @@ namespace Mono.Cecil {
 
 		ImageReader m_imgReader;
 		ReflectionController m_controller;
+		MetadataResolver m_resolver;
 		SecurityDeclarationReader m_secReader;
 
 		public Guid Mvid {
@@ -125,6 +126,10 @@ namespace Mono.Cecil {
 			get { return m_controller; }
 		}
 
+		internal MetadataResolver Resolver {
+			get { return m_resolver; }
+		}
+
 		internal ImageReader ImageReader {
 			get { return m_imgReader; }
 		}
@@ -174,6 +179,7 @@ namespace Mono.Cecil {
 			m_members = new MemberReferenceCollection (this);
 
 			m_controller = new ReflectionController (this);
+			m_resolver = new MetadataResolver (asm);
 		}
 
 		public IMetadataTokenProvider LookupByToken (MetadataToken token)

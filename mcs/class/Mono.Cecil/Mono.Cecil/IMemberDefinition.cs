@@ -30,6 +30,7 @@ namespace Mono.Cecil {
 
 	public interface IMemberDefinition : IMemberReference, ICustomAttributeProvider {
 
+		new TypeDefinition DeclaringType { get; set; }
 		bool IsSpecialName { get; set; }
 		bool IsRuntimeSpecialName { get; set; }
 	}

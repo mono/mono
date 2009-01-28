@@ -1,3 +1,30 @@
+2009-01-28  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/MetadataResolver.cs:
+		Add new MetadataResolver.
+
+	* Mono.Cecil/GenericParameter.cs
+	  Mono.Cecil/FieldDefinition.cs
+	  Mono.Cecil/TypeReference.cs
+	  Mono.Cecil/GenericInstanceMethod.cs
+	  Mono.Cecil/IMemberDefinition.cs
+	  Mono.Cecil/TypeDefinition.cs
+	  Mono.Cecil/PropertyReference.cs
+	  Mono.Cecil/EventReference.cs
+	  Mono.Cecil/MethodDefinition.cs
+	  Mono.Cecil/EventDefinition.cs
+	  Mono.Cecil/ModuleDefinition.cs
+	  Mono.Cecil/MethodReference.cs
+	  Mono.Cecil/FieldReference.cs
+	  Mono.Cecil/ParameterDefinition.cs
+	  Mono.Cecil/PropertyDefinition.cs
+	  Mono.Cecil/ParameterReference.cs
+	  Mono.Cecil.Cil/VariableReference.cs
+	  Mono.Cecil.Cil/VariableDefinition.cs:
+		Add Resolve to Definition methods on References.
+
+	* Mono.Cecil.dll.sources, Mono.Cecil.csproj: add MetadataResolver.cs
+
 2009-01-05  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionHelper.cs

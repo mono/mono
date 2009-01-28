@@ -107,6 +107,15 @@ namespace Mono.Cecil {
 			this.ReturnType.ReturnType = returnType;
 		}
 
+		public virtual MethodDefinition Resolve ()
+		{
+			TypeReference declaringType = DeclaringType;
+			if (declaringType == null)
+				return null;
+
+			return declaringType.Module.Resolver.Resolve (this);
+		}
+
 		public virtual MethodReference GetOriginalMethod ()
 		{
 			return this;

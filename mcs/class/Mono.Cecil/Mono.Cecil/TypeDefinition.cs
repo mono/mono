@@ -451,6 +451,11 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public new TypeDefinition DeclaringType {
+			get { return (TypeDefinition) base.DeclaringType; }
+			set { base.DeclaringType = value; }
+		}
+
 		internal TypeDefinition (string name, string ns, TypeAttributes attrs) :
 			base (name, ns)
 		{
@@ -463,6 +468,11 @@ namespace Mono.Cecil {
 			this (name, ns, attributes)
 		{
 			this.BaseType = baseType;
+		}
+
+		public override TypeDefinition Resolve ()
+		{
+			return this;
 		}
 
 		public TypeDefinition Clone ()

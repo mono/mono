@@ -50,6 +50,15 @@ namespace Mono.Cecil {
 			this.DeclaringType = declaringType;
 		}
 
+		public virtual FieldDefinition Resolve ()
+		{
+			TypeReference declaringType = DeclaringType;
+			if (declaringType == null)
+				return null;
+
+			return declaringType.Module.Resolver.Resolve (this);
+		}
+
 		public override string ToString ()
 		{
 			return string.Concat (m_fieldType.FullName, " ", base.ToString ());

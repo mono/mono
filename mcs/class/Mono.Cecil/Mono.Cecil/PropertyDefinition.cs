@@ -159,9 +159,19 @@ namespace Mono.Cecil {
 
 		#endregion
 
+		public new TypeDefinition DeclaringType {
+			get { return (TypeDefinition) base.DeclaringType; }
+			set { base.DeclaringType = value; }
+		}
+
 		public PropertyDefinition (string name, TypeReference propertyType, PropertyAttributes attrs) : base (name, propertyType)
 		{
 			m_attributes = attrs;
+		}
+
+		public override PropertyDefinition Resolve ()
+		{
+			return this;
 		}
 
 		public static MethodDefinition CreateGetMethod (PropertyDefinition prop)

@@ -42,6 +42,8 @@ namespace Mono.Cecil {
 			m_eventType = eventType;
 		}
 
+		public abstract EventDefinition Resolve ();
+
 		public override string ToString ()
 		{
 			return string.Concat (m_eventType.FullName, " ", base.ToString ());

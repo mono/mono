@@ -43,8 +43,6 @@ namespace Mono.Cecil {
 		SecurityDeclarationCollection m_secDecls;
 		CustomAttributeCollection m_customAttrs;
 
-		ModuleDefinition m_module;
-
 		MethodBody m_body;
 		RVA m_rva;
 		OverrideCollection m_overrides;
@@ -64,16 +62,6 @@ namespace Mono.Cecil {
 		public MethodSemanticsAttributes SemanticsAttributes {
 			get { return m_semAttrs; }
 			set { m_semAttrs = value; }
-		}
-
-		public override TypeReference DeclaringType {
-			get { return base.DeclaringType; }
-			set {
-				base.DeclaringType = value;
-				TypeDefinition t = value as TypeDefinition;
-				if (t != null)
-					m_module = t.Module;
-			}
 		}
 
 		public bool HasSecurityDeclarations {
@@ -540,6 +528,11 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public new TypeDefinition DeclaringType {
+			get { return (TypeDefinition) base.DeclaringType; }
+			set { base.DeclaringType = value; }
+		}
+
 		public MethodDefinition (string name, RVA rva,
 			MethodAttributes attrs, MethodImplAttributes implAttrs,
 			bool hasThis, bool explicitThis, MethodCallingConvention callConv) :
@@ -572,9 +565,17 @@ namespace Mono.Cecil {
 		{
 			if (m_body == null && this.HasBody) {
 				m_body = new MethodBody (this);
-				if (m_module != null && m_rva != RVA.Zero)
-					m_module.Controller.Reader.Code.VisitMethodBody (m_body);
+
+				ModuleDefinition module = DeclaringType != null ? DeclaringType.Module : null;
+
+				if (module != null && m_rva != RVA.Zero)
+					module.Controller.Reader.Code.VisitMethodBody (m_body);
 			}
+		}
+
+		public override MethodDefinition Resolve ()
+		{
+			return this;
 		}
 
 		public MethodDefinition Clone ()

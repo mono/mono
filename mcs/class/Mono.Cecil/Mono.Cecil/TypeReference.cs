@@ -138,6 +138,15 @@ namespace Mono.Cecil {
 			m_isValueType = valueType;
 		}
 
+		public virtual TypeDefinition Resolve ()
+		{
+			ModuleDefinition module = Module;
+			if (module == null)
+				return null;
+
+			return module.Resolver.Resolve (this);
+		}
+
 		public virtual TypeReference GetOriginalType ()
 		{
 			return this;

@@ -75,6 +75,8 @@ namespace Mono.Cecil {
 			m_paramType = parameterType;
 		}
 
+		public abstract ParameterDefinition Resolve ();
+
 		public override string ToString ()
 		{
 			if (m_name != null && m_name.Length > 0)

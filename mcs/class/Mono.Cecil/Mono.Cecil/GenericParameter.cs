@@ -181,6 +181,11 @@ namespace Mono.Cecil {
 			m_owner = owner;
 		}
 
+		public override TypeDefinition Resolve ()
+		{
+			return null;
+		}
+
 		internal static void CloneInto (IGenericParameterProvider old, IGenericParameterProvider np, ImportContext context)
 		{
 			foreach (GenericParameter gp in old.GenericParameters) {

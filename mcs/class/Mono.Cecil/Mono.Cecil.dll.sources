@@ -73,6 +73,7 @@
 ./Mono.Cecil/MarshalSpec.cs
 ./Mono.Cecil/MemberReference.cs
 ./Mono.Cecil/MemberReferenceCollection.cs
+./Mono.Cecil/MetadataResolver.cs
 ./Mono.Cecil/MethodAttributes.cs
 ./Mono.Cecil/MethodCallingConvention.cs
 ./Mono.Cecil/MethodDefinition.cs

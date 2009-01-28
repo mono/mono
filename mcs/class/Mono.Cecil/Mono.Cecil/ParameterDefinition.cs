@@ -156,6 +156,11 @@ namespace Mono.Cecil {
 		{
 		}
 
+		public override ParameterDefinition Resolve ()
+		{
+			return this;
+		}
+
 		public ParameterDefinition (string name, int seq, ParameterAttributes attrs, TypeReference paramType) : base (name, seq, paramType)
 		{
 			m_attributes = attrs;
