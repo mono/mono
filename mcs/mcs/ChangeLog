@@ -1,5 +1,10 @@
 2009-01-28  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #470227
+	* cs-tokenizer.cs: Remove too agressive parser optimization.
+
+2009-01-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #324319
 	* class.cs: Remove too early base type resolve.
 
