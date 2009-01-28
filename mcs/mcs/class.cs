@@ -1145,12 +1145,6 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoResolveType ()
 		{
-			if ((base_type != null) &&
-			    (base_type.ResolveAsTypeTerminal (this, false) == null)) {
-				error = true;
-				return false;
-			}
-
 			if (!IsGeneric)
 				return true;
 
