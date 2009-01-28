@@ -1,3 +1,7 @@
+2009-01-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (print_jit_stats): Print out major gc count/time for libgc too.
+
 2009-01-27  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (emit_stloc_ir): Only apply the reg-reg move
