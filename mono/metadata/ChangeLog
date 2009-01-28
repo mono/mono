@@ -1,3 +1,8 @@
+2009-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_print_stack_frame): Print the IL offset even when
+	there is no line number info.
+
 2009-01-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	Avoid some MonoType allocations
