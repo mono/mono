@@ -1,3 +1,10 @@
+2009-01-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: We should use utf8 handling clipboard transference
+	with other x11 applications, and use utf16 when handling clipboard
+	data in the class library. Update the related points as well.
+	Fixes #468683.
+
 2009-01-28  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCell.cs: Format strings according to the supplied 
