@@ -1,3 +1,7 @@
+2009-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (compile_method): Make a copy of cfg->locals to fix the build.
+
 2009-01-29  Miguel de Icaza  <miguel@novell.com>
 
 	* mini-darwin.c, mini-windows.c, mini-posix.c: Commit the first
