@@ -145,25 +145,18 @@ namespace MonoTests.System.Data.SqlClient
 		[Test] // bug #341743
 		public void Dispose_Connection_Disposed ()
 		{
-			IDbConnection conn = ConnectionManager.Singleton.Connection;
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
 
-			IDbCommand cmd = null;
-			try {
-				cmd = conn.CreateCommand ();
-				cmd.CommandText = "SELECT 'a'";
-				cmd.ExecuteNonQuery ();
+			cmd = conn.CreateCommand ();
+			cmd.CommandText = "SELECT 'a'";
+			cmd.ExecuteNonQuery ();
 
-				conn.Dispose ();
+			conn.Dispose ();
 
-				Assert.AreSame (conn, cmd.Connection, "#1");
-				cmd.Dispose ();
-				Assert.AreSame (conn, cmd.Connection, "#2");
-			} finally {
-				if (cmd != null)
-					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
-			}
+			Assert.AreSame (conn, cmd.Connection, "#1");
+			cmd.Dispose ();
+			Assert.AreSame (conn, cmd.Connection, "#2");
 		}
 
 		[Test]
@@ -199,7 +192,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ((byte) 15, ex.Class, "#B3");
 				Assert.IsNull (ex.InnerException, "#B4");
 				Assert.IsNotNull (ex.Message, "#B5");
-				Assert.IsTrue (ex.Message.IndexOf ("'from'") != -1, "#B6");
+				Assert.IsTrue (ex.Message.IndexOf ("'from'") != -1, "#B6:"+ ex.Message);
 				Assert.AreEqual (156, ex.Number, "#B7");
 				Assert.AreEqual ((byte) 1, ex.State, "#B8");
 			}
@@ -269,6 +262,67 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
+		public void ExecuteScalar_CommandText_Empty ()
+		{
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
+			cmd = conn.CreateCommand ();
+
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#A1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteScalar: CommandText property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar"), "#A5:" + ex.Message);
+#else
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#A5:" + ex.Message);
+#endif
+			}
+
+			cmd.CommandText = string.Empty;
+
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#B1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteScalar: CommandText property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#B2");
+				Assert.IsNull (ex.InnerException, "#B3");
+				Assert.IsNotNull (ex.Message, "#B4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar"), "#B5:" + ex.Message);
+#else
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#B5:" + ex.Message);
+#endif
+			}
+
+			cmd.CommandText = null;
+
+			try {
+				cmd.ExecuteScalar ();
+				Assert.Fail ("#C1");
+			} catch (InvalidOperationException ex) {
+				// ExecuteScalar: CommandText property
+				// has not been initialized
+				Assert.AreEqual (typeof (InvalidOperationException), ex.GetType (), "#C2");
+				Assert.IsNull (ex.InnerException, "#C3");
+				Assert.IsNotNull (ex.Message, "#C4");
+#if NET_2_0
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteScalar"), "#C5:" + ex.Message);
+#else
+				Assert.IsTrue (ex.Message.StartsWith ("ExecuteReader"), "#C5:" + ex.Message);
+#endif
+			}
+		}
+
+		[Test]
 		public void ExecuteScalar_Connection_PendingTransaction ()
 		{
 			conn = new SqlConnection (connectionString);
@@ -315,7 +369,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ((byte) 16, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("'InvalidQuery'") != -1, "#6");
+				Assert.IsTrue (ex.Message.IndexOf ("'InvalidQuery'") != -1, "#6:" + ex.Message);
 				Assert.AreEqual (2812, ex.Number, "#7");
 				Assert.AreEqual ((byte) 62, ex.State, "#8");
 			}
@@ -539,7 +593,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ((byte) 16, ex.Class, "#A3");
 				Assert.IsNull (ex.InnerException, "#A4");
 				Assert.IsNotNull (ex.Message, "#A5");
-				Assert.IsTrue (ex.Message.IndexOf ("'id1'") != -1, "#A6");
+				Assert.IsTrue (ex.Message.IndexOf ("'id1'") != -1, "#A6:" + ex.Message);
 				Assert.AreEqual (207, ex.Number, "#A7");
 				Assert.AreEqual ((byte) 1, ex.State, "#A8");
 			}
@@ -766,7 +820,7 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual ((byte) 16, ex.Class, "#3");
 				Assert.IsNull (ex.InnerException, "#4");
 				Assert.IsNotNull (ex.Message, "#5");
-				Assert.IsTrue (ex.Message.IndexOf ("'InvalidQuery'") != -1, "#6");
+				Assert.IsTrue (ex.Message.IndexOf ("'InvalidQuery'") != -1, "#6:" + ex.Message);
 				Assert.AreEqual (2812, ex.Number, "#7");
 				Assert.AreEqual ((byte) 62, ex.State, "#8");
 			}
@@ -1514,9 +1568,17 @@ namespace MonoTests.System.Data.SqlClient
 				try {
 					cmd.ExecuteNonQuery ();
 					Assert.Fail ("#B1");
-				} catch (SqlException) {
+				} catch (SqlException ex) {
 					// Procedure or Function '#sp_temp_insert_employee'
 					// expects parameter '@fname', which was not supplied
+					Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
+					Assert.AreEqual ((byte) 16, ex.Class, "#B3");
+					Assert.IsNull (ex.InnerException, "#B4");
+					Assert.IsNotNull (ex.Message, "#B5");
+					Assert.IsTrue (ex.Message.IndexOf ("#sp_temp_insert_employee") != -1, "#B6:"+ ex.Message);
+					Assert.IsTrue (ex.Message.IndexOf ("'@fname'") != -1, "#B7:" + ex.Message);
+					Assert.AreEqual (201, ex.Number, "#B8");
+					Assert.AreEqual ((byte) 4, ex.State, "#B9");
 				}
 #endif
 			} finally {
@@ -2406,6 +2468,57 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 			}
+		}
+
+		[Test] // bug #470579
+		public void OutputParamTest ()
+		{
+			SqlParameter newId, id;
+
+			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
+			ConnectionManager.Singleton.OpenConnection ();
+
+			cmd = conn.CreateCommand ();
+			cmd.CommandText = "set @NewId=@Id + 2";
+			cmd.CommandType = CommandType.Text;
+			newId = cmd.Parameters.Add ("@NewId", SqlDbType.Int);
+			newId.Direction = ParameterDirection.Output;
+			id = cmd.Parameters.Add ("@Id", SqlDbType.Int);
+			id.Value = 3;
+			cmd.ExecuteNonQuery ();
+
+			Assert.AreEqual (5, newId.Value, "#A1");
+			Assert.AreEqual (3, id.Value, "#A2");
+
+			cmd = conn.CreateCommand ();
+			cmd.CommandText = "set @NewId=@Id + 2";
+			cmd.CommandType = CommandType.Text;
+			newId = cmd.Parameters.Add ("NewId", SqlDbType.Int);
+			newId.Direction = ParameterDirection.Output;
+			id = cmd.Parameters.Add ("Id", SqlDbType.Int);
+			id.Value = 6;
+#if NET_2_0
+			cmd.ExecuteNonQuery ();
+
+			Assert.AreEqual (8, newId.Value, "#B1");
+			Assert.AreEqual (6, id.Value, "#B2");
+#else
+			try {
+				cmd.ExecuteNonQuery ();
+				Assert.Fail ("#B1");
+			} catch (SqlException ex) {
+				// Incorrect syntax near 'NewId'.
+				// Must declare the scalar variable "@Id"
+				Assert.AreEqual (typeof (SqlException), ex.GetType (), "#B2");
+				Assert.AreEqual ((byte) 15, ex.Class, "#B3");
+				Assert.IsNull (ex.InnerException, "#B4");
+				Assert.IsNotNull (ex.Message, "#B5");
+				Assert.IsTrue (ex.Message.IndexOf ("'NewId'") != -1, "#B6:" + ex.Message);
+				Assert.IsTrue (ex.Message.IndexOf ("\"@Id\"") != -1, "#B7:" + ex.Message);
+				Assert.AreEqual (102, ex.Number, "#B8");
+				Assert.AreEqual ((byte) 1, ex.State, "#B9");
+			}
+#endif
 		}
 
 		[Test]

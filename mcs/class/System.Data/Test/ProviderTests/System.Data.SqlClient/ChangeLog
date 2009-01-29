@@ -1,3 +1,7 @@
+2009-01-29  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SqlCommandTest.cs: Added test for bug #470579.
+
 2009-01-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SqlCommandBuilderTest.cs: Improved DeriveParameters test.
