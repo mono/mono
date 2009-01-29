@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public static string GetMethodDocCommentName (MemberCore mc, Parameters p, DeclSpace ds)
+		public static string GetMethodDocCommentName (MemberCore mc, ParametersCompiled p, DeclSpace ds)
 		{
 			return "";
 		}
