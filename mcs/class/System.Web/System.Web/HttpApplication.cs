@@ -97,7 +97,6 @@ namespace System.Web {
 		// mono's perfcounters use the counter instance parameter for
 		// the process to access shared memory.
 		internal static PerformanceCounter requests_total_counter = new PerformanceCounter ("ASP.NET", "Requests Total");
-		internal static PerformanceCounter execution_time_counter = new PerformanceCounter ("ASP.NET", "Request Execution Time");
 		
 		internal static readonly string [] BinDirs = {"Bin", "bin"};
 		object this_lock = new object();
@@ -105,12 +104,6 @@ namespace System.Web {
 		HttpContext context;
 		HttpSessionState session;
 		ISite isite;
-
-#if NET_2_0
-		Stopwatch execution_time = new Stopwatch ();
-#else
-		DateTime execution_time;
-#endif
 
 		// The source, and the exposed API (cache).
 		HttpModuleCollection modcoll;
@@ -1104,6 +1097,9 @@ namespace System.Web {
 
 			try {
 				OutputPage ();
+			} catch (ThreadAbortException taex) {
+				ProcessError (taex);
+				Thread.ResetAbort ();
 			} catch (Exception e) {
 				Console.WriteLine ("Internal error: OutputPage threw an exception " + e);
 			} finally {
@@ -1127,20 +1123,9 @@ namespace System.Web {
 			else
 				done.Set ();
 
-			int exec_ms;
-
-#if NET_2_0
-			execution_time.Stop ();
-			exec_ms = (int)execution_time.ElapsedMilliseconds;
-#else
-			DateTime stop = DateTime.Now;
-			exec_ms = (int)(stop - execution_time).Milliseconds;
-#endif
-
-			execution_time_counter.RawValue = exec_ms;
 			requests_total_counter.Increment ();
 		}
-		
+
 		class Tim {
 			string name;
 			DateTime start;
@@ -1162,14 +1147,16 @@ namespace System.Web {
 			}
 
 			public void Stop () {
-				Console.Error.WriteLine ("{0}: {1}ms", name, (DateTime.UtcNow - start).TotalMilliseconds);
+				Console.WriteLine ("{0}: {1}ms", name, (DateTime.UtcNow - start).TotalMilliseconds);
 			}
 		}
 
-		Tim tim = new Tim ();
+		Tim tim;
 		[Conditional ("PIPELINE_TIMER")]
 		void StartTimer (string name)
 		{
+			if (tim == null)
+				tim = new Tim ();
 			tim.Name = name;
 			tim.Start ();
 		}
@@ -1186,13 +1173,6 @@ namespace System.Web {
 		//
 		IEnumerator Pipeline ()
 		{
-#if NET_2_0
-			execution_time.Reset ();
-			execution_time.Start ();
-#else
-			execution_time = DateTime.Now;
-#endif
-
 			Delegate eventHandler;
 			if (stop_processing)
 				yield return true;
@@ -1615,7 +1595,7 @@ namespace System.Web {
 				return ret;
 			
 #if NET_2_0
-			HttpHandlersSection	httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
+			HttpHandlersSection httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
 			ret = httpHandlersSection.LocateHandler (verb, url);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
