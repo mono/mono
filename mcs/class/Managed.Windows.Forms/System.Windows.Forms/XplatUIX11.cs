@@ -205,7 +205,8 @@ namespace System.Windows.Forms {
 		private static IntPtr PRIMARY;
 		//private static IntPtr DIB;
 		private static IntPtr OEMTEXT;
-		private static IntPtr UNICODETEXT;
+		private static IntPtr UTF8_STRING;
+		private static IntPtr UTF16_STRING;
 		private static IntPtr RICHTEXTFORMAT;
 		private static IntPtr TARGETS;
 
@@ -619,6 +620,7 @@ namespace System.Windows.Forms {
 				"PRIMARY",
 				"COMPOUND_TEXT",
 				"UTF8_STRING",
+				"UTF16_STRING",
 				"RICHTEXTFORMAT",
 				"TARGETS",
 				"_SWF_AsyncAtom",
@@ -693,7 +695,8 @@ namespace System.Windows.Forms {
 			CLIPBOARD = atoms [off++];
 			PRIMARY = atoms [off++];
 			OEMTEXT = atoms [off++];
-			UNICODETEXT = atoms [off++];
+			UTF8_STRING = atoms [off++];
+			UTF16_STRING = atoms [off++];
 			RICHTEXTFORMAT = atoms [off++];
 			TARGETS = atoms [off++];
 			AsyncAtom = atoms [off++];
@@ -1248,7 +1251,12 @@ namespace System.Windows.Forms {
 					// FIXME - convert pixmap to image
 				} else if (property == OEMTEXT) {
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
-				} else if (property == UNICODETEXT) {
+				} else if (property == UTF8_STRING) {
+					byte [] buffer = new byte [(int)nitems];
+					for (int i = 0; i < (int)nitems; i++)
+						buffer [i] = Marshal.ReadByte (prop, i);
+					Clipboard.Item = Encoding.UTF8.GetString (buffer);
+				} else if (property == UTF16_STRING) {
 					Clipboard.Item = Marshal.PtrToStringUni (prop, Encoding.Unicode.GetMaxCharCount ((int)nitems));
 				} else if (property == RICHTEXTFORMAT)
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
@@ -1703,7 +1711,8 @@ namespace System.Windows.Forms {
 						if (Clipboard.Item is String) {
 							atoms[atom_count++] = (int)Atom.XA_STRING;
 							atoms[atom_count++] = (int)OEMTEXT;
-							atoms[atom_count++] = (int)UNICODETEXT;
+							atoms[atom_count++] = (int)UTF8_STRING;
+							atoms[atom_count++] = (int)UTF16_STRING;
 							atoms[atom_count++] = (int)RICHTEXTFORMAT;
 						} else if (Clipboard.Item is Image) {
 							atoms[atom_count++] = (int)Atom.XA_PIXMAP;
@@ -1737,7 +1746,7 @@ namespace System.Windows.Forms {
 							while (Marshal.ReadByte(buffer, buflen) != 0) {
 								buflen++;
 							}
-						} else if (xevent.SelectionRequestEvent.target == UNICODETEXT) {
+						} else if (xevent.SelectionRequestEvent.target == UTF16_STRING) {
 							Byte [] bytes;
 
 							bytes = Encoding.Unicode.GetBytes ((string)Clipboard.Source);
@@ -2612,7 +2621,7 @@ namespace System.Windows.Forms {
 			//else if (format == "PenData" ) return 10;
 			//else if (format == "RiffAudio" ) return 11;
 			//else if (format == "WaveAudio" ) return 12;
-			else if (format == "UnicodeText" ) return UNICODETEXT.ToInt32();
+			else if (format == "UnicodeText" ) return UTF16_STRING.ToInt32();
 			//else if (format == "EnhancedMetafile" ) return 14;
 			//else if (format == "FileDrop" ) return 15;
 			//else if (format == "Locale" ) return 16;
@@ -4565,7 +4574,7 @@ namespace System.Windows.Forms {
 
 				XGetWindowProperty(DisplayHandle, handle,
 						   _NET_WM_NAME, IntPtr.Zero, new IntPtr (1), false,
-						   UNICODETEXT, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+						   UTF8_STRING, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
 
 				if ((long)nitems > 0 && prop != IntPtr.Zero) {
 					text = Marshal.PtrToStringUni (prop, (int)nitems);
@@ -6018,7 +6027,7 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock) {
-				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_NAME, UNICODETEXT, 8,
+				XChangeProperty(DisplayHandle, hwnd.whole_window, _NET_WM_NAME, UTF8_STRING, 8,
 						PropertyMode.Replace, text, Encoding.UTF8.GetByteCount (text));
 
 				// XXX this has problems with UTF8.
