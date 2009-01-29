@@ -1,7 +1,7 @@
 2009-01-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Tds70.cs: fix for output parameters and '@'.
-	Fixes bug #470120.
+	Fixes bug #470579. Patch from Varadhan.
 
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
