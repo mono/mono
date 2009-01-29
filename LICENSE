@@ -37,8 +37,8 @@ For comments, corrections and updates, please contact mono@novell.com
 
 	We consider non-LGPL use instances where you use this on an
 	embedded system where the end user is not able to upgrade the
-	Moonlight installation or distribution that is part of your
-	product (Section 6 and 7), you would have to obtain a
+	Mono VM or Moonlight installation or distribution that is part
+	of your product (Section 6 and 7), you would have to obtain a
 	commercial license from Novell (consider software burned into
 	a ROM, systems where end users would not be able to upgrade,
 	an embedded console, a game console that imposes limitations
