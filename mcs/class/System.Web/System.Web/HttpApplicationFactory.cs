@@ -87,7 +87,7 @@ namespace System.Web {
 		static string[] app_mono_machine_browsers_files = new string[0];
 #endif
 		Stack available = new Stack ();
-		HttpApplication next_free;
+		object next_free;
 		Stack available_for_end = new Stack ();
 		
 		bool IsEventHandler (MethodInfo m)
@@ -539,7 +539,7 @@ namespace System.Web {
 				}
 			}
 
-			app = Interlocked.Exchange (ref factory.next_free, null);
+			app = (HttpApplication) Interlocked.Exchange (ref factory.next_free, null);
 			if (app != null) {
 				app.RequestCompleted = false;
 				return app;
