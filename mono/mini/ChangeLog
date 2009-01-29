@@ -1,3 +1,7 @@
+2009-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_dwarf_info): Add minimal support for locals.
+
 2009-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Avoid generic sharing for calls made to
