@@ -1,5 +1,10 @@
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-arm.c: Fix warnings.
+
+	* tramp-arm.c aot-compiler.c unwind.h unwind.c: Implement xdebug support for
+	ARM.
+
 	* mini-x86.c: Fix --enable-minimal=jit build.
 
 	* mini.c: Really fix --enable-minimal=jit build.
