@@ -33,6 +33,7 @@ using System.Reflection;
 using System.Web.UI;
 using System.Web.SessionState;
 using System.Web.Configuration;
+using System.Threading;
 
 using System.Web.Compilation;
 #if TARGET_J2EE
@@ -69,9 +70,10 @@ namespace System.Web {
 #else
 		static HttpApplicationFactory theFactory = new HttpApplicationFactory();
 #endif
-		MethodInfo session_end;
+		object session_end; // This is a MethodInfo
 		bool needs_init = true;
 		bool app_start_needed = true;
+		bool have_app_events;
 		Type app_type;
 		HttpApplicationState app_state;
 		Hashtable app_event_handlers;
@@ -85,6 +87,7 @@ namespace System.Web {
 		static string[] app_mono_machine_browsers_files = new string[0];
 #endif
 		Stack available = new Stack ();
+		HttpApplication next_free;
 		Stack available_for_end = new Stack ();
 		
 		bool IsEventHandler (MethodInfo m)
@@ -149,9 +152,9 @@ namespace System.Web {
 		
 		Hashtable GetApplicationTypeEvents (Type type)
 		{
-			if (app_event_handlers != null)
-					return app_event_handlers;
-			
+			if (have_app_events)
+				return app_event_handlers;
+
 			lock (this_lock) {
 				if (app_event_handlers != null)
 					return app_event_handlers;
@@ -175,6 +178,7 @@ namespace System.Web {
 					}
 				}
 				used = null;
+				have_app_events = true;
 			}
 
 			return app_event_handlers;
@@ -182,15 +186,10 @@ namespace System.Web {
 
 		Hashtable GetApplicationTypeEvents (HttpApplication app)
 		{
-			if (app_event_handlers != null)
+			if (have_app_events)
 				return app_event_handlers;
-			
-			lock (this_lock) {
-				if (app_event_handlers != null)
-					return app_event_handlers;
 
-				return GetApplicationTypeEvents (app.GetType ());
-			}
+			return GetApplicationTypeEvents (app.GetType ());
 		}
 
 		bool FireEvent (string method_name, object target, object [] args)
@@ -283,16 +282,13 @@ namespace System.Web {
 
 				string usualName = moduleName + "_" + eventName;
 				object methodData = possibleEvents [usualName];
-				if (methodData != null && eventName == "End" && moduleName == "Session") {
-					lock (factory) {
-						if (factory.session_end == null)
-							factory.session_end = (MethodInfo) methodData;
-					}
-					continue;
-				}
-
 				if (methodData == null)
 					continue;
+
+				if (eventName == "End" && moduleName == "Session") {
+					Interlocked.CompareExchange (ref factory.session_end, methodData, null);
+					continue;
+				}
 
 				if (methodData is MethodInfo) {
 					factory.AddHandler (evt, target, app, (MethodInfo) methodData);
@@ -341,7 +337,7 @@ namespace System.Web {
 			MethodInfo method = null;
 			HttpApplication app = null;
 			lock (factory.available_for_end) {
-				method = factory.session_end;
+				method = (MethodInfo) factory.session_end;
 				if (method == null)
 					return;
 
@@ -399,9 +395,6 @@ namespace System.Web {
 		
 		void InitType (HttpContext context)
 		{
-			if (!needs_init)
-				return;
-			
 			lock (this_lock) {
 				if (!needs_init)
 					return;
@@ -530,7 +523,7 @@ namespace System.Web {
 						foreach (string dir in HttpApplication.BinDirs)
 							WatchLocationForRestart (dir, "*.dll");
 #if NET_2_0
-						// Restart if the App_* directories are created...
+									// Restart if the App_* directories are created...
 			                        WatchLocationForRestart (".", "App_Code");
 			                        WatchLocationForRestart (".", "App_Browsers");
 			                        WatchLocationForRestart (".", "App_GlobalResources");
@@ -546,20 +539,21 @@ namespace System.Web {
 				}
 			}
 
+			app = Interlocked.Exchange (ref factory.next_free, null);
+			if (app != null) {
+				app.RequestCompleted = false;
+				return app;
+			}
+
 			lock (factory.available) {
 				if (factory.available.Count > 0) {
 					app = (HttpApplication) factory.available.Pop ();
 					app.RequestCompleted = false;
-					context.ApplicationInstance = app;
-					app.SetContext (context);
 					return app;
 				}
 			}
 			
-			app = (HttpApplication) Activator.CreateInstance (factory.app_type, true);
-			context.ApplicationInstance = app;
-			app.SetContext (context);
-			return app;
+			return (HttpApplication) Activator.CreateInstance (factory.app_type, true);
 		}
 
 		// The lock is in InvokeSessionEnd
@@ -580,7 +574,7 @@ namespace System.Web {
 			bool dispose = false;
 			HttpApplicationFactory factory = theFactory;
 			lock (factory.available_for_end) {
-				if (factory.available_for_end.Count < 32)
+				if (factory.available_for_end.Count < 64)
 					factory.available_for_end.Push (app);
 				else
 					dispose = true;
@@ -593,13 +587,14 @@ namespace System.Web {
 		{
 			bool dispose = false;
 			HttpApplicationFactory factory = theFactory;
+			if (Interlocked.CompareExchange (ref factory.next_free, app, null) == null)
+				return;
+
 			lock (factory.available) {
-				if (factory.available.Count < 32) {
-					app.SetContext (null);
+				if (factory.available.Count < 64)
 					factory.available.Push (app);
-				} else {
+				else
 					dispose = true;
-				}
 			}
 			if (dispose)
 				app.Dispose ();

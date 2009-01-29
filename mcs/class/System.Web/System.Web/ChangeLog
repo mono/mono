@@ -1,3 +1,9 @@
+2009-01-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpApplicationFactory.cs: fix check that avoids lock. Keep one
+	HttpApplication instance ready to be returned in an instance variable
+	to avoid a few locks.
+
 2009-01-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: optimize lock usage.
