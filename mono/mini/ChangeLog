@@ -1,3 +1,11 @@
+2009-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-arm.c (mono_arm_throw_exception_by_token): New helper function
+	to avoid calling mono_exception_from_token () from the throw trampoline.
+	(mono_arch_get_throw_exception_generic): call throw_exception_by_token
+	for throwing corlib exceptions, this fixes full-aot support for corlib
+	exceptions.
+
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r124456.
