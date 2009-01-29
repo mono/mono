@@ -1,5 +1,7 @@
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Add full-aot support delegate BeginInvoke/EndInvoke.
+
 	* exceptions-arm.c (mono_arm_throw_exception_by_token): New helper function
 	to avoid calling mono_exception_from_token () from the throw trampoline.
 	(mono_arch_get_throw_exception_generic): call throw_exception_by_token
