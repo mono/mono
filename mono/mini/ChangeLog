@@ -1,5 +1,8 @@
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (construct_object_context_for_method): Move this outside
+	the DISABLE_JIT block to fix the --enable-minimal=jit build.
+
 	"Backported" of r124984 from 2.0 branch.
 	
 	* aot-compiler.c aot-runtime.c: Add full-aot support delegate BeginInvoke/EndInvoke.
