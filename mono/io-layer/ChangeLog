@@ -1,5 +1,8 @@
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* shared.c: Fall back to file based shared storage if shm_open () fails
+	because /dev/shm is not mounted.
+	
 	* shared.c: Add an alternative implementation using shared memory instead of
 	files. This fixes problems where the mono process would spin up the disk
 	every x secs on laptops. Fixes #434566, #415373 and #321949.
