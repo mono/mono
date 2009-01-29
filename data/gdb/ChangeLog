@@ -1,0 +1,5 @@
+2009-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py mono-gdbinit: Support files to help debugging mono/mono apps
+	using a python enabled gdb.
+
