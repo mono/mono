@@ -820,7 +820,7 @@ namespace Mono.CSharp {
 		// Returns a string that represents the signature for this 
 		// member which should be used in XML documentation.
 		//
-		public static string GetMethodDocCommentName (MemberCore mc, Parameters parameters, DeclSpace ds)
+		public static string GetMethodDocCommentName (MemberCore mc, ParametersCompiled parameters, DeclSpace ds)
 		{
 			IParameterData [] plist = parameters.FixedParameters;
 			string paramSpec = String.Empty;

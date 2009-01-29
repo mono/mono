@@ -26,7 +26,7 @@ namespace Mono.CSharp {
 	public class Delegate : DeclSpace, IMemberContainer
 	{
  		FullNamedExpression ReturnType;
-		public Parameters      Parameters;
+		public ParametersCompiled      Parameters;
 
 		public ConstructorBuilder ConstructorBuilder;
 		public MethodBuilder      InvokeBuilder;
@@ -55,7 +55,7 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
  		public Delegate (NamespaceEntry ns, DeclSpace parent, FullNamedExpression type,
-				 int mod_flags, MemberName name, Parameters param_list,
+				 int mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
 			: base (ns, parent, name, attrs)
 
@@ -174,7 +174,7 @@ namespace Mono.CSharp {
 				new ParameterData ("method", Parameter.Modifier.NONE)
 			};
 
-			AParametersCollection const_parameters = new ParametersCollection (
+			AParametersCollection const_parameters = new ParametersImported (
 				fixed_pars,
 				new Type[] { TypeManager.object_type, TypeManager.intptr_type });
 			
@@ -260,7 +260,7 @@ namespace Mono.CSharp {
 			//
 			// BeginInvoke
 			//
-			Parameters async_parameters = Parameters.MergeGenerated (Parameters, false,
+			ParametersCompiled async_parameters = ParametersCompiled.MergeGenerated (Parameters, false,
 				new Parameter [] {
 					new Parameter (null, "callback", Parameter.Modifier.NONE, null, Location),
 					new Parameter (null, "object", Parameter.Modifier.NONE, null, Location)
@@ -286,7 +286,7 @@ namespace Mono.CSharp {
 			//
 			// Define parameters, and count out/ref parameters
 			//
-			Parameters end_parameters;
+			ParametersCompiled end_parameters;
 			int out_params = 0;
 
 			foreach (Parameter p in Parameters.FixedParameters) {
@@ -308,12 +308,12 @@ namespace Mono.CSharp {
 					end_params [param] = p;
 					++param;
 				}
-				end_parameters = Parameters.CreateFullyResolved (end_params, end_param_types);
+				end_parameters = ParametersCompiled.CreateFullyResolved (end_params, end_param_types);
 			} else {
-				end_parameters = Parameters.EmptyReadOnlyParameters;
+				end_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 			}
 
-			end_parameters = Parameters.MergeGenerated (end_parameters, false,
+			end_parameters = ParametersCompiled.MergeGenerated (end_parameters, false,
 				new Parameter (null, "result", Parameter.Modifier.NONE, null, Location), TypeManager.iasyncresult_type);
 
 			//
@@ -332,7 +332,7 @@ namespace Mono.CSharp {
 			Parameters.ApplyAttributes (InvokeBuilder);
 
 			if (BeginInvokeBuilder != null) {
-				Parameters p = (Parameters) TypeManager.GetParameterData (BeginInvokeBuilder);
+				ParametersCompiled p = (ParametersCompiled) TypeManager.GetParameterData (BeginInvokeBuilder);
 				p.ApplyAttributes (BeginInvokeBuilder);
 			}
 
@@ -429,7 +429,7 @@ namespace Mono.CSharp {
 				if (g_args != null) {
 					invoke = TypeBuilder.GetMethod (dt, d.InvokeBuilder);
 #if MS_COMPATIBLE
-					Parameters p = (Parameters) d.Parameters.InflateTypes (g_args, g_args);
+					ParametersCompiled p = (ParametersCompiled) d.Parameters.InflateTypes (g_args, g_args);
 					TypeManager.RegisterMethod (invoke, p);
 #endif
 					return invoke;

@@ -2383,7 +2383,7 @@ namespace Mono.CSharp {
 				if (is_property) {
 					if ((entry.EntryType & EntryType.Field) != 0) {
 						fi = (FieldInfo)entry.Member;
-						cmp_attrs = Parameters.EmptyReadOnlyParameters;
+						cmp_attrs = ParametersCompiled.EmptyReadOnlyParameters;
 					} else {
 						pi = (PropertyInfo) entry.Member;
 						cmp_attrs = TypeManager.GetParameterData (pi);
@@ -2651,7 +2651,7 @@ namespace Mono.CSharp {
  			}
   		}
 
-		public bool CheckExistingMembersOverloads (MemberCore member, string name, Parameters parameters)
+		public bool CheckExistingMembersOverloads (MemberCore member, string name, ParametersCompiled parameters)
 		{
 			ArrayList entries = (ArrayList)member_hash [name];
 			if (entries == null)

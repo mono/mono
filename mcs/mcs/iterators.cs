@@ -183,11 +183,11 @@ namespace Mono.CSharp {
 
 			public IteratorMethod (IteratorStorey host, FullNamedExpression returnType, int mod, MemberName name)
 				: base (host, null, returnType, mod | Modifiers.DEBUGGER_HIDDEN | Modifiers.COMPILER_GENERATED,
-				  name, Parameters.EmptyReadOnlyParameters, null)
+				  name, ParametersCompiled.EmptyReadOnlyParameters, null)
 			{
 				this.host = host;
 
-				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, Parameters.EmptyReadOnlyParameters, Location);
+				Block = new ToplevelBlock (host.Iterator.Container.Toplevel, ParametersCompiled.EmptyReadOnlyParameters, Location);
 			}
 
 			public override EmitContext CreateEmitContext (DeclSpace tc, ILGenerator ig)
@@ -346,7 +346,7 @@ namespace Mono.CSharp {
 			{
 				host.AddMethod (this);
 
-				Block = new ToplevelBlock (host.Iterator.Container, Parameters.EmptyReadOnlyParameters, Location);
+				Block = new ToplevelBlock (host.Iterator.Container, ParametersCompiled.EmptyReadOnlyParameters, Location);
 				Block.AddStatement (new DisposeMethodStatement (host.Iterator));
 			}
 		}
@@ -565,7 +565,7 @@ namespace Mono.CSharp {
 				this, null, TypeManager.system_void_expr,
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("Reset", Location),
-				Parameters.EmptyReadOnlyParameters, null);
+				ParametersCompiled.EmptyReadOnlyParameters, null);
 			AddMethod (reset);
 
 			reset.Block = new ToplevelBlock (Location);
@@ -817,7 +817,7 @@ namespace Mono.CSharp {
 		//
 		private Iterator (IMethodData method, TypeContainer host, Type iterator_type, bool is_enumerable)
 			: base (
-				new ToplevelBlock (method.Block, Parameters.EmptyReadOnlyParameters, method.Block.StartLocation),
+				new ToplevelBlock (method.Block, ParametersCompiled.EmptyReadOnlyParameters, method.Block.StartLocation),
 				TypeManager.bool_type,
 				method.Location)
 		{
@@ -840,7 +840,7 @@ namespace Mono.CSharp {
 				this, Storey, null, TypeManager.system_boolean_expr,
 				Modifiers.PUBLIC, OriginalMethod.GetSignatureForError (),
 				new MemberName ("MoveNext", Location),
-				Parameters.EmptyReadOnlyParameters);
+				ParametersCompiled.EmptyReadOnlyParameters);
 
 			if (!Compatible (ec))
 				return null;
@@ -899,7 +899,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Parameters parameters = method.ParameterInfo;
+			ParametersCompiled parameters = method.ParameterInfo;
 			for (int i = 0; i < parameters.Count; i++) {
 				Parameter p = parameters [i];
 				Parameter.Modifier mod = p.ModFlags;

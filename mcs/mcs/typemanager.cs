@@ -1787,14 +1787,14 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (mb.DeclaringType) + "." + mb.Name);
 			}
 
-			pd = ParametersCollection.Create (mb);
+			pd = ParametersImported.Create (mb);
 #else
 			MethodBase generic = TypeManager.DropGenericMethodArguments (mb);
 			if (generic != mb) {
 				pd = TypeManager.GetParameterData (generic);
-				pd = ParametersCollection.Create (pd, mb);
+				pd = ParametersImported.Create (pd, mb);
 			} else {
-				pd = ParametersCollection.Create (mb);
+				pd = ParametersImported.Create (mb);
 			}
 #endif
 			method_params.Add (mb, pd);
@@ -1807,13 +1807,13 @@ namespace Mono.CSharp {
 		AParametersCollection pd = (AParametersCollection)method_params [pi];
 		if (pd == null) {
 			if (pi is PropertyBuilder)
-				return Parameters.EmptyReadOnlyParameters;
+				return ParametersCompiled.EmptyReadOnlyParameters;
 
 			ParameterInfo [] p = pi.GetIndexParameters ();
 			if (p == null)
-				return Parameters.EmptyReadOnlyParameters;
+				return ParametersCompiled.EmptyReadOnlyParameters;
 
-			pd = ParametersCollection.Create (p, null);
+			pd = ParametersImported.Create (p, null);
 			method_params.Add (pi, pd);
 		}
 

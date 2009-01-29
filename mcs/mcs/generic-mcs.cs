@@ -239,7 +239,7 @@ namespace Mono.CSharp
 	public class GenericMethod : DeclSpace
 	{
 		public GenericMethod (NamespaceEntry ns, DeclSpace parent, MemberName name,
-				      Expression return_type, Parameters parameters)
+				      Expression return_type, ParametersCompiled parameters)
 			: base (ns, parent, name, null)
 		{
 			throw new NotImplementedException ();

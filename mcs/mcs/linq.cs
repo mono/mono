@@ -487,7 +487,7 @@ namespace Mono.CSharp.Linq
 				if (sn == null)
 					return true;
 
-				return sn.Name != block.Parameters[0].Name;
+				return sn.Name != block.Parameters.FixedParameters [0].Name;
 			}
 		}
 
@@ -607,10 +607,10 @@ namespace Mono.CSharp.Linq
 			public static int Counter;
 			const string ParameterNamePrefix = "<>__TranspIdent";
 
-			public readonly Parameters Parent;
+			public readonly ParametersCompiled Parent;
 			public readonly string Identifier;
 
-			public TransparentParameter (Parameters parent, LocatedToken identifier)
+			public TransparentParameter (ParametersCompiled parent, LocatedToken identifier)
 				: base (ParameterNamePrefix + Counter++, identifier.Location)
 			{
 				Parent = parent;
@@ -632,14 +632,14 @@ namespace Mono.CSharp.Linq
 		}
 
 		public QueryBlock (Block parent, LocatedToken lt, Location start)
-			: base (parent, new Parameters (new ImplicitQueryParameter (lt.Value, lt.Location)), start)
+			: base (parent, new ParametersCompiled (new ImplicitQueryParameter (lt.Value, lt.Location)), start)
 		{
 			if (parent != null)
 				base.CheckParentConflictName (parent.Toplevel, lt.Value, lt.Location);
 		}
 
-		public QueryBlock (Block parent, Parameters parameters, LocatedToken lt, Location start)
-			: base (parent, new Parameters (parameters [0].Clone (), new ImplicitQueryParameter (lt.Value, lt.Location)), start)
+		public QueryBlock (Block parent, ParametersCompiled parameters, LocatedToken lt, Location start)
+			: base (parent, new ParametersCompiled (parameters [0].Clone (), new ImplicitQueryParameter (lt.Value, lt.Location)), start)
 		{
 		}
 
@@ -652,7 +652,7 @@ namespace Mono.CSharp.Linq
 		{
 			base.CheckParentConflictName (this, name.Value, name.Location);
 
-			parameters = new Parameters (new TransparentParameter (parameters, name));
+			parameters = new ParametersCompiled (new TransparentParameter (parameters, name));
 		}
 
 		protected override bool CheckParentConflictName (ToplevelBlock block, string name, Location l)

@@ -2610,7 +2610,7 @@ namespace Mono.CSharp {
 	public class ToplevelBlock : ExplicitBlock {
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
-		protected Parameters parameters;
+		protected ParametersCompiled parameters;
 		ToplevelParameterInfo[] parameter_info;
 		LocalInfo this_variable;
 
@@ -2619,7 +2619,7 @@ namespace Mono.CSharp {
 		//
 		// The parameters for the block.
 		//
-		public Parameters Parameters {
+		public ParametersCompiled Parameters {
 			get { return parameters; }
 		}
 
@@ -2631,30 +2631,30 @@ namespace Mono.CSharp {
 			get { return Parent == null ? null : Parent.Toplevel; }
 		}
 
-		public ToplevelBlock (Block parent, Parameters parameters, Location start) :
+		public ToplevelBlock (Block parent, ParametersCompiled parameters, Location start) :
 			this (parent, (Flags) 0, parameters, start)
 		{
 		}
 
-		public ToplevelBlock (Block parent, Parameters parameters, GenericMethod generic, Location start) :
+		public ToplevelBlock (Block parent, ParametersCompiled parameters, GenericMethod generic, Location start) :
 			this (parent, parameters, start)
 		{
 			this.generic = generic;
 		}
 		
-		public ToplevelBlock (Parameters parameters, Location start) :
+		public ToplevelBlock (ParametersCompiled parameters, Location start) :
 			this (null, (Flags) 0, parameters, start)
 		{
 		}
 
-		ToplevelBlock (Flags flags, Parameters parameters, Location start) :
+		ToplevelBlock (Flags flags, ParametersCompiled parameters, Location start) :
 			this (null, flags, parameters, start)
 		{
 		}
 
 		// We use 'Parent' to hook up to the containing block, but don't want to register the current block as a child.
 		// So, we use a two-stage setup -- first pass a null parent to the base constructor, and then override 'Parent'.
-		public ToplevelBlock (Block parent, Flags flags, Parameters parameters, Location start) :
+		public ToplevelBlock (Block parent, Flags flags, ParametersCompiled parameters, Location start) :
 			base (null, flags, start, Location.Null)
 		{
 			this.Toplevel = this;
@@ -2669,7 +2669,7 @@ namespace Mono.CSharp {
 		}
 
 		public ToplevelBlock (Location loc)
-			: this (null, (Flags) 0, Parameters.EmptyReadOnlyParameters, loc)
+			: this (null, (Flags) 0, ParametersCompiled.EmptyReadOnlyParameters, loc)
 		{
 		}
 
@@ -2826,7 +2826,7 @@ namespace Mono.CSharp {
 			return this_variable == null || this_variable.IsThisAssigned (ec);
 		}
 
-		public bool ResolveMeta (EmitContext ec, Parameters ip)
+		public bool ResolveMeta (EmitContext ec, ParametersCompiled ip)
 		{
 			int errors = Report.Errors;
 			int orig_count = parameters.Count;

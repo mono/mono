@@ -769,7 +769,7 @@ namespace Mono.CSharp {
 		bool unreachable;
 
 		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
-					     Parameters ip, IMethodData md, out bool unreachable)
+					     ParametersCompiled ip, IMethodData md, out bool unreachable)
 		{
 			if (resolved) {
 				unreachable = this.unreachable;

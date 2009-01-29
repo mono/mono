@@ -1618,10 +1618,10 @@ namespace Mono.CSharp {
 	public class GenericMethod : DeclSpace
 	{
 		FullNamedExpression return_type;
-		Parameters parameters;
+		ParametersCompiled parameters;
 
 		public GenericMethod (NamespaceEntry ns, DeclSpace parent, MemberName name,
-				      FullNamedExpression return_type, Parameters parameters)
+				      FullNamedExpression return_type, ParametersCompiled parameters)
 			: base (ns, parent, name, null)
 		{
 			this.return_type = return_type;

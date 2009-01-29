@@ -359,7 +359,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Type ret_type = method.method.ReturnType;
-			Parameters args = method.method.ParameterInfo;
+			ParametersCompiled args = method.method.ParameterInfo;
 			int arg_len = args.Count;
 			bool is_indexer = method.method is Indexer.SetIndexerMethod || method.method is Indexer.GetIndexerMethod;
 
@@ -497,7 +497,7 @@ namespace Mono.CSharp {
 
 			for (int i = 0; i < param.Count; i++) {
 				string name = param.FixedParameters [i].Name;
-				ParameterAttributes attr = Parameters.GetParameterAttribute (param.FixedParameters [i].ModFlags);
+				ParameterAttributes attr = ParametersCompiled.GetParameterAttribute (param.FixedParameters [i].ModFlags);
 				proxy.DefineParameter (i + 1, attr, name);
 			}
 

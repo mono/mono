@@ -1420,7 +1420,7 @@ namespace Mono.CSharp
 			this.IsParameter = false;
 		}
 
-		public VariableInfo (Parameters ip, int i, int offset)
+		public VariableInfo (ParametersCompiled ip, int i, int offset)
 			: this (ip.FixedParameters [i].Name, ip.Types [i], offset)
 		{
 			this.IsParameter = true;

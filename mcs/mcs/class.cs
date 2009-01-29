@@ -2579,12 +2579,12 @@ namespace Mono.CSharp {
 			}
 
 			Constructor c = new Constructor (this, MemberName.Name, mods,
-				null, Parameters.EmptyReadOnlyParameters,
+				null, ParametersCompiled.EmptyReadOnlyParameters,
 				new GeneratedBaseInitializer (Location),
 				Location);
 			
 			AddConstructor (c);
-			c.Block = new ToplevelBlock (Parameters.EmptyReadOnlyParameters, Location);
+			c.Block = new ToplevelBlock (ParametersCompiled.EmptyReadOnlyParameters, Location);
 		}
 
 		public override bool Define ()
@@ -3135,12 +3135,12 @@ namespace Mono.CSharp {
 
 	public abstract class MethodCore : InterfaceMemberBase
 	{
-		public readonly Parameters Parameters;
+		public readonly ParametersCompiled Parameters;
 		protected ToplevelBlock block;
 
 		public MethodCore (DeclSpace parent, GenericMethod generic,
 			FullNamedExpression type, int mod, int allowed_mod,
-			MemberName name, Attributes attrs, Parameters parameters)
+			MemberName name, Attributes attrs, ParametersCompiled parameters)
 			: base (parent, generic, type, mod, allowed_mod, name, attrs)
 		{
 			Parameters = parameters;
@@ -3155,8 +3155,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Parameters ParameterInfo
-		{
+		public ParametersCompiled ParameterInfo {
 			get {
 				return Parameters;
 			}
@@ -3362,7 +3361,7 @@ namespace Mono.CSharp {
 		protected virtual bool CheckForDuplications ()
 		{
 			return Parent.MemberCache.CheckExistingMembersOverloads (
-				this, GetFullName (MemberName), Parameters.EmptyReadOnlyParameters);
+				this, GetFullName (MemberName), ParametersCompiled.EmptyReadOnlyParameters);
 		}
 
 		//
@@ -3519,7 +3518,7 @@ namespace Mono.CSharp {
 			return base.Define ();
 		}
 
-		protected bool DefineParameters (Parameters parameters)
+		protected bool DefineParameters (ParametersCompiled parameters)
 		{
 			IResolveContext rc = GenericMethod == null ? this : (IResolveContext)ds;
 
@@ -3672,7 +3671,7 @@ namespace Mono.CSharp {
 
 		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, int mod,
 				int allowed_mod, MemberName name,
-				Attributes attrs, Parameters parameters)
+				Attributes attrs, ParametersCompiled parameters)
 			: base (parent, generic, type, mod, allowed_mod, name,
 					attrs, parameters)
 		{
@@ -4043,7 +4042,7 @@ namespace Mono.CSharp {
 
 		public Method (DeclSpace parent, GenericMethod generic,
 			       FullNamedExpression return_type, int mod,
-			       MemberName name, Parameters parameters, Attributes attrs)
+			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
 				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs, parameters)
@@ -4051,7 +4050,7 @@ namespace Mono.CSharp {
 		}
 
 		protected Method (DeclSpace parent, FullNamedExpression return_type, int mod, int amod,
-					MemberName name, Parameters parameters, Attributes attrs)
+					MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, null, return_type, mod, amod, name, attrs, parameters)
 		{
 		}
@@ -4239,9 +4238,7 @@ namespace Mono.CSharp {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
 								GetSignatureForError ());
 						} else {
-							IMethodData md = TypeManager.GetMethod (MethodBuilder);
-							md.SetMemberIsUsed ();
-
+							SetMemberIsUsed ();
 							RootContext.EntryPoint = this;
 						}
 					} else {
@@ -4343,7 +4340,7 @@ namespace Mono.CSharp {
 			if (!base.VerifyClsCompliance ())
 				return false;
 
-			if (ParameterInfo.Count > 0) {
+			if (!Parameters.IsEmpty) {
 				ArrayList al = (ArrayList)Parent.PartialContainer.MemberCache.Members [Name];
 				if (al.Count > 1)
 					MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder);
@@ -4499,7 +4496,7 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (DeclSpace parent, string name, int mod, Attributes attrs, Parameters args,
+		public Constructor (DeclSpace parent, string name, int mod, Attributes attrs, ParametersCompiled args,
 				    ConstructorInitializer init, Location loc)
 			: base (parent, null, null, mod, AllowedModifiers,
 				new MemberName (name, loc), attrs, args)
@@ -4671,7 +4668,7 @@ namespace Mono.CSharp {
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 					block.AddThisVariable (Parent, Location);
 
-				if (!block.ResolveMeta (ec, ParameterInfo))
+				if (!block.ResolveMeta (ec, Parameters))
 					block = null;
 
 				if (block != null && (ModFlags & Modifiers.STATIC) == 0){
@@ -4700,7 +4697,7 @@ namespace Mono.CSharp {
 
 			bool unreachable = false;
 			if (block != null) {
-				if (!ec.ResolveTopBlock (null, block, ParameterInfo, this, out unreachable))
+				if (!ec.ResolveTopBlock (null, block, Parameters, this, out unreachable))
 					return;
 
 				ec.EmitMeta (block);
@@ -4746,8 +4743,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
- 			if (ParameterInfo.Count > 0) {
- 				ArrayList al = (ArrayList)Parent.MemberCache.Members [".ctor"];
+ 			if (!Parameters.IsEmpty) {
+ 				ArrayList al = (ArrayList)Parent.MemberCache.Members [ConstructorInfo.ConstructorName];
  				if (al.Count > 2)
  					MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder);
  
@@ -4826,7 +4823,7 @@ namespace Mono.CSharp {
 		MemberName MethodName { get; }
 		Type ReturnType { get; }
 		GenericMethod GenericMethod { get; }
-		Parameters ParameterInfo { get; }
+		ParametersCompiled ParameterInfo { get; }
 
 		Attributes OptAttributes { get; }
 		ToplevelBlock Block { get; set; }
@@ -5063,7 +5060,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Create the MethodBuilder for the method 
 		/// </summary>
-		void DefineMethodBuilder (TypeContainer container, string method_name, Parameters param)
+		void DefineMethodBuilder (TypeContainer container, string method_name, ParametersCompiled param)
 		{
 			if (builder == null) {
 				builder = container.TypeBuilder.DefineMethod (
@@ -5140,7 +5137,7 @@ namespace Mono.CSharp {
 
 		public static readonly string MetadataName = "Finalize";
 
-		public Destructor (DeclSpace parent, int mod, Parameters parameters, Attributes attrs, Location l)
+		public Destructor (DeclSpace parent, int mod, ParametersCompiled parameters, Attributes attrs, Location l)
 			: base (parent, null, TypeManager.system_void_expr, mod, AllowedModifiers,
 				new MemberName (MetadataName, l), attrs, parameters)
 		{
@@ -5942,9 +5939,9 @@ namespace Mono.CSharp {
 		public Attributes Attributes;
 		public Location Location;
 		public int ModFlags;
-		public Parameters Parameters;
+		public ParametersCompiled Parameters;
 		
-		public Accessor (ToplevelBlock b, int mod, Attributes attrs, Parameters p, Location loc)
+		public Accessor (ToplevelBlock b, int mod, Attributes attrs, ParametersCompiled p, Location loc)
 		{
 			Block = b;
 			Attributes = attrs;
@@ -6037,7 +6034,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public abstract Parameters ParameterInfo { get ; }
+		public abstract ParametersCompiled ParameterInfo { get ; }
 		public abstract Type ReturnType { get; }
 		public abstract EmitContext CreateEmitContext (DeclSpace ds, ILGenerator ig);
 
@@ -6215,9 +6212,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override Parameters ParameterInfo {
+			public override ParametersCompiled ParameterInfo {
 				get {
-					return Parameters.EmptyReadOnlyParameters;
+					return ParametersCompiled.EmptyReadOnlyParameters;
 				}
 			}
 
@@ -6232,12 +6229,12 @@ namespace Mono.CSharp {
 
 			static string[] attribute_targets = new string [] { "method", "param", "return" };
 			ImplicitParameter param_attr;
-			protected Parameters parameters;
+			protected ParametersCompiled parameters;
 
 			public SetMethod (PropertyBase method) :
 				base (method, "set_")
 			{
-				parameters = new Parameters (
+				parameters = new ParametersCompiled (
 					new Parameter (method.type_name, "value", Parameter.Modifier.NONE, null, Location));
 			}
 
@@ -6260,7 +6257,7 @@ namespace Mono.CSharp {
 				base.ApplyAttributeBuilder (a, cb);
 			}
 
-			public override Parameters ParameterInfo {
+			public override ParametersCompiled ParameterInfo {
 			    get {
 			        return parameters;
 			    }
@@ -6728,7 +6725,7 @@ namespace Mono.CSharp {
 			Parent.PartialContainer.AddField (field);
 
 			// Create get block
-			Get.Block = new ToplevelBlock (Parameters.EmptyReadOnlyParameters, Location);
+			Get.Block = new ToplevelBlock (ParametersCompiled.EmptyReadOnlyParameters, Location);
 			Return r = new Return (new SimpleName (field.Name, Location), Location);
 			Get.Block.AddStatement (r);
 
@@ -6788,7 +6785,7 @@ namespace Mono.CSharp {
 		protected override PropertyInfo ResolveBaseProperty ()
 		{
 			return Parent.PartialContainer.BaseCache.FindMemberToOverride (
-				Parent.TypeBuilder, Name, Parameters.EmptyReadOnlyParameters, null, true) as PropertyInfo;
+				Parent.TypeBuilder, Name, ParametersCompiled.EmptyReadOnlyParameters, null, true) as PropertyInfo;
 		}
 	}
 
@@ -7268,7 +7265,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override Parameters ParameterInfo {
+			public override ParametersCompiled ParameterInfo {
 				get {
 					return method.parameters;
 				}
@@ -7297,7 +7294,7 @@ namespace Mono.CSharp {
 		public MyEventBuilder     EventBuilder;
 		public MethodBuilder AddBuilder, RemoveBuilder;
 
-		Parameters parameters;
+		ParametersCompiled parameters;
 
 		protected Event (DeclSpace parent, FullNamedExpression type, int mod_flags, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
@@ -7336,7 +7333,7 @@ namespace Mono.CSharp {
 				Report.Error (66, Location, "`{0}': event must be of a delegate type", GetSignatureForError ());
 			}
 
-			parameters = Parameters.CreateFullyResolved (
+			parameters = ParametersCompiled.CreateFullyResolved (
 				new Parameter (null, "value", Parameter.Modifier.NONE, null, Location), MemberType);
 
 			if (!CheckBase ())
@@ -7414,7 +7411,7 @@ namespace Mono.CSharp {
 	{
 		public class GetIndexerMethod : GetMethod
 		{
-			Parameters parameters;
+			ParametersCompiled parameters;
 
 			public GetIndexerMethod (Indexer method):
 				base (method)
@@ -7444,7 +7441,7 @@ namespace Mono.CSharp {
 				return false;
 			}			
 
-			public override Parameters ParameterInfo {
+			public override ParametersCompiled ParameterInfo {
 				get {
 					return parameters;
 				}
@@ -7456,7 +7453,7 @@ namespace Mono.CSharp {
 			public SetIndexerMethod (Indexer method):
 				base (method)
 			{
-				parameters = Parameters.MergeGenerated (method.parameters, false, parameters [0], null);
+				parameters = ParametersCompiled.MergeGenerated (method.parameters, false, parameters [0], null);
 			}
 
 			public SetIndexerMethod (PropertyBase method, Accessor accessor):
@@ -7492,10 +7489,10 @@ namespace Mono.CSharp {
 		const int AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public readonly Parameters parameters;
+		public readonly ParametersCompiled parameters;
 
 		public Indexer (DeclSpace parent, FullNamedExpression type, MemberName name, int mod,
-				Parameters parameters, Attributes attrs,
+				ParametersCompiled parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block, bool define_set_first)
 			: base (parent, type, mod,
 				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
@@ -7722,7 +7719,7 @@ namespace Mono.CSharp {
 		}
 		
 		public Operator (DeclSpace parent, OpType type, FullNamedExpression ret_type,
-				 int mod_flags, Parameters parameters,
+				 int mod_flags, ParametersCompiled parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, null, ret_type, mod_flags, AllowedModifiers,
 				new MemberName (GetMetadataName (type), loc), attrs, parameters)

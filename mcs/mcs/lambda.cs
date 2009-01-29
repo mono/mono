@@ -51,7 +51,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegateType)
+		protected override ParametersCompiled ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegateType)
 		{
 			if (!TypeManager.IsDelegateType (delegateType))
 				return null;
@@ -115,7 +115,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected override AnonymousMethodBody CompatibleMethodFactory (Type returnType, Type delegateType, Parameters p, ToplevelBlock b)
+		protected override AnonymousMethodBody CompatibleMethodFactory (Type returnType, Type delegateType, ParametersCompiled p, ToplevelBlock b)
 		{
 			return new LambdaMethod (p, b, returnType, delegateType, loc);
 		}
@@ -128,7 +128,7 @@ namespace Mono.CSharp {
 
 	public class LambdaMethod : AnonymousMethodBody
 	{
-		public LambdaMethod (Parameters parameters,
+		public LambdaMethod (ParametersCompiled parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
 			: base (parameters, block, return_type, delegate_type, loc)

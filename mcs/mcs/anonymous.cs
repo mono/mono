@@ -851,11 +851,11 @@ namespace Mono.CSharp {
 
 		public virtual bool HasExplicitParameters {
 			get {
-				return Parameters != Parameters.Undefined;
+				return Parameters != ParametersCompiled.Undefined;
 			}
 		}
 		
-		public Parameters Parameters {
+		public ParametersCompiled Parameters {
 			get { return Block.Parameters; }
 		}
 
@@ -1078,11 +1078,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected virtual Parameters ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
+		protected virtual ParametersCompiled ResolveParameters (EmitContext ec, TypeInferenceContext tic, Type delegate_type)
 		{
 			AParametersCollection delegate_parameters = TypeManager.GetDelegateParameters (delegate_type);
 
-			if (Parameters == Parameters.Undefined) {
+			if (Parameters == ParametersCompiled.Undefined) {
 				//
 				// We provide a set of inaccessible parameters
 				//
@@ -1103,7 +1103,7 @@ namespace Mono.CSharp {
 						delegate_parameters.FixedParameters [i].ModFlags, null, loc);
 				}
 
-				return Parameters.CreateFullyResolved (fixedpars, delegate_parameters.Types);
+				return ParametersCompiled.CreateFullyResolved (fixedpars, delegate_parameters.Types);
 			}
 
 			if (!VerifyExplicitParameters (delegate_type, delegate_parameters, ec.IsInProbingMode)) {
@@ -1164,7 +1164,7 @@ namespace Mono.CSharp {
 
 		protected AnonymousMethodBody CompatibleMethod (EmitContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
 		{
-			Parameters p = ResolveParameters (ec, tic, delegate_type);
+			ParametersCompiled p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
 				return null;
 
@@ -1177,7 +1177,7 @@ namespace Mono.CSharp {
 			return anonymous;
 		}
 
-		protected virtual AnonymousMethodBody CompatibleMethodFactory (Type return_type, Type delegate_type, Parameters p, ToplevelBlock b)
+		protected virtual AnonymousMethodBody CompatibleMethodFactory (Type return_type, Type delegate_type, ParametersCompiled p, ToplevelBlock b)
 		{
 			return new AnonymousMethodBody (p, b, return_type, delegate_type, loc);
 		}
@@ -1204,7 +1204,7 @@ namespace Mono.CSharp {
 			public AnonymousMethodMethod (DeclSpace parent, AnonymousExpression am, AnonymousMethodStorey storey,
 							  GenericMethod generic, TypeExpr return_type,
 							  int mod, string real_name, MemberName name,
-							  Parameters parameters)
+							  ParametersCompiled parameters)
 				: base (parent, generic, return_type, mod | Modifiers.COMPILER_GENERATED,
 						name, parameters, null)
 			{
@@ -1350,7 +1350,7 @@ namespace Mono.CSharp {
 
 	public class AnonymousMethodBody : AnonymousExpression
 	{
-		protected readonly Parameters parameters;
+		protected readonly ParametersCompiled parameters;
 		AnonymousMethodStorey storey;
 
 		AnonymousMethodMethod method;
@@ -1358,7 +1358,7 @@ namespace Mono.CSharp {
 
 		static int unique_id;
 
-		public AnonymousMethodBody (Parameters parameters,
+		public AnonymousMethodBody (ParametersCompiled parameters,
 					ToplevelBlock block, Type return_type, Type delegate_type,
 					Location loc)
 			: base (block, return_type, loc)
@@ -1606,7 +1606,7 @@ namespace Mono.CSharp {
 	//
 	public class AnonymousTypeClass : CompilerGeneratedClass
 	{
-		sealed class AnonymousParameters : Parameters
+		sealed class AnonymousParameters : ParametersCompiled
 		{
 			public AnonymousParameters (params Parameter[] parameters)
 				: base (parameters)
@@ -1723,11 +1723,11 @@ namespace Mono.CSharp {
 
 			Method equals = new Method (this, null, TypeManager.system_boolean_expr,
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("Equals", loc),
-				Mono.CSharp.Parameters.CreateFullyResolved (new Parameter (null, "obj", 0, null, loc), TypeManager.object_type), null);
+				Mono.CSharp.ParametersCompiled.CreateFullyResolved (new Parameter (null, "obj", 0, null, loc), TypeManager.object_type), null);
 
 			Method tostring = new Method (this, null, TypeManager.system_string_expr,
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("ToString", loc),
-				Mono.CSharp.Parameters.EmptyReadOnlyParameters, null);
+				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
 
 			ToplevelBlock equals_block = new ToplevelBlock (equals.Parameters, loc);
 			TypeExpr current_type;
@@ -1826,7 +1826,7 @@ namespace Mono.CSharp {
 			Method hashcode = new Method (this, null, TypeManager.system_int32_expr,
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("GetHashCode", loc),
-				Mono.CSharp.Parameters.EmptyReadOnlyParameters, null);
+				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
 
 			//
 			// Modified FNV with good avalanche behavior and uniform

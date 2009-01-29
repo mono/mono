@@ -1,5 +1,10 @@
 2009-01-29  Marek Safar  <marek.safar@gmail.com>
 
+	*.cs: Rename Parameters to ParametersCompiled and ParametersImported
+	when I finally found the right naming convention.
+
+2009-01-29  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs: Put back different open parens optimization.
 
 2009-01-28  Marek Safar  <marek.safar@gmail.com>
