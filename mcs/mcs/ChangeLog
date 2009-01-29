@@ -1,5 +1,9 @@
 2009-01-29  Marek Safar  <marek.safar@gmail.com>
 
+	* class.cs: Remove duplicate CallingConvention.
+
+2009-01-29  Marek Safar  <marek.safar@gmail.com>
+
 	*.cs: Rename Parameters to ParametersCompiled and ParametersImported
 	when I finally found the right naming convention.
 

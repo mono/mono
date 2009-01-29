@@ -3171,6 +3171,19 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public CallingConventions CallingConventions {
+			get {
+				CallingConventions cc = Parameters.CallingConvention;
+				if (!IsInterface)
+					if ((ModFlags & Modifiers.STATIC) == 0)
+						cc |= CallingConventions.HasThis;
+
+				// FIXME: How is `ExplicitThis' used in C#?
+			
+				return cc;
+			}
+		}
+
 		protected override bool CheckBase ()
 		{
 			// Check whether arguments were correct.
@@ -3872,19 +3885,6 @@ namespace Mono.CSharp {
 		}
 
 		#region IMethodData Members
-
-		public CallingConventions CallingConventions {
-			get {
-				CallingConventions cc = Parameters.CallingConvention;
-				if (!IsInterface)
-					if ((ModFlags & Modifiers.STATIC) == 0)
-						cc |= CallingConventions.HasThis;
-
-				// FIXME: How is `ExplicitThis' used in C#?
-			
-				return cc;
-			}
-		}
 
 		public Type ReturnType {
 			get {
@@ -4761,20 +4761,6 @@ namespace Mono.CSharp {
 		}
 
 		#region IMethodData Members
-
-		public System.Reflection.CallingConventions CallingConventions {
-			get {
-				CallingConventions cc = Parameters.CallingConvention;
-
-				if (Parent.PartialContainer.Kind == Kind.Class)
-					if ((ModFlags & Modifiers.STATIC) == 0)
-						cc |= CallingConventions.HasThis;
-
-				// FIXME: How is `ExplicitThis' used in C#?
-			
-				return cc;
-			}
-		}
 
 		public MemberName MethodName {
 			get {
