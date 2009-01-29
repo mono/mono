@@ -1,5 +1,17 @@
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	"Backported" of r124984 from 2.0 branch.
+	
+	* aot-compiler.c aot-runtime.c: Add full-aot support delegate BeginInvoke/EndInvoke.
+
+	"Backport" of r124977 + r124978 from 2.0 branch.
+	
+	* exceptions-arm.c (mono_arm_throw_exception_by_token): New helper function
+	to avoid calling mono_exception_from_token () from the throw trampoline.
+	(mono_arch_get_throw_exception_generic): call throw_exception_by_token
+	for throwing corlib exceptions, this fixes full-aot support for corlib
+	exceptions.
+
 	* aot-compiler.c (compile_method): Make a copy of cfg->locals to fix the build.
 
 2009-01-29  Miguel de Icaza  <miguel@novell.com>
