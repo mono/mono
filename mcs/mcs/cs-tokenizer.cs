@@ -2484,6 +2484,17 @@ namespace Mono.CSharp
 							return Token.OPEN_PARENS;
 						}
 
+						// Optimize using peek
+						int xx = peek_char ();
+						switch (xx) {
+						case '(':
+						case '\'':
+						case '"':
+						case '0':
+						case '1':
+							return Token.OPEN_PARENS;
+						}
+
 						lambda_arguments_parsing = true;
 						PushPosition ();
 						d = TokenizeOpenParens ();
