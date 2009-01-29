@@ -47,6 +47,7 @@ namespace System.Web
 		bool disposing;
 		Exception initialException;
 		PerformanceCounter requestsQueuedCounter;
+		int empty_queue;
 		
 		public QueueManager ()
 		{
@@ -124,6 +125,10 @@ namespace System.Web
 				return null;
 			}
 
+			// We might not queue a few requests right when the queue starts to be used
+			if (Interlocked.CompareExchange (ref empty_queue, 0, 0) == 0)
+				return req;
+
 			HttpWorkerRequest result;
 			lock (queue) {
 				result = Dequeue ();
@@ -142,6 +147,7 @@ namespace System.Web
 		{
 			if (queue.Count < queueLimit) {
 				queue.Enqueue (wr);
+				Interlocked.Exchange (ref empty_queue, 1);
 				requestsQueuedCounter.Increment ();
 				return;
 			}
@@ -151,9 +157,12 @@ namespace System.Web
 
 		HttpWorkerRequest Dequeue ()
 		{
-			if (queue.Count > 0) {
+			int count = queue.Count;
+			if (count > 0) {
 				HttpWorkerRequest request = (HttpWorkerRequest) queue.Dequeue ();
 				requestsQueuedCounter.Decrement ();
+				if (count == 1)
+					Interlocked.Exchange (ref empty_queue, 0);
 				return request;
 			}
 
