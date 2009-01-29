@@ -1,5 +1,7 @@
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c: Fix --enable-minimal=jit build.
+
 	* mini.c: Really fix --enable-minimal=jit build.
 	
 	* mini.c (construct_object_context_for_method): Move this outside
