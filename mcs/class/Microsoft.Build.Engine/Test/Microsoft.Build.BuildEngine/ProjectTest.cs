@@ -1445,6 +1445,42 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
+		public void TestBatchedMetadataRef5 ()
+		{
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName=""BatchingTestTask"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+			<ItemGroup>
+				<Coll1 Include=""A1""><Name>Abc</Name></Coll1>
+				<Coll1 Include=""A2""><Name>Def</Name></Coll1>
+				<Coll1 Include=""A3""><Name>Xyz</Name></Coll1>
+				<Coll2 Include=""B1""><Name>Bar</Name></Coll2>
+			</ItemGroup>
+				<Target Name=""ShowMessage"">
+					<Message Text=""Coll1: @(Coll1->'Foo%(Name)Bar')"" />
+					<BatchingTestTask Sources=""@(Coll1->'Foo%(Name)Bar')"" >
+						<Output TaskParameter=""Output"" ItemName=""FinalList"" />
+					</BatchingTestTask>
+				</Target>
+		 </Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (projectString);
+			bool result = project.Build ("ShowMessage");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("A1: Build failed");
+			}
+			logger.DumpMessages ();
+			BuildItemGroup include = project.GetEvaluatedItemsByName ("FinalList");
+			Assert.AreEqual (3, include.Count, "A2");
+		}
+
+		[Test]
 		public void TestInitialTargets ()
 		{
 			Engine engine = new Engine (Consts.BinPath);
@@ -1473,6 +1509,94 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				throw;
 			}
+		}
+
+		[Test]
+		public void TestRequiredTask_String1 ()
+		{
+			CheckProjectForRequiredTests ("RequiredTestTask_String", "@(NonExistant)",
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_String");
+		}
+
+		[Test]
+		public void TestRequiredTask_String2 ()
+		{
+			CheckProjectForRequiredTests ("RequiredTestTask_String", "$(NonExistant)",
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_String");
+		}
+
+		[Test]
+		public void TestRequiredTask_TaskItem1 ()
+		{
+			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItem", "@(NonExistant)",
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_TaskItem");
+		}
+
+		[Test]
+		public void TestRequiredTask_TaskItem2 ()
+		{
+			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItem", "$(NonExistant)",
+				false, "Should've failed: No value specified for required field - 'Property' of RequiredTestTask_TaskItem");
+		}
+
+		[Test]
+		public void TestRequiredTask_TaskItemArray1 ()
+		{
+			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItems", "@(NonExistant)",
+				true, "Build failed");
+
+			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
+			Assert.AreEqual (1, group.Count, "A2");
+			Assert.AreEqual ("count: 0", group [0].FinalItemSpec, "A3");
+		}
+
+		[Test]
+		public void TestRequiredTask_TaskItemArray2 ()
+		{
+			Project p = CheckProjectForRequiredTests ("RequiredTestTask_TaskItems", "$(NonExistant)",
+				true, "Build failed");
+
+			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
+			Assert.AreEqual (1, group.Count, "A2");
+			Assert.AreEqual ("count: 0", group [0].FinalItemSpec, "A3");
+		}
+
+		[Test]
+		public void TestRequiredTask_TaskItemArray3 ()
+		{
+			Project p = CheckProjectForRequiredTests ("RequiredTestTask_IntArray", "$(NonExistant)",
+				true, "Build failed");
+
+			BuildItemGroup group = p.GetEvaluatedItemsByName ("OutItem");
+			Assert.AreEqual (1, group.Count, "A2");
+			Assert.AreEqual ("count: 0", group [0].FinalItemSpec, "A3");
+		}
+
+
+		Project CheckProjectForRequiredTests (string taskname, string property_arg, bool expected_result, string error_msg)
+		{
+			string projectString = String.Format (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<UsingTask TaskName=""{0}"" AssemblyFile=""Test/resources/TestTasks.dll"" />
+				<Target Name=""foo"">
+					<{0} Property=""{1}"">
+						<Output TaskParameter=""Output"" ItemName=""OutItem""/>
+					</{0}>
+				</Target>
+			</Project>", taskname, property_arg);
+
+			Engine engine = new Engine (Consts.BinPath);
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+			Project project = engine.CreateNewProject ();
+			project.LoadXml (projectString);
+
+			try {
+				Assert.AreEqual (expected_result, project.Build (), error_msg);
+			} finally {
+				logger.DumpMessages ();
+			}
+			return project;
 		}
 
 		static void CheckBuildItem (BuildItem item, string name, string [,] metadata, string finalItemSpec, string prefix)

@@ -1,3 +1,9 @@
+2009-01-30  Ankit Jain  <jankit@novell.com>
+
+	* TestTasks.cs (RequiredTestTask): Rename to ..
+	(RequiredTestTask_TaskItems): .. this.
+	(RequiredTestTask_*): New types.
+
 2009-01-29  Ankit Jain  <jankit@novell.com>
 
 	* TestTasks.cs (BatchingTestTask.TaskItemsOutput): New.

@@ -1,3 +1,8 @@
+2009-01-30  Ankit Jain  <jankit@novell.com>
+
+	* TaskEngine.cs (GetObjectFromString): Empty value is allowed only for
+	arrays.
+
 2009-01-29  Ankit Jain  <jankit@novell.com>
 
 	* BuildItem.cs (child_items): Change type from BuildItemGroup to
