@@ -37,7 +37,7 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.BuildEngine {
 	public class Target : IEnumerable {
 	
-		BatchingImpl	batchingImpl;
+		TargetBatchingImpl batchingImpl;
 		BuildState	buildState;
 		Engine		engine;
 		ImportedProject	importedProject;
@@ -64,7 +64,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.onErrorElements  = new List <XmlElement> ();
 			this.buildState = BuildState.NotStarted;
 			this.buildTasks = new List <BuildTask> ();
-			this.batchingImpl = new BatchingImpl (project, this.targetElement);
+			this.batchingImpl = new TargetBatchingImpl (project, this.targetElement);
 
 			bool onErrorFound = false;
 			foreach (XmlNode xn in targetElement.ChildNodes) {
@@ -171,26 +171,16 @@ namespace Microsoft.Build.BuildEngine {
 		
 		bool DoBuild ()
 		{
-			bool executeOnErrors = false;
+			bool executeOnErrors;
 			bool result = true;
 		
-			LogTargetStarted ();
-			
-			if (batchingImpl.BuildNeeded ()) {
-				foreach (BuildTask bt in buildTasks) {
-					result = batchingImpl.BatchBuildTask (bt);
-				
-					if (!result && !bt.ContinueOnError) {
-						executeOnErrors = true;
-						break;
-					}
-				}
-			} else {
-				LogTargetSkipped ();
+			try {
+				result = batchingImpl.Build (this, out executeOnErrors);
+			} catch (Exception e) {
+				Console.WriteLine (e.ToString ());
+				throw;
 			}
 
-			LogTargetFinished (result);
-			
 			if (executeOnErrors == true)
 				ExecuteOnErrors ();
 				
@@ -209,29 +199,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
-		void LogTargetSkipped ()
-		{
-			BuildMessageEventArgs bmea;
-			bmea = new BuildMessageEventArgs (String.Format ("Skipping target \"{0}\" because its outputs are up-to-date.",
-				name), null, "MSBuild", MessageImportance.Normal);
-			engine.EventSource.FireMessageRaised (this, bmea);
-		}
-		
-		void LogTargetStarted ()
-		{
-			TargetStartedEventArgs tsea;
-			string projectFile = project.FullFileName;
-			tsea = new TargetStartedEventArgs (String.Format ("Target {0} started.", name), null, name, projectFile, null);
-			engine.EventSource.FireTargetStarted (this, tsea);
-		}
-		
-		void LogTargetFinished (bool succeeded)
-		{
-			TargetFinishedEventArgs tfea;
-			string projectFile = project.FullFileName;
-			tfea = new TargetFinishedEventArgs (String.Format ("Target {0} finished.", name), null, name, projectFile, null, succeeded);
-			engine.EventSource.FireTargetFinished (this, tfea);
-		}
 	
 		public string Condition {
 			get { return targetElement.GetAttribute ("Condition"); }
@@ -253,6 +220,14 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal Project Project {
 			get { return project; }
+		}
+
+		internal List<BuildTask> BuildTasks {
+			get { return buildTasks; }
+		}
+
+		internal Engine Engine {
+			get { return engine; }
 		}
 		
 		internal BuildState BuildState {

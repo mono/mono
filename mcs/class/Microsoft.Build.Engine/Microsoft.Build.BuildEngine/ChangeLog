@@ -1,3 +1,15 @@
+2009-01-31  Ankit Jain  <jankit@novell.com>
+
+	* BatchingImpl.cs: Split into ..
+	* BatchingImplBase.cs: .. this,
+	* TaskBatchingImpl.cs: .. this ..
+	* TargetBatchingImpl.cs: .. and this. Implement target batching here.
+
+	* Target.cs (DoBuild): Use TargetBatchingImpl for building.
+	(Log*): Move to TargetBatchingImpl .
+	(BuildTasks): New.
+	(Engine): New.
+
 2009-01-30  Ankit Jain  <jankit@novell.com>
 
 	* TaskEngine.cs (GetObjectFromString): Empty value is allowed only for

@@ -1,3 +1,11 @@
+2009-01-31  Ankit Jain  <jankit@novell.com>
+
+	* TaskBatchingTest.cs (*): Add tests for target/task events.
+	(TestTargetBatching*): New tests for target batching.
+	* TestMessageLogger.cs: Add counts for target/task started/finished
+	events.
+	(NormalMessageCount): New.
+
 2008-12-22  Ankit Jain  <jankit@novell.com>
 
 	* TestMessageLogger.cs: Emit debug messages to stderr.

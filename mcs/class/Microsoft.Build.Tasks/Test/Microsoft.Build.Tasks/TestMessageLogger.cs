@@ -8,12 +8,38 @@ namespace MonoTests.Microsoft.Build.Tasks
 	internal class TestMessageLogger : ILogger
 	{
 		List<BuildMessageEventArgs> messages;
-		List<BuildEventArgs> errorsAndWarnings;
+		List<BuildEventArgs> all_messages;
+		int target_started, target_finished;
+		int task_started, task_finished;
 
 		public TestMessageLogger ()
 		{
 			messages = new List<BuildMessageEventArgs> ();
-			errorsAndWarnings = new List<BuildEventArgs> ();
+			all_messages = new List<BuildEventArgs> ();
+		}
+
+		public int TargetFinished
+		{
+			get { return target_finished; }
+			set { target_finished = value; }
+		}
+
+		public int TargetStarted
+		{
+			get { return target_started; }
+			set { target_started = value; }
+		}
+
+		public int TaskStarted
+		{
+			get { return task_started; }
+			set { task_started = value; }
+		}
+
+		public int TaskFinished
+		{
+			get { return task_finished; }
+			set { task_finished = value; }
 		}
 
 		public int Count
@@ -28,8 +54,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void Initialize (IEventSource eventSource)
 		{
 			eventSource.MessageRaised += new BuildMessageEventHandler (MessageHandler);
-			eventSource.ErrorRaised += new BuildErrorEventHandler (ErrorHandler);
-			eventSource.WarningRaised += new BuildWarningEventHandler (WarningHandler);
+			eventSource.ErrorRaised += new BuildErrorEventHandler (AllMessagesHandler);
+			eventSource.WarningRaised += new BuildWarningEventHandler(AllMessagesHandler);
+			eventSource.TargetStarted += delegate { target_started++; };
+			eventSource.TargetFinished += delegate { target_finished++; };
+			eventSource.TaskStarted += delegate { task_started++; };
+			eventSource.TaskFinished += delegate { task_finished++; };
 		}
 
 		public void Shutdown ()
@@ -40,16 +70,23 @@ namespace MonoTests.Microsoft.Build.Tasks
 		{
 			if (args.Message.StartsWith ("Using") == false)
 				messages.Add (args);
+			all_messages.Add (args);
 		}
 
-		private void ErrorHandler (object sender, BuildEventArgs args)
+		private void AllMessagesHandler (object sender, BuildEventArgs args)
 		{
-			errorsAndWarnings.Add (args);
+			all_messages.Add (args);
 		}
 
-		private void WarningHandler (object sender, BuildEventArgs args)
-		{
-			errorsAndWarnings.Add (args);
+		public int NormalMessageCount {
+			get
+			{
+				int count = 0, i = 0;
+				while (i ++ < messages.Count)
+					if (messages [i - 1].Importance == MessageImportance.Normal)
+						count++;
+				return count;
+			}
 		}
 
 		public int CheckHead (string text, MessageImportance importance)
@@ -64,8 +101,13 @@ namespace MonoTests.Microsoft.Build.Tasks
 			actual_msg = String.Empty;
 
 			if (messages.Count > 0) {
-				actual = messages [0];
-				messages.RemoveAt (0);
+				//find first @importance level message
+				int i = 0;
+				while (messages [i].Importance != importance && i < messages.Count)
+					i++;
+
+				actual = messages [i];
+				messages.RemoveAt (i);
 			} else
 				return 1;
 
@@ -102,10 +144,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		public void DumpMessages ()
 		{
-			foreach (BuildEventArgs arg in errorsAndWarnings)
-				Console.WriteLine ("{0} {1}", (arg is BuildErrorEventArgs) ? "Err:" : "Warn:", arg.Message);
-
-			foreach (BuildMessageEventArgs arg in messages)
+			foreach (BuildEventArgs arg in all_messages)
 				Console.WriteLine ("Msg: {0}", arg.Message);
 		}
 	}
