@@ -1,3 +1,20 @@
+2009-01-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125077-79
+	* exceptions-arm.c (mono_arch_find_jit_info): The frame layout on arm have
+	separate frame and stack pointers, so we must use FP to find the register
+	spill area.
+	The FP reg is retrieved from the MonoContext::regs array.
+
+
+	* mini-arm.c (mono_arch_output_basic_block): Emit two cond ops for OP_FBGE
+	as FPA requires it.
+
+	* mini-arm.c (mono_arch_emit_setret): Emit OP_FMOVE for methods that
+	return R4 and R8 when not running under softfloat.
+
+	Fixes basic-calls.exe
+
 2009-01-27  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r124712.
