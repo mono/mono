@@ -1,5 +1,11 @@
 2009-01-29  Miguel de Icaza  <miguel@novell.com>
 
+	* ssa.c: handle another alloca.h
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Do not use
+	PLATFORM_WIN32 for detecting if we have sigaction.   Instead use
+	MONO_ARCH_USE_SIGACTION. 
+
 	* aot-runtime.c, mini-exceptions.c: Replace platform define with
 	capability defines.
 
