@@ -15665,6 +15665,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-15.cs">
+    <type name="Foo">
+      <method name="Int32 Helper(System.Linq.Expressions.Expression`1[System.Predicate`1[System.Int32]])">
+        <size>2</size>
+      </method>
+      <method name="Void Main()">
+        <size>190</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
