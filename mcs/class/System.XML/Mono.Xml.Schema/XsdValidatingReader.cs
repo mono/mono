@@ -1608,7 +1608,7 @@ namespace Mono.Xml.Schema
 
 				if (reader.IsEmptyElement)
 					goto case XmlNodeType.EndElement;
-				else
+				else if (xsiNilDepth < reader.Depth)
 					shouldValidateCharacters = true;
 				break;
 			case XmlNodeType.EndElement:

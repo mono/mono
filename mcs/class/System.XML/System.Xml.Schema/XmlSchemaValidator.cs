@@ -437,7 +437,8 @@ namespace System.Xml.Schema
 			if (xsiType != null)
 				HandleXsiType (xsiType);
 
-			shouldValidateCharacters = true;
+			if (xsiNilDepth < depth)
+				shouldValidateCharacters = true;
 
 			if (info != null) {
 				info.IsNil = xsiNilDepth >= 0;

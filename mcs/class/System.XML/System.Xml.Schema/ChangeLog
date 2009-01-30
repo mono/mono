@@ -1,5 +1,10 @@
 2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : when xsi:nil is true, do not validate
+	  text string. Fixed bug #469713.
+
+2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaElement.cs : to reference elementFormDefault, use its
 	  ancestor, not the schema island root.
 
