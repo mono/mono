@@ -1,3 +1,8 @@
+2009-01-30  Jb Evain  <jbevain@novell.com>
+
+	* pedump.c: reuse code from monodis to make sure pedump honors
+	MONO_PATH, which is needed to verify net_2_1 assemblies.
+
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-debug.c (mono_debug_print_stack_frame): Print the IL offset even when
