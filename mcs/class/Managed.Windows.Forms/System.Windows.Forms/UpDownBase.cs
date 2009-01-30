@@ -842,6 +842,11 @@ namespace System.Windows.Forms
 		}
 #endif
 
+		internal override void SetBoundsCoreInternal(int x, int y, int width, int height, BoundsSpecified specified)
+		{
+			base.SetBoundsCoreInternal (x, y, width, Math.Min (width, PreferredHeight), specified);
+		}
+
 		protected abstract void UpdateEditText ();
 
 		protected virtual void ValidateEditText ()

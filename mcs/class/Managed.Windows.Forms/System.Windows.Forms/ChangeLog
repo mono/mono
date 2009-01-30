@@ -1,3 +1,7 @@
+2009-01-30  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* UpDownBase.cs: Force Height to PreferredHeight.
+
 2009-01-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: We should use utf8 handling clipboard transference

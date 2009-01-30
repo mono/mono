@@ -116,6 +116,15 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Height ()
+		{
+			NumericUpDown nud = new NumericUpDown ();
+			Assert.AreEqual (20, nud.PreferredHeight, "#1");
+			nud.Height = 9999;
+			Assert.AreEqual (nud.PreferredHeight, nud.Height, "#2");
+		}
+
+		[Test]
 #if NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 #else
