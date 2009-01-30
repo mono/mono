@@ -1,3 +1,8 @@
+2009-01-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* cpu-arm.md: Increase the size of storer8_membase_reg to 20 bytes
+	as it might use decomposed ops.
+
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* jit-icalls.c (mono_imul_ovf): Fix one of the literals.
