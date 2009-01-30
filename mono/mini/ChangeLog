@@ -1,5 +1,8 @@
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_context_get_int_reg): Adapt this to the "clever"
+	way registers are stored in MonoContext on arm.
+
 	* unwind.c: Rewrite the handling of the cached_info array to use hazard pointers
 	instead of locking so mono_get_cached_unwind_info () becomes signal safe.
 
