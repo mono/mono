@@ -1,3 +1,10 @@
+2009-01-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-arm.c (mono_arch_emit_setret): Emit OP_FMOVE for methods that
+	return R4 and R8 when not running under softfloat.
+
+	Fixes basic-calls.exe
+
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c: Implement some overflow opcodes.
