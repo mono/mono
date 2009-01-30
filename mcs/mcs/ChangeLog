@@ -1,3 +1,9 @@
+2009-01-30  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #470767
+	* statement.cs: Introduced BlockScopeExpression, needed when 
+	expression tree conversion has to emit scope variables.
+
 2009-01-29  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Remove duplicate CallingConvention.

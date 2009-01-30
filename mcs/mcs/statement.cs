@@ -1574,7 +1574,7 @@ namespace Mono.CSharp {
 		//
 		Block switch_block;
 
-		ArrayList scope_initializers;
+		protected ArrayList scope_initializers;
 
 		ArrayList anonymous_children;
 
@@ -2322,16 +2322,8 @@ namespace Mono.CSharp {
 			Block prev_block = ec.CurrentBlock;
 			ec.CurrentBlock = this;
 
-			if (scope_initializers != null) {
-				SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
-
-				using (ec.Set (EmitContext.Flags.OmitDebuggingInfo)) {
-					foreach (Statement s in scope_initializers)
-						s.Emit (ec);
-				}
-
-				SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
-			}
+			if (scope_initializers != null)
+				EmitScopeInitializers (ec);
 
 			ec.Mark (StartLocation);
 			DoEmit (ec);
@@ -2340,6 +2332,18 @@ namespace Mono.CSharp {
 				EmitSymbolInfo (ec);
 
 			ec.CurrentBlock = prev_block;
+		}
+
+		protected void EmitScopeInitializers (EmitContext ec)
+		{
+			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
+
+			using (ec.Set (EmitContext.Flags.OmitDebuggingInfo)) {
+				foreach (Statement s in scope_initializers)
+					s.Emit (ec);
+			}
+
+			SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
 		}
 
 		protected virtual void EmitSymbolInfo (EmitContext ec)
@@ -2607,7 +2611,57 @@ namespace Mono.CSharp {
 	// In particular, this was introduced when the support for Anonymous
 	// Methods was implemented. 
 	// 
-	public class ToplevelBlock : ExplicitBlock {
+	public class ToplevelBlock : ExplicitBlock
+	{
+		// 
+		// Block is converted to an expression
+		//
+		sealed class BlockScopeExpression : Expression
+		{
+			Expression child;
+			readonly ToplevelBlock block;
+
+			public BlockScopeExpression (Expression child, ToplevelBlock block)
+			{
+				this.child = child;
+				this.block = block;
+			}
+
+			public override Expression CreateExpressionTree (EmitContext ec)
+			{
+				throw new NotSupportedException ();
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				if (child == null)
+					return null;
+				
+				block.ResolveMeta (ec, ParametersCompiled.EmptyReadOnlyParameters);
+				child = child.Resolve (ec);
+				if (child == null)
+					return null;
+
+				eclass = child.eclass;
+				type = child.Type;
+				return this;
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				block.EmitMeta (ec);
+				block.EmitScopeInitializers (ec);
+				child.Emit (ec);
+			}
+
+			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+			{
+				type = storey.MutateType (type);
+				child.MutateHoistedGenericType (storey);
+				block.MutateHoistedGenericType (storey);
+			}
+		}
+
 		GenericMethod generic;
 		FlowBranchingToplevel top_level_branching;
 		protected ParametersCompiled parameters;
@@ -2737,8 +2791,13 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			if (statements.Count == 1)
-				return ((Statement) statements [0]).CreateExpressionTree (ec);
+			if (statements.Count == 1) {
+				Expression expr = ((Statement) statements[0]).CreateExpressionTree (ec);
+				if (scope_initializers != null)
+					expr = new BlockScopeExpression (expr, this);
+
+				return expr;
+			}
 
 			return base.CreateExpressionTree (ec);
 		}
