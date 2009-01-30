@@ -1,5 +1,8 @@
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c: Rewrite the handling of the cached_info array to use hazard pointers
+	instead of locking so mono_get_cached_unwind_info () becomes signal safe.
+
 	* mini.c (mini_init): Emuate OP_FCONV_TO_I when using soft float.
 
 	* mini-arm.c (emit_load_volatile_arguments): Avoid an unneccesary assert.
