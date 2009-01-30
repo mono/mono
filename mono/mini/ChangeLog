@@ -1,5 +1,12 @@
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
-	
+
+	* jit-icalls.c (mono_imul_ovf): Fix one of the literals.
+
+	* mini.c (mini_init): Emulate mul.ovf opcodes if MONO_ARCH_EMULATE_MUL_OVF
+	is defined.
+
+	* mini-arm.h (MONO_ARCH_EMULATE_MUL_OVF): New define.
+
 	* mini-arm.c (mono_arch_build_imt_thunk): Rewrite this to allow large vtable
 	offsets.
 
