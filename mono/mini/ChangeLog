@@ -1,5 +1,16 @@
 2009-01-30  Miguel de Icaza  <miguel@novell.com>
 
+	Question: if we are storing gint32's inside the "*native_offset",
+	should we change the signature to "gint32 *native_offset" to
+	ensure that we do not have type definition problems?
+	
+	* mini-exceptions.c (ves_icall_get_frame_info): Cast the gint32 to
+	an int * as this is what the other function expects, causes
+	problems with Freescale's compiler that defined int32_t to be a
+	long and makes int incompatible 
+
+2009-01-30  Miguel de Icaza  <miguel@novell.com>
+
 	* Rename generic-sharing.c to mini-generic-sharing.c to avoid the
 	filename conflict with bjam.
 
