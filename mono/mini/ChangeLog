@@ -1,5 +1,9 @@
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Emuate OP_FCONV_TO_I when using soft float.
+
+	* mini-arm.c (emit_load_volatile_arguments): Avoid an unneccesary assert.
+
 	* mini.c (mini_init): Register mono_isfinite.
 
 	* jit-icalls.c (mono_isfinite): New jit icall.
