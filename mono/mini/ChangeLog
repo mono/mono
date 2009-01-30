@@ -1,5 +1,9 @@
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Fix --enable-minimal=aot.
+
+2009-01-30  Zoltan Varga  <vargaz@gmail.com>
+
 	* exceptions-arm.c (mono_arch_get_throw_exception_generic): Fix the
 	previous change.
 
