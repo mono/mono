@@ -1,5 +1,11 @@
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Register mono_isfinite.
+
+	* jit-icalls.c (mono_isfinite): New jit icall.
+
+	* method-to-ir.c (mono_decompose_soft_float): Add support for OP_CKFINITE.
+	
 	* exceptions-arm.c (mono_arch_find_jit_info): When unwinding using the LMF,
 	set esp to ARMREG_FP instead of R12, since R12 stores the value of sp for
 	the parent frame.
