@@ -452,7 +452,7 @@ namespace System.Xml.Schema
 				{
 					string targetNamespace = String.Empty;
 
-					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && schema.ElementFormDefault == XmlSchemaForm.Qualified))
+					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && AncestorSchema.ElementFormDefault == XmlSchemaForm.Qualified))
 						targetNamespace = AncestorSchema.TargetNamespace;
 
 					if(this.name == null)	//b1
@@ -926,7 +926,7 @@ namespace System.Xml.Schema
 						}
 					} else {
 						if (any.TargetNamespace != this.QualifiedName.Namespace)
-							error (h, "Ambiguous element label which is contained by -any- particle with ##other value was detected: " + this.QualifiedName);
+							error (h, String.Format ("Ambiguous element label '{0}' which is contained by -any- particle with ##other value than '{1}' was detected: ", this.QualifiedName.Namespace, any.TargetNamespace));
 					}
 				}
 				qnames.Add (this.QualifiedName, this);

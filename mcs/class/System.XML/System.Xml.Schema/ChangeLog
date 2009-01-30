@@ -1,3 +1,8 @@
+2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaElement.cs : to reference elementFormDefault, use its
+	  ancestor, not the schema island root.
+
 2008-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchema.cs, XmlSchemaSet.cs : move substitutionGroup processing
