@@ -1,3 +1,8 @@
+2009-01-30  Andreia Gaita  <avidigal@novell.com>
+
+	* SynchronizationContext.cs: Remove moonlight hacks, dispatcher should
+	be able to handle this now.
+
 2008-12-20  Miguel de Icaza  <miguel@novell.com>
 
 	* WaitHandle.cs: Add two overloads that were introduced in 3.5.
