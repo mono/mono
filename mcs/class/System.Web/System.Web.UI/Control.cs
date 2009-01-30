@@ -1609,7 +1609,10 @@ namespace System.Web.UI
 			if (Adapter != null)
 				thisAdapterViewState = Adapter.SaveAdapterViewState ();
 #endif
-			object thisState = SaveViewState ();
+			object thisState = null;
+
+			if (EnableViewState)
+				thisState = SaveViewState ();
 
 			if (thisState == null && controlList == null && controlStates == null) {
 				if (trace != null) {
