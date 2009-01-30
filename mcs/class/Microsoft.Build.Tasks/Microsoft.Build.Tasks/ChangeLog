@@ -1,3 +1,9 @@
+2009-01-30  Ankit Jain  <jankit@novell.com>
+
+	* Copy.cs (Execute): Use for loop instead of enumerators.
+	sourceFiles and destinationFiles can be null, handle that.
+	Create new directory if required.
+
 2009-01-27  Ankit Jain  <jankit@novell.com>
 
 	* Delete.cs (Execute): Skip non-existant files.

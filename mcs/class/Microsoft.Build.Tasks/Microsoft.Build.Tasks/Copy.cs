@@ -52,18 +52,15 @@ namespace Microsoft.Build.Tasks {
 			try {
 				List <ITaskItem> temporaryCopiedFiles = new List <ITaskItem> ();
 			
-				if (sourceFiles.Length != destinationFiles.Length)
+				if (sourceFiles != null && destinationFiles != null &&
+					sourceFiles.Length != destinationFiles.Length)
 					throw new Exception ("Number of source files is different than number of destination files.");
 				if (destinationFiles != null && destinationFolder != null)
 					throw new Exception ("You must specify only one attribute from DestinationFiles and DestinationFolder");
 				if (destinationFiles != null) {
-					IEnumerator <ITaskItem> source, destination;
-					source = ((IEnumerable <ITaskItem>) sourceFiles).GetEnumerator ();
-					destination = ((IEnumerable <ITaskItem>) destinationFiles).GetEnumerator ();
-					while (source.MoveNext ()) {
-						destination.MoveNext ();
-						ITaskItem sourceItem = source.Current;
-						ITaskItem destinationItem = destination.Current;
+					for (int i = 0; i < sourceFiles.Length; i ++) {
+						ITaskItem sourceItem = sourceFiles [i];
+						ITaskItem destinationItem = destinationFiles [i];
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string destinationFile = destinationItem.GetMetadata ("FullPath");
 
@@ -74,23 +71,27 @@ namespace Microsoft.Build.Tasks {
 								File.GetLastWriteTime (destinationFile))
 								continue;
 						}
+
+						string dest_dir = Path.GetDirectoryName (destinationFile);
+						if (!Directory.Exists (dest_dir)) {
+							Log.LogMessage ("Creating directory '{0}'", dest_dir);
+							Directory.CreateDirectory (dest_dir);
+						}
 						Log.LogMessage ("Copying file from '{0}' to '{1}'", sourceFile, destinationFile);
 						File.Copy (sourceFile, destinationFile, true);
-						temporaryCopiedFiles.Add (source.Current);
+						temporaryCopiedFiles.Add (sourceItem);
 					}
 					
 				} else if (destinationFolder != null) {
 					bool directoryCreated = false;
 					string destinationDirectory = destinationFolder.GetMetadata ("FullPath");
 					if (Directory.Exists (destinationDirectory) == false) {
+						Log.LogMessage ("Creating directory '{0}'", destinationDirectory);
 						Directory.CreateDirectory (destinationDirectory);
 						directoryCreated = true;
 					}
 					
-					IEnumerator <ITaskItem> source;
-					source = (IEnumerator <ITaskItem>) sourceFiles.GetEnumerator ();
-					while (source.MoveNext ()) {
-						ITaskItem sourceItem = source.Current;
+					foreach (ITaskItem sourceItem in sourceFiles) {
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string filename = sourceItem.GetMetadata ("Filename") + sourceItem.GetMetadata ("Extension");
 						string destinationFile = Path.Combine (destinationDirectory,filename);
@@ -104,7 +105,7 @@ namespace Microsoft.Build.Tasks {
 						}
 						Log.LogMessage ("Copying file from '{0}' to '{1}'", sourceFile, destinationFile);
 						File.Copy (sourceFile, destinationFile, true);
-						temporaryCopiedFiles.Add (source.Current);
+						temporaryCopiedFiles.Add (sourceItem);
 					}
 				} else {
 					throw new Exception ("You must specify DestinationFolder or DestinationFiles attribute.");
