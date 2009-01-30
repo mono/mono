@@ -77,7 +77,7 @@ using ValException = System.Xml.Schema.XmlSchemaValidationException;
 namespace Mono.Xml.Schema
 {
 	internal class XmlSchemaValidatingReader : XmlReader, IXmlLineInfo,
-		IXmlSchemaInfo, IXmlNamespaceResolver
+		IXmlSchemaInfo, IXmlNamespaceResolver, IHasXmlParserContext
 	{
 		static readonly XsAttr [] emptyAttributeArray =
 			new XsAttr [0];
@@ -363,11 +363,9 @@ namespace Mono.Xml.Schema
 			}
 		}
 
-#if !NON_MONO
 		public XmlParserContext ParserContext {
 			get { return XmlSchemaUtil.GetParserContext (reader); }
 		}
-#endif
 
 		public override string Prefix {
 			get {

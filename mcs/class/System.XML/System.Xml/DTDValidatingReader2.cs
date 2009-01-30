@@ -95,9 +95,7 @@ namespace Mono.Xml
 		internal DTDValidatingReader (XmlReader reader,
 			XmlValidatingReader validatingReader)
 		{
-			IHasXmlParserContext container = reader as IHasXmlParserContext;
-			this.reader = new EntityResolvingXmlReader (reader,
-				container != null ? container.ParserContext : null);
+			this.reader = new EntityResolvingXmlReader (reader);
 			this.sourceTextReader = reader as XmlTextReader;
 			elementStack = new Stack ();
 			automataStack = new Stack ();

@@ -383,7 +383,12 @@ namespace System.Xml
 		}
 
 		XmlParserContext IHasXmlParserContext.ParserContext {
-			get { return dtdReader != null ? dtdReader.ParserContext : null; }
+			get {
+				if (dtdReader != null)
+					return dtdReader.ParserContext;
+				IHasXmlParserContext i = sourceReader as IHasXmlParserContext;
+				return i != null ? i.ParserContext : null;
+			}
 		}
 
 #if NET_2_0

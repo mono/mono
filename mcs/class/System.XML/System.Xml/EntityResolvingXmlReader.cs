@@ -55,10 +55,14 @@ namespace Mono.Xml
 		bool inside_attr;
 		bool do_resolve;
 
-		public EntityResolvingXmlReader (XmlReader source, XmlParserContext context)
+		public EntityResolvingXmlReader (XmlReader source)
 		{
 			this.source = source;
-			this.context = context;
+			IHasXmlParserContext container = source as IHasXmlParserContext;
+			if (container != null)
+				this.context = container.ParserContext;
+			else
+				this.context = new XmlParserContext (source.NameTable, new XmlNamespaceManager (source.NameTable), null, XmlSpace.None);
 		}
 
 		EntityResolvingXmlReader (XmlReader entityContainer,
