@@ -1,3 +1,8 @@
+2009-01-30  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: don't save the control's state if it's
+	disabled. Fixes bug #470993
+
 2009-01-23  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlTextWriter.cs: if OnTagRender returns false when called from
