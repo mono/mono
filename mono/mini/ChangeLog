@@ -1,3 +1,7 @@
+2009-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c: Implement some overflow opcodes.
+
 2009-01-29  Miguel de Icaza  <miguel@novell.com>
 
 	* ssa.c: handle another alloca.h
