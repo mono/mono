@@ -1,5 +1,8 @@
 2009-01-29  Miguel de Icaza  <miguel@novell.com>
 
+	* aot-runtime.c, mini-exceptions.c: Replace platform define with
+	capability defines.
+
 	* method-to-ir.c (mono_method_to_ir): Type cast fix on some platforms.
 
 	* mini-ppc.h (MONO_ARCH_USE_SIGACTION): Do not define this for all
