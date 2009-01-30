@@ -1,3 +1,8 @@
+2009-01-30  Miguel de Icaza  <miguel@novell.com>
+
+	* Rename generic-sharing.c to mini-generic-sharing.c to avoid the
+	filename conflict with bjam.
+
 2009-01-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* cpu-arm.md: Increase the size of storer8_membase_reg to 20 bytes
