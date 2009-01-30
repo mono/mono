@@ -1,3 +1,15 @@
+2009-01-29  Miguel de Icaza  <miguel@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir): Type cast fix on some platforms.
+
+	* mini-ppc.h (MONO_ARCH_USE_SIGACTION): Do not define this for all
+	PPC targets as sigaction does not exist on all platforms, define
+	this on a per-platform basis.
+
+	Instead of erroring out if the platform is not defined, include
+	mini-ppc-os.h, and expect that the OS specific setting provides
+	the required information.   
+
 2009-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Fix --enable-minimal=aot.
