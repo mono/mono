@@ -580,6 +580,15 @@ fail_no_space:
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
 #endif
 							}
+							else if ((leftBits & 0xF800) == 0xD800) {
+								// UTF-8 doesn't use surrogate characters
+#if NET_2_0
+								length += Fallback (provider, ref fallbackBuffer, ref bufferArg, bytes, index - leftSoFar, leftSoFar);
+#else
+								if (throwOnInvalid)
+									throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#endif
+							}
 							else
 								++length;
 						} else if (leftBits < (uint)0x110000) {

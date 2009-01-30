@@ -11,6 +11,7 @@
 
 using NUnit.Framework;
 using System;
+using System.IO;
 using System.Text;
 
 #if NET_2_0
@@ -1116,6 +1117,16 @@ namespace MonoTests.System.Text
 			AssertType.IsFalse (b.MovePrevious (), "#2");
 			AssertType.AreEqual (1, b.Remaining, "#3");
 			AssertType.AreEqual ('\uFFFD', b.GetNextChar (), "#4");
+		}
+
+		[Test]
+		public void Bug415628 ()
+		{
+			using (var f = File.Open ("Test/resources/415628.bin", FileMode.Open)) {
+				BinaryReader br = new BinaryReader (f);
+				byte [] buf = br.ReadBytes (8000);
+				Encoding.UTF8.GetString(buf);
+			}
 		}
 #endif
 	}

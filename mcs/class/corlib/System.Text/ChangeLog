@@ -1,3 +1,9 @@
+2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8Encoding.cs : surrogate characters are handled in 
+	  InternalGetChars() but not in InternalGetCharCount().
+	  Fixed bug #415628.
+
 2009-01-13  Jb Evain  <jbevain@novell.com>
 
 	* Encoding.cs: when creating a ForwardingEncoder or a

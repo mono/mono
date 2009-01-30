@@ -1,3 +1,7 @@
+2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* 415628.bin : new test resource.
+
 2007-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* bug81759.resources : test resource for bug 81759 test.
