@@ -1,3 +1,10 @@
+2009-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_dwarf_info): Emit names for local variables.
+
+	* driver.c (mono_main): Enable debugging support automatically if XDEBUG
+	is used.
+
 2009-01-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-calls.cs: Test for the weird crash found on arm.
