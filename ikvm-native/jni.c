@@ -28,7 +28,7 @@
 #include <malloc.h>
 #define ALLOCA _alloca
 #else
-#if defined(__FreeBSD__) || defined(__NetBSD__)
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__)
 #include <stdlib.h>
 #else
 #include <alloca.h>
