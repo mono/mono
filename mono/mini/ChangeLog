@@ -1,5 +1,9 @@
 2009-01-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic-calls.cs: Test for the weird crash found on arm.
+	
+2009-01-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* cpu-arm.md: Increase the size of storer8_membase_reg and
 	loadr8_membase_reg to 24 bytes to accomodate the extra add.
 
