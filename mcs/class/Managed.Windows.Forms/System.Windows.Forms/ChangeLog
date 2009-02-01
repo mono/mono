@@ -1,5 +1,12 @@
 2009-02-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs, DataGridViewColumnCollection.cs: Ensure that the 
+	binding is cleared prior to setting it to null. Fixes a regression 
+	causing exceptions when the DataSource is set to null and then set 
+	again to a data source.
+
+2009-02-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewImageColumn.cs, DataGridViewCell.cs: 
 	   - Make Image/Bitmap cells work.
 	   - Handle images with size greater than the cell.
