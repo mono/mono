@@ -3665,7 +3665,6 @@ namespace System.Windows.Forms {
 				//
 				if (!is_autogenerating_columns && columns.Count == 1)
 					ReBind ();
-
 				foreach (DataGridViewRow row in Rows)
 					row.Cells.Add ((DataGridViewCell)e.Column.CellTemplate.Clone ());
 			}
@@ -5858,6 +5857,8 @@ namespace System.Windows.Forms {
 		{
 			if (type == typeof (bool))
 				return new DataGridViewCheckBoxColumn ();
+			else if (typeof(Bitmap).IsAssignableFrom (type))
+				return new DataGridViewImageColumn ();
 				
 			return new DataGridViewTextBoxColumn ();
 		}
