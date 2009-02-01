@@ -1,5 +1,7 @@
 2009-02-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Emit line number info in xdebug mode.
+	
 	* aot-compiler.c (mono_save_xdebug_info): Receive a MonoCompile instead of a
 	million arguments.
 
