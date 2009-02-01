@@ -47,6 +47,7 @@ namespace System.Windows.Forms {
 			this.valuesAreIcons = valuesAreIcons;
 			base.CellTemplate = new DataGridViewImageCell(valuesAreIcons);
 			(base.CellTemplate as DataGridViewImageCell).ImageLayout = DataGridViewImageCellLayout.Normal;
+			DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 			icon = null;
 			image = null;
 		}

@@ -877,6 +877,8 @@ namespace System.Windows.Forms {
 			
 			if (FormattedValueType == typeof(string) && value is IFormattable && !String.IsNullOrEmpty (cellStyle.Format))
 				return ((IFormattable) value).ToString (cellStyle.Format, cellStyle.FormatProvider);
+			if (value != null && FormattedValueType.IsAssignableFrom (value.GetType()))
+				return value;
 
 			if (formattedValueTypeConverter == null)
 				formattedValueTypeConverter = FormattedValueTypeConverter;
@@ -1402,13 +1404,13 @@ namespace System.Windows.Forms {
 			else if (align == DataGridViewContentAlignment.BottomCenter || align == DataGridViewContentAlignment.MiddleCenter || align == DataGridViewContentAlignment.TopCenter)
 				x = Math.Max (outer.X + ((outer.Width - inner.Width) / 2), outer.Left);
 			else if (align == DataGridViewContentAlignment.BottomRight || align == DataGridViewContentAlignment.MiddleRight || align == DataGridViewContentAlignment.TopRight)
-				x = outer.Right - inner.Width;
+				x = Math.Max (outer.Right - inner.Width, outer.X);
 			if (align == DataGridViewContentAlignment.TopCenter || align == DataGridViewContentAlignment.TopLeft || align == DataGridViewContentAlignment.TopRight)
 				y = outer.Y;
 			else if (align == DataGridViewContentAlignment.MiddleCenter || align == DataGridViewContentAlignment.MiddleLeft || align == DataGridViewContentAlignment.MiddleRight)
-				y = outer.Y + (outer.Height - inner.Height) / 2;
+				y = Math.Max (outer.Y + (outer.Height - inner.Height) / 2, outer.Y);
 			else if (align == DataGridViewContentAlignment.BottomCenter || align == DataGridViewContentAlignment.BottomRight || align == DataGridViewContentAlignment.BottomLeft)
-				y = outer.Bottom - inner.Height;
+				y = Math.Max (outer.Bottom - inner.Height, outer.Y);
 
 			return new Rectangle (x, y, Math.Min (inner.Width, outer.Width), Math.Min (inner.Height, outer.Height));
 		}
