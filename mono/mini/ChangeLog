@@ -1,7 +1,10 @@
 2009-02-01  Zoltan Varga  <vargaz@gmail.com>
 
-	* aot-compiler.c: Optimize the size of the generated line number info.
+	* aot-compiler.c: Add debug info for methods without debug info by
+	emitting an IL file and having the line number info referencing that file.
 	
+	* aot-compiler.c: Optimize the size of the generated line number info.
+
 	* aot-compiler.c: Emit line number info in xdebug mode.
 
 	* aot-compiler.c (mono_save_xdebug_info): Receive a MonoCompile instead of a
