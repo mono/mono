@@ -16955,7 +16955,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>2008</size>
+        <size>2137</size>
       </method>
       <method name="Void Foo(Int32, Boolean)">
         <size>11</size>
@@ -17232,6 +17232,45 @@
       </method>
       <method name="IEnumerable`1 &lt;&gt;m__32(IGrouping`2)">
         <size>7</size>
+      </method>
+    </type>
+    <type name="from.C">
+      <method name="Int32 &lt;Main&gt;m__39(Int32)">
+        <size>2</size>
+      </method>
+      <method name="&lt;&gt;__AnonType4`2[&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]],System.Int32] &lt;Main&gt;m__3B(&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]])">
+        <size>9</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__3C(&lt;&gt;__AnonType4`2[&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]],System.Int32])">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType4`2[&lt;&lt;&gt;__TranspIdent13&gt;__T,&lt;l2&gt;__T]">
+      <method name="Void .ctor(&lt;&lt;&gt;__TranspIdent13&gt;__T, &lt;l2&gt;__T)">
+        <size>21</size>
+      </method>
+      <method name="&lt;&lt;&gt;__TranspIdent13&gt;__T get_&lt;&gt;__TranspIdent13()">
+        <size>7</size>
+      </method>
+      <method name="&lt;l2&gt;__T get_l2()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>142</size>
+      </method>
+    </type>
+    <type name="from.C+&lt;Main&gt;c__AnonStorey0">
+      <method name="&lt;&gt;__AnonType1`2[System.Int32,System.Collections.Generic.IEnumerable`1[System.Int32]] &lt;&gt;m__3A(Int32)">
+        <size>47</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__3D(Int32)">
+        <size>2</size>
       </method>
     </type>
   </test>

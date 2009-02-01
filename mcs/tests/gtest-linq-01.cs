@@ -68,6 +68,13 @@ namespace from
 					select b
 				orderby a
 				select a;
+				
+			var e4 = from i in
+					from x in i2
+					select x
+				let l = from x2 in i2 select x2
+				let l2 = 50
+				select 1;
 
 			int from = 0;
 			bool let = false;
