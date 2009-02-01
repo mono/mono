@@ -51,7 +51,7 @@ namespace Mono.CSharp
 		// scope only
 		//
 		public int parsing_block;
-		internal int query_parsing;
+		internal bool query_parsing;
 		
 		// 
 		// When parsing type only, useful for ambiguous nullable types
@@ -444,7 +444,7 @@ namespace Mono.CSharp
 				}
 				break;
 			case Token.WHERE:
-				if (!handle_where && query_parsing == 0)
+				if (!handle_where && !query_parsing)
 					res = -1;
 				break;
 			case Token.FROM:
@@ -452,7 +452,7 @@ namespace Mono.CSharp
 				// A query expression is any expression that starts with `from identifier'
 				// followed by any token except ; , =
 				// 
-				if (query_parsing == 0) {
+				if (!query_parsing) {
 					if (lambda_arguments_parsing) {
 						res = -1;
 						break;
@@ -479,7 +479,8 @@ namespace Mono.CSharp
 						if (next_token == Token.SEMICOLON || next_token == Token.COMMA || next_token == Token.EQUALS)
 							goto default;
 						
-						++query_parsing;
+						res = Token.FROM_FIRST;
+						query_parsing = true;
 						if (RootContext.Version <= LanguageVersion.ISO_2)
 							Report.FeatureIsNotAvailable (Location, "query expressions");
 						break;
@@ -507,7 +508,7 @@ namespace Mono.CSharp
 			case Token.ASCENDING:
 			case Token.DESCENDING:
 			case Token.INTO:
-				if (query_parsing == 0)
+				if (!query_parsing)
 					res = -1;
 				break;
 				
