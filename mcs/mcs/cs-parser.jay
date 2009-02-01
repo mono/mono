@@ -232,6 +232,7 @@ namespace Mono.CSharp
 %token PARTIAL
 %token ARROW
 %token FROM
+%token FROM_FIRST
 %token JOIN
 %token ON
 %token EQUALS
@@ -5194,18 +5195,23 @@ using_statement
 // LINQ
 
 query_expression
-	: first_from_clause
+	: first_from_clause query_body
 	  {
-		++lexer.query_parsing;
-	  }
-	  query_body
-	  {
-		if (--lexer.query_parsing == 1)
-			lexer.query_parsing = 0;
+		lexer.query_parsing = false;
 			
 		Linq.AQueryClause from = $1 as Linq.AQueryClause;
 			
-		from.Tail.Next = (Linq.AQueryClause)$3;
+		from.Tail.Next = (Linq.AQueryClause)$2;
+		$$ = from;
+		
+		current_block.SetEndLocation (lexer.Location);
+		current_block = current_block.Parent;
+	  }
+	| nested_from_clause query_body
+	  {
+		Linq.AQueryClause from = $1 as Linq.AQueryClause;
+			
+		from.Tail.Next = (Linq.AQueryClause)$2;
 		$$ = from;
 		
 		current_block.SetEndLocation (lexer.Location);
@@ -5214,6 +5220,19 @@ query_expression
 	;
 	
 first_from_clause
+	: FROM_FIRST IDENTIFIER IN expression
+	  {
+		$$ = new Linq.QueryExpression (current_block, new Linq.QueryStartClause ((Expression)$4));
+		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $2, GetLocation ($1));
+	  }
+	| FROM_FIRST type IDENTIFIER IN expression
+	  {
+		$$ = new Linq.QueryExpression (current_block, new Linq.Cast ((FullNamedExpression)$2, (Expression)$5));
+		current_block = new Linq.QueryBlock (current_block, (LocatedToken) $3, GetLocation ($1));
+	  }
+	;
+
+nested_from_clause
 	: FROM IDENTIFIER IN expression
 	  {
 		$$ = new Linq.QueryExpression (current_block, new Linq.QueryStartClause ((Expression)$4));
@@ -6402,6 +6421,7 @@ static string GetTokenName (int token)
 	case Token.ARROW:
 		return "=>";
 	case Token.FROM:
+	case Token.FROM_FIRST:
 		return "from";
 	case Token.JOIN:
 		return "join";
