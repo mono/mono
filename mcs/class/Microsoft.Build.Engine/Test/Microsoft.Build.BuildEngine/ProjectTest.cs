@@ -36,6 +36,8 @@ using Microsoft.Build.Utilities;
 using NUnit.Framework;
 using System.Text;
 
+using MBT = MonoTests.Microsoft.Build.Tasks;
+
 namespace MonoTests.Microsoft.Build.BuildEngine {
 
 	class TestLogger : Logger {
@@ -371,14 +373,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+					<Target Name='T'>
 						<Message Text='text' />
 					</Target>
 				</Project>
 			";
 
 			engine = new Engine (Consts.BinPath);
-			TestLogger tl = new TestLogger ();
+			MBT.TestMessageLogger tl = new MBT.TestMessageLogger();
 			engine.RegisterLogger (tl);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -386,8 +388,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Build ("T");
 			project.Build ("T");
 
-			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
-			Assert.AreEqual (2, tl.TargetFinishedEvents, "A2");
+			Assert.AreEqual (2, tl.TargetStarted, "A1");
+			Assert.AreEqual (2, tl.TargetFinished, "A2");
+			Assert.AreEqual (2, tl.TaskStarted, "A3");
+			Assert.AreEqual (2, tl.TaskFinished, "A4");
 		}
 
 		[Test]
@@ -398,14 +402,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+					<Target Name='T'>
 						<Message Text='text' />
 					</Target>
 				</Project>
 			";
 
 			engine = new Engine (Consts.BinPath);
-			TestLogger tl = new TestLogger ();
+			MBT.TestMessageLogger tl = new MBT.TestMessageLogger ();
 			engine.RegisterLogger (tl);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -413,12 +417,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Build (new string [1] { "T" }, null, BuildSettings.None);
 			project.Build (new string [1] { "T" }, null, BuildSettings.None);
 
-			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
-			Assert.AreEqual (2, tl.TargetFinishedEvents, "A2");
+			Assert.AreEqual (2, tl.TargetStarted, "A1");
+			Assert.AreEqual (2, tl.TargetFinished, "A2");
+			Assert.AreEqual (2, tl.TaskStarted, "A3");
+			Assert.AreEqual (2, tl.TaskFinished, "A4");
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestBuild4 ()
 		{
 			Engine engine;
@@ -426,14 +431,14 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			string documentString = @"
 				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
-					<Target Name='T' Inputs='Test\resources\TestTasks.cs' Outputs='Test\resources\TestTasks.dll'>
+					<Target Name='T'>
 						<Message Text='text' />
 					</Target>
 				</Project>
 			";
 
 			engine = new Engine (Consts.BinPath);
-			TestLogger tl = new TestLogger ();
+			MBT.TestMessageLogger tl = new MBT.TestMessageLogger ();
 			engine.RegisterLogger (tl);
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
@@ -441,8 +446,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
 			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
 
-			Assert.AreEqual (1, tl.TargetStartedEvents, "A1");
-			Assert.AreEqual (1, tl.TargetFinishedEvents, "A2");
+			Assert.AreEqual (1, tl.TargetStarted, "A1");
+			Assert.AreEqual (1, tl.TargetFinished, "A2");
+			Assert.AreEqual (1, tl.TaskStarted, "A3");
+			Assert.AreEqual (1, tl.TaskFinished, "A4");
 		}
 
 		[Test]
@@ -1037,7 +1044,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestResetBuildStatus ()
 		{
 			Engine engine;

@@ -234,5 +234,81 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Targets.CopyTo (t, 0);
 			t [0].RemoveTask (null);
 		}
+
+		[Test]
+		public void TestTargetOutputs1 ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<ItemGroup>
+				<fruit Include=""apple""/>
+				<fruit Include=""rhubarb""/>
+				<fruit Include=""apricot""/>
+			</ItemGroup>
+
+			<Target Name=""Main"">
+				<CallTarget Targets=""foo"">
+					<Output TaskParameter=""TargetOutputs"" ItemName=""AllOut""/>
+				</CallTarget>
+
+				<CallTarget Targets=""foo"">
+					<Output TaskParameter=""TargetOutputs"" ItemName=""AllOut""/>
+				</CallTarget>
+				<Message Text=""AllOut: @(AllOut)""/>
+			</Target>
+
+			<Target Name=""foo"" Outputs=""@(FooItem)"">
+				<Message Text=""foo called""/>
+				<CreateItem Include=""%(fruit.Identity)"">
+					<Output TaskParameter=""Include"" ItemName=""FooItem""/>
+				</CreateItem>
+				<Message Text=""FooItem: @(FooItem)""/>
+			</Target>
+		</Project>";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			bool result = project.Build ("Main");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+				Assert.AreEqual (3, logger.NormalMessageCount, "Expected number of messages");
+				CheckLoggedMessageHead (logger, "foo called", "A1");
+				CheckLoggedMessageHead (logger, "FooItem: apple;rhubarb;apricot", "A2");
+				CheckLoggedMessageHead (logger, "AllOut: apple;rhubarb;apricot;apple;rhubarb;apricot", "A3");
+				Assert.AreEqual (0, logger.NormalMessageCount, "Extra messages found");
+
+				Assert.AreEqual (2, logger.TargetStarted, "TargetStarted count");
+				Assert.AreEqual (2, logger.TargetFinished, "TargetFinished count");
+				Assert.AreEqual (8, logger.TaskStarted, "TaskStarted count");
+				Assert.AreEqual (8, logger.TaskFinished, "TaskFinished count");
+
+			} catch (AssertionException) {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
+		void CheckLoggedMessageHead (MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger, string expected, string id)
+		{
+			string actual;
+			int result = logger.CheckHead (expected, MessageImportance.Normal, out actual);
+			if (result == 1)
+				Assert.Fail ("{0}: Expected message '{1}' was not emitted.", id, expected);
+			if (result == 2)
+				Assert.AreEqual (expected, actual, id);
+		}
+
 	}
 }

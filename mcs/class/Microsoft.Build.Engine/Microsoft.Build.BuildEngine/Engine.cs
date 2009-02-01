@@ -49,6 +49,7 @@ namespace Microsoft.Build.BuildEngine {
 		List <ILogger>		loggers;
 		//bool			onlyLogCriticalEvents;
 		Dictionary <string, Project>	projects;
+		Dictionary <string, ITaskItem[]> builtTargetsOutputByName;
 
 		static Engine		globalEngine;
 		static Version		version;
@@ -74,6 +75,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.loggers = new List <ILogger> ();
 			this.buildStarted = false;
 			this.globalProperties = new BuildPropertyGroup ();
+			this.builtTargetsOutputByName = new Dictionary<string, ITaskItem[]> ();
 			
 			RegisterDefaultTasks ();
 		}
@@ -117,21 +119,13 @@ namespace Microsoft.Build.BuildEngine {
 					  IDictionary targetOutputs,
 					  BuildSettings buildFlags)
 		{
-			bool result;
 			if (project == null)
 				throw new ArgumentException ("project");
 			if (targetNames == null)
 				return false;
 
 			StartBuild ();
-			
-			LogProjectStarted (project, targetNames);
-				
-			result =  project.Build (targetNames, targetOutputs);
-			
-			LogProjectFinished (project, result);
-			
-			return result;
+			return project.Build (targetNames, targetOutputs, buildFlags);
 		}
 
 		[MonoTODO]
@@ -178,25 +172,18 @@ namespace Microsoft.Build.BuildEngine {
 					      IDictionary targetOutputs,
 					      BuildSettings buildFlags)
 		{
-			bool result;
 			Project project;
 
 			StartBuild ();
 			
 			if (projects.ContainsKey (projectFile)) {
 				project = (Project) projects [projectFile];
-				LogProjectStarted (project, targetNames);
-				result = project.Build (targetNames, targetOutputs);
 			} else {
 				project = CreateNewProject ();
 				project.Load (projectFile);
-				LogProjectStarted (project, targetNames);
-				result = project.Build (targetNames, targetOutputs);
 			}
 			
-			LogProjectFinished (project, result);
-			
-			return result;
+			return project.Build (targetNames, targetOutputs, buildFlags);
 		}
 
 		void CheckBinPath ()
@@ -288,28 +275,6 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 		
-		void LogProjectStarted (Project project, string [] targetNames)
-		{
-			ProjectStartedEventArgs psea;
-			if (targetNames == null || targetNames.Length == 0) {
-				if (project.DefaultTargets != String.Empty)
-					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName,
-						project.DefaultTargets, null, null);
-				else
-					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, "default", null, null);
-			} else
-			psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, String.Join (";",
-				targetNames), null, null);
-			eventSource.FireProjectStarted (this, psea);
-		}
-		
-		void LogProjectFinished (Project project, bool succeeded)
-		{
-			ProjectFinishedEventArgs pfea;
-			pfea = new ProjectFinishedEventArgs ("Project started.", null, project.FullFileName, succeeded);
-			eventSource.FireProjectFinished (this, pfea);
-		}
-		
 		void LogBuildStarted ()
 		{
 			BuildStartedEventArgs bsea;
@@ -384,6 +349,10 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal TaskDatabase DefaultTasks {
 			get { return defaultTasks; }
+		}
+
+		internal Dictionary<string, ITaskItem[]> BuiltTargetsOutputByName {
+			get { return builtTargetsOutputByName; }
 		}
 	}
 }

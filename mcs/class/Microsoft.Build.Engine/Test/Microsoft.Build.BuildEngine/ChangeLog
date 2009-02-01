@@ -1,3 +1,12 @@
+2009-02-01  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestBuild[23]): Check number of task started/finished
+	events.
+	(TestResetBuildStat): Remove "NotWorking".
+	(TestBuild4): Likewise. Check number of task started/finished events.
+
+	* TargetTest.cs (TestTargetOutputs1): New.
+
 2009-01-30  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestRequiredTask_*): New.

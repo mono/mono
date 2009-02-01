@@ -1,3 +1,14 @@
+2009-02-01  Ankit Jain  <jankit@novell.com>
+
+	* BuildEngine.cs (BuildProjectFile): Use
+	BuildSettings.DoNotResetPreviouslyBuiltTargets for building projects.
+	* Engine.cs (BuiltTargetsOutputByName): New. Table of targets already
+	built. Move logging of project start/finish to ..
+	* Project.cs: .. here. Build a target only if hasn't been built already.
+	Keep track of target outputs, and return those even if an already built
+	target has been invoked again.
+	Honor BuildSettings.None and DoNotResetPreviouslyBuiltTargets .
+
 2009-01-31  Ankit Jain  <jankit@novell.com>
 
 	* BatchingImpl.cs: Split into ..
