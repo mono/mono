@@ -1,5 +1,11 @@
 2009-02-01  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Complete incomplete rows when they are added to 
+	the grid.
+	[Fixes bug #471068]
+
+2009-02-01  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewColumnCollection.cs: Ensure that the 
 	binding is cleared prior to setting it to null. Fixes a regression 
 	causing exceptions when the DataSource is set to null and then set 
