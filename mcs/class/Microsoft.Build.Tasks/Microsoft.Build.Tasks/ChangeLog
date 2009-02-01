@@ -1,5 +1,9 @@
 2009-02-01  Ankit Jain  <jankit@novell.com>
 
+	* CallTarget.cs: Copy all items from target to TargetOutputs.
+
+2009-02-01  Ankit Jain  <jankit@novell.com>
+
 	* Csc.cs (AddResponseFileCommands):
 	* ManagedCompiler.cs (AddResponseFileCommands): 'AddModules' and
 	'AdditionalLibPaths' can be empty.

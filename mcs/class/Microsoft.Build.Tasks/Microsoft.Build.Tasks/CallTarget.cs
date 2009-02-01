@@ -29,6 +29,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 
@@ -36,27 +37,26 @@ namespace Microsoft.Build.Tasks {
 	public class CallTarget : TaskExtension {
 	
 		bool		runEachTargetSeparately;
-		ITaskItem[]	targetOutputs;
+		List<ITaskItem>	targetOutputs_list;
+		ITaskItem[]	targetOutputs_array;
 		string[]	targets;
 	
 		public CallTarget ()
 		{
+			targetOutputs_list = new List<ITaskItem> ();
 		}
 		
 		[MonoTODO]
 		public override bool Execute ()
 		{
 			Hashtable targets_table = new Hashtable ();
-			targetOutputs = new ITaskItem [targets.Length];
 
 			if (!RunEachTargetSeparately) {
 				bool ret = BuildEngine.BuildProjectFile (BuildEngine.ProjectFileOfTaskNode,
 						targets, null, targets_table);
-				int i = 0;
 				foreach (ITaskItem[] items in targets_table.Values) {
-					//FIXME: can a target return multiple taskitems?
-					if (items != null && items.Length > 0)
-						targetOutputs [i ++] = items [0];
+					if (items != null)
+						targetOutputs_list.AddRange (items);
 				}
 
 				return ret;
@@ -76,9 +76,8 @@ namespace Microsoft.Build.Tasks {
 					continue;
 
 				ITaskItem [] items = (ITaskItem[]) targets_table [target];
-				if (items != null && items.Length > 0)
-					//FIXME:
-					targetOutputs [i] = items [0];
+				if (items != null)
+					targetOutputs_list.AddRange (items);
 			}
 
 			return allPassed;
@@ -91,7 +90,11 @@ namespace Microsoft.Build.Tasks {
 		
 		[Output]
 		public ITaskItem[] TargetOutputs {
-			get { return targetOutputs; }
+			get {
+				if (targetOutputs_array == null)
+					targetOutputs_array = targetOutputs_list.ToArray ();
+				return targetOutputs_array;
+			}
 		}
 		
 		public string[] Targets {
