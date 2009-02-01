@@ -1,3 +1,9 @@
+2009-02-01  Ankit Jain  <jankit@novell.com>
+
+	* Csc.cs (AddResponseFileCommands):
+	* ManagedCompiler.cs (AddResponseFileCommands): 'AddModules' and
+	'AdditionalLibPaths' can be empty.
+
 2009-01-30  Ankit Jain  <jankit@novell.com>
 
 	* Copy.cs (Execute): Use for loop instead of enumerators.

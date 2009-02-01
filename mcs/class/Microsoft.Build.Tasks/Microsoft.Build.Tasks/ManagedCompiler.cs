@@ -54,7 +54,8 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddResponseFileCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
-			commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
+			if (AddModules != null && AddModules.Length > 0)
+				commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
 			if (Bag ["CodePage"] != null)
 				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
 
