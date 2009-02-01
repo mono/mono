@@ -105,7 +105,7 @@ namespace System.Windows.Forms
 			
 			// When we clear the column collection, all rows get deleted
 			dataGridView.Rows.Clear ();
-			dataGridView.PrepareEditingRow (false, true);
+			dataGridView.RemoveEditingRow ();
 			
 			RegenerateSortedList ();
 		}
