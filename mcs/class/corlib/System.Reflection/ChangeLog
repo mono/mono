@@ -1,3 +1,9 @@
+2008-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoMethod.cs (ToString): Fix representation of pointer types.
+
+	Fixes #409583.
+
 2009-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoGenericClass.cs: Fix warnings.

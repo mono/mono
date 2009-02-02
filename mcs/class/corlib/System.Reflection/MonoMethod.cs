@@ -259,10 +259,11 @@ namespace System.Reflection {
 
 		public override string ToString () {
 			StringBuilder sb = new StringBuilder ();
-			if (ReturnType.IsClass)
-				sb.Append (ReturnType.ToString ());
+			Type retType = ReturnType;
+			if (retType.IsClass  && !retType.IsPointer)
+				sb.Append (retType.ToString ());
 			else
-				sb.Append (ReturnType.Name);
+				sb.Append (retType.Name);
 			sb.Append (" ");
 			sb.Append (Name);
 #if NET_2_0 || BOOTSTRAP_NET_2_0
@@ -286,7 +287,7 @@ namespace System.Reflection {
 				bool byref = pt.IsByRef;
 				if (byref)
 					pt = pt.GetElementType ();
-				if (pt.IsClass)
+				if (pt.IsClass && !pt.IsPointer)
 					sb.Append (pt.ToString ());
 				else
 					sb.Append (pt.Name);
