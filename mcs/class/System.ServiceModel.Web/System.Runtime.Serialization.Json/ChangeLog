@@ -1,3 +1,8 @@
+2009-02-02  Andreia Gaita  <avidigal@novell.com>
+
+	* JsonSerializationReader.cs : Use 2.1 "approved" calls for Enum.Parse
+    and Convert.ChangeType
+
 2008-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializer.cs : IsStartObject() could raise
