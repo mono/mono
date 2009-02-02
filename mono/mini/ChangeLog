@@ -1,3 +1,7 @@
+2009-02-02  Mark Probst  <mark.probst@gmail.com>
+
+	* cpu-ppc64.md: Fixed storer4_memindex length.
+
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_line_number_info): Optimize the size of the emitted
