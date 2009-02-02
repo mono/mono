@@ -1,3 +1,11 @@
+2009-02-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125402.
+
+	* icall.c (type_from_name): Ignore reflection frames to find out the real caller.
+
+	Fixes #471255.
+
 2009-02-02  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r125388.
