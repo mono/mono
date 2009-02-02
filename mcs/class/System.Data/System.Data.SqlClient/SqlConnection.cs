@@ -69,7 +69,7 @@ namespace System.Data.SqlClient
 		bool disposed;
 
 		// The set of SQL connection pools
-		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds70);
+		static TdsConnectionPoolManager sqlConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds80);
 #if NET_2_0
 		const int DEFAULT_PACKETSIZE = 8000;
 		const int MAX_PACKETSIZE = 32768;
