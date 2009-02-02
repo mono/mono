@@ -516,7 +516,7 @@ namespace System.Runtime.Serialization.Json
 					ReadNumber (ch);
 					return true;
 				}
-				throw XmlError ("Unexpected token");
+				throw XmlError (String.Format ("Unexpected token: '{0}' ({1:X04})", ch, (int) ch));
 			}
 		}
 
