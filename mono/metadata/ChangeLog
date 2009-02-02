@@ -1,5 +1,10 @@
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_free_dynamic_wrappers): New function for
+	freeing wrappers of dynamic methods.
+
+	* loader.c (mono_free_method): Call it. Fixes #463323.
+	
 	* marshal.c (mono_marshal_get_runtime_invoke): Disable sharing for
 	methods taking vtype/byref arguments, to fix yet another bug caused by
 	the sharing of runtime invoke wrappers. Partly fixes #471259.
