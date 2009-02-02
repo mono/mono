@@ -1,3 +1,7 @@
+2009-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_line_number_info): Optimize this.
+
 2009-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Disassemble tokens in the IL disassembly.
