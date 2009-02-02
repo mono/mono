@@ -1,3 +1,9 @@
+2009-02-02  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolBar.cs: Add new UIAPerformClick method to be called by
+	UIAutomationWinforms when someone calls Invoke() on the
+	ToolBarButtonProvider. r: jpobst
+
 2009-02-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: Don't send a WM_SHOWWINDOW message when receiving
