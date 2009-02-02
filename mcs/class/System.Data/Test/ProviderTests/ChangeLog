@@ -1,3 +1,7 @@
+2009-02-02  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* app-net_2.0.config: Added ClientVersion to Engine section
+	
 2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* app-default.config: Renamed to app-net_1_1.config, and added
