@@ -6,6 +6,7 @@
 //      Kornél Pál <http://www.kornelpal.hu/>
 //	Sureshkumar T (tsureshkumar@novell.com)
 //	Senganal T (tsenganal@novell.com)
+//	Veerapuram Varadhan (vvaradhan@novell.com)
 //
 // Copyright (c) 2004 Novell Inc., and the individuals listed
 // on the ChangeLog entries.
@@ -112,6 +113,7 @@ namespace MonoTests.System.Data.SqlClient
 			stringRow = stringDataTable.Select ("id=1")[0];
 			binaryRow = binaryDataTable.Select ("id=1")[0];
 			datetimeRow = datetimeDataTable.Select ("id=1")[0];
+
 		}
 
 		[SetUp]
@@ -3106,14 +3108,6 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.AreEqual (columns [i] [1], col.DataType, prefix + "DataType (" + i + ")");
 			}
 		}
-
-#if ONLY_1_1
-		static bool RunningOnMono {
-			get {
-				return (Type.GetType ("System.MonoType", false) != null);
-			}
-		}
-#endif
 	}
 
 	[TestFixture]
@@ -3122,6 +3116,7 @@ namespace MonoTests.System.Data.SqlClient
 	{
 		SqlConnection conn;
 		SqlCommand cmd;
+		EngineConfig engine;
 
 		[SetUp]
 		public void SetUp ()
@@ -3129,6 +3124,7 @@ namespace MonoTests.System.Data.SqlClient
 			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
 			ConnectionManager.Singleton.OpenConnection ();
 			cmd = conn.CreateCommand ();
+			engine = ConnectionManager.Singleton.Engine;
 		}
 
 		[TearDown]
@@ -3149,10 +3145,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("ColumnSize"), "IsNull");
 				// we only support TDS 7.0, which returns bigint data values as decimal(19,0)
-				if (RunningOnMono)
-					Assert.AreEqual (17, row ["ColumnSize"], "Value");
-				else
+				if (ClientVersion > 7)
 					Assert.AreEqual (8, row ["ColumnSize"], "Value");
+				else
+					Assert.AreEqual (17, row ["ColumnSize"], "Value");
 			}
 		}
 
@@ -4187,7 +4183,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (19, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (19, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4200,7 +4199,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4213,7 +4215,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4226,7 +4231,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4245,7 +4253,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (23, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (23, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4298,7 +4309,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (15, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (15, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4311,7 +4325,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4324,7 +4341,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (10, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (10, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4337,7 +4357,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (19, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (19, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4350,7 +4373,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4363,7 +4389,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4376,7 +4405,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4389,7 +4421,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (7, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (7, row ["NumericPrecision"], "Value");
 			}
 
 		}
@@ -4403,7 +4438,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (16, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (16, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4416,7 +4454,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (5, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (5, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4429,7 +4470,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (10, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (10, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4442,7 +4486,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4461,7 +4508,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4474,7 +4524,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (3, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (3, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4493,7 +4546,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4506,7 +4562,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4519,7 +4578,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericPrecision"), "IsNull");
-				Assert.AreEqual (255, row ["NumericPrecision"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericPrecision"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericPrecision"], "Value");
 			}
 		}
 
@@ -4544,8 +4606,7 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				// we only support TDS 7.0, which returns bigint data values as decimal(19,0)
-				if (RunningOnMono)
+				if (ClientVersion > 7)
 					Assert.AreEqual (0, row ["NumericScale"], "Value");
 				else
 					Assert.AreEqual (255, row ["NumericScale"], "Value");
@@ -4561,7 +4622,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4574,7 +4638,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4587,7 +4654,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4606,7 +4676,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (3, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (3, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4659,7 +4732,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4672,7 +4748,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4685,7 +4764,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4698,7 +4780,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4711,7 +4796,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4724,7 +4812,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4737,7 +4828,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4750,7 +4844,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 
 		}
@@ -4777,7 +4874,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4790,7 +4890,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4803,7 +4906,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4822,7 +4928,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4835,7 +4944,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4854,7 +4966,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4867,7 +4982,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -4880,7 +4998,10 @@ namespace MonoTests.System.Data.SqlClient
 				DataTable schemaTable = rdr.GetSchemaTable ();
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("NumericScale"), "IsNull");
-				Assert.AreEqual (255, row ["NumericScale"], "Value");
+				if (ClientVersion > 7)
+					Assert.AreEqual (0, row ["NumericScale"], "Value");
+				else
+					Assert.AreEqual (255, row ["NumericScale"], "Value");
 			}
 		}
 
@@ -5180,7 +5301,7 @@ namespace MonoTests.System.Data.SqlClient
 				DataRow row = schemaTable.Rows [0];
 				Assert.IsFalse (row.IsNull ("ProviderType"), "IsNull");
 				// we currently consider timestamp as binary (due to TDS 7.0?)
-				if (RunningOnMono)
+				if (ClientVersion > 7)
 					Assert.AreEqual (1, row ["ProviderType"], "Value");
 				else
 					Assert.AreEqual (19, row ["ProviderType"], "Value");
@@ -5257,9 +5378,9 @@ namespace MonoTests.System.Data.SqlClient
 			// TODO
 		}
 
-		static bool RunningOnMono {
-			get {
-				return (Type.GetType ("System.MonoType", false) != null);
+		private int ClientVersion {
+		        get {
+				return (engine.ClientVersion);
 			}
 		}
 	}

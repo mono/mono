@@ -3,6 +3,7 @@
 //
 // Authors:
 //      Sureshkumar T (tsureshkumar@novell.com)
+//	Veerapuram Varadhan  (vvaradhan@novell.com)
 // 
 // Copyright (c) 2004 Novell Inc., and the individuals listed on the
 // ChangeLog entries.
@@ -45,12 +46,36 @@ namespace MonoTests.System.Data
 	[Category ("sqlserver")]
 	public class SqlCommandBuilderTest
 	{
+		SqlConnection conn = null;
+		static EngineConfig engine;
+
+		[TestFixtureSetUp]
+		public void init ()
+		{
+			conn = new SqlConnection (ConnectionManager.Singleton.ConnectionString);
+			engine = ConnectionManager.Singleton.Engine;
+		}
+
+		private static EngineConfig Engine {
+			get {
+				return engine;
+			}
+		}
+
+		[SetUp]
+		public void Setup ()
+		{
+			conn.Open ();
+		}
+		[TearDown]
+		public void TearDown ()
+		{
+			conn.Close ();
+		}
+		
 		[Test]
 		public void GetInsertCommand1 ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -116,16 +141,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetInsertCommand1_Expression ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -153,7 +174,6 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
@@ -161,9 +181,6 @@ namespace MonoTests.System.Data
 		[Test] // GetInsertCommand (Boolean)
 		public void GetInsertCommand2 ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -208,7 +225,6 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 #endif
@@ -216,8 +232,6 @@ namespace MonoTests.System.Data
 		[Test] // GetUpdateCommand ()
 		public void GetUpdateCommand1 ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -297,16 +311,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetUpdateCommand ()
 		public void GetUpdateCommand1_AutoIncrement ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -340,16 +350,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetUpdateCommand ()
 		public void GetUpdateCommand1_CheckParameters ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -370,7 +376,6 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
@@ -378,8 +383,6 @@ namespace MonoTests.System.Data
 		[Test] // GetUpdateCommand (Boolean)
 		public void GetUpdateCommand2 ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -434,16 +437,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetUpdateCommand (Boolean)
 		public void GetUpdateCommand2_AutoIncrement ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -499,16 +498,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetUpdateCommand (Boolean)
 		public void GetUpdateDeleteCommand2_CheckParameters ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -545,7 +540,6 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 #endif
@@ -553,87 +547,70 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetUpdateCommandDBConcurrencyExceptionTest ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			string selectQuery = "select id, fname from employee where id = 1";
+			SqlDataAdapter da = new SqlDataAdapter (selectQuery, conn);
+			DataSet ds = new DataSet ();
+			da.Fill (ds, "IntTest");
+			Assert.AreEqual (1, ds.Tables.Count);
 
+			SqlCommandBuilder cb = new SqlCommandBuilder (da);
+			Assert.IsNotNull (cb);
+
+			DataRow [] rows = ds.Tables [0].Select ("id=1");
+			rows [0] [0] = 6660; // non existent 
+			ds.Tables [0].AcceptChanges (); // moves 6660 to original value
+			rows [0] [0] = 1; // moves 6660 as search key into db table
 			try {
-				string selectQuery = "select id, fname from employee where id = 1";
-				SqlDataAdapter da = new SqlDataAdapter (selectQuery, conn);
-				DataSet ds = new DataSet ();
-				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count);
-
-				SqlCommandBuilder cb = new SqlCommandBuilder (da);
-				Assert.IsNotNull (cb);
-
-				DataRow [] rows = ds.Tables [0].Select ("id=1");
-				rows [0] [0] = 6660; // non existent 
-				ds.Tables [0].AcceptChanges (); // moves 6660 to original value
-				rows [0] [0] = 1; // moves 6660 as search key into db table
-				try {
-					da.Update (rows);
-					Assert.Fail ("#1");
-				} catch (DBConcurrencyException ex) {
-					// Concurrency violation: the UpdateCommand
-					// affected 0 of the expected 1 records
-					Assert.AreEqual (typeof (DBConcurrencyException), ex.GetType (), "#3");
-					Assert.IsNull (ex.InnerException, "#4");
-					Assert.IsNotNull (ex.Message, "#5");
-					Assert.AreSame (rows [0], ex.Row, "#6");
+				da.Update (rows);
+				Assert.Fail ("#1");
+			} catch (DBConcurrencyException ex) {
+				// Concurrency violation: the UpdateCommand
+				// affected 0 of the expected 1 records
+				Assert.AreEqual (typeof (DBConcurrencyException), ex.GetType (), "#3");
+				Assert.IsNull (ex.InnerException, "#4");
+				Assert.IsNotNull (ex.Message, "#5");
+				Assert.AreSame (rows [0], ex.Row, "#6");
 #if NET_2_0
-					Assert.AreEqual (1, ex.RowCount, "#7");
+				Assert.AreEqual (1, ex.RowCount, "#7");
 #endif
-				}
-			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void GetDeleteCommandDBConcurrencyExceptionTest ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			string selectQuery = "select id, fname from employee where id = 1";
+			SqlDataAdapter da = new SqlDataAdapter (selectQuery, conn);
+			DataSet ds = new DataSet ();
+			da.Fill (ds, "IntTest");
+			Assert.AreEqual (1, ds.Tables.Count);
 
+			SqlCommandBuilder cb = new SqlCommandBuilder (da);
+			Assert.IsNotNull (cb);
+
+			DataRow [] rows = ds.Tables [0].Select ("id=1");
+			rows [0] [0] = 6660; // non existent 
+			ds.Tables [0].AcceptChanges (); // moves 6660 to original value
+			rows [0].Delete ();  // moves 6660 as search key into db table
 			try {
-				string selectQuery = "select id, fname from employee where id = 1";
-				SqlDataAdapter da = new SqlDataAdapter (selectQuery, conn);
-				DataSet ds = new DataSet ();
-				da.Fill (ds, "IntTest");
-				Assert.AreEqual (1, ds.Tables.Count);
-
-				SqlCommandBuilder cb = new SqlCommandBuilder (da);
-				Assert.IsNotNull (cb);
-
-				DataRow [] rows = ds.Tables [0].Select ("id=1");
-				rows [0] [0] = 6660; // non existent 
-				ds.Tables [0].AcceptChanges (); // moves 6660 to original value
-				rows [0].Delete ();  // moves 6660 as search key into db table
-				try {
-					da.Update (rows);
-					Assert.Fail ("#1");
-				} catch (DBConcurrencyException ex) {
-					// Concurrency violation: the DeleteCommand
-					// affected 0 of the expected 1 records
-					Assert.AreEqual (typeof (DBConcurrencyException), ex.GetType (), "#2");
-					Assert.IsNull (ex.InnerException, "#3");
-					Assert.IsNotNull (ex.Message, "#4");
-					Assert.AreSame (rows [0], ex.Row, "#5");
+				da.Update (rows);
+				Assert.Fail ("#1");
+			} catch (DBConcurrencyException ex) {
+				// Concurrency violation: the DeleteCommand
+				// affected 0 of the expected 1 records
+				Assert.AreEqual (typeof (DBConcurrencyException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreSame (rows [0], ex.Row, "#5");
 #if NET_2_0
-					Assert.AreEqual (1, ex.RowCount, "#6");
+				Assert.AreEqual (1, ex.RowCount, "#6");
 #endif
-				}
-			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetDeleteCommand ()
 		public void GetDeleteCommand1 ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -709,16 +686,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetDeleteCommand ()
 		public void GetDeleteCommand1_AutoIncrement ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -752,16 +725,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetDeleteCommand ()
 		public void GetDeleteCommand1_CheckParameters ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -777,7 +746,6 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
@@ -785,9 +753,6 @@ namespace MonoTests.System.Data
 		[Test] // GetDeleteCommand ()
 		public void GetDeleteCommand2 ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -842,16 +807,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test] // GetDeleteCommand (Boolean)
 		public void GetDeleteCommand2_AutoIncrement ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
-
 			SqlCommand cmd = null;
 
 			try {
@@ -904,7 +865,6 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 #endif
@@ -912,29 +872,23 @@ namespace MonoTests.System.Data
 		[Test]
 		public void DefaultProperties ()
 		{
-			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				//IDbConnection conn = ConnectionManager.Singleton.Connection;
-				SqlCommandBuilder cb = new SqlCommandBuilder ();
+			SqlCommandBuilder cb = new SqlCommandBuilder ();
 #if NET_2_0
-				Assert.AreEqual ("[", cb.QuotePrefix, "#5");
-				Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
-				Assert.AreEqual (".", cb.CatalogSeparator, "#2");
-				//Assert.AreEqual ("", cb.DecimalSeparator, "#3");
-				Assert.AreEqual (".", cb.SchemaSeparator, "#4");
-				Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
-				Assert.AreEqual ("[monotest]", cb.QuoteIdentifier ("monotest"), "#7");
-				Assert.AreEqual ("\"monotest\"", cb.UnquoteIdentifier ("\"monotest\""), "#8");
-				//Assert.AreEqual (cb.ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
+			Assert.AreEqual ("[", cb.QuotePrefix, "#5");
+			Assert.AreEqual ("]", cb.QuoteSuffix, "#6");
+			Assert.AreEqual (".", cb.CatalogSeparator, "#2");
+			//Assert.AreEqual ("", cb.DecimalSeparator, "#3");
+			Assert.AreEqual (".", cb.SchemaSeparator, "#4");
+			Assert.AreEqual (CatalogLocation.Start, cb.CatalogLocation, "#1");
+			Assert.AreEqual ("[monotest]", cb.QuoteIdentifier ("monotest"), "#7");
+			Assert.AreEqual ("\"monotest\"", cb.UnquoteIdentifier ("\"monotest\""), "#8");
+			//Assert.AreEqual (cb.ConflictOption.CompareAllSearchableValues, cb.ConflictDetection);
 #else
-				Assert.AreEqual ("", cb.QuotePrefix, "#5");
-				Assert.AreEqual ("", cb.QuoteSuffix, "#6");
-				//Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest"), "#7");
-				//Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\""), "#8");
+			Assert.AreEqual ("", cb.QuotePrefix, "#5");
+			Assert.AreEqual ("", cb.QuoteSuffix, "#6");
+			//Assert.AreEqual ("\"monotest\"", cb.QuoteIdentifier ("monotest"), "#7");
+			//Assert.AreEqual ("monotest", cb.UnquoteIdentifier ("\"monotest\""), "#8");
 #endif
-			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
-			}
 			// FIXME: test SetAllValues
 		}
 
@@ -944,44 +898,33 @@ namespace MonoTests.System.Data
 		[Test]
 		public void CheckParameters_BuiltCommand ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
+			SqlDataAdapter adapter = new SqlDataAdapter ("select id,type_varchar from string_family", conn);
+			SqlCommandBuilder cb = new SqlCommandBuilder(adapter);
+			DataSet ds = new DataSet ();
+			adapter.Fill(ds);
 
-			try {
-				SqlDataAdapter adapter = new SqlDataAdapter ("select id,type_varchar from string_family", conn);
-				SqlCommandBuilder cb = new SqlCommandBuilder(adapter);
-				DataSet ds = new DataSet ();
-				adapter.Fill(ds);
+			Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#1");
 
-				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#1");
+			DataRow row_rsInput = ds.Tables[0].NewRow();
+			row_rsInput["id"] = 100;
+			row_rsInput["type_varchar"] = "ttt";
+			ds.Tables[0].Rows.Add(row_rsInput);
 
-				DataRow row_rsInput = ds.Tables[0].NewRow();
-				row_rsInput["id"] = 100;
-				row_rsInput["type_varchar"] = "ttt";
-				ds.Tables[0].Rows.Add(row_rsInput);
+			Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#2");
 
-				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#2");
+			row_rsInput = ds.Tables[0].NewRow();
+			row_rsInput["id"] = 101;
+			row_rsInput["type_varchar"] = "ttt";
+			ds.Tables[0].Rows.Add(row_rsInput);
 
-				row_rsInput = ds.Tables[0].NewRow();
-				row_rsInput["id"] = 101;
-				row_rsInput["type_varchar"] = "ttt";
-				ds.Tables[0].Rows.Add(row_rsInput);
-
-				Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#3");
-			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
-			}
+			Assert.AreEqual (2, cb.GetInsertCommand().Parameters.Count, "#3");
 		}
 
 		[Test]
 		public void DeriveParameters ()
 		{
-			SqlConnection conn;
 			SqlCommand cmd = null;
 			SqlParameter param;
-
-			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			ConnectionManager.Singleton.OpenConnection ();
 
 			try {
 				cmd = conn.CreateCommand ();
@@ -1053,15 +996,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void QuotePrefix_DeleteCommand_Generated ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -1098,15 +1038,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void QuotePrefix_InsertCommand_Generated ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -1143,15 +1080,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void QuotePrefix_UpdateCommand_Generated ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -1188,15 +1122,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void QuoteSuffix_DeleteCommand_Generated ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -1233,15 +1164,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void QuoteSuffix_InsertCommand_Generated ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -1278,15 +1206,12 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
 		[Test]
 		public void QuoteSuffix_UpdateCommand_Generated ()
 		{
-			SqlConnection conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-
 			SqlCommand cmd = null;
 
 			try {
@@ -1323,7 +1248,6 @@ namespace MonoTests.System.Data
 			} finally {
 				if (cmd != null)
 					cmd.Dispose ();
-				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
 
@@ -1346,7 +1270,12 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("@Original_id", param.ParameterName, prefix + "ParameterName (0)");
 			else
 				Assert.AreEqual ("@p1", param.ParameterName, prefix + "ParameterName (0)");
-			Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+
+			if (ClientVersion > 7)
+			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
+			else
+				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (0)");
@@ -1522,7 +1451,12 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("@id", param.ParameterName, prefix + "ParameterName (0)");
 			else
 				Assert.AreEqual ("@p1", param.ParameterName, prefix + "ParameterName (0)");
-			Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+
+			if (ClientVersion > 7)
+			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
+			else
+				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (0)");
@@ -1624,7 +1558,12 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("@id", param.ParameterName, prefix + "ParameterName (0)");
 			else
 				Assert.AreEqual ("@p1", param.ParameterName, prefix + "ParameterName (0)");
-			Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+
+			if (ClientVersion > 7)
+			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
+			else
+				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (0)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (0)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (0)");
@@ -1715,7 +1654,12 @@ namespace MonoTests.System.Data
 				Assert.AreEqual ("@Original_id", param.ParameterName, prefix + "ParameterName (3)");
 			else
 				Assert.AreEqual ("@p4", param.ParameterName, prefix + "ParameterName (3)");
-			Assert.AreEqual (10, param.Precision, prefix + "Precision (3)");
+
+			if (ClientVersion > 7)
+			   	Assert.AreEqual (0, param.Precision, prefix + "Precision (0)");
+			else
+				Assert.AreEqual (10, param.Precision, prefix + "Precision (0)");
+
 			Assert.AreEqual (0, param.Scale, prefix + "Scale (3)");
 			//Assert.AreEqual (0, param.Size, prefix + "Size (3)");
 			Assert.AreEqual ("id", param.SourceColumn, prefix + "SourceColumn (3)");
@@ -1874,6 +1818,12 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionName, prefix + "XmlSchemaCollectionName (7)");
 			Assert.AreEqual (string.Empty, param.XmlSchemaCollectionOwningSchema, prefix + "XmlSchemaCollectionOwningSchema (7)");
 #endif
+		}
+
+		static int ClientVersion {
+		        get {
+				return (SqlCommandBuilderTest.Engine.ClientVersion);
+			}
 		}
 	}
 }
