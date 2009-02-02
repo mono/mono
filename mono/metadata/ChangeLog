@@ -1,3 +1,8 @@
+2009-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_print_stack_frame): Avoid crashes when this is
+	called while the debugging module is not initialized. Fixes #471669.
+
 2009-02-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (type_from_name): Ignore reflection frames to find out the real caller.
