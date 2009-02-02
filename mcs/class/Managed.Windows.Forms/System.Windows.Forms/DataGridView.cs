@@ -2429,7 +2429,7 @@ namespace System.Windows.Forms {
 			Focus ();
 			if (currentCell.RowIndex == NewRowIndex) {
 				new_row_editing = false;
-				RemoveEditingRow (); // editing row becomes a real row
+				editing_row = null; // editing row becomes a real row
 				PrepareEditingRow (true, false); // add a new editing row
 				MoveCurrentCell (currentCell.ColumnIndex, NewRowIndex, true, false, false, true);
 			}
