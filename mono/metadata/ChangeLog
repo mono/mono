@@ -1,3 +1,10 @@
+2009-02-02  Mark Probst  <mark.probst@gmail.com>
+
+	Backport or r125371.
+
+	* metadata.c (type_in_image): Added a check to fix a monodis
+	crash.
+
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c: return NULL instead of throwing FileNotFoundException
