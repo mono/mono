@@ -1,3 +1,8 @@
+2009-02-02  Mark Probst  <mark.probst@gmail.com>
+
+	* metadata.c (type_in_image): Added a check to fix a monodis
+	crash.
+
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Add support for byref
