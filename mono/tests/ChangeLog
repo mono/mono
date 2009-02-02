@@ -1,3 +1,7 @@
+2009-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* generics-invoke-byref.2.cs: Add a test for #471259.
+
 2009-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* generic-marshalbyref.2.cs: Also do the test for a class without type
