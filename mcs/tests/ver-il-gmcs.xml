@@ -34256,6 +34256,42 @@
       </method>
     </type>
   </test>
+  <test name="test-703.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_Finished(System.EventHandler)">
+        <size>0</size>
+      </method>
+      <method name="Void remove_Finished(System.EventHandler)">
+        <size>0</size>
+      </method>
+      <method name="Void test(A)">
+        <size>19</size>
+      </method>
+      <method name="Void TestA(System.Object, System.EventArgs)">
+        <size>25</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>65</size>
+      </method>
+      <method name="Void add_Finished(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_Finished(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void TestB(System.Object, System.EventArgs)">
+        <size>25</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="test-71.cs">
     <type name="X">
       <method name="Void .ctor()">
