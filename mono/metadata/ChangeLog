@@ -1,3 +1,10 @@
+2009-02-02  Mark Probst  <mark.probst@gmail.com>
+
+	Backport or r125371.
+
+	* metadata.c (type_in_image): Added a check to fix a monodis
+	crash.
+
 2009-01-23  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r124022 and r124301.
