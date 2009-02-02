@@ -1,3 +1,9 @@
+2008-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125410.
+
+	* MethodInfoTest.cs: Test for #409583.
+
 2008-11-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* FieldInfoTest.cs: Test FieldInfo::GetValue on a constant of an open

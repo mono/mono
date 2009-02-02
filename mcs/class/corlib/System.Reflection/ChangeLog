@@ -1,3 +1,11 @@
+2008-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125409.
+
+	* MonoMethod.cs (ToString): Fix representation of pointer types.
+
+	Fixes #409583.
+
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Assembly.cs: add new LoadSatelliteAssemblyNoThrow method and use the

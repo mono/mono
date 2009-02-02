@@ -175,9 +175,14 @@ namespace MonoTests.System.Reflection
 		{
 			out1 = null;
 		}
-		
+
 		public void SignatureTest (__arglist)
 		{
+		}
+		
+		public static unsafe int* PtrFunc (int* a)
+		{
+			return (int*) 0;
 		}
 
 		[Test] // bug #81538
@@ -219,6 +224,12 @@ namespace MonoTests.System.Reflection
 		{
 			Assert.AreEqual ("Void SignatureTest(...)",
 				this.GetType ().GetMethod ("SignatureTest").ToString ());
+		}
+
+		[Test]
+		public void ToStringWithPointerSignatures () //bug #409583
+		{
+			Assert.AreEqual ("Int32* PtrFunc(Int32*)", this.GetType ().GetMethod ("PtrFunc").ToString ());
 		}
 
 #if NET_2_0
