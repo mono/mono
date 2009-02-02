@@ -1,5 +1,26 @@
 2009-02-02  Mark Probst  <mark.probst@gmail.com>
 
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* exceptions-ppc.c (restore_regs_from_context): Correct operand
+	order (offset then base reg) for ppc_load_multiple_regs.
+	(emit_save_saved_regs) Correct operand order for
+	ppc_store_multiple_regs.
+	(mono_arch_get_call_filter): Correct operand order for
+	ppc_load_multiple_regs.
+
+	* mini-ppc.c (emit_memcpy): Fix operand order for
+	ppc_load_reg_update and ppc_store_reg_update.
+	(mono_arch_output_basic_block): Correct operand order for ppc_lha.
+	(mono_arch_emit_epilog): Correct operand order for
+	ppc_load_multiple_regs.
+
+	* tramp-ppc.c (mono_arch_create_trampoline_code): Correct operand
+	order for ppc_store_multiple_regs and ppc_load_multiple_regs.
+
+2009-02-02  Mark Probst  <mark.probst@gmail.com>
+
 	* cpu-ppc64.md: Fixed storer4_memindex length.
 
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
