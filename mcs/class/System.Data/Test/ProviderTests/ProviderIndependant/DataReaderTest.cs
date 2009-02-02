@@ -4,6 +4,7 @@
 // Authors:
 //      Sureshkumar T (tsureshkumar@novell.com)
 //	Gert Driesen (drieseng@users.sourceforge.net)
+//	Veerapuram Varadhan  (vvaradhan@novell.com)
 // 
 // Copyright (c) 2004 Novell Inc., and the individuals listed on the
 // ChangeLog entries.
@@ -159,6 +160,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetChars_Index_Invalid ()
 		{
+			//Console.WriteLine ("In GetChars_Index_Invalid - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
 			using (IDataReader rdr = cmd.ExecuteReader ()) {
@@ -185,6 +187,7 @@ namespace MonoTests.System.Data
 				}
 			}
 
+			//Console.WriteLine ("In GetChars_Index_Invalid - second_executereader");
 			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (rdr.Read ());
 
@@ -213,6 +216,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetChars_Reader_Closed ()
 		{
+			//Console.WriteLine ("GetChars_Reader_Closed - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
 			using (IDataReader rdr = cmd.ExecuteReader ()) {
@@ -230,6 +234,7 @@ namespace MonoTests.System.Data
 				}
 			}
 
+			//Console.WriteLine ("GetChars_Reader_Closed - second_executereader");
 			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (rdr.Read ());
 				rdr.Close ();
@@ -249,6 +254,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetChars_Reader_NoData ()
 		{
+			//Console.WriteLine ("GetChars_Reader_NoData - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 666";
 
 			using (IDataReader rdr = cmd.ExecuteReader ()) {
@@ -1065,6 +1071,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetValue_Reader_Closed ()
 		{
+			//Console.WriteLine ("GetValue_Reader_Closed - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
 			using (IDataReader reader = cmd.ExecuteReader ()) {
@@ -1086,6 +1093,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetValue_Reader_NoData ()
 		{
+			//Console.WriteLine ("GetValue_Reader_NoData - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 666";
 
 			using (IDataReader rdr = cmd.ExecuteReader ()) {
@@ -1207,6 +1215,7 @@ namespace MonoTests.System.Data
 			object value;
 			object expected;
 
+			//Console.WriteLine ("GetValue_Type_Image - first_executereader");
 			cmd.CommandText = "select type_blob from binary_family order by id asc";
 			using (IDataReader rdr = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				expected = new byte [] { 0x32, 0x56, 0x00,
@@ -1247,6 +1256,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (typeof (byte []), rdr.GetFieldType (0), "#D5");
 			}
 
+			//Console.WriteLine ("GetChars_Reader_Closed - second_executereader");
 			using (IDataReader rdr = cmd.ExecuteReader ()) {
 				expected = new byte [] { 0x32, 0x56, 0x00,
 					0x44, 0x22 };
@@ -2114,6 +2124,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetBytes ()
 		{
+			//Console.WriteLine ("GetBytes - first_executereader");
 			byte [] expected = new byte [] { 0x32, 0x56, 0x00, 0x44, 0x22 };
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
@@ -2127,6 +2138,7 @@ namespace MonoTests.System.Data
 				long ret = 0;
 				long count = 0;
 				byte [] val = new byte [totalsize];
+				//Console.WriteLine ("GetBytes:: totalsize={0}", totalsize);
 				do {
 					ret = reader.GetBytes (0, offset, val, offset,
 						(int) Math.Min (buffsize, totalsize - count));
@@ -2138,6 +2150,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (expected, val, "#A3");
 			}
 
+			//Console.WriteLine ("GetBytes - second_executereader");
 			using (IDataReader reader = cmd.ExecuteReader ()) {
 				Assert.IsTrue (reader.Read (), "#B1");
 
@@ -2160,6 +2173,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (expected, val, "#B3");
 			}
 
+			//Console.WriteLine ("GetBytes - third_executereader");
 			// buffer size > (buffer offset + length) > remaining data
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (reader.Read ());
@@ -2176,6 +2190,7 @@ namespace MonoTests.System.Data
 					Assert.AreEqual (expected [i], val [buffer_offset + i], "#C3:" + i);
 			}
 
+			//Console.WriteLine ("GetBytes - fourth_executereader");
 			// buffer size > (buffer offset + length) > remaining data
 			using (IDataReader reader = cmd.ExecuteReader ()) {
 				Assert.IsTrue (reader.Read ());
@@ -2228,6 +2243,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (new byte [] { 0x0a, 0x0a, 0x0a, 0x56, 0x00, 0x44, 0x0a, 0x22 }, val, "#E12");
 			}
 
+			//Console.WriteLine ("GetBytes - fifth_executereader");
 			behavior = CommandBehavior.SingleResult;
 			using (IDataReader reader = cmd.ExecuteReader (behavior)) {
 				Assert.IsTrue (reader.Read (), "#F1");
@@ -2252,6 +2268,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetBytes_Buffer_Null ()
 		{
+			//Console.WriteLine ("GetBytes_Buffer_Null- first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id in (1,2,3,4) order by id";
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
@@ -2400,6 +2417,7 @@ namespace MonoTests.System.Data
 		{
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 2";
 
+			//Console.WriteLine ("GetBytes_DataIndex_Overflow - first_executereader");
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (reader.Read ());
 
@@ -2418,6 +2436,7 @@ namespace MonoTests.System.Data
 				Assert.AreEqual (0, ret, "#C3");
 			}
 
+			//Console.WriteLine ("GetBytes_DataIndex_Overflow - second_executereader");
 			using (IDataReader reader = cmd.ExecuteReader ()) {
 				Assert.IsTrue (reader.Read ());
 
@@ -2440,6 +2459,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetBytes_DataIndex_OffSet ()
 		{
+			//Console.WriteLine ("GetBytes_DataIndex_Offset - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 2";
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult | CommandBehavior.SequentialAccess)) {
@@ -2490,6 +2510,7 @@ namespace MonoTests.System.Data
 					Assert.AreEqual (long_bytes [i + 2], val [i], "#D4:" + i);
 			}
 
+			//Console.WriteLine ("GetBytes_DataIndex_Offset - second_executereader");
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SingleResult | CommandBehavior.SequentialAccess)) {
 				Assert.IsTrue (reader.Read ());
 
@@ -2516,6 +2537,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetBytes_Reader_Closed ()
 		{
+			//Console.WriteLine ("GetBytes_Reader_Closed - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
@@ -2534,9 +2556,11 @@ namespace MonoTests.System.Data
 			}
 		}
 
+#if DONT_RUN
 		[Test]
 		public void GetBytes_Reader_NoData ()
 		{
+			//Console.WriteLine ("GetBytes_Reader_NoData - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
 			using (IDataReader reader = cmd.ExecuteReader (CommandBehavior.SequentialAccess)) {
@@ -2551,7 +2575,7 @@ namespace MonoTests.System.Data
 				}
 			}
 		}
-
+#endif 
 		[Test]
 		public void GetSchemaTableTest_AutoIncrement ()
 		{
@@ -2572,6 +2596,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetValues_Reader_Closed ()
 		{
+			//Console.WriteLine ("GetValues_Reader_Closed - first_executereader");
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 1";
 
 			using (IDataReader rdr = cmd.ExecuteReader ()) {
@@ -2593,6 +2618,7 @@ namespace MonoTests.System.Data
 		[Test]
 		public void GetValues_Reader_NoData ()
 		{
+			//Console.WriteLine ("GetValues_Reader_NoData - first_executereader");			
 			cmd.CommandText = "SELECT type_blob FROM binary_family where id = 666";
 
 			using (IDataReader rdr = cmd.ExecuteReader ()) {

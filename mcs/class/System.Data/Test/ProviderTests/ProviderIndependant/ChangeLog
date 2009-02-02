@@ -1,3 +1,8 @@
+2009-02-02  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DataReaderTest.cs: Added debug statements. Disabled
+	GetBytes_Reader_NoData test for debugging TDS 8 changes.
+	
 2009-01-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataReaderTest.cs: Added indexer tests. Added/improved GetBytes
