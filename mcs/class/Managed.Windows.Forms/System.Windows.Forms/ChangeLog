@@ -1,3 +1,9 @@
+2009-02-02  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* TreeView.cs: When drawing the node's image, check that the index
+	specified by the node is valid for the ImageList.
+	Fixes #471094.
+
 2009-02-02  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ToolBar.cs: Add new UIAPerformClick method to be called by

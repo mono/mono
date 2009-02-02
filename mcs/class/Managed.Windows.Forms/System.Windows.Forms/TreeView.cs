@@ -1605,7 +1605,7 @@ namespace System.Windows.Forms {
 
 			int use_index = node.Image;
 
-			if (use_index != -1)
+			if (use_index > -1 && use_index < ImageList.Images.Count)
 				ImageList.Draw (dc, x, y, ImageList.ImageSize.Width, ImageList.ImageSize.Height, use_index);
 		}
 
