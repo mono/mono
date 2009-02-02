@@ -1,3 +1,9 @@
+2009-02-02  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: When editing is finished do not remove the editing 
+	row, because it has already become a real one. Instead add a new one.
+	[Fixes bug #471754]
+
 2009-02-02  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* TreeView.cs: When drawing the node's image, check that the index
