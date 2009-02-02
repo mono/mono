@@ -76,7 +76,28 @@ namespace Microsoft.Build.Tasks {
 			List <ITaskItem> tempResolvedFiles = new List <ITaskItem> ();
 		
 			foreach (ITaskItem item in assemblies) {
-				string resolved = assembly_resolver.ResolveAssemblyReference (item);
+				//FIXME: Copy local
+				string resolved = null;
+				foreach (string spath in searchPaths) {
+					if (String.Compare (spath, "{HintPathFromItem}") == 0) {
+						resolved = assembly_resolver.ResolveHintPathReference (item);
+					} else if (String.Compare (spath, "{TargetFrameworkDirectory}") == 0) {
+						foreach (string fpath in targetFrameworkDirectories) {
+							resolved = assembly_resolver.FindInTargetFramework (item, fpath);
+							if (resolved != null)
+								break;
+						}
+					} else if (String.Compare (spath, "{GAC}") == 0) {
+						resolved = assembly_resolver.ResolveGacReference (item);
+					} else if (String.Compare (spath, "{RawFileName}") == 0) {
+						resolved = item.ItemSpec;
+					} else {
+						resolved = assembly_resolver.FindInDirectory (item, spath);
+					}
+
+					if (resolved != null)
+						break;
+				}
 
 				if (resolved == null) {
 					Log.LogWarning ("Reference {0} not resolved", item.ItemSpec);

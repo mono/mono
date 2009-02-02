@@ -1,3 +1,10 @@
+2009-02-02  Ankit Jain  <jankit@novell.com>
+
+	* ResolveAssemblyReference.cs: Honor SearchPaths and the special
+	items like '{HintPathFromItem}', '{TargetFrameworkDirectory}' etc.
+	* AssemblyResolver.cs: Add api for more specific search, like search
+	in a directory, target frameworks, gac etc.
+
 2009-02-01  Ankit Jain  <jankit@novell.com>
 
 	* CallTarget.cs: Copy all items from target to TargetOutputs.

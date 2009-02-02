@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Ankit Jain (jankit@novell.com)
 // 
 // (C) 2006 Marek Sieradzki
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,12 +41,14 @@ namespace Microsoft.Build.Tasks {
 	internal class AssemblyResolver {
 
 		// name -> (version -> assemblypath)
-		Dictionary <string, Dictionary <Version, string>> gac;
+		Dictionary<string, TargetFrameworkAssemblies> target_framework_cache;
+		Dictionary<string, Dictionary<Version, string>> gac;
 		TaskLoggingHelper log;
 
 		public AssemblyResolver ()
 		{
-			gac = new Dictionary <string, Dictionary <Version, string>> ();
+			gac = new Dictionary<string, Dictionary<Version, string>> ();
+			target_framework_cache = new Dictionary <string, TargetFrameworkAssemblies> ();
 
 			GatherGacAssemblies ();
 		}
@@ -88,71 +92,98 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		public string ResolveAssemblyReference (ITaskItem reference)
+		public string FindInTargetFramework (ITaskItem reference, string framework_dir)
 		{
-			AssemblyName name = null;
-			string resolved = null;
-
-			name = new AssemblyName (reference.ItemSpec);
-
-			if (reference.GetMetadata ("HintPath") != String.Empty) {
-
-				bool specificVersion;
-
-				if (reference.GetMetadata ("SpecificVersion") != String.Empty) {
-					specificVersion = Boolean.Parse (reference.GetMetadata ("SpecificVersion"));
-				} else {
-					specificVersion = IsStrongNamed (name);
-				}
-
-				resolved = ResolveHintPathReference (name, reference.GetMetadata ("HintPath"), specificVersion);
+			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
+			TargetFrameworkAssemblies gac_asm;
+			if (!target_framework_cache.TryGetValue (framework_dir, out gac_asm)) {
+				// fill gac_asm
+				gac_asm = target_framework_cache [framework_dir] = PopulateTargetFrameworkAssemblies (framework_dir);
 			}
-			
-			if (resolved == null)
-				resolved = ResolveGacReference (name, gac);
 
-			return resolved;
+			KeyValuePair<AssemblyName, string> pair;
+			if (gac_asm.NameToAssemblyNameCache.TryGetValue (key_aname.Name, out pair)) {
+				if (AssemblyNamesCompatible (key_aname, pair.Key, false))
+					return pair.Value;
+			}
+			return null;
 		}
 
-		string ResolveGacReference (AssemblyName name, Dictionary <string, Dictionary <Version, string>> dic)
+		public string FindInDirectory (ITaskItem reference, string directory)
+		{
+			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
+			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
+				AssemblyName found = AssemblyName.GetAssemblyName (file);
+				if (AssemblyNamesCompatible (key_aname, found, false))
+					return file;
+			}
+
+			return null;
+		}
+
+		TargetFrameworkAssemblies PopulateTargetFrameworkAssemblies (string directory)
+		{
+			TargetFrameworkAssemblies gac_asm = new TargetFrameworkAssemblies (directory);
+			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
+				AssemblyName aname = AssemblyName.GetAssemblyName (file);
+				gac_asm.NameToAssemblyNameCache [aname.Name] =
+					new KeyValuePair<AssemblyName, string> (aname, file);
+			}
+
+			return gac_asm;
+		}
+
+		public string ResolveGacReference (ITaskItem reference)
 		{
 			// FIXME: deal with SpecificVersion=False
-
-			if (!dic.ContainsKey (name.Name))
+			AssemblyName name = new AssemblyName (reference.ItemSpec);
+			if (!gac.ContainsKey (name.Name))
 				return null;
 
 			if (name.Version != null) {
-				if (!dic [name.Name].ContainsKey (name.Version))
+				if (!gac [name.Name].ContainsKey (name.Version))
 					return null;
 				else
-					return dic [name.Name] [name.Version];
+					return gac [name.Name] [name.Version];
 			}
 
-			Version [] versions = new Version [dic [name.Name].Keys.Count];
-			dic [name.Name].Keys.CopyTo (versions, 0);
+			Version [] versions = new Version [gac [name.Name].Keys.Count];
+			gac [name.Name].Keys.CopyTo (versions, 0);
 			Array.Sort (versions, (IComparer <Version>) null);
 			Version highest = versions [versions.Length - 1];
-			return dic [name.Name] [highest];
+			return gac [name.Name] [highest];
 		}
 
-		string ResolveHintPathReference (AssemblyName name, string hintpath, bool specificVersion)
+		public string ResolveHintPathReference (ITaskItem reference)
 		{
-			AssemblyName found;
-			string ret = null;
+			AssemblyName name = new AssemblyName (reference.ItemSpec);
+			string resolved = null;
 
-			if (!File.Exists (hintpath))
+			string hintpath = reference.GetMetadata ("HintPath");
+			if (String.IsNullOrEmpty (hintpath))
+				return null;
+
+			bool specificVersion;
+			if (!String.IsNullOrEmpty (reference.GetMetadata ("SpecificVersion")))
+				specificVersion = Boolean.Parse (reference.GetMetadata ("SpecificVersion"));
+			else
+				specificVersion = IsStrongNamed (name);
+
+			if (!File.Exists (hintpath)) {
 				log.LogMessage (MessageImportance.Low, "HintPath {0} does not exist.", hintpath);
+				return null;
+			}
 
 			try {
-				found = AssemblyName.GetAssemblyName (hintpath);
+				AssemblyName found = AssemblyName.GetAssemblyName (hintpath);
 				if (AssemblyNamesCompatible (name, found, specificVersion))
-					ret = hintpath;
+					resolved = hintpath;
 				else
 					log.LogMessage (MessageImportance.Low, "Assembly names are not compatible.");
 			} catch {
 			}
 
-			return ret;
+			return resolved;
 		}
 
 		static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
@@ -160,7 +191,7 @@ namespace Microsoft.Build.Tasks {
 			if (a.Name != b.Name)
 				return false;
 
-			if (a.CultureInfo != null && a.CultureInfo != b.CultureInfo)
+			if (a.CultureInfo != null && !a.CultureInfo.Equals (b.CultureInfo))
 				return false;
 
 			if (specificVersion && a.Version != null && a.Version > b.Version)
@@ -190,6 +221,19 @@ namespace Microsoft.Build.Tasks {
 
 		public TaskLoggingHelper Log {
 			set { log = value; }
+		}
+	}
+
+	class TargetFrameworkAssemblies {
+		public string Path;
+
+		// assembly (simple) name -> (AssemblyName, file path)
+		public Dictionary <string, KeyValuePair<AssemblyName, string>> NameToAssemblyNameCache;
+
+		public TargetFrameworkAssemblies (string path)
+		{
+			this.Path = path;
+			NameToAssemblyNameCache = new Dictionary<string, KeyValuePair<AssemblyName, string>> ();
 		}
 	}
 }
