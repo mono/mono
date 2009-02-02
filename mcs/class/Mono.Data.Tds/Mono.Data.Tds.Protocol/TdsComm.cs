@@ -433,7 +433,7 @@ namespace Mono.Data.Tds.Protocol {
 
 		public string GetString (int len)
 		{
-			if (tdsVersion == TdsVersion.tds70) 
+			if (tdsVersion >= TdsVersion.tds70) 
 				return GetString (len, true);
 			else
 				return GetString (len, false);
