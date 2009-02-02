@@ -257,10 +257,13 @@ namespace System.Reflection {
 			return attrs;
 		}
 
+		static bool ShouldPrintFullName (Type type) {
+			return type.IsClass && (!type.IsPointer || (!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested));
+		}
 		public override string ToString () {
 			StringBuilder sb = new StringBuilder ();
 			Type retType = ReturnType;
-			if (retType.IsClass  && !retType.IsPointer)
+			if (ShouldPrintFullName (retType))
 				sb.Append (retType.ToString ());
 			else
 				sb.Append (retType.Name);
@@ -287,7 +290,7 @@ namespace System.Reflection {
 				bool byref = pt.IsByRef;
 				if (byref)
 					pt = pt.GetElementType ();
-				if (pt.IsClass && !pt.IsPointer)
+				if (ShouldPrintFullName (pt))
 					sb.Append (pt.ToString ());
 				else
 					sb.Append (pt.Name);

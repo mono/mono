@@ -1,5 +1,9 @@
 2008-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoMethod.cs (ToString): Fix the representation of non primitive structs.
+
+2008-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoMethod.cs (ToString): Fix representation of pointer types.
 
 	Fixes #409583.
