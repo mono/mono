@@ -1,3 +1,13 @@
+2009-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-builder.h (_MonoMethodBuilder): Add a 'skip_visibility' flag.
+
+	* method-builder.c (mono_mb_create_method): Set method->skip_visibility from
+	the method builder.
+
+	* marshal.c: Set mb->skip_visibility instead of setting it on the method
+	after it was created and cached, as the later is not thread safe.
+	
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-debug.c (mono_debug_print_stack_frame): Avoid crashes when this is
