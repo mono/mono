@@ -1,5 +1,10 @@
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Add support for byref
+	nullable arguments.
+
+	* object.c (mono_runtime_invoke_array): Ditto.
+	
 	* marshal.c (mono_marshal_free_dynamic_wrappers): New function for
 	freeing wrappers of dynamic methods.
 
