@@ -6,7 +6,7 @@ LIBRARY = System.ServiceModel.Web.dll
 LIB_MCS_FLAGS = -r:System.dll -r:System.Xml.dll -r:System.Runtime.Serialization.dll -r:System.ServiceModel.dll
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += /d:NET_3_0 	\
+LIB_MCS_FLAGS += -d:NET_3_5 -d:NET_3_0 	\
 			/r:System.Configuration.dll
 endif
 

@@ -1,3 +1,10 @@
+2009-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeMap.cs : DataContractJsonSerializer in RTM does not seem to
+	  reject contract-less types. So populate map for public members.
+	* DataContractJsonSerializer.cs : close XmlWriter to flush stream
+	  (and it closes the stream by default).
+
 2009-02-02  Andreia Gaita  <avidigal@novell.com>
 
 	* JsonSerializationReader.cs : Use 2.1 "approved" calls for Enum.Parse

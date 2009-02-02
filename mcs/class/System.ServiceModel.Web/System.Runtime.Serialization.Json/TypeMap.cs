@@ -61,7 +61,30 @@ namespace System.Runtime.Serialization.Json
 			if (atts.Length == 1)
 				return CreateTypeMap (type, null);
 
-			return null;
+			if (IsPrimitiveType (type))
+				return null;
+
+			return CreateDefaultTypeMap (type);
+		}
+
+		static bool IsPrimitiveType (Type type)
+		{
+			if (type.IsEnum)
+				return true;
+			if (Type.GetTypeCode (type) != TypeCode.Object)
+				return true; // FIXME: it is likely hacky
+			return false;
+		}
+
+		static TypeMap CreateDefaultTypeMap (Type type)
+		{
+			var l = new List<TypeMapMember> ();
+			foreach (var fi in type.GetFields ())
+				l.Add (new TypeMapField (fi, null));
+			foreach (var pi in type.GetProperties ())
+				if (pi.CanRead && pi.CanWrite)
+					l.Add (new TypeMapProperty (pi, null));
+			return new TypeMap (type, null, l.ToArray ());
 		}
 
 		static TypeMap CreateTypeMap (Type type, DataContractAttribute dca)

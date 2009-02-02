@@ -186,7 +186,8 @@ namespace System.Runtime.Serialization.Json
 
 		public override void WriteObject (Stream stream, object graph)
 		{
-			WriteObject (JsonReaderWriterFactory.CreateJsonWriter (stream), graph);
+			using (var xw = JsonReaderWriterFactory.CreateJsonWriter (stream))
+				WriteObject (xw, graph);
 		}
 
 		public override void WriteObject (XmlWriter writer, object graph)
