@@ -1,3 +1,11 @@
+2009-02-02  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.CSharp.targets: Add targets to generate resource ids.
+	* Microsoft.Common.targets: Add targets for generating resources,
+	generate and deploy satellite assemblies, resolve project and assembly
+	references. All intermediate build output goes into a 'obj/' dir by
+	default. 'Clean' target enabled.
+
 2008-12-12  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.CSharp.targets: Add CreateCSharpManifestResourceName task.
