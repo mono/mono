@@ -524,6 +524,28 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 
+#if NET_2_0
+		internal void UIAPerformClick (ToolBarButton button)
+		{
+			ToolBarItem previous_item = current_item;
+			current_item = null;
+			
+			foreach (ToolBarItem item in items)
+				if (item.Button == button) {
+					current_item = item;
+					break;
+				}
+
+			try {
+				if (current_item == null)
+					throw new ArgumentException ("button", "The button specified is not part of this toolbar");
+				OnButtonClick (new ToolBarButtonClickEventArgs (button));
+			} finally {
+				current_item = previous_item;
+			}
+		}
+#endif
+
 		protected virtual void OnButtonClick (ToolBarButtonClickEventArgs e)
 		{
 			if (e.Button.Style == ToolBarButtonStyle.ToggleButton) {
