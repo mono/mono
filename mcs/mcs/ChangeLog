@@ -1,3 +1,8 @@
+2009-02-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #471213
+	* class.cs: Avoid emitting backing field for abstract event fields.
+
 2009-02-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #359731

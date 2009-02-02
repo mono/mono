@@ -7114,7 +7114,12 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (IsInterface)
+			if (Initializer != null && (ModFlags & Modifiers.ABSTRACT) != 0) {
+				Report.Error (74, Location, "`{0}': abstract event cannot have an initializer",
+					GetSignatureForError ());
+			}
+
+			if (!HasBackingField)
 				return true;
 
 			// FIXME: We are unable to detect whether generic event is used because
@@ -7132,12 +7137,6 @@ namespace Mono.CSharp {
 			TypeManager.RegisterEventField (EventBuilder, this);
 
 			if (Initializer != null) {
-				if (((ModFlags & Modifiers.ABSTRACT) != 0)) {
-					Report.Error (74, Location, "`{0}': abstract event cannot have an initializer",
-						GetSignatureForError ());
-					return false;
-				}
-
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
 					new FieldInitializer (FieldBuilder, Initializer, this));
 			}
@@ -7145,10 +7144,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		bool HasBackingField {
+			get {
+				return !IsInterface && (ModFlags & Modifiers.ABSTRACT) == 0;
+			}
+		}
+
 		public override string[] ValidAttributeTargets 
 		{
 			get {
-				return IsInterface ? attribute_targets_interface : attribute_targets;
+				return HasBackingField ? attribute_targets : attribute_targets_interface;
 			}
 		}
 	}
