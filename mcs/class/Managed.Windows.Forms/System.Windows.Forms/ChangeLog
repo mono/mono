@@ -1,3 +1,12 @@
+2009-02-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: Don't send a WM_SHOWWINDOW message when receiving
+	MapNotify/UnmapNotify events - we are already firing those events in
+	the proper places, so we avoid this way to send the same message two
+	times. I'm leaving the handling code in case we could break something
+	in the future, as this change seems dangerous (but needed).
+	Fixes #467546.
+
 2009-02-01  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Complete incomplete rows when they are added to 

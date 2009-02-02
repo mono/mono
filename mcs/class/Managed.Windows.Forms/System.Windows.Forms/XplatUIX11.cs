@@ -4367,25 +4367,27 @@ namespace System.Windows.Forms {
 					goto ProcessNextMessage;
 				}
 
+				// We are already firing WM_SHOWWINDOW messages in the proper places, but I'm leaving this code
+				// in case we break a scenario not taken into account in the tests
 				case XEventName.MapNotify: {
-					if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
+					/*if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
 						hwnd.mapped = true;
 						msg.message = Msg.WM_SHOWWINDOW;
 						msg.wParam = (IntPtr) 1;
 						// XXX we're missing the lParam..
 						break;
-					}
+					}*/
 					goto ProcessNextMessage;
 				}
 
 				case XEventName.UnmapNotify: {
-					if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
+					/*if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
 						hwnd.mapped = false;
 						msg.message = Msg.WM_SHOWWINDOW;
 						msg.wParam = (IntPtr) 0;
 						// XXX we're missing the lParam..
 						break;
-					}
+					}*/
 					goto ProcessNextMessage;
 				}
 
