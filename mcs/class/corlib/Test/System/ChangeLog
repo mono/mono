@@ -1,3 +1,7 @@
+2009-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Add a test for #471255.
+
 2009-01-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeTest.cs: Add a test for #467229.
