@@ -1,3 +1,14 @@
+2009-02-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125205.
+
+	* cpu-arm.md: Increase the size of storer8_membase_reg and
+	loadr8_membase_reg to 24 bytes to accomodate the extra add.
+
+	* mini-arm.c (mono_arch_output_basic_block): Under FPA, when emitting
+	OP_STORER8_MEMBASE_REG and OP_LOADR8_MEMBASE_REG, add the original
+	reg to LR otherwise we'll be loading/storing from just the offset.
+
 2009-01-27  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r124712.
