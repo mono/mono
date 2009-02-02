@@ -99,7 +99,11 @@ NUNIT_DIRS = \
 	$(topdir)/nunit20/mocks/$(doc_en)      \
 	$(topdir)/nunit20/util/$(doc_en)
 
+ifdef DISABLE_MCS_DOCS
+build-documentation:
+else
 build-documentation: $(ASSEMBLED_DOCS)
+endif
 
 # To support `make -jN`, we can't mention multiple targets in the same rule;
 # DO NOT DO THIS:
