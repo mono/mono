@@ -137,6 +137,13 @@ namespace Mono.Cecil.Mdb {
 			}
 		}
 
+		public byte [] GetDebugHeader ()
+		{
+			// mdb doesn't need a debug header
+			// in the PE file.
+			return new byte [0];
+		}
+
 		public void Dispose ()
 		{
 			m_writer.WriteSymbolFile (m_mvid);
