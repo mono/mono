@@ -40,7 +40,7 @@ endif
 all-local test-local run-test-local run-test-ondotnet-local doc-update:
 
 clean-local:
-	-rm $(CLEAN_FILES)
+	-rm -f $(CLEAN_FILES)
 
 dist-local: dist-default
 

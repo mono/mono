@@ -1,3 +1,8 @@
+2009-01-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* docs/Makefile: use -f with rm on the clean target so
+	rm doesn't complain about missing files.
+
 2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : remove sys.messaging from CENTUM_TESTS. It has never
