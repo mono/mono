@@ -1,5 +1,10 @@
 2009-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeMap.cs : allow get-only collections. Note that they are not
+	  always deserializable (in .NET either).
+
+2009-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeMap.cs : DataContractJsonSerializer in RTM does not seem to
 	  reject contract-less types. So populate map for public members.
 	* DataContractJsonSerializer.cs : close XmlWriter to flush stream

@@ -1,5 +1,10 @@
 2009-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataContractJsonSerializerTest.cs : fixed some tests to match
+	  .NET RTM behavior. Added read-only collection case, (but [Ignore]d).
+
+2009-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataContractJsonSerializerTest.cs : added test for contract-less
 	  serialization.
 

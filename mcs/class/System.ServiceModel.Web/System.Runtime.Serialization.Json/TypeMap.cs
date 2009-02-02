@@ -87,6 +87,17 @@ namespace System.Runtime.Serialization.Json
 			return new TypeMap (type, null, l.ToArray ());
 		}
 
+		static bool IsCollection (Type type)
+		{
+			if (type.GetInterface ("System.Collections.IList") != null)
+				return true;
+			if (type.GetInterface ("System.Collections.Generic.IList`1") != null)
+				return true;
+			if (type.GetInterface ("System.Collections.Generic.ICollection`1") != null)
+				return true;
+			return false;
+		}
+
 		static TypeMap CreateTypeMap (Type type, DataContractAttribute dca)
 		{
 			if (dca != null && dca.Name != null && IsInvalidNCName (dca.Name))
@@ -112,8 +123,12 @@ namespace System.Runtime.Serialization.Json
 				foreach (PropertyInfo pi in type.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
 					if (pi.GetIndexParameters ().Length > 0)
 						continue;
-					if (!pi.CanRead || !pi.CanWrite)
-						throw new InvalidDataContractException (String.Format ("Property {0} must have both getter and setter", pi));
+					if (IsCollection (pi.PropertyType)) {
+						if (!pi.CanRead)
+							throw new InvalidDataContractException (String.Format ("Property {0} must have a getter", pi));
+					}
+					else if (!pi.CanRead || !pi.CanWrite)
+						throw new InvalidDataContractException (String.Format ("Non-collection property {0} must have both getter and setter", pi));
 					object [] atts = pi.GetCustomAttributes (typeof (DataMemberAttribute), true);
 					if (atts.Length == 0)
 						continue;

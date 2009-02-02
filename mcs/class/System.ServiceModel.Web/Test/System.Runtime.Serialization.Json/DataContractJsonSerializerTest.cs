@@ -377,8 +377,9 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidDataContractException))]
+		//[ExpectedException (typeof (InvalidDataContractException))]
 		// NonDC is not a DataContract type.
+		// UPDATE: non-DataContract types are became valid in RTM.
 		public void SerializeNonDC ()
 		{
 			DataContractJsonSerializer ser = new DataContractJsonSerializer (typeof (NonDC));
@@ -390,9 +391,10 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		// DCHasNonDC
 
 		[Test]
-		[ExpectedException (typeof (InvalidDataContractException))]
+		//[ExpectedException (typeof (InvalidDataContractException))]
 		// DCHasNonDC itself is a DataContract type whose field is
 		// marked as DataMember but its type is not DataContract.
+		// UPDATE: non-DataContract types are became valid in RTM.
 		public void SerializeDCHasNonDC ()
 		{
 			DataContractJsonSerializer ser = new DataContractJsonSerializer (typeof (DCHasNonDC));
@@ -551,9 +553,8 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			}
 		}
 
-		// CollectionContainer : Items must have a setter.
+		// CollectionContainer : Items must have a setter. (but became valid in RTM).
 		[Test]
-		[ExpectedException (typeof (InvalidDataContractException))]
 		public void SerializeReadOnlyCollectionMember ()
 		{
 			DataContractJsonSerializer ser =
@@ -564,9 +565,8 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			}
 		}
 
-		// DataCollectionContainer : Items must have a setter.
+		// DataCollectionContainer : Items must have a setter. (but became valid in RTM).
 		[Test]
-		[ExpectedException (typeof (InvalidDataContractException))]
 		public void SerializeReadOnlyDataCollectionMember ()
 		{
 			DataContractJsonSerializer ser =
@@ -575,6 +575,24 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
 				ser.WriteObject (w, null);
 			}
+		}
+
+		[Test]
+		[Ignore ("https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=409970")]
+		[ExpectedException (typeof (SerializationException))]
+		public void DeserializeReadOnlyDataCollection_NullCollection ()
+		{
+			DataContractJsonSerializer ser =
+				new DataContractJsonSerializer (typeof (CollectionContainer));
+			StringWriter sw = new StringWriter ();
+			var c = new CollectionContainer ();
+			c.Items.Add ("foo");
+			c.Items.Add ("bar");
+			using (XmlWriter w = XmlWriter.Create (sw, settings))
+				ser.WriteObject (w, c);
+			// CollectionContainer.Items is null, so it cannot deserialize non-null collection.
+			using (XmlReader r = XmlReader.Create (new StringReader (sw.ToString ())))
+				c = (CollectionContainer) ser.ReadObject (r);
 		}
 
 		[Test]
