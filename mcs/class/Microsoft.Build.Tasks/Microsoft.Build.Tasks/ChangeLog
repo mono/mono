@@ -1,5 +1,9 @@
 2009-02-02  Ankit Jain  <jankit@novell.com>
 
+	* MSBuild.cs (Execute): Disable incorrect 'rebaseOutputs' behavior.
+
+2009-02-02  Ankit Jain  <jankit@novell.com>
+
 	* ResolveAssemblyReference.cs: Honor SearchPaths and the special
 	items like '{HintPathFromItem}', '{TargetFrameworkDirectory}' etc.
 	* AssemblyResolver.cs: Add api for more specific search, like search

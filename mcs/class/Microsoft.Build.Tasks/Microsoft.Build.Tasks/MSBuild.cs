@@ -74,8 +74,10 @@ namespace Microsoft.Build.Tasks {
 						ITaskItem [] array = (ITaskItem []) de.Value;
 						foreach (ITaskItem item in array) {
 							outputItems.Add (item);
-							if (rebaseOutputs)
-								File.Copy (item.ItemSpec, Path.Combine (currentDirectory, item.ItemSpec), true);
+							//FIXME: Correctly rebase output paths to be relative to the
+							//	 calling project
+							//if (rebaseOutputs)
+							//	File.Copy (item.ItemSpec, Path.Combine (currentDirectory, item.ItemSpec), true);
 						}
 					}
 				} else {
