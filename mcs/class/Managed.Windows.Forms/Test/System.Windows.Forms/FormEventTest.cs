@@ -479,6 +479,59 @@ namespace MonoTests.System.Windows.Forms
 		}
 #endif
 
+		[Test]
+		public void VisibleChangedEvent ()
+		{
+			_form = new Form ();
+			_form.VisibleChanged += new EventHandler (FormVisibleChangedHandler);
+
+			Control control1 = new Control ();
+			control1.Location = new Point (5, 5);
+			control1.VisibleChanged += new EventHandler (Control1VisibleChangedHandler);
+			control1_visiblechanged_count = 0;
+
+			Assert.AreEqual (true, control1.Visible, "#A1");
+			Assert.AreEqual (false, _form.Visible, "#A2");
+
+			// case one - change without being added to the form
+			control1.Visible = false;
+			Assert.AreEqual (false, control1.Visible, "#B1");
+			Assert.AreEqual (1, control1_visiblechanged_count, "#B2");
+
+			control1.Visible = true;
+			control1_visiblechanged_count = 0;
+			_form.Controls.Add (control1);
+			Assert.AreEqual (false, control1.Visible, "#C1");
+			Assert.AreEqual (1, control1_visiblechanged_count, "#C2");
+
+			// Add a second control that actually is not visible
+			Control control2 = new Control ();
+			control2.Visible = false;
+			_form.Controls.Add (control2);
+
+			control1_visiblechanged_count = control2_visiblechanged_count = form_visiblechanged_count = 0;
+			_form.Show ();
+			Assert.AreEqual (1, control1_visiblechanged_count, "#D1");
+			Assert.AreEqual (0, control2_visiblechanged_count, "#D2");
+			Assert.AreEqual (1, form_visiblechanged_count, "#D3");
+
+			_form.Dispose ();
+		}
+
+		int control1_visiblechanged_count;
+		int control2_visiblechanged_count;
+		int form_visiblechanged_count;
+
+		void Control1VisibleChangedHandler (object o, EventArgs args)
+		{
+			control1_visiblechanged_count++;
+		}
+
+		void FormVisibleChangedHandler (object o, EventArgs args)
+		{
+			form_visiblechanged_count++;
+		}
+
 		class DelayedCloseForm : Form
 		{
 			private Timer _timer;
