@@ -46,6 +46,7 @@ namespace MonoTests.System.Data
 		private bool supportsTime;
 		private bool supportsTimestamp;
 		private EngineType type;
+		private int clientVersion;
 
 		private EngineConfig ()
 		{
@@ -94,6 +95,10 @@ namespace MonoTests.System.Data
 			get { return supportsTimestamp; }
 		}
 
+		public int ClientVersion {
+		       get { return clientVersion; }
+		}
+
 		public static EngineConfig FromXml (XmlNode config)
 		{
 			EngineConfig engine = new EngineConfig ();
@@ -107,6 +112,7 @@ namespace MonoTests.System.Data
 			engine.supportsTime = ParseBoolean (config, "supportsTime", false, true);
 			engine.supportsTimestamp = ParseBoolean (config, "supportsTimestamp", false, true);
 			engine.type = ParseEngineType (config, "type");
+			engine.clientVersion = ParseClientVersion (config, "clientversion");
 			return engine;
 		}
 
@@ -154,6 +160,22 @@ namespace MonoTests.System.Data
 				throw CreateInvalidValueException (attrName,
 					value, attr, ex);
 			}
+		}
+
+		static int ParseClientVersion (XmlNode config, string attrName)
+		{
+			XmlAttribute attr = config.Attributes [attrName];
+			if (attr == null)
+				return -1;
+
+			string value = attr.Value;
+
+			try {
+				return Int32.Parse (value);
+			} catch (Exception ex) {
+				throw CreateInvalidValueException (attrName,
+					value, attr, ex);
+			}			
 		}
 
 		static Exception CreateInvalidValueException (string name, string value, XmlNode node, Exception cause)

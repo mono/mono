@@ -1,3 +1,9 @@
+2008-02-02  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* EngineConfig.cs: Add "ClientVersion" to use in tests.
+	ClientVersion holds the version of TDS used by Mono's SqlClient
+	implementation.
+	
 2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConnectionConfig.cs:  Holds information on a specific connection and
