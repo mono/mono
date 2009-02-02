@@ -1,5 +1,11 @@
 2009-02-02  Mark Probst  <mark.probst@gmail.com>
 
+	* generic-sharing.c (lookup_or_register_other_info): Make sure the
+	loader lock is not taken while the templates lock is held.  Fixes
+	#471089.
+
+2009-02-02  Mark Probst  <mark.probst@gmail.com>
+
 	* metadata.c (type_in_image): Added a check to fix a monodis
 	crash.
 
