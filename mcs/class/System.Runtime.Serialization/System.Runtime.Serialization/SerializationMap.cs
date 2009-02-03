@@ -445,7 +445,7 @@ namespace System.Runtime.Serialization
 					continue;
 				if (!pi.CanRead || !pi.CanWrite)
 					throw new InvalidDataContractException (String.Format (
-							"DataMember property {0} must have both getter and setter.", pi));
+							"DataMember property '{0}' on type '{1}' must have both getter and setter.", pi, pi.DeclaringType));
 				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType));
 			}
 

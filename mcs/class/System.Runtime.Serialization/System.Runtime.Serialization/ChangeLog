@@ -1,3 +1,7 @@
+2009-02-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : a bit more detailed error message.
+
 2009-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* KnownTypeCollection.cs : similar fix to the previous one,
