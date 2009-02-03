@@ -1,3 +1,14 @@
+2009-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Remove the --64 argument to as, it is not needed.
+	
+	* mono-gdb.py (stringify_class_name): Helper function to print base types
+	using their short name. Also add a prototype implementation of registering
+	the hooks from python code instead of needing the mono-gdbinit file.
+
+	* gdb-python.diff: Changes against the gdb archer branch at 
+	http://sourceware.org/gdb/wiki/PythonGdb to fix some problems/add functionality.
+	
 2009-02-03  Geoff Norton  <gnorton@novell.com>
 
 	* mono-gdbinit: Hook into backtrace as hook-stop seems to crash gdb

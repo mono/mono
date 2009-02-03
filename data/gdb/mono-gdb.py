@@ -150,7 +150,7 @@ class MonoSupport(object):
             new_size = os.stat ("xdb.s").st_size
             if new_size > self.s_size:
                 sofile = "xdb.so"
-                gdb.execute ("shell as --64 -o xdb.o xdb.s && ld -shared -o %s xdb.o" % sofile)
+                gdb.execute ("shell as -o xdb.o xdb.s && ld -shared -o %s xdb.o" % sofile)
                 # FIXME: This prints messages which couldn't be turned off
                 gdb.execute ("add-symbol-file %s 0" % sofile)
                 self.s_size = new_size
