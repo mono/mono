@@ -1,3 +1,7 @@
+2009-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* arrays.cs: Test for Get/SetValue of array with negate lower bounds.
+	
 2009-02-02  Mark Probst  <mark.probst@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by Steven
