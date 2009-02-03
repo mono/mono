@@ -1,3 +1,18 @@
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_compatible_boxed_valuetype): When checking if the boxed 
+	valuetype is compatible with target type, check by inheritance as a
+	VT is not really compatible with System.ValueType, for example.
+
+	* verify.c (do_invoke_method): Improve error message.
+
+	* verify.c (do_box_value): If boxing a nullable, use the type argument
+	on stack instead.
+
+	* verify.c (do_newobj): Improve error message.	
+
+	Fixes #469549.
+
 2009-02-03  Miguel de Icaza  <miguel@novell.com>
 
 	* appdomain.c: Add support for DISABLE_SOCKETS and DISABLE_SHADOW_COPY
