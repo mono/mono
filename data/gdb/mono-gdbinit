@@ -7,6 +7,9 @@
 #define hook-stop
 #	   python mono_support.stop_hook ()
 #end
+define hook-backtrace
+	   python mono_support.stop_hook ()
+end
 
 define hook-run
 	   python mono_support.run_hook ()

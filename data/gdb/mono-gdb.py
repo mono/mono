@@ -159,5 +159,5 @@ exec_file = gdb.current_objfile ().filename
 if os.stat (exec_file).st_size != os.lstat (exec_file).st_size:
     exec_file = os.readlink (exec_file)
 exec_dir = os.path.dirname (exec_file)
-gdb.execute ("source %s/mono-gdbinit" % exec_dir)
+gdb.execute ("source %s/%s-gdbinit" % (exec_dir, os.path.basename (exec_file)))
 

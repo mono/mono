@@ -1,3 +1,9 @@
+2009-02-03  Geoff Norton  <gnorton@novell.com>
+
+	* mono-gdbinit: Hook into backtrace as hook-stop seems to crash gdb
+	* mono-gdb.py: Find the gdbinit name from the executable name instead of
+	hardcoding mono
+
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py mono-gdbinit: Support files to help debugging mono/mono apps
