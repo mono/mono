@@ -746,8 +746,14 @@ namespace Mono.CSharp {
 				gc = (GenericConstraints) constraints;
 			}
 
+			SetConstraints (type);
+			return true;
+		}
+
+		public void SetConstraints (GenericTypeParameterBuilder type)
+		{
 			if (gc == null)
-				return true;
+				return;
 
 			if (gc.HasClassConstraint || gc.HasValueTypeConstraint)
 				type.SetBaseTypeConstraint (gc.EffectiveBaseClass);
@@ -755,8 +761,6 @@ namespace Mono.CSharp {
 			type.SetInterfaceConstraints (gc.InterfaceConstraints);
 			type.SetGenericParameterAttributes (gc.Attributes);
 			TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
-
-			return true;
 		}
 
 		/// <summary>

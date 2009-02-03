@@ -229,6 +229,9 @@ namespace Mono.CSharp {
 		TypeExpr base_type;
 		TypeExpr[] iface_exprs;
 		Type GenericType;
+#if GMCS_SOURCE		
+		GenericTypeParameterBuilder[] nested_gen_params;
+#endif
 
 		protected ArrayList type_bases;
 
@@ -978,6 +981,11 @@ namespace Mono.CSharp {
 				GenericTypeParameterBuilder[] gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
 				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				if (offset > 0) {
+					nested_gen_params = new GenericTypeParameterBuilder [offset];
+					Array.Copy (gen_params, nested_gen_params, offset);
+				}
+
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].Define (gen_params [i]);
 			}
@@ -1111,6 +1119,7 @@ namespace Mono.CSharp {
 			}
 		}
 
+#if GMCS_SOURCE
 		void UpdateTypeParameterConstraints (TypeContainer part)
 		{
 			TypeParameter[] current_params = CurrentTypeParameters;
@@ -1128,6 +1137,7 @@ namespace Mono.CSharp {
 					GetSignatureForError (), current_params [i].GetSignatureForError ());
 			}
 		}
+#endif
 
 		public bool ResolveType ()
 		{
@@ -1145,6 +1155,7 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoResolveType ()
 		{
+#if GMCS_SOURCE
 			if (!IsGeneric)
 				return true;
 
@@ -1165,10 +1176,19 @@ namespace Mono.CSharp {
 					UpdateTypeParameterConstraints (part);
 			}
 
-			foreach (TypeParameter type_param in TypeParameters) {
-				if (!type_param.DefineType (this)) {
-					error = true;
-					return false;
+			for (int i = 0; i < TypeParameters.Length; ++i) {
+				//
+				// FIXME: Same should be done for delegates
+				// TODO: Quite ugly way how to propagate constraints to
+				// nested types
+				//
+				if (nested_gen_params != null && i < nested_gen_params.Length) {
+					TypeParameters [i].SetConstraints (nested_gen_params [i]);
+				} else {
+					if (!TypeParameters [i].DefineType (this)) {
+						error = true;
+						return false;
+					}
 				}
 			}
 
@@ -1182,6 +1202,7 @@ namespace Mono.CSharp {
 			}
 
 			CurrentType = current_type.Type;
+#endif			
 			return true;
 		}
 

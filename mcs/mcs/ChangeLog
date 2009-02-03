@@ -1,3 +1,8 @@
+2009-02-03  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs, generic.cs: Emit type parameter constraints for nested
+	types.
+
 2009-02-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #471213
