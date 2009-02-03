@@ -1,3 +1,7 @@
+2009-02-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebProxy.cs: use TryParse when checking for a localhost IP.
+
 2009-01-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebResponse.cs: avoid throwing an exception when

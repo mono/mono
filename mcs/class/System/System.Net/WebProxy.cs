@@ -188,14 +188,12 @@ namespace System.Net
 				if (String.Compare (server, "loopback", true, CultureInfo.InvariantCulture) == 0)
 					return true;
 
-				try {
-					IPAddress addr = IPAddress.Parse (server);
-					if (IPAddress.IsLoopback (addr))
-						return true;
-				} catch {}
+				IPAddress addr = null;
+				if (IPAddress.TryParse (server, out addr) && IPAddress.IsLoopback (addr))
+					return true;
 			}
 
-			if (bypassList == null)
+			if (bypassList == null || bypassList.Count == 0)
 				return false;
 
 			try {
