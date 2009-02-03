@@ -1,5 +1,10 @@
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* valid_boxed_vt_compatible_with_sys_vt_or_sys_enum.il:
+	Regression test for #469549.
+
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* unverifiable_delegate_with_bad_bound_first_arg_to_static_method.il:
 	* mono/tests/verifier/valid_ldfnt_delegates_of_static_methods.il:
 	Regression test for #469529.
