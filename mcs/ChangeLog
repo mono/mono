@@ -1,3 +1,8 @@
+2009-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* docs/Makefile: Fix install-local and uninstall-local if
+	DISABLE_MCS_DOCS is defined.
+
 2009-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* docs/Makefile: Don't build build-documentation if DISABLE_MCS_DOCS

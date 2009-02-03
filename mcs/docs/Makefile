@@ -44,8 +44,15 @@ clean-local:
 
 dist-local: dist-default
 
+
 MONODOC_INSTALL_DIR = $(DESTDIR)$(mono_libdir)/monodoc
 
+ifdef DISABLE_MCS_DOCS
+install-local:
+
+uninstall-local:
+
+else
 install-local:
 	$(MKINSTALLDIRS) $(MONODOC_INSTALL_DIR) $(MONODOC_INSTALL_DIR)/sources
 	$(INSTALL_DATA) $(MONODOC_SOURCES_INSTALL_FILES) $(MONODOC_INSTALL_DIR)/sources
@@ -54,6 +61,9 @@ install-local:
 uninstall-local:
 	-rm -f $(MONODOC_INSTALL_DIR)/monodoc.xml
 	-rm -f $(addprefix $(MONODOC_INSTALL_DIR)/sources/,$(MONODOC_SOURCES_INSTALL_FILES))
+endif
+
+
 
 classdir = $(topdir)/class
 doc_en   = Documentation/en
