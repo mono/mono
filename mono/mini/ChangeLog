@@ -1,3 +1,9 @@
+2009-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125459.
+
+	* arrays.cs: Test for Get/SetValue of array with negate lower bounds.
+	
 2009-01-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r125172, r125205 and r125206 
