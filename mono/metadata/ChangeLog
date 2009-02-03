@@ -12,6 +12,16 @@
 
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_delegate_signature_equal): Make it possible to check
+	first-arg-bound delegates to static method.
+
+	* verify.c (verify_delegate_compatibility): Correctly verify delegates to
+	static methods with the first arg bound.
+
+	Fixes #469529.
+
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Added stack_slot_full_name to provide decent and more meanfull
 	errors.
 
