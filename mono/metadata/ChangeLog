@@ -1,5 +1,15 @@
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Added stack_slot_full_name to provide decent and more meanfull
+	errors.
+
+	* verify.c (is_compatible_boxed_valuetype): Be less restrictive when not
+	under strict mode. Any type, when boxed can be seen as a reference type.
+
+	Fixes #469528.
+
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object.h: The lower bound of an array is a signed integer value.
 	Introduce mono_array_lower_bound_t typedef. It should be used instead of
 	gint32 as under MONO_BIG_ARRAYS it will be a gint64.
