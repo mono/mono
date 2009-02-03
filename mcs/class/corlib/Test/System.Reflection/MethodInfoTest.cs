@@ -190,11 +190,6 @@ namespace MonoTests.System.Reflection
 			return (int*) 0;
 		}
 
-		public static unsafe SimpleStruct* PtrFunc2 (SimpleStruct* a, A.B.C.MethodInfoTestStruct *b)
-		{
-			return (SimpleStruct*) 0;
-		}
-
 		[Test] // bug #81538
 		public void InvokeThreadAbort ()
 		{
@@ -247,6 +242,11 @@ namespace MonoTests.System.Reflection
 		public struct SimpleStruct
 		{
 			int a;
+		}
+
+		public static unsafe SimpleStruct* PtrFunc2 (SimpleStruct* a, A.B.C.MethodInfoTestStruct *b)
+		{
+			return (SimpleStruct*) 0;
 		}
 
 		[Test]

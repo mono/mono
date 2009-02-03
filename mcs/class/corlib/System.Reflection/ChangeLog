@@ -1,3 +1,7 @@
+2008-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoMethod.cs: Fix the 1.1 build.
+
 2008-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoMethod.cs (ToString): Fix the representation of non primitive structs.
