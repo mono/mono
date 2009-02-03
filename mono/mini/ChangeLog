@@ -1,5 +1,7 @@
 2009-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Emit precise live range information for variables.
+
 	* mini-amd64.c (mono_arch_output_basic_block): Add OP_LIVERANGE_START/END.
 
 	* method-to-ir.c (mono_spill_global_vars): Compute the instructions marking
