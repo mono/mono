@@ -1,3 +1,10 @@
+2009-02-02  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix #463999
+	* CommittableTransaction.cs (CommitCallback): Handle the case
+	where the callback is invoked before BeginCommit ends due to the
+	async call ending synchronously.
+
 2007-08-13  Miguel de Icaza  <miguel@novell.com>
 
 	* Transaction.cs: Remove the exception throwing on Dispose, from

@@ -66,6 +66,8 @@ namespace System.Transactions
 
 		private void CommitCallback (IAsyncResult ar)
 		{
+			if (asyncResult == null && ar.CompletedSynchronously)
+				asyncResult = ar;
 			callback (this);
 		}
 
