@@ -1,5 +1,10 @@
 2009-01-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebResponse.cs: avoid throwing an exception when
+	Content-Length is not present.
+
+2009-01-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpWebRequest.cs: added locking in SetResponseData for the case
 	when we get an error response before BeginGetResponse has been
 	called.

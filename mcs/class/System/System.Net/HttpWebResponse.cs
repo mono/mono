@@ -70,11 +70,19 @@ namespace System.Net
 			statusCode = (HttpStatusCode) data.StatusCode;
 			statusDescription = data.StatusDescription;
 			stream = data.stream;
+			contentLength = -1;
 
 			try {
-				contentLength = (long) UInt64.Parse (webHeaders ["Content-Length"]);
+				string cl = webHeaders ["Content-Length"];
+#if NET_2_0
+				if (String.IsNullOrEmpty (cl) || !Int64.TryParse (cl, out contentLength))
+					contentLength = -1;
+#else
+				if (cl != null && cl != String.Empty)
+					contentLength = (long) UInt64.Parse (cl);
+#endif
 			} catch (Exception) {
-				contentLength = - 1;
+				contentLength = -1;
 			}
 
 			if (container != null) {
