@@ -4831,14 +4831,6 @@ namespace System.Windows.Forms {
 			if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
 				hover_cell = null;
 
-			// Complete the rows if they are incomplete.
-			for (int i = e.RowIndex; i < e.RowIndex + e.RowCount; i++) {
-				if (Rows[i].Cells.Count < ColumnCount) {
-					for (int j = Rows[i].Cells.Count; j < ColumnCount; j++)
-						Rows[i].Cells.Add ((DataGridViewCell) columns[j].CellTemplate.Clone ());
-				}
-			}
-
 			AutoResizeColumnsInternal ();
 			Invalidate ();
 			OnRowsAdded (e);

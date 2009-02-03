@@ -135,7 +135,7 @@ namespace System.Windows.Forms
 				dataGridViewRow.SetIndex (result);
 			}
 			dataGridViewRow.SetDataGridView (dataGridView);
-
+			CompleteRowCells (dataGridViewRow);
 			for (int i = 0; i < dataGridViewRow.Cells.Count; i++) {
 				dataGridViewRow.Cells [i].SetOwningColumn (dataGridView.Columns [i]);
 			}
@@ -145,6 +145,18 @@ namespace System.Windows.Forms
 				DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (result, 1));
 			}
 			return result;
+		}
+
+		// Complete the rows if they are incomplete.
+		private void CompleteRowCells (DataGridViewRow row)
+		{
+			if (row == null || DataGridView == null)
+				return;
+
+			if (row.Cells.Count < DataGridView.ColumnCount) {
+				for (int i = row.Cells.Count; i < DataGridView.ColumnCount; i++)
+					row.Cells.Add ((DataGridViewCell) DataGridView.Columns[i].CellTemplate.Clone ());
+			}
 		}
 
 		public virtual int Add (DataGridViewRow dataGridViewRow)
@@ -391,6 +403,7 @@ namespace System.Windows.Forms
 		{
 			dataGridViewRow.SetIndex (rowIndex);
 			dataGridViewRow.SetDataGridView (dataGridView);
+			CompleteRowCells (dataGridViewRow);
 			list[rowIndex] = dataGridViewRow;
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewRow));
 			if (raiseEvent)
