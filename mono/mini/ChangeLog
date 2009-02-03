@@ -1,3 +1,17 @@
+2009-02-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Add OP_LIVERANGE_START/END.
+
+	* method-to-ir.c (mono_spill_global_vars): Compute the instructions marking
+	the live ranges of variables, and emit OP_LIVERANGE_START/END opcodes for
+	them.
+
+	* mini-ops.h: Add OP_LIVERANGE_START/END opcodes to mark
+	the live ranges of variables.
+
+	* mini.h (struct MonoMethodVar): Add two fields containing the live range
+	of the variable in terms of native offsets.
+
 2009-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* arrays.cs: Test for Get/SetValue of array with negate lower bounds.
