@@ -1,3 +1,28 @@
+2009-02-02  Miguel de Icaza  <miguel@novell.com>
+
+	From Paolo's work, refactored, cleared up:
+	
+	* threadpool.c, icall.c: ifdef code that requires a working socket
+	stack.
+
+	* metadata.c (mono_metadata_field_info): Do not attempt to return
+	a value from a function declared as void.
+
+	* console-io.c: Use MONO_NULL_TTYDRIVER to remove the tty driver
+	from the console stack.
+
+	* assembly.c: use strrchr instead of rindex.
+
+	* class.c, object.c, marshal.c, icall.c, reflection.c: include
+	alloca.h on systems that have it.
+
+	* environment.c: Avoid code that uses stuff from
+	HAVE_SYS_UTSNAME_H
+	
+	* appdomain.c: Include sys/time.h.
+
+	* console-io.c: include sys/ioctl.h if it is available.
+
 2009-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-builder.h (_MonoMethodBuilder): Add a 'skip_visibility' flag.
