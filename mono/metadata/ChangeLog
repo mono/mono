@@ -1,3 +1,7 @@
+2009-02-03  Miguel de Icaza  <miguel@novell.com>
+
+	* appdomain.c: Add support for DISABLE_SOCKETS and DISABLE_SHADOW_COPY
+
 2009-02-03  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Don't hold domain lock when calling
