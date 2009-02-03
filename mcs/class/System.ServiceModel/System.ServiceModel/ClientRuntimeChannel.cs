@@ -329,18 +329,28 @@ namespace System.ServiceModel
 
 		#region Request/Output processing
 
-		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters) {
-			object [] param = new object [parameters.Length - 2];
-			for (int i = 0; i < param.Length; i++)
-				param [i] = parameters [i];
-			return _processDelegate.BeginInvoke (method, operationName, param, (AsyncCallback) parameters [parameters.Length - 2], parameters [parameters.Length - 1]);
+		public IAsyncResult BeginProcess (MethodBase method, string operationName, object [] parameters, AsyncCallback callback, object asyncState)
+		{
+			return _processDelegate.BeginInvoke (method, operationName, parameters, callback, asyncState);
 		}
 
-		public object EndProcess (MethodBase method, string operationName, object [] parameters) {
-			return _processDelegate.EndInvoke ((IAsyncResult) parameters [0]);
+		public object EndProcess (IAsyncResult result)
+		{
+			return _processDelegate.EndInvoke (result);
 		}
 
 		public object Process (MethodBase method, string operationName, object [] parameters)
+		{
+			try {
+				return DoProcess (method, operationName, parameters);
+			} catch (Exception ex) {
+				Console.Write ("Exception in async operation: ");
+				Console.WriteLine (ex);
+				throw;
+			}
+		}
+
+		object DoProcess (MethodBase method, string operationName, object [] parameters)
 		{
 			if (AllowInitializationUI)
 				DisplayInitializationUI ();
