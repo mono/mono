@@ -1,5 +1,8 @@
 2009-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_allocate_vars): Avoid setting cfg->ret->dreg to
+	the variable index.
+
 	* aot-compiler.c: Add emit_push_section ()/emit_pop_section () helper functions
 	which mimic .push_section/.pop_section in GAS.
 	
