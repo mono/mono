@@ -1,5 +1,14 @@
 2009-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_emit_prolog): Emit unwind info.
+
+	* aot-compiler.c (emit_line_number_info): Fix line number emission when
+	the line diff is 0.
+
+	* aot-compiler.c: Add xdebug support on x86.
+
+	* unwind.c: Add x86 support.
+	
 	* aot-compiler.c (emit_exception_debug_info): Control the emission of
 	unwind info using a new MONO_ARCH_HAVE_XP_UNWIND define.
 
