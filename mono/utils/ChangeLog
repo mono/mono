@@ -1,3 +1,11 @@
+2009-02-03  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-filemap.c: Integrate Paolo's mono-filemap code here, split
+	some code from mono-mmap. into this file to ease porting.
+
+	* mono-io-portability.c: Use new define to turn off portability
+	features. 
+
 2009-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Add ARM Linux support.
