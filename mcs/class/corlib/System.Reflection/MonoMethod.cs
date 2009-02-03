@@ -258,8 +258,14 @@ namespace System.Reflection {
 		}
 
 		static bool ShouldPrintFullName (Type type) {
-			return type.IsClass && (!type.IsPointer || (!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested));
+			return type.IsClass && (!type.IsPointer ||
+#if NET_2_0
+ 				(!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested));
+#else
+				!type.GetElementType ().IsPrimitive);
+#endif
 		}
+
 		public override string ToString () {
 			StringBuilder sb = new StringBuilder ();
 			Type retType = ReturnType;
