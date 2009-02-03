@@ -1,5 +1,10 @@
 2009-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_exception_debug_info): Control the emission of
+	unwind info using a new MONO_ARCH_HAVE_XP_UNWIND define.
+
+	* mini.c (mini_method_compile): Ditto.
+	
 	* mini-amd64.c (mono_arch_allocate_vars): Avoid setting cfg->ret->dreg to
 	the variable index.
 
