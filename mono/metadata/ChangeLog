@@ -1,3 +1,14 @@
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object.h: The lower bound of an array is a signed integer value.
+	Introduce mono_array_lower_bound_t typedef. It should be used instead of
+	gint32 as under MONO_BIG_ARRAYS it will be a gint64.
+
+	* icall.c: Cast MonoArrayBounds::length to a signed value so correctly
+	calculate the upper bound.
+	
+	Fixes #471252.
+
 2009-02-02  Miguel de Icaza  <miguel@novell.com>
 
 	From Paolo's work, refactored, cleared up:
