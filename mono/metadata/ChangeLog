@@ -1,5 +1,17 @@
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Backport of r125539.
+
+	* verify.c: Added stack_slot_full_name to provide decent and more meanfull
+	errors.
+
+	* verify.c (is_compatible_boxed_valuetype): Be less restrictive when not
+	under strict mode. Any type, when boxed can be seen as a reference type.
+
+	Fixes #469528.
+
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Backport of r125458.
 
 	* object.h: The lower bound of an array is a signed integer value.
