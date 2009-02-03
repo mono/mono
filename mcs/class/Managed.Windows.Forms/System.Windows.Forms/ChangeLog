@@ -1,3 +1,10 @@
+2009-02-03  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewRowCollection.cs, DataGridView.cs: Move row completion 
+	code in the row collection code, so that the completion happens before 
+	the CollectionChanged event, also better encapsulation.
+	[Fixes bug #471987]
+
 2009-02-02  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: When editing is finished do not remove the editing 
