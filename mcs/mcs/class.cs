@@ -229,7 +229,9 @@ namespace Mono.CSharp {
 		TypeExpr base_type;
 		TypeExpr[] iface_exprs;
 		Type GenericType;
+#if GMCS_SOURCE		
 		GenericTypeParameterBuilder[] nested_gen_params;
+#endif
 
 		protected ArrayList type_bases;
 
@@ -1170,7 +1172,7 @@ namespace Mono.CSharp {
 				foreach (TypeContainer part in partial_parts)
 					UpdateTypeParameterConstraints (part);
 			}
-
+#if GMCS_SOUCE
 			for (int i = 0; i < TypeParameters.Length; ++i) {
 				//
 				// FIXME: Same should be done for delegates
@@ -1186,7 +1188,7 @@ namespace Mono.CSharp {
 					}
 				}
 			}
-
+#endif
 			// TODO: Very strange, why not simple make generic type from
 			// current type parameters
 			current_type = new GenericTypeExpr (this, Location);
