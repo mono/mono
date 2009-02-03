@@ -1,5 +1,8 @@
 2009-02-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Add emit_push_section ()/emit_pop_section () helper functions
+	which mimic .push_section/.pop_section in GAS.
+	
 	* aot-compiler.c: Emit precise live range information for variables.
 
 	* mini-amd64.c (mono_arch_output_basic_block): Add OP_LIVERANGE_START/END.
