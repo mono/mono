@@ -1,3 +1,15 @@
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125581.
+
+	* verify.c (mono_delegate_signature_equal): Make it possible to check
+	first-arg-bound delegates to static method.
+
+	* verify.c (verify_delegate_compatibility): Correctly verify delegates to
+	static methods with the first arg bound.
+
+	Fixes #469529.
+
 2009-02-03  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r125565.
@@ -7,6 +19,7 @@
 
 	* domain-internals.h, loader.c: Describe locking policy of domain
 	lock vs loader lock.
+
 
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 

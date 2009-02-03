@@ -1,5 +1,13 @@
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Backport of r125582.
+
+	* unverifiable_delegate_with_bad_bound_first_arg_to_static_method.il:
+	* mono/tests/verifier/valid_ldfnt_delegates_of_static_methods.il:
+	Regression test for #469529.
+
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Backport of r125540.
 
 	* valid_valuetype_boxed_types_are_merge_compatible.il:
