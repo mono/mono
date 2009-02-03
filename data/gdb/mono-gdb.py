@@ -39,6 +39,14 @@ class StringPrinter:
         res.append ('"')
         return ''.join (res)
 
+def stringify_class_name(ns, name):
+    if ns == "System":
+        if name == "Byte":
+            return "byte"
+        if name == "String":
+            return "string"
+    return "%s.%s" % (ns, name)
+
 class ArrayPrinter:
     "Print a C# array"
 
@@ -50,7 +58,7 @@ class ArrayPrinter:
     def to_string(self):
         obj = self.val.cast (gdb.Type ("MonoArray").pointer ()).dereference ()
         length = obj ['max_length']
-        return "%s.%s [%d]" % (self.class_ns, self.class_name [0:len(self.class_name) - 2], int(length))
+        return "%s [%d]" % (stringify_class_name (self.class_ns, self.class_name [0:len(self.class_name) - 2]), int(length))
         
 class ObjectPrinter:
     "Print a C# object"
@@ -147,9 +155,20 @@ class MonoSupport(object):
                 gdb.execute ("add-symbol-file %s 0" % sofile)
                 self.s_size = new_size
 
+class RunHook (gdb.Command):
+    def __init__ (self):
+        super (RunHook, self).__init__ ("hook-run", gdb.COMMAND_NONE,
+                                        gdb.COMPLETE_COMMAND, pre_hook_of="run")
+
+    def invoke(self, arg, from_tty):
+        mono_support.run_hook ()
+
 print "Mono support loaded."
 
 mono_support = MonoSupport ()
+
+# This depends on the changes in gdb-python.diff to work
+#RunHook ()
 
 # Register our hooks
 # This currently cannot be done from python code
@@ -160,4 +179,3 @@ if os.stat (exec_file).st_size != os.lstat (exec_file).st_size:
     exec_file = os.readlink (exec_file)
 exec_dir = os.path.dirname (exec_file)
 gdb.execute ("source %s/%s-gdbinit" % (exec_dir, os.path.basename (exec_file)))
-
