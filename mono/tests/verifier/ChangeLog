@@ -1,5 +1,12 @@
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Backport of r125604.
+
+	* valid_boxed_vt_compatible_with_sys_vt_or_sys_enum.il:
+	Regression test for #469549.
+
+2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Backport of r125582.
 
 	* unverifiable_delegate_with_bad_bound_first_arg_to_static_method.il:
