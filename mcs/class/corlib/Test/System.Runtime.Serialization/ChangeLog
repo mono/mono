@@ -1,3 +1,7 @@
+2009-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* SerializationCallbackTest.cs: Make a few tests quiet.
+
 2008-09-17  Robert Jordan  <robertj@gmx.net>
 
 	* SerializationTest2.cs: Add test case for bug #421664.

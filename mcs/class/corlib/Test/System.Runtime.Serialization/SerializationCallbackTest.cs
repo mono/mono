@@ -25,7 +25,7 @@ namespace MonoTests.System.Runtime.Serialization
                 {
                         Log.Clear ();
                         Driver (new BinaryFormatter (), new A (new B()));
-                        Console.WriteLine (Log.Text);
+                        //Console.WriteLine (Log.Text);
                         Assert.AreEqual (Log.Text, "A1B1A2B2A3B3B4A4");
                 }
 
@@ -34,7 +34,7 @@ namespace MonoTests.System.Runtime.Serialization
                 {
                         Log.Clear ();
                         Driver (new BinaryFormatter (), new C (new B()));
-                        Console.WriteLine (Log.Text);
+                        //Console.WriteLine (Log.Text);
                         Assert.AreEqual (Log.Text, "A1C1B1A2C2B2A3B3B4A4");
                 }
 
@@ -43,7 +43,7 @@ namespace MonoTests.System.Runtime.Serialization
                 {
                         Log.Clear ();
                         Driver (new BinaryFormatter (), new A (new D()));
-                        Console.WriteLine (Log.Text);
+                        //Console.WriteLine (Log.Text);
                         Assert.AreEqual (Log.Text, "A1B1A2B2A3B3B4A4");
                 }
 
