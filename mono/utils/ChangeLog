@@ -1,5 +1,9 @@
 2009-02-03  Miguel de Icaza  <miguel@novell.com>
 
+	* mono-dl.c: Add support for registering in-proc addresses as
+	libraries that can be P/Invoked.   Used in operating systems that
+	lack a dynamic linker. 
+
 	* mono-filemap.c: Integrate Paolo's mono-filemap code here, split
 	some code from mono-mmap. into this file to ease porting.
 
