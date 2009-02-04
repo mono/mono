@@ -388,6 +388,16 @@ namespace MonoTests.System.Windows.Forms
 
 			col.Width = -2;
 			Assert.IsTrue (col.Width > 0, "#2");
+
+#if NET_2_0
+			bool eventRaised = false;
+			lv.ColumnWidthChanged += delegate (object sender, ColumnWidthChangedEventArgs e) {
+				Assert.AreEqual (e.ColumnIndex, 0, "#3");
+				eventRaised = true;
+			};
+			col.Width = 100;
+			Assert.IsTrue (eventRaised, "#4");
+#endif
 		}
 
 		[Test]
