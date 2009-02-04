@@ -1,3 +1,8 @@
+2009-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs : add async operation support (might
+	  be hacky under some condition).
+
 2009-01-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescriptionGenerator.cs : async begin method with
