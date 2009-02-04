@@ -1172,7 +1172,7 @@ namespace Mono.CSharp {
 				foreach (TypeContainer part in partial_parts)
 					UpdateTypeParameterConstraints (part);
 			}
-#if GMCS_SOUCE
+#if GMCS_SOURCE
 			for (int i = 0; i < TypeParameters.Length; ++i) {
 				//
 				// FIXME: Same should be done for delegates
