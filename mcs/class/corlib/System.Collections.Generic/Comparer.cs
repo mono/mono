@@ -66,7 +66,7 @@ namespace System.Collections.Generic {
 			throw new ArgumentException ();
 		}
 	
-		class DefaultComparer : Comparer<T> {
+		sealed class DefaultComparer : Comparer<T> {
 	
 			public override int Compare (T x, T y)
 			{
@@ -87,7 +87,7 @@ namespace System.Collections.Generic {
 	}
 	
 	[Serializable]
-	class GenericComparer <T> : Comparer <T> where T : IComparable<T> {
+	sealed class GenericComparer <T> : Comparer <T> where T : IComparable<T> {
 		public override int Compare (T x, T y)
 		{
 			// `null' is less than any other ref type
