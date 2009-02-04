@@ -1,3 +1,9 @@
+2009-02-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FlowLayout.cs: When laying out ToolStripItems, they should be
+	the height of the ToolStrip, not their preferred height.
+	[Fixes bug #469196]
+
 2008-11-07  Jonathan Pobst  <monkey@jpobst.com>
 
 	* DefaultLayout.cs: Apply patch from Jonathan Anderson that keeps
