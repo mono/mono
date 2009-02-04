@@ -1,5 +1,9 @@
 2009-02-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
+	* ToolBarButton: Fix typo in previous commit (r125704).
+
+2009-02-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
 	* ToolBar.cs, ToolBarButton.cs: Add new UIA events to know
 	when a button gets focus, firing the events from the ToolBar.
 	r: jpobst

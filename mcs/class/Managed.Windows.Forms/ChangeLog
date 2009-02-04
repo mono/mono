@@ -6,7 +6,7 @@
 
 	* Makefile: here is another nunit24 option breakage.
 
-2008-11-11  Andres G. Aragoneses  <aaragoneses@novell.com>
+2008-11-11  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* Application.cs: After UIA assembly is successfully loaded,
 	dump any exception that happens on initialization to stderr.
