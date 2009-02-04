@@ -1,5 +1,16 @@
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_Type_GetMethodsByName): Optimize the case when
+	the call is made from Delegate.CreateDelegate () for the invoke method of
+	a delegate.
+
+	* loader.c: Add a statistics for the memory occupied by inflated signatures.
+
+	* metadata.c (mono_metadata_signature_size): New helper function.
+
+	* class.c (mono_class_get_method_from_name_flags): Add an optimization for
+	generic instances.
+
 	* metadata.c (inflated_method_in_image): Avoid calling 
 	mono_method_signature () if the method does not already have a signature.
 
