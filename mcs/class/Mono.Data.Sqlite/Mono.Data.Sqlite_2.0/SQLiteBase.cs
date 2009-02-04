@@ -152,9 +152,8 @@ namespace Mono.Data.Sqlite
     internal abstract DateTime GetDateTime(SqliteStatement stmt, int index);
     internal abstract bool     IsNull(SqliteStatement stmt, int index);
 
-    internal abstract IntPtr  CreateCollation(string strCollation, SqliteCollation func);
-    internal abstract IntPtr  CreateFunction(string strFunction, int nArgs, SqliteCallback func, SqliteCallback funcstep, SqliteCallback funcfinal);
-    internal abstract void FreeFunction(IntPtr cookie);
+    internal abstract void  CreateCollation(string strCollation, SqliteCollation func);
+    internal abstract void  CreateFunction(string strFunction, int nArgs, SqliteCallback func, SqliteCallback funcstep, SqliteFinalCallback funcfinal);
 
     internal abstract int AggregateCount(IntPtr context);
     internal abstract IntPtr AggregateContext(IntPtr context);

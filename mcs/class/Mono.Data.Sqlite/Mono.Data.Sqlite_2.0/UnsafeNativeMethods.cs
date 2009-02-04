@@ -158,13 +158,10 @@ namespace Mono.Data.Sqlite
     internal static extern int sqlite3_reset(IntPtr stmt);
 
     [DllImport(SQLITE_DLL)]
-    internal static extern int sqlite3_create_collation(IntPtr db, byte[] strName, int nType, int nArgs, SqliteCollation func, out IntPtr nCookie);
+    internal static extern int sqlite3_create_collation(IntPtr db, byte[] strName, int eTextRep, IntPtr ctx, SqliteCollation fcompare);
 
     [DllImport(SQLITE_DLL)]
-    internal static extern int sqlite3_create_function(IntPtr db, byte[] strName, int nArgs, int nType, SqliteCallback func, SqliteCallback fstep, SqliteCallback ffinal, out IntPtr nCookie);
-
-    [DllImport(SQLITE_DLL)]
-    internal static extern void sqlite3_function_free_callbackcookie(IntPtr nCookie);
+    internal static extern int sqlite3_create_function(IntPtr db, byte[] strName, int nArgs, int eTextRep, IntPtr app, SqliteCallback func, SqliteCallback fstep, SqliteFinalCallback ffinal);
 
     [DllImport(SQLITE_DLL)]
     internal static extern int sqlite3_aggregate_count(IntPtr context);
@@ -257,10 +254,10 @@ namespace Mono.Data.Sqlite
     internal static extern IntPtr sqlite3_column_decltype16(IntPtr stmt, int index, out int len);
 
     [DllImport(SQLITE_DLL, CharSet = CharSet.Unicode)]
-    internal static extern int sqlite3_create_collation16(IntPtr db, string strName, int nType, int nArgs, SqliteCollation func, out IntPtr nCookie);
+    internal static extern int sqlite3_create_collation16(IntPtr db, string strName, int eTextRep, IntPtr ctx, SqliteCollation fcompare);
 
     [DllImport(SQLITE_DLL, CharSet = CharSet.Unicode)]
-    internal static extern int sqlite3_create_function16(IntPtr db, string strName, int nArgs, int nType, SqliteCallback func, SqliteCallback funcstep, SqliteCallback funcfinal, out IntPtr nCookie);
+    internal static extern int sqlite3_create_function16(IntPtr db, string strName, int nArgs, int eTextRep, IntPtr app, SqliteCallback func, SqliteCallback funcstep, SqliteFinalCallback funcfinal);
 
     [DllImport(SQLITE_DLL)]
     internal static extern IntPtr sqlite3_value_text16(IntPtr p);

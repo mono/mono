@@ -1,3 +1,10 @@
+2009-02-04  Marek Habersack  <mhabersack@novell.com>
+
+	* SQLite3.cs, SQLite3_UTF16.cs, SQLiteBase.cs, SQLiteFunction.cs,
+	UnsafeNativeMethods.cs: fixes for custom functions and collations
+	creation with sqlite3. Fixes bug #470042. Patch from John Millikin
+	<jmillikin@gmail.com>, thanks!
+
 2008-12-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* SQLite3.cs: Avoid IntPtr.ToInt32 () to convert between IntPtr's and integers
