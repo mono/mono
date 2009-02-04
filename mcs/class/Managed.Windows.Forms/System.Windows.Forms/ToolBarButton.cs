@@ -311,7 +311,34 @@ namespace System.Windows.Forms
 			if (Parent != null)
 				Parent.Invalidate (Rectangle);
 		}
+		
+#if NET_2_0
+		bool uiaHasFocus = false;
+		internal bool UIAHasFocus {
+			get { return UIAHasFocus; }
+			set {
+				uiaHasFocus = value;
+				EventHandler eh = 
+					(EventHandler) (value ? Events [UIAGotFocusEvent] : Events [UIALostFocusEvent]);
+				if (eh != null)
+					eh (this, EventArgs.Empty);
+			}
+		}
 
+		static object UIAGotFocusEvent = new object ();
+		static object UIALostFocusEvent = new object ();
+		
+		internal event EventHandler UIAGotFocus {
+			add { Events.AddHandler (UIAGotFocusEvent, value); }
+			remove { Events.RemoveHandler (UIAGotFocusEvent, value); }
+		}
+		
+		internal event EventHandler UIALostFocus {
+			add { Events.AddHandler (UIALostFocusEvent, value); }
+			remove { Events.RemoveHandler (UIALostFocusEvent, value); }
+		}
+#endif
+		
 		#endregion Internal Methods
 
 		#region methods

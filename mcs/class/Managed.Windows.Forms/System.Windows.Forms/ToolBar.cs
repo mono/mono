@@ -525,6 +525,8 @@ namespace System.Windows.Forms
 		}
 
 #if NET_2_0
+		private ToolBarButton button_for_focus = null;
+		
 		internal void UIAPerformClick (ToolBarButton button)
 		{
 			ToolBarItem previous_item = current_item;
@@ -557,6 +559,11 @@ namespace System.Windows.Forms
 			
 			current_item.Pressed = false;
 			current_item.Invalidate ();
+			
+#if NET_2_0
+			button_for_focus = current_item.Button;
+			button_for_focus.UIAHasFocus = true;
+#endif
 			
 			ToolBarButtonClickEventHandler eh = (ToolBarButtonClickEventHandler)(Events [ButtonClickEvent]);
 			if (eh != null)
@@ -651,6 +658,12 @@ namespace System.Windows.Forms
 		#region Private Methods
 		private void FocusChanged (object sender, EventArgs args)
 		{
+#if NET_2_0
+			if (!Focused && button_for_focus != null)
+				button_for_focus.UIAHasFocus = false;
+			button_for_focus = null;
+#endif
+			
 			if (Appearance != ToolBarAppearance.Flat || Buttons.Count == 0)
 				return;
 
