@@ -76,7 +76,6 @@ namespace Mono.Data.Sqlite
       {
         int n = UnsafeNativeMethods.sqlite3_close(_sql);
         if (n > 0) throw new SqliteException(n, SqliteLastError());
-        SqliteFunction.UnbindFunctions(this, _functionsArray);
       }
       _sql = IntPtr.Zero;
     }
@@ -511,32 +510,16 @@ namespace Mono.Data.Sqlite
       return UnsafeNativeMethods.sqlite3_aggregate_count(context);
     }
 
-    internal override IntPtr CreateFunction(string strFunction, int nArgs, SqliteCallback func, SqliteCallback funcstep, SqliteCallback funcfinal)
+    internal override void CreateFunction(string strFunction, int nArgs, SqliteCallback func, SqliteCallback funcstep, SqliteFinalCallback funcfinal)
     {
-      IntPtr nCookie;
-
-      // FIXME: Cookie must be allocated in C# and passed as a parameter to the Sqlite function
-      int n = UnsafeNativeMethods.sqlite3_create_function(_sql, ToUTF8(strFunction), nArgs, 1, func, funcstep, funcfinal, out nCookie);
+      int n = UnsafeNativeMethods.sqlite3_create_function(_sql, ToUTF8(strFunction), nArgs, 1, IntPtr.Zero, func, funcstep, funcfinal);
       if (n > 0) throw new SqliteException(n, SqliteLastError());
-
-      return nCookie;
     }
 
-    internal override IntPtr CreateCollation(string strCollation, SqliteCollation func)
+    internal override void CreateCollation(string strCollation, SqliteCollation func)
     {
-      IntPtr nCookie;
-
-      // FIXME: Cookie must be allocated in C# and passed as a parameter to the Sqlite function
-      int n = UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 1, 0, func, out nCookie);
+      int n = UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 1, IntPtr.Zero, func);
       if (n > 0) throw new SqliteException(n, SqliteLastError());
-
-      return nCookie;
-    }
-
-    internal override void FreeFunction(IntPtr nCookie)
-    {
-	    // FIXME: must be handled in C#, this function does not exist in the mainstream sqlite3
-      UnsafeNativeMethods.sqlite3_function_free_callbackcookie(nCookie);
     }
 
     internal override long GetParamValueBytes(IntPtr p, int nDataOffset, byte[] bDest, int nStart, int nLength)

@@ -76,6 +76,11 @@ namespace Mono.Data.Sqlite
   /// <param name="argsptr">A pointer to the array of argument pointers</param>
   internal delegate void SqliteCallback(IntPtr context, int nArgs, IntPtr argsptr);
   /// <summary>
+  /// An internal callback delegate declaration.
+  /// </summary>
+  /// <param name="context">Raw context pointer for the user function</param>
+  internal delegate void SqliteFinalCallback(IntPtr context);
+  /// <summary>
   /// Internal callback delegate for implementing collation sequences
   /// </summary>
   /// <param name="len1">Length of the string pv1</param>
@@ -109,10 +114,6 @@ namespace Mono.Data.Sqlite
     /// </summary>
     private SqliteBase              _base;
     /// <summary>
-    /// Used internally to keep track of memory allocated for aggregate functions
-    /// </summary>
-    private IntPtr                     _interopCookie;
-    /// <summary>
     /// Internal array used to keep track of aggregate function context data
     /// </summary>
     private Dictionary<long, object> _contextDataList;
@@ -128,7 +129,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Holds a reference to the callback function for finalizing an aggregate function
     /// </summary>
-    private SqliteCallback  _FinalFunc;
+    private SqliteFinalCallback  _FinalFunc;
     /// <summary>
     /// Holds a reference to the callback function for collation sequences
     /// </summary>
@@ -380,9 +381,7 @@ namespace Mono.Data.Sqlite
     /// An internal aggregate Final function callback, which wraps the context pointer and calls the virtual Final() method.
     /// </summary>
     /// <param name="context">A raw context pointer</param>
-    /// <param name="nArgs">Not used, always zero</param>
-    /// <param name="argsptr">Not used, always zero</param>
-    internal void FinalCallback(IntPtr context, int nArgs, IntPtr argsptr)
+    internal void FinalCallback(IntPtr context)
     {
       long n = (long)_base.AggregateContext(context);
       object obj = null;
@@ -524,10 +523,6 @@ namespace Mono.Data.Sqlite
     /// It is done this way so that all user-defined functions will access the database using the same encoding scheme
     /// as the connection (UTF-8 or UTF-16).
     /// </summary>
-    /// <remarks>
-    /// The wrapper functions that interop with Sqlite will create a unique cooke value, which internally is a pointer to
-    /// all the wrapped callback functions.  The interop function uses it to map CDecl callbacks to StdCall callbacks.
-    /// </remarks>
     /// <param name="sqlbase">The base object on which the functions are to bind</param>
     /// <returns>Returns an array of functions which the connection object should retain until the connection is closed.</returns>
     internal static SqliteFunction[] BindFunctions(SqliteBase sqlbase)
@@ -541,15 +536,13 @@ namespace Mono.Data.Sqlite
         f._base = sqlbase;
         f._InvokeFunc = (pr.FuncType == FunctionType.Scalar) ? new SqliteCallback(f.ScalarCallback) : null;
         f._StepFunc = (pr.FuncType == FunctionType.Aggregate) ? new SqliteCallback(f.StepCallback) : null;
-        f._FinalFunc = (pr.FuncType == FunctionType.Aggregate) ? new SqliteCallback(f.FinalCallback) : null;
+        f._FinalFunc = (pr.FuncType == FunctionType.Aggregate) ? new SqliteFinalCallback(f.FinalCallback) : null;
         f._CompareFunc = (pr.FuncType == FunctionType.Collation) ? new SqliteCollation(f.CompareCallback) : null;
 
         if (pr.FuncType != FunctionType.Collation)
-          f._interopCookie = sqlbase.CreateFunction(pr.Name, pr.Arguments, f._InvokeFunc, f._StepFunc, f._FinalFunc);
+          sqlbase.CreateFunction(pr.Name, pr.Arguments, f._InvokeFunc, f._StepFunc, f._FinalFunc);
         else
-          f._interopCookie = sqlbase.CreateCollation(pr.Name, f._CompareFunc);
-
-
+          sqlbase.CreateCollation(pr.Name, f._CompareFunc);
         lFunctions.Add(f);
       }
 
@@ -557,28 +550,7 @@ namespace Mono.Data.Sqlite
       lFunctions.CopyTo(arFunctions, 0);
 
       return arFunctions;
-    }
 
-    /// <summary>
-    /// Issued after the base connection is closed, this function cleans up all user-defined functions and disposes of them.
-    /// </summary>
-    /// <remarks>
-    /// Cleaning up here is done mainly because of the interop wrapper.  It allocated memory to hold a reference to all the
-    /// delegates, and now must free that memory.
-    /// Freeing is done after the connection is closed to ensure no callbacks get hit after we've freed the cookie.
-    /// </remarks>
-    /// <param name="sqlbase">The base Sqlite connection object</param>
-    /// <param name="ar">An array of user-defined functions for this object</param>
-    internal static void UnbindFunctions(SqliteBase sqlbase, SqliteFunction[] ar)
-    {
-      if (ar == null) return;
-
-      int x = ar.Length;
-      for (int n = 0; n < x; n++)
-      {
-        sqlbase.FreeFunction(ar[n]._interopCookie);
-        ar[n].Dispose();
-      }
     }
   }
 }

@@ -131,28 +131,16 @@ namespace Mono.Data.Sqlite
       return ToString(UnsafeNativeMethods.sqlite3_column_table_name16(stmt._sqlite_stmt, index));
     }
 
-    internal override IntPtr CreateFunction(string strFunction, int nArgs, SqliteCallback func, SqliteCallback funcstep, SqliteCallback funcfinal)
+    internal override void CreateFunction(string strFunction, int nArgs, SqliteCallback func, SqliteCallback funcstep, SqliteFinalCallback funcfinal)
     {
-	    // FIXME: the function interface below is not supported in the mainstream version of sqlite. Need to rewrite the C# API to
-	    // use the mainstream sqlite. The cookie needs to be allocated in C#
-      IntPtr nCookie;
-
-      int n = UnsafeNativeMethods.sqlite3_create_function16(_sql, strFunction, nArgs, 4, func, funcstep, funcfinal, out nCookie);
+      int n = UnsafeNativeMethods.sqlite3_create_function16(_sql, strFunction, nArgs, 4, IntPtr.Zero, func, funcstep, funcfinal);
       if (n > 0) throw new SqliteException(n, SqliteLastError());
-
-      return nCookie;
     }
 
-    internal override IntPtr CreateCollation(string strCollation, SqliteCollation func)
+    internal override void CreateCollation(string strCollation, SqliteCollation func)
     {
-	    // FIXME: the function interface below is not supported in the mainstream version of sqlite. Need to rewrite the C# API to
-	    // use the mainstream sqlite. The cookie needs to be allocated in C#
-      IntPtr nCookie;
-
-      int n = UnsafeNativeMethods.sqlite3_create_collation16(_sql, strCollation, 4, 0, func, out nCookie);
+      int n = UnsafeNativeMethods.sqlite3_create_collation16(_sql, strCollation, 4, IntPtr.Zero, func);
       if (n > 0) throw new SqliteException(n, SqliteLastError());
-
-      return nCookie;
     }
 
     internal override string GetParamValueText(IntPtr ptr)
