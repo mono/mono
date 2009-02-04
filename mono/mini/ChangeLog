@@ -3,6 +3,17 @@
 	Contributed under the terms of the MIT/X11 license by Steven
 	Munroe <munroesj@us.ibm.com>.
 
+	* exceptions-ppc.c (mono_arch_get_restore_context): Code size
+	comparison fix.
+
+	* tramp-ppc.c (mono_arch_create_generic_class_init_trampoline):
+	The trampoline can be longer on PPC64.
+
+2009-02-04  Mark Probst  <mark.probst@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
 	* mini-ppc.c: Compiler warning fixes and trivial code
 	simplifications.
 
