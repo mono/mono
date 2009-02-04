@@ -103,7 +103,7 @@ public sealed class UTF32Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
 		int ret = 0;
-		for (int i = index; i < count; i++) {
+		for (int i = index; i < index + count; i++) {
 			if (Char.IsSurrogate (chars [i])) {
 				if (i + 1 < chars.Length && Char.IsSurrogate (chars [i + 1]))
 					ret += 4;

@@ -1,3 +1,8 @@
+2009-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF32Encoding.cs : fixed wrong range in GetByteCount(). Patch by
+	  David Michell.
+
 2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8Encoding.cs : surrogate characters are handled in 
