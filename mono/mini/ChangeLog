@@ -1,3 +1,11 @@
+2009-02-04  Mark Probst  <mark.probst@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* mini-ppc.c: Compiler warning fixes and trivial code
+	simplifications.
+
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_spill_global_vars): Fix problems caused by reading
