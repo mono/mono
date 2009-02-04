@@ -39,6 +39,8 @@ gtest-etree-05.cs
 gtest-etree-07.cs
 gtest-exmethod-12.cs
 gtest-linq-13.cs
+gtest-variance-1.cs
+gtest-variance-2.cs
 test-107.cs
 test-117.cs
 test-118.cs
