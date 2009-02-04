@@ -43,6 +43,16 @@ using System.Security.Permissions;
 using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic {
+
+	/* 
+	 * Declare this outside the main class so it doesn't have to be inflated for each
+	 * instantiation of Dictionary.
+	 */
+	internal struct Link {
+		public int HashCode;
+		public int Next;
+	}
+
 	[ComVisible(false)]
 	[Serializable]
 	public class Dictionary<TKey, TValue> : IDictionary<TKey, TValue>,
@@ -73,11 +83,6 @@ namespace System.Collections.Generic {
 		const float DEFAULT_LOAD_FACTOR = (90f / 100);
 		const int NO_SLOT = -1;
 		const int HASH_FLAG = -2147483648;
-		
-		private struct Link {
-			public int HashCode;
-			public int Next;
-		}
 
 		// The hash table contains indices into the linkSlots array
 		int [] table;

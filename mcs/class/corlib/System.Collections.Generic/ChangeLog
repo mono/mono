@@ -1,3 +1,8 @@
+2009-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Dictionary.cs: Declare the Link struct outside the main class to avoid
+	creating a separate inflated instances for each instantiation of Dictionary.
+
 2008-11-14  Jb Evain  <jbevain@novell.com>
 
 	* Dictionary.cs (ICollection.CopyTo): fix the different possible
