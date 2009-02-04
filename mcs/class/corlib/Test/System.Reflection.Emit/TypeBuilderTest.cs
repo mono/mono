@@ -9926,7 +9926,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			Type t = tb2.CreateType ();
 			int[] res = (int[])t.GetMethod ("Test").Invoke (null, new object[0]);
-			Console.WriteLine (res[0]);
+			//Console.WriteLine (res[0]);
 		}
 #endif
 
