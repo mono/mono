@@ -97,6 +97,7 @@ namespace System.Net
 		Exception saved_exc;
 		object locker = new object ();
 		bool is_ntlm_auth;
+		bool finished_reading;
 #if NET_1_1
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
@@ -812,23 +813,42 @@ namespace System.Net
 			return EndGetResponse (result);
 		}
 		
+		internal bool FinishedReading {
+			get { return finished_reading; }
+			set { finished_reading = value; }
+		}
+
 		public override void Abort ()
 		{
-			haveResponse = true;
+			if (aborted)
+				return;
+
 			aborted = true;
+			if (haveResponse && finished_reading)
+				return;
+
+			haveResponse = true;
 			if (asyncWrite != null) {
 				WebAsyncResult r = asyncWrite;
-				WebException wexc = new WebException ("Aborted.", WebExceptionStatus.RequestCanceled); 
-				r.SetCompleted (false, wexc);
-				r.DoCallback ();
+				if (!r.IsCompleted) {
+					try {
+						WebException wexc = new WebException ("Aborted.", WebExceptionStatus.RequestCanceled); 
+						r.SetCompleted (false, wexc);
+						r.DoCallback ();
+					} catch {}
+				}
 				asyncWrite = null;
 			}			
 
 			if (asyncRead != null) {
 				WebAsyncResult r = asyncRead;
-				WebException wexc = new WebException ("Aborted.", WebExceptionStatus.RequestCanceled); 
-				r.SetCompleted (false, wexc);
-				r.DoCallback ();
+				if (!r.IsCompleted) {
+					try {
+						WebException wexc = new WebException ("Aborted.", WebExceptionStatus.RequestCanceled); 
+						r.SetCompleted (false, wexc);
+						r.DoCallback ();
+					} catch {}
+				}
 				asyncRead = null;
 			}			
 

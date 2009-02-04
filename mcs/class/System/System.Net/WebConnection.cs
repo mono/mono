@@ -340,8 +340,10 @@ namespace System.Net
 				req = Data.request;
 
 			Close (true);
-			if (req != null)
+			if (req != null) {
+				req.FinishedReading = true;
 				req.SetResponseError (st, e, where);
+			}
 		}
 		
 		static void ReadDone (IAsyncResult result)
@@ -633,6 +635,7 @@ namespace System.Net
 		internal void NextRead ()
 		{
 			lock (this) {
+				Data.request.FinishedReading = true;
 				string header = (sPoint.UsesProxy) ? "Proxy-Connection" : "Connection";
 				string cncHeader = (Data.Headers != null) ? Data.Headers [header] : null;
 				bool keepAlive = (Data.Version == HttpVersion.Version11 && this.keepAlive);
@@ -933,7 +936,8 @@ namespace System.Net
 		{
 			lock (this) {
 				if (Data.request == sender) {
-					HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
+					if (!Data.request.FinishedReading)
+						HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
 					return;
 				}
 
