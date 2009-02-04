@@ -3,6 +3,15 @@
 	Contributed under the terms of the MIT/X11 license by Steven
 	Munroe <munroesj@us.ibm.com>.
 
+	* mini-ppc.c (mono_arch_output_basic_block): Generate better code
+	for LOADI4_MEMBASE.  Use addi instead of addic if it's not
+	necessary.
+
+2009-02-04  Mark Probst  <mark.probst@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
 	* exceptions-ppc.c (mono_arch_get_restore_context): Code size
 	comparison fix.
 
