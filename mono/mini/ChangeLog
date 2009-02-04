@@ -1,3 +1,8 @@
+2009-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_setup_altstack): Use a more reasonable altstack
+	size on systems with 64k pages. Fixes #471389.
+
 2009-02-04  Mark Probst  <mark.probst@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by Steven
