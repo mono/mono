@@ -1,3 +1,7 @@
+2009-02-04  Marek Safar  <marek.safar@gmail.com>
+
+	* namespace.cs: Add better extension class check.
+
 2009-02-05  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* generic.cs: Fixed typeo (TypeParameter.Variacne).

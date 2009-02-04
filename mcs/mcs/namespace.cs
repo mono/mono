@@ -537,7 +537,7 @@ namespace Mono.CSharp {
 					if (c == null)
 						continue;
 
-					if (!c.IsStaticClass)
+					if ((c.ModFlags & Modifiers.METHOD_EXTENSION) == 0)
 						continue;
 
 					ArrayList res = c.MemberCache.FindExtensionMethods (extensionType, name, c != currentClass);
