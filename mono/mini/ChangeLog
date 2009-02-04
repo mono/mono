@@ -1,5 +1,20 @@
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_spill_global_vars): Fix problems caused by reading
+	ins->dreg which could be a hardware register, not a vreg.
+
+	* aot-compiler.c (emit_method_dwarf_info): Ditto.
+	
+	* mini.h (MonoCompile): Remove vreg_to_var_num array, it is no longer used.
+	(struct MonoMethodVar): Add a vreg field, holding the vreg of variable.
+
+	* mini.c (mono_compile_create_var_for_vreg): Set var->vreg.
+	
+	* mini-amd64.c (mono_arch_output_basic_block): Avoid reading cfg->varinfo[..]
+	->dreg, that is not the vreg we are looking for.
+
+	* mini-amd64.h mini-x86.h: Enable MONO_ARCH_LIVENESS_OPS again.
+
 	* mini-x86.c (mono_arch_output_basic_block): Add support for LIVERANGE_START/
 	LIVERANGE_END.
 
