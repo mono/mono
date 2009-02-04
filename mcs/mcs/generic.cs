@@ -610,7 +610,7 @@ namespace Mono.CSharp {
 			get { return decl; }
 		}
 
-		public Variance Variacne {
+		public Variance Variance {
 			get { return variance; }
 		}
 
