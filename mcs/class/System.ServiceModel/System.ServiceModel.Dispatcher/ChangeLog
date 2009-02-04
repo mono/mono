@@ -1,3 +1,7 @@
+2009-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BaseMessagesFormatter.cs : do not use non-2.1 CreateInstance().
+
 2008-06-18  Noam Lampert <noaml@mainsoft.com>
 
 	* ChannelDispatcher.cs: Avoid aborting host process on faulty input message.

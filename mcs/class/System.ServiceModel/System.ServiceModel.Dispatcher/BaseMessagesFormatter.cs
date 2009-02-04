@@ -146,7 +146,11 @@ namespace System.ServiceModel.Dispatcher
 
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
+#if NET_2_1
+				parameters [0] = Activator.CreateInstance (md.MessageType);
+#else
 				parameters [0] = Activator.CreateInstance (md.MessageType, true);
+#endif
 				PartsToMessageObject (md, parts, parameters [0]);
 			}
 			else
@@ -167,7 +171,11 @@ namespace System.ServiceModel.Dispatcher
 
 			object [] parts = MessageToParts (md, message);
 			if (md.MessageType != null) {
+#if NET_2_1
+				object msgObject = Activator.CreateInstance (md.MessageType);
+#else
 				object msgObject = Activator.CreateInstance (md.MessageType, true);
+#endif
 				PartsToMessageObject (md, parts, msgObject);
 				return msgObject;
 			}
