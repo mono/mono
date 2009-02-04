@@ -898,7 +898,7 @@ namespace System
 
 		const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
 		
-		public static bool CoreParse (string s, IFormatProvider provider, DateTimeStyles styles,
+		internal static bool CoreParse (string s, IFormatProvider provider, DateTimeStyles styles,
 					      out DateTime result, bool setExceptionOnError, ref Exception exception)
 		{
 			if (provider == null)
