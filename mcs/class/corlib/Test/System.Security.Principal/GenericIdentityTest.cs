@@ -69,7 +69,7 @@ namespace MonoTests.System.Security.Principal {
 			MemoryStream ms = new MemoryStream ();
 			bf.Serialize (ms, gi);
 
-			Console.WriteLine (BitConverter.ToString (ms.ToArray ()));
+			//Console.WriteLine (BitConverter.ToString (ms.ToArray ()));
 
 			ms.Position = 0;
 			GenericIdentity clone = (GenericIdentity) bf.Deserialize (ms);

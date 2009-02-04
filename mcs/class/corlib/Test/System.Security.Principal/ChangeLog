@@ -1,3 +1,8 @@
+2009-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* GenericIdentityTest.cs GenericPrincipalTest.cs: Make these tests
+	quiet.
+
 2006-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GenericIdentityTest.cs: Added serialization test cases.
