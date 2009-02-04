@@ -1,5 +1,12 @@
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_inflate_generic_class): New helper function.
+
+	* class.c: Use mono_class_inflate_generic_class in a few places. Add
+	statistics for inflated methods/classes.
+
+	* loader.c (inflate_generic_header): Use mono_class_inflate_generic_class.
+
 	* icall.c (ves_icall_Type_GetMethodsByName): Optimize the case when
 	the call is made from Delegate.CreateDelegate () for the invoke method of
 	a delegate.
