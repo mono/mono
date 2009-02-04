@@ -1,5 +1,8 @@
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* generic-sharing.c (mono_method_fill_runtime_generic_context): Fix a
+	warning.
+
 	* class.c (mono_class_inflate_generic_class): New helper function.
 
 	* class.c: Use mono_class_inflate_generic_class in a few places. Add
