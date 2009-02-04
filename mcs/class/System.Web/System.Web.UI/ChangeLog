@@ -1,3 +1,9 @@
+2009-02-04  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: update of the fix for bug #470993 - view state of
+	the child controls isn't saved when any of their parents has it
+	disabled.
+
 2009-01-30  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: don't save the control's state if it's
