@@ -322,9 +322,13 @@ namespace System.Windows.Forms
 		public int Width {
 			get { return width; }
 			set {
-				width = value;
-				if (owner != null)
-					owner.Redraw (true);
+				if (width != value) {
+					width = value;
+					if (owner != null) {
+						owner.Redraw (true);
+						owner.RaiseColumnWidthChanged (this);
+					}
+				}
 			}
 		}
 		#endregion // Public Instance Properties

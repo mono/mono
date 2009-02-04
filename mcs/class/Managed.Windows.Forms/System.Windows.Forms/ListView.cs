@@ -6244,6 +6244,12 @@ namespace System.Windows.Forms
 		}
 #endif
 
+		internal void RaiseColumnWidthChanged (ColumnHeader column)
+		{
+			int index = Columns.IndexOf (column);
+			RaiseColumnWidthChanged (index);
+		}
+
 #if NET_2_0
 		
 		#region UIA Framework: Methods, Properties and Events

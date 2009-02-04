@@ -1,3 +1,11 @@
+2009-02-04  Mario Carrion  <mcarrion@novell.com>
+
+	* ColumnHeader.cs: Raising ListView.ColumnWidthChanged when setting 
+	Width.
+	* ListView.cs: Internal method added: RaiseColumnWidthChanged, used by
+	ColumnHeader to raise ColumnWidthChanged.
+	[Fixes Bug #467086]
+
 2009-02-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewRowCollection.cs, DataGridView.cs: Move row completion 
