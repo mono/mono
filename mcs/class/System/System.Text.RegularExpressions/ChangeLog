@@ -1,3 +1,7 @@
+2009-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* Regex.cs: Disable the new regex engine for now.
+
 2009-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs: Avoid throwing exceptions for a few more unhandled opcodes.
