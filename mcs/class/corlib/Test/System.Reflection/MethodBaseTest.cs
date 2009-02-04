@@ -267,7 +267,6 @@ namespace MonoTests.System.Reflection
 
 			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<double>).TypeHandle);
 			Assert.AreEqual (typeof (Generic<double>), res.DeclaringType, "#5");
-			Console.WriteLine ("res is {0}", res.DeclaringType);
 
 			res = MethodBase.GetMethodFromHandle(handle, typeof (Generic<>).TypeHandle);
 			Assert.AreEqual (typeof (Generic<>), res.DeclaringType, "#6");
