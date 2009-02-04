@@ -787,6 +787,8 @@ namespace Mono.CSharp
 					the_token = token ();
 				} while (the_token != Token.CLOSE_BRACKET);
 				the_token = token ();
+			} else if (the_token == Token.IN || the_token == Token.OUT) {
+				the_token = token ();
 			}
 			switch (the_token) {
 			case Token.IDENTIFIER:
@@ -807,7 +809,6 @@ namespace Mono.CSharp
 			case Token.CHAR:
 			case Token.VOID:
 				break;
-
 			case Token.OP_GENERICS_GT:
 				return true;
 

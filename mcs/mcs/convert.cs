@@ -369,9 +369,11 @@ namespace Mono.CSharp {
 				(expr_type == TypeManager.delegate_type || TypeManager.IsDelegateType (expr_type)))
 				return true;
 
-			// from a generic type definition to a generic instance.
 			if (TypeManager.IsEqual (expr_type, target_type))
 				return true;
+
+			if (TypeManager.IsVariantOf (expr_type, target_type))
+			    return true;
 
 			return false;
 		}
@@ -1212,6 +1214,10 @@ namespace Mono.CSharp {
 				if (expr_type != TypeManager.null_type && expr_type != TypeManager.anonymous_method_type)
 					return expr;
 				return null;
+			}
+
+			if (TypeManager.IsVariantOf (expr_type, target_type)) {
+				return expr;
 			}
 
 			if (TypeManager.IsNullableType (target_type))

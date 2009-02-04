@@ -239,7 +239,7 @@ namespace Mono.CSharp
 				"   -help                Lists all compiler options (short: -?)\n" + 
 				"   -keycontainer:NAME   The key pair container used to sign the output assembly\n" +
 				"   -keyfile:FILE        The key file used to strongname the ouput assembly\n" +
-				"   -langversion:TEXT    Specifies language version modes: ISO-1, ISO-2, or Default\n" + 
+				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, Default, or future\n" + 
 				"   -lib:PATH1[,PATHn]   Specifies the location of referenced assemblies\n" +
 				"   -main:CLASS          Specifies the class with the Main method (short: -m)\n" +
 				"   -noconfig            Disables implicitly referenced assemblies\n" +
@@ -1496,6 +1496,9 @@ namespace Mono.CSharp
 #if GMCS_SOURCE
 				case "iso-2":
 					RootContext.Version = LanguageVersion.ISO_2;
+					return true;
+				case "future":
+					RootContext.Version = LanguageVersion.Future;
 					return true;
 #endif
 				}

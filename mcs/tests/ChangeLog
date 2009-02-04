@@ -1,3 +1,14 @@
+2009-02-04  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This patch is contributed under the MIT/X11 license.
+
+	* gtest-variance-1.cs: Added test for generic covariance.
+
+	* gtest-variance-2.cs: Added test for generic contravariance.
+
+	* known-issues-gmcs: Added the two above tests to the ignore list
+	since runtime support is not yet in place.
+
 2009-01-22  Jb Evain  <jbevain@novell.com>
 
 	* gtest-anontype-05.cs: update according to lastest changes in gmcs

@@ -13,6 +13,13 @@ using System.Collections;
 
 namespace Mono.CSharp
 {
+	public enum Variance
+	{
+		None,
+		Covariant,
+		Contravariant
+	}
+
 	public enum SpecialConstraint
 	{
 		Constructor,
@@ -68,7 +75,7 @@ namespace Mono.CSharp
 	public class TypeParameter : MemberCore, IMemberContainer
 	{
 		public TypeParameter (DeclSpace parent, DeclSpace decl, string name,
-				      Constraints constraints, Attributes attrs, Location loc)
+				      Constraints constraints, Attributes attrs, Variance variance, Location loc)
 			: base (parent, new MemberName (name, loc), attrs)
 		{
 			throw new NotImplementedException ();
@@ -152,6 +159,10 @@ namespace Mono.CSharp
 			get { throw new NotImplementedException (); }
 		}
 
+		public Variance Variance {
+			get { throw new NotImplementedException (); }
+		}
+
 		MemberCache IMemberContainer.BaseCache {
 			get { throw new NotImplementedException (); }
 		}
@@ -199,16 +210,29 @@ namespace Mono.CSharp
 	public class TypeParameterName : SimpleName
 	{
 		Attributes attributes;
+		Variance variance;
 
 		public TypeParameterName (string name, Attributes attrs, Location loc)
+			: this (name, attrs, Variance.None, loc)
+		{
+		}
+
+		public TypeParameterName (string name, Attributes attrs, Variance variance, Location loc)
 			: base (name, loc)
 		{
 			attributes = attrs;
+			this.variance = variance;
 		}
 
 		public Attributes OptAttributes {
 			get {
 				return attributes;
+			}
+		}
+
+		public Variance Variance {
+			get {
+				return variance;
 			}
 		}
 	}

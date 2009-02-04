@@ -2135,7 +2135,7 @@ namespace Mono.CSharp {
 
 			if (interfaces != null){
 				foreach (Type i in interfaces){
-					if (i == iface)
+					if (i == iface || IsVariantOf (i, iface))
 						return true;
 				}
 			}
@@ -2143,6 +2143,64 @@ namespace Mono.CSharp {
 			t = t.BaseType;
 		} while (t != null);
 		
+		return false;
+	}
+
+	public static bool VerifyNoVariantTypeParameters (Type type, Location loc)
+	{
+#if GMCS_SOURCE
+		if (type != null && type.IsGenericType) {
+			foreach (Type t in type.GetGenericArguments ()) {
+				if (t.IsGenericParameter) {
+					if ((t.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
+						Report.Error (-34, loc, "Contravariant type parameters can only be used " +
+						              "as input arguments to a method");
+						return false;
+					}
+					if ((t.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0) {
+						Report.Error (-35, loc, "Covariant type parameters can only be used as return types " +
+						              "or in interface inheritance");
+						return false;
+					}
+				} else if (!VerifyNoVariantTypeParameters (t, loc)) {
+					return false;
+				}
+			}
+		}
+#endif
+		return true;
+	}
+
+	public static bool IsVariantOf (Type type1, Type type2)
+	{
+#if GMCS_SOURCE
+		if (type1.IsGenericType && type2.IsGenericType) {
+			Type generic_target_type = type2.GetGenericTypeDefinition ();
+			if (type1.GetGenericTypeDefinition () == generic_target_type) {
+				Type [] t1 = type1.GetGenericArguments ();
+				Type [] t2 = type2.GetGenericArguments ();
+				int i = 0;
+				foreach (Type t in generic_target_type.GetGenericArguments ()) {
+					if ((t.GenericParameterAttributes & GenericParameterAttributes.VarianceMask) != 0) {
+						// FIXME this is not right
+						if (IsValueType (t1[i]) || IsValueType (t2[i])) {
+							return false;
+						}
+						if ((t.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0 && !t2[i].IsAssignableFrom (t1[i])) {
+							return false;
+						}
+						if ((t.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0 && !t1[i].IsAssignableFrom (t2[i])) {
+							return false;
+						}
+					} else if (t1[i] != t2[i]) {
+						return false;
+					}
+					i++;
+				}
+				return true;
+			}
+		}
+#endif
 		return false;
 	}
 

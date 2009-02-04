@@ -12,3 +12,5 @@ gtest-437.cs
 
 gtest-etree-07.cs
 
+gtest-variance-1.cs IGNORE	# Runtime support for variance is not yet in place
+gtest-variance-2.cs IGNORE

@@ -1,3 +1,57 @@
+2009-02-04  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This patch adds initial generic variance support to the compiler.
+	It is contributed under the MIT/X11 license.
+
+	* typemanager.cs: Modified ImplementsInterface to check variance.
+	Added VerifyVariantTypeParameters which checks the specified type to see
+	if it uses a variant type parameter as a type argument (which is not
+	allowed). Added IsVariantOf which determins if the first type is a
+	variant of the second. NOTE: This only supports reference types at
+	the moment to conform with the current level of VM support. When the
+	VM supports value types, this will follow step.
+
+	* generic.cs: Added the Variance enum. Added a Variance property to
+	TypeParameter and added variance support to definition phase. Added a
+	Variance property to TypeParameterName. Also check to make sure that
+	no variant types appear in generic method parameters.
+
+	* cs-tokenizer.cs: Modified parse_less_than to tokenize the variance
+	keywords if the langversion supports it.
+
+	* parameter.cs: Added Parameter.VerifyNoVariantTypeParameters to ensure
+	that variant types are only used in legal positions. Also added
+	ParametersCompiled.VerifyNoVariantTypeParameters to check all of its
+	parameters.
+
+	* decl.cs: Construct TypeParameter with the variance information.
+
+	* convert.cs: Checks variance in ImplicitReferenceConversionExists
+	and ImplicitConversionStandard.
+
+	* rootcontext.cs: Added new "Future" language version.
+
+	* class.cs: In TypeContainer.DoDefineMembers, ensure that contravariant
+	type parameters are not used as type arguments in interface inheritance.
+	In MemberBase.DoMemberDependentChecks, ensure that contravariant type
+	parameters are not used as method return types. In MemberBase.
+	ResolveMemberType, ensure that variant type parameters are not used
+	as type arguments. Also call VerifyNoVariantTypeParameters on every
+	set of parameters which are resolved.
+
+	* delegate.cs: Modified Delegate.Define to ensure that variant
+	parameters are not used as type arguments and that a contravariant
+	parameter is not used as the return type. Also call
+	VerifyNoVariantTypeParameters on the delegate parameters.
+
+	* cs-parser.jay: Modified grammar to support "in" and "out" keywords
+	to specify generic variance.
+
+	* driver.cs: Added support for LanguageVersion.Future in the form of
+	"-langversion:future".
+
+	* generic-mcs.cs: Stubbed out new members in generic.cs.
+
 2009-02-03  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, generic.cs: Emit type parameter constraints for nested

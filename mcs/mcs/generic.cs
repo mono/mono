@@ -124,6 +124,13 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public enum Variance
+	{
+		None,
+		Covariant,
+		Contravariant
+	}
+
 	public enum SpecialConstraint
 	{
 		Constructor,
@@ -577,13 +584,18 @@ namespace Mono.CSharp {
 		Constraints constraints;
 		GenericTypeParameterBuilder type;
 		MemberCache member_cache;
+		Variance variance;
 
 		public TypeParameter (DeclSpace parent, DeclSpace decl, string name,
-				      Constraints constraints, Attributes attrs, Location loc)
+				      Constraints constraints, Attributes attrs, Variance variance, Location loc)
 			: base (parent, new MemberName (name, loc), attrs)
 		{
 			this.decl = decl;
 			this.constraints = constraints;
+			this.variance = variance;
+			if (variance != Variance.None && !(decl is Interface) && !(decl is Delegate)) {
+				Report.Error (-36, loc, "Generic variance can only be used with interfaces and delegates");
+			}
 		}
 
 		public GenericConstraints GenericConstraints {
@@ -596,6 +608,10 @@ namespace Mono.CSharp {
 
 		public DeclSpace DeclSpace {
 			get { return decl; }
+		}
+
+		public Variance Variacne {
+			get { return variance; }
 		}
 
 		public Type Type {
@@ -752,15 +768,22 @@ namespace Mono.CSharp {
 
 		public void SetConstraints (GenericTypeParameterBuilder type)
 		{
-			if (gc == null)
-				return;
+			GenericParameterAttributes attr = GenericParameterAttributes.None;
+			if (variance == Variance.Contravariant)
+				attr |= GenericParameterAttributes.Contravariant;
+			else if (variance == Variance.Covariant)
+				attr |= GenericParameterAttributes.Covariant;
 
-			if (gc.HasClassConstraint || gc.HasValueTypeConstraint)
-				type.SetBaseTypeConstraint (gc.EffectiveBaseClass);
+			if (gc != null) {
+				if (gc.HasClassConstraint || gc.HasValueTypeConstraint)
+					type.SetBaseTypeConstraint (gc.EffectiveBaseClass);
 
-			type.SetInterfaceConstraints (gc.InterfaceConstraints);
-			type.SetGenericParameterAttributes (gc.Attributes);
-			TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
+				attr |= gc.Attributes;
+				type.SetInterfaceConstraints (gc.InterfaceConstraints);
+				TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
+			}
+			
+			type.SetGenericParameterAttributes (attr);
 		}
 
 		/// <summary>
@@ -1171,16 +1194,29 @@ namespace Mono.CSharp {
 	public class TypeParameterName : SimpleName
 	{
 		Attributes attributes;
+		Variance variance;
 
 		public TypeParameterName (string name, Attributes attrs, Location loc)
+			: this (name, attrs, Variance.None, loc)
+		{
+		}
+
+		public TypeParameterName (string name, Attributes attrs, Variance variance, Location loc)
 			: base (name, loc)
 		{
 			attributes = attrs;
+			this.variance = variance;
 		}
 
 		public Attributes OptAttributes {
 			get {
 				return attributes;
+			}
+		}
+
+		public Variance Variance {
+			get {
+				return variance;
 			}
 		}
 	}

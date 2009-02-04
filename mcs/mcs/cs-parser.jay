@@ -2755,10 +2755,10 @@ type_parameters
 	;
 
 type_parameter
-	: opt_attributes IDENTIFIER
+	: opt_attributes opt_type_parameter_variance IDENTIFIER
 	  {
-		LocatedToken lt = (LocatedToken)$2;
-		$$ = new TypeParameterName (lt.Value, (Attributes)$1, lt.Location);
+		LocatedToken lt = (LocatedToken)$3;
+		$$ = new TypeParameterName (lt.Value, (Attributes)$1, (Variance)$2, lt.Location);
   	  }
   	| error
   	  {
@@ -4185,6 +4185,30 @@ type_parameter_constraint
 	  }
 	| STRUCT {
 		$$ = SpecialConstraint.ValueType;
+	  }
+	;
+
+opt_type_parameter_variance
+	: /* empty */
+	  {
+		$$ = Variance.None;
+	  }
+	| type_parameter_variance
+	  {
+		if (RootContext.Version < LanguageVersion.Future)
+			Report.FeatureIsNotAvailable (lexer.Location, "generic variance");
+		$$ = $1;
+	  }
+	;
+
+type_parameter_variance
+	: OUT
+	  {
+		$$ = Variance.Covariant;
+	  }
+	| IN
+	  {
+		$$ = Variance.Contravariant;
 	  }
 	;
 

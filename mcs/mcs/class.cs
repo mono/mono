@@ -1291,8 +1291,18 @@ namespace Mono.CSharp {
 							oa, iface.GetSignatureForError (), Location);
 
 					GenericTypeExpr ct = iface as GenericTypeExpr;
-					if ((ct != null) && !ct.CheckConstraints (this))
-						return false;
+					if (ct != null) {
+						if (!ct.CheckConstraints (this))
+							return false;
+#if GMCS_SOURCE
+						foreach (Type t in ct.TypeArguments.Arguments) {
+							if (t.IsGenericParameter && (t.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
+								Report.Error (-39, ct.Location, "Contravariant type parameters cannot be used " +
+								              "as arguments in interface inheritance");
+							}
+						}
+#endif
+					}
 				}
 			}
 
@@ -5304,6 +5314,11 @@ namespace Mono.CSharp {
 						      "accessible than field `" + GetSignatureForError () + "'");
 				}
 			}
+#if GMCS_SOURCE
+			if (MemberType.IsGenericParameter && (MemberType.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
+				Report.Error (-33, Location, "Contravariant type parameters can only be used in input positions");
+			}
+#endif
 		}
 
 		protected bool IsTypePermitted ()
@@ -5336,6 +5351,10 @@ namespace Mono.CSharp {
 			if (te == null)
 				return false;
 
+			if (!TypeManager.VerifyNoVariantTypeParameters (te.Type, te.Location)) {
+				return false;
+			}
+			
 			//
 			// Replace original type name, error reporting can use fully resolved name
 			//
@@ -5965,7 +5984,7 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 		protected ListDictionary declarative_security;
 
-		// The accessor are created event if they are not wanted.
+		// The accessor are created even if they are not wanted.
 		// But we need them because their names are reserved.
 		// Field says whether accessor will be emited or not
 		public readonly bool IsDummy;
@@ -6273,6 +6292,7 @@ namespace Mono.CSharp {
 			public override MethodBuilder Define (DeclSpace parent)
 			{
 				parameters.Resolve (ResolveContext);
+				
 				base.Define (parent);
 
 				if (IsDummy)

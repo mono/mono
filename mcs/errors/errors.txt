@@ -91,6 +91,24 @@ numbers, as they look nicer on the debugging output.
 
 -31     Internal compiler error during the method emit phase.
 
+-32     Internal compiler error during parsing.
+
+-33     Contravariant type parameters cannot be the return type.
+
+-34     Contravariant type parameters cannot be used as type arguments.
+
+-35     Covariant type parameters cannot be used as type arguments except
+        for inherited interfaces.
+
+-36     Variant type parameters can only be used with interface and
+        delegate types.
+
+-37     Contravariant type parameters cannot be byref method parameters.
+
+-38     Covariant type parameters cannot be used as method parameters.
+
+-39     Contravariant type parameters cannot be used in interface inheritance.
+
 ----------
 
 Errors that we have allocated that will have corresponding errors in

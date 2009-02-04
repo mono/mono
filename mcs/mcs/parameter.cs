@@ -376,9 +376,23 @@ namespace Mono.CSharp {
 			}
 
 #if GMCS_SOURCE
-			TypeParameterExpr tparam = texpr as TypeParameterExpr;
-			if (tparam != null) {
+			if (parameter_type.IsGenericParameter) {
+				AbstractPropertyEventMethod accessor = ec as AbstractPropertyEventMethod;
+				if (accessor == null || !accessor.IsDummy) {
+					if ((parameter_type.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0) {
+						Report.Error (-38, Location, "Covariant type parameters cannot be used as method parameters");
+						return null;
+					} else if ((ModFlags & Modifier.ISBYREF) != 0 &&
+					           (parameter_type.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
+						Report.Error (-37, Location, "Contravariant type parameters cannot be used in output positions");
+						return null;
+					}
+				}
 				return parameter_type;
+			}
+
+			if (!TypeManager.VerifyNoVariantTypeParameters (parameter_type, Location)) {
+				return null;
 			}
 #endif
 
@@ -1006,7 +1020,7 @@ namespace Mono.CSharp {
 		{
 			if (types != null)
 				return true;
-
+			
 			types = new Type [Count];
 			
 			bool ok = true;

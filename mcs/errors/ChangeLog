@@ -1,3 +1,46 @@
+2009-02-04  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This patch is contributed under the MIT/X11 license.
+
+	* errors.txt: Added new mono-specific errors codes -33 to -39 pertaining
+	to generic variance.
+
+	* gcs8033.cs:
+	* gcs8033-2.cs:
+	* gcs8034.cs:
+	* gcs8034-2.cs:
+	* gcs8034-3.cs:
+	* gcs8034-4.cs:
+	* gcs8034-5.cs:
+	* gcs8034-6.cs:
+	* gcs8034-7.cs:
+	* gcs8034-8.cs:
+	* gcs8034-9.cs:
+	* gcs8034-10.cs:
+	* gcs8035.cs:
+	* gcs8035-2.cs:
+	* gcs8035-3.cs:
+	* gcs8035-4.cs:
+	* gcs8035-5.cs:
+	* gcs8035-6.cs:
+	* gcs8035-7.cs:
+	* gcs8035-8.cs:
+	* gcs8035-9.cs:
+	* gcs8035-10.cs:
+	* gcs8036.cs:
+	* gcs8036-2.cs:
+	* gcs8037.cs:
+	* gcs8037-2.cs:
+	* gcs8038.cs:
+	* gcs8038-2.cs:
+	* gcs8038-3.cs:
+	* gcs8039.cs: Added tests for new error codes.
+
+	* gcs1525.cs: Updated error message to jive with new grammar.
+
+	* gcs1644-15.cs:
+	* gcs1644-16.cs: Add tests for "unsupported feature" error in iso-2.
+
 2009-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile (check): Add a standard check target.
