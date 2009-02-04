@@ -1583,6 +1583,21 @@ namespace System.Web.UI
 			stateMask &= ~INITING;
 		}
 
+		bool ViewStateShouldBeSaved ()
+		{
+			if (!EnableViewState)
+				return false;
+
+			Control parent = Parent;
+			while (parent != null) {
+				if (!parent.EnableViewState)
+					return false;
+				parent = parent.Parent;
+			}
+
+			return true;
+		}
+		
 		internal object SaveViewStateRecursive ()
 		{
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
@@ -1596,7 +1611,7 @@ namespace System.Web.UI
 
 			ArrayList controlList = null;
 			ArrayList controlStates = null;
-
+			
 			int idx = -1;
 			if (HasControls ()) {
 				int len = _controls.Count;
@@ -1624,7 +1639,7 @@ namespace System.Web.UI
 #endif
 			object thisState = null;
 
-			if (EnableViewState)
+			if (ViewStateShouldBeSaved ())
 				thisState = SaveViewState ();
 
 			if (thisState == null && controlList == null && controlStates == null) {
