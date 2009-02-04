@@ -1,3 +1,16 @@
+2009-02-04  Miguel de Icaza  <miguel@novell.com>
+
+	* icall-def.h: Remove internal calls for sockets when
+	DISABLE_SOCKET is defined, file system writing features when the
+	OS only support reading and not writing data and Policy support if
+	the Policy is disabled.
+	
+	* image.c (do_mono_image_open): Apply Paolo's patches for using
+	mono_file_map_ APIs here.
+
+	* assembly.c: Add support for platforms to avoid prefix
+	auto-detection. 
+
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* generic-sharing.c (mono_method_fill_runtime_generic_context): Fix a
