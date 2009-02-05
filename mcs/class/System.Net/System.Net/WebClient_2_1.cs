@@ -60,6 +60,7 @@
 //    exceptions in threads terminate the application).
 //
 using System;
+using System.Security;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -1013,6 +1014,7 @@ namespace System.Net
 //		}
 //
 //#if NET_2_0
+		[SecuritySafeCritical]
 		public void CancelAsync ()
 		{
 			lock (this){

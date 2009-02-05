@@ -1,3 +1,8 @@
+2009-02-05  Geoff Norton  <gnorton@novell.com>
+
+	* WebClient_2_1.cs: CancelAsync calls Thread.Interrupt so needs to be
+	SecuritySafeCritical for now.
+
 2009-01-26  Rolf Bjarne Kvinge  <rkvinge@novell.com>
 
 	* WebClient_2_1.cs: Ensure we don't let exceptions go to native code.
