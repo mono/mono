@@ -261,11 +261,12 @@ namespace System.Windows.Forms
 				if (value == text)
 					return;
 
+				text = value;
+
 #if NET_2_0
 				OnUIATextChanged (EventArgs.Empty);
 #endif
 				
-				text = value;
 				if (Parent != null)
 					Parent.Redraw (true);
 			}
