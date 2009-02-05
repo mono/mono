@@ -2801,6 +2801,27 @@ namespace MonoTests.System.Net.Sockets
 			Assert.IsTrue (RRCLastRead);
 		}
 
+		//
+		// Test case for bug #471580
+		[Test]
+		public void UdpDoubleBind ()
+		{
+			Socket s = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+			
+			s.Bind (new IPEndPoint (IPAddress.Any, 12345));
+			
+			Socket ss = new Socket (AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			ss.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
+			
+			ss.Bind (new IPEndPoint (IPAddress.Any, 12345));
+
+			// If we make it this far, we succeeded.
+			
+			ss.Close ();
+			s.Close ();
+		}
+		
 #if NET_2_0
 		[Test]
                 public void ConnectedProperty ()
