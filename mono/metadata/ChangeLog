@@ -1,3 +1,9 @@
+2009-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* verify.c metadata.c object.c icall.c reflection.c: Use 
+	mono_class_enum_basetype () instead of accessing klass->enum_basetype 
+	directly.
+
 2009-02-04  Miguel de Icaza  <miguel@novell.com>
 
 	* icall-def.h: Remove internal calls for sockets when
