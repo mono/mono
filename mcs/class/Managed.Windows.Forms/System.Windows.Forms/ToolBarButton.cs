@@ -317,6 +317,8 @@ namespace System.Windows.Forms
 		}
 		
 #if NET_2_0
+		static object UIATextChangedEvent = new object ();
+		
 		internal event EventHandler UIATextChanged {
 			add { Events.AddHandler (UIATextChangedEvent, value); }
 			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
