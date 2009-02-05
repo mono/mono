@@ -1,3 +1,7 @@
+2009-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (print_jit_stats): Remove some unused statistics.
+
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_klass_info): Update after MonoClass changes.
