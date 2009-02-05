@@ -2,9 +2,10 @@
 // System.Web.Compilation.AppResourceFilesCollection
 //
 // Authors:
-//   Marek Habersack (grendello@gmail.com)
+//   Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2006 Marek Habersack
+// (C) 2007-2009 Novell, Inc http://novell.com/
 //
 
 //
@@ -33,6 +34,7 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -44,8 +46,167 @@ using System.Web.Util;
 
 namespace System.Web.Compilation 
 {
-	internal class AppResourcesCompiler
+	class AppResourcesCompiler
 	{
+		class TypeResolutionService : ITypeResolutionService
+		{
+			List <Assembly> referencedAssemblies;
+			Dictionary <string, Type> mappedTypes;
+
+			public Assembly GetAssembly (AssemblyName name)
+			{
+				return GetAssembly (name, false);
+			}
+			
+			public Assembly GetAssembly (AssemblyName name, bool throwOnError)
+			{
+				try {
+					return Assembly.Load (name);
+				} catch {
+					if (throwOnError)
+						throw;
+				}
+
+				return null;
+			}
+
+			public void ReferenceAssembly (AssemblyName name)
+			{
+				if (referencedAssemblies == null)
+					referencedAssemblies = new List <Assembly> ();
+
+				Assembly asm = GetAssembly (name, false);
+				if (asm == null)
+					return;
+				
+				if (referencedAssemblies.Contains (asm))
+					return;
+				
+				referencedAssemblies.Add (asm);
+			}
+
+			public string GetPathOfAssembly (AssemblyName name)
+			{
+				if (name == null)
+					return null;
+
+				Assembly asm = GetAssembly (name, false);
+				if (asm == null)
+					return null;
+				
+				return asm.Location;
+			}
+
+			public Type GetType (string name)
+			{
+				return GetType (name, false, false);
+			}
+
+			public Type GetType (string name, bool throwOnError)
+			{
+				return GetType (name, throwOnError, false);
+			}
+
+			public Type GetType (string name, bool throwOnError, bool ignoreCase)
+			{
+				if (String.IsNullOrEmpty (name)) {
+					if (throwOnError)
+						throw new ArgumentNullException ("name");
+					else
+						return null;
+				}
+
+				int idx = name.IndexOf (',');
+				Type type = null;
+				if (idx == -1) {
+					type = MapType (name, false);
+					if (type != null)
+						return type;
+					
+					type = FindInAssemblies (name, ignoreCase);
+					if (type == null) {
+						if (throwOnError)
+							throw new InvalidOperationException ("Type '" + name + "' is not fully qualified and there are no referenced assemblies.");
+						else
+							return null;
+					}
+
+					return type;
+				}
+
+				type = MapType (name, true);
+				if (type != null)
+					return type;
+				
+				return Type.GetType (name, throwOnError, ignoreCase);
+			}
+
+			Type MapType (string name, bool full)
+			{
+				if (mappedTypes == null)
+					mappedTypes = new Dictionary <string, Type> (StringComparer.Ordinal);
+
+				Type ret;
+				if (mappedTypes.TryGetValue (name, out ret))
+					return ret;
+
+				if (!full) {
+					if (String.Compare (name, "ResXDataNode", StringComparison.Ordinal) == 0)
+						return AddMappedType (name, typeof (ResXDataNode));
+					if (String.Compare (name, "ResXFileRef", StringComparison.Ordinal) == 0)
+						return AddMappedType (name, typeof (ResXFileRef));
+					if (String.Compare (name, "ResXNullRef", StringComparison.Ordinal) == 0)
+						return AddMappedType (name, typeof (ResXNullRef));
+					if (String.Compare (name, "ResXResourceReader", StringComparison.Ordinal) == 0)
+						return AddMappedType (name, typeof (ResXResourceReader));
+					if (String.Compare (name, "ResXResourceWriter", StringComparison.Ordinal) == 0)
+						return AddMappedType (name, typeof (ResXResourceWriter));
+
+					return null;
+				}
+
+				if (name.IndexOf ("System.Windows.Forms") == -1)
+					return null;
+
+				if (name.IndexOf ("ResXDataNode", StringComparison.Ordinal) != -1)
+					return AddMappedType (name, typeof (ResXDataNode));
+				if (name.IndexOf ("ResXFileRef", StringComparison.Ordinal) != -1)
+					return AddMappedType (name, typeof (ResXFileRef));
+				if (name.IndexOf ("ResXNullRef", StringComparison.Ordinal) != -1)
+					return AddMappedType (name, typeof (ResXNullRef));
+				if (name.IndexOf ("ResXResourceReader", StringComparison.Ordinal) != -1)
+					return AddMappedType (name, typeof (ResXResourceReader));
+				if (name.IndexOf ("ResXResourceWriter", StringComparison.Ordinal) != -1)
+					return AddMappedType (name, typeof (ResXResourceWriter));
+
+				return null;
+			}
+
+			Type AddMappedType (string name, Type type)
+			{
+				mappedTypes.Add (name, type);
+				return type;
+			}
+			
+			Type FindInAssemblies (string name, bool ignoreCase)
+			{
+				Type ret = Type.GetType (name, false);
+				if (ret != null)
+					return ret;
+
+				if (referencedAssemblies == null || referencedAssemblies.Count == 0)
+					return null;
+
+				foreach (Assembly asm in referencedAssemblies) {
+					ret = asm.GetType (name, false, ignoreCase);
+					if (ret != null)
+						return ret;
+				}
+
+				return null;
+			}
+		}
+		
 		const string cachePrefix = "@@LocalResourcesAssemblies";
 		public const string DefaultCultureKey = ".:!DefaultCulture!:.";
 		
@@ -541,7 +702,7 @@ namespace System.Web.Compilation
 			try {
 				source = new FileStream (path, FileMode.Open, FileAccess.Read);
 				destination = new FileStream (resource, FileMode.Create, FileAccess.Write);
-				reader = GetReaderForKind (arfi.Kind, source);
+				reader = GetReaderForKind (arfi.Kind, source, path);
 				writer = new ResourceWriter (destination);
 				foreach (DictionaryEntry de in reader) {
 					object val = de.Value;
@@ -566,11 +727,14 @@ namespace System.Web.Compilation
 			return resource;
 		}
 
-		IResourceReader GetReaderForKind (AppResourceFileKind kind, Stream stream)
+		IResourceReader GetReaderForKind (AppResourceFileKind kind, Stream stream, string path)
 		{
 			switch (kind) {
 				case AppResourceFileKind.ResX:
-					return new ResXResourceReader (stream);
+					var ret = new ResXResourceReader (stream, new TypeResolutionService ());
+					if (!String.IsNullOrEmpty (path))
+						ret.BasePath = Path.GetDirectoryName (path);
+					return ret;
 
 				case AppResourceFileKind.Resource:
 					return new ResourceReader (stream);
