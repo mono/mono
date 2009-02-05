@@ -182,13 +182,18 @@ namespace System.Web.UI.WebControls {
 				PasswordRequired.ValidationGroup = _login.ID;
 				_login.RegisterApplyStyle (PasswordRequired, _login.ValidatorTextStyle);
 
+				bool useRememberMe = _login != null ? _login.DisplayRememberMe : true;
+				CheckBox RememberMe;
 				//
-				CheckBox RememberMe = new CheckBox ();
-				RememberMe.ID = "RememberMe";
-				RememberMe.Checked = _login.RememberMeSet;
-				RememberMe.Text = _login.RememberMeText;
-				_login.RegisterApplyStyle (RememberMe, _login.CheckBoxStyle);
-
+				if (useRememberMe) {
+					RememberMe = new CheckBox ();
+					RememberMe.ID = "RememberMe";
+					RememberMe.Checked = _login.RememberMeSet;
+					RememberMe.Text = _login.RememberMeText;
+					_login.RegisterApplyStyle (RememberMe, _login.CheckBoxStyle);
+				} else
+					RememberMe = null;
+				
 				// TODO: Error text
 				Literal FailureText = new Literal ();
 				FailureText.ID = "FailureText";
@@ -247,7 +252,8 @@ namespace System.Web.UI.WebControls {
 					else
 						row2.Cells.Add (CreateCell (PasswordLabel, null, _login.LabelStyle));
 					row2.Cells.Add (CreateCell (Password, PasswordRequired, null));
-					row2.Cells.Add (CreateCell (RememberMe, null, null));
+					if (useRememberMe)
+						row2.Cells.Add (CreateCell (RememberMe, null, null));
 					row2.Cells.Add (CreateCell (LoginButton, null, null));
 					if (row1.Cells.Count > 0)
 						table.Rows.Add (row1);
@@ -266,7 +272,8 @@ namespace System.Web.UI.WebControls {
 						table.Rows.Add (CreateRow (PasswordLabel, null, null, _login.LabelStyle));
 						table.Rows.Add (CreateRow (null, Password, PasswordRequired, null));
 					}
-					table.Rows.Add (CreateRow (CreateCell (RememberMe, null, null)));
+					if (useRememberMe)
+						table.Rows.Add (CreateRow (CreateCell (RememberMe, null, null)));
 					table.Rows.Add (CreateRow (CreateCell (LoginButton, null, null, HorizontalAlign.Right)));
 				}
 

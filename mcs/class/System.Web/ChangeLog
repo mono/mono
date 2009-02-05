@@ -1,3 +1,8 @@
+2009-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWebResources/LoginDisplayRememberMe.aspx
+
 2009-01-27  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.dll.sources: added System.Web.Util/SearchPattern.cs

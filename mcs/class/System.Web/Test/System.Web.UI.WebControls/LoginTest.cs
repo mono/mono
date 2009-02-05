@@ -1112,6 +1112,22 @@ namespace MonoTests.System.Web.UI.WebControls {
 			}
 		}
 
+		[Test] // Bug #468359
+		[Category ("NunitWeb")]
+		public void DisplayRememberMe ()
+		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.LoginDisplayRememberMe.aspx", "LoginDisplayRememberMe.aspx");
+#else
+			WebTest.CopyResource (GetType (), "LoginDisplayRememberMe.aspx", "LoginDisplayRememberMe.aspx");
+#endif
+
+			WebTest t = new WebTest ("LoginDisplayRememberMe.aspx");
+			string html = t.Run ();
+
+			Assert.AreEqual (-1, html.IndexOf ("Login1_RememberMe"), "#A1");
+		}
+		
 		[TestFixtureTearDown]
 		public void Teardown ()
 		{
