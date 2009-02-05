@@ -1,6 +1,6 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
-	* class.c: Use 	mono_class_enum_basetype () instead of accessing 
+	* class.c marshal.c: Use mono_class_enum_basetype () instead of accessing 
 	klass->enum_basetype directly.
 
 	* verify.c metadata.c object.c icall.c reflection.c: Use 
