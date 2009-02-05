@@ -1,3 +1,10 @@
+2009-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (struct _MonoMethodInflated): Move the is_mb_open
+	field to MonoMethod since it only consumes 1 bit there, and 4/8 bytes here.
+
+	* class.c metadata.c: Update after the changes above.
+
 2009-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Simplified error handling and added
