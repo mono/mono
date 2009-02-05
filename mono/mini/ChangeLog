@@ -1,3 +1,8 @@
+2009-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c (mono_unwind_ops_encode): Handle offsets greater than 32 between
+	opcodes. Fixes #472775.
+
 2009-02-05  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-exceptions.c (ves_icall_get_frame_info): Account for the
