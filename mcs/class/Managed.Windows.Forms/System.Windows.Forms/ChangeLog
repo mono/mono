@@ -1,3 +1,13 @@
+2009-02-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewRowCollection.cs, DataGridView.cs: Fix row insertation: 
+	   - Use ArrayList.Insert instead of the Item property so that the item 
+	   is actually inserted and not an existing item replaced.
+	   - Call DataGridView.OnRowsAddedInternal and drop internal from 
+	   OnRowsAdded for binary compitability. This also fixes several 
+	   redrawing issues.
+	[Fixes bug #472968]
+
 2009-02-05  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ToolBarButton.cs: Doh, fire OnUIATextChanged *after* setting

@@ -4836,7 +4836,7 @@ namespace System.Windows.Forms {
 			OnRowsAdded (e);
 		}
 
-		protected internal virtual void OnRowsAdded (DataGridViewRowsAddedEventArgs e)
+		protected virtual void OnRowsAdded (DataGridViewRowsAddedEventArgs e)
 		{
 			DataGridViewRowsAddedEventHandler eh = (DataGridViewRowsAddedEventHandler)(Events [RowsAddedEvent]);
 			if (eh != null) eh (this, e);

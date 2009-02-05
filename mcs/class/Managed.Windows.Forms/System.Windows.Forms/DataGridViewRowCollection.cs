@@ -198,7 +198,7 @@ namespace System.Windows.Forms
 			int result = 0;
 			for (int i = 0; i < count; i++)
 				result = Add (dataGridView.RowTemplateFull as DataGridViewRow);
-			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (result - count + 1, count));
+			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (result - count + 1, count));
 			raiseEvent = true;
 			return result;
 		}
@@ -223,7 +223,7 @@ namespace System.Windows.Forms
 			int lastIndex = 0;
 			for (int i = 0; i < count; i++)
 				lastIndex = AddCopy(indexSource);
-			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (lastIndex - count + 1, count));
+			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (lastIndex - count + 1, count));
 			raiseEvent = true;
 			return lastIndex;
 		}
@@ -246,7 +246,7 @@ namespace System.Windows.Forms
 				lastIndex = Add (row);
 				count++;
 			}
-			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (lastIndex - count + 1, count));
+			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (lastIndex - count + 1, count));
 			raiseEvent = true;
 		}
 
@@ -404,10 +404,11 @@ namespace System.Windows.Forms
 			dataGridViewRow.SetIndex (rowIndex);
 			dataGridViewRow.SetDataGridView (dataGridView);
 			CompleteRowCells (dataGridViewRow);
-			list[rowIndex] = dataGridViewRow;
+			list.Insert (rowIndex, dataGridViewRow);
+			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewRow));
 			if (raiseEvent)
-				DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (rowIndex, 1));
+				DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (rowIndex, 1));
 		}
 
 		public virtual void Insert (int rowIndex, int count)
@@ -416,7 +417,7 @@ namespace System.Windows.Forms
 			raiseEvent = false;
 			for (int i = 0; i < count; i++)
 				Insert (index++, dataGridView.RowTemplateFull);
-			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (rowIndex, count));
+			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (rowIndex, count));
 			raiseEvent = true;
 		}
 
@@ -437,7 +438,7 @@ namespace System.Windows.Forms
 			int index = indexDestination;
 			for (int i = 0; i < count; i++)
 				InsertCopy (indexSource, index++);
-			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (indexDestination, count));
+			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (indexDestination, count));
 			raiseEvent = true;
 		}
 
@@ -455,7 +456,7 @@ namespace System.Windows.Forms
 				Insert (index++, row);
 				count++;
 			}
-			DataGridView.OnRowsAdded (new DataGridViewRowsAddedEventArgs (rowIndex, count));
+			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (rowIndex, count));
 			raiseEvent = true;
 		}
 
