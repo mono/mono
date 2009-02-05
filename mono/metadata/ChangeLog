@@ -1,5 +1,10 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* class-internals.h (struct _MonoClass): Remove enum_basetype, it contains
+	the same information as element_class->byval_arg.
+
+	* class.c reflection.c: Remove references to class->byval_arg.
+
 	* class.c marshal.c: Use mono_class_enum_basetype () instead of accessing 
 	klass->enum_basetype directly.
 
