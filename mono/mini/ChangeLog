@@ -1,5 +1,13 @@
 2009-02-05  Mark Probst  <mark.probst@gmail.com>
 
+	Backport of r125887.
+
+	* jit-icalls.c (mono_helper_compile_generic_method): Don't inflate
+	the method we get from mono_object_get_virtual_method() because
+	that function does it properly, now.
+
+2009-02-05  Mark Probst  <mark.probst@gmail.com>
+
 	Backport of r125839.
 
 	* mini-exceptions.c (ves_icall_get_frame_info): Account for the
