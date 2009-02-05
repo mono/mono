@@ -1,5 +1,9 @@
 2009-02-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
+	* ToolBarButton.cs: Add another event (OnUIATextChanged).
+
+2009-02-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
 	* ToolBarButton: Fix typo in previous commit (r125704).
 
 2009-02-04  Andrés G. Aragoneses  <aaragoneses@novell.com>

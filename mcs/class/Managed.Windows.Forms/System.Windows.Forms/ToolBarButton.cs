@@ -261,6 +261,10 @@ namespace System.Windows.Forms
 				if (value == text)
 					return;
 
+#if NET_2_0
+				OnUIATextChanged (EventArgs.Empty);
+#endif
+				
 				text = value;
 				if (Parent != null)
 					Parent.Redraw (true);
@@ -327,6 +331,7 @@ namespace System.Windows.Forms
 
 		static object UIAGotFocusEvent = new object ();
 		static object UIALostFocusEvent = new object ();
+		static object UIATextChangedEvent = new object ();
 		
 		internal event EventHandler UIAGotFocus {
 			add { Events.AddHandler (UIAGotFocusEvent, value); }
@@ -336,6 +341,18 @@ namespace System.Windows.Forms
 		internal event EventHandler UIALostFocus {
 			add { Events.AddHandler (UIALostFocusEvent, value); }
 			remove { Events.RemoveHandler (UIALostFocusEvent, value); }
+		}
+		
+		internal event EventHandler UIATextChanged {
+			add { Events.AddHandler (UIATextChangedEvent, value); }
+			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
+		}
+		
+		protected virtual void OnUIATextChanged(EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [UIATextChangedEvent]);
+			if (eh != null)
+				eh (this, e);
 		}
 #endif
 		
