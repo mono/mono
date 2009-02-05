@@ -48,6 +48,15 @@ namespace System.Web.Compilation {
 		{
 		}
 
+		protected override string MapPath (string virtualPath)
+		{
+			// We need this hack to support out-of-application wsdl helpers
+			if (StrUtils.StartsWith (virtualPath, BuildManager.FAKE_VIRTUAL_PATH_PREFIX))
+				return virtualPath.Substring (BuildManager.FAKE_VIRTUAL_PATH_PREFIX.Length);
+
+			return base.MapPath (virtualPath);
+		}
+		
 		protected override TextReader SpecialOpenReader (string virtualPath, out string physicalPath)
 		{
 			// We need this hack to support out-of-application wsdl helpers

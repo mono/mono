@@ -58,6 +58,17 @@ namespace System.Web.Compilation
 		protected abstract string GetClassType (BaseCompiler compiler, TParser parser);
 		protected abstract AspGenerator CreateAspGenerator (TParser parser);
 		protected abstract List <string> GetReferencedAssemblies (TParser parser);
+
+		protected virtual string MapPath (string virtualPath)
+		{
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+
+			if (req != null)
+				return req.MapPath (VirtualPath);
+			else
+				return null;
+		}
 		
 		protected virtual TParser Parse ()
 		{
@@ -68,18 +79,9 @@ namespace System.Web.Compilation
 
 			if (!IsDirectoryBuilder) {
 				AspGenerator generator = CreateAspGenerator (parser);
-				if (_reader != null) {
-					HttpContext ctx = HttpContext.Current;
-					HttpRequest req = ctx != null ? ctx.Request : null;
-					string filename;
-					
-					if (req != null)
-						filename = req.MapPath (VirtualPath);
-					else
-						filename = null;
-					
-					generator.Parse (_reader, filename, true);
-				} else
+				if (_reader != null)
+					generator.Parse (_reader, MapPath (VirtualPath), true);
+				else
 					generator.Parse ();
 			}
 			
