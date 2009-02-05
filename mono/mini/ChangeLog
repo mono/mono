@@ -1,3 +1,11 @@
+2009-02-05  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r125839.
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Account for the
+	fact that mono_find_jit_info() sometimes returns the context
+	corresponding to the jit info in new_ctx.  Fixes #472600.
+
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of 125697.
