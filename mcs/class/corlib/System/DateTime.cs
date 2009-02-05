@@ -901,6 +901,13 @@ namespace System
 		internal static bool CoreParse (string s, IFormatProvider provider, DateTimeStyles styles,
 					      out DateTime result, bool setExceptionOnError, ref Exception exception)
 		{
+			if (s == null || s.Length == 0) {
+				if (setExceptionOnError)
+					exception = new FormatException (formatExceptionMessage);
+				result = MinValue;
+				return false;
+			}
+
 			if (provider == null)
 				provider = CultureInfo.CurrentCulture;
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
