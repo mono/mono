@@ -1,3 +1,8 @@
+2009-02-05  Miguel De Icaza  <miguel@novell.com>
+
+	* sockets.c (_wapi_setsockopt): SO_REUSEPORT is needed also on
+	MacOS X.  Fixes bug #471292
+
 2009-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* shared.c: Fall back to file based shared storage if shm_open () fails
