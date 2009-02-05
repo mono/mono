@@ -1,3 +1,9 @@
+2009-02-05  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-472600.2.cs: New test.
+
+	* Makefile.am: Test added.
+
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* generics-invoke-byref.2.cs: Add a test for #471259.
