@@ -131,6 +131,7 @@ namespace System.Web.UI
 		const int ENABLE_THEMING = 1 << 16;
 #endif
 		const int AUTOID_SET = 1 << 17;
+		const int REMOVED = 1 << 18;
 		/*************/
 
 		static Control ()
@@ -150,7 +151,7 @@ namespace System.Web.UI
 			if (this is INamingContainer)
 				stateMask |= IS_NAMING_CONTAINER;
 		}
-
+		
 #if NET_2_0
 		ControlAdapter adapter;
 		bool did_adapter_lookup;
@@ -637,10 +638,12 @@ namespace System.Web.UI
 			control._parent = this;
 			Control nc = ((stateMask & IS_NAMING_CONTAINER) != 0) ? this : NamingContainer;
 
-			if ((stateMask & (INITING | INITED)) != 0)
+			if ((stateMask & (INITING | INITED)) != 0) {
 				control.InitRecursive (nc);
-			else {
+				control.SetMask (REMOVED, false);
+			} else {
 				control.SetNamingContainer (nc);
+				control.SetMask (REMOVED, false);
 				return;
 			}
 
@@ -1565,22 +1568,25 @@ namespace System.Web.UI
 				}
 			}
 
-			stateMask |= INITING;
+			if ((stateMask & REMOVED) == 0) {
+				stateMask |= INITING;
 #if NET_2_0
-			ApplyTheme ();
-			ControlAdapter tmp = Adapter;
-			if (tmp != null)
-				tmp.OnInit (EventArgs.Empty);
-			else
+				ApplyTheme ();
+				ControlAdapter tmp = Adapter;
+				if (tmp != null)
+					tmp.OnInit (EventArgs.Empty);
+				else
 #endif
-				OnInit (EventArgs.Empty);
+					OnInit (EventArgs.Empty);
+				TrackViewState ();
+				stateMask |= INITED;
+				stateMask &= ~INITING;
+			}
+			
 #if MONO_TRACE
 			if (trace != null)
 				trace.Write ("control", String.Concat ("End InitRecursive ", _userId, " ", type_name));
 #endif
-			TrackViewState ();
-			stateMask |= INITED;
-			stateMask &= ~INITING;
 		}
 
 		bool ViewStateShouldBeSaved ()
@@ -1760,6 +1766,7 @@ namespace System.Web.UI
 				control.SetMask (ID_SET, false);
 			}
 			control.NullifyUniqueID ();
+			control.SetMask (REMOVED, true);
 		}
 		
 #if NET_2_0

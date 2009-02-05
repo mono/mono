@@ -1,3 +1,12 @@
+2009-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: if a control has been added to the controls
+	collection, removed and added again do not call OnInit (). At the
+	same time OnInit() should be called more than once if a control is
+	added to a container which, in turn, is then added to another
+	control. To achieve that a new state mask flag has been added -
+	REMOVED. Fixes bug #471305
+
 2009-02-04  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: update of the fix for bug #470993 - view state of
