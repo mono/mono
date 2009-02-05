@@ -1,3 +1,8 @@
+2009-02-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UTF32Encoding.cs: Added missing argument check in GetByteCount 
+	(char*, int) overload.
+
 2009-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF32Encoding.cs : fixed wrong range in GetByteCount(). Patch by

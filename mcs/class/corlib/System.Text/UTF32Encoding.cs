@@ -473,6 +473,8 @@ public sealed class UTF32Encoding : Encoding
 	[CLSCompliantAttribute(false)]
 	public unsafe override int GetByteCount (char *chars, int count)
 	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
 		return count * 4;
 	}
 #else
