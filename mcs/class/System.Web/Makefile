@@ -162,7 +162,9 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ContentPlaceHolderInTemplate.aspx \
 	Test/mainsoft/NunitWebResources/ContentPlaceHolderInTemplate.master \
 	Test/mainsoft/NunitWebResources/MissingMasterFile.aspx \
-	Test/mainsoft/NunitWebResources/CustomSectionEmptyCollection.aspx
+	Test/mainsoft/NunitWebResources/CustomSectionEmptyCollection.aspx \
+	Test/mainsoft/NunitWebResources/NoDoubleOnInitOnRemoveAdd.aspx \
+	Test/mainsoft/NunitWebResources/NoDoubleOnInitOnRemoveAdd.aspx.cs
 
 RESX_DIST =  resources/TranslationResources.resx
 ifeq (net_2_0, $(PROFILE))

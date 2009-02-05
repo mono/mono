@@ -1,3 +1,7 @@
+2009-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlTest.cs: added test for bug #471305
+
 2009-01-21  Marek Habersack  <mhabersack@novell.com>
 
 	* XhtmlTextWriterTest.cs: temporarily disabled the

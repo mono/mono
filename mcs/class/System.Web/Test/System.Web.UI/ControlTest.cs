@@ -274,6 +274,23 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual ("", result, "#01");
 		}
 
+		[Test] // Bug #471305
+		[Category ("NunitWeb")]
+		public void NoDoubleOnInitOnRemoveAdd ()
+		{
+#if VISUAL_STUDIO
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoDoubleOnInitOnRemoveAdd.aspx", "NoDoubleOnInitOnRemoveAdd.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoDoubleOnInitOnRemoveAdd.aspx.cs", "NoDoubleOnInitOnRemoveAdd.aspx.cs");
+#else
+			WebTest.CopyResource (GetType (), "NoDoubleOnInitOnRemoveAdd.aspx", "NoDoubleOnInitOnRemoveAdd.aspx");
+			WebTest.CopyResource (GetType (), "NoDoubleOnInitOnRemoveAdd.aspx.cs", "NoDoubleOnInitOnRemoveAdd.aspx.cs");
+#endif
+			WebTest t = new WebTest ("NoDoubleOnInitOnRemoveAdd.aspx");
+			string html = t.Run ();
+
+			Assert.AreEqual (-1, html.IndexOf ("<span>label</span><span>label</span>"), "#A1");
+		}
+		
 #if NET_2_0
 		[Test]
 		[Category("NunitWeb")]

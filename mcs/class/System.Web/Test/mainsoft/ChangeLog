@@ -1,3 +1,8 @@
+2009-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWebResources/NoDoubleOnInitOnRemoveAdd.aspx,
+	NunitWebResources/NoDoubleOnInitOnRemoveAdd.aspx.cs: added
+
 2008-12-23  Marek Habersack  <mhabersack@novell.com>
 
 	* NunitWeb/Makefile (NunitWeb.dll): added NunitWeb/CustomSection.cs
