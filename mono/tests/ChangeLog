@@ -1,5 +1,13 @@
 2009-02-05  Mark Probst  <mark.probst@gmail.com>
 
+	Backport of r125887.
+
+	* bug-472692.2.cs: New test.
+
+	* Makefile.am: Test added.
+
+2009-02-05  Mark Probst  <mark.probst@gmail.com>
+
 	Backport of r125839.
 
 	* bug-472600.2.cs: New test.
