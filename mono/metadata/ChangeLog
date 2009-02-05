@@ -1,3 +1,17 @@
+2009-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r125849.
+
+	* class.c (mono_class_create_from_typedef): The CLR supports SystemF
+	recursive types such as List<T>:Cons<T,List<T>> so when doing the lookup
+	for the parent type, the created type must be ready to be used on a generic
+	instantiation.
+	We fill this_arg/byval_arg if the parent is a generic instance to make sure
+	we won't have duplicated entries in generic_inst_cache.
+
+	Fixes #469553.
+
+
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r125603.
