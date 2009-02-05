@@ -1,5 +1,11 @@
 2009-02-05  Mark Probst  <mark.probst@gmail.com>
 
+	* bug-472692.2.cs: New test.
+
+	* Makefile.am: Test added.
+
+2009-02-05  Mark Probst  <mark.probst@gmail.com>
+
 	* bug-472600.2.cs: New test.
 
 	* Makefile.am: Test added.
