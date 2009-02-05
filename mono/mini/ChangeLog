@@ -1,3 +1,7 @@
+2009-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_klass_info): Update after MonoClass changes.
+
 2009-02-05  Mark Probst  <mark.probst@gmail.com>
 
 	* jit-icalls.c (mono_helper_compile_generic_method): Don't inflate
