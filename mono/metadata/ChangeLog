@@ -1,5 +1,13 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* class-internals.h (struct _MonoClass): Add 'is_generic' and 'is_inflated'
+	fields, similar to the ones in MonoMethod.
+
+	* class.c (mono_generic_class_get_class): Set klass->is_inflated.
+	(mono_class_create_from_typedef): Set klass->is_generic if needed.
+
+	* reflection.c (mono_reflection_create_generic_class): Set klass->is_generic.
+	
 	* class-internals.h (struct _MonoClass): Remove enum_basetype, it contains
 	the same information as element_class->byval_arg.
 
