@@ -1,5 +1,9 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c mini-hppa.c mini.c trace.c mini-s390x.c aot-compiler.c
+	mini-s390.c: Use mono_class_enum_basetype () instead of accessing
+	klass->enum_basetype directly.
+
 	* aot-compiler.c (emit_class_dwarf_info): Add support for all possible
 	enum subtypes.
 
