@@ -1,5 +1,9 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_inflate_generic_method_full): Set is_mb_open again
+	after the original method is copied to the inflated method.
+	(mono_class_get_vtable_entry): Handle rgctx invoke wrappers more efficiently.
+
 	* class-internals.h (struct _MonoMethodInflated): Move the is_mb_open
 	field to MonoMethod since it only consumes 1 bit there, and 4/8 bytes here.
 
