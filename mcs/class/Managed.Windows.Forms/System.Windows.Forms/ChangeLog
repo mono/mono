@@ -1,3 +1,8 @@
+2009-02-05  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolBarButton.cs: Doh, fire OnUIATextChanged *after* setting
+	  the value.
+
 2009-02-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ToolBarButton.cs: Add another event (OnUIATextChanged).
