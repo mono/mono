@@ -1,3 +1,13 @@
+2009-02-05  Marek Habersack  <mhabersack@novell.com>
+
+	* GenericBuildProvider.cs: added a new virtual method, MapPath,
+	which can be overriden by builders which need special handling of
+	virtual path mapping.
+
+	* PageBuildProvider.cs: provide implementation of
+	GenericBuildProvider.MapPath which takes into account fake virtual
+	paths. Fixes bug #463950
+
 2009-01-26  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManagerDirectoryBuilder.cs: added support for fake virtual
