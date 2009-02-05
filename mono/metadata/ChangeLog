@@ -1,3 +1,15 @@
+2009-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (MonoClassExt): New structure containing rarely used
+	fields of MonoClass.
+	(struct _MonoClass): Move rarely used fields to MonoClassExt, accessed
+	through a new 'ext' field.
+
+	* class.c (mono_class_alloc_ext): New helper function to allocate 
+	class->ext.
+
+	* class.c metadata.c reflection.c: Update after MonoClass structure changes.
+
 2009-02-05  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c (mono_object_get_virtual_method): Properly inflate
