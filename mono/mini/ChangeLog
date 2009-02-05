@@ -1,5 +1,8 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_class_dwarf_info): Add support for all possible
+	enum subtypes.
+
 	* unwind.c: Avoid 0 sized arrays.
 
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
