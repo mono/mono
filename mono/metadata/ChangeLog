@@ -1,5 +1,7 @@
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c: Add a statistics for the size of the memberref signature cache.
+	
 	* loader.c (find_cached_memberref_sig): New helper function.
 	(cache_memberref_sig): Ditto.
 
