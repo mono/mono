@@ -1,3 +1,8 @@
+2009-02-05  Miguel de Icaza  <miguel@novell.com>
+
+	* WebConnectionStream.cs: Prevent a nullref here.   This might
+	have to be backported to 2.2 and 2.4
+
 2009-02-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs:
