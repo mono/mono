@@ -2106,7 +2106,20 @@ namespace MonoTests.System
 			DateTime result = DateTime.ParseExact ("2005-01-01T01:11:11+8:00", f, new DateTimeFormatInfo (), dts);
 		}
 
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void EmptyString ()
+		{
+			DateTime.Parse ("");
+		}
 #if NET_2_0
+		[Test]
+		public void TryEmptyString ()
+		{
+			DateTime date;
+			Assert.IsFalse (DateTime.TryParse ("", out date));
+		}
+
 		[Test]
 		public void Kind ()
 		{
