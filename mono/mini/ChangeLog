@@ -1,3 +1,7 @@
+2009-02-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c: Avoid 0 sized arrays.
+
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_setup_altstack): Use a more reasonable altstack
