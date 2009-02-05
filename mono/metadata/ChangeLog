@@ -1,3 +1,12 @@
+2009-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (find_cached_memberref_sig): New helper function.
+	(cache_memberref_sig): Ditto.
+
+	* loader.c: Cache the result of parsing memberref signatures, since otherwise
+	they will be parsed again for every generic instantiation, leading to unbounded
+	memory growth.
+
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_get_method_from_token): Avoid creating class for the generic
