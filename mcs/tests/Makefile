@@ -70,7 +70,7 @@ endif
 ifeq (net_1_1, $(PROFILE))
 COMPILER_NAME = mcs
 TEST_PATTERN = 'test-*.cs'
-LOCAL_RUNTIME_FLAGS = --security=validil --verify-all
+LOCAL_RUNTIME_FLAGS = --verify-all
 endif
 
 COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
