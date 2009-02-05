@@ -261,6 +261,10 @@ namespace System.Windows.Forms
 				if (value == text)
 					return;
 
+#if NET_2_0
+				OnUIATextChanged (EventArgs.Empty);
+#endif
+				
 				text = value;
 				if (Parent != null)
 					Parent.Redraw (true);
@@ -311,9 +315,23 @@ namespace System.Windows.Forms
 			if (Parent != null)
 				Parent.Invalidate (Rectangle);
 		}
+		
+#if NET_2_0
+		internal event EventHandler UIATextChanged {
+			add { Events.AddHandler (UIATextChangedEvent, value); }
+			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
+		}
+		
+		protected virtual void OnUIATextChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [UIATextChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
 
 		#endregion Internal Methods
-
+		
 		#region methods
 
 		protected override void Dispose (bool disposing)

@@ -1,3 +1,8 @@
+2009-02-05  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+        * ToolBarButton.cs: OnTextChanged added.
+	(Backport of r125802.) r: jpobst
+
 2009-02-03  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewRowCollection.cs, DataGridView.cs: Move row completion 
