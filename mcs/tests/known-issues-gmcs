@@ -10,7 +10,5 @@ test-539.cs IGNORE	# In 2.0 profile, RuntimeCompatilityAttribute is added by def
 gtest-230.cs
 gtest-437.cs
 
-gtest-etree-07.cs
-
 gtest-variance-1.cs IGNORE	# Runtime support for variance is not yet in place
 gtest-variance-2.cs IGNORE
