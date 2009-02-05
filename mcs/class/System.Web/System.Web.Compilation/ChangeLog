@@ -1,5 +1,17 @@
 2009-02-05  Marek Habersack  <mhabersack@novell.com>
 
+	* AppResourcesCompiler.cs: implemented a type resolver for
+	ResXResourceReader so that it can correctly resolve
+	System.Resources types which are normally found in
+	System.Windows.Forms but are included by System.Web
+	directly. Without the type resolver, code comparing types inside
+	ResXResourceReader when file references are used in side the .resx
+	file will not work correctly. The reason for that is that .resx
+	files will name "System.Resources.ResXFileRef,
+	System.Windows.Forms" as the file reference handler, while inside
+	System.Web ResXFileRef will be of type
+	"System.Resources.ResXFileRef, System.Web". Fixes bug #466059
+
 	* GenericBuildProvider.cs: added a new virtual method, MapPath,
 	which can be overriden by builders which need special handling of
 	virtual path mapping.
