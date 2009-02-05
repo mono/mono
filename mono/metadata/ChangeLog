@@ -1,5 +1,8 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* loader.c (mono_get_method_from_token): Avoid creating class for the generic
+	parameters of generic methods.
+
 	* class.c (mono_class_inflate_generic_method_full): Set is_mb_open again
 	after the original method is copied to the inflated method.
 	(mono_class_get_vtable_entry): Handle rgctx invoke wrappers more efficiently.
