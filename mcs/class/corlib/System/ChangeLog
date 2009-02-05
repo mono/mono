@@ -1,3 +1,8 @@
+2009-02-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DateTime.cs: check for null and empty strings before anything else
+	in CoreParse.
+
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AppDomain.cs: LoadAssembly() returns null instead of throwing now.
