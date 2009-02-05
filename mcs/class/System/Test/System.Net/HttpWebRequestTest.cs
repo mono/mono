@@ -97,6 +97,36 @@ namespace MonoTests.System.Net
 			} catch (InvalidOperationException) {}
 		}
 
+		[Test] // bug #471782
+		public void CloseRequestStreamAfterReadingResponse ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+
+				byte [] data = new byte [128];
+				req.ContentLength = data.Length;
+
+				Stream rs = req.GetRequestStream ();
+				rs.Write (data, 0, data.Length);
+				rs.Flush ();
+
+				HttpWebResponse response = (HttpWebResponse) req.GetResponse ();
+				response.Close ();
+
+				rs.Close ();
+
+				responder.Stop ();
+			}
+		}
+
 		[Test]
 		[Category("InetAccess")] 
 		public void Cookies1 ()

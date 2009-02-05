@@ -1,3 +1,7 @@
+2009-02-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpListener2Test.cs: Make tests quiet.
+	* HttpWebRequestTest.cs: Added test for bug #471782.
 
 2009-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

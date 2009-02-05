@@ -672,7 +672,6 @@ namespace MonoTests.System.Net {
 		{
 			HttpListener listener = HttpListener2Test.CreateAndStartListener ("http://127.0.0.1:9000/multiple/");
 
-			Console.WriteLine ("First");
 			// First one
 			NetworkStream ns = HttpListener2Test.CreateNS (9000);
 			HttpListener2Test.Send (ns, "POST /multiple/ HTTP/1.0\r\nHost: 127.0.0.1\r\nContent-Length: 3\r\n\r\n123");
@@ -681,7 +680,6 @@ namespace MonoTests.System.Net {
 			ctx.Response.OutputStream.Close ();
 			string response = HttpListener2Test.Receive (ns, 1024);
 			ns.Close ();
-			Console.WriteLine ("First over");
 
 			// Second one
 			ns = HttpListener2Test.CreateNS (9000);
@@ -692,7 +690,6 @@ namespace MonoTests.System.Net {
 			response = HttpListener2Test.Receive (ns, 1024);
 			ns.Close ();
 			
-			Console.WriteLine ("Done");
 			listener.Close ();
 		}
 
