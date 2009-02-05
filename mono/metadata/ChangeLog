@@ -1,5 +1,8 @@
 2009-02-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_get_generic_class): New accessor function.
+	(mono_class_get_generic_container): Ditto.
+
 	* class-internals.h (struct _MonoClass): Add 'is_generic' and 'is_inflated'
 	fields, similar to the ones in MonoMethod.
 
