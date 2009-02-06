@@ -1,3 +1,10 @@
+2009-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_interfaces): New function to lazily initalize
+	klass->interfaces.
+	(mono_generic_class_get_class): Don't initalize klass->interfaces.
+	(mono_generic_class_get_class): Ditto.
+
 2009-02-06  U-QUACK\miguel  <miguel@quack>
 
 	* icall-defs.h: Include also the Encrypt/Decrypt string methods as
