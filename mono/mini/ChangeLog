@@ -1,11 +1,3 @@
-2009-02-06  Scott Peterson  <lunchtimemama@gmail.com>
-
-	Contrubuted under the MIT/X11 license.
-
-	* mini-trampolines.cs: Use the
-	new mono_class_interface_offset_with_variance method to find interface
-	offsets.
-
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (print_jit_stats): Remove some unused statistics.
