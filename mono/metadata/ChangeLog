@@ -1,5 +1,8 @@
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (get_runtime_invoke_type): Avoid sharing enum types since they
+	need to be boxed.
+
 	* loader.c: Add a statistics for the size of the memberref signature cache.
 	
 	* loader.c (find_cached_memberref_sig): New helper function.
