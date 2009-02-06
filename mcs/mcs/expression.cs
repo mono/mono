@@ -4242,6 +4242,10 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
+			HoistedVariable hv = GetHoistedVariable (ec);
+			if (hv != null)
+				return hv.CreateExpressionTree (ec);
+				
 			ArrayList arg = new ArrayList (1);
 			arg.Add (new Argument (this));
 			return CreateExpressionFactoryCall ("Constant", arg);
