@@ -1,5 +1,10 @@
 2009-02-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* FtpWebRequest.cs: some servers have a comment after the directory
+	name. Fixes bugs #471149 and #471216.
+
+2009-02-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebConnectionStream.cs: set the content length to 0 when the
 	response is not supposed to have any content.
 

@@ -786,8 +786,14 @@ namespace System.Net
 						WebExceptionStatus.UnknownError, null);
 
 			string msg = status.StatusDescription.Substring (4);
-			if (msg [0] == '"')
-				msg = msg.Substring (1, msg.Length - 2);
+			if (msg [0] == '"') {
+				int next_quote = msg.IndexOf ('\"', 1);
+				if (next_quote == -1)
+					throw new WebException ("Error getting current directory: PWD -> " + status.StatusDescription, null,
+								WebExceptionStatus.UnknownError, null);
+
+				msg = msg.Substring (1, next_quote - 1);
+			}
 
 			if (!msg.EndsWith ("/"))
 				msg += "/";
