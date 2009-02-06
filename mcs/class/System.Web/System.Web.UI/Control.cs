@@ -294,7 +294,15 @@ namespace System.Web.UI
 			get { return _isChildControlStateCleared; }
 		}
 
-		protected internal bool IsViewStateEnabled {
+		protected bool LoadViewStateByID {
+			get { return false; }
+		}
+#endif
+
+#if NET_2_0
+		protected internal
+#endif
+		bool IsViewStateEnabled {
 			get {
 				for (Control control = this; control != null; control = control.Parent)
 					if (!control.EnableViewState)
@@ -304,10 +312,7 @@ namespace System.Web.UI
 			}
 		}
 
-		protected bool LoadViewStateByID {
-			get { return false; }
-		}
-
+#if NET_2_0
 		protected char IdSeparator {
 			get { return '$'; }
 		}
@@ -1589,21 +1594,6 @@ namespace System.Web.UI
 #endif
 		}
 
-		bool ViewStateShouldBeSaved ()
-		{
-			if (!EnableViewState)
-				return false;
-
-			Control parent = Parent;
-			while (parent != null) {
-				if (!parent.EnableViewState)
-					return false;
-				parent = parent.Parent;
-			}
-
-			return true;
-		}
-		
 		internal object SaveViewStateRecursive ()
 		{
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
@@ -1645,7 +1635,7 @@ namespace System.Web.UI
 #endif
 			object thisState = null;
 
-			if (ViewStateShouldBeSaved ())
+			if (IsViewStateEnabled)
 				thisState = SaveViewState ();
 
 			if (thisState == null && controlList == null && controlStates == null) {

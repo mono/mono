@@ -1,3 +1,10 @@
+2009-02-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Control.cs: Make IsViewStateEnabled available on 1.0 profile
+	and use it to determine if viewstate needs to be saved instead of
+	the newly introduced ViewStateShouldBeSaved. Remove
+	ViewStateShouldBeSaved.
+
 2009-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: if a control has been added to the controls
