@@ -749,6 +749,20 @@ public class StreamReaderTest
 		return decodedString == TestString;
 	}
     
+    	[Test] // Bug445326
+	public void EndOfBufferIsCR ()
+	{
+		using (StreamReader reader = new StreamReader ("Test/resources/Fergie.GED")) {
+			string line;
+			int count = 0;
+			while ((line = reader.ReadLine ()) != null) {
+				Assert.IsFalse (line.Length > 1000, "#1 " + count);
+				count++;
+			}
+			Assert.AreEqual (16107, count, "#2");
+		}
+	}
+
 	[Test]
 	public void bug75526 ()
 	{
