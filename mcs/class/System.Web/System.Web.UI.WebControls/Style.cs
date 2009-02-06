@@ -173,6 +173,9 @@ namespace System.Web.UI.WebControls {
 
 			set 
 			{
+				if (value < BorderStyle.NotSet || value > BorderStyle.Outset)
+					throw new ArgumentOutOfRangeException ("value", "The selected value is not one of the BorderStyle enumeration values.");
+				
 				viewstate["BorderStyle"] = value;
 				SetBit ((int) Styles.BorderStyle);
 			}
@@ -217,12 +220,16 @@ namespace System.Web.UI.WebControls {
 		{
 			get 
 			{
-				if (!CheckBit ((int) Styles.CssClass)) 
+				if (!CheckBit ((int) Styles.CssClass))
 				{
-					return string.Empty;
+					return String.Empty;
 				}
 
-				return (string)viewstate["CssClass"];
+				string ret = viewstate["CssClass"] as string;
+				if (ret == null)
+					return String.Empty;
+
+				return ret;
 			}
 
 			set 
@@ -403,16 +410,18 @@ namespace System.Web.UI.WebControls {
 		{
 #if NET_2_0
 			if (RegisteredCssClass.Length > 0) {
-				if (CssClass.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass + " " + RegisteredCssClass);
+				string cssclass = CssClass;
+				if (!String.IsNullOrEmpty (cssclass))
+					writer.AddAttribute (HtmlTextWriterAttribute.Class, cssclass + " " + RegisteredCssClass);
 				else
 					writer.AddAttribute (HtmlTextWriterAttribute.Class, RegisteredCssClass);
 			}
 			else 
 #endif
 			{
-				if (CssClass.Length > 0)
-					writer.AddAttribute (HtmlTextWriterAttribute.Class, CssClass);
+				string cssclass = CssClass;
+				if (cssclass != null && cssclass.Length > 0)
+					writer.AddAttribute (HtmlTextWriterAttribute.Class, cssclass);
 #if NET_2_0
 				CssStyleCollection col = new CssStyleCollection ();
 				FillStyleAttributes (col, owner);
