@@ -1594,6 +1594,13 @@ namespace System.Web.UI
 #endif
 		}
 
+		bool ViewStateShouldBeSaved ()
+		{
+			if (!EnableViewState)
+				return false;
+			return IsViewStateEnabled;
+		}
+		
 		internal object SaveViewStateRecursive ()
 		{
 			TraceContext trace = (Context != null && Context.Trace.IsEnabled) ? Context.Trace : null;
@@ -1635,7 +1642,7 @@ namespace System.Web.UI
 #endif
 			object thisState = null;
 
-			if (IsViewStateEnabled)
+			if (ViewStateShouldBeSaved ())
 				thisState = SaveViewState ();
 
 			if (thisState == null && controlList == null && controlStates == null) {
