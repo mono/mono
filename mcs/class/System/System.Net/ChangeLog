@@ -1,3 +1,8 @@
+2009-02-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnectionStream.cs: set the content length to 0 when the
+	response is not supposed to have any content.
+
 2009-02-05  Miguel de Icaza  <miguel@novell.com>
 
 	* WebConnectionStream.cs: Prevent a nullref here.   This might
