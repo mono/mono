@@ -367,9 +367,41 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (Color.Red, s.BackColor, "Copy1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void Style_CssClass ()
+		{
+			StyleTestClass s = new StyleTestClass ();
+			Assert.AreEqual (String.Empty, s.CssClass, "#A1");
+
+			s.CssClass = "css1";
+			Assert.AreEqual ("css1", s.CssClass, "#A2");
+
+			s.CssClass = String.Empty;
+			Assert.AreEqual (String.Empty, s.CssClass, "#A3");
+
+			s.CssClass = null;
+			Assert.AreEqual (String.Empty, s.CssClass, "#A4");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Style_BorderStyle_InvalidValue1 ()
+		{
+			StyleTestClass s = new StyleTestClass ();
+			s.BorderStyle = (BorderStyle)(BorderStyle.NotSet - 1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Style_BorderStyle_InvalidValue2 ()
+		{
+			StyleTestClass s = new StyleTestClass ();
+			s.BorderStyle = (BorderStyle)(BorderStyle.Outset + 1);
+		}
+		
+#if NET_2_0
+		[Test]
+		public void Style_RegisteredCssClass ()
 		{
 			StyleTestClass s = new StyleTestClass ();
 
@@ -381,7 +413,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			s.BackColor = Color.AliceBlue;
 			Assert.AreEqual ("blah", s.RegisteredCssClass, "Css3");
 		}
-
+		
 		[Test]
 		[Category ("NunitWeb")]
 		public void Style_AddRegisteredCssClassAttribute () {

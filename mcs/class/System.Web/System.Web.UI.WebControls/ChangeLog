@@ -1,3 +1,9 @@
+2009-02-06  Marek Habersack  <mhabersack@novell.com>
+
+	* Style.cs: if CssClass is null, return String.Empty. Fixes bug
+	#473303
+	Added a range check to the BorderStyle property.
+
 2009-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Login.cs: check the value of DisplayRememberMe when creating

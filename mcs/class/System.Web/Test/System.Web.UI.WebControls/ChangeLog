@@ -1,3 +1,8 @@
+2009-02-06  Marek Habersack  <mhabersack@novell.com>
+
+	* StyleTest.cs: added tests for CssClass and BorderStyle. 
+	Renamed the Style_CssClass method to Style_RegisteredCssClass.
+
 2009-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* LoginTest.cs: added test for Bug #468359
