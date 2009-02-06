@@ -1,3 +1,15 @@
+2009-02-06  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This adds runtime generic variance support for reference types.
+	This patch is contributed under the MIT/X11 license.
+
+	* class.c: Added mono_class_has_variant_generic_params which determins
+	if a generic class has a variant type parameter. Added
+	mono_class_is_variant_of which determins if the first class is a legal
+	variant of the second. Added mono_class_interface_offset_with_variance
+	to look for interfaces in a variance-aware fashion. Modified
+	mono_class_is_assignable_from to use the two new methods.
+
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c: Add a statistics for the size of the memberref signature cache.
@@ -256,6 +268,7 @@
 	methods taking vtype/byref arguments, to fix yet another bug caused by
 	the sharing of runtime invoke wrappers. Partly fixes #471259.
 
+>>>>>>> .r125974
 2009-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-mono-symfile.c (check_line): Return NULL instead of returning
