@@ -1,3 +1,11 @@
+2009-02-06  U-QUACK\miguel  <miguel@quack>
+
+	* icall-defs.h: Include also the Encrypt/Decrypt string methods as
+	they live in security.c
+
+	* debug-mono-symfile.c (mono_debug_open_mono_symbols): Integrated
+	another bit from Paolo's code.
+
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (build_imt_slots): Add a small optimization to avoid inflating
