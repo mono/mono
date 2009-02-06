@@ -161,6 +161,10 @@ namespace System.ServiceModel
 			}
 		}
 
+		internal ClientRuntimeChannel InnerRuntimeChannel {
+			get { return (ClientRuntimeChannel) InnerChannel; }
+		}
+
 		protected TChannel Channel {
 			get { return (TChannel) (object) InnerChannel; }
 		}
@@ -185,6 +189,11 @@ namespace System.ServiceModel
 		}
 
 #if NET_2_1
+		protected T GetDefaultValueForInitialization<T> ()
+		{
+			return default (T);
+		}
+
 		IAsyncResult delegate_async;
 
 		protected void InvokeAsync (BeginOperationDelegate beginOperationDelegate,
@@ -328,13 +337,21 @@ namespace System.ServiceModel
 			[MonoTODO]
 			protected IAsyncResult BeginInvoke (string methodName, object [] args, AsyncCallback callback, object state)
 			{
-				throw new NotImplementedException ();
+				var cd = client.Endpoint.Contract;
+				var od = cd.Operations.Find (methodName);
+				if (od == null)
+					throw new ArgumentException (String.Format ("Operation '{0}' not found in the service contract '{1}' in namespace '{2}'", methodName, cd.Name, cd.Namespace));
+				return client.BeginProcess (od.BeginMethod, methodName, args, callback, state);
 			}
 
 			[MonoTODO]
 			protected object EndInvoke (string methodName, object [] args, IAsyncResult result)
 			{
-				throw new NotImplementedException ();
+				var cd = client.Endpoint.Contract;
+				var od = cd.Operations.Find (methodName);
+				if (od == null)
+					throw new ArgumentException (String.Format ("Operation '{0}' not found in the service contract '{1}' in namespace '{2}'", methodName, cd.Name, cd.Namespace));
+				return client.EndProcess (od.EndMethod, methodName, args, result);
 			}
 
 			#region ICommunicationObject
@@ -483,7 +500,6 @@ namespace System.ServiceModel
 				get { return client.InnerChannel.InputSession; }
 			}
 
-			[MonoTODO]
 			public EndpointAddress LocalAddress {
 				get { return client.InnerChannel.LocalAddress; }
 			}
@@ -499,7 +515,6 @@ namespace System.ServiceModel
 				get { return client.InnerChannel.OutputSession; }
 			}
 
-			[MonoTODO]
 			public EndpointAddress RemoteAddress {
 				get { return client.InnerChannel.RemoteAddress; }
 			}
@@ -511,83 +526,76 @@ namespace System.ServiceModel
 
 			#endregion
 
+			#region IRequestChannel
 
-			[MonoTODO]
 			IAsyncResult IRequestChannel.BeginRequest (Message message, AsyncCallback callback, object state)
 			{
-				throw new NotImplementedException ();
+				return ((IRequestChannel) this).BeginRequest (message, client.Endpoint.Binding.SendTimeout);
 			}
 
-			[MonoTODO]
 			IAsyncResult IRequestChannel.BeginRequest (Message message, TimeSpan timeout, AsyncCallback callback, object state)
 			{
-				throw new NotImplementedException ();
+				return client.InnerRuntimeChannel.BeginRequest (message, timeout, callback, state);
 			}
 
-			[MonoTODO]
 			Message IRequestChannel.EndRequest (IAsyncResult result)
 			{
-				throw new NotImplementedException ();
+				return client.InnerRuntimeChannel.EndRequest (result);
 			}
 
-			[MonoTODO]
 			Message IRequestChannel.Request (Message message)
 			{
-				throw new NotImplementedException ();
+				return ((IRequestChannel) this).Request (message, client.Endpoint.Binding.SendTimeout);
 			}
 
-			[MonoTODO]
 			Message IRequestChannel.Request (Message message, TimeSpan timeout)
 			{
-				throw new NotImplementedException ();
+				return client.InnerRuntimeChannel.Request (message, timeout);
 			}
 
-			[MonoTODO]
 			EndpointAddress IRequestChannel.RemoteAddress {
-				get { throw new NotImplementedException (); }
+				get { return client.Endpoint.Address; }
 			}
 
-			[MonoTODO]
 			Uri IRequestChannel.Via {
-				get { throw new NotImplementedException (); }
+				get { return Via; }
 			}
 
-			[MonoTODO]
+			#endregion
+
+			#region IOutputChannel
+
 			IAsyncResult IOutputChannel.BeginSend (Message message, AsyncCallback callback, object state)
 			{
-				throw new NotImplementedException ();
+				return ((IOutputChannel) this).BeginSend (message, client.Endpoint.Binding.SendTimeout, callback, state);
 			}
 
-			[MonoTODO]
 			IAsyncResult IOutputChannel.BeginSend (Message message, TimeSpan timeout, AsyncCallback callback, object state)
 			{
-				throw new NotImplementedException ();
+				return client.InnerRuntimeChannel.BeginSend (message, timeout, callback, state);
 			}
 
-			[MonoTODO]
 			void IOutputChannel.EndSend (IAsyncResult result)
 			{
-				throw new NotImplementedException ();
+				client.InnerRuntimeChannel.EndSend (result);
 			}
 
-			[MonoTODO]
 			void IOutputChannel.Send (Message message)
 			{
-				throw new NotImplementedException ();
+				((IOutputChannel) this).BeginSend (message, client.Endpoint.Binding.SendTimeout);
 			}
 
-			[MonoTODO]
 			void IOutputChannel.Send (Message message, TimeSpan timeout)
 			{
-				throw new NotImplementedException ();
+				client.InnerRuntimeChannel.Send (message, timeout);
 			}
 
-			[MonoTODO]
+			#endregion
+
 			IExtensionCollection<IContextChannel> IExtensibleObject<IContextChannel>.Extensions {
 				get { return client.InnerChannel.Extensions; }
 			}
 
-			[MonoTODO]
 			TProperty IChannel.GetProperty<TProperty> ()
 			{
 				return client.InnerChannel.GetProperty<TProperty> ();

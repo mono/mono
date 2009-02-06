@@ -1,3 +1,9 @@
+2009-02-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs, ClientBase.cs :
+	  implement remaining ChannelBase members and made some required
+	  changes in ClientRuntimeChannel.
+
 2009-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs, ClientProxyGenerator.cs :
