@@ -161,6 +161,8 @@ namespace System.Net
 		internal void ForceCompletion ()
 		{
 			if (!nextReadCalled) {
+				if (contentLength == Int32.MaxValue)
+					contentLength = 0;
 				nextReadCalled = true;
 				cnc.NextRead ();
 			}
