@@ -843,8 +843,11 @@ namespace Mono.Xml
 
 				// If namespace URI is empty, then prefix
 				// must be empty as well.
-				if (prefix.Length > 0 && namespaceUri.Length == 0)
-					throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
+				if (prefix.Length > 0 && namespaceUri.Length == 0) {
+					namespaceUri = nsmanager.LookupNamespace (prefix, false);
+					if (namespaceUri == null || namespaceUri.Length == 0)
+						throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
+				}
 
 				// Dive into extremely complex procedure.
 				if (!isNSDecl && namespaceUri.Length > 0)

@@ -1,3 +1,8 @@
+2009-02-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : in WriteStartAttribute(), fill namespace in
+	  case it is null and the prefix has matching ns. Fixed bug #472634.
+
 2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DTDValidatingReader2.cs, EntityResolvingXmlReader.cs : simplify
