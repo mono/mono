@@ -1,3 +1,8 @@
+2009-02-06  Neville Gao  <nevillegao@gmail.com>
+
+	* TabControl.cs: Control enabled to support accessibility.
+	[Fixes Bug #472428]
+
 2009-02-05  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewRowCollection.cs, DataGridView.cs: Fix row insertation: 

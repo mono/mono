@@ -66,6 +66,48 @@ namespace System.Windows.Forms {
 #endif		
 		#endregion	// Fields
 
+		#region UIA Framework Events
+#if NET_2_0
+		static object UIAHorizontallyScrollableChangedEvent = new object ();
+
+		internal event EventHandler UIAHorizontallyScrollableChanged {
+			add { Events.AddHandler (UIAHorizontallyScrollableChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAHorizontallyScrollableChangedEvent, value); }
+		}
+
+		internal void OnUIAHorizontallyScrollableChanged (EventArgs e)
+		{
+			EventHandler eh
+				= (EventHandler) Events [UIAHorizontallyScrollableChangedEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+
+		static object UIAHorizontallyScrolledEvent = new object ();
+
+		internal event EventHandler UIAHorizontallyScrolled {
+			add { Events.AddHandler (UIAHorizontallyScrolledEvent, value); }
+			remove { Events.RemoveHandler (UIAHorizontallyScrolledEvent, value); }
+		}
+
+		internal void OnUIAHorizontallyScrolled (EventArgs e)
+		{
+			EventHandler eh
+				= (EventHandler) Events [UIAHorizontallyScrolledEvent];
+			if (eh != null)
+				eh (this, e);
+		}
+#endif
+		#endregion
+
+		#region UIA Framework Property
+#if NET_2_0
+		internal double UIAHorizontalViewSize {
+			get { return LeftScrollButtonArea.Left * 100 / TabPages [TabCount - 1].TabBounds.Right; }
+		}
+#endif
+		#endregion
+
 		#region Public Constructors
 		public TabControl ()
 		{
@@ -450,7 +492,14 @@ namespace System.Windows.Forms {
 		#region Internal Properties
 		internal bool ShowSlider {
 			get { return show_slider; }
-			set { show_slider = value; }
+			set {
+				show_slider = value;
+
+#if NET_2_0
+				// UIA Framework Event: HorizontallyScrollable Changed
+				OnUIAHorizontallyScrollableChanged (EventArgs.Empty);
+#endif
+			}
 		}
 
 		internal int SliderPos {
@@ -920,6 +969,11 @@ namespace System.Windows.Forms {
 						slider_pos++;
 						SizeTabs ();
 
+#if NET_2_0
+						// UIA Framework Event: Horizontally Scrolled
+						OnUIAHorizontallyScrolled (EventArgs.Empty);
+#endif
+
 						switch (this.Alignment) {
 							case TabAlignment.Top:
 								Invalidate (new Rectangle (0, 0, Width, ItemSize.Height));
@@ -944,6 +998,11 @@ namespace System.Windows.Forms {
 					if (CanScrollLeft) {
 						slider_pos--;
 						SizeTabs ();
+
+#if NET_2_0
+						// UIA Framework Event: Horizontally Scrolled
+						OnUIAHorizontallyScrolled (EventArgs.Empty);
+#endif
 
 						switch (this.Alignment) {
 							case TabAlignment.Top:
