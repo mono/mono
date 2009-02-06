@@ -570,16 +570,9 @@ namespace Mono.CSharp {
 			else
 				arg_count = args.Count;
 
-			Expression ml = Expression.MemberLookup (
-				ec.ContainerType, delegate_type, "Invoke", loc);
-
-			MethodGroupExpr me = ml as MethodGroupExpr;
-			if (me == null) {
-				Report.Error (-100, loc, "Internal error: could not find Invoke method!" + delegate_type);
-				return false;
-			}
-			
 			MethodBase mb = GetInvokeMethod (ec.ContainerType, delegate_type);
+			MethodGroupExpr me = new MethodGroupExpr (new MemberInfo [] { mb }, delegate_type, loc);
+			
 			AParametersCollection pd = TypeManager.GetParameterData (mb);
 
 			int pd_count = pd.Count;
