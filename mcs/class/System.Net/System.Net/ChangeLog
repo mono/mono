@@ -1,5 +1,10 @@
 2009-02-05  Geoff Norton  <gnorton@novell.com>
 
+	* WebClient_2_1.cs: Use g_timeout_add instead of g_idle_add here until
+	SyncContext is ready, as its less prone to starvation.
+
+2009-02-05  Geoff Norton  <gnorton@novell.com>
+
 	* WebClient_2_1.cs: CancelAsync calls Thread.Interrupt so needs to be
 	SecuritySafeCritical for now.
 

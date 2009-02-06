@@ -1433,7 +1433,7 @@ namespace System.Net
 				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) { OpenReadCompleted (this, (OpenReadCompletedEventArgs) callback_args); wait_event.Set (); return false; };
 				callback_args = args;
 
-				g_idle_add (callback, IntPtr.Zero);
+				g_timeout_add (0, callback, IntPtr.Zero);
 
 				wait_event.WaitOne ();
 				GC.KeepAlive (callback);
@@ -1443,7 +1443,7 @@ namespace System.Net
 		public delegate bool GSourceFunc (IntPtr data);
 
 		[DllImport ("moon")]
-		static extern uint g_idle_add (GSourceFunc callback, IntPtr data);
+		static extern uint g_timeout_add (uint delay, GSourceFunc callback, IntPtr data);
 
 		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
 		{
@@ -1464,7 +1464,7 @@ namespace System.Net
 				};
 				callback_args = args;
 
-				g_idle_add (callback, IntPtr.Zero);
+				g_timeout_add (0, callback, IntPtr.Zero);
 
 				wait_event.WaitOne ();
 				GC.KeepAlive (callback);
