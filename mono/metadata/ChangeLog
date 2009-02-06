@@ -1,5 +1,8 @@
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (build_imt_slots): Add a small optimization to avoid inflating
+	methods which will be discarded by add_imt_builder_entry ().
+
 	* marshal.c (get_runtime_invoke_type): Avoid sharing enum types since they
 	need to be boxed.
 
