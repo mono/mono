@@ -1634,8 +1634,7 @@ class Tester
 	{
 		string s = "localvar";
 		Expression<Func<string>> e9 = () => s;
-		// CSC emits this as MemberAccess
-		AssertNodeType (e9, ExpressionType.Constant);
+		AssertNodeType (e9, ExpressionType.MemberAccess);
 		Assert ("localvar", e9.Compile ().Invoke ());
 	}
 	

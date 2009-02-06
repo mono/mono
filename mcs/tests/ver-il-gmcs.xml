@@ -12705,7 +12705,7 @@
         <size>7</size>
       </method>
       <method name="Boolean &lt;&gt;m__0()">
-        <size>194</size>
+        <size>199</size>
       </method>
     </type>
     <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
@@ -14512,7 +14512,7 @@
         <size>118</size>
       </method>
       <method name="Void ConvertTest_9()">
-        <size>87</size>
+        <size>97</size>
       </method>
       <method name="Void ConvertTest_10()">
         <size>178</size>
@@ -14755,22 +14755,22 @@
         <size>292</size>
       </method>
       <method name="Void MemberAccessTest()">
-        <size>122</size>
+        <size>132</size>
       </method>
       <method name="Void MemberAccessTest_2()">
         <size>63</size>
       </method>
       <method name="Void MemberAccessTest_3()">
-        <size>103</size>
+        <size>113</size>
       </method>
       <method name="Void MemberAccessTest_4()">
-        <size>81</size>
+        <size>91</size>
       </method>
       <method name="Void MemberAccessTest_5()">
         <size>39</size>
       </method>
       <method name="Void MemberAccessTest_6()">
-        <size>94</size>
+        <size>104</size>
       </method>
       <method name="Void MemberAccessTest_7()">
         <size>109</size>
@@ -14779,7 +14779,7 @@
         <size>63</size>
       </method>
       <method name="Void MemberAccessTest_9()">
-        <size>70</size>
+        <size>80</size>
       </method>
       <method name="Void MemberInitTest()">
         <size>302</size>
@@ -15409,7 +15409,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>346</size>
+        <size>366</size>
       </method>
     </type>
     <type name="C+&lt;Main&gt;c__AnonStorey0">
@@ -15514,7 +15514,7 @@
         <size>3</size>
       </method>
       <method name="Int32 Goo(Boolean)">
-        <size>199</size>
+        <size>204</size>
       </method>
       <method name="Int32 Main()">
         <size>14</size>
@@ -15532,7 +15532,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>289</size>
+        <size>299</size>
       </method>
       <method name="System.Int64[] GetValues()">
         <size>23</size>
@@ -15550,7 +15550,7 @@
         <size>7</size>
       </method>
       <method name="Boolean ContainsAll[U](IEnumerable`1)">
-        <size>184</size>
+        <size>189</size>
       </method>
       <method name="Boolean Contains(T)">
         <size>2</size>
