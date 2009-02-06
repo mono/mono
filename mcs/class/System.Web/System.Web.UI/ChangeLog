@@ -1,3 +1,10 @@
+2009-02-06  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: partially restore the ViewStateShouldBeSaved method
+	in order to introduce a small optimization - when the control's
+	EnableViewState is false, there is no point in checking all the
+	child controls.
+
 2009-02-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Control.cs: Make IsViewStateEnabled available on 1.0 profile
