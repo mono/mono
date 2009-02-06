@@ -341,7 +341,7 @@ namespace System.ServiceModel
 				var od = cd.Operations.Find (methodName);
 				if (od == null)
 					throw new ArgumentException (String.Format ("Operation '{0}' not found in the service contract '{1}' in namespace '{2}'", methodName, cd.Name, cd.Namespace));
-				return client.BeginProcess (od.BeginMethod, methodName, args, callback, state);
+				return client.InnerRuntimeChannel.BeginProcess (od.BeginMethod, methodName, args, callback, state);
 			}
 
 			[MonoTODO]
@@ -351,7 +351,7 @@ namespace System.ServiceModel
 				var od = cd.Operations.Find (methodName);
 				if (od == null)
 					throw new ArgumentException (String.Format ("Operation '{0}' not found in the service contract '{1}' in namespace '{2}'", methodName, cd.Name, cd.Namespace));
-				return client.EndProcess (od.EndMethod, methodName, args, result);
+				return client.InnerRuntimeChannel.EndProcess (od.EndMethod, methodName, args, result);
 			}
 
 			#region ICommunicationObject
@@ -530,7 +530,7 @@ namespace System.ServiceModel
 
 			IAsyncResult IRequestChannel.BeginRequest (Message message, AsyncCallback callback, object state)
 			{
-				return ((IRequestChannel) this).BeginRequest (message, client.Endpoint.Binding.SendTimeout);
+				return ((IRequestChannel) this).BeginRequest (message, client.Endpoint.Binding.SendTimeout, callback, state);
 			}
 
 			IAsyncResult IRequestChannel.BeginRequest (Message message, TimeSpan timeout, AsyncCallback callback, object state)
@@ -582,7 +582,7 @@ namespace System.ServiceModel
 
 			void IOutputChannel.Send (Message message)
 			{
-				((IOutputChannel) this).BeginSend (message, client.Endpoint.Binding.SendTimeout);
+				((IOutputChannel) this).Send (message, client.Endpoint.Binding.SendTimeout);
 			}
 
 			void IOutputChannel.Send (Message message, TimeSpan timeout)
