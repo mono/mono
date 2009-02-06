@@ -1,3 +1,9 @@
+2009-02-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StreamReader.cs: when a LF ends a decoded buffer and is not followed
+	by a CR in the next decoded buffer, we didn't flush the string.
+	Fixes bug #445326.
+
 2009-01-08  Christian Prochnow  <cproch@seculogix.de>
 
 	* DriveInfo.cs: Added GetDiskFreeSpaceInternal

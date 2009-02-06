@@ -426,6 +426,10 @@ namespace System.IO {
 					return res;
 				} else if (foundCR) {
 					foundCR = false;
+					if (pos == 0)
+						return -2; // Need to flush the current buffered line.
+							   // This is a \r at the end of the previous decoded buffer that
+							   // is not followed by a \n in the current decoded buffer.
 					return pos - 1;
 				}
 
@@ -447,6 +451,8 @@ namespace System.IO {
 			int end = FindNextEOL ();
 			if (end < decoded_count && end >= begin)
 				return new string (decoded_buffer, begin, end - begin);
+			else if (end == -2)
+				return line_builder.ToString (0, line_builder.Length);
 
 			if (line_builder == null)
 				line_builder = new StringBuilder ();
@@ -477,7 +483,8 @@ namespace System.IO {
 						return sb.ToString (0, sb.Length);
 					}
 					return line_builder.ToString (0, line_builder.Length);
-				}
+				} else if (end == -2)
+					return line_builder.ToString (0, line_builder.Length);
 			}
 		}
 
