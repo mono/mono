@@ -1,9 +1,12 @@
 // CS8035: Covariant type parameters can only be used as type arguments in covariant positions
-// Line: 9
+// Line: 11
 // Compiler options: -langversion:future
 
-interface A<T>
+interface A<in T>
 {
 }
 
-delegate A<A<T>> B<out T> ();
+interface B<out T>
+{
+	A<T> A { get; }
+}

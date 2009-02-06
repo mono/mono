@@ -1,4 +1,4 @@
-// CS8035: Covariant type parameters can only be used as return types or in interface inheritance
+// CS8035: Covariant type parameters can only be used as type arguments in covariant positions
 // Line: 9
 // Compiler options: -langversion:future
 

@@ -2,8 +2,10 @@
 // Line: 9
 // Compiler options: -langversion:future
 
-interface A<T>
+interface A<in T>
 {
 }
 
-delegate A<A<T>> B<out T> ();
+interface B<out T> : A<T>
+{
+}

@@ -390,10 +390,6 @@ namespace Mono.CSharp {
 				}
 				return parameter_type;
 			}
-
-			if (!TypeManager.VerifyNoVariantTypeParameters (parameter_type, Location)) {
-				return null;
-			}
 #endif
 
 			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {

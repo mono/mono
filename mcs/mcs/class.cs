@@ -1292,16 +1292,8 @@ namespace Mono.CSharp {
 
 					GenericTypeExpr ct = iface as GenericTypeExpr;
 					if (ct != null) {
-						if (!ct.CheckConstraints (this))
+						if (!ct.CheckConstraints (this) || !ct.VerifyVariantTypeParameters ())
 							return false;
-#if GMCS_SOURCE
-						foreach (Type t in ct.TypeArguments.Arguments) {
-							if (t.IsGenericParameter && (t.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
-								Report.Error (-39, ct.Location, "Contravariant type parameters cannot be used " +
-								              "as arguments in interface inheritance");
-							}
-						}
-#endif
 					}
 				}
 			}
@@ -5350,10 +5342,6 @@ namespace Mono.CSharp {
 			TypeExpr te = type_name.ResolveAsTypeTerminal (rc, false);
 			if (te == null)
 				return false;
-
-			if (!TypeManager.VerifyNoVariantTypeParameters (te.Type, te.Location)) {
-				return false;
-			}
 			
 			//
 			// Replace original type name, error reporting can use fully resolved name

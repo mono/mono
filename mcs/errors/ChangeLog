@@ -1,3 +1,23 @@
+2009-02-06  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This patch is contributed under the MIT/X11 license.
+
+	* errors.txt: Updated variance-related code messages and removed -39
+	which is no longer relevant.
+
+	* gcs8034-11.cs:
+	* gcs8034-12.cs:
+	* gcs8034-13.cs:
+	* gcs8034-14.cs:
+	* gcs8034-15.cs:
+	* gcs8035-11.cs:
+	* gcs8035-12.cs:
+	* gcs8035-13.cs:
+	* gcs8035-14.cs:
+	* gcs8035-15.cs: Added new error tests to cover new variance rules.
+
+	* gcs8039.cs: Removed. This case is now covered by -34.
+
 2009-02-04  Scott Peterson  <lunchtimemama@gmail.com>
 
 	This patch is contributed under the MIT/X11 license.

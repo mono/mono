@@ -230,10 +230,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!TypeManager.VerifyNoVariantTypeParameters (ret_type, ReturnType.Location)) {
-				return false;
-			}
-
 #if GMCS_SOURCE
 			if (ret_type.IsGenericParameter && (ret_type.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
 				Report.Error (-33, Location, "Contravariant type parameters can only be used in input positions");

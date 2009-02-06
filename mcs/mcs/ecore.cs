@@ -294,11 +294,12 @@ namespace Mono.CSharp {
 
 				// TODO: silent flag is ignored
 				ct.CheckConstraints (ec);
+				ct.VerifyVariantTypeParameters ();
 			}
 
 			return te;
 		}
-
+	
 		public TypeExpr ResolveAsBaseTerminal (IResolveContext ec, bool silent)
 		{
 			int errors = Report.Errors;

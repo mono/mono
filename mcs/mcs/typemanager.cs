@@ -2146,31 +2146,6 @@ namespace Mono.CSharp {
 		return false;
 	}
 
-	public static bool VerifyNoVariantTypeParameters (Type type, Location loc)
-	{
-#if GMCS_SOURCE
-		if (type != null && type.IsGenericType) {
-			foreach (Type t in type.GetGenericArguments ()) {
-				if (t.IsGenericParameter) {
-					if ((t.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
-						Report.Error (-34, loc, "Contravariant type parameters can only be used " +
-						              "as input arguments to a method");
-						return false;
-					}
-					if ((t.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0) {
-						Report.Error (-35, loc, "Covariant type parameters can only be used as return types " +
-						              "or in interface inheritance");
-						return false;
-					}
-				} else if (!VerifyNoVariantTypeParameters (t, loc)) {
-					return false;
-				}
-			}
-		}
-#endif
-		return true;
-	}
-
 	public static bool IsVariantOf (Type type1, Type type2)
 	{
 #if GMCS_SOURCE

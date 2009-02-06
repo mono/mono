@@ -6,4 +6,6 @@ interface A<T>
 {
 }
 
-delegate A<A<T>> B<out T> ();
+interface B<out T> : A<T>
+{
+}

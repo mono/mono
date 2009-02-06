@@ -258,6 +258,11 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+
+		public bool VerifyVariantTypeParameters ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	public class GenericMethod : DeclSpace

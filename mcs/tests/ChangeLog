@@ -1,3 +1,15 @@
+2009-02-07  Scott Peterson  <lunchtimemama@gmail.com>
+
+	This patch is contributed under the MIT/X11 license.
+
+	* gtest-variance-3.cs: Added test for covariance delegates.
+
+	* gtest-variance-4.cs: Added test for contravariant delegates.
+
+	* gtest-variance-5.cs: Added more complete interface variance test.
+
+	* known-issues-gmcs: Added the 3 new tests to the ignroe list.
+
 2009-02-04  Scott Peterson  <lunchtimemama@gmail.com>
 
 	This patch is contributed under the MIT/X11 license.

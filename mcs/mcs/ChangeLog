@@ -1,3 +1,21 @@
+2009-02-06  Scott Peterson  <lunchtimemama@gmail.com>
+
+	Contributed under the MIT/X11 license.
+
+	* generic.cs: Added VerifyVariantTypeParameters which performs new
+	variance verification logic. The old logic, based on the spec, was
+	wrong because the spec is full of LIES!
+
+	* generic-mcs.cs: Stubbed out the VerifyVariantTypeParameters method.
+
+	*typemanager.cs: Moved variance verification logic to GenericTypeExpr.
+
+	* class.cs:
+	* ecore.cs: Added calls to the new variance verification logic.
+
+	* parameter.cs:
+	* delegate.cs: Removed calls to the old variance verification logic.
+
 2009-02-06  Marek Safar  <marek.safar@gmail.com>
 
 	* delegate.cs: Use cached Invoke method directly.

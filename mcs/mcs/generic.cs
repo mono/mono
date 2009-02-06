@@ -1303,6 +1303,42 @@ namespace Mono.CSharp {
 			return ConstraintChecker.CheckConstraints (ec, open_type, gen_params, args.Arguments, loc);
 		}
 
+		static bool IsVariant (Type type)
+		{
+			return (type.GenericParameterAttributes & GenericParameterAttributes.VarianceMask) != 0;
+		}
+	
+		static bool IsCovariant (Type type)
+		{
+			return (type.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0;
+		}
+	
+		static bool IsContravariant (Type type)
+		{
+			return (type.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0;
+		}
+	
+		public bool VerifyVariantTypeParameters ()
+		{
+			for (int i = 0; i < args.Count; i++) {
+				Type argument = args.Arguments[i];
+				if (argument.IsGenericParameter && IsVariant (argument)) {
+					if (IsContravariant (argument) && !IsContravariant (gen_params[i])) {
+						Report.Error (-34, loc, "Contravariant type parameters can only be used " +
+				              "as type arguments in contravariant positions");
+						return false;
+					}
+					else if (IsCovariant (argument) && !IsCovariant (gen_params[i])) {
+						Report.Error (-35, loc, "Covariant type parameters can only be used " +
+				              "as type arguments in covariant positions");
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		
 		public override bool CheckAccessLevel (DeclSpace ds)
 		{
 			return ds.CheckAccessLevel (open_type);

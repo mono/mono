@@ -2,11 +2,11 @@
 // Line: 11
 // Compiler options: -langversion:future
 
-interface A<T>
+interface A<out T>
 {
 }
 
 interface B<in T>
 {
-	A<A<T>> C();
+	A<T> A { get; }
 }

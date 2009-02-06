@@ -95,10 +95,11 @@ numbers, as they look nicer on the debugging output.
 
 -33     Contravariant type parameters cannot be the return type.
 
--34     Contravariant type parameters cannot be used as type arguments.
+-34     Contravariant type parameters can only be used as type arguments in
+	contravariant positions.
 
--35     Covariant type parameters cannot be used as type arguments except
-        for inherited interfaces.
+-35     Covariant type parameters can only be used as type arguments in
+	covariant positions.
 
 -36     Variant type parameters can only be used with interface and
         delegate types.
@@ -106,8 +107,6 @@ numbers, as they look nicer on the debugging output.
 -37     Contravariant type parameters cannot be byref method parameters.
 
 -38     Covariant type parameters cannot be used as method parameters.
-
--39     Contravariant type parameters cannot be used in interface inheritance.
 
 ----------
 
