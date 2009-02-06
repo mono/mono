@@ -1,3 +1,8 @@
+2009-02-06  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: allow System.Net to see mscorlib's internals,
+	as it needs Thread.Interrupt.
+
 2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Change InternalsVisibleTo on Mono.Moonlight to
