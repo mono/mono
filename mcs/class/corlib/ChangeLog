@@ -1,3 +1,7 @@
+2009-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile: Add Test/resources/Fergie.GED to EXTRA_DIST.
+
 2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: new resource, new EXTRA_DIST mess.
