@@ -710,7 +710,8 @@ namespace System.Windows.Forms {
 			set {
 				if (dataMember != value) {
 					dataMember = value;
-					ReBind ();
+					if (IsHandleCreated)
+						ReBind ();
 					OnDataMemberChanged(EventArgs.Empty);
 				}
 			}
@@ -733,7 +734,8 @@ namespace System.Windows.Forms {
 					
 				ClearBinding ();
 				dataSource = value;
-				ReBind ();
+				if (IsHandleCreated)
+					ReBind ();
 				OnDataSourceChanged (EventArgs.Empty);
 			}
 		}
@@ -3966,6 +3968,7 @@ namespace System.Windows.Forms {
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated(e);
+			ReBind ();
 			
 			if (CurrentCell == null && Rows.Count > 0 && Columns.Count > 0)
 				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, false);
