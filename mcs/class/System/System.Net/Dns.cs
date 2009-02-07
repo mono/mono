@@ -280,13 +280,13 @@ namespace System.Net {
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
 
-			if (hostNameOrAddress == "0.0.0.0" || hostNameOrAddress == "")
-				hostNameOrAddress = "127.0.0.1";
+			if (hostNameOrAddress == "0.0.0.0")
+				hostNameOrAddress = "";
 			IPAddress addr;
-			if (IPAddress.TryParse (hostNameOrAddress, out addr))
+			if (hostNameOrAddress.Length > 0 && IPAddress.TryParse (hostNameOrAddress, out addr))
 				return GetHostEntry (addr);
-			else
-				return GetHostByName (hostNameOrAddress);
+
+			return GetHostByName (hostNameOrAddress);
 		}
 
 		public static IPHostEntry GetHostEntry (IPAddress address)
@@ -302,19 +302,14 @@ namespace System.Net {
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
 
-			if (hostNameOrAddress == "0.0.0.0" || hostNameOrAddress == "")
-				hostNameOrAddress = "127.0.0.1";
+			if (hostNameOrAddress == "0.0.0.0")
+				hostNameOrAddress = "";
 
 			IPAddress addr;
-			if (IPAddress.TryParse (hostNameOrAddress, out addr))
-			{
+			if (hostNameOrAddress.Length > 0 && IPAddress.TryParse (hostNameOrAddress, out addr))
 				return new IPAddress[1] { addr };
-			}
-			else
-			{
-			  
-				return GetHostEntry (hostNameOrAddress).AddressList;
-			}
+
+			return GetHostEntry (hostNameOrAddress).AddressList;
 		}
 #endif
 
@@ -348,14 +343,11 @@ namespace System.Net {
 			string h_name;
 			string[] h_aliases, h_addrlist;
 
-			bool ret = GetHostByName_internal(hostName, out h_name,
-				out h_aliases,
-				out h_addrlist);
+			bool ret = GetHostByName_internal(hostName, out h_name, out h_aliases, out h_addrlist);
 			if (ret == false)
 				throw new SocketException(11001);
 
-			return(hostent_to_IPHostEntry(h_name, h_aliases,
-				h_addrlist));
+			return(hostent_to_IPHostEntry(h_name, h_aliases, h_addrlist));
 #endif
 		}
 

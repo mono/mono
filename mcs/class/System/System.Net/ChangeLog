@@ -1,3 +1,9 @@
+2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Dns.cs: empty string for host (also 0.0.0.0) is just passed to the
+	runtime, which will then retrieve the local IP addresses. Fixes bug
+	#386637 part 2/2.
+
 2009-02-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: some servers have a comment after the directory
