@@ -1,5 +1,10 @@
 2009-02-07  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: End or if end fails then cancel the current edit 
+	operation before clearing the data source.
+
+2009-02-07  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Data-bind only after the handle is created.
 	[Fixes bug #473680]
 
