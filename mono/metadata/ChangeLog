@@ -1,3 +1,8 @@
+2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* socket-io.c: an empty host name returns the list of local IPs.
+	Fixes bug #386637 part 1/2.
+
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r126054.
