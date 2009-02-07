@@ -1,5 +1,10 @@
 2009-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c (mono_unwind_frame): Eliminate the data_align_factor argument,
+	use the DWARF_DATA_ALIGN constant instead.
+
+	* exception-<ARCH>.c: Update after the above change.
+
 	* exceptions-arm.c (mono_arch_find_jit_info): Transition this to use the
 	dwarf unwinder.
 
