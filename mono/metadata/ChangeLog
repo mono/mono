@@ -1,3 +1,9 @@
+2009-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* verify.c (mono_class_interface_implements_interface): Call
+	mono_class_setup_interfaces ().
+	(merge_stacks): Ditto.
+
 2009-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_interfaces): New function to lazily initalize
