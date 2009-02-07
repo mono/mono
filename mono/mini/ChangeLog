@@ -1,3 +1,10 @@
+2009-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c (mono_arch_find_jit_info): Transition this to use the
+	dwarf unwinder.
+
+	* mini-x86.h: Enable the dwarf unwinder.
+
 2009-02-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix mcs/tests/test-7.cs
