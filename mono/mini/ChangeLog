@@ -1,5 +1,10 @@
 2009-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-arm.c (mono_arch_find_jit_info): Transition this to use the
+	dwarf unwinder.
+
+	* mini-arm.c: Enable the dwarf unwinder.
+
 	* mini-trampolines.c (mono_magic_trampoline): Use mono_class_get_vtable_entry ()
 	instead of mono_class_setup_vtable ().
 
