@@ -1,3 +1,7 @@
+2009-02-07 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* Mono.Cairo/NativeMethods.cs: class should be internal not public
+
 2008-11-30 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* Mono.Cairo/ImageSurface.cs: Fixes ImageSurface constructor signature.
