@@ -5877,6 +5877,10 @@ namespace System.Windows.Forms {
 		
 		private void ClearBinding ()
 		{
+			if (IsCurrentCellInEditMode && !EndEdit ())
+				CancelEdit ();
+			MoveCurrentCell (-1, -1, false, false, false, true);
+
 			if (DataManager != null) {
 				DataManager.ListChanged -= OnListChanged;
 				DataManager.PositionChanged -= OnListPositionChanged;
