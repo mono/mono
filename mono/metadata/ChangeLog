@@ -1,5 +1,10 @@
 2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* mono-perfcounters-def.h: processor time is an inverse time.
+	Fixes bug #468625.
+
+2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* socket-io.c: an empty host name returns the list of local IPs.
 	Fixes bug #386637 part 1/2.
 
