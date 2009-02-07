@@ -1,5 +1,10 @@
 2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* socket-io.c: when requesting all the local ips, if there are no
+	interfaces up and running, MS returns 127.0.0.1.
+
+2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* mono-perfcounters-def.h: processor time is an inverse time.
 	Fixes bug #468625.
 
