@@ -1,3 +1,7 @@
+2009-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* wait.c (WaitForMultipleObjectsEx): Initialize poll variable.
+
 2009-02-05  Miguel De Icaza  <miguel@novell.com>
 
 	* sockets.c (_wapi_setsockopt): SO_REUSEPORT is needed also on
