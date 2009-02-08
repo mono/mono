@@ -80,8 +80,10 @@ namespace System.Runtime.Remoting.Channels.Http
 				response = ex.Response;
 				//only error 500 is handled by the remoting stack
 				HttpWebResponse httpResponse = response as HttpWebResponse;
-				if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.InternalServerError)
-					throw;
+				if (httpResponse == null || httpResponse.StatusCode != HttpStatusCode.InternalServerError) {
+					sinkStack.DispatchException (ex);
+					return;
+				}
 			}
 			
 			//this is only valid after the response is fetched

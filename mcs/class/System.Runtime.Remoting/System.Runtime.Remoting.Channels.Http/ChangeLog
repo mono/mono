@@ -1,3 +1,8 @@
+2009-02-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpClientTransportSink.cs: if we get an WebException that does not
+	have a response, dispatch it to the sink.
+
 2008-11-10  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* HttpServerTransportSink.cs: Seek to beginning of server response 
