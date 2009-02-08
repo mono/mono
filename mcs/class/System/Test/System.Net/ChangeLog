@@ -1,3 +1,8 @@
+2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Added Not-Modified-Since test. Updated
+	bug numbers.
+
 2009-02-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpListener2Test.cs: Make tests quiet.
