@@ -40,6 +40,38 @@ namespace MonoTests.System
 		private const string absolute = "http://www.mono-project.com/CAS";
 		private const string relative = "server.com/directory/";
 
+		[Test] // .ctor (String, UriKind)
+		public void Constructor4_UriKind_Invalid ()
+		{
+			try {
+				new Uri ("http://www.contoso.com", (UriKind) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The value '666' passed for the UriKind parameter
+				// is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.Message.IndexOf ("'666'") != -1, "#5:" + ex.Message);
+				Assert.IsNotNull (ex.Message.IndexOf ("UriKind") != -1, "#6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#7");
+			}
+		}
+
+		[Test] // .ctor (String, UriKind)
+		public void Constructor4_UriString_Null ()
+		{
+			try {
+				new Uri ((string) null, (UriKind) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("uriString", ex.ParamName, "#5");
+			}
+		}
+
 		[Test]
 		public void AbsoluteUri_RelativeUri ()
 		{
@@ -123,51 +155,90 @@ namespace MonoTests.System
 			new Uri (absolute, UriKind.Relative);
 		}
 
-		[Test]
-		public void TryCreate_String_UriKind_Uri ()
+		[Test] // TryCreate (String, UriKind, Uri)
+		public void TryCreate1 ()
 		{
-			Uri uri = null;
+			Uri uri;
+
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (absolute, UriKind.Absolute, out uri), "absolute-Absolute");
 			Assert.AreEqual (absolute, uri.AbsoluteUri, "absolute-Absolute-AbsoluteUri");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (absolute, UriKind.RelativeOrAbsolute, out uri), "absolute-RelativeOrAbsolute");
 			Assert.AreEqual (absolute, uri.AbsoluteUri, "absolute-RelativeOrAbsolute-AbsoluteUri");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsFalse (Uri.TryCreate (absolute, UriKind.Relative, out uri), "absolute-Relative");
 			Assert.IsNull (uri, "absolute-Relative-uri");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsFalse (Uri.TryCreate (relative, UriKind.Absolute, out uri), "relative-Absolute");
 			Assert.IsNull (uri, "relative-Relative-uri");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (relative, UriKind.RelativeOrAbsolute, out uri), "relative-RelativeOrAbsolute");
 			Assert.AreEqual (relative, uri.OriginalString, "relative-RelativeOrAbsolute-OriginalString");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (relative, UriKind.Relative, out uri), "relative-Relative");
 			Assert.AreEqual (relative, uri.OriginalString, "relative-RelativeOrAbsolute-OriginalString");
 		}
 
-		[Test]
+		[Test] // TryCreate (String, UriKind, Uri)
+		public void TryCreate1_UriKind_Invalid ()
+		{
+			Uri relativeUri = new Uri (relative, UriKind.Relative);
+			Uri uri = relativeUri;
+
+			try {
+				Uri.TryCreate (absolute, (UriKind) 666, out uri);
+				Assert.Fail ("#A1");
+			} catch (ArgumentException ex) {
+				// The value '666' passed for the UriKind parameter
+				// is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#A2");
+				Assert.IsNull (ex.InnerException, "#A3");
+				Assert.IsNotNull (ex.Message, "#A4");
+				Assert.IsNotNull (ex.Message.IndexOf ("'666'") != -1, "#A5:" + ex.Message);
+				Assert.IsNotNull (ex.Message.IndexOf ("UriKind") != -1, "#A6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#A7");
+
+				Assert.IsNotNull (uri, "#A8");
+				Assert.AreSame (relativeUri, uri, "#A9");
+			}
+
+			Assert.IsFalse (Uri.TryCreate ((string) null, (UriKind) 666, out uri), "#B1");
+			Assert.IsNull (uri, "#B2");
+		}
+
+		[Test] // TryCreate (Uri, String, Uri)
 		[Category ("NotWorking")]
-		public void TryCreate_Uri_String_Uri ()
+		public void TryCreate2 ()
 		{
 			Uri baseUri = new Uri (absolute);
-			Uri uri = null;
+			Uri uri;
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, relative, out uri), "baseUri+relative");
 			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.AbsoluteUri, "baseUri+relative+AbsoluteUri");
 			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.OriginalString, "baseUri+relative+OriginalString");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, absolute, out uri), "baseUri+absolute");
 			Assert.AreEqual (absolute, uri.AbsoluteUri, "baseUri+absolute+AbsoluteUri");
 			Assert.AreEqual (absolute, uri.OriginalString, "baseUri+absolute+OriginalString");
 
+			uri = new Uri ("http://dummy.com");
 			Uri relativeUri = new Uri (relative, UriKind.Relative);
 			Assert.IsFalse (Uri.TryCreate (relativeUri, relative, out uri), "relativeUri+relative");
 			Assert.IsNull (uri, "relativeUri+relative+Uri");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (relativeUri, absolute, out uri), "relativeUri+absolute");
 			Assert.AreEqual (absolute, uri.OriginalString, "relativeUri+absolute+OriginalString");
 
+			uri = new Uri ("http://dummy.com");
 			string n = null;
 			Assert.IsFalse (Uri.TryCreate (baseUri, n, out uri), "baseUri+null");
 			Assert.IsNull (uri, "baseUri+null+Uri");
@@ -176,65 +247,82 @@ namespace MonoTests.System
 			Assert.IsFalse (Uri.TryCreate (null, relative, out uri), "null+relative");
 			Assert.IsNull (uri, "null+relative+Uri");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (null, absolute, out uri), "null+absolute");
 			Assert.AreEqual (absolute, uri.OriginalString, "null+absolute+OriginalString");
 		}
 
-		[Test]
+		[Test] // TryCreate (Uri, Uri, Uri)
 		[Category ("NotWorking")]
-		public void TryCreate_Uri_Uri_Uri ()
+		public void TryCreate3 ()
 		{
 			Uri baseUri = new Uri (absolute);
 			Uri relativeUri = new Uri (relative, UriKind.Relative);
-			Uri uri = null;
+			Uri uri;
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, relativeUri, out uri), "baseUri+relativeUri");
 			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.AbsoluteUri, "baseUri+relativeUri+AbsoluteUri");
 			Assert.AreEqual ("http://www.mono-project.com/server.com/directory/", uri.OriginalString, "baseUri+relativeUri+OriginalString");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsTrue (Uri.TryCreate (baseUri, baseUri, out uri), "baseUri+baseUri");
 			Assert.AreEqual (absolute, uri.AbsoluteUri, "baseUri+baseUri+AbsoluteUri");
 			Assert.AreEqual (absolute, uri.OriginalString, "baseUri+baseUri+OriginalString");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsFalse (Uri.TryCreate (relativeUri, relativeUri, out uri), "relativeUri+relativeUri");
 			Assert.IsNull (uri, "relativeUri+relativeUri+Uri");
 
+			uri = new Uri ("http://dummy.com");
 			Assert.IsFalse (Uri.TryCreate (relativeUri, baseUri, out uri), "relativeUri+baseUri");
 			Assert.IsNull (uri, "relativeUri+baseUri+Uri");
 
-			// a null relativeUri throws a NullReferenceException (see next test)
+			uri = new Uri ("http://dummy.com");
 			Assert.IsFalse (Uri.TryCreate (null, relativeUri, out uri), "null+relativeUri");
 			Assert.IsNull (uri, "null+relativeUri+Uri");
 			Assert.IsFalse (Uri.TryCreate (null, baseUri, out uri), "null+baseUri");
 			Assert.IsNull (uri, "null+baseUri+Uri");
 		}
 
-		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void TryCreate_Uri_UriNull_Uri ()
+		[Test] // TryCreate (Uri, Uri, out Uri)
+		public void TryCreate3_RelativeUri_Null ()
 		{
 			Uri uri = null;
-			Uri.TryCreate (new Uri (absolute), (Uri) null, out uri);
+			Uri baseUri = new Uri (absolute);
+			try {
+				Uri.TryCreate (baseUri, (Uri) null, out uri);
+				Assert.Fail ();
+			} catch (NullReferenceException) {
+			}
 		}
 
 		[Test]
-		public void IsWellFormedUriString_Null ()
-		{
-			Assert.IsFalse (Uri.IsWellFormedUriString (null, UriKind.Absolute), "null");
-		}
-
-		[Test]
-		public void IsWellFormedUriString_Http ()
+		public void IsWellFormedUriString ()
 		{
 			Assert.IsFalse (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page", UriKind.Absolute), "http/space");
 			Assert.IsTrue (Uri.IsWellFormedUriString ("http://www.go-mono.com/Main%20Page", UriKind.Absolute), "http/%20");
+			Assert.IsFalse (Uri.IsWellFormedUriString (null, UriKind.Absolute), "null");
+			Assert.IsFalse (Uri.IsWellFormedUriString ("data", UriKind.Absolute), "data");
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void IsWellFormedUriString_BadUriKind ()
+		public void IsWellFormedUriString_UriKind_Invalid ()
 		{
-			Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page", (UriKind)Int32.MinValue);
+			try {
+				Uri.IsWellFormedUriString ("http://www.go-mono.com/Main Page",
+					(UriKind) 666);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				// The value '666' passed for the UriKind parameter
+				// is invalid
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.IsNotNull (ex.Message.IndexOf ("'666'") != -1, "#5:" + ex.Message);
+				Assert.IsNotNull (ex.Message.IndexOf ("UriKind") != -1, "#6:" + ex.Message);
+				Assert.IsNull (ex.ParamName, "#7");
+			}
 		}
 
 		[Test]
@@ -315,11 +403,14 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
 		public void IsBaseOf_Null ()
 		{
 			Uri http = new Uri ("http://www.mono-project.com/Main_Page#FAQ?Edit");
-			http.IsBaseOf (null);
+			try {
+				http.IsBaseOf (null);
+				Assert.Fail ();
+			} catch (NullReferenceException) {
+			}
 		}
 
 		[Test] 
@@ -399,8 +490,7 @@ namespace MonoTests.System
 			}
 		}
 
-		[Test]
-		// LAMESPEC: see bug #78374.
+		[Test] // LAMESPEC: see bug #321113
 		public void OriginalStringRelative ()
 		{
 			Uri k1 = new Uri ("http://www.mono-project.com");
@@ -409,18 +499,21 @@ namespace MonoTests.System
 
 			Uri a = new Uri ("http://www.mono-project.com:808/foo");
 			Uri b = new Uri (a, "../docs?queryyy#% %20%23%25bar");
+			//Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#% %20%23%25bar", b.OriginalString, "#2");
 
-			// it won't work.
-			// Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#% %20%23%25bar", b.OriginalString, "#2");
+			Uri c = new Uri ("http://www.mono-project.com:808/foo");
+			Uri d = new Uri (a, "../docs?queryyy#%20%23%25bar");
+			Assert.AreEqual ("http://www.mono-project.com:808/docs?queryyy#%20%23%25bar", d.OriginalString, "#3");
 
-			Uri c = new Uri ("http://www.mono-project.com:909");
-			Uri d = new Uri (c, "http://www.mono-project.com:606/docs");
-			Assert.AreEqual ("http://www.mono-project.com:606/docs", d.OriginalString, "#3");
+			Uri e = new Uri ("http://www.mono-project.com:909");
+			Uri f = new Uri (e, "http://www.mono-project.com:606/docs");
+			Assert.AreEqual ("http://www.mono-project.com:606/docs", f.OriginalString, "#4");
 
-			Uri e = new Uri ("http://www.mono-project.com:303/foo");
-			Uri f = new Uri (e, "?query");
+			Uri g = new Uri ("http://www.mono-project.com:303/foo");
+			Uri h = new Uri (g, "?query");
 			// it doesn't work. MS.NET also returns incorrect URI: ..303/?query
-			// Assert.AreEqual ("http://www.mono-project.com:303/foo?query", f.OriginalString, "#4");
+			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=412604
+			//Assert.AreEqual ("http://www.mono-project.com:303/foo?query", h.OriginalString, "#5");
 		}
 
 		[Test]

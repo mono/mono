@@ -1,3 +1,8 @@
+2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Uri.cs: Moved UriKind check from TryCreate to exception-less .ctor,
+	and check accessibility of this .ctor from internal to private.
+
 2009-01-28  Bill Holmes  <billholmes54@gmail.com>
 
 	* Uri.cs (IsWellFormedUriString):  Changing IsWellFormedUriString

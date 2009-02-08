@@ -145,7 +145,7 @@ namespace System {
 				break;
 			default:
 				string msg = Locale.GetText ("Invalid UriKind value '{0}'.", uriKind);
-				throw new ArgumentException ("uriKind", msg);
+				throw new ArgumentException (msg);
 			}
 		}
 
@@ -153,11 +153,18 @@ namespace System {
 		// An exception-less constructor, returns success
 		// condition on the out parameter `success'.
 		//
-		internal Uri (string uriString, UriKind uriKind, out bool success)
+		Uri (string uriString, UriKind uriKind, out bool success)
 		{
-			if (uriString == null){
+			if (uriString == null) {
 				success = false;
 				return;
+			}
+
+			if (uriKind != UriKind.RelativeOrAbsolute &&
+				uriKind != UriKind.Absolute &&
+				uriKind != UriKind.Relative) {
+				string msg = Locale.GetText ("Invalid UriKind value '{0}'.", uriKind);
+				throw new ArgumentException (msg);
 			}
 
 			source = uriString;
@@ -1993,13 +2000,6 @@ namespace System {
 			if (uriString == null)
 				return false;
 
-			if (uriKind != UriKind.RelativeOrAbsolute &&
-				uriKind != UriKind.Absolute &&
-				uriKind != UriKind.Relative) {
-				string msg = Locale.GetText ("Invalid UriKind value '{0}'.", uriKind);
-                                throw new ArgumentException ("uriKind", msg);
-			}
-
 			Uri uri;
 			if (Uri.TryCreate (uriString, uriKind, out uri))
 				return uri.IsWellFormedOriginalString ();
@@ -2009,8 +2009,9 @@ namespace System {
 		public static bool TryCreate (string uriString, UriKind uriKind, out Uri result)
 		{
 			bool success;
+
 			Uri r = new Uri (uriString, uriKind, out success);
-			if (success){
+			if (success) {
 				result = r;
 				return true;
 			}
@@ -2025,8 +2026,7 @@ namespace System {
 				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri);
 				return true;
-			}
-			catch (UriFormatException) {
+			} catch (UriFormatException) {
 				result = null;
 				return false;
 			}
@@ -2039,8 +2039,7 @@ namespace System {
 				// FIXME: this should call UriParser.Resolve
 				result = new Uri (baseUri, relativeUri);
 				return true;
-			}
-			catch (UriFormatException) {
+			} catch (UriFormatException) {
 				result = null;
 				return false;
 			}

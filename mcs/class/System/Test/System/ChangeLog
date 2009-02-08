@@ -1,3 +1,8 @@
+2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* UriTest3.cs: Added and improved tests for TryCreate. Added few
+	asserts for IsWellFormedUriString. Added .ctor tests.
+
 2009-15-01  Leszek Ciesielski <skolima@gmail.com>
 
 	* UriTest3.cs: test for bug #464235
