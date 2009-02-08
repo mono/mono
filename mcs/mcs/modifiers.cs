@@ -110,20 +110,20 @@ namespace Mono.CSharp {
 
 			if (is_toplevel){
 				if ((mod_flags & PUBLIC) != 0)
-					t |= TypeAttributes.Public;
-				if ((mod_flags & PRIVATE) != 0)
-					t |= TypeAttributes.NotPublic;
+					t = TypeAttributes.Public;
+				else if ((mod_flags & PRIVATE) != 0)
+					t = TypeAttributes.NotPublic;
 			} else {
 				if ((mod_flags & PUBLIC) != 0)
-					t |= TypeAttributes.NestedPublic;
-				if ((mod_flags & PRIVATE) != 0)
-					t |= TypeAttributes.NestedPrivate;
-				if ((mod_flags & PROTECTED) != 0 && (mod_flags & INTERNAL) != 0)
-					t |= TypeAttributes.NestedFamORAssem;
-				if ((mod_flags & PROTECTED) != 0)
-					t |= TypeAttributes.NestedFamily;
-				if ((mod_flags & INTERNAL) != 0)
-					t |= TypeAttributes.NestedAssembly;
+					t = TypeAttributes.NestedPublic;
+				else if ((mod_flags & PRIVATE) != 0)
+					t = TypeAttributes.NestedPrivate;
+				else if ((mod_flags & (PROTECTED | INTERNAL)) == (PROTECTED | INTERNAL))
+					t = TypeAttributes.NestedFamORAssem;
+				else if ((mod_flags & PROTECTED) != 0)
+					t = TypeAttributes.NestedFamily;
+				else if ((mod_flags & INTERNAL) != 0)
+					t = TypeAttributes.NestedAssembly;
 			}
 			
 			if ((mod_flags & SEALED) != 0)
