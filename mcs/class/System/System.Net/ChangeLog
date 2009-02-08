@@ -1,3 +1,7 @@
+2009-02-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: lock SetResponseError.
+
 2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Dns.cs: BeginGetHostAddresses - renamed argument to match MS,

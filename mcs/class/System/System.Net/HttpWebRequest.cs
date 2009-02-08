@@ -759,8 +759,8 @@ namespace System.Net
 			WebAsyncResult aread = asyncRead;
 			initialMethod = method;
 			if (haveResponse) {
+				Exception saved = saved_exc;
 				if (webResponse != null) {
-					Exception saved = saved_exc;
 					Monitor.Exit (locker);
 					if (saved == null) {
 						aread.SetCompleted (true, webResponse);
@@ -769,8 +769,9 @@ namespace System.Net
 					}
 					aread.DoCallback ();
 					return aread;
-				} else if (saved_exc != null) {
-					aread.SetCompleted (true, saved_exc);
+				} else if (saved != null) {
+					Monitor.Exit (locker);
+					aread.SetCompleted (true, saved);
 					aread.DoCallback ();
 					return aread;
 				}
@@ -1134,22 +1135,32 @@ namespace System.Net
 		{
 			if (aborted)
 				return;
+			lock (locker) {
 			string msg = String.Format ("Error getting response stream ({0}): {1}", where, status);
 			WebAsyncResult r = asyncRead;
 			if (r == null)
 				r = asyncWrite;
 
+			WebException wexc;
+			if (e is WebException) {
+				wexc = (WebException) e;
+			} else {
+				wexc = new WebException (msg, e, status, null); 
+			}
 			if (r != null) {
-				WebException wexc;
-				if (e is WebException) {
-					wexc = (WebException) e;
-				} else {
-					wexc = new WebException (msg, e, status, null); 
+				if (!r.IsCompleted) {
+					r.SetCompleted (false, wexc);
+					r.DoCallback ();
+				} else if (r == asyncWrite) {
+					saved_exc = wexc;
 				}
-				r.SetCompleted (false, wexc);
-				r.DoCallback ();
+				haveResponse = true;
 				asyncRead = null;
 				asyncWrite = null;
+			} else {
+				haveResponse = true;
+				saved_exc = wexc;
+			}
 			}
 		}
 
