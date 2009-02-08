@@ -1,5 +1,10 @@
 2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* DnsTest.cs: Use Assert syntax, and spaces to tabs. Added tests
+	for argument checks.
+
+2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* HttpWebRequestTest.cs: Added Not-Modified-Since test. Updated
 	bug numbers.
 
