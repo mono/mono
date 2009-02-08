@@ -1,3 +1,7 @@
+2009-02-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: lock SetResponseError.
+
 2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Dns.cs: empty string for host (also 0.0.0.0) is just passed to the
