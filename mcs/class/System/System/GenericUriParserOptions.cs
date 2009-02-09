@@ -26,12 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System {
 
 	[Flags]
-	public enum GenericUriParserOptions {
+#if NET_2_0
+	public
+#endif
+	enum GenericUriParserOptions {
 
 		Default = 0,
 		GenericAuthority = 1,
@@ -47,5 +48,3 @@ namespace System {
 		IriParsing = 1024
 	}
 }
-
-#endif

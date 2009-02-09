@@ -1,3 +1,10 @@
+2009-02-09  Raja R Harinath  <harinath@hurrynot.org>
+
+	Make UriParser available in the NET_1_1 build
+	* UriParser.cs: Make visible as internal class in the NET_1_1 build.
+	* UriComponents.cs, UriFormats.cs, DefaultUriParser.cs: Likewise.
+	* GenericUriParser.cs, GenericUriParserOptions.cs: Likewise.
+
 2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Uri.cs: Moved UriKind check from TryCreate to exception-less .ctor,

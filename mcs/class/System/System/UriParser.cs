@@ -26,16 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections;
 using System.Globalization;
 using System.Security.Permissions;
 using System.Text;
 
 namespace System {
-
-	public abstract class UriParser {
+#if NET_2_0
+	public
+#endif
+	abstract class UriParser {
 
 		static object lock_object = new object ();
 		static Hashtable table;
@@ -128,6 +128,7 @@ namespace System {
 				parsingError = null;
 		}
 
+#if NET_2_0
 		protected internal virtual bool IsBaseOf (Uri baseUri, Uri relativeUri)
 		{
 			// compare, not case sensitive, the scheme, host and port (+ user informations)
@@ -147,7 +148,7 @@ namespace System {
 			// Though this class does not seem to do anything. Even null arguments aren't checked :/
 			return uri.IsWellFormedOriginalString ();
 		}
-
+#endif
 		protected internal virtual UriParser OnNewUri ()
 		{
 			// nice time for init
@@ -223,8 +224,10 @@ namespace System {
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeHttp, 80);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeHttps, 443);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeMailto, 25);
+#if NET_2_0
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNetPipe, -1);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNetTcp, -1);
+#endif
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNews, 119);
 			InternalRegister (newtable, new DefaultUriParser (), Uri.UriSchemeNntp, 119);
 			// not defined in Uri.UriScheme* but a parser class exists
@@ -303,4 +306,3 @@ namespace System {
 	}
 }
 
-#endif

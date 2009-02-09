@@ -26,16 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System {
-
-	public class GenericUriParser : UriParser {
+#if NET_2_0
+	public
+#endif
+	class GenericUriParser : UriParser {
 
 		public GenericUriParser (GenericUriParserOptions options)
 		{
 		}
 	}
 }
-
-#endif

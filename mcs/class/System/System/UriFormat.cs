@@ -26,16 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System {
 
-	public enum UriFormat {
+#if NET_2_0
+	public
+#endif
+	enum UriFormat {
 
 		UriEscaped = 1,
 		Unescaped,
 		SafeUnescaped,
 	}
 }
-
-#endif

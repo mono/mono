@@ -26,12 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System {
 
 	[Flags]
-	public enum UriComponents {
+#if NET_2_0
+	public
+#endif
+	enum UriComponents {
 
 		Scheme = 1,
 		UserInfo = 2,
@@ -52,5 +53,3 @@ namespace System {
 		SerializationInfoString = Int32.MinValue
 	}
 }
-
-#endif
