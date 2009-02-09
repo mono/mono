@@ -998,3 +998,5 @@ System.Runtime.InteropServices.ComTypes/IEnumSTATDATA.cs
 System.Runtime.InteropServices.ComTypes/STATDATA.cs
 System.Runtime.InteropServices.ComTypes/STGMEDIUM.cs
 System.Runtime.InteropServices.ComTypes/TYMED.cs
+System/IUriData.cs
+System/UriData.cs
