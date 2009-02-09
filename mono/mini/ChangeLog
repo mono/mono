@@ -1,3 +1,10 @@
+2009-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* image-writer.h image-writer.c: New files, extracted from aot-compiler.c.
+
+	* aot-compiler.c: Extract the image writing functionality into a separate
+	module to reduce the size of this file.
+
 2009-02-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (is_shared_got_patch): Add MONO_PATCH_INFO_IMAGE.
