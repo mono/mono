@@ -64,7 +64,7 @@ endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
 TEST_PATTERN = '*test-*.cs'
-LOCAL_RUNTIME_FLAGS = --security=validil --verify-all
+LOCAL_RUNTIME_FLAGS = --verify-all
 TOPTIONS += '-il:ver-il-gmcs.xml'
 endif
 ifeq (net_1_1, $(PROFILE))
