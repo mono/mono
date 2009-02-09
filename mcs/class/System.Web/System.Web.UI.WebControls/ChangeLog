@@ -1,3 +1,9 @@
+2009-02-09  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectDataSourceView.cs: ExecuteSelect returns a single-item
+	array of objects containing the result, if the result isn't one of
+	DataSet, DataTable or IEnumerable. Fixes bug #471767
+
 2009-02-06  Marek Habersack  <mhabersack@novell.com>
 
 	* Style.cs: if CssClass is null, return String.Empty. Fixes bug

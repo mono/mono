@@ -819,6 +819,29 @@ namespace MonoTests.System.Web.UI.WebControls
 			Eventassert ("ObjectDisposing");
 		}
 
+		IEnumerable returnedData;
+		void SelectCallback (IEnumerable data)
+		{
+			returnedData = data;
+		}
+		
+		[Test] // bug #471767
+		public void SelectReturnsObjectArray ()
+		{
+			ObjectDataSource ds = new ObjectDataSource ();
+			ds.TypeName=typeof(DataSourceObject).AssemblyQualifiedName;
+			ds.SelectMethod="SelectObject";
+
+			DataSourceView dsv = ((IDataSource)ds).GetView (String.Empty);
+			dsv.Select (DataSourceSelectArguments.Empty, new DataSourceViewSelectCallback (SelectCallback));
+			Assert.IsTrue (returnedData != null, "#A1");
+			Assert.AreEqual (typeof (object[]), returnedData.GetType (), "#A2");
+
+			object[] data = returnedData as object[];
+			Assert.AreEqual (1, data.Length, "#A3");
+			Assert.AreEqual (typeof (MyCustomDataObject), data [0].GetType (), "#A4");
+		}
+		
 		enum InitViewType
 		{
 			MatchParamsToValues,
@@ -1456,6 +1479,10 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 	}
 
+	public class MyCustomDataObject
+	{
+	}
+	
 	public class DataSourceObject
 	{
 		private static int maximumRows;
@@ -1467,6 +1494,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static DataTable Select ()
 		{
 			return ds;
+		}
+
+		public static MyCustomDataObject SelectObject ()
+		{
+			return new MyCustomDataObject ();
 		}
 		
 		[Sys.ComponentModel.DataObjectMethod(Sys.ComponentModel.DataObjectMethodType.Select, false)]
