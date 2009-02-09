@@ -1,5 +1,7 @@
 2009-02-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (fullaotcheck): New target to run full-aot tests.
+
 	* method-to-ir.c (inline_method): Save/Restore cfg->ret_var_set too.
 
 	* exceptions.cs: Add a test.
