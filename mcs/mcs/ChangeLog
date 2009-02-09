@@ -1,5 +1,12 @@
 2009-02-09  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Initializer of reference argument use temporary
+	variable to be verifiable.
+	
+	* parameter.cs: Share EmitLdArg.
+
+2009-02-09  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #473559
 	* class.cs: Fixed: Not reporting error about nested class with the
 	same name.

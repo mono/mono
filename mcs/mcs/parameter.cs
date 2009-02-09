@@ -551,10 +551,7 @@ namespace Mono.CSharp {
 
 			bool is_ref = (ModFlags & Modifier.ISBYREF) != 0;
 			if (is_ref) {
-				if (arg_idx <= 255)
-					ec.ig.Emit (OpCodes.Ldarg_S, (byte) arg_idx);
-				else
-					ec.ig.Emit (OpCodes.Ldarg, arg_idx);
+				ParameterReference.EmitLdArg (ec.ig, arg_idx);
 			} else {
 				if (arg_idx <= 255)
 					ec.ig.Emit (OpCodes.Ldarga_S, (byte) arg_idx);

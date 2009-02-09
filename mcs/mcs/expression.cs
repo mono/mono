@@ -9592,28 +9592,28 @@ namespace Mono.CSharp {
 			// If target is non-hoisted variable, let's use it
 			//
 			VariableReference variable = target as VariableReference;
-			if (variable != null) {
+			if (variable != null && !variable.IsRef) {
 				instance = target;
 
 				if (left_on_stack) {
-					if (variable.IsRef)
-						StoreFromPtr (ec.ig, type);
-					else
-						variable.EmitAssign (ec, EmptyExpression.Null, false, false);
-
+					variable.EmitAssign (ec, EmptyExpression.Null, false, false);
 					left_on_stack = false;
 				}
 			} else {
 				temp = target as LocalTemporary;
+				bool is_address = false;
 				if (temp == null) {
-					if (!left_on_stack)
-						throw new NotImplementedException ();
+					if (!left_on_stack) {
+						is_address = true;
+						target.AddressOf (ec, AddressOp.Load);
+						left_on_stack = true;
+					}
 
 					temp = new LocalTemporary (type);
 				}
 
 				instance = temp;
-				if (left_on_stack)
+				if (left_on_stack && !is_address)
 					temp.Store (ec);
 			}
 
