@@ -1,5 +1,21 @@
 2009-02-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_trampolines): Add throw_pending_exception/
+	generic_class_init trampolines.
+	(add_generic_class): Extract some code from add_generic_instances () into a
+	separate function so it can be called from other places too.
+	(compile_method): Call add_generic_class () for the classes of inflated methods
+	referenced by the method.
+	(can_encode_patch): Allow references to generic parameters.
+
+	* aot-runtime.c: Add support the patches required by the new trampolines.
+	
+	* exceptions-amd64.c (mono_arch_get_throw_pending_exception_full): Add full-aot
+	support.
+
+	* tramp-amd64.c (mono_arch_create_generic_class_init_trampoline_full): Add
+	full-aot support.
+
 	* exceptions-amd64.c (mono_arch_get_throw_pending_exception_full): Rename
 	this from get_throw_pending_exception, make the signature full aot compatible.
 
