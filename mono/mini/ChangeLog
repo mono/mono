@@ -1,3 +1,9 @@
+2009-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (inline_method): Save/Restore cfg->ret_var_set too.
+
+	* exceptions.cs: Add a test.
+
 2009-02-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* unwind.c (mono_unwind_frame): Eliminate the data_align_factor argument,
