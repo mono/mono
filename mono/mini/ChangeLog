@@ -1,5 +1,9 @@
 2009-02-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_create_monitor_enter_trampoline_full): 
+	Initialize *ji.
+	(mono_arch_create_monitor_exit_trampoline_full): Ditto.
+
 	* tramp-amd64.c (mono_arch_create_monitor_enter_trampoline_full): Use 'code'
 	as the moving pointer instead of 'buf' for consistency with the rest of the
 	codebase.
