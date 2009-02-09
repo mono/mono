@@ -2534,7 +2534,7 @@ namespace Mono.CSharp {
 
 		protected override bool AddToContainer (MemberCore symbol, string name)
 		{
-			if (name == MemberName.Name && symbol.MemberName.Left == null) {
+			if (name == MemberName.Name) {
 				if (symbol is TypeParameter) {
 					Report.Error (694, symbol.Location,
 						"Type parameter `{0}' has same name as containing type, or method",
@@ -2542,10 +2542,13 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				Report.SymbolRelatedToPreviousError (this);
-				Report.Error (542, symbol.Location, "`{0}': member names cannot be the same as their enclosing type",
-					symbol.GetSignatureForError ());
-				return false;
+				InterfaceMemberBase imb = symbol as InterfaceMemberBase;
+				if (imb == null || !imb.IsExplicitImpl) {
+					Report.SymbolRelatedToPreviousError (this);
+					Report.Error (542, symbol.Location, "`{0}': member names cannot be the same as their enclosing type",
+						symbol.GetSignatureForError ());
+					return false;
+				}
 			}
 
 			return base.AddToContainer (symbol, name);
