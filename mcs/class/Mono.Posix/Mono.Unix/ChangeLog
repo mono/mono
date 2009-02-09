@@ -1,3 +1,9 @@
+2009-02-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixGroupInfo.cs (GetMembers): Skip group members which aren't valid
+	  users on the system (thus removing a possible exception).  Patch
+	  thanks to Daniel Peñalba.
+
 2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* UnixSignal.cs: Check if realtime signal install failed with 

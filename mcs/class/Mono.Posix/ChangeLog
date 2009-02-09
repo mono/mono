@@ -1,3 +1,8 @@
+2009-02-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* Documentation/en/Mono.Unix/UnixGroupInfo.xml: Document semantic 
+	  changes to UnixGroupInfo.GetMembers().
+
 2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Documentation/en/*: Updated the documentation	for RT signals.

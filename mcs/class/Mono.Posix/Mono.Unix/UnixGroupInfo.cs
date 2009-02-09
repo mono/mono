@@ -86,10 +86,15 @@ namespace Mono.Unix {
 
 		public UnixUserInfo[] GetMembers ()
 		{
-			UnixUserInfo[] members = new UnixUserInfo [group.gr_mem.Length];
-			for (int i = 0; i < members.Length; ++i)
-				members [i] = new UnixUserInfo (group.gr_mem [i]);
-			return members;
+			ArrayList members = new ArrayList (group.gr_mem.Length);
+			for (int i = 0; i < group.gr_mem.Length; ++i) {
+				try {
+					members.Add (new UnixUserInfo (group.gr_mem [i]));
+				} catch (ArgumentException) {
+					// ignore invalid users
+				}
+			}
+			return (UnixUserInfo[]) members.ToArray (typeof (UnixUserInfo));
 		}
 
 		public string[] GetMemberNames ()

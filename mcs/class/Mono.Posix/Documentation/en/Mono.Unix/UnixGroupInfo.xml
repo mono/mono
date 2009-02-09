@@ -225,6 +225,12 @@
           group members.
         </returns>
         <remarks>
+          <block subset="none" type="note">
+            There is no guarantee that the group member names returned are
+            valid users on the system, i.e. that 
+            <c>GetMemberNames().Select(m => new UnixUserInfo(m)).ToArray()</c>
+            won't generate an exception.
+          </block>
         </remarks>
         <altmember cref="F:Mono.Unix.Native.Group.gr_mem" />
       </Docs>
@@ -249,7 +255,8 @@
         <remarks>
           This is equivalent to creating a 
           <see cref="T:Mono.Unix.UnixUserInfo" /> instance over each name
-          returned by <see cref="M:Mono.Unix.UnixGroupInfo.GetMemberNames" />.
+          returned by <see cref="M:Mono.Unix.UnixGroupInfo.GetMemberNames" />,
+          except that invalid user names will not be returned.
         </remarks>
         <altmember cref="F:Mono.Unix.Native.Group.gr_mem" />
       </Docs>
