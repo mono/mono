@@ -14218,7 +14218,7 @@
         <size>34</size>
       </method>
       <method name="Void R(System.Object ByRef)">
-        <size>27</size>
+        <size>28</size>
       </method>
     </type>
   </test>
@@ -16457,7 +16457,7 @@
         <size>39</size>
       </method>
       <method name="Void Foo(Point ByRef)">
-        <size>25</size>
+        <size>31</size>
       </method>
     </type>
   </test>
@@ -20468,7 +20468,7 @@
         <size>8</size>
       </method>
       <method name="Int32 GetInfo(MonoEnumInfo ByRef)">
-        <size>23</size>
+        <size>20</size>
       </method>
       <method name="Int32 Main()">
         <size>32</size>
@@ -21384,10 +21384,10 @@
         <size>9</size>
       </method>
       <method name="Void test5(A ByRef)">
-        <size>10</size>
+        <size>9</size>
       </method>
       <method name="Void test6(B ByRef)">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void test7()">
         <size>28</size>
@@ -28209,7 +28209,7 @@
         <size>7</size>
       </method>
       <method name="Void Func(Int32 ByRef)">
-        <size>13</size>
+        <size>12</size>
       </method>
       <method name="Void Main()">
         <size>10</size>
@@ -32637,7 +32637,7 @@
         <size>7</size>
       </method>
       <method name="Void Foo(A ByRef)">
-        <size>9</size>
+        <size>8</size>
       </method>
       <method name="Void Foo(System.Object ByRef)">
         <size>9</size>
@@ -34126,10 +34126,10 @@
         <size>7</size>
       </method>
       <method name="Void test1(DateTime ByRef)">
-        <size>11</size>
+        <size>10</size>
       </method>
       <method name="Void test2(DateTime ByRef)">
-        <size>14</size>
+        <size>13</size>
       </method>
       <method name="Int32 Main()">
         <size>141</size>
