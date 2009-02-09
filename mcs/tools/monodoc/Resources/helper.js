@@ -1,4 +1,3 @@
-<script type="text/JavaScript">
 function toggle_display (block) {
   var w = document.getElementById (block);
   var t = document.getElementById (block + ":toggle");
@@ -11,4 +10,3 @@ function toggle_display (block) {
   }
 }
 
-</script>

@@ -722,7 +722,9 @@ public class HelpSource {
 		System.Reflection.Assembly assembly = System.Reflection.Assembly.GetCallingAssembly ();
 		Stream str_js = assembly.GetManifestResourceStream ("helper.js");
 		StringBuilder sb = new StringBuilder ((new StreamReader (str_js)).ReadToEnd());
+		output.Write ("<script type=\"text/JavaScript\">\n");
 		output.Write (sb.ToString ());
+		output.Write ("</script>\n");
 		
 		if (js != null) {
 			output.Write ("<script type=\"text/JavaScript\">\n");

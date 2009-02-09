@@ -17,7 +17,6 @@ RESOURCE_FILES = \
 	Resources/mdoc-html-utils.xsl     \
 	Resources/mdoc-sections-css.xsl   \
 	Resources/mdoc-sections.xsl       \
-	Resources/mono-ecma-css.js        \
 	Resources/mono-ecma-css.xsl       \
 	Resources/mono-ecma-impl.xsl      \
 	Resources/mono-ecma.css           \
@@ -54,7 +53,6 @@ LIB_MCS_FLAGS = \
 	/resource:Resources/mdoc-html-utils.xsl,mdoc-html-utils.xsl       \
 	/resource:Resources/mdoc-sections-css.xsl,mdoc-sections-css.xsl   \
 	/resource:Resources/mdoc-sections.xsl,mdoc-sections.xsl           \
-	/resource:Resources/mono-ecma-css.js,mono-ecma-css.js             \
 	/resource:Resources/mono-ecma-css.xsl,mono-ecma-css.xsl           \
 	/resource:Resources/mono-ecma-impl.xsl,mono-ecma-impl.xsl         \
 	/resource:Resources/mono-ecma.css,mono-ecma.css                   \

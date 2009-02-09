@@ -1,3 +1,13 @@
+2009-02-09  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile: Don't include mono-ecma-css.js as a resource.
+	* Monodoc/ecma-provider.cs: Insert helper.js, not mono-ecma-css.js.
+	* Monodoc/provider.cs: Surround the contents of `helper.js' with a
+	  <script/> block so that valid HTMl is generated.
+	* Resources/helper.js: Remove <script/> block, so that `helper.js' is an
+	  actual JavaScript file, not an SGML file w/ JavaScript content.
+	* Resources/mono-ecma-css.js: Remove; use Resources/helper.js instead.
+
 2009-01-05  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile: Fix $(the_lib) dependencies so that monodoc.dll is rebuilt

@@ -565,7 +565,7 @@ public class EcmaHelpSource : HelpSource {
 				return js;
 			if (use_css) {
 				System.Reflection.Assembly assembly = typeof(EcmaHelpSource).Assembly;
-				Stream str_js = assembly.GetManifestResourceStream ("mono-ecma-css.js");
+				Stream str_js = assembly.GetManifestResourceStream ("helper.js");
 				js = (new StreamReader (str_js)).ReadToEnd();
 			} else {
 				js = String.Empty;
