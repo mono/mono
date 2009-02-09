@@ -1,5 +1,7 @@
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_xdebug_init): Fix xdebug support.
+
 	* image-writer.h image-writer.c: New files, extracted from aot-compiler.c.
 
 	* aot-compiler.c: Extract the image writing functionality into a separate
