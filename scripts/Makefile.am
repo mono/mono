@@ -61,6 +61,7 @@ scripts_1_0 = \
 	dtd2xsd$(SCRIPT_SUFFIX)			\
 	dtd2rng$(SCRIPT_SUFFIX)			\
 	installvst$(SCRIPT_SUFFIX)		\
+	genxs$(SCRIPT_SUFFIX)			\
 	macpack$(SCRIPT_SUFFIX)			\
 	mcs$(SCRIPT_SUFFIX)			\
 	mjs$(SCRIPT_SUFFIX)			\
@@ -74,7 +75,6 @@ scripts_1_0 = \
 	setreg$(SCRIPT_SUFFIX)			\
 	signcode$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
-	sqlsharp$(SCRIPT_SUFFIX)		\
 	xsd$(SCRIPT_SUFFIX)
 
 scripts_1_0_umask = \
@@ -99,6 +99,7 @@ scripts_2_0 = \
 	wsdl2$(SCRIPT_SUFFIX)			\
 	xsd2$(SCRIPT_SUFFIX)			\
 	sgen$(SCRIPT_SUFFIX)			\
+	sqlsharp$(SCRIPT_SUFFIX)		\
 	xbuild$(SCRIPT_SUFFIX)
 
 MDOC_SUBCOMMANDS = \
@@ -124,7 +125,6 @@ MDOC_COMPAT = \
 #
 scripts_defaults = 		\
 	al$(SCRIPT_SUFFIX)			\
-	genxs$(SCRIPT_SUFFIX)			\
 	ilasm$(SCRIPT_SUFFIX)			\
 	gacutil$(SCRIPT_SUFFIX)			\
 	mkbundle$(SCRIPT_SUFFIX)		\
@@ -212,7 +212,7 @@ smcs$(SCRIPT_SUFFIX): $(SMCS_IN) Makefile
 	mv $@.tmp $@
 
 mod$(SCRIPT_SUFFIX): mod.in Makefile
-	$(REWRITE2) -e "s,@""exe_name@,mod,g" $(srcdir)/mod.in > $@.tmp
+	$(REWRITE1) -e "s,@""exe_name@,mod,g" $(srcdir)/mod.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_1_0): $(SCRIPT_IN) Makefile
