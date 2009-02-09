@@ -41,6 +41,9 @@ gtest-exmethod-12.cs
 gtest-linq-13.cs
 gtest-variance-1.cs IGNORE
 gtest-variance-2.cs IGNORE
+gtest-variance-3.cs IGNORE
+gtest-variance-4.cs IGNORE
+gtest-variance-5.cs IGNORE
 test-107.cs
 test-117.cs
 test-118.cs
