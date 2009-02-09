@@ -626,6 +626,19 @@ namespace MonoTests.System.Xml
 			yyy.SetAttribute ("id", "xxx");
 		}
 
+		[Test]
+		public void SetAttributeExistingNoInsert () // bug #464394
+		{
+			XmlDocument doc = new XmlDocument ();
+			bool changed = false;
+			doc.LoadXml (@"<MyNode Key='ABC' ClientName='xxx' DateIssued='yyy' />");
+			doc.NodeChanged += delegate {
+				changed = true;
+			};
+			doc.DocumentElement.SetAttribute ("Key", "");
+			Assert (changed);
+		}
+
 		class MyXmlElement : XmlElement
 		{
 			public MyXmlElement (string localName, string ns, XmlDocument doc)

@@ -1,3 +1,9 @@
+2009-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlElementTest.cs: SetAttribute(name,value) should identify value
+	  change for existing node, from new node insertion.
+	  Fixed bug #464394.
+
 2009-02-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : in WriteStartAttribute(), fill namespace in

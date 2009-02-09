@@ -369,9 +369,14 @@ namespace System.Xml
 
 		public virtual void SetAttribute (string name, string value)
 		{
-			XmlAttribute attribute = OwnerDocument.CreateAttribute (name);
-			attribute.Value = value;
-			Attributes.SetNamedItem (attribute);
+			XmlAttribute attr = Attributes [name];
+			if (attr == null) {
+				attr = OwnerDocument.CreateAttribute (name);
+				attr.Value = value;
+				Attributes.SetNamedItem (attr);
+			}
+			else
+				attr.Value = value;
 		}
 
 		public virtual string SetAttribute (string localName, string namespaceURI, string value)
