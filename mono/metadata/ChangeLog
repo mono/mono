@@ -1,3 +1,9 @@
+2009-02-09  Geoff Norton  <gnorton@novell.com>
+
+	* appdomain.h:
+	* security-core-clr.c: Allow enabling core-clr from the embedding
+	API.
+
 2009-02-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: when requesting all the local ips, if there are no
