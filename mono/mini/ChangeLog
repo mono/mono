@@ -1,3 +1,8 @@
+2009-02-10  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-x86.c (mono_arch_context_get_int_reg): Handle all registers
+	individually.  Fixes #473482.
+
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_output_basic_block): Disable AOT for OP_JMP.
