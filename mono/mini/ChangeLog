@@ -1,3 +1,7 @@
+2009-02-09  Geoff Norton  <gnorton@novell.com>
+
+	* mini-s390.c: Fix the signature of emit_sig_cookie.
+
 2009-02-05  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r125887.
