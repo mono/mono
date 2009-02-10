@@ -1,7 +1,11 @@
 2009-02-10  Jeffrey Stedfast  <fejj@novell.com>
 
-	* minizip/unzip.c (unzlocal_DosDateToTmuDate): Fix ambiguous
-	else's.
+	* minizip/zip.c: Fix warnings about old-style paramater type
+	specifications.
+
+	* minizip/unzip.c Fix warnings about old-style paramater type
+	specifications.
+	(unzlocal_DosDateToTmuDate): Fix ambiguous else's.
 	(unzlocal_DosDateToTmuDate): Here too.
 	(unzlocal_CheckCurrentFileCoherencyHeader): And here.
 

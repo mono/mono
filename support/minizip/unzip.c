@@ -259,9 +259,7 @@ local int unzlocal_getLong (pzlib_filefunc_def,filestream,pX)
 
 
 /* My own strcmpi / strcasecmp */
-local int strcmpcasenosensitive_internal (fileName1,fileName2)
-    const char* fileName1;
-    const char* fileName2;
+local int strcmpcasenosensitive_internal (const char *fileName1, const char *fileName2)
 {
     for (;;)
     {
@@ -545,9 +543,7 @@ extern int ZEXPORT unzGetGlobalInfo (file,pglobal_info)
 /*
    Translate date/time from Dos format to tm_unz (readable more easilty)
 */
-local void unzlocal_DosDateToTmuDate (ulDosDate, ptm)
-    uLong ulDosDate;
-    tm_unz* ptm;
+local void unzlocal_DosDateToTmuDate (uLong ulDosDate, tm_unz *ptm)
 {
     uLong uDate;
     uDate = (uLong)(ulDosDate>>16);
@@ -959,13 +955,9 @@ extern int ZEXPORT unzGoToFilePos(file, file_pos)
   store in *piSizeVar the size of extra info in local header
         (filename and size of extra field data)
 */
-local int unzlocal_CheckCurrentFileCoherencyHeader (s,piSizeVar,
-                                                    poffset_local_extrafield,
-                                                    psize_local_extrafield)
-    unz_s* s;
-    uInt* piSizeVar;
-    uLong *poffset_local_extrafield;
-    uInt  *psize_local_extrafield;
+local int unzlocal_CheckCurrentFileCoherencyHeader (unz_s *s, uInt *piSizeVar,
+                                                    uLong *poffset_local_extrafield,
+                                                    uInt *psize_local_extrafield)
 {
     uLong uMagic,uData,uFlags;
     uLong size_filename;
@@ -1540,7 +1532,6 @@ extern int ZEXPORT unzGetGlobalComment (file, szComment, uSizeBuf)
     char *szComment;
     uLong uSizeBuf;
 {
-    int err=UNZ_OK;
     unz_s* s;
     uLong uReadThis ;
     if (file==NULL)

@@ -158,7 +158,7 @@ typedef struct
 #include "crypt.h"
 #endif
 
-local linkedlist_datablock_internal* allocate_new_datablock()
+local linkedlist_datablock_internal* allocate_new_datablock(void)
 {
     linkedlist_datablock_internal* ldi;
     ldi = (linkedlist_datablock_internal*)
@@ -172,8 +172,7 @@ local linkedlist_datablock_internal* allocate_new_datablock()
     return ldi;
 }
 
-local void free_datablock(ldi)
-    linkedlist_datablock_internal* ldi;
+local void free_datablock(linkedlist_datablock_internal *ldi)
 {
     while (ldi!=NULL)
     {
@@ -183,24 +182,19 @@ local void free_datablock(ldi)
     }
 }
 
-local void init_linkedlist(ll)
-    linkedlist_data* ll;
+local void init_linkedlist(linkedlist_data *ll)
 {
     ll->first_block = ll->last_block = NULL;
 }
 
-local void free_linkedlist(ll)
-    linkedlist_data* ll;
+local void free_linkedlist(linkedlist_data *ll)
 {
     free_datablock(ll->first_block);
     ll->first_block = ll->last_block = NULL;
 }
 
 
-local int add_data_in_datablock(ll,buf,len)
-    linkedlist_data* ll;
-    const void* buf;
-    uLong len;
+local int add_data_in_datablock(linkedlist_data *ll, const void *buf, uLong len)
 {
     linkedlist_datablock_internal* ldi;
     const unsigned char* from_copy;
@@ -315,9 +309,7 @@ local void ziplocal_putValue_inmemory (dest, x, nbByte)
 /****************************************************************************/
 
 
-local uLong ziplocal_TmzDateToDosDate(ptm,dosDate)
-    const tm_zip* ptm;
-    uLong dosDate;
+local uLong ziplocal_TmzDateToDosDate(const tm_zip *ptm, uLong dosDate)
 {
     uLong year = (uLong)ptm->tm_year;
     if (year>1980)
@@ -941,8 +933,7 @@ extern int ZEXPORT zipOpenNewFileInZip (file, filename, zipfi,
                                  comment, method, level, 0);
 }
 
-local int zipFlushWriteBuffer(zi)
-  zip_internal* zi;
+local int zipFlushWriteBuffer(zip_internal *zi)
 {
     int err=ZIP_OK;
 
