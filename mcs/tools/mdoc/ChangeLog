@@ -1,3 +1,10 @@
+2009-02-10  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Cleanup: turn static data into
+	  instance data (for future Threading changes, as only static data
+	  will be tracked for thread-safety); use MDocCommand.Message() and
+	  MDocCommand.Error() for message reporting; remove warnings.
+
 2009-01-05  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: Fix $(PROGRAM) dependencies so that mdoc.exe is rebuilt
