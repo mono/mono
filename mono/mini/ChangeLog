@@ -1,5 +1,9 @@
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-arm.c (mono_arch_find_jit_info): Fix aot support.
+
+	* mini-arm.c: Checkin unwind related changes missing from an earlier commit.
+
 	* aot-compiler.c: Fix arm support.
 
 	* image-writer.c: Move the R_ARM constants to image-writer.h. Export a
