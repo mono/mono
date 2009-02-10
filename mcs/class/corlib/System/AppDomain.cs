@@ -966,7 +966,11 @@ namespace System {
 			if (shadowCopyFiles)
 				info.ShadowCopyFiles = "true";
 			else
+#if NET_2_0
 				info.ShadowCopyFiles = "false";
+#else
+				info.ShadowCopyFiles = null;
+#endif
 
 			return info;
 		}
