@@ -1,5 +1,10 @@
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Fix arm support.
+
+	* image-writer.c: Move the R_ARM constants to image-writer.h. Export a
+	img_writer_emit_unset_mode () function.
+
 	* unwind.c (mono_unwind_get_dwarf_data_align): New helper function.
 	(mono_unwind_get_dwarf_pc_reg): Ditto.
 
