@@ -1,3 +1,7 @@
+2009-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Disable AOT for OP_JMP.
+
 2009-02-09  Jeffrey Stedfast  <fejj@novell.com>
 
 	* aot-compiler.c (arch_emit_plt_entry): Fixed to compile.
