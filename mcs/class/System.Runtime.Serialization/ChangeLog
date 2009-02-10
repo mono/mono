@@ -1,3 +1,8 @@
+2009-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Runtime.Serialization.dll.sources: Add
+	  System.Xml/IFragmentCapableXmlDictionaryWriter.cs to the build.
+
 2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Runtime.Serialization_test.dll.soruces :

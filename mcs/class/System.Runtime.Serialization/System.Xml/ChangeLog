@@ -1,3 +1,7 @@
+2009-02-10  Jonathan Pryor  <jpryor@novell.com>
+
+	* IFragmentCapableXmlDictionaryWriter.cs: Added.
+
 2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 			Jb Evain  <jbevain@novell.com>
 

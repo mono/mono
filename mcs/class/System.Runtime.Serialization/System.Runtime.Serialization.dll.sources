@@ -32,6 +32,7 @@ System.Runtime.Serialization/XmlObjectSerializer.cs
 System.Runtime.Serialization/XmlSerializableServices.cs
 System.Runtime.Serialization/XsdDataContractExporter.cs
 System.Runtime.Serialization/XsdDataContractImporter.cs
+System.Xml/IFragmentCapableXmlDictionaryWriter.cs
 System.Xml/IStreamProvider.cs
 System.Xml/IXmlBinaryReaderInitializer.cs
 System.Xml/IXmlBinaryWriterInitializer.cs
