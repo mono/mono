@@ -226,7 +226,7 @@ namespace Mono.CSharp {
 			if (type == Type)
 				return IsDefaultValue;
 
-			return Type == TypeManager.null_type;
+			return this is NullLiteral;
 		}
 
 		public abstract bool IsDefaultValue {

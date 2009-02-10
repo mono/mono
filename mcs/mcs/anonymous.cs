@@ -1010,6 +1010,7 @@ namespace Mono.CSharp {
 			if (am == null)
 				return null;
 
+			// Stop referencing gmcs NullLiteral type
 			if (am.ReturnType == TypeManager.null_type)
 				am.ReturnType = null;
 

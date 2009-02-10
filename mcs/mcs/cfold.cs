@@ -268,7 +268,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (lt == TypeManager.null_type && lt == rt)
+				if (left.IsNull && right.IsNull)
 					return left;
 
 				//

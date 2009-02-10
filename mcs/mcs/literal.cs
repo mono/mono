@@ -28,7 +28,8 @@ namespace Mono.CSharp {
 	//
 	// The null literal
 	//
-	public class NullLiteral : Constant {
+	class NullLiteral : Constant
+	{
 		public NullLiteral (Location loc):
 			base (loc)
 		{
@@ -120,8 +121,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public override bool IsDefaultValue 
-		{
+		public override bool IsDefaultValue {
 			get { return true; }
 		}
 
@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 	//
 	// A null literal in a pointer context
 	//
-	public class NullPointer : NullLiteral {
+	class NullPointer : NullLiteral {
 		public NullPointer (Location loc):
 			base (loc)
 		{
