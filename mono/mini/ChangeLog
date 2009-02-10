@@ -1,5 +1,7 @@
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (fullaotcheck): Make this run the tests.
+
 	* aot-compiler.c: Make the printing of skipped methods runtime configurable.
 
 2009-02-10  Mark Probst  <mark.probst@gmail.com>
