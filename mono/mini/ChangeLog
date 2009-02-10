@@ -1,5 +1,12 @@
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c (mono_unwind_get_dwarf_data_align): New helper function.
+	(mono_unwind_get_dwarf_pc_reg): Ditto.
+
+	* aot-compiler.c (emit_dwarf_abbrev): Another large reorganization.
+	Move almost all platform specific code to a set of arch_ functions, 
+	and document them to ease porting.
+	
 	* aot-compiler.c (mono_xdebug_init): Fix xdebug support.
 
 	* image-writer.h image-writer.c: New files, extracted from aot-compiler.c.
