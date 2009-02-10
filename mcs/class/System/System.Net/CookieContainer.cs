@@ -240,11 +240,11 @@ namespace System.Net
 			StringBuilder result = new StringBuilder ();
 			foreach (Cookie cookie in coll) {
 				result.Append (cookie.ToString ());
-				result.Append (';');
+				result.Append ("; ");
 			}
 
 			if (result.Length > 0)
-				result.Length--; // remove trailing semicolon
+				result.Length -= 2; // remove trailing semicolon and space
 
 			return result.ToString ();
 		}
