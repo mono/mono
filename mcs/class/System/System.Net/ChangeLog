@@ -1,3 +1,8 @@
+2009-02-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CookieContainer.cs: separate cookies with "; " instead of just ';'.
+	Fixes bug #386727.
+
 2009-02-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: lock SetResponseError.
