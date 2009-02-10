@@ -1,3 +1,7 @@
+2009-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Make the printing of skipped methods runtime configurable.
+
 2009-02-10  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-x86.c (mono_arch_context_get_int_reg): Handle all registers
