@@ -1,3 +1,16 @@
+2009-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (encode_method_ref): Encode methods of array types.
+	(can_encode_patch): We can now handle arrays of generic parameters and
+	array methods.
+
+	* aot-runtime.c (decode_method_ref_2): Handle methods of array types.
+
+	* aot-compiler.c aot-runtime.c: Emit the size of specific trampolines into
+	the AOT file to avoid some #ifdefs in aot-runtime.c
+
+	* mini.h: Bump AOT file format version.
+
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (fullaotcheck): Make this run the tests.
