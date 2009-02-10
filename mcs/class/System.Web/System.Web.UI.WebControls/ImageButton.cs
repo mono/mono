@@ -135,7 +135,7 @@ namespace System.Web.UI.WebControls {
 		public virtual string OnClientClick 
 		{
 			get {
-				return ViewState.GetString ("OnClientClick", "");
+				return ViewState.GetString ("OnClientClick", String.Empty);
 			}
 			set {
 				ViewState ["OnClientClick"] = value;
@@ -199,61 +199,78 @@ namespace System.Web.UI.WebControls {
 #endif		
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
-		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
+		{			
+			Page page = Page;
+			if (page != null)
+				page.VerifyRenderingInServerForm (this);
 			
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "image", false);
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+
+			base.AddAttributesToRender (writer);
 #if NET_2_0
 			string onclick = OnClientClick;
-			onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
+			if (!String.IsNullOrEmpty (onclick))
+				onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
+			else
+				onclick = String.Empty;
+			
 			if (Attributes ["onclick"] != null) {
 				onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick + Attributes ["onclick"]);
 				Attributes.Remove ("onclick");
 			}
-
-			if (Page != null) {
+			
+			if (page != null)
 				onclick += GetClientScriptEventReference ();
-			}
-
+			
 			if (onclick.Length > 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
 #else
-			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
-				ClientScriptManager csm = new ClientScriptManager (Page);
+			if (CausesValidation && page != null && page.AreValidatorsUplevel ()) {
+				ClientScriptManager csm = new ClientScriptManager (page);
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, csm.GetClientValidationEvent ());
 				writer.AddAttribute ("language", "javascript");
 			}
 #endif
-			base.AddAttributesToRender (writer);
 		}
 
 #if NET_2_0
 		internal virtual string GetClientScriptEventReference ()
 		{
 			PostBackOptions options = GetPostBackOptions ();
-			return Page.ClientScript.GetPostBackEventReference (options, true);
+			Page page = Page;
+			
+			if (options.PerformValidation || !String.IsNullOrEmpty (options.ActionUrl)) {
+				return page != null ? page.ClientScript.GetPostBackEventReference (options, true) : String.Empty;
+			} else {
+				if (page != null)
+					page.ClientScript.RegisterForEventValidation (options);
+				return String.Empty;
+			}
 		}
 
 		protected virtual PostBackOptions GetPostBackOptions ()
 		{
 			PostBackOptions options = new PostBackOptions (this);
+			Page page = Page;
+			
 			options.ActionUrl = (PostBackUrl.Length > 0 ?
 #if TARGET_J2EE
-				CreateActionUrl (PostBackUrl)
+					     CreateActionUrl (PostBackUrl)
 #else
-				Page.ResolveClientUrl (PostBackUrl) 
+					     (page != null ? page.ResolveClientUrl (PostBackUrl) : null)
 #endif
-				: null);
-			options.ValidationGroup = null;
+					     : null);
+
 			options.Argument = String.Empty;
 			options.ClientSubmit = true;
-			options.RequiresJavaScriptProtocol = false;
-			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			options.RequiresJavaScriptProtocol = true;
+			options.PerformValidation = CausesValidation && page != null && page.AreValidatorsUplevel (ValidationGroup);
 			if (options.PerformValidation)
 				options.ValidationGroup = ValidationGroup;
-
+			else
+				options.ValidationGroup = null;
+			
 			return options;
 		}
 #endif		
@@ -298,7 +315,7 @@ namespace System.Web.UI.WebControls {
 		void RaisePostBackEvent (string eventArgument)
 		{
 #if NET_2_0
-			ValidateEvent (UniqueID, eventArgument);
+			ValidateEvent (UniqueID, String.Empty);
 #endif
 			if (CausesValidation)
 #if NET_2_0

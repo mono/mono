@@ -1,3 +1,15 @@
+2009-02-10  Marek Habersack  <mhabersack@novell.com>
+
+	* ImageButton.cs: AddAttributesToRender renders the onclick
+	attribute only if any of the following is true:
+	  - OnClientClick is not empty
+	  - Validation is enabled for the control
+	  - PostBackUrl is used
+	PostBackOptions now indicate that control requires the javascript
+	protocol for the handler.
+	RaisePostBackEvent passes String.Empty as the argument.
+	Fixes bug #463939
+
 2009-02-09  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceView.cs: ExecuteSelect returns a single-item
