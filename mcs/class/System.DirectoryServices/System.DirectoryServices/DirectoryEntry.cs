@@ -1025,19 +1025,24 @@ namespace System.DirectoryServices
 					LdapAttribute attr=null;
 					if (properties [attribute].Mbit)
 					{
-						if (properties [attribute].Count == 1)
-						{
-							string val = (string) properties [attribute].Value;
-							attr = new LdapAttribute( attribute , val);
+						switch (properties [attribute].Count) {
+							case 0:
+								attr = new LdapAttribute (attribute, new string [0]);
+								modList.Add (new LdapModification (LdapModification.DELETE, attr));
+								break;
+							case 1:
+								string val = (string) properties [attribute].Value;
+								attr = new LdapAttribute (attribute, val);
+								modList.Add (new LdapModification (LdapModification.REPLACE, attr));
+								break;
+							default:
+								object [] vals = (object [])properties [attribute].Value;
+								string [] aStrVals = new string [properties [attribute].Count];
+								Array.Copy (vals, 0, aStrVals, 0, properties [attribute].Count);
+								attr = new LdapAttribute (attribute, aStrVals);
+								modList.Add (new LdapModification (LdapModification.REPLACE, attr));
+								break;
 						}
-						else
-						{
-							object[] vals =(object []) properties [attribute].Value;
-							string[] aStrVals = new string [properties [attribute].Count];
-							Array.Copy (vals,0,aStrVals,0,properties [attribute].Count);
-							attr = new LdapAttribute( attribute , aStrVals);
-						}
-						modList.Add( new LdapModification(LdapModification.REPLACE, attr));
 						properties [attribute].Mbit=false;
 					}
 				}

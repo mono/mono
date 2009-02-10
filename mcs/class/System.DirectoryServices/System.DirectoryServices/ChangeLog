@@ -1,3 +1,14 @@
+2009-02-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	- The PropertyValueCollection class doesn't mark its data as dirty/changed in
+	  - this[int index] setter
+	  - Insert()
+	  - Remove() 
+	  - Value setter
+	The DirectoryEntry class doesn't handle the clearing of an attribute (see
+	CommitEntry())
+	Patch from Juraj Skripsky that fixes bug #416985.
+
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryEntry.cs: Use typeof(LdapModification) instead of

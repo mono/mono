@@ -67,6 +67,7 @@ namespace System.DirectoryServices
 			set  
 			{
 				List[index] = value;
+				_Mbit = true;
 			}
 		}
 
@@ -104,11 +105,13 @@ namespace System.DirectoryServices
 		public void Insert( int index, object value )  
 		{
 			List.Insert( index, value );
+			_Mbit = true;
 		}
 
 		public void Remove( object value )  
 		{
 			List.Remove( value );
+			_Mbit = true;
 		}
 
 		public bool Contains( object value )  
@@ -188,10 +191,14 @@ namespace System.DirectoryServices
 			}
 			set
 			{
+				if (value == null && List.Count == 0)
+					return;
+
 				List.Clear();
 				if (value != null) {
 					Add(value);
 				}
+				_Mbit = true;
 			}
 		}
 
