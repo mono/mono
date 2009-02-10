@@ -1,3 +1,9 @@
+2009-02-09  Jeffrey Stedfast  <fejj@novell.com>
+
+	* supportw.c (SetWindowPos): Fixed compile warnings about
+	printf-style formatters.
+	(SendMessageA): Same.
+
 2009-01-14  Geoff Norton  <gnorton@novell.com>
 
 	* supportw.c: Use unsigned int instead of uint, as its more portable.
