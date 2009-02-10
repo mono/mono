@@ -1,3 +1,15 @@
+2009-02-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_native_func_wrapper): Use get_cache to
+	lazily initialize the native wrapper cache.
+	(mono_marshal_get_native_wrapper): Put aot-ed native wrappers into a separate
+	cache, since they are different from the normal wrappers.
+
+	* image.c (mono_image_init): Initialize native_wrapper_cache lazily as well.
+
+	* metadata-internals.h (struct _MonoImage): Add a new wrapper for
+	AOT compiled native wrappers.
+
 2009-02-09  Geoff Norton  <gnorton@novell.com>
 
 	* appdomain.h:
