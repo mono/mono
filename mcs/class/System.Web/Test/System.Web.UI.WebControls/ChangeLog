@@ -1,3 +1,7 @@
+2009-02-10  Marek Habersack  <mhabersack@novell.com>
+
+	* ImageButtonTest.cs: added test for bug #463939
+
 2009-02-09  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectDataSourceViewTest.cs: added test for bug #471767

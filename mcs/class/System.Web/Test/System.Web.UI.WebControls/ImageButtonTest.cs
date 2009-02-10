@@ -171,6 +171,22 @@ namespace MonoTests.System.Web.UI.WebControls
 				Assert.Fail ("OnClientClick#1");
 		}
 
+		[Test] // Bug #463939
+		public void OnClientClickEmpty ()
+		{
+			PokerImageButton b = new PokerImageButton ();
+			string html = b.Render ();
+			Assert.AreEqual (-1, html.IndexOf ("onclick=\""), "#A1");
+
+			b.OnClientClick = String.Empty;
+			html = b.Render ();
+			Assert.AreEqual (-1, html.IndexOf ("onclick=\""), "#A2");
+
+			b.OnClientClick = null;
+			html = b.Render ();
+			Assert.AreEqual (-1, html.IndexOf ("onclick=\""), "#A3");
+		}
+		
 		[Test]
 		[Category ("NunitWeb")]
 		public void PostBackUrl ()
