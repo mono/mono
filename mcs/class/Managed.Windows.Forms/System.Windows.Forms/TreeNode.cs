@@ -214,8 +214,6 @@ namespace System.Windows.Forms
 			get {
 				if (prop_bag != null)
 					return prop_bag.BackColor;
-				if (TreeView != null)
-					return TreeView.BackColor;
 				return Color.Empty;
 			}
 			set {

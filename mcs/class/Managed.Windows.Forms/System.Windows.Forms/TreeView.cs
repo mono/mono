@@ -1726,12 +1726,19 @@ namespace System.Windows.Forms {
 				return;
 
 			r.Inflate (-1, -1);
+
 			if (Focused && node == highlighted_node) {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), r);
+				// Use the node's BackColor if is not empty, and is not actually the selected one (yet)
+				Color back_color = node != selected_node && node.BackColor != Color.Empty ? node.BackColor :
+					ThemeEngine.Current.ColorHighlight;
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), r);
+
 			} else if (!hide_selection && node == highlighted_node) {
 				dc.FillRectangle (SystemBrushes.Control, r);
 			} else {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (node.BackColor), r);
+				// If selected_node is not the current highlighted one, use the color of the TreeView
+				Color back_color = node == selected_node ? BackColor : node.BackColor;
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (back_color), r);
 			}
 		}
 		 
