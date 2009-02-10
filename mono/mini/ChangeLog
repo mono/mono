@@ -5,6 +5,9 @@
 2009-02-09  Jeffrey Stedfast  <fejj@novell.com>
 
 	* aot-compiler.c (arch_emit_plt_entry): Fixed to compile.
+	(mono_compile_assembly): Hush compile warnings about
+	uninitialized [tmp_]outfile_name variables in the !use_bin_writer
+	code path.
 
 2009-02-10  Zoltan Varga  <vargaz@gmail.com>
 
