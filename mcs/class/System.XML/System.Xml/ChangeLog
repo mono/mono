@@ -1,3 +1,8 @@
+2009-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : similar fix in WriteStartElement() to
+	  previous change. Fixed bug #474091.
+
 2009-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlElementTest.cs: SetAttribute(name,value) should identify value

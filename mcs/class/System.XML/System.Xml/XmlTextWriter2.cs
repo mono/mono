@@ -605,8 +605,14 @@ namespace Mono.Xml
 			if (!namespaces && prefix.Length > 0)
 				throw ArgumentError ("Namespace prefix is disabled in this XmlTextWriter.");
 
-			if (prefix.Length > 0 && namespaceUri == null)
-				throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
+			// If namespace URI is empty, then either prefix
+			// must be empty as well, or there is an
+			// existing namespace mapping for the prefix.
+			if (prefix.Length > 0 && namespaceUri == null) {
+				namespaceUri = nsmanager.LookupNamespace (prefix, false);
+				if (namespaceUri == null || namespaceUri.Length == 0)
+					throw ArgumentError ("Namespace URI must not be null when prefix is not an empty string.");
+			}
 			// Considering the fact that WriteStartAttribute()
 			// automatically changes argument namespaceURI, this
 			// is kind of silly implementation. See bug #77094.
@@ -841,8 +847,9 @@ namespace Mono.Xml
 				if (isNSDecl && namespaceUri != XmlnsNamespace)
 					throw ArgumentError (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
-				// If namespace URI is empty, then prefix
-				// must be empty as well.
+				// If namespace URI is empty, then either prefix
+				// must be empty as well, or there is an
+				// existing namespace mapping for the prefix.
 				if (prefix.Length > 0 && namespaceUri.Length == 0) {
 					namespaceUri = nsmanager.LookupNamespace (prefix, false);
 					if (namespaceUri == null || namespaceUri.Length == 0)
