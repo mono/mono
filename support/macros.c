@@ -9,6 +9,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <glib.h>
+#include "map.h"
 
 int wifexited (int status)
 {

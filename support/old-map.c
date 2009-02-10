@@ -13,6 +13,14 @@
 #include <poll.h>
 #include "mph.h"
 #include "old-map.h"
+
+int map_Mono_Posix_AccessMode (int mode);
+int map_Mono_Posix_FileMode (int mode);
+int map_Mono_Posix_OpenFlags (int flags);
+int map_Mono_Posix_PollEvents (int x);
+int map_Mono_Posix_Signals (int x);
+int map_Mono_Posix_WaitOptions (int wait_options);
+
 int map_Mono_Posix_OpenFlags (int x)
 {
 	int r = 0;
