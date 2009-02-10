@@ -1,3 +1,9 @@
+2009-02-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AppDomain.cs: this fixes the remoting tests.
+	Zoltan found out that there was a domain improperly using shadow
+	copy.
+
 2009-02-04 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DateTime.cs: check for null and empty strings before anything else
