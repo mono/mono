@@ -1,3 +1,12 @@
+2009-02-11  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-generic-sharing.c: mini_method_get_context() just calls
+	mono_method_get_context_general() now.
+
+	* mini.c, mini.h: Moved get_object_generic_inst(),
+	construct_object_context_for_method() and
+	mono_domain_lookup_shared_generic() to metadata/generic-sharing.c.
+
 2009-02-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_if_conversion): Handle the case where the merged 
