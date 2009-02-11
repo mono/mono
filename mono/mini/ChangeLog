@@ -1,3 +1,13 @@
+2009-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of 126604.
+
+	* branch-opts.c (mono_if_conversion): Handle the case where the merged 
+	basic block fell through to its successor bblock without a branch. Fixes
+	#474718.
+
+	* iltests.il.in: Add a test.
+
 2009-02-10  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r126467.
