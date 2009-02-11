@@ -1,5 +1,9 @@
 2009-02-11  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs: Use member cache when looking for foreach members.
+
+2009-02-11  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Don't expose internal initializer types.
 	
 	* statement.cs: Check also explicit conversions for goto case.

@@ -5495,14 +5495,10 @@ namespace Mono.CSharp {
 			//
 			bool FetchMoveNext (Type t)
 			{
-				MemberList move_next_list;
-
-				move_next_list = TypeContainer.FindMembers (
-					t, MemberTypes.Method,
+				MemberInfo[] move_next_list = TypeManager.MemberLookup (null, null, t,
+					MemberTypes.Method,
 					BindingFlags.Public | BindingFlags.Instance,
-					Type.FilterName, "MoveNext");
-				if (move_next_list.Count == 0)
-					return false;
+					"MoveNext", null);
 
 				foreach (MemberInfo m in move_next_list){
 					MethodInfo mi = (MethodInfo) m;
@@ -5537,14 +5533,10 @@ namespace Mono.CSharp {
 			//
 			static MethodInfo FetchMethodDispose (Type t)
 			{
-				MemberList dispose_list;
-
-				dispose_list = TypeContainer.FindMembers (
-					t, MemberTypes.Method,
+				MemberInfo[] dispose_list = TypeManager.MemberLookup (null, null, t,
+					MemberTypes.Method,
 					BindingFlags.Public | BindingFlags.Instance,
-					Type.FilterName, "Dispose");
-				if (dispose_list.Count == 0)
-					return null;
+					"Dispose", null);
 
 				foreach (MemberInfo m in dispose_list){
 					MethodInfo mi = (MethodInfo) m;
