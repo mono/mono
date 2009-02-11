@@ -1,5 +1,11 @@
 2009-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* branch-opts.c (mono_if_conversion): Handle the case where the merged 
+	basic block fell through to its successor bblock without a branch. Fixes
+	#474718.
+
+	* iltests.il.in: Add a test.
+	
 	* aot-compiler.c (encode_method_ref): Encode methods of array types.
 	(can_encode_patch): We can now handle arrays of generic parameters and
 	array methods.
