@@ -42,6 +42,7 @@ namespace Microsoft.Build.Tasks {
 		ITaskItem[]	assemblies;
 		string		appConfigFile;
 		string[]	allowedAssemblyExtensions;
+		string[]	allowedRelatedFileExtensions;
 		string[]	candidateAssemblyFiles;
 		ITaskItem[]	copyLocalFiles;
 		ITaskItem[]	filesWritten;
@@ -135,6 +136,11 @@ namespace Microsoft.Build.Tasks {
 		public string[] AllowedAssemblyExtensions {
 			get { return allowedAssemblyExtensions; }
 			set { allowedAssemblyExtensions = value; }
+		}
+
+		public string[] AllowedRelatedFileExtensions {
+			get { return allowedRelatedFileExtensions; }
+			set { allowedRelatedFileExtensions = value; }
 		}
 		
 		public string[] CandidateAssemblyFiles {

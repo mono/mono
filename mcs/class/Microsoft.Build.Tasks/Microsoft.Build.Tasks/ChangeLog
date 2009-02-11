@@ -1,3 +1,7 @@
+2009-02-11  Leszek Ciesielski <skolima@gmail.com>
+
+	* ResolveAssemblyReference.cs : AllowedRelatedFileExtensions stub
+
 2009-02-02  Ankit Jain  <jankit@novell.com>
 
 	* MSBuild.cs (Execute): Disable incorrect 'rebaseOutputs' behavior.
