@@ -1,3 +1,16 @@
+2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c: Make mono_image_alloc_lock and mono_image_alloc0_lock non static.
+
+	* metadata-internals.h: Export mono_image_alloc_lock and mono_image_alloc0_lock.
+
+	* loader.c (mono_get_method_full): Drop the loader lock while constructing the method
+	and recheck the cache for dups after it.
+
+	* loader.c (mono_get_method_from_token): Use _lock version of mono_image_alloc0.
+
+	Fixes one of the deadlocks found in #473150.
+
 2009-02-11  Bill Holmes  <billholmes54@gmail.com>
 
 	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Accept_internal):
