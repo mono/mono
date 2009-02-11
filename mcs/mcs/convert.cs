@@ -760,7 +760,7 @@ namespace Mono.CSharp {
 			// If `expr_type' implements `target_type' (which is an iface)
 			// see TryImplicitIntConversion
 			//
-			if (target_type.IsInterface && target_type.IsAssignableFrom (expr_type))
+			if (target_type.IsInterface && TypeManager.ImplementsInterface (expr_type, target_type))
 				return true;
 
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
@@ -1228,13 +1228,6 @@ namespace Mono.CSharp {
 			//
 			Constant c = expr as Constant;
 			if (c != null) {
-				//
-				// If `target_type' is an interface and the type of `ic' implements the interface
-				// e.g. target_type is IComparable, IConvertible, IFormattable
-				//
-				if (c.Type == TypeManager.int32_type && target_type.IsInterface && target_type.IsAssignableFrom (c.Type))
-					return new BoxedCast (c, target_type);
-
 				try {
 					c = c.ConvertImplicitly (target_type);
 				} catch {
