@@ -5423,8 +5423,7 @@ namespace Mono.CSharp {
 				//
 
 				if (return_type == TypeManager.ienumerator_type ||
-				    TypeManager.ienumerator_type.IsAssignableFrom (return_type) ||
-				    (!RootContext.StdLib && TypeManager.ImplementsInterface (return_type, TypeManager.ienumerator_type))) {
+					TypeManager.ImplementsInterface (return_type, TypeManager.ienumerator_type)) {
 					//
 					// If it is not an interface, lets try to find the methods ourselves.
 					// For example, if we have:
