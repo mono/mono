@@ -1,3 +1,19 @@
+2009-02-11  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r126631.
+
+	* class.c, class-internals.h: mono_method_get_context_general()
+	combines the functionality of mono_method_get_context() and
+	mini_method_get_context().
+
+	* generic-sharing.c, domain-internals.h:
+	mono_method_construct_object_context() and
+	mono_domain_lookup_shared_generic() moved from mini.
+
+	* icall.c (ves_icall_InternalInvoke): Handle the case where the
+	method doesn't have the correct instantiation because it's shared
+	generic code.  Fixes #473999.
+
 2009-02-11  Bill Holmes  <billholmes54@gmail.com>
 
 	Backport of r126596.
