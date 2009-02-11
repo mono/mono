@@ -1,3 +1,9 @@
+2009-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_method_get_wrapper_data): Handle inflated methods as well.
+
+	* loader.c (mono_loader_lock): Add a comment pointing to the locking document.
+
 2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c: Make mono_image_alloc_lock and mono_image_alloc0_lock non static.
