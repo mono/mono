@@ -1074,6 +1074,8 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			ec.CurrentBranching.CurrentUsageVector.Goto ();
+
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return false;
@@ -1085,21 +1087,18 @@ namespace Mono.CSharp {
 			}
 
 			Type type = ec.Switch.SwitchType;
-			if (!Convert.ImplicitStandardConversionExists (c, type))
-				Report.Warning (469, 2, loc, "The `goto case' value is not implicitly " +
-						"convertible to type `{0}'", TypeManager.CSharpName (type));
-
-			bool fail = false;
-			object val = c.GetValue ();
-			if ((val != null) && (c.Type != type) && (c.Type != TypeManager.object_type))
-				val = TypeManager.ChangeType (val, type, out fail);
-
-			if (fail) {
-				Report.Error (30, loc, "Cannot convert type `{0}' to `{1}'",
-					      c.GetSignatureForError (), TypeManager.CSharpName (type));
+			Constant res = c.TryReduce (ec, type, c.Location);
+			if (res == null) {
+				c.Error_ValueCannotBeConverted (ec, loc, type, true);
 				return false;
 			}
 
+			if (!Convert.ImplicitStandardConversionExists (c, type))
+				Report.Warning (469, 2, loc,
+					"The `goto case' value is not implicitly convertible to type `{0}'",
+					TypeManager.CSharpName (type));
+
+			object val = res.GetValue ();
 			if (val == null)
 				val = SwitchLabel.NullStringCase;
 					
@@ -1111,7 +1110,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ec.CurrentBranching.CurrentUsageVector.Goto ();
 			return true;
 		}
 

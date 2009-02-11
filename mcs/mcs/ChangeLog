@@ -1,5 +1,11 @@
 2009-02-11  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Don't expose internal initializer types.
+	
+	* statement.cs: Check also explicit conversions for goto case.
+
+2009-02-11  Marek Safar  <marek.safar@gmail.com>
+
 	* convert.cs: Removed usage of IsAssignableFrom.
 
 2009-02-10  Marek Safar  <marek.safar@gmail.com>

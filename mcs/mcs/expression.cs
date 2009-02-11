@@ -9346,6 +9346,7 @@ namespace Mono.CSharp {
 	public class CollectionOrObjectInitializers : ExpressionStatement
 	{
 		ArrayList initializers;
+		bool is_collection_initialization;
 		
 		public static readonly CollectionOrObjectInitializers Empty = 
 			new CollectionOrObjectInitializers (new ArrayList (0), Location.Null);
@@ -9364,7 +9365,7 @@ namespace Mono.CSharp {
 
 		public bool IsCollectionInitializer {
 			get {
-				return type == typeof (CollectionOrObjectInitializers);
+				return is_collection_initialization;
 			}
 		}
 
@@ -9394,7 +9395,6 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Invalid)
 				return this;
 
-			bool is_collection_initialization = false;
 			ArrayList element_names = null;
 			for (int i = 0; i < initializers.Count; ++i) {
 				Expression initializer = (Expression) initializers [i];
@@ -9441,15 +9441,12 @@ namespace Mono.CSharp {
 					initializers [i] = e;
 			}
 
+			type = ec.CurrentInitializerVariable.Type;
 			if (is_collection_initialization) {
-				if (TypeManager.HasElementType (ec.CurrentInitializerVariable.Type)) {
+				if (TypeManager.HasElementType (type)) {
 					Report.Error (1925, loc, "Cannot initialize object of type `{0}' with a collection initializer",
-						TypeManager.CSharpName (ec.CurrentInitializerVariable.Type));
+						TypeManager.CSharpName (type));
 				}
-
-				type = typeof (CollectionOrObjectInitializers);
-			} else {
-				type = typeof (ElementInitializer);
 			}
 
 			eclass = ExprClass.Variable;
@@ -9566,15 +9563,15 @@ namespace Mono.CSharp {
 			if (type == null)
 				return null;
 
-			// Empty initializer can be optimized to simple new
-			if (initializers.IsEmpty) {
-				initializers.Resolve (ec);
-				return ReducedExpression.Create (e, this).Resolve (ec);
-			}
-
 			Expression previous = ec.CurrentInitializerVariable;
 			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);
 			initializers.Resolve (ec);
+
+			// Empty initializer can be optimized to simple new
+			if (initializers.IsEmpty) {
+				e = ReducedExpression.Create (e, this).Resolve (ec);
+			}
+			
 			ec.CurrentInitializerVariable = previous;
 			return e;
 		}
