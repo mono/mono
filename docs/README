@@ -1,3 +1,9 @@
+Documentation is now maintained on the mono wiki:
+
+http://www.mono-project.com/Mono:Runtime:Documentation
+
+Older documents or documents which were not yet migrated to the wiki are kept here.
+
 * Scripts to maintain the Mono VM internal API
 
 Layout
