@@ -248,17 +248,19 @@ namespace System.Xml
 
 		public virtual void WriteValue (Guid guid)
 		{
-			throw new NotSupportedException ();
+			WriteString (guid.ToString ());
 		}
 
 		public virtual void WriteValue (TimeSpan duration)
 		{
-			throw new NotSupportedException ();
+			WriteString (XmlConvert.ToString (duration));
 		}
 
 		public virtual void WriteValue (UniqueId id)
 		{
-			throw new NotSupportedException ();
+			if (id == null)
+				throw new ArgumentNullException ("id");
+			WriteString (id.ToString ());
 		}
 
 		public virtual void WriteValue (XmlDictionaryString value)

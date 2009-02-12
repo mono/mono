@@ -1,5 +1,10 @@
 2009-02-12  Jonathan Pryor  <jpryor@novell.com>
 
+	* XmlDictionaryWriterTest.cs: Test WriteValue(Guid),
+	  WriteValue(TimeSpan), WriteValue(UniqueId).
+
+2009-02-12  Jonathan Pryor  <jpryor@novell.com>
+
 	* XmlDictionaryWriterTest.cs: Added; test
 	  XmlDictionaryWriter.WriteElementString().
 

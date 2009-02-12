@@ -87,7 +87,7 @@ namespace System.Xml
 		}
 
 		public bool IsGuid {
-			get { return guid != default (Guid); }
+			get { return id == null; }
 		}
 
 		[MonoTODO]

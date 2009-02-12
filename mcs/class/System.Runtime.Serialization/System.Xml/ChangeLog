@@ -1,5 +1,12 @@
 2009-02-12  Jonathan Pryor  <jpryor@novell.com>
 
+	* XmlDictionaryWriter.cs: Implement WriteValue(Guid),
+	  WriteValue(TimeSpan), WriteValue(UniqueId).
+	* UniqueId.cs: Fix UniqueId.IsGuid, as `new UniqueId(new Guid())` was
+	  previously being detected as a string value, not a Guid value.
+
+2009-02-12  Jonathan Pryor  <jpryor@novell.com>
+
 	* XmlDictionaryWriter.cs (WriteStartElement): Add parameter checking
 	  and default arguments to avoid NullReferenceExceptions.
 

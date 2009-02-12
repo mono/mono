@@ -241,5 +241,41 @@ namespace MonoTests.System.Xml
 					"<ns:foo xmlns:ns=\"urn:bar\">data</ns:foo><ns:foo xmlns:ns=\"urn:bar\" />", 
 					contents.ToString ());
 		}
+
+		[Test]
+		public void WriteValue_Guid ()
+		{
+			writer.WriteValue (new Guid ());
+			writer.Flush ();
+
+			Assert.AreEqual (new Guid().ToString (), contents.ToString ());
+		}
+
+		[Test]
+		public void WriteValue_TimeSpan ()
+		{
+			writer.WriteValue (new TimeSpan ());
+			writer.Flush ();
+
+			Assert.AreEqual (XmlConvert.ToString (new TimeSpan()), contents.ToString ());
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void WriteValue_UniqueId_IdNull ()
+		{
+			UniqueId value = null;
+			writer.WriteValue (value);
+		}
+
+		[Test]
+		public void WriteValue_UniqueId ()
+		{
+			writer.WriteValue (new UniqueId (new Guid ()));
+			writer.WriteValue (new UniqueId ("string"));
+			writer.Flush ();
+
+			Assert.AreEqual ("urn:uuid:" + new Guid ().ToString () + "string",
+					contents.ToString ());
+		}
 	}
 }
