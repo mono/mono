@@ -1,6 +1,30 @@
-2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	This patch is the first of a series to remove explicit reference of MonoImage::mempool
+	This patch is the third of a series to remove explicit reference of MonoImage::mempool
+	and use mono_image_alloc set of functions instead. This time we finish with marshal.c
+	and generics-sharing.c.
+
+	* generics-sharing.c (set_other_info_templates): Take a MonoImage instead of a MonoMemPool
+	as first argument. Note that this function remains broken as it doesn't perform locking around the
+	mempool allocation.
+
+	* generics-sharing.c (rgctx_template_set_other_slot): Pass the image and not the mempool.
+
+	* image.c: Add g_slist_append_image.
+
+	* metadata.c (mono_metadata_field_info_with_mempool): Remove the mempool argument and use
+	the supplied image for allocation. Move code into mono_metadata_field_info_full.
+
+	* metadata.c (mono_metadata_parse_marshal_spec_full): Take a MonoImage instead of a MonoMemPool.
+	Fix all related code to do the same.
+
+	* marshal.c (mono_marshal_load_type_info): Pass the image instead of the mempool.
+
+	* metadata-internals.h: Fix the signatures.
+
+2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	This patch is the second of a series to remove explicit reference of MonoImage::mempool
 	and use mono_image_alloc set of functions instead. This time we rework mono_metadata_type_dup
 	and similar to work using MonoImage.
 
