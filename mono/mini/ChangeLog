@@ -1,3 +1,8 @@
+2009-02-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_emit_method_call_full): Use mono_metadata_signature_dup_mempool
+	instead of mono_metadata_signature_dup_full.
+
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* ssa.c (fold_ins): Use MONO_IS_JUMP_TABLE () and MONO_JUMP_TABLE_FROM_INS ()

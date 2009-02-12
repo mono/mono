@@ -1,6 +1,40 @@
 2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	This patch is the first of a series to remove explicit reference of MonoImage::mempool
+	and use mono_image_alloc set of functions instead. This time we rework mono_metadata_type_dup
+	and similar to work using MonoImage.
+
+	* class.c (mono_mempool_dup): Rename to mono_image_memdup and take a MonoImage instead of a
+	MonoMemPool.
+
+	* class.c (mono_dup_array_type): Take a MonoImage instead of a MonoMemPool as first argument.
+
+	* class.c (mono_metadata_signature_deep_dup): Same.
+
+	* class.c (inflate_generic_type): Same.
+
+	* class.c (mono_class_inflate_generic_type_with_mempool): Same.
+
+	* metadata.c (mono_metadata_signature_dup_full): Same.
+
+	* metadata.c: Add mono_metadata_signature_dup_mempool and extract common functionality from 
+	mono_metadata_signature_dup_full.
+
+	* metadata.c (mono_metadata_type_dup): Same.
+
+	* marshal.c: Pass the image to calls to mono_metadata_type_dup.
+
+	* reflection.c: Same.
+
+	* generic-sharing.c: Pass the image to calls to mono_class_inflate_generic_type_with_mempool.
+
+	* metadata-internals.h: Fix the signatures.
+
+	* class-internals.h: Same.
+
+2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	This patch is the first of a series to remove explicit reference of MonoImage::mempool
 	and use mono_image_alloc set of functions instead. 
 
 	* class.c (mono_class_inflate_generic_type_with_mempool_no_copy):
