@@ -89,7 +89,7 @@ namespace Cairo {
                         NativeMethods.cairo_pattern_reference (pattern);
                 }
 
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 		}

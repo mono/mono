@@ -51,13 +51,13 @@ namespace Cairo
 		~FontFace ()
 		{
 			// Since Cairo is not thread safe, we can not unref the
-			// font_face here, the programmer must do this with IDisposable.Dispose
+			// font_face here, the programmer must do this with Dispose
 
 			Console.Error.WriteLine ("Programmer forgot to call Dispose on the FontFace");
 			Dispose (false);
 		}
 
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 		}

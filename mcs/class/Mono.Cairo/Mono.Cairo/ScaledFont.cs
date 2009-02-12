@@ -91,7 +91,7 @@ namespace Cairo {
 			get { return NativeMethods.cairo_scaled_font_status (handle); }
 		}
 
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);

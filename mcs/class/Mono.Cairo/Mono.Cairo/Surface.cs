@@ -139,7 +139,7 @@ namespace Cairo {
 			NativeMethods.cairo_paint (gr.Handle);
 		}
 
-		void IDisposable.Dispose ()
+		public void Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);

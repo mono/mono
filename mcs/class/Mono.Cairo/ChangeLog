@@ -1,3 +1,11 @@
+2009-02-12 Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* Mono.Cairo/ScaledFont.cs: Fixes Dispose signature
+	* Mono.Cairo/FontFace.cs: Fixes Dispose signature
+	* Mono.Cairo/Surface.cs: Fixes Dispose signature
+	* Mono.Cairo/Path.cs: Fixes Dispose signature
+	* Mono.Cairo/Pattern.cs: Fixes Dispose signature
+
 2009-02-07 Jordi Mas i Hernandez <jordimash@gmail.com>
 
 	* Mono.Cairo/NativeMethods.cs: class should be internal not public
