@@ -1,5 +1,10 @@
 2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* image.c (mono_image_alloc, mono_image_alloc0, mono_image_strdup): Guard mempool
+	allocation with the image lock.
+
+2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	This patch is the last of a series to remove explicit reference of MonoImage::mempool
 	and use mono_image_alloc set of functions instead. This time we finish with reflection.c
 
