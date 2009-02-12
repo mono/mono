@@ -1,3 +1,8 @@
+2009-02-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_build_imt_thunk): Fix size calculation after
+	the fail_tramp changes. Hopefully fixes #475132.
+
 2009-02-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_emit_method_call_full): Use mono_metadata_signature_dup_mempool
