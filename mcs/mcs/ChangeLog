@@ -1,3 +1,7 @@
+2009-02-12  Marek Safar  <marek.safar@gmail.com>
+
+	* attribute.cs: Compare only ref/out array modifiers. 
+
 2009-02-11  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs: Use member cache when looking for foreach members.

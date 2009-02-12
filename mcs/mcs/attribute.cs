@@ -1575,7 +1575,8 @@ namespace Mono.CSharp {
 				if (aType != bType)
 					return Result.Ok;
 
-				if (pa.FixedParameters [i].ModFlags != pb.FixedParameters [i].ModFlags)
+				const Parameter.Modifier out_ref_mod = (Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
+				if ((pa.FixedParameters[i].ModFlags & out_ref_mod) != (pb.FixedParameters[i].ModFlags & out_ref_mod))
 					result = Result.RefOutArrayError;
 			}
 			return result;
