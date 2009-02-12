@@ -1,3 +1,8 @@
+2009-02-12  Marek Safar  <marek.safar@gmail.com>
+
+	* ControlBuilder.cs, PageParserFilter.cs, CodeConstructType.cs:
+	Add few missing members.
+
 2009-02-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Control.cs: Make IsViewStateEnabled available on 1.0 profile

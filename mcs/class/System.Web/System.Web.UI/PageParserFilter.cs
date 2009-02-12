@@ -86,6 +86,11 @@ namespace System.Web.UI
 		public virtual void PreprocessDirective (string directiveName, IDictionary attributes) {
 			throw new NotImplementedException ();
 		}
+		
+		public virtual bool ProcessCodeConstruct(CodeConstructType codeType, string code)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 #endif
