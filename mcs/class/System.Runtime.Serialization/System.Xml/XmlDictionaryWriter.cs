@@ -235,7 +235,10 @@ namespace System.Xml
 			XmlDictionaryString localName,
 			XmlDictionaryString namespaceUri)
 		{
-			WriteStartElement (prefix, localName.Value, namespaceUri.Value);
+			if (localName == null)
+				throw new ArgumentException ("localName must not be null.", "localName");
+			WriteStartElement (prefix, localName.Value,
+					namespaceUri != null ? namespaceUri.Value : null);
 		}
 
 		public virtual void WriteString (XmlDictionaryString value)

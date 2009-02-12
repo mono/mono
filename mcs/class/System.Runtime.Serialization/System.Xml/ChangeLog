@@ -1,3 +1,8 @@
+2009-02-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* XmlDictionaryWriter.cs (WriteStartElement): Add parameter checking
+	  and default arguments to avoid NullReferenceExceptions.
+
 2009-02-11  Jonathan Pryor  <jpryor@novell.com>
 
 	* XmlDictionaryString.cs: Add constructor argument checking.

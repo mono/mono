@@ -1,3 +1,8 @@
+2009-02-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* XmlDictionaryWriterTest.cs: Added; test
+	  XmlDictionaryWriter.WriteElementString().
+
 2009-02-11  Jonathan Pryor  <jpryor@novell.com>
 
 	* XmlDictionaryStringTest.cs: Added; tests for XmlDictionaryString.
