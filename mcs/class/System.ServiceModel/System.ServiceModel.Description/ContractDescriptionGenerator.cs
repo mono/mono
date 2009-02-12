@@ -277,8 +277,10 @@ namespace System.ServiceModel.Description
 				md.ProtectionLevel = mca.ProtectionLevel;
 
 			MessageBodyDescription mb = md.Body;
-			mb.WrapperName = mca.WrapperName ?? messageType.Name;
-			mb.WrapperNamespace = mca.WrapperNamespace ?? defaultNamespace;
+			if (mca.IsWrapped) {
+				mb.WrapperName = mca.WrapperName ?? messageType.Name;
+				mb.WrapperNamespace = mca.WrapperNamespace ?? defaultNamespace;
+			}
 
 			int index = 0;
 			foreach (MemberInfo bmi in messageType.GetMembers (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
