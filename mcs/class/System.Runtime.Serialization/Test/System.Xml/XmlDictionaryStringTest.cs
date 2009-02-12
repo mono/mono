@@ -1,10 +1,10 @@
 //
-// XmlDictionaryString.cs
+// XmlDictionaryStringTest.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//   Jonathan Pryor <jpryor@novell.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,56 +25,38 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
-using System.Collections;
+using System.Xml;
+using NUnit.Framework;
 
-namespace System.Xml
+namespace MonoTests.System.Xml
 {
-	public class XmlDictionaryString
+	[TestFixture]
+	public class XmlDictionaryStringTest
 	{
-		static XmlDictionaryString empty = new XmlDictionaryString (
-			XmlDictionary.EmptyDictionary.Instance,
-			String.Empty, 0);
-
-		public static XmlDictionaryString Empty {
-			get { return empty; }
-		}
-
-		readonly IXmlDictionary dict;
-		readonly string value;
-		readonly int key;
-
-		public XmlDictionaryString (IXmlDictionary dictionary,
-			string value, int key)
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_DictionaryNull ()
 		{
-			if (dictionary == null)
-				throw new ArgumentNullException ("dictionary");
-			if (value == null)
-				throw new ArgumentNullException ("value");
-			if (key < 0 || key > (int.MaxValue/4))
-				throw new ArgumentOutOfRangeException ("key");
-			this.dict = dictionary;
-			this.value = value;
-			this.key = key;
+			new XmlDictionaryString (null, "foo", -1);
 		}
 
-		public IXmlDictionary Dictionary {
-			get { return dict; }
-		}
-
-		public int Key {
-			get { return key; }
-		}
-
-		public string Value {
-			get { return value; }
-		}
-
-		public override string ToString ()
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void Constructor_ValueyNull ()
 		{
-			return value;
+			new XmlDictionaryString (new XmlDictionary (), null, -1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Constructor_KeyNegative ()
+		{
+			new XmlDictionaryString (new XmlDictionary (), "key", -1);
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void Constructor_KeyTooLarge ()
+		{
+			new XmlDictionaryString (new XmlDictionary (), "key", (int.MaxValue/4)+1);
 		}
 	}
 }
-#endif

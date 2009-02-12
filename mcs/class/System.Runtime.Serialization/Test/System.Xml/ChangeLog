@@ -1,3 +1,7 @@
+2009-02-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* XmlDictionaryStringTest.cs: Added; tests for XmlDictionaryString.
+
 2008-04-10  Eyal Alaluf <eyala@mainsoft.com>
 
 	* XmlBinaryDictionaryWriterTest.cs: Tested binary writer WriteXmlnsAttributa

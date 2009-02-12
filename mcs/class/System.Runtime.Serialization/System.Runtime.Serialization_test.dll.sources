@@ -8,6 +8,7 @@ System.Xml/XmlBinaryWriterSessionTest.cs
 System.Xml/XmlDictionaryReaderAbstractTest.cs
 System.Xml/XmlDictionaryReaderQuotasTest.cs
 System.Xml/XmlDictionaryTest.cs
+System.Xml/XmlDictionaryStringTest.cs
 System.Xml/XmlSimpleDictionaryWriterTest.cs
 System.Runtime.Serialization/AttributesTest.cs
 XmlComparer.cs

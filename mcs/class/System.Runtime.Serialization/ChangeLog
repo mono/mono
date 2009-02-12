@@ -1,3 +1,8 @@
+2009-02-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* System.Runtime.Serialization_test.dll.sources: Add
+	  System.Xml/XmlDictionaryStringTest.cs to the test build.
+
 2009-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Runtime.Serialization.dll.sources: Add
