@@ -1,5 +1,27 @@
 2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	This patch is the first of a series to remove explicit reference of MonoImage::mempool
+	and use mono_image_alloc set of functions instead. 
+
+	* class.c (mono_class_inflate_generic_type_with_mempool_no_copy):
+	Rename to mono_class_inflate_generic_type_no_copy and take a MonoImage instead
+	of a MonoMemPool.
+
+	* class.c (mono_class_setup_fields): Adapt to mono_class_inflate_generic_type_no_copy.
+
+	* class.c (g_list_prepend_mempool): Removed.
+
+	* class.c (mono_class_get_nested_types): Use g_list_prepend_image instead of g_list_prepend_mempool.
+
+	* image.c: Add g_list_prepend_image.
+
+	* metadata-internals.h (struct MonoImage): Fix comment. Export g_list_prepend_image as internal.
+
+	* reflection.c (mono_reflection_create_runtime_class): Use g_list_prepend_image instead of g_list_prepend_mempool.
+
+
+2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-internals.h (struct MonoImage): Add lock field. Export mono_image_lock and
 	mono_image_unlock.
 
