@@ -1,5 +1,17 @@
 2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	This patch is the last of a series to remove explicit reference of MonoImage::mempool
+	and use mono_image_alloc set of functions instead. This time we finish with reflection.c
+
+	* object.c: Add mono_string_to_utf8_image.
+
+	* object-internals.h: Export mono_string_to_utf8_image.
+
+	* reflection.c: Rework all explicit references to the the image mempool to go thought
+	the mono_image_alloc set of functions.
+
+2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	This patch is the third of a series to remove explicit reference of MonoImage::mempool
 	and use mono_image_alloc set of functions instead. This time we finish with marshal.c
 	and generics-sharing.c.
