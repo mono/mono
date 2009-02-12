@@ -1,3 +1,8 @@
+2009-02-12  Robert Jordan  <robertj@gmx.net>
+
+	* Exception.cs: Rename remote_stack_trace for MS.NET
+	compatibility. Fixes #425512.
+
 2009-02-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MarshalByRefObject.cs: Implemented MemberwiseClone(bool).
