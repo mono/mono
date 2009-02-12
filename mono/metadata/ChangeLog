@@ -1,5 +1,13 @@
 2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c:
+	* metadata.c:
+	* method-builder.c:
+	* marshal.c:
+	* reflection.c: Don't take the loader lock to alloc memory from the image mempool.
+
+2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c: Remove mono_image_alloc_lock and mono_image_alloc0_lock.
 	Rework the code to use regular mono_image_alloc/0.
 
