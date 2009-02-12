@@ -1,5 +1,10 @@
 2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_reflection_lookup_dynamic_token): This function might be called without
+	the loader lock which is required to guard MonoImage:tokens.
+
+2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c:
 	* metadata.c:
 	* method-builder.c:
