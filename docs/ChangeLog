@@ -1,3 +1,7 @@
+2009-02-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* thread-safety.txt: Document the new image lock.
+
 2008-12-12  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-porting.txt: Added some details about function descriptors

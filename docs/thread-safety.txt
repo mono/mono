@@ -15,7 +15,7 @@ There are three kinds of threads with regards to read-only data:
 
 Most threads are readers.
 
-- synchronization between readers is not neccesary
+- synchronization between readers is not necessary
 - synchronization between the writers is done using locks.
 - synchronization between the readers and the creator is done by not exposing
   the data to readers before it is fully constructed.
@@ -50,7 +50,14 @@ protects the various caches inside MonoImage which are used by these modules.
 
 Each appdomain has a lock which protects the per-domain data structures.
 
-1.3.4 The locking hierarchy
+1.3.4 The image lock
+--------------------
+
+Each MonoImage has a lock which protects the per-image data structures and memory pool. This lock must only
+be held while manipulating such structures and no call to any function besides that should be made. In special,
+no other runtime lock should be acquired while holding an image lock.
+
+1.3.5 The locking hierarchy
 ---------------------------
 
 It is useful to model locks by a locking hierarchy, which is a relation between locks, which is reflexive, transitive,
