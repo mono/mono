@@ -118,8 +118,8 @@ mono_class_check_context_used (MonoClass *class)
  * Guards the two global rgctx (template) hash tables and all rgctx
  * templates.
  *
- * Ordering: The loader lock can be taken while the templates lock is
- * held.
+ * Ordering: Domain locks and the loader lock must not be taken while
+ * the templates lock is held.
  */
 static CRITICAL_SECTION templates_mutex;
 
@@ -159,7 +159,7 @@ get_other_info_templates (MonoRuntimeGenericContextTemplate *template, int type_
 }
 
 /*
- * LOCKING: templates lock
+ * LOCKING: loader lock and templates lock
  */
 static void
 set_other_info_templates (MonoMemPool *mp, MonoRuntimeGenericContextTemplate *template, int type_argc,
@@ -402,7 +402,7 @@ alloc_oti (MonoImage *image)
 #define MONO_RGCTX_SLOT_USED_MARKER	((gpointer)&mono_defaults.object_class->byval_arg)
 
 /*
- * LOCKING: templates lock
+ * LOCKING: loader lock and templates lock
  */
 static void
 rgctx_template_set_other_slot (MonoImage *image, MonoRuntimeGenericContextTemplate *template, int type_argc,
@@ -425,8 +425,6 @@ rgctx_template_set_other_slot (MonoImage *image, MonoRuntimeGenericContextTempla
 	g_assert (slot >= 0);
 	g_assert (data);
 
-	mono_loader_lock ();
-
 	i = 0;
 	while (i <= slot) {
 		if (i > 0)
@@ -435,8 +433,6 @@ rgctx_template_set_other_slot (MonoImage *image, MonoRuntimeGenericContextTempla
 			*oti = alloc_oti (image);
 		++i;
 	}
-
-	mono_loader_unlock ();
 
 	g_assert (!(*oti)->data);
 	(*oti)->data = data;
@@ -646,8 +642,8 @@ mono_class_get_runtime_generic_context_template (MonoClass *class)
 		inst = NULL;
 
 	mono_loader_lock ();
+
 	template = alloc_template (class);
-	mono_loader_unlock ();
 
 	templates_lock ();
 
@@ -706,6 +702,8 @@ mono_class_get_runtime_generic_context_template (MonoClass *class)
 	}
 
 	templates_unlock ();
+
+	mono_loader_unlock ();
 
 	return template;
 }
@@ -842,7 +840,7 @@ instantiate_other_info (MonoDomain *domain, MonoRuntimeGenericContextOtherInfoTe
 }
 
 /*
- * LOCKING: templates lock
+ * LOCKING: loader lock and templates lock
  */
 static void
 fill_in_rgctx_template_slot (MonoClass *class, int type_argc, int index, gpointer data, int info_type)
@@ -877,7 +875,7 @@ fill_in_rgctx_template_slot (MonoClass *class, int type_argc, int index, gpointe
 }
 
 /*
- * LOCKING: templates lock
+ * LOCKING: loader lock and templates lock
  */
 static int
 register_other_info (MonoClass *class, int type_argc, gpointer data, int info_type)
@@ -1020,6 +1018,7 @@ lookup_or_register_other_info (MonoClass *class, int type_argc, gpointer data, i
 	/* We haven't found the info, so check if the list is still
 	   the same. */
 
+	mono_loader_lock ();
 	templates_lock ();
 
 	/* We need to fetch oti_list again here because the list could
@@ -1030,19 +1029,23 @@ lookup_or_register_other_info (MonoClass *class, int type_argc, gpointer data, i
 		g_assert (oti);
 
 		if (copy [i].info_type != oti->info_type || copy [i].data != oti->data) {
+			mono_loader_unlock ();
 			g_free (copy);
 			goto restart;
 		}
 	}
 	g_free (copy);
-	if (oti)
+	if (oti) {
+		mono_loader_unlock ();
 		goto restart;
+	}
 
 	/* The list is still the same - success. */
 
 	i = register_other_info (class, type_argc, data, info_type);
 
 	templates_unlock ();
+	mono_loader_unlock ();
 
 	if (!inited) {
 		mono_counters_register ("RGCTX max slot number", MONO_COUNTER_GENERICS | MONO_COUNTER_INT, &max_slot);

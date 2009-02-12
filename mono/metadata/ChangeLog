@@ -1,3 +1,8 @@
+2009-02-12  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Fixed a locking bug: The loader lock has to
+	be taken before the templates lock.  Fixes part of #473150.
+
 2009-02-11  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r126631.
