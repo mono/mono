@@ -1,3 +1,8 @@
+2009-02-12  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c: Don't take the loader lock to guard image
+	mempool allocs.
+
 2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_reflection_lookup_dynamic_token): This function might be called without
