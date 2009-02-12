@@ -1,3 +1,8 @@
+2009-02-12  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug ##475246
+	* expression.cs: More broken flowanalysis hacking needed.
+
 2009-02-03  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs, generic.cs: Emit type parameter constraints for nested
