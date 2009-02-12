@@ -1,3 +1,10 @@
+2009-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* cominterop.c cominterop.h: New files.
+
+	* marshal.c: Move the COM interop related code to cominterop.c. Make a few
+	function/typedefs which are needed by cominterop.c global.
+
 2009-02-12  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Don't take the loader lock to guard image
@@ -5,8 +12,8 @@
 
 2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* reflection.c (mono_reflection_lookup_dynamic_token): This function might be called without
-	the loader lock which is required to guard MonoImage:tokens.
+	* reflection.c (mono_reflection_lookup_dynamic_token): This function might be
+	called without the loader lock which is required to guard MonoImage:tokens.
 
 2009-02-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
