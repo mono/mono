@@ -1,3 +1,10 @@
+2009-02-12  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-x86.c, mini-x86.h: Very simple frame pointer removal.  We
+	remove the frame pointer in leaf methods which don't receive any
+	arguments, don't throw exceptions and don't do dynamic stack
+	allocations.
+
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_build_imt_thunk): Fix size calculation after
