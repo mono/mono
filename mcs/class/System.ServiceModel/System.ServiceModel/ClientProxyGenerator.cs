@@ -184,16 +184,36 @@ namespace System.ServiceModel
 			ParameterInfo p = pinfos [0];
 			CodeArgumentReference asyncResultRef = new CodeArgumentReference (typeof (IAsyncResult), 0, p.Name);
 
+			CodeVariableDeclaration paramsDecl = new CodeVariableDeclaration (typeof (object []), "parameters");
+			b.CurrentBlock.Add (paramsDecl);
+			CodeVariableReference paramsRef = paramsDecl.Variable;
+			b.Assign (paramsRef,
+				  new CodeNewArray (typeof (object), new CodeLiteral (pinfos.Length - 2)));
+			/*
+			for (int i = 0; i < pinfos.Length - 2; i++) {
+				ParameterInfo par = pinfos [i];
+				if (!par.IsOut)
+					b.Assign (
+						new CodeArrayItem (paramsRef, new CodeLiteral (i)),
+						new CodeCast (typeof (object),
+							new CodeArgumentReference (par.ParameterType, par.Position + 1, "arg" + i)));
+			}
+			*/
+			CodeMethodCall argMethodInfo = new CodeMethodCall (typeof (MethodBase), "GetCurrentMethod");
+			CodeLiteral argOperName = new CodeLiteral (name);
+			
 			CodeVariableReference retValue = null;
 			if (mi.ReturnType == typeof (void))
-				b.Call (m.GetThis (), endProcessMethod, asyncResultRef);
+				// FIXME: pass appropriate argument.
+				b.Call (m.GetThis (), endProcessMethod, argMethodInfo, argOperName, paramsRef, asyncResultRef);
 			else {
 				CodeVariableDeclaration retValueDecl = new CodeVariableDeclaration (mi.ReturnType, "retValue");
 				b.CurrentBlock.Add (retValueDecl);
 				retValue = retValueDecl.Variable;
+				// FIXME: pass appropriate argument.
 				b.Assign (retValue,
 					new CodeCast (mi.ReturnType,
-						b.CallFunc (m.GetThis (), endProcessMethod, asyncResultRef)));
+						b.CallFunc (m.GetThis (), endProcessMethod, argMethodInfo, argOperName, paramsRef, asyncResultRef)));
 			}
 
 			if (retValue != null)

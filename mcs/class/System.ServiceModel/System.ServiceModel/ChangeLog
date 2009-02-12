@@ -1,3 +1,9 @@
+2009-02-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientProxyGenerator.cs : so, the proxy generator was buggy to
+	  generate end invoke.
+	* ClientBase.cs : make it simpler and just work.
+
 2009-02-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientBase.cs : oops, should have tried build with net_2_1_raw.

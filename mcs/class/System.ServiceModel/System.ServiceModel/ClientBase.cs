@@ -207,6 +207,7 @@ namespace System.ServiceModel
 			if (delegate_async != null)
 				throw new InvalidOperationException ("Another async operation is in progress");
 
+			/*
 			var bw = new BackgroundWorker ();
 			bw.DoWork += delegate (object o, DoWorkEventArgs e) {
 				delegate_async = beginOperationDelegate (inValues, null, userState);
@@ -218,6 +219,12 @@ namespace System.ServiceModel
 				delegate_async = null;
 			};
 			bw.RunWorkerAsync ();
+			*/
+			AsyncCallback cb = delegate (IAsyncResult ar) {
+				operationCompletedCallback (userState);
+				endOperationDelegate (ar);
+			};
+			beginOperationDelegate (inValues, cb, userState);
 		}
 #endif
 		
