@@ -10,6 +10,11 @@
 
 	* wait.c (WaitForMultipleObjectsEx): Initialize poll variable.
 
+2009-02-05  Miguel De Icaza  <miguel@novell.com>
+
+	* sockets.c (_wapi_setsockopt): SO_REUSEPORT is needed also on
+	MacOS X.  Fixes bug #471292
+
 2009-01-20  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* threads.c: Add wapi_current_thread_desc that produces
