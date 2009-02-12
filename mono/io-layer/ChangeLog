@@ -1,3 +1,9 @@
+2009-02-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* io.c: EXDEV when moving directories fails now without creating a
+	file in the destination.
+	Fixes bug #326983.
+
 2009-02-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* wait.c (WaitForMultipleObjectsEx): Initialize poll variable.
