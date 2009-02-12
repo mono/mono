@@ -1089,7 +1089,7 @@ typedef struct {
 
 typedef struct {
 	MonoObject object;
-	MonoBoolean *visible;
+	MonoBoolean visible;
 } MonoReflectionComVisibleAttribute;
 
 enum {
@@ -1278,4 +1278,6 @@ MonoException *
 mono_runtime_class_init_full (MonoVTable *vtable, gboolean raise_exception) MONO_INTERNAL;
 
 #endif /* __MONO_OBJECT_INTERNALS_H__ */
+
+
 

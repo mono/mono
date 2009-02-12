@@ -1,3 +1,29 @@
+2009-02-12  Bill Holmes  <billholmes54@gmail.com>
+
+	Backport of r126738.  This is a safer variant of the
+	  trunk for the 2.4 branch. The default in emit_marshal_boolean
+	  for this version is I1.
+
+	* object-internals.h : Fixing a typo in the 
+	  MonoReflectionComVisibleAttribute struct.
+
+	* marshal.c (cominterop_com_visible): Check the implemented 
+	  interfaces for ComImport.
+
+	* marshal.c (cominterop_get_native_wrapper_adjusted): For COM calls 
+	  assume that bools should be treated as VARIANTBOOLs.
+
+	* marshal.c (emit_marshal_boolean): Adding cases for 
+	  MARSHAL_ACTION_MANAGED_CONV_IN and MARSHAL_ACTION_MANAGED_CONV_OUT.
+
+	* marshal.c (mono_marshal_emit_managed_wrapper): Adding calls to 
+	  emit_marshal MARSHAL_ACTION_MANAGED_CONV_IN and OUT for bools.
+
+	* marshal.c (cominterop_get_ccw): For COM calls assume that bools
+	  should be treated as VARIANTBOOLs.	
+
+	Code is contributed under MIT/X11 license.
+
 2009-02-12  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c: Fixed a locking bug: The loader lock has to
