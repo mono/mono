@@ -1,5 +1,14 @@
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r126737.
+
+	* mini-s390x.c (mono_arch_output_basic_block): Fix the shift amounts in 
+	OP_LCONV_TO_U2.
+
+	* basic-long.cs: Add a test.
+
+2009-02-12  Zoltan Varga  <vargaz@gmail.com>
+
 	Backport of r126668.
 	
 	* ssa.c (fold_ins): Use MONO_IS_JUMP_TABLE () and MONO_JUMP_TABLE_FROM_INS ()
