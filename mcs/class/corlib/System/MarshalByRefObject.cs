@@ -96,10 +96,12 @@ namespace System
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected MarshalByRefObject MemberwiseClone (bool cloneIdentity)
 		{
-			throw new NotImplementedException ();
+			MarshalByRefObject mbr = (MarshalByRefObject) MemberwiseClone ();
+			if (!cloneIdentity)
+				mbr._identity = null;
+			return mbr;
 		}
 #endif
 	}

@@ -1,3 +1,7 @@
+2009-02-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MarshalByRefObject.cs: Implemented MemberwiseClone(bool).
+
 2009-02-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AppDomain.cs: this fixes the remoting tests.
