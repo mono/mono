@@ -1,3 +1,8 @@
+2009-02-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* ssa.c (fold_ins): Use MONO_IS_JUMP_TABLE () and MONO_JUMP_TABLE_FROM_INS ()
+	for processing jump tables. Fixes #473787.
+
 2009-02-11  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-generic-sharing.c: mini_method_get_context() just calls
