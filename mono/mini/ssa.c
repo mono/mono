@@ -979,9 +979,9 @@ visit_inst (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, GList **cvars, 
 			}
 		}
 
-		if (ins->opcode == OP_JUMP_TABLE) {
+		if (MONO_IS_JUMP_TABLE (ins)) {
 			int i;
-			MonoJumpInfoBBTable *table = ins->inst_p0;
+			MonoJumpInfoBBTable *table = MONO_JUMP_TABLE_FROM_INS (ins);
 
 			if (ins->next->opcode != OP_PADD) {
 				/* The PADD was optimized away */
@@ -1089,9 +1089,9 @@ fold_ins (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *ins, MonoInst **carray
 			}
 		}
 
-		if (ins->opcode == OP_JUMP_TABLE) {
+		if (MONO_IS_JUMP_TABLE (ins)) {
 			int i;
-			MonoJumpInfoBBTable *table = ins->inst_p0;
+			MonoJumpInfoBBTable *table = MONO_JUMP_TABLE_FROM_INS (ins);
 
 			if (ins->next->opcode != OP_PADD) {
 				/* The PADD was optimized away */
