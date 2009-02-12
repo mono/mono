@@ -271,10 +271,12 @@ namespace System.ServiceModel.Channels
 		{
 			if (Version.Envelope != EnvelopeVersion.None) {
 				WriteStartEnvelope (writer);
-				OnWriteStartHeaders (writer);
-				for (int i = 0, count = Headers.Count; i < count; i++)
-					Headers.WriteHeader (i, writer);
-				writer.WriteEndElement ();
+				if (Headers.Count > 0) {
+					OnWriteStartHeaders (writer);
+					for (int i = 0, count = Headers.Count; i < count; i++)
+						Headers.WriteHeader (i, writer);
+					writer.WriteEndElement ();
+				}
 			}
 			WriteBody (writer);
 			if (Version.Envelope != EnvelopeVersion.None)
