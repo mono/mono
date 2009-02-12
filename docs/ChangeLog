@@ -1,5 +1,7 @@
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (EXTRA_DIST): Remove removed files.
+
 	* README: Point to the documentation on the wiki.
 
 	* call-sites.txt: Remove this, its contents is in jit-trampolines.

@@ -14,7 +14,6 @@ ASSEMBLED_DOCS = \
 EXTRA_DIST = \
 	abc-removal.txt		\
 	AgilityPack.dll		\
-	aot-compiler.txt	\
 	api-style.css		\
 	assembly-bundle		\
 	check-exports		\
@@ -25,7 +24,6 @@ EXTRA_DIST = \
 	docs.make		\
 	documented		\
 	embedded-api		\
-	exception-handling.txt	\
 	exceptions		\
 	exdoc			\
 	file-share-modes	\
@@ -36,7 +34,6 @@ EXTRA_DIST = \
 	internal-calls		\
 	ir-desc			\
 	jit-imt			\
-	jit-regalloc		\
 	jit-thoughts		\
 	jit-trampolines		\
 	local-regalloc.txt	\
@@ -63,7 +60,6 @@ EXTRA_DIST = \
 	ssapre.txt		\
 	stack-alignment		\
 	stack-overflow.txt	\
-	thread-safety.txt	\
 	threading		\
 	toc.xml			\
 	TODO			\
