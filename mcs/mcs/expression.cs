@@ -4531,6 +4531,10 @@ namespace Mono.CSharp {
 			if (!DoResolveBase (ec))
 				return null;
 
+			// HACK: Variables are not captured in probing mode
+			if (ec.IsInProbingMode)
+				return this;
+
 			if (HasOutModifier && ec.DoFlowAnalysis &&
 			    (!ec.OmitStructFlowAnalysis || !VariableInfo.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;

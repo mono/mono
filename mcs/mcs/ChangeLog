@@ -1,5 +1,10 @@
 2009-02-12  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug ##475246
+	* expression.cs: More broken flowanalysis hacking needed.
+
+2009-02-12  Marek Safar  <marek.safar@gmail.com>
+
 	* attribute.cs: Compare only ref/out array modifiers. 
 
 2009-02-11  Marek Safar  <marek.safar@gmail.com>
