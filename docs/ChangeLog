@@ -1,3 +1,8 @@
+2009-02-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* memory-management.txt thread-safety.txt aot-compiler.txt jit-regalloc
+	exception-handling.txt: Remove documents which are now on the wiki.
+
 2009-02-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* thread-safety.txt: Improve the docs about image lock.
