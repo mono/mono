@@ -1,3 +1,14 @@
+2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-internals.h (struct MonoImage): Add lock field. Export mono_image_lock and
+	mono_image_unlock.
+
+	* image.c (mono_image_init): Init the lock field.
+ 
+	* image.c (mono_image_init): Cleanup the lock field.
+
+	* image.c: Add mono_image_(un)lock functions.
+
 2009-02-11  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c, class-internals.h: mono_method_get_context_general()
@@ -17,7 +28,7 @@
 	* loader.c (mono_method_get_wrapper_data): Handle inflated methods as well.
 
 	* loader.c (mono_loader_lock): Add a comment pointing to the locking document.
-
+	
 2009-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c: Make mono_image_alloc_lock and mono_image_alloc0_lock non static.
