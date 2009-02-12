@@ -1,5 +1,7 @@
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* call-sites.txt: Remove this, its contents is in jit-trampolines.
+
 	* memory-management.txt thread-safety.txt aot-compiler.txt jit-regalloc
 	exception-handling.txt: Remove documents which are now on the wiki.
 
