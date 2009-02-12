@@ -13327,6 +13327,44 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-53.cs">
+    <type name="TestComp.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="TestComp.Program+MyClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void MyTemplate(TestComp.Program+MyClass+MyDelegate)">
+        <size>1</size>
+      </method>
+      <method name="Void UseATemplate()">
+        <size>36</size>
+      </method>
+      <method name="Void &lt;UseATemplate&gt;m__0(System.Collections.Generic.List`1[System.Int32] ByRef)">
+        <size>16</size>
+      </method>
+    </type>
+    <type name="TestComp.Program+MyClass+MyDelegate">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(System.Collections.Generic.List`1[System.Int32] ByRef)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.Collections.Generic.List`1[System.Int32] ByRef, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(System.Collections.Generic.List`1[System.Int32] ByRef, IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-6.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -39441,6 +39479,27 @@
     <type name="Foo">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-cls-18.cs">
+    <type name="Base">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Test(System.Int32[])">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="CLSClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Test(System.Int32[])">
+        <size>1</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
