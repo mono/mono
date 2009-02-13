@@ -492,7 +492,6 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
-Console.WriteLine ("!!!!! {0} / {1} / {2} / {3}", type, elementType, qname, element_qname);
 
 			var cdca = GetCollectionDataContractAttribute (type);
 			IsReference = cdca != null ? cdca.IsReference : false;
