@@ -1,5 +1,12 @@
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r126717.
+
+	* mini-amd64.c (mono_arch_build_imt_thunk): Fix size calculation after
+	the fail_tramp changes. Hopefully fixes #475132.
+
+2009-02-12  Zoltan Varga  <vargaz@gmail.com>
+
 	Backport of r126737.
 
 	* mini-s390x.c (mono_arch_output_basic_block): Fix the shift amounts in 
