@@ -46,6 +46,7 @@ namespace Mono.XBuild.CommandLine {
 		}
 
 		public Dictionary<TargetInfo, TargetInfo> TargetMap = new Dictionary<TargetInfo, TargetInfo> ();
+		public List<Guid> Dependencies = new List<Guid> ();
 	}
 
 	struct TargetInfo {
@@ -70,9 +71,11 @@ namespace Mono.XBuild.CommandLine {
 	class SolutionParser {
 		static string[] buildTargets = new string[] { "Build", "Clean", "Rebuild", "Publish" };
 
-		static string guidExpression = "{[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}}";
+		static string guidExpression = "{[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}}";
 
-		static Regex projectRegex = new Regex ("Project\\(\"(" + guidExpression + ")\"\\) = \"(.*?)\", \"(.*?)\", \"(" + guidExpression + ")\"");
+		static Regex projectRegex = new Regex ("Project\\(\"(" + guidExpression + ")\"\\) = \"(.*?)\", \"(.*?)\", \"(" + guidExpression + ")\"(.*?)((.*?)ProjectSection\\((.*?)\\) = (.*?)EndProjectSection(.*?))*(.*?)EndProject?", RegexOptions.Singleline);
+		static Regex projectDependenciesRegex = new Regex ("ProjectSection\\((.*?)\\) = \\w*(.*?)EndProjectSection", RegexOptions.Singleline);
+		static Regex projectDependencyRegex = new Regex ("\\s*(" + guidExpression + ") = (" + guidExpression + ")");
 
 		static Regex globalRegex = new Regex ("Global(.*)EndGlobal", RegexOptions.Singleline);
 		static Regex globalSectionRegex = new Regex ("GlobalSection\\((.*?)\\) = \\w*(.*?)EndGlobalSection", RegexOptions.Singleline);
@@ -95,7 +98,26 @@ namespace Mono.XBuild.CommandLine {
 
 			Match m = projectRegex.Match (line);
 			while (m.Success) {
-				projectInfos.Add (new Guid (m.Groups[4].Value), new ProjectInfo (m.Groups[2].Value, m.Groups[3].Value));
+				ProjectInfo projectInfo = new ProjectInfo (m.Groups[2].Value, m.Groups[3].Value);
+				projectInfos.Add (new Guid (m.Groups[4].Value), projectInfo);
+
+				Project currentProject = p.ParentEngine.CreateNewProject ();
+				currentProject.Load (projectInfo.FileName.Replace ('\\', Path.DirectorySeparatorChar));
+
+				foreach (BuildItem bi in currentProject.GetEvaluatedItemsByName ("ProjectReference")) {
+					string projectReferenceGuid = bi.GetEvaluatedMetadata ("Project");
+					projectInfo.Dependencies.Add (new Guid (projectReferenceGuid));
+				}
+
+				Match projectSectionMatch = projectDependenciesRegex.Match (m.Groups[6].Value);
+				while (projectSectionMatch.Success) {
+					Match projectDependencyMatch = projectDependencyRegex.Match (projectSectionMatch.Value);
+					while (projectDependencyMatch.Success) {
+						projectInfo.Dependencies.Add (new Guid (projectDependencyMatch.Groups[1].Value));
+						projectDependencyMatch = projectDependencyMatch.NextMatch ();
+					}
+					projectSectionMatch = projectSectionMatch.NextMatch ();
+				}
 				m = m.NextMatch ();
 			}
 
@@ -114,7 +136,7 @@ namespace Mono.XBuild.CommandLine {
 						ParseSolutionProperties (globalSectionMatch.Groups[2].Value);
 						break;
 					default:
-						Console.WriteLine ("Don't know how to handle {0}", sectionType);
+						ErrorUtilities.ReportError (0, string.Format("Don't know how to handle GlobalSection {0}", sectionType));
 						break;
 				}
 				globalSectionMatch = globalSectionMatch.NextMatch ();
@@ -171,7 +193,12 @@ namespace Mono.XBuild.CommandLine {
 			Match projectConfigurationPlatform = projectConfigurationActiveCfgRegex.Match (section);
 			while (projectConfigurationPlatform.Success) {
 				Guid guid = new Guid (projectConfigurationPlatform.Groups[1].Value);
-				ProjectInfo projectInfo = projectInfos[guid];
+				ProjectInfo projectInfo;
+				if (!projectInfos.TryGetValue (guid, out projectInfo)) {
+					ErrorUtilities.ReportError (0, string.Format("Failed to find project {0}", guid));
+					projectConfigurationPlatform = projectConfigurationPlatform.NextMatch ();
+					continue;
+				}
 				string solConf = projectConfigurationPlatform.Groups[2].Value;
 				string solPlat = projectConfigurationPlatform.Groups[3].Value;
 				string projConf = projectConfigurationPlatform.Groups[4].Value;
@@ -247,13 +274,31 @@ namespace Mono.XBuild.CommandLine {
 				ProjectInfo project = projectInfo.Value;
 				foreach (string buildTarget in buildTargets) {
 					Target target = p.Targets.AddNewTarget (project.Name + (buildTarget == "Build" ? string.Empty : ":" + buildTarget));
-					target.Condition = "'$(CurrentSolutionConfigurationContents)' != ''";
+					target.Condition = "'$(CurrentSolutionConfigurationContents)' != ''"; 
+					string dependencies = string.Empty;
+					foreach (Guid dependency in project.Dependencies) {
+						ProjectInfo dependentInfo;
+						if (projectInfos.TryGetValue (dependency, out dependentInfo)) {
+							if (dependencies.Length > 0)
+								dependencies += ";";
+							dependencies += dependentInfo.Name;
+							if (buildTarget != "Build")
+								dependencies += ":" + buildTarget;
+						}
+					}
+					if (dependencies != string.Empty)
+						target.DependsOnTargets = dependencies;
+
 					foreach (TargetInfo targetInfo in solutionTargets) {
 						BuildTask task = null;
-						TargetInfo projectTargetInfo = project.TargetMap[targetInfo];
+						TargetInfo projectTargetInfo;
+						if (!project.TargetMap.TryGetValue (targetInfo, out projectTargetInfo)) {
+							ErrorUtilities.ReportError (0, string.Format ("Failed to find targets {0}|{1} for project {2}", targetInfo.Configuration, targetInfo.Platform, project.Name));
+						}
 						if (projectTargetInfo.Build) {
 							task = target.AddNewTask ("MSBuild");
 							task.SetParameterValue ("Projects", project.FileName);
+							
 							if (buildTarget != "Build")
 								task.SetParameterValue ("Targets", buildTarget);
 							task.SetParameterValue ("Properties", string.Format ("Configuration={0}; Platform={1}; BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)", projectTargetInfo.Configuration, projectTargetInfo.Platform));

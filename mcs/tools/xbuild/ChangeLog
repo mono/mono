@@ -1,5 +1,12 @@
 2009-02-13  Jonathan Chambers  <joncham@gmail.com>
 
+	* SolutionParser.cs: Make Guid Regex case insensitive.
+	Handle project dependencies. The solution has explicit
+	dependencies, but we have to open projects for implicit
+	dependencies (via ProjectReferences).
+
+2009-02-13  Jonathan Chambers  <joncham@gmail.com>
+
 	* Main.cs: Add support for .sln files.
 	* SolutionParser.cs: Class for generating project file
 	from solution file.
