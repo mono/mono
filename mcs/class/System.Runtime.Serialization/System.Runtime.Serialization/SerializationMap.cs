@@ -563,7 +563,11 @@ namespace System.Runtime.Serialization
             if (RuntimeType.IsArray)
                 instance = new ArrayList ();
             else
+#if NET_2_1 // FIXME: is it fine?
+                instance = Activator.CreateInstance (RuntimeType);
+#else
                 instance = Activator.CreateInstance (RuntimeType, true);
+#endif
             int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
             while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
                 object elem = deserializer.Deserialize (element_type, reader);

@@ -140,6 +140,7 @@ Console.WriteLine ("Found reference: " + label);
 					throw new SerializationException (String.Format ("Value type {0} cannot be null.", type));
 			}
 
+			bool isEmpty = reader.IsEmptyElement;
 			reader.ReadStartElement ();
 
 			object res = DeserializeContent (graph_qname, type, reader);
@@ -147,7 +148,7 @@ Console.WriteLine ("Found reference: " + label);
 			reader.MoveToContent ();
 			if (reader.NodeType == XmlNodeType.EndElement)
 				reader.ReadEndElement ();
-			else if (reader.NodeType != XmlNodeType.None)
+			else if (!isEmpty && reader.NodeType != XmlNodeType.None)
 				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.", reader.NodeType, reader.Name, reader.NamespaceURI, type.FullName));
 			return res;
 		}

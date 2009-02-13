@@ -1,5 +1,10 @@
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs : remove use of non-2.1 CreateInstance().
+	* XmlFormatterDeserializer.cs : allow empty element.
+
+2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs, DataContractSerializer.cs,
 	  KnownTypeCollection.cs : now .NET 3.5/SP1 supports non-contract
 	  type serialization.
