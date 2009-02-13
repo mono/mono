@@ -1,3 +1,10 @@
+2009-02-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* Main.cs: Add support for .sln files.
+	* SolutionParser.cs: Class for generating project file
+	from solution file.
+	* xbuild.exe.sources: Added SolutionParser.cs.
+
 2009-02-02  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.CSharp.targets: Add targets to generate resource ids.

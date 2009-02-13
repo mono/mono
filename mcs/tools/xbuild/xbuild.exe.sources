@@ -6,3 +6,4 @@ ErrorUtilities.cs
 LoggerInfo.cs
 Main.cs
 Parameters.cs
+SolutionParser.cs

@@ -35,7 +35,6 @@ using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Mono.XBuild.Framework;
-using Mono.XBuild.Utilities;
 
 namespace Mono.XBuild.CommandLine {
 	public class MainClass {
@@ -103,7 +102,11 @@ namespace Mono.XBuild.CommandLine {
 						project.SchemaFile = parameters.ValidationSchema;
 				}
 
-				project.Load (parameters.ProjectFile);
+				string projectFile = parameters.ProjectFile;
+				if (projectFile.EndsWith (".sln"))
+					projectFile = GenerateSolutionProject (projectFile);
+
+				project.Load (projectFile);
 				
 				result = engine.BuildProject (project, parameters.Targets, null);
 			}
@@ -127,6 +130,17 @@ namespace Mono.XBuild.CommandLine {
 				Environment.Exit (result ? 0 : 1);
 			}
 
+		}
+
+		string GenerateSolutionProject (string solutionFile)
+		{
+			SolutionParser s = new SolutionParser ();
+			Project p = engine.CreateNewProject ();
+			s.ParseSolution (solutionFile, p);
+			string projectFile = solutionFile + ".proj";
+			p.Save (projectFile);
+
+			return projectFile;
 		}
 	}
 }
