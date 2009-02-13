@@ -1,3 +1,7 @@
+2009-02-12  Miguel de Icaza  <miguel@novell.com>
+
+	* generic-sharing.c: Use alloca.h here as well.
+
 2009-02-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_reflection_lookup_dynamic_token): Do the locking properly.
