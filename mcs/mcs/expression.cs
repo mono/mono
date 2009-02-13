@@ -6211,8 +6211,13 @@ namespace Mono.CSharp {
 			}
 			
 			if (array_data != null) {
-				foreach (Expression e in array_data)
+				foreach (Expression e in array_data) {
+					// Don't mutate values optimized away
+					if (e == null)
+						continue;
+
 					e.MutateHoistedGenericType (storey);
+				}
 			}
 		}
 
