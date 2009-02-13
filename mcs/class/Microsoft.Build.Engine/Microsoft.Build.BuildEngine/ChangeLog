@@ -1,3 +1,9 @@
+2009-02-12  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildProperty.cs: Value corresponds to XmlElement.InnerXml
+	no XmlElement.InnerText. This allows properties to be additional 
+	xml elements.
+
 2009-02-01  Ankit Jain  <jankit@novell.com>
 
 	* BuildEngine.cs (BuildProjectFile): Use

@@ -1,3 +1,7 @@
+2009-02-12  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildPropertyTest.cs (TestValueXml): New.
+
 2009-02-01  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestBuild[23]): Check number of task started/finished

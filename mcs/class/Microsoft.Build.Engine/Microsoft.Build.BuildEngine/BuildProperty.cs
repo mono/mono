@@ -74,7 +74,7 @@ namespace Microsoft.Build.BuildEngine {
 			this.propertyType = PropertyType.Normal;
 			this.parentProject = parentProject;
 			this.name = propertyElement.Name;
-			this.value = propertyElement.InnerText;
+			this.value = propertyElement.InnerXml;
 			this.isImported = false;
 		}
 
@@ -166,7 +166,7 @@ namespace Microsoft.Build.BuildEngine {
 			set {
 				this.@value = value;
 				if (FromXml) {
-					propertyElement.InnerText = value;
+					propertyElement.InnerXml = value;
 				} else {
 					finalValue = value;
 				}
