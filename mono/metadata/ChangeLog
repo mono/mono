@@ -1,3 +1,9 @@
+2009-02-12  Miguel de Icaza  <miguel@novell.com>
+
+	* domain.c (app_config_parse): Remove another use of stat that is
+	not necessary as g_file_get_contents already does the presence
+	check. 
+
 2009-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* cominterop.c icall-def.h: Fix the DISABLE_COM build.
