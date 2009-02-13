@@ -12163,6 +12163,19 @@
         <size>56</size>
       </method>
     </type>
+    <type name="Test">
+      <method name="Void ArrayMutate[T](T[])">
+        <size>27</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ArrayMutate&gt;c__AnonStorey9`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__9(Int32)">
+        <size>36</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-anon-25.cs">
     <type name="HS`1[T]">

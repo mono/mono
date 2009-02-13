@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+// Generics mutate tests
+
 class Disposable<T> : IDisposable
 {
 	public void Dispose ()
@@ -110,6 +112,17 @@ class Test
 				return new List<T> () { e };
 			
 			throw new ApplicationException ();
+		};
+	}
+	
+	public void ArrayMutate<T> (T[] array)
+	{
+		int r = 4;
+		Action<int> anonMeth = delegate (int slc) {
+			long[] idx = new long[] { 0, 0 };
+			for (int i = 0; i < r; i++) {
+				idx [0] = i;
+			}
 		};
 	}
 	
