@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 				TypeManager.decimal_constant_attribute_ctor = ctor;
 			}
 
-			Decimal d = ((DecimalConstant) value).Value;
+			Decimal d = (Decimal) value.GetValue ();
 			int [] bits = Decimal.GetBits (d);
 			object [] args = new object [] { 
 				(byte) (bits [3] >> 16),

@@ -5312,6 +5312,8 @@ namespace Mono.CSharp {
 				return new DecimalConstant (0, Location.Null);
 			if (TypeManager.IsEnumType (t))
 				return new EnumConstant (Constantify (TypeManager.GetEnumUnderlyingType (t)), t);
+			if (TypeManager.IsNullableType (t))
+				return Nullable.LiftedNull.Create (t, Location.Null);
 
 			return null;
 		}

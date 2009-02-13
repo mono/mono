@@ -1,6 +1,13 @@
+2009-02-13  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #475354
+	* expression.cs (Constantify): Add nullable types.
+	
+	* const.cs (EmitDecimalConstant): Avoid explicit cast.
+
 2009-02-12  Marek Safar  <marek.safar@gmail.com>
 
-	A fix for bug ##475246
+	A fix for bug #475246
 	* expression.cs: More broken flowanalysis hacking needed.
 
 2009-02-12  Marek Safar  <marek.safar@gmail.com>
