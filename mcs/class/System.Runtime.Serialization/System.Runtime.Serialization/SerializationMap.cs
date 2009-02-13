@@ -480,6 +480,32 @@ namespace System.Runtime.Serialization
 		}
 	}
 
+	internal class DefaultTypeMap : SerializationMap
+	{
+		public DefaultTypeMap (Type type, KnownTypeCollection knownTypes)
+			: base (type, KnownTypeCollection.GetContractQName (type, null, null), knownTypes)
+		{
+			Members.AddRange (GetDefaultMembers ());
+		}
+
+		List<DataMemberInfo> GetDefaultMembers ()
+		{
+			var l = new List<DataMemberInfo> ();
+			foreach (var mi in RuntimeType.GetMembers ()) {
+				Type mt = null;
+				FieldInfo fi = mi as FieldInfo;
+				mt = fi == null ? null : fi.FieldType;
+				PropertyInfo pi = mi as PropertyInfo;
+				if (pi != null && pi.CanRead && pi.CanWrite && pi.GetIndexParameters ().Length == 0)
+					mt = pi.PropertyType;
+				if (mt == null)
+					continue;
+				l.Add (new DataMemberInfo (mi, new DataMemberAttribute (), null, null));
+			}
+			return l;
+		}
+	}
+
 	// FIXME: it still needs to consider ItemName/KeyName/ValueName
 	// (especially Dictionary collection is not likely considered yet.)
 	internal class CollectionContractTypeMap : CollectionTypeMap
@@ -635,6 +661,7 @@ namespace System.Runtime.Serialization
 			return data_members;
 		}
 
+		// Does this make sense? I doubt.
 		public override List<DataMemberInfo> GetMembers ()
 		{
 			return GetMembers (RuntimeType, XmlName, true);

@@ -1,5 +1,11 @@
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs, DataContractSerializer.cs,
+	  KnownTypeCollection.cs : now .NET 3.5/SP1 supports non-contract
+	  type serialization.
+
+2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs, KnownTypeCollection.cs : couple of refactoring
 	  to simplify code base and handle CollectionDataContract namespace.
 

@@ -449,7 +449,7 @@ namespace System.Runtime.Serialization
 			return a == null ? null : GetContractQName (type, a.Name, a.Namespace);
 		}
 
-		QName GetContractQName (Type type, string name, string ns)
+		internal static QName GetContractQName (Type type, string name, string ns)
 		{
 			if (name == null)
 				// FIXME: there could be decent ways to get 
@@ -553,7 +553,8 @@ namespace System.Runtime.Serialization
 				return true;
 			}
 
-			throw new InvalidDataContractException (String.Format ("Type {0} has neither Serializable nor DataContract attributes.", type));
+			RegisterDefaultTypeMap (type);
+			return true;
 		}
 
 		static readonly Type genericIEnumerable = typeof (IEnumerable<>);
@@ -672,6 +673,13 @@ namespace System.Runtime.Serialization
 
 			SharedContractMap ret =
 				new SharedContractMap (type, qname, this);
+			contracts.Add (ret);
+			return ret;
+		}
+
+		DefaultTypeMap RegisterDefaultTypeMap (Type type)
+		{
+			DefaultTypeMap ret = new DefaultTypeMap (type, this);
 			contracts.Add (ret);
 			return ret;
 		}

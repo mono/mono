@@ -320,44 +320,30 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (expected, sw.ToString ());
 		}
 
-		// NonDC
+		// NonDC (behavior changed in 3.5/SP1; not it's not rejected)
 
 		[Test]
-		// NonDC is not a DataContract type.
-		public void SerializeNonDCOnlyCtor ()
-		{
-			DataContractSerializer ser = new DataContractSerializer (typeof (NonDC));
-		}
-
-		[Test]
-		/* old code
-		[ExpectedException (typeof (InvalidDataContractException))]
-		// NonDC is not a DataContract type.
-		*/
-		[Category ("NotWorking")] // behavior has changed in 3.5/SP1
 		public void SerializeNonDC ()
 		{
 			DataContractSerializer ser = new DataContractSerializer (typeof (NonDC));
-			using (XmlWriter w = XmlWriter.Create (TextWriter.Null, settings)) {
+			var sw = new StringWriter ();
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
 				ser.WriteObject (w, new NonDC ());
 			}
+			Assert.AreEqual ("<NonDC xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization'><Whee>whee!</Whee></NonDC>".Replace ('\'', '"'), sw.ToString ());
 		}
 
 		// DCHasNonDC
 
 		[Test]
-		/* old code
-		[ExpectedException (typeof (InvalidDataContractException))]
-		// DCHasNonDC itself is a DataContract type whose field is
-		// marked as DataMember but its type is not DataContract.
-		*/
-		[Category ("NotWorking")] // behavior has changed in 3.5/SP1
 		public void SerializeDCHasNonDC ()
 		{
 			DataContractSerializer ser = new DataContractSerializer (typeof (DCHasNonDC));
-			using (XmlWriter w = XmlWriter.Create (TextWriter.Null, settings)) {
+			var sw = new StringWriter ();
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
 				ser.WriteObject (w, new DCHasNonDC ());
 			}
+			Assert.AreEqual ("<DCHasNonDC xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization'><Hoge><Whee>whee!</Whee></Hoge></DCHasNonDC>".Replace ('\'', '"'), sw.ToString ());
 		}
 
 		// DCHasSerializable
@@ -1240,6 +1226,8 @@ namespace MonoTests.System.Runtime.Serialization
 	public class SimpleSer1
 	{
 		public string Doh = "doh!";
+		[NonSerialized]
+		public string Bah = "bah!";
 	}
 
 	public class Wrapper
