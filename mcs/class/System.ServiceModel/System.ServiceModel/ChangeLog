@@ -1,3 +1,11 @@
+2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory.cs : for default constructor, first try to
+	  retrieve configuration from its contract name.
+	  Diagnose errorneous configuration.
+	* SilverlightClientConfigLoader.cs : basicHttpBinding/binding
+	  element could be defined two or more times.
+
 2009-02-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientProxyGenerator.cs : so, the proxy generator was buggy to

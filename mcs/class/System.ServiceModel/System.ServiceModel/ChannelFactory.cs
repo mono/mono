@@ -75,13 +75,24 @@ namespace System.ServiceModel
 			try {
 				// It should automatically use XmlXapResolver
 				var cfg = new SilverlightClientConfigLoader ().Load (XmlReader.Create ("ServiceReferences.ClientConfig"));
-				var se = cfg.GetServiceEndpointConfiguration (endpointConfig);
+
+				SilverlightClientConfigLoader.ServiceEndpointConfiguration se = null;
+				if (endpointConfig == "*")
+					se = cfg.GetServiceEndpointConfiguration (Endpoint.Contract.Name);
+				if (se == null)
+					se = cfg.GetServiceEndpointConfiguration (endpointConfig);
+
 				if (se.Binding != null && Endpoint.Binding == null)
 					Endpoint.Binding = se.Binding;
+				else // ignore it
+					Console.WriteLine ("WARNING: Configured binding not found in configuration {0}", endpointConfig);
 				if (se.Address != null && Endpoint.Address == null)
 					Endpoint.Address = se.Address;
+				else // ignore it
+					Console.WriteLine ("WARNING: Configured endpoint address not found in configuration {0}", endpointConfig);
 			} catch (Exception) {
 				// ignore it.
+				Console.WriteLine ("WARNING: failed to load endpoint configuration for {0}", endpointConfig);
 			}
 #else
 

@@ -74,11 +74,21 @@ namespace System.ServiceModel
 						reader.ReadStartElement ();
 						for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 							if (reader.NodeType != XmlNodeType.Element ||
-							    reader.LocalName != "basicHttpBinding") {
+							    reader.LocalName != "basicHttpBinding" ||
+							    reader.IsEmptyElement) {
 								reader.Skip ();
 								continue;
 							}
-							ret.Bindings.BasicHttpBinding.Add (ReadBasicHttpBinding (reader));
+							reader.ReadStartElement ();
+							for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+								if (reader.NodeType != XmlNodeType.Element ||
+								    reader.LocalName != "binding") {
+									reader.Skip ();
+									continue;
+								}
+								ret.Bindings.BasicHttpBinding.Add (ReadBasicHttpBinding (reader));
+							}
+							reader.ReadEndElement ();
 						}
 						reader.ReadEndElement ();
 						break;
@@ -109,7 +119,9 @@ namespace System.ServiceModel
 		{
 			string a;
 			var b = new BasicHttpBindingConfiguration ();
-
+			
+			if ((a = reader.GetAttribute ("name")) != null)
+				b.Name = a;
 			if ((a = reader.GetAttribute ("maxBufferPoolSize")) != null)
 				b.MaxBufferPoolSize = XmlConvert.ToInt32 (a);
 			if ((a = reader.GetAttribute ("maxBufferSize")) != null)
@@ -134,7 +146,7 @@ namespace System.ServiceModel
 				}
 				reader.ReadEndElement ();
 			}
-
+			
 			return b;
 		}
 
@@ -151,7 +163,6 @@ namespace System.ServiceModel
 				e.BindingConfiguration = a;
 			if ((a = reader.GetAttribute ("contract")) != null)
 				e.Contract = a;
-
 			reader.Skip ();
 
 			return e;
