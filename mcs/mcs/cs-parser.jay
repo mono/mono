@@ -2154,7 +2154,7 @@ constructor_initializer
 		$$ = new ConstructorThisInitializer ((ArrayList) $5, (Location) $2);
 	  }
 	| COLON error {
-		Report.Error (1018, (Location) $1, "Keyword this or base expected");
+		Report.Error (1018, GetLocation ($1), "Keyword `this' or `base' expected");
 		$$ = null;
 	  }
 	;

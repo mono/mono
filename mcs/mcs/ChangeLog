@@ -1,5 +1,11 @@
 2009-02-13  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #475342
+	* cs-parser.jay: Using 'super' instead of 'base' to call base
+	constructor crashes compiler.
+
+2009-02-13  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #475354
 	* expression.cs (Constantify): Add nullable types.
 	
