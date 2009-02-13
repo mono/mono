@@ -62,9 +62,13 @@ namespace System.Net
 		bool read_eof;
 		bool complete_request_written;
 		long max_buffer_size;
+		int read_timeout;
+		int write_timeout;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
+			read_timeout = request.ReadWriteTimeout;
+			write_timeout = read_timeout;
 			isRead = true;
 			pending = new ManualResetEvent (true);
 			this.request = cnc.Data.request;
@@ -89,6 +93,8 @@ namespace System.Net
 
 		public WebConnectionStream (WebConnection cnc, HttpWebRequest request)
 		{
+			read_timeout = request.ReadWriteTimeout;
+			write_timeout = read_timeout;
 			isRead = false;
 			this.cnc = cnc;
 			this.request = request;
@@ -129,6 +135,36 @@ namespace System.Net
 			get { return true; }
 		}
 #endif
+
+#if NET_2_0
+		public override
+#endif
+		int ReadTimeout {
+			get {
+				return read_timeout;
+			}
+
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value");
+				read_timeout = value;
+			}
+		}
+
+#if NET_2_0
+		public override
+#endif
+		int WriteTimeout {
+			get {
+				return write_timeout;
+			}
+
+			set {
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value");
+				write_timeout = value;
+			}
+		}
 
 		internal bool CompleteRequestWritten {
 			get { return complete_request_written; }
@@ -278,11 +314,10 @@ namespace System.Net
 
 			AsyncCallback cb = new AsyncCallback (ReadCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginRead (buffer, offset, size, cb, null);
-			if (!res.IsCompleted && !res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+			if (!res.IsCompleted && !res.WaitUntilComplete (ReadTimeout, false)) {
 				nextReadCalled = true;
 				cnc.Close (true);
-				throw new WebException ("The operation has timed out.",
-					WebExceptionStatus.Timeout);
+				throw new WebException ("The operation has timed out.", WebExceptionStatus.Timeout);
 			}
 
 			return EndRead (res);
@@ -502,7 +537,7 @@ namespace System.Net
 
 			AsyncCallback cb = new AsyncCallback (WriteCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginWrite (buffer, offset, size, cb, null);
-			if (!res.IsCompleted && !res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+			if (!res.IsCompleted && !res.WaitUntilComplete (WriteTimeout, false)) {
 				nextReadCalled = true;
 				cnc.Close (true);
 				throw new IOException ("Write timed out.");
