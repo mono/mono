@@ -317,6 +317,20 @@ namespace System.Xml
 			WriteString (guid.ToString ());
 		}
 
+		public virtual void WriteValue (IStreamProvider value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			Stream stream = value.GetStream ();
+			byte[] buf = new byte [Math.Min (2048, stream.CanSeek ? stream.Length : 2048)];
+			int read;
+			while ((read = stream.Read (buf, 0, buf.Length)) > 0) {
+				WriteBase64 (buf, 0, read);
+			}
+			value.ReleaseStream (stream);
+		}
+
 		public virtual void WriteValue (TimeSpan duration)
 		{
 			WriteString (XmlConvert.ToString (duration));

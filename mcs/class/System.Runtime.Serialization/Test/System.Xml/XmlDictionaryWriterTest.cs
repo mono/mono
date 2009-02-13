@@ -76,6 +76,9 @@ namespace MonoTests.System.Xml
 
 		public override void WriteBase64 (byte[] buffer, int index, int count)
 		{
+			var e = WriteBase64Event;
+			if (e != null)
+				e (this, new EventArgs ());
 			d.WriteBase64 (buffer, index, count);
 		}
 
@@ -185,7 +188,7 @@ namespace MonoTests.System.Xml
 
 		protected override void WriteTextNode (XmlDictionaryReader reader, bool isAttribute)
 		{
-			var e = TextNode;
+			var e = WriteTextNodeEvent;
 			if (e != null)
 				e (this, new WriteTextNodeEventArgs { Reader = reader, IsAttribute = isAttribute });
 			base.WriteTextNode (reader, isAttribute);
@@ -196,7 +199,34 @@ namespace MonoTests.System.Xml
 			base.WriteTextNode (reader, isAttribute);
 		}
 
-		public event EventHandler<WriteTextNodeEventArgs> TextNode;
+		public event EventHandler<EventArgs> WriteBase64Event;
+		public event EventHandler<WriteTextNodeEventArgs> WriteTextNodeEvent;
+	}
+
+	class ReleaseStreamEventArgs : EventArgs {
+		public Stream Stream;
+	}
+
+	class DummyStreamProvider : IStreamProvider {
+		public Stream Stream;
+
+		public Stream GetStream ()
+		{
+			var e = GetStreamEvent;
+			if (e != null)
+				e (this, new EventArgs ());
+			return Stream;
+		}
+
+		public void ReleaseStream (Stream stream)
+		{
+			var e = ReleaseStreamEvent;
+			if (e != null)
+				e (this, new ReleaseStreamEventArgs { Stream = stream });
+		}
+
+		public event EventHandler<EventArgs> GetStreamEvent;
+		public event EventHandler<ReleaseStreamEventArgs> ReleaseStreamEvent;
 	}
 
 	[TestFixture]
@@ -285,7 +315,7 @@ namespace MonoTests.System.Xml
 			XmlDictionaryReader reader = XmlDictionaryReader.CreateDictionaryReader (
 					XmlReader.Create (new StringReader (xml)));
 			int writeTextNodeCount = 0;
-			writer.TextNode += (o, e) => {
+			writer.WriteTextNodeEvent += (o, e) => {
 				++writeTextNodeCount;
 				writer.WriteString ("[text]");
 			};
@@ -311,7 +341,7 @@ namespace MonoTests.System.Xml
 			string xml = "<outer attr='a'>data<inner attr='b'>more-data</inner>end</outer>";
 			XmlReader reader = XmlReader.Create (new StringReader (xml));
 			int writeTextNodeCount = 0;
-			writer.TextNode += (o, e) => {
+			writer.WriteTextNodeEvent += (o, e) => {
 				++writeTextNodeCount;
 				writer.WriteString ("[text]");
 			};
@@ -370,6 +400,52 @@ namespace MonoTests.System.Xml
 			writer.Flush ();
 
 			Assert.AreEqual (new Guid().ToString (), contents.ToString ());
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void WriteValue_IStreamProvider_ValueNull ()
+		{
+			IStreamProvider value = null;
+			writer.WriteValue (value);
+		}
+
+		[Test]
+		public void WriteValue_IStreamProvider ()
+		{
+			byte[] data = Encoding.UTF8.GetBytes ("Hello, Worlds!!");
+			int getStreamCount = 0;
+			int releaseStreamCount = 0;
+			var provider = new DummyStreamProvider {
+				Stream = new MemoryStream (data)
+			};
+			provider.GetStreamEvent += (o, e) => { ++getStreamCount; };
+			provider.ReleaseStreamEvent += (o, e) => {
+				++releaseStreamCount;
+				Assert.IsTrue (object.ReferenceEquals (provider.Stream, e.Stream));
+			};
+			writer.WriteValue (provider);
+			writer.Flush ();
+			Assert.AreEqual (1, getStreamCount);
+			Assert.AreEqual (1, releaseStreamCount);
+			Assert.AreEqual (data.Length, provider.Stream.Position);
+			Assert.AreEqual (Convert.ToBase64String (data), contents.ToString ());
+
+			provider.Stream.Position = 0;
+			writer.WriteBase64Event += (o, e) => {
+				throw new Exception ("incomplete!");
+			};
+			getStreamCount = 0;
+			releaseStreamCount = 0;
+			Exception thrown = null;
+			try {
+				writer.WriteValue (provider);
+			}
+			catch (Exception e) {
+				thrown = e;
+			}
+			Assert.IsNotNull (thrown);
+			Assert.AreEqual (1, getStreamCount);
+			Assert.AreEqual (0, releaseStreamCount);
 		}
 
 		[Test]
