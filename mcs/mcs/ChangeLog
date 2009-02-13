@@ -1,3 +1,8 @@
+2009-02-13  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #475327
+	* expression.cs (ArrayCreation): Don't mutate values optimized away.
+
 2009-02-12  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug ##475246
