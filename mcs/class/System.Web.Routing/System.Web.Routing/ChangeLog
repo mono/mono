@@ -1,3 +1,11 @@
+2009-02-14  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlPattern.cs: use the defaults collection when matching a path
+	and segments are missing.
+
+	* RouteCollection.cs: GetRouteData must use VirtualPathProvider
+	to check for virtual path existence.
+
 2008-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UrlPattern.cs : fixed possible out-of-range case ("tableName/" in
