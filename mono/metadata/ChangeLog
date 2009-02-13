@@ -8,6 +8,21 @@
 
 2009-02-12  Miguel de Icaza  <miguel@novell.com>
 
+	More Paolo patches from the Wii port:
+	
+	* security.c: Remove ves_icall_System_Environment_get_UserName
+	from here.
+
+	* icall.c: And put ves_icall_System_Environment_get_UserName
+	here. 
+
+	* appdomain.c (mono_set_private_bin_path_from_config): Remove
+	redundant call to stat that was only used to test for the file
+	existence.   Patch from Paolo.
+
+	* gc.c (run_finalize): If COM is disabled, do not link in
+	mono_marshal_free_ccw.
+
 	* generic-sharing.c: Use alloca.h here as well.
 
 2009-02-13 Rodrigo Kumpera  <rkumpera@novell.com>
