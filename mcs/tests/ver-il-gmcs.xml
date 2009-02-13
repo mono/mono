@@ -7947,7 +7947,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>63</size>
+        <size>74</size>
       </method>
     </type>
     <type name="D">
@@ -14487,7 +14487,7 @@
         <size>59</size>
       </method>
       <method name="Void ConstantTest_2()">
-        <size>75</size>
+        <size>62</size>
       </method>
       <method name="Void ConstantTest_3()">
         <size>61</size>

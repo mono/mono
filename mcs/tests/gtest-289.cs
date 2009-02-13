@@ -55,7 +55,11 @@ class Test
 			Console.WriteLine("Optimization failed");
 			return 3;
 		}
-			
+
+		bool b = default (DateTime?) == default (DateTime?);
+		if (!b)
+			return 19;
+		
 		Console.WriteLine ("OK");
 		return 0;
 	}
