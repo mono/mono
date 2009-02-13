@@ -73,7 +73,6 @@ namespace System.Web.UI
 		bool enable_event_validation;
 		bool maintainScrollPositionOnPostBack;
 		int maxPageStateFieldLength = -1;
-		string pageParserFilter = String.Empty;
 		Type previousPageType;
 		string previousPageVirtualPath;
 #endif
@@ -85,15 +84,16 @@ namespace System.Web.UI
 		
 		internal PageParser (string virtualPath, string inputFile, HttpContext context)
 		{
+#if NET_2_0
+			this.VirtualPath = new VirtualPath (virtualPath);
+#endif
+
 			Context = context;
 			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 			InputFile = inputFile;
 			SetBaseType (null);
 			AddApplicationAssembly ();
 			LoadConfigDefaults ();
-#if NET_2_0
-			this.VirtualPath = new VirtualPath (virtualPath);
-#endif
 		}
 
 #if NET_2_0
@@ -104,6 +104,7 @@ namespace System.Web.UI
 		
 		internal PageParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
+			this.VirtualPath = new VirtualPath (virtualPath);
 			Context = context;
 			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 			Reader = reader;
@@ -116,9 +117,6 @@ namespace System.Web.UI
 			SetBaseType (null);
 			AddApplicationAssembly ();
 			LoadConfigDefaults ();
-#if NET_2_0
-			this.VirtualPath = new VirtualPath (virtualPath);
-#endif
 		}
 #endif
 
@@ -142,7 +140,6 @@ namespace System.Web.UI
 				masterPage = null;
 			enable_event_validation = ps.EnableEventValidation;
 			maxPageStateFieldLength = ps.MaxPageStateFieldLength;
-			pageParserFilter = ps.PageParserFilterType;
 			theme = ps.Theme;
 			if (theme.Length == 0)
 				theme = null;
@@ -402,6 +399,10 @@ namespace System.Web.UI
 			Type type = null;
 			
 			if (isMasterType || isPreviousPageType) {
+				PageParserFilter pfilter = PageParserFilter;
+				if (pfilter != null)
+					pfilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+				
 				typeName = GetString (atts, "TypeName", null);
 				virtualPath = GetString (atts, "VirtualPath", null);
 
@@ -592,10 +593,6 @@ namespace System.Web.UI
 
 		internal int MaxPageStateFieldLength {
 			get { return maxPageStateFieldLength; }
-		}
-
-		internal string PageParserFilterType {
-			get { return pageParserFilter; }
 		}
 
 		internal Type PreviousPageType {

@@ -35,61 +35,123 @@ namespace System.Web.UI
 {
 	public abstract class PageParserFilter
 	{
-		protected PageParserFilter () {
-			throw new NotImplementedException ();
-		}
-		public virtual bool AllowCode {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		public virtual int NumberOfControlsAllowed {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		public virtual int NumberOfDirectDependenciesAllowed {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		public virtual int TotalNumberOfDependenciesAllowed {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		protected string VirtualPath {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-		public virtual bool AllowBaseType (
-			Type baseType
-		) {
-			throw new NotImplementedException ();
-		}
-		public virtual bool AllowControl (Type controlType, ControlBuilder builder) {
-			throw new NotImplementedException ();
-		}
-		public virtual bool AllowServerSideInclude (string includeVirtualPath) {
-			throw new NotImplementedException ();
-		}
-		public virtual bool AllowVirtualReference (string referenceVirtualPath, VirtualReferenceType referenceType) {
-			throw new NotImplementedException ();
-		}
-		public virtual CompilationMode GetCompilationMode (CompilationMode current) {
-			throw new NotImplementedException ();
-		}
-		public virtual void ParseComplete (ControlBuilder rootBuilder) {
-			throw new NotImplementedException ();
-		}
-		public virtual void PreprocessDirective (string directiveName, IDictionary attributes) {
-			throw new NotImplementedException ();
+		TemplateParser parser;
+
+		protected PageParserFilter ()
+		{
 		}
 		
-		public virtual bool ProcessCodeConstruct(CodeConstructType codeType, string code)
+		public virtual bool AllowCode {
+			get { return false; }
+		}
+
+		protected int Line {
+			get {
+				if (parser == null)
+					return 0;
+
+				
+			}
+		}
+
+		public virtual int NumberOfControlsAllowed {
+			get { return 0; }
+		}
+		
+		public virtual int NumberOfDirectDependenciesAllowed {
+			get { return 0; }
+		}
+		
+		public virtual int TotalNumberOfDependenciesAllowed {
+			get { return 0; }
+		}
+		
+		protected string VirtualPath {
+			get;
+			private set;
+		}
+
+		protected void AddControl (Type type, IDictionary attributes)
 		{
-			throw new NotImplementedException ();
+			if (parser == null)
+				return;
+
+			parser.AddControl (type, attributes);
+		}
+		
+		public virtual bool AllowBaseType (Type baseType)
+		{
+			return false;
+		}
+		
+		public virtual bool AllowControl (Type controlType, ControlBuilder builder)
+		{
+			return false;
+		}
+		
+		public virtual bool AllowServerSideInclude (string includeVirtualPath)
+		{
+			return false;
+		}
+		
+		public virtual bool AllowVirtualReference (string referenceVirtualPath, VirtualReferenceType referenceType)
+		{
+			return false;
+		}
+		
+		public virtual CompilationMode GetCompilationMode (CompilationMode current)
+		{
+			return current;
+		}
+
+		public virtual Type GetNoCompileUserControlType ()
+		{
+			return null;
+		}
+
+		// LAMEDOC:
+		// http://msdn.microsoft.com/en-us/library/system.web.ui.pageparserfilter.initialize.aspx
+		// claims there's a virtualPath parameter, but there's none. Probably an internal
+		// method is used to wrap a call to this one.
+		protected virtual void Initialize ()
+		{
+		}
+
+		internal void Initialize (VirtualPath virtualPath, TemplateParser parser)
+		{
+			if (virtualPath == null)
+				throw new ArgumentNullException ("virtualPath");
+			
+			this.parser = parser;
+			VirtualPath = virtualPath.Absolute;
+			Initialize ();
+		}
+		
+		public virtual void ParseComplete (ControlBuilder rootBuilder)
+		{
+		}
+		
+		public virtual void PreprocessDirective (string directiveName, IDictionary attributes)
+		{
+		}
+		
+		public virtual bool ProcessCodeConstruct (CodeConstructType codeType, string code)
+		{
+			return false;
+		}
+
+		public virtual bool ProcessDataBindingAttribute (string controlId, string name, string value)
+		{
+			return false;
+		}
+
+		public virtual bool ProcessEventHookup (string controlId, string eventName, string handlerName)
+		{
+			return false;
+		}
+
+		protected void SetPageProperty (string filter, string name, string value)
+		{
 		}
 	}
 }

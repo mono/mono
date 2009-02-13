@@ -1,3 +1,25 @@
+2009-02-13  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: PageParserFilter handling moved to here.
+	PagesConfig must use the current virtual path when retrieving the
+	section, or otherwise we'll miss the lower level web.configs.
+	Added the AddControl method, used by PageParserFilter.
+	Implementing filtering of: parsed directives and the base type, if
+	a page parser filter is present.
+
+	* PageParserFilter.cs: added missing 3.5 members and implemented
+	everything.
+
+	* PageParser.cs: moved PageParserFilter processing to
+	TemplateParser.
+	VirtualPath must be set before anything else.
+	Call page parser filter's directive preprocessing code from
+	AddDirective if a filter is present and a mastertype or
+	previouspagetype directive is parsed.
+
+	* MasterPageParser.cs: when PageParserFilter is present use it to
+	preprocess the MasterType directive.
+
 2009-02-12  Marek Safar  <marek.safar@gmail.com>
 
 	* ControlBuilder.cs, PageParserFilter.cs, CodeConstructType.cs:

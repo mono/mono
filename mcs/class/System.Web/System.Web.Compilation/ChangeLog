@@ -1,3 +1,15 @@
+2009-02-13  Marek Habersack  <mhabersack@novell.com>
+
+	* AspParser.cs: added an event raised when parsing is complete.
+
+	* AspGenerator.cs: added support for PageParserFilter which, if
+	found, is used to control certain aspects of code parsing
+	(accepting/rejecting control types, accepting/rejecting code
+	snippets, parsing completion)
+	Added the AddControl method, used by PageParserFilter when a
+	custom filter wants to inject a control in the current control
+	builder tree.
+
 2009-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesCompiler.cs: implemented a type resolver for
