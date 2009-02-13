@@ -552,8 +552,7 @@ namespace System.Runtime.Serialization
 			throw new InvalidDataContractException (String.Format ("Type {0} has neither Serializable nor DataContract attributes.", type));
 		}
 
-		static readonly Type genericIEnumerable =
-			typeof (IEnumerable<object>).GetGenericTypeDefinition ();
+		static readonly Type genericIEnumerable = typeof (IEnumerable<>);
 
 		internal static Type GetCollectionElementType (Type type)
 		{
@@ -561,16 +560,12 @@ namespace System.Runtime.Serialization
 				return type.GetElementType ();
 
 			Type [] ifaces = type.GetInterfaces ();
-			foreach (Type iface in ifaces) {
-				Type t = iface;
-				Type gt = t.IsGenericType ? 
-					t.GetGenericTypeDefinition () : null;
-				if (gt == genericIEnumerable)
-					return t.GetGenericArguments () [0];
-				foreach (Type i in ifaces)
-					if (i == typeof (IEnumerable))
-						return typeof (object);
-			}
+			foreach (Type i in ifaces)
+				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (genericIEnumerable))
+					return i.GetGenericArguments () [0];
+			foreach (Type i in ifaces)
+				if (i == typeof (IEnumerable))
+					return typeof (object);
 			return null;
 		}
 

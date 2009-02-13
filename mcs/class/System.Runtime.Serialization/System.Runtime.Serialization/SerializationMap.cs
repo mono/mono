@@ -108,6 +108,13 @@ namespace System.Runtime.Serialization
 			Members = new List<DataMemberInfo> ();
 		}
 
+		public CollectionDataContractAttribute GetCollectionDataContractAttribute (Type type)
+		{
+			object [] atts = type.GetCustomAttributes (
+				typeof (CollectionDataContractAttribute), false);
+			return atts.Length == 0 ? null : (CollectionDataContractAttribute) atts [0];
+		}
+
 		public DataMemberAttribute GetDataMemberAttribute (
 			MemberInfo mi)
 		{
@@ -443,7 +450,9 @@ namespace System.Runtime.Serialization
 					GetDataMemberAttribute (pi);
 				if (dma == null)
 					continue;
-				if (!pi.CanRead || !pi.CanWrite)
+				KnownTypes.TryRegister (pi.PropertyType);
+				var map = KnownTypes.FindUserMap (pi.PropertyType);
+				if (!pi.CanRead || (!pi.CanWrite && !(map is CollectionTypeMap)))
 					throw new InvalidDataContractException (String.Format (
 							"DataMember property '{0}' on type '{1}' must have both getter and setter.", pi, pi.DeclaringType));
 				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType));
@@ -483,10 +492,10 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
+Console.WriteLine ("!!!!! {0} / {1} / {2} / {3}", type, elementType, qname, element_qname);
 
-			object [] atts = type.GetCustomAttributes (
-				typeof (CollectionDataContractAttribute), false);
-			IsReference = atts.Length > 0 ? (((CollectionDataContractAttribute) atts [0]).IsReference) : false;
+			var cdca = GetCollectionDataContractAttribute (type);
+			IsReference = cdca != null ? cdca.IsReference : false;
 		}
 
 		public override void SerializeNonReference (object graph,

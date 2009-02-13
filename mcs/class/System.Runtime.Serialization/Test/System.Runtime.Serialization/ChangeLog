@@ -1,3 +1,8 @@
+2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : added couple of test fixes in
+	  collection serialization tests.
+
 2008-11-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : added test for IsReference = true.

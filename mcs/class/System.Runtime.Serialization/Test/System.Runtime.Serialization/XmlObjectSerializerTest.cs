@@ -292,6 +292,8 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		[ExpectedException (typeof (SerializationException))]
+		[Category ("NotWorking")] // behavior changed in 3.5/SP1
 		public void SerializeSimpleXml ()
 		{
 			DataContractSerializer ser =
@@ -328,8 +330,11 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
+		/* old code
 		[ExpectedException (typeof (InvalidDataContractException))]
 		// NonDC is not a DataContract type.
+		*/
+		[Category ("NotWorking")] // behavior has changed in 3.5/SP1
 		public void SerializeNonDC ()
 		{
 			DataContractSerializer ser = new DataContractSerializer (typeof (NonDC));
@@ -341,9 +346,12 @@ namespace MonoTests.System.Runtime.Serialization
 		// DCHasNonDC
 
 		[Test]
+		/* old code
 		[ExpectedException (typeof (InvalidDataContractException))]
 		// DCHasNonDC itself is a DataContract type whose field is
 		// marked as DataMember but its type is not DataContract.
+		*/
+		[Category ("NotWorking")] // behavior has changed in 3.5/SP1
 		public void SerializeDCHasNonDC ()
 		{
 			DataContractSerializer ser = new DataContractSerializer (typeof (DCHasNonDC));
@@ -468,23 +476,36 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (expected, sw.ToString ());
 		}
 
-		// CollectionContainer : Items must have a setter.
 		[Test]
+		/* old code
+		// CollectionContainer : Items must have a setter.
 		[ExpectedException (typeof (InvalidDataContractException))]
 		[Category ("NotWorking")]
+		*/
 		public void SerializeReadOnlyCollectionMember ()
 		{
 			DataContractSerializer ser =
 				new DataContractSerializer (typeof (CollectionContainer));
+
 			StringWriter sw = new StringWriter ();
 			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
 				ser.WriteObject (w, null);
 			}
+			Assert.AreEqual ("<CollectionContainer i:nil='true' xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization' />".Replace ('\'', '"'), sw.ToString (), "#1");
+
+			sw = new StringWriter ();
+			var c = new CollectionContainer ();
+			c.Items.Add ("foo");
+			c.Items.Add ("bar");
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
+				ser.WriteObject (w, c);
+			}
+			Assert.AreEqual ("<CollectionContainer xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization'><Items xmlns:d2p1='http://schemas.microsoft.com/2003/10/Serialization/Arrays'><d2p1:string>foo</d2p1:string><d2p1:string>bar</d2p1:string></Items></CollectionContainer>".Replace ('\'', '"'), sw.ToString (), "#2");
 		}
 
 		// DataCollectionContainer : Items must have a setter.
 		[Test]
-		[ExpectedException (typeof (InvalidDataContractException))]
+		//[ExpectedException (typeof (InvalidDataContractException))]
 		[Category ("NotWorking")]
 		public void SerializeReadOnlyDataCollectionMember ()
 		{
@@ -494,6 +515,16 @@ namespace MonoTests.System.Runtime.Serialization
 			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
 				ser.WriteObject (w, null);
 			}
+			Assert.AreEqual ("<DataCollectionContainer i:nil='true' xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization' />".Replace ('\'', '"'), sw.ToString (), "#1");
+
+			sw = new StringWriter ();
+			var c = new DataCollectionContainer ();
+			c.Items.Add ("foo");
+			c.Items.Add ("bar");
+			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
+				ser.WriteObject (w, c);
+			}
+			Assert.AreEqual ("<DataCollectionContainer xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization'><Items><string>foo</string><string>bar</string></Items></DataCollectionContainer>".Replace ('\'', '"'), sw.ToString (), "#2");
 		}
 
 		[Test]

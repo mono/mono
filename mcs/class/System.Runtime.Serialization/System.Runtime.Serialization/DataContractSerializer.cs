@@ -340,8 +340,6 @@ namespace System.Runtime.Serialization
 			if (graph == null) {
 				writer.WriteStartElement (root_name.Value, root_ns.Value);
 				writer.WriteAttributeString ("i", "nil", XmlSchema.InstanceNamespace, "true");
-				writer.WriteAttributeString ("xmlns", xmlns, root_ns.Value);
-
 				return;
 			}
 

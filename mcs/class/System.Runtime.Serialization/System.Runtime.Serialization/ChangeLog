@@ -1,3 +1,11 @@
+2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializer.cs : remove extra writexmlns.
+	* SerializationMap.cs : allow DataMember of collection contract type
+	  as read-only.
+	* KnownTypeCollection.cs : it was not iterating interfaces to find
+	  IEnumerable<T> correctly.
+
 2009-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : a bit more detailed error message.
