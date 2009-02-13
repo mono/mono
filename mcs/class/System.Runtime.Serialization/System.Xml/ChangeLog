@@ -1,3 +1,11 @@
+2009-02-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* XmlDictionaryWriter.cs: Implement
+	  WriteTextNode(XmlDictionaryReader,bool).  This requires changes to
+	  WriteNode(), as testing had determined that WriteTextNode() is used
+	  instead of WriteString() for Text nodes and attribute values when
+	  called via WriteNode().
+
 2009-02-12  Jonathan Pryor  <jpryor@novell.com>
 
 	* XmlDictionaryWriter.cs: Implement WriteValue(Guid),

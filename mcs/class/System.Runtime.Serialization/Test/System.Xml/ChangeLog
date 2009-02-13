@@ -1,3 +1,8 @@
+2009-02-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* XmlDictionaryWriterTest.cs: Test WriteNode(XmlDictionaryReader),
+	  WriteNode(XmlReader), and WriteTextNode().
+
 2009-02-12  Jonathan Pryor  <jpryor@novell.com>
 
 	* XmlDictionaryWriterTest.cs: Test WriteValue(Guid),

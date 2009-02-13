@@ -30,12 +30,18 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
 
 namespace MonoTests.System.Xml
 {
+	class WriteTextNodeEventArgs : EventArgs {
+		public XmlDictionaryReader  Reader;
+		public bool                 IsAttribute;
+	}
+
 	class DelegatingXmlDictionaryWriter : XmlDictionaryWriter
 	{
 		XmlWriter d;
@@ -44,6 +50,10 @@ namespace MonoTests.System.Xml
 		{
 			d = delegateTo;
 		}
+
+		//
+		// XmlWriter Methods
+		//
 
 		public override WriteState WriteState {
 			get {return d.WriteState;}
@@ -168,12 +178,31 @@ namespace MonoTests.System.Xml
 		{
 			d.WriteWhitespace (ws);
 		}
+
+		//
+		// XmlDictionaryWriter methods
+		//
+
+		protected override void WriteTextNode (XmlDictionaryReader reader, bool isAttribute)
+		{
+			var e = TextNode;
+			if (e != null)
+				e (this, new WriteTextNodeEventArgs { Reader = reader, IsAttribute = isAttribute });
+			base.WriteTextNode (reader, isAttribute);
+		}
+
+		public void TestWriteTextNode (XmlDictionaryReader reader, bool isAttribute)
+		{
+			base.WriteTextNode (reader, isAttribute);
+		}
+
+		public event EventHandler<WriteTextNodeEventArgs> TextNode;
 	}
 
 	[TestFixture]
 	public class XmlDictionaryWriterTest
 	{
-		XmlDictionaryWriter writer;
+		DelegatingXmlDictionaryWriter writer;
 		StringBuilder       contents;
 
 		[SetUp]
@@ -240,6 +269,98 @@ namespace MonoTests.System.Xml
 					"<foo xmlns=\"urn:bar\">data</foo><foo xmlns=\"urn:bar\" />" +
 					"<ns:foo xmlns:ns=\"urn:bar\">data</ns:foo><ns:foo xmlns:ns=\"urn:bar\" />", 
 					contents.ToString ());
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void WriteNode_XmlDictionaryReader_ReaderNull ()
+		{
+			XmlDictionaryReader reader = null;
+			writer.WriteNode (reader, true);
+		}
+
+		[Test]
+		public void WriteNode_XmlDictionaryReader ()
+		{
+			string xml = "<outer attr='a'>data<inner attr='b'>more-data</inner>end</outer>";
+			XmlDictionaryReader reader = XmlDictionaryReader.CreateDictionaryReader (
+					XmlReader.Create (new StringReader (xml)));
+			int writeTextNodeCount = 0;
+			writer.TextNode += (o, e) => {
+				++writeTextNodeCount;
+				writer.WriteString ("[text]");
+			};
+			writer.WriteNode (reader, false);
+			writer.Flush ();
+
+			Assert.AreEqual (5, writeTextNodeCount);
+			Assert.AreEqual (
+					"<outer attr=\"[text]a\">[text]data<inner attr=\"[text]b\">[text]more-data</inner>[text]end</outer>",
+					contents.ToString ());
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void WriteNode_XmlReader_ReaderNull ()
+		{
+			XmlReader reader = null;
+			writer.WriteNode (reader, true);
+		}
+
+		[Test]
+		public void WriteNode_XmlReader ()
+		{
+			string xml = "<outer attr='a'>data<inner attr='b'>more-data</inner>end</outer>";
+			XmlReader reader = XmlReader.Create (new StringReader (xml));
+			int writeTextNodeCount = 0;
+			writer.TextNode += (o, e) => {
+				++writeTextNodeCount;
+				writer.WriteString ("[text]");
+			};
+			writer.WriteNode (reader, false);
+			writer.Flush ();
+
+			Assert.AreEqual (0, writeTextNodeCount);
+			Assert.AreEqual (
+					"<outer attr=\"a\">data<inner attr=\"b\">more-data</inner>end</outer>",
+					contents.ToString ());
+		}
+
+		[Test, ExpectedException (typeof (NullReferenceException))]
+		public void WriteTextNode_ReaderNull ()
+		{
+			writer.TestWriteTextNode (null, false);
+		}
+
+		[Test]
+		public void WriteTextNode ()
+		{
+			string xml = "<foo attr='a'>data</foo>";
+
+			XmlDictionaryReader reader = XmlDictionaryReader.CreateDictionaryReader (
+					XmlReader.Create (new StringReader (xml)));
+			reader.MoveToContent ();
+			reader.MoveToFirstAttribute ();
+			Assert.AreEqual (XmlNodeType.Attribute, reader.NodeType);
+			writer.TestWriteTextNode (reader, true);
+			writer.Flush ();
+			Assert.AreEqual (XmlNodeType.Attribute, reader.NodeType);
+			Assert.AreEqual ("a", contents.ToString ());
+			contents.Length = 0;
+			writer.TestWriteTextNode (reader, false);
+			writer.Flush ();
+			Assert.AreEqual ("a", contents.ToString ());
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType);
+
+			contents.Length = 0;
+			writer.TestWriteTextNode (reader, true);
+			writer.Flush ();
+			Assert.AreEqual ("data", contents.ToString ());
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType);
+
+			contents.Length = 0;
+			writer.TestWriteTextNode (reader, false);
+			writer.Flush ();
+			Assert.AreEqual ("data", contents.ToString ());
+			Assert.AreNotEqual (XmlNodeType.Text, reader.NodeType);
 		}
 
 		[Test]
