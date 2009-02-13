@@ -1,3 +1,7 @@
+2009-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Remove some COM interop code missed previously.
+
 2009-02-12  Miguel de Icaza  <miguel@novell.com>
 
 	* generic-sharing.c: Use alloca.h here as well.
