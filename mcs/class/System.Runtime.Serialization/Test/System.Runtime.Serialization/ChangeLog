@@ -1,5 +1,10 @@
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlObjectSerializerTest.cs : fixed collection contract test and
+	  added some notes.
+
+2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlObjectSerializerTest.cs : added couple of test fixes in
 	  collection serialization tests.
 

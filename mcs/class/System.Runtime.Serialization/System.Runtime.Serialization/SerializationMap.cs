@@ -480,10 +480,27 @@ namespace System.Runtime.Serialization
 		}
 	}
 
+	// FIXME: it still needs to consider ItemName/KeyName/ValueName
+	// (especially Dictionary collection is not likely considered yet.)
+	internal class CollectionContractTypeMap : CollectionTypeMap
+	{
+		public CollectionContractTypeMap (
+			Type type, CollectionDataContractAttribute a, Type elementType,
+			QName qname, KnownTypeCollection knownTypes)
+			: base (type, elementType, qname, knownTypes)
+		{
+			IsReference = a.IsReference;
+		}
+
+		internal override string CurrentNamespace {
+			get { return XmlName.Namespace; }
+		}
+	}
+
 	internal class CollectionTypeMap : SerializationMap
 	{
 		Type element_type;
-		QName element_qname;
+		internal QName element_qname;
 
 		public CollectionTypeMap (
 			Type type, Type elementType,
@@ -492,20 +509,23 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
+		}
 
-			var cdca = GetCollectionDataContractAttribute (type);
-			IsReference = cdca != null ? cdca.IsReference : false;
+		internal virtual string CurrentNamespace {
+			get {
+				string ns = element_qname.Namespace;
+				if (ns == KnownTypeCollection.MSSimpleNamespace)
+					ns = KnownTypeCollection.MSArraysNamespace;
+				return ns;
+			}
 		}
 
 		public override void SerializeNonReference (object graph,
 			XmlFormatterSerializer serializer)
 		{
-			string ns = element_qname.Namespace;
-			if (ns == KnownTypeCollection.MSSimpleNamespace)
-				ns = KnownTypeCollection.MSArraysNamespace;
 
 			foreach (object o in (IEnumerable) graph) {
-				serializer.WriteStartElement (element_qname.Name, XmlName.Namespace, ns);
+				serializer.WriteStartElement (element_qname.Name, XmlName.Namespace, CurrentNamespace);
 				serializer.Serialize (element_type, o);
 				serializer.WriteEndElement ();
 			}

@@ -506,7 +506,6 @@ namespace MonoTests.System.Runtime.Serialization
 		// DataCollectionContainer : Items must have a setter.
 		[Test]
 		//[ExpectedException (typeof (InvalidDataContractException))]
-		[Category ("NotWorking")]
 		public void SerializeReadOnlyDataCollectionMember ()
 		{
 			DataContractSerializer ser =
@@ -524,6 +523,12 @@ namespace MonoTests.System.Runtime.Serialization
 			using (XmlWriter w = XmlWriter.Create (sw, settings)) {
 				ser.WriteObject (w, c);
 			}
+			// LAMESPEC: this is bogus behavior. .NET serializes 
+			// System.String as "string" without overriding its 
+			// element namespace, but then it must be regarded as
+			// in parent's namespace. What if there already is an
+			// element definition for "string" with the same
+			// namespace?
 			Assert.AreEqual ("<DataCollectionContainer xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization'><Items><string>foo</string><string>bar</string></Items></DataCollectionContainer>".Replace ('\'', '"'), sw.ToString (), "#2");
 		}
 

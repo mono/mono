@@ -1,5 +1,10 @@
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs, KnownTypeCollection.cs : couple of refactoring
+	  to simplify code base and handle CollectionDataContract namespace.
+
+2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs : oops, remove debug lines.
 
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
