@@ -45,13 +45,9 @@ namespace System.Web.UI
 			get { return false; }
 		}
 
+		[MonoTODO ("Need to implement support for this in the parser")]
 		protected int Line {
-			get {
-				if (parser == null)
-					return 0;
-
-				
-			}
+			get { return 0; }
 		}
 
 		public virtual int NumberOfControlsAllowed {
