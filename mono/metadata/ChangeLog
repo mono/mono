@@ -1,5 +1,7 @@
 2009-02-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* cominterop.c icall-def.h: Fix the DISABLE_COM build.
+
 	* marshal.c: Move the bstr handling code to cominterop.c.
 
 	* marshal.c: Remove some COM interop code missed previously.
