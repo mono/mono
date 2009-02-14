@@ -1,3 +1,10 @@
+2009-02-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* image.c: Add mono_image_property_(lookup,insert,remove) functions that
+	take the image lock instead of the loader lock.
+
+	* metadata-internals.h: Export new functions.
+
 2009-02-12  Miguel de Icaza  <miguel@novell.com>
 
 	* domain.c (app_config_parse): Remove another use of stat that is
