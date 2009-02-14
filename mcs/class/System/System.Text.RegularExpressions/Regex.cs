@@ -238,7 +238,7 @@ namespace System.Text.RegularExpressions {
 
 		// The new rx engine has blocking bugs like
 		// https://bugzilla.novell.com/show_bug.cgi?id=470827
-		static readonly bool old_rx = true;
+		static readonly bool old_rx = Environment.GetEnvironmentVariable ("MONO_NEW_RX") == null;
 #if FALSE
 #if !NET_2_1
 			Environment.GetEnvironmentVariable ("MONO_OLD_RX") != null;
