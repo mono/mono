@@ -1,5 +1,8 @@
 2009-02-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (find_extra_method_in_amodule): Avoid decoding wrapper names
+	using decode_method_ref ().
+
 	* method-to-ir.c (mini_emit_ldelema_1_ins): If the array index is a long,
 	convert it to an in32. Fixes #475859.
 
