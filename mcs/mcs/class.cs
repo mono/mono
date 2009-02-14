@@ -5879,7 +5879,11 @@ namespace Mono.CSharp {
 				FieldBuilder = Parent.TypeBuilder.DefineField (
 					Name, MemberType, Modifiers.FieldAttr (ModFlags));
 #endif
-				Parent.MemberCache.AddMember (FieldBuilder, this);
+				// Don't cache inaccessible fields
+				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
+					Parent.MemberCache.AddMember (FieldBuilder, this);
+				}
+
 				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
 			catch (ArgumentException) {
@@ -5913,17 +5917,6 @@ namespace Mono.CSharp {
 						GetSignatureForError ());
 				}
 			}
-		}
-
-		public override string GetSignatureForError ()
-		{
-			string s = base.GetSignatureForError ();
-			if ((ModFlags & Modifiers.BACKING_FIELD) == 0)
-				return s;
-
-			// Undecorate name mangling
-			int l = s.LastIndexOf ('>');
-			return s.Substring (0, l).Remove (s.LastIndexOf ('<'), 1);
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -6101,9 +6094,9 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public void Emit (DeclSpace parent)
+		public virtual void Emit (DeclSpace parent)
 		{
-			EmitMethod (parent);
+			method_data.Emit (parent);
 
 #if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
@@ -6121,11 +6114,6 @@ namespace Mono.CSharp {
 			}
 
 			block = null;
-		}
-
-		protected virtual void EmitMethod (DeclSpace parent)
-		{
-			method_data.Emit (parent);
 		}
 
 		public override bool EnableOverloadChecks (MemberCore overload)
@@ -6676,7 +6664,26 @@ namespace Mono.CSharp {
 		}
 	}
 			
-	public class Property : PropertyBase {
+	public class Property : PropertyBase
+	{
+		public sealed class BackingField : Field
+		{
+			readonly Property property;
+
+			public BackingField (Property p)
+				: base (p.Parent, p.type_name,
+				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				new MemberName ("<" + p.GetFullName (p.MemberName) + ">k__BackingField", p.Location), null)
+			{
+				this.property = p;
+			}
+
+			public override string GetSignatureForError ()
+			{
+				return property.GetSignatureForError ();
+			}
+		}
+
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -6733,23 +6740,24 @@ namespace Mono.CSharp {
 		void CreateAutomaticProperty ()
 		{
 			// Create backing field
-			Field field = new Field (
-				Parent, type_name,
-				Modifiers.BACKING_FIELD | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
-				new MemberName ("<" + GetFullName (MemberName) + ">k__BackingField", Location), null);
+			Field field = new BackingField (this);
 			if (!field.Define ())
 				return;
 
 			Parent.PartialContainer.AddField (field);
 
+			FieldExpr fe = new FieldExpr (field.FieldBuilder, Location);
+			if ((field.ModFlags & Modifiers.STATIC) == 0)
+				fe.InstanceExpression = new CompilerGeneratedThis (fe.Type, Location);
+
 			// Create get block
 			Get.Block = new ToplevelBlock (ParametersCompiled.EmptyReadOnlyParameters, Location);
-			Return r = new Return (new SimpleName (field.Name, Location), Location);
+			Return r = new Return (fe, Location);
 			Get.Block.AddStatement (r);
 
 			// Create set block
 			Set.Block = new ToplevelBlock (Set.ParameterInfo, Location);
-			Assign a = new SimpleAssign (new SimpleName (field.Name, Location), new SimpleName ("value", Location));
+			Assign a = new SimpleAssign (fe, new SimpleName ("value", Location));
 			Set.Block.AddStatement (new StatementExpression (a));
 		}
 
@@ -6982,12 +6990,6 @@ namespace Mono.CSharp {
 				base (method, accessor, "add_")
 			{
 			}
-
-			protected override MethodInfo DelegateMethodInfo {
-				get {
-					return TypeManager.delegate_combine_delegate_delegate;
-				}
-			}
 		}
 
 		sealed class RemoveDelegateMethod: AEventPropertyAccessor
@@ -6995,12 +6997,6 @@ namespace Mono.CSharp {
 			public RemoveDelegateMethod (Event method, Accessor accessor):
 				base (method, accessor, "remove_")
 			{
-			}
-
-			protected override MethodInfo DelegateMethodInfo {
-				get {
-					return TypeManager.delegate_remove_delegate_delegate;
-				}
 			}
 		}
 
@@ -7043,42 +7039,31 @@ namespace Mono.CSharp {
 			{
 			}
 
-			protected override void EmitMethod(DeclSpace parent)
+			public override void Emit (DeclSpace parent)
 			{
-				if (method_data.implementing != null)
-					parent.PartialContainer.PendingImplementations.ImplementMethod (
-						Name, method.InterfaceType, method_data, method.IsExplicitImpl);
-				
-				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
-					return;
+				if ((method.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) == 0) {
+					if (parent is Class) {
+						MethodBuilder mb = method_data.MethodBuilder;
+						mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
+					}
 
-				MethodBuilder mb = method_data.MethodBuilder;
-				ILGenerator ig = mb.GetILGenerator ();
+					// TODO: because we cannot use generics yet
+					FieldInfo field_info = ((EventField) method).BackingField.FieldBuilder;
+					FieldExpr f_expr = new FieldExpr (field_info, Location);
+					if ((method.ModFlags & Modifiers.STATIC) == 0)
+						f_expr.InstanceExpression = new CompilerGeneratedThis (field_info.FieldType, Location);
 
-				// TODO: because we cannot use generics yet
-				FieldInfo field_info = ((EventField)method).FieldBuilder;
-
-				if (parent is Class) {
-					mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
+					block = new ToplevelBlock (ParameterInfo, Location);
+					block.AddStatement (new StatementExpression (
+						new CompoundAssign (Operation,
+							f_expr,
+							block.GetParameterReference (ParameterInfo[0].Name, Location))));
 				}
-				
-				if ((method.ModFlags & Modifiers.STATIC) != 0) {
-					ig.Emit (OpCodes.Ldsfld, field_info);
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Call, DelegateMethodInfo);
-					ig.Emit (OpCodes.Castclass, method.MemberType);
-					ig.Emit (OpCodes.Stsfld, field_info);
-				} else {
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, field_info);
-					ig.Emit (OpCodes.Ldarg_1);
-					ig.Emit (OpCodes.Call, DelegateMethodInfo);
-					ig.Emit (OpCodes.Castclass, method.MemberType);
-					ig.Emit (OpCodes.Stfld, field_info);
-				}
-				ig.Emit (OpCodes.Ret);
+
+				base.Emit (parent);
 			}
+
+			protected abstract Binary.Operator Operation { get; }
 		}
 
 		sealed class AddDelegateMethod: EventFieldAccessor
@@ -7088,10 +7073,8 @@ namespace Mono.CSharp {
 			{
 			}
 
-			protected override MethodInfo DelegateMethodInfo {
-				get {
-					return TypeManager.delegate_combine_delegate_delegate;
-				}
+			protected override Binary.Operator Operation {
+				get { return Binary.Operator.Addition; }
 			}
 		}
 
@@ -7102,10 +7085,8 @@ namespace Mono.CSharp {
 			{
 			}
 
-			protected override MethodInfo DelegateMethodInfo {
-				get {
-					return TypeManager.delegate_remove_delegate_delegate;
-				}
+			protected override Binary.Operator Operation {
+				get { return Binary.Operator.Subtraction; }
 			}
 		}
 
@@ -7113,7 +7094,7 @@ namespace Mono.CSharp {
 		static readonly string[] attribute_targets = new string [] { "event", "field", "method" };
 		static readonly string[] attribute_targets_interface = new string[] { "event", "method" };
 
-		public FieldBuilder FieldBuilder;
+		public Field BackingField;
 		public Expression Initializer;
 
 		public EventField (DeclSpace parent, FullNamedExpression type, int mod_flags, MemberName name, Attributes attrs)
@@ -7126,7 +7107,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Target == AttributeTargets.Field) {
-				FieldBuilder.SetCustomAttribute (cb);
+				BackingField.ApplyAttributeBuilder (a, cb);
 				return;
 			}
 
@@ -7163,17 +7144,19 @@ namespace Mono.CSharp {
 			if (Add.IsInterfaceImplementation)
 				SetMemberIsUsed ();
 
-			FieldBuilder = Parent.TypeBuilder.DefineField (
-				Name, MemberType,
-				FieldAttributes.Private | ((ModFlags & Modifiers.STATIC) != 0 ? FieldAttributes.Static : 0));
 			TypeManager.RegisterEventField (EventBuilder, this);
 
-			if (Initializer != null) {
-				((TypeContainer) Parent).RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, Initializer, this));
-			}
+			BackingField = new Field (Parent,
+				new TypeExpression (MemberType, Location),
+				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
+				MemberName, null);
 
-			return true;
+			Parent.PartialContainer.AddField (BackingField);
+			BackingField.Initializer = Initializer;
+			BackingField.ModFlags &= ~Modifiers.COMPILER_GENERATED;
+
+			// Call define because we passed fields definition
+			return BackingField.Define ();
 		}
 
 		bool HasBackingField {
@@ -7261,8 +7244,6 @@ namespace Mono.CSharp {
 				ParameterInfo.ApplyAttributes (mb);
 				return mb;
 			}
-
-			protected abstract MethodInfo DelegateMethodInfo { get; }
 
 			public override Type ReturnType {
 				get {

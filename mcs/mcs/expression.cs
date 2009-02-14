@@ -4556,16 +4556,18 @@ namespace Mono.CSharp {
 
 		static public void EmitLdArg (ILGenerator ig, int x)
 		{
-			if (x <= 255){
-				switch (x){
-				case 0: ig.Emit (OpCodes.Ldarg_0); break;
-				case 1: ig.Emit (OpCodes.Ldarg_1); break;
-				case 2: ig.Emit (OpCodes.Ldarg_2); break;
-				case 3: ig.Emit (OpCodes.Ldarg_3); break;
-				default: ig.Emit (OpCodes.Ldarg_S, (byte) x); break;
-				}
-			} else
-				ig.Emit (OpCodes.Ldarg, x);
+			switch (x) {
+			case 0: ig.Emit (OpCodes.Ldarg_0); break;
+			case 1: ig.Emit (OpCodes.Ldarg_1); break;
+			case 2: ig.Emit (OpCodes.Ldarg_2); break;
+			case 3: ig.Emit (OpCodes.Ldarg_3); break;
+			default:
+				if (x > byte.MaxValue)
+					ig.Emit (OpCodes.Ldarg, x);
+				else
+					ig.Emit (OpCodes.Ldarg_S, (byte) x);
+				break;
+			}
 		}
 	}
 	

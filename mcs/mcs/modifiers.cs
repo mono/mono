@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 		public const int DEFAULT_ACCESS_MODIFER	= 0x40000;
 		public const int METHOD_EXTENSION		= 0x80000;
 		public const int COMPILER_GENERATED		= 0x100000;
-		public const int BACKING_FIELD			= 0x200000 | COMPILER_GENERATED;
+		public const int BACKING_FIELD			= 0x200000;
 		public const int DEBUGGER_HIDDEN		= 0x400000;
 
 		public const int Accessibility =

@@ -1139,7 +1139,7 @@ namespace Mono.CSharp
 
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					FieldBase fb = TypeManager.GetField (field);
-					if (fb != null && (fb.ModFlags & Modifiers.BACKING_FIELD) != 0) {
+					if (fb is Property.BackingField) {
 						Report.Error (843, loc,
 							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling default contructor",
 							fb.GetSignatureForError ());
@@ -1206,22 +1206,6 @@ namespace Mono.CSharp
 								public_fields.Add (field.FieldBuilder);
 							else
 								non_public_fields.Add (field.FieldBuilder);
-						}
-					}
-
-					if (tc.Events != null) {
-						foreach (Event e in tc.Events) {
-							if ((e.ModFlags & Modifiers.STATIC) != 0)
-								continue;
-
-							EventField ef = e as EventField;
-							if (ef == null)
-								continue;
-
-							if ((ef.ModFlags & Modifiers.PUBLIC) != 0)
-								public_fields.Add (ef.FieldBuilder);
-							else
-								non_public_fields.Add (ef.FieldBuilder);
 						}
 					}
 					}

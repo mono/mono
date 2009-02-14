@@ -929,7 +929,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if ((mc.ModFlags & Modifiers.COMPILER_GENERATED) != 0)
+			if (((mc.ModFlags | symbol.ModFlags) & Modifiers.COMPILER_GENERATED) != 0)
 				return true;
 
 			if (symbol.EnableOverloadChecks (mc))

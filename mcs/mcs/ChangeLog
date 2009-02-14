@@ -1,3 +1,11 @@
+2009-02-14  Marek Safar  <marek.safar@gmail.com>
+
+	* modifiers.cs, decl.cs, ecore.cs, class.cs, flowanalysis.cs:
+	Simplified event field definition using backing field and not
+	field builder directly.
+
+	* expression.cs (EmitLdArg): Optimize fast paths.
+
 2009-02-13  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #475327

@@ -5615,7 +5615,7 @@ namespace Mono.CSharp {
 					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.IsInCompoundAssignment)
 						Error_AssignmentEventOnly ();
 					
-					FieldExpr ml = new FieldExpr (mi.FieldBuilder, loc);
+					FieldExpr ml = new FieldExpr (mi.BackingField.FieldBuilder, loc);
 
 					InstanceExpression = null;
 				
