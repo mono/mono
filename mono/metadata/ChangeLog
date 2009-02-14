@@ -1,5 +1,11 @@
 2009-02-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c:
+	* loader.c:
+	* reflection.c: Remove all explicit uses of MonoImage::property_hash.
+
+2009-02-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* image.c: Add mono_image_property_(lookup,insert,remove) functions that
 	take the image lock instead of the loader lock.
 
