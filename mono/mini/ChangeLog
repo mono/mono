@@ -1,3 +1,10 @@
+2009-02-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mini_emit_ldelema_1_ins): If the array index is a long,
+	convert it to an in32. Fixes #475859.
+
+	* arrays.cs: Add a test.
+
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390x.c (mono_arch_output_basic_block): Fix the shift amounts in 
