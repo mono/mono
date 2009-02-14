@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//	Jonathan Pryor <jpryor@novell.com>
 //
-// Copyright (C) 2005,2007 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005,2007,2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +28,7 @@
 //
 #if NET_2_0
 using System;
+using System.Collections.Generic;
 
 namespace System.Xml
 {
@@ -61,36 +63,59 @@ namespace System.Xml
 			this.id = value;
 		}
 
-		[MonoTODO]
 		public UniqueId (byte [] id, int offset)
 		{
 			if (id == null)
 				throw new ArgumentNullException ();
-			if (offset < 0 || offset >= id.Length)
+			if (offset < 0)
 				throw new ArgumentOutOfRangeException ("offset");
+			if (offset >= id.Length)
+				throw new ArgumentException ("id too small.", "offset");
 
 			if (id.Length - offset != 16)
-				throw new NotImplementedException ();
+				throw new ArgumentException ("id and offset provide less than 16 bytes");
 
-			guid = new Guid (new ArraySegment<byte> (id, offset, id.Length - offset).Array);
+			if (offset == 0)
+				guid = new Guid (id);
+			else {
+				List<byte> buf = new List<byte> (id);
+				buf.RemoveRange (0, offset);
+				guid = new Guid (buf.ToArray ());
+			}
 		}
 
-		[MonoTODO]
 		public UniqueId (char [] id, int offset, int count)
 		{
-			throw new NotImplementedException ();
+			if (id == null)
+				throw new ArgumentNullException ("id");
+			if (offset < 0 || offset >= id.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (count < 0 || id.Length - offset < count)
+				throw new ArgumentOutOfRangeException ("count");
+			if (count == 0)
+				throw new FormatException ();
+
+			// Does it start with "urn:uuid:"?  If so, it's a Guid.
+			if (count > 8 && id [offset] == 'u' && id [offset+1] == 'r' && 
+					id [offset+2] == 'n' && id [offset+3] == ':' &&
+					id [offset+4] == 'u' && id [offset+5] == 'u' &&
+					id [offset+6] == 'i' && id [offset+7] == 'd' &&
+					id [offset+8] == ':') {
+				if (count != 45)
+					throw new ArgumentOutOfRangeException ("Invalid Guid");
+				this.guid = new Guid (new string (id, offset+9, count-9));
+			} else
+				this.id = new string (id, offset, count);
 		}
 
-		[MonoTODO]
 		public int CharArrayLength {
-			get { throw new NotImplementedException (); }
+			get {return id != null ? id.Length : 45;}
 		}
 
 		public bool IsGuid {
-			get { return id == null; }
+			get { return guid != default (Guid); }
 		}
 
-		[MonoTODO]
 		public override bool Equals (Object obj)
 		{
 			UniqueId other = obj as UniqueId;
@@ -99,28 +124,21 @@ namespace System.Xml
 				return false;
 
 			if (IsGuid && other.IsGuid) {
-				Guid g1, g2;
-				TryGetGuid (out g1);
-				other.TryGetGuid (out g2);
-				return g1.Equals (g2);
+				return guid.Equals (other.guid);
 			}
 
-			return ToString () == other.ToString ();
+			return id == other.id;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Determine semantics when IsGuid==true")]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return id != null ? id.GetHashCode () : guid.GetHashCode ();
 		}
 
 		public static bool operator == (UniqueId id1, UniqueId id2)
 		{
-			if ((object) id1 == null)
-				return (object) id2 == null;
-			if ((object) id2 == null)
-				return false;
-			return id1.Equals (id2);
+			return object.Equals (id1, id2);
 		}
 
 		public static bool operator != (UniqueId id1, UniqueId id2)
@@ -128,16 +146,21 @@ namespace System.Xml
 			return ! (id1 == id2);
 		}
 
-		[MonoTODO]
 		public int ToCharArray (char [] array, int offset)
 		{
-			throw new NotImplementedException ();
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (offset < 0 || offset >= array.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			string s = ToString ();
+			s.CopyTo (0, array, offset, s.Length);
+			return s.Length;
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			if (IsGuid)
+			if (id == null)
 				return "urn:uuid:" + guid;
 
 			return id;
@@ -156,11 +179,17 @@ namespace System.Xml
 
 		public bool TryGetGuid (byte [] buffer, int offset)
 		{
-			Guid ret;
-			if (!TryGetGuid (out ret))
+			if (!IsGuid)
 				return false;
-			byte [] bytes = ret.ToByteArray ();
-			bytes.CopyTo (buffer, offset);
+
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+			if (offset < 0 || offset >= buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+			if (buffer.Length - offset < 16)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			guid.ToByteArray ().CopyTo (buffer, offset);
 			return true;
 		}
 	}

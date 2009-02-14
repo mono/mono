@@ -1,5 +1,9 @@
 2009-02-13  Jonathan Pryor  <jpryor@novell.com>
 
+	* UniqueIdTest.cs: Add tests for all members.
+
+2009-02-13  Jonathan Pryor  <jpryor@novell.com>
+
 	* XmlDictionaryWriterTest.cs: Test WriteValue(IStreamProvider).
 
 2009-02-13  Jonathan Pryor  <jpryor@novell.com>

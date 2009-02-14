@@ -1,5 +1,13 @@
 2009-02-13  Jonathan Pryor  <jpryor@novell.com>
 
+	* UniqueId.cs: Remove most [MonoTODO]s and NotImplementedExceptions.
+	  Revert the 2009-02-12 UniqueId.IsGuid "fix", as .NET says that 
+	  new UniqueId(new Guid()).IsGuid==false (which makes no sense, as
+	  .ToString() on the same instance includes the "urn:uuid:" prefix,
+	  which is used by Guids...).
+
+2009-02-13  Jonathan Pryor  <jpryor@novell.com>
+
 	* XmlDictionaryWriter.cs: Implement WriteValue(IStreamProvider).
 
 2009-02-13  Jonathan Pryor  <jpryor@novell.com>
