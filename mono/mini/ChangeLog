@@ -1,5 +1,8 @@
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Use xdebug_lock ()/unlock () macros for locking in the
+	xdebug code.
+	
 	* aot-compiler.c: Make the xdebug code not depend on the AOT compiler,
 	use the image/dwarf writers directly.
 
