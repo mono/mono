@@ -1,3 +1,8 @@
+2009-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (compile_method): For generic icalls, queue the wrapper to
+	be compiled, not the icall itself.
+
 2009-02-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (find_extra_method_in_amodule): Avoid decoding wrapper names
