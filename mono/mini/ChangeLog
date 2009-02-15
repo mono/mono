@@ -1,5 +1,8 @@
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_method_ref): Add a case for 
+	MONO_AOT_METHODREF_WRAPPER_NAME.
+
 	* mini.h: Add constants for the magic numbers used in encode_method_ref ()
 	for AOT.
 
