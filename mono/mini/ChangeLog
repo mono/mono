@@ -1,5 +1,10 @@
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.h dwarfwriter.c: New files.
+	
+	* aot-compiler.c: Extract the DWARF info writing functionality into a 
+	separate module.
+
 	* tramp-amd64.c (mono_arch_create_trampoline_code_full): Add a 'out_unwind_ops'
 	argument to return unwind info.
 
