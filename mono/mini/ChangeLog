@@ -1,5 +1,7 @@
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.h: Fix some typos.
+
 	* dwarfwriter.h dwarfwriter.c: New files.
 	
 	* aot-compiler.c: Extract the DWARF info writing functionality into a 
