@@ -1,5 +1,12 @@
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Add constants for the magic numbers used in encode_method_ref ()
+	for AOT.
+
+	* aot-compiler.c (encode_method_ref): Use the new constants.
+
+	* aot-runtime.c (decode_method_ref): Ditto.
+
 	* aot-compiler.c (compile_method): For generic icalls, queue the wrapper to
 	be compiled, not the icall itself.
 
