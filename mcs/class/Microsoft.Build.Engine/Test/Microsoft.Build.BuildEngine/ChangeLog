@@ -1,3 +1,8 @@
+2009-02-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildChooseTest.cs (TestValueXml): Add tests for Choose.
+	Currently not working.
+
 2009-02-12  Jonathan Chambers  <joncham@gmail.com>
 
 	* BuildPropertyTest.cs (TestValueXml): New.

@@ -1,3 +1,7 @@
+2009-02-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* Microsoft.Build.Engine_test.dll.sources: Add BuildChooseTest.cs.
+
 2009-01-31  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Engine_test.dll.sources: Replace BatchingImpl.cs with
