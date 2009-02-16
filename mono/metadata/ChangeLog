@@ -1,3 +1,14 @@
+2009-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r126958.
+	
+	* reflection.c (clear_cached_object): New helper function.
+	(mono_method_clear_object): New function to clear the cached reflection
+	objects for a dynamic method.
+
+	* object.c (mono_runtime_free_method): Call mono_method_clear_object ().
+	Partly fixes # 463323.
+
 2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (method_from_memberref): Properly fix #474271 and
