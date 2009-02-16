@@ -1,5 +1,12 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_compile_assembly): Use the ASM writer for full aot
+	on ARM.
+	(mono_compile_assembly): Handle the assembler failing.
+
+	* image-writer.c (asm_writer_emit_section_change): Handle ARM gas not
+	accepting subsections of .bss.
+
 	* ssa.c (visit_inst): Fix a crash if the instruction following a switch
 	was optimized away.
 
