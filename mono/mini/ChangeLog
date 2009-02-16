@@ -1,5 +1,8 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* ssa.c (visit_inst): Fix a crash if the instruction following a switch
+	was optimized away.
+
 	* aot-compiler.c: Remove some unused includes.
 	
 	* aot-compiler.c (MonoAotCompile): Remove some unused fields which are
