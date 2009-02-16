@@ -1,5 +1,8 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (MonoAotCompile): Remove some unused fields which are
+	now in MonoImageWriter.
+
 	* mini-x86.c (mono_arch_get_vcall_slot): Handle yet another
 	code sequence which matches a non-virtual call. Fixes #472654.
 
