@@ -1,3 +1,11 @@
+2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	*loader.c: Guard MonoImage::method_cache/methodref_cache
+	using the image lock instead of the loader lock.
+
+	* metadata.h: Add comments about which fields are protected by
+	the image lock.
+
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (mono_set_private_bin_path_from_config): Fix a warning.
