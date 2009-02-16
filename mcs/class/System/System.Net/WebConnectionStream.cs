@@ -67,11 +67,11 @@ namespace System.Net
 
 		public WebConnectionStream (WebConnection cnc)
 		{
-			read_timeout = request.ReadWriteTimeout;
-			write_timeout = read_timeout;
 			isRead = true;
 			pending = new ManualResetEvent (true);
 			this.request = cnc.Data.request;
+			read_timeout = request.ReadWriteTimeout;
+			write_timeout = read_timeout;
 			this.cnc = cnc;
 			string contentType = cnc.Data.Headers ["Transfer-Encoding"];
 			bool chunkedRead = (contentType != null && contentType.ToLower ().IndexOf ("chunked") != -1);
