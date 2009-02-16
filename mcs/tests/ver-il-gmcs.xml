@@ -15790,6 +15790,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-17.cs">
+    <type name="CompilerCrashTest.QueryCompiler">
+      <method name="D Compile[D](System.Linq.Expressions.Expression`1[D])">
+        <size>12</size>
+      </method>
+      <method name="System.Delegate Compile(System.Linq.Expressions.LambdaExpression)">
+        <size>6</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
