@@ -1,3 +1,8 @@
+2009-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_vcall_slot): Handle yet another
+	code sequence which matches a non-virtual call. Fixes #472654.
+
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Use xdebug_lock ()/unlock () macros for locking in the
