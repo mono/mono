@@ -1,5 +1,12 @@
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r125349.
+
+	* marshal.c (mono_marshal_free_dynamic_wrappers): New function for
+	freeing wrappers of dynamic methods.
+
+	* loader.c (mono_free_method): Call it. Fixes #463323.
+	
 	Backport of r126958.
 	
 	* reflection.c (clear_cached_object): New helper function.
