@@ -14503,7 +14503,7 @@
         <size>62</size>
       </method>
       <method name="Void ConstantTest_3()">
-        <size>61</size>
+        <size>54</size>
       </method>
       <method name="Void ConstantTest_4()">
         <size>54</size>
@@ -14836,7 +14836,7 @@
         <size>302</size>
       </method>
       <method name="Void MemberInitTest_2()">
-        <size>265</size>
+        <size>250</size>
       </method>
       <method name="Void MemberInitTest_3()">
         <size>124</size>
@@ -15425,6 +15425,11 @@
         <size>7</size>
       </method>
     </type>
+    <type name="Tester">
+      <method name="Void NewArrayInitTest_6()">
+        <size>103</size>
+      </method>
+    </type>
   </test>
   <test name="gtest-etree-02.cs">
     <type name="M">
@@ -15767,6 +15772,21 @@
       </method>
       <method name="Void Main()">
         <size>190</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-16.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>136</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
