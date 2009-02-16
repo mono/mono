@@ -1,3 +1,20 @@
+2009-02-16  Jérémie Laval  <jeremie.laval@gmail.com>
+	
+	* AggregateException.cs
+	* AtomicBoolean.cs
+	* CountdownEvent.cs
+	* ISupportsCancellation.cs
+	* LazyInit.cs
+	* LazyInitMode.cs
+	* ManuelResetEventSlim.cs
+	* Parallel.cs
+	* ParallelLogger.cs
+	* ParallelState.cs
+	* SemaphoreSlim.cs
+	* SpinLock.cs
+	* SpinWait.cs
+	* WriteOnce.cs: Added ParallelFx files
+
 2009-01-30  Andreia Gaita  <avidigal@novell.com>
 
 	* SynchronizationContext.cs: Remove moonlight hacks, dispatcher should

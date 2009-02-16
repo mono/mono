@@ -1,3 +1,10 @@
+2009-02-16  Jérémie Laval  <jeremie.laval@gmail.com>
+	
+	* System.Threading.Collections/:
+	* System.Threading.Tasks: Added ParallelFx related directories from
+	  Google code svn r516.
+	* corlib.dll.sources/corlib_test.dll.sources: Added ParallelFx files
+
 2009-02-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile: Add Test/resources/Fergie.GED to EXTRA_DIST.
