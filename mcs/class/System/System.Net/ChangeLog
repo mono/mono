@@ -1,3 +1,7 @@
+2009-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebConnectionStream.cs : use request only after it is set.
+
 2009-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnectionStream.cs: implemente (Read|Write)Timeout.
