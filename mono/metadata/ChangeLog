@@ -1,3 +1,8 @@
+2009-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_domain_alloc): Add locking so the caller doesn't have to.
+	(mono_domain_alloc0): Ditto.
+
 2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (method_from_memberref): Don't abort if the array
