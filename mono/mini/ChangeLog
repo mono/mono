@@ -1,4 +1,21 @@
-2009-02-16  Mark Probst  <mark.probst@gmail.com>
+2009-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r126983 + r127069.
+
+	* ssa.c (visit_inst): Fix a crash if the instruction following a switch
+	was optimized away.
+
+	Backport of r126980.
+
+	* mini-x86.c (mono_arch_get_vcall_slot): Handle yet another
+	code sequence which matches a non-virtual call. Fixes #472654.
+
+	Backport of r124419.
+
+	* mini-amd64.c (mono_arch_get_vcall_slot): Handle yet another
+	code sequence which matches a non-virtual call.
+
+2009-01-23  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r125679.
 
