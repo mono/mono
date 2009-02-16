@@ -1,3 +1,15 @@
+2009-02-16  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Support C#4 variant generics, e.g.
+	  `delegate TRet Func<in TArg, out TRet>(TArg a)'.  Alas, this
+	  required making MemberFormatter explicitly stateful, so any thoughts
+	  of using instances w/o locking are now out the window...  (Not that
+	  threads are currently used, but they're planned to be used...)
+	  TODO: Add a test to Test/DocTest-v1.cs.  This wasn't done as the
+	  current gmcs support doesn't like intermixing variance with generic
+	  parameter attributes, and I don't want to introduce a new delegate
+	  type (and the ~6 new files that would imply) just for this feature.
+
 2009-02-10  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Cleanup: turn static data into

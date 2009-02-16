@@ -3054,6 +3054,12 @@ class DocumentationMember {
 	}
 }
 
+public enum MemberFormatterState {
+	None,
+	WithinArray,
+	WithinGenericTypeContainer,
+}
+
 public abstract class MemberFormatter {
 	public virtual string GetName (IMemberReference member)
 	{
@@ -3089,16 +3095,21 @@ public abstract class MemberFormatter {
 		get {return new char[]{'[', ']'};}
 	}
 
+	protected virtual MemberFormatterState MemberFormatterState { get; set; }
+
 	protected StringBuilder _AppendTypeName (StringBuilder buf, TypeReference type)
 	{
 		if (type is ArrayType) {
 			TypeSpecification spec = type as TypeSpecification;
 			_AppendTypeName (buf, spec != null ? spec.ElementType : type.GetOriginalType ())
 					.Append (ArrayDelimeters [0]);
+			var origState = MemberFormatterState;
+			MemberFormatterState = MemberFormatterState.WithinArray;
 			ArrayType array = (ArrayType) type;
 			int rank = array.Rank;
 			if (rank > 1)
 				buf.Append (new string (',', rank-1));
+			MemberFormatterState = origState;
 			return buf.Append (ArrayDelimeters [1]);
 		}
 		if (type is ReferenceType) {
@@ -3197,9 +3208,12 @@ public abstract class MemberFormatter {
 			prev = ac;
 			if (c > 0) {
 				buf.Append (GenericTypeContainer [0]);
+				var origState = MemberFormatterState;
+				MemberFormatterState = MemberFormatterState.WithinGenericTypeContainer;
 				_AppendTypeName (buf, genArgs [argIdx++]);
 				for (int i = 1; i < c; ++i)
 					_AppendTypeName (buf.Append (","), genArgs [argIdx++]);
+				MemberFormatterState = origState;
 				buf.Append (GenericTypeContainer [1]);
 			}
 		}
@@ -3401,7 +3415,7 @@ class CSharpFullMemberFormatter : MemberFormatter {
 	protected override StringBuilder AppendTypeName (StringBuilder buf, TypeReference type)
 	{
 		if (type is GenericParameter)
-			return buf.Append (type.Name);
+			return AppendGenericParameterConstraints (buf, (GenericParameter) type).Append (type.Name);
 		string t = type.FullName;
 		if (!t.StartsWith ("System.")) {
 			return base.AppendTypeName (buf, type);
@@ -3412,6 +3426,20 @@ class CSharpFullMemberFormatter : MemberFormatter {
 			return buf.Append (s);
 		
 		return base.AppendTypeName (buf, type);
+	}
+
+	private StringBuilder AppendGenericParameterConstraints (StringBuilder buf, GenericParameter type)
+	{
+		if (MemberFormatterState != MemberFormatterState.WithinGenericTypeContainer)
+			return buf;
+		GenericParameterAttributes attrs = type.Attributes;
+		bool isout = (attrs & GenericParameterAttributes.Covariant) != 0;
+		bool isin  = (attrs & GenericParameterAttributes.Contravariant) != 0;
+		if (isin)
+			buf.Append ("in ");
+		else if (isout)
+			buf.Append ("out ");
+		return buf;
 	}
 
 	protected override string GetTypeDeclaration (TypeDefinition type)
@@ -3524,11 +3552,15 @@ class CSharpFullMemberFormatter : MemberFormatter {
 			ConstraintCollection constraints = genArg.Constraints;
 			if (attrs == GenericParameterAttributes.NonVariant && constraints.Count == 0)
 				continue;
-			buf.Append (" where ").Append (genArg.Name).Append (" : ");
+
 			bool isref = (attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0;
 			bool isvt  = (attrs & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0;
 			bool isnew = (attrs & GenericParameterAttributes.DefaultConstructorConstraint) != 0;
 			bool comma = false;
+
+			if (!isref && !isvt && !isnew && constraints.Count == 0)
+				continue;
+			buf.Append (" where ").Append (genArg.Name).Append (" : ");
 			if (isref) {
 				buf.Append ("class");
 				comma = true;
