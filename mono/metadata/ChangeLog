@@ -1,3 +1,11 @@
+2009-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r125348.
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Disable sharing for
+	methods taking vtype/byref arguments, to fix yet another bug caused by
+	the sharing of runtime invoke wrappers. Partly fixes #471259.
+
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r125349.
