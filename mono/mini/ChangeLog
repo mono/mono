@@ -1,3 +1,8 @@
+2009-02-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_check_inlining): Avoid calling 
+	mono_method_get_header () on inflated methods as an optimization.
+
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* ssa.c (fold_ins): Fix another crash if the instruction following the
