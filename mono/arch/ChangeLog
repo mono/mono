@@ -1,3 +1,26 @@
+2009-02-16  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r125443.
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* ppc/ppc-codegen.h: Make operand order and case consistent
+	(assembler order) for ppc_load_reg_update, ppc_load_multiple_regs,
+	ppc_store_multiple_regs, ppc_lwz, ppc_lhz, ppc_lbz,
+	ppc_stw,ppc_sth, ppc_stb, ppc_stwu, ppc_lbzu, ppc_lfdu, ppc_lfsu,
+	ppc_lfsux, ppc_lfsx, ppc_lha, ppc_lhau, ppc_lhzu, ppc_lmw,
+	ppc_lwzu, ppc_stbu, ppc_stfdu, ppc_stfsu, ppc_sthu, ppc_stmw.  Use
+	"i" or "ui" instead of "d" for immediated operands to immediate
+	arthimetic and logical instructions in macros ppc_addi, ppc_addis,
+	ppc_ori, ppc_addic, ppc_addicd, ppc_andid, ppc_andisd.
+	[__mono_ppc64__]: Make operand order and case consistent
+	(assembler order) for ppc_load_multiple_regs,
+	ppc_store_multiple_regs.  Simplify the DS form and make them
+	consistent with D forms for ppc_load_reg, ppc_load_reg_update,
+	ppc_store_reg, ppc_store_reg_update. ppc_ld, ppc_lwa, ppc_ldu,
+	ppc_std, ppc_stdu.  Define ppc_lwax and ppc_lwaux.
+
 2009-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* x86/x86-codegen.h: Add x86_movd_xreg_membase.
