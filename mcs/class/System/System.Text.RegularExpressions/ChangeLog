@@ -1,3 +1,7 @@
+2009-02-16  Jb Evain  <jbevain@novell.com>
+
+	* Regex.cs: on the NET_2_1 profile, always use the old engine for now.
+
 2009-02-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* Regex.cs: Add a MONO_NEW_RX variable to enable the new regex
