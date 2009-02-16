@@ -1,5 +1,7 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (fullaotcheck): Exit if a test fails.
+
 	* aot-compiler.c (mono_compile_assembly): Use the ASM writer for full aot
 	on ARM.
 	(mono_compile_assembly): Handle the assembler failing.
