@@ -1,5 +1,19 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_trampolines): Emit generic class init trampolines
+	on ARM too.
+
+	* tramp-arm.c (mono_arch_create_generic_class_init_trampoline_full): Add
+	AOT support.
+
+	* aot-runtime.c (load_named_code): Handle 
+	mono_arm_throw_exception_by_token.
+
+	* mini-arm.h: Add declaration of mono_arm_throw_exception_by_token.
+
+	* image-writer.c (asm_writer_emit_pointer_unaligned): Make this really
+	unaligned.
+
 	* Makefile.am (fullaotcheck): Exit if a test fails.
 
 	* aot-compiler.c (mono_compile_assembly): Use the ASM writer for full aot
