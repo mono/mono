@@ -365,6 +365,11 @@ namespace Mono.CSharp {
 
 		public virtual void Error_ValueCannotBeConverted (EmitContext ec, Location loc, Type target, bool expl)
 		{
+			Error_ValueCannotBeConvertedCore (ec, loc, target, expl);
+		}
+
+		protected void Error_ValueCannotBeConvertedCore (EmitContext ec, Location loc, Type target, bool expl)
+		{
 			// The error was already reported as CS1660
 			if (type == TypeManager.anonymous_method_type)
 				return;
@@ -1613,13 +1618,7 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			child.Emit (ec);
-			
-#if GMCS_SOURCE
-			// Only to make verifier happy
-			if (TypeManager.IsGenericParameter (type) && child.IsNull)
-				ec.ig.Emit (OpCodes.Unbox_Any, type);
-#endif
+			child.Emit (ec);			
 		}
 
 		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
@@ -5854,7 +5853,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("An implicitly typed local variable could not be redefined");
 			
 			type = right_side.Type;
-			if (right_side is NullLiteral || type == TypeManager.void_type || type == TypeManager.anonymous_method_type) {
+			if (type == TypeManager.null_type || type == TypeManager.void_type || type == TypeManager.anonymous_method_type) {
 				Report.Error (815, loc, "An implicitly typed local variable declaration cannot be initialized with `{0}'",
 				              right_side.GetSignatureForError ());
 				return false;

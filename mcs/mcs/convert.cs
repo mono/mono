@@ -673,10 +673,14 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool ImplicitStandardConversionExists (Expression expr, Type target_type)
 		{
-			if (expr is NullLiteral)
-				return ((NullLiteral) expr).ConvertImplicitly (target_type) != null;
-
 			Type expr_type = expr.Type;
+
+			if (expr_type == TypeManager.null_type) {
+				NullLiteral nl = expr as NullLiteral;
+				if (nl != null)
+					return nl.ConvertImplicitly (target_type) != null;
+			}
+
 			if (expr_type == TypeManager.void_type)
 				return false;
 

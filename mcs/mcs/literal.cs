@@ -28,13 +28,26 @@ namespace Mono.CSharp {
 	//
 	// The null literal
 	//
+	// Note: C# specification null-literal is NullLiteral of NullType type
+	//
 	class NullLiteral : Constant
 	{
+		//
+		// Default type of null is an object
+		//
 		public NullLiteral (Location loc):
-			base (loc)
+			this (typeof (NullLiteral), loc)
+		{
+		}
+
+		//
+		// Null can have its own type, think of default (Foo)
+		//
+		public NullLiteral (Type type, Location loc)
+			: base (loc)
 		{
 			eclass = ExprClass.Value;
-			type = typeof (NullLiteral);
+			this.type = type;
 		}
 
 		override public string AsString ()
@@ -44,8 +57,10 @@ namespace Mono.CSharp {
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			// HACK: change type to be object
-			type = TypeManager.object_type;
+			// HACK: avoid referencing mcs internal type
+			if (type == typeof (NullLiteral))
+				type = TypeManager.object_type;
+
 			return base.CreateExpressionTree (ec);
 		}		
 
@@ -57,6 +72,12 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldnull);
+
+#if GMCS_SOURCE
+			// Only to make verifier happy
+			if (TypeManager.IsGenericParameter (type))
+				ec.ig.Emit (OpCodes.Unbox_Any, type);
+#endif
 		}
 
 		public override string ExprClassName {
@@ -76,23 +97,33 @@ namespace Mono.CSharp {
 				Report.Error(403, loc,
 					"Cannot convert null to the type parameter `{0}' because it could be a value " +
 					"type. Consider using `default ({0})' instead", t.Name);
-			} else {
+				return;
+			}
+
+			if (TypeManager.IsValueType (t)) {
 				Report.Error(37, loc, "Cannot convert null to `{0}' because it is a value type",
 					TypeManager.CSharpName(t));
+				return;
 			}
+
+			base.Error_ValueCannotBeConverted (ec, loc, t, expl);
 		}
 
 		public override Constant ConvertExplicitly (bool inCheckedContext, Type targetType)
 		{
-			if (targetType.IsPointer)
-				return new EmptyConstantCast (new NullPointer (loc), targetType);
+			if (targetType.IsPointer) {
+				if (type == TypeManager.null_type || this is NullPointer)
+					return new EmptyConstantCast (new NullPointer (loc), targetType);
+
+				return null;
+			}
 
 			// Exlude internal compiler types
 			if (targetType == TypeManager.anonymous_method_type)
 				return null;
 
 			if (TypeManager.IsReferenceType (targetType))
-				return new EmptyConstantCast (this, targetType);
+				return new NullLiteral (targetType, loc);
 
 			if (TypeManager.IsNullableType (targetType))
 				return Nullable.LiftedNull.Create (targetType, loc);

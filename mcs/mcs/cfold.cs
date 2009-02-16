@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 
 		//
 		// Performs the numeric promotions on the left and right expresions
-		// and desposits the results on `lc' and `rc'.
+		// and deposits the results on `lc' and `rc'.
 		//
 		// On success, the types of `lc' and `rc' on output will always match,
 		// and the pair will be one of:
@@ -254,22 +254,24 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Addition:
+				if (lt == TypeManager.null_type)
+					return right;
+
+				if (rt == TypeManager.null_type)
+					return left;
+
 				//
 				// If both sides are strings, then concatenate, if
 				// one is a string, and the other is not, then defer
 				// to runtime concatenation
 				//
 				if (lt == TypeManager.string_type || rt == TypeManager.string_type){
-					if (lt == TypeManager.string_type && rt == TypeManager.string_type)
-						return new StringConstant (
-							((StringConstant) left).Value +
-							((StringConstant) right).Value, left.Location);
+					if (lt == rt)
+						return new StringConstant ((string)left.GetValue () + (string)right.GetValue (),
+							left.Location);
 					
 					return null;
 				}
-
-				if (left.IsNull && right.IsNull)
-					return left;
 
 				//
 				// handle "E operator + (E x, U y)"
@@ -382,8 +384,6 @@ namespace Mono.CSharp {
 								((DecimalConstant) right).Value);
 
 						result = new DecimalConstant (res, left.Location);
-					} else {
-						throw new Exception ( "Unexepected addition input: " + left);
 					}
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);

@@ -1,3 +1,9 @@
+2009-02-16  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #475823
+	* convert.cs, expression.cs, literal.cs, ecore.cs, cfold.cs: Add
+	typed-null support.
+
 2009-02-14  Marek Safar  <marek.safar@gmail.com>
 
 	* modifiers.cs, decl.cs, ecore.cs, class.cs, flowanalysis.cs:
