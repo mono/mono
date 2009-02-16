@@ -1,5 +1,7 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (mono_set_private_bin_path_from_config): Fix a warning.
+
 	* generic-sharing.c (mono_method_construct_object_context): Remove the
 	wrapper_type == NONE assert, it is not needed.
 
