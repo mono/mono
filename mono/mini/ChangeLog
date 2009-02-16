@@ -1,5 +1,7 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Remove some unused includes.
+	
 	* aot-compiler.c (MonoAotCompile): Remove some unused fields which are
 	now in MonoImageWriter.
 
