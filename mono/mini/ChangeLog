@@ -1,5 +1,15 @@
 2009-02-16  Mark Probst  <mark.probst@gmail.com>
 
+	Backport of r125672.
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* mini-ppc.c: Compiler warning fixes and trivial code
+	simplifications.
+
+2009-02-16  Mark Probst  <mark.probst@gmail.com>
+
 	Backport of r125443.
 
 	Contributed under the terms of the MIT/X11 license by Steven
