@@ -2526,8 +2526,6 @@ namespace Mono.CSharp {
 			ArrayList types_to_fix = new ArrayList (unfixed_types);
 			for (int i = 0; i < methodParameters.Length; ++i) {
 				Type t = methodParameters[i];
-				if (t.IsGenericParameter)
-					continue;
 
 				if (!TypeManager.IsDelegateType (t)) {
 					if (TypeManager.DropGenericTypeArguments (t) != TypeManager.expression_type)
@@ -2535,6 +2533,9 @@ namespace Mono.CSharp {
 
 					t = t.GetGenericArguments () [0];
 				}
+
+				if (t.IsGenericParameter)
+					continue;
 
 				MethodInfo invoke = Delegate.GetInvokeMethod (t, t);
 				Type rtype = invoke.ReturnType;

@@ -1,5 +1,11 @@
 2009-02-16  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #475965
+	* generics.cs: Check generic parameter type after extracting from
+	Expression<T>.
+
+2009-02-16  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #475823
 	* convert.cs, expression.cs, literal.cs, ecore.cs, cfold.cs: Add
 	typed-null support.
