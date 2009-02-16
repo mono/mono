@@ -1,3 +1,8 @@
+2009-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (mono_method_construct_object_context): Remove the
+	wrapper_type == NONE assert, it is not needed.
+
 2009-02-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (clear_cached_object): New helper function.
