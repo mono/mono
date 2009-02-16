@@ -1,5 +1,13 @@
 2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (method_from_memberref): Don't abort if the array
+	method is not found. A regular loader failure is more informative
+	and correct.
+
+	Fixes #474271.
+
+2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	*loader.c: Guard MonoImage::method_cache/methodref_cache
 	using the image lock instead of the loader lock.
 
