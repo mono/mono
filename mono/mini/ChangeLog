@@ -1,5 +1,16 @@
 2009-02-16  Mark Probst  <mark.probst@gmail.com>
 
+	Backport of r125679.
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* mini-ppc.c (mono_arch_output_basic_block): Generate better code
+	for LOADI4_MEMBASE.  Use addi instead of addic if it's not
+	necessary.
+
+2009-02-16  Mark Probst  <mark.probst@gmail.com>
+
 	Backport of r125676.
 
 	Contributed under the terms of the MIT/X11 license by Steven
