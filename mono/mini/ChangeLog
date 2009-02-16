@@ -1,5 +1,10 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (compile_method): Only add wrappers referenced by
+	the method if compiling with full AOT.
+	(mono_compile_assembly): Error out if --aot=full is specified on
+	a platform where it is not supported.
+
 	* aot-compiler.c (emit_trampolines): Emit generic class init trampolines
 	on ARM too.
 
