@@ -1,5 +1,9 @@
 2009-02-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c method-to-ir.c mini-trampolines.c aot-runtime.c: Remove locking
+	around the mono_domain_alloc calls, it is now done by the functions
+	themselves.
+
 	* aot-compiler.c (compile_method): Only add wrappers referenced by
 	the method if compiling with full AOT.
 	(mono_compile_assembly): Error out if --aot=full is specified on
