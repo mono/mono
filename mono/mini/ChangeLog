@@ -1,5 +1,8 @@
 2009-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_exception_debug_info): Bump the maximum size of
+	the encoding buffer.
+
 	* method-to-ir.c (mono_method_check_inlining): Avoid calling 
 	mono_method_get_header () on inflated methods as an optimization.
 
