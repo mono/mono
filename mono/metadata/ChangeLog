@@ -1,5 +1,9 @@
 2009-02-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c: Revert previous change as it breaks the build.
+	
+2009-02-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Properly handle SZARRAY element type.
 
 	Fixes #474271.
