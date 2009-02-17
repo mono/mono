@@ -1732,8 +1732,11 @@ class MDocUpdater : MDocCommand
 				switch (r.Name) {
 					case "param":
 					case "typeparam": {
+						string name = r.GetAttribute ("name");
+						if (name == null)
+							break;
 						XmlNode doc = e.SelectSingleNode (
-								r.Name + "[@name='" + r.GetAttribute ("name") + "']");
+								r.Name + "[@name='" + name + "']");
 						string value = r.ReadInnerXml ();
 						if (doc != null)
 							doc.InnerXml = value.Replace ("\r", "");
@@ -1745,6 +1748,8 @@ class MDocUpdater : MDocCommand
 					case "seealso": {
 						string name = r.Name;
 						string cref = r.GetAttribute ("cref");
+						if (cref == null)
+							break;
 						XmlNode doc = e.SelectSingleNode (
 								r.Name + "[@cref='" + cref + "']");
 						string value = r.ReadInnerXml ().Replace ("\r", "");
@@ -1806,7 +1811,10 @@ class MDocUpdater : MDocCommand
 					switch (child.Name) {
 						case "param":
 						case "typeparam": {
-							XmlElement p2 = (XmlElement) e.SelectSingleNode (child.Name + "[@name='" + child.Attributes ["name"].Value + "']");
+							XmlAttribute name = child.Attributes ["name"];
+							if (name == null)
+								break;
+							XmlElement p2 = (XmlElement) e.SelectSingleNode (child.Name + "[@name='" + name.Value + "']");
 							if (p2 != null)
 								p2.InnerXml = child.InnerXml;
 							break;
@@ -1814,7 +1822,10 @@ class MDocUpdater : MDocCommand
 						case "altmember":
 						case "exception":
 						case "permission": {
-							XmlElement a = (XmlElement) e.SelectSingleNode (child.Name + "[@cref='" + child.Attributes ["cref"].Value + "']");
+							XmlAttribute cref = child.Attributes ["cref"] ?? child.Attributes ["name"];
+							if (cref == null)
+								break;
+							XmlElement a = (XmlElement) e.SelectSingleNode (child.Name + "[@cref='" + cref.Value + "']");
 							if (a == null) {
 								a = e.OwnerDocument.CreateElement (child.Name);
 								a.SetAttribute ("cref", child.Attributes ["cref"].Value);
@@ -1824,7 +1835,10 @@ class MDocUpdater : MDocCommand
 							break;
 						}
 						case "seealso": {
-							XmlElement a = (XmlElement) e.SelectSingleNode ("altmember[@cref='" + child.Attributes ["cref"].Value + "']");
+							XmlAttribute cref = child.Attributes ["cref"];
+							if (cref == null)
+								break;
+							XmlElement a = (XmlElement) e.SelectSingleNode ("altmember[@cref='" + cref.Value + "']");
 							if (a == null) {
 								a = e.OwnerDocument.CreateElement ("altmember");
 								a.SetAttribute ("cref", child.Attributes ["cref"].Value);

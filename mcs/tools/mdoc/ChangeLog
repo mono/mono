@@ -1,8 +1,16 @@
 2009-02-17  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/monodocer.cs: Check that the cref attribute is
+	  non-null before trying to use it when importing slashdoc sources.
+	  Fixes #475852.
+	* Test/DocTest-v1.cs: Add an <exception/> doc comment with an invalid
+	  attribute value for testing.
+
+2009-02-17  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/mdoc.cs: Set Environment.ExitCode=1 if an
 	  exception occurs, so that calling code can determine that an error
-	  occurred w/o resorting to parsing stderr.
+	  occurred w/o resorting to parsing stderr.  Fixes #475746.
 
 2009-02-16  Jonathan Pryor <jpryor@novell.com>
 
