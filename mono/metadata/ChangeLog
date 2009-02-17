@@ -1,5 +1,10 @@
 2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): rethrow opcode doesn not fall through.
+	Fixes #476257.
+
+2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c (main): Call mono_marshal_init so pedump
 	doesn't crash.
 
