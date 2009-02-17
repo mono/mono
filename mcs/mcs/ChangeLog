@@ -1,7 +1,8 @@
 2009-02-17  Marek Safar  <marek.safar@gmail.com>
 
-	* typemanager.cs, convert.cs, flowanalysis.cs, driver.cs: More
-	messing with static variables.
+	* typemanager.cs, convert.cs, flowanalysis.cs, driver.cs,
+	expression.cs, ecore.cs, rootcontext.cs: More messing with static
+	variables.
 
 2009-02-16  Marek Safar  <marek.safar@gmail.com>
 

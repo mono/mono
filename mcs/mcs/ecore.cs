@@ -2761,7 +2761,7 @@ namespace Mono.CSharp {
 					me.SetTypeArguments (targs);
 				}
 
-				if (!me.IsStatic && (me.InstanceExpression != null) &&
+				if (!me.IsStatic && (me.InstanceExpression != null && me.InstanceExpression != EmptyExpression.Null) &&
 				    TypeManager.IsNestedFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
 				    me.InstanceExpression.Type != me.DeclaringType &&
 				    !TypeManager.IsFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
@@ -4691,11 +4691,15 @@ namespace Mono.CSharp {
 					using (ec.With (EmitContext.Flags.DoFlowAnalysis, false)) {
 						Expression right_side =
 							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
-						InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side, loc);
+
+						if (InstanceExpression != EmptyExpression.Null)
+							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side, loc);
 					}
 				} else {
 					ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
-					InstanceExpression = InstanceExpression.Resolve (ec, rf);
+
+					if (InstanceExpression != EmptyExpression.Null)
+						InstanceExpression = InstanceExpression.Resolve (ec, rf);
 				}
 
 				if (InstanceExpression == null)

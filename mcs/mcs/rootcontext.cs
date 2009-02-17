@@ -108,7 +108,7 @@ namespace Mono.CSharp {
 		// This hashtable contains all of the #definitions across the source code
 		// it is used by the ConditionalAttribute handler.
 		//
-		static ArrayList AllDefines = new ArrayList ();
+		static ArrayList AllDefines;
 		
 		//
 		// This keeps track of the order in which classes were defined

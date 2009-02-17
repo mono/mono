@@ -8786,9 +8786,9 @@ namespace Mono.CSharp {
 			temp = e;
 		}
 
-		// TODO: should be protected
-		public EmptyExpression ()
+		EmptyExpression ()
 		{
+			// FIXME: Don't set to object
 			type = TypeManager.object_type;
 			eclass = ExprClass.Value;
 			loc = Location.Null;

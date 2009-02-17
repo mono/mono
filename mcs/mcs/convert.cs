@@ -81,9 +81,11 @@ namespace Mono.CSharp {
 			if (isExplicit)
 				return ExplicitReferenceConversionExists (element_type, arg_type);
 
+			Type t = TypeManager.GetElementType (array);
 			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression ();
-			MyEmptyExpr.SetType (TypeManager.GetElementType (array));
+				MyEmptyExpr = new EmptyExpression (t);
+			else
+				MyEmptyExpr.SetType (t);
 
 			return ImplicitReferenceConversionExists (MyEmptyExpr, arg_type);
 #else
@@ -110,8 +112,10 @@ namespace Mono.CSharp {
 				return true;
 			
 			if (MyEmptyExpr == null)
-				MyEmptyExpr = new EmptyExpression();
-			MyEmptyExpr.SetType(element_type);
+				MyEmptyExpr = new EmptyExpression(element_type);
+			else
+				MyEmptyExpr.SetType(element_type);
+				
 			return ImplicitReferenceConversionExists(MyEmptyExpr, arg_type) || ExplicitReferenceConversionExists(element_type, arg_type);
 #else
 			return false;
@@ -357,9 +361,9 @@ namespace Mono.CSharp {
 						return false;
 
 					if (MyEmptyExpr == null)
-						MyEmptyExpr = new EmptyExpression ();
-
-					MyEmptyExpr.SetType (expr_element_type);
+						MyEmptyExpr = new EmptyExpression (expr_element_type);
+					else
+						MyEmptyExpr.SetType (expr_element_type);
 
 					return ImplicitStandardConversionExists (MyEmptyExpr, target_element_type);
 				}
