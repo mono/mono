@@ -1,3 +1,10 @@
+2009-02-16  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* TextBox.cs: When handling WndProc with autocomplete activated,
+	event if the new text is not causing any change in the look up
+	algorithm, save it as we normally do when numbers and letters.
+	Fixes #469967.
+
 2009-02-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNode.cs: When Text/StateImageIndex/StateImageKey/NodeFont change
