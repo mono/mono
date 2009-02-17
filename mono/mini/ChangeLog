@@ -1,5 +1,17 @@
 2009-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
+
+	* aot-compiler.c (mono_aot_method_hash): New function to return a hash
+	usable for hashing methods.
+	(emit_extra_methods): Use the new hash to avoid putting every method in the
+	same hash bucket.
+
+	* aot-runtime.c (find_extra_method_in_amodule): Use the new hash.
+
+	* aot-runtime.c (can_method_ref_match_method): New function to quickly check
+	whenever a method ref could match a method.
+	
 	* aot-runtime.c (load_image): Revert the previous change, it causes an AOT
 	test to fail.
 	
