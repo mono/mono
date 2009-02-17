@@ -1,3 +1,8 @@
+2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_rethrow_doesnt_fallthrough: New regression test for
+	#476257.
+
 2009-02-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_boxed_vt_compatible_with_sys_vt_or_sys_enum.il:
