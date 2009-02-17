@@ -1,3 +1,8 @@
+2009-02-17  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolBarButton.cs: Event for Enabled property (needed to fix
+	  UIA #474197).
+
 2009-02-16  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* TextBox.cs: When handling WndProc with autocomplete activated,

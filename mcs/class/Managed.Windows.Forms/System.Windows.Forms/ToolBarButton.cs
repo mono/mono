@@ -116,6 +116,10 @@ namespace System.Windows.Forms
 
 				enabled = value;
 				Invalidate ();
+				
+#if NET_2_0
+				OnEnabledChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -333,6 +337,7 @@ namespace System.Windows.Forms
 		static object UIAGotFocusEvent = new object ();
 		static object UIALostFocusEvent = new object ();
 		static object UIATextChangedEvent = new object ();
+		static object UIAEnabledChangedEvent = new object ();
 		
 		internal event EventHandler UIAGotFocus {
 			add { Events.AddHandler (UIAGotFocusEvent, value); }
@@ -349,9 +354,21 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
 		}
 		
+		internal event EventHandler UIAEnabledChanged {
+			add { Events.AddHandler (UIATextChangedEvent, value); }
+			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
+		}
+		
 		protected virtual void OnUIATextChanged(EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [UIATextChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		protected virtual void OnEnabledChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [UIAEnabledChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
