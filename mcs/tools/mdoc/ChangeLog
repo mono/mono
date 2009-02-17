@@ -1,3 +1,9 @@
+2009-02-17  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/mdoc.cs: Set Environment.ExitCode=1 if an
+	  exception occurs, so that calling code can determine that an error
+	  occurred w/o resorting to parsing stderr.
+
 2009-02-16  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Support C#4 variant generics, e.g.
