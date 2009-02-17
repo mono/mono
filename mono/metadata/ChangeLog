@@ -1,3 +1,8 @@
+2009-02-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_close): Delete the critical section before
+	freeing the memory holding it.
+
 2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): rethrow opcode doesn not fall through.
