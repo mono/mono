@@ -1,0 +1,17 @@
+2008-02-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* detect-sc.cs: Tool to detect methods that *likely* needs a
+	[SecurityCritical] attribute to execute under the CoreCLR
+	* detect-ssc.cs: Tool to detect methods that *likely* needs a
+	[SecuritySafeCritical] attribute to execute under the CoreCLR
+	* find-sc.cs: Tool to extract types and methods decorated with
+	[SecurityCritical] in Silverlight platform code.
+	* merge.cs: Tool to merge the different data files into files (one
+	per assembly) usable by the tuner.
+	* PlatformCode.cs: Helpers for tools.
+	* CecilRocks.cs: Extension methods helpers for tools.
+	* Makefile: Build file. Normally only the merging should be done.
+	Other options needs "supervision" ;-) and store their data into 
+	SVN to allow tracking/auditing all changes. Note: this is not (yet)
+	part of the main build.
+	* README: Documentation about the files.
