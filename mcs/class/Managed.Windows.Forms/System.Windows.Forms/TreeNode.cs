@@ -559,7 +559,7 @@ namespace System.Windows.Forms
 				if (prop_bag == null)
 					prop_bag = new OwnerDrawPropertyBag (); 
 				prop_bag.Font = value;
-				InvalidateWidth ();
+				Invalidate ();
 			}
 		}
 
@@ -655,7 +655,7 @@ namespace System.Windows.Forms
 				if (state_image_index != value) {
 					state_image_index = value;
 					state_image_key = string.Empty;
-					InvalidateWidth ();
+					Invalidate ();
 				}
 			}
 		}
@@ -672,7 +672,7 @@ namespace System.Windows.Forms
 				if (state_image_key != value) {
 					state_image_key = value;
 					state_image_index = -1;
-					InvalidateWidth ();
+					Invalidate ();
 				}
 			}
 		}
@@ -698,7 +698,7 @@ namespace System.Windows.Forms
 				if (text == value)
 					return;
 				text = value;
-				InvalidateWidth ();
+				Invalidate ();
 #if NET_2_0
 				// UIA Framework Event: Text Changed
 				TreeView view = TreeView;
@@ -1059,6 +1059,22 @@ namespace System.Windows.Forms
 
 		internal bool NeedsWidth {
 			get { return width == -1; }
+		}
+
+		internal void Invalidate ()
+		{
+			// invalidate width first so Bounds retrieves 
+			// the updated value (we don't use it here however)
+			width = -1;
+
+			TreeView tv = TreeView;
+			if (tv == null)
+				return;
+				
+			// Use actual TreeView width to invalidate total prev/new area
+			Rectangle bounds = Bounds;
+			bounds.Width = tv.ClientSize.Width;
+			tv.Invalidate (bounds);
 		}
 
 		internal void InvalidateWidth ()

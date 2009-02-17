@@ -1,3 +1,10 @@
+2009-02-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNode.cs: When Text/StateImageIndex/StateImageKey/NodeFont change
+	Invalidate the proper bounds in the TreeView, not only resetting the
+	width.
+	Fixes #475542.
+
 2009-02-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNode.cs: Don't return TreeView.BackColor when retrieving our own
