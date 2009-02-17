@@ -2220,6 +2220,7 @@ namespace Mono.CSharp {
 				foreach (CompilerGeneratedClass c in compiler_generated)
 					c.CloseType ();
 			
+			PartialContainer = null;
 			types = null;
 			properties = null;
 			delegates = null;

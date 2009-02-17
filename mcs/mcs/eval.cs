@@ -77,7 +77,7 @@ namespace Mono.CSharp {
 				
 				driver.ProcessDefaultConfig ();
 				CompilerCallableEntryPoint.Reset ();
-				Driver.LoadReferences ();
+				driver.LoadReferences ();
 				RootContext.EvalMode = true;
 				inited = true;
 			}

@@ -35,24 +35,24 @@ namespace Mono.CSharp
 		//
 		// Assemblies references to be linked.   Initialized with
 		// mscorlib.dll here.
-		static ArrayList references;
+		ArrayList references;
 
 		//
 		// If any of these fail, we ignore the problem.  This is so
 		// that we can list all the assemblies in Windows and not fail
 		// if they are missing on Linux.
 		//
-		static ArrayList soft_references;
+		ArrayList soft_references;
 
 		// 
 		// External aliases for assemblies.
 		//
-		static Hashtable external_aliases;
+		Hashtable external_aliases;
 
 		//
 		// Modules to be linked
 		//
-		static ArrayList modules;
+		ArrayList modules;
 
 		// Lookup paths
 		static ArrayList link_paths;
@@ -74,9 +74,9 @@ namespace Mono.CSharp
 		//
 		// A list of resource files
 		//
-		static Resources embedded_resources;
-		static string win32ResourceFile;
-		static string win32IconFile;
+		Resources embedded_resources;
+		string win32ResourceFile;
+		string win32IconFile;
 
 		//
 		// Output file
@@ -97,8 +97,6 @@ namespace Mono.CSharp
 
 		static public void Reset ()
 		{
-			embedded_resources = null;
-			win32ResourceFile = win32IconFile = null;
 			output_file = null;
 		}
 
@@ -458,7 +456,7 @@ namespace Mono.CSharp
 		/// <summary>
 		///   Loads all assemblies referenced on the command line
 		/// </summary>
-		static public void LoadReferences ()
+		public void LoadReferences ()
 		{
 			link_paths.Add (GetSystemDir ());
 			link_paths.Add (Directory.GetCurrentDirectory ());
@@ -1557,7 +1555,7 @@ namespace Mono.CSharp
 			return new_args;
 		}
 
-		static void AddExternAlias (string identifier, string assembly)
+		void AddExternAlias (string identifier, string assembly)
 		{
 			if (assembly.Length == 0) {
 				Report.Error (1680, "Invalid reference alias '" + identifier + "='. Missing filename");

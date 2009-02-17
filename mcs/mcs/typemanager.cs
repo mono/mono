@@ -272,12 +272,12 @@ namespace Mono.CSharp {
 	static TypeManager ()
 	{
 		Reset ();
-
-		InitExpressionTypes ();
 	}
 
 	static public void Reset ()
 	{
+		InitExpressionTypes ();
+		
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
@@ -292,6 +292,9 @@ namespace Mono.CSharp {
 		type_hash = new DoubleHash ();
 		assembly_internals_vis_attrs = new PtrHashtable ();
 		iface_cache = new PtrHashtable ();
+		
+		closure = new Closure ();
+		FilterWithClosure_delegate = new MemberFilter (closure.Filter);
 
 		// TODO: I am really bored by all this static stuff
 		system_type_get_type_from_handle =
@@ -3031,8 +3034,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	static Closure closure = new Closure ();
-	static MemberFilter FilterWithClosure_delegate = new MemberFilter (closure.Filter);
+	static Closure closure;
+	static MemberFilter FilterWithClosure_delegate;
 
 	//
 	// Looks up a member called `name' in the `queried_type'.  This lookup
