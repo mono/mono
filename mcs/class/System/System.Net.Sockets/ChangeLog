@@ -1,10 +1,3 @@
-2009-02-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* Socket.cs: instead of clearing the sockets form the output and then
-	adding them back, we just remove the ones that have not been
-	signaled.
-	Fixes bug #354090.
-
 2009-01-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: don't throw when there's no ipv6 configuration.

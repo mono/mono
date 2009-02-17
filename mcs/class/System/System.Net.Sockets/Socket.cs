@@ -678,45 +678,43 @@ namespace System.Net.Sockets
 			 * 				 WRITE socket 0-n, null,
 			 *				 ERROR socket 0-n, null
 			 */
-			Socket [] original = (Socket []) list.ToArray (typeof (Socket));
-			Socket [] sockets = original;
+			Socket [] sockets = (Socket []) list.ToArray (typeof (Socket));
 			Select_internal (ref sockets, microSeconds, out error);
 
 			if (error != 0)
 				throw new SocketException (error);
 
-			if (sockets == null) {
-				if (checkRead != null)
-					checkRead.Clear ();
-				if (checkWrite != null)
-					checkWrite.Clear ();
-				if (checkError != null)
-					checkError.Clear ();
+			if (checkRead != null)
+				checkRead.Clear ();
+
+			if (checkWrite != null)
+				checkWrite.Clear ();
+
+			if (checkError != null)
+				checkError.Clear ();
+
+			if (sockets == null)
 				return;
-			}
 
 			int mode = 0;
-			int count = original.Length;
+			int count = sockets.Length;
 			IList currentList = checkRead;
-			int currentIdx = 0;
 			for (int i = 0; i < count; i++) {
-				Socket sock = original [i];
+				Socket sock = sockets [i];
 				if (sock == null) { // separator
 					currentList = (mode == 0) ? checkWrite : checkError;
-					currentIdx = 0;
 					mode++;
 					continue;
 				}
 
-				if (mode == 1 && currentList == checkWrite && !sock.connected) {
-					if ((int) sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0)
-						sock.connected = true;
-				}
-
-				Socket cur_sock;
-				int max = currentList.Count;
-				while ((cur_sock = (Socket) currentList [currentIdx++]) != sock) {
-					currentList.RemoveAt (currentIdx);
+				if (currentList != null) {
+					if (currentList == checkWrite && !sock.connected) {
+						if ((int) sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
+							sock.connected = true;
+						}
+					}
+					
+					currentList.Add (sock);
 				}
 			}
 		}
