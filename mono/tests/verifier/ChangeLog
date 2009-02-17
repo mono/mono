@@ -1,3 +1,8 @@
+2009-02-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* unverifiable_array_element_type_compatiblity.il: Regression test
+	for #474271.
+
 2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_rethrow_doesnt_fallthrough: New regression test for
