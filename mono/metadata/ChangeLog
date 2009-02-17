@@ -1,3 +1,8 @@
+2009-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_boolean): Add null checks to the new 
+	native->managed marshalling code. Fixes #476247.
+
 2009-02-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_vtable_entry): Move the addition of
