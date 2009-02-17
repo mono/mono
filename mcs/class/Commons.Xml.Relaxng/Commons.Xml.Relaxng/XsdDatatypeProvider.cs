@@ -138,6 +138,7 @@ namespace Commons.Xml.Relaxng.XmlSchema
 			r.BaseTypeName = new XmlQualifiedName (primitive.Name, ns);
 			foreach (RelaxngParam p in parameters) {
 				XmlSchemaFacet f = null;
+				string value = p.Value;
 				switch (p.Name) {
 				case "maxExclusive":
 					f = new XmlSchemaMaxExclusiveFacet ();
@@ -153,6 +154,9 @@ namespace Commons.Xml.Relaxng.XmlSchema
 					break;
 				case "pattern":
 					f = new XmlSchemaPatternFacet ();
+					// .NET/Mono Regex has a bug that it does not support "IsLatin-1Supplement"
+					// (it somehow breaks at '-').
+					value = value.Replace ("\\p{IsLatin-1Supplement}", "[\\x80-\\xFF]");
 					break;
 				case "whiteSpace":
 					f = new XmlSchemaWhiteSpaceFacet ();
@@ -175,7 +179,7 @@ namespace Commons.Xml.Relaxng.XmlSchema
 				default:
 					throw new RelaxngException (String.Format ("XML Schema facet {0} is not recognized or not supported.", p.Name));
 				}
-				f.Value = p.Value;
+				f.Value = value;
 				r.Facets.Add (f);
 			}
 

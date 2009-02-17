@@ -1,3 +1,8 @@
+2009-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdDatatypeProvider.cs : workaround .NET/Mono Regex bug that
+	  does not handle \p{Latin-1Supplement} to work with OOXML grammar.
+
 2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngReader.cs : fixed wrong text skip and ns/datatypeLibrary
