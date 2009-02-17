@@ -1,5 +1,8 @@
 2009-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (find_extra_method_in_amodule): Add a cache for decoded 
+	methods refs.
+	
 	* aot-runtime.c (load_image): Pass our basedir to mono_assembly_load.
 
 	* aot-compiler.c (emit_exception_debug_info): Bump the maximum size of
