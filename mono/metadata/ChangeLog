@@ -1,3 +1,12 @@
+2009-02-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_get_vtable_entry): Move the addition of
+	static rgctx invoke wrappers for vtable methods here, this simplifies
+	a lot of code and causes fewer rgctx wrappers to be created.
+
+	* marshal.c (mono_marshal_get_static_rgctx_invoke): Change the
+	name of the statistics to begin with an uppercase.
+
 2009-02-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c: Revert previous change as it breaks the build.
