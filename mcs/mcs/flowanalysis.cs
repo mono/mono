@@ -1038,8 +1038,19 @@ namespace Mono.CSharp
 		// </summary>
 		public TypeInfo[] SubStructInfo;
 
-		protected readonly StructInfo struct_info;
-		private static Hashtable type_hash = new Hashtable ();
+		readonly StructInfo struct_info;
+		private static Hashtable type_hash;
+		
+		static TypeInfo ()
+		{
+			Reset ();
+		}
+		
+		public static void Reset ()
+		{
+			type_hash = new Hashtable ();
+			StructInfo.field_type_hash = new Hashtable ();
+		}
 
 		public static TypeInfo GetTypeInfo (Type type)
 		{
@@ -1097,7 +1108,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		protected TypeInfo (StructInfo struct_info, int offset)
+		TypeInfo (StructInfo struct_info, int offset)
 		{
 			this.struct_info = struct_info;
 			this.Offset = offset;
@@ -1161,7 +1172,7 @@ namespace Mono.CSharp
 					      Type, Offset, Length, TotalLength);
 		}
 
-		protected class StructInfo {
+		class StructInfo {
 			public readonly Type Type;
 			public readonly FieldInfo[] Fields;
 			public readonly TypeInfo[] StructFields;
@@ -1172,7 +1183,7 @@ namespace Mono.CSharp
 			public readonly int TotalLength;
 			public readonly bool HasStructFields;
 
-			private static Hashtable field_type_hash = new Hashtable ();
+			public static Hashtable field_type_hash;
 			private Hashtable struct_field_hash;
 			private Hashtable field_hash;
 

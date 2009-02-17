@@ -21,6 +21,23 @@ namespace Mono.CSharp {
 	// A container class for all the conversion operations
 	//
 	static class Convert {
+		
+		static EmptyExpression MyEmptyExpr;
+		static DoubleHash explicit_conv;
+		static DoubleHash implicit_conv;
+		
+		static Convert ()
+		{
+			Reset ();
+		}
+		
+		public static void Reset ()
+		{
+			MyEmptyExpr = null;
+			explicit_conv = new DoubleHash (100);
+			implicit_conv = new DoubleHash (100);
+		}
+		
 #if GMCS_SOURCE
 		static Type TypeParam_EffectiveBaseType (GenericConstraints gc)
 		{
@@ -217,7 +234,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static EmptyExpression MyEmptyExpr;
 		static Expression ImplicitReferenceConversion (Expression expr, Type target_type, bool explicit_cast)
 		{
 			Type expr_type = expr.Type;
@@ -1096,9 +1112,6 @@ namespace Mono.CSharp {
 
 			return method;
 		}
-
-		static DoubleHash explicit_conv = new DoubleHash (100);
-		static DoubleHash implicit_conv = new DoubleHash (100);
 
 		/// <summary>
 		///   User-defined conversions

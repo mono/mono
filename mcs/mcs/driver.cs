@@ -2008,6 +2008,8 @@ namespace Mono.CSharp
 			SymbolWriter.Reset ();
 			Switch.Reset ();
 			Linq.QueryBlock.TransparentParameter.Reset ();
+			Convert.Reset ();
+			TypeInfo.Reset ();
 		}
 
 	}

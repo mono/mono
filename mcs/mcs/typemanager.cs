@@ -291,6 +291,7 @@ namespace Mono.CSharp {
 		fields = new Hashtable ();
 		type_hash = new DoubleHash ();
 		assembly_internals_vis_attrs = new PtrHashtable ();
+		iface_cache = new PtrHashtable ();
 
 		// TODO: I am really bored by all this static stuff
 		system_type_get_type_from_handle =
@@ -2040,7 +2041,7 @@ namespace Mono.CSharp {
 		return ret;
 	}
 		
-	static PtrHashtable iface_cache = new PtrHashtable ();
+	static PtrHashtable iface_cache;
 		
 	/// <summary>
 	///   This function returns the interfaces in the type `t'.  Works with
