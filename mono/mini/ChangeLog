@@ -1,5 +1,10 @@
 2009-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c: Don't align subsections to 8 in the binary writer.
+	
+	* dwarfwriter.c (emit_line_number_info_begin): This now works with the
+	binary writer too.
+	
 	* dwarfwriter.c (mono_dwarf_writer_emit_base_info): Use 2 as the DWARF
 	version instead of 3 as valgrind doesn't like version 3.
 
