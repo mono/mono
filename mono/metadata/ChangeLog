@@ -1,3 +1,10 @@
+2009-02-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_create_method_token): Correctly encode
+	MethodDef MemberRefParent token.
+
+	Fixes #472845.
+
 2009-02-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_close): Delete the critical section before
