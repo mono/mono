@@ -1,5 +1,8 @@
 2009-02-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c (mono_dwarf_writer_emit_base_info): Use 2 as the DWARF
+	version instead of 3 as valgrind doesn't like version 3.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
 
 	* aot-compiler.c (mono_aot_method_hash): New function to return a hash
