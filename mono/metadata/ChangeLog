@@ -1,5 +1,10 @@
 2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c (main): Call mono_marshal_init so pedump
+	doesn't crash.
+
+2009-02-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (method_from_memberref): Properly fix #474271 and
 	don't break the runtime bad.
 
