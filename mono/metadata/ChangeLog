@@ -1,3 +1,10 @@
+2009-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r127232.
+	
+	* marshal.c (emit_marshal_boolean): Add null checks to the new 
+	native->managed marshalling code. Fixes #476247.
+
 2009-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r125348.
