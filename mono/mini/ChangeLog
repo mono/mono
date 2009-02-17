@@ -1,3 +1,8 @@
+2009-02-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_class): Only add rgctx invoke wrappers
+	for cctors if needed.
+
 2009-02-17  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c: Fix build on Darwin.
