@@ -34552,6 +34552,32 @@
       </method>
     </type>
   </test>
+  <test name="test-706.cs">
+    <type name="Test.CustomParentAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void DoSomething()">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test.MyClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Test.MyClass+CustomChildAttribute">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void DoSomething()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-71.cs">
     <type name="X">
       <method name="Void .ctor()">
