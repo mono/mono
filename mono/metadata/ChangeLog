@@ -1,3 +1,10 @@
+2009-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r127347.
+
+	* marshal.c (mono_ftnptr_to_delegate): Convert a NULL ftnptr to a null
+	delegate. Fixes #477396.
+
 2009-02-18  Bill Holmes  <billholmes54@gmail.com>
 
 	backport of r127279.
