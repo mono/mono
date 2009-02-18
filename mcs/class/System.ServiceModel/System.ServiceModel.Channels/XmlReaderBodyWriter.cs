@@ -27,15 +27,22 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO ("Check if isBuffered works or not (I think it shouldn't).")]
 	internal class XmlReaderBodyWriter : BodyWriter
 	{
 		XmlDictionaryReader reader;
+		string xml;
+
+		public XmlReaderBodyWriter (string xml)
+			: base (true)
+		{
+			this.xml = xml;
+		}
 
 		public XmlReaderBodyWriter (XmlDictionaryReader reader)
 			: base (false)
@@ -44,17 +51,19 @@ namespace System.ServiceModel.Channels
 			this.reader = reader;
 		}
 
-		[MonoTODO]
 		protected override BodyWriter OnCreateBufferedCopy (
 			int maxBufferSize)
 		{
-			throw new NotSupportedException ();
+			if (xml == null)
+				throw new NotSupportedException ();
+			return new XmlReaderBodyWriter (xml);
 		}
 
 		protected override void OnWriteBodyContents (
 			XmlDictionaryWriter writer)
 		{
-			writer.WriteNode (reader, false);
+			XmlReader r = reader ?? XmlReader.Create (new StringReader (xml));
+			writer.WriteNode (r, false);
 		}
 	}
 }

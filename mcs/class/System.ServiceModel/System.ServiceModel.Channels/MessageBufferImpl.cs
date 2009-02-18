@@ -38,14 +38,16 @@ namespace System.ServiceModel.Channels
 		MessageProperties properties;
 		BodyWriter body;
 		bool closed, is_fault;
-		
+		int max_buffer_size;
+
 		internal DefaultMessageBuffer (MessageHeaders headers, MessageProperties properties)
-			: this (headers, properties, null, false)
+			: this (0, headers, properties, null, false)
 		{
 		}
 
-		internal DefaultMessageBuffer (MessageHeaders headers, MessageProperties properties, BodyWriter body, bool isFault)
+		internal DefaultMessageBuffer (int maxBufferSize, MessageHeaders headers, MessageProperties properties, BodyWriter body, bool isFault)
 		{
+			this.max_buffer_size = maxBufferSize;
 			this.headers = headers;
 			this.body = body;
 			this.closed = false;
@@ -72,7 +74,7 @@ namespace System.ServiceModel.Channels
 			if (body == null)
 				msg = new EmptyMessage (headers.MessageVersion, headers.Action);
 			else
-				msg = new SimpleMessage (headers.MessageVersion, headers.Action, body, is_fault);
+				msg = new SimpleMessage (headers.MessageVersion, headers.Action, body.CreateBufferedCopy (max_buffer_size), is_fault);
 			msg.Properties.CopyProperties (properties);
 			return msg;
 		}

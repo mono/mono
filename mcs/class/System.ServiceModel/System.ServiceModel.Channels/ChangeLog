@@ -1,3 +1,8 @@
+2009-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Message.cs, MessageBufferImpl.cs, XmlReaderBodyWriter.cs :
+	  make buffered copy in ML2 really buffered.
+
 2009-02-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Message.cs : if there is no header item to write, do not write
