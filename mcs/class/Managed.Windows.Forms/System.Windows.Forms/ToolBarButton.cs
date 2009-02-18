@@ -355,8 +355,8 @@ namespace System.Windows.Forms
 		}
 		
 		internal event EventHandler UIAEnabledChanged {
-			add { Events.AddHandler (UIATextChangedEvent, value); }
-			remove { Events.RemoveHandler (UIATextChangedEvent, value); }
+			add { Events.AddHandler (UIAEnabledChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAEnabledChangedEvent, value); }
 		}
 		
 		protected virtual void OnUIATextChanged(EventArgs e)

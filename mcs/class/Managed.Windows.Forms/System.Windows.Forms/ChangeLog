@@ -1,3 +1,7 @@
+2009-02-18  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolBarButton.cs: Oops, use the correct event (fix r127298).
+
 2009-02-17  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ToolBarButton.cs: Event for Enabled property (needed to fix
