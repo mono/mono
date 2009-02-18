@@ -101,3 +101,5 @@ test-xml-022.cs
 test-xml-035.cs
 test-xml-037.cs
 test-xml-038.cs
+
+test-704.cs IGNORE #474271

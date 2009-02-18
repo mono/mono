@@ -1611,7 +1611,7 @@
         <size>44</size>
       </method>
       <method name="Int32 Main()">
-        <size>87</size>
+        <size>82</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__Iterator0">
@@ -1702,7 +1702,7 @@
         <size>17</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>210</size>
+        <size>214</size>
       </method>
     </type>
     <type name="ComparablePair`2[T,U]">
@@ -1931,7 +1931,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>58</size>
+        <size>53</size>
       </method>
     </type>
     <type name="MyList`1+&lt;GetEnumerator&gt;c__Iterator0[T]">
@@ -2031,7 +2031,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>62</size>
+        <size>64</size>
       </method>
       <method name="IEnumerator GetEnumerator()">
         <size>8</size>
@@ -2045,10 +2045,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>184</size>
+        <size>186</size>
       </method>
       <method name="Void Dispose()">
-        <size>60</size>
+        <size>62</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -2867,7 +2867,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>59</size>
+        <size>54</size>
       </method>
     </type>
     <type name="Test`1+&lt;GetEnumerator&gt;c__Iterator0[T]">
@@ -3075,7 +3075,7 @@
         <size>44</size>
       </method>
       <method name="IMyList`1 Map[U](Mapper`2[T,U])">
-        <size>72</size>
+        <size>67</size>
       </method>
       <method name="IEnumerator System.Collections.IEnumerable.GetEnumerator()">
         <size>7</size>
@@ -3105,7 +3105,7 @@
         <size>143</size>
       </method>
       <method name="Int32 GetHashCode()">
-        <size>71</size>
+        <size>66</size>
       </method>
       <method name="IEnumerator`1 GetEnumerator()">
         <size>7</size>
@@ -3114,7 +3114,7 @@
         <size>7</size>
       </method>
       <method name="LinkedList`1[T] op_Addition(LinkedList`1[T], LinkedList`1[T])">
-        <size>128</size>
+        <size>119</size>
       </method>
     </type>
     <type name="LinkedList`1+Node[T]">
@@ -3155,7 +3155,7 @@
         <size>7</size>
       </method>
       <method name="Void Print(System.IO.TextWriter)">
-        <size>92</size>
+        <size>87</size>
       </method>
     </type>
     <type name="MyString">
@@ -3177,7 +3177,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>500</size>
+        <size>483</size>
       </method>
     </type>
     <type name="Mapper`2[A,R]">
@@ -4147,7 +4147,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>92</size>
+        <size>96</size>
       </method>
     </type>
   </test>
@@ -4321,7 +4321,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>117</size>
+        <size>119</size>
       </method>
     </type>
     <type name="X+A">
@@ -4753,7 +4753,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>181</size>
+        <size>186</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__Iterator0">
@@ -4842,7 +4842,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>74</size>
+        <size>69</size>
       </method>
     </type>
     <type name="test.Test`1+&lt;Lookup&gt;c__Iterator0[T]">
@@ -5535,7 +5535,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>117</size>
+        <size>112</size>
       </method>
     </type>
   </test>
@@ -5661,7 +5661,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>86</size>
+        <size>81</size>
       </method>
     </type>
     <type name="HashSet`1+&lt;GetEnumerator&gt;c__Iterator0[T]">
@@ -6008,7 +6008,7 @@
         <size>44</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>100</size>
+        <size>95</size>
       </method>
       <method name="IEnumerable`1 FromTo(Int32, Int32)">
         <size>44</size>
@@ -6754,7 +6754,7 @@
         <size>7</size>
       </method>
       <method name="Void AddAll[U](IEnumerable`1)">
-        <size>66</size>
+        <size>61</size>
       </method>
       <method name="Boolean searchoradd(T ByRef, Boolean, Boolean, Boolean)">
         <size>2</size>
@@ -7062,7 +7062,7 @@
         <size>11</size>
       </method>
       <method name="Void Run()">
-        <size>156</size>
+        <size>147</size>
       </method>
     </type>
     <type name="Test+&lt;GetEnumerator&gt;c__Iterator0">
@@ -7461,7 +7461,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>58</size>
+        <size>53</size>
       </method>
     </type>
     <type name="Qux`2+GetEnumerator&gt;c__Iterator0[X,V]">
@@ -7814,7 +7814,7 @@
         <size>106</size>
       </method>
       <method name="Int32 Test(System.Type, System.Type[])">
-        <size>394</size>
+        <size>399</size>
       </method>
       <method name="Int32 Test()">
         <size>532</size>
@@ -8202,7 +8202,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>69</size>
+        <size>64</size>
       </method>
     </type>
   </test>
@@ -8230,7 +8230,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>64</size>
+        <size>59</size>
       </method>
     </type>
     <type name="Test+GetEnumerator&gt;c__Iterator0">
@@ -8876,7 +8876,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>58</size>
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -8963,7 +8963,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>64</size>
+        <size>59</size>
       </method>
     </type>
     <type name="BaseCollection`1[T]">
@@ -10172,7 +10172,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>72</size>
+        <size>67</size>
       </method>
       <method name="IEnumerable`1 setX()">
         <size>16</size>
@@ -11402,6 +11402,23 @@
       </method>
     </type>
   </test>
+  <test name="gtest-439.cs">
+    <type name="MonoBug.Stuff">
+      <method name="MonoBug.GenericStuff`2[T1,T2] CreateThing[T1,T2](T1, T2)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="MonoBug.GenericStuff`2[T1,T2]">
+      <method name="Void .ctor(T1, T2)">
+        <size>21</size>
+      </method>
+    </type>
+    <type name="MonoBug.Program">
+      <method name="Void Main()">
+        <size>35</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -11449,7 +11466,7 @@
         <size>44</size>
       </method>
       <method name="Int32 Main()">
-        <size>100</size>
+        <size>95</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__Iterator0`1[T]">
@@ -12514,7 +12531,7 @@
         <size>33</size>
       </method>
       <method name="System.String Implode[TSource](IEnumerable`1, System.String, System.Action`2[System.Text.StringBuilder,TSource])">
-        <size>130</size>
+        <size>126</size>
       </method>
     </type>
     <type name="Test">
@@ -12718,7 +12735,7 @@
         <size>7</size>
       </method>
       <method name="Boolean &lt;&gt;m__0()">
-        <size>199</size>
+        <size>194</size>
       </method>
     </type>
     <type name="Foo`1+&lt;ContainsAll&gt;c__AnonStorey0`1+&lt;ContainsAll&gt;c__AnonStorey1`1[T,U]">
@@ -12792,7 +12809,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>62</size>
+        <size>57</size>
       </method>
       <method name="Int32 GetItem()">
         <size>50</size>
@@ -13161,7 +13178,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>83</size>
+        <size>78</size>
       </method>
     </type>
     <type name="Hello">
@@ -13439,7 +13456,7 @@
         <size>30</size>
       </method>
       <method name="Void Main()">
-        <size>63</size>
+        <size>58</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__Iterator0">
@@ -13521,7 +13538,7 @@
         <size>11</size>
       </method>
       <method name="Void Main()">
-        <size>83</size>
+        <size>78</size>
       </method>
       <method name="Foo op_Implicit(Test)">
         <size>30</size>
@@ -14232,10 +14249,10 @@
         <size>7</size>
       </method>
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)">
-        <size>77</size>
+        <size>81</size>
       </method>
       <method name="Int32 Main()">
-        <size>505</size>
+        <size>509</size>
       </method>
     </type>
     <type name="Test+Wrap">
@@ -15606,7 +15623,7 @@
         <size>7</size>
       </method>
       <method name="Boolean ContainsAll[U](IEnumerable`1)">
-        <size>189</size>
+        <size>184</size>
       </method>
       <method name="Boolean Contains(T)">
         <size>2</size>
@@ -15679,7 +15696,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>58</size>
+        <size>53</size>
       </method>
       <method name="IEnumerable`1 Test[T](Int32)">
         <size>30</size>
@@ -16028,7 +16045,7 @@
     </type>
     <type name="ChatExtensions">
       <method name="Void Say(ChatClient, System.String, System.Collections.Specialized.StringCollection)">
-        <size>60</size>
+        <size>62</size>
       </method>
     </type>
   </test>
@@ -16728,10 +16745,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>213</size>
+        <size>218</size>
       </method>
       <method name="Void Dispose()">
-        <size>51</size>
+        <size>56</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -16870,7 +16887,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>121</size>
+        <size>116</size>
       </method>
       <method name="Nullable`1 &lt;Main&gt;m__0(Int32)">
         <size>30</size>
@@ -16934,10 +16951,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>181</size>
+        <size>186</size>
       </method>
       <method name="Void Dispose()">
-        <size>51</size>
+        <size>56</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -16959,7 +16976,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>114</size>
+        <size>116</size>
       </method>
     </type>
     <type name="App+&lt;QueryEnumerable&gt;c__Iterator0`1[T]">
@@ -17008,7 +17025,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>99</size>
+        <size>94</size>
       </method>
     </type>
     <type name="Test+&lt;Create&gt;c__Iterator0`1[T]">
@@ -17047,7 +17064,7 @@
         <size>44</size>
       </method>
       <method name="Int32 Main()">
-        <size>168</size>
+        <size>159</size>
       </method>
     </type>
     <type name="Test+&lt;FromTo&gt;c__Iterator0">
@@ -17118,7 +17135,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>142</size>
+        <size>137</size>
       </method>
     </type>
     <type name="Collection`1+&lt;GetEnumerator&gt;c__Iterator0[T]">
@@ -17132,10 +17149,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>170</size>
+        <size>175</size>
       </method>
       <method name="Void Dispose()">
-        <size>51</size>
+        <size>56</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -17473,7 +17490,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>517</size>
+        <size>501</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0(Int32)">
         <size>2</size>
@@ -17514,7 +17531,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>569</size>
+        <size>553</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -17626,7 +17643,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>414</size>
+        <size>406</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;i&gt;__T,&lt;u&gt;__T]">
@@ -17696,7 +17713,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>761</size>
+        <size>748</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;i1&gt;__T,&lt;i2&gt;__T]">
@@ -17950,7 +17967,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>635</size>
+        <size>631</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;a&gt;__T,&lt;ab&gt;__T]">
@@ -18060,7 +18077,7 @@
         <size>108</size>
       </method>
       <method name="Int32 Main()">
-        <size>481</size>
+        <size>464</size>
       </method>
     </type>
     <type name="&lt;&gt;__AnonType0`2[&lt;values&gt;__T,&lt;length&gt;__T]">
@@ -18371,7 +18388,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>161</size>
+        <size>157</size>
       </method>
       <method name="Int32 &lt;Main&gt;m__0(Int32)">
         <size>2</size>
@@ -18644,7 +18661,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>214</size>
+        <size>219</size>
       </method>
     </type>
   </test>
@@ -19359,7 +19376,7 @@
         <size>32</size>
       </method>
       <method name="TR Sum[TA,TR](IEnumerable`1, System.Func`3[TR,TA,TR])">
-        <size>125</size>
+        <size>120</size>
       </method>
     </type>
     <type name="Repro">
@@ -19404,7 +19421,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0(Int32)">
-        <size>57</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -22204,7 +22221,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main(System.String[])">
-        <size>76</size>
+        <size>78</size>
       </method>
     </type>
   </test>
@@ -23203,7 +23220,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main(System.String[])">
-        <size>133</size>
+        <size>138</size>
       </method>
     </type>
     <type name="MonoBUG.Foo">
@@ -23970,7 +23987,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>65</size>
+        <size>67</size>
       </method>
     </type>
     <type name="Blah">
@@ -24570,7 +24587,7 @@
         <size>10</size>
       </method>
       <method name="Void Main()">
-        <size>59</size>
+        <size>61</size>
       </method>
     </type>
     <type name="T+C">
@@ -25319,7 +25336,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>468</size>
+        <size>473</size>
       </method>
     </type>
     <type name="A+B+C">
@@ -25415,7 +25432,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>468</size>
+        <size>473</size>
       </method>
     </type>
     <type name="A+B+C">
@@ -26784,7 +26801,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>260</size>
+        <size>275</size>
       </method>
     </type>
     <type name="X">
@@ -28315,7 +28332,7 @@
         <size>16</size>
       </method>
       <method name="Void Main()">
-        <size>62</size>
+        <size>64</size>
       </method>
     </type>
     <type name="XX+&lt;X&gt;c__Iterator0">
@@ -29659,7 +29676,7 @@
         <size>2</size>
       </method>
       <method name="Void Main()">
-        <size>160</size>
+        <size>170</size>
       </method>
     </type>
     <type name="Q">
@@ -29894,7 +29911,7 @@
         <size>11</size>
       </method>
       <method name="Void Run()">
-        <size>166</size>
+        <size>176</size>
       </method>
     </type>
     <type name="Test+&lt;GetEnumerator&gt;c__Iterator0">
@@ -30388,7 +30405,7 @@
         <size>6</size>
       </method>
       <method name="Int32 Main()">
-        <size>484</size>
+        <size>499</size>
       </method>
     </type>
   </test>
@@ -31335,7 +31352,7 @@
         <size>7</size>
       </method>
       <method name="System.Object TestMethod(TestCollection)">
-        <size>62</size>
+        <size>64</size>
       </method>
       <method name="Void Main()">
         <size>1</size>
@@ -31738,7 +31755,7 @@
         <size>76</size>
       </method>
       <method name="System.String BuildNode_D()">
-        <size>151</size>
+        <size>156</size>
       </method>
       <method name="Void BuildNode_E(System.String[,] ByRef)">
         <size>68</size>
@@ -32859,7 +32876,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>63</size>
+        <size>65</size>
       </method>
     </type>
     <type name="Foo+&lt;foo&gt;c__Iterator0">
@@ -34487,6 +34504,41 @@
       </method>
     </type>
   </test>
+  <test name="test-705.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>1</size>
+      </method>
+      <method name="Nested GetEnumerator()">
+        <size>10</size>
+      </method>
+    </type>
+    <type name="Test+Nested">
+      <method name="Void System.IDisposable.Dispose()">
+        <size>13</size>
+      </method>
+      <method name="Int32 get_Current()">
+        <size>2</size>
+      </method>
+      <method name="Boolean MoveNext()">
+        <size>2</size>
+      </method>
+      <method name="Void Reset()">
+        <size>1</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Int32 Main()">
+        <size>70</size>
+      </method>
+    </type>
+  </test>
   <test name="test-71.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -35499,10 +35551,10 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>257</size>
+        <size>262</size>
       </method>
       <method name="System.Collections.ArrayList Find(predicate, System.Collections.ArrayList)">
-        <size>79</size>
+        <size>81</size>
       </method>
     </type>
     <type name="predicate">
@@ -36379,7 +36431,7 @@
   <test name="test-anon-35.cs">
     <type name="CustomDict">
       <method name="Void .ctor()">
-        <size>64</size>
+        <size>66</size>
       </method>
       <method name="IEnumerator GetEnumerator()">
         <size>15</size>
@@ -36906,7 +36958,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>62</size>
+        <size>64</size>
       </method>
       <method name="IEnumerator GetEnumerator()">
         <size>8</size>
@@ -37088,7 +37140,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>62</size>
+        <size>64</size>
       </method>
       <method name="IEnumerator GetEnumerator()">
         <size>8</size>
@@ -37102,10 +37154,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>184</size>
+        <size>186</size>
       </method>
       <method name="Void Dispose()">
-        <size>60</size>
+        <size>62</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -39682,7 +39734,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>168</size>
+        <size>173</size>
       </method>
     </type>
     <type name="X+&lt;GetIt&gt;c__Iterator0">
@@ -39781,7 +39833,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>237</size>
+        <size>247</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -39855,7 +39907,7 @@
         <size>44</size>
       </method>
       <method name="Void Main()">
-        <size>97</size>
+        <size>99</size>
       </method>
     </type>
     <type name="X+&lt;GetRange&gt;c__Iterator0">
@@ -39894,7 +39946,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>103</size>
+        <size>105</size>
       </method>
     </type>
     <type name="List">
@@ -39966,7 +40018,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>383</size>
+        <size>403</size>
       </method>
     </type>
     <type name="S+&lt;Get&gt;c__Iterator0">
@@ -40104,7 +40156,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>374</size>
+        <size>379</size>
       </method>
     </type>
     <type name="Test+&lt;Foo&gt;c__Iterator0">
@@ -40151,7 +40203,7 @@
         <size>44</size>
       </method>
       <method name="Int32 Main()">
-        <size>169</size>
+        <size>171</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__Iterator0">
@@ -40195,7 +40247,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>263</size>
+        <size>268</size>
       </method>
     </type>
     <type name="Tester+&lt;GetEnumerator&gt;c__Iterator0">
@@ -40206,10 +40258,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>621</size>
+        <size>623</size>
       </method>
       <method name="Void Dispose()">
-        <size>80</size>
+        <size>82</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -40237,7 +40289,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>181</size>
+        <size>186</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__Iterator0">
@@ -40708,7 +40760,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>100</size>
+        <size>102</size>
       </method>
     </type>
     <type name="Test1.Foo+&lt;E&gt;c__Iterator0">

@@ -15,3 +15,5 @@ gtest-variance-2.cs IGNORE
 gtest-variance-3.cs IGNORE
 gtest-variance-4.cs IGNORE
 gtest-variance-5.cs IGNORE
+
+test-704.cs IGNORE #474271

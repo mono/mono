@@ -5,3 +5,5 @@
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
 test-xml-027.cs
+test-704.cs IGNORE #474271
+
