@@ -1,9 +1,7 @@
 2009-02-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TemplateControlCompiler.cs: lowercase place holder names
-	* BuildManager.cs: initial support for precompilation. No 'updatable',
-	please.
-
+	* BuildManager.cs: initial support for precompiled sites.
 
 2009-02-13  Marek Habersack  <mhabersack@novell.com>
 
