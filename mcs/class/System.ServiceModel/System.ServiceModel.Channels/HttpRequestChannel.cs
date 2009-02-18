@@ -134,14 +134,28 @@ namespace System.ServiceModel.Channels
 			}
 
 			WebResponse res;
+			Stream resstr;
 			try {
 				res = web_request.EndGetResponse (web_request.BeginGetResponse (null, null));
-			}
-			catch (WebException we) {
+				resstr = res.GetResponseStream ();
+			} catch (WebException we) {
 				res = we.Response;
+#if NET_2_1 // debug
+				Console.WriteLine (we);
+#endif
+				try {
+					// The response might contain SOAP fault. It might not.
+					resstr = res.GetResponseStream ();
+				} catch (WebException we2) {
+#if NET_2_1 // debug
+					Console.WriteLine (we2);
+#endif
+					throw we;
+				}
 			}
+			
 			try {
-				using (Stream responseStream = res.GetResponseStream ()) {
+				using (var responseStream = resstr) {
 					MemoryStream ms = new MemoryStream ();
 					byte [] b = new byte [65536];
 					int n = 0;

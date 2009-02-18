@@ -219,8 +219,8 @@ namespace System.ServiceModel.Channels
 		{
 #if NET_2_1
 			StringWriter sw = new StringWriter ();
-			XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw));
-			WriteMessage (w);
+			using (XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw)))
+				WriteMessage (w);
 			return new DefaultMessageBuffer (maxBufferSize, Headers, Properties, new XmlReaderBodyWriter (sw.ToString ()), false);
 #else
 			DTMXPathDocumentWriter2 pw = new DTMXPathDocumentWriter2 (new NameTable (), 100);
