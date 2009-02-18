@@ -1,3 +1,7 @@
+2009-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (create_custom_attr): Get rid of alloca.
+
 2009-02-18  Bill Holmes  <billholmes54@gmail.com>
 
 	* cominterop.c (cominterop_get_managed_wrapper_adjusted) :
