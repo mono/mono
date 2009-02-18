@@ -182,17 +182,27 @@ namespace System.Web.Routing
 		static readonly string [] substsep = {"{{"};
 
 		// it may return null for invalid values.
-		public bool TrySubstitute (RouteValueDictionary values, out string value)
+		public bool TrySubstitute (RouteValueDictionary values, RouteValueDictionary defaults, out string value)
 		{
+			var replacements = new RouteValueDictionary ();
 			if (values == null) {
 				value = Url;
 				return true;
 			} else {
+				object val;
+				bool missing;
 				foreach (string token in tokens) {
-					if (!values.ContainsKey (token)) {
+					val = null;
+					missing = false;
+					if (!values.TryGetValue (token, out val))
+						if (defaults == null || !defaults.TryGetValue (token, out val))
+							missing = true;
+					if (missing) {
 						value = null;
 						return false;
 					}
+
+					replacements.Add (token, val);
 				}
 			}
 
@@ -200,7 +210,7 @@ namespace System.Web.Routing
 			string [] arr = Url.Split (substsep, StringSplitOptions.None);
 			for (int i = 0; i < arr.Length; i++) {
 				string s = arr [i];
-				foreach (var p in values)
+				foreach (var p in replacements)
 					s = s.Replace ("{" + p.Key + "}", p.Value.ToString ());
 				arr [i] = s;
 			}

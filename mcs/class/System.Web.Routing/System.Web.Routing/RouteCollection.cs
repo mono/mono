@@ -150,7 +150,7 @@ namespace System.Web.Routing
 				return null;
 
 			VirtualPathData vp = null;
-			if (name != null) {
+			if (!String.IsNullOrEmpty (name)) {
 				RouteBase rb = this [name];
 				if (rb != null)
 					vp = rb.GetVirtualPath (requestContext, values);

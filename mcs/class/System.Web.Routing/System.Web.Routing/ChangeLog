@@ -1,3 +1,15 @@
+2009-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlPattern.cs: TrySubstitute now gets the collection of default
+	values and uses it to replace url segments instead of failing when
+	the passed values collection is missing a segment.
+
+	* RouteCollection.cs: check if name is null or empty, not just
+	null in GetVirtualPath
+
+	* Route.cs: url.TrySubstitute should be passed the defaults
+	collection when called from GetVirtualPath
+
 2009-02-14  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlPattern.cs: use the defaults collection when matching a path
