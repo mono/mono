@@ -47,6 +47,9 @@ namespace System.Web.UI
 		{
 			InputFile = fname;
 			Context = context;
+#if NET_2_0
+			VirtualPath = new VirtualPath ("/" + Path.GetFileName (fname));
+#endif
 		}
 
 #if NET_2_0
@@ -57,6 +60,7 @@ namespace System.Web.UI
 		
 		internal ApplicationFileParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
+			VirtualPath = new VirtualPath (virtualPath);
 			Context = context;
 			Reader = reader;
 

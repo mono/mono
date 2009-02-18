@@ -175,10 +175,6 @@ namespace System.Web.UI {
 			debug = CompilationConfig.Debug;
 #if NET_2_0
 			pageParserFilterTypeName = PagesConfig.PageParserFilterType;
-			if (!String.IsNullOrEmpty (pageParserFilterTypeName)) {
-				pageParserFilter = Activator.CreateInstance (PageParserFilterType) as PageParserFilter;
-				pageParserFilter.Initialize (VirtualPath, this);
-			}
 #endif
 		}
 		
@@ -304,6 +300,7 @@ namespace System.Web.UI {
 		internal virtual void AddDirective (string directive, Hashtable atts)
 		{
 #if NET_2_0
+			var pageParserFilter = PageParserFilter;
 			if (pageParserFilter != null)
 				pageParserFilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
 #endif
@@ -854,6 +851,7 @@ namespace System.Web.UI {
 			}
 
 #if NET_2_0
+			var pageParserFilter = PageParserFilter;
 			if (pageParserFilter != null && !pageParserFilter.AllowBaseType (parent))
 				throw new HttpException ("Base type '" + parent + "' is not allowed.");
 #endif
@@ -942,7 +940,18 @@ namespace System.Web.UI {
 		}
 
 		internal PageParserFilter PageParserFilter {
-			get { return pageParserFilter; }
+			get {
+				if (pageParserFilter != null)
+					return pageParserFilter;
+				
+				if (String.IsNullOrEmpty (pageParserFilterTypeName))
+					return null;
+
+				pageParserFilter = Activator.CreateInstance (PageParserFilterType) as PageParserFilter;
+				pageParserFilter.Initialize (VirtualPath, this);
+				
+				return pageParserFilter;
+			}
 		}
 		
 		internal Type PageParserFilterType {
