@@ -1422,6 +1422,7 @@ namespace System {
 			
 			bool startsWithSlashSlash = endpos-startpos >= 2 && uriString [startpos] == '/' && uriString [startpos+1] == '/';
 			bool unixAbsPath = scheme == UriSchemeFile && startsWithSlashSlash && (endpos-startpos == 2 || uriString [startpos+2] == '/');
+			bool windowsFilePath = false;
 			if (startsWithSlashSlash) {
 				if (kind == UriKind.Relative)
 					return "Absolute URI when we expected a relative one";
@@ -1446,8 +1447,10 @@ namespace System {
 					}
 				}
 				
-				if (endpos - startpos > 1 && uriString [startpos + 1] == ':')
+				if (endpos - startpos > 1 && uriString [startpos + 1] == ':') {
 					unixAbsPath = false;
+					windowsFilePath = true;
+				}
 
 			} else if (!IsPredefinedScheme (scheme)) {
 				path = uriString.Substring(startpos, endpos-startpos);
@@ -1457,6 +1460,8 @@ namespace System {
 
 			// 5 path
 			pos = uriString.IndexOf ('/', startpos, endpos-startpos);
+			if (pos == -1 && windowsFilePath)
+				pos = uriString.IndexOf ('\\', startpos, endpos-startpos);
 			if (unixAbsPath)
 				pos = -1;
 			if (pos == -1) {

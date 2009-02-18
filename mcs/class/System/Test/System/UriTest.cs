@@ -1607,6 +1607,12 @@ namespace MonoTests.System
 			AssertEquals (path, "c:/tmp/foo/bar", fileUri.AbsolutePath);
 		}
 
+		[Test]
+		public void WindowsLocalPath ()
+		{
+			new Uri (@"file:///J:\Wrldwide\MSFin\Flash\FLASH.xls");
+		}
+
 #if NET_2_0
 		[Test]
 		public void TestEscapeDataString ()

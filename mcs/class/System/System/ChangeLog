@@ -1,3 +1,8 @@
+2009-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : file URI for Windows path should also try '\' instead of
+	  '/' as a host/path separator.
+
 2009-02-09  Raja R Harinath  <harinath@hurrynot.org>
 
 	* IUriData.cs, UriData.cs: New.  Initial cut at UriParser protocol.

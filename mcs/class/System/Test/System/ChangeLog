@@ -1,3 +1,8 @@
+2009-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTest.cs : added test for windows local path with '\' (used in
+	  ooxml relax ng test case).
+
 2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* UriTest3.cs: Added and improved tests for TryCreate. Added few
