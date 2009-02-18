@@ -371,6 +371,12 @@ namespace Mono.DocTest {
 			// delegates/interface calls:
 			Func<int, int> a = x => {throw new InvalidOperationException ();};
 			a (1);
+
+			// Multi-dimensional arrays have "phantom" methods that Cecil can't
+			// resolve, as they're provided by the runtime.  These should be
+			// ignored.
+			int[,] array = new int[1,1];
+			array[0,0] = 42;
 		}
 
 		/// <param name="list">A <see cref="T:Mono.DocTest.Generic.MyList{System.Predicate{System.Int32}}" />.</param>

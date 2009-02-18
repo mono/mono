@@ -1573,7 +1573,7 @@ class MDocUpdater : MDocCommand
 	private static bool GetFieldConstValue (FieldDefinition field, out string value)
 	{
 		value = null;
-		TypeDefinition type = DocUtils.GetTypeDefinition (field.DeclaringType);
+		TypeDefinition type = field.DeclaringType.Resolve ();
 		if (type != null && type.IsEnum) return false;
 		
 		if (type != null && type.IsGenericType ()) return false;
@@ -2190,7 +2190,7 @@ class MDocUpdater : MDocCommand
 			return "\"" + v.ToString () + "\"";
 		if (v is Boolean)
 			return (bool)v ? "true" : "false";
-		TypeDefinition valueDef = DocUtils.GetTypeDefinition (valueType);
+		TypeDefinition valueDef = valueType.Resolve ();
 		if (valueDef == null || !valueDef.IsEnum)
 			return v.ToString ();
 		string typename = GetDocTypeFullName (valueType);
@@ -2275,7 +2275,7 @@ class MDocUpdater : MDocCommand
 			if ((attrs & GenericParameterAttributes.ReferenceTypeConstraint) != 0)
 				AppendElementText (ce, "ParameterAttribute", "ReferenceTypeConstraint");
 			foreach (TypeReference c in constraints) {
-				TypeDefinition cd = DocUtils.GetTypeDefinition (c);
+				TypeDefinition cd = c.Resolve ();
 				AppendElementText (ce,
 						(cd != null && cd.IsInterface) ? "InterfaceName" : "BaseTypeName",
 						GetDocTypeFullName (c));
@@ -2647,14 +2647,6 @@ static class CecilExtensions {
 		return source.FirstOrDefault ();
 	}
 
-	static T EnsureOne<T> (this IEnumerable<T> source)
-	{
-		if (source.Count () > 1)
-			throw new InvalidOperationException ("too many matches: " +
-					string.Join ("; ", source.Select (e => e.ToString ()).ToArray ()));
-		return source.First ();
-	}
-
 	public static MethodDefinition GetMethod (this TypeDefinition type, string method)
 	{
 		return type.Methods.Cast<MethodDefinition> ()
@@ -2701,124 +2693,24 @@ static class CecilExtensions {
 		return method.GenericParameters.Count > 0;
 	}
 
-	public static IMemberReference GetDefinition (this IMemberReference member)
+	public static IMemberReference Resolve (this IMemberReference member)
 	{
 		EventReference er = member as EventReference;
 		if (er != null)
-			return GetEventDefinition (er);
+			return er.Resolve ();
 		FieldReference fr = member as FieldReference;
 		if (fr != null)
-			return GetFieldDefinition (fr);
+			return fr.Resolve ();
 		MethodReference mr = member as MethodReference;
 		if (mr != null)
-			return GetMethodDefinition (mr);
+			return mr.Resolve ();
 		PropertyReference pr = member as PropertyReference;
 		if (pr != null)
-			return GetPropertyDefinition (pr);
+			return pr.Resolve ();
 		TypeReference tr = member as TypeReference;
 		if (tr != null)
-			return GetTypeDefinition (tr);
+			return tr.Resolve ();
 		throw new NotSupportedException ("Cannot find definition for " + member.ToString ());
-	}
-
-	public static EventDefinition GetEventDefinition (this EventReference ev)
-	{
-		EventDefinition evDef = ev as EventDefinition;
-		if (evDef != null)
-			return evDef;
-		return (EventDefinition) ev.DeclaringType.GetTypeDefinition ()
-			.GetMember (ev.Name);
-	}
-
-	public static FieldDefinition GetFieldDefinition (this FieldReference field)
-	{
-		FieldDefinition fieldDef = field as FieldDefinition;
-		if (fieldDef != null)
-			return fieldDef;
-		return (FieldDefinition) field.DeclaringType.GetTypeDefinition ()
-			.GetMember (field.Name);
-	}
-
-	public static MethodDefinition GetMethodDefinition (this MethodReference method)
-	{
-		MethodDefinition methodDef = method as MethodDefinition;
-		if (methodDef != null)
-			return methodDef;
-		method = method.GetOriginalMethod ();
-		return method.DeclaringType.GetTypeDefinition ()
-			.GetMembers (method.Name).OfType<MethodDefinition> ()
-			.Where (m => 
-					AreSame (method.ReturnType.ReturnType, m.ReturnType.ReturnType) &&
-					AreSame (method.Parameters, m.Parameters))
-			.EnsureOne ();
-	}
-
-	static bool AreSame (ParameterDefinitionCollection a, ParameterDefinitionCollection b)
-	{
-		if (a.Count != b.Count)
-			return false;
-
-		if (a.Count == 0)
-			return true;
-
-		for (int i = 0; i < a.Count; i++) {
-			if (!AreSame (a [i].ParameterType, b [i].ParameterType))
-				return false;
-		}
-
-		return true;
-	}
-
-	static bool AreSame (TypeReference a, TypeReference b)
-	{
-		while (a is TypeSpecification || b is TypeSpecification) {
-			if (a.GetType () != b.GetType ())
-				return false;
-
-			IGenericInstance ga = a as IGenericInstance;
-			IGenericInstance gb = b as IGenericInstance;
-
-			a = ((TypeSpecification) a).ElementType;
-			b = ((TypeSpecification) b).ElementType;
-
-			if (ga != null && gb != null) {
-				if (ga.GenericArguments.Count != gb.GenericArguments.Count) {
-					return false;
-				}
-				for (int i = 0; i < ga.GenericArguments.Count; ++i) {
-					if (!AreSame (ga.GenericArguments [i], gb.GenericArguments [i]))
-						return false;
-				}
-			}
-		}
-
-		GenericParameter pa = (a as GenericParameter);
-		GenericParameter pb = (b as GenericParameter);
-		if ((pa != null) || (pb != null)) {
-			if (a.GetType () != b.GetType ())
-				return false;
-
-			return pa.Position == pb.Position;
-		}
-
-		return a.FullName == b.FullName;
-	}
-
-	public static PropertyDefinition GetPropertyDefinition (this PropertyReference property)
-	{
-		PropertyDefinition propertyDef = property as PropertyDefinition;
-		if (propertyDef != null)
-			return propertyDef;
-		return (PropertyDefinition) property.DeclaringType.GetTypeDefinition ()
-			.GetMembers (property.Name).OfType<PropertyDefinition> ()
-			.Where (p => p.PropertyType.FullName == property.PropertyType.FullName &&
-					AreSame (property.Parameters, p.Parameters))
-			.EnsureOne ();
-	}
-
-	public static TypeDefinition GetTypeDefinition (this TypeReference type)
-	{
-		return DocUtils.GetTypeDefinition (type);
 	}
 }
 
@@ -2940,32 +2832,12 @@ static class DocUtils {
 				: type.GenericParameters.Count;
 	}
 
-	public static TypeDefinition GetTypeDefinition (TypeReference type)
-	{
-		// Remove generic instantiation info (so string comparison below works)
-		type = type.GetOriginalType ();
-		TypeDefinition typeDef = type as TypeDefinition;
-		if (typeDef != null)
-			return typeDef;
-
-		AssemblyNameReference reference = type.Scope as AssemblyNameReference;
-		if (reference != null) {
-			AssemblyDefinition ad = type.Module.Assembly.Resolver.Resolve (reference);
-			if (ad != null && (typeDef = ad.MainModule.Types [type.FullName]) != null)
-				return typeDef;
-		}
-		ModuleDefinition module = type.Scope as ModuleDefinition;
-		if (module != null && (typeDef = module.Types [type.FullName]) != null)
-			return typeDef;
-		return null;
-	}
-
 	public static IEnumerable<TypeReference> GetUserImplementedInterfaces (TypeDefinition type)
 	{
 		HashSet<string> inheritedInterfaces = GetInheritedInterfaces (type);
 		List<TypeReference> userInterfaces = new List<TypeReference> ();
 		foreach (TypeReference iface in type.Interfaces) {
-			TypeReference lookup = GetTypeDefinition (iface) ?? iface;
+			TypeReference lookup = iface.Resolve () ?? iface;
 			if (!inheritedInterfaces.Contains (GetQualifiedTypeName (lookup)))
 				userInterfaces.Add (iface);
 		}
@@ -2985,12 +2857,12 @@ static class DocUtils {
 			if (t == null) return;
 			foreach (TypeReference r in t.Interfaces) {
 				inheritedInterfaces.Add (GetQualifiedTypeName (r));
-				a (GetTypeDefinition (r));
+				a (r.Resolve ());
 			}
 		};
 		TypeReference baseRef = type.BaseType;
 		while (baseRef != null) {
-			TypeDefinition baseDef = GetTypeDefinition (baseRef);
+			TypeDefinition baseDef = baseRef.Resolve ();
 			if (baseDef != null) {
 				a (baseDef);
 				baseRef = baseDef.BaseType;
@@ -2999,7 +2871,7 @@ static class DocUtils {
 				baseRef = null;
 		}
 		foreach (TypeReference r in type.Interfaces)
-			a (GetTypeDefinition (r));
+			a (r.Resolve ());
 		return inheritedInterfaces;
 	}
 }
@@ -3211,7 +3083,7 @@ public abstract class MemberFormatter {
 		int prev = 0;
 		bool insertNested = false;
 		foreach (var decl in decls) {
-			TypeReference declDef = DocUtils.GetTypeDefinition (decl) ?? decl;
+			TypeReference declDef = decl.Resolve () ?? decl;
 			if (insertNested) {
 				buf.Append (NestedTypeSeparator);
 			}

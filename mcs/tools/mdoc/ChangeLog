@@ -1,5 +1,16 @@
 2009-02-17  Jonathan Pryor <jpryor@novell.com>
 
+	* Test/DocTest-v1.cs: Add test for #471379.
+	* Mono.Documentation/exceptions.cs, Mono.Documentation/monodocer.cs:
+	  Use the new Mono.Cecil .Resolve() methods instead of (erroneously)
+	  duplicating their functionality with the .GetDefinition() methods.
+	  ExceptionLookup.this[IMemberReference] checks for multi-dimensional
+	  arrays, as MD arrays are "special" (Cecil can't resolve them, as
+	  they're internal to the runtime with no specific associated IL).
+	  Fixes #471379.
+
+2009-02-17  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/monodocer.cs: Check that the cref attribute is
 	  non-null before trying to use it when importing slashdoc sources.
 	  Fixes #475852.

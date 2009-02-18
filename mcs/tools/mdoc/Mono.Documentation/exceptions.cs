@@ -76,7 +76,20 @@ namespace Mono.Documentation {
 			get {
 				if (member == null)
 					throw new ArgumentNullException ("member");
-				string memberDecl = xdoc.GetDeclaration (member.GetDefinition ());
+				IMemberReference memberDef = member.Resolve ();
+				if (memberDef == null) {
+					ArrayType array = member.DeclaringType as ArrayType;
+					if (array != null && array.Rank > 1) {
+						// Multi-dimensional array; the member is runtime generated, 
+						// doesn't "really" exist (in a form that we can resolve),
+						// so we can't do anything further.
+						return new ExceptionSources[0];
+					}
+					throw new NotSupportedException (string.Format (
+								"Unable to resolve member {0}::{1}.",
+								member.DeclaringType.FullName, member.Name));
+				}
+				string memberDecl = xdoc.GetDeclaration (member.Resolve ());
 				Dictionary<string, ExceptionSources> e;
 				if (!db.TryGetValue (memberDecl, out e)) {
 					e = new Dictionary<string, ExceptionSources> ();
@@ -95,10 +108,10 @@ namespace Mono.Documentation {
 		MethodBody[] GetMethodBodies (IMemberReference member)
 		{
 			if (member is MethodReference) {
-				return new[]{ ((MethodDefinition) member.GetDefinition ()).Body };
+				return new[]{ (((MethodReference) member).Resolve ()).Body };
 			}
 			if (member is PropertyReference) {
-				PropertyDefinition prop = (PropertyDefinition) member.GetDefinition ();
+				PropertyDefinition prop = ((PropertyReference) member).Resolve ();
 				return new[]{
 					prop.GetMethod != null ? prop.GetMethod.Body : null,
 					prop.SetMethod != null ? prop.SetMethod.Body : null,
@@ -107,7 +120,7 @@ namespace Mono.Documentation {
 			if (member is FieldReference)
 				return new MethodBody[]{};
 			if (member is EventReference) {
-				EventDefinition ev = (EventDefinition) member.GetDefinition ();
+				EventDefinition ev = ((EventReference) member).Resolve ();
 				return new[]{
 					ev.AddMethod != null ? ev.AddMethod.Body : null,
 					ev.InvokeMethod != null ? ev.InvokeMethod.Body : null, 
@@ -189,10 +202,10 @@ namespace Mono.Documentation {
 		static IEnumerable<TypeReference> GetBases (TypeReference type)
 		{
 			yield return type;
-			TypeDefinition def = DocUtils.GetTypeDefinition (type);
+			TypeDefinition def = type.Resolve ();
 			while (def != null && def.BaseType != null) {
 				yield return def.BaseType;
-				def = DocUtils.GetTypeDefinition (def.BaseType);
+				def = def.BaseType.Resolve ();
 			}
 		}
 	}
