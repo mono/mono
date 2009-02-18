@@ -2300,7 +2300,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (a.Expr is NullLiteral)
+				if (a.Expr.Type == TypeManager.null_type)
 					continue;
 
 				//
