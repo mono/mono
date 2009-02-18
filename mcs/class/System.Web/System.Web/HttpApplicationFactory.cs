@@ -456,7 +456,10 @@ namespace System.Web {
 					}
 #endif
 
-					if (app_file != null) {
+#if NET_2_0
+					app_type = BuildManager.GetPrecompiledApplicationType ();
+#endif
+					if (app_type == null && app_file != null) {
 #if TARGET_J2EE
 						app_file = System.Web.Util.UrlUtils.ResolveVirtualPathFromAppAbsolute("~/" + Path.GetFileName(app_file));
 						app_type = System.Web.J2EE.PageMapper.GetObjectType(context, app_file);
@@ -471,7 +474,7 @@ namespace System.Web {
 							string msg = String.Format ("Error compiling application file ({0}).", app_file);
 							throw new ApplicationException (msg);
 						}
-					} else {
+					} else if (app_type == null) {
 						app_type = typeof (System.Web.HttpApplication);
 						app_state = new HttpApplicationState ();
 					}

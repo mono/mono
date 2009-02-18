@@ -1,3 +1,7 @@
+2009-02-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* MasterPage.cs: the items in ContentPlaceHolders are lowercase.
+
 2009-02-18  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: don't initialize PageParserFilter in

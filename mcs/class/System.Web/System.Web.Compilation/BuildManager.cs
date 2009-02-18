@@ -43,6 +43,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Configuration;
@@ -74,6 +75,8 @@ namespace System.Web.Compilation {
 		static List <Assembly> referencedAssemblies;
 
 		static int buildCount;
+		static bool is_precompiled;
+		static Dictionary<string, PreCompilationData> precompiled;
 		
 		// This is here _only_ for the purpose of unit tests!
 		internal static bool suppressDebugModeMessages;
@@ -139,7 +142,62 @@ namespace System.Web.Compilation {
 #endif
 			referencedAssemblies = new List <Assembly> ();
 			recursionDepth = 0;
+
+			is_precompiled = File.Exists (Path.Combine (HttpRuntime.AppDomainAppPath, "PrecompiledApp.config"));
+			if (is_precompiled) {
+				LoadPrecompilationInfo ();
+			}
 			LoadVirtualPathsToIgnore ();
+		}
+
+		static void LoadPrecompilationInfo ()
+		{
+			string [] compiled = Directory.GetFiles (HttpRuntime.BinDirectory, "*.compiled");
+			foreach (string str in compiled) {
+				LoadCompiled (str);
+			}
+		}
+
+		static void LoadCompiled (string filename)
+		{
+			using (XmlTextReader reader = new XmlTextReader (filename)) {
+				reader.MoveToContent ();
+				if (reader.Name == "preserve" && reader.HasAttributes) {
+					reader.MoveToNextAttribute ();
+					string val = reader.Value;
+					// 2 -> ashx
+					// 3 -> ascx, aspx
+					// 6 -> app_code - nothing to do here
+					// 8 -> global.asax
+					if (reader.Name == "resultType" && (val == "2" || val == "3" || val == "8"))
+						LoadPageData (reader);
+				}
+			}
+		}
+
+		class PreCompilationData {
+			public string VirtualPath;
+			public string AssemblyFileName;
+			public string TypeName;
+			public Type Type;
+		}
+
+		static void LoadPageData (XmlTextReader reader)
+		{
+			PreCompilationData pc_data = new PreCompilationData ();
+
+			while (reader.MoveToNextAttribute ()) {
+				string name = reader.Name;
+				if (name == "virtualPath")
+					pc_data.VirtualPath = reader.Value;
+				else if (name == "assembly")
+					pc_data.AssemblyFileName = reader.Value;
+				else if (name == "type")
+					pc_data.TypeName = reader.Value;
+			}
+			if (precompiled == null)
+				precompiled = new Dictionary<string, PreCompilationData> (comparer);
+			precompiled.Add (pc_data.VirtualPath, pc_data);
 		}
 
 		static void AddAssembly (Assembly asm, List <Assembly> al)
@@ -577,14 +635,43 @@ namespace System.Web.Compilation {
 			return codeDomProviderType;
 		}
 
+		static Type GetPrecompiledType (string virtualPath)
+		{
+			PreCompilationData pc_data;
+			if (precompiled.TryGetValue (virtualPath, out pc_data)) {
+				if (pc_data.Type == null) {
+					pc_data.Type = Type.GetType (pc_data.TypeName + ", " + pc_data.AssemblyFileName, true);
+				}
+				return pc_data.Type;
+			}
+			//Console.WriteLine ("VPath not precompiled: {0}", virtualPath);
+			return null;
+		}
+
+		internal static Type GetPrecompiledApplicationType ()
+		{
+			if (!is_precompiled)
+				return null;
+
+			Type apptype = GetPrecompiledType (HttpRuntime.AppDomainAppVirtualPath + "/Global.asax");
+			if (apptype == null)
+				apptype = GetPrecompiledType (HttpRuntime.AppDomainAppVirtualPath + "/global.asax");
+			return apptype;
+		}
+
 		public static Assembly GetCompiledAssembly (string virtualPath)
 		{
 			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
 			string vpabsolute = vp.Absolute;
+			if (is_precompiled) {
+				Type type = GetPrecompiledType (vpabsolute);
+				if (type != null)
+					return type.Assembly;
+			}
 			BuildManagerCacheItem bmci = GetCachedItem (vpabsolute);
 			if (bmci != null)
 				return bmci.BuiltAssembly;
-			
+
 			Build (vp);
 			bmci = GetCachedItem (vpabsolute);
 			if (bmci != null)
@@ -597,6 +684,11 @@ namespace System.Web.Compilation {
 		{
 			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
 			string vpabsolute = vp.Absolute;
+			if (is_precompiled) {
+				Type type = GetPrecompiledType (vpabsolute);
+				if (type != null)
+					return type;
+			}
 			BuildManagerCacheItem bmci = GetCachedItem (vpabsolute);
 			if (bmci != null) {
 				ReferenceAssemblyInCompilation (bmci);
