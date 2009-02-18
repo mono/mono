@@ -563,10 +563,9 @@ namespace Mono.CSharp {
 		{
 			int rank = array.GetArrayRank ();
 			Type element = TypeManager.GetElementType (array);
-			if (element.IsArray)
-				throw new NotImplementedException ();
-
-			if (TypeManager.IsGenericParameter (element)) {
+			if (element.IsArray) {
+				element = MutateArrayType (element);
+			} else if (TypeManager.IsGenericParameter (element)) {
 				element = MutateGenericArgument (element);
 			} else if (TypeManager.IsGenericType (element)) {
 				element = MutateGenericType (element);
