@@ -168,13 +168,15 @@ namespace System.ComponentModel
 		public virtual Attribute this[Type type] {
 			get {
 				Attribute attr = null;
-				foreach (Attribute a in attrList) {
-					if (type.IsAssignableFrom (a.GetType ())) {
-						attr = a;
-						break;
+				if (attrList != null) {
+					foreach (Attribute a in attrList) {
+						if (type.IsAssignableFrom (a.GetType ())) {
+							attr = a;
+							break;
+						}
 					}
 				}
-
+				
 				if (attr == null)
 					attr = GetDefaultAttribute (type);
 

@@ -1,3 +1,13 @@
+2009-02-19  Marek Habersack  <mhabersack@novell.com>
+
+	* AttributeCollection.cs: this [Type] shouldn't throw a NREX when
+	attrList is null.
+
+	* TypeDescriptor.cs: GetConverter (Type) must throw
+	ArgumentNullException if the passed parameter is null.
+	FindDefaultConverterType should gracefully cope with type being
+	null.
+
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* BindingList.cs: Add calls InsertItem which raises OnListChanged, so 

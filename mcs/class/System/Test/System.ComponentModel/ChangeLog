@@ -1,3 +1,8 @@
+2009-02-19  Marek Habersack  <mhabersack@novell.com>
+
+	* TypeDescriptorTests.cs: added a test for
+	TypeDescriptor.GetConverter (null) case.
+
 2008-12-22  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* ReferenceConverterTest.cs: Added.
