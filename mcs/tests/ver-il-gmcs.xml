@@ -16283,6 +16283,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-26.cs">
+    <type name="test.TypeExtensions">
+      <method name="Boolean IsNullable(System.Type)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="testmono.MainClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>33</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
