@@ -126,7 +126,7 @@ namespace System.Web.UI
 			List <string> placeholders = masterPage.placeholders;
 			if (contentTemplateCollection != null && placeholders != null && placeholders.Count > 0) {
 				foreach (string templateName in contentTemplateCollection.Keys) {
-					if (!placeholders.Contains (templateName)) {
+					if (!placeholders.Contains (templateName.ToLowerInvariant ())) {
 						throw new HttpException (
 							String.Format ("Cannot find ContentPlaceHolder '{0}' in the master page '{1}'",
 								       templateName, masterPageFile));

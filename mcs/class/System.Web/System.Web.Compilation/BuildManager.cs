@@ -43,6 +43,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Configuration;
@@ -260,6 +261,8 @@ namespace System.Web.Compilation {
 		const string BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX = "Build_Manager";
 		static int BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX_LENGTH = BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX.Length;
 		static bool hosted;
+		static IEqualityComparer <string> comparer;
+
 		
 		static object buildCacheLock = new object ();
 
@@ -270,6 +273,8 @@ namespace System.Web.Compilation {
 		//
 		// static object buildCountLock = new object ();
 		// static int buildCount = 0;
+		static bool is_precompiled;
+		static Dictionary<string, PreCompilationData> precompiled;
 		
 		static List<Assembly> AppCode_Assemblies = new List<Assembly>();
 		static List<Assembly> TopLevel_Assemblies = new List<Assembly>();
@@ -316,8 +321,6 @@ namespace System.Web.Compilation {
 		
 		static BuildManager ()
 		{
-			IEqualityComparer <string> comparer;
-
 			if (HttpRuntime.CaseInsensitive)
 				comparer = StringComparer.CurrentCultureIgnoreCase;
 			else
@@ -328,6 +331,11 @@ namespace System.Web.Compilation {
 			dependencyCache = new Dictionary <string, List <string>> (comparer);
 			compilationTickets = new Dictionary <string, object> (comparer);
 			hosted = (AppDomain.CurrentDomain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
+
+			is_precompiled = File.Exists (Path.Combine (HttpRuntime.AppDomainAppPath, "PrecompiledApp.config"));
+			if (is_precompiled) {
+				LoadPrecompilationInfo ();
+			}
 		}
 		
 		internal static void ThrowNoProviderException (string extension)
@@ -411,6 +419,56 @@ namespace System.Web.Compilation {
 			AddAssembly (Assembly.Load (info.Assembly), al);
 		}
 
+		static void LoadPrecompilationInfo ()
+		{
+			string [] compiled = Directory.GetFiles (HttpRuntime.BinDirectory, "*.compiled");
+			foreach (string str in compiled) {
+				LoadCompiled (str);
+			}
+		}
+
+		static void LoadCompiled (string filename)
+		{
+			using (XmlTextReader reader = new XmlTextReader (filename)) {
+				reader.MoveToContent ();
+				if (reader.Name == "preserve" && reader.HasAttributes) {
+					reader.MoveToNextAttribute ();
+					string val = reader.Value;
+					// 2 -> ashx
+					// 3 -> ascx, aspx
+					// 6 -> app_code - nothing to do here
+					// 8 -> global.asax
+					if (reader.Name == "resultType" && (val == "2" || val == "3" || val == "8"))
+						LoadPageData (reader);
+				}
+			}
+		}
+
+		class PreCompilationData {
+			public string VirtualPath;
+			public string AssemblyFileName;
+			public string TypeName;
+			public Type Type;
+		}
+
+		static void LoadPageData (XmlTextReader reader)
+		{
+			PreCompilationData pc_data = new PreCompilationData ();
+
+			while (reader.MoveToNextAttribute ()) {
+				string name = reader.Name;
+				if (name == "virtualPath")
+					pc_data.VirtualPath = reader.Value;
+				else if (name == "assembly")
+					pc_data.AssemblyFileName = reader.Value;
+				else if (name == "type")
+					pc_data.TypeName = reader.Value;
+			}
+			if (precompiled == null)
+				precompiled = new Dictionary<string, PreCompilationData> (comparer);
+			precompiled.Add (pc_data.VirtualPath, pc_data);
+		}
+
 		static void AddAssembly (Assembly asm, List <Assembly> al)
 		{
 			if (al.Contains (asm))
@@ -488,10 +546,39 @@ namespace System.Web.Compilation {
 
 			return null;
 		}
-		
+
+		static Type GetPrecompiledType (string virtualPath)
+		{
+			PreCompilationData pc_data;
+			if (precompiled.TryGetValue (virtualPath, out pc_data)) {
+				if (pc_data.Type == null) {
+					pc_data.Type = Type.GetType (pc_data.TypeName + ", " + pc_data.AssemblyFileName, true);
+				}
+				return pc_data.Type;
+			}
+			//Console.WriteLine ("VPath not precompiled: {0}", virtualPath);
+			return null;
+		}
+
+		internal static Type GetPrecompiledApplicationType ()
+		{
+			if (!is_precompiled)
+				return null;
+
+			Type apptype = GetPrecompiledType (HttpRuntime.AppDomainAppVirtualPath + "/Global.asax");
+			if (apptype == null)
+				apptype = GetPrecompiledType (HttpRuntime.AppDomainAppVirtualPath + "/global.asax");
+			return apptype;
+		}
+
 		public static Assembly GetCompiledAssembly (string virtualPath)
 		{
 			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
+			if (is_precompiled) {
+				Type type = GetPrecompiledType (vp.Absolute);
+				if (type != null)
+					return type.Assembly;
+			}
 			BuildCacheItem ret = GetCachedItem (vp);
 			if (ret != null)
 				return ret.assembly;
@@ -507,6 +594,12 @@ namespace System.Web.Compilation {
 		public static Type GetCompiledType (string virtualPath)
 		{
 			VirtualPath vp = GetAbsoluteVirtualPath (virtualPath);
+			if (is_precompiled) {
+				Type type = GetPrecompiledType (vp.Absolute);
+				if (type != null)
+					return type;
+				//TODO: What do we do here? Throw?
+			}
 			BuildCacheItem ret = GetCachedItem (vp);
 			
 			if (ret != null)

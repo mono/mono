@@ -1569,7 +1569,7 @@ namespace System.Web.Compilation
 			CodeMethodInvokeExpression mcall;
 			foreach (string id in masterPageContentPlaceHolders) {
 				mcall = new CodeMethodInvokeExpression (ilistRef, "Add");
-				mcall.Parameters.Add (new CodePrimitiveExpression (id));
+				mcall.Parameters.Add (new CodePrimitiveExpression (id.ToLowerInvariant ()));
 				statements.Add (mcall);
 			}
 		}
