@@ -1,5 +1,10 @@
 2009-02-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #476400
+	* statemetn.cs, expression.cs: Removed wrong Dispose optimization.
+
+2009-02-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #476811
 	* generics.cs: Fixed null-literal check.
 

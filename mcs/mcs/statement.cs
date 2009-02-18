@@ -5528,27 +5528,6 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			// 
-			// Retrieves a `public void Dispose ()' method from the Type `t'
-			//
-			static MethodInfo FetchMethodDispose (Type t)
-			{
-				MemberInfo[] dispose_list = TypeManager.MemberLookup (null, null, t,
-					MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.Instance,
-					"Dispose", null);
-
-				foreach (MemberInfo m in dispose_list){
-					MethodInfo mi = (MethodInfo) m;
-
-					if (TypeManager.GetParameterData (mi).Count == 0){
-						if (mi.ReturnType == TypeManager.void_type)
-							return mi;
-					}
-				}
-				return null;
-			}
-
 			void Error_Enumerator ()
 			{
 				if (enumerator_found) {
@@ -5691,9 +5670,6 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				bool is_disposable = !enumerator_type.IsSealed ||
-					TypeManager.ImplementsInterface (enumerator_type, TypeManager.idisposable_type);
-
 				VarExpr ve = var_type as VarExpr;
 				if (ve != null) {
 					// Infer implicitly typed local variable from foreach enumerable type
@@ -5728,9 +5704,14 @@ namespace Mono.CSharp {
 
 				loop = new While (move_next_expr, block, loc);
 
-				wrapper = is_disposable ?
-					(Statement) new DisposableWrapper (this) :
-					(Statement) new NonDisposableWrapper (this);
+
+				bool implements_idisposable = TypeManager.ImplementsInterface (enumerator_type, TypeManager.idisposable_type);
+				if (implements_idisposable || !enumerator_type.IsSealed) {
+					wrapper = new DisposableWrapper (this, implements_idisposable);
+				} else {
+					wrapper = new NonDisposableWrapper (this);
+				}
+
 				return wrapper.Resolve (ec);
 			}
 
@@ -5769,12 +5750,15 @@ namespace Mono.CSharp {
 				}
 			}
 
-			class DisposableWrapper : ExceptionStatement {
+			sealed class DisposableWrapper : ExceptionStatement
+			{
 				CollectionForeach parent;
+				bool implements_idisposable;
 
-				internal DisposableWrapper (CollectionForeach parent)
+				internal DisposableWrapper (CollectionForeach parent, bool implements)
 				{
 					this.parent = parent;
+					this.implements_idisposable = implements;
 				}
 
 				protected override void CloneTo (CloneContext clonectx, Statement target)
@@ -5814,7 +5798,31 @@ namespace Mono.CSharp {
 
 				protected override void EmitFinallyBody (EmitContext ec)
 				{
-					parent.EmitFinallyBody (ec);
+					ILGenerator ig = ec.ig;
+
+					Expression instance = parent.enumerator;
+					if (!TypeManager.IsValueType (parent.enumerator_type)) {
+
+						parent.enumerator.Emit (ec);
+
+						Label call_dispose = ig.DefineLabel ();
+
+						if (!implements_idisposable) {
+							ec.ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
+							LocalTemporary temp = new LocalTemporary (TypeManager.idisposable_type);
+							temp.Store (ec);
+							temp.Emit (ec);
+							instance = temp;
+						}
+						
+						ig.Emit (OpCodes.Brtrue_S, call_dispose);
+
+						// using 'endfinally' to empty the evaluation stack
+						ig.Emit (OpCodes.Endfinally);
+						ig.MarkLabel (call_dispose);
+					}
+
+					Invocation.EmitCall (ec, false, instance, TypeManager.void_dispose_void, new ArrayList (0), loc);
 				}
 
 				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -5836,37 +5844,6 @@ namespace Mono.CSharp {
 			void EmitLoopBody (EmitContext ec)
 			{
 				loop.Emit (ec);
-			}
-
-			void EmitFinallyBody (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-
-				if (TypeManager.IsStruct (enumerator_type)) {
-					MethodInfo mi = FetchMethodDispose (enumerator_type);
-					if (mi != null) {
-						enumerator.AddressOf (ec, AddressOp.Load);
-						ig.Emit (OpCodes.Call, mi);
-					} else {
-						enumerator.Emit (ec);
-						ig.Emit (OpCodes.Box, enumerator_type);
-						ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-					}
-				} else {
-					Label call_dispose = ig.DefineLabel ();
-
-					enumerator.Emit (ec);
-					ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-					ig.Emit (OpCodes.Dup);
-					ig.Emit (OpCodes.Brtrue_S, call_dispose);
-
-					// 'endfinally' empties the evaluation stack, and can appear anywhere inside a finally block
-					// (Partition III, Section 3.35)
-					ig.Emit (OpCodes.Endfinally);
-
-					ig.MarkLabel (call_dispose);
-					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				}
 			}
 
 			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)

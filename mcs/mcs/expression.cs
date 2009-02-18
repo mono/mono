@@ -5028,7 +5028,7 @@ namespace Mono.CSharp {
 			bool is_static = method.IsStatic;
 			if (!is_static){
 				this_call = instance_expr is This;
-				if (TypeManager.IsStruct (decl_type) || TypeManager.IsEnumType (decl_type) || (!this_call && TypeManager.IsStruct (instance_expr.Type)))
+				if (TypeManager.IsStruct (decl_type) || TypeManager.IsEnumType (decl_type))
 					struct_call = true;
 
 				//
@@ -5070,6 +5070,9 @@ namespace Mono.CSharp {
 								t = TypeManager.GetReferenceType (iexpr_type);
 						} else {
 							instance_expr.Emit (ec);
+							
+							// FIXME: should use instance_expr is IMemoryLocation + constraint.
+							// to help JIT to produce better code
 							ig.Emit (OpCodes.Box, instance_expr.Type);
 							t = TypeManager.object_type;
 						}
