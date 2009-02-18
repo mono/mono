@@ -13636,68 +13636,6 @@
       </method>
     </type>
   </test>
-  <test name="gtest-anon-type-09.cs">
-    <type name="My.System.Test">
-      <method name="Void Main()">
-        <size>14</size>
-      </method>
-    </type>
-    <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
-      <method name="Void .ctor(&lt;X&gt;__T)">
-        <size>14</size>
-      </method>
-      <method name="&lt;X&gt;__T get_X()">
-        <size>7</size>
-      </method>
-      <method name="Boolean Equals(System.Object)">
-        <size>39</size>
-      </method>
-      <method name="Int32 GetHashCode()">
-        <size>63</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>67</size>
-      </method>
-    </type>
-  </test>
-  <test name="gtest-anon-type-10.cs">
-    <type name="A">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 get_X()">
-        <size>3</size>
-      </method>
-    </type>
-    <type name="B">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>11</size>
-      </method>
-      <method name="Int32 Test()">
-        <size>33</size>
-      </method>
-    </type>
-    <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
-      <method name="Void .ctor(&lt;X&gt;__T)">
-        <size>14</size>
-      </method>
-      <method name="&lt;X&gt;__T get_X()">
-        <size>7</size>
-      </method>
-      <method name="Boolean Equals(System.Object)">
-        <size>39</size>
-      </method>
-      <method name="Int32 GetHashCode()">
-        <size>63</size>
-      </method>
-      <method name="System.String ToString()">
-        <size>67</size>
-      </method>
-    </type>
-  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -14022,6 +13960,85 @@
       </method>
       <method name="System.String ToString()">
         <size>142</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anontype-09.cs">
+    <type name="My.System.Test">
+      <method name="Int32 Main()">
+        <size>35</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
+      <method name="Void .ctor(&lt;X&gt;__T)">
+        <size>14</size>
+      </method>
+      <method name="&lt;X&gt;__T get_X()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>67</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType1`1[&lt;Value&gt;__T]">
+      <method name="Void .ctor(&lt;Value&gt;__T)">
+        <size>14</size>
+      </method>
+      <method name="&lt;Value&gt;__T get_Value()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>67</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anontype-10.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_X()">
+        <size>3</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>11</size>
+      </method>
+      <method name="Int32 Test()">
+        <size>33</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`1[&lt;X&gt;__T]">
+      <method name="Void .ctor(&lt;X&gt;__T)">
+        <size>14</size>
+      </method>
+      <method name="&lt;X&gt;__T get_X()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>39</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>63</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>67</size>
       </method>
     </type>
   </test>
