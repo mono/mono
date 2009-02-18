@@ -12105,7 +12105,7 @@
         <size>26</size>
       </method>
       <method name="Int32 Main()">
-        <size>300</size>
+        <size>431</size>
       </method>
     </type>
     <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
@@ -12191,6 +12191,19 @@
       </method>
       <method name="Void &lt;&gt;m__9(Int32)">
         <size>36</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="System.Func`1[T[][]] ArrayMultiMutate[T](T[][])">
+        <size>26</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyA`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T[][] &lt;&gt;m__A()">
+        <size>48</size>
       </method>
     </type>
   </test>

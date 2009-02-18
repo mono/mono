@@ -126,6 +126,17 @@ class Test
 		};
 	}
 	
+	static Func<T[][]> ArrayMultiMutate<T> (T[][] array)
+	{
+		return () => {
+			for (int i = 0; i < 3; i++) {
+				array [i][i] = default (T);
+			}
+			
+			return array;
+		};
+	}
+	
 	public static int Main ()
 	{
 		if (For (new List<int> { 5, 10 })() [1] != 10)
@@ -166,7 +177,11 @@ class Test
 		var t9 = ForForeach (new [] { 4, 1 });
 		if (t9 ()[0] != 4)
 			return 9;
-		
+			
+		var t10 = ArrayMultiMutate (new string [][] { new string [] { "a", "b", "c" }, new string [] { "1", "2", "3" }, new string [] { "A", "B", "C" }});
+		if (t10 () [2] [2] != null)
+			return 10;
+
 		Console.WriteLine ("OK");
 		return 0;
 	}
