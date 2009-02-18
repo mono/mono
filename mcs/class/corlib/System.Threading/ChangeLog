@@ -1,3 +1,8 @@
+2009-02-18  Jb Evain  <jbevain@novell.com>
+
+	* SynchronizationContext.cs: add NET_2_1 SetThreadStaticContext
+	method, even if already obsolete.
+
 2009-01-30  Andreia Gaita  <avidigal@novell.com>
 
 	* SynchronizationContext.cs: Remove moonlight hacks, dispatcher should

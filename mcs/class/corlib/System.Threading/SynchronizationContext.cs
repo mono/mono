@@ -93,6 +93,14 @@ namespace System.Threading
 			currentContext = syncContext;
 		}
 
+#if NET_2_1
+		[Obsolete]
+		public static void SetThreadStaticContext (SynchronizationContext syncContext)
+		{
+			currentContext = syncContext;
+		}
+#endif
+
 		[MonoTODO]
 		protected void SetWaitNotificationRequired ()
 		{
