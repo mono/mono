@@ -1,5 +1,7 @@
 2009-02-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_reflection_init): Remove the unused reflection mutex.
+
 	* marshal.c (emit_marshal_boolean): Add null checks to the new 
 	native->managed marshalling code. Fixes #476247.
 
