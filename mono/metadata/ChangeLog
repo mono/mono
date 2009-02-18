@@ -1,3 +1,8 @@
+2009-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_ftnptr_to_delegate): Convert a NULL ftnptr to a null
+	delegate. Fixes #477396.
+
 2009-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (create_custom_attr): Get rid of alloca.
