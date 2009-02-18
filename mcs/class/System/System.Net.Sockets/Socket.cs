@@ -684,38 +684,47 @@ namespace System.Net.Sockets
 			if (error != 0)
 				throw new SocketException (error);
 
-			if (checkRead != null)
-				checkRead.Clear ();
-
-			if (checkWrite != null)
-				checkWrite.Clear ();
-
-			if (checkError != null)
-				checkError.Clear ();
-
-			if (sockets == null)
+			if (sockets == null) {
+				if (checkRead != null)
+					checkRead.Clear ();
+				if (checkWrite != null)
+					checkWrite.Clear ();
+				if (checkError != null)
+					checkError.Clear ();
 				return;
+			}
 
 			int mode = 0;
 			int count = sockets.Length;
 			IList currentList = checkRead;
+			int currentIdx = 0;
 			for (int i = 0; i < count; i++) {
+				Socket cur_sock;
 				Socket sock = sockets [i];
 				if (sock == null) { // separator
+					if (currentList != null) {
+						// Remove non-signaled sockets after the current one
+						int to_remove = currentList.Count - currentIdx;
+						for (int k = 0; k < to_remove; k++)
+							currentList.RemoveAt (currentIdx);
+					}
 					currentList = (mode == 0) ? checkWrite : checkError;
+					currentIdx = 0;
 					mode++;
 					continue;
 				}
 
-				if (currentList != null) {
-					if (currentList == checkWrite && !sock.connected) {
-						if ((int) sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0) {
-							sock.connected = true;
-						}
-					}
-					
-					currentList.Add (sock);
+				if (mode == 1 && currentList == checkWrite && !sock.connected) {
+					if ((int) sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error) == 0)
+						sock.connected = true;
 				}
+
+				// Remove non-signaled sockets before the current one
+				int max = currentList.Count;
+				while ((cur_sock = (Socket) currentList [currentIdx]) != sock) {
+					currentList.RemoveAt (currentIdx);
+				}
+				currentIdx++;
 			}
 		}
 
