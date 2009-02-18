@@ -1,5 +1,10 @@
 2009-02-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #476895
+	* attribute.cs: Use correct resolve context for attribute type.
+
+2009-02-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #476266
 	* anonymous.cs: Mutate multi-dimensional arrays.
 

@@ -77,6 +77,46 @@ namespace Mono.CSharp {
 
 	public class Attribute : Expression
 	{
+		//
+		// Wraps owner resolve context, the owner is an attribute
+		// parent and the rest is exactly same
+		//
+		struct AttributeResolveContext : IResolveContext
+		{
+			readonly IResolveContext rc;
+
+			public AttributeResolveContext (IResolveContext rc)
+			{
+				this.rc = rc;
+			}
+
+			#region IResolveContext Members
+
+			public DeclSpace DeclContainer {
+				get {
+					DeclSpace ds = rc as DeclSpace;
+					if (ds == null)
+						return rc.DeclContainer;
+
+					return ds;
+				}
+			}
+
+			public bool IsInObsoleteScope {
+				get { return rc.IsInObsoleteScope; }
+			}
+
+			public bool IsInUnsafeScope {
+				get { return rc.IsInUnsafeScope; }
+			}
+
+			public DeclSpace GenericDeclContainer {
+				get { return rc.GenericDeclContainer; }
+			}
+
+			#endregion
+		}
+
 		public readonly string ExplicitTarget;
 		public AttributeTargets Target;
 
@@ -225,7 +265,7 @@ namespace Mono.CSharp {
 
 		Type ResolvePossibleAttributeType (string name, bool silent, ref bool is_attr)
 		{
-			IResolveContext rc = Owner.ResolveContext;
+			IResolveContext rc = new AttributeResolveContext (Owner.ResolveContext);
 
 			TypeExpr te;
 			if (LeftExpr == null) {
