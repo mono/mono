@@ -1,3 +1,7 @@
+2009-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs libtest.c: Add a test for #477396.
+
 2009-02-11  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-473999.2.cs: New test.
