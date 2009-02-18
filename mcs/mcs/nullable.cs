@@ -961,7 +961,7 @@ namespace Mono.CSharp.Nullable
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
 		{
-			if (left is NullLiteral)
+			if (left.Type == TypeManager.null_type)
 				Report.Error (845, loc, "An expression tree cannot contain a coalescing operator with null left side");
 
 			UserCast uc = left as UserCast;

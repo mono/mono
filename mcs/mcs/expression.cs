@@ -9815,7 +9815,7 @@ namespace Mono.CSharp {
 			}
 
 			type = e.Type;
-			if (type == TypeManager.void_type || e is NullLiteral ||
+			if (type == TypeManager.void_type || type == TypeManager.null_type ||
 				type == TypeManager.anonymous_method_type || type.IsPointer) {
 				Error_InvalidInitializer (e.GetSignatureForError ());
 				return null;
