@@ -101,6 +101,20 @@ namespace System.Web.Routing
 
 			this.tokens = tokens.ToArray ();
 		}
+
+		string SegmentToKey (string segment)
+		{
+			int start = segment.IndexOf ('{');
+			int end = segment.IndexOf ('}');
+			if (start == -1)
+				start = 0;
+			else
+				start++;
+			
+			if (end == -1)
+				end = segment.Length;
+			return segment.Substring (start, end - start);
+		}
 		
 		RouteValueDictionary tmp = new RouteValueDictionary ();
 		public RouteValueDictionary Match (string path, RouteValueDictionary defaults)
@@ -123,8 +137,9 @@ namespace System.Web.Routing
 					string v = i < argsLen ? argSegs [i] : null;
 
 					if (String.IsNullOrEmpty (v)) {
+						string key = SegmentToKey (segments [i]);
 						object o;
-						if (haveDefaults && !defaults.TryGetValue (tokens [i], out o))
+						if (haveDefaults && !defaults.TryGetValue (key, out o))
 							return null; // ends with '/' while more
 								     // tokens are expected and
 								     // there are is no default
@@ -133,7 +148,7 @@ namespace System.Web.Routing
 
 						v = o as string;
 						if (v == null)
-							throw new InvalidOperationException ("The RouteData must contain an item named '" + tokens [i] + "' with a string value.");
+							throw new InvalidOperationException ("The RouteData must contain an item named '" + key + "' with a string value.");
 					}
 					
 					int tfrom = 0, vfrom = 0;

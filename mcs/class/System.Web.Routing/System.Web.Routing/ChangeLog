@@ -3,6 +3,7 @@
 	* UrlPattern.cs: TrySubstitute now gets the collection of default
 	values and uses it to replace url segments instead of failing when
 	the passed values collection is missing a segment.
+	Do not use the tokens array in Match.
 
 	* RouteCollection.cs: check if name is null or empty, not just
 	null in GetVirtualPath
