@@ -1,3 +1,10 @@
+2009-02-18  Bill Holmes  <billholmes54@gmail.com>
+
+	* cominterop.c (cominterop_get_managed_wrapper_adjusted) :
+	  Adding exception handling for all CCW calls.
+
+	Code is contributed under MIT/X11 license.
+
 2009-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_reflection_init): Remove the unused reflection mutex.
