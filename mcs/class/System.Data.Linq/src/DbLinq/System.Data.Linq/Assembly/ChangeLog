@@ -1,0 +1,8 @@
+2008-05-20  Marek Safar  <marek.safar@gmail.com>
+
+	* AssemblyInfo.cs: Clean up some attributes.
+
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssemblyInfo.cs : refresh stub checkin.
+

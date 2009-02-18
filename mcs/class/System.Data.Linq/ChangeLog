@@ -1,0 +1,64 @@
+2008-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r966.
+
+2008-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r960.
+
+2008-11-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r947 (XmlMappingSource).
+
+2008-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r946 (quick fix for vendor loading).
+
+2008-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r945.
+	  It is not working well wrt connectionString yet.
+
+2008-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* updated to DbLinq r931.
+
+2008-10-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* src/DbLinq.Firebird, System.Data.Linq.dll.sources :
+	  added Firebird support sources (new in DbLinq).
+
+2008-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* src/DbLinq.{Oracle|MySql|PostgreSql|Sqlite|Ingres}: new.
+	* src/DbLinq : updated to DbLinq r905.
+	* System.Data.Linq.dll.sources : added vendor-specific files and
+	  new files in r905.
+
+2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data.Linq.dll.sources : fix wrong reference to EntitySet.cs.
+
+2008-10-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data.Linq.dll.sources :
+	  SqlServer vendor sources were missing.
+
+2008-10-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data.Linq.dll.sources, Makefile, src/* :
+	  replace everything with DBLinq integration.
+
+	  Imported DBLinq tree is r899. Skipped: DbLinq.Localization,
+	  DbLinq.Ingres, DbLinq.MySql, DbLinq.Oracle, DbLinq.PostgreSql,
+	  DbLinq.Sqlite, DbMetal, VisualMetal directories.
+
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Data.Linq.dll.sources :
+	  added System.Data.Linq.SqlClient* stubs.
+
+2008-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, System.Data.Linq.dll.sources : refresh stub checkin.
+

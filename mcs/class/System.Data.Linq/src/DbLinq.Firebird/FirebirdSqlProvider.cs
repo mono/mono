@@ -1,0 +1,113 @@
+#region MIT license
+// 
+// MIT license
+//
+// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne
+// 
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+// 
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+// 
+#endregion
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+#if MONO_STRICT
+using System.Data.Linq.Sql;
+#else
+using DbLinq.Data.Linq.Sql;
+#endif
+using DbLinq.Util;
+using DbLinq.Vendor.Implementation;
+using System;
+
+namespace DbLinq.Firebird
+{
+#if MONO_STRICT
+    internal
+#else
+    public
+#endif
+    class FirebirdSqlProvider : SqlProvider
+    {
+        public override string GetParameterName(string nameBase)
+        {
+            return "@" + nameBase;
+        }
+
+        protected override SqlStatement GetLiteralCount(SqlStatement a)
+        {
+            return "COUNT(*)";
+        }
+
+        protected override SqlStatement GetLiteralStringConcat(SqlStatement a, SqlStatement b)
+        {
+            return SqlStatement.Format("CONCAT({0}, {1})", a, b);
+        }
+
+        protected override char SafeNameStartQuote { get { return ' '; } }
+        protected override char SafeNameEndQuote { get { return ' '; } }
+
+        /// <summary>
+        /// MySQL is case insensitive, and names always specify a case (there is no default casing)
+        /// However, tables appear to be full lowercase
+        /// </summary>
+        /// <param name="dbName"></param>
+        /// <returns></returns>
+        protected override bool IsNameCaseSafe(string dbName)
+        {
+            return dbName == dbName.ToUpperInvariant();
+        }
+
+        /// <summary>
+        /// Returns a table alias
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public override string GetTable(string table)
+        {
+            var parts = table.Split('.');
+            return GetSafeName(parts[parts.Length - 1]);
+        }
+
+        /// <summary>
+        /// Returns a LIMIT clause around a SELECT clause
+        /// </summary>
+        /// <param name="select">SELECT clause</param>
+        /// <param name="limit">limit value (number of columns to be returned)</param>
+        /// <returns></returns>
+        public override SqlStatement GetLiteralLimit(SqlStatement select, SqlStatement limit)
+        {
+            string stmt = limit.Count == 2
+                ? string.Format("SELECT FIRST {0}, LAST {1}", limit[0].Sql, limit[1].Sql)
+                : string.Format("SELECT FIRST {0}", limit[0].Sql);
+            return select.Replace("SELECT", stmt, true);
+        }
+
+        public override SqlStatement GetInsertIds(IList<SqlStatement> outputParameters, IList<SqlStatement> outputExpressions)
+        {
+            // no parameters? no need to get them back
+            if (outputParameters.Count == 0)
+                return "";
+            // otherwise we keep track of the new values
+            return SqlStatement.Format("SELECT {0} INTO {1} FROM DUAL",
+                SqlStatement.Join(", ", (from outputExpression in outputExpressions select outputExpression.Replace(".NextVal", ".CurrVal", true)).ToArray()),
+                SqlStatement.Join(", ", outputParameters.ToArray()));
+        }
+    }
+}

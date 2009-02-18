@@ -1,0 +1,25 @@
+﻿
+Piece = query expression part
+
+Query expressions language identification
+   1. Specific language patterns identification (VB string compare)
+--> ExpressionLanguageParser
+   2. Constant reduction 
+--> ExpressionOptimizer
+
+# Query expressions query identification
+--> ExpressionDispatcher
+
+   1. Key methods (where, select...) identification and inner expressions dispatching (top-level method is handled specifically)
+   2. Non-operation expressions deduction
+          * Table (--> TableExpression)
+          * Column (--> ColumnExpression)
+          * Input parameter (--> ParameterExpression)
+          * Meta-table (a class containing table aliases) (--> MetaTableExpression)
+          
+--> DataMapper
+--> ExpressionQuery
+--> ExpressionRegistrar // no other idea at the moment
+
+Generate SQL (Sugar + Database IVendor) 
+--> Query

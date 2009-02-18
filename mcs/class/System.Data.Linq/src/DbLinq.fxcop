@@ -1,0 +1,2958 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<FxCopProject Version="1.35" Name="My FxCop Project">
+ <ProjectOptions>
+  <SharedProject>True</SharedProject>
+  <Stylesheet Apply="False">http://www.gotdotnet.com/team/fxcop//xsl/1.35/FxCopReport.xsl</Stylesheet>
+  <SaveMessages>
+   <Project Status="Active, Excluded" NewOnly="False" />
+   <Report Status="Active" NewOnly="False" />
+  </SaveMessages>
+  <ProjectFile Compress="True" DefaultTargetCheck="True" DefaultRuleCheck="True" SaveByRuleGroup="" Deterministic="True" />
+  <EnableMultithreadedLoad>True</EnableMultithreadedLoad>
+  <EnableMultithreadedAnalysis>True</EnableMultithreadedAnalysis>
+  <SourceLookup>True</SourceLookup>
+  <AnalysisExceptionsThreshold>10</AnalysisExceptionsThreshold>
+  <RuleExceptionsThreshold>1</RuleExceptionsThreshold>
+  <Spelling Locale="en-us" />
+  <VersionAware>False</VersionAware>
+  <OverrideRuleVisibilities>False</OverrideRuleVisibilities>
+  <CustomDictionaries SearchFxCopDir="True" SearchUserProfile="True" SearchProjectDir="True" />
+  <SearchGlobalAssemblyCache>False</SearchGlobalAssemblyCache>
+  <DeadlockDetectionTimeout>120</DeadlockDetectionTimeout>
+ </ProjectOptions>
+ <Targets>
+  <Target Name="$(ProjectDir)/DbLinq/bin/DbLinq.Mysql.Prototype.dll" Analyze="True" AnalyzeAllChildren="True" />
+ </Targets>
+ <Rules>
+  <RuleFiles>
+   <RuleFile Name="$(FxCopDir)\Rules\DesignRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\GlobalizationRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\InteroperabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\MobilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\NamingRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PerformanceRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\PortabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="True" />
+  </RuleFiles>
+  <Groups />
+  <Settings />
+ </Rules>
+ <FxCopReport Version="1.35">
+  <Namespaces>
+   <Namespace Name="DBLinq.Linq.clause">
+    <Messages>
+     <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2007-06-13 16:29:09Z">
+      <Issue Name="Namespace">
+       <Item>DBLinq.Linq.clause</Item>
+      </Issue>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="DBLinq.util">
+    <Messages>
+     <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2007-06-13 16:29:09Z">
+      <Issue Name="Namespace">
+       <Item>DBLinq.util</Item>
+      </Issue>
+     </Message>
+    </Messages>
+   </Namespace>
+   <Namespace Name="DBLinq.vendor">
+    <Messages>
+     <Message TypeName="AvoidNamespacesWithFewTypes" Category="Microsoft.Design" CheckId="CA1020" Created="2007-06-13 16:29:09Z">
+      <Issue>
+       <Item>DBLinq.vendor</Item>
+      </Issue>
+     </Message>
+     <Message TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2007-06-13 16:29:09Z">
+      <Issue Name="Namespace">
+       <Item>DBLinq.vendor</Item>
+      </Issue>
+     </Message>
+    </Messages>
+   </Namespace>
+  </Namespaces>
+  <Targets>
+   <Target Name="$(ProjectDir)/DbLinq/bin/DbLinq.Mysql.Prototype.dll">
+    <Modules>
+     <Module Name="dblinq.mysql.prototype.dll">
+      <Messages>
+       <Message TypeName="AssembliesShouldDeclareMinimumSecurity" Category="Microsoft.Usage" CheckId="CA2209" Created="2007-06-13 16:29:09Z">
+        <Issue>
+         <Item>DbLinq.Mysql.Prototype</Item>
+        </Issue>
+       </Message>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Created="2007-06-13 16:29:09Z">
+        <Issue Name="NoStrongName">
+         <Item>DbLinq.Mysql.Prototype</Item>
+        </Issue>
+       </Message>
+       <Message TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014" Created="2007-06-13 16:29:09Z">
+        <Issue Name="NoAttr">
+         <Item>DbLinq.Mysql.Prototype</Item>
+        </Issue>
+       </Message>
+      </Messages>
+      <Namespaces>
+       <Namespace Name="DBLinq.Linq">
+        <Types>
+         <Type Name="AutoGenIdAttribute">
+          <Messages>
+           <Message TypeName="AvoidUnsealedAttributes" Category="Microsoft.Performance" CheckId="CA1813" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.Linq.AutoGenIdAttribute</Item>
+            </Issue>
+           </Message>
+          </Messages>
+         </Type>
+         <Type Name="EntityMSet`1">
+          <Messages>
+           <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.Linq.EntityMSet`1</Item>
+             <Item>Collection</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="CreateQuery(System.Linq.Expressions.Expression):System.Linq.IQueryable">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>EntityMSet`1.CreateQuery(Expression):IQueryable</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.EntityMSet`1.CreateQuery(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CreateQuery(System.Linq.Expressions.Expression):System.Linq.IQueryable`1&lt;S&gt;">
+            <Messages>
+             <Message TypeName="GenericMethodsShouldProvideTypeParameter" Category="Microsoft.Design" CheckId="CA1004" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>EntityMSet`1.CreateQuery(Expression):IQueryable`1&lt;S&gt;</Item>
+               <Item>S</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.EntityMSet`1.CreateQuery(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>expr</Item>
+               <Item>EntityMSet`1.CreateQuery(Expression):IQueryable`1&lt;S&gt;</Item>
+               <Item>expression</Item>
+               <Item>IQueryable`1&lt;T&gt;.CreateQuery(Expression):IQueryable`1&lt;TElement&gt;</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ElementType">
+            <Accessors>
+             <Accessor Name="get_ElementType():System.Type">
+              <Messages>
+               <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+                <Issue Name="TooGeneric">
+                 <Item>EntityMSet`1.get_ElementType():Type</Item>
+                 <Item>System.ApplicationException</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="Execute(System.Linq.Expressions.Expression):S">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>EntityMSet`1.Execute(Expression):S</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="GenericMethodsShouldProvideTypeParameter" Category="Microsoft.Design" CheckId="CA1004" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>EntityMSet`1.Execute(Expression):S</Item>
+               <Item>S</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.EntityMSet`1.Execute(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="Execute(System.Linq.Expressions.Expression):System.Object">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>EntityMSet`1.Execute(Expression):Object</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.EntityMSet`1.Execute(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetEnumerator():System.Collections.Generic.IEnumerator`1&lt;T&gt;">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>EntityMSet`1.GetEnumerator():IEnumerator`1&lt;T&gt;</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="System.Collections.IEnumerable.GetEnumerator():System.Collections.IEnumerator">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>EntityMSet`1.System.Collections.IEnumerable.GetEnumerator():IEnumerator</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="IQueryText">
+          <Members>
+           <Member Name="GetQueryText():System.String">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2007-06-13 16:29:09Z">
+              <Issue Certainty="50">
+               <Item>GetQueryText</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MContext">
+          <Messages>
+           <Message TypeName="AbstractTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1012" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>MContext</Item>
+            </Issue>
+           </Message>
+           <Message TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001" Created="2007-06-13 16:29:09Z" FixCategory="Breaking">
+            <Issue>
+             <Item>DBLinq.Linq.MContext</Item>
+             <Item>MySql.Data.MySqlClient.MySqlConnection</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name=".ctor(System.String)">
+            <Messages>
+             <Message Id="0#" TypeName="AvoidTypeNamesInParameters" Category="Microsoft.Naming" CheckId="CA1720" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>sqlConnString</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetChangeText():System.String">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2007-06-13 16:29:09Z" FixCategory="Breaking">
+              <Issue>
+               <Item>MContext.GetChangeText():String</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2007-06-13 16:29:09Z">
+              <Issue Certainty="50">
+               <Item>GetChangeText</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetQueryText(System.Linq.IQueryable):System.String">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2007-06-13 16:29:09Z" FixCategory="Breaking">
+              <Issue>
+               <Item>MContext.GetQueryText(IQueryable):String</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MTable_Projected`1">
+          <Members>
+           <Member Name="CreateQuery(System.Linq.Expressions.Expression):System.Linq.IQueryable">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>MTable_Projected`1.CreateQuery(Expression):IQueryable</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CreateQuery(System.Linq.Expressions.Expression):System.Linq.IQueryable`1&lt;S&gt;">
+            <Messages>
+             <Message Id="msg1" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>MTable_Projected`1.CreateQuery(Expression):IQueryable`1&lt;S&gt;</Item>
+               <Item>msg1</Item>
+               <Item>System.String</Item>
+              </Issue>
+             </Message>
+             <Message Id="msg2" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>MTable_Projected`1.CreateQuery(Expression):IQueryable`1&lt;S&gt;</Item>
+               <Item>msg2</Item>
+               <Item>System.String</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="Dispose():System.Void">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2007-06-13 16:29:09Z" FixCategory="NonBreaking">
+              <Issue>
+               <Item>MTable_Projected`1.Dispose():Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ElementType">
+            <Accessors>
+             <Accessor Name="get_ElementType():System.Type">
+              <Messages>
+               <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+                <Issue Name="TooGeneric">
+                 <Item>MTable_Projected`1.get_ElementType():Type</Item>
+                 <Item>System.ApplicationException</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="Execute(System.Linq.Expressions.Expression):System.Object">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>MTable_Projected`1.Execute(Expression):Object</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="System.Collections.IEnumerable.GetEnumerator():System.Collections.IEnumerator">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>MTable_Projected`1.System.Collections.IEnumerable.GetEnumerator():IEnumerator</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="MTable`1">
+          <Messages>
+           <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.Linq.MTable`1</Item>
+             <Item>Collection</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="CreateQuery(System.Linq.Expressions.Expression):System.Linq.IQueryable">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>MTable`1.CreateQuery(Expression):IQueryable</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.MTable`1.CreateQuery(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CreateQuery(System.Linq.Expressions.Expression):System.Linq.IQueryable`1&lt;S&gt;">
+            <Messages>
+             <Message TypeName="GenericMethodsShouldProvideTypeParameter" Category="Microsoft.Design" CheckId="CA1004" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>MTable`1.CreateQuery(Expression):IQueryable`1&lt;S&gt;</Item>
+               <Item>S</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.MTable`1.CreateQuery(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>expr</Item>
+               <Item>MTable`1.CreateQuery(Expression):IQueryable`1&lt;S&gt;</Item>
+               <Item>expression</Item>
+               <Item>IQueryable`1&lt;T&gt;.CreateQuery(Expression):IQueryable`1&lt;TElement&gt;</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ElementType">
+            <Accessors>
+             <Accessor Name="get_ElementType():System.Type">
+              <Messages>
+               <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+                <Issue Name="TooGeneric">
+                 <Item>MTable`1.get_ElementType():Type</Item>
+                 <Item>System.ApplicationException</Item>
+                </Issue>
+               </Message>
+              </Messages>
+             </Accessor>
+            </Accessors>
+           </Member>
+           <Member Name="Execute(System.Linq.Expressions.Expression):S">
+            <Messages>
+             <Message TypeName="GenericMethodsShouldProvideTypeParameter" Category="Microsoft.Design" CheckId="CA1004" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>MTable`1.Execute(Expression):S</Item>
+               <Item>S</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.MTable`1.Execute(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="Execute(System.Linq.Expressions.Expression):System.Object">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>MTable`1.Execute(Expression):Object</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.MTable`1.Execute(System.Linq.Expressions.Expression)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetModifiedEnumerator(DBLinq.Linq.CustomExpressionHandler):DBLinq.util.RowEnumerator`1&lt;T&gt;">
+            <Messages>
+             <Message Id="0#" TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>fct</Item>
+               <Item>MTable`1.GetModifiedEnumerator(CustomExpressionHandler):RowEnumerator`1&lt;T&gt;</Item>
+               <Item>callback</Item>
+               <Item>IGetModifiedEnumerator`1&lt;T&gt;.GetModifiedEnumerator(CustomExpressionHandler):RowEnumerator`1&lt;T&gt;</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="SaveAll():System.Void">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>MTable`1.SaveAll():Void</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+              <Issue>
+               <Item>MTable`1.SaveAll():Void</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ProjectionData">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>ProjectionData</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="autoGenField">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>autoGenField</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ctor">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ctor</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ctor2">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ctor2</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="fields">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>fields</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;DBLinq.Linq.ProjectionData+ProjectionField&gt;</Item>
+               <Item>ProjectionData.fields</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="FromDbType(System.Type):DBLinq.Linq.ProjectionData">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>ProjectionData.FromDbType(Type):ProjectionData</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>Db</Item>
+               <Item>ProjectionData.FromDbType(Type):ProjectionData</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="FromReflectedType(System.Type):DBLinq.Linq.ProjectionData">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>ProjectionData.FromReflectedType(Type):ProjectionData</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="FromSelectExpr(System.Linq.Expressions.LambdaExpression):DBLinq.Linq.ProjectionData">
+            <Messages>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'selectExpr'</Item>
+               <Item>ProjectionData.FromSelectExpr(LambdaExpression):ProjectionData</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="FromSelectGroupByExpr(System.Linq.Expressions.LambdaExpression,System.Linq.Expressions.LambdaExpression,DBLinq.Linq.clause.SqlExpressionParts):DBLinq.Linq.ProjectionData">
+            <Messages>
+             <Message Id="sqlParts" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2007-06-13 16:29:09Z" FixCategory="Breaking">
+              <Issue>
+               <Item>sqlParts</Item>
+               <Item>ProjectionData.FromSelectGroupByExpr(LambdaExpression, LambdaExpression, SqlExpressionParts):ProjectionData</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'groupByExpr'</Item>
+               <Item>ProjectionData.FromSelectGroupByExpr(LambdaExpression, LambdaExpression, SqlExpressionParts):ProjectionData</Item>
+              </Issue>
+              <Issue>
+               <Item>'groupByExpr'</Item>
+               <Item>ProjectionData.FromSelectGroupByExpr(LambdaExpression, LambdaExpression, SqlExpressionParts):ProjectionData</Item>
+              </Issue>
+              <Issue>
+               <Item>'selectExpr'</Item>
+               <Item>ProjectionData.FromSelectGroupByExpr(LambdaExpression, LambdaExpression, SqlExpressionParts):ProjectionData</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="keyColumnName">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>keyColumnName</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="LoopOverBindings(DBLinq.Linq.ProjectionData,System.Linq.Expressions.MemberInitExpression):System.Void">
+            <Messages>
+             <Message Id="callEx" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ProjectionData.LoopOverBindings(ProjectionData, MemberInitExpression):Void</Item>
+               <Item>callEx</Item>
+               <Item>System.Linq.Expressions.MethodCallExpression</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="tableAttribute">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>tableAttribute</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="type">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>type</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ProjectionData+ProjectionField">
+          <Messages>
+           <Message TypeName="NestedTypesShouldNotBeVisible" Category="Microsoft.Design" CheckId="CA1034" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.Linq.ProjectionData+ProjectionField</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name=".ctor(System.Reflection.MemberInfo)">
+            <Messages>
+             <Message Id="System.ArgumentException.#ctor(System.String)" TypeName="DoNotPassLiteralsAsLocalizedParameters" Category="Microsoft.Globalization" CheckId="CA1303" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ProjectionField.ProjectionField(MemberInfo)</Item>
+               <Item>1</Item>
+               <Item>ArgumentException.ArgumentException(String)</Item>
+               <Item>Bad mInfo:__</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="columnAttribute">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>columnAttribute</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="expr1">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>expr1</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="IsValid(System.String&amp;):System.Boolean">
+            <Messages>
+             <Message Id="0#" TypeName="AvoidOutParameters" Category="Microsoft.Design" CheckId="CA1021" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>error</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="s_emptyIndices">
+            <Messages>
+             <Message TypeName="ArrayFieldsShouldNotBeReadOnly" Category="Microsoft.Security" CheckId="CA2105" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ProjectionField.s_emptyIndices</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>s_emptyIndices</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>s_emptyIndices</Item>
+              </Issue>
+             </Message>
+             <Message Id="Indices" TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>Indices</Item>
+               <Item>s_emptyIndices</Item>
+               <Item>Indexes</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="type">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>type</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="typeEnum">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>typeEnum</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="QueryProcessor">
+          <Members>
+           <Member Name="_whereBuilder">
+            <Messages>
+             <Message TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>QueryProcessor._whereBuilder</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="SessionVars">
+          <Members>
+           <Member Name=".cctor()">
+            <Messages>
+             <Message TypeName="DoNotInitializeUnnecessarily" Category="Microsoft.Performance" CheckId="CA1805" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SessionVars.SessionVars()</Item>
+               <Item>s_serial</Item>
+               <Item>System.Int32</Item>
+               <Item>0</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_serial">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>_serial</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>_serial</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_sqlParts">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>_sqlParts</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>_sqlParts</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="context">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>context</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="createQueryExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>createQueryExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="createQueryList">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>createQueryList</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.Type&gt;</Item>
+               <Item>SessionVars.createQueryList</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetDefaultVarName():System.String">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2007-06-13 16:29:09Z">
+              <Issue Certainty="50">
+               <Item>GetDefaultVarName</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="groupByExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>groupByExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="groupByNewExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>groupByNewExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="lambdasInOrder">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SessionVars.lambdasInOrder</Item>
+               <Item>System.Collections.Generic.List`1&lt;System.Linq.Expressions.LambdaExpression&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>lambdasInOrder</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.Linq.Expressions.LambdaExpression&gt;</Item>
+               <Item>SessionVars.lambdasInOrder</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="limitClause">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>limitClause</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="log">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>log</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="memberExprNickames">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>memberExprNickames</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="orderBy_desc">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>orderBy_desc</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>orderBy_desc</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="orderByExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>orderByExpr</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.Linq.Expressions.LambdaExpression&gt;</Item>
+               <Item>SessionVars.orderByExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="projectionData">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>projectionData</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="selectExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>selectExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="selectManyExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>selectManyExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="sourceType">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>sourceType</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="sqlConnString">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>sqlConnString</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="sqlString">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>sqlString</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="StoreLambda(System.String,System.Linq.Expressions.LambdaExpression):System.Void">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>SessionVars.StoreLambda(String, LambdaExpression):Void</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="StoreQuery(System.Linq.Expressions.Expression):System.Void">
+            <Messages>
+             <Message TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Local">
+               <Item>howMany</Item>
+               <Item>System.Linq.Expressions.ConstantExpression</Item>
+               <Item>SessionVars.StoreQuery(Expression):Void</Item>
+               <Item>castclass</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>SessionVars.StoreQuery(Expression):Void</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>SessionVars.StoreQuery(Expression):Void</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="whereExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>whereExpr</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.Linq.Expressions.LambdaExpression&gt;</Item>
+               <Item>SessionVars.whereExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+       <Namespace Name="DBLinq.Linq.clause">
+        <Types>
+         <Type Name="ExpressionTreeParser">
+          <Members>
+           <Member Name=".cctor()">
+            <Messages>
+             <Message TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.Linq.clause.ExpressionTreeParser</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AnalyzeConstant(DBLinq.Linq.clause.ExpressionTreeParser+RecurData,System.Linq.Expressions.ConstantExpression):System.Void">
+            <Messages>
+             <Message Id="recurData" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2007-06-13 16:29:09Z" FixCategory="NonBreaking">
+              <Issue>
+               <Item>recurData</Item>
+               <Item>ExpressionTreeParser.AnalyzeConstant(RecurData, ConstantExpression):Void</Item>
+              </Issue>
+             </Message>
+             <Message Id="System.DateTime.ToString(System.String)" TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ExpressionTreeParser.AnalyzeConstant(RecurData, ConstantExpression):Void</Item>
+               <Item>System.DateTime.ToString(System.String)</Item>
+               <Item>System.DateTime.ToString(System.String,System.IFormatProvider)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AnalyzeExpression(DBLinq.Linq.clause.ExpressionTreeParser+RecurData,System.Linq.Expressions.Expression):System.Void">
+            <Messages>
+             <Message Id="System.ApplicationException.#ctor(System.String)" TypeName="DoNotPassLiteralsAsLocalizedParameters" Category="Microsoft.Globalization" CheckId="CA1303" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ExpressionTreeParser.AnalyzeExpression(RecurData, Expression):Void</Item>
+               <Item>1</Item>
+               <Item>ApplicationException.ApplicationException(String)</Item>
+               <Item>Analyze: L105 TODO: __</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>ExpressionTreeParser.AnalyzeExpression(RecurData, Expression):Void</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AnalyzeMethodCall(DBLinq.Linq.clause.ExpressionTreeParser+RecurData,System.Linq.Expressions.MethodCallExpression):System.Void">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>ExpressionTreeParser.AnalyzeMethodCall(RecurData, MethodCallExpression):Void</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AnalyzeParameter(DBLinq.Linq.clause.ExpressionTreeParser+RecurData,System.Linq.Expressions.ParameterExpression):System.Void">
+            <Messages>
+             <Message Id="recurData" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2007-06-13 16:29:09Z" FixCategory="NonBreaking">
+              <Issue>
+               <Item>recurData</Item>
+               <Item>ExpressionTreeParser.AnalyzeParameter(RecurData, ParameterExpression):Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ExpressionTreeParser+RecurData">
+          <Messages>
+           <Message TypeName="NestedTypesShouldNotBeVisible" Category="Microsoft.Design" CheckId="CA1034" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.Linq.clause.ExpressionTreeParser+RecurData</Item>
+            </Issue>
+           </Message>
+           <Message TypeName="OverrideEqualsAndOperatorEqualsOnValueTypes" Category="Microsoft.Performance" CheckId="CA1815" Created="2007-06-13 16:29:09Z">
+            <Issue Name="Equals">
+             <Item>DBLinq.Linq.clause.ExpressionTreeParser+RecurData</Item>
+            </Issue>
+            <Issue Name="op_Equality">
+             <Item>DBLinq.Linq.clause.ExpressionTreeParser+RecurData</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="depth">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>depth</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="operatorPrecedence">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>operatorPrecedence</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="selectAllFields">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>selectAllFields</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="FromClauseBuilder">
+          <Messages>
+           <Message TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.Linq.clause.FromClauseBuilder</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="SelectAllFields(DBLinq.Linq.SessionVars,DBLinq.Linq.clause.SqlExpressionParts,System.Type,System.String):System.Void">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>FromClauseBuilder.SelectAllFields(SessionVars, SqlExpressionParts, Type, String):Void</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="InsertClauseBuilder">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>InsertClauseBuilder</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="GetClause(MySql.Data.MySqlClient.MySqlConnection,System.Object,DBLinq.Linq.ProjectionData):MySql.Data.MySqlClient.MySqlCommand">
+            <Messages>
+             <Message Id="1#" TypeName="AvoidTypeNamesInParameters" Category="Microsoft.Naming" CheckId="CA1720" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>objectToInsert</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>InsertClauseBuilder.GetClause(MySqlConnection, Object, ProjectionData):MySqlCommand</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetUpdateCommand(MySql.Data.MySqlClient.MySqlConnection,System.Object,DBLinq.Linq.ProjectionData,System.String):MySql.Data.MySqlClient.MySqlCommand">
+            <Messages>
+             <Message Id="1#" TypeName="AvoidTypeNamesInParameters" Category="Microsoft.Naming" CheckId="CA1720" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>objectToInsert</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>InsertClauseBuilder.GetUpdateCommand(MySqlConnection, Object, ProjectionData, String):MySqlCommand</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message Id="3#" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Parameter">
+               <Item>ID_to_update</Item>
+              </Issue>
+             </Message>
+             <Message Id="3#I" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Parameter">
+               <Item>InsertClauseBuilder.GetUpdateCommand(MySqlConnection, Object, ProjectionData, String):MySqlCommand</Item>
+               <Item>I</Item>
+               <Item>ID_to_update</Item>
+              </Issue>
+             </Message>
+             <Message Id="3#" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Parameter">
+               <Item>ID_to_update</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="JoinBuilder">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>JoinBuilder</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="AddJoin2(System.Linq.Expressions.MemberExpression,DBLinq.Linq.clause.ParseInputs,DBLinq.Linq.clause.ParseResult):System.Void">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>JoinBuilder.AddJoin2(MemberExpression, ParseInputs, ParseResult):Void</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>JoinBuilder.AddJoin2(MemberExpression, ParseInputs, ParseResult):Void</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>JoinBuilder.AddJoin2(MemberExpression, ParseInputs, ParseResult):Void</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+             <Message Id="System.Char.ToLower(System.Char)" TypeName="SpecifyCultureInfo" Category="Microsoft.Globalization" CheckId="CA1304" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>JoinBuilder.AddJoin2(MemberExpression, ParseInputs, ParseResult):Void</Item>
+               <Item>System.Char.ToLower(System.Char)</Item>
+               <Item>System.Char.ToLower(System.Char,System.Globalization.CultureInfo)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ParseInputs">
+          <Members>
+           <Member Name="groupByExpr">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>groupByExpr</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="memberExprNickames">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>memberExprNickames</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="NicknameRequest(System.Linq.Expressions.Expression,System.Data.Linq.AssociationAttribute):System.String">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2007-06-13 16:29:09Z" FixCategory="Breaking">
+              <Issue>
+               <Item>ParseInputs.NicknameRequest(Expression, AssociationAttribute):String</Item>
+              </Issue>
+             </Message>
+             <Message Id="assoc1" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2007-06-13 16:29:09Z" FixCategory="Breaking">
+              <Issue>
+               <Item>assoc1</Item>
+               <Item>ParseInputs.NicknameRequest(Expression, AssociationAttribute):String</Item>
+              </Issue>
+             </Message>
+             <Message Id="expr" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2007-06-13 16:29:09Z" FixCategory="Breaking">
+              <Issue>
+               <Item>expr</Item>
+               <Item>ParseInputs.NicknameRequest(Expression, AssociationAttribute):String</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="paramMap">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ParseInputs.paramMap</Item>
+               <Item>System.Collections.Generic.Dictionary`2&lt;System.String,System.Object&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>paramMap</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ParseResult">
+          <Members>
+           <Member Name="addJoin(System.String):System.Void">
+            <Messages>
+             <Message Id="Member" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>addJoin</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AppendString(System.String):System.Void">
+            <Messages>
+             <Message Id="0#" TypeName="AvoidTypeNamesInParameters" Category="Microsoft.Naming" CheckId="CA1720" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>columnString</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="columns">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>columns</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>ParseResult.columns</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="joins">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>joins</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>ParseResult.joins</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="lastParamName">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>lastParamName</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="MarkSbPosition():System.Int32">
+            <Messages>
+             <Message Id="Member" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>Sb</Item>
+               <Item>ParseResult.MarkSbPosition():Int32</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="memberExprNickames">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ParseResult.memberExprNickames</Item>
+               <Item>System.Collections.Generic.Dictionary`2&lt;System.Linq.Expressions.MemberExpression,System.String&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>memberExprNickames</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="paramMap">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ParseResult.paramMap</Item>
+               <Item>System.Collections.Generic.Dictionary`2&lt;System.String,System.Object&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>paramMap</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="storeParam(System.String):System.String">
+            <Messages>
+             <Message Id="Member" TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>storeParam</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="tablesUsed">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ParseResult.tablesUsed</Item>
+               <Item>System.Collections.Generic.Dictionary`2&lt;System.Type,System.String&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>tablesUsed</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="SqlExpressionParts">
+          <Members>
+           <Member Name=".cctor()">
+            <Messages>
+             <Message TypeName="DoNotInitializeUnnecessarily" Category="Microsoft.Performance" CheckId="CA1805" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts.SqlExpressionParts()</Item>
+               <Item>s_serial</Item>
+               <Item>System.Int32</Item>
+               <Item>0</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_serial">
+            <Messages>
+             <Message TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts._serial</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AddFrom(System.String):System.Void">
+            <Messages>
+             <Message Id="System.String.ToLower" TypeName="SpecifyCultureInfo" Category="Microsoft.Globalization" CheckId="CA1304" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts.AddFrom(String):Void</Item>
+               <Item>System.String.ToLower</Item>
+               <Item>System.String.ToLower(System.Globalization.CultureInfo)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AddHaving(System.Collections.Generic.List`1&lt;System.String&gt;):System.Void">
+            <Messages>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>SqlExpressionParts.AddHaving(List`1&lt;System.String&gt;):Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AddSelect(System.Collections.Generic.List`1&lt;System.String&gt;):System.Void">
+            <Messages>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>SqlExpressionParts.AddSelect(List`1&lt;System.String&gt;):Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="AddWhere(System.Collections.Generic.List`1&lt;System.String&gt;):System.Void">
+            <Messages>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>SqlExpressionParts.AddWhere(List`1&lt;System.String&gt;):Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="appendCsvList(System.Text.StringBuilder,System.String,System.Collections.Generic.List`1&lt;System.String&gt;,System.String):System.Void">
+            <Messages>
+             <Message TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822" Created="2007-06-13 16:29:09Z" FixCategory="NonBreaking">
+              <Issue>
+               <Item>SqlExpressionParts.appendCsvList(StringBuilder, String, List`1&lt;System.String&gt;, String):Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="countClause">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>countClause</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="distinctClause">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>distinctClause</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="doneClauses">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts.doneClauses</Item>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>doneClauses</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>SqlExpressionParts.doneClauses</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetSelect():System.String">
+            <Messages>
+             <Message TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>GetSelect</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="groupByList">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts.groupByList</Item>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>groupByList</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>SqlExpressionParts.groupByList</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="havingList">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts.havingList</Item>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>havingList</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>SqlExpressionParts.havingList</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="joinList">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts.joinList</Item>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>joinList</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>SqlExpressionParts.joinList</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="paramMap">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>SqlExpressionParts.paramMap</Item>
+               <Item>System.Collections.Generic.Dictionary`2&lt;System.String,System.Object&gt;</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>paramMap</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="WhereClauseBuilder">
+          <Members>
+           <Member Name="_parts">
+            <Messages>
+             <Message TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>WhereClauseBuilder._parts</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="FindLambda(System.Linq.Expressions.Expression,System.String&amp;):System.Linq.Expressions.LambdaExpression">
+            <Messages>
+             <Message Id="1#" TypeName="AvoidOutParameters" Category="Microsoft.Design" CheckId="CA1021" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>methodName</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>WhereClauseBuilder.FindLambda(Expression, String&amp;):LambdaExpression</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>WhereClauseBuilder.FindLambda(Expression, String&amp;):LambdaExpression</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>WhereClauseBuilder.FindLambda(Expression, String&amp;):LambdaExpression</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>WhereClauseBuilder.FindLambda(Expression, String&amp;):LambdaExpression</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+       <Namespace Name="DBLinq.util">
+        <Types>
+         <Type Name="AttribHelper">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>AttribHelper</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="ExtractTypeFromMSet(System.Type):System.Type">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>AttribHelper.ExtractTypeFromMSet(Type):Type</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'t'</Item>
+               <Item>AttribHelper.ExtractTypeFromMSet(Type):Type</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="FindPropertiesWithGivenAttrib(System.Type):T[]">
+            <Messages>
+             <Message TypeName="GenericMethodsShouldProvideTypeParameter" Category="Microsoft.Design" CheckId="CA1004" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>AttribHelper.FindPropertiesWithGivenAttrib(Type):T[]</Item>
+               <Item>T</Item>
+              </Issue>
+             </Message>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>AttribHelper.FindPropertiesWithGivenAttrib(Type):T[]</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetColumnAttrib(System.Reflection.MemberInfo):System.Data.Linq.ColumnAttribute">
+            <Messages>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'memberInfo'</Item>
+               <Item>AttribHelper.GetColumnAttrib(MemberInfo):ColumnAttribute</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetColumnAttribs(System.Type):System.Data.Linq.ColumnAttribute[]">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>AttribHelper.GetColumnAttribs(Type):ColumnAttribute[]</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetProjectionData(System.Type):DBLinq.Linq.ProjectionData">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>AttribHelper.GetProjectionData(Type):ProjectionData</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>AttribHelper.GetProjectionData(Type):ProjectionData</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetSQLColumnName(System.Reflection.MemberInfo):System.String">
+            <Messages>
+             <Message Id="Member" TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>AttribHelper.GetSQLColumnName(MemberInfo):String</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetTableAttrib(System.Type):System.Data.Linq.TableAttribute">
+            <Messages>
+             <Message TypeName="ConsiderPassingBaseTypesAsParameters" Category="Microsoft.Design" CheckId="CA1011" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>t</Item>
+               <Item>AttribHelper.GetTableAttrib(Type):TableAttribute</Item>
+               <Item>System.Type</Item>
+               <Item>System.Reflection.MemberInfo</Item>
+              </Issue>
+             </Message>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>AttribHelper.GetTableAttrib(Type):TableAttribute</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="IsAssociation(System.Linq.Expressions.MemberExpression,System.Data.Linq.AssociationAttribute&amp;):System.Boolean">
+            <Messages>
+             <Message Id="1#" TypeName="AvoidOutParameters" Category="Microsoft.Design" CheckId="CA1021" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>assoc</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="IsAssociation(System.Reflection.PropertyInfo,System.Data.Linq.AssociationAttribute&amp;):System.Boolean">
+            <Messages>
+             <Message Id="1#" TypeName="AvoidOutParameters" Category="Microsoft.Design" CheckId="CA1021" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>assoc</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="CSharp">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>CSharp</Item>
+            </Issue>
+           </Message>
+           <Message TypeName="TypeNamesShouldNotMatchNamespaces" Category="Microsoft.Naming" CheckId="CA1724" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>CSharp</Item>
+             <Item>Microsoft.CSharp</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="CategorizeType(System.Type):DBLinq.util.TypeEnum">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>CSharp.CategorizeType(Type):TypeEnum</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'t'</Item>
+               <Item>CSharp.CategorizeType(Type):TypeEnum</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="IsColumnType(System.Type):System.Boolean">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>CSharp.IsColumnType(Type):Boolean</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="IsPrimitiveType(System.Type):System.Boolean">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>CSharp.IsPrimitiveType(Type):Boolean</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="IsProjection(System.Type):System.Boolean">
+            <Messages>
+             <Message Id="0#t" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>CSharp.IsProjection(Type):Boolean</Item>
+               <Item>t</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'t'</Item>
+               <Item>CSharp.IsProjection(Type):Boolean</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="DataReader2">
+          <Messages>
+           <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Created="2007-06-13 16:29:09Z">
+            <Issue Name="ProvideDisposeBool">
+             <Item>DBLinq.util.DataReader2</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="Dispose():System.Void">
+            <Messages>
+             <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Created="2007-06-13 16:29:09Z">
+              <Issue Name="DisposeImplementation">
+               <Item>DataReader2.Dispose():Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetBooleanN(System.Int32):System.Nullable`1&lt;System.Boolean&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetBooleanN(Int32):Nullable`1&lt;System.Boolean&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetBytes(System.Int32):System.Byte[]">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetBytes(Int32):Byte[]</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetCharN(System.Int32):System.Nullable`1&lt;System.Char&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetCharN(Int32):Nullable`1&lt;System.Char&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetDateTime(System.Int32):System.DateTime">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetDateTime(Int32):DateTime</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetDateTimeN(System.Int32):System.Nullable`1&lt;System.DateTime&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetDateTimeN(Int32):Nullable`1&lt;System.DateTime&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetDecimal(System.Int32):System.Decimal">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetDecimal(Int32):Decimal</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetDouble(System.Int32):System.Double">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetDouble(Int32):Double</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetDoubleN(System.Int32):System.Nullable`1&lt;System.Double&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetDoubleN(Int32):Nullable`1&lt;System.Double&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetFloat(System.Int32):System.Single">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetFloat(Int32):Single</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetInt16N(System.Int32):System.Nullable`1&lt;System.Int16&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetInt16N(Int32):Nullable`1&lt;System.Int16&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetInt32(System.Int32):System.Int32">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetInt32(Int32):Int32</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetInt32N(System.Int32):System.Nullable`1&lt;System.Int32&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetInt32N(Int32):Nullable`1&lt;System.Int32&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetInt64(System.Int32):System.Int64">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetInt64(Int32):Int64</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetInt64N(System.Int32):System.Nullable`1&lt;System.Int64&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetInt64N(Int32):Nullable`1&lt;System.Int64&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetString(System.Int32):System.String">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetString(Int32):String</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetUInt32(System.Int32):System.UInt32">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetUInt32(Int32):UInt32</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+              <Issue>
+               <Item>DataReader2.GetUInt32(Int32):UInt32</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetUInt32N(System.Int32):System.Nullable`1&lt;System.UInt32&gt;">
+            <Messages>
+             <Message TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DataReader2.GetUInt32N(Int32):Nullable`1&lt;System.UInt32&gt;</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ExprExtensions">
+          <Members>
+           <Member Name="XOp(System.Linq.Expressions.UnaryExpression):System.Linq.Expressions.Expression">
+            <Messages>
+             <Message Id="Member" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>Op</Item>
+               <Item>ExprExtensions.XOp(UnaryExpression):Expression</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="FieldUtils">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>FieldUtils</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="GetValue(System.Reflection.MemberInfo,System.Object):System.Object">
+            <Messages>
+             <Message Id="System.Exception.#ctor(System.String)" TypeName="DoNotPassLiteralsAsLocalizedParameters" Category="Microsoft.Globalization" CheckId="CA1303" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>FieldUtils.GetValue(MemberInfo, Object):Object</Item>
+               <Item>1</Item>
+               <Item>Exception.Exception(String)</Item>
+               <Item>L55 Member is neither Property nor Field:__</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>FieldUtils.GetValue(MemberInfo, Object):Object</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="SetObjectIdField(System.Object,System.Reflection.FieldInfo,System.Object):System.Void">
+            <Messages>
+             <Message Id="assignable1" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>FieldUtils.SetObjectIdField(Object, FieldInfo, Object):Void</Item>
+               <Item>assignable1</Item>
+               <Item>System.Boolean</Item>
+              </Issue>
+             </Message>
+             <Message Id="assignable2" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>FieldUtils.SetObjectIdField(Object, FieldInfo, Object):Void</Item>
+               <Item>assignable2</Item>
+               <Item>System.Boolean</Item>
+              </Issue>
+             </Message>
+             <Message Id="longID" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>FieldUtils.SetObjectIdField(Object, FieldInfo, Object):Void</Item>
+               <Item>longID</Item>
+               <Item>System.Int64</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'finfo'</Item>
+               <Item>FieldUtils.SetObjectIdField(Object, FieldInfo, Object):Void</Item>
+              </Issue>
+              <Issue>
+               <Item>'finfo'</Item>
+               <Item>FieldUtils.SetObjectIdField(Object, FieldInfo, Object):Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="GroupHelper2`1">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>GroupHelper2`1</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="BuildProjFieldBinding(DBLinq.Linq.SessionVars,DBLinq.Linq.ProjectionData+ProjectionField,System.Linq.Expressions.ParameterExpression,System.Int32&amp;):System.Linq.Expressions.MemberAssignment">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>GroupHelper2`1.BuildProjFieldBinding(SessionVars, ProjectionField, ParameterExpression, Int32&amp;):MemberAssignment</Item>
+               <Item>DBLinq.util.GroupHelper2`1</Item>
+              </Issue>
+             </Message>
+             <Message Id="ictos" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>GroupHelper2`1.BuildProjFieldBinding(SessionVars, ProjectionField, ParameterExpression, Int32&amp;):MemberAssignment</Item>
+               <Item>ictos</Item>
+               <Item>System.Reflection.ConstructorInfo[]</Item>
+              </Issue>
+             </Message>
+             <Message Id="igroupies" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>GroupHelper2`1.BuildProjFieldBinding(SessionVars, ProjectionField, ParameterExpression, Int32&amp;):MemberAssignment</Item>
+               <Item>igroupies</Item>
+               <Item>System.Reflection.PropertyInfo[]</Item>
+              </Issue>
+             </Message>
+             <Message Id="3#" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterId">
+               <Item>ID</Item>
+               <Item>fieldID</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Log1">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>Log1</Item>
+            </Issue>
+           </Message>
+          </Messages>
+         </Type>
+         <Type Name="Lookup`2">
+          <Messages>
+           <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.util.Lookup`2</Item>
+             <Item>Collection</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name=".ctor(K,T)">
+            <Messages>
+             <Message Id="0#k" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterOneLetter">
+               <Item>Lookup`2.Lookup`2(K, T)</Item>
+               <Item>k</Item>
+              </Issue>
+             </Message>
+             <Message Id="1#val" TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Parameter">
+               <Item>Lookup`2.Lookup`2(K, T)</Item>
+               <Item>val</Item>
+               <Item>val</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_elements">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>_elements</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;T&gt;</Item>
+               <Item>Lookup`2._elements</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>_elements</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="EnumGroups(DBLinq.util.DataReader2,System.Linq.Func`2&lt;DBLinq.util.DataReader2,K&gt;,System.Linq.Func`2&lt;DBLinq.util.DataReader2,T&gt;):System.Collections.Generic.IEnumerable`1&lt;DBLinq.util.Lookup`2&lt;K,T&gt;&gt;">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>Lookup`2.EnumGroups(DataReader2, Func`2&lt;DBLinq.util.DataReader2,K&gt;, Func`2&lt;DBLinq.util.DataReader2,T&gt;):IEnumerable`1&lt;DBLinq.util.Lookup`2&lt;K,T&gt;&gt;</Item>
+               <Item>DBLinq.util.Lookup`2</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotNestGenericTypesInMemberSignatures" Category="Microsoft.Design" CheckId="CA1006" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>Lookup`2.EnumGroups(DataReader2, Func`2&lt;DBLinq.util.DataReader2,K&gt;, Func`2&lt;DBLinq.util.DataReader2,T&gt;):IEnumerable`1&lt;DBLinq.util.Lookup`2&lt;K,T&gt;&gt;</Item>
+               <Item>System.Collections.Generic.IEnumerable`1&lt;DBLinq.util.Lookup`2&lt;K,T&gt;&gt;</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ReverseAssociation">
+          <Members>
+           <Member Name="child">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ReverseAssociation.child</Item>
+               <Item>DBLinq.util.ReverseAssociation+Part</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>child</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="parent">
+            <Messages>
+             <Message TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>ReverseAssociation.parent</Item>
+               <Item>DBLinq.util.ReverseAssociation+Part</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>parent</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="ReverseAssociation+Part">
+          <Messages>
+           <Message TypeName="NestedTypesShouldNotBeVisible" Category="Microsoft.Design" CheckId="CA1034" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.util.ReverseAssociation+Part</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="assocAttrib">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>assocAttrib</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="propInfo">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>propInfo</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="tableAttrib">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>tableAttrib</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="varName">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>varName</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="RowEnumerator`1">
+          <Messages>
+           <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.util.RowEnumerator`1</Item>
+             <Item>Collection</Item>
+            </Issue>
+           </Message>
+           <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Created="2007-06-13 16:29:09Z">
+            <Issue Name="ProvideDisposeBool">
+             <Item>DBLinq.util.RowEnumerator`1</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name=".ctor(DBLinq.Linq.SessionVars,System.Collections.Generic.Dictionary`2&lt;T,T&gt;)">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>RowEnumerator`1.RowEnumerator`1(SessionVars, Dictionary`2&lt;T,T&gt;)</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_conn">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>_conn</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>_conn</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_objFromRow2">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>_objFromRow2</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>_objFromRow2</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_projectionData">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>_projectionData</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>_projectionData</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="_vars">
+            <Messages>
+             <Message TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>_vars</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>_vars</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="Dispose():System.Void">
+            <Messages>
+             <Message TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063" Created="2007-06-13 16:29:09Z">
+              <Issue Name="DisposeImplementation">
+               <Item>RowEnumerator`1.Dispose():Void</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ExecuteSqlCommand(MySql.Data.MySqlClient.MySqlConnection,DBLinq.util.DataReader2&amp;):MySql.Data.MySqlClient.MySqlCommand">
+            <Messages>
+             <Message Id="1#" TypeName="AvoidOutParameters" Category="Microsoft.Design" CheckId="CA1021" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>rdr2</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="RowEnumeratorCompiler`1">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>RowEnumeratorCompiler`1</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="BuildProjectedRowLambda(DBLinq.Linq.SessionVars,DBLinq.Linq.ProjectionData,System.Linq.Expressions.ParameterExpression,System.Int32&amp;):System.Linq.Expressions.LambdaExpression">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.BuildProjectedRowLambda(SessionVars, ProjectionData, ParameterExpression, Int32&amp;):LambdaExpression</Item>
+               <Item>DBLinq.util.RowEnumeratorCompiler`1</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>RowEnumeratorCompiler`1.BuildProjectedRowLambda(SessionVars, ProjectionData, ParameterExpression, Int32&amp;):LambdaExpression</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>RowEnumeratorCompiler`1.BuildProjectedRowLambda(SessionVars, ProjectionData, ParameterExpression, Int32&amp;):LambdaExpression</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message Id="mis" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.BuildProjectedRowLambda(SessionVars, ProjectionData, ParameterExpression, Int32&amp;):LambdaExpression</Item>
+               <Item>mis</Item>
+               <Item>System.Reflection.MethodInfo[]</Item>
+              </Issue>
+             </Message>
+             <Message Id="3#" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterId">
+               <Item>ID</Item>
+               <Item>fieldID</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ChooseFieldRetrievalMethod(System.Type):System.Reflection.MethodInfo">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>RowEnumeratorCompiler`1.ChooseFieldRetrievalMethod(Type):MethodInfo</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>RowEnumeratorCompiler`1.ChooseFieldRetrievalMethod(Type):MethodInfo</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CompileColumnRowDelegate(DBLinq.Linq.ProjectionData,System.Int32&amp;):System.Linq.Func`2&lt;DBLinq.util.DataReader2,T&gt;">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.CompileColumnRowDelegate(ProjectionData, Int32&amp;):Func`2&lt;DBLinq.util.DataReader2,T&gt;</Item>
+               <Item>DBLinq.util.RowEnumeratorCompiler`1</Item>
+              </Issue>
+             </Message>
+             <Message Id="sb" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.CompileColumnRowDelegate(ProjectionData, Int32&amp;):Func`2&lt;DBLinq.util.DataReader2,T&gt;</Item>
+               <Item>sb</Item>
+               <Item>System.Text.StringBuilder</Item>
+              </Issue>
+             </Message>
+             <Message Id="1#" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterId">
+               <Item>ID</Item>
+               <Item>fieldID</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CompileIDRetrieval(DBLinq.Linq.ProjectionData):System.Linq.Func`2&lt;T,System.String&gt;">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.CompileIDRetrieval(ProjectionData):Func`2&lt;T,System.String&gt;</Item>
+               <Item>DBLinq.util.RowEnumeratorCompiler`1</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="MemberId">
+               <Item>RowEnumeratorCompiler`1.CompileIDRetrieval(ProjectionData):Func`2&lt;T,System.String&gt;</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CompilePrimitiveRowDelegate(System.Int32&amp;):System.Linq.Func`2&lt;DBLinq.util.DataReader2,T&gt;">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.CompilePrimitiveRowDelegate(Int32&amp;):Func`2&lt;DBLinq.util.DataReader2,T&gt;</Item>
+               <Item>DBLinq.util.RowEnumeratorCompiler`1</Item>
+              </Issue>
+             </Message>
+             <Message Id="0#" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterId">
+               <Item>ID</Item>
+               <Item>fieldID</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CompileProjectedRowDelegate(DBLinq.Linq.SessionVars,DBLinq.Linq.ProjectionData):System.Linq.Func`2&lt;DBLinq.util.DataReader2,T&gt;">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.CompileProjectedRowDelegate(SessionVars, ProjectionData):Func`2&lt;DBLinq.util.DataReader2,T&gt;</Item>
+               <Item>DBLinq.util.RowEnumeratorCompiler`1</Item>
+              </Issue>
+             </Message>
+             <Message Id="sb" TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.CompileProjectedRowDelegate(SessionVars, ProjectionData):Func`2&lt;DBLinq.util.DataReader2,T&gt;</Item>
+               <Item>sb</Item>
+               <Item>System.Text.StringBuilder</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="CompileRowDelegate(DBLinq.Linq.SessionVars,System.Int32&amp;):System.Linq.Func`2&lt;DBLinq.util.DataReader2,T&gt;">
+            <Messages>
+             <Message TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumeratorCompiler`1.CompileRowDelegate(SessionVars, Int32&amp;):Func`2&lt;DBLinq.util.DataReader2,T&gt;</Item>
+               <Item>DBLinq.util.RowEnumeratorCompiler`1</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>RowEnumeratorCompiler`1.CompileRowDelegate(SessionVars, Int32&amp;):Func`2&lt;DBLinq.util.DataReader2,T&gt;</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message Id="1#" TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706" Created="2007-06-13 16:29:09Z">
+              <Issue Name="ParameterId">
+               <Item>ID</Item>
+               <Item>fieldID</Item>
+               <Item>Id</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="GetFieldMethodCall(System.Type,System.Linq.Expressions.Expression,System.Int32):System.Linq.Expressions.MethodCallExpression">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>RowEnumeratorCompiler`1.GetFieldMethodCall(Type, Expression, Int32):MethodCallExpression</Item>
+               <Item>System.Exception</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="RowEnumeratorGroupBy`3">
+          <Messages>
+           <Message TypeName="AvoidExcessiveParametersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1005" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.util.RowEnumeratorGroupBy`3</Item>
+            </Issue>
+           </Message>
+           <Message TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.util.RowEnumeratorGroupBy`3</Item>
+             <Item>Collection</Item>
+            </Issue>
+           </Message>
+          </Messages>
+         </Type>
+         <Type Name="RowEnumFactory`1">
+          <Members>
+           <Member Name="Create(DBLinq.Linq.SessionVars,System.Collections.Generic.Dictionary`2&lt;T,T&gt;):DBLinq.util.RowEnumerator`1&lt;T&gt;">
+            <Messages>
+             <Message TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>RowEnumFactory`1.Create(SessionVars, Dictionary`2&lt;T,T&gt;):RowEnumerator`1&lt;T&gt;</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="IsOrHasGroupField(DBLinq.Linq.SessionVars,System.Type&amp;):System.Boolean">
+            <Messages>
+             <Message Id="vars" TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801" Created="2007-06-13 16:29:09Z" FixCategory="NonBreaking">
+              <Issue>
+               <Item>vars</Item>
+               <Item>RowEnumFactory`1.IsOrHasGroupField(SessionVars, Type&amp;):Boolean</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="RowScalar`1">
+          <Members>
+           <Member Name="GetScalar(System.Linq.Expressions.Expression):S">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>RowScalar`1.GetScalar(Expression):S</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>RowScalar`1.GetScalar(Expression):S</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>RowScalar`1.GetScalar(Expression):S</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>RowScalar`1.GetScalar(Expression):S</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+              <Issue Name="TooGeneric">
+               <Item>RowScalar`1.GetScalar(Expression):S</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="TypeEnum">
+          <Messages>
+           <Message TypeName="IdentifiersShouldNotHaveIncorrectSuffix" Category="Microsoft.Naming" CheckId="CA1711" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>DBLinq.util.TypeEnum</Item>
+             <Item>Enum</Item>
+            </Issue>
+           </Message>
+          </Messages>
+         </Type>
+        </Types>
+       </Namespace>
+       <Namespace Name="DBLinq.vendor">
+        <Types>
+         <Type Name="MySqlTypeConversions">
+          <Members>
+           <Member Name=".cctor()">
+            <Messages>
+             <Message TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>DBLinq.vendor.MySqlTypeConversions</Item>
+              </Issue>
+             </Message>
+             <Message Id="System.String.ToLower" TypeName="SpecifyCultureInfo" Category="Microsoft.Globalization" CheckId="CA1304" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>MySqlTypeConversions.MySqlTypeConversions()</Item>
+               <Item>System.String.ToLower</Item>
+               <Item>System.String.ToLower(System.Globalization.CultureInfo)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="ParseType(System.String):MySql.Data.MySqlClient.MySqlDbType">
+            <Messages>
+             <Message TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201" Created="2007-06-13 16:29:09Z">
+              <Issue Name="TooGeneric">
+               <Item>MySqlTypeConversions.ParseType(String):MySqlDbType</Item>
+               <Item>System.ApplicationException</Item>
+              </Issue>
+             </Message>
+             <Message Id="System.String.ToLower" TypeName="SpecifyCultureInfo" Category="Microsoft.Globalization" CheckId="CA1304" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>MySqlTypeConversions.ParseType(String):MySqlDbType</Item>
+               <Item>System.String.ToLower</Item>
+               <Item>System.String.ToLower(System.Globalization.CultureInfo)</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+         <Type Name="Vendor">
+          <Messages>
+           <Message TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>Vendor</Item>
+            </Issue>
+           </Message>
+           <Message TypeName="TypeNamesShouldNotMatchNamespaces" Category="Microsoft.Naming" CheckId="CA1724" Created="2007-06-13 16:29:09Z">
+            <Issue>
+             <Item>Vendor</Item>
+             <Item>DBLinq.vendor</Item>
+            </Issue>
+           </Message>
+          </Messages>
+          <Members>
+           <Member Name="Concat(System.Collections.Generic.List`1&lt;System.String&gt;):System.String">
+            <Messages>
+             <Message TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>System.Collections.Generic.List`1&lt;System.String&gt;</Item>
+               <Item>Vendor.Concat(List`1&lt;System.String&gt;):String</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+           <Member Name="FieldName_Safe(System.String):System.String">
+            <Messages>
+             <Message Id="name" TypeName="AvoidUnnecessaryStringCreation" Category="Microsoft.Performance" CheckId="CA1807" Created="2007-06-13 16:29:09Z">
+              <Issue Name="UseStringCompareParameter">
+               <Item>Vendor.FieldName_Safe(String):String</Item>
+               <Item>String.op_Equality(String, String):Boolean</Item>
+               <Item>name</Item>
+              </Issue>
+             </Message>
+             <Message Id="Member" TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707" Created="2007-06-13 16:29:09Z">
+              <Issue Name="Member">
+               <Item>FieldName_Safe</Item>
+              </Issue>
+             </Message>
+             <Message Id="System.String.ToLower" TypeName="SpecifyCultureInfo" Category="Microsoft.Globalization" CheckId="CA1304" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>Vendor.FieldName_Safe(String):String</Item>
+               <Item>System.String.ToLower</Item>
+               <Item>System.String.ToLower(System.Globalization.CultureInfo)</Item>
+              </Issue>
+             </Message>
+             <Message TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062" Created="2007-06-13 16:29:09Z">
+              <Issue>
+               <Item>'name'</Item>
+               <Item>Vendor.FieldName_Safe(String):String</Item>
+              </Issue>
+             </Message>
+            </Messages>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
+   </Target>
+  </Targets>
+  <Rules>
+   <Rule TypeName="AbstractTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1012">
+    <Resolution Name="Default">Change the accessibility of all public constructors in '{0}' to protected.</Resolution>
+   </Rule>
+   <Rule TypeName="ArrayFieldsShouldNotBeReadOnly" Category="Microsoft.Security" CheckId="CA2105">
+    <Resolution Name="Default">Either replace {0} with a strongly typed collection that cannot be changed, or replace the public field with a method that returns a clone of a private array.</Resolution>
+   </Rule>
+   <Rule TypeName="AssembliesShouldDeclareMinimumSecurity" Category="Microsoft.Usage" CheckId="CA2209">
+    <Resolution Name="Default">No valid permission requests were found for assembly '{0}'. You should always specify the minimum security permissions using SecurityAction.RequestMinimum.</Resolution>
+   </Rule>
+   <Rule TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210">
+    <Resolution Name="NoStrongName">Sign '{0}' with a strong name key.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidExcessiveParametersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1005">
+    <Resolution Name="Default">Consider a design where '{0}' has no more than 2 type parameters.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidNamespacesWithFewTypes" Category="Microsoft.Design" CheckId="CA1020">
+    <Resolution Name="Default">Consider merging the types defined in '{0}' with another namespace.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidOutParameters" Category="Microsoft.Design" CheckId="CA1021">
+    <Resolution Name="Default">Consider a design that does not require that '{0}' be an out parameter.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidTypeNamesInParameters" Category="Microsoft.Naming" CheckId="CA1720">
+    <Resolution Name="Default">Remove the type identifier from parameter name '{0}'.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidUninstantiatedInternalClasses" Category="Microsoft.Performance" CheckId="CA1812">
+    <Resolution Name="Default">'{0}' is an internal class that is apparently never instantiated. If so, remove the code from the assembly. If this class is intended to contain only static methods, consider adding a private constructor to prevent the compiler from generating a default constructor.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidUnnecessaryStringCreation" Category="Microsoft.Performance" CheckId="CA1807">
+    <Resolution Name="UseStringCompareParameter">{0} calls {1} after converting '{2}', a parameter, to upper or lowercase. If possible, eliminate the string creation and call the overload of String.Compare that performs a case-insensitive comparison.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidUnsealedAttributes" Category="Microsoft.Performance" CheckId="CA1813">
+    <Resolution Name="Default">Seal '{0}', if possible.</Resolution>
+   </Rule>
+   <Rule TypeName="AvoidUnusedPrivateFields" Category="Microsoft.Performance" CheckId="CA1823">
+    <Resolution Name="Default">It appears that field '{0}' is never used or is only ever assigned to. Use this field or remove it.</Resolution>
+   </Rule>
+   <Rule TypeName="ConsiderPassingBaseTypesAsParameters" Category="Microsoft.Design" CheckId="CA1011">
+    <Resolution Name="Default">Consider changing the type of parameter '{0}' in {1} from {2} to its base type {3}. This method appears to only require base class members in its implementation. Suppress this violation if there is a compelling reason to require the more derived type in the method signature.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotCastUnnecessarily" Category="Microsoft.Performance" CheckId="CA1800">
+    <Resolution Name="Local">'{0}', a local, is cast to type '{1}' multiple times in method {2}. Cache the result of the 'as' operator or direct cast in order to eliminate the redundant {3} instruction.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotCatchGeneralExceptionTypes" Category="Microsoft.Design" CheckId="CA1031">
+    <Resolution Name="Default">Modify '{0}' to catch a more specific exception than '{1}' or rethrow the exception.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotDeclareReadOnlyMutableReferenceTypes" Category="Microsoft.Security" CheckId="CA2104">
+    <Resolution Name="Default">Remove the readonly declaration from '{0}' or change the field to one that is an immutable reference type. If the reference type '{1}' is, in fact, immutable, exclude this message.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotDeclareStaticMembersOnGenericTypes" Category="Microsoft.Design" CheckId="CA1000">
+    <Resolution Name="Default">Remove {0} from '{1}' or make it an instance member.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotDeclareVisibleInstanceFields" Category="Microsoft.Design" CheckId="CA1051">
+    <Resolution Name="Default">Make '{0}' private or internal (Friend in VB, public private in C++) and provide a public or protected property to access it.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotExposeGenericLists" Category="Microsoft.Design" CheckId="CA1002">
+    <Resolution Name="Default">Change '{0}' in {1} to use Collection&lt;T&gt;, ReadOnlyCollection&lt;T&gt; or KeyedCollection&lt;K,V&gt;</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotInitializeUnnecessarily" Category="Microsoft.Performance" CheckId="CA1805">
+    <Resolution Name="Default">{0} initializes field {1} of type {2} to {3}. Remove this initialization as it will be done automatically by the runtime.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotNestGenericTypesInMemberSignatures" Category="Microsoft.Design" CheckId="CA1006">
+    <Resolution Name="Default">Consider a design where {0} doesn't nest generic type '{1}'.</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotPassLiteralsAsLocalizedParameters" Category="Microsoft.Globalization" CheckId="CA1303">
+    <Resolution Name="Default">{0} passes a literal as parameter {1} of a call to {2}. Retrieve the following string argument from a resource table instead: '{3}'</Resolution>
+   </Rule>
+   <Rule TypeName="DoNotRaiseReservedExceptionTypes" Category="Microsoft.Usage" CheckId="CA2201">
+    <Resolution Name="TooGeneric">{0} creates an exception of type '{1}', an exception type that is not sufficiently specific and should never be raised by user code. If this exception instance might be thrown, use a different exception type.</Resolution>
+   </Rule>
+   <Rule TypeName="GenericMethodsShouldProvideTypeParameter" Category="Microsoft.Design" CheckId="CA1004">
+    <Resolution Name="Default">Consider a design where {0} doesn't require explicit type parameter '{1}' in any call to it.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldBeCasedCorrectly" Category="Microsoft.Naming" CheckId="CA1709">
+    <Resolution Name="Member">Correct the casing of member name '{0}'.</Resolution>
+    <Resolution Name="Namespace">Correct the casing of namespace name '{0}'.</Resolution>
+    <Resolution Name="Parameter">Correct the casing of parameter name '{0}'.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldBeSpelledCorrectly" Category="Microsoft.Naming" CheckId="CA1704">
+    <Resolution Name="Parameter">In method {0}, correct the spelling of the unrecognized token '{1}' in parameter name '{2}' or strip it entirely if it represents any sort of hungarian notation.</Resolution>
+    <Resolution Name="ParameterOneLetter">In method {0}, consider providing a more meaningful name than the one-letter parameter name '{1}'.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldHaveCorrectSuffix" Category="Microsoft.Naming" CheckId="CA1710">
+    <Resolution Name="Default">Rename '{0}' to end in '{1}'.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldNotContainUnderscores" Category="Microsoft.Naming" CheckId="CA1707">
+    <Resolution Name="Member">Remove all underscores from member '{0}'.</Resolution>
+    <Resolution Name="Parameter">Remove all underscores from parameter '{0}'.</Resolution>
+   </Rule>
+   <Rule TypeName="IdentifiersShouldNotHaveIncorrectSuffix" Category="Microsoft.Naming" CheckId="CA1711">
+    <Resolution Name="Default">Rename '{0}' so that it does not end in '{1}'.</Resolution>
+   </Rule>
+   <Rule TypeName="ImplementIDisposableCorrectly" Category="Microsoft.Design" CheckId="CA1063">
+    <Resolution Name="DisposeImplementation">Modify {0} so that it calls Dispose(true), then calls GC.SuppressFinalize on the current object instance ('this' or 'Me' in VB), and then returns.</Resolution>
+    <Resolution Name="ProvideDisposeBool">Provide an overridable implementation of Dispose(bool) on {0} or mark the type as sealed. A call to Dispose(false) should only clean up native resources. A call to Dispose(true) should clean up both managed and native resources.</Resolution>
+   </Rule>
+   <Rule TypeName="InitializeReferenceTypeStaticFieldsInline" Category="Microsoft.Performance" CheckId="CA1810">
+    <Resolution Name="Default">Initialize all static fields in {0} when those fields are declared and remove the explicit static constructor.</Resolution>
+   </Rule>
+   <Rule TypeName="LongAcronymsShouldBePascalCased" Category="Microsoft.Naming" CheckId="CA1705">
+    <Resolution Name="Member">Correct the capitalization of member name '{0}'.</Resolution>
+   </Rule>
+   <Rule TypeName="MarkAssembliesWithClsCompliant" Category="Microsoft.Design" CheckId="CA1014">
+    <Resolution Name="NoAttr">'{0}' should be marked with CLSCompliantAttribute and its value should be true.</Resolution>
+   </Rule>
+   <Rule TypeName="MarkMembersAsStatic" Category="Microsoft.Performance" CheckId="CA1822">
+    <Resolution Name="Default">The 'this' parameter (or 'Me' in VB) of {0} is never used. Mark the member as static (or Shared in VB) or use 'this'/'Me' in the method body or at least one property accessor, if appropriate.</Resolution>
+   </Rule>
+   <Rule TypeName="MembersShouldDifferByMoreThanReturnType" Category="Microsoft.Usage" CheckId="CA2223">
+    <Resolution Name="Default">'{0}' should differ from other members by more than its return type.</Resolution>
+   </Rule>
+   <Rule TypeName="NestedTypesShouldNotBeVisible" Category="Microsoft.Design" CheckId="CA1034">
+    <Resolution Name="Default">Do not nest type '{0}'. Alternatively, change its accessibility so that it is not externally visible.</Resolution>
+   </Rule>
+   <Rule TypeName="OverrideEqualsAndOperatorEqualsOnValueTypes" Category="Microsoft.Performance" CheckId="CA1815">
+    <Resolution Name="Equals">'{0}' should override Equals.</Resolution>
+    <Resolution Name="op_Equality">'{0}' should override the equality (==) and inequality (!=) operators.</Resolution>
+   </Rule>
+   <Rule TypeName="ParameterNamesShouldMatchBaseDeclaration" Category="Microsoft.Naming" CheckId="CA1725">
+    <Resolution Name="Default">Change parameter name '{0}' of method {1} to '{2}' in order to match the identifier as it has been declared in {3}.</Resolution>
+   </Rule>
+   <Rule TypeName="RemoveUnusedLocals" Category="Microsoft.Performance" CheckId="CA1804">
+    <Resolution Name="Default">{0} declares a local, '{1}', of type {2}, which is never used or is only assigned to. Use this local or remove it.</Resolution>
+   </Rule>
+   <Rule TypeName="RethrowToPreserveStackDetails" Category="Microsoft.Usage" CheckId="CA2200">
+    <Resolution Name="Default">{0} rethrows a caught exception and specifies it explicitly as an argument. Use 'throw' without an argument instead, in order to preserve the stack location where the exception was initially raised.</Resolution>
+   </Rule>
+   <Rule TypeName="ReviewUnusedParameters" Category="Microsoft.Usage" CheckId="CA1801">
+    <Resolution Name="Default">Parameter '{0}' of {1} is never used. Remove the parameter or use it in the method body.</Resolution>
+   </Rule>
+   <Rule TypeName="ShortAcronymsShouldBeUppercase" Category="Microsoft.Naming" CheckId="CA1706">
+    <Resolution Name="Member">Correct the capitalization of '{0}' in member name '{1}'.</Resolution>
+    <Resolution Name="MemberId">'Id' is an abbreviation and therefore is not subject to acronym casing guidelines. Correct the capitalization of 'ID' in member name '{0}' by changing it to 'Id'.</Resolution>
+    <Resolution Name="ParameterId">'Id' is an abbreviation and therefore is not subject to acronym casing guidelines. Correct the capitalization of '{0}' in parameter name '{1}' by changing it to '{2}'.</Resolution>
+   </Rule>
+   <Rule TypeName="SpecifyCultureInfo" Category="Microsoft.Globalization" CheckId="CA1304">
+    <Resolution Name="Default">{0} makes a call to {1} that does not explicitly provide a CultureInfo. This should be replaced with a call to {2}.</Resolution>
+   </Rule>
+   <Rule TypeName="SpecifyIFormatProvider" Category="Microsoft.Globalization" CheckId="CA1305">
+    <Resolution Name="Default">{0} makes a call to {1} that does not explicitly provide an IFormatProvider. This should be replaced with a call to {2}.</Resolution>
+   </Rule>
+   <Rule TypeName="StaticHolderTypesShouldNotHaveConstructors" Category="Microsoft.Design" CheckId="CA1053">
+    <Resolution Name="Default">Remove the public constructors from '{0}'.</Resolution>
+   </Rule>
+   <Rule TypeName="TypeNamesShouldNotMatchNamespaces" Category="Microsoft.Naming" CheckId="CA1724">
+    <Resolution Name="Default">The type name '{0}' conflicts in whole or in part with the namespace name '{1}'. Change either name to eliminate the conflict.</Resolution>
+   </Rule>
+   <Rule TypeName="TypesThatOwnDisposableFieldsShouldBeDisposable" Category="Microsoft.Design" CheckId="CA1001">
+    <Resolution Name="Default">Implement IDisposable on '{0}' as it instantiates members of the following IDisposable types: {1}</Resolution>
+   </Rule>
+   <Rule TypeName="UsePreferredTerms" Category="Microsoft.Naming" CheckId="CA1726">
+    <Resolution Name="Member">Replace the term '{0}' in member name '{1}' with the preferred alternate '{2}'.</Resolution>
+   </Rule>
+   <Rule TypeName="UsePropertiesWhereAppropriate" Category="Microsoft.Design" CheckId="CA1024">
+    <Resolution Name="Default">Change '{0}' to a property if appropriate.</Resolution>
+   </Rule>
+   <Rule TypeName="ValidateArgumentsOfPublicMethods" Category="Microsoft.Design" CheckId="CA1062">
+    <Resolution Name="Default">Validate parameter {0} passed to externally visible method {1}.</Resolution>
+   </Rule>
+  </Rules>
+ </FxCopReport>
+</FxCopProject>
