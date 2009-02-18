@@ -1,5 +1,11 @@
 2009-02-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #472805
+	* typemanager.cs, namespace.cs: Import only visible extension method
+	types.
+
+2009-02-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #476895
 	* attribute.cs: Use correct resolve context for attribute type.
 

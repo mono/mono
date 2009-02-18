@@ -238,7 +238,6 @@ namespace Mono.CSharp {
 		events = null;
 		type_hash = null;
 		propertybuilder_to_property = null;
-		assembly_internals_vis_attrs = null;
 
 		TypeHandle.CleanUp ();
 	}

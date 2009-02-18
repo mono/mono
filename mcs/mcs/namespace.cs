@@ -516,6 +516,13 @@ namespace Mono.CSharp {
 
 		public void RegisterExternalExtensionMethodClass (Type type)
 		{
+			// Ignore, extension methods cannot be nested
+			if (type.IsNested)
+				return;
+
+			if (type.IsNotPublic && !TypeManager.IsThisOrFriendAssembly (type.Assembly))
+				return;
+
 			if (external_exmethod_classes == null)
 				external_exmethod_classes = new ArrayList ();
 
