@@ -1,3 +1,8 @@
+2009-02-19  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OracleParameter.cs (bind): Consider OciDataType.Float and .Integer as 
+	OciDataType.Number.  Patch provided by Russell <russell.kay@realtimeworlds.com>
+	
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* OracleDataReader.cs: Replace a few Type.GetType by typeof
