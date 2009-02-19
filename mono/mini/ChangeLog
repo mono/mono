@@ -1,3 +1,27 @@
+2009-02-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* aot-runtime.c:
+	* mini-amd64.c:
+	* mini-arm.c:
+	* mini-ia64.c:
+	* mini-mips.c:
+	* mini-ppc.c:
+	* mini-sparc.c:
+	* mini-trampolines.c:
+	* mini-x86.c:
+	* mini.c:
+	* tramp-alpha.c:
+	* tramp-amd64.c:
+	* tramp-arm.c:
+	* tramp-hppa.c:
+	* tramp-ia64.c:
+	* tramp-mips.c:
+	* tramp-ppc.c:
+	* tramp-s390.c:
+	* tramp-s390x.c:
+	* tramp-sparc.c:
+	* tramp-x86.c: Use mono_domain_code_* functions instead of using MonoDomain::code_mp directly.
+
 2009-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Remove a ! from if (!dest_sreg1)
