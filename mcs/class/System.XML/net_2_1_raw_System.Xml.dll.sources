@@ -15,6 +15,7 @@ Mono.Xml/IHasXmlParserContext.cs
 Mono.Xml/SubtreeXmlReader.cs
 Mono.Xml/XmlFilterReader.cs
 System.Xml.Schema/XmlSeverityType.cs
+System.Xml.Schema/XmlSchemaForm.cs
 System.Xml.Schema/XmlTypeCode.cs
 System.Xml/ConformanceLevel.cs
 System.Xml/DtdProcessing.cs
@@ -64,5 +65,18 @@ System.Xml.Schema/XmlSchema_2_1.cs
 System.Xml.Schema/XmlSchemaObject_2_1.cs
 System.Xml.Schema/XmlSchemaSet_2_1.cs
 System.Xml.Serialization/IXmlSerializable.cs
+System.Xml.Serialization/SerializationSource.cs
+System.Xml.Serialization/XmlAnyElementAttribute.cs
+System.Xml.Serialization/XmlArrayAttribute.cs
+System.Xml.Serialization/XmlArrayItemAttribute.cs
+System.Xml.Serialization/XmlAttributeAttribute.cs
+System.Xml.Serialization/XmlChoiceIdentifierAttribute.cs
+System.Xml.Serialization/XmlElementAttribute.cs
+System.Xml.Serialization/XmlEnumAttribute.cs
+System.Xml.Serialization/XmlIgnoreAttribute.cs
+System.Xml.Serialization/XmlIncludeAttribute.cs
+System.Xml.Serialization/XmlNamespaceDeclarationsAttribute.cs
 System.Xml.Serialization/XmlRootAttribute.cs
 System.Xml.Serialization/XmlSchemaProviderAttribute.cs
+System.Xml.Serialization/XmlTextAttribute.cs
+System.Xml.Serialization/XmlTypeAttribute.cs

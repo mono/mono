@@ -1,3 +1,7 @@
+2009-02-19  Geoff Norton  <gnorton@novell.com>
+
+	* net_2_1_raw_System.Xml.dll.sources: Add a bunch of missing attributes
+
 2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_raw_System.Xml.dll.sources: added XmlXapResolver.cs.
