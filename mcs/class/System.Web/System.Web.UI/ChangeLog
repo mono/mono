@@ -1,7 +1,10 @@
 2009-02-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
-	* MasterPage.cs: the items in ContentPlaceHolders are lowercase.
+	* TemplateControl.cs: ReadStringResource returns null now.
 
+2009-02-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* MasterPage.cs: the items in ContentPlaceHolders are lowercase.
 
 2009-02-06  Gert Driesen  <drieseng@users.sourceforge.net>
 

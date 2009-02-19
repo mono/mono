@@ -367,7 +367,8 @@ namespace System.Web.UI {
 #endif
 		object ReadStringResource ()
 		{
-			throw new NotSupportedException ();
+			// LAMESPEC: MS says that it throws, but precompiled sites might use it.
+			return null;
 		}
 
 #if NET_2_0
