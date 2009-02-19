@@ -1,3 +1,11 @@
+2009-02-19  Bill Holmes  <billholmes54@gmail.com>
+
+	* cominterop.c : Adding cominterop_type_from_handle and 
+	  registering it as an icall.  Replacing all references
+	  to type_from_handle.
+
+	Code is contributed under MIT/X11 license.
+
 2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Makefile.am: Add lock-tracer.h and lock-trace.c.
