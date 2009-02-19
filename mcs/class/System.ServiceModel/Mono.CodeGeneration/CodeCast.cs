@@ -115,10 +115,12 @@ namespace Mono.CodeGeneration
 		public override void PrintCode (CodeWriter cp)
 		{
 			Type typeObj = exp.GetResultType ();
-			if (type.IsAssignableFrom (typeObj)) 
+			if (type.IsAssignableFrom (typeObj)) {
+				exp.PrintCode (cp);
 				return;
+			}
 			
-			cp.Write ("((" + type.FullName + ")");
+			cp.Write ("((" + type.FullName + ") ");
 			exp.PrintCode (cp);
 			cp.Write (")");
 		}
