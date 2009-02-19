@@ -11419,6 +11419,45 @@
       </method>
     </type>
   </test>
+  <test name="gtest-440.cs">
+    <type name="AnyObjectId">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_W1()">
+        <size>7</size>
+      </method>
+      <method name="Void set_W1(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="ObjectId">
+      <method name="Void .ctor()">
+        <size>14</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-441.cs">
+    <type name="Name.Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Name.Subclass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.Collections.Generic.List`1[System.Int32] get_List()">
+        <size>7</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -34606,6 +34645,32 @@
         <size>7</size>
       </method>
       <method name="Void DoSomething()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-707.cs">
+    <type name="Tzap">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tzap+Baz">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Gazonk()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Tzap+Bar">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo()">
         <size>1</size>
       </method>
     </type>
