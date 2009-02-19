@@ -1,5 +1,22 @@
 2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Makefile.am: Add lock-tracer.h and lock-trace.c.
+
+	* appdomain.c: Call the tracer init function.
+
+ 	* domain-internals.h: Enable the tracer for the domain locks.
+
+	* image.c: Enable the tracer for image locks.
+
+	* loader.c: Enable the trace for the loader lock.
+
+	* lock-tracer.h:
+	* lock-tracer.c: Initial implementation of the lock trace utility.
+	The tracer requires a compile time define to be enabled and a env var
+	to be enabled at runtime.
+
+2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* domain.c (mono_domain_code_foreach): Improve documentation.
 
 2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
