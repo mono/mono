@@ -1,3 +1,7 @@
+2009-02-19  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: More verbosity needed for runtime crashes.
+
 2008-11-05  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: Better -warnaserror detection.

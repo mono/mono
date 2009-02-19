@@ -450,6 +450,9 @@ namespace TestRunner {
 			if (test_hash.Contains (filename))
 				return true;
 
+			if (verbose)
+				Log (filename + "...\t");
+
 			if (ignore_list.Contains (filename)) {
 				++ignored;
 				LogFileLine (filename, "NOT TESTED");
@@ -602,7 +605,10 @@ namespace TestRunner {
 		
 		public void LogFileLine (string file, string msg, params object [] args)
 		{
-			string s = file + "...\t" + string.Format (msg, args); 
+			string s = verbose ? 
+				string.Format (msg, args) :
+				file + "...\t" + string.Format (msg, args); 
+
 			Console.WriteLine (s);
 			if (log_file != null)
 				log_file.WriteLine (s);
