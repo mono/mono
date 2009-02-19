@@ -1,3 +1,10 @@
+2009-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequest.cs: avoid errors when creating a temporary Uri to get
+	the local path.
+	* WebClient.cs: when setting up the request for downloading, use the
+	default method. Fixes bug #477611.
+
 2009-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebConnectionStream.cs : use request only after it is set.

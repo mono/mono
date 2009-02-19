@@ -541,12 +541,13 @@ namespace System.Net
 		{
 			string result;
 			string local_path = Uri.UnescapeDataString (uri.LocalPath);
-			if (initial_path == null) {
+			if (initial_path == null || initial_path == "/") {
 				result = local_path;
 			} else {
 				if (local_path [0] == '/')
 					local_path = local_path.Substring (1);
-				Uri initial = new Uri (initial_path);
+
+				Uri initial = new Uri ("ftp://dummy-host" + initial_path);
 				result = new Uri (initial, local_path).LocalPath;
 			}
 

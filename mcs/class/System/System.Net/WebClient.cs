@@ -271,7 +271,7 @@ namespace System.Net
 			WebRequest request = null;
 			
 			try {
-				request = SetupRequest (address, "GET");
+				request = SetupRequest (address);
 				WebResponse response = request.GetResponse ();
 				Stream st = ProcessResponse (response);
 				return ReadAll (st, (int) response.ContentLength, userToken);
