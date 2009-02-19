@@ -1,5 +1,9 @@
 2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* domain.c (mono_domain_code_foreach): Improve documentation.
+
+2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* appdomain.c:
 	* generic-sharing.c:
 	* object.c:
