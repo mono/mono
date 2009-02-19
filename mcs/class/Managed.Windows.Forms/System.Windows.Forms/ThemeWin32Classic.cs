@@ -4118,13 +4118,17 @@ namespace System.Windows.Forms
 		public override void DrawPictureBox (Graphics dc, Rectangle clip, PictureBox pb) {
 			Rectangle client = pb.ClientRectangle;
 
+#if NET_2_0
+			client = new Rectangle (client.Left + pb.Padding.Left, client.Top + pb.Padding.Top, client.Width - pb.Padding.Horizontal, client.Height - pb.Padding.Vertical);
+#endif
+
 			// FIXME - instead of drawing the whole picturebox every time
 			// intersect the clip rectangle with the drawn picture and only draw what's needed,
 			// Also, we only need a background fill where no image goes
 			if (pb.Image != null) {
 				switch (pb.SizeMode) {
 				case PictureBoxSizeMode.StretchImage:
-					dc.DrawImage (pb.Image, 0, 0, client.Width, client.Height);
+					dc.DrawImage (pb.Image, client.Left, client.Top, client.Width, client.Height);
 					break;
 
 				case PictureBoxSizeMode.CenterImage:
@@ -4144,7 +4148,7 @@ namespace System.Windows.Forms
 #endif
 				default:
 					// Normal, AutoSize
-					dc.DrawImage(pb.Image, 0, 0, pb.Image.Width, pb.Image.Height);
+					dc.DrawImage (pb.Image, client.Left, client.Top, pb.Image.Width, pb.Image.Height);
 					break;
 				}
 
