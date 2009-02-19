@@ -29,6 +29,7 @@
 //
 
 using System.Collections;
+using System.Text;
 
 namespace Mono.Data.Tds.Protocol {
 	public class TdsDataColumn
@@ -157,6 +158,16 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		public bool? AllowDBNull {
+			get;
+			set;
+		}
+		
+		public int? LCID {
+			get;
+			set;
+		}
+		
+		public int? SortOrder {
 			get;
 			set;
 		}

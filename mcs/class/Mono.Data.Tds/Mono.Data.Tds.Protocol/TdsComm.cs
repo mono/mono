@@ -431,6 +431,14 @@ namespace Mono.Data.Tds.Protocol {
 			return result;
 		}
 
+		public string GetString (int len, Encoding enc)
+		{
+			if (tdsVersion >= TdsVersion.tds70) 
+				return GetString (len, true, null);
+			else
+				return GetString (len, false, null);
+		}
+		
 		public string GetString (int len)
 		{
 			if (tdsVersion >= TdsVersion.tds70) 
@@ -439,7 +447,7 @@ namespace Mono.Data.Tds.Protocol {
 				return GetString (len, false);
 		}
 
-		public string GetString (int len, bool wide)
+		public string GetString (int len, bool wide, Encoding enc)
 		{
 			if (wide) {
 				char[] chars = new char[len];
@@ -453,8 +461,17 @@ namespace Mono.Data.Tds.Protocol {
 			else {
 				byte[] result = new byte[len];
 				Array.Copy (GetBytes (len, false), result, len);
-				return (encoder.GetString (result));
+				// Use the passed encoder, if available
+				if (enc != null)
+					return (enc.GetString (result));
+				else
+					return (encoder.GetString (result));
 			}
+		}
+		
+		public string GetString (int len, bool wide)
+		{
+			return GetString (len, wide, null);
 		}
 
 		public int GetNetShort ()

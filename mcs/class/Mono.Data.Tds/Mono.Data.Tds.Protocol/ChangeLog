@@ -1,3 +1,12 @@
+2009-02-19  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Tds.cs: Tds 8 collation support
+	  Tds80.cs: - ditto -
+	  TdsComm.cs: - ditto -
+	  TdsDataColumn.cs: - ditto -
+	  TdsCollation.cs: New file. Based on patch from Dmitry S. Kataev  
+	  <dmitryskey@hotmail.com>
+	  
 2009-02-02  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Tds.cs:	TDS 8 changes

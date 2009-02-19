@@ -102,6 +102,7 @@ namespace Mono.Data.Tds.Protocol {
 				int columnSize;
 				string tableName = null;
 				byte[] collation = null;
+				int lcid = 0, sortId = 0;
 
 				if (IsBlobType (columnType)) {
 					columnSize = Comm.GetTdsInt ();
@@ -119,6 +120,8 @@ namespace Mono.Data.Tds.Protocol {
 				    xColumnType == TdsColumnType.NText) {
 				    // Read collation for SqlServer 2000 and beyond
 				    collation = Comm.GetBytes (5, true);
+					lcid = TdsCollation.LCID (collation);
+					sortId = TdsCollation.SortId (collation);
 				}
 
 				if (IsBlobType (columnType)) {
@@ -160,6 +163,8 @@ namespace Mono.Data.Tds.Protocol {
 				col.IsReadOnly = !writable;
 				col.AllowDBNull = nullable;
 				col.BaseTableName = tableName;
+				col.LCID = lcid;
+				col.SortOrder = sortId;
 #else
 				col ["ColumnType"] = columnType;
 				col ["ColumnName"] = columnName;
@@ -171,6 +176,8 @@ namespace Mono.Data.Tds.Protocol {
 				col ["IsReadOnly"] = !writable;
 				col ["AllowDBNull"] = nullable;
 				col ["BaseTableName"] = tableName;
+				col ["LCID"] = lcid;
+				col ["SortOrder"] = sortId;
 #endif
 			}
 			//Console.WriteLine ("Tds80.cs: In ProcessColumnInfo... exit");  TDS 8 Debugging
