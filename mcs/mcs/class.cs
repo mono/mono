@@ -1307,6 +1307,10 @@ namespace Mono.CSharp {
 				if ((ct != null) && !ct.CheckConstraints (this))
 					return false;
 				
+				TypeContainer baseContainer = TypeManager.LookupTypeContainer(base_type.Type);
+				if (baseContainer != null)
+					baseContainer.Define();				
+				
 				member_cache = new MemberCache (base_type.Type, this);
 			} else if (Kind == Kind.Interface) {
 				member_cache = new MemberCache (null, this);

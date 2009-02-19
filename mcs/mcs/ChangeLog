@@ -1,3 +1,8 @@
+2009-02-19  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #475860 by David Mitchell <dmitchell@logos.com>
+	* class.cs: Define base type members before setting up member cache.
+
 2009-02-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #477378
