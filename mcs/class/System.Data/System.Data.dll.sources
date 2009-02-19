@@ -185,6 +185,7 @@ System.Data.OleDb/OleDbDataReader.cs
 System.Data.OleDb/OleDbError.cs
 System.Data.OleDb/OleDbErrorCollection.cs
 System.Data.OleDb/OleDbException.cs
+System.Data.OleDb/OleDbFactory.cs
 System.Data.OleDb/OleDbInfoMessageEventArgs.cs
 System.Data.OleDb/OleDbInfoMessageEventHandler.cs
 System.Data.OleDb/OleDbLiteral.cs

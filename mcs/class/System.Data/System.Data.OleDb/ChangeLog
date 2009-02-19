@@ -1,3 +1,7 @@
+2009-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* OleDbFactory.cs: New file.
+
 2008-04-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OleDbDataAdapter.cs: Changed argument names to match MS. Removed
