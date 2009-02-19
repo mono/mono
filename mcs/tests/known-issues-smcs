@@ -36,7 +36,6 @@ gtest-collectioninit-03.cs
 gtest-etree-01.cs
 gtest-etree-04.cs
 gtest-etree-05.cs
-gtest-etree-07.cs
 gtest-exmethod-12.cs
 gtest-linq-13.cs
 gtest-variance-1.cs IGNORE
@@ -61,15 +60,12 @@ test-263.cs
 test-269.cs
 test-271.cs
 test-28.cs
-test-286.cs
 test-300.cs
 test-304.cs
 test-311.cs
 test-316.cs
 test-318.cs
 test-324.cs
-test-388.cs
-test-389.cs
 test-399.cs
 test-399-lib.cs
 test-453.cs
@@ -85,6 +81,7 @@ test-651.cs
 test-657.cs
 test-695.cs
 test-695-3-lib.cs
+test-705.cs
 test-93.cs
 test-anon-02.cs
 test-anon-12.cs
