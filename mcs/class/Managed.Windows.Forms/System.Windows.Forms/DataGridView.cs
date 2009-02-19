@@ -5889,6 +5889,18 @@ namespace System.Windows.Forms {
 				RemoveEditingRow ();
 			}
 		}
+
+		private void ResetRows ()
+		{
+			rows.Clear ();
+			RemoveEditingRow ();
+			if (DataManager != null) {
+				foreach (object element in DataManager.List)
+					AddBoundRow (element);
+			}
+			PrepareEditingRow (false, true);
+			OnListPositionChanged (this, EventArgs.Empty);
+		}
 		
 		private void DoBinding ()
 		{
@@ -6069,7 +6081,7 @@ namespace System.Windows.Forms {
 				case ListChangedType.ItemChanged:
 					break;
 				default:
-					ReBind ();
+					ResetRows ();
 					break;
 			}
 			
