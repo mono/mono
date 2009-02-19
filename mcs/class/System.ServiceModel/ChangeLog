@@ -1,3 +1,9 @@
+2009-02-19  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources,
+	  net_2_1_raw_System.ServiceModel.dll.sources :
+	  added CodeTryBlock.cs.
+
 2009-01-22  Astushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.dll.sources :

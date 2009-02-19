@@ -40,6 +40,7 @@ Mono.CodeGeneration/CodeProperty.cs
 Mono.CodeGeneration/CodePropertyReference.cs
 Mono.CodeGeneration/CodeReturn.cs
 Mono.CodeGeneration/CodeSelect.cs
+Mono.CodeGeneration/CodeTryBlock.cs
 Mono.CodeGeneration/CodeSelfIncrement.cs
 Mono.CodeGeneration/CodeUnaryOperation.cs
 Mono.CodeGeneration/CodeValueReference.cs

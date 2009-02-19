@@ -1,5 +1,9 @@
 2009-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CodeTryBlock.cs : new statement support.
+
+2009-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CodeCast.cs : fix PrintCode() for no-conversion case.
 
 2009-01-19  Atsushi Enomoto  <atsushi@ximian.com>
