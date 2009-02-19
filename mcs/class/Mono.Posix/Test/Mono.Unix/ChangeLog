@@ -1,3 +1,9 @@
+2009-02-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixSignalTest.cs: Disable the tests that use RealTimeSignum on OS X, 
+	  as OS X doesn't support real-time signals (and thus these will
+	  always error, often for the "wrong" reason).
+
 2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* UnixSignalTest.cs: Fix the RealTimeSignum constructor

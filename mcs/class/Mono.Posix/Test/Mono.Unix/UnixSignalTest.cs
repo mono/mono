@@ -54,6 +54,7 @@ namespace MonoTests.Mono.Unix {
 		}
 	
 		[Test]
+		[Category ("NotOnMac")]
 		public void TestRealTimeCstor ()
 		{
 			RealTimeSignum rts = new RealTimeSignum (0);
@@ -66,6 +67,7 @@ namespace MonoTests.Mono.Unix {
 
 		[Test]
 		[ExpectedException]
+		[Category ("NotOnMac")]
 		public void TestSignumPropertyThrows ()
 		{
 			UnixSignal signal1 = new UnixSignal (new RealTimeSignum (0));
@@ -73,6 +75,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void TestRealTimeSignumProperty ()
 		{
 			RealTimeSignum rts = new RealTimeSignum (0);
@@ -82,6 +85,7 @@ namespace MonoTests.Mono.Unix {
 	
 		[Test]
 		[ExpectedException]
+		[Category ("NotOnMac")]
 		public void TestRealTimePropertyThrows ()
 		{
 			UnixSignal signal1 = new UnixSignal (Signum.SIGSEGV);
@@ -89,6 +93,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void TestRaiseRTMINSignal ()
 		{
 			RealTimeSignum rts = new RealTimeSignum (0);
@@ -102,6 +107,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void TestRaiseRTMINPlusOneSignal ()
 		{
 			/*this number is a guestimate, but it's ok*/
@@ -126,6 +132,7 @@ namespace MonoTests.Mono.Unix {
 		}
 
 		[Test]
+		[Category ("NotOnMac")]
 		public void TestCanRegisterRTSignalMultipleTimes ()
 		{
 			/*this number is a guestimate, but it's ok*/
