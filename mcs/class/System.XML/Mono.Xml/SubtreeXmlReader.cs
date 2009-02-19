@@ -235,14 +235,12 @@ namespace Mono.Xml
 			return false;
 		}
 
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			if (initial || eof)
 				return false;
 			return Reader.ReadAttributeValue ();
 		}
-#endif
 
 		public override void ResolveEntity ()
 		{

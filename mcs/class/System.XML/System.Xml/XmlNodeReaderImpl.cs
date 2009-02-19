@@ -789,7 +789,6 @@ namespace System.Xml
 			}
 		}
 
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			if (current.NodeType == XmlNodeType.Attribute) {
@@ -805,7 +804,6 @@ namespace System.Xml
 			} else
 				return false;
 		}
-#endif
 
 		public override string ReadString ()
 		{

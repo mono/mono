@@ -574,7 +574,6 @@ namespace System.Xml
 			}
 		}
 
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			if (entity != null && entityInsideAttribute) {
@@ -587,7 +586,6 @@ namespace System.Xml
 			}
 			return Current.ReadAttributeValue ();
 		}
-#endif
 
 		public override string ReadString ()
 		{

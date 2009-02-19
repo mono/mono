@@ -563,9 +563,7 @@ namespace System.Xml
 
 		public abstract bool Read ();
 
-#if !NET_2_1
 		public abstract bool ReadAttributeValue ();
-#endif
 
 		public virtual string ReadElementString ()
 		{

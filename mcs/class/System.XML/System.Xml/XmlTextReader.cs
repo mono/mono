@@ -617,7 +617,6 @@ namespace System.Xml
 			return more;
 		}
 
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			if (readState == ReadState.Initial && startNodeType == XmlNodeType.Attribute) {
@@ -638,7 +637,6 @@ namespace System.Xml
 			else
 				return false;
 		}
-#endif
 
 		public int ReadBase64 (byte [] buffer, int offset, int length)
 		{

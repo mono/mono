@@ -403,7 +403,6 @@ namespace Mono.Xml
 			}
 		}
 
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			if (entity != null && entity_inside_attr) {
@@ -418,7 +417,6 @@ namespace Mono.Xml
 			}
 			return Current.ReadAttributeValue ();
 		}
-#endif
 
 		public override string ReadString ()
 		{
