@@ -550,6 +550,8 @@ namespace System.Data.OracleClient
 							timezone);
 					}
 					break;
+				case OciDataType.Integer:
+				case OciDataType.Float:
 				case OciDataType.Number:
 					bindType = OciDataType.String;
 					indicator = 0;
