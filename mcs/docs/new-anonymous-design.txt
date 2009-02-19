@@ -4,45 +4,30 @@ Anonymous Methods and the TypeContainer resolve order
 Anonymous methods add another resolving pass to the TypeContainer framework.
 The new code works like this:
 
-* Everything which may contain anonymous methods or iterators now
-  implements the `IAnonymousHost' interface.  This applies to
-  `Method', `Constructor', `Accessor' and `Operator'.
+* Parsing
 
   We can already determine whether or not a method contains anonymous
   methods or iterators at parsing time, but we can't determine their
-  types yet.  If we encounter an anonymous method or iterator while
-  parsing, we add the information to the current `IAnonymousHost'.
+  types yet.
 
   This means that at the end of the parsing stage, we already know
   about all anonymous methods and iterators, but didn't resolve them
   yet.
 
-* After parsing, RootContext.ResolveTree() calls DefineType() on all
-  TypeContainers.
+* DefineType
 
-* Inside TypeContainer.DefineType(), we do the following:
+  Anonymous method containers are not created until they are needed
+  which means we cannot use standard DefineType to setup type
+  container.
+  
+  Note: Even if block looks like anonymous method, it does not necessary
+  mean it's anonymous method, expression trees are good example.
 
-  - first we have to create our TypeBuilder via DefineTypeBuilder().
+* EmitType
 
-  - after that, we scan all methods, constructors, operators and
-    property/indexer accessors for anonymous methods and iterators.
-
-    For each method which either contains anonymous methods or is
-    implemented as iterator, we create a new helper class (the "root
-    scope" of the anonymous method) and add it to the current type as
-    a nested class.
-
-    This is done by the new TypeContainer.ResolveMembers() method.
-
-  - when done, we call DefineNestedTypes() to descend into our nested
-    children.
-
-* RootContext.PopulateTypes() calls TypeContainer.ResolveType() and
-  TypeContainer.DefineMembers() as usual and populates everything.
-
-* In TypeContainer.EmitType(), we call DefineMembers() and EmitType()
-  on all our CompilerGeneratedClass'es once we're done emitting the
-  current type.
+  At this point we enter anonymous methods land. We call Resolve on
+  method block which when hits anonymous method expression we start
+  anonymous method definition.
 
 One of the hardest parts of the new anonymous methods implementation
 was getting this resolve order right.  It may sound complicated, but
@@ -69,21 +54,38 @@ Let's have a look at a small example:
 	=====
 
 After parsing this file, we already know that Test() contains an
-anonymous method, but we don't know its type until resolving it.
+anonymous method, but we don't know whether it needs to capture local
+variable or access this pointer.
 
-Because Test() is a generic method, we need to create a generic helper
-class and then transform all method type parameters into class type
-parameters.
+Because Test() is a generic method, it complicates things further
+as we may need to create generic type container and transform all method
+type parameters into class type parameters to keep method signature
+compatible with requested delegate signature.
 
-One key feature of the new code is using the normal TypeContainer
-framework to create and use generic classes.  For each method
-containing anonymous methods, we create one "root scope" which deals
-with generics and also hosts any captured parameter and `this'.
+One key feature of the new code is using minimal possible anonymous
+method overhead. Based on whether an anonymous method needs access to
+this pointer or has access to local variables from outher scope new
+TypeContainer (anonymous method storey) is created. We may end up with
+up to 3 scenarios.
 
-In this example, this is done when calling DefineType() on `X's
-TypeContainer, during the ResolveMembers() pass.  After that, we can
-handle the helper classes just like normal nested classes, so
-DefineNestedTypes() creates their TypeBuilders.
+1. No access to local variable or this
+
+	Anonymous method is emitted in a compiler generated static method
+inside same class as current block.
+
+2. No access to local variable but this is accessible
+
+	Anonymous method is emitted in a compiler generated instance method
+inside same class as current block.
+
+3. Local variable is accessible
+
+	New nested class (anonymous method storey) is created and anonymous
+method block is emitted as an instance method inside this nested class.
+
+Note: The important detail for cases 1 and 2 is that both methods are
+created inside current block class, which means they can end up inside
+anonymous method storey when parent scope needs access to local variable.
 
 One important thing to keep in mind is that we neither know the type
 of the anonymous methods nor any captured variables until resolving
@@ -91,17 +93,15 @@ of the anonymous methods nor any captured variables until resolving
 TypeContainer.EmitCode(), so we can't call DefineMembers() on our
 CompilerGeneratedClass'es until we emitted all methods.
 
-
 Anonymous Methods and Scopes:
 -----------------------------
 
 The new code fundamentally changes the concept of CaptureContexts and
-ScopeInfos.  CaptureContext is completely gone while the ScopeInfo has
-been completely redesigned.
+ScopeInfos. CaptureContext is completely gone together with ScopeInfo.
 
-Unfortunately, computing the "root scope" of an anonymous method is
-very difficult and was the primary reason for the update in late
-November 2006.  Consider the following example:
+Unfortunately, computing the optimal "root scope" of an anonymous
+method is very difficult and was the primary reason for the update in
+late November 2006.  Consider the following example:
 
 	====
 	TestDelegate d = null;
@@ -141,24 +141,13 @@ with GMCS's way of resolving and defining generic types; ie. everything
 related to generics is handled during the normal TypeContainer
 resolving process.
 
-When the anonymous methods code kicks in, all the generic types are
-already defined and ready for use.
-
-Adding a new non-generic class to such a generic type is really easy
-and not a problem - non-generic means that the new class does not
-introduce any new type parameters; it may still use its containing
-class'es type parameters:
-
-Example:
-
-    class IAmGeneric<T>
-    {
-        class IAmNot // must derive from System.Object
-        {
-            // using the containing classe's type parameter is ok.
-            public T ButMayStillUseMyParentsT;
-        }
-    }
+However, there is a problem when we are dealing with generics variables.
+They may end up to be captured but their local generic type has been
+already resolved. To handle this scenario type mutation was introduced,
+to convert any method type parameter (MVAR) to generic type parameter
+(VAR). This process is not straighforward due to way how S.R.E deals
+with generics and we have to recontruct each reference of mutated
+(MVAR->VAR) generic type.
 
 
 The new `Variable' abstraction:
@@ -173,9 +162,6 @@ class, which is also used by `This'.
 
 `Variable' also controls whether or not we need to create a temporary
 copy of a variable.
-
-Before emitting any method, we scan over all its parameters and local
-variables again and check whether any of them have been captured.
 
 `Parameter' and `LocalInfo' both have a new ResolveVariable() method
 which creates an instance of the new `Variable' class for each of
