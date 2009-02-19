@@ -1300,7 +1300,7 @@ namespace System.Windows.Forms {
 			else
 				valuex = value;
 
-			if (oldValue != value) {
+			if (!Object.ReferenceEquals (oldValue, value) || !Object.Equals (oldValue, value)) {
 				RaiseCellValueChanged (new DataGridViewCellEventArgs (ColumnIndex, RowIndex));
 				
 				// Set this dirty flag back to false
