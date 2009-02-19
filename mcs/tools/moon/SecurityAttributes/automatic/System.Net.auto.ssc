@@ -1,0 +1,11 @@
+# [SecuritySafeCritical] needed inside System.Net to call all [SecurityCritical] methods
+# 8 methods
+
++SSC-M: System.Void System.Net.NetworkInformation.LinuxIPInterfaceProperties::ParseResolvConf()
++SSC-M: System.Boolean System.Net.NetworkInformation.LinuxIPv4InterfaceProperties::get_IsForwardingEnabled()
++SSC-M: System.Int32 System.Net.NetworkInformation.LinuxIPv4InterfaceProperties::get_Mtu()
++SSC-M: System.Void System.Net.NetworkInformation.LinuxNetworkInterface::SetLinkLayerInfo(System.Int32,System.Byte[],System.Net.NetworkInformation.NetworkInterfaceType)
++SSC-M: System.Net.NetworkInformation.OperationalStatus System.Net.NetworkInformation.LinuxNetworkInterface::get_OperationalStatus()
++SSC-M: System.Boolean System.Net.NetworkInformation.LinuxNetworkInterface::get_SupportsMulticast()
++SSC-M: System.String System.Net.NetworkInformation.NetworkInterface::ReadLine(System.String)
++SSC-M: System.Void System.Net.Sockets.Socket::Dispose(System.Boolean)

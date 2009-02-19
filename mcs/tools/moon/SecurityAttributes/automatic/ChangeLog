@@ -1,0 +1,4 @@
+2009-02-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* *.auto.sc: Data files for [SecurityCritical]
+	* *.auto.ssc: Data files for [SecuritySafeCritical]

@@ -1,0 +1,3 @@
+# [SecuritySafeCritical] needed inside System.ServiceModel.Web to call all [SecurityCritical] methods
+# 0 methods
+

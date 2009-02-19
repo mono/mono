@@ -1,0 +1,3 @@
+# [SecuritySafeCritical] needed inside System.Runtime.Serialization to call all [SecurityCritical] methods
+# 0 methods
+
