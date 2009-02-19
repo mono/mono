@@ -225,6 +225,11 @@ namespace System.Web.Hosting {
 			//
 			string domain_id = (virtualDir.GetHashCode () + 1 ^ physicalDir.GetHashCode () + 2 ^ tempDirTag).ToString ("x");
 
+			// This is used by mod_mono's fail-over support
+			string domain_id_suffix = Environment.GetEnvironmentVariable ("__MONO_DOMAIN_ID_SUFFIX");
+			if (domain_id_suffix != null && domain_id_suffix.Length > 0)
+				domain_id += domain_id_suffix;
+			
 			setup.ApplicationName = domain_id;
 			setup.DynamicBase = dynamic_dir;
 			setup.CachePath = dynamic_dir;

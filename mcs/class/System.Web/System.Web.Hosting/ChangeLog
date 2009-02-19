@@ -1,3 +1,8 @@
+2009-02-19  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: added support for the
+	__MONO_DOMAIN_ID_SUFFIX environment variable, used by mod_mono.
+
 2008-10-29  Marek Habersack  <mhabersack@novell.com>
 
 	* ApplicationHost.cs: set domain setup CachePath to the same value
