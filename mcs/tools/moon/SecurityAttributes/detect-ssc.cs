@@ -101,25 +101,43 @@ class Program {
 
 	static int Main (string [] args)
 	{
-		if (args.Length < 1) {
-			Console.WriteLine ("Usage: detect-ssc input-dir [output-dir]");
-			return 1;
-		}
+		int input;
+		string output;
 
-		string input = args [0];
-		string output = (args.Length < 2) ? input : args [1];
+		switch (args.Length) {
+		case 0:
+			Console.WriteLine ("Usage: detect-ssc input-dir [input-dir [...]] [output-dir]");
+			return 1;
+		case 1:
+			output = args [0];
+			input = 1;
+			break;
+		default:
+			input = args.Length - 1;
+			output = args [input];
+			break;
+		}
 
 		// load everything first (to ease resolving later)
 		Console.WriteLine ("Loading assemblies...");
 		foreach (string assembly in PlatformCode.Assemblies) {
-			string fullpath = Path.Combine (args [0], assembly) + ".dll";
-			if (!File.Exists (fullpath)) {
+			string fullpath = null;
+			for (int i = 0; i < input; i++) {
+				fullpath = Path.Combine (args [i], assembly) + ".dll";
+				if (File.Exists (fullpath))
+					break;
+
+				fullpath = null;
+			}
+
+			if (fullpath == null) {
 				Console.WriteLine ("{0} NOT FOUND!", assembly);
 				continue;
 			}
 
 			AssemblyDefinition ad = AssemblyFactory.GetAssembly (fullpath);
-			(ad.Resolver as BaseAssemblyResolver).AddSearchDirectory (args [0]);
+			for (int i = 0; i < input; i++)
+				(ad.Resolver as BaseAssemblyResolver).AddSearchDirectory (args [i]);
 			methods.Add (ad, new List<string> ());
 		}
 
@@ -136,12 +154,12 @@ class Program {
 			string outfile = Path.Combine (output, assembly) + ".auto.ssc";
 			using (StreamWriter sw = new StreamWriter (outfile)) {
 				sw.WriteLine ("# [SecuritySafeCritical] needed inside {0} to call all [SecurityCritical] methods", assembly);
-				sw.WriteLine ("# {0} jemethods", list.Count);
+				sw.WriteLine ("# {0} methods", list.Count);
 				sw.WriteLine ();
 				foreach (string method in list) {
 					sw.WriteLine ("+SSC-M: {0}", method);
 				}
-				Console.WriteLine ("{0}.dll: {1} methods.", assembly, methods.Count);
+				Console.WriteLine ("{0}.dll: {1} methods.", assembly, list.Count);
 			}
 		}
 		return 0;

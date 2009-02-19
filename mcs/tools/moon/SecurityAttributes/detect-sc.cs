@@ -151,20 +151,37 @@ class Program {
 
 	static int Main (string [] args)
 	{
-		if (args.Length < 1) {
-			Console.WriteLine ("Usage: detect-sc input-dir [output-dir]");
-			return 1;
-		}
+		int input;
+		string output;
 
-		string input = args [0];
-		string output = (args.Length < 2) ? input : args [1];
+		switch (args.Length) {
+		case 0:
+			Console.WriteLine ("Usage: detect-sc input-dir [input-dir [...]] [output-dir]");
+			return 1;
+		case 1:
+			output = args [0];
+			input = 1;
+			break;
+		default:
+			input = args.Length - 1;
+			output = args [input];
+			break;
+		}
 
 		foreach (string assembly in PlatformCode.Assemblies) {
 			Console.Write ("{0}.dll:", assembly);
 
-			string fullpath = Path.Combine (input, assembly) + ".dll";
-			if (!File.Exists (fullpath)) {
-				Console.WriteLine (" NOT FOUND!");
+			string fullpath = null;
+			for (int i = 0; i < input; i++) {
+				fullpath = Path.Combine (args [i], assembly) + ".dll";
+				if (File.Exists (fullpath))
+					break;
+
+				fullpath = null;
+			}
+
+			if (fullpath == null) {
+				Console.WriteLine (" NOT FOUND!", assembly);
 				continue;
 			}
 
