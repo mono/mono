@@ -127,6 +127,8 @@ environment variable that affects behavior:
 
 		static void ValidateRelaxng (RelaxngPattern p, string [] args)
 		{
+			p.Compile ();
+
 			if (args.Length < 2)
 				return;
 

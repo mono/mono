@@ -1,3 +1,9 @@
+2009-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltool.cs : call Compile() and detect relax ng grammar error
+	  so that it could detect grammar sanity when there is no instance
+	  to be validated.
+
 2007-12-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xmltool.cs : use absolute path as the base uri for *.rnc.
