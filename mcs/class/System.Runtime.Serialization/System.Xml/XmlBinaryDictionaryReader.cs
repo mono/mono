@@ -454,7 +454,6 @@ namespace System.Xml
 			return false;
 		}
 
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			if (current_attr < 0)
@@ -475,7 +474,6 @@ namespace System.Xml
 			}
 			return false;
 		}
-#endif
 
 		public override bool Read ()
 		{

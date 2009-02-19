@@ -293,12 +293,10 @@ namespace System.Xml
 		{
 			reader.ResolveEntity ();
 		}
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			return reader.ReadAttributeValue ();
 		}
-#endif
 		#endregion
 	}
 }

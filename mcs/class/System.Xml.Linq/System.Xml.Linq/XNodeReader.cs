@@ -497,9 +497,7 @@ namespace System.Xml.Linq
 		}
 
 		public
-#if !NET_2_1
 		override
-#endif
 		bool ReadAttributeValue ()
 		{
 			if (attr < 0 || attr_value)

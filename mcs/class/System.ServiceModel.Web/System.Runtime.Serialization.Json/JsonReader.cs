@@ -341,7 +341,6 @@ namespace System.Runtime.Serialization.Json
 				return MoveToAttribute ("__type");
 		}
 
-#if !NET_2_1
 		public override bool ReadAttributeValue ()
 		{
 			switch (attr_state) {
@@ -354,7 +353,6 @@ namespace System.Runtime.Serialization.Json
 			}
 			return false;
 		}
-#endif
 
 		public override void ResolveEntity ()
 		{
