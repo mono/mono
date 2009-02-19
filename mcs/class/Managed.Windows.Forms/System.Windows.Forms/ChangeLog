@@ -1,3 +1,9 @@
+2009-02-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Do not reset the columns when the data list changes, 
+	but only the rows. Fixes multiple bugs related to sorting, custom 
+	column styles being reset and more.
+
 2009-02-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: End or if end fails then cancel the current edit 
