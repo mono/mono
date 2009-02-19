@@ -1,3 +1,7 @@
+2009-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* SecurityManager.cs: Make core-clr work under non 2.1 profiles.
+
 2008-09-15  Jb Evain  <jbevain@novell.com>
 
 	* SecuritySafeCriticalAttribute.cs: Include SecuritySafeCritical in
