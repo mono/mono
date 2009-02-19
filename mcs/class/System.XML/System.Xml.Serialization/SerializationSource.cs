@@ -34,6 +34,7 @@ using System.Text;
 
 namespace System.Xml.Serialization 
 {
+#if !NET_2_1
 	internal abstract class SerializationSource 
 	{
 		Type[] includedTypes;
@@ -186,6 +187,7 @@ namespace System.Xml.Serialization
 			return membersHash.GetHashCode ();
 		}
 	}
+#endif
 	
 	internal class KeyHelper
 	{
