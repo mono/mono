@@ -1,0 +1,6 @@
+2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* LockTracerDecoder.cs: Initial version of the lock tracers decoder.
+
+	
+
