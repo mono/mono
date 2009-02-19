@@ -1,3 +1,8 @@
+2009-02-19  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdDatatypeProvider.cs : detect grammar-level error in type usage
+	  at compile time.
+
 2009-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdDatatypeProvider.cs : workaround .NET/Mono Regex bug that

@@ -191,6 +191,7 @@ namespace Commons.Xml.Relaxng.XmlSchema
 			el.Name = "root";
 			el.SchemaType = type;
 			schema.Items.Add (el);
+			schema.Compile (null);
 		}
 
 		public override string Name {
