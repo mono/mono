@@ -10581,5 +10581,161 @@ namespace MonoTests.System.Reflection.Emit
 			mb.GetILGenerator ().Emit (OpCodes.Ret);
 			eb.SetAddOnMethod (mb);
 		}
+
+#if NET_2_0
+		/* 
+		 * Tests for passing user types to Ref.Emit. Currently these only test
+		 * whenever the runtime code can handle them without crashing, since we
+		 * don't support user types yet.
+		 */
+
+		[Test]
+		public void UserTypes () {
+			TypeDelegator t = new TypeDelegator (typeof (int));
+
+			try {
+				/* Parent */
+				TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, t);
+			} catch {
+			}
+
+			try {
+				/* Interfaces */
+				TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public, typeof (object), new Type [] { t });
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Fields */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				tb.DefineField ("Foo", t, FieldAttributes.Public);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Custom modifiers on fields */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				tb.DefineField ("Foo", typeof (int), new Type [] { t }, new Type [] { t }, FieldAttributes.Public);
+				tb.CreateType ();
+			} catch {
+			}
+
+#if !WINDOWS
+			try {
+				/* This is mono only */
+				UnmanagedMarshal m = UnmanagedMarshal.DefineCustom (t, "foo", "bar", Guid.Empty);
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				FieldBuilder fb = tb.DefineField ("Foo", typeof (int), FieldAttributes.Public);
+				fb.SetMarshal (m);
+				tb.CreateType ();
+			} catch {
+			}
+#endif
+
+			try {
+				/* Properties */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				tb.DefineProperty ("Foo", PropertyAttributes.None, t, null);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Custom modifiers on properties */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				// FIXME: These seems to be ignored
+				tb.DefineProperty ("Foo", PropertyAttributes.None, typeof (int), new Type [] { t }, new Type [] { t }, null, null, null);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Method return types */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public, t, null);
+				mb.GetILGenerator ().Emit (OpCodes.Ret);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Custom modifiers on method return types */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public, CallingConventions.Standard, typeof (int), new Type [] { t }, new Type [] { t }, null, null, null);
+				mb.GetILGenerator ().Emit (OpCodes.Ret);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Method parameters */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public, typeof (int), new Type [] { t });
+				mb.GetILGenerator ().Emit (OpCodes.Ret);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Custom modifiers on method parameters */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public, CallingConventions.Standard, typeof (int), null, null, new Type [] { typeof (int) }, new Type [][] { new Type [] { t }}, new Type[][] { new Type [] { t }});
+				mb.GetILGenerator ().Emit (OpCodes.Ret);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* Ctor parameters */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				ConstructorBuilder mb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, new Type [] { t });
+				mb.GetILGenerator ().Emit (OpCodes.Ret);
+				tb.CreateType ();
+			} catch {
+			}
+			
+			try {
+				/* Custom modifiers on ctor parameters */
+				TypeBuilder tb = module.DefineType ("foo", TypeAttributes.Public, typeof (object));
+				ConstructorBuilder mb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, new Type [] { typeof (int) }, new Type [][] { new Type [] { t }}, new Type[][] { new Type [] { t }});
+				mb.GetILGenerator ().Emit (OpCodes.Ret);
+				tb.CreateType ();
+			} catch {
+			}
+
+			try {
+				/* SignatureHelper arguments */
+				SignatureHelper sighelper = SignatureHelper.GetFieldSigHelper (module);
+				sighelper.AddArgument (t, false);
+				byte[] arr = sighelper.GetSignature ();
+			} catch {
+			}
+
+			try {
+				SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (module);
+				sighelper.AddArgument (t, false);
+				byte[] arr = sighelper.GetSignature ();
+			} catch {
+			}
+
+			try {
+				/* Custom modifiers on SignatureHelper arguments */
+				SignatureHelper sighelper = SignatureHelper.GetFieldSigHelper (module);
+				sighelper.AddArgument (typeof (int), new Type [] { t }, new Type [] { t });
+				byte[] arr = sighelper.GetSignature ();
+			} catch {
+			}
+
+			try {
+				/* Custom modifiers on SignatureHelper arguments */
+				SignatureHelper sighelper = SignatureHelper.GetLocalVarSigHelper (module);
+				sighelper.AddArgument (typeof (int), new Type [] { t }, new Type [] { t });
+				byte[] arr = sighelper.GetSignature ();
+			} catch {
+			}
+		}
+#endif
 	}
 }

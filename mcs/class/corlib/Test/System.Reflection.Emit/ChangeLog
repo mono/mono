@@ -1,3 +1,7 @@
+2009-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs: Add minimal tests for user types + Ref.Emit.
+
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Make this test quiet.
