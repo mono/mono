@@ -2,6 +2,17 @@
 
 	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
 
+	* mini-x86.c (emit_move_return_value): Don't reduce precision of functions returning float.
+	This behavior is compatible with MS.
+
+	* iltest.il.in: Add a test for this.
+
+	Fixed part of #467201.
+
+2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+
 	* mini-x86.c (mono_arch_output_basic_block): Implement OP_FCONV_TO_R4, it must
 	change the precision of the value.
 
