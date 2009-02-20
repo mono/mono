@@ -266,30 +266,42 @@ namespace System.Threading
 			}
 		}
 
-		[MonoTODO]
 		public static bool SignalAndWait (WaitHandle toSignal,
 						  WaitHandle toWaitOn)
 		{
-			throw new NotImplementedException ();
+			return SignalAndWait (toSignal, toWaitOn, -1, false);
 		}
 		
-		[MonoTODO]
 		public static bool SignalAndWait (WaitHandle toSignal,
 						  WaitHandle toWaitOn,
 						  int millisecondsTimeout,
 						  bool exitContext)
 		{
-			throw new NotImplementedException ();
+			if (toSignal == null)
+				throw new ArgumentNullException ("toSignal");
+			if (toWaitOn == null)
+				throw new ArgumentNullException ("toWaitOn");
+
+			if (millisecondsTimeout < -1)
+				throw new ArgumentOutOfRangeException ("millisecondsTimeout");
+
+			return SignalAndWait_Internal (toSignal.Handle, toWaitOn.Handle, millisecondsTimeout, exitContext);
 		}
 		
-		[MonoTODO]
 		public static bool SignalAndWait (WaitHandle toSignal,
 						  WaitHandle toWaitOn,
 						  TimeSpan timeout,
 						  bool exitContext)
 		{
-			throw new NotImplementedException ();
+			double ms = timeout.TotalMilliseconds;
+			if (ms > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("timeout");
+
+			return SignalAndWait (toSignal, toWaitOn, Convert.ToInt32 (ms), false);
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern bool SignalAndWait_Internal (IntPtr toSignal, IntPtr toWaitOn, int ms, bool exitContext);
 
 		public virtual bool WaitOne()
 		{
