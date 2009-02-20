@@ -81,6 +81,9 @@ namespace System.Web {
 			}
 		}
 
+		internal HttpResponse Response {
+			get { return response; }
+		}
 		//
 		// Flush data, and closes socket
 		//
@@ -159,6 +162,11 @@ namespace System.Web {
 				return;
 
 			response.Flush ();
+		}
+
+		internal void WriteUTF8Ptr (IntPtr ptr, int length)
+		{
+			output_stream.WritePtr (ptr, length);
 		}
 
 		public void WriteBytes (byte [] buffer, int index, int count)

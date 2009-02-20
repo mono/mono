@@ -181,6 +181,17 @@ namespace System.Web {
 				position += count;
 			}
 
+			public void Write (IntPtr ptr, int count)
+			{
+				if (count == 0)
+					return;
+				
+				EnsureCapacity (position + count);
+				byte *src = (byte *) ptr.ToPointer ();
+				memcpy (data + position, src, count);
+				position += count;
+			}
+
 			public void Send (HttpWorkerRequest wr, int start, int end)
 			{
 				if (end - start <= 0)
@@ -265,6 +276,16 @@ namespace System.Web {
 				return count;
 			}
 
+			public int Write (IntPtr ptr, int count)
+			{
+				if (Expandable == false)
+					throw new Exception ("This should not happen.");
+
+				blocks.Write (ptr, count);
+				length += count;
+				return count;
+			}
+
 			public override void Dispose ()
 			{
 				blocks.Dispose ();
@@ -286,7 +307,7 @@ namespace System.Web {
 				blocks.Send (stream, start, length);
 			}
 		}
-	
+
 		class BufferedFileBucket : Bucket {
 			string file;
 			long offset;
@@ -456,6 +477,38 @@ namespace System.Web {
 			filtering = false;
 		}
 
+		public void WritePtr (IntPtr ptr, int length)
+		{
+			if (length == 0)
+				return;
+
+			bool buffering = response.BufferOutput;
+
+			if (buffering) {
+				// It does not matter whether we're in ApplyFilter or not
+				AppendBuffer (ptr, length);
+			} else if (filter == null || filtering) {
+				response.WriteHeaders (false);
+				HttpWorkerRequest wr = response.WorkerRequest;
+				// Direct write because not buffering
+				wr.SendResponseFromMemory (ptr, length);
+				wr.FlushResponse (false);
+			} else {
+				// Write to the filter, which will call us back, and then Flush
+				filtering = true;
+				try {
+					byte [] bytes = new byte [length];
+					Marshal.Copy (ptr, bytes, 0, length);
+					filter.Write (bytes, 0, length);
+					bytes = null;
+				} finally {
+					filtering = false;
+				}
+				Flush (response.WorkerRequest, false);
+			}
+
+		}
+
 	        public override void Write (byte [] buffer, int offset, int count)
 		{
 			bool buffering = response.BufferOutput;
@@ -512,6 +565,15 @@ namespace System.Web {
 			((ByteBucket) cur_bucket).Write (buffer, offset, count);
 		}
 
+		void AppendBuffer (IntPtr ptr, int count)
+		{
+			if (!(cur_bucket is ByteBucket))
+				AppendBucket (new ByteBucket ());
+
+			total += count;
+			((ByteBucket) cur_bucket).Write (ptr, count);
+		}
+
 		//
 		// This should not flush/close or anything else, its called
 		// just to free any memory we might have allocated (when we later
@@ -541,6 +603,120 @@ namespace System.Web {
 			total = 0;
 		}
 		
+		// Do not use directly. Use memcpy.
+		static unsafe void memcpy4 (byte *dest, byte *src, int size) {
+			/*while (size >= 32) {
+				// using long is better than int and slower than double
+				// FIXME: enable this only on correct alignment or on platforms
+				// that can tolerate unaligned reads/writes of doubles
+				((double*)dest) [0] = ((double*)src) [0];
+				((double*)dest) [1] = ((double*)src) [1];
+				((double*)dest) [2] = ((double*)src) [2];
+				((double*)dest) [3] = ((double*)src) [3];
+				dest += 32;
+				src += 32;
+				size -= 32;
+			}*/
+			while (size >= 16) {
+				((int*)dest) [0] = ((int*)src) [0];
+				((int*)dest) [1] = ((int*)src) [1];
+				((int*)dest) [2] = ((int*)src) [2];
+				((int*)dest) [3] = ((int*)src) [3];
+				dest += 16;
+				src += 16;
+				size -= 16;
+			}
+			while (size >= 4) {
+				((int*)dest) [0] = ((int*)src) [0];
+				dest += 4;
+				src += 4;
+				size -= 4;
+			}
+			while (size > 0) {
+				((byte*)dest) [0] = ((byte*)src) [0];
+				dest += 1;
+				src += 1;
+				--size;
+			}
+		}
+
+		// Do not use directly. Use memcpy.
+		static unsafe void memcpy2 (byte *dest, byte *src, int size) {
+			while (size >= 8) {
+				((short*)dest) [0] = ((short*)src) [0];
+				((short*)dest) [1] = ((short*)src) [1];
+				((short*)dest) [2] = ((short*)src) [2];
+				((short*)dest) [3] = ((short*)src) [3];
+				dest += 8;
+				src += 8;
+				size -= 8;
+			}
+			while (size >= 2) {
+				((short*)dest) [0] = ((short*)src) [0];
+				dest += 2;
+				src += 2;
+				size -= 2;
+			}
+			if (size > 0)
+				((byte*)dest) [0] = ((byte*)src) [0];
+		}
+
+		// Do not use directly. Use memcpy.
+		static unsafe void memcpy1 (byte *dest, byte *src, int size) {
+			while (size >= 8) {
+				((byte*)dest) [0] = ((byte*)src) [0];
+				((byte*)dest) [1] = ((byte*)src) [1];
+				((byte*)dest) [2] = ((byte*)src) [2];
+				((byte*)dest) [3] = ((byte*)src) [3];
+				((byte*)dest) [4] = ((byte*)src) [4];
+				((byte*)dest) [5] = ((byte*)src) [5];
+				((byte*)dest) [6] = ((byte*)src) [6];
+				((byte*)dest) [7] = ((byte*)src) [7];
+				dest += 8;
+				src += 8;
+				size -= 8;
+			}
+			while (size >= 2) {
+				((byte*)dest) [0] = ((byte*)src) [0];
+				((byte*)dest) [1] = ((byte*)src) [1];
+				dest += 2;
+				src += 2;
+				size -= 2;
+			}
+			if (size > 0)
+				((byte*)dest) [0] = ((byte*)src) [0];
+		}
+
+		static unsafe void memcpy (byte *dest, byte *src, int size) {
+			// FIXME: if pointers are not aligned, try to align them
+			// so a faster routine can be used. Handle the case where
+			// the pointers can't be reduced to have the same alignment
+			// (just ignore the issue on x86?)
+			if ((((int)dest | (int)src) & 3) != 0) {
+				if (((int)dest & 1) != 0 && ((int)src & 1) != 0 && size >= 1) {
+					dest [0] = src [0];
+					++dest;
+					++src;
+					--size;
+				}
+				if (((int)dest & 2) != 0 && ((int)src & 2) != 0 && size >= 2) {
+					((short*)dest) [0] = ((short*)src) [0];
+					dest += 2;
+					src += 2;
+					size -= 2;
+				}
+				if ((((int)dest | (int)src) & 1) != 0) {
+					memcpy1 (dest, src, size);
+					return;
+				}
+				if ((((int)dest | (int)src) & 2) != 0) {
+					memcpy2 (dest, src, size);
+					return;
+				}
+			}
+			memcpy4 (dest, src, size);
+		}
+
 	        public override bool CanRead {
 	                get {
 				return false;
