@@ -1,3 +1,7 @@
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (projectRegex): Use '\s' to match whitespace.
+
 2009-02-19  Jonathan Chambers  <joncham@gmail.com>
 
 	* xbuild.csproj: Add.

@@ -73,7 +73,7 @@ namespace Mono.XBuild.CommandLine {
 
 		static string guidExpression = "{[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}}";
 
-		static Regex projectRegex = new Regex ("Project\\(\"(" + guidExpression + ")\"\\) = \"(.*?)\", \"(.*?)\", \"(" + guidExpression + ")\"(.*?)((.*?)ProjectSection\\((.*?)\\) = (.*?)EndProjectSection(.*?))*(.*?)EndProject?", RegexOptions.Singleline);
+		static Regex projectRegex = new Regex ("Project\\(\"(" + guidExpression + ")\"\\) = \"(.*?)\", \"(.*?)\", \"(" + guidExpression + ")\"(\\s*?)((\\s*?)ProjectSection\\((.*?)\\) = (.*?)EndProjectSection(\\s*?))*(\\s*?)EndProject?", RegexOptions.Singleline);
 		static Regex projectDependenciesRegex = new Regex ("ProjectSection\\((.*?)\\) = \\w*(.*?)EndProjectSection", RegexOptions.Singleline);
 		static Regex projectDependencyRegex = new Regex ("\\s*(" + guidExpression + ") = (" + guidExpression + ")");
 
