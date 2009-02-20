@@ -93,7 +93,7 @@ run-test-local: $(TEST_ILS:.il=.dll) eval-test
 
 # Temporary testing target
 cecil:
-	$(TESTER) -mode:pos -files:'test-*.cs' -compiler:gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log
+	$(TESTER) -mode:pos -files:'test-*.cs' -compiler:gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log -verbose
 
 test-everything:
 	$(MAKE) PROFILE=net_1_1 run-test

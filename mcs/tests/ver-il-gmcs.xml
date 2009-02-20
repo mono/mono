@@ -13447,6 +13447,46 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-54.cs">
+    <type name="Class">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String get_Property()">
+        <size>6</size>
+      </method>
+      <method name="System.String Method()">
+        <size>44</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>39</size>
+      </method>
+    </type>
+    <type name="Class+&lt;Method&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String &lt;&gt;m__0()">
+        <size>56</size>
+      </method>
+    </type>
+    <type name="Class+&lt;Method&gt;c__AnonStorey0+&lt;Method&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String &lt;&gt;m__1(System.String)">
+        <size>52</size>
+      </method>
+    </type>
+    <type name="Class+&lt;Method&gt;c__AnonStorey0+&lt;Method&gt;c__AnonStorey2+&lt;Method&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="System.String &lt;&gt;m__2()">
+        <size>39</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-6.cs">
     <type name="X">
       <method name="Void .ctor()">
