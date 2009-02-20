@@ -1,3 +1,8 @@
+2009-02-19  Jonathan Chambers  <joncham@gmail.com>
+
+	* xbuild.csproj: Add.
+	* xbuild.sln: Add.
+
 2009-02-13  Jonathan Chambers  <joncham@gmail.com>
 
 	* SolutionParser.cs: Make Guid Regex case insensitive.
