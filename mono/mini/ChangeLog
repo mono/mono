@@ -2,7 +2,20 @@
 
 	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
 
-	* mini-x86.c (emono_arch_output_basic_block): Adjust precision of long to double
+	* mini-x86.c (mono_arch_output_basic_block): Adjust precision of int to float
+	conversion to 32 bits.
+
+	* cpu-x86.md: Increase the size of int_conv_to_r4.
+
+	* basic-float.cs: Add a test for this.
+
+	Fixed part of #467201.
+
+2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+
+	* mini-x86.c (mono_arch_output_basic_block): Adjust precision of long to double
 	conversion to 64 bits.
 
 	* basic-float.cs: Add a test for this.
