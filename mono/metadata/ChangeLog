@@ -1,3 +1,22 @@
+2009-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_setup_internal_class): Check for user types.
+	(mono_reflection_create_runtime_class): Ditto.
+	(mono_reflection_sighelper_get_signature_local): Ditto.
+	(mono_reflection_sighelper_get_signature_field): Ditto.
+
+	* object-internals.h (CHECK_MONOTYPE): New macro to check that a Type object
+	is a System.MonoType object or similar.
+	(monotype_cast): New helper function to cast a MonoObject to a 
+	MonoReflectionType object.
+
+	* object-internals.h: Change MonoReflectionType* members in structures to
+	MonoObject* members to force the usage of the monotype_cast () function.
+
+	* reflection.c icall.c: Use monotype_cast () for accessing Type members of
+	structures/arrays. This causes us to assert instead of crashing when 
+	instances of user defined subclasses of System.Type are encountered.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* cil-coff.h:
