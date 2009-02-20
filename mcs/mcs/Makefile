@@ -36,7 +36,7 @@ PROGRAM_COMPILE = $(BOOT_COMPILE)
 CLEAN_FILES += y.output
 
 %-parser.cs: %-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -cv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
+	$(topdir)/jay/jay -cvt < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 
 ifeq (net_2_0_bootstrap, $(PROFILE))
