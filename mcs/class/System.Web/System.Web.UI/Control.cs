@@ -37,6 +37,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+using System.Diagnostics;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.Util;
@@ -1500,6 +1501,49 @@ namespace System.Web.UI
 				Dispose ();
 		}
 
+		class Tim {
+			string name;
+			DateTime start;
+			public bool Print;
+
+			public Tim () {
+			}
+
+			public Tim (string name) {
+				this.name = name;
+			}
+
+			public string Name {
+				get { return name; }
+				set { name = value; }
+			}
+
+			public void Start () {
+				start = DateTime.UtcNow;
+				Print = true;
+			}
+
+			public void Stop () {
+				if (Print) {
+					Console.Error.WriteLine ("{0}: {1}ms", name, (DateTime.UtcNow - start).TotalMilliseconds);
+				}
+			}
+		}
+
+		//[Conditional ("PIPELINE_TIMER")]
+		void StartTimer (string name, out Tim tim)
+		{
+			tim = new Tim ();
+			tim.Name = name;
+			tim.Start ();
+		}
+
+		//[Conditional ("PIPELINE_TIMER")]
+		void StopTimer (Tim tim)
+		{
+			tim.Stop ();
+		}
+
 		internal void PreRenderRecursiveInternal ()
 		{
 			bool visible;
@@ -1511,6 +1555,8 @@ namespace System.Web.UI
 #endif
 			
 			if (visible) {
+				//Tim tim;
+				//StartTimer (_userId + " " + GetType ().Name, out tim);
 #if NET_2_0
 				SetMask (VISIBLE, true);
 #endif
@@ -1541,6 +1587,7 @@ namespace System.Web.UI
 				if (trace != null)
 					trace.Write ("control", String.Concat ("End PreRenderRecursive ", _userId, " ", type_name));
 #endif
+				//StopTimer (tim);
 			}
 #if NET_2_0
 			else
