@@ -1,3 +1,7 @@
+2009-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-ppc.md (store_memindex): Increase the size of this.
+
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
