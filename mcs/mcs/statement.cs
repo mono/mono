@@ -2513,9 +2513,16 @@ namespace Mono.CSharp {
 			//
 			if (am_storey != null) {
 				if (ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null) {
+					//
+					// Creates parent storey reference when hoisted this is accessible
+					//
 					if (am_storey.OriginalSourceBlock.Explicit.HasCapturedThis) {
 						ExplicitBlock parent = Toplevel.Parent.Explicit;
-						while (parent.am_storey == null)
+
+						//
+						// Hoisted this exists in top-level parent storey only
+						//
+						while (parent.am_storey == null || parent.am_storey.Parent is AnonymousMethodStorey)
 							parent = parent.Parent.Explicit;
 
 						am_storey.AddParentStoreyReference (parent.am_storey);
