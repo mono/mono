@@ -135,6 +135,8 @@ namespace Mono.XBuild.CommandLine {
 					case "SolutionProperties":
 						ParseSolutionProperties (globalSectionMatch.Groups[2].Value);
 						break;
+					case "NestedProjects":
+						break;
 					default:
 						ErrorUtilities.ReportError (0, string.Format("Don't know how to handle GlobalSection {0}", sectionType));
 						break;

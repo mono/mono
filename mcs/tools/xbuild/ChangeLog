@@ -1,5 +1,10 @@
 2009-02-20  Ankit Jain  <jankit@novell.com>
 
+	* SolutionParser.cs (ParseSolution): Ignore GlobalSection named
+	'NestedProjects'.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
 	* SolutionParser.cs (ParseProjectConfigurationPlatforms): Report missing
 	project guids as Warnings and not errors. Report every missing guid only
 	once.
