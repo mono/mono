@@ -170,7 +170,10 @@ namespace Microsoft.Build.BuildEngine {
 			
 			// FIXME: looks like a hack: if '-' is here '->' won't be tokenized
 			// maybe we should treat item reference as a token
-			if (Char.IsDigit (ch) || ch == '-') {
+			if (ch == '-' && PeekChar () == '>') {
+				ReadChar ();
+				token = new Token ("->", TokenType.Transform);
+			} else if (Char.IsDigit (ch) || ch == '-') {
 				StringBuilder sb = new StringBuilder ();
 				
 				sb.Append (ch);
@@ -190,14 +193,24 @@ namespace Microsoft.Build.BuildEngine {
 				string temp;
 				
 				sb.Append (ch);
+				bool is_itemref = (PeekChar () == '@');
+				int num_open_braces = 0;
+				bool in_literal = false;
 				
 				while ((i = PeekChar ()) != -1) {
 					ch = (char) i;
+					if (ch == '(' && !in_literal && is_itemref)
+						num_open_braces ++;
+					if (ch == ')' && !in_literal && is_itemref)
+						num_open_braces --;
 					
 					sb.Append ((char) ReadChar ());
 					
-					if (ch == '\'')
-						break;
+					if (ch == '\'') {
+						if (num_open_braces == 0)
+							break;
+						in_literal = !in_literal;
+					}
 				}
 				
 				temp = sb.ToString ();

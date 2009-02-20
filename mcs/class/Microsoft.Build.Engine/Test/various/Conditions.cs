@@ -309,6 +309,32 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsNotNull (proj.EvaluatedProperties ["D"], "A4");
 			Assert.IsNotNull (proj.EvaluatedProperties ["E"], "A5");
 		}
+		[Test]
+		public void TestCondition11 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup>
+		<FooProp>true</FooProp>
+	</PropertyGroup>
+	<ItemGroup>
+		<FooList Include=""abc.exe""/>
+		<List1 Include=""fr_a.txt"" Condition="" $(FooProp) == 'true'"" />
+		<List1 Include=""fr_b.txt"" Condition="" '@(FooList->'%(Extension)a(foo', ',')' == '.exea(foo'"" />
+		<List1 Include=""fr_c.txt"" Condition="" @(FooList -> '%(Extension)', ',') == '.exe'"" />
+	</ItemGroup>
+</Project>";
+
+			proj.LoadXml (documentString);
+
+			BuildItemGroup bgp = proj.GetEvaluatedItemsByName ("List1");
+			Assert.IsNotNull (bgp, "Expected values in List1");
+			Assert.AreEqual (3, bgp.Count, "A1");
+			Assert.AreEqual ("fr_a.txt", bgp [0].FinalItemSpec, "A2");
+			Assert.AreEqual ("fr_b.txt", bgp [1].FinalItemSpec, "A3");
+			Assert.AreEqual ("fr_c.txt", bgp [2].FinalItemSpec, "A4");
+		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]

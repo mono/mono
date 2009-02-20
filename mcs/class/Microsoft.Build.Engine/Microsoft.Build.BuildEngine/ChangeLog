@@ -1,3 +1,13 @@
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
+	Fix #449683.
+	* ConditionTokenizer.cs: Handle unquoted item references (with or w/o
+	transforms) in conditions.
+	* ConditionParser.cs: Parse unquoted item, property references.
+	eg. Condition = " @(Foo->'%(Extension)') == '.exe' "
+	* Token.cs (Token.ToString): Override.
+	(TokenType.Transform): Uncomment.
+
 2009-02-12  Jonathan Chambers  <joncham@gmail.com>
 
 	* BuildProperty.cs: Value corresponds to XmlElement.InnerXml
