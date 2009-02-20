@@ -808,21 +808,25 @@ namespace System.Data.Odbc
 					bufsize = (col.MaxLength < 255 && col.MaxLength > 0 ? col.MaxLength : 255);
 					buffer= new byte [bufsize];
 					ArrayList al = new ArrayList ();
-					do {
-						ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, bufsize, ref outsize);
-						if (ret == OdbcReturn.Error)
-							break;
-						if (ret != OdbcReturn.NoData && outsize != -1) {
-							if (outsize < bufsize) {
-								byte [] tmparr = new byte [outsize];
-								Array.Copy (buffer, 0, tmparr, 0, outsize);
-								al.AddRange (tmparr);
-							} else
-								al.AddRange (buffer);
-						} else {
-							break;
-						}
-					} while (ret != OdbcReturn.NoData);
+					//get the size of data to be returned.
+					ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, 0, ref outsize);
+					if (outsize != (int) OdbcLengthIndicator.NullData) {
+						do {
+							ret = libodbc.SQLGetData (hstmt, ColIndex, SQL_C_TYPE.BINARY, buffer, bufsize, ref outsize);
+							if (ret == OdbcReturn.Error)
+								break;
+							if (ret != OdbcReturn.NoData && outsize != -1) {
+								if (outsize < bufsize) {
+									byte [] tmparr = new byte [outsize];
+									Array.Copy (buffer, 0, tmparr, 0, outsize);
+									al.AddRange (tmparr);
+								} else
+									al.AddRange (buffer);
+							} else {
+								break;
+							}
+						} while (ret != OdbcReturn.NoData);
+					}
 					DataValue = al.ToArray (typeof (byte));
 					break;
 				case OdbcType.Binary :
