@@ -1,3 +1,8 @@
+2009-02-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OdbcDataReader.cs (GetValue): Handle null image data.  Fixes ##419224
+	Patch by John Mortlock <johnm@hlaustralia.com.au>.
+	
 2009-01-18  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcDataReader.cs: Fixed GetBytes with limited length. Added reader
