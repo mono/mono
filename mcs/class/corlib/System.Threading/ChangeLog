@@ -1,3 +1,7 @@
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WaitHandle.cs: implemented SignalAndWait.
+
 2009-02-18  Jb Evain  <jbevain@novell.com>
 
 	* SynchronizationContext.cs: add NET_2_1 SetThreadStaticContext
