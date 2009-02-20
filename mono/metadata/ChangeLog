@@ -1,3 +1,9 @@
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall-def.h:
+	* threads-types.h:
+	* threads.c: added internal call for WaitHandle.SignalAndWait.
+
 2009-02-19  Bill Holmes  <billholmes54@gmail.com>
 
 	* cominterop.c : Adding cominterop_type_from_handle and 
