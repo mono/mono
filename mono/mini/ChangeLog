@@ -1,3 +1,16 @@
+2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+
+	* mini-x86.c (mono_arch_output_basic_block): Implement OP_FCONV_TO_R4, it must
+	change the precision of the value.
+
+	* cpu-x86.md: Define len for float_conv_to_r4.
+
+	* basic-float.cs: Add a test for this.
+
+	Fixed part of #467201.
+
 2009-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c: Adjust locking order to the new semantics where the loader lock
