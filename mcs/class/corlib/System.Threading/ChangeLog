@@ -1,4 +1,3 @@
-=======
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WaitHandle.cs: implemented SignalAndWait.
