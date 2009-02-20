@@ -136,6 +136,12 @@ namespace Microsoft.Build.Utilities
 		
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
+
+			if (!File.Exists (filename)) {
+				Log.LogError ("Unable to find tool {0} at '{1}'", ToolName, filename);
+				return false;
+			}
+
 			if (arguments == null)
 				throw new ArgumentNullException ("arguments");
 			
@@ -150,8 +156,13 @@ namespace Microsoft.Build.Utilities
 			Log.LogMessage (MessageImportance.Normal, String.Format ("Tool {0} execution started with arguments: {1}",
 				filename, arguments));
 			
-			process.Start ();
-			process.WaitForExit ();
+			try {
+				process.Start ();
+				process.WaitForExit ();
+			} catch (System.ComponentModel.Win32Exception e) {
+				Log.LogError ("Error executing tool '{0}': {1}", filename, e.Message);
+				return false;
+			}
 			
 			exitCode = process.ExitCode;
 			
