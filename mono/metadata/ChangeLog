@@ -1,5 +1,8 @@
 2009-02-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_reflection_setup_internal_class): Move the user type
+	check before the locking.
+	
 	* reflection.c (mono_reflection_setup_internal_class): Check for user types.
 	(mono_reflection_create_runtime_class): Ditto.
 	(mono_reflection_sighelper_get_signature_local): Ditto.
