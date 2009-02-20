@@ -374,11 +374,13 @@ namespace System.Web.UI {
 #endif
 		object ReadStringResource ()
 		{
+#if NET_2_0
 			StringResourceData data = new StringResourceData ();
 			if (ICalls.GetUnmanagedResourcesPtr (GetType ().Assembly, out data.Ptr, out data.Length)) {
 				return data;
 			}
 			Console.WriteLine ("ReadStringResource Returns null!");
+#endif
 			return null;
 		}
 
