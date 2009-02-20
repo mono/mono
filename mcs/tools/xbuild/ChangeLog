@@ -1,5 +1,9 @@
 2009-02-20  Ankit Jain  <jankit@novell.com>
 
+	* SolutionParser.cs (ParseSolution): Ignore solution folders.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
 	* SolutionParser.cs (ParseSolution): Ignore GlobalSection named
 	'NestedProjects'.
 

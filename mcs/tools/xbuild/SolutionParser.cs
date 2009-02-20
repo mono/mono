@@ -84,6 +84,7 @@ namespace Mono.XBuild.CommandLine {
 		static Regex projectConfigurationActiveCfgRegex = new Regex ("\\s*(" + guidExpression + ")\\.(.+?)\\|(.+?)\\.ActiveCfg = (.+?)\\|(.+)");
 		static Regex projectConfigurationBuildRegex = new Regex ("\\s*(" + guidExpression + ")\\.(.*?)\\|(.*?)\\.Build\\.0 = (.*?)\\|(.+)");
 
+		static string solutionFolderGuid = "{2150E333-8FDC-42A3-9474-1A3956D46DE8}";
 
 		public void ParseSolution (string file, Project p)
 		{
@@ -99,6 +100,13 @@ namespace Mono.XBuild.CommandLine {
 			Match m = projectRegex.Match (line);
 			while (m.Success) {
 				ProjectInfo projectInfo = new ProjectInfo (m.Groups[2].Value, m.Groups[3].Value);
+				if (String.Compare (m.Groups [1].Value, solutionFolderGuid,
+						StringComparison.InvariantCultureIgnoreCase) == 0) {
+					// Ignore solution folders
+					m = m.NextMatch ();
+					continue;
+				}
+
 				projectInfos.Add (new Guid (m.Groups[4].Value), projectInfo);
 
 				Project currentProject = p.ParentEngine.CreateNewProject ();
