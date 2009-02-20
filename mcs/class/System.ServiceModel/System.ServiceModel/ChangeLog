@@ -1,3 +1,9 @@
+2009-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory_1.cs : it's not going to create ClientRuntime
+	  anymore here. Moving to ServiceEndpoint.cs as the first stage.
+	* ClientBase.cs : some comment.
+
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory.cs : for default constructor, first try to

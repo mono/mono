@@ -1,3 +1,7 @@
+2009-02-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceEndpoint.cs : moved CreateRuntime() from ChannelFactory<T>.
+
 2009-02-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescriptionGenerator.cs : do not write body wrapper element
