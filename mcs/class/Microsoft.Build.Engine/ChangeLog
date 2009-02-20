@@ -1,3 +1,7 @@
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* Import.cs (GetFullPath): Use Utilities.FromMSBuildPath .
+
 2009-02-19  Jonathan Chambers  <joncham@gmail.com>
 
 	* Microsoft.Build.Engine.csproj: Add.
