@@ -31,14 +31,15 @@ class Test {
 
 		try {
 			res = d.EndInvoke (ar1);
+			
+			while (cb_state == 0)
+				Thread.Sleep (0);
+			
 		} catch (NotImplementedException) {
 			res = 1;
 			Console.WriteLine ("received exception ... OK");
 		}
 
-		while (cb_state == 0)
-			Thread.Sleep (0);
-		
 		if (cb_state != 1)
 			return 1;
 		
