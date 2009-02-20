@@ -1116,6 +1116,44 @@ namespace MonoTests.System.Data
 			Adaptador.Fill(Lector);
 		}
 
+		[Test]
+		public void Bug419224Test () 
+		{
+			cmd = new OdbcCommand ("DROP TABLE IF EXISTS bug419224test");
+			cmd.Connection = conn;
+			cmd.ExecuteNonQuery ();
+
+			cmd = new OdbcCommand ("CREATE TABLE bug419224test (id_test INTEGER NOT NULL, payload TINYBLOB NOT NULL)");
+			cmd.Connection = conn;
+			cmd.ExecuteNonQuery ();
+
+			cmd = new OdbcCommand ("INSERT INTO odbc_test (id_test, payload) VALUES (1, 'test for bug419224)");
+			cmd.Connection = conn;
+			cmd.ExecuteNonQuery ();
+
+			OdbcDataAdapter Adaptador = new OdbcDataAdapter ();
+
+			DataSet Lector = new DataSet ();
+
+			Adaptador.SelectCommand = new OdbcCommand ("SELECT * FROM odbc_test WHERE id_test=1", (OdbcConnection) conn);
+			Adaptador.Fill (Lector);
+			Assert.AreEqual (Lector.Tables[0].Rows[0]["payload"], 1.2346);
+
+
+  			OdbcDataReader NewRdr = cmd.ExecuteReader();
+
+  			// tinyblob column index:
+  			int TinyblobIdx = 1;
+
+  			bool read = NewRdr.Read();
+
+  			if (read)
+  			{
+    				bool ret = NewRdr.IsDBNull(TinyblobIdx); 
+				Assert.AreEqual (ret, false);
+			}
+		}
+
 		static void DoExecuteNonQuery (OdbcConnection conn, string sql)
 		{
 			IDbCommand cmd = new OdbcCommand (sql, conn);
