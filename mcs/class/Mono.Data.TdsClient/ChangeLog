@@ -1,3 +1,8 @@
+2009-02-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* TdsDataReader.cs: Access TdsDataColumn correctly for NET_2_0.
+	Fixes #466199. Patch by Tom Hindle <tom_hindle@sil.org>
+	
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Data.TdsClient/TdsCommand.cs: Fix unneeded assignment

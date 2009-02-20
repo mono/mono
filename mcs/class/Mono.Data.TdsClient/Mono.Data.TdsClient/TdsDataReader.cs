@@ -389,7 +389,11 @@ namespace Mono.Data.TdsClient {
 				if (row ["BaseColumnName"] == DBNull.Value)
 					row ["BaseColumnName"] = row ["ColumnName"];
 
+#if NET_2_0
+				switch ((TdsColumnType) schema.ColumnType) {
+#else
 				switch ((TdsColumnType) schema ["ColumnType"]) {
+#endif
 					case TdsColumnType.Image :
 						dataTypeNames.Add ("image");
 						row ["ProviderType"] = (int) TdsType.Image;
