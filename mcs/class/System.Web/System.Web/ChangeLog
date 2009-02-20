@@ -1,7 +1,13 @@
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWriter.cs: new Response property and WriteUTF8Ptr
+	method.
+	* HttpResponseStream.cs: added support for writing from an
+	IntPtr. copied the memcpy method from String.cs.
+
 2009-02-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpApplicationFactory.cs: check of global.asax was precompiled.
-
 
 2009-01-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

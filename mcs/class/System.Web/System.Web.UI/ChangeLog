@@ -1,3 +1,19 @@
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ResourceBasedLiteralControl.cs: new Control. It's just
+	like a LiteralControl but will render itself from the bytes pointed to
+	by an IntPtr and not create any string from the underlying data unless
+	needed.
+
+	* TemplateControl.cs: implemented a bunch of methods
+	that are used from the precompiled assemblies for a web project. The
+	most notable change needed is to be able to read a win32 resource from
+	the dll of the control. The resource is a concatenation of literals
+	with plain text for the control and a specialized LiteralControl is
+	generated from different chunks of the resource.
+
+	* HtmlTextWriter.cs: new method that returns the HttpWriter in use.
+
 2009-02-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TemplateControl.cs: ReadStringResource returns null now.

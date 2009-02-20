@@ -689,6 +689,7 @@ System.Web.UI/PropertyConverter.cs
 System.Web.UI/PropertyEntry.cs
 System.Web.UI/ReadOnlyDataSourceView.cs
 System.Web.UI/RenderMethod.cs
+System.Web.UI/ResourceBasedLiteralControl.cs
 System.Web.UI/RootBuilder.cs
 System.Web.UI/SessionPageStatePersister.cs
 System.Web.UI/SimpleHandlerFactory.cs

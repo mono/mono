@@ -825,6 +825,11 @@ namespace System.Web.UI {
 			}
 		}
 		
+		internal HttpWriter GetHttpWriter ()
+		{
+			return b as HttpWriter;
+		}
+
 		TextWriter b;
 		string tab_string;
 		bool newline;

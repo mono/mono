@@ -169,6 +169,7 @@ namespace System.Web.Compilation {
 					// 3 -> ascx, aspx
 					// 6 -> app_code - nothing to do here
 					// 8 -> global.asax
+					// 9 -> App_GlobalResources - nothing to do?
 					if (reader.Name == "resultType" && (val == "2" || val == "3" || val == "8"))
 						LoadPageData (reader);
 				}

@@ -1,3 +1,7 @@
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* System.Web.Compilation/BuildManager.cs: updated comment.
+
 2009-02-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TemplateControlCompiler.cs: lowercase place holder names
