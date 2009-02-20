@@ -1,5 +1,11 @@
 2009-02-20  Ankit Jain  <jankit@novell.com>
 
+	* SolutionParser.cs (ParseProjectConfigurationPlatforms): Report missing
+	project guids as Warnings and not errors. Report every missing guid only
+	once.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
 	* SolutionParser.cs (projectRegex): Use '\s' to match whitespace.
 
 2009-02-19  Jonathan Chambers  <joncham@gmail.com>

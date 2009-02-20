@@ -190,12 +190,16 @@ namespace Mono.XBuild.CommandLine {
 
 		void ParseProjectConfigurationPlatforms (string section, Dictionary<Guid, ProjectInfo> projectInfos)
 		{
+			List<Guid> missingGuids = new List<Guid> ();
 			Match projectConfigurationPlatform = projectConfigurationActiveCfgRegex.Match (section);
 			while (projectConfigurationPlatform.Success) {
 				Guid guid = new Guid (projectConfigurationPlatform.Groups[1].Value);
 				ProjectInfo projectInfo;
 				if (!projectInfos.TryGetValue (guid, out projectInfo)) {
-					ErrorUtilities.ReportError (0, string.Format("Failed to find project {0}", guid));
+					if (!missingGuids.Contains (guid)) {
+						ErrorUtilities.ReportWarning (0, string.Format("Failed to find project {0}", guid));
+						missingGuids.Add (guid);
+					}
 					projectConfigurationPlatform = projectConfigurationPlatform.NextMatch ();
 					continue;
 				}
@@ -212,7 +216,15 @@ namespace Mono.XBuild.CommandLine {
 			Match projectConfigurationPlatformBuild = projectConfigurationBuildRegex.Match (section);
 			while (projectConfigurationPlatformBuild.Success) {
 				Guid guid = new Guid (projectConfigurationPlatformBuild.Groups[1].Value);
-				ProjectInfo projectInfo = projectInfos[guid];
+				ProjectInfo projectInfo;
+				if (!projectInfos.TryGetValue (guid, out projectInfo)) {
+					if (!missingGuids.Contains (guid)) {
+						ErrorUtilities.ReportWarning (0, string.Format("Failed to find project {0}", guid));
+						missingGuids.Add (guid);
+					}
+					projectConfigurationPlatformBuild = projectConfigurationPlatformBuild.NextMatch ();
+					continue;
+				}
 				string solConf = projectConfigurationPlatformBuild.Groups[2].Value;
 				string solPlat = projectConfigurationPlatformBuild.Groups[3].Value;
 				string projConf = projectConfigurationPlatformBuild.Groups[4].Value;
