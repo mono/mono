@@ -367,22 +367,13 @@ namespace System.Web.UI {
 		}
 #endif
 	
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public 
-#if !NET_2_0
-		static
-#endif
-		object ReadStringResource ()
-		{
 #if NET_2_0
-			StringResourceData data = new StringResourceData ();
-			if (ICalls.GetUnmanagedResourcesPtr (GetType ().Assembly, out data.Ptr, out data.Length)) {
-				return data;
-			}
-			Console.WriteLine ("ReadStringResource Returns null!");
-#endif
-			return null;
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		public object ReadStringResource ()
+		{
+			return ReadStringResource (GetType ());
 		}
+#endif
 
 		class StringResourceData {
 			public IntPtr Ptr;
@@ -443,7 +434,11 @@ namespace System.Web.UI {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public static object ReadStringResource (Type t)
 		{
-			throw new NotSupportedException ();
+			StringResourceData data = new StringResourceData ();
+			if (ICalls.GetUnmanagedResourcesPtr (t.Assembly, out data.Ptr, out data.Length))
+				return data;
+
+			throw new HttpException ("Unable to load the string resources.");
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]

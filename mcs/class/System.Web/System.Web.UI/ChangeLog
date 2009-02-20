@@ -1,5 +1,10 @@
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* TemplateControl.cs: implement the other ReadStringResource method.
+	Patch from Kornel Pal.
+
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* ResourceBasedLiteralControl.cs: new Control. It's just
 	like a LiteralControl but will render itself from the bytes pointed to
 	by an IntPtr and not create any string from the underlying data unless
