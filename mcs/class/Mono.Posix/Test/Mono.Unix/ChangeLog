@@ -1,3 +1,9 @@
+2009-02-20  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixSignalTest.cs: Add tests to check for concurrent
+	  UnixSignal.WaitOne() invocations.  Tests thanks to 
+	  tim.jenks@realtimeworlds.com.
+
 2009-02-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixSignalTest.cs: Disable the tests that use RealTimeSignum on OS X, 

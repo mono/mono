@@ -138,7 +138,7 @@ namespace Mono.Unix {
 
 		[Map]
 		struct SignalInfo {
-			public int signum, count, read_fd, write_fd, have_handler;
+			public int signum, count, read_fd, write_fd, have_handler, pipecnt;
 			public IntPtr handler;
 		}
 
