@@ -395,8 +395,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void Load (string projectFileName)
 		{
-			this.fullFileName = Path.GetFullPath (projectFileName);
-			DoLoad (new StreamReader (projectFileName));
+			this.fullFileName = Utilities.FromMSBuildPath (Path.GetFullPath (projectFileName));
+			DoLoad (new StreamReader (fullFileName));
 		}
 		
 		[MonoTODO ("Not tested")]
@@ -826,6 +826,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", parentEngine.BinPath, PropertyType.Reserved));
 
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;

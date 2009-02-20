@@ -1,3 +1,9 @@
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* Utilities.cs (FromMSBuildPath): Copy from monodevelop.
+	* Project.cs (Load): Use FromMSBuildPath on the path.
+	(InitializeProperties): Set "MSBuildToolsPath" also.
+
 2009-02-20  Ankit Jain  <jankit@novell.com>
 
 	Fix #449683.
