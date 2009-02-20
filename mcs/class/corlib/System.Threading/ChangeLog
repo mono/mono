@@ -1,3 +1,18 @@
+=======
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WaitHandle.cs: implemented SignalAndWait.
+
+2009-02-18  Jb Evain  <jbevain@novell.com>
+
+	* SynchronizationContext.cs: add NET_2_1 SetThreadStaticContext
+	method, even if already obsolete.
+
+2009-01-30  Andreia Gaita  <avidigal@novell.com>
+
+	* SynchronizationContext.cs: Remove moonlight hacks, dispatcher should
+	be able to handle this now.
+
 2008-12-20  Miguel de Icaza  <miguel@novell.com>
 
 	* WaitHandle.cs: Add two overloads that were introduced in 3.5.
