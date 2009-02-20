@@ -5,6 +5,8 @@
 	* cpu-x86.md: Fix the sizes for fcall(_reg,_membase), long_conv_to_r4_2
 	and long_conv_to_r8_2:
 
+	Fixed part of #467201.
+
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
