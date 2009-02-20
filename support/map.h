@@ -1568,6 +1568,7 @@ struct Mono_Unix_UnixSignal_SignalInfo {
 	int   read_fd;
 	int   write_fd;
 	int   have_handler;
+	int   pipecnt;
 	void* handler;
 };
 
@@ -1582,8 +1583,6 @@ int helper_Mono_Posix_Stat (const char* filename, int dereference, int* device, 
 int map_Mono_Posix_AccessMode (int mode);
 int map_Mono_Posix_FileMode (int mode);
 int map_Mono_Posix_OpenFlags (int flags);
-int map_Mono_Posix_PollEvents (int x);
-int map_Mono_Posix_Signals (int x);
 int map_Mono_Posix_WaitOptions (int wait_options);
 int Mono_Posix_FromRealTimeSignum (int offset, int* rval);
 int Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs* source, void* destination);
@@ -1664,7 +1663,6 @@ int Mono_Posix_Syscall_getlogin_r (char* name, guint64 bufsize);
 int Mono_Posix_Syscall_getpwent (struct Mono_Posix_Syscall__Passwd* pwbuf);
 int Mono_Posix_Syscall_getpwnam (const char* name, struct Mono_Posix_Syscall__Passwd* passwd);
 int Mono_Posix_Syscall_getpwnam_r (const char* name, struct Mono_Posix_Syscall__Passwd* pwbuf, void** pwbufp);
-int helper_Mono_Posix_getpwnamuid (int mode, char *in_name, int in_uid, char **account, char **password, int *uid, int *gid, char **name, char **home, char **shell);
 int Mono_Posix_Syscall_getpwuid (unsigned int uid, struct Mono_Posix_Syscall__Passwd* passwd);
 int Mono_Posix_Syscall_getpwuid_r (unsigned int uid, struct Mono_Posix_Syscall__Passwd* pwbuf, void** pwbufp);
 int Mono_Posix_Syscall_gettimeofday (struct Mono_Posix_Timeval* tv, void* ignore);

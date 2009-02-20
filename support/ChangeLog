@@ -1,3 +1,16 @@
+2009-02-20  Jonathan Pryor  <jpryor@novell.com>
+
+	* map.h: Flush (adds Mono_Unix_UnixSignal_SignalInfo::pipecnt, removes
+	  functions no longer declared within Mono.Posix.dll).
+	* signal.c: Allow Mono_Unix_UnixSignal_WaitAny() to be called 
+	  concurrently from multiple threads w/o blocking each thread;
+	  previously, calls to Mono_Unix_UnixSignal_WaitAny() would block
+	  until the previous call completed.  This required restructuring
+	  Mono_Unix_UnixSignal_SignalInfo to hold a ref-counted
+	  read_fd/write_fd pair (instead of allocating & releasing within
+	  _WaitAny()) so that the pipes could be "shared" between threads.
+	  Patch thanks to tim.jenks@realtimeworlds.com.
+
 2009-02-10  Jeffrey Stedfast  <fejj@novell.com>
 
 	* minizip/zip.c: Fix warnings about old-style paramater type

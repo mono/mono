@@ -4,6 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *   Jonathan Pryor (jpryor@novell.com)
+ *   Tim Jenks (tim.jenks@realtimeworlds.com)
  *
  * Copyright (C) 2004-2005 Jonathan Pryor
  * Copyright (C) 2008 Novell, Inc.
@@ -17,6 +18,7 @@
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #include <sys/types.h>
+#include <poll.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -101,16 +103,19 @@ int Mono_Posix_FromRealTimeSignum (int offset, int *r)
 #ifdef WAPI_ATOMIC_ASM
 	#define mph_int_get(p)     InterlockedExchangeAdd ((p), 0)
 	#define mph_int_inc(p)     InterlockedIncrement ((p))
+	#define mph_int_dec_test(p)     (InterlockedDecrement ((p)) == 0)
 	#define mph_int_set(p,o,n) InterlockedExchange ((p), (n))
 #elif GLIB_CHECK_VERSION(2,4,0)
 	#define mph_int_get(p) g_atomic_int_get ((p))
  	#define mph_int_inc(p) do {g_atomic_int_inc ((p));} while (0)
+	#define mph_int_dec_test(p) g_atomic_int_dec_and_test ((p))
 	#define mph_int_set(p,o,n) do {                                 \
 		while (!g_atomic_int_compare_and_exchange ((p), (o), (n))) {} \
 	} while (0)
 #else
 	#define mph_int_get(p) (*(p))
 	#define mph_int_inc(p) do { (*(p))++; } while (0)
+	#define mph_int_dec_test(p) (--(*(p)) == 0)
 	#define mph_int_set(p,o,n) do { *(p) = n; } while (0)
 #endif
 
@@ -125,6 +130,27 @@ Mono_Posix_Syscall_psignal (int sig, const char* s)
 #define NUM_SIGNALS 64
 static signal_info signals[NUM_SIGNALS];
 
+static int acquire_mutex (pthread_mutex_t *mutex)
+{
+	int mr;
+	while ((mr = pthread_mutex_lock (mutex)) == EAGAIN) {
+		/* try to acquire again */
+	}
+	if ((mr != 0) && (mr != EDEADLK))  {
+		errno = mr;
+		return -1;
+	}
+	return 0;
+}
+
+static void release_mutex (pthread_mutex_t *mutex)
+{
+	int mr;
+	while ((mr = pthread_mutex_unlock (mutex)) == EAGAIN) {
+		/* try to release mutex again */
+	}
+}
+
 static void
 default_handler (int signum)
 {
@@ -137,8 +163,14 @@ default_handler (int signum)
 		mph_int_inc (&h->count);
 		fd = mph_int_get (&h->write_fd);
 		if (fd > 0) {
+			int j,pipecounter;
 			char c = signum;
-			write (fd, &c, 1);
+			pipecounter = mph_int_get (&h->pipecnt);
+			for (j = 0; j < pipecounter; ++j) {
+				int r;
+				do { r = write (fd, &c, 1); } while (r == -1 && errno == EINTR);
+				fsync (fd); /* force */
+			}
 		}
 	}
 }
@@ -148,16 +180,13 @@ static pthread_mutex_t signals_mutex = PTHREAD_MUTEX_INITIALIZER;
 void*
 Mono_Unix_UnixSignal_install (int sig)
 {
-	int i, mr;
+	int i;
 	signal_info* h = NULL; 
 	int have_handler = 0;
 	void* handler = NULL;
 
-	mr = pthread_mutex_lock (&signals_mutex);
-	if (mr != 0) {
-		errno = mr;
+	if (acquire_mutex (&signals_mutex) == -1)
 		return NULL;
-	}
 
 #if defined (SIGRTMIN) && defined (SIGRTMAX)
 	/*The runtime uses some rt signals for itself so it's important to not override them.*/
@@ -202,9 +231,10 @@ Mono_Unix_UnixSignal_install (int sig)
 	if (h) {
 		mph_int_set (&h->count, h->count, 0);
 		mph_int_set (&h->signum, h->signum, sig);
+		mph_int_set (&h->pipecnt, h->pipecnt, 0);
 	}
 
-	pthread_mutex_unlock (&signals_mutex);
+	release_mutex (&signals_mutex);
 
 	return h;
 }
@@ -225,13 +255,10 @@ int
 Mono_Unix_UnixSignal_uninstall (void* info)
 {
 	signal_info* h;
-	int mr, r = -1;
+	int r = -1;
 
-	mr = pthread_mutex_lock (&signals_mutex);
-	if (mr != 0) {
-		errno = mr;
+	if (acquire_mutex (&signals_mutex) == -1)
 		return -1;
-	}
 
 	h = info;
 
@@ -249,28 +276,33 @@ Mono_Unix_UnixSignal_uninstall (void* info)
 		h->signum = 0;
 	}
 
-	pthread_mutex_unlock (&signals_mutex);
+	release_mutex (&signals_mutex);
 
 	return r;
 }
 
 static int
-setup_pipes (signal_info** signals, int count, fd_set *read_fds, int *max_fd)
+setup_pipes (signal_info** signals, int count, struct pollfd *fd_structs, int *currfd)
 {
-	int i, r;
+	int i;
+	int r = 0;
 	for (i = 0; i < count; ++i) {
 		signal_info* h;
 		int filedes[2];
 
-		if ((r = pipe (filedes)) != 0) {
-			break;
-		}
 		h = signals [i];
-		h->read_fd  = filedes [0];
-		h->write_fd = filedes [1];
-		if (h->read_fd > *max_fd)
-			*max_fd = h->read_fd;
-		FD_SET (h->read_fd, read_fds);
+
+		if (mph_int_get (&h->pipecnt) == 0) {
+			if ((r = pipe (filedes)) != 0) {
+				break;
+			}
+			h->read_fd  = filedes [0];
+			h->write_fd = filedes [1];
+		}
+		mph_int_inc (&h->pipecnt);
+		fd_structs[*currfd].fd = h->read_fd;
+		fd_structs[*currfd].events = POLLIN;
+		++(*currfd);
 	}
 	return r;
 }
@@ -281,17 +313,20 @@ teardown_pipes (signal_info** signals, int count)
 	int i;
 	for (i = 0; i < count; ++i) {
 		signal_info* h = signals [i];
-		if (h->read_fd != 0)
-			close (h->read_fd);
-		if (h->write_fd != 0)
-			close (h->write_fd);
-		h->read_fd  = 0;
-		h->write_fd = 0;
+
+		if (mph_int_dec_test (&h->pipecnt)) {
+			if (h->read_fd != 0)
+				close (h->read_fd);
+			if (h->write_fd != 0)
+				close (h->write_fd);
+			h->read_fd  = 0;
+			h->write_fd = 0;
+		}
 	}
 }
 
 static int
-wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, int timeout)
+wait_for_any (signal_info** signals, int count, int *currfd, struct pollfd* fd_structs, int timeout)
 {
 	int r, idx;
 	do {
@@ -302,8 +337,7 @@ wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, in
 			tv.tv_usec = (timeout % 1000)*1000;
 			ptv = &tv;
 		}
-
-		r = select (max_fd + 1, read_fds, NULL, NULL, ptv);
+		r = poll (fd_structs, count, timeout);
 	} while (r == -1 && errno == EINTR);
 
 	idx = -1;
@@ -313,9 +347,12 @@ wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, in
 		int i;
 		for (i = 0; i < count; ++i) {
 			signal_info* h = signals [i];
-			if (FD_ISSET (h->read_fd, read_fds)) {
+			if (fd_structs[i].revents & POLLIN) {
+				int r;
 				char c;
-				read (h->read_fd, &c, 1); /* ignore any error */
+				do {
+					r = read (h->read_fd, &c, 1);
+				} while (r == -1 && errno == EINTR);
 				if (idx == -1)
 					idx = i;
 			}
@@ -333,27 +370,32 @@ wait_for_any (signal_info** signals, int count, int max_fd, fd_set* read_fds, in
 int
 Mono_Unix_UnixSignal_WaitAny (void** _signals, int count, int timeout /* milliseconds */)
 {
-	fd_set read_fds;
-	int mr, r;
-	int max_fd = 0;
+	int r;
+	int currfd = 0;
+	struct pollfd fd_structs[NUM_SIGNALS];
 
 	signal_info** signals = (signal_info**) _signals;
 
-	mr = pthread_mutex_lock (&signals_mutex);
-	if (mr != 0) {
-		errno = mr;
+	if (count > NUM_SIGNALS)
 		return -1;
-	}
 
-	FD_ZERO (&read_fds);
+	if (acquire_mutex (&signals_mutex) == -1)
+		return -1;
 
-	r = setup_pipes (signals, count, &read_fds, &max_fd);
+	r = setup_pipes (signals, count, &fd_structs[0], &currfd);
+
+	release_mutex (&signals_mutex);
+
 	if (r == 0) {
-		r = wait_for_any (signals, count, max_fd, &read_fds, timeout);
+		r = wait_for_any (signals, count, &currfd, &fd_structs[0], timeout);
 	}
+
+	if (acquire_mutex (&signals_mutex) == -1)
+		return -1;
+
 	teardown_pipes (signals, count);
 
-	pthread_mutex_unlock (&signals_mutex);
+	release_mutex (&signals_mutex);
 
 	return r;
 }
