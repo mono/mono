@@ -2,6 +2,13 @@
 
 	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
 
+	* cpu-x86.md: Fix the sizes for fcall(_reg,_membase), long_conv_to_r4_2
+	and long_conv_to_r8_2:
+
+2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+
 	* mini-x86.c (mono_arch_output_basic_block): Adjust precision of int to float
 	conversion to 32 bits.
 
