@@ -1,3 +1,12 @@
+2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* cil-coff.h:
+	* icall-def.h:
+	* icall.c: add new GetUnmanagedResourcePtr that returns a pointer to a
+	win32 resource loaded from a PE file.
+
+	* image.c: fix mono_image_lookup_resource.
+
 2009-02-19  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r127347.
