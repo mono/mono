@@ -1,3 +1,9 @@
+2009-02-21  Jb Evain  <jbevain@novell.com>
+
+	* ModuleBuilderTest.cs: add a test accessing the property
+	Module.ModuleVersionId on a dynamic module.
+	Test for #471302.
+
 2009-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add minimal tests for user types + Ref.Emit.

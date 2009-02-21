@@ -402,8 +402,21 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (typeToken.Token == TypeToken.Empty.Token, "#1");
 #endif
 		}
-		
-		
+
+#if NET_2_0
+		[Test] // bug #471302
+		public void ModuleBuilder_ModuleVersionId ()
+		{
+			var name = new AssemblyName () { Name = "Foo" };
+			var assembly = AppDomain.CurrentDomain.DefineDynamicAssembly (
+				name, AssemblyBuilderAccess.Run);
+
+			var module = assembly.DefineDynamicModule ("Foo");
+
+			Assert.AreNotEqual (new Guid (), module.ModuleVersionId);
+		}
+#endif
+
 		[Test]
 		public void GetGenericArguments_Returns_Null_For_Non_Generic_Methods ()
 		{
