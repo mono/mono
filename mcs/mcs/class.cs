@@ -840,7 +840,7 @@ namespace Mono.CSharp {
 						}
 					}
 
-					if (Kind == Kind.Interface && !fne_resolved.AsAccessible (this)) {
+					if (Kind == Kind.Interface && !IsAccessibleAs (fne_resolved.Type)) {
 						Report.Error (61, fne.Location,
 							"Inconsistent accessibility: base interface `{0}' is less accessible than interface `{1}'",
 							fne_resolved.GetSignatureForError (), GetSignatureForError ());
@@ -2853,7 +2853,7 @@ namespace Mono.CSharp {
 					return ifaces;
 				}
 
-				if (!base_class.AsAccessible (this)) {
+				if (!IsAccessibleAs (base_class.Type)) {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (60, Location, "Inconsistent accessibility: base class `{0}' is less accessible than class `{1}'", 
 						TypeManager.CSharpName (base_class.Type), GetSignatureForError ());

@@ -2838,11 +2838,6 @@ namespace Mono.CSharp {
 			return ds.CheckAccessLevel (Type);
 		}
 
-		public virtual bool AsAccessible (DeclSpace ds)
-		{
-			return ds.IsAccessibleAs (Type);
-		}
-
 		public virtual bool IsClass {
 			get { return Type.IsClass; }
 		}

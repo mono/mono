@@ -1,3 +1,7 @@
+2009-02-21  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, ecore.cs, class.cs: Removed redundant AsAccessible.
+
 2009-02-20  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #477447

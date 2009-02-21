@@ -1344,16 +1344,6 @@ namespace Mono.CSharp {
 			return ds.CheckAccessLevel (open_type);
 		}
 
-		public override bool AsAccessible (DeclSpace ds)
-		{
-			foreach (Type t in args.Arguments) {
-				if (!ds.IsAccessibleAs (t))
-					return false;
-			}
-
-			return ds.IsAccessibleAs (open_type);
-		}
-
 		public override bool IsClass {
 			get { return open_type.IsClass; }
 		}
