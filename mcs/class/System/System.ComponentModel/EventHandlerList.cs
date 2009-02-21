@@ -48,20 +48,17 @@ namespace System.ComponentModel {
 	public sealed class EventHandlerList : IDisposable
 	{
 #if NET_2_0
-		Dictionary <object, HandlerEntry> handlers;
+		Dictionary <object, Delegate> handlers;
 #else
 		Hashtable handlers;
 #endif
-		HandlerEntry nullEntry;
-		
 		public EventHandlerList ()
 		{
 		}
 
 		public Delegate this [object key] {
 			get {
-				HandlerEntry entry = FindEntry (key);
-				return entry == null ? null : entry.value;
+				return FindEntry (key);
 			}
 
 			set {
@@ -71,24 +68,22 @@ namespace System.ComponentModel {
 
 		public void AddHandler (object key, Delegate value)
 		{
-			HandlerEntry entry = FindEntry (key);
-			if (entry == null) {
+			Delegate prev = FindEntry (key);
+			if (prev == null) {
 				if (handlers == null) {
 #if NET_2_0
-					handlers = new Dictionary <object, HandlerEntry> ();
+					handlers = new Dictionary <object, Delegate> ();
 #else
 					handlers = new Hashtable ();
 #endif
 				}
 
 				if (key != null)
-					handlers.Add (key, new HandlerEntry (value));
-				else
-					nullEntry = new HandlerEntry (value);
+					handlers.Add (key, value);
 
 				return;
 			}
-			entry.value = Delegate.Combine (entry.value, value);
+			handlers [key] = Delegate.Combine (prev, value);
 		}
 
 #if NET_2_0
@@ -97,18 +92,18 @@ namespace System.ComponentModel {
 			if (listToAddFrom == null)
 				return;
 
-			foreach (KeyValuePair <object, HandlerEntry> kvp in listToAddFrom.handlers)
-				AddHandler (kvp.Key, kvp.Value.value);
+			foreach (KeyValuePair <object, Delegate> kvp in listToAddFrom.handlers)
+				AddHandler (kvp.Key, kvp.Value);
 		}
 #endif
 
 		public void RemoveHandler (object key, Delegate value)
 		{
-			HandlerEntry entry = FindEntry (key);
+			Delegate entry = FindEntry (key);
 			if (entry == null)
 				return;
 
-			entry.value = Delegate.Remove (entry.value, value);
+			entry = Delegate.Remove (entry, value);
 		}
 
 		public void Dispose ()
@@ -116,16 +111,12 @@ namespace System.ComponentModel {
 			handlers = null;
 		}
 		
-		private HandlerEntry FindEntry (object key)
+		private Delegate FindEntry (object key)
 		{
-			if (key == null)
-				return nullEntry;
-			
-			if (handlers == null)
+			if (key == null || handlers == null)
 				return null;
-
 #if NET_2_0
-			HandlerEntry entry;
+			Delegate entry;
 			if (handlers.TryGetValue (key, out entry))
 				return entry;
 
@@ -134,16 +125,6 @@ namespace System.ComponentModel {
 			return handlers [key] as HandlerEntry;
 #endif
 		}
-
-		[Serializable]
-		sealed class HandlerEntry
-		{
-			public Delegate value;
-			
-			public HandlerEntry (Delegate value)
-			{
-				this.value = value;
-			}
-		}
 	}
 }
+

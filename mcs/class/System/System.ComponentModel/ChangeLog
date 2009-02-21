@@ -1,3 +1,8 @@
+2009-02-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* EventHandlerList.cs: there's no need for HandlerEntry here.
+	Just store the delegate.
+
 2009-01-09  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* BindingList.cs: Add calls InsertItem which raises OnListChanged, so 
