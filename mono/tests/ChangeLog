@@ -1,3 +1,7 @@
+2009-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* invoke.cs: Add a test.
+
 2009-02-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add a test for #477396.
