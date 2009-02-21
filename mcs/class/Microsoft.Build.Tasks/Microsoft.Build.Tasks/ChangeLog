@@ -1,5 +1,13 @@
 2009-02-21  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #458916.
+	* Copy.cs: CopiedFiles and DestinationFiles should have target paths
+	instead of source. Also, the metadata should get retained from source
+	items. Based on a patch by Jeffrey Richardson <themann@indyfantasysports.net>
+	Refactor a bit to remove code duplication.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
 	* MSBuild.cs (SplitPropertiesToDictionary): Split into exactly 2 parts.
 
 2009-02-11  Leszek Ciesielski <skolima@gmail.com>

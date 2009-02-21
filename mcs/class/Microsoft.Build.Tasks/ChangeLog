@@ -1,3 +1,7 @@
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added CopyTest.cs
+
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add Test/resources/Sample.cs
