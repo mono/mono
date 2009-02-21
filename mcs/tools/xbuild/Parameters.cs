@@ -129,6 +129,10 @@ namespace Mono.XBuild.CommandLine {
                                         for (int i = 0; i < t; i++) {
                                                 char c = line [i];
 
+						if (c == '#')
+							// comment, ignore rest of the line
+							break;
+
                                                 if (c == '"' || c == '\'') {
                                                         char end = c;
 
