@@ -1,3 +1,7 @@
+2009-02-21  Kornél Pál  <kornelpal@gmail.com>
+
+	* EventHandlerList.cs: Fix profile 1.x build by not using HandlerEntry.
+
 2009-02-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* EventHandlerList.cs: there's no need for HandlerEntry here.
