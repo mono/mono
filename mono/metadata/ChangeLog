@@ -1,3 +1,10 @@
+2009-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix _another_ bug sharing
+	runtime invoke wrappers, this time it is string ctor wrappers, which
+	pass a dummy string as 'this' instead of their obj argument. Fixes
+	#478473.
+
 2009-02-21  Jb Evain  <jbevain@novell.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetReferencedAssemblies):
