@@ -252,8 +252,11 @@ namespace Microsoft.Build.BuildEngine {
 				return;
 			}
 			
-			foreach (XmlElement xe in itemElement.ChildNodes)
-				AddMetadata (xe.Name, xe.InnerText);
+			foreach (XmlNode xn in itemElement.ChildNodes) {
+				XmlElement xe = xn as XmlElement;
+				if (xe != null && ConditionParser.ParseAndEvaluate (xe.GetAttribute ("Condition"), project))
+					AddMetadata (xe.Name, xe.InnerText);
+			}
 
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
@@ -383,8 +386,8 @@ namespace Microsoft.Build.BuildEngine {
 			newElement.SetAttribute ("Include", child.FinalItemSpec);
 			if (parent.itemElement.HasAttribute ("Condition"))
 				newElement.SetAttribute ("Condition", parent.itemElement.GetAttribute ("Condition"));
-			foreach (XmlElement xe in parent.itemElement)
-				newElement.AppendChild (xe.Clone ());
+			foreach (XmlNode xn in parent.itemElement)
+				newElement.AppendChild (xn.Clone ());
 			parent.itemElement.ParentNode.InsertAfter (newElement, insertAfter);
 
 			newParent = new BuildItem (newElement, parent.parent_item_group);
@@ -467,8 +470,8 @@ namespace Microsoft.Build.BuildEngine {
 					XmlElement newElement = itemElement.OwnerDocument.CreateElement (value, Project.XmlNamespace);
 					newElement.SetAttribute ("Include", itemElement.GetAttribute ("Include"));
 					newElement.SetAttribute ("Condition", itemElement.GetAttribute ("Condition"));
-					foreach (XmlElement xe in itemElement)
-						newElement.AppendChild (xe.Clone ());
+					foreach (XmlNode xn in itemElement)
+						newElement.AppendChild (xn.Clone ());
 					itemElement.ParentNode.ReplaceChild (newElement, itemElement);
 					itemElement = newElement;
 				} else if (HasParentItem) {

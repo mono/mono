@@ -1,3 +1,8 @@
+2009-02-22  Ankit Jain  <jankit@novell.com>
+
+	* BuildItem.cs: Iterate over XmlElements childnodes with XmlNode
+	instead of XmlElement. Eg. XmlComment
+
 2009-02-21  Ankit Jain  <jankit@novell.com>
 
 	* Utilities.cs (FromMSBuildPath): Copy from monodevelop.
