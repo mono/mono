@@ -741,6 +741,7 @@ namespace System.Net
 
 		void OpenControlConnection ()
 		{
+			Exception exception = null;
 			Socket sock = null;
 			foreach (IPAddress address in hostEntry.AddressList) {
 				sock = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -755,7 +756,8 @@ namespace System.Net
 						sock.Connect (remote);
 						localEndPoint = (IPEndPoint) sock.LocalEndPoint;
 						break;
-					} catch (SocketException) {
+					} catch (SocketException exc) {
+						exception = exc;
 						sock.Close ();
 						sock = null;
 					}
@@ -764,7 +766,7 @@ namespace System.Net
 
 			// Couldn't connect to any address
 			if (sock == null)
-				throw new WebException ("Unable to connect to remote server", null,
+				throw new WebException ("Unable to connect to remote server", exception,
 						WebExceptionStatus.UnknownError, ftpResponse);
 
 			controlStream = new NetworkStream (sock);

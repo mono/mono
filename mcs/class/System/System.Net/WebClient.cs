@@ -444,7 +444,7 @@ namespace System.Net
 #if NET_2_0				
 				async = false;
 #endif				
-				WebRequest request = SetupRequest (address, method);
+				WebRequest request = SetupRequest (address, method, true);
 				return request.GetRequestStream ();
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -454,16 +454,16 @@ namespace System.Net
 			}
 		}
 
-		private string DetermineMethod (Uri address, string method)
+		private string DetermineMethod (Uri address, string method, bool is_upload)
 		{
 			if (method != null)
 				return method;
 
 #if NET_2_0
 			if (address.Scheme == Uri.UriSchemeFtp)
-				return "RETR";
+				return (is_upload) ? "STOR" : "RETR";
 #endif
-			return "POST";
+			return (is_upload) ? "POST" : "GET";
 		}
 
 		//   UploadData
@@ -514,6 +514,8 @@ namespace System.Net
 				async = false;
 #endif				
 				return UploadDataCore (address, method, data, null);
+			} catch (WebException) {
+				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
 					"performing a WebClient request.", ex);
@@ -531,7 +533,7 @@ namespace System.Net
 				throw new ArgumentNullException ("data");
 #endif
 
-			WebRequest request = SetupRequest (address, method);
+			WebRequest request = SetupRequest (address, method, true);
 			try {
 				int contentLength = data.Length;
 				request.ContentLength = contentLength;
@@ -628,7 +630,7 @@ namespace System.Net
 			WebRequest request = null;
 			try {
 				fStream = File.OpenRead (fileName);
-				request = SetupRequest (address, method);
+				request = SetupRequest (address, method, true);
 				reqStream = request.GetRequestStream ();
 				byte [] realBoundary = Encoding.ASCII.GetBytes ("--" + boundary + "\r\n");
 				reqStream.Write (realBoundary, 0, realBoundary.Length);
@@ -734,7 +736,7 @@ namespace System.Net
 							"value for this request.");
 
 			Headers ["Content-Type"] = urlEncodedCType;
-			WebRequest request = SetupRequest (uri, method);
+			WebRequest request = SetupRequest (uri, method, true);
 			try {
 				Stream rqStream = request.GetRequestStream ();
 				MemoryStream tmpStream = new MemoryStream ();
@@ -937,10 +939,10 @@ namespace System.Net
 			return request;
 		}
 
-		WebRequest SetupRequest (Uri uri, string method)
+		WebRequest SetupRequest (Uri uri, string method, bool is_upload)
 		{
 			WebRequest request = SetupRequest (uri);
-			request.Method = DetermineMethod (uri, method);
+			request.Method = DetermineMethod (uri, method, is_upload);
 			return request;
 		}
 
@@ -1234,7 +1236,7 @@ namespace System.Net
 					object [] args = (object []) state;
 					WebRequest request = null;
 					try {
-						request = SetupRequest ((Uri) args [0], (string) args [1]);
+						request = SetupRequest ((Uri) args [0], (string) args [1], true);
 						Stream stream = request.GetRequestStream ();
 						OnOpenWriteCompleted (
 							new OpenWriteCompletedEventArgs (stream, null, false, args [2]));

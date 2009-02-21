@@ -135,9 +135,8 @@ namespace System.Net
 
 		public override Stream GetResponseStream ()
 		{
-			if (stream == null) {
-				throw new InvalidOperationException ();
-			}
+			if (stream == null)
+				return Stream.Null; // After a STOR we get this
 			
 			if (method != WebRequestMethods.Ftp.DownloadFile &&
 					method != WebRequestMethods.Ftp.ListDirectory)
