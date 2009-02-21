@@ -1,3 +1,8 @@
+2009-02-21  Jb Evain  <jbevain@novell.com>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetReferencedAssemblies):
+	only get create_culture once.
+
 2009-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_reflection_setup_internal_class): Move the user type
