@@ -1,3 +1,9 @@
+2008-02-21  Jb Evain  <jbevain@novell.com>
+
+	* ModuleBuilder.cs: override GetModuleVersionId
+	so that we can get the module guid from Module.ModuleVersionId.
+	Part of the fix for #471302.
+
 2009-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* SignatureHelper.cs: Fix warnings.

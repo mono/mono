@@ -790,9 +790,15 @@ namespace System.Reflection.Emit {
 				global_type = new TypeBuilder (this, 0);
 		}
 
+		internal override Guid GetModuleVersionId ()
+		{
+			return new Guid (guid);
+		}
+
+		// Used by mcs, the symbol writer, and mdb through reflection
 		internal static Guid Mono_GetGuid (ModuleBuilder mb)
 		{
-			return new Guid (mb.guid);
+			return mb.GetModuleVersionId ();
 		}
 
 		void _ModuleBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

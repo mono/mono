@@ -1,3 +1,10 @@
+2008-02-21  Jb Evain  <jbevain@novell.com>
+
+	* Module.cs: add a new virtual GetModuleVersionId method,
+	and make the properties .MvId and ModuleVersionId call it.
+	This way, we can override it in ModuleBuilder.
+	Part of the fix for #471302.
+
 2008-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoMethod.cs: Fix the 1.1 build.
