@@ -1,3 +1,9 @@
+2008-02-21  Jb Evain  <jbevain@novell.com>
+
+	* ModuleBuilder.cs: override GetModuleVersionId
+	so that we can get the module guid from Module.ModuleVersionId.
+	Part of the fix for #471302.
+
 2008-11-23  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilder.cs: When assembly is strongnamed, then explicitly

@@ -297,14 +297,14 @@ namespace System.Reflection {
 
 		internal Guid MvId {
 			get {
-				return Mono_GetGuid (this);
+				return GetModuleVersionId ();
 			}
 		}
 
 #if NET_2_0
 		public Guid ModuleVersionId {
 			get {
-				return Mono_GetGuid (this);
+				return GetModuleVersionId ();
 			}
 		}
 
@@ -425,10 +425,15 @@ namespace System.Reflection {
 				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
 		}
 
-		// Mono Extension: returns the GUID of this module
+		// Used by mcs, the symbol writer, and mdb through reflection
 		internal static Guid Mono_GetGuid (Module module)
 		{
-			return new Guid (module.GetGuidInternal ());
+			return module.GetModuleVersionId ();
+		}
+
+		internal virtual Guid GetModuleVersionId ()
+		{
+			return new Guid (GetGuidInternal ());
 		}
 
 		private static bool filter_by_type_name (Type m, object filterCriteria) {
