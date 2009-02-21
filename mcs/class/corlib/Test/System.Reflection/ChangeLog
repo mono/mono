@@ -1,3 +1,8 @@
+2009-02-21  Jb Evain  <jbevain@novell.com>
+
+	* BinderTests.cs: add test for bug #471257, where Type.InvokeMember
+	calls Binder.BindToMethod will a null args.
+
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* MethodBaseTest.cs: Make a test quiet.
