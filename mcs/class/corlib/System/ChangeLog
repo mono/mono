@@ -1,3 +1,10 @@
+2009-02-21  Jb Evain  <jbevain@novell.com>
+
+	backport of r127628.
+
+	* MonoType.cs (InvokeMember): don't pass a null args to
+	Binder.BindToMethod. Fix for #471275.
+
 2009-02-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MarshalByRefObject.cs: Implemented MemberwiseClone(bool).

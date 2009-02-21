@@ -379,6 +379,8 @@ namespace System
 			if ((invokeAttr & BindingFlags.InvokeMethod) != 0) {
 				MethodInfo[] methods = GetMethodsByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
+				if (args == null)
+					args = new object [0];
 				MethodBase m = binder.BindToMethod (invokeAttr, methods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null) {
 					if (methods.Length > 0)
