@@ -1,3 +1,7 @@
+2009-02-21  Jb Evain  <jbevain@novell.com>
+
+	* EventHandlerList.cs: fix the 1.1 profile.
+
 2009-02-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* EventHandlerList.cs: there's no need for HandlerEntry here.

@@ -122,7 +122,7 @@ namespace System.ComponentModel {
 
 			return null;
 #else
-			return handlers [key] as HandlerEntry;
+			return handlers [key] as Delegate;
 #endif
 		}
 	}
