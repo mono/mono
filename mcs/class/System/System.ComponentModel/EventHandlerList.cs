@@ -103,7 +103,7 @@ namespace System.ComponentModel {
 			if (entry == null)
 				return;
 
-			entry = Delegate.Remove (entry, value);
+			handlers [key] = Delegate.Remove (entry, value);
 		}
 
 		public void Dispose ()
