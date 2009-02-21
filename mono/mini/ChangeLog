@@ -1,3 +1,8 @@
+2009-02-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Don't assert if string ctors
+	are called from runtime invoke wrappers.
+
 2009-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-ppc.md (store_memindex): Increase the size of this.
