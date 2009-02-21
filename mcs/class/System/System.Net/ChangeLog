@@ -1,3 +1,12 @@
+2009-02-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebResponse.cs: return a Null stream when there's no response to
+	be read.
+	* FtpWebRequest.cs: provide the error returned by the server in the
+	exception.
+	* WebClient.cs: set the correct method when doing a FTP upload.
+	Fixes bug #478451.
+
 2009-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: avoid errors when creating a temporary Uri to get
