@@ -1,5 +1,9 @@
 2009-02-21  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/xbuild.rsp: Add descriptive comments.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
 	* Parameters.cs (LoadResponseFile): Handle comments.
 
 2009-02-20  Ankit Jain  <jankit@novell.com>
