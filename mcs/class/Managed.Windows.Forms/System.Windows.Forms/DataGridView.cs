@@ -5033,7 +5033,7 @@ namespace System.Windows.Forms {
 
 		protected bool ProcessDeleteKey (Keys keyData)
 		{
-			if (!allowUserToDeleteRows || SelectedRows.Count == 0)
+			if (!AllowUserToDeleteRows || SelectedRows.Count == 0)
 				return false;
 
 			int index = Math.Max (selected_row - SelectedRows.Count + 1, 0);
@@ -5047,8 +5047,8 @@ namespace System.Windows.Forms {
 				if (hover_cell != null && hover_cell.OwningRow == row)
 					hover_cell = null;
 					
-				if (DataSource != null && DataSource is DataSet)
-					(DataSource as DataSet).Tables[dataMember].Rows.RemoveAt (row.Index);
+				if (DataManager != null)
+					DataManager.RemoveAt (row.Index);
 				else
 					Rows.RemoveAt (row.Index);
 			}

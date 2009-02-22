@@ -1,3 +1,7 @@
+2009-02-22  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Fix row removal in the data-bound scenario.
+
 2009-02-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCell.cs: Use strict equality comparison in order to 
