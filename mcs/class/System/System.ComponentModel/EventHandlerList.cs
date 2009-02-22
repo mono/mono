@@ -52,12 +52,16 @@ namespace System.ComponentModel {
 #else
 		Hashtable handlers;
 #endif
+		Delegate null_entry;
+
 		public EventHandlerList ()
 		{
 		}
 
 		public Delegate this [object key] {
 			get {
+				if (key == null)
+					return null_entry;
 				return FindEntry (key);
 			}
 
@@ -68,6 +72,11 @@ namespace System.ComponentModel {
 
 		public void AddHandler (object key, Delegate value)
 		{
+			if (key == null) {
+				null_entry = Delegate.Combine (null_entry, value);
+				return;
+			}
+
 			Delegate prev = FindEntry (key);
 			if (prev == null) {
 				if (handlers == null) {
@@ -77,11 +86,6 @@ namespace System.ComponentModel {
 					handlers = new Hashtable ();
 #endif
 				}
-
-				if (key != null)
-					handlers.Add (key, value);
-
-				return;
 			}
 			handlers [key] = Delegate.Combine (prev, value);
 		}
@@ -99,6 +103,11 @@ namespace System.ComponentModel {
 
 		public void RemoveHandler (object key, Delegate value)
 		{
+			if (key == null) {
+				null_entry = Delegate.Remove (null_entry, value);
+				return;
+			}
+
 			Delegate entry = FindEntry (key);
 			if (entry == null)
 				return;
@@ -113,7 +122,7 @@ namespace System.ComponentModel {
 		
 		private Delegate FindEntry (object key)
 		{
-			if (key == null || handlers == null)
+			if (handlers == null)
 				return null;
 #if NET_2_0
 			Delegate entry;
