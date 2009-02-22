@@ -1,3 +1,8 @@
+2009-02-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* socket-io.c: support SO_MAXCONN, SO_USELOOPBACK and
+	SO_EXLUSIVEADDRUSE where available.
+
 2009-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Fix _another_ bug sharing
