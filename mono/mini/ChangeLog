@@ -1,3 +1,10 @@
+2009-02-22  Mark Probst  <mark.probst@gmail.com>
+
+	Backport of r127665.
+
+	* tramp-ppc.c (mono_arch_create_trampoline_code): Store the
+	correct frame pointer in the LMF.  Should fix #478394.
+
 2009-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Don't assert if string ctors
