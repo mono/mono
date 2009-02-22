@@ -1,3 +1,9 @@
+2009-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (fullaotcheck): Copy Mono.Simd.dll as well.
+
+	* image-writer.c: Make the binary writer less verbose.
+
 2009-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Don't assert if string ctors
