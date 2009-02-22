@@ -133,7 +133,18 @@ namespace System.Windows.Forms {
 			auto_complete_listbox.Scroll (-lines);
 		}
 
-		private void ShowAutoCompleteListBox (bool is_backspace)
+		// Receives either WM_KEYDOWN or WM_CHAR that will likely need the generation/lookup
+		// of new matches
+		private void ProcessAutoCompleteInput (ref Message m, bool deleting_chars)
+		{
+			// Need to call base.WndProc before to have access to
+			// the updated Text property value
+			base.WndProc (ref m);
+			auto_complete_original_text = Text;
+			ShowAutoCompleteListBox (deleting_chars);
+		}
+
+		private void ShowAutoCompleteListBox (bool deleting_chars)
 		{
 			// 
 			// We only support CustomSource by now
@@ -192,7 +203,7 @@ namespace System.Windows.Forms {
 				auto_complete_listbox.ShowListBox ();
 			}
 
-			if (append && !is_backspace)
+			if (append && !deleting_chars)
 				AppendAutoCompleteMatch (0);
 
 			document.MoveCaret (CaretDirection.End);
@@ -672,6 +683,9 @@ namespace System.Windows.Forms {
 							if (auto_complete_listbox != null && auto_complete_listbox.Visible)
 								auto_complete_listbox.HideListBox (false);
 							break;
+						case Keys.Delete:
+							ProcessAutoCompleteInput (ref m, true);
+							return;
 						default:
 							break;
 					}
@@ -680,24 +694,12 @@ namespace System.Windows.Forms {
 					if (!IsAutoCompleteAvailable)
 						break;
 
-					bool is_backspace = m.WParam.ToInt32 () == 8;
-					if (!Char.IsLetterOrDigit ((char)m.WParam) && !is_backspace) {
-						// Update Text and save it before returning
-						base.WndProc (ref m);
-						auto_complete_original_text = Text;
-						return;
-					}
-					
-					if (!is_backspace)
-						Text = auto_complete_original_text;
+					// Don't handle either Enter or Esc - they are handled in the WM_KEYDOWN case
+					int char_value = m.WParam.ToInt32 ();
+					if (char_value == 13 || char_value == 27)
+						break;
 
-					document.MoveCaret (CaretDirection.End);
-
-					// Need to call base.WndProc before to have access to
-					// the updated Text property value
-					base.WndProc (ref m);
-					auto_complete_original_text = Text;
-					ShowAutoCompleteListBox (is_backspace);
+					ProcessAutoCompleteInput (ref m, char_value == 8);
 					return;
 #endif
 				case Msg.WM_LBUTTONDOWN:
