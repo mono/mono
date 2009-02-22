@@ -1,3 +1,12 @@
+2009-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c: Call _mono_debug_get_image () while holding the debug lock.
+
+	* debug-mono-symfile.c (mono_debug_symfile_lookup_method): Actually
+	search the method_hash before inserting a new entry, to avoid crashes when
+	the same method is inserted multiple times, causing the old 
+	MonoDebugMethodInfo structure to be freed by the value dtor function.
+
 2009-02-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: support SO_MAXCONN, SO_USELOOPBACK and
