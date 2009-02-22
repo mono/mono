@@ -1,3 +1,10 @@
+2009-02-22  Robert Jordan  <robertj@gmx.net>
+
+	* sockets.c: implement WSASend/WSARecv using sendmsg/recvmsg.
+	Fixes #470021.
+
+	Code is contributed under MIT/X11 license.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* events.c: fix event_signal and namedevent_signal to actually signal
