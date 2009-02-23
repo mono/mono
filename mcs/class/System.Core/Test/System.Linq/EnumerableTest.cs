@@ -209,11 +209,29 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void TestMaxNullableInt32 ()
+		{
+			int? [] data = { null, null, null };
+
+			Assert.IsNull (data.Max (x => -x));
+		}
+
+		[Test]
 		public void TestMin ()
 		{
 			int [] data = {3, 5, 2, 6, 1, 7};
 
 			Assert.AreEqual (1, data.Min ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TestMinNullableInt32 ()
+		{
+			int? [] data = { null, null, null };
+
+			Assert.IsNull (data.Min(x => -x));
 		}
 
 		[Test]
