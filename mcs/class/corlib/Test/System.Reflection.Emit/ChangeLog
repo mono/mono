@@ -1,3 +1,7 @@
+2009-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs: Add more tests for user types.
+
 2009-02-21  Jb Evain  <jbevain@novell.com>
 
 	* ModuleBuilderTest.cs: add a test accessing the property
