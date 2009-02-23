@@ -272,5 +272,44 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new SlotFromNullableToNullable (42), negate (new SlotFromNullableToNullable (-42)));
 			Assert.AreEqual (null, negate (null));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NegateDecimal ()
+		{
+			var d = Expression.Parameter (typeof (decimal), "l");
+
+			var meth = typeof (decimal).GetMethod ("op_UnaryNegation", new [] { typeof (decimal) });
+
+			var node = Expression.Negate (d);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (decimal), node.Type);
+			Assert.AreEqual (meth, node.Method);
+
+			var neg = Expression.Lambda<Func<decimal, decimal>> (node, d).Compile ();
+
+			Assert.AreEqual (-2m, neg (2m));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NegateLiftedDecimal ()
+		{
+			var d = Expression.Parameter (typeof (decimal?), "l");
+
+			var meth = typeof (decimal).GetMethod ("op_UnaryNegation", new [] { typeof (decimal) });
+
+			var node = Expression.Negate (d);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (decimal?), node.Type);
+			Assert.AreEqual (meth, node.Method);
+
+			var neg = Expression.Lambda<Func<decimal?, decimal?>> (node, d).Compile ();
+
+			Assert.AreEqual (-2m, neg (2m));
+			Assert.AreEqual (null, neg (null));
+		}
 	}
 }
