@@ -1,5 +1,10 @@
 2009-02-23  Jb Evain  <jbevain@novell.com>
 
+	* Expression.cs (IsNumber): actually decimal is rather a special
+	case, and not a primitive number.
+
+2009-02-23  Jb Evain  <jbevain@novell.com>
+
 	* Expression.cs (BinaryCoreCheck): add decimal operations
 	are provided by custom operators.
 

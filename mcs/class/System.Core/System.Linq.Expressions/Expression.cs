@@ -242,7 +242,7 @@ namespace System.Linq.Expressions {
 
 				// Use IsNumber to avoid expensive reflection.
 				if (IsNumber (ultype)) {
-					if (ultype == urtype && ltype == rtype && ultype != typeof (decimal))
+					if (ultype == urtype && ltype == rtype)
 						return null;
 
 					if (oper_name != null){
@@ -2221,7 +2221,7 @@ namespace System.Linq.Expressions {
 			if (IsInt (t))
 				return true;
 
-			return t == typeof (float) || t == typeof (double) || t == typeof (decimal);
+			return t == typeof (float) || t == typeof (double);
 		}
 
 		static bool IsSignedNumber (Type t)
