@@ -274,7 +274,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NegateDecimal ()
 		{
 			var d = Expression.Parameter (typeof (decimal), "l");
@@ -293,7 +292,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NegateLiftedDecimal ()
 		{
 			var d = Expression.Parameter (typeof (decimal?), "l");
