@@ -1,3 +1,8 @@
+2009-02-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: append the QueryString in DownloadData.
+	Fixes bug #323788.
+
 2009-02-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebResponse.cs: return a Null stream when there's no response to
