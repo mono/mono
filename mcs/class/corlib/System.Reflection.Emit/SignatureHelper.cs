@@ -374,6 +374,15 @@ namespace System.Reflection.Emit {
 			if (returnType == null)
 				returnType = typeof (void);
 
+			if (returnType.IsUserType)
+				throw new NotSupportedException ("User defined subclasses of System.Type are not yet supported.");
+			if (parameters != null) {
+				for (int i = 0; i < parameters.Length; ++i)
+					if (parameters [i].IsUserType)
+						throw new NotSupportedException ("User defined subclasses of System.Type are not yet supported.");
+
+			}
+
 			SignatureHelper helper = 
 				new SignatureHelper ((ModuleBuilder)mod, SignatureHelperType.HELPER_METHOD);
 			helper.returnType = returnType;

@@ -1,3 +1,7 @@
+2009-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* ILGenerator.cs SignatureHelper.cs: Add checks for user types.
+
 2008-02-21  Jb Evain  <jbevain@novell.com>
 
 	* ModuleBuilder.cs: override GetModuleVersionId
