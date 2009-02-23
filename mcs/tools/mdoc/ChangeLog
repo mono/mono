@@ -1,13 +1,13 @@
 2009-02-17  Jonathan Pryor <jpryor@novell.com>
 
-	* Test/DocTest-v1.cs: Add test for #471379.
+	* Test/DocTest-v1.cs: Add test for #475814.
 	* Mono.Documentation/exceptions.cs, Mono.Documentation/monodocer.cs:
 	  Use the new Mono.Cecil .Resolve() methods instead of (erroneously)
 	  duplicating their functionality with the .GetDefinition() methods.
 	  ExceptionLookup.this[IMemberReference] checks for multi-dimensional
 	  arrays, as MD arrays are "special" (Cecil can't resolve them, as
 	  they're internal to the runtime with no specific associated IL).
-	  Fixes #471379.
+	  Fixes #475814.
 
 2009-02-17  Jonathan Pryor <jpryor@novell.com>
 
