@@ -1,3 +1,8 @@
+2009-02-23  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ops.h: Fix the argument types for a few x86 opcodes where
+	they were wrong.
+
 2009-02-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* basic-float.cs basic-calls.cs: Fix warnings.
