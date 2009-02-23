@@ -1,3 +1,8 @@
+2009-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : ReadContentAsXxx() should not advance XmlReader
+	  when it is on attribute *value* text.
+
 2009-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextWriter2.cs : similar fix in WriteStartElement() to

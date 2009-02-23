@@ -885,7 +885,9 @@ namespace System.Xml
 
 		private string ReadContentString ()
 		{
-			if (NodeType == XmlNodeType.Attribute)
+			// The latter condition indicates that this XmlReader is on an attribute value
+			// (HasAttributes is to indicate it is on attribute value).
+			if (NodeType == XmlNodeType.Attribute || NodeType != XmlNodeType.Element && HasAttributes)
 				return Value;
 			return ReadContentString (true);
 		}
