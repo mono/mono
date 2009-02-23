@@ -241,8 +241,8 @@ namespace System.Linq.Expressions {
 				}
 
 				// Use IsNumber to avoid expensive reflection.
-				if (IsNumber (ultype)){
-					if (ultype == urtype && ltype == rtype)
+				if (IsNumber (ultype)) {
+					if (ultype == urtype && ltype == rtype && ultype != typeof (decimal))
 						return null;
 
 					if (oper_name != null){
