@@ -215,6 +215,7 @@ namespace System.Windows.Forms {
 			selectionMode = DataGridViewSelectionMode.RowHeaderSelect;
 			showCellErrors = true;
 			showEditingIcon = true;
+			scrollBars = ScrollBars.Both;
 			userSetCursor = Cursor.Current;
 			virtualMode = false;
 
@@ -1168,6 +1169,8 @@ namespace System.Windows.Forms {
 				/// or canceled.
 				///////////////////////////////////////////////////////////
 				scrollBars = value;
+				PerformLayout ();
+				Invalidate ();
 			}
 		}
 
@@ -4615,23 +4618,25 @@ namespace System.Windows.Forms {
 			bool verticalVisible = false;
 			
 			if (AutoSize) {
-				if (gridWidth > Size.Width || gridHeight > Size.Height) {
+				if (gridWidth > Size.Width || gridHeight > Size.Height)
 					Size = new Size(gridWidth, gridHeight);
-				}
 			}
 			else {
-				if (gridWidth > Size.Width) {
+				if (gridWidth > Size.Width)
 					horizontalVisible = true;
-				}
-				if (gridHeight > Size.Height) {
+				if (gridHeight > Size.Height)
 					verticalVisible = true;
-				}
-				if (horizontalScrollBar.Visible && (gridHeight + horizontalScrollBar.Height) > Size.Height) {
+
+				if (horizontalScrollBar.Visible && (gridHeight + horizontalScrollBar.Height) > Size.Height)
 					verticalVisible = true;
-				}
-				if (verticalScrollBar.Visible && (gridWidth + verticalScrollBar.Width) > Size.Width) {
+				if (verticalScrollBar.Visible && (gridWidth + verticalScrollBar.Width) > Size.Width) 
 					horizontalVisible = true;
-				}
+
+				if (scrollBars != ScrollBars.Vertical && scrollBars != ScrollBars.Both)
+					verticalVisible = false;
+				if (scrollBars != ScrollBars.Horizontal && scrollBars != ScrollBars.Both)
+					horizontalVisible = false;
+
 				if (horizontalVisible) {
 					horizontalScrollBar.Minimum = 0;
 					horizontalScrollBar.Maximum = gridWidth;
