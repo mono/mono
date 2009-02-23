@@ -1,3 +1,9 @@
+2009-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Replace the
+	nop code by patching the call address to point to the nullified class init
+	trampoline, as the former does not seem to be safe on SMP machines.
+
 2009-02-23  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ops.h: Fix the argument types for a few x86 opcodes where
