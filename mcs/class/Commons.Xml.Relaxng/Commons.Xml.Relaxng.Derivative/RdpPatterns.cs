@@ -48,6 +48,16 @@ namespace Commons.Xml.Relaxng.Derivative
 	// for now).
 	public abstract class RdpPattern
 	{
+		public static readonly RdpPattern Anything;
+
+		static RdpPattern ()
+		{
+			RdpPattern anyAtts = new RdpList (new RdpAttribute (RdpAnyName.Instance, RdpText.Instance));
+			RdpElement anyElement = new RdpElement (RdpAnyName.Instance, null);
+			Anything = new RdpChoice (RdpEmpty.Instance, new RdpChoice (anyAtts, new RdpChoice (RdpText.Instance, new RdpList (anyElement))));
+			anyElement.Children = Anything;
+		}
+
 		internal bool nullableComputed;
 		internal bool isNullable;
 		Hashtable patternPool;

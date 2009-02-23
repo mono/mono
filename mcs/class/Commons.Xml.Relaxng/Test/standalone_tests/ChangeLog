@@ -1,3 +1,7 @@
+2009-02-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* relaxngtest.cs : added --skip-error option to test error recovery.
+
 2005-04-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* anglia-test-runner.cs : added some options.

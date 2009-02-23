@@ -80,6 +80,22 @@ namespace Commons.Xml.Relaxng
 		bool inContent;
 		bool firstRead = true;
 
+		public delegate bool RelaxngValidationEventHandler (XmlReader source, string message);
+
+		public static readonly RelaxngValidationEventHandler IgnoreError = delegate { return true; };
+
+		public event RelaxngValidationEventHandler InvalidNodeFound;
+
+		delegate RdpPattern RecoveryHandler (RdpPattern source);
+
+		RdpPattern HandleError (string error, bool elements, RdpPattern source, RecoveryHandler recover)
+		{
+			if (InvalidNodeFound != null && InvalidNodeFound (this, error))
+				return recover (source);
+			else
+				throw CreateValidationError (error, true);
+		}
+
 		internal string CurrentStateXml {
 			get { return RdpUtil.DebugRdpPattern (vState, new Hashtable ()); }
 		}
@@ -397,8 +413,10 @@ namespace Commons.Xml.Relaxng
 				prevState = vState;
 				vState = memo.StartTagOpenDeriv (vState,
 					reader.LocalName, reader.NamespaceURI);
-				if (vState.PatternType == RelaxngPatternType.NotAllowed)
-					throw CreateValidationError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true);
+				if (vState.PatternType == RelaxngPatternType.NotAllowed) {
+					if (InvalidNodeFound != null)
+						vState = HandleError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true, prevState, RecoverFromInvalidStartTag);
+				}
 
 				// AttsDeriv equals to for each AttDeriv
 				string elementNS = reader.NamespaceURI;
@@ -407,31 +425,26 @@ namespace Commons.Xml.Relaxng
 						if (reader.NamespaceURI == "http://www.w3.org/2000/xmlns/")
 							continue;
 
+						RdpPattern savedState = vState;
 						prevState = vState;
 						string attrNS = reader.NamespaceURI;
 
-#if false // old code
-
-						vState = vState.AttDeriv (reader.LocalName, attrNS, reader.GetAttribute (reader.LocalName, attrNS), this);
-						if (vState == RdpNotAllowed.Instance)
-							throw CreateValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
-
-#else
-
-						prevState = vState;
 						vState = memo.StartAttDeriv (vState, reader.LocalName, attrNS);
-						if (vState == RdpNotAllowed.Instance)
-							throw CreateValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
+						if (vState == RdpNotAllowed.Instance) {
+							vState = HandleError (String.Format ("Invalid attribute occurence found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false, savedState, p => p);
+							continue; // the following steps are ignored.
+						}
 						prevState = vState;
 						vState = memo.TextOnlyDeriv (vState);
 						vState = TextDeriv (vState, reader.Value, reader);
 						if (Util.IsWhitespace (reader.Value))
 							vState = vState.Choice (prevState);
+						if (vState == RdpNotAllowed.Instance)
+							vState = HandleError (String.Format ("Invalid attribute value is found. Value = '{0}'", reader.Value), false, prevState, RecoverFromInvalidText);
+						prevState = vState;
 						vState = memo.EndAttDeriv (vState);
 						if (vState == RdpNotAllowed.Instance)
-							throw CreateValidationError (String.Format ("Invalid attribute value is found. Value = '{0}'", reader.Value), false);
-
-#endif
+							vState = HandleError (String.Format ("Invalid attribute value is found. Value = '{0}'", reader.Value), false, prevState, RecoverFromInvalidEnd);
 					} while (reader.MoveToNextAttribute ());
 					MoveToElement ();
 				}
@@ -440,7 +453,7 @@ namespace Commons.Xml.Relaxng
 				prevState = vState;
 				vState = memo.StartTagCloseDeriv (vState);
 				if (vState.PatternType == RelaxngPatternType.NotAllowed)
-					throw CreateValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false);
+					vState = HandleError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), false, prevState, RecoverFromInvalidStartTagClose);
 
 				// if it is empty, then redirect to EndElement
 				if (reader.IsEmptyElement) {
@@ -455,7 +468,7 @@ namespace Commons.Xml.Relaxng
 				prevState = vState;
 				vState = memo.EndTagDeriv (vState);
 				if (vState.PatternType == RelaxngPatternType.NotAllowed)
-					throw CreateValidationError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true);
+					vState = HandleError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}.", reader.LocalName, reader.NamespaceURI), true, prevState, RecoverFromInvalidEnd);
 				break;
 			case XmlNodeType.Whitespace:
 				if (inContent)
@@ -478,6 +491,122 @@ namespace Commons.Xml.Relaxng
 			return ret;
 		}
 
+		#region error recovery
+		// Error recovery feature can be enabled by using
+		// InvalidNodeFound event of type RelaxngValidationEventHandler.
+		// 
+		// Other than startTagOpenDeriv, it is (again) based on
+		// James Clark's derivative algorithm.
+		// http://www.thaiopensource.com/relaxng/derivative.html
+		// For invalid start tag, we just recover from it by using
+		// xs:any-like pattern for unexpected node occurence.
+
+		RdpPattern MakeGroupHeadOptional (RdpPattern p)
+		{
+			if (p is RdpAbstractSingleContent)
+				return new RdpChoice (RdpEmpty.Instance, p);
+			RdpAbstractBinary ab = p as RdpAbstractBinary;
+			if (ab == null)
+				return p;
+			if (ab is RdpGroup)
+				return new RdpGroup (new RdpChoice (RdpEmpty.Instance, ab.LValue), ab.RValue);
+			else if (ab is RdpChoice)
+				return new RdpChoice (MakeGroupHeadOptional (ab.LValue), MakeGroupHeadOptional (ab.RValue));
+			else if (ab is RdpInterleave)
+				return new RdpInterleave (MakeGroupHeadOptional (ab.LValue), MakeGroupHeadOptional (ab.RValue));
+			else if (ab is RdpAfter) // FIXME: is it correct?
+				return new RdpAfter (MakeGroupHeadOptional (ab.LValue), MakeGroupHeadOptional (ab.RValue));
+			throw new SystemException ("INTERNAL ERROR: unexpected pattern: " + p.GetType ());
+		}
+
+		RdpPattern ReplaceAfterHeadWithEmpty (RdpPattern p)
+		{
+			if (p is RdpAbstractSingleContent)
+				return new RdpChoice (RdpEmpty.Instance, p);
+			RdpAbstractBinary ab = p as RdpAbstractBinary;
+			if (ab == null)
+				return p;
+			if (ab is RdpGroup)
+				return new RdpGroup (ReplaceAfterHeadWithEmpty (ab.LValue), ReplaceAfterHeadWithEmpty (ab.RValue));
+			else if (ab is RdpChoice)
+				return new RdpChoice (ReplaceAfterHeadWithEmpty (ab.LValue), ReplaceAfterHeadWithEmpty (ab.RValue));
+			else if (ab is RdpInterleave)
+				return new RdpInterleave (ReplaceAfterHeadWithEmpty (ab.LValue), ReplaceAfterHeadWithEmpty (ab.RValue));
+			else if (ab is RdpAfter)
+				return new RdpAfter (RdpEmpty.Instance, ab.RValue);
+			throw new SystemException ("INTERNAL ERROR: unexpected pattern: " + p.GetType ());
+		}
+
+		RdpPattern CollectAfterTailAsChoice (RdpPattern p)
+		{
+			RdpAbstractBinary ab = p as RdpAbstractBinary;
+			if (ab == null)
+				return RdpEmpty.Instance;
+			if (ab is RdpAfter)
+				return ab.RValue;
+			RdpPattern l = CollectAfterTailAsChoice (ab.LValue);
+			if (l == RdpEmpty.Instance)
+				return CollectAfterTailAsChoice (ab.RValue);
+			RdpPattern r = CollectAfterTailAsChoice (ab.RValue);
+			if (r == RdpEmpty.Instance)
+				return l;
+			return new RdpChoice (l, r);
+		}
+
+		RdpPattern ReplaceAttributesWithEmpty (RdpPattern p)
+		{
+			if (p is RdpAttribute)
+				return RdpEmpty.Instance;
+
+			RdpAbstractSingleContent asc = p as RdpAbstractSingleContent;
+			if (asc is RdpList)
+				return new RdpList (ReplaceAttributesWithEmpty (asc.Child));
+			if (asc is RdpOneOrMore)
+				return new RdpOneOrMore (ReplaceAttributesWithEmpty (asc.Child));
+			else if (asc is RdpElement)
+				return asc; // should not be expected to contain any attribute as RdpElement.
+
+			RdpAbstractBinary ab = p as RdpAbstractBinary;
+			if (ab == null)
+				return p;
+			if (ab is RdpGroup)
+				return new RdpGroup (ReplaceAttributesWithEmpty (ab.LValue), ReplaceAttributesWithEmpty (ab.RValue));
+			else if (ab is RdpChoice)
+				return new RdpChoice (ReplaceAttributesWithEmpty (ab.LValue), ReplaceAttributesWithEmpty (ab.RValue));
+			else if (ab is RdpInterleave)
+				return new RdpInterleave (ReplaceAttributesWithEmpty (ab.LValue), ReplaceAttributesWithEmpty (ab.RValue));
+			else if (ab is RdpAfter) // FIXME: is it correct?
+				return new RdpAfter (ReplaceAttributesWithEmpty (ab.LValue), ReplaceAttributesWithEmpty (ab.RValue));
+			throw new SystemException ("INTERNAL ERROR: unexpected pattern: " + p.GetType ());
+		}
+
+		RdpPattern RecoverFromInvalidStartTag (RdpPattern p)
+		{
+			RdpPattern test1 = MakeGroupHeadOptional (p);
+			test1 = memo.StartTagOpenDeriv (test1, reader.LocalName, reader.NamespaceURI);
+			if (test1 != null)
+				return test1;
+			// FIXME: JJC derivative algorithm suggests more complicated recovery. We simply treats current "extra" node as "anything".
+			return new RdpChoice (RdpPattern.Anything, p);
+		}
+
+		RdpPattern RecoverFromInvalidText (RdpPattern p)
+		{
+			return ReplaceAfterHeadWithEmpty (p);
+		}
+
+		RdpPattern RecoverFromInvalidEnd (RdpPattern p)
+		{
+			return CollectAfterTailAsChoice (p);
+		}
+
+		RdpPattern RecoverFromInvalidStartTagClose (RdpPattern p)
+		{
+			return ReplaceAttributesWithEmpty (p);
+		}
+
+		#endregion
+
 		RdpPattern TextDeriv (RdpPattern p, string value, XmlReader context)
 		{
 			if (value.Length > 0 && p.IsTextValueDependent)
@@ -498,8 +627,15 @@ namespace Commons.Xml.Relaxng
 			case XmlNodeType.Element:
 				startElementDepth = -1;
 				if (!Util.IsWhitespace (cachedValue)) {
+					// HandleError() is not really useful here since it involves else condition...
 					ts = memo.MixedTextDeriv (ts);
-					ts = TextDeriv (ts, cachedValue, reader);
+					if (InvalidNodeFound != null) {
+						InvalidNodeFound (reader, "Not allowed text node was found.");
+						ts = vState;
+						cachedValue = null;
+					}
+					else
+						ts = TextDeriv (ts, cachedValue, reader);
 				}
 				break;
 			default:
@@ -512,7 +648,7 @@ namespace Commons.Xml.Relaxng
 			vState = ts;
 
 			if (vState.PatternType == RelaxngPatternType.NotAllowed)
-				throw CreateValidationError (String.Format ("Invalid text found. Text value = {0} ", cachedValue), true);
+				vState = HandleError (String.Format ("Invalid text found. Text value = {0} ", cachedValue), true, prevState, RecoverFromInvalidText);
 			cachedValue = null;
 			return;
 		}
@@ -528,7 +664,7 @@ namespace Commons.Xml.Relaxng
 			vState = ts;
 
 			if (vState.PatternType == RelaxngPatternType.NotAllowed)
-				throw CreateValidationError (String.Format ("Invalid text found. Text value = {0} ", cachedValue), true);
+				vState = HandleError (String.Format ("Invalid text found. Text value = {0} ", cachedValue), true, prevState, RecoverFromInvalidText);
 			cachedValue = null;
 			startElementDepth = -1;
 		}

@@ -1,3 +1,10 @@
+2009-02-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngValidatingReader.cs : implemented error recovery feature.
+	  Use InvalidNodeFound event (of type RelaxngValidationEventHandler)
+	  to handle validation error like ValidationEventHandler in
+	  System.Xml.XmlSchema.
+
 2009-02-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdDatatypeProvider.cs : detect grammar-level error in type usage
