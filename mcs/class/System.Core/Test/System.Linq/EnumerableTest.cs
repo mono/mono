@@ -209,7 +209,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestMaxNullableInt32 ()
 		{
 			int? [] data = { null, null, null };
@@ -230,7 +229,6 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestMinNullableInt32 ()
 		{
 			int? [] data = { null, null, null };
@@ -239,7 +237,7 @@ namespace MonoTests.System.Linq {
 
 			data = new int? [] { null, 1, 2 };
 
-			Assert.AreEqual (-1, data.Max (x => -x));
+			Assert.AreEqual (-2, data.Min (x => -x));
 		}
 
 		[Test]
