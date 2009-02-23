@@ -1,3 +1,8 @@
+2009-02-23  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #478655
+	* literal.cs: Check also underlying null type conversion.
+
 2009-02-21  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, ecore.cs, class.cs: Removed redundant AsAccessible.

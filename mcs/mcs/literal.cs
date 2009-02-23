@@ -122,6 +122,9 @@ namespace Mono.CSharp {
 			if (targetType == TypeManager.anonymous_method_type)
 				return null;
 
+			if (type != TypeManager.null_type && !Convert.ImplicitStandardConversionExists (this, targetType))
+				return null;
+
 			if (TypeManager.IsReferenceType (targetType))
 				return new NullLiteral (targetType, loc);
 
