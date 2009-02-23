@@ -215,6 +215,10 @@ namespace MonoTests.System.Linq {
 			int? [] data = { null, null, null };
 
 			Assert.IsNull (data.Max (x => -x));
+
+			data = new int? [] { null, 1, 2 };
+
+			Assert.AreEqual (-1, data.Max (x => -x));
 		}
 
 		[Test]
@@ -232,6 +236,10 @@ namespace MonoTests.System.Linq {
 			int? [] data = { null, null, null };
 
 			Assert.IsNull (data.Min(x => -x));
+
+			data = new int? [] { null, 1, 2 };
+
+			Assert.AreEqual (-1, data.Max (x => -x));
 		}
 
 		[Test]
