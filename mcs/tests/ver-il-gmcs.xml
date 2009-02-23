@@ -34715,6 +34715,33 @@
       </method>
     </type>
   </test>
+  <test name="test-708.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="A+ADelegate Delegate2(Boolean)">
+        <size>25</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="A+ADelegate">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="A+ADelegate Invoke(Boolean)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Boolean, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="A+ADelegate EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-71.cs">
     <type name="X">
       <method name="Void .ctor()">

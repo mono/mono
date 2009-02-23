@@ -93,6 +93,7 @@ run-test-local: $(TEST_ILS:.il=.dll) eval-test
 
 # Temporary testing target
 cecil:
+	rm -f *.mdb
 	$(TESTER) -mode:pos -files:'test-*.cs' -compiler:gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log -verbose
 
 test-everything:
