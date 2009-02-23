@@ -1,3 +1,7 @@
+2009-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs: Add IsUserType internal property.
+
 2009-02-21  Jb Evain  <jbevain@novell.com>
 
 	* MonoType.cs (InvokeMember): don't pass a null args to

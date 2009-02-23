@@ -1394,6 +1394,20 @@ namespace System {
 
 #endif
 
+		/* 
+		 * Return whenever this object is an instance of a user defined subclass
+		 * of System.Type or an instance of TypeDelegator.
+		 */
+		internal bool IsUserType {
+			get {
+				/* 
+				 * subclasses cannot modify _impl so if it is zero, it means the
+				 * type is not created by the runtime.
+				 */
+				return _impl.Value == IntPtr.Zero;
+			}
+		}
+
 		void _Type.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
