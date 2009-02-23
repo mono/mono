@@ -1052,38 +1052,38 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a > b);
+			return IterateNullable (source, (a, b) => Math.Max (a, b));
 		}
 
 		public static long? Max (this IEnumerable<long?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a > b);
+			return IterateNullable (source, (a, b) => Math.Max (a, b));
 		}
 
 		public static double? Max (this IEnumerable<double?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a > b);
+			return IterateNullable (source, (a, b) => Math.Max (a, b));
 		}
 
 		public static float? Max (this IEnumerable<float?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a > b);
+			return IterateNullable (source, (a, b) => Math.Max (a, b));
 		}
 
 		public static decimal? Max (this IEnumerable<decimal?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a > b);
+			return IterateNullable (source, (a, b) => Math.Max (a, b));
 		}
 
-		static T? IterateNullable<T> (IEnumerable<T?> source, Func<T?, T?, bool> selector) where T : struct
+		static T? IterateNullable<T> (IEnumerable<T?> source, Func<T, T, T> selector) where T : struct
 		{
 			bool empty = true;
 			T? value = null;
@@ -1093,8 +1093,8 @@ namespace System.Linq
 
 				if (!value.HasValue)
 					value = element.Value;
-				else if (selector (element.Value, value))
-					value = element;
+				else
+					value = selector (element.Value, value.Value);
 
 				empty = false;
 			}
@@ -1321,35 +1321,35 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a < b);
+			return IterateNullable (source, (a, b) => Math.Min (a, b));
 		}
 
 		public static long? Min (this IEnumerable<long?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a < b);
+			return IterateNullable (source, (a, b) => Math.Min (a, b));
 		}
 
 		public static double? Min (this IEnumerable<double?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a < b);
+			return IterateNullable (source, (a, b) => Math.Min (a, b));
 		}
 
 		public static float? Min (this IEnumerable<float?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a < b);
+			return IterateNullable (source, (a, b) => Math.Min (a, b));
 		}
 
 		public static decimal? Min (this IEnumerable<decimal?> source)
 		{
 			Check.Source (source);
 
-			return IterateNullable (source, (a, b) => a < b);
+			return IterateNullable (source, (a, b) => Math.Min (a, b));
 		}
 
 		public static TSource Min<TSource> (this IEnumerable<TSource> source)
