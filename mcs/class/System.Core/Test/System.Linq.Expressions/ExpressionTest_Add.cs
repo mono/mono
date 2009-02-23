@@ -355,5 +355,47 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (string.Empty, concat (null, null));
 			Assert.AreEqual ("foobar", concat ("foo", "bar"));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AddDecimals ()
+		{
+			var l = Expression.Parameter (typeof (decimal), "l");
+			var r = Expression.Parameter (typeof (decimal), "r");
+
+			var meth = typeof (decimal).GetMethod ("op_Addition", new [] { typeof (decimal), typeof (decimal) });
+
+			var node = Expression.Add (l, r);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (decimal), node.Type);
+			Assert.AreEqual (meth, node.Method);
+
+			var add = Expression.Lambda<Func<decimal, decimal, decimal>> (node, l, r).Compile ();
+
+			Assert.AreEqual (2m, add (1m, 1m));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void AddLiftedDecimals ()
+		{
+			var l = Expression.Parameter (typeof (decimal?), "l");
+			var r = Expression.Parameter (typeof (decimal?), "r");
+
+			var meth = typeof (decimal).GetMethod ("op_Addition", new [] { typeof (decimal), typeof (decimal) });
+
+			var node = Expression.Add (l, r);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsTrue (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (decimal?), node.Type);
+			Assert.AreEqual (meth, node.Method);
+
+			var add = Expression.Lambda<Func<decimal?, decimal?, decimal?>> (node, l, r).Compile ();
+
+			Assert.AreEqual (2m, add (1m, 1m));
+			Assert.AreEqual (null, add (1m, null));
+			Assert.AreEqual (null, add (null, null));
+		}
 	}
 }
