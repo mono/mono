@@ -109,6 +109,17 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void DateTimeAttribute ()
+		{
+			var date = DateTime.Now;
+			var attribute = new XAttribute ("Date", date);
+
+			var value = (DateTime) attribute;
+
+			Assert.AreEqual (date, value);
+		}
+
+		[Test]
 		public void NullCasts ()
 		{
 			XAttribute a = null;
