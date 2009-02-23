@@ -770,12 +770,18 @@ namespace System.Net
 #if NET_2_0
 		public string DownloadString (string address)
 		{
-			return encoding.GetString (DownloadData (address));
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return encoding.GetString (DownloadData (CreateUri (address)));
 		}
 
 		public string DownloadString (Uri address)
 		{
-			return encoding.GetString (DownloadData (address));
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			return encoding.GetString (DownloadData (CreateUri (address)));
 		}
 
 		public string UploadString (string address, string data)
@@ -849,23 +855,51 @@ namespace System.Net
 #endif
 		}
 
+#if NET_2_0
+		Uri CreateUri (Uri address)
+		{
+			string query = address.Query;
+			if (String.IsNullOrEmpty (query))
+				query = GetQueryString (true);
+
+			if (baseAddress == null && query == null)
+				return address;
+
+			if (baseAddress == null)
+				return new Uri (address.ToString () + query, (query != null));
+
+			if (query == null)
+				return new Uri (baseAddress, address.ToString ());
+
+			return new Uri (baseAddress, address.ToString () + query, (query != null));
+
+		}
+#endif
+
+		string GetQueryString (bool add_qmark)
+		{
+			if (queryString == null || queryString.Count == 0)
+				return null;
+
+			StringBuilder sb = new StringBuilder ();
+			if (add_qmark)
+				sb.Append ('?');
+
+			foreach (string key in queryString)
+				sb.AppendFormat ("{0}={1}&", key, UrlEncode (queryString [key]));
+
+			if (sb.Length != 0)
+				sb.Length--; // removes last '&' or the '?' if empty.
+
+			if (sb.Length == 0)
+				return null;
+
+			return sb.ToString ();
+		}
+
 		Uri MakeUri (string path)
 		{
-			string query = null;
-			if (queryString != null && queryString.Count != 0) {
-				// This is not the same as UploadValues, because these 'keys' are not
-				// urlencoded here.
-				StringBuilder sb = new StringBuilder ();
-				sb.Append ('?');
-				foreach (string key in queryString)
-					sb.AppendFormat ("{0}={1}&", key, UrlEncode (queryString [key]));
-
-				if (sb.Length != 0) {
-					sb.Length--; // remove trailing '&'
-					query = sb.ToString ();
-				}
-			}
-
+			string query = GetQueryString (true);
 			if (baseAddress == null && query == null) {
 				try {
 					return new Uri (path);
