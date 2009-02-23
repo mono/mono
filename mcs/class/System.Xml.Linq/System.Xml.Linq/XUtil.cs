@@ -45,9 +45,15 @@ namespace System.Xml.Linq
 		{
 			if (o == null)
 				throw new InvalidOperationException ("Attempt to get string from null");
-			if (o is string)
+
+			switch (Type.GetTypeCode (o.GetType ())) {
+			case TypeCode.String:
 				return (string) o;
-			return o.ToString ();
+			case TypeCode.DateTime:
+				return XmlConvert.ToString ((DateTime) o, XmlDateTimeSerializationMode.RoundtripKind);
+			default:
+				return o.ToString ();
+			}
 		}
 
 		public static bool ToBoolean (object o)

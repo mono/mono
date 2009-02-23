@@ -1,3 +1,9 @@
+2009-02-23  Jb Evain  <jbevain@novell.com>
+
+	backport of 127784.
+
+	* XUtil.cs (ToString): properly stringify datetimes.
+
 2009-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElement.cs : oops, experimental code remained and caused test
