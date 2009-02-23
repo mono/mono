@@ -1,3 +1,7 @@
+2009-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-float.cs basic-calls.cs: Fix warnings.
+
 2009-02-22  Mark Probst  <mark.probst@gmail.com>
 
 	* tramp-ppc.c (mono_arch_create_trampoline_code): Store the
