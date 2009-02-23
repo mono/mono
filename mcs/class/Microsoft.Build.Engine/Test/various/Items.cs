@@ -804,5 +804,79 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsFalse (proj.Build ("1"));
 		}
 
+		[Test]
+		public void TestItemsInTarget8 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<Foo>Five</Foo>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A'>
+							<M>True</M>
+							<M>False</M>
+						</A>
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual (1, proj.EvaluatedItems.Count, "A1");
+			BuildItem bi = proj.EvaluatedItems [0];
+			Assert.AreEqual ("False", bi.GetMetadata ("M"), "A2");
+		}
+
+
+		[Test]
+		public void TestItemsInTarget9 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<Foo>Five</Foo>
+					</PropertyGroup>
+					<ItemGroup>
+						<A Include='A'>
+							<M Condition="" '$(Foo)' == 'Five' "">True</M>
+							<M Condition="" '$(Foo)' != 'Five' "">False</M>
+						</A>
+					</ItemGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.AreEqual (1, proj.EvaluatedItems.Count, "A1");
+			BuildItem bi = proj.EvaluatedItems [0];
+			Assert.AreEqual ("True", bi.GetMetadata ("M"), "A2");
+			Assert.AreEqual (0, bi.Condition.Length, "A3");
+
+			BuildItemGroup big = proj.GetEvaluatedItemsByNameIgnoringCondition ("A");
+			Assert.AreEqual (1, big.Count, "A4");
+			bi = big [0];
+			Assert.AreEqual ("True", bi.GetMetadata ("M"), "A5");
+			Assert.AreEqual ("True", bi.GetEvaluatedMetadata ("M"), "A6");
+
+			/*proj.SetProperty ("Foo", "Six");
+			proj.Build ();
+			bi = proj.GetEvaluatedItemsByName ("A") [0];
+			Assert.AreEqual ("False", bi.GetMetadata ("M"), "A7");
+			Assert.AreEqual ("False", bi.GetEvaluatedMetadata ("M"), "A7a");
+			Assert.AreEqual (0, bi.Condition.Length, "A8");
+
+			big = proj.GetEvaluatedItemsByNameIgnoringCondition ("A");
+			Assert.AreEqual (1, big.Count, "A9");
+			bi = big [0];
+			Assert.AreEqual ("True", bi.GetMetadata ("M"), "A10");
+			Assert.AreEqual ("True", bi.GetEvaluatedMetadata ("M"), "A11");*/
+		}
 	}
 }

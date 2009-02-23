@@ -228,11 +228,11 @@ namespace Microsoft.Build.BuildEngine {
 			if (parent_item_group != null) {
 				Expression e = new Expression ();
 				e.Parse (value, true);
-				evaluatedMetadata.Add (name, (string) e.ConvertTo (parent_item_group.ParentProject, typeof (string)));
+				evaluatedMetadata [name] = (string) e.ConvertTo (parent_item_group.ParentProject, typeof (string));
 			} else
-				evaluatedMetadata.Add (name, Utilities.Unescape (value));
+				evaluatedMetadata [name] = Utilities.Unescape (value);
 				
-				unevaluatedMetadata.Add (name, value);
+			unevaluatedMetadata [name] = value;
 		}
 
 		void DeleteMetadata (string name)

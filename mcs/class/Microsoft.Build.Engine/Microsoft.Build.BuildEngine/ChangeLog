@@ -1,3 +1,7 @@
+2009-02-23  Ankit Jain  <jankit@novell.com>
+
+	* BuildItem.cs (AddMetadata): Allow overwriting older values.
+
 2009-02-22  Ankit Jain  <jankit@novell.com>
 
 	* BuildItem.cs: Iterate over XmlElements childnodes with XmlNode
