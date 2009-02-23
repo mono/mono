@@ -138,6 +138,16 @@ environment variable that affects behavior:
 					new RelaxngValidatingReader (xtr, p);
 				if (Environment.GetEnvironmentVariable ("MONO_XMLTOOL_ERROR_DETAILS") == "yes")
 					vr.ReportDetails = true;
+				else
+					vr.InvalidNodeFound += delegate (XmlReader source, string message) {
+						IXmlLineInfo li = source as IXmlLineInfo;
+						Console.WriteLine ("ERROR: {0} (at {1} line {2} column {3})",
+							message,
+							source.BaseURI,
+							li != null && li.HasLineInfo () ? li.LineNumber : 0,
+							li != null && li.HasLineInfo () ? li.LinePosition : 0);
+						return true;
+					};
 
 				while (!vr.EOF)
 					vr.Read ();
