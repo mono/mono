@@ -1,3 +1,7 @@
+2009-02-23  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Make the ScrollBars property work properly.
+
 2009-02-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TextBox.cs: Some code lifting for AutoComplete's support. First,
