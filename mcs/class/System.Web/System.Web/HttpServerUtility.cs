@@ -141,8 +141,9 @@ namespace System.Web {
 #if NET_2_0 && !TARGET_J2EE
 			// If the target handler is not Page, the transfer must not occur.
 			// InTransit == true means we're being called from Transfer
-			if (isTransfer && !(handler is Page))
-				throw new HttpException ("Transfer is possible only to .aspx files");
+			bool is_static = (handler is StaticFileHandler);
+			if (isTransfer && !(handler is Page) && !is_static)
+				throw new HttpException ("Transfer is only allowed to .aspx and static files");
 #endif
 
 			HttpRequest request = context.Request;
@@ -169,6 +170,8 @@ namespace System.Web {
 			try {
 #if NET_2_0
 				context.PushHandler (handler);
+				if (is_static) // Not sure if this should apply to Page too
+					request.SetFilePath (exePath);
 #endif
 				request.SetCurrentExePath (exePath);
 				context.IsProcessingInclude = isInclude;
