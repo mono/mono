@@ -357,7 +357,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AddDecimals ()
 		{
 			var l = Expression.Parameter (typeof (decimal), "l");
@@ -377,7 +376,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void AddLiftedDecimals ()
 		{
 			var l = Expression.Parameter (typeof (decimal?), "l");
