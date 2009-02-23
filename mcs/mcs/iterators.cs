@@ -502,7 +502,7 @@ namespace Mono.CSharp {
 			Define_Reset ();
 
 			if (Iterator.IsEnumerable) {
-				MemberName name = new MemberName ("System");
+				MemberName name = new MemberName (QualifiedAliasMember.GlobalAlias, "System", null, Location);
 				name = new MemberName (name, "Collections", Location);
 				name = new MemberName (name, "IEnumerable", Location);
 				name = new MemberName (name, "GetEnumerator", Location);
@@ -537,10 +537,9 @@ namespace Mono.CSharp {
 
 		void Define_Current (bool is_generic)
 		{
-			MemberName name;
 			TypeExpr type;
 
-			name = new MemberName ("System");
+			MemberName name = new MemberName (QualifiedAliasMember.GlobalAlias, "System", null, Location);
 			name = new MemberName (name, "Collections", Location);
 
 			if (is_generic) {
