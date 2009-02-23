@@ -1,3 +1,7 @@
+2009-02-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpServerUtility.cs: allow Transfer to static files too.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWriter.cs: new Response property and WriteUTF8Ptr
