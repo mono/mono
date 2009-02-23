@@ -1,3 +1,13 @@
+2009-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (encode_locals): Add checks for user types.
+	(method_encode_clauses): Ditto.
+	(method_encode_code): Ditto.
+	(mono_image_create_token): Ditto.
+
+	* object-internals.h: Change the type of more fields from MonoReflectionType*
+	to MonoObject*.
+
 2009-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_thread_suspend_all_other_threads): Handle the case when
