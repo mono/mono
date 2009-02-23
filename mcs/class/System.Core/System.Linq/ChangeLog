@@ -1,3 +1,10 @@
+2009-02-23  Jb Evain  <jbevain@novell.com>
+
+	backport of 127772.
+
+	* Enumerable.cs (IterateNullable): fix initial value
+	for nullables.
+
 2009-01-22  Jb Evain  <jbevain@novell.com>
 
 	* SortSequenceContext.cs: make sort stable.
