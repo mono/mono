@@ -502,14 +502,17 @@ namespace Mono.CSharp {
 			Define_Reset ();
 
 			if (Iterator.IsEnumerable) {
-				MemberName name = new MemberName (
-					new MemberName ("System.Collections.IEnumerable", Location), "GetEnumerator", Location);
+				MemberName name = new MemberName ("System");
+				name = new MemberName (name, "Collections", Location);
+				name = new MemberName (name, "IEnumerable", Location);
+				name = new MemberName (name, "GetEnumerator", Location);
 
 #if GMCS_SOURCE
 				Method get_enumerator = new IteratorMethod (this, enumerator_type, 0, name);
 
-				name = new MemberName (
-					new MemberName ("System.Collections.Generic.IEnumerable", generic_args, Location), "GetEnumerator", Location);
+				name = new MemberName (name.Left.Left, "Generic", Location);
+				name = new MemberName (name, "IEnumerable", generic_args, Location);
+				name = new MemberName (name, "GetEnumerator", Location);
 				Method gget_enumerator = new GetEnumeratorMethod (this, generic_enumerator_type, name);
 
 				//
@@ -534,20 +537,22 @@ namespace Mono.CSharp {
 
 		void Define_Current (bool is_generic)
 		{
-			MemberName left;
+			MemberName name;
 			TypeExpr type;
 
+			name = new MemberName ("System");
+			name = new MemberName (name, "Collections", Location);
+
 			if (is_generic) {
-				left = new MemberName (
-					"System.Collections.Generic.IEnumerator",
-					generic_args, Location);
+				name = new MemberName (name, "Generic", Location);
+				name = new MemberName (name, "IEnumerator", generic_args, Location);
 				type = iterator_type_expr;
 			} else {
-				left = new MemberName ("System.Collections.IEnumerator", Location);
+				name = new MemberName (name, "IEnumerator");
 				type = TypeManager.system_object_expr;
 			}
 
-			MemberName name = new MemberName (left, "Current", Location);
+			name = new MemberName (name, "Current", Location);
 
 			ToplevelBlock get_block = new ToplevelBlock (Location);
 			get_block.AddStatement (new Return (new DynamicFieldExpr (CurrentField, Location), Location));

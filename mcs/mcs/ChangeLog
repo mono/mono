@@ -1,5 +1,9 @@
 2009-02-23  Marek Safar  <marek.safar@gmail.com>
 
+	* iterators.cs: Create MemberName correctly.
+
+2009-02-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #478655
 	* literal.cs: Check also underlying null type conversion.
 
