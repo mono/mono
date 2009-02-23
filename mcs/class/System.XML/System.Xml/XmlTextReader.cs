@@ -129,9 +129,13 @@ namespace System.Xml
 		// argument is uri, not an xml fragment.
 		internal XmlTextReader (bool dummy, XmlResolver resolver, string url, XmlNodeType fragType, XmlParserContext context)
 		{
-			if (resolver == null)
+			if (resolver == null) {
+#if NET_2_1
+				resolver = new XmlXapResolver ();
+#else
 				resolver = new XmlUrlResolver ();
-
+#endif
+			}
 			this.XmlResolver = resolver;
 			string uriString;
 			Stream stream = GetStreamFromUrl (url, out uriString);
@@ -950,7 +954,11 @@ namespace System.Xml
 		// These values are never re-initialized.
 		private bool namespaces = true;
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
+#if NET_2_1
+		private XmlResolver resolver = new XmlXapResolver ();
+#else
 		private XmlResolver resolver = new XmlUrlResolver ();
+#endif
 		private bool normalization = false;
 
 		private bool checkCharacters;
