@@ -1,3 +1,9 @@
+2009-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* os_dep.c (GC_init_linux_data_start): Avoid the call to GC_find_limit ()
+	if GC_no_dls is TRUE, as it is not needed and it complicates debugging since
+	it causes a SIGSEGV.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gcconfig.h: Applied patch from Koushik Dutta
