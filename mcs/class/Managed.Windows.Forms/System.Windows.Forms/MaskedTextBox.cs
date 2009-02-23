@@ -236,20 +236,29 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			int testPosition;
+			int testPosition, editPosition;
 			MaskedTextResultHint resultHint;
 			bool result;
 			
-			if (IsOverwriteMode) {
+			if (e.KeyChar == '\b') {
+				if (SelectionLength == 0)
+					result = provider.RemoveAt (SelectionStart - 1, SelectionStart - 1, out testPosition, out resultHint);
+				else
+					result = provider.RemoveAt (SelectionStart, SelectionStart + SelectionLength - 1, out testPosition, out resultHint);
+
+				editPosition = testPosition;
+			} else if (IsOverwriteMode) {
 				result = provider.InsertAt (e.KeyChar, SelectionStart, out testPosition, out resultHint);
+				editPosition = testPosition + 1;
 			} else {
 				result = provider.Replace (e.KeyChar, SelectionStart, SelectionStart, out testPosition, out resultHint);
+				editPosition = testPosition + 1;
 			}
 			
 			if (!result) {
 				OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
 			} else {
-				int iIndex = provider.FindEditPositionFrom (SelectionStart+1, true);
+				int iIndex = provider.FindEditPositionFrom (editPosition, true);
 
 				if (iIndex != MaskedTextProvider.InvalidIndex) {
 					SelectionStart = iIndex;
