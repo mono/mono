@@ -1,5 +1,12 @@
 2009-02-23  Jb Evain  <jbevain@novell.com>
 
+	backport of 127755.
+
+	* Expression.cs (IsNumber): actually decimal is rather a special
+	case, and not a primitive number.
+
+2009-02-23  Jb Evain  <jbevain@novell.com>
+
 	backport of 127746.
 
 	* Expression.cs (BinaryCoreCheck): add decimal operations
