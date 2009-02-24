@@ -201,6 +201,18 @@ public class StringReaderTest : Assertion {
 		StringReader reader = new StringReader ("Line1\rLine2\r\nLine3\nLine4");
 		AssertEquals (24, reader.Read (new char[24], 0, 24));
 	}	
+
+	[Test]
+	public void MixedLineEnding ()
+	{
+		string foobar = "Foo\n\r\n\rBar";
+		StringReader reader = new StringReader (foobar);
+		int count = 0;
+		while (reader.ReadLine () != null)
+			count++;
+		AssertEquals (4, count);
+
+	}
 }
 
 }
