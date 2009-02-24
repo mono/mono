@@ -1,3 +1,8 @@
+2009-02-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory_1Test.cs, ChannelFactoryTest.cs, ClientBaseTest.cs:
+	  Ignore all failing-under-dotnet tests
+
 2009-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientBase_InteractiveChannelInitializerTest.cs : new test, for

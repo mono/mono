@@ -1,3 +1,8 @@
+2009-02-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingsSectionTest.cs, ServiceModelSectionGroupTest.cs:
+	  Ignore all failing-under-dotnet tests
+
 2008-04-03  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* StandardBindingElementCollectionTest.cs: fixed test

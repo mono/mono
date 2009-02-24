@@ -1,3 +1,8 @@
+2009-02-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WsdlExporterTest.cs:
+	  Ignore all failing-under-dotnet tests
+
 2008-05-22  Roei Erez  <roeie@mainsoft.com>
 	* fix ContractDescription.GetContract implementation
 	* Refactor Request processing
