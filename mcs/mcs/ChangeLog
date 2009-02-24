@@ -1,3 +1,8 @@
+2009-02-24  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #476295
+	* convert.cs: Avoid wrapping implicitly convertible reference type.
+
 2009-02-23  Marek Safar  <marek.safar@gmail.com>
 
 	* iterators.cs: Create MemberName correctly.

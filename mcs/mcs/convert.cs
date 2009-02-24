@@ -264,9 +264,9 @@ namespace Mono.CSharp {
 
 			if (ImplicitReferenceConversionExists (expr, target_type)) {
 				// 
-				// Reduce implicit reference conversion to object
+				// Avoid wrapping implicitly convertible reference type
 				//
-				if (!explicit_cast && target_type == TypeManager.object_type)
+				if (!explicit_cast)
 					return expr;
 
 				return EmptyCast.Create (expr, target_type);
