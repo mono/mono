@@ -1,3 +1,7 @@
+2009-02-24  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (BinaryCoreCheck): fix comparison of enums
+
 2009-02-23  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (IsNumber): actually decimal is rather a special
