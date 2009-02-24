@@ -65,6 +65,8 @@ namespace System.Data
 		AnsiStringFixedLength = 22,
 #if NET_2_0
 		Xml = 25,
+		DateTime2 = 26,
+		DateTimeOffset = 27,
 #endif
 		StringFixedLength = 23
 	}
