@@ -1,3 +1,11 @@
+2009-02-24  Jonathan Pryor  <jpryor@novell.com>
+
+	* docs/Makefile: Remove and don't install nunit-docs.source.  As
+	  Atsushi Enomoto said on 2008-11-26, Mono's NUnit is for internal use
+	  only, and installing nunit-docs.source causes an warning message
+	  during monodoc startup.
+	* docs/nunit-docs.source: Remove.
+
 2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : remove sys.messaging from CENTUM_TESTS. It has never

@@ -17,8 +17,7 @@ DOC_SOURCE_FILES = \
 	lang-csharp.source          \
 	Mono.source                 \
 	netdocs.source              \
-	Novell.source               \
-	nunit-docs.source
+	Novell.source
 
 ASSEMBLED_DOCS = \
 	cs-errors.tree cs-errors.zip      \
@@ -124,10 +123,6 @@ Mono.tree: Makefile
 Novell.zip : Novell.tree
 Novell.tree: Makefile
 	$(MDOC) assemble -o Novell $(NOVELL_DIRS)
-
-nunit-docs.zip : nunit-docs.tree
-nunit-docs.tree: Makefile
-	$(MDOC) assemble -o nunit-docs $(NUNIT_DIRS)
 
 cs-errors.zip : cs-errors.tree
 cs-errors.tree: cs-errors.config Makefile

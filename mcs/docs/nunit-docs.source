@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<monodoc>
-  <node label="NUnit Libraries" name="classlib-nunit" parent="libraries" />
-  <source provider="ecma" basefile="nunit-docs" path="classlib-nunit"/>
-</monodoc>
