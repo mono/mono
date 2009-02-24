@@ -253,7 +253,7 @@ namespace System.Net
 //			}
 //		}
 //
-		byte [] DownloadDataCore (Uri address, object userToken)
+		Stream DownloadDataCore (Uri address, object userToken)
 		{
 			WebRequest request = null;
 
@@ -927,36 +927,28 @@ namespace System.Net
 			return response.GetResponseStream ();
 		}
 
-		byte [] ReadAll (Stream stream, int length, object userToken)
+		Stream ReadAll (Stream stream, int length, object userToken)
 		{
 			MemoryStream ms = null;
 
 			bool nolength = (length == -1);
 			int size = ((nolength) ? 8192 : length);
-			if (nolength)
-				ms = new MemoryStream ();
+			ms = new MemoryStream (size);
 
-//			long total = 0;
-			int nread = 0;
-			int offset = 0;
+			int nread;
 			byte [] buffer = new byte [size];
-			while ((nread = stream.Read (buffer, offset, size)) != 0) {
-				if (nolength) {
-					ms.Write (buffer, 0, nread);
-				} else {
-					offset += nread;
-					size -= nread;
-				}
+			while ((nread = stream.Read (buffer, 0, buffer.Length)) != 0) {
+				ms.Write (buffer, 0, nread);
 				if (async){
-//					total += nread;
 					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (nread, length, userToken));
+				}
+				if (!nolength && ms.Length == length) {
+					break;
 				}
 			}
 
-			if (nolength)
-				return ms.ToArray ();
-
-			return buffer;
+			ms.Position = 0;
+			return ms;
 		}
 
 //		string UrlEncode (string str)
@@ -1132,8 +1124,11 @@ namespace System.Net
 				async_thread = new Thread (delegate (object state) {
 					object [] args = (object []) state;
 					try {
-						byte [] bdata = DownloadDataCore ((Uri) args [0], args [1]);
-						string data = encoding.GetString (bdata, 0, bdata.Length);
+						Stream bdata = DownloadDataCore ((Uri) args [0], args [1]);
+						string data;
+						using (StreamReader stream = new StreamReader (bdata, encoding, true))
+							data = stream.ReadToEnd ();
+
 						OnDownloadStringCompleted (
 							new DownloadStringCompletedEventArgs (data, null, false, args [1]));
 					} catch (ThreadInterruptedException){
