@@ -1,3 +1,7 @@
+2009-02-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StringReader.cs: LF followed by CR is 2 lines.
+
 2009-02-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* MonoIO.cs:
