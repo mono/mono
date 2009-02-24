@@ -408,5 +408,50 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (true, eq (null, null));
 			Assert.AreEqual (true, eq (false, false));
 		}
+
+		public enum Foo {
+			Bar,
+			Baz,
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void EnumEqual ()
+		{
+			var l = Expression.Parameter (typeof (Foo), "l");
+			var r = Expression.Parameter (typeof (Foo), "r");
+
+			var node = Expression.Equal (l, r);
+			Assert.IsFalse (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (bool), node.Type);
+			Assert.IsNull (node.Method);
+
+			var eq = Expression.Lambda<Func<Foo, Foo, bool>> (node, l, r).Compile ();
+
+			Assert.AreEqual (true, eq (Foo.Bar, Foo.Bar));
+			Assert.AreEqual (false, eq (Foo.Bar, Foo.Baz));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void LiftedEnumEqual ()
+		{
+			var l = Expression.Parameter (typeof (Foo?), "l");
+			var r = Expression.Parameter (typeof (Foo?), "r");
+
+			var node = Expression.Equal (l, r);
+			Assert.IsTrue (node.IsLifted);
+			Assert.IsFalse (node.IsLiftedToNull);
+			Assert.AreEqual (typeof (bool), node.Type);
+			Assert.IsNull (node.Method);
+
+			var eq = Expression.Lambda<Func<Foo?, Foo?, bool>> (node, l, r).Compile ();
+
+			Assert.AreEqual (true, eq (Foo.Bar, Foo.Bar));
+			Assert.AreEqual (false, eq (Foo.Bar, Foo.Baz));
+			Assert.AreEqual (false, eq (Foo.Bar, null));
+			Assert.AreEqual (true, eq (null, null));
+		}
 	}
 }

@@ -233,5 +233,20 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (null, gte (new Slot (1), null));
 			Assert.AreEqual (null, gte (null, null));
 		}
+
+		enum Foo {
+			Bar,
+			Baz
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void EnumGreaterThan ()
+		{
+			Expression.GreaterThan (
+				Foo.Bar.ToConstant (),
+				Foo.Baz.ToConstant ());
+		}
 	}
 }
