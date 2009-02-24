@@ -265,6 +265,9 @@ namespace System.Linq.Expressions {
 					if (!ltype.IsValueType && !rtype.IsValueType)
 						return null;
 
+					if (ltype == rtype && ultype.IsEnum)
+						return null;
+
 					if (ltype == rtype && ultype == typeof (bool))
 						return null;
 				}
