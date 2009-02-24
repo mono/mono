@@ -305,13 +305,23 @@ namespace System.Data
 						// however doesn't behave well with XMLs like the one in 
 						// https://bugzilla.novell.com/show_bug.cgi?id=377146 which is 
 						// apparently supported by MS.NET - to maintain compatibility,
-						// Try reading the element content as an object type
-						row [col] = reader.ReadContentAsObject ();
-					} catch {
+						// If the obj implements IXmlSerializable, let obj's ReadXml do the reading
+						IXmlSerializable obj = (IXmlSerializable) Activator.CreateInstance (col.DataType, new object [0]);
+						if (!reader.IsEmptyElement) {
+							obj.ReadXml (reader);
+   							reader.ReadEndElement ();
+						} else {
+   							reader.Skip ();
+						}						
+						row [col] = obj;
+					} catch (XmlException e) {
 #endif
 						// XML is not in accordance to expected standards, try reading the content as an xml doc
 						row [col] = reader.ReadInnerXml ();
 #if NET_2_0
+					} catch (InvalidOperationException e) {
+
+						row [col] = reader.ReadInnerXml ();
 					}
 #endif
 				} else {
