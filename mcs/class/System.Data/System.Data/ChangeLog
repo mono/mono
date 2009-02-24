@@ -1,3 +1,9 @@
+2009-02-24  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Fixes #476523
+	* DbType.cs: Add DateTime2 and DateTimeOffset - 3.5 additions
+	Patch by Jay Wren <jrwren@xmtp.net>
+	
 2009-01-05  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DataRelationCollection.cs (BinarySerialize): New.  Carved out of ...
