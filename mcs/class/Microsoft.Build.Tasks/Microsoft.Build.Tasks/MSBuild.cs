@@ -85,6 +85,8 @@ namespace Microsoft.Build.Tasks {
 					if (stopOnFirstFailure)
 						break;
 				}
+
+				Directory.SetCurrentDirectory (currentDirectory);
 			}
 
 			if (result)
