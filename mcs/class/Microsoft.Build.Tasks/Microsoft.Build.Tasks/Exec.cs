@@ -123,7 +123,7 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		protected override string GetWorkingDirectory ()
 		{
-			return Environment.CurrentDirectory;
+			return workingDirectory;
 		}
 		
 		[MonoTODO]

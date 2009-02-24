@@ -29,6 +29,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Resources;
@@ -98,30 +99,18 @@ namespace Microsoft.Build.Utilities
 						   string responseFileCommands,
 						   string commandLineCommands)
 		{
-			string arguments;
-			bool success;
-			
-			arguments = String.Concat (commandLineCommands, " ", responseFileCommands);
-			
-			success  = RealExecute (pathToTool, arguments);
-			
-			if (success)
-				return 0;
-			else
-				return -1;
+			return RealExecute (pathToTool, responseFileCommands, commandLineCommands) ? 0 : -1;
 		}
 		
 		public override bool Execute ()
 		{
-			int result;
-			
-			result = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
+			if (SkipTaskExecution ())
+				return true;
+
+			int result = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
 				GenerateCommandLineCommands ());
 			
-			if (result == 0)
-				return true;
-			else
-				return false;
+			return result == 0;
 		}
 		
 		[MonoTODO]
@@ -130,47 +119,61 @@ namespace Microsoft.Build.Utilities
 			return null;
 		}
 		
-		private bool RealExecute (string filename, string arguments)
+		private bool RealExecute (string pathToTool,
+					   string responseFileCommands,
+					   string commandLineCommands)
+
 		{
-			string line;
-		
-			if (filename == null)
-				throw new ArgumentNullException ("filename");
+			if (pathToTool == null)
+				throw new ArgumentNullException ("pathToTool");
 
-			if (!File.Exists (filename)) {
-				Log.LogError ("Unable to find tool {0} at '{1}'", ToolName, filename);
+			if (!File.Exists (pathToTool)) {
+				Log.LogError ("Unable to find tool {0} at '{1}'", ToolName, pathToTool);
 				return false;
 			}
 
-			if (arguments == null)
-				throw new ArgumentNullException ("arguments");
-			
-			process = new Process ();
-			process.StartInfo.Arguments = arguments;
-			process.StartInfo.CreateNoWindow = true;
-			process.StartInfo.FileName = filename;
-			process.StartInfo.RedirectStandardError = true;
-			process.StartInfo.RedirectStandardOutput = true;
-			process.StartInfo.UseShellExecute = false;
-			
-			Log.LogMessage (MessageImportance.Normal, String.Format ("Tool {0} execution started with arguments: {1}",
-				filename, arguments));
-			
+			string responseFileName = Path.GetTempFileName ();
+			File.WriteAllText (responseFileName, responseFileCommands);
+
+			string arguments = String.Concat (commandLineCommands, " ", GetResponseFileSwitch (responseFileName));
+
+			Log.LogMessage (MessageImportance.Normal, String.Format ("Tool {0} execution started with arguments: {1} {2}",
+				pathToTool, commandLineCommands, responseFileCommands));
+
+			string output = Path.GetTempFileName ();
+			string error = Path.GetTempFileName ();
+			StreamWriter outwr = new StreamWriter (output);
+			StreamWriter errwr = new StreamWriter (error);
+
+			ProcessStartInfo pinfo = new ProcessStartInfo (pathToTool, arguments);
+			pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
+
+			pinfo.UseShellExecute = false;
+			pinfo.RedirectStandardOutput = true;
+			pinfo.RedirectStandardError = true;
+
 			try {
-				process.Start ();
-				process.WaitForExit ();
+				ProcessWrapper pw = ProcessService.StartProcess (pinfo, outwr, errwr, null, environmentOverride);
+				pw.WaitForOutput();
+				exitCode = pw.ExitCode;
+				outwr.Close();
+				errwr.Close();
+				pw.Dispose ();
 			} catch (System.ComponentModel.Win32Exception e) {
-				Log.LogError ("Error executing tool '{0}': {1}", filename, e.Message);
+				Log.LogError ("Error executing tool '{0}': {1}", pathToTool, e.Message);
 				return false;
 			}
-			
-			exitCode = process.ExitCode;
-			
-			while ((line = process.StandardError.ReadLine ()) != null) {
-				LogEventsFromTextOutput (line, MessageImportance.Low);
+
+			foreach (string s in new string[] { output, error }) {
+				using (StreamReader sr = File.OpenText (s)) {
+					string line;
+					while ((line = sr.ReadLine ()) != null) {
+						LogEventsFromTextOutput (line, MessageImportance.Low);
+					}
+				}
 			}
 			
-			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", filename));
+			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", pathToTool));
 			
 			return !Log.HasLoggedErrors;
 		}
@@ -179,6 +182,9 @@ namespace Microsoft.Build.Utilities
 		[MonoTODO]
 		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
 		{
+			if (String.IsNullOrEmpty (singleLine))
+				return;
+
 			string filename, origin, category, code, subcategory, text;
 			int lineNumber, columnNumber, endLineNumber, endColumnNumber;
 		
