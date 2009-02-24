@@ -62,6 +62,12 @@ namespace System.Runtime.InteropServices
 		int refcount = 0;
 		bool owns_handle;
 		
+#if NET_2_1
+		protected SafeHandle ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		protected SafeHandle (IntPtr invalidHandleValue, bool ownsHandle)
 		{
