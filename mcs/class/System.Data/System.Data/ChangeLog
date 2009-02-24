@@ -1,5 +1,13 @@
 2009-02-24  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* *Fixes #377146 - in a better way
+	* XmlDataReader.cs (ReadElementElement): For reference types that
+	implement IXmlSerializable, call the corresponding ReadXml.
+	* DataSet.cs (WriteColumnAsElement): For reference types that implement 
+	IXmlSerializable, call the corresponding WriteXml.
+	
+2009-02-24  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* Fixes #476523
 	* DbType.cs: Add DateTime2 and DateTimeOffset - 3.5 additions
 	Patch by Jay Wren <jrwren@xmtp.net>

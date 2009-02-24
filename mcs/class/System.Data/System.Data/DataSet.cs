@@ -1274,6 +1274,7 @@ namespace System.Data
 			if (o is TimeSpan) return XmlConvert.ToString ((TimeSpan) o);
 			if (o is Guid) return XmlConvert.ToString ((Guid) o);
 			if (o is byte[]) return Convert.ToBase64String ((byte[])o);
+
 			return o.ToString ();
 		}
 
@@ -1384,8 +1385,13 @@ namespace System.Data
 				colnspc = col.Namespace;
 
 			//TODO check if I can get away with write element string
-			WriteStartElement (writer, mode, colnspc, col.Prefix, XmlHelper.Encode (col.ColumnName));
-			writer.WriteString (WriteObjectXml (rowObject));
+			WriteStartElement (writer, mode, colnspc, col.Prefix, XmlHelper.Encode (col.ColumnName));	
+			if (typeof (IXmlSerializable).IsAssignableFrom (col.DataType)) {
+				((IXmlSerializable)rowObject).WriteXml (writer);
+			} else {
+				writer.WriteString (WriteObjectXml (rowObject));
+			}
+
 			writer.WriteEndElement ();
 		}
 
