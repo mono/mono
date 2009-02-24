@@ -1,3 +1,8 @@
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseSolution): Report warning instead of error
+	for unknown global sections.
+
 2009-02-21  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/xbuild.rsp: Add descriptive comments.

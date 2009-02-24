@@ -146,7 +146,7 @@ namespace Mono.XBuild.CommandLine {
 					case "NestedProjects":
 						break;
 					default:
-						ErrorUtilities.ReportError (0, string.Format("Don't know how to handle GlobalSection {0}", sectionType));
+						ErrorUtilities.ReportWarning (0, string.Format("Don't know how to handle GlobalSection {0}, Ignoring.", sectionType));
 						break;
 				}
 				globalSectionMatch = globalSectionMatch.NextMatch ();
