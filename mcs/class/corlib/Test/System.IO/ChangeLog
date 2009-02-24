@@ -1,3 +1,7 @@
+2009-02-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StringReaderTest.cs: new test for ReadLine.
+
 2008-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryReaderTest.cs : fix tests that are also failing under .NET
