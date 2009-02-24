@@ -1,3 +1,8 @@
+2009-02-24  Marek Habersack  <mhabersack@novell.com>
+
+	* ResXFileRef.cs: the class must be internal when compiled as part
+	of System.Web
+
 2008-04-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ResXResourceWriter.cs, ResXResourceReader.cs, ResXDataNode.cs,

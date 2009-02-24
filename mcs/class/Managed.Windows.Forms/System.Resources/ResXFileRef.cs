@@ -36,7 +36,12 @@ using System.Text;
 namespace System.Resources {
 	[Serializable]
 	[TypeConverter(typeof(ResXFileRef.Converter))]
-	public class ResXFileRef {
+#if INSIDE_SYSTEM_WEB
+	internal
+#else
+	public 
+#endif
+	class ResXFileRef {
 #if INSIDE_SYSTEM_WEB
 		internal
 #else
