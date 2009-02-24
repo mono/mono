@@ -3,6 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Threading;
 
 #if NET_2_0
 using System.Collections.Generic;
@@ -147,6 +148,8 @@ namespace System.Text.RegularExpressions {
 			}				
 		}
 
+		LocalBuilder local_textinfo;
+
 		/*
 		 * Create a dynamic method which is equivalent to the RxInterpreter.EvalByteCode 
 		 * method specialized to the given program and a given pc. Return the newly
@@ -170,6 +173,13 @@ namespace System.Text.RegularExpressions {
 			 * call with the rest of the code.
 			 */
 			Frame frame = new Frame (ilgen);
+
+			/* Cache the textinfo used by Char.ToLower () */
+			local_textinfo = ilgen.DeclareLocal (typeof (TextInfo));
+			ilgen.Emit (OpCodes.Call, typeof (Thread).GetMethod ("get_CurrentThread"));
+			ilgen.Emit (OpCodes.Call, typeof (Thread).GetMethod ("get_CurrentCulture"));
+			ilgen.Emit (OpCodes.Call, typeof (CultureInfo).GetMethod ("get_TextInfo"));
+			ilgen.Emit (OpCodes.Stloc, local_textinfo);
 
 			m = EmitEvalMethodBody (m, ilgen, frame, program, pc, program.Length, false, false, out pc);
 			if (m == null)
@@ -512,6 +522,9 @@ namespace System.Text.RegularExpressions {
 						ilgen.Emit (OpCodes.Bge, l1);
 					}
 
+					if (ignore)
+						ilgen.Emit (OpCodes.Ldloc, local_textinfo);
+
 					//  int c = str [strpos];
 					LocalBuilder local_c = ilgen.DeclareLocal (typeof (char));
 					ilgen.Emit (OpCodes.Ldarg_0);
@@ -523,7 +536,7 @@ namespace System.Text.RegularExpressions {
 					}
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 					if (ignore)
-						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
+						ilgen.Emit (OpCodes.Callvirt, typeof (TextInfo).GetMethod ("ToLower", new Type [] { typeof (char) }));
 
 					if (op == RxOp.Char) {
 						ilgen.Emit (OpCodes.Conv_I4);
@@ -826,6 +839,8 @@ namespace System.Text.RegularExpressions {
 					}
 					//  int c = str [strpos];
 					LocalBuilder local_c = ilgen.DeclareLocal (typeof (int));
+					if (ignore)
+						ilgen.Emit (OpCodes.Ldloc, local_textinfo);
 					ilgen.Emit (OpCodes.Ldarg_0);
 					ilgen.Emit (OpCodes.Ldfld, fi_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
@@ -836,7 +851,7 @@ namespace System.Text.RegularExpressions {
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 					ilgen.Emit (OpCodes.Conv_I4);
 					if (ignore)
-						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
+						ilgen.Emit (OpCodes.Callvirt, typeof (TextInfo).GetMethod ("ToLower", new Type [] { typeof (char) }));
 					//  c -= program [pc + 1];
 					if (unicode) {
 						ilgen.Emit (OpCodes.Ldc_I4, ReadShort (program, pc + 1));
@@ -971,12 +986,14 @@ namespace System.Text.RegularExpressions {
 					for (i = 0; i < length; ++i) {
 						// if (*(strptr + i) != program [start + i])
 						//   return false;
+						if (ignore)
+							ilgen.Emit (OpCodes.Ldloc, local_textinfo);
 						ilgen.Emit (OpCodes.Ldloc, local_strptr);
 						ilgen.Emit (OpCodes.Ldc_I4, i * 2);
 						ilgen.Emit (OpCodes.Add);
 						ilgen.Emit (OpCodes.Ldind_I2);
 						if (ignore)
-							ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
+							ilgen.Emit (OpCodes.Callvirt, typeof (TextInfo).GetMethod ("ToLower", new Type [] { typeof (char) }));
 						ilgen.Emit (OpCodes.Ldc_I4, (int)program [start + i]);
 						ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 					}
@@ -1007,11 +1024,13 @@ namespace System.Text.RegularExpressions {
 					while (start < end) {
 						//if (str [strpos] != program [start])
 						//	return false;
+						if (ignore)
+							ilgen.Emit (OpCodes.Ldloc, local_textinfo);
 						ilgen.Emit (OpCodes.Ldloc, local_str);
 						ilgen.Emit (OpCodes.Ldarg_1);
 						ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 						if (ignore)
-							ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
+							ilgen.Emit (OpCodes.Callvirt, typeof (TextInfo).GetMethod ("ToLower", new Type [] { typeof (char) }));
 						ilgen.Emit (OpCodes.Ldc_I4, unicode ? ReadShort (program, start) : (int)program [start]);
 						ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 						//strpos++;
@@ -1778,16 +1797,20 @@ namespace System.Text.RegularExpressions {
 					ilgen.MarkLabel (l_loop_body);
 					//if (str [strpos] != str [start])
 					//return false;
+					if (ignore)
+						ilgen.Emit (OpCodes.Ldloc, local_textinfo);
 					ilgen.Emit (OpCodes.Ldloc, local_str);
 					ilgen.Emit (OpCodes.Ldarg_1);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 					if (ignore)
-						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
+						ilgen.Emit (OpCodes.Callvirt, typeof (TextInfo).GetMethod ("ToLower", new Type [] { typeof (char) }));
+					if (ignore)
+						ilgen.Emit (OpCodes.Ldloc, local_textinfo);
 					ilgen.Emit (OpCodes.Ldloc, local_str);
 					ilgen.Emit (OpCodes.Ldloc, loc_start);
 					ilgen.Emit (OpCodes.Callvirt, typeof (string).GetMethod ("get_Chars"));
 					if (ignore)
-						ilgen.Emit (OpCodes.Call, typeof (Char).GetMethod ("ToLower", new Type [] { typeof (char) }));
+						ilgen.Emit (OpCodes.Callvirt, typeof (TextInfo).GetMethod ("ToLower", new Type [] { typeof (char) }));
 					ilgen.Emit (OpCodes.Bne_Un, frame.label_fail);
 					// strpos++;
 					ilgen.Emit (OpCodes.Ldarg_1);
