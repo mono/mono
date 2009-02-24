@@ -143,7 +143,8 @@ namespace System.Web.Compilation {
 			referencedAssemblies = new List <Assembly> ();
 			recursionDepth = 0;
 
-			is_precompiled = File.Exists (Path.Combine (HttpRuntime.AppDomainAppPath, "PrecompiledApp.config"));
+			string appPath = HttpRuntime.AppDomainAppPath;
+			is_precompiled = String.IsNullOrEmpty (appPath) ? false : File.Exists (Path.Combine (appPath, "PrecompiledApp.config"));
 			if (is_precompiled) {
 				LoadPrecompilationInfo ();
 			}

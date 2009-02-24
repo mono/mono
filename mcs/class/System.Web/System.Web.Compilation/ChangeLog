@@ -1,3 +1,8 @@
+2009-02-24  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: Path.Combine must not be passed null first
+	parameter.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* System.Web.Compilation/BuildManager.cs: updated comment.
