@@ -13487,6 +13487,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-55.cs">
+    <type name="Thing`1[TFirst]">
+      <method name="Void .ctor(Action`1)">
+        <size>14</size>
+      </method>
+      <method name="Thing`1[TFirst] Create[TSecond](System.Func`2[TFirst,TSecond])">
+        <size>31</size>
+      </method>
+      <method name="Void SomeAction()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void Main()">
+        <size>42</size>
+      </method>
+      <method name="System.Object &lt;Main&gt;m__1(System.Object)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Thing`1+&lt;Create&gt;c__AnonStorey0`1[TFirst,TSecond]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void &lt;&gt;m__0(TFirst)">
+        <size>47</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-6.cs">
     <type name="X">
       <method name="Void .ctor()">
