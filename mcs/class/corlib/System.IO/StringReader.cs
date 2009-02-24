@@ -154,7 +154,7 @@ namespace System.IO {
 				readTo = nextCR;
 			} else {
 				readTo = (nextCR > nextLF) ? nextLF : nextCR;
-				consecutive = (nextCR + 1 == nextLF || nextLF + 1 == nextCR);
+				consecutive = (nextCR + 1 == nextLF);
 			}
 
 			string nextLine = source.Substring (nextChar, readTo - nextChar);
