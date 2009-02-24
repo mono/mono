@@ -1,3 +1,8 @@
+2009-02-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: made the HttpException (int httpCode, string
+	message, Exception innerException, string resourceName) internal.
+
 2009-02-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpServerUtility.cs: allow Transfer to static files too.

@@ -118,7 +118,7 @@ namespace System.Web
 			http_code = httpCode;
 		}
 
-		public HttpException (int httpCode, string message, Exception innerException, string resourceName)
+		internal HttpException (int httpCode, string message, Exception innerException, string resourceName)
 			: this (httpCode, message, innerException)
 		{
 			resource_name = resourceName;
