@@ -174,6 +174,11 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return true; }
 		}
+		
+		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
+		{
+			type = storey.MutateType (type);
+		}
 	}
 
 	//

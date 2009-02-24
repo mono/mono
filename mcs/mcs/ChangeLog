@@ -1,5 +1,10 @@
 2009-02-24  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #479209
+	* literal.cs: Mutate null underlying type.
+
+2009-02-24  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #476295
 	* convert.cs: Avoid wrapping implicitly convertible reference type.
 
