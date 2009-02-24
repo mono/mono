@@ -415,7 +415,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void EnumEqual ()
 		{
 			var l = Expression.Parameter (typeof (Foo), "l");
@@ -434,7 +433,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void LiftedEnumEqual ()
 		{
 			var l = Expression.Parameter (typeof (Foo?), "l");
