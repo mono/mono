@@ -158,7 +158,7 @@
 			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutputPath)\%(Culture)\$(AssemblyName).resources.dll')" />
 	</Target>
 
-	<Target Name="GetTargetPath" Outputs="@(TargetPath->'%(FullPath)$(AssemblyName)$(TargetExt)')"/>
+	<Target Name="GetTargetPath" Outputs="@(TargetPath->'%(FullPath)\$(AssemblyName)$(TargetExt)')"/>
 
 	<!-- FIXME: Include all generated files -->
 	<Target Name="Clean">
