@@ -316,11 +316,11 @@ namespace System.Windows.Forms {
 				return false;
 			}
 			set {
+				bool changed = selected != value;
 				selected = value;
 
-				if (value != ((State & DataGridViewElementStates.Selected) != 0)) {
+				if (value != ((State & DataGridViewElementStates.Selected) != 0))
 					SetState(State ^ DataGridViewElementStates.Selected);
-				}
 				
 				// If our row is selected, unselect it and select
 				// the first cell in it that isn't us
@@ -332,6 +332,9 @@ namespace System.Windows.Forms {
 					else if (OwningRow.Cells.Count > 1)
 						OwningRow.Cells[1].Selected = true;
 				}
+
+				if (changed && DataGridView != null && DataGridView.IsHandleCreated)
+					DataGridView.Invalidate ();
 			}
 		}
 
