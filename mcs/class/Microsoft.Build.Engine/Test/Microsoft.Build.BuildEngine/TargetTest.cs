@@ -284,9 +284,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			try {
 				Assert.AreEqual (3, logger.NormalMessageCount, "Expected number of messages");
-				CheckLoggedMessageHead (logger, "foo called", "A1");
-				CheckLoggedMessageHead (logger, "FooItem: apple;rhubarb;apricot", "A2");
-				CheckLoggedMessageHead (logger, "AllOut: apple;rhubarb;apricot;apple;rhubarb;apricot", "A3");
+				logger.CheckLoggedMessageHead ("foo called", "A1");
+				logger.CheckLoggedMessageHead ("FooItem: apple;rhubarb;apricot", "A2");
+				logger.CheckLoggedMessageHead ("AllOut: apple;rhubarb;apricot;apple;rhubarb;apricot", "A3");
 				Assert.AreEqual (0, logger.NormalMessageCount, "Extra messages found");
 
 				Assert.AreEqual (2, logger.TargetStarted, "TargetStarted count");
@@ -298,16 +298,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				logger.DumpMessages ();
 				throw;
 			}
-		}
-
-		void CheckLoggedMessageHead (MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger, string expected, string id)
-		{
-			string actual;
-			int result = logger.CheckHead (expected, MessageImportance.Normal, out actual);
-			if (result == 1)
-				Assert.Fail ("{0}: Expected message '{1}' was not emitted.", id, expected);
-			if (result == 2)
-				Assert.AreEqual (expected, actual, id);
 		}
 
 	}

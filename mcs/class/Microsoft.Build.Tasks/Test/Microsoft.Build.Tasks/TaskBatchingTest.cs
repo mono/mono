@@ -313,7 +313,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 			project.LoadXml (projectString);
 			Assert.IsTrue (project.Build ("ShowMessage"), "A1: Build failed");
 
-			CheckLoggedMessageHead (testLogger, "ResXFiles: Item1;Item2 NonResXFiles: ", "A2");
+			testLogger.CheckLoggedMessageHead ("ResXFiles: Item1;Item2 NonResXFiles: ", "A2");
 			CheckEngineEventCounts (testLogger, 1, 1, 1, 1);
 		}
 
@@ -849,7 +849,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 		{
 			try {
 				for (int i = 0; i < values.Length; i++) {
-					CheckLoggedMessageHead (logger, values [i], prefix + "#" + i);
+					logger.CheckLoggedMessageHead (values [i], prefix + "#" + i);
 				}
 				if (logger.NormalMessageCount > 0)
 					Assert.Fail ("{0}: Expected {1} messages, but found {2}",
@@ -862,22 +862,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		void CheckMessage (TestMessageLogger logger, string culture, string items, string id)
 		{
-			CheckLoggedMessageHead (logger, String.Format ("Culture: {0} -- ResXFile: {1}", culture, items), id);
+			logger.CheckLoggedMessageHead (String.Format ("Culture: {0} -- ResXFile: {1}", culture, items), id);
 		}
 
 		void CheckMessage2 (TestMessageLogger logger, string culture, string resx_files, string nonresx_files, string id)
 		{
-			CheckLoggedMessageHead (logger, String.Format ("Culture: {0} -- ResXFiles: {1} NonResXFiles: {2}", culture, resx_files, nonresx_files), id);
-		}
-
-		void CheckLoggedMessageHead (TestMessageLogger logger, string expected, string id)
-		{
-			string actual;
-			int result = logger.CheckHead (expected, MessageImportance.Normal, out actual);
-			if (result == 1)
-				Assert.Fail ("{0}: Expected message '{1}' was not emitted.", id, expected);
-			if (result == 2)
-				Assert.AreEqual (expected, actual, id);
+			logger.CheckLoggedMessageHead (String.Format ("Culture: {0} -- ResXFiles: {1} NonResXFiles: {2}", culture, resx_files, nonresx_files), id);
 		}
 
 		void CheckLoggedMessageAny (TestMessageLogger logger, string expected, string id)

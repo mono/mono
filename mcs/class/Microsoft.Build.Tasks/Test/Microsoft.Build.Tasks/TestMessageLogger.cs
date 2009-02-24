@@ -2,6 +2,7 @@ using Microsoft.Build.Framework;
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace MonoTests.Microsoft.Build.Tasks
 {
@@ -147,6 +148,18 @@ namespace MonoTests.Microsoft.Build.Tasks
 			foreach (BuildEventArgs arg in all_messages)
 				Console.WriteLine ("Msg: {0}", arg.Message);
 		}
+
+		public void CheckLoggedMessageHead (string expected, string id)
+		{
+			string actual;
+			int result = CheckHead (expected, MessageImportance.Normal, out actual);
+			if (result == 1)
+				Assert.Fail ("{0}: Expected message '{1}' was not emitted.", id, expected);
+			if (result == 2)
+				Assert.AreEqual (expected, actual, id);
+		}
+
+
 	}
 
 }

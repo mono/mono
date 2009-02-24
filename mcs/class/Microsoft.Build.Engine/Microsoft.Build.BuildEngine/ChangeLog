@@ -1,3 +1,17 @@
+2009-02-24  Ankit Jain  <jankit@novell.com>
+
+	Lazily load UsingTask tasks.
+	* UsingTask.cs (Evaluate): Register 'this' with task database,
+	but don't load it yet. Register only if condition evaluates to true.
+	Move the load logic to ..
+	(Load): .. here. Register with the specified task database.
+	* TaskDatabase.cs (RegisterUsingTask): Store the UsingTask instance
+	in a table keyed by task name, but don't load it yet.
+	(GetTypeFromClassName): Try to load UsingTask if task is not already
+	loaded. Move loading logic to ..
+	(GetTypeFromClassNameInternal): .. here.
+	(CopyTasks): Copy the usingTasks table also.
+
 2009-02-23  Ankit Jain  <jankit@novell.com>
 
 	* BuildItem.cs (AddMetadata): Allow overwriting older values.

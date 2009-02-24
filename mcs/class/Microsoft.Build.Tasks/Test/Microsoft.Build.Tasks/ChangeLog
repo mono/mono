@@ -1,3 +1,8 @@
+2009-02-24  Ankit Jain  <jankit@novell.com>
+
+	* TestMessageLogger.cs (CheckLoggedMessageHead): Move here from
+	* TaskBatchingTest.cs: .. here. Track api change.
+
 2009-02-21  Ankit Jain  <jankit@novell.com>
 
 	* CopyTest.cs: New.

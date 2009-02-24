@@ -1,3 +1,11 @@
+2009-02-24  Ankit Jain  <jankit@novell.com>
+
+	* UsingTaskTest.cs (TestLazyLoad{1,2,3}): New.
+	(TestAssemblyNameOrAssemblyFileConditionFalse): New.
+	(TestDuplicate1): New.
+	* TargetTest (CheckLoggedMessageHead): Moved to TestMessageLogger,
+	use that.
+
 2009-02-15  Jonathan Chambers  <joncham@gmail.com>
 
 	* BuildChooseTest.cs (TestValueXml): Add tests for Choose.

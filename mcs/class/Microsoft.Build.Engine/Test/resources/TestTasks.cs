@@ -278,4 +278,41 @@ public class BatchingTestTask : Task
 	}
 }
 
+namespace Another
+{
+	public class SameTask : Task
+	{
+		string output;
+		public override bool Execute ()
+		{
+			output = "Another.SameTask";
+			return true;
+		}
+
+		[Output]
+		public string OutputString
+		{
+			get { return output; }
+		}
+	}
+}
+
+namespace Other
+{
+	public class SameTask : Task
+	{
+		string output;
+		public override bool Execute ()
+		{
+			output = "Other.SameTask";
+			return true;
+		}
+
+		[Output]
+		public string OutputString
+		{
+			get { return output; }
+		}
+	}
+}
 
