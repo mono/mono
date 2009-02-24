@@ -14692,10 +14692,10 @@
         <size>97</size>
       </method>
       <method name="Void ConvertTest_10()">
-        <size>178</size>
+        <size>163</size>
       </method>
       <method name="Void ConvertTest_11()">
-        <size>116</size>
+        <size>101</size>
       </method>
       <method name="Void ConvertTest_12()">
         <size>166</size>
@@ -14782,7 +14782,7 @@
         <size>113</size>
       </method>
       <method name="Void EqualTestDelegate_2()">
-        <size>342</size>
+        <size>312</size>
       </method>
       <method name="Void ExclusiveOrTest()">
         <size>115</size>
@@ -15926,6 +15926,26 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-18.cs">
+    <type name="FooBase">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>140</size>
       </method>
     </type>
   </test>
