@@ -1,3 +1,8 @@
+2009-02-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OracleException:  2.0 changes - patch submitted by 
+	Jay Wren <jrwren@xmtp.net>
+	
 2009-02-19  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OracleParameter.cs (bind): Consider OciDataType.Float and .Integer as 
