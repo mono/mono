@@ -667,7 +667,7 @@ namespace System.Web.Compilation
 				if (this.text.Length > 0)
 					FlushText (true);
 				CodeRenderParser r = new CodeRenderParser (text, stack.Builder);
-				r.AddChildren ();
+				r.AddChildren (this);
 				return;
 			}
 			
@@ -1020,22 +1020,24 @@ namespace System.Web.Compilation
 		{
 			string str;
 			ControlBuilder builder;
-
+			AspGenerator generator;
+			
 			public CodeRenderParser (string str, ControlBuilder builder)
 			{
 				this.str = str;
 				this.builder = builder;
 			}
 
-			public void AddChildren ()
+			public void AddChildren (AspGenerator generator)
 			{
+				this.generator = generator;
 				int index = str.IndexOf ("<%");
 				if (index > 0) {
 					TextParsed (null, str.Substring (0, index));
 					str = str.Substring (index);
 				}
-
-				AspParser parser = new AspParser ("@@inner_string@@", new StringReader (str));
+				
+				AspParser parser = new AspParser ("@@nested_tag@@", new StringReader (str));
 				parser.Error += new ParseErrorHandler (ParseError);
 				parser.TagParsed += new TagParsedHandler (TagParsed);
 				parser.TextParsed += new TextParsedHandler (TextParsed);
@@ -1044,14 +1046,31 @@ namespace System.Web.Compilation
 
 			void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 			{
-				if (tagtype == TagType.CodeRender)
-					builder.AppendSubBuilder (new CodeRenderBuilder (tagid, false, location));
-				else if (tagtype == TagType.CodeRenderExpression)
-					builder.AppendSubBuilder (new CodeRenderBuilder (tagid, true, location));
-				else if (tagtype == TagType.DataBinding)
-					builder.AppendSubBuilder (new DataBindingBuilder (tagid, location));
-				else
-					builder.AppendLiteralString (location.PlainText);
+				switch (tagtype) {
+					case TagType.CodeRender:
+						builder.AppendSubBuilder (new CodeRenderBuilder (tagid, false, location));
+						break;
+						
+					case TagType.CodeRenderExpression:
+						builder.AppendSubBuilder (new CodeRenderBuilder (tagid, true, location));
+						break;
+						
+					case TagType.DataBinding:
+						builder.AppendSubBuilder (new DataBindingBuilder (tagid, location));
+						break;
+
+					case TagType.Tag:
+					case TagType.SelfClosing:
+						if (generator != null)
+							generator.TagParsed (location, tagtype, tagid, attributes);
+						else
+							goto default;
+						break;
+						
+					default:
+						builder.AppendLiteralString (location.PlainText);
+						break;
+				}
 			}
 
 			void TextParsed (ILocation location, string text)
