@@ -1,5 +1,12 @@
 2009-02-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata-internals.h (struct _MonoImage): Add a new cache for szarray
+	classes + a separate lock for it, as it is used frequently at runtime, not
+	just during metadata loading/JIT compilation.
+
+	* class.c (mono_bounded_array_class_get): Use the separate cache + lock
+	for szarrays.
+	
 	* object-internals.h (mono_class_from_name_cached): New macro to cache
 	the results of the lookup locally without having to declare a static
 	variable to hold it.
