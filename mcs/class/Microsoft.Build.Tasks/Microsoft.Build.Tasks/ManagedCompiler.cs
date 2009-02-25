@@ -92,8 +92,14 @@ namespace Microsoft.Build.Tasks {
 				commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);
 			
 			if (Resources != null)
-				foreach (ITaskItem item in Resources)
+				foreach (ITaskItem item in Resources) {
+					string logical_name = item.GetMetadata ("LogicalName");
+					if (logical_name.Length > 0)
+						commandLine.AppendSwitchIfNotNull ("/resource:",
+								String.Format ("{0},{1}", item.ItemSpec, logical_name));
+					else
 						commandLine.AppendSwitchIfNotNull ("/resource:", item.ItemSpec);
+				}
 
 			if (Sources != null)
 				foreach (ITaskItem item in Sources)

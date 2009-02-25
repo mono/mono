@@ -126,8 +126,7 @@ namespace Microsoft.Build.Tasks {
 			if (culture == null)
 				return rname;
 			else
-				//FIXME: Why??!! Tests show that this is required!
-				return culture + "\\" + rname;
+				return Path.Combine (culture, rname);
 		}
 
 		/* Special parser for C# files

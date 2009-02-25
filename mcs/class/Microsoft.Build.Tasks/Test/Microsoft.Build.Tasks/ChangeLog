@@ -1,3 +1,9 @@
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* CreateCSharpManifestResourceNameTest.cs (CheckResourceNames):
+	Refactor a bit to improve error reporting.
+	Update to use Path.Combine instead of hardcoding "\".
+
 2009-02-24  Ankit Jain  <jankit@novell.com>
 
 	* TestMessageLogger.cs (CheckLoggedMessageHead): Move here from

@@ -79,7 +79,7 @@
 	/>
 
 	<Target Name="BuildResources"
-		DependsOnTargets="SplitResourcesByCulture;CreateManifestResourceNames;GenerateResources;GenerateSatelliteAssemblies">
+		DependsOnTargets="SplitResourcesByCulture;CreateManifestResourceNames;CopyNonResxEmbeddedResources;GenerateResources;GenerateSatelliteAssemblies">
 	</Target>
 
 	<Target Name="SplitResourcesByCulture">
@@ -105,6 +105,23 @@
 		</CreateItem>
 	</Target>
 
+	<!-- Copy non-resx resources to their manifest resource names, this is what the compiler expects -->
+	<Target Name = "CopyNonResxEmbeddedResources"
+		Condition = "'@(NonResxWithCulture)' != '' or '@(NonResxWithNoCulture)' != '' or '@(ManifestNonResxWithCulture)' != '' or '@(ManifestNonResxWithNoCulture)' != ''">
+
+		<MakeDir Directories="$(IntermediateOutputPath)%(ManifestNonResxWithCulture.Culture)"/>
+		<Copy SourceFiles = "@(NonResxWithCulture)"
+			DestinationFiles = "@(ManifestNonResxWithCulture->'$(IntermediateOutputPath)%(Identity)')">
+			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithCultureOnDisk"/>
+		</Copy>
+
+		<Copy SourceFiles = "@(NonResxWithNoCulture)"
+			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')">
+			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithNoCultureOnDisk"/>
+		</Copy>
+
+	</Target>
+
 	<Target Name = "GenerateResources">
 		<GenerateResource
 			Sources = "@(ResxWithNoCulture)"
@@ -126,22 +143,22 @@
 	</Target>
 
 	<Target Name="GenerateSatelliteAssemblies"
-		Inputs="@(ManifestResourceWithCulture);@(NonResxWithCulture)"
+		Inputs="@(ManifestResourceWithCulture);@(ManifestNonResxWithCultureOnDisk)"
 		Outputs="$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll" >
 		<!-- @(NonResxWithCulture) - rename files to ManifestNon.. and then use for AL -->
 		<MakeDir Directories = "$(IntermediateOutputPath)%(ManifestResourceWithCulture.Culture)" Condition = "'@(ManifestResourceWithCulture)' != ''" />
-		<MakeDir Directories = "$(IntermediateOutputPath)%(NonResxWithCulture.Culture)" Condition = "'@(NonResxWithCulture)' != ''" />
+		<MakeDir Directories = "$(IntermediateOutputPath)%(ManifestNonResxWithCultureOnDisk.Culture)" Condition = "'@(ManifestNonResxWithCultureOnDisk)' != ''" />
 
 		<AL
 			Culture = "%(Culture)"
-			EmbedResources = "@(ManifestResourceWithCulture);@(NonResxWithCulture)"
+			EmbedResources = "@(ManifestResourceWithCulture);@(ManifestNonResxWithCultureOnDisk)"
 			OutputAssembly = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll"
 		/>
 
 		<CreateItem
 			Include = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll"
 			AdditionalMetadata = "Culture=%(Culture)"
-			Condition = "'@(ManifestResourceWithCulture)' != '' or '@(NonResxWithCulture)' != ''">
+			Condition = "'@(ManifestResourceWithCulture)' != '' or '@(ManifestNonResxWithCultureOnDisk)' != ''">
 			<Output TaskParameter = "Include" ItemName = "IntermediateSatelliteAssemblies" />
 		</CreateItem>
 	</Target>
