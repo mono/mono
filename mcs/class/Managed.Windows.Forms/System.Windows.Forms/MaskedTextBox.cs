@@ -240,7 +240,7 @@ namespace System.Windows.Forms
 			endSelection = SelectionLength == 0 ? SelectionStart : SelectionStart + SelectionLength - 1;
 			result = provider.RemoveAt (SelectionStart, endSelection, out testPosition, out resultHint);
 
-			PostprocessInput (result, testPosition, testPosition, resultHint);
+			PostprocessKeyboardInput (result, testPosition, testPosition, resultHint);
 
 			e.Handled = true;
 		}
@@ -272,7 +272,7 @@ namespace System.Windows.Forms
 				editPosition = testPosition + 1;
 			}
 
-			PostprocessInput (result, editPosition, testPosition, resultHint);
+			PostprocessKeyboardInput (result, editPosition, testPosition, resultHint);
 			
 			e.Handled = true;
 		}
