@@ -1,5 +1,9 @@
 2009-02-25  Ankit Jain  <jankit@novell.com>
 
+	* AL.cs (Execute): Use ToolTask.Execute instead of doing our own.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
 	* AssemblyResolver.cs:
 	* ResolveAssemblyReference.cs: Honor SpecificVersion. Emit detailed error
 	messages incase assembly resolution fails. Make specific version
