@@ -1,5 +1,14 @@
 2009-02-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* object-internals.h (mono_class_from_name_cached): New macro to cache
+	the results of the lookup locally without having to declare a static
+	variable to hold it.
+	(mono_class_get_field_from_name_cached): Ditto.
+	(mono_array_class_get_cached): Ditto.
+
+	* threadpool.c threads.c locales.c icall.c reflection.c socket-io.c: Use
+	the new macros.
+	
 	* object.c (mono_get_delegate_invoke): Call setup_methods () to avoid the
 	slower search in metadata.
 
