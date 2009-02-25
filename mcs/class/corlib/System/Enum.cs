@@ -47,12 +47,16 @@ namespace System
 		internal string[] names;
 		[ThreadStatic]
 		static Hashtable cache;
+		static Hashtable global_cache;
+		static object global_cache_monitor;
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
 
 		static MonoEnumInfo ()
 		{
+			global_cache_monitor = new object ();
+			global_cache = new Hashtable ();
 		}
 
 		static Hashtable Cache {
@@ -72,13 +76,26 @@ namespace System
 
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
+			/* First check the thread-local cache without locking */
 			if (Cache.ContainsKey (enumType)) {
 				info = (MonoEnumInfo) cache [enumType];
 				return;
 			}
+			/* Threads could die, so keep a global cache too */
+			lock (global_cache_monitor) {
+				if (global_cache.ContainsKey (enumType)) {
+					info = (MonoEnumInfo) global_cache [enumType];
+					cache [enumType] = info;
+					return;
+				}
+			}
+
 			get_enum_info (enumType, out info);
 			Array.Sort (info.values, info.names);
-			cache.Add (enumType, new MonoEnumInfo (info));
+			MonoEnumInfo cached = new MonoEnumInfo (info);
+			lock (global_cache_monitor) {
+				global_cache [enumType] = cached;
+			}
 		}
 	};
 

@@ -1,3 +1,8 @@
+2009-02-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Enum.cs (GetInfo): Add a global cache in addition to the thread-local
+	caches to accomodate short living threads like threadpool threads.
+
 2009-02-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* Type.cs: Add IsUserType internal property.
