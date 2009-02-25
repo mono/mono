@@ -19,7 +19,15 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<IntermediateOutputPath Condition="'$(IntermediateOutputPath)' == ''">obj\</IntermediateOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">obj\</BaseIntermediateOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(IntermediateOutputPath)' == ''">
+		<IntermediateOutputPath Condition=" '$(PlatformName)' == 'AnyCPU'">$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+		<IntermediateOutputPath Condition=" '$(PlatformName)' != 'AnyCPU'">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<IntermediateAssembly Condition="'$(IntermediateAssembly)' == ''">$(IntermediateOutputPath)$(AssemblyName)$(TargetExt)</IntermediateAssembly>
 	</PropertyGroup>
 
