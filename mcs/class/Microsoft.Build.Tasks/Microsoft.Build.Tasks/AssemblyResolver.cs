@@ -44,6 +44,7 @@ namespace Microsoft.Build.Tasks {
 		Dictionary<string, TargetFrameworkAssemblies> target_framework_cache;
 		Dictionary<string, Dictionary<Version, string>> gac;
 		TaskLoggingHelper log;
+		StringWriter sw;
 
 		public AssemblyResolver ()
 		{
@@ -51,6 +52,15 @@ namespace Microsoft.Build.Tasks {
 			target_framework_cache = new Dictionary <string, TargetFrameworkAssemblies> ();
 
 			GatherGacAssemblies ();
+		}
+
+		public StringWriter SearchLogger {
+			get { return sw; }
+		}
+
+		public void ResetSearchLogger ()
+		{
+			sw = new StringWriter ();
 		}
 
 		string GetGacPath ()
@@ -92,7 +102,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		public string FindInTargetFramework (ITaskItem reference, string framework_dir)
+		public string FindInTargetFramework (ITaskItem reference, string framework_dir, bool specific_version)
 		{
 			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
 			TargetFrameworkAssemblies gac_asm;
@@ -103,19 +113,35 @@ namespace Microsoft.Build.Tasks {
 
 			KeyValuePair<AssemblyName, string> pair;
 			if (gac_asm.NameToAssemblyNameCache.TryGetValue (key_aname.Name, out pair)) {
-				if (AssemblyNamesCompatible (key_aname, pair.Key, false))
+				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version))
 					return pair.Value;
+
+				SearchLogger.WriteLine ("Considered target framework dir {0}, assembly name '{1}' did not " +
+						"match the expected '{2}' (SpecificVersion={3})",
+						framework_dir, pair.Key, key_aname, specific_version);
+			} else {
+				SearchLogger.WriteLine ("Considered target framework dir {0}, assembly named '{1}' not found.",
+						framework_dir, key_aname.Name);
 			}
 			return null;
 		}
 
 		public string FindInDirectory (ITaskItem reference, string directory)
 		{
-			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
-			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
-				AssemblyName found = AssemblyName.GetAssemblyName (file);
-				if (AssemblyNamesCompatible (key_aname, found, false))
-					return file;
+			if (reference.ItemSpec.IndexOf (',') > 0) {
+				AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
+				foreach (string file in Directory.GetFiles (directory, "*.dll")) {
+					AssemblyName found = AssemblyName.GetAssemblyName (file);
+					//FIXME: Extract 'name' and look only for name.dll name.exe ?
+					if (AssemblyNamesCompatible (key_aname, found, false))
+						return file;
+
+					SearchLogger.WriteLine ("Considered {0}, but assembly name wasn't compatible.", file);
+				}
+			} else {
+				string path = Path.Combine (directory, reference.ItemSpec);
+				if (GetAssemblyNameFromFile (path) != null)
+					return path;
 			}
 
 			return null;
@@ -133,18 +159,26 @@ namespace Microsoft.Build.Tasks {
 			return gac_asm;
 		}
 
-		public string ResolveGacReference (ITaskItem reference)
+		public string ResolveGacReference (ITaskItem reference, bool specific_version)
 		{
-			// FIXME: deal with SpecificVersion=False
 			AssemblyName name = new AssemblyName (reference.ItemSpec);
-			if (!gac.ContainsKey (name.Name))
+			if (!gac.ContainsKey (name.Name)) {
+				SearchLogger.WriteLine ("Considered {0}, but could not find in the GAC.",
+						reference.ItemSpec);
 				return null;
+			}
 
 			if (name.Version != null) {
-				if (!gac [name.Name].ContainsKey (name.Version))
+				string ret;
+				if (gac [name.Name].TryGetValue (name.Version, out ret))
+					return ret;
+
+				// not found
+				if (specific_version) {
+					SearchLogger.WriteLine ("Considered '{0}', but an assembly with the specific version not found.",
+							reference.ItemSpec);
 					return null;
-				else
-					return gac [name.Name] [name.Version];
+				}
 			}
 
 			Version [] versions = new Version [gac [name.Name].Keys.Count];
@@ -154,36 +188,55 @@ namespace Microsoft.Build.Tasks {
 			return gac [name.Name] [highest];
 		}
 
-		public string ResolveHintPathReference (ITaskItem reference)
+		public string ResolveHintPathReference (ITaskItem reference, bool specific_version)
 		{
 			AssemblyName name = new AssemblyName (reference.ItemSpec);
 			string resolved = null;
 
 			string hintpath = reference.GetMetadata ("HintPath");
-			if (String.IsNullOrEmpty (hintpath))
+			if (String.IsNullOrEmpty (hintpath)) {
+				SearchLogger.WriteLine ("HintPath attribute not found");
 				return null;
-
-			bool specificVersion;
-			if (!String.IsNullOrEmpty (reference.GetMetadata ("SpecificVersion")))
-				specificVersion = Boolean.Parse (reference.GetMetadata ("SpecificVersion"));
-			else
-				specificVersion = IsStrongNamed (name);
+			}
 
 			if (!File.Exists (hintpath)) {
 				log.LogMessage (MessageImportance.Low, "HintPath {0} does not exist.", hintpath);
+				SearchLogger.WriteLine ("Considererd {0}, but it does not exist.", hintpath);
 				return null;
 			}
 
-			try {
-				AssemblyName found = AssemblyName.GetAssemblyName (hintpath);
-				if (AssemblyNamesCompatible (name, found, specificVersion))
-					resolved = hintpath;
-				else
-					log.LogMessage (MessageImportance.Low, "Assembly names are not compatible.");
-			} catch {
+			AssemblyName found = GetAssemblyNameFromFile (hintpath);
+			if (found == null) {
+				log.LogMessage (MessageImportance.Low, "File at HintPath {0}, is either an invalid assembly or the file does not exist.", hintpath);
+				return null;
+			}
+
+			if (AssemblyNamesCompatible (name, found, specific_version)) {
+				resolved = hintpath;
+			} else {
+				SearchLogger.WriteLine ("Considered {0}, but assembly name '{1}' did not match the " +
+						"expected '{2}' (SpecificVersion={3})", hintpath, found, name, specific_version);
+				log.LogMessage (MessageImportance.Low, "Assembly names are not compatible.");
 			}
 
 			return resolved;
+		}
+
+		public AssemblyName GetAssemblyNameFromFile (string filename)
+		{
+			AssemblyName aname = null;
+			try {
+				aname = AssemblyName.GetAssemblyName (filename);
+			} catch (FileNotFoundException) {
+			} catch (BadImageFormatException) {
+			}
+
+			if (aname != null)
+				return aname;
+
+			SearchLogger.WriteLine ("Considered '{0}' as a file, but it is either an invalid assembly " +
+					"or file does not exist.", Path.GetFullPath (filename));
+			return null;
 		}
 
 		static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
@@ -194,7 +247,7 @@ namespace Microsoft.Build.Tasks {
 			if (a.CultureInfo != null && !a.CultureInfo.Equals (b.CultureInfo))
 				return false;
 
-			if (specificVersion && a.Version != null && a.Version > b.Version)
+			if (specificVersion && a.Version != null && a.Version != b.Version)
 				return false;
 
 			byte [] a_bytes = a.GetPublicKeyToken ();
@@ -214,7 +267,7 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 
-		static bool IsStrongNamed (AssemblyName name)
+		public bool IsStrongNamed (AssemblyName name)
 		{
 			return (name.Version != null && name.GetPublicKeyToken ().Length != 0);
 		}

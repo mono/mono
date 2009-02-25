@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Security;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -77,21 +78,31 @@ namespace Microsoft.Build.Tasks {
 			List <ITaskItem> tempResolvedFiles = new List <ITaskItem> ();
 		
 			foreach (ITaskItem item in assemblies) {
+				assembly_resolver.ResetSearchLogger ();
 				//FIXME: Copy local
 				string resolved = null;
 				foreach (string spath in searchPaths) {
+					bool specific_version;
+					if (!TryGetSpecificVersionValue (item, out specific_version))
+						return false;
+
+					assembly_resolver.SearchLogger.WriteLine ("For searchpath {0}", spath);
+
 					if (String.Compare (spath, "{HintPathFromItem}") == 0) {
-						resolved = assembly_resolver.ResolveHintPathReference (item);
+						resolved = assembly_resolver.ResolveHintPathReference (item, specific_version);
 					} else if (String.Compare (spath, "{TargetFrameworkDirectory}") == 0) {
 						foreach (string fpath in targetFrameworkDirectories) {
-							resolved = assembly_resolver.FindInTargetFramework (item, fpath);
+							resolved = assembly_resolver.FindInTargetFramework (item,
+									fpath, specific_version);
 							if (resolved != null)
 								break;
 						}
 					} else if (String.Compare (spath, "{GAC}") == 0) {
-						resolved = assembly_resolver.ResolveGacReference (item);
+						resolved = assembly_resolver.ResolveGacReference (item, specific_version);
 					} else if (String.Compare (spath, "{RawFileName}") == 0) {
-						resolved = item.ItemSpec;
+						//FIXME: identify assembly names, as extract the name, and try with that?
+						if (assembly_resolver.GetAssemblyNameFromFile (item.ItemSpec) != null)
+							resolved = item.ItemSpec;
 					} else {
 						resolved = assembly_resolver.FindInDirectory (item, spath);
 					}
@@ -101,7 +112,8 @@ namespace Microsoft.Build.Tasks {
 				}
 
 				if (resolved == null) {
-					Log.LogWarning ("Reference {0} not resolved", item.ItemSpec);
+					Log.LogWarning ("Reference '{0}' not resolved", item.ItemSpec);
+					Log.LogMessage ("{0}", assembly_resolver.SearchLogger.ToString ());
 				} else {
 					Log.LogMessage (MessageImportance.Low, "Reference {0} resolved to {1}", item.ItemSpec, resolved);
 					tempResolvedFiles.Add (new TaskItem (resolved));
@@ -111,6 +123,26 @@ namespace Microsoft.Build.Tasks {
 			resolvedFiles = tempResolvedFiles.ToArray ();
 
 			return true;
+		}
+
+		bool TryGetSpecificVersionValue (ITaskItem item, out bool specific_version)
+		{
+			specific_version = true;
+			string value = item.GetMetadata ("SpecificVersion");
+			if (String.IsNullOrEmpty (value)) {
+				AssemblyName name = new AssemblyName (item.ItemSpec);
+				// If SpecificVersion is not specified, then
+				// it is true if the Include is a strong name else false
+				specific_version = assembly_resolver.IsStrongNamed (name);
+				return true;
+			}
+
+			if (Boolean.TryParse (value, out specific_version))
+				return true;
+
+			Log.LogError ("Item '{0}' has attribute SpecificVersion with invalid value '{1}' " +
+					"which could not be converted to a boolean.", item.ItemSpec, value);
+			return false;
 		}
 		
 		public bool AutoUnify {

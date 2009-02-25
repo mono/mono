@@ -1,5 +1,12 @@
 2009-02-25  Ankit Jain  <jankit@novell.com>
 
+	* AssemblyResolver.cs:
+	* ResolveAssemblyReference.cs: Honor SpecificVersion. Emit detailed error
+	messages incase assembly resolution fails. Make specific version
+	strict.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
 	* ManagedCompiler.cs (AddResponseFileCommands): Use LogicalName for
 	embedded resources, wherever available.
 	* CreateCSharpManifestResourceName.cs (GetResourceIdFromFileName): Use
