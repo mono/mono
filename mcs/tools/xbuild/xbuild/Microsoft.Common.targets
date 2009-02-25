@@ -35,7 +35,6 @@
 		<TargetPath Include="$(OutputPath)" />
 	</ItemGroup>
 
-
 	<Target Name="PrepareForBuild">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
 		
@@ -80,9 +79,33 @@
 	</Target>
 -->
 
+	<PropertyGroup>
+		<BuildDependsOn>
+			BeforeBuild;
+			CoreBuild;
+			AfterBuild
+		</BuildDependsOn>
+	</PropertyGroup>
+
+	<Target Name="BeforeBuild"/>
+	<Target Name="AfterBuild"/>
+
+	<Target Name="Build" DependsOnTargets="$(BuildDependsOn)" Outputs="$(TargetPath)"/>
+
+	<PropertyGroup>
+		<CoreBuildDependsOn>
+			PrepareForBuild;
+			ResolveAssemblyReferences;
+			ResolveProjectReferences;
+			BuildResources;
+			CoreCompile;
+			DeployOutputFiles
+		</CoreBuildDependsOn>
+	</PropertyGroup>
+
 	<Target
-		Name="Build"
-		DependsOnTargets="PrepareForBuild;ResolveAssemblyReferences;ResolveProjectReferences;BuildResources;CoreCompile;DeployOutputFiles"
+		Name="CoreBuild"
+		DependsOnTargets="$(CoreBuildDependsOn)"
 		Outputs="$(OutputPath)$(AssemblyName)$(TargetExt)"
 	/>
 
@@ -185,8 +208,22 @@
 
 	<Target Name="GetTargetPath" Outputs="@(TargetPath->'%(FullPath)\$(AssemblyName)$(TargetExt)')"/>
 
+	<PropertyGroup>
+		<CleanDependsOn>
+			BeforeClean;
+			CoreClean;
+			AfterClean
+		</CleanDependsOn>
+	</PropertyGroup>
+
 	<!-- FIXME: Include all generated files -->
-	<Target Name="Clean">
+	<Target Name="Clean" DependsOnTargets="$(CleanDependsOn)"/>
+
+	<!-- Override in project to run before/after clean tasks -->
+	<Target Name="BeforeClean" />
+	<Target Name="AfterClean" />
+
+	<Target Name="CoreClean">
 		<Message Text="Trying to delete $(OutputPath)$(AssemblyName)$(TargetExt)"/>
 		<Delete Files="$(OutputPath)$(AssemblyName)$(TargetExt)" />
 	</Target>
