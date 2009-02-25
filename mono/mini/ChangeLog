@@ -1,5 +1,20 @@
 2009-02-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-exceptions.c (mono_handle_native_sigsegv): Implement the
+	suspend-on-sigsegv functionality.
+
+	* mini.c (mini_parse_debug_options): Add a new 'suspend-on-sigsegv' option
+	to suspend when a native SIGSEGV is received. This is useful for debugging
+	crashes which don't happen under gdb, since a live process contains more
+	information than a core file.
+
+	* mini-exceptions.c (mono_print_thread_dump): Use 
+	MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX instead of platform defines.
+
+	* mini-x86.h (MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX): New define.
+
+	* mini-amd64.h (MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX): Ditto.
+	
 	* basic-float.cs: Disable the tests which currently fail on amd64.
 
 	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Pass a non-null 
