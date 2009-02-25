@@ -47,7 +47,9 @@ class Program {
 			break;
 		case '!':
 		case '+':
-			lines.Add (line.Substring (1));
+			string s = line.Substring (1);
+			if (!lines.Contains (s))
+				lines.Add (s);
 			break;
 		case '-':
 			lines.Remove (line.Substring (1));

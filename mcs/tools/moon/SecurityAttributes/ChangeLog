@@ -1,3 +1,8 @@
+2008-02-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* merge.cs: Avoid duplicates in the merged files (e.g. an SC from
+	both compatibility and automatic).
+
 2008-02-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* detect-sc.cs, detect-ssc.cs: Accept multiple input directories
