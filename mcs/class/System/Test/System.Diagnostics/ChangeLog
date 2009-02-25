@@ -1,3 +1,7 @@
+2009-02-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+        * Process.cs: New tests for bug 477943.
+
 2008-12-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* ProcessTest.cs: Import System.Threading namespace.

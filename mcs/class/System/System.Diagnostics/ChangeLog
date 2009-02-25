@@ -1,3 +1,8 @@
+2009-02-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* Process.cs: Throw IOEs instead of normal exceptions.
+	Fixes bug 477943.
+
 2009-01-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* Stopwatch.cs: Reorder the calculations in Elapsed and ElapsedMilliseconds
