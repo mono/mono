@@ -1,3 +1,10 @@
+2009-02-25  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r127929.
+	
+	* Enum.cs (GetInfo): Add a global cache in addition to the thread-local
+	caches to accomodate short living threads like threadpool threads.
+
 2009-02-21  Jb Evain  <jbevain@novell.com>
 
 	backport of r127628.
