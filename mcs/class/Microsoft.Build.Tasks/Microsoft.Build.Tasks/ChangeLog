@@ -1,3 +1,7 @@
+2009-02-26  Ankit Jain  <jankit@novell.com>
+
+	* MakeDir.cs (Execute): Don't create+log if dir already exists.
+
 2009-02-25  Ankit Jain  <jankit@novell.com>
 
 	* AL.cs (Execute): Use ToolTask.Execute instead of doing our own.
