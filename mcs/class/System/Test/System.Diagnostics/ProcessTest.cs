@@ -707,7 +707,7 @@ namespace MonoTests.System.Diagnostics
 			Assert.AreEqual ("hello", Encoding.Default.GetString (buffer, 0, 5), "#04");
 			*/
 		}
-
+		
 		void Read (IAsyncResult ar)
 		{
 			Stream stm = (Stream) ar.AsyncState;
@@ -735,6 +735,8 @@ namespace MonoTests.System.Diagnostics
 			EventWaitHandle exited = new ManualResetEvent(false);
 
 			Process p = new Process();
+			
+			p.StartInfo = GetCrossPlatformStartInfo ();
 			p.StartInfo.UseShellExecute = false;
 			p.StartInfo.RedirectStandardOutput = true;
 			p.StartInfo.RedirectStandardError = true;
@@ -757,14 +759,6 @@ namespace MonoTests.System.Diagnostics
 			
 			p.EnableRaisingEvents = true;
 
-			if (RunningOnUnix){
-				p.StartInfo.FileName = "/bin/ls";
-				p.StartInfo.Arguments = "/";
-			} else {
-				p.StartInfo.FileName = "help";
-				p.StartInfo.Arguments = "";
-			}
-
 			p.Start();
 
 			p.BeginErrorReadLine();
@@ -774,6 +768,56 @@ namespace MonoTests.System.Diagnostics
 			bool r = WaitHandle.WaitAll(new WaitHandle[] { errorClosed, outClosed, exited }, 10000, false);
 
 			Assert.AreEqual (true, r, "Null Argument Events Raised");
+		}
+		
+		private ProcessStartInfo GetCrossPlatformStartInfo ()
+		{
+			return RunningOnUnix ? new ProcessStartInfo ("/bin/ls", "/") : new ProcessStartInfo ("help", "");
+		}
+		
+		[Test]
+		public void ProcessName_NotStarted ()
+		{
+			Process p = new Process ();
+			Exception e = null;
+			try {
+				String.IsNullOrEmpty (p.ProcessName);
+			} catch (Exception ex) {
+				e = ex;
+			}
+			
+			Assert.IsNotNull (e, "ProcessName should raise if process was not started");
+			
+			//msg should be "No process is associated with this object"
+			Assert.AreEqual (e.GetType (), typeof (InvalidOperationException),
+			                 "exception should be IOE, I got: " + e.GetType ().Name);
+			
+			Assert.IsNull (e.InnerException, "IOE inner exception should be null");
+		}
+		
+		[Test]
+		public void ProcessName_AfterExit ()
+		{
+			Process p = new Process ();
+			p.StartInfo = GetCrossPlatformStartInfo ();
+			p.Start ();
+			p.WaitForExit ();
+			String.IsNullOrEmpty (p.ExitCode + "");
+			
+			Exception e = null;
+			try {
+				String.IsNullOrEmpty (p.ProcessName);
+			} catch (Exception ex) {
+				e = ex;
+			}
+			
+			Assert.IsNotNull (e, "ProcessName should raise if process was finished");
+			
+			//msg should be "Process has exited, so the requested information is not available"
+			Assert.AreEqual (e.GetType (), typeof (InvalidOperationException),
+			                 "exception should be IOE, I got: " + e.GetType ().Name);
+			
+			Assert.IsNull (e.InnerException, "IOE inner exception should be null");
 		}
 #endif
 	}
