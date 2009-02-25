@@ -1,5 +1,10 @@
 2009-02-25  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #479532
+	* expression.cs: Implement NewInitialize::AddressOf.
+
+2009-02-25  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #413633
 	* expression.cs: Iterate all base class-constraint types.
 
