@@ -614,6 +614,13 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual ("TestName", TypeDescriptor.GetComponentName (sitedcom), "#7");
 			Assert.AreEqual ("TestName", TypeDescriptor.GetComponentName (sitedcom), "#8");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetConverterNullParam ()
+		{
+			TypeDescriptor.GetConverter (null);
+		}
 		
 		[Test]
 		public void TestGetConverter ()

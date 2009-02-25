@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.Compilation;
@@ -90,6 +91,10 @@ namespace System.Web.UI
 		internal override void AddDirective (string directive, Hashtable atts)
 		{
 			if (String.Compare ("MasterType", directive, true) == 0) {
+				PageParserFilter pfilter = PageParserFilter;
+				if (pfilter != null)
+					pfilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+				
 				string type = GetString (atts, "TypeName", null);
 				if (type != null) {
 					masterType = LoadType (type);

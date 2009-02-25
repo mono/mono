@@ -192,7 +192,7 @@ namespace System.Web.Compilation
 		bool inForm;
 		bool useOtherTags;
 		TagType lastTag;
-		
+
 		public AspGenerator (TemplateParser tparser)
 		{
 			this.tparser = tparser;
@@ -215,6 +215,17 @@ namespace System.Web.Compilation
 		public string Filename {
 			get { return pstack.Filename; }
 		}
+
+#if NET_2_0
+		PageParserFilter PageParserFilter {
+			get {
+				if (tparser == null)
+					return null;
+
+				return tparser.PageParserFilter;
+			}
+		}
+#endif
 		
 		BaseCompiler GetCompilerFromType ()
 		{
@@ -241,6 +252,10 @@ namespace System.Web.Compilation
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
+#if NET_2_0
+			parser.ParsingComplete += new ParsingCompleteHandler (ParsingCompleted);
+			tparser.AspGenerator = this;
+#endif
 			if (!pstack.Push (parser))
 				throw new ParseException (Location, "Infinite recursion detected including file: " + filename);
 
@@ -495,6 +510,17 @@ namespace System.Web.Compilation
 			if (text.Length > 0)
 				FlushText ();
 		}
+
+#if NET_2_0
+		void ParsingCompleted ()
+		{
+			PageParserFilter pfilter = PageParserFilter;
+			if (pfilter == null)
+				return;
+
+			pfilter.ParseComplete (rootBuilder);
+		}
+#endif
 		
 		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 		{
@@ -663,6 +689,11 @@ namespace System.Web.Compilation
 				return;
 			
 			if (inScript) {
+#if NET_2_0
+				PageParserFilter pfilter = PageParserFilter;
+				if (pfilter != null && !pfilter.ProcessCodeConstruct (CodeConstructType.ScriptTag, t))
+					return;
+#endif
 				tparser.Scripts.Add (new ServerSideScript (t, new System.Web.Compilation.Location (tparser.Location)));
 				return;
 			}
@@ -726,6 +757,16 @@ namespace System.Web.Compilation
 			return true;
 		}
 #endif
+
+		public void AddControl (Type type, IDictionary attributes)
+		{
+			ControlBuilder parent = stack.Builder;
+			ControlBuilder builder = ControlBuilder.CreateBuilderFromType (tparser, parent, type, null, null,
+										       attributes, location.BeginLine,
+										       location.Filename);
+			if (builder != null)
+				parent.AppendSubBuilder (builder);
+		}
 		
 		bool ProcessTag (ILocation location, string tagid, TagAttributes atts, TagType tagtype)
 		{
@@ -765,6 +806,10 @@ namespace System.Web.Compilation
 				return false;
 
 #if NET_2_0
+			PageParserFilter pfilter = PageParserFilter;
+			if (pfilter != null && !pfilter.AllowControl (builder.ControlType, builder))
+				throw new ParseException (Location, "Control type '" + builder.ControlType + "' not allowed.");
+			
 			if (!OtherControlsAllowed (builder))
 				throw new ParseException (Location, "Only Content controls are allowed directly in a content page that contains Content controls.");
 #endif
@@ -906,8 +951,32 @@ namespace System.Web.Compilation
 			return true;
 		}
 
+#if NET_2_0
+		CodeConstructType MapTagTypeToConstructType (TagType tagtype)
+		{
+			switch (tagtype) {
+				case TagType.DataBinding:
+					return CodeConstructType.ExpressionSnippet;
+
+				case TagType.CodeRender:
+					return CodeConstructType.CodeSnippet;
+
+				case TagType.CodeRenderExpression:
+					return CodeConstructType.DataBindingSnippet;
+
+				default:
+					throw new InvalidOperationException ("Unexpected tag type.");
+			}
+		}
+		
+#endif
 		bool ProcessCode (TagType tagtype, string code, ILocation location)
 		{
+#if NET_2_0
+			PageParserFilter pfilter = PageParserFilter;
+			if (pfilter != null && (!pfilter.AllowCode || !pfilter.ProcessCodeConstruct (MapTagTypeToConstructType (tagtype), code)))
+				return true;
+#endif
 			ControlBuilder b = null;
 			if (tagtype == TagType.CodeRender)
 				b = new CodeRenderBuilder (code, false, location);

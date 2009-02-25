@@ -355,6 +355,9 @@ public sealed class TypeDescriptor
 	
 	public static TypeConverter GetConverter (Type type)
 	{
+		if (type == null)
+			throw new ArgumentNullException ("type");
+		
 		Type converterType = null;
 		AttributeCollection atts = GetAttributes (type);
 		TypeConverterAttribute tca = (TypeConverterAttribute) atts[typeof(TypeConverterAttribute)];
@@ -377,16 +380,18 @@ public sealed class TypeDescriptor
 	private static Type FindDefaultConverterType (Type type)
 	{
 		Type converterType = null;
+		if (type != null) {
 #if NET_2_0
-		if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-			return typeof(NullableConverter);
+			if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+				return typeof(NullableConverter);
 #endif
-		// Is there a default converter
-		foreach (DictionaryEntry entry in DefaultConverters) {
-			if ((Type)entry.Key == type)
-				return (Type)entry.Value;
+			// Is there a default converter
+			foreach (DictionaryEntry entry in DefaultConverters) {
+				if ((Type)entry.Key == type)
+					return (Type)entry.Value;
+			}
 		}
-
+		
 		// Find default converter with a baseType this baseType is assignable to
 		Type baseType = type;
 		while (baseType != null && baseType != typeof (object)) {
@@ -401,7 +406,7 @@ public sealed class TypeDescriptor
 		}
 
 		if (converterType == null) {
-			if (type.IsInterface)
+			if (type != null && type.IsInterface)
 				converterType = typeof (ReferenceConverter);
 			else
 				converterType = typeof (TypeConverter);

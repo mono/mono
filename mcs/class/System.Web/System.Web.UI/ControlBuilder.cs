@@ -747,6 +747,16 @@ namespace System.Web.UI {
 		{
 			return CreateInstance ();
 		}
+		
+		[MonoTODO]
+		public virtual void ProcessGeneratedCode(CodeCompileUnit codeCompileUnit,
+			CodeTypeDeclaration baseType,
+			CodeTypeDeclaration derivedType,
+			CodeMemberMethod buildMethod,
+			CodeMemberMethod dataBindingMethod)
+		{
+			throw new NotImplementedException ();
+		}
 
 		internal void ResetState()
 		{

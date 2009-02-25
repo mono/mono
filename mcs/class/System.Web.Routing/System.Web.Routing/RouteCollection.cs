@@ -119,12 +119,11 @@ namespace System.Web.Routing
 
 			if (!RouteExistingFiles) {
 				var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
-				if (path.StartsWith ("~/", StringComparison.Ordinal))
-					path = path.Substring (2);
-				if (File.Exists (path))
+				VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
+				if (path != "~/" && vpp != null && (vpp.FileExists (path) || vpp.DirectoryExists (path)))
 					return null;
 			}
-
+			
 			if (Count == 0)
 				return null;
 
@@ -151,7 +150,7 @@ namespace System.Web.Routing
 				return null;
 
 			VirtualPathData vp = null;
-			if (name != null) {
+			if (!String.IsNullOrEmpty (name)) {
 				RouteBase rb = this [name];
 				if (rb != null)
 					vp = rb.GetVirtualPath (requestContext, values);

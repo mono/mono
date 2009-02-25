@@ -102,6 +102,10 @@ namespace System.Web.UI {
 		string codeFileBaseClass;
 		string metaResourceKey;
 		Type codeFileBaseClassType;
+		string pageParserFilterTypeName;
+		Type pageParserFilterType;
+		PageParserFilter pageParserFilter;
+		
 		List <UnknownAttributeDescriptor> unknownMainAttributes;
 		Stack <string> includeDirs;
 		List <string> registeredTagNames;
@@ -169,6 +173,9 @@ namespace System.Web.UI {
 		internal virtual void LoadConfigDefaults ()
 		{
 			debug = CompilationConfig.Debug;
+#if NET_2_0
+			pageParserFilterTypeName = PagesConfig.PageParserFilterType;
+#endif
 		}
 		
 		internal void AddApplicationAssembly ()
@@ -185,6 +192,14 @@ namespace System.Web.UI {
 		protected abstract Type CompileIntoType ();
 
 #if NET_2_0
+		internal void AddControl (Type type, IDictionary attributes)
+		{
+			AspGenerator generator = AspGenerator;
+			if (generator == null)
+				return;
+			generator.AddControl (type, attributes);
+		}
+		
 		void AddNamespaces (ArrayList imports)
 		{
 			if (BuildManager.HaveResources)
@@ -257,8 +272,6 @@ namespace System.Web.UI {
                                         throw new ParseException (Location, pe.Message, pe);
                                 throw;
                         }
-
-                        
                 }
 
                 internal void RegisterNamespace (string tagPrefix, string ns, string assembly)
@@ -286,6 +299,11 @@ namespace System.Web.UI {
 		
 		internal virtual void AddDirective (string directive, Hashtable atts)
 		{
+#if NET_2_0
+			var pageParserFilter = PageParserFilter;
+			if (pageParserFilter != null)
+				pageParserFilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+#endif
 			if (String.Compare (directive, DefaultDirectiveName, true) == 0) {
 				if (mainAttributes != null)
 					ThrowParseException ("Only 1 " + DefaultDirectiveName + " is allowed");
@@ -807,28 +825,37 @@ namespace System.Web.UI {
 		
 		internal void SetBaseType (string type)
 		{
-			if (type == null || type == DefaultBaseTypeName) {
-				baseType = DefaultBaseType;
-				return;
-			}
-			
-#if NET_2_0			
-			Type parent = LoadType (type);
-#else
-			Type parent = null;
-			if (srcAssembly != null)
-				parent = srcAssembly.GetType (type);
+			Type parent;			
+			if (type == null || type == DefaultBaseTypeName)
+				parent = DefaultBaseType;
+			else
+				parent = null;
 
-			if (parent == null)
+			if (parent == null) {
+#if NET_2_0			
 				parent = LoadType (type);
+#else
+				parent = null;
+				if (srcAssembly != null)
+					parent = srcAssembly.GetType (type);
+
+				if (parent == null)
+					parent = LoadType (type);
 #endif				
 
-			if (parent == null)
-				ThrowParseException ("Cannot find type " + type);
+				if (parent == null)
+					ThrowParseException ("Cannot find type " + type);
 
-			if (!DefaultBaseType.IsAssignableFrom (parent))
-				ThrowParseException ("The parent type '" + type + "' does not derive from " + DefaultBaseType);
+				if (!DefaultBaseType.IsAssignableFrom (parent))
+					ThrowParseException ("The parent type '" + type + "' does not derive from " + DefaultBaseType);
+			}
 
+#if NET_2_0
+			var pageParserFilter = PageParserFilter;
+			if (pageParserFilter != null && !pageParserFilter.AllowBaseType (parent))
+				throw new HttpException ("Base type '" + parent + "' is not allowed.");
+#endif
+			
 			baseType = parent;
 		}
 
@@ -906,6 +933,34 @@ namespace System.Web.UI {
 		internal byte[] MD5Checksum {
 			get { return md5checksum; }
 			set { md5checksum = value; }
+		}
+
+		internal string PageParserFilterTypeName {
+			get { return pageParserFilterTypeName; }
+		}
+
+		internal PageParserFilter PageParserFilter {
+			get {
+				if (pageParserFilter != null)
+					return pageParserFilter;
+				
+				if (String.IsNullOrEmpty (pageParserFilterTypeName))
+					return null;
+
+				pageParserFilter = Activator.CreateInstance (PageParserFilterType) as PageParserFilter;
+				pageParserFilter.Initialize (VirtualPath, this);
+				
+				return pageParserFilter;
+			}
+		}
+		
+		internal Type PageParserFilterType {
+			get {
+				if (pageParserFilterType == null)
+					pageParserFilterType = Type.GetType (PageParserFilterTypeName, true);
+
+				return pageParserFilterType;
+			}
 		}
 #endif
 		
@@ -1211,8 +1266,18 @@ namespace System.Web.UI {
 		
 		internal PagesSection PagesConfig {
 			get {
-				return WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+				VirtualPath vp = VirtualPath;
+				string virtualPath = vp != null ? VirtualPath.Absolute : null;
+				if (!String.IsNullOrEmpty (virtualPath))
+					return WebConfigurationManager.GetSection ("system.web/pages", virtualPath) as PagesSection;
+				else
+					return WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
 			}
+		}
+
+		internal AspGenerator AspGenerator {
+			get;
+			set;
 		}
 #else
 		internal PagesConfiguration PagesConfig {

@@ -118,7 +118,7 @@ namespace System.Web.Routing
 				values = requestContext.RouteData.Values;
 
 			string s;
-			if (!url.TrySubstitute (values, out s))
+			if (!url.TrySubstitute (values, Defaults, out s))
 				return null;
 
 			return new VirtualPathData (this, s);

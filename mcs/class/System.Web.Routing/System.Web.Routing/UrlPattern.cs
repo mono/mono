@@ -36,8 +36,10 @@ namespace System.Web.Routing
 {
 	internal class UrlPattern
 	{
+		int segmentsCount;
 		string [] segments;
-		bool [] segment_flags;
+		int [] segmentLengths;
+		bool [] segment_flags;		
 		string [] tokens;
 
 		public UrlPattern (string url)
@@ -60,21 +62,25 @@ namespace System.Web.Routing
 			var tokens = new List<string> ();
 
 			segments = Url.Split ('/');
-			segment_flags = new bool [segments.Length];
-
-			for (int i = 0; i < segments.Length; i++) {
+			segmentsCount = segments.Length;
+			segment_flags = new bool [segmentsCount];
+			segmentLengths = new int [segmentsCount];
+			
+			for (int i = 0; i < segmentsCount; i++) {
 				string s = segments [i];
-				if (s.Length == 0 && i < segments.Length - 1)
+				int slen = s.Length;
+				segmentLengths [i] = slen;
+				if (slen == 0 && i < segmentsCount - 1)
 					throw new ArgumentException ("Consecutive URL segment separators '/' are not allowed");
 				int from = 0;
-				while (from < s.Length) {
+				while (from < slen) {
 					int start = s.IndexOf ('{', from);
-					if (start == s.Length - 1)
+					if (start == slen - 1)
 						throw new ArgumentException ("Unterminated URL parameter. It must contain matching '}'");
 					if (start < 0) {
 						if (s.IndexOf ('}', from) >= from)
 							throw new ArgumentException ("Unmatched URL parameter closer '}'. A corresponding '{' must precede");
-						from = s.Length;
+						from = slen;
 						continue;
 					}
 					segment_flags [i] = true;
@@ -96,9 +102,21 @@ namespace System.Web.Routing
 			this.tokens = tokens.ToArray ();
 		}
 
+		string SegmentToKey (string segment)
+		{
+			int start = segment.IndexOf ('{');
+			int end = segment.IndexOf ('}');
+			if (start == -1)
+				start = 0;
+			else
+				start++;
+			
+			if (end == -1)
+				end = segment.Length;
+			return segment.Substring (start, end - start);
+		}
+		
 		RouteValueDictionary tmp = new RouteValueDictionary ();
-
-		// FIXME: how is "defaults" used?
 		public RouteValueDictionary Match (string path, RouteValueDictionary defaults)
 		{
 			tmp.Clear ();
@@ -108,15 +126,31 @@ namespace System.Web.Routing
 				return tmp;
 
 			string [] argSegs = path.Split ('/');
-			if (argSegs.Length != segments.Length)
+			int argsLen = argSegs.Length;
+			bool haveDefaults = defaults != null && defaults.Count > 0;
+			if (!haveDefaults && argsLen != segmentsCount)
 				return null;
 
-			for (int i = 0; i < segments.Length; i++) {
+			for (int i = 0; i < segmentsCount; i++) {
 				if (segment_flags [i]) {
 					string t = segments [i];
-					string v = argSegs [i];
-					if (v.Length == 0)
-						return null; // ends with '/' while more tokens are expected.
+					string v = i < argsLen ? argSegs [i] : null;
+
+					if (String.IsNullOrEmpty (v)) {
+						string key = SegmentToKey (segments [i]);
+						object o;
+						if (haveDefaults && !defaults.TryGetValue (key, out o))
+							return null; // ends with '/' while more
+								     // tokens are expected and
+								     // there are is no default
+								     // value in the defaults
+								     // dictionary.
+
+						v = o as string;
+						if (v == null)
+							throw new InvalidOperationException ("The RouteData must contain an item named '" + key + "' with a string value.");
+					}
+					
 					int tfrom = 0, vfrom = 0;
 					while (tfrom < t.Length) {
 						int start = t.IndexOf ('{', tfrom);
@@ -153,7 +187,7 @@ namespace System.Web.Routing
 						}
 						tfrom = end + 1;
 					}
-				} else if (segments [i] != argSegs [i])
+				} else if (i > argsLen || segments [i] != argSegs [i])
 					return null;
 			}
 
@@ -163,17 +197,27 @@ namespace System.Web.Routing
 		static readonly string [] substsep = {"{{"};
 
 		// it may return null for invalid values.
-		public bool TrySubstitute (RouteValueDictionary values, out string value)
+		public bool TrySubstitute (RouteValueDictionary values, RouteValueDictionary defaults, out string value)
 		{
+			var replacements = new RouteValueDictionary ();
 			if (values == null) {
 				value = Url;
 				return true;
 			} else {
+				object val;
+				bool missing;
 				foreach (string token in tokens) {
-					if (!values.ContainsKey (token)) {
+					val = null;
+					missing = false;
+					if (!values.TryGetValue (token, out val))
+						if (defaults == null || !defaults.TryGetValue (token, out val))
+							missing = true;
+					if (missing) {
 						value = null;
 						return false;
 					}
+
+					replacements.Add (token, val);
 				}
 			}
 
@@ -181,7 +225,7 @@ namespace System.Web.Routing
 			string [] arr = Url.Split (substsep, StringSplitOptions.None);
 			for (int i = 0; i < arr.Length; i++) {
 				string s = arr [i];
-				foreach (var p in values)
+				foreach (var p in replacements)
 					s = s.Replace ("{" + p.Key + "}", p.Value.ToString ());
 				arr [i] = s;
 			}
