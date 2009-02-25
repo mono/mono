@@ -29,7 +29,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 namespace System.Web {
-	public class TempFileStream : FileStream {
+	internal class TempFileStream : FileStream {
 		bool read_mode;
 		bool disposed;
 		long saved_position;

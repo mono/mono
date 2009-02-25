@@ -250,7 +250,7 @@ namespace System.Web {
 			return ToAbsolute (virtualPath, applicationPath, true);
 		}
 
-		public static string ToAbsolute (string virtualPath, string applicationPath, bool normalize)
+		internal static string ToAbsolute (string virtualPath, string applicationPath, bool normalize)
 		{
 			if (StrUtils.IsNullOrEmpty (applicationPath))
 				throw new ArgumentNullException ("applicationPath");

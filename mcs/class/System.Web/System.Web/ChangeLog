@@ -1,5 +1,10 @@
 2009-02-24  Marek Habersack  <mhabersack@novell.com>
 
+	* TempFileStream.cs: the class is internal
+
+	* VirtualPathUtility.cs: ToAbsolute (string, string, bool) is
+	internal
+
 	* HttpException.cs: made the HttpException (int httpCode, string
 	message, Exception innerException, string resourceName) internal.
 
