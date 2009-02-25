@@ -48,6 +48,20 @@ namespace System.Web.Compilation
 
 	class AspTokenizer
 	{
+		class PutBackItem
+		{
+			public readonly string Value;
+			public readonly int Position;
+			public readonly int CurrentToken;
+			
+			public PutBackItem (string value, int position, int currentToken)
+			{
+				Value = value;
+				Position = position;
+				CurrentToken = currentToken;
+			}
+		}
+		
 		static char [] lfcr = new char [] { '\n', '\r' };
 		TextReader sr;
 		int current_token;
@@ -64,6 +78,7 @@ namespace System.Web.Compilation
 		bool have_unget;
 		int unget_value;
 		string val;
+		Stack putBackBuffer;
 		
 		public AspTokenizer (TextReader reader)
 		{
@@ -82,18 +97,28 @@ namespace System.Web.Compilation
 
 		public void put_back ()
 		{
-			if (hasPutBack)
+			if (hasPutBack && !inTag)
 				throw new HttpException ("put_back called twice!");
 			
 			hasPutBack = true;
-			position -= Value.Length;
+			if (putBackBuffer == null)
+				putBackBuffer = new Stack ();
+
+			string val = Value;
+			putBackBuffer.Push (new PutBackItem (val, position, current_token));
+			position -= val.Length;
 		}
 		
 		public int get_token ()
 		{
-			if (hasPutBack){
-				hasPutBack = false;
-				position += Value.Length;
+			if (hasPutBack) {
+				PutBackItem pbi = putBackBuffer.Pop () as PutBackItem;
+				hasPutBack = putBackBuffer.Count > 0;
+				position = pbi.Position;
+				have_value = false;
+				val = null;
+				sb = new StringBuilder (pbi.Value);
+				current_token = pbi.CurrentToken;
 				return current_token;
 			}
 

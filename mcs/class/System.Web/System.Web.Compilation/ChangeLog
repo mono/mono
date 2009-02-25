@@ -1,3 +1,12 @@
+2009-02-25  Marek Habersack  <mhabersack@novell.com>
+ 
+ 	* AspTokenizer.cs: put_back now uses a stack and allows more than
+ 	one invocation when called inside a tag.
+ 
+ 	* AspGenerator.cs: when a nested parser is used, pay attention to
+ 	server tags found inside client tags and add them to the control
+ 	tree.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* BuildManager.cs: updated comment.
