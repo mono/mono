@@ -128,7 +128,8 @@ namespace Microsoft.Build.BuildEngine {
 
 				buildState = BuildState.Finished;
 			// FIXME: log it 
-			} catch (Exception) {
+			} catch (Exception e) {
+				LogError ("Error building target {0}: {1}", Name, e.ToString ());
 				return false;
 			}
 
@@ -173,11 +174,15 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			bool executeOnErrors;
 			bool result = true;
+
+			if (BuildTasks.Count == 0)
+				// nothing to do
+				return true;
 		
 			try {
 				result = batchingImpl.Build (this, out executeOnErrors);
 			} catch (Exception e) {
-				Console.WriteLine (e.ToString ());
+				LogError ("Error building target {0}: {1}", Name, e.ToString ());
 				throw;
 			}
 
@@ -199,6 +204,16 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		void LogError (string message, params object [] messageArgs)
+		{
+			if (message == null)
+				throw new ArgumentException ("message");
+
+			BuildErrorEventArgs beea = new BuildErrorEventArgs (
+				null, null, null, 0, 0, 0, 0, String.Format (message, messageArgs),
+				null, null);
+			engine.EventSource.FireErrorRaised (this, beea);
+		}
 	
 		public string Condition {
 			get { return targetElement.GetAttribute ("Condition"); }
@@ -234,7 +249,6 @@ namespace Microsoft.Build.BuildEngine {
 			get { return buildState; }
 		}
 
-		// FIXME: implement batching
 		internal ITaskItem [] Outputs {
 			get {
 				string outputs = targetElement.GetAttribute ("Outputs");

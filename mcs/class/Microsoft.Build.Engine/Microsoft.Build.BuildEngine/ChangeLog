@@ -1,3 +1,7 @@
+2009-02-26  Ankit Jain  <jankit@novell.com>
+
+	* Target.cs: Handle target with no tasks. Log errors.
+
 2009-02-24  Ankit Jain  <jankit@novell.com>
 
 	Lazily load UsingTask tasks.
