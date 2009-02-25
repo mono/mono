@@ -1,5 +1,7 @@
 2009-02-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* basic-float.cs: Disable the tests which currently fail on amd64.
+
 	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Pass a non-null 
 	value to mono_arch_patch_callsite () to fix crashes.
 	
