@@ -11458,6 +11458,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-442.cs">
+    <type name="NonGenericBase">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="GenericBase`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="T get_Instance()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo()">
+        <size>24</size>
+      </method>
+    </type>
+    <type name="EntryPoint">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
