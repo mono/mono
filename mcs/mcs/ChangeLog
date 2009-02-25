@@ -1,3 +1,8 @@
+2009-02-25  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #413633
+	* expression.cs: Iterate all base class-constraint types.
+
 2009-02-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #479209

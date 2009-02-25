@@ -8316,8 +8316,13 @@ namespace Mono.CSharp {
 					if (gc == null)
 						return ix;
 
-					if (gc.HasClassConstraint)
-						ix.Append (caller_type, GetIndexersForTypeOrInterface (caller_type, gc.ClassConstraint));
+					if (gc.HasClassConstraint) {
+						Type class_contraint = gc.ClassConstraint;
+						while (class_contraint != TypeManager.object_type && class_contraint != null) {
+							ix.Append (caller_type, GetIndexersForTypeOrInterface (caller_type, class_contraint));
+							class_contraint = class_contraint.BaseType;
+						}
+					}
 
 					Type[] ifaces = gc.InterfaceConstraints;
 					foreach (Type itype in ifaces)
