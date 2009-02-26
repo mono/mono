@@ -1,3 +1,10 @@
+2009-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* object-internals.h (struct _MonoReflectionGenericClass): Sync with
+	changes to the managed side.
+
 2009-02-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata-internals.h (struct _MonoImage): Add a new cache for szarray
