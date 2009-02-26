@@ -50,7 +50,7 @@ namespace System.Web.Configuration {
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = Hashtable.Synchronized (new Hashtable ());
-		static Hashtable sectionCache = new Hashtable (StringComparer.OrdinalIgnoreCase);
+		static Hashtable sectionCache = new Hashtable ();
 		static Hashtable configPaths = Hashtable.Synchronized (new Hashtable ());
 #else
 		const string AppSettingsKey = "WebConfigurationManager.AppSettings";
@@ -472,7 +472,7 @@ namespace System.Web.Configuration {
 			get { return configFactory; }
 		}
 
-		static void AddSectionToCache (string key, object section)
+		static void AddSectionToCache (int key, object section)
 		{
 			if (sectionCache [key] != null)
 				return;
@@ -485,9 +485,9 @@ namespace System.Web.Configuration {
 			sectionCache = tmpTable;
 		}
 
-		static string GetSectionCacheKey (string sectionName, string path)
+		static int GetSectionCacheKey (string sectionName, string path)
 		{
-			return string.Concat (path, "/", sectionName);
+			return sectionName.GetHashCode () ^ (path.GetHashCode () + 37);
 		}
 
 		
