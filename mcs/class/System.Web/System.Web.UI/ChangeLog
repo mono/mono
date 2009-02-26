@@ -1,3 +1,8 @@
+2009-02-26  Marek Habersack  <mhabersack@novell.com>
+
+	* FileLevelControlBuilderAttribute.cs,
+	DataSourceCacheDurationConverter: hush the gmcs warnings
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TemplateControl.cs: implement the other ReadStringResource method.

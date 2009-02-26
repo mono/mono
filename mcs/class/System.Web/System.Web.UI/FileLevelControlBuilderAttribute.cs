@@ -45,7 +45,7 @@ namespace System.Web.UI
 		{
 			throw new NotImplementedException ();
 		}
-		public static bool Equals (Object objA, Object objB)
+		public new static bool Equals (Object objA, Object objB)
 		{
 			throw new NotImplementedException ();
 		}

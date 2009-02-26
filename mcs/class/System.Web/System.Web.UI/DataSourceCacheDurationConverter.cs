@@ -41,19 +41,19 @@ namespace System.Web.UI
 		public DataSourceCacheDurationConverter () {
 			throw new NotImplementedException ();
 		}
-		public bool CanConvertFrom (Type sourceType) {
+		public new bool CanConvertFrom (Type sourceType) {
 			throw new NotImplementedException ();
 		}
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType) {
 			throw new NotImplementedException ();
 		}
-		public bool CanConvertTo (Type destinationType) {
+		public new bool CanConvertTo (Type destinationType) {
 			throw new NotImplementedException ();
 		}
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType) {
 			throw new NotImplementedException ();
 		}
-		public Object ConvertFrom (Object value) {
+		public new Object ConvertFrom (Object value) {
 			throw new NotImplementedException ();
 		}
 		public override Object ConvertFrom (ITypeDescriptorContext context,
@@ -61,7 +61,7 @@ namespace System.Web.UI
 											Object value) {
 			throw new NotImplementedException ();
 		}
-		public Object ConvertTo (Object value, Type destinationType) {
+		public new Object ConvertTo (Object value, Type destinationType) {
 			throw new NotImplementedException ();
 		}
 		public override Object ConvertTo (ITypeDescriptorContext context,
@@ -70,19 +70,19 @@ namespace System.Web.UI
 										Type destinationType) {
 			throw new NotImplementedException ();
 		}
-		public ICollection GetStandardValues () {
+		public new ICollection GetStandardValues () {
 			throw new NotImplementedException ();
 		}
 		public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context) {
 			throw new NotImplementedException ();
 		}
-		public bool GetStandardValuesExclusive () {
+		public new bool GetStandardValuesExclusive () {
 			throw new NotImplementedException ();
 		}
 		public override bool GetStandardValuesExclusive (ITypeDescriptorContext context) {
 			throw new NotImplementedException ();
 		}
-		public bool GetStandardValuesSupported () {
+		public new bool GetStandardValuesSupported () {
 			throw new NotImplementedException ();
 		}
 		public override bool GetStandardValuesSupported (ITypeDescriptorContext context) {
