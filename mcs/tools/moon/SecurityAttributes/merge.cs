@@ -27,7 +27,58 @@ using Moonlight.SecurityModel;
 
 class Program {
 
-	static List<string> lines = new List<string> ();
+	static List<string> additions = new List<string> ();
+	static List<string> removals = new List<string> ();
+	static List<string> always = new List<string> ();
+
+	private static List<string> Merge ()
+	{
+		List<string> lines = new List<string> ();
+
+		foreach (string add in additions) {
+			// check if this addition was 'manually' overidden
+			if (removals.Contains (add))
+				continue;
+
+			if (!lines.Contains (add))
+				lines.Add (add);
+		}
+
+		foreach (string add in always) {
+			// add '!' into the list (if they were not already there)
+			if (!lines.Contains (add))
+				lines.Add (add);
+		}
+
+		// simplify
+
+		for (int i = lines.Count - 1; i >= 0; i--) {
+			string line = lines [i];
+			// if this is a method...
+			bool critical_method = line.StartsWith ("SC-M: ");
+			bool safe_method = line.StartsWith ("SSC-M: ");
+			if (critical_method || safe_method) {
+				// then check if the type is already marked
+				int start = line.IndexOf (' ', 7) + 1;
+				int length = line.IndexOf ("::", start) - start;
+				string type = line.Substring (start, length);
+
+				if (safe_method) {
+					// if it's a safe method then it's not worth having it inside a SSC type
+					if (lines.Contains ("SSC-T: " + type))
+						lines.RemoveAt (i);
+				}
+
+				// if it's a critical (or safe) method then it's not worth having inside a SC type
+				if (lines.Contains ("SC-T: " + type))
+					lines.RemoveAt (i);
+			}
+		}
+
+		lines.Sort ();
+		return lines;
+	}
+
 
 	// 1. read all files for an assembly
 	// 2. copy all lines that start with a '+'
@@ -46,13 +97,13 @@ class Program {
 			// don't copy comments into the merged files
 			break;
 		case '!':
+			always.Add (line.Substring (1));
+			break;
 		case '+':
-			string s = line.Substring (1);
-			if (!lines.Contains (s))
-				lines.Add (s);
+			additions.Add (line.Substring (1));
 			break;
 		case '-':
-			lines.Remove (line.Substring (1));
+			removals.Add (line.Substring (1));
 			break;
 		default:
 			// if the line is not empty (spaces, tabs) then display an error
@@ -96,7 +147,7 @@ class Program {
 		ProcessFile (filename);
 
 		// make it easier for humans
-		lines.Sort ();
+		List<string> lines = Merge ();
 
 		filename = Path.Combine (output, assembly + ".secattr");
 		using (StreamWriter sw = new StreamWriter (filename)) {
@@ -104,7 +155,9 @@ class Program {
 				sw.WriteLine (line);
 		}
 
-		lines.Clear ();
+		additions.Clear ();
+		removals.Clear ();
+		always.Clear ();
 	}
 
 	static int Main (string [] args)

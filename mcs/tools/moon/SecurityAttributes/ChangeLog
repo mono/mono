@@ -1,3 +1,8 @@
+2008-02-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* merge.cs: Smarter merge to avoid duplicate (or unneeded) attributes
+	on methods when a type is decorated with SC or SSC.
+
 2008-02-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* merge.cs: Avoid duplicates in the merged files (e.g. an SC from
