@@ -112,7 +112,7 @@ namespace System.Text.RegularExpressions
 			if (!m.Success)
 				return input;
 
-			StringBuilder result = new StringBuilder ();
+			StringBuilder result = new StringBuilder (input.Length);
 			int ptr = startat;
 			int counter = count;
 

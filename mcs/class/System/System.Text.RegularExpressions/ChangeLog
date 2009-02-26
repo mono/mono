@@ -1,3 +1,8 @@
+2009-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* BaseMachine.cs (LTRReplace): Initialize the StringBuilder with an
+	appropriate initial length.
+
 2009-02-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* CILCompiler.cs: Partially inline calls to Char.ToLower () to speed
