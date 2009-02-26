@@ -903,6 +903,10 @@ namespace System.Windows.Forms {
 						isSelected = value;
 						Invalidate ();
 					}
+
+					get {
+						return isSelected;
+					}
 				}
 				
 				public Color InternalColor {
@@ -962,7 +966,23 @@ namespace System.Windows.Forms {
 			private Label baseColorLabel;
 			
 			private SmallColorControl selectedSmallColorControl;
-			
+
+			#region UIA Framework Property
+#if NET_2_0
+			public SmallColorControl UIASelectedSmallColorControl {
+				get {
+					for (int i = 0; i < smallColorControl.Length - 1; ++i)
+						if (smallColorControl [i].IsSelected)
+							return smallColorControl [i];
+					for (int j = 0; j < userSmallColorControl.Length - 1; ++j)
+						if (userSmallColorControl [j].IsSelected)
+							return userSmallColorControl [j];
+					return null;
+				}
+			}
+#endif
+			#endregion
+
 			private int currentlyUsedUserSmallColorControl = 0;
 			
 			private ColorDialog colorDialog = null;
