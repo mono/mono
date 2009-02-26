@@ -1,3 +1,8 @@
+2009-02-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: make the check to avoid copying when the assembly is
+	already shadow copied actually work.
+
 2009-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
