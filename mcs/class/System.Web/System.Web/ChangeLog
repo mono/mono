@@ -1,5 +1,8 @@
 2009-02-26  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpResponse.cs: added DisableKernelCache and TransmitFile
+	methods.
+
 	* IisTraceListener.cs: added + implemented
 
 2009-02-25  Marek Habersack  <mhabersack@novell.com>

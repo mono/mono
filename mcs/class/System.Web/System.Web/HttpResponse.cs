@@ -599,6 +599,13 @@ namespace System.Web {
 			closed = true;
 		}
 
+#if NET_2_0
+		public void DisableKernelCache ()
+		{
+			// does nothing in Mono
+		}
+#endif
+		
 		public void End ()
 		{
 			if (context == null)
@@ -989,6 +996,13 @@ namespace System.Web {
 		}
 
 #if NET_2_0
+		public void TransmitFile (string filename, long offset, long length)
+		{
+			output_stream.WriteFile (filename, offset, length);
+			output_stream.ApplyFilter (false);
+			Flush (false);
+		}
+		
 		internal void TransmitFile (VirtualFile vf)
 		{
 			TransmitFile (vf, false);
