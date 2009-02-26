@@ -1177,6 +1177,9 @@ namespace System.Web {
 			if (stop_processing)
 				yield return true;
 
+#if NET_2_0
+			context.MapRequestHandlerDone = false;
+#endif
 			StartTimer ("BeginRequest");
 			eventHandler = Events [BeginRequestEvent];
 			if (eventHandler != null) {
@@ -1243,6 +1246,7 @@ namespace System.Web {
 				foreach (bool stop in RunHooks (eventHandler))
 					yield return stop;
 			StopTimer ();
+			context.MapRequestHandlerDone = true;
 #endif
 			
 			StartTimer ("GetHandler");

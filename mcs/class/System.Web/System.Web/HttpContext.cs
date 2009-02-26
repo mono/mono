@@ -311,6 +311,11 @@ namespace System.Web {
 		}
 
 #if NET_2_0
+		internal bool MapRequestHandlerDone {
+			get;
+			set;
+		}
+		
 		// The two properties below are defined only when the IIS7 integrated mode is used.
 		// They are useless under Mono
 		public RequestNotification CurrentNotification {
@@ -617,6 +622,15 @@ namespace System.Web {
 			return null;
 		}
 
+#if NET_2_0
+		public void RemapHandler (IHttpHandler handler)
+		{
+			if (MapRequestHandlerDone)
+				throw new InvalidOperationException ("The RemapHandler method was called after the MapRequestHandler event occurred.");
+			Handler = handler;
+		}
+#endif
+		
 		public void RewritePath (string path)
 		{
 #if NET_2_0

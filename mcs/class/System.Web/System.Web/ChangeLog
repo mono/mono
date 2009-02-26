@@ -1,3 +1,10 @@
+2009-02-25  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: let the current context known that
+	MapRequestHandler is done.
+
+	* HttpContext.cs: implemented RemapHandler
+
 2009-02-24  Marek Habersack  <mhabersack@novell.com>
 
 	* TempFileStream.cs: the class is internal
