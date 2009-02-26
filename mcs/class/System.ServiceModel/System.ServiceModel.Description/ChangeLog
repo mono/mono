@@ -1,3 +1,8 @@
+2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs : ClientBase<> argument type must be
+	  class (the class itself is to be fixed soon as well).
+
 2009-02-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceEndpoint.cs : moved CreateRuntime() from ChannelFactory<T>.

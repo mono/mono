@@ -170,7 +170,7 @@ namespace System.ServiceModel.Description
 			CodeTypeDeclaration type = GetTypeDeclaration (cns, name);
 			if (type != null)
 				return; // already imported
-			CodeTypeReference clientBase = new CodeTypeReference (typeof (ClientBase<int>).GetGenericTypeDefinition ());
+			CodeTypeReference clientBase = new CodeTypeReference (typeof (ClientBase<>));
 			clientBase.TypeArguments.Add (new CodeTypeReference (cd.Name));
 			type = new CodeTypeDeclaration (name);
 			cns.Types.Add (type);
