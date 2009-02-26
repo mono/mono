@@ -1,3 +1,11 @@
+2009-02-26  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Monodoc/provider.cs: It's possible for a HelpSource to have 0
+	  elements (which can be done by e.g. running `mdoc assemble' on an 
+	  empty directory), in which case HelpSource.Tree.Nodes will be null.
+	  Make sure that we don't get a NullReferenceException.
+	  Patch thanks to Theerud Lawtrakul.  Fixes #443699.
+
 2009-02-25  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile: 

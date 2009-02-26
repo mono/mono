@@ -892,6 +892,9 @@ public class RootTree : Tree {
 					parent = third_party;
 				}
 
+				if (hs.Tree.Nodes == null)
+					continue;
+
 				foreach (Node n in hs.Tree.Nodes){
 					parent.AddNode (n);
 				}
