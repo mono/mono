@@ -1,3 +1,8 @@
+2009-02-26  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/assembler.cs: When processing an empty directory,
+	  it's possible for HelpSource.Tree to be null; avoid an NRE.
+
 2009-02-17  Jonathan Pryor <jpryor@novell.com>
 
 	* Test/DocTest-v1.cs: Add test for #475814.

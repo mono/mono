@@ -104,7 +104,7 @@ public class MDocAssembler : MDocCommand {
 			p.PopulateTree (hs.Tree);
 		}
 
-		if (sort)
+		if (sort && hs.Tree != null)
 			hs.Tree.Sort ();
 			      
 		//
