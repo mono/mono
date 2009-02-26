@@ -1,5 +1,9 @@
 2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs : make it work with SL2 UI threading model.
+
+2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientProxyGenerator.cs : simply use CodeMethod.GetArg().
 
 2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>

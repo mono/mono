@@ -41,6 +41,25 @@ namespace System.ServiceModel
 		: IDisposable, ICommunicationObject where TChannel : class
 	{
 		static InstanceContext initialContxt = new InstanceContext (null);
+#if NET_2_1
+		static readonly PropertyInfo dispatcher_main_property;
+		static readonly MethodInfo dispatcher_begin_invoke_method;
+
+		static ClientBase ()
+		{
+			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ()) {
+				if (ass.GetName ().Name != "System.Windows")
+					continue;
+				Type dispatcher_type = ass.GetType ("System.Windows.Threading.Dispatcher", true);
+				dispatcher_main_property = dispatcher_type.GetProperty ("Main", BindingFlags.NonPublic | BindingFlags.Static);
+				dispatcher_begin_invoke_method = dispatcher_type.GetMethod ("BeginInvoke", new Type [] {typeof (Delegate), typeof (object [])});
+			}
+			if (dispatcher_main_property == null)
+				throw new SystemException ("Dispatcher.Main not found");
+			if (dispatcher_begin_invoke_method == null)
+				throw new SystemException ("Dispatcher.BeginInvoke not found");
+		}
+#endif
 
 		ChannelFactory<TChannel> factory;
 		ChannelBase<TChannel> inner_channel;
@@ -130,25 +149,27 @@ namespace System.ServiceModel
 
 		internal ClientBase (ChannelFactory<TChannel> factory)
 		{
-			this.factory = factory;
+			ChannelFactory = factory;
 		}
 
 		void Initialize (InstanceContext instance,
 			string endpointConfigurationName, EndpointAddress remoteAddress)
 		{
-			factory = new ChannelFactory<TChannel> (endpointConfigurationName, remoteAddress);
-			factory.OwnerClientBase = this;
+			ChannelFactory = new ChannelFactory<TChannel> (endpointConfigurationName, remoteAddress);
 		}
 
 		void Initialize (InstanceContext instance,
 			Binding binding, EndpointAddress remoteAddress)
 		{
-			factory = new ChannelFactory<TChannel> (binding, remoteAddress);
-			factory.OwnerClientBase = this;
+			ChannelFactory = new ChannelFactory<TChannel> (binding, remoteAddress);
 		}
 
 		public ChannelFactory<TChannel> ChannelFactory {
 			get { return factory; }
+			private set {
+				factory = value;
+				factory.OwnerClientBase = this;
+			}
 		}
 
 #if !NET_2_1
@@ -199,7 +220,18 @@ namespace System.ServiceModel
 			return default (T);
 		}
 
-		IAsyncResult delegate_async;
+		//IAsyncResult delegate_async;
+
+		void RunCompletedCallback (SendOrPostCallback callback, InvokeAsyncCompletedEventArgs args)
+		{
+			object dispatcher = dispatcher_main_property.GetValue (null, null);
+			if (dispatcher == null) {
+				callback (args);
+				return;
+			}
+			EventHandler a = delegate { callback (args); };
+			dispatcher_begin_invoke_method.Invoke (dispatcher, new object [] {a, new object [] {this, new EventArgs ()}});
+		}
 
 		protected void InvokeAsync (BeginOperationDelegate beginOperationDelegate,
 			object [] inValues, EndOperationDelegate endOperationDelegate,
@@ -209,8 +241,8 @@ namespace System.ServiceModel
 				throw new ArgumentNullException ("beginOperationDelegate");
 			if (endOperationDelegate == null)
 				throw new ArgumentNullException ("endOperationDelegate");
-			if (delegate_async != null)
-				throw new InvalidOperationException ("Another async operation is in progress");
+			//if (delegate_async != null)
+			//	throw new InvalidOperationException ("Another async operation is in progress");
 
 			AsyncCallback cb = delegate (IAsyncResult ar) {
 				object [] results = null;
@@ -223,7 +255,7 @@ namespace System.ServiceModel
 				}
 				try {
 					if (operationCompletedCallback != null)
-						operationCompletedCallback (new InvokeAsyncCompletedEventArgs (results, error, cancelled, userState));
+						RunCompletedCallback (operationCompletedCallback, new InvokeAsyncCompletedEventArgs (results, error, cancelled, userState));
 				} catch (Exception ex) {
 					Console.WriteLine ("Exception during operationCompletedCallback" + ex);
 					throw;
