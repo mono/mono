@@ -1,3 +1,8 @@
+2009-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_this_arg_from_call): Avoid expensive calls
+	to  get_generic_context_from_code () + get_call_info () if possible.
+
 2009-02-22  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r127665.
