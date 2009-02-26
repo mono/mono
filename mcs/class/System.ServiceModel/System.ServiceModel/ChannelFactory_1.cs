@@ -98,7 +98,8 @@ namespace System.ServiceModel
 			Endpoint.Address = remoteAddress;
 		}
 
-		[MonoTODO]
+		internal object OwnerClientBase { get; set; }
+
 		public TChannel CreateChannel ()
 		{
 			return CreateChannel (Endpoint.Address);
@@ -119,13 +120,19 @@ namespace System.ServiceModel
 			return new ChannelFactory<TChannel> (binding).CreateChannel (address, via);
 		}
 
-		[MonoTODO]
 		public virtual TChannel CreateChannel (EndpointAddress address, Uri via)
 		{
 			EnsureOpened ();
 			Type type = ClientProxyGenerator.CreateProxyType (Endpoint.Contract);
-			object proxy = Activator.CreateInstance (type,
-				new object [] {Endpoint.CreateRuntime (), this});
+			// in .NET and SL2, it seems that the proxy is RealProxy.
+			// But since there is no remoting in SL2 (and we have
+			// no special magic), we have to use different approach
+			// that should work either.
+
+			// it's complicated, but since TChannel must be class while it isn't here, we need ugly reflection hack.
+
+			object arg = OwnerClientBase ?? Activator.CreateInstance (typeof (DummyClientBase<>).MakeGenericType (typeof (TChannel)), new object [] {this});
+			object proxy = Activator.CreateInstance (type, new object [] {arg});
 			return (TChannel) proxy;
 		}
 
@@ -142,6 +149,14 @@ namespace System.ServiceModel
 			ep.Behaviors.Add (new ClientCredentials ());
 #endif
 			return ep;
+		}
+	}
+
+	class DummyClientBase<T> : ClientBase<T> where T : class
+	{
+		public DummyClientBase (ChannelFactory<T> factory)
+			: base (factory)
+		{
 		}
 	}
 }

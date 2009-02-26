@@ -1,3 +1,11 @@
+2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs, ClientProxyGenerator.cs,
+	  ClientBase.cs, ChannelFactory_1.cs, DuplexClientBase.cs:
+	  now ClientBase<TChannel>.InnerChannel became ChannelBase<T> as
+	  SL2 does. This change required several internal changes in
+	  proxy code generation. Also, now TChannel must be class.
+
 2009-02-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory_1.cs : it's not going to create ClientRuntime

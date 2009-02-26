@@ -31,7 +31,7 @@ using System.ServiceModel.Channels;
 
 namespace System.ServiceModel
 {
-	public class DuplexClientBase<TChannel> : ClientBase<TChannel>
+	public class DuplexClientBase<TChannel> : ClientBase<TChannel> where TChannel : class
 	{
 		protected DuplexClientBase (InstanceContext instance)
 			: this (instance, (Binding) null, null)

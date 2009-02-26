@@ -349,6 +349,10 @@ namespace System.ServiceModel
 
 		public object EndProcess (MethodBase method, string operationName, object [] parameters, IAsyncResult result)
 		{
+			if (result == null)
+				throw new ArgumentNullException ("result");
+			if (parameters == null)
+				throw new ArgumentNullException ("parameters");
 			// FIXME: the method arguments should be verified to be 
 			// identical to the arguments in the corresponding begin method.
 			return _processDelegate.EndInvoke (result);
