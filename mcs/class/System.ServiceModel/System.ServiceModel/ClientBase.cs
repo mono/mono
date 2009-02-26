@@ -185,8 +185,7 @@ namespace System.ServiceModel
 		public IClientChannel InnerChannel {
 			get {
 				if (inner_channel == null)
-					// FIXME: "factory." might be extraneous.
-					inner_channel = (ChannelBase<TChannel>) (object) ChannelFactory.CreateChannel ();
+					inner_channel = (ChannelBase<TChannel>) (object) CreateChannel ();
 				return inner_channel;
 			}
 		}
