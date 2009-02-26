@@ -10254,7 +10254,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>254</size>
+        <size>260</size>
       </method>
     </type>
     <type name="MyTypeA">
@@ -10779,7 +10779,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>102</size>
+        <size>99</size>
       </method>
     </type>
     <type name="MyColor">
@@ -11262,7 +11262,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>183</size>
+        <size>173</size>
       </method>
     </type>
   </test>
@@ -11375,7 +11375,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>150</size>
+        <size>258</size>
       </method>
     </type>
   </test>

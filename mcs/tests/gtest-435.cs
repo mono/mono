@@ -4,8 +4,18 @@ namespace testcase
 {
 	public class Program
 	{
-		private static int Main ()
+		static int Main ()
 		{
+			DateTime? a = default (DateTime?);
+			DateTime? b = default (DateTime?);
+			bool res = a == b;
+			if (!res)
+				return 4;
+
+			res = a != b;
+			if (res)
+				return 3;
+
 			decimal? D1 = null;
 			decimal? D2 = 7;
 
