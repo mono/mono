@@ -62,7 +62,7 @@
 			WarningsAsErrors="$(WarningsAsErrors)"
 			Win32Icon="$(Win32Icon)"
 			Win32Resource="$(Win32Resource)"
-			Resources="@(ManifestResourceWithNoCulture);@(ManifestResourceWithNoCultureOnDisk);@(CompiledLicenseFile)" />
+			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)" />
 			<!-- ToolPath="$(CscToolPath)" -->
 
 	</Target>

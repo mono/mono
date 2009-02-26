@@ -1,5 +1,10 @@
 2009-02-26  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.CSharp.targets (Csc): Fix "Resources" argument to use
+	ManifestNonResxWithCultureOnDisk instead of ManifestResourceWithNoCultureOnDisk.
+
+2009-02-26  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets: Make targets extensible. Add
 	before/after hooks.
 
