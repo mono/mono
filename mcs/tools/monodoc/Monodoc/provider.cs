@@ -126,6 +126,8 @@ public class Node : IComparable {
 	protected ArrayList nodes;
 	protected internal int position;
 
+	static ArrayList empty = ArrayList.ReadOnly(new ArrayList(0));
+
 	/// <summary>
 	///    Creates a node, called by the Tree.
 	/// </summary>
@@ -173,7 +175,7 @@ public class Node : IComparable {
 		get {
 			if (position < 0)
 				LoadNode ();
-			return nodes;
+			return nodes != null ? nodes : empty;
 		}
 	}
 
@@ -891,9 +893,6 @@ public class RootTree : Tree {
 					Console.Error.WriteLine ("node `{0}' is not defined on the documentation map", path);
 					parent = third_party;
 				}
-
-				if (hs.Tree.Nodes == null)
-					continue;
 
 				foreach (Node n in hs.Tree.Nodes){
 					parent.AddNode (n);

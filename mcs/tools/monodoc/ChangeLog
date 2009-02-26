@@ -1,5 +1,13 @@
 2009-02-26  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* Monodoc/provider.cs: Revert; Don't check for Tree.Nodes == null, as it
+	  happens in numerous places.  Instead, take a page out of the "I
+	  never should have invented `null'" book, and ensure that Tree.Nodes
+	  can never be null.  This fixes the "HelpSource has 0 items" issue
+	  and several other related ones.
+
+2009-02-26  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Monodoc/provider.cs: It's possible for a HelpSource to have 0
 	  elements (which can be done by e.g. running `mdoc assemble' on an 
 	  empty directory), in which case HelpSource.Tree.Nodes will be null.
