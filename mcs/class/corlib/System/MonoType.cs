@@ -38,9 +38,16 @@ using System.Security;
 
 namespace System
 {
+	// Contains information about the type which is expensive to compute
+	internal class MonoTypeInfo {
+		public string full_name;
+	}
+		
 	[Serializable]
 	internal class MonoType : Type, ISerializable
 	{
+		[NonSerialized]
+		MonoTypeInfo type_info;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void type_from_obj (MonoType type, Object obj);
@@ -522,7 +529,13 @@ namespace System
 
 		public override string FullName {
 			get {
-				return getFullName (true, false);
+				// This doesn't need locking
+				if (type_info == null)
+					type_info = new MonoTypeInfo ();
+				if (type_info.full_name == null)
+					type_info.full_name = getFullName (true, false);
+
+				return type_info.full_name;
 			}
 		}
 

@@ -1,3 +1,10 @@
+2009-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoType.cs (FullName): Cache the result of this in a field, as
+	computing it is expensive.
+
+	* Environment.cs: Bump corlib version.
+	
 2009-02-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Enum.cs (GetInfo): Add a global cache in addition to the thread-local
