@@ -1,3 +1,8 @@
+2009-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* String.cs (FormatHelper): If all the arguments are strings, compute an
+	initial length for the stringbuilder to avoid reallocations.
+
 2009-02-25  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r127929.
