@@ -157,8 +157,8 @@ namespace System.ServiceModel
 				if (!par.IsOut)
 					b.Assign (
 						new CodeArrayItem (paramsRef, new CodeLiteral (i)),
-						new CodeCast (typeof (object),
-							new CodeArgumentReference (par.ParameterType, par.Position + 1, "arg" + i)));
+						new CodeCast (typeof (object), m.GetArg (i)));
+						//	new CodeArgumentReference (par.ParameterType, par.Position + 1, "arg" + i)));
 			}
 			CodeMethodCall argMethodInfo = new CodeMethodCall (typeof (MethodBase), "GetCurrentMethod");
 			CodeLiteral argOperName = new CodeLiteral (name);

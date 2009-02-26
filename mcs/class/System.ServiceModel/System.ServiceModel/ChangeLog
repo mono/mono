@@ -1,5 +1,9 @@
 2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientProxyGenerator.cs : simply use CodeMethod.GetArg().
+
+2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs, ClientProxyGenerator.cs,
 	  ClientBase.cs, ChannelFactory_1.cs, DuplexClientBase.cs:
 	  now ClientBase<TChannel>.InnerChannel became ChannelBase<T> as
