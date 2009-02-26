@@ -1,3 +1,8 @@
+2009-02-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_get_delegate_invoke): Call setup_methods () to avoid the
+	slower search in metadata.
+
 2009-02-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: support SO_MAXCONN, SO_USELOOPBACK and
