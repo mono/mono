@@ -1853,17 +1853,34 @@ namespace System
 	
 		public static string Format (IFormatProvider provider, string format, params object[] args)
 		{
-			StringBuilder b = new StringBuilder ();
-			FormatHelper (b, provider, format, args);
+			StringBuilder b = FormatHelper (null, provider, format, args);
 			return b.ToString ();
 		}
 		
-		internal static void FormatHelper (StringBuilder result, IFormatProvider provider, string format, params object[] args)
+		internal static StringBuilder FormatHelper (StringBuilder result, IFormatProvider provider, string format, params object[] args)
 		{
 			if (format == null)
 				throw new ArgumentNullException ("format");
 			if (args == null)
 				throw new ArgumentNullException ("args");
+
+			if (result == null) {
+				/* Try to approximate the size of result to avoid reallocations */
+				int i, len;
+
+				len = 0;
+				for (i = 0; i < args.Length; ++i) {
+					string s = args [i] as string;
+					if (s != null)
+						len += s.length;
+					else
+						break;
+				}
+				if (i == args.Length)
+					result = new StringBuilder (len + format.length);
+				else
+					result = new StringBuilder ();
+			}
 
 			int ptr = 0;
 			int start = ptr;
@@ -1939,6 +1956,8 @@ namespace System
 
 			if (start < format.length)
 				result.Append (format, start, format.Length - start);
+
+			return result;
 		}
 
 		public unsafe static String Copy (String str)

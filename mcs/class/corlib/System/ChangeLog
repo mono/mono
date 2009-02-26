@@ -1,5 +1,8 @@
 2009-02-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* String.cs (FormatHelper): If all the arguments are strings, compute an
+	initial length for the stringbuilder to avoid reallocations.
+
 	* MonoType.cs (FullName): Cache the result of this in a field, as
 	computing it is expensive.
 
