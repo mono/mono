@@ -1,3 +1,8 @@
+2009-02-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConfigurationManager.cs: generate a hash from the string hsah
+	codes instead of concatenating them.
+
 2009-01-27  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpHandlerAction.cs: removed the matches cache, it doesn't
