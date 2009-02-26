@@ -1,3 +1,7 @@
+2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntime.cs : fill contractType in .ctor().
+
 2009-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BaseMessagesFormatter.cs : do not use non-2.1 CreateInstance().

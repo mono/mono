@@ -69,6 +69,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			contract_name = endpoint.Contract.Name;
 			contract_ns = endpoint.Contract.Namespace;
+			contract = endpoint.Contract.ContractType;
 		}
 
 		public Type CallbackClientType {
