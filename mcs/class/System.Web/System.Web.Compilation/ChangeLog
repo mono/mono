@@ -1,3 +1,13 @@
+2009-02-26  Marek Habersack  <mhabersack@novell.com>
+
+	* TagAttributes.cs: modified ToString to return string formatted
+	in a more helpful way.
+
+	* AspParser.cs: added ToString, helpful when debugging.
+
+	* AspGenerator.cs: properly print leading and trailing plain text
+	when looking for embedded tags in ProcessTagsInAttributes.
+
 2009-02-25  Marek Habersack  <mhabersack@novell.com>
 
 	* AspTokenizer.cs: put_back now uses a stack and allows more than

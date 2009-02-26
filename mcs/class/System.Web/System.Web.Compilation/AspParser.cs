@@ -525,6 +525,16 @@ namespace System.Web.Compilation
 				  (varname ? TagType.CodeRenderExpression : TagType.CodeRender));
 		}
 
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ("AspParser {");
+			if (filename != null && filename.Length > 0)
+				sb.AppendFormat ("{0}:{1}.{2}", filename, beginLine, beginColumn);
+			sb.Append ('}');
+
+			return sb.ToString ();
+		}
+		
 		void OnError (string msg)
 		{
 			ParseErrorHandler eh = events [errorEvent] as ParseErrorHandler;

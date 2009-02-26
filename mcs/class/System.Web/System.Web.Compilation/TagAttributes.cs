@@ -180,20 +180,22 @@ namespace System.Web.Compilation
 		
 		public override string ToString ()
 		{
-			StringBuilder result = new StringBuilder ();
+			StringBuilder result = new StringBuilder ("TagAttributes {");
 			string value;
 			foreach (string key in Keys){
+				result.Append ('[');
 				result.Append (key);
 				value = this [key] as string;
 				if (value != null)
 					result.AppendFormat ("=\"{0}\"", value);
 
-				result.Append (' ');
+				result.Append ("] ");
 			}
 
 			if (result.Length > 0 && result [result.Length - 1] == ' ')
 				result.Length--;
-				
+
+			result.Append ('}');
 			return result.ToString ();
 		}
 		

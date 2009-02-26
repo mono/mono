@@ -464,8 +464,10 @@ namespace System.Web.Compilation
 			sb.AppendFormat ("\t<{0}", tagid);
 			foreach (string key in attributes.Keys) {
 				value = attributes [key] as string;
-				if (value == null || value.Length < 16) // optimization
+				if (value == null || value.Length < 16) { // optimization
+					sb.AppendFormat (" {0}=\"{1}\"", key, value);
 					continue;
+				}
 				
 				match = runatServer.Match (attributes [key] as string);
 				if (!match.Success) {
@@ -481,13 +483,14 @@ namespace System.Web.Compilation
 				group = match.Groups [0];
 				index = group.Index;
 				length = group.Length;
-				
-				if (index > 0)
-					TextParsed (location, String.Format (" {0}=\"{1}", key, value.Substring (0, index)));
+
+				TextParsed (location, String.Format (" {0}=\"{1}", key, index > 0 ? value.Substring (0, index) : String.Empty));;
 				FlushText ();				
 				ParseAttributeTag (group.Value);
 				if (index + length < value.Length)
 					TextParsed (location, value.Substring (index + length) + "\"");
+				else
+					TextParsed (location, "\"");
 			}
 			if (type == TagType.SelfClosing)
 				sb.Append ("/>");
@@ -1036,7 +1039,7 @@ namespace System.Web.Compilation
 					TextParsed (null, str.Substring (0, index));
 					str = str.Substring (index);
 				}
-				
+
 				AspParser parser = new AspParser ("@@nested_tag@@", new StringReader (str));
 				parser.Error += new ParseErrorHandler (ParseError);
 				parser.TagParsed += new TagParsedHandler (TagParsed);
