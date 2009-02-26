@@ -1,3 +1,12 @@
+2009-02-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Tds.cs (ProcessLoginAck): Set TdsVersion to the version
+	supported by the server.
+	(GetColumnValue): lcid and sortId are available only from Tds 8.
+
+	* Tds80.cs (ProcessColumnInfo, ProcessOutputParam): Call base
+	methods if the server version is less than Tds 8.
+	
 2009-02-19  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Tds.cs: Tds 8 collation support

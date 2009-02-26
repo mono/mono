@@ -726,7 +726,7 @@ namespace Mono.Data.Tds.Protocol
 			if (colType == null)
 				throw new ArgumentNullException ("colType");
 #endif
-			if (ordinal > -1) {
+			if (ordinal > -1 && tdsVersion > TdsVersion.tds70) {
 #if NET_2_0
 				lcid = (int) columns[ordinal].LCID;
 				sortId = (int) columns[ordinal].SortOrder; 
@@ -1224,12 +1224,11 @@ namespace Mono.Data.Tds.Protocol
 			    (colType == TdsColumnType.BigChar || colType == TdsColumnType.BigNVarChar || 
 			     colType == TdsColumnType.BigVarChar || colType == TdsColumnType.NChar ||
 				 colType == TdsColumnType.NVarChar)) {
-				    // Read collation for SqlServer 2000 and beyond
-					byte[] collation;
-				    collation = Comm.GetBytes (5, true);
-					enc = TdsCharset.GetEncoding (collation);
-					//comm.Skip (5);
-					shortLen = true;
+				// Read collation for SqlServer 2000 and beyond
+				byte[] collation;
+				collation = Comm.GetBytes (5, true);
+				enc = TdsCharset.GetEncoding (collation);
+				shortLen = true;
 			} else {
 				shortLen = (tdsVersion >= TdsVersion.tds70) && (wideChars || !outputParam);
 			}
@@ -1598,24 +1597,38 @@ namespace Mono.Data.Tds.Protocol
 
 		protected void ProcessLoginAck ()
 		{
-			//TODO: Reade the server version and process packets accordingly
+			uint srvVersion = 0;
 			GetSubPacketLength ();
-
+			
+			// Valid only for a Login7 request
 			if (tdsVersion >= TdsVersion.tds70) {
-				comm.Skip (5);
+				comm.Skip (1);
+				srvVersion = (uint)comm.GetTdsInt ();
+
+				switch (srvVersion) {
+				case 0x07000000: 
+					tdsVersion = TdsVersion.tds70;
+					break;
+				case 0x07010000:
+					tdsVersion = TdsVersion.tds80;
+					break;
+				case 0x71000001:
+					tdsVersion = TdsVersion.tds81;
+					break;
+				case 0x72090002:
+					tdsVersion = TdsVersion.tds90;
+					break;
+				}
+			}
+			
+			if (tdsVersion >= TdsVersion.tds70) {
 				int nameLength = comm.GetByte ();
 				databaseProductName = comm.GetString (nameLength);
 				databaseMajorVersion = comm.GetByte ();
 				databaseProductVersion = String.Format ("{0}.{1}.{2}", databaseMajorVersion.ToString("00"),
 								comm.GetByte ().ToString("00"), 
 								(256 * comm.GetByte () + comm.GetByte ()).ToString("0000"));
-				// VARADHAN: TDS 8 Debugging
-				/*
-				Console.WriteLine ("tdsVersion >= tds70");
-				Console.WriteLine ("\t Name: {0}, version: {1}", databaseProductName, databaseProductVersion);
-				*/
-			}
-			else {
+			} else {
 				comm.Skip (5);
 				short nameLength = comm.GetByte ();
 				databaseProductName = comm.GetString (nameLength);

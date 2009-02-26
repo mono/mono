@@ -71,6 +71,10 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected override TdsDataColumnCollection ProcessColumnInfo ()
 		{
+			// We are connected to a Sql 7.0 server
+			if (TdsVersion < TdsVersion.tds80)
+				return base.ProcessColumnInfo ();
+			
 			// VARADHAN: TDS 8 Debugging
 			//Console.WriteLine ("Tds80.cs: In ProcessColumnInfo... entry");
 			TdsDataColumnCollection result = new TdsDataColumnCollection ();
@@ -186,6 +190,10 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected override void ProcessOutputParam ()
 		{
+			// We are connected to a Sql 7.0 server
+			if (TdsVersion < TdsVersion.tds80)
+				base.ProcessOutputParam ();
+
 			GetSubPacketLength ();
 			
 			Comm.Skip ((Comm.GetByte () & 0xff) <<1); // Parameter name
