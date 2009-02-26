@@ -1,3 +1,7 @@
+2009-02-26  Marek Safar  <marek.safar@gmail.com>
+
+	* Nullable.cs: Inline GetValueOrDefault.
+
 2009-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* String.cs (FormatHelper): If all the arguments are strings, compute an

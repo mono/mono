@@ -140,15 +140,12 @@ namespace System
 
 		public T GetValueOrDefault ()
 		{
-			return GetValueOrDefault (default (T));
+			return has_value ? value : default (T);
 		}
 
 		public T GetValueOrDefault (T defaultValue)
 		{
-			if (!has_value)
-				return defaultValue;
-			else
-				return value;
+			return has_value ? value : defaultValue;
 		}
 
 		public override string ToString ()
