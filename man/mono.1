@@ -1084,6 +1084,12 @@ to track down the source of the problems.
 \fBno-gdb-backtrace\fR
 This option will disable the GDB backtrace emitted by the runtime
 after a SIGSEGV or SIGABRT in unmanaged code.
+.TP
+\fBsuspend-on-sigsegv\fR
+
+This option will to suspend when a native SIGSEGV is received. This is
+useful for debugging crashes which don not happen under gdb, since a
+live process contains more information than a core file.
 .ne
 .RE
 .TP
