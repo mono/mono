@@ -1276,7 +1276,7 @@ namespace Mono.CSharp {
 					// D and T are the same value types but D can be null
 					//
 					if (d_is_nullable && !t_is_nullable) {
-						expr_unwrap = Nullable.Unwrap.Create (expr, ec);
+						expr_unwrap = Nullable.Unwrap.Create (expr, false);
 						return this;
 					}
 					

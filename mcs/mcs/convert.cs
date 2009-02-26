@@ -1908,7 +1908,7 @@ namespace Mono.CSharp {
 						return Nullable.Wrap.Create (e, target_type);
 				}
 			} else if (TypeManager.IsNullableType (expr_type)) {
-				e = Nullable.Unwrap.Create (expr, ec);
+				e = Nullable.Unwrap.Create (expr, false);
 
 				bool use_class_cast;
 				if (ImplicitBoxingConversionExists (e, target_type, out use_class_cast))

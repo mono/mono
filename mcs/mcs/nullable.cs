@@ -90,11 +90,13 @@ namespace Mono.CSharp.Nullable
 		NullableInfo info;
 
 		LocalTemporary temp;
+		readonly bool useDefaultValue;
 
-		protected Unwrap (Expression expr)
+		Unwrap (Expression expr, bool useDefaultValue)
 		{
 			this.expr = expr;
 			this.loc = expr.Location;
+			this.useDefaultValue = useDefaultValue;
 
 			info = new NullableInfo (expr.Type);
 			type = info.UnderlyingType;
@@ -110,12 +112,12 @@ namespace Mono.CSharp.Nullable
 			if (wrap != null)
 				return wrap.Child;
 
-			return Create (expr, null);
+			return Create (expr, false);
 		}
 
-		public static Unwrap Create (Expression expr, EmitContext ec)
+		public static Unwrap Create (Expression expr, bool useDefaultValue)
 		{
-			return new Unwrap (expr);
+			return new Unwrap (expr, useDefaultValue);
 		}
 		
 		public override Expression CreateExpressionTree (EmitContext ec)
@@ -136,19 +138,16 @@ namespace Mono.CSharp.Nullable
 		public override void Emit (EmitContext ec)
 		{
 			Store (ec);
-			Invocation.EmitCall (ec, false, this, info.Value, null, loc);
+			if (useDefaultValue)
+				Invocation.EmitCall (ec, false, this, info.GetValueOrDefault, null, loc);
+			else
+				Invocation.EmitCall (ec, false, this, info.Value, null, loc);
 		}
 
 		public void EmitCheck (EmitContext ec)
 		{
 			Store (ec);
 			Invocation.EmitCall (ec, false, this, info.HasValue, null, loc);
-		}
-
-		public void EmitGetValueOrDefault (EmitContext ec)
-		{
-			Store (ec);
-			Invocation.EmitCall (ec, false, this, info.GetValueOrDefault, null, loc);
 		}
 
 		public override bool Equals (object obj)
@@ -465,7 +464,7 @@ namespace Mono.CSharp.Nullable
 			if (eclass != ExprClass.Invalid)
 				return this;
 
-			unwrap = Unwrap.Create (Expr, ec);
+			unwrap = Unwrap.Create (Expr, false);
 			if (unwrap == null)
 				return null;
 
@@ -604,16 +603,17 @@ namespace Mono.CSharp.Nullable
 				return null;
 			}
 
+			bool use_default_call = (Oper & (Operator.BitwiseMask | Operator.EqualityMask)) != 0;
 			left_orig = left;
 			if (TypeManager.IsNullableType (left.Type)) {
-				left = left_unwrap = Unwrap.Create (left, ec);
+				left = left_unwrap = Unwrap.Create (left, use_default_call);
 				if (left == null)
 					return null;
 			}
 
 			right_orig = right;
 			if (TypeManager.IsNullableType (right.Type)) {
-				right = right_unwrap = Unwrap.Create (right, ec);
+				right = right_unwrap = Unwrap.Create (right, use_default_call);
 				if (right == null)
 					return null;
 			}
@@ -647,10 +647,10 @@ namespace Mono.CSharp.Nullable
 			Label load_right = ig.DefineLabel ();
 			Label end_label = ig.DefineLabel ();
 
-			left_unwrap.EmitGetValueOrDefault (ec);
+			left_unwrap.Emit (ec);
 			ig.Emit (OpCodes.Brtrue_S, load_right);
 
-			right_unwrap.EmitGetValueOrDefault (ec);
+			right_unwrap.Emit (ec);
 			ig.Emit (OpCodes.Brtrue_S, load_left);
 
 			left_unwrap.EmitCheck (ec);
@@ -677,7 +677,7 @@ namespace Mono.CSharp.Nullable
 		//
 		// Emits optimized equality or inequality operator when possible
 		//
-		bool EmitEquality (EmitContext ec)
+		void EmitEquality (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -690,7 +690,7 @@ namespace Mono.CSharp.Nullable
 					ig.Emit (OpCodes.Ldc_I4_0);
 					ig.Emit (OpCodes.Ceq);
 				}
-				return true;
+				return;
 			}
 
 			if (right_unwrap != null && (left_null_lifted || left.IsNull)) {
@@ -699,32 +699,32 @@ namespace Mono.CSharp.Nullable
 					ig.Emit (OpCodes.Ldc_I4_0);
 					ig.Emit (OpCodes.Ceq);
 				}
-				return true;
+				return;
 			}
-
-			if (user_operator != null)
-				return false;
-
-			if (left is UserCast || right is UserCast)
-				return false;
 
 			Label dissimilar_label = ig.DefineLabel ();
 			Label end_label = ig.DefineLabel ();
 
-			if (left_unwrap != null)
-				left_unwrap.EmitGetValueOrDefault (ec);
-			else
-				left.Emit (ec);
+			if (user_operator != null) {
+				user_operator.Emit (ec);
+				ig.Emit (Oper == Operator.Equality ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, dissimilar_label);
+			} else {
+				if (left_unwrap != null && !(left is UserCast))
+					left_unwrap.Emit (ec);
+				else
+					left.Emit (ec);
 
-			if (right_unwrap != null)
-				right_unwrap.EmitGetValueOrDefault (ec);
-			else
-				right.Emit (ec);
+				if (right_unwrap != null && !(right is UserCast))
+					right_unwrap.Emit (ec);
+				else
+					right.Emit (ec);
 
-			ig.Emit (OpCodes.Bne_Un_S, dissimilar_label);
+				ig.Emit (OpCodes.Bne_Un_S, dissimilar_label);
+			}
 
 			if (left_unwrap != null)
 				left_unwrap.EmitCheck (ec);
+
 			if (right_unwrap != null)
 				right_unwrap.EmitCheck (ec);
 
@@ -749,7 +749,6 @@ namespace Mono.CSharp.Nullable
 				ig.Emit (OpCodes.Ldc_I4_0);
 
 			ig.MarkLabel (end_label);
-			return true;
 		}
 		
 		public override void EmitBranchable (EmitContext ec, Label target, bool onTrue)
@@ -772,8 +771,8 @@ namespace Mono.CSharp.Nullable
 			}
 
 			if ((Oper & Operator.EqualityMask) != 0) {
-				if (EmitEquality (ec))
-					return;
+				EmitEquality (ec);
+				return;
 			}
 
 			ILGenerator ig = ec.ig;
@@ -803,15 +802,7 @@ namespace Mono.CSharp.Nullable
 			ig.MarkLabel (is_null_label);
 
 			if ((Oper & Operator.ComparisonMask) != 0) {
-				//
-				// Emit true when equality operator both operands are same
-				// or inequality operator operands are not
-				//
-				if ((Oper == Operator.Equality && left_unwrap == right_unwrap) ||
-					(Oper == Operator.Inequality && left_unwrap != right_unwrap))
-					ig.Emit (OpCodes.Ldc_I4_1);
-				else
-					ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ldc_I4_0);
 			} else {
 				LiftedNull.Create (type, loc).Emit (ec);
 			}
@@ -997,7 +988,7 @@ namespace Mono.CSharp.Nullable
 			// the result is underlying type of left
 			//
 			if (TypeManager.IsNullableType (ltype)) {
-				unwrap = Unwrap.Create (left, ec);
+				unwrap = Unwrap.Create (left, false);
 				if (unwrap == null)
 					return null;
 
@@ -1143,7 +1134,7 @@ namespace Mono.CSharp.Nullable
 			if (expr == null)
 				return null;
 
-			unwrap = Unwrap.Create (expr, ec);
+			unwrap = Unwrap.Create (expr, false);
 			if (unwrap == null)
 				return null;
 

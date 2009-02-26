@@ -3614,7 +3614,7 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			if ((new_expr == null) && TypeManager.IsNullableType (Expr.Type)) {
-				unwrap = Nullable.Unwrap.Create (Expr, ec);
+				unwrap = Nullable.Unwrap.Create (Expr, false);
 				if (unwrap == null)
 					return false;
 
