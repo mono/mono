@@ -1,3 +1,14 @@
+2009-02-25  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile: 
+	  - s/TEST_FILES/MAN_TEST_FILES/g: $(TEST_FILES) is used by the normal
+	    build process, so the local definition is lost (and thus ignored).
+	    Result: Test/* isn't actually copied.  Oops.  Changing to
+	    MAN_TEST_FILES allows things to be copied.
+	  - Fix the filenames within $(MAN_TEST_FILES) so `make dist-local'
+	    works without error.
+	  - Fixes #479753.
+
 2009-01-05  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile: Fix $(the_lib) dependencies so that monodoc.dll is rebuilt

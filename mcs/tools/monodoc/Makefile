@@ -23,21 +23,21 @@ RESOURCE_FILES = \
 	Resources/mono-ecma.css           \
 	Resources/mono-ecma.xsl
 
-TEST_FILES = \
+MAN_TEST_FILES = \
 	Test/man-provider-test.cs   \
-	Test/man-test-1.1           \
-	Test/man-test-1.html        \
-	Test/man-test-2.1           \
-	Test/man-test-2.html        \
-	Test/man-test-3.1           \
-	Test/man-test-3.html        \
-	Test/man-test-4.1           \
-	Test/man-test-4.html
+	Test/man-test1.1            \
+	Test/man-test1.html         \
+	Test/man-test2.1            \
+	Test/man-test2.html         \
+	Test/man-test3.1            \
+	Test/man-test3.html         \
+	Test/man-test4.1            \
+	Test/man-test4.html
 
 EXTRA_DISTFILES = \
 	monodoc.dll.config.in   \
 	$(RESOURCE_FILES)       \
-	$(TEST_FILES)
+	$(MAN_TEST_FILES)
 
 LIB_MCS_FLAGS = \
 	/codepage:utf8                                                    \
