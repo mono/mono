@@ -54,6 +54,7 @@ namespace System.Resources
 #endif
 		protected IResourceReader Reader;
 		protected Hashtable Table;
+		bool resources_read;
 
 		[NonSerialized]
 		private bool disposed;
@@ -68,22 +69,26 @@ namespace System.Resources
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
+			Table = new Hashtable ();
 			Reader = reader;
 		}
 
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public ResourceSet (Stream stream)
 		{
+			Table = new Hashtable ();
 			Reader = new ResourceReader (stream);
 		}
 
 		internal ResourceSet (IntPtrStream stream)
 		{
+			Table = new Hashtable ();
 			Reader = new ResourceReader (stream);
 		}
 		
 		public ResourceSet (string fileName)
 		{
+			Table = new Hashtable ();
 			Reader = new ResourceReader (fileName);
 		}
 
@@ -132,8 +137,7 @@ namespace System.Resources
 #else
 				throw new InvalidOperationException ("ResourceSet is closed.");
 #endif
-			if (Table == null)
-				ReadResources ();
+			ReadResources ();
 			return Table.GetEnumerator();
 		}
 
@@ -153,8 +157,7 @@ namespace System.Resources
 #else
 				throw new InvalidOperationException ("ResourceSet is closed.");
 #endif
-			if (Table == null)
-				ReadResources ();
+			ReadResources ();
 
 			object o = Table [name];
 			if (o != null)
@@ -214,15 +217,19 @@ namespace System.Resources
 #else
 				throw new InvalidOperationException ("ResourceSet is closed.");
 #endif
-			
-			IDictionaryEnumerator i = Reader.GetEnumerator();
+			if (resources_read)
+				return;
 
-			if (Table == null)
-				Table = new Hashtable ();
-			i.Reset ();
+			lock (Table) {
+				if (resources_read)
+					return;
 
-			while (i.MoveNext ()) 
-				Table.Add (i.Key, i.Value);
+				IDictionaryEnumerator i = Reader.GetEnumerator();
+				i.Reset ();
+				while (i.MoveNext ()) 
+					Table.Add (i.Key, i.Value);
+				resources_read = true;
+			}
 		}
 
 #if NET_2_0
