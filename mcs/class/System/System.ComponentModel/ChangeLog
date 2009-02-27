@@ -1,3 +1,12 @@
+2009-02-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ReflectionPropertyDescriptor.cs: Don't cache getter and
+	setter properties. Cache instead the PropertyInfo objects
+	that defined them.
+
+	PropertyInfo::Get/SetValue is faster than calling the method
+	throught reflection.	
+
 2009-02-21  Kornél Pál  <kornelpal@gmail.com>
 
 	* EventHandlerList.cs: Fix profile 1.x build by not using HandlerEntry.

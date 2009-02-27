@@ -41,7 +41,7 @@ namespace System.ComponentModel
 		PropertyInfo _member;
 		Type _componentType;
 		Type _propertyType;
-		MethodInfo getter, setter;
+		PropertyInfo getter, setter;
 		bool accessors_inited;
 
 		public ReflectionPropertyDescriptor (Type componentType, PropertyDescriptor oldPropertyDescriptor, Attribute [] attributes)
@@ -146,7 +146,7 @@ namespace System.ComponentModel
 		{
 			component = MemberDescriptor.GetInvokee (_componentType, component);
 			InitAccessors ();
-			return getter.Invoke (component, new object[0]);
+			return getter.GetValue (component,  null);
 		}
 
 		DesignerTransaction CreateTransaction (object obj, string description)
@@ -206,21 +206,28 @@ namespace System.ComponentModel
 			if (accessors_inited)
 				return;
 			PropertyInfo prop = GetPropertyInfo ();
+			MethodInfo setterMethod, getterMethod;
+			setterMethod = prop.GetSetMethod (true);
+			getterMethod = prop.GetGetMethod (true);
 
-			setter = prop.GetSetMethod (true);
-			getter = prop.GetGetMethod (true);
+			if (getterMethod != null)
+				getter = prop;
 
-			if (setter != null && getter != null) {//both exist
+			if (setterMethod != null)
+				setter = prop;
+
+
+			if (setterMethod != null && getterMethod != null) {//both exist
 				accessors_inited = true;
 				return;
 			}
-			if (setter == null && getter == null) {//neither exist, this is a broken property
+			if (setterMethod == null && getterMethod == null) {//neither exist, this is a broken property
 				accessors_inited = true;
 				return;
 			}
 
 			//In order to detect that this is a virtual property with override, we check the non null accessor
-			MethodInfo mi = getter != null ? getter : setter;
+			MethodInfo mi = getterMethod != null ? getterMethod : setterMethod;
 
 			if (mi == null || !mi.IsVirtual || (mi.Attributes & MethodAttributes.NewSlot) == MethodAttributes.NewSlot) {
 				accessors_inited = true;
@@ -235,10 +242,17 @@ namespace System.ComponentModel
 										      new Type[0], new ParameterModifier[0]);
 				if (prop == null) //nothing left to search
 					break;
-				if (setter == null)
-					setter = mi = prop.GetSetMethod ();
+				if (setterMethod == null)
+					setterMethod = mi = prop.GetSetMethod ();
 				else
-					getter = mi = prop.GetGetMethod ();
+					getterMethod = mi = prop.GetGetMethod ();
+
+				if (getterMethod != null && getter == null)
+					getter = prop;
+	
+				if (setterMethod != null && setter == null)
+					setter = prop;
+				
 				if (mi != null)
 					break;
 				type = type.BaseType;
@@ -255,7 +269,7 @@ namespace System.ComponentModel
 
 			try {
 				InitAccessors ();
-				setter.Invoke (propertyHolder, new object[] { value });
+				setter.SetValue (propertyHolder, value, null);
 				EndTransaction (component, tran, old, value, true);
 			} catch {
 				EndTransaction (component, tran, old, value, false);
