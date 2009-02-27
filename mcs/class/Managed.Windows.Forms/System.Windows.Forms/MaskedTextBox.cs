@@ -263,11 +263,14 @@ namespace System.Windows.Forms
 					result = provider.RemoveAt (SelectionStart, SelectionStart + SelectionLength - 1, out testPosition, out resultHint);
 
 				editPosition = testPosition;
-			} else if (IsOverwriteMode) {
+			} else if (IsOverwriteMode || SelectionLength > 0) { // Replace
 				int start = provider.FindEditPositionFrom (SelectionStart, true);
-				result = provider.Replace (e.KeyChar, start, start, out testPosition, out resultHint);
+				int end = SelectionLength > 0 ? SelectionStart + SelectionLength - 1 : start;
+				result = provider.Replace (e.KeyChar, start, end, out testPosition, out resultHint);
+
 				editPosition = testPosition + 1;
-			} else {
+			} else { 
+				// Move chars to the right
 				result = provider.InsertAt (e.KeyChar, SelectionStart, out testPosition, out resultHint);
 				editPosition = testPosition + 1;
 			}
@@ -723,8 +726,7 @@ namespace System.Windows.Forms
 					base.Text = value;
 					setting_text = false;
 				} else {
-					SelectionStart = 0;
-					InputText (value, true);
+					InputText (value);
 				}
 				UpdateVisibleText ();
 			}
@@ -868,26 +870,24 @@ namespace System.Windows.Forms
 			setting_text = false;
 		}
 		
-		private void InputText (string text, bool clear)
+		private void InputText (string text)
 		{
 			string input = text;
-			
-			if (clear) {
-				provider.Clear ();
-			}
-
+				
 			int testPosition;
 			MaskedTextResultHint resultHint;
 			bool result;
 			
 			if (RejectInputOnFirstFailure) {
-				result = provider.Replace (input, SelectionStart, SelectionStart + input.Length - 1, out testPosition, out resultHint);
+				result = provider.Set (input, out testPosition, out resultHint);
 				if (!result)
 					OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
 			} else {
+				provider.Clear ();
+				testPosition = 0;
+
 				// Unfortunately we can't break if we reach the end of the mask, since
 				// .net iterates over _all_ the chars in the input
-				testPosition = SelectionStart;
 				for (int i = 0; i < input.Length; i++) {
 					char c = input [i];
 

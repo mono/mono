@@ -1,3 +1,17 @@
+2009-02-27  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* MaskedTextBox.cs: Properly replace selection when a new valid key
+	is pressed - even when IsOverwriteMode is false. This is what .net
+	does.
+
+2009-02-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextBox.cs: When setting Text and RejectOnFirstFailure is
+	true, use MaskedTextProvider.Set instead of MaskedTextProvider.Replace, 
+	since Set will keep the previous value in case of error (just what we
+	need), but still call MaskedTextProvider.Clear if
+	RejectOnFirstFailure is false - match .net.
+
 2009-02-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MaskedTextBox.cs: When setting Text use the very precise algorithm
