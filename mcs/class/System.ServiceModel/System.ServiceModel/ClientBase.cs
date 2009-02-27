@@ -228,7 +228,14 @@ namespace System.ServiceModel
 				callback (args);
 				return;
 			}
-			EventHandler a = delegate { callback (args); };
+			EventHandler a = delegate {
+				try {
+					callback (args); 
+				} catch (Exception ex) {
+					Console.WriteLine ("ClientBase<TChannel> caught an error during operationCompletedCallback: " + ex);
+					throw;
+				}
+			};
 			dispatcher_begin_invoke_method.Invoke (dispatcher, new object [] {a, new object [] {this, new EventArgs ()}});
 		}
 
@@ -259,7 +266,7 @@ namespace System.ServiceModel
 					Console.WriteLine ("Exception during operationCompletedCallback" + ex);
 					throw;
 				}
-				Console.WriteLine ("System.ServiceModel.ClientBase<TChannel>: web service invocation is successfully done.");
+				Console.WriteLine ("System.ServiceModel.ClientBase<TChannel>: web service invocation is successfully done (operationCompletedCallback may not be).");
 			};
 			begin_async_result = beginOperationDelegate (inValues, cb, userState);
 		}
