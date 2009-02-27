@@ -342,7 +342,20 @@ namespace System.Runtime.Serialization
 			int memberInd = -1;
 			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				DataMemberInfo dmi = null;
-				for (int i = memberInd + 1; i < Members.Count; i++) {
+				int i = 0;
+				for (; i < Members.Count; i++) { // unordered
+					if (Members [i].Order >= 0)
+						break;
+					if (reader.LocalName == Members [i].XmlName &&
+						reader.NamespaceURI == Members [i].XmlRootNamespace) {
+						memberInd = i;
+						dmi = Members [i];
+						break;
+					}
+				}
+				for (; i < Members.Count; i++) { // ordered
+					if (dmi != null)
+						break;
 					if (reader.LocalName == Members [i].XmlName &&
 						reader.NamespaceURI == Members [i].XmlRootNamespace) {
 						memberInd = i;

@@ -1,3 +1,8 @@
+2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : look for unordered members first, in
+	  different iteration. Got SL OpenStreetMap working.
+
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : remove use of non-2.1 CreateInstance().
