@@ -1,3 +1,8 @@
+2009-02-27  Jonathan Pryor <jpryor@novell.com>
+
+	* Regex.cs (Replace): Check that input & evaluator are not null, as
+	  documented in MSDN (and the variance found while testing DbLinq).
+
 2009-02-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* BaseMachine.cs (LTRReplace): Initialize the StringBuilder with an

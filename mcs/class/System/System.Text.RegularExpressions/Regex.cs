@@ -388,6 +388,11 @@ namespace System.Text.RegularExpressions {
 
 		public string Replace (string input, MatchEvaluator evaluator, int count, int startat)
 		{
+			if (input == null)
+				throw new ArgumentNullException ("null");
+			if (evaluator == null)
+				throw new ArgumentNullException ("evaluator");
+
 			BaseMachine m = (BaseMachine)CreateMachine ();
 
 			if (RightToLeft)
