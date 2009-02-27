@@ -1,5 +1,9 @@
 2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs : give successful WCF call completion info.
+
+2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientBase.cs : diagnose more precisely.
 
 2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>

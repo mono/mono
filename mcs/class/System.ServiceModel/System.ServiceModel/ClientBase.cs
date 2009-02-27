@@ -231,6 +231,7 @@ namespace System.ServiceModel
 			EventHandler a = delegate {
 				try {
 					callback (args); 
+					Console.WriteLine ("ClientBase<TChannel>: operationCompletedCallback is successfully done (unless the callback has further async operations)");
 				} catch (Exception ex) {
 					Console.WriteLine ("ClientBase<TChannel> caught an error during operationCompletedCallback: " + ex);
 					throw;
