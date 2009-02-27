@@ -3597,11 +3597,16 @@ namespace Mono.CSharp {
 		public override void Emit()
 		{
 			// for extern static method must be specified either DllImport attribute or MethodImplAttribute.
-			// We are more strict than Microsoft and report CS0626 as error
+			// We are more strict than csc and report this as an error because SRE does not allow emit that
 			if ((ModFlags & Modifiers.EXTERN) != 0 && !is_external_implementation) {
-				Report.Error (626, Location,
-					"`{0}' is marked as an external but has no DllImport attribute. Consider adding a DllImport attribute to specify the external implementation",
-					GetSignatureForError ());
+				if (this is Constructor) {
+					Report.Error (824, Location,
+						"Constructor `{0}' is marked `external' but has no external implementation specified", GetSignatureForError ());
+				} else {
+					Report.Error (626, Location,
+						"`{0}' is marked as an external but has no DllImport attribute. Consider adding a DllImport attribute to specify the external implementation",
+						GetSignatureForError ());
+				}
 			}
 
 			base.Emit ();

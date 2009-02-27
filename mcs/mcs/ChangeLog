@@ -1,3 +1,7 @@
+2009-02-27  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs: Add external constructor error.
+
 2009-02-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #475354
