@@ -1,3 +1,15 @@
+2008-02-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoProperty.cs (GetValue): Optimize getters for properties without arguments.
+	The optimization is to create a pair of chained delegates that duplicate the workings
+	on MethodBase::Invoke without all the aditional overhead and without doing two
+	managed/native transitions.
+
+	Simple Getter performance is up to 17x faster.
+
+	This patch reduces contention on domain and domain jit code hash locks, which
+	can be very hot on asp.net applications.
+
 2008-02-21  Jb Evain  <jbevain@novell.com>
 
 	* Module.cs: add a new virtual GetModuleVersionId method,

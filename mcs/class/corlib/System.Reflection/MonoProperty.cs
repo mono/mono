@@ -64,6 +64,11 @@ namespace System.Reflection {
 		
 	}
 
+#if NET_2_0
+	internal delegate object GetterAdapter (object _this);
+	internal delegate R Getter<T,R> (T _this);
+#endif
+
 	[Serializable]
 	internal class MonoProperty : PropertyInfo, ISerializable {
 #pragma warning disable 649
@@ -71,6 +76,7 @@ namespace System.Reflection {
 		internal IntPtr prop;
 		MonoPropertyInfo info;
 		PInfo cached;
+		GetterAdapter cached_getter;
 #pragma warning restore 649
 		
 		public override PropertyAttributes Attributes {
@@ -213,6 +219,69 @@ namespace System.Reflection {
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, false);
 		}
+
+
+#if NET_2_0
+		delegate object GetterAdapter (object _this);
+		delegate R Getter<T,R> (T _this);
+		delegate R StaticGetter<R> ();
+
+		static object GetterAdapterFrame<T,R> (Getter<T,R> getter, object obj)
+		{
+			return getter ((T)obj);
+		}
+
+		static object StaticGetterAdapterFrame<R> (StaticGetter<R> getter, object obj)
+		{
+			return getter ();
+		}
+
+		/*
+		 * The idea behing this optimization is to use a pair of delegates to simulate the same effect of doing a reflection call.
+		 * The first delegate cast the this argument to the right type and the second does points to the target method.
+		 */
+		static GetterAdapter CreateGetterDelegate (MethodInfo method)
+		{
+			Type[] typeVector;
+			Type getterType;
+			object getterDelegate;
+			MethodInfo adapterFrame;
+			Type getterDelegateType;
+			string frameName;
+
+			if (method.IsStatic) {
+				typeVector = new Type[] { method.ReturnType };
+				getterDelegateType = typeof (StaticGetter<>);
+				frameName = "StaticGetterAdapterFrame";
+			} else {
+				typeVector = new Type[] { method.DeclaringType, method.ReturnType };
+				getterDelegateType = typeof (Getter<,>);
+				frameName = "GetterAdapterFrame";
+			}
+
+			getterType = getterDelegateType.MakeGenericType (typeVector);
+			getterDelegate = Delegate.CreateDelegate (getterType, method);
+			adapterFrame = typeof (MonoProperty).GetMethod (frameName, BindingFlags.Static | BindingFlags.NonPublic);
+			adapterFrame = adapterFrame.MakeGenericMethod (typeVector);
+			return (GetterAdapter)Delegate.CreateDelegate (typeof (GetterAdapter), getterDelegate, adapterFrame, true);
+		}
+			
+		public override object GetValue (object obj, object[] index)
+		{
+			if (index == null || index.Length == 0) {
+				/*FIXME we should check if the number of arguments matches the expected one, otherwise the error message will be pretty criptic.*/
+				if (cached_getter == null) {
+					MethodInfo method = GetGetMethod (true);
+					if (method == null)
+						throw new ArgumentException ("Get Method not found for '" + Name + "'");
+					cached_getter = CreateGetterDelegate (method);
+				}
+				return cached_getter (obj);
+			}
+
+			return GetValue (obj, BindingFlags.Default, null, index, null);
+		}
+#endif
 
 		public override object GetValue (object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
 		{
