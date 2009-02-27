@@ -1,3 +1,8 @@
+2009-02-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* profiler.c: Make the stat profiler work with multiple appdomains, this
+	currently only works when no appdomains are unloaded.
+
 2009-02-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c: make the check to avoid copying when the assembly is
