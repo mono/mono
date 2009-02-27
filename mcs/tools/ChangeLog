@@ -1,3 +1,8 @@
+2009-02-27  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: don't tune net_2_1 assemblies here.
+	moon takes care of that now.
+
 2008-12-05  Jb Evain  <jbevain@novell.com>
 
 	* tuner/Mono.Tuner/RemoveSerialization.cs

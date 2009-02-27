@@ -63,7 +63,6 @@ net_1_1_SUBDIRS := $(net_1_1_dirs)
 net_2_0_bootstrap_SUBDIRS = resgen
 net_2_0_SUBDIRS := $(net_2_0_dirs)
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
-net_2_1_SUBDIRS := $(net_2_1_dirs) moon
 
 SUBDIRS = $(net_1_1_SUBDIRS) $(net_2_0_SUBDIRS) $(net_2_1_SUBDIRS)
 
