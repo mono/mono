@@ -1,5 +1,8 @@
 2009-02-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* domain.c (SET_APPDOMAIN): Avoid calling TlsSetValue () on some platforms,
+	since it acquires a global lock leading to scalability problems.
+
 	* profiler.c: Make the stat profiler work with multiple appdomains, this
 	currently only works when no appdomains are unloaded.
 
