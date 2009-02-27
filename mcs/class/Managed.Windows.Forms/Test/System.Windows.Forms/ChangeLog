@@ -1,3 +1,7 @@
+2009-02-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextBoxTest.cs: Yet a new Text test case.
+
 2009-02-04  Mario Carrion <mcarrion@novell.com>
 
 	* ColumnHeaderTest.cs: Testing ListView.ColumnWidthChanged when 

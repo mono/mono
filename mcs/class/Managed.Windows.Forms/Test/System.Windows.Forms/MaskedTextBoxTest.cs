@@ -227,7 +227,26 @@ namespace MonoTests.System.Windows.Forms
 
 			mtb.Dispose ();
 		}
-		
+
+		[Test]
+		public void TextTest3 ()
+		{
+			MaskedTextBox mtb;
+
+			mtb = new MaskedTextBox ();
+			mtb.Mask = "00-00";
+			mtb.Text = "12 3";
+			Assert.AreEqual ("12- 3", mtb.Text, "#T1");
+
+			mtb.Text = "b31i4";
+			Assert.AreEqual ("31-4", mtb.Text, "#T2");
+
+			mtb.Text = "1234";
+			Assert.AreEqual ("12-34", mtb.Text, "#T3");
+
+			mtb.Dispose ();
+		}
+
 		[Test]
 		public void SkipLiteralsTest ()
 		{
