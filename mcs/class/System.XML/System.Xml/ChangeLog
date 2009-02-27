@@ -1,3 +1,8 @@
+2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs : do not try to read at non-readable state in
+	  MoveToContent().
+
 2009-02-23  Alan McGovern  <amcgovern@novell.com>
 
 	* XmlTextReader.cs: Under the SL2 profile, the default resolver

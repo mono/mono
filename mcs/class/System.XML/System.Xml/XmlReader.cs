@@ -544,6 +544,14 @@ namespace System.Xml
 
 		public virtual XmlNodeType MoveToContent ()
 		{
+			switch (ReadState) {
+			case ReadState.Initial:
+			case ReadState.Interactive:
+				break;
+			default:
+				return NodeType;
+			}
+
 			if (NodeType == XmlNodeType.Attribute)
 				MoveToElement ();
 
