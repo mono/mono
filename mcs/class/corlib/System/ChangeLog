@@ -1,3 +1,15 @@
+2009-02-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* UInt16.cs (CompareTo/short): Make it return the
+	same values as the /object version.
+
+	* Enum.cs (CompareTo): Use new compare_value_to icall to do the comparison.
+	This avoids two allocations and reduce the number of trips to unmanaged land
+	by one.
+
+	The performance improvement is up to 3.5x with the bonus of reducing the generated
+	garbage.
+
 2009-02-26  Marek Safar  <marek.safar@gmail.com>
 
 	* Nullable.cs: Inline GetValueOrDefault.

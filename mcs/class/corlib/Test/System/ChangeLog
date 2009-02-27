@@ -1,3 +1,7 @@
+2009-02-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	EnumTest.cs: Tests for CompareTo.
+
 2009-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Add a test for #471255.

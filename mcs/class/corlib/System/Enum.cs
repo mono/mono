@@ -422,6 +422,9 @@ namespace System
 			}
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern int compare_value_to (object other);
+
 		/// <summary>
 		///   Compares the enum value with another enum value of the same type.
 		/// </summary>
@@ -441,12 +444,7 @@ namespace System
 					target.GetType(), thisType));
 			}
 
-			object value1, value2;
-
-			value1 = this.get_value ();
-			value2 = ((Enum)target).get_value ();
-
-			return ((IComparable)value1).CompareTo (value2);
+			return compare_value_to (target);
 		}
 
 		public override string ToString ()

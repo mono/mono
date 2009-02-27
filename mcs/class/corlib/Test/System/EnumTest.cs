@@ -875,23 +875,23 @@ namespace MonoTests.System
 			Assert.AreEqual (EnInt8.C.GetHashCode(), SByte.MaxValue, "i8#2");
 	
 			Assert.AreEqual (EnUInt8.A.GetHashCode(), Byte.MinValue, "u8#0");
-			Assert.AreEqual (EnUInt8.B.GetHashCode(), 44, "u8#1");
+			Assert.AreEqual (EnUInt8.B.GetHashCode(), 55, "u8#1");
 			Assert.AreEqual (EnUInt8.C.GetHashCode(), Byte.MaxValue, "u8#2");
 	
 			Assert.AreEqual (EnInt16.A.GetHashCode(), Int16.MinValue, "i16#0");
-			Assert.AreEqual (EnInt16.B.GetHashCode(), 44, "i16#1");
+			Assert.AreEqual (EnInt16.B.GetHashCode(), 66, "i16#1");
 			Assert.AreEqual (EnInt16.C.GetHashCode(), Int16.MaxValue, "i16#2");
 	
 			Assert.AreEqual (EnUInt16.A.GetHashCode(), UInt16.MinValue, "u16#0");
-			Assert.AreEqual (EnUInt16.B.GetHashCode(), 44, "u16#1");
+			Assert.AreEqual (EnUInt16.B.GetHashCode(), 77, "u16#1");
 			Assert.AreEqual (EnUInt16.C.GetHashCode(), UInt16.MaxValue, "u16#2");
 	
 			Assert.AreEqual (EnInt32.A.GetHashCode(), Int32.MinValue, "i32#0");
-			Assert.AreEqual (EnInt32.B.GetHashCode(), 44, "i32#1");
+			Assert.AreEqual (EnInt32.B.GetHashCode(), 88, "i32#1");
 			Assert.AreEqual (EnInt32.C.GetHashCode(), Int32.MaxValue, "i32#2");
 	
 			Assert.AreEqual (EnUInt32.A.GetHashCode(), UInt32.MinValue, "u32#0");
-			Assert.AreEqual (EnUInt32.B.GetHashCode(), 44, "u32#1");
+			Assert.AreEqual (EnUInt32.B.GetHashCode(), 99, "u32#1");
 			Assert.AreEqual (EnUInt32.C.GetHashCode(), UInt32.MaxValue.GetHashCode (), "u32#2");
 	
 			Assert.AreEqual (EnInt64.A.GetHashCode(), Int64.MinValue.GetHashCode (), "i64#0");
@@ -903,6 +903,42 @@ namespace MonoTests.System
 			Assert.AreEqual (EnUInt64.C.GetHashCode(), UInt64.MaxValue.GetHashCode (), "u64#2");
 		}
 
+		[Test]
+		public void CompareTo_ShouldBeEqualToUnderlyingType ()
+		{
+			Assert.AreEqual (sbyte.MinValue.CompareTo (sbyte.MinValue), EnInt8.A.CompareTo (EnInt8.A), "i8#0");
+			Assert.AreEqual (sbyte.MinValue.CompareTo ((sbyte)44), EnInt8.A.CompareTo (EnInt8.B), "i8#1");
+			Assert.AreEqual (((sbyte)44).CompareTo (sbyte.MinValue), EnInt8.B.CompareTo (EnInt8.A), "i8#2");
+	
+			Assert.AreEqual (byte.MinValue.CompareTo (byte.MinValue), EnUInt8.A.CompareTo (EnUInt8.A), "ui8#0");
+			Assert.AreEqual (byte.MinValue.CompareTo ((byte)55),  EnUInt8.A.CompareTo (EnUInt8.B), "ui8#1");
+			Assert.AreEqual (((byte)55).CompareTo (byte.MinValue), EnUInt8.B.CompareTo (EnUInt8.A),"ui8#2");
+
+			Assert.AreEqual (short.MinValue.CompareTo (short.MinValue), EnInt16.A.CompareTo (EnInt16.A), "i16#0");
+			Assert.AreEqual (short.MinValue.CompareTo ((short)66), EnInt16.A.CompareTo (EnInt16.B), "i16#1");
+			Assert.AreEqual (((short)66).CompareTo (short.MinValue), EnInt16.B.CompareTo (EnInt16.A), "i16#2");
+
+			Assert.AreEqual (ushort.MinValue.CompareTo (ushort.MinValue), EnUInt16.A.CompareTo (EnUInt16.A), "ui16#0");
+			Assert.AreEqual (ushort.MinValue.CompareTo ((ushort)77), EnUInt16.A.CompareTo (EnUInt16.B), "ui16#1");
+			Assert.AreEqual (((ushort)77).CompareTo (ushort.MinValue), EnUInt16.B.CompareTo (EnUInt16.A), "ui16#2");
+
+			Assert.AreEqual (int.MinValue.CompareTo (int.MinValue), EnInt32.A.CompareTo (EnInt32.A), "i32#0");
+			Assert.AreEqual (int.MinValue.CompareTo ((int)88), EnInt32.A.CompareTo (EnInt32.B), "i32#1");
+			Assert.AreEqual (((int)88).CompareTo (int.MinValue), EnInt32.B.CompareTo (EnInt32.A), "i32#2");
+	
+			Assert.AreEqual (uint.MinValue.CompareTo (uint.MinValue), EnUInt32.A.CompareTo (EnUInt32.A), "u32#0");
+			Assert.AreEqual (uint.MinValue.CompareTo ((uint)99), EnUInt32.A.CompareTo (EnUInt32.B), "u32#1");
+			Assert.AreEqual (((uint)99).CompareTo (uint.MinValue), EnUInt32.B.CompareTo (EnUInt32.A), "u32#2");
+	
+			Assert.AreEqual (long.MinValue.CompareTo (long.MinValue), EnInt64.A.CompareTo (EnInt64.A), "i64#0");
+			Assert.AreEqual (long.MinValue.CompareTo ((long)456), EnInt64.A.CompareTo (EnInt64.D), "i64#1");
+			Assert.AreEqual (((long)456).CompareTo (long.MinValue), EnInt64.D.CompareTo (EnInt64.A), "i64#2");
+	
+			Assert.AreEqual (ulong.MinValue.CompareTo (ulong.MinValue), EnUInt64.A.CompareTo (EnUInt64.A), "u64#0");
+			Assert.AreEqual (ulong.MinValue.CompareTo ((ulong)789),  EnUInt64.A.CompareTo (EnUInt64.D), "u64#1");
+			Assert.AreEqual (((ulong)789).CompareTo (ulong.MinValue), EnUInt64.D.CompareTo (EnUInt64.A), "u64#2");
+		}
+		
 		[Flags]
 		enum SomeEnum
 		{
@@ -1044,31 +1080,31 @@ namespace MonoTests.System
 		
 		enum EnUInt8 : byte {
 			A = Byte.MinValue,
-			B = 44,
+			B = 55,
 			C = Byte.MaxValue,
 		}
 		
 		enum EnInt16 : short{
 			A = Int16.MinValue,
-			B = 44,
+			B = 66,
 			C = Int16.MaxValue,
 		}
 		
 		enum EnUInt16 : ushort {
 			A = UInt16.MinValue,
-			B = 44,
+			B = 77,
 			C = UInt16.MaxValue,
 		}
-		
+
 		enum EnInt32 : int{
 			A = Int32.MinValue,
-			B = 44,
+			B = 88,
 			C = Int32.MaxValue,
 		}
 		
 		enum EnUInt32 : uint {
 			A = UInt32.MinValue,
-			B = 44,
+			B = 99,
 			C = UInt32.MaxValue,
 		}
 		
@@ -1076,12 +1112,14 @@ namespace MonoTests.System
 			A = Int64.MinValue,
 			B = 3488924689489L,
 			C = Int64.MaxValue,
+			D = 456L
 		}
 		
 		enum EnUInt64 : ulong {
 			A = UInt64.MinValue,
 			B = 3488924689489L,
 			C = UInt64.MaxValue,
+			D = 789L
 		}
 	}
 }
