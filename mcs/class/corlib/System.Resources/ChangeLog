@@ -1,3 +1,8 @@
+2009-02-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ResourceSet.cs: populating the resource should be locked because the
+	resourceset could be shared.
+
 2009-01-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ResourceManager.cs: don't throw every time we try to load a resource
