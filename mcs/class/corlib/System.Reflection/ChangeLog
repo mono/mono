@@ -1,6 +1,10 @@
 2008-02-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoProperty.cs (GetValue): Optimize getters for properties without arguments.
+
+2008-02-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoProperty.cs (GetValue): Optimize getters for properties without arguments.
 	The optimization is to create a pair of chained delegates that duplicate the workings
 	on MethodBase::Invoke without all the aditional overhead and without doing two
 	managed/native transitions.

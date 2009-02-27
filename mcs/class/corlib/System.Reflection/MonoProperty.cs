@@ -76,7 +76,10 @@ namespace System.Reflection {
 		internal IntPtr prop;
 		MonoPropertyInfo info;
 		PInfo cached;
+#if NET_2_0
 		GetterAdapter cached_getter;
+#endif
+
 #pragma warning restore 649
 		
 		public override PropertyAttributes Attributes {
