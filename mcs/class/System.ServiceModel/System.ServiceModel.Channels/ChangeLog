@@ -1,3 +1,13 @@
+2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Message.cs : (in CreateBufferedCopy) do not pass the entire
+	  message as BodyWriter.
+	  (in GetReaderAtBodyContents) just write body contents.
+	* MessageImpl.cs : do not try to read body at ctor (fixed tons
+	  of test failures).
+	  Add some state check in GetReaderAtBodyContents().
+	* XmlReaderBodyWriter.cs : avoid possible extra xmldecl onto output.
+
 2009-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Message.cs : do not forget to flush.

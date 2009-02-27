@@ -218,9 +218,12 @@ namespace System.ServiceModel.Channels
 			int maxBufferSize)
 		{
 #if NET_2_1
+			var s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
+			s.ConformanceLevel = ConformanceLevel.Auto;
 			StringWriter sw = new StringWriter ();
-			using (XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw)))
-				WriteMessage (w);
+			using (XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw, s)))
+				WriteBodyContents (w);
 			return new DefaultMessageBuffer (maxBufferSize, Headers, Properties, new XmlReaderBodyWriter (sw.ToString ()), false);
 #else
 			DTMXPathDocumentWriter2 pw = new DTMXPathDocumentWriter2 (new NameTable (), 100);
@@ -237,30 +240,18 @@ namespace System.ServiceModel.Channels
 			return null;
 		}
 
-		[MonoTODO]
 		protected virtual XmlDictionaryReader OnGetReaderAtBodyContents ()
 		{
-			XmlDictionaryWriter writer = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (TextWriter.Null));
-			if (Version.Envelope != EnvelopeVersion.None) {
-				WriteStartEnvelope (writer);
-				OnWriteStartHeaders (writer);
-				for (int i = 0, count = Headers.Count; i < count; i++)
-					Headers.WriteHeader (i, writer);
-				writer.WriteEndElement ();
-				WriteStartBody (writer);
-			}
-
+			var ws = new XmlWriterSettings ();
+			ws.ConformanceLevel = ConformanceLevel.Auto;
 			StringWriter sw = new StringWriter ();
-			using (XmlDictionaryWriter body = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw))) {
+			using (XmlDictionaryWriter body = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw, ws))) {
 				WriteBodyContents (body);
 			}
 
-			if (Version.Envelope != EnvelopeVersion.None) {
-				writer.WriteEndElement ();
-				writer.WriteEndElement ();
-			}
-
-			return XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (sw.ToString ())));
+			var rs = new XmlReaderSettings ();
+			rs.ConformanceLevel = ConformanceLevel.Auto;
+			return XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (sw.ToString ()), rs));
 		}
 
 		protected abstract void OnWriteBodyContents (
@@ -283,7 +274,6 @@ namespace System.ServiceModel.Channels
 				writer.WriteEndElement ();
 		}
 
-		[MonoTODO]
 		protected virtual void OnWriteStartBody (
 			XmlDictionaryWriter writer)
 		{

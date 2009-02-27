@@ -63,6 +63,7 @@ namespace System.ServiceModel.Channels
 			XmlDictionaryWriter writer)
 		{
 			XmlReader r = reader ?? XmlReader.Create (new StringReader (xml));
+			r.MoveToContent ();
 			writer.WriteNode (r, false);
 		}
 	}
