@@ -1,3 +1,8 @@
+2009-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* EventHandlerList.cs: Change this to use a linked list as stated by the
+	MSDN docs.
+
 2009-02-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ReflectionPropertyDescriptor.cs: Don't cache getter and
