@@ -55,7 +55,7 @@ namespace System.Web {
 			try {
 #if NET_2_0
 				mode = TraceMode.SortByTime;
-				TraceSection config = WebConfigurationManager.GetSection ("system.web/trace") as TraceSection;
+				TraceSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/trace") as TraceSection;
 				if (config == null)
 					config = new TraceSection ();
 #else

@@ -1,3 +1,14 @@
+2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Web/HttpResponseHeader.cs:
+	* Web/HttpResponse.cs:
+	* Web/QueueManager.cs:
+	* Web/HttpRequest.cs:
+	* Web/TraceManager.cs:
+	* Web/HttpServerUtility.cs:
+	* Web/HttpApplication.cs: use GetWebApplication
+	instead of GetSection for application level configuration.
+
 2009-02-26  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: added DisableKernelCache and TransmitFile

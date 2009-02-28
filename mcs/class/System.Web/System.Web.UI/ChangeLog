@@ -1,3 +1,8 @@
+2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ObjectStateFormatter.cs: use GetWebApplication
+	instead of GetSection for application level configuration.
+
 2009-02-28  Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Control.cs: Avoid double OnInit in scenarios with two master

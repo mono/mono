@@ -56,7 +56,7 @@ namespace System.Web
 #if NET_2_0
 				HttpRuntimeSection config;
 
-				config = (HttpRuntimeSection) WebConfigurationManager.GetSection ("system.web/httpRuntime");
+				config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
 #else
 				HttpRuntimeConfig config;
 
