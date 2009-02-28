@@ -205,7 +205,7 @@ namespace System.Web.UI {
 			if (BuildManager.HaveResources)
 				imports.Add ("System.Resources");
 			
-			PagesSection pages = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			PagesSection pages = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
 			if (pages == null)
 				return;
 
@@ -1266,12 +1266,7 @@ namespace System.Web.UI {
 		
 		internal PagesSection PagesConfig {
 			get {
-				VirtualPath vp = VirtualPath;
-				string virtualPath = vp != null ? VirtualPath.Absolute : null;
-				if (!String.IsNullOrEmpty (virtualPath))
-					return WebConfigurationManager.GetSection ("system.web/pages", virtualPath) as PagesSection;
-				else
-					return WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+				return WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
 			}
 		}
 

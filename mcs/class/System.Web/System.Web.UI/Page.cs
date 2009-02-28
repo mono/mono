@@ -187,7 +187,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		ID = "__Page";
 		
 #if NET_2_0
-		PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+		PagesSection ps = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
 		if (ps != null) {
 			asyncTimeout = ps.AsyncTimeout;
 			viewStateEncryptionMode = ps.ViewStateEncryptionMode;
@@ -618,7 +618,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	void InitializeStyleSheet ()
 	{
 		if (_styleSheetTheme == null) {
-			PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			PagesSection ps = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
 			if (ps != null)
 				_styleSheetTheme = ps.StyleSheetTheme;
 		}
@@ -636,7 +636,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	void InitializeTheme ()
 	{
 		if (_theme == null) {
-			PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
+			PagesSection ps = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
 			if (ps != null)
 				_theme = ps.Theme;
 		}
