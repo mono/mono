@@ -1,3 +1,7 @@
+2008-02-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoProperty.cs (GetValue): Don't use the delegate optimization for valuetypes.
+
 2008-02-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoProperty.cs (GetValue): Optimize getters for properties without arguments.
