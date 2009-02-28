@@ -575,7 +575,7 @@ namespace System.Web.UI
 #if NET_2_0
 		CompilationSection CompilationConfig {
 			get {
-				return (CompilationSection)WebConfigurationManager.GetSection ("system.web/compilation");
+				return (CompilationSection)WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			}
 		}
 

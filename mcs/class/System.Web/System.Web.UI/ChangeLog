@@ -1,5 +1,16 @@
 2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* BaseParser.cs:
+	* PageParser.cs:
+	* ControlBuilder.cs:
+	* TemplateParser.cs:
+	* Page.cs:
+	* SimpleWebHandlerParser.cs: settings that have to be in
+	machine.config or the root level web.config now call
+	GetWebApplicationSection.
+
+2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* ObjectStateFormatter.cs: use GetWebApplication
 	instead of GetSection for application level configuration.
 

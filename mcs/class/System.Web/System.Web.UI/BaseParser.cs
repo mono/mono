@@ -153,7 +153,7 @@ namespace System.Web.UI
 #if NET_2_0
 		internal CompilationSection CompilationConfig {
 			get {
-				return WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+				return WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 			}
 		}
 

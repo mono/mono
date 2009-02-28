@@ -318,7 +318,7 @@ namespace System.Web.UI
 			if (clientTarget != null) {
 				clientTarget = clientTarget.Trim ();
 #if NET_2_0
-				ClientTargetSection sec = (ClientTargetSection)WebConfigurationManager.GetSection ("system.web/clientTarget");
+				ClientTargetSection sec = (ClientTargetSection)WebConfigurationManager.GetWebApplicationSection ("system.web/clientTarget");
 				ClientTarget ct = null;
 				
 				if ((ct = sec.ClientTargets [clientTarget]) == null)
@@ -333,7 +333,7 @@ namespace System.Web.UI
 				clientTarget = ct.UserAgent;
 #else
 				NameValueCollection coll;
-				coll = (NameValueCollection) Context.GetConfig ("system.web/clientTarget");
+				coll = (NameValueCollection) HttpContext.GetAppConfig ("system.web/clientTarget");
 				object ct = null;
 				
 				if (coll != null) {
