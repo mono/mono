@@ -198,7 +198,7 @@ namespace System.Web.Compilation
 			}
 
 			CodeDomProvider provider = null;
-			CompilationSection compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			CompilationSection compilationSection = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 			if (compilerInfo == null) {
 				if (!CodeDomProvider.IsDefinedLanguage (compilationSection.DefaultLanguage))
 					throw new HttpException ("Failed to retrieve default source language");
@@ -359,7 +359,7 @@ namespace System.Web.Compilation
 		bool ProcessAppCodeDir (string appCode, AppCodeAssembly defasm)
 		{
 			// First process the codeSubDirectories
-			CompilationSection cs = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			CompilationSection cs = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			
 			if (cs != null) {
 				string aname;
@@ -626,7 +626,7 @@ namespace System.Web.Compilation
 				return;
 			
 			string appCode = Path.Combine (HttpRuntime.AppDomainAppPath, "App_Code");
-			ProfileSection ps = WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection;
+			ProfileSection ps = WebConfigurationManager.GetWebApplicationSection ("system.web/profile") as ProfileSection;
 			bool haveAppCodeDir = Directory.Exists (appCode);
 			bool haveCustomProfile = HaveCustomProfile (ps);
 			

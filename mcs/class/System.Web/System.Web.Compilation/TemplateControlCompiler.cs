@@ -783,11 +783,7 @@ namespace System.Web.Compilation
 			string prefix = value.Substring (0, colon).Trim ();
 			string expr = value.Substring (colon + 1).Trim ();
 			
-			System.Configuration.Configuration config = WebConfigurationManager.OpenWebConfiguration ("");
-			if (config == null)
-				return null;
-			
-			CompilationSection cs = (CompilationSection)config.GetSection ("system.web/compilation");
+			CompilationSection cs = (CompilationSection)WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			if (cs == null)
 				return null;
 			

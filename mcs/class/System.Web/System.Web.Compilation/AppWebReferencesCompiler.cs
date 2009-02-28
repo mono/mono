@@ -53,7 +53,7 @@ namespace System.Web.Compilation
 			if (files == null || files.Length == 0)
 				return;
 
-			CompilationSection cs = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			CompilationSection cs = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 			if (cs == null)
 				throw new HttpException ("Unable to determine default compilation language.");
 

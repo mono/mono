@@ -303,7 +303,7 @@ namespace System.Web.Compilation
 				}
 			}
 
-			CompilationSection cfg = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			CompilationSection cfg = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 			AssemblyCollection asmcoll = cfg != null ? cfg.Assemblies : null;
 
 			if (asmcoll == null)

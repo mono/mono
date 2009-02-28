@@ -76,7 +76,7 @@ namespace System.Web.Compilation {
 		protected CompilerType GetDefaultCompilerType ()
 		{
 			CompilationSection config;
-			config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			config = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			return BuildManager.GetDefaultCompilerTypeForLanguage (config.DefaultLanguage, config);
 		}
 		
