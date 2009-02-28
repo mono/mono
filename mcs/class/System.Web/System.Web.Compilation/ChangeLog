@@ -1,3 +1,21 @@
+2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AppResourcesAssemblyBuilder.cs:
+	* BuildManagerDirectoryBuilder.cs:
+	* AspComponentFoundry.cs:
+	* AssemblyBuilder.cs:
+	* CachingCompiler.cs:
+	* AspGenerator.cs:
+	* WsdlBuildProvider.cs:
+	* BaseCompiler.cs:
+	* BuildProvider.cs:
+	* AppWebReferencesCompiler.cs:
+	* TemplateControlCompiler.cs:
+	* BuildManager.cs:
+	* AppCodeCompiler.cs: settings that have to be in
+	machine.config or the root level web.config now call
+	GetWebApplicationSection.
+
 2009-02-26  Marek Habersack  <mhabersack@novell.com>
 
 	* TagAttributes.cs: modified ToString to return string formatted

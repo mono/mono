@@ -52,7 +52,7 @@ namespace System.Web.Compilation {
 		public override CompilerType CodeCompilerType {
 			get {
 				if (_compilerType == null) {
-					CompilationSection cs = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+					CompilationSection cs = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 					if (cs == null)
 						throw new HttpException ("Unable to determine default compilation language.");
 					

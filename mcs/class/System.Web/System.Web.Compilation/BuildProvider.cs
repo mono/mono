@@ -55,7 +55,7 @@ namespace System.Web.Compilation {
 		CompilationSection CompilationConfig {
 			get {
 				if (compilationSection == null)
-					compilationSection = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+					compilationSection = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 				return compilationSection;
 			}
 		}

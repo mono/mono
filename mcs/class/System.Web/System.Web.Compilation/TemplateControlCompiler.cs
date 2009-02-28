@@ -787,7 +787,7 @@ namespace System.Web.Compilation
 			if (config == null)
 				return null;
 			
-			CompilationSection cs = (CompilationSection)config.GetSection ("system.web/compilation");
+			CompilationSection cs = (CompilationSection)config.GetWebApplicationSection ("system.web/compilation");
 			if (cs == null)
 				return null;
 			

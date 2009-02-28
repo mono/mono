@@ -133,10 +133,7 @@ namespace System.Web.Compilation {
 			units = new List <CodeUnit> ();
 
 			CompilationSection section;
-			if (virtualPath != null)
-				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation", virtualPath.Absolute);
-			else
-				section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			section = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			string tempdir = section.TempDirectory;
 			if (String.IsNullOrEmpty (tempdir))
 				tempdir = AppDomain.CurrentDomain.SetupInformation.DynamicBase;

@@ -67,7 +67,7 @@ namespace System.Web.Compilation
 		CompilationSection CompilationSection {
 			get {
 				if (compilationSection == null)
-					compilationSection = WebConfigurationManager.GetSection ("system.web/compilation", virtualPath.Original) as CompilationSection;
+					compilationSection = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation", virtualPath.Original) as CompilationSection;
 				return compilationSection;
 			}
 		}

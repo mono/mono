@@ -112,7 +112,7 @@ namespace System.Web.Compilation {
 		}
 		
 		internal static CompilationSection CompilationConfig {
-			get { return WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection; }
+			get { return WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection; }
 		}
 
 		internal static bool HaveResources {
@@ -736,7 +736,7 @@ namespace System.Web.Compilation {
 				
 			CompilationSection config;
 			if (configSection == null)
-				config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+				config = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 			else
 				config = configSection;
 			
@@ -771,7 +771,7 @@ namespace System.Web.Compilation {
 		{
 			List <Assembly> al = new List <Assembly> ();
 			
-			CompilationSection compConfig = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			CompilationSection compConfig = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
                         if (compConfig == null)
 				return al;
 			

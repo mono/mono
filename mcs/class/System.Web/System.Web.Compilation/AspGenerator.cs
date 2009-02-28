@@ -1007,7 +1007,7 @@ namespace System.Web.Compilation
 				return;
 
 #if NET_2_0
-			CompilationSection section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			CompilationSection section = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			if (section.Compilers[tparser.Language] != section.Compilers[lang])
 #else
 			CompilationConfiguration cfg = CompilationConfiguration.GetInstance (HttpContext.Current); 

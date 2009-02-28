@@ -74,7 +74,7 @@ namespace System.Web.Compilation
 			this.baseAssemblyDirectory = Path.GetDirectoryName (baseAssemblyPath);
 			this.canonicAssemblyName = canonicAssemblyName;
 			
-			config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+			config = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
 			if (config == null || !CodeDomProvider.IsDefinedLanguage (config.DefaultLanguage))
 				throw new ApplicationException ("Could not get the default compiler.");
 			ci = CodeDomProvider.GetCompilerInfo (config.DefaultLanguage);

@@ -434,7 +434,7 @@ namespace System.Web.Compilation
 		protected void CreateProfileProperty ()
 		{
 			string retType;
-			if (AppCodeCompiler.HaveCustomProfile (WebConfigurationManager.GetSection ("system.web/profile") as ProfileSection))
+			if (AppCodeCompiler.HaveCustomProfile (WebConfigurationManager.GetWebApplicationSection ("system.web/profile") as ProfileSection))
 				retType = "ProfileCommon";
 			else
 				retType = "System.Web.Profile.DefaultProfile";
@@ -635,7 +635,7 @@ namespace System.Web.Compilation
 			par = null;
 			
 #if NET_2_0
-			CompilationSection config = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
+			CompilationSection config = (CompilationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
 			Compiler comp = config.Compilers[lang];
 			
 			if (comp == null) {
