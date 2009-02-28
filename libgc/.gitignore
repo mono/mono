@@ -18,6 +18,7 @@
 /.deps
 /.libs
 /*.la
+/*.o
 /autom4te.cache
 /libgc-mono.pc
 /libgc-mono-*.tar.gz
