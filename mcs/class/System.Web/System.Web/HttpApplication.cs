@@ -203,7 +203,7 @@ namespace System.Web {
 				
 #if NET_2_0
 				HttpModulesSection modules;
-				modules = (HttpModulesSection) WebConfigurationManager.GetSection ("system.web/httpModules", HttpRuntime.AppDomainAppVirtualPath);
+				modules = (HttpModulesSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpModules");
 #else
 				ModulesConfiguration modules;
 
@@ -1595,7 +1595,7 @@ namespace System.Web {
 				return ret;
 			
 #if NET_2_0
-			HttpHandlersSection httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetSection ("system.web/httpHandlers");
+			HttpHandlersSection httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpHandlers");
 			ret = httpHandlersSection.LocateHandler (verb, url);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");

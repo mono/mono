@@ -46,7 +46,7 @@ namespace System.Web {
 		
 		static BaseResponseHeader () {
 #if NET_2_0
-			HttpRuntimeSection section = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+			HttpRuntimeSection section = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
 #else
 			HttpRuntimeConfig section = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
 #endif

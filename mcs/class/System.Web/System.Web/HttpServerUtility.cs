@@ -124,7 +124,7 @@ namespace System.Web {
 			bool cookieless = false;
 			
 #if NET_2_0
-			SessionStateSection config = WebConfigurationManager.GetSection ("system.web/sessionState") as SessionStateSection;
+			SessionStateSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/sessionState") as SessionStateSection;
 			cookieless = SessionStateModule.IsCookieLess (context, config);
 #else
 			SessionConfig config = HttpContext.GetAppConfig ("system.web/sessionState") as SessionConfig;

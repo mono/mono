@@ -1,3 +1,14 @@
+2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpResponseHeader.cs:
+	* HttpResponse.cs:
+	* QueueManager.cs:
+	* HttpRequest.cs:
+	* TraceManager.cs:
+	* HttpServerUtility.cs:
+	* HttpApplication.cs: use GetWebApplication
+	instead of GetSection for application level configuration.
+
 2009-02-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpServerUtility.cs: allow Transfer to static files too.
