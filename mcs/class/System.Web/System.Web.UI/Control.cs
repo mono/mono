@@ -1573,7 +1573,7 @@ namespace System.Web.UI
 				}
 			}
 
-			if ((stateMask & REMOVED) == 0) {
+			if ((stateMask & REMOVED) == 0 && (stateMask & INITED) != INITED) {
 				stateMask |= INITING;
 #if NET_2_0
 				ApplyTheme ();
