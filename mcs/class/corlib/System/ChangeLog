@@ -1,3 +1,8 @@
+2009-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Enum.cs (FindName): Use a hash table for looking up names instead of
+	a linear search for enums with a lot of values.
+
 2009-02-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* UInt16.cs (CompareTo/short): Make it return the

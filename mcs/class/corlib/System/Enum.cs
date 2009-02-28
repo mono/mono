@@ -45,6 +45,7 @@ namespace System
 		internal Type utype;
 		internal Array values;
 		internal string[] names;
+		internal Hashtable name_hash;
 		[ThreadStatic]
 		static Hashtable cache;
 		static Hashtable global_cache;
@@ -72,6 +73,7 @@ namespace System
 			utype = other.utype;
 			values = other.values;
 			names = other.names;
+			name_hash = other.name_hash;
 		}
 
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
@@ -92,6 +94,11 @@ namespace System
 
 			get_enum_info (enumType, out info);
 			Array.Sort (info.values, info.names);
+			if (info.names.Length > 50) {
+				info.name_hash = new Hashtable (info.names.Length);
+				for (int i = 0; i <  info.names.Length; ++i)
+					info.name_hash [info.names [i]] = i;
+			}
 			MonoEnumInfo cached = new MonoEnumInfo (info);
 			lock (global_cache_monitor) {
 				global_cache [enumType] = cached;
@@ -331,12 +338,19 @@ namespace System
 			return Parse (enumType, value, false);
 		}
 
-		private static int FindName (string [] names, string name,  bool ignoreCase)
+		private static int FindName (Hashtable name_hash, string [] names, string name,  bool ignoreCase)
 		{
 			if (!ignoreCase) {
-				for (int i = 0; i < names.Length; ++i) {
-					if (name == names [i])
-						return i;
+				/* For enums with many values, use a hash table */
+				if (name_hash != null) {
+					object val = name_hash [name];
+					if (val != null)
+						return (int)val;
+				} else {
+					for (int i = 0; i < names.Length; ++i) {
+						if (name == names [i])
+							return i;
+					}
 				}
 			} else {
 				for (int i = 0; i < names.Length; ++i) {
@@ -395,7 +409,7 @@ namespace System
 			MonoEnumInfo.GetInfo (enumType, out info);
 
 			// is 'value' a named constant?
-			int loc = FindName (info.names, value, ignoreCase);
+			int loc = FindName (info.name_hash, info.names, value, ignoreCase);
 			if (loc >= 0)
 				return info.values.GetValue (loc);
 
@@ -406,7 +420,7 @@ namespace System
 				string [] names = value.Split (split_char);
 				ulong retVal = 0;
 				for (int i = 0; i < names.Length; ++i) {
-					loc = FindName (info.names, names [i].Trim (), ignoreCase);
+					loc = FindName (info.name_hash, info.names, names [i].Trim (), ignoreCase);
 					if (loc < 0)
 						throw new ArgumentException ("The requested value was not found.");
 					retVal |= GetValue (info.values.GetValue (loc), typeCode);
