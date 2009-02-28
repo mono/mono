@@ -1,3 +1,12 @@
+2009-02-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: In our MouseDown handler in ItemControl use the item in
+	the very specific *real* position where the mouse was pressed, using
+	GetItemAtDisplayIndex for that purpose, instead of directly accessing
+	Items - this is specially useful when groups with Details view is
+	used. This is what we do in other places when using groups.
+	Fixes part of #478689.
+
 2009-02-27  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* MaskedTextBox.cs: Properly replace selection when a new valid key
