@@ -451,13 +451,10 @@ namespace System.Web.Configuration {
 
 		public static object GetWebApplicationSection (string sectionName)
 		{
-			string path = (HttpContext.Current == null
-				|| HttpContext.Current.Request == null
-				|| HttpContext.Current.Request.ApplicationPath == null
-				|| HttpContext.Current.Request.ApplicationPath == "") ?
-				String.Empty : HttpContext.Current.Request.ApplicationPath;
-
-			return GetSection (sectionName, path);
+			HttpContext ctx = HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+			string applicationPath = req != null ? req.ApplicationPath : null;
+			return GetSection (sectionName, String.IsNullOrEmpty (applicationPath) ? String.Empty : applicationPath);
 		}
 
 		public static NameValueCollection AppSettings {
