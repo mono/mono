@@ -1,3 +1,9 @@
+2009-03-01  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: tune for internal use, but don't install.
+	Temporary situation, this will require more discussion
+	with spouliot.
+
 2009-01-19  Jb Evain  <jbevain@novell.com>
 
 	* Descriptors/System.ServiceModel.xml
