@@ -1201,7 +1201,7 @@ namespace System.Windows.Forms
 			if (recalculate)
 				CalculateListView (this.alignment);
 
-			Refresh ();
+			Invalidate (true);
 		}
 
 		void InvalidateSelection ()
@@ -5315,12 +5315,17 @@ namespace System.Windows.Forms
 				if (is_main_collection && owner != null) {
 					owner.SetFocusedItem (-1);
 					owner.h_scroll.Value = owner.v_scroll.Value = 0;
-						
+
+#if NET_2_0
+					// first remove any item in the groups that *are* part of this LV too
+					foreach (ListViewGroup group in owner.groups)
+						group.Items.ClearItemsWithSameListView ();
+#endif
+				
 					foreach (ListViewItem item in list) {
 						owner.item_control.CancelEdit (item);
 						item.Owner = null;
 					}
-					
 				}
 #if NET_2_0
 				else
@@ -5337,6 +5342,29 @@ namespace System.Windows.Forms
 #endif
 
 			}
+
+#if NET_2_0
+			// This method is intended to be used from ListViewGroup.Items, not from ListView.Items,
+			// added for performance reasons (avoid calling manually Remove for every item on ListViewGroup.Items)
+			void ClearItemsWithSameListView ()
+			{
+				if (is_main_collection)
+					return;
+
+				int counter = list.Count - 1;
+				while (counter >= 0) {
+					ListViewItem item = list [counter] as ListViewItem;
+
+					// remove only if the items in group have being added to the ListView too
+					if (item.ListView == group.ListView) {
+						list.RemoveAt (counter);
+						item.SetGroup (null);
+					}
+						
+					counter--;
+				}
+			}
+#endif
 
 			public bool Contains (ListViewItem item)
 			{

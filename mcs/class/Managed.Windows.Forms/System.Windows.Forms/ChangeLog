@@ -1,3 +1,12 @@
+2009-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: When removing items from a ListViewItemCollection
+	contained in ListView (not in ListViewGroup), before actually removing
+	the items remove them also from their -if any- associated groups. If
+	the item is present in ListViewGroup.Items but not in ListView.Items,
+	then don't remove it - this is *exactly* what .net seems to do.
+	Fixes the remaining bits of #478689.
+
 2009-02-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: In our MouseDown handler in ItemControl use the item in
