@@ -1,3 +1,7 @@
+2009-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebEncoding.cs: another GetWebApplication here.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* System.Web/HttpWriter.cs: new Response property and WriteUTF8Ptr
