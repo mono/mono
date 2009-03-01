@@ -1,3 +1,7 @@
+2009-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebEncoding.cs: another GetWebApplication here.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ICalls.cs: new internal call to get a pointer to the

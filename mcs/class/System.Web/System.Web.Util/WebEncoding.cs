@@ -43,7 +43,7 @@ namespace System.Web.Util
 			get {
 				if (!cached) {
 					try {
-						sect = (GlobalizationSection) WebConfigurationManager.GetSection ("system.web/globalization");
+						sect = (GlobalizationSection) WebConfigurationManager.GetWebApplicationSection ("system.web/globalization");
 					}
 					catch { }
 					cached = true;
