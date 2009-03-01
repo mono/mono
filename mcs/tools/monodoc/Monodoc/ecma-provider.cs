@@ -990,8 +990,9 @@ public class EcmaHelpSource : HelpSource {
 		return base.GetNodeXPath (n);
 	}
 
-	protected virtual XmlReader GetNamespaceDocument (string ns) {
-		return GetHelpXml ("xml.summary." + ns);
+	protected virtual XmlDocument GetNamespaceDocument (string ns)
+	{
+		return GetHelpXmlWithChanges ("xml.summary." + ns);
 	}
 
 	public override string RenderNamespaceLookup (string nsurl, out Node match_node)
@@ -1003,7 +1004,7 @@ public class EcmaHelpSource : HelpSource {
 			match_node = ns_node;
 			string ns_name = nsurl.Substring (2);
 			
-			XmlDocument doc = GetHelpXmlWithChanges("xml.summary." + ns_name);
+			XmlDocument doc = GetNamespaceDocument (ns_name);
 			if (doc == null)
 				return null;
 
@@ -2100,12 +2101,14 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 		return base.GetText(url, out match_node);
 	}
 	
-	protected override XmlReader GetNamespaceDocument (string ns) {
+	protected override XmlDocument GetNamespaceDocument (string ns)
+	{
 		XmlDocument nsdoc = new XmlDocument();
 		nsdoc.Load (EcmaDoc.GetNamespaceFile (basedir.FullName, ns));
 		
 		XmlDocument elements = new XmlDocument();
 		XmlElement docnode = elements.CreateElement("elements");
+		elements.AppendChild (docnode);
 		
 		foreach (XmlElement doc in nsdoc.SelectNodes("Namespace/Docs/*")) {
 			docnode.AppendChild(elements.ImportNode(doc, true));
@@ -2133,7 +2136,7 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 			docnode.AppendChild(typenode);
 		}
 
-		return new XmlNodeReader(docnode);
+		return elements;
 	}
 	
 }

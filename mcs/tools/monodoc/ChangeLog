@@ -1,3 +1,11 @@
+2009-03-01  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/ecma-provider.cs: For some reason,
+	  EcmaHelpSource.GetNamespaceDocument() wasn't being used anymore,
+	  which is what EcmaUncompiledHelpSource overrides to permit loading
+	  of local files.  Result: an exception when trying to view namespaces
+	  of local (non-assembled) directories.  Oops.  "Fixes" 443508.
+
 2009-02-26  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Monodoc/provider.cs: Revert; Don't check for Tree.Nodes == null, as it
