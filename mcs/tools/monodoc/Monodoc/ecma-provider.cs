@@ -1118,7 +1118,8 @@ public class EcmaHelpSource : HelpSource {
 			}
 		}
 		XmlDocUtils.AddExtensionMethods (doc, extensions, delegate (string s) {
-				return RootTree.GetHelpXml ("T:" + s);
+				s = s.StartsWith ("T:") ? s : "T:" + s;
+				return RootTree.GetHelpXml (s);
 		});
 
 		XsltArgumentList args = new XsltArgumentList();
@@ -2139,6 +2140,20 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 		return elements;
 	}
 	
+	public override Stream GetHelpStream (string id)
+	{
+		if (id == "ExtensionMethods.xml") {
+			// TODO: generate ExtensionMethods.xml based on index.xml contents.
+		}
+		return null;
+	}
+
+	public override XmlDocument GetHelpXmlWithChanges (string id)
+	{
+		XmlDocument doc = new XmlDocument ();
+		doc.Load (id);
+		return doc;
+	}
 }
 
 }

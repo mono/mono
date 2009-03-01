@@ -137,7 +137,7 @@ namespace Mono.Documentation {
 				yield return s;
 				XmlDocument d;
 				string p = s;
-				while ((d = loader (s)) != null) {
+				while (s != null && (d = loader (s)) != null) {
 					s = GetEscapedPath (d, "Type/Base/BaseTypeName");
 					if (p == s)
 						break;

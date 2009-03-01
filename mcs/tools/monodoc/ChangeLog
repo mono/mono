@@ -1,5 +1,27 @@
 2009-03-01  Jonathan Pryor  <jpryor@novell.com>
 
+	* Mono.Documentation/XmlDocUtils.cs: It's possible for the `loader'
+	  delegate to return `null' if no further base types are found, so
+	  stop processing if we find a null base type.
+	* Monodoc/provider.cs: 
+	  - Make GetHelpStream() virtual so that EcmaUncompiledHelpSource can
+	    override it, as the default zip-based behavior is inappropriate.
+	  - Make GetHelpXmlWithChanges() virtual so that
+	    EcmaUncompiledHelpSource can override it, as the default zip-based
+	    behavior is inappropriate.
+	  - When initializing UncompiledHelpSources, set the
+	    HelpSource.RootTree property (avoids an NRE from
+	    EcmaHelpSource.GetTextFromUrl() when it reads RootTree.HelpSources).
+	* Monodoc/ecma-provider.cs: 
+	  - Within the XmlDocUtils.AddExtensionMethods() call, don't always 
+	    prefix the type with "T:", as sometimes the type will already start 
+	    with "T:", which is the case with EcmaUncompiledHelpSource ids.  
+	  - Add EcmaUncompiledHelpSource.GetHelpStream() and
+	    EcmaUncompiledHelpSource.GetHelpXmlWithChanges(), which Do The
+	    Right Thing for the file-based backend.
+
+2009-03-01  Jonathan Pryor  <jpryor@novell.com>
+
 	* Monodoc/ecma-provider.cs: For some reason,
 	  EcmaHelpSource.GetNamespaceDocument() wasn't being used anymore,
 	  which is what EcmaUncompiledHelpSource overrides to permit loading

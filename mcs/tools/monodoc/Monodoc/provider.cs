@@ -483,7 +483,7 @@ public class HelpSource {
 	/// <summary>
 	///   Returns a stream from the packaged help source archive
 	/// </summary>
-	public Stream GetHelpStream (string id)
+	public virtual Stream GetHelpStream (string id)
 	{
 		if (zip_file == null)
 			zip_file = new ZipFile (zip_filename);
@@ -519,7 +519,7 @@ public class HelpSource {
 		return null;
 	}
 	
-	public XmlDocument GetHelpXmlWithChanges (string id)
+	public virtual XmlDocument GetHelpXmlWithChanges (string id)
 	{
 		if (zip_file == null)
 			zip_file = new ZipFile (zip_filename);
@@ -903,6 +903,7 @@ public class RootTree : Tree {
 		
 		foreach (string path in UncompiledHelpSources) {
 			EcmaUncompiledHelpSource hs = new EcmaUncompiledHelpSource(path);
+			hs.RootTree = root;
 			root.help_sources.Add (hs);
 			string epath = "extra-help-source-" + hs.Name;
 			Node hsn = root.CreateNode (hs.Name, "root:/" + epath);
