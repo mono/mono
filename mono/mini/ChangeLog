@@ -1,3 +1,13 @@
+2009-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_set_signal_chaining): New public API function to enable
+	signal chaining on POSIX platforms.
+
+	* mini-posix.c mini.c: Applied a variant of a patch by Simon Rowland 
+	(si@lindenlab.com) to implement signal chaining. The original patch was
+	contributed under the MIT X/11 license:
+	https://bugzilla.novell.com/show_bug.cgi?id=318894
+
 2009-02-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* iltests.il.in (test_0_implicit_float_to_double_conversion): Disable this
