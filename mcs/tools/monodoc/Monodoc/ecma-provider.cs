@@ -1203,18 +1203,24 @@ public class EcmaHelpSource : HelpSource {
 
 	static XslTransform ecma_transform;
 
-	public static string Htmlize (IXPathNavigable ecma_xml)
+	public string Htmlize (IXPathNavigable ecma_xml)
 	{
 		return Htmlize(ecma_xml, null);
 	}
-	
-	public static string Htmlize (IXPathNavigable ecma_xml, XsltArgumentList args)
+
+	public string Htmlize (IXPathNavigable ecma_xml, XsltArgumentList args)
 	{
 		EnsureTransform ();
 		
 		StringWriter output = new StringWriter ();
-		ecma_transform.Transform (ecma_xml, args, output, null);
+		ecma_transform.Transform (ecma_xml, args, output, CreateDocumentResolver ());
 		return output.ToString ();
+	}
+
+	protected virtual XmlResolver CreateDocumentResolver ()
+	{
+		// results in using XmlUrlResolver
+		return null;
 	}
 	
 	static void Htmlize (IXPathNavigable ecma_xml, XsltArgumentList args, XmlWriter w)
@@ -2096,7 +2102,7 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 			XsltArgumentList args = new XsltArgumentList();
 			args.AddExtensionObject("monodoc:///extensions", ExtObject);
 			args.AddParam("show", "", "masteroverview");
-			string s = EcmaHelpSource.Htmlize(new XPathDocument (reader), args);
+			string s = Htmlize(new XPathDocument (reader), args);
 			return BuildHtml (css_ecma_code, js_code, s); 
 		}
 		return base.GetText(url, out match_node);
@@ -2153,6 +2159,27 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 		XmlDocument doc = new XmlDocument ();
 		doc.Load (id);
 		return doc;
+	}
+	
+	class UncompiledResolver : XmlResolver {
+		public override Uri ResolveUri (Uri baseUri, string relativeUri)
+		{
+			return null;
+		}
+
+		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
+		{
+			return null;
+		}
+
+		public override System.Net.ICredentials Credentials {
+			set {/* ignore */}
+		}
+	}
+
+	protected override XmlResolver CreateDocumentResolver ()
+	{
+		return new UncompiledResolver ();
 	}
 }
 

@@ -1,5 +1,21 @@
 2009-03-01  Jonathan Pryor  <jpryor@novell.com>
 
+	* Monodoc/ecma-provider.cs: Viewing type members (plural, e.g. the
+	  Fields sub-node) would result in a stack overflow within
+	  Resources/mdoc-html-utils.xsl:GetInheritedMembers(), because the
+	  document() XSLT function was being used to obtain the base type's
+	  documentation.  It stack overflowed because the XmlUrlResolver was
+	  being used, which when given e.g. file:///DocAttribute.xml, would
+	  return file:///DocAttribute.xml (which makes sense), but it was
+	  non-terminating.  (I find this troubling as it should have been
+	  trying to resolve e.g. System.Attribute, not DocAttribute; it must
+	  be some XmlTransform-fu that was substituting documents.)
+	  The fix is for EcmaUncompiledHelpSource to provide an alternate
+	  document XmlResolver, one which always returns null from
+	  XmlResolver.ResolveUri(), thus preventing endless recursion.
+
+2009-03-01  Jonathan Pryor  <jpryor@novell.com>
+
 	* Mono.Documentation/XmlDocUtils.cs: It's possible for the `loader'
 	  delegate to return `null' if no further base types are found, so
 	  stop processing if we find a null base type.
