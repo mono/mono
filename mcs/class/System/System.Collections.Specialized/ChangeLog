@@ -1,3 +1,8 @@
+2009-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* NameValueCollection.cs (AsSingleString): Avoid the allocation of
+	a stringbuilder for collections with only one element.
+
 2008-09-09  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* BitVector32.cs: Minor fixes. Simplified Section.ToString and

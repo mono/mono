@@ -257,16 +257,25 @@ namespace System.Collections.Specialized{
 				return null;
 			int max = values.Count;
 			
-			if (max == 0)
+			switch (max) {
+			case 0:
 				return null;
-			//TODO: reimplement this
-			StringBuilder sb = new StringBuilder ((string)values [0]);
-			for (int i = 1; i < max; i++){
-				sb.Append (separator);
-				sb.Append (values [i]);
-			}
+			case 1:
+				return (string)values [0];
+			case 2:
+				return String.Concat ((string)values [0], separator, (string)values [1]);
+			default:
+				int len = max;
+				for (int i = 0; i < max; i++)
+					len += ((string)values [i]).Length;
+				StringBuilder sb = new StringBuilder ((string)values [0], len);
+				for (int i = 1; i < max; i++){
+					sb.Append (separator);
+					sb.Append (values [i]);
+				}
 
-			return sb.ToString ();			
+				return sb.ToString ();
+			}
 		}
 		
 		
