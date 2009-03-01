@@ -1,5 +1,13 @@
 2009-03-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_Type_GetInterfaces): Avoid allocating
+	intermediary managed arrays. Use caching version of mono_array_new
+	to allocate the result array.
+
+	* icall.c (ves_icall_Type_GetConstructors_internal): Same.
+
+2009-03-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c: Add small implementation of a growable stack bound array.
 
 	* icall.c (ves_icall_System_Enum_get_hashcode): Fix warning.
