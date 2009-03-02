@@ -1,3 +1,8 @@
+2009-03-02  Geoff Norton  <gnorton@novell.com>
+
+	* mini.c:
+	* driver.c: Allow signal chaining of SIGFPE as well.
+
 2009-03-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_generic_virtual_remoting_trampoline): Update
