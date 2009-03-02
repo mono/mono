@@ -86,8 +86,9 @@ namespace System
 			/* Threads could die, so keep a global cache too */
 			lock (global_cache_monitor) {
 				if (global_cache.ContainsKey (enumType)) {
-					info = (MonoEnumInfo) global_cache [enumType];
-					cache [enumType] = info;
+					object boxedInfo = global_cache [enumType];
+					cache [enumType] = boxedInfo;
+					info = (MonoEnumInfo)boxedInfo;
 					return;
 				}
 			}

@@ -1,3 +1,8 @@
+2009-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Enum.cs (MonoEnumInfo::GetInfo): Share the boxed form of the
+	MonoEnumInfo between both caches.
+
 2009-02-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* Enum.cs (FindName): Use a hash table for looking up names instead of
