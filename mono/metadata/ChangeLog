@@ -1,3 +1,9 @@
+2009-03-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_Type_GetMethodsByName): Avoid allocating
+	intermediary managed arrays. Use caching version of mono_array_new
+	to allocate the result array.
+
 2009-03-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c: Use cached version of mono_array_new alongside
