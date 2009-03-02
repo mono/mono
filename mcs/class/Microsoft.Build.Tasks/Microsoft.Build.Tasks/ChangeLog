@@ -1,3 +1,8 @@
+2009-03-03  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #480856.
+	* Csc.cs (AddResponseFileCommands): Split DefineConstants on ';'.
+
 2009-02-26  Ankit Jain  <jankit@novell.com>
 
 	* MakeDir.cs (Execute): Don't create+log if dir already exists.

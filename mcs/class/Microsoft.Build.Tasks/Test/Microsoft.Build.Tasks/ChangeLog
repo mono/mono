@@ -1,3 +1,9 @@
+2009-03-03  Ankit Jain  <jankit@novell.com>
+
+	* CscTest.cs (DefineConstants): Add some extra semi-colons,
+	that should get removed on output.
+	(DefineConstants2): New. Test effectively empty define constants.
+
 2009-02-25  Ankit Jain  <jankit@novell.com>
 
 	* CreateCSharpManifestResourceNameTest.cs (CheckResourceNames):
