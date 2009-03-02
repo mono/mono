@@ -1,3 +1,11 @@
+2009-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): 
+	Virtual generic methods might not have method->slot set, work around
+	that.
+
+	* generics.cs: Add a test.
+
 2009-03-02  Geoff Norton  <gnorton@novell.com>
 
 	* mini.c:
