@@ -1,3 +1,7 @@
+2009-03-02 Everaldo Canuto <ecanuto@novell.com>
+
+	* HttpResponse.cs: Headers property implementation.
+	
 2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Web/HttpResponseHeader.cs:

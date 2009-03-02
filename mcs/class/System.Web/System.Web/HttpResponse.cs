@@ -308,6 +308,14 @@ namespace System.Web {
 				headerEncoding = value;
 			}
 		}
+
+		[MonoTODO ("Not implemented")]
+		public NameValueCollection Headers {
+			get {
+				// TODO: currently only return empty NameValueColletion
+				return new NameValueCollection ();
+			}
+		}
 #endif
 		public bool IsClientConnected {
 			get {
