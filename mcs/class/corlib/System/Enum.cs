@@ -314,6 +314,12 @@ namespace System
 			} else if ((vType == info.utype) || (vType == enumType)) {
 				value = ToObject (enumType, value);
 				MonoEnumInfo.GetInfo (enumType, out info);
+#if NET_2_0
+			int[] int_array = info.values as int[];
+			if (int_array != null)
+				return Array.BinarySearch (int_array, (int)value) >= 0;
+			else
+#endif
 				return (Array.BinarySearch (info.values, value) >= 0);
 			} else {
 				throw new ArgumentException("The value parameter is not the correct type."
