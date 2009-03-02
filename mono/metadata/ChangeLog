@@ -22,6 +22,12 @@
 
 2009-03-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* object-internals.h (MonoReflectionEvent): Add cached_add_event.
+
+2009-03-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object-internals.h: Rename _MonoReflectionEvent to
 	MonoReflectionMonoEvent so it reflects the right managed type.
 	Add a MonoReflectionEvent that correctly represents System.EventInfo.
