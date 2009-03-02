@@ -1,5 +1,19 @@
 2009-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_build_imt_thunk): Add support for mixed
+	generic/imt thunks where some entries branch through the vtable, while
+	other entries branch directly.
+
+	* mini-x86.c (mono_arch_build_imt_thunk): Ditto.
+
+	* method-to-ir.c (mono_method_to_ir): Enable fast virtual generic call 
+	support for interface methods as well.
+
+	* mini-trampolines.c: Add support for virtual generic methods in interfaces
+	using the normal IMT thunks.
+
+	generics.cs: Add new tests.
+	
 	* method-to-ir.c (mono_method_to_ir): Pass the method instead of
 	the generic inst to the generic imt thunks. This fixes AOT support, 
 	improves consistency with the normal IMT thunks, and makes it easier to
