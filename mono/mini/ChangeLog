@@ -1,5 +1,9 @@
 2009-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_generic_virtual_remoting_trampoline): Update
+	this since it now receives the method not its generic context in the
+	IMT reg.
+
 	* mini-amd64.c (mono_arch_build_imt_thunk): Add support for mixed
 	generic/imt thunks where some entries branch through the vtable, while
 	other entries branch directly.
