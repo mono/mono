@@ -1,3 +1,8 @@
+2009-03-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Add a missing
+	mono_loader_unlock ().
+
 2009-03-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_Type_GetMethodsByName): Avoid allocating
