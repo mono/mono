@@ -279,7 +279,16 @@ namespace System
 			MonoEnumInfo info;
 			value = ToObject (enumType, value);
 			MonoEnumInfo.GetInfo (enumType, out info);
-			int i = Array.BinarySearch (info.values, value);
+
+			int i;
+#if NET_2_0
+			int[] int_array = info.values as int[];
+			if (int_array != null)
+				i = Array.BinarySearch (int_array, (int)value);
+			else
+#endif
+				i = Array.BinarySearch (info.values, value);
+
 			return (i >= 0) ? info.names [i] : null;
 		}
 

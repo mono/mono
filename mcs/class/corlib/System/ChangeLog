@@ -1,5 +1,10 @@
 2009-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Enum.cs (GetName): If the enum underlying type is int32, use
+	the generic version, which doesn't box every element of the array.
+
+2009-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Enum.cs (MonoEnumInfo::GetInfo): Share the boxed form of the
 	MonoEnumInfo between both caches.
 
