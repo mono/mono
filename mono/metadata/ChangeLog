@@ -1,5 +1,9 @@
 2009-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_method_add_generic_virtual_invocation): Take a
+	MonoMethod argument instead of a MonoGenericInst. Fix the construction of
+	the IMT thunk to include all items.
+	
 	* object.c (mono_class_create_runtime_vtable): Add a missing
 	mono_loader_unlock ().
 
