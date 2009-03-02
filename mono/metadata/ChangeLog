@@ -1,5 +1,18 @@
 2009-03-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (get_generic_virtual_entries): New helper function to collect
+	the virtual generic method instances which need to be added to an IMT
+	thunk.
+	(mono_method_add_generic_virtual_invocation): Add a 'vtable' argument.
+	Instead of creating a new IMT thunk, reset the vtable slot to the
+	trampoline, the thunk will be created the next time the trampoline is called.
+	(build_imt_slots): Add support for virtual generic methods in interfaces by
+	adding to the IMT thunk all the methods registered using 
+	mono_method_add_generic_virtual_invocation ().
+
+	* object-internals.h (_MonoImtBuilderEntry): Add a 'has_target_code' field.
+	(struct _MonoIMTCheckItem): Ditto.
+
 	* object.c (mono_method_add_generic_virtual_invocation): Take a
 	MonoMethod argument instead of a MonoGenericInst. Fix the construction of
 	the IMT thunk to include all items.
