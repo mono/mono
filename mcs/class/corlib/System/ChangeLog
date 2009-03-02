@@ -1,5 +1,9 @@
 2009-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Environment.cs: Bump corlib version.
+
+2009-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Enum.cs (IsDefined): If the enum underlying type is int32, use
 	the generic version, which doesn't box every element of the array.
 

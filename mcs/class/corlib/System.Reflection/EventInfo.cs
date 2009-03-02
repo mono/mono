@@ -39,6 +39,11 @@ namespace System.Reflection {
 #endif
 	[ClassInterface(ClassInterfaceType.None)]
 	public abstract class EventInfo : MemberInfo, _EventInfo {
+#if NET_2_0
+		AddEventAdapter cached_add_event;
+#else
+		object placeholder;
+#endif
 
 		public abstract EventAttributes Attributes {get;}
 
@@ -77,11 +82,24 @@ namespace System.Reflection {
 		[DebuggerStepThrough]
 		public void AddEventHandler (object target, Delegate handler)
 		{
+#if NET_2_0
+			if (cached_add_event == null) {
+				MethodInfo add = GetAddMethod ();
+				if (add == null)
+					throw new Exception ("No add method!?");
+				if (add.DeclaringType.IsValueType) {
+					add.Invoke (target, new object [] {handler});
+					return;
+				}
+				cached_add_event = CreateAddEventDelegate (add);
+			}
+			cached_add_event (target, handler);
+#else
 			MethodInfo add = GetAddMethod ();
 			if (add == null)
 				throw new Exception ("No add method!?");
-
 			add.Invoke (target, new object [] {handler});
+#endif
 		}
 
 		public MethodInfo GetAddMethod() {
@@ -138,5 +156,50 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+#if NET_2_0
+		delegate void AddEventAdapter (object _this, Delegate dele);
+		delegate void AddEvent<T, D> (T _this, D dele);
+		delegate void StaticAddEvent<D> (D dele);
+
+		static void AddEventFrame<T,D> (AddEvent<T,D> addEvent, object obj, object dele)
+		{
+			addEvent ((T)obj, (D)dele);
+		}
+
+		static void StaticAddEventAdapterFrame<D> (StaticAddEvent<D> addEvent, object obj, object dele)
+		{
+			addEvent ((D)dele);
+		}
+
+		/*
+		 * The idea behing this optimization is to use a pair of delegates to simulate the same effect of doing a reflection call.
+		 * The first delegate performs casting and boxing, the second dispatch to the add_... method.
+		 */
+		static AddEventAdapter CreateAddEventDelegate (MethodInfo method)
+		{
+			Type[] typeVector;
+			Type addHandlerType;
+			object addHandlerDelegate;
+			MethodInfo adapterFrame;
+			Type addHandlerDelegateType;
+			string frameName;
+
+			if (method.IsStatic) {
+				typeVector = new Type[] { method.GetParameters () [0].ParameterType };
+				addHandlerDelegateType = typeof (StaticAddEvent<>);
+				frameName = "StaticAddEventAdapterFrame";
+			} else {
+				typeVector = new Type[] { method.DeclaringType, method.GetParameters () [0].ParameterType };
+				addHandlerDelegateType = typeof (AddEvent<,>);
+				frameName = "AddEventFrame";
+			}
+
+			addHandlerType = addHandlerDelegateType.MakeGenericType (typeVector);
+			addHandlerDelegate = Delegate.CreateDelegate (addHandlerType, method);
+			adapterFrame = typeof (EventInfo).GetMethod (frameName, BindingFlags.Static | BindingFlags.NonPublic);
+			adapterFrame = adapterFrame.MakeGenericMethod (typeVector);
+			return (AddEventAdapter)Delegate.CreateDelegate (typeof (AddEventAdapter), addHandlerDelegate, adapterFrame, true);
+		}
+#endif
 	}
 }

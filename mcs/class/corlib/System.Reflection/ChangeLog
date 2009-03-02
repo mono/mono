@@ -1,3 +1,8 @@
+2008-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* EventInfo.cs: Apply similar trick to the one in MonoProperty to speed up
+	AddEventHandler.
+
 2008-02-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoProperty.cs (GetValue): Don't use the delegate optimization for valuetypes.
