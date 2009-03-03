@@ -3215,6 +3215,7 @@ namespace Mono.CSharp {
  		bool identical_type_name;
 		bool has_inaccessible_candidates_only;
 		Type delegate_type;
+		Type queried_type;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Type type, Location l)
 			: this (type, l)
@@ -3251,7 +3252,8 @@ namespace Mono.CSharp {
 		{
 			this.loc = loc;
 			eclass = ExprClass.MethodGroup;
-			this.type = type;
+			this.type = typeof (MethodGroupExpr);
+			queried_type = type;
 		}
 
 		public override Type DeclaringType {
@@ -4149,7 +4151,7 @@ namespace Mono.CSharp {
 								// base class (CS1540).  If the qualifier_type is a base of the
 								// ec.ContainerType and the lookup succeeds with the latter one,
 								// then we are in this situation.
-								Error_CannotAccessProtected (loc, best_candidate, type, ec.ContainerType);
+								Error_CannotAccessProtected (loc, best_candidate, queried_type, ec.ContainerType);
 							} else {
 								Report.SymbolRelatedToPreviousError (best_candidate);
 								ErrorIsInaccesible (loc, GetSignatureForError ());
@@ -4170,10 +4172,10 @@ namespace Mono.CSharp {
 				// We failed to find any method with correct argument count
 				//
 				if (Name == ConstructorInfo.ConstructorName) {
-					Report.SymbolRelatedToPreviousError (type);
+					Report.SymbolRelatedToPreviousError (queried_type);
 					Report.Error (1729, loc,
 						"The type `{0}' does not contain a constructor that takes `{1}' arguments",
-						TypeManager.CSharpName (type), arg_count);
+						TypeManager.CSharpName (queried_type), arg_count);
 				} else {
 					Error_ArgumentCountWrong (arg_count);
 				}

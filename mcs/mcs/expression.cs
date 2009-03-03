@@ -1997,16 +1997,8 @@ namespace Mono.CSharp {
 		public static void Error_OperatorCannotBeApplied (Expression left, Expression right, string oper, Location loc)
 		{
 			string l, r;
-			// TODO: This should be handled as Type of method group in CSharpName
-			if (left.eclass == ExprClass.MethodGroup)
-				l = left.ExprClassName;
-			else
-				l = TypeManager.CSharpName (left.Type);
-
-			if (right.eclass == ExprClass.MethodGroup)
-				r = right.ExprClassName;
-			else
-				r = TypeManager.CSharpName (right.Type);
+			l = TypeManager.CSharpName (left.Type);
+			r = TypeManager.CSharpName (right.Type);
 
 			Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
 				oper, l, r);

@@ -602,6 +602,9 @@ namespace Mono.CSharp {
 		if (t == typeof (AnonymousMethodBody))
 			return "anonymous method";
 
+		if (t == typeof (MethodGroupExpr))
+			return "method group";
+
 		if (t == null)
 			return "internal error";
 

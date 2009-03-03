@@ -1,5 +1,11 @@
 2009-03-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #480867
+	* typemanager.cs, expression.cs, ecore.cs: Changed method group
+	expression to have no valid type.
+
+2009-03-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #481258
 	* class.cs: Set extension method flag in partial container.
 
