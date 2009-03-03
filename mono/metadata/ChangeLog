@@ -1,3 +1,8 @@
+2009-03-03  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_MAJOR_VERSION): Bump to 81 because
+	of the `MonoGenericInst' changes.
+
 2009-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_MonoType_GetGenericArguments): Use
