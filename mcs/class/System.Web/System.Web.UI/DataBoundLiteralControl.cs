@@ -51,7 +51,6 @@ namespace System.Web.UI {
 						int dataBoundLiteralCount)
 		{
 			this.staticLiteralsCount = staticLiteralsCount;
-			staticLiterals = new string [staticLiteralsCount];
 			dataBoundLiterals = new string [dataBoundLiteralCount];
 			AutoID = false;
 		}

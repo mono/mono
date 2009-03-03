@@ -1,3 +1,8 @@
+2009-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DataBoundLiteralControl.cs: Don't init static literals
+	as they are lazily created.
+
 2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* BaseParser.cs:
