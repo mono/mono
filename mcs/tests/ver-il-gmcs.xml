@@ -34892,6 +34892,21 @@
       </method>
     </type>
   </test>
+  <test name="test-710.cs">
+    <type name="Z">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-72.cs">
     <type name="outer">
       <method name="Void .ctor()">
