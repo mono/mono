@@ -1,3 +1,7 @@
+2009-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Guid.cs (BaseToString): Reduce allocations.
+
 2009-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Environment.cs: Bump corlib version.

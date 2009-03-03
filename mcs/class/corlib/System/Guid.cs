@@ -513,6 +513,29 @@ namespace System {
 			return res;
 		}
 
+		static void AppendInt (StringBuilder builder, int value) {
+			builder.Append (ToHex ((value >> 28) & 0xf));
+			builder.Append (ToHex ((value >> 24) & 0xf));
+			builder.Append (ToHex ((value >> 20) & 0xf));
+			builder.Append (ToHex ((value >> 16) & 0xf));
+			builder.Append (ToHex ((value >> 12) & 0xf));
+			builder.Append (ToHex ((value >> 8) & 0xf));
+			builder.Append (ToHex ((value >> 4) & 0xf));
+			builder.Append (ToHex (value & 0xf));
+		}
+
+		static void AppendShort (StringBuilder builder, short value) {
+			builder.Append (ToHex ((value >> 12) & 0xf));
+			builder.Append (ToHex ((value >> 8) & 0xf));
+			builder.Append (ToHex ((value >> 4) & 0xf));
+			builder.Append (ToHex (value & 0xf));
+		}
+
+		static void AppendByte (StringBuilder builder, byte value) {
+			builder.Append (ToHex ((value >> 4) & 0xf));
+			builder.Append (ToHex (value & 0xf));
+		}
+
 		private string BaseToString (bool h, bool p, bool b)
 		{
 			StringBuilder res = new StringBuilder (40);
@@ -523,48 +546,33 @@ namespace System {
 				res.Append ('{');
 			}
 		
-			res.Append (_a.ToString ("x8"));
+			AppendInt (res, _a);
 			if (h) {
 				res.Append ('-');
 			}
-			res.Append (_b.ToString ("x4"));
+			AppendShort (res, _b);
 			if (h) {
 				res.Append ('-');
 			}
-			res.Append (_c.ToString ("x4"));
+			AppendShort (res, _c);
 			if (h) {
 				res.Append ('-');
 			}
 	
-			char[] vals1 = {
-				ToHex((_d >> 4) & 0xf),
-				ToHex(_d & 0xf),
-				ToHex((_e >> 4) & 0xf),
-				ToHex(_e & 0xf)
-			};
-
-			res.Append (vals1);
+			AppendByte (res, _d);
+			AppendByte (res, _e);
 
 			if (h) {
 				res.Append ('-');
 			}
-		
-			char[] vals2 = {
-				ToHex((_f >> 4) & 0xf),
-				ToHex(_f & 0xf),
-				ToHex((_g >> 4) & 0xf),
-				ToHex(_g & 0xf),
-				ToHex((_h >> 4) & 0xf),
-				ToHex(_h & 0xf),
-				ToHex((_i >> 4) & 0xf),
-				ToHex(_i & 0xf),
-				ToHex((_j >> 4) & 0xf),
-				ToHex(_j & 0xf),
-				ToHex((_k >> 4) & 0xf),
-				ToHex(_k & 0xf)
-			};
-	
-			res.Append (vals2);
+
+			AppendByte (res, _f);
+			AppendByte (res, _g);
+			AppendByte (res, _h);
+			AppendByte (res, _i);
+			AppendByte (res, _j);
+			AppendByte (res, _k);
+
 	
 			if (p) {
 				res.Append (')');
