@@ -724,13 +724,14 @@ namespace System.Web {
 			// upload
 			//
 			int content_length = ContentLength;
-
+			int content_length_kb = content_length / 1024;
+			
 #if NET_2_0
 			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
 #else
 			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
 #endif
-			if ((content_length / 1024) > config.MaxRequestLength)
+			if (content_length_kb > config.MaxRequestLength)
 				throw new HttpException (400, "Upload size exceeds httpRuntime limit.");
 
 			int total = 0;
@@ -750,7 +751,7 @@ namespace System.Web {
 			if (buffer != null)
 				total = buffer.Length;
 
-			if (content_length > 0 && (content_length / 1024) >= config.RequestLengthDiskThreshold) {
+			if (content_length > 0 && content_length_kb >= config.RequestLengthDiskThreshold) {
 				// Writes the request to disk
 				total = Math.Min (content_length, total);
 				request_file = GetTempStream ();

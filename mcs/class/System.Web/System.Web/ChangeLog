@@ -1,3 +1,8 @@
+2009-03-03  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: avoid calculating the same value twice in
+	MakeInputStream
+
 2009-03-02 Everaldo Canuto <ecanuto@novell.com>
 
 	* HttpResponse.cs: Headers property implementation.
