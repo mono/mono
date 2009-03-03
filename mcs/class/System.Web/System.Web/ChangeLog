@@ -1,5 +1,18 @@
 2009-03-03  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpResponse.cs: fully implemented the Headers property.
+	It is also used in the 1.1 profile, but is internal.
+
+	* HttpCookie.cs: GetCookieHeader renamed to GetCookieHeaderValue -
+	now returns a string with the header value.
+
+	* HttpCacheVaryByParams.cs: GetResponseHeader renamed to
+	GetResponseHeaderValue - now returns a string with the header
+	value.
+
+	* HttpCachePolicy.cs: SetHeaders now takes a NameValueCollection
+	instead of an ArrayList
+
 	* HttpRequest.cs: avoid calculating the same value twice in
 	MakeInputStream
 

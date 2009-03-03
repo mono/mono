@@ -69,7 +69,7 @@ namespace System.Web {
 		string user_cache_control = "private";
 		string redirect_location;
 		
-		static UnknownResponseHeader version_header;
+		static string version_header;
 		
 		//
 		// Negative Content-Length means we auto-compute the size of content-length
@@ -81,9 +81,10 @@ namespace System.Web {
 		// The list of the headers that we will send back to the client, except
 		// the headers that we compute here.
 		//
-		ArrayList headers = new ArrayList ();
+
+		NameValueCollection headers;
 		bool headers_sent;
-		ArrayList cached_headers;
+		NameValueCollection cached_headers;
 
 		//
 		// Transfer encoding state
@@ -111,10 +112,8 @@ namespace System.Web {
 #else
 			HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
 #endif
-			if (config != null && config.EnableVersionHeader) {
-				string version = Environment.Version.ToString (3);
-				version_header = new UnknownResponseHeader ("X-AspNet-Version", version);
-			}
+			if (config != null && config.EnableVersionHeader)
+				version_header = Environment.Version.ToString (3);
 		}
 		
 		internal HttpResponse ()
@@ -309,14 +308,20 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO ("Not implemented")]
-		public NameValueCollection Headers {
+		public
+#else
+		internal
+#endif
+		NameValueCollection Headers {
 			get {
-				// TODO: currently only return empty NameValueColletion
-				return new NameValueCollection ();
+				if (headers == null)
+					headers = new NameValueCollection ();
+
+				return headers;
 			}
 		}
-#endif
+
+		
 		public bool IsClientConnected {
 			get {
 				if (WorkerRequest == null)
@@ -514,7 +519,7 @@ namespace System.Web {
 				return;
 			}
 
-			headers.Add (new UnknownResponseHeader (name, value));
+			headers.Add (name, value);
 		}
 
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
@@ -529,7 +534,7 @@ namespace System.Web {
 			if (virtualPath == null)
 				return null;
 		
-			if (virtualPath == "")
+			if (virtualPath.Length == 0)
 				return context.Request.RootVirtualDir;
 
 			if (UrlUtils.IsRelativeUrl (virtualPath)) {
@@ -589,7 +594,8 @@ namespace System.Web {
 			content_type = "text/html";
 			transfer_encoding = null;
 			user_cache_control = null;
-			headers.Clear ();
+			if (headers != null)
+				headers.Clear ();
 		}
 
 		internal bool HeadersSent {
@@ -636,30 +642,30 @@ namespace System.Web {
 		//   Transfer-Encoding (chunked)
 		//   Cache-Control
 		//   X-AspNet-Version
-		void AddHeadersNoCache (ArrayList write_headers, bool final_flush)
+		void AddHeadersNoCache (NameValueCollection write_headers, bool final_flush)
 		{
 #if !TARGET_J2EE
 			//
 			// Transfer-Encoding
 			//
 			if (use_chunked)
-				write_headers.Add (new UnknownResponseHeader ("Transfer-Encoding", "chunked"));
+				write_headers.Add ("Transfer-Encoding", "chunked");
 			else if (transfer_encoding != null)
-				write_headers.Add (new UnknownResponseHeader ("Transfer-Encoding", transfer_encoding));
+				write_headers.Add ("Transfer-Encoding", transfer_encoding);
 #endif
 			if (redirect_location != null)
-				write_headers.Add (new UnknownResponseHeader ("Location", redirect_location));
+				write_headers.Add ("Location", redirect_location);
 			
 #if !TARGET_J2EE
 			if (version_header != null)
-				write_headers.Add (version_header);
+				write_headers.Add ("X-AspNet-Version", version_header);
 
 			//
 			// If Content-Length is set.
 			//
 			if (content_length >= 0) {
-				write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderContentLength,
-								      content_length.ToString (CultureInfo.InvariantCulture)));
+				write_headers.Add (HttpWorkerRequest.GetKnownResponseHeaderName (HttpWorkerRequest.HeaderContentLength),
+						   content_length.ToString (CultureInfo.InvariantCulture));
 			} else if (BufferOutput) {
 				if (final_flush) {					
 					//
@@ -667,15 +673,15 @@ namespace System.Web {
 					// we know the content-length.
 					//
 					content_length = output_stream.total;
-					write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderContentLength,
-									      content_length.ToString (CultureInfo.InvariantCulture)));
+					write_headers.Add (HttpWorkerRequest.GetKnownResponseHeaderName (HttpWorkerRequest.HeaderContentLength),
+							   content_length.ToString (CultureInfo.InvariantCulture));
 				} else {
 					//
 					// We are buffering, and this is a flush in the middle.
 					// If we are not chunked, we need to set "Connection: close".
 					//
 					if (use_chunked){
-						write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderConnection, "close"));
+						write_headers.Add (HttpWorkerRequest.GetKnownResponseHeaderName (HttpWorkerRequest.HeaderConnection), "close");
 					}
 				}
 			} else {
@@ -684,7 +690,7 @@ namespace System.Web {
 				// close at the end.
 				//
 				if (use_chunked){
-					write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderConnection, "close"));
+					write_headers.Add (HttpWorkerRequest.GetKnownResponseHeaderName (HttpWorkerRequest.HeaderConnection), "close");
 				}
 			}
 #endif
@@ -695,7 +701,7 @@ namespace System.Web {
 			if (cache_policy != null)
 				cache_policy.SetHeaders (this, headers);
 			else
-				write_headers.Add (new UnknownResponseHeader ("Cache-Control", CacheControl));
+				write_headers.Add ("Cache-Control", CacheControl);
 			
 			//
 			// Content-Type
@@ -711,13 +717,13 @@ namespace System.Web {
 					}
 				}
 				
-				write_headers.Add (new UnknownResponseHeader ("Content-Type", header));
+				write_headers.Add ("Content-Type", header);
 			}
 
 			if (cookies != null && cookies.Count != 0){
 				int n = cookies.Count;
 				for (int i = 0; i < n; i++)
-					write_headers.Add (cookies.Get (i).GetCookieHeader ());
+					write_headers.Add ("Set-Cookie", cookies.Get (i).GetCookieHeaderValue ());
 #if TARGET_J2EE
 				// For J2EE Portal support emulate cookies by storing them in the session.
 				context.Request.SetSessionCookiesForPortal (cookies);
@@ -746,18 +752,29 @@ namespace System.Web {
 
 			// If this page is cached use the cached headers
 			// instead of the standard headers	
-			ArrayList write_headers = headers;
+			NameValueCollection write_headers;
 			if (cached_headers != null)
 				write_headers = cached_headers;
-			else
+			else {
+				write_headers = Headers;
 				AddHeadersNoCache (write_headers, final_flush);
-
+			}
+			
 			if (WorkerRequest != null)
 				WorkerRequest.SendStatus (status_code, StatusDescription);
 
 			if (WorkerRequest != null) {
-				foreach (BaseResponseHeader header in write_headers){
-					header.SendContent (WorkerRequest);
+				string header_name;
+				string[] values;
+				
+				for (int i = 0; i < write_headers.Count; i++) {
+					header_name = write_headers.GetKey (i);
+					values = write_headers.GetValues (i);
+					if (values == null)
+						continue;
+					
+					foreach (string val in values)
+						WorkerRequest.SendUnknownResponseHeader (header_name, val);
 				}
 			}
 		}
@@ -1049,9 +1066,10 @@ namespace System.Web {
 #endregion
 		
 #region Cache Support
-		internal void SetCachedHeaders (ArrayList headers)
+		internal void SetCachedHeaders (NameValueCollection headers)
 		{
 			cached_headers = headers;
+			
 		}
 
 		internal bool IsCached {
