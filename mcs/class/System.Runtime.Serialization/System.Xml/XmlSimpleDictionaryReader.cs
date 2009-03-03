@@ -144,11 +144,9 @@ namespace System.Xml
 			get { return reader.Prefix; }
 		}
 
-#if !NET_2_1
 		public override bool HasValue {
 			get { return reader.HasValue; }
 		}
-#endif
 
 		public override string Value {
 			get { return reader.Value; }

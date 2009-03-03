@@ -1,3 +1,9 @@
+2009-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* XmlReader.cs, XmlTextReader.cs, XmlTextReader2.cs,
+	EntityResolvingXmlReader.cs: 2.1 has HasValue.
+
+
 2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : do not try to read at non-readable state in

@@ -1,3 +1,7 @@
+2009-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* SubtreeXmlReader.cs, XmlFilterReader.cs: 2.1 has HasValue.
+
 2008-09-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SubtreeXmlReader.cs : Close() should correctly skip empty element.

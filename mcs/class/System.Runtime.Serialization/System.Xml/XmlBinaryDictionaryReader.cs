@@ -306,11 +306,9 @@ namespace System.Xml
 			get { return state == ReadState.EndOfFile || state == ReadState.Error; }
 		}
 
-#if !NET_2_1
 		public override bool HasValue {
 			get { return current.Value.Length > 0; }
 		}
-#endif
 
 		public override bool IsEmptyElement {
 			get { return false; }

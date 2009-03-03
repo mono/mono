@@ -1,3 +1,8 @@
+2009-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* XmlBinaryDictionaryReader.cs, XmlSimpleDictionaryReader.cs: 2.1
+	has HasValue.
+
 2009-02-13  Jonathan Pryor  <jpryor@novell.com>
 
 	* UniqueId.cs: Remove most [MonoTODO]s and NotImplementedExceptions.

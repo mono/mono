@@ -257,11 +257,9 @@ namespace System.Xml
 			get { return readState == ReadState.EndOfFile; }
 		}
 
-#if !NET_2_1
 		public override bool HasValue {
 			get { return cursorToken.Value != null; }
 		}
-#endif
 
 		public override bool IsDefault {
 			// XmlTextReader does not expand default attributes.

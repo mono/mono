@@ -194,11 +194,9 @@ namespace System.Xml
 			get { return source.EOF; }
 		}
 
-#if !NET_2_1
 		public override bool HasValue {
 			get { return Current.HasValue; }
 		}
-#endif
 
 		public override bool IsDefault {
 			get { return Current.IsDefault; }

@@ -161,7 +161,6 @@ namespace System.Runtime.Serialization.Json
 			}
 		}
 
-#if !NET_2_1
 		public override bool HasValue {
 			get {
 				switch (NodeType) {
@@ -173,7 +172,6 @@ namespace System.Runtime.Serialization.Json
 				}
 			}
 		}
-#endif
 
 		public override bool IsEmptyElement {
 			get { return false; }

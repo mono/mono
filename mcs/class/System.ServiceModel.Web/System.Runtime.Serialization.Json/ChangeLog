@@ -1,3 +1,7 @@
+2009-03-02  Chris Toshok  <toshok@ximian.com>
+
+	* JsonReader.cs: 2.1 has HasValue.
+
 2009-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonReader.cs : show invalid input character in the error

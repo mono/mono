@@ -107,11 +107,7 @@ namespace System.Xml.Linq
 			}
 		}
 
-		public
-#if !NET_2_1
-		override
-#endif
-		bool HasValue {
+		public override bool HasValue {
 			get {
 				if (attr >= 0)
 					return true;

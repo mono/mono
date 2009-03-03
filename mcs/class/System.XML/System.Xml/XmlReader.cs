@@ -123,9 +123,7 @@ namespace System.Xml
 			get { return AttributeCount > 0; }
 		}
 
-#if !NET_2_1
 		public abstract bool HasValue { get; }
-#endif
 
 		public abstract bool IsEmptyElement { get; }
 

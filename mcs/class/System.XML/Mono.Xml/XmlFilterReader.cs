@@ -96,11 +96,9 @@ namespace Mono.Xml
 			get { return reader.Prefix; }
 		}
 
-#if !NET_2_1
 		public override bool HasValue {
 			get { return reader.HasValue; }
 		}
-#endif
 
 		public override int Depth {
 			get { return reader.Depth; }
