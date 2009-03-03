@@ -1,5 +1,10 @@
 2009-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Control.cs (FillControlCache): Remove useless control
+	parameter. It's always the same of 'this'.
+
+2009-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* DataBoundLiteralControl.cs: Don't init static literals
 	as they are lazily created.
 

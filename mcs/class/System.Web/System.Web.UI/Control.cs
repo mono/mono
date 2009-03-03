@@ -812,16 +812,16 @@ namespace System.Web.UI
 				return;
 
 			InitControlsCache ();
-			FillControlCache (this, Controls);
+			FillControlCache (Controls);
 
 		}
 
-		void FillControlCache (Control control, ControlCollection controls)
+		void FillControlCache (ControlCollection controls)
 		{
 			foreach (Control c in controls) {
 				try {
 					if (c._userId != null)
-						control._controlsCache.Add (c._userId, c);
+						_controlsCache.Add (c._userId, c);
 				} catch (ArgumentException) {
 					throw new HttpException (
 						"Multiple controls with the same ID '" + 
@@ -830,7 +830,7 @@ namespace System.Web.UI
 				}
 
 				if ((c.stateMask & IS_NAMING_CONTAINER) == 0 && c.HasControls ())
-					control.FillControlCache (control, c.Controls);
+					FillControlCache (c.Controls);
 			}
 		}
 
