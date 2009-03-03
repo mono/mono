@@ -1,3 +1,19 @@
+2009-03-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (struct _MonoDomain): Add finalize_runtime_invoke
+	field.
+
+	* metadata-internals.h (struct _MonoImage): Add runtime_invoke_vcall_cache
+	cache.
+
+	* image.c (mono_image_close): Free it.
+	
+	* marshal.c (mono_marshal_get_runtime_invoke): Add a 'virtual' argument
+	allowing a creation of a wrapper which invokes its method using a CALLVIRT
+	on the this argument.
+
+	* gc.c (run_finalize): Optimize the calling of the finalizers.
+
 2009-03-03  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_MAJOR_VERSION): Bump to 81 because
@@ -21,7 +37,7 @@
 	to reduce locking contention.
 
 2009-03-03  Zoltan Varga  <vargaz@gmail.com>
-
+		
 	* object.c (mono_method_add_generic_virtual_invocation): Put back the
 	thunk builder code for the non-interface case.
 

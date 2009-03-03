@@ -1,5 +1,8 @@
 2009-03-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c aot-compiler.c: Update after the changes to 
+	mono_marshal_get_runtime_invoke ().
+
 	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): 
 	Virtual generic methods might not have method->slot set, work around
 	that.
