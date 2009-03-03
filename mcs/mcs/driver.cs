@@ -237,7 +237,7 @@ namespace Mono.CSharp
 				"   -help                Lists all compiler options (short: -?)\n" + 
 				"   -keycontainer:NAME   The key pair container used to sign the output assembly\n" +
 				"   -keyfile:FILE        The key file used to strongname the ouput assembly\n" +
-				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, Default, or future\n" + 
+				"   -langversion:TEXT    Specifies language version: ISO-1, ISO-2, Default, or Future\n" + 
 				"   -lib:PATH1[,PATHn]   Specifies the location of referenced assemblies\n" +
 				"   -main:CLASS          Specifies the class with the Main method (short: -m)\n" +
 				"   -noconfig            Disables implicitly referenced assemblies\n" +
@@ -255,7 +255,7 @@ namespace Mono.CSharp
 				"                        KIND can be one of: exe, winexe, library, module\n" +
 				"   -unsafe[+|-]         Allows to compile code which uses unsafe keyword\n" +
 				"   -warnaserror[+|-]    Treats all warnings as errors\n" +
-				"   -warnaserror:W1[,Wn] Treats one or more compiler warnings as errors\n" +
+				"   -warnaserror[+|-]:W1[,Wn] Treats one or more compiler warnings as errors\n" +
 				"   -warn:0-4            Sets warning level, the default is 4 (short -w:)\n" +
 				"   -help2               Shows internal compiler options\n" + 
 				"\n" +
@@ -982,11 +982,6 @@ namespace Mono.CSharp
 				Report.Fatal = true;
 				return true;
 				
-			case "--werror":
-				Report.Warning (-29, 1, "Compatibility: Use -warnaserror: option instead of --werror");
-				Report.WarningsAreErrors = true;
-				return true;
-
 			case "--nowarn":
 				Report.Warning (-29, 1, "Compatibility: Use -nowarn instead of --nowarn");
 				if ((i + 1) >= args.Length){
@@ -1376,6 +1371,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "/warnaserror":
+			case "/warnaserror+":
 				if (value.Length == 0) {
 					Report.WarningsAreErrors = true;
 				} else {
@@ -1384,12 +1380,13 @@ namespace Mono.CSharp
 				}
 				return true;
 
-			case "/warnaserror+":
-				Report.WarningsAreErrors = true;
-				return true;
-
 			case "/warnaserror-":
-				Report.WarningsAreErrors = false;
+				if (value.Length == 0) {
+					Report.WarningsAreErrors = false;
+				} else {
+					foreach (string wid in value.Split (argument_value_separator))
+						Report.RemoveWarningAsError (wid);
+				}
 				return true;
 
 			case "/warn":

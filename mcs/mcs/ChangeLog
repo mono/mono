@@ -1,5 +1,10 @@
 2009-03-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #480319
+	* report.cs, driver.cs: Support -warnaserror-:<warning list> option.
+
+2009-03-03  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #480867
 	* typemanager.cs, expression.cs, ecore.cs: Changed method group
 	expression to have no valid type.
