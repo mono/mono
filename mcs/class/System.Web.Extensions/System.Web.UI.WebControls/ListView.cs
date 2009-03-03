@@ -2000,7 +2000,7 @@ namespace System.Web.UI.WebControls
 
 			if (maximumRows != _maximumRows || startRowIndex != _startRowIndex) {
 				if (databind) {
-					var args = new PagePropertiesChangingEventArgs (maximumRows, startRowIndex);
+					var args = new PagePropertiesChangingEventArgs (startRowIndex, maximumRows);
 					OnPagePropertiesChanging (args);
 				}
 

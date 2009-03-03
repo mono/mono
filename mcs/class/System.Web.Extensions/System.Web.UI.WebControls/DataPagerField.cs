@@ -238,7 +238,7 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
-			return false;
+			return true;
 		}
 		
 		void AddEventHandler (object key, EventHandler handler)

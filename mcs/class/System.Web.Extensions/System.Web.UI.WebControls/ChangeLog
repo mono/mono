@@ -1,3 +1,12 @@
+2009-03-03  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: SetPageProperties invoked the
+	PagePropertiesChanging event with the startRowIndex and
+	maximumRows parameters reversed. Fixes bugs #481250 and #481252
+
+	* DataPagerField.cs: GetQueryModeStartRowIndex must return 'true'
+	if in query mode. Fixes bug #481248
+
 2008-11-28  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: use the _correct_ operator when checking whether
