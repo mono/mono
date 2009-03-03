@@ -1,5 +1,10 @@
 2009-03-03  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #481258
+	* class.cs: Set extension method flag in partial container.
+
+2009-03-03  Marek Safar  <marek.safar@gmail.com>
+
 	* statement.cs, typemanager.cs: Use expression for StringEmitter.
 	
 	* attribute.cs: Add sanity check.

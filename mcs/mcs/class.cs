@@ -4252,7 +4252,7 @@ namespace Mono.CSharp {
 					}
 
 					ModFlags |= Modifiers.METHOD_EXTENSION;
-					Parent.ModFlags |= Modifiers.METHOD_EXTENSION;
+					Parent.PartialContainer.ModFlags |= Modifiers.METHOD_EXTENSION;
 					CodeGen.Assembly.HasExtensionMethods = true;
 				} else {
 					Report.Error (1106, Location, "`{0}': Extension methods must be defined in a non-generic static class",
