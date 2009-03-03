@@ -1,5 +1,10 @@
 2009-03-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* domain-internals.h (struct _MonoDomain): Add a separate lock for the
+	finalize_objects_hash.
+
+	* gc.c: Use the separate lock to access the finalize_objects_hash field.
+	
 	* domain-internals.h (struct _MonoDomain): Add finalize_runtime_invoke
 	field.
 
