@@ -45,9 +45,6 @@ namespace System.Text.RegularExpressions {
 	[Serializable]
 	public partial class Regex : ISerializable {
 
-#if NET_2_0
-		private static int cache_size = 15;
-#endif
 #if !TARGET_JVM
 		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname)
