@@ -26602,7 +26602,20 @@
         <size>11</size>
       </method>
       <method name="Void Main()">
-        <size>12</size>
+        <size>24</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Boolean get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Boolean get_Item(Double)">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Boolean get_Item(Double)">
+        <size>11</size>
       </method>
     </type>
   </test>
@@ -34827,6 +34840,22 @@
       </method>
       <method name="A+ADelegate EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-709.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void CopyTo(Int32, System.Char[], Int32, Int32)">
+        <size>68</size>
+      </method>
+      <method name="Void CharCopy(Char*, Char*, Int32)">
+        <size>35</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>58</size>
       </method>
     </type>
   </test>

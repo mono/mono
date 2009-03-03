@@ -1,3 +1,5 @@
+// Compiler options: -warnaserror
+
 using System;
 using System.Reflection;
 using System.ComponentModel;
@@ -21,12 +23,14 @@ public delegate CLSDelegate Delegate ();
 public class CLSDelegate {
 }
 
+#pragma warning disable 3019
 internal class CLSClass_5 {
         [CLSCompliant (true)]
         public uint Test () {
                 return 1;
         }
 }
+#pragma warning restore 3019
 
 [CLSCompliant (true)]
 public class CLSClass_4 {
@@ -60,14 +64,14 @@ class CLSClass_1 {
 public class CLSClass {
     
         private class C1 {
-            
+#pragma warning disable 3019            
             [CLSCompliant(true)]
             public class C11 {
                 protected ulong Foo3() {
                     return 1;
                 }
             }
-
+#pragma warning restore 3019
             protected long Foo2() {
                 return 1;
             }
@@ -80,11 +84,12 @@ public class CLSClass {
         	}
 	}
 
-        
-	[CLSCompliant(true)]
+#pragma warning disable 3019, 169
+		[CLSCompliant(true)]
         private ulong Valid() {
                 return 1;
         }
+#pragma warning restore 3019, 169
         
         [CLSCompliant(true)]
         public byte XX {
@@ -98,10 +103,12 @@ public class CLSClass {
         internal UInt32 FooInternal() {
                 return 1;
         }        
-    
+
+#pragma warning disable 169
         private ulong Foo() {
                 return 1;
         }
+#pragma warning restore 169
 
         
         public static void Main() {}

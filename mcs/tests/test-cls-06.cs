@@ -1,3 +1,5 @@
+// Compiler options: -warnaserror
+
 using System;
 
 [assembly:CLSCompliant(true)]
@@ -7,8 +9,11 @@ public delegate uint MyDelegate();
 
 [CLSCompliant(false)]
 public interface IFake {
+#pragma warning disable 3018	
         [CLSCompliant(true)]
         long AA(long arg);
+#pragma warning disable 3018        
+        
         [CLSCompliant(false)]
         ulong BB { get; }
         //[CLSCompliant(false)]
@@ -17,6 +22,7 @@ public interface IFake {
         event MyDelegate MyEvent;
 }
 
+#pragma warning disable 3019
 [CLSCompliant(false)]
 internal interface I {
         [CLSCompliant(false)]
@@ -25,6 +31,7 @@ internal interface I {
         [CLSCompliant(true)]
         ulong this[int indexA] { set; }
 }
+#pragma warning restore 3019
 
 interface I2 {
         int Test(int arg1, bool arg2);

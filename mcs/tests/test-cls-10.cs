@@ -1,3 +1,5 @@
+// Compiler options: -warnaserror
+
 using System;
 [assembly:CLSCompliant (true)]
 
@@ -9,8 +11,10 @@ public interface I {
 
 [CLSCompliant (false)]
 public interface I2 {
+#pragma warning disable 3018	
         [CLSCompliant (true)]
         void Error (long arg);
+#pragma warning disable 3018        
 }
 
 

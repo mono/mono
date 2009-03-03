@@ -1,3 +1,5 @@
+// Compiler options: -warnaserror
+
 using System;
 
 [assembly:CLSCompliant(true)]
