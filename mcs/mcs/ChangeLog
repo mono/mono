@@ -1,3 +1,9 @@
+2009-03-03  Marek Safar  <marek.safar@gmail.com>
+
+	* statement.cs, typemanager.cs: Use expression for StringEmitter.
+	
+	* attribute.cs: Add sanity check.
+
 2009-02-27  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Add external constructor error.

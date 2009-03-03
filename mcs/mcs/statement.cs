@@ -1270,7 +1270,7 @@ namespace Mono.CSharp {
 	// The information about a user-perceived local variable
 	//
 	public class LocalInfo : IKnownVariable, ILocalVariable {
-		public readonly Expression Type;
+		public readonly FullNamedExpression Type;
 
 		public Type VariableType;
 		public readonly string Name;
@@ -1300,8 +1300,8 @@ namespace Mono.CSharp {
 		Flags flags;
 		ReadOnlyContext ro_context;
 		LocalBuilder builder;
-		
-		public LocalInfo (Expression type, string name, Block block, Location l)
+
+		public LocalInfo (FullNamedExpression type, string name, Block block, Location l)
 		{
 			Type = type;
 			Name = name;
@@ -1478,7 +1478,7 @@ namespace Mono.CSharp {
 			// Variables in anonymous block are not resolved yet
 			//
 			if (VariableType == null)
-				return new LocalInfo (Type.Clone (clonectx), Name, clonectx.LookupBlock (Block), Location);
+				return new LocalInfo ((FullNamedExpression) Type.Clone (clonectx), Name, clonectx.LookupBlock (Block), Location);
 
 			//
 			// Variables in method block are resolved
@@ -1873,7 +1873,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			LocalInfo vi = new LocalInfo (type, name, this, l);
+			LocalInfo vi = new LocalInfo ((FullNamedExpression) type, name, this, l);
 			AddVariable (vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
@@ -1911,7 +1911,7 @@ namespace Mono.CSharp {
 		{
 			Report.Error (412, loc, "The type parameter name `{0}' is the same as `{1}'",
 				name, conflict);
-		}					
+		}
 
 		public bool AddConstant (Expression type, string name, Expression value, Location l)
 		{
@@ -3602,6 +3602,7 @@ namespace Mono.CSharp {
 		public static void Reset ()
 		{
 			unique_counter = 0;
+			allowed_types = null;
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -4299,81 +4300,51 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class StringEmitter : Emitter {
-			class StringPtr : Expression
-			{
-				LocalBuilder b;
-
-				public StringPtr (LocalBuilder b, Location l)
-				{
-					this.b = b;
-					eclass = ExprClass.Value;
-					type = TypeManager.char_ptr_type;
-					loc = l;
-				}
-
-				public override Expression CreateExpressionTree (EmitContext ec)
-				{
-					throw new NotSupportedException ("ET");
-				}
-
-				public override Expression DoResolve (EmitContext ec)
-				{
-					// This should never be invoked, we are born in fully
-					// initialized state.
-
-					return this;
-				}
-
-				public override void Emit (EmitContext ec)
-				{
-					if (TypeManager.int_get_offset_to_string_data == null) {
-						// TODO: Move to resolve !!
-						TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedMethod (
-							TypeManager.runtime_helpers_type, "get_OffsetToStringData", loc, Type.EmptyTypes);
-					}
-
-					ILGenerator ig = ec.ig;
-
-					ig.Emit (OpCodes.Ldloc, b);
-					ig.Emit (OpCodes.Conv_I);
-					ig.Emit (OpCodes.Call, TypeManager.int_get_offset_to_string_data);
-					ig.Emit (OpCodes.Add);
-				}
-			}
-
-			LocalBuilder pinned_string;
-			Location loc;
+		class StringEmitter : Emitter
+		{
+			LocalInfo pinned_string;
 
 			public StringEmitter (Expression expr, LocalInfo li, Location loc):
 				base (expr, li)
 			{
-				this.loc = loc;
+				pinned_string = new LocalInfo (new TypeExpression (TypeManager.string_type, loc), null, null, loc);
+				pinned_string.Pinned = true;
 			}
 
 			public override void Emit (EmitContext ec)
 			{
-				ILGenerator ig = ec.ig;
-				pinned_string = TypeManager.DeclareLocalPinned (ig, TypeManager.string_type);
-					
-				converted.Emit (ec);
-				ig.Emit (OpCodes.Stloc, pinned_string);
-
-				Expression sptr = new StringPtr (pinned_string, loc);
-				converted = Convert.ImplicitConversionRequired (
-					ec, sptr, vi.VariableType, loc);
-					
-				if (converted == null)
-					return;
+				pinned_string.Resolve (ec);
+				pinned_string.ResolveVariable (ec);
 
 				converted.Emit (ec);
+				pinned_string.EmitAssign (ec);
+
+				PropertyInfo p = TypeManager.int_get_offset_to_string_data;
+				if (p == null) {
+					// TODO: Move to resolve
+					p = TypeManager.int_get_offset_to_string_data = TypeManager.GetPredefinedProperty (
+						TypeManager.runtime_helpers_type, "OffsetToStringData", pinned_string.Location, TypeManager.int32_type);
+
+					if (p == null)
+						return;
+				}
+
+				// TODO: Should use Binary::Add
+				pinned_string.Emit (ec);
+				ec.ig.Emit (OpCodes.Conv_I);
+
+				PropertyExpr pe = new PropertyExpr (pinned_string.VariableType, p, pinned_string.Location);
+				//pe.InstanceExpression = pinned_string;
+				pe.Resolve (ec).Emit (ec);
+
+				ec.ig.Emit (OpCodes.Add);
 				vi.EmitAssign (ec);
 			}
 
 			public override void EmitExit (EmitContext ec)
 			{
 				ec.ig.Emit (OpCodes.Ldnull);
-				ec.ig.Emit (OpCodes.Stloc, pinned_string);
+				pinned_string.EmitAssign (ec);
 			}
 		}
 

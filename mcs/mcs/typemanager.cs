@@ -47,7 +47,6 @@ namespace Mono.CSharp {
 	static public Type float_type;
 	static public Type double_type;
 	static public Type char_type;
-	static public Type char_ptr_type;
 	static public Type short_type;
 	static public Type decimal_type;
 	static public Type bool_type;
@@ -156,7 +155,7 @@ namespace Mono.CSharp {
 	static public MethodInfo void_initializearray_array_fieldhandle;
 	static public MethodInfo delegate_combine_delegate_delegate;
 	static public MethodInfo delegate_remove_delegate_delegate;
-	static public MethodInfo int_get_offset_to_string_data;
+	static public PropertyInfo int_get_offset_to_string_data;
 	static public MethodInfo int_interlocked_compare_exchange;
 	static public PropertyInfo ienumerator_getcurrent;
 	public static MethodInfo methodbase_get_type_from_handle;
@@ -304,13 +303,13 @@ namespace Mono.CSharp {
 		void_initializearray_array_fieldhandle =
 		delegate_combine_delegate_delegate =
 		delegate_remove_delegate_delegate =
-		int_get_offset_to_string_data =
 		int_interlocked_compare_exchange =
 		methodbase_get_type_from_handle =
 		methodbase_get_type_from_handle_generic =
 		fieldinfo_get_field_from_handle =
 		activator_create_instance = null;
 
+		int_get_offset_to_string_data =
 		ienumerator_getcurrent = null;
 
 		void_decimal_ctor_five_args =
@@ -1069,7 +1068,6 @@ namespace Mono.CSharp {
 		null_type = typeof (NullLiteral);
 		
 		void_ptr_type = GetPointerType (void_type);
-		char_ptr_type = GetPointerType (char_type);
 
 		//
 		// Initialize InternalsVisibleTo as the very first optional type. Otherwise we would populate

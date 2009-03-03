@@ -485,12 +485,12 @@ namespace Mono.CSharp {
 			}
 			
 			MethodGroupExpr mg = MemberLookupFinal (ec, ec.ContainerType,
-				Type, ".ctor", MemberTypes.Constructor,
+				Type, ConstructorInfo.ConstructorName, MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				Location) as MethodGroupExpr;
 
 			if (mg == null)
-				return null;
+				throw new NotImplementedException ();
 
 			mg = mg.OverloadResolve (ec, ref PosArguments, false, Location);
 			if (mg == null)
