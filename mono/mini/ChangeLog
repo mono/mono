@@ -1,5 +1,10 @@
 2009-03-04  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c: Don't inline methods that use JMP.  Fixes
+	#481403.
+
+2009-03-04  Mark Probst  <mark.probst@gmail.com>
+
 	* exceptions-x86.c: Include debug-mini.h - fixes build.
 
 2009-03-04  Martin Baulig  <martin@ximian.com>

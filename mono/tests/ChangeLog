@@ -1,3 +1,9 @@
+2009-03-04  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-481403.il: New test.
+
+	* Makefile.am: Test added.
+
 2009-02-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* invoke.cs: Add a test.
