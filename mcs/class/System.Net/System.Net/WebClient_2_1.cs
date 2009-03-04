@@ -162,15 +162,17 @@ namespace System.Net
 //			set { credentials = value; }
 //		}
 //
-//		public WebHeaderCollection Headers {
-//			get {
+		public WebHeaderCollection Headers {
+			get {
+				throw new NotImplementedException ();
 //				if (headers == null)
 //					headers = new WebHeaderCollection ();
 //
 //				return headers;
-//			}
+			}
+			set { throw new NotImplementedException (); }
 //			set { headers = value; }
-//		}
+		}
 //		
 //		public NameValueCollection QueryString {
 //			get {
@@ -187,14 +189,16 @@ namespace System.Net
 //		}
 //
 //#if NET_2_0
-//		public Encoding Encoding {
+		public Encoding Encoding {
+			get { throw new NotImplementedException (); }
 //			get { return encoding; }
-//			set {
+			set {
+				throw new NotImplementedException ();
 //				if (value == null)
 //					throw new ArgumentNullException ("value");
 //				encoding = value;
-//			}
-//		}
+			}
+		}
 //
 //		public IWebProxy Proxy {
 //			get { return proxy; }
@@ -204,6 +208,11 @@ namespace System.Net
 //
 		public bool IsBusy {
 			get { return is_busy; }
+		}
+
+		public bool AllowReadStreamBuffering {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
 		}
 
 		// Methods
@@ -801,12 +810,13 @@ namespace System.Net
 		public event DownloadProgressChangedEventHandler DownloadProgressChanged;
 		public event DownloadStringCompletedEventHandler DownloadStringCompleted;
 		public event OpenReadCompletedEventHandler OpenReadCompleted;
-//		public event OpenWriteCompletedEventHandler OpenWriteCompleted;
+		public event OpenWriteCompletedEventHandler OpenWriteCompleted;
 //		public event UploadDataCompletedEventHandler UploadDataCompleted;
 //		public event UploadFileCompletedEventHandler UploadFileCompleted;
-//		public event UploadProgressChangedEventHandler UploadProgressChanged;
-//		public event UploadStringCompletedEventHandler UploadStringCompleted;
+		public event UploadProgressChangedEventHandler UploadProgressChanged;
+		public event UploadStringCompletedEventHandler UploadStringCompleted;
 //		public event UploadValuesCompletedEventHandler UploadValuesCompleted;
+		public event WriteStreamClosedEventHandler WriteStreamClosed;
 //#endif
 //
 //		Uri CreateUri (string address)
@@ -1186,18 +1196,19 @@ namespace System.Net
 
 //		//    OpenWriteAsync
 //
-//		public void OpenWriteAsync (Uri address)
-//		{
-//			OpenWriteAsync (address, null);
-//		}
-//
-//		public void OpenWriteAsync (Uri address, string method)
-//		{
-//			OpenWriteAsync (address, method, null);
-//		}
-//
-//		public void OpenWriteAsync (Uri address, string method, object userToken)
-//		{
+		public void OpenWriteAsync (Uri address)
+		{
+			OpenWriteAsync (address, null);
+		}
+
+		public void OpenWriteAsync (Uri address, string method)
+		{
+			OpenWriteAsync (address, method, null);
+		}
+
+		public void OpenWriteAsync (Uri address, string method, object userToken)
+		{
+			throw new NotImplementedException ();
 //			if (address == null)
 //				throw new ArgumentNullException ("address");
 //
@@ -1225,7 +1236,7 @@ namespace System.Net
 //				object [] cb_args = new object [] {address, method, userToken};
 //				async_thread.Start (cb_args);
 //			}
-//		}
+		}
 //
 //		//    UploadDataAsync
 //
@@ -1316,18 +1327,19 @@ namespace System.Net
 //
 //		//    UploadStringAsync
 //
-//		public void UploadStringAsync (Uri address, string data)
-//		{
-//			UploadStringAsync (address, null, data);
-//		}
-//
-//		public void UploadStringAsync (Uri address, string method, string data)
-//		{
-//			UploadStringAsync (address, method, data, null);
-//		}
-//
-//		public void UploadStringAsync (Uri address, string method, string data, object userToken)
-//		{
+		public void UploadStringAsync (Uri address, string data)
+		{
+			UploadStringAsync (address, null, data);
+		}
+
+		public void UploadStringAsync (Uri address, string method, string data)
+		{
+			UploadStringAsync (address, method, data, null);
+		}
+
+		public void UploadStringAsync (Uri address, string method, string data, object userToken)
+		{
+			throw new NotImplementedException ();
 //			if (address == null)
 //				throw new ArgumentNullException ("address");
 //			if (data == null)
@@ -1354,7 +1366,7 @@ namespace System.Net
 //				object [] cb_args = new object [] {address, method, data, userToken};
 //				async_thread.Start (cb_args);
 //			}
-//		}
+		}
 //
 //		//    UploadValuesAsync
 //
@@ -1467,12 +1479,12 @@ namespace System.Net
 		}
 
 
-//		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
-//		{
-//			CompleteAsync ();
-//			if (OpenWriteCompleted != null)
-//				OpenWriteCompleted (this, args);
-//		}
+		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
+		{
+			CompleteAsync ();
+			if (OpenWriteCompleted != null)
+				OpenWriteCompleted (this, args);
+		}
 //
 //		protected virtual void OnUploadDataCompleted (UploadDataCompletedEventArgs args)
 //		{
@@ -1488,18 +1500,18 @@ namespace System.Net
 //				UploadFileCompleted (this, args);
 //		}
 //
-//		protected virtual void OnUploadProgressChanged (UploadProgressChangedEventArgs e)
-//		{
-//			if (UploadProgressChanged != null)
-//				UploadProgressChanged (this, e);
-//		}
-//
-//		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs args)
-//		{
-//			CompleteAsync ();
-//			if (UploadStringCompleted != null)
-//				UploadStringCompleted (this, args);
-//		}
+		protected virtual void OnUploadProgressChanged (UploadProgressChangedEventArgs e)
+		{
+			if (UploadProgressChanged != null)
+				UploadProgressChanged (this, e);
+		}
+
+		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs args)
+		{
+			CompleteAsync ();
+			if (UploadStringCompleted != null)
+				UploadStringCompleted (this, args);
+		}
 //
 //		protected virtual void OnUploadValuesCompleted (UploadValuesCompletedEventArgs args)
 //		{
@@ -1508,21 +1520,26 @@ namespace System.Net
 //				UploadValuesCompleted (this, args);
 //		}
 //
-//		[MonoNotSupported("")]
-//		protected virtual WebRequest GetWebRequest (Uri address)
-//		{
-//			throw new NotImplementedException ();
-//		}
+		protected virtual void OnWriteStreamClosed (WriteStreamClosedEventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoNotSupported("")]
+		protected virtual WebRequest GetWebRequest (Uri address)
+		{
+			throw new NotImplementedException ();
+		}
 //
 //		protected virtual WebResponse GetWebResponse (WebRequest request)
 //		{
 //			return request.GetResponse ();
 //		}
 //
-//		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
-//		{
-//			return request.EndGetResponse (result);
-//		}
+		protected virtual WebResponse GetWebResponse (WebRequest request, IAsyncResult result)
+		{
+			return request.EndGetResponse (result);
+		}
 //#endif
 #endif
 	}

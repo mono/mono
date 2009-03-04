@@ -1,3 +1,9 @@
+2009-03-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WebClient_2_1.cs: Stub out missing methods.
+	* WriteStreamClosedEventArgs_2_1.cs: 
+	* WriteStreamClosedEventHandler_2_1.cs: Added.
+
 2009-02-05  Geoff Norton  <gnorton@novell.com>
 
 	* WebClient_2_1.cs: Use g_timeout_add instead of g_idle_add here until

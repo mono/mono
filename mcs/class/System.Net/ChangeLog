@@ -1,3 +1,8 @@
+2009-03-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* System.Net.dll.sources: Added WriteStreamClosedEventArgs_2_1.cs
+	  and WriteStreamClosedEventHandler_2_1.cs
+
 2009-02-24  Alan McGovern  <amcgovern@novell.com>
 
 	* System.Net/WebClient_2_1.cs: If we're getting text, ensure we
