@@ -77,6 +77,7 @@ namespace Mono.Cecil {
 				if (module.Image.CLIHeader.Metadata.VirtualAddress != RVA.Zero)
 					ResetImage (module);
 
+			asm.MetadataToken = new MetadataToken (TokenType.Assembly, 1);
 			ReflectionWriter rw = asm.MainModule.Controller.Writer;
 			rw.StructureWriter = this;
 
@@ -209,6 +210,7 @@ namespace Mono.Cecil {
 					0);
 
 				modTable.Rows.Add (modRow);
+				module.MetadataToken = new MetadataToken (TokenType.Module, 1);
 			} else {
 				// multiple module assemblies
 				throw new NotImplementedException ();
