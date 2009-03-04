@@ -1295,8 +1295,16 @@ namespace System.Windows.Forms {
 				return topLeftHeaderCell;
 			}
 			set {
+				if (topLeftHeaderCell == value)
+					return;
+
+				if (topLeftHeaderCell != null)
+					topLeftHeaderCell.SetDataGridView (null);
+
 				topLeftHeaderCell = value;
-				topLeftHeaderCell.SetDataGridView (this);
+
+				if (topLeftHeaderCell != null)
+					topLeftHeaderCell.SetDataGridView (this);
 			}
 		}
 

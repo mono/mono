@@ -1,3 +1,13 @@
+2009-03-04  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs, DataGridViewElement.cs: 
+	   - Always calls OnDataGridViewChanged() if the new DGV is 
+	   not the same/null as the current one.
+	   - Do not throw NREs when setting TopLeftHeaderCell to null
+	   - Unset the DGV for TopLeftHeaderCell when replacing it
+	  Based on a patch by Tom Hindle <tom_hindle@sil.org>
+	  [Fixes bug #481681]
+
 2009-03-04  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDown.cs: When dismissing control due to ESC, don't
