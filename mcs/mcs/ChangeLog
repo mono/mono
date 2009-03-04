@@ -1,3 +1,8 @@
+2009-03-04  Marek Safar  <marek.safar@gmail.com>
+
+	* statement.cs: Fixed an issue when using variable is of interface
+	type.
+
 2009-03-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #480319
