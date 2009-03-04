@@ -44,9 +44,9 @@ namespace System.Net {
 		// The IP address is stored in little-endian order inside the int, 
 		// meaning the lower order bytes contain the netid
 		private long m_Address;
-		private AddressFamily m_Family = AddressFamily.InterNetwork;
-		private ushort[] m_Numbers = new ushort[8];	/// ip6 Stored in network order (as ip4)
-		private long m_ScopeId = 0;
+		private AddressFamily m_Family;
+		private ushort[] m_Numbers;	/// ip6 Stored in network order (as ip4)
+		private long m_ScopeId;
 
 		public static readonly IPAddress Any = new IPAddress(0);
 		public static readonly IPAddress Broadcast = IPAddress.Parse ("255.255.255.255");
@@ -130,6 +130,7 @@ namespace System.Net {
 		public IPAddress (long addr)
 		{
 			m_Address = addr;
+			m_Family = AddressFamily.InterNetwork;
 		}
 
 		public IPAddress (byte[] address)
@@ -149,12 +150,14 @@ namespace System.Net {
 #endif
 
 			if (len == 16) {
+				m_Numbers = new ushort [8];
 				Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
 				m_Family = AddressFamily.InterNetworkV6;
 				m_ScopeId = 0;
 			} else {
 				m_Address = ((uint) address [3] << 24) + (address [2] << 16) +
 					(address [1] << 8) + address [0];
+				m_Family = AddressFamily.InterNetwork;
 			}
 		}
 
@@ -171,6 +174,7 @@ namespace System.Net {
 				throw new ArgumentException("address");
 #endif
 
+			m_Numbers = new ushort [8];
 			Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
 			m_Family = AddressFamily.InterNetworkV6;
 			m_ScopeId = scopeId;

@@ -1,3 +1,7 @@
+2009-03-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* IPAddress.cs: don't allocate the IPv6 array for IPv4 addresses.
+
 2009-02-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebClient.cs: append the QueryString in DownloadData.
