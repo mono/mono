@@ -940,6 +940,10 @@ namespace System.Windows.Forms
 				case Keys.Escape:
 					this.Dismiss (ToolStripDropDownCloseReason.Keyboard);
 					
+					// ContextMenuStrip won't have a parent
+					if (this.OwnerItem == null)
+						return true;
+						
 					ToolStrip parent_strip = this.OwnerItem.Parent;
 					ToolStripManager.SetActiveToolStrip (parent_strip, true);
 					

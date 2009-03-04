@@ -1,3 +1,9 @@
+2009-03-04  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDown.cs: When dismissing control due to ESC, don't
+	hit a NRE if we are a ContextMenuStrip and do not have a parent.
+	[Fixes bug #478616]
+
 2009-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: When removing items from a ListViewItemCollection
