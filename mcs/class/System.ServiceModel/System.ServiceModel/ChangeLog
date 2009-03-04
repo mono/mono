@@ -1,5 +1,10 @@
 2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CrossDomainAccessManager.cs : 2.1 WebRequest misses some
+ 	  members used here.
+
+2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CrossDomainAccessManager.cs, ClientAccessPolicy.cs,
 	  CrossDomainPolicy.cs : new. support cross domain access check.
 

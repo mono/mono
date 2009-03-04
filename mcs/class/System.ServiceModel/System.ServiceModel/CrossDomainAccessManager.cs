@@ -81,8 +81,8 @@ namespace System.ServiceModel
 		{
 			var m = new CrossDomainAccessManager (applicationUri);
 
-			var wreq = WebRequest.Create (new Uri (applicationUri, "/clientaccesspolicy.xml"));
-			var wres = (HttpWebResponse) wreq.GetResponse ();
+			var wreq = (HttpWebRequest) WebRequest.Create (new Uri (applicationUri, "/clientaccesspolicy.xml"));
+			var wres = (HttpWebResponse) wreq.EndGetResponse (wreq.BeginGetResponse (null, null));
 			if ((int) wres.StatusCode >= 400)
 				try {
 					using (var xr = XmlReader.Create (wres.GetResponseStream ()))
@@ -95,8 +95,8 @@ namespace System.ServiceModel
 			if (m.Client != null)
 				return m;
 
-			wreq = WebRequest.Create (new Uri (applicationUri, "/crossdomain.xml"));
-			wres = (HttpWebResponse) wreq.GetResponse ();
+			wreq = (HttpWebRequest) WebRequest.Create (new Uri (applicationUri, "/crossdomain.xml"));
+			wres = (HttpWebResponse) wreq.EndGetResponse (wreq.BeginGetResponse (null, null));
 			if ((int) wres.StatusCode >= 400)
 				try {
 					using (var xr = XmlReader.Create (wres.GetResponseStream ()))
