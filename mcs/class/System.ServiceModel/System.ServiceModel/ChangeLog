@@ -1,5 +1,11 @@
 2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CrossDomainPolicy.cs : added validation method. Not sure if it is
+	  complete.
+	* CrossDomainAccessManager.cs : validate against crossdomain.xml too.
+
+2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CrossDomainAccessManager.cs : replace reflection-based
 	  Uri retrieval with actually working one.
 

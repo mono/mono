@@ -142,6 +142,8 @@ namespace System.ServiceModel
 						return true;
 			}
 			else if (Domain != null) {
+				if (Domain.IsAllowed (uri, headerKeys))
+					return true;
 			}
 Console.WriteLine ("##### Cross Domain Access Manager rejected '{0}' with headers {1}", uri, String.Join (",", headerKeys));
 			return false;

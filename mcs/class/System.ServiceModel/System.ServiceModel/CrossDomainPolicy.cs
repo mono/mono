@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 
 /*
@@ -103,23 +104,66 @@ public static void Main (string [] args)
 		public List<AllowHttpRequestHeadersFrom> AllowedHttpRequestHeaders { get; private set; }
 		public List<AllowAccessFromIdentity> AllowedIdentities { get; private set; }
 
+		public bool IsAllowed (Uri uri, string [] headerKeys)
+		{
+			// FIXME: handle site-control
+
+			if (AllowedAccesses.Count > 0 &&
+			    !AllowedAccesses.Any (a => a.IsAllowed (uri, headerKeys)))
+				return false;
+			if (AllowedHttpRequestHeaders.Count > 0 && 
+			    AllowedHttpRequestHeaders.Any (h => h.IsRejected (uri, headerKeys)))
+				return false;
+			if (AllowedIdentities.Count > 0 &&
+			    !AllowedIdentities.Any (a => a.IsAllowed (uri, headerKeys)))
+				return false;
+			return true;
+		}
+
 		public class AllowAccessFrom
 		{
-			public AllowAccessFrom ()
-			{
-				throw new XmlException ("Silverlight does not support allow-access-from specification in cross-domain.xml");
-			}
-
 			public string Domain { get; set; }
-			public string ToPorts { get; set; }
+			public bool AllowAnyPort { get; set; }
+			public int [] ToPorts { get; set; }
 			public bool Secure { get; set; }
+
+			public bool IsAllowed (Uri uri, string [] headerKeys)
+			{
+				if (!uri.Host.EndsWith (Domain, StringComparison.Ordinal))
+					return false;
+				if (!AllowAnyPort && ToPorts != null && Array.IndexOf (ToPorts, uri.Port) < 0)
+					return false;
+				if (Secure && uri.Scheme != Uri.UriSchemeHttps)
+					return false;
+				return true;
+			}
 		}
 
 		public class AllowHttpRequestHeadersFrom
 		{
 			public string Domain { get; set; }
-			public string Headers { get; set; }
+			public bool AllowAllHeaders { get; set; }
+			public string [] Headers { get; private set; }
 			public bool Secure { get; set; }
+
+			public void SetHeaders (string headers)
+			{
+				if (headers == "*")
+					AllowAllHeaders = true;
+				else
+					Headers = headers.Split (',');
+			}
+
+			public bool IsRejected (Uri uri, string [] headerKeys)
+			{
+				if (!uri.Host.EndsWith (Domain, StringComparison.Ordinal))
+					return false;
+				if (headerKeys.Any (s => Array.IndexOf (Headers, s) < 0))
+					return true;
+				if (Secure && uri.Scheme != Uri.UriSchemeHttps)
+					return true;
+				return false;
+			}
 		}
 
 		public class AllowAccessFromIdentity
@@ -131,6 +175,11 @@ public static void Main (string [] args)
 
 			public string Fingerprint { get; set; }
 			public string FingerprintAlgorithm { get; set; }
+
+			public bool IsAllowed (Uri uri, string [] headerKeys)
+			{
+				throw new InvalidOperationException ("Silverlight does not support allow-access-from specification in cross-domain.xml");
+			}
 		}
 
 		class CrossDomainPolicyReader
@@ -167,16 +216,20 @@ public static void Main (string [] args)
 					case "allow-access-from":
 						var a = new AllowAccessFrom () {
 							Domain = reader.GetAttribute ("domain"),
-							ToPorts = reader.GetAttribute ("to-ports"),
 							Secure = reader.GetAttribute ("secure") == "true" };
+						var p = reader.GetAttribute ("to-ports");
+						if (p == "*")
+							a.AllowAnyPort = true;
+						else if (p != null)
+							a.ToPorts = Array.ConvertAll<string, int> (p.Split (','), s => XmlConvert.ToInt32 (s));
 						cdp.AllowedAccesses.Add (a);
 						reader.Skip ();
 						break;
 					case "allow-http-request-headers-from":
 						var h = new AllowHttpRequestHeadersFrom () {
 							Domain = reader.GetAttribute ("domain"),
-							Headers = reader.GetAttribute ("headers"),
 							Secure = reader.GetAttribute ("secure") == "true" };
+						h.SetHeaders (reader.GetAttribute ("headers"));
 						cdp.AllowedHttpRequestHeaders.Add (h);
 						reader.Skip ();
 						break;
