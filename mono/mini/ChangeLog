@@ -1,3 +1,27 @@
+2009-03-04  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (mono_debugger_runtime_invoke): Moved here from
+	../metadata/mono-debug-debugger.c; save and reset exception state.
+
+2009-03-02  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c: Moved the debugger exception handling here from
+	../metadata/mono-debug-debugger.c.
+
+	* debug-mini.h
+	(MonoDebuggerExceptionAction): New exception typedef.
+
+	* debug-mini.c
+	(MonoDebuggerThreadInfo): Added `MonoObject *last_exception'.
+
+	* exceptions-amd64.c
+	(mono_amd64_throw_exception): Use the new debugger exception
+	handling code.
+
+	* mini-exceptions.c
+	(mono_handle_exception_internal): Don't call
+	mono_debugger_unhandled_exception() here.
+
 2009-03-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c aot-compiler.c: Update after the changes to 
