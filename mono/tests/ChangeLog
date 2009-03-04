@@ -1,5 +1,9 @@
 2009-03-04  Mark Probst  <mark.probst@gmail.com>
 
+	* Makefile.am: Erroneous change reverted.
+
+2009-03-04  Mark Probst  <mark.probst@gmail.com>
+
 	* bug-481403.il: New test.
 
 	* Makefile.am: Test added.
