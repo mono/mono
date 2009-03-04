@@ -65,16 +65,16 @@ namespace System.ServiceModel
 
 		static Uri GetApplicationDocumentUri ()
 		{
-			var assembly = Assembly.Load ("System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
+			var assembly = Assembly.Load ("System.Windows, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
 			if (assembly == null)
-				throw new InvalidOperationException ("Can not load System.Windows.Browser");
+				throw new InvalidOperationException ("Can not load System.Windows.dll");
 
-			var type = assembly.GetType ("System.Windows.Browser.HtmlPage");
+			var type = assembly.GetType ("System.Windows.Interop.PluginHost");
 			if (type == null)
 				throw new InvalidOperationException ("Can not get HtmlPage");
 
-			object document = type.GetProperty ("Document").GetValue (null, null);
-			return (Uri) document.GetType ().GetProperty ("DocumentUri").GetValue (document, null);
+			var prop = type.GetProperty ("RootUri");
+			return (Uri) prop.GetValue (null, null);
 		}
 
 		public static CrossDomainAccessManager CreateForUri (Uri applicationUri)
@@ -130,7 +130,6 @@ namespace System.ServiceModel
 
 		public bool IsAllowed (Uri uri, params string [] headerKeys)
 		{
-
 			if (uri.Host == ApplicationUri.Host)
 				return true;
 
@@ -144,6 +143,7 @@ namespace System.ServiceModel
 			}
 			else if (Domain != null) {
 			}
+Console.WriteLine ("##### Cross Domain Access Manager rejected '{0}' with headers {1}", uri, String.Join (",", headerKeys));
 			return false;
 		}
 	}

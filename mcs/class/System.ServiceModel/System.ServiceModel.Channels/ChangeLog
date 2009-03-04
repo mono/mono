@@ -1,3 +1,7 @@
+2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : use cross domain access manager.
+
 2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Message.cs : (in CreateBufferedCopy) do not pass the entire

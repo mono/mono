@@ -1,5 +1,10 @@
 2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CrossDomainAccessManager.cs : replace reflection-based
+	  Uri retrieval with actually working one.
+
+2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CrossDomainAccessManager.cs : 2.1 WebRequest misses some
  	  members used here.
 
