@@ -1186,6 +1186,23 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[0].GetType ().ToString (), "A1");
 		}
 
+
+		[Test]
+		public void ColumnCountDecrease ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.ColumnCount = 6;
+			Assert.AreEqual (6, dgv.ColumnCount, "A1");
+
+			dgv.ColumnCount = 3;
+			Assert.AreEqual (3, dgv.ColumnCount, "A2");
+			
+			// Increasing the ColumnCount adds TextBoxColumns, not generic columns
+			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[0].GetType ().ToString (), "A3");
+			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[1].GetType ().ToString (), "A4");
+			Assert.AreEqual ("System.Windows.Forms.DataGridViewTextBoxColumn", dgv.Columns[2].GetType ().ToString (), "A5");
+		}
+
 		private class DataItem
 		{
 			public string Text {
@@ -1499,7 +1516,28 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (1, dgv.Rows[1].Index, "A4");
 			Assert.AreEqual (2, dgv.Rows[2].Index, "A5");
 		}
-		
+
+		[Test]
+		public void RowCountDecrease ()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "A1");
+			Assert.AreEqual (1, dgv.ColumnCount, "A2");
+
+			dgv.RowCount = 3;
+			Assert.AreEqual (3, dgv.RowCount, "A3");
+			Assert.AreEqual (0, dgv.Rows[0].Index, "A4");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "A5");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "A6");
+
+			try {
+				dgv.RowCount = 0;
+				Assert.Fail ("C1");
+			} catch {}
+		}
+
 		[Test]
 		public void BindToReadonlyProperty ()
 		{

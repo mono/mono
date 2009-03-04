@@ -1,5 +1,9 @@
 2009-03-04  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewTest.cs: Add tests for RowCount/ColumnCount decreasing.
+
+2009-03-04  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewCellTest.cs: Add tests for OnDataGridViewChanged behavior.
 
 2009-02-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>

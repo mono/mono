@@ -579,7 +579,7 @@ namespace System.Windows.Forms {
 					throw new InvalidOperationException("Cant change column count if DataSource is set.");
 				}
 				if (value < columns.Count) {
-					for (int i = value; i < columns.Count; i++) {
+					for (int i = columns.Count -1; i >= value; i--) {
 						columns.RemoveAt(i);
 					}
 				}
@@ -1008,7 +1008,12 @@ namespace System.Windows.Forms {
 					throw new InvalidOperationException("Cant change row count if DataSource is set.");
 				}
 				if (value < rows.Count) {
-					for (int i = value; i < rows.Count; i++) {
+					int removeRangeEndIndex = rows.Count - 1;
+					if (AllowUserToAddRows)
+						removeRangeEndIndex--;
+					int removeRangeStartIndex = removeRangeEndIndex - (value - 1);
+
+					for (int i = removeRangeEndIndex; i >= removeRangeStartIndex; i--) {
 						rows.RemoveAt(i);
 					}
 				}

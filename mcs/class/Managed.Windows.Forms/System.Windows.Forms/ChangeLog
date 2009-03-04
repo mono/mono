@@ -1,5 +1,12 @@
 2009-03-04  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Fix RowCount/ColumnCount decreasing.
+
+	  Based on a patch by Tom Hindle <tom_hindle@sil.org>
+	  [Fixes bug #482133]
+
+2009-03-04  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewElement.cs: 
 	   - Always calls OnDataGridViewChanged() if the new DGV is 
 	   not the same/null as the current one.
