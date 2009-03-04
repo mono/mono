@@ -1,3 +1,26 @@
+2009-03-04  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(mono_debugger_runtime_invoke): Removed.
+
+	* mono-debug-debugger.c
+	(mono_runtime_invoke): Moved into ../mini/debug-mini.c.
+
+2009-03-02  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(mono_debugger_unhandled_exception): Removed.
+	(mono_debugger_handle_exception): Removed.
+	(mono_debugger_throw_exception): Removed.
+
+	* mono-debug.h (MONO_DEBUGGER_MINOR_VERSION): Bump to 1.
+
+	* mono-debug.c
+	(mono_debug_debugger_version): Bump to 5.
+
+	* mono-debug-debugger.c: Moved the exception handling code to
+	../mini/debug-mini.c
+
 2009-02-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c: make the check to avoid copying when the assembly is
