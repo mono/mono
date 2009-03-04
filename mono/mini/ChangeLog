@@ -1,3 +1,10 @@
+2009-03-04  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: Don't inline methods that use JMP.  Fixes
+	#481403.
+
+	Backport of r128552.
+
 2009-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_this_arg_from_call): Avoid expensive calls
