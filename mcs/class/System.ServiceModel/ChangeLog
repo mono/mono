@@ -1,3 +1,8 @@
+2009-03-04  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources :
+	  added cross domain checker sources.
+
 2009-02-19  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources,
