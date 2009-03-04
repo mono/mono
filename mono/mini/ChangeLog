@@ -1,3 +1,8 @@
+2009-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_line_number_info): Add some debug code to help track
+	down an assert.
+
 2009-03-04  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Don't inline methods that use JMP.  Fixes
