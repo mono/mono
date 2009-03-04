@@ -605,10 +605,6 @@ namespace System.Web {
 
 		static void DoUnload (object state)
 		{
-			if (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") == null)
-				System.Web.Hosting.ApplicationHost.ClearDynamicBaseDirectory (
-					AppDomain.CurrentDomain.SetupInformation.DynamicBase
-				);
 #if TARGET_J2EE
 			// No unload support for appdomains under Grasshopper
 #else
