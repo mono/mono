@@ -24202,7 +24202,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>32</size>
+        <size>36</size>
       </method>
     </type>
     <type name="Blah">
@@ -30202,11 +30202,16 @@
   </test>
   <test name="test-498.cs">
     <type name="C">
+      <method name="Int32 Main()">
+        <size>81</size>
+      </method>
+    </type>
+    <type name="A">
       <method name="Void .ctor(Single)">
         <size>0</size>
       </method>
-      <method name="Int32 Main()">
-        <size>39</size>
+      <method name="Int32 get_Foo()">
+        <size>0</size>
       </method>
     </type>
   </test>
@@ -34901,6 +34906,61 @@
     <type name="C">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-711.cs">
+    <type name="N.Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor(Int32)">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-712.cs">
+    <type name="Hello">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>22</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-713.cs">
+    <type name="DispBar">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="IDisposable GetBar()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>11</size>
+      </method>
+      <method name="Boolean TryThing()">
+        <size>46</size>
       </method>
       <method name="Void Main()">
         <size>7</size>
