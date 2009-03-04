@@ -9,6 +9,15 @@
 
 2009-03-04  Martin Baulig  <martin@ximian.com>
 
+	* debug-mini.c: Clean up the exception API and add documentation.
+	(mono_debugger_handle_exception): New public method; this is
+	called when throwing an exception or encountering an unhandled one.
+	(mono_debugger_call_exception_handler): Formerly known as
+	mono_debugger_handle_exception(); this is used to tell the
+	debugger that we're about to invoke an exception handler.
+
+2009-03-04  Martin Baulig  <martin@ximian.com>
+
 	* debug-mini.c (mono_debugger_runtime_invoke): Moved here from
 	../metadata/mono-debug-debugger.c; save and reset exception state.
 
