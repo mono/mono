@@ -519,7 +519,7 @@ namespace System.Web {
 				return;
 			}
 
-			headers.Add (name, value);
+			Headers.Add (name, value);
 		}
 
 		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
