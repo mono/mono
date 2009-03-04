@@ -215,7 +215,7 @@ namespace System.Text.RegularExpressions {
 		private void ResetGroups () {
 			int n = groups.Length;
 			if (marks == null)
-				marks = new Mark [n * 10];
+				marks = new Mark [n];
 
 			for (int i = 0; i < n; ++ i) {
 				groups [i] = i;
