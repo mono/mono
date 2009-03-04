@@ -1,3 +1,7 @@
+2009-03-04  Mark Probst  <mark.probst@gmail.com>
+
+	* exceptions-x86.c: Include debug-mini.h - fixes build.
+
 2009-03-04  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c (mono_debugger_runtime_invoke): Moved here from
