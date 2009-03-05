@@ -402,9 +402,9 @@ namespace Mono.CSharp
 
 				// Extern aliased refs require special handling
 				if (alias == null)
-					RootNamespace.Global.AddAssemblyReference (a);
+					GlobalRootNamespace.Instance.AddAssemblyReference (a);
 				else
-					RootNamespace.DefineRootNamespace (alias, a);
+					GlobalRootNamespace.Instance.DefineRootNamespace (alias, a);
 
 			} catch (BadImageFormatException f) {
 				// .NET 2.0 throws this if we try to load a module without an assembly manifest ...
@@ -444,7 +444,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				RootNamespace.Global.AddModuleReference (m);
+				GlobalRootNamespace.Instance.AddModuleReference (m);
 
 			} catch (BadImageFormatException f) {
 				Error9 ("module", f.FileName, f.FusionLog);
@@ -476,7 +476,7 @@ namespace Mono.CSharp
 			foreach (DictionaryEntry entry in external_aliases)
 				LoadAssembly ((string) entry.Value, (string) entry.Key, false);
 				
-			RootNamespace.ComputeNamespaces ();
+			GlobalRootNamespace.Instance.ComputeNamespaces ();
 		}
 
 		static string [] LoadArgs (string file)
@@ -1638,7 +1638,7 @@ namespace Mono.CSharp
 				set_method.Invoke (CodeGen.Assembly.Builder, BindingFlags.Default, null, new object[]{true}, null);
 			}
 
-			RootNamespace.Global.AddModuleReference (CodeGen.Module.Builder);
+			GlobalRootNamespace.Instance.AddModuleReference (CodeGen.Module.Builder);
 
 			//
 			// Load assemblies required
@@ -1991,7 +1991,7 @@ namespace Mono.CSharp
 			TypeHandle.Reset ();
 
 			if (full_flag)
-				RootNamespace.Reset ();
+				GlobalRootNamespace.Reset ();
 			
 			NamespaceEntry.Reset ();
 			CodeGen.Reset ();

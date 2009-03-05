@@ -572,7 +572,7 @@ namespace Mono.CSharp {
 	public static void LoadAllImportedTypes ()
 	{
 		AllClsTopLevelTypes = new Hashtable (1500);
-		foreach (Assembly a in RootNamespace.Global.Assemblies) {
+		foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
 			foreach (Type t in a.GetExportedTypes ()) {
 				AllClsTopLevelTypes [t.FullName.ToLower (System.Globalization.CultureInfo.InvariantCulture)] = null;
 			}
@@ -581,7 +581,7 @@ namespace Mono.CSharp {
 
 	public static bool NamespaceClash (string name, Location loc)
 	{
-		if (! RootNamespace.Global.IsNamespace (name))
+		if (!GlobalRootNamespace.Instance.IsNamespace (name))
 			return false;
 
 		Report.Error (519, loc, String.Format ("`{0}' clashes with a predefined namespace", name));
@@ -875,7 +875,7 @@ namespace Mono.CSharp {
 	//
 	public static Type CoreLookupType (string ns_name, string name, Kind type_kind, bool required)
 	{
-		Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
+		Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, true);
 		Expression expr = ns.Lookup (RootContext.ToplevelTypes, name, Location.Null);
 
 		if (expr == null) {

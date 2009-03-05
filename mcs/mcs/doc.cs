@@ -724,7 +724,7 @@ namespace Mono.CSharp {
 				xref.SetAttribute ("cref", "N:" + ns.GetSignatureForError ());
 				return; // a namespace
 			}
-			if (RootNamespace.Global.IsNamespace (name)) {
+			if (GlobalRootNamespace.Instance.IsNamespace (name)) {
 				xref.SetAttribute ("cref", "N:" + name);
 				return; // a namespace
 			}

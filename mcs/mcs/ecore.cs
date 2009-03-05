@@ -2533,7 +2533,7 @@ namespace Mono.CSharp {
 
 			string ns = ec.DeclContainer.NamespaceEntry.NS.Name;
 			string fullname = (ns.Length > 0) ? ns + "." + Name : Name;
-			foreach (Assembly a in RootNamespace.Global.Assemblies) {
+			foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
 				Type type = a.GetType (fullname);
 				if (type != null) {
 					Report.SymbolRelatedToPreviousError (type);
@@ -2937,7 +2937,7 @@ namespace Mono.CSharp {
 			// DeclSpace instead of Type
 			//
 			if (type == null) {
-				Namespace ns = RootNamespace.Global.GetNamespace (ns_name, false);
+				Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, false);
 				FullNamedExpression fne = ns.Lookup (null, name, loc);
 				if (fne != null)
 					type = fne.Type;

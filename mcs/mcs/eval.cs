@@ -739,7 +739,7 @@ namespace Mono.CSharp {
 		{
 			lock (evaluator_lock){
 				Driver.LoadAssembly (file, false);
-				RootNamespace.ComputeNamespaces ();
+				GlobalRootNamespace.Instance.ComputeNamespaces ();
 			}
 		}
 
@@ -749,8 +749,8 @@ namespace Mono.CSharp {
 		static public void ReferenceAssembly (Assembly a)
 		{
 			lock (evaluator_lock){
-				RootNamespace.Global.AddAssemblyReference (a);
-				RootNamespace.ComputeNamespaces ();
+				GlobalRootNamespace.Instance.AddAssemblyReference (a);
+				GlobalRootNamespace.Instance.ComputeNamespaces ();
 			}
 		}
 		
