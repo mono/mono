@@ -1,3 +1,8 @@
+2009-03-05  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #480100
+	* parameter.cs: A parameter is not hoisted when used directly as ET.
+
 2009-03-04  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs: Fixed an issue when using variable is of interface
