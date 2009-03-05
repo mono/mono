@@ -1,3 +1,12 @@
+2009-03-05  Mark Probst  <mark.probst@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* mono-compiler.h: MONO_THREAD_VAR_OFFSET for PPC(64).
+
+	Backport of r127060.
+
 2009-01-19  Bill Holmes  <billholmes54@gmail.com>
 
 	* mono-path.c (mono_path_canonicalize): Adding support for UNC

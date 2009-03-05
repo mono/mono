@@ -1,3 +1,12 @@
+2009-03-05  Mark Probst  <mark.probst@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* mini-ppc.c, mini-ppc.h: Implement TLS for PPC64.
+
+	Backport of r127060.
+
 2009-03-04  Mark Probst  <mark.probst@gmail.com>
 
 	* exceptions-x86.c: Include debug-mini.h - fixes build.
