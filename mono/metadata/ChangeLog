@@ -1,3 +1,8 @@
+2009-03-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (ALLOC_REFENTRY): Allocate ReflectedEntry-es using malloc
+	instead of through the GC since they contain no object references.
+
 2009-03-05  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c (instantiate_other_info): Always return a jump
