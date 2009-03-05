@@ -1,3 +1,9 @@
+2009-03-04  Geoff Norton  <gnorton@novell.com>
+
+	* boehm-gc.c: Add some MONO_LOG tracing for the GC
+	* gc-internal.h:
+	* mono-gc.h: Expose mono_gc_invoke_finalizers in the embedding api.
+
 2009-03-04  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h
