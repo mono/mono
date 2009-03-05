@@ -250,7 +250,34 @@ namespace MonoTests.System.Linq.Expressions {
 					new ParameterExpression [0]),
 				p).Compile ();
 
-			Assert.AreEqual ("x", f ("x") ());
+			var f2 = f ("x");
+
+			Assert.AreEqual ("x", f2 ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TwoHoistingLevels ()
+		{
+			var p1 = Expression.Parameter (typeof (string), "x");
+			var p2 = Expression.Parameter (typeof (string), "y");
+
+			Expression<Func<string, Func<string, Func<string>>>> e =
+				Expression.Lambda<Func<string, Func<string, Func<string>>>> (
+					Expression.Lambda<Func<string, Func<string>>> (
+						Expression.Lambda<Func<string>> (
+							Expression.Call (
+								typeof (string).GetMethod ("Concat", new [] { typeof (string), typeof (string) }),
+								new [] { p1, p2 }),
+							new ParameterExpression [0]),
+						new [] { p2 }),
+					new [] { p1 });
+
+			var f = e.Compile ();
+			var f2 = f ("Hello ");
+			var f3 = f2 ("World !");
+
+			Assert.AreEqual ("Hello World !", f3 ());
 		}
 
 		[Test]
