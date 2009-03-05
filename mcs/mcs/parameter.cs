@@ -493,6 +493,11 @@ namespace Mono.CSharp {
 
 		public ExpressionStatement CreateExpressionTreeVariable (EmitContext ec)
 		{
+			//
+			// A parameter is not hoisted when used directly as ET
+			//
+			HoistedVariableReference = null;
+
 			if ((modFlags & Modifier.ISBYREF) != 0)
 				Report.Error (1951, Location, "An expression tree parameter cannot use `ref' or `out' modifier");
 
