@@ -1,3 +1,7 @@
+2009-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaderException.cs : added missing members.
+
 2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CrossDomainPolicy.cs : added validation method. Not sure if it is

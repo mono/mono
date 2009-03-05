@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006,2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,10 +34,44 @@ namespace System.ServiceModel {
 	[Serializable]
 	public class MessageHeaderException : ProtocolException
 	{
-		public MessageHeaderException () : base () {}
-		public MessageHeaderException (string msg) : base (msg) {}
+		public MessageHeaderException () : this ("Message header exception") {}
+		public MessageHeaderException (string msg) : this (msg, null) {}
 		public MessageHeaderException (string msg, Exception inner) : base (msg, inner) {}
 		protected MessageHeaderException (SerializationInfo info, StreamingContext context) :
-			base (info, context) {}
+			base (info, context)
+		{
+		}
+
+		public MessageHeaderException (string message, bool isDuplicate)
+			: this (message, null, null, isDuplicate, null)
+		{
+		}
+
+		public MessageHeaderException (string message, string headerName, string ns)
+			: this (message, headerName, ns, null)
+		{
+		}
+
+		public MessageHeaderException (string message, string headerName, string ns, bool isDuplicate)
+			: this (message, headerName, ns, isDuplicate, null)
+		{
+		}
+
+		public MessageHeaderException (string message, string headerName, string ns, Exception innerException)
+			: this (message, headerName, ns, false, innerException)
+		{
+		}
+
+		public MessageHeaderException (string message, string headerName, string ns, bool isDuplicate, Exception innerException)
+			: this (message, innerException)
+		{
+			HeaderName = headerName;
+			HeaderNamespace = ns;
+			IsDuplicate = isDuplicate;
+		}
+
+		public string HeaderName { get; private set; }
+		public string HeaderNamespace { get; private set; }
+		public bool IsDuplicate { get; private set; }
 	}
 }
