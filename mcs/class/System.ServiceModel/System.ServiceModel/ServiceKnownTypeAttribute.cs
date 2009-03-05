@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Collections.Generic;
 
 namespace System.ServiceModel {
 
@@ -35,26 +37,45 @@ namespace System.ServiceModel {
 		{
 		}
 
-		public ServiceKnownTypeAttribute (Type declaringType)
-			: this (null, declaringType)
+		public ServiceKnownTypeAttribute (Type type)
 		{
+			this.type = type;
 		}
 
 		public ServiceKnownTypeAttribute (string methodName, Type declaringType)
 		{
-			this.type = declaringType;
+			this.declaring_type = declaringType;
 			this.method = methodName;
 		}
 
 		string method;
-		Type type;
+		Type declaring_type, type;
 
 		public string MethodName {
 			get { return method; }
 		}
 
 		public Type DeclaringType {
+			get { return declaring_type; }
+		}
+
+		public Type Type {
 			get { return type; }
+		}
+
+		public IEnumerable<Type> GetTypes ()
+		{
+			if (type != null)
+				return new Type [] {type};
+			else if (declaring_type == null || method == null)
+				return Type.EmptyTypes;
+
+			var mi = declaring_type.GetMethod (method);
+			if (mi == null || mi.ReturnType != typeof (Type []) || !mi.IsStatic)
+				// actuall nonstatic method raises anerror on .NET, but it does not make sense
+				// because it ignores other erroneous patterns.
+				return Type.EmptyTypes;
+			return (Type []) mi.Invoke (null, new object [0]);
 		}
 	}
 }

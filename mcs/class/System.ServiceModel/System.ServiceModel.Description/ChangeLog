@@ -1,3 +1,7 @@
+2009-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionGenerator.cs : fill service known types.
+
 2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGenerator.cs : ClientBase<> argument type must be

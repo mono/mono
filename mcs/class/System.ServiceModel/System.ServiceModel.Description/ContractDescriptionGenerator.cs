@@ -196,6 +196,12 @@ namespace System.ServiceModel.Description
 				od.Messages.Add (GetMessage (od, mi, oca, true, null));
 				if (!od.IsOneWay)
 					od.Messages.Add (GetMessage (od, mi, oca, false, asyncReturnType));
+				foreach (ServiceKnownTypeAttribute a in cd.ContractType.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false))
+					foreach (Type t in a.GetTypes ())
+						od.KnownTypes.Add (t);
+				foreach (ServiceKnownTypeAttribute a in serviceMethod.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false))
+					foreach (Type t in a.GetTypes ())
+						od.KnownTypes.Add (t);
 				cd.Operations.Add (od);
 			}
 			else if (oca.AsyncPattern && od.BeginMethod != null ||

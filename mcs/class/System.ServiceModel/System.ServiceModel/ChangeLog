@@ -1,5 +1,10 @@
 2009-03-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceKnownTypeAttribute.cs : correct implementation to populate
+	  specified types.
+
+2009-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeaderException.cs : added missing members.
 
 2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
