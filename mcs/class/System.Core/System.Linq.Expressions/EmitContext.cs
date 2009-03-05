@@ -40,7 +40,7 @@ namespace System.Linq.Expressions {
 
 	class CompilationContext {
 
-		class HoistedVariablesDetector : ExpressionVisitor {
+		class HoistedVariableDetector : ExpressionVisitor {
 
 			Dictionary<ParameterExpression, LambdaExpression> parameter_to_lambda =
 				new Dictionary<ParameterExpression, LambdaExpression> ();
@@ -126,7 +126,7 @@ namespace System.Linq.Expressions {
 
 		void DetectHoistedVariables (LambdaExpression lambda)
 		{
-			hoisted_map = new HoistedVariablesDetector ().Process (lambda);
+			hoisted_map = new HoistedVariableDetector ().Process (lambda);
 		}
 
 		public List<ParameterExpression> GetHoistedLocals (LambdaExpression lambda)
