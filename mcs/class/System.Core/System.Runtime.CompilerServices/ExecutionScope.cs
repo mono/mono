@@ -39,15 +39,22 @@ namespace System.Runtime.CompilerServices {
 		public ExecutionScope Parent;
 
 		internal CompilationContext context;
+		internal int compilation_unit;
 
-		internal ExecutionScope (CompilationContext context)
+		ExecutionScope (CompilationContext context, int compilation_unit)
 		{
 			this.context = context;
+			this.compilation_unit = compilation_unit;
 			this.Globals = context.GetGlobals ();
 		}
 
-		internal ExecutionScope (CompilationContext context, ExecutionScope parent, object [] locals)
-			: this (context)
+		internal ExecutionScope (CompilationContext context)
+			: this (context, 0)
+		{
+		}
+
+		internal ExecutionScope (CompilationContext context, int compilation_unit, ExecutionScope parent, object [] locals)
+			: this (context, compilation_unit)
 		{
 			this.Parent = parent;
 			this.Locals = locals;
@@ -55,12 +62,14 @@ namespace System.Runtime.CompilerServices {
 
 		public Delegate CreateDelegate (int indexLambda, object [] locals)
 		{
-			return context.CreateDelegate (indexLambda, new ExecutionScope (context, this, locals));
+			return context.CreateDelegate (
+				indexLambda,
+				new ExecutionScope (context, indexLambda, this, locals));
 		}
 
 		public object [] CreateHoistedLocals ()
 		{
-			throw new NotSupportedException ();
+			return context.CreateHoistedLocals (compilation_unit);
 		}
 
 		public Expression IsolateExpression (Expression expression, object [] locals)

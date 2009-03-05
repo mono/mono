@@ -1,3 +1,7 @@
+2009-03-05  Jb Evain  <jbevain@novell.com>
+
+	* ExecutionScope.cs: add support for hoisted locals.
+
 2008-06-20  Jb Evain  <jbevain@novell.com>
 
 	* ExecutionScope.cs (CreateDelegate): implement.

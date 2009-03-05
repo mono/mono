@@ -1,3 +1,9 @@
+2009-03-05  Jb Evain  <jbevain@novell.com>
+
+	* EmitContext.cs
+	* ParameterExpression.cs:
+		add support for hoisted locals.
+
 2009-02-24  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (BinaryCoreCheck): fix comparison of enums

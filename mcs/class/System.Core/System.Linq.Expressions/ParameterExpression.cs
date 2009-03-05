@@ -46,9 +46,41 @@ namespace System.Linq.Expressions {
 			this.name = name;
 		}
 
+		void EmitLocalParameter (EmitContext ec, int position)
+		{
+			ec.ig.Emit (OpCodes.Ldarg, position);
+		}
+
+		void EmitHoistedLocal (EmitContext ec, int level, int position)
+		{
+			ec.EmitScope ();
+
+			for (int i = 0; i < level; i++)
+				ec.EmitParentScope ();
+
+			ec.EmitLoadLocals ();
+
+			ec.ig.Emit (OpCodes.Ldc_I4, position);
+			ec.ig.Emit (OpCodes.Ldelem, typeof (object));
+
+			ec.EmitLoadStrongBoxValue (Type);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldarg, ec.GetParameterPosition (this));
+			int position = -1;
+			if (ec.IsLocalParameter (this, ref position)) {
+				EmitLocalParameter (ec, position);
+				return;
+			}
+
+			int level = 0;
+			if (ec.IsHoistedLocal (this, ref level, ref position)) {
+				EmitHoistedLocal (ec, level, position);
+				return;
+			}
+
+			throw new InvalidOperationException ("Parameter out of scope");
 		}
 	}
 }

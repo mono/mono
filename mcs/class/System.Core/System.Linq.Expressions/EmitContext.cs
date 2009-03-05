@@ -40,8 +40,59 @@ namespace System.Linq.Expressions {
 
 	class CompilationContext {
 
+		class HoistedVariablesDetector : ExpressionVisitor {
+
+			Dictionary<ParameterExpression, LambdaExpression> parameter_to_lambda =
+				new Dictionary<ParameterExpression, LambdaExpression> ();
+
+			Dictionary<LambdaExpression, List<ParameterExpression>> hoisted_map;
+
+			LambdaExpression lambda;
+
+			public Dictionary<LambdaExpression, List<ParameterExpression>> Process (LambdaExpression lambda)
+			{
+				Visit (lambda);
+				return hoisted_map;
+			}
+
+			protected override void VisitLambda (LambdaExpression lambda)
+			{
+				this.lambda = lambda;
+				foreach (var parameter in lambda.Parameters)
+					parameter_to_lambda [parameter] = lambda;
+				base.VisitLambda (lambda);
+			}
+
+			protected override void VisitParameter (ParameterExpression parameter)
+			{
+				if (lambda.Parameters.Contains (parameter))
+					return;
+
+				Hoist (parameter);
+			}
+
+			void Hoist (ParameterExpression parameter)
+			{
+				LambdaExpression lambda;
+				if (!parameter_to_lambda.TryGetValue (parameter, out lambda))
+					return;
+
+				if (hoisted_map == null)
+					hoisted_map = new Dictionary<LambdaExpression, List<ParameterExpression>> ();
+
+				List<ParameterExpression> hoisted;
+				if (!hoisted_map.TryGetValue (lambda, out hoisted)) {
+					hoisted = new List<ParameterExpression> ();
+					hoisted_map [lambda] = hoisted;
+				}
+
+				hoisted.Add (parameter);
+			}
+		}
+
 		List<object> globals = new List<object> ();
 		List<EmitContext> units = new List<EmitContext> ();
+		Dictionary<LambdaExpression, List<ParameterExpression>> hoisted_map;
 
 		public int AddGlobal (object global)
 		{
@@ -61,10 +112,37 @@ namespace System.Linq.Expressions {
 
 		public int AddCompilationUnit (LambdaExpression lambda)
 		{
-			var context = new EmitContext (this, lambda);
+			DetectHoistedVariables (lambda);
+			return AddCompilationUnit (null, lambda);
+		}
+
+		public int AddCompilationUnit (EmitContext parent, LambdaExpression lambda)
+		{
+			var context = new EmitContext (this, parent, lambda);
 			var unit = AddItemToList (context, units);
 			context.Emit ();
 			return unit;
+		}
+
+		void DetectHoistedVariables (LambdaExpression lambda)
+		{
+			hoisted_map = new HoistedVariablesDetector ().Process (lambda);
+		}
+
+		public List<ParameterExpression> GetHoistedLocals (LambdaExpression lambda)
+		{
+			if (hoisted_map == null)
+				return null;
+
+			List<ParameterExpression> hoisted;
+			hoisted_map.TryGetValue (lambda, out hoisted);
+			return hoisted;
+		}
+
+		public object [] CreateHoistedLocals (int unit)
+		{
+			var hoisted = GetHoistedLocals (units [unit].Lambda);
+			return new object [hoisted == null ? 0 : hoisted.Count];
 		}
 
 		public Delegate CreateDelegate ()
@@ -80,29 +158,49 @@ namespace System.Linq.Expressions {
 
 	class EmitContext {
 
-		LambdaExpression owner;
 		CompilationContext context;
+		EmitContext parent;
+		LambdaExpression lambda;
 		DynamicMethod method;
+		LocalBuilder hoisted_store;
+		List<ParameterExpression> hoisted;
 
-		public ILGenerator ig;
+		public readonly ILGenerator ig;
 
-		public EmitContext (CompilationContext context, LambdaExpression lambda)
+		public bool HasHoistedLocals {
+			get { return hoisted != null && hoisted.Count > 0; }
+		}
+
+		public LambdaExpression Lambda {
+			get { return lambda; }
+		}
+
+		public EmitContext (CompilationContext context, EmitContext parent, LambdaExpression lambda)
 		{
 			this.context = context;
-			this.owner = lambda;
+			this.parent = parent;
+			this.lambda = lambda;
+			this.hoisted = context.GetHoistedLocals (lambda);
 
-			method = new DynamicMethod ("lambda_method", owner.GetReturnType (),
-				CreateParameterTypes (owner.Parameters), typeof (ExecutionScope), true);
+			method = new DynamicMethod (
+				"lambda_method",
+				lambda.GetReturnType (),
+				CreateParameterTypes (lambda.Parameters),
+				typeof (ExecutionScope),
+				true);
 
 			ig = method.GetILGenerator ();
 		}
 
 		public void Emit ()
 		{
-			owner.EmitBody (this);
+			if (HasHoistedLocals)
+				EmitStoreHoistedLocals ();
+
+			lambda.EmitBody (this);
 		}
 
-		static Type [] CreateParameterTypes (ReadOnlyCollection<ParameterExpression> parameters)
+		static Type [] CreateParameterTypes (IList<ParameterExpression> parameters)
 		{
 			var types = new Type [parameters.Count + 1];
 			types [0] = typeof (ExecutionScope);
@@ -113,18 +211,20 @@ namespace System.Linq.Expressions {
 			return types;
 		}
 
-		public int GetParameterPosition (ParameterExpression p)
+		public bool IsLocalParameter (ParameterExpression parameter, ref int position)
 		{
-			int position = owner.Parameters.IndexOf (p);
-			if (position == -1)
-				throw new InvalidOperationException ("Parameter not in scope");
+			position = lambda.Parameters.IndexOf (parameter);
+			if (position > -1) {
+				position++;
+				return true;
+			}
 
-			return position + 1; // + 1 because 0 is the ExecutionScope
+			return false;
 		}
 
 		public Delegate CreateDelegate (ExecutionScope scope)
 		{
-			return method.CreateDelegate (owner.Type, scope);
+			return method.CreateDelegate (lambda.Type, scope);
 		}
 
 		public void Emit (Expression expression)
@@ -176,7 +276,7 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Ldloc, local);
 		}
 
-		public void EmitCall (LocalBuilder local, ReadOnlyCollection<Expression> arguments, MethodInfo method)
+		public void EmitCall (LocalBuilder local, IList<Expression> arguments, MethodInfo method)
 		{
 			EmitLoadSubject (local);
 			EmitArguments (method, arguments);
@@ -197,7 +297,7 @@ namespace System.Linq.Expressions {
 			EmitCall (method);
 		}
 
-		public void EmitCall (Expression expression, ReadOnlyCollection<Expression> arguments, MethodInfo method)
+		public void EmitCall (Expression expression, IList<Expression> arguments, MethodInfo method)
 		{
 			if (!method.IsStatic)
 				EmitLoadSubject (expression);
@@ -206,7 +306,7 @@ namespace System.Linq.Expressions {
 			EmitCall (method);
 		}
 
-		void EmitArguments (MethodInfo method, ReadOnlyCollection<Expression> arguments)
+		void EmitArguments (MethodInfo method, IList<Expression> arguments)
 		{
 			var parameters = method.GetParameters ();
 
@@ -311,6 +411,11 @@ namespace System.Linq.Expressions {
 			ig.Emit (OpCodes.Ldc_I4, AddGlobal (global, type));
 			ig.Emit (OpCodes.Ldelem, typeof (object));
 
+			EmitLoadStrongBoxValue (type);
+		}
+
+		public void EmitLoadStrongBoxValue (Type type)
+		{
 			var strongbox = type.MakeStrongBoxType ();
 
 			ig.Emit (OpCodes.Isinst, strongbox);
@@ -327,16 +432,74 @@ namespace System.Linq.Expressions {
 			EmitScope ();
 
 			ig.Emit (OpCodes.Ldc_I4, AddChildContext (lambda));
-			ig.Emit (OpCodes.Ldnull);
+			if (hoisted_store != null)
+				ig.Emit (OpCodes.Ldloc, hoisted_store);
+			else
+				ig.Emit (OpCodes.Ldnull);
 
 			ig.Emit (OpCodes.Callvirt, typeof (ExecutionScope).GetMethod ("CreateDelegate"));
 
 			ig.Emit (OpCodes.Castclass, lambda.Type);
 		}
 
+		void EmitStoreHoistedLocals ()
+		{
+			EmitHoistedLocalsStore ();
+			for (int i = 0; i < hoisted.Count; i++)
+				EmitStoreHoistedLocal (i, hoisted [i]);
+		}
+
+		void EmitStoreHoistedLocal (int position, ParameterExpression parameter)
+		{
+			ig.Emit (OpCodes.Ldloc, hoisted_store);
+			ig.Emit (OpCodes.Ldc_I4, position);
+			parameter.Emit (this);
+			EmitCreateStrongBox (parameter.Type);
+			ig.Emit (OpCodes.Stelem, typeof (object));
+		}
+
+		void EmitCreateStrongBox (Type type)
+		{
+			ig.Emit (OpCodes.Newobj, type.MakeStrongBoxType ().GetConstructor (new [] { type }));
+		}
+
+		void EmitHoistedLocalsStore ()
+		{
+			EmitScope ();
+			hoisted_store = ig.DeclareLocal (typeof (object []));
+			ig.Emit (OpCodes.Callvirt, typeof (ExecutionScope).GetMethod ("CreateHoistedLocals"));
+			ig.Emit (OpCodes.Stloc, hoisted_store);
+		}
+
+		public void EmitLoadLocals ()
+		{
+			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Locals"));
+		}
+
+		public void EmitParentScope ()
+		{
+			ig.Emit (OpCodes.Ldfld, typeof (ExecutionScope).GetField ("Parent"));
+		}
+
+		public bool IsHoistedLocal (ParameterExpression parameter, ref int level, ref int position)
+		{
+			if (parent == null)
+				return false;
+
+			if (parent.hoisted != null) {
+				position = parent.hoisted.IndexOf (parameter);
+				if (position > -1)
+					return true;
+			}
+
+			level++;
+
+			return parent.IsHoistedLocal (parameter, ref level, ref position);
+		}
+
 		int AddChildContext (LambdaExpression lambda)
 		{
-			return context.AddCompilationUnit (lambda);
+			return context.AddCompilationUnit (this, lambda);
 		}
 
 		static object CreateStrongBox (object value, Type type)
