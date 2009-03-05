@@ -1,5 +1,16 @@
 2009-03-05  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Only force the vtable var
+	for methods which actually have one.  For all other methods, make
+	sure the this argument var is live the whole method.
+
+	* mini.c (mini_method_compile): Every shared method has a
+	this/vtable/mrgctx info.  Fixes #480807.
+
+	Backport of r128720.
+
+2009-03-05  Mark Probst  <mark.probst@gmail.com>
+
 	Contributed under the terms of the MIT/X11 license by Steven
 	Munroe <munroesj@us.ibm.com>.
 
