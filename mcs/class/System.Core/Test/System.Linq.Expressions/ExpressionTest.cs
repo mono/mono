@@ -240,6 +240,21 @@ namespace MonoTests.System.Linq.Expressions {
 
 		[Test]
 		[Category ("NotWorking")]
+		public void SimpleHoistedParameter ()
+		{
+			var p = Expression.Parameter (typeof (string), "s");
+
+			var f = Expression.Lambda<Func<string, Func<string>>> (
+				Expression.Lambda<Func<string>> (
+					p,
+					new ParameterExpression [0]),
+				p).Compile ();
+
+			Assert.AreEqual ("x", f ("x") ());
+		}
+
+		[Test]
+		[Category ("NotWorking")]
 		public void HoistedParameter ()
 		{
 			var i = Expression.Parameter (typeof (int), "i");
