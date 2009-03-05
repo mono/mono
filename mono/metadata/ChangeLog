@@ -1,5 +1,13 @@
 2009-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* domain-internals.h (MonoDomain): Add two fields to cache invoke wrappers to
+	capture the thread context.
+
+	* object.c (mono_async_result_new): Cache the invoke wrappers to
+	ExecutionContext::Capture.
+
+2009-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.h: Add a prototype for what mono_compile_method returns
 	for invoke wrappers.
 
