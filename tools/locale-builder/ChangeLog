@@ -1,3 +1,11 @@
+2009-03-05  Marek Habersack  <mhabersack@novell.com>
+
+	* locales/en_TT.xml: added here since openi18n.org times out and
+	also I can't update icu_locales.tar.gz. File based on en_ZA.xml
+	from that tarball, with appropriate modifications.
+
+	* Makefile.am (supp_data_files): added supp/en_TT.xml
+
 2007-11-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatEntry.cs, Driver.cs : adjust the count of
