@@ -1,3 +1,10 @@
+2009-03-05  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDrowDown.cs: Remove some hardcoded values and assumptions.
+	* ToolStripDropDownButton.cs: This should use a ToolStripDropDownMenu,
+	not a ToolStripDropDown.
+	* ToolStripItem.cs: Don't use the item margins on a ToolStripDropDown.
+
 2009-03-04  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fix RowCount/ColumnCount decreasing.

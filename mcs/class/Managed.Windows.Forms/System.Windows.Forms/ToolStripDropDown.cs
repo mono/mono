@@ -577,7 +577,7 @@ namespace System.Windows.Forms
 
 		protected override void OnLayout (LayoutEventArgs e)
 		{
-			// Find the widest menu item
+			// Find the widest menu item, so we know how wide to make our dropdown
 			int widest = 0;
 
 			foreach (ToolStripItem tsi in this.Items) {
@@ -586,12 +586,13 @@ namespace System.Windows.Forms
 					
 				tsi.SetPlacement (ToolStripItemPlacement.Main);
 				
-				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
-					widest = tsi.GetPreferredSize (Size.Empty).Width;
+				widest = Math.Max (widest, tsi.GetPreferredSize (Size.Empty).Width + tsi.Margin.Horizontal);
 			}
 			
+			// Add any padding our dropdown has set
+			widest += this.Padding.Horizontal;
+			
 			int x = this.Padding.Left;
-			widest += 68 - this.Padding.Horizontal;
 			int y = this.Padding.Top;
 
 			foreach (ToolStripItem tsi in this.Items) {
@@ -602,16 +603,20 @@ namespace System.Windows.Forms
 
 				int height = 0;
 
-				if (tsi is ToolStripSeparator)
+				Size preferred_size = tsi.GetPreferredSize (Size.Empty);
+
+				if (preferred_size.Height > 22)
+					height = preferred_size.Height;
+				else if (tsi is ToolStripSeparator)
 					height = 7;
 				else
 					height = 22;
 
-				tsi.SetBounds (new Rectangle (x, y, widest, height));
+				tsi.SetBounds (new Rectangle (x, y, preferred_size.Width, height));
 				y += tsi.Height + tsi.Margin.Bottom;
 			}
 
-			this.Size = new Size (widest + this.Padding.Horizontal, y + this.Padding.Bottom);// + 2);
+			this.Size = new Size (widest, y + this.Padding.Bottom);
 			this.SetDisplayedItems ();
 			this.OnLayoutCompleted (EventArgs.Empty);
 			this.Invalidate ();

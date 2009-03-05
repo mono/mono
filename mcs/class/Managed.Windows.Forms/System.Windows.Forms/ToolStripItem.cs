@@ -1856,7 +1856,7 @@ namespace System.Windows.Forms
 					return true;
 
 				if (!(this.Owner is ToolStripDropDownMenu))
-					return true;
+					return false;
 
 				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
 
@@ -1870,7 +1870,7 @@ namespace System.Windows.Forms
 					return true;
 
 				if (!(this.Owner is ToolStripDropDownMenu))
-					return true;
+					return false;
 
 				ToolStripDropDownMenu tsddm = (ToolStripDropDownMenu)this.Owner;
 
