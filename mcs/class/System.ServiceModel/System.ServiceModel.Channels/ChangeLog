@@ -1,3 +1,8 @@
+2009-03-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeader.cs, MessageHeaders.cs, MessageImpl.cs :
+	  handle headers in SL2. Slightly changed 3.0 code too.
+
 2009-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestChannel.cs : use cross domain access manager.

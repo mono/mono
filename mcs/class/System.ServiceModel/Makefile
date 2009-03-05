@@ -30,7 +30,7 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 endif
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += /r:System.Net /r:System.Core
+LIB_MCS_FLAGS += /r:System.Net /r:System.Core /r:System.Xml.Linq
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

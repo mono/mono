@@ -1,3 +1,7 @@
+2009-03-05  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added /r:System.Xml.Linq in 2.1 too.
+
 2009-03-04  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : add /r:System.Core in 2.1 build.

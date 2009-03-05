@@ -207,10 +207,8 @@ namespace System.ServiceModel.Channels
 			MessageHeader item = (MessageHeader) l [index];
 
 			XmlReader reader =
-#if !NET_2_1 // FIXME: implement RawMessageHeader
 				item is MessageHeader.RawMessageHeader ?
 				((MessageHeader.RawMessageHeader) item).CreateReader () :
-#endif
 				XmlReader.Create (
 					new StringReader (item.ToString ()),
 					reader_settings);

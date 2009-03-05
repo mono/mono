@@ -32,6 +32,9 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Xml;
+#if NET_2_1
+using System.Xml.Linq;
+#endif
 
 namespace System.ServiceModel.Channels
 {
@@ -53,13 +56,6 @@ namespace System.ServiceModel.Channels
 		static bool default_must_understand = false;
 		static bool default_relay = false;
 		static Type [] knownTypes = new Type [1] {typeof (EndpointAddress10)};
-
-#if !NET_2_1 // FIXME: eliminate XmlElement
-		internal static MessageHeader CreateInternalHeader (XmlElement el, string soap_ns)
-		{
-			return new RawMessageHeader (el, soap_ns);
-		}
-#endif
 
 		public static MessageHeader CreateHeader (string name, string ns, object value)
 		{
@@ -205,7 +201,52 @@ namespace System.ServiceModel.Channels
 
 		public override bool Relay { get { return default_relay; }}
 
-#if !NET_2_1 // FIXME: this should be rewritten to eliminate XmlElement
+#if NET_2_1 // FIXME: this should be rewritten to eliminate XmlElement
+		internal class RawMessageHeader : MessageHeader
+		{
+			XElement element;
+			string soap_ns;
+			bool is_ref, must_understand, relay;
+			string actor;
+
+			public RawMessageHeader (XmlReader reader, string soap_ns)
+			{
+				Id = reader.GetAttribute ("Id", Constants.WsuNamespace);
+
+				// FIXME: fill is_ref
+				string s = reader.GetAttribute ("relay", soap_ns);
+				relay = s != null ? XmlConvert.ToBoolean (s) : false;
+				s = reader.GetAttribute ("mustUnderstand", soap_ns);
+				must_understand = s != null ? XmlConvert.ToBoolean (s) : false;
+				actor = reader.GetAttribute ("actor", soap_ns);
+				element = XElement.Load (reader);
+			}
+
+			public XmlReader CreateReader ()
+			{
+				return element.CreateReader ();
+			}
+
+			protected override void OnWriteHeaderContents (
+				XmlDictionaryWriter writer, MessageVersion version)
+			{
+				foreach (var n in element.Nodes ())
+					n.WriteTo (writer);
+			}
+
+			public override string Actor { get { return actor; }}
+
+			public override bool IsReferenceParameter { get { return is_ref; }}
+
+			public override bool MustUnderstand { get { return must_understand; }}
+
+			public override string Name { get { return element.Name.LocalName; }}
+
+			public override string Namespace { get { return element.Name.NamespaceName; }}
+
+			public override bool Relay { get { return relay; }}
+		}
+#else
 		internal class RawMessageHeader : MessageHeader
 		{
 			XmlElement source;
