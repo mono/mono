@@ -1,5 +1,11 @@
 2009-03-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* domain-internals.h (struct _MonoDomain): Move 'typeof_void' before
+	FIRST_GC_TRACKED.
+
+	* domain.c (mono_domain_create): Register the fields between FIRST_GC_TRACKED
+	and LAST_GC_TRACKED as a GC root.
+
 	* gc-internal.h: Fix the comment of mono_gc_alloc_fixed.
 
 	* object.c (mono_class_create_runtime_vtable): Create a GC descriptor for
