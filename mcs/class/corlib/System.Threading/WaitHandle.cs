@@ -338,6 +338,11 @@ namespace System.Threading
 			return WaitOne (millisecondsTimeout, false);
 		}
 
+		public virtual bool WaitOne (TimeSpan timeout)
+		{
+			return WaitOne (timeout, false);
+		}
+
 		public virtual bool WaitOne(TimeSpan timeout, bool exitContext)
 		{
 			CheckDisposed ();

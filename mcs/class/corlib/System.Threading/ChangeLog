@@ -1,3 +1,7 @@
+2009-03-05 Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WaitHandle.cs: Added missing WaitOne overload.
+
 2009-02-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WaitHandle.cs: implemented SignalAndWait.
