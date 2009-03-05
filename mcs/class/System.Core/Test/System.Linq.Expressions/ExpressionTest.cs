@@ -239,7 +239,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SimpleHoistedParameter ()
 		{
 			var p = Expression.Parameter (typeof (string), "s");
@@ -256,7 +255,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TwoHoistingLevels ()
 		{
 			var p1 = Expression.Parameter (typeof (string), "x");
@@ -281,7 +279,6 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void HoistedParameter ()
 		{
 			var i = Expression.Parameter (typeof (int), "i");
