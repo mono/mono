@@ -2,7 +2,7 @@
 
 	* mini-trampolines.c (mono_create_jump_trampoline): If the method
 	is shared generic code, return the trampoline, even if the method
-	has already been compiled.  Fixes #479753.
+	has already been compiled.  Fixes #479763.
 
 	* mini.c, mini.h: New function
 	mono_jit_find_compiled_method_with_jit_info() which is the same as
