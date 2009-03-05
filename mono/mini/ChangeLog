@@ -1,3 +1,9 @@
+2009-03-05  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ppc.c (mono_arch_build_imt_thunk): Add support for mixed
+	generic/imt thunks where some entries branch through the vtable,
+	while other entries branch directly.
+
 2009-03-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-darwin.c (mono_chain_signal): Define this to fix the build.
