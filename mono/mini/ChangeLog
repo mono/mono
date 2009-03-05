@@ -1,5 +1,15 @@
 2009-03-05  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-trampolines.c (mono_create_jump_trampoline): If the method
+	is shared generic code, return the trampoline, even if the method
+	has already been compiled.  Fixes #479753.
+
+	* mini.c, mini.h: New function
+	mono_jit_find_compiled_method_with_jit_info() which is the same as
+	mono_jit_find_compiled_method() but also returns the jit info.
+
+2009-03-05  Mark Probst  <mark.probst@gmail.com>
+
 	* method-to-ir.c (mono_method_to_ir): Only force the vtable var
 	for methods which actually have one.  For all other methods, make
 	sure the this argument var is live the whole method.

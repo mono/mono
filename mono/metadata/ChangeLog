@@ -1,3 +1,8 @@
+2009-03-05  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c (instantiate_other_info): Always return a jump
+	trampoline for method code.
+
 2009-03-05  Marek Habersack  <mhabersack@novell.com>
 
 	* culture-info-tables.h: generated to include the en-tt culture.

@@ -1,3 +1,9 @@
+2009-03-05  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-479763.2.cs: New test.
+
+	* Makefile.am: Test added.
+
 2009-03-04  Mark Probst  <mark.probst@gmail.com>
 
 	* Makefile.am: Second part of the erroneous change reverted.  I
