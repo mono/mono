@@ -1,3 +1,7 @@
+2009-03-05  Marek Habersack  <mhabersack@novell.com>
+
+	* culture-info-tables.h: generated to include the en-tt culture.
+
 2009-03-04  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h

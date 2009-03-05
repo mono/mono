@@ -60,6 +60,7 @@ supp_data_files = 	\
 	supp/en_IE.xml	\
 	supp/en_NZ.xml	\
 	supp/en_PH.xml	\
+	supp/en_TT.xml	\
 	supp/en_US.xml	\
 	supp/en.xml	\
 	supp/en_ZA.xml	\
