@@ -1,5 +1,13 @@
 2009-03-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc-internal.h: Fix the comment of mono_gc_alloc_fixed.
+
+	* object.c (mono_class_create_runtime_vtable): Create a GC descriptor for
+	the static data even if it consists of 1 reference.
+
+	* boehm-gc.c (mono_gc_alloc_fixed): Allocate using GC_MALLOC_EXPLICITLY_TYPED
+	if there is a GC descriptor.
+
 	* reflection.c (ALLOC_REFENTRY): Allocate ReflectedEntry-es using malloc
 	instead of through the GC since they contain no object references.
 
