@@ -1372,6 +1372,13 @@ class Tester
 		Assert ("4", e2.Compile ().Invoke ((a) => (a+1).ToString (), 3));
 	}
 	
+	void LambdaTest ()
+	{
+		Expression<Func<string, Func<string>>> e = (string s) => () => s;
+		AssertNodeType (e, ExpressionType.Lambda);
+		Assert ("xx", e.Compile ().Invoke ("xx") ());
+	}
+	
 	void LeftShiftTest ()
 	{
 		Expression<Func<ulong, short, ulong>> e = (ulong a, short b) => a << b;

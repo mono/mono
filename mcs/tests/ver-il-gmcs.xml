@@ -15584,34 +15584,37 @@
         <size>7</size>
       </method>
     </type>
-    <type name="Tester+&lt;MemberAccessTest&gt;c__AnonStorey1">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_3&gt;c__AnonStorey2">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_4&gt;c__AnonStorey3">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_6&gt;c__AnonStorey4">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStorey5">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
     <type name="Tester">
       <method name="Void NewArrayInitTest_6()">
         <size>103</size>
+      </method>
+      <method name="Void LambdaTest()">
+        <size>89</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest&gt;c__AnonStorey2">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_3&gt;c__AnonStorey3">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_4&gt;c__AnonStorey4">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_6&gt;c__AnonStorey5">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStorey6">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
