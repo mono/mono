@@ -120,8 +120,7 @@ namespace System.Windows.Forms
 
 				tsi.SetPlacement (ToolStripItemPlacement.Main);
 
-				if (tsi.GetPreferredSize (Size.Empty).Width > widest)
-					widest = tsi.GetPreferredSize (Size.Empty).Width;
+				widest = Math.Max (widest, tsi.GetPreferredSize (Size.Empty).Width);
 			}
 
 			int x = this.Padding.Left;

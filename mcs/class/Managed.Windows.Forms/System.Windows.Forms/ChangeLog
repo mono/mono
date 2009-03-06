@@ -1,5 +1,10 @@
 2009-03-06  Jonathan Pobst  <monkey@jpobst.com>
 
+	* ToolStripDropDownMenu.cs: Use Math.Max instead of calculating
+	preferred size twice.
+
+2009-03-06  Jonathan Pobst  <monkey@jpobst.com>
+
 	* ToolStripMenuItem.cs: Don't draw the dropdown arrow or shortcut
 	string if we aren't on a ToolStripDropDownMenu.
 
