@@ -1582,10 +1582,6 @@ namespace System.Windows.Forms
 				preferred_size.Height += 4;
 				preferred_size.Width += 4;
 			}
-			
-			// Account for ToolStripDropDownButton's drop down arrow
-			if (this is ToolStripDropDownButton && (this as ToolStripDropDownButton).ShowDropDownArrow)
-				preferred_size.Width += 9;
 
 			return preferred_size;
 		}

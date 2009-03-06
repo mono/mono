@@ -1,3 +1,8 @@
+2009-03-06  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripDropDownButton.cs, ToolStripItem.cs: Refactor some Button
+	code from Item to Button.  Patch from Alex Shulgin.
+
 2009-03-05  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDrowDown.cs: Remove some hardcoded values and assumptions.

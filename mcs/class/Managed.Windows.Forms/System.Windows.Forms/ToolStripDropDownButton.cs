@@ -169,6 +169,18 @@ namespace System.Windows.Forms
 			return true;
 		}
 		#endregion
+
+		#region Internal Methods
+		internal override Size CalculatePreferredSize (Size constrainingSize)
+		{
+			Size preferred_size = base.CalculatePreferredSize (constrainingSize);
+
+			if (this.ShowDropDownArrow)
+				preferred_size.Width += 9;
+
+			return preferred_size;
+		}
+		#endregion
 	}
 }
 #endif
