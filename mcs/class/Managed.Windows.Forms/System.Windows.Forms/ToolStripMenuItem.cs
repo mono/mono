@@ -389,8 +389,9 @@ namespace System.Windows.Forms
 			if (image_layout_rect != Rectangle.Empty)
 				this.Owner.Renderer.DrawItemImage (new ToolStripItemImageRenderEventArgs (e.Graphics, this, draw_image, image_layout_rect));
 
-			if (this.IsOnDropDown && this.HasDropDownItems)
+			if (this.IsOnDropDown && this.HasDropDownItems && this.Parent is ToolStripDropDownMenu)
 				this.Owner.Renderer.DrawArrow (new ToolStripArrowRenderEventArgs (e.Graphics, this, new Rectangle (this.Bounds.Width - 17, 2, 10, 20), Color.Black, ArrowDirection.Right));
+			
 			return;
 		}
 
@@ -466,7 +467,9 @@ namespace System.Windows.Forms
 		{
 			if (this.show_shortcut_keys == false)
 				return string.Empty;
-
+			if (this.Parent == null || !(this.Parent is ToolStripDropDownMenu))
+				return string.Empty;
+				
 			string key_string = string.Empty;
 
 			if (!string.IsNullOrEmpty (this.shortcut_display_string))
