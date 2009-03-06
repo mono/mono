@@ -1,3 +1,8 @@
+2009-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* arm/tramp.c: Include a change from the debian patches. Avoid #include-ing
+	a file in the middle of a function.
+
 2009-02-16  Mark Probst  <mark.probst@gmail.com>
 
 	Backport of r125443.
