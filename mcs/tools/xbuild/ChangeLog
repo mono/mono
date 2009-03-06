@@ -1,3 +1,9 @@
+2009-03-06  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #481336.
+	* SolutionParser.cs (AddWarningForMissingProjectConfiguration): New.
+	(AddProjectTargets): Emit warning for missing project configurations.
+
 2009-02-26  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.CSharp.targets (Csc): Fix "Resources" argument to use

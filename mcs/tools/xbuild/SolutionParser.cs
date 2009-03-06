@@ -276,6 +276,18 @@ namespace Mono.XBuild.CommandLine {
 			}
 		}
 
+		void AddWarningForMissingProjectConfiguration (Target target, string slnConfig, string slnPlatform, string projectName)
+		{
+			BuildTask task = target.AddNewTask ("Warning");
+			task.SetParameterValue ("Text",
+					String.Format ("The project configuration for project '{0}' corresponding " +
+						"to the solution configuration '{1}|{2}' was not found in the solution file.",
+						projectName, slnConfig, slnPlatform));
+			task.Condition = String.Format ("('$(Configuration)' == '{0}') and ('$(Platform)' == '{1}')",
+						slnConfig, slnPlatform);
+
+		}
+
 		void AddValidateSolutionConfiguration (Project p)
 		{
 			Target t = p.Targets.AddNewTarget ("ValidateSolutionConfiguration");
@@ -315,7 +327,9 @@ namespace Mono.XBuild.CommandLine {
 						BuildTask task = null;
 						TargetInfo projectTargetInfo;
 						if (!project.TargetMap.TryGetValue (targetInfo, out projectTargetInfo)) {
-							ErrorUtilities.ReportError (0, string.Format ("Failed to find targets {0}|{1} for project {2}", targetInfo.Configuration, targetInfo.Platform, project.Name));
+							AddWarningForMissingProjectConfiguration (target, targetInfo.Configuration,
+									targetInfo.Platform, project.Name);
+							continue;
 						}
 						if (projectTargetInfo.Build) {
 							task = target.AddNewTask ("MSBuild");
