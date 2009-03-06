@@ -268,6 +268,9 @@ namespace System.Web.UI {
 						return ct;
 
 					ct = cb.ControlType;
+					if (ct == null)
+						return typeof (Control);
+					
 					if (typeof (INonBindingContainer).IsAssignableFrom (ct) || !typeof (INamingContainer).IsAssignableFrom (ct))
 						return MyNamingContainer.BindingContainerType;
 
@@ -275,6 +278,9 @@ namespace System.Web.UI {
 				}
 
 				ct = cb.ControlType;
+				if (ct == null)
+					return typeof (Control);
+				
 				if (typeof (INonBindingContainer).IsAssignableFrom (ct) || !typeof (INamingContainer).IsAssignableFrom (ct))
 					return MyNamingContainer.BindingContainerType;
 				
