@@ -543,7 +543,7 @@ namespace System.Web.UI.WebControls {
 
 		protected override void LoadViewState (object savedState) 
 		{
-			if (savedState == null) {
+			if (savedState == null || !(savedState is Pair)) {
 				base.LoadViewState (null);
 				return;
 			}
