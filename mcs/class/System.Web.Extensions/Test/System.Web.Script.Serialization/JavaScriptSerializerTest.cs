@@ -375,6 +375,20 @@ namespace Tests.System.Web.Script.Serialization
 			Assert.AreEqual (1, dict ["itemOne"], "#B1");
 			Assert.AreEqual (2, dict ["itemTwo"], "#B2");
 		}
+
+		[Test]
+		public void TestDeserializeUnquotedKeysWithSpaces ()
+		{
+			JavaScriptSerializer ser = new JavaScriptSerializer ();
+			IDictionary dict = ser.Deserialize <Dictionary <string, object>> ("{ itemOne :\"1\",itemTwo:\"2\"}");
+
+			Assert.AreEqual ("1", dict ["itemOne"], "#A1");
+			Assert.AreEqual ("2", dict ["itemTwo"], "#A2");
+
+			dict = ser.Deserialize <Dictionary <string, object>> ("{   itemOne   :1,   itemTwo   :2}");
+			Assert.AreEqual (1, dict ["itemOne"], "#B1");
+			Assert.AreEqual (2, dict ["itemTwo"], "#B2");
+		}
 		
 		[Test]
 		public void TestDeserialize () {
@@ -802,7 +816,7 @@ namespace Tests.System.Web.Script.Serialization
 			string s = ser.Serialize(pc);
 			MyPointContainer pc2 = ser.Deserialize<MyPointContainer>(s);
 		}
-
+		
 		[Test]
 		public void MaxJsonLengthDeserializeObject () 
 		{

@@ -1,3 +1,8 @@
+2009-03-06  Marek Habersack  <mhabersack@novell.com>
+
+	* JsonDeserializer.cs: unquoted key values must ignore leading
+	and trailing whitespace
+
 2008-12-05  Marek Habersack  <mhabersack@novell.com>
 
 	* JsonSerializer.cs: StringBuilder extension methods aren't used
