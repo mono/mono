@@ -1,3 +1,12 @@
+2009-03-06  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Be compatible with MS in that the scroll to 
+	selection has a synchronous effect. The trick here is that in 
+	order to avoid unnecessary calculations each time a row/column 
+	is added/removed we recalculate the whole grid size just before 
+	just before the scroll to selection.
+	[Fixes bug #482478]
+
 2009-03-06  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* RichTextBox.cs: LoadFile(string path) should pass by default

@@ -135,9 +135,6 @@ namespace System.Windows.Forms {
 		private DataGridViewSelectedColumnCollection selected_columns;
 		private DataGridViewRow editing_row;
 		
-		private int gridWidth;
-		private int gridHeight;
-
 		DataGridViewHeaderCell pressed_header_cell;
 		DataGridViewHeaderCell entered_header_cell;
 
@@ -4562,16 +4559,12 @@ namespace System.Windows.Forms {
 				bounds.Y += columnHeadersHeight;
 			}
 			
-			gridWidth = rowHeadersVisible ? rowHeadersWidth : 0;
-			gridHeight = 0;
-			
-			int first_row_height = Rows.Count > 0 ? Rows[Math.Min (Rows.Count - 1, first_row_index)].Height : 0;
-//			int room_left = this.Height;
-			
 			// Reset all columns to !Displayed
 			for (int i = 0; i < Columns.Count; i++)
 				Columns[i].DisplayedInternal = false;
 			
+			int gridWidth = rowHeadersVisible ? rowHeadersWidth : 0;
+
 			// Set Displayed columns
 			for (int i = first_col_index; i < Columns.Count; i++) {
 				DataGridViewColumn col = Columns.ColumnDisplayIndexSortedArrayList[i];
@@ -4581,7 +4574,6 @@ namespace System.Windows.Forms {
 			
 				col.DisplayedInternal = true;
 				gridWidth += col.Width;
-				
 				if (gridWidth >= Width)
 					break;
 			}
@@ -4606,27 +4598,44 @@ namespace System.Windows.Forms {
 				
 				if (bounds.Y >= ClientSize.Height - (horizontalScrollBar.Visible ? horizontalScrollBar.Height : 0))
 					break;
-					
-				gridHeight += row.Height;
 			}
 
-			gridWidth = 0;
+			RefreshScrollBars ();
 			
-			foreach (DataGridViewColumn col in sortedColumns)
+			// Paint the bottom right square if both scrollbars are displayed
+			if (horizontalScrollBar.Visible && verticalScrollBar.Visible)
+				g.FillRectangle (SystemBrushes.Control, new Rectangle (horizontalScrollBar.Right, verticalScrollBar.Bottom, verticalScrollBar.Width, horizontalScrollBar.Height));
+
+			// Paint the border
+			bounds = ClientRectangle;
+			
+			switch (BorderStyle) {
+				case BorderStyle.FixedSingle:
+					g.DrawRectangle (Pens.Black, new Rectangle (bounds.Left, bounds.Top, bounds.Width - 1, bounds.Height - 1));
+					break;
+				case BorderStyle.Fixed3D:
+					ControlPaint.DrawBorder3D (g, bounds, Border3DStyle.Sunken);
+					break;
+			}
+		}
+
+		private void RefreshScrollBars ()
+		{
+			int gridWidth = 0;
+			int gridHeight = 0;
+
+			foreach (DataGridViewColumn col in columns.ColumnDisplayIndexSortedArrayList)
 				if (col.Visible)
 					gridWidth += col.Width;
-
-			gridHeight = 0;
 			
 			foreach (DataGridViewRow row in Rows)
 				gridHeight += row.Height;
 
 			if (rowHeadersVisible)
 				gridWidth += rowHeadersWidth;
-
 			if (columnHeadersVisible)
 				gridHeight += columnHeadersHeight;
-			
+
 			bool horizontalVisible = false;
 			bool verticalVisible = false;
 			
@@ -4659,9 +4668,11 @@ namespace System.Windows.Forms {
 						largeChange = ClientSize.Width;
 					horizontalScrollBar.LargeChange = largeChange;
 				}
+
 				if (verticalVisible) {
 					verticalScrollBar.Minimum = 0;
 					verticalScrollBar.Maximum = gridHeight;
+					int first_row_height = Rows.Count > 0 ? Rows[Math.Min (Rows.Count - 1, first_row_index)].Height : 0;
 					verticalScrollBar.SmallChange = first_row_height + 1;
 					int largeChange = ClientSize.Height - columnHeadersHeight;
 					if (largeChange <= 0)
@@ -4672,22 +4683,6 @@ namespace System.Windows.Forms {
 
 			horizontalScrollBar.Visible = horizontalVisible;
 			verticalScrollBar.Visible = verticalVisible;
-			
-			// Paint the bottom right square if both scrollbars are displayed
-			if (horizontalScrollBar.Visible && verticalScrollBar.Visible)
-				g.FillRectangle (SystemBrushes.Control, new Rectangle (horizontalScrollBar.Right, verticalScrollBar.Bottom, verticalScrollBar.Width, horizontalScrollBar.Height));
-
-			// Paint the border
-			bounds = ClientRectangle;
-			
-			switch (BorderStyle) {
-				case BorderStyle.FixedSingle:
-					g.DrawRectangle (Pens.Black, new Rectangle (bounds.Left, bounds.Top, bounds.Width - 1, bounds.Height - 1));
-					break;
-				case BorderStyle.Fixed3D:
-					ControlPaint.DrawBorder3D (g, bounds, Border3DStyle.Sunken);
-					break;
-			}
 		}
 
 		protected virtual void OnReadOnlyChanged (EventArgs e) {
@@ -5602,7 +5597,6 @@ namespace System.Windows.Forms {
 				return;
 
 			int top = 0;
-			
 			for (int index = 0; index < Rows.Count; index++) {
 				DataGridViewRow row = Rows[index];
 				if (e.NewValue < top + row.Height) {
@@ -6014,8 +6008,14 @@ namespace System.Windows.Forms {
 			// If the current cell isn't visible, scroll to it
 			if (scroll) {
 				int disp_x = ColumnIndexToDisplayIndex (x);
+				bool scrollbarsRefreshed = false;
 
 				if (disp_x < first_col_index) {
+					// The trick here is that in order to avoid unnecessary calculations each time a row/column 
+					// is added/removed we recalculate the whole grid size just before just before the scroll 
+					// to selection.
+					RefreshScrollBars ();
+					scrollbarsRefreshed = true;
 					int delta_x = 0;
 
 					if (disp_x == 0)
@@ -6033,6 +6033,9 @@ namespace System.Windows.Forms {
 				int delta_y = 0;
 
 				if (disp_y < first_row_index) {
+					if (!scrollbarsRefreshed)
+						RefreshScrollBars ();
+
 					if (disp_y == 0)
 						delta_y = verticalScrollBar.Value;
 					else
@@ -6042,6 +6045,8 @@ namespace System.Windows.Forms {
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta_y);
 					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
 				} else if (disp_y > first_row_index + displayedRowsCount - 1) {
+					if (!scrollbarsRefreshed)
+						RefreshScrollBars ();
 					if (disp_y == Rows.Count - 1)
 						delta_y = verticalScrollBar.Maximum - verticalScrollBar.Value;
 					else

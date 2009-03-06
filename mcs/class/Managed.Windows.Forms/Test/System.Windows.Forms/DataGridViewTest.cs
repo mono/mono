@@ -1599,6 +1599,16 @@ namespace MonoTests.System.Windows.Forms
 			f.Close ();
 			f.Dispose ();
 		}
+
+		[Test]
+		public void ScrollToSelectionSynchronous()
+		{
+			DataGridView dgv = new DataGridView ();
+			dgv.RowCount = 1000;
+			dgv.CurrentCell = dgv[0, dgv.RowCount -1];		
+			Rectangle rowRect = dgv.GetRowDisplayRectangle (dgv.RowCount - 1, false);
+			Assert.AreEqual (true, dgv.DisplayRectangle.Contains (rowRect), "#01");
+		}
 	}
 	
 	[TestFixture]
@@ -1704,8 +1714,6 @@ namespace MonoTests.System.Windows.Forms
 				Assert.AreEqual (2, controls.Count, "#05");
 			}
 		}
-		
-		
 	}
 		
 }
