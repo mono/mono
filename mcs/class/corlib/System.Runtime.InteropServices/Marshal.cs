@@ -292,10 +292,9 @@ namespace System.Runtime.InteropServices
 		}
 #endif
 
-		[MonoTODO]
 		public static Guid GenerateGuidForType (Type type)
 		{
-			throw new NotImplementedException ();
+			return type.GUID;
 		}
 
 		[MonoTODO]

@@ -3,6 +3,10 @@
 	* SafeHandle.cs: Add default ctor in 2.1 profile (needed to compile
 	new unit tests in moonlight).
 
+2009-03-05  Tom Hindle <tom_hindle@sil.org>
+	
+	* Marshal.cs: Implemented GenerateGuidForType
+
 2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Marshal.cs: Fixed order of arguments for ArgumentException in
