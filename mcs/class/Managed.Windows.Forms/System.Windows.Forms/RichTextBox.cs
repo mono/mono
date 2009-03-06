@@ -1006,6 +1006,11 @@ namespace System.Windows.Forms {
 					sb.Append (buffer, 0, charsRead);
 					charsRead = sr.Read (buffer, 0, buffer.Length);
 				}
+
+				// Remove the EOF converted to an extra EOL by the StreamReader
+				if (sb.Length > 0 && sb [sb.Length - 1] == '\n')
+					sb.Remove (sb.Length - 1, 1);
+
 				base.Text = sb.ToString();
 				return;
 			}

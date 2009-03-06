@@ -1,3 +1,9 @@
+2009-03-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: When calling LoadFile, remove the extra EOL
+	introduced by StreamReader, since it will convert the EOF to an EOL.
+	Fixes #479646.
+
 2009-03-06  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripDropDownMenu.cs: Use Math.Max instead of calculating
