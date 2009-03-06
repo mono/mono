@@ -1,3 +1,12 @@
+2009-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r128749.
+	
+	* method-to-ir.c (mini_emit_memset): Fix the handling of size '3'. Fixes
+	#481458.
+
+	* iltests.il.in: Add a test.
+
 2009-02-14  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r126897.
