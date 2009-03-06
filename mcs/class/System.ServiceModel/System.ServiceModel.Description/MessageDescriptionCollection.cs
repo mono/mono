@@ -31,7 +31,6 @@ using System.Runtime.Serialization;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public class MessageDescriptionCollection : Collection<MessageDescription>
 	{
 		internal MessageDescriptionCollection ()

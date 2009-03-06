@@ -35,7 +35,6 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public class MessagePartDescription
 	{
 		int index;

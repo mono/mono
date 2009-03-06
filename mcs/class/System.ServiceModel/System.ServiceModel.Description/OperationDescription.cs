@@ -59,7 +59,6 @@ namespace System.ServiceModel.Description
 			is_initiating = true;
 		}
 
-		[MonoTODO]
 		public MethodInfo BeginMethod {
 			get { return begin_method; }
 			set { begin_method = value; }
@@ -75,7 +74,6 @@ namespace System.ServiceModel.Description
 			set { contract = value; }
 		}
 
-		[MonoTODO]
 		public MethodInfo EndMethod {
 			get { return end_method; }
 			set { end_method = value; }
@@ -112,7 +110,6 @@ namespace System.ServiceModel.Description
 			get { return known_types; }
 		}
 
-		[MonoTODO]
 		public MessageDescriptionCollection Messages {
 			get { return messages; }
 		}

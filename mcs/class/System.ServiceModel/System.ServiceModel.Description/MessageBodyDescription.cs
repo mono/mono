@@ -36,7 +36,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public class MessageBodyDescription
 	{
 		string wrapper_name, wrapper_ns;
