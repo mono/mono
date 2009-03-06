@@ -1,3 +1,7 @@
+2009-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* load-exceptions.cs load-missing.il: Add a test for #482638.
+
 2009-03-05  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-479763.2.cs: New test.
