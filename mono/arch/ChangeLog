@@ -1,3 +1,8 @@
+2009-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* arm/tramp.c: Include a change from the debian patches. Avoid #include-ing
+	a file in the middle of a function.
+
 2009-02-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/{arm_fpamacros.h, arm_vfpmacros.h}: Remove these files, they are
