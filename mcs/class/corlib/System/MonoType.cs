@@ -41,6 +41,7 @@ namespace System
 	// Contains information about the type which is expensive to compute
 	internal class MonoTypeInfo {
 		public string full_name;
+		public ConstructorInfo default_ctor;
 	}
 		
 	[Serializable]
@@ -62,7 +63,21 @@ namespace System
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern TypeAttributes get_attributes (Type type);
+
+		internal ConstructorInfo GetDefaultConstructor () {
+			ConstructorInfo ctor = null;
+			
+			if (type_info == null)
+				type_info = new MonoTypeInfo ();
+			if ((ctor = type_info.default_ctor) == null) {
+				BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
 	
+				 ctor = type_info.default_ctor = GetConstructor (flags,  null, CallingConventions.Any, Type.EmptyTypes, null);
+			}
+
+			return ctor;
+		}
+
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{
 			return get_attributes (this);
@@ -529,13 +544,14 @@ namespace System
 
 		public override string FullName {
 			get {
+				string fullName;
 				// This doesn't need locking
 				if (type_info == null)
 					type_info = new MonoTypeInfo ();
-				if (type_info.full_name == null)
-					type_info.full_name = getFullName (true, false);
+				if ((fullName = type_info.full_name) == null)
+					fullName = type_info.full_name = getFullName (true, false);
 
-				return type_info.full_name;
+				return fullName;
 			}
 		}
 

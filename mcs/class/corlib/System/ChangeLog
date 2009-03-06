@@ -1,3 +1,19 @@
+2009-03-06  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoType.cs (MonoTypeInfo): Add default_ctor field.
+
+	* MonoType.cs: Add GetDefaultConstructor that caches using
+	type_info.default_ctor.
+
+	* MonoType.cs (FullName): Protects against type_info been replaced
+	under the hood.
+
+	* Activator.cs (CreateInstance): If the type is a MonoType resolve the
+	default constructor using the new method from MonoType.
+
+	Improves Activator::CreateInstance performance by at least 30%, reduces object churn
+	and domain lock contention.
+
 2009-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Guid.cs (BaseToString): Reduce allocations.

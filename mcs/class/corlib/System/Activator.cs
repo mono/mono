@@ -306,11 +306,19 @@ namespace System
 #endif
 			CheckAbstractType (type);
 
-			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-			if (nonPublic)
-				flags |= BindingFlags.NonPublic;
+			ConstructorInfo ctor;
+			MonoType monoType = type as MonoType;
 
-			ConstructorInfo ctor = type.GetConstructor (flags, null, CallingConventions.Any, Type.EmptyTypes, null);
+			if (monoType != null) {
+				ctor = monoType.GetDefaultConstructor ();
+				if (!nonPublic && ctor != null && !ctor.IsPublic)
+					ctor = null;
+			} else {
+				BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+				if (nonPublic)
+					flags |= BindingFlags.NonPublic;
+				ctor = type.GetConstructor (flags, null, CallingConventions.Any, Type.EmptyTypes, null);
+			}
 
 			if (ctor == null) {
 				if (type.IsValueType)
