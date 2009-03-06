@@ -2906,9 +2906,15 @@ namespace System {
 				else if (conversionType == conversionTable[18]) // 18 TypeCode.String
 					return (object) convertValue.ToString (provider);
 				else {
-					throw new InvalidCastException (
-						String.Format (Locale.GetText ("Unknown target convertion type from {0} to {1}"), 
-							       value.GetType (), conversionType));
+					object ret = convertValue.ToType (conversionType, provider);
+					if (ret != null)
+						return ret;
+					else
+					{
+						throw new InvalidCastException (
+							String.Format (Locale.GetText ("Unknown target convertion type from {0} to {1}"), 
+								       value.GetType (), conversionType));
+					}
 				}
 			} else
 				// Not in the conversion table

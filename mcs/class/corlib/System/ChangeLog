@@ -1,3 +1,11 @@
+2009-03-06  Miguel de Icaza  <miguel@novell.com>
+
+	* Convert.cs: Apply patch from Tom Hindle that uses
+	IConvertible.ToType if there are no other possible conversions
+	defined. 
+
+	Fixes: #481687
+
 2009-03-06  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoType.cs (MonoTypeInfo): Add default_ctor field.
