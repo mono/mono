@@ -1,3 +1,7 @@
+2009-03-05  Tom Hindle <tom_hindle@sil.org>
+	
+	* Marshal.cs: Implemented GenerateGuidForType
+
 2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Marshal.cs: Fixed order of arguments for ArgumentException in
