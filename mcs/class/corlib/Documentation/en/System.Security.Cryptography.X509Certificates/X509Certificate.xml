@@ -21,7 +21,10 @@
   <Docs>
     <summary>This class handle X.509 certificates (version 1, 2 and 3). However in most cases, except for <see cref="M:System.Security.Cryptography.X509Certificates.X509Certificate.CreateFromSignedFile(System.String)" />, no validation of the integrity nor the validity of the certificate is done.</summary>
     <remarks>The structure of an X.509 certificate is detailled in the document "Internet X.509 Public Key Infrastructure Certificate and CRL Profile" (<see cref="http://www.ietf.org/rfc/rfc3280.txt" />).
-</remarks>
+
+<para><block subset="none" type="note"><para>
+	There are some compatibility issues with this class. Microsoft's original class do not support other format except ASN.1 DER encoded certificates, but the mono's implementation support both, ASN.1 DER and PEM format. Developers should take care about this behavior when porting their application to both the .NET and mono platforms.
+  </para></block></para></remarks>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -45,9 +48,9 @@
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="data">A byte array containing a single ASN.1 DER encoded X.509 certificate.</param>
+        <param name="data">A byte array containing a single ASN.1 DER or PEM encoded X.509 certificate (see Remarks below).</param>
         <summary>Construct an X509Certificate object from an array of bytes.</summary>
-        <remarks>Privacy Enhanced Mail (PEM), a.k.a Base64, encoded certificates aren't supported by this constructor.</remarks>
+        <remarks>Privacy Enhanced Mail (PEM), a.k.a Base64, encoded certificates aren't supported by this constructor (in Microsoft genuine libraries). However, mono's implementation supports PEM and DER encoded format.</remarks>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
