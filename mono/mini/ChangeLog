@@ -1,3 +1,8 @@
+2009-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-darwin.c (mono_chain_signal): Remove this, it is already in
+	mini-posix.c.
+
 2009-03-05  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-trampolines.c (mono_create_jump_trampoline): If the method
