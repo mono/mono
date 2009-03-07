@@ -1,3 +1,8 @@
+2009-03-06  Mark Probst  <mark.probst@gmail.com>
+
+	* icall.c: Partially revert r126631 because using the jump
+	trampolines for generic shared methods makes it superfluous.
+
 2009-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (handle_store): Create the 'threads' hash table with the proper
