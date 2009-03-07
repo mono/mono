@@ -4596,5 +4596,147 @@ namespace MonoTests.System {
 		{
 			Convert.ToUInt64 ("-", 16);
 		}
+
+		[Test] // bug #481687
+		public void ChangeType_Value_IConvertible ()
+		{
+			BitmapStatus bitmapStatus = new BitmapStatus (3);
+			Image c1 = Convert.ChangeType (bitmapStatus, typeof (Image)) as Image;
+			AssertNotNull ("#A1", c1);
+			AssertEquals ("#A2", 32, c1.ColorDepth);
+
+			bitmapStatus.ConvertToImage = false;
+			object c2 = Convert.ChangeType (bitmapStatus, typeof (Image));
+			AssertNull ("#B", c2);
+
+			object c3 = Convert.ChangeType (bitmapStatus, typeof (int));
+			AssertNotNull ("#C1", c3);
+			AssertEquals ("#C2", 3, c3);
+		}
+	}
+
+	public class Image
+	{
+		private int colorDepth;
+
+		public Image ()
+		{
+			colorDepth = 8;
+		}
+
+		public Image (int colorDepth)
+		{
+			this.colorDepth = colorDepth;
+		}
+
+		public int ColorDepth {
+			get { return colorDepth; }
+		}
+	}
+
+	public class BitmapStatus : IConvertible
+	{
+		protected int m_Status;
+		private bool convertToImage;
+
+		public BitmapStatus (int status)
+		{
+			m_Status = status;
+			convertToImage = true;
+		}
+
+		public bool ConvertToImage {
+			get { return convertToImage; }
+			set { convertToImage = value; }
+		}
+
+		TypeCode IConvertible.GetTypeCode ()
+		{
+			return TypeCode.Int32;
+		}
+
+		bool IConvertible.ToBoolean (IFormatProvider provider)
+		{
+			return (bool)((IConvertible)this).ToType (typeof (bool), provider);
+		}
+
+		byte IConvertible.ToByte (IFormatProvider provider)
+		{
+			return (byte)((IConvertible)this).ToType (typeof (byte), provider);
+		}
+
+		char IConvertible.ToChar (IFormatProvider provider)
+		{
+			return (char)((IConvertible)this).ToType (typeof (char), provider);
+		}
+
+		DateTime IConvertible.ToDateTime (IFormatProvider provider)
+		{
+			return (DateTime)((IConvertible)this).ToType (typeof (DateTime), provider);
+		}
+
+		decimal IConvertible.ToDecimal (IFormatProvider provider)
+		{
+			return (decimal)((IConvertible)this).ToType (typeof (decimal), provider);
+		}
+
+		double IConvertible.ToDouble (IFormatProvider provider)
+		{
+			return (double)((IConvertible)this).ToType (typeof (double), provider);
+		}
+
+		short IConvertible.ToInt16 (IFormatProvider provider)
+		{
+			return (short)((IConvertible)this).ToType (typeof (short), provider);
+		}
+
+		int IConvertible.ToInt32 (IFormatProvider provider)
+		{
+			return (int)m_Status;
+		}
+
+		long IConvertible.ToInt64 (IFormatProvider provider)
+		{
+			return (long)((IConvertible)this).ToType (typeof (long), provider);
+		}
+
+		sbyte IConvertible.ToSByte (IFormatProvider provider)
+		{
+			return (sbyte)((IConvertible)this).ToType (typeof (sbyte), provider);
+		}
+
+		float IConvertible.ToSingle (IFormatProvider provider)
+		{
+			return (float)((IConvertible)this).ToType (typeof (float), provider);
+		}
+
+		string IConvertible.ToString (IFormatProvider provider)
+		{
+			return (string)((IConvertible)this).ToType (typeof (string), provider);
+		}
+
+		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
+		{
+			if (ConvertToImage && conversionType == typeof (Image))
+				return new Image (32);
+			else if (conversionType.IsAssignableFrom (typeof (int)))
+				return Convert.ChangeType (1, conversionType, provider);
+			return null;
+		}
+
+		ushort IConvertible.ToUInt16 (IFormatProvider provider)
+		{
+			return (ushort)((IConvertible)this).ToType (typeof (ushort), provider);
+		}
+
+		uint IConvertible.ToUInt32 (IFormatProvider provider)
+		{
+			return (uint)((IConvertible)this).ToType (typeof (uint), provider);
+		}
+
+		ulong IConvertible.ToUInt64 (IFormatProvider provider)
+		{
+			return (ulong)((IConvertible)this).ToType (typeof (ulong), provider);
+		}
 	}
 }

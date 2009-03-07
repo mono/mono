@@ -1,6 +1,11 @@
+2009-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConvertTest.cs: Merged and improved test for bug #481687.
+	* ConvertTest2.cs: Merged into ConvertTest.cs.
+
 2009-02-27  Rodrigo Kumpera  <rkumpera@novell.com>
 
-	EnumTest.cs: Tests for CompareTo.
+	* EnumTest.cs: Tests for CompareTo.
 
 2009-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
 

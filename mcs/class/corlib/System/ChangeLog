@@ -1,3 +1,8 @@
+2009-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Convert.cs: Do not throw InvalidCastException if IConvertible.ToType
+	returns null.
+
 2009-03-06  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* Convert.cs: Correct typo in exception message.
