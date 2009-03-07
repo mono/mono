@@ -70,9 +70,9 @@ namespace System
 			if (type_info == null)
 				type_info = new MonoTypeInfo ();
 			if ((ctor = type_info.default_ctor) == null) {
-				BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
+				const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
 	
-				 ctor = type_info.default_ctor = GetConstructor (flags,  null, CallingConventions.Any, Type.EmptyTypes, null);
+				ctor = type_info.default_ctor = GetConstructor (flags,  null, CallingConventions.Any, Type.EmptyTypes, null);
 			}
 
 			return ctor;
