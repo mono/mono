@@ -1,3 +1,8 @@
+2009-03-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ResourceSet.cs: for custom resource sets without a reader, pretende
+	that's we've already read the stream.
+
 2009-02-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ResourceSet.cs: populating the resource should be locked because the
