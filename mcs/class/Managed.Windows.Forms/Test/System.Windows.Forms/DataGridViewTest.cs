@@ -1515,6 +1515,44 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (0, dgv.Rows[0].Index, "A3");
 			Assert.AreEqual (1, dgv.Rows[1].Index, "A4");
 			Assert.AreEqual (2, dgv.Rows[2].Index, "A5");
+
+
+			dgv.RowCount = 2;
+			
+			Assert.AreEqual (2, dgv.RowCount, "B1");
+			Assert.AreEqual (1, dgv.ColumnCount, "B2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "B3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "B4");
+
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "C1");
+			Assert.AreEqual (1, dgv.ColumnCount, "C2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "C3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "C4");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "C5");
+
+			dgv.AllowUserToAddRows = false;
+
+			Assert.AreEqual (5, dgv.RowCount, "D1");
+			Assert.AreEqual (1, dgv.ColumnCount, "D2");
+
+			dgv.RowCount = 1;
+			
+			Assert.AreEqual (1, dgv.RowCount, "E1");
+			Assert.AreEqual (1, dgv.ColumnCount, "E2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "E3");
+
+			dgv.RowCount = 8;
+			
+			Assert.AreEqual (8, dgv.RowCount, "F1");
+			Assert.AreEqual (1, dgv.ColumnCount, "F2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "F3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "F4");
 		}
 
 		[Test]
@@ -1536,6 +1574,51 @@ namespace MonoTests.System.Windows.Forms
 				dgv.RowCount = 0;
 				Assert.Fail ("C1");
 			} catch {}
+
+
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "B1");
+			Assert.AreEqual (1, dgv.ColumnCount, "B2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "B3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "B4");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "B5");
+
+
+			dgv.RowCount = 2;
+			
+			Assert.AreEqual (2, dgv.RowCount, "C1");
+			Assert.AreEqual (1, dgv.ColumnCount, "C2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "C3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "C4");
+
+			dgv.AllowUserToAddRows = false;
+
+			Assert.AreEqual (1, dgv.RowCount, "D1");
+			Assert.AreEqual (1, dgv.ColumnCount, "D2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "D3");
+
+			dgv.RowCount = 6;
+			
+			Assert.AreEqual (6, dgv.RowCount, "E1");
+			Assert.AreEqual (1, dgv.ColumnCount, "E2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "E3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "E4");
+			Assert.AreEqual (2, dgv.Rows[2].Index, "E5");
+
+
+			dgv.RowCount = 2;
+			
+			Assert.AreEqual (2, dgv.RowCount, "F1");
+			Assert.AreEqual (1, dgv.ColumnCount, "F2");
+
+			Assert.AreEqual (0, dgv.Rows[0].Index, "F3");
+			Assert.AreEqual (1, dgv.Rows[1].Index, "F4");
+
 		}
 
 		[Test]

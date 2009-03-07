@@ -272,8 +272,14 @@ namespace System.Windows.Forms {
 			set {
 				if (allowUserToAddRows != value) {
 					allowUserToAddRows = value;
+					if (!value) {
+						if (new_row_editing)
+							CancelEdit ();
+						RemoveEditingRow ();
+					} else {
+						PrepareEditingRow (false, false);
+					}
 					OnAllowUserToAddRowsChanged(EventArgs.Empty);
-					PrepareEditingRow (false, false);
 					Invalidate ();
 				}
 			}
@@ -1004,17 +1010,19 @@ namespace System.Windows.Forms {
 				if (dataSource != null) {
 					throw new InvalidOperationException("Cant change row count if DataSource is set.");
 				}
+
 				if (value < rows.Count) {
 					int removeRangeEndIndex = rows.Count - 1;
 					if (AllowUserToAddRows)
-						removeRangeEndIndex--;
-					int removeRangeStartIndex = removeRangeEndIndex - (value - 1);
+						removeRangeEndIndex--; // do not remove editing row
 
-					for (int i = removeRangeEndIndex; i >= removeRangeStartIndex; i--) {
+					int removeRangeStartIndex = value - 1;
+					if (AllowUserToAddRows)
+						removeRangeStartIndex--; // remove an extra row before/instead of the editing row
+
+					for (int i = removeRangeEndIndex; i > removeRangeStartIndex; i--)
 						rows.RemoveAt(i);
-					}
-				}
-				else if (value > rows.Count) {
+				} else if (value > rows.Count) {
 					// If we need to add rows and don't have any columns,
 					// we create one column
 					if (ColumnCount == 0)

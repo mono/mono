@@ -1,3 +1,8 @@
+2009-03-07  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Fix RowCount decrease which wasn't working well 
+	in both scenarions - with and without editing row.
+
 2009-03-06  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Be compatible with MS in that the scroll to 
