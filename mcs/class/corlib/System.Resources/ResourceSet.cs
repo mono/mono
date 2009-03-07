@@ -63,6 +63,7 @@ namespace System.Resources
 		protected ResourceSet ()
 		{
 			Table = new Hashtable ();
+			resources_read = true;
 		}
 
 		public ResourceSet (IResourceReader reader)
@@ -211,15 +212,15 @@ namespace System.Resources
 
 		protected virtual void ReadResources ()
 		{
+			if (resources_read)
+				return;
+
 			if (Reader == null)
 #if NET_2_0
 				throw new ObjectDisposedException ("ResourceSet is closed.");
 #else
 				throw new InvalidOperationException ("ResourceSet is closed.");
 #endif
-			if (resources_read)
-				return;
-
 			lock (Table) {
 				if (resources_read)
 					return;
