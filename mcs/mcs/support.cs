@@ -203,31 +203,42 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   This is a wrapper around StreamReader which is seekable backwards
-	///   within a window of around 2048 chars.
+	///   This is an arbitrarily seekable StreamReader wrapper.
+	///
+	///   It uses a self-tuning buffer to cache the seekable data,
+	///   but if the seek is too far, it may read the underly
+	///   stream all over from the beginning.
 	/// </summary>
 	public class SeekableStreamReader
 	{
-		const int AverageReadLength = 1024;
+		const int default_average_read_length = 1024;
+		const int buffer_read_length_spans = 3;
+
 		TextReader reader;
 		Stream stream;
 		Encoding encoding;
 
 		char[] buffer;
+		int average_read_length;
 		int buffer_start;       // in chars
 		int char_count;         // count buffer[] valid characters
 		int pos;                // index into buffer[]
+
+		void ResetStream (int read_length_inc)
+		{
+			average_read_length += read_length_inc;
+			stream.Position = 0;
+			reader = new StreamReader (stream, encoding, true);
+			buffer = new char [average_read_length * buffer_read_length_spans];
+			buffer_start = char_count = pos = 0;
+		}
 
 		public SeekableStreamReader (Stream stream, Encoding encoding)
 		{
 			this.stream = stream;
 			this.encoding = encoding;
-			
-			this.reader = new StreamReader (stream, encoding, true);
-			this.buffer = new char [AverageReadLength * 3];
 
-			// Let the StreamWriter autodetect the encoder
-			reader.Peek ();
+			ResetStream (default_average_read_length);
 		}
 
 		/// <remarks>
@@ -241,23 +252,14 @@ namespace Mono.CSharp {
 			get { return buffer_start + pos; }
 
 			set {
-				if (value > buffer_start + char_count)
-					throw new InternalErrorException ("can't seek that far forward: " + (pos - value));
-				
-				if (value < buffer_start){
-					// Reinitialize.
-					stream.Position = 0;
-					reader = new StreamReader (stream, encoding, true);
-					buffer_start = 0;
-					char_count = 0;
-					pos = 0;
-					Peek ();
+				// If the lookahead was too small, re-read from the beginning.  Increase the buffer size while we're at it
+				if (value < buffer_start)
+					ResetStream (average_read_length / 2);
 
-					while (value > buffer_start + char_count){
-						pos = char_count+1;
-						Peek ();
-					}
-					pos = value - buffer_start;
+				while (value > buffer_start + char_count) {
+					pos = char_count;
+					if (!ReadBuffer ())
+						throw new InternalErrorException ("Seek beyond end of file: " + (buffer_start + char_count - value));
 				}
 
 				pos = value - buffer_start;
@@ -267,18 +269,17 @@ namespace Mono.CSharp {
 		private bool ReadBuffer ()
 		{
 			int slack = buffer.Length - char_count;
-			if (slack <= AverageReadLength / 2) {
-				// shift the buffer to make room for AverageReadLength number of characters
-				int shift = AverageReadLength - slack;
+			if (slack <= average_read_length / 2) {
+				// shift the buffer to make room for average_read_length number of characters
+				int shift = average_read_length - slack;
 				Array.Copy (buffer, shift, buffer, 0, char_count - shift);
 				pos -= shift;
 				char_count -= shift;
 				buffer_start += shift;
-				slack += shift;		// slack == AverageReadLength
+				slack += shift;		// slack == average_read_length
 			}
 
-			int chars_read = reader.Read (buffer, char_count, slack);
-			char_count += chars_read;
+			char_count += reader.Read (buffer, char_count, slack);
 
 			return pos < char_count;
 		}

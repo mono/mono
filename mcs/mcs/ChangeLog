@@ -1,3 +1,12 @@
+2009-03-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	Make SeekableStreamReader self-tuning and arbitrarily seekable
+	* support.cs (SeekableStreamReader.ResetStream): New.  Allocates
+	the buffer.
+	(SeekableStreamReader.Position.set): Use it.  Simplify logic
+	which, as a side-effect, makes it arbitrarily-seekable.  Tune the
+	buffer size when the stream needs to be re-read from the beginning.
+
 2009-03-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #480100
