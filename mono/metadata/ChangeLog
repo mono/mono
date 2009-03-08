@@ -1,3 +1,7 @@
+2009-03-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* appdomain.c (get_shadow_assembly_location): Fix memleak.
+
 2009-03-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* domain-internals.h (struct _MonoDomain): Add new hash tables mapping
