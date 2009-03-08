@@ -311,8 +311,13 @@ namespace Mono.CSharp {
 			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order)
 					tc.ResolveType ();
-				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.Define ();
+				foreach (TypeContainer tc in type_container_resolve_order) {
+					try {
+						tc.Define ();
+					} catch (Exception e) {
+						throw new InternalErrorException (tc, e);
+					}
+				}
 			}
 
 			ArrayList delegates = root.Delegates;

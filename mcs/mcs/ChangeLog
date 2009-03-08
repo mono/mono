@@ -1,3 +1,10 @@
+2009-03-08  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs: Use correct common base type for unmanaged delayed
+	check.
+
+	* rootcontext.cs: Wrap unhandled exception.
+
 2009-03-05  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #480100
