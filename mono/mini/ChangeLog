@@ -1,3 +1,8 @@
+2009-03-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (token_handler): Decode method references in non-wrappers
+	as well.
+
 2009-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Check for type load exceptions in
