@@ -1,3 +1,10 @@
+2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Fix three column bugs:
+	   - Rows should be cleared (but not removed) if columns become 0.
+	   - The current cell should get moved
+	   - ColumnCount increase was adding too many columns.
+
 2009-03-07  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fix RowCount decrease which wasn't working well 

@@ -266,6 +266,11 @@ namespace System.Windows.Forms
 			}
 		}
 
+		internal void ClearInternal ()
+		{
+			list.Clear ();
+		}
+
 		bool IList.Contains (object value)
 		{
 			return Contains (value as DataGridViewRow);

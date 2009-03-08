@@ -587,7 +587,7 @@ namespace System.Windows.Forms {
 					}
 				}
 				else if (value > columns.Count) {
-					for (int i = 0; i < value; i++) {
+					for (int i = columns.Count; i < value; i++) {
 						DataGridViewTextBoxColumn col = new DataGridViewTextBoxColumn ();
 						columns.Add(col);
 					}
@@ -3835,8 +3835,20 @@ namespace System.Windows.Forms {
 			}
 
 			AutoResizeColumnsInternal ();
-			OnColumnRemoved (e);
 			PrepareEditingRow (false, true);
+			if (Columns.Count == 0) {
+				rows.ClearInternal ();
+				MoveCurrentCell (-1, -1, true, false, false, true);
+			} else if (currentCell != null && CurrentCell.ColumnIndex == e.Column.Index) {
+				int nextColumnIndex = e.Column.Index;
+				if (nextColumnIndex >= Columns.Count)
+					nextColumnIndex = Columns.Count - 1;
+				MoveCurrentCell (nextColumnIndex, currentCell.RowIndex, true, false, false, true);
+				if (hover_cell != null && hover_cell.ColumnIndex >= e.Column.Index)
+					hover_cell = null;
+			}
+
+			OnColumnRemoved (e);
 		}
 
 		protected virtual void OnColumnRemoved (DataGridViewColumnEventArgs e)

@@ -1161,18 +1161,41 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ColumnCount ()
 		{
-			DataGridView grid = new DataGridView ();
-			Assert.AreEqual (0, grid.ColumnCount, "#A1");
+			DataGridView dgv = new DataGridView ();
+
+			dgv.RowCount = 10;
+			dgv.ColumnCount = 2;
+
+			Assert.AreEqual (10, dgv.RowCount, "A1");
+			Assert.AreEqual (2, dgv.ColumnCount, "A2");
+
+			dgv.ColumnCount = 1;
+
+			Assert.AreEqual (10, dgv.RowCount, "B1");
+			Assert.AreEqual (1, dgv.ColumnCount, "B2");
+
+			dgv.ColumnCount = 3;
+
+			Assert.AreEqual (10, dgv.RowCount, "C1");
+			Assert.AreEqual (3, dgv.ColumnCount, "C2");
+
+
+			dgv.ColumnCount = 0;
+
+			Assert.AreEqual (0, dgv.RowCount, "D1");
+			Assert.AreEqual (0, dgv.ColumnCount, "D2");
+
+			Assert.AreEqual (0, dgv.ColumnCount, "E1");
 
 			try {
-				grid.ColumnCount = -1;
-				Assert.Fail ("#B1");
+				dgv.ColumnCount = -1;
+				Assert.Fail ("F1");
 			} catch (ArgumentOutOfRangeException ex) {
-				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "#B2");
-				Assert.IsNotNull (ex.Message, "#B3");
-				Assert.IsNotNull (ex.ParamName, "#B4");
-				Assert.AreEqual ("ColumnCount", ex.ParamName, "#B5");
-				Assert.IsNull (ex.InnerException, "#B6");
+				Assert.AreEqual (typeof (ArgumentOutOfRangeException), ex.GetType (), "F2");
+				Assert.IsNotNull (ex.Message, "F3");
+				Assert.IsNotNull (ex.ParamName, "F4");
+				Assert.AreEqual ("ColumnCount", ex.ParamName, "F5");
+				Assert.IsNull (ex.InnerException, "F6");
 			}
 		}
 
