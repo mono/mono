@@ -1,3 +1,13 @@
+2009-03-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (struct _MonoDomain): Add new hash tables mapping
+	between GCHandles of type WeakTrackResurrection and the objects they
+	point to.
+
+	* gc.c: Partly implement the sematics of GCHandles of type 
+	WeakTrackResurrection: these handles should only be cleared after the
+	finalizer of the object they are pointing to has ran.
+
 2009-03-06  Mark Probst  <mark.probst@gmail.com>
 
 	* icall.c: Partially revert r126631 because using the jump
