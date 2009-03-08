@@ -34970,6 +34970,19 @@
       </method>
     </type>
   </test>
+  <test name="test-714.cs">
+    <type name="Hello">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void IBar.Test()">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-72.cs">
     <type name="outer">
       <method name="Void .ctor()">
