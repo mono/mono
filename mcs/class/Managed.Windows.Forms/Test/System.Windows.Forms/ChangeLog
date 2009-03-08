@@ -1,5 +1,9 @@
 2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewTest.cs: Add tests for CurrentCell.
+
+2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewTest.cs: Add tests for ColumnCount.
 
 2009-03-07  Ivan N. Zlatev  <contact@i-nz.net>

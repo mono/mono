@@ -1,5 +1,12 @@
 2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: When removing the first displayed row and moving 
+	the current cell up one we must invalidate the first displayed row 
+	index before calculating the row heights, etc.
+	[Fixes bug #483202]
+
+2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Fix three column bugs:
 	   - Rows should be cleared (but not removed) if columns become 0.
 	   - The current cell should get moved

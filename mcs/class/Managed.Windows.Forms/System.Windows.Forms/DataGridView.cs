@@ -4897,7 +4897,7 @@ namespace System.Windows.Forms {
 			} else if (Columns.Count == 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				hover_cell = null;
-			} else {
+			} else if (currentCell != null && currentCell.RowIndex == e.RowIndex) {
 				int nextRowIndex = e.RowIndex;
 				if (nextRowIndex >= Rows.Count)
 					nextRowIndex = Rows.Count - 1;
@@ -6040,9 +6040,13 @@ namespace System.Windows.Forms {
 
 					if (disp_x == 0)
 						delta_x = horizontalScrollBar.Value;
-					else
+					else {
+						// in case the column got removed
+						if (first_col_index >= ColumnCount)
+							first_col_index = ColumnCount - 1;
 						for (int i = disp_x; i < first_col_index; i++)
 							delta_x += Columns[ColumnDisplayIndexToIndex (i)].Width;
+					}
 				
 					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value - delta_x);
 					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
@@ -6058,15 +6062,20 @@ namespace System.Windows.Forms {
 
 					if (disp_y == 0)
 						delta_y = verticalScrollBar.Value;
-					else
+					else {
+						// in case the row got removed
+						if (first_row_index >= RowCount)
+							first_row_index = RowCount - 1;
 						for (int i = disp_y; i < first_row_index; i++)
 							delta_y += GetRowInternal (i).Height;
+					}
 
 					verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta_y);
 					OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
 				} else if (disp_y > first_row_index + displayedRowsCount - 1) {
 					if (!scrollbarsRefreshed)
 						RefreshScrollBars ();
+
 					if (disp_y == Rows.Count - 1)
 						delta_y = verticalScrollBar.Maximum - verticalScrollBar.Value;
 					else
