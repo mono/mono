@@ -1,3 +1,10 @@
+2009-03-09  Mark Probst  <mark.probst@gmail.com>
+
+	* generic-sharing.c (instantiate_other_info): Always return a jump
+	trampoline for method code.
+
+	Backport of r128723.
+
 2009-03-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r128853.

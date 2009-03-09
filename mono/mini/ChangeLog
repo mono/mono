@@ -1,3 +1,15 @@
+2009-03-09  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c (mono_create_jump_trampoline): If the method
+	is shared generic code, return the trampoline, even if the method
+	has already been compiled.  Fixes #479763.
+
+	* mini.c, mini.h: New function
+	mono_jit_find_compiled_method_with_jit_info() which is the same as
+	mono_jit_find_compiled_method() but also returns the jit info.
+
+	Backport of r128723.
+
 2009-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r128749.
