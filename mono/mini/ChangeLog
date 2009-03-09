@@ -1,3 +1,11 @@
+2009-03-09  Mark Probst  <mark.probst@gmail.com>
+
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* mini-ppc.c: Correct handling of OP_LOADI4_MEMINDEX for ppc64.
+	Fixes #483462.
+
 2009-03-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (token_handler): Decode method references in non-wrappers
