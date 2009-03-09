@@ -1,0 +1,14 @@
+/NpgsqlClosedState.resources
+/NpgsqlCommandBuilder.resources
+/NpgsqlCommand.resources
+/NpgsqlConnectedState.resources
+/NpgsqlConnection.resources
+/NpgsqlConnectionString.resources
+/NpgsqlEventLog.resources
+/NpgsqlException.resources
+/NpgsqlParameterCollection.resources
+/NpgsqlParameter.resources
+/NpgsqlReadyState.resources
+/NpgsqlState.resources
+/NpgsqlTransaction.resources
+/PGUtil.resources
