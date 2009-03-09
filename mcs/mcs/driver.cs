@@ -1984,7 +1984,6 @@ namespace Mono.CSharp
 		{
 			Driver.Reset ();
 			RootContext.Reset (full_flag);
-			Tokenizer.Reset ();
 			Location.Reset ();
 			Report.Reset ();
 			TypeManager.Reset ();

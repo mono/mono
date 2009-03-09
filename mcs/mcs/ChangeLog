@@ -1,3 +1,10 @@
+2009-03-09  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs: Optimized GetKeyword using an array instead of
+	hashtable (~10x faster).
+	
+	* driver.cs: Removed wrong Reset.
+
 2009-03-08  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Use correct common base type for unmanaged delayed

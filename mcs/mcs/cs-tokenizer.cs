@@ -27,6 +27,19 @@ namespace Mono.CSharp
 
 	public class Tokenizer : yyParser.yyInput
 	{
+		class KeywordEntry
+		{
+			public readonly int Token;
+			public KeywordEntry Next;
+			public readonly char[] Value;
+
+			public KeywordEntry (string value, int token)
+			{
+				this.Value = value.ToCharArray ();
+				this.Token = token;
+			}
+		}
+
 		SeekableStreamReader reader;
 		SourceFile ref_name;
 		CompilationUnit file_name;
@@ -161,7 +174,7 @@ namespace Mono.CSharp
 		//
 		// Class variables
 		// 
-		static CharArrayHashtable[] keywords;
+		static KeywordEntry[][] keywords;
 		static Hashtable keyword_strings;
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
@@ -278,16 +291,32 @@ namespace Mono.CSharp
 		static void AddKeyword (string kw, int token)
 		{
 			keyword_strings.Add (kw, kw);
-			if (keywords [kw.Length] == null) {
-				keywords [kw.Length] = new CharArrayHashtable (kw.Length);
+
+			int length = kw.Length;
+			if (keywords [length] == null) {
+				keywords [length] = new KeywordEntry ['z' - '_' + 1];
 			}
-			keywords [kw.Length] [kw.ToCharArray ()] = token;
+
+			int char_index = kw [0] - '_';
+			KeywordEntry kwe = keywords [length] [char_index];
+			if (kwe == null) {
+				keywords [length] [char_index] = new KeywordEntry (kw, token);
+				return;
+			}
+
+			while (kwe.Next != null) {
+				kwe = kwe.Next;
+			}
+
+			kwe.Next = new KeywordEntry (kw, token);
 		}
 
 		static void InitTokens ()
 		{
 			keyword_strings = new Hashtable ();
-			keywords = new CharArrayHashtable [64];
+
+			// 11 is the length of the longest keyword for now
+			keywords = new KeywordEntry [11] [];
 
 			AddKeyword ("__arglist", Token.ARGLIST);
 			AddKeyword ("abstract", Token.ABSTRACT);
@@ -394,12 +423,7 @@ namespace Mono.CSharp
 		// 
 		static Tokenizer ()
 		{
-			Reset ();
-		}
-
-		public static void Reset ()
-		{
-			InitTokens ();
+			InitTokens ();			
 			csharp_format_info = NumberFormatInfo.InvariantInfo;
 			styles = NumberStyles.Float;
 
@@ -408,20 +432,37 @@ namespace Mono.CSharp
 
 		int GetKeyword (char[] id, int id_len)
 		{
-			/*
-			 * Keywords are stored in an array of hashtables grouped by their
-			 * length.
-			 */
-
-			if ((id_len >= keywords.Length) || (keywords [id_len] == null))
+			//
+			// Keywords are stored in an array of arrays grouped by their
+			// length and then by the first character
+			//
+			if (id_len >= keywords.Length || keywords [id_len] == null)
 				return -1;
-			object o = keywords [id_len] [id];
 
-			if (o == null)
+			int first_index = id [0] - '_';
+			if (first_index > 'z')
+				return -1;
+
+			KeywordEntry kwe = keywords [id_len] [first_index];
+			if (kwe == null)
+				return -1;
+
+			int res;
+			do {
+				res = kwe.Token;
+				for (int i = 1; i < id_len; ++i) {
+					if (id [i] != kwe.Value [i]) {
+						res = 0;
+						break;
+					}
+				}
+				kwe = kwe.Next;
+			} while (kwe != null && res == 0);
+
+			if (res == 0)
 				return -1;
 
 			int next_token;
-			int res = (int) o;
 			switch (res) {
 			case Token.GET:
 			case Token.SET:
@@ -589,8 +630,19 @@ namespace Mono.CSharp
 
 		static bool is_identifier_part_character (char c)
 		{
-			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') ||
-				Char.IsLetter (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation;
+			if (c >= 'a' && c <= 'z')
+				return true;
+
+			if (c >= 'A' && c <= 'Z')
+				return true;
+
+			if (c == '_' || (c >= '0' && c <= '9'))
+				return true;
+
+			if (c < 0x80)
+				return false;
+
+			return Char.IsLetter (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation;
 		}
 
 		public static bool IsKeyword (string s)
