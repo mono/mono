@@ -1,3 +1,8 @@
+2009-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_has_attr): Handle interfaces. Fixes
+	#483247.
+
 2009-03-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* appdomain.c (get_shadow_assembly_location): Fix memleak.
