@@ -636,10 +636,8 @@ namespace Mono.CompilerServices.SymbolWriter
 				int count_includes = reader.ReadLeb128 ();
 				if (count_includes > 0) {
 					include_files = new ArrayList ();
-					for (int i = 0; i < count_includes; i++) {
-						// FIXME: The debugger will need this later on.
-						reader.ReadLeb128 ();
-					}
+					for (int i = 0; i < count_includes; i++)
+						include_files.Add (file.GetSourceFile (reader.ReadLeb128 ()));
 				}
 
 				int count_ns = reader.ReadLeb128 ();
@@ -656,6 +654,18 @@ namespace Mono.CompilerServices.SymbolWriter
 				ReadData ();
 				NamespaceEntry[] retval = new NamespaceEntry [namespaces.Count];
 				namespaces.CopyTo (retval, 0);
+				return retval;
+			}
+		}
+
+		public SourceFileEntry[] IncludeFiles {
+			get {
+				ReadData ();
+				if (include_files == null)
+					return new SourceFileEntry [0];
+
+				SourceFileEntry[] retval = new SourceFileEntry [include_files.Count];
+				include_files.CopyTo (retval, 0);
 				return retval;
 			}
 		}

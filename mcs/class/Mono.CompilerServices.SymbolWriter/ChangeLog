@@ -1,3 +1,9 @@
+2009-03-05  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(CompileUnitEntry.IncludeFiles): New public property.
+	(CompileUnitEntry.ReadData): Also read include files.
+
 2008-11-19  Marek Safar  <marek.safar@gmail.com>
 
 	* MonoSymbolWriter.cs, MonoSymbolTable.cs: Change always boxed
