@@ -1,5 +1,15 @@
 2009-03-09  Mark Probst  <mark.probst@gmail.com>
 
+	Contributed under the terms of the MIT/X11 license by Steven
+	Munroe <munroesj@us.ibm.com>.
+
+	* mini-ppc.c: Correct handling of OP_LOADI4_MEMINDEX for ppc64.
+	Fixes #483462.
+
+	Backport of r128904.
+
+2009-03-09  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-trampolines.c (mono_create_jump_trampoline): If the method
 	is shared generic code, return the trampoline, even if the method
 	has already been compiled.  Fixes #479763.
