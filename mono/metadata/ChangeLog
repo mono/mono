@@ -1,3 +1,9 @@
+2009-03-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r128853.
+
+	* appdomain.c (get_shadow_assembly_location): Fix memleak.
+
 2009-03-05  Marek Habersack  <mhabersack@novell.com>
 
 	* culture-info-tables.h: generated to include the en-tt culture.
