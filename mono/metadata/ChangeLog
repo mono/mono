@@ -1,3 +1,11 @@
+2009-03-10  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r129009.
+
+	* reflection.c (ensure_complete_type): New helper function to call
+	type resolve handlers for unfinished dynamic types.
+	(resolve_object): Call it for MonoClassFields. Fixes #483852.
+
 2009-03-09  Mark Probst  <mark.probst@gmail.com>
 
 	* generic-sharing.c (instantiate_other_info): Always return a jump
