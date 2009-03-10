@@ -43,7 +43,7 @@ namespace System.Web.Configuration {
 
 		static AuthorizationSection ()
 		{
-			rulesProp = new ConfigurationProperty ("", typeof (AuthorizationRuleCollection), null,
+			rulesProp = new ConfigurationProperty (String.Empty, typeof (AuthorizationRuleCollection), null,
 							       null, PropertyHelper.DefaultValidator,
 							       ConfigurationPropertyOptions.IsDefaultCollection);
 			properties = new ConfigurationPropertyCollection ();
@@ -68,8 +68,7 @@ namespace System.Web.Configuration {
 
 		internal bool IsValidUser (IPrincipal user, string verb)
 		{
-			string username = (user == null) ? "" : user.Identity.Name;
-
+			string username = (user == null) ? String.Empty : user.Identity.Name;
 			foreach (AuthorizationRule rule in Rules) {
 				if (rule.Verbs.Count != 0 && !rule.CheckVerb (verb))
 					continue;
