@@ -1,3 +1,10 @@
+2009-03-10  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r128924.
+	
+	* mini-s390x.c: Fix support for vtypes whose addresses are passed on the
+	stack.
+
 2009-03-09  Mark Probst  <mark.probst@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by Steven
