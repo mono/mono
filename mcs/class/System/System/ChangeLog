@@ -1,3 +1,7 @@
+2009-03-10  Jackson Harper  <jackson@ximian.com>
+
+	* Uri.cs: 2.1 Uris do get a UriTypeConverter.
+
 2009-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : file URI for Windows path should also try '\' instead of
