@@ -1,5 +1,7 @@
 2009-03-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_compile_assembly): Make the output less verbose.
+
 	* dwarfwriter.c (emit_line_number_info): The line number info for
 	IL code was off by one. Fix that.
 
