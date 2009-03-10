@@ -10583,6 +10583,43 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 #if NET_2_0
+		static TypeBuilder Resolve1_Tb;
+		static bool Resolve1_Called;
+
+		public class Lookup<T>
+		{
+			public static Type t = typeof(T);
+		}
+
+		Assembly Resolve1 (object sender, ResolveEventArgs args) {
+			Resolve1_Called = true;
+			Resolve1_Tb.CreateType ();
+			return Resolve1_Tb.Assembly;
+		}
+
+		[Test]
+		public void TypeResolveGenericInstances () {
+			// Test that TypeResolve is called for generic instances (#483852)
+			TypeBuilder tb1 = null;
+
+			AppDomain.CurrentDomain.TypeResolve += Resolve1;
+
+			tb1 = module.DefineType("Foo");
+			Resolve1_Tb = tb1;
+			FieldInfo field = TypeBuilder.GetField(typeof(Lookup<>).MakeGenericType(tb1), typeof(Lookup<>).GetField("t"));
+			TypeBuilder tb2 = module.DefineType("Bar");
+			ConstructorBuilder cb = tb2.DefineConstructor(MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+			ILGenerator ilgen = cb.GetILGenerator();
+			ilgen.Emit(OpCodes.Ldsfld, field);
+			ilgen.Emit(OpCodes.Pop);
+			ilgen.Emit(OpCodes.Ret);
+			Activator.CreateInstance(tb2.CreateType());
+
+			Assert.IsTrue (Resolve1_Called);
+		}
+#endif
+
+#if NET_2_0
 #if !WINDOWS
 		/* 
 		 * Tests for passing user types to Ref.Emit. Currently these only test

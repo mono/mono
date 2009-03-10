@@ -1,3 +1,7 @@
+2009-03-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilderTest.cs: Add a test for #483852.
+
 2009-02-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add more tests for user types.
