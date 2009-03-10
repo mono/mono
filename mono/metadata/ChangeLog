@@ -1,3 +1,9 @@
+2009-03-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (ensure_complete_type): New helper function to call
+	type resolve handlers for unfinished dynamic types.
+	(resolve_object): Call it for MonoClassFields. Fixes #483852.
+
 2009-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_custom_attrs_has_attr): Handle interfaces. Fixes
