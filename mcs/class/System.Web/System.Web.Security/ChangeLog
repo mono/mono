@@ -1,3 +1,9 @@
+2009-03-10  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlAuthorizationModule.cs: OnAuthorizeRequest must use the
+	configuration from <location> elements in the config. Fixes bug
+	#467221
+
 2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FormsAuthentication.cs: use GetWebApplication instead of GetSection
