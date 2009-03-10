@@ -53,6 +53,7 @@ net_2_0_dirs := \
 	nunitreport	\
 	sqlsharp	\
 	gacutil		\
+	svcutil		\
 	csharplib
 
 net_2_1_dirs := \

@@ -1,3 +1,7 @@
+2009-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: add svcutil to the build.
+
 2008-12-01  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: build the tuner library during the net_1_1 profile. The
