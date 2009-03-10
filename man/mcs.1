@@ -384,7 +384,14 @@ assembly.
 Use this to stop option parsing, and allow option-looking parameters
 to be passed on the command line.
 .PP
-.SH PACKAGES
+.SH PACKAGES AND LIBRARIES
+When referencing an assembly, if the name of the assembly is a path,
+the compiler will try to load the assembly specified in the path.   If
+it does not, then the compiler will try loading the assembly from the
+current directory, the compiler base directory and if the assembly is
+not found in any of those places in the directories specified as
+arguments to the -lib: command argument.
+.PP
 Depending on the invocation for the C# compiler (mcs, gmcs, or smcs)
 you will get a default set of libraries and versions of those
 libraries that are referenced.
