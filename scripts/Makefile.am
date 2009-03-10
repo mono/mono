@@ -99,6 +99,7 @@ scripts_2_0 = \
 	xsd2$(SCRIPT_SUFFIX)			\
 	sgen$(SCRIPT_SUFFIX)			\
 	sqlsharp$(SCRIPT_SUFFIX)		\
+	svcutil$(SCRIPT_SUFFIX)			\
 	xbuild$(SCRIPT_SUFFIX)
 
 MDOC_SUBCOMMANDS = \
