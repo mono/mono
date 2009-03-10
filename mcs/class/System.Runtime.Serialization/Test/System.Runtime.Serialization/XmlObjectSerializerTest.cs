@@ -1066,6 +1066,20 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (w.T, w.T2, "#2");
 		}
 
+		[Test]
+		public void GenericSerialization ()
+		{
+			var sw = new StringWriter ();
+			var ser  = new DataContractSerializer (typeof (Foo<string,int,int>));
+			using (var xw = XmlWriter.Create (sw))
+				ser.WriteObject (xw, new Foo<string,int,int> () {Field = "f"
+			});
+			var s = sw.ToString ();
+
+			var ret = (Foo<string,int,int>) ser.ReadObject (XmlReader.Create (new StringReader (s)));
+			Assert.AreEqual ("f", ret.Field);
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1320,4 +1334,11 @@ namespace MonoTests.System.Runtime.Serialization
 [DataContract]
 class GlobalSample1
 {
+}
+
+[DataContract]
+class Foo<X,Y,Z>
+{
+	[DataMember]
+	public X Field;
 }

@@ -1,3 +1,7 @@
+2009-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : fix for generic serialization.
+
 2009-02-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : look for unordered members first, in

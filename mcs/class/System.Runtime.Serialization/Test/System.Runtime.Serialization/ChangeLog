@@ -1,3 +1,7 @@
+2009-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : test for generic type serialization.
+
 2009-02-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : fixed non-contract serialization

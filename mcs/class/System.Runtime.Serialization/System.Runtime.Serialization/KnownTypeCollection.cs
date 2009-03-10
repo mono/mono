@@ -451,11 +451,16 @@ namespace System.Runtime.Serialization
 
 		internal static QName GetContractQName (Type type, string name, string ns)
 		{
-			if (name == null)
+			if (name == null) {
 				// FIXME: there could be decent ways to get 
 				// the same result...
 				name = type.Namespace == null || type.Namespace.Length == 0 ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
-
+				if (type.IsGenericType) {
+					name = name.Substring (0, name.IndexOf ('`')) + "Of";
+					foreach (var t in type.GetGenericArguments ())
+						name += t.Name; // FIXME: check namespaces too
+				}
+			}
 			if (ns == null)
 				ns = XmlObjectSerializer.DefaultNamespaceBase + type.Namespace;
 			return new QName (name, ns);
@@ -501,6 +506,11 @@ namespace System.Runtime.Serialization
 		private QName GetSerializableQName (Type type)
 		{
 			string xmlName = type.Name;
+			if (type.IsGenericType) {
+				xmlName = xmlName.Substring (0, xmlName.IndexOf ('`')) + "Of";
+				foreach (var t in type.GetGenericArguments ())
+					xmlName += t.Name; // FIXME: check namespaces too
+			}
 			string xmlNamespace = XmlObjectSerializer.DefaultNamespaceBase + type.Namespace;
 			var x = GetAttribute<XmlRootAttribute> (type);
 			if (x != null) {
