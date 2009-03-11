@@ -1,0 +1,218 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D63B7158-6F23-4B35-9C39-871D37C9BAA6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Test_NUnit_MsSql</RootNamespace>
+    <AssemblyName>DbLinq.SqlServer_test_strict</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\..\build.dbg\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MSSQL;MONO_STRICT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\..\build\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MSSQL;MONO_STRICT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.core, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\nunit.core.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.core.interfaces, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\nunit.core.interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\examples\DbLinq.Mssql.Example\nwind\originalMSNorthwind.designer.cs">
+      <Link>nwind\originalMSNorthwind.designer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\lib\DynamicLinq.cs">
+      <Link>lib\DynamicLinq.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Attach.cs">
+      <Link>Providers\Attach.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\CompositePK_Test.cs">
+      <Link>Providers\CompositePK_Test.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\DataLoadOptions_Test.cs">
+      <Link>Providers\DataLoadOptions_Test.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTest_Subquery.cs">
+      <Link>Providers\ReadTest_Subquery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\DynamicLinqTest.cs">
+      <Link>Providers\DynamicLinqTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ExecuteCommand_Test.cs">
+      <Link>Providers\ExecuteCommand_Test.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ExecuteQuery_Test.cs">
+      <Link>Providers\ExecuteQuery_Test.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Advanced.cs">
+      <Link>Providers\Linq_101_Samples\Advanced.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Conversion_Operators.cs">
+      <Link>Providers\Linq_101_Samples\Conversion_Operators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Count_Sum_Min_Max_Avg.cs">
+      <Link>Providers\Linq_101_Samples\Count_Sum_Min_Max_Avg.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\ExsistIn_Any_All.cs">
+      <Link>Providers\Linq_101_Samples\ExsistIn_Any_All.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\GroupBy_Having.cs">
+      <Link>Providers\Linq_101_Samples\GroupBy_Having.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Inheritance.cs">
+      <Link>Providers\Linq_101_Samples\Inheritance.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Insert_Update_Delete.cs">
+      <Link>Providers\Linq_101_Samples\Insert_Update_Delete.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Join.cs">
+      <Link>Providers\Linq_101_Samples\Join.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Linq101SamplesModifiedAttribute.cs">
+      <Link>Providers\Linq_101_Samples\Linq101SamplesModifiedAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Null.cs">
+      <Link>Providers\Linq_101_Samples\Null.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Object Loading.cs">
+      <Link>Providers\Linq_101_Samples\Object Loading.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Object_Identity.cs">
+      <Link>Providers\Linq_101_Samples\Object_Identity.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\OrderBy.cs">
+      <Link>Providers\Linq_101_Samples\OrderBy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Paging.cs">
+      <Link>Providers\Linq_101_Samples\Paging.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Select_Distinct.cs">
+      <Link>Providers\Linq_101_Samples\Select_Distinct.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\String_Date_functions.cs">
+      <Link>Providers\Linq_101_Samples\String_Date_functions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Top_Bottom.cs">
+      <Link>Providers\Linq_101_Samples\Top_Bottom.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\UnionAll_Union_Intersect.cs">
+      <Link>Providers\Linq_101_Samples\UnionAll_Union_Intersect.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Views.cs">
+      <Link>Providers\Linq_101_Samples\Views.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\Where.cs">
+      <Link>Providers\Linq_101_Samples\Where.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_AnyCountFirst.cs">
+      <Link>Providers\ReadTests_AnyCountFirst.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_Conversions.cs">
+      <Link>Providers\ReadTests_Conversions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_DateTimeFunctions.cs">
+      <Link>Providers\ReadTests_DateTimeFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_EntitySet.cs">
+      <Link>Providers\ReadTests_EntitySet.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_Maths.cs">
+      <Link>Providers\ReadTests_Maths.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_ReferenceLoading.cs">
+      <Link>Providers\ReadTests_ReferenceLoading.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_StringFunctions.cs">
+      <Link>Providers\ReadTests_StringFunctions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Table.cs">
+      <Link>Providers\Table.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Transactions.cs">
+      <Link>Providers\Transactions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\Properties\AssemblyInfo.cs">
+      <Link>Providers\Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTest.cs">
+      <Link>Providers\ReadTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTests_Join.cs">
+      <Link>Providers\ReadTests_Join.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTest_Complex.cs">
+      <Link>Providers\ReadTest_Complex.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTest_GroupBy.cs">
+      <Link>Providers\ReadTest_GroupBy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\ReadTest_Operands.cs">
+      <Link>Providers\ReadTest_Operands.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\StoredProcTest.cs">
+      <Link>Providers\StoredProcTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\TestBase.cs">
+      <Link>Providers\TestBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\VerticalPartitioningTest.cs">
+      <Link>Providers\VerticalPartitioningTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\WriteTest.cs">
+      <Link>Providers\WriteTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\DbLinq\Test\Providers\WriteTest_BulkInsert.cs">
+      <Link>Providers\WriteTest_BulkInsert.cs</Link>
+    </Compile>
+    <Compile Include="TestBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\DbLinq\Test\Providers\Linq_101_Samples\101_readme.htm">
+      <Link>Providers\Linq_101_Samples\101_readme.htm</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

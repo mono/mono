@@ -203,14 +203,5 @@ namespace DbLinq.Sqlite
             }
             return outParamValues;
         }
-
-        override protected TypeToLoadData GetProviderTypeName()
-        {
-            return new TypeToLoadData
-            {
-                assemblyName = "System.Data.SQLite.DLL",
-                className = "SQLiteConnection",
-            };
-        }
     }
 }

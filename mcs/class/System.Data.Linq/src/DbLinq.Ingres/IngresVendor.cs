@@ -249,14 +249,5 @@ namespace DbLinq.Ingres
             }
             return outParamValues;
         }
-
-        override protected TypeToLoadData GetProviderTypeName()
-        {
-            return new TypeToLoadData
-            {
-                assemblyName = "Ingres.Client.DLL",
-                className = "IngresConnection",
-            };
-        }
     }
 }

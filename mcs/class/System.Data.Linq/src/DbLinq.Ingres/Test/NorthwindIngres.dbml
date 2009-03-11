@@ -1,0 +1,158 @@
+<?xml version="1.0"?>
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Northwind" Class="Northwind" Provider="Ingres" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="linquser.categories" Member="Categories">
+    <Type Name="Category">
+      <Association Name="linquser_products_categoryid_linquser_categories_categoryid" Member="Products" Type="Product" ThisKey="CategoryId" OtherKey="CategoryId" />
+      <Column Name="categoryid" Member="CategoryId" Storage="categoryId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="next value for &quot;linquser&quot;.&quot;categories_seq&quot;" />
+      <Column Name="categoryname" Member="CategoryName" Storage="categoryName" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="description" Member="Description" Storage="description" Type="System.String" DbType="VARCHAR(500)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="picture" Member="Picture" Storage="picture" Type="System.Byte[]" DbType="LONG BYTE" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="linquser.customers" Member="Customers">
+    <Type Name="Customer">
+      <Association Name="linquser_orders_customerid_linquser_customers_customerid" Member="Orders" Type="Order" ThisKey="CustomerId" OtherKey="CustomerId" />
+      <Column Name="address" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="city" Member="City" Storage="city" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="companyname" Member="CompanyName" Storage="companyName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="contactname" Member="ContactName" Storage="contactName" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="contacttitle" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="country" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="customerid" Member="CustomerId" Storage="customerId" Type="System.String" DbType="VARCHAR(5)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="fax" Member="Fax" Storage="fax" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="phone" Member="Phone" Storage="phone" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="postalcode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="region" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="linquser.employees" Member="Employees">
+    <Type Name="Employee">
+      <Association Name="linquser_employees_reportsto_linquser_employees_employeeid" Member="ParentEmployee" Storage="linqUserEmployeesReportsToLinqUserEmployeesEmployeeId" Type="Employee" ThisKey="ReportsTo" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="linquser_employees_reportsto_linquser_employees_employeeid" Member="Employees" Type="Employee" ThisKey="EmployeeId" OtherKey="ReportsTo" />
+      <Association Name="linquser_employeeterritories_employeeid_linquser_employees_employeeid" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Association Name="linquser_orders_employeeid_linquser_employees_employeeid" Member="Orders" Type="Order" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Column Name="address" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="birthdate" Member="BirthDate" Storage="birthDate" Type="System.DateTime" DbType="INGRESDATE" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="city" Member="City" Storage="city" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="country" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="employeeid" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="next value for &quot;linquser&quot;.&quot;employees_seq&quot;" />
+      <Column Name="firstname" Member="FirstName" Storage="firstName" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="hiredate" Member="HireDate" Storage="hireDate" Type="System.DateTime" DbType="INGRESDATE" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="homephone" Member="HomePhone" Storage="homePhone" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="lastname" Member="LastName" Storage="lastName" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="notes" Member="Notes" Storage="notes" Type="System.String" DbType="VARCHAR(100)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="photo" Member="Photo" Storage="photo" Type="System.Byte[]" DbType="LONG BYTE" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="postalcode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="region" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="reportsto" Member="ReportsTo" Storage="reportsTo" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="title" Member="Title" Storage="title" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="linquser.employeeterritories" Member="EmployeeTerritories">
+    <Type Name="EmployeeTerritory">
+      <Association Name="linquser_employeeterritories_territoryid_linquser_territories_territoryid" Member="Territory" Storage="linqUserEmployeeTerritoriesTerritoryIdLinqUserTerritoriesTerritoryId" Type="Territory" ThisKey="TerritoryId" OtherKey="TerritoryId" IsForeignKey="true" />
+      <Association Name="linquser_employeeterritories_employeeid_linquser_employees_employeeid" Member="Employee" Storage="linqUserEmployeeTerritoriesEmployeeIdLinqUserEmployeesEmployeeId" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Column Name="employeeid" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="territoryid" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="linquser.iietab_107_108" Member="IIeTab107108">
+    <Type Name="IIeTab107108">
+      <Column Name="per_key" Member="PerKey" Storage="perKey" Type="System.String" DbType="CHAR(8)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_next" Member="PerNext" Storage="perNext" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_segment0" Member="PerSegment0" Storage="perSegment0" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_segment1" Member="PerSegment1" Storage="perSegment1" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_value" Member="PerValue" Storage="perValue" Type="System.Byte[]" DbType="BYTE VARYING" IsPrimaryKey="false" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="linquser.iietab_12b_12c" Member="IIeTab12B12C">
+    <Type Name="IIeTab12B12C">
+      <Column Name="per_key" Member="PerKey" Storage="perKey" Type="System.String" DbType="CHAR(8)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_next" Member="PerNext" Storage="perNext" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_segment0" Member="PerSegment0" Storage="perSegment0" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_segment1" Member="PerSegment1" Storage="perSegment1" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="per_value" Member="PerValue" Storage="perValue" Type="System.Byte[]" DbType="BYTE VARYING" IsPrimaryKey="false" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="linquser.orders" Member="Orders">
+    <Type Name="Order">
+      <Association Name="linquser_orders_employeeid_linquser_employees_employeeid" Member="Employee" Storage="linqUserOrdersEmployeeIdLinqUserEmployeesEmployeeId" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="linquser_orders_customerid_linquser_customers_customerid" Member="Customer" Storage="linqUserOrdersCustomerIdLinqUserCustomersCustomerId" Type="Customer" ThisKey="CustomerId" OtherKey="CustomerId" IsForeignKey="true" />
+      <Association Name="linquser_orderdetails_orderid_linquser_orders_orderid" Member="OrderDetails" Type="OrderDetail" ThisKey="OrderId" OtherKey="OrderId" />
+      <Column Name="customerid" Member="CustomerId" Storage="customerId" Type="System.String" DbType="VARCHAR(5)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="employeeid" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="freight" Member="Freight" Storage="freight" Type="System.Decimal" DbType="DECIMAL(5, 0)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="orderdate" Member="OrderDate" Storage="orderDate" Type="System.DateTime" DbType="INGRESDATE" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="orderid" Member="OrderId" Storage="orderId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="next value for &quot;linquser&quot;.&quot;categories_seq&quot;" />
+      <Column Name="requireddate" Member="RequiredDate" Storage="requiredDate" Type="System.DateTime" DbType="INGRESDATE" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shipaddress" Member="ShipAddress" Storage="shipAddress" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shipcity" Member="ShipCity" Storage="shipCity" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shipcountry" Member="ShipCountry" Storage="shipCountry" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shipname" Member="ShipName" Storage="shipName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shippeddate" Member="ShippedDate" Storage="shippedDate" Type="System.DateTime" DbType="INGRESDATE" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shippostalcode" Member="ShipPostalCode" Storage="shipPostalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shipregion" Member="ShipRegion" Storage="shipRegion" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="shipvia" Member="ShipVia" Storage="shipVia" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="linquser.orderdetails" Member="OrderDetails">
+    <Type Name="OrderDetail">
+      <Association Name="linquser_orderdetails_productid_linquser_products_productid" Member="Product" Storage="linqUserOrderDetailsProductIdLinqUserProductsProductId" Type="Product" ThisKey="ProductId" OtherKey="ProductId" IsForeignKey="true" />
+      <Association Name="linquser_orderdetails_orderid_linquser_orders_orderid" Member="Order" Storage="linqUserOrderDetailsOrderIdLinqUserOrdersOrderId" Type="Order" ThisKey="OrderId" OtherKey="OrderId" IsForeignKey="true" />
+      <Column Name="discount" Member="Discount" Storage="discount" Type="System.Double" DbType="FLOAT" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="orderid" Member="OrderId" Storage="orderId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="productid" Member="ProductId" Storage="productId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="quantity" Member="Quantity" Storage="quantity" Type="System.Int16" DbType="INTEGER(2)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="unitprice" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="DECIMAL(5, 0)" IsPrimaryKey="false" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="linquser.products" Member="Products">
+    <Type Name="Product">
+      <Association Name="linquser_products_supplierid_linquser_suppliers_supplierid" Member="Supplier" Storage="linqUserProductsSupplierIdLinqUserSuppliersSupplierId" Type="Supplier" ThisKey="SupplierId" OtherKey="SupplierId" IsForeignKey="true" />
+      <Association Name="linquser_products_categoryid_linquser_categories_categoryid" Member="Category" Storage="linqUserProductsCategoryIdLinqUserCategoriesCategoryId" Type="Category" ThisKey="CategoryId" OtherKey="CategoryId" IsForeignKey="true" />
+      <Association Name="linquser_orderdetails_productid_linquser_products_productid" Member="OrderDetails" Type="OrderDetail" ThisKey="ProductId" OtherKey="ProductId" />
+      <Column Name="categoryid" Member="CategoryId" Storage="categoryId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="discontinued" Member="Discontinued" Storage="discontinued" Type="System.Int16" DbType="INTEGER(2)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="productid" Member="ProductId" Storage="productId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="next value for &quot;linquser&quot;.&quot;products_seq&quot;" />
+      <Column Name="productname" Member="ProductName" Storage="productName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="quantityperunit" Member="QuantityPerUnit" Storage="quantityPerUnit" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="reorderlevel" Member="ReorderLevel" Storage="reorderLevel" Type="System.Int16" DbType="INTEGER(2)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="supplierid" Member="SupplierId" Storage="supplierId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="unitprice" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="DECIMAL(5, 0)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="unitsinstock" Member="UnitsInStock" Storage="unitsInStock" Type="System.Int16" DbType="INTEGER(2)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="unitsonorder" Member="UnitsOnOrder" Storage="unitsOnOrder" Type="System.Int16" DbType="INTEGER(2)" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="linquser.region" Member="Regions">
+    <Type Name="Region">
+      <Association Name="linquser_territories_regionid_linquser_region_regionid" Member="Territories" Type="Territory" ThisKey="RegionId" OtherKey="RegionId" />
+      <Column Name="regiondescription" Member="RegionDescription" Storage="regionDescription" Type="System.String" DbType="VARCHAR(50)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="regionid" Member="RegionId" Storage="regionId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="next value for &quot;linquser&quot;.&quot;region_seq&quot;" />
+    </Type>
+  </Table>
+  <Table Name="linquser.suppliers" Member="Suppliers">
+    <Type Name="Supplier">
+      <Association Name="linquser_products_supplierid_linquser_suppliers_supplierid" Member="Products" Type="Product" ThisKey="SupplierId" OtherKey="SupplierId" />
+      <Column Name="address" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="city" Member="City" Storage="city" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="companyname" Member="CompanyName" Storage="companyName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="contactname" Member="ContactName" Storage="contactName" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="contacttitle" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="country" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="fax" Member="Fax" Storage="fax" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="phone" Member="Phone" Storage="phone" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="postalcode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="region" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="supplierid" Member="SupplierId" Storage="supplierId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="next value for &quot;linquser&quot;.&quot;suppliers_seq&quot;" />
+    </Type>
+  </Table>
+  <Table Name="linquser.territories" Member="Territories">
+    <Type Name="Territory">
+      <Association Name="linquser_territories_regionid_linquser_region_regionid" Member="Region" Storage="linqUserTerritoriesRegionIdLinqUserRegionRegionId" Type="Region" ThisKey="RegionId" OtherKey="RegionId" IsForeignKey="true" />
+      <Association Name="linquser_employeeterritories_territoryid_linquser_territories_territoryid" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="TerritoryId" OtherKey="TerritoryId" />
+      <Column Name="regionid" Member="RegionId" Storage="regionId" Type="System.Int32" DbType="INTEGER(4)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="territorydescription" Member="TerritoryDescription" Storage="territoryDescription" Type="System.String" DbType="VARCHAR(50)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="territoryid" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>

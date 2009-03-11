@@ -228,14 +228,5 @@ namespace DbLinq.PostgreSql
             }
             return outParamValues;
         }
-
-        override protected TypeToLoadData GetProviderTypeName()
-        {
-            return new TypeToLoadData
-            {
-                assemblyName = "Npgsql.DLL",
-                className = "NpgsqlConnection",
-            };
-        }
     }
 }

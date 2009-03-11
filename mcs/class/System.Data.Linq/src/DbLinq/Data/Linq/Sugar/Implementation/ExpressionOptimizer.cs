@@ -75,6 +75,12 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 if (!(operand is ConstantExpression))
                     return expression;
             }
+            if (expression is ColumnExpression)
+                return expression;
+            if (expression is TableExpression)
+                return expression;
+            if (expression is ParameterExpression)
+                return expression;
             // now, we just simply return a constant with new value
             try
             {

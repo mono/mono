@@ -58,6 +58,7 @@ namespace DbLinq.Util
                 case System.Globalization.UnicodeCategory.LetterNumber:
                 case System.Globalization.UnicodeCategory.LowercaseLetter:
                 case System.Globalization.UnicodeCategory.UppercaseLetter:
+                case System.Globalization.UnicodeCategory.ConnectorPunctuation:
                     break;
                 default:
                     return false;

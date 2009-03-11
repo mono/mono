@@ -66,34 +66,39 @@ namespace DbLinq.Util
         }
 
         /// <summary>
-        /// Extracts a MemberInfo with more or less digging
+        /// Returns MemberInfo specified in the lambda, optional parameter expression constraint.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
-        private static MemberInfo GetMemberInfo(Expression expression)
+        public static MemberInfo GetMemberInfo(LambdaExpression expression)
         {
-            switch (expression.NodeType)
-            {
-            // the ReflectionUtility Get** methods return the value as a object. If the value is a struct, we get a cast,
-            // that we must unwrap
-            case ExpressionType.Convert:
-            case ExpressionType.ConvertChecked:
-                return GetMemberInfo(((UnaryExpression)expression).Operand);
-            case ExpressionType.MemberAccess:
-                return ((MemberExpression)expression).Member;
-            default:
-                return null;
-            }
+            var paramExpr = expression.Parameters.Count == 1 ? expression.Parameters[0] : null;
+            return GetMemberInfo(paramExpr, expression.Body);
         }
 
         /// <summary>
-        /// Returns MemberInfo specified in the lambda
+        /// Returns MemberInfo specified in the lambda, optional parameter expression constraint.
         /// </summary>
         /// <param name="lambdaExpression"></param>
         /// <returns></returns>
-        public static MemberInfo GetMemberInfo(LambdaExpression lambdaExpression)
+        private static MemberInfo GetMemberInfo(Expression optionalParamExpr, Expression expression)
         {
-            return GetMemberInfo(lambdaExpression.Body);
+            switch (expression.NodeType)
+            {
+                // the ReflectionUtility Get** methods return the value as a object. If the value is a struct, we get a cast,
+                // that we must unwrap
+                case ExpressionType.Convert:
+                case ExpressionType.ConvertChecked:
+                    return GetMemberInfo(optionalParamExpr, ((UnaryExpression)expression).Operand);
+                case ExpressionType.MemberAccess:
+                    var me = (MemberExpression)expression;
+                    if (optionalParamExpr == null || me.Expression == optionalParamExpr)
+                        return me.Member;
+                    else
+                        return null;
+                default:
+                    return null;
+            }
         }
 
         /// <summary>

@@ -162,72 +162,26 @@ namespace DbLinq.Vendor.Implementation
         }
 
         /// <summary>
-        /// used during DataContext ctor -
-        /// - to ask specific DLL and class to load an IDbConnection object from
-        /// </summary>
-        /// <returns></returns>
-        protected abstract TypeToLoadData GetProviderTypeName();
-
-        /// <summary>
         /// called from DataContext ctor, which needs to create an IDbConnection, given an IVendor
         /// </summary>
         public IDbConnection CreateDbConnection(string connectionString)
         {
-            TypeToLoadData typeToLoad = GetProviderTypeName();
-            string assemblyToLoad = typeToLoad.assemblyName; //e.g. "System.Data.SQLite.DLL",
-            Assembly assy;
-            try
-            {
-                //TODO: check if DLL is already loaded?
-                assy = Assembly.LoadFrom(assemblyToLoad);
-            }
-            catch (Exception ex)
-            {
-                //TODO: add proper logging here
-                Console.WriteLine("DataContext ctor: Assembly load failed for " + assemblyToLoad + ": " + ex);
-                throw ex;
-            }
-            Type[] STRING_PARAM = new Type[] { typeof(string) };
+            var reConnectionType = new System.Text.RegularExpressions.Regex(@"DbLinqConnectionType=([^;]+)");
+            if (!reConnectionType.IsMatch(connectionString))
+                throw new ArgumentException("No DbLinqConnectionType parameter found.  " +
+                    "Please specify the assembly qualified type name to use for the Connection Type.",
+                    "connectionString");
 
-            //find IDbProvider class in this assembly:
-            var ctors = (from mod in assy.GetModules()
-                         from cls in mod.GetTypes()
-                         where cls.GetInterfaces().Contains(typeof(IDbConnection))
-                         let ctorInfo = cls.GetConstructor(STRING_PARAM)
-                         where ctorInfo != null
-                         select ctorInfo).ToList();
-            if (ctors.Count == 0)
-            {
-                string msg = "Found no IVendor class in assembly " + assemblyToLoad + " having a string ctor";
-                throw new ArgumentException(msg);
-            }
-            else if (ctors.Count > 1)
-            {
-                string msg = "Found more than one IVendor class in assembly " + assemblyToLoad + " having a string ctor";
-                throw new ArgumentException(msg);
-            }
-            ConstructorInfo ctorInfo2 = ctors[0];
-
-            object iDbConnObject;
-            try
-            {
-                iDbConnObject = ctorInfo2.Invoke(new object[] { connectionString });
-            }
-            catch (Exception ex)
-            {
-                //TODO: add proper logging here
-                Console.WriteLine("DataContext/Vendor: Failed to invoke IDbConnection ctor " + ctorInfo2.Name + ": " + ex);
-                throw ex;
-            }
-            var connection = (IDbConnection)iDbConnObject;
-            return connection;
-        }
-
-        // TODO: update, this is obsolete
-        public class TypeToLoadData
-        {
-            public string assemblyName;
-            public string className;
+            var    match        = reConnectionType.Match(connectionString);
+            string connTypeVal  = match.Groups[1].Value;
+            var    connType     = Type.GetType(connTypeVal);
+            if (connType == null)
+                throw new ArgumentException(string.Format(
+                        "Could not load the specified DbLinqConnectionType `{0}'.",
+                        connTypeVal),
+                    "connectionString");
+            connectionString = reConnectionType.Replace(connectionString, "");
+            return (IDbConnection)Activator.CreateInstance(connType, connectionString);
         }
     }
 }

@@ -201,14 +201,5 @@ namespace DbLinq.Firebird
             }
             return outParamValues;
         }
-
-        override protected TypeToLoadData GetProviderTypeName()
-        {
-            return new TypeToLoadData
-            {
-                assemblyName = "FirebirdSql.Data.FirebirdClient.DLL",
-                className = "FbConnection",
-            };
-        }
     }
 }

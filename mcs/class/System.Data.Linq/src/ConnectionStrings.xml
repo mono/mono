@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Connections>
+  <Connection assembly="DbLinq.SqlServer_test">Data Source=.\SQLExpress;Integrated Security=True;Initial Catalog=Northwind</Connection>
+  <Connection assembly="DbLinq.SqlServer_test_strict">Data Source=.\SQLExpress;Integrated Security=True;Initial Catalog=Northwind</Connection>
+
+  <Connection assembly="DbLinq.Oracle_test_odp">Data Source = (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = {0})(PORT = 1521)))(CONNECT_DATA = (SERVER = DEDICATED))); User Id = Northwind; Password = linq2</Connection>
+  <Connection assembly="DbLinq.Oracle_test">Data Source = (DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST = {0})(PORT = 1521)))(CONNECT_DATA = (SERVER = DEDICATED))); User Id = Northwind; Password = linq2</Connection>
+
+  <Connection assembly="DbLinq.Sqlite_test">Data Source=Northwind.db3</Connection>
+  <Connection assembly="DbLinq.Sqlite_test_mono">Data Source=Northwind.db3</Connection>
+  <Connection assembly="DbLinq.Sqlite_test_mono_strict">DbLinqProvider=Sqlite;Data Source=Northwind.db3</Connection>
+  <Connection assembly="DbLinq.MySql_test">server={0};user id=LinqUser; password=linq2; database=Northwind</Connection>
+  <Connection assembly="DbLinq.PostgreSql_test">server={0};user id=LinqUser; password=linq2; database=Northwind</Connection>
+  <Connection assembly="DbLinq.Ingres_test">server={0};user id=LinqUser; password=linq2; database=Northwind</Connection>
+  <Connection assembly="DbLinq.Firebird_test">server={0};user id=LinqUser; password=linq2; database=c:\Program Files\Firebird\Firebird_2_1\examples\nwind\NORTHWIND.FDB</Connection>
+</Connections>
+
+<!--
+<Connection assembly="DbLinq.MySql_test">server=hasselhoff.eii.us.es;user id=LinqUser; password=linq2; database=Northwind</Connection>
+<Connection assembly="DbLinq.PostgreSql_test">server=hasselhoff.eii.us.es;user id=LinqUser; password=linq2; database=postgreNorthwind</Connection>
+
+  <Connection assembly="DbLinq.MySql_test">server={0};user id=LinqUser; password=linq2; database=Northwind</Connection>
+  <Connection assembly="DbLinq.PostgreSql_test">server={0};user id=LinqUser; password=linq2; database=Northwind</Connection>
+-->

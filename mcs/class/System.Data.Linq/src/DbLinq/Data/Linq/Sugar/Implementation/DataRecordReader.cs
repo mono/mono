@@ -157,6 +157,11 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 return (Expression<Func<IDataRecord, MappingContext, int, int?>>)((dataRecord, mappingContext, valueIndex)
                                                                                   => dataRecord.GetAsNullableNumeric<int>(valueIndex));
             }
+            if (simpleReturnType == typeof(System.Data.Linq.Binary))
+            {
+                return (Expression<Func<IDataRecord, MappingContext, int, byte[]>>)((dataRecord, mappingContext, valueIndex)
+                                                                                    => dataRecord.GetAsBytes(valueIndex));
+            }
             // for polymorphic types especially for ExecuteQuery<>()
             if (simpleReturnType == typeof(object))
             {

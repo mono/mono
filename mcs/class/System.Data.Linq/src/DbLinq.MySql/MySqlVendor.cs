@@ -288,15 +288,5 @@ namespace DbLinq.MySql
             }
             return outParamValues;
         }
-
-        override protected TypeToLoadData GetProviderTypeName()
-        {
-            return new TypeToLoadData
-            {
-                assemblyName = "MySql.Data.DLL",
-                className = "MySqlConnection",
-            };
-        }
-
     }
 }

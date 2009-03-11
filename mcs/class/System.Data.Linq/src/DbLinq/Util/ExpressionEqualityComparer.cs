@@ -184,6 +184,8 @@ namespace DbLinq.Util
         /// <returns></returns>
         private bool Equals2<T>(IList<T> xs, IList<T> ys, Func<T, T, bool> equals2)
         {
+            if (xs == null || ys == null)
+                return false;
             if (xs.Count != ys.Count)
                 return false;
 

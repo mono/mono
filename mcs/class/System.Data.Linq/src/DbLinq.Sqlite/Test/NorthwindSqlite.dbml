@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Northwind" Class="Northwind" Provider="Sqlite" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="main.Categories" Member="Categories">
+    <Type Name="Category">
+      <Column Name="CategoryID" Member="CategoryId" Storage="categoryId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CategoryName" Member="CategoryName" Storage="categoryName" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="Description" Member="Description" Storage="description" Type="System.String" DbType="TEXT" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Picture" Member="Picture" Storage="picture" Type="System.Byte[]" DbType="BLOB" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="main.Customers" Member="Customers">
+    <Type Name="Customer">
+      <Association Name="fk_Orders_1" Member="Orders" Type="Order" ThisKey="CustomerId" OtherKey="CustomerId" />
+      <Column Name="Address" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="City" Member="City" Storage="city" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="CompanyName" Member="CompanyName" Storage="companyName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="ContactName" Member="ContactName" Storage="contactName" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ContactTitle" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Country" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="CustomerID" Member="CustomerId" Storage="customerId" Type="System.String" DbType="VARCHAR(5)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Fax" Member="Fax" Storage="fax" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Phone" Member="Phone" Storage="phone" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="PostalCode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Region" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="main.Employees" Member="Employees">
+    <Type Name="Employee">
+      <Association Name="fk_EmployeeTerritories_1" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Association Name="fk_Employees_0" Member="ParentEmployee" Storage="fkEmployees0" Type="Employee" ThisKey="ReportsTo" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="fk_Employees_0" Member="Employees" Type="Employee" ThisKey="EmployeeId" OtherKey="ReportsTo" />
+      <Association Name="fk_Orders_0" Member="Orders" Type="Order" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Column Name="Address" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="BirthDate" Member="BirthDate" Storage="birthDate" Type="System.DateTime" DbType="DATETIME" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="City" Member="City" Storage="city" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Country" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="EmployeeID" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="FirstName" Member="FirstName" Storage="firstName" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="HireDate" Member="HireDate" Storage="hireDate" Type="System.DateTime" DbType="DATETIME" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="HomePhone" Member="HomePhone" Storage="homePhone" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="LastName" Member="LastName" Storage="lastName" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="Notes" Member="Notes" Storage="notes" Type="System.String" DbType="TEXT" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Photo" Member="Photo" Storage="photo" Type="System.Byte[]" DbType="BLOB" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="PostalCode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Region" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ReportsTo" Member="ReportsTo" Storage="reportsTo" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Title" Member="Title" Storage="title" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="main.EmployeeTerritories" Member="EmployeeTerritories">
+    <Type Name="EmployeeTerritory">
+      <Association Name="fk_EmployeeTerritories_0" Member="Territory" Storage="fkEmployeeTerritories0" Type="Territory" ThisKey="TerritoryId" OtherKey="TerritoryId" IsForeignKey="true" />
+      <Association Name="fk_EmployeeTerritories_1" Member="Employee" Storage="fkEmployeeTerritories1" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Column Name="EmployeeID" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TerritoryID" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="main.Orders" Member="Orders">
+    <Type Name="Order">
+      <Association Name="fk_Order Details_1" Member="OrderDetails" Type="OrderDetail" ThisKey="OrderId" OtherKey="OrderId" />
+      <Association Name="fk_Orders_0" Member="Employee" Storage="fkOrders0" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="fk_Orders_1" Member="Customer" Storage="fkOrders1" Type="Customer" ThisKey="CustomerId" OtherKey="CustomerId" IsForeignKey="true" />
+      <Column Name="CustomerID" Member="CustomerId" Storage="customerId" Type="System.String" DbType="VARCHAR(5)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="EmployeeID" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Freight" Member="Freight" Storage="freight" Type="System.Decimal" DbType="DECIMAL" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="OrderDate" Member="OrderDate" Storage="orderDate" Type="System.DateTime" DbType="DATETIME" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="OrderID" Member="OrderId" Storage="orderId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RequiredDate" Member="RequiredDate" Storage="requiredDate" Type="System.DateTime" DbType="DATETIME" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipAddress" Member="ShipAddress" Storage="shipAddress" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipCity" Member="ShipCity" Storage="shipCity" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipCountry" Member="ShipCountry" Storage="shipCountry" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipName" Member="ShipName" Storage="shipName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShippedDate" Member="ShippedDate" Storage="shippedDate" Type="System.DateTime" DbType="DATETIME" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipPostalCode" Member="ShipPostalCode" Storage="shipPostalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipRegion" Member="ShipRegion" Storage="shipRegion" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipVia" Member="ShipVia" Storage="shipVia" Type="System.Int32" DbType="INT" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="main.Order Details" Member="OrderDetails">
+    <Type Name="OrderDetail">
+      <Association Name="fk_Order Details_0" Member="Product" Storage="fkOrderDetails0" Type="Product" ThisKey="ProductId" OtherKey="ProductId" IsForeignKey="true" />
+      <Association Name="fk_Order Details_1" Member="Order" Storage="fkOrderDetails1" Type="Order" ThisKey="OrderId" OtherKey="OrderId" IsForeignKey="true" />
+      <Column Name="Discount" Member="Discount" Storage="discount" Type="System.Single" DbType="FLOAT" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="OrderID" Member="OrderId" Storage="orderId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProductID" Member="ProductId" Storage="productId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Quantity" Member="Quantity" Storage="quantity" Type="System.Int16" DbType="SMALLINT" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="UnitPrice" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="DECIMAL" IsPrimaryKey="false" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="main.Products" Member="Products">
+    <Type Name="Product">
+      <Association Name="fk_Order Details_0" Member="OrderDetails" Type="OrderDetail" ThisKey="ProductId" OtherKey="ProductId" />
+      <Association Name="fk_Products_0" Member="Supplier" Storage="fkProducts0" Type="Supplier" ThisKey="SupplierId" OtherKey="SupplierId" IsForeignKey="true" />
+      <Column Name="CategoryID" Member="CategoryId" Storage="categoryId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Discontinued" Member="Discontinued" Storage="discontinued" Type="System.Boolean" DbType="BIT" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="ProductID" Member="ProductId" Storage="productId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProductName" Member="ProductName" Storage="productName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="QuantityPerUnit" Member="QuantityPerUnit" Storage="quantityPerUnit" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ReorderLevel" Member="ReorderLevel" Storage="reorderLevel" Type="System.Int16" DbType="SMALLINT" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="SupplierID" Member="SupplierId" Storage="supplierId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="UnitPrice" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="DECIMAL" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="UnitsInStock" Member="UnitsInStock" Storage="unitsInStock" Type="System.Int16" DbType="SMALLINT" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="UnitsOnOrder" Member="UnitsOnOrder" Storage="unitsOnOrder" Type="System.Int16" DbType="SMALLINT" IsPrimaryKey="false" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="main.Regions" Member="Regions">
+    <Type Name="Region">
+      <Association Name="fk_Territories_0" Member="Territories" Type="Territory" ThisKey="RegionId" OtherKey="RegionId" />
+      <Column Name="RegionDescription" Member="RegionDescription" Storage="regionDescription" Type="System.String" DbType="VARCHAR(50)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="RegionID" Member="RegionId" Storage="regionId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="main.Shippers" Member="Shippers">
+    <Type Name="Shipper">
+      <Column Name="CompanyName" Member="CompanyName" Storage="companyName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="Phone" Member="Phone" Storage="phone" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ShipperID" Member="ShipperId" Storage="shipperId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="main.Suppliers" Member="Suppliers">
+    <Type Name="Supplier">
+      <Association Name="fk_Products_0" Member="Products" Type="Product" ThisKey="SupplierId" OtherKey="SupplierId" />
+      <Column Name="Address" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR(60)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="City" Member="City" Storage="city" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="CompanyName" Member="CompanyName" Storage="companyName" Type="System.String" DbType="VARCHAR(40)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="ContactName" Member="ContactName" Storage="contactName" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="ContactTitle" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="VARCHAR(30)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Country" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Fax" Member="Fax" Storage="fax" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Phone" Member="Phone" Storage="phone" Type="System.String" DbType="VARCHAR(24)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="PostalCode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR(10)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="Region" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR(15)" IsPrimaryKey="false" CanBeNull="true" />
+      <Column Name="SupplierID" Member="SupplierId" Storage="supplierId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="main.Territories" Member="Territories">
+    <Type Name="Territory">
+      <Association Name="fk_EmployeeTerritories_0" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="TerritoryId" OtherKey="TerritoryId" />
+      <Association Name="fk_Territories_0" Member="Region" Storage="fkTerritories0" Type="Region" ThisKey="RegionId" OtherKey="RegionId" IsForeignKey="true" />
+      <Column Name="RegionID" Member="RegionId" Storage="regionId" Type="System.Int32" DbType="INTEGER" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="TerritoryDescription" Member="TerritoryDescription" Storage="territoryDescription" Type="System.String" DbType="VARCHAR(50)" IsPrimaryKey="false" CanBeNull="false" />
+      <Column Name="TerritoryID" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="VARCHAR(20)" IsPrimaryKey="true" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

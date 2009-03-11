@@ -62,6 +62,13 @@ namespace DbLinq.SqlServer
             return string.Format("{0} AS {1}", GetTable(table), GetTableAlias(alias));
         }
 
+        public override SqlStatement GetLiteral(bool literal)
+        {
+            if (literal)
+                return "1";
+            return "0";
+        }
+
         public override string GetParameterName(string nameBase)
         {
             return string.Format("@{0}", nameBase);

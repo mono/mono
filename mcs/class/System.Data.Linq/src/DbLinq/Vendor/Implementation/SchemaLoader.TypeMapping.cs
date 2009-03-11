@@ -50,7 +50,7 @@ namespace DbLinq.Vendor.Implementation
 #else
         public
 #endif
-        class DataType : IDataType
+ class DataType : IDataType
         {
             public virtual string Type { get; set; }
             public virtual bool Nullable { get; set; }
@@ -102,6 +102,7 @@ namespace DbLinq.Vendor.Implementation
             case "nclob":   // oracle type
             case "rowid":   // oracle type
             case "urowid":  // oracle type
+            case "tinytext": // mysql type
                 return typeof(String);
 
             // bool
@@ -201,6 +202,7 @@ namespace DbLinq.Vendor.Implementation
             case "mediumblob":
             case "raw":       // oracle type
             case "long raw":  // oracle type
+            case "varbinary":
                 return typeof(Byte[]);
 
             // PostgreSQL, for example has an uuid type that can be mapped as a Guid

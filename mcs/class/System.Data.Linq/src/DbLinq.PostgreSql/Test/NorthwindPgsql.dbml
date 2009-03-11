@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="northwind" Class="NorthWind" Provider="PostgreSQL" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="public.categories" Member="Categories">
+    <Type Name="Category">
+      <Association Name="fk_prod_catg" Member="Products" Type="Product" ThisKey="CategoryId" OtherKey="CategoryId" />
+      <Column Name="categoryid" Member="CategoryId" Storage="categoryId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="nextval('categories_categoryid_seq')" />
+      <Column Name="categoryname" Member="CategoryName" Storage="categoryName" Type="System.String" DbType="character varying(15)" CanBeNull="false" />
+      <Column Name="description" Member="Description" Storage="description" Type="System.String" DbType="text" CanBeNull="true" />
+      <Column Name="picture" Member="Picture" Storage="picture" Type="System.Byte[]" DbType="oid" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="public.customers" Member="Customers">
+    <Type Name="Customer">
+      <Association Name="fk_order_customer" Member="Orders" Type="Order" ThisKey="CustomerId" OtherKey="CustomerId" />
+      <Column Name="address" Member="Address" Storage="address" Type="System.String" DbType="character varying(60)" CanBeNull="true" />
+      <Column Name="city" Member="City" Storage="city" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="companyname" Member="CompanyName" Storage="companyName" Type="System.String" DbType="character varying(40)" CanBeNull="false" />
+      <Column Name="contactname" Member="ContactName" Storage="contactName" Type="System.String" DbType="character varying(30)" CanBeNull="false" />
+      <Column Name="contacttitle" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="character varying(30)" CanBeNull="true" />
+      <Column Name="country" Member="Country" Storage="country" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="customerid" Member="CustomerId" Storage="customerId" Type="System.String" DbType="character varying(5)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="fax" Member="Fax" Storage="fax" Type="System.String" DbType="character varying(24)" CanBeNull="true" />
+      <Column Name="phone" Member="Phone" Storage="phone" Type="System.String" DbType="character varying(24)" CanBeNull="true" />
+      <Column Name="postalcode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="character varying(10)" CanBeNull="true" />
+      <Column Name="region" Member="Region" Storage="region" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="public.employees" Member="Employees">
+    <Type Name="Employee">
+      <Association Name="fk_emp_reportstoemp" Member="ParentEmployee" Storage="fkEmPReportsToeMp" Type="Employee" ThisKey="ReportsTo" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="fk_emp_reportstoemp" Member="Employees" Type="Employee" ThisKey="EmployeeId" OtherKey="ReportsTo" />
+      <Association Name="employeeterritories_employeeid_fkey" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Association Name="fk_order_product" Member="Orders" Type="Order" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Column Name="address" Member="Address" Storage="address" Type="System.String" DbType="character varying(60)" CanBeNull="true" />
+      <Column Name="birthdate" Member="BirthDate" Storage="birthDate" Type="System.DateTime" DbType="date" CanBeNull="true" />
+      <Column Name="city" Member="City" Storage="city" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="country" Member="Country" Storage="country" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="employeeid" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="nextval('employees_employeeid_seq')" />
+      <Column Name="firstname" Member="FirstName" Storage="firstName" Type="System.String" DbType="character varying(10)" CanBeNull="false" />
+      <Column Name="hiredate" Member="HireDate" Storage="hireDate" Type="System.DateTime" DbType="timestamp without time zone" CanBeNull="true" />
+      <Column Name="homephone" Member="HomePhone" Storage="homePhone" Type="System.String" DbType="character varying(24)" CanBeNull="true" />
+      <Column Name="lastname" Member="LastName" Storage="lastName" Type="System.String" DbType="character varying(20)" CanBeNull="false" />
+      <Column Name="notes" Member="Notes" Storage="notes" Type="System.String" DbType="text" CanBeNull="true" />
+      <Column Name="photo" Member="Photo" Storage="photo" Type="System.Byte[]" DbType="oid" CanBeNull="true" />
+      <Column Name="postalcode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="character varying(10)" CanBeNull="true" />
+      <Column Name="region" Member="Region" Storage="region" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="reportsto" Member="ReportsTo" Storage="reportsTo" Type="System.Int32" DbType="integer(32,0)" CanBeNull="true" />
+      <Column Name="title" Member="Title" Storage="title" Type="System.String" DbType="character varying(30)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="public.employeeterritories" Member="EmployeeTerritories">
+    <Type Name="EmployeeTerritory">
+      <Association Name="employeeterritories_employeeid_fkey" Member="Employee" Storage="employeeTerritoriesEmployeeIdFkEY" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="employeeterritories_territoryid_fkey" Member="Territory" Storage="employeeTerritoriesTerritoryIdFkEY" Type="Territory" ThisKey="TerritoryId" OtherKey="TerritoryId" IsForeignKey="true" />
+      <Column Name="employeeid" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="territoryid" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="character varying(20)" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="public.orders" Member="Orders">
+    <Type Name="Order">
+      <Association Name="fk_order_customer" Member="Customer" Storage="fkOrderCustomer" Type="Customer" ThisKey="CustomerId" OtherKey="CustomerId" IsForeignKey="true" />
+      <Association Name="fk_order_product" Member="Employee" Storage="fkOrderProduct" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="orderdetails_orderid_fkey" Member="OrderDetails" Type="OrderDetail" ThisKey="OrderId" OtherKey="OrderId" />
+      <Column Name="customerid" Member="CustomerId" Storage="customerId" Type="System.String" DbType="character varying(5)" CanBeNull="false" />
+      <Column Name="employeeid" Member="EmployeeId" Storage="employeeId" Type="System.Int32" DbType="integer(32,0)" CanBeNull="true" />
+      <Column Name="freight" Member="Freight" Storage="freight" Type="System.Decimal" DbType="numeric" CanBeNull="true" />
+      <Column Name="orderdate" Member="OrderDate" Storage="orderDate" Type="System.DateTime" DbType="timestamp without time zone" CanBeNull="true" />
+      <Column Name="orderid" Member="OrderId" Storage="orderId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="nextval('orders_orderid_seq')" />
+      <Column Name="requireddate" Member="RequiredDate" Storage="requiredDate" Type="System.DateTime" DbType="timestamp without time zone" CanBeNull="true" />
+      <Column Name="shipaddress" Member="ShipAddress" Storage="shipAddress" Type="System.String" DbType="character varying(60)" CanBeNull="true" />
+      <Column Name="shipcity" Member="ShipCity" Storage="shipCity" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="shipcountry" Member="ShipCountry" Storage="shipCountry" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="shipname" Member="ShipName" Storage="shipName" Type="System.String" DbType="character varying(40)" CanBeNull="true" />
+      <Column Name="shippeddate" Member="ShippedDate" Storage="shippedDate" Type="System.DateTime" DbType="timestamp without time zone" CanBeNull="true" />
+      <Column Name="shippostalcode" Member="ShipPostalCode" Storage="shipPostalCode" Type="System.String" DbType="character varying(10)" CanBeNull="true" />
+      <Column Name="shipregion" Member="ShipRegion" Storage="shipRegion" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="shipvia" Member="ShipVia" Storage="shipVia" Type="System.Int32" DbType="integer(32,0)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="public.orderdetails" Member="OrderDetails">
+    <Type Name="OrderDetail">
+      <Association Name="orderdetails_orderid_fkey" Member="Order" Storage="orderDetailsOrderIdFkEY" Type="Order" ThisKey="OrderId" OtherKey="OrderId" IsForeignKey="true" />
+      <Association Name="orderdetails_productid_fkey" Member="Product" Storage="orderDetailsProductIdFkEY" Type="Product" ThisKey="ProductId" OtherKey="ProductId" IsForeignKey="true" />
+      <Column Name="discount" Member="Discount" Storage="discount" Type="System.Double" DbType="double precision" CanBeNull="true" />
+      <Column Name="orderid" Member="OrderId" Storage="orderId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="productid" Member="ProductId" Storage="productId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="quantity" Member="Quantity" Storage="quantity" Type="System.Int32" DbType="integer(32,0)" CanBeNull="true" />
+      <Column Name="unitprice" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="numeric" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="public.products" Member="Products">
+    <Type Name="Product">
+      <Association Name="fk_prod_catg" Member="Category" Storage="fkProdCatG" Type="Category" ThisKey="CategoryId" OtherKey="CategoryId" IsForeignKey="true" />
+      <Association Name="fk_prod_supp" Member="Supplier" Storage="fkProdSupP" Type="Supplier" ThisKey="SupplierId" OtherKey="SupplierId" IsForeignKey="true" />
+      <Association Name="orderdetails_productid_fkey" Member="OrderDetails" Type="OrderDetail" ThisKey="ProductId" OtherKey="ProductId" />
+      <Column Name="categoryid" Member="CategoryId" Storage="categoryId" Type="System.Int32" DbType="integer(32,0)" CanBeNull="true" />
+      <Column Name="discontinued" Member="Discontinued" Storage="discontinued" Type="System.Boolean" DbType="bit(1)" CanBeNull="false" />
+      <Column Name="productid" Member="ProductId" Storage="productId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="nextval('products_productid_seq')" />
+      <Column Name="productname" Member="ProductName" Storage="productName" Type="System.String" DbType="character varying(40)" CanBeNull="false" />
+      <Column Name="quantityperunit" Member="QuantityPerUnit" Storage="quantityPerUnit" Type="System.String" DbType="character varying(20)" CanBeNull="true" />
+      <Column Name="reorderlevel" Member="ReorderLevel" Storage="reorderLevel" Type="System.Int16" DbType="smallint(16,0)" CanBeNull="true" />
+      <Column Name="supplierid" Member="SupplierId" Storage="supplierId" Type="System.Int32" DbType="integer(32,0)" CanBeNull="true" />
+      <Column Name="unitprice" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="numeric" CanBeNull="true" />
+      <Column Name="unitsinstock" Member="UnitsInStock" Storage="unitsInStock" Type="System.Int16" DbType="smallint(16,0)" CanBeNull="true" />
+      <Column Name="unitsonorder" Member="UnitsOnOrder" Storage="unitsOnOrder" Type="System.Int16" DbType="smallint(16,0)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="public.region" Member="Regions">
+    <Type Name="Region">
+      <Association Name="fk_terr_region" Member="Territories" Type="Territory" ThisKey="RegionId" OtherKey="RegionId" />
+      <Column Name="regiondescription" Member="RegionDescription" Storage="regionDescription" Type="System.String" DbType="character varying(50)" CanBeNull="false" />
+      <Column Name="regionid" Member="RegionId" Storage="regionId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="nextval('region_regionid_seq')" />
+    </Type>
+  </Table>
+  <Table Name="public.shippers" Member="Shippers">
+    <Type Name="Shipper">
+      <Column Name="companyname" Member="CompanyName" Storage="companyName" Type="System.String" DbType="character varying(40)" CanBeNull="false" />
+      <Column Name="phone" Member="Phone" Storage="phone" Type="System.String" DbType="character varying(24)" CanBeNull="true" />
+      <Column Name="shipperid" Member="ShipperId" Storage="shipperId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="nextval('shippers_shipperid_seq')" />
+    </Type>
+  </Table>
+  <Table Name="public.suppliers" Member="Suppliers">
+    <Type Name="Supplier">
+      <Association Name="fk_prod_supp" Member="Products" Type="Product" ThisKey="SupplierId" OtherKey="SupplierId" />
+      <Column Name="address" Member="Address" Storage="address" Type="System.String" DbType="character varying(60)" CanBeNull="true" />
+      <Column Name="city" Member="City" Storage="city" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="companyname" Member="CompanyName" Storage="companyName" Type="System.String" DbType="character varying(40)" CanBeNull="false" />
+      <Column Name="contactname" Member="ContactName" Storage="contactName" Type="System.String" DbType="character varying(30)" CanBeNull="true" />
+      <Column Name="contacttitle" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="character varying(30)" CanBeNull="true" />
+      <Column Name="country" Member="Country" Storage="country" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="fax" Member="Fax" Storage="fax" Type="System.String" DbType="character varying(24)" CanBeNull="true" />
+      <Column Name="phone" Member="Phone" Storage="phone" Type="System.String" DbType="character varying(24)" CanBeNull="true" />
+      <Column Name="postalcode" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="character varying(10)" CanBeNull="true" />
+      <Column Name="region" Member="Region" Storage="region" Type="System.String" DbType="character varying(15)" CanBeNull="true" />
+      <Column Name="supplierid" Member="SupplierId" Storage="supplierId" Type="System.Int32" DbType="integer(32,0)" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" Expression="nextval('suppliers_supplierid_seq')" />
+    </Type>
+  </Table>
+  <Table Name="public.territories" Member="Territories">
+    <Type Name="Territory">
+      <Association Name="fk_terr_region" Member="Region" Storage="fkTeRrRegion" Type="Region" ThisKey="RegionId" OtherKey="RegionId" IsForeignKey="true" />
+      <Association Name="employeeterritories_territoryid_fkey" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="TerritoryId" OtherKey="TerritoryId" />
+      <Column Name="regionid" Member="RegionId" Storage="regionId" Type="System.Int32" DbType="integer(32,0)" CanBeNull="false" />
+      <Column Name="territorydescription" Member="TerritoryDescription" Storage="territoryDescription" Type="System.String" DbType="character varying(50)" CanBeNull="false" />
+      <Column Name="territoryid" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="character varying(20)" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Function Name="getordercount" Method="GetOrderCount">
+    <Parameter Name="custid" Type="System.String" DbType="character varying" Direction="In" />
+    <Return Type="System.Int32" DbType="integer" />
+  </Function>
+  <Function Name="hello0" Method="Hello0">
+    <Return Type="System.String" DbType="text" />
+  </Function>
+  <Function Name="hello1" Method="Hello1">
+    <Parameter Name="name" Type="System.String" DbType="text" Direction="In" />
+    <Return Type="System.String" DbType="text" />
+  </Function>
+  <Function Name="hello2" Method="Hello2">
+    <Parameter Name="name" Type="System.String" DbType="text" Direction="In" />
+    <Parameter Name="unused" Type="System.String" DbType="text" Direction="In" />
+    <Return Type="System.String" DbType="text" />
+  </Function>
+</Database>

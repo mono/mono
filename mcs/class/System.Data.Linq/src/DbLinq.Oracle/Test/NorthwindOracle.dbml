@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Northwind" Class="Northwind" Provider="Oracle" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="NORTHWIND.CASETEST" Member="CaseTests">
+    <Type Name="CaseTest">
+      <Column Name="NOCASE" Member="NoCase" Storage="noCase" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="Number1" Member="Number1" Storage="number1" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="Number2" Member="Number2" Storage="number2" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="value0" Member="Value0" Storage="value0" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="WithCase" Member="WithCase" Storage="withCase" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.CaseTest2" Member="CaseTest2">
+    <Type Name="CaseTest2">
+      <Column Name="SimpleColumn" Member="SimpleColumn" Storage="simpleColumn" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.CATEGORIES" Member="Categories">
+    <Type Name="Category">
+      <Association Name="SYS_C004131" Member="Products" Type="Product" ThisKey="CategoryId" OtherKey="CategoryId" />
+      <Column Name="CATEGORYID" Member="CategoryId" Storage="categoryId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CATEGORYNAME" Member="CategoryName" Storage="categoryName" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="DESCRIPTION" Member="Description" Storage="description" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="PICTURE" Member="Picture" Storage="picture" Type="System.Byte[]" DbType="BLOB" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.CUSTOMERS" Member="Customers">
+    <Type Name="Customer">
+      <Association Name="SYS_C004148" Member="Orders" Type="Order" ThisKey="CustomerId" OtherKey="CustomerId" />
+      <Column Name="ADDRESS" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="CITY" Member="City" Storage="city" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="COMPANYNAME" Member="CompanyName" Storage="companyName" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="CONTACTNAME" Member="ContactName" Storage="contactName" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="CONTACTTITLE" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="COUNTRY" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="CUSTOMERID" Member="CustomerId" Storage="customerId" Type="System.String" DbType="VARCHAR2" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="FAX" Member="Fax" Storage="fax" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="PHONE" Member="Phone" Storage="phone" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="POSTALCODE" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="REGION" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.EMPLOYEES" Member="Employees">
+    <Type Name="Employee">
+      <Association Name="SYS_C004140" Member="ParentEmployee" Storage="sysC004140" Type="Employee" ThisKey="ReportsTo" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="SYS_C004140" Member="Employees" Type="Employee" ThisKey="EmployeeId" OtherKey="ReportsTo" />
+      <Association Name="SYS_C004144" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Association Name="SYS_C004149" Member="Orders" Type="Order" ThisKey="EmployeeId" OtherKey="EmployeeId" />
+      <Column Name="ADDRESS" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="BIRTHDATE" Member="BirthDate" Storage="birthDate" Type="System.DateTime" DbType="DATE" CanBeNull="true" />
+      <Column Name="CITY" Member="City" Storage="city" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="COUNTRY" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="EMPLOYEEID" Member="EmployeeId" Storage="employeeId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FIRSTNAME" Member="FirstName" Storage="firstName" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="HIREDATE" Member="HireDate" Storage="hireDate" Type="System.DateTime" DbType="DATE" CanBeNull="true" />
+      <Column Name="HOMEPHONE" Member="HomePhone" Storage="homePhone" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="LASTNAME" Member="LastName" Storage="lastName" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="NOTES" Member="Notes" Storage="notes" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="PHOTO" Member="Photo" Storage="photo" Type="System.Byte[]" DbType="BLOB" CanBeNull="true" />
+      <Column Name="POSTALCODE" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="REGION" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="REPORTSTO" Member="ReportsTo" Storage="reportsTo" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="TITLE" Member="Title" Storage="title" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.EMPLOYEETERRITORIES" Member="EmployeeTerritories">
+    <Type Name="EmployeeTerritory">
+      <Association Name="SYS_C004145" Member="Territory" Storage="sysC004145" Type="Territory" ThisKey="TerritoryId" OtherKey="TerritoryId" IsForeignKey="true" />
+      <Association Name="SYS_C004144" Member="Employee" Storage="sysC004144" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Column Name="EMPLOYEEID" Member="EmployeeId" Storage="employeeId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TERRITORYID" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="VARCHAR2" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.ORDERS" Member="Orders">
+    <Type Name="Order">
+      <Association Name="SYS_C004149" Member="Employee" Storage="sysC004149" Type="Employee" ThisKey="EmployeeId" OtherKey="EmployeeId" IsForeignKey="true" />
+      <Association Name="SYS_C004148" Member="Customer" Storage="sysC004148" Type="Customer" ThisKey="CustomerId" OtherKey="CustomerId" IsForeignKey="true" />
+      <Association Name="SYS_C004156" Member="OrderDetails" Type="OrderDetail" ThisKey="OrderId" OtherKey="OrderId" />
+      <Column Name="CUSTOMERID" Member="CustomerId" Storage="customerId" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="EMPLOYEEID" Member="EmployeeId" Storage="employeeId" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="FREIGHT" Member="Freight" Storage="freight" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="ORDERDATE" Member="OrderDate" Storage="orderDate" Type="System.DateTime" DbType="DATE" CanBeNull="true" />
+      <Column Name="ORDERID" Member="OrderId" Storage="orderId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="REQUIREDDATE" Member="RequiredDate" Storage="requiredDate" Type="System.DateTime" DbType="DATE" CanBeNull="true" />
+      <Column Name="SHIPADDRESS" Member="ShipAddress" Storage="shipAddress" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="SHIPCITY" Member="ShipCity" Storage="shipCity" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="SHIPCOUNTRY" Member="ShipCountry" Storage="shipCountry" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="SHIPNAME" Member="ShipName" Storage="shipName" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="SHIPPEDDATE" Member="ShippedDate" Storage="shippedDate" Type="System.DateTime" DbType="DATE" CanBeNull="true" />
+      <Column Name="SHIPPOSTALCODE" Member="ShipPostalCode" Storage="shipPostalCode" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="SHIPREGION" Member="ShipRegion" Storage="shipRegion" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="SHIPVIA" Member="ShipVia" Storage="shipVia" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.ORDERDETAILS" Member="OrderDetails">
+    <Type Name="OrderDetail">
+      <Association Name="SYS_C004157" Member="Product" Storage="sysC004157" Type="Product" ThisKey="ProductId" OtherKey="ProductId" IsForeignKey="true" />
+      <Association Name="SYS_C004156" Member="Order" Storage="sysC004156" Type="Order" ThisKey="OrderId" OtherKey="OrderId" IsForeignKey="true" />
+      <Column Name="DISCOUNT" Member="Discount" Storage="discount" Type="System.Single" DbType="FLOAT" CanBeNull="false" />
+      <Column Name="ORDERID" Member="OrderId" Storage="orderId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="PRODUCTID" Member="ProductId" Storage="productId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="QUANTITY" Member="Quantity" Storage="quantity" Type="System.Decimal" DbType="NUMBER" CanBeNull="false" />
+      <Column Name="UNITPRICE" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="NUMBER" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.PRODUCTS" Member="Products">
+    <Type Name="Product">
+      <Association Name="SYS_C004132" Member="Supplier" Storage="sysC004132" Type="Supplier" ThisKey="SupplierId" OtherKey="SupplierId" IsForeignKey="true" />
+      <Association Name="SYS_C004131" Member="Category" Storage="sysC004131" Type="Category" ThisKey="CategoryId" OtherKey="CategoryId" IsForeignKey="true" />
+      <Association Name="SYS_C004157" Member="OrderDetails" Type="OrderDetail" ThisKey="ProductId" OtherKey="ProductId" />
+      <Column Name="CATEGORYID" Member="CategoryId" Storage="categoryId" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="DISCONTINUED" Member="Discontinued" Storage="discontinued" Type="System.Boolean" DbType="NUMBER" CanBeNull="false" />
+      <Column Name="PRODUCTID" Member="ProductId" Storage="productId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="PRODUCTNAME" Member="ProductName" Storage="productName" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="QUANTITYPERUNIT" Member="QuantityPerUnit" Storage="quantityPerUnit" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="REORDERLEVEL" Member="ReorderLevel" Storage="reorderLevel" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="SUPPLIERID" Member="SupplierId" Storage="supplierId" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="UNITPRICE" Member="UnitPrice" Storage="unitPrice" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="UNITSINSTOCK" Member="UnitsInStock" Storage="unitsInStock" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+      <Column Name="UNITSONORDER" Member="UnitsOnOrder" Storage="unitsOnOrder" Type="System.Decimal" DbType="NUMBER" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.REGION" Member="Regions">
+    <Type Name="Region">
+      <Association Name="SYS_C004120" Member="Territories" Type="Territory" ThisKey="RegionId" OtherKey="RegionId" />
+      <Column Name="REGIONDESCRIPTION" Member="RegionDescription" Storage="regionDescription" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="REGIONID" Member="RegionId" Storage="regionId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.SUPPLIERS" Member="Suppliers">
+    <Type Name="Supplier">
+      <Association Name="SYS_C004132" Member="Products" Type="Product" ThisKey="SupplierId" OtherKey="SupplierId" />
+      <Column Name="ADDRESS" Member="Address" Storage="address" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="CITY" Member="City" Storage="city" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="COMPANYNAME" Member="CompanyName" Storage="companyName" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="CONTACTNAME" Member="ContactName" Storage="contactName" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="CONTACTTITLE" Member="ContactTitle" Storage="contactTitle" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="COUNTRY" Member="Country" Storage="country" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="FAX" Member="Fax" Storage="fax" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="PHONE" Member="Phone" Storage="phone" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="POSTALCODE" Member="PostalCode" Storage="postalCode" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="REGION" Member="Region" Storage="region" Type="System.String" DbType="VARCHAR2" CanBeNull="true" />
+      <Column Name="SUPPLIERID" Member="SupplierId" Storage="supplierId" Type="System.Decimal" DbType="NUMBER" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="NORTHWIND.TERRITORIES" Member="Territories">
+    <Type Name="Territory">
+      <Association Name="SYS_C004120" Member="Region" Storage="sysC004120" Type="Region" ThisKey="RegionId" OtherKey="RegionId" IsForeignKey="true" />
+      <Association Name="SYS_C004145" Member="EmployeeTerritories" Type="EmployeeTerritory" ThisKey="TerritoryId" OtherKey="TerritoryId" />
+      <Column Name="REGIONID" Member="RegionId" Storage="regionId" Type="System.Decimal" DbType="NUMBER" CanBeNull="false" />
+      <Column Name="TERRITORYDESCRIPTION" Member="TerritoryDescription" Storage="territoryDescription" Type="System.String" DbType="VARCHAR2" CanBeNull="false" />
+      <Column Name="TERRITORYID" Member="TerritoryId" Storage="territoryId" Type="System.String" DbType="VARCHAR2" IsPrimaryKey="true" CanBeNull="false" />
+    </Type>
+  </Table>
+</Database>
