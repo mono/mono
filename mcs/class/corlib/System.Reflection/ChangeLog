@@ -1,3 +1,9 @@
+2009-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r129069.
+
+	* Binder.cs: Allow conversions from T to T?. Fixes #484294.
+
 2008-02-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoProperty.cs (GetValue): Don't use the delegate optimization for valuetypes.

@@ -253,6 +253,11 @@ namespace System.Reflection
 						return true;
 				}
 
+#if NET_2_0
+				if (to.IsGenericType && to.GetGenericTypeDefinition () == typeof (Nullable<>) && to.GetGenericArguments ()[0] == from)
+					return true;
+#endif
+
 				TypeCode fromt = Type.GetTypeCode (from);
 				TypeCode tot = Type.GetTypeCode (to);
 
