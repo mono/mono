@@ -584,31 +584,31 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-        public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer)
-        {
-            object instance;
-            if (RuntimeType.IsArray)
-                instance = new ArrayList ();
-            else
+		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer)
+		{
+			object instance;
+			if (RuntimeType.IsArray)
+				instance = new ArrayList ();
+			else
 #if NET_2_1 // FIXME: is it fine?
-                instance = Activator.CreateInstance (RuntimeType);
+				instance = Activator.CreateInstance (RuntimeType);
 #else
-                instance = Activator.CreateInstance (RuntimeType, true);
+				instance = Activator.CreateInstance (RuntimeType, true);
 #endif
-            int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
-            while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
-                object elem = deserializer.Deserialize (element_type, reader);
-                if (instance is IList)
-                    ((IList)instance).Add (elem);
-                else if (add_method != null)
+			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
+			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
+				object elem = deserializer.Deserialize (element_type, reader);
+				if (instance is IList)
+					((IList)instance).Add (elem);
+				else if (add_method != null)
 					add_method.Invoke (instance, new object [] {elem});
 				else
-                    throw new NotImplementedException (String.Format ("Type {0} is not supported", RuntimeType));
-            }
-            if (RuntimeType.IsArray)
-                return ((ArrayList)instance).ToArray (element_type);
-            return instance;
-        }
+					throw new NotImplementedException (String.Format ("Type {0} is not supported", RuntimeType));
+			}
+			if (RuntimeType.IsArray)
+				return ((ArrayList)instance).ToArray (element_type);
+			return instance;
+		}
 
 		public override List<DataMemberInfo> GetMembers ()
 		{
