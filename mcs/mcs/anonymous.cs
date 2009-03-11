@@ -864,8 +864,10 @@ namespace Mono.CSharp {
 		//
 		public bool ImplicitStandardConversionExists (EmitContext ec, Type delegate_type)
 		{
-			using (ec.Set (EmitContext.Flags.ProbingMode)) {
-				return Compatible (ec, delegate_type) != null;
+			using (ec.With (EmitContext.Flags.InferReturnType, false)) {
+				using (ec.Set (EmitContext.Flags.ProbingMode)) {
+					return Compatible (ec, delegate_type) != null;
+				}
 			}
 		}
 

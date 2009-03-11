@@ -1,5 +1,11 @@
 2009-03-11  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #482996
+	* anonymous.cs: Make sure we are not infering return type when
+	checking type compatibility.
+
+2009-03-11  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, generic.cs, parameter.cs, decl.cs, const.cs,
 	rootcontext.cs, namespace.cs, class.cs, delegate.cs, driver.cs,
 	generic-mcs.cs, attribute.cs, codegen.cs: Maintain predefined
