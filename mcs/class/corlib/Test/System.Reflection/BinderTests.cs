@@ -294,6 +294,18 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (3, bug42457_2, "#6");
 		}
 
+#if NET_2_0
+		[Test]
+		public void NullableArg () {
+			MethodInfo method = (typeof (BinderTest)).GetMethod("SetA", new [] {typeof (Int32)});
+			Assert.AreEqual (5, method.Invoke (new BinderTest (), new object [] { 5 }));
+		}
+
+		public int SetA(Int32? a) {
+			return (int)a;
+		}
+#endif
+
 		static void MethodWithLongParam(long param)
 		{
 		}
