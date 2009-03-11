@@ -1116,6 +1116,24 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual ("bar", d [0].Value);
 		}
 
+		[Test]
+		public void GenericListOfDictionaryEntrySerialization ()
+		{
+			string xml = @"<?xml version='1.0' encoding='utf-16'?><ArrayOfDictionaryEntry xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/System.Collections'><DictionaryEntry><_key xmlns:d3p1='http://www.w3.org/2001/XMLSchema' i:type='d3p1:string'>foo</_key><_value xmlns:d3p1='http://www.w3.org/2001/XMLSchema' i:type='d3p1:string'>bar</_value></DictionaryEntry></ArrayOfDictionaryEntry>".Replace ('\'', '"');
+
+			var ds = new DataContractSerializer (typeof (List<DictionaryEntry>));
+			var d = new List<DictionaryEntry> ();
+			d.Add (new DictionaryEntry ("foo", "bar"));
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw))
+				ds.WriteObject (xw, d);
+			Assert.AreEqual (xml, sw.ToString (), "#1");
+			Assert.IsTrue (sw.ToString ().IndexOf ("i:type") >= 0);
+			d = (List<DictionaryEntry>) ds.ReadObject (XmlReader.Create (new StringReader (xml)));
+			Assert.AreEqual (1, d.Count, "#2");
+			Assert.AreEqual ("bar", d [0].Value);
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));

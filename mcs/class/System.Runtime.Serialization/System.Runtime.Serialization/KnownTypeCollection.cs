@@ -79,6 +79,8 @@ namespace System.Runtime.Serialization
 			"http://schemas.microsoft.com/2003/10/Serialization/";
 		internal const string MSArraysNamespace =
 			"http://schemas.microsoft.com/2003/10/Serialization/Arrays";
+		internal const string DefaultClrNamespaceBase =
+			"http://schemas.datacontract.org/2004/07/";
 
 		static QName any_type, bool_type,
 			byte_type, date_type, decimal_type, double_type,
@@ -462,7 +464,7 @@ namespace System.Runtime.Serialization
 				}
 			}
 			if (ns == null)
-				ns = XmlObjectSerializer.DefaultNamespaceBase + type.Namespace;
+				ns = DefaultClrNamespaceBase + type.Namespace;
 			return new QName (name, ns);
 		}
 
@@ -481,7 +483,7 @@ namespace System.Runtime.Serialization
 			}
 
 			if (ns == null)
-				ns = XmlObjectSerializer.DefaultNamespaceBase + type.Namespace;
+				ns = DefaultClrNamespaceBase + type.Namespace;
 
 			if (name == null)
 				name = type.Namespace == null || type.Namespace.Length == 0 ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
@@ -511,7 +513,7 @@ namespace System.Runtime.Serialization
 				foreach (var t in type.GetGenericArguments ())
 					xmlName += GetQName (t).Name; // FIXME: check namespaces too
 			}
-			string xmlNamespace = XmlObjectSerializer.DefaultNamespaceBase + type.Namespace;
+			string xmlNamespace = DefaultClrNamespaceBase + type.Namespace;
 			var x = GetAttribute<XmlRootAttribute> (type);
 			if (x != null) {
 				xmlName = x.ElementName;

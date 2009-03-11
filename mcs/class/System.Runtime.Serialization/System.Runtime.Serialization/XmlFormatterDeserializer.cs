@@ -168,10 +168,24 @@ namespace System.Runtime.Serialization
 			}
 
 			SerializationMap map = types.FindUserMap (name);
+			if (map == null && name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal)) {
+				var it = GetTypeFromNamePair (name.Name, name.Namespace.Substring (KnownTypeCollection.DefaultClrNamespaceBase.Length));
+				if (types.TryRegister (it))
+					map = types.FindUserMap (name);
+			}
 			if (map == null)
-				throw new SerializationException (String.Format ("Unknown type {0} is used for DataContract. Any derived types of a data contract or a data member should be added to KnownTypes.", type));
+				throw new SerializationException (String.Format ("Unknown type {0} is used for DataContract with reference of name {1}. Any derived types of a data contract or a data member should be added to KnownTypes.", type, name));
 
 			return map.DeserializeContent (reader, this);
+		}
+
+		Type GetTypeFromNamePair (string name, string ns)
+		{
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ())
+				foreach (var t in ass.GetTypes ())
+					if (t.Name == name && t.Namespace == ns)
+						return t;
+			return null;
 		}
 	}
 }

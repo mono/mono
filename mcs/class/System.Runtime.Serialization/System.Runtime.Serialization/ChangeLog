@@ -1,5 +1,11 @@
 2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlFormatterSerializer.cs, XmlObjectSerializer.cs,
+	  XmlFormatterDeserializer.cs, KnownTypeCollection.cs :
+	  add more xsi:type to cover collection items.
+
+2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* KnownTypeCollection.cs : fix generic argument names in xml.
 	  They should use xmlized names instead of raw type name.
 	* XmlFormatterDeserializer.cs : remove extra Console.WriteLine.

@@ -40,9 +40,6 @@ namespace System.Runtime.Serialization
 {
 	public abstract class XmlObjectSerializer
 	{
-		internal const string DefaultNamespaceBase =
-			"http://schemas.datacontract.org/2004/07/";
-
 		// This is only for compatible mode.
 		IDataContractSurrogate surrogate;
 

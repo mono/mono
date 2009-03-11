@@ -88,6 +88,21 @@ namespace System.Runtime.Serialization
 				writer.WriteAttributeString ("nil", XmlSchema.InstanceNamespace, "true");
 			else {
 				Type actualType = graph.GetType ();
+				if (actualType != type) {
+					QName qname = types.GetXmlName (actualType);
+					string name = qname.Name;
+					string ns = qname.Namespace;
+					if (qname == QName.Empty) {
+						name = XmlConvert.EncodeLocalName (actualType.Name);
+						ns = KnownTypeCollection.DefaultClrNamespaceBase + actualType.Namespace;
+					} else if (qname.Namespace == KnownTypeCollection.MSSimpleNamespace)
+						ns = XmlSchema.Namespace;
+					if (writer.LookupPrefix (ns) == null) // it goes first (extraneous, but it makes att order compatible)
+						writer.WriteXmlnsAttribute (null, ns);
+					writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
+					writer.WriteQualifiedName (name, ns);
+					writer.WriteEndAttribute ();
+				}
 				QName predef = KnownTypeCollection.GetPredefinedTypeName (actualType);
 				if (predef != QName.Empty)
 					SerializePrimitive (type, graph, predef);
@@ -116,13 +131,6 @@ namespace System.Runtime.Serialization
 			writer.WriteEndElement ();
 		}
 
-		private void Write_i_type (QName qname)
-		{
-			writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
-			writer.WriteQualifiedName (qname.Name, qname.Namespace);
-			writer.WriteEndAttribute ();
-		}
-
 		public void SerializeNonPrimitive (Type type, object graph)
 		{
 			Type actualType = graph.GetType ();
@@ -132,10 +140,7 @@ namespace System.Runtime.Serialization
 				/* Unknown actual type */
 				types.Add (actualType);
 				map = types.FindUserMap (actualType);
-//				throw new InvalidDataContractException (String.Format ("Type {0} has neither Serializable nor DataContract attributes.", type));
 			}
-			if (type != actualType)
-				Write_i_type (map.XmlName);
 
 			map.Serialize (graph, this);
 		}
