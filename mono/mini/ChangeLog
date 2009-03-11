@@ -1,3 +1,9 @@
+2009-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix % 1. Fixes #484323.
+
+	* basic.cs: Add a test.
+
 2009-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r128749.
