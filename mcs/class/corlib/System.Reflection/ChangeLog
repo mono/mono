@@ -1,3 +1,7 @@
+2009-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Binder.cs: Allow conversions from T to T?. Fixes #484294.
+
 2008-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* EventInfo.cs: Apply similar trick to the one in MonoProperty to speed up
