@@ -1159,13 +1159,13 @@ namespace Mono.CSharp {
 				}
 
 				atypes[i] = te.Type;
-/*
+
 				if (te.Type.IsSealed && te.Type.IsAbstract) {
 					Report.Error (718, te.Location, "`{0}': static classes cannot be used as generic arguments",
 						te.GetSignatureForError ());
 					ok = false;
 				}
-*/
+
 				if (te.Type.IsPointer || TypeManager.IsSpecialType (te.Type)) {
 					Report.Error (306, te.Location,
 						"The type `{0}' may not be used as a type argument",
