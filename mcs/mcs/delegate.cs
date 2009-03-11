@@ -67,17 +67,17 @@ namespace Mono.CSharp {
 			Parameters      = param_list;
 		}
 
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (InvokeBuilder, Location);
 
-				return_attributes.ApplyAttributeBuilder (a, cb);
+				return_attributes.ApplyAttributeBuilder (a, cb, pa);
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
 		public override TypeBuilder DefineType ()

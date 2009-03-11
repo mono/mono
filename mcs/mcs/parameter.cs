@@ -30,10 +30,10 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 #if !NET_2_0
-			if (a.Type == TypeManager.marshal_as_attr_type) {
+			if (a.Type == pa.MarshalAs) {
 				UnmanagedMarshal marshal = a.GetMarshal (this);
 				if (marshal != null) {
 					builder.SetMarshal (marshal);
@@ -70,9 +70,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.cls_compliant_attribute_type) {
+			if (a.Type == pa.CLSCompliant) {
 				Report.Warning (3023, 1, a.Location, "CLSCompliant attribute has no meaning when applied to return types. Try putting it on the method instead");
 			}
 
@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 			if (builder == null)
 				return;
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -183,21 +183,7 @@ namespace Mono.CSharp {
 		public override void ApplyAttributes (MethodBuilder mb, ConstructorBuilder cb, int index)
 		{
 			base.ApplyAttributes (mb, cb, index);
-
-			CustomAttributeBuilder ca = TypeManager.param_array_attr;
-			if (ca == null) {
-				ConstructorInfo ci = TypeManager.GetPredefinedConstructor (TypeManager.param_array_type, Location, Type.EmptyTypes);
-				if (ci == null)
-					return;
-
-				ca = new CustomAttributeBuilder (ci, new object [0]);
-				if (ca == null)
-					return;
-
-				TypeManager.param_array_attr = ca;
-			}
-				
-			builder.SetCustomAttribute (ca);
+			PredefinedAttributes.Get.ParamArray.EmitAttribute (builder, Location);
 		}
 	}
 
@@ -282,31 +268,31 @@ namespace Mono.CSharp {
 			TypeName = type;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.in_attribute_type && ModFlags == Modifier.OUT) {
+			if (a.Type == pa.In && ModFlags == Modifier.OUT) {
 				Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
 				return;
 			}
 
-			if (a.Type == TypeManager.param_array_type) {
+			if (a.Type == pa.ParamArray) {
 				Report.Error (674, a.Location, "Do not use `System.ParamArrayAttribute'. Use the `params' keyword instead");
 				return;
 			}
 
-			if (a.Type == TypeManager.out_attribute_type && (ModFlags & Modifier.REF) == Modifier.REF &&
-			    TypeManager.in_attribute_type != null && !OptAttributes.Contains (TypeManager.in_attribute_type)) {
+			if (a.Type == PredefinedAttributes.Get.Out && (ModFlags & Modifier.REF) == Modifier.REF &&
+			    !OptAttributes.Contains (pa.In)) {
 				Report.Error (662, a.Location,
 					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");
 				return;
 			}
 
-			if (a.Type == TypeManager.cls_compliant_attribute_type) {
+			if (a.Type == pa.CLSCompliant) {
 				Report.Warning (3022, 1, a.Location, "CLSCompliant attribute has no meaning when applied to parameters. Try putting it on the method instead");
 			}
 
 			// TypeManager.default_parameter_value_attribute_type is null if !NET_2_0, or if System.dll is not referenced
-			if (a.Type == TypeManager.default_parameter_value_attribute_type) {
+			if (a.Type == pa.DefaultParameterValue) {
 				object val = a.GetParameterDefaultValue ();
 				if (val != null) {
 					Type t = val.GetType ();
@@ -334,7 +320,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 		
 		public virtual bool CheckAccessibility (InterfaceMemberBase member)
@@ -847,6 +833,8 @@ namespace Mono.CSharp {
 			Type [] types = new Type [pi.Length];
 			IParameterData [] par = new IParameterData [pi.Length];
 			bool is_params = false;
+			PredefinedAttribute extension_attr = PredefinedAttributes.Get.Extension;
+			PredefinedAttribute param_attr = PredefinedAttributes.Get.ParamArray;
 			for (int i = 0; i < types.Length; i++) {
 				types [i] = TypeManager.TypeToCoreType (pi [i].ParameterType);
 
@@ -862,12 +850,12 @@ namespace Mono.CSharp {
 					// Strip reference wrapping
 					//
 					types [i] = TypeManager.GetElementType (types [i]);
-				} else if (i == 0 && TypeManager.extension_attribute_type != null && method != null && method.IsStatic &&
+				} else if (i == 0 && extension_attr.IsDefined && method != null && method.IsStatic &&
 			        (method.DeclaringType.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
-			        method.IsDefined (TypeManager.extension_attribute_type, false)) {
+					method.IsDefined (extension_attr.Type, false)) {
 					mod = Parameter.Modifier.This;
 				} else if (i >= pi.Length - 2 && types [i].IsArray) {
-					if (p.IsDefined (TypeManager.param_array_type, false)) {
+					if (p.IsDefined (param_attr.Type, false)) {
 						mod = Parameter.Modifier.PARAMS;
 						is_params = true;
 					}

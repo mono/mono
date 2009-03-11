@@ -547,16 +547,16 @@ namespace Mono.CSharp {
 			compiler_generated.Add (c);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.default_member_type) {
+			if (a.Type == pa.DefaultMember) {
 				if (Indexers != null) {
 					Report.Error (646, a.Location, "Cannot specify the `DefaultMember' attribute on type containing an indexer");
 					return;
 				}
 			}
 			
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		} 
 
 		public override AttributeTargets AttributeTargets {
@@ -645,10 +645,10 @@ namespace Mono.CSharp {
 
 		public bool IsComImport {
 			get {
-				if (OptAttributes == null || TypeManager.comimport_attr_type == null)
+				if (OptAttributes == null)
 					return false;
 
-				return OptAttributes.Contains (TypeManager.comimport_attr_type);
+				return OptAttributes.Contains (PredefinedAttributes.Get.ComImport);
 			}
 		}
 
@@ -1442,23 +1442,12 @@ namespace Mono.CSharp {
 			if (!seen_normal_indexers)
 				return;
 
-			if (TypeManager.default_member_ctor == null) {
-				if (TypeManager.default_member_type == null) {
-					TypeManager.default_member_type = TypeManager.CoreLookupType (
-						"System.Reflection", "DefaultMemberAttribute", Kind.Class, true);
+			PredefinedAttribute pa = PredefinedAttributes.Get.DefaultMember;
+			if (pa.Constructor == null &&
+				!pa.ResolveConstructor (Location, TypeManager.string_type))
+				return;
 
-					if (TypeManager.default_member_type == null)
-						return;
-				}
-
-				TypeManager.default_member_ctor = TypeManager.GetPredefinedConstructor (
-					TypeManager.default_member_type, Location, TypeManager.string_type);
-
-				if (TypeManager.default_member_ctor == null)
-					return;
-			}
-
-			CustomAttributeBuilder cb = new CustomAttributeBuilder (TypeManager.default_member_ctor, new string [] { IndexerName });
+			CustomAttributeBuilder cb = new CustomAttributeBuilder (pa.Constructor, new string [] { IndexerName });
 			TypeBuilder.SetCustomAttribute (cb);
 		}
 
@@ -2573,7 +2562,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
@@ -2583,14 +2572,14 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.struct_layout_attribute_type) {
+			if (a.Type == pa.StructLayout) {
 				PartialContainer.HasStructLayout = true;
 
 				if (a.GetLayoutKindValue () == LayoutKind.Explicit)
 					PartialContainer.HasExplicitLayout = true;
 			}
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
 		/// <summary>
@@ -2697,27 +2686,26 @@ namespace Mono.CSharp {
 			base.AddBasesForPart (part, bases);
 		}
 
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.attribute_usage_type) {
+			if (a.Type == pa.AttributeUsage) {
 				if (!TypeManager.IsAttributeType (BaseType) &&
 					TypeBuilder.FullName != "System.Attribute") {
 					Report.Error (641, a.Location, "Attribute `{0}' is only valid on classes derived from System.Attribute", a.GetSignatureForError ());
 				}
 			}
 
-			if (a.Type == TypeManager.conditional_attribute_type && !TypeManager.IsAttributeType (BaseType)) {
+			if (a.Type == pa.Conditional && !TypeManager.IsAttributeType (BaseType)) {
 				Report.Error (1689, a.Location, "Attribute `System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes");
 				return;
 			}
 
-			if (a.Type == TypeManager.comimport_attr_type && TypeManager.guid_attr_type != null &&
-				!attributes.Contains (TypeManager.guid_attr_type)) {
-					a.Error_MissingGuidAttribute ();
-					return;
+			if (a.Type == pa.ComImport && !attributes.Contains (pa.Guid)) {
+				a.Error_MissingGuidAttribute ();
+				return;
 			}
 
-			if (a.Type == TypeManager.extension_attribute_type) {
+			if (a.Type == pa.Extension) {
 				a.Error_MisusedExtensionAttribute ();
 				return;
 			}
@@ -2725,7 +2713,7 @@ namespace Mono.CSharp {
 			if (AttributeTester.IsAttributeExcluded (a.Type, Location))
 				return;
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -2807,7 +2795,7 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
-				TypeBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
+				PredefinedAttributes.Get.Extension.EmitAttribute (TypeBuilder);
 #endif			
 		}
 
@@ -2889,11 +2877,7 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return false;
 
-			if (TypeManager.conditional_attribute_type == null)
-				return false;
-
-			Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
-
+			Attribute[] attrs = OptAttributes.SearchMulti (PredefinedAttributes.Get.Conditional);
 			if (attrs == null)
 				return false;
 
@@ -2955,16 +2939,16 @@ namespace Mono.CSharp {
 			this.ModFlags |= Modifiers.SEALED;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 
 			//
 			// When struct constains fixed fixed and struct layout has explicitly
 			// set CharSet, its value has to be propagated to compiler generated
 			// fixed field types
 			//
-			if (a.Type == TypeManager.struct_layout_attribute_type && Fields != null && a.HasField ("CharSet")) {
+			if (a.Type == pa.StructLayout && Fields != null && a.HasField ("CharSet")) {
 				for (int i = 0; i < Fields.Count; ++i) {
 					FixedField ff = Fields [i] as FixedField;
 					if (ff != null)
@@ -3090,14 +3074,14 @@ namespace Mono.CSharp {
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, name.Location);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.comimport_attr_type && TypeManager.guid_attr_type != null &&
-				!attributes.Contains (TypeManager.guid_attr_type)) {
-					a.Error_MissingGuidAttribute ();
-					return;
+			if (a.Type == pa.ComImport && !attributes.Contains (pa.Guid)) {
+				a.Error_MissingGuidAttribute ();
+				return;
 			}
-			base.ApplyAttributeBuilder (a, cb);
+
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
 
@@ -3350,13 +3334,13 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 					ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (base_method);
 					if (oa != null) {
-						if (OptAttributes == null || TypeManager.obsolete_attribute_type == null || !OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
+						if (OptAttributes == null || !OptAttributes.Contains (PredefinedAttributes.Get.Obsolete)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 								Report.Warning (672, 1, Location, "Member `{0}' overrides obsolete member `{1}'. Add the Obsolete attribute to `{0}'",
 									GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 						}
 					} else {
-						if (OptAttributes != null && TypeManager.obsolete_attribute_type != null && OptAttributes.Contains (TypeManager.obsolete_attribute_type)) {
+						if (OptAttributes != null && OptAttributes.Contains (PredefinedAttributes.Get.Obsolete)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (809, 1, Location, "Obsolete member `{0}' overrides non-obsolete member `{1}'",
 								GetSignatureForError (), TypeManager.CSharpSignature (base_method));
@@ -3726,13 +3710,13 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (MethodBuilder, Location);
 
-				return_attributes.ApplyAttributeBuilder (a, cb);
+				return_attributes.ApplyAttributeBuilder (a, cb, pa);
 				return;
 			}
 
@@ -3740,7 +3724,7 @@ namespace Mono.CSharp {
 				is_external_implementation = true;
 			}
 
-			if (a.Type == TypeManager.dllimport_type) {
+			if (a.Type == pa.DllImport) {
 				const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
 				if ((ModFlags & extern_static) != extern_static) {
 					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
@@ -3871,12 +3855,11 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-#if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
+				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (MethodBuilder);
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
-				MethodBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
-#endif
+				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (MethodBuilder);
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -3947,10 +3930,7 @@ namespace Mono.CSharp {
 				if (OptAttributes == null)
 					return false;
 
-				if (TypeManager.conditional_attribute_type == null)
-					return false;
-
-				Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type);
+				Attribute[] attrs = OptAttributes.SearchMulti (PredefinedAttributes.Get.Conditional);
 
 				if (attrs == null)
 					return false;
@@ -4121,9 +4101,9 @@ namespace Mono.CSharp {
 					(Parameters[0].ModFlags & ~Parameter.Modifier.PARAMS) == Parameter.Modifier.NONE;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.conditional_attribute_type) {
+			if (a.Type == pa.Conditional) {
 				if (IsExplicitImpl) {
 					Error_ConditionalAttributeIsNotValid ();
 					return;
@@ -4159,12 +4139,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (a.Type == TypeManager.extension_attribute_type) {
+			if (a.Type == pa.Extension) {
 				a.Error_MisusedExtensionAttribute ();
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
   		protected override bool CheckForDuplications ()
@@ -4239,16 +4219,11 @@ namespace Mono.CSharp {
 						Report.Error (1109, Location, "`{0}': Extension methods cannot be defined in a nested class",
 							GetSignatureForError ());
 
-					if (TypeManager.extension_attribute_type == null) {
+					PredefinedAttribute pa = PredefinedAttributes.Get.Extension;
+					if (!pa.IsDefined) {
 						Report.Error (1110, Location,
 							"`{0}': Extension methods cannot be declared without a reference to System.Core.dll assembly. Add the assembly reference or remove `this' modifer from the first parameter",
 							GetSignatureForError ());
-					} else if (TypeManager.extension_attribute_attr == null) {
-						ConstructorInfo ci = TypeManager.GetPredefinedConstructor (
-							TypeManager.extension_attribute_type, Location, System.Type.EmptyTypes);
-
-						if (ci != null)
-							TypeManager.extension_attribute_attr = new CustomAttributeBuilder (ci, new object [0]);
 					}
 
 					ModFlags |= Modifiers.METHOD_EXTENSION;
@@ -4315,7 +4290,7 @@ namespace Mono.CSharp {
 				
 #if GMCS_SOURCE				
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
-					MethodBuilder.SetCustomAttribute (TypeManager.extension_attribute_attr);
+					PredefinedAttributes.Get.Extension.EmitAttribute (MethodBuilder);
 #endif
 
 			} catch {
@@ -4561,7 +4536,7 @@ namespace Mono.CSharp {
 					(Initializer.Arguments == null);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null) {
@@ -4678,7 +4653,7 @@ namespace Mono.CSharp {
 		public override void Emit ()
 		{
 			if ((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0)
-				ConstructorBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
+				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (ConstructorBuilder);
 
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
@@ -5167,14 +5142,14 @@ namespace Mono.CSharp {
 			ModFlags |= Modifiers.PROTECTED;
 		}
 
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.conditional_attribute_type) {
+			if (a.Type == pa.Conditional) {
 				Error_ConditionalAttributeIsNotValid ();
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
 		protected override bool CheckBase ()
@@ -5396,9 +5371,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.field_offset_attribute_type) {
+			if (a.Type == pa.FieldOffset) {
 				status |= Status.HAS_OFFSET;
 
 				if (!Parent.PartialContainer.HasExplicitLayout) {
@@ -5413,14 +5388,14 @@ namespace Mono.CSharp {
 			}
 
 #if NET_2_0
-			if (a.Type == TypeManager.fixed_buffer_attr_type) {
+			if (a.Type == pa.FixedBuffer) {
 				Report.Error (1716, Location, "Do not use 'System.Runtime.CompilerServices.FixedBuffer' attribute. Use the 'fixed' field modifier instead");
 				return;
 			}
 #endif
 
 #if !NET_2_0
-			if (a.Type == TypeManager.marshal_as_attr_type) {
+			if (a.Type == pa.MarshalAs) {
 				UnmanagedMarshal marshal = a.GetMarshal (this);
 				if (marshal != null) {
 					FieldBuilder.SetMarshal (marshal);
@@ -5482,10 +5457,8 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-#if GMCS_SOURCE
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				FieldBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
-#endif
+				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (FieldBuilder);
 
 			if (OptAttributes != null) {
 				OptAttributes.Emit ();
@@ -5677,53 +5650,27 @@ namespace Mono.CSharp {
 			buffer_size *= type_size;
 			EmitFieldSize (buffer_size);
 
-#if GMCS_SOURCE
-			//
-			// Emit compiler generated fixed buffer type attribute
-			//
-			CustomAttributeBuilder cab = TypeManager.unsafe_value_type_attr;
-			if (cab == null) {
-				Type attr_type = TypeManager.CoreLookupType (
-					"System.Runtime.CompilerServices", "UnsafeValueTypeAttribute", Kind.Class, true);
+			PredefinedAttributes.Get.UnsafeValueType.EmitAttribute (fixed_buffer_type);
 
-				if (attr_type != null) {
-					ConstructorInfo ci = TypeManager.GetPredefinedConstructor (attr_type, Location);
-					if (ci != null) {
-						cab = new CustomAttributeBuilder (ci, new object [0]);
-						TypeManager.unsafe_value_type_attr = cab;
-					}
-				}
-			}
-
-			if (cab != null)
-				fixed_buffer_type.SetCustomAttribute (cab);
-#endif
 			base.Emit ();
 		}
 
 		void EmitFieldSize (int buffer_size)
 		{
-			if (TypeManager.struct_layout_attribute_type == null) {
-				TypeManager.struct_layout_attribute_type = TypeManager.CoreLookupType (
-					"System.Runtime.InteropServices", "StructLayoutAttribute", Kind.Class, true);
+			CustomAttributeBuilder cab;
+			PredefinedAttribute pa;
 
-				if (TypeManager.struct_layout_attribute_type == null)
+			pa = PredefinedAttributes.Get.StructLayout;
+			if (pa.Constructor == null &&
+				!pa.ResolveConstructor (Location, TypeManager.short_type))
 					return;
-			}
 
+			// TODO: It's not cleared
 			if (fi == null)
-				fi = new FieldInfo [] { TypeManager.struct_layout_attribute_type.GetField ("Size") };
+				fi = new FieldInfo[] { pa.Type.GetField ("Size") };
 
-			object [] fi_val = new object [] { buffer_size };
-
-			if (TypeManager.struct_layout_attribute_ctor == null) {
-				TypeManager.struct_layout_attribute_ctor = TypeManager.GetPredefinedConstructor (
-					TypeManager.struct_layout_attribute_type, Location, TypeManager.short_type);
-				if (TypeManager.struct_layout_attribute_ctor == null)
-					return;
-			}
-
-			CustomAttributeBuilder cab = new CustomAttributeBuilder (TypeManager.struct_layout_attribute_ctor,
+			object[] fi_val = new object[] { buffer_size };
+			cab = new CustomAttributeBuilder (pa.Constructor,
 				ctor_args, fi, fi_val);
 			fixed_buffer_type.SetCustomAttribute (cab);
 			
@@ -5731,25 +5678,14 @@ namespace Mono.CSharp {
 			// Don't emit FixedBufferAttribute attribute for private types
 			//
 			if ((ModFlags & Modifiers.PRIVATE) != 0)
-				return;	
+				return;
 
-			if (TypeManager.fixed_buffer_attr_ctor == null) {
-				if (TypeManager.fixed_buffer_attr_type == null) {
-					TypeManager.fixed_buffer_attr_type = TypeManager.CoreLookupType (
-						"System.Runtime.CompilerServices", "FixedBufferAttribute", Kind.Class, true);
+			pa = PredefinedAttributes.Get.FixedBuffer;
+			if (pa.Constructor == null &&
+				!pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
+				return;
 
-					if (TypeManager.fixed_buffer_attr_type == null)
-						return;
-				}
-
-				TypeManager.fixed_buffer_attr_ctor = TypeManager.GetPredefinedConstructor (TypeManager.fixed_buffer_attr_type,
-					Location, TypeManager.type_type, TypeManager.int32_type);
-				
-				if (TypeManager.fixed_buffer_attr_ctor == null)
-					return;
-			}
-
-			cab = new CustomAttributeBuilder (TypeManager.fixed_buffer_attr_ctor, new object [] { MemberType, buffer_size });
+			cab = new CustomAttributeBuilder (pa.Constructor, new object[] { MemberType, buffer_size });
 			FieldBuilder.SetCustomAttribute (cab);
 		}
 
@@ -6060,10 +5996,9 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.cls_compliant_attribute_type || a.Type == TypeManager.obsolete_attribute_type ||
-					a.Type == TypeManager.conditional_attribute_type) {
+			if (a.Type == pa.CLSCompliant || a.Type == pa.Obsolete || a.Type == pa.Conditional) {
 				Report.Error (1667, a.Location,
 					"Attribute `{0}' is not valid on property or event accessors. It is valid on `{1}' declarations only",
 					TypeManager.CSharpName (a.Type), a.GetValidTargets ());
@@ -6086,14 +6021,14 @@ namespace Mono.CSharp {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (method_data.MethodBuilder, Location);
 
-				return_attributes.ApplyAttributeBuilder (a, cb);
+				return_attributes.ApplyAttributeBuilder (a, cb, pa);
 				return;
 			}
 
-			ApplyToExtraTarget (a, cb);
+			ApplyToExtraTarget (a, cb, pa);
 		}
 
-		virtual protected void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb)
+		protected virtual void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			throw new NotSupportedException ("You forgot to define special attribute target handling");
 		}
@@ -6108,12 +6043,11 @@ namespace Mono.CSharp {
 		{
 			method_data.Emit (parent);
 
-#if GMCS_SOURCE			
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
+				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (method_data.MethodBuilder);
 			if (((ModFlags & Modifiers.DEBUGGER_HIDDEN) != 0))
-				method_data.MethodBuilder.SetCustomAttribute (TypeManager.GetDebuggerHiddenAttribute (Location));
-#endif			
+				PredefinedAttributes.Get.DebuggerHidden.EmitAttribute (method_data.MethodBuilder);
+
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
 
@@ -6259,17 +6193,17 @@ namespace Mono.CSharp {
 				this.parameters = accessor.Parameters;
 			}
 
-			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
+			protected override void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
 						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
-					param_attr.ApplyAttributeBuilder (a, cb);
+					param_attr.ApplyAttributeBuilder (a, cb, pa);
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, cb);
+				base.ApplyAttributeBuilder (a, cb, pa);
 			}
 
 			public override ParametersCompiled ParameterInfo {
@@ -6334,13 +6268,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 			{
 				if (a.IsInternalMethodImplAttribute) {
 					method.is_external_implementation = true;
 				}
 
-				base.ApplyAttributeBuilder (a, cb);
+				base.ApplyAttributeBuilder (a, cb, pa);
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -6480,7 +6414,7 @@ namespace Mono.CSharp {
 			 this.define_set_first = define_set_first;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.HasSecurityAttribute) {
 				a.Error_InvalidSecurityParent ();
@@ -7114,22 +7048,22 @@ namespace Mono.CSharp {
 			Remove = new RemoveDelegateMethod (this);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.Field) {
-				BackingField.ApplyAttributeBuilder (a, cb);
+				BackingField.ApplyAttributeBuilder (a, cb, pa);
 				return;
 			}
 
 			if (a.Target == AttributeTargets.Method) {
 				int errors = Report.Errors;
-				Add.ApplyAttributeBuilder (a, cb);
+				Add.ApplyAttributeBuilder (a, cb, pa);
 				if (errors == Report.Errors)
-					Remove.ApplyAttributeBuilder (a, cb);
+					Remove.ApplyAttributeBuilder (a, cb, pa);
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 
 		public override bool Define()
@@ -7209,26 +7143,26 @@ namespace Mono.CSharp {
 				get { return method_data.implementing != null; }
 			}
 
-			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 			{
 				if (a.IsInternalMethodImplAttribute) {
 					method.is_external_implementation = true;
 				}
 
-				base.ApplyAttributeBuilder (a, cb);
+				base.ApplyAttributeBuilder (a, cb, pa);
 			}
 
-			protected override void ApplyToExtraTarget(Attribute a, CustomAttributeBuilder cb)
+			protected override void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
 						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
-					param_attr.ApplyAttributeBuilder (a, cb);
+					param_attr.ApplyAttributeBuilder (a, cb, pa);
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, cb);
+				base.ApplyAttributeBuilder (a, cb, pa);
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -7317,7 +7251,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if ((a.HasSecurityAttribute)) {
 				a.Error_InvalidSecurityParent ();
@@ -7538,8 +7472,8 @@ namespace Mono.CSharp {
 			if (!DefineParameters (parameters))
 				return false;
 
-			if (OptAttributes != null && TypeManager.indexer_name_type != null) {
-				Attribute indexer_attr = OptAttributes.Search (TypeManager.indexer_name_type);
+			if (OptAttributes != null) {
+				Attribute indexer_attr = OptAttributes.Search (PredefinedAttributes.Get.IndexerName);
 				if (indexer_attr != null) {
 					// Remove the attribute from the list because it is not emitted
 					OptAttributes.Attrs.Remove (indexer_attr);
@@ -7742,14 +7676,14 @@ namespace Mono.CSharp {
 			Block = block;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb) 
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.conditional_attribute_type) {
+			if (a.Type == pa.Conditional) {
 				Error_ConditionalAttributeIsNotValid ();
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb);
+			base.ApplyAttributeBuilder (a, cb, pa);
 		}
 		
 		public override bool Define ()

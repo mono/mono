@@ -57,11 +57,11 @@ namespace Mono.CSharp {
 			referenced_assemblies = n;
 		}
 
-		public void ComputeNamespace ()
+		public void ComputeNamespace (Type extensionType)
 		{
 			foreach (Assembly a in referenced_assemblies) {
 				try {
-					ComputeNamespaces (a);
+					ComputeNamespaces (a, extensionType);
 				} catch (TypeLoadException e) {
 					Report.Error (11, Location.Null, e.Message);
 				} catch (System.IO.FileNotFoundException) {
@@ -122,10 +122,9 @@ namespace Mono.CSharp {
  			ns.RegisterExternalExtensionMethodClass (t);
  		}
 
-  		void ComputeNamespaces (Assembly assembly)
+  		void ComputeNamespaces (Assembly assembly, Type extensionType)
   		{
- 			bool contains_extension_methods = TypeManager.extension_attribute_type != null &&
- 					assembly.IsDefined(TypeManager.extension_attribute_type, false);
+			bool contains_extension_methods = extensionType != null && assembly.IsDefined (extensionType, false);
  
  			if (get_namespaces_method != null) {
   				string [] namespaces = (string []) get_namespaces_method.Invoke (assembly, null);
@@ -138,7 +137,7 @@ namespace Mono.CSharp {
 
  			foreach (Type t in assembly.GetTypes ()) {
  				if ((t.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
- 					contains_extension_methods && t.IsDefined (TypeManager.extension_attribute_type, false))
+ 					contains_extension_methods && t.IsDefined (extensionType, false))
  					RegisterExtensionMethodClass (t);
 
 				if (get_namespaces_method == null)
@@ -227,10 +226,10 @@ namespace Mono.CSharp {
 			// Do very early lookup because type is required when we cache
 			// imported extension types in ComputeNamespaces
 			//
-			TypeManager.extension_attribute_type = TypeManager.CoreLookupType ("System.Runtime.CompilerServices", "ExtensionAttribute", Kind.Class, false);
+			Type extension_attribute_type = TypeManager.CoreLookupType ("System.Runtime.CompilerServices", "ExtensionAttribute", Kind.Class, false);
 
 			foreach (RootNamespace rn in root_namespaces.Values) {
-				rn.ComputeNamespace ();
+				rn.ComputeNamespace (extension_attribute_type);
 			}
 		}
 

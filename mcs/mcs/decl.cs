@@ -458,10 +458,10 @@ namespace Mono.CSharp {
 
 			caching_flags &= ~Flags.Obsolete_Undetected;
 
-			if (OptAttributes == null || TypeManager.obsolete_attribute_type == null)
+			if (OptAttributes == null)
 				return null;
 
-			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type);
+			Attribute obsolete_attr = OptAttributes.Search (PredefinedAttributes.Get.Obsolete);
 			if (obsolete_attr == null)
 				return null;
 
@@ -683,9 +683,9 @@ namespace Mono.CSharp {
 
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
-			if (OptAttributes != null && TypeManager.cls_compliant_attribute_type != null) {
+			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.Search (
-					TypeManager.cls_compliant_attribute_type);
+					PredefinedAttributes.Get.CLSCompliant);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
 					bool value = cls_attribute.GetClsCompliantAttributeValue ();
@@ -737,12 +737,12 @@ namespace Mono.CSharp {
 			if (!IsClsComplianceRequired ()) {
 				if (HasClsCompliantAttribute && Report.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly ()) {
-						Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+						Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
 						Report.Warning (3019, 2, a.Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
 					}
 
 					if (!CodeGen.Assembly.IsClsCompliant) {
-						Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+						Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
 						Report.Warning (3021, 2, a.Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
 					}
 				}
@@ -751,7 +751,7 @@ namespace Mono.CSharp {
 
 			if (HasClsCompliantAttribute) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null && !CodeGen.Assembly.IsClsCompliant) {
-					Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+					Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
 					Report.Warning (3014, 1, a.Location,
 						"`{0}' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant",
 						GetSignatureForError ());
@@ -759,7 +759,7 @@ namespace Mono.CSharp {
 				}
 
 				if (!Parent.IsClsComplianceRequired ()) {
-					Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type);
+					Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
 					Report.Warning (3018, 1, a.Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
 						GetSignatureForError (), Parent.GetSignatureForError ());
 					return false;
@@ -1037,7 +1037,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				TypeBuilder.SetCustomAttribute (TypeManager.GetCompilerGeneratedAttribute (Location));
+				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (TypeBuilder);
 #endif
 
 			base.Emit ();
@@ -1248,9 +1248,9 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.required_attr_type) {
+			if (a.Type == pa.Required) {
 				Report.Error (1608, a.Location, "The RequiredAttribute attribute is not permitted on C# types");
 				return;
 			}

@@ -1,3 +1,11 @@
+2009-03-11  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, generic.cs, parameter.cs, decl.cs, const.cs,
+	rootcontext.cs, namespace.cs, class.cs, delegate.cs, driver.cs,
+	generic-mcs.cs, attribute.cs, codegen.cs: Maintain predefined
+	attributes in their own structure. Needed when accessing their
+	properties before they are resolved.
+
 2009-03-09  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs: Optimized GetKeyword using an array instead of

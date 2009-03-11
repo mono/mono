@@ -126,7 +126,7 @@ namespace Mono.CSharp {
 		protected override int GetHash (object key)
 		{
 			TypeBuilder tb = key as TypeBuilder;
-			if (tb != null && tb.BaseType == TypeManager.enum_type)
+			if (tb != null && tb.BaseType == TypeManager.enum_type && tb.BaseType != null)
 				key = tb.BaseType;
 
 			return base.GetHash (key);

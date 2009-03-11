@@ -1052,7 +1052,7 @@ namespace Mono.CSharp {
 			OptAttributes.Emit ();
 		}
 
-		protected Attribute ResolveAttribute (Type a_type)
+		protected Attribute ResolveAttribute (PredefinedAttribute a_type)
 		{
 			Attribute a = OptAttributes.Search (a_type);
 			if (a != null) {
@@ -1091,7 +1091,6 @@ namespace Mono.CSharp {
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
 		bool wrap_non_exception_throws;
-		Type runtime_compatibility_attr_type;
 
 		public Attribute ClsCompliantAttribute;
 
@@ -1146,9 +1145,6 @@ namespace Mono.CSharp {
 
 		public void Resolve ()
 		{
-			runtime_compatibility_attr_type = TypeManager.CoreLookupType (
-				"System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute", Kind.Class, false);
-
 			if (RootContext.Unsafe) {
 				//
 				// Emits [assembly: SecurityPermissionAttribute (SecurityAction.RequestMinimum, SkipVerification = true)]
@@ -1183,20 +1179,17 @@ namespace Mono.CSharp {
 			if (!OptAttributes.CheckTargets())
 				return;
 
-			if (TypeManager.cls_compliant_attribute_type != null)
-				ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
+			ClsCompliantAttribute = ResolveAttribute (PredefinedAttributes.Get.CLSCompliant);
 
 			if (ClsCompliantAttribute != null) {
 				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue ();
 			}
 
-			if (runtime_compatibility_attr_type != null) {
-				Attribute a = ResolveAttribute (runtime_compatibility_attr_type);
-				if (a != null) {
-					object val = a.GetPropertyValue ("WrapNonExceptionThrows");
-					if (val != null)
-						wrap_non_exception_throws = (bool) val;
-				}
+			Attribute a = ResolveAttribute (PredefinedAttributes.Get.RuntimeCompatibility);
+			if (a != null) {
+				object val = a.GetPropertyValue ("WrapNonExceptionThrows");
+				if (val != null)
+					wrap_non_exception_throws = (bool) val;
 			}
 		}
 
@@ -1401,7 +1394,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
@@ -1411,7 +1404,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.assembly_culture_attribute_type) {
+			if (a.Type == pa.AssemblyCulture) {
 				string value = a.GetString ();
 				if (value == null || value.Length == 0)
 					return;
@@ -1422,7 +1415,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (a.Type == TypeManager.assembly_version_attribute_type) {
+			if (a.Type == pa.AssemblyVersion) {
 				string value = a.GetString ();
 				if (value == null || value.Length == 0)
 					return;
@@ -1436,10 +1429,10 @@ namespace Mono.CSharp {
 			}
 
 #if GMCS_SOURCE
-			if (a.Type == TypeManager.internals_visible_attr_type && !CheckInternalsVisibleAttribute (a))
+			if (a.Type == pa.InternalsVisibleTo && !CheckInternalsVisibleAttribute (a))
 				return;
 
-			if (a.Type == TypeManager.type_forwarder_attr_type) {
+			if (a.Type == pa.TypeForwarder) {
 				Type t = a.GetArgumentType ();
 				if (t == null || TypeManager.HasElementType (t)) {
 					Report.Error (735, a.Location, "Invalid type specified as an argument for TypeForwardedTo attribute");
@@ -1489,12 +1482,12 @@ namespace Mono.CSharp {
 				return;
 			}
 			
-			if (a.Type == TypeManager.extension_attribute_type) {
+			if (a.Type == pa.Extension) {
 				a.Error_MisusedExtensionAttribute ();
 				return;
 			}
 #endif
-			Builder.SetCustomAttribute (customBuilder);
+			Builder.SetCustomAttribute (cb);
 		}
 
 		public override void Emit (TypeContainer tc)
@@ -1503,21 +1496,20 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 			if (has_extension_method)
-				Builder.SetCustomAttribute (TypeManager.extension_attribute_attr);
+				PredefinedAttributes.Get.Extension.EmitAttribute (Builder);
 #endif
 
-			if (runtime_compatibility_attr_type != null) {
-				// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
-				if (OptAttributes == null || !OptAttributes.Contains (runtime_compatibility_attr_type)) {
-					ConstructorInfo ci = TypeManager.GetPredefinedConstructor (
-						runtime_compatibility_attr_type, Location.Null, Type.EmptyTypes);
-					PropertyInfo [] pis = new PropertyInfo [1];
-					pis [0] = TypeManager.GetPredefinedProperty (runtime_compatibility_attr_type,
-						"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type);
-					object [] pargs = new object [1];
-					pargs [0] = true;
-					Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));
-				}
+			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
+			PredefinedAttribute pa = PredefinedAttributes.Get.RuntimeCompatibility;
+			if (pa.IsDefined && (OptAttributes == null || !OptAttributes.Contains (pa))) {
+				ConstructorInfo ci = TypeManager.GetPredefinedConstructor (
+					pa.Type, Location.Null, Type.EmptyTypes);
+				PropertyInfo [] pis = new PropertyInfo [1];
+				pis [0] = TypeManager.GetPredefinedProperty (pa.Type,
+					"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type);
+				object [] pargs = new object [1];
+				pargs [0] = true;
+				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));
 			}
 
 			if (declarative_security != null) {
@@ -1619,10 +1611,10 @@ namespace Mono.CSharp {
 				}
 			}
 		}
-                
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
-			if (a.Type == TypeManager.cls_compliant_attribute_type) {
+			if (a.Type == pa.CLSCompliant) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
 					Report.Warning (3012, 1, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
 				}
@@ -1633,7 +1625,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Builder.SetCustomAttribute (customBuilder);
+			Builder.SetCustomAttribute (cb);
 		}
 
 		public bool HasDefaultCharSet {
@@ -1658,10 +1650,7 @@ namespace Mono.CSharp {
 			if (!OptAttributes.CheckTargets())
 				return;
 
-			if (TypeManager.default_charset_type == null)
-				return;
-
-			Attribute a = ResolveAttribute (TypeManager.default_charset_type);
+			Attribute a = ResolveAttribute (PredefinedAttributes.Get.DefaultCharset);
 			if (a != null) {
 				has_default_charset = true;
 				DefaultCharSet = a.GetCharSetValue ();

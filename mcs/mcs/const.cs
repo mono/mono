@@ -133,25 +133,11 @@ namespace Mono.CSharp {
 
 		void EmitDecimalConstant ()
 		{
-			ConstructorInfo ctor = TypeManager.decimal_constant_attribute_ctor;
-			if (ctor == null) {
-				if (TypeManager.decimal_constant_attribute_type == null) {
-					TypeManager.decimal_constant_attribute_type = TypeManager.CoreLookupType (
-						"System.Runtime.CompilerServices", "DecimalConstantAttribute", Kind.Class, true);
-
-					if (TypeManager.decimal_constant_attribute_type == null)
-						return;
-				}
-
-				ctor = TypeManager.GetPredefinedConstructor (TypeManager.decimal_constant_attribute_type, Location,
-					TypeManager.byte_type, TypeManager.byte_type,
-					TypeManager.uint32_type, TypeManager.uint32_type, TypeManager.uint32_type);
-
-				if (ctor == null)
-					return;
-
-				TypeManager.decimal_constant_attribute_ctor = ctor;
-			}
+			PredefinedAttribute pa = PredefinedAttributes.Get.DecimalConstant;
+			if (pa.Constructor == null &&
+				!pa.ResolveConstructor (Location, TypeManager.byte_type, TypeManager.byte_type,
+					TypeManager.uint32_type, TypeManager.uint32_type, TypeManager.uint32_type))
+				return;
 
 			Decimal d = (Decimal) value.GetValue ();
 			int [] bits = Decimal.GetBits (d);
@@ -161,7 +147,7 @@ namespace Mono.CSharp {
 				(uint) bits [2], (uint) bits [1], (uint) bits [0]
 			};
 
-			CustomAttributeBuilder cab = new CustomAttributeBuilder (ctor, args);
+			CustomAttributeBuilder cab = new CustomAttributeBuilder (pa.Constructor, args);
 			FieldBuilder.SetCustomAttribute (cab);
 		}
 
@@ -275,10 +261,11 @@ namespace Mono.CSharp {
 			if (fi is FieldBuilder)
 				return null;
 
-			if (TypeManager.decimal_constant_attribute_type == null)
+			PredefinedAttribute pa = PredefinedAttributes.Get.DecimalConstant;
+			if (!pa.IsDefined)
 				return null;
 
-			object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
+			object[] attrs = fi.GetCustomAttributes (pa.Type, false);
 			if (attrs.Length != 1)
 				return null;
 

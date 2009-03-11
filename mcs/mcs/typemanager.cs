@@ -64,7 +64,6 @@ namespace Mono.CSharp {
 	static public Type ienumerator_type;
 	static public Type ienumerable_type;
 	static public Type idisposable_type;
-	static public Type default_member_type;
 	static public Type iasyncresult_type;
 	static public Type asynccallback_type;
 	static public Type intptr_type;
@@ -72,47 +71,18 @@ namespace Mono.CSharp {
 	static public Type runtime_field_handle_type;
 	static public Type runtime_argument_handle_type;
 	static public Type attribute_type;
-	static public Type attribute_usage_type;
-	static public Type decimal_constant_attribute_type;
-	static public Type dllimport_type;
-	static public Type methodimpl_attr_type;
-#if !NET_2_0
-	static public Type marshal_as_attr_type;
-#endif
-	static public Type param_array_type;
 	static public Type void_ptr_type;
-	static public Type indexer_name_type;
 	static public Type exception_type;
-	static public Type obsolete_attribute_type;
-	static public Type conditional_attribute_type;
-	static public Type in_attribute_type;
-	static public Type out_attribute_type;
-	static public Type extension_attribute_type;
-	static public Type default_parameter_value_attribute_type;
 
 	static public Type anonymous_method_type;
-	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
 	static public Type arg_iterator_type;
 	static public Type mbr_type;
-	static public Type struct_layout_attribute_type;
-	static public Type field_offset_attribute_type;
-	static public Type security_attr_type;
-	static public Type required_attr_type;
-	static public Type guid_attr_type;
-	static public Type assembly_culture_attribute_type;
-	static public Type assembly_version_attribute_type;
-	static public Type coclass_attr_type;
-	static public Type comimport_attr_type;
 	public static Type runtime_helpers_type;
-	public static Type internals_visible_attr_type;
 
 	// 
 	// C# 2.0
 	//
-	static internal Type fixed_buffer_attr_type;
-	static internal Type default_charset_type;
-	static internal Type type_forwarder_attr_type;
 	static internal Type isvolatile_type;
 	static public Type generic_ilist_type;
 	static public Type generic_icollection_type;
@@ -162,28 +132,12 @@ namespace Mono.CSharp {
 	public static MethodInfo methodbase_get_type_from_handle_generic;
 	public static MethodInfo fieldinfo_get_field_from_handle;
 	static public MethodInfo activator_create_instance;
-	
+
 	//
-	// The attribute constructors.
+	// The constructors.
 	//
 	static public ConstructorInfo void_decimal_ctor_five_args;
 	static public ConstructorInfo void_decimal_ctor_int_arg;
-	static public ConstructorInfo default_member_ctor;
-	static public ConstructorInfo decimal_constant_attribute_ctor;
-	static internal ConstructorInfo struct_layout_attribute_ctor;
-	static public ConstructorInfo field_offset_attribute_ctor;
-	public static ConstructorInfo invalid_operation_exception_ctor;
-
-	static public CustomAttributeBuilder param_array_attr;
-	static CustomAttributeBuilder compiler_generated_attr;
-	static CustomAttributeBuilder debugger_hidden_attr;
-
-	// C# 2.0
-	static internal ConstructorInfo fixed_buffer_attr_ctor;
-	static internal CustomAttributeBuilder unsafe_value_type_attr;
-
-	// C# 3.0
-	static internal CustomAttributeBuilder extension_attribute_attr;
 
 	static PtrHashtable builder_to_declspace;
 
@@ -313,18 +267,7 @@ namespace Mono.CSharp {
 		ienumerator_getcurrent = null;
 
 		void_decimal_ctor_five_args =
-		void_decimal_ctor_int_arg =
-		default_member_ctor =
-		decimal_constant_attribute_ctor =
-		struct_layout_attribute_ctor =
-		field_offset_attribute_ctor =
-		invalid_operation_exception_ctor =
-		fixed_buffer_attr_ctor = null;
-
-		param_array_attr =
-		compiler_generated_attr =
-		unsafe_value_type_attr =
-		extension_attribute_attr = null;
+		void_decimal_ctor_int_arg = null;
 
 		isvolatile_type = null;
 			
@@ -516,42 +459,6 @@ namespace Mono.CSharp {
 
 		type_hash.Insert (t, dim, null);
 		return null;
-	}
-
-	public static CustomAttributeBuilder GetCompilerGeneratedAttribute (Location loc)
-	{
-		if (compiler_generated_attr != null)
-			return compiler_generated_attr;
-
-		Type t = TypeManager.CoreLookupType (
-			"System.Runtime.CompilerServices", "CompilerGeneratedAttribute", Kind.Class, true);
-
-		// TODO: it cannot be null
-		if (t == null)
-			return null;
-
-		compiler_generated_attr = new CustomAttributeBuilder (
-			GetPredefinedConstructor (t, loc, Type.EmptyTypes), new object[0]);
-
-		return compiler_generated_attr;
-	}
-
-	public static CustomAttributeBuilder GetDebuggerHiddenAttribute (Location loc)
-	{
-		if (debugger_hidden_attr != null)
-			return debugger_hidden_attr;
-
-		Type t = TypeManager.CoreLookupType (
-			"System.Diagnostics", "DebuggerHiddenAttribute", Kind.Class, true);
-
-		// TODO: it cannot be null
-		if (t == null)
-			return null;
-
-		debugger_hidden_attr = new CustomAttributeBuilder (
-			GetPredefinedConstructor (t, loc, Type.EmptyTypes), new object[0]);
-
-		return debugger_hidden_attr;
 	}
 
 	public static Type GetNestedType (Type t, string name)
@@ -1053,8 +960,8 @@ namespace Mono.CSharp {
 		runtime_field_handle_type = CoreLookupType ("System", "RuntimeFieldHandle", Kind.Struct, true);
 		runtime_handle_type = CoreLookupType ("System", "RuntimeTypeHandle", Kind.Struct, true);
 
-		param_array_type = CoreLookupType ("System", "ParamArrayAttribute", Kind.Class, true);
-		out_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "OutAttribute", Kind.Class, true);
+		PredefinedAttributes.Get.ParamArray.Resolve (false);
+		PredefinedAttributes.Get.Out.Resolve (false);
 
 		return Report.Errors == 0;
 	}
@@ -1076,7 +983,7 @@ namespace Mono.CSharp {
 		// Initialize InternalsVisibleTo as the very first optional type. Otherwise we would populate
 		// types cache with incorrect accessiblity when any of optional types is internal.
 		//
-		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute", Kind.Class, false);
+		PredefinedAttributes.Get.Initialize ();
 
 		runtime_argument_handle_type = CoreLookupType ("System", "RuntimeArgumentHandle", Kind.Struct, false);
 		asynccallback_type = CoreLookupType ("System", "AsyncCallback", Kind.Delegate, false);
@@ -1088,35 +995,12 @@ namespace Mono.CSharp {
 		//
 		// Optional attributes, used for error reporting only
 		//
-		obsolete_attribute_type = CoreLookupType ("System", "ObsoleteAttribute", Kind.Class, false);
-		if (obsolete_attribute_type != null) {
-			Class c = TypeManager.LookupClass (obsolete_attribute_type);
-			if (c != null)
-				c.Define ();
-		}
+		//if (PredefinedAttributes.Get.Obsolete.IsDefined) {
+		//    Class c = TypeManager.LookupClass (PredefinedAttributes.Get.Obsolete.Type);
+		//    if (c != null)
+		//        c.Define ();
+		//}
 
-		dllimport_type = CoreLookupType ("System.Runtime.InteropServices", "DllImportAttribute", Kind.Class, false);
-		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "MethodImplAttribute", Kind.Class, false);
-#if !NET_2_0
-		marshal_as_attr_type = CoreLookupType ("System.Runtime.InteropServices", "MarshalAsAttribute", Kind.Class, false);
-#endif
-		in_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "InAttribute", Kind.Class, false);
-		indexer_name_type = CoreLookupType ("System.Runtime.CompilerServices", "IndexerNameAttribute", Kind.Class, false);
-		conditional_attribute_type = CoreLookupType ("System.Diagnostics", "ConditionalAttribute", Kind.Class, false);
-		cls_compliant_attribute_type = CoreLookupType ("System", "CLSCompliantAttribute", Kind.Class, false);
-		security_attr_type = CoreLookupType ("System.Security.Permissions", "SecurityAttribute", Kind.Class, false);
-		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute", Kind.Class, false);
-		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute", Kind.Class, false);
-		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute", Kind.Class, false);
-		assembly_version_attribute_type = CoreLookupType ("System.Reflection", "AssemblyVersionAttribute", Kind.Class, false);
-		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute", Kind.Class, false);
-		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute", Kind.Class, false);
-		attribute_usage_type = CoreLookupType ("System", "AttributeUsageAttribute", Kind.Class, false);
-		default_parameter_value_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultParameterValueAttribute", Kind.Class, false);
-
-		// New in .NET 2.0
-		default_charset_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultCharSetAttribute", Kind.Class, false);
-		type_forwarder_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "TypeForwardedToAttribute", Kind.Class, false);
 		generic_ilist_type = CoreLookupType ("System.Collections.Generic", "IList`1", Kind.Interface, false);
 		generic_icollection_type = CoreLookupType ("System.Collections.Generic", "ICollection`1", Kind.Interface, false);
 		generic_ienumerable_type = CoreLookupType ("System.Collections.Generic", "IEnumerable`1", Kind.Interface, false);
@@ -1125,14 +1009,7 @@ namespace Mono.CSharp {
 		//
 		// Optional types which are used as types and for member lookup
 		//
-		default_member_type = CoreLookupType ("System.Reflection", "DefaultMemberAttribute", Kind.Class, false);
 		runtime_helpers_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeHelpers", Kind.Class, false);
-		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices", "DecimalConstantAttribute", Kind.Class, false);
-		struct_layout_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "StructLayoutAttribute", Kind.Class, false);
-		field_offset_attribute_type = CoreLookupType ("System.Runtime.InteropServices", "FieldOffsetAttribute", Kind.Class, false);
-
-		// New in .NET 2.0
-		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute", Kind.Class, false);
 
 		// New in .NET 3.5
 		// Note: extension_attribute_type is already loaded
@@ -1648,11 +1525,16 @@ namespace Mono.CSharp {
 
 		if (assembly_internals_vis_attrs.Contains (assembly))
 			return (bool)(assembly_internals_vis_attrs [assembly]);
-				
-		if (internals_visible_attr_type == null)
+
+		PredefinedAttribute pa = PredefinedAttributes.Get.InternalsVisibleTo;
+		// HACK: Do very early resolve of SRE type checking
+		if (pa.Type == null)
+			pa.Resolve (true);
+
+		if (!pa.IsDefined)
 			return false;
 		
-		object [] attrs = assembly.GetCustomAttributes (internals_visible_attr_type, false);
+		object [] attrs = assembly.GetCustomAttributes (pa.Type, false);
 		if (attrs.Length == 0) {
 			assembly_internals_vis_attrs.Add (assembly, false);
 			return false;
@@ -2369,12 +2251,15 @@ namespace Mono.CSharp {
 			TypeContainer tc = t.IsInterface ? LookupInterface (t) : LookupTypeContainer (t);
 			return tc == null ? TypeContainer.DefaultIndexerName : tc.IndexerName;
 		}
-		
-		System.Attribute attr = System.Attribute.GetCustomAttribute (
-			t, TypeManager.default_member_type);
-		if (attr != null){
-			DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
-			return dma.MemberName;
+
+		PredefinedAttribute pa = PredefinedAttributes.Get.DefaultMember;
+		if (pa.IsDefined) {
+			System.Attribute attr = System.Attribute.GetCustomAttribute (
+				t, pa.Type);
+			if (attr != null) {
+				DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
+				return dma.MemberName;
+			}
 		}
 
 		return TypeContainer.DefaultIndexerName;
@@ -3350,8 +3235,9 @@ namespace Mono.CSharp {
 		//
 		// DefaultMemberName and indexer name has to match to identify valid C# indexer
 		//
-		if ((s_count > 1 || g_count > 0) && TypeManager.default_member_type != null) {
-			object[] o = pi.DeclaringType.GetCustomAttributes (TypeManager.default_member_type, false);
+		PredefinedAttribute pa = PredefinedAttributes.Get.DefaultMember;
+		if ((s_count > 1 || g_count > 0) && pa.IsDefined) {
+			object[] o = pi.DeclaringType.GetCustomAttributes (pa.Type, false);
 			if (o.Length == 0)
 				return false;
 			

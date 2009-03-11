@@ -1987,6 +1987,7 @@ namespace Mono.CSharp
 			Location.Reset ();
 			Report.Reset ();
 			TypeManager.Reset ();
+			PredefinedAttributes.Reset ();
 			TypeHandle.Reset ();
 
 			if (full_flag)

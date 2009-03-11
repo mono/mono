@@ -95,8 +95,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a,
-							    CustomAttributeBuilder cb)
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
 		{
 			throw new NotImplementedException ();
 		}
