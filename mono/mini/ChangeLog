@@ -1,3 +1,11 @@
+2009-03-11  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): Use different
+	registers in case the ones we want to overwrite are used by the
+	other operand.  Fixes regression in #480807.
+
+	Backport of r129058.
+
 2009-03-10  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r128924.
