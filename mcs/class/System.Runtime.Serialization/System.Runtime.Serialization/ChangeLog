@@ -1,5 +1,11 @@
 2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* KnownTypeCollection.cs : fix generic argument names in xml.
+	  They should use xmlized names instead of raw type name.
+	* XmlFormatterDeserializer.cs : remove extra Console.WriteLine.
+
+2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs : eliminate whitespace misuses.
 
 2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>

@@ -509,7 +509,7 @@ namespace System.Runtime.Serialization
 			if (type.IsGenericType) {
 				xmlName = xmlName.Substring (0, xmlName.IndexOf ('`')) + "Of";
 				foreach (var t in type.GetGenericArguments ())
-					xmlName += t.Name; // FIXME: check namespaces too
+					xmlName += GetQName (t).Name; // FIXME: check namespaces too
 			}
 			string xmlNamespace = XmlObjectSerializer.DefaultNamespaceBase + type.Namespace;
 			var x = GetAttribute<XmlRootAttribute> (type);

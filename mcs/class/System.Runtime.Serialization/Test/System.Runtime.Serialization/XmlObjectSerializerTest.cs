@@ -1095,6 +1095,27 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (2, l.Count);
 		}
 
+		[Test]
+		public void GenericListOfKeyValuePairSerialization ()
+		{
+			string xml = @"<?xml version='1.0' encoding='utf-16'?><ArrayOfKeyValuePairOfstringstring xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.datacontract.org/2004/07/System.Collections.Generic'><KeyValuePairOfstringstring><key>foo</key><value>bar</value></KeyValuePairOfstringstring></ArrayOfKeyValuePairOfstringstring>".Replace ('\'', '"');
+
+			var ds = new DataContractSerializer (typeof (List<KeyValuePair<string,string>>));
+			var d = new List<KeyValuePair<string,string>> ();
+			//d ["foo"] = "bar";
+			//d.Add (new DictionaryEntry ("foo", "bar"));
+			d.Add (new KeyValuePair<string,string> ("foo", "bar"));
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw))
+			        ds.WriteObject (xw, d);
+			Assert.AreEqual (xml, sw.ToString (), "#1");
+			d = (List<KeyValuePair<string,string>>) ds.ReadObject (XmlReader.Create (new StringReader (xml)));
+			//Console.WriteLine ("{0}: {1}", d.Count, d ["foo"]);
+			Console.WriteLine ("{0}: {1}", d.Count, d [0].Value);
+			Assert.AreEqual (1, d.Count, "#2");
+			Assert.AreEqual ("bar", d [0].Value);
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));

@@ -120,7 +120,6 @@ namespace System.Runtime.Serialization
 
 			string label = reader.GetAttribute ("Ref", KnownTypeCollection.MSSimpleNamespace);
 			if (label != null) {
-Console.WriteLine ("Found reference: " + label);
 				object o = references [label];
 				if (o == null)
 					throw new SerializationException (String.Format ("Deserialized object with reference Id '{0}' was not found", label));

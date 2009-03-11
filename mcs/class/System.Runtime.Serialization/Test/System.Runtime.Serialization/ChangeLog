@@ -1,5 +1,10 @@
 2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlObjectSerializerTest.cs : test for generic IList of KeyValuePair
+	  (it is still different from full IDictionary support...!).
+
+2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlObjectSerializerTest.cs : test for generic IList serialization.
 
 2009-03-10  Atsushi Enomoto  <atsushi@ximian.com>
