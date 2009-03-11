@@ -34,6 +34,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
@@ -540,6 +541,7 @@ namespace System.Runtime.Serialization
 	{
 		Type element_type;
 		internal QName element_qname;
+		MethodInfo add_method;
 
 		public CollectionTypeMap (
 			Type type, Type elementType,
@@ -548,6 +550,18 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
+			var ilist = RuntimeType.GetInterfaces ().FirstOrDefault (
+				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IList<>));
+			if (ilist != null) {
+				var imap = RuntimeType.GetInterfaceMap (ilist);
+				for (int i = 0; i < imap.InterfaceMethods.Length; i++)
+					if (imap.InterfaceMethods [i].Name == "Add") {
+						add_method = imap.TargetMethods [i];
+						break;
+					}
+				if (add_method == null)
+					add_method = type.GetMethod ("Add", new Type [] {ilist.GetGenericArguments() [0]});
+			}
 		}
 
 		internal virtual string CurrentNamespace {
@@ -586,7 +600,9 @@ namespace System.Runtime.Serialization
                 object elem = deserializer.Deserialize (element_type, reader);
                 if (instance is IList)
                     ((IList)instance).Add (elem);
-                else
+                else if (add_method != null)
+					add_method.Invoke (instance, new object [] {elem});
+				else
                     throw new NotImplementedException (String.Format ("Type {0} is not supported", RuntimeType));
             }
             if (RuntimeType.IsArray)

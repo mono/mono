@@ -10,6 +10,7 @@ LIB_MCS_FLAGS = \
 			/nowarn:168,169,219,414 \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
+		/r:System.Core.dll \
 	        $(RESOURCE_FILES:%=/resource:%)
 
 ifneq (2.1, $(FRAMEWORK_VERSION))

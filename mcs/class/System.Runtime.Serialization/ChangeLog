@@ -1,3 +1,7 @@
+2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: added -r:System.Core.
+
 2009-02-12  Jonathan Pryor  <jpryor@novell.com>
 
 	* System.Runtime.Serialization_test.dll.sources: Add

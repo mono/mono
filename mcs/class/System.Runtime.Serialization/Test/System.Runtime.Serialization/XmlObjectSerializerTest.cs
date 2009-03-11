@@ -34,6 +34,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -1080,6 +1081,20 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual ("f", ret.Field);
 		}
 
+		[Test]
+		public void GenericCollectionSerialization ()
+		{
+			var l = new MyList ();
+			l.Add ("foo");
+			l.Add ("bar");
+			var ds = new DataContractSerializer (typeof (MyList));
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw))
+				ds.WriteObject (xw, l);
+			l = (MyList) ds.ReadObject (XmlReader.Create (new StringReader (sw.ToString ())));
+			Assert.AreEqual (2, l.Count);
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1329,6 +1344,26 @@ namespace MonoTests.System.Runtime.Serialization
 		[DataMember]
 		public string F = "x";
 	}
+
+	public class MyList : IList<string>
+	{
+		List<string> l = new List<string> ();
+		public void Clear () { l.Clear (); }
+		public void Add(string s) { l.Add (s);}
+		public void Insert(int idx, string s) { l.Insert(idx,s);}
+		public bool Contains(string s) { return l.Contains(s); }
+		public IEnumerator<string> GetEnumerator () { return l.GetEnumerator (); }
+		IEnumerator IEnumerable.GetEnumerator () { return l.GetEnumerator (); }
+		public bool Remove(string s) { return l.Remove(s); }
+		public void RemoveAt(int i) { l.RemoveAt (i);}
+		public void CopyTo (string [] arr, int index) { l.CopyTo (arr, index);}
+		public int IndexOf (string s) { return l.IndexOf (s); }
+	
+		public int Count { get { return l.Count; } }
+		public bool IsReadOnly { get { return ((IList<string>) l).IsReadOnly; } }
+		public string this [int index] { get { return l [index]; } set { l [index] = value; } }
+	}
+
 }
 
 [DataContract]
