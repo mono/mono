@@ -275,6 +275,28 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual ("B", values [1]);
 			Assert.AreEqual ("C", values [2]);
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void KeyEnumeratorVersionChecking () {
+            var en = list.Keys.GetEnumerator();
+
+            int i = 0;
+			en.MoveNext ();
+			list.Remove (en.Current);
+			en.MoveNext ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ValueEnumeratorVersionChecking () {
+            var en = list.Values.GetEnumerator();
+
+            int i = 0;
+			en.MoveNext ();
+			list.RemoveAt (0);
+			en.MoveNext ();
+		}
 	}
 }
 
