@@ -1,5 +1,9 @@
 2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs : actually it could just be ICollection<T>.
+
+2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs : implemented generic IList deserialization.
 
 2009-03-10  Atsushi Enomoto  <atsushi@ximian.com>

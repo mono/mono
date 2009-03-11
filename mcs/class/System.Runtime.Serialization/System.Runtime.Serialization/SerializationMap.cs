@@ -550,17 +550,17 @@ namespace System.Runtime.Serialization
 		{
 			element_type = elementType;
 			element_qname = KnownTypes.GetQName (element_type);
-			var ilist = RuntimeType.GetInterfaces ().FirstOrDefault (
-				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IList<>));
-			if (ilist != null) {
-				var imap = RuntimeType.GetInterfaceMap (ilist);
+			var icoll = RuntimeType.GetInterfaces ().FirstOrDefault (
+				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>));
+			if (icoll != null) {
+				var imap = RuntimeType.GetInterfaceMap (icoll);
 				for (int i = 0; i < imap.InterfaceMethods.Length; i++)
 					if (imap.InterfaceMethods [i].Name == "Add") {
 						add_method = imap.TargetMethods [i];
 						break;
 					}
 				if (add_method == null)
-					add_method = type.GetMethod ("Add", new Type [] {ilist.GetGenericArguments() [0]});
+					add_method = type.GetMethod ("Add", new Type [] {icoll.GetGenericArguments() [0]});
 			}
 		}
 
