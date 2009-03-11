@@ -1174,10 +1174,12 @@ mono_domain_create (void)
 	domain->jit_info_table = jit_info_table_new (domain);
 	domain->jit_info_free_queue = NULL;
 	domain->finalizable_objects_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
+	domain->track_resurrection_handles_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	InitializeCriticalSection (&domain->lock);
 	InitializeCriticalSection (&domain->assemblies_lock);
 	InitializeCriticalSection (&domain->jit_code_hash_lock);
+	InitializeCriticalSection (&domain->finalizable_objects_hash_lock);
 
 	domain->method_rgctx_hash = NULL;
 
@@ -1791,6 +1793,12 @@ mono_domain_assembly_open (MonoDomain *domain, const char *name)
 	return ass;
 }
 
+static void
+free_slist (gpointer key, gpointer value, gpointer user_data)
+{
+	g_slist_free (value);
+}
+
 void
 mono_domain_free (MonoDomain *domain, gboolean force)
 {
@@ -1898,6 +1906,12 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	}
 	g_hash_table_destroy (domain->finalizable_objects_hash);
 	domain->finalizable_objects_hash = NULL;
+	if (domain->track_resurrection_objects_hash) {
+		g_hash_table_foreach (domain->track_resurrection_objects_hash, free_slist, NULL);
+		g_hash_table_destroy (domain->track_resurrection_objects_hash);
+	}
+	if (domain->track_resurrection_handles_hash)
+		g_hash_table_destroy (domain->track_resurrection_handles_hash);
 	if (domain->method_rgctx_hash) {
 		g_hash_table_destroy (domain->method_rgctx_hash);
 		domain->method_rgctx_hash = NULL;
@@ -1907,6 +1921,7 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 		domain->generic_virtual_cases = NULL;
 	}
 
+	DeleteCriticalSection (&domain->finalizable_objects_hash_lock);
 	DeleteCriticalSection (&domain->assemblies_lock);
 	DeleteCriticalSection (&domain->jit_code_hash_lock);
 	DeleteCriticalSection (&domain->lock);

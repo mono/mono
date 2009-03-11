@@ -1,3 +1,20 @@
+2009-03-08  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r128849 + r128490.
+
+	* domain-internals.h (struct _MonoDomain): Add new hash tables mapping
+	between GCHandles of type WeakTrackResurrection and the objects they
+	point to.
+
+	* gc.c: Partly implement the sematics of GCHandles of type 
+	WeakTrackResurrection: these handles should only be cleared after the
+	finalizer of the object they are pointing to has ran.
+
+	* domain-internals.h (struct _MonoDomain): Add a separate lock for the
+	finalize_objects_hash.
+
+	* gc.c: Use the separate lock to access the finalize_objects_hash field.
+	
 2009-03-10  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r129009.
