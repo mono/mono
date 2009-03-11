@@ -1437,7 +1437,26 @@ namespace System.Net
 			CompleteAsync ();
 			if (OpenReadCompleted != null) {
 				ManualResetEvent wait_event = new ManualResetEvent (false);
-				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx) { OpenReadCompleted (this, (OpenReadCompletedEventArgs) callback_args); wait_event.Set (); return false; };
+				GSourceFunc callback = (GSourceFunc) delegate (IntPtr ctx)
+				{
+					try {
+						OpenReadCompleted (this, (OpenReadCompletedEventArgs) callback_args);
+					} catch (Exception ex) {
+						try {
+							Console.WriteLine ("Unhandled exception: {0}", ex);
+						} catch {
+						}
+					}
+					try {
+						wait_event.Set ();
+					} catch (Exception ex) {
+						try {
+							Console.WriteLine ("Unhandled exception: {0}", ex);
+						} catch {
+						}
+					}
+					return false;
+				};
 				callback_args = args;
 
 				g_timeout_add (0, callback, IntPtr.Zero);
@@ -1461,11 +1480,19 @@ namespace System.Net
 				{
 					try {
 						DownloadStringCompleted (this, (DownloadStringCompletedEventArgs) callback_args);
+					} catch (Exception ex) {
+						try {
+							Console.WriteLine ("Unhandled exception: {0}", ex);
+						} catch {
+						}
+					}
+					try {
 						wait_event.Set ();
 					} catch (Exception ex) {
-						Console.WriteLine ("Unhandled exception: {0}", ex);
-					} catch {
-						Console.WriteLine ("Unhandled exception.");
+						try {
+							Console.WriteLine ("Unhandled exception: {0}", ex);
+						} catch {
+						}
 					}
 					return false;
 				};

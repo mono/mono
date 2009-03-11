@@ -1,3 +1,8 @@
+2009-03-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WebClient_2_1.cs: OnOpenReadCompleted and OnDownloadStringCompleted:
+	make sure we don't pass any exceptions back to native code.
+
 2009-03-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebClient_2_1.cs: Stub out missing methods.
