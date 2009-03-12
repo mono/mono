@@ -1,0 +1,7 @@
+# note that databaserver can be specified in %DbLinqServer%, and is localhost by default (if not specified)
+#-code:AllTypesSqlite1.cs -provider:Sqlite     -conn="data source=../../Northwind.db3"
+#-code:AllTypesOracle1.cs -provider:Oracle     -user=Northwind
+#-code:AllTypesOraODP1.cs -provider:OracleODP  -user=Northwind
+#-code:AllTypesPgsql1.cs  -provider:PostgreSQL -database=northwind
+#-code:AllTypesIngres1.cs -provider:Ingres     
+-code:AllTypesMySql1.cs  -provider:MySQL      

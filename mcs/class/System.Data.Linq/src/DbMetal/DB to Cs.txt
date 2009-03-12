@@ -1,0 +1,3 @@
+﻿# DbMetal "@Db to Cs.txt"
+#/database=Northwind /server=%DbLinqServer??localhost /user=LinqUser /password=linq2 /namespace=nwind /sprocs /entityInterfaces=INotifyPropertyChanged /pluralize "@DB all to Cs.txt" /culture="en"
+/database=Northwind /server=%DbLinqServer??localhost /user=LinqUser /password=linq2 /namespace=nwind /sprocs /entityInterfaces=INotifyPropertyChanged /pluralize "@DB all to Cs.txt" /culture="en" /no-generateEqualsAndHash /entityAttributes=System.Runtime.Serialization.DataContract /memberAttributes=System.Runtime.Serialization.DataMember

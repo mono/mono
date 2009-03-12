@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<Database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+Name="Northwind" Class="Northwind" Provider="Oracle" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Table Name="NORTHWIND.CATEGORIES" Member="Catégories">
+    <Type Name="Catégorie">
+      <Column Name="CATEGORYID" Member="CatégorieId" Storage="catégorieId" Type="System.Int32" />
+    </Type>
+  </Table>
+</Database>

@@ -1,0 +1,2 @@
+﻿# DbMetal "@Db to Cs.txt"
+/database=AllTypes /server=%DbLinqServer??localhost /user=LinqUser /password=linq2 /namespace=nwind /sprocs /entityInterfaces=INotifyPropertyChanged /pluralize "@AllTypes all to Cs.txt" /culture="en"

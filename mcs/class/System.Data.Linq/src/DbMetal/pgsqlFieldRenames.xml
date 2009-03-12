@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Renamings>
+  <!-- modify field names so that they match Microsot example names -->
+  <Renaming old="companyname" new="CompanyName" />
+  <Renaming old="contactname" new="ContactName" />
+  <Renaming old="firstname" new="FirstName" />
+  <Renaming old="lastname" new="LastName" />
+  <Renaming old="quantityperunit" new="QuantityPerUnit" />
+  <Renaming old="postalcode" new="PostalCode" />
+  <Renaming old="productname" new="ProductName" />
+  <Renaming old="orderdate" new="OrderDate" />
+  <Renaming old="linqtestdb" new="LinqTestDB" />
+  <Renaming old="getordercount" new="getOrderCount" />
+  <Renaming old="unitprice" new="UnitPrice" />
+  <Renaming old="unitsonorder" new="UnitsOnOrder" />
+  <Renaming old="unitsinstock" new="UnitsInStock" />
+  <Renaming old="hiredate" new="HireDate" />
+  <Renaming old="reportsto" new="ReportsTo" />
+  <Renaming old="territorydescription" new="TerritoryDescription" />
+  <Renaming old="orderdetail" new="OrderDetail" />
+  <Renaming old="orderdetails" new="OrderDetails" />
+  <Renaming old="Orderdetails" new="OrderDetails" />
+  <Renaming old="Shipcity" new="ShipCity" />
+  <Renaming old="Shipregion" new="ShipRegion" />
+</Renamings>

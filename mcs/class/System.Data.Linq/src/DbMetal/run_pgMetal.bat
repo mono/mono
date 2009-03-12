@@ -1,0 +1,1 @@
+bin\DbMetal.exe /provider=PostgreSql /code=Northwind.cs -user:LinqUser -database:northwind -server:%%DbLinqServer??localhost -password:linq2 -namespace:nwind -renamesFile:pgsqlFieldRenames.xml -sprocs

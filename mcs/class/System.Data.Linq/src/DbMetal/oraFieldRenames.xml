@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<Renamings>
+  <!-- modify field names so that they match Microsot example names -->
+  <Renaming old="COMPANYNAME" new="CompanyName" />
+  <Renaming old="CONTACTNAME" new="ContactName" />
+  <Renaming old="CONTACTTITLE" new="ContactTitle" />
+  <Renaming old="QUANTITYPERUNIT" new="QuantityPerUnit" />
+  <Renaming old="POSTALCODE" new="PostalCode" />
+  <Renaming old="PRODUCTNAME" new="ProductName" />
+  <Renaming old="PRODUCTID" new="ProductID" />
+  <Renaming old="ORDERDATE" new="OrderDate" />
+  <Renaming old="ORDERID" new="OrderID" />
+  <Renaming old="SHIPVIA" new="ShipVia" />
+  <Renaming old="REQUIREDDATE" new="RequiredDate" />
+  <Renaming old="SHIPPEDDATE" new="ShippedDate" />
+  <Renaming old="FREIGHT" new="Freight" />
+  <Renaming old="CUSTOMERID" new="CustomerID" />
+  <Renaming old="CATEGORYID" new="CategoryID" />
+  <Renaming old="CITY" new="City" />
+  <Renaming old="PHONE" new="Phone" />
+  <Renaming old="FAX" new="Fax" />
+  <Renaming old="UNITPRICE" new="UnitPrice" />
+  <Renaming old="UNITSONORDER" new="UnitsOnOrder" />
+  <Renaming old="REORDERLEVEL" new="ReorderLevel" />
+  <Renaming old="DISCONTINUED" new="Discontinued" />
+  <Renaming old="SUPPLIERID" new="SupplierID" />
+  <Renaming old="REPORTSTO" new="ReportsTo" />
+  <Renaming old="FIRSTNAME" new="FirstName" />
+  <Renaming old="LASTNAME" new="LastName" />
+  <Renaming old="HIREDATE" new="HireDate" />
+  <Renaming old="ADDRESS" new="Address" />
+  <Renaming old="HOMEPHONE" new="HomePhone" />
+  <Renaming old="HOMEPHONE" new="HomePhone" />
+  <Renaming old="UNITSINSTOCK" new="UnitsInStock" />
+  <Renaming old="SUPPLIER" new="Supplier" />
+  <Renaming old="EMPLOYEEID" new="EmployeeID" />
+  <Renaming old="COUNTRY" new="Country" />
+  <Renaming old="REGION" new="Region" />
+  <Renaming old="EMPLOYEETERRITORY" new="EmployeeTerritory" />
+  <Renaming old="TERRITORYDESCRIPTION" new="TerritoryDescription" />
+  <Renaming old="SHIPCITY" new="ShipCity" />
+  <Renaming old="SHIPREGION" new="ShipRegion" />
+  <Renaming old="LinqTestDB" new="LinqTestDB" />
+</Renamings>

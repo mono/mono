@@ -1,0 +1,7 @@
+# note that databaserver can be specified in %DbLinqServer%, and is localhost by default (if not specified)
+-dbml:NorthwindSqlite1.dbml -provider:Sqlite     -conn="data source=../../Northwind.db3"
+-dbml:NorthwindOracle1.dbml -provider:Oracle     -user=Northwind
+-dbml:NorthwindOraODP1.dbml -provider:OracleODP  -user=Northwind
+-dbml:NorthwindPgsql1.dbml  -provider:PostgreSQL -database=northwind
+-dbml:NorthwindIngres1.dbml -provider:Ingres     
+-dbml:NorthwindMySql1.dbml  -provider:MySQL      

@@ -1,0 +1,2 @@
+﻿# DbMetal "@Db to DBML.txt"
+/database=Northwind /server=%DbLinqServer??localhost /user=LinqUser /password=linq2 /namespace=nwind /sprocs /entityInterfaces=INotifyPropertyChanged /pluralize "@DB all to DBML.txt"

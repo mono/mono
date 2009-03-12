@@ -1,0 +1,6 @@
+Z:\Development\mono-HEAD\dblinq2007\build.dbg\DbMetal.exe.config
+Z:\Development\mono-HEAD\dblinq2007\build.dbg\DbMetal.exe
+Z:\Development\mono-HEAD\dblinq2007\build.dbg\DbMetal.pdb
+Z:\Development\mono-HEAD\dblinq2007\src\DbMetal\obj\Debug\ResolveAssemblyReference.cache
+Z:\Development\mono-HEAD\dblinq2007\src\DbMetal\obj\Debug\DbMetal.exe
+Z:\Development\mono-HEAD\dblinq2007\src\DbMetal\obj\Debug\DbMetal.pdb

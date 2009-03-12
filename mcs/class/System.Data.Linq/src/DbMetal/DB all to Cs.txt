@@ -1,0 +1,8 @@
+# note that databaserver can be specified in %DbLinqServer%, and is localhost by default (if not specified)
+/code:NorthwindFirebird1.cs /provider:Firebird   /database="c:\program files\Firebird\Firebird_2_1\examples\nwind\Northwind.FDB"
+/code:NorthwindSqlite1.cs   /provider:Sqlite     /conn="data source=../../Northwind.db3"
+/code:NorthwindIngres1.cs   /provider:Ingres     
+/code:NorthwindOraODP1.cs   /provider:OracleODP  /user=Northwind
+/code:NorthwindOracle1.cs   /provider:Oracle     /user=Northwind
+/code:NorthwindMySql1.cs    /provider:MySQL      
+/code:NorthwindPgsql1.cs    /provider:PostgreSQL 
