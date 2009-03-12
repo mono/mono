@@ -52,6 +52,7 @@ net_2_0_dirs := \
 	installutil	\
 	nunitreport	\
 	sqlsharp	\
+	sqlmetal	\
 	gacutil		\
 	svcutil		\
 	csharplib

@@ -1,0 +1,7 @@
+2009-03-12  Jonathan Pryor <jonpryor@vt.edu>
+
+	* ChangeLog, Makefile, sqlmetal.exe.config, sqlmetal.exe.sources:
+	  Added; builds `sqlmetal.exe', which is the Mono version of DbLinq's
+	  DbMetal.exe program (which in turn is modeled on .NET's SQLMETAL
+	  tool), "tuned" to depend only on Mono's System.Data.Linq.
+
