@@ -291,10 +291,12 @@ namespace System.IO {
 					if (justcreated) {
 						lock (fsw) {
 							RenamedEventArgs renamed = null;
-							fsw.DispatchEvents (FileAction.Added, directory, ref renamed);
-							if (fsw.Waiting) {
-								fsw.Waiting = false;
-								System.Threading.Monitor.PulseAll (fsw);
+							if (fsw.Pattern.IsMatch (directory)) {
+								fsw.DispatchEvents (FileAction.Added, directory, ref renamed);
+								if (fsw.Waiting) {
+									fsw.Waiting = false;
+									System.Threading.Monitor.PulseAll (fsw);
+								}
 							}
 						}
 					}
@@ -311,14 +313,15 @@ namespace System.IO {
 				foreach (string filename in Directory.GetFiles (data.Directory)) {
 					lock (fsw) {
 						RenamedEventArgs renamed = null;
+						if (fsw.Pattern.IsMatch (filename)) {
+							fsw.DispatchEvents (FileAction.Added, filename, ref renamed);
+							/* If a file has been created, then it has been written to */
+							fsw.DispatchEvents (FileAction.Modified, filename, ref renamed);
 
-						fsw.DispatchEvents (FileAction.Added, filename, ref renamed);
-						/* If a file has been created, then it has been written to */
-						fsw.DispatchEvents (FileAction.Modified, filename, ref renamed);
-
-						if (fsw.Waiting) {
-							fsw.Waiting = false;
-							System.Threading.Monitor.PulseAll(fsw);
+							if (fsw.Waiting) {
+								fsw.Waiting = false;
+								System.Threading.Monitor.PulseAll(fsw);
+							}
 						}
 					}
 				}
