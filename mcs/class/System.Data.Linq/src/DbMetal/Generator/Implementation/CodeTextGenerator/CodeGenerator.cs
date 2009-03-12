@@ -138,7 +138,6 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
 
 #if MONO_STRICT
             writer.WriteUsingNamespace("System.Data.Linq");
-            writer.WriteUsingNamespace("System.Vendor");
 #else
             writer.WriteUsingNamespace("DbLinq.Data.Linq");
             writer.WriteUsingNamespace("DbLinq.Vendor");

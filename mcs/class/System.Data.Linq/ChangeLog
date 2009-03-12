@@ -1,5 +1,10 @@
 2009-03-12  Jonathan Pryor  <jpryor@novell.com>
 
+	* src/DbMetal/Generator/Implementation/CodeTextGenerator/CodeGenerator.cs:
+	  There is no System.Vendor namespace, so don't generate one.
+
+2009-03-12  Jonathan Pryor  <jpryor@novell.com>
+
 	* Makefile: Add a dist-local target and distribute all DbLinq sources.
 	  We can't just rely on the normal System.Data.Linq.dll.sources
 	  handling because ../../tools/sqlmetal also uses these sources.
