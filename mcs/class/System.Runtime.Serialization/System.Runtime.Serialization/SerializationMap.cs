@@ -273,9 +273,7 @@ namespace System.Runtime.Serialization
 
 			return schema;
 		}
-#endif
 
-		//FIXME: redundant?
 		protected XmlQualifiedName GetQualifiedName (Type type)
 		{
 			if (qname_table.ContainsKey (type))
@@ -288,6 +286,7 @@ namespace System.Runtime.Serialization
 			qname_table [type] = qname;
 			return qname;
 		}
+#endif
 
 		public virtual void Serialize (object graph,
 			XmlFormatterSerializer serializer)

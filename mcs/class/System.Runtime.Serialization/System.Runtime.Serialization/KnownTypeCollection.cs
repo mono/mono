@@ -569,8 +569,6 @@ namespace System.Runtime.Serialization
 			return true;
 		}
 
-		static readonly Type genericIEnumerable = typeof (IEnumerable<>);
-
 		internal static Type GetCollectionElementType (Type type)
 		{
 			if (type.IsArray)
@@ -578,10 +576,10 @@ namespace System.Runtime.Serialization
 
 			Type [] ifaces = type.GetInterfaces ();
 			foreach (Type i in ifaces)
-				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (genericIEnumerable))
+				if (i.IsGenericType && i.GetGenericTypeDefinition ().Equals (typeof (ICollection<>)))
 					return i.GetGenericArguments () [0];
 			foreach (Type i in ifaces)
-				if (i == typeof (IEnumerable))
+				if (i == typeof (IList))
 					return typeof (object);
 			return null;
 		}

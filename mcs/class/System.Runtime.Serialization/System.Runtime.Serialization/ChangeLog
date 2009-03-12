@@ -1,3 +1,9 @@
+2009-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : cosmetic !NET_2_1 fix (no effect).
+	* KnownTypeCollection.cs : use ICollection<> and IList instead of
+	  IEnumerable. This causes confusion for dictionary.
+
 2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlFormatterSerializer.cs, XmlObjectSerializer.cs,
