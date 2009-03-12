@@ -9,6 +9,7 @@
 
 using System;
 using System.IO;
+using System.Reflection;
 
 using Mono.Cecil;
 
@@ -34,6 +35,8 @@ namespace Mono.CilStripper {
 					Console.WriteLine ("Assembly {0} stripped out into {1}", file, output);
 				else
 					Console.WriteLine ("Assembly {0} stripped", file);
+			} catch (TargetInvocationException tie) {
+				Console.WriteLine ("Error: {0}", tie.InnerException);
 			} catch (Exception e) {
 				Console.WriteLine ("Error: {0}", e);
 			}
