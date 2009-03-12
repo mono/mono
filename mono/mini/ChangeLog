@@ -1,3 +1,8 @@
+2009-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_line_number_info): Optimize the computation of the
+	native->IL offset mapping.
+
 2009-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Fix % 1. Fixes #484323.
