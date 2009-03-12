@@ -1,3 +1,7 @@
+2009-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Check section header flags.
+
 2009-03-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (add_to_global_remset): Fix the handling of root global remset
