@@ -1,3 +1,8 @@
+2009-03-12  Andreia Gaita  <avidigal@novell.com>
+
+	* JsonReaderWriterFactory.cs: try to auto-detect encoding for streams
+	without BOM
+
 2009-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* JsonReader.cs: 2.1 has HasValue.
