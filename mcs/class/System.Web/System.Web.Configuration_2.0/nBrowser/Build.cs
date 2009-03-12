@@ -41,6 +41,7 @@ namespace System.Web.Configuration.nBrowser
 		private System.Collections.Generic.Dictionary<string, string> BrowserKeys;
 
 		//
+		private object browserSyncRoot = new object();
 		private System.Web.Configuration.nBrowser.Node browser;
 
 		/// <summary>
@@ -146,11 +147,22 @@ namespace System.Web.Configuration.nBrowser
 		/// <returns></returns>
 		public Node Browser()
 		{
-			if (browser != null)
+			if (browser == null)
 			{
-				return browser;
+				lock (browserSyncRoot)
+				{
+					if (browser == null)
+					{
+						browser = InitializeTree();
+					}
+				}
 			}
-			browser = new Node();
+			return browser;
+		}
+
+		private Node InitializeTree()
+		{
+			Node root = new Node();
 			//Custom Sorted List, to allow where Multple files in Diff directorys might have the same
 			//filename. So still to some degree first come first serve but might be close enough
 			//to how microsoft System to match much more closely.
@@ -194,7 +206,7 @@ namespace System.Web.Configuration.nBrowser
 							throw new nBrowser.Exception(String.Format("Parent not found with id = {0}", child.ParentId));
 					}
 					if (parent == null)
-						parent = browser;
+						parent = root;
 					parent.AddChild(child);
 				}
 			}
@@ -215,7 +227,7 @@ namespace System.Web.Configuration.nBrowser
 					}
 					Node parentNode = this.GetNode(node.ParentId);
 					if (parentNode == null)
-						parentNode = browser;
+						parentNode = root;
 					// insert the default node between the regular node and it's parent.
 					parentNode.RemoveChild(node);
 					defaultNode.AddChild(node);
@@ -233,7 +245,7 @@ namespace System.Web.Configuration.nBrowser
 			}
 			#endregion
 
-			return browser;
+			return root;
 		}
 						
 		/// <summary>
