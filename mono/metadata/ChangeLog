@@ -1,5 +1,9 @@
 2009-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify data directories.
+
+2009-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Check section header flags.
 
 2009-03-12  Zoltan Varga  <vargaz@gmail.com>
