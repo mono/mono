@@ -64,3 +64,11 @@ using DbLinq.Factory;
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: DbLinqAttribute]
 
+// DbMetal needs access to the DbLinq internals
+[assembly: InternalsVisibleTo("sqlmetal, PublicKey=" +
+"0024000004800000940000000602000000240000525341310004000001000100c5753d8c47f400" +
+"83f549016a5711238ac8ec297605abccd3dc4b6d0f280b4764eb2cc58ec4e37831edad7e7a07b8" +
+"fe4a9cbb059374c0cc047aa28839fed7176761813caf6a2ffa0bff9afb50ead56dd3f56186a663" +
+"962a12b830c2a70eb70ec77823eb5750e5bdef9e01d097c30b5c5463c3d07d3472b58e4c02f279" +
+"2309259f")]
+

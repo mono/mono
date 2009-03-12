@@ -1,5 +1,12 @@
 2009-03-12  Jonathan Pryor  <jpryor@novell.com>
 
+	* src/DbLinq/System.Data.Linq/Assembly/AssemblyInfo.cs: Allow 
+	  sqlmetal.exe to access the System.Data.Linq.dll internals, as
+	  sqlmetal.exe is DbMetal.exe, and needs access to (normally public)
+	  DbLinq.dll types.
+
+2009-03-12  Jonathan Pryor  <jpryor@novell.com>
+
 	* System.Data.Linq.dll.sources: Sort filenames (to more easily see
 	  which DbLinq files are being excluded from the build), and add
 	  additional files to the build, specifically the *SchemaLoader and
