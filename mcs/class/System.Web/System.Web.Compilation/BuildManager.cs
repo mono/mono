@@ -465,7 +465,7 @@ namespace System.Web.Compilation {
 		
 		static void GenerateAssembly (AssemblyBuilder abuilder, BuildProviderGroup group, VirtualPath vp, bool debug)
 		{
-			List <string> deps;
+			IDictionary <string, bool> deps;
 			BuildManagerCacheItem bmci;
 			string bvp, vpabsolute = vp.Absolute;
 			StringBuilder sb;
@@ -507,8 +507,8 @@ namespace System.Web.Compilation {
 				
 				deps = bp.ExtractDependencies ();
 				if (deps != null) {
-					foreach (string dep in deps) {
-						bmci = GetCachedItemNoLock (dep);
+					foreach (var dep in deps) {
+						bmci = GetCachedItemNoLock (dep.Key);
 						if (bmci == null || bmci.BuiltAssembly == null)
 							continue;
 						abuilder.AddAssemblyReference (bmci.BuiltAssembly);
@@ -822,12 +822,12 @@ namespace System.Web.Compilation {
 			return ret;
 		}
 
-		public static ICollection GetVirtualPathDependencies (string virtualPath)
+		public static IDictionary <string, bool> GetVirtualPathDependencies (string virtualPath)
 		{
 			return GetVirtualPathDependencies (virtualPath, null);
 		}
 
-		internal static ICollection GetVirtualPathDependencies (string virtualPath, BuildProvider bprovider)
+		internal static IDictionary <string, bool> GetVirtualPathDependencies (string virtualPath, BuildProvider bprovider)
 		{
 			BuildProvider provider = bprovider;
 			if (provider == null) {
@@ -1067,7 +1067,7 @@ namespace System.Web.Compilation {
 			string virtualPath = bp.VirtualPath;
 			
 			if (req != null) {
-				List <string> deps = bp.ExtractDependencies ();
+				IDictionary <string, bool> deps = bp.ExtractDependencies ();
 				var files = new List <string> ();
 				string physicalPath;
 
@@ -1076,8 +1076,8 @@ namespace System.Web.Compilation {
 					files.Add (physicalPath);
 				
 				if (deps != null && deps.Count > 0) {
-					foreach (string d in bp.ExtractDependencies ()) {
-						physicalPath = req.MapPath (d);
+					foreach (var d in deps) {
+						physicalPath = req.MapPath (d.Key);
 						if (!File.Exists (physicalPath))
 							continue;
 						if (!files.Contains (physicalPath))

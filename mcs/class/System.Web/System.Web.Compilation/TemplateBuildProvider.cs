@@ -51,7 +51,7 @@ namespace System.Web.Compilation
 		static SortedDictionary <string, ExtractDirectiveDependencies> directiveAttributes;
 		static char[] directiveValueTrimChars = {' ', '\t', '\r', '\n', '"', '\''};
 
-		List <string> dependencies;
+		SortedDictionary <string, bool> dependencies;
 		string compilationLanguage;
 		
 		internal override string LanguageName {
@@ -125,10 +125,10 @@ namespace System.Web.Compilation
 			if (String.IsNullOrEmpty (value))
 				return;
 
-			if (bp.dependencies.Contains (value))
+			if (bp.dependencies.ContainsKey (value))
 				return;
 
-			bp.dependencies.Add (value);
+			bp.dependencies.Add (value, true);
 		}
 
 		static void ExtractRegisterDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
@@ -145,10 +145,10 @@ namespace System.Web.Compilation
 			if (String.IsNullOrEmpty (value))
 				return;
 
-			if (bp.dependencies.Contains (src))
+			if (bp.dependencies.ContainsKey (src))
 				return;
 
-			bp.dependencies.Add (src);
+			bp.dependencies.Add (src, true);
 		}
 
 		static void ExtractPreviousPageTypeOrMasterTypeDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
@@ -157,10 +157,10 @@ namespace System.Web.Compilation
 			if (String.IsNullOrEmpty (value))
 				return;
 
-			if (bp.dependencies.Contains (value))
+			if (bp.dependencies.ContainsKey (value))
 				return;
 
-			bp.dependencies.Add (value);
+			bp.dependencies.Add (value, true);
 		}
 
 		static void ExtractReferenceDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
@@ -186,13 +186,13 @@ namespace System.Web.Compilation
 			else
 				value = page;
 
-			if (bp.dependencies.Contains (value))
+			if (bp.dependencies.ContainsKey (value))
 				return;
 
-			bp.dependencies.Add (value);
+			bp.dependencies.Add (value, true);
 		}
 		
-		internal override List <string> ExtractDependencies ()
+		internal override IDictionary <string, bool> ExtractDependencies ()
 		{
 			if (dependencies != null) {
 				if (dependencies.Count == 0)
@@ -229,7 +229,7 @@ namespace System.Web.Compilation
 			if (matches == null || matches.Count == 0)
 				return null;
 			
-			dependencies = new List <string> ();
+			dependencies = new SortedDictionary <string, bool> (StringComparer.InvariantCultureIgnoreCase);
 			CaptureCollection ccNames;
 			GroupCollection groups;
 			string directiveName;

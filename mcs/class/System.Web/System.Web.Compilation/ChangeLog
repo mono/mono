@@ -1,5 +1,10 @@
 2009-03-12  Marek Habersack  <mhabersack@novell.com>
 
+	* BuildManager.cs, BuildManagerDirectoryBuilder.cs,
+	BuildProvider.cs, TemplateBuildProvider.cs: dependencies are
+	returned as an IDictionary <string, bool>. Dependencies must be
+	compared case-insensitively.
+
 	* TemplateBuildProvider.cs: ExtractReferenceDependencies must also
 	extract the value of the Page attribute.
 

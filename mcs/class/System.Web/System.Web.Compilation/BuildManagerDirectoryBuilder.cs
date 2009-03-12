@@ -180,7 +180,7 @@ namespace System.Web.Compilation
 				return;
 			
 			BuildProvider bp;
-			List <string> deps;
+			IDictionary <string, bool> deps;
 			var dirs = new List <string> ();
 			string fileVirtualPath;
 			
@@ -199,13 +199,14 @@ namespace System.Web.Compilation
 				if (deps == null)
 					continue;
 
-				string depDir;
+				string depDir, s;
 				dirs.Clear ();
-				foreach (string dep in deps) {
-					depDir = VirtualPathUtility.GetDirectory (dep); // dependencies are assumed to contain absolute paths
+				foreach (var dep in deps) {
+					s = dep.Key;
+					depDir = VirtualPathUtility.GetDirectory (s); // dependencies are assumed to contain absolute paths
 					if (cache.ContainsKey (depDir))
 						continue;
-					AddVirtualDir (GetVirtualDirectory (dep), bpcoll, cache);
+					AddVirtualDir (GetVirtualDirectory (s), bpcoll, cache);
 				}
 			}
 		}
@@ -359,17 +360,17 @@ namespace System.Web.Compilation
 		
 		bool IsDependency (BuildProvider bp1, BuildProvider bp2)
 		{
-			List <string> deps = bp1.ExtractDependencies ();
+			IDictionary <string, bool> deps = bp1.ExtractDependencies ();
 			if (deps == null)
 				return false;
-			
-			if (deps.Contains (bp2.VirtualPath))
+
+			if (deps.ContainsKey (bp2.VirtualPath))
 				return true;
 
 			BuildProvider bp;
 			// It won't loop forever as by the time this method is called, we are sure there are no cycles
-			foreach (string dep in deps) {
-				if (!buildProviders.TryGetValue (dep, out bp))
+			foreach (var dep in deps) {
+				if (!buildProviders.TryGetValue (dep.Key, out bp))
 					continue;
 
 				if (IsDependency (bp, bp2))
@@ -386,14 +387,14 @@ namespace System.Web.Compilation
 			return IsDependencyCycle (cache, buildProvider.ExtractDependencies ());
 		}
 
-		bool IsDependencyCycle (Dictionary <BuildProvider, bool> cache, List <string> deps)
+		bool IsDependencyCycle (Dictionary <BuildProvider, bool> cache, IDictionary <string, bool> deps)
 		{
 			if (deps == null)
 				return false;
 
 			BuildProvider bp;
-			foreach (string s in deps) {
-				if (!buildProviders.TryGetValue (s, out bp))
+			foreach (var d in deps) {
+				if (!buildProviders.TryGetValue (d.Key, out bp))
 					continue;
 				if (cache.ContainsKey (bp))
 					return true;

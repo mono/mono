@@ -78,7 +78,7 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		internal virtual List <string> ExtractDependencies ()
+		internal virtual IDictionary <string, bool> ExtractDependencies ()
 		{
 			return null;
 		}
