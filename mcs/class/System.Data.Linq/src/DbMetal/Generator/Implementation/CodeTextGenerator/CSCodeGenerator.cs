@@ -29,7 +29,10 @@ using System.Text;
 
 namespace DbMetal.Generator.Implementation.CodeTextGenerator
 {
-    public class CSCodeGenerator : CodeGenerator
+#if !MONO_STRICT
+    public
+#endif
+    class CSCodeGenerator : CodeGenerator
     {
         public override string LanguageCode { get { return "C#"; } }
         public override string Extension { get { return ".cs"; } }

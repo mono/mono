@@ -36,11 +36,15 @@ using DbMetal.Generator.EntityInterface;
 #if MONO_STRICT
 using System.Data.Linq;
 #else
+using DbLinq.Data.Linq;
 #endif
 
 namespace DbMetal.Generator.Implementation.CodeTextGenerator
 {
-    public partial class CodeGenerator
+#if !MONO_STRICT
+    public
+#endif
+    partial class CodeGenerator
     {
         protected virtual void WriteClasses(CodeWriter writer, Database schema, GenerationContext context)
         {
@@ -417,7 +421,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                                    ? child.Member + "_" + string.Join("", child.OtherKeys.ToArray())
                                    : child.Member;
 
-            var propertyType = writer.GetGenericName(TypeExtensions.GetShortName(typeof(DbLinq.Data.Linq.EntitySet<>)), child.Type);
+            var propertyType = writer.GetGenericName(TypeExtensions.GetShortName(typeof(EntitySet<>)), child.Type);
 
             if (child.Storage != null)
                 writer.WriteField(SpecificationDefinition.Private, child.Storage, propertyType);
@@ -425,7 +429,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
             using (writer.WriteAttribute(storageAttribute))
             using (writer.WriteAttribute(NewAttributeDefinition<DebuggerNonUserCodeAttribute>()))
             using (writer.WriteProperty(specifications, propertyName,
-                                        writer.GetGenericName(TypeExtensions.GetShortName(typeof(DbLinq.Data.Linq.EntitySet<>)), child.Type)))
+                                        writer.GetGenericName(TypeExtensions.GetShortName(typeof(EntitySet<>)), child.Type)))
             {
                 // if we have a backing field, use it
                 if (child.Storage != null)
@@ -490,7 +494,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
             }
 
             writer.WriteField(SpecificationDefinition.Private, storageField,
-                              writer.GetGenericName(TypeExtensions.GetShortName(typeof(DbLinq.Data.Linq.EntityRef<>)),
+                              writer.GetGenericName(TypeExtensions.GetShortName(typeof(EntityRef<>)),
                                                     targetTable.Type.Name));
 
             var storageAttribute = NewAttributeDefinition<AssociationAttribute>();
@@ -727,7 +731,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                         writer.GetAssignmentExpression(
                             entitySetMember,
                             writer.GetNewExpression(writer.GetMethodCallExpression(
-                                writer.GetGenericName(TypeExtensions.GetShortName(typeof(DbLinq.Data.Linq.EntitySet<>)), child.Type),
+                                writer.GetGenericName(TypeExtensions.GetShortName(typeof(EntitySet<>)), child.Type),
                                 GetChildAttachMethodName(child),
                                 GetChildDetachMethodName(child)
                             ))
@@ -742,7 +746,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                         writer.GetAssignmentExpression(
                             entityRefMember,
                             writer.GetNewExpression(writer.GetMethodCallExpression(
-                            writer.GetGenericName(TypeExtensions.GetShortName(typeof(DbLinq.Data.Linq.EntityRef<>)), parent.Type)
+                            writer.GetGenericName(TypeExtensions.GetShortName(typeof(EntityRef<>)), parent.Type)
                             ))
                         )
                     ));

@@ -36,7 +36,10 @@ using DbMetal.Utility;
 
 namespace DbMetal.Generator
 {
-    public class GenerationContext
+#if !MONO_STRICT
+    public
+#endif
+    class GenerationContext
     {
         public class ExtendedTypeAndName
         {

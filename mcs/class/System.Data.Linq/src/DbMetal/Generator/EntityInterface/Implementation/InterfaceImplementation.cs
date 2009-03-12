@@ -30,7 +30,10 @@ namespace DbMetal.Generator.EntityInterface.Implementation
     /// <summary>
     /// Helper to make default IImplementation implementation
     /// </summary>
-    public abstract class InterfaceImplementation : IImplementation
+#if !MONO_STRICT
+    public
+#endif
+    abstract class InterfaceImplementation : IImplementation
     {
         public abstract string InterfaceName { get; }
 

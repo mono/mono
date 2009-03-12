@@ -32,7 +32,10 @@ namespace DbMetal.Language
     /// <summary>
     /// German support
     /// </summary>
-    public class GermanWords : AbstractEndPluralWords
+#if !MONO_STRICT
+    public
+#endif
+    class GermanWords : AbstractEndPluralWords
     {
         /// <summary>
         /// Loads the words (operation may be slow, so it is excluded from ctor)

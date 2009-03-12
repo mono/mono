@@ -29,7 +29,10 @@ using DbLinq.Vendor;
 
 namespace DbMetal.Schema
 {
-    public static class NameAliasesLoader
+#if !MONO_STRICT
+    public
+#endif
+    static class NameAliasesLoader
     {
         public static INameAliases Load(string path)
         {

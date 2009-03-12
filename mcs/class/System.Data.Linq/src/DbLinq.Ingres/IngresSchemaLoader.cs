@@ -35,7 +35,10 @@ using DbLinq.Vendor.Implementation;
 
 namespace DbLinq.Ingres
 {
-    public partial class IngresSchemaLoader : SchemaLoader
+#if !MONO_STRICT
+    public
+#endif
+    partial class IngresSchemaLoader : SchemaLoader
     {
         private readonly Vendor.IVendor vendor = new IngresVendor();
         public override Vendor.IVendor Vendor { get { return vendor; } }

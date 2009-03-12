@@ -25,7 +25,10 @@
 #endregion
 namespace DbMetal.Generator.EntityInterface.Implementation
 {
-    public class IModifiedImplementation : InterfaceImplementation
+#if !MONO_STRICT
+    public
+#endif
+    class IModifiedImplementation : InterfaceImplementation
     {
         public override string InterfaceName
         {

@@ -31,7 +31,10 @@ using Microsoft.VisualBasic;
 
 namespace DbMetal.Generator.Implementation.CodeDomGenerator
 {
-    public class VisualBasicCodeDomGenerator : AbstractCodeDomGenerator
+#if !MONO_STRICT
+    public
+#endif
+    class VisualBasicCodeDomGenerator : AbstractCodeDomGenerator
     {
         public override string LanguageCode { get { return "VB"; } }
         public override string Extension { get { return ".vb"; } }

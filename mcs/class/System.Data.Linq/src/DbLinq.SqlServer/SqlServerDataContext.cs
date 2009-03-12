@@ -29,19 +29,35 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using System.Data.SqlClient;
-using DataContext=DbLinq.Data.Linq.DataContext;
+
+#if MONO_STRICT
+using System.Data.Linq;
+#else
+using DbLinq.Data.Linq;
+#endif
 
 namespace DbLinq.SqlServer
 {
-    public class SqlServerDataContext : DataContext
+#if MONO_STRICT
+    public
+#endif
+    class SqlServerDataContext : DataContext
     {
         public SqlServerDataContext(string connStr)
-            : base(new SqlConnection(connStr), new SqlServerVendor())
+            : base(new SqlConnection(connStr)
+#if !MONO_STRICT
+                , new SqlServerVendor()
+#endif
+              )
         {
         }
 
         public SqlServerDataContext(IDbConnection conn)
-            : base((SqlConnection)conn, new SqlServerVendor())
+            : base((SqlConnection)conn
+#if !MONO_STRICT
+                , new SqlServerVendor()
+#endif
+              )
         {
         }
 

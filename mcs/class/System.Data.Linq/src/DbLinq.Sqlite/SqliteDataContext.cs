@@ -24,7 +24,12 @@
 // 
 #endregion
 using System.Data;
-using DataContext=DbLinq.Data.Linq.DataContext;
+
+#if MONO_STRICT
+using System.Data.Linq;
+#else
+using DbLinq.Data.Linq;
+#endif
 
 namespace DbLinq.Sqlite
 {
@@ -37,7 +42,11 @@ namespace DbLinq.Sqlite
         }
 #endif
         public SqliteDataContext(IDbConnection conn)
+#if MONO_STRICT
+            : base(conn)
+#else
             : base(conn, new SqliteVendor())
+#endif
         {
         }
 

@@ -34,7 +34,10 @@ using Type = System.Type;
 
 namespace DbMetal.Generator.Implementation.CodeTextGenerator
 {
-    public partial class CodeGenerator
+#if !MONO_STRICT
+    public
+#endif
+    partial class CodeGenerator
     {
         protected virtual void WriteDataContextProcedures(CodeWriter writer, DbLinq.Schema.Dbml.Database schema, GenerationContext context)
         {

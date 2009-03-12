@@ -36,7 +36,10 @@ using DbMetal.Configuration;
 
 namespace DbMetal.Generator.Implementation
 {
-    public class SchemaLoaderFactory : ISchemaLoaderFactory
+#if !MONO_STRICT
+    public
+#endif
+    class SchemaLoaderFactory : ISchemaLoaderFactory
     {
         private TextWriter log;
         /// <summary>

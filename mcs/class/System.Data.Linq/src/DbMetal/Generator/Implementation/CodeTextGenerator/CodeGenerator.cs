@@ -34,9 +34,16 @@ using DbLinq.Schema.Dbml.Adapter;
 using DbLinq.Util;
 using Type = System.Type;
 
+#if MONO_STRICT
+using System.Data.Linq;
+#endif
+
 namespace DbMetal.Generator.Implementation.CodeTextGenerator
 {
-    public abstract partial class CodeGenerator : ICodeGenerator
+#if !MONO_STRICT
+    public
+#endif
+    abstract partial class CodeGenerator : ICodeGenerator
     {
         public abstract string LanguageCode { get; }
         public abstract string Extension { get; }

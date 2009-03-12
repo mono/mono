@@ -31,7 +31,10 @@ using Microsoft.CSharp;
 
 namespace DbMetal.Generator.Implementation.CodeDomGenerator
 {
-    public class CSharpCodeDomGenerator: AbstractCodeDomGenerator
+#if !MONO_STRICT
+    public
+#endif
+    class CSharpCodeDomGenerator: AbstractCodeDomGenerator
     {
         public override string LanguageCode { get { return "C#2"; } }
         public override string Extension { get { return ".cs2"; } }

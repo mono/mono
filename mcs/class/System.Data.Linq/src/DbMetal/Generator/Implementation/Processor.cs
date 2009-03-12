@@ -37,7 +37,10 @@ using DbMetal.Schema;
 
 namespace DbMetal.Generator.Implementation
 {
-    public class Processor : IProcessor
+#if !MONO_STRICT
+    public
+#endif
+    class Processor : IProcessor
     {
         private TextWriter log;
         /// <summary>

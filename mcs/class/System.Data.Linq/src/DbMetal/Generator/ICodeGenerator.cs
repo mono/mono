@@ -33,7 +33,10 @@ namespace DbMetal.Generator
     /// <summary>
     /// Generates a code file fro a DBML schema
     /// </summary>
-    public interface ICodeGenerator
+#if !MONO_STRICT
+    public
+#endif
+    interface ICodeGenerator
     {
         /// <summary>
         /// Used to match /language parameter

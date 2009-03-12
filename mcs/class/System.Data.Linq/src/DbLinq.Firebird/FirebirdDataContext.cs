@@ -24,7 +24,12 @@
 // 
 #endregion
 using System.Data;
-using DataContext=DbLinq.Data.Linq.DataContext;
+
+#if MONO_STRICT
+using System.Data.Linq;
+#else
+using DbLinq.Data.Linq;
+#endif
 
 namespace DbLinq.Firebird
 {
@@ -37,7 +42,11 @@ namespace DbLinq.Firebird
         }
 #endif
         public FirebirdDataContext(IDbConnection conn)
+#if MONO_STRICT
+            : base(conn)
+#else
             : base(conn, new FirebirdVendor())
+#endif
         {
         }
 

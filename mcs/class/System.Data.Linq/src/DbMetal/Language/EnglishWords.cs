@@ -32,7 +32,10 @@ namespace DbMetal.Language
     /// <summary>
     /// Support for english words
     /// </summary>
-    public class EnglishWords : AbstractEndPluralWords
+#if !MONO_STRICT
+    public
+#endif
+    class EnglishWords : AbstractEndPluralWords
     {
         /// <summary>
         /// Loads the words (operation may be slow, so it is excluded from ctor)

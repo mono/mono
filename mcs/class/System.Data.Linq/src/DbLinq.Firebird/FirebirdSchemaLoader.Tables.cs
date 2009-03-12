@@ -31,7 +31,10 @@ using DbLinq.Vendor.Implementation;
 
 namespace DbLinq.Firebird
 {
-    public partial class FirebirdSchemaLoader
+#if !MONO_STRICT
+    public
+#endif
+    partial class FirebirdSchemaLoader
     {
         public override IList<IDataName> ReadTables(IDbConnection connectionString, string databaseName)
         {

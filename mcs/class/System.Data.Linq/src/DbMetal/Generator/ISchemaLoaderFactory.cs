@@ -29,7 +29,10 @@ using DbLinq.Vendor;
 
 namespace DbMetal.Generator
 {
-    public interface ISchemaLoaderFactory
+#if !MONO_STRICT
+    public
+#endif
+    interface ISchemaLoaderFactory
     {
         /// <summary>
         /// the 'main entry point' into this class

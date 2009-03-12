@@ -24,7 +24,12 @@
 // 
 #endregion
 using System.Data;
-using DataContext=DbLinq.Data.Linq.DataContext;
+
+#if MONO_STRICT
+using System.Data.Linq;
+#else
+using DbLinq.Data.Linq;
+#endif
 
 namespace DbLinq.PostgreSql
 {
@@ -40,7 +45,11 @@ namespace DbLinq.PostgreSql
         }
 #endif
         public PgsqlDataContext(IDbConnection conn)
+#if MONO_STRICT
+            : base(conn)
+#else
             : base(conn, new PgsqlVendor())
+#endif
         {
         }
 

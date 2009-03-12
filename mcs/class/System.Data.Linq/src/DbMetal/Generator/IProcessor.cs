@@ -31,7 +31,10 @@ using DbLinq.Vendor;
 
 namespace DbMetal.Generator
 {
-    public interface IProcessor
+#if !MONO_STRICT
+    public
+#endif
+    interface IProcessor
     {
         /// <summary>
         /// The SchemaLoadFactory is used to create the ISchemaLoader (who loads the schema from the database)

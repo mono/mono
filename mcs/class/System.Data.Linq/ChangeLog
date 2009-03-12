@@ -1,3 +1,12 @@
+2009-03-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* System.Data.Linq.dll.sources: Sort filenames (to more easily see
+	  which DbLinq files are being excluded from the build), and add
+	  additional files to the build, specifically the *SchemaLoader and
+	  *DataContext types.
+	* src/**: Flush to DbLinq r1013 (which allows the *SchemaLoader and
+	  *DataContext types to build under MONO_STRICT).
+
 2009-03-11  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/DbMetal/**, src/VisualMetal/**: Remove generated directories.

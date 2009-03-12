@@ -32,7 +32,10 @@ namespace DbMetal.Generator.EntityInterface
     /// It is identified by the target interface name, called 3 times,
     /// during the header generation, before and after the setter.
     /// </summary>
-    public interface IImplementation
+#if !MONO_STRICT
+    public
+#endif
+    interface IImplementation
     {
         /// <summary>
         /// Interface name, in short format

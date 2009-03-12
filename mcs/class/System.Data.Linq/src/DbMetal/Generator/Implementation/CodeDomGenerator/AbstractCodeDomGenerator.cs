@@ -40,7 +40,10 @@ using DbLinq.Schema.Dbml;
 
 namespace DbMetal.Generator.Implementation.CodeDomGenerator
 {
-    public abstract class AbstractCodeDomGenerator : ICodeGenerator
+#if !MONO_STRICT
+    public
+#endif
+    abstract class AbstractCodeDomGenerator : ICodeGenerator
     {
         public abstract string LanguageCode { get; }
         public abstract string Extension { get; }

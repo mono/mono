@@ -32,7 +32,10 @@ namespace DbMetal.Language
     /// <summary>
     /// Words for french language
     /// </summary>
-    public class FrenchWords : AbstractEndPluralWords
+#if !MONO_STRICT
+    public
+#endif
+    class FrenchWords : AbstractEndPluralWords
     {
         /// <summary>
         /// Loads the words (operation may be slow, so it is excluded from ctor)

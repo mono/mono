@@ -28,7 +28,10 @@ using DbLinq.Schema;
 
 namespace DbMetal.Generator.EntityInterface.Implementation
 {
-    public class INotifyPropertyChangedImplementation : InterfaceImplementation
+#if !MONO_STRICT
+    public
+#endif
+    class INotifyPropertyChangedImplementation : InterfaceImplementation
     {
         public override string InterfaceName
         {
