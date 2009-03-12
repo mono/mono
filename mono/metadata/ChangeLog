@@ -1,3 +1,8 @@
+2009-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c: Allocate the memory used by the mono_ptr_array macros using
+	mono_gc_alloc_fixed () since it contains GC refs.
+
 2009-03-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (ensure_complete_type): New helper function to call
