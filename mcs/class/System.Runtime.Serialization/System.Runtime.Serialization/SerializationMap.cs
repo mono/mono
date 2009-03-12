@@ -797,7 +797,8 @@ namespace System.Runtime.Serialization
 			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				if (reader.IsEmptyElement)
 					throw new XmlException (String.Format ("Unexpected empty element for dictionary entry: name {0}", reader.Name));
-				reader.ReadStartElement (item_qname.Name, item_qname.Namespace);
+				// FIXME: sloppy parsing
+				reader.ReadStartElement ();// item_qname.Name, item_qname.Namespace);
 				reader.MoveToContent ();
 				object key = deserializer.Deserialize (key_type, reader);
 				reader.MoveToContent ();
