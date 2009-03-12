@@ -1,3 +1,12 @@
+2009-03-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: In GetMessage when F1 gets pressed, besides sending a
+	WM_HELP message for the associated window, don't call
+	NativeWindow.WndProc *at all*, since this could send a WM_*
+	key-related to Control.WndProc. Also, return the keypress message, in
+	case it needs to be preprocessed for any menu.
+	Fixes #478476.
+
 2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: When removing the first displayed row and moving 

@@ -3876,18 +3876,14 @@ namespace System.Windows.Forms {
 
 					// F1 key special case - WM_HELP sending
 					if (msg.wParam == (IntPtr)VirtualKeys.VK_F1 || msg.wParam == (IntPtr)VirtualKeys.VK_HELP) {
-						// Send the keypress message first
-						NativeWindow.WndProc (FocusWindow, msg.message, msg.wParam, msg.lParam);
-
-						// Send wM_HELP
+						// Send wM_HELP and then return it as a keypress message in
+						// case it needs to be preproccessed.
 						HELPINFO helpInfo = new HELPINFO ();
 						GetCursorPos (IntPtr.Zero, out helpInfo.MousePos.x, out helpInfo.MousePos.y);
 						IntPtr helpInfoPtr = Marshal.AllocHGlobal (Marshal.SizeOf (helpInfo));
 						Marshal.StructureToPtr (helpInfo, helpInfoPtr, true);
 						NativeWindow.WndProc (FocusWindow, Msg.WM_HELP, IntPtr.Zero, helpInfoPtr);
 						Marshal.FreeHGlobal (helpInfoPtr);
-
-						goto ProcessNextMessage;
 					}
 					break;
 				}
