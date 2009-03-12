@@ -639,7 +639,6 @@ typedef struct {
 	guint32 exceptions_depth;
 	guint32 aspnet_requests_queued;
 	guint32 aspnet_requests;
-	guint32 aspnet_exec_time;
 	/* Memory category */
 	guint32 gc_collections0;
 	guint32 gc_collections1;

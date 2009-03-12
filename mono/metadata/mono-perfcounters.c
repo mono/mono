@@ -767,9 +767,6 @@ predef_writable_counter (ImplVtable *vtable, MonoBoolean only_value, MonoCounter
 		case COUNTER_ASPNET_REQ_TOTAL:
 			sample->rawValue = mono_perfcounters->aspnet_requests;
 			return TRUE;
-		case COUNTER_ASPNET_EXEC_TIME:
-			sample->rawValue = mono_perfcounters->aspnet_exec_time;
-			return TRUE;
 		}
 		break;
 	}
@@ -788,7 +785,6 @@ predef_writable_update (ImplVtable *vtable, MonoBoolean do_incr, gint64 value)
 		switch (id) {
 		case COUNTER_ASPNET_REQ_Q: ptr = &mono_perfcounters->aspnet_requests_queued; break;
 		case COUNTER_ASPNET_REQ_TOTAL: ptr = &mono_perfcounters->aspnet_requests; break;
-		case COUNTER_ASPNET_EXEC_TIME: ptr = &mono_perfcounters->aspnet_exec_time; break;
 		}
 		break;
 	}

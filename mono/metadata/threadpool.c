@@ -12,8 +12,8 @@
 #include <config.h>
 #include <glib.h>
 
-#define THREADS_PER_CPU	15 /* 20 + THREADS_PER_CPU * number of CPUs */
-#define THREAD_EXIT_TIMEOUT 2000
+#define THREADS_PER_CPU	10 /* 20 + THREADS_PER_CPU * number of CPUs */
+#define THREAD_EXIT_TIMEOUT 1000
 
 #include <mono/metadata/domain-internals.h>
 #include <mono/metadata/tabledefs.h>
