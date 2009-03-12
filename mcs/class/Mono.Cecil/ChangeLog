@@ -1,3 +1,8 @@
+2009-03-12  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/AssemblyStripper.cs (PatchHeap): don't crash
+	if the assembly doesn't contain a specific metadata heap.
+
 2009-03-04  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/StructureWriter.cs: properly set the metadata tokens

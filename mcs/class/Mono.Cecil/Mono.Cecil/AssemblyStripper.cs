@@ -128,6 +128,9 @@ namespace Mono.Cecil {
 
 		static void PatchHeap (MemoryBinaryWriter heap_writer, MetadataHeap heap)
 		{
+			if (heap == null)
+				return;
+
 			heap_writer.BaseStream.Position = 0;
 			heap_writer.Write (heap.Data);
 		}
