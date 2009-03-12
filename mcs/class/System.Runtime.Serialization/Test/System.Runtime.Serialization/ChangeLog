@@ -1,5 +1,10 @@
 2009-03-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlObjectSerializerTest.cs : added test for dictionary with
+	  CollectionDataContractAttribute.
+
+2009-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlObjectSerializerTest.cs : added tests for IDictionary
 	  serialization (both generic and non-generic).
 

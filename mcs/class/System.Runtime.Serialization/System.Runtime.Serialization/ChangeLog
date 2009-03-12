@@ -1,6 +1,11 @@
 2009-03-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs, KnownTypeCollection.cs :
+	  support CollectionDataContract-based dictionary too.
+
+2009-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs, KnownTypeCollection.cs :
 	  added support for dictionary serialization (not for
 	  CollectionDataContract-attributed dictionary yet).
 

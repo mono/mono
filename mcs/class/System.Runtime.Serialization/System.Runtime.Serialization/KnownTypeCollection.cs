@@ -555,10 +555,10 @@ namespace System.Runtime.Serialization
 			if (RegisterIXmlSerializable (type) != null)
 				return true;
 
-			if (RegisterCollectionContract (type) != null)
+			if (RegisterDictionary (type) != null)
 				return true;
 
-			if (RegisterDictionary (type) != null)
+			if (RegisterCollectionContract (type) != null)
 				return true;
 
 			if (RegisterCollection (type) != null)
@@ -635,13 +635,16 @@ namespace System.Runtime.Serialization
 			return ret;
 		}
 
+		// it also supports contract-based dictionary.
 		private DictionaryTypeMap RegisterDictionary (Type type)
 		{
 			if (!type.GetInterfaces ().Any (t => t == typeof (IDictionary) || t.FullName.StartsWith ("System.Collections.Generic.IDictionary")))
 				return null;
 
+			var cdca = GetAttribute<CollectionDataContractAttribute> (type);
+
 			DictionaryTypeMap ret =
-				new DictionaryTypeMap (type, this);
+				new DictionaryTypeMap (type, cdca, this);
 
 			if (FindUserMap (ret.XmlName) != null)
 				throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, ret.XmlName));

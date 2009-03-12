@@ -1164,6 +1164,23 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual ("bar", d ["foo"], "#3");
 		}
 
+		[Test]
+		public void CollectionContarctDictionarySerialization ()
+		{
+			string xml = @"<?xml version='1.0' encoding='utf-16'?><NAME xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='urn:foo'><ITEM><KEY>foo</KEY><VALUE>bar</VALUE></ITEM></NAME>".Replace ('\'', '"');
+
+			var ds = new DataContractSerializer (typeof (MyDictionary<string,string>));
+			var d = new MyDictionary<string,string> ();
+			d ["foo"] = "bar";
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw))
+			        ds.WriteObject (xw, d);
+			Assert.AreEqual (xml, sw.ToString (), "#1");
+			d = (MyDictionary<string,string>) ds.ReadObject (XmlReader.Create (new StringReader (xml)));
+			Assert.AreEqual (1, d.Count, "#2");
+			Assert.AreEqual ("bar", d ["foo"], "#3");
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1445,4 +1462,9 @@ class Foo<X,Y,Z>
 {
 	[DataMember]
 	public X Field;
+}
+
+[CollectionDataContract (Name = "NAME", Namespace = "urn:foo", ItemName = "ITEM", KeyName = "KEY", ValueName = "VALUE")]
+public class MyDictionary<K,V> : Dictionary<K,V>
+{
 }
