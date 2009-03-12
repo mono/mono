@@ -1,3 +1,30 @@
+2009-03-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/DbMetal/**, src/VisualMetal/**: Remove generated directories.
+	  (Oops.)
+
+2009-03-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/DbMetal/**, src/VisualMetal/**: Added, so that we can add a 
+	  `sqlmetal' tool which uses the DbMetal sources.
+
+2009-03-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* Flush.  (Updates to sync with DbLinq r1009, fixes IVendor lookup 
+	  within System.Data.Linq.dll, add unit tests -- which aren't hooked 
+	  up to Mono's build system -- various bug fixes, etc.)
+
+2009-03-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* Flush.  (Updates to sync with DbLinq r1009, fixes IVendor lookup 
+	  within System.Data.Linq.dll, add unit tests -- which aren't hooked 
+	  up to Mono's build system -- various bug fixes, etc.)
+
+2009-02-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* Add a more functional (i.e. fewer-stubs) implementation of 
+	  System.Data.Linq.
+
 2008-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* updated to DbLinq r966.
