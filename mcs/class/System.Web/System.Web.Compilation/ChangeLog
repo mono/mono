@@ -1,3 +1,8 @@
+2009-03-12  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuildProvider.cs: ExtractReferenceDependencies must also
+	extract the value of the Page attribute.
+
 2009-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AppResourcesAssemblyBuilder.cs:

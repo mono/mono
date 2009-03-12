@@ -167,17 +167,24 @@ namespace System.Web.Compilation
 		{
 			string control = ExtractDirectiveAttribute (baseDirectory, "Control", names, values);
 			string virtualPath = ExtractDirectiveAttribute (baseDirectory, "VirtualPath", names, values);
+			string page = ExtractDirectiveAttribute (baseDirectory, "Page", names, values);
 			bool controlEmpty = String.IsNullOrEmpty (control);
 			bool virtualPathEmpty = String.IsNullOrEmpty (virtualPath);
-
-			if ((controlEmpty && virtualPathEmpty) || (!controlEmpty && !virtualPathEmpty))
+			bool pageEmpty = String.IsNullOrEmpty (page);
+			
+			if (controlEmpty && virtualPathEmpty && pageEmpty)
 				return;
 
+			if ((controlEmpty ? 1 : 0) + (virtualPathEmpty ? 1 : 0) + (pageEmpty ? 1 : 0) != 2)
+				return;
+			
 			string value;
-			if (controlEmpty)
+			if (!controlEmpty)
+				value = control;
+			else if (!virtualPathEmpty)
 				value = virtualPath;
 			else
-				value = control;
+				value = page;
 
 			if (bp.dependencies.Contains (value))
 				return;
