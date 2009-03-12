@@ -1102,18 +1102,14 @@ namespace MonoTests.System.Runtime.Serialization
 
 			var ds = new DataContractSerializer (typeof (List<KeyValuePair<string,string>>));
 			var d = new List<KeyValuePair<string,string>> ();
-			//d ["foo"] = "bar";
-			//d.Add (new DictionaryEntry ("foo", "bar"));
 			d.Add (new KeyValuePair<string,string> ("foo", "bar"));
 			var sw = new StringWriter ();
 			using (var xw = XmlWriter.Create (sw))
 			        ds.WriteObject (xw, d);
 			Assert.AreEqual (xml, sw.ToString (), "#1");
 			d = (List<KeyValuePair<string,string>>) ds.ReadObject (XmlReader.Create (new StringReader (xml)));
-			//Console.WriteLine ("{0}: {1}", d.Count, d ["foo"]);
-			Console.WriteLine ("{0}: {1}", d.Count, d [0].Value);
 			Assert.AreEqual (1, d.Count, "#2");
-			Assert.AreEqual ("bar", d [0].Value);
+			Assert.AreEqual ("bar", d [0].Value, "#3");
 		}
 
 		[Test]
@@ -1131,7 +1127,41 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.IsTrue (sw.ToString ().IndexOf ("i:type") >= 0);
 			d = (List<DictionaryEntry>) ds.ReadObject (XmlReader.Create (new StringReader (xml)));
 			Assert.AreEqual (1, d.Count, "#2");
-			Assert.AreEqual ("bar", d [0].Value);
+			Assert.AreEqual ("bar", d [0].Value, "#3");
+		}
+
+		[Test]
+		public void GenericDictionarySerialization ()
+		{
+			string xml = @"<?xml version='1.0' encoding='utf-16'?><ArrayOfKeyValueOfstringstring xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.microsoft.com/2003/10/Serialization/Arrays'><KeyValueOfstringstring><Key>foo</Key><Value>bar</Value></KeyValueOfstringstring></ArrayOfKeyValueOfstringstring>".Replace ('\'', '"');
+
+			var ds = new DataContractSerializer (typeof (Dictionary<string,string>));
+			var d = new Dictionary<string,string> ();
+			d ["foo"] = "bar";
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw))
+			        ds.WriteObject (xw, d);
+			Assert.AreEqual (xml, sw.ToString (), "#1");
+			d = (Dictionary<string,string>) ds.ReadObject (XmlReader.Create (new StringReader (xml)));
+			Assert.AreEqual (1, d.Count, "#2");
+			Assert.AreEqual ("bar", d ["foo"], "#3");
+		}
+
+		[Test]
+		public void HashtableSerialization ()
+		{
+			string xml = @"<?xml version='1.0' encoding='utf-16'?><ArrayOfKeyValueOfanyTypeanyType xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://schemas.microsoft.com/2003/10/Serialization/Arrays'><KeyValueOfanyTypeanyType><Key xmlns:d3p1='http://www.w3.org/2001/XMLSchema' i:type='d3p1:string'>foo</Key><Value xmlns:d3p1='http://www.w3.org/2001/XMLSchema' i:type='d3p1:string'>bar</Value></KeyValueOfanyTypeanyType></ArrayOfKeyValueOfanyTypeanyType>".Replace ('\'', '"');
+
+			var ds = new DataContractSerializer (typeof (Hashtable));
+			var d = new Hashtable ();
+			d ["foo"] = "bar";
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw))
+			        ds.WriteObject (xw, d);
+			Assert.AreEqual (xml, sw.ToString (), "#1");
+			d = (Hashtable) ds.ReadObject (XmlReader.Create (new StringReader (xml)));
+			Assert.AreEqual (1, d.Count, "#2");
+			Assert.AreEqual ("bar", d ["foo"], "#3");
 		}
 
 		private T Deserialize<T> (string xml)

@@ -86,7 +86,6 @@ namespace System.Runtime.Serialization
 
 		public readonly KnownTypeCollection KnownTypes;
 		public readonly Type RuntimeType;
-		public readonly QName XmlName;
 		public bool IsReference; // new in 3.5 SP1
 		public List<DataMemberInfo> Members;
 #if !NET_2_1
@@ -108,6 +107,8 @@ namespace System.Runtime.Serialization
 			XmlName = qname;
 			Members = new List<DataMemberInfo> ();
 		}
+
+		public QName XmlName { get; set; }
 
 		public CollectionDataContractAttribute GetCollectionDataContractAttribute (Type type)
 		{
@@ -465,7 +466,7 @@ namespace System.Runtime.Serialization
 					continue;
 				KnownTypes.TryRegister (pi.PropertyType);
 				var map = KnownTypes.FindUserMap (pi.PropertyType);
-				if (!pi.CanRead || (!pi.CanWrite && !(map is CollectionTypeMap)))
+				if (!pi.CanRead || (!pi.CanWrite && !(map is ICollectionTypeMap)))
 					throw new InvalidDataContractException (String.Format (
 							"DataMember property '{0}' on type '{1}' must have both getter and setter.", pi, pi.DeclaringType));
 				data_members.Add (CreateDataMemberInfo (dma, pi, pi.PropertyType));
@@ -536,7 +537,11 @@ namespace System.Runtime.Serialization
 		}
 	}
 
-	internal class CollectionTypeMap : SerializationMap
+	internal interface ICollectionTypeMap
+	{
+	}
+
+	internal class CollectionTypeMap : SerializationMap, ICollectionTypeMap
 	{
 		Type element_type;
 		internal QName element_qname;
@@ -559,7 +564,7 @@ namespace System.Runtime.Serialization
 						break;
 					}
 				if (add_method == null)
-					add_method = type.GetMethod ("Add", new Type [] {icoll.GetGenericArguments() [0]});
+					add_method = type.GetMethod ("Add", icoll.GetGenericArguments());
 			}
 		}
 
@@ -656,6 +661,166 @@ namespace System.Runtime.Serialization
 			generated_schema_types [XmlName] = complex_type;
 
 			return complex_type;
+		}
+#endif
+	}
+
+	internal class DictionaryTypeMap : SerializationMap, ICollectionTypeMap
+	{
+		Type key_type, value_type;
+		internal QName dict_qname, item_qname, key_qname, value_qname;
+		MethodInfo add_method;
+
+		public DictionaryTypeMap (
+			Type type, KnownTypeCollection knownTypes)
+			: base (type, QName.Empty, knownTypes)
+		{
+			key_type = typeof (object);
+			value_type = typeof (object);
+
+			var idic = RuntimeType.GetInterfaces ().FirstOrDefault (
+				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>));
+			if (idic != null) {
+				var imap = RuntimeType.GetInterfaceMap (idic);
+				for (int i = 0; i < imap.InterfaceMethods.Length; i++)
+					if (imap.InterfaceMethods [i].Name == "Add") {
+						add_method = imap.TargetMethods [i];
+						break;
+					}
+				var argtypes = idic.GetGenericArguments();
+				key_type = argtypes [0];
+				value_type = argtypes [1];
+				if (add_method == null)
+					add_method = type.GetMethod ("Add", argtypes);
+			}
+
+			XmlName = GetDictionaryQName ();
+			item_qname = GetItemQName ();
+			key_qname = GetKeyQName ();
+			value_qname = GetValueQName ();
+		}
+
+		public Type KeyType { get { return key_type; } }
+		public Type ValueType { get { return value_type; } }
+
+		static readonly QName kvpair_key_qname = new QName ("Key", KnownTypeCollection.MSArraysNamespace);
+		static readonly QName dentry_key_qname = new QName ("key", KnownTypeCollection.MSArraysNamespace);
+		static readonly QName kvpair_value_qname = new QName ("Value", KnownTypeCollection.MSArraysNamespace);
+		static readonly QName dentry_value_qname = new QName ("value", KnownTypeCollection.MSArraysNamespace);
+
+		internal virtual QName GetDictionaryQName ()
+		{
+			if (dict_qname == null)
+				dict_qname = new QName ("ArrayOf" + GetItemQName ().Name, KnownTypeCollection.MSArraysNamespace);
+			return dict_qname;
+		}
+
+		internal virtual QName GetItemQName ()
+		{
+			if (item_qname == null)
+				item_qname = new QName ("KeyValueOf" + KnownTypes.GetQName (key_type).Name + KnownTypes.GetQName (value_type).Name, KnownTypeCollection.MSArraysNamespace);
+			return item_qname;
+		}
+
+		internal virtual QName GetKeyQName ()
+		{
+			if (add_method != null)
+				return kvpair_key_qname;
+			else
+				return dentry_key_qname;
+		}
+
+		internal virtual QName GetValueQName ()
+		{
+			if (add_method != null)
+				return kvpair_value_qname;
+			else
+				return dentry_value_qname;
+		}
+
+		internal virtual string CurrentNamespace {
+			get {
+				string ns = item_qname.Namespace;
+				if (ns == KnownTypeCollection.MSSimpleNamespace)
+					ns = KnownTypeCollection.MSArraysNamespace;
+				return ns;
+			}
+		}
+
+		Type pair_type;
+		PropertyInfo pair_key_property, pair_value_property;
+
+		public override void SerializeNonReference (object graph,
+			XmlFormatterSerializer serializer)
+		{
+			if (add_method != null) { // generic
+				if (pair_type == null) {
+					pair_type = typeof (KeyValuePair<,>).MakeGenericType (add_method.DeclaringType.GetGenericArguments ());
+					pair_key_property = pair_type.GetProperty ("Key");
+					pair_value_property = pair_type.GetProperty ("Value");
+				}
+				foreach (object p in (IEnumerable) graph) {
+					serializer.WriteStartElement (item_qname.Name, item_qname.Namespace, CurrentNamespace);
+					serializer.WriteStartElement (key_qname.Name, key_qname.Namespace, CurrentNamespace);
+					serializer.Serialize (pair_key_property.PropertyType, pair_key_property.GetValue (p, null));
+					serializer.WriteEndElement ();
+					serializer.WriteStartElement (value_qname.Name, value_qname.Namespace, CurrentNamespace);
+					serializer.Serialize (pair_value_property.PropertyType, pair_value_property.GetValue (p, null));
+					serializer.WriteEndElement ();
+					serializer.WriteEndElement ();
+				}
+			} else { // non-generic
+				foreach (DictionaryEntry p in (IEnumerable) graph) {
+					serializer.WriteStartElement (item_qname.Name, item_qname.Namespace, CurrentNamespace);
+					serializer.WriteStartElement (key_qname.Name, key_qname.Namespace, CurrentNamespace);
+					serializer.Serialize (key_type, p.Key);
+					serializer.WriteEndElement ();
+					serializer.WriteStartElement (value_qname.Name, value_qname.Namespace, CurrentNamespace);
+					serializer.Serialize (value_type, p.Value);
+					serializer.WriteEndElement ();
+					serializer.WriteEndElement ();
+				}
+			}
+		}
+
+		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer)
+		{
+#if NET_2_1 // FIXME: is it fine?
+			object instance = Activator.CreateInstance (RuntimeType);
+#else
+			object instance = Activator.CreateInstance (RuntimeType, true);
+#endif
+			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
+			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
+				if (reader.IsEmptyElement)
+					throw new XmlException (String.Format ("Unexpected empty element for dictionary entry: name {0}", reader.Name));
+				reader.ReadStartElement (item_qname.Name, item_qname.Namespace);
+				reader.MoveToContent ();
+				object key = deserializer.Deserialize (key_type, reader);
+				reader.MoveToContent ();
+				object val = deserializer.Deserialize (value_type, reader);
+				reader.ReadEndElement (); // of pair
+
+				if (instance is IDictionary)
+					((IDictionary)instance).Add (key, val);
+				else if (add_method != null)
+					add_method.Invoke (instance, new object [] {key, val});
+				else
+					throw new NotImplementedException (String.Format ("Type {0} is not supported", RuntimeType));
+			}
+			return instance;
+		}
+
+		public override List<DataMemberInfo> GetMembers ()
+		{
+			//Shouldn't come here at all!
+			throw new NotImplementedException ();
+		}
+		
+#if !NET_2_1
+		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
+		{
+			throw new NotImplementedException ();
 		}
 #endif
 	}

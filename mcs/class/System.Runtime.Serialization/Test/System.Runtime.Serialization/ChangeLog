@@ -1,3 +1,8 @@
+2009-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : added tests for IDictionary
+	  serialization (both generic and non-generic).
+
 2009-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : test for generic IList of

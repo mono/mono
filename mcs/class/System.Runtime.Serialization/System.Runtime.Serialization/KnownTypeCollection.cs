@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
@@ -557,6 +558,9 @@ namespace System.Runtime.Serialization
 			if (RegisterCollectionContract (type) != null)
 				return true;
 
+			if (RegisterDictionary (type) != null)
+				return true;
+
 			if (RegisterCollection (type) != null)
 				return true;
 
@@ -628,6 +632,24 @@ namespace System.Runtime.Serialization
 			CollectionTypeMap ret =
 				new CollectionTypeMap (type, element, qname, this);
 			contracts.Add (ret);
+			return ret;
+		}
+
+		private DictionaryTypeMap RegisterDictionary (Type type)
+		{
+			if (!type.GetInterfaces ().Any (t => t == typeof (IDictionary) || t.FullName.StartsWith ("System.Collections.Generic.IDictionary")))
+				return null;
+
+			DictionaryTypeMap ret =
+				new DictionaryTypeMap (type, this);
+
+			if (FindUserMap (ret.XmlName) != null)
+				throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, ret.XmlName));
+			contracts.Add (ret);
+
+			TryRegister (ret.KeyType);
+			TryRegister (ret.ValueType);
+
 			return ret;
 		}
 
