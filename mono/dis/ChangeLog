@@ -1,3 +1,7 @@
+2009-03-12  Jb Evain  <jbevain@novell.com>
+
+	* get.c (get_token): add support for METHOD_SPEC tokens.
+
 2009-01-12  Jb Evain  <jbevain@novell.com>
 
 	* main.c: update reference to METHOD_ATTRIBUTE_CHECK_ACCESS_ON_OVERRIDE
