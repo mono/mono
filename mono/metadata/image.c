@@ -1341,7 +1341,7 @@ mono_image_close (MonoImage *image)
 	int i;
 
 	g_return_if_fail (image != NULL);
-
+#if 0
 	if (InterlockedDecrement (&image->ref_count) > 0)
 		return;
 
@@ -1529,6 +1529,7 @@ mono_image_close (MonoImage *image)
 	}
 
 	mono_profiler_module_event (image, MONO_PROFILE_END_UNLOAD);
+#endif
 }
 
 /** 

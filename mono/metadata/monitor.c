@@ -380,7 +380,7 @@ mono_monitor_try_enter_internal (MonoObject *obj, guint32 ms, gboolean allow_int
 	gsize id = GetCurrentThreadId ();
 	HANDLE sem;
 	guint32 then = 0, now, delta;
-	guint32 waitms;
+	guint32 waitms = 0;
 	guint32 ret;
 	MonoThread *thread;
 
@@ -503,7 +503,10 @@ retry:
 	}
 
 	/* The object must be locked by someone else... */
-	mono_perfcounters->thread_contentions++;
+
+	/* Avoid counting contentions once per retry */
+	if (then == 0)
+		mono_perfcounters->thread_contentions++;
 
 	/* If ms is 0 we don't block, but just fail straight away */
 	if (ms == 0) {
@@ -535,15 +538,17 @@ retry:
 	 * handle technique from pulse/wait would involve locking the
 	 * lock struct and therefore slowing down the fast path.
 	 */
-	if (ms != INFINITE) {
+	if (then == 0 && ms != INFINITE) {
 		then = mono_msec_ticks ();
 		if (ms < 100) {
 			waitms = ms;
 		} else {
 			waitms = 100;
 		}
-	} else {
+	} else if (then == 0) {
 		waitms = 100;
+	} else if (ms != INFINITE) {
+		waitms = ms - waitms;
 	}
 	
 	InterlockedIncrement (&mon->entry_count);

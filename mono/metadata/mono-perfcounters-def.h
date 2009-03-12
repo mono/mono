@@ -32,6 +32,7 @@ PERFCTR_CAT(ASPNET, "ASP.NET", "", MultiInstance, Mono, ASPNET_REQ_Q)
 PERFCTR_COUNTER(ASPNET_REQ_Q, "Requests Queued", "", NumberOfItems64, aspnet_requests_queued)
 PERFCTR_COUNTER(ASPNET_REQ_TOTAL, "Requests Total", "", NumberOfItems32, aspnet_requests)
 PERFCTR_COUNTER(ASPNET_REQ_PSEC, "Requests/Sec", "", RateOfCountsPerSecond32, aspnet_requests)
+PERFCTR_COUNTER(ASPNET_EXEC_TIME, "Request Execution Time", "", NumberOfItems32, aspnet_exec_time)
 
 PERFCTR_CAT(JIT, ".NET CLR JIT", "", MultiInstance, Mono, JIT_BYTES)
 PERFCTR_COUNTER(JIT_BYTES, "# of IL Bytes JITted", "", NumberOfItems32, jit_bytes)
