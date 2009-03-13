@@ -550,7 +550,8 @@ namespace System.Windows.Forms
 		
 		protected virtual void OnButtonClick (ToolBarButtonClickEventArgs e)
 		{
-			if (e.Button.Style == ToolBarButtonStyle.ToggleButton) {
+			if (e.Button.Style == ToolBarButtonStyle.ToggleButton ||
+			    e.Button.Style == ToolBarButtonStyle.DropDownButton) {
 				if (! e.Button.Pushed)
 					e.Button.Pushed = true;
 				else

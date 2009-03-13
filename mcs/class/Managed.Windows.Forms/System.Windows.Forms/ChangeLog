@@ -1,3 +1,9 @@
+2009-03-13  Neville Gao  <nevillegao@gmail.com>
+
+	* ToolBar.cs: Sent ButtonClick events when button style is DropDown.
+	* ContextMenu.cs: Add UIA Framework property UIAVisible to detect if
+	ContextMenu is displayed.
+
 2009-03-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: In GetMessage when F1 gets pressed, besides sending a
