@@ -43,7 +43,7 @@ namespace System.Xml.Serialization
 	{
 		private string dataType;
 		private string elementName;
-		private bool isNullable = true;
+		private bool isNullable = true, isNullableSpecified;
 		private string ns;
 
 		public XmlRootAttribute ()
@@ -77,7 +77,14 @@ namespace System.Xml.Serialization
 
 		public bool IsNullable {
 			get { return isNullable; }
-			set { isNullable = value; }
+			set {
+				isNullableSpecified = true;
+				isNullable = value;
+			}
+		}
+
+		public bool IsNullableSpecified {
+			get { return isNullableSpecified; }
 		}
 
 		public string Namespace {

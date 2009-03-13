@@ -1,5 +1,10 @@
 2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlRootAttribute.cs : it is also expected to have
+	  internal property for SL2.
+
+2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlArrayItemAttribute.cs, XmlElementAttribute.cs,
 	  XmlAnyElementAttribute.cs : added more 2.1 obstacles.
 
