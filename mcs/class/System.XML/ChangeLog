@@ -1,3 +1,8 @@
+2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources, net_2_1_raw_System.Xml.dll.sources :
+	  added KeyHelper.cs.
+
 2009-02-19  Geoff Norton  <gnorton@novell.com>
 
 	* net_2_1_raw_System.Xml.dll.sources: Add a bunch of missing attributes

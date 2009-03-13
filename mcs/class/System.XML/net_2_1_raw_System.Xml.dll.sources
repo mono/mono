@@ -65,6 +65,7 @@ System.Xml.Schema/XmlSchema_2_1.cs
 System.Xml.Schema/XmlSchemaObject_2_1.cs
 System.Xml.Schema/XmlSchemaSet_2_1.cs
 System.Xml.Serialization/IXmlSerializable.cs
+System.Xml.Serialization/KeyHelper.cs
 System.Xml.Serialization/SerializationSource.cs
 System.Xml.Serialization/XmlAnyElementAttribute.cs
 System.Xml.Serialization/XmlArrayAttribute.cs
