@@ -1,3 +1,9 @@
+2009-03-13  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: clear the controls cache on control removal. This
+	ensures that a subsequent FindControl call won't return the
+	removed control.
+
 2009-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* XPathBinder.cs: use the pased namespace manager

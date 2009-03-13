@@ -1757,6 +1757,7 @@ namespace System.Web.UI
 			}
 			control.NullifyUniqueID ();
 			control.SetMask (REMOVED, true);
+			ResetControlsCache ();
 		}
 		
 #if NET_2_0
