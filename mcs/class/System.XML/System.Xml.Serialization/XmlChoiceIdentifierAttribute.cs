@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace System.Xml.Serialization
 {
@@ -58,7 +59,12 @@ namespace System.Xml.Serialization
 			}
 			set { memberName = value; }
 		}
-		
+
+#if NET_2_1
+		// It is used only in 2.1 S.X.Serialization.dll in MS SDK.
+		internal MemberInfo MemberInfo { get; set; }
+#endif
+
 		internal void AddKeyHash (System.Text.StringBuilder sb)
 		{
 			sb.Append ("XCA ");

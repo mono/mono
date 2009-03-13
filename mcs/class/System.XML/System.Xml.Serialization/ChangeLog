@@ -1,5 +1,10 @@
 2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlChoiceIdentifierAttribute.cs : added internal MemberInfo
+	  property for SL2.
+
+2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationSource.cs, KeyHelper.cs : split out KeyHelper from
 	  SerializationSource as the class is going to be used in 2.1 too.
 	* XmlRootAttribute.cs : use KeyHelper above to add internal Key
