@@ -145,8 +145,9 @@ namespace System.ServiceModel
 				if (Domain.IsAllowed (uri, headerKeys))
 					return true;
 			}
-Console.WriteLine ("##### Cross Domain Access Manager rejected '{0}' with headers {1}", uri, String.Join (",", headerKeys));
-			return false;
+			// FIXME: it should really reject access
+Console.WriteLine ("##### Warning!!! Cross Domain Access Manager detected '{0}' with headers {1}. Moonlight will be blocking this access in later versions.", uri, String.Join (",", headerKeys));
+			return true;//false;
 		}
 	}
 }

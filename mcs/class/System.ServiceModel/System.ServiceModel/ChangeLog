@@ -1,3 +1,8 @@
+2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CrossDomainAccessManager.cs: temporarily disable
+	  access checker to just warn invalid access for now.
+
 2009-03-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceKnownTypeAttribute.cs : correct implementation to populate
