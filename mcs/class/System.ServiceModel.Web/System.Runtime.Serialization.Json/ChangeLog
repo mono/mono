@@ -1,3 +1,8 @@
+2009-03-12  Geoff Norton  <gnorton@novell.com>
+
+	* TypeMap.cs: Avoid checking the getter/setter information until after
+	checking if we have the required attribute decorated.
+
 2009-03-12  Andreia Gaita  <avidigal@novell.com>
 
 	* JsonReaderWriterFactory.cs: try to auto-detect encoding for streams

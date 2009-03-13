@@ -121,17 +121,17 @@ namespace System.Runtime.Serialization.Json
 
 			if (dca != null) {
 				foreach (PropertyInfo pi in type.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)) {
-					if (pi.GetIndexParameters ().Length > 0)
 						continue;
+					object [] atts = pi.GetCustomAttributes (typeof (DataMemberAttribute), true);
+					if (atts.Length == 0)
+						continue;
+					if (pi.GetIndexParameters ().Length > 0)
 					if (IsCollection (pi.PropertyType)) {
 						if (!pi.CanRead)
 							throw new InvalidDataContractException (String.Format ("Property {0} must have a getter", pi));
 					}
 					else if (!pi.CanRead || !pi.CanWrite)
 						throw new InvalidDataContractException (String.Format ("Non-collection property {0} must have both getter and setter", pi));
-					object [] atts = pi.GetCustomAttributes (typeof (DataMemberAttribute), true);
-					if (atts.Length == 0)
-						continue;
 					DataMemberAttribute dma = (DataMemberAttribute) atts [0];
 					members.Add (new TypeMapProperty (pi, dma));
 				}
