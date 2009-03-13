@@ -29,7 +29,7 @@ endif
 include ../../build/library.make
 
 dist-local: dist-default
-	find src -name '*.cs' -o -name '*.snk' -o -name '*.xml' > .files ; \
+	find src -name '*.cs' -o -name '*.snk' -o -name '*.xml' -o -name '*.txt' > .files ; \
 	tar cTf .files - | (cd $(distdir); tar xf -) ; \
 	rm .files
 

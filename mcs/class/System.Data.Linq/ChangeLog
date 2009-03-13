@@ -1,5 +1,9 @@
 2009-03-12  Jonathan Pryor  <jpryor@novell.com>
 
+	* Makefile: Also distribute .txt files.
+
+2009-03-12  Jonathan Pryor  <jpryor@novell.com>
+
 	* src/DbMetal/Generator/Implementation/CodeTextGenerator/CodeGenerator.cs:
 	  There is no System.Vendor namespace, so don't generate one.
 
