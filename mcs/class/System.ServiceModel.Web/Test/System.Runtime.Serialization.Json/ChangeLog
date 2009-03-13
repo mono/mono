@@ -1,3 +1,7 @@
+2009-03-13  Andreia Gaita  <avidigal@novell.com>
+
+	* JsonReaderTest.cs: test for skip and depth (if depth fails, skip is affected)
+
 2009-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs : fixed some tests to match

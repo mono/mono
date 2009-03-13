@@ -144,6 +144,10 @@ namespace System.Runtime.Serialization.Json
 				case AttributeState.RuntimeTypeValue:
 					mod += 2;
 					break;
+				case AttributeState.None:
+					if (NodeType == XmlNodeType.Text)
+						mod++;
+					break;
 				}
 				return read_state != ReadState.Interactive ? 0 : elements.Count - 1 + mod;
 			}
