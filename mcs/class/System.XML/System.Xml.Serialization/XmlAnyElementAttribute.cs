@@ -42,6 +42,7 @@ namespace System.Xml.Serialization
 	{
 		private string elementName;
 		private string ns;
+		private bool isNamespaceSpecified;
 #if NET_2_0
 		private int order = -1;
 #endif		
@@ -73,7 +74,14 @@ namespace System.Xml.Serialization
 
 		public string Namespace {
 			get { return ns; }
-			set { ns = value; }
+			set {
+				isNamespaceSpecified = true;
+				ns = value;
+			}
+		}
+
+		internal bool NamespaceSpecified {
+			get { return isNamespaceSpecified; }
 		}
 
 #if NET_2_0

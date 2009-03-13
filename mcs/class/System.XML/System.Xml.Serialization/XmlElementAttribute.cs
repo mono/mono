@@ -44,7 +44,7 @@ namespace System.Xml.Serialization
 		private string elementName;
 		private XmlSchemaForm form;
 		private string ns;
-		private bool isNullable;
+		private bool isNullable, isNullableSpecified;
 		private Type type;
 #if NET_2_0
 		private int order = -1;
@@ -110,8 +110,13 @@ namespace System.Xml.Serialization
 				return isNullable;
 			} 
 			set {
+				isNullableSpecified = true;
 				isNullable = value;
 			}
+		}
+
+		internal bool IsNullableSpecified {
+			get { return isNullableSpecified; }
 		}
 
 #if NET_2_0

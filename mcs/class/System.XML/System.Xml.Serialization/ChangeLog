@@ -1,5 +1,10 @@
 2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlArrayItemAttribute.cs, XmlElementAttribute.cs,
+	  XmlAnyElementAttribute.cs : added more 2.1 obstacles.
+
+2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlChoiceIdentifierAttribute.cs : added internal MemberInfo
 	  property for SL2.
 

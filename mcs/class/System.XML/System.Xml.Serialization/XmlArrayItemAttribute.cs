@@ -44,7 +44,7 @@ namespace System.Xml.Serialization
 		private string elementName;
 		private XmlSchemaForm form;
 		private string ns;
-		private bool isNullable = false;
+		private bool isNullable = false, isNullableSpecified;
 		private int nestingLevel;
 		private Type type;
 
@@ -99,7 +99,14 @@ namespace System.Xml.Serialization
 
 		public bool IsNullable {
 			get { return isNullable; } 
-			set { isNullable = value; }
+			set {
+				isNullableSpecified = true;
+				isNullable = value;
+			}
+		}
+
+		internal bool IsNullableSpecified {
+			get { return isNullableSpecified; }
 		}
 
 		public Type Type {
