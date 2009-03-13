@@ -93,6 +93,7 @@ namespace Mono.XBuild.CommandLine {
 			StreamReader reader = new StreamReader (file);
 			string line = reader.ReadToEnd ();
 			line = line.Replace ("\r\n", "\n");
+			string solutionDir = Path.GetDirectoryName (file);
 
 			List<TargetInfo> solutionTargets = new List<TargetInfo> ();
 			Dictionary<Guid, ProjectInfo> projectInfos = new Dictionary<Guid, ProjectInfo> ();
@@ -110,7 +111,8 @@ namespace Mono.XBuild.CommandLine {
 				projectInfos.Add (new Guid (m.Groups[4].Value), projectInfo);
 
 				Project currentProject = p.ParentEngine.CreateNewProject ();
-				currentProject.Load (projectInfo.FileName.Replace ('\\', Path.DirectorySeparatorChar));
+				currentProject.Load (Path.Combine (solutionDir,
+							projectInfo.FileName.Replace ('\\', Path.DirectorySeparatorChar)));
 
 				foreach (BuildItem bi in currentProject.GetEvaluatedItemsByName ("ProjectReference")) {
 					string projectReferenceGuid = bi.GetEvaluatedMetadata ("Project");

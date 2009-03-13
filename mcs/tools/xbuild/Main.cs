@@ -108,7 +108,10 @@ namespace Mono.XBuild.CommandLine {
 
 				project.Load (projectFile);
 				
+				string oldCurrentDirectory = Environment.CurrentDirectory;
+				Directory.SetCurrentDirectory (Path.GetDirectoryName (projectFile));
 				result = engine.BuildProject (project, parameters.Targets, null);
+				Directory.SetCurrentDirectory (oldCurrentDirectory);
 			}
 			
 			catch (InvalidProjectFileException ipfe) {

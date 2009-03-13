@@ -1,3 +1,10 @@
+2009-03-13  Ankit Jain  <jankit@novell.com>
+
+	* Main.cs (Execute): Build the project/sln with current directory set to
+	the project file's dir.
+	* SolutionParser.cs (ParseSolution): Project paths are relative to
+	solution directory.
+
 2009-03-06  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #481336.
