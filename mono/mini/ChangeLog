@@ -1,3 +1,8 @@
+2009-03-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_line_number_info): Fix eglib build as eglib doesn't
+	implement GArray.
+
 2009-03-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (emit_line_number_info): Optimize the computation of the
