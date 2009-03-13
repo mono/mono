@@ -846,6 +846,14 @@ namespace System.Xml {
 			return value.ToString (format, CultureInfo.InvariantCulture);
 		}
 #endif
+
+		// it is used only from 2.1 System.Xml.Serialization.dll from
+		// MS Silverlight SDK. We don't use it so far.
+		internal Uri ToUri (string s)
+		{
+			return new Uri (s, UriKind.RelativeOrAbsolute);
+		}
+
 #endif
 	}
 }

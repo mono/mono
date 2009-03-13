@@ -1,3 +1,8 @@
+2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : added ToUri() (extraneous in 2.0; used only from
+	  2.1 S.X.Serialization.dll in MS SDK).
+
 2009-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* XmlReader.cs, XmlTextReader.cs, XmlTextReader2.cs,
