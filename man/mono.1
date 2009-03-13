@@ -503,14 +503,45 @@ addr2line utility that comes from the binutils package).
 .PP
 The
 .I logging profiler
-will eventually replace the default profiler as it is more complete
-and encompasses the functionality of all the other profilers for Mono.
-It supports the following execution modes:
+is a general purpose profiler that can track many different kinds of
+events and logs those into a file as the program executes.   This is
+different than previous profilers in Mono that kept the information in
+memory and rendered a summary of the results when the program shut
+down.
+.PP
+Using the logging profiler means that useful information can be
+gathered for long-running applications, applications that terminate
+abormally (crashes, segfaults, complicated tear down processes) or
+when no data about the shutdown is required.
+.PP
+The data collected by the running threads is kept independent of each
+other to minimize the runtime overhead and the information dumped into
+the log at regular intervals. 
+.PP
+A sample use is very simple:
+.nf
+	$ mono --profile=logging program.exe
+
+	$ mprof-decoder program.mprof
+.fi
+.PP
+In the above example the logging profiler is used in its default mode
+that merely records GC statistics for the execution of program.exe.
+The profiling data collected is stored in the file program.mprof.  The
+mprof-decoder tool is then used to analyze the data.
+.PP
+You can instruct the logging profiler to record different one or more
+sets of events.   These are the modes supported:
 .IP
-.I Statistical:
-the program instruction pointer is periodically sampled (it works also with
-unmanaged functions). If call chains are requested, for each sample the
-profiler gets a partial stack trace (up to a desired depth) so that
+.I Statistical Profiling (stat)
+the program instruction pointer is periodically sampled to determine
+where the program is spending most of its time.   Statistical
+profiling has a very low impact on a running application and it is
+very useful to get a general picture of where time is being spent on a
+program.   
+.IP 
+If call chains are requested, for each sample the profiler gets a
+partial stack trace (limited by the specified depth) so that
 caller-callee information is available.
 .IP
 .I Instrumenting:
@@ -536,16 +567,6 @@ Moreover, other events can be logged and analyzed, like jit time for each
 method, load and unload for assemblies, modules and and individual classes,
 and appdomain and thread creation and destruction.
 .PP
-Instead of reporting the collected
-information at the end of the execution of the program, this profiler logs
-all the events periodically into a file during program execution.
-To minimize the performance impact with multi-threaded applications,
-the logging uses per-thread buffers that are routinely saved to disk.
-.PP
-The output file contains compressed events, to process the data you should
-use tools like the "Mono.Profiler" tool provided on the Mono SVN
-repository.  
-.PP
 This profiler is activated passing the \fB--profile=logging\fR option to
 the mono runtime, and is controlled attaching further options, like
 \fB--profile=logging:statistical\fR for doing statistical profiling (multiple
@@ -553,17 +574,16 @@ options are separated by commas).
 .PP
 As a quick primer, here are a few examples of the most common usage modes:
 .PP
-To write the resulting data to "mydata.mprof" (defaults to statistical
-profiling):
+To perform statistical profiling:
 .nf
 
-	mono --profile=logging:output=mydata.mprof program.exe
+	mono --profile=logging:stat program.exe
 .fi
 .PP
 To perform statistical profiling, inspecting call chains up to depth 8:
 .nf
 
-	mono --profile=logging:statistical=8 program.exe
+	mono --profile=logging:stat=8 program.exe
 .fi
 .PP
 To profile allocations (by default the call stack will be analized for
@@ -584,41 +604,34 @@ To perform heap profiling taking heap snapshots:
 .nf
 
 	mono --profile=logging:heap=all program.exe
-	mono --profile=logging:heap=<signal> program.exe
 .fi
+.PP
+To write the resulting data to a different file:
+.nf
 
-If "all" is specified, a heap snapshot is taken at each collection.
-If, instead, a signal name or number is given (one of SIGUSR1, SIGUSR2 and
-SIGPROF, remembering that SIGPROF is not compatible with the statistical
-profiler), a garbage collection is forced and a snapshot is taken every
-time the signal is received.
-Heap profiling also enables full allocation profiling (with call stacks),
-and each allocation can be related to its corresponding object in the
-snapshots, enabling investigations like "find all objects of a given class
-allocated by a given method and still live at a given collection, and then
-find all objects referencing them".
-
+	mono --profile=logging:output=mydata.mprof program.exe
+.fi
 .PP
 Then you would need to invoke the decoder \fImprof-decoder(1)\fR
 on the output file to see the profiling results, or to examine heap
 snapshots and allocations in detail \fImprof-heap-viewer(1)\fR.
-
 .PP
 The operating modes described above are the default ones, and are sufficient
 to use the profiler.
 .PP
 To further customize the profiler behavior there are more options, described
 below.
-These options can be individually enabled and disabled prefixing them with
-an (optional) '+' character or a '-' character.
-For instance, the "allocations" option by default records also the full call
-stack at each allocation.
-If only the caller is wanted, one should use "allocations,-save-allocation-stack",
-or to disable call tracking completely (making the profiler less intrusive)
-"allocations,-save-allocation-caller,-save-allocation-stack".
-In practice the "allocation" option by default behaves like
-"allocations,save-allocation-caller,save-allocation-stack", but the user can
-tune this to his needs.
+.PP
+These options can be individually enabled and disabled prefixing them
+with an (optional) '+' character or a '-' character.  For instance,
+the "allocations" option by default records also the full call stack
+at each allocation.  If only the caller is wanted, one should use
+"allocations,-save-allocation-stack", or to disable call tracking
+completely (making the profiler less intrusive)
+"allocations,-save-allocation-caller,-save-allocation-stack".  In
+practice the "allocation" option by default behaves like
+"allocations,save-allocation-caller,save-allocation-stack", but the
+user can tune this to his needs.
 .PP
 These are all the available options, organized by category:
 .PP
@@ -687,19 +700,34 @@ the summarized data broken down by class).
 \fIgc\fR or \fIg\fR
 Measure the time spent in each collection, and also trace heap resizes.
 .TP
-\fIheap-shot\fR, \fIheap\fR or \fIh\fR
+\fIheap-shot[=ARG]\fR, \fIheap[=ARG]\fR or \fIh[=ARH]\fR
 Performs full heap profiling.   In this case on each
 collection a full heap snapshot is recorded to disk.
 Inside the snapshots, each object reference is still represented so
 that it's possible to investigate who is responsible for keeping objects
 alive.
 .PP
-The actual production of heap snapshots could produce large log files,
-so it can be controlled in three ways:
+If the value of ARG is 
+.B all, 
+a heap snapshot is taken at each collection.  
+.PP
+If the value is signal name or a number (one of SIGUSR1, SIGUSR2 and
+SIGPROF, remembering that SIGPROF is not compatible with the
+statistical profiler), a garbage collection is forced and a snapshot
+is taken every time the signal is received.
+.PP
+Heap profiling also enables full allocation profiling (with call
+stacks), and each allocation can be related to its corresponding
+object in the snapshots, enabling investigations like "find all
+objects of a given class allocated by a given method and still live at
+a given collection, and then find all objects referencing them".
+.PP
+The heap shot log can be further customized with the following
+options: 
 .TP
 \fIgc-dumps=N\fR, \fIgc-d=N\fR, \fIgcd=N\fR
 states the number of snapshots that must be dumped (since the application
-starts). Zero means no dumps at all, -1 means dump at all collections.
+starts).  Zero means no dumps at all, -1 means dump at all collections.
 .TP
 \fIgc-signal=<signal>\fR, \fIgc-s\fR or \fIgcs\fR
 (where <signal> is one of "SIGUSR1", "SIGUSR2", or "SIGPROF")
@@ -773,10 +801,9 @@ This defaults to wbs=1024.
 .ne
 .RE
 .PP
-In its current state, this profiler can also perform heap analysis (like
-heap-shot), and the decoder is already able to read the data, however
-the user interface for this feature is experimental (the
-\fImprof-heap-viewer\fR tool in the mono-tools module).
+In its current state, this profiler can also perform heap analysis
+like the HeapShot profiler, but there is no UI to process this
+information. 
 .PP
 Another known issue is that if the timer is not strictly monotonic (like
 rtdsc), differences between times can underflow (they are handled as
@@ -785,6 +812,10 @@ unsigned integers) and weird numbers can show up in the logs.
 Finally, it can happen that when exceptions are thrown the profiler temporarily
 loses track of the execution stack and misattributes the caller for a few
 allocations (and method execution time).
+.PP
+The output file contains compressed events, to process the data you should
+use tools like the "Mono.Profiler" tool provided on the Mono SVN
+repository.  
 .PP
 More explanations are provided here: "http://www.mono-project.com/LoggingProfiler".
 .SH EXTERNAL PROFILERS
