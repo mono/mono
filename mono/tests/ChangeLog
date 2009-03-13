@@ -1,3 +1,8 @@
+2009-03-13  Mark Probst  <mark.probst@gmail.com>
+
+	* coreclr-security.exe: Added a test for calling via a
+	MANAGED_TO_MANAGED wrapper.
+
 2009-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* custom-attr.cs: Add a test for #483247.
