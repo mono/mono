@@ -1,5 +1,10 @@
 2009-03-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c (emit_line_number_info): Disable an assert which seems to
+	trigger randomly.
+
+	* aot-compiler.c: Get rid of xdebug_lock (), use the loader lock instead.
+	
 	* dwarfwriter.c (emit_line_number_info): Fix eglib build as eglib doesn't
 	implement GArray.
 
