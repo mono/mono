@@ -1,7 +1,11 @@
 2009-03-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Small cleanup and add comment for IAT directory entry. 
+
+2009-03-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify the data pointed by the import table. 
-	
+
 2009-03-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (load_data_directories): Store data
