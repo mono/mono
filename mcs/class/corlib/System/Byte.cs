@@ -170,7 +170,7 @@ namespace System
 
 		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return System.Convert.ToType (m_value, type, provider);
+			return System.Convert.ToType (m_value, type, provider, false);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)

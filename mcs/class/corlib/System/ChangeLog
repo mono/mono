@@ -1,7 +1,24 @@
+2009-03-14  Miguel de Icaza  <miguel@novell.com>
+
+	* Convert.cs (ToType): Control whether this internal function will
+	call an IConvertible.ToType method or not.  
+
+	Classes and structs implementing IConvertible in mscorlib (the
+	only callers that can access Convert.ToType) must pass false to
+	avoid a infinite recursion problem and callers from the public
+	Convert API must call it with true.
+
+	This fixes the regression reported in #485377 that was introduced
+	by the fix for #481687.
+
+	* Int16.cs, UInt64.cs, Double.cs, Enum.cs, SByte.cs, UInt16.cs,
+	Byte.cs, Decimal.cs, Int32.cs, String.cs, Int64.cs, Char.cs,
+	Boolean.cs, Single.cs, UInt32.cs: Update the call sites.
+
 2009-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
-	* Convert.cs: Do not throw InvalidCastException if IConvertible.ToType
-	returns null.
+	* Convert.cs: Do not throw InvalidCastException if
+	IConvertible.ToType returns null.
 
 2009-03-06  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
@@ -13,7 +30,7 @@
 	IConvertible.ToType if there are no other possible conversions
 	defined. 
 
-	Fixes: #481687
+	Fixes: #481687 
 
 2009-03-06  Rodrigo Kumpera  <rkumpera@novell.com>
 

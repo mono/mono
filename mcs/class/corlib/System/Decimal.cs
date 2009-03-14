@@ -1239,7 +1239,7 @@ namespace System
 
 		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return Convert.ToType (this, type, provider);
+			return Convert.ToType (this, type, provider, false);
 		}
 
 		bool IConvertible.ToBoolean (IFormatProvider provider)

@@ -4613,6 +4613,17 @@ namespace MonoTests.System {
 			AssertNotNull ("#C1", c3);
 			AssertEquals ("#C2", 3, c3);
 		}
+
+		// This is a simple and happy struct.
+		struct Foo {
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))]
+		public void ChangeType_ShouldThrowOnString ()
+		{
+			Foo f = (Foo) Convert.ChangeType ("this-is-a-string", typeof (Foo));
+		}
 	}
 
 	public class Image
