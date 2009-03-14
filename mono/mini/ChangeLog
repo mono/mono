@@ -1,3 +1,8 @@
+2009-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* local-propagation.c (reg_is_softreg_no_fpstack): Use >= instead of
+	> so it works on the first vreg as well.
+
 2009-03-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (emit_line_number_info): Disable an assert which seems to
