@@ -1,3 +1,10 @@
+2009-03-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (load_data_directories): Store data
+	directory contents.
+
+	* metadata-verify.c: Verify the import table. 
+
 2009-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify data directories.
