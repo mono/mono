@@ -445,18 +445,54 @@ namespace Mono.Data.Tds.Protocol
 			TdsColumnType colType = param.GetMetaType ();
 			param.IsNullable = false;
 
-			Comm.Append ((byte)colType); // type
-
+			bool partLenType = false;
 			int size = param.Size;
-			if (size == 0)
+			if (size < 1) {
+				if (size < 0)
+					partLenType = true;
 				size = param.GetActualSize ();
+			}
 
-			/*
-			  If column type is SqlDbType.NVarChar the size of parameter is multiplied by 2
-			  FIXME: Need to check for other types
+			// Change colType according to the following table
+			/* 
+			 * Original Type	Maxlen		New Type 
+			 * 
+			 * NVarChar		4000 UCS2	NText
+			 * BigVarChar		8000 ASCII	Text
+			 * BigVarBinary		8000 bytes	Image
+			 * 
 			 */
-			if (colType == TdsColumnType.BigNVarChar)
+			TdsColumnType origColType = colType;
+			if (colType == TdsColumnType.BigNVarChar) {
+				if (partLenType) 
+					size >>= 1;
+				if (size > 4000)
+					colType = TdsColumnType.NText;
 				size <<= 1;
+			} else if (colType == TdsColumnType.BigVarChar) {
+				if (size > 8000)
+					colType = TdsColumnType.Text;	
+			} else if (colType == TdsColumnType.BigVarBinary) {
+				if (size > 8000)
+					colType = TdsColumnType.Image;
+			}
+			// Calculation of TypeInfo field
+			/* 
+			 * orig size value		TypeInfo field
+			 * 
+			 * >= 0 <= Maxlen		origColType + content len
+			 * > Maxlen		NewType as per above table + content len
+			 * -1		origColType + USHORTMAXLEN (0xFFFF) + content len (TDS 9)
+			 * 
+			 */
+			// Write updated colType, iff partLenType == false
+			if (TdsVersion > TdsVersion.tds81 && partLenType) {
+				Comm.Append ((byte)origColType);
+				Comm.Append ((short)-1);
+			} else {
+				Comm.Append ((byte)colType);
+			}
+			
 			if (IsLargeType (colType))
 				Comm.Append ((short)size); // Parameter size passed in SqlParameter
 			else if (IsBlobType (colType))

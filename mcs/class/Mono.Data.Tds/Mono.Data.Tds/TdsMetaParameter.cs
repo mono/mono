@@ -184,7 +184,7 @@ namespace Mono.Data.Tds {
 			if (newValue == DBNull.Value || newValue == null)
 				return newValue;
 
-			if (!isSizeSet || size == 0)
+			if (!isSizeSet || size <= 0)
 				return newValue;
 
 			// if size is set, truncate the value to specified size

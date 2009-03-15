@@ -1,3 +1,8 @@
+2009-03-14  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Tds70.cs (WriteParameterInfo): Handle scenarios of Partlentype, 
+	a TDS 9 feature.
+	
 2009-03-04  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* TdsComm.cs (Append (*)): Do not create temporary byte arrays, 
