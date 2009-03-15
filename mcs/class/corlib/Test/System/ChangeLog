@@ -1,3 +1,7 @@
+2009-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConvertTest.cs: Avoid false positive in ChangeType test. 
+
 2009-03-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConvertTest.cs: Merged and improved test for bug #481687.

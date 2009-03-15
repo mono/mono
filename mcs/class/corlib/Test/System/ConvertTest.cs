@@ -4622,7 +4622,7 @@ namespace MonoTests.System {
 		[ExpectedException (typeof (InvalidCastException))]
 		public void ChangeType_ShouldThrowOnString ()
 		{
-			Foo f = (Foo) Convert.ChangeType ("this-is-a-string", typeof (Foo));
+			Convert.ChangeType ("this-is-a-string", typeof (Foo));
 		}
 	}
 
