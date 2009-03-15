@@ -1,3 +1,13 @@
+2009-03-04  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* TdsComm.cs (Append (*)): Do not create temporary byte arrays, 
+	instead manipulate directly. Saves quite a bit of allocations 
+	and improves performance.
+	(AppendInternal) : Do the math here.
+	(TdsByteOrder) : Property that indicates the byte-order-encoding which, 
+	is independent of host's byte-order-encoding.
+	(SendPhysicalPacket): Add packet-id to the header
+	
 2009-02-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Tds.cs (ProcessLoginAck): Set TdsVersion to the version
