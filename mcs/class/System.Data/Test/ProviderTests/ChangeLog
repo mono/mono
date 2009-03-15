@@ -1,3 +1,9 @@
+2009-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* app-net_1.1.config: Added ClientVersion to Engine section. Added
+	SQL Server 2000 config.
+	* app-net_2.0.config: Spaces to tabs.
+
 2009-02-02  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* app-net_2.0.config: Added ClientVersion to Engine section
