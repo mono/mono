@@ -137,7 +137,7 @@ namespace System.Windows.Forms {
 
 		public override string ToString ()
 		{
-			return this.GetType().Name;
+			return string.Format ("DataGridViewTextBoxCell {{ ColumnIndex={0}, RowIndex={1} }}", ColumnIndex, RowIndex);
 		}
 
 		protected override Rectangle GetContentBounds (Graphics graphics, DataGridViewCellStyle cellStyle, int rowIndex)

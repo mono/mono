@@ -1,3 +1,9 @@
+2009-03-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewCell.cs: Escape literal { in ToString.
+	* DataGridViewTextBoxCell.cs: Fix ToString.
+	[Fixes bug #484923]
+
 2009-03-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MenuAPI.cs: When navigating items using the keyboard properly handle

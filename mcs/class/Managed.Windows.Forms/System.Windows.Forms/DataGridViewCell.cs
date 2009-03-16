@@ -716,7 +716,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString () {
-			return String.Format("{0} {RowIndex = {1}, ColumnIndex = {2}}", this.GetType().FullName, RowIndex, columnIndex);
+			return String.Format("{0} {{ ColumnIndex={1}, RowIndex={2} }}", this.GetType().Name, ColumnIndex, RowIndex);
 		}
 
 		protected virtual Rectangle BorderWidths (DataGridViewAdvancedBorderStyle advancedBorderStyle)
