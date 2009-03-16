@@ -169,6 +169,21 @@ namespace System.Xml.Schema
 			return false;
 		}
 
+		public static bool AreSchemaDatatypeEqual (XmlSchemaSimpleType st1, object v1, XmlSchemaSimpleType st2, object v2)
+		{
+			if (st1.Datatype is XsdAnySimpleType)
+				return AreSchemaDatatypeEqual (st1.Datatype as XsdAnySimpleType, v1, st2.Datatype as XsdAnySimpleType, v2);
+			// otherwise the types are lists of strings.
+			string [] a1 = v1 as string [];
+			string [] a2 = v2 as string [];
+			if (st1 != st2 || a1 == null || a2 == null || a1.Length != a2.Length)
+				return false;
+			for (int i = 0; i < a1.Length; i++)
+				if (a1 [i] != a2 [i])
+					return false;
+			return true;
+		}
+
 		public static bool AreSchemaDatatypeEqual (XsdAnySimpleType st1, object v1,
 			XsdAnySimpleType st2, object v2)
 		{

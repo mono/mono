@@ -835,7 +835,7 @@ namespace System.Xml.Schema
 
 				if (attr.ValidatedFixedValue != null && 
 					!XmlSchemaUtil.AreSchemaDatatypeEqual (
-					attr.AttributeSchemaType.Datatype as XsdAnySimpleType, attr.ValidatedFixedTypedValue, dt as XsdAnySimpleType, parsedValue)) {
+					attr.AttributeSchemaType, attr.ValidatedFixedTypedValue, attr.AttributeSchemaType, parsedValue)) {
 					HandleError (String.Format ("The value of the attribute {0} does not match with its fixed value '{1}' in the space of type {2}", attr.QualifiedName, attr.ValidatedFixedValue, dt));
 					parsedValue = attr.ValidatedFixedTypedValue;
 				}

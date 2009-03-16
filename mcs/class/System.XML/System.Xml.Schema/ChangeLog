@@ -1,5 +1,10 @@
 2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaUtil.cs, XmlSchemaValidator.cs : predefined non-primitive
+	  xml schema types now validate fixed values as expected.
+
+2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BuiltInDatatype.cs, XmlSchemaDatatype.cs : some equality comparison
 	  failed because it anyType is not used as singleton.
 
