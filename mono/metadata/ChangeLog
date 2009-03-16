@@ -1,5 +1,9 @@
 2009-03-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* console-io.c: the termios values may vary in different flavors of unix.
+
+2009-03-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* console-io.[ch]: return the entire set of control characters when
 	initializing the terminal.
 	* appdomain.c: bump corlib version.
