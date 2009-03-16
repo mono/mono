@@ -1632,9 +1632,18 @@ namespace System.Xml
 			}
 			parserInputStack.Push (currentInput);
 			Stream s = null;
+			MemoryStream ms = new MemoryStream ();
 			try {
 				s = DTD.Resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
-				currentInput = new XmlParserInput (new XmlStreamReader (s), absPath);
+				int size;
+				byte [] buf = new byte [4096];
+				do {
+					size = s.Read (buf, 0, buf.Length);
+					ms.Write (buf, 0, size);
+				} while (size > 0);
+				s.Close ();
+				ms.Position = 0;
+				currentInput = new XmlParserInput (new XmlStreamReader (ms), absPath);
 			} catch (Exception ex) { // FIXME: (wishlist) Bad exception catch ;-(
 				if (s != null)
 					s.Close ();
