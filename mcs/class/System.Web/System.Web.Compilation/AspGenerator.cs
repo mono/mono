@@ -1064,6 +1064,7 @@ namespace System.Web.Compilation
 
 					case TagType.Tag:
 					case TagType.SelfClosing:
+					case TagType.Close:
 						if (generator != null)
 							generator.TagParsed (location, tagtype, tagid, attributes);
 						else
