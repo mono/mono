@@ -1,3 +1,10 @@
+2009-03-15  Steven Munroe  <munroesj@us.ibm.com>
+
+	This patch is contributed under the terms of the MIT/X11 license
+
+	* mkbundle.cs (WriteSymbol): Use .p2align 5 instead of .align 32
+	to get consistent results on all platforms.
+
 2008-02-23  Marek Safar  <marek.safar@gmail.com>
 
 	* mkbundle.cs: Close resources correctly when something goes wrong.

@@ -158,7 +158,7 @@ class MakeBundle {
 			sw.WriteLine (
 				".globl {0}\n" +
 				"\t.section .rodata\n" +
-				"\t.align 32\n" +
+				"\t.p2align 5\n" +
 				"\t.type {0}, @object\n" +
 				"\t.size {0}, {1}\n" +
 				"{0}:\n",
