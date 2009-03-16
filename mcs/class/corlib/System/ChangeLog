@@ -2,7 +2,7 @@
 
 	* ConsoleDriver.cs:
 	* TermInfoDriver.cs: handle Ctrl-D (or similar) in ReadLine.
-	Fixes bug #483268.
+	Fixes bug #483950.
 
 	* ControlCharacters.cs: index to the control characters list.
 	* Environment.cs: bumped corlib version.
