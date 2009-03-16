@@ -853,7 +853,7 @@ namespace System.Xml
 		public virtual bool ReadToFollowing (string localName, string namespaceURI)
 		{
 			while (Read ())
-				if (NodeType == XmlNodeType.Element && localName == Name && namespaceURI == NamespaceURI)
+				if (NodeType == XmlNodeType.Element && localName == LocalName && namespaceURI == NamespaceURI)
 					return true;
 			return false;
 		}

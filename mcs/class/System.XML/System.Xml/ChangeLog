@@ -1,5 +1,10 @@
 2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReader.cs : (ReadToFollowing) check LocalName, not Name.
+	  Fixed bug #478506.
+
+2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DTDRreader.cs : read up all DTD stream so that we don't have to
 	  see bugs like #469317 many times.
 
