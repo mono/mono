@@ -3,6 +3,11 @@
 	* AspGenerator.cs: when parsing nested tags (includes tags inside
 	client-side javascript script blocks) pass the closing tag up to
 	the containing parser.
+	Instead of parsing the whole plain text contents, plus the two
+	constructs we're interested in from it using regexs. This is
+	necessary as we might be passed JavaScript code and without
+	understanding its syntax we'll confuse the '<' character for the
+	start of a tag.
 
 2009-03-12  Marek Habersack  <mhabersack@novell.com>
 
