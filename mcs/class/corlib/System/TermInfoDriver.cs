@@ -58,7 +58,6 @@ namespace System {
 		string term;
 		StreamReader stdin;
 		CStreamWriter stdout;
-		internal byte verase;
 
 		int windowWidth;
 		int windowHeight;
@@ -89,6 +88,7 @@ namespace System {
 		ByteMatcher rootmap;
 		bool home_1_1; // if true, we have to add 1 to x and y when using cursorAddress
 		int rl_startx = -1, rl_starty = -1;
+		byte [] control_characters; // Indexed by ControlCharacters.XXXXXX
 #if DEBUG
 		StreamWriter logger;
 #endif
@@ -206,7 +206,7 @@ namespace System {
 			byte vsusp;
 			byte intr;
 			unsafe {
-				if (!ConsoleDriver.TtySetup (keypadXmit, endString, out verase, out vsusp, out intr, out native_terminal_size))
+				if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size))
 					throw new IOException ("Error initializing terminal.");
 			}
 
@@ -1112,11 +1112,15 @@ namespace System {
 
 			rl_startx = cursorLeft;
 			rl_starty = cursorTop;
+			char eof = control_characters [ControlCharacters.EOF];
 
 			do {
 				key = ReadKeyInternal (out fresh);
 				echo = echo || fresh;
 				c = key.KeyChar;
+				// EOF -> Ctrl-D (EOT) pressed.
+				if (c == eof && c != 0 && builder.Length == 0)
+					return null;
 
 				if (key.Key != ConsoleKey.Enter) {
 					if (key.Key != ConsoleKey.Backspace) {
@@ -1348,7 +1352,7 @@ namespace System {
 			AddStringMapping (TermInfoStrings.KeyDc);
 			AddStringMapping (TermInfoStrings.KeyIc);
 
-			rootmap.AddMapping (TermInfoStrings.KeyBackspace, new byte [] { verase });
+			rootmap.AddMapping (TermInfoStrings.KeyBackspace, new byte [] { control_characters [ControlCharacters.Erase] });
 			rootmap.Sort ();
 			initKeys = true;
 		}

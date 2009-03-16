@@ -121,6 +121,7 @@ System/ConsoleSpecialKey.cs
 System/ContextBoundObject.cs
 System/ContextMarshalException.cs
 System/ContextStaticAttribute.cs
+System/ControlCharacters.cs
 System/Convert.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
