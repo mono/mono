@@ -2,6 +2,7 @@
 
 	* console-io.[ch]: return the entire set of control characters when
 	initializing the terminal.
+	* appdomain.c: bump corlib version.
 
 Mon Mar 16 11:11:26 CET 2009 Paolo Molaro <lupus@ximian.com>
 
