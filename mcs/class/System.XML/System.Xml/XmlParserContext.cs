@@ -156,9 +156,8 @@ namespace System.Xml
 			XmlSpace xmlSpace,
 			Encoding enc)
 		{
-			this.nameTable = nt;
-
 			this.namespaceManager = nsMgr;
+			this.nameTable = nt != null ? nt : nsMgr != null ? nsMgr.NameTable : null;
 			if (dtd != null) {
 				this.DocTypeName = dtd.Name;
 				this.PublicId = dtd.PublicId;

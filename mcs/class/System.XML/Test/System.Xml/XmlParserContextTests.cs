@@ -159,5 +159,17 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual ("", pc.XmlLang, "#B9");
 			Assert.AreEqual (XmlSpace.Preserve, pc.XmlSpace, "#B10");
 		}
+
+		[Test]
+		public void NameTableConstructor ()
+		{
+			NameTable nt = new NameTable ();
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (nt);
+			nsmgr.AddNamespace("Dynamic", "urn:Test");
+			Assert.IsNotNull (new XmlParserContext (nt, nsmgr,
+null, XmlSpace.Default).NameTable, "#1");
+			Assert.IsNotNull (new XmlParserContext (null, nsmgr,
+null, XmlSpace.Default).NameTable, "#2"); // bug #485419
+		}
 	}
 }
