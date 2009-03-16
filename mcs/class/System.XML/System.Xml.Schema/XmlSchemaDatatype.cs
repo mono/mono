@@ -279,7 +279,7 @@ namespace System.Xml.Schema
 			}
 		}
 
-		static readonly XsdAnySimpleType datatypeAnySimpleType = new XsdAnySimpleType ();
+		static readonly XsdAnySimpleType datatypeAnySimpleType =XsdAnySimpleType.Instance;
 		static readonly XsdString datatypeString = new XsdString ();
 		static readonly XsdNormalizedString datatypeNormalizedString = new XsdNormalizedString ();
 		static readonly XsdToken datatypeToken = new XsdToken ();

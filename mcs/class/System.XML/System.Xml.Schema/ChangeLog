@@ -1,3 +1,8 @@
+2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BuiltInDatatype.cs, XmlSchemaDatatype.cs : some equality comparison
+	  failed because it anyType is not used as singleton.
+
 2009-01-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : when xsi:nil is true, do not validate

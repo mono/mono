@@ -78,6 +78,10 @@ namespace Mono.Xml.Schema
 			get { return instance; }
 		}
 
+		protected XsdAnySimpleType ()
+		{
+		}
+
 #if NET_2_0
 		public override XmlTypeCode TypeCode {
 			get { return XmlTypeCode.AnyAtomicType; }
