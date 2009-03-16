@@ -1,3 +1,10 @@
+2009-03-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MenuAPI.cs: When navigating items using the keyboard properly handle
+	the case when no item is selected - this way we should try to select
+	the first or the last item depending on the direction, but no the
+	second or third one, etc.
+
 2209-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Form.cs: When calling ProcessCmdKey, just after checking for any

@@ -526,8 +526,7 @@ namespace System.Windows.Forms {
 
 			case ItemNavigation.Next:
 
-				if (menu.SelectedItem != null)
-					pos = menu.SelectedItem.Index;
+				pos = menu.SelectedItem == null ? - 1 : menu.SelectedItem.Index;
 
 				/* Next item that is not separator and it is visible*/
 				for (pos++; pos < menu.MenuItems.Count; pos++) {
