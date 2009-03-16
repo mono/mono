@@ -67,7 +67,6 @@ scripts_1_0 = \
 	mjs$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
-	mono-xmltool$(SCRIPT_SUFFIX)		\
 	mozroots$(SCRIPT_SUFFIX)		\
 	permview$(SCRIPT_SUFFIX)		\
 	prj2make$(SCRIPT_SUFFIX)		\
@@ -97,6 +96,7 @@ scripts_2_0 = \
 	resgen2$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)			\
 	xsd2$(SCRIPT_SUFFIX)			\
+	mono-xmltool$(SCRIPT_SUFFIX)		\
 	sgen$(SCRIPT_SUFFIX)			\
 	sqlmetal$(SCRIPT_SUFFIX)		\
 	sqlsharp$(SCRIPT_SUFFIX)		\
