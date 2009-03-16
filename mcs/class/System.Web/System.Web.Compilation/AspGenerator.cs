@@ -537,10 +537,12 @@ namespace System.Web.Compilation
 
 			if (0 == String.Compare (tagid, "script", true, CultureInfo.InvariantCulture)) {
 				bool in_script = (inScript || ignore_text);
-				if (in_script || tagtype != TagType.Close) {
-					if ((in_script || (attributes != null && attributes.IsRunAtServer ())) && ProcessScript (tagtype, attributes))
+				if (in_script) {
+					if (ProcessScript (tagtype, attributes))
 						return;
-				}
+				} else
+					if (ProcessScript (tagtype, attributes))
+						return;
 			}
 
 			lastTag = tagtype;

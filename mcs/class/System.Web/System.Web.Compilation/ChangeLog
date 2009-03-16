@@ -8,6 +8,11 @@
 	necessary as we might be passed JavaScript code and without
 	understanding its syntax we'll confuse the '<' character for the
 	start of a tag.
+	TagParsed now better handles <script> tags. For both server and
+	client tags ProcessScript is called and the input text, in case of
+	client tags, is read verbatim to be processed when ProcessScript
+	is called to close the tag. At this point the verbatim text is
+	checked whether it contains server-side tags and/or expressions.
 
 2009-03-12  Marek Habersack  <mhabersack@novell.com>
 
