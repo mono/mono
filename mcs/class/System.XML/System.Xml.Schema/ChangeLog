@@ -1,5 +1,11 @@
 2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : check identities for untyped attributes.
+	  Attribute keyfield test must adjust depth, or it never matches.
+	  Missing braces for IgnoreIdentity test.
+
+2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaUtil.cs, XmlSchemaValidator.cs : predefined non-primitive
 	  xml schema types now validate fixed values as expected.
 

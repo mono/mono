@@ -669,10 +669,11 @@ namespace System.Xml.Schema
 			}
 
 #region Key Constraints
-			if (!IgnoreIdentity)
+			if (!IgnoreIdentity) {
 				ValidateKeySelectors ();
 				ValidateKeyFields (false, xsiNilDepth == depth,
 					Context.ActualType, null, null, null);
+			}
 #endregion
 		}
 
@@ -818,9 +819,11 @@ namespace System.Xml.Schema
 			XsDatatype dt = attr.AttributeType as XsDatatype;
 			if (dt == null)
 				dt = ((SimpleType) attr.AttributeType).Datatype;
+
+			object parsedValue = null;
+
 			// It is a bit heavy process, so let's omit as long as possible ;-)
 			if (dt != SimpleType.AnySimpleType || attr.ValidatedFixedValue != null) {
-				object parsedValue = null;
 				try {
 					CurrentAttributeType = dt;
 					parsedValue = getter ();
@@ -839,28 +842,28 @@ namespace System.Xml.Schema
 					HandleError (String.Format ("The value of the attribute {0} does not match with its fixed value '{1}' in the space of type {2}", attr.QualifiedName, attr.ValidatedFixedValue, dt));
 					parsedValue = attr.ValidatedFixedTypedValue;
 				}
+			}
+
 #region ID Constraints
-				if (!IgnoreIdentity) {
-					string error = idManager.AssessEachAttributeIdentityConstraint (dt, parsedValue, ((QName) elementQNameStack [elementQNameStack.Count - 1]).Name);
-					if (error != null)
-						HandleError (error);
-				}
+			if (!IgnoreIdentity) {
+				string error = idManager.AssessEachAttributeIdentityConstraint (dt, parsedValue, ((QName) elementQNameStack [elementQNameStack.Count - 1]).Name);
+				if (error != null)
+					HandleError (error);
+			}
 #endregion
 
-				#region Key Constraints
-				if (!IgnoreIdentity)
-					ValidateKeyFields (
-						true,
-						false,
-						attr.AttributeType,
-						attr.QualifiedName.Name,
-						attr.QualifiedName.Namespace,
-						getter);
-				#endregion
+#region Key Constraints
+			if (!IgnoreIdentity)
+				ValidateKeyFields (
+					true,
+					false,
+					attr.AttributeType,
+					attr.QualifiedName.Name,
+					attr.QualifiedName.Namespace,
+					getter);
+#endregion
 
-				return parsedValue;
-			}
-			return null;
+			return parsedValue;
 		}
 
 		private void AssessAttributeLocallyValidUse (XsAttribute attr)
@@ -1242,7 +1245,7 @@ namespace System.Xml.Schema
 							schemaType,
 							nsResolver,
 							lineInfo,
-							depth,
+							isAttr ? depth + 1 : depth,
 							attrName,
 							attrNs,
 							getter == null ?
