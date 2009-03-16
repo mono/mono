@@ -414,7 +414,11 @@ Example */
 		[Localizable (true)]
 		public override bool Visible {
 			get { return visible; }
-			set { visible = value; }
+			set {
+				visible = value;
+				if (DataGridView != null)
+					DataGridView.Invalidate ();
+			}
 		}
 
 		[Localizable (true)]

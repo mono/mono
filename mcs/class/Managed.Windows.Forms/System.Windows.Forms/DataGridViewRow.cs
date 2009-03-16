@@ -330,7 +330,13 @@ namespace System.Windows.Forms
 				if (IsNewRow && value == false) {
 					throw new InvalidOperationException("Cant make invisible a new row.");
 				}
+				if (!value && DataGridView != null && DataGridView.DataManager != null && 
+				    DataGridView.DataManager.Position == Index)
+					throw new InvalidOperationException("Row associated with the currency manager's position cannot be made invisible.");
+
 				base.Visible = value;
+				if (DataGridView != null)
+					DataGridView.Invalidate ();
 			}
 		}
 

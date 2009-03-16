@@ -2512,7 +2512,10 @@ namespace System.Windows.Forms {
 			}
 			
 			for (int i = first_row_index; i < Rows.Count; i++) {
-				if (i == rowIndex) {
+				if (!rows[i].Visible)
+					continue;
+					
+				if (rows[i].Index == rowIndex) {
 					h = rows [i].Height;
 					break;
 				}
@@ -2772,13 +2775,17 @@ namespace System.Windows.Forms {
 			if (ColumnHeadersVisible)
 				y += ColumnHeadersHeight;
 
+
 			for (int i = first_row_index; i < Rows.Count; i++) {
-				if (i == rowIndex) {
-					h = rows[i].Height;
+				if (!rows[i].Visible)
+					continue;
+					
+				if (rows[i].Index == rowIndex) {
+					h = rows [i].Height;
 					break;
 				}
-
-				y += rows[i].Height;
+				
+				y += rows [i].Height;
 			}
 
 			return new Rectangle (0, y, Width, h);
@@ -2814,6 +2821,8 @@ namespace System.Windows.Forms {
 			
 			for (int i = first_row_index; i < Rows.Count; i++) {
 				DataGridViewRow row = Rows[i];
+				if (!row.Visible)
+					continue;
 				
 				if (y > top && y <= (top + row.Height)) {
 					rowindex = i;
@@ -3167,6 +3176,8 @@ namespace System.Windows.Forms {
 			}
 			
 			foreach (DataGridViewRow row in Rows) {
+				if (!row.Visible)
+					continue;
 				if (!displayed_only || row.Displayed) {
 					int new_height = row.GetPreferredHeight (row.Index, mode, fixedWidth);
 
@@ -4605,6 +4616,8 @@ namespace System.Windows.Forms {
 			// Draw rows
 			for (int index = first_row_index; index < Rows.Count; index++) {
 				DataGridViewRow row = Rows[index];
+				if (!row.Visible)
+					continue;
 				GetRowInternal (index).DisplayedInternal = true;
 	
 				bounds.Height = row.Height;
@@ -4649,7 +4662,8 @@ namespace System.Windows.Forms {
 					gridWidth += col.Width;
 			
 			foreach (DataGridViewRow row in Rows)
-				gridHeight += row.Height;
+				if (row.Visible)
+					gridHeight += row.Height;
 
 			if (rowHeadersVisible)
 				gridWidth += rowHeadersWidth;
@@ -5619,6 +5633,8 @@ namespace System.Windows.Forms {
 			int top = 0;
 			for (int index = 0; index < Rows.Count; index++) {
 				DataGridViewRow row = Rows[index];
+				if (!row.Visible)
+					continue;
 				if (e.NewValue < top + row.Height) {
 					if (first_row_index != index) {
 						first_row_index = index;
@@ -5783,6 +5799,8 @@ namespace System.Windows.Forms {
 			only_visible = (mode == DataGridViewAutoSizeColumnMode.DisplayedCells || mode == DataGridViewAutoSizeColumnMode.DisplayedCellsExceptHeader);
 			
 			for (int i = first_row; i < Rows.Count; i++) {
+				if (!Rows[i].Visible)
+					continue;
 				if (only_visible) {
 					Rectangle row_rect = this.GetRowDisplayRectangle (i, false);
 					if (!ClientRectangle.IntersectsWith (row_rect))
@@ -5997,6 +6015,34 @@ namespace System.Windows.Forms {
 		{
 			if (x == -1 || y == -1)
 				x = y = -1;
+			else {
+				if (x < 0 || x > Columns.Count - 1)
+					throw new ArgumentOutOfRangeException ("x");
+				if (y < 0 || y > Rows.Count - 1)
+					throw new ArgumentOutOfRangeException ("y");
+
+				if (!Rows[y].Visible) {
+					for (int i = y; i < Rows.Count; i++) {
+						if (Rows[i].Visible) {
+							y = i;
+							break;
+						}
+					}
+				}
+
+				if (!Columns[x].Visible) {
+					for (int i = x; i < Columns.Count; i++) {
+						if (Columns[i].Visible) {
+							x = i;
+							break;
+						}
+					}
+				}
+
+				// in case either no visible columns or rows
+				if (!Rows[y].Visible || !Columns[x].Visible)
+					x = y = -1;
+			}
 
 			if (!SetCurrentCellAddressCore (x, y, true, false, false)) {
 				ClearSelection ();

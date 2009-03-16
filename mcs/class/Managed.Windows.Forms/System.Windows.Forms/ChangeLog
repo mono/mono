@@ -1,5 +1,11 @@
 2009-03-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs, DataGridViewRow.cs, DataGridViewColumn.cs: 
+	Add support for invisible rows and columns.
+	[Fixes bug #484951]
+
+2009-03-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewCell.cs: Escape literal { in ToString.
 	* DataGridViewTextBoxCell.cs: Fix ToString.
 	[Fixes bug #484923]
