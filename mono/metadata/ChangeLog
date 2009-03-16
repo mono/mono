@@ -1,3 +1,8 @@
+2009-03-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* console-io.[ch]: return the entire set of control characters when
+	initializing the terminal.
+
 Mon Mar 16 11:11:26 CET 2009 Paolo Molaro <lupus@ximian.com>
 
 	* mono-perfcounters.c: added support for in-process custom
