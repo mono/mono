@@ -203,8 +203,6 @@ namespace System {
 			if (resetColors != null)
 				endString += resetColors;
 
-			byte vsusp;
-			byte intr;
 			unsafe {
 				if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size))
 					throw new IOException ("Error initializing terminal.");
@@ -1112,7 +1110,7 @@ namespace System {
 
 			rl_startx = cursorLeft;
 			rl_starty = cursorTop;
-			char eof = control_characters [ControlCharacters.EOF];
+			char eof = (char) control_characters [ControlCharacters.EOF];
 
 			do {
 				key = ReadKeyInternal (out fresh);
