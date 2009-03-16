@@ -1,3 +1,11 @@
+2009-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (get_generic_info_from_stack_frame): Avoid returning
+	a managed object which is later put into a GList. Return its class instead.
+
+	* mini.c (mono_allocate_stack_slots_full): Avoid sharing ref and non-ref
+	stack slots when using sgen.
+
 2009-03-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (emit_line_number_info): Really fix the eglib build.
