@@ -1,3 +1,8 @@
+2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : only bogus v1 XmlTextWriter ignores null
+	  namespace for conflict check. Fixed bug #479725.
+
 2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : added ToUri() (extraneous in 2.0; used only from

@@ -376,6 +376,16 @@ namespace MonoTests.System.Xml
 			Assert.IsFalse (ms.CanWrite, "#B3");
 		}
 
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void CreateWriter_AttributeNamespacesXmlnsXmlns ()
+		{
+			// Unlike XmlTextWriter, null namespace is not ignored.
+			XmlWriter w = XmlWriter.Create (new StringWriter ());
+			w.WriteStartElement ("foo");
+			w.WriteAttributeString ("xmlns", "xmlns", null, "http://abc.def");
+		}
+
 		XmlWriter CreateWriter (TextWriter tw)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();

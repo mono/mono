@@ -239,6 +239,8 @@ namespace Mono.Xml
 
 		char quote_char = '"';
 
+		bool v2;
+
 		// Constructors
 
 		public XmlTextWriter (string filename, Encoding encoding)
@@ -265,6 +267,8 @@ namespace Mono.Xml
 		internal XmlTextWriter (
 			TextWriter writer, XmlWriterSettings settings, bool closeOutput)
 		{
+			v2 = true;
+
 			if (settings == null)
 				settings = new XmlWriterSettings ();
 
@@ -963,12 +967,19 @@ namespace Mono.Xml
 						throw ArgumentError ("Non-empty prefix must be mapped to non-empty namespace URI.");
 					string existing = nsmanager.LookupNamespace (preserved_name, false);
 					explicit_nsdecls.Add (preserved_name);
-					if (open_count > 0 &&
-					    elements [open_count - 1].NS == String.Empty &&
-					    elements [open_count - 1].Prefix == preserved_name)
-						; // do nothing
-					else if (existing != value)
-						nsmanager.AddNamespace (preserved_name, value);
+					if (open_count > 0) {
+
+						if (v2 &&
+						    elements [open_count - 1].Prefix == preserved_name &&
+						    elements [open_count - 1].NS != value)
+							throw new XmlException (String.Format ("Cannot redefine the namespace for prefix '{0}' used at current element", preserved_name));
+
+						if (elements [open_count - 1].NS == String.Empty &&
+						    elements [open_count - 1].Prefix == preserved_name)
+						    	; // do nothing
+						else if (existing != value)
+							nsmanager.AddNamespace (preserved_name, value);
+					}
 				} else {
 					switch (preserved_name) {
 					case "lang":
