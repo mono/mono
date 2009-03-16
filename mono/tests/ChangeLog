@@ -1,3 +1,11 @@
+2009-03-15  Steven Munroe  <munroesj@us.ibm.com>
+
+	Backport of r129461.
+	
+	This patch is contributed under the terms of the MIT/X11 license
+
+	* Makefile.am (test_platform): Enable testbundle for ppc.
+
 2009-03-09  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-479763.2.cs: New test.
