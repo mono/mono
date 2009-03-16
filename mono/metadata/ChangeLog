@@ -1,3 +1,9 @@
+
+Mon Mar 16 11:11:26 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* mono-perfcounters.c: added support for in-process custom
+	performance counters.
+
 2009-03-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Small cleanup and add comment for IAT directory entry. 
