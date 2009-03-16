@@ -40,6 +40,7 @@ options:
 	--validate-rnc relax-ng-compact-grammar-file [instances]
 	--validate-nvdl nvdl-script-xml [instances]
 	--validate-xsd xml-schema [instances]
+	--validate-xsd2 xml-schema [instances] (in .NET 2.0 validator)
 	--validate-dtd instances
 	--transform stylesheet instance-xml [output-xml]
 	--prettyprint [source] [result]
@@ -76,6 +77,9 @@ environment variable that affects behavior:
 				ValidateNvdl (args);
 				return;
 #endif
+			case "--validate-xsd2":
+				ValidateXsd2 (args);
+				return;
 			case "--validate-xsd":
 				ValidateXsd (args);
 				return;
@@ -182,6 +186,19 @@ environment variable that affects behavior:
 				while (!xvr.EOF)
 					xvr.Read ();
 				xvr.Close ();
+			}
+		}
+
+		static void ValidateXsd2 (string [] args)
+		{
+			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ValidationType = ValidationType.Schema;
+			s.Schemas.Add (null, args [1]);
+			for (int i = 2; i < args.Length; i++) {
+				XmlReader xr = XmlReader.Create (args [i], s);
+				while (!xr.EOF)
+					xr.Read ();
+				xr.Close ();
 			}
 		}
 

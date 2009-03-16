@@ -1,3 +1,8 @@
+2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xmltool.cs: added --validate-xsd2 option to validate with xsd
+	  but with new validator in 2.0.
+
 2009-02-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xmltool.cs : Enabled new error recovery feature in RELAX NG
