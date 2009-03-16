@@ -1,3 +1,7 @@
+2009-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_line_number_info): Really fix the eglib build.
+
 2009-03-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* local-propagation.c (reg_is_softreg_no_fpstack): Use >= instead of
