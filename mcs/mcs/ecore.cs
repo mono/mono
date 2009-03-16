@@ -1720,7 +1720,7 @@ namespace Mono.CSharp {
 			//
 			// This works only sometimes
 			//
-			if (type.Module == CodeGen.Module.Builder)
+			if (type.Module == RootContext.ToplevelTypes.Builder)
 				return Child.GetValue ();
 #endif
 

@@ -643,7 +643,7 @@ attribute_sections
 
 			if (global_attrs_enabled) {
 				if (current_attr_target == "module") {
-					CodeGen.Module.AddAttributes (sect);
+					current_container.Module.AddAttributes (sect);
 					$$ = null;
 				} else if (current_attr_target != null && current_attr_target.Length > 0) {
 					CodeGen.Assembly.AddAttributes (sect);
@@ -674,7 +674,7 @@ attribute_sections
 
 			if (global_attrs_enabled) {
 				if (current_attr_target == "module") {
-					CodeGen.Module.AddAttributes (sect);
+					current_container.Module.AddAttributes (sect);
 					$$ = null;
 				} else if (current_attr_target == "assembly") {
 					CodeGen.Assembly.AddAttributes (sect);

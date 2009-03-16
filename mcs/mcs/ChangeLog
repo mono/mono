@@ -1,3 +1,10 @@
+2009-03-16  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, decl.cs, roottypes.cs, anonymous.cs, nullable.cs,
+	expression.cs, rootcontext.cs, namespace.cs, ecore.cs, class.cs,
+	delegate.cs, flowanalysis.cs, cs-parser.jay, driver.cs,
+	attribute.cs, codegen.cs: Changed RootTypes to be ModuleContainer.
+
 2009-03-11  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #482996

@@ -4961,7 +4961,7 @@ namespace Mono.CSharp {
 				return false;
 
 			method = TypeManager.DropGenericMethodArguments (method);
-			if (method.DeclaringType.Module == CodeGen.Module.Builder) {
+			if (method.DeclaringType.Module == RootContext.ToplevelTypes.Builder) {
 				IMethodData md = TypeManager.GetMethod (method);
 				if (md != null)
 					return md.IsExcluded ();
@@ -6045,7 +6045,7 @@ namespace Mono.CSharp {
 
 		MethodInfo GetArrayMethod (int arguments)
 		{
-			ModuleBuilder mb = CodeGen.Module.Builder;
+			ModuleBuilder mb = RootContext.ToplevelTypes.Builder;
 
 			Type[] arg_types = new Type[arguments];
 			for (int i = 0; i < arguments; i++)
@@ -6283,8 +6283,8 @@ namespace Mono.CSharp {
 				for (int j = 0; j < dims; j++)
 					args [j] = TypeManager.int32_type;
 				args [dims] = array_element_type;
-				
-				set = CodeGen.Module.Builder.GetArrayMethod (
+
+				set = RootContext.ToplevelTypes.Builder.GetArrayMethod (
 					type, "Set",
 					CallingConventions.HasThis | CallingConventions.Standard,
 					TypeManager.void_type, args);
@@ -8038,7 +8038,7 @@ namespace Mono.CSharp {
 
 		MethodInfo FetchGetMethod ()
 		{
-			ModuleBuilder mb = CodeGen.Module.Builder;
+			ModuleBuilder mb = RootContext.ToplevelTypes.Builder;
 			int arg_count = ea.Arguments.Count;
 			Type [] args = new Type [arg_count];
 			MethodInfo get;
@@ -8059,7 +8059,7 @@ namespace Mono.CSharp {
 
 		MethodInfo FetchAddressMethod ()
 		{
-			ModuleBuilder mb = CodeGen.Module.Builder;
+			ModuleBuilder mb = RootContext.ToplevelTypes.Builder;
 			int arg_count = ea.Arguments.Count;
 			Type [] args = new Type [arg_count];
 			MethodInfo address;
@@ -8179,7 +8179,7 @@ namespace Mono.CSharp {
 					}
 					args [arg_count] = type;
 
-					MethodInfo set = CodeGen.Module.Builder.GetArrayMethod (
+					MethodInfo set = RootContext.ToplevelTypes.Builder.GetArrayMethod (
 						ea.Expr.Type, "Set",
 						CallingConventions.HasThis |
 						CallingConventions.Standard,
@@ -9703,7 +9703,7 @@ namespace Mono.CSharp {
 
 		AnonymousTypeClass CreateAnonymousType (ArrayList parameters)
 		{
-			AnonymousTypeClass type = RootContext.ToplevelTypes.GetAnonymousType (parameters);
+			AnonymousTypeClass type = parent.Module.GetAnonymousType (parameters);
 			if (type != null)
 				return type;
 
@@ -9717,7 +9717,7 @@ namespace Mono.CSharp {
 			if (Report.Errors == 0)
 				type.CloseType ();
 
-			RootContext.ToplevelTypes.AddAnonymousType (type);
+			parent.Module.AddAnonymousType (type);
 			return type;
 		}
 

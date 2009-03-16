@@ -73,7 +73,7 @@ namespace Mono.CSharp.Nullable
 			HasValue = has_value_pi.GetGetMethod (false);
 			Value = value_pi.GetGetMethod (false);
 #if MS_COMPATIBLE
-			if (UnderlyingType.Module == CodeGen.Module.Builder) {
+			if (UnderlyingType.Module == RootContext.ToplevelTypes.Builder) {
 				Type o_type = TypeManager.DropGenericTypeArguments (type);
 				Constructor = TypeBuilder.GetConstructor (type,
 					TypeManager.GetPredefinedConstructor (o_type, Location.Null, o_type.GetGenericArguments ()));

@@ -297,16 +297,17 @@ namespace Mono.CSharp
 			if (d == null)
 				return 1;
 
-			else if (d.Compile () && Report.Errors == 0) {
+			if (d.Compile () && Report.Errors == 0) {
 				if (Report.Warnings > 0) {
 					Console.WriteLine ("Compilation succeeded - {0} warning(s)", Report.Warnings);
 				}
 				return 0;
-			} else {
-				Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
-					Report.Errors, Report.Warnings);
-				return 1;
 			}
+			
+			
+			Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
+				Report.Errors, Report.Warnings);
+			return 1;
 		}
 
 		static public void LoadAssembly (string assembly, bool soft)
@@ -1595,6 +1596,9 @@ namespace Mono.CSharp
 		//
 		public bool Compile ()
 		{
+			// TODO: Should be passed to parser as an argument
+			RootContext.ToplevelTypes = new ModuleContainer (RootContext.Unsafe);
+
 			Parse ();
 			if (Report.Errors > 0)
 				return false;
@@ -1638,7 +1642,7 @@ namespace Mono.CSharp
 				set_method.Invoke (CodeGen.Assembly.Builder, BindingFlags.Default, null, new object[]{true}, null);
 			}
 
-			GlobalRootNamespace.Instance.AddModuleReference (CodeGen.Module.Builder);
+			GlobalRootNamespace.Instance.AddModuleReference (RootContext.ToplevelTypes.Builder);
 
 			//
 			// Load assemblies required
@@ -1663,8 +1667,6 @@ namespace Mono.CSharp
 
 			if (timestamps)
 				ShowTime ("   Core Types done");
-
-			CodeGen.Module.Resolve ();
 
 			//
 			// The second pass of the compiler

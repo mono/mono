@@ -1197,7 +1197,7 @@ namespace Mono.CSharp
 
 				field_type_hash.Add (type, this);
 
-				if (type.Module == CodeGen.Module.Builder) {
+				if (type.Module == RootContext.ToplevelTypes.Builder) {
 					TypeContainer tc = TypeManager.LookupTypeContainer (TypeManager.DropGenericTypeArguments (type));
 
 					ArrayList public_fields = new ArrayList ();

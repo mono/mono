@@ -320,7 +320,7 @@ namespace Mono.CSharp {
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
-		if (t.Module == CodeGen.Module.Builder) {
+		if (t.Module == RootContext.ToplevelTypes.Builder) {
 			DeclSpace container = (DeclSpace)builder_to_declspace [t];
 			if (container != null)
 				return container.MemberCache;
@@ -798,7 +798,7 @@ namespace Mono.CSharp {
 			return t;
 
 		// TODO: All predefined imported types have to have correct signature
-		if (t.Module != CodeGen.Module.Builder)
+		if (t.Module != RootContext.ToplevelTypes.Builder)
 			return t;
 
 		DeclSpace ds = (DeclSpace)RootContext.ToplevelTypes.GetDefinition (t.FullName);

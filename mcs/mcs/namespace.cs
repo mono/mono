@@ -213,7 +213,7 @@ namespace Mono.CSharp {
 			n [top] = m;
 			modules = n;
 
-			if (m == CodeGen.Module.Builder)
+			if (m == RootContext.ToplevelTypes.Builder)
 				return;
 
 			foreach (Type t in m.GetTypes ())

@@ -371,7 +371,7 @@ namespace Mono.CSharp {
 			if (Type != PredefinedAttributes.Get.DllImport)
 				return;
 
-			if (!CodeGen.Module.HasDefaultCharSet)
+			if (!RootContext.ToplevelTypes.HasDefaultCharSet)
 				return;
 
 			const string CharSetEnumMember = "CharSet";
@@ -385,7 +385,7 @@ namespace Mono.CSharp {
 			}
 			
 			NamedArguments.Add (new DictionaryEntry (CharSetEnumMember,
-				new Argument (Constant.CreateConstant (typeof (CharSet), CodeGen.Module.DefaultCharSet, Location))));
+				new Argument (Constant.CreateConstant (typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location))));
  		}
 
 		public CustomAttributeBuilder Resolve ()
@@ -1376,7 +1376,7 @@ namespace Mono.CSharp {
 				return;
 			}
 			if (ExplicitTarget == "module") {
-				owners [0] = CodeGen.Module;
+				owners [0] = RootContext.ToplevelTypes;
 				return;
 			}
 			throw new NotImplementedException ("Unknown global explicit target " + ExplicitTarget);

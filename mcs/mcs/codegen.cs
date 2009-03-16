@@ -40,7 +40,6 @@ namespace Mono.CSharp {
 		static AppDomain current_domain;
 
 		public static AssemblyClass Assembly;
-		public static ModuleClass Module;
 
 		static CodeGen ()
 		{
@@ -50,7 +49,6 @@ namespace Mono.CSharp {
 		public static void Reset ()
 		{
 			Assembly = new AssemblyClass ();
-			Module = new ModuleClass (RootContext.Unsafe);
 		}
 
 		public static string Basename (string name)
@@ -99,7 +97,8 @@ namespace Mono.CSharp {
 			AssemblyName an = Assembly.GetAssemblyName (name, name);
 			
 			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run | COMPILER_ACCESS);
-			Module.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
+			RootContext.ToplevelTypes = new ModuleContainer (true);
+			RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
 #if GMCS_SOURCE
 			Assembly.Name = Assembly.Builder.GetName ();
 #endif
@@ -169,12 +168,12 @@ namespace Mono.CSharp {
 			// load the default symbol writer.
 			//
 			try {
-				Module.Builder = Assembly.Builder.DefineDynamicModule (
+				RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (
 					Basename (name), Basename (output), want_debugging_support);
 
 #if !MS_COMPATIBLE
 				// TODO: We should use SymbolWriter from DefineDynamicModule
-				if (want_debugging_support && !SymbolWriter.Initialize (Module.Builder, output)) {
+				if (want_debugging_support && !SymbolWriter.Initialize (RootContext.ToplevelTypes.Builder, output)) {
 					Report.Error (40, "Unexpected debug information initialization error `{0}'",
 						"Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll)");
 					return false;
@@ -1567,115 +1566,5 @@ namespace Mono.CSharp {
 				throw ex.InnerException;
 			}
 		}		
-	}
-
-	public class ModuleClass : CommonAssemblyModulClass {
-		// TODO: make it private and move all builder based methods here
-		public ModuleBuilder Builder;
-		bool m_module_is_unsafe;
-#if GMCS_SOURCE		
-		bool has_default_charset;
-#endif		
-
-		public CharSet DefaultCharSet = CharSet.Ansi;
-		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
-
-		static string[] attribute_targets = new string [] { "module" };
-
-		public ModuleClass (bool is_unsafe)
-		{
-			m_module_is_unsafe = is_unsafe;
-		}
-
- 		public override AttributeTargets AttributeTargets {
- 			get {
- 				return AttributeTargets.Module;
- 			}
-		}
-
-		public override bool IsClsComplianceRequired ()
-		{
-			return CodeGen.Assembly.IsClsCompliant;
-		}
-
-		public override void Emit (TypeContainer tc) 
-		{
-			base.Emit (tc);
-
-			if (m_module_is_unsafe) {
-				Type t = TypeManager.CoreLookupType ("System.Security", "UnverifiableCodeAttribute", Kind.Class, true);
-				if (t != null) {
-					ConstructorInfo unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, Type.EmptyTypes);
-					if (unverifiable_code_ctor != null)
-						Builder.SetCustomAttribute (new CustomAttributeBuilder (unverifiable_code_ctor, new object [0]));
-				}
-			}
-		}
-
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
-		{
-			if (a.Type == pa.CLSCompliant) {
-				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
-					Report.Warning (3012, 1, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
-				}
-				else if (CodeGen.Assembly.IsClsCompliant != a.GetBoolean ()) {
-					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.GetSignatureForError ());
-					Report.Warning (3017, 1, a.Location, "You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
-					return;
-				}
-			}
-
-			Builder.SetCustomAttribute (cb);
-		}
-
-		public bool HasDefaultCharSet {
-			get {
-#if GMCS_SOURCE		
-				return has_default_charset;
-#else
-				return false;
-#endif								
-			}
-		}
-
-		/// <summary>
-		/// It is called very early therefore can resolve only predefined attributes
-		/// </summary>
-		public void Resolve ()
-		{
-#if GMCS_SOURCE
-			if (OptAttributes == null)
-				return;
-
-			if (!OptAttributes.CheckTargets())
-				return;
-
-			Attribute a = ResolveAttribute (PredefinedAttributes.Get.DefaultCharset);
-			if (a != null) {
-				has_default_charset = true;
-				DefaultCharSet = a.GetCharSetValue ();
-				switch (DefaultCharSet) {
-				case CharSet.Ansi:
-				case CharSet.None:
-					break;
-				case CharSet.Auto:
-					DefaultCharSetType = TypeAttributes.AutoClass;
-					break;
-				case CharSet.Unicode:
-					DefaultCharSetType = TypeAttributes.UnicodeClass;
-					break;
-				default:
-					Report.Error (1724, a.Location, "Value specified for the argument to 'System.Runtime.InteropServices.DefaultCharSetAttribute' is not valid");
-					break;
-				}
-			}
-#endif
-		}
-
-		public override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
-			}
-		}
 	}
 }

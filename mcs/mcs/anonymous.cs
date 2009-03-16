@@ -508,7 +508,7 @@ namespace Mono.CSharp {
 				Type t = MutateGenericType (method.DeclaringType);
 				if (t != method.DeclaringType) {
 					method = (MethodInfo) TypeManager.DropGenericMethodArguments (method);
-					if (method.Module == CodeGen.Module.Builder)
+					if (method.Module == Module.Builder)
 						method = TypeBuilder.GetMethod (t, method);
 					else
 						method = (MethodInfo) MethodInfo.GetMethodFromHandle (method.MethodHandle, t.TypeHandle);
@@ -534,7 +534,7 @@ namespace Mono.CSharp {
 				Type t = MutateGenericType (ctor.DeclaringType);
 				if (t != ctor.DeclaringType) {
 					ctor = (ConstructorInfo) TypeManager.DropGenericMethodArguments (ctor);
-					if (ctor.Module == CodeGen.Module.Builder)
+					if (ctor.Module == Module.Builder)
 						return TypeBuilder.GetConstructor (t, ctor);
 						
 					return (ConstructorInfo) ConstructorInfo.GetMethodFromHandle (ctor.MethodHandle, t.TypeHandle);

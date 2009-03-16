@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 				if (TypeManager.NamespaceClash (Name, Location))
 					return null;
 				
-				ModuleBuilder builder = CodeGen.Module.Builder;
+				ModuleBuilder builder = Module.Builder;
 
 				TypeBuilder = builder.DefineType (
 					Name, TypeAttr, TypeManager.multicast_delegate_type);

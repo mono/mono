@@ -102,7 +102,7 @@ namespace Mono.CSharp {
 		//
 		// Contains the parsed tree
 		//
-		static RootTypes root;
+		static ModuleContainer root;
 
 		//
 		// This hashtable contains all of the #definitions across the source code
@@ -145,7 +145,7 @@ namespace Mono.CSharp {
 		public static void Reset (bool full)
 		{
 			if (full)
-				root = new RootTypes ();
+				root = null;
 			
 			type_container_resolve_order = new ArrayList ();
 			EntryPoint = null;
@@ -167,8 +167,8 @@ namespace Mono.CSharp {
 			//
 			// Setup default defines
 			//
-			RootContext.AllDefines = new ArrayList ();
-			RootContext.AddConditional ("__MonoCS__");
+			AllDefines = new ArrayList ();
+			AddConditional ("__MonoCS__");
 		}
 
 		public static void AddConditional (string p)
@@ -183,8 +183,9 @@ namespace Mono.CSharp {
 			return AllDefines.Contains (value);
 		}
 
-		static public RootTypes ToplevelTypes {
+		static public ModuleContainer ToplevelTypes {
 			get { return root; }
+			set { root = value; }
 		}
 
 		public static void RegisterOrder (TypeContainer tc)
@@ -201,6 +202,8 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public void ResolveTree ()
 		{
+			root.Resolve ();
+
 			//
 			// Interfaces are processed next, as classes and
 			// structs might inherit from an object or implement
@@ -356,7 +359,7 @@ namespace Mono.CSharp {
 			}			
 
 			CodeGen.Assembly.Emit (root);
-			CodeGen.Module.Emit (root);
+			root.Emit ();
 		}
 		
 		//
@@ -389,7 +392,7 @@ namespace Mono.CSharp {
 			FieldBuilder fb;
 			
 			if (impl_details_class == null){
-				impl_details_class = CodeGen.Module.Builder.DefineType (
+				impl_details_class = ToplevelTypes.Builder.DefineType (
 					"<PrivateImplementationDetails>",
                                         TypeAttributes.NotPublic,
                                         TypeManager.object_type);

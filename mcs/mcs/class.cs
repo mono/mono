@@ -956,7 +956,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					ModuleBuilder builder = CodeGen.Module.Builder;
+					ModuleBuilder builder = Module.Builder;
 					TypeBuilder = builder.DefineType (
 						Name, TypeAttr, default_parent, type_size);
 				} else {
@@ -5595,7 +5595,7 @@ namespace Mono.CSharp {
 			
 			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
-			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name, CodeGen.Module.DefaultCharSetType |
+			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name, Parent.Module.DefaultCharSetType |
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type);
 			
 			element = fixed_buffer_type.DefineField (FixedElementName, MemberType, FieldAttributes.Public);

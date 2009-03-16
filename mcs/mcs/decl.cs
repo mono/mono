@@ -941,7 +941,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (this is RootTypes) {
+			if (this is ModuleContainer) {
 				Report.Error (101, symbol.Location, 
 					"The namespace `{0}' already contains a definition for `{1}'",
 					((DeclSpace)symbol).NamespaceEntry.GetSignatureForError (), symbol.MemberName.Name);
@@ -1012,7 +1012,7 @@ namespace Mono.CSharp {
 		}
 
 		protected virtual TypeAttributes TypeAttr {
-			get { return CodeGen.Module.DefaultCharSetType; }
+			get { return Module.DefaultCharSetType; }
 		}
 
 		/// <remarks>
@@ -1246,6 +1246,10 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract MemberCache MemberCache {
 			get;
+		}
+
+		public virtual ModuleContainer Module {
+			get { return Parent.Module; }
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
