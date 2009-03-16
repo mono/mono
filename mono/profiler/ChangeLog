@@ -1,3 +1,9 @@
+2009-03-16  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Backport from trunk, make it like r129416:
+	- When checking if an elf file is valid, avoid mapping it in memory
+	until we know it's usable (avoids virtual memory fragmentation issues).
+	- Correctly handle duplicated entries in /proc/self/maps.
+
 2009-01-18  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Bug fixing.
 	- profiler_executable_memory_region_destroy: fixed a cut&paste mistake

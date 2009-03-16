@@ -1,3 +1,11 @@
+/*
+ * mono-profiler-logging.c: Logging profiler for Mono.
+ *
+ * Author:
+ *   Massimiliano Mantione (massi@ximian.com)
+ *
+ * Copyright 2008-2009 Novell, Inc (http://www.novell.com)
+ */
 #include <config.h>
 #include <mono/metadata/profiler.h>
 #include <mono/metadata/class.h>
@@ -2658,26 +2666,15 @@ append_region (ProfilerExecutableMemoryRegions *regions, gpointer *start, gpoint
 	regions->next_id ++;
 }
 
-static void
-restore_old_regions (ProfilerExecutableMemoryRegions *old_regions, ProfilerExecutableMemoryRegions *new_regions) {
-	int old_i;
-	int new_i;
-	
-	for (old_i = 0; old_i < old_regions->regions_count; old_i++) {
-		ProfilerExecutableMemoryRegionData *old_region = old_regions->regions [old_i];
-		for (new_i = 0; new_i < new_regions->regions_count; new_i++) {
-			ProfilerExecutableMemoryRegionData *new_region = new_regions->regions [new_i];
-			if ((old_region->start == new_region->start) &&
-					(old_region->end == new_region->end) &&
-					(old_region->file_offset == new_region->file_offset) &&
-					! strcmp (old_region->file_name, new_region->file_name)) {
-				new_regions->regions [new_i] = old_region;
-				old_regions->regions [old_i] = new_region;
-				
-				// FIXME (sanity check)
-				g_assert (new_region->is_new && ! old_region->is_new);
-			}
-		}
+static gboolean
+regions_are_equivalent (ProfilerExecutableMemoryRegionData *region1, ProfilerExecutableMemoryRegionData *region2) {
+	if ((region1->start == region2->start) &&
+			(region1->end == region2->end) &&
+			(region1->file_offset == region2->file_offset) &&
+			! strcmp (region1->file_name, region2->file_name)) {
+		return TRUE;
+	} else {
+		return FALSE;
 	}
 }
 
@@ -2689,8 +2686,68 @@ compare_regions (const void *a1, const void *a2) {
 }
 
 static void
+restore_old_regions (ProfilerExecutableMemoryRegions *old_regions, ProfilerExecutableMemoryRegions *new_regions) {
+	int old_i;
+	int new_i;
+	
+	for (new_i = 0; new_i < new_regions->regions_count; new_i++) {
+		ProfilerExecutableMemoryRegionData *new_region = new_regions->regions [new_i];
+		for (old_i = 0; old_i < old_regions->regions_count; old_i++) {
+			ProfilerExecutableMemoryRegionData *old_region = old_regions->regions [old_i];
+			if ( regions_are_equivalent (old_region, new_region)) {
+				new_regions->regions [new_i] = old_region;
+				old_regions->regions [old_i] = new_region;
+				
+				// FIXME (sanity check)
+				g_assert (new_region->is_new && ! old_region->is_new);
+			}
+		}
+	}
+}
+
+static void
 sort_regions (ProfilerExecutableMemoryRegions *regions) {
-	qsort (regions->regions, regions->regions_count, sizeof (ProfilerExecutableMemoryRegionData *), compare_regions);
+	if (regions->regions_count > 1) {
+		int i;
+		
+		qsort (regions->regions, regions->regions_count, sizeof (ProfilerExecutableMemoryRegionData *), compare_regions);
+		
+		i = 1;
+		while (i < regions->regions_count) {
+			ProfilerExecutableMemoryRegionData *current_region = regions->regions [i];
+			ProfilerExecutableMemoryRegionData *previous_region = regions->regions [i - 1];
+			
+			if (regions_are_equivalent (previous_region, current_region)) {
+				int j;
+				
+				if (! current_region->is_new) {
+					profiler_executable_memory_region_destroy (previous_region);
+					regions->regions [i - 1] = current_region;
+				} else {
+					profiler_executable_memory_region_destroy (current_region);
+				}
+				
+				for (j = i + 1; j < regions->regions_count; j++) {
+					regions->regions [j - 1] = regions->regions [j];
+				}
+				
+				regions->regions_count --;
+			} else {
+				i++;
+			}
+		}
+	}
+}
+
+static void
+fix_region_references (ProfilerExecutableMemoryRegions *regions) {
+	int i;
+	for (i = 0; i < regions->regions_count; i++) {
+		ProfilerExecutableMemoryRegionData *region = regions->regions [i];
+		if (region->file_region_reference != NULL) {
+			region->file_region_reference->region = region;
+		}
+	}
 }
 
 static void
@@ -2712,6 +2769,62 @@ executable_file_add_region_reference (ProfilerExecutableFile *file, ProfilerExec
 	}
 }
 
+static gboolean check_elf_header (ElfHeader* header) {
+	guint16 test = 0x0102;
+	
+	if ((header->e_ident [EI_MAG0] != 0x7f) || (header->e_ident [EI_MAG1] != 'E') ||
+			(header->e_ident [EI_MAG2] != 'L') || (header->e_ident [EI_MAG3] != 'F')) {
+		return FALSE;
+	}
+
+	if (sizeof (gsize) == 4) {
+		if (header->e_ident [EI_CLASS] != ELF_CLASS_32) {
+			g_warning ("Class is not ELF_CLASS_32 with gsize size %d", (int) sizeof (gsize));
+			return FALSE;
+		}
+	} else if (sizeof (gsize) == 8) {
+		if (header->e_ident [EI_CLASS] != ELF_CLASS_64) {
+			g_warning ("Class is not ELF_CLASS_64 with gsize size %d", (int) sizeof (gsize));
+			return FALSE;
+		}
+	} else {
+		g_warning ("Absurd gsize size %d", (int) sizeof (gsize));
+		return FALSE;
+	}
+
+	if ((*(guint8*)(&test)) == 0x01) {
+		if (header->e_ident [EI_DATA] != ELF_DATA_MSB) {
+			g_warning ("Data is not ELF_DATA_MSB with first test byte 0x01");
+			return FALSE;
+		}
+	} else if ((*(guint8*)(&test)) == 0x02) {
+		if (header->e_ident [EI_DATA] != ELF_DATA_LSB) {
+			g_warning ("Data is not ELF_DATA_LSB with first test byte 0x02");
+			return FALSE;
+		}
+	} else {
+		g_warning ("Absurd test byte value");
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+
+static gboolean check_elf_file (int fd) {
+	void *header = malloc (sizeof (ElfHeader));
+	ssize_t read_result = read (fd, header, sizeof (ElfHeader));
+	gboolean result;
+	
+	if (read_result != sizeof (ElfHeader)) {
+		result = FALSE;
+	} else {
+		result = check_elf_header ((ElfHeader*) header);
+	}
+	
+	free (header);
+	return result;
+}
+
 static ProfilerExecutableFile*
 executable_file_open (ProfilerExecutableMemoryRegionData *region) {
 	ProfilerExecutableFiles *files = & (profiler->executable_files);
@@ -2721,7 +2834,6 @@ executable_file_open (ProfilerExecutableMemoryRegionData *region) {
 		file = (ProfilerExecutableFile*) g_hash_table_lookup (files->table, region->file_name);
 		
 		if (file == NULL) {
-			guint16 test = 0x0102;
 			struct stat stat_buffer;
 			int symtab_index = 0;
 			int strtab_index = 0;
@@ -2747,6 +2859,8 @@ executable_file_open (ProfilerExecutableMemoryRegionData *region) {
 				if (fstat (file->fd, &stat_buffer) != 0) {
 					//g_warning ("Cannot stat file '%s': '%s'", region->file_name, strerror (errno));
 					return file;
+				} else if (! check_elf_file (file->fd)) {
+					return file;
 				} else {
 					size_t region_length = ((guint8*)region->end) - ((guint8*)region->start);
 					file->length = stat_buffer.st_size;
@@ -2768,46 +2882,10 @@ executable_file_open (ProfilerExecutableMemoryRegionData *region) {
 				}
 			}
 			
+			/* OK, this is a usable elf file, and we mmapped it... */
 			header = (ElfHeader*) file->data;
-			
-			if ((header->e_ident [EI_MAG0] != 0x7f) || (header->e_ident [EI_MAG1] != 'E') ||
-					(header->e_ident [EI_MAG2] != 'L') || (header->e_ident [EI_MAG3] != 'F')) {
-				return file;
-			}
-			
-			if (sizeof (gsize) == 4) {
-				if (header->e_ident [EI_CLASS] != ELF_CLASS_32) {
-					g_warning ("Class is not ELF_CLASS_32 with gsize size %d", (int) sizeof (gsize));
-					return file;
-				}
-			} else if (sizeof (gsize) == 8) {
-				if (header->e_ident [EI_CLASS] != ELF_CLASS_64) {
-					g_warning ("Class is not ELF_CLASS_64 with gsize size %d", (int) sizeof (gsize));
-					return file;
-				}
-			} else {
-				g_warning ("Absurd gsize size %d", (int) sizeof (gsize));
-				return file;
-			}
-			
-			if ((*(guint8*)(&test)) == 0x01) {
-				if (header->e_ident [EI_DATA] != ELF_DATA_MSB) {
-					g_warning ("Data is not ELF_DATA_MSB with first test byte 0x01");
-					return file;
-				}
-			} else if ((*(guint8*)(&test)) == 0x02) {
-				if (header->e_ident [EI_DATA] != ELF_DATA_LSB) {
-					g_warning ("Data is not ELF_DATA_LSB with first test byte 0x02");
-					return file;
-				}
-			} else {
-				g_warning ("Absurd test byte value");
-				return file;
-			}
-			
-			/* OK, this is a usable elf file... */
 			file->header = header;
-			section_headers = file->data + header->e_shoff;
+			section_headers = file->data + file->header->e_shoff;
 			file->main_string_table = ((const char*) file->data) + (((ElfSection*) (section_headers + (header->e_shentsize * header->e_shstrndx)))->sh_offset);
 			
 			for (section_index = 0; section_index < header->e_shnum; section_index ++) {
@@ -3287,8 +3365,9 @@ refresh_memory_regions (void) {
 	
 	LOG_WRITER_THREAD ("Refreshing memory regions...");
 	scan_process_regions (new_regions);
-	restore_old_regions (old_regions, new_regions);
 	sort_regions (new_regions);
+	restore_old_regions (old_regions, new_regions);
+	fix_region_references (new_regions);
 	LOG_WRITER_THREAD ("Refreshed memory regions.");
 	
 	LOG_WRITER_THREAD ("Building symbol tables...");
