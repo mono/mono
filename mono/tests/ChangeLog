@@ -1,3 +1,9 @@
+2009-03-15  Steven Munroe  <munroesj@us.ibm.com>
+
+	This patch is contributed under the terms of the MIT/X11 license
+
+	* Makefile.am (test_platform): Enable testbundle for ppc.
+
 2009-03-13  Mark Probst  <mark.probst@gmail.com>
 
 	* coreclr-security.exe: Added a test for calling via a
