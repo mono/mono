@@ -223,7 +223,7 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public DataGridViewColumn OwningColumn {
 			get {
-				if (DataGridView == null || columnIndex == -1)
+				if (DataGridView == null || columnIndex < 0 || columnIndex >= DataGridView.Columns.Count)
 					return null;
 					
 				return DataGridView.Columns[columnIndex];

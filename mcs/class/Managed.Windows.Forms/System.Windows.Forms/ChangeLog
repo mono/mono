@@ -1,5 +1,11 @@
 2009-03-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewCell.cs: In OwningColumng Handle invalid column index 
+	silently.
+	[Fixes bug #485278]
+
+2009-03-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewBand.cs: Update our State whenever a property changes.
 	* DataGridView.cs: Don't be so generous in reseting Displayed, because 
 	it will spawn lots and lots of unneeded State changed events.
