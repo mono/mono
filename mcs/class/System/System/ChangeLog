@@ -1,3 +1,12 @@
+2009-03-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	Reduce dependence of UriParser on Uri
+	* UriParser.cs (GetComponents): Don't refer to fields of Uri to
+	extract components.  Use a pair of regexes instead on
+	Uri.OriginalString.
+	* Uri.cs (OriginalString): Make available as an internal property
+	in the NET_1_1 profile.
+
 2009-03-10  Jackson Harper  <jackson@ximian.com>
 
 	* Uri.cs: 2.1 Uris do get a UriTypeConverter.

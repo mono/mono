@@ -684,16 +684,20 @@ namespace System {
 		public bool IsAbsoluteUri {
 			get { return isAbsoluteUri; }
 		}
-
+#endif
 		// LAMESPEC: source field is supplied in such case that this
 		// property makes sense. For such case that source field is
 		// not supplied (i.e. .ctor(Uri, string), this property
 		// makes no sense. To avoid silly regression it just returns
 		// ToString() value now. See bug #78374.
-		public string OriginalString {
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		string OriginalString {
 			get { return source != null ? source : ToString (); }
 		}
-#endif
 
 		// Methods		
 
