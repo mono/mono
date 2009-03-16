@@ -1,5 +1,10 @@
 2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlReaderBinarySupport.cs : ReadContentsAsBase64() could skip
+	  EndElement at the next XmlReader.Read(). Fixed bug #480066.
+
+2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlTextWriter2.cs : only bogus v1 XmlTextWriter ignores null
 	  namespace for conflict check. Fixed bug #479725.
 

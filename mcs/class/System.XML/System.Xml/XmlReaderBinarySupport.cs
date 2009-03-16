@@ -72,7 +72,14 @@ namespace System.Xml
 			if (!dontReset) {
 				dontReset = true;
 				if (hasCache) {
-					reader.Read ();
+					switch (reader.NodeType) {
+					case XmlNodeType.Text:
+					case XmlNodeType.CDATA:
+					case XmlNodeType.SignificantWhitespace:
+					case XmlNodeType.Whitespace:
+						reader.Read ();
+						break;
+					}
 					switch (state) {
 					case CommandState.ReadElementContentAsBase64:
 					case CommandState.ReadElementContentAsBinHex:

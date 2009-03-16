@@ -2162,6 +2162,25 @@ namespace MonoTests.System.Xml
 			foreach (byte b in buffer) sw.Write ("{0:X02}", b);
 			AssertEquals ("#3", "000102030405060708090A0B0C0D0E0F1011121314151617", sw.ToString ());
 		}
+
+		[Test]
+		public void ReadContentAsBase64_2 () // bug #480066
+		{
+			StringReader readerString = new StringReader ("<root><b64>TWFu</b64><b64>TWFu</b64>\r\n\t<b64>TWFu</b64><b64>TWFu</b64></root>");
+			XmlReaderSettings settingsXml = new XmlReaderSettings ();
+			settingsXml.XmlResolver = null;
+			using (var readerXml = XmlReader.Create (readerString, settingsXml)) {
+				readerXml.MoveToContent ();
+				readerXml.Read ();
+				readerXml.ReadStartElement ("b64");
+				const int bufferLength = 1024;
+				byte [] buffer = new byte [bufferLength];
+				readerXml.ReadContentAsBase64 (buffer, 0, bufferLength);
+				AssertEquals ("#1", XmlNodeType.EndElement, readerXml.NodeType);
+				readerXml.Read ();
+				AssertEquals ("#2", XmlNodeType.Element, readerXml.NodeType);
+			}
+		}
 #endif
 	}
 }
