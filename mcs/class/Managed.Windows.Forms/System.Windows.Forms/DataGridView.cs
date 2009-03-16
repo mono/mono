@@ -4590,8 +4590,8 @@ namespace System.Windows.Forms {
 				bounds.Y += columnHeadersHeight;
 			}
 			
-			// Reset all columns to !Displayed
-			for (int i = 0; i < Columns.Count; i++)
+			// Reset not displayed columns to !Displayed
+			for (int i = 0; i < first_col_index; i++)
 				Columns[i].DisplayedInternal = false;
 			
 			int gridWidth = rowHeadersVisible ? rowHeadersWidth : 0;
@@ -4609,8 +4609,8 @@ namespace System.Windows.Forms {
 					break;
 			}
 			
-			// Reset all rows to !Displayed
-			for (int i = 0; i < Rows.Count; i++)
+			// Reset all not displayed rows to !Displayed
+			for (int i = 0; i < first_row_index; i++)
 				GetRowInternal (i).DisplayedInternal = false;
 			
 			// Draw rows

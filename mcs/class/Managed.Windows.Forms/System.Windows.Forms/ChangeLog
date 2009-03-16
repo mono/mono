@@ -1,5 +1,12 @@
 2009-03-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewBand.cs: Update our State whenever a property changes.
+	* DataGridView.cs: Don't be so generous in reseting Displayed, because 
+	it will spawn lots and lots of unneeded State changed events.
+	[Fixes bug #484989]
+
+2009-03-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewRow.cs, DataGridViewColumn.cs: 
 	Add support for invisible rows and columns.
 	[Fixes bug #484951]
