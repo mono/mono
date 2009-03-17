@@ -1,3 +1,11 @@
+2009-03-17  Marek Habersack  <mhabersack@novell.com>
+
+	* JavaScriptSerializer.cs: if conversion of IDictionary or
+	IDictionary <K,V> to an object is requested, make sure that a
+	concrete type is used (in both cases Dictionary <string, object>).
+	Make sure that if the target type is an IDictionary<K,V> that the
+	key is either an object or a string.
+
 2009-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* JsonDeserializer.cs: unquoted key values must ignore leading

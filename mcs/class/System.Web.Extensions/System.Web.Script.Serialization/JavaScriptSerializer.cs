@@ -245,6 +245,20 @@ namespace System.Web.Script.Serialization
 				}
 			}
 
+			if (type.IsGenericType) {
+				if (type.GetGenericTypeDefinition ().IsAssignableFrom (typeof (IDictionary <,>))) {
+					Type[] arguments = type.GetGenericArguments ();
+					if (arguments == null || arguments.Length != 2 || (arguments [0] != typeof (object) && arguments [0] != typeof (string)))
+						throw new InvalidOperationException (
+							"Type '" + type + "' is not not supported for serialization/deserialization of a dictionary, keys must be strings or objects.");
+					if (type.IsAbstract) {
+						Type dictType = typeof (Dictionary <,>);
+						type = dictType.MakeGenericType (arguments [0], arguments [1]);
+					}
+				}
+			} else if (type.IsAssignableFrom (typeof (IDictionary)))
+				type = typeof (Dictionary <string, object>);
+			
 			object target = Activator.CreateInstance (type, true);
 
 			foreach (KeyValuePair<string, object> entry in dict) {

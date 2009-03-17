@@ -1273,5 +1273,45 @@ namespace Tests.System.Web.Script.Serialization
 			Assert.AreEqual (dictOut.Count, 1, "#1");
 			Assert.AreEqual (dictOut["hello"], "world", "#2");
 		}
+
+		[Test]
+		public void ConvertToIDictionary ()
+		{
+			JavaScriptSerializer jss = new JavaScriptSerializer ();
+			string json = "{\"node\":{\"Text\":\"Root Node\",\"Value\":null,\"ExpandMode\":3,\"NavigateUrl\":null,\"PostBack\":true,\"DisabledCssClass\":null,\"SelectedCssClass\":null,\"HoveredCssClass\":null,\"ImageUrl\":null,\"HoveredImageUrl\":null,\"DisabledImageUrl\":null,\"ExpandedImageUrl\":null,\"ContextMenuID\":\"\"},\"context\":{\"NumberOfNodes\":1000}}";
+			object input = jss.Deserialize<IDictionary>(json);
+			IDictionary o = jss.ConvertToType<IDictionary>(input);
+
+			Assert.IsTrue (o != null, "#A1");
+			Assert.AreEqual (typeof (Dictionary <string, object>), o.GetType (), "#A2");
+		}
+
+		[Test]
+		public void ConvertToGenericIDictionary ()
+		{
+			JavaScriptSerializer jss = new JavaScriptSerializer ();
+			string json = "{\"node\":{\"Text\":\"Root Node\",\"Value\":null,\"ExpandMode\":3,\"NavigateUrl\":null,\"PostBack\":true,\"DisabledCssClass\":null,\"SelectedCssClass\":null,\"HoveredCssClass\":null,\"ImageUrl\":null,\"HoveredImageUrl\":null,\"DisabledImageUrl\":null,\"ExpandedImageUrl\":null,\"ContextMenuID\":\"\"},\"context\":{\"NumberOfNodes\":1000}}";
+
+			object input = jss.Deserialize<IDictionary>(json);
+			
+			IDictionary <string, object> o = jss.ConvertToType<IDictionary <string, object>>(input);
+			Assert.IsTrue (o != null, "#A1");
+			Assert.AreEqual (typeof (Dictionary <string, object>), o.GetType (), "#A2");
+
+			IDictionary <object, object> o1 = jss.ConvertToType<IDictionary <object, object>>(input);
+			Assert.IsTrue (o1 != null, "#B1");
+			Assert.AreEqual (typeof (Dictionary <object, object>), o1.GetType (), "#B2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConvertToGenericIDictionary_InvalidDefinition ()
+		{
+			JavaScriptSerializer jss = new JavaScriptSerializer ();
+			string json = "{\"node\":{\"Text\":\"Root Node\",\"Value\":null,\"ExpandMode\":3,\"NavigateUrl\":null,\"PostBack\":true,\"DisabledCssClass\":null,\"SelectedCssClass\":null,\"HoveredCssClass\":null,\"ImageUrl\":null,\"HoveredImageUrl\":null,\"DisabledImageUrl\":null,\"ExpandedImageUrl\":null,\"ContextMenuID\":\"\"},\"context\":{\"NumberOfNodes\":1000}}";
+
+			object input = jss.Deserialize<IDictionary>(json);
+			IDictionary <int, object> o = jss.ConvertToType<IDictionary <int, object>>(input);
+		}
 	}
 }

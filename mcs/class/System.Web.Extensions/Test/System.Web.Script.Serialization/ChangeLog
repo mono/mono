@@ -1,3 +1,8 @@
+2009-03-17  Marek Habersack  <mhabersack@novell.com>
+
+	* JavaScriptSerializerTest.cs: added tests for conversion to
+	IDictionary and IDictionary <K,V> types.
+
 2009-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* JavaScriptSerializerTest.cs: added a test for unquoted tests
