@@ -1,3 +1,7 @@
+2009-03-17  Marek Habersack  <mhabersack@novell.com>
+
+	* UnitTest.cs: added a test for equality with Unit.Empty
+
 2009-03-12  Marek Habersack  <mhabersack@novell.com>
 
 	* EditCommandColumnTest.cs: ignore two tests, most likely broken.

@@ -203,6 +203,16 @@ namespace MonoTests.System.Web.UI.WebControls
 			// Test that its comparing the units and value
 			Assert.AreEqual (u2 != c2, true, "U5");
 		}
+
+		[Test]
+		public void UnitEqualityWithEmpty ()
+		{
+			Unit unit = Unit.Parse ("");
+			Assert.AreEqual (Unit.Empty, unit, "A1");
+
+			unit = Unit.Parse ("0px");
+			Assert.IsTrue (unit != Unit.Empty, "B1");
+		}
 		
 		[Test]
 		public void UnitImplicit ()
