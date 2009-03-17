@@ -1231,6 +1231,11 @@ namespace MonoTests.System.Windows.Forms
 			public string Text {
 				get { return String.Empty; }
 			}
+
+			[Browsable (false)]
+			public string NotVisible {
+				get { return String.Empty; }
+			}
 		}
 
 		[Test]

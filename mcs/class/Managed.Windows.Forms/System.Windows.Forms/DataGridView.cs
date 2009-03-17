@@ -5969,6 +5969,8 @@ namespace System.Windows.Forms {
 						// This keeps out things like arrays
 						if ((typeof(ICollection).IsAssignableFrom (property.PropertyType)))
 							continue;
+						if (!property.IsBrowsable)
+							continue;
 
 						if (IsColumnAlreadyBound (property.DisplayName))
 							continue;

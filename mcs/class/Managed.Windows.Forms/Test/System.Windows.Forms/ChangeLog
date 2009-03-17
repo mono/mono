@@ -1,3 +1,7 @@
+2009-03-17  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewTest.cs: Add a test for Browsable(false) columns.
+
 2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewTest.cs: Add tests for CurrentCell.

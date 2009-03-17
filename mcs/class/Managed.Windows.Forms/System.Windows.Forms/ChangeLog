@@ -1,3 +1,9 @@
+2009-03-17  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Browsable(false) properties should be skipped when 
+	autogenerating the columns.
+	[Fixes bug #486021]
+
 2009-03-16  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* DomainUpDown.cs: When ReadOnly is true, all the text entered by the
