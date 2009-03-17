@@ -1,3 +1,8 @@
+2009-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c (mono_gc_make_descr_for_object): Fix 64 bit support.
+	(mono_gc_make_descr_for_array): Ditto.
+
 2009-03-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* verify.c (mono_verifier_is_class_full_trust): Add support for
