@@ -1231,7 +1231,7 @@ namespace System.Xml.XPath
 			if (left.Peer && right.Subtree)
 				return new SimpleSlashIterator (iterLeft, right);
 			BaseIterator si = new SlashIterator (iterLeft, right);
-			return RequireSorting ? new SortedIterator (si) : si;
+			return new SortedIterator (si);
 		}
 
 		public override bool RequireSorting { get { return left.RequireSorting || right.RequireSorting; } }

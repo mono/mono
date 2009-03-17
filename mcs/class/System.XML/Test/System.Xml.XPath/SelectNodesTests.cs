@@ -315,5 +315,34 @@ namespace MonoTests.System.Xml.XPath
 			var nodes = doc.SelectNodes (xpath, ns);
 			AssertEquals (4, nodes.Count);
 		}
+
+		[Test]
+		public void Bug443090_2 ()
+		{
+			string xml = @"
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<body>
+<div id='e1'>
+    <div id='e1.1'>
+        <div id='e1.1.1'/>
+        <div id='e1.1.2'>
+          <div id='e1.1.2.1'>
+              <div id='e1.1.2.1.1'>e1.1.2.1.1</div>
+          </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XmlNamespaceManager ns = new XmlNamespaceManager (doc.NameTable);
+			ns.AddNamespace ("_", "http://www.w3.org/1999/xhtml");
+
+			XmlNode n = doc.SelectSingleNode ("//_:html", ns);
+			Assert ("#1", n != null);
+			XmlNodeList nodes = n.SelectNodes (".//_:div//_:div", ns);
+			AssertEquals ("#2", 5, nodes.Count);
+		}
 	}
 }
