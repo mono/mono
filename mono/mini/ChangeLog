@@ -1,3 +1,9 @@
+2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mini_method_compile): Print the method been compiled with
+	verbose level 1 instead of 3 as this helps a lot debugging JIT crashes
+	for people not familiar with the runtime.
+
 2009-03-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (get_generic_info_from_stack_frame): Avoid returning
