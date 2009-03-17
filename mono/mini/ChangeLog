@@ -1,5 +1,10 @@
 2009-03-17  Jb Evain  <jbevain@novell.com>
 
+	* driver.c: remove now uneeded call to mono_gc_base_init before
+	mono_profiler_load.
+
+2009-03-17  Jb Evain  <jbevain@novell.com>
+
 	* dwarfwriter.c (token_handler): handle more cases.
 
 2009-03-17  Sebastien Pouliot  <sebastien@ximian.com> 
