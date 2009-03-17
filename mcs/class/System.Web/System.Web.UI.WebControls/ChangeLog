@@ -1,3 +1,8 @@
+2009-03-17  Marek Habersack  <mhabersack@novell.com>
+
+	* Unit.cs: introduced a field to tell the difference between empty
+	(as in Unit.Empty) and 0px units.
+
 2009-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* WebControl.cs: if savedState is not an instance of Pair in

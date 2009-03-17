@@ -52,6 +52,7 @@ namespace System.Web.UI.WebControls {
 		
 		UnitType type;
 		double value;
+		bool valueSet;
 		public static readonly Unit Empty;
 		
 		public Unit (double value, UnitType type)
@@ -64,6 +65,7 @@ namespace System.Web.UI.WebControls {
 				this.value = (int) value;
 			else
 				this.value = value;
+			valueSet = true;
 		}
 
 		public Unit (double value) : this (value, UnitType.Pixel)
@@ -256,6 +258,7 @@ namespace System.Web.UI.WebControls {
 
 			if (haveSep && type == UnitType.Pixel)
 				throw new FormatException ("Pixel units do not allow floating point values");
+			valueSet = true;
 		}
 		
 		public Unit (string value) : this (value, '.')
@@ -320,7 +323,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if (obj is Unit){
 				Unit other = (Unit) obj;
-				return (other.type == type && other.value == value);
+				return (other.type == type && other.value == value && valueSet == other.valueSet);
 			}
 			return false;
 		}
@@ -332,12 +335,12 @@ namespace System.Web.UI.WebControls {
 		
 		public static bool operator == (Unit left, Unit right)
 		{
-			return left.Type == right.Type && left.Value == right.Value;
+			return left.Type == right.Type && left.Value == right.Value && left.valueSet == right.valueSet;
 		}
 
 		public static bool operator != (Unit left, Unit right)
 		{
-			return left.Type != right.Type || left.Value != right.Value;
+			return left.Type != right.Type || left.Value != right.Value || left.valueSet != right.valueSet;
 		}
 		
 		public static implicit operator Unit (int n)
