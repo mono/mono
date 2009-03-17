@@ -1,3 +1,7 @@
+2009-03-17  Jb Evain  <jbevain@novell.com>
+
+	* dwarfwriter.c (token_handler): handle more cases.
+
 2009-03-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* method-to-ir.c: Remove more dead code (that was required only
