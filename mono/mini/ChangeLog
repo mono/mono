@@ -1,3 +1,8 @@
+2009-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* method-to-ir.c: Remove unneeded/useless method_is_safe
+	http://lists.ximian.com/archives/public/mono-devel-list/2009-March/031404.html
+
 2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mini_method_compile): Print the method been compiled with
