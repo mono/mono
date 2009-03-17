@@ -1,5 +1,9 @@
 2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Be less restrictive with some coff fields.
+
+2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (init_stack_with_value_at_exception_boundary): Init generic
 	params as boxed values on stack. Fixes #485706.
 
