@@ -1,5 +1,9 @@
 2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add minimal PECOFF resource verification.
+
+2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Be less restrictive with some coff fields.
 
 2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
