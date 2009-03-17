@@ -1,3 +1,8 @@
+2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (init_stack_with_value_at_exception_boundary): Init generic
+	params as boxed values on stack. Fixes #485706.
+
 2009-03-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* console-io.c: the termios values may vary in different flavors of unix.
