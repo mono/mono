@@ -1,3 +1,7 @@
+2009-03-17  Jb Evain  <jbevain@novell.com>
+
+	* profiler.c: call mono_gc_base_init from mono_profiler_load.
+
 2009-03-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (mono_gc_make_descr_for_object): Fix 64 bit support.
