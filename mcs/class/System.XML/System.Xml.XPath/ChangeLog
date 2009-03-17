@@ -1,3 +1,9 @@
+2009-03-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathExpression.cs : eliminate use of ExpressionCache and lose
+	  significant performance in some use for the sake of multithreaded
+	  use. Fixed bug #477049.
+
 2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Expression.cs : give up sortless iterator optimization.
