@@ -714,7 +714,7 @@ namespace System.Windows.Forms {
 			set {
 				if (dataMember != value) {
 					dataMember = value;
-					if (IsHandleCreated)
+					if (BindingContext != null)
 						ReBind ();
 					OnDataMemberChanged(EventArgs.Empty);
 				}
@@ -738,7 +738,7 @@ namespace System.Windows.Forms {
 					
 				ClearBinding ();
 				dataSource = value;
-				if (IsHandleCreated)
+				if (BindingContext != null)
 					ReBind ();
 				OnDataSourceChanged (EventArgs.Empty);
 			}

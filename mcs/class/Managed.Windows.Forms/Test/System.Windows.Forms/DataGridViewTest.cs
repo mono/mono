@@ -22,6 +22,7 @@
 // Author:
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //	Daniel Nauck    (dna(at)mono-project(dot)de)
+//	Ivan N. Zlatev  <contact@i-nz.net>
 
 
 #if NET_2_0
@@ -1768,6 +1769,44 @@ namespace MonoTests.System.Windows.Forms
 			dgv.ColumnCount = 0;
 			Assert.AreEqual (0, dgv.RowCount, "I2");
 			Assert.IsNull (dgv.CurrentCell, "I3");
+		}
+
+		[Test]
+		public void DataSourceBindingContextDependency ()
+		{
+			List<DataItem> dataList = new List<DataItem> ();
+			dataList.Add (new DataItem ());
+			dataList.Add (new DataItem ());
+
+			DataGridView dgv = new DataGridView ();
+			dgv.DataSource = dataList;
+			Assert.IsNull (dgv.BindingContext, "#1");
+			Assert.IsFalse (dgv.IsHandleCreated, "#2");
+			Assert.AreEqual (0, dgv.RowCount, "#3");
+
+			dgv.DataSource = null;
+
+			Form form = new Form ();
+			form.Controls.Add (dgv);
+			dgv.DataSource = dataList;
+
+			Assert.IsNotNull (dgv.BindingContext, "#4");
+			Assert.IsFalse (dgv.IsHandleCreated, "#5");
+			Assert.AreEqual (2, dgv.RowCount, "#6");
+
+			dgv.Dispose ();
+			dgv = new DataGridView ();
+			dgv.DataSource = dataList;
+
+			Assert.IsNull (dgv.BindingContext, "#7");
+			Assert.IsFalse (dgv.IsHandleCreated, "#8");
+			Assert.AreEqual (0, dgv.RowCount, "#9");
+
+			dgv.CreateControl ();
+
+			Assert.IsNull (dgv.BindingContext, "#10");
+			Assert.IsTrue (dgv.IsHandleCreated, "#11");
+			Assert.AreEqual (0, dgv.RowCount, "#12");
 		}
 	}
 	

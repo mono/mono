@@ -1,5 +1,10 @@
 2009-03-17  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewTest.cs: Add tests for the relevance of IsHandleCreated and 
+	the BindingContext for the databound state of the DataGridView.
+
+2009-03-17  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewTest.cs: Add a test for Browsable(false) columns.
 
 2009-03-08  Ivan N. Zlatev  <contact@i-nz.net>

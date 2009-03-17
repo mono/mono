@@ -1,5 +1,11 @@
 2009-03-17  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: When DataSource changes the rebinding should happen 
+	not if IsHandleCreated but if BindingContext != null.
+	[Fixes bug #486013]
+
+2009-03-17  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Browsable(false) properties should be skipped when 
 	autogenerating the columns.
 	[Fixes bug #486021]
