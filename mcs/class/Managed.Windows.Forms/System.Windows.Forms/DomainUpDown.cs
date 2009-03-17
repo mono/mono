@@ -260,7 +260,54 @@ namespace System.Windows.Forms
 			Select(base.txtView.SelectionStart + base.txtView.SelectionLength, 0);
 		}
 
+		int SearchTextWithPrefix (char key_char)
+		{
+			string prefix = key_char.ToString ();
+			int start_index, i;
+
+			start_index = selected_index == -1 ? 0 : selected_index;
+			i = selected_index == -1 || selected_index + 1 >= items.Count ? 0 : start_index + 1;
+
+			while (true) {
+				string item_text = items [i].ToString ();
+				if (String.Compare (prefix, 0, item_text, 0, 1, true) == 0)
+					return i;
+
+				if (i + 1 >= items.Count)
+					i = 0;
+				else
+					i++;
+
+				if (i == start_index)
+					break;
+			}
+
+			return -1;
+		}
+
+		bool IsValidInput (char key_char)
+		{
+			return Char.IsLetterOrDigit (key_char)
+					|| Char.IsNumber (key_char)
+					|| Char.IsPunctuation (key_char)
+					|| Char.IsSymbol (key_char)
+					|| Char.IsWhiteSpace (key_char);
+		}
+
 		private void TextBoxKeyDown(object source, KeyPressEventArgs e) {
+			if (ReadOnly) {
+				char key_char = e.KeyChar;
+				if (IsValidInput (key_char) && items.Count > 0) {
+					int idx = SearchTextWithPrefix (key_char);
+					if (idx > -1) {
+						SelectedIndex = idx;
+						e.Handled = true;
+					}
+				}
+
+				return;
+			}
+
 			if (!UserEdit) {
 				base.txtView.SelectionLength = 0;
 				typed_to_index = -1;
@@ -324,11 +371,7 @@ namespace System.Windows.Forms
 			else {
 				char key_char = e.KeyChar;
 
-				if (char.IsLetterOrDigit(key_char)
-					|| char.IsNumber(key_char)
-					|| char.IsPunctuation(key_char)
-					|| char.IsSymbol(key_char)
-					|| char.IsWhiteSpace(key_char)) {
+				if (IsValidInput (key_char)) {
 					string prefix = base.txtView.SelectedText + key_char;
 
 					bool found = false;
