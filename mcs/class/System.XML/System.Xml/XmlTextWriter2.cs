@@ -259,6 +259,9 @@ namespace Mono.Xml
 
 		public XmlTextWriter (TextWriter writer)
 		{
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
+			ignore_encoding = (writer.Encoding == null);
 			Initialize (writer);
 			allow_doc_fragment = true;
 		}
