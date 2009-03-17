@@ -1,3 +1,9 @@
+2009-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* verify.c (mono_verifier_is_class_full_trust): Add support for
+	CoreCLR security mode where trusted assemblies are defined as
+	"platform code".
+
 2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add minimal PECOFF resource verification.
