@@ -1,5 +1,10 @@
 2009-03-18  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Implement the CellMouseDoubleClick event.
+	[Fixes bug #486262]
+
+2009-03-18  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Fix scrolling to take into account that the 
 	scrollbars are actually inside the client area of the datagridview.
 

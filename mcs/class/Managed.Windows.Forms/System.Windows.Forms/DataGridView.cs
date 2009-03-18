@@ -4114,6 +4114,11 @@ namespace System.Windows.Forms {
 		protected override void OnMouseDoubleClick (MouseEventArgs e)
 		{
 			base.OnMouseDoubleClick(e);
+
+			HitTestInfo hitInfo = HitTest (e.X, e.Y);
+			if (hitInfo.Type == DataGridViewHitTestType.Cell)
+				OnCellMouseDoubleClick (new DataGridViewCellMouseEventArgs (hitInfo.ColumnIndex, hitInfo.RowIndex,
+											    hitInfo.ColumnX, hitInfo.RowY, e));
 		}
 
 		private void DoSelectionOnMouseDown (HitTestInfo hitTest)
