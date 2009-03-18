@@ -1,3 +1,7 @@
+2009-03-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add more tests for user types.
+
 2009-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ConvertTest.cs: Avoid false positive in ChangeType test. 

@@ -3086,6 +3086,33 @@ PublicKeyToken=b77a5c561934e089"));
 		UserType2 t2 = new UserType2(t1);
 		Assert.AreEqual (42, t2.GetHashCode());
 	}
+	
+	[Test]
+	public void IsGenericTypeDefinitionUserType () {
+		Assert.IsFalse (new UserType(null).IsGenericTypeDefinition);
+	}
+	
+	[Test]
+	public void IsGenericTypeUserType () {
+		Assert.IsFalse (new UserType(null).IsGenericType);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void GetGenericTypeDefinitionUserType () {
+		new UserType(null).GetGenericTypeDefinition ();
+	}
+
+	[ExpectedException (typeof (NotSupportedException))]
+	public void GetGenericArgumentsUserType () {
+		new UserType(null).GetGenericArguments ();
+	}
+	
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void GenericParameterPositionUserType () {
+		Assert.IsTrue (new UserType(null).GenericParameterPosition == 0);
+	}
 #endif
 
 		[Test]
