@@ -1,3 +1,8 @@
+2009-03-18  Matt Guo  <matt@mattguo.com>
+
+	* FontDialog.cs: Override "ToString" for FontDialog.ColorComboBox.ColorComboBoxItem
+	[Fixes bug #482690]
+
 2009-03-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Implement the CellMouseDoubleClick event.

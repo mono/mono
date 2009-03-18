@@ -1237,6 +1237,11 @@ namespace System.Windows.Forms
 						return name;
 					}
 				}
+
+				public override string ToString()
+				{
+					return this.Name;
+				}
 			}
 			
 			private Color selectedColor;
