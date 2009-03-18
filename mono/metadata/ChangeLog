@@ -1,5 +1,9 @@
 2009-03-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Initial verification of the CLI header.
+
+2009-03-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_resources_table): Fix verification of zero
 	sized resource section and id entries count.
 
