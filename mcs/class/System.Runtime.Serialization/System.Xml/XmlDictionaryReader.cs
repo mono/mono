@@ -404,6 +404,34 @@ namespace System.Xml
 			}
 		}
 
+		public virtual void ReadFullStartElement ()
+		{
+			if (!IsStartElement ())
+				throw new XmlException ("Current node is not a start element");
+			ReadStartElement ();
+		}
+
+		public virtual void ReadFullStartElement (string name)
+		{
+			if (!IsStartElement (name))
+				throw new XmlException (String.Format ("Current node is not a start element '{0}'", name));
+			ReadStartElement (name);
+		}
+
+		public virtual void ReadFullStartElement (string localName, string namespaceUri)
+		{
+			if (!IsStartElement (localName, namespaceUri))
+				throw new XmlException (String.Format ("Current node is not a start element '{0}' in namesapce '{1}'", localName, namespaceUri));
+			ReadStartElement (localName, namespaceUri);
+		}
+
+		public virtual void ReadFullStartElement (XmlDictionaryString localName, XmlDictionaryString namespaceUri)
+		{
+			if (!IsStartElement (localName, namespaceUri))
+				throw new XmlException (String.Format ("Current node is not a start element '{0}' in namesapce '{1}'", localName, namespaceUri));
+			ReadStartElement (localName.Value, namespaceUri.Value);
+		}
+
 		public override string ReadString ()
 		{
 			return ReadString (Quotas.MaxStringContentLength);
