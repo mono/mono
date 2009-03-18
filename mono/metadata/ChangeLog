@@ -1,3 +1,8 @@
+2009-03-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (verify_resources_table): Fix verification of zero
+	sized resource section and id entries count.
+
 2009-03-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c: Handle user types in many Type icalls. Fixes #486303.
