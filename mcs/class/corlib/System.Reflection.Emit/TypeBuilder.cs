@@ -1750,7 +1750,7 @@ namespace System.Reflection.Emit
 		{
 			create_generic_class ();
 
-			return base.GetGenericTypeDefinition ();
+			return base.GetGenericTypeDefinition_impl ();
 		}
 
 		public override bool ContainsGenericParameters {

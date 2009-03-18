@@ -1,3 +1,8 @@
+2009-03-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs (GetGenericTypeDefinition): Call the icall instead of
+	the base method which now throws an exception.
+
 2009-02-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* ILGenerator.cs SignatureHelper.cs: Add checks for user types.
