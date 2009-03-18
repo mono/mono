@@ -993,6 +993,8 @@ namespace System.Xml
 					else
 						return XmlQualifiedName.Parse (text, this);
 				}
+				if (type == typeof (DateTimeOffset))
+					return XmlConvert.ToDateTimeOffset (text);
 
 				switch (Type.GetTypeCode (type)) {
 				case TypeCode.Boolean:
