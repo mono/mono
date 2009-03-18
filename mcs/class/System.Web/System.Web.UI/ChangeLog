@@ -1,3 +1,10 @@
+2009-03-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: AppRelativeResourceDirectory no longer returns a
+	hard-coded "~/" when template control's virtual path cannot be
+	determined. It returns application relative version of
+	TemplateSourceDirectory instead.
+
 2009-03-13  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: clear the controls cache on control removal. This
