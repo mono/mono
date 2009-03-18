@@ -1,3 +1,7 @@
+2009-03-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (token_handler): Fix a crash caused by the last change.
+
 2009-03-17  Jb Evain  <jbevain@novell.com>
 
 	* driver.c: remove now uneeded call to mono_gc_base_init before
