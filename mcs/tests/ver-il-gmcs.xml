@@ -2045,7 +2045,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>186</size>
+        <size>185</size>
       </method>
       <method name="Void Dispose()">
         <size>62</size>
@@ -4321,7 +4321,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>119</size>
+        <size>118</size>
       </method>
     </type>
     <type name="X+A">
@@ -4753,7 +4753,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>186</size>
+        <size>184</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__Iterator0">
@@ -7814,7 +7814,7 @@
         <size>106</size>
       </method>
       <method name="Int32 Test(System.Type, System.Type[])">
-        <size>399</size>
+        <size>398</size>
       </method>
       <method name="Int32 Test()">
         <size>532</size>
@@ -9476,7 +9476,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>105</size>
+        <size>103</size>
       </method>
       <method name="Int32 f2(IList, IList)">
         <size>2</size>
@@ -11030,7 +11030,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>57</size>
+        <size>56</size>
       </method>
       <method name="System.Object Test(System.String)">
         <size>42</size>
@@ -14419,7 +14419,7 @@
         <size>81</size>
       </method>
       <method name="Int32 Main()">
-        <size>509</size>
+        <size>507</size>
       </method>
     </type>
     <type name="Test+Wrap">
@@ -20993,7 +20993,7 @@
         <size>54</size>
       </method>
       <method name="Int32 Test()">
-        <size>358</size>
+        <size>356</size>
       </method>
       <method name="Int32 Main()">
         <size>94</size>
@@ -21652,7 +21652,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>88</size>
+        <size>87</size>
       </method>
     </type>
   </test>
@@ -23320,7 +23320,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>36</size>
+        <size>31</size>
       </method>
     </type>
     <type name="S">
@@ -23426,7 +23426,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>180</size>
+        <size>174</size>
       </method>
       <method name="System.Object compare_gte(Int32, Int32)">
         <size>13</size>
@@ -23544,7 +23544,7 @@
         <size>12</size>
       </method>
       <method name="MonoBUG.Foo get_Current()">
-        <size>51</size>
+        <size>46</size>
       </method>
       <method name="Boolean MoveNext()">
         <size>12</size>
@@ -23680,7 +23680,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>68</size>
+        <size>65</size>
       </method>
     </type>
   </test>
@@ -23802,13 +23802,13 @@
         <size>38</size>
       </method>
       <method name="Boolean One()">
-        <size>63</size>
+        <size>62</size>
       </method>
       <method name="Boolean Two()">
-        <size>63</size>
+        <size>62</size>
       </method>
       <method name="Boolean Three()">
-        <size>63</size>
+        <size>62</size>
       </method>
     </type>
     <type name="List+MyEnumerator">
@@ -23994,7 +23994,7 @@
         <size>7</size>
       </method>
       <method name="Int32 RunTests(System.Type, System.String[])">
-        <size>572</size>
+        <size>571</size>
       </method>
       <method name="Int32 RunTests(System.Type)">
         <size>8</size>
@@ -24782,28 +24782,28 @@
         <size>361</size>
       </method>
       <method name="Int32 AddABunchOfInts(...)">
-        <size>64</size>
+        <size>63</size>
       </method>
       <method name="Int32 AddASecondBunchOfInts(Int32, ...)">
-        <size>64</size>
+        <size>63</size>
       </method>
       <method name="Result VtAddABunchOfInts(...)">
-        <size>69</size>
+        <size>68</size>
       </method>
       <method name="Result VtAddASecondBunchOfInts(Int32, ...)">
-        <size>69</size>
+        <size>68</size>
       </method>
       <method name="Int32 InstAddABunchOfInts(...)">
-        <size>64</size>
+        <size>63</size>
       </method>
       <method name="Int32 InstAddASecondBunchOfInts(Int32, ...)">
-        <size>64</size>
+        <size>63</size>
       </method>
       <method name="Result InstVtAddABunchOfInts(...)">
-        <size>69</size>
+        <size>68</size>
       </method>
       <method name="Result InstVtAddASecondBunchOfInts(Int32, ...)">
-        <size>69</size>
+        <size>68</size>
       </method>
     </type>
     <type name="Result">
@@ -25095,7 +25095,7 @@
         <size>26</size>
       </method>
       <method name="Int32 Main()">
-        <size>123</size>
+        <size>122</size>
       </method>
     </type>
   </test>
@@ -25160,10 +25160,10 @@
         <size>7</size>
       </method>
       <method name="System.Object Add(integer, System.Object)">
-        <size>72</size>
+        <size>70</size>
       </method>
       <method name="Int32 Main()">
-        <size>69</size>
+        <size>68</size>
       </method>
     </type>
     <type name="integer">
@@ -25529,7 +25529,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>313</size>
+        <size>311</size>
       </method>
       <method name="Void Login(System.String)">
         <size>1</size>
@@ -27102,7 +27102,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>275</size>
+        <size>272</size>
       </method>
     </type>
     <type name="X">
@@ -27578,7 +27578,7 @@
         <size>16</size>
       </method>
       <method name="Void Main()">
-        <size>113</size>
+        <size>108</size>
       </method>
     </type>
   </test>
@@ -28633,7 +28633,7 @@
         <size>16</size>
       </method>
       <method name="Void Main()">
-        <size>64</size>
+        <size>63</size>
       </method>
     </type>
     <type name="XX+&lt;X&gt;c__Iterator0">
@@ -29164,7 +29164,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>239</size>
+        <size>237</size>
       </method>
     </type>
   </test>
@@ -29282,40 +29282,40 @@
         <size>7</size>
       </method>
       <method name="Int32 cast_int(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="UInt32 cast_uint(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Int16 cast_short(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Char cast_char(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="UInt16 cast_ushort(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Byte cast_byte(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="SByte cast_sbyte(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Int64 cast_long(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="UInt64 cast_ulong(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Single cast_float(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Double cast_double(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Boolean cast_bool(System.Object)">
-        <size>8</size>
+        <size>7</size>
       </method>
       <method name="Int32 Main()">
         <size>1120</size>
@@ -29341,7 +29341,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>52</size>
+        <size>50</size>
       </method>
     </type>
     <type name="Value">
@@ -29977,7 +29977,7 @@
         <size>2</size>
       </method>
       <method name="Void Main()">
-        <size>170</size>
+        <size>165</size>
       </method>
     </type>
     <type name="Q">
@@ -30711,7 +30711,7 @@
         <size>6</size>
       </method>
       <method name="Int32 Main()">
-        <size>499</size>
+        <size>498</size>
       </method>
     </type>
   </test>
@@ -32061,7 +32061,7 @@
         <size>76</size>
       </method>
       <method name="System.String BuildNode_D()">
-        <size>156</size>
+        <size>155</size>
       </method>
       <method name="Void BuildNode_E(System.String[,] ByRef)">
         <size>68</size>
@@ -32693,7 +32693,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>62</size>
+        <size>60</size>
       </method>
     </type>
   </test>
@@ -33957,10 +33957,10 @@
         <size>67</size>
       </method>
       <method name="Int32 TestObjectSingle()">
-        <size>49</size>
+        <size>48</size>
       </method>
       <method name="Int32 TestObjectDouble()">
-        <size>73</size>
+        <size>72</size>
       </method>
       <method name="Int32 Main()">
         <size>80</size>
@@ -36086,7 +36086,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>262</size>
+        <size>257</size>
       </method>
       <method name="System.Collections.ArrayList Find(predicate, System.Collections.ArrayList)">
         <size>81</size>
@@ -36108,7 +36108,7 @@
     </type>
     <type name="X">
       <method name="Boolean &lt;Main&gt;m__0(System.Object)">
-        <size>13</size>
+        <size>12</size>
       </method>
     </type>
   </test>
@@ -37689,7 +37689,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>186</size>
+        <size>185</size>
       </method>
       <method name="Void Dispose()">
         <size>62</size>
@@ -37716,7 +37716,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>201</size>
+        <size>196</size>
       </method>
     </type>
     <type name="Test+&lt;Foo&gt;c__Iterator0">
@@ -40269,7 +40269,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>173</size>
+        <size>171</size>
       </method>
     </type>
     <type name="X+&lt;GetIt&gt;c__Iterator0">
@@ -40332,7 +40332,7 @@
         <size>8</size>
       </method>
       <method name="Int32 Main()">
-        <size>89</size>
+        <size>88</size>
       </method>
     </type>
     <type name="X+&lt;GetRange&gt;c__Iterator0">
@@ -40368,7 +40368,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>247</size>
+        <size>245</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -40442,7 +40442,7 @@
         <size>44</size>
       </method>
       <method name="Void Main()">
-        <size>99</size>
+        <size>98</size>
       </method>
     </type>
     <type name="X+&lt;GetRange&gt;c__Iterator0">
@@ -40481,7 +40481,7 @@
         <size>16</size>
       </method>
       <method name="Int32 Main()">
-        <size>105</size>
+        <size>104</size>
       </method>
     </type>
     <type name="List">
@@ -40509,7 +40509,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>184</size>
+        <size>183</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
@@ -40553,7 +40553,7 @@
         <size>30</size>
       </method>
       <method name="Int32 Main()">
-        <size>403</size>
+        <size>399</size>
       </method>
     </type>
     <type name="S+&lt;Get&gt;c__Iterator0">
@@ -40691,7 +40691,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>379</size>
+        <size>372</size>
       </method>
     </type>
     <type name="Test+&lt;Foo&gt;c__Iterator0">
@@ -40738,7 +40738,7 @@
         <size>44</size>
       </method>
       <method name="Int32 Main()">
-        <size>171</size>
+        <size>167</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__Iterator0">
@@ -40824,7 +40824,7 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>186</size>
+        <size>184</size>
       </method>
     </type>
     <type name="X+&lt;&gt;c__Iterator0">
