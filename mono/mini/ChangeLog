@@ -1,3 +1,7 @@
+2009-03-18  Geoff Norton  <gnorton@novell.com>
+
+	* mini.c: Only chain sigfpe if it wasn't generated in mangaed code.
+
 2009-03-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (token_handler): Fix a crash caused by the last change.
