@@ -443,9 +443,14 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-		public virtual byte [] ReadValueAsBase64 ()
+		public virtual byte [] ReadValueAsBase64 (byte [] bytes, int start, int length)
 		{
 			throw new NotSupportedException (); // as it is documented ...
+		}
+
+		public virtual bool TryGetValueAsDictionaryString (out XmlDictionaryString value)
+		{
+			throw new NotSupportedException (); // as documented
 		}
 
 		#endregion

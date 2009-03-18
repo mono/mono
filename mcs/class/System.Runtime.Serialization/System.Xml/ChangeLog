@@ -1,5 +1,9 @@
 2009-03-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDictionaryReader.cs : more not-understandable bits.
+
+2009-03-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDictionaryReader.cs : implemented ReadFullStartElement (full??).
 
 2009-03-18  Atsushi Enomoto  <atsushi@ximian.com>
