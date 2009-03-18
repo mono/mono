@@ -1,3 +1,8 @@
+2009-03-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs (GetGenericTypeDefinition): Make this throw an exception to be
+	consistent with MS.NET. Move the real implementation to MonoType.
+
 2009-03-18  Marek Safar  <marek.safar@gmail.com>
 
 	* Decimal.cs: Initialize all fields.

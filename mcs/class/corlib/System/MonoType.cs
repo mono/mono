@@ -669,6 +669,14 @@ namespace System
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
+
+		public override Type GetGenericTypeDefinition () {
+			Type res = GetGenericTypeDefinition_impl ();
+			if (res == null)
+				throw new InvalidOperationException ();
+
+			return res;
+		}
 #endif
 
 		private MethodBase CheckMethodSecurity (MethodBase mb)

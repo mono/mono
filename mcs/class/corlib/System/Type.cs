@@ -1184,15 +1184,11 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern Type GetGenericTypeDefinition_impl ();
+		internal extern Type GetGenericTypeDefinition_impl ();
 
 		public virtual Type GetGenericTypeDefinition ()
 		{
-			Type res = GetGenericTypeDefinition_impl ();
-			if (res == null)
-				throw new InvalidOperationException ();
-
-			return res;
+			throw new NotSupportedException ("Derived classes must provide an implementation.");
 		}
 
 		public virtual extern bool IsGenericType {
