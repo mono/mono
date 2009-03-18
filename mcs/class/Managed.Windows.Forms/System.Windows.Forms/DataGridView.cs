@@ -4524,6 +4524,14 @@ namespace System.Windows.Forms {
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
 			base.OnMouseWheel(e);
+
+			int delta = SystemInformation.MouseWheelScrollLines * verticalScrollBar.SmallChange;
+			if (e.Delta < 0)
+				verticalScrollBar.SafeValueSet (verticalScrollBar.Value + delta);
+			else
+				verticalScrollBar.SafeValueSet (verticalScrollBar.Value - delta);
+
+			OnVScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, verticalScrollBar.Value));
 		}
 
 		protected virtual void OnMultiSelectChanged (EventArgs e)

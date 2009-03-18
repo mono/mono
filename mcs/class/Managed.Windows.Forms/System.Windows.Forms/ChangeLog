@@ -1,3 +1,8 @@
+2009-03-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Implement mouse wheel scrolling.
+	[Fixes bug #486159]
+
 2009-03-17  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: When DataSource changes the rebinding should happen 
