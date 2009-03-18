@@ -1850,19 +1850,16 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			
 			base.Emit (ec);
-#if GMCS_SOURCE
-			if (type.IsGenericParameter || type.IsGenericType && type.IsValueType)
-				ig.Emit (OpCodes.Unbox_Any, type);
-			else
-#endif
-			{
-				ig.Emit (OpCodes.Unbox, type);
 
-				LoadFromPtr (ig, type);
-			}
+			ILGenerator ig = ec.ig;
+
+#if GMCS_SOURCE
+			ig.Emit (OpCodes.Unbox_Any, type);
+#else			
+			ig.Emit (OpCodes.Unbox, type);
+			LoadFromPtr (ig, type);
+#endif			
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
