@@ -1,3 +1,7 @@
+2009-03-18  Marek Safar  <marek.safar@gmail.com>
+
+	* Decimal.cs: Initialize all fields.
+
 2009-03-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ConsoleDriver.cs:

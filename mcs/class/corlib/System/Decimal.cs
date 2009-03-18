@@ -141,6 +141,7 @@ namespace System
 		public Decimal (uint value) 
 		{
 			lo = value;
+			flags = hi = mid = 0;
 		}
 
 		public Decimal (long value) 
