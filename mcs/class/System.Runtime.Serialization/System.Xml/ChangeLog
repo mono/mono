@@ -1,3 +1,8 @@
+2009-03-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryReader.cs : implemented missing && understandable
+	  members.
+
 2009-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* XmlBinaryDictionaryReader.cs, XmlSimpleDictionaryReader.cs: 2.1

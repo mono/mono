@@ -148,31 +148,66 @@ namespace System.Xml
 			return IsStartElement (localName.Value, namespaceUri.Value);
 		}
 
-		[MonoTODO]
+		protected bool IsTextNode (XmlNodeType nodeType)
+		{
+			switch (nodeType) {
+			case XmlNodeType.Attribute: // wow, it isn't indeed.
+			case XmlNodeType.Text:
+			case XmlNodeType.CDATA:
+			case XmlNodeType.Whitespace:
+			case XmlNodeType.SignificantWhitespace:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		XmlException XmlError (string message)
+		{
+			IXmlLineInfo li = this as IXmlLineInfo;
+			if (li == null || !li.HasLineInfo ())
+				return new XmlException (message);
+			else
+				return new XmlException (String.Format ("{0} in {1} , at ({2},{3})", message, BaseURI, li.LineNumber, li.LinePosition));
+		}
+
 		public virtual void MoveToStartElement ()
 		{
-			throw new NotImplementedException ();
+			MoveToContent ();
+			if (NodeType != XmlNodeType.Element)
+				throw XmlError (String.Format ("Element node is expected, but got {0} node.", NodeType));
 		}
 
-		[MonoTODO]
 		public virtual void MoveToStartElement (string name)
 		{
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			MoveToStartElement ();
+			if (Name != name)
+				throw XmlError (String.Format ("Element node '{0}' is expected, but got '{1}' element.", name, Name));
 		}
 
-		[MonoTODO]
 		public virtual void MoveToStartElement (
 			string localName, string namespaceUri)
 		{
-			throw new NotImplementedException ();
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (namespaceUri == null)
+				throw new ArgumentNullException ("namespaceUri");
+			MoveToStartElement ();
+			if (LocalName != localName || NamespaceURI != namespaceUri)
+				throw XmlError (String.Format ("Element node '{0}' in namespace '{1}' is expected, but got '{2}' in namespace '{3}' element.", localName, namespaceUri, LocalName, NamespaceURI));
 		}
 
-		[MonoTODO]
 		public virtual void MoveToStartElement (
 			XmlDictionaryString localName,
 			XmlDictionaryString namespaceUri)
 		{
-			throw new NotImplementedException ();
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (namespaceUri == null)
+				throw new ArgumentNullException ("namespaceUri");
+			MoveToStartElement (localName.Value, namespaceUri.Value);
 		}
 
 		[MonoTODO]
@@ -195,7 +230,6 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool TryGetLocalNameAsDictionaryString (
 			out XmlDictionaryString localName)
 		{
@@ -203,7 +237,6 @@ namespace System.Xml
 			return false;
 		}
 
-		[MonoTODO]
 		public virtual bool TryGetNamespaceUriAsDictionaryString (
 			out XmlDictionaryString namespaceUri)
 		{
@@ -274,10 +307,11 @@ namespace System.Xml
 			return XmlConvert.ToGuid (ReadContentAsString ());
 		}
 
-		[MonoTODO]
 		public virtual void ReadContentAsQualifiedName (out string localName, out string namespaceUri)
 		{
-			throw new NotImplementedException ();
+			XmlQualifiedName qname = (XmlQualifiedName) ReadContentAs (typeof (XmlQualifiedName), this as IXmlNamespaceResolver);
+			localName = qname.Name;
+			namespaceUri = qname.Namespace;
 		}
 
 		public override string ReadContentAsString ()
@@ -381,10 +415,9 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-		[MonoTODO]
 		public virtual byte [] ReadValueAsBase64 ()
 		{
-			return ReadContentAsBase64 ();
+			throw new NotSupportedException (); // as it is documented ...
 		}
 
 		#endregion
@@ -460,7 +493,6 @@ namespace System.Xml
 				session, null);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateBinaryReader (
 			Stream stream, IXmlDictionary dictionary,
 			XmlDictionaryReaderQuotas quotas,
@@ -471,7 +503,6 @@ namespace System.Xml
 				dictionary, quotas, session, onClose);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateDictionaryReader (
 			XmlReader reader)
 		{
@@ -561,7 +592,6 @@ namespace System.Xml
 				Encoding.UTF8, quotas, null);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateTextReader (
 			byte [] buffer, int offset, int count,
 			Encoding encoding,
@@ -577,7 +607,6 @@ namespace System.Xml
 			return CreateTextReader (stream, Encoding.UTF8, quotas, null);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateTextReader (
 			Stream stream, Encoding encoding,
 			XmlDictionaryReaderQuotas quotas,
