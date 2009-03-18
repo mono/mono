@@ -535,6 +535,8 @@ mono_domain_get_tls_offset (void) MONO_INTERNAL;
 
 /* Reflection and Reflection.Emit support */
 
+#define IS_MONOTYPE(obj) (!(obj) || (((MonoObject*)(obj))->vtable->klass->image == mono_defaults.corlib && ((MonoReflectionType*)(obj))->type != NULL))
+
 /*
  * The following structure must match the C# implementation in our corlib.
  */
