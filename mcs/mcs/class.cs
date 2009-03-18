@@ -3025,8 +3025,7 @@ namespace Mono.CSharp {
 			get {
 				const TypeAttributes DefaultTypeAttributes =
 					TypeAttributes.SequentialLayout |
-					TypeAttributes.Sealed |
-					TypeAttributes.BeforeFieldInit;
+					TypeAttributes.Sealed;
 
 				return base.TypeAttr | DefaultTypeAttributes;
 			}

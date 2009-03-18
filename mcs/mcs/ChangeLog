@@ -1,3 +1,7 @@
+2009-03-18  Marek Safar  <marek.safar@gmail.com>
+
+	* class.cs: Always set TypeAttributes.BeforeFieldInit conditionally.
+
 2009-03-17  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs: Removed obsolete version of type inference.
