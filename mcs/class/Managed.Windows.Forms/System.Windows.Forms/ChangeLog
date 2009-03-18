@@ -1,3 +1,8 @@
+2009-03-18  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Fire CellEnter and CellLeave events for the Cell.
+	[Fixes bug #486640]
+
 2009-03-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* XplatUICarbon.cs: Commit patch from Alex Shulgin that fixes window

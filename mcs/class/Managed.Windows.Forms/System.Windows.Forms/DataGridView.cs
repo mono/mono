@@ -3491,6 +3491,9 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellEnter (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+			cell.OnEnterInternal (e.RowIndex, true);
+
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellEnterEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -3524,6 +3527,9 @@ namespace System.Windows.Forms {
 
 		protected virtual void OnCellLeave (DataGridViewCellEventArgs e)
 		{
+			DataGridViewCell cell = GetCellInternal (e.ColumnIndex, e.RowIndex);
+			cell.OnLeaveInternal (e.RowIndex, true);
+
 			DataGridViewCellEventHandler eh = (DataGridViewCellEventHandler)(Events [CellLeaveEvent]);
 			if (eh != null)
 				eh (this, e);
