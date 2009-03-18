@@ -2412,9 +2412,15 @@ namespace System.Windows.Forms {
 			if (ColumnHeadersVisible)
 				rowTop += ColumnHeadersHeight;
 
+			Size visibleClientArea = ClientSize;
+			if (verticalScrollBar.Visible)
+				visibleClientArea.Width -= verticalScrollBar.Width;
+			if (horizontalScrollBar.Visible)
+				visibleClientArea.Height -= horizontalScrollBar.Height;
+
 			for (int index = first_row_index; index < Rows.Count; index++) {
 				DataGridViewRow row = GetRowInternal (index);
-				if (rowTop + row.Height <= ClientSize.Height) {
+				if (rowTop + row.Height <= visibleClientArea.Height) {
 					result++;
 					rowTop += row.Height;
 				} else {
@@ -4705,7 +4711,7 @@ namespace System.Windows.Forms {
 					horizontalScrollBar.Minimum = 0;
 					horizontalScrollBar.Maximum = gridWidth;
 					horizontalScrollBar.SmallChange = Columns[first_col_index].Width;
-					int largeChange = ClientSize.Width - rowHeadersWidth;
+					int largeChange = ClientSize.Width - rowHeadersWidth - horizontalScrollBar.Height;
 					if (largeChange <= 0)
 						largeChange = ClientSize.Width;
 					horizontalScrollBar.LargeChange = largeChange;
@@ -4716,7 +4722,7 @@ namespace System.Windows.Forms {
 					verticalScrollBar.Maximum = gridHeight;
 					int first_row_height = Rows.Count > 0 ? Rows[Math.Min (Rows.Count - 1, first_row_index)].Height : 0;
 					verticalScrollBar.SmallChange = first_row_height + 1;
-					int largeChange = ClientSize.Height - columnHeadersHeight;
+					int largeChange = ClientSize.Height - columnHeadersHeight - verticalScrollBar.Width;
 					if (largeChange <= 0)
 						largeChange = ClientSize.Height;
 					verticalScrollBar.LargeChange = largeChange;
@@ -5639,11 +5645,16 @@ namespace System.Windows.Forms {
 				return;
 
 			int top = 0;
+			int lastTopVisibleRowIndex = Rows.Count - DisplayedRowCount (false);
+
 			for (int index = 0; index < Rows.Count; index++) {
 				DataGridViewRow row = Rows[index];
 				if (!row.Visible)
 					continue;
-				if (e.NewValue < top + row.Height) {
+
+				if (row.Index >= lastTopVisibleRowIndex) {
+					first_row_index = lastTopVisibleRowIndex;
+				} else if (e.NewValue < top + row.Height) {
 					if (first_row_index != index) {
 						first_row_index = index;
 						Invalidate ();
@@ -5656,7 +5667,7 @@ namespace System.Windows.Forms {
 				top += row.Height;
 			}
 			
-			first_row_index = Rows.Count - DisplayedRowCount (false);
+			first_row_index = lastTopVisibleRowIndex;
 			Invalidate ();
 			OnScroll (e);
 		}
