@@ -1,3 +1,8 @@
+2009-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Add another check to avoid hitting
+	the stack_alloc_size < (1 << 16) assertion in emit_prolog ().
+
 2009-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* method-to-ir.c: Allow CoreCLR to throw FieldAccessException. 
