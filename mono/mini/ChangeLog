@@ -1,5 +1,8 @@
 2009-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (fullaotcheck): Don't run the generics tests, some of
+	them don't run yet.
+
 	* basic-simd.cs: Fix the names of some test methods.
 
 2009-03-18  Geoff Norton  <gnorton@novell.com>
