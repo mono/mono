@@ -1,3 +1,20 @@
+2009-03-19  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptManager.cs: WriteCallbackPanel is called from
+	UpdatePanel.RenderChildren and should not output anything for
+	panels registered as the ones to refresh. If such a panel calls
+	this method, its output is stored in a dictionary to be used later
+	in RenderFormCallback.
+	RenderFormCallback first renders all the form controls. In that
+	process UpdatePanel instances, if any, may call
+	WriteCallbackPanel. After that, if there are panels registered for
+	refresh, another loop over the list is made this time checking
+	whether any panels left their output in WriteCallbackPanel. If a
+	panel hasn't done it it is rendered. And last, another check is
+	done to see if the loop described above caused any panels to leave
+	output in WriteCallbackPanel. If yes, the output is written to the
+	text writer.
+
 2009-01-26  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptManager.cs: before registering script service reference

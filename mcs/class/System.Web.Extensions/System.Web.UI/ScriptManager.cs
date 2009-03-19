@@ -1208,10 +1208,20 @@ namespace System.Web.UI
 			panel.Update ();
 			_panelsToRefresh.Add (panel);
 		}
-		
-		internal void WriteCallbackPanel (TextWriter output, UpdatePanel panel, StringBuilder panelOutput) {
-			RegisterPanelForRefresh (panel);
-			WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
+
+		Dictionary <UpdatePanel, string> _refreshedPanelsOutput;
+		internal void WriteCallbackPanel (TextWriter output, UpdatePanel panel, StringBuilder panelOutput)
+		{
+			if (_panelsToRefresh != null && _panelsToRefresh.Contains (panel)) {
+				if (_refreshedPanelsOutput == null)
+					_refreshedPanelsOutput = new Dictionary <UpdatePanel, string> ();
+				
+				if (_refreshedPanelsOutput.ContainsKey (panel))
+					_refreshedPanelsOutput [panel] = panelOutput.ToString ();
+				else
+					_refreshedPanelsOutput.Add (panel, panelOutput.ToString ());
+			} else
+				WriteCallbackOutput (output, updatePanel, panel.ClientID, panelOutput);
 		}
 
 		internal void RegisterChildUpdatePanel (UpdatePanel updatePanel) {
@@ -1397,14 +1407,32 @@ namespace System.Web.UI
 			throw new InvalidOperationException (String.Format ("The script tag registered for type '{0}' and key '{1}' has invalid characters outside of the script tags: {2}. Only properly formatted script tags can be registered.", scriptEntry.Type, scriptEntry.Key, scriptEntry.Script));
 		}
 
-		void RenderFormCallback (HtmlTextWriter output, Control container) {
-			output = ((HtmlTextParser) output).ResponseOutput;
+		void RenderFormCallback (HtmlTextWriter output, Control container)
+		{
+			_refreshedPanelsOutput = null;
 			HtmlForm form = (HtmlForm) container;
 			HtmlTextWriter writer = new HtmlDropWriter (output);
+			
 			if (form.HasControls ()) {
-				for (int i = 0; i < form.Controls.Count; i++) {
+				for (int i = 0; i < form.Controls.Count; i++)
 					form.Controls [i].RenderControl (writer);
+			}
+
+			if (_panelsToRefresh != null && _panelsToRefresh.Count > 0) {
+				output = ((HtmlTextParser) output).ResponseOutput;
+				writer = new HtmlDropWriter (output);
+				bool haveRefreshedPanelsOutput = _refreshedPanelsOutput != null && _refreshedPanelsOutput.Count > 0;
+				foreach (UpdatePanel panel in _panelsToRefresh) {
+					if (haveRefreshedPanelsOutput && _refreshedPanelsOutput.ContainsKey (panel))
+						WriteCallbackOutput (output, updatePanel, panel.ClientID, _refreshedPanelsOutput [panel]);
+					else
+						panel.RenderControl (writer);
 				}
+
+				// For panels which called WriteCallbackPanel in the loop above
+				if (_refreshedPanelsOutput != null && _refreshedPanelsOutput.Count > 0)
+					foreach (var entry in _refreshedPanelsOutput)
+						WriteCallbackOutput (output, updatePanel, entry.Key.ClientID, entry.Value);
 			}
 		}
 
