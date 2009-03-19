@@ -103,13 +103,20 @@ namespace Mono.XBuild.CommandLine {
 				}
 
 				string projectFile = parameters.ProjectFile;
+				if (!File.Exists (projectFile)) {
+					ErrorUtilities.ReportError (0, String.Format ("Project file '{0}' not found.", projectFile));
+					return;
+				}
+
 				if (projectFile.EndsWith (".sln"))
 					projectFile = GenerateSolutionProject (projectFile);
 
 				project.Load (projectFile);
 				
 				string oldCurrentDirectory = Environment.CurrentDirectory;
-				Directory.SetCurrentDirectory (Path.GetDirectoryName (projectFile));
+				string dir = Path.GetDirectoryName (projectFile);
+				if (!String.IsNullOrEmpty (dir))
+					Directory.SetCurrentDirectory (dir);
 				result = engine.BuildProject (project, parameters.Targets, null);
 				Directory.SetCurrentDirectory (oldCurrentDirectory);
 			}
