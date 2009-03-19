@@ -1,5 +1,9 @@
 2009-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c: Fix CLI header dumping.
+
+2009-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: More CLI header verification.
 
 2009-03-19  Zoltan Varga  <vargaz@gmail.com>
