@@ -1,3 +1,7 @@
+2009-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* basic-simd.cs: Fix the names of some test methods.
+
 2009-03-18  Geoff Norton  <gnorton@novell.com>
 
 	* mini.c: Only chain sigfpe if it wasn't generated in mangaed code.
