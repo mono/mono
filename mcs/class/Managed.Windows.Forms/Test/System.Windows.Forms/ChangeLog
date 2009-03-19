@@ -1,5 +1,10 @@
 2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewTest.cs: Add tests to verify that the current cell changes 
+	if IsHandleCreated and the first row is added in a non-databound scenario.
+
+2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewTest.cs, DataGridViewColumnTest.cs: Add tests for 
 	Row/CellTemplates being always null.
 

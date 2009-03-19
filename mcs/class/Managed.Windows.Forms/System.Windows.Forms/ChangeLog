@@ -1,5 +1,17 @@
 2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: If IsHandleCreated and the very first row is added 
+	to the grid in a non-databound scenario - select the first cell.
+	[Fixes bug #486881]
+
+2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: If we are not databound and empty once the first row 
+	gets added select the first cell.
+	[Fixes bug #486881]
+
+2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewColumn.cs: Do not set Row/CellTemplate's
 	DataGridView. They do not belong to a DataGridView.
 	[Fixes bug #486645]

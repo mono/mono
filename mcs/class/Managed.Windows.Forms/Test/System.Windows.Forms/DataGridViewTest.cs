@@ -1769,6 +1769,16 @@ namespace MonoTests.System.Windows.Forms
 			dgv.ColumnCount = 0;
 			Assert.AreEqual (0, dgv.RowCount, "I2");
 			Assert.IsNull (dgv.CurrentCell, "I3");
+
+			dgv.RowCount = 0;
+			dgv.ColumnCount = 0;
+			dgv.CreateControl ();
+			dgv.ColumnCount = 2;
+			dgv.RowCount = 3;
+
+			Assert.IsNotNull (dgv.CurrentCell, "G1");
+			Assert.AreEqual (0, dgv.CurrentCell.RowIndex, "G1");
+			Assert.AreEqual (0, dgv.CurrentCell.ColumnIndex, "G1");
 		}
 
 		[Test]

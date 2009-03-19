@@ -4026,7 +4026,7 @@ namespace System.Windows.Forms {
 			base.OnHandleCreated(e);
 			ReBind ();
 			
-			if (CurrentCell == null && Rows.Count > 0 && Columns.Count > 0)
+			if (DataManager == null && CurrentCell == null && Rows.Count > 0 && Columns.Count > 0)
 				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, false);
 		}
 
@@ -4905,6 +4905,11 @@ namespace System.Windows.Forms {
 		{
 			if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
 				hover_cell = null;
+
+			// Select the first row if we are not databound. 
+			// If we are databound selection is managed by the data manager.
+			if (IsHandleCreated && DataManager == null && Rows.Count == 1 && Columns.Count > 0)
+				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, true);
 
 			AutoResizeColumnsInternal ();
 			Invalidate ();
