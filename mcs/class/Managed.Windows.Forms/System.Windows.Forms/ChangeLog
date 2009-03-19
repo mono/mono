@@ -1,5 +1,11 @@
 2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Do not add any cells to the FullRowTemplate in RowCount. 
+	FullRowTemplate already contains all the cells.
+	[Fixes part of bug #486645]
+
+2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewCellCollection.cs: Split the column removal 
 	to perform Pre and Post removal actions to allow the current cell to be 
 	moved and all events fired properly before the column is removed.

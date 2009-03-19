@@ -1031,9 +1031,6 @@ namespace System.Windows.Forms {
 					for (int i = rows.Count; i < value; i++) {
 						DataGridViewRow row = (DataGridViewRow) RowTemplateFull;
 						rows.AddInternal (row, false);
-						
-						foreach (DataGridViewColumn col in columns)
-							row.Cells.Add (col.CellTemplate.Clone () as DataGridViewCell);
 					}
 				}
 			}
