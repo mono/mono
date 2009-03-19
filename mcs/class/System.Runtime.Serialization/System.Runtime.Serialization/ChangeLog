@@ -1,3 +1,9 @@
+2009-03-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs, XmlFormatterDeserializer.cs :
+	  to infer type from xml qname, consider DataContractAttribute
+	  names.
+
 2009-03-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : make generic type parsing sloppy.

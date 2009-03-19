@@ -74,6 +74,15 @@ namespace System.Runtime.Serialization
 	  exists (and raises InvalidOperationException if required).
 
 */
+	internal static class TypeExtensions
+	{
+		public static T GetCustomAttribute<T> (this Type type, bool inherit)
+		{
+			var arr = type.GetCustomAttributes (typeof (T), inherit);
+			return arr != null && arr.Length == 1 ? (T) arr [0] : default (T);
+		}
+	}
+
 	internal sealed class KnownTypeCollection : Collection<Type>
 	{
 		internal const string MSSimpleNamespace =

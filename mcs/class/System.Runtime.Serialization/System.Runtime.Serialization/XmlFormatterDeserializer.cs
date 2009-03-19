@@ -29,6 +29,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Xml;
@@ -169,7 +170,7 @@ namespace System.Runtime.Serialization
 
 			SerializationMap map = types.FindUserMap (name);
 			if (map == null && name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal)) {
-				var it = GetTypeFromNamePair (name.Name, name.Namespace.Substring (KnownTypeCollection.DefaultClrNamespaceBase.Length));
+				var it = GetTypeFromNamePair (name.Name, name.Namespace);
 				if (types.TryRegister (it))
 					map = types.FindUserMap (name);
 			}
@@ -181,11 +182,21 @@ namespace System.Runtime.Serialization
 
 		Type GetTypeFromNamePair (string name, string ns)
 		{
-			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ())
-				foreach (var t in ass.GetTypes ())
-					if (t.Name == name && t.Namespace == ns)
-						return t;
-			return null;
+			int xlen = KnownTypeCollection.DefaultClrNamespaceBase.Length;
+			string clrns = ns.Length > xlen ?  ns.Substring (xlen) : null;
+			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
+				bool sysass = ass != typeof (Type).Assembly && ass.FullName.StartsWith ("System"); // FIXME: hacky optimization
+				foreach (var t in ass.GetTypes ()) {
+					if (!sysass) {
+						var dca = t.GetCustomAttribute<DataContractAttribute> (true);
+						if (dca != null && dca.Name == name && dca.Namespace == ns)
+							return t;
+						if (clrns != null && t.Name == name && t.Namespace == clrns)
+							return t;
+					}
+				}
+			}
+			throw new XmlException (String.Format ("Type not found; name: {0}, namespace: {1}", name, ns));
 		}
 	}
 }
