@@ -1,3 +1,9 @@
+2009-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Remove VerificationException (not used from
+	the runtime anymore) and add FieldAccessException (which is now, 
+	or soon will be, required/used by the runtime).
+
 2009-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* SecurityManager.cs: Make core-clr work under non 2.1 profiles.
