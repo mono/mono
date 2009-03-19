@@ -94,9 +94,19 @@ namespace Microsoft.Build.Tasks {
 						version = new Version (version_info.Name.Split (
 							new char [] {'_'}, StringSplitOptions.RemoveEmptyEntries) [0]);
 
-						if (!gac.ContainsKey (assembly_info.Name))
-							gac.Add (assembly_info.Name, new Dictionary <Version, string> ());
-						gac [assembly_info.Name].Add (version, file);
+						Dictionary<Version, string> assembliesByVersion = new Dictionary <Version, string> ();
+						if (!gac.TryGetValue (assembly_info.Name, out assembliesByVersion)) {
+							assembliesByVersion = new Dictionary <Version, string> ();
+							gac.Add (assembly_info.Name, assembliesByVersion);
+						}
+
+						string found_file;
+						if (assembliesByVersion.TryGetValue (version, out found_file) &&
+							File.GetLastWriteTime (file) <= File.GetLastWriteTime (found_file))
+								// Duplicate found, take the newer file
+								continue;
+
+						assembliesByVersion [version] = file;
 					}
 				}
 			}

@@ -1,3 +1,10 @@
+2009-03-19  Ankit Jain  <jankit@novell.com>
+
+	Fix bugs #323833 and #484384.
+	* AssemblyResolver.cs (GatherGacAssemblies): Handle duplicate entries.
+	These seem to be old copies of the assemblies with old keys. Pick
+	the one with the latest timestamp.
+
 2009-03-03  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #480856.
