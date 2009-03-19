@@ -1,3 +1,9 @@
+2009-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* method-to-ir.c: Allow CoreCLR to throw FieldAccessException. 
+	Simplify logic for ensure_method_is_allowed_to_call_method. 
+	Handle wrappers on callers.
+
 2009-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (fullaotcheck): Don't run the generics tests, some of
