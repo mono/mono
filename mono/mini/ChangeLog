@@ -1,5 +1,11 @@
 2009-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c (mono_unwind_ops_encode): Increase the size of the encode buffer.
+
+	* mini-amd64.c (mono_arch_emit_epilog): Remove the encoding of stack size
+	into cfg->used_int_regs, it is not needed with the dwarf unwinder.
+	(mono_arch_compute_omit_fp): Remove the emit_epilog () workaround.
+
 	* mini-amd64.c (mono_arch_compute_omit_fp): Add another check to avoid hitting
 	the stack_alloc_size < (1 << 16) assertion in emit_prolog ().
 
