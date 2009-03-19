@@ -475,18 +475,20 @@ namespace System.Windows.Forms
 			if (dataGridViewRow.IsNewRow)
 				throw new InvalidOperationException ("Cannot delete the new row");
 				
+			DataGridView.OnRowsPreRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
-			DataGridView.OnRowsRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
+			DataGridView.OnRowsPostRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 		}
 
 		internal virtual void RemoveInternal (DataGridViewRow dataGridViewRow)
 		{
+			DataGridView.OnRowsPreRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 			list.Remove (dataGridViewRow);
 			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewRow));
-			DataGridView.OnRowsRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
+			DataGridView.OnRowsPostRemovedInternal (new DataGridViewRowsRemovedEventArgs (dataGridViewRow.Index, 1));
 		}
 		
 		public virtual void RemoveAt (int index)

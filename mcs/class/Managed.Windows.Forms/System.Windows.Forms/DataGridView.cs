@@ -4923,14 +4923,14 @@ namespace System.Windows.Forms {
 			if (eh != null) eh (this, e);
 		}
 
-		internal void OnRowsRemovedInternal (DataGridViewRowsRemovedEventArgs e)
+		internal void OnRowsPreRemovedInternal (DataGridViewRowsRemovedEventArgs e)
 		{
 			if (selected_rows != null)
 				selected_rows.InternalClear ();
 			if (selected_columns != null)
 				selected_columns.InternalClear ();
 
-			if (Rows.Count == 0) {
+			if (Rows.Count - e.RowCount <= 0) {
 				MoveCurrentCell (-1, -1, true, false, false, true);
 				hover_cell = null;
 			} else if (Columns.Count == 0) {
@@ -4938,14 +4938,17 @@ namespace System.Windows.Forms {
 				hover_cell = null;
 			} else if (currentCell != null && currentCell.RowIndex == e.RowIndex) {
 				int nextRowIndex = e.RowIndex;
-				if (nextRowIndex >= Rows.Count)
-					nextRowIndex = Rows.Count - 1;
+				if (nextRowIndex >= Rows.Count - e.RowCount)
+					nextRowIndex = Rows.Count - 1 - e.RowCount;
 				MoveCurrentCell (currentCell != null ? currentCell.ColumnIndex : 0, nextRowIndex, 
 						 true, false, false, true);
 				if (hover_cell != null && hover_cell.RowIndex >= e.RowIndex)
 					hover_cell = null;
 			}
+		}
 
+		internal void OnRowsPostRemovedInternal (DataGridViewRowsRemovedEventArgs e)
+		{
 			Invalidate ();
 			OnRowsRemoved (e);
 		}

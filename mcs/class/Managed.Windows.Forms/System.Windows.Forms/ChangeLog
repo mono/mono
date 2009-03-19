@@ -1,3 +1,9 @@
+2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs, DataGridViewRow.cs: Split the row removal to perform Pre and 
+	Post removal action to allow the current cell to be moved and all events fired 
+	properly before the row is removed.
+
 2009-03-18  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Fire CellEnter and CellLeave events for the Cell.
