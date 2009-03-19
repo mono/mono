@@ -387,7 +387,7 @@ get_current_locale_name (void)
 
 	if ((p = strchr (locale, '.')) != NULL) {
 		/* assume new locale can't be larger than old one? */
-		corrected = malloc (strlen (locale));
+		corrected = g_malloc (strlen (locale));
 		strncpy (corrected, locale, p - locale);
 		corrected [p - locale] = 0;
 
@@ -406,7 +406,7 @@ get_current_locale_name (void)
 		 */
 
 		if (corrected == NULL) {
-			corrected = malloc (strlen (locale));
+			corrected = g_malloc (strlen (locale));
 			strncpy (corrected, locale, p - locale);
 			corrected [p - locale] = 0;
 		}

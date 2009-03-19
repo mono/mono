@@ -1,3 +1,9 @@
+2009-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	Backport of r129798.
+
+	* locales.c (get_current_locale_name): Use g_malloc instead of malloc.
+
 2009-03-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c: Handle user types in many Type icalls. Fixes #486303.
