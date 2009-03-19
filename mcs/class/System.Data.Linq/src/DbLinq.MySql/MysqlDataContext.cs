@@ -33,7 +33,10 @@ using DbLinq.Data.Linq;
 
 namespace DbLinq.MySql
 {
-    public class MySqlDataContext : DataContext
+#if !MONO_STRICT
+    public
+#endif
+    class MySqlDataContext : DataContext
     {
 #if MYSQL_IS_REFERENCED
         public MySqlDataContext(string connStr)

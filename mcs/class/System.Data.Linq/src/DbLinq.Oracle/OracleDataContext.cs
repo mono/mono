@@ -33,7 +33,10 @@ using DbLinq.Data.Linq;
 
 namespace DbLinq.Oracle
 {
-    public class OracleDataContext : DataContext
+#if !MONO_STRICT
+    public
+#endif
+    class OracleDataContext : DataContext
     {
 #if ORACLE_IS_REFERENCED
         public OracleDataContext(string connStr)

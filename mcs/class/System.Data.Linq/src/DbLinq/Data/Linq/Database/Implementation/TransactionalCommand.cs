@@ -39,7 +39,10 @@ namespace DbLinq.Data.Linq.Database.Implementation
     /// <summary>
     /// Transactional command
     /// </summary>
-    public class TransactionalCommand : ITransactionalCommand
+#if !MONO_STRICT
+    public
+#endif
+    class TransactionalCommand : ITransactionalCommand
     {
         private readonly IDisposable _connection;
         /// <summary>

@@ -33,7 +33,10 @@ using DbLinq.Data.Linq;
 
 namespace DbLinq.Firebird
 {
-    public class FirebirdDataContext : DataContext
+#if !MONO_STRICT
+    public
+#endif
+    class FirebirdDataContext : DataContext
     {
 #if FIREBIRDSQL_IS_REFERENCED
         public FbDataContext(string connStr)

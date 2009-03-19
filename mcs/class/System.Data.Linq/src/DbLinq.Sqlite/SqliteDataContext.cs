@@ -33,7 +33,10 @@ using DbLinq.Data.Linq;
 
 namespace DbLinq.Sqlite
 {
-    public class SqliteDataContext : DataContext
+#if !MONO_STRICT
+    public
+#endif
+    class SqliteDataContext : DataContext
     {
 #if SQLITE_IS_REFERENCED
         public SqliteDataContext(string connStr)

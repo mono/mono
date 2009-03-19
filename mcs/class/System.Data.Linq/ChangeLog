@@ -1,3 +1,17 @@
+2009-03-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/DbLinq/Data/Linq/Database/Implementation/TransactionalCommand.cs,
+	  src/DbLinq.Firebird/FirebirdDataContext.cs,
+	  src/DbLinq.Ingres/IngresDataContext.cs,
+	  src/DbLinq.MySql/MysqlDataContext.cs,
+	  src/DbLinq.Oracle/OracleDataContext.cs,
+	  src/DbLinq.PostgreSql/PgsqlDataContext.cs,
+	  src/DbLinq.Sqlite/Schema/DataCommand.cs,
+	  src/DbLinq.Sqlite/SqliteDataContext.cs,
+	  src/DbLinq.SqlServer/SqlServerDataContext.cs,
+	  src/DbLinq/Util/ReflectionUtility.cs: Make types internal so that
+	  they aren't exported from System.Data.Linq.dll.
+
 2009-03-12  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Also distribute .txt files.

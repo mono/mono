@@ -34,7 +34,10 @@ namespace DbLinq.Util
     /// What is extreme laziness? :)
     /// This class allows to get PropertyInfo or MethodInfo given a lambda (which allows to refactor members)
     /// </summary>
-    public static class ReflectionUtility
+#if !MONO_STRICT
+    public
+#endif
+    static class ReflectionUtility
     {
         public static MethodInfo GetMethodInfo(LambdaExpression lambdaExpression)
         {

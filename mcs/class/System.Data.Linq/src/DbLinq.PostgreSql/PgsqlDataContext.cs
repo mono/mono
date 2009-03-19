@@ -36,7 +36,10 @@ namespace DbLinq.PostgreSql
     /// <summary>
     /// PgsqlDataContext allows easier one-parameter creation of a data context.
     /// </summary>
-    public class PgsqlDataContext : DataContext
+#if !MONO_STRICT
+    public
+#endif
+    class PgsqlDataContext : DataContext
     {
 #if POSTGRESQL_IS_REFERENCED
         public PgsqlDataContext(string connStr)

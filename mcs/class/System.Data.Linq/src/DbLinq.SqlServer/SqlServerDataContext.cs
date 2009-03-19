@@ -38,7 +38,7 @@ using DbLinq.Data.Linq;
 
 namespace DbLinq.SqlServer
 {
-#if MONO_STRICT
+#if !MONO_STRICT
     public
 #endif
     class SqlServerDataContext : DataContext

@@ -36,7 +36,10 @@ namespace DbLinq.Ingres
     /// <summary>
     /// PgsqlDataContext allows easier one-parameter creation of a data context.
     /// </summary>
-    public class IngresDataContext : DataContext
+#if !MONO_STRICT
+    public
+#endif
+    class IngresDataContext : DataContext
     {
         public IngresDataContext(IDbConnection conn)
 #if MONO_STRICT

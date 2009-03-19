@@ -31,7 +31,10 @@ using System.Text;
 
 namespace DbLinq.Sqlite.Schema
 {
-    public static class DataCommand
+#if !MONO_STRICT
+    public
+#endif
+    static class DataCommand
     {
         public delegate T ReadDelegate<T>(IDataReader reader, string table);
 
