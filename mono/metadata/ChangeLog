@@ -1,5 +1,9 @@
 2009-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Reject cli header tables that mono don't handle.
+
+2009-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c: Fix CLI header dumping.
 
 2009-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
