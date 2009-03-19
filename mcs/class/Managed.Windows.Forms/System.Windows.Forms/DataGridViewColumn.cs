@@ -100,12 +100,7 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual DataGridViewCell CellTemplate {
 			get { return cellTemplate; }
-			set {
-				cellTemplate = value;
-				if (DataGridView != null) {
-					cellTemplate.SetDataGridView(DataGridView);
-				}
-			}
+			set { cellTemplate = value; }
 		}
 
 		[Browsable (false)]
@@ -483,9 +478,6 @@ Example */
 			}
 			
 			base.SetDataGridView (dataGridView);
-			if (cellTemplate != null) {
-				cellTemplate.SetDataGridView(dataGridView);
-			}
 			headerCell.SetDataGridView(dataGridView);
 		}
 

@@ -1134,7 +1134,6 @@ namespace System.Windows.Forms {
 			}
 			set {
 				rowTemplate = value;
-				rowTemplate.SetDataGridView(this);
 			}
 		}
 

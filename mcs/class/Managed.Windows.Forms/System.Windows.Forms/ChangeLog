@@ -1,5 +1,11 @@
 2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs, DataGridViewColumn.cs: Do not set Row/CellTemplate's
+	DataGridView. They do not belong to a DataGridView.
+	[Fixes bug #486645]
+
+2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewCellCollection.cs, DataGridViewColumnCollection.cs: 
 	Set indices and associate with DataGridView only after the item is 
 	add to the internal list.

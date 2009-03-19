@@ -254,6 +254,15 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		private int columnChanged;
+
+		[Test]
+		public void CellTemplateDataGridView ()
+		{
+			DataGridView dgv = new DataGridView ();
+			DataGridViewColumn dvc = new DataGridViewTextBoxColumn ();
+			dgv.Columns.Add (dvc);
+			Assert.IsNull (dvc.CellTemplate.DataGridView, "#1");
+		}
 	}
 }
 #endif

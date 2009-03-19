@@ -1808,6 +1808,13 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (dgv.IsHandleCreated, "#11");
 			Assert.AreEqual (0, dgv.RowCount, "#12");
 		}
+
+		[Test]
+		public void RowTemplateDataGridView ()
+		{
+			DataGridView gdv = new DataGridView ();
+			Assert.IsNull (gdv.RowTemplate.DataGridView, "#1");
+		}
 	}
 	
 	[TestFixture]
