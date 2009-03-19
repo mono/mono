@@ -1,3 +1,8 @@
+2009-03-19  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs: Load build-in types directly instead of accessing
+	an internal field.
+
 2009-03-18  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs: Always use unbox.any when available.

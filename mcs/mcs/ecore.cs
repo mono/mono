@@ -4920,15 +4920,21 @@ namespace Mono.CSharp {
 				if (!prepared)
 					EmitInstance (ec, false);
 
-				IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
-				if (ff != null) {
-					ig.Emit (OpCodes.Ldflda, GetConstructedFieldInfo ());
-					ig.Emit (OpCodes.Ldflda, ff.Element);
+				// Optimization for build-in types
+				// TODO: Iterators don't set current container
+				if (TypeManager.IsStruct (type) && type == ec.DeclContainer.TypeBuilder && ec.CurrentIterator == null) {
+					LoadFromPtr (ig, type);
 				} else {
-					if (is_volatile)
-						ig.Emit (OpCodes.Volatile);
+					IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
+					if (ff != null) {
+						ig.Emit (OpCodes.Ldflda, GetConstructedFieldInfo ());
+						ig.Emit (OpCodes.Ldflda, ff.Element);
+					} else {
+						if (is_volatile)
+							ig.Emit (OpCodes.Volatile);
 
-					ig.Emit (OpCodes.Ldfld, GetConstructedFieldInfo ());
+						ig.Emit (OpCodes.Ldfld, GetConstructedFieldInfo ());
+					}
 				}
 			}
 
