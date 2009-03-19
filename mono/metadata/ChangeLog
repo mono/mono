@@ -1,3 +1,7 @@
+2009-03-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: More CLI header verification.
+
 2009-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* locales.c (get_current_locale_name): Use g_malloc instead of malloc.
