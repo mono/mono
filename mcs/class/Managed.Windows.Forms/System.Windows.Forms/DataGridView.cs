@@ -3848,7 +3848,22 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		internal void OnColumnRemovedInternal (DataGridViewColumnEventArgs e)
+		internal void OnColumnPreRemovedInternal (DataGridViewColumnEventArgs e)
+		{
+			if (Columns.Count - 1 == 0) {
+				MoveCurrentCell (-1, -1, true, false, false, true);
+				rows.ClearInternal ();
+			} else if (currentCell != null && CurrentCell.ColumnIndex == e.Column.Index) {
+				int nextColumnIndex = e.Column.Index;
+				if (nextColumnIndex >= Columns.Count - 1)
+					nextColumnIndex = Columns.Count - 1 - 1;
+				MoveCurrentCell (nextColumnIndex, currentCell.RowIndex, true, false, false, true);
+				if (hover_cell != null && hover_cell.ColumnIndex >= e.Column.Index)
+					hover_cell = null;
+			}
+		}
+
+		private void OnColumnPostRemovedInternal (DataGridViewColumnEventArgs e)
 		{
 			if (e.Column.CellTemplate != null) {
 				int index = e.Column.Index;
@@ -3859,17 +3874,6 @@ namespace System.Windows.Forms {
 
 			AutoResizeColumnsInternal ();
 			PrepareEditingRow (false, true);
-			if (Columns.Count == 0) {
-				rows.ClearInternal ();
-				MoveCurrentCell (-1, -1, true, false, false, true);
-			} else if (currentCell != null && CurrentCell.ColumnIndex == e.Column.Index) {
-				int nextColumnIndex = e.Column.Index;
-				if (nextColumnIndex >= Columns.Count)
-					nextColumnIndex = Columns.Count - 1;
-				MoveCurrentCell (nextColumnIndex, currentCell.RowIndex, true, false, false, true);
-				if (hover_cell != null && hover_cell.ColumnIndex >= e.Column.Index)
-					hover_cell = null;
-			}
 
 			OnColumnRemoved (e);
 		}
@@ -5696,7 +5700,7 @@ namespace System.Windows.Forms {
 					OnColumnAddedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
 					break;
 				case CollectionChangeAction.Remove:
-					OnColumnRemovedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
+					OnColumnPostRemovedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
 					break;
 				case CollectionChangeAction.Refresh:
 					break;

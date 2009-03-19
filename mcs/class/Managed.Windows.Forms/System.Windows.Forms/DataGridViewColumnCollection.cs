@@ -198,6 +198,7 @@ namespace System.Windows.Forms
 
 		public virtual void Remove (DataGridViewColumn dataGridViewColumn)
 		{
+			DataGridView.OnColumnPreRemovedInternal (new DataGridViewColumnEventArgs (dataGridViewColumn));
 			base.List.Remove (dataGridViewColumn);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataGridViewColumn));
 		}

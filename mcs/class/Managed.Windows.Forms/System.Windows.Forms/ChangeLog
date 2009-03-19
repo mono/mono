@@ -1,5 +1,11 @@
 2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs, DataGridViewCellCollection.cs: Split the column removal 
+	to perform Pre and Post removal actions to allow the current cell to be 
+	moved and all events fired properly before the column is removed.
+
+2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs, DataGridViewRow.cs: Split the row removal to perform Pre and 
 	Post removal action to allow the current cell to be moved and all events fired 
 	properly before the row is removed.
