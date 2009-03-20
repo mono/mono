@@ -1,3 +1,9 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc_wrapper.h: New file, moved from ../os.
+
+	* Makefile.am: Add gc_wrapper.h
+
 2009-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-hash.c: Use precise GC allocation for the Boehm GC as well.

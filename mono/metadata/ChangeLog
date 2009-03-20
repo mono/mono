@@ -1,3 +1,7 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc-internal.h: Change location of gc_wrapper.h
+
 2009-03-20  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* class.c: Simplification to coreclr checks for overrides that

@@ -1,3 +1,9 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc_wrapper.h: Move this to 'utils'.
+
+	* Makefile.am: Remove gc_wrapper.h
+
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: Move the REGISTER/UNREGISTER macros to metadata/gc-internal.h.

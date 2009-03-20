@@ -1,3 +1,7 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* interp.c: Change location of gc_wrapper.h.
+
 2007-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* interp.c, interp.h (RuntimeMethod): Due to the jit_code_hash

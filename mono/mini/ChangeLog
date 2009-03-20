@@ -1,5 +1,7 @@
 2009-03-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c: Change location of gc_wrapper.h.
+
 	* method-to-ir.c (mono_find_block_region): Handle try clauses nested
 	inside finally clauses correctly. Fixes #485721.
 

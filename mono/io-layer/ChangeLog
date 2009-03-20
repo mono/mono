@@ -1,3 +1,7 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c handles.c wait.c: Change location of gc_wrapper.h.
+
 2009-02-22  Robert Jordan  <robertj@gmx.net>
 
 	* sockets.c: implement WSASend/WSARecv using sendmsg/recvmsg.
