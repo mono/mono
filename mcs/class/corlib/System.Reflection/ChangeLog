@@ -1,3 +1,8 @@
+2009-03-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventInfo.cs, MonoProperty.cs: Ensure the delegate optimization 
+	works correctly, i.e. throw the right exception, with Moonlight.
+
 2009-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Binder.cs: Allow conversions from T to T?. Fixes #484294.

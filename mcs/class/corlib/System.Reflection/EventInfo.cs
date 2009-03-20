@@ -195,7 +195,16 @@ namespace System.Reflection {
 			}
 
 			addHandlerType = addHandlerDelegateType.MakeGenericType (typeVector);
+#if NET_2_1
+			// with Silverlight a coreclr failure (e.g. Transparent caller creating a delegate on a Critical method)
+			// would normally throw an ArgumentException, so we set throwOnBindFailure to false and check for a null
+			// delegate that we can transform into a MethodAccessException
+			addHandlerDelegate = Delegate.CreateDelegate (addHandlerType, method, false);
+			if (addHandlerDelegate == null)
+				throw new MethodAccessException ();
+#else
 			addHandlerDelegate = Delegate.CreateDelegate (addHandlerType, method);
+#endif
 			adapterFrame = typeof (EventInfo).GetMethod (frameName, BindingFlags.Static | BindingFlags.NonPublic);
 			adapterFrame = adapterFrame.MakeGenericMethod (typeVector);
 			return (AddEventAdapter)Delegate.CreateDelegate (typeof (AddEventAdapter), addHandlerDelegate, adapterFrame, true);
