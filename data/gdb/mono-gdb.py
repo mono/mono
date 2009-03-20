@@ -119,14 +119,20 @@ class ObjectPrinter:
             # FIXME: This can happen because we don't have liveness information
             return self.val.cast (gdb.Type ("guint64"))
 
+def lookup_pretty_printer(val):
+    if str (val.type ()) == "object":
+        return ObjectPrinter (val)
+    if str (val.type ()) == "string":
+        return StringPrinter (val)
+    return None
+
 def register_csharp_printers(obj):
     "Register C# pretty-printers with objfile Obj."
 
     if obj == None:
         obj = gdb
 
-    obj.pretty_printers['object'] = ObjectPrinter
-    obj.pretty_printers['string'] = StringPrinter
+    obj.pretty_printers.append (lookup_pretty_printer)
 
 register_csharp_printers (gdb.current_objfile())
 

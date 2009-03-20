@@ -1,3 +1,7 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Update for the latest python API on the archer branch.
+
 2009-02-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py: Remove the --64 argument to as, it is not needed.
