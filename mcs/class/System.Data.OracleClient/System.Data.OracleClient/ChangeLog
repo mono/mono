@@ -1,3 +1,8 @@
+2009-03-20  Daniel Morgan <monodanmorg@yahoo.com>
+
+	* OracleCommand.cs: fix suggested by Thracx <SpamMonkey01+Mono@gmail.com>
+	where the parameter was always item zero for an out parameter.
+
 2009-02-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OracleException:  2.0 changes - patch submitted by 
