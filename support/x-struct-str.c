@@ -39,7 +39,8 @@ _mph_copy_structure_strings (
 
 	buflen = num_strings;
 	for (i = 0; i < num_strings; ++i) {
-		len[i] = strlen (str_at(from, from_offsets[i]));
+		const char* s = str_at(from, from_offsets[i]);
+		len [i] = s ? strlen (s) : 0;
 		if (len[i] < INT_MAX - buflen)
 			buflen += len[i];
 		else
@@ -63,6 +64,12 @@ _mph_copy_structure_strings (
 }
 
 #ifdef TEST
+
+/*
+ * To run the tests:
+ * $ gcc -DTEST -I.. `pkg-config --cflags --libs glib-2.0` x-struct-str.c
+ * $ ./a.out
+ */
 
 #include <stdio.h>
 
@@ -99,6 +106,13 @@ main ()
 	};
 	char *buf;
 
+	buf = _mph_copy_structure_strings (&b, bar_offsets, 
+			&f, foo_offsets, 3);
+	printf ("b.a=%s\n", b.a);
+	printf ("b.c=%s\n", b.c);
+	printf ("b.e=%s\n", b.e);
+
+	f.c = NULL;
 	buf = _mph_copy_structure_strings (&b, bar_offsets, 
 			&f, foo_offsets, 3);
 	printf ("b.a=%s\n", b.a);
