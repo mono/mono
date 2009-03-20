@@ -1,3 +1,8 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread6.cs: Use a monitor to avoid sleeping which doesn't work on slow
+	machines.
+
 2009-03-15  Steven Munroe  <munroesj@us.ibm.com>
 
 	This patch is contributed under the terms of the MIT/X11 license
