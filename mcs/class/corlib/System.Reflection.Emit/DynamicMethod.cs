@@ -268,11 +268,18 @@ namespace System.Reflection.Emit {
 
 		public override object Invoke (object obj, BindingFlags invokeAttr,
 									   Binder binder, object[] parameters,
-									   CultureInfo culture) {
-			CreateDynMethod ();
-			if (method == null)
-				method = new MonoMethod (mhandle);
-			return method.Invoke (obj, parameters);
+									   CultureInfo culture)
+		{
+			try {
+				CreateDynMethod ();
+				if (method == null)
+					method = new MonoMethod (mhandle);
+
+				return method.Invoke (obj, parameters);
+			}
+			catch (MethodAccessException mae) {
+				throw new TargetInvocationException ("Method cannot be invoked.", mae);
+			}
 		}
 
 		[MonoTODO("Not implemented")]

@@ -1,3 +1,8 @@
+2009-03-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DynamicMethod.cs (Invoke): Wrap a MethodAccessException inside a
+	TargetInvocationException (required for Moonlight 2).
+
 2009-03-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilder.cs (GetGenericTypeDefinition): Call the icall instead of
