@@ -1,3 +1,13 @@
+2009-03-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_find_block_region): Handle try clauses nested
+	inside finally clauses correctly. Fixes #485721.
+
+	* mini.c (mono_find_spvar_for_region): This needs to handle try regions
+	after the change above.
+
+	* exceptions.cs: Add a test.
+	
 2009-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* unwind.c (mono_unwind_ops_encode): Increase the size of the encode buffer.
