@@ -1,3 +1,8 @@
+2009-03-20  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* class.c: Simplification to coreclr checks for overrides that
+	makes it easier to set breakpoints.
+
 2009-03-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c|h: (mono_security_core_clr_class_level, 
