@@ -1,3 +1,10 @@
+2009-03-21  Mark Probst  <mark.probst@gmail.com>
+
+	* cfold.c, cprop.c, decompose.c, genmdesc.c, helpers.c, ir-emit.h,
+	liveness.c, local-propagation.c, method-to-ir.c, mini-codegen.c,
+	mini.c, mini.h, simd-intrinsics.c, ssa.c: Support for ternary IR
+	operations.
+
 2009-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c: Change location of gc_wrapper.h.
