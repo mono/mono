@@ -1,3 +1,13 @@
+2009-03-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* exception.c|h: Add helpers to create [Field|Method]AccessException
+	* icall.c: Add required coreclr check calls for field reflection.
+	Move the existing (method) check logic into security-core-clr.c
+	* security-core-clr.c: Add functions to check if the access of a
+	field or method is allowed when reflecting under coreclr. This is
+	mostly done using a stack walk to find the "real" caller: i.e. the
+	code that is calling the reflection
+
 2009-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc-internal.h: Change location of gc_wrapper.h
