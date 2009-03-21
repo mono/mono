@@ -1,3 +1,8 @@
+2009-03-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: added two missing 3.0+ properties -
+	SubStatusCode and TrySkipIisCustomErrors.
+
 2009-03-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: do not clean the dynamic base directory in

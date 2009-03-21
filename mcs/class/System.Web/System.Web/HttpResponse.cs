@@ -386,6 +386,21 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0
+		// We ignore the two properties on Mono as they are for use with IIS7, but there is
+		// no point in throwing PlatformNotSupportedException. We might find a use for them
+		// some day.
+		public int SubStatusCode {
+			get;
+			set;
+		}
+
+		public bool TrySkipIisCustomErrors {
+			get;
+			set;
+		}
+#endif
+		
 		public int StatusCode {
 			get {
 				return status_code;
