@@ -30,6 +30,7 @@
 using System.Collections;
 using System.Collections.Specialized;
 using System.Security.Permissions;
+using System.Web;
 
 namespace System.Web.SessionState {
 
@@ -55,6 +56,15 @@ public sealed class HttpSessionState : ICollection, IEnumerable
 
 	public HttpSessionState Contents {
 		get { return this; }
+	}
+
+	public HttpCookieMode CookieMode {
+		get {
+			if (IsCookieless)
+				return HttpCookieMode.UseUri;
+			else
+				return HttpCookieMode.UseCookies;
+		}
 	}
 
 	public int Count {
