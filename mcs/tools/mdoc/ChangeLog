@@ -1,3 +1,10 @@
+2009-03-20  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocs2html.cs: Do as make(1) does: if the
+	  target file already exists and is newer than the source file, don't
+	  regenerate it.  (Greatly speeds things up if only a few .xml files
+	  changed.)  Add a --force-update option to disable this behavior.
+
 2009-02-26  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/assembler.cs: When processing an empty directory,

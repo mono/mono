@@ -23,6 +23,7 @@ class MDocToHtmlConverterOptions {
 	public string onlytype;
 	public string template;
 	public bool   dumptemplate;
+	public bool   forceUpdate;
 }
 
 class MDocToHtmlConverter : MDocCommand {
@@ -38,6 +39,11 @@ class MDocToHtmlConverter : MDocCommand {
 				"The file {EXTENSION} to use for created files.  "+
 					"This defaults to \"html\".",
 				v => opts.ext = v },
+			{ "force-update",
+				"Always generate new files.  If not specified, will only generate a " + 
+					"new file if the source .xml file is newer than the current output " +
+					"file.",
+				v => opts.forceUpdate = v != null },
 			{ "o|out=",
 				"The {DIRECTORY} to place the generated files and directories.",
 				v => opts.dest = v },
@@ -138,6 +144,13 @@ class MDocToHtmlConverter : MDocCommand {
 				string typefile = opts.source + "/" + nsname + "/" + typefilebase + ".xml";
 				if (!File.Exists(typefile)) continue;
 
+				string destfile = opts.dest + "/" + nsname + "/" + typefilebase + "." + opts.ext;
+
+				if (!opts.forceUpdate && File.Exists (destfile) &&
+						File.GetLastWriteTime (typefile) < File.GetLastWriteTime (destfile))
+					// target already exists, and is newer.  why regenerate?
+					continue;
+
 				XmlDocument typexml = new XmlDocument();
 				typexml.Load(typefile);
 				if (extensions != null) {
@@ -147,7 +160,7 @@ class MDocToHtmlConverter : MDocCommand {
 				
 				Console.WriteLine(nsname + "." + typename);
 				
-				Generate(typexml, stylesheet, typeargs, opts.dest + "/" + nsname + "/" + typefilebase + "." + opts.ext, template);
+				Generate(typexml, stylesheet, typeargs, destfile, template);
 			}
 		}
 	}
