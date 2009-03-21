@@ -196,6 +196,56 @@ class MDocUpdater : MDocCommand
 		output.WriteLine();	
 	}
 
+	private static void WriteFile (string filename, FileMode mode, Action<TextWriter> action)
+	{
+		if (!File.Exists (filename)) {
+			using (var writer = OpenWrite (filename, mode))
+				action (writer);
+			return;
+		}
+
+		string tmpFile = filename + ".tmp";
+		bool move = true;
+
+		try {
+			using (var writer = OpenWrite (tmpFile, mode))
+				action (writer);
+
+			using (var a = File.OpenRead (filename))
+			using (var b = File.OpenRead (tmpFile)) {
+				if (a.Length == b.Length)
+					move = !FileContentsIdentical (a, b);
+			}
+
+			if (move) {
+				File.Delete (filename);
+				File.Move (tmpFile, filename);
+			}
+		}
+		finally {
+			if (!move && File.Exists (tmpFile))
+				File.Delete (tmpFile);
+		}
+	}
+
+	static bool FileContentsIdentical (Stream a, Stream b)
+	{
+		byte[] ba = new byte[4096];
+		byte[] bb = new byte[4096];
+		int ra, rb;
+
+		while ((ra = a.Read (ba, 0, ba.Length)) > 0 &&
+				(rb = b.Read (bb, 0, bb.Length)) > 0) {
+			if (ra != rb)
+				return false;
+			for (int i = 0; i < ra; ++i) {
+				if (ba [i] != bb [i])
+					return false;
+			}
+		}
+		return true;
+	}
+
 	private static void OrderTypeAttributes (XmlElement e)
 	{
 		foreach (XmlElement type in e.SelectNodes ("//Type")) {
@@ -283,9 +333,8 @@ class MDocUpdater : MDocCommand
 		index_remarks.InnerText = "To be added.";
 		index_docs.AppendChild(index_remarks);
 
-		using (TextWriter writer = OpenWrite (outdir + "/ns-" + ns + ".xml",  FileMode.CreateNew)) {
-			WriteXml(index.DocumentElement, writer);
-		}
+		WriteFile (outdir + "/ns-" + ns + ".xml", FileMode.CreateNew, 
+				writer => WriteXml (index.DocumentElement, writer));
 	}
 
 	public void DoUpdateTypes (string basepath, List<string> typenames, string dest)
@@ -475,8 +524,8 @@ class MDocUpdater : MDocCommand
 		CleanupIndexTypes (index_types, goodfiles);
 		CleanupExtensions (index_types);
 
-		using (TextWriter writer = OpenWrite (indexfile, FileMode.Create))
-			WriteXml(index.DocumentElement, writer);
+		WriteFile (indexfile, FileMode.Create, 
+				writer => WriteXml(index.DocumentElement, writer));
 	}
 		
 	private static char[] InvalidFilenameChars = {'\\', '/', ':', '*', '?', '"', '<', '>', '|'};
@@ -884,20 +933,17 @@ class MDocUpdater : MDocCommand
 			SortTypeMembers (m);
 		} while (false);
 
-		System.IO.TextWriter writer;
 		if (output == null)
-			writer = Console.Out;
+			WriteXml(basefile.DocumentElement, Console.Out);
 		else {
 			FileInfo file = new FileInfo (output);
 			if (!file.Directory.Exists) {
 				Console.WriteLine("Namespace Directory Created: " + type.Namespace);
 				file.Directory.Create ();
 			}
-			writer = OpenWrite (output, FileMode.Create);
+			WriteFile (output, FileMode.Create,
+					writer => WriteXml(basefile.DocumentElement, writer));
 		}
-
-		using (writer)
-			WriteXml(basefile.DocumentElement, writer);
 	}
 
 	private string GetCodeSource (string lang, string file)

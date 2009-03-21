@@ -1,3 +1,13 @@
+2009-03-21  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Be nice to make,
+	  mdoc-export-html, and other apps that use file timetamps: if the 
+	  file contents haven't changed after the update, don't replace the
+	  "original" file.  This preserves file timestamps, thus allowing
+	  other apps to behave nicely (e.g. mdoc-export-html won't update all
+	  documentation after running mdoc-update, as the files won't change
+	  unless something has *actually* changed).
+
 2009-03-20  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2html.cs: Do as make(1) does: if the
