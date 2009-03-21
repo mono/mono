@@ -1,3 +1,9 @@
+2009-03-22  Daniel Nauck  <dna@mono-project.de>
+
+	* GenerateResource.cs: Set BasePath property of
+		ResXResourceReader class.
+		See: http://lists.ximian.com/pipermail/mono-devel-list/2009-March/031459.html
+
 2009-03-19  Ankit Jain  <jankit@novell.com>
 
 	Fix bugs #323833 and #484384.
