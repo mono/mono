@@ -1,5 +1,10 @@
 2009-03-22  Mark Probst  <mark.probst@gmail.com>
 
+	* method-to-ir.c (mono_spill_global_vars): Support for ternary
+	ops.
+
+2009-03-22  Mark Probst  <mark.probst@gmail.com>
+
 	* method-to-ir.c: MINI_OP3 needs a comma.
 
 	* method-to-ir.c, mini.h, mini.c: Remove
