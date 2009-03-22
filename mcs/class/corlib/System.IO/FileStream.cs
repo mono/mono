@@ -163,6 +163,7 @@ namespace System.IO
 				   int bufferSize, bool isAsync)
 			:this (handle.DangerousGetHandle (), access, false, bufferSize, isAsync)
 		{
+			this.safeHandle = handle;
 		}
 
 		public FileStream (string path, FileMode mode,
@@ -437,7 +438,17 @@ namespace System.IO
 		public virtual SafeFileHandle SafeFileHandle {
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
-			get { throw new NotImplementedException (); }
+			get {
+				SafeFileHandle ret;
+
+				if (safeHandle != null)
+					ret = safeHandle;
+				else
+					ret = new SafeFileHandle (handle, owner);
+
+				FlushBuffer ();
+				return ret;
+			}
 		}
 #endif
 
@@ -1118,5 +1129,9 @@ namespace System.IO
 		private string name = "[Unknown]";	// name of file.
 
 		IntPtr handle;				// handle to underlying file
+#if NET_2_0
+		SafeFileHandle safeHandle;              // set only when using one of the
+							// constructors taking SafeFileHandle
+#endif
 	}
 }
