@@ -1,5 +1,10 @@
 2009-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_build_imt_thunk): Disable the !fail_tramp
+	assertion.
+
+	* mini-ops.h: Fix arguments of the MEMINDEX opcodes.
+
 	* mini-amd64.c (mono_arch_build_imt_thunk): Simplify the fail handling
 	code somewhat.
 
