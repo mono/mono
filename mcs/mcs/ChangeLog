@@ -1,3 +1,12 @@
+2009-03-22  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs (Main): Use Environment.Exit to quit quickly and
+	prevent the compiler from doing the usual wait for helper thread
+	to terminate.  
+
+	This is to prevent a slowdown that was reported by Gonzalo on
+	ASP.NET 
+
 2009-03-19  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs: Load build-in types directly instead of accessing

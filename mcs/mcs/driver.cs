@@ -301,12 +301,14 @@ namespace Mono.CSharp
 				if (Report.Warnings > 0) {
 					Console.WriteLine ("Compilation succeeded - {0} warning(s)", Report.Warnings);
 				}
+				Environment.Exit (0);
 				return 0;
 			}
 			
 			
 			Console.WriteLine("Compilation failed: {0} error(s), {1} warnings",
 				Report.Errors, Report.Warnings);
+			Environment.Exit (1);
 			return 1;
 		}
 
