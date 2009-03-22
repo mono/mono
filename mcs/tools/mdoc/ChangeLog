@@ -1,3 +1,8 @@
+2009-03-20  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocs2html.cs: Perform the timestamp check for
+	  the top-level and namespace-level index files.
+
 2009-03-21  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Be nice to make,
