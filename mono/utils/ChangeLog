@@ -1,3 +1,8 @@
+2009-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc_wrapper.h: Disable thread local allocation for ARM too because of
+	incomplete support in libgc.
+
 2009-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: New file, moved from ../os.
