@@ -1,5 +1,13 @@
 2009-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (arch_emit_unbox_trampoline): Fix the binary writer support.
+	(mono_compile_assembly): Enable the binary writer for full-aot as well.
+
+	* image-writer.c (do_reloc): Add support for the JUMP24 relocation,
+	fix the handling of large values in the ALU_PC_G0_NC relocation.
+
+2009-03-22  Zoltan Varga  <vargaz@gmail.com>
+
 	* local-propagation.c method-to-ir.c local-propagation.c: Fix warnings.
 
 2009-03-22  Mark Probst  <mark.probst@gmail.com>
