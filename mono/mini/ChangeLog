@@ -1,5 +1,8 @@
 2009-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_output_basic_block): Fix aot support in
+	OP_JMP.
+	
 	* mini-arm.c (mono_arch_build_imt_thunk): Disable the !fail_tramp
 	assertion.
 
