@@ -1,3 +1,8 @@
+2009-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_build_imt_thunk): Simplify the fail handling
+	code somewhat.
+
 2009-03-21  Mark Probst  <mark.probst@gmail.com>
 
 	* cfold.c, cprop.c, decompose.c, genmdesc.c, helpers.c, ir-emit.h,
