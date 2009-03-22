@@ -1,3 +1,10 @@
+2009-03-22  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: MINI_OP3 needs a comma.
+
+	* method-to-ir.c, mini.h, mini.c: Remove
+	mono_init_op_sreg_counts ().
+
 2009-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_output_basic_block): Fix aot support in
