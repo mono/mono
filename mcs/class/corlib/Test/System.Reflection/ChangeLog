@@ -1,3 +1,8 @@
+2009-03-03  Matthew Metnetsky  <matthew@cowarthill.com>
+
+	* BinderTests.cs: added tests for TargetParameterCountException
+	* BinderTests.cs: added tests for BindingFlags.ExactBinding
+
 2009-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* BinderTests.cs: Add a test for #484294.

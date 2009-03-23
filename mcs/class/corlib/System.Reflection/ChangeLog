@@ -1,3 +1,10 @@
+2009-03-03  Matthew Metnetsky  <matthew@cowarthill.com>
+
+	* MonoMethod.cs: within Invoke only change types if BindingFlags.ExactBinding isn't set
+
+	* MonoMethod.cs: within Invoke ensure arg types match ParameterInfo types before
+	calling InvokeInternal
+
 2009-03-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EventInfo.cs, MonoProperty.cs: Ensure the delegate optimization 

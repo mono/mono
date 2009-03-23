@@ -542,6 +542,11 @@ namespace MonoTests.System.Reflection
 			public void Bar ()
 			{
 			}
+
+			public int Add(int x, int y)
+			{
+				return x + y;	
+			}
 		}
 
 		class Foo : BaseFoo {
@@ -568,5 +573,76 @@ namespace MonoTests.System.Reflection
 
 			Assert.IsTrue (foo.Barred);
 		}
-    }
+
+		class Int32Binder : AssertingBinder
+		{
+			public override object ChangeType(Object value, Type type, CultureInfo ci)
+			{
+				if (value.GetType() == type) {
+					return value;
+				} else if (type.IsPrimitive) {
+					if (type == typeof(Int32))
+						return Convert.ToInt32(value);
+
+					throw new ArgumentException("missing support for primitive: " + type);
+				}
+
+				throw new ArgumentException("Could not ChangeType to " + type.FullName);
+			}
+		}
+
+		[Test]
+		[ExpectedException(typeof (TargetParameterCountException))]
+		public void TestTargetParameterCountExceptionA ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, null, null, null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (TargetParameterCountException))]
+		public void TestTargetParameterCountExceptionB ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke(new Foo (), 0, null, new object [] {1}, null);
+		}
+
+		[Test]
+		public void TestBindingFlagsA ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, null, new object [] {1, 2}, null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void TestBindingFlagsB ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, null, new object [] {1, "2"}, null);
+		}
+
+		[Test]
+		public void TestBindingFlagsExactBindingA ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), BindingFlags.ExactBinding, null, new object [] {1, 2}, null);
+		}
+
+		[Test]
+		[ExpectedException(typeof (ArgumentException))]
+		public void TestBindingFlagsExactBindingB ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), BindingFlags.ExactBinding, new Int32Binder (), new object [] {1, "2"}, null);
+		}
+
+		[Test]
+		public void TestBindingFlagsExactBindingC ()
+		{
+			MethodInfo method = typeof (Foo).GetMethod ("Add");
+			method.Invoke((new Foo ()), 0, new Int32Binder (), new object [] {1, "2"}, null);
+		}
+
+	}
 }
