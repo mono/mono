@@ -576,13 +576,13 @@ namespace Mono.CSharp {
 
 				Expression member = Expression.MemberLookup (
 					ec.ContainerType, Type, member_name,
-					MemberTypes.Field | MemberTypes.Property,
-					BindingFlags.Public | BindingFlags.Instance,
+					MemberTypes.All,
+					BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static,
 					Location);
 
 				if (member == null) {
 					member = Expression.MemberLookup (ec.ContainerType, Type, member_name,
-						MemberTypes.Field | MemberTypes.Property, BindingFlags.NonPublic | BindingFlags.Instance,
+						MemberTypes.All, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static,
 						Location);
 
 					if (member != null) {
@@ -612,7 +612,7 @@ namespace Mono.CSharp {
 				if (member is PropertyExpr) {
 					PropertyInfo pi = ((PropertyExpr) member).PropertyInfo;
 
-					if (!pi.CanWrite || !pi.CanRead) {
+					if (!pi.CanWrite || !pi.CanRead || pi.GetGetMethod ().IsStatic) {
 						Report.SymbolRelatedToPreviousError (pi);
 						Error_InvalidNamedArgument (member_name);
 						return false;
@@ -640,7 +640,7 @@ namespace Mono.CSharp {
 				} else {
 					FieldInfo fi = ((FieldExpr) member).FieldInfo;
 
-					if (fi.IsInitOnly) {
+					if (fi.IsInitOnly || fi.IsStatic) {
 						Error_InvalidNamedArgument (member_name);
 						return false;
 					}

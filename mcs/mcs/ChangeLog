@@ -1,5 +1,10 @@
 2009-03-23  Marek Safar  <marek.safar@gmail.com>
 
+	* attribute.cs: Consider all members for error reporting when
+	checking named arguments.
+
+2009-03-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #487625
 	* namespace.cs: Use a warning for all predefined type conflicts.
 
