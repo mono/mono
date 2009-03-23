@@ -1,3 +1,12 @@
+2009-03-23  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateBuildProvider.cs: add values of the CodeFile and Src
+	page/master/control directives to the list of file dependencies.
+	Extract language also for master/page, not only for controls.
+
+	* PageCompiler.cs: CreateConstructors now triggers master page
+	build, if the current page is using one. Fixes bug #487857
+
 2009-03-16  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: when parsing nested tags (includes tags inside

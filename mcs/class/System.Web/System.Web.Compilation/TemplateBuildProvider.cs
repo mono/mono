@@ -69,7 +69,7 @@ namespace System.Web.Compilation
 		static TemplateBuildProvider ()
 		{
 			directiveAttributes = new SortedDictionary <string, ExtractDirectiveDependencies> (StringComparer.InvariantCultureIgnoreCase);
-			directiveAttributes.Add ("Control", ExtractLanguage);
+			directiveAttributes.Add ("Control", ExtractControlDependencies);
 			directiveAttributes.Add ("Master", ExtractPageOrMasterDependencies);
 			directiveAttributes.Add ("MasterType", ExtractPreviousPageTypeOrMasterTypeDependencies);
 			directiveAttributes.Add ("Page", ExtractPageOrMasterDependencies);
@@ -110,6 +110,12 @@ namespace System.Web.Compilation
 			return String.Empty;
 		}
 
+		static void ExtractControlDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
+		{
+			ExtractLanguage (baseDirectory, names, values, bp);
+			ExtractCodeBehind (baseDirectory, names, values, bp);
+		}
+		
 		static void ExtractLanguage (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
 		{
 			string value = ExtractDirectiveAttribute (baseDirectory, "Language", names, values, false);
@@ -117,20 +123,36 @@ namespace System.Web.Compilation
 				return;
 
 			bp.compilationLanguage = value;
+
+			ExtractCodeBehind (baseDirectory, names, values, bp);
 		}
 		
 		static void ExtractPageOrMasterDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
 		{
+			ExtractLanguage (baseDirectory, names, values, bp);
 			string value = ExtractDirectiveAttribute (baseDirectory, "MasterPageFile", names, values);
-			if (String.IsNullOrEmpty (value))
-				return;
+			if (!String.IsNullOrEmpty (value)) {
+				if (!bp.dependencies.ContainsKey (value))
+					bp.dependencies.Add (value, true);
+			}
 
-			if (bp.dependencies.ContainsKey (value))
-				return;
-
-			bp.dependencies.Add (value, true);
+			ExtractCodeBehind (baseDirectory, names, values, bp);
 		}
 
+		static void ExtractCodeBehind (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
+		{
+			string[] varray = new string [2];
+
+			varray [0] = ExtractDirectiveAttribute (baseDirectory, "CodeFile", names, values);
+			varray [1] = ExtractDirectiveAttribute (baseDirectory, "Src", names, values);
+			foreach (string value in varray) {
+				if (!String.IsNullOrEmpty (value)) {
+					if (!bp.dependencies.ContainsKey (value))
+						bp.dependencies.Add (value, true);
+				}
+			}
+		}
+		
 		static void ExtractRegisterDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp)
 		{
 			string src = ExtractDirectiveAttribute (baseDirectory, "Src", names, values);
