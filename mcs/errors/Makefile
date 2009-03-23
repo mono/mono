@@ -11,7 +11,7 @@ ifeq (net_1_1, $(PROFILE))
 
 MCS = $(with_mono_path) $(INTERNAL_MCS)
 else
-EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll GCS0122-2-lib.dll GCS0730-lib.dll GCS0733-lib.dll
+EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll GCS0122-2-lib.dll GCS0730-lib.dll GCS0733-lib.dll GCS1685-lib.dll
 endif
 
 ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
@@ -83,6 +83,9 @@ run-mcs-tests: $(TEST_SUPPORT_FILES)
 run-mcs-tests:
 	rm -f *.exe *.mdb
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
+
+cecil:
+	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:../tests/gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS) -verbose
 
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
