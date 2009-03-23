@@ -87,7 +87,7 @@ namespace Mono.Unix {
 		}
 
 		public long AvailableFreeSpace {
-			get {Refresh (); return Convert.ToInt64 (stat.f_bavail * stat.f_bsize);}
+			get {Refresh (); return Convert.ToInt64 (stat.f_bavail * stat.f_frsize);}
 		}
 
 		public string DriveFormat {
@@ -122,7 +122,7 @@ namespace Mono.Unix {
 		}
 
 		public long TotalFreeSpace {
-			get {Refresh (); return (long) (stat.f_bfree * stat.f_bsize);}
+			get {Refresh (); return (long) (stat.f_bfree * stat.f_frsize);}
 		}
 
 		public long TotalSize {

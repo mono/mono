@@ -1,3 +1,11 @@
+2009-03-23  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixDriveInfo.cs: UnixDriveInfo.AvailableFreeSpace needs to return 
+	  stat.f_bavail * stat.f_frsize, NOT f_bavail*f_bsize, as on some
+	  platforms (Solaris) bsize is the preferred block I/O size, while
+	  f_frsize is the *actual* filesystem block size.  Thus, to get proper
+	  disk under Solaris, we need to s/f_bsize/f_frsize/g.
+
 2009-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* UnixSignal.cs: Check if realtime signal install failed with 
