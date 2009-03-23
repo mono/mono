@@ -980,7 +980,10 @@ namespace System
 
 		public int LastIndexOf (string value, StringComparison comparisonType)
 		{
-			return LastIndexOf (value, this.Length - 1, this.Length, comparisonType);
+			if (this.Length == 0)
+				return value == String.Empty ? 0 : -1;
+			else
+				return LastIndexOf (value, this.Length - 1, this.Length, comparisonType);
 		}
 
 		public int LastIndexOf (string value, int startIndex, StringComparison comparisonType)

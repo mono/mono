@@ -1,3 +1,7 @@
+2009-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* String.cs (LastIndexOf): Handle empty strings correctly. Fixes #486234.
+
 2009-03-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* Type.cs (GetGenericTypeDefinition): Make this throw an exception to be
