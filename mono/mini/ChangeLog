@@ -1,3 +1,9 @@
+2009-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_method_ref): Fix a warning.
+
+	* unwind.c (mono_unwind_frame): Ditto.	
+
 2009-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (arch_emit_unbox_trampoline): Fix the binary writer support.
