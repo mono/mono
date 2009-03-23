@@ -745,6 +745,7 @@ namespace Mono.Data.Tds.Protocol
 			case TdsColumnType.Int1 :
 			case TdsColumnType.Int2 :
 			case TdsColumnType.Int4 :
+			case TdsColumnType.BigInt :
 				element = GetIntValue (colType);
 				break;
 			case TdsColumnType.Image :
@@ -1127,6 +1128,9 @@ namespace Mono.Data.Tds.Protocol
 				throw new ArgumentNullException ("type");
 #endif
 			switch (type) {
+			case TdsColumnType.BigInt :
+				len = 8;
+				break;
 			case TdsColumnType.IntN :
 				len = comm.GetByte ();
 				break;
@@ -1320,6 +1324,7 @@ namespace Mono.Data.Tds.Protocol
 				case TdsColumnType.Int1 :
 				case TdsColumnType.Int2 :
 				case TdsColumnType.Int4 :
+				case TdsColumnType.BigInt :
 				case TdsColumnType.Float8 :
 				case TdsColumnType.DateTime :
 				case TdsColumnType.Bit :
@@ -1384,6 +1389,7 @@ namespace Mono.Data.Tds.Protocol
 				case TdsColumnType.Float8 :
 				case TdsColumnType.DateTime :
 				case TdsColumnType.Money :
+				case TdsColumnType.BigInt :
 					return 8;
 				default :
 					return 0;

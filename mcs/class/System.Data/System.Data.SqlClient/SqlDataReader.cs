@@ -331,6 +331,7 @@ namespace System.Data.SqlClient
 				case TdsColumnType.Int2:
 				case TdsColumnType.Int4:
 				case TdsColumnType.IntN:
+				case TdsColumnType.BigInt:
 					switch (csize) {
 					case 1:
 						typeName = "tinyint";

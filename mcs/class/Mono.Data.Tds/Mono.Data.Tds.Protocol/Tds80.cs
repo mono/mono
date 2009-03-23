@@ -4,6 +4,7 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //	 Veerapuram Varadhan  (vvaradhan@novell.com)
+//
 // Copyright (C) 2002 Tim Coleman
 // Copyright (C) 2008,2009 Novell Inc.
 //
@@ -191,8 +192,10 @@ namespace Mono.Data.Tds.Protocol {
 		protected override void ProcessOutputParam ()
 		{
 			// We are connected to a Sql 7.0 server
-			if (TdsVersion < TdsVersion.tds80)
+			if (TdsVersion < TdsVersion.tds80) {
 				base.ProcessOutputParam ();
+				return;
+			}
 
 			GetSubPacketLength ();
 			

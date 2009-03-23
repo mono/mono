@@ -335,7 +335,7 @@ namespace Mono.Data.Tds {
 					return TdsColumnType.BitN;
 				return TdsColumnType.Bit;
 			case "bigint":
-				return TdsColumnType.IntN;
+				return TdsColumnType.BigInt;
 			case "char":
 				return TdsColumnType.Char;
 			case "money":

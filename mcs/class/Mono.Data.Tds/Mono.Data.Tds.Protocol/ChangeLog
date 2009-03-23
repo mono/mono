@@ -1,3 +1,7 @@
+2009-03-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Tds.cs: Properly handle TdsColumnType.BigInt as we support TDS 8 now.
+	
 2009-03-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #463011

@@ -1,3 +1,7 @@
+2009-03-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlDataReader.cs (GetSchemaRowType): Correctly handle Tds 8 BigInt type.
+	
 2009-02-02  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlConnection.cs: Use TDS 8 instead of TDS 7
