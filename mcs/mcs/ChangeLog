@@ -1,3 +1,9 @@
+2009-03-23  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #485706
+	* statement.cs: Explicitly type catch type argument to pass verifier
+	check.
+
 2009-03-22  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs (Main): Use Environment.Exit to quit quickly and
