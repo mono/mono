@@ -1,3 +1,7 @@
+2009-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke-2.2.cs libtest.c: Add a test for #487758.
+
 2009-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread6.cs: Use a monitor to avoid sleeping which doesn't work on slow
