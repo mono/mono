@@ -11487,6 +11487,29 @@
       </method>
     </type>
   </test>
+  <test name="gtest-443.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void M[T]()">
+        <size>23</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-444.cs">
+    <type name="MyClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>114</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -35035,16 +35058,6 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-715.cs">
-    <type name="MyClass">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Int32 Main()">
-        <size>114</size>
       </method>
     </type>
   </test>
