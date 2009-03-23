@@ -1,3 +1,7 @@
+2009-03-23  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Removed useless "gc-signal" option (the
+	newer "heap=<SIGNAL>" format of the "heap" option does the same thing).
+
 2009-03-16  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: When checking if an elf file is valid,
 	avoid mapping it in memory until we know it's usable (avoids virtual
