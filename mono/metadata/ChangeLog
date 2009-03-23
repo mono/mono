@@ -1,3 +1,8 @@
+2009-03-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* console-io.c: some of the values for control characters might not be
+	present.
+
 2009-03-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* exception.c|h: Add helpers to create [Field|Method]AccessException
