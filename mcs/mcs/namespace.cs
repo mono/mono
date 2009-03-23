@@ -128,12 +128,23 @@ namespace Mono.CSharp {
 
 				Report.SymbolRelatedToPreviousError (found_type);
 				Report.SymbolRelatedToPreviousError (t);
-				Report.Error (433, loc, "The imported type `{0}' is defined multiple times", name);
+				if (loc.IsNull) {
+					Error_AmbiguousPredefinedType (loc, name, found_type);
+				} else {
+					Report.Error (433, loc, "The imported type `{0}' is defined multiple times", name);
+				}
 
 				return found_type;
 			}
 
 			return found_type;
+		}
+
+		protected void Error_AmbiguousPredefinedType (Location loc, string name, Type type)
+		{
+			Report.Warning (1685, 1, loc,
+				"The predefined type `{0}' is ambiguous. Using definition from `{1}'",
+				name, type.Assembly.FullName);
 		}
 
 		public void RegisterNamespace (Namespace child)
@@ -276,8 +287,7 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (found_type);
 					if (loc.IsNull) {
 						DeclSpace ds = TypeManager.LookupDeclSpace (t);
-						Report.Warning (1685, 1, ds.Location, "The type `{0}' conflicts with the predefined type `{1}' and will be ignored",
-							ds.GetSignatureForError (), TypeManager.CSharpName (found_type));
+						Error_AmbiguousPredefinedType (ds.Location, name, found_type);
 						return found_type;
 					}
 					Report.SymbolRelatedToPreviousError (t);
