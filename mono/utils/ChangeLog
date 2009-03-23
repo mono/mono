@@ -1,3 +1,7 @@
+2009-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (libmonoutils_la_SOURCES): Fix make dist.
+
 2009-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: Disable thread local allocation for ARM too because of
