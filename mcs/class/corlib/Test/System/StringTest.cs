@@ -2768,6 +2768,9 @@ public class StringTest : TestCase
 
 		AssertEquals ("#5-1", 0, text.LastIndexOf (text4, 1, 2, StringComparison.Ordinal));
 		AssertEquals ("#5-2", 0, text.LastIndexOf (text4, 1, 2, StringComparison.OrdinalIgnoreCase));
+
+		AssertEquals (-1, "".LastIndexOf ("FOO", StringComparison.Ordinal));
+		AssertEquals (0, "".LastIndexOf ("", StringComparison.Ordinal));
 	}
 
 	[Test]
