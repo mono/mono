@@ -713,8 +713,10 @@ a heap snapshot is taken at each collection.
 .PP
 If the value is signal name or a number (one of SIGUSR1, SIGUSR2 and
 SIGPROF, remembering that SIGPROF is not compatible with the
-statistical profiler), a garbage collection is forced and a snapshot
-is taken every time the signal is received.
+statistical profiler), every time the application receives this signal
+a garbage collection is forced and a snapshot is taken. The natural way
+to take a heap snapshot is then using the kill command to deliver the
+appropriate signal to the application.
 .PP
 Heap profiling also enables full allocation profiling (with call
 stacks), and each allocation can be related to its corresponding
@@ -722,16 +724,15 @@ object in the snapshots, enabling investigations like "find all
 objects of a given class allocated by a given method and still live at
 a given collection, and then find all objects referencing them".
 .PP
-The heap shot log can be further customized with the following
-options: 
+This kind of heap snapshot analysis is performed using the mprof-heap-viewer(1)
+application.
+.PP
+The number of heap snapshots taken (and the moment in which they are taken)
+can be further customized with the following options: 
 .TP
 \fIgc-dumps=N\fR, \fIgc-d=N\fR, \fIgcd=N\fR
 states the number of snapshots that must be dumped (since the application
 starts).  Zero means no dumps at all, -1 means dump at all collections.
-.TP
-\fIgc-signal=<signal>\fR, \fIgc-s\fR or \fIgcs\fR
-(where <signal> is one of "SIGUSR1", "SIGUSR2", or "SIGPROF")
-specifies a signal that will immediately trigger a collection and a dump.
 .TP
 \fIgc-commands=FILE\fR, \fIgc-c=FILE\fR or \fIgcc=FILE\fR 
 specify a "command file". The file must contain an integer value in ASCII
@@ -741,6 +742,14 @@ option value, and dump the required number of snapshots from that moment
 onwards.
 If the file is present at application startup it takes precedence over an
 eventual \fIgcd=N\fR option.
+.TP
+These options exist because it can happen that the user wants to investigate
+what happens during collections but without forcing a collection using a
+signal, because forcing a collection alters the program behavior.
+Of course it is possible to simply take a snapshot at every collection, but
+in some workloads this is could not be feasible (too much data).
+So we have this "garbage collection dumps" counter to control how many
+snapshots to take.
 .ne
 .RE
 .PP
