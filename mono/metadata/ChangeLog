@@ -1,3 +1,9 @@
+2009-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_delegate_to_ftnptr): For delegates wrapping pinvoke
+	methods, return the native function address itself. Fixes
+	#487758.
+
 2009-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	Backport of r129798.
