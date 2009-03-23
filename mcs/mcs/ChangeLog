@@ -1,5 +1,10 @@
 2009-03-23  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #487625
+	* namespace.cs: Use a warning for all predefined type conflicts.
+
+2009-03-23  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #485706
 	* statement.cs: Explicitly type catch type argument to pass verifier
 	check.
