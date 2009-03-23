@@ -77,7 +77,7 @@ namespace System.Web.Compilation
 			if (!String.IsNullOrEmpty (pageParser.MasterPageFile))
 				// This is here just to trigger master page build, so that its type
 				// is available when compiling the page itself.
-				Type master = BuildManager.GetCompiledType (pageParser.MasterPageFile);
+				BuildManager.GetCompiledType (pageParser.MasterPageFile);
 #endif
 			if (pageParser.ClientTarget != null) {
 				CodeExpression prop;
