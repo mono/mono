@@ -1,3 +1,8 @@
+2009-03-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequest.cs: we were sending CWD instead of PWD.
+	Bug #486703 fixed.
+
 2009-03-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* IPAddress.cs: don't allocate the IPv6 array for IPv4 addresses.

@@ -635,7 +635,7 @@ namespace System.Net
 			FtpStatus status;
 			
 			if (method == WebRequestMethods.Ftp.PrintWorkingDirectory)
-				method = ChangeDir;
+				method = "PWD";
 
 			if (method == WebRequestMethods.Ftp.Rename)
 				method = RenameFromCommand;
