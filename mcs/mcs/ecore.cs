@@ -3255,11 +3255,7 @@ namespace Mono.CSharp {
 
 		public override Type DeclaringType {
 			get {
-				//
-				// We assume that the top-level type is in the end
-				//
-				return Methods [Methods.Length - 1].DeclaringType;
-				//return Methods [0].DeclaringType;
+				return queried_type;
 			}
 		}
 

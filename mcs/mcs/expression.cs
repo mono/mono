@@ -3106,11 +3106,14 @@ namespace Mono.CSharp {
 						type = TypeManager.bool_type;
 						if (left is NullLiteral || right is NullLiteral)
 							oper_expr = ReducedExpression.Create (this, oper_expr).Resolve (ec);
-					} else if (union.DeclaringType == TypeManager.delegate_type && l != r) {
+					} else if (l != r) {
+						MethodInfo mi = (MethodInfo) union;
+						
 						//
 						// Two System.Delegate(s) are never equal
 						//
-						return null;
+						if (mi.DeclaringType == TypeManager.multicast_delegate_type)
+							return null;
 					}
 				}
 			}
