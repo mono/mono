@@ -143,7 +143,7 @@ namespace System.Runtime.Serialization
 			bool isEmpty = reader.IsEmptyElement;
 			reader.ReadStartElement ();
 
-			object res = DeserializeContent (graph_qname, type, reader);
+			object res = DeserializeContent (graph_qname, type, reader, isEmpty);
 
 			reader.MoveToContent ();
 			if (reader.NodeType == XmlNodeType.EndElement)
@@ -153,7 +153,7 @@ namespace System.Runtime.Serialization
 			return res;
 		}
 
-		object DeserializeContent (QName name, Type type, XmlReader reader)
+		object DeserializeContent (QName name, Type type, XmlReader reader, bool isEmpty)
 		{
 			if (KnownTypeCollection.IsPrimitiveType (name)) {
 				string value;
@@ -177,7 +177,10 @@ namespace System.Runtime.Serialization
 			if (map == null)
 				throw new SerializationException (String.Format ("Unknown type {0} is used for DataContract with reference of name {1}. Any derived types of a data contract or a data member should be added to KnownTypes.", type, name));
 
-			return map.DeserializeContent (reader, this);
+			if (isEmpty)
+				return map.DeserializeEmptyContent (reader, this);
+			else
+				return map.DeserializeContent (reader, this);
 		}
 
 		Type GetTypeFromNamePair (string name, string ns)

@@ -1,3 +1,9 @@
+2009-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs, XmlFormatterDeserializer.cs:
+	  empty collection deserialization resulted in extra
+	  consumption of the next xml node.
+
 2009-03-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* KnownTypeCollection.cs, XmlFormatterDeserializer.cs :

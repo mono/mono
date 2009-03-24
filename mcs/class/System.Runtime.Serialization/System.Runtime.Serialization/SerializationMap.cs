@@ -334,6 +334,15 @@ namespace System.Runtime.Serialization
 		}
 		
 		/* Deserialize non-primitive types */
+
+		// This is sort of hack. The argument reader already moved ahead of
+		// the actual empty element.It's just for historical consistency.
+		public virtual object DeserializeEmptyContent (XmlReader reader,
+			XmlFormatterDeserializer deserializer)
+		{
+			return DeserializeContent (reader, deserializer);
+		}
+
 		public virtual object DeserializeContent (XmlReader reader,
 			XmlFormatterDeserializer deserializer)
 		{
@@ -588,17 +597,26 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer)
+		object CreateInstance ()
 		{
-			object instance;
 			if (RuntimeType.IsArray)
-				instance = new ArrayList ();
+				return new ArrayList ();
 			else
 #if NET_2_1 // FIXME: is it fine?
-				instance = Activator.CreateInstance (RuntimeType);
+				return Activator.CreateInstance (RuntimeType);
 #else
-				instance = Activator.CreateInstance (RuntimeType, true);
+				return Activator.CreateInstance (RuntimeType, true);
 #endif
+		}
+
+		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer)
+		{
+			return CreateInstance ();
+		}
+
+		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer)
+		{
+			object instance = CreateInstance ();
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				object elem = deserializer.Deserialize (element_type, reader);
