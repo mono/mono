@@ -61,14 +61,7 @@ namespace System.Runtime.InteropServices
 		IntPtr invalid_handle_value;
 		int refcount = 0;
 		bool owns_handle;
-
-#if NET_2_0
-		internal bool OwnsHandle {
-			get { return owns_handle; }
-			set { owns_handle = false; }
-		}
-#endif
-			
+		
 #if NET_2_1
 		protected SafeHandle ()
 		{

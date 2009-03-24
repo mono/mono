@@ -1,8 +1,3 @@
-2009-03-23  Marek Habersack  <mhabersack@novell.com>
-
-	* SafeHandle.cs: added an internal property, OwnsHandle, used by
-	FileStream.
-
 2009-02-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SafeHandle.cs: Add default ctor in 2.1 profile (needed to compile

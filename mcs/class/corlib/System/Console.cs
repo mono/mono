@@ -68,118 +68,6 @@ namespace System
 			}
 		}
 
-#if NET_2_0
-		private class StandardConsoleStream : Stream
-		{
-			IntPtr handle;
-			bool canRead;
-			bool canWrite;
-			string fname;
-			
-			public override bool CanRead {
-				get { return canRead; }
-			}
-
-			public override bool CanWrite {
-				get { return canWrite; }
-			}
-
-			public override bool CanSeek {
-				get { return false; }
-			}
-
-			public override long Length {
-				get { throw GetNoSeekException (); }
-			}
-
-			public override long Position {
-				get { throw GetNoSeekException (); }
-				set { throw GetNoSeekException (); }
-			}
-			
-			public StandardConsoleStream (string fname, IntPtr handle, bool canWrite, bool canRead)
-			{
-				this.fname = fname;
-				this.handle = handle;
-				this.canWrite = canWrite;
-				this.canRead = canRead;
-			}
-
-			public override void Flush ()
-			{
-				// nothing to do
-			}
-			
-			public override int Read ([In,Out] byte[] array, int offset, int count)
-			{
-				if (array == null)
-					throw new ArgumentNullException ("array");
-				if (!CanRead)
-					throw new NotSupportedException ("Stream does not support reading");
-				int len = array.Length;
-				if (offset < 0)
-					throw new ArgumentOutOfRangeException ("offset", "< 0");
-				if (count < 0)
-					throw new ArgumentOutOfRangeException ("count", "< 0");
-				if (offset > len)
-					throw new ArgumentException ("destination offset is beyond array size");
-				// reordered to avoid possible integer overflow
-				if (offset > len - count)
-					throw new ArgumentException ("Reading would overrun buffer");
-
-				MonoIOError error;
-				int amount = 0;
-
-				amount = MonoIO.Read (handle, array, offset, count, out error);
-				if (error == MonoIOError.ERROR_BROKEN_PIPE) {
-					amount = 0; // might not be needed, but well...
-				} else if (error != MonoIOError.ERROR_SUCCESS)
-					throw MonoIO.GetException (fname, error);
-				
-				/* Check for read error */
-				if (amount == -1)
-					throw new IOException ();
-				
-				return amount;
-			}
-
-			public override void Write (byte[] array, int offset, int count)
-			{
-				if (array == null)
-					throw new ArgumentNullException ("array");
-				if (offset < 0)
-					throw new ArgumentOutOfRangeException ("offset", "< 0");
-				if (count < 0)
-					throw new ArgumentOutOfRangeException ("count", "< 0");
-				// ordered to avoid possible integer overflow
-				if (offset > array.Length - count)
-					throw new ArgumentException ("Reading would overrun buffer");
-				if (!CanWrite)
-					throw new NotSupportedException ("Stream does not support writing");
-
-				MonoIOError error;
-				MonoIO.Write (handle, array, offset, count, out error);
-				if (error != MonoIOError.ERROR_SUCCESS)
-					throw MonoIO.GetException (fname, error);
-			}
-			
-			public override long Seek (long offset, SeekOrigin origin)
-			{
-				throw GetNoSeekException ();
-			}
-
-			public override void SetLength (long value)
-			{
-				throw GetNoSeekException ();
-			}
-			
-			NotSupportedException GetNoSeekException ()
-			{
-				return new NotSupportedException ("Stream does not support seeking.");
-			}			
-		}		
-#endif
-		
 		internal static TextWriter stdout;
 		private static TextWriter stderr;
 		private static TextReader stdin;
@@ -282,11 +170,7 @@ namespace System
 		public static Stream OpenStandardError (int bufferSize)
 		{
 			try {
-#if NET_2_0
-				return new StandardConsoleStream ("stderr", MonoIO.ConsoleError, true, false);
-#else
 				return new FileStream (MonoIO.ConsoleError, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
-#endif
 			} catch (IOException) {
 				return new NullStream ();
 			}
@@ -305,11 +189,7 @@ namespace System
 		public static Stream OpenStandardInput (int bufferSize)
 		{
 			try {
-#if NET_2_0
-				return new StandardConsoleStream ("stdin", MonoIO.ConsoleInput, false, true);
-#else
 				return new FileStream (MonoIO.ConsoleInput, FileAccess.Read, false, bufferSize, false, bufferSize == 0);
-#endif
 			} catch (IOException) {
 				return new NullStream ();
 			}
@@ -328,11 +208,7 @@ namespace System
 		public static Stream OpenStandardOutput (int bufferSize)
 		{
 			try {
-#if NET_2_0
-				return new StandardConsoleStream ("stdout", MonoIO.ConsoleOutput, true, false);
-#else
 				return new FileStream (MonoIO.ConsoleOutput, FileAccess.Write, false, bufferSize, false, bufferSize == 0);
-#endif
 			} catch (IOException) {
 				return new NullStream ();
 			}

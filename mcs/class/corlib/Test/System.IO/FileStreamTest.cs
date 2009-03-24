@@ -13,9 +13,6 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
-#if NET_2_0
-using Microsoft.Win32.SafeHandles;
-#endif
 
 namespace MonoTests.System.IO
 {
@@ -452,32 +449,6 @@ namespace MonoTests.System.IO
 			}
 		}
 
-#if NET_2_0
-		[Test]
-		[ExpectedException (typeof (NullReferenceException))]
-		public void CtorSafeHandleException1 ()
-		{
-			// .NET doesn't check for null here, so won't we
-			SafeFileHandle sfh = null;
-			FileStream fs = new FileStream (sfh, FileAccess.Read, 1, false);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CtorSafeHandleException2 ()
-		{
-			SafeFileHandle sfh = new SafeFileHandle ((IntPtr)0, true);
-			FileStream fs = new FileStream (sfh, FileAccess.Read, 1, false);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void CtorSafeHandleException3 ()
-		{
-			SafeFileHandle sfh = new SafeFileHandle ((IntPtr)(-1), true);
-			FileStream fs = new FileStream (sfh, FileAccess.Read, 1, false);
-		}
-#endif
 		[Test]
 		public void ModeAndAccessCombinations ()
 		{

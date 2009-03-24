@@ -72,11 +72,7 @@ namespace System.IO
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool noBuffering)
-#if NET_2_0
-			: this (new SafeFileHandle (handle, ownsHandle), access, bufferSize, isAsync)
-#endif
 		{
-#if !NET_2_0
 			this.handle = MonoIO.InvalidHandle;
 			if (handle == this.handle)
 				throw new ArgumentException ("handle", Locale.GetText ("Invalid."));
@@ -116,9 +112,8 @@ namespace System.IO
 
 			/* Can't set append mode */
 			this.append_startpos=0;
-#endif
 		}
-		
+
 		// construct from filename
 		
 		public FileStream (string path, FileMode mode)
@@ -163,44 +158,12 @@ namespace System.IO
 		{
 		}
 		
-		public FileStream (SafeFileHandle handle, FileAccess access, int bufferSize, bool isAsync)
+		[MonoLimitationAttribute("Need to use SafeFileHandle instead of underlying handle")]
+		public FileStream (SafeFileHandle handle, FileAccess access,
+				   int bufferSize, bool isAsync)
+			:this (handle.DangerousGetHandle (), access, false, bufferSize, isAsync)
 		{
-			// No null check is performed on handle for .NET compatibility!
-			if (handle.IsInvalid)
-				throw new ArgumentException ("handle", Locale.GetText ("Invalid."));
-			
-			if (access < FileAccess.Read || access > FileAccess.ReadWrite)
-				throw new ArgumentOutOfRangeException ("access");
-
-			IntPtr realHandle = handle.DangerousGetHandle ();
-			MonoIOError error;
-			MonoFileType ftype = MonoIO.GetFileType (realHandle, out error);
-
-			if (error != MonoIOError.ERROR_SUCCESS)
-				throw MonoIO.GetException (name, error);
-			
-			if (ftype == MonoFileType.Unknown)
-				throw new IOException ("Invalid handle.");
-			else if (ftype == MonoFileType.Disk)
-				this.canseek = true;
-			else
-				this.canseek = false;
-
 			this.safeHandle = handle;
-			this.access = access;
-			this.async = isAsync;
-			this.anonymous = false;
-
-			InitBuffer (bufferSize, false);
-
-			if (canseek) {
-				buf_start = MonoIO.Seek (realHandle, 0, SeekOrigin.Current, out error);
-				if (error != MonoIOError.ERROR_SUCCESS)
-					throw MonoIO.GetException (name, error);
-			}
-
-			/* Can't set append mode */
-			this.append_startpos=0;
 		}
 
 		public FileStream (string path, FileMode mode,
@@ -223,7 +186,7 @@ namespace System.IO
 			: this (path, mode, access, share, bufferSize, anonymous, isAsync ? FileOptions.Asynchronous : FileOptions.None)
 		{
 		}
-		
+
 		internal FileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, bool anonymous, FileOptions options)
 		{
 			if (path == null) {
@@ -334,31 +297,28 @@ namespace System.IO
 			// TODO: demand permissions
 
 			MonoIOError error;
-			IntPtr realHandle = MonoIO.Open (path, mode, access, share, options, out error);
-			if (realHandle == MonoIO.InvalidHandle) {
+
+			this.handle = MonoIO.Open (path, mode, access, share, options, out error);
+			if (handle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
 				string fname = (anonymous) ? Path.GetFileName (path) : Path.GetFullPath (path);
 				throw MonoIO.GetException (fname, error);
 			}
 
-#if NET_2_0
-			this.safeHandle = new SafeFileHandle (realHandle, true);
-#else
-			this.handle = realHandle;
-			this.owner = true;
-#endif
 			this.access = access;
+			this.owner = true;
 			this.anonymous = anonymous;
 
 			/* Can we open non-files by name? */
 			
-			if (MonoIO.GetFileType (realHandle, out error) == MonoFileType.Disk) {
+			if (MonoIO.GetFileType (handle, out error) == MonoFileType.Disk) {
 				this.canseek = true;
 				this.async = (options & FileOptions.Asynchronous) != 0;
 			} else {
 				this.canseek = false;
 				this.async = false;
 			}
+
 
 			if (access == FileAccess.Read && canseek && (bufferSize == DefaultBufferSize)) {
 				/* Avoid allocating a large buffer for small files */
@@ -412,29 +372,9 @@ namespace System.IO
 			}
 		}
 
-		bool HandleIsInvalidOrClosed {
-			get {
-#if NET_2_0
-				return safeHandle.IsInvalid || safeHandle.IsClosed;
-#else
-				return handle == MonoIO.InvalidHandle;
-#endif
-			}
-		}
-
-		IntPtr RealHandle {
-			get {
-#if NET_2_0
-				return safeHandle.DangerousGetHandle ();
-#else
-				return handle;
-#endif
-			}
-		}
-
 		public override long Length {
 			get {
-				if (HandleIsInvalidOrClosed)
+				if (handle == MonoIO.InvalidHandle)
 					throw new ObjectDisposedException ("Stream has been closed");
 
 				if (!CanSeek)
@@ -445,7 +385,8 @@ namespace System.IO
 
 				MonoIOError error;
 				long length;
-				length = MonoIO.GetLength (RealHandle, out error);
+				
+				length = MonoIO.GetLength (handle, out error);
 				if (error != MonoIOError.ERROR_SUCCESS) {
 					// don't leak the path information for isolated storage
 					string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -458,7 +399,7 @@ namespace System.IO
 
 		public override long Position {
 			get {
-				if (HandleIsInvalidOrClosed)
+				if (handle == MonoIO.InvalidHandle)
 					throw new ObjectDisposedException ("Stream has been closed");
 
 				if(CanSeek == false)
@@ -467,7 +408,7 @@ namespace System.IO
 				return(buf_start + buf_offset);
 			}
 			set {
-				if (HandleIsInvalidOrClosed)
+				if (handle == MonoIO.InvalidHandle)
 					throw new ObjectDisposedException ("Stream has been closed");
 
 				if(CanSeek == false) {
@@ -489,13 +430,7 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
-#if NET_2_0
-				if (safeHandle.IsClosed)
-					return (IntPtr)(-1);
-				return safeHandle.DangerousGetHandle ();
-#else
 				return handle;
-#endif
 			}
 		}
 
@@ -504,18 +439,15 @@ namespace System.IO
 			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
-				FlushBuffer ();
+				SafeFileHandle ret;
 
-				// MSDN (http://msdn.microsoft.com/en-us/library/system.io.filestream.aspx):
-				//
-				// A FileStream object will not have an exclusive hold on its handle
-				// when either the SafeFileHandle property is accessed to expose the
-				// handle or the FileStream object is given the SafeFileHandle
-				// property in its constructor.
-				//
-				if (safeHandle.OwnsHandle)
-					safeHandle.OwnsHandle = false;
-				return safeHandle;
+				if (safeHandle != null)
+					ret = safeHandle;
+				else
+					ret = new SafeFileHandle (handle, owner);
+
+				FlushBuffer ();
+				return ret;
 			}
 		}
 #endif
@@ -524,14 +456,14 @@ namespace System.IO
 
 		public override int ReadByte ()
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			if (!CanRead)
 				throw new NotSupportedException ("Stream does not support reading");
 			
 			if (buf_size == 0) {
-				int n = ReadData (RealHandle, buf, 0, 1);
+				int n = ReadData (handle, buf, 0, 1);
 				if (n == 0) return -1;
 				else return buf[0];
 			}
@@ -547,7 +479,7 @@ namespace System.IO
 
 		public override void WriteByte (byte value)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			if (!CanWrite)
@@ -573,7 +505,7 @@ namespace System.IO
 
 		public override int Read ([In,Out] byte[] array, int offset, int count)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -619,7 +551,7 @@ namespace System.IO
 				 * to count bytes
 				 */
 				FlushBuffer();
-				n = ReadData (RealHandle, dest,
+				n = ReadData (handle, dest,
 					      offset+copied,
 					      count);
 			
@@ -644,7 +576,7 @@ namespace System.IO
 		public override IAsyncResult BeginRead (byte [] array, int offset, int numBytes,
 							AsyncCallback userCallback, object stateObject)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			if (!CanRead)
@@ -691,7 +623,7 @@ namespace System.IO
 
 		public override void Write (byte[] array, int offset, int count)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -721,7 +653,8 @@ namespace System.IO
 				MonoIOError error;
 
 				FlushBuffer ();
-				MonoIO.Write (RealHandle, src, offset, count, out error);
+
+				MonoIO.Write (handle, src, offset, count, out error);
 				if (error != MonoIOError.ERROR_SUCCESS) {
 					// don't leak the path information for isolated storage
 					string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -752,7 +685,7 @@ namespace System.IO
 		public override IAsyncResult BeginWrite (byte [] array, int offset, int numBytes,
 							AsyncCallback userCallback, object stateObject)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			if (!CanWrite)
@@ -817,7 +750,7 @@ namespace System.IO
 		{
 			long pos;
 
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 			
 			// make absolute
@@ -858,7 +791,8 @@ namespace System.IO
 			FlushBuffer ();
 
 			MonoIOError error;
-			buf_start = MonoIO.Seek (RealHandle, pos,
+		
+			buf_start = MonoIO.Seek (handle, pos,
 						 SeekOrigin.Begin,
 						 out error);
 
@@ -873,7 +807,7 @@ namespace System.IO
 
 		public override void SetLength (long value)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			if(CanSeek == false)
@@ -888,7 +822,8 @@ namespace System.IO
 			Flush ();
 
 			MonoIOError error;
-			MonoIO.SetLength (RealHandle, value, out error);
+			
+			MonoIO.SetLength (handle, value, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
 				string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -901,7 +836,7 @@ namespace System.IO
 
 		public override void Flush ()
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 
 			FlushBuffer ();
@@ -922,7 +857,7 @@ namespace System.IO
 
 		public virtual void Lock (long position, long length)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 			if (position < 0) {
 				throw new ArgumentOutOfRangeException ("position must not be negative");
@@ -930,10 +865,13 @@ namespace System.IO
 			if (length < 0) {
 				throw new ArgumentOutOfRangeException ("length must not be negative");
 			}
-			
+			if (handle == MonoIO.InvalidHandle) {
+				throw new ObjectDisposedException ("Stream has been closed");
+			}
+				
 			MonoIOError error;
 
-			MonoIO.Lock (RealHandle, position, length, out error);
+			MonoIO.Lock (handle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
 				string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -943,7 +881,7 @@ namespace System.IO
 
 		public virtual void Unlock (long position, long length)
 		{
-			if (HandleIsInvalidOrClosed)
+			if (handle == MonoIO.InvalidHandle)
 				throw new ObjectDisposedException ("Stream has been closed");
 			if (position < 0) {
 				throw new ArgumentOutOfRangeException ("position must not be negative");
@@ -954,7 +892,7 @@ namespace System.IO
 				
 			MonoIOError error;
 
-			MonoIO.Unlock (RealHandle, position, length, out error);
+			MonoIO.Unlock (handle, position, length, out error);
 			if (error != MonoIOError.ERROR_SUCCESS) {
 				// don't leak the path information for isolated storage
 				string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -975,21 +913,13 @@ namespace System.IO
 		protected virtual void Dispose (bool disposing)
 #endif
 		{
-#if NET_2_0
-			bool valid = !safeHandle.IsInvalid;
-#else
-			bool valid = handle != MonoIO.InvalidHandle;
-#endif
-			if (valid) {
+			if (handle != MonoIO.InvalidHandle) {
 				FlushBuffer ();
 
-#if NET_2_0
-				safeHandle.Dispose ();
-#else
 				if (owner) {
 					MonoIOError error;
 				
-					MonoIO.Close (RealHandle, out error);
+					MonoIO.Close (handle, out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
 						// don't leak the path information for isolated storage
 						string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -998,7 +928,6 @@ namespace System.IO
 
 					handle = MonoIO.InvalidHandle;
 				}
-#endif
 			}
 
 			canseek = false;
@@ -1072,7 +1001,7 @@ namespace System.IO
 			if (buf_dirty) {
 				if (CanSeek == true) {
 					MonoIOError error;
-					MonoIO.Seek (RealHandle, buf_start,
+					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
@@ -1095,7 +1024,7 @@ namespace System.IO
 				MonoIOError error;
 				
 				if (CanSeek == true) {
-					MonoIO.Seek (RealHandle, buf_start,
+					MonoIO.Seek (handle, buf_start,
 						     SeekOrigin.Begin,
 						     out error);
 					if (error != MonoIOError.ERROR_SUCCESS) {
@@ -1104,7 +1033,7 @@ namespace System.IO
 						throw MonoIO.GetException (fname, error);
 					}
 				}
-				MonoIO.Write (RealHandle, buf, 0,
+				MonoIO.Write (handle, buf, 0,
 					      buf_length, out error);
 
 				if (error != MonoIOError.ERROR_SUCCESS) {
@@ -1129,7 +1058,7 @@ namespace System.IO
 		{
 			FlushBuffer();
 			
-			buf_length = ReadData (RealHandle, buf, 0,
+			buf_length = ReadData (handle, buf, 0,
 					       buf_size);
 		}
 
@@ -1185,9 +1114,7 @@ namespace System.IO
 		internal const int DefaultBufferSize = 8192;
 
 		private FileAccess access;
-#if !NET_2_0
 		private bool owner;
-#endif
 		private bool async;
 		private bool canseek;
 		private long append_startpos;
@@ -1200,11 +1127,11 @@ namespace System.IO
 		private bool buf_dirty;			// true if buffer has been written to
 		private long buf_start;			// location of buffer in file
 		private string name = "[Unknown]";	// name of file.
+
+		IntPtr handle;				// handle to underlying file
 #if NET_2_0
 		SafeFileHandle safeHandle;              // set only when using one of the
 							// constructors taking SafeFileHandle
-#else
-		IntPtr handle;				// handle to underlying file
 #endif
 	}
 }

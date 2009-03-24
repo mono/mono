@@ -1,8 +1,3 @@
-2009-03-23  Marek Habersack  <mhabersack@novell.com>
-
-	* FileStreamTest.cs: added a bunch of tests for SafeFileHandle
-	constructors
-
 2009-02-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StringReaderTest.cs: new test for ReadLine.

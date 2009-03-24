@@ -1,12 +1,3 @@
-2009-03-23  Marek Habersack  <mhabersack@novell.com>
-
-	* Console.cs: OpenStandard{Input,Output,Error} no longer use
-	FileStream on 2.0+. The reason is that SafeFileHandle used in the
-	stream doesn't allow handles with values <= 0, and on Unix stdin
-	is 0 which would break the Console class. Instead of FileStream,
-	introduced a simple internal specialized stream which is used in
-	this scenario.
-
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* String.cs (LastIndexOf): Handle empty strings correctly. Fixes #486234.

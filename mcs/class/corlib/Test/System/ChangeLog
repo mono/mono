@@ -1,8 +1,3 @@
-2009-03-23  Marek Habersack  <mhabersack@novell.com>
-
-	* ConsoleTest.cs: added a bunch of tests for the standard input,
-	output and error stream properties.
-
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* StringTest.cs (LastIndexOfStringComparison): Add a test for #486234.
