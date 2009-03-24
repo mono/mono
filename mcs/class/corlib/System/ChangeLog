@@ -1,3 +1,9 @@
+2009-03-25  Jb Evain  <jbevain@novell.com>
+
+	* Delegate.cs (CreateDelegate): fix checks to deal with
+	valuetypes -> obj conversions for arguments, and avoid
+	issues with such unallowed conversion for return types.
+
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* String.cs (LastIndexOf): Handle empty strings correctly. Fixes #486234.

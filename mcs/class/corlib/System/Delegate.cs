@@ -133,7 +133,7 @@ namespace System
 
 			// Delegate contravariance
 			if (!match) {
-				if (!delArgType.IsValueType && (delArgType != typeof (ValueType)) && (argType.IsAssignableFrom (delArgType)))
+				if (!argType.IsValueType && argType.IsAssignableFrom (delArgType))
 					match = true;
 			}
 
@@ -147,7 +147,7 @@ namespace System
 #if NET_2_0
 			if (!returnMatch) {
 				// Delegate covariance
-				if (!delReturnType.IsValueType && (delReturnType != typeof (ValueType)) && (delReturnType.IsAssignableFrom (returnType)))
+				if (!returnType.IsValueType && delReturnType.IsAssignableFrom (returnType))
 					returnMatch = true;
 			}
 #endif
