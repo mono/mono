@@ -1,3 +1,15 @@
+2009-03-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-ops.h: New ternary ATOMIC_CAS ops replace the old
+	ATOMIC_CAS_IMM ops.
+
+	* method-to-ir.c: Handle more cases for
+	Interlocked.CompareExchange.
+
+	* cpu-x86.md, mini-x86.c, mini-x86.h, cpu-amd64.md, mini-amd64.c,
+	mini-amd64.h, cpu-ppc.md, cpu-ppc64.md, mini-ppc.c, mini-ppc.h:
+	ATOMIC_CAS implementations for x86, AMD64, PPC and PPC64.
+
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_method_ref): Fix a warning.

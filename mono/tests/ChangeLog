@@ -1,3 +1,9 @@
+2009-03-24  Mark Probst  <mark.probst@gmail.com>
+
+	* interlocked-3.cs: New CompareExchange test.
+
+	* Makefile.am: Test added.
+
 2009-03-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread6.cs: Add back a sleep to avoid a race.
