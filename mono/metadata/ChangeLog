@@ -1,3 +1,8 @@
+2009-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* image.c (load_metadata_ptrs): We decode MonoImage::md_version_minor at
+	the wrong offset (8 instead of 6).
+
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_delegate_to_ftnptr): For delegates wrapping pinvoke
