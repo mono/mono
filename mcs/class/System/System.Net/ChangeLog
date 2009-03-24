@@ -1,3 +1,8 @@
+2009-03-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequest.cs: we were sending CWD instead of PWD.
+	Bug #486703 fixed.
+
 2009-02-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebClient.cs: append the QueryString in DownloadData.
