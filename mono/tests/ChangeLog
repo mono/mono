@@ -1,3 +1,7 @@
+2009-03-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread6.cs: Add back a sleep to avoid a race.
+
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke-2.2.cs libtest.c: Add a test for #487758.
