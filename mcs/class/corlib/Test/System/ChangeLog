@@ -1,3 +1,8 @@
+2009-03-25  Jb Evain  <jbevain@novell.com>
+
+	* DelegateTest.cs: add CreateDelegate tests for valuetype -> object
+	conversion for arguments and return types.
+
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* StringTest.cs (LastIndexOfStringComparison): Add a test for #486234.

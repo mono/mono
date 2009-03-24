@@ -851,6 +851,57 @@ namespace MonoTests.System
 			d (null);
 		}
 
+		static object Box (object o)
+		{
+			return o;
+		}
+
+		delegate object Boxer ();
+
+		[Test]
+		public void BoxingCovariance ()
+		{
+			var boxer = (Boxer) Delegate.CreateDelegate (
+				typeof (Boxer),
+				42,
+				GetType ().GetMethod ("Box", BindingFlags.NonPublic | BindingFlags.Static));
+
+			Assert.IsNotNull (boxer);
+			Assert.AreEqual (42, boxer ());
+		}
+
+		static object Nada (int o)
+		{
+			return (int) o;
+		}
+
+		delegate int WrongDelegate ();
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WrongReturnTypeContravariance ()
+		{
+			Delegate.CreateDelegate (
+				typeof (WrongDelegate),
+				42,
+				GetType ().GetMethod ("Nada", BindingFlags.NonPublic | BindingFlags.Static));
+		}
+
+		static int Identity (int i)
+		{
+			return i;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WrongReturnTypeContravariance_2 ()
+		{
+			Delegate.CreateDelegate (
+				typeof (Boxer),
+				42,
+				GetType ().GetMethod ("Identity", BindingFlags.NonPublic | BindingFlags.Static));
+		}
+
 		[Test]
 		public void Virtual ()
 		{
