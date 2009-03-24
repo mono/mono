@@ -1,9 +1,3 @@
-2009-03-23  Marek Habersack  <mhabersack@novell.com>
-
-	* FileStream.cs: implemented full support for SafeFileHandle in
-	2.0. The obsolete constructors taking an IntPtr now wrap it in a
-	SafeFileHandle.
-
 2009-03-22  Marek Habersack  <mhabersack@novell.com>
 
 	* FileStream.cs: implemented the SafeFileHandle property.
