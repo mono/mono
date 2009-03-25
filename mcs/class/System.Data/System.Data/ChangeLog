@@ -1,3 +1,8 @@
+2009-03-25  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataView.cs: Fire ListChanged when the RowFilter changes.
+	[Fixes bug #479405]
+
 2009-02-24  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* *Fixes #377146 - in a better way

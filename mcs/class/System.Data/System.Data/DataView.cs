@@ -220,8 +220,10 @@ namespace System.Data
 					rowFilterExpr = parser.Compile (value);
 				}
 				rowFilter = value;
-				if (!inEndInit)
+				if (!inEndInit) {
 					UpdateIndex (true);
+					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
+				}
 			}
 		}
 
