@@ -1,3 +1,7 @@
+2009-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs: Add a test for #488670.
+
 2009-03-25  Mark Probst  <mark.probst@gmail.com>
 
 	* interlocked-4.2.cs: New CompareExchange test (triggered register
