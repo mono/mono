@@ -1,3 +1,13 @@
+2009-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.c: Bump MONO_CORLIB_VERSION to 73
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Add
+	an extra 'throwOnBindFailure' parameter to the icall. Remove FIXME
+	and add a call to mono_security_core_clr_ensure_delegate_creation
+	to do the extra checks required by CoreCLR.
+	* security-core-clr.c|h: Add function to check delegate creation,
+	both in the binding and accessibility, under CoreCLR.
+
 2009-03-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* reflection.c (mono_reflection_create_dynamic_method): when 
