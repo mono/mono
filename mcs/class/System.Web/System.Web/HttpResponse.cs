@@ -608,7 +608,10 @@ namespace System.Web {
 			content_length = -1;
 			content_type = "text/html";
 			transfer_encoding = null;
-			user_cache_control = null;
+			user_cache_control = "private";
+			if (cache_policy != null)
+				cache_policy.Cacheability = HttpCacheability.Private;
+
 			if (headers != null)
 				headers.Clear ();
 		}

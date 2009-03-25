@@ -1,3 +1,8 @@
+2009-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpResponse.cs: ClearHeaders() also resets cacheability.
+	Bug #485557 fixed.
+
 2009-03-21  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: added two missing 3.0+ properties -
