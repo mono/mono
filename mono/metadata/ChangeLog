@@ -1,6 +1,11 @@
+2009-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Generate code to throw an exception
+	instead of throwing it. Fixes #488670.
+
 2009-03-25  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* appdomain.c: Bump MONO_CORLIB_VERSION to 73
+	* appdomain.c: Bump MONO_CORLIB_VERSION to 73.
 	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Add
 	an extra 'throwOnBindFailure' parameter to the icall. Remove FIXME
 	and add a call to mono_security_core_clr_ensure_delegate_creation
