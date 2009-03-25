@@ -1,3 +1,11 @@
+2009-03-25  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyBuilder.cs: renamed CopyFile to CopyFileWithChecksum, in
+	prepration for future inclusion of checksum and line pragmas in
+	the file being copied.
+	Files are copied chunk by chunk, not by reading the entire
+	contents.
+
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* PageCompiler.cs: Fix the build.

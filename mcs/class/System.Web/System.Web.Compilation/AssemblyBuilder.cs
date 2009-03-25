@@ -349,7 +349,9 @@ namespace System.Web.Compilation {
 		{
 			AddCodeFile (path, bp, false);
 		}
-		
+
+		// We should use a CodeSnippetUnit here, but the problem with that approach is that
+		// we would have to read the entire file into a string, which we cannot do.
 		internal void AddCodeFile (string path, BuildProvider bp, bool isVirtual)
 		{
 			if (String.IsNullOrEmpty (path))
@@ -372,9 +374,9 @@ namespace System.Web.Compilation {
 				if (vf == null)
 					throw new HttpException (404, "Virtual file '" + path + "' does not exist.");
 
-				CopyFile (vf.Open (), filename);
+				CopyFileWithChecksum (vf.Open (), filename, path);
 			} else
-				CopyFile (path, filename);
+				CopyFileWithChecksum (path, filename, path);
 
 			if (bp != null)
 				AddPathToBuilderMap (filename, bp);
@@ -382,16 +384,26 @@ namespace System.Web.Compilation {
 			SourceFiles.Add (filename);
 		}
 
-		void CopyFile (string input, string filename)
+		void CopyFileWithChecksum (string input, string to, string from)
 		{
-			CopyFile (new FileStream (input, FileMode.Open, FileAccess.Read), filename);
+			CopyFileWithChecksum (new FileStream (input, FileMode.Open, FileAccess.Read), to, from);
 		}
 		
-		void CopyFile (Stream input, string filename)
+		void CopyFileWithChecksum (Stream input, string to, string from)
 		{
-			using (StreamWriter sw = new StreamWriter (new FileStream (filename, FileMode.Create, FileAccess.Write), Encoding.UTF8)) {
+			// No checksum is computed for now
+			using (StreamWriter sw = new StreamWriter (new FileStream (to, FileMode.Create, FileAccess.Write), Encoding.UTF8)) {
 				using (StreamReader sr = new StreamReader (input, WebEncoding.FileEncoding)) {
-					sw.Write (sr.ReadToEnd ());
+					char[] src = new char [COPY_BUFFER_SIZE];
+					int count;
+
+					do {
+						count = sr.Read (src, 0, COPY_BUFFER_SIZE);
+						if (count == 0)
+							break;
+						sw.Write (src, 0, count);
+					} while (true);
+					src = null;
 				}
 			}
 		}
