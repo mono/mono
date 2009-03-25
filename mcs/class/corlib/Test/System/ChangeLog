@@ -1,5 +1,9 @@
 2009-03-25  Jb Evain  <jbevain@novell.com>
 
+	* DelegateTest.cs: add new CreateDelegate test.
+
+2009-03-25  Jb Evain  <jbevain@novell.com>
+
 	* DelegateTest.cs: add CreateDelegate tests for valuetype -> object
 	conversion for arguments and return types.
 

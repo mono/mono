@@ -902,6 +902,28 @@ namespace MonoTests.System
 				GetType ().GetMethod ("Identity", BindingFlags.NonPublic | BindingFlags.Static));
 		}
 
+		delegate object CallTarget ();
+
+		class Closure {}
+
+		static object Target (Closure c)
+		{
+			return c;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void NullFirstArgumentOnStaticMethod ()
+		{
+			CallTarget call = (CallTarget) Delegate.CreateDelegate (
+				typeof (CallTarget),
+				null,
+				GetType ().GetMethod ("Target", BindingFlags.NonPublic | BindingFlags.Static));
+
+			Assert.IsNotNull (call);
+			Assert.IsNull (call ());
+		}
+
 		[Test]
 		public void Virtual ()
 		{
