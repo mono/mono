@@ -22,3 +22,6 @@ cs0457.cs
 
 cs1540-6.cs
 cs1540-9.cs
+
+# the error message has an assembly version in it
+cs1685.cs
