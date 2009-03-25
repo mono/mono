@@ -1,3 +1,9 @@
+2009-03-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpResponseTest.cs: Added tests for bug #485557 and #488702. 
+	Return meaningful value for GetUriPath () in FakeHttpWorkerRequest2
+	to allow tests to pass on MS.
+ 
 2008-07-25  Dean Brettle <dean@brettle.com>
 
 	* AppBrowsersTest.cs: Added tests for bug where capabilities 

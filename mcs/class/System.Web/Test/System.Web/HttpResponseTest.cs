@@ -36,16 +36,20 @@ using NUnit.Framework;
 namespace MonoTests.System.Web {
 
 	public class FakeHttpWorkerRequest2 : HttpWorkerRequest {
+		public ArrayList KnownResponseHeaders;
+		public ArrayList UnknownResponseHeaders;
 		public int return_kind;
 		
 		public FakeHttpWorkerRequest2 (int re)
 		{
+			KnownResponseHeaders = new ArrayList ();
+			UnknownResponseHeaders = new ArrayList ();
 			return_kind = re;
 		}
 		
 		public override string GetUriPath()
 		{
-			return "GetUriPath";
+			return "/fake";
 		}
 		
 		public override string GetQueryString()
@@ -110,11 +114,13 @@ namespace MonoTests.System.Web {
 		bool headers_sent;
 		public override void SendKnownResponseHeader(int x, string j)
 		{
+			KnownResponseHeaders.Add (new KnownResponseHeader (x, j));
 			headers_sent = true;
 		}
 		
 		public override void SendUnknownResponseHeader(string a, string b)
 		{
+			UnknownResponseHeaders.Add (new UnknownResponseHeader (a, b));
 			headers_sent = true;
 		}
 
@@ -131,8 +137,6 @@ namespace MonoTests.System.Web {
 				data [i] = arr [i];
 			data_len = x;
 			total += data_len;
-
-			//Console.WriteLine (Environment.StackTrace);
 		}
 		
 		public override void SendResponseFromFile(string a, long b , long c)
@@ -163,13 +167,49 @@ namespace MonoTests.System.Web {
 			}
 		}
 	}
-		
+
+	class KnownResponseHeader
+	{
+		private int index;
+		private string value;
+
+		public KnownResponseHeader (int index, string value)
+		{
+			this.index = index;
+			this.value = value;
+		}
+
+		public int Index {
+			get { return index; }
+		}
+
+		public string Value {
+			get { return value; }
+		}
+	}
+
+	class UnknownResponseHeader
+	{
+		private string name;
+		private string value;
+
+		public UnknownResponseHeader (string name, string value)
+		{
+			this.name = name;
+			this.value = value;
+		}
+
+		public string Name {
+			get { return name; }
+		}
+
+		public string Value {
+			get { return value; }
+		}
+	}
+
 	[TestFixture]
 	public class HttpResponseTest {
-
-		// NOTE : This test cannot be runned on .net with no web context ....
-		// ONLY MONO TESTS
-
 		HttpContext Cook (int re, out FakeHttpWorkerRequest2 f)
 		{
 			f = new FakeHttpWorkerRequest2 (re);
@@ -178,11 +218,19 @@ namespace MonoTests.System.Web {
 			return c;
 		}
 
+		[SetUp]
+		public void SetUp ()
+		{
+#if NET_2_0
+			AppDomain.CurrentDomain.SetData (".appPath", AppDomain.CurrentDomain.BaseDirectory);
+#endif
+		}
+
+		[Test]
 #if TARGET_JVM
 		[Category ("NotWorking")] // char output stream in gh make this test fail
 #endif
-		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
-		[Test] public void Test_Response ()
+		public void Test_Response ()
 		{
 			FakeHttpWorkerRequest2 f;
 			HttpContext c = Cook (1, out f);
@@ -205,7 +253,6 @@ namespace MonoTests.System.Web {
 #if TARGET_JVM
 		[Category ("NotWorking")] // char output stream in gh make this test fail
 #endif
-		[Category ("NotDotNet")]  //This test cannot be runned on .net with no web context ....
 		public void TestResponse_Chunked ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -222,7 +269,6 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void Status1 ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -251,31 +297,34 @@ namespace MonoTests.System.Web {
 		}
 
 		[Test]
-		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
-		[ExpectedException (typeof (HttpException))]
 		public void Status2 ()
 		{
 			FakeHttpWorkerRequest2 f;
 			HttpContext c = Cook (2, out f);
 
 			HttpResponse resp = c.Response;
-			resp.Status = "200";
+			try {
+				resp.Status = "200";
+				Assert.Fail ("#1");
+			} catch (HttpException) {
+			}
 		}
 
 		[Test]
-		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
-		[ExpectedException (typeof (HttpException))]
 		public void Status3 ()
 		{
 			FakeHttpWorkerRequest2 f;
 			HttpContext c = Cook (2, out f);
 
 			HttpResponse resp = c.Response;
-			resp.Status = "200\t";
+			try {
+				resp.Status = "200\t";
+				Assert.Fail ("#1");
+			} catch (HttpException) {
+			}
 		}
 
 		[Test]
-		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void Status4 ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -304,7 +353,6 @@ namespace MonoTests.System.Web {
 		//`
 
 		[Test]
-		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void SetCacheability ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -337,7 +385,6 @@ namespace MonoTests.System.Web {
 		// "no-cache" from the spec is also allowed
 		//
 		[Test]
-		[Category ("NotDotNet")] //This test cannot be runned on .net with no web context ....
 		public void CacheControl ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -365,7 +412,6 @@ namespace MonoTests.System.Web {
 		//
 		// Just checks if the AddFileDepend* methods accept values, added after bug #342511
 		[Test]
-		[Category ("NotDotNet")]
 		public void AddFileDependencies ()
 		{
 			FakeHttpWorkerRequest2 f;
@@ -384,7 +430,151 @@ namespace MonoTests.System.Web {
 			c = Cook (1, out f);
 			c.Response.AddFileDependency ("somefile.txt");
 		}
-		
-		//[Test][ExpectedException (typeof (HttpException))]
+
+		[Test] // bug #488702
+		[Category ("NotWorking")]
+		public void WriteHeaders ()
+		{
+			FakeHttpWorkerRequest2 f;
+			HttpContext c = Cook (2, out f);
+
+			HttpResponse resp = c.Response;
+			resp.CacheControl = "public";
+			resp.Cache.SetCacheability (HttpCacheability.NoCache);
+			resp.ContentType = "text/xml";
+			resp.AppendHeader ("Content-Disposition", "inline");
+			resp.AppendHeader ("Content-Type", "application/ms-word");
+			resp.AppendHeader ("Content-Length", "40");
+			resp.AppendHeader ("Transfer-Encoding", "compress");
+			resp.AppendHeader ("My-Custom-Header", "never");
+			resp.AppendHeader ("My-Custom-Header", "always");
+
+			Assert.AreEqual ("public", resp.CacheControl, "#A1");
+			Assert.AreEqual ("application/ms-word", resp.ContentType, "#A2");
+			Assert.AreEqual (0, f.KnownResponseHeaders.Count, "#A3");
+			Assert.AreEqual (0, f.UnknownResponseHeaders.Count, "#A4");
+
+			resp.Flush ();
+
+			KnownResponseHeader known;
+
+			Assert.AreEqual (6, f.KnownResponseHeaders.Count, "#B1");
+			known = (KnownResponseHeader)f.KnownResponseHeaders [0];
+#if NET_2_0
+			Assert.AreEqual (HttpWorkerRequest.HeaderContentLength, known.Index, "#B2");
+			Assert.AreEqual ("40", known.Value, "#B3");
+			known = (KnownResponseHeader)f.KnownResponseHeaders[1];
+			Assert.AreEqual (HttpWorkerRequest.HeaderTransferEncoding, known.Index, "#B4");
+			Assert.AreEqual ("compress", known.Value, "#B5");
+			known = (KnownResponseHeader)f.KnownResponseHeaders[2];
+			Assert.AreEqual (HttpWorkerRequest.HeaderCacheControl, known.Index, "#B6");
+			Assert.AreEqual ("no-cache", known.Value, "#B7");
+			known = (KnownResponseHeader)f.KnownResponseHeaders[3];
+			Assert.AreEqual (HttpWorkerRequest.HeaderPragma, known.Index, "#B8");
+			Assert.AreEqual ("no-cache", known.Value, "#B9");
+			known = (KnownResponseHeader)f.KnownResponseHeaders[4];
+			Assert.AreEqual (HttpWorkerRequest.HeaderExpires, known.Index, "#B10");
+			Assert.AreEqual ("-1", known.Value, "#B11");
+			known = (KnownResponseHeader)f.KnownResponseHeaders[5];
+			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B12");
+			Assert.AreEqual ("application/ms-word", known.Value, "#B13");
+#else
+			Assert.AreEqual (HttpWorkerRequest.HeaderTransferEncoding, known.Index, "#B2");
+			Assert.AreEqual ("compress", known.Value, "#B3");
+			known = (KnownResponseHeader)f.KnownResponseHeaders [1];
+			Assert.AreEqual (HttpWorkerRequest.HeaderCacheControl, known.Index, "#B4");
+			Assert.AreEqual ("no-cache", known.Value, "#B5");
+			known = (KnownResponseHeader)f.KnownResponseHeaders [2];
+			Assert.AreEqual (HttpWorkerRequest.HeaderPragma, known.Index, "#B6");
+			Assert.AreEqual ("no-cache", known.Value, "#B7");
+			known = (KnownResponseHeader)f.KnownResponseHeaders [3];
+			Assert.AreEqual (HttpWorkerRequest.HeaderExpires, known.Index, "#B8");
+			Assert.AreEqual ("-1", known.Value, "#B9");
+			known = (KnownResponseHeader)f.KnownResponseHeaders [4];
+			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B10");
+			Assert.AreEqual ("application/ms-word", known.Value, "#B11");
+			known = (KnownResponseHeader)f.KnownResponseHeaders [5];
+			Assert.AreEqual (HttpWorkerRequest.HeaderContentLength, known.Index, "#B12");
+			Assert.AreEqual ("40", known.Value, "#B13");
+#endif
+
+			UnknownResponseHeader unknown;
+
+#if NET_2_0
+			Assert.AreEqual (4, f.UnknownResponseHeaders.Count, "#C1");
+			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [0];
+			Assert.AreEqual ("X-AspNet-Version", unknown.Name, "#C2");
+			Assert.AreEqual (Environment.Version.ToString (3), unknown.Value, "#C3");
+			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [1];
+			Assert.AreEqual ("Content-Disposition", unknown.Name, "#C4");
+			Assert.AreEqual ("inline", unknown.Value, "#C5");
+			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [2];
+			Assert.AreEqual ("My-Custom-Header", unknown.Name, "#C6");
+			Assert.AreEqual ("never", unknown.Value, "#C7");
+			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [3];
+			Assert.AreEqual ("My-Custom-Header", unknown.Name, "#C8");
+			Assert.AreEqual ("always", unknown.Value, "#C9");
+#else
+			Assert.AreEqual (3, f.UnknownResponseHeaders.Count, "#C1");
+			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [0];
+			Assert.AreEqual ("Content-Disposition", unknown.Name, "#C2");
+			Assert.AreEqual ("inline", unknown.Value, "#C3");
+			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [1];
+			Assert.AreEqual ("My-Custom-Header", unknown.Name, "#C4");
+			Assert.AreEqual ("never", unknown.Value, "#C5");
+			unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [2];
+			Assert.AreEqual ("My-Custom-Header", unknown.Name, "#C6");
+			Assert.AreEqual ("always", unknown.Value, "#C7");
+#endif
+		}
+
+		[Test] // bug #485557
+		[Category ("NotWorking")] // bug #488702
+		public void ClearHeaders ()
+		{
+			FakeHttpWorkerRequest2 f;
+			HttpContext c = Cook (2, out f);
+
+			HttpResponse resp = c.Response;
+			resp.CacheControl = "public";
+			resp.Cache.SetCacheability (HttpCacheability.NoCache);
+			resp.ContentType = "text/xml";
+			resp.AppendHeader ("Content-Disposition", "inline");
+			resp.AppendHeader ("Content-Type", "application/ms-word");
+			resp.AppendHeader ("Content-Length", "40");
+			resp.AppendHeader ("Transfer-Encoding", "compress");
+			resp.AppendHeader ("My-Custom-Header", "never");
+			resp.AppendHeader ("My-Custom-Header", "always");
+			resp.ClearHeaders ();
+
+			Assert.AreEqual ("private", resp.CacheControl, "#A1");
+			Assert.AreEqual ("text/html", resp.ContentType, "#A2");
+			Assert.AreEqual (0, f.KnownResponseHeaders.Count, "#A3");
+			Assert.AreEqual (0, f.UnknownResponseHeaders.Count, "#A4");
+
+			resp.Flush ();
+
+			KnownResponseHeader known;
+
+			Assert.AreEqual (3, f.KnownResponseHeaders.Count, "#B1");
+			known = (KnownResponseHeader) f.KnownResponseHeaders [0];
+			Assert.AreEqual (HttpWorkerRequest.HeaderTransferEncoding, known.Index, "#B2");
+			Assert.AreEqual ("chunked", known.Value, "#B3");
+			known = (KnownResponseHeader) f.KnownResponseHeaders [1];
+			Assert.AreEqual (HttpWorkerRequest.HeaderCacheControl, known.Index, "#B4");
+			Assert.AreEqual ("private", known.Value, "#B5");
+			known = (KnownResponseHeader) f.KnownResponseHeaders [2];
+			Assert.AreEqual (HttpWorkerRequest.HeaderContentType, known.Index, "#B6");
+			Assert.AreEqual ("text/html", known.Value, "#B7");
+
+#if NET_2_0
+			Assert.AreEqual (1, f.UnknownResponseHeaders.Count, "#C1");
+			UnknownResponseHeader unknown = (UnknownResponseHeader) f.UnknownResponseHeaders [0];
+			Assert.AreEqual ("X-AspNet-Version", unknown.Name, "#C2");
+			Assert.AreEqual (Environment.Version.ToString (3), unknown.Value, "#C3");
+#else
+			Assert.AreEqual (0, f.UnknownResponseHeaders.Count, "#C1");
+#endif
+		}
 	}
 }
