@@ -26,43 +26,58 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System;
+using System.Collections.Generic;
+
 namespace System.Xml
 {
 	public class XmlBinaryReaderSession : IXmlDictionary
 	{
+		XmlDictionary dic = new XmlDictionary ();
+		Dictionary<int,XmlDictionaryString> store = new Dictionary<int,XmlDictionaryString> ();
+
 		public XmlBinaryReaderSession ()
 		{
 		}
 
-		[MonoTODO]
 		public XmlDictionaryString Add (int id, string value)
 		{
-			throw new NotImplementedException ();
+			var v = dic.Add (value);
+			store [id] = v;
+			return v;
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			store.Clear ();
 		}
 
-		[MonoTODO]
 		public bool TryLookup (int key, out XmlDictionaryString result)
 		{
-			throw new NotImplementedException ();
+			return store.TryGetValue (key, out result);
 		}
 
-		[MonoTODO]
 		public bool TryLookup (string value, out XmlDictionaryString result)
 		{
-			throw new NotImplementedException ();
+			foreach (var v in store.Values)
+				if (v.Value == value) {
+					result = v;
+					return true;
+				}
+			result = null;
+			return false;
 		}
 
-		[MonoTODO]
 		public bool TryLookup (XmlDictionaryString value,
 			out XmlDictionaryString result)
 		{
-			throw new NotImplementedException ();
+			foreach (var v in store.Values)
+				if (v == value) {
+					result = v;
+					return true;
+				}
+			result = null;
+			return false;
 		}
 	}
 }

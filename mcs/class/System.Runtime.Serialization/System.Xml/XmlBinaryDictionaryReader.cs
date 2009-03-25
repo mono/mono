@@ -929,13 +929,13 @@ namespace System.Xml
 			int size = 0;
 			// If sizeSpec < 0, then it is variant size specifier.
 			// Otherwise it is fixed size s = sizeSpec + 1 byte(s).
+			int d = 0;
 			do {
-				size <<= 7;
 				byte got = ReadByteOrError ();
-				size += got;
+				size += (got & 0x7F) << d;
+				d += 7;
 				if (got < 0x80)
 					break;
-				size -= 0x80;
 			} while (true);
 			return size;
 		}

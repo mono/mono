@@ -1,3 +1,11 @@
+2009-03-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReader.cs, XmlBinaryFormat.cs,
+	  XmlBinaryDictionaryWriter.cs : couple of enhancements to support
+	  missing types, Dictionary string lookups and indexing fixes.
+	  Also reflect some correction by [MC-NBFX] (MS OSPed document).
+	* XmlBinaryReaderSession.cs : implemented.
+
 2009-03-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDictionaryReader.cs : more not-understandable bits.

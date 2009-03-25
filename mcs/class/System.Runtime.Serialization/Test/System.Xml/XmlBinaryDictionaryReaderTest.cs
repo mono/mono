@@ -172,7 +172,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ContainsInvalidIndex ()
 		{
 			byte [] bytes = new byte [] {
@@ -192,19 +191,19 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+//		[Category ("NotWorking")]
 		public void Beyond128DictionaryEntries ()
 		{
 			XmlDictionaryString ds;
 			MemoryStream ms = new MemoryStream ();
 			XmlDictionary dic = new XmlDictionary ();
 			for (int i = 0; i < 260; i++)
-				Assert.AreEqual (i, dic.Add ("n" + i).Key, "d");
+				Assert.AreEqual (i, dic.Add ("n" + i).Key, "dic");
 			XmlDictionary dic2 = new XmlDictionary ();
 			XmlBinaryReaderSession session = new XmlBinaryReaderSession ();
 			int idx;
 			for (int i = 0; i < 260; i++)
-				session.Add (i, "n" + i);
+				Assert.AreEqual (i, session.Add (i, "s" + i).Key, "session");
 
 			byte [] bytes = new byte [] {
 				// so, when it went beyond 128, the index
@@ -218,8 +217,19 @@ namespace MonoTests.System.Xml
 				1, 1, 1, 1};
 
 			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (bytes), dic, new XmlDictionaryReaderQuotas (), session);
-			while (!reader.EOF)
-				reader.Read ();
+			Assert.IsTrue (reader.Read (), "#r1");
+			Assert.AreEqual ("n128", reader.LocalName, "#l1");
+			Assert.IsTrue (reader.Read (), "#r2");
+			Assert.AreEqual ("s130", reader.LocalName, "#l1");
+			Assert.IsTrue (reader.Read (), "#r3");
+			Assert.AreEqual ("n132", reader.LocalName, "#l1");
+			Assert.IsTrue (reader.Read (), "#r4");
+			Assert.AreEqual ("n256", reader.LocalName, "#l1");
+			for (int i = 0; i < 4; i++) {
+				Assert.IsTrue (reader.Read (), "#re" + i);
+				Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#ne" + i);
+			}
+			Assert.IsFalse (reader.Read ()); // EOF
 		}
 
 		[Test]

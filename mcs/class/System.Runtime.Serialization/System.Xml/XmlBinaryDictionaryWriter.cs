@@ -41,8 +41,22 @@ namespace System.Xml
 {
 	internal class XmlBinaryDictionaryWriter : XmlDictionaryWriter
 	{
+		class MyBinaryWriter : BinaryWriter
+		{
+			public MyBinaryWriter (Stream s)
+				: base (s)
+			{
+			}
+
+			public void WriteCharBuffer (char [] buf, int index, int count)
+			{
+				Write7BitEncodedInt (Encoding.UTF8.GetByteCount (buf, index, count));
+				Write (buf, index, count);
+			}
+		}
+
 		#region Fields
-		BinaryWriter original, writer, buffer_writer;
+		MyBinaryWriter original, writer, buffer_writer;
 		IXmlDictionary dict_ext;
 		XmlDictionary dict_int = new XmlDictionary ();
 		XmlBinaryWriterSession session;
@@ -57,6 +71,7 @@ namespace System.Xml
 		bool open_start_element = false;
 		// transient current node info
 		ListDictionary namespaces = new ListDictionary ();
+		List<string> dummy_namespaces = new List<string> ();
 		string xml_lang = null;
 		XmlSpace xml_space = XmlSpace.None;
 		// stacked info
@@ -96,9 +111,9 @@ namespace System.Xml
 			if (session == null)
 				session = new XmlBinaryWriterSession ();
 
-			original = new BinaryWriter (stream);
+			original = new MyBinaryWriter (stream);
 			this.writer = original;
-			buffer_writer = new BinaryWriter (buffer);
+			buffer_writer = new MyBinaryWriter (buffer);
 			this.dict_ext = dictionary;
 			this.session = session;
 			owns_stream = ownsStream;
@@ -154,6 +169,7 @@ namespace System.Xml
 				nsmgr.AddNamespace (prefix, ent.Value.ToString ());
 			}
 			namespaces.Clear ();
+			dummy_namespaces.Clear ();
 		}
 
 		private void CheckState ()
@@ -273,8 +289,9 @@ namespace System.Xml
 			if (count == 0)
 				writer.Write (BF.EmptyText);
 			else {
-				byte [] data = utf8Enc.GetBytes (buffer, index, count);
-				WriteToStream (BF.Text, data, 0, data.Length);
+				// FIXME: BinaryWriter 7BitEncodedInt should work here.
+				writer.Write (BF.Text);
+				writer.WriteCharBuffer (buffer, index, count);
 			}
 		}
 
@@ -444,12 +461,25 @@ namespace System.Xml
 			throw new InvalidOperationException ("too many prefix population");
 		}
 
+		bool CollectionContains (ICollection col, string value)
+		{
+			foreach (string v in col)
+				if (v == value)
+					return true;
+			return false;
+		}
+
 		void ProcessStartAttributeCommon (string prefix, string localName, string ns, object nameObj, object nsObj)
 		{
 			// dummy prefix is created here, while the caller
 			// still uses empty string as the prefix there.
-			if (prefix.Length == 0 && ns.Length > 0)
+			if (prefix.Length == 0 && ns.Length > 0
+			    // this condition is to exclude duplicate mappings. 
+			    // (I assume it is correct, but might be insufficient.)
+			    && !CollectionContains (dummy_namespaces, ns)) {
 				prefix = CreateNewPrefix ();
+				dummy_namespaces.Add (ns);
+			}
 			else if (prefix.Length > 0 && ns.Length == 0)
 				throw new ArgumentException ("Cannot use prefix with an empty namespace.");
 			// here we omit such cases that it is used for writing
@@ -511,9 +541,25 @@ namespace System.Xml
 				return;
 
 			int op = prefix.Length > 0 ? BF.AttrStringPrefix : BF.AttrString;
+
 			// Write to Stream
-			writer.Write ((byte) op);
-			WriteNames (prefix, localName);
+			int idx = 0;
+			if (prefix.Length == 0 && ns.Length > 0) { // i.e. dummy prefix
+				foreach (string n in dummy_namespaces) {
+					if (n == ns) {
+						writer.Write ((byte) (0x26 + idx));
+						WriteNamePart (localName);
+						idx = -1;
+						break;
+					}
+					if (idx++ == 26)
+						break;
+				}
+			}
+			if (idx >= 0) {
+				writer.Write ((byte) op);
+				WriteNames (prefix, localName);
+			}
 		}
 
 		public override void WriteStartDocument ()
@@ -886,20 +932,15 @@ namespace System.Xml
 
 		private void WriteNamePart (string name)
 		{
-			byte [] data = utf8Enc.GetBytes (name);
-			writer.Write ((byte) (data.Length));
-			writer.Write (data, 0, data.Length);
+			// BinaryWriter 7BitEncodedInt works here.
+			writer.Write (name);
 		}
 
 		private void WriteToStream (byte identifier, string text)
 		{
-			if (text.Length == 0) {
-				writer.Write (identifier);
-				writer.Write ((byte) 0);
-			} else {
-				byte [] data = utf8Enc.GetBytes (text);
-				WriteToStream (identifier, data, 0, data.Length);
-			}
+			writer.Write (identifier);
+			// BinaryWriter 7BitEncodedInt works here.
+			writer.Write (text);
 		}
 
 		// FIXME: process long data (than 255 bytes)

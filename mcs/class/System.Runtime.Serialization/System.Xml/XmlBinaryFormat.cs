@@ -96,8 +96,13 @@ namespace System.Xml
 		$string is length-prefixed string. @index is index as
 		described above. [value] is length-prefixed raw array.
 
+		// 2009-03-25: now that the binary format is open under OSP
+		// [MC-NBFX], I have added some notes beyond current
+		// implementation status (marked as TODO).
+
 		01			: EndElement
 		02 $value		: Comment
+		03			: TODO: array
 		04 $name		: local attribute by string
 		05 $prefix $name	: global attribute by string
 		06 @name		: local attribute by index
@@ -106,13 +111,16 @@ namespace System.Xml
 		09 $prefix $name	: prefixed namespace by string
 		0A @name		: default namespace by index
 		0B $prefix @name	: prefixed namespace by index
-		0C @name		: global attribute by index
-		0D @name		: global attribute by index,
-					: in current element's namespace
+		0C @name		: global attribute by index,
+		... 0x25		: in current element's namespace
+		26 ... 0x3F		: attributes with prefix
 		40 $name		: element w/o namespace by string
 		41 $prefix $name	: element with namespace by string
 		42 @name		: element w/o namespace by index
 		43 $prefix @name	: element with namespace by index
+		44 @name		: global element by index,
+		... 0x5D		: in current element's namespace
+		5E ... 0x77		: TODO: elements with prefix
 		98 $value		: text/cdata/chars
 		99 $value		: text/cdata/chars + EndElement
 
@@ -132,12 +140,25 @@ namespace System.Xml
 		92 : double
 		94 : decimal
 		96 : DateTime
-		98 : UniqueId
-		9E : base64Binary
-		A0 : base64Binary fixed length?
-		AC : UniqueId whose IsGuid = true
+		98 : TODO: chars8
+		9A : TODO: chars16
+		9C : TODO: chars32
+		9E : TODO: bytes8 (base64)
+		A0 : TODO: bytes16 (base64 with fixed length?)
+		A2 : TODO: bytes32 (base64)
+		A4 : TODO: start of list
+		A6 : TODO: end of list
+		A8 : TODO: empty text
+		AA : TODO: text index
+		AC : UniqueId (IsGuid = true)
 		AE : TimeSpan
-		B0 : Guid
+		B0 : UUID
+		B2 : UInt64
+		B4 : bool text
+		B6 : TODO: unichars8
+		B8 : TODO: unichars16
+		BA : TODO: unichars32
+		BC : TODO: QName index
 
 		Error: PIs, doctype
 		Ignored: XMLdecl
