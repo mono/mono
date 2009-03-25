@@ -581,7 +581,12 @@ namespace System.Web {
 			content_type = "text/html";
 			transfer_encoding = null;
 			user_cache_control = null;
-			headers.Clear ();
+			user_cache_control = "private";
+			if (cache_policy != null)
+				cache_policy.Cacheability = HttpCacheability.Private;
+
+			if (headers != null)
+				headers.Clear ();
 		}
 
 		internal bool HeadersSent {

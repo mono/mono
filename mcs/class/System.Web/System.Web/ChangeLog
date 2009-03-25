@@ -1,3 +1,8 @@
+2009-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpResponse.cs: ClearHeaders() also resets cacheability.
+	Bug #485557 fixed.
+
 2009-03-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: do not clean the dynamic base directory in
