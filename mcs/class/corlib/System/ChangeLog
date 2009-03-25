@@ -1,3 +1,8 @@
+2009-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Delegate.cs: Add new parameter to CreateDelegate_internal (icall)
+	* Environment.cs: Bump mono_corlib_version to 73
+
 2009-03-25  Jb Evain  <jbevain@novell.com>
 
 	* Delegate.cs (CreateDelegate): fix checks to deal with

@@ -122,7 +122,7 @@ namespace System
 		//
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info);
+		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info, bool throwOnBindFailure);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern void SetMulticastInvoke ();
@@ -253,8 +253,9 @@ namespace System
 					return null;
 #endif
 
-			Delegate d = CreateDelegate_internal (type, target, method);
-			d.original_method_info = method;
+			Delegate d = CreateDelegate_internal (type, target, method, throwOnBindFailure);
+			if (d != null)
+				d.original_method_info = method;
 			return d;
 		}
 
@@ -358,7 +359,7 @@ namespace System
 			if (info == null)
 				return null;
 
-			return CreateDelegate_internal (type, null, info);
+			return CreateDelegate_internal (type, null, info, throwOnBindFailure);
 		}
 
  		public static Delegate CreateDelegate (Type type, Type target, string method) {
@@ -386,7 +387,7 @@ namespace System
 			if (info == null)
 				return null;
 
-			return CreateDelegate_internal (type, target, info);
+			return CreateDelegate_internal (type, target, info, throwOnBindFailure);
 		}
 
 		public static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase) {
