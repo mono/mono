@@ -1,3 +1,8 @@
+2009-03-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Don't let sregs get
+	allocated to the same registers as fixed sregs.
+
 2009-03-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ops.h: New ternary ATOMIC_CAS ops replace the old

@@ -1,3 +1,10 @@
+2009-03-25  Mark Probst  <mark.probst@gmail.com>
+
+	* interlocked-4.2.cs: New CompareExchange test (triggered register
+	allocation bug on x86 and amd64).
+
+	* Makefile.am: Test added.
+
 2009-03-24  Mark Probst  <mark.probst@gmail.com>
 
 	* interlocked-3.cs: New CompareExchange test.
