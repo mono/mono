@@ -1,3 +1,11 @@
+2009-03-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* reflection.c (mono_reflection_create_dynamic_method): when 
+	coreclr is enabled make sure that every resolved object are
+	checked (e.g. field and method access).
+	* security-core-clr.c|h: Add function to check objects resolved
+	when a dynamic method is created.
+
 2009-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Cache directory rva translations.
