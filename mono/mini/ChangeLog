@@ -1,3 +1,7 @@
+2009-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_handle_global_vregs): Fix support for ternary ops.
+
 2009-03-25  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Don't let sregs get
