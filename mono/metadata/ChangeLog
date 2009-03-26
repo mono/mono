@@ -4,6 +4,14 @@
 
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_get_parameter_info): Add a 'member' argument, used to
+	obtain the refclass argument needed by mono_param_get_objects (). Fixes
+	#488383.
+
+	* reflection.c (mono_param_get_objects_internal): Add a 'refclass' argument.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump this.
+	
 	* marshal.c (emit_marshal_object): Generate code to throw an exception
 	instead of throwing it. Fixes #488670.
 
