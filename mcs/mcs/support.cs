@@ -19,66 +19,6 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
-#if GMCS_SOURCE
-	public class ReflectionConstraints : GenericConstraints
-	{
-		GenericParameterAttributes attrs;
-		Type base_type;
-		Type class_constraint;
-		Type[] iface_constraints;
-		string name;
-
-		public static GenericConstraints GetConstraints (Type t)
-		{
-			Type [] constraints = t.GetGenericParameterConstraints ();
-			GenericParameterAttributes attrs = t.GenericParameterAttributes;
-			if (constraints.Length == 0 && attrs == GenericParameterAttributes.None)
-				return null;
-			return new ReflectionConstraints (t.Name, constraints, attrs);
-		}
-
-		private ReflectionConstraints (string name, Type [] constraints, GenericParameterAttributes attrs)
-		{
-			this.name = name;
-			this.attrs = attrs;
-
-			if ((constraints.Length > 0) && !constraints [0].IsInterface) {
-				class_constraint = constraints [0];
-				iface_constraints = new Type [constraints.Length - 1];
-				Array.Copy (constraints, 1, iface_constraints, 0, constraints.Length - 1);
-			} else
-				iface_constraints = constraints;
-
-			if (HasValueTypeConstraint)
-				base_type = TypeManager.value_type;
-			else if (class_constraint != null)
-				base_type = class_constraint;
-			else
-				base_type = TypeManager.object_type;
-		}
-
-		public override string TypeParameter {
-			get { return name; }
-		}
-
-		public override GenericParameterAttributes Attributes {
-			get { return attrs; }
-		}
-
-		public override Type ClassConstraint {
-			get { return class_constraint; }
-		}
-
-		public override Type EffectiveBaseClass {
-			get { return base_type; }
-		}
-
-		public override Type[] InterfaceConstraints {
-			get { return iface_constraints; }
-		}
-	}
-#endif
-
 	class PtrHashtable : Hashtable {
 		sealed class PtrComparer : IComparer
 #if NET_2_0
