@@ -73,7 +73,7 @@ namespace System.Xml
 
 		public const byte EmptyText = 0xA8;
 
-		public const byte Uuid = 0xAC;
+		public const byte UniqueId = 0xAC;
 		public const byte TimeSpan = 0xAE;
 		public const byte Guid = 0xB0;
 	}
@@ -144,15 +144,15 @@ namespace System.Xml
 		92 : double
 		94 : decimal
 		96 : DateTime
-		98 : TODO: chars8
-		9A : TODO: chars16
-		9C : TODO: chars32
-		9E : TODO: bytes8 (base64)
-		A0 : TODO: bytes16 (base64 with fixed length?)
-		A2 : TODO: bytes32 (base64)
+		98 : chars8
+		9A : chars16
+		9C : chars32
+		9E : bytes8 (base64)
+		A0 : bytes16 (base64 with fixed length?)
+		A2 : bytes32 (base64)
 		A4 : TODO: start of list
 		A6 : TODO: end of list
-		A8 : TODO: empty text
+		A8 : empty text
 		AA : TODO: text index
 		AC : UniqueId (IsGuid = true)
 		AE : TimeSpan

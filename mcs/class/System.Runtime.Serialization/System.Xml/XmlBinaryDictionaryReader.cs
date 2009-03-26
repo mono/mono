@@ -179,7 +179,7 @@ namespace System.Xml
 						return XmlConvert.ToString ((TimeSpan) TypedValue);
 					case BF.Guid:
 						return XmlConvert.ToString ((Guid) TypedValue);
-					case BF.Uuid:
+					case BF.UniqueId:
 						return TypedValue.ToString ();
 					case BF.Bytes8:
 					case BF.Bytes16:
@@ -879,7 +879,7 @@ namespace System.Xml
 			case BF.TimeSpan:
 				node.TypedValue = new TimeSpan (source.Reader.ReadInt64 ());
 				break;
-			case BF.Uuid:
+			case BF.UniqueId:
 				byte [] guid = new byte [16];
 				source.Reader.Read (guid, 0, guid.Length);
 				node.TypedValue = new UniqueId (new Guid (guid));
@@ -1142,7 +1142,7 @@ namespace System.Xml
 				UniqueId ret = new UniqueId (node.Value);
 				Read ();
 				return ret;
-			case BF.Uuid:
+			case BF.UniqueId:
 				ret = (UniqueId) node.TypedValue;
 				Read ();
 				return ret;

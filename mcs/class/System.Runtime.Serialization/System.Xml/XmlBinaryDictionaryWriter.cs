@@ -41,20 +41,6 @@ namespace System.Xml
 {
 	internal class XmlBinaryDictionaryWriter : XmlDictionaryWriter
 	{
-		class MyBinaryWriter : BinaryWriter
-		{
-			public MyBinaryWriter (Stream s)
-				: base (s)
-			{
-			}
-
-			public void WriteCharBuffer (char [] buf, int index, int count)
-			{
-				Write7BitEncodedInt (Encoding.UTF8.GetByteCount (buf, index, count));
-				Write (buf, index, count);
-			}
-		}
-
 		#region Fields
 		MyBinaryWriter original, writer, buffer_writer;
 		IXmlDictionary dict_ext;
@@ -111,9 +97,9 @@ namespace System.Xml
 			if (session == null)
 				session = new XmlBinaryWriterSession ();
 
-			original = new MyBinaryWriter (stream);
+			original = new BinaryWriter (stream);
 			this.writer = original;
-			buffer_writer = new MyBinaryWriter (buffer);
+			buffer_writer = new BinaryWriter (buffer);
 			this.dict_ext = dictionary;
 			this.session = session;
 			owns_stream = ownsStream;
@@ -916,7 +902,7 @@ namespace System.Xml
 				// attr_typed_value not being true.
 				ProcessTypedValue ();
 
-				writer.Write (BF.Uuid);
+				writer.Write (BF.UniqueId);
 				byte [] bytes = guid.ToByteArray ();
 				writer.Write (bytes, 0, bytes.Length);
 			} else {
