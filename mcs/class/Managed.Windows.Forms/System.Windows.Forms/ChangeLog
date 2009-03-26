@@ -1,5 +1,12 @@
 2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Add an implementation for UpdateRowHeightInfo. No 
+	longer throws a NotImplementedException.
+	  Based on a patch by Tom Hindle <tom_hindle@sil.org>
+	[Fixes bug #488319]
+
+2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Implement IsCurrentRowDirty. No longer throws 
 	NotImplementedException.
 

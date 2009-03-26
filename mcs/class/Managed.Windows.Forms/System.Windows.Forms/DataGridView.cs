@@ -3063,8 +3063,53 @@ namespace System.Windows.Forms {
 				InvalidateRow (i);
 		}
 
-		public void UpdateRowHeightInfo (int rowIndex, bool updateToEnd) {
-			throw new NotImplementedException();
+		public void UpdateRowHeightInfo (int rowIndex, bool updateToEnd)
+		{
+			if (rowIndex < 0 && updateToEnd)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			if (rowIndex < -1 && !updateToEnd)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			if (rowIndex >= Rows.Count)
+				throw new ArgumentOutOfRangeException ("rowIndex");
+			
+			if (!VirtualMode && DataManager == null)
+				return;
+
+			if (rowIndex == -1) {
+				updateToEnd = true;
+				rowIndex = 0;
+			}
+
+			if (updateToEnd) {
+				for (int i = rowIndex; i < Rows.Count; i++) {
+					DataGridViewRow row = Rows[i];
+					if (!row.Visible)
+						continue;
+
+					DataGridViewRowHeightInfoNeededEventArgs rowInfo = 
+						new DataGridViewRowHeightInfoNeededEventArgs (row.Index, row.Height, row.MinimumHeight);
+					OnRowHeightInfoNeeded (rowInfo);
+
+					if (row.Height != rowInfo.Height || row.MinimumHeight != rowInfo.MinimumHeight) {
+						row.Height = rowInfo.Height;
+						row.MinimumHeight = rowInfo.MinimumHeight;
+						OnRowHeightInfoPushed (new DataGridViewRowHeightInfoPushedEventArgs (row.Index, rowInfo.Height, 
+														     rowInfo.MinimumHeight));
+					}
+				}
+			} else {
+				DataGridViewRow row = Rows[rowIndex];
+				DataGridViewRowHeightInfoNeededEventArgs rowInfo = 
+					new DataGridViewRowHeightInfoNeededEventArgs (row.Index, row.Height, row.MinimumHeight);
+				OnRowHeightInfoNeeded (rowInfo);
+
+				if (row.Height != rowInfo.Height || row.MinimumHeight != rowInfo.MinimumHeight) {
+					row.Height = rowInfo.Height;
+					row.MinimumHeight = rowInfo.MinimumHeight;
+					OnRowHeightInfoPushed (new DataGridViewRowHeightInfoPushedEventArgs (row.Index, rowInfo.Height, 
+													     rowInfo.MinimumHeight));
+				}
+			}
 		}
 
 		protected override bool CanEnableIme {
@@ -4866,6 +4911,7 @@ namespace System.Windows.Forms {
 
 		protected internal virtual void OnRowHeightChanged (DataGridViewRowEventArgs e)
 		{
+			UpdateRowHeightInfo (e.Row.Index, false);
 			DataGridViewRowEventHandler eh = (DataGridViewRowEventHandler)(Events [RowHeightChangedEvent]);
 			if (eh != null) eh (this, e);
 		}
