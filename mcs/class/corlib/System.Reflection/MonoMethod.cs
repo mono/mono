@@ -52,7 +52,7 @@ namespace System.Reflection {
 		internal static extern void get_method_info (IntPtr handle, out MonoMethodInfo info);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern ParameterInfo[] get_parameter_info (IntPtr handle);
+			internal static extern ParameterInfo[] get_parameter_info (IntPtr handle, MemberInfo member);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern UnmanagedMarshal get_retval_marshal (IntPtr handle);
@@ -117,7 +117,7 @@ namespace System.Reflection {
 		}
 
 		public override ParameterInfo[] GetParameters() {
-			return MonoMethodInfo.get_parameter_info (mhandle);
+			return MonoMethodInfo.get_parameter_info (mhandle, this);
 		}
 
 		/*
@@ -413,7 +413,7 @@ namespace System.Reflection {
 		}
 
 		public override ParameterInfo[] GetParameters() {
-			return MonoMethodInfo.get_parameter_info (mhandle);
+			return MonoMethodInfo.get_parameter_info (mhandle, this);
 		}
 
 		/*

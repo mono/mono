@@ -1,3 +1,7 @@
+2009-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoMethod.cs: Add a 'member' argument to the get_parameter_info () icall.
+
 2009-03-03  Matthew Metnetsky  <matthew@cowarthill.com>
 
 	* MonoMethod.cs: within Invoke only change types if BindingFlags.ExactBinding isn't set

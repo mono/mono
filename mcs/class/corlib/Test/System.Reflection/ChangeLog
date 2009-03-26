@@ -1,3 +1,7 @@
+2009-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* ParameterInfoTest.cs: Add a test for #488383.
+
 2009-03-03  Matthew Metnetsky  <matthew@cowarthill.com>
 
 	* BinderTests.cs: added tests for TargetParameterCountException

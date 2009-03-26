@@ -184,5 +184,23 @@ namespace MonoTests.System.Reflection
 			}
 		}
 #endif
+
+		[Test]
+		public void Member () {
+			ParameterInfo parm = typeof (Derived).GetMethod ("SomeMethod").GetParameters()[0];
+			Assert.AreEqual (typeof (Derived), parm.Member.ReflectedType);
+			Assert.AreEqual (typeof (Base), parm.Member.DeclaringType);
+		}
+
+		class Base
+		{
+			public void SomeMethod( int x )
+			{
+			}
+		}
+
+		class Derived : Base
+		{
+		}
 	}
 }
