@@ -131,14 +131,18 @@ namespace DbLinq.Data.Linq
             return query.GetEnumerator();
         }
 
+        IEnumerator<TEntity> IEnumerable<TEntity>.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         /// <summary>
         /// Enumerates all table items
         /// </summary>
         /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            var enumT = GetEnumerator();
-            return enumT;
+            return GetEnumerator();
         }
 
         Type IQueryable.ElementType

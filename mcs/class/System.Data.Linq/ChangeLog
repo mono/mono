@@ -1,8 +1,14 @@
 2009-03-26  Jonathan Pryor  <jpryor@novell.com>
 
+	* src/DbLinq/Data/Linq/Table.cs: Add an explicit 
+	  IEnumerable<TEntity>.GetEnumerator() implementation to Table<TEntity>.
+	  This is done for cor-compare compatibility with .NET.
+
+2009-03-26  Jonathan Pryor  <jpryor@novell.com>
+
 	* Test/: Added (though empty), to allow building unit tests located in
 	  src/*/Test/**.
-	* System.Data.Linq_test.dll.sources: Added; database-less unit tests.
+	* System.Data.Linq_test.dll.sources: Added; unit tests.
 
 2009-03-26  Jonathan Pryor  <jpryor@novell.com>
 
