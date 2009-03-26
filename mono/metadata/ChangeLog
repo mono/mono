@@ -1,5 +1,9 @@
 2009-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify valid table bits.
+
+2009-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_metadata_header): Store size in the size field.
 
 	* metadata-verify.c: Add initial table schema verification.
