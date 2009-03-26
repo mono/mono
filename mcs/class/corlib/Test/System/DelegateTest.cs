@@ -921,6 +921,7 @@ namespace MonoTests.System
 				GetType ().GetMethod ("Target", BindingFlags.NonPublic | BindingFlags.Static));
 
 			Assert.IsNotNull (call);
+			Assert.IsNull (call.Target);
 			Assert.IsNull (call ());
 		}
 
