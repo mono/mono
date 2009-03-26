@@ -8,6 +8,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.Core.dll \
 	        /r:System.Xml.dll \
 	        /r:System.Data.dll \
+	        /r:System.Runtime.Serialization.dll \
 		/d:MONO_STRICT /d:MONO_DEPLOY
 
 ifeq (2.0, $(FRAMEWORK_VERSION))

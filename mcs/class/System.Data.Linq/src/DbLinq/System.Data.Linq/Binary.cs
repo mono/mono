@@ -34,16 +34,16 @@ using System.Linq;
 namespace System.Data.Linq
 {
     [SerializableAttribute]
-#if WCF_ENABLED
-	[DataContractAttribute]
-#endif
+    [System.Runtime.Serialization.DataContract]
     public sealed class Binary : IEquatable<Binary>
     {
         byte[] data;
 
         public Binary(byte[] value)
         {
-            data = value;
+            if (value == null)
+                throw new ArgumentNullException("value");
+            data = (byte[]) value.Clone();
         }
 
         public static bool operator ==(Binary binary1, Binary binary2)
@@ -57,11 +57,7 @@ namespace System.Data.Linq
 
         public static bool operator !=(Binary binary1, Binary binary2)
         {
-            bool isNull = binary1 as object == null;
-            if (isNull)
-                return binary2 as object != null;
-            else
-                return !binary1.data.Equals(binary2.data);
+            return !(binary1 == binary2);
         }
 
         public static implicit operator Binary(byte[] value)
@@ -97,7 +93,10 @@ namespace System.Data.Linq
 
         public override int GetHashCode()
         {
-            return data.GetHashCode();
+            int hc = 0;
+            for (int i = 0; i < data.Length; ++i)
+                hc ^= data[i];
+            return hc;
         }
 
         public byte[] ToArray()
@@ -106,6 +105,11 @@ namespace System.Data.Linq
                 return data.ToArray();
             else
                 return null;
+        }
+
+        public override string ToString()
+        {
+            return '"' + Convert.ToBase64String(data) + '"';
         }
     }
 }
