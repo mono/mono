@@ -1,3 +1,7 @@
+2009-03-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Add/update documentation
+
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Generate code to throw an exception
