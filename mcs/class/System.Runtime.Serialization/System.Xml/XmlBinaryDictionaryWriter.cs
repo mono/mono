@@ -42,7 +42,7 @@ namespace System.Xml
 	internal class XmlBinaryDictionaryWriter : XmlDictionaryWriter
 	{
 		#region Fields
-		MyBinaryWriter original, writer, buffer_writer;
+		BinaryWriter original, writer, buffer_writer;
 		IXmlDictionary dict_ext;
 		XmlDictionary dict_int = new XmlDictionary ();
 		XmlBinaryWriterSession session;
