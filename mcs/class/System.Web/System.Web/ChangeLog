@@ -1,3 +1,14 @@
+2009-03-26  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpWorkerRequest.cs: use a generic dictionary to keep header
+	names in 2.0+.
+	GetKnown{Request,Response}HeaderIndex doesn't use the switch
+	anymore.
+
+	* HttpResponse.cs: WriteHeaders now checks whether a header to be
+	sent is a known one or not and uses the appropriate method to send
+	that header. Partial fix for bug #488702
+
 2009-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpResponse.cs: ClearHeaders() also resets cacheability.

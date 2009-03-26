@@ -1,3 +1,11 @@
+2009-03-26  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponseTest.cs: enabled the WriteHeader test. Modified the
+	part where it checks the values of the headers - order in which
+	the headers are sent does not matter. Partial fix for bug #488702
+	FakeHttpWorkerRequest2 stores the sent (un)known headers in hash
+	tables now.
+
 2009-03-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpResponseTest.cs: Added tests for bug #485557 and #488702. 

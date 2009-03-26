@@ -784,15 +784,21 @@ namespace System.Web {
 			if (WorkerRequest != null) {
 				string header_name;
 				string[] values;
+				int header_index;
 				
 				for (int i = 0; i < write_headers.Count; i++) {
 					header_name = write_headers.GetKey (i);
+					header_index = HttpWorkerRequest.GetKnownResponseHeaderIndex (header_name);
 					values = write_headers.GetValues (i);
 					if (values == null)
 						continue;
 					
-					foreach (string val in values)
-						WorkerRequest.SendUnknownResponseHeader (header_name, val);
+					foreach (string val in values) {
+						if (header_index > -1)
+							WorkerRequest.SendKnownResponseHeader (header_index, val);
+						else
+							WorkerRequest.SendUnknownResponseHeader (header_name, val);
+					}
 				}
 			}
 		}

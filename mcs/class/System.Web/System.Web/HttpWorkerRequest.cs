@@ -34,6 +34,10 @@ using System.Security.Permissions;
 using System.Web.UI;
 using System.Collections.Specialized;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.Web {
 
 	// CAS
@@ -106,17 +110,32 @@ namespace System.Web {
 		public const int ReasonClientDisconnect = 4;
 		public const int ReasonDefault = 0;
 
+#if NET_2_0
+		static readonly Dictionary <string, int> RequestHeaderIndexer;
+		static readonly Dictionary <string, int> ResponseHeaderIndexer;
+#else
 		static readonly Hashtable RequestHeaderIndexer;
 		static readonly Hashtable ResponseHeaderIndexer;
-
-		static HttpWorkerRequest() {
+#endif
+		
+		static HttpWorkerRequest ()
+		{
+#if NET_2_0
+			RequestHeaderIndexer = new Dictionary <string, int> (StringComparer.OrdinalIgnoreCase);
+#else
 			RequestHeaderIndexer = CollectionsUtil.CreateCaseInsensitiveHashtable(RequestHeaderMaximum);
+#endif
+			
 			for (int i = 0; i < RequestHeaderMaximum; i++)
-				RequestHeaderIndexer[GetKnownRequestHeaderName(i)] = i;
+				RequestHeaderIndexer.Add (GetKnownRequestHeaderName(i), i);
 
+#if NET_2_0
+			ResponseHeaderIndexer = new Dictionary <string, int> (StringComparer.OrdinalIgnoreCase);
+#else
 			ResponseHeaderIndexer = CollectionsUtil.CreateCaseInsensitiveHashtable(ResponseHeaderMaximum);
+#endif
 			for (int i = 0; i < ResponseHeaderMaximum; i++)
-				ResponseHeaderIndexer[GetKnownResponseHeaderName(i)] = i;
+				ResponseHeaderIndexer.Add (GetKnownResponseHeaderName(i), i);
 		}
 
 		public virtual string MachineConfigPath {
@@ -345,52 +364,15 @@ namespace System.Web {
 		
 		public static int GetKnownRequestHeaderIndex (string header)
 		{
-			switch (header){
-			case "Cache-Control": return HeaderCacheControl;
-			case "Connection": return HeaderConnection;
-			case "Date": return HeaderDate;
-			case "Keep-Alive": return HeaderKeepAlive;
-			case "Pragma": return HeaderPragma;
-			case "Trailer": return HeaderTrailer;
-			case "Transfer-Encoding": return HeaderTransferEncoding;
-			case "Upgrade": return HeaderUpgrade;
-			case "Via": return HeaderVia;
-			case "Warning": return HeaderWarning;
-			case "Allow": return HeaderAllow;
-			case "Content-Length": return HeaderContentLength;
-			case "Content-Type": return HeaderContentType;
-			case "Content-Encoding": return HeaderContentEncoding;
-			case "Content-Language": return HeaderContentLanguage;
-			case "Content-Location": return HeaderContentLocation;
-			case "Content-MD5": return HeaderContentMd5;
-			case "Content-Range": return HeaderContentRange;
-			case "Expires": return HeaderExpires;
-			case "Last-Modified": return HeaderLastModified;
-			case "Accept": return HeaderAccept;
-			case "Accept-Charset": return HeaderAcceptCharset;
-			case "Accept-Encoding": return HeaderAcceptEncoding;
-			case "Accept-Language": return HeaderAcceptLanguage;
-			case "Authorization": return HeaderAuthorization;
-			case "Cookie": return HeaderCookie;
-			case "Expect": return HeaderExpect;
-			case "From": return HeaderFrom;
-			case "Host": return HeaderHost;
-			case "If-Match": return HeaderIfMatch;
-			case "If-Modified-Since": return HeaderIfModifiedSince;
-			case "If-None-Match": return HeaderIfNoneMatch;
-			case "If-Range": return HeaderIfRange;
-			case "If-Unmodified-Since": return HeaderIfUnmodifiedSince;
-			case "Max-Forwards": return HeaderMaxForwards;
-			case "Proxy-Authorization": return HeaderProxyAuthorization;
-			case "Referer": return HeaderReferer;
-			case "Range": return HeaderRange;
-			case "TE": return HeaderTe;
-			case "User-Agent": return HeaderUserAgent;
-			}
-
+#if NET_2_0
+			int index;
+			if (RequestHeaderIndexer.TryGetValue (header, out index))
+				return index;
+#else
 			object index = RequestHeaderIndexer[header];
 			if (index != null)
 				return (int)index;
+#endif
 
 			return -1;
 		}
@@ -445,42 +427,15 @@ namespace System.Web {
 
 		public static int GetKnownResponseHeaderIndex (string header)
 		{
-			switch (header){
-			case "Cache-Control": return HeaderCacheControl;
-			case "Connection": return HeaderConnection;
-			case "Date": return HeaderDate;
-			case "Keep-Alive": return HeaderKeepAlive;
-			case "Pragma": return HeaderPragma;
-			case "Trailer": return HeaderTrailer;
-			case "Transfer-Encoding": return HeaderTransferEncoding;
-			case "Upgrade": return HeaderUpgrade;
-			case "Via": return HeaderVia;
-			case "Warning": return HeaderWarning;
-			case "Allow": return HeaderAllow;
-			case "Content-Length": return HeaderContentLength;
-			case "Content-Type": return HeaderContentType;
-			case "Content-Encoding": return HeaderContentEncoding;
-			case "Content-Language": return HeaderContentLanguage;
-			case "Content-Location": return HeaderContentLocation;
-			case "Content-MD5": return HeaderContentMd5;
-			case "Content-Range": return HeaderContentRange;
-			case "Expires": return HeaderExpires;
-			case "Last-Modified": return HeaderLastModified;
-			case "Accept-Ranges": return HeaderAcceptRanges;
-			case "Age": return HeaderAge;
-			case "ETag": return HeaderEtag;
-			case "Location": return HeaderLocation;
-			case "Proxy-Authenticate":return HeaderProxyAuthenticate;
-			case "Retry-After": return HeaderRetryAfter;
-			case "Server": return HeaderServer;
-			case "Set-Cookie": return HeaderSetCookie;
-			case "Vary": return HeaderVary;
-			case "WWW-Authenticate": return HeaderWwwAuthenticate;
-			}
-
+#if NET_2_0
+			int index;
+			if (ResponseHeaderIndexer.TryGetValue (header, out index))
+				return index;
+#else
 			object index = ResponseHeaderIndexer[header];
 			if (index != null)
 				return (int)index;
+#endif
 
 			return -1;
 		}
