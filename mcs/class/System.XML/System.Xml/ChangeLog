@@ -1,3 +1,7 @@
+2009-03-25  Geoff Norton  <gnorton@novell.com>
+
+	* XmlTextReader.cs: Create the uri as relativeorabsolute.
+
 2009-03-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReader.cs : handle DateTimeOffset in typed reader methods.

@@ -1056,7 +1056,7 @@ namespace System.Xml
 			if (url != null && url.Length > 0) {
 				Uri uri = null;
 				try {
-					uri = new Uri (url);
+					uri = new Uri (url, UriKind.RelativeOrAbsolute);
 				} catch (Exception) {
 					string path = Path.GetFullPath ("./a");
 					uri = new Uri (new Uri (path), url);
