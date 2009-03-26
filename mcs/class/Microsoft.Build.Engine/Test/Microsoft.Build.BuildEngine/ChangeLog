@@ -1,3 +1,7 @@
+2009-03-26  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildTaskTest.cs (TestTaskInNamespace): Add test for Task in namespace.
+
 2009-02-24  Ankit Jain  <jankit@novell.com>
 
 	* UsingTaskTest.cs (TestLazyLoad{1,2,3}): New.

@@ -1,3 +1,7 @@
+2009-03-26  Jonathan Chambers  <joncham@gmail.com>
+
+	* TestTasks.cs (NamespacedOutputTestTask): New.
+
 2009-02-24  Ankit Jain  <jankit@novell.com>
 
 	* TestTasks.cs (Another.SameTask): New.

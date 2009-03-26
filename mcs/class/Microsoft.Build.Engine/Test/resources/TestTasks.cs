@@ -29,6 +29,23 @@ using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
+namespace Foo
+{
+    public class NamespacedOutputTestTask : Task
+    {
+        public override bool Execute()
+        {
+            return true;
+        }
+
+        [Output]
+        public string Property
+        {
+            get { return "some_text"; }
+        }
+    }
+}
+
 public class OutputTestTask : Task {
 	public override bool Execute ()
 	{

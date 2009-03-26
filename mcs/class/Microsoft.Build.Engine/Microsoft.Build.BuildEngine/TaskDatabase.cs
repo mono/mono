@@ -65,6 +65,15 @@ namespace Microsoft.Build.BuildEngine {
 				assembly = Assembly.Load (assemblyLoadInfo.AssemblyNameString);
 			
 			Type type = assembly.GetType (classname);
+			if (type == null) {
+				// search for matching class in case namespace was not used
+				foreach (Type exportedType in assembly.GetExportedTypes()) {
+					if (exportedType.Name == classname) {
+						type = exportedType;
+						break;
+					}
+				}
+			}
 			typesByFullName.Add (classname, type);
 			typesByShortName [GetShortName (classname)] = type;
 		}

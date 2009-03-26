@@ -1,3 +1,8 @@
+2009-03-26  Jonathan Chambers  <joncham@gmail.com>
+
+	* TaskDatabase.cs (RegisterTask): Search for class by name
+	if task was not found using GetType (which uses namespace). 
+
 2009-02-26  Ankit Jain  <jankit@novell.com>
 
 	* Target.cs: Handle target with no tasks. Log errors.
