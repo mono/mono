@@ -152,15 +152,15 @@ namespace System.Xml
 				if (ns != null) {
 					if (prefix.Length > 0) {
 						writer.Write (BF.PrefixNSString);
-						WriteNamePart (prefix);
+						writer.Write (prefix);
 					}
 					else
 						writer.Write (BF.DefaultNSString);
-					WriteNamePart (ns);
+					writer.Write (ns);
 				} else {
 					if (prefix.Length > 0) {
 						writer.Write (BF.PrefixNSIndex);
-						WriteNamePart (prefix);
+						writer.Write (prefix);
 					}
 					else
 						writer.Write (BF.DefaultNSIndex);
@@ -262,9 +262,23 @@ namespace System.Xml
 
 		public override void WriteBase64 (byte[] buffer, int index, int count)
 		{
+			if (count < 0)
+				throw new IndexOutOfRangeException ("Negative count");
 			ProcessStateForContent ();
 
-			WriteToStream (BF.Base64, buffer, index, count);
+			if (count < 0x100) {
+				writer.Write (BF.Bytes8);
+				writer.Write ((byte) count);
+				writer.Write (buffer, index, count);
+			} else if (count < 0x10000) {
+				writer.Write (BF.Bytes8);
+				writer.Write ((ushort) count);
+				writer.Write (buffer, index, count);
+			} else {
+				writer.Write (BF.Bytes32);
+				writer.Write (count);
+				writer.Write (buffer, index, count);
+			}
 		}
 
 		public override void WriteCData (string text)
@@ -286,12 +300,22 @@ namespace System.Xml
 		{
 			ProcessStateForContent ();
 
-			if (count == 0)
+			int blen = Encoding.UTF8.GetByteCount (buffer, index, count);
+
+			if (blen == 0)
 				writer.Write (BF.EmptyText);
-			else {
-				// FIXME: BinaryWriter 7BitEncodedInt should work here.
-				writer.Write (BF.Text);
-				writer.WriteCharBuffer (buffer, index, count);
+			else if (blen < 0x100) {
+				writer.Write (BF.Chars8);
+				writer.Write ((byte) blen);
+				writer.Write (buffer, index, count);
+			} else if (blen < 0x10000) {
+				writer.Write (BF.Chars16);
+				writer.Write ((ushort) blen);
+				writer.Write (buffer, index, count);
+			} else {
+				writer.Write (BF.Chars32);
+				writer.Write (blen);
+				writer.Write (buffer, index, count);
 			}
 		}
 
@@ -307,7 +331,8 @@ namespace System.Xml
 			if (state == WriteState.Attribute)
 				throw new InvalidOperationException ("Comment node is not allowed inside an attribute");
 
-			WriteToStream (BF.Comment, text);
+			writer.Write (BF.Comment);
+			writer.Write (text);
 		}
 
 		public override void WriteDocType (string name, string pubid, string sysid, string subset)
@@ -543,22 +568,24 @@ namespace System.Xml
 			int op = prefix.Length > 0 ? BF.AttrStringPrefix : BF.AttrString;
 
 			// Write to Stream
-			int idx = 0;
+			int idx = BF.AttrTempIndexPrefixStringStart;
 			if (prefix.Length == 0 && ns.Length > 0) { // i.e. dummy prefix
 				foreach (string n in dummy_namespaces) {
 					if (n == ns) {
-						writer.Write ((byte) (0x26 + idx));
-						WriteNamePart (localName);
+						writer.Write ((byte) (idx));
+						writer.Write (localName);
 						idx = -1;
 						break;
 					}
-					if (idx++ == 26)
+					if (++idx > BF.AttrTempIndexPrefixStringEnd)
 						break;
 				}
 			}
 			if (idx >= 0) {
 				writer.Write ((byte) op);
-				WriteNames (prefix, localName);
+				if (prefix.Length > 0)
+					writer.Write (prefix);
+				writer.Write (localName);
 			}
 		}
 
@@ -607,7 +634,9 @@ namespace System.Xml
 				prefix = String.Empty;
 
 			writer.Write ((byte) (prefix.Length > 0 ? BF.ElemStringPrefix : BF.ElemString));
-			WriteNames (prefix, localName);
+			if (prefix.Length > 0)
+				writer.Write (prefix);
+			writer.Write (localName);
 
 			OpenElement (prefix, ns);
 		}
@@ -736,8 +765,10 @@ namespace System.Xml
 
 			if (prefix.Length == 0)
 				writer.Write (BF.ElemIndex);
-			else
-				WriteToStream (BF.ElemIndexPrefix, prefix);
+			else {
+				writer.Write (BF.ElemIndexPrefix);
+				writer.Write (prefix);
+			}
 			WriteDictionaryIndex (localName);
 
 			OpenElement (prefix, namespaceUri);
@@ -768,7 +799,7 @@ namespace System.Xml
 			// Write to Stream
 			writer.Write ((byte) op);
 			if (prefix.Length > 0)
-				WriteNamePart (prefix);
+				writer.Write (prefix);
 			WriteDictionaryIndex (localName);
 		}
 
@@ -885,7 +916,7 @@ namespace System.Xml
 				// attr_typed_value not being true.
 				ProcessTypedValue ();
 
-				writer.Write (BF.UniqueIdFromGuid);
+				writer.Write (BF.Uuid);
 				byte [] bytes = guid.ToByteArray ();
 				writer.Write (bytes, 0, bytes.Length);
 			} else {
@@ -919,55 +950,10 @@ namespace System.Xml
 		{
 			if (text.Length == 0)
 				writer.Write (BF.EmptyText);
-			else
-				WriteToStream (BF.Text, text);
-		}
-
-		private void WriteNames (string prefix, string localName)
-		{
-			if (prefix != String.Empty)
-				WriteNamePart (prefix);
-			WriteNamePart (localName);
-		}
-
-		private void WriteNamePart (string name)
-		{
-			// BinaryWriter 7BitEncodedInt works here.
-			writer.Write (name);
-		}
-
-		private void WriteToStream (byte identifier, string text)
-		{
-			writer.Write (identifier);
-			// BinaryWriter 7BitEncodedInt works here.
-			writer.Write (text);
-		}
-
-		// FIXME: process long data (than 255 bytes)
-		private void WriteToStream (byte identifier, byte [] data, int start, int len)
-		{
-			//int lengthAdjust = 0;GetLengthAdjust (len);
-			//writer.Write ((byte) (identifier + lengthAdjust));
-			//WriteLength (len, lengthAdjust);
-			writer.Write ((byte) (identifier));
-			WriteLength (len, 0);
-			writer.Write (data, start, len);
-		}
-
-		/*
-		private int GetLengthAdjust (int count)
-		{
-			int lengthAdjust = 0;
-			for (int ctmp = count; ctmp >= 0x100; ctmp /= 0x100)
-				lengthAdjust++;
-			return lengthAdjust;
-		}
-		*/
-
-		private void WriteLength (int count, int lengthAdjust)
-		{
-			for (int i = 0, ctmp = count; i < lengthAdjust + 1; i++, ctmp /= 0x100)
-				writer.Write ((byte) (ctmp % 0x100));
+			else {
+				char [] arr = text.ToCharArray ();
+				WriteChars (arr, 0, arr.Length);
+			}
 		}
 
 		#endregion

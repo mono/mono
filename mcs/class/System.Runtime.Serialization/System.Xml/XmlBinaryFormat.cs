@@ -45,7 +45,8 @@ namespace System.Xml
 		public const byte PrefixNSIndex = 0x0B;
 		public const byte GlobalAttrIndex = 0x0C;
 		public const byte GlobalAttrIndexInElemNS = 0x0D;
-
+		public const byte AttrTempIndexPrefixStringStart = 0x26;
+		public const byte AttrTempIndexPrefixStringEnd = 0x26 + 26 - 1;
 		public const byte ElemString = 0x40;
 		public const byte ElemStringPrefix = 0x41;
 		public const byte ElemIndex = 0x42;
@@ -63,13 +64,16 @@ namespace System.Xml
 		public const byte Double = 0x92;
 		public const byte Decimal = 0x94;
 		public const byte DateTime = 0x96;
-		public const byte Base64 = 0x9E;
-		public const byte Base64Fixed = 0xA0;
+		public const byte Chars8 = 0x98;
+		public const byte Chars16 = 0x9A;
+		public const byte Chars32 = 0x9C;
+		public const byte Bytes8 = 0x9E;
+		public const byte Bytes16 = 0xA0;
+		public const byte Bytes32 = 0xA2;
 
-		public const byte Text = 0x98;
 		public const byte EmptyText = 0xA8;
 
-		public const byte UniqueIdFromGuid = 0xAC;
+		public const byte Uuid = 0xAC;
 		public const byte TimeSpan = 0xAE;
 		public const byte Guid = 0xB0;
 	}

@@ -153,7 +153,9 @@ namespace System.Xml
 					switch (ValueType) {
 					case 0:
 					case BF.Comment:
-					case BF.Text:
+					case BF.Chars8:
+					case BF.Chars16:
+					case BF.Chars32:
 					case BF.EmptyText:
 						return value;
 					case BF.Zero:
@@ -177,10 +179,11 @@ namespace System.Xml
 						return XmlConvert.ToString ((TimeSpan) TypedValue);
 					case BF.Guid:
 						return XmlConvert.ToString ((Guid) TypedValue);
-					case BF.UniqueIdFromGuid:
+					case BF.Uuid:
 						return TypedValue.ToString ();
-					case BF.Base64:
-					case BF.Base64Fixed:
+					case BF.Bytes8:
+					case BF.Bytes16:
+					case BF.Bytes32:
 						return Convert.ToBase64String ((byte []) TypedValue);
 					default:
 						throw new NotImplementedException ("ValueType " + ValueType + " on node " + NodeType);
@@ -204,6 +207,7 @@ namespace System.Xml
 		class AttrNodeInfo : NodeInfo
 		{
 			public int ValueIndex;
+			public int NSIndex;
 
 			public override void Reset ()
 			{
@@ -616,8 +620,12 @@ namespace System.Xml
 					ReadNamespace ((byte) ident);
 					break;
 				default:
-					next = ident;
-					loop = false;
+					if (BF.AttrTempIndexPrefixStringStart <= ident && ident <= BF.AttrTempIndexPrefixStringEnd)
+						ReadAttribute ((byte) ident);
+					else {
+						next = ident;
+						loop = false;
+					}
 					break;
 				}
 /*
@@ -669,6 +677,10 @@ namespace System.Xml
 				}
 */
 			} while (loop);
+
+			foreach (AttrNodeInfo a in attributes)
+				if (a.NSIndex == -3)
+					throw new NotImplementedException (); // FIXME: fill ns index
 
 #if true
 			node.NS = context.NamespaceManager.LookupNamespace (node.Prefix) ?? String.Empty;
@@ -747,6 +759,14 @@ namespace System.Xml
 				a.DictLocalName = ReadDictName ();
 				a.NSSlot = -2;
 				break;
+			default:
+				if (BF.AttrTempIndexPrefixStringStart <= ident && ident <= BF.AttrTempIndexPrefixStringEnd) {
+					a.Prefix = ((char) ('a' + ident)).ToString ();
+					a.LocalName = ReadUTF8 ();
+					a.NSSlot = -3;
+					break;
+				}
+				else throw new XmlException (String.Format ("Unexpected attribute node type: 0x{0:X02}", ident));
 			}
 			ReadAttributeValueBinary (a);
 		}
@@ -845,20 +865,21 @@ namespace System.Xml
 				node.TypedValue = new DateTime (source.Reader.ReadInt64 ());
 				break;
 			//case BF.UniqueId: // identical to .Text
-			case BF.Base64:
-				byte [] base64 = new byte [ReadVariantSize ()];
-				source.Reader.Read (base64, 0, base64.Length);
-				node.TypedValue = base64;
-				break;
-			case BF.Base64Fixed:
-				base64 = new byte [source.Reader.ReadInt16 ()];
+			case BF.Bytes8:
+			case BF.Bytes16:
+			case BF.Bytes32:
+				int size =
+					(ident == BF.Bytes8) ? source.Reader.ReadByte () :
+					(ident == BF.Bytes16) ? source.Reader.ReadUInt16 () :
+					source.Reader.ReadInt32 ();
+				byte [] base64 = new byte [size];
 				source.Reader.Read (base64, 0, base64.Length);
 				node.TypedValue = base64;
 				break;
 			case BF.TimeSpan:
 				node.TypedValue = new TimeSpan (source.Reader.ReadInt64 ());
 				break;
-			case BF.UniqueIdFromGuid:
+			case BF.Uuid:
 				byte [] guid = new byte [16];
 				source.Reader.Read (guid, 0, guid.Length);
 				node.TypedValue = new UniqueId (new Guid (guid));
@@ -868,8 +889,14 @@ namespace System.Xml
 				source.Reader.Read (guid, 0, guid.Length);
 				node.TypedValue = new Guid (guid);
 				break;
-			case BF.Text:
-				node.Value = ReadUTF8 ();
+			case BF.Chars8:
+				size =
+					(ident == BF.Chars8) ? source.Reader.ReadByte () :
+					(ident == BF.Chars16) ? source.Reader.ReadUInt16 () :
+					source.Reader.ReadInt32 ();
+				byte [] bytes = new byte [size];
+				source.Reader.Read (bytes, 0, size);
+				node.Value = Encoding.UTF8.GetString (bytes, 0, size);
 				node.NodeType = XmlNodeType.Text;
 				break;
 			case BF.EmptyText:
@@ -983,11 +1010,14 @@ namespace System.Xml
 		public override bool TryGetBase64ContentLength (out int length)
 		{
 			length = 0;
-			if (current.ValueType != BF.Base64 &&
-			    current.ValueType != BF.Base64Fixed)
-				return false;
-			length = ((byte []) current.TypedValue).Length;
-			return true;
+			switch (current.ValueType) {
+			case BF.Bytes8:
+			case BF.Bytes16:
+			case BF.Bytes32:
+				length = ((byte []) current.TypedValue).Length;
+				return true;
+			}
+			return false;
 		}
 
 		public override string ReadContentAsString ()
@@ -1060,15 +1090,25 @@ namespace System.Xml
 			return v;
 		}
 
+		bool IsBase64Node (byte b)
+		{
+			switch (b) {
+			case BF.Bytes8:
+			case BF.Bytes16:
+			case BF.Bytes32:
+				return true;
+			}
+			return false;
+		}
+
 		// FIXME: this is not likely to consume sequential base64 nodes.
 		public override byte [] ReadContentAsBase64 ()
 		{
 			byte [] ret = null;
-			if (node.ValueType != BF.Base64 &&
-			    node.ValueType != BF.Base64Fixed)
+			if (!IsBase64Node (node.ValueType))
 				throw new InvalidOperationException ("Current content is not base64");
-			while (NodeType == XmlNodeType.Text &&
-			       (node.ValueType == BF.Base64 || node.ValueType == BF.Base64Fixed)) {
+
+			while (NodeType == XmlNodeType.Text && IsBase64Node (node.ValueType)) {
 				if (ret == null)
 					ret = (byte []) node.TypedValue;
 				else {
@@ -1096,11 +1136,13 @@ namespace System.Xml
 		public override UniqueId ReadContentAsUniqueId ()
 		{
 			switch (node.ValueType) {
-			case BF.Text:
+			case BF.Chars8:
+			case BF.Chars16:
+			case BF.Chars32:
 				UniqueId ret = new UniqueId (node.Value);
 				Read ();
 				return ret;
-			case BF.UniqueIdFromGuid:
+			case BF.Uuid:
 				ret = (UniqueId) node.TypedValue;
 				Read ();
 				return ret;
