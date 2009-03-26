@@ -1,3 +1,8 @@
+2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: When the current cell is moved out of the editing row 
+	be sure to reset it back to a place holder row.
+
 2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: If IsHandleCreated and the very first row is added 

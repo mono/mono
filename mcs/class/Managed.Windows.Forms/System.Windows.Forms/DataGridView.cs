@@ -5512,6 +5512,10 @@ namespace System.Windows.Forms {
 							return false;
 						else if (currentCell.RowIndex == NewRowIndex && new_row_editing)
 							CancelEdit ();
+					} else {
+						// CancelEdit will replace the uncommited real editing row with a place holder row
+						if (new_row_editing && currentCell.RowIndex == NewRowIndex)
+							CancelEdit ();
 					}
 					OnCellLeave (new DataGridViewCellEventArgs(currentCell.ColumnIndex, currentCell.RowIndex));
 					OnRowLeave (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
@@ -5530,7 +5534,7 @@ namespace System.Windows.Forms {
 				OnCurrentCellChanged (EventArgs.Empty);
 
 				if (cell != null) {
-					// If the user begins an edit in the NewRow, add a new row
+					// If the user begins an edit in the NewRow, add a new real row
 					if (AllowUserToAddRows && cell.RowIndex == NewRowIndex && !is_binding && !new_row_editing) {
 						// OnUserAddedRow will add a real row and reset the current cell
 						OnUserAddedRow (new DataGridViewRowEventArgs (Rows[NewRowIndex]));
