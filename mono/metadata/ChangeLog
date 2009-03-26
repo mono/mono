@@ -1,7 +1,3 @@
-2009-03-26  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* security-core-clr.c: Add/update documentation
-
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_get_parameter_info): Add a 'member' argument, used to
@@ -11,7 +7,13 @@
 	* reflection.c (mono_param_get_objects_internal): Add a 'refclass' argument.
 
 	* appdomain.c (MONO_CORLIB_VERSION): Bump this.
-	
+
+2009-03-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Add/update documentation
+
+2009-03-26  Zoltan Varga  <vargaz@gmail.com>
+
 	* marshal.c (emit_marshal_object): Generate code to throw an exception
 	instead of throwing it. Fixes #488670.
 
