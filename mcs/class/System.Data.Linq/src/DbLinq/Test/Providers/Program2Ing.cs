@@ -2,7 +2,7 @@
 // 
 // MIT license
 //
-// Copyright (c) 2009 Novell, Inc.
+// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,55 +23,29 @@
 // THE SOFTWARE.
 // 
 #endregion
-
+#region HEADER
 using System;
-using System.Collections;
+using System.Threading;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Text;
 using System.Linq;
-using System.Reflection;
+using Test_NUnit_Ingres;
+#endregion
 
-#if MONO_STRICT
-using System.Data.Linq;
-using System.Data.Linq.Mapping;
-#else
-using DbLinq.Data.Linq;
-using DbLinq.Data.Linq.Mapping;
-#endif
-
-using DbLinq.Null;
-using NUnit.Framework;
-
-namespace DbLinqTest {
-
-    [TestFixture]
-    public class MsSqlDataContextTest : DataContextTestBase
+namespace Test_NUnit_Ingres
+{
+#region HEADER
+    /// <summary>
+    /// when a problem crops up in NUnit, you can convert the project from DLL into EXE, 
+    /// and debug into the offending method.
+    /// </summary>
+#endregion
+    class Program2
     {
-        static MsSqlDataContextTest()
+        static void Main()
         {
-#if !MONO_STRICT
-            // Make sure this assembly has a ref to DbLinq.SqlServer.dll.
-            var dummy = new DbLinq.SqlServer.SqlServerSqlProvider();
-#endif
-        }
-
-        protected override DataContext CreateDataContext()
-        {
-            return new DataContext (new NullConnection (), new AttributeMappingSource ());
-        }
-
-        protected override string People(string firstName)
-        {
-            return
-                "SELECT [first_name], [last_name]\n" + 
-                "FROM [people]\n" +
-                "WHERE [first_name] = '" + firstName + "'";
-        }
-
-        protected override string People(string firstName, string lastName)
-        {
-            return People(firstName) + " AND [last_name] = '" + lastName + "'";
+            // The current test status can be found at
+            // http://linq.to/db/Tests
         }
     }
 }
-

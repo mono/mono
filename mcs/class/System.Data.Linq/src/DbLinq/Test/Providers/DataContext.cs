@@ -1,8 +1,8 @@
-#region MIT license
+﻿#region MIT license
 // 
 // MIT license
 //
-// Copyright (c) 2009 Novell, Inc.
+// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,55 +23,58 @@
 // THE SOFTWARE.
 // 
 #endregion
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Reflection;
-
-#if MONO_STRICT
-using System.Data.Linq;
-using System.Data.Linq.Mapping;
-#else
-using DbLinq.Data.Linq;
-using DbLinq.Data.Linq.Mapping;
-#endif
-
-using DbLinq.Null;
+using System.Text;
 using NUnit.Framework;
+using Test_NUnit;
+using System.Data.Linq;
 
-namespace DbLinqTest {
-
-    [TestFixture]
-    public class MsSqlDataContextTest : DataContextTestBase
-    {
-        static MsSqlDataContextTest()
-        {
 #if !MONO_STRICT
-            // Make sure this assembly has a ref to DbLinq.SqlServer.dll.
-            var dummy = new DbLinq.SqlServer.SqlServerSqlProvider();
+using nwind;
+#else
+using MsNorthwind;
 #endif
-        }
 
-        protected override DataContext CreateDataContext()
+#if MYSQL
+    namespace Test_NUnit_MySql
+#elif ORACLE
+#if ODP
+        namespace Test_NUnit_OracleODP
+#else
+        namespace Test_NUnit_Oracle
+#endif
+#elif POSTGRES
+    namespace Test_NUnit_PostgreSql
+#elif SQLITE
+    namespace Test_NUnit_Sqlite
+#elif INGRES
+    namespace Test_NUnit_Ingres
+#elif MSSQL
+#if MONO_STRICT
+namespace Test_NUnit_MsSql_Strict
+#else
+namespace Test_NUnit_MsSql
+#endif
+#else
+#error unknown target
+#endif
+{
+    [TestFixture]
+    public class DataContext : TestBase
+    {
+        [Test]
+        public void GetCommand()
         {
-            return new DataContext (new NullConnection (), new AttributeMappingSource ());
-        }
+            var db = CreateDB();
+            string country = "Spain";
+            var cust = db.Customers.Where(c => c.Country == country);
+            var dbCommand=db.GetCommand(cust);
+            
 
-        protected override string People(string firstName)
-        {
-            return
-                "SELECT [first_name], [last_name]\n" + 
-                "FROM [people]\n" +
-                "WHERE [first_name] = '" + firstName + "'";
-        }
-
-        protected override string People(string firstName, string lastName)
-        {
-            return People(firstName) + " AND [last_name] = '" + lastName + "'";
+            Assert.IsNotNull(dbCommand.CommandText);
+            Assert.Greater(dbCommand.Parameters.Count, 0);
         }
     }
 }
-

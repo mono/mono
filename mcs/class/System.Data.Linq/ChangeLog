@@ -1,5 +1,10 @@
 2009-03-26  Jonathan Pryor  <jpryor@novell.com>
 
+	* **/*: Flush.  (Updates to sync with DbLinq r1026, correcting tests
+	  so that they build under Mono for testing System.Data.Linq.dll.)
+
+2009-03-26  Jonathan Pryor  <jpryor@novell.com>
+
 	* **/*: Flush.  (Updates to sync with DbLinq r1020, adding additional 
 	  tests generated from gui-compare differences.)
 
