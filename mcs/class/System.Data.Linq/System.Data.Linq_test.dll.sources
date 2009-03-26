@@ -1,0 +1,6 @@
+../src/DbLinq/Test/BinaryTest.cs
+../src/DbLinq/Test/DataContextTest.cs
+../src/DbLinq/Test/NullProvider.cs
+../src/DbLinq/Test/PeopleTable.cs
+../src/DbLinq/Test/Providers/DataContextTestBase.cs
+../src/DbLinq/Test/TableTest.cs

@@ -1,5 +1,11 @@
 2009-03-26  Jonathan Pryor  <jpryor@novell.com>
 
+	* Test/: Added (though empty), to allow building unit tests located in
+	  src/*/Test/**.
+	* System.Data.Linq_test.dll.sources: Added; database-less unit tests.
+
+2009-03-26  Jonathan Pryor  <jpryor@novell.com>
+
 	* src/DbLinq/System.Data.Linq/Binary.cs: Update to pass the unit tests.
 	* Makefile: Build against System.Runtime.Serialization.dll so that
 	  Binary can use the [DataContract] attribute.
