@@ -1,5 +1,11 @@
 2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Do not show the vertical scrollbar if there is only 
+	one row or less. For the sake of MSNET compatibility.
+	[Fixes bug #487988]
+
+2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: When the current cell is moved out of the editing row 
 	be sure to reset it back to a place holder row.
 

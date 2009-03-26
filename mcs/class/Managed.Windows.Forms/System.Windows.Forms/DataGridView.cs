@@ -4718,6 +4718,10 @@ namespace System.Windows.Forms {
 				if (scrollBars != ScrollBars.Horizontal && scrollBars != ScrollBars.Both)
 					horizontalVisible = false;
 
+				// MSNET compatibility here
+				if (RowCount <= 1)
+					verticalVisible = false;
+
 				if (horizontalVisible) {
 					horizontalScrollBar.Minimum = 0;
 					horizontalScrollBar.Maximum = gridWidth;
