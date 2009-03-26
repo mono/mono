@@ -753,11 +753,15 @@ namespace MonoTests.System.Windows.Forms
 			ts.Items.Add (tsi);
 			
 			Assert.AreEqual (false, tsi.IsDisposed, "A1");
-			
+			Assert.AreEqual (1, ts.Items.Count, "A2");
+			Assert.AreEqual (ts, tsi.Owner, "A3");
+
 			tsi.Dispose ();
-			Assert.AreEqual (true, tsi.IsDisposed, "A2");
+			Assert.AreEqual (true, tsi.IsDisposed, "A4");
+			Assert.AreEqual (0, ts.Items.Count, "A5");
+			Assert.AreEqual (null, tsi.Owner, "A6");
 		}
-		
+
 		[Test]
 		public void MethodProcessMnemonic ()
 		{

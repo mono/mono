@@ -661,7 +661,25 @@ namespace MonoTests.System.Windows.Forms
 			//Assert.AreEqual ("System.Windows.Forms.TableLayoutSettings", ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.Table).ToString (), "A4");
 			Assert.AreEqual (null, ts.PublicCreateLayoutSettings (ToolStripLayoutStyle.VerticalStackWithOverflow), "A5");
 		}
-		
+
+		[Test]
+		public void MethodDipose()
+		{
+			ToolStrip ts = new ToolStrip ();
+			ToolStripItem item_a = ts.Items.Add ("A");
+			ToolStripItem item_b = ts.Items.Add ("B");
+			ToolStripItem item_c = ts.Items.Add ("C");
+
+			Assert.AreEqual (3, ts.Items.Count, "A1");
+
+			ts.Dispose ();
+
+			Assert.AreEqual (0, ts.Items.Count, "A2");
+			Assert.IsTrue (item_a.IsDisposed, "A3");
+			Assert.IsTrue (item_b.IsDisposed, "A4");
+			Assert.IsTrue (item_c.IsDisposed, "A5");
+		}
+
 		[Test]
 		public void MethodGetNextItem ()
 		{

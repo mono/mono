@@ -1,3 +1,8 @@
+2009-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripTest.cs:
+	* ToolStripItemTest.cs: Update our Dispose tests.
+
 2009-03-19  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewTest.cs: Add tests to verify that the current cell changes 
