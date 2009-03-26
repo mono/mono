@@ -98,6 +98,9 @@ namespace DbLinq.Data.Linq.Implementation
         /// <param name="entity"></param>
         public void RegisterToInsert(object entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             lock (lockObject)
             {
                 var entityTrack = FindByReference(entity);
@@ -170,6 +173,9 @@ namespace DbLinq.Data.Linq.Implementation
         /// <param name="entity"></param>
         public void RegisterToDelete(object entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             lock (lockObject)
             {
                 var entityTrack = FindByReference(entity);

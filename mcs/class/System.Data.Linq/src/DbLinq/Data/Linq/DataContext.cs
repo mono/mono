@@ -605,6 +605,9 @@ namespace DbLinq.Data.Linq
         /// <param name="entity"></param>
         internal void RegisterUpdate(object entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             var identityReader = _GetIdentityReader(entity.GetType());
             var identityKey = identityReader.GetIdentityKey(entity);
             // if we have no key, we can not watch
@@ -754,6 +757,13 @@ namespace DbLinq.Data.Linq
         /// <returns></returns>
         public IEnumerable<TResult> Translate<TResult>(DbDataReader reader)
         {
+            if (reader == null)
+                throw new ArgumentNullException("reader");
+            return CreateTranslateIterator<TResult>(reader);
+        }
+
+        IEnumerable<TResult> CreateTranslateIterator<TResult>(DbDataReader reader)
+        {
             foreach (TResult result in Translate(typeof(TResult), reader))
                 yield return result;
         }
@@ -765,6 +775,11 @@ namespace DbLinq.Data.Linq
 
         public IEnumerable Translate(Type elementType, DbDataReader reader)
         {
+            if (elementType == null)
+                throw new ArgumentNullException("elementType");
+            if (reader == null)
+                throw new ArgumentNullException("reader");
+
             return QueryRunner.EnumerateResult(elementType, reader, this);
         }
 

@@ -921,11 +921,18 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 // first, check if we have a MetaTable definition
                 Type metaType;
                 var typeInitializers = GetTypeInitializers<Expression>((NewExpression)expression, true, out metaType);
-                var aliases = new Dictionary<MemberInfo, TableExpression>();
+                var aliases = new Dictionary<MemberInfo, MutableExpression>();
                 foreach (var memberInfo in typeInitializers.Keys)
                 {
                     var tableExpression = Analyze(typeInitializers[memberInfo], builderContext) as TableExpression;
-                    aliases[memberInfo] = tableExpression;
+                    if (tableExpression != null)
+                    {
+                        aliases[memberInfo] = tableExpression;
+                    }
+                    else
+                    {
+                        aliases[memberInfo] = Analyze(typeInitializers[memberInfo], builderContext) as MetaTableExpression;
+                    }
                 }
                 if (IsMetaTableDefinition(aliases))
                     return RegisterMetaTable(metaType, aliases, builderContext);
@@ -933,7 +940,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             return AnalyzeOperator(expression, builderContext);
         }
 
-        protected virtual bool IsMetaTableDefinition(IDictionary<MemberInfo, TableExpression> aliases)
+        protected virtual bool IsMetaTableDefinition(IDictionary<MemberInfo, MutableExpression> aliases)
         {
             if (aliases.Count != 2)
                 return false;

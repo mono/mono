@@ -47,18 +47,27 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.MetaTable;
 
-        protected IDictionary<MemberInfo, TableExpression> Aliases;
+        protected IDictionary<MemberInfo, MutableExpression> Aliases; 
 
-        public TableExpression GetTableExpression(MemberInfo memberInfo)
+        public MutableExpression GetTableExpression(MemberInfo memberInfo)
         {
-            TableExpression tablePiece;
+            MutableExpression tablePiece;
             Aliases.TryGetValue(memberInfo, out tablePiece);
             return tablePiece;
         }
 
-        public MetaTableExpression(IDictionary<MemberInfo, TableExpression> aliases, Type metaTableType)
+        public MetaTableExpression(IDictionary<MemberInfo, MutableExpression> aliases, Type metaTableType)
             : base(ExpressionType, metaTableType)
         {
+            /* This check was disabled just becouse should be implied by the usage
+            foreach (var alias in aliases)
+            {
+                if ( !(alias.Value is TableExpression) && !(alias.Value is MetaTableExpression))
+                {
+                    throw Error.BadArgument("Invalid MetaTable element type: {0}", alias.Value.Type);
+                }
+            }
+             * */
             Aliases = aliases;
         }
     }

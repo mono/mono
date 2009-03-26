@@ -70,6 +70,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CsvArrayAdapterTest.cs" />
     <Compile Include="DataContextTest.cs" />
     <Compile Include="ExpressionEqualityComparerTest.cs" />
@@ -79,6 +80,7 @@
     </Compile>
     <Compile Include="PeopleTable.cs" />
     <Compile Include="Providers\Internals\ReflectionTest.cs" />
+    <Compile Include="TableTest.cs" />
     <Compile Include="TypeContextTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +110,7 @@
     <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\DbLinq.snk" />

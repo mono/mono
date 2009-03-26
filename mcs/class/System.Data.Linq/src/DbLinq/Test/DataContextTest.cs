@@ -164,6 +164,49 @@ namespace DbLinqTest {
             IQueryable query = null;
             context.GetCommand(query);
         }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void GetTable_TypeNull()
+        {
+            context.GetTable(null);
+        }
+
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void GetTable_NotSupportedType()
+        {
+            context.GetTable(typeof(object));
+        }
+
+        [Test, ExpectedException(typeof(InvalidOperationException))]
+        public void GetTableTEntity_NotSupportedType()
+        {
+            context.GetTable<object>();
+        }
+
+        [Test]
+        public void GetTableTEntity()
+        {
+            Table<Person> table = context.GetTable<Person>();
+        }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void Translate_ReaderNull()
+        {
+            context.Translate(typeof(Person), null);
+        }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void Translate_ElementTypeNull()
+        {
+            DbDataReader reader = new NullDataReader();
+            context.Translate(null, reader);
+        }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void TranslateTResult_ReaderNull()
+        {
+            context.Translate<Person>(null);
+        }
     }
 }
 

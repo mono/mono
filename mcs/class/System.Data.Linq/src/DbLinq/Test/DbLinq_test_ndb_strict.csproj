@@ -70,11 +70,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinaryTest.cs" />
     <Compile Include="DataContextTest.cs" />
     <Compile Include="NullProvider.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="PeopleTable.cs" />
+    <Compile Include="TableTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.4.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
@@ -89,6 +91,7 @@
     <Reference Include="System.Data.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\DbLinq.snk" />

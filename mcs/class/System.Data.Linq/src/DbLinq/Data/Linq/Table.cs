@@ -182,6 +182,9 @@ namespace DbLinq.Data.Linq
 
         public void InsertAllOnSubmit<TSubEntity>(IEnumerable<TSubEntity> entities) where TSubEntity : TEntity
         {
+            if (entities == null)
+                throw new ArgumentNullException("entities");
+
             foreach (var entity in entities)
                 Context.RegisterInsert(entity);
         }
@@ -212,6 +215,9 @@ namespace DbLinq.Data.Linq
 
         public void DeleteAllOnSubmit<TSubEntity>(IEnumerable<TSubEntity> entities) where TSubEntity : TEntity
         {
+            if (entities == null)
+                throw new ArgumentNullException("entities");
+
             foreach (var row in entities)
                 Context.RegisterDelete(row);
         }
@@ -268,6 +274,9 @@ namespace DbLinq.Data.Linq
 
         public void AttachAll<TSubEntity>(IEnumerable<TSubEntity> entities) where TSubEntity : TEntity
         {
+            if (entities == null)
+                throw new ArgumentNullException("entities");
+
             foreach (var entity in entities)
                 Context.RegisterUpdate(entity);
         }
@@ -329,6 +338,9 @@ namespace DbLinq.Data.Linq
         [DbLinqToDo]
         public TEntity GetOriginalEntityState(TEntity entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             throw new NotImplementedException();
         }
 
@@ -341,9 +353,15 @@ namespace DbLinq.Data.Linq
         [DbLinqToDo]
         public ModifiedMemberInfo[] GetModifiedMembers(TEntity entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             throw new NotImplementedException();
         }
 
-
+        public override string ToString()
+        {
+            return string.Format("Table({0})", typeof(TEntity).Name);
+        }
     }
 }

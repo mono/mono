@@ -306,7 +306,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <param name="aliases"></param>
         /// <param name="builderContext"></param>
         /// <returns></returns>
-        public virtual MetaTableExpression RegisterMetaTable(Type metaTableType, IDictionary<MemberInfo, TableExpression> aliases,
+        public virtual MetaTableExpression RegisterMetaTable(Type metaTableType, IDictionary<MemberInfo, MutableExpression> aliases,
                                                              BuilderContext builderContext)
         {
             MetaTableExpression metaTableExpression;

@@ -1,3 +1,8 @@
+2009-03-26  Jonathan Pryor  <jpryor@novell.com>
+
+	* **/*: Flush.  (Updates to sync with DbLinq r1020, adding additional 
+	  tests generated from gui-compare differences.)
+
 2009-03-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/DbLinq/Data/Linq/Database/Implementation/TransactionalCommand.cs,
