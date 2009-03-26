@@ -1,3 +1,9 @@
+2009-03-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509ChainPolicyTest.cs: Add a small sleep between the Reset and
+	the second VerificationTime check since it would be possible, on
+	fast hardware, to get the same value (and assert).
+
 2008-01-13  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* X509Certificate2Test.cs: Added asserts to ensure NotAfter and

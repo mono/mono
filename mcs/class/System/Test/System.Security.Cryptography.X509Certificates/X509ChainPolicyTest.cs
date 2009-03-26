@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
@@ -249,6 +250,8 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			cp.VerificationFlags = X509VerificationFlags.AllFlags;
 			DateTime vt = cp.VerificationTime;
 			Assert ("VerificationTime", ((vt <= DateTime.Now) && (vt > DateTime.Now.AddMinutes (-1))));
+			// wait a bit before calling Reset, otherwise we could end up with the same time value
+			Thread.Sleep (100);
 			cp.Reset ();
 			Assert ("VerificationTime-Reset", (vt != cp.VerificationTime));
 			// default properties
