@@ -1,5 +1,10 @@
 2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Implement IsCurrentRowDirty. No longer throws 
+	NotImplementedException.
+
+2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewColumn.cs, DataGridViewTextBoxColumn.cs: 
 	Fix SortMode clash handling.
 	[Fixes bug #488263]

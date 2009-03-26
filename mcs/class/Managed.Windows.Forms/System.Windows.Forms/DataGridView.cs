@@ -908,11 +908,12 @@ namespace System.Windows.Forms {
 		[Browsable (false)]
 		public bool IsCurrentRowDirty {
 			get {
-				if (!virtualMode) {
+				if (!virtualMode)
 					return IsCurrentCellDirty;
-				}
-				// Calcular
-				throw new NotImplementedException();
+
+				QuestionEventArgs args = new QuestionEventArgs ();
+				OnRowDirtyStateNeeded (args);
+				return args.Response;
 			}
 		}
 
