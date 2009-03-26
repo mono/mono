@@ -239,11 +239,16 @@ namespace System.Xml
 			writer.Flush ();
 		}
 
+		[MonoTODO ("needs verification")]
 		public override string LookupPrefix (string ns)
 		{
 			if (ns == null || ns == String.Empty)
 				throw new ArgumentException ("The Namespace cannot be empty.");
-			throw new NotImplementedException ();
+
+			string p = namespaces [ns] as string;
+			if (p != null)
+				return p;
+			return nsmgr.LookupPrefix (ns);
 		}
 
 		public override void WriteBase64 (byte[] buffer, int index, int count)
@@ -438,6 +443,41 @@ namespace System.Xml
 				throw new ArgumentException ("Processing instructions are not supported. ('xml' is allowed for XmlDeclaration; this is because of design problem of ECMA XmlWriter)");
 			// Otherwise, silently ignored. WriteStartDocument()
 			// is still callable after this method(!)
+		}
+
+		[MonoTODO ("Some namespace management redesign is needed; it has to consider namespaces in ancestors to convert matching one into the index")]
+		public override void WriteQualifiedName (XmlDictionaryString local, XmlDictionaryString ns)
+		{
+			throw new NotImplementedException ();
+
+			/*
+			string prefix = LookupPrefix (ns.Value);
+			if (prefix == null)
+				throw new ArgumentException (String.Format ("Namespace URI '{0}' is not bound to any of the prefixes", ns.Value));
+			int idx = 26;
+
+			if (prefix.Length == 1) {
+				idx = 0;
+				foreach (string nss in namespaces.Values) {
+					if (nss == ns.Value)
+						break;
+					idx++;
+				}
+			}
+
+			ProcessTypedValue ();
+
+			if (idx >= 26 || idx == namespaces.Count) {
+				// QNameIndex is not applicable.
+				WriteString (prefix);
+				WriteString (":");
+				WriteString (local);
+			} else {
+				writer.Write (BF.QNameIndex);
+				writer.Write ((byte) (prefix [0] - 'a'));
+				writer.Write ((byte) idx);
+			}
+			*/
 		}
 
 		public override void WriteRaw (string data)

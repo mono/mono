@@ -586,8 +586,11 @@ Console.WriteLine ();
 		public void WriteTypedValues ()
 		{
 			MemoryStream ms = new MemoryStream ();
-			XmlDictionaryWriter w = XmlDictionaryWriter.CreateBinaryWriter (ms, null, null);
+			var dic = new XmlDictionary ();
+			XmlDictionaryWriter w = XmlDictionaryWriter.CreateBinaryWriter (ms, dic, null);
 			w.WriteStartElement ("root");
+			w.WriteXmlnsAttribute ("x", "urn:x");
+			w.WriteXmlnsAttribute ("xx", "urn:xx");
 			w.WriteValue ((byte) 5);
 			w.WriteValue ((short) 893);
 			w.WriteValue ((int) 37564);
@@ -597,15 +600,20 @@ Console.WriteLine ();
 			w.WriteValue ((double) 2.2360679);
 			w.WriteValue ((decimal) 3.141592);
 			w.WriteValue (new DateTime (2000, 1, 2, 3, 4, 5));
-			w.WriteValue (new XmlDictionary ().Add ("xxx"));
+			w.WriteValue (new XmlDictionary ().Add ("xxx")); // from different dictionary -> string output, not index output
 			// w.WriteValue ((object) null); ANE
 			w.WriteValue (1);
+			// FIXME: enable them once implemented
+			//w.WriteQualifiedName (dic.Add ("local"), dic.Add ("urn:x"));
+			//w.WriteQualifiedName (dic.Add ("local"), dic.Add ("urn:xx")); // QName tag is not used, since the prefix is more than 1 byte
 			w.Close ();
 			Assert.AreEqual (typed_values, ms.ToArray ());
 		}
 
 		byte [] typed_values = new byte [] {
-			0x40, 4, 0x72, 0x6F, 0x6F, 0x74,
+			0x40, 4, 0x72, 0x6F, 0x6F, 0x74, // elem
+			0x09, 1, 0x78, 5, 0x75, 0x72, 0x6E, 0x3A, 0x78, // xmlns:x
+			0x09, 2, 0x78, 0x78, 6, 0x75, 0x72, 0x6E, 0x3A, 0x78, 0x78, // xmlns:xx
 			0x88, 5,
 			0x8A, 0x7D, 0x03,
 			0x8C, 0xBC, 0x92, 0, 0, // int
@@ -615,8 +623,13 @@ Console.WriteLine ();
 			0x92, 0x4C, 0x15, 0x31, 0x91, 0x77, 0xE3, 0x01, 0x40, // 43
 			0x94, 0, 0, 6, 0, 0, 0, 0, 0, 0xD8, 0xEF, 0x2F, 0, 0, 0, 0, 0,
 			0x96, 0x80, 0x40, 0xA3, 0x29, 0xE5, 0x22, 0xC1, 8,
-			0x98, 3, 0x78, 0x78, 0x78, // dictionary string is just a string here
-			0x83,
+			0x98, 3, 0x78, 0x78, 0x78, // dictionary string that is not in the in-use dictionary is just a string here
+
+			//0x82,
+			0x83, // FIXME: switch to line above once this node got not to contain EndElement.
+			// FIXME: enable them once QName is implemented
+			//0xBC, 23, 0, // QName dictionay string
+			//0x98, 2, 0x78, 0x78, 0x98, 1, 0x3A, 0xAB, 0, // QName with longer prefix is written just as a string
 			};
 	}
 }

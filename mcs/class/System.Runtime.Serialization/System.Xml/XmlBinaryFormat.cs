@@ -79,6 +79,7 @@ namespace System.Xml
 		public const byte Utf16_8 = 0xB6;
 		public const byte Utf16_16 = 0xB8;
 		public const byte Utf16_32 = 0xBA;
+		public const byte QNameIndex = 0xBC;
 	}
 
 	/* Binary Format (incomplete):
