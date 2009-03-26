@@ -213,8 +213,13 @@ namespace System
 					// as the 'this' argument to the method.
 					//
 					argLengthMatch = (args.Length + 1 == delargs.Length);
-				else
+				else {
 					argLengthMatch = (args.Length == delargs.Length);
+
+					if (!argLengthMatch)
+						// closed over a null reference
+						argLengthMatch = args.Length == delargs.Length + 1;
+				}
 			}
 			if (!argLengthMatch)
 				if (throwOnBindFailure)
@@ -240,9 +245,16 @@ namespace System
 					for (int i = 0; i < args.Length; i++)
 						argsMatch &= arg_type_match (delargs [i + 1].ParameterType, args [i].ParameterType);
 				} else {
-					argsMatch = true;
-					for (int i = 0; i < args.Length; i++)
-						argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
+					if (delargs.Length + 1 == args.Length) {
+						// closed over a null reference
+						argsMatch = !args [0].ParameterType.IsValueType;
+						for (int i = 0; i < delargs.Length; i++)
+							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i + 1].ParameterType);
+					} else {
+						argsMatch = true;
+						for (int i = 0; i < args.Length; i++)
+							argsMatch &= arg_type_match (delargs [i].ParameterType, args [i].ParameterType);
+					}
 				}
 			}
 
