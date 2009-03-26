@@ -76,6 +76,9 @@ namespace System.Xml
 		public const byte UniqueId = 0xAC;
 		public const byte TimeSpan = 0xAE;
 		public const byte Guid = 0xB0;
+		public const byte Utf16_8 = 0xB6;
+		public const byte Utf16_16 = 0xB8;
+		public const byte Utf16_32 = 0xBA;
 	}
 
 	/* Binary Format (incomplete):
@@ -159,9 +162,9 @@ namespace System.Xml
 		B0 : UUID
 		B2 : UInt64
 		B4 : bool text
-		B6 : TODO: unichars8
-		B8 : TODO: unichars16
-		BA : TODO: unichars32
+		B6 : utf16_8
+		B8 : utf16_16
+		BA : utf16_32
 		BC : TODO: QName index
 
 		Error: PIs, doctype

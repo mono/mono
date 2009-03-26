@@ -157,6 +157,9 @@ namespace System.Xml
 					case BF.Chars16:
 					case BF.Chars32:
 					case BF.EmptyText:
+					case BF.Utf16_8:
+					case BF.Utf16_16:
+					case BF.Utf16_32:
 						return value;
 					case BF.Zero:
 					case BF.One:
@@ -890,13 +893,19 @@ namespace System.Xml
 				node.TypedValue = new Guid (guid);
 				break;
 			case BF.Chars8:
+			case BF.Chars16:
+			case BF.Chars32:
+			case BF.Utf16_8:
+			case BF.Utf16_16:
+			case BF.Utf16_32:
+				Encoding enc = ident <= BF.Chars32 ? Encoding.UTF8 : Encoding.Unicode;
 				size =
 					(ident == BF.Chars8) ? source.Reader.ReadByte () :
 					(ident == BF.Chars16) ? source.Reader.ReadUInt16 () :
 					source.Reader.ReadInt32 ();
 				byte [] bytes = new byte [size];
 				source.Reader.Read (bytes, 0, size);
-				node.Value = Encoding.UTF8.GetString (bytes, 0, size);
+				node.Value = enc.GetString (bytes, 0, size);
 				node.NodeType = XmlNodeType.Text;
 				break;
 			case BF.EmptyText:
@@ -1139,6 +1148,9 @@ namespace System.Xml
 			case BF.Chars8:
 			case BF.Chars16:
 			case BF.Chars32:
+			case BF.Utf16_8:
+			case BF.Utf16_16:
+			case BF.Utf16_32:
 				UniqueId ret = new UniqueId (node.Value);
 				Read ();
 				return ret;
