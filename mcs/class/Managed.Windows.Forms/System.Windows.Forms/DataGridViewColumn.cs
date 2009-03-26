@@ -368,8 +368,13 @@ Example */
 		public DataGridViewColumnSortMode SortMode {
 			get { return sortMode; }
 			set {
-				if (value == DataGridViewColumnSortMode.Automatic && DataGridView != null && DataGridView.SelectionMode == DataGridViewSelectionMode.FullColumnSelect)
-					throw new InvalidOperationException ("Column's SortMode cannot be set to Automatic while the DataGridView control's SelectionMode is set to FullColumnSelect.");
+				if (DataGridView != null && value == DataGridViewColumnSortMode.Automatic) {
+					if (DataGridView.SelectionMode == DataGridViewSelectionMode.FullColumnSelect ||
+					    DataGridView.SelectionMode == DataGridViewSelectionMode.ColumnHeaderSelect)
+						throw new InvalidOperationException ("Column's SortMode cannot be set to Automatic "+
+										     "while the DataGridView control's SelectionMode "+
+										     "is set to FullColumnSelect or ColumnHeaderSelect.");
+				}
 
 				if (sortMode != value) {
 					sortMode = value;

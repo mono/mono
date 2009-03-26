@@ -1,5 +1,11 @@
 2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewColumn.cs, DataGridViewTextBoxColumn.cs: 
+	Fix SortMode clash handling.
+	[Fixes bug #488263]
+
+2009-03-26  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Do not show the vertical scrollbar if there is only 
 	one row or less. For the sake of MSNET compatibility.
 	[Fixes bug #487988]
