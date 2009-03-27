@@ -122,15 +122,20 @@ void BuildOperationInfo ()
 	
 	// Protocols supported by the operation
 	CurrentOperationProtocols = "";
+	WebServiceProtocols testProtocols = 0;
 	ArrayList prots = FindServiceProtocols (CurrentOperationName);
 	for (int n=0; n<prots.Count; n++) {
+		string prot = (string) prots [n];
 		if (n != 0) CurrentOperationProtocols += ", ";
-		CurrentOperationProtocols += (string) prots[n];
+		CurrentOperationProtocols += prot;
+		if (prot == "HttpGet")
+			testProtocols |= WebServiceProtocols.HttpGet;
+		else if (prot == "HttpPost") {
+			testProtocols |= WebServiceProtocols.HttpPost;
+			if (Context.Request.IsLocal)
+				testProtocols |= WebServiceProtocols.HttpPostLocalhost;
+		}
 	}
-	
-	WebServiceProtocols testProtocols = WebServiceProtocols.HttpGet | WebServiceProtocols.HttpPost;
-	if (Context.Request.IsLocal)
-	    testProtocols |= WebServiceProtocols.HttpPostLocalhost;
 	CurrentOperationSupportsTest = (WebServicesSection.Current.EnabledProtocols & testProtocols) != 0;
 
 	// Operation format
