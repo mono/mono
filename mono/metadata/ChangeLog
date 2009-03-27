@@ -1,3 +1,21 @@
+2009-03-27  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* appdomain.h: Export a new callback type and a new function to
+	set this callback. This allow a mono host to provide it's own
+	definition for "platform code".
+	* metadata-internals.h: Add a core_clr_platform_code flag on 
+	_MonoImage to (cache and) know if it is representing platform 
+	code.
+	* image.c (do_mono_image_open): Set core_clr_platform_code flag 
+	on platform code images.
+	* security-core-clr.c|h	
+	(mono_security_set_core_clr_platform_callback): Allow the host
+	to provide it's own platform check definition.
+	(mono_security_core_clr_determine_platform_image): Detect if an 
+	image is platform code (using the specified callback).
+	(mono_security_core_clr_is_platform_image): Return cached value 
+	for platform code.
+
 2009-03-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_create_thread): New helper function to wrap CreateThread
