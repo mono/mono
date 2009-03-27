@@ -57,7 +57,6 @@ namespace System.Xml
 		bool open_start_element = false;
 		// transient current node info
 		ListDictionary namespaces = new ListDictionary ();
-		List<string> dummy_namespaces = new List<string> ();
 		string xml_lang = null;
 		XmlSpace xml_space = XmlSpace.None;
 		// stacked info
@@ -155,7 +154,6 @@ namespace System.Xml
 				nsmgr.AddNamespace (prefix, ent.Value.ToString ());
 			}
 			namespaces.Clear ();
-			dummy_namespaces.Clear ();
 		}
 
 		private void CheckState ()
@@ -245,9 +243,9 @@ namespace System.Xml
 			if (ns == null || ns == String.Empty)
 				throw new ArgumentException ("The Namespace cannot be empty.");
 
-			string p = namespaces [ns] as string;
-			if (p != null)
-				return p;
+			foreach (DictionaryEntry de in namespaces)
+				if (de.Value.ToString () == ns)
+					return (string) de.Key;
 			return nsmgr.LookupPrefix (ns);
 		}
 
@@ -370,6 +368,9 @@ namespace System.Xml
 				break;
 			}
 
+			if (current_attr_prefix.Length > 0 && save_target != SaveTarget.Namespaces)
+				AddNamespaceChecked (current_attr_prefix, current_attr_ns);
+
 			state = WriteState.Element;
 			current_attr_prefix = null;
 			current_attr_name = null;
@@ -448,9 +449,6 @@ namespace System.Xml
 		[MonoTODO ("Some namespace management redesign is needed; it has to consider namespaces in ancestors to convert matching one into the index")]
 		public override void WriteQualifiedName (XmlDictionaryString local, XmlDictionaryString ns)
 		{
-			throw new NotImplementedException ();
-
-			/*
 			string prefix = LookupPrefix (ns.Value);
 			if (prefix == null)
 				throw new ArgumentException (String.Format ("Namespace URI '{0}' is not bound to any of the prefixes", ns.Value));
@@ -477,7 +475,6 @@ namespace System.Xml
 				writer.Write ((byte) (prefix [0] - 'a'));
 				writer.Write ((byte) idx);
 			}
-			*/
 		}
 
 		public override void WriteRaw (string data)
@@ -500,14 +497,18 @@ namespace System.Xml
 
 		string CreateNewPrefix ()
 		{
-			string s = String.Empty;
-			for (int n = 0; n < 26; n++) {
-				for (int i = 0; i < 26; i++) {
-					string x = s + (char) (0x61 + i);
-					if (!namespaces.Contains (x))
-						return x;
-				}
-				s = ((char) (0x61 + n)).ToString ();
+			return CreateNewPrefix (String.Empty);
+		}
+		
+		string CreateNewPrefix (string p)
+		{
+			for (char c = 'a'; c <= 'z'; c++)
+				if (!namespaces.Contains (p + c))
+					return p + c;
+			for (char c = 'a'; c <= 'z'; c++) {
+				var s = CreateNewPrefix (c.ToString ());
+				if (s != null)
+					return s;
 			}
 			throw new InvalidOperationException ("too many prefix population");
 		}
@@ -520,16 +521,18 @@ namespace System.Xml
 			return false;
 		}
 
-		void ProcessStartAttributeCommon (string prefix, string localName, string ns, object nameObj, object nsObj)
+		void ProcessStartAttributeCommon (ref string prefix, string localName, string ns, object nameObj, object nsObj)
 		{
 			// dummy prefix is created here, while the caller
 			// still uses empty string as the prefix there.
-			if (prefix.Length == 0 && ns.Length > 0
-			    // this condition is to exclude duplicate mappings. 
-			    // (I assume it is correct, but might be insufficient.)
-			    && !CollectionContains (dummy_namespaces, ns)) {
-				prefix = CreateNewPrefix ();
-				dummy_namespaces.Add (ns);
+			if (prefix.Length == 0 && ns.Length > 0) {
+				prefix = LookupPrefix (ns);
+				// Not only null but also ""; when the returned
+				// string is empty, then it still needs a dummy
+				// prefix, since default namespace does not
+				// apply to attribute
+				if (String.IsNullOrEmpty (prefix))
+					prefix = CreateNewPrefix ();
 			}
 			else if (prefix.Length > 0 && ns.Length == 0)
 				throw new ArgumentException ("Cannot use prefix with an empty namespace.");
@@ -565,13 +568,6 @@ namespace System.Xml
 			current_attr_prefix = prefix;
 			current_attr_name = nameObj;
 			current_attr_ns = nsObj;
-
-			// for namespace nodes we don't write attribute node here.
-			if (save_target == SaveTarget.Namespaces)
-				return;
-
-			if (prefix.Length > 0)
-				AddNamespaceChecked (prefix, nsObj);
 		}
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
@@ -585,30 +581,22 @@ namespace System.Xml
 				localName = String.Empty;
 			}
 
-			ProcessStartAttributeCommon (prefix, localName, ns, localName, ns);
+			ProcessStartAttributeCommon (ref prefix, localName, ns, localName, ns);
 
 			// for namespace nodes we don't write attribute node here.
 			if (save_target == SaveTarget.Namespaces)
 				return;
 
-			int op = prefix.Length > 0 ? BF.AttrStringPrefix : BF.AttrString;
+			byte op = prefix.Length == 1 && 'a' <= prefix [0] && prefix [0] <= 'z' ?
+				  (byte) (prefix [0] - 'a' + BF.PrefixNAttrStringStart) :
+				  prefix.Length == 0 ? BF.AttrString :
+				  BF.AttrStringPrefix;
 
-			// Write to Stream
-			int idx = BF.AttrTempIndexPrefixStringStart;
-			if (prefix.Length == 0 && ns.Length > 0) { // i.e. dummy prefix
-				foreach (string n in dummy_namespaces) {
-					if (n == ns) {
-						writer.Write ((byte) (idx));
-						writer.Write (localName);
-						idx = -1;
-						break;
-					}
-					if (++idx > BF.AttrTempIndexPrefixStringEnd)
-						break;
-				}
-			}
-			if (idx >= 0) {
-				writer.Write ((byte) op);
+			if (BF.PrefixNAttrStringStart <= op && op <= BF.PrefixNAttrStringEnd) {
+				writer.Write (op);
+				writer.Write (localName);
+			} else {
+				writer.Write (op);
 				if (prefix.Length > 0)
 					writer.Write (prefix);
 				writer.Write (localName);
@@ -732,8 +720,8 @@ namespace System.Xml
 			if (namespaceUri == null)
 				throw new ArgumentNullException ("namespaceUri");
 
-			if (prefix == null)
-				prefix = ((char)('a' + Depth - 1)).ToString ();
+			if (String.IsNullOrEmpty (prefix))
+				prefix = CreateNewPrefix ();
 
 			CheckStateForAttribute ();
 
@@ -751,7 +739,7 @@ namespace System.Xml
 			}
 
 			if (prefix == null)
-				prefix = String.Empty;
+				throw new InvalidOperationException ();
 			if (namespaces.Contains (prefix)) {
 				if (namespaces [prefix].ToString () != ns.ToString ())
 					throw new ArgumentException (String.Format ("The prefix '{0}' is already mapped to another namespace URI '{1}' in this element scope", prefix ?? "(null)", namespaces [prefix] ?? "(null)"));
@@ -813,28 +801,31 @@ namespace System.Xml
 				localName = XmlDictionaryString.Empty;
 			}
 
-			ProcessStartAttributeCommon (prefix, localName.Value, ns.Value, localName, ns);
+			ProcessStartAttributeCommon (ref prefix, localName.Value, ns.Value, localName, ns);
 
 			if (save_target == SaveTarget.Namespaces)
 				return;
 
-			int op = 
-				ns.Value == nsmgr.LookupNamespace (element_prefix) ? BF.GlobalAttrIndexInElemNS :
-				ns.Value.Length == 0 ? BF.AttrIndex :
-				prefix.Length > 0 ? BF.AttrIndexPrefix : BF.GlobalAttrIndex;
-			// Write to Stream
-			writer.Write ((byte) op);
-			if (prefix.Length > 0)
-				writer.Write (prefix);
-			WriteDictionaryIndex (localName);
+			if (prefix.Length == 1 && 'a' <= prefix [0] && prefix [0] <= 'z') {
+				writer.Write ((byte) (prefix [0] - 'a' + BF.PrefixNAttrIndexStart));
+				WriteDictionaryIndex (localName);
+			} else {
+				byte op = ns.Value.Length == 0 ? BF.AttrIndex :BF.AttrIndexPrefix;
+				// Write to Stream
+				writer.Write (op);
+				if (prefix.Length > 0)
+					writer.Write (prefix);
+				WriteDictionaryIndex (localName);
+			}
 		}
 
 		public override void WriteXmlnsAttribute (string prefix, XmlDictionaryString namespaceUri)
 		{
-			if (prefix == null)
-				throw new ArgumentNullException ("prefix");
 			if (namespaceUri == null)
 				throw new ArgumentNullException ("namespaceUri");
+
+			if (String.IsNullOrEmpty (prefix))
+				prefix = CreateNewPrefix ();
 
 			CheckStateForAttribute ();
 

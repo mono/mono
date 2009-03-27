@@ -148,7 +148,7 @@ namespace System.Xml
 
 			public string Value {
 				get {
-					if (BF.AttrString <= ValueType && ValueType <= BF.GlobalAttrIndexInElemNS)
+					if (BF.AttrString <= ValueType && ValueType <= BF.PrefixNAttrIndexEnd)
 						return value; // attribute
 					switch (ValueType) {
 					case 0:
@@ -612,8 +612,6 @@ namespace System.Xml
 				case BF.AttrStringPrefix:
 				case BF.AttrIndex:
 				case BF.AttrIndexPrefix:
-				case BF.GlobalAttrIndex:
-				case BF.GlobalAttrIndexInElemNS:
 					ReadAttribute ((byte) ident);
 					break;
 				case BF.DefaultNSString:
@@ -623,7 +621,8 @@ namespace System.Xml
 					ReadNamespace ((byte) ident);
 					break;
 				default:
-					if (BF.AttrTempIndexPrefixStringStart <= ident && ident <= BF.AttrTempIndexPrefixStringEnd)
+					if (BF.PrefixNAttrStringStart <= ident && ident <= BF.PrefixNAttrStringEnd ||
+					    BF.PrefixNAttrIndexStart <= ident && ident <= BF.PrefixNAttrIndexEnd)
 						ReadAttribute ((byte) ident);
 					else {
 						next = ident;
@@ -680,10 +679,6 @@ namespace System.Xml
 				}
 */
 			} while (loop);
-
-			foreach (AttrNodeInfo a in attributes)
-				if (a.NSIndex == -3)
-					throw new NotImplementedException (); // FIXME: fill ns index
 
 #if true
 			node.NS = context.NamespaceManager.LookupNamespace (node.Prefix) ?? String.Empty;
@@ -752,21 +747,15 @@ namespace System.Xml
 				a.Prefix = ReadUTF8 ();
 				a.NSSlot = ns_slot++;
 				goto case BF.AttrIndex;
-			case BF.GlobalAttrIndex:
-				a.NSSlot = ns_slot++;
-				a.DictLocalName = ReadDictName ();
-				// FIXME: retrieve namespace
-				break;
-			case BF.GlobalAttrIndexInElemNS:
-				a.Prefix = node.Prefix;
-				a.DictLocalName = ReadDictName ();
-				a.NSSlot = -2;
-				break;
 			default:
-				if (BF.AttrTempIndexPrefixStringStart <= ident && ident <= BF.AttrTempIndexPrefixStringEnd) {
+				if (BF.PrefixNAttrStringStart <= ident && ident <= BF.PrefixNAttrStringEnd) {
 					a.Prefix = ((char) ('a' + ident)).ToString ();
 					a.LocalName = ReadUTF8 ();
-					a.NSSlot = -3;
+					break;
+				}
+				else if (BF.PrefixNAttrIndexStart <= ident && ident <= BF.PrefixNAttrIndexEnd) {
+					a.Prefix = ((char) ('a' + ident)).ToString ();
+					a.DictLocalName = ReadDictName ();
 					break;
 				}
 				else throw new XmlException (String.Format ("Unexpected attribute node type: 0x{0:X02}", ident));

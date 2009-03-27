@@ -43,10 +43,10 @@ namespace System.Xml
 		public const byte PrefixNSString = 0x09;
 		public const byte DefaultNSIndex = 0x0A;
 		public const byte PrefixNSIndex = 0x0B;
-		public const byte GlobalAttrIndex = 0x0C;
-		public const byte GlobalAttrIndexInElemNS = 0x0D;
-		public const byte AttrTempIndexPrefixStringStart = 0x26;
-		public const byte AttrTempIndexPrefixStringEnd = 0x26 + 26 - 1;
+		public const byte PrefixNAttrIndexStart = 0x0C;
+		public const byte PrefixNAttrIndexEnd = 0x0C + 26 - 1;
+		public const byte PrefixNAttrStringStart = 0x26;
+		public const byte PrefixNAttrStringEnd = 0x26 + 26 - 1;
 		public const byte ElemString = 0x40;
 		public const byte ElemStringPrefix = 0x41;
 		public const byte ElemIndex = 0x42;

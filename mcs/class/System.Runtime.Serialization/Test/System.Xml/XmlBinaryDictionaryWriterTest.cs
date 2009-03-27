@@ -478,7 +478,7 @@ Console.WriteLine ();
 			w.WriteAttributeString ("bbb", "n5", "urn:foo", String.Empty);
 			w.WriteAttributeString ("n6", String.Empty);
 			w.WriteAttributeString (dic.Add ("n7"), XmlDictionaryString.Empty, String.Empty); // local attribute
-			w.WriteAttributeString ("bbb", "n8", "urn:foo", String.Empty); // xmlns:bbb mapping already exists (n5), and written just once
+			w.WriteAttributeString ("bbb", "n8", "urn:foo", String.Empty); // xmlns:bbb mapping already exists (from StartElement = 'a'), so prefix "bbb" won't be used.
 			w.Close ();
 
 			// 0x0C nameidx (value) 0x0D nameidx (value)
@@ -630,6 +630,33 @@ Console.WriteLine ();
 			// FIXME: enable them once QName is implemented
 			//0xBC, 23, 0, // QName dictionay string
 			//0x98, 2, 0x78, 0x78, 0x98, 1, 0x3A, 0xAB, 0, // QName with longer prefix is written just as a string
+			};
+
+		const string xmlnsns = "http://www.w3.org/2000/xmlns/";
+
+		[Test]
+		public void WriteAutoIndexedAttribute ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlDictionary dic = new XmlDictionary ();
+			var w = XmlDictionaryWriter.CreateBinaryWriter (ms, dic, null);
+			w.WriteStartElement ("root");
+			w.WriteXmlnsAttribute ("c", "urn:foo");
+			w.WriteAttributeString ("xmlns", "d", xmlnsns, "urn:bar");
+			w.WriteAttributeString ("xmlns", "dd", xmlnsns, "urn:baz");
+			w.WriteAttributeString ("a1", "urn:foo", "v1");
+			w.WriteAttributeString ("a2", "urn:bar", "v2");
+			w.WriteAttributeString ("a3", "urn:baz", "v3");
+			w.Close ();
+			Assert.AreEqual (auto_indexed_atts_value, ms.ToArray ());
+		}
+		
+		byte [] auto_indexed_atts_value = {
+			0x40, 0x04, 0x72, 0x6F, 0x6F, 0x74, 0x28, 0x02, 0x61, 0x31, 0x98, 0x02, 0x76, 0x31, 0x29, 0x02,
+			0x61, 0x32, 0x98, 0x02, 0x76, 0x32, 0x05, 0x02, 0x64, 0x64, 0x02, 0x61, 0x33, 0x98, 0x02, 0x76,
+			0x33, 0x09, 0x01, 0x63, 0x07, 0x75, 0x72, 0x6E, 0x3A, 0x66, 0x6F, 0x6F, 0x09, 0x01, 0x64, 0x07,
+			0x75, 0x72, 0x6E, 0x3A, 0x62, 0x61, 0x72, 0x09, 0x02, 0x64, 0x64, 0x07, 0x75, 0x72, 0x6E, 0x3A,
+			0x62, 0x61, 0x7A, 0x01,
 			};
 	}
 }
