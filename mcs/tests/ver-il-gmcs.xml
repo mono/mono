@@ -35102,6 +35102,72 @@
       </method>
     </type>
   </test>
+  <test name="test-717.cs">
+    <type name="AA">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Foo(Int32)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Foo(Byte)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Foo(Int32)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Foo(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void Foo(System.String)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="System.String ToString()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="MyClass">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>61</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-718.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo(Int32, Int32)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>8</size>
+      </method>
+      <method name="Void Foo(Int32)">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="test-72.cs">
     <type name="outer">
       <method name="Void .ctor()">
