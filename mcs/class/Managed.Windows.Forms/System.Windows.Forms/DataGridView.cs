@@ -4325,7 +4325,9 @@ namespace System.Windows.Forms {
 			DataGridViewRow row = null;
 			Rectangle cellBounds;
 
-			if (hitTest.Type == DataGridViewHitTestType.ColumnHeader && MouseOverColumnResize (hitTest.ColumnIndex, e.X)) {
+			if ((hitTest.Type == DataGridViewHitTestType.ColumnHeader ||
+			     (hitTest.Type == DataGridViewHitTestType.Cell && !ColumnHeadersVisible)) 
+			    && MouseOverColumnResize (hitTest.ColumnIndex, e.X)) {
 				if (e.Clicks == 2) {
 					AutoResizeColumn (hitTest.ColumnIndex);
 					return;
@@ -4429,7 +4431,12 @@ namespace System.Windows.Forms {
 			Cursor new_cursor = Cursors.Default;
 			HitTestInfo hit = this.HitTest (e.X, e.Y);
 			
-			if (hit.Type == DataGridViewHitTestType.Cell) {
+			if (hit.Type == DataGridViewHitTestType.ColumnHeader || 
+			    (!ColumnHeadersVisible && hit.Type == DataGridViewHitTestType.Cell && MouseOverColumnResize (hit.ColumnIndex, e.X))) {
+				EnteredHeaderCell = Columns [hit.ColumnIndex].HeaderCell;
+				if (MouseOverColumnResize (hit.ColumnIndex, e.X))
+					new_cursor = Cursors.VSplit;
+			} else if (hit.Type == DataGridViewHitTestType.Cell) {
 				EnteredHeaderCell = null;
 
 				DataGridViewCell new_cell = GetCellInternal (hit.ColumnIndex, hit.RowIndex);
@@ -4450,6 +4457,8 @@ namespace System.Windows.Forms {
 						MouseLeftErrorIcon (new_cell);
 				}
 				
+				Cursor = new_cursor;
+
 				// We have never been in a cell before
 				if (hover_cell == null) {
 					hover_cell = new_cell;
@@ -4525,13 +4534,7 @@ namespace System.Windows.Forms {
 				}
 			
 			} else {
-				if (hit.Type == DataGridViewHitTestType.ColumnHeader) {
-					EnteredHeaderCell = Columns [hit.ColumnIndex].HeaderCell;
-					
-					if (MouseOverColumnResize (hit.ColumnIndex, e.X))
-						new_cursor = Cursors.VSplit;
-				} else
-					EnteredHeaderCell = null;
+				EnteredHeaderCell = null;
 
 				// We have left the cell area
 				if (hover_cell != null) {
