@@ -1,5 +1,10 @@
 2009-03-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Disable tail calls for calls which
+	return a valuetype. Fixes #487518.
+
+	* iltests.il: Add a test.
+	
 	* aot-compiler.c: Use mono_thread_create () to create helper threads.
 
 	* mini-trampolines.c (mono_delegate_trampoline): Handle static delegates
