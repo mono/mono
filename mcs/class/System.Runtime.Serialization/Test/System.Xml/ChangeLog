@@ -1,5 +1,9 @@
 2009-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryWriterTest.cs : enabled QName test parts.
+
+2009-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryWriterTest.cs: added test for shorthand
 	  prefixed attributes.
 

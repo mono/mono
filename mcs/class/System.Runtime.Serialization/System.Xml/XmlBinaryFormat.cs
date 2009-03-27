@@ -72,7 +72,7 @@ namespace System.Xml
 		public const byte Bytes32 = 0xA2;
 
 		public const byte EmptyText = 0xA8;
-
+		public const byte TextIndex = 0xAA;
 		public const byte UniqueId = 0xAC;
 		public const byte TimeSpan = 0xAE;
 		public const byte Guid = 0xB0;
@@ -152,12 +152,12 @@ namespace System.Xml
 		9A : chars16
 		9C : chars32
 		9E : bytes8 (base64)
-		A0 : bytes16 (base64 with fixed length?)
+		A0 : bytes16 (base64)
 		A2 : bytes32 (base64)
 		A4 : TODO: start of list
 		A6 : TODO: end of list
 		A8 : empty text
-		AA : TODO: text index
+		AA : text index
 		AC : UniqueId (IsGuid = true)
 		AE : TimeSpan
 		B0 : UUID
@@ -166,7 +166,7 @@ namespace System.Xml
 		B6 : utf16_8
 		B8 : utf16_16
 		BA : utf16_32
-		BC : TODO: QName index
+		BC : QName index
 
 		Error: PIs, doctype
 		Ignored: XMLdecl

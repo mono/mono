@@ -446,38 +446,27 @@ namespace System.Xml
 			// is still callable after this method(!)
 		}
 
-		[MonoTODO ("Some namespace management redesign is needed; it has to consider namespaces in ancestors to convert matching one into the index")]
 		public override void WriteQualifiedName (XmlDictionaryString local, XmlDictionaryString ns)
 		{
-			throw new NotImplementedException ();
-			/*
-			string prefix = LookupPrefix (ns.Value);
+			string prefix = namespaces.LastOrDefault (i => i.Value.ToString () == ns.ToString ()).Key;
+			bool use_dic = prefix != null;
 			if (prefix == null)
-				throw new ArgumentException (String.Format ("Namespace URI '{0}' is not bound to any of the prefixes", ns.Value));
-			int idx = 26;
-
-			if (prefix.Length == 1) {
-				idx = 0;
-				foreach (var de in namespaces) {
-					if (de.Value.ToString () == ns.Value)
-						break;
-					idx++;
-				}
-			}
+				prefix = LookupPrefix (ns.Value);
+			if (prefix == null)
+				throw new ArgumentException (String.Format ("Namespace URI '{0}' is not bound to any of the prefixes", ns));
 
 			ProcessTypedValue ();
 
-			if (idx >= 26 || idx == namespaces.Count) {
+			if (use_dic && prefix.Length == 1) {
+				writer.Write (BF.QNameIndex);
+				writer.Write ((byte) (prefix [0] - 'a'));
+				WriteDictionaryIndex (local);
+			} else {
 				// QNameIndex is not applicable.
 				WriteString (prefix);
 				WriteString (":");
 				WriteString (local);
-			} else {
-				writer.Write (BF.QNameIndex);
-				writer.Write ((byte) (prefix [0] - 'a'));
-				writer.Write ((byte) idx);
 			}
-			*/
 		}
 
 		public override void WriteRaw (string data)
@@ -678,13 +667,20 @@ namespace System.Xml
 			namespaces.Add (new KeyValuePair<string,object> (prefix, nsobj));
 		}
 
-		public override void WriteString (string text)
+		void CheckIfTextAllowed ()
 		{
 			switch (state) {
 			case WriteState.Start:
 			case WriteState.Prolog:
 				throw new InvalidOperationException ("Token content in state Prolog would result in an invalid XML document.");
 			}
+		}
+
+		public override void WriteString (string text)
+		{
+			if (text == null)
+				throw new ArgumentNullException ("text");
+			CheckIfTextAllowed ();
 
 			if (text == null)
 				text = String.Empty;
@@ -695,6 +691,27 @@ namespace System.Xml
 				attr_value += text;
 			else
 				WriteTextBinary (text);
+		}
+
+		public override void WriteString (XmlDictionaryString text)
+		{
+			if (text == null)
+				throw new ArgumentNullException ("text");
+			CheckIfTextAllowed ();
+
+			if (text == null)
+				text = XmlDictionaryString.Empty;
+
+			ProcessStateForContent ();
+
+			if (state == WriteState.Attribute)
+				attr_value += text.Value;
+			else if (text.Equals (XmlDictionary.Empty))
+				writer.Write (BF.EmptyText);
+			else {
+				writer.Write (BF.TextIndex);
+				WriteDictionaryIndex (text);
+			}
 		}
 
 		public override void WriteSurrogateCharEntity (char lowChar, char highChar)
