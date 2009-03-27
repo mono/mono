@@ -38,6 +38,7 @@ namespace DbLinq.Null {
 	{
 		public NullConnection ()
 		{
+            ConnectionString = "";
 		}
 
 		public override string ConnectionString {get; set;}

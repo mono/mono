@@ -1,3 +1,15 @@
+2009-03-27  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/DbLinq.sln,
+	  src/DbLinq.SqlServer/Test/DbLinq.SqlServer_test_ndb.csproj: Flush;
+	  syncs to DbLinq r1029.
+	* src/DbLinq.suo: Delete.
+	* src (svn:ignore): Ignore DbLinq.suo.
+	* src/DbLinq/Test/NullProvider.cs: Default initialize the
+	  ConnectionString to "" so that the MsSqlDataContextTest tests pass.
+	* System.Data.Linq_test.dll.sources: Add 
+	  src/DbLinq.SqlServer/Test/MsSqlDataContextTest.cs.
+
 2009-03-26  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/DbLinq/Data/Linq/Table.cs: Add an explicit 
