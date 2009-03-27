@@ -912,7 +912,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NullFirstArgumentOnStaticMethod ()
 		{
 			CallTarget call = (CallTarget) Delegate.CreateDelegate (

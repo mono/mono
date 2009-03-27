@@ -1,3 +1,7 @@
+2009-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* DelegateTest.cs: Mark a test as working.
+
 2009-03-25  Jb Evain  <jbevain@novell.com>
 
 	* DelegateTest.cs: add new CreateDelegate test.
