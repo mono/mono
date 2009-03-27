@@ -1,3 +1,8 @@
+2009-03-27  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (net_2_0_dirs): Build System.Runtime.Serialization
+	before System.Data.Linq.
+
 2009-01-22  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (net_2_0_dirs): added System.Web - it now depends on
