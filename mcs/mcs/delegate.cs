@@ -136,7 +136,6 @@ namespace Mono.CSharp {
 
  		public override bool Define ()
 		{
-#if GMCS_SOURCE
 			if (IsGeneric) {
 				foreach (TypeParameter type_param in TypeParameters) {
 					if (!type_param.Resolve (this))
@@ -148,7 +147,7 @@ namespace Mono.CSharp {
 						return false;
 				}
 			}
-#endif
+
 			member_cache = new MemberCache (TypeManager.multicast_delegate_type, this);
 
 			// FIXME: POSSIBLY make this static, as it is always constant
@@ -384,13 +383,11 @@ namespace Mono.CSharp {
 		public static ConstructorInfo GetConstructor (Type container_type, Type delegate_type)
 		{
 			Type dt = delegate_type;
-#if GMCS_SOURCE
 			Type[] g_args = null;
-			if (delegate_type.IsGenericType) {
-				g_args = delegate_type.GetGenericArguments ();
-				delegate_type = delegate_type.GetGenericTypeDefinition ();
+			if (TypeManager.IsGenericType (delegate_type)) {
+				g_args = TypeManager.GetTypeArguments (delegate_type);
+				delegate_type = TypeManager.DropGenericTypeArguments (delegate_type);
 			}
-#endif
 
 			Delegate d = TypeManager.LookupDelegate (delegate_type);
 			if (d != null) {
@@ -422,13 +419,13 @@ namespace Mono.CSharp {
 		public static MethodInfo GetInvokeMethod (Type container_type, Type delegate_type)
 		{
 			Type dt = delegate_type;
-#if GMCS_SOURCE
+
 			Type[] g_args = null;
-			if (delegate_type.IsGenericType) {
-				g_args = delegate_type.GetGenericArguments ();
-				delegate_type = delegate_type.GetGenericTypeDefinition ();
+			if (TypeManager.IsGenericType (delegate_type)) {
+				g_args = TypeManager.GetTypeArguments (delegate_type);
+				delegate_type = TypeManager.DropGenericTypeArguments (delegate_type);
 			}
-#endif
+
 			Delegate d = TypeManager.LookupDelegate (delegate_type);
 			MethodInfo invoke;
 			if (d != null) {

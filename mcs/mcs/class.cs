@@ -229,9 +229,7 @@ namespace Mono.CSharp {
 		TypeExpr base_type;
 		TypeExpr[] iface_exprs;
 		Type GenericType;
-#if GMCS_SOURCE		
 		GenericTypeParameterBuilder[] nested_gen_params;
-#endif
 
 		protected ArrayList type_bases;
 
@@ -972,12 +970,12 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (this);
 
-#if GMCS_SOURCE
 			if (IsGeneric) {
 				string[] param_names = new string [TypeParameters.Length];
 				for (int i = 0; i < TypeParameters.Length; i++)
 					param_names [i] = TypeParameters [i].Name;
 
+#if GMCS_SOURCE
 				GenericTypeParameterBuilder[] gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
 				int offset = CountTypeParameters - CurrentTypeParameters.Length;
@@ -988,8 +986,11 @@ namespace Mono.CSharp {
 
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].Define (gen_params [i]);
-			}
+#else
+				nested_gen_params = null;
+				throw new NotSupportedException ();
 #endif
+			}
 
 			return true;
 		}
@@ -1119,7 +1120,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-#if GMCS_SOURCE
 		void UpdateTypeParameterConstraints (TypeContainer part)
 		{
 			TypeParameter[] current_params = CurrentTypeParameters;
@@ -1137,7 +1137,6 @@ namespace Mono.CSharp {
 					GetSignatureForError (), current_params [i].GetSignatureForError ());
 			}
 		}
-#endif
 
 		public bool ResolveType ()
 		{
@@ -1155,7 +1154,6 @@ namespace Mono.CSharp {
 
 		protected virtual bool DoResolveType ()
 		{
-#if GMCS_SOURCE
 			if (!IsGeneric)
 				return true;
 
@@ -1202,7 +1200,6 @@ namespace Mono.CSharp {
 			}
 
 			CurrentType = current_type.Type;
-#endif			
 			return true;
 		}
 
@@ -1382,15 +1379,13 @@ namespace Mono.CSharp {
 				GenericType = CurrentType;
 			}
 
-#if GMCS_SOURCE
 			//
 			// FIXME: This hack is needed because member cache does not work
 			// with generic types, we rely on runtime to inflate dynamic types.
 			// TODO: This hack requires member cache refactoring to be removed
 			//
-			if (TypeBuilder.IsGenericType)
+			if (TypeManager.IsGenericType (TypeBuilder))
 				member_cache = new MemberCache (this);
-#endif			
 
 			return true;
 		}
@@ -2793,10 +2788,8 @@ namespace Mono.CSharp {
 		{
 			base.Emit ();
 
-#if GMCS_SOURCE
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				PredefinedAttributes.Get.Extension.EmitAttribute (TypeBuilder);
-#endif			
 		}
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
@@ -3814,10 +3807,8 @@ namespace Mono.CSharp {
 					
 			MethodBuilder = MethodData.MethodBuilder;
 
-#if GMCS_SOURCE						
-			if (MethodBuilder.IsGenericMethod)
+			if (TypeManager.IsGenericMethod (MethodBuilder))
 				Parent.MemberCache.AddGenericMember (MethodBuilder, this);
-#endif			
 			
 			Parent.MemberCache.AddMember (MethodBuilder, this);
 
@@ -4287,11 +4278,8 @@ namespace Mono.CSharp {
 
 				base.Emit ();
 				
-#if GMCS_SOURCE				
 				if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 					PredefinedAttributes.Get.Extension.EmitAttribute (MethodBuilder);
-#endif
-
 			} catch {
 				Console.WriteLine ("Internal compiler error at {0}: exception caught while emitting {1}",
 						   Location, MethodBuilder);
@@ -4837,9 +4825,7 @@ namespace Mono.CSharp {
 	// Encapsulates most of the Method's state
 	//
 	public class MethodData {
-#if GMCS_SOURCE
 		static FieldInfo methodbuilder_attrs_field;
-#endif
 		public readonly IMethodData method;
 
 		public readonly GenericMethod GenericMethod;
@@ -5072,7 +5058,7 @@ namespace Mono.CSharp {
 			//
 			builder.SetParameters (param.GetEmitTypes ());
 			builder.SetReturnType (method.ReturnType);
-
+#endif
 			if (builder.Attributes != flags) {
 				try {
 					if (methodbuilder_attrs_field == null)
@@ -5082,9 +5068,6 @@ namespace Mono.CSharp {
 					Report.RuntimeMissingSupport (method.Location, "Generic method MethodAttributes");
 				}
 			}
-#else
-			throw new InternalErrorException ();
-#endif
 		}
 
 		//

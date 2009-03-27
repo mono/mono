@@ -400,13 +400,9 @@ namespace Mono.CSharp {
 
 		TypeExpr enumerator_type;
 		TypeExpr enumerable_type;
-#if GMCS_SOURCE
 		TypeArguments generic_args;
 		TypeExpr generic_enumerator_type;
 		TypeExpr generic_enumerable_type;
-#else
-		const TypeArguments generic_args = null;
-#endif
 
 		ArrayList hoisted_params_copy;
 		int local_name_idx;
@@ -433,10 +429,7 @@ namespace Mono.CSharp {
 		protected override TypeExpr [] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			iterator_type_expr = new TypeExpression (MutateType (Iterator.OriginalIteratorType), Location);
-
-#if GMCS_SOURCE
 			generic_args = new TypeArguments (iterator_type_expr);
-#endif
 
 			ArrayList list = new ArrayList ();
 			if (Iterator.IsEnumerable) {
@@ -444,12 +437,12 @@ namespace Mono.CSharp {
 					TypeManager.ienumerable_type, Location);
 				list.Add (enumerable_type);
 
-#if GMCS_SOURCE
-				generic_enumerable_type = new GenericTypeExpr (
-					TypeManager.generic_ienumerable_type,
-					generic_args, Location);
-				list.Add (generic_enumerable_type);
-#endif
+				if (TypeManager.generic_ienumerable_type != null) {
+					generic_enumerable_type = new GenericTypeExpr (
+						TypeManager.generic_ienumerable_type,
+						generic_args, Location);
+					list.Add (generic_enumerable_type);
+				}
 			}
 
 			enumerator_type = new TypeExpression (
@@ -458,12 +451,12 @@ namespace Mono.CSharp {
 
 			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
 
-#if GMCS_SOURCE
-			generic_enumerator_type = new GenericTypeExpr (
-				TypeManager.generic_ienumerator_type,
-				generic_args, Location);
-			list.Add (generic_enumerator_type);
-#endif
+			if (TypeManager.generic_ienumerator_type != null) {
+				generic_enumerator_type = new GenericTypeExpr (
+					TypeManager.generic_ienumerator_type,
+					generic_args, Location);
+				list.Add (generic_enumerator_type);
+			}
 
 			type_bases = list;
 
@@ -494,9 +487,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-#if GMCS_SOURCE
-			Define_Current (true);
-#endif
+			if (generic_enumerator_type != null)
+				Define_Current (true);
+
 			Define_Current (false);
 			new DisposeMethod (this);
 			Define_Reset ();
@@ -507,25 +500,25 @@ namespace Mono.CSharp {
 				name = new MemberName (name, "IEnumerable", Location);
 				name = new MemberName (name, "GetEnumerator", Location);
 
-#if GMCS_SOURCE
-				Method get_enumerator = new IteratorMethod (this, enumerator_type, 0, name);
+				if (generic_enumerator_type != null) {
+					Method get_enumerator = new IteratorMethod (this, enumerator_type, 0, name);
 
-				name = new MemberName (name.Left.Left, "Generic", Location);
-				name = new MemberName (name, "IEnumerable", generic_args, Location);
-				name = new MemberName (name, "GetEnumerator", Location);
-				Method gget_enumerator = new GetEnumeratorMethod (this, generic_enumerator_type, name);
+					name = new MemberName (name.Left.Left, "Generic", Location);
+					name = new MemberName (name, "IEnumerable", generic_args, Location);
+					name = new MemberName (name, "GetEnumerator", Location);
+					Method gget_enumerator = new GetEnumeratorMethod (this, generic_enumerator_type, name);
 
-				//
-				// Just call generic GetEnumerator implementation
-				//
-				get_enumerator.Block.AddStatement (
-					new Return (new Invocation (new DynamicMethodGroupExpr (gget_enumerator, Location), new ArrayList (0)), Location));
+					//
+					// Just call generic GetEnumerator implementation
+					//
+					get_enumerator.Block.AddStatement (
+						new Return (new Invocation (new DynamicMethodGroupExpr (gget_enumerator, Location), new ArrayList (0)), Location));
 
-				AddMethod (get_enumerator);
-				AddMethod (gget_enumerator);
-#else
-				AddMethod (new GetEnumeratorMethod (this, enumerator_type, name));
-#endif
+					AddMethod (get_enumerator);
+					AddMethod (gget_enumerator);
+				} else {
+					AddMethod (new GetEnumeratorMethod (this, enumerator_type, name));
+				}
 			}
 		}
 

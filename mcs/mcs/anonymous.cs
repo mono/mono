@@ -585,7 +585,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < t_args.Length; ++i)
 				t_args [i] = MutateType (t_args [i]);
 
-			return type.GetGenericTypeDefinition ().MakeGenericType (t_args);
+			return TypeManager.DropGenericTypeArguments (type).MakeGenericType (t_args);
 		}
 #endif
 
@@ -876,7 +876,6 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDelegateType (delegate_type))
 				return delegate_type;
 
-#if GMCS_SOURCE
 			if (TypeManager.DropGenericTypeArguments (delegate_type) == TypeManager.expression_type) {
 				delegate_type = TypeManager.GetTypeArguments (delegate_type) [0];
 				if (TypeManager.IsDelegateType (delegate_type))
@@ -886,7 +885,6 @@ namespace Mono.CSharp {
 					GetSignatureForError (), TypeManager.CSharpName (delegate_type));
 				return null;
 			}
-#endif
 
 			Report.Error (1660, loc, "Cannot convert `{0}' to non-delegate type `{1}'",
 				      GetSignatureForError (), TypeManager.CSharpName (delegate_type));
@@ -971,16 +969,12 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!TypeManager.IsDelegateType (delegate_type)) {
-#if GMCS_SOURCE
 				if (TypeManager.DropGenericTypeArguments (delegate_type) != TypeManager.expression_type)
 					return false;
 
-				delegate_type = delegate_type.GetGenericArguments () [0];
+				delegate_type = TypeManager.GetTypeArguments (delegate_type) [0];
 				if (!TypeManager.IsDelegateType (delegate_type))
 					return false;
-#else
-				return false;
-#endif
 			}
 			
 			AParametersCollection d_params = TypeManager.GetDelegateParameters (delegate_type);
@@ -1537,7 +1531,6 @@ namespace Mono.CSharp {
 			}
 
 			MethodInfo delegate_method = method.MethodBuilder;
-#if GMCS_SOURCE
 			if (storey != null && storey.MemberName.IsGeneric) {
 				Type t = storey.Instance.Type;
 				
@@ -1551,9 +1544,13 @@ namespace Mono.CSharp {
 					t = storey.GetGenericStorey ().MutateType (t);
 				}
 
+#if GMCS_SOURCE
 				delegate_method = TypeBuilder.GetMethod (t, delegate_method);
-			}
+#else
+				throw new NotSupportedException ();
 #endif
+			}
+
 			ig.Emit (OpCodes.Ldftn, delegate_method);
 
 			ConstructorInfo constructor_method = Delegate.GetConstructor (ec.ContainerType, type);

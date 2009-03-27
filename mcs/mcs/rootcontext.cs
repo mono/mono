@@ -260,9 +260,7 @@ namespace Mono.CSharp {
 			//
 			if (helper_classes != null){
 				foreach (TypeBuilder type_builder in helper_classes) {
-#if GMCS_SOURCE
 					PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (type_builder);
-#endif
 					type_builder.CreateType ();
 				}
 			}

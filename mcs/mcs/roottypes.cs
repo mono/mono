@@ -28,9 +28,7 @@ namespace Mono.CSharp
 		public ModuleBuilder Builder;
 		bool is_unsafe;
 
-#if GMCS_SOURCE
 		bool has_default_charset;
-#endif
 
 		public CharSet DefaultCharSet = CharSet.Ansi;
 		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
@@ -136,11 +134,7 @@ namespace Mono.CSharp
 
 		public bool HasDefaultCharSet {
 			get {
-#if GMCS_SOURCE		
 				return has_default_charset;
-#else
-				return false;
-#endif								
 			}
 		}
 
@@ -183,7 +177,6 @@ namespace Mono.CSharp
 		/// </summary>
 		public void Resolve ()
 		{
-#if GMCS_SOURCE
 			if (OptAttributes == null)
 				return;
 
@@ -209,7 +202,6 @@ namespace Mono.CSharp
 					break;
 				}
 			}
-#endif
 		}
 
 		Attribute ResolveAttribute (PredefinedAttribute a_type)

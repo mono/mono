@@ -365,7 +365,6 @@ namespace Mono.CSharp {
 				t == TypeManager.type_type;
 		}
 
-		[Conditional ("GMCS_SOURCE")]
 		void ApplyModuleCharSet ()
 		{
 			if (Type != PredefinedAttributes.Get.DllImport)

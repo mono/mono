@@ -1000,10 +1000,8 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Value;
 
-#if GMCS_SOURCE
 			if (TypeManager.IsNullableValueType (expr.Type))
 				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
-#endif
 
 			return ResolveOperator (ec);
 		}
@@ -1321,7 +1319,6 @@ namespace Mono.CSharp {
 
 		Expression ResolveGenericParameter (Type d, Type t)
 		{
-#if GMCS_SOURCE
 			GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
 			if (constraints != null) {
 				if (constraints.IsReferenceType && TypeManager.IsStruct (d))
@@ -1335,9 +1332,6 @@ namespace Mono.CSharp {
 				expr = new BoxedCast (expr, d);
 
 			return this;
-#else
-			return null;
-#endif
 		}
 		
 		protected override string OperatorName {
@@ -5411,8 +5405,7 @@ namespace Mono.CSharp {
 				return (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 			}
 
-#if GMCS_SOURCE
-			if (type.IsGenericParameter) {
+			if (TypeManager.IsGenericParameter (type)) {
 				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (type);
 
 				if ((gc == null) || (!gc.HasConstructorConstraint && !gc.IsValueType)) {
@@ -5444,7 +5437,6 @@ namespace Mono.CSharp {
 				eclass = ExprClass.Value;
 				return this;
 			}
-#endif
 
 			if (type.IsAbstract && type.IsSealed) {
 				Report.SymbolRelatedToPreviousError (type);
@@ -7380,12 +7372,12 @@ namespace Mono.CSharp {
 			Expression member_lookup;
 			member_lookup = MemberLookup (
 				ec.ContainerType, expr_type, expr_type, Name, loc);
-#if GMCS_SOURCE
-			if ((member_lookup == null) && (targs != null)) {
+
+			if (member_lookup == null && targs != null) {
 				member_lookup = MemberLookup (
 					ec.ContainerType, expr_type, expr_type, LookupIdentifier, loc);
 			}
-#endif
+
 			if (member_lookup == null) {
 				ExprClass expr_eclass = expr_resolved.eclass;
 
@@ -7430,7 +7422,6 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-#if GMCS_SOURCE
 				GenericTypeExpr ct = expr_resolved as GenericTypeExpr;
 				if (ct != null) {
 					//
@@ -7445,7 +7436,7 @@ namespace Mono.CSharp {
 
 					return ct.ResolveAsTypeStep (ec, false);
 				}
-#endif
+
 				return member_lookup;
 			}
 
@@ -7537,7 +7528,6 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-#if GMCS_SOURCE
 			TypeArguments the_args = targs;
 			Type declaring_type = texpr.Type.DeclaringType;
 			if (TypeManager.HasGenericArguments (declaring_type) && !TypeManager.IsGenericTypeDefinition (expr_type)) {
@@ -7559,7 +7549,6 @@ namespace Mono.CSharp {
 				GenericTypeExpr ctype = new GenericTypeExpr (texpr.Type, the_args, loc);
 				return ctype.ResolveAsTypeStep (rc, false);
 			}
-#endif
 
 			return texpr;
 		}
@@ -8310,8 +8299,7 @@ namespace Mono.CSharp {
 			{
 				Indexers ix = new Indexers ();
 
-	#if GMCS_SOURCE
-				if (lookup_type.IsGenericParameter) {
+				if (TypeManager.IsGenericParameter (lookup_type)) {
 					GenericConstraints gc = TypeManager.GetTypeParameterConstraints (lookup_type);
 					if (gc == null)
 						return ix;
@@ -8330,7 +8318,6 @@ namespace Mono.CSharp {
 
 					return ix;
 				}
-	#endif
 
 				Type copy = lookup_type;
 				while (copy != TypeManager.object_type && copy != null){
@@ -8958,14 +8945,12 @@ namespace Mono.CSharp {
 				return null;
 
 			Type ltype = lexpr.Type;
-#if GMCS_SOURCE
 			if ((dim.Length > 0) && (dim [0] == '?')) {
 				TypeExpr nullable = new Nullable.NullableType (lexpr, loc);
 				if (dim.Length > 1)
 					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
 				return nullable.ResolveAsTypeTerminal (ec, false);
 			}
-#endif
 
 			if (dim == "*" && !TypeManager.VerifyUnManaged (ltype, loc))
 				return null;

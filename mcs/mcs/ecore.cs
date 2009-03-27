@@ -4330,11 +4330,9 @@ namespace Mono.CSharp {
 				return null;
 
 			MethodBase the_method = TypeManager.DropGenericMethodArguments (best_candidate);
-#if GMCS_SOURCE
-			if (the_method.IsGenericMethodDefinition &&
+			if (TypeManager.IsGenericMethodDefinition (the_method) &&
 			    !ConstraintChecker.CheckConstraints (ec, the_method, best_candidate, loc))
 				return null;
-#endif
 
 			//
 			// Check ObsoleteAttribute on the best method

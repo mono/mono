@@ -3137,20 +3137,14 @@ namespace Mono.CSharp {
 		FieldExpr switch_cache_field;
 		static int unique_counter;
 
-#if GMCS_SOURCE
 		//
-		// Nullable Types support for GMCS.
+		// Nullable Types support
 		//
 		Nullable.Unwrap unwrap;
 
 		protected bool HaveUnwrap {
 			get { return unwrap != null; }
 		}
-#else
-		protected bool HaveUnwrap {
-			get { return false; }
-		}
-#endif
 
 		//
 		// The types allowed to be implicitly cast from
@@ -3613,7 +3607,6 @@ namespace Mono.CSharp {
 
 			new_expr = SwitchGoverningType (ec, Expr);
 
-#if GMCS_SOURCE
 			if ((new_expr == null) && TypeManager.IsNullableType (Expr.Type)) {
 				unwrap = Nullable.Unwrap.Create (Expr, false);
 				if (unwrap == null)
@@ -3621,7 +3614,6 @@ namespace Mono.CSharp {
 
 				new_expr = SwitchGoverningType (ec, unwrap);
 			}
-#endif
 
 			if (new_expr == null){
 				Report.Error (151, loc, "A value of an integral type or string expected for switch");
@@ -3705,20 +3697,21 @@ namespace Mono.CSharp {
 		void ResolveStringSwitchMap (EmitContext ec)
 		{
 			FullNamedExpression string_dictionary_type;
-#if GMCS_SOURCE
-			MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
-				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc), "Generic", loc);
+			if (TypeManager.generic_ienumerable_type != null) {
+				MemberAccess system_collections_generic = new MemberAccess (new MemberAccess (
+					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc), "Generic", loc);
 
-			string_dictionary_type = new MemberAccess (system_collections_generic, "Dictionary",
-				new TypeArguments (
-					new TypeExpression (TypeManager.string_type, loc),
-					new TypeExpression (TypeManager.int32_type, loc)), loc);
-#else
-			MemberAccess system_collections_generic = new MemberAccess (
-				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc);
+				string_dictionary_type = new MemberAccess (system_collections_generic, "Dictionary",
+					new TypeArguments (
+						new TypeExpression (TypeManager.string_type, loc),
+						new TypeExpression (TypeManager.int32_type, loc)), loc);
+			} else {
+				MemberAccess system_collections_generic = new MemberAccess (
+					new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Collections", loc);
 
-			string_dictionary_type = new MemberAccess (system_collections_generic, "Hashtable", loc);
-#endif
+				string_dictionary_type = new MemberAccess (system_collections_generic, "Hashtable", loc);
+			}
+
 			Field field = new Field (ec.TypeContainer, string_dictionary_type,
 				Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
 				new MemberName (CompilerGeneratedClass.MakeName (null, "f", "switch$map", unique_counter++), loc), null);
@@ -3779,36 +3772,37 @@ namespace Mono.CSharp {
 
 			LocalTemporary string_switch_variable = new LocalTemporary (TypeManager.int32_type);
 
-#if GMCS_SOURCE
-			ArrayList get_value_args = new ArrayList (2);
-			get_value_args.Add (new Argument (value));
-			get_value_args.Add (new Argument (string_switch_variable, Argument.AType.Out));
-			Expression get_item = new Invocation (new MemberAccess (switch_cache_field, "TryGetValue", loc), get_value_args).Resolve (ec);
-			if (get_item == null)
-				return;
+			if (TypeManager.generic_ienumerable_type != null) {
+				ArrayList get_value_args = new ArrayList (2);
+				get_value_args.Add (new Argument (value));
+				get_value_args.Add (new Argument (string_switch_variable, Argument.AType.Out));
+				Expression get_item = new Invocation (new MemberAccess (switch_cache_field, "TryGetValue", loc), get_value_args).Resolve (ec);
+				if (get_item == null)
+					return;
 
-			//
-			// A value was not found, go to default case
-			//
-			get_item.EmitBranchable (ec, default_target, false);
-#else
-			ArrayList get_value_args = new ArrayList (1);
-			get_value_args.Add (value);
+				//
+				// A value was not found, go to default case
+				//
+				get_item.EmitBranchable (ec, default_target, false);
+			} else {
+				ArrayList get_value_args = new ArrayList (1);
+				get_value_args.Add (value);
 
-			Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args), loc).Resolve (ec);
-			if (get_item == null)
-				return;
+				Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args), loc).Resolve (ec);
+				if (get_item == null)
+					return;
 
-			LocalTemporary get_item_object = new LocalTemporary (TypeManager.object_type);
-			get_item_object.EmitAssign (ec, get_item, true, false);
-			ec.ig.Emit (OpCodes.Brfalse, default_target);
+				LocalTemporary get_item_object = new LocalTemporary (TypeManager.object_type);
+				get_item_object.EmitAssign (ec, get_item, true, false);
+				ec.ig.Emit (OpCodes.Brfalse, default_target);
 
-			ExpressionStatement get_item_int = (ExpressionStatement) new SimpleAssign (string_switch_variable,
-				new Cast (new TypeExpression (TypeManager.int32_type, loc), get_item_object, loc)).Resolve (ec);
+				ExpressionStatement get_item_int = (ExpressionStatement) new SimpleAssign (string_switch_variable,
+					new Cast (new TypeExpression (TypeManager.int32_type, loc), get_item_object, loc)).Resolve (ec);
 
-			get_item_int.EmitStatement (ec);
-			get_item_object.Release (ec);
-#endif
+				get_item_int.EmitStatement (ec);
+				get_item_object.Release (ec);
+			}
+
 			TableSwitchEmit (ec, string_switch_variable);
 			string_switch_variable.Release (ec);
 		}
@@ -3825,12 +3819,10 @@ namespace Mono.CSharp {
 			LocalTemporary value;
 			if (HaveUnwrap) {
 				value = new LocalTemporary (SwitchType);
-#if GMCS_SOURCE
 				unwrap.EmitCheck (ec);
 				ig.Emit (OpCodes.Brfalse, null_target);
 				new_expr.Emit (ec);
 				value.Store (ec);
-#endif
 			} else if (!is_constant) {
 				value = new LocalTemporary (SwitchType);
 				new_expr.Emit (ec);
@@ -4788,7 +4780,7 @@ namespace Mono.CSharp {
 			if (General != null) {
 				if (CodeGen.Assembly.WrapNonExceptionThrows) {
 					foreach (Catch c in Specific){
-						if (c.CatchType == TypeManager.exception_type) {
+						if (c.CatchType == TypeManager.exception_type && PredefinedAttributes.Get.RuntimeCompatibility.IsDefined) {
 							Report.Warning (1058, 1, c.loc, "A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
 						}
 					}
@@ -5404,11 +5396,10 @@ namespace Mono.CSharp {
 							TypeManager.ienumerator_type, "Current", loc, TypeManager.object_type);
 					}
 
-#if GMCS_SOURCE
 					//
 					// Prefer a generic enumerator over a non-generic one.
 					//
-					if (return_type.IsInterface && return_type.IsGenericType) {
+					if (return_type.IsInterface && TypeManager.IsGenericType (return_type)) {
 						enumerator_type = return_type;
 						if (!FetchGetCurrent (ec, return_type))
 							get_current = new PropertyExpr (
@@ -5417,7 +5408,6 @@ namespace Mono.CSharp {
 							move_next = TypeManager.bool_movenext_void;
 						return true;
 					}
-#endif
 
 					if (return_type.IsInterface ||
 					    !FetchMoveNext (return_type) ||

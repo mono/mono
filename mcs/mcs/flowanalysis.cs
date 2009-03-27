@@ -1228,12 +1228,10 @@ namespace Mono.CSharp
 					Fields = new FieldInfo [Count];
 					public_fields.CopyTo (Fields, 0);
 					non_public_fields.CopyTo (Fields, CountPublic);
-#if GMCS_SOURCE
 				} else if (type is GenericTypeParameterBuilder) {
 					CountPublic = CountNonPublic = Count = 0;
 
 					Fields = new FieldInfo [0];
-#endif
 				} else {
 					FieldInfo[] public_fields = type.GetFields (
 						BindingFlags.Instance|BindingFlags.Public);

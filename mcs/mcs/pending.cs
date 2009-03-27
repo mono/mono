@@ -484,16 +484,18 @@ namespace Mono.CSharp {
 				CallingConventions.Standard | CallingConventions.HasThis,
 				base_method.ReturnType, param.GetEmitTypes ());
 
-#if GMCS_SOURCE
-			Type[] gargs = iface_method.GetGenericArguments ();
+			Type[] gargs = TypeManager.GetGenericArguments (iface_method);
 			if (gargs.Length > 0) {
 				string[] gnames = new string[gargs.Length];
 				for (int i = 0; i < gargs.Length; ++i)
 					gnames[i] = gargs[i].Name;
 
+#if GMCS_SOURCE
 				proxy.DefineGenericParameters (gnames);
-			}
+#else
+				throw new NotSupportedException ();
 #endif
+			}
 
 			for (int i = 0; i < param.Count; i++) {
 				string name = param.FixedParameters [i].Name;

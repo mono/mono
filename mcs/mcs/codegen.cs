@@ -99,9 +99,7 @@ namespace Mono.CSharp {
 			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run | COMPILER_ACCESS);
 			RootContext.ToplevelTypes = new ModuleContainer (true);
 			RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
-#if GMCS_SOURCE
 			Assembly.Name = Assembly.Builder.GetName ();
-#endif
 		}
 		
 		//
@@ -153,11 +151,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-#if GMCS_SOURCE
 			// Get the complete AssemblyName from the builder
 			// (We need to get the public key and token)
 			Assembly.Name = Assembly.Builder.GetName ();
-#endif
 
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how
@@ -445,10 +441,6 @@ namespace Mono.CSharp {
 
 			if (return_type == null)
 				throw new ArgumentNullException ("return_type");
-#if GMCS_SOURCE
-			if ((return_type is TypeBuilder) && return_type.IsGenericTypeDefinition)
-				throw new InternalErrorException ();
-#endif
 
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
@@ -1094,28 +1086,22 @@ namespace Mono.CSharp {
 		public Attribute ClsCompliantAttribute;
 
 		ListDictionary declarative_security;
-#if GMCS_SOURCE
 		bool has_extension_method;		
 		public AssemblyName Name;
 		MethodInfo add_type_forwarder;
 		ListDictionary emitted_forwarders;
-#endif
 
 		// Module is here just because of error messages
 		static string[] attribute_targets = new string [] { "assembly", "module" };
 
 		public AssemblyClass (): base ()
 		{
-#if GMCS_SOURCE
 			wrap_non_exception_throws = true;
-#endif
 		}
 
 		public bool HasExtensionMethods {
 			set {
-#if GMCS_SOURCE				
 				has_extension_method = value;
-#endif
 			}
 		}
 
@@ -1340,7 +1326,6 @@ namespace Mono.CSharp {
 			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
-#if GMCS_SOURCE
 		bool CheckInternalsVisibleAttribute (Attribute a)
 		{
 			string assembly_name = a.GetString ();
@@ -1349,7 +1334,11 @@ namespace Mono.CSharp {
 				
 			AssemblyName aname = null;
 			try {
+#if GMCS_SOURCE
 				aname = new AssemblyName (assembly_name);
+#else
+				throw new NotSupportedException ();
+#endif
 			} catch (FileLoadException) {
 			} catch (ArgumentException) {
 			}
@@ -1369,7 +1358,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-#endif
 
 		static bool IsValidAssemblyVersion (string version)
 		{
@@ -1427,7 +1415,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-#if GMCS_SOURCE
 			if (a.Type == pa.InternalsVisibleTo && !CheckInternalsVisibleAttribute (a))
 				return;
 
@@ -1456,13 +1443,13 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if (t.IsNested) {
+				if (t.DeclaringType != null) {
 					Report.Error (730, a.Location, "Cannot forward type `{0}' because it is a nested type",
 						TypeManager.CSharpName (t));
 					return;
 				}
 
-				if (t.IsGenericType) {
+				if (TypeManager.IsGenericType (t)) {
 					Report.Error (733, a.Location, "Cannot forward generic type `{0}'", TypeManager.CSharpName (t));
 					return;
 				}
@@ -1485,7 +1472,7 @@ namespace Mono.CSharp {
 				a.Error_MisusedExtensionAttribute ();
 				return;
 			}
-#endif
+
 			Builder.SetCustomAttribute (cb);
 		}
 
@@ -1493,10 +1480,8 @@ namespace Mono.CSharp {
 		{
 			base.Emit (tc);
 
-#if GMCS_SOURCE
 			if (has_extension_method)
 				PredefinedAttributes.Get.Extension.EmitAttribute (Builder);
-#endif
 
 			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
 			PredefinedAttribute pa = PredefinedAttributes.Get.RuntimeCompatibility;

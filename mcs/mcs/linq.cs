@@ -104,18 +104,21 @@ namespace Mono.CSharp.Linq
 
 			public bool NoExactMatch (EmitContext ec, MethodBase method)
 			{
-#if GMCS_SOURCE				
 				AParametersCollection pd = TypeManager.GetParameterData (method);
 				Type source_type = pd.ExtensionMethodType;
 				if (source_type != null) {
 					Argument a = (Argument) Arguments [0];
 
-					if (source_type.IsGenericType && source_type.ContainsGenericParameters) {
-						TypeInferenceContext tic = new TypeInferenceContext (source_type.GetGenericArguments ());
+					if (TypeManager.IsGenericType (source_type) && TypeManager.ContainsGenericParameters (source_type)) {
+#if GMCS_SOURCE
+						TypeInferenceContext tic = new TypeInferenceContext (TypeManager.GetTypeArguments (source_type));
 						tic.OutputTypeInference (ec, a.Expr, source_type);
 						if (tic.FixAllTypes ()) {
-							source_type = source_type.GetGenericTypeDefinition ().MakeGenericType (tic.InferredTypeArguments);
+							source_type = TypeManager.DropGenericTypeArguments (source_type).MakeGenericType (tic.InferredTypeArguments);
 						}
+#else
+						throw new NotSupportedException ();
+#endif
 					}
 
 					if (!Convert.ImplicitConversionExists (ec, a.Expr, source_type)) {
@@ -125,7 +128,7 @@ namespace Mono.CSharp.Linq
 					}
 				}
 
-				if (!method.IsGenericMethod)
+				if (!TypeManager.IsGenericMethod (method))
 					return false;
 
 				if (mg.Name == "SelectMany") {
@@ -137,10 +140,8 @@ namespace Mono.CSharp.Linq
 						"An expression type in `{0}' clause is incorrect. Type inference failed in the call to `{1}'",
 						mg.Name.ToLower (), mg.Name);
 				}
+
 				return true;
-#else
-				return false;
-#endif
 			}
 		}
 

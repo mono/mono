@@ -557,17 +557,15 @@ namespace Mono.CSharp {
 			while (TypeManager.HasElementType (p))
 				p = TypeManager.GetElementType (p);
 
-#if GMCS_SOURCE
-			if (p.IsGenericParameter)
+			if (TypeManager.IsGenericParameter (p))
 				return true;
 
 			if (TypeManager.IsGenericType (p)) {
-				foreach (Type t in p.GetGenericArguments ()) {
+				foreach (Type t in TypeManager.GetTypeArguments (p)) {
 					if (!IsAccessibleAs (t))
 						return false;
 				}
 			}
-#endif
 
 			for (Type p_parent = null; p != null; p = p_parent) {
 				p_parent = p.DeclaringType;
@@ -1029,7 +1027,6 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-#if GMCS_SOURCE
 			if (type_params != null) {
 				int offset = count_type_params - type_params.Length;
 				for (int i = offset; i < type_params.Length; i++)
@@ -1038,7 +1035,6 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (TypeBuilder);
-#endif
 
 			base.Emit ();
 		}
@@ -1051,7 +1047,7 @@ namespace Mono.CSharp {
 		public bool CheckAccessLevel (Type check_type)
 		{
 			Type tb = TypeBuilder;
-#if GMCS_SOURCE
+
 			if (this is GenericMethod) {
 				tb = Parent.TypeBuilder;
 
@@ -1060,7 +1056,6 @@ namespace Mono.CSharp {
 				if (TypeBuilder == null)
 					return true;
 			}
-#endif
 
 			check_type = TypeManager.DropGenericTypeArguments (check_type);
 			if (check_type == tb)
@@ -1176,7 +1171,6 @@ namespace Mono.CSharp {
 				if ((t == null) || !CheckAccessLevel (t))
 					continue;
 
-#if GMCS_SOURCE
 				if (!TypeManager.IsGenericType (current_type))
 					return t;
 
@@ -1185,6 +1179,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < args.Length; i++)
 					targs [i] = args [i];
 
+#if GMCS_SOURCE
 				t = t.MakeGenericType (targs);
 #endif
 
@@ -2675,12 +2670,12 @@ namespace Mono.CSharp {
 					p_types = pd.Types;
 				} else {
 					MethodBase mb = (MethodBase) ce.Member;
-#if GMCS_SOURCE					
+		
 					// TODO: This is more like a hack, because we are adding generic methods
 					// twice with and without arity name
-					if (mb.IsGenericMethod && !member.MemberName.IsGeneric)
+					if (TypeManager.IsGenericMethod (mb) && !member.MemberName.IsGeneric)
 						continue;
-#endif			
+
 					pd = TypeManager.GetParameterData (mb);
 					p_types = pd.Types;
 				}
@@ -2696,10 +2691,10 @@ namespace Mono.CSharp {
 						type_b = p_types [ii];
 
 #if GMCS_SOURCE
-						if (type_a.IsGenericParameter && type_a.DeclaringMethod != null)
+						if (TypeManager.IsGenericParameter (type_a) && type_a.DeclaringMethod != null)
 							type_a = null;
 
-						if (type_b.IsGenericParameter && type_b.DeclaringMethod != null)
+						if (TypeManager.IsGenericParameter (type_b) && type_b.DeclaringMethod != null)
 							type_b = null;
 #endif
 						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=

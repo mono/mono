@@ -26,13 +26,40 @@ namespace Mono.CSharp
 		ReferenceType,
 		ValueType
 	}
+
+	public abstract class GenericTypeParameterBuilder : Type
+	{
+	}
+
+	public class InternalsVisibleToAttribute
+	{
+		public string AssemblyName;
+	}
+
+	class ConstraintChecker
+	{
+		public static bool CheckConstraints (EmitContext ec, MethodBase a, MethodBase b, Location loc)
+		{
+			throw new NotSupportedException ();
+		}
+	}
 	
 	public abstract class GenericConstraints
 	{
+		public bool HasConstructorConstraint {
+			get { throw new NotImplementedException (); }
+		}
+
 		public bool HasValueTypeConstraint {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { throw new NotImplementedException (); }
+		}
+
+		public bool HasClassConstraint {
+			get { throw new NotImplementedException (); }
+		}
+
+		public bool HasReferenceTypeConstraint {
+			get { throw new NotImplementedException (); }
 		}
 			
 		public abstract string TypeParameter {
@@ -45,7 +72,19 @@ namespace Mono.CSharp
 		
 		public bool IsValueType { 
 			get { throw new NotSupportedException (); }
-		}		
+		}
+
+		public Type[] InterfaceConstraints {
+			get { throw new NotSupportedException (); }
+		}
+
+		public Type ClassConstraint {
+			get { throw new NotSupportedException (); }
+		}
+
+		public Type EffectiveBaseClass {
+			get { throw new NotSupportedException (); }
+		}
 	}
 
 	public class Constraints : GenericConstraints
@@ -93,6 +132,10 @@ namespace Mono.CSharp
 		public override bool Define ()
 		{
 			return true;
+		}
+
+		public void Define (Type t)
+		{
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
@@ -185,6 +228,11 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+
+		public void SetConstraints (GenericTypeParameterBuilder type)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 
 	public class TypeParameterExpr : TypeExpr
@@ -256,6 +304,10 @@ namespace Mono.CSharp
 		public bool CheckConstraints (IResolveContext ec)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public TypeArguments TypeArguments {
+			get { throw new NotImplementedException (); }
 		}
 
 		public bool VerifyVariantTypeParameters ()

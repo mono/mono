@@ -734,9 +734,8 @@ namespace Mono.CSharp {
 			else {
 				sig.Append (mb.Name);
 
-#if GMCS_SOURCE
-				if (TypeManager.IsGenericMethod (mb)) {
-					Type[] args = mb.GetGenericArguments ();
+				if (IsGenericMethod (mb)) {
+					Type[] args = GetGenericArguments (mb);
 					sig.Append ('<');
 					for (int i = 0; i < args.Length; i++) {
 						if (i > 0)
@@ -745,7 +744,6 @@ namespace Mono.CSharp {
 					}
 					sig.Append ('>');
 				}
-#endif
 			}
 
 			sig.Append (parameters);
@@ -761,14 +759,10 @@ namespace Mono.CSharp {
 
 	public static string GetMethodName (MethodInfo m)
 	{
-#if GMCS_SOURCE
 		if (!IsGenericMethodDefinition (m) && !IsGenericMethod (m))
 			return m.Name;
 
-		return MemberName.MakeName (m.Name, m.GetGenericArguments ().Length);
-#else
-		return m.Name;
-#endif
+		return MemberName.MakeName (m.Name, TypeManager.GetGenericArguments (m).Length);
 	}
 
 	static public string CSharpSignature (EventInfo ei)
@@ -1277,10 +1271,8 @@ namespace Mono.CSharp {
 
 	public static bool IsDelegateType (Type t)
 	{
-#if GMCS_SOURCE
-		if (t.IsGenericParameter)
+		if (TypeManager.IsGenericParameter (t))
 			return false;
-#endif
 
 		if (t == TypeManager.delegate_type || t == TypeManager.multicast_delegate_type)
 			return false;
@@ -1342,12 +1334,10 @@ namespace Mono.CSharp {
 		if (!IsValueType (t))
 			return false;
 
-#if GMCS_SOURCE
 		for (Type p = t.DeclaringType; p != null; p = p.DeclaringType) {
-			if (p.IsGenericTypeDefinition)
+			if (IsGenericTypeDefinition (p))
 				return false;
 		}
-#endif
 
 		bool retval = true;
 		{
@@ -1541,7 +1531,7 @@ namespace Mono.CSharp {
 		}
 
 		bool is_friend = false;
-#if GMCS_SOURCE
+
 		AssemblyName this_name = CodeGen.Assembly.Name;
 		byte [] this_token = this_name.GetPublicKeyToken ();
 		foreach (InternalsVisibleToAttribute attr in attrs) {
@@ -1550,7 +1540,11 @@ namespace Mono.CSharp {
 			
 			AssemblyName aname = null;
 			try {
+#if GMCS_SOURCE
 				aname = new AssemblyName (attr.AssemblyName);
+#else
+				throw new NotSupportedException ();
+#endif
 			} catch (FileLoadException) {
 			} catch (ArgumentException) {
 			}
@@ -1573,12 +1567,11 @@ namespace Mono.CSharp {
 			is_friend = true;
 			break;
 		}
-#endif
+
 		assembly_internals_vis_attrs.Add (assembly, is_friend);
 		return is_friend;
 	}
 
-#if GMCS_SOURCE
 	static bool CompareKeyTokens (byte [] token1, byte [] token2)
 	{
 		for (int i = 0; i < token1.Length; i++)
@@ -1594,7 +1587,6 @@ namespace Mono.CSharp {
 			"Friend access was granted to `{0}', but the output assembly is named `{1}'. Try adding a reference to `{0}' or change the output assembly name to match it",
 			other_name, CodeGen.Assembly.Name.FullName);
 	}
-#endif
 
         //
         // Do the right thing when returning the element type of an
@@ -1977,7 +1969,6 @@ namespace Mono.CSharp {
 
 			iface_cache [t] = result;
 			return result;
-#if GMCS_SOURCE
 		} else if (t is GenericTypeParameterBuilder){
 			Type[] type_ifaces = (Type []) builder_to_ifaces [t];
 			if (type_ifaces == null || type_ifaces.Length == 0)
@@ -1985,7 +1976,6 @@ namespace Mono.CSharp {
 
 			iface_cache [t] = type_ifaces;
 			return type_ifaces;
-#endif
 		} else {
 			Type[] ifaces = t.GetInterfaces ();
 			iface_cache [t] = ifaces;
@@ -2326,13 +2316,12 @@ namespace Mono.CSharp {
 		if (a.IsByRef && b.IsByRef)
 			return IsSignatureEqual (GetElementType (a), GetElementType (b));
 
-#if GMCS_SOURCE
-		if (a.IsGenericType && b.IsGenericType) {
-			if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
+		if (IsGenericType (a) && IsGenericType (b)) {
+			if (DropGenericTypeArguments (a) != DropGenericTypeArguments (b))
 				return false;
 
-			Type[] aargs = a.GetGenericArguments ();
-			Type[] bargs = b.GetGenericArguments ();
+			Type[] aargs = GetTypeArguments (a);
+			Type[] bargs = GetTypeArguments (b);
 
 			if (aargs.Length != bargs.Length)
 				return false;
@@ -2344,7 +2333,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-#endif
 
 		return false;
 	}
@@ -2517,13 +2505,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-#if GMCS_SOURCE
-		if (a.IsGenericParameter && b.IsGenericParameter) {
+		if (IsGenericParameter (a) && IsGenericParameter (b)) {
 			// TODO: needs more testing before cleaning up
 			//if (a.DeclaringMethod != b.DeclaringMethod &&
 			//    (a.DeclaringMethod == null || b.DeclaringMethod == null))
 			//	return false;
+#if GMCS_SOURCE
 			return a.GenericParameterPosition == b.GenericParameterPosition;
+#else
+			throw new NotSupportedException ();
+#endif
 		}
 
 		if (a.IsArray && b.IsArray) {
@@ -2535,9 +2526,9 @@ namespace Mono.CSharp {
 		if (a.IsByRef && b.IsByRef)
 			return IsEqual (a.GetElementType (), b.GetElementType ());
 
-		if (a.IsGenericType && b.IsGenericType) {
-			Type adef = a.GetGenericTypeDefinition ();
-			Type bdef = b.GetGenericTypeDefinition ();
+		if (IsGenericType (a) && IsGenericType (b)) {
+			Type adef = DropGenericTypeArguments (a);
+			Type bdef = DropGenericTypeArguments (b);
 
 			if (adef != bdef)
 				return false;
@@ -2545,8 +2536,8 @@ namespace Mono.CSharp {
 			if (adef.IsEnum && bdef.IsEnum)
 				return true;
 
-			Type[] aargs = a.GetGenericArguments ();
-			Type[] bargs = b.GetGenericArguments ();
+			Type[] aargs = GetTypeArguments (a);
+			Type[] bargs = GetTypeArguments (b);
 
 			if (aargs.Length != bargs.Length)
 				return false;
@@ -2558,7 +2549,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-#endif
 
 		return false;
 	}
@@ -3384,10 +3374,8 @@ public sealed class TypeHandle : IMemberContainer {
 	{
 		MemberInfo [] members;
 
-#if GMCS_SOURCE
 		if (type is GenericTypeParameterBuilder)
 			return MemberList.Empty;
-#endif
 
 #if MS_COMPATIBLE
 		type = TypeManager.DropGenericTypeArguments (type);

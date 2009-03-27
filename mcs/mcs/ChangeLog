@@ -1,3 +1,7 @@
+2009-03-27  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Removed some gmcs conditionals.
+
 2009-03-26  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, support.cs: Moved generics stuff out of support.cs
