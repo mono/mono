@@ -451,7 +451,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			if (TypeManager.IsNullableValueType (Expr.Type))
+			if (TypeManager.IsNullableType (Expr.Type))
 				return new Nullable.LiftedUnaryOperator (Oper, Expr).Resolve (ec);
 
 			//
@@ -1000,7 +1000,7 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Value;
 
-			if (TypeManager.IsNullableValueType (expr.Type))
+			if (TypeManager.IsNullableType (expr.Type))
 				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
 
 			return ResolveOperator (ec);

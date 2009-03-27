@@ -1,5 +1,9 @@
 2009-03-27  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, expression.cs: Removed unused nullable checks.
+
+2009-03-27  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Removed some gmcs conditionals.
 
 2009-03-26  Marek Safar  <marek.safar@gmail.com>

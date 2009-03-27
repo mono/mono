@@ -2747,30 +2747,6 @@ namespace Mono.CSharp {
 		return false;
 #endif
 	}
-
-	public static bool IsNullableTypeOf (Type t, Type nullable)
-	{
-#if GMCS_SOURCE
-		if (!IsNullableType (t))
-			return false;
-
-		return GetTypeArguments (t) [0] == nullable;
-#else
-		return false;
-#endif
-	}
-
-	public static bool IsNullableValueType (Type t)
-	{
-#if GMCS_SOURCE
-		if (!IsNullableType (t))
-			return false;
-
-		return IsValueType (GetTypeArguments (t) [0]);
-#else
-		return false;
-#endif
-	}
 #endregion
 
 #region MemberLookup implementation
