@@ -1,3 +1,10 @@
+2009-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Disable tail calls for calls which
+	return a valuetype. Fixes #487518.
+
+	* iltests.il: Add a test.
+	
 2009-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_method_ref): Fix a warning.
