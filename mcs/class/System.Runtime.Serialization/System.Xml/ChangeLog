@@ -1,5 +1,11 @@
 2009-03-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryWriter.cs : further namespace refactory.
+	  namespaces are managed by its own (to work fine for both string
+	  and dictionary string).
+
+2009-03-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryFormat.cs, XmlBinaryDictionaryReader.cs,
 	  XmlBinaryDictionaryWriter.cs : improved shorthanded prefix
 	  support. Not only autocreated prefixes but also explicitly-

@@ -33,6 +33,7 @@ using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 using BF = System.Xml.XmlBinaryFormat;
@@ -56,13 +57,14 @@ namespace System.Xml
 		WriteState state = WriteState.Start;
 		bool open_start_element = false;
 		// transient current node info
-		ListDictionary namespaces = new ListDictionary ();
+		List<KeyValuePair<string,object>> namespaces = new List<KeyValuePair<string,object>> ();
 		string xml_lang = null;
 		XmlSpace xml_space = XmlSpace.None;
+		int ns_index = 0;
 		// stacked info
+		Stack<int> ns_index_stack = new Stack<int> ();
 		Stack<string> xml_lang_stack = new Stack<string> ();
 		Stack<XmlSpace> xml_space_stack = new Stack<XmlSpace> ();
-		XmlNamespaceManager nsmgr = new XmlNamespaceManager (new NameTable ());
 		Stack<string> element_ns_stack = new Stack<string> ();
 		string element_ns = String.Empty;
 		int element_count;
@@ -103,8 +105,9 @@ namespace System.Xml
 			this.session = session;
 			owns_stream = ownsStream;
 
-//			xml_lang_stack.Push (null);
-//			xml_space_stack.Push (XmlSpace.None);
+			AddNamespace ("xml", "http://www.w3.org/XML/1998/namespace");
+			AddNamespace ("xml", "http://www.w3.org/2000/xmlns/");
+			ns_index = 2;
 		}
 
 		#endregion
@@ -130,7 +133,8 @@ namespace System.Xml
 		private void AddMissingElementXmlns ()
 		{
 			// push new namespaces to manager.
-			foreach (DictionaryEntry ent in namespaces) {
+			for (int i = ns_index; i < namespaces.Count; i++) {
+				var ent = namespaces [i];
 				string prefix = (string) ent.Key;
 				string ns = ent.Value as string;
 				XmlDictionaryString dns = ent.Value as XmlDictionaryString;
@@ -151,9 +155,8 @@ namespace System.Xml
 						writer.Write (BF.DefaultNSIndex);
 					WriteDictionaryIndex (dns);
 				}
-				nsmgr.AddNamespace (prefix, ent.Value.ToString ());
 			}
-			namespaces.Clear ();
+			ns_index = namespaces.Count;
 		}
 
 		private void CheckState ()
@@ -229,7 +232,6 @@ namespace System.Xml
 
 			state = WriteState.Content;
 			open_start_element = false;
-			nsmgr.PushScope ();
 		}
 
 		public override void Flush ()
@@ -237,16 +239,13 @@ namespace System.Xml
 			writer.Flush ();
 		}
 
-		[MonoTODO ("needs verification")]
 		public override string LookupPrefix (string ns)
 		{
 			if (ns == null || ns == String.Empty)
 				throw new ArgumentException ("The Namespace cannot be empty.");
 
-			foreach (DictionaryEntry de in namespaces)
-				if (de.Value.ToString () == ns)
-					return (string) de.Key;
-			return nsmgr.LookupPrefix (ns);
+			var de = namespaces.LastOrDefault (i => i.Value.ToString () == ns);
+			return de.Key; // de is KeyValuePair and its default key is null.
 		}
 
 		public override void WriteBase64 (byte[] buffer, int index, int count)
@@ -359,7 +358,6 @@ namespace System.Xml
 				if (current_attr_name.ToString ().Length > 0 && attr_value.Length == 0)
 					throw new ArgumentException ("Cannot use prefix with an empty namespace.");
 
-				// add namespace
 				AddNamespaceChecked (current_attr_name.ToString (), attr_value);
 				break;
 			default:
@@ -419,10 +417,12 @@ namespace System.Xml
 			if (needExplicitEndElement)
 				writer.Write (BF.EndElement);
 
-			nsmgr.PopScope ();
 			element_ns = element_ns_stack.Pop ();
 			xml_lang = xml_lang_stack.Pop ();
 			xml_space = xml_space_stack.Pop ();
+			int cur = namespaces.Count;
+			ns_index = ns_index_stack.Pop ();
+			namespaces.RemoveRange (ns_index, cur - ns_index);
 			open_start_element = false;
 
 			Depth--;
@@ -449,6 +449,8 @@ namespace System.Xml
 		[MonoTODO ("Some namespace management redesign is needed; it has to consider namespaces in ancestors to convert matching one into the index")]
 		public override void WriteQualifiedName (XmlDictionaryString local, XmlDictionaryString ns)
 		{
+			throw new NotImplementedException ();
+			/*
 			string prefix = LookupPrefix (ns.Value);
 			if (prefix == null)
 				throw new ArgumentException (String.Format ("Namespace URI '{0}' is not bound to any of the prefixes", ns.Value));
@@ -456,8 +458,8 @@ namespace System.Xml
 
 			if (prefix.Length == 1) {
 				idx = 0;
-				foreach (string nss in namespaces.Values) {
-					if (nss == ns.Value)
+				foreach (var de in namespaces) {
+					if (de.Value.ToString () == ns.Value)
 						break;
 					idx++;
 				}
@@ -475,6 +477,7 @@ namespace System.Xml
 				writer.Write ((byte) (prefix [0] - 'a'));
 				writer.Write ((byte) idx);
 			}
+			*/
 		}
 
 		public override void WriteRaw (string data)
@@ -503,7 +506,7 @@ namespace System.Xml
 		string CreateNewPrefix (string p)
 		{
 			for (char c = 'a'; c <= 'z'; c++)
-				if (!namespaces.Contains (p + c))
+				if (!namespaces.Any (iter => iter.Key == p + c))
 					return p + c;
 			for (char c = 'a'; c <= 'z'; c++) {
 				var s = CreateNewPrefix (c.ToString ());
@@ -631,6 +634,7 @@ namespace System.Xml
 			element_ns_stack.Push (element_ns);
 			xml_lang_stack.Push (xml_lang);
 			xml_space_stack.Push (xml_space);
+			ns_index_stack.Push (ns_index);
 		}
 
 		public override void WriteStartElement (string prefix, string localName, string ns)
@@ -658,21 +662,20 @@ namespace System.Xml
 		void OpenElement (string prefix, object nsobj)
 		{
 			string ns = nsobj.ToString ();
-//			if (prefix.Length == 0 && ns != nsmgr.DefaultNamespace ||
-//			    prefix.Length > 0 && nsmgr.LookupNamespace (prefix) != ns) {
-			// FIXME: this condition might be still incorrect...
-			if (nsobj.ToString () != element_ns ||
-			    nsmgr.LookupPrefix (element_ns) != prefix) {
-				nsmgr.AddNamespace (prefix, ns);
-				if (nsmgr.LookupPrefix (element_ns) != prefix)
-					namespaces.Add (prefix, nsobj);
-			}
 
 			state = WriteState.Element;
 			open_start_element = true;
 			element_prefix = prefix;
 			element_count++;
 			element_ns = nsobj.ToString ();
+
+			if (element_ns != String.Empty && LookupPrefix (element_ns) != prefix)
+				AddNamespace (prefix, nsobj);
+		}
+
+		void AddNamespace (string prefix, object nsobj)
+		{
+			namespaces.Add (new KeyValuePair<string,object> (prefix, nsobj));
 		}
 
 		public override void WriteString (string text)
@@ -740,12 +743,13 @@ namespace System.Xml
 
 			if (prefix == null)
 				throw new InvalidOperationException ();
-			if (namespaces.Contains (prefix)) {
-				if (namespaces [prefix].ToString () != ns.ToString ())
-					throw new ArgumentException (String.Format ("The prefix '{0}' is already mapped to another namespace URI '{1}' in this element scope", prefix ?? "(null)", namespaces [prefix] ?? "(null)"));
+			var o = namespaces.FirstOrDefault (i => i.Key == prefix);
+			if (o.Key != null) { // i.e. exists
+				if (o.Value.ToString () != ns.ToString ())
+					throw new ArgumentException (String.Format ("The prefix '{0}' is already mapped to another namespace URI '{1}' in this element scope", prefix ?? "(null)", o.Value ?? "(null)"));
 			}
 			else
-				namespaces.Add (prefix, ns);
+				AddNamespace  (prefix, ns);
 		}
 
 		#region DictionaryString
