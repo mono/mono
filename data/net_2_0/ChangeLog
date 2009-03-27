@@ -1,3 +1,9 @@
+2009-03-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DefaultWsdlHelpGenerator.aspx: disable the test form
+	when only Soap is supported.
+	Bug #342073 fixed.
+
 2009-01-07  Kornél Pál  <kornelpal@gmail.com>
 
 	* DefaultWsdlHelpGenerator.aspx: Move <script> at the end of <head> that
