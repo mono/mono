@@ -1,3 +1,8 @@
+2009-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_delegate_trampoline): Handle static delegates
+	closed over a null reference correctly.
+
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_handle_global_vregs): Fix support for ternary ops.
