@@ -1,3 +1,7 @@
+2009-03-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify heap sizes and size to decode row counts. 
+
 2009-03-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* appdomain.c:
