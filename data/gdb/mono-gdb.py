@@ -33,7 +33,11 @@ class StringPrinter:
         i = 0
         res = ['"']
         while i < len:
-            c = chr ((chars.cast(gdb.Type ("gint64")) + (i * 2)).cast(gdb.Type ("gunichar2").pointer ()).dereference ())
+            val = (chars.cast(gdb.Type ("gint64")) + (i * 2)).cast(gdb.Type ("gunichar2").pointer ()).dereference ()
+            if val >= 256:
+                c = "\u%X" % val
+            else:
+                c = chr (val)
             res.append (c)
             i = i + 1
         res.append ('"')
