@@ -1,3 +1,10 @@
+2009-03-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c:
+	* console-io.[ch]: added new mono_console_init() to make sure that
+	file descriptors 0, 1 and 2 are opened.
+	Bug #489019 fixed.
+
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Generate code to throw an exception
