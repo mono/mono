@@ -1,3 +1,7 @@
+2009-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.h: Add a comment to CreateThread.
+
 2009-03-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c handles.c wait.c: Change location of gc_wrapper.h.

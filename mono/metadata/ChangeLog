@@ -1,3 +1,11 @@
+2009-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_create_thread): New helper function to wrap CreateThread
+	which has different parameter types for the 'tid' argument in windows and
+	the io-layer.
+
+	* appdomain.c attach.c threads.c: Use the new helper.
+
 2009-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify valid table bits.
