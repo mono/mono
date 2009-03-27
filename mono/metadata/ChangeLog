@@ -1,5 +1,12 @@
 2009-03-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Rename bounds_check_offset to bounds_check_datadir.
+
+	* metadata-verify.c: Implement table layout row size calculation. Verify
+	the total size of the tables.
+
+2009-03-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify heap sizes and size to decode row counts. 
 
 2009-03-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
