@@ -1,3 +1,11 @@
+2009-03-27  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildWhen.cs: Add basic implementation.
+	* BuildChoose.cs: Add basic implementation.
+	* BuildItem.cs (AddEvaluatedItem): Add BuiltItem to 
+	EvaluatedItemsIgnoringCondition.
+	* GroupingCollection.cs: Add evaluation of BuildChoose items.
+
 2009-03-26  Jonathan Chambers  <joncham@gmail.com>
 
 	* TaskDatabase.cs (RegisterTask): Search for class by name

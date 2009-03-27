@@ -35,15 +35,36 @@ namespace Microsoft.Build.BuildEngine {
 	internal class BuildChoose {
 		
 		BuildWhen	otherwise;
-		//Project		project;
-		//XmlElement	xmlElement;
+		Project		project;
+		XmlElement	xmlElement;
 		List <BuildWhen>	whens;
 		
 		public BuildChoose (XmlElement xmlElement, Project project)
 		{
-			//this.xmlElement = xmlElement;
-			//this.project = project;
+			this.xmlElement = xmlElement;
+			this.project = project;
 			this.whens = new List <BuildWhen> ();
+
+			foreach (XmlNode xn in xmlElement.ChildNodes) {
+				if (!(xn is XmlElement))
+					continue;
+
+				XmlElement xe = (XmlElement)xn;
+
+				if (xe.Name == "When") {
+					if (otherwise != null)
+						throw new InvalidProjectFileException ("The 'Otherwise' element must be last in a 'Choose' element.");
+					if (xe.Attributes.GetNamedItem ("Condition") == null)
+						throw new InvalidProjectFileException ("The 'When' element requires a 'Condition' attribute.");
+					BuildWhen bw = new BuildWhen (xe, project);
+					whens.Add (bw);
+				} else if (xe.Name == "Otherwise") {
+					if (this.whens.Count == 0)
+						throw new InvalidProjectFileException ("At least one 'When' element must occur in a 'Choose' element.");
+					
+					otherwise = new BuildWhen (xe, project);
+				}
+			}
 		}
 		
 		public void Evaluate ()

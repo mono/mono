@@ -164,6 +164,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Evaluate (EvaluationType.Property);
 			Evaluate (EvaluationType.Item);
+			Evaluate (EvaluationType.Choose);
 		}
 
 		void Evaluate (EvaluationType type)
@@ -194,7 +195,7 @@ namespace Microsoft.Build.BuildEngine {
 
 					evaluate_iterator = evaluate_iterator.Next;
 				}
-			} else {
+			} else if (type == EvaluationType.Item) {
 				evaluate_iterator = list.First;
 				add_iterator = list.First;
 
@@ -203,6 +204,29 @@ namespace Microsoft.Build.BuildEngine {
 						big = (BuildItemGroup) evaluate_iterator.Value;
 						if (ConditionParser.ParseAndEvaluate (big.Condition, project))
 							big.Evaluate ();
+					}
+
+					evaluate_iterator = evaluate_iterator.Next;
+				}
+			} else if (type == EvaluationType.Choose) {
+				evaluate_iterator = list.First;
+				add_iterator = list.First;
+
+				while (evaluate_iterator != null) {
+					if (evaluate_iterator.Value is BuildChoose) {
+						BuildChoose bc = (BuildChoose)evaluate_iterator.Value;
+						bool whenUsed = false;
+						foreach (BuildWhen bw in bc.Whens) {
+							if (ConditionParser.ParseAndEvaluate (bw.Condition, project)) {
+								bw.Evaluate ();
+								whenUsed = true;
+								break;
+							}
+						}
+						if (!whenUsed && bc.Otherwise != null &&
+							ConditionParser.ParseAndEvaluate (bc.Otherwise.Condition, project)) {
+							bc.Otherwise.Evaluate ();
+						}
 					}
 
 					evaluate_iterator = evaluate_iterator.Next;
@@ -231,7 +255,8 @@ namespace Microsoft.Build.BuildEngine {
 
 	enum EvaluationType {
 		Property,
-		Item
+		Item,
+		Choose
 	}
 }
 

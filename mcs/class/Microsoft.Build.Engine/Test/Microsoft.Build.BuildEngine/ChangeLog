@@ -1,3 +1,8 @@
+2009-03-27  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildChooseTest.cs: Enable tests.
+	* Microsoft.Build.Engine.Test.csproj: Update post build step.
+
 2009-03-26  Jonathan Chambers  <joncham@gmail.com>
 
 	* BuildTaskTest.cs (TestTaskInNamespace): Add test for Task in namespace.

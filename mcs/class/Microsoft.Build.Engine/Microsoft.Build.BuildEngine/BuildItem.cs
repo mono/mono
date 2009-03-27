@@ -294,6 +294,8 @@ namespace Microsoft.Build.BuildEngine {
 			BuildItem bi = new BuildItem (this);
 			bi.finalItemSpec = itemSpec;
 
+			project.EvaluatedItemsIgnoringCondition.AddItem (bi);
+
 			if (evaluatedTo) {
 				project.EvaluatedItems.AddItem (bi);
 	
