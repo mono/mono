@@ -1,3 +1,11 @@
+2009-03-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_print_ins_index): Print the vreg of the
+	LIVERANGE_START/END opcodes.
+
+	* method-to-ir.c (mono_spill_global_vars): Fix liverange calculation
+	for arguments and values in registers.
+
 2009-03-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Disable tail calls for calls which
