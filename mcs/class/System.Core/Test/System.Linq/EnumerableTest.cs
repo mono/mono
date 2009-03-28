@@ -270,13 +270,12 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestIntersect ()
 		{
 			int [] left = { 1, 1 }, right = { 1, 1 };
 			int [] result = { 1 };
 
-			Assert.AreSame (result, left.Intersect (right));
+			AssertAreSame (result, left.Intersect (right));
 		}
 
 		[Test]
