@@ -1,3 +1,7 @@
+2009-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* coreclr-security.cs: Add more override test cases.
+
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs: Add a test for #488670.
