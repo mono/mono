@@ -1,3 +1,8 @@
+2009-03-28  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridViewCell.cs: We don't support drawing all types of cell borders, 
+	so fallback and at least draw something instead of nothing.
+
 2009-03-27  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: If the column header isn't visible allow resizing 
