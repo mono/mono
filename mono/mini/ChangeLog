@@ -1,3 +1,11 @@
+2009-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (get_generic_info_from_stack_frame): Avoid returning
+	a managed object which is later put into a GList. Return its class instead.
+
+	* mini.c (mono_allocate_stack_slots_full): Avoid sharing ref and non-ref
+	stack slots when using sgen.
+
 2009-03-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Disable tail calls for calls which
