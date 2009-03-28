@@ -1,3 +1,10 @@
+2009-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* class.c: move coreclr inheritance/override checks to 
+	security-core.clr.c
+	* security-core.clr.c|h: add code from class.c with additional
+	documentation. Fix override check when the method is not critical.
+
 2009-03-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (mono_method_desc_match): Make '*' match anything.
