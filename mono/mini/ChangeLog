@@ -1,5 +1,8 @@
 2009-03-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c (mono_dwarf_writer_emit_method): Fix handling of the
+	this argument for vtype methods. Add precise liveness info for arguments.
+
 	* mini-codegen.c (mono_print_ins_index): Print the vreg of the
 	LIVERANGE_START/END opcodes.
 
