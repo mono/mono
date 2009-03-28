@@ -1,3 +1,7 @@
+2009-03-28  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableTest.cs: add test for bug #490016.
+
 2009-01-15  Jb Evain  <jbevain@novell.com>
 
 	* LookupTest.cs: new tests.

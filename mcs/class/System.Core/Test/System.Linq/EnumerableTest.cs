@@ -270,6 +270,16 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void TestIntersect ()
+		{
+			int [] left = { 1, 1 }, right = { 1, 1 };
+			int [] result = { 1 };
+
+			Assert.AreSame (result, left.Intersect (right));
+		}
+
+		[Test]
 		public void TestAverageOnInt32 ()
 		{
 			Assert.AreEqual (23.25, (new int [] { 24, 7, 28, 34 }).Average ());
