@@ -1,3 +1,9 @@
+2009-03-28  Jb Evain  <jbevain@novell.com>
+
+	backport of r130478.
+
+	* Enumerable.cs: fix Intersect.
+
 2009-02-23  Jb Evain  <jbevain@novell.com>
 
 	backport of 127772.

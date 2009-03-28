@@ -854,7 +854,7 @@ namespace System.Linq
 		{
 			var items = new HashSet<TSource> (second, comparer);
 			foreach (TSource element in first) {
-				if (items.Contains (element))
+				if (items.Remove (element))
 					yield return element;
 			}
 		}
