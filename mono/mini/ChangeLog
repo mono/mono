@@ -1,5 +1,8 @@
 2009-03-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): Handle generic virtual 
+	interface methods on proxies correctly.
+
 	* dwarfwriter.c (mono_dwarf_writer_emit_method): Fix handling of the
 	this argument for vtype methods. Add precise liveness info for arguments.
 
