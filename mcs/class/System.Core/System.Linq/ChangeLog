@@ -1,3 +1,7 @@
+2009-03-28  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: fix Intersect.
+
 2009-02-23  Marek Safar  <marek.safar@gmail.com>
 
 	* Enumerable.cs (IterateNullable): Compare unwrapped values.
