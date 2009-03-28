@@ -1,5 +1,7 @@
 2009-03-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* load-exceptions.cs: Add a test for missing locals.
+
 	* remoting4.cs: Add a test for generic virtual interface methods on proxies.
 
 2009-03-28  Sebastien Pouliot  <sebastien@ximian.com>
