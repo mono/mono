@@ -41,6 +41,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 	internal class CodeGenerator
 	{
 		// Code generation
+
+		static object monitor = new object ();
 		
 		static ModuleBuilder _module;
 		
@@ -54,7 +56,14 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			_module = myAsmBuilder.DefineDynamicModule("__MetadataTypesModule", false);
 		}
 		
-		static public Type GenerateMetadataType (Type type, StreamingContext context)
+		static public Type GenerateMetadataType (Type type, StreamingContext context) {
+			/* SRE is not thread safe */
+			lock (monitor) {
+				return GenerateMetadataTypeInternal (type, context);
+			}
+		}
+
+		static public Type GenerateMetadataTypeInternal (Type type, StreamingContext context)
 		{		
 			string name = type.Name + "__TypeMetadata";
 			string sufix = "";
@@ -253,7 +262,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				ig.Emit (OpCodes.Ldind_Ref);
 		}
 
-		public static void EmitWriteTypeSpec (ILGenerator gen, Type type, string member)
+		static void EmitWriteTypeSpec (ILGenerator gen, Type type, string member)
 		{
 			// WARNING Keep in sync with WriteTypeSpec
 			
