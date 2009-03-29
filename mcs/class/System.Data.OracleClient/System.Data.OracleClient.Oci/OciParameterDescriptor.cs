@@ -69,6 +69,7 @@ namespace System.Data.OracleClient.Oci {
 
 		public static OracleType OciDataTypeToOracleType (OciDataType ociType)
 		{
+			Console.WriteLine ("OciDataType = {0}", ociType);
 			switch (ociType) {
 			case OciDataType.VarChar2:
 				return OracleType.VarChar;
@@ -124,6 +125,10 @@ namespace System.Data.OracleClient.Oci {
 				return OracleType.DateTime;
 			case OciDataType.TimeStamp:
 				return OracleType.Timestamp;
+			case OciDataType.IntervalDayToSecond:
+				return OracleType.IntervalDayToSecond;
+			case OciDataType.IntervalYearToMonth:
+				return OracleType.IntervalYearToMonth;
 			default:
 				throw new NotImplementedException ();
 			}

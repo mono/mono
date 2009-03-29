@@ -47,6 +47,8 @@ namespace System.Data.OracleClient.Oci {
 		RSet = 0x74, // REF CURSOR
 		OciString = 0x9b,
 		OciDate = 0x9c,
-		TimeStamp = 0xbb
+		TimeStamp = 0xbb,
+		IntervalYearToMonth = 0xbd,
+		IntervalDayToSecond = 0xbe
 	}
 }

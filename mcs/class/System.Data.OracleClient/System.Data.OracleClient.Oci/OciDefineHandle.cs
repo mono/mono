@@ -54,6 +54,7 @@ namespace System.Data.OracleClient.Oci
 
 		OciLobLocator lobLocator;
 		OciDateTimeDescriptor dateTimeDesc;
+		OciIntervalDescriptor intervalDesc;
 
 		#endregion // Fields
 
@@ -148,6 +149,10 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Long:
 			case OciDataType.LongVarChar:
 				DefineLongVarChar (position, connection);
+				return;
+			case OciDataType.IntervalDayToSecond:
+			case OciDataType.IntervalYearToMonth:
+				DefineInterval (position, definedType, connection);
 				return;
 			default:
 				DefineChar (position, connection); // HANDLE ALL OTHERS AS CHAR FOR NOW
@@ -380,6 +385,50 @@ namespace System.Data.OracleClient.Oci
 			}
 		}
 
+		void DefineInterval (int position, OciDataType type, OracleConnection connection)
+		{
+			ociType = type;
+			fieldType = typeof(System.TimeSpan);
+
+			switch (type) {
+				case OciDataType.IntervalDayToSecond:
+					definedSize = 11;
+					intervalDesc = (OciIntervalDescriptor) connection.Environment.Allocate (OciHandleType.IntervalDayToSecond);
+					break;
+				case OciDataType.IntervalYearToMonth:
+					intervalDesc = (OciIntervalDescriptor) connection.Environment.Allocate (OciHandleType.IntervalYearToMonth);
+					definedSize = 5;
+					break;
+			}
+			
+			if (intervalDesc == null) {
+				OciErrorInfo info = connection.ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			value = intervalDesc.Handle;
+			intervalDesc.ErrorHandle = ErrorHandle;
+
+			int status = 0;
+
+			status = OciCalls.OCIDefineByPosPtr (Parent,
+				out handle,
+				ErrorHandle,
+				position + 1,
+				ref value,
+				definedSize,
+				ociType,
+				ref indicator,
+				ref rlenp,
+				IntPtr.Zero,
+				0);
+
+			if (status != 0) {
+				OciErrorInfo info = connection.ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+		
 		protected override void Dispose (bool disposing)
 		{
 			if (!disposed) {
@@ -468,6 +517,25 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Blob:
 			case OciDataType.Clob:
 				return GetOracleLob ();
+			case OciDataType.IntervalDayToSecond:
+				long ticks;
+				tmp = Marshal.PtrToStringAnsi (Value, Size);
+				if (tmp != null) {
+					//TimeSpan ts = new TimeSpan (
+					Console.WriteLine ("IntervalDayToSecond value: {0}", (string)tmp);
+					ticks = long.Parse (String.Copy ((string)tmp));
+					return new OracleTimeSpan (ticks);
+				}
+				break;
+			case OciDataType.IntervalYearToMonth:
+				int months;
+				tmp = Marshal.PtrToStringAnsi (Value, Size);
+				if (tmp != null) {
+					Console.WriteLine ("IntervalDayToSecond value: {0}", (string)tmp);
+					months = int.Parse (String.Copy ((string)tmp));
+					return new OracleMonthSpan (months);
+				}
+				break;
 			default:
 				throw new Exception("OciDataType not implemented: " + DataType.ToString ());
 			}
@@ -502,6 +570,10 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Long:
 			case OciDataType.RowIdDescriptor:
 				return new OracleString ((string) ovalue);
+			case OciDataType.IntervalDayToSecond:
+				return new OracleTimeSpan ((OracleTimeSpan) ovalue);
+			case OciDataType.IntervalYearToMonth:
+				return new OracleMonthSpan ((OracleMonthSpan) ovalue);
 			default:
 				// TODO: do other types
 				throw new NotImplementedException ();

@@ -422,10 +422,14 @@ namespace System.Data.OracleClient
 			return new OracleDateTime (GetDateTime (i));
 		}
 
-		[MonoTODO]
 		public OracleMonthSpan GetOracleMonthSpan (int i)
 		{
-			throw new NotImplementedException ();
+			if (IsDBNull (i))
+				throw new InvalidOperationException("The value is null");
+
+			OracleMonthSpan output = (OracleMonthSpan) ((OciDefineHandle) statement.Values [i]).GetValue (
+				command.Connection.SessionFormatProvider, command.Connection);
+			return output;
 		}
 
 		public OracleString GetOracleString (int i)
@@ -462,6 +466,10 @@ namespace System.Data.OracleClient
 			case OciDataType.Long:
 			case OciDataType.RowIdDescriptor:
 				return GetOracleString (i);
+			case OciDataType.IntervalDayToSecond:
+				return GetOracleTimeSpan (i);
+			case OciDataType.IntervalYearToMonth:
+				return GetOracleMonthSpan (i);
 			default:
 				throw new NotImplementedException ();
 			}
@@ -484,7 +492,6 @@ namespace System.Data.OracleClient
 			return retval;
 		}
 
-		[MonoTODO]
 		public OracleTimeSpan GetOracleTimeSpan (int i)
 		{
 			return new OracleTimeSpan (GetTimeSpan (i));
