@@ -1,3 +1,8 @@
+2009-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Throw the correct type of exception if
+	mono_method_get_header () fails because of a loading error.
+
 2009-03-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Clear the loader error if the method
