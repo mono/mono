@@ -1,5 +1,11 @@
 2009-03-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Emit a few nops before 
+	indirect calls, this avoids problems where get_vcall_slot () would get
+	confused by the native code for the instruction preceeding the call.
+	(mono_arch_get_vcall_slot): Simplify this.
+	(mono_arch_emit_imt_argument): Remove this, it is no longer needed.
+
 	* mini-ops.h: Fix the definitions of the OP_IA64 opcodes, since the local
 	register allocator now seems to depend on them instead of the data in
 	cpu-<ARCH>.md.
