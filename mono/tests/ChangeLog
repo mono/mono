@@ -1,3 +1,7 @@
+2009-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* remoting4.cs: Fix the last change.
+
 2009-03-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* load-exceptions.cs: Add a test for missing locals.
