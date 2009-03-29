@@ -1,3 +1,7 @@
+2009-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* CodeGenerator.cs: Add synchronization as SRE is not thread safe.
+
 2008-09-17  Robert Jordan  <robertj@gmx.net>>
 
 	* ObjectReader.cs (ReadTypeMetadata): Replace the check for
