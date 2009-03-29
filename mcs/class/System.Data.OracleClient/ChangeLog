@@ -1,3 +1,7 @@
+2009-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* System.Data.OracleClient.dll.sources: Add new file
+	
 2008-09-24  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* Test/testblob.cs

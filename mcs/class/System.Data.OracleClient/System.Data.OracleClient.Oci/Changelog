@@ -1,3 +1,14 @@
+2009-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Fixes #480377
+	* OciCalls.cs:
+	* OciDataType.cs:
+	* OciDefineHandle.cs:
+	* OciHandle.cs:
+	* OciIntervalDescriptor.cs:
+	* OciParameterDescriptor.cs: Implement INTERVAL_YEAR_TO_MONTH and 
+	INTERVAL_DAY_TO_SECOND OCI types.
+	
 2008-12-18  Veerapuram Varadhan  <vvaradhan@novell.com>
         
 	* OciDefineHandle.cs (GetValue): Use connection's environment
