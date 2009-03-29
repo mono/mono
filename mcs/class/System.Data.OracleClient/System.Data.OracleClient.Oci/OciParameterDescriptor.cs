@@ -69,7 +69,6 @@ namespace System.Data.OracleClient.Oci {
 
 		public static OracleType OciDataTypeToOracleType (OciDataType ociType)
 		{
-			Console.WriteLine ("OciDataType = {0}", ociType);
 			switch (ociType) {
 			case OciDataType.VarChar2:
 				return OracleType.VarChar;
@@ -191,6 +190,10 @@ namespace System.Data.OracleClient.Oci {
 				return typeof (System.DateTime);
 			case "TimeStamp":
 				return typeof (System.DateTime);
+			case "IntervalDayToSecond":
+				return typeof (System.TimeSpan);
+			case "IntervalYearToMonth":
+				return typeof (System.Int32);
 			default:
 				// FIXME: are these types correct?
 				return typeof(System.String);
@@ -255,6 +258,10 @@ namespace System.Data.OracleClient.Oci {
 					return "OciDate";
 				case OciDataType.TimeStamp:
 					return "TimeStamp";
+				case OciDataType.IntervalDayToSecond:
+					return "IntervalDayToSecond";
+				case OciDataType.IntervalYearToMonth:
+					return "IntervalYearToMonth";
 				default:
 					return "Unknown";
 			}

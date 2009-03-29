@@ -388,8 +388,9 @@ namespace System.Data.OracleClient.Oci
 		void DefineInterval (int position, OciDataType type, OracleConnection connection)
 		{
 			ociType = type;
-			fieldType = typeof(System.TimeSpan);
-
+			fieldType = typeof(string);
+			definedSize = -1;
+			
 			switch (type) {
 				case OciDataType.IntervalDayToSecond:
 					definedSize = 11;
@@ -437,6 +438,8 @@ namespace System.Data.OracleClient.Oci
 					case OciDataType.Clob:
 					case OciDataType.Blob:
 					case OciDataType.TimeStamp:
+					case OciDataType.IntervalDayToSecond:
+					case OciDataType.IntervalYearToMonth:
 						break;
 					default:
 						Marshal.FreeHGlobal (value);
@@ -504,7 +507,7 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Float:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
 				if (tmp != null)
-                                        return Decimal.Parse (String.Copy ((string) tmp), formatProvider);
+					return Decimal.Parse (String.Copy ((string) tmp), formatProvider);
 				break;
 			case OciDataType.TimeStamp:
 				return dateTimeDesc.GetDateTime (conn.Environment, dateTimeDesc.ErrorHandle);
@@ -518,24 +521,9 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Clob:
 				return GetOracleLob ();
 			case OciDataType.IntervalDayToSecond:
-				long ticks;
-				tmp = Marshal.PtrToStringAnsi (Value, Size);
-				if (tmp != null) {
-					//TimeSpan ts = new TimeSpan (
-					Console.WriteLine ("IntervalDayToSecond value: {0}", (string)tmp);
-					ticks = long.Parse (String.Copy ((string)tmp));
-					return new OracleTimeSpan (ticks);
-				}
-				break;
+				return new OracleTimeSpan (intervalDesc.GetDayToSecond (conn.Environment, intervalDesc.ErrorHandle));
 			case OciDataType.IntervalYearToMonth:
-				int months;
-				tmp = Marshal.PtrToStringAnsi (Value, Size);
-				if (tmp != null) {
-					Console.WriteLine ("IntervalDayToSecond value: {0}", (string)tmp);
-					months = int.Parse (String.Copy ((string)tmp));
-					return new OracleMonthSpan (months);
-				}
-				break;
+				return new OracleMonthSpan (intervalDesc.GetYearToMonth (conn.Environment, intervalDesc.ErrorHandle));
 			default:
 				throw new Exception("OciDataType not implemented: " + DataType.ToString ());
 			}

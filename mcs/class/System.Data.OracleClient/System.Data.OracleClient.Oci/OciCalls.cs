@@ -658,13 +658,23 @@ namespace System.Data.OracleClient.Oci
 			out byte min,
 			out byte sec,
 			out uint fsec);
-		
+				
 		[DllImport ("oci")]
-		internal static extern int OCIIntervalFromText (IntPtr hndl,
+		internal static extern int OCIIntervalGetDaySecond (IntPtr hndl,
 			IntPtr err,
-			string inpstring,
-			long inplen,
-			out IntPtr ret);
+			out int days,
+			out int hours,
+			out int mins,
+			out int secs,
+			out int fsec,
+			IntPtr interval);
+
+		[DllImport ("oci")]
+		internal static extern int OCIIntervalGetYearMonth (IntPtr hndl,
+			IntPtr err,
+			out int years,
+			out int months,
+			IntPtr interval);
 
 		internal static int OCIDefineByPos (IntPtr stmtp,
 			out IntPtr defnpp,
