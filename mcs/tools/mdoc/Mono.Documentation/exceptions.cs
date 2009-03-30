@@ -40,7 +40,7 @@ namespace Mono.Documentation {
 		Member              = 0x0,
 		Assembly            = 0x1,
 		DependentAssemblies = 0x2,
-		All = Assembly | DependentAssemblies
+		AddedMembers        = 0x4,
 	}
 	 
 	public class ExceptionSources {

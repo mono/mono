@@ -155,9 +155,10 @@ class MDocUpdater : MDocCommand
 			return loc;
 		foreach (var type in s.Split (',')) {
 			switch (type) {
+				case "added":   loc |= ExceptionLocations.AddedMembers; break;
+				case "all":     loc |= ExceptionLocations.Assembly | ExceptionLocations.DependentAssemblies; break;
 				case "asm":     loc |= ExceptionLocations.Assembly; break;
 				case "depasm":  loc |= ExceptionLocations.DependentAssemblies; break;
-				case "all":     loc = ExceptionLocations.All; break;
 				default:        throw new NotSupportedException ("Unsupported --exceptions value: " + type);
 			}
 		}
@@ -1758,7 +1759,8 @@ class MDocUpdater : MDocCommand
 		if (addremarks)
 			WriteElementInitialText(e, "remarks", "To be added.");
 
-		if (exceptions.HasValue && info.Member != null) {
+		if (exceptions.HasValue && info.Member != null &&
+				(exceptions.Value & ExceptionLocations.AddedMembers) == 0) {
 			UpdateExceptions (e, info.Member);
 		}
 
@@ -2404,6 +2406,9 @@ class MDocUpdater : MDocCommand
 		
 		info.Node = me;
 		UpdateMember(info);
+		if (exceptions.HasValue && 
+				(exceptions.Value & ExceptionLocations.AddedMembers) != 0)
+			UpdateExceptions (info.Node, info.Member);
 
 		if (since != null) {
 			XmlNode docs = me.SelectSingleNode("Docs");

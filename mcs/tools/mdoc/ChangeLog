@@ -1,3 +1,14 @@
+2009-03-29  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/exceptions.cs: Add
+	  ExceptionLocations.AddedMember, used for --exceptions=added support.
+	* Mono.Documentation/monodocer.cs: Add --exceptions=added, which will 
+	  only add <exception/> elements for newly added elements.  This is
+	  useful for updating documentation for established projects which
+	  already have <exception/> corrections (e.g. *removal* of
+	  <exception/> elements because the exceptions weren't actually
+	  possible), so only new members should have <exception/> created.
+
 2009-03-20  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2html.cs: Perform the timestamp check for
