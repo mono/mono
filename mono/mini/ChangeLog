@@ -1,3 +1,8 @@
+2009-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (mono_dwarf_writer_emit_method): Fix a crash introduced
+	by the last change.
+
 2009-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Emit a few nops before 
