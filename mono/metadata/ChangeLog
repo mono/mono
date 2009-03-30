@@ -1,3 +1,7 @@
+2009-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Fix eglib build.
+
 2009-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads-types.h: Fix the win32 build.
