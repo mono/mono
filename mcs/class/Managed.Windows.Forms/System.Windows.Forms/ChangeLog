@@ -1,3 +1,8 @@
+2009-03-30 Tom Hindle <tom-hindle@sil.org>
+	
+	* DataGridView added Support for Invisible Columns to 
+	AutoFillColumnsInternal method.
+
 2009-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Structs:

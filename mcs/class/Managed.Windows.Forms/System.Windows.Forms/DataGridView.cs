@@ -5794,6 +5794,9 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < Columns.Count; i++) {
 				DataGridViewColumn col = Columns [i];
 
+				if (!col.Visible)
+					continue;
+
 				switch (col.InheritedAutoSizeMode) {
 				case DataGridViewAutoSizeColumnMode.Fill:
 					FillCount++;
@@ -5820,6 +5823,9 @@ namespace System.Windows.Forms {
 					
 					if (col.InheritedAutoSizeMode != DataGridViewAutoSizeColumnMode.Fill)
 						continue;
+				
+					if (!col.Visible)
+						continue;
 						
 					if (fixed_widths [i] != 0)
 						continue;
@@ -5844,7 +5850,10 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < columns.Count; i++) {
 				if (Columns [i].InheritedAutoSizeMode != DataGridViewAutoSizeColumnMode.Fill)
 					continue;
-					
+
+				if (!Columns[i].Visible)
+					continue;
+
 				Columns [i].Width = new_widths [i];
 			}
 		}
