@@ -1,3 +1,10 @@
+2009-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TextBox.cs: Process auto completion properly when we are using the
+	internal source provided by ComboBox, and also remove some repeated
+	checks.
+	Fixes #489339.
+
 2009-03-30 Tom Hindle <tom-hindle@sil.org>
 	
 	* DataGridView added Support for Invisible Columns to 
