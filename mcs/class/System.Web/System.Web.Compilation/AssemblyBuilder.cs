@@ -39,6 +39,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Security.Cryptography;
 using System.Reflection;
 using System.Text;
 using System.Web.Configuration;
@@ -90,6 +91,114 @@ namespace System.Web.Compilation {
 			{
 				this.BuildProvider = bp;
 				this.Unit = unit;
+			}
+		}
+
+		interface ICodePragmaGenerator
+		{
+			int ReserveSpace (string filename);
+			void DecorateFile (string path, string filename, MD5 checksum, Encoding enc);
+		}
+
+		class CSharpCodePragmaGenerator : ICodePragmaGenerator
+		{
+			// Copied from CSharpCodeGenerator.cs
+			string QuoteSnippetString (string value)
+			{
+				// FIXME: this is weird, but works.
+				string output = value.Replace ("\\", "\\\\");
+				output = output.Replace ("\"", "\\\"");
+				output = output.Replace ("\t", "\\t");
+				output = output.Replace ("\r", "\\r");
+				output = output.Replace ("\n", "\\n");
+				
+				return "\"" + output + "\"";
+			}
+
+			string ChecksumToHex (MD5 checksum)
+			{
+				var ret = new StringBuilder ();
+				foreach (byte b in checksum.Hash)
+					ret.Append (b.ToString ("X2"));
+
+				return ret.ToString ();
+			}
+
+			const int pragmaChecksumStaticCount = 21;
+			const int pragmaLineStaticCount = 8;
+			const int md5ChecksumCount = 32;
+			
+			public int ReserveSpace (string filename) 
+			{
+				return pragmaChecksumStaticCount +
+					pragmaLineStaticCount +
+					md5ChecksumCount +
+					(QuoteSnippetString (filename).Length * 2) +
+					(Environment.NewLine.Length * 4) +
+					BaseCompiler.HashMD5.ToString ("B").Length;
+			}
+			
+			public void DecorateFile (string path, string filename, MD5 checksum, Encoding enc)
+			{
+				string newline = Environment.NewLine;
+				var sb = new StringBuilder ();
+				
+				sb.AppendFormat ("#pragma checksum {0} {1} \"{2}\"{3}{3}",
+						 QuoteSnippetString (filename),
+						 BaseCompiler.HashMD5.ToString ("B"),
+						 ChecksumToHex (checksum),
+						 newline);
+				sb.AppendFormat ("#line 1 {0}{1}{1}", QuoteSnippetString (filename), newline);
+
+				byte[] bytes = enc.GetBytes (sb.ToString ());
+				using (FileStream fs = new FileStream (path, FileMode.Open, FileAccess.Write)) {
+					fs.Seek (enc.GetPreamble ().Length, SeekOrigin.Begin);
+					fs.Write (bytes, 0, bytes.Length);
+					bytes = null;
+				
+					sb.Length = 0;
+					sb.AppendFormat ("{0}#line default{0}#line hidden{0}", newline);
+					bytes = Encoding.UTF8.GetBytes (sb.ToString ());
+				
+					fs.Seek (0, SeekOrigin.End);
+					fs.Write (bytes, 0, bytes.Length);
+				}
+				
+				sb = null;
+				bytes = null;
+			}
+		}
+
+		class VBCodePragmaGenerator : ICodePragmaGenerator
+		{
+			const int pragmaExternalSourceCount = 21;
+			public int ReserveSpace (string filename)
+			{
+				return pragmaExternalSourceCount +
+					filename.Length +
+					(Environment.NewLine.Length * 2);
+			}
+			
+			public void DecorateFile (string path, string filename, MD5 checksum, Encoding enc)
+			{
+				string newline = Environment.NewLine;
+				var sb = new StringBuilder ();
+
+				sb.AppendFormat ("#ExternalSource(\"{0}\",1){1}{1}", filename, newline);
+				byte[] bytes = enc.GetBytes (sb.ToString ());
+				using (FileStream fs = new FileStream (path, FileMode.Open, FileAccess.Write)) {
+					fs.Seek (enc.GetPreamble ().Length, SeekOrigin.Begin);
+					fs.Write (bytes, 0, bytes.Length);
+					bytes = null;
+
+					sb.Length = 0;
+					sb.AppendFormat ("{0}#End ExternalSource{0}", newline);
+					bytes = enc.GetBytes (sb.ToString ());
+					fs.Seek (0, SeekOrigin.End);
+					fs.Write (bytes, 0, bytes.Length);
+				}
+				sb = null;
+				bytes = null;
 			}
 		}
 		
@@ -350,8 +459,10 @@ namespace System.Web.Compilation {
 			AddCodeFile (path, bp, false);
 		}
 
-		// We should use a CodeSnippetUnit here, but the problem with that approach is that
-		// we would have to read the entire file into a string, which we cannot do.
+		// The kludge of using ICodePragmaGenerator for C# and VB code files is bad, but
+		// it's better than allowing for potential DoS while reading a file with arbitrary
+		// size in memory for use with the CodeSnippetCompileUnit class.
+		// Files with extensions other than .cs and .vb use CodeSnippetCompileUnit.
 		internal void AddCodeFile (string path, BuildProvider bp, bool isVirtual)
 		{
 			if (String.IsNullOrEmpty (path))
@@ -368,44 +479,104 @@ namespace System.Web.Compilation {
 				return; // maybe better to throw an exception here?
 			extension = extension.Substring (1);
 			string filename = GetTempFilePhysicalPath (extension);
+			ICodePragmaGenerator pragmaGenerator;
+			
+			switch (extension.ToLower ()) {
+				case "cs":
+					pragmaGenerator = new CSharpCodePragmaGenerator ();
+					break;
 
+				case "vb":
+					pragmaGenerator = new VBCodePragmaGenerator ();
+					break;
+
+				default:
+					pragmaGenerator = null;
+					break;
+			}
+			
 			if (isVirtual) {
 				VirtualFile vf = HostingEnvironment.VirtualPathProvider.GetFile (path);
 				if (vf == null)
 					throw new HttpException (404, "Virtual file '" + path + "' does not exist.");
 
-				CopyFileWithChecksum (vf.Open (), filename, path);
+				if (vf is DefaultVirtualFile)
+					path = HostingEnvironment.MapPath (path);
+				CopyFileWithChecksum (vf.Open (), filename, path, pragmaGenerator);
 			} else
-				CopyFileWithChecksum (path, filename, path);
+				CopyFileWithChecksum (path, filename, path, pragmaGenerator);
 
-			if (bp != null)
-				AddPathToBuilderMap (filename, bp);
+			if (pragmaGenerator != null) {
+				if (bp != null)
+					AddPathToBuilderMap (filename, bp);
 			
-			SourceFiles.Add (filename);
+				SourceFiles.Add (filename);
+			}
 		}
 
-		void CopyFileWithChecksum (string input, string to, string from)
+		void CopyFileWithChecksum (string input, string to, string from, ICodePragmaGenerator pragmaGenerator)
 		{
-			CopyFileWithChecksum (new FileStream (input, FileMode.Open, FileAccess.Read), to, from);
+			CopyFileWithChecksum (new FileStream (input, FileMode.Open, FileAccess.Read), to, from, pragmaGenerator);
 		}
 		
-		void CopyFileWithChecksum (Stream input, string to, string from)
+		void CopyFileWithChecksum (Stream input, string to, string from, ICodePragmaGenerator pragmaGenerator)
 		{
-			// No checksum is computed for now
-			using (StreamWriter sw = new StreamWriter (new FileStream (to, FileMode.Create, FileAccess.Write), Encoding.UTF8)) {
+			if (pragmaGenerator == null) {
+				// This is BAD, BAD, BAD! CodeDOM API is really no good in this
+				// instance.
+				string filedata;
 				using (StreamReader sr = new StreamReader (input, WebEncoding.FileEncoding)) {
-					char[] src = new char [COPY_BUFFER_SIZE];
-					int count;
+					filedata = sr.ReadToEnd ();
+				}
 
-					do {
-						count = sr.Read (src, 0, COPY_BUFFER_SIZE);
-						if (count == 0)
-							break;
+				var snippet = new CodeSnippetCompileUnit (filedata);
+				snippet.LinePragma = new CodeLinePragma (from, 1);
+				filedata = null;
+				AddCodeCompileUnit (snippet);
+				snippet = null;
+				
+				return;
+			}
+			
+			MD5 checksum = MD5.Create ();
+			using (FileStream fs = new FileStream (to, FileMode.Create, FileAccess.Write)) {
+				using (StreamWriter sw = new StreamWriter (fs, Encoding.UTF8)) {
+					using (StreamReader sr = new StreamReader (input, WebEncoding.FileEncoding)) {
+						int count = pragmaGenerator.ReserveSpace (from);
+						char[] src;
+						
+						if (count > COPY_BUFFER_SIZE)
+							src = new char [count];
+						else
+							src = new char [COPY_BUFFER_SIZE];
+
 						sw.Write (src, 0, count);
-					} while (true);
-					src = null;
+						do {
+							count = sr.Read (src, 0, COPY_BUFFER_SIZE);
+							if (count == 0) {
+								UpdateChecksum (src, 0, checksum, true);
+								break;
+							}
+						
+							sw.Write (src, 0, count);
+							UpdateChecksum (src, count, checksum, false);
+						} while (true);
+						src = null;
+					}
 				}
 			}
+			pragmaGenerator.DecorateFile (to, from, checksum, Encoding.UTF8);
+		}
+
+		void UpdateChecksum (char[] buf, int count, MD5 checksum, bool final)
+		{
+			byte[] input = Encoding.UTF8.GetBytes (buf, 0, count);
+
+			if (final)
+				checksum.TransformFinalBlock (input, 0, input.Length);
+			else
+				checksum.TransformBlock (input, 0, input.Length, input, 0);
+			input = null;
 		}
 		
 		public Stream CreateEmbeddedResource (BuildProvider buildProvider, string name)

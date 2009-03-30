@@ -46,7 +46,7 @@ namespace System.Web.Compilation
 		const string DEFAULT_NAMESPACE = "ASP";
 
 #if NET_2_0
-		static Guid HashMD5 = new Guid(0x406ea660, 0x64cf, 0x4c82, 0xb6, 0xf0, 0x42, 0xd4, 0x81, 0x72, 0xa7, 0x99);
+		internal static Guid HashMD5 = new Guid(0x406ea660, 0x64cf, 0x4c82, 0xb6, 0xf0, 0x42, 0xd4, 0x81, 0x72, 0xa7, 0x99);
 		static BindingFlags replaceableFlags = BindingFlags.Public | BindingFlags.NonPublic |
 						  BindingFlags.Instance;
 #endif
