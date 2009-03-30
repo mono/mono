@@ -1,3 +1,14 @@
+2009-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_compile_assembly): Call img_writer_emit_start ()
+	right before emitting code, not at the start.
+
+	* mini.c (mono_postprocess_patches): Extract this into a separate function
+	from mono_codegen ().
+
+	* ssa.c (mono_ssa_compute): Set ins->klass for every PHI node, handle
+	byref types correctly.
+
 2009-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (mono_dwarf_writer_emit_method): Fix a crash introduced
