@@ -103,7 +103,7 @@ namespace Mono.CSharp {
 					return false;
 
 				if (ClassConstraint != null) {
-					if (!ClassConstraint.IsValueType)
+					if (!TypeManager.IsValueType (ClassConstraint))
 						return false;
 
 					if (ClassConstraint != TypeManager.value_type)
