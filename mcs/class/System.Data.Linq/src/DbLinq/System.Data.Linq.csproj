@@ -49,6 +49,9 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -229,7 +232,6 @@
     <Compile Include="Data\Linq\Table.cs" />
     <Compile Include="DbLinqToDoAttribute.cs" />
     <Compile Include="Factory\DbLinqAttribute.cs" />
-    <Compile Include="Factory\Implementation\AbstractObjectFactory.cs" />
     <Compile Include="Factory\Implementation\ReflectionObjectFactory.cs" />
     <Compile Include="Factory\IObjectFactory.cs" />
     <Compile Include="Factory\ObjectFactory.cs" />

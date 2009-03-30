@@ -34,6 +34,7 @@ using System.Linq;
 
 namespace DbLinq.Null {
 
+	[System.ComponentModel.DesignerCategory("Code")]
 	class NullConnection : DbConnection
 	{
 		public NullConnection ()

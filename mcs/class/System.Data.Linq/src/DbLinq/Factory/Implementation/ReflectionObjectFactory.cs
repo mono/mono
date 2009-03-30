@@ -36,7 +36,7 @@ namespace DbLinq.Factory.Implementation
     /// Object factory. Main objects (most of them are stateless) are created with this class
     /// This may allow later to inject dependencies with a third party injector (I'm a Spring.NET big fan)
     /// </summary>
-    internal class ReflectionObjectFactory : AbstractObjectFactory
+    internal class ReflectionObjectFactory : IObjectFactory
     {
         private IDictionary<Type, IList<Type>> implementations;
         /// <summary>
@@ -106,18 +106,7 @@ namespace DbLinq.Factory.Implementation
                 var assemblyTypes = assembly.GetTypes();
                 foreach (Type type in assemblyTypes)
                 {
-                    if (type.IsAbstract)
-                        continue;
-                    foreach (Type i in type.GetInterfaces())
-                    {
-                        if (i.Assembly.GetCustomAttributes(typeof(DbLinqAttribute), false).Length > 0)
-                        {
-                            IList<Type> types;
-                            if (!interfaceImplementations.TryGetValue(i, out types))
-                                interfaceImplementations[i] = types = new List<Type>();
-                            types.Add(type);
-                        }
-                    }
+                    Register(type, interfaceImplementations);
                 }
             }
             catch (ReflectionTypeLoadException)
@@ -125,16 +114,43 @@ namespace DbLinq.Factory.Implementation
             }
         }
 
+        private void Register(Type type, IDictionary<Type, IList<Type>> interfaceImplementations)
+        {
+            if (type.IsAbstract)
+                return;
+            foreach (Type i in type.GetInterfaces())
+            {
+                if (i.Assembly.GetCustomAttributes(typeof(DbLinqAttribute), false).Length > 0)
+                {
+                    IList<Type> types;
+                    if (!interfaceImplementations.TryGetValue(i, out types))
+                        interfaceImplementations[i] = types = new List<Type>();
+                    types.Add(type);
+                }
+            }
+        }
+
+        public void Register(Type implementationType)
+        {
+            Register(implementationType, Implementations);
+        }
+
+        public void Unregister(Type implementationType)
+        {
+            foreach (var entry in Implementations)
+                entry.Value.Remove(implementationType);
+        }
+
         /// <summary>
         /// Gets the singleton.
         /// </summary>
         /// <param name="t">The t.</param>
         /// <returns></returns>
-        private object GetSingleton(Type t)
+        public object Get(Type t)
         {
             object r;
             if (!Singletons.TryGetValue(t, out r))
-                Singletons[t] = r = GetNewInstance(t);
+                Singletons[t] = r = Create(t);
             return r;
         }
 
@@ -143,7 +159,7 @@ namespace DbLinq.Factory.Implementation
         /// </summary>
         /// <param name="t">The t.</param>
         /// <returns></returns>
-        private object GetNewInstance(Type t)
+        public object Create(Type t)
         {
             //warning - the Activator.CreateInstance below was throwing unerported exceptions (as of 2008June).
             //So - let's add two future rules:
@@ -162,24 +178,11 @@ namespace DbLinq.Factory.Implementation
         }
 
         /// <summary>
-        /// Underlying method for Get&lt;T&gt; and Create&lt;T&gt;
-        /// </summary>
-        /// <param name="t"></param>
-        /// <param name="newInstanceRequired"></param>
-        /// <returns></returns>
-        public override object GetInstance(Type t, bool newInstanceRequired)
-        {
-            if (newInstanceRequired)
-                return GetNewInstance(t);
-            return GetSingleton(t);
-        }
-
-        /// <summary>
         /// Returns a list of types implementing the required interface
         /// </summary>
         /// <param name="interfaceType"></param>
         /// <returns></returns>
-        public override IEnumerable<Type> GetImplementations(Type interfaceType)
+        public IEnumerable<Type> GetImplementations(Type interfaceType)
         {
             return Implementations[interfaceType];
         }

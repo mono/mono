@@ -1,3 +1,13 @@
+2009-03-30  Jonathan Pryor  <jpryor@novell.com>
+
+	* System.Data.Linq.dll.sources: Remove
+	  src/DbLinq/Factory/Implementation/AbstractObjectFactory.cs, add 
+	  src/DbLinq/Data/Linq/SqlClient/Sql2008Provider.cs.
+	* src/**/*: Flush; syncs to DbLinq r1038, fixes
+	  System.Data.Linq.SqlClient.Sql200?Provider cor-compare differences,
+	  unit test execution order dependency issues, namespace names within
+	  tests, etc.
+
 2009-03-27  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/DbLinq.sln,

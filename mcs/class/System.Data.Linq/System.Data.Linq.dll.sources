@@ -53,6 +53,7 @@ src/DbLinq/Data/Linq/SqlClient/OracleProvider.cs
 src/DbLinq/Data/Linq/SqlClient/PostgreSqlProvider.cs
 src/DbLinq/Data/Linq/SqlClient/Sql2000Provider.cs
 src/DbLinq/Data/Linq/SqlClient/Sql2005Provider.cs
+src/DbLinq/Data/Linq/SqlClient/Sql2008Provider.cs
 src/DbLinq/Data/Linq/SqlClient/SqliteProvider.cs
 src/DbLinq/Data/Linq/SqlClient/SqlServerProvider.cs
 src/DbLinq/Data/Linq/Sql/SqlLiteralPart.cs
@@ -145,7 +146,6 @@ src/DbLinq/Data/Linq/Sugar/UpsertQuery.cs
 src/DbLinq/Data/Linq/Table.cs
 src/DbLinq/DbLinqToDoAttribute.cs
 src/DbLinq/Factory/DbLinqAttribute.cs
-src/DbLinq/Factory/Implementation/AbstractObjectFactory.cs
 src/DbLinq/Factory/Implementation/ReflectionObjectFactory.cs
 src/DbLinq/Factory/IObjectFactory.cs
 src/DbLinq/Factory/ObjectFactory.cs

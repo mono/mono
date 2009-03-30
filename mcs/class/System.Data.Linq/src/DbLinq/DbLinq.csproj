@@ -202,7 +202,6 @@
     <Compile Include="Data\Linq\Table.Extended.cs" />
     <Compile Include="DbLinqToDoAttribute.cs" />
     <Compile Include="Factory\DbLinqAttribute.cs" />
-    <Compile Include="Factory\Implementation\AbstractObjectFactory.cs" />
     <Compile Include="Factory\Implementation\ReflectionObjectFactory.cs" />
     <Compile Include="Factory\IObjectFactory.cs" />
     <Compile Include="Factory\ObjectFactory.cs" />

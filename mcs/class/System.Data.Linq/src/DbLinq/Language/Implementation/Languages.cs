@@ -47,7 +47,7 @@ namespace DbLinq.Language.Implementation
             {
                 // checks for instance, but doesn't load it here
                 // (loading is slow)
-                var language = (ILanguageWords)objectFactory.GetInstance(languageType, false);
+                var language = (ILanguageWords)objectFactory.Get(languageType);
                 if (language.Supports(cultureInfo))
                 {
                     // if we have the right language, we load it

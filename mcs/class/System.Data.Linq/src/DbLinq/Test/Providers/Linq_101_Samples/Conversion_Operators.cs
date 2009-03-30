@@ -1,8 +1,8 @@
-#region MIT license
+﻿#region MIT license
 // 
 // MIT license
 //
-// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne, Pascal Craponne
+// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -34,30 +34,25 @@ using Test_NUnit.Linq_101_Samples;
 
 using nwind;
 
+// test ns Linq_101_Samples
 #if MYSQL
-namespace Test_NUnit_MySql.Linq_101_Samples
+    namespace Test_NUnit_MySql.Linq_101_Samples
+#elif ORACLE && ODP
+    namespace Test_NUnit_OracleODP.Linq_101_Samples
 #elif ORACLE
-#if ODP
-        namespace Test_NUnit_OracleODP.Linq_101_Samples
-#else
-        namespace Test_NUnit_Oracle.Linq_101_Samples
-#endif
+    namespace Test_NUnit_Oracle.Linq_101_Samples
 #elif POSTGRES
-namespace Test_NUnit_PostgreSql.Linq_101_Samples
+    namespace Test_NUnit_PostgreSql.Linq_101_Samples
 #elif SQLITE
-namespace Test_NUnit_Sqlite.Linq_101_Samples
+    namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL
-#if MONO_STRICT
+#elif MSSQL && MONO_STRICT
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
-#else
+#elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
-#endif
 #elif FIREBIRD
     namespace Test_NUnit_Firebird.Linq_101_Samples
-#else
-    #error unknown target
 #endif
 {
     [TestFixture]

@@ -7,24 +7,25 @@ using NUnit.Framework;
 using nwind;
 using Test_NUnit.Linq_101_Samples;
 
+// test ns Linq_101_Samples
 #if MYSQL
-namespace Test_NUnit_MySql.Linq_101_Samples
+    namespace Test_NUnit_MySql.Linq_101_Samples
+#elif ORACLE && ODP
+    namespace Test_NUnit_OracleODP.Linq_101_Samples
 #elif ORACLE
-#if ODP
-        namespace Test_NUnit_OracleODP.Linq_101_Samples
-#else
-        namespace Test_NUnit_Oracle.Linq_101_Samples
-#endif
+    namespace Test_NUnit_Oracle.Linq_101_Samples
 #elif POSTGRES
     namespace Test_NUnit_PostgreSql.Linq_101_Samples
 #elif SQLITE
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
+#elif MSSQL && MONO_STRICT
+    namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
-namespace Test_NUnit_MsSql.Linq_101_Samples
-#else
-#error unknown target
+    namespace Test_NUnit_MsSql.Linq_101_Samples
+#elif FIREBIRD
+    namespace Test_NUnit_Firebird.Linq_101_Samples
 #endif
 {
     [TestFixture]

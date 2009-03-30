@@ -165,7 +165,7 @@ namespace DbMetal.Generator.Implementation
         {
             foreach (var codeGeneratorType in ObjectFactory.Current.GetImplementations(typeof(ICodeGenerator)))
             {
-                yield return (ICodeGenerator)ObjectFactory.Current.GetInstance(codeGeneratorType, false);
+                yield return (ICodeGenerator)ObjectFactory.Current.Get(codeGeneratorType);
             }
         }
 

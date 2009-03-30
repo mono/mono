@@ -51,7 +51,6 @@
     </Compile>
     <Compile Include="MsSqlDataContextTest.cs" />
     <Compile Include="..\..\DbLinq\Test\NullProvider.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="..\..\DbLinq\Test\Providers\DataContextTestBase.cs" />
   </ItemGroup>

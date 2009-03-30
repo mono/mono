@@ -26,10 +26,12 @@
 
 using System.Globalization;
 using DbLinq;
+using DbLinq.Factory;
 using DbLinq.Schema;
 using DbLinq.Schema.Implementation;
 using DbLinq.Util;
 using DbMetal;
+using DbMetal.Language;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using Assert = NUnit.Framework.Assert;
@@ -84,27 +86,51 @@ namespace DbLinqTest
         [Test]
         public void InvalidCharactersLanguage2Test()
         {
-            var nf = new NameFormatter();
-            var tn = nf.GetTableName("Test#?", WordsExtraction.FromDictionary, EnglishNameFormat);
-            Assert.AreEqual("Test__", tn.ClassName);
+            try
+            {
+                ObjectFactory.Current.Register(typeof(EnglishWords));
+                var nf = new NameFormatter();
+                var tn = nf.GetTableName("Test#?", WordsExtraction.FromDictionary, EnglishNameFormat);
+                Assert.AreEqual("Test__", tn.ClassName);
+            }
+            finally
+            {
+                ObjectFactory.Current.Unregister(typeof(EnglishWords));
+            }
         }
 
         [TestMethod]
         [Test]
         public void GetWordsTest_MyTableName()
         {
-            var nf = new NameFormatter();
-            var tn = nf.GetTableName("MY_TABLE_NAME_", WordsExtraction.FromDictionary, EnglishNameFormat);
-            Assert.AreEqual("MyTableName", tn.ClassName);
+            try
+            {
+                ObjectFactory.Current.Register(typeof(EnglishWords));
+                var nf = new NameFormatter();
+                var tn = nf.GetTableName("MY_TABLE_NAME_", WordsExtraction.FromDictionary, EnglishNameFormat);
+                Assert.AreEqual("MyTableName", tn.ClassName);
+            }
+            finally
+            {
+                ObjectFactory.Current.Unregister(typeof(EnglishWords));
+            }
         }
 
         [TestMethod]
         [Test]
         public void GetWordsTest_MyTableName2()
         {
-            var nf = new NameFormatter();
-            var tn = nf.GetTableName("_MY_TABLE__NAME", WordsExtraction.FromDictionary, EnglishNameFormat);
-            Assert.AreEqual("MyTableName", tn.ClassName);
+            try
+            {
+                ObjectFactory.Current.Register(typeof(EnglishWords));
+                var nf = new NameFormatter();
+                var tn = nf.GetTableName("_MY_TABLE__NAME", WordsExtraction.FromDictionary, EnglishNameFormat);
+                Assert.AreEqual("MyTableName", tn.ClassName);
+            }
+            finally
+            {
+                ObjectFactory.Current.Unregister(typeof(EnglishWords));
+            }
         }
 
     }

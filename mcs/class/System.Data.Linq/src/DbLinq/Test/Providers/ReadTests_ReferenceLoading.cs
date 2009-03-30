@@ -9,30 +9,25 @@ using System.Data.Linq;
 
 using nwind;
 
+// test ns 
 #if MYSQL
-namespace Test_NUnit_MySql
+    namespace Test_NUnit_MySql
+#elif ORACLE && ODP
+    namespace Test_NUnit_OracleODP
 #elif ORACLE
-#if ODP
-        namespace Test_NUnit_OracleODP
-#else
-        namespace Test_NUnit_Oracle
-#endif
+    namespace Test_NUnit_Oracle
 #elif POSTGRES
     namespace Test_NUnit_PostgreSql
 #elif SQLITE
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
+#elif MSSQL && MONO_STRICT
+    namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
-#if MONO_STRICT
-namespace Test_NUnit_MsSql_Strict
-#else
-namespace Test_NUnit_MsSql
-#endif
+    namespace Test_NUnit_MsSql
 #elif FIREBIRD
     namespace Test_NUnit_Firebird
-#else
-    #error unknown target
 #endif
 {
     [TestFixture]

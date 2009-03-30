@@ -2,7 +2,7 @@
 // 
 // MIT license
 //
-// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne
+// Copyright (c) 2009 Novell, Inc.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,7 @@ namespace System.Data.Linq.SqlClient
 namespace DbLinq.Data.Linq.SqlClient
 #endif
 {
-    /// <summary>
-    /// Identifies vendor by using VendorAttribute with this type
-    /// </summary>
-    public class Sql2005Provider : SqlProvider
+    public class Sql2008Provider : SqlProvider
     {
     }
 }
