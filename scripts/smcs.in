@@ -1,2 +1,0 @@
-#!/bin/sh
-exec @bindir@/@mono_interp@ $MONO_OPTIONS --runtime=moonlight --security=temporary-smcs-hack @mono_instdir@/@framework_version@/@exe_name@.exe "$@"
