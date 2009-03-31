@@ -1,5 +1,11 @@
 2009-03-31  Mark Probst  <mark.probst@gmail.com>
 
+	* critical-finalizers.cs: Test case for critical finalizers.
+
+	* Makefile.am: Test added.
+
+2009-03-31  Mark Probst  <mark.probst@gmail.com>
+
 	* finalizer-wait.cs: Test case for WaitForPendingFinalizers.
 
 	* Makefile.am: Test added.

@@ -1,3 +1,11 @@
+2009-03-31  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Execute critical finalizers after ordinary
+	finalizers.
+
+	* class-internals.h, domain.c: Add CriticalFinalizerObject to
+	mono_defaults.
+
 2009-03-31 Jb Evain <jbevain@novell.com>
 
 	* verify.c (do_ldstr): don't check if a string is in the user strings
