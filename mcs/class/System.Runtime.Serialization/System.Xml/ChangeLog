@@ -1,5 +1,11 @@
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryReader.cs, XmlDictionaryWriter.cs :
+	  a couple of fixes to reflect correct values for node properties
+	  on each read step.
+
+2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryReader.cs, XmlBinaryFormat.cs :
 	  support array operation (0x03) on reader too.
 

@@ -1,5 +1,10 @@
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryReaderTest.cs: make tests more doubtful on
+	  state.
+
+2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryReaderTest.cs: test array reader.
 
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>

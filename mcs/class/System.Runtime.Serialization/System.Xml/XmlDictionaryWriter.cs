@@ -152,8 +152,6 @@ namespace System.Xml
 			throw new NotSupportedException ();
 		}
 
-		// FIXME: add Write*Array() overloads.
-
 		public void WriteAttributeString (
 			XmlDictionaryString localName,
 			XmlDictionaryString namespaceUri,

@@ -44,6 +44,20 @@ namespace MonoTests.System.Xml
 
 			while (!reader.EOF)
 				reader.Read ();
+			// FIXME: use this instead; right now some tests are broken.
+			//XmlDocument doc = new XmlDocument ();
+			//doc.AppendChild (doc.CreateElement ("root"));
+			//while (!reader.EOF)
+			//	doc.DocumentElement.AppendChild (doc.ReadNode (reader));
+		}
+
+		void AssertNode (XmlNodeType nodeType, string localName, string ns, string value, int depth, XmlReader reader, string label)
+		{
+			Assert.AreEqual (nodeType, reader.NodeType, label + ".Node");
+			Assert.AreEqual (localName, reader.LocalName, label + ".LocalName");
+			Assert.AreEqual (ns, reader.NamespaceURI, label + ".NS");
+			Assert.AreEqual (value, reader.Value, label + ".Value");
+			Assert.AreEqual (depth, reader.Depth, label + ".Depth");
 		}
 
 		[Test]
@@ -303,6 +317,17 @@ namespace MonoTests.System.Xml
 				};
 
 			Read (bytes);
+
+			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (bytes), new XmlDictionaryReaderQuotas ());
+			Assert.IsTrue (reader.Read (), "#1-1");
+			AssertNode (XmlNodeType.Element, "root", "urn:bar", "", 0, reader, "#1");
+			reader.MoveToAttribute (0);
+			if (reader.LocalName != "a")
+				reader.MoveToAttribute (1);
+			AssertNode (XmlNodeType.Attribute, "a", "", "", 1, reader, "#2");
+			Assert.IsTrue (reader.ReadAttributeValue (), "#3");
+			AssertNode (XmlNodeType.Text, "a", "", "", 2, reader, "#4");
+			Assert.IsFalse (reader.ReadAttributeValue (), "#5");
 		}
 
 		[Test]
@@ -339,7 +364,25 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ReadInt16Array ()
 		{
-			Read (array_int16);
+			Read (array_int32);
+
+			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (array_int16), new XmlDictionaryReaderQuotas ());
+			Assert.IsTrue (reader.Read (), "#1-1");
+			AssertNode (XmlNodeType.Element, "el", "", "", 0, reader, "#1-2");
+			Assert.IsTrue (reader.Read (), "#2-1");
+			AssertNode (XmlNodeType.Text, "", "", "4", 1, reader, "#2-2");
+			Assert.IsTrue (reader.Read (), "#3-1");
+			AssertNode (XmlNodeType.EndElement, "el", "", "", 0, reader, "#3-2");
+			Assert.IsTrue (reader.Read (), "#4-1");
+			AssertNode (XmlNodeType.Element, "el", "", "", 0, reader, "#4-2");
+			Assert.IsTrue (reader.Read (), "#5-1");
+			AssertNode (XmlNodeType.Text, "", "", "6", 1, reader, "#5-2");
+			Assert.IsTrue (reader.Read (), "#6-1");
+			AssertNode (XmlNodeType.EndElement, "el", "", "", 0, reader, "#6-2");
+			for (int i = 0; i < 3; i++) // 6, 8, 10
+				for (int j = 0; j < 3; j++) // el / text / endel
+					Assert.IsTrue (reader.Read (), "#x-" + i + j);
+			Assert.IsFalse (reader.Read (), "End");
 		}
 
 		static readonly byte [] array_int16 = {

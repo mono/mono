@@ -42,8 +42,6 @@ namespace System.Xml
 {
 	// FIXME:
 	//	- support XmlDictionaryReaderQuotas.
-	//	- support XmlBinaryReaderSession.
-	//	- handle namespaces as expected.
 
 	internal class XmlBinaryDictionaryReader : XmlDictionaryReader, IXmlNamespaceResolver
 	{
@@ -114,9 +112,9 @@ namespace System.Xml
 			// 0 or more to fill later
 			public int NSSlot;
 
-			string name;
-			string local_name;
-			string ns;
+			string name = String.Empty;
+			string local_name = String.Empty;
+			string ns = String.Empty;
 			string value;
 
 			public string LocalName {
@@ -215,6 +213,7 @@ namespace System.Xml
 			{
 				base.Reset ();
 				ValueIndex = -1;
+				NodeType = XmlNodeType.Attribute;
 			}
 		}
 
@@ -310,7 +309,7 @@ namespace System.Xml
 		}
 
 		public override int Depth {
-			get { return depth; }
+			get { return current == node ? depth : NodeType == XmlNodeType.Attribute ? depth + 1 : depth + 2; }
 		}
 
 		public override bool EOF {
@@ -330,15 +329,16 @@ namespace System.Xml
 		}
 
 		public override string Prefix {
-			get { return current.Prefix; }
+			get { return current_attr >= 0 ? attributes [current_attr].Prefix : current.Prefix; }
 		}
 
+		// looks like it may return attribute's name even if it is on its value node.
 		public override string LocalName {
-			get { return current.LocalName; }
+			get { return current_attr >= 0 ? attributes [current_attr].LocalName : current.LocalName; }
 		}
 
 		public override string NamespaceURI {
-			get { return current.NS; }
+			get { return current_attr >= 0 ? attributes [current_attr].NS : current.NS; }
 		}
 
 		public override XmlNameTable NameTable {
@@ -475,12 +475,15 @@ namespace System.Xml
 				current = attr_values [start];
 				return true;
 			}
+			// Actually there is no case for attribute whose value is split to more than two nodes. We could simplify the node structure.
+			/*
 			for (int i = start; i < end; i++) {
 				if (current == attr_values [i] && i + 1 < end) {
 					current = attr_values [i + 1];
 					return true;
 				}
 			}
+			*/
 			return false;
 		}
 
@@ -517,7 +520,6 @@ namespace System.Xml
 				}
 				else
 					node = node_stack [depth];
-				node.Reset ();
 				current = node;
 			}
 
@@ -526,7 +528,6 @@ namespace System.Xml
 				ProcessEndElement ();
 				return true;
 			}
-			node.Reset ();
 
 			// process array node after preparing node stack.
 			switch (array_state) {
@@ -545,6 +546,9 @@ namespace System.Xml
 					return true;
 				}
 			}
+
+			// array consumer does not expect Reset whlie it's on reading. So call it later than array check.
+			node.Reset ();
 
 			int ident = next >= 0 ? next : source.ReadByte ();
 			next = -1;
