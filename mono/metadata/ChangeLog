@@ -1,3 +1,10 @@
+2009-03-31  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c
+	(mono_debugger_register_class_init_callback): Also register the
+	class init callback if the class is already initialized to make
+	things work with shadow copied assemblies.
+
 2009-03-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c
