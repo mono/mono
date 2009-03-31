@@ -1,3 +1,7 @@
+2009-03-31  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile: Remove make warning about overriding dist-local.
+
 2009-03-30  Jonathan Pryor  <jpryor@novell.com>
 
 	* System.Data.Linq.dll.sources: Remove
