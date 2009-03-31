@@ -1,5 +1,6 @@
 2009-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* Fixes rest of #480377
 	* DataContainer.cs (GetContainerData, GetExplicitValue): Added to handle cases 
 	where passed type overloads an explicit operator for conversion of values.
 	
