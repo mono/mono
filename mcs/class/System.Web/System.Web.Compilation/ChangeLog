@@ -1,5 +1,8 @@
 2009-03-30  Marek Habersack  <mhabersack@novell.com>
 
+	* AspTokenizer.cs: UpdateChecksum - fixed off-by-one bug when
+	processing the checksum buffer.
+
 	* AssemblyBuilder.cs: introduced a kludge to add #pragma checksum
 	and #pragma lines (or its vb equivalent - #ExternalSource) to
 	code-behind files named in the CodeFile/Src directives while
