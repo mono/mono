@@ -2362,8 +2362,8 @@ handler_block		: scope_block
                           }
 			| K_HANDLER int32 K_TO int32
 			  {
-				LabelInfo from = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
-				LabelInfo to = codegen.CurrentMethodDef.AddLabelRef ((string) $4);
+				LabelInfo from = codegen.CurrentMethodDef.AddLabel ((int) $2);
+				LabelInfo to = codegen.CurrentMethodDef.AddLabel ((int) $4);
 
 				$$ = new HandlerBlock (from, to);
 			  }

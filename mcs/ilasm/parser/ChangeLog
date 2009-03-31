@@ -1,3 +1,7 @@
+2009-03-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ILParser.jay: Fix integer labels in handler blocks.
+
 2008-06-02  Ankit Jain  <jankit@novell.com>
 
 	Part of fix for bug #367114.
