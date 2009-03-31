@@ -1,5 +1,9 @@
 2009-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c (dump_verify_info): Don't crash if signature decoding fails.
+
+2009-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verifier_load_field): Fail if the field parent could not be loaded.
 
 	* verify.c (mono_method_verify): Do proper bounds checking of exception
