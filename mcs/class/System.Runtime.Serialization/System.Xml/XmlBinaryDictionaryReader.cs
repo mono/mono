@@ -563,6 +563,9 @@ namespace System.Xml
 				break;
 
 			default:
+				if (BF.PrefixNElemIndexStart <= ident && ident <= BF.PrefixNElemIndexEnd ||
+				    BF.PrefixNElemStringStart <= ident && ident <= BF.PrefixNElemStringEnd)
+					goto case BF.ElemString;
 				ReadTextOrValue ((byte) ident, node, false);
 				break;
 			}
@@ -600,6 +603,15 @@ namespace System.Xml
 				node.Prefix = ReadUTF8 ();
 				node.NSSlot = ns_slot++;
 				goto case BF.ElemIndex;
+			default:
+				if (BF.PrefixNElemIndexStart <= ident && ident <= BF.PrefixNElemIndexEnd) {
+					node.Prefix = ((char) (ident - BF.PrefixNElemIndexStart + 'a')).ToString ();
+					node.DictLocalName = ReadDictName ();
+				} else if (BF.PrefixNElemStringStart <= ident && ident <= BF.PrefixNElemStringEnd) {
+					node.Prefix = ((char) (ident - BF.PrefixNElemStringStart + 'a')).ToString ();
+					node.LocalName = ReadUTF8 ();
+				}
+				break;
 			}
 
 			bool loop = true;

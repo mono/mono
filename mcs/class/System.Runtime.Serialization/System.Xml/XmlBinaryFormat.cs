@@ -51,6 +51,10 @@ namespace System.Xml
 		public const byte ElemStringPrefix = 0x41;
 		public const byte ElemIndex = 0x42;
 		public const byte ElemIndexPrefix = 0x43;
+		public const byte PrefixNElemIndexStart = 0x44;
+		public const byte PrefixNElemIndexEnd = 0x44 + 26 - 1;
+		public const byte PrefixNElemStringStart = 0x5E;
+		public const byte PrefixNElemStringEnd = 0x5E + 26 - 1;
 
 		public const byte Zero = 0x80;
 		public const byte One = 0x82;

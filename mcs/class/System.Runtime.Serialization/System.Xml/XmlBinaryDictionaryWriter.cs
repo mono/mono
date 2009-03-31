@@ -640,10 +640,20 @@ namespace System.Xml
 			if (prefix == null)
 				prefix = String.Empty;
 
-			writer.Write ((byte) (prefix.Length > 0 ? BF.ElemStringPrefix : BF.ElemString));
-			if (prefix.Length > 0)
-				writer.Write (prefix);
-			writer.Write (localName);
+			byte op = prefix.Length == 1 && 'a' <= prefix [0] && prefix [0] <= 'z' ?
+				  (byte) (prefix [0] - 'a' + BF.PrefixNElemStringStart) :
+				  prefix.Length == 0 ? BF.ElemString :
+				  BF.ElemStringPrefix;
+
+			if (BF.PrefixNElemStringStart <= op && op <= BF.PrefixNElemStringEnd) {
+				writer.Write (op);
+				writer.Write (localName);
+			} else {
+				writer.Write (op);
+				if (prefix.Length > 0)
+					writer.Write (prefix);
+				writer.Write (localName);
+			}
 
 			OpenElement (prefix, ns);
 		}
@@ -798,13 +808,20 @@ namespace System.Xml
 			if (prefix == null)
 				prefix = String.Empty;
 
-			if (prefix.Length == 0)
-				writer.Write (BF.ElemIndex);
-			else {
-				writer.Write (BF.ElemIndexPrefix);
-				writer.Write (prefix);
+			byte op = prefix.Length == 1 && 'a' <= prefix [0] && prefix [0] <= 'z' ?
+				  (byte) (prefix [0] - 'a' + BF.PrefixNElemIndexStart) :
+				  prefix.Length == 0 ? BF.ElemIndex :
+				  BF.ElemIndexPrefix;
+
+			if (BF.PrefixNElemIndexStart <= op && op <= BF.PrefixNElemIndexEnd) {
+				writer.Write (op);
+				WriteDictionaryIndex (localName);
+			} else {
+				writer.Write (op);
+				if (prefix.Length > 0)
+					writer.Write (prefix);
+				WriteDictionaryIndex (localName);
 			}
-			WriteDictionaryIndex (localName);
 
 			OpenElement (prefix, namespaceUri);
 		}

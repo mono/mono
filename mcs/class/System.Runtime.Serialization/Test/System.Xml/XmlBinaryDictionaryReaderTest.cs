@@ -38,6 +38,13 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XmlBinaryDictionaryReaderTest
 	{
+		void Read (byte [] buf)
+		{
+			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (buf), new XmlDictionaryReaderQuotas ());
+			while (!reader.EOF)
+				reader.Read ();
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void NullQuotas ()
@@ -191,7 +198,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-//		[Category ("NotWorking")]
 		public void Beyond128DictionaryEntries ()
 		{
 			XmlDictionaryString ds;
@@ -303,9 +309,7 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ReadTypedValues ()
 		{
-			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (typed_values), new XmlDictionaryReaderQuotas ());
-			while (!reader.EOF)
-				reader.Read ();
+			Read (typed_values);
 		}
 
 		byte [] typed_values = new byte [] {
@@ -319,6 +323,18 @@ namespace MonoTests.System.Xml
 			0x92, 0x4C, 0x15, 0x31, 0x91, 0x77, 0xE3, 0x01, 0x40, // 43
 			0x94, 0, 0, 6, 0, 0, 0, 0, 0, 0xD8, 0xEF, 0x2F, 0, 0, 0, 0, 0,
 			0x97, 0x80, 0x40, 0xA3, 0x29, 0xE5, 0x22, 0xC1, 8
+			};
+
+		[Test]
+		public void ReadShortPrefixedElement ()
+		{
+			Read (short_prefixed_elem_value);
+		}
+
+		static readonly byte [] short_prefixed_elem_value = {
+			0x6D, 4, 0x72, 0x6F, 0x6F, 0x74,
+			0x09, 1, 0x70, 7, 0x75, 0x72, 0x6E, 0x3A, 0x66, 0x6F, 0x6F,
+			0x99, 4, 0x74, 0x65, 0x73, 0x74,
 			};
 	}
 }
