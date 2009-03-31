@@ -1,5 +1,9 @@
 2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : do not bork at some unimplemented bits.
+
+2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CrossDomainAccessManager.cs: temporarily disable
 	  access checker to just warn invalid access for now.
 

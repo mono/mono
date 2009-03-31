@@ -74,6 +74,7 @@ namespace System.ServiceModel
 
 			// default values
 			AllowInitializationUI = true;
+			OperationTimeout = TimeSpan.FromMinutes (1);
 		}
 
 		public ClientRuntime Runtime {
@@ -236,10 +237,7 @@ namespace System.ServiceModel
 		#region IContextChannel
 
 		[MonoTODO]
-		public bool AllowOutputBatching {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public bool AllowOutputBatching { get; set; }
 
 		[MonoTODO]
 		public IInputSession InputSession {
@@ -256,10 +254,7 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public TimeSpan OperationTimeout {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public TimeSpan OperationTimeout { get; set; }
 
 		[MonoTODO]
 		public IOutputSession OutputSession {
@@ -571,11 +566,14 @@ namespace System.ServiceModel
 			if (version == null)
 				version = MessageVersion.Default;
 
+			Message msg;
 			if (op.SerializeRequest)
-				return op.GetFormatter ().SerializeRequest (
+				msg = op.GetFormatter ().SerializeRequest (
 					version, parameters);
 			else
-				return (Message) parameters [0];
+				msg = (Message) parameters [0];
+			msg.Properties.AllowOutputBatching = AllowOutputBatching;
+			return msg;
 		}
 
 		#endregion
