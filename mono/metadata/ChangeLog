@@ -1,3 +1,9 @@
+2009-03-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* socket-io.c: don't fail if the SocketOptionsFlag has Partial or
+	* MaxIOVectorLength enabled, just ignore them.
+	Fixes bug #349688.
+
 2009-01-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_load_type_info): Fill out info->min_align.
