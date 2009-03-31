@@ -1,3 +1,11 @@
+2009-03-31  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationFileParser.cs, MasterPageParser.cs, PageParser.cs,
+	PageThemeFileParser.cs, PageThemeParser.cs, UserControlParser.cs,
+	WebHandlerParser.cs, WebServiceParser.cs: 2.0 constructors take a
+	VirtualPath instance for the virtualPath parameter, instead of a
+	string.
+
 2009-03-18  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: AppRelativeResourceDirectory no longer returns a

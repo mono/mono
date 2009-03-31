@@ -47,14 +47,14 @@ namespace System.Web.Compilation {
 		{
 		}
 
-		protected override SimpleWebHandlerParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
+		protected override SimpleWebHandlerParser CreateParser (VirtualPath virtualPath, string physicalPath, TextReader reader, HttpContext context)
 		{
 			return new WebServiceParser (context, virtualPath, physicalPath, reader);
 		}
 		
-		protected override SimpleWebHandlerParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
+		protected override SimpleWebHandlerParser CreateParser (VirtualPath virtualPath, string physicalPath, HttpContext context)
 		{
-			return new WebServiceParser (context, virtualPath, physicalPath, OpenReader (virtualPath));
+			return new WebServiceParser (context, virtualPath, physicalPath, OpenReader (virtualPath.Original));
 		}
 	}
 }

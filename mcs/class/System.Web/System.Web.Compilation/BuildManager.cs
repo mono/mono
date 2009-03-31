@@ -244,8 +244,8 @@ namespace System.Web.Compilation {
 			string realpath;
 			bool dothrow = false;
 			
-			if (virtualPath.StartsWith (FAKE_VIRTUAL_PATH_PREFIX)) {
-				realpath = virtualPath.Original.Substring (FAKE_VIRTUAL_PATH_PREFIX.Length);
+			if (virtualPath.IsFake) {
+				realpath = virtualPath.PhysicalPath;
 				if (!File.Exists (realpath) && !Directory.Exists (realpath))
 					dothrow = true;
 			} else {

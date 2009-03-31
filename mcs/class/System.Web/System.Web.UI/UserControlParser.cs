@@ -42,6 +42,8 @@ namespace System.Web.UI
 		string masterPage;
 #endif
 
+
+#if !NET_2_0
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 			: this (virtualPath, inputFile, context, null)
 		{
@@ -52,12 +54,9 @@ namespace System.Web.UI
 		{
 			this.Dependencies = deps;
 		}
-		
+
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context, string type)
 		{
-#if NET_2_0
-			VirtualPath = new VirtualPath (virtualPath);
-#endif
 			Context = context;
 			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 			InputFile = inputFile;
@@ -65,23 +64,42 @@ namespace System.Web.UI
 			AddApplicationAssembly ();
 		}
 
-#if NET_2_0
-		internal UserControlParser (string virtualPath, TextReader reader, HttpContext context)
+#else
+		internal UserControlParser (VirtualPath virtualPath, string inputFile, HttpContext context)
+			: this (virtualPath, inputFile, context, null)
+		{
+		}
+
+		internal UserControlParser (VirtualPath virtualPath, string inputFile, ArrayList deps, HttpContext context)
+			: this (virtualPath, inputFile, context, null)
+		{
+			this.Dependencies = deps;
+		}
+
+		internal UserControlParser (VirtualPath virtualPath, string inputFile, HttpContext context, string type)
+		{
+			VirtualPath = virtualPath;
+			Context = context;
+			BaseVirtualDir = virtualPath.DirectoryNoNormalize;
+			InputFile = inputFile;
+			SetBaseType (type);
+			AddApplicationAssembly ();
+		}
+
+		internal UserControlParser (VirtualPath virtualPath, TextReader reader, HttpContext context)
 			: this (virtualPath, null, reader, context)
 		{
 		}
 		
-		internal UserControlParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
+		internal UserControlParser (VirtualPath virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
-			VirtualPath = new VirtualPath (virtualPath);
+			VirtualPath = virtualPath;
 			Context = context;
-			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
+			BaseVirtualDir = virtualPath.DirectoryNoNormalize;
 
-			if (String.IsNullOrEmpty (inputFile)) {
-				HttpRequest req = context != null ? context.Request : null;
-				if (req != null)
-					InputFile = req.MapPath (virtualPath);
-			} else
+			if (String.IsNullOrEmpty (inputFile))
+				InputFile = virtualPath.PhysicalPath;
+			else
 				InputFile = inputFile;
 			
 			Reader = reader;
@@ -115,13 +133,21 @@ namespace System.Web.UI
 		
 		internal static Type GetCompiledType (string virtualPath, string inputFile, ArrayList deps, HttpContext context)
 		{
+#if NET_2_0
+			UserControlParser ucp = new UserControlParser (new VirtualPath (virtualPath), inputFile, deps, context);
+#else
 			UserControlParser ucp = new UserControlParser (virtualPath, inputFile, deps, context);
+#endif
 			return ucp.CompileIntoType ();
 		}
 
 		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)
 		{
+#if NET_2_0
+			UserControlParser ucp = new UserControlParser (new VirtualPath (virtualPath), inputFile, context);
+#else
 			UserControlParser ucp = new UserControlParser (virtualPath, inputFile, context);
+#endif
 			return ucp.CompileIntoType ();
 		}
 

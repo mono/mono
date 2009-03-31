@@ -104,8 +104,8 @@ namespace System.Web.Compilation
 			if (bpcoll == null || bpcoll.Count == 0)
 				return null;
 			
-			if (StrUtils.StartsWith (virtualPath.Original, BuildManager.FAKE_VIRTUAL_PATH_PREFIX)) {
-				BuildProvider bp = GetBuildProvider (virtualPath.Original, bpcoll);
+			if (virtualPath.IsFake) {
+				BuildProvider bp = GetBuildProvider (virtualPath, bpcoll);
 
 				if (bp == null)
 					return null;
@@ -406,23 +406,27 @@ namespace System.Web.Compilation
 			
 			return false;
 		}
-		
+
 		public static BuildProvider GetBuildProvider (string virtualPath, BuildProviderCollection coll)
 		{
-			if (String.IsNullOrEmpty (virtualPath) || coll == null)
+			return GetBuildProvider (new VirtualPath (virtualPath), coll);
+		}
+		
+		public static BuildProvider GetBuildProvider (VirtualPath virtualPath, BuildProviderCollection coll)
+		{
+			if (virtualPath == null || String.IsNullOrEmpty (virtualPath.Original) || coll == null)
 				return null;
 			
-			string extension = VirtualPathUtility.GetExtension (virtualPath);
+			string extension = virtualPath.Extension;
 			BuildProvider bp = coll.GetProviderForExtension (extension);
 			if (bp == null) {
-				VirtualPath vp = new VirtualPath (virtualPath);
 				if (String.Compare (extension, ".asax", StringComparison.OrdinalIgnoreCase) == 0)
 					bp = new ApplicationFileBuildProvider ();
-				else if (StrUtils.StartsWith (vp.AppRelative, "~/App_Themes/"))
+				else if (StrUtils.StartsWith (virtualPath.AppRelative, "~/App_Themes/"))
 					bp = new ThemeDirectoryBuildProvider ();
 
 				if (bp != null)
-					bp.SetVirtualPath (vp);
+					bp.SetVirtualPath (virtualPath);
 				
 				return bp;
 			}
@@ -435,7 +439,7 @@ namespace System.Web.Compilation
 			if ((appliesTo & BuildProviderAppliesTo.Web) == 0)
 				return null;
 
-			bp.SetVirtualPath (new VirtualPath (virtualPath));
+			bp.SetVirtualPath (virtualPath);
 			return bp;
 		}
 	}

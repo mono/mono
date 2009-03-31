@@ -51,6 +51,8 @@ namespace System.Web.Compilation {
 		
 		ICollection vpath_deps;
 		CompilationSection compilationSection;
+
+		VirtualPath vpath;
 		
 		CompilationSection CompilationConfig {
 			get {
@@ -71,7 +73,7 @@ namespace System.Web.Compilation {
 
 		internal void SetVirtualPath (VirtualPath virtualPath)
 		{
-			virtual_path = virtualPath.Absolute;
+			vpath = virtualPath;
 		}
 
 		internal virtual void GenerateCode ()
@@ -143,9 +145,13 @@ namespace System.Web.Compilation {
 		}
 
 		protected internal string VirtualPath {
-			get { return virtual_path; }
+			get { return vpath != null ? vpath.Absolute : null; }
 		}
 
+		internal VirtualPath VirtualPathInternal {
+			get { return vpath; }
+		}
+		
 		public virtual ICollection VirtualPathDependencies {
 			get {
 				if (vpath_deps == null)
