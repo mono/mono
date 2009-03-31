@@ -1,3 +1,8 @@
+2009-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* DataContainer.cs (GetContainerData, GetExplicitValue): Added to handle cases 
+	where passed type overloads an explicit operator for conversion of values.
+	
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbCommandBuilder.cs (QuoteIdentifier): Throw NotSupportedException.

@@ -22,6 +22,8 @@
 //
 using System;
 using System.Collections;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace System.Data.Common
 {
@@ -143,6 +145,63 @@ namespace System.Data.Common
 			return container;
 		}
 
+		internal static object GetExplicitValue (object value) 
+		{
+			Type valueType = value.GetType ();
+			MethodInfo method = valueType.GetMethod ("op_Explicit", new Type[]{valueType});
+			if (method != null) 
+				return (method.Invoke (value, new object[]{value}));
+			return null;
+		}
+		
+		internal object GetContainerData (object value) 
+		{
+			object obj; 
+
+			if (_type.IsInstanceOfType (value)) {
+				return value;
+			} else if (value is IConvertible) {
+				switch (Type.GetTypeCode(_type)) {
+					case TypeCode.Int16:
+						return (Convert.ToInt16 (value));
+					case TypeCode.Int32:
+						return (Convert.ToInt32 (value));
+					case TypeCode.Int64:
+						return (Convert.ToInt64 (value));
+					case TypeCode.String:
+						return (Convert.ToString (value));
+					case TypeCode.Boolean:
+						return (Convert.ToBoolean (value));
+					case TypeCode.Byte:
+						return (Convert.ToByte (value));
+					case TypeCode.Char:
+						return (Convert.ToChar (value));
+					case TypeCode.Double:
+						return (Convert.ToDouble (value));
+					case TypeCode.SByte:
+						return (Convert.ToSByte (value));
+					case TypeCode.Single:
+						return (Convert.ToSingle (value));
+					case TypeCode.UInt16:
+						return (Convert.ToUInt16 (value));
+					case TypeCode.UInt32:
+						return (Convert.ToUInt32 (value));
+					case TypeCode.UInt64:
+						return (Convert.ToUInt64 (value));
+					case TypeCode.DateTime:
+						return (Convert.ToDateTime (value));
+					case TypeCode.Decimal:
+						return (Convert.ToDecimal (value));
+					default:
+						throw new InvalidCastException ();
+				}
+			} else if ((obj = GetExplicitValue (value)) != null) {
+				return (obj);
+			} else {
+				throw new InvalidCastException ();
+			}
+		}
+		
 		internal bool IsNull (int index)
 		{
 			return null_values == null || null_values [index];
@@ -201,7 +260,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is bool ? (bool) value : Convert.ToBoolean (value);
+			_values [index] = (bool) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -250,7 +309,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is char ? (char) value : Convert.ToChar (value);
+			_values [index] = (char) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -303,7 +362,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is byte ? (byte) value : Convert.ToByte (value);
+			_values [index] = (byte) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -356,7 +415,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is sbyte ? (sbyte) value : Convert.ToSByte (value);
+			_values [index] = (sbyte) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -409,7 +468,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is short ? (short) value : Convert.ToInt16 (value);
+			_values [index] = (short) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -462,7 +521,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is ushort ? (ushort) value : Convert.ToUInt16 (value);
+			_values [index] = (ushort) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -515,7 +574,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is int ? (int) value : Convert.ToInt32 (value);
+			_values [index] = (int) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -568,7 +627,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is uint ? (uint) value : Convert.ToUInt32 (value);
+			_values [index] = (uint) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -621,7 +680,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is long ? (long) value : Convert.ToInt64 (value);
+			_values [index] = (long) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -674,7 +733,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is ulong ? (ulong) value : Convert.ToUInt64 (value);
+			_values [index] = (ulong) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -727,7 +786,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is float ? (float) value : Convert.ToSingle (value);
+			_values [index] = (float) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -780,7 +839,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			_values [index] = value is double ? (double) value : Convert.ToDouble (value);
+			_values [index] = (double) GetContainerData (value);
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
@@ -894,7 +953,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			base.SetValue (index, Convert.ToDateTime (value));
+			base.SetValue (index, GetContainerData (value));
 		}
 	}
 
@@ -906,7 +965,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			base.SetValue (index, Convert.ToDecimal (value));
+			base.SetValue (index, GetContainerData (value));
 		}
 	}
 
@@ -920,7 +979,7 @@ namespace System.Data.Common
 
 		protected override void SetValue (int index, object value)
 		{
-			SetValue (index, value is string ? (string) value : Convert.ToString (value));
+			SetValue (index, (string) GetContainerData (value));
 		}
 
 		protected override void SetValueFromSafeDataRecord (int index, ISafeDataRecord record, int field)
