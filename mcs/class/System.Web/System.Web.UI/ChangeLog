@@ -1,5 +1,9 @@
 2009-03-31  Marek Habersack  <mhabersack@novell.com>
 
+	* Page.cs: SavePageViewState saves the list of controls which
+	require post back regardless of whether view state is disabled or
+	not. Fixes bug #490753
+
 	* ApplicationFileParser.cs, MasterPageParser.cs, PageParser.cs,
 	PageThemeFileParser.cs, PageThemeParser.cs, UserControlParser.cs,
 	WebHandlerParser.cs, WebServiceParser.cs: 2.0 constructors take a
