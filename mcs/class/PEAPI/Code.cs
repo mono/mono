@@ -1296,10 +1296,17 @@ namespace PEAPI {
 		int tide = 0;
 		CILInstruction labInstr;
 		uint offset = 0;
+		bool absolute;
 
-		public CILLabel (uint offset) 
+
+		public CILLabel (uint offset, bool absolute) 
 		{
 			this.offset = offset;
+			this.absolute = absolute;
+		}
+
+		public CILLabel (uint offset) : this (offset, false)
+		{
 		}
 
 
@@ -1332,6 +1339,7 @@ namespace PEAPI {
 
 		internal uint GetLabelOffset() 
 		{
+			if (absolute) return offset;
 			if (labInstr == null) return 0;
 			return labInstr.offset + offset;
 		}
