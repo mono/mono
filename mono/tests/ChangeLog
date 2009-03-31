@@ -1,3 +1,9 @@
+2009-03-31  Mark Probst  <mark.probst@gmail.com>
+
+	* finalizer-wait.cs: Test case for WaitForPendingFinalizers.
+
+	* Makefile.am: Test added.
+
 2009-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* remoting4.cs: Fix the last change.

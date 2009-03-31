@@ -1,3 +1,8 @@
+2009-03-31  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Wait until the last finalizer has executed when
+	returning from WaitForPendingFinalizers.
+
 2009-03-31  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_MINOR_VERSION): Bump to 2.
