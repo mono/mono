@@ -572,7 +572,7 @@ namespace Mono.ILASM {
 
                         foreach (LabelInfo label in label_info) {
                                 if (label.UseOffset) {
-                                        label.Define (new PEAPI.CILLabel (label.Offset));
+                                        label.Define (new PEAPI.CILLabel (label.Offset, true));
                                         continue;
                                 }
                                 if (label.Pos == previous_pos)
