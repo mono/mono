@@ -1,5 +1,12 @@
 2009-03-31  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Remove data (callback) element from FinalizeEntry and
+	call the run-finalize function directly.
+
+	* gc.c, gc-internal.h: Make run_finalize() non-static.
+
+2009-03-31  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Use a separate struct for disappearing links.
 
 2009-03-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
