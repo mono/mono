@@ -35,6 +35,7 @@ namespace System.Xml
 	{
 		public const byte EndElement = 0x01;
 		public const byte Comment = 0x02;
+		public const byte Array = 0x03;
 		public const byte AttrString = 0x04;
 		public const byte AttrStringPrefix = 0x05;
 		public const byte AttrIndex = 0x06;
@@ -114,7 +115,7 @@ namespace System.Xml
 
 		01			: EndElement
 		02 $value		: Comment
-		03			: TODO: array
+		03			: array
 		04 $name		: local attribute by string
 		05 $prefix $name	: global attribute by string
 		06 @name		: local attribute by index
@@ -132,7 +133,7 @@ namespace System.Xml
 		43 $prefix @name	: element with namespace by index
 		44 @name		: global element by index,
 		... 0x5D		: in current element's namespace
-		5E ... 0x77		: TODO: elements with prefix
+		5E ... 0x77		: elements with prefix
 		98 $value		: text/cdata/chars
 		99 $value		: text/cdata/chars + EndElement
 

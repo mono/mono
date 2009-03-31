@@ -1,5 +1,11 @@
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryWriterAutoGen.cs : generated code.
+	* XmlBinaryFormat.cs, XmlBinaryDictionaryWriter.cs :
+	  support array operation (0x03) and a bunch of WriteArray() methods.
+
+2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryReader.cs, XmlBinaryDictionaryWriter.cs
 	  XmlBinaryFormat.cs : implemented element with short prefix.
 

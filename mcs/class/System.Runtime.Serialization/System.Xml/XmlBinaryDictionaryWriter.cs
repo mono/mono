@@ -40,10 +40,23 @@ using BF = System.Xml.XmlBinaryFormat;
 
 namespace System.Xml
 {
-	internal class XmlBinaryDictionaryWriter : XmlDictionaryWriter
+	internal partial class XmlBinaryDictionaryWriter : XmlDictionaryWriter
 	{
+		class MyBinaryWriter : BinaryWriter
+		{
+			public MyBinaryWriter (Stream s)
+				: base (s)
+			{
+			}
+
+			public void WriteFlexibleInt (int value)
+			{
+				Write7BitEncodedInt (value);
+			}
+		}
+
 		#region Fields
-		BinaryWriter original, writer, buffer_writer;
+		MyBinaryWriter original, writer, buffer_writer;
 		IXmlDictionary dict_ext;
 		XmlDictionary dict_int = new XmlDictionary ();
 		XmlBinaryWriterSession session;
@@ -98,9 +111,9 @@ namespace System.Xml
 			if (session == null)
 				session = new XmlBinaryWriterSession ();
 
-			original = new BinaryWriter (stream);
+			original = new MyBinaryWriter (stream);
 			this.writer = original;
-			buffer_writer = new BinaryWriter (buffer);
+			buffer_writer = new MyBinaryWriter (buffer);
 			this.dict_ext = dictionary;
 			this.session = session;
 			owns_stream = ownsStream;
@@ -877,7 +890,6 @@ namespace System.Xml
 		public override void WriteValue (bool value)
 		{
 			ProcessTypedValue ();
-
 			writer.Write ((byte) (value ? BF.BoolTrue : BF.BoolFalse));
 		}
 
@@ -920,6 +932,11 @@ namespace System.Xml
 		{
 			ProcessTypedValue ();
 			writer.Write (BF.Single);
+			WriteValueContent (value);
+		}
+
+		void WriteValueContent (float value)
+		{
 			writer.Write (value);
 		}
 
@@ -927,6 +944,11 @@ namespace System.Xml
 		{
 			ProcessTypedValue ();
 			writer.Write (BF.Double);
+			WriteValueContent (value);
+		}
+
+		void WriteValueContent (double value)
+		{
 			writer.Write (value);
 		}
 
@@ -934,6 +956,11 @@ namespace System.Xml
 		{
 			ProcessTypedValue ();
 			writer.Write (BF.Decimal);
+			WriteValueContent (value);
+		}
+
+		void WriteValueContent (decimal value)
+		{
 			int [] bits = Decimal.GetBits (value);
 			// so, looks like it is saved as its internal form,
 			// not the returned order.
@@ -948,14 +975,23 @@ namespace System.Xml
 		{
 			ProcessTypedValue ();
 			writer.Write (BF.DateTime);
+			WriteValueContent (value);
+		}
+
+		void WriteValueContent (DateTime value)
+		{
 			writer.Write (value.Ticks);
 		}
 
 		public override void WriteValue (Guid value)
 		{
 			ProcessTypedValue ();
-
 			writer.Write (BF.Guid);
+			WriteValueContent (value);
+		}
+
+		void WriteValueContent (Guid value)
+		{
 			byte [] bytes = value.ToByteArray ();
 			writer.Write (bytes, 0, bytes.Length);
 		}
@@ -984,6 +1020,11 @@ namespace System.Xml
 			ProcessTypedValue ();
 
 			writer.Write (BF.TimeSpan);
+			WriteValueContent (value);
+		}
+
+		void WriteValueContent (TimeSpan value)
+		{
 			WriteBigEndian (value.Ticks, 8);
 		}
 		#endregion
@@ -1009,6 +1050,33 @@ namespace System.Xml
 				char [] arr = text.ToCharArray ();
 				WriteChars (arr, 0, arr.Length);
 			}
+		}
+
+		#endregion
+
+		#region Write typed array content
+
+		// they are packed in WriteValue(), so we cannot reuse
+		// them for array content.
+
+		void WriteValueContent (bool value)
+		{
+			writer.Write (value ? (byte) 1 : (byte) 0);
+		}
+
+		void WriteValueContent (short value)
+		{
+			writer.Write (value);
+		}
+
+		void WriteValueContent (int value)
+		{
+			writer.Write (value);
+		}
+
+		void WriteValueContent (long value)
+		{
+			writer.Write (value);
 		}
 
 		#endregion

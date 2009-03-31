@@ -671,5 +671,59 @@ Console.WriteLine ();
 			0x09, 1, 0x70, 7, 0x75, 0x72, 0x6E, 0x3A, 0x66, 0x6F, 0x6F,
 			0x99, 4, 0x74, 0x65, 0x73, 0x74,
 			};
+
+		[Test]
+		public void WriteValueInt16 ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlDictionary dic = new XmlDictionary ();
+			var w = XmlDictionaryWriter.CreateBinaryWriter (ms, dic, null);
+			w.WriteStartElement ("a");
+			w.WriteValue ((short) 0);
+			w.WriteValue ((short) 2);
+			w.Close ();
+			Assert.AreEqual (value_int16, ms.ToArray ());
+		}
+
+		static readonly byte [] value_int16 = {
+			0x40, 1, 0x61,
+			0x80, // not Int16, but Zero
+			0x89, 2 // not Int16, but Int8
+			};
+
+		[Test]
+		public void WriteArrayInt16 ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlDictionary dic = new XmlDictionary ();
+			var w = XmlDictionaryWriter.CreateBinaryWriter (ms, dic, null);
+			short [] arr = new short [] {0, 2, 4, 6, 8, 10, 12, 14};
+			w.WriteArray ("", "el", "", arr, 2, 5);
+			w.Close ();
+			Assert.AreEqual (array_int16, ms.ToArray ());
+		}
+
+		static readonly byte [] array_int16 = {
+			0x03, 0x40, 2, 0x65, 0x6C, 0x01,
+			0x8B, 5, 4, 0, 6, 0, 8, 0, 10, 0, 12, 0,
+			};
+
+		[Test]
+		public void WriteArrayInt32 ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlDictionary dic = new XmlDictionary ();
+			var w = XmlDictionaryWriter.CreateBinaryWriter (ms, dic, null);
+			int [] arr = new int [] {0, 2, 0, 6, 8, 10,};
+			w.WriteArray ("", "el", "", arr, 2, 3);
+			w.Close ();
+			Assert.AreEqual (array_int32, ms.ToArray ());
+		}
+
+		// make sure that 0 is not written in shortened format.
+		static readonly byte [] array_int32 = {
+			0x03, 0x40, 2, 0x65, 0x6C, 0x01,
+			0x8D, 3, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0,
+			};
 	}
 }

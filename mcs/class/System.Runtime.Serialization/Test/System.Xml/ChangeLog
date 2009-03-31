@@ -1,5 +1,9 @@
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryWriterTest.cs : added test for array operation.
+
+2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryReaderTest.cs,
 	  XmlBinaryDictionaryWriterTest.cs : added test for element with
 	  short prefix.
