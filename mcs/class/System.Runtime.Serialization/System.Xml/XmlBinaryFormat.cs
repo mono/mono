@@ -81,6 +81,8 @@ namespace System.Xml
 		public const byte UniqueId = 0xAC;
 		public const byte TimeSpan = 0xAE;
 		public const byte Guid = 0xB0;
+		public const byte UInt64 = 0xB2;
+		public const byte Bool = 0xB4; // e.g. for typed array
 		public const byte Utf16_8 = 0xB6;
 		public const byte Utf16_16 = 0xB8;
 		public const byte Utf16_32 = 0xBA;

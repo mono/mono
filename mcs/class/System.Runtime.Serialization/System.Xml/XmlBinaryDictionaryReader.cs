@@ -248,6 +248,11 @@ namespace System.Xml
 		byte [] tmp_buffer = new byte [128];
 		UTF8Encoding utf8enc = new UTF8Encoding ();
 
+		// See comment at Read()
+		int array_item_remaining;
+		byte array_item_type;
+		XmlNodeType array_state;
+
 		public XmlBinaryDictionaryReader (byte [] buffer, int offset,
 			int count, IXmlDictionary dictionary,
 			XmlDictionaryReaderQuotas quota,
@@ -479,6 +484,14 @@ namespace System.Xml
 			return false;
 		}
 
+		// When reading an array (0x03), it requires extraneously
+		// complex procedure for XmlReader. First, it reads element,
+		// type of operation and length of the items. And this XmlReader
+		// has to return Element state. On the next Read(), it proceeds
+		// to the value node of the first item of the array, so it
+		// reads the value stream. On the next Read(), it proceeds to
+		// EndElement, so it should not read anything from stream while
+		// it has to move to the node state to EndElement.
 		public override bool Read ()
 		{
 			switch (state) {
@@ -515,6 +528,24 @@ namespace System.Xml
 			}
 			node.Reset ();
 
+			// process array node after preparing node stack.
+			switch (array_state) {
+			case XmlNodeType.Element:
+				ReadArrayItem ();
+				return true;
+			case XmlNodeType.Text:
+				ShiftToArrayItemEndElement ();
+				return true;
+			case XmlNodeType.EndElement:
+				if (--array_item_remaining == 0) {
+					array_state = XmlNodeType.None;
+					break;
+				} else {
+					ShiftToArrayItemElement ();
+					return true;
+				}
+			}
+
 			int ident = next >= 0 ? next : source.ReadByte ();
 			next = -1;
 
@@ -544,6 +575,21 @@ namespace System.Xml
 				ReadElementBinary ((byte) ident);
 				break;
 
+			case BF.Array:
+				ident = ReadByteOrError ();
+				ReadElementBinary ((byte) ident);
+				ident = ReadByteOrError ();
+				if (ident != 0x01)
+					throw new XmlException (String.Format ("EndElement is expected after element in an array. The actual byte was {0:X} in hexadecimal", ident));
+				ident = ReadByteOrError () - 1; // -1 becauseit contains EndElement
+				VerifyValidArrayItemType (ident);
+				if (ident < 0)
+					throw new XmlException ("The stream has ended where the array item type is expected");
+				array_item_type = (byte) ident;
+				array_item_remaining = ReadVariantSize ();
+				array_state = XmlNodeType.Element;
+				break;
+
 			default:
 				if (BF.PrefixNElemIndexStart <= ident && ident <= BF.PrefixNElemIndexEnd ||
 				    BF.PrefixNElemStringStart <= ident && ident <= BF.PrefixNElemStringEnd)
@@ -553,6 +599,43 @@ namespace System.Xml
 			}
 
 			return true;
+		}
+
+		void ReadArrayItem ()
+		{
+			ReadTextOrValue (array_item_type, node, false);
+			array_state = XmlNodeType.Text;
+		}
+
+		void ShiftToArrayItemEndElement ()
+		{
+			ProcessEndElement ();
+			array_state = XmlNodeType.EndElement;
+		}
+
+		void ShiftToArrayItemElement ()
+		{
+			node.NodeType = XmlNodeType.Element;
+			context.NamespaceManager.PushScope ();
+			array_state = XmlNodeType.Element;
+		}
+
+		void VerifyValidArrayItemType (int ident)
+		{
+			switch (ident) {
+			case BF.Bool:
+			case BF.Int16:
+			case BF.Int32:
+			case BF.Int64:
+			case BF.Single:
+			case BF.Double:
+			case BF.Decimal:
+			case BF.DateTime:
+			case BF.TimeSpan:
+			case BF.Guid:
+				return;
+			}
+			throw new XmlException (String.Format ("Unexpected array item type {0:X} in hexadecimal", ident));
 		}
 
 		private void ProcessEndElement ()
@@ -593,13 +676,14 @@ namespace System.Xml
 					node.Prefix = ((char) (ident - BF.PrefixNElemStringStart + 'a')).ToString ();
 					node.LocalName = ReadUTF8 ();
 				}
+				else
+					throw new XmlException (String.Format ("Invalid element node type {0:X02} in hexadecimal", ident));
 				break;
 			}
 
 			bool loop = true;
 			do {
-				ident = next < 0 ? ReadByteOrError () : next;
-				next = -1;
+				ident = ReadByteOrError ();
 
 				switch (ident) {
 				case BF.AttrString:
@@ -866,6 +950,11 @@ namespace System.Xml
 
 		private byte ReadByteOrError ()
 		{
+			if (next >= 0) {
+				byte b = (byte) next;
+				next = -1;
+				return b;
+			}
 			int ret = source.ReadByte ();
 			if (ret < 0)
 				throw new XmlException (String.Format ("Unexpected end of binary stream. Position is at {0}", source.Position));

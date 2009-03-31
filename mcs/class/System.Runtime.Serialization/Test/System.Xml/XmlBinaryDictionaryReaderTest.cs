@@ -41,6 +41,7 @@ namespace MonoTests.System.Xml
 		void Read (byte [] buf)
 		{
 			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (buf), new XmlDictionaryReaderQuotas ());
+
 			while (!reader.EOF)
 				reader.Read ();
 		}
@@ -301,9 +302,7 @@ namespace MonoTests.System.Xml
 				0x08, 7, 0x75, 0x72, 0x6E, 0x3A, 0x62, 0x61, 0x72, 1
 				};
 
-			XmlDictionaryReader reader = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (bytes), dic, new XmlDictionaryReaderQuotas ());
-			while (!reader.EOF)
-				reader.Read ();
+			Read (bytes);
 		}
 
 		[Test]
@@ -335,6 +334,29 @@ namespace MonoTests.System.Xml
 			0x6D, 4, 0x72, 0x6F, 0x6F, 0x74,
 			0x09, 1, 0x70, 7, 0x75, 0x72, 0x6E, 0x3A, 0x66, 0x6F, 0x6F,
 			0x99, 4, 0x74, 0x65, 0x73, 0x74,
+			};
+
+		[Test]
+		public void ReadInt16Array ()
+		{
+			Read (array_int16);
+		}
+
+		static readonly byte [] array_int16 = {
+			0x03, 0x40, 2, 0x65, 0x6C, 0x01,
+			0x8B, 5, 4, 0, 6, 0, 8, 0, 10, 0, 12, 0,
+			};
+
+		[Test]
+		public void ReadInt32Array ()
+		{
+			Read (array_int32);
+		}
+
+		// make sure that 0 is not written in shortened format.
+		static readonly byte [] array_int32 = {
+			0x03, 0x40, 2, 0x65, 0x6C, 0x01,
+			0x8D, 3, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0,
 			};
 	}
 }
