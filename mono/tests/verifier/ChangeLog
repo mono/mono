@@ -1,3 +1,9 @@
+2009-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* invalid_catch_block_out_of_bounds.il
+	* invalid_try_block_out_of_bounds.il: Tests for proper bounds
+	check of exception clauses.
+
 2009-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* invalid_generic_generic_object_is_boxed.il: Regression test
