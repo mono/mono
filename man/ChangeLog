@@ -1,3 +1,8 @@
+2009-03-31  Jonathan Pryor  <jpryor@novell.com>
+
+	* mdoc-update.1: Fix --out=DIRECTORY formatting.  (It was causing the
+	  remaining text to be bolded within monodoc).
+
 2009-03-30  Jonathan Pryor  <jpryor@novell.com>
 
 	* mdoc-update.1: Add new --exceptions=added functionality.
