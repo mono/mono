@@ -1,7 +1,0 @@
-assemblies_dir=@prefix@/lib/mono
-Libraries=${assemblies_dir}/2.1/smcs.exe
-
-Name: Mono Internal -- Do not use.
-Description: Mono Internal Libraries -- Do not use 
-Version: @VERSION@
-Libs: -r:smcs.exe
