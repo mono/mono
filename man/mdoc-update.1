@@ -62,6 +62,12 @@ member.
 that should be searched for exceptions:
 .Sp
 .nf
+        added   Only generate <exception/> elements for members 
+                  added during the current program execution.
+                  This keeps mdoc-update from re-generating
+                  <exception/> elements for all members (and thus
+                  prevents re-insertion for members that had the
+                  <exception/> elements removed).
         all     Find exceptions created in the member itself, 
                   references to members in the same assembly, 
                   and references to members in dependent 
