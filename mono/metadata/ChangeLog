@@ -1,5 +1,12 @@
 2009-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verifier_load_field): Fail if the field parent could not be loaded.
+
+	* verify.c (mono_method_verify): Do proper bounds checking of exception
+	clause ranges.
+
+2009-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_field_from_token): Don't crash if the field parent could
 	not be decoded.
 
