@@ -1,3 +1,12 @@
+2009-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c
+	(mono_security_core_clr_ensure_reflection_access_field): Let 
+	critical code access the field (just like we do for methods). Use
+	check_field_access helper.
+	(mono_security_core_clr_ensure_reflection_access_method): Use 
+	check_field_access helper.
+
 2009-03-31  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Remove data (callback) element from FinalizeEntry and
