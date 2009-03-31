@@ -41,7 +41,6 @@ using BF = System.Xml.XmlBinaryFormat;
 namespace System.Xml
 {
 	// FIXME:
-	//	- native value data (7B-82, 8D-A0) are not implemented.
 	//	- support XmlDictionaryReaderQuotas.
 	//	- support XmlBinaryReaderSession.
 	//	- handle namespaces as expected.
@@ -528,24 +527,7 @@ namespace System.Xml
 
 			is_next_end_element = ident > 0x80 && (ident & 1) == 1;
 			ident -= is_next_end_element ? 1 : 0;
-/*
-			if (0x3F <= ident && ident <= 0x42)
-				ReadElementBinary ((byte) ident);
-			else {
-				switch (ident) {
-				case 0x3C: // end element
-					ProcessEndElement ();
-					break;
-				case 0x3D: // comment
-					node.Value = ReadUTF8 ();
-					node.NodeType = XmlNodeType.Comment;
-					break;
-				default:
-					ReadTextOrValue ((byte) ident, node, false);
-					break;
-				}
-			}
-*/
+
 			switch (ident) {
 			case BF.EndElement:
 				ProcessEndElement ();
@@ -642,98 +624,15 @@ namespace System.Xml
 					}
 					break;
 				}
-/*
-				if (ident < 4) {
-					// attributes
-					if (attributes.Count == attr_count)
-						attributes.Add (new AttrNodeInfo ());
-					AttrNodeInfo a = attributes [attr_count++];
-					a.Reset ();
-					a.Position = source.Position;
-					switch (ident) {
-					case 0:
-						a.LocalName = ReadUTF8 ();
-						break;
-					case 1:
-						a.Prefix = ReadUTF8 ();
-						goto case 0;
-					case 2:
-						a.DictLocalName = ReadDictName ();
-						break;
-					case 3:
-						a.Prefix = ReadUTF8 ();
-						goto case 2;
-					}
-					ReadAttributeValueBinary (a);
-				}
-				else if (ident < 6) {
-					// namespaces
-					string prefix = ident == 4 ?
-						String.Empty : ReadUTF8 ();
-					string ns = ReadUTF8 ();
-					ns_store.Add (new QName (prefix, ns));
-					context.NamespaceManager.AddNamespace (prefix, ns);
-				}
-				else if (0x22 <= ident && ident < 0x3C) {
-					// attributes with predefined ns index
-					if (attributes.Count == attr_count)
-						attributes.Add (new AttrNodeInfo ());
-					AttrNodeInfo a = attributes [attr_count++];
-					a.Reset ();
-					a.Position = source.Position;
-					a.NSSlot = ident - 0x22;
-					a.LocalName = ReadUTF8 ();
-					ReadAttributeValueBinary (a);
-				}
-				else {
-					next = ident;
-					break;
-				}
-*/
 			} while (loop);
 
-#if true
 			node.NS = context.NamespaceManager.LookupNamespace (node.Prefix) ?? String.Empty;
 			foreach (AttrNodeInfo a in attributes)
 				if (a.Prefix.Length > 0)
 					a.NS = context.NamespaceManager.LookupNamespace (a.Prefix);
-//Console.WriteLine ("[{0}-{1}->{3}/{2:X02}]", node.Prefix, node.LocalName, ident, node.NS);
-#else
-			if (node.Prefix.Length == 0)
-				foreach (QName q in ns_store)
-					if (q.Name.Length == 0) {
-						node.NS = q.Namespace;
-						break;
-					}
-			else if (node.NSSlot >= 0)
-				FillNamespaceBySlot (node);
-			foreach (AttrNodeInfo a in attributes) {
-				if (a.NSSlot >= 0) {
-					/*
-					if (a.NSSlot >= ns_store.Count)
-						throw new XmlException (String.Format ("Binary XML data is not valid. An attribute node has an invalid index at position {0}. Index is {1}.", a.Position, a.NSSlot));
-					a.NS = ns_store [a.NSSlot].Namespace;
-					a.Prefix = ns_store [a.NSSlot].Name;
-					*/
-					FillNamespaceBySlot (a);
-				}
-				else if (a.NSSlot == -2) {
-					a.NS = node.NS;
-					a.Prefix = node.Prefix;
-				}
-			}
-#endif
 
 			ns_store.Clear ();
 			ns_dict_store.Clear ();
-		}
-
-		void FillNamespaceBySlot (NodeInfo n)
-		{
-			if (n.NSSlot >= ns_store.Count)
-				throw new XmlException (String.Format ("Binary XML data is not valid. The '{2}' node has an invalid index. Index is {1}. The position in the stream is at {0}.", n.Position, n.NSSlot, n.NodeType));
-			n.NS = ns_store [n.NSSlot].Namespace;
-			//n.Prefix = ns_store [n.NSSlot].Name;
 		}
 
 		private void ReadAttribute (byte ident)
@@ -920,45 +819,6 @@ namespace System.Xml
 				return false;
 			}
 			return true;
-/*
-			if (ident == 0x8B) {
-				// empty text
-				node.Value = String.Empty;
-				node.NodeType = XmlNodeType.Text;
-			}
-			else if (0x83 <= ident && ident <= 0x85 ||
-				0x9D <= ident && ident <= 0x9F) {
-				// text
-				int sizeSpec = ident > 0x90 ? ident - 0x9D : ident - 0x83;
-				node.Value = ReadUTF8 (sizeSpec);
-				node.NodeType = XmlNodeType.Text;
-				is_next_end_element = ident > 0x90;
-			}
-			else {
-				switch (ident) {
-				case 0x7B: // byte
-				case 0x7C: // short
-				case 0x7D: // int
-				case 0x7E: // long
-				case 0x7F: // float
-				case 0x80: // double
-				case 0x81: // decimal
-				case 0x82: // DateTime
-				case 0x8D: // UniqueId
-				case 0x8E: // TimeSpan
-				case 0x8F: // Guid
-				case 0xA0: // base64Binary
-					Console.WriteLine ("At position {0}({0:X})", source.Position);
-					throw new NotImplementedException ();
-				default:
-					if (!canSkip)
-						throw new ArgumentException (String.Format ("Unexpected binary XML data at position {1}: {0:X}", ident, source.Position));
-					next = ident;
-					return false;
-				}
-			}
-			return true;
-*/
 		}
 
 		private int ReadVariantSize ()

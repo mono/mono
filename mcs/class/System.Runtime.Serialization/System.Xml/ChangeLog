@@ -1,5 +1,9 @@
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryReader.cs : removed lots of unused part.
+
+2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryWriterAutoGen.cs : generated code.
 	* XmlBinaryFormat.cs, XmlBinaryDictionaryWriter.cs :
 	  support array operation (0x03) and a bunch of WriteArray() methods.
