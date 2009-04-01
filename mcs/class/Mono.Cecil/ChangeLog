@@ -1,3 +1,8 @@
+2009-04-01  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionHelper.cs: throw proper exception
+	when importing in an invalid context.
+
 2009-03-12  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/AssemblyStripper.cs (PatchHeap): don't crash

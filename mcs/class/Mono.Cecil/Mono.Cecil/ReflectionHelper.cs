@@ -172,10 +172,16 @@ namespace Mono.Cecil {
 		static GenericParameter GetGenericParameter (Type t, ImportContext context)
 		{
 			int pos = (int) t.GetType ().GetProperty ("GenericParameterPosition").GetValue (t, null);
+			IGenericParameterProvider provider;
 			if (GenericParameterOfMethod (t))
-				return context.GenericContext.Method.GenericParameters [pos];
+				provider = context.GenericContext.Method;
 			else
-				return context.GenericContext.Type.GenericParameters [pos];
+				provider = context.GenericContext.Type;
+
+			if (provider == null)
+				throw new InvalidOperationException ("Invalid context");
+
+			return provider.GenericParameters [pos];
 		}
 
 		TypeReference GetTypeSpec (Type t, ImportContext context)
