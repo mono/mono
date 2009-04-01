@@ -111,7 +111,7 @@ namespace System.Web.Compilation {
 				return ret.ToString ();
 			}
 
-			const int pragmaChecksumStaticCount = 21;
+			const int pragmaChecksumStaticCount = 23;
 			const int pragmaLineStaticCount = 8;
 			const int md5ChecksumCount = 32;
 			
@@ -121,8 +121,8 @@ namespace System.Web.Compilation {
 					pragmaLineStaticCount +
 					md5ChecksumCount +
 					(QuoteSnippetString (filename).Length * 2) +
-					(Environment.NewLine.Length * 4) +
-					BaseCompiler.HashMD5.ToString ("B").Length + 2; // 2 for the quotes around the hash
+					(Environment.NewLine.Length * 3) +
+					BaseCompiler.HashMD5.ToString ("B").Length;
 			}
 			
 			public void DecorateFile (string path, string filename, MD5 checksum, Encoding enc)
@@ -163,7 +163,7 @@ namespace System.Web.Compilation {
 			{
 				return pragmaExternalSourceCount +
 					filename.Length +
-					(Environment.NewLine.Length * 2);
+					(Environment.NewLine.Length);
 			}
 			
 			public void DecorateFile (string path, string filename, MD5 checksum, Encoding enc)
@@ -171,7 +171,7 @@ namespace System.Web.Compilation {
 				string newline = Environment.NewLine;
 				var sb = new StringBuilder ();
 
-				sb.AppendFormat ("#ExternalSource(\"{0}\",1){1}{1}", filename, newline);
+				sb.AppendFormat ("#ExternalSource(\"{0}\",1){1}", filename, newline);
 				byte[] bytes = enc.GetBytes (sb.ToString ());
 				using (FileStream fs = new FileStream (path, FileMode.Open, FileAccess.Write)) {
 					fs.Seek (enc.GetPreamble ().Length, SeekOrigin.Begin);

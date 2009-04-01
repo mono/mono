@@ -1,3 +1,14 @@
+2009-04-01  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyBuilder.cs: CSharpCodePragmaGenerator.ReserveSpace:
+	added the 2 extra chars to pragmaChecksumStaticCount constant (the
+	ones added by Gonzalo below) and removed one NewLine to account
+	for Martin's change below.
+	VBCodePragmaGenerator.ReserveSpace - one newline follows
+	#ExternalSource.
+	VBCodePragmaGenerator.DecorateFile - one newline follows
+	#ExternalSource.
+
 2009-04-01  Martin Baulig  <martin@ximian.com>
 
 	* AssemblyBuilder.cs: Don't emit a blank line after the #line as
