@@ -1,5 +1,9 @@
 2009-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDictionaryReader.cs : add ReadStartElement() overload.
+
+2009-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UniqueId.cs : add missing security attributes.
 	* XmlDictionaryReader.cs : cleanup extra TODOs.
 	* XmlBinaryDictionaryReader.cs : iplement IsArray.

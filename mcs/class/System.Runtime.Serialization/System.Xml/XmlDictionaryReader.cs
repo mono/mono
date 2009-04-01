@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -433,6 +433,15 @@ namespace System.Xml
 			ReadStartElement (localName.Value, namespaceUri.Value);
 		}
 
+		public virtual void ReadStartElement (XmlDictionaryString localName, XmlDictionaryString namespaceUri)
+		{
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (namespaceUri == null)
+				throw new ArgumentNullException ("namespaceUri");
+			ReadStartElement (localName.Value, namespaceUri.Value);
+		}
+
 		public override string ReadString ()
 		{
 			return ReadString (Quotas.MaxStringContentLength);
@@ -657,4 +666,3 @@ namespace System.Xml
 		#endregion
 	}
 }
-#endif
