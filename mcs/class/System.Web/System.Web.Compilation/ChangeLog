@@ -1,5 +1,13 @@
 2009-03-25  Marek Habersack  <mhabersack@novell.com>
 
+	* AspTokenizer.cs: MD5 checksum calculation happens here. It's
+	done incrementally as characters are read.
+
+	* AspParser.cs: the MD5 checksum is no longer computed here. Moved
+	to AspTokenizer.
+	After parsing, both the tokenizer and the string reader are
+	disposed of.
+
 	* AssemblyBuilder.cs: renamed CopyFile to CopyFileWithChecksum, in
 	prepration for future inclusion of checksum and line pragmas in
 	the file being copied.

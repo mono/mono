@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+using System.Security.Cryptography;
 
 namespace System.Web.Compilation
 {
@@ -48,6 +49,9 @@ namespace System.Web.Compilation
 
 	class AspTokenizer
 	{
+#if NET_2_0
+		const int CHECKSUM_BUF_SIZE = 8192;
+#endif
 		class PutBackItem
 		{
 			public readonly string Value;
@@ -79,6 +83,15 @@ namespace System.Web.Compilation
 		int unget_value;
 		string val;
 		Stack putBackBuffer;
+#if NET_2_0
+		MD5 checksum;
+		char[] checksum_buf = new char [CHECKSUM_BUF_SIZE];
+		int checksum_buf_pos = -1;
+		
+		public MD5 Checksum {
+			get { return checksum; }
+		}
+#endif
 		
 		public AspTokenizer (TextReader reader)
 		{
@@ -149,7 +162,36 @@ namespace System.Web.Compilation
 			position--;
 			col--;
 		}
+
+#if NET_2_0
+		void TransformNextBlock (int count, bool final)
+		{
+			byte[] input = Encoding.UTF8.GetBytes (checksum_buf, 0, count);
+
+			if (checksum == null)
+				checksum = MD5.Create ();
+			
+			if (final)
+				checksum.TransformFinalBlock (input, 0, input.Length);
+			else
+				checksum.TransformBlock (input, 0, input.Length, input, 0);
+			input = null;
+			
+			checksum_buf_pos = -1;
+		}
 		
+		void UpdateChecksum (int c)
+		{
+			bool final = c == -1;
+
+			if (!final) {
+				if (checksum_buf_pos >= CHECKSUM_BUF_SIZE)
+					TransformNextBlock (checksum_buf_pos + 1, false);
+				checksum_buf [++checksum_buf_pos] = (char)c;
+			} else
+				TransformNextBlock (checksum_buf_pos + 1, true);
+		}
+#endif
 		int read_char ()
 		{
 			int c;
@@ -158,10 +200,16 @@ namespace System.Web.Compilation
 				have_unget = false;
 			} else {
 				c = sr.Read ();
+#if NET_2_0
+				UpdateChecksum (c);
+#endif
 			}
 
 			if (c == '\r' && sr.Peek () == '\n') {
 				c = sr.Read ();
+#if NET_2_0
+				UpdateChecksum (c);
+#endif
 				position++;
 			}
 
