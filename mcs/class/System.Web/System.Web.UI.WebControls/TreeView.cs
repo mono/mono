@@ -33,6 +33,7 @@
 using System.Collections;
 using System.Text;
 using System.ComponentModel;
+using System.Globalization;
 using System.Web.Handlers;
 using System.Collections.Specialized;
 using System.IO;
@@ -85,6 +86,73 @@ namespace System.Web.UI.WebControls
 		static readonly object TreeNodePopulateEvent = new object();
 		
 		static Hashtable imageStyles = new Hashtable ();
+
+		class TreeViewExpandDepthConverter : TypeConverter
+		{
+			public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+			{
+				if (sourceType == typeof (string) || sourceType == typeof (int))
+					return true;
+
+				return base.CanConvertFrom (context, sourceType);
+			}
+
+			public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+			{
+				if (destinationType == typeof (string) || destinationType == typeof (int))
+					return true;
+
+				return base.CanConvertTo (context, destinationType);
+			}
+
+			public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+			{
+				if (destinationType != typeof (int) && destinationType != typeof (string))
+					return base.ConvertTo (context, culture, value, destinationType);
+				
+				if (value is string) {
+					if (destinationType == typeof (int)) {
+						if (String.Compare ("FullyExpand", (string)value, StringComparison.OrdinalIgnoreCase) == 0)
+							return -1;
+						
+						try {
+							return Int32.Parse ((string)value);
+						} catch (Exception) {
+							return -1;
+						}
+					} else
+						return value;	
+				}
+
+				int val = (int)value;
+				if (destinationType == typeof (string)) {
+					if (val == -1)
+						return "FullyExpand";
+					return val.ToString ();
+				}
+					
+				return value;
+			}
+
+			public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
+			{
+				if (!(value is string) && !(value is int))
+					return base.ConvertFrom (context, culture, value);
+
+				if (value is string) {
+					if (String.Compare ("FullyExpand", (string)value, StringComparison.OrdinalIgnoreCase) == 0)
+						return -1;
+
+					try {
+						return Int32.Parse ((string)value);
+					} catch (Exception) {
+						return null;
+					}
+				}
+
+				return value;
+			}
+		}
 		
 		class ImageStyle
 		{
