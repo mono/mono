@@ -1,3 +1,7 @@
+2009-03-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AssemblyBuilder.cs: the guid has to be quoted.
+
 2009-03-31  Marek Habersack  <mhabersack@novell.com>
 
 	* All of the below are part of the fix for bug #489687

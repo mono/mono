@@ -135,7 +135,7 @@ namespace System.Web.Compilation {
 					md5ChecksumCount +
 					(QuoteSnippetString (filename).Length * 2) +
 					(Environment.NewLine.Length * 4) +
-					BaseCompiler.HashMD5.ToString ("B").Length;
+					BaseCompiler.HashMD5.ToString ("B").Length + 2; // 2 for the quotes around the hash
 			}
 			
 			public void DecorateFile (string path, string filename, MD5 checksum, Encoding enc)
@@ -143,7 +143,7 @@ namespace System.Web.Compilation {
 				string newline = Environment.NewLine;
 				var sb = new StringBuilder ();
 				
-				sb.AppendFormat ("#pragma checksum {0} {1} \"{2}\"{3}{3}",
+				sb.AppendFormat ("#pragma checksum {0} \"{1}\" \"{2}\"{3}{3}",
 						 QuoteSnippetString (filename),
 						 BaseCompiler.HashMD5.ToString ("B"),
 						 ChecksumToHex (checksum),
