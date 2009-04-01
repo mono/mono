@@ -185,7 +185,7 @@ namespace System.Web.Compilation
 			bool final = c == -1;
 
 			if (!final) {
-				if (checksum_buf_pos >= CHECKSUM_BUF_SIZE)
+				if (checksum_buf_pos + 1 >= CHECKSUM_BUF_SIZE)
 					TransformNextBlock (checksum_buf_pos + 1, false);
 				checksum_buf [++checksum_buf_pos] = (char)c;
 			} else
