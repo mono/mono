@@ -26,7 +26,7 @@
 	for the virtualPath parameter.
 
 	* ThemeBuildProvider.cs: use new parser constructors which take
-	VirtualPath instances instead of strings.o
+	VirtualPath instances instead of strings.
 
 2009-03-30  Marek Habersack  <mhabersack@novell.com>
 
