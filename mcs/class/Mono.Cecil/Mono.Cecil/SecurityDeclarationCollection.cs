@@ -31,7 +31,7 @@ namespace Mono.Cecil {
 	using System;
 	using System.Collections;
 
-	public sealed class SecurityDeclarationCollection : IReflectionVisitable {
+	public sealed class SecurityDeclarationCollection : IReflectionVisitable, IEnumerable {
 
 		IDictionary m_items;
 		IHasSecurity m_container;
