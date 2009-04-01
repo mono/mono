@@ -1,3 +1,10 @@
+2009-03-31  Marek Habersack  <mhabersack@novell.com>
+
+	* DefaultWsdlHelpGenerator.aspx: the link element in <head> must
+	be created using Response.Write, as the code expression in the
+	href attribute is otherwise treated verbatim. This is the same as
+	with .NET. Fixes bug #490497
+
 2009-03-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DefaultWsdlHelpGenerator.aspx: disable the test form

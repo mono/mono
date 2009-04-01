@@ -1521,8 +1521,9 @@ public class HtmlSampleGenerator: SampleGenerator
 </script>
 
 <head runat="server">
-	<link rel="alternate" type="text/xml" href="<%=Request.FilePath%>?disco"/>
-
+	<%
+	Response.Write ("<link rel=\"alternate\" type=\"text/xml\" href=\"" + Request.FilePath + "?disco\"/>");
+	%>
 	<title><%=WebServiceName%> Web Service</title>
     <style type="text/css">
 		BODY { font-family: Arial; margin-left: 20px; margin-top: 20px; font-size: x-small}
