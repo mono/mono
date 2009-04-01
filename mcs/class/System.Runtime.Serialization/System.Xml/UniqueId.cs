@@ -29,6 +29,7 @@
 #if NET_2_0
 using System;
 using System.Collections.Generic;
+using System.Security;
 
 namespace System.Xml
 {
@@ -47,6 +48,8 @@ namespace System.Xml
 		{
 		}
 
+		[SecuritySafeCritical]
+		[SecurityTreatAsSafe]
 		public UniqueId (Guid id)
 		{
 			this.guid = id;
@@ -63,6 +66,8 @@ namespace System.Xml
 			this.id = value;
 		}
 
+		[SecuritySafeCritical]
+		[SecurityTreatAsSafe]
 		public UniqueId (byte [] id, int offset)
 		{
 			if (id == null)
@@ -84,6 +89,8 @@ namespace System.Xml
 			}
 		}
 
+		[SecuritySafeCritical]
+		[SecurityTreatAsSafe]
 		public UniqueId (char [] id, int offset, int count)
 		{
 			if (id == null)
@@ -108,6 +115,8 @@ namespace System.Xml
 				this.id = new string (id, offset, count);
 		}
 
+		[SecuritySafeCritical]
+		[SecurityTreatAsSafe]
 		public int CharArrayLength {
 			get {return id != null ? id.Length : 45;}
 		}
@@ -130,6 +139,8 @@ namespace System.Xml
 			return id == other.id;
 		}
 
+		[SecuritySafeCritical]
+		[SecurityTreatAsSafe]
 		[MonoTODO ("Determine semantics when IsGuid==true")]
 		public override int GetHashCode ()
 		{
@@ -146,6 +157,8 @@ namespace System.Xml
 			return ! (id1 == id2);
 		}
 
+		[SecuritySafeCritical]
+		[SecurityTreatAsSafe]
 		public int ToCharArray (char [] array, int offset)
 		{
 			if (array == null)
@@ -177,6 +190,8 @@ namespace System.Xml
 			}
 		}
 
+		[SecuritySafeCritical]
+		[SecurityTreatAsSafe]
 		public bool TryGetGuid (byte [] buffer, int offset)
 		{
 			if (!IsGuid)

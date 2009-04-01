@@ -54,7 +54,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public virtual void EndCanonicalization ()
 		{
 			throw new NotSupportedException ();
@@ -107,6 +106,12 @@ namespace System.Xml
 			return -1;
 		}
 
+		public virtual bool IsArray (out Type type)
+		{
+			type = null;
+			return false;
+		}
+
 		public virtual bool IsLocalName (string localName)
 		{
 			return LocalName == localName;
@@ -131,10 +136,10 @@ namespace System.Xml
 			return NamespaceURI == namespaceUri.Value;
 		}
 
-		[MonoTODO]
 		public virtual bool IsStartArray (out Type type)
 		{
-			throw new NotImplementedException ();
+			type = null;
+			return false;
 		}
 
 		public virtual bool IsStartElement (
@@ -210,7 +215,6 @@ namespace System.Xml
 			MoveToStartElement (localName.Value, namespaceUri.Value);
 		}
 
-		[MonoTODO]
 		public virtual void StartCanonicalization (
 			Stream stream, bool includeComments,
 			string [] inclusivePrefixes)
@@ -246,7 +250,6 @@ namespace System.Xml
 
 		#region Content Reader Methods
 
-		[MonoTODO]
 		public override object ReadContentAs (Type type, IXmlNamespaceResolver nsResolver)
 		{
 			return base.ReadContentAs (type, nsResolver);
@@ -290,13 +293,11 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override decimal ReadContentAsDecimal ()
 		{
 			return base.ReadContentAsDecimal ();
 		}
 
-		[MonoTODO]
 		public override float ReadContentAsFloat ()
 		{
 			return base.ReadContentAsFloat ();
@@ -325,13 +326,13 @@ namespace System.Xml
 			return base.ReadContentAsString ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("there is exactly no information on the web")]
 		public virtual string ReadContentAsString (string [] strings, out int index)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("there is exactly no information on the web")]
 		public virtual string ReadContentAsString (XmlDictionaryString [] strings, out int index)
 		{
 			throw new NotImplementedException ();

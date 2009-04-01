@@ -1,3 +1,9 @@
+2009-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UniqueId.cs : add missing security attributes.
+	* XmlDictionaryReader.cs : cleanup extra TODOs.
+	* XmlBinaryDictionaryReader.cs : iplement IsArray.
+
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryReader.cs, XmlDictionaryWriter.cs :

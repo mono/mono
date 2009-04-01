@@ -404,6 +404,17 @@ namespace System.Xml
 				NameTable.Get (prefix));
 		}
 
+		public override bool IsArray (out Type type)
+		{
+			if (array_state == XmlNodeType.Element) {
+				type = GetArrayType (array_item_type);
+				return true;
+			} else {
+				type = null;
+				return false;
+			}
+		}
+
 		public override bool MoveToElement ()
 		{
 			bool ret = current_attr >= 0;
@@ -626,20 +637,35 @@ namespace System.Xml
 
 		void VerifyValidArrayItemType (int ident)
 		{
+			if (GetArrayType (ident) == null)
+				throw new XmlException (String.Format ("Unexpected array item type {0:X} in hexadecimal", ident));
+		}
+		
+		Type GetArrayType (int ident)
+		{
 			switch (ident) {
 			case BF.Bool:
+				return typeof (bool);
 			case BF.Int16:
+				return typeof (short);
 			case BF.Int32:
+				return typeof (int);
 			case BF.Int64:
+				return typeof (long);
 			case BF.Single:
+				return typeof (float);
 			case BF.Double:
+				return typeof (double);
 			case BF.Decimal:
+				return typeof (decimal);
 			case BF.DateTime:
+				return typeof (DateTime);
 			case BF.TimeSpan:
+				return typeof (TimeSpan);
 			case BF.Guid:
-				return;
+				return typeof (Guid);
 			}
-			throw new XmlException (String.Format ("Unexpected array item type {0:X} in hexadecimal", ident));
+			return null;
 		}
 
 		private void ProcessEndElement ()
