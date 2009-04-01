@@ -128,8 +128,10 @@ namespace System.ServiceModel.Dispatcher
 			if (includeDetailsInFault) {
 				return Message.CreateMessage (req.Version, fc, ex.Message, new ExceptionDetail (ex), req.Headers.Action);
 			}
+			// MS returns: The server was unable to process the request due to an internal error.  For more information about the error, either turn on IncludeExceptionDetailInFaults (either from ServiceBehaviorAttribute or from the &lt;serviceDebug&gt; configuration behavior) on the server in order to send the exception information back to the client, or turn on tracing as per the Microsoft .NET Framework 3.0 SDK documentation and inspect the server trace logs.";
+			//
 			string faultString =
-				@"The server was unable to process the request due to an internal error.  For more information about the error, either turn on IncludeExceptionDetailInFaults (either from ServiceBehaviorAttribute or from the &lt;serviceDebug&gt; configuration behavior) on the server in order to send the exception information back to the client, or turn on tracing as per the Microsoft .NET Framework 3.0 SDK documentation and inspect the server trace logs.";
+				@"The server was unable to process the request due to an internal error.  The server may be able to return exception details (it depends on the server settings).";
 			return Message.CreateMessage (req.Version, fc, faultString, req.Headers.Action);
 		}
 

@@ -1,3 +1,7 @@
+2009-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokeHandler.cs : replace MS copycat exception message.
+
 2009-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntime.cs : fill contractType in .ctor().
