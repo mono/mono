@@ -1934,14 +1934,14 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 
 		Pair vsr = null;
-
-		if (EnableViewState) {
-			object viewState = SaveViewStateRecursive ();
-			object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
-
-			if (viewState != null || reqPostback != null)
-				vsr = new Pair (viewState, reqPostback);
-		}
+		object viewState = null;
+		
+		if (EnableViewState)
+			viewState = SaveViewStateRecursive ();
+		
+		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;
+		if (viewState != null || reqPostback != null)
+			vsr = new Pair (viewState, reqPostback);
 
 		Pair pair = new Pair ();
 		pair.First = vsr;
