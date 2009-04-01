@@ -112,7 +112,7 @@ namespace Mono.Cecil {
 				if (method == null) {
 					if (type.BaseType == null)
 						return null;
-	
+
 					type = Resolve (type.BaseType);
 				} else
 					return method;
