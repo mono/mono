@@ -73,6 +73,12 @@ namespace System.Web.Compilation
 		protected override void CreateConstructor (CodeStatementCollection localVars,
 							   CodeStatementCollection trueStmt)
 		{
+#if NET_2_0
+			if (!String.IsNullOrEmpty (pageParser.MasterPageFile))
+				// This is here just to trigger master page build, so that its type
+				// is available when compiling the page itself.
+				Type master = BuildManager.GetCompiledType (pageParser.MasterPageFile);
+#endif
 			if (pageParser.ClientTarget != null) {
 				CodeExpression prop;
 				prop = new CodePropertyReferenceExpression (thisRef, "ClientTarget");
