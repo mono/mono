@@ -71,7 +71,16 @@ namespace System.Web.Compilation {
 				return typeName;
 			}
 		}
-
+		
+		public CompileUnitPartialType (CodeCompileUnit unit, CodeNamespace parentNamespace, CodeTypeDeclaration type)
+		{
+			this.Unit = unit;
+			this.ParentNamespace = parentNamespace;
+			this.PartialType = type;
+		}
+	}
+	
+	public class AssemblyBuilder {
 		interface ICodePragmaGenerator
 		{
 			int ReserveSpace (string filename);
@@ -180,15 +189,6 @@ namespace System.Web.Compilation {
 			}
 		}
 		
-		public CompileUnitPartialType (CodeCompileUnit unit, CodeNamespace parentNamespace, CodeTypeDeclaration type)
-		{
-			this.Unit = unit;
-			this.ParentNamespace = parentNamespace;
-			this.PartialType = type;
-		}
-	}
-	
-	public class AssemblyBuilder {
 		const string DEFAULT_ASSEMBLY_BASE_NAME = "App_Web_";
 		const int COPY_BUFFER_SIZE = 8192;
 		
