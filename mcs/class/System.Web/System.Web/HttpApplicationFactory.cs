@@ -34,6 +34,7 @@ using System.Web.UI;
 using System.Web.SessionState;
 using System.Web.Configuration;
 using System.Threading;
+using System.Web.Util;
 
 using System.Web.Compilation;
 #if TARGET_J2EE
@@ -479,11 +480,21 @@ namespace System.Web {
 						app_state = new HttpApplicationState ();
 					}
 
-					WatchLocationForRestart("Global.asax");
-					WatchLocationForRestart("global.asax");
-					WatchLocationForRestart(String.Empty, "Web.config", true);
-					WatchLocationForRestart(String.Empty, "web.config", true);
-					WatchLocationForRestart(String.Empty, "Web.Config", true);
+					WatchLocationForRestart ("?lobal.asax");
+#if CODE_DISABLED_UNTIL_SYSTEM_CONFIGURATION_IS_FIXED
+					// This is the correct behavior, but until
+					// System.Configuration is fixed to properly reload
+					// configuration when it is modified on disk, we need to use
+					// the recursive watchers below.
+					WatchLocationForRestart ("?eb.?onfig");
+#else
+					// This is to avoid startup delays. Inotify/FAM code looks
+					// recursively for all subdirectories and adds them to the
+					// watch set. This can take a lot of time for deep directory
+					// trees (see bug #490497)
+					ThreadPool.QueueUserWorkItem (new WaitCallback (SetUpWebConfigWatchers), null);
+#endif
+					
 					needs_init = false;
 #if NET_2_0
 				} catch (Exception) {
@@ -502,6 +513,11 @@ namespace System.Web {
 				//
 
 			}
+		}
+
+		static void SetUpWebConfigWatchers (object state)
+		{
+			WatchLocationForRestart (String.Empty, "?eb.?onfig", true);
 		}
 		
 		//
@@ -610,7 +626,7 @@ namespace System.Web {
 
                 internal static bool WatchLocationForRestart (string filter)
 	        {
-			return WatchLocationForRestart ("", filter, false);
+			return WatchLocationForRestart (String.Empty, filter, false);
 	        }
 
 		internal static bool WatchLocationForRestart (string virtualPath, string filter)
@@ -700,6 +716,13 @@ namespace System.Web {
 
 	        static void OnFileChanged(object sender, FileSystemEventArgs args)
 	        {
+			string name = args.Name;
+
+			if (StrUtils.EndsWith (name, "onfig", true) && String.Compare (name, "web.config", true) != 0)
+				return;
+			if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true) != 0)
+				return;
+			
 	        	lock (watchers_lock) {
 				if(app_shutdown)
 					return;

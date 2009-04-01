@@ -1,5 +1,10 @@
 2009-03-31  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplicationFactory.cs: use glob patterns to watch for
+	changes to global.asax and web.config files.
+	Set up recursive watch on web.config in a separate thread, to
+	minimize application startup delay.
+
 	* VirtualPath.cs: added code to detect whether the VirtualPath
 	instance represents a fake virtual path (IsFake property).
 	Added new property DirectoryNoNormalize which returns
