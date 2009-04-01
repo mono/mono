@@ -1,3 +1,16 @@
+2009-03-30  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyBuilder.cs: introduced a kludge to add #pragma checksum
+	and #pragma lines (or its vb equivalent - #ExternalSource) to
+	code-behind files named in the CodeFile/Src directives while
+	copying them to the dynamic directory for compilation. The kludge
+	works by recognizing the .cs and .vb extensions and wrapping the
+	file contents in the appropriate directives. This is done in this
+	way because the other possible way, using the
+	CodeSnippetCompileUnit, requires the entire file to be read in
+	memory and then passed to CodeDOM. We fall back to this way when
+	the file being copied is neither C# or VB.
+
 2009-03-25  Marek Habersack  <mhabersack@novell.com>
 
 	* AspTokenizer.cs: MD5 checksum calculation happens here. It's
