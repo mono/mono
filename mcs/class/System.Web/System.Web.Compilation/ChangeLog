@@ -1,3 +1,8 @@
+2009-04-01  Martin Baulig  <martin@ximian.com>
+
+	* AssemblyBuilder.cs: Don't emit a blank line after the #line as
+	thid'd cause all line numbers to be off by 1.
+
 2009-03-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* AssemblyBuilder.cs: the guid has to be quoted.
