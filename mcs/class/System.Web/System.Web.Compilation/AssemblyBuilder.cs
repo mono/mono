@@ -148,7 +148,7 @@ namespace System.Web.Compilation {
 						 BaseCompiler.HashMD5.ToString ("B"),
 						 ChecksumToHex (checksum),
 						 newline);
-				sb.AppendFormat ("#line 1 {0}{1}{1}", QuoteSnippetString (filename), newline);
+				sb.AppendFormat ("#line 1 {0}{1}", QuoteSnippetString (filename), newline);
 
 				byte[] bytes = enc.GetBytes (sb.ToString ());
 				using (FileStream fs = new FileStream (path, FileMode.Open, FileAccess.Write)) {
