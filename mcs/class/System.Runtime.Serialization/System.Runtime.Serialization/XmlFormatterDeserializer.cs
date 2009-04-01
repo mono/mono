@@ -146,7 +146,7 @@ namespace System.Runtime.Serialization
 			object res = DeserializeContent (graph_qname, type, reader, isEmpty);
 
 			reader.MoveToContent ();
-			if (reader.NodeType == XmlNodeType.EndElement)
+			if (!isEmpty && reader.NodeType == XmlNodeType.EndElement)
 				reader.ReadEndElement ();
 			else if (!isEmpty && reader.NodeType != XmlNodeType.None)
 				throw new SerializationException (String.Format ("Deserializing type '{3}'. Expecting state 'EndElement'. Encountered state '{0}' with name '{1}' with namespace '{2}'.", reader.NodeType, reader.Name, reader.NamespaceURI, type.FullName));
@@ -157,12 +157,13 @@ namespace System.Runtime.Serialization
 		{
 			if (KnownTypeCollection.IsPrimitiveType (name)) {
 				string value;
-				if (reader.NodeType != XmlNodeType.Text)
+				if (isEmpty) {
 					if (type.IsValueType)
 						return Activator.CreateInstance (type);
 					else
 						// FIXME: Workaround for creating empty objects of the correct type.
 						value = String.Empty;
+				}
 				else
 					value = reader.ReadContentAsString ();
 				return KnownTypeCollection.PredefinedTypeStringToObject (value, name.Name, reader);

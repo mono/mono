@@ -1,3 +1,8 @@
+2009-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterDeserializer.cs : more hack to handle empty
+	  element nicely.
+
 2009-03-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs, XmlFormatterDeserializer.cs:
