@@ -196,6 +196,9 @@ namespace System.Web.Compilation
 				result.Length--;
 
 			result.Append ('}');
+			if (IsRunAtServer ())
+				result.Append (" @Server");
+			
 			return result.ToString ();
 		}
 		

@@ -48,10 +48,10 @@ namespace System.Web.UI
 			set { linkedStyleSheets = value; }
 		}
 
-		internal PageThemeParser (string virtualPath, HttpContext context)
-		: base (virtualPath, Path.GetDirectoryName(virtualPath), context, "System.Web.UI.PageTheme")
+		internal PageThemeParser (VirtualPath virtualPath, HttpContext context)
+		: base (virtualPath, virtualPath.PhysicalPath, context, "System.Web.UI.PageTheme")
 		{
-			AddDependency (virtualPath);
+			AddDependency (virtualPath.Original);
 		}
 		
 		internal override void HandleOptions (object obj)

@@ -49,7 +49,7 @@ namespace System.Web.UI
 				throw new HttpException (String.Format ("Theme '{0}' cannot be found in the application or global theme directories.", theme));
 			string [] skin_files = Directory.GetFiles (physicalPath, "*.skin");
 
-			PageThemeParser ptp = new PageThemeParser (virtualPath, context);
+			PageThemeParser ptp = new PageThemeParser (new VirtualPath (virtualPath), context);
 			
 			string[] css_files = Directory.GetFiles (physicalPath, "*.css");
 			string[] css_urls = new string[css_files.Length];
@@ -65,7 +65,7 @@ namespace System.Web.UI
 			string skin_file_url;
 			for (int i = 0; i < skin_files.Length; i ++) {
 				skin_file_url = VirtualPathUtility.Combine (virtualPath, Path.GetFileName (skin_files [i]));
-				PageThemeFileParser ptfp = new PageThemeFileParser (skin_file_url,
+				PageThemeFileParser ptfp = new PageThemeFileParser (new VirtualPath (skin_file_url),
 										    skin_files[i],
 										    context);
 

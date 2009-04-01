@@ -1,3 +1,11 @@
+2009-03-31  Marek Habersack  <mhabersack@novell.com>
+
+	* VirtualPath.cs: added code to detect whether the VirtualPath
+	instance represents a fake virtual path (IsFake property).
+	Added new property DirectoryNoNormalize which returns
+	non-normalized directory for the VirtualPath instance.
+	Made ToString () a bit more friendly and well-behaved.
+
 2009-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpResponse.cs: ClearHeaders() also resets cacheability.

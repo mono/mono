@@ -49,7 +49,7 @@ namespace System.Web.UI
 		List <string> contentPlaceHolderIds;
 		string cacheEntryName;
 		
-		internal MasterPageParser (string virtualPath, string inputFile, HttpContext context)
+		internal MasterPageParser (VirtualPath virtualPath, string inputFile, HttpContext context)
 			: base (virtualPath, inputFile, context, "System.Web.UI.MasterPage")
 		{
 			this.cacheEntryName = String.Concat ("@@MasterPagePHIDS:", virtualPath, ":", inputFile);
@@ -57,12 +57,12 @@ namespace System.Web.UI
 			contentPlaceHolderIds = HttpRuntime.InternalCache.Get (this.cacheEntryName) as List <string>;
 		}
 
-		internal MasterPageParser (string virtualPath, TextReader reader, HttpContext context)
+		internal MasterPageParser (VirtualPath virtualPath, TextReader reader, HttpContext context)
 			: this (virtualPath, null, reader, context)
 		{
 		}
 		
-		internal MasterPageParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
+		internal MasterPageParser (VirtualPath virtualPath, string inputFile, TextReader reader, HttpContext context)
 			: base (virtualPath, inputFile, reader, context)
 		{
 			this.cacheEntryName = String.Concat ("@@MasterPagePHIDS:", virtualPath, ":", InputFile);

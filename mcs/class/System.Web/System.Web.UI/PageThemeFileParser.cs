@@ -41,7 +41,7 @@ namespace System.Web.UI
 {
 	internal sealed class PageThemeFileParser: UserControlParser
 	{
-		internal PageThemeFileParser (string virtualPath, string inputFile, HttpContext context)
+		internal PageThemeFileParser (VirtualPath virtualPath, string inputFile, HttpContext context)
 		: base (virtualPath, inputFile, context, "System.Web.UI.PageTheme")
 		{
 		}

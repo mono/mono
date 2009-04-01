@@ -60,19 +60,19 @@ namespace System.Web.Compilation
 			return new PageThemeCompiler (parser as PageThemeParser);
 		}
 		
-		protected override TemplateParser CreateParser (string virtualPath, string inputFile, TextReader reader, HttpContext context)
+		protected override TemplateParser CreateParser (VirtualPath virtualPath, string inputFile, TextReader reader, HttpContext context)
 		{
 			return CreateParser (virtualPath, inputFile, context);
 		}
 
-		protected override TemplateParser CreateParser (string virtualPath, string inputFile, HttpContext context)
+		protected override TemplateParser CreateParser (VirtualPath virtualPath, string inputFile, HttpContext context)
 		{
-			string vp = VirtualPathUtility.AppendTrailingSlash (virtualPath);
-			string physicalPath = context.Request.MapPath (vp);
+			string vp = VirtualPathUtility.AppendTrailingSlash (virtualPath.Original);
+			string physicalPath = virtualPath.PhysicalPath;
 			if (!Directory.Exists (physicalPath))
-				throw new HttpException (String.Concat ("Theme '", vp ,"' cannot be found in the application or global theme directories."));
+				throw new HttpException (String.Concat ("Theme '", virtualPath.Original ,"' cannot be found in the application or global theme directories."));
 
-			PageThemeParser ptp = new PageThemeParser (vp, context);
+			PageThemeParser ptp = new PageThemeParser (virtualPath, context);
 			
 			string[] css_files = Directory.GetFiles (physicalPath, "*.css");
 			string[] css_urls = new string [css_files.Length];
@@ -91,7 +91,7 @@ namespace System.Web.Compilation
 			
 			foreach (string skin_file in skin_files) {
 				skin_file_url = VirtualPathUtility.Combine (vp, Path.GetFileName (skin_file));
-				PageThemeFileParser ptfp = new PageThemeFileParser (skin_file_url, skin_file, context);
+				PageThemeFileParser ptfp = new PageThemeFileParser (new VirtualPath (skin_file_url), skin_file, context);
 
 				ptp.AddDependency (skin_file_url);
 				generator = new AspGenerator (ptfp);

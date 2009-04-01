@@ -486,7 +486,7 @@ namespace System.Web.Compilation
 				length = group.Length;
 
 				TextParsed (location, String.Format (" {0}=\"{1}", key, index > 0 ? value.Substring (0, index) : String.Empty));;
-				FlushText ();				
+				FlushText ();
 				ParseAttributeTag (group.Value);
 				if (index + length < value.Length)
 					TextParsed (location, value.Substring (index + length) + "\"");
@@ -837,7 +837,7 @@ namespace System.Web.Compilation
 			} else {
 				if (!isApplication && builder is ObjectTagBuilder) {
 					ObjectTagBuilder ot = (ObjectTagBuilder) builder;
-					if (ot.Scope != null && ot.Scope != "")
+					if (ot.Scope != null && ot.Scope.Length > 0)
 						throw new ParseException (location, "Scope not allowed here");
 
 					if (tagtype == TagType.Tag) {

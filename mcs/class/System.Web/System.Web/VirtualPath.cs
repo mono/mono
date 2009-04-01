@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_0
+using System.IO;
+using System.Web.Compilation;
 using System.Web.Util;
 
 namespace System.Web
@@ -39,6 +41,7 @@ namespace System.Web
 		string _appRelativeNotRooted;
 		string _extension;
 		string _directory;
+		string _directoryNoNormalize;
 		string _currentRequestDirectory;
 		string _physicalPath;
 		
@@ -47,6 +50,11 @@ namespace System.Web
 			private set;
 		}
 
+		public bool IsFake {
+			get;
+			private set;
+		}
+		
 		public bool IsRooted {
 			get;
 			private set;
@@ -131,6 +139,15 @@ namespace System.Web
 			}
 		}
 
+		public string DirectoryNoNormalize {
+			get {
+				if (_directoryNoNormalize == null)
+					_directoryNoNormalize = VirtualPathUtility.GetDirectory (Absolute, false);
+				
+				return _directoryNoNormalize;
+			}
+		}
+		
 		public string CurrentRequestDirectory {
 			get {
 				if (_currentRequestDirectory != null)
@@ -165,11 +182,18 @@ namespace System.Web
 				
 		public VirtualPath (string vpath)
 		{
-			Original = vpath;
-
 			IsRooted = VirtualPathUtility.IsRooted (vpath);
 			IsAbsolute = VirtualPathUtility.IsAbsolute (vpath);
 			IsAppRelative = VirtualPathUtility.IsAppRelative (vpath);
+
+			if (StrUtils.StartsWith (vpath, BuildManager.FAKE_VIRTUAL_PATH_PREFIX)) {
+				_physicalPath = vpath.Substring (BuildManager.FAKE_VIRTUAL_PATH_PREFIX.Length);
+				Original = "~/" + Path.GetFileName (_physicalPath);
+				IsFake = true;
+			} else {
+				Original = vpath;
+				IsFake = false;
+			}
 		}
 
 		public VirtualPath (string vpath, string baseVirtualDir)
@@ -205,7 +229,15 @@ namespace System.Web
 		
 		public override string ToString ()
 		{
-			return Original;
+			string ret = Original;
+
+			if (String.IsNullOrEmpty (ret))
+				return GetType ().ToString ();
+
+			if (IsFake)
+				ret += " [fake]";
+			
+			return ret;
 		}
 
 		public static VirtualPath PhysicalToVirtual (string physical_path)

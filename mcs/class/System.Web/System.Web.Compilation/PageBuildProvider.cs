@@ -57,11 +57,11 @@ namespace System.Web.Compilation {
 			return base.MapPath (virtualPath);
 		}
 		
-		protected override TextReader SpecialOpenReader (string virtualPath, out string physicalPath)
+		protected override TextReader SpecialOpenReader (VirtualPath virtualPath, out string physicalPath)
 		{
 			// We need this hack to support out-of-application wsdl helpers
-			if (StrUtils.StartsWith (virtualPath, BuildManager.FAKE_VIRTUAL_PATH_PREFIX)) {
-				physicalPath = virtualPath.Substring (BuildManager.FAKE_VIRTUAL_PATH_PREFIX.Length);
+			if (virtualPath.IsFake) {
+				physicalPath = virtualPath.PhysicalPath;
 				return new StreamReader (physicalPath);
 			} else
 				physicalPath = null;
@@ -74,12 +74,12 @@ namespace System.Web.Compilation {
 			return new PageCompiler (parser as PageParser);
 		}
 
-		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, HttpContext context)
+		protected override TemplateParser CreateParser (VirtualPath virtualPath, string physicalPath, HttpContext context)
 		{	
-			return CreateParser (virtualPath, physicalPath, OpenReader (virtualPath), context);
+			return CreateParser (virtualPath, physicalPath, OpenReader (virtualPath.Original), context);
 		}
 		
-		protected override TemplateParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context)
+		protected override TemplateParser CreateParser (VirtualPath virtualPath, string physicalPath, TextReader reader, HttpContext context)
 		{
 			return new PageParser (virtualPath, physicalPath, reader, context);
 		}

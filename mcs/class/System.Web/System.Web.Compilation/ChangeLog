@@ -1,3 +1,33 @@
+2009-03-31  Marek Habersack  <mhabersack@novell.com>
+
+	* All of the below are part of the fix for bug #489687
+
+	* ThemeDirectoryCompiler.cs: pass VirtualPath instances to parser
+	constructors.
+
+	* BuildProvider.cs: associated virtual path is stored internally
+	as an instance of VirtualPath, accessible via new
+	VirtualPathInternal property.
+
+	* BuildManagerDirectoryBuilder.cs: VirtualPath.IsFake is used to
+	detect fake virtual paths.
+	GetBuildProvider now takes a VirtualPath instead of string for the
+	virtualPath parameter. The passed VirtualPath instance is passed
+	unchanged to BuildProvider.
+
+	* BuildManager.cs: AssertVirtualPathExists now uses
+	VirtualPath.IsFake to check for fake virtual paths.
+
+	* ApplicationFileBuildProvider.cs, GenericBuildProvider.cs,
+	MasterPageBuildProvider.cs, PageBuildProvider.cs,
+	ThemeBuildProvider.cs, UserControlBuildProvider.cs,
+	WebHandlerBuildProvider.cs, WebServiceBuildProvider.cs:
+	CreateParser overloads now take a VirtualPath instead of a string
+	for the virtualPath parameter.
+
+	* ThemeBuildProvider.cs: use new parser constructors which take
+	VirtualPath instances instead of strings.o
+
 2009-03-30  Marek Habersack  <mhabersack@novell.com>
 
 	* AspTokenizer.cs: UpdateChecksum - fixed off-by-one bug when

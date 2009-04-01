@@ -49,8 +49,8 @@ namespace System.Web.Compilation
 		bool _parsed;
 		bool _codeGenerated;
 		
-		protected abstract TParser CreateParser (string virtualPath, string physicalPath, TextReader reader, HttpContext context);
-		protected abstract TParser CreateParser (string virtualPath, string physicalPath, HttpContext context);
+		protected abstract TParser CreateParser (VirtualPath virtualPath, string physicalPath, TextReader reader, HttpContext context);
+		protected abstract TParser CreateParser (VirtualPath virtualPath, string physicalPath, HttpContext context);
 		protected abstract BaseCompiler CreateCompiler (TParser parser);
 		protected abstract string GetParserLanguage (TParser parser);
 		protected abstract ICollection GetParserDependencies (TParser parser);
@@ -153,10 +153,10 @@ namespace System.Web.Compilation
 
 		// This is intended to be used by builders which may need to do special processing
 		// on the virtualPath before actually opening the reader.
-		protected virtual TextReader SpecialOpenReader (string virtualPath, out string physicalPath)
+		protected virtual TextReader SpecialOpenReader (VirtualPath virtualPath, out string physicalPath)
 		{
 			physicalPath = null;
-			return OpenReader (virtualPath);
+			return OpenReader (virtualPath.Original);
 		}
 		
 		// FIXME: figure this out.
@@ -181,8 +181,8 @@ namespace System.Web.Compilation
 		public TParser Parser {
 			get {
 				if (_parser == null) {
-					string vp = VirtualPath;					
-					if (String.IsNullOrEmpty (vp))
+					VirtualPath vp = VirtualPathInternal;
+					if (vp == null)
 						throw new HttpException ("VirtualPath not set, cannot instantiate parser.");
 					
 					if (!IsDirectoryBuilder) {
