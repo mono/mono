@@ -1,3 +1,11 @@
+2009-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs, X11Clipboard.cs: Text and Rtf formats must be
+	separated, and we cannot fallback on Text if Rtf is requested but not
+	present.
+	* Clipboard.cs: Actually use the format specified by our user when
+	putting data.
+
 2009-03-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* X11Clipboard.cs: Actually look for the RtfText format when calling

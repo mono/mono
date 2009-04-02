@@ -1725,25 +1725,33 @@ namespace System.Windows.Forms {
 						XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, 
 								(IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
 						sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+					} else if (xevent.SelectionRequestEvent.target == (IntPtr)RICHTEXTFORMAT) {
+						string rtf_text = Clipboard.GetRtfText ();
+						if (rtf_text != null) {
+							// The RTF spec mentions that ascii is enough to contain it
+							Byte [] bytes = Encoding.ASCII.GetBytes (rtf_text);
+							int buflen = bytes.Length;
+							IntPtr buffer = Marshal.AllocHGlobal (buflen);
+
+							for (int i = 0; i < buflen; i++)
+								Marshal.WriteByte (buffer, i, bytes[i]);
+
+							XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property,
+									(IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
+							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+							Marshal.FreeHGlobal(buffer);
+						}
 					} else if (Clipboard.IsSourceText) {
 						IntPtr	buffer;
 						int	buflen;
 
 						buflen = 0;
 
-						// The RTF spec mentions that ascii is enough to contain it
 						IntPtr target_atom = xevent.SelectionRequestEvent.target;
-						if (target_atom == (IntPtr)Atom.XA_STRING ||
-								target_atom == (IntPtr)RICHTEXTFORMAT) {
+						if (target_atom == (IntPtr)Atom.XA_STRING) {
 							Byte[] bytes;
 
-							string source_data = null;
-							if (target_atom == (IntPtr)RICHTEXTFORMAT)
-								source_data = Clipboard.GetRtfText ();
-							if (source_data == null) // fallback to plain text if needed
-								source_data = Clipboard.GetPlainText ();
-
-							bytes = Encoding.ASCII.GetBytes(source_data);
+							bytes = Encoding.ASCII.GetBytes(Clipboard.GetPlainText ());
 							buffer = Marshal.AllocHGlobal(bytes.Length);
 							buflen = bytes.Length;
 

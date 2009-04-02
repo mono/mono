@@ -216,13 +216,13 @@ namespace System.Windows.Forms {
 			SetData (DataFormats.WaveAudio, audioStream);
 		}
 
-		[MonoInternalNote ("Does not use requested format")]
 		public static void SetData (string format, Object data)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
 				
-			SetDataObject (data);
+			DataObject data_object = new DataObject (format, data);
+			SetDataObject (data_object);
 		}
 #endif
 

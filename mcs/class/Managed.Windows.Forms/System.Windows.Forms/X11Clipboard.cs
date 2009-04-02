@@ -34,7 +34,6 @@ namespace System.Windows.Forms {
 		ListDictionary source_data;			// Source in its different formats, if any
 		string plain_text_source;			// Cached source as plain-text string
 		Image image_source;				// Cached source as image
-		bool is_source_text;				// Is any form of text supported? (plain, rtf, etc)
 
 		internal object		Item;			// Object on the clipboard
 		internal ArrayList	Formats;		// list of formats available in the clipboard
@@ -52,7 +51,6 @@ namespace System.Windows.Forms {
 			source_data.Clear ();
 			plain_text_source = null;
 			image_source = null;
-			is_source_text = false;
 		}
 
 		public void AddSource (int type, object source)
@@ -64,7 +62,6 @@ namespace System.Windows.Forms {
 			else if (source is Image)
 				image_source = source as Image;
 
-			is_source_text = source is string || is_source_text;
 			source_data [type] = source;
 		}
 
@@ -94,7 +91,7 @@ namespace System.Windows.Forms {
 
 		public bool IsSourceText {
 			get {
-				return is_source_text;
+				return plain_text_source != null;
 			}
 		}
 
