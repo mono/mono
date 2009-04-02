@@ -8,6 +8,11 @@
 	* WebConfigurationManager.cs: optimized GetWebApplicationSection a
 	bit
 
+2009-02-28  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: make sure no nrex happens in
+	GetSectionCacheKey ()
+
 2009-02-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConfigurationManager.cs: generate a hash from the string hsah

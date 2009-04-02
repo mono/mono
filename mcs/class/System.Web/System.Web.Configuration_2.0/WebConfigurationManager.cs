@@ -484,7 +484,7 @@ namespace System.Web.Configuration {
 
 		static int GetSectionCacheKey (string sectionName, string path)
 		{
-			return sectionName.GetHashCode () ^ (path.GetHashCode () + 37);
+			return (sectionName != null ? sectionName.GetHashCode () : 0) ^ ((path != null ? path.GetHashCode () : 0) + 37);
 		}
 
 		
