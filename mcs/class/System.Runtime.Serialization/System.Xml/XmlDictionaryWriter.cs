@@ -83,22 +83,20 @@ namespace System.Xml
 			return new XmlSimpleDictionaryWriter (writer);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryWriter CreateMtomWriter (
 			Stream stream, Encoding encoding, int maxSizeInBytes,
 			string startInfo)
 		{
 			return CreateMtomWriter (stream, encoding,
-				maxSizeInBytes, startInfo, null, null, false, false);
+				maxSizeInBytes, startInfo, Guid.NewGuid () + "id=1", "http://tempuri.org/0/" + DateTime.Now.Ticks, true, false);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryWriter CreateMtomWriter (
 			Stream stream, Encoding encoding, int maxSizeInBytes,
 			string startInfo, string boundary, string startUri,
 			bool writeMessageHeaders, bool ownsStream)
 		{
-			throw new NotImplementedException ();
+			return new XmlMtomDictionaryWriter (stream, encoding, maxSizeInBytes, startInfo, boundary, startUri, writeMessageHeaders, ownsStream);
 		}
 
 		public static XmlDictionaryWriter CreateTextWriter (
@@ -247,7 +245,6 @@ namespace System.Xml
 			WriteEndAttribute ();
 		}
 
-		[MonoTODO ("make use of dictionary reader optimization")]
 		public override void WriteNode (XmlReader reader, bool defattr)
 		{
 			if (reader == null)

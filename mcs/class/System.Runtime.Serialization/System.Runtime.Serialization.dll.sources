@@ -58,5 +58,6 @@ System.Xml/XmlDictionaryReaderQuotas.cs
 System.Xml/XmlDictionaryString.cs
 System.Xml/XmlDictionaryWriter.cs
 System.Xml/XmlDictionaryWriterAutoGen.cs
+System.Xml/XmlMtomDictionaryWriter.cs
 System.Xml/XmlSimpleDictionaryReader.cs
 System.Xml/XmlSimpleDictionaryWriter.cs

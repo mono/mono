@@ -1,3 +1,7 @@
+2009-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlMtomDictionaryWriterTest.cs : new.
+
 2009-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryReaderTest.cs: make tests more doubtful on
