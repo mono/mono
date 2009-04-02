@@ -1,3 +1,11 @@
+2009-04-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Enable support for non-IMT virtual
+	calls.
+
+	* mini-amd64.c (mono_arch_get_vcall_slot): Handle more kinds of the SIB
+	addressing modes.
+
 2009-04-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (llvm_sources): Enable this.
