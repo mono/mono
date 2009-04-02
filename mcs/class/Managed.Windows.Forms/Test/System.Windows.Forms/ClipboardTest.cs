@@ -35,7 +35,7 @@ namespace MonoTests.System.Windows.Forms
 	{
 #if NET_2_0
 		[Test]
-		public void TextTest ()
+		public void UnicodeTextTest ()
 		{
 			// Put some unicode chars
 			string text = "hello \u1000 mono!";
@@ -43,6 +43,37 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual (true, Clipboard.ContainsText (TextDataFormat.UnicodeText), "#A1");
 			Assert.AreEqual (text, Clipboard.GetText (TextDataFormat.UnicodeText), "#A2");
+
+			Clipboard.Clear ();
+		}
+
+		[Test]
+		public void RtfTextTest ()
+		{
+			string rtf_text = @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fnil\fcharset0 Arial;}}{\*\generator Mono RichTextBox;}\pard\f0\fs16 hola\par}";
+			string plain_text = "hola";
+
+			Clipboard.SetText (rtf_text, TextDataFormat.Rtf);
+
+			Assert.AreEqual (false, Clipboard.ContainsText (TextDataFormat.Text), "#A1");
+			Assert.AreEqual (false, Clipboard.ContainsText (TextDataFormat.UnicodeText), "#A2");
+			Assert.AreEqual (true, Clipboard.ContainsText (TextDataFormat.Rtf), "#A3");
+			Assert.AreEqual (rtf_text, Clipboard.GetText (TextDataFormat.Rtf), "#A4");
+
+			// Now use a IDataObject, so we can have more than one format at the time
+			DataObject data = new DataObject ();
+			data.SetData (DataFormats.Rtf, rtf_text);
+			data.SetData (DataFormats.UnicodeText, plain_text);
+
+			Clipboard.SetDataObject (data);
+
+			Assert.AreEqual (true, Clipboard.ContainsText (TextDataFormat.Text), "#B1");
+			Assert.AreEqual (true, Clipboard.ContainsText (TextDataFormat.UnicodeText), "#B2");
+			Assert.AreEqual (true, Clipboard.ContainsText (TextDataFormat.Rtf), "#B3");
+			Assert.AreEqual (rtf_text, Clipboard.GetText (TextDataFormat.Rtf), "#B4");
+			Assert.AreEqual (plain_text, Clipboard.GetText (), "#B5");
+
+			Clipboard.Clear ();
 		}
 #endif
 	}

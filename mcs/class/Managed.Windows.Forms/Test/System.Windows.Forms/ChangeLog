@@ -1,3 +1,9 @@
+2009-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ClipboardTest.cs: New rrich text format test, and also re-name the 
+	previous test to be a little more informative. Also clear the data 
+	we have put in the clipboard before returning.
+
 2009-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripTest.cs:
