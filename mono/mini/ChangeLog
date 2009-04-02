@@ -1,5 +1,7 @@
 2009-04-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_output_basic_block): Fix the ARM_FPU_NONE build.
+
 	* mini-arm.h mini-arm.c cpu-arm.md: Finish VFP support.
 
 2009-04-01  Mark Probst  <mark.probst@gmail.com>
