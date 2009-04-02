@@ -986,6 +986,20 @@ namespace MonoTests.System.Collections.Generic {
 
 			collection.CopyTo (array, 0);
 		}
+
+		[Test]
+		public void ValuesCopyToObjectArray ()
+		{
+			var dictionary = new Dictionary<string, string> { { "foo", "bar" } };
+
+			var values = dictionary.Values as ICollection;
+
+			var array = new object [values.Count];
+
+			values.CopyTo (array, 0);
+
+			Assert.AreEqual ("bar", array [0]);
+		}
 	}
 }
 
