@@ -26,7 +26,9 @@ typedef guint16 WORD;
 typedef guint32 DWORD;
 typedef gpointer PVOID;
 typedef gpointer LPVOID;
+#ifndef __OS_H__
 typedef gboolean BOOL;
+#endif
 typedef guint32 *LPDWORD;
 typedef gint32 LONG;
 typedef guint32 ULONG;
