@@ -1,3 +1,9 @@
+#if defined(ARM_FPU_VFP)
+#define FPU_VFP_IMPL TRUE
+#else
+#define FPU_VFP_IMPL FALSE
+#endif
+
 %%
 
 #
@@ -121,6 +127,10 @@ stmt: OP_SETRET (freg) {
 		tree->sreg1 = state->left->reg1;
 		tree->sreg2 = state->left->reg2;
 		tree->dreg = ARMREG_R0;
+		mono_bblock_add_inst (s->cbb, tree);
+	} else if (FPU_VFP_IMPL) {
+		tree->opcode = OP_SETFRET;
+		tree->sreg1 = state->left->reg1;
 		mono_bblock_add_inst (s->cbb, tree);
 	} else {
 		tree->opcode = OP_FMOVE;
