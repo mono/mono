@@ -1,3 +1,8 @@
+2009-04-02  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Remove object element in the disappearing link struct
+	by storing the object pointer in the link.
+
 2009-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* pedump.c (dump_verify_info): Don't crash if signature decoding fails.
