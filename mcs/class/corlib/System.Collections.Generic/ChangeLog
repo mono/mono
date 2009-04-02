@@ -1,3 +1,9 @@
+2009-04-02  Jb Evain  <jbevain@novell.com>
+
+	* Dictionary.cs (ValueCollection.CopyTo): fix for copying to
+	an object array. Based on a patch by Tobias Grimm <mono@e-tobi.net>.
+	Fixes bug #328036.
+
 2009-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* Dictionary.cs: Declare the Link struct outside the main class to avoid

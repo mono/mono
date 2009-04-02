@@ -967,6 +967,13 @@ namespace System.Collections.Generic {
 			{
 				IList list = array;
 				CopyToCheck (list, index);
+
+				var target = array as TKey [];
+				if (target != null) {
+					CopyTo (target, index);
+					return;
+				}
+
 				for (int i = 0; i < dictionary.touchedSlots; i++) {
 					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
 						list [index++] = dictionary.keySlots [i];
@@ -1040,17 +1047,22 @@ namespace System.Collections.Generic {
 				this.dictionary = dictionary;
 			}
 
-			public void CopyTo (TValue [] array, int index)
+			void CopyToCheck (IList array, int index)
 			{
 				if (array == null)
 					throw new ArgumentNullException ("array");
 				if (index < 0)
 					throw new ArgumentOutOfRangeException ("index");
 				// we want no exception for index==array.Length && dictionary.Count == 0
-				if (index > array.Length)
+				if (index > array.Count)
 					throw new ArgumentException ("index larger than largest valid index of array");
-				if (array.Length - index < dictionary.Count)
+				if (array.Count - index < dictionary.Count)
 					throw new ArgumentException ("Destination array cannot hold the requested elements!");
+			}
+
+			public void CopyTo (TValue [] array, int index)
+			{
+				CopyToCheck (array, index);
 
 				for (int i = 0; i < dictionary.touchedSlots; i++) {
 					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
@@ -1090,7 +1102,19 @@ namespace System.Collections.Generic {
 
 			void ICollection.CopyTo (Array array, int index)
 			{
-				CopyTo ((TValue []) array, index);
+				IList list = array;
+				CopyToCheck (list, index);
+
+				var target = array as TValue [];
+				if (target != null) {
+					CopyTo (target, index);
+					return;
+				}
+
+				for (int i = 0; i < dictionary.touchedSlots; i++) {
+					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
+						list [index++] = dictionary.valueSlots [i];
+				}
 			}
 
 			IEnumerator IEnumerable.GetEnumerator ()
