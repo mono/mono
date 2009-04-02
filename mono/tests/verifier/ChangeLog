@@ -1,3 +1,12 @@
+2009-04-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_candidate_contraint_is_inflated_using_global_context.cs:
+	New test for cases where the candidate constraint type refers to the
+	global generic context.
+
+	We have to use it because it might be the case the the global context
+	has more arguments than the local one.
+
 2009-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* invalid_catch_block_out_of_bounds.il
