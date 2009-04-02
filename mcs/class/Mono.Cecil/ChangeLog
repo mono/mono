@@ -1,3 +1,9 @@
+2009-04-03  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Metadata/BlobHeap.cs
+	* Mono.Cecil.Metadata/MetadataWriter.cs:
+		do a better job at emitting a blob heap.
+
 2009-04-01  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ModuleDefinition.cs (Import): add overloads

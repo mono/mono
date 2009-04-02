@@ -131,7 +131,7 @@ namespace Mono.Cecil.Metadata {
 			m_usWriter = new MemoryBinaryWriter (Encoding.Unicode);
 			m_usWriter.Write ((byte) 0);
 
-			m_blobCache = new Hashtable ();
+			m_blobCache = new Hashtable (ByteArrayEqualityComparer.Instance, ByteArrayEqualityComparer.Instance);
 			m_blobWriter = new MemoryBinaryWriter ();
 			m_blobWriter.Write ((byte) 0);
 

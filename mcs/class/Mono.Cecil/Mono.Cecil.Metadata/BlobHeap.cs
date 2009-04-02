@@ -28,6 +28,8 @@
 
 namespace Mono.Cecil.Metadata {
 
+	using System;
+	using System.Collections;
 	using System.IO;
 
 	public class BlobHeap : MetadataHeap {
@@ -49,6 +51,40 @@ namespace Mono.Cecil.Metadata {
 		public override void Accept (IMetadataVisitor visitor)
 		{
 			visitor.VisitBlobHeap (this);
+		}
+	}
+
+	class ByteArrayEqualityComparer : IHashCodeProvider, IComparer {
+
+		public static readonly ByteArrayEqualityComparer Instance = new ByteArrayEqualityComparer ();
+
+		public int GetHashCode (object obj)
+		{
+			byte [] array = (byte []) obj;
+
+			int hash = 0;
+			for (int i = 0; i < array.Length; i++)
+				hash = (hash * 37) ^ array [i];
+
+			return hash;
+		}
+
+		public int Compare (object a, object b)
+		{
+			byte [] x = (byte []) a;
+			byte [] y = (byte []) b;
+
+			if (x == null || y == null)
+				return x == y ? 0 : 1;
+
+			if (x.Length != y.Length)
+				return 1;
+
+			for (int i = 0; i < x.Length; i++)
+				if (x [i] != y [i])
+					return 1;
+
+			return 0;
 		}
 	}
 }
