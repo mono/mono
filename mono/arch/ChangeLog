@@ -1,3 +1,7 @@
+2009-04-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* arm/arm-vfp-codegen.h: Add missing VFP codegen macros.
+
 2009-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/tramp.c: Include a change from the debian patches. Avoid #include-ing
