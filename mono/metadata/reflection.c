@@ -10055,7 +10055,7 @@ typebuilder_setup_fields (MonoClass *klass)
 		if (fb->def_value) {
 			MonoDynamicImage *assembly = (MonoDynamicImage*)klass->image;
 			field->type->attrs |= FIELD_ATTRIBUTE_HAS_DEFAULT;
-			idx = encode_constant (assembly, fb->def_value, &klass->ext->field_def_values [i].def_type);
+			idx = encode_constant (assembly, fb->def_value, (guint32 *) &klass->ext->field_def_values [i].def_type);
 			/* Copy the data from the blob since it might get realloc-ed */
 			p = assembly->blob.data + idx;
 			len = mono_metadata_decode_blob_size (p, &p2);
