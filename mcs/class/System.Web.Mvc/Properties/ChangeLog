@@ -1,0 +1,5 @@
+2009-04-02  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: added Mono specific attributes to delay-sign
+	the assembly with the winfx.pub key.
+
