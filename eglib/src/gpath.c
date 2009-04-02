@@ -47,7 +47,9 @@ g_build_path (const gchar *separator, const gchar *first_element, ...)
 	va_list args;
 	
 	g_return_val_if_fail (separator != NULL, NULL);
-	g_return_val_if_fail (first_element != NULL, NULL);
+
+	if (first_element == NULL)
+		return g_strdup ("");
 
 	result = g_string_sized_new (48);
 
