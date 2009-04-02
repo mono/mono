@@ -1,3 +1,11 @@
+2009-04-02  Jb Evain  <jbevain@novell.com>
+
+	backport of r130884 and r130886.
+
+	* Dictionary.cs (ValueCollection.CopyTo): fix for copying to
+	an object array. Based on a patch by Tobias Grimm <mono@e-tobi.net>.
+	Fixes bug #328036.
+
 2008-11-14  Jb Evain  <jbevain@novell.com>
 
 	* Dictionary.cs (ICollection.CopyTo): fix the different possible
