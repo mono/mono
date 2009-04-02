@@ -164,6 +164,14 @@ namespace System.Web.Configuration {
 			PropertyInfo prop = typeof(ConfigurationManager).GetProperty ("ConfigurationFactory", BindingFlags.Static | BindingFlags.NonPublic);
 			if (prop != null)
 				configFactory = prop.GetValue (null, null) as IInternalConfigConfigurationFactory;
+
+			// Part of fix for bug #491531
+			Type type = Type.GetType ("System.Configuration.CustomizableFileSettingsProvider, System", false);
+			if (type != null) {
+				FieldInfo fi = type.GetField ("webConfigurationFileMapType", BindingFlags.Static | BindingFlags.NonPublic);
+				if (fi != null && fi.FieldType == Type.GetType ("System.Type"))
+					fi.SetValue (null, typeof (ApplicationSettingsConfigurationFileMap));
+			}
 		}
 
 		public static _Configuration OpenMachineConfiguration ()
@@ -386,7 +394,7 @@ namespace System.Web.Configuration {
 			return curPath.Substring (0, idx);
 		}
 		
-		static string FindWebConfig (string path)
+		internal static string FindWebConfig (string path)
 		{
 			if (String.IsNullOrEmpty (path))
 				return path;
@@ -419,7 +427,7 @@ namespace System.Web.Configuration {
 					curPath = rootPath;
 					break;
 				}
-				
+
 				if (WebConfigurationHost.GetWebConfigFileName (physPath) != null)
 					break;
 				
