@@ -1,3 +1,7 @@
+2009-04-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.h mini-arm.c cpu-arm.md: Finish VFP support.
+
 2009-04-01  Mark Probst  <mark.probst@gmail.com>
 
 	* regalloc.h, mini-codegen.c: Make vassign members gint32 to fix
