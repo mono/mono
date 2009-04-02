@@ -1,3 +1,11 @@
+2009-04-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_generic_param_is_constraint_compatible): Inflate the candidate
+	using the context of the method been verifier and not of the method been called.
+
+	* verify.c: Add verifier_inflate_type and mono_type_is_valid_type_in_context to
+	safely inflate generic types. 
+
 2009-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Change the strategy for checking the 
