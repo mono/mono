@@ -965,14 +965,14 @@ namespace System.Collections.Generic {
 
 			void ICollection.CopyTo (Array array, int index)
 			{
-				IList list = array;
-				CopyToCheck (list, index);
-
 				var target = array as TKey [];
 				if (target != null) {
 					CopyTo (target, index);
 					return;
 				}
+
+				IList list = array;
+				CopyToCheck (list, index);
 
 				for (int i = 0; i < dictionary.touchedSlots; i++) {
 					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
@@ -1102,14 +1102,14 @@ namespace System.Collections.Generic {
 
 			void ICollection.CopyTo (Array array, int index)
 			{
-				IList list = array;
-				CopyToCheck (list, index);
-
 				var target = array as TValue [];
 				if (target != null) {
 					CopyTo (target, index);
 					return;
 				}
+
+				IList list = array;
+				CopyToCheck (list, index);
 
 				for (int i = 0; i < dictionary.touchedSlots; i++) {
 					if ((dictionary.linkSlots [i].HashCode & HASH_FLAG) != 0)
