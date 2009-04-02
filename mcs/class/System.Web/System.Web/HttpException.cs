@@ -384,9 +384,17 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				else
 					builder.Append (exc.FileName);
 
-				if ((isParseException || isCompileException) && exc.ErrorLines.Length > 0) {
-					builder.Append ("&nbsp;&nbsp;<strong>Line: </strong>");
-					builder.Append (exc.ErrorLines [0]);
+				if (isParseException || isCompileException) {
+					int[] errorLines = exc.ErrorLines;
+					int numErrors = errorLines != null ? errorLines.Length : 0;
+					if (numErrors > 0) {
+						builder.AppendFormat ("&nbsp;&nbsp;<strong>Line{0}: </strong>", numErrors > 1 ? "s" : String.Empty);
+						for (int i = 0; i < numErrors; i++) {
+							if (i > 0)
+								builder.Append (", ");
+							builder.Append (exc.ErrorLines [i]);
+						}
+					}
 				}
 				builder.Append ("</p>");
 			} else if (exc.FileName != null)

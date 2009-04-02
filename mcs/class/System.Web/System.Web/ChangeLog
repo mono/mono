@@ -1,3 +1,8 @@
+2009-04-02  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: if there are more lines with errors, display
+	them all.
+
 2009-03-31  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: use glob patterns to watch for

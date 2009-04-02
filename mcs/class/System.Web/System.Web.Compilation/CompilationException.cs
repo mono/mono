@@ -117,7 +117,16 @@ namespace System.Web.Compilation
 			get {
 				if (errmsg == null && errors != null) {
 #if NET_2_0
-					errmsg = errors [0].ToString ();
+					CompilerError firstError = null;
+					
+					foreach (CompilerError err in errors) {
+						if (err.IsWarning)
+							continue;
+						firstError = err;
+						break;
+					};
+					
+					errmsg = firstError.ToString ();
 					int idx = errmsg.IndexOf (" : error ");
 					if (idx > -1)
 						errmsg = errmsg.Substring (idx + 9);
@@ -144,6 +153,9 @@ namespace System.Web.Compilation
 				if (errorLines == null && errors != null) {
 					ArrayList list = new ArrayList ();
 					foreach (CompilerError err in errors) {
+						if (err.IsWarning)
+							continue;
+						
 						if (err.Line != 0 && !list.Contains (err.Line))
 							list.Add (err.Line);
 					}

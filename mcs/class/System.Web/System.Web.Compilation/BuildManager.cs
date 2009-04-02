@@ -345,7 +345,7 @@ namespace System.Web.Compilation {
 						if (results == null)
 							throw;
 						else
-							RemoveFailedAssemblies (ex, abuilder, group, results, debug);
+							RemoveFailedAssemblies (vpabsolute, ex, abuilder, group, results, debug);
 					}
 				}
 
@@ -978,8 +978,8 @@ namespace System.Web.Compilation {
 			referencedAssemblies.Add (bmci.BuiltAssembly);
 		}
 		
-		static void RemoveFailedAssemblies (CompilationException ex, AssemblyBuilder abuilder, BuildProviderGroup group,
-						    CompilerResults results, bool debug)
+		static void RemoveFailedAssemblies (string requestedVirtualPath, CompilationException ex, AssemblyBuilder abuilder,
+						    BuildProviderGroup group, CompilerResults results, bool debug)
 		{
 			StringBuilder sb;
 			string newline;
@@ -997,6 +997,7 @@ namespace System.Web.Compilation {
 			BuildProvider bp;
 			HttpContext ctx = HttpContext.Current;
 			HttpRequest req = ctx != null ? ctx.Request : null;
+			bool rethrow = false;
 			
 			foreach (CompilerError error in results.Errors) {
 				bp = abuilder.GetBuildProviderForPhysicalFilePath (error.FileName);
@@ -1005,6 +1006,9 @@ namespace System.Web.Compilation {
 					if (bp == null)
 						continue;
 				}
+
+				if (String.Compare (bp.VirtualPath, requestedVirtualPath, StringComparison.Ordinal) == 0)
+					rethrow = true;
 
 				if (!failedBuildProviders.Contains (bp)) {
 					failedBuildProviders.Add (bp);
@@ -1025,6 +1029,9 @@ namespace System.Web.Compilation {
 				ShowDebugModeMessage (sb.ToString ());
 				sb = null;
 			}
+
+			if (rethrow)
+				throw ex;
 		}
 		
 		static void SetCommonParameters (CompilationSection config, CompilerParameters p, Type compilerType, string language)
