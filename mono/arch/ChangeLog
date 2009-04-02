@@ -1,3 +1,7 @@
+2009-04-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* amd64/amd64-codegen.h: Add macros for decoding the SIB byte.
+
 2009-04-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/arm-vfp-codegen.h: Add missing VFP codegen macros.
