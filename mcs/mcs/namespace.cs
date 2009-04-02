@@ -158,6 +158,10 @@ namespace Mono.CSharp {
 
 		protected static Type GetTypeInAssembly (Assembly assembly, string name)
 		{
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			Type t = assembly.GetType (name);
 			if (t == null)
 				return null;
