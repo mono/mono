@@ -1,3 +1,9 @@
+2009-04-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: allow System.Runtime.Serialization to see 
+	mscorlib's internals. Fix Encoding.get_CodeBase (and likely
+	others too)
+
 2009-02-06  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyInfo.cs: allow System.Net to see mscorlib's internals,
