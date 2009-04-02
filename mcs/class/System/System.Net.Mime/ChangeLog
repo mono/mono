@@ -1,3 +1,7 @@
+2009-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContentType.cs : when there are especials, quote parameter values.
+
 2008-08-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContentType.cs : patch by Ted Unangst, fixed bug #392843.

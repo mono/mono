@@ -162,11 +162,23 @@ namespace System.Net.Mime {
 						sb.Append ("; ");
 						sb.Append (pair.Key);
 						sb.Append ("=");
-						sb.Append (EncodeSubjectRFC2047 (pair.Value as string, enc));
+						sb.Append (WrapIfEspecialsExist (EncodeSubjectRFC2047 (pair.Value as string, enc)));
 					}
 				}
 			}
 			return sb.ToString ();
+		}
+
+		// see RFC 2047
+		static readonly char [] especials = {'(', ')', '<', '>', '@', ',', ';', ':', '<', '>', '/', '[', ']', '?', '.', '='};
+
+		static string WrapIfEspecialsExist (string s)
+		{
+			s = s.Replace ("\"", "\\\"");
+			if (s.IndexOfAny (especials) >= 0)
+				return '"' + s + '"';
+			else
+				return s;
 		}
 
 		internal static Encoding GuessEncoding (string s)

@@ -122,21 +122,45 @@ namespace MonoTests.System.Net.Mime
 		[Test]
 		public void ToStringTest ()
 		{
-			Assert.IsTrue (ct.ToString () == "application/octet-stream");
+			Assert.AreEqual ("application/octet-stream", ct.ToString ());
 		}
 
 		[Test]
 		public void ToStringTest2 ()
 		{
 			ContentType dummy = new ContentType ("text/plain; charset=us-ascii");
-			Assert.IsTrue (dummy.ToString () == "text/plain; charset=us-ascii");
+			Assert.AreEqual ("text/plain; charset=us-ascii", dummy.ToString ());
 		}
 
 		[Test]
 		public void ToStringTest3 ()
 		{
 			ct.Parameters.Add ("foo", "bar");
-			Assert.IsTrue (ct.ToString () == "application/octet-stream; foo=bar");
+			Assert.AreEqual ("application/octet-stream; foo=bar", ct.ToString ());
+		}
+
+		[Test]
+		public void ToStringTest4 ()
+		{
+			ct.Parameters.Add ("start", "urn:foo");
+			Assert.AreEqual ("application/octet-stream; start=\"urn:foo\"", ct.ToString ());
+		}
+
+		[Test]
+		public void ToStringTest5 ()
+		{
+			ct.Parameters.Add ("start", "foo_bar");
+			Assert.AreEqual ("application/octet-stream; start=foo_bar", ct.ToString ());
+			ct.Parameters.Clear ();
+			ct.Parameters.Add ("start", "foo@bar");
+			Assert.AreEqual ("application/octet-stream; start=\"foo@bar\"", ct.ToString ());
+		}
+
+		[Test]
+		public void ToStringTest6 ()
+		{
+			ct.Parameters.Add ("start", "urn:foo\"bar\"");
+			Assert.AreEqual ("application/octet-stream; start=\"urn:foo\\\"bar\\\"\"", ct.ToString ());
 		}
 	}
 }
