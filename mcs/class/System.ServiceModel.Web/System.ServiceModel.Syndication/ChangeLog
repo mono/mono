@@ -1,3 +1,17 @@
+2009-04-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDocumentFormatter.cs
+	  InlineCategoriesDocument.cs
+	  AtomPub10ServiceDocumentFormatter_1.cs
+	  Workspace.cs
+	  AtomPub10CategoriesDocumentFormatter.cs
+	  ReferencedCategoriesDocument.cs
+	  CategoriesDocumentFormatter.cs
+	  AtomPub10ServiceDocumentFormatter.cs
+	  ResourceCollectionInfo.cs
+	  CategoriesDocument.cs
+	  ServiceDocument.cs : stubs (new in 3.5 SP1).
+
 2008-04-10  Eyal Alaluf <eyala@mainsoft.com>
 
 	* SyndicationElementExtension.cs: XmlObjectSerializer.ReadObject now
