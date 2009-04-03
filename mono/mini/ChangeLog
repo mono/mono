@@ -1,5 +1,18 @@
 2009-04-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (COMPILE_LLVM): New macro.
+
+	* decompose.c (mono_decompose_opcode): Use the COMPILE_LLVM macro.
+
+	* ssa.c (mono_ssa_compute): Ditto.
+	
+	* unwind.c (mono_unwind_get_ops_from_fde): New helper function to extract
+	the unwind ops from a DWARF FDE.
+
+	* mini-llvm.c: Implement generation of unwind info for LLVM compiled
+	methods by extracting the dwarf unwind ops from the unwind info generated
+	by LLVM.
+	
 	* mini-llvm.c (mono_llvm_emit_method): Enable support for non-IMT virtual
 	calls.
 
