@@ -508,21 +508,18 @@ webForm.RequiredFieldValidatorEvaluateIsValid = function (validator)
 webForm.CustomValidatorEvaluateIsValid = function (validator)
 {
 	var ControlToValidate = validator.controltovalidate;
-
-	if (!ControlToValidate) {
-		webForm.ValidatorSucceeded (validator);
-		return true;
-	}
-
 	var evaluationfunc = validator.clientvalidationfunction;
+	var ctrl_value;
 
-	var ctrl_value = webForm.ValidatorTrim (webForm.ValidatorGetValue (ControlToValidate));
-	
-    if ((ctrl_value.length == 0) && ((typeof(validator.validateemptytext) != "string") || (validator.validateemptytext != "true"))) {
+	if (ControlToValidate) {
+	    ctrl_value = webForm.ValidatorTrim (webForm.ValidatorGetValue (ControlToValidate));
+
+	    if ((ctrl_value.length == 0) && ((typeof(validator.validateemptytext) != "string") || (validator.validateemptytext != "true"))) {
 		webForm.ValidatorSucceeded (validator);
 		return true;
-	}
-
+	    }
+	} else
+	    ctrl_value = "";
 	var result = true;
 
 	if (evaluationfunc && evaluationfunc != "") {
