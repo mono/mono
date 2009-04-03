@@ -1,5 +1,9 @@
 2009-04-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c mini-amd64.c method-to-ir.c: Use COMPILE_LLVM in a few more places.
+
+	* mini-llvm.c: Update comments.
+
 	* mini.h (COMPILE_LLVM): New macro.
 
 	* decompose.c (mono_decompose_opcode): Use the COMPILE_LLVM macro.
