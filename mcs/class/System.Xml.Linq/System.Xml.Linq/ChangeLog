@@ -1,3 +1,8 @@
+2009-04-03  Federico Di Gregorio <fog@initd.org>
+
+	* XNode.cs: fixed XDocumentType to keep the value of SYSTEMID
+	when parsing XML from file.
+
 2009-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* XNodeReader.cs: 2.1 has HasValue.

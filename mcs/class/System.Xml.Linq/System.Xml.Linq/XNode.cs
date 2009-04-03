@@ -181,7 +181,7 @@ namespace System.Xml.Linq
 			case XmlNodeType.DocumentType:
 				XDocumentType d = new XDocumentType (r.Name,
 					r.GetAttribute ("PUBLIC"),
-					r.GetAttribute ("System"),
+					r.GetAttribute ("SYSTEM"),
 					r.Value);
 				d.FillLineInfoAndBaseUri (r, options);
 				r.Read ();
