@@ -1,3 +1,7 @@
+2009-04-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify the modules table.
+
 2009-04-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_generic_param_is_constraint_compatible): Inflate the candidate
