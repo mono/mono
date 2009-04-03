@@ -1,3 +1,7 @@
+2009-04-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* ssa.c (mono_ssa_compute): Fix some memory leaks.
+
 2009-04-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c mini-amd64.c method-to-ir.c: Use COMPILE_LLVM in a few more places.
