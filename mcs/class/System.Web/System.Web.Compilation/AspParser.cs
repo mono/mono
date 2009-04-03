@@ -52,6 +52,8 @@ namespace System.Web.Compilation
 		static readonly object textParsedEvent = new object ();
 #if NET_2_0
 		static readonly object parsingCompleteEvent = new object();
+
+		MD5 checksum;
 #endif
 		AspTokenizer tokenizer;
 		int beginLine, endLine;
@@ -97,7 +99,6 @@ namespace System.Web.Compilation
 #if NET_2_0
 		public byte[] MD5Checksum {
 			get {
-				MD5 checksum = tokenizer.Checksum;
 				if (checksum == null)
 					return new byte[0];
 				
@@ -245,6 +246,9 @@ namespace System.Web.Compilation
 					fileReader.Close ();
 					fileReader = null;
 				}
+#if NET_2_0
+				checksum = tokenizer.Checksum;
+#endif
 				tokenizer = null;
 			}
 

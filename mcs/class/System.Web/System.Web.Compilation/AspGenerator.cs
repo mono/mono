@@ -266,9 +266,6 @@ namespace System.Web.Compilation
 				
 				tparser.AddDependency (arvp);
 			}
-#if NET_2_0
-			tparser.MD5Checksum = parser.MD5Checksum;
-#endif
 		}
 		
 #if NET_2_0
@@ -300,6 +297,9 @@ namespace System.Web.Compilation
 				if (text.Length > 0)
 					FlushText ();
 
+#if NET_2_0
+				tparser.MD5Checksum = pstack.Parser.MD5Checksum;
+#endif
 				pstack.Pop ();
 
 #if DEBUG
@@ -309,6 +309,7 @@ namespace System.Web.Compilation
 				if (stack.Count > 1 && pstack.Count == 0)
 					throw new ParseException (stack.Builder.Location,
 								  "Expecting </" + stack.Builder.TagName + "> " + stack.Builder);
+
 			} finally {
 				if (reader != null)
 					reader.Close ();
