@@ -102,16 +102,14 @@ namespace System.ServiceModel.Syndication
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteAttributeExtensions (AttributeExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected internal virtual void WriteElementExtensions (XmlWriter writer, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (ElementExtensions, writer, version);
 		}
 	}
 }

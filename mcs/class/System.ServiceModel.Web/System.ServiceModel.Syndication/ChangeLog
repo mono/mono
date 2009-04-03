@@ -1,6 +1,15 @@
 2009-04-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDocumentFormatter.cs
+	  Workspace.cs
+	  AtomPub10ServiceDocumentFormatter.cs
+	  ResourceCollectionInfo.cs
+	  CategoriesDocument.cs
+	  ServiceDocument.cs : ongoing implementation.
+
+2009-04-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDocumentFormatter.cs
 	  InlineCategoriesDocument.cs
 	  AtomPub10ServiceDocumentFormatter_1.cs
 	  Workspace.cs

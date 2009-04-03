@@ -35,6 +35,21 @@ using System.Xml;
 
 namespace System.ServiceModel.Syndication
 {
+	internal class Utility
+	{
+		public static void WriteAttributeExtensions (Dictionary<XmlQualifiedName,string> attributes, XmlWriter writer, string version)
+		{
+			foreach (var p in attributes)
+				writer.WriteAttributeString (p.Key.Name, p.Key.Namespace, p.Value);
+		}
+
+		public static void WriteElementExtensions (SyndicationElementExtensionCollection elements, XmlWriter writer, string version)
+		{
+			foreach (var x in elements)
+				x.WriteTo (writer);
+		}
+	}
+
 	public class ServiceDocument
 	{
 		[MonoTODO]
@@ -61,11 +76,9 @@ namespace System.ServiceModel.Syndication
 		public ServiceDocument (IEnumerable<Workspace> workspaces)
 			: this ()
 		{
-			if (workspaces == null)
-				throw new ArgumentNullException ("workspaces");
-
-			foreach (var w in workspaces)
-				Workspaces.Add (w);
+			if (workspaces != null)
+				foreach (var w in workspaces)
+					Workspaces.Add (w);
 		}
 
 		ServiceDocumentFormatter formatter;
@@ -93,16 +106,29 @@ namespace System.ServiceModel.Syndication
 			return formatter;
 		}
 
-		[MonoTODO]
 		public void Save (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			GetFormatter ().WriteTo (writer);
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseAttribute (string name, string ns, string value, string version)
 		{
-			throw new NotImplementedException ();
+			if (version != "http://www.w3.org/2007/app")
+				return false;
+
+			switch (ns) {
+			case "http://www.w3.org/XML/1998/namespace":
+				switch (name) {
+				case "base":
+					BaseUri = new Uri (value, UriKind.RelativeOrAbsolute);
+					return true;
+				case "lang":
+					Language = value;
+					return true;
+				}
+				return false;
+			}
+			return false;
 		}
 
 		[MonoTODO]
@@ -111,16 +137,14 @@ namespace System.ServiceModel.Syndication
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteAttributeExtensions (AttributeExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected internal virtual void WriteElementExtensions (XmlWriter writer, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (ElementExtensions, writer, version);
 		}
 	}
 }

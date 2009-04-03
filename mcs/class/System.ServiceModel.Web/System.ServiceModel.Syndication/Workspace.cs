@@ -45,11 +45,12 @@ namespace System.ServiceModel.Syndication
 		}
 
 		public Workspace (TextSyndicationContent title, IEnumerable<ResourceCollectionInfo> collections)
+			: this ()
 		{
 			Title = title;
-			Collections = new Collection<ResourceCollectionInfo> ();
-			foreach (var i in collections)
-				Collections.Add (i);
+			if (collections != null)
+				foreach (var i in collections)
+					Collections.Add (i);
 		}
 
 		public Workspace (string title, IEnumerable<ResourceCollectionInfo> collections)
@@ -84,16 +85,14 @@ namespace System.ServiceModel.Syndication
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteAttributeExtensions (AttributeExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected internal virtual void WriteElementExtensions (XmlWriter writer, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (ElementExtensions, writer, version);
 		}
 	}
 }

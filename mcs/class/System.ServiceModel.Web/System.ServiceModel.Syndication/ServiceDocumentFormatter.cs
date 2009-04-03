@@ -140,52 +140,44 @@ namespace System.ServiceModel.Syndication
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected static void WriteAttributeExtensions (XmlWriter writer, CategoriesDocument categories, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteAttributeExtensions (categories.AttributeExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected static void WriteAttributeExtensions (XmlWriter writer, ResourceCollectionInfo collection, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteAttributeExtensions (collection.AttributeExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected static void WriteAttributeExtensions (XmlWriter writer, ServiceDocument document, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteAttributeExtensions (document.AttributeExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected static void WriteAttributeExtensions (XmlWriter writer, Workspace workspace, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteAttributeExtensions (workspace.AttributeExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected static void WriteElementExtensions (XmlWriter writer, CategoriesDocument categories, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (categories.ElementExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected static void WriteElementExtensions (XmlWriter writer, ResourceCollectionInfo collection, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (collection.ElementExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected static void WriteElementExtensions (XmlWriter writer, ServiceDocument document, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (document.ElementExtensions, writer, version);
 		}
 
-		[MonoTODO]
 		protected static void WriteElementExtensions (XmlWriter writer, Workspace workspace, string version)
 		{
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (workspace.ElementExtensions, writer, version);
 		}
 
 		// instance members

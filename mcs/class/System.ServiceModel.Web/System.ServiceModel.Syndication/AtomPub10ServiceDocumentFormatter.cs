@@ -36,6 +36,14 @@ using System.Xml.Serialization;
 
 namespace System.ServiceModel.Syndication
 {
+	class Namespaces
+	{
+		public const string Xml = "http://www.w3.org/XML/1998/namespace";
+		public const string Xmlns = "http://www.w3.org/2000/xmlns/";
+		public const string AtomPP = "http://www.w3.org/2007/app";
+		public const string Atom10 = "http://www.w3.org/2005/Atom";
+	}
+
 	public class AtomPub10ServiceDocumentFormatter : ServiceDocumentFormatter, IXmlSerializable
 	{
 		public AtomPub10ServiceDocumentFormatter ()
@@ -55,13 +63,15 @@ namespace System.ServiceModel.Syndication
 		Type doc_type;
 
 		public override string Version {
-			get { return "http://www.w3.org/2007/app"; }
+			get { return Namespaces.AtomPP; }
 		}
 
-		[MonoTODO]
 		public override bool CanRead (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+			reader.MoveToContent ();
+			return reader.LocalName == "service" && reader.NamespaceURI == Version;
 		}
 
 		protected override ServiceDocument CreateDocumentInstance ()
@@ -72,13 +82,74 @@ namespace System.ServiceModel.Syndication
 		[MonoTODO]
 		public override void ReadFrom (XmlReader reader)
 		{
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			for (int i = 0; i < reader.AttributeCount; i++) {
+				reader.MoveToAttribute (i);
+				Document.TryParseAttribute (reader.LocalName, reader.NamespaceURI, reader.Value, Version);
+			}
+			reader.MoveToElement ();
+
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
+
+			writer.WriteStartElement ("app", "service", Version);
+			writer.WriteAttributeString ("xmlns", "a10", Namespaces.Xmlns, Namespaces.Atom10);
+			writer.WriteAttributeString ("xmlns", "app", Namespaces.Xmlns, Version);
+
+			// xml:lang, xml:base, workspace*
+			if (Document.Language != null)
+				writer.WriteAttributeString ("xml", "lang", Namespaces.Xml, Document.Language);
+			if (Document.BaseUri != null)
+				writer.WriteAttributeString ("xml", "base", Namespaces.Xml, Document.BaseUri.ToString ());
+
+			Document.WriteAttributeExtensions (writer, Version);
+			Document.WriteElementExtensions (writer, Version);
+
+			foreach (var ws in Document.Workspaces) {
+				writer.WriteStartElement ("app", "workspace", Version);
+
+				// xml:base, title, collection*
+				if (ws.BaseUri != null)
+					writer.WriteAttributeString ("xml", "base", Namespaces.Xml, ws.BaseUri.ToString ());
+
+				ws.WriteAttributeExtensions (writer, Version);
+				ws.WriteElementExtensions (writer, Version);
+
+				if (ws.Title != null)
+					ws.Title.WriteTo (writer, "title", Namespaces.Atom10);
+				foreach (var rc in ws.Collections) {
+					writer.WriteStartElement ("app", "collection", Version);
+
+					// accept*, xml:base, category, @href, title
+					if (rc.BaseUri != null)
+						writer.WriteAttributeString ("xml", "base", Namespaces.Xml, rc.BaseUri.ToString ());
+					if (rc.Link != null)
+						writer.WriteAttributeString ("href", rc.Link.ToString ());
+
+					rc.WriteAttributeExtensions (writer, Version);
+
+					if (rc.Title != null)
+						rc.Title.WriteTo (writer, "title", Namespaces.Atom10);
+					foreach (var s in rc.Accepts) {
+						writer.WriteStartElement ("app", "accept", Version);
+						writer.WriteString (s);
+						writer.WriteEndElement ();
+					}
+					foreach (var cat in rc.Categories)
+						cat.Save (writer);
+
+					writer.WriteEndElement ();
+				}
+				writer.WriteEndElement ();
+			}
+			writer.WriteEndElement ();
 		}
 
 		[MonoTODO]

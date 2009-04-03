@@ -116,13 +116,9 @@ namespace System.ServiceModel.Syndication
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
-			foreach (var p in AttributeExtensions)
-				writer.WriteAttributeString (p.Key.Name, p.Key.Namespace, p.Value);
-
-			throw new NotImplementedException ();
+			Utility.WriteElementExtensions (ElementExtensions, writer, version);
 		}
 	}
 }
