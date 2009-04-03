@@ -1,5 +1,11 @@
 2009-04-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (AM_CXXFLAGS): Add GLIB_CFLAGS to this.
+
+	* mini-llvm-cpp.h: New header file for mini-llvm-cpp.cpp.
+
+	* mini-llvm.c: Remove unused fields from EmitContext, fix memory leaks.
+
 	* ssa.c (mono_ssa_compute): Fix some memory leaks.
 
 2009-04-03  Zoltan Varga  <vargaz@gmail.com>
