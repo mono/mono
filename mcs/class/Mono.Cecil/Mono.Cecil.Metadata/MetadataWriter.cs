@@ -194,14 +194,12 @@ namespace Mono.Cecil.Metadata {
 			if (data == null || data.Length == 0)
 				return 0;
 
-			// using CompactFramework compatible version of
-			// Convert.ToBase64String
-			string key = Convert.ToBase64String (data, 0, data.Length);
-			if (m_blobCache.Contains (key))
-				return (uint) m_blobCache [key];
+			object cached = m_blobCache [data];
+			if (cached != null)
+				return (uint) cached;
 
 			uint pointer = (uint) m_blobWriter.BaseStream.Position;
-			m_blobCache [key] = pointer;
+			m_blobCache [data] = pointer;
 			Utilities.WriteCompressedInteger (m_blobWriter, data.Length);
 			m_blobWriter.Write (data);
 			return pointer;
