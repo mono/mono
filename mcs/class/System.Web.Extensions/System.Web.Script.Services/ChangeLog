@@ -1,3 +1,9 @@
+2009-04-03  Marek Habersack  <mhabersack@novell.com>
+
+	* LogicalTypeInfo.cs: don't throw NREX when the passed type
+	doesn't have a parameterless constructor in
+	ShouldGenerateScript. Fixes bug #485435
+
 2009-01-26  Marek Habersack  <mhabersack@novell.com>
 
 	* ClientProxyHandler.cs: before generating the proxy check if the
