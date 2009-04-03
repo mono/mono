@@ -67,25 +67,11 @@ namespace System.Web.SessionState {
 		public void Init (SessionStateModule module, HttpApplication context,
 				  SessionConfig config)
 		{
-			string connectionTypeName;
-			string providerAssemblyName;
-			string cncString;
+
 
 			this.config = config;
 			this.AppPath = context.Request.ApplicationPath;
 			
-			GetConnectionData (out providerAssemblyName, out connectionTypeName, out cncString);
-			if (cncType == null) {
-				Assembly dbAssembly = Assembly.Load (providerAssemblyName);
-				cncType = dbAssembly.GetType (connectionTypeName, true);
-				if (!typeof (IDbConnection).IsAssignableFrom (cncType))
-					throw new ApplicationException ("The type '" + cncType +
-							"' does not implement IDB Connection.\n" +
-							"Check 'DbConnectionType' in server.exe.config.");
-			}
-
-			cnc = (IDbConnection) Activator.CreateInstance (cncType);
-			cnc.ConnectionString = cncString;
 			try {
 				InitializeConnection ();
 			} catch (Exception exc) {
@@ -99,6 +85,25 @@ namespace System.Web.SessionState {
 				ReplaceParamPrefix (ref updateCommandText);
 				ReplaceParamPrefix (ref deleteCommandText);
 			}
+		}
+		
+		void CreateNewConnection() 
+		{
+			string connectionTypeName;
+			string providerAssemblyName;
+			string cncString;
+			GetConnectionData (out providerAssemblyName, out connectionTypeName, out cncString);
+			if (cncType == null) {
+				Assembly dbAssembly = Assembly.Load (providerAssemblyName);
+				cncType = dbAssembly.GetType (connectionTypeName, true);
+				if (!typeof (IDbConnection).IsAssignableFrom (cncType))
+					throw new ApplicationException ("The type '" + cncType +
+							"' does not implement IDB Connection.\n" +
+							"Check 'DbConnectionType' in server.exe.config.");
+			}
+
+			cnc = (IDbConnection) Activator.CreateInstance (cncType);
+			cnc.ConnectionString = cncString;
 		}
 
 		void ReplaceParamPrefix(ref string command)
@@ -317,6 +322,8 @@ namespace System.Web.SessionState {
 
 		void InitializeConnection()
 		{
+			if (cnc == null)
+				CreateNewConnection();
 			cnc.Open ();
 			selectCommand = cnc.CreateCommand ();
 			selectCommand.CommandText = selectCommandText;
