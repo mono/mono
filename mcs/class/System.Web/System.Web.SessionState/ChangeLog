@@ -1,3 +1,10 @@
+2009-04-03  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionSQLServerHandler.cs: recreate connection after database
+	became unavailable but the session handler is still alive. Fixes
+	bug #491508. Patch from Hubert Fongarnand
+	<informatique.internet@fiducial.fr>, thanks!
+
 2008-10-21  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateModule.cs: OnAcquireState should set up a session
