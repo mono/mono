@@ -335,6 +335,10 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
+			var actual = source as IEnumerable<TResult>;
+			if (actual != null)
+				return actual;
+
 			return CreateCastIterator<TResult> (source);
 		}
 
