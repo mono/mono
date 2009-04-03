@@ -1,3 +1,7 @@
+2009-04-03  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableTest.cs: test for bug 491841.
+
 2009-03-28  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableTest.cs: add test for bug #490016.

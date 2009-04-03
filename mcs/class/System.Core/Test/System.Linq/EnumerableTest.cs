@@ -86,6 +86,38 @@ namespace MonoTests.System.Linq {
 			AssertAreSame (result, foos.Cast<Bar> ());
 		}
 
+		class Bingo : IEnumerable<int>, IEnumerable<string> {
+
+			IEnumerator<int> IEnumerable<int>.GetEnumerator ()
+			{
+				yield return 42;
+				yield return 12;
+			}
+
+			IEnumerator<string> IEnumerable<string>.GetEnumerator ()
+			{
+				yield return "foo";
+				yield return "bar";
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				return (this as IEnumerable<int>).GetEnumerator ();
+			}
+		}
+
+		[Test]
+		public void TestCastToImplementedType ()
+		{
+			var ints = new int [] { 42, 12 };
+			var strs = new string [] { "foo", "bar" };
+
+			var bingo = new Bingo ();
+
+			AssertAreSame (ints, bingo.Cast<int> ());
+			AssertAreSame (strs, bingo.Cast<string> ());
+		}
+
 		[Test]
 		public void TestLast ()
 		{
