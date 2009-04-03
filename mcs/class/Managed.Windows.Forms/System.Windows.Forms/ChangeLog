@@ -1,3 +1,12 @@
+2009-04-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When removing a tab that was previously selected, set
+	internally the value of selected_index to -1, to avoid trying to
+	access the previous one when trying to set the new one (and was
+	already removed from the collection). This is what .net seems to do
+	too.
+	Fixes #490937.
+
 2009-04-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs, X11Clipboard.cs: Text and Rtf formats must be
