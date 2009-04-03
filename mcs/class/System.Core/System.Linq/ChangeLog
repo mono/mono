@@ -1,3 +1,8 @@
+2009-04-03  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs (Cast): fix for when casted enumerator is already
+	of the appropriate type.
+
 2009-03-28  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: fix Intersect.
