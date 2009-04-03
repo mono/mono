@@ -1,3 +1,9 @@
+2009-04-03  Miguel de Icaza  <miguel@novell.com>
+ 
+ 	* mono-filemap.c: Move mono_file_unmap for the not-mmap case to
+ 	the mono-filemap.c file so it can be plugged in platform-specific
+ 	code as well. 
+	
 2009-02-16  Mark Probst  <mark.probst@gmail.com>
 
 	Contributed under the terms of the MIT/X11 license by Steven
