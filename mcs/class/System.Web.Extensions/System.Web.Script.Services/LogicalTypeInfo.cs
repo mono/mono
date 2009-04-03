@@ -365,7 +365,7 @@ var gtc = Sys.Net.WebServiceProxy._generateTypedConstructor;");
 				return false;
 
 			ConstructorInfo ci = type.GetConstructor (Type.EmptyTypes);
-			if (!ci.IsPublic) {
+			if (ci == null || !ci.IsPublic) {
 				if (throwIfNot)
 					ThrowOnIncorrectGenerateScriptAttribute ();
 				return false;
