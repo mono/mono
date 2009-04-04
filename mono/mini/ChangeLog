@@ -1,3 +1,7 @@
+2009-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_type): Emit the class info for classes.
+
 2009-04-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (AM_CXXFLAGS): Add GLIB_CFLAGS to this.
