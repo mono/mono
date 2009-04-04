@@ -220,11 +220,13 @@ namespace System.Web.Handlers {
 		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
 #endif
 		{
+			HttpRequest request = context.Request;
+			HttpResponse response = context.Response;
 			string resourceName;
 			string asmName;
 			Assembly assembly;
 
-			DecryptAssemblyResource (context.Request.QueryString ["d"], out asmName, out resourceName);
+			DecryptAssemblyResource (request.QueryString ["d"], out asmName, out resourceName);
 			if (resourceName == null)
 				throw new HttpException (404, "No resource name given");
 			
@@ -255,11 +257,33 @@ namespace System.Web.Handlers {
 			if (wra == null)
 				throw new HttpException (404, String.Concat ("Resource ", resourceName, " not found"));
 			
-			context.Response.ContentType = wra.ContentType;
+			string req_cache = request.Headers ["Cache-Control"];
+			if (req_cache == "max-age=0") {
+				long atime;
+				if (Int64.TryParse (request.QueryString ["t"], out atime)) {
+					if (atime == File.GetLastWriteTimeUtc (assembly.Location).Ticks) {
+						response.StatusCode = 304;
+						return;
+					}
+				}
+			}
+			string modif_since = request.Headers ["If-Modified-Since"];
+			if (!String.IsNullOrEmpty (modif_since)) {
+				try {
+					DateTime modif;
+					if (DateTime.TryParseExact (modif_since, "r", null, 0, out modif))
+						if (File.GetLastWriteTimeUtc (assembly.Location) <= modif)
+							response.StatusCode = 304;
+							return;
+				} catch {}
+			}
 
-			/* tell the client they can cache resources for 1 year */
-			context.Response.ExpiresAbsolute = DateTime.Now.AddYears (1);
-			context.Response.CacheControl = "private";
+			response.ContentType = wra.ContentType;
+
+			DateTime utcnow = DateTime.UtcNow;
+			response.Headers.Add ("Last-Modified", utcnow.ToString ("r"));
+			response.ExpiresAbsolute = utcnow.AddYears (1);
+			response.CacheControl = "public";
 
 			Stream s = assembly.GetManifestResourceStream (resourceName);
 			if (s == null)
@@ -267,13 +291,13 @@ namespace System.Web.Handlers {
 
 			if (wra.PerformSubstitution) {
 				using (StreamReader r = new StreamReader (s)) {
-					TextWriter w = context.Response.Output;
+					TextWriter w = response.Output;
 					new PerformSubstitutionHelper (assembly).PerformSubstitution (r, w);
 				}
 			}
 			else {
 				byte [] buf = new byte [1024];
-				Stream output = context.Response.OutputStream;
+				Stream output = response.OutputStream;
 				int c;
 				do {
 					c = s.Read (buf, 0, 1024);
@@ -281,7 +305,7 @@ namespace System.Web.Handlers {
 				} while (c > 0);
 			}
 #if SYSTEM_WEB_EXTENSIONS
-			TextWriter writer = context.Response.Output;
+			TextWriter writer = response.Output;
 			foreach (ScriptResourceAttribute sra in assembly.GetCustomAttributes (typeof (ScriptResourceAttribute), false)) {
 				if (sra.ScriptName == resourceName) {
 					string scriptResourceName = sra.ScriptResourceName;
@@ -329,7 +353,7 @@ namespace System.Web.Handlers {
 				}
 			}
 
-			bool notifyScriptLoaded = context.Request.QueryString ["n"] == "t";
+			bool notifyScriptLoaded = request.QueryString ["n"] == "t";
 			if (notifyScriptLoaded) {
 				writer.WriteLine ();
 				writer.WriteLine ("if(typeof(Sys)!=='undefined')Sys.Application.notifyScriptLoaded();");
