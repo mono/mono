@@ -260,7 +260,15 @@ namespace System.Web.Handlers {
 			string req_cache = request.Headers ["Cache-Control"];
 			if (req_cache == "max-age=0") {
 				long atime;
+#if NET_2_0
 				if (Int64.TryParse (request.QueryString ["t"], out atime)) {
+#else
+				atime = -1;
+				try {
+					atime = Int64.Parse (request.QueryString ["t"]);
+				} catch {}
+				if (atime > -1) {
+#endif
 					if (atime == File.GetLastWriteTimeUtc (assembly.Location).Ticks) {
 						response.StatusCode = 304;
 						return;
@@ -268,10 +276,18 @@ namespace System.Web.Handlers {
 				}
 			}
 			string modif_since = request.Headers ["If-Modified-Since"];
-			if (!String.IsNullOrEmpty (modif_since)) {
+			if (modif_since != null && modif_since != "") {
 				try {
 					DateTime modif;
+#if NET_2_0
 					if (DateTime.TryParseExact (modif_since, "r", null, 0, out modif))
+#else
+					modif = DateTime.MinValue;
+					try {
+						modif = DateTime.ParseExact (modif_since, "r", null, 0);
+					} catch { }
+					if (modif != DateTime.MinValue)
+#endif
 						if (File.GetLastWriteTimeUtc (assembly.Location) <= modif)
 							response.StatusCode = 304;
 							return;
