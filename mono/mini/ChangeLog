@@ -1,5 +1,8 @@
 2009-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c: Emit inheritance information for classes, emit fields
+	of complex types.
+	
 	* dwarfwriter.c (emit_type): Emit the class info for classes.
 
 2009-04-04  Zoltan Varga  <vargaz@gmail.com>
