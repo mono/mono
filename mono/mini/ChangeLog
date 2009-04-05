@@ -1,5 +1,8 @@
 2009-04-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Move the handling of
+	amd64 opcodes inside an ifdef.
+
 	* dwarfwriter.c: Emit inheritance information for classes, emit fields
 	of complex types.
 	
