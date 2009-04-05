@@ -43,6 +43,7 @@ DISTFILES = \
 	library.make			\
 	nunit-summary.xsl		\
 	rules.make			\
+	tests.make			\
 	$(COMMON_SRCS:%=common/%)	\
 	$(PLATFORMS:%=platforms/%.make) $(PROFILES:%=profiles/%.make)
 

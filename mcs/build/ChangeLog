@@ -1,3 +1,14 @@
+2009-04-05  Jonathan Pryor  <jpryor@novell.com>
+
+	* executable.make: Support HAS_NUNIT_TEST variable; if set, will build
+	  an NUnit test assembly during 'make test' and will run the tests
+	  within the NUnit test assembly during 'make run-test'.
+	* library.make: Split out NUnit test rules/logic into tests.make.
+	* Makefile: Distribute tests.make.
+	* README.makefiles: Document HAS_NUNIT_TEST for executable.make,
+	  documenting how to have NUnit tests for executables.
+	* tests.make: Added; NUnit test logic rules.
+
 2009-01-08  Geoff Norton  <gnorton@novell.com>
 
 	* Makefile: Add darwin.make to the make dist target as well

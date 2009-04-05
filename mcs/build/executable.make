@@ -61,7 +61,7 @@ uninstall-local:
 endif
 
 clean-local:
-	-rm -f $(executable_CLEAN_FILES) $(CLEAN_FILES)
+	-rm -f $(executable_CLEAN_FILES) $(CLEAN_FILES) $(tests_CLEAN_FILES)
 
 test-local:
 	@:
@@ -123,4 +123,11 @@ $(makefrag): $(topdir)/build/executable.make $(depsdir)/.stamp
 
 doc-update-local:
 	@:
+
+ifdef HAS_NUNIT_TEST
+ASSEMBLY      = $(PROGRAM)
+ASSEMBLY_EXT  = .exe
+the_assembly  = $(PROGRAM)
+include $(topdir)/build/tests.make
+endif
 

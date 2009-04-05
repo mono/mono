@@ -59,37 +59,6 @@ else
 build_lib = $(the_lib)
 endif
 
-ifndef NO_TEST
-test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
-test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
-test_nunit_ref = $(test_nunit_dep:%=-r:%)
-library_CLEAN_FILES += TestResult*.xml
-
-test_lib = $(LIBRARY:.dll=_test_$(PROFILE).dll)
-test_sourcefile = $(LIBRARY:.dll=_test.dll.sources)
-test_pdb = $(test_lib:.dll=.pdb)
-test_response = $(depsdir)/$(test_lib).response
-test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_flags = -r:$(the_lib) $(test_nunit_ref) $(TEST_MCS_FLAGS)
-library_CLEAN_FILES += $(LIBRARY:.dll=_test*.dll) $(LIBRARY:.dll=_test*.pdb) $(test_response) $(test_makefrag)
-
-btest_lib = $(LIBRARY:.dll=_btest_$(PROFILE).dll)
-btest_sourcefile = $(LIBRARY:.dll=_btest.dll.sources)
-btest_pdb = $(btest_lib:.dll=.pdb)
-btest_response = $(depsdir)/$(btest_lib).response
-btest_makefrag = $(depsdir)/$(btest_lib).makefrag
-btest_flags = -r:$(the_lib) $(test_nunit_ref) $(TEST_MBAS_FLAGS)
-library_CLEAN_FILES += $(LIBRARY:.dll=_btest*.dll) $(LIBRARY:.dll=_btest*.pdb) $(btest_response) $(btest_makefrag)
-
-ifndef HAVE_CS_TESTS
-HAVE_CS_TESTS := $(wildcard $(test_sourcefile))
-endif
-ifndef HAVE_VB_TESTS
-HAVE_VB_TESTS := $(wildcard $(btest_sourcefile))
-endif
-
-endif
-
 ifdef NO_SIGN_ASSEMBLY
 SN = :
 else
@@ -161,85 +130,21 @@ install-local: $(gacutil)
 uninstall-local: $(gacutil)
 	-$(GACUTIL) /u $(LIBRARY_NAME:.dll=) $(gacdir_flag) /root $(GACROOT) $(package_flag)
 
-endif
-endif
+endif # LIBRARY_INSTALL_DIR
+endif # NO_INSTALL
 
 clean-local:
-	-rm -f $(library_CLEAN_FILES) $(CLEAN_FILES)
+	-rm -f $(tests_CLEAN_FILES) $(library_CLEAN_FILES) $(CLEAN_FILES)
 
 test-local run-test-local run-test-ondotnet-local:
 	@:
 
-ifndef NO_TEST
-$(test_nunit_dep): $(topdir)/build/deps/nunit-$(PROFILE).stamp
-	@if test -f $@; then :; else rm -f $<; $(MAKE) $<; fi
-$(topdir)/build/deps/nunit-$(PROFILE).stamp:
-	cd ${topdir}/nunit24 && $(MAKE)
-	echo "stamp" >$@
-library_CLEAN_FILES += $(topdir)/build/deps/nunit-$(PROFILE).stamp
-endif
-
-test_assemblies :=
-
-ifdef HAVE_CS_TESTS
-test_assemblies += $(test_lib)
-endif
-
-ifdef HAVE_VB_TESTS
-test_assemblies += $(btest_lib)
-endif
-
-ifdef test_assemblies
-check: run-test
-test-local: $(test_assemblies)
-run-test-local: run-test-lib
-run-test-ondotnet-local: run-test-ondotnet-lib
-
-TEST_HARNESS_EXCLUDES = -exclude=$(PLATFORM_TEST_HARNESS_EXCLUDES)NotWorking,ValueAdd,CAS,InetAccess
-TEST_HARNESS_EXCLUDES_ONDOTNET = /exclude:$(PLATFORM_TEST_HARNESS_EXCLUDES)NotDotNet,CAS
-
-ifdef TEST_HARNESS_VERBOSE
-TEST_HARNESS_OUTPUT = -labels
-TEST_HARNESS_OUTPUT_ONDOTNET = -labels
-TEST_HARNESS_POSTPROC = :
-TEST_HARNESS_POSTPROC_ONDOTNET = :
-else
-TEST_HARNESS_OUTPUT = -output=TestResult-$(PROFILE).log
-TEST_HARNESS_OUTPUT_ONDOTNET = -output=TestResult-ondotnet-$(PROFILE).log
-TEST_HARNESS_POSTPROC = (echo ''; cat TestResult-$(PROFILE).log) | sed '1,/^Tests run: /d'; xsltproc $(topdir)/build/nunit-summary.xsl TestResult-$(PROFILE).xml >> TestResult-$(PROFILE).log
-TEST_HARNESS_POSTPROC_ONDOTNET = (echo ''; cat TestResult-ondotnet-$(PROFILE).log) | sed '1,/^Tests run: /d'; xsltproc $(topdir)/build/nunit-summary.xsl TestResult-ondotnet-$(PROFILE).xml >> TestResult-ondotnet-$(PROFILE).log
-endif
-
-ifdef FIXTURE
-FIXTURE_ARG = -fixture=MonoTests.$(FIXTURE)
-endif
-
-ifdef TESTNAME
-TESTNAME_ARG = -run=MonoTests.$(TESTNAME)
-endif
-
-## FIXME: i18n problem in the 'sed' command below
-run-test-lib: test-local
-	ok=:; \
-	MONO_REGISTRY_PATH="$(HOME)/.mono/registry" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_FLAGS) $(TEST_HARNESS_EXCLUDES) $(TEST_HARNESS_OUTPUT) -xml=TestResult-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG)|| ok=false; \
-	$(TEST_HARNESS_POSTPROC) ; $$ok
-
-run-test-ondotnet-lib: test-local
-	ok=:; \
-	$(TEST_HARNESS) $(test_assemblies) -noshadow $(TEST_HARNESS_FLAGS) $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS) $(TEST_HARNESS_EXCLUDES_ONDOTNET) $(TEST_HARNESS_OUTPUT_ONDOTNET) -xml=TestResult-ondotnet-$(PROFILE).xml $(FIXTURE_ARG) $(TESTNAME_ARG) || ok=false; \
-	$(TEST_HARNESS_POSTPROC_ONDOTNET) ; $$ok
-endif
-
 DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES)
 
-TEST_FILES =
-
 ifdef HAVE_CS_TESTS
-TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -et -e 's,^,Test/,' $(test_sourcefile)`
 DISTFILES += $(test_sourcefile)
 endif
 ifdef HAVE_VB_TESTS
-TEST_FILES += `sed -e '/^$$/d' -e 's,^../,,' -et -e 's,^,Test/,' $(btest_sourcefile)`
 DISTFILES += $(btest_sourcefile)
 endif
 
@@ -265,14 +170,6 @@ endif
 
 ifndef LIBRARY_COMPILE
 LIBRARY_COMPILE = $(CSCOMPILE)
-endif
-
-ifndef TEST_COMPILE
-TEST_COMPILE = $(CSCOMPILE)
-endif
-
-ifndef BTEST_COMPILE
-BTEST_COMPILE = $(BASCOMPILE)
 endif
 
 ifndef LIBRARY_SNK
@@ -335,40 +232,6 @@ endif
 # for now, don't give any /lib flags or set MONO_PATH, since we
 # give a full path to the assembly.
 
-ifdef HAVE_CS_TESTS
-
-$(test_lib): $(the_lib) $(test_response) $(test_nunit_dep)
-	$(TEST_COMPILE) -target:library -out:$@ $(test_flags) @$(test_response)
-
-$(test_response): $(test_sourcefile)
-	@echo Creating $@ ...
-	@sed -e '/^$$/d' -e 's,^,Test/,' $(test_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-
-$(test_makefrag): $(test_response)
-	@echo Creating $@ ...
-	@sed 's,^,$(test_lib): ,' $< >$@
-
--include $(test_makefrag)
-
-endif
-
-ifdef HAVE_VB_TESTS
-
-$(btest_lib): $(the_lib) $(btest_response) $(test_nunit_dep)
-	$(BTEST_COMPILE) -target:library -out:$@ $(btest_flags) @$(btest_response)
-
-$(btest_response): $(btest_sourcefile)
-	@echo Creating $@ ...
-	@sed -e '/^$$/d' -e 's,^,Test/,' $(btest_sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
-
-$(btest_makefrag): $(btest_response)
-	@echo Creating $@ ...
-	@sed 's,^,$(btest_lib): ,' $< >$@
-
--include $(btest_makefrag)
-
-endif
-
 ## Include corcompare stuff
 include $(topdir)/build/corcompare.make
 
@@ -395,4 +258,9 @@ doc-update-local: $(the_libdir)/.doc-stamp
 $(the_libdir)/.doc-stamp: $(the_lib)
 	$(MDOC_UP)
 	@echo "doc-stamp" > $@
+
+ASSEMBLY      = $(LIBRARY)
+ASSEMBLY_EXT  = .dll
+the_assembly  = $(the_lib)
+include $(topdir)/build/tests.make
 
