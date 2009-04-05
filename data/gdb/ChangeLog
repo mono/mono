@@ -1,3 +1,7 @@
+2009-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Handle superclasses in the pretty printer.
+
 2009-03-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py (StringPrinter.to_string): Fix support for non-ascii characters.

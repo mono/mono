@@ -81,7 +81,15 @@ class ObjectPrinter:
 
         def next(self):
             field = self.iter.next ()
-            return (field.name, self.obj [field.name])
+            try:
+                if str(self.obj [field.name].type ()) == "object":
+                    # Avoid recursion
+                    return (field.name, self.obj [field.name].cast (gdb.Type ("void").pointer ()))
+                else:
+                    return (field.name, self.obj [field.name])
+            except:
+                # Superclass
+                return (field.name, self.obj.cast (gdb.Type ("struct %s" % (field.name))))
 
     def children(self):
         # FIXME: It would be easier if gdb.Value would support iteration itself
