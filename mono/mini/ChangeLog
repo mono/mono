@@ -1,3 +1,10 @@
+2009-04-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Fix int->float conversion of
+	negative numbers for vfp.
+
+	* basic-float.cs: Add a test.
+	
 2009-04-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.h mini-arm.c cpu-arm.md: Finish VFP support.
