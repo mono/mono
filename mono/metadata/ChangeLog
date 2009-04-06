@@ -5,6 +5,12 @@
 
 2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_throw): Don't allow an unboxed generic param ar argument.
+
+	Fixes #487738.
+
+2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c (do_mono_metadata_parse_type): Fail if we are decoding
 	a MVAR using a class context.
 
