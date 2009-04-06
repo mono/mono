@@ -2272,7 +2272,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		try {
 			target.RaiseCallbackEvent (callbackArgument);
 		} catch (Exception ex) {
-			callbackEventError = String.Concat ("e", ex.Message);
+			callbackEventError = String.Concat ("e", HttpRuntime.IsDebuggingEnabled ? ex.ToString () : ex.Message);
 		}
 		
 	}
@@ -2283,7 +2283,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		try {
 			callBackResult = target.GetCallbackResult ();
 		} catch (Exception ex) {
-			return String.Concat ("e", ex.Message);
+			return String.Concat ("e", HttpRuntime.IsDebuggingEnabled ? ex.ToString () : ex.Message);
 		}
 		
 		string eventValidation = ClientScript.GetEventValidationStateFormatted ();

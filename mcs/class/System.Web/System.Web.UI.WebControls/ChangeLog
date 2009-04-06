@@ -1,3 +1,21 @@
+2009-04-06  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeView.js: TreeView_ToggleExpand now takes more parameters - a
+	full definition of treeview's node contents.
+	Added new function, TreeView_PopulateNode, which partially takes
+	over role of the PopulateNode function generated in
+	TreeView.OnPreRender (see below). Fixes bug #492307
+
+	* TreeView.cs: RaiseCallbackEvent needs to recreate the event
+	target's parental tree all the way from the root to the node and
+	populate only the leaf (requested) node. This avoids calling the
+	TreeNodePopulate handler more times than needed. Fixes bug #492307
+	OnPreRender: moved the script code to constants and the script
+	body is now generated using StringBuilder instead of a series of
+	String.Format calls.
+	GetClientExpandEvent: adjusted code for new TreeView JavaScript
+	API.
+
 2009-03-17  Marek Habersack  <mhabersack@novell.com>
 
 	* Unit.cs: introduced a field to tell the difference between empty

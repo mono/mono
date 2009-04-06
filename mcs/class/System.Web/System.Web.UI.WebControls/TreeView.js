@@ -1,5 +1,5 @@
 
-function TreeView_ToggleExpand (treeId, nodeId) {
+function TreeView_ToggleExpand (treeId, nodeId, nodeText, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget) {
 	var tree = getTree (treeId);
 	if (tree == null)
 	    return;
@@ -8,7 +8,7 @@ function TreeView_ToggleExpand (treeId, nodeId) {
 	var expand = node.style.display == "none";
 	
 	if (tree.populateFromClient && expand && node.populated != true && (node.innerHTML.length == 0 || node.hasError)) {
-		tree.PopulateNode (nodeId);
+	    tree.PopulateNode (nodeId, nodeText, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget);
 		return;
 	}
 	
@@ -34,6 +34,12 @@ function TreeView_ToggleExpand (treeId, nodeId) {
 		}
 		image.alt = alt;
 	}
+}
+
+function TreeView_PopulateNode (uid, treeId, nodeId, nodeText, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget)
+{
+    var arg = nodeId + "|" + nodeText + "|" + nodeValue + "|" + nodeImageUrl + "|" + nodeNavigateUrl + "|" + nodeTarget;
+    window.WebForm_DoCallback (uid, arg, TreeView_PopulateCallback, treeId + " " + nodeId, TreeView_PopulateCallback, false);
 }
 
 function TreeView_SetNodeFlag (flagInput, nodeId, set)

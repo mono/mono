@@ -730,6 +730,24 @@ namespace System.Web {
 			get { return caseInsensitive; }
 		}
 
+		internal static bool IsDebuggingEnabled {
+			get {
+#if NET_2_0
+				CompilationSection cs = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+				if (cs != null)
+					return cs.Debug;
+
+				return false;
+#else
+				try {
+					return CompilationConfiguration.GetInstance (HttpContext.Current).Debug;
+				} catch {
+					return false;
+				}
+#endif
+			}
+		}
+		
 		internal static TraceManager TraceManager {
 			get {
 				return trace_manager;

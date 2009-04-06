@@ -973,14 +973,47 @@ namespace System.Web.UI.WebControls
 		protected virtual void RaisePostDataChangedEvent ()
 		{
 		}
+
+		TreeNode MakeNodeTree (string[] args)
+		{
+			string[] segments = args [0].Split ('_');
+			TreeNode ret = null, node;
+			string path;
+			StringBuilder sb = new StringBuilder ();
+			
+			foreach (string seg in segments) {
+				if (sb.Length == 0)
+					sb.Append (seg);
+				else
+					sb.Append ("_" + seg);
+
+				path = sb.ToString ();
+				node = new TreeNode (seg);
+				if (ret != null)
+					ret.ChildNodes.Add (node);
+				ret = node;
+			}
+
+			ret.Text = args [1];
+			ret.Value = args [2];
+			ret.ImageUrl = args [3];
+			ret.NavigateUrl = args [4];
+			ret.Target = args [5];
+			ret.Tree = this;
+			
+			NotifyPopulateRequired (ret);
+			
+			return ret;
+		}
 		
 		string callbackResult;
 		protected virtual void RaiseCallbackEvent (string eventArgs)
 		{
+			string[] args = eventArgs.Split ('|');
 			RequiresDataBinding = true;
 			EnsureDataBound ();
 			
-			TreeNode node = FindNodeByPos (eventArgs);
+			TreeNode node = MakeNodeTree (args);
 			ArrayList levelLines = new ArrayList ();
 			TreeNode nd = node;
 			while (nd != null) {
@@ -992,14 +1025,14 @@ namespace System.Web.UI.WebControls
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter writer = new HtmlTextWriter (sw);
 			EnsureStylesPrepared ();
-			
+
 			node.Expanded = true;
 			int num = node.ChildNodes.Count;
 			for (int n=0; n<num; n++)
 				RenderNode (writer, node.ChildNodes [n], node.Depth + 1, levelLines, true, n<num-1);
 			
 			string res = sw.ToString ();
-			callbackResult = res != "" ? res : "*";
+			callbackResult = res.Length > 0 ? res : "*";
 		}
 		
 		protected virtual string GetCallbackResult ()
@@ -1084,7 +1117,7 @@ namespace System.Web.UI.WebControls
 							continue;
 						TreeNode node = FindNodeByPos (id);
 						if (node != null && node.PopulateOnDemand && !node.Populated)
-							node.Populate();
+							node.Populated = true;
 					}
 				}
 				res = true;
@@ -1106,6 +1139,36 @@ namespace System.Web.UI.WebControls
 			}
 			return res;
 		}
+
+		const string _OnPreRender_Script_Preamble =
+			"var {0} = new Object ();\n" +
+			"{0}.treeId = {1};\n" +
+			"{0}.uid = {2};\n" +
+			"{0}.showImage = {3};\n";
+
+		const string _OnPreRender_Script_ShowExpandCollapse =
+			"{0}.expandImage = {1};\n" +
+			"{0}.collapseImage = {2};\n";
+
+		const string _OnPreRender_Script_ShowExpandCollapse_Populate =
+			"{0}.noExpandImage = {1};\n";
+
+		const string _OnPreRender_Script_PopulateCallback =
+			"{0}.form = {1};\n" +
+			"{0}.PopulateNode = function (nodeId, nodeText, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget) {{\n" +
+			"\t{2}.__theFormPostData = \"\";\n" +
+			"\t{2}.__theFormPostCollection = new Array ();\n" +
+			"\t{2}.WebForm_InitCallback ();\n" +
+			"\tTreeView_PopulateNode (this.uid, this.treeId, nodeId, nodeText, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget)\n}};\n";
+
+		const string _OnPreRender_Script_CallbackOptions =
+			"{0}.populateFromClient = {1};\n" +
+			"{0}.expandAlt = {2};\n" +
+			"{0}.collapseAlt = {3};\n";
+
+		const string _OnPreRender_Script_HoverStyle =
+			"{0}.hoverClass = {1};\n" +
+			"{0}.hoverLinkClass = {2};\n";
 		
 		protected internal override void OnPreRender (EventArgs e)
 		{
@@ -1122,33 +1185,43 @@ namespace System.Web.UI.WebControls
 			}
 			
 			string ctree = ClientID + "_data";
-			string script = string.Format ("var {0} = new Object ();\n", ctree);
-			script += string.Format ("{0}.treeId = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ClientID));
-			script += string.Format ("{0}.uid = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (UniqueID));
-			script += string.Format ("{0}.showImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));
+			StringBuilder script = new StringBuilder ();
+			script.AppendFormat (_OnPreRender_Script_Preamble,
+					     ctree,
+					     ClientScriptManager.GetScriptLiteral (ClientID),
+					     ClientScriptManager.GetScriptLiteral (UniqueID),
+					     ClientScriptManager.GetScriptLiteral (ShowExpandCollapse));			
 			
 			if (ShowExpandCollapse) {
 				ImageStyle imageStyle = GetImageStyle ();
-				script += string.Format ("{0}.expandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("plus", imageStyle)));
-				script += string.Format ("{0}.collapseImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("minus", imageStyle)));
+				script.AppendFormat (_OnPreRender_Script_ShowExpandCollapse,
+						     ctree,
+						     ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("plus", imageStyle)),
+						     ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("minus", imageStyle)));
+						     
 				if (PopulateNodesFromClient)
-					script += string.Format ("{0}.noExpandImage = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("noexpand", imageStyle)));
+					script.AppendFormat (_OnPreRender_Script_ShowExpandCollapse_Populate,
+							     ctree,
+							     ClientScriptManager.GetScriptLiteral (GetNodeImageUrl ("noexpand", imageStyle)));
 			}
 
 			if (Page != null) {
-				script += string.Format ("{0}.form = {1};\n", ctree, Page.theForm);
-				script += string.Format (
-@"{0}.PopulateNode = function(nodeId) {{
-	" + Page.WebFormScriptReference + @".__theFormPostData = """";
-	" + Page.WebFormScriptReference + @".__theFormPostCollection = new Array();
-	" + Page.WebFormScriptReference + @".WebForm_InitCallback();
-	{1};
-}};
-", ctree, Page.ClientScript.GetCallbackEventReference ("this.uid", "nodeId", "TreeView_PopulateCallback", "this.treeId + \" \" + nodeId", "TreeView_PopulateCallback", false));
-				script += string.Format ("{0}.populateFromClient = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient));
-				script += string.Format ("{0}.expandAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)));
-				script += string.Format ("{0}.collapseAlt = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
-
+				script.AppendFormat (_OnPreRender_Script_PopulateCallback,
+						     ctree,
+						     Page.theForm,
+						     Page.WebFormScriptReference);
+				
+						     // Page.ClientScript.GetCallbackEventReference (
+						     // 	     "this.uid", "nodeId",
+						     // 	     "TreeView_PopulateCallback",
+						     // 	     "this.treeId + \" \" + nodeId", "TreeView_PopulateCallback", false));
+				
+				script.AppendFormat (_OnPreRender_Script_CallbackOptions,
+						     ctree,
+						     ClientScriptManager.GetScriptLiteral (PopulateNodesFromClient),
+						     ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (true, null)),
+						     ClientScriptManager.GetScriptLiteral (GetNodeImageToolTip (false, null)));
+				
 				if (!Page.IsPostBack) {
 					SetNodesExpandedToDepthRecursive (Nodes);
 				}
@@ -1170,11 +1243,14 @@ namespace System.Web.UI.WebControls
 					if (Page.Header == null)
 						throw new InvalidOperationException ("Using TreeView.HoverNodeStyle requires Page.Header to be non-null (e.g. <head runat=\"server\" />).");
 					RegisterStyle (HoverNodeStyle, HoverNodeLinkStyle);
-					script += string.Format ("{0}.hoverClass = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (HoverNodeStyle.RegisteredCssClass));
-					script += string.Format ("{0}.hoverLinkClass = {1};\n", ctree, ClientScriptManager.GetScriptLiteral (HoverNodeLinkStyle.RegisteredCssClass));
+					script.AppendFormat (_OnPreRender_Script_HoverStyle,
+							     ctree,
+							     ClientScriptManager.GetScriptLiteral (HoverNodeStyle.RegisteredCssClass),
+							     ClientScriptManager.GetScriptLiteral (HoverNodeLinkStyle.RegisteredCssClass));					
 				}
 				
-				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script, true);
+				Page.ClientScript.RegisterStartupScript (typeof(TreeView), this.UniqueID, script.ToString (), true);
+				script = null;
 			}
 		}
 
@@ -1875,9 +1951,16 @@ namespace System.Web.UI.WebControls
 		
 		string GetClientExpandEvent (TreeNode node)
 		{
-			return "javascript:TreeView_ToggleExpand ('" + ClientID + "', '" + node.Path + "')";
+			return String.Format ("javascript:TreeView_ToggleExpand ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
+					      ClientID,
+					      node.Path,
+					      node.Text,
+					      node.Value,
+					      node.ImageUrl,
+					      node.NavigateUrl,
+					      node.Target);
 		}
-		
+
 		TreeNode FindNodeByPos (string path)
 		{
 			string[] indexes = path.Split ('_');

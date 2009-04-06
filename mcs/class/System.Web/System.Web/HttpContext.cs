@@ -226,18 +226,7 @@ namespace System.Web {
 		}
 #if !TARGET_JVM
 		public bool IsDebuggingEnabled {
-			get {
-#if NET_2_0
-				CompilationSection section = (CompilationSection) WebConfigurationManager.GetSection ("system.web/compilation");
-				return section.Debug;
-#else
-				try {
-					return CompilationConfiguration.GetInstance (this).Debug;
-				} catch {
-					return false;
-				}
-#endif
-			}
+			get { return HttpRuntime.IsDebuggingEnabled; }
 		}
 #endif
 		public IDictionary Items {

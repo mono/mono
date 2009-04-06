@@ -1,3 +1,11 @@
+2009-04-06  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: added a new internal static property
+	IsDebuggingEnabled
+
+	* HttpContext.cs: IsDebuggingEnabled now calls
+	HttpRuntime.IsDebuggingEnabled
+
 2009-04-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpRuntime.cs: Avoid ANE on Windows when HttpRuntime is used
