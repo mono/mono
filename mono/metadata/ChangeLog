@@ -1,4 +1,12 @@
 2009-04-06  Massimiliano Mantione  <massi@ximian.com>
+	monitor.c (mono_monitor_try_enter_internal):
+	Added calls to profile monitor contentions.
+	Also duplicated a small piece of code (the "get the monitor" logic)
+	from the fast path to the slow path, and changed the relevant goto
+	statements, so that monitor acquisition events can be emitted from the
+	slow path (this is by Paolo Molaro).
+
+2009-04-06  Massimiliano Mantione  <massi@ximian.com>
 	* profiler.c, profiler.h, profiler-private.h:
 	Added support for profiling monitor contentions.
 
