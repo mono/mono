@@ -1,4 +1,10 @@
+2009-04-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_output_basic_block): Fix int->float conversion of
+	negative numbers for vfp.
+
+	* basic-float.cs: Add a test.
+	
 Mon Apr 6 14:12:10 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-x86.c, mini-x86.h: x86 support code for continuations.
