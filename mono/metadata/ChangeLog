@@ -1,3 +1,7 @@
+2009-04-06  Massimiliano Mantione  <massi@ximian.com>
+	* profiler.c, profiler.h, profiler-private.h:
+	Added support for profiling monitor contentions.
+
 2009-04-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the modules table.
