@@ -1,5 +1,9 @@
 2009-04-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c: Use _ to separate class name 
+	components as gdb can't handle '.'. Represent reference variables
+	as 'class <NAME>&'.
+	
 	* mini.h (MonoCompile): Add locals_min_stack_offset/locals_max_stack_offset.
 
 	* mini-amd64.c (mono_arch_allocate_vars): Save min/max stack offset.
