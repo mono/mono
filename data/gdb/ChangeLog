@@ -1,5 +1,7 @@
 2009-04-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* test-xdb.py: New file, tester script for xdb.
+
 	* mono-gdb.py (stringify_class_name): Handle classes without a namespace
 	correctly.
 	
