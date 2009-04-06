@@ -5526,7 +5526,7 @@ namespace Mono.CSharp {
 			temp.AddressOf (ec, AddressOp.Store);
 			ig.Emit (OpCodes.Initobj, type);
 			temp.Emit (ec);
-			ig.Emit (OpCodes.Br, label_end);
+			ig.Emit (OpCodes.Br_S, label_end);
 
 			ig.MarkLabel (label_activator);
 
@@ -5567,9 +5567,6 @@ namespace Mono.CSharp {
 		//
 		public virtual bool Emit (EmitContext ec, IMemoryLocation target)
 		{
-			if (is_type_parameter)
-				return DoEmitTypeParameter (ec);
-
 			bool is_value_type = TypeManager.IsValueType (type);
 			ILGenerator ig = ec.ig;
 			VariableReference vr = target as VariableReference;
@@ -5579,6 +5576,9 @@ namespace Mono.CSharp {
 			} else if (vr != null && vr.IsRef) {
 				vr.EmitLoad (ec);
 			}
+			
+			if (is_type_parameter)
+				return DoEmitTypeParameter (ec);
 
 			if (method != null)
 				method.EmitArguments (ec, Arguments);
