@@ -1,4 +1,8 @@
 
+Mon Apr 6 14:12:10 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-x86.c, mini-x86.h: x86 support code for continuations.
+
 Mon Apr 6 14:09:53 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 	* tasklets.h, tasklets.c, mini.h, mini.c, Makefile.am: arch-indep
