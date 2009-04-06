@@ -1,3 +1,8 @@
+2009-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.Web_test.dll.sources : added
+	  AtomPub10CategoriesDocumentFormatterTest.
+
 2009-04-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.Web_test.dll.sources : added

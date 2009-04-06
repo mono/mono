@@ -44,26 +44,26 @@ namespace MonoTests.System.ServiceModel.Syndication
 	{
 		static XmlWriterSettings settings = new XmlWriterSettings () { OmitXmlDeclaration = true};
 
+		string app1 = "<app:service xmlns:a10=\"http://www.w3.org/2005/Atom\" xmlns:app=\"http://www.w3.org/2007/app\" />";
+
 		[Test]
 		public void WriteTo ()
 		{
-			string xml = "<app:service xmlns:a10=\"http://www.w3.org/2005/Atom\" xmlns:app=\"http://www.w3.org/2007/app\" />";
-
 			var s = new ServiceDocument ();
 			var a = new AtomPub10ServiceDocumentFormatter (s);
 			Assert.AreEqual ("http://www.w3.org/2007/app", a.Version, "#1");
-			Assert.IsTrue (a.CanRead (XmlReader.Create (new StringReader (xml))), "#2");
+			Assert.IsTrue (a.CanRead (XmlReader.Create (new StringReader (app1))), "#2");
 			var sw = new StringWriter ();
 			using (var xw = XmlWriter.Create (sw, settings))
 				a.WriteTo (xw);
-			Assert.AreEqual (xml, sw.ToString (), "#3");
+			Assert.AreEqual (app1, sw.ToString (), "#3");
 		}
+
+		string app2 = "<app:service xmlns:a10=\"http://www.w3.org/2005/Atom\" xmlns:app=\"http://www.w3.org/2007/app\"><app:workspace><a10:title type=\"text\">test title</a10:title><app:collection href=\"urn:foo\"><a10:title type=\"text\">test resource</a10:title><app:accept>application/atom+xml;type=entry</app:accept></app:collection></app:workspace></app:service>";
 
 		[Test]
 		public void WriteTo2 ()
 		{
-			string xml = "<app:service xmlns:a10=\"http://www.w3.org/2005/Atom\" xmlns:app=\"http://www.w3.org/2007/app\"><app:workspace><a10:title type=\"text\">test title</a10:title><app:collection href=\"urn:foo\"><a10:title type=\"text\">test resource</a10:title><app:accept>application/atom+xml;type=entry</app:accept></app:collection></app:workspace></app:service>";
-
 			var s = new ServiceDocument ();
 			var ws = new Workspace ("test title", null);
 			var rc = new ResourceCollectionInfo ("test resource", new Uri ("urn:foo"));
@@ -72,11 +72,24 @@ namespace MonoTests.System.ServiceModel.Syndication
 			s.Workspaces.Add (ws);
 			var a = new AtomPub10ServiceDocumentFormatter (s);
 			Assert.AreEqual ("http://www.w3.org/2007/app", a.Version, "#1");
-			Assert.IsTrue (a.CanRead (XmlReader.Create (new StringReader (xml))), "#2");
+			Assert.IsTrue (a.CanRead (XmlReader.Create (new StringReader (app2))), "#2");
 			var sw = new StringWriter ();
 			using (var xw = XmlWriter.Create (sw, settings))
 				a.WriteTo (xw);
-			Assert.AreEqual (xml, sw.ToString (), "#3");
+			Assert.AreEqual (app2, sw.ToString (), "#3");
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))] // insufficient content
+		public void Load ()
+		{
+			ServiceDocument.Load (XmlReader.Create (new StringReader (app1)));
+		}
+
+		[Test]
+		public void Load2 ()
+		{
+			ServiceDocument.Load (XmlReader.Create (new StringReader (app2)));
 		}
 	}
 }

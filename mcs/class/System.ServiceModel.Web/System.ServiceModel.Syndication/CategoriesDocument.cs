@@ -55,10 +55,22 @@ namespace System.ServiceModel.Syndication
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static CategoriesDocument Load (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			var f = new AtomPub10CategoriesDocumentFormatter ();
+			reader.MoveToContent ();
+
+			CategoriesDocument doc;
+			if (reader.GetAttribute ("href") == null)
+				doc = new InlineCategoriesDocument ();
+			else
+				doc = new ReferencedCategoriesDocument ();
+			doc.GetFormatter ().ReadFrom (reader);
+
+			return doc;
 		}
 
 		public CategoriesDocument ()
@@ -84,10 +96,9 @@ namespace System.ServiceModel.Syndication
 			return formatter;
 		}
 
-		[MonoTODO]
 		public void Save (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			GetFormatter ().WriteTo (writer);
 		}
 
 		[MonoTODO]

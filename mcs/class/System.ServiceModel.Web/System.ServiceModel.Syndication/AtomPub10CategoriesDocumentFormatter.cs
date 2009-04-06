@@ -39,6 +39,7 @@ namespace System.ServiceModel.Syndication
 	public class AtomPub10CategoriesDocumentFormatter : CategoriesDocumentFormatter, IXmlSerializable
 	{
 		public AtomPub10CategoriesDocumentFormatter ()
+			: this (typeof (InlineCategoriesDocument), typeof (ReferencedCategoriesDocument))
 		{
 		}
 
@@ -64,10 +65,12 @@ namespace System.ServiceModel.Syndication
 			get { return "http://www.w3.org/2007/app"; }
 		}
 
-		[MonoTODO]
 		public override bool CanRead (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+			reader.MoveToContent ();
+			return reader.LocalName != "categories" || reader.NamespaceURI != Version;
 		}
 
 		protected override InlineCategoriesDocument CreateInlineCategoriesDocument ()
@@ -80,16 +83,104 @@ namespace System.ServiceModel.Syndication
 			return (ReferencedCategoriesDocument) Activator.CreateInstance (ref_type, new object [0]);
 		}
 
-		[MonoTODO]
 		public override void ReadFrom (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			reader.MoveToContent ();
+
+			bool isEmpty = reader.IsEmptyElement;
+
+			if (Document == null) {
+				var href = reader.GetAttribute ("href");
+				if (href != null) {
+					var doc = CreateReferencedCategoriesDocument ();
+					doc.Link = new Uri (href, UriKind.RelativeOrAbsolute);
+					SetDocument (doc);
+				} else {
+					var doc = CreateInlineCategoriesDocument ();
+					doc.Scheme = reader.GetAttribute ("scheme");
+					if (reader.GetAttribute ("fixed") == "yes")
+						doc.IsFixed = true;
+					SetDocument (doc);
+				}
+			}
+			var inline = Document as InlineCategoriesDocument;
+			// var referenced = Document as ReferencedCategoriesDocument;
+
+			reader.ReadStartElement ("categories", Version);
+			if (isEmpty)
+				return;
+
+			for (reader.MoveToContent ();
+			     reader.NodeType != XmlNodeType.EndElement;
+			     reader.MoveToContent ()) {
+				if (inline != null && reader.LocalName == "category" && reader.NamespaceURI == Namespaces.Atom10)
+					ReadInlineCategoriesContent (inline, reader);
+				// FIXME: else read element as an extension
+				else
+					reader.Skip ();
+			}
+
+			reader.ReadEndElement (); // </app:categories>
 		}
 
-		[MonoTODO]
+		void ReadInlineCategoriesContent (InlineCategoriesDocument doc, XmlReader reader)
+		{
+			var cat = new SyndicationCategory ();
+			atom10_formatter.ReadCategory (reader, cat);
+			doc.Categories.Add (cat);
+		}
+
 		public override void WriteTo (XmlWriter writer)
 		{
-			throw new NotImplementedException ();
+			if (writer == null)
+				throw new ArgumentNullException ("writer");
+
+			writer.WriteStartElement ("app", "categories", Version);
+
+			if (writer.LookupPrefix (Namespaces.Atom10) != "a10")
+				writer.WriteAttributeString ("xmlns", "a10", Namespaces.Xmlns, Namespaces.Atom10);
+
+			// xml:lang, xml:base, term, scheme, label
+			if (Document.Language != null)
+				writer.WriteAttributeString ("xml", "lang", Namespaces.Xml, Document.Language);
+			if (Document.BaseUri != null)
+				writer.WriteAttributeString ("xml", "base", Namespaces.Xml, Document.BaseUri.ToString ());
+
+			InlineCategoriesDocument inline = Document as InlineCategoriesDocument;
+			ReferencedCategoriesDocument referenced = Document as ReferencedCategoriesDocument;
+
+			// ... no term ?
+
+			if (inline != null) {
+				if (inline.IsFixed)
+					writer.WriteAttributeString ("fixed", "yes");
+				if (inline.Scheme != null)
+					writer.WriteAttributeString ("scheme", inline.Scheme);
+			} else if (referenced != null) {
+				if (referenced.Link != null)
+					writer.WriteAttributeString ("href", referenced.Link.ToString ());
+			}
+
+			Document.WriteAttributeExtensions (writer, Version);
+
+			Document.WriteElementExtensions (writer, Version);
+
+			if (inline != null)
+				WriteInlineCategoriesContent (inline, writer);
+			// no (non-extension) contents for out-of-line category
+
+			writer.WriteEndElement ();
+		}
+
+		Atom10FeedFormatter atom10_formatter = new Atom10FeedFormatter ();
+
+		void WriteInlineCategoriesContent (InlineCategoriesDocument doc, XmlWriter writer)
+		{
+			foreach (var cat in doc.Categories)
+				atom10_formatter.WriteCategory (cat, writer);
 		}
 
 		[MonoTODO]
