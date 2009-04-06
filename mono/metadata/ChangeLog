@@ -1,3 +1,8 @@
+2009-04-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Fix typo while comparing second method names
+	in can_avoid_corlib_reflection_delegate_optimization
+
 2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c (do_mono_metadata_parse_type): Fail if we are decoding
