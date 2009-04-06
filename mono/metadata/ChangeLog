@@ -1,4 +1,16 @@
+2009-04-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_compute_gc_descriptor): Make this non-static.
+
+	* domain-internals.h (struct _MonoJitInfo): Add a 'gc_info' field.
+
+	* gc-internal.h (MonoGCCallbacks): New stucture containing the callback
+	functions supplied by the JIT for the SGEN GC.
+
+	* sgen-gc.c: Call the callbacks supplied by the JIT to do stack marking.
+	
 2009-04-06  Massimiliano Mantione  <massi@ximian.com>
+
 	monitor.c (mono_monitor_try_enter_internal):
 	Added calls to profile monitor contentions.
 	Also duplicated a small piece of code (the "get the monitor" logic)
@@ -7,6 +19,7 @@
 	slow path (this is by Paolo Molaro).
 
 2009-04-06  Massimiliano Mantione  <massi@ximian.com>
+
 	* profiler.c, profiler.h, profiler-private.h:
 	Added support for profiling monitor contentions.
 
