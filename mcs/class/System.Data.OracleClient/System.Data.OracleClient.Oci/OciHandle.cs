@@ -106,6 +106,9 @@ namespace System.Data.OracleClient.Oci {
 				return new OciRowIdDescriptor (this, newHandle);
 			case OciHandleType.TimeStamp:
 				return new OciDateTimeDescriptor (this, newHandle);
+			case OciHandleType.IntervalDayToSecond:
+			case OciHandleType.IntervalYearToMonth:
+				return new OciIntervalDescriptor (this, type, newHandle);
 			}
 			return null;
 		}

@@ -1,3 +1,8 @@
+2009-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Fixes #480377
+	* OracleDataReader.cs: Implement MonthSpan and TimeSpan.
+	
 2009-03-20  Daniel Morgan <monodanmorg@yahoo.com>
 
 	* OracleCommand.cs: fix suggested by Thracx <SpamMonkey01+Mono@gmail.com>
