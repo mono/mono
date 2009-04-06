@@ -1259,7 +1259,7 @@
         <size>7</size>
       </method>
       <method name="T Create()">
-        <size>39</size>
+        <size>36</size>
       </method>
     </type>
     <type name="X">
@@ -3282,10 +3282,10 @@
         <size>78</size>
       </method>
       <method name="Polynomial`1[E] Mul(Polynomial`1[E])">
-        <size>222</size>
+        <size>219</size>
       </method>
       <method name="E Eval(E)">
-        <size>109</size>
+        <size>106</size>
       </method>
     </type>
     <type name="TestPolynomial">
@@ -3962,7 +3962,7 @@
   <test name="gtest-151.cs">
     <type name="Test`1[T]">
       <method name="Void .ctor()">
-        <size>46</size>
+        <size>45</size>
       </method>
     </type>
     <type name="X">
@@ -4011,7 +4011,7 @@
   <test name="gtest-153.cs">
     <type name="MyClass`1[T]">
       <method name="Void .ctor()">
-        <size>59</size>
+        <size>56</size>
       </method>
     </type>
     <type name="X">
@@ -4069,7 +4069,7 @@
   <test name="gtest-155.cs">
     <type name="MyClass`1[T]">
       <method name="Void .ctor()">
-        <size>59</size>
+        <size>56</size>
       </method>
     </type>
     <type name="X">
@@ -8853,7 +8853,7 @@
         <size>7</size>
       </method>
       <method name="Void Foo()">
-        <size>40</size>
+        <size>37</size>
       </method>
     </type>
     <type name="Foo">
@@ -8886,7 +8886,7 @@
         <size>7</size>
       </method>
       <method name="Void Do()">
-        <size>53</size>
+        <size>50</size>
       </method>
     </type>
     <type name="Reference">
@@ -11507,6 +11507,55 @@
       </method>
       <method name="Int32 Main()">
         <size>114</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-445.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void Foo[T](T ByRef)">
+        <size>1</size>
+      </method>
+      <method name="Void Foo[T](T[])">
+        <size>1</size>
+      </method>
+      <method name="Void Foo[T](T[,])">
+        <size>1</size>
+      </method>
+      <method name="Void Foo[T](T[,,])">
+        <size>1</size>
+      </method>
+      <method name="Void Bar(Int32 ByRef)">
+        <size>1</size>
+      </method>
+      <method name="Void Bar(System.Int32[])">
+        <size>1</size>
+      </method>
+      <method name="Void Bar(System.Int32[,])">
+        <size>1</size>
+      </method>
+      <method name="Void Bar(System.Int32[,,])">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-446.cs">
+    <type name="BugTest.Bug`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void CreateObject(T ByRef)">
+        <size>42</size>
+      </method>
+    </type>
+    <type name="BugTest.Program">
+      <method name="Int32 Main()">
+        <size>16</size>
       </method>
     </type>
   </test>
@@ -16030,6 +16079,19 @@
       </method>
       <method name="Int32 Main()">
         <size>140</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-19.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>20</size>
+      </method>
+      <method name="T Value[T]()">
+        <size>76</size>
       </method>
     </type>
   </test>
