@@ -1,3 +1,8 @@
+
+Mon Apr 6 14:37:32 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile, Mono.Tasklets: managed part of continuation support.
+
 2009-03-27  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (net_2_0_dirs): Build System.Runtime.Serialization
