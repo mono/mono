@@ -2683,7 +2683,11 @@ namespace System.Windows.Forms
 #endif
 			
 			// draw the gridlines
+#if NET_2_0
 			if (details && control.GridLines && !control.UsingGroups) {
+#else
+			if (details && control.GridLines) {
+#endif
 				Size control_size = control.ClientSize;
 				int top = (control.HeaderStyle == ColumnHeaderStyle.None) ?
 					0 : control.header_control.Height;

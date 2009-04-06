@@ -1,3 +1,8 @@
+2009-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ThemeWin32Classic.cs: Include the previous check for ListView in a
+	2.0 define as needed.
+
 2009-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ThemeWin32Classic.cs: Don't draw ListView's gridlines if we are using groups.
