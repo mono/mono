@@ -1,3 +1,8 @@
+2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* unverifiable_throw_with_unboxed_generic_argument.il: Regression test
+	for #487738.
+
 2009-04-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_candidate_contraint_is_inflated_using_global_context.cs:
