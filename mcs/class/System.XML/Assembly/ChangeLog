@@ -1,3 +1,10 @@
+2009-04-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Remove AllowPartiallyTrustedCallers from NET_2_1
+	build (not in SL2) and open our internals to System.Xml.Serialization
+	(only in NET_2_1) since MS SL2 SDK requires it.	Test case @
+	http://demos.devexpress.com/AgDataGridDemos/
+
 2008-04-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing attributes
