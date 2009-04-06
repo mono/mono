@@ -1,3 +1,10 @@
+2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (do_mono_metadata_parse_type): Fail if we are decoding
+	a MVAR using a class context.
+
+	Fixes #490335.
+
 2009-04-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_class_compute_gc_descriptor): Make this non-static.
