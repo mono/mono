@@ -328,13 +328,26 @@ The \fIc\fR element can contain the following elements:
 \fIsee\fR, and
 \fItypeparamref\fR.
 .TP
-.I <code lang="LANGUAGE">TEXT</code>
+.I <code lang="LANGUAGE" src="SOURCE">TEXT</code>
 Display multiple lines of text in a code-like font (similar to the HTML <pre/>
 element).
+.Sp
 .I LANGUAGE
 is the language this code block is for.  For example, if \fILANGUAGE\fR is
 \fBC#\fR, then \fITEXT\fR will get syntax highlighting for the C# language 
 within the Mono Documentation Browser.
+.Sp
+.I SOURCE
+is only interpreted by \fBmdoc-update\fR(1).  If the \fIsrc\fR attribute is
+present when \fBmdoc-update\fR(1) is run, then \fISOURCE\fR is a file 
+(relative to \fBmdoc-update\fR(1)'s \fB--out\fR directory) that
+should be inserted as the value for \fITEXT\fR.
+The contents of \fITEXT\fR will be ignored by \fBmdoc-update\fR(1)
+and replaced on every invocation.  \fISOURCE\fR can also contain an "anchor",
+e.g. \fIsrc="path/to/file.cs#RegionMarker"\fR.  If an anchor is present,
+\fIand\fR \fILANGUAGE\fR is \fIC#\fR, then \fI#region RegionMarker\fR will be
+searched for, and the contents between the \fI#region\fR and the following
+\fI#endregion\fR will be inserted as the value for \fITEXT\fR element.
 .TP
 .I <example>XML_TEXT</example>
 Indicates an example that should be displayed specially.  For example:
