@@ -72,7 +72,7 @@ namespace System
 		}
 
 #if NET_2_0
-		[MonoTODO ("mode parameter ignored")]
+		[MonoDocumentationNote ("mode parameter ignored")]
 		public static void Collect (int generation, GCCollectionMode mode) {
 			Collect (generation);
 		}
