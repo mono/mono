@@ -1,3 +1,14 @@
+2009-04-06  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Added monitor contention profiling.
+	- Changed RESERVE_EVENTS to require a call to the new 
+	COMMIT_RESERVED_EVENTS macro after we have filled the event slots
+	(this allows to acquire all the event slots atomically).
+	- Created utility function "save_stack_delta".
+	- Created "monitor_event" callback.
+	- renamed "handle_heap_profiling" as "process_gc_event" because it
+	must be used also to help avoid interferences between garbage
+	collections and monitor	profiling.
+
 2009-03-23  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Removed useless "gc-signal" option (the
 	newer "heap=<SIGNAL>" format of the "heap" option does the same thing).
