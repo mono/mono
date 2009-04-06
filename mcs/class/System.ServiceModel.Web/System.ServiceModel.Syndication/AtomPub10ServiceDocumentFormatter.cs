@@ -76,22 +76,15 @@ namespace System.ServiceModel.Syndication
 
 		protected override ServiceDocument CreateDocumentInstance ()
 		{
-			return doc_type != null ? (ServiceDocument) Activator.CreateInstance (doc_type, new object [0]) : base.CreateDocumentInstance ();
+			var doc = doc_type != null ? (ServiceDocument) Activator.CreateInstance (doc_type, new object [0]) : base.CreateDocumentInstance ();
+			doc.InternalFormatter = this;
+			return doc;
 		}
 
-		[MonoTODO]
 		public override void ReadFrom (XmlReader reader)
 		{
-			if (reader == null)
-				throw new ArgumentNullException ("reader");
-
-			for (int i = 0; i < reader.AttributeCount; i++) {
-				reader.MoveToAttribute (i);
-				Document.TryParseAttribute (reader.LocalName, reader.NamespaceURI, reader.Value, Version);
-			}
-			reader.MoveToElement ();
-
-			throw new NotImplementedException ();
+			if (!Document.TryParseElement (reader, Version))
+				throw new XmlException (String.Format ("Unexpected element '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));
 		}
 
 		public override void WriteTo (XmlWriter writer)

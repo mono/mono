@@ -251,7 +251,7 @@ namespace System.ServiceModel.Syndication
 			reader.ReadEndElement ();
 		}
 
-		TextSyndicationContent ReadTextSyndicationContent (XmlReader reader)
+		internal static TextSyndicationContent ReadTextSyndicationContent (XmlReader reader)
 		{
 			TextSyndicationContentKind kind = TextSyndicationContentKind.Plaintext;
 			switch (reader.GetAttribute ("type")) {

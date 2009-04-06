@@ -1,5 +1,9 @@
 2009-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AtomPub10ServiceDocumentFormatterTest.cs : add ReadFrom() test.
+
+2009-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AtomPub10CategoriesDocumentFormatterTest.cs : new test.
 	* AtomPub10ServiceDocumentFormatterTest.cs : add reader tests.
 

@@ -39,6 +39,14 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace MonoTests.System.ServiceModel.Syndication
 {
+	class MyServiceFormatter : AtomPub10ServiceDocumentFormatter
+	{
+		public void Read (XmlReader reader)
+		{
+			ReadFrom (reader);
+		}
+	}
+
 	[TestFixture]
 	public class AtomPub10ServiceDocumentFormatterTest
 	{
@@ -90,6 +98,12 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void Load2 ()
 		{
 			ServiceDocument.Load (XmlReader.Create (new StringReader (app2)));
+		}
+
+		[Test]
+		public void ReadFrom ()
+		{
+			new MyServiceFormatter ().Read (XmlReader.Create (new StringReader (app2)));
 		}
 	}
 }

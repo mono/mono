@@ -52,17 +52,17 @@ namespace System.ServiceModel.Syndication
 
 	public class ServiceDocument
 	{
-		[MonoTODO]
 		public static TServiceDocument Load<TServiceDocument> (XmlReader reader)
 			where TServiceDocument : ServiceDocument, new()
 		{
-			throw new NotImplementedException ();
+			var doc = new TServiceDocument ();
+			new AtomPub10ServiceDocumentFormatter<TServiceDocument> (doc).ReadFrom (reader);
+			return doc;
 		}
 
-		[MonoTODO]
 		public static ServiceDocument Load (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			return Load<ServiceDocument> (reader);
 		}
 
 
@@ -81,6 +81,10 @@ namespace System.ServiceModel.Syndication
 
 		ServiceDocumentFormatter formatter;
 		SyndicationExtensions extensions = new SyndicationExtensions ();
+
+		internal ServiceDocumentFormatter InternalFormatter {
+			set { formatter = value; }
+		}
 
 		public Dictionary<XmlQualifiedName, string> AttributeExtensions {
 			get { return extensions.Attributes; }
@@ -134,10 +138,42 @@ namespace System.ServiceModel.Syndication
 			return false;
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseElement (XmlReader reader, string version)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			reader.MoveToContent ();
+
+			if (reader.LocalName != "service" || reader.NamespaceURI != version)
+				return false;
+
+			for (int i = 0; i < reader.AttributeCount; i++) {
+				reader.MoveToAttribute (i);
+				if (!TryParseAttribute (reader.LocalName, reader.NamespaceURI, reader.Value, version))
+					AttributeExtensions.Add (new XmlQualifiedName (reader.LocalName, reader.NamespaceURI), reader.Value);
+			}
+			reader.MoveToElement ();
+
+			if (reader.IsEmptyElement)
+				throw new XmlException ("AtomPP service element requires at least one workspace element");
+
+			reader.ReadStartElement ();
+
+			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+				if (reader.LocalName == "workspace" && reader.NamespaceURI == version) {
+					var ws = CreateWorkspace ();
+					if (ws.TryParseElement (reader, version)) {
+						Workspaces.Add (ws);
+						continue;
+					}
+				}
+				ElementExtensions.Add (new SyndicationElementExtension (reader));
+			}
+
+			reader.ReadEndElement ();
+
+			return true;
 		}
 
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)

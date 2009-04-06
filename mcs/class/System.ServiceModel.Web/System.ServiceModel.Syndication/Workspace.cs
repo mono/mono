@@ -77,16 +77,44 @@ namespace System.ServiceModel.Syndication
 			return new ResourceCollectionInfo ();
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseAttribute (string name, string ns, string value, string version)
 		{
-			throw new NotImplementedException ();
+			if (name == "base" && ns == Namespaces.Xml) {
+				BaseUri = new Uri (value, UriKind.RelativeOrAbsolute);
+				return true;
+			}
+			return false;
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseElement (XmlReader reader, string version)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			reader.MoveToContent ();
+			if (reader.LocalName != "workspace" || reader.NamespaceURI != version)
+				return false;
+
+			bool isEmpty = reader.IsEmptyElement;
+
+			reader.ReadStartElement ();
+			if (isEmpty)
+				return true;
+
+			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+				if (reader.LocalName == "title" && reader.NamespaceURI == Namespaces.Atom10) {
+					Title = Atom10FeedFormatter.ReadTextSyndicationContent (reader);
+					continue;
+				} else if (reader.LocalName == "collection" && reader.NamespaceURI == version) {
+					var rc = new ResourceCollectionInfo ();
+					if (rc.TryParseElement (reader, version)) {
+						Collections.Add (rc);
+						continue;
+					}
+				}
+				ElementExtensions.Add (new SyndicationElementExtension (reader));
+			}
+			return true;
 		}
 
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)

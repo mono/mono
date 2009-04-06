@@ -38,34 +38,29 @@ namespace System.ServiceModel.Syndication
 	[DataContract]
 	public abstract class ServiceDocumentFormatter
 	{
-		[MonoTODO]
 		protected static SyndicationCategory CreateCategory (InlineCategoriesDocument inlineCategories)
 		{
-			throw new NotImplementedException ();
+			return inlineCategories.CreateCategory ();
 		}
 
-		[MonoTODO]
 		protected static ResourceCollectionInfo CreateCollection (Workspace workspace)
 		{
-			throw new NotImplementedException ();
+			return workspace.CreateResourceCollection ();
 		}
 
-		[MonoTODO]
 		protected static InlineCategoriesDocument CreateInlineCategories (ResourceCollectionInfo collection)
 		{
-			throw new NotImplementedException ();
+			return collection.CreateInlineCategoriesDocument ();
 		}
 
-		[MonoTODO]
 		protected static ReferencedCategoriesDocument CreateReferencedCategories (ResourceCollectionInfo collection)
 		{
-			throw new NotImplementedException ();
+			return collection.CreateReferencedCategoriesDocument ();
 		}
 
-		[MonoTODO]
 		protected static Workspace CreateWorkspace (ServiceDocument document)
 		{
-			throw new NotImplementedException ();
+			return document.CreateWorkspace ();
 		}
 
 		[MonoTODO]
@@ -201,7 +196,7 @@ namespace System.ServiceModel.Syndication
 
 		protected virtual ServiceDocument CreateDocumentInstance ()
 		{
-			return new ServiceDocument ();
+			return new ServiceDocument () { InternalFormatter = this };
 		}
 
 		public abstract void ReadFrom (XmlReader reader);

@@ -107,21 +107,54 @@ namespace System.ServiceModel.Syndication
 			return new ReferencedCategoriesDocument ();
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseAttribute (string name, string ns, string value, string version)
 		{
-			throw new NotImplementedException ();
+			if (name == "base" && ns == Namespaces.Xml)
+				BaseUri = new Uri (value, UriKind.RelativeOrAbsolute);
+			else if (name == "href" && ns == String.Empty)
+				Link = new Uri (value, UriKind.RelativeOrAbsolute);
+			else
+				return false;
+			return true;
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseElement (XmlReader reader, string version)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+			reader.MoveToContent ();
+
+			if (reader.LocalName != "collection" || reader.NamespaceURI != version)
+				return false;
+
+			for (int i = 0; i < reader.AttributeCount; i++) {
+				reader.MoveToAttribute (i);
+				if (!TryParseAttribute (reader.LocalName, reader.NamespaceURI, reader.Value, version))
+					AttributeExtensions.Add (new XmlQualifiedName (reader.LocalName, reader.NamespaceURI), reader.Value);
+			}
+			reader.MoveToElement ();
+
+			if (!reader.IsEmptyElement) {
+				reader.Read ();
+				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+					if (reader.LocalName == "title" && reader.NamespaceURI == Namespaces.Atom10)
+						Title = Atom10FeedFormatter.ReadTextSyndicationContent (reader);
+					else
+						ElementExtensions.Add (new SyndicationElementExtension (reader));
+				}
+			}
+			reader.Read ();
+			return true;
 		}
 
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
 			extensions.WriteAttributeExtensions (writer, version);
+		}
+
+		protected internal virtual void WriteElementExtensions (XmlWriter writer, string version)
+		{
+			extensions.WriteElementExtensions (writer, version);
 		}
 	}
 }

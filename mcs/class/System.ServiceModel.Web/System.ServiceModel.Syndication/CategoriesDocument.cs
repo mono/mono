@@ -101,16 +101,34 @@ namespace System.ServiceModel.Syndication
 			GetFormatter ().WriteTo (writer);
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseAttribute (string name, string ns, string value, string version)
 		{
-			throw new NotImplementedException ();
+			var inline = this as InlineCategoriesDocument;
+			if (name == "lang" && ns == Namespaces.Xml)
+				Language = value;
+			else if (name == "base" && ns == Namespaces.Xml)
+				BaseUri = new Uri (value, UriKind.RelativeOrAbsolute);
+			else if (name == "href" && ns == String.Empty && this is ReferencedCategoriesDocument)
+				((ReferencedCategoriesDocument) this).Link = new Uri (value, UriKind.RelativeOrAbsolute);
+			else if (name == "fixed" && ns == String.Empty && inline != null && value == "true")
+				inline.IsFixed = true;
+			else if (name == "scheme" && ns == String.Empty && inline != null)
+				inline.Scheme = value;
+			else
+				return false;
+			return true;
 		}
 
-		[MonoTODO]
 		protected internal virtual bool TryParseElement (XmlReader reader, string version)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+
+			var f = GetFormatter ();
+			if (!f.CanRead (reader))
+				return false;
+			f.ReadFrom (reader);
+			return true;
 		}
 
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
