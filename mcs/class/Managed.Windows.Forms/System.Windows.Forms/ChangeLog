@@ -1,3 +1,10 @@
+2009-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolTip.cs: New fields to store the title/icon information.
+	* ThemeWin32Classic.cs: Implement support for tooltip's title and
+	icon.
+	Fixes #491978.
+
 2009-04-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: When removing a tab that was previously selected, set

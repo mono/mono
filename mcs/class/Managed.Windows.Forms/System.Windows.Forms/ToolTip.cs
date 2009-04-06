@@ -64,7 +64,6 @@ namespace System.Windows.Forms {
 		private bool owner_draw;
 		private bool stripAmpersands;
 		private ToolTipIcon tool_tip_icon;
-		private string tool_tip_title;
 		private bool useAnimation;
 		private bool useFading;
 		private object tag;
@@ -76,6 +75,11 @@ namespace System.Windows.Forms {
 		internal class ToolTipWindow : Control {
 			#region ToolTipWindow Class Local Variables
 			private Control associated_control;
+			internal Icon icon;
+			internal string title = String.Empty;
+			internal Rectangle icon_rect;
+			internal Rectangle title_rect;
+			internal Rectangle text_rect;
 			#endregion	// ToolTipWindow Class Local Variables
 			
 			#region ToolTipWindow Class Constructor
@@ -531,13 +535,35 @@ namespace System.Windows.Forms {
 		[DefaultValue (ToolTipIcon.None)]
 		public ToolTipIcon ToolTipIcon {
 			get { return this.tool_tip_icon; }
-			set { this.tool_tip_icon = value; }
+			set {
+				switch (value) {
+					case ToolTipIcon.None:
+						tooltip_window.icon = null;
+						break;
+					case ToolTipIcon.Error:
+						tooltip_window.icon = SystemIcons.Error;
+						break;
+					case ToolTipIcon.Warning:
+						tooltip_window.icon = SystemIcons.Warning;
+						break;
+					case ToolTipIcon.Info:
+						tooltip_window.icon = SystemIcons.Information;
+						break;
+				}
+
+				tool_tip_icon = value;
+		       	}
 		}
 		
 		[DefaultValue ("")]
 		public string ToolTipTitle {
-			get { return this.tool_tip_title; }
-			set { this.tool_tip_title = value; }
+			get { return tooltip_window.title; }
+			set {
+			       if (value == null)
+				       value = String.Empty;
+			       
+			       tooltip_window.title = value; 
+			}
 		}
 		
 		[Browsable (true)]

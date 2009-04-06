@@ -5394,14 +5394,23 @@ namespace System.Windows.Forms
 		{
 			ToolTipDrawBackground (dc, clip_rectangle, control);
 
-			Rectangle text_rect = Rectangle.Inflate (control.ClientRectangle, -2, -1);
+			TextFormatFlags flags = TextFormatFlags.HidePrefix;
 #if NET_2_0
 			Color foreground = control.ForeColor;
+			if (control.title.Length > 0) {
+				Font bold_font = new Font (control.Font, control.Font.Style | FontStyle.Bold);
+				TextRenderer.DrawTextInternal (dc, control.title, bold_font, control.title_rect,
+						foreground, flags, false);
+				bold_font.Dispose ();
+			}
+
+			if (control.icon != null)
+				dc.DrawIcon (control.icon, control.icon_rect);
 #else
 			Color foreground = this.ColorInfoText;
 #endif
-			TextFormatFlags flags = TextFormatFlags.HidePrefix;
-			TextRenderer.DrawTextInternal (dc, control.Text, control.Font, text_rect, foreground, flags, false);
+
+			TextRenderer.DrawTextInternal (dc, control.Text, control.Font, control.text_rect, foreground, flags, false);
 		}
 
 		protected virtual void ToolTipDrawBackground (Graphics dc, Rectangle clip_rectangle, ToolTip.ToolTipWindow control)
@@ -5418,10 +5427,59 @@ namespace System.Windows.Forms
 		public override Size ToolTipSize(ToolTip.ToolTipWindow tt, string text)
 		{
 			Size size = TextRenderer.MeasureTextInternal (text, tt.Font, false);
-
 			size.Width += 4;
 			size.Height += 3;
-			
+			Rectangle text_rect = new Rectangle (Point.Empty, size);
+			text_rect.Inflate (-2, -1);
+			tt.text_rect = text_rect;
+#if NET_2_0
+			tt.icon_rect = tt.title_rect = Rectangle.Empty;
+
+			Size title_size = Size.Empty;
+			if (tt.title.Length > 0) {
+				Font bold_font = new Font (tt.Font, tt.Font.Style | FontStyle.Bold);
+				title_size = TextRenderer.MeasureTextInternal (tt.title, bold_font, false);
+				bold_font.Dispose ();
+			}
+
+			Size icon_size = Size.Empty;
+			if (tt.icon != null)
+				icon_size = new Size (size.Height, size.Height);
+
+			if (icon_size != Size.Empty || title_size != Size.Empty) {
+				int padding = 8;
+				int top_area_width = 0;
+				int top_area_height = icon_size.Height > title_size.Height ? icon_size.Height : title_size.Height;
+				Size text_size = size;
+				Point location = new Point (padding, padding);
+
+				if (icon_size != Size.Empty) {
+					tt.icon_rect = new Rectangle (location, icon_size);
+					top_area_width = icon_size.Width + padding;
+				}
+
+				if (title_size != Size.Empty) {
+					Rectangle title_rect = new Rectangle (location, new Size (title_size.Width, top_area_height));
+					if (icon_size != Size.Empty)
+						title_rect.X += icon_size.Width + padding;
+
+					tt.title_rect = title_rect;
+					top_area_width += title_size.Width;
+				}
+
+				tt.text_rect = new Rectangle (new Point (location.X, location.Y + top_area_height + padding),
+						text_size);
+
+				size.Height += padding + top_area_height;
+				if (top_area_width > size.Width)
+					size.Width = top_area_width;
+
+				// margins
+				size.Width += padding * 2;
+				size.Height += padding * 2;
+			}
+#endif
+
 			return size;
 		}
 		
