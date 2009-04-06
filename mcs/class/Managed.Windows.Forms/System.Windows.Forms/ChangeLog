@@ -1,3 +1,8 @@
+2009-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ThemeWin32Classic.cs: Don't draw ListView's gridlines if we are using groups.
+	Fixes part of #491978.
+
 2009-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolTip.cs: New fields to store the title/icon information.
