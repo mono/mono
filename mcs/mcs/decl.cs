@@ -2693,10 +2693,10 @@ namespace Mono.CSharp {
 
 #if GMCS_SOURCE
 						if (type_a.IsGenericParameter && type_a.DeclaringMethod != null)
-							type_a = null;
+							type_a = typeof (TypeParameter);
 
 						if (type_b.IsGenericParameter && type_b.DeclaringMethod != null)
-							type_b = null;
+							type_b = typeof (TypeParameter);
 #endif
 						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=
 							(parameters.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF))
