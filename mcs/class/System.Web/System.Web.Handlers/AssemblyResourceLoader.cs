@@ -297,7 +297,7 @@ namespace System.Web.Handlers {
 			response.ContentType = wra.ContentType;
 
 			DateTime utcnow = DateTime.UtcNow;
-			response.Headers.Add ("Last-Modified", utcnow.ToString ("r"));
+			response.AddHeader ("Last-Modified", utcnow.ToString ("r"));
 			response.ExpiresAbsolute = utcnow.AddYears (1);
 			response.CacheControl = "public";
 
