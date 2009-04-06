@@ -578,7 +578,7 @@ namespace System.Data.OracleClient
 
 				if (Parameters.Count > 0) {
 					for (int p = 0; p < Parameters.Count; p++) {
-						OracleParameter parm = Parameters [0];
+						OracleParameter parm = Parameters [p];
 						if (parm.OracleType.Equals (OracleType.Cursor)) {
 							if (parm.Direction != ParameterDirection.Input) {
 								rd = (OracleDataReader) parm.Value;
