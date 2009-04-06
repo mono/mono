@@ -49,7 +49,10 @@ def stringify_class_name(ns, name):
             return "byte"
         if name == "String":
             return "string"
-    return "%s.%s" % (ns, name)
+    if ns == "":
+        return name
+    else:
+        return "%s.%s" % (ns, name)
 
 class ArrayPrinter:
     "Print a C# array"

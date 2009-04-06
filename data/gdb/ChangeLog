@@ -1,5 +1,8 @@
 2009-04-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-gdb.py (stringify_class_name): Handle classes without a namespace
+	correctly.
+	
 	* mono-gdb.py: Update after the changes to dwarfwriter.c.
 
 2009-04-05  Zoltan Varga  <vargaz@gmail.com>
