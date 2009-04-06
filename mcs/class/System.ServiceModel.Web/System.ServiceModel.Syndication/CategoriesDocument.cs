@@ -37,22 +37,19 @@ namespace System.ServiceModel.Syndication
 {
 	public abstract class CategoriesDocument
 	{
-		[MonoTODO]
 		public static InlineCategoriesDocument Create (Collection<SyndicationCategory> categories)
 		{
-			throw new NotImplementedException ();
+			return new InlineCategoriesDocument (categories);
 		}
 
-		[MonoTODO]
 		public static ReferencedCategoriesDocument Create (Uri linkToCategoriesDocument)
 		{
-			throw new NotImplementedException ();
+			return new ReferencedCategoriesDocument (linkToCategoriesDocument);
 		}
 
-		[MonoTODO]
 		public static InlineCategoriesDocument Create (Collection<SyndicationCategory> categories, bool isFixed, string scheme)
 		{
-			throw new NotImplementedException ();
+			return new InlineCategoriesDocument (categories, isFixed, scheme);
 		}
 
 		public static CategoriesDocument Load (XmlReader reader)
@@ -75,17 +72,20 @@ namespace System.ServiceModel.Syndication
 
 		public CategoriesDocument ()
 		{
-			AttributeExtensions = new Dictionary<XmlQualifiedName, string> ();
-			ElementExtensions = new SyndicationElementExtensionCollection ();
 		}
 
 		CategoriesDocumentFormatter formatter;
+		SyndicationExtensions extensions = new SyndicationExtensions ();
 
-		public Dictionary<XmlQualifiedName, string> AttributeExtensions { get; private set; }
+		public Dictionary<XmlQualifiedName, string> AttributeExtensions {
+			get { return extensions.Attributes; }
+		}
 
 		public Uri BaseUri { get; set; }
 
-		public SyndicationElementExtensionCollection ElementExtensions { get; private set; }
+		public SyndicationElementExtensionCollection ElementExtensions {
+			get { return extensions.Elements; }
+		}
 
 		public string Language { get; set; }
 
@@ -115,12 +115,12 @@ namespace System.ServiceModel.Syndication
 
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
-			Utility.WriteAttributeExtensions (AttributeExtensions, writer, version);
+			extensions.WriteAttributeExtensions (writer, version);
 		}
 
 		protected internal virtual void WriteElementExtensions (XmlWriter writer, string version)
 		{
-			Utility.WriteElementExtensions (ElementExtensions, writer, version);
+			extensions.WriteElementExtensions (writer, version);
 		}
 	}
 }

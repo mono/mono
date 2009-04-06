@@ -1,5 +1,11 @@
 2009-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Workspace.cs, ResourceCollectionInfo.cs,
+	  CategoriesDocument.cs, ServiceDocument.cs : use common internal
+	  SyndicationExtension class for extensions.
+
+2009-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AtomPub10CategoriesDocumentFormatter.cs, Atom10FeedFormatter.cs,
 	  CategoriesDocument.cs : ongoing implementation (handle categories).
 

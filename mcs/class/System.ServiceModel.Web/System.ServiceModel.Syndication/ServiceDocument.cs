@@ -68,8 +68,6 @@ namespace System.ServiceModel.Syndication
 
 		public ServiceDocument ()
 		{
-			AttributeExtensions = new Dictionary<XmlQualifiedName, string> ();
-			ElementExtensions = new SyndicationElementExtensionCollection ();
 			Workspaces = new Collection<Workspace> ();
 		}
 
@@ -82,12 +80,17 @@ namespace System.ServiceModel.Syndication
 		}
 
 		ServiceDocumentFormatter formatter;
+		SyndicationExtensions extensions = new SyndicationExtensions ();
 
-		public Dictionary<XmlQualifiedName, string> AttributeExtensions { get; private set; }
+		public Dictionary<XmlQualifiedName, string> AttributeExtensions {
+			get { return extensions.Attributes; }
+		}
 
 		public Uri BaseUri { get; set; }
 
-		public SyndicationElementExtensionCollection ElementExtensions { get; private set; }
+		public SyndicationElementExtensionCollection ElementExtensions {
+			get { return extensions.Elements; }
+		}
 
 		public string Language { get; set; }
 
@@ -139,12 +142,12 @@ namespace System.ServiceModel.Syndication
 
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
-			Utility.WriteAttributeExtensions (AttributeExtensions, writer, version);
+			extensions.WriteAttributeExtensions (writer, version);
 		}
 
 		protected internal virtual void WriteElementExtensions (XmlWriter writer, string version)
 		{
-			Utility.WriteElementExtensions (ElementExtensions, writer, version);
+			extensions.WriteElementExtensions (writer, version);
 		}
 	}
 }

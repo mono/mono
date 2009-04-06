@@ -40,9 +40,7 @@ namespace System.ServiceModel.Syndication
 		public ResourceCollectionInfo ()
 		{
 			Accepts = new Collection<string> ();
-			AttributeExtensions = new Dictionary<XmlQualifiedName, string> ();
 			Categories = new Collection<CategoriesDocument> ();
-			ElementExtensions = new SyndicationElementExtensionCollection ();
 		}
 
 		public ResourceCollectionInfo (TextSyndicationContent title, Uri link)
@@ -78,16 +76,21 @@ namespace System.ServiceModel.Syndication
 		}
 
 		bool allow_new_entries;
+		SyndicationExtensions extensions = new SyndicationExtensions ();
 
 		public Collection<string> Accepts { get; private set; }
 
-		public Dictionary<XmlQualifiedName, string> AttributeExtensions { get; private set; }
+		public Dictionary<XmlQualifiedName, string> AttributeExtensions {
+			get { return extensions.Attributes; }
+		}
 
 		public Uri BaseUri { get; set; }
 
 		public Collection<CategoriesDocument> Categories { get; private set; }
 
-		public SyndicationElementExtensionCollection ElementExtensions { get; private set; }
+		public SyndicationElementExtensionCollection ElementExtensions {
+			get { return extensions.Elements; }
+		}
 
 		public Uri Link { get; set; }
 
@@ -118,7 +121,7 @@ namespace System.ServiceModel.Syndication
 
 		protected internal virtual void WriteAttributeExtensions (XmlWriter writer, string version)
 		{
-			Utility.WriteElementExtensions (ElementExtensions, writer, version);
+			extensions.WriteAttributeExtensions (writer, version);
 		}
 	}
 }
