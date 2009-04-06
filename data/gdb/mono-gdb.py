@@ -68,7 +68,10 @@ class ObjectPrinter:
     "Print a C# object"
 
     def __init__(self, val):
-        self.val = val
+        if str(val.type ())[-1] == "&":
+            self.val = val.address ().cast (gdb.Type ("MonoObject").pointer ())
+        else:
+            self.val = val.cast (gdb.Type ("MonoObject").pointer ())
 
     class _iterator:
         def __init__(self,obj):
@@ -89,7 +92,7 @@ class ObjectPrinter:
                     return (field.name, self.obj [field.name])
             except:
                 # Superclass
-                return (field.name, self.obj.cast (gdb.Type ("struct %s" % (field.name))))
+                return (field.name, self.obj.cast (gdb.Type ("%s" % (field.name))))
 
     def children(self):
         # FIXME: It would be easier if gdb.Value would support iteration itself
@@ -97,19 +100,23 @@ class ObjectPrinter:
         if int(self.val.cast (gdb.Type ("guint64"))) == 0:
             return {}.__iter__ ()
         try:
-            obj = self.val.cast (gdb.Type ("MonoObject").pointer ()).dereference ()
+            obj = self.val.dereference ()
             class_ns = obj ['vtable'].dereference ()['klass'].dereference ()['name_space'].string ()
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
-            gdb_type = gdb.Type ("struct %s.%s" % (class_ns, class_name))
+            if class_name [-2:len(class_name)] == "[]":
+                return {}.__iter__ ()
+            gdb_type = gdb.Type ("struct %s_%s" % (class_ns.replace (".", "_"), class_name))
             return self._iterator(obj.cast (gdb_type))
         except:
+            print sys.exc_info ()[0]
+            print sys.exc_info ()[1]
             return {}.__iter__ ()
 
     def to_string(self):
         if int(self.val.cast (gdb.Type ("guint64"))) == 0:
             return "null"
         try:
-            obj = self.val.cast (gdb.Type ("MonoObject").pointer ()).dereference ()
+            obj = self.val.dereference ()
             class_ns = obj ['vtable'].dereference ()['klass'].dereference ()['name_space'].string ()
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
             if class_ns == "System" and class_name == "String":
@@ -132,9 +139,12 @@ class ObjectPrinter:
             return self.val.cast (gdb.Type ("guint64"))
 
 def lookup_pretty_printer(val):
-    if str (val.type ()) == "object":
+    t = str (val.type ())
+    if t == "object":
         return ObjectPrinter (val)
-    if str (val.type ()) == "string":
+    if t[0:5] == "class" and t[-1] == "&":
+        return ObjectPrinter (val)    
+    if t == "string":
         return StringPrinter (val)
     return None
 
