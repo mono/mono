@@ -1,0 +1,5 @@
+2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	(bah, bad manner; no ChangeLog previously.)
+
+	* CustomPeerResolverServiceTest.cs : added contract check.

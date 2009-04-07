@@ -9,7 +9,7 @@
 
 namespace System.ServiceModel.PeerResolvers
 {
-	[ServiceContract (Name = "IPeerResolverContract", Namespace = "http://schemas.microsoft.com/net/2006/05/peer/resolver")]
+	[ServiceContract (Name = "IPeerResolverContract", Namespace = "http://schemas.microsoft.com/net/2006/05/peer/resolver", SessionMode = SessionMode.Allowed)]
 	public interface IPeerResolverContract
 	{
 		[OperationContract (IsOneWay = false, Name = "GetServiceInfo", 

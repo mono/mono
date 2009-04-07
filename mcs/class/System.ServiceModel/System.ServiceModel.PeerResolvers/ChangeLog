@@ -1,3 +1,7 @@
+2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IPeerResolverContract.cs: fix SessionMode value.
+
 2007-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RegisterInfo.cs : marcos would have never thought that this is
