@@ -29,7 +29,7 @@ namespace Mono.Tasklets {
 
 	// we may want to not expose this class at all in the API
 	// and just provide a higher-level API
-	public class Continuation
+	public class Continuation : IDisposable
 	{
 		IntPtr cont;
 
@@ -40,7 +40,12 @@ namespace Mono.Tasklets {
 
 		~Continuation ()
 		{
-			if (cont != IntPtr.Zero) {
+			Dispose ();
+		}
+
+		public void Dispose ()
+		{
+			if (cont != IntPtr.Zero){
 				free (cont);
 				cont = IntPtr.Zero;
 			}

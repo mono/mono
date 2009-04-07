@@ -1,0 +1,5 @@
+2009-04-07  Miguel de Icaza  <miguel@novell.com>
+
+	* Mono.Tasklets/Mono.Tasklets/Continuation.cs: Implement
+	IDisposable.
+
