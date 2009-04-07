@@ -1,3 +1,13 @@
+2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Don't init code slots for exception boundaries if they
+	are larger than code size.
+
+	This can happen in valid code if the try/catch block is not followed by any instruction
+	and do a backward branch on the leave instruction.
+
+	Fixes #492494.
+
 2009-04-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Fix typo while comparing second method names
