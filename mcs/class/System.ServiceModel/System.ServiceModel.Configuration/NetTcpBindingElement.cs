@@ -170,6 +170,7 @@ namespace System.ServiceModel.Configuration
 			get { return (XmlDictionaryReaderQuotasElement) this ["readerQuotas"]; }
 		}
 
+		[MonoTODO ("This configuration prpperty is not applied yet")]
 		[ConfigurationProperty ("reliableSession",
 			 Options = ConfigurationPropertyOptions.None)]
 		public StandardBindingOptionalReliableSessionElement ReliableSession {
@@ -207,10 +208,41 @@ namespace System.ServiceModel.Configuration
 			set { this ["transferMode"] = value; }
 		}
 
+		protected override void OnApplyConfiguration (Binding binding)
+		{
+			NetTcpBinding n = (NetTcpBinding) binding;
+			n.CloseTimeout = CloseTimeout;
+			n.HostNameComparisonMode = HostNameComparisonMode;
+			n.ListenBacklog = ListenBacklog;
+			n.MaxBufferPoolSize = MaxBufferPoolSize;
+			n.MaxBufferSize = MaxBufferSize;
+			n.MaxConnections = MaxConnections;
+			n.MaxReceivedMessageSize = MaxReceivedMessageSize;
+			n.OpenTimeout = OpenTimeout;
+			n.PortSharingEnabled = PortSharingEnabled;
+			if (ReaderQuotas != null)
+				n.ReaderQuotas = ReaderQuotas.Create ();
+			n.ReceiveTimeout = ReceiveTimeout;
 
+			// FIXME: apply this too.
+			//ReliableSession.ApplyTo (n.ReliableSession);
 
-		protected override void OnApplyConfiguration (Binding binding) {
-			throw new NotImplementedException ();
+			if (Security != null) {
+				n.Security.Mode = Security.Mode;
+				if (Security.Message != null) {
+					n.Security.Message.AlgorithmSuite = Security.Message.AlgorithmSuite;
+					n.Security.Message.ClientCredentialType = Security.Message.ClientCredentialType;
+				}
+				if (Security.Transport != null) {
+					n.Security.Transport.ClientCredentialType = Security.Transport.ClientCredentialType;
+					n.Security.Transport.ProtectionLevel = Security.Transport.ProtectionLevel;
+				}
+			}
+
+			n.SendTimeout = SendTimeout;
+			n.TransactionFlow = TransactionFlow;
+			n.TransactionProtocol = TransactionProtocol;
+			n.TransferMode = TransferMode;
 		}
 	}
 

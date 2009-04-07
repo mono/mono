@@ -162,7 +162,21 @@ namespace System.ServiceModel.Configuration
 			get { return properties; }
 		}
 
-
+		internal XmlDictionaryReaderQuotas Create ()
+		{
+			var q =  new XmlDictionaryReaderQuotas ();
+			if (MaxArrayLength > 0)
+				q.MaxArrayLength = MaxArrayLength;
+			if (MaxBytesPerRead > 0)
+				q.MaxBytesPerRead = MaxBytesPerRead;
+			if (MaxDepth > 0)
+				q.MaxDepth = MaxDepth;
+			if (MaxNameTableCharCount > 0)
+				q.MaxNameTableCharCount = MaxNameTableCharCount;
+			if (MaxStringContentLength > 0)
+				q.MaxStringContentLength = MaxStringContentLength;
+			return q;
+		}
 	}
 
 }
