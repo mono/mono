@@ -1,3 +1,8 @@
+2009-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptComponentDescriptor.cs: new values replace old in
+	AddEntry.
+
 2009-03-19  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptManager.cs: WriteCallbackPanel is called from
