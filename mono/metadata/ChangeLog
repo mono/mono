@@ -1,3 +1,7 @@
+2009-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (dis_one): Decode string arguments.
+
 2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* pedump.c (dump_verify_info): Dump type name correctly.
