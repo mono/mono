@@ -140,6 +140,8 @@ namespace System.Web.UI
 				dictionary = new Dictionary<string, string> ();
 			if (!dictionary.ContainsKey (key))
 				dictionary.Add (key, value);
+			else
+				dictionary [key] = value;
 		}
 
 		protected internal override string GetScript () {
