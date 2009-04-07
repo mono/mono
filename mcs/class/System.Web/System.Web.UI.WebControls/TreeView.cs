@@ -987,7 +987,6 @@ namespace System.Web.UI.WebControls
 				if (ret != null) {
 					ret.ChildNodes.Add (node);
 					node.Index = idx;
-					Console.WriteLine (node.Path);
 				}
 				ret = node;
 			}
