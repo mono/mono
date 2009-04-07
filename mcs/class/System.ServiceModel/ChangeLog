@@ -1,3 +1,7 @@
+2009-04-07  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources: added IOnlineStatus.cs.
+
 2009-03-05  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added /r:System.Xml.Linq in 2.1 too.

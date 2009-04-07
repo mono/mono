@@ -1,3 +1,7 @@
+2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IOnlineStatus.cs : added missing interface.
+
 2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : do not bork at some unimplemented bits.

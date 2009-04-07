@@ -819,6 +819,7 @@ System.ServiceModel/IDuplexClientChannel.cs
 System.ServiceModel/IExtensibleObject.cs
 System.ServiceModel/IExtension.cs
 System.ServiceModel/IExtensionCollection.cs
+System.ServiceModel/IOnlineStatus.cs
 System.ServiceModel/IServiceChannel.cs
 System.ServiceModel/InstanceContext.cs
 System.ServiceModel/InvalidMessageContractException.cs
