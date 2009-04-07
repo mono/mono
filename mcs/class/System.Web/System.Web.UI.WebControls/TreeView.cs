@@ -991,11 +991,10 @@ namespace System.Web.UI.WebControls
 				ret = node;
 			}
 
-			ret.Text = args [1];
-			ret.Value = args [2];
-			ret.ImageUrl = args [3];
-			ret.NavigateUrl = args [4];
-			ret.Target = args [5];
+			ret.Value = args [1].Replace ("U+007C", "|");
+			ret.ImageUrl = args [2].Replace ("U+007C", "|");
+			ret.NavigateUrl = args [3].Replace ("U+007C", "|");
+			ret.Target = args [4].Replace ("U+007C", "|");
 			ret.Tree = this;
 			
 			NotifyPopulateRequired (ret);
@@ -1152,11 +1151,11 @@ namespace System.Web.UI.WebControls
 
 		const string _OnPreRender_Script_PopulateCallback =
 			"{0}.form = {1};\n" +
-			"{0}.PopulateNode = function (nodeId, nodeText, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget) {{\n" +
+			"{0}.PopulateNode = function (nodeId, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget) {{\n" +
 			"\t{2}.__theFormPostData = \"\";\n" +
 			"\t{2}.__theFormPostCollection = new Array ();\n" +
 			"\t{2}.WebForm_InitCallback ();\n" +
-			"\tTreeView_PopulateNode (this.uid, this.treeId, nodeId, nodeText, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget)\n}};\n";
+			"\tTreeView_PopulateNode (this.uid, this.treeId, nodeId, nodeValue, nodeImageUrl, nodeNavigateUrl, nodeTarget)\n}};\n";
 
 		const string _OnPreRender_Script_CallbackOptions =
 			"{0}.populateFromClient = {1};\n" +
@@ -1949,14 +1948,13 @@ namespace System.Web.UI.WebControls
 		
 		string GetClientExpandEvent (TreeNode node)
 		{
-			return String.Format ("javascript:TreeView_ToggleExpand ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
+			return String.Format ("javascript:TreeView_ToggleExpand ('{0}','{1}','{2}','{3}','{4}','{5}')",
 					      ClientID,
 					      node.Path,
-					      "", //HttpUtility.HtmlEncode (node.Text).Replace ("'", "\\'"),
-					      HttpUtility.HtmlAttributeEncode (node.Value).Replace ("'", "\\'"),
-					      HttpUtility.HtmlAttributeEncode (node.ImageUrl).Replace ("'", "\\'"),
-					      HttpUtility.HtmlAttributeEncode (node.NavigateUrl).Replace ("'", "\\'"),
-					      HttpUtility.HtmlAttributeEncode (node.Target).Replace ("'", "\\'"));
+					      HttpUtility.HtmlAttributeEncode (node.Value).Replace ("'", "\\'").Replace ("|","U+007C"),
+					      HttpUtility.HtmlAttributeEncode (node.ImageUrl).Replace ("'", "\\'").Replace ("|","U+007c"),
+					      HttpUtility.HtmlAttributeEncode (node.NavigateUrl).Replace ("'", "\\'").Replace ("|","U+007C"),
+					      HttpUtility.HtmlAttributeEncode (node.Target).Replace ("'", "\\'").Replace ("|","U+007C"));
 		}
 
 		TreeNode FindNodeByPos (string path)

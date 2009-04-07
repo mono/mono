@@ -1,3 +1,11 @@
+2009-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeView.js: removed nodeText parameter from the JS calls.
+
+	* TreeView.cs: encode | characters into U+007C, so that
+	RaiseCallbackEvent doesn't get confused.
+	Removed nodeText parameter from the JS calls.
+
 2009-04-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TreeNode.cs: reset the path data for all child nodes too.
