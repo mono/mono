@@ -1,3 +1,4 @@
+AssemblyInfo.cs
 ../../class/System.Data.Linq/src/DbLinq.ProductInfo.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/AttributeDefinition.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/Implementation/CodeDomGenerator/AbstractCodeDomGenerator.cs
@@ -33,7 +34,6 @@
 ../../class/System.Data.Linq/src/DbMetal/Utility/VariablesExtension.cs
 ../../class/System.Data.Linq/src/DbMetal/Program.cs
 ../../class/System.Data.Linq/src/DbMetal/AbstractParameters.cs
-../../class/System.Data.Linq/src/DbMetal/Properties/AssemblyInfo.cs
 ../../class/System.Data.Linq/src/DbMetal/Configuration/ProvidersSection.cs
 ../../class/System.Data.Linq/src/DbMetal/Parameters.cs
 ../../class/System.Data.Linq/src/DbMetal/Schema/TableAlias.cs

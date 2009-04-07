@@ -1,3 +1,15 @@
+2009-04-06  Jonathan Pryor <jonpryor@vt.edu>
+
+	* . (svn:ignore): Ignore generated files.
+	* AssemblyInfo.cs: Added; Assembly-level attributes for sqlmetal.exe.
+	* Makefile: Correct the "namespace" of the embedded resource files;
+	  build NUnit tests for sqlmetal.exe.
+	* sqlmetal.exe.sources: Build against the local AssemblyInfo.cs, not
+	  DbMetal's AssemblyInfo.cs file.
+	* sqlmetal_test.dll.sources: Added; source files for the NUnit test.
+	* Test/AssemblyInfo.cs: Added; Assembly-level attributes for the NUnit
+	  test assembly.
+
 2009-03-12  Jonathan Pryor <jonpryor@vt.edu>
 
 	* ChangeLog, Makefile, sqlmetal.exe.config, sqlmetal.exe.sources:

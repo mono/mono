@@ -3,13 +3,14 @@ SUBDIRS =
 include ../../build/rules.make
 
 dbmetal_src = ../../class/System.Data.Linq/src/DbMetal
+ns          = DbMetal.Language
 
 LOCAL_MCS_FLAGS = \
 	-d:MONO_STRICT                                                      \
 	-keyfile:$(dbmetal_src)/../DbLinq.snk                               \
-	-resource:$(dbmetal_src)/Language/EnglishWords.txt,EnglishWords.txt \
-	-resource:$(dbmetal_src)/Language/FrenchWords.txt,FrenchWords.txt   \
-	-resource:$(dbmetal_src)/Language/GermanWords.txt,GermanWords.txt   \
+	-resource:$(dbmetal_src)/Language/EnglishWords.txt,$(ns).EnglishWords.txt \
+	-resource:$(dbmetal_src)/Language/FrenchWords.txt,$(ns).FrenchWords.txt   \
+	-resource:$(dbmetal_src)/Language/GermanWords.txt,$(ns).GermanWords.txt   \
 	-r:System.Configuration                                             \
 	-r:System.Core                                                      \
 	-r:System.Data                                                      \
@@ -26,9 +27,9 @@ EXTRA_DISTFILES = \
 
 PROGRAM = sqlmetal.exe
 
-$(PROGRAM) : $(SQLMETAL_RESOURCES)
+$(PROGRAM) : Makefile $(SQLMETAL_RESOURCES)
+
+HAS_NUNIT_TEST = yes
 
 include ../../build/executable.make
-
-$(PROGRAM) : Makefile
 
