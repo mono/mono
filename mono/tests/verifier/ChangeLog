@@ -1,3 +1,8 @@
+2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_eh_block_with_no_instructions_after.il: Regression test
+	for #492494.
+
 2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* unverifiable_throw_with_unboxed_generic_argument.il: Regression test
