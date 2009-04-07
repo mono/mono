@@ -1,3 +1,7 @@
+2009-04-07  Miguel de Icaza  <miguel@novell.com>
+
+	* tasklets.c: Return exceptions in the out argument.
+
 2009-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Fix alignment in the LOCALLOC_IMM
