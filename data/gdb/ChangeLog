@@ -1,3 +1,7 @@
+2009-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (ObjectPrinter.__init__): Update to latest archer api.
+
 2009-04-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* test-xdb.py: New file, tester script for xdb.

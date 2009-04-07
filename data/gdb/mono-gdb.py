@@ -72,7 +72,7 @@ class ObjectPrinter:
 
     def __init__(self, val):
         if str(val.type ())[-1] == "&":
-            self.val = val.address ().cast (gdb.Type ("MonoObject").pointer ())
+            self.val = val.address.cast (gdb.Type ("MonoObject").pointer ())
         else:
             self.val = val.cast (gdb.Type ("MonoObject").pointer ())
 
