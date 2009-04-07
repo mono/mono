@@ -1,3 +1,9 @@
+2009-04-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebRequest.cs: send REST after PASV to avoid some servers
+	forgetting aboout it.
+	Bug #491590 fixed.
+
 2009-03-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: we were sending CWD instead of PWD.
