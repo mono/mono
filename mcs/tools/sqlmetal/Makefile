@@ -29,7 +29,7 @@ PROGRAM = sqlmetal.exe
 
 $(PROGRAM) : Makefile $(SQLMETAL_RESOURCES)
 
-HAS_NUNIT_TEST = yes
+#HAS_NUNIT_TEST = yes
 
 include ../../build/executable.make
 
