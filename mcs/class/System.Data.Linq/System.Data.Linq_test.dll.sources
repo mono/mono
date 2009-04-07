@@ -1,3 +1,4 @@
+dummy.cs
 ../src/DbLinq.SqlServer/Test/MsSqlDataContextTest.cs
 ../src/DbLinq/Test/BinaryTest.cs
 ../src/DbLinq/Test/DataContextTest.cs
