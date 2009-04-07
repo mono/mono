@@ -120,5 +120,31 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.IsFalse (be.CanBuildChannelListener<IDuplexChannel> (ctx), "#11");
 			Assert.IsTrue (be.CanBuildChannelListener<IDuplexSessionChannel> (ctx), "#12");
 		}
+
+		[Test]
+		public void CanBuildChannelListener2 ()
+		{
+			TcpTransportBindingElement be =
+				new TcpTransportBindingElement ();
+			be.TransferMode = TransferMode.Streamed;
+			BindingContext ctx = new BindingContext (
+				new CustomBinding (), empty_params);
+			Assert.IsTrue (be.CanBuildChannelListener<IReplyChannel> (ctx), "#1");
+			Assert.IsFalse (be.CanBuildChannelListener<IOutputChannel> (ctx), "#2");
+			Assert.IsFalse (be.CanBuildChannelListener<IRequestChannel> (ctx), "#3");
+			Assert.IsFalse (be.CanBuildChannelListener<IInputChannel> (ctx), "#4");
+
+			Assert.IsFalse (be.CanBuildChannelListener<IReplySessionChannel> (ctx), "#5");
+			Assert.IsFalse (be.CanBuildChannelListener<IOutputSessionChannel> (ctx), "#6");
+			Assert.IsFalse (be.CanBuildChannelListener<IRequestSessionChannel> (ctx), "#7");
+			Assert.IsFalse (be.CanBuildChannelListener<IInputSessionChannel> (ctx), "#8");
+
+			// IServiceChannel is not supported
+			Assert.IsFalse (be.CanBuildChannelListener<IServiceChannel> (ctx), "#9");
+			Assert.IsFalse (be.CanBuildChannelListener<IClientChannel> (ctx), "#10");
+
+			Assert.IsFalse (be.CanBuildChannelListener<IDuplexChannel> (ctx), "#11");
+			Assert.IsFalse (be.CanBuildChannelListener<IDuplexSessionChannel> (ctx), "#12");
+		}
 	}
 }

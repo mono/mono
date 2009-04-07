@@ -87,14 +87,17 @@ namespace System.ServiceModel.Channels
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
+			if (!CanBuildChannelFactory<TChannel> (context))
+				throw new InvalidOperationException (String.Format ("Not supported channel factory type '{0}'", typeof (TChannel)));
 			return new TcpChannelFactory<TChannel> (this, context);
 		}
 
-		[MonoTODO]
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
+			if (!CanBuildChannelListener<TChannel> (context))
+				throw new InvalidOperationException (String.Format ("Not supported channel listener type '{0}'", typeof (TChannel)));
 			return new TcpChannelListener<TChannel> (this, context);
 		}
 

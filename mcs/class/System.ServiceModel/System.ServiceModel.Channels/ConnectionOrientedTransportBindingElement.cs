@@ -101,18 +101,32 @@ namespace System.ServiceModel.Channels
 			set { transfer_mode = value; }
 		}
 		
-		[MonoTODO]
 		public override bool CanBuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			return typeof (TChannel) == typeof (IDuplexSessionChannel);
+			switch (TransferMode) {
+			case TransferMode.Buffered:
+			case TransferMode.StreamedResponse:
+				return typeof (TChannel) == typeof (IDuplexSessionChannel);
+			case TransferMode.Streamed:
+			case TransferMode.StreamedRequest:
+				return typeof (TChannel) == typeof (IRequestChannel);
+			}
+			return false;
 		}
 
-		[MonoTODO]
 		public override bool CanBuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			return typeof (TChannel) == typeof (IDuplexSessionChannel);
+			switch (TransferMode) {
+			case TransferMode.Buffered:
+			case TransferMode.StreamedRequest:
+				return typeof (TChannel) == typeof (IDuplexSessionChannel);
+			case TransferMode.Streamed:
+			case TransferMode.StreamedResponse:
+				return typeof (TChannel) == typeof (IReplyChannel);
+			}
+			return false;
 		}
 	}
 }

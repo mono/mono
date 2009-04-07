@@ -1,3 +1,7 @@
+2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpTransportBindingElementTest.cs : more can-build tests.
+
 2008-04-13  Igor Zelmanovich <igorz@mainsoft.com>
 
 	* BindingTest.cs:

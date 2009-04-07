@@ -1,3 +1,10 @@
+2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpTransportBindingElement.cs : check build-ability before
+	  actually building channels.
+	* ConnectionOrientedTransportBindingElement.cs : fixed build-ability
+	  conditions according to MSDN.
+
 2009-03-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageHeader.cs, MessageHeaders.cs, MessageImpl.cs :

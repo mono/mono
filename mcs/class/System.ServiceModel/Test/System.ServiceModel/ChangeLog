@@ -1,3 +1,7 @@
+2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : new test.
+
 2009-02-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory_1Test.cs, ChannelFactoryTest.cs, ClientBaseTest.cs:
