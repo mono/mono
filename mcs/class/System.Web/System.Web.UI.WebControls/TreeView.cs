@@ -39,6 +39,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Security.Permissions;
 using System.Collections.Generic;
+using System.Web.Util;
 
 namespace System.Web.UI.WebControls
 {
@@ -978,19 +979,16 @@ namespace System.Web.UI.WebControls
 		{
 			string[] segments = args [0].Split ('_');
 			TreeNode ret = null, node;
-			string path;
 			StringBuilder sb = new StringBuilder ();
-			
-			foreach (string seg in segments) {
-				if (sb.Length == 0)
-					sb.Append (seg);
-				else
-					sb.Append ("_" + seg);
 
-				path = sb.ToString ();
+			foreach (string seg in segments) {
+				int idx = Int32.Parse (seg);
 				node = new TreeNode (seg);
-				if (ret != null)
+				if (ret != null) {
 					ret.ChildNodes.Add (node);
+					node.Index = idx;
+					Console.WriteLine (node.Path);
+				}
 				ret = node;
 			}
 
@@ -1516,6 +1514,7 @@ namespace System.Web.UI.WebControls
 						writer.RenderBeginTag (HtmlTextWriterTag.A);	// Anchor
 					}
 
+					// tooltip is 'HtmlAttributeEncoded'
 					writer.AddAttribute ("alt", tooltip);
 
 					if (buttonImage && clientExpand)
@@ -1879,16 +1878,16 @@ namespace System.Web.UI.WebControls
 		string GetNodeImageToolTip (bool expand, string txt) {
 			if (expand)  {
 				if (ExpandImageToolTip != "")
-					return String.Format (ExpandImageToolTip, txt);
+					return String.Format (ExpandImageToolTip, HttpUtility.HtmlAttributeEncode (txt));
 				else if (txt != null)
-					return "Expand " + txt;
+					return "Expand " + HttpUtility.HtmlAttributeEncode (txt);
 				else
 					return "Expand {0}";
 			} else {
 				if (CollapseImageToolTip != "")
-					return String.Format (CollapseImageToolTip, txt);
+					return String.Format (CollapseImageToolTip, HttpUtility.HtmlAttributeEncode (txt));
 				else if (txt != null)
-					return "Collapse " + txt;
+					return "Collapse " + HttpUtility.HtmlAttributeEncode (txt);
 				else
 					return "Collapse {0}";
 			}
@@ -1954,11 +1953,11 @@ namespace System.Web.UI.WebControls
 			return String.Format ("javascript:TreeView_ToggleExpand ('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
 					      ClientID,
 					      node.Path,
-					      node.Text,
-					      node.Value,
-					      node.ImageUrl,
-					      node.NavigateUrl,
-					      node.Target);
+					      "", //HttpUtility.HtmlEncode (node.Text).Replace ("'", "\\'"),
+					      HttpUtility.HtmlAttributeEncode (node.Value).Replace ("'", "\\'"),
+					      HttpUtility.HtmlAttributeEncode (node.ImageUrl).Replace ("'", "\\'"),
+					      HttpUtility.HtmlAttributeEncode (node.NavigateUrl).Replace ("'", "\\'"),
+					      HttpUtility.HtmlAttributeEncode (node.Target).Replace ("'", "\\'"));
 		}
 
 		TreeNode FindNodeByPos (string path)

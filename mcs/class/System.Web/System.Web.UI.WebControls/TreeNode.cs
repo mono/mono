@@ -119,6 +119,10 @@ namespace System.Web.UI.WebControls
 			path = null;
 			depth = -1;
 			gotBinding = false;
+			if (nodes != null) {
+				foreach (TreeNode node in nodes)
+					node.ResetPathData ();
+			}
 		}
 		
 		internal TreeView Tree {

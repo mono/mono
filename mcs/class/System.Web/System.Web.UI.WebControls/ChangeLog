@@ -1,3 +1,10 @@
+2009-04-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TreeNode.cs: reset the path data for all child nodes too.
+	* TreeView.cs: HtmlAttribute encode the node text. When rebuilding the
+	node tree, set the correct index for the nodes so that the Path is
+	correct.
+
 2009-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* TreeView.js: TreeView_ToggleExpand now takes more parameters - a
