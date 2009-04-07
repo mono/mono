@@ -57,11 +57,11 @@ namespace System.Web.Script.Services
 				response.ContentType = "text/html";
 				throw new InvalidOperationException ("Only Web services with a [ScriptService] attribute on the class definition can be called from script.");
 			}
-			
+
 			response.ContentType = "application/x-javascript";
-			response.Cache.SetExpires (DateTime.Now.AddYears (1));
+			response.Cache.SetExpires (DateTime.UtcNow.AddYears (1));
 			response.Cache.SetValidUntilExpires (true);
-			response.Cache.SetCacheability (HttpCacheability.Private);
+			response.Cache.SetCacheability (HttpCacheability.Public);
 			response.Output.Write (_logicalTypeInfo.Proxy);
 		}
 

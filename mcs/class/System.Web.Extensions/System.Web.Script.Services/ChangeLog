@@ -1,3 +1,7 @@
+2009-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ClientProxyHandler.cs: set cacheability to public.
+
 2009-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* LogicalTypeInfo.cs: don't throw NREX when the passed type
