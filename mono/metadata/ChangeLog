@@ -1,5 +1,9 @@
 2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c (dump_verify_info): Dump type name correctly.
+
+2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): Don't init code slots for exception boundaries if they
 	are larger than code size.
 
