@@ -1,3 +1,14 @@
+2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (method_from_memberref): If ít's a memberref to a typespec inflate
+	the signature and search the inflated type.
+
+	We can't blindly search the generic type definition or expect that the signature
+	will be inflated as both options can happen. The only solution is to search the
+	inflated type against the inflated signature.
+
+	Fixes #492778.
+
 2009-04-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (dis_one): Decode string arguments.
