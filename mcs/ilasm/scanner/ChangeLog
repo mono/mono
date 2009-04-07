@@ -1,3 +1,9 @@
+2009-04-08  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #487155.
+	* StringHelper.cs: Handle octal values in strings.
+	Patch from  Stephen Gennard (stephen@gennard.net)
+
 2006-11-09  Ankit Jain  <jankit@novell.com>
 
 	* ILTables.cs (keywords): Add 'retargetable'.

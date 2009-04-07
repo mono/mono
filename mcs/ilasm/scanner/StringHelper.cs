@@ -78,7 +78,7 @@ namespace Mono.ILASM {
 							continue;
 						}
 
-						int escaped = Escape (ch);
+						int escaped = Escape (reader, ch);
 						if (escaped == -1) {
                                                         reader.Unread (ch);
                                                         ch = '\\';
@@ -109,12 +109,21 @@ namespace Mono.ILASM {
 		/// </summary>
 		/// <param name="ch"></param>
 		/// <returns></returns>
-		public static int Escape (int ch)
+		public static int Escape (ILReader reader, int ch)
 		{
 			int res = -1;
 
 			if (ch >= '0' && ch <='7') {
-				//TODO : octal code
+				StringBuilder octal = new StringBuilder ();
+				octal.Append ((char)ch);
+				int possibleOctalChar = reader.Peek ();
+				if (possibleOctalChar >= '0' && possibleOctalChar <='7') {
+					octal.Append ((char)reader.Read ());
+					possibleOctalChar = reader.Peek ();
+					if (possibleOctalChar >= '0' && possibleOctalChar <='7')
+						octal.Append ((char)reader.Read ());
+				}
+				res = Convert.ToInt32(octal.ToString (), 8);
 			} else {
 				int id = "abfnrtv\"'\\".IndexOf ((char)ch);
 				if (id != -1) {
