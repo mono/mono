@@ -1,5 +1,9 @@
 2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : add duplex channels as channel candidates.
+
+2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IOnlineStatus.cs : added missing interface.
 
 2009-03-13  Atsushi Enomoto  <atsushi@ximian.com>

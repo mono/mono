@@ -522,6 +522,11 @@ namespace System.ServiceModel
 				return b.BuildChannelListener<IInputSessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
 			if (b.CanBuildChannelListener<IInputChannel> (pl))
 				return b.BuildChannelListener<IInputChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+
+			if (b.CanBuildChannelListener<IDuplexChannel> (pl))
+				return b.BuildChannelListener<IDuplexChannel> (se.ListenUri, "", se.ListenUriMode, pl);
+			if (b.CanBuildChannelListener<IDuplexSessionChannel> (pl))
+				return b.BuildChannelListener<IDuplexSessionChannel> (se.ListenUri, "", se.ListenUriMode, pl);
 			throw new InvalidOperationException ("None of the listener channel types is supported");
 		}
 
