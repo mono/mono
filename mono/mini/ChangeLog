@@ -1,3 +1,17 @@
+2009-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Fix alignment in the LOCALLOC_IMM
+	opcode. Use pointer types in more places instead of casting them to 
+	integers.
+
+	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Create a pass manager to run
+	optimizations.
+	(mono_llvm_optimize_method): New helper function to optimize a method.
+
+	* method-to-ir.c (mono_emit_widen_call_res): Extract the call result 
+	widening code so it could be called from more places.
+	(mono_method_to_ir): Call mono_emit_widne_call_res () in several more
+	code paths in the call opcodes.
 
 Mon Apr 6 14:19:54 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
