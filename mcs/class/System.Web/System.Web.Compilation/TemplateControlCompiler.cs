@@ -1809,6 +1809,9 @@ namespace System.Web.Compilation
 			}
 #endif
 
+			if (tca == TypeConverterAttribute.Default)
+				tca = null;
+			
 			if (tca == null)
 				return null;
 
@@ -2012,10 +2015,34 @@ namespace System.Web.Compilation
 				}
 			}
 
-			TypeConverter converter = preConverted ? cvt :
-				wasNullable ? TypeDescriptor.GetConverter (type) :
-				TypeDescriptor.GetProperties (member.DeclaringType) [member.Name].Converter;
+			TypeConverter converter = preConverted ? cvt : wasNullable ? TypeDescriptor.GetConverter (type) : null;
+			if (converter == null) {
+				PropertyDescriptor pdesc = TypeDescriptor.GetProperties (member.DeclaringType) [member.Name];
+				if (pdesc != null)
+					converter = pdesc.Converter;
+				else {
+					Type memberType;
+					switch (member.MemberType) {
+						case MemberTypes.Field:
+							memberType = ((FieldInfo)member).FieldType;
+							break;
 
+						case MemberTypes.Property:
+							memberType = ((PropertyInfo)member).PropertyType;
+							break;
+
+						default:
+							memberType = null;
+							break;
+					}
+
+					if (memberType == null)
+						return null;
+
+					converter = TypeDescriptor.GetConverter (memberType);
+				}
+			}
+			
 			if (preConverted || (converter != null && SafeCanConvertFrom (typeof (string), converter))) {
 				object value = preConverted ? convertedFromAttr : converter.ConvertFromInvariantString (str);
 

@@ -1,3 +1,9 @@
+2009-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: GenerateExpressionFromString doesn't
+	assume that the passed member is a property anymore. Fixes bug
+	#492252
+
 2009-04-01  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyBuilder.cs: CSharpCodePragmaGenerator.ReserveSpace:
