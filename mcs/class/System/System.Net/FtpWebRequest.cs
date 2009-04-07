@@ -719,14 +719,6 @@ namespace System.Net
 		{
 			State = RequestState.OpeningData;
 
-			// Handle content offset
-			if (offset > 0) {
-				FtpStatus status = SendCommand (RestCommand, offset.ToString ());
-
-				if (status.StatusCode != FtpStatusCode.FileCommandPending)
-					throw CreateExceptionFromResponse (status);
-			}
-
 			OpenDataConnection ();
 
 			State = RequestState.TransferInProgress;
@@ -936,6 +928,13 @@ namespace System.Net
 			FtpStatus status;
 			
 			Socket s = InitDataConnection ();
+
+			// Handle content offset
+			if (offset > 0) {
+				status = SendCommand (RestCommand, offset.ToString ());
+				if (status.StatusCode != FtpStatusCode.FileCommandPending)
+					throw CreateExceptionFromResponse (status);
+			}
 
 			if (method != WebRequestMethods.Ftp.ListDirectory && method != WebRequestMethods.Ftp.ListDirectoryDetails &&
 			    method != WebRequestMethods.Ftp.UploadFileWithUniqueName) {
