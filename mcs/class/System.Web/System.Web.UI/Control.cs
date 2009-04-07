@@ -1724,8 +1724,9 @@ namespace System.Web.UI
 				trace.Write ("control", String.Concat ("ApplyThemeRecursive ", _userId, " ", type_name));
 			}
 #endif
-			if (Page.PageTheme != null && EnableTheming) {
-				ControlSkin controlSkin = Page.PageTheme.GetControlSkin (GetType (), SkinID);
+			Page page = Page;
+			if (page != null && page.PageTheme != null && EnableTheming) {
+				ControlSkin controlSkin = page.PageTheme.GetControlSkin (GetType (), SkinID);
 				if (controlSkin != null)
 					controlSkin.ApplySkin (this);
 			}
