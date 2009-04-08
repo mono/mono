@@ -1,3 +1,8 @@
+2009-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Pass i1/i2 arguments as i4 since 
+	JITted code depends on it.
+
 2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
 	* aot-compiler.c: Use new MonoGenericParam accessors.
