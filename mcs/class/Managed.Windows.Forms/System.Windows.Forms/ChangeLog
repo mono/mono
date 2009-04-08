@@ -1,3 +1,9 @@
+2009-04-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextBox.cs: If Insert is pressed, change the internal
+	overwrite mode for our default value.
+	Fixes some bits of #477395.
+
 2009-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ListView.cs: In EnsureVisible avoid any direct access to items if we

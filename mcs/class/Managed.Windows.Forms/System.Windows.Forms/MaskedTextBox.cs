@@ -226,7 +226,16 @@ namespace System.Windows.Forms
 
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			// Only handle Delete here
+			// Only handle Delete or Insert here
+
+			if (e.KeyCode == Keys.Insert && insert_key_mode == InsertKeyMode.Default) {
+				// switch the internal overwriting mode, not the public one
+				insert_key_overwriting = !insert_key_overwriting;
+				OnIsOverwriteModeChanged (EventArgs.Empty);
+				e.Handled = true;
+				return;
+			}
+
 			if (e.KeyCode != Keys.Delete || is_empty_mask) {
 				base.OnKeyDown (e);
 				return;
