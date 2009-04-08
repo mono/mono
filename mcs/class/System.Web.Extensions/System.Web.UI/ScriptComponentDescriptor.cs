@@ -39,9 +39,9 @@ namespace System.Web.UI
 		string _elementID;
 		string _type;
 		string _id;
-		Dictionary<string, string> _properties;
-		Dictionary<string, string> _events;
-		Dictionary<string, string> _references;
+		IDictionary<string, string> _properties;
+		IDictionary<string, string> _events;
+		IDictionary<string, string> _references;
 
 		public ScriptComponentDescriptor (string type) {
 			if (String.IsNullOrEmpty (type))
@@ -135,9 +135,9 @@ namespace System.Web.UI
 			AddEntry (ref _properties, String.Format ("\"{0}\"", name), script);
 		}
 
-		void AddEntry (ref Dictionary<string, string> dictionary, string key, string value) {
+		void AddEntry (ref IDictionary<string, string> dictionary, string key, string value) {
 			if (dictionary == null)
-				dictionary = new Dictionary<string, string> ();
+				dictionary = new SortedDictionary<string, string> ();
 			if (!dictionary.ContainsKey (key))
 				dictionary.Add (key, value);
 			else
@@ -159,7 +159,7 @@ namespace System.Web.UI
 			}
 		}
 
-		internal static string SerializeDictionary (Dictionary<string, string> dictionary) {
+		internal static string SerializeDictionary (IDictionary<string, string> dictionary) {
 			if (dictionary == null || dictionary.Count == 0)
 				return "null";
 			StringBuilder sb = new StringBuilder ("{");

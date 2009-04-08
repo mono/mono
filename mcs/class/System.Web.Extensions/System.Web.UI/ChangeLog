@@ -1,3 +1,9 @@
+2009-04-08  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptComponentDescriptor.cs: properties/events/references must
+	be serialized in alphabetical order. This matches what .NET
+	does. Some 3rd party controls depend upon this fact.
+
 2009-04-07  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptComponentDescriptor.cs: new values replace old in
