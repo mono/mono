@@ -1,3 +1,10 @@
+2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
+
+	Reduce memory usage and improve correctness wrt MonoGenericParam
+	* aot-runtime.c (decode_klass_ref): Simplify generic parameter
+	handing.  Avoid allocating MonoGenericParams, but use the ones in
+	the container itself.
+
 2009-04-07  Miguel de Icaza  <miguel@novell.com>
 
 	* tasklets.c: Return exceptions in the out argument.
