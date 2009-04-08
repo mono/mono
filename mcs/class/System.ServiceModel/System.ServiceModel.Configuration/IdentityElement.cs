@@ -100,6 +100,24 @@ namespace System.ServiceModel.Configuration
 		}
 
 
+		internal EndpointIdentity Create ()
+		{
+			if (Certificate != null && !String.IsNullOrEmpty (Certificate.EncodedValue))
+				return new X509CertificateEndpointIdentity (new X509Certificate2 (Convert.FromBase64String (Certificate.EncodedValue)));
+			if (CertificateReference != null && !String.IsNullOrEmpty (CertificateReference.FindValue))
+				// FIXME: imeplement
+				throw new NotImplementedException ();
+			if (Dns != null && !String.IsNullOrEmpty (Dns.Value))
+				return new DnsEndpointIdentity (Dns.Value);
+			if (Rsa != null && !String.IsNullOrEmpty (Rsa.Value))
+				return new RsaEndpointIdentity (Rsa.Value);
+			if (ServicePrincipalName != null && !String.IsNullOrEmpty (ServicePrincipalName.Value))
+				return new SpnEndpointIdentity (ServicePrincipalName.Value);
+			if (UserPrincipalName != null && !String.IsNullOrEmpty (UserPrincipalName.Value))
+				return new UpnEndpointIdentity (UserPrincipalName.Value);
+
+			return null;
+		}
 	}
 
 }

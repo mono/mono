@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006-2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Reflection;
@@ -149,10 +150,34 @@ namespace System.ServiceModel.Configuration
 			get { return (PeerSecurityElement) this ["security"]; }
 		}
 
-
-
-		protected override void OnApplyConfiguration (Binding binding) {
-			throw new NotImplementedException ();
+		protected override void OnApplyConfiguration (Binding binding)
+		{
+			var n = (NetPeerTcpBinding) binding;
+			n.ListenIPAddress = ListenIPAddress;
+			n.MaxBufferPoolSize = MaxBufferPoolSize;
+			n.MaxReceivedMessageSize = MaxReceivedMessageSize;
+			n.Port = Port;
+			n.ReaderQuotas = ReaderQuotas.Create ();
+			if (Resolver != null) {
+				if (Resolver.Custom != null) {
+					n.Resolver.Custom.Address = new EndpointAddress (Resolver.Custom.Address, Resolver.Custom.Identity.Create (), Resolver.Custom.Headers.Headers);
+					if (Resolver.Custom.Binding != null) {
+						var bcol = ConfigUtil.BindingsSection [Resolver.Custom.Binding];
+						var bc = bcol.ConfiguredBindings.First (b => b.Name == Resolver.Custom.BindingConfiguration);
+						n.Resolver.Custom.Binding = (Binding) Activator.CreateInstance (bcol.BindingType, new object[0]);
+						bc.ApplyConfiguration (n.Resolver.Custom.Binding);
+					}
+					// FIXME: correct type instantiation.
+					if (!String.IsNullOrEmpty (Resolver.Custom.ResolverType))
+						n.Resolver.Custom.Resolver = (PeerResolver) Activator.CreateInstance (Type.GetType (Resolver.Custom.ResolverType), new object [0]);
+				}
+				n.Resolver.Mode = Resolver.Mode;
+				n.Resolver.ReferralPolicy = Resolver.ReferralPolicy;
+			}
+			if (Security != null) {
+				n.Security.Mode = Security.Mode;
+				n.Security.Transport.CredentialType = Security.Transport.CredentialType;
+			}
 		}
 	}
 
