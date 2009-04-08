@@ -1,3 +1,9 @@
+2009-04-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Simplify get_reflection_caller not to call
+	mono_method_get_last_managed (another stack walk) and adjust the
+	callers to handle a (should not happen) NULL return value.
+
 2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
 	Add accessors to some MonoGenericParam fields
