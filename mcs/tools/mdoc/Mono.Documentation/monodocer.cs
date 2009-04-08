@@ -47,6 +47,7 @@ class MDocUpdater : MDocCommand
 	
 	static string srcPath;
 	static List<AssemblyDefinition> assemblies;
+	static DefaultAssemblyResolver assemblyResolver = new DefaultAssemblyResolver();
 	
 	static bool nooverrides = true, delete = false, ignoremembers = false;
 	static bool pretty = false;
@@ -231,9 +232,9 @@ class MDocUpdater : MDocCommand
 		if (assembly == null)
 			throw new InvalidOperationException("Assembly " + name + " not found.");
 
-		var r = assembly.Resolver as BaseAssemblyResolver;
-		if (r != null && name.Contains (Path.DirectorySeparatorChar)) {
-			r.AddSearchDirectory (Path.GetDirectoryName (name));
+		assembly.Resolver = assemblyResolver;
+		if (name.Contains (Path.DirectorySeparatorChar)) {
+			assemblyResolver.AddSearchDirectory (Path.GetDirectoryName (name));
 		}
 		return assembly;
 	}
