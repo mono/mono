@@ -333,6 +333,42 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.AreEqual(4, employeeCount, "Expected for employees, got count=" + employeeCount);
         }
 
+        [Test]
+        [ExpectedException(ExceptionType=typeof(InvalidOperationException), ExpectedMessage="Data context options cannot be modified after results have been returned from a query.")]
+        public void C13_Changing_ObjectTrackingEnabled2False()
+        {
+            Northwind db = CreateDB();
+            var q = from t in db.Territories
+                    select t;
+            var employeeCount = q.Count();
+            db.ObjectTrackingEnabled = false;
+            Assert.AreEqual(4, employeeCount, "Expected for employees, got count=" + employeeCount);
+        }
+
+        [Test]
+        [ExpectedException(ExceptionType = typeof(InvalidOperationException), ExpectedMessage = "Data context options cannot be modified after results have been returned from a query.")]
+        public void C14_Changing_DeferredLoadingEnabled2False()
+        {
+            Northwind db = CreateDB();
+            var q = from t in db.Territories
+                    select t;
+            var employeeCount = q.Count();
+            db.DeferredLoadingEnabled = false;
+            Assert.AreEqual(4, employeeCount, "Expected for employees, got count=" + employeeCount);
+        }
+
+        [Test]
+        [ExpectedException(ExceptionType = typeof(InvalidOperationException), ExpectedMessage = "Object tracking is not enabled for the current data context instance.")]
+        public void C15_SubmitChanges_DeferredLoadingEnabled_False()
+        {
+            Northwind db = CreateDB();
+            db.ObjectTrackingEnabled = false;
+            var q = from t in db.Territories
+                    select t;
+            var employeeCount = q.Count();
+            db.SubmitChanges();
+        }
+
         #endregion
 
         #region region D - select first or last - calls IQueryable.Execute instead of GetEnumerator

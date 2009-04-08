@@ -34,7 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{C11FF24E-368
 	ProjectSection(SolutionItems) = preProject
 		..\lib\DynamicLinq.cs = ..\lib\DynamicLinq.cs
 		..\lib\Ingres.Client.dll = ..\lib\Ingres.Client.dll
-		..\lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll = ..\lib\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 		..\lib\Mono.Security.dll = ..\lib\Mono.Security.dll
 		..\lib\MySql.Data.dll = ..\lib\MySql.Data.dll
 		..\lib\Npgsql.dll = ..\lib\Npgsql.dll

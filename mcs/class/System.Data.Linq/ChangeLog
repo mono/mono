@@ -1,3 +1,8 @@
+2009-04-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* **/* (svn:ignore): Ignore generated files and directories.
+	* src/**/*: Flush; syncs to DbLinq r1043.
+
 2009-03-31  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Remove make warning about overriding dist-local.

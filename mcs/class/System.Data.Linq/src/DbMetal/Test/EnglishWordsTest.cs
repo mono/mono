@@ -25,10 +25,8 @@
 #endregion
 
 using DbMetal.Language;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace DbLinqTest
 {
@@ -39,7 +37,6 @@ namespace DbLinqTest
     ///to contain all EnglishWordsTest Unit Tests
     ///</summary>
     [TestFixture]
-    [TestClass]
     public class EnglishWordsTest
     {
         public EnglishWordsTest()
@@ -70,28 +67,27 @@ namespace DbLinqTest
 
         private EnglishWords englishWords;
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_HelloWorld()
         {
             var actual = englishWords.GetWords("helloworld");
             AssertAreEqual(actual, "hello", "world");
         }
-        [TestMethod]
+
         [Test]
         public void GetWordsTest_HireDate()
         {
             var actual = englishWords.GetWords("hiredate");
             AssertAreEqual(actual, "hire", "date");
         }
-        [TestMethod]
+
         [Test]
         public void GetWordsTest_QuantityPerUnit()
         {
             var actual = englishWords.GetWords("quantityperunit");
             AssertAreEqual(actual, "quantity", "per", "unit");
         }
-        [TestMethod]
+
         [Test]
         public void GetWordsTest_UnitsInStock()
         {
@@ -99,21 +95,19 @@ namespace DbLinqTest
             AssertAreEqual(actual, "units", "in", "stock");
         }
         // we can't rely on this test, since "terr" is not a word, so the algorithm returs "ft" "t" "err" "region"
-        //[TestMethod]
         //[Test]
         //public void GetWords4Test()
         //{
         //    var actual = englishWords.GetWords("fkterrregion");
         //    AssertAreEqual(actual, "fk", "terr", "region");
         //}
-        [TestMethod]
         [Test]
         public void GetWordsTest_FkProdCatG()
         {
             var actual = englishWords.GetWords("fkprodcatg");
             AssertAreEqual(actual, "fk", "prod", "cat", "g");
         }
-        [TestMethod]
+
         [Test]
         public void GetWordsTest_CatG()
         {
@@ -121,7 +115,6 @@ namespace DbLinqTest
             AssertAreEqual(actual, "cat", "g");
         }
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_CustomerId()
         {
@@ -129,7 +122,6 @@ namespace DbLinqTest
             AssertAreEqual(actual, "customer", "id");
         }
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_SupplierId()
         {
@@ -147,7 +139,6 @@ namespace DbLinqTest
         //    AssertAreEqual(actual, "int", "type");
         //}
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_AllIntType()
         {
@@ -155,21 +146,18 @@ namespace DbLinqTest
             AssertAreEqual(actual, "all", "int", "type");
         }
 
-        [TestMethod]
         [Test]
         public void GetNoteTest_ToothPaste()
         {
             Assert.IsTrue(englishWords.GetNote(new[] { "toothpaste" }) > englishWords.GetNote(new[] { "tooth", "paste" }));
         }
 
-        [TestMethod]
         [Test]
         public void GetNoteTest_PerUnit()
         {
             Assert.IsTrue(englishWords.GetNote(new[] { "per", "unit" }) > englishWords.GetNote(new[] { "peru", "nit" }));
         }
 
-        [TestMethod]
         [Test]
         public void GetNoteTest_Hello()
         {

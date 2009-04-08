@@ -56,9 +56,6 @@ namespace Test_NUnit
                 xConnectionStringsDoc.Load("../src/ConnectionStrings.xml");
                 XmlNode currentAssemblyNode = xConnectionStringsDoc.SelectSingleNode(string.Format("//Connection[@assembly=\"{0}\"]", Assembly.GetCallingAssembly().GetName().Name));
                 string stringConnection = currentAssemblyNode.FirstChild.Value.Replace(@"\\", @"\");
-								Console.WriteLine ("# Assembly={0}; connectionString={1}",
-										Assembly.GetCallingAssembly().GetName().Name,
-										stringConnection);
                 if (stringConnection.Contains("{0}"))
                     stringConnection = string.Format(stringConnection, DbServer);
                 return stringConnection;

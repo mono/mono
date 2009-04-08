@@ -25,10 +25,8 @@
 #endregion
 
 using DbMetal.Language;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace DbLinqTest
 {
@@ -39,7 +37,6 @@ namespace DbLinqTest
     ///to contain all EnglishWordsTest Unit Tests
     ///</summary>
     [TestFixture]
-    [TestClass]
     public class FrenchWordsTest
     {
         public FrenchWordsTest()
@@ -70,7 +67,6 @@ namespace DbLinqTest
 
         private FrenchWords frenchWords;
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_SalutMonde()
         {
@@ -78,7 +74,6 @@ namespace DbLinqTest
             AssertAreEqual(actual, "salut", "monde");
         }
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_MTER()
         {
@@ -86,7 +81,6 @@ namespace DbLinqTest
             AssertAreEqual(actual, "mon", "tailleur", "est", "riche");
         }
 
-        [TestMethod]
         [Test]
         public void PluralizeTest_Oeuf()
         {
@@ -94,21 +88,20 @@ namespace DbLinqTest
             Assert.AreEqual("œufs", actual);
         }
 
-        [TestMethod]
         [Test]
         public void PluralizeTest_Bijou()
         {
             var actual = frenchWords.Pluralize("bijou");
             Assert.AreEqual("bijoux", actual);
         }
-        [TestMethod]
+
         [Test]
         public void PluralizeTest_Cou()
         {
             var actual = frenchWords.Pluralize("cou");
             Assert.AreEqual("cous", actual);
         }
-        [TestMethod]
+
         [Test]
         public void PluralizeTest_Gas()
         {

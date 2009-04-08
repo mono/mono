@@ -140,6 +140,8 @@ namespace DbLinq.Data.Linq.Implementation
             lock (lockObject)
             {
                 var entityTrack = FindByReference(entity);
+                Console.WriteLine("# RegisterToWatch({0}, {1})", entity, identityKey);
+                Console.WriteLine("# entityTrack={0}", entityTrack);
                 if (entityTrack == null)
                 {
                     entityTrack = new EntityTrack(entity, EntityState.ToWatch) { IdentityKey = identityKey };
@@ -148,6 +150,7 @@ namespace DbLinq.Data.Linq.Implementation
                 }
                 else
                 {
+                    Console.WriteLine("# have entityTrack; entityState={0}", entityTrack.EntityState);
                     // changes the state of the current entity
                     switch (entityTrack.EntityState)
                     {

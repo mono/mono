@@ -28,9 +28,7 @@ using System.Globalization;
 using DbLinq.Schema;
 using DbLinq.Schema.Implementation;
 using DbLinq.Util;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
 
 namespace DbLinqTest
 {
@@ -38,7 +36,6 @@ namespace DbLinqTest
     /// Summary description for TypeContextTest
     /// </summary>
     [TestFixture]
-    [TestClass]
     public class TypeContextTest
     {
         public enum SomeEnum
@@ -47,7 +44,6 @@ namespace DbLinqTest
             B = 2,
         }
 
-        [TestMethod]
         [Test]
         public void ToEnumTest1()
         {
@@ -55,7 +51,6 @@ namespace DbLinqTest
             Assert.AreEqual(SomeEnum.B, e);
         }
 
-        [TestMethod]
         [Test]
         public void ToEnumTest2()
         {

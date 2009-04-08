@@ -42,8 +42,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.VisualStudio.TeamSystem.Data.UnitTesting, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core">
@@ -102,6 +100,7 @@
     <Compile Include="Data\Linq\SqlClient\FirebirdProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\Sql2005Provider.cs" />
     <Compile Include="Data\Linq\SqlClient\Sql2000Provider.cs" />
+    <Compile Include="Data\Linq\SqlClient\Sql2008Provider.cs" />
     <Compile Include="Data\Linq\SqlClient\SqlServerProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\SqliteProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\OracleProvider.cs" />

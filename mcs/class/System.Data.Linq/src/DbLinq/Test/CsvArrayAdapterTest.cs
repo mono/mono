@@ -27,9 +27,7 @@
 using System.Linq;
 using DbLinq.Schema.Dbml.Adapter;
 using DbLinq.Util;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
 
 namespace DbLinqTest
 {
@@ -37,7 +35,6 @@ namespace DbLinqTest
     /// Summary description for TypeContextTest
     /// </summary>
     [TestFixture]
-    [TestClass]
     public class CsvArrayAdapterTest
     {
         public class CsvArray
@@ -51,7 +48,6 @@ namespace DbLinqTest
             }
         }
 
-        [TestMethod]
         [Test]
         public void ArrayTest()
         {
@@ -62,7 +58,6 @@ namespace DbLinqTest
             Assert.AreEqual("b", al[1]);
         }
 
-        [TestMethod]
         [Test]
         public void WriteArrayTest()
         {

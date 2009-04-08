@@ -24,6 +24,8 @@
 // 
 #endregion
 
+using System.Data.Linq.SqlClient;
+
 #if MONO_STRICT
 namespace System.Data.Linq.SqlClient
 #else

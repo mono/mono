@@ -58,6 +58,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         public virtual IEnumerable<T> Select<T>(SelectQuery selectQuery)
         {
             var rowObjectCreator = selectQuery.GetRowObjectCreator<T>();
+            Console.WriteLine("# rowObjectCreator={0}", rowObjectCreator.Method);
+            Console.WriteLine("# rowObjectCreator.Target={0}", rowObjectCreator.Target.GetType().FullName);
 
             // handle the special case where the query is empty, meaning we don't need the DB
             if (string.IsNullOrEmpty(selectQuery.Sql.ToString()))

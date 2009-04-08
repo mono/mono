@@ -30,7 +30,7 @@ using DbLinq.Schema.Dbml;
 using DbLinq.Util;
 using DbLinq.Vendor;
 using DbLinq.Vendor.Implementation;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace DbLinqTest
 {
@@ -38,14 +38,14 @@ namespace DbLinqTest
     ///This is a test class for SchemaLoaderTest and is intended
     ///to contain all SchemaLoaderTest Unit Tests
     ///</summary>
-    [TestClass()]
+    [TestFixture]
     public class IDataTypeExtensionsTest
     {
 
         /// <summary>
         ///A test for UnpackDbType
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void UnpackDbType1Test()
         {
             string rawType = "int";
@@ -61,7 +61,7 @@ namespace DbLinqTest
         /// <summary>
         ///A test for UnpackDbType
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void UnpackDbType2Test()
         {
             string rawType = "int(12)";
@@ -77,7 +77,7 @@ namespace DbLinqTest
         /// <summary>
         ///A test for UnpackDbType
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void UnpackDbType3Test()
         {
             string rawType = "number(15,5)";
@@ -93,7 +93,7 @@ namespace DbLinqTest
         /// <summary>
         ///A test for UnpackDbType
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void UnpackDbType4Test()
         {
             string rawType = "type()";
@@ -108,7 +108,7 @@ namespace DbLinqTest
         /// <summary>
         ///A test for UnpackDbType
         ///</summary>
-        [TestMethod()]
+        [Test]
         public void UnpackDbType5Test()
         {
             string rawType = "smallint unsigned";

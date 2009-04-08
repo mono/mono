@@ -32,9 +32,7 @@ using DbLinq.Schema.Implementation;
 using DbLinq.Util;
 using DbMetal;
 using DbMetal.Language;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
-using Assert = NUnit.Framework.Assert;
 using Case = DbLinq.Schema.Case;
 using WordsExtraction = DbLinq.Schema.WordsExtraction;
 
@@ -44,7 +42,6 @@ namespace DbLinqTest
     /// Test for NameFormatter
     /// </summary>
     [TestFixture]
-    [TestClass]
     public class NameFormatterTest
     {
         private NameFormat InvariantNameFormat
@@ -64,7 +61,6 @@ namespace DbLinqTest
             }
         }
 
-        [TestMethod]
         [Test]
         public void InvalidCharactersCaseTest()
         {
@@ -73,7 +69,6 @@ namespace DbLinqTest
             Assert.AreEqual("A__", tn.ClassName);
         }
 
-        [TestMethod]
         [Test]
         public void InvalidCharactersLanguageTest()
         {
@@ -82,7 +77,6 @@ namespace DbLinqTest
             Assert.AreEqual("A__", tn.ClassName);
         }
 
-        [TestMethod]
         [Test]
         public void InvalidCharactersLanguage2Test()
         {
@@ -99,7 +93,6 @@ namespace DbLinqTest
             }
         }
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_MyTableName()
         {
@@ -116,7 +109,6 @@ namespace DbLinqTest
             }
         }
 
-        [TestMethod]
         [Test]
         public void GetWordsTest_MyTableName2()
         {

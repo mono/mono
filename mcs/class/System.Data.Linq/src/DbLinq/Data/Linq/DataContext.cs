@@ -610,6 +610,7 @@ namespace DbLinq.Data.Linq
 
             var identityReader = _GetIdentityReader(entity.GetType());
             var identityKey = identityReader.GetIdentityKey(entity);
+            Console.WriteLine("# identityKey={0}", identityKey == null ? "<null>" : identityKey.ToString());
             // if we have no key, we can not watch
             if (identityKey == null)
                 return;
