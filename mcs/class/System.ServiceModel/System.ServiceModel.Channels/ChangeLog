@@ -1,3 +1,7 @@
+2009-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerTransportBindingElement.cs : ListenIPAddress is IPAddress.
+
 2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpTransportBindingElement.cs : check build-ability before

@@ -38,7 +38,6 @@ namespace System.ServiceModel.Channels
 	public sealed class PeerTransportBindingElement
 		: TransportBindingElement, ISecurityCapabilities
 	{
-		string listen_ip_addr;
 		long max_recv_message_size;
 		bool auth_msg;
 		int port;
@@ -54,10 +53,7 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		public string ListenIPAddress {
-			get { return listen_ip_addr; }
-			set { listen_ip_addr = value; }
-		}
+		public IPAddress ListenIPAddress { get; set; }
 
 		public override long MaxReceivedMessageSize {
 			get { return max_recv_message_size; }
