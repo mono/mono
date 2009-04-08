@@ -1,3 +1,10 @@
+2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
+
+	Fix gtest-252.cs
+	* verify.c (mono_type_is_valid_type_in_context): Rewrite to use
+	the standard case/loop.  In particular, don't complain about
+	references to generic type definitions.
+
 2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (method_from_memberref): If ít's a memberref to a typespec inflate
