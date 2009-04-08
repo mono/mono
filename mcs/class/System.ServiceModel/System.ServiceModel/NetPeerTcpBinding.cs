@@ -29,6 +29,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Security;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -42,7 +43,6 @@ namespace System.ServiceModel
 		IBindingDeliveryCapabilities, IBindingMulticastCapabilities,
 		ISecurityCapabilities, IBindingRuntimePreferences
 	{
-		string listen_ip_address;
 		long max_buffer_pool_size = 0x80000;
 		long max_recv_message_size = 0x10000;
 		bool msg_auth;
@@ -62,10 +62,7 @@ namespace System.ServiceModel
 			throw new NotImplementedException ();
 		}
 
-		public string ListenIPAddress {
-			get { return listen_ip_address; }
-			set { listen_ip_address = value; }
-		}
+		public IPAddress ListenIPAddress { get; set; }
 
 		public long MaxBufferPoolSize {
 			get { return max_buffer_pool_size; }
