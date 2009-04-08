@@ -1,5 +1,9 @@
 2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
+	* get.c: Use new MonoGenericParam accessors.
+
+2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
+
 	* get.c: Use MonoGenericContainer accessor to get the contained
 	MonoGenericParam.
 

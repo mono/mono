@@ -1,5 +1,14 @@
 2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
+	Add accessors to some MonoGenericParam fields
+	* class-internals.h (mono_generic_param_owner): New accessor.
+	(mono_generic_param_num): Likewise.
+	(mono_type_get_generic_param_owner): New helper.
+	(mono_type_get_generic_param_num): New helper.
+	* class.c, icall.c, metadata.c, reflection.c, verify.c: Use them.
+
+2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
+
 	* class-internals.h (mono_generic_container_get_param): New wrapper.
 	* class.c, icall.c, metadata.c, verify.c: Use it.
 
