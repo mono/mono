@@ -1,3 +1,9 @@
+2009-04-08  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources:
+	  added PeerTransportSecuritySettings.cs.
+	* Makefile: use -r:System.Core in non-2.1 build too.
+
 2009-04-07  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel_test.dll.sources: added NetTcpBindingTest.cs.

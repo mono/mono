@@ -12,6 +12,7 @@ LIB_MCS_FLAGS = \
 		/unsafe \
 	        /r:System.dll \
 	        /r:System.Xml.dll \
+		/r:System.Core.dll \
 	        /r:System.Runtime.Serialization.dll \
 		$(RESOURCE_FILES:%=/resource:%)
 
@@ -30,7 +31,7 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 endif
 
 ifeq (2.1, $(FRAMEWORK_VERSION))
-LIB_MCS_FLAGS += /r:System.Net /r:System.Core /r:System.Xml.Linq
+LIB_MCS_FLAGS += /r:System.Net /r:System.Xml.Linq
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)

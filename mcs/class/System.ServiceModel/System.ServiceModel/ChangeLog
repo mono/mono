@@ -1,3 +1,8 @@
+2009-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerTransportSecuritySettings.cs : new.
+	* PeerSecuritySettings.cs : Transport was missing.
+
 2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : add duplex channels as channel candidates.
