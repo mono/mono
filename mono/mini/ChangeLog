@@ -1,3 +1,9 @@
+2009-04-08  Bill Holmes  <billholmes54@gmail.com>
+
+	* aot-runtime.c:  Fixing the MSVC build.
+
+	Code is contributed under MIT/X11 license.
+
 2009-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Pass i1/i2 arguments as i4 since 
