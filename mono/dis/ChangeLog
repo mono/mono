@@ -1,3 +1,8 @@
+2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
+
+	* get.c: Use MonoGenericContainer accessor to get the contained
+	MonoGenericParam.
+
 2009-03-12  Jb Evain  <jbevain@novell.com>
 
 	* get.c (get_token): add support for METHOD_SPEC tokens.
