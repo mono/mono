@@ -24,6 +24,9 @@
 using System;
 using System.IO;
 
+namespace Mono.CodeGeneration
+{
+
 public class CodeWriter
 {
 	TextWriter writer;
@@ -83,4 +86,6 @@ public class CodeWriter
 	{
 		indent--;
 	}
+}
+
 }
