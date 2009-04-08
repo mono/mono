@@ -1,3 +1,11 @@
+2009-04-08  Jonathan Pryor <jonpryor@vt.edu>
+
+	* AssemblyInfo.cs: Building against the local AssemblyInfo.cs broke
+	  sqlmetal, as it couldn't find an IProcessor implementation (as the
+	  local AssemblyInfo.cs was missing a [assembly: DbLinq] attribute).
+	  Fix so that sqlmetal works again.
+	* Makefile: Actually enable NUnit tests.
+
 2009-04-06  Jonathan Pryor <jonpryor@vt.edu>
 
 	* . (svn:ignore): Ignore generated files.

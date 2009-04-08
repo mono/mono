@@ -32,6 +32,8 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+using DbLinq.Factory;
+
 [assembly: AssemblyTitle ("SqlMetal")]
 [assembly: AssemblyDescription ("System.Data.Linq code generator")]
 [assembly: AssemblyDefaultAlias ("SqlMetal.exe")]
@@ -45,4 +47,6 @@ using System.Runtime.CompilerServices;
 "fe4a9cbb059374c0cc047aa28839fed7176761813caf6a2ffa0bff9afb50ead56dd3f56186a663" +
 "962a12b830c2a70eb70ec77823eb5750e5bdef9e01d097c30b5c5463c3d07d3472b58e4c02f279" +
 "2309259f")]
+
+[assembly: DbLinq]
 
