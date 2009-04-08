@@ -43,7 +43,7 @@ namespace MonoTests.System.ServiceModel
 		{
 			var n = new NetTcpBinding ();
 			Assert.AreEqual (HostNameComparisonMode.StrongWildcard, n.HostNameComparisonMode, "#1");
-			Assert.AreEqual (0, n.ListenBacklog, "#2");
+			Assert.AreEqual (10, n.ListenBacklog, "#2");
 			Assert.AreEqual (false, n.PortSharingEnabled, "#3");
 
 			var tr = n.CreateBindingElements ().Find<TcpTransportBindingElement> ();
