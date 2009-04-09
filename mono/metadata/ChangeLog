@@ -1,5 +1,7 @@
 2009-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* debug-helpers.c (dis_one): Fix decoding of strings in dynamic images.
+
 	* marshal.c (get_runtime_invoke_type): Share enums with their base types.
 	
 	* marshal.c (get_runtime_invoke_type): Share pointers with ints and
