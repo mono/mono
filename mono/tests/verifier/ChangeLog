@@ -1,3 +1,9 @@
+2009-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_nested_access_with_multi_array_instance.cs:
+	* valid_nested_access_with_array_instance.cs: Regression tests for
+	#493068.
+
 2009-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_eh_block_with_no_instructions_after.il: Regression test
