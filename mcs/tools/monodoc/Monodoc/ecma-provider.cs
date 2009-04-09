@@ -25,7 +25,6 @@ using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.Text;
 using System.Collections;
-using ICSharpCode.SharpZipLib.Zip;
 using Monodoc.Lucene.Net.Index;
 using Monodoc.Lucene.Net.Documents;
 

@@ -429,12 +429,18 @@ public class HelpSource {
 	DateTime zipFileWriteTime;
 	string name;
 	TraceLevel trace_level = TraceLevel.Warning;
+	bool nozip;
+	string base_dir;
 
 	public HelpSource (string base_filename, bool create)
 	{
 		this.name = Path.GetFileName (base_filename);
 		tree_filename = base_filename + ".tree";
 		zip_filename = base_filename + ".zip";
+		if (!create && Directory.Exists (base_filename)) {
+			nozip = true;
+			base_dir = base_filename;
+		}
 
 		if (create)
 			SetupForOutput ();
@@ -485,6 +491,13 @@ public class HelpSource {
 	/// </summary>
 	public virtual Stream GetHelpStream (string id)
 	{
+		if (nozip) {
+			string path = Path.Combine (base_dir, id);
+			if (File.Exists (path))
+				return File.OpenRead (path);
+			return null;
+		}
+
 		if (zip_file == null)
 			zip_file = new ZipFile (zip_filename);
 
@@ -507,6 +520,12 @@ public class HelpSource {
 	
 	public XmlReader GetHelpXml (string id)
 	{
+		if (nozip) {
+			Stream s = File.OpenRead (Path.Combine (base_dir, id));
+			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
+			return new XmlTextReader (url, s);
+		}
+
 		if (zip_file == null)
 			zip_file = new ZipFile (zip_filename);
 
@@ -521,6 +540,15 @@ public class HelpSource {
 	
 	public virtual XmlDocument GetHelpXmlWithChanges (string id)
 	{
+		if (nozip) {
+			Stream s = File.OpenRead (Path.Combine (base_dir, id));
+			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
+			XmlReader r = new XmlTextReader (url, s);
+			XmlDocument ret = new XmlDocument ();
+			ret.Load (r);
+			return ret;
+		}
+
 		if (zip_file == null)
 			zip_file = new ZipFile (zip_filename);
 

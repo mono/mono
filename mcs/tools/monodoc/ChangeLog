@@ -1,3 +1,9 @@
+2009-04-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ecma-provider.cs: remove 'using'.
+	* provider.cs: if there's a directory with the base name, read the
+	files from there instead of from the .zip file.
+
 2009-03-01  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/ecma-provider.cs: Viewing type members (plural, e.g. the
