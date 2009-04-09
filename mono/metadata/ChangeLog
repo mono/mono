@@ -1,3 +1,9 @@
+2009-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_delegate_type_equal): Proper check MONO_TYPE_CLASS.
+
+	* verify.c (verify_ldftn_delegate): Improve error message.
+
 2009-04-09  Raja R Harinath  <harinath@hurrynot.org>
 
 	* reflection.c (my_mono_class_from_mono_type): Remove.
