@@ -1,3 +1,11 @@
+2009-04-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CheckedListbox.cs: When executing OnItemClick check that the index
+	is different to -1 before trying to retrieve an item using that value.
+	Fixes a ArgumentOutOfRangeException thrown when the horizontal
+	scrollbar was visible but not needed, and then a clicked was received
+	on its area.
+
 2009-04-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MaskedTextBox.cs: If Insert is pressed, change the internal
