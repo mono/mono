@@ -1,5 +1,16 @@
 2009-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (can_access_instantiation): Verify accesibility of element types
+	for arrays and pointers.
+
+	* class.c (can_access_type): Return true if the target class is VAR or MVAR.
+
+	* class.c (mono_method_can_access_method_full): Fix typos in the documentation.
+
+	Fixes #493068.
+
+2009-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_invoke_method): Improve error messages.
 
 2009-04-08  Bill Holmes  <billholmes54@gmail.com>
