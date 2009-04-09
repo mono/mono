@@ -1,3 +1,7 @@
+2009-04-09  Raja R Harinath  <harinath@hurrynot.org>
+
+	* get.c: Use new MonoGenericParamInfo accessors.
+
 2009-04-08  Raja R Harinath  <harinath@hurrynot.org>
 
 	* get.c: Use new MonoGenericParam accessors.

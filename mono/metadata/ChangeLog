@@ -1,3 +1,14 @@
+2009-04-09  Raja R Harinath  <harinath@hurrynot.org>
+
+	Prepare to reduce memory usage of owner-less generic parameters (1/n)
+	* class-internals.h (MonoGenericParam): Carve out pklass, name, flags
+	and constraints fields into ...
+	(MonoGenericParamInfo): ... this.
+	(mono_generic_param_info, mono_generic_container_get_param_info):
+	New accessors.
+	* class.c, debug-helpers.c, icall.c: Update to changes.
+	* metadata.c, reflection.c, verify.c: Likewise.
+
 2009-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (dis_one): Fix decoding of strings in dynamic images.
