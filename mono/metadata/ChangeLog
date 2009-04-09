@@ -1,5 +1,9 @@
 2009-04-09  Raja R Harinath  <harinath@hurrynot.org>
 
+	* reflection.c (my_mono_class_from_mono_type): Remove.
+
+2009-04-09  Raja R Harinath  <harinath@hurrynot.org>
+
 	Prepare to reduce memory usage of owner-less generic parameters (1/n)
 	* class-internals.h (MonoGenericParam): Carve out pklass, name, flags
 	and constraints fields into ...
