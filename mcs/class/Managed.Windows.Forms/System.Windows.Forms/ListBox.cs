@@ -2091,6 +2091,8 @@ namespace System.Windows.Forms
 			get {
 				if (string_format == null) {
 					string_format = new StringFormat ();
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
+
 					if (RightToLeft == RightToLeft.Yes)
 						string_format.Alignment = StringAlignment.Far;
 					else
