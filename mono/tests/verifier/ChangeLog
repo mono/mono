@@ -1,3 +1,9 @@
+2009-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_delegate_signature_with_generics.cs: Test for the compatibility
+	of delegate arguments when a function has a non generic type argument
+	and the delegate has a generic one.
+
 2009-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_nested_access_with_multi_array_instance.cs:
