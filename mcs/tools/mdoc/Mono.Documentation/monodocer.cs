@@ -27,6 +27,7 @@ class MDocUpdater : MDocCommand
 {
 	string srcPath;
 	List<AssemblyDefinition> assemblies;
+	readonly DefaultAssemblyResolver assemblyResolver = new DefaultAssemblyResolver();
 	
 	bool delete;
 	bool show_exceptions;
@@ -170,7 +171,7 @@ class MDocUpdater : MDocCommand
 		Message (TraceLevel.Warning, "mdoc: " + format, args);
 	}
 	
-	private static AssemblyDefinition LoadAssembly (string name)
+	private AssemblyDefinition LoadAssembly (string name)
 	{
 		AssemblyDefinition assembly = null;
 		try {
@@ -180,9 +181,9 @@ class MDocUpdater : MDocCommand
 		if (assembly == null)
 			throw new InvalidOperationException("Assembly " + name + " not found.");
 
-		var r = assembly.Resolver as BaseAssemblyResolver;
-		if (r != null && name.Contains (Path.DirectorySeparatorChar)) {
-			r.AddSearchDirectory (Path.GetDirectoryName (name));
+		assembly.Resolver = assemblyResolver;
+		if (name.Contains (Path.DirectorySeparatorChar)) {
+			assemblyResolver.AddSearchDirectory (Path.GetDirectoryName (name));
 		}
 		return assembly;
 	}

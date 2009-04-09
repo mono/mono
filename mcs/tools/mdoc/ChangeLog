@@ -1,3 +1,15 @@
+2009-04-08  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Use a single IAssemblyResolver
+	  shared amongst all AssemblyDefinitions to resolve assembly/type
+	  references with Cecil.  Otherwise, if we have deeply nested
+	  directories with cross-directory assembly dependencies, then Cecil
+	  won't find the necessary assemblies (e.g. b/bin/Debug/b.dll has a
+	  type which inherits from a/bin/Debug/a.dll -- here, we'll have two
+	  separate AssemblyDefinitions, and when b.dll's AssemblyDefinition
+	  tries to resolve types from a.dll, it fails).
+	  See: http://lists.ximian.com/pipermail/mono-devel-list/2009-April/031646.html
+
 2009-03-29  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/exceptions.cs: Add
