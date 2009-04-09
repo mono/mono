@@ -5,7 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //  Jb Evain  <jbevain@novell.com>
 //
-// (c) 2007 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2007, 2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,18 +31,96 @@
 
 #if NET_2_1
 
-using System;
+using System.IO;
 
 namespace System.Net { 
 
+	// note: the NotImplementedException are needed to match MS implementation
+
 	public abstract class HttpWebRequest : WebRequest {
 
-		public abstract bool HaveResponse { get; }
+		private string accept;
+		private string content_type;
+		private WebHeaderCollection headers;
+
+		protected HttpWebRequest ()
+		{
+		}
+
+		public string Accept {
+			get { return accept; }
+			set {
+				if (String.IsNullOrEmpty (value))
+					accept = null;
+				else
+					accept = value;
+			}
+		}
+
 		public virtual bool AllowReadStreamBuffering {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
+		}
+
+		public override string ContentType {
+			get { return content_type; }
+			set {
+				if (String.IsNullOrEmpty (value))
+					content_type = null;
+				else
+					content_type = value;
+			}
+		}
+
+		public virtual bool HaveResponse {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override WebHeaderCollection Headers {
+			get { return headers; }
+			set {
+				if (value == null)
+					throw new NullReferenceException ();
+				headers = value;
+			}
+		}
+
+		public override string Method {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		public override Uri RequestUri {
+			get { throw new NotImplementedException (); }
+		}
+
+
+		public override void Abort ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
 
 #endif
+

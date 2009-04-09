@@ -1,3 +1,10 @@
+2009-04-09  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* System.Net.dll.sources: Remove some unneeded files for the
+	build. Add the SL2 specific enums, instead of using the existing
+	ones from System.dll. Include Socket_2_1.cs (from System) and use
+	the AssemblyInfo.cs for this assembly
+
 2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Net.dll.sources: Remove classes that are not in the 

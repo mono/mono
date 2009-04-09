@@ -1,3 +1,11 @@
+2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DnsEndPoint_2_1.cs: Fix header.
+	* HttpStatusCode_2_1.cs: New. SL2 (short) version of the enum
+	* HttpWebRequest_2_1.cs: Add missing members
+	* WebExceptionStatus_2_1.cs: New. SL2 (short) version of the enum
+	* WebHeaderCollection_2_1.cs: Implement S.C.IEnumerable
+
 2009-03-11  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebClient_2_1.cs: OnOpenReadCompleted and OnDownloadStringCompleted:

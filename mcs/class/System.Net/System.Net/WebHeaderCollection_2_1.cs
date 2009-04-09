@@ -31,11 +31,12 @@
 #if NET_2_1
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace System.Net {
 
-	public class WebHeaderCollection {
+	public class WebHeaderCollection : IEnumerable {
 
 		Dictionary<string, string> headers = new Dictionary<string, string> ();
 
@@ -69,6 +70,11 @@ namespace System.Net {
 		public string this [HttpRequestHeader header] {
 			get { return this [HttpRequestHeaderToString (header)]; }
 			set { this [HttpRequestHeaderToString (header)] = value; }
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return headers.GetEnumerator ();
 		}
 
 		static string HttpResponseHeaderToString (HttpResponseHeader header)

@@ -1,5 +1,5 @@
 //
-// System.Net.HttpWebRequest (for 2.1 profile)
+// System.Net.DnsEndPoint (for 2.1 profile)
 //
 // Authors:
 //	Stephane Delcroix  <stephane@delcroix.org>
