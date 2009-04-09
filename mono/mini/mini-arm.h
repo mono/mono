@@ -8,6 +8,10 @@
 #define MONO_ARCH_SOFT_FLOAT 1
 #endif
 
+#ifdef ARM_FPU_VFP
+#error "VFP support is not complete, try mono SVN for that."
+#endif
+
 #if defined(__ARM_EABI__)
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
 #define ARM_ARCHITECTURE "armel"

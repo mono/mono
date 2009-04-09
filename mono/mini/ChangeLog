@@ -1,3 +1,8 @@
+2009-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.h: Error out if VFP support is requested, since its not
+	complete in 2.4.
+
 2009-03-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (get_generic_info_from_stack_frame): Avoid returning
