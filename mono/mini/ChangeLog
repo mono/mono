@@ -1,5 +1,11 @@
 2009-04-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_compile_assembly): Split this huge function into
+	smaller parts. Add 'nodebug' option to prevent generation of DWARF debug
+	info. Strip 'mapping symbols' on ARM.
+
+	* iltests.il.in (test_0_fconv_to_i): Disable this on ARM too.
+	
 	* genmdesc.pl: Applied patch by Martin Fuzzey (mfuzzey@parkeon.com). Sync
 	this with the native genmdesc.
 
