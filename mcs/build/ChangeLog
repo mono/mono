@@ -1,3 +1,10 @@
+2009-04-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* executable.make, library.make: Move the include for tests.make so
+	  that DISTFILES can be properly set (and thus properly distribute the
+	  *_test.dll.sources file).  This allows unit tests to actually build
+	  and run when building from the tarball.
+
 2009-04-05  Jonathan Pryor  <jpryor@novell.com>
 
 	* executable.make: Support HAS_NUNIT_TEST variable; if set, will build

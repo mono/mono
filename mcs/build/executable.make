@@ -72,6 +72,17 @@ run-test-ondotnet-local:
 
 DISTFILES = $(sourcefile) $(base_prog_config) $(EXTRA_DISTFILES)
 
+ifdef HAS_NUNIT_TEST
+ASSEMBLY      = $(PROGRAM)
+ASSEMBLY_EXT  = .exe
+the_assembly  = $(PROGRAM)
+include $(topdir)/build/tests.make
+endif
+
+ifdef HAVE_CS_TESTS
+DISTFILES += $(test_sourcefile)
+endif
+
 dist-local: dist-default
 	for f in `cat $(sourcefile)` ; do \
 	  case $$f in \
@@ -123,11 +134,4 @@ $(makefrag): $(topdir)/build/executable.make $(depsdir)/.stamp
 
 doc-update-local:
 	@:
-
-ifdef HAS_NUNIT_TEST
-ASSEMBLY      = $(PROGRAM)
-ASSEMBLY_EXT  = .exe
-the_assembly  = $(PROGRAM)
-include $(topdir)/build/tests.make
-endif
 

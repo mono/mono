@@ -141,11 +141,13 @@ test-local run-test-local run-test-ondotnet-local:
 
 DISTFILES = $(wildcard *$(LIBRARY)*.sources) $(EXTRA_DISTFILES)
 
+ASSEMBLY      = $(LIBRARY)
+ASSEMBLY_EXT  = .dll
+the_assembly  = $(the_lib)
+include $(topdir)/build/tests.make
+
 ifdef HAVE_CS_TESTS
 DISTFILES += $(test_sourcefile)
-endif
-ifdef HAVE_VB_TESTS
-DISTFILES += $(btest_sourcefile)
 endif
 
 # make dist will collect files in .sources files from all profiles
@@ -258,9 +260,4 @@ doc-update-local: $(the_libdir)/.doc-stamp
 $(the_libdir)/.doc-stamp: $(the_lib)
 	$(MDOC_UP)
 	@echo "doc-stamp" > $@
-
-ASSEMBLY      = $(LIBRARY)
-ASSEMBLY_EXT  = .dll
-the_assembly  = $(the_lib)
-include $(topdir)/build/tests.make
 
