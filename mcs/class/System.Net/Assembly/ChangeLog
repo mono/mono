@@ -1,3 +1,7 @@
+2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Adjust attributes for 2.1
+
 2008-04-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* AssemblyInfo.cs: Added missing attributes

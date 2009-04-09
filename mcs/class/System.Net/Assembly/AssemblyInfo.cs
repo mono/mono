@@ -59,16 +59,16 @@ using System.Runtime.InteropServices;
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
 	[assembly: AssemblyKeyFile ("../ecma.pub")]
+	[assembly: AllowPartiallyTrustedCallers]
+	[assembly: SecurityCritical]
+	[assembly: Debuggable (DebuggableAttribute.DebuggingModes.DisableOptimizations | 
+	                       DebuggableAttribute.DebuggingModes.EnableEditAndContinue | 
+	                       DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 #endif
 
 [assembly: ComVisible (false)]
-[assembly: AllowPartiallyTrustedCallers]
 
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
-[assembly: Debuggable (DebuggableAttribute.DebuggingModes.DisableOptimizations | 
-                       DebuggableAttribute.DebuggingModes.EnableEditAndContinue | 
-                       DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
-[assembly: SecurityCritical]
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, Execution = true)]
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
