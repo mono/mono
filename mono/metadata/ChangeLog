@@ -1,3 +1,8 @@
+2009-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (get_runtime_invoke_type): Share pointers with ints and
+	booleans with sbytes.
+
 2009-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (can_access_instantiation): Verify accesibility of element types
