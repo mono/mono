@@ -1,3 +1,8 @@
+2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Net.dll.sources: Remove classes that are not in the 
+	final SL2 release
+
 2009-03-04  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* System.Net.dll.sources: Added WriteStreamClosedEventArgs_2_1.cs

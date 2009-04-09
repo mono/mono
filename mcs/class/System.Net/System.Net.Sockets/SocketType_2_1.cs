@@ -1,10 +1,4 @@
-//
-// System.Net.Sockets.CrossDomainSocketPolicyManager
-//
-// Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
-//
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// SocketType.cs (Silverlight specific)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,34 +22,13 @@
 
 #if NET_2_1
 
-using System.Security;
-
 namespace System.Net.Sockets {
 
-	[MonoTODO]
-	[SecurityCritical]
-	public class CrossDomainSocketPolicyManager : ISocketPolicyManager {
-
-		public CrossDomainSocketPolicyManager ()
-		{
-		}
-
-		public CrossDomainSocketPolicyManager (Uri applicationUri)
-		{
-		}
-
-
-		public override SocketPolicyAsyncResult BeginPolicyCheck (ProtocolType protocol, IPEndPoint endPoint, 
-			SocketPolicyCheckCallback callback, object userToken)
-		{
-			return new SocketPolicyAsyncResult (protocol, endPoint, callback, userToken);
-		}
-
-
-		static public void DoPolicyCheck (SocketPolicyAsyncResult result)
-		{
-		}
+	public enum SocketType {
+		Unknown = -1,
+		Stream = 1,
 	}
 }
 
 #endif
+

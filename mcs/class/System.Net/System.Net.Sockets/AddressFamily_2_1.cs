@@ -1,10 +1,4 @@
-//
-// System.Net.Sockets.SocketPolicyAsyncResult
-//
-// Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
-//
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// AddressFamily.cs (Silverlight specific)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,59 +22,15 @@
 
 #if NET_2_1
 
-using System.Security;
-
 namespace System.Net.Sockets {
 
-	[MonoTODO]
-	[SecurityCritical]
-	public class SocketPolicyAsyncResult {
-
-		// more m_* fields
-		protected SocketPolicyCheckCallback m_Callback;
-		protected object m_UserToken;
-
-		private IPEndPoint endpoint;
-		private ProtocolType protocol;
-
-
-		public SocketPolicyAsyncResult (ProtocolType protocol, IPEndPoint endpoint, SocketPolicyCheckCallback callback,
-			object userToken)
-		{
-			this.protocol = protocol;
-			this.endpoint = endpoint;
-			// safe bet
-			m_Callback = callback;
-			m_UserToken = userToken;
-		}
-
-		public bool Aborted { get; set; }
-
-		public bool Allowed { get; set; }
-
-		public bool CompletedSynchronously { get; set; }
-
-		public IPEndPoint EndPoint {
-			get { return endpoint; }
-		}
-
-		public ProtocolType Protocol {
-			get { return protocol; }
-		}
-
-		public object UserToken {
-			get { return m_UserToken; }
-		}
-
-
-		public virtual void Abort ()
-		{
-		}
-
-		public void Complete ()
-		{
-		}
+	public enum AddressFamily {
+		Unknown = -1,
+		Unspecified = 0,
+		InterNetwork = 2,
+		InterNetworkV6 = 23,
 	}
 }
 
 #endif
+

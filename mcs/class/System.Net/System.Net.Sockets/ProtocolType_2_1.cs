@@ -1,10 +1,4 @@
-//
-// System.Net.Sockets.SocketSecurityState
-//
-// Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
-//
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// ProtocolType.cs (Silverlight specific)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,40 +22,15 @@
 
 #if NET_2_1
 
-using System.Security;
-
 namespace System.Net.Sockets {
 
-	[MonoTODO]
-	[SecurityCritical]
-	public class SocketSecurityState : SecurityState {
+	public enum ProtocolType {
 
-		// somehow I think (or hope) the fields will be removed
-		// but since it's [SecurityCritical] it should not matter much (usage wise)
-		public bool m_CreateManager;
-		public Uri m_OriginHost; // note: not static
-		public ISocketPolicyManager m_SocketPolicyManager; // note: not static
-
-
-		protected SocketSecurityState ()
-		{
-		}
-
-
-		public static string OriginHost {
-			get { return String.Empty; }
-		}
-
-		public static ISocketPolicyManager SocketPolicyManager {
-			get { return null; }
-		}
-
-
-		public override void EnsureState ()
-		{
-			throw new NotImplementedException ();
-		}
+		Unknown = -1,
+		Unspecified = 0,
+		Tcp = 6
 	}
 }
 
 #endif
+

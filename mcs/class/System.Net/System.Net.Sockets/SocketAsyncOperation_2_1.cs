@@ -1,10 +1,11 @@
+// System.Net.Sockets.SocketAsyncOperation.cs (Silverlight specific)
 //
-// System.Net.Sockets.SocketPolicyCheckCallback
+// Authors:
+//	Marek Habersack (mhabersack@novell.com)
 //
-// Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+// Copyright (c) 2008 Novell, Inc. (http://www.novell.com)
 //
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,11 +28,12 @@
 //
 
 #if NET_2_1
-
 namespace System.Net.Sockets {
-
-	public delegate void SocketPolicyCheckCallback (SocketPolicyAsyncResult result);
-
+	public enum SocketAsyncOperation {
+		None,
+		Connect = 2,
+		Receive = 4,
+		Send = 7,
+	}
 }
-
 #endif

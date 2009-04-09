@@ -1,3 +1,15 @@
+2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AddressFamily_2_1.cs: New. SL2 (short) version of the enum
+	* ProtocolType_2_1.cs: New. SL2 (short) version of the enum
+	* CrossDomainSocketPolicyManager.cs: Removed (from SL2)
+	* ISocketPolicyManager.cs: Removed (from SL2)
+	* SocketAsyncOperation_2_1.cs:New. SL2 (short) version of the enum
+	* SocketPolicyAsyncResult.cs: Removed (from SL2)
+	* SocketPolicyCheckCallback.cs: Removed (from SL2)
+	* SocketSecurityState.cs: Removed (from SL2)
+	* SocketType_2_1.cs: New. SL2 (short) version of the enum
+
 2008-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CrossDomainSocketPolicyManager.cs: New.

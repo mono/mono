@@ -16,11 +16,6 @@ System.Net/WebResponse_2_1.cs
 System.Net/WriteStreamClosedEventArgs_2_1.cs
 System.Net/WriteStreamClosedEventHandler_2_1.cs
 System.Net.Sockets/SocketException_2_1.cs
-System.Net.Sockets/CrossDomainSocketPolicyManager.cs
-System.Net.Sockets/ISocketPolicyManager.cs
-System.Net.Sockets/SocketPolicyAsyncResult.cs
-System.Net.Sockets/SocketPolicyCheckCallback.cs
-System.Net.Sockets/SocketSecurityState.cs
 ../System/Assembly/AssemblyInfo.cs
 ../System/System.Net/AuthenticationSchemes.cs
 ../System/System.Net/AuthenticationSchemeSelector.cs
