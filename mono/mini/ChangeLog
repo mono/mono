@@ -1,3 +1,8 @@
+2009-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* genmdesc.pl: Applied patch by Martin Fuzzey (mfuzzey@parkeon.com). Sync
+	this with the native genmdesc.
+
 2009-04-08  Bill Holmes  <billholmes54@gmail.com>
 
 	* aot-runtime.c:  Fixing the MSVC build.
