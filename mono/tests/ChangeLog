@@ -1,3 +1,7 @@
+2009-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread6.cs: Fix race added by the last change.
+
 2009-04-09  Bill Holmes  <billholmes54@gmail.com>
 
 	* finalizer-abort.cs, finalizer-exception.cs, finalizer-exit.cs :
