@@ -1,3 +1,11 @@
+2009-04-09  Bill Holmes  <billholmes54@gmail.com>
+
+	* finalizer-abort.cs, finalizer-exception.cs, finalizer-exit.cs :
+	  Adding a sleep to the waiting thread to give Mono on Windows an
+	  opportunity to interrupt the thread via QueueUserAPC.
+
+	Contributed under MIT/X11 license.
+
 2009-03-31  Mark Probst  <mark.probst@gmail.com>
 
 	* critical-finalizers.cs: Test case for critical finalizers.
