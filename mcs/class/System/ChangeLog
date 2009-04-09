@@ -1,3 +1,7 @@
+2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.dll.sources: Add System.Net.Sockets/Socket_2_1.cs
+
 2009-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.dll.sources: Add System/UriTypeConverter.cs to

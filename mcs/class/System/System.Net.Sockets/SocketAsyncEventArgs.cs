@@ -145,20 +145,6 @@ namespace System.Net.Sockets
 		}
 
 #region Internals
-		void AcceptCallback ()
-		{
-			SocketError = SocketError.Success;
-			LastOperation = SocketAsyncOperation.Accept;
-			try {
-				curSocket.Accept (AcceptSocket);
-			} catch (SocketException ex) {
-				SocketError = ex.SocketErrorCode;
-				throw;
-			} finally {
-				OnCompleted (this);
-			}
-		}
-
 		void ReceiveCallback ()
 		{
 			SocketError = SocketError.Success;
@@ -214,6 +200,20 @@ namespace System.Net.Sockets
 				OnCompleted (this);
 			}
 		}
+#if !NET_2_1
+		void AcceptCallback ()
+		{
+			SocketError = SocketError.Success;
+			LastOperation = SocketAsyncOperation.Accept;
+			try {
+				curSocket.Accept (AcceptSocket);
+			} catch (SocketException ex) {
+				SocketError = ex.SocketErrorCode;
+				throw;
+			} finally {
+				OnCompleted (this);
+			}
+		}
 
 		void DisconnectCallback ()
 		{
@@ -265,23 +265,16 @@ namespace System.Net.Sockets
 				OnCompleted (this);
 			}
 		}
-		
+#endif
 		internal void DoOperation (SocketAsyncOperation operation, Socket socket)
 		{
 			ThreadStart callback;
 			curSocket = socket;
 			
 			switch (operation) {
+#if !NET_2_1
 				case SocketAsyncOperation.Accept:
 					callback = new ThreadStart (AcceptCallback);
-					break;
-
-				case SocketAsyncOperation.Receive:
-					callback = new ThreadStart (ReceiveCallback);
-					break;
-
-				case SocketAsyncOperation.Connect:
-					callback = new ThreadStart (ConnectCallback);
 					break;
 
 				case SocketAsyncOperation.Disconnect:
@@ -291,15 +284,23 @@ namespace System.Net.Sockets
 				case SocketAsyncOperation.ReceiveFrom:
 					callback = new ThreadStart (ReceiveFromCallback);
 					break;
-					
-				case SocketAsyncOperation.Send:
-					callback = new ThreadStart (SendCallback);
-					break;
 
 				case SocketAsyncOperation.SendTo:
 					callback = new ThreadStart (SendToCallback);
 					break;
-					
+#endif
+				case SocketAsyncOperation.Receive:
+					callback = new ThreadStart (ReceiveCallback);
+					break;
+
+				case SocketAsyncOperation.Connect:
+					callback = new ThreadStart (ConnectCallback);
+					break;
+
+				case SocketAsyncOperation.Send:
+					callback = new ThreadStart (SendCallback);
+					break;
+				
 				default:
 					throw new NotSupportedException ();
 			}

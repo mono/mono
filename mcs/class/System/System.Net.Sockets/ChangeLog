@@ -1,3 +1,14 @@
+2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Socket.cs: Split socket class into two files (this one and the
+	new Socket_2_1.cs). This let us remove (some) existing #if in the
+	sources and avoid (a lot) of new ones for Moonlight.
+	* Socket_2_1.cs: Just enough of socket for NET_2_1. This helps
+	the tuner not to bring a lot of extra stuff (some visible)
+	into Moonlight.
+	* SocketAsyncEventArgs.cs: Ifdef out some cases for NET_2_1 so 
+	Moonlight can use it's own (smaller) SocketAsyncOperation enum
+
 2009-02-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: instead of clearing the sockets form the output and then
