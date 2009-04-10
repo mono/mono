@@ -24,16 +24,16 @@ class StringPrinter:
         self.val = val
 
     def to_string(self):
-        if int(self.val.cast (gdb.Type ("guint64"))) == 0:
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
             return "null"
 
-        obj = self.val.cast (gdb.Type ("MonoString").pointer ()).dereference ()
+        obj = self.val.cast (gdb.lookup_type ("MonoString").pointer ()).dereference ()
         len = obj ['length']
         chars = obj ['chars']
         i = 0
         res = ['"']
         while i < len:
-            val = (chars.cast(gdb.Type ("gint64")) + (i * 2)).cast(gdb.Type ("gunichar2").pointer ()).dereference ()
+            val = (chars.cast(gdb.lookup_type ("gint64")) + (i * 2)).cast(gdb.lookup_type ("gunichar2").pointer ()).dereference ()
             if val >= 256:
                 c = "\u%X" % val
             else:
@@ -63,7 +63,7 @@ class ArrayPrinter:
         self.class_name = class_name
 
     def to_string(self):
-        obj = self.val.cast (gdb.Type ("MonoArray").pointer ()).dereference ()
+        obj = self.val.cast (gdb.lookup_type ("MonoArray").pointer ()).dereference ()
         length = obj ['max_length']
         return "%s [%d]" % (stringify_class_name (self.class_ns, self.class_name [0:len(self.class_name) - 2]), int(length))
         
@@ -71,15 +71,15 @@ class ObjectPrinter:
     "Print a C# object"
 
     def __init__(self, val):
-        if str(val.type ())[-1] == "&":
-            self.val = val.address.cast (gdb.Type ("MonoObject").pointer ())
+        if str(val.type)[-1] == "&":
+            self.val = val.address.cast (gdb.lookup_type ("MonoObject").pointer ())
         else:
-            self.val = val.cast (gdb.Type ("MonoObject").pointer ())
+            self.val = val.cast (gdb.lookup_type ("MonoObject").pointer ())
 
     class _iterator:
         def __init__(self,obj):
             self.obj = obj
-            self.iter = self.obj.type ().fields ().__iter__ ()
+            self.iter = self.obj.type.fields ().__iter__ ()
             pass
 
         def __iter__(self):
@@ -88,19 +88,19 @@ class ObjectPrinter:
         def next(self):
             field = self.iter.next ()
             try:
-                if str(self.obj [field.name].type ()) == "object":
+                if str(self.obj [field.name].type) == "object":
                     # Avoid recursion
-                    return (field.name, self.obj [field.name].cast (gdb.Type ("void").pointer ()))
+                    return (field.name, self.obj [field.name].cast (gdb.lookup_type ("void").pointer ()))
                 else:
                     return (field.name, self.obj [field.name])
             except:
                 # Superclass
-                return (field.name, self.obj.cast (gdb.Type ("%s" % (field.name))))
+                return (field.name, self.obj.cast (gdb.lookup_type ("%s" % (field.name))))
 
     def children(self):
         # FIXME: It would be easier if gdb.Value would support iteration itself
         # It would also be better if we could return None
-        if int(self.val.cast (gdb.Type ("guint64"))) == 0:
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
             return {}.__iter__ ()
         try:
             obj = self.val.dereference ()
@@ -108,7 +108,7 @@ class ObjectPrinter:
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
             if class_name [-2:len(class_name)] == "[]":
                 return {}.__iter__ ()
-            gdb_type = gdb.Type ("struct %s_%s" % (class_ns.replace (".", "_"), class_name))
+            gdb_type = gdb.lookup_type ("struct %s_%s" % (class_ns.replace (".", "_"), class_name))
             return self._iterator(obj.cast (gdb_type))
         except:
             print sys.exc_info ()[0]
@@ -116,7 +116,7 @@ class ObjectPrinter:
             return {}.__iter__ ()
 
     def to_string(self):
-        if int(self.val.cast (gdb.Type ("guint64"))) == 0:
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
             return "null"
         try:
             obj = self.val.dereference ()
@@ -128,7 +128,7 @@ class ObjectPrinter:
                 return ArrayPrinter (self.val,class_ns,class_name).to_string ()
             if class_ns != "":
                 try:
-                    gdb_type = gdb.Type ("struct %s.%s" % (class_ns, class_name))
+                    gdb_type = gdb.lookup_type ("struct %s.%s" % (class_ns, class_name))
                 except:
                     # Maybe there is no debug info for that type
                     return "%s.%s" % (class_ns, class_name)
@@ -139,10 +139,10 @@ class ObjectPrinter:
             print sys.exc_info ()[0]
             print sys.exc_info ()[1]
             # FIXME: This can happen because we don't have liveness information
-            return self.val.cast (gdb.Type ("guint64"))
+            return self.val.cast (gdb.lookup_type ("guint64"))
 
 def lookup_pretty_printer(val):
-    t = str (val.type ())
+    t = str (val.type)
     if t == "object":
         return ObjectPrinter (val)
     if t[0:5] == "class" and t[-1] == "&":
