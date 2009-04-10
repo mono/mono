@@ -1,5 +1,7 @@
 2009-04-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Disable the AOT compiler if the JIT is disabled.
+
 	* dwarfwriter.c (emit_type): Emit byref to reference types as 'int' for now.
 
 	* decompose.c (mono_decompose_opcode): Make this return a MonoInst*
