@@ -1,3 +1,10 @@
+2009-04-10  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: enabled recursion checking for page
+	targets. Also, if a built item is skipped because it has been
+	compiled recursively, add its assembly to the list of referenced
+	assemblies for the batch being currently compiled.
+
 2009-04-07  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: GenerateExpressionFromString doesn't

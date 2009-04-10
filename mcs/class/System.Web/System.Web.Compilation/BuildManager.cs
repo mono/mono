@@ -1143,11 +1143,12 @@ namespace System.Web.Compilation {
 					return;
 				
 				Dictionary <Type, List <AssemblyBuilder>> assemblyBuilders = new Dictionary <Type, List <AssemblyBuilder>> ();
-				bool checkForRecursion = buildKind == BuildKind.NonPages;
+				bool checkForRecursion = buildKind == BuildKind.NonPages || buildKind == BuildKind.Pages;
 				string buildItemVp;
 				BuildItem requestBuildItem = null;
 				AssemblyBuilder originalRequestAssemblyBuilder = null;
 				bool isRequestAssemblyBuilder = false;
+				var skippedItemsAssemblies = new List <Assembly> ();
 				
 				foreach (BuildItem buildItem in buildItems) {
 					buildItemVp = buildItem.VirtualPath;
@@ -1165,8 +1166,14 @@ namespace System.Web.Compilation {
 						// our list might've been put into a different
 						// assembly in a recursive call.
 						lock (buildCacheLock) {
-							if (buildCache.ContainsKey (buildItem.VirtualPath))
+							BuildCacheItem bci;
+							
+							if (buildCache.TryGetValue (buildItem.VirtualPath, out bci)) {
+								Assembly asm = bci.assembly;
+								if (asm != null && !skippedItemsAssemblies.Contains (asm))
+									skippedItemsAssemblies.Add (asm);
 								continue;
+							}
 						}
 					}
 
@@ -1190,6 +1197,8 @@ namespace System.Web.Compilation {
 				bool needToBuildRequestItemAlone = false;
 				foreach (List <AssemblyBuilder> abuilders in assemblyBuilders.Values) {
 					foreach (AssemblyBuilder abuilder in abuilders) {
+						abuilder.AddAssemblyReference (skippedItemsAssemblies);
+						
 						try {
 							GenerateAssembly (abuilder, buildItems, virtualPath, buildKind);
 						} catch (Exception ex) {
@@ -1259,11 +1268,11 @@ namespace System.Web.Compilation {
 						globalAsaxAssembly = compiledAssembly;
 						break;
 				}
-							
+
 				foreach (BuildItem buildItem in buildItems) {
 					if (!buildItem.ProcessedFine || buildItem.assemblyBuilder != abuilder)
 						continue;
-								
+					
 					vp = buildItem.VirtualPath;
 					bp = buildItem.buildProvider;
 					buildItem.SetCompiledAssembly (abuilder, compiledAssembly);
