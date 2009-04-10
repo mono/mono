@@ -1,3 +1,8 @@
+2009-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gc_locks.h (GC_test_and_set): Merge a change from libgc
+	7.1's libatomic-ops to fix the ppc build with gcc 4.4.
+
 2009-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gcconfig.h: Applied patch from Koushik Dutta
