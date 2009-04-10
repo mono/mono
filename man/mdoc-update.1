@@ -29,11 +29,9 @@ as added types and members, while preserving existing documentation.
 .Sp
 In some limited circumstances, renames will be tracked, minimizing the
 documentation burden when e.g. a parameter is renamed.
-circumstances, 
-creates stubs and updates documentation in the \fBmdoc\fR(5)
-documentation format from \fIASSEMBLIES\fR.
 .PP
-\fBmdoc update\fR does not rely on documentation found within source code.
+\fBmdoc update\fR does not rely on documentation found within source code,
+though it can import XML Documentation Comments via the \fB\-i\fR option.
 .PP
 See \fBmdoc\fR(1) and \fBmdoc\fR(5) for more information.
 .SH OPTIONS
@@ -177,10 +175,21 @@ Import documentation found within \fIFILE\fR.
 .Sp
 \fIFILE\fR may contain either \fIcsc /doc\fR XML or \fIECMA-335\fR XML.
 .TP
+\fB\-L\fR, \fB\-\-lib\fR=\fIDIRECTORY\fR
+Add \fIDIRECTORY\fR to the assembly search path, so that dependencies of
+\fIASSEMBLIES\fR can be found without documenting those assemblies.
+.TP
 \fB\-o\fR, \fB\-\-out\fR=\fIDIRECTORY\fR
 Place the generated stubs into \fIDIRECTORY\fR.
 .Sp
 When updating documentation, \fIDIRECTORY\fR is also the source directory.
+.TP
+\fB\-r\fR=\fIASSEMBLY\fR
+\fIASSEMBLY\fR is a dependency for one of \fIASSEMBLIES\fR which should
+\fInot\fR be documented but is required to process one of \fIASSEMBLIES\fR.
+Add the directory containing \fIASSEMBLY\fR to the assembly search path.
+.Sp
+This option is equivalent to specifying \fB\-L\fR `\fIdirname\fR ASSEMBLY`.
 .TP
 \fB\-\-since\fR=\fIVERSION\fR
 When \fIupdating\fR documentation for an assembly, if a type or member is

@@ -1,3 +1,7 @@
+2009-04-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* mdoc-update.1: Document -L, -r options.
+
 2009-04-06  Jonathan Pryor  <jpryor@novell.com>
 
 	* mdoc.5: Document //code/@src attribute.
