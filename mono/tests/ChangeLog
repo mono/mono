@@ -1,3 +1,8 @@
+2009-04-10  Mark Probst  <mark.probst@gmail.com>
+
+	* appdomain-unload.cs: Test for invoking on a proxy whose server
+	domain was unloaded.
+
 2009-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread6.cs: Fix race added by the last change.
