@@ -1,3 +1,10 @@
+2009-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* decompose.c (mono_decompose_opcode): Make this return a MonoInst*
+	representing the result of the decomposition. Nullify instructions
+	instead of setting them to OP_NOP since nops can't have registers
+	set.
+
 2009-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_compile_assembly): Split this huge function into
