@@ -1,3 +1,7 @@
+2009-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* ArrayTest.cs: Add a test for ICollection:IsReadOnly on generic arrays.
+
 2009-03-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* DelegateTest.cs: Mark a test as working.

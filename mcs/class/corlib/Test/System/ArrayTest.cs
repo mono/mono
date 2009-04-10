@@ -3013,6 +3013,12 @@ public class ArrayTest : Assertion
 			AssertNotNull ("#B4", ex.Message);
 		}
 	}
+
+	public void ICollection_IsReadOnly() {
+		ICollection<string> arr = new string [10];
+
+		Assert (arr.IsReadOnly);
+	}
 #endif
 }
 }
