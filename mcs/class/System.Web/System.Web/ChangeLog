@@ -1,3 +1,7 @@
+2009-04-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpResponseStream.cs: use the unsafe version when copying buffers.
+
 2009-04-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: added a new internal static property
