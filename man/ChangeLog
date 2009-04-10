@@ -1,3 +1,7 @@
+2009-04-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* mdoc-update.1: Document -L, -r options.
+
 2008-12-31  Massimiliano Mantione  <massi@ximian.com>
 
 	* mono.1: Updated the profiler documentation, removing the "ts"
