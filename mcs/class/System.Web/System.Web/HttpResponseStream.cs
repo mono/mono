@@ -266,12 +266,16 @@ namespace System.Web {
 				get { return length; }
 			}
 
-			public int Write (byte [] buf, int offset, int count)
+			public unsafe int Write (byte [] buf, int offset, int count)
 			{
 				if (Expandable == false)
 					throw new Exception ("This should not happen.");
 
-				blocks.Write (buf, offset, count);
+				fixed (byte *p = &buf[0]) {
+					IntPtr p2 = new IntPtr (p + offset);
+					blocks.Write (p2, count);
+				}
+
 				length += count;
 				return count;
 			}
