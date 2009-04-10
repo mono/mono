@@ -1,3 +1,13 @@
+2009-04-09  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Using a single IAssemblyResolver is
+	  an improvement, but doesn't fix all problems.  In particular, some
+	  assemblies will depend upon other assemblies to load (e.g. 3rd party
+	  assemblies) but these dependent assemblies shouldn't be documented.
+	  Add support for -r:ASSEMBLY and -L:DIRECTORY arguments to allow the
+	  user to manually add to the assembly search path so that assemblies
+	  can be found.  Assemblies added via -r will NOT be documented.
+
 2009-04-08  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Use a single IAssemblyResolver

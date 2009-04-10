@@ -84,9 +84,16 @@ class MDocUpdater : MDocCommand
 			{ "i|import=", 
 				"Import documentation from {FILE}.",
 				v => import = v },
+			{ "L|lib=",
+				"Check for assembly references in {DIRECTORY}.",
+				v => assemblyResolver.AddSearchDirectory (v) },
 			{ "o|out=",
 				"Root {DIRECTORY} to generate/update documentation.",
 				v => srcPath = v },
+			{ "r=",
+				"Search for dependent assemblies in the directory containing {ASSEMBLY}.\n" +
+				"(Equivalent to '-L `dirname ASSEMBLY`'.)",
+				v => assemblyResolver.AddSearchDirectory (Path.GetDirectoryName (v)) },
 			{ "since=",
 				"Manually specify the assembly {VERSION} that new members were added in.",
 				v => since = v },
@@ -101,6 +108,11 @@ class MDocUpdater : MDocCommand
 			return;
 		if (assemblies.Count == 0)
 			Error ("No assemblies specified.");
+
+		foreach (var dir in assemblies
+				.Where (a => a.Contains (Path.DirectorySeparatorChar))
+				.Select (a => Path.GetDirectoryName (a)))
+			assemblyResolver.AddSearchDirectory (dir);
 
 		// PARSE BASIC OPTIONS AND LOAD THE ASSEMBLY TO DOCUMENT
 		
@@ -182,9 +194,6 @@ class MDocUpdater : MDocCommand
 			throw new InvalidOperationException("Assembly " + name + " not found.");
 
 		assembly.Resolver = assemblyResolver;
-		if (name.Contains (Path.DirectorySeparatorChar)) {
-			assemblyResolver.AddSearchDirectory (Path.GetDirectoryName (name));
-		}
 		return assembly;
 	}
 
