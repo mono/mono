@@ -1,5 +1,10 @@
 2009-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Avoid using the fast virtual method
+	call code in full-aot mode since IMT is disabled there.
+	(mono_method_to_ir): Inline ldfld wrappers which return structures too, the
+	new JIT no longer has that restriction.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
 
 	* aot-compiler.c (emit_extra_methods): Emit the wrapper method names in
