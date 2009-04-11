@@ -1,3 +1,8 @@
+2009-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Avoid putting MonoMethod
+	pointers into the vtable.
+
 2009-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_delegate_type_equal): Proper check MONO_TYPE_CLASS.
