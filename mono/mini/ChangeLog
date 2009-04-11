@@ -1,5 +1,8 @@
 2009-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Put the last change inside an 
+	#ifdef MONO_ARCH_HAVE_LIVERANGE_OPS.
+	
 	* mini.c (mini_method_compile): Disable sharing of stack slots/registers
 	and extend live ranges to cover the whole method when using xdb.
 
