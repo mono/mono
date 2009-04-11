@@ -44,15 +44,58 @@ namespace System.Web.UI
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class UpdatePanel : Control
 	{
+		sealed class SingleChildControlCollection : ControlCollection
+		{
+			public SingleChildControlCollection (Control owner)
+				: base (owner)
+			{}
+
+			internal void AddInternal (Control child)
+			{
+				base.Add (child);
+			}
+			
+			public override void Add (Control child)
+			{
+				throw GetNoChildrenException ();
+			}
+
+			public override void AddAt (int index, Control child)
+			{
+				throw GetNoChildrenException ();
+			}
+
+			public override void Clear ()
+			{
+				throw GetNoChildrenException ();
+			}
+
+			public override void Remove (Control value)
+			{
+				throw GetNoChildrenException ();
+			}
+
+			public override void RemoveAt (int index)
+			{
+				throw GetNoChildrenException ();
+			}
+			
+			InvalidOperationException GetNoChildrenException ()
+			{
+				return new InvalidOperationException ("The Controls property of UpdatePanel with ID '" + Owner.ID + "' cannot be modified directly. To change the contents of the UpdatePanel modify the child controls of the ContentTemplateContainer property.");
+			}
+		}
+		
 		ITemplate _contentTemplate;
 		Control _contentTemplateContainer;
 		UpdatePanelUpdateMode _updateMode = UpdatePanelUpdateMode.Always;
 		bool _childrenAsTriggers = true;
-		bool _requiresUpdate = false;
+		bool _requiresUpdate;
+		bool _inPartialRendering;
 		UpdatePanelTriggerCollection _triggers;
 		UpdatePanelRenderMode _renderMode = UpdatePanelRenderMode.Block;
 		ScriptManager _scriptManager;
-
+		
 		[Category ("Behavior")]
 		[DefaultValue (true)]
 		public bool ChildrenAsTriggers {
@@ -81,23 +124,19 @@ namespace System.Web.UI
 			get {
 				if (_contentTemplateContainer == null) {
 					_contentTemplateContainer = CreateContentTemplateContainer ();
-					Controls.Add (_contentTemplateContainer);
+					((SingleChildControlCollection) Controls).AddInternal (_contentTemplateContainer);
 				}
 				return _contentTemplateContainer;
 			}
 		}
 
 		public override sealed ControlCollection Controls {
-			get {
-				return base.Controls;
-			}
+			get { return base.Controls; }
 		}
 
 		[Browsable (false)]
 		public bool IsInPartialRendering {
-			get {
-				return ScriptManager.IsInPartialRendering;
-			}
+			get { return _inPartialRendering; }
 		}
 
 		[Category ("Layout")]
@@ -112,7 +151,7 @@ namespace System.Web.UI
 
 		protected internal virtual bool RequiresUpdate {
 			get {
-				return UpdateMode == UpdatePanelUpdateMode.Always || _requiresUpdate;
+				return UpdateMode == UpdatePanelUpdateMode.Always || _requiresUpdate || AnyTriggersFired ();
 			}
 		}
 
@@ -139,6 +178,18 @@ namespace System.Web.UI
 			}
 		}
 
+		bool AnyTriggersFired ()
+		{
+			if (_triggers == null || _triggers.Count == 0)
+				return false;
+
+			foreach (UpdatePanelTrigger trigger in _triggers)
+				if (trigger.HasTriggered ())
+					return true;
+
+			return false;
+		}
+		
 		[Category ("Behavior")]
 		[DefaultValueAttribute (UpdatePanelUpdateMode.Always)]
 		public UpdatePanelUpdateMode UpdateMode {
@@ -149,30 +200,25 @@ namespace System.Web.UI
 				_updateMode = value;
 			}
 		}
-
-		protected virtual Control CreateContentTemplateContainer () {
+		
+		protected virtual Control CreateContentTemplateContainer ()
+		{
 			return new Control ();
 		}
 
-		[MonoTODO ()]
-		protected override sealed ControlCollection CreateControlCollection () {
-			// TODO: Because this method is protected and sealed, it is visible to classes that inherit 
-			// from the UpdatePanel class, but it cannot be overridden. This method overrides 
-			// the base implementation to return a specialized ControlCollection object that throws 
-			// an InvalidOperationException when the Add(Control), AddAt(Int32, Control), Clear(), 
-			// Remove(Control), or RemoveAt(Int32) method of the ControlCollection class is invoked. 
-			// To change the content of the UpdatePanel control, modify the child controls of 
-			// the ContentTemplateContainer property.
-
-			return base.CreateControlCollection ();
+		protected override sealed ControlCollection CreateControlCollection ()
+		{
+			return new SingleChildControlCollection (this);
 		}
 
-		protected internal virtual void Initialize () {
-			if (_triggers != null) {
-				for (int i = 0; i < _triggers.Count; i++) {
-					_triggers [i].Initialize ();
-				}
-			}
+		protected internal virtual void Initialize ()
+		{
+			int tcount = _triggers != null ? _triggers.Count : 0;
+			if (tcount == 0 || !ScriptManager.SupportsPartialRendering)
+				return;
+			
+			for (int i = 0; i < tcount; i++)
+				_triggers [i].Initialize ();
 		}
 
 		protected override void OnInit (EventArgs e) {
@@ -211,36 +257,36 @@ namespace System.Web.UI
 			writer.RenderEndTag ();
 		}
 
-		protected override void RenderChildren (HtmlTextWriter writer) {
-			if (ScriptManager.IsInAsyncPostBack){
-				if (!ScriptManager.IsInPartialRendering) {
-					ScriptManager.IsInPartialRendering = true;
-					ScriptManager.AlternativeHtmlTextWriter altWriter = writer as ScriptManager.AlternativeHtmlTextWriter;
-					if (altWriter == null)
-						altWriter = writer.InnerWriter as ScriptManager.AlternativeHtmlTextWriter;
-					if (altWriter == null)
-						throw new InvalidOperationException ("Internal error. Invalid writer object.");
+		protected override void RenderChildren (HtmlTextWriter writer)
+		{
+			if (IsInPartialRendering) {
+				ScriptManager.AlternativeHtmlTextWriter altWriter = writer as ScriptManager.AlternativeHtmlTextWriter;
+				if (altWriter == null)
+					altWriter = writer.InnerWriter as ScriptManager.AlternativeHtmlTextWriter;
+				if (altWriter == null)
+					throw new InvalidOperationException ("Internal error. Invalid writer object.");
 					
-					HtmlTextWriter responseOutput = altWriter.ResponseOutput;
-					StringBuilder sb = new StringBuilder ();
-					HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
-					base.RenderChildren (w);
-					w.Flush ();
+				HtmlTextWriter responseOutput = altWriter.ResponseOutput;
+				StringBuilder sb = new StringBuilder ();
+				HtmlTextWriter w = new HtmlTextWriter (new StringWriter (sb));
+				base.RenderChildren (w);
+				w.Flush ();
 					
-					ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
-					ScriptManager.IsInPartialRendering = false;
-				}
-				else {
-					if (ScriptManager.IsInPartialRendering)
-						ScriptManager.RegisterChildUpdatePanel (this);
-					base.RenderChildren (writer);
-				}
-			}
-			else
+				ScriptManager.WriteCallbackPanel (responseOutput, this, sb);
+			} else
 				base.RenderChildren (writer);
 		}
 
-		public void Update () {
+		internal void SetInPartialRendering (bool setting)
+		{
+			_inPartialRendering = setting;
+		}
+		
+		public void Update ()
+		{
+			if (UpdateMode == UpdatePanelUpdateMode.Always)
+				throw new InvalidOperationException ("The Update method can only be called on UpdatePanel with ID '" + ID + "' when UpdateMode is set to Conditional.");
+			
 			_requiresUpdate = true;
 		}
 	}

@@ -1,3 +1,34 @@
+2009-04-11  Marek Habersack  <mhabersack@novell.com>
+
+	* UpdatePanel.cs: implemented SingleChildControlCollection to be
+	used in CreateControlCollection ().
+	RequiresUpdate not only checks the update mode and explicit update
+	requests, but also looks if any triggers fired.
+	Initialize () initializes triggers only if partial rendering is
+	supported by the ScriptManager.
+	IsInPartialRendering property no longer returns the value of
+	ScriptManager.IsInPartialRendering. Instead, it relies on the
+	value of instance field which can be set using new internal
+	SetInPartialRendering () method (called from
+	ScriptManager.RenderPageCallback ())
+	Simplified the logic in RenderChildren ().
+
+	* ScriptManager.cs: no need to register panels for refresh in
+	OnPreRenderComplete, this is now done in RenderPageCallback.
+	Modified HasBeenRendered () so that it doesn't query whether the
+	panel has been explicitly updated by the user, but checks whether
+	panel is in the list of panels to refresh.
+	RaisePostDataChangedEvent () doesn't update the panel whose id is
+	named in the POST request for refresh. This is handled in
+	RenderPageCallback.
+	Reverted the changes to WriteCallbackPanel and RenderFormCallback
+	committed in r129774.
+	RenderPageCallback now correctly detects panels to be refreshed
+	(and thus included in the async response).
+
+	* AsyncPostBackTrigger.cs, PostBackTrigger.cs: implemented
+	HasTriggered ().
+
 2009-04-08  Marek Habersack  <mhabersack@novell.com>
 
 	* ScriptComponentDescriptor.cs: properties/events/references must
