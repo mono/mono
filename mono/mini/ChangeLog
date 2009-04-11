@@ -1,5 +1,13 @@
 2009-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* jit-icalls.c (ldvirtfn_internal): Avoid creating rgctx wrappers here,
+	do it in the trampolines.
+
+	* mini-trampolines.c (mono_magic_trampoline): Add an rgctx wrapper if
+	needed.
+
+	* mini-trampolines.c (mono_delegate_trampoline): Ditto.
+	
 	* method-to-ir.c (mono_method_to_ir): Avoid using the fast virtual method
 	call code in full-aot mode since IMT is disabled there.
 	(mono_method_to_ir): Inline ldfld wrappers which return structures too, the
