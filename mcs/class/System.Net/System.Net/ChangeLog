@@ -1,3 +1,12 @@
+2009-04-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DnsEndPoint_2_1.cs: Adjust exceptions wrt unit tests
+	* HttpWebRequest_2_1.cs: Fix Headers property wrt unit tests: 
+	* WebClient_2_1.cs: Fix some properties
+	* WebHeaderCollection_2_1.cs: Adjust exceptions wrt unit tests
+	* WebRequest_2_1.cs: Add RegisterPrefix functionality and add
+	missing checks (fix unit tests)
+
 2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsEndPoint_2_1.cs: Fix header.

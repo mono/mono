@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Jb Evain  <jbevain@novell.com>
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
-// (c) 2008 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2008-2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,6 +32,7 @@
 #if NET_2_1
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -39,6 +41,7 @@ namespace System.Net {
 	public abstract class WebRequest {
 
 		static Type browser_http_request;
+		static Dictionary<string,IWebRequestCreate> registred_prefixes = new Dictionary<string,IWebRequestCreate> ();
 
 		public abstract string ContentType { get; set; }
 		public abstract WebHeaderCollection Headers { get; set; }
@@ -57,46 +60,64 @@ namespace System.Net {
 
 		public static WebRequest Create (Uri uri)
 		{
-			if (uri.IsAbsoluteUri && !uri.Scheme.StartsWith ("http"))
-				throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
+			if (uri == null)
+				throw new ArgumentNullException ("uri");
+			if (!uri.IsAbsoluteUri)
+				throw new InvalidOperationException ("Uri is not absolute.");
 
-			return CreateBrowserHttpRequest (uri);
+			switch (uri.Scheme) {
+			case "http":
+			case "https":
+				// we don't use whatever has been registred but our own
+				return CreateBrowserWebRequest (uri);
+			default:
+				IWebRequestCreate creator;
+				if (registred_prefixes.TryGetValue (uri.Scheme, out creator)) {
+					return creator.Create (uri);
+				} else {
+					throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
+				}
+			}
 		}
 
-		static WebRequest CreateBrowserHttpRequest (Uri uri)
+		static WebRequest CreateBrowserWebRequest (Uri uri)
 		{
-			if (browser_http_request == null)
-				browser_http_request = GetBrowserHttpFromMoonlight ();
+			if (browser_http_request == null) {
+				var assembly = Assembly.Load ("System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
+				if (assembly == null)
+					throw new InvalidOperationException ("Can not load System.Windows.Browser");
+
+				browser_http_request = assembly.GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest");
+				if (browser_http_request == null)
+					throw new InvalidOperationException ("Can not get BrowserHttpWebRequest");
+			}
 
 			return (WebRequest) Activator.CreateInstance (browser_http_request, new object [] { uri });
 		}
 
-		static Type GetBrowserHttpFromMoonlight ()
-		{
-			var assembly = Assembly.Load ("System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
-			if (assembly == null)
-				throw new InvalidOperationException ("Can not load System.Windows.Browser");
-
-			var type = assembly.GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest");
-			if (type == null)
-				throw new InvalidOperationException ("Can not get BrowserHttpWebRequest");
-
-			return type;
-		}
-
 		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
 		{
-			throw new NotSupportedException ();
+			if (prefix == null)
+				throw new ArgumentNullException ("prefix");
+			if (creator == null)
+				throw new ArgumentNullException ("creator");
+
+			// LAMESPEC: according to doc registering http or https will fail. Actually this is not true
+			// the registration works but the class being registred won't be used for http[s]
+			prefix = prefix.ToLowerInvariant ();
+			if (registred_prefixes.ContainsKey (prefix))
+				return false;
+
+			registred_prefixes.Add (prefix, creator);
+			return true;
 		}
 
 		internal void SetupProgressDelegate (Delegate progress_delegate)
 		{
-			if (browser_http_request == null)
-				browser_http_request = GetBrowserHttpFromMoonlight ();
-
-			this.GetType ().GetField ("progress_delegate", BindingFlags.Instance | BindingFlags.NonPublic).SetValue (this, progress_delegate);
+			FieldInfo fi = GetType ().GetField ("progress_delegate", BindingFlags.Instance | BindingFlags.NonPublic);
+			if (fi != null)
+				fi.SetValue (this, progress_delegate);
 		}
-		
 	}
 }
 

@@ -58,13 +58,23 @@ namespace System.Net {
 
 		public string this [string header] {
 			get {
+				if (header == null)
+					throw new ArgumentNullException ("header");
+
 				string value;
 				if (headers.TryGetValue (header, out value))
 					return value;
 
-				return string.Empty;
+				return null;
 			}
-			set { headers [header] = value; }
+			set {
+				if (header == null)
+					throw new ArgumentNullException ("header");
+				if (header.Length == 0)
+					throw new ArgumentException ("header");
+
+				headers [header] = value;
+			}
 		}
 
 		public string this [HttpRequestHeader header] {
@@ -110,7 +120,8 @@ namespace System.Net {
 			case HttpResponseHeader.SetCookie:			return "set-cookie";
 			case HttpResponseHeader.Vary:				return "vary";
 			case HttpResponseHeader.WwwAuthenticate:	return "www-authenticate";
-			default:									throw new ArgumentException ();
+			default:
+				throw new IndexOutOfRangeException ();
 			}
 		}
 
@@ -158,7 +169,8 @@ namespace System.Net {
 			case HttpRequestHeader.Te:					return "te";
 			case HttpRequestHeader.Translate:			return "translate";
 			case HttpRequestHeader.UserAgent:			return "user-agent";
-			default:									throw new ArgumentException ();
+			default:
+				throw new IndexOutOfRangeException ();
 			}
 		}
 	}

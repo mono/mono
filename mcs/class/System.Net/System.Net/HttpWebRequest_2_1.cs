@@ -77,7 +77,11 @@ namespace System.Net {
 		}
 
 		public override WebHeaderCollection Headers {
-			get { return headers; }
+			get {
+				if (headers == null)
+					headers = new WebHeaderCollection ();
+				return headers;
+			}
 			set {
 				if (value == null)
 					throw new NullReferenceException ();

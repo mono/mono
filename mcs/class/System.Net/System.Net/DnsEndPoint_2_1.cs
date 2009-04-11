@@ -30,15 +30,14 @@
 
 #if NET_2_1
 
-using System;
+using System.Net.Sockets;
 
 namespace System.Net { 
 
 	public sealed class DnsEndPoint : EndPoint {
 		string host;
 		int port;
-		Sockets.AddressFamily addressFamily = Sockets.AddressFamily.Unknown;
-		private IPAddress ipAddress;
+		AddressFamily addressFamily = AddressFamily.Unspecified;
 
 		public DnsEndPoint (string host, int port)
 		{
@@ -51,16 +50,20 @@ namespace System.Net {
 
 			this.host = host;
 			this.port = port;
-			
-			IPHostEntry host_entry = Dns.GetHostEntry (host);
-			ipAddress = host_entry.AddressList[0];
 		}
 
-		public DnsEndPoint (string host, int port, Sockets.AddressFamily addressFamily) : this (host, port)
+		public DnsEndPoint (string host, int port, AddressFamily addressFamily) : this (host, port)
 		{
-			if (addressFamily == Sockets.AddressFamily.Unknown)
-				throw new ArgumentNullException ("the addressFamily parameter is specified as Unknown");
-			this.addressFamily = addressFamily;
+			switch (addressFamily) {
+			case AddressFamily.InterNetwork:
+			case AddressFamily.InterNetworkV6:
+			case AddressFamily.Unspecified:
+				this.addressFamily = addressFamily;
+				break;
+			default:
+				// throw for Unknown or any invalid value
+				throw new ArgumentException ("addressFamily");
+			}
 		}
 
 		public override bool Equals (object other)
@@ -84,16 +87,11 @@ namespace System.Net {
 
 		public override string ToString ()
 		{
-			return String.Format ("{0} {1}:{2}", addressFamily, host, port);
+			return String.Format ("{0}/{1}:{2}", addressFamily, host, port);
 		}
 
-		public override Sockets.AddressFamily AddressFamily {
+		public override AddressFamily AddressFamily {
 			get { return addressFamily; }
-		}
-
-		public override SocketAddress Serialize ()
-		{
-			return new IPEndPoint (ipAddress, port).Serialize ();
 		}
 
 		public string Host {

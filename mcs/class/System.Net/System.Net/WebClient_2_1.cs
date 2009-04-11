@@ -80,7 +80,7 @@ namespace System.Net
 //		static readonly string urlEncodedCType = "application/x-www-form-urlencoded";
 //		static byte [] hexBytes;
 //		ICredentials credentials;
-//		WebHeaderCollection headers;
+		WebHeaderCollection headers;
 //		WebHeaderCollection responseHeaders;
 		Uri baseAddress;
 		string baseString;
@@ -88,6 +88,7 @@ namespace System.Net
 		bool is_busy, async;
 		Thread async_thread;
 		Encoding encoding = Encoding.UTF8;
+		bool allow_read_buffering = true;
 //		IWebProxy proxy;
 //
 //		// Constructors
@@ -164,14 +165,12 @@ namespace System.Net
 //
 		public WebHeaderCollection Headers {
 			get {
-				throw new NotImplementedException ();
-//				if (headers == null)
-//					headers = new WebHeaderCollection ();
-//
-//				return headers;
+				if (headers == null)
+					headers = new WebHeaderCollection ();
+
+				return headers;
 			}
-			set { throw new NotImplementedException (); }
-//			set { headers = value; }
+			set { headers = value; }
 		}
 //		
 //		public NameValueCollection QueryString {
@@ -190,13 +189,11 @@ namespace System.Net
 //
 //#if NET_2_0
 		public Encoding Encoding {
-			get { throw new NotImplementedException (); }
-//			get { return encoding; }
+			get { return encoding; }
 			set {
-				throw new NotImplementedException ();
-//				if (value == null)
-//					throw new ArgumentNullException ("value");
-//				encoding = value;
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				encoding = value;
 			}
 		}
 //
@@ -210,9 +207,10 @@ namespace System.Net
 			get { return is_busy; }
 		}
 
+		[MonoTODO ("value is unused")]
 		public bool AllowReadStreamBuffering {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return allow_read_buffering; }
+			set { allow_read_buffering = value; }
 		}
 
 		// Methods
