@@ -63,8 +63,11 @@ namespace System.Web.UI
 			}
 		}
 
-		protected internal override bool HasTriggered () {
-			throw new NotImplementedException ();
+		protected internal override bool HasTriggered ()
+		{
+			if (String.Compare (Owner.ScriptManager.AsyncPostBackSourceElementID, ControlID, StringComparison.Ordinal) == 0)
+				return true;
+			return false;
 		}
 
 		// LAME SPEC: it seems DefaultEventAttribute is never queried for the event name.

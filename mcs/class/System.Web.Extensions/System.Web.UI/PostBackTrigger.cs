@@ -44,8 +44,11 @@ namespace System.Web.UI
 			}
 		}
 
-		protected internal override bool HasTriggered () {
-			throw new NotImplementedException ();
+		protected internal override bool HasTriggered ()
+		{
+			// Since this kind of trigger causes a normal postback, we never get
+			// triggered
+			return false;
 		}
 
 		protected internal override void Initialize () {
