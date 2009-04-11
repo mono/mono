@@ -1,3 +1,13 @@
+2009-04-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_generic_class): Add the helper methods from T[]
+	when a ICollection<T> etc is encountered.
+	(add_generic_instances): Process method arguments/locals too.
+	(emit_trampolines): Emit unbox trampolines for extra methods too. Shorten
+	trampoline names.
+
+	* aot-runtime.c (mono_aot_get_unbox_trampoline): Handle extra methods too.
+	
 2009-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Disable the AOT compiler if the JIT is disabled.
