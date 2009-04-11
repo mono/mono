@@ -5558,7 +5558,17 @@ namespace Mono.CSharp {
 		//
 		public virtual bool Emit (EmitContext ec, IMemoryLocation target)
 		{
-			bool is_value_type = TypeManager.IsValueType (type);
+			bool is_value_type = type.IsValueType;
+#if NET_2_0			
+			if (!is_value_type && TypeManager.IsGenericParameter (type)) {
+				GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (type);
+				if (constraints == null)
+					is_value_type = false;
+				else
+					is_value_type =  constraints.IsValueType;
+			}
+#endif			
+			
 			ILGenerator ig = ec.ig;
 			VariableReference vr = target as VariableReference;
 
