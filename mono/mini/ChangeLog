@@ -1,5 +1,15 @@
 2009-04-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
+
+	* aot-compiler.c (emit_extra_methods): Emit the wrapper method names in
+	a more compact format.
+	(mono_aot_wrapper_name): New function to return a unique name for a
+	wrapper method, also used by the AOT runtime.
+
+	* aot-runtime.c (find_extra_method_in_amodule): Update after the changes to
+	aot-compiler.c.
+
 	* aot-compiler.c (add_generic_class): Add the helper methods from T[]
 	when a ICollection<T> etc is encountered.
 	(add_generic_instances): Process method arguments/locals too.
