@@ -1,3 +1,9 @@
+2009-04-11  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* WebClient_2_1.cs: WebClient allows relative URI...
+	* WebRequest_2_1.cs: ...while WebRequest does not by default. 
+	Also uncomment a few checks for new test cases
+
 2009-04-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsEndPoint_2_1.cs: Adjust exceptions wrt unit tests

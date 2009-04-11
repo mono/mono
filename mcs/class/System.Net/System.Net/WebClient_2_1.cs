@@ -873,7 +873,7 @@ namespace System.Net
 //		
 		WebRequest SetupRequest (Uri uri)
 		{
-			WebRequest request = WebRequest.Create (baseAddress != null ? new Uri (baseAddress, uri) : uri);
+			WebRequest request = WebRequest.CreateInternal (baseAddress != null ? new Uri (baseAddress, uri) : uri, true);
 //			if (Proxy != null)
 //				request.Proxy = Proxy;
 //			request.Credentials = credentials;
@@ -1206,9 +1206,10 @@ namespace System.Net
 
 		public void OpenWriteAsync (Uri address, string method, object userToken)
 		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
 			throw new NotImplementedException ();
-//			if (address == null)
-//				throw new ArgumentNullException ("address");
 //
 //			lock (this) {
 //				SetBusy ();
@@ -1337,12 +1338,12 @@ namespace System.Net
 
 		public void UploadStringAsync (Uri address, string method, string data, object userToken)
 		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
 			throw new NotImplementedException ();
-//			if (address == null)
-//				throw new ArgumentNullException ("address");
-//			if (data == null)
-//				throw new ArgumentNullException ("data");
-//			
 //			lock (this) {
 //				SetBusy ();
 //				async = true;
