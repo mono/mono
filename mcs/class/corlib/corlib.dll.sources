@@ -152,6 +152,7 @@ System/FlagsAttribute.cs
 System/FormatException.cs
 System/GC.cs
 System/GCCollectionMode.cs
+System/GCNotificationStatus.cs
 System/Guid.cs
 System/IAppDomainSetup.cs
 System/IAsyncResult.cs

@@ -1,3 +1,7 @@
+2009-04-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WaitHandle.cs: implemented 2 missing WaitAny overloads.
+
 2009-03-05 Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WaitHandle.cs: Added missing WaitOne overload.

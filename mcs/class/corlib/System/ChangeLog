@@ -1,3 +1,7 @@
+2009-04-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* GCNotificationStatus.cs: new enum.
+
 2009-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs: Make some of the InternalArray methods non-generic to cut down

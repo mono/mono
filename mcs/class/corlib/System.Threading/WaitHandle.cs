@@ -171,6 +171,19 @@ namespace System.Threading
 
 #if NET_2_0
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static int WaitAny(WaitHandle[] waitHandles, TimeSpan timeout)
+		{
+			return WaitAny (waitHandles, timeout, false);
+		}
+
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static int WaitAny(WaitHandle[] waitHandles, int millisecondsTimeout)
+		{
+			return WaitAny (waitHandles, millisecondsTimeout, false);
+		}
+#endif
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  TimeSpan timeout, bool exitContext)
@@ -190,7 +203,6 @@ namespace System.Threading
 			}
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		protected
 #else
