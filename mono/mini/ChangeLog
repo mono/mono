@@ -1,3 +1,8 @@
+2009-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_lowering_pass): Use NULLIFY_INS instead of
+	just setting the opcode to OP_NOP.
+
 2009-04-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Put the last change inside an 
