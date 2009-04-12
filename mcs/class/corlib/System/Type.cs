@@ -518,25 +518,25 @@ namespace System {
 				return GetTypeCodeInternal (type);
 		}
 
-		[MonoTODO("Mono does not support COM")]
+		[MonoTODO("This operation is currently not supported by Mono")]
 		public static Type GetTypeFromCLSID (Guid clsid)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Mono does not support COM")]
+		[MonoTODO("This operation is currently not supported by Mono")]
 		public static Type GetTypeFromCLSID (Guid clsid, bool throwOnError)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Mono does not support COM")]
+		[MonoTODO("This operation is currently not supported by Mono")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Mono does not support COM")]
+		[MonoTODO("This operation is currently not supported by Mono")]
 		public static Type GetTypeFromCLSID (Guid clsid, string server, bool throwOnError)
 		{
 			throw new NotImplementedException ();
