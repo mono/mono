@@ -1,3 +1,20 @@
+2009-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_create_static_rgctx_trampoline): New trampoline
+	creation function which returns a trampoline which sets the rgctx
+	argument.
+	(mono_magic_trampoline): Use the rgctx trampoline instead of an rgctx
+	wrapper if possible.
+	(mono_delegate_trampoline): Ditto.
+
+	* mini.c (mono_jit_runtime_invoke): Ditto.
+
+	* tramp-amd64.c: Add an implemention of static rgctx trampolines for AMD64.
+	
+	* aot-compiler.c aot-runtime.c: Add support for static rgctx trampolines.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
+	
 2009-04-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (mono_arch_lowering_pass): Use NULLIFY_INS instead of
