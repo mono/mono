@@ -1,3 +1,8 @@
+2009-04-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (MonoMethodPrinter.to_string): Add a MonoMethod* pretty
+	printer.
+
 2009-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py: Update to the latest archer api.

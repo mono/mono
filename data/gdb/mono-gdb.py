@@ -140,6 +140,22 @@ class ObjectPrinter:
             print sys.exc_info ()[1]
             # FIXME: This can happen because we don't have liveness information
             return self.val.cast (gdb.lookup_type ("guint64"))
+        
+class MonoMethodPrinter:
+    "Print a MonoMethod structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
+            return "0x0"
+        val = self.val.dereference ()
+        klass = val ["klass"].dereference ()
+        class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
+        return "\"%s:%s ()\"" % (class_name, val ["name"].string ())
+        # This returns more info but requires calling into the inferior
+        #return "\"%s\"" % (gdb.parse_and_eval ("mono_method_full_name (%s, 1)" % (str (int (self.val.cast (gdb.lookup_type ("guint64")))))).string ())
 
 def lookup_pretty_printer(val):
     t = str (val.type)
@@ -149,6 +165,8 @@ def lookup_pretty_printer(val):
         return ObjectPrinter (val)    
     if t == "string":
         return StringPrinter (val)
+    if t == "MonoMethod *":
+        return MonoMethodPrinter (val)
     return None
 
 def register_csharp_printers(obj):
