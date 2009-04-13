@@ -29,9 +29,19 @@ namespace Test
 			}
 		}
 
-		public static void Main()
+		public static int Main()
 		{
-			int result = ParseType("foo");
+			int result1 = ParseType("foo");
+			Console.WriteLine (result1);
+			if (result1 != 1)
+				return 1;
+
+			int result2 = ParseType("headed");
+			Console.WriteLine (result2);
+			if (result1 != result2)
+				return 2;
+			
+			return 0;
 		}
 	}
 }

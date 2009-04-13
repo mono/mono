@@ -27421,10 +27421,10 @@
         <size>7</size>
       </method>
       <method name="Int32 ParseType(System.String)">
-        <size>164</size>
+        <size>168</size>
       </method>
-      <method name="Void Main()">
-        <size>12</size>
+      <method name="Int32 Main()">
+        <size>54</size>
       </method>
     </type>
   </test>
@@ -30138,13 +30138,13 @@
         <size>124</size>
       </method>
       <method name="Void test_76590(System.String)">
-        <size>100</size>
+        <size>107</size>
       </method>
       <method name="Void test_77964()">
         <size>37</size>
       </method>
       <method name="Boolean bug_78860()">
-        <size>107</size>
+        <size>114</size>
       </method>
       <method name="Int32 Main()">
         <size>1037</size>
@@ -34126,7 +34126,7 @@
         <size>7</size>
       </method>
       <method name="Boolean Test(System.String)">
-        <size>137</size>
+        <size>148</size>
       </method>
       <method name="Int32 Main()">
         <size>49</size>
