@@ -1,3 +1,9 @@
+2009-04-13  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #493887
+	* statement.cs: Don't skip string multi-section with default or
+	null label when populating string hashtable.
+
 2009-04-11  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #492329

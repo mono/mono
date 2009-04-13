@@ -3732,11 +3732,10 @@ namespace Mono.CSharp {
 			Elements.Clear ();
 			string value = null;
 			foreach (SwitchSection section in Sections) {
+				int last_count = init.Count;
 				foreach (SwitchLabel sl in section.Labels) {
-					if (sl.Label == null || sl.Converted == SwitchLabel.NullStringCase) {
-						value = null;
+					if (sl.Label == null || sl.Converted == SwitchLabel.NullStringCase)
 						continue;
-					}
 
 					value = (string) sl.Converted;
 					ArrayList init_args = new ArrayList (2);
@@ -3745,7 +3744,10 @@ namespace Mono.CSharp {
 					init.Add (new CollectionElementInitializer (init_args, loc));
 				}
 
-				if (value == null)
+				//
+				// Don't add empty sections
+				//
+				if (last_count == init.Count)
 					continue;
 
 				Elements.Add (counter, section.Labels [0]);
@@ -3753,7 +3755,7 @@ namespace Mono.CSharp {
 			}
 
 			ArrayList args = new ArrayList (1);
-			args.Add (new Argument (new IntConstant (Sections.Count, loc)));
+			args.Add (new Argument (new IntConstant (init.Count, loc)));
 			Expression initializer = new NewInitialize (string_dictionary_type, args,
 				new CollectionOrObjectInitializers (init, loc), loc);
 
