@@ -1,5 +1,12 @@
 2009-04-13  Bill Holmes  <billholmes54@gmail.com>
 
+	* object.c (build_imt_slots): Changing a free to a g_free to match
+	  the g_malloc0 in add_imt_builder_entry that allocated this memory.
+
+	Code is contributed under MIT/X11 license.
+
+2009-04-13  Bill Holmes  <billholmes54@gmail.com>
+
 	* marshal.c (emit_marshal_boolean): Adding code to ensure that
 	  the correct TRUE value is passed through the marshaling layer.
 
