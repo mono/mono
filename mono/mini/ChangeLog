@@ -1,5 +1,20 @@
 2009-04-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_create_delegate_trampoline): Delegate the
+	full aot support to the arch specific code.
+
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Add full-aot support.
+
+	* aot-compiler.c (emit_trampolines): Emit delegate invoke impl trampolines.
+
+	* aot-compiler.c (emit_named_code): Rename this to 'emit_trampoline'.
+	
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impls): New function to
+	collect information about the delegate invoke impl trampolines.
+
+	* mini.h (MonoAotTrampInfo): New structure collecting the information needed
+	to save trampolines during full-aot mode.
+
 	* mini-trampolines.c (mono_create_static_rgctx_trampoline): New trampoline
 	creation function which returns a trampoline which sets the rgctx
 	argument.
