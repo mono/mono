@@ -1033,6 +1033,23 @@ namespace System.Web {
 #endif
 
 #if NET_2_0
+		class HttpQSCollection : NameValueCollection {
+			public override string ToString ()
+			{
+				int count = Count;
+				if (count == 0)
+					return "";
+				StringBuilder sb = new StringBuilder ();
+				string [] keys = AllKeys;
+				for (int i = 0; i < count; i++) {
+					sb.AppendFormat ("{0}={1}&", keys [i], this [keys [i]]);
+				}
+				if (sb.Length > 0)
+					sb.Length--;
+				return sb.ToString ();
+			}
+		}
+
 		public static NameValueCollection ParseQueryString (string query)
 		{
 			return ParseQueryString (query, Encoding.UTF8);
@@ -1049,7 +1066,7 @@ namespace System.Web {
 			if (query[0] == '?')
 				query = query.Substring (1);
 				
-			NameValueCollection result = new NameValueCollection ();
+			NameValueCollection result = new HttpQSCollection ();
 			ParseQueryString (query, encoding, result);
 			return result;
 		} 				
