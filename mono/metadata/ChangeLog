@@ -1,3 +1,12 @@
+2009-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_create_runtime_vtable): Set field->offset to -1
+	to mark fields as special static.
+	(mono_field_static_get_value): Handle special static fields.
+	(mono_field_static_set_value): Ditto.
+
+	* class-internals.h (struct _MonoClassField): Document this.
+
 2009-04-13  Bill Holmes  <billholmes54@gmail.com>
 
 	* cominterop.c (mono_cominterop_emit_marshal_com_interface): Assigning
