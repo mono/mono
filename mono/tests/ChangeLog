@@ -1,3 +1,7 @@
+2009-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* thread-static.cs: Add a test for accesses through reflection.
+
 2009-04-13  Bill Holmes  <billholmes54@gmail.com>
 
 	* Makefile.am: Adding marshalbool.cs.
