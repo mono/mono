@@ -1,3 +1,7 @@
+2009-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke2.cs: Add a test for #492330.
+
 2009-04-10  Mark Probst  <mark.probst@gmail.com>
 
 	* appdomain-unload.cs: Test for invoking on a proxy whose server
