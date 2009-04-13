@@ -1,3 +1,13 @@
+2009-04-13  Bill Holmes  <billholmes54@gmail.com>
+
+	* Makefile.am: Adding marshalbool.cs.
+
+	* libtest.c: Adding native code for marshalbool.cs tests.
+
+	* marshalbool.cs: Adding tests for emit_marshal_boolean.
+
+	Contributed under MIT/X11 license.
+
 2009-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs: Add a test for #492330.
