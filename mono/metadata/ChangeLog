@@ -1,5 +1,8 @@
 2009-04-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_emit_managed_wrapper): Handle closed delegates
+	correctly. Fixes #492330.
+	
 	* marshal.c: Fix the embedding of object pointers into JITted code in
 	the native-to-managed wrappers by allocating some GC tracked memory, and
 	embedding the address of that.
