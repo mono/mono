@@ -1,5 +1,13 @@
 2009-04-13  Bill Holmes  <billholmes54@gmail.com>
 
+	* cominterop.c (mono_cominterop_emit_marshal_com_interface): Assigning
+	  the argument a value of null for the MARSHAL_ACTION_MANAGED_CONV_OUT
+	  case.  This will handle when managed code returns null to native code.
+
+	Code is contributed under MIT/X11 license.
+
+2009-04-13  Bill Holmes  <billholmes54@gmail.com>
+
 	* object.c (build_imt_slots): Changing a free to a g_free to match
 	  the g_malloc0 in add_imt_builder_entry that allocated this memory.
 
