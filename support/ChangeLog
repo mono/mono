@@ -1,3 +1,8 @@
+2009-04-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* sys-time.c: Properly set the modification time, instead of using the
+	  access time as the modification time.  Fixes #494253.
+
 2009-03-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* x-struct-str.c: It's possible for struct members to be NULL, so make 
