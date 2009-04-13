@@ -1,3 +1,10 @@
+2009-04-13  Bill Holmes  <billholmes54@gmail.com>
+
+	* marshal.c (emit_marshal_boolean): Adding code to ensure that
+	  the correct TRUE value is passed through the marshaling layer.
+
+	Code is contributed under MIT/X11 license.
+
 2009-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_emit_managed_wrapper): Handle closed delegates
