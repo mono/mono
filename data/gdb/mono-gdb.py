@@ -157,6 +157,21 @@ class MonoMethodPrinter:
         # This returns more info but requires calling into the inferior
         #return "\"%s\"" % (gdb.parse_and_eval ("mono_method_full_name (%s, 1)" % (str (int (self.val.cast (gdb.lookup_type ("guint64")))))).string ())
 
+class MonoClassPrinter:
+    "Print a MonoClass structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
+            return "0x0"
+        klass = self.val.dereference ()
+        class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
+        return "\"%s\"" % (class_name)
+        # This returns more info but requires calling into the inferior
+        #return "\"%s\"" % (gdb.parse_and_eval ("mono_type_full_name (&((MonoClass*)%s)->byval_arg)" % (str (int ((self.val).cast (gdb.lookup_type ("guint64")))))))
+
 def lookup_pretty_printer(val):
     t = str (val.type)
     if t == "object":
@@ -167,6 +182,8 @@ def lookup_pretty_printer(val):
         return StringPrinter (val)
     if t == "MonoMethod *":
         return MonoMethodPrinter (val)
+    if t == "MonoClass *":
+        return MonoClassPrinter (val)
     return None
 
 def register_csharp_printers(obj):

@@ -1,3 +1,8 @@
+2009-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py (MonoClassPrinter.to_string): Add a MonoClass* pretty
+	printer.
+
 2009-04-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py (MonoMethodPrinter.to_string): Add a MonoMethod* pretty
