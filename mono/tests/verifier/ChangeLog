@@ -1,3 +1,7 @@
+2009-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* invalid_backward_branch.il: Fix typo.
+
 2009-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_delegate_signature_with_generics.cs: Test for the compatibility
