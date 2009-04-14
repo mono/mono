@@ -1,3 +1,12 @@
+2009-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ContainerControl.cs: Implement support for Control.CausesValidation,
+	by adding a pending list of controls to be validated in the top
+	container control, and postpone validation as needed. 
+	Also remove any control in the validation chain in case it gets removed 
+	from its owner before the pending validation actually happens.
+	Fixes #457170.
+
 2009-04-09  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ListBox.cs: The default instance StringFormat field used to draw our

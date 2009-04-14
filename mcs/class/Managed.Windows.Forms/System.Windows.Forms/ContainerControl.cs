@@ -39,6 +39,7 @@ namespace System.Windows.Forms {
 	public class ContainerControl : ScrollableControl, IContainerControl {
 		private Control		active_control;
 		private Control		unvalidated_control;
+		private ArrayList	pending_validation_chain;
 
 		// This is an internal hack that allows some container controls
 		// to not auto select their child when they are activated
@@ -139,13 +140,31 @@ namespace System.Windows.Forms {
 					walk = walk.Parent;
 				}
 
-				validation_failed = false;
-				for (int i = 0; i < validation_chain.Count; i ++) {
-					if (!ValidateControl ((Control)validation_chain[i])) {
-						active_control = value = (Control)validation_chain[i];
-						fire_enter = true;
-						validation_failed = true;
+				// Validation can be postponed due to all the controls
+				// in the enter chain not causing validation. If we don't have any
+				// enter chain, it means that the selected control is a child and then
+				// we need to validate the controls anyway
+				bool postpone_validation;
+				Control topmost_under_root = null; // topmost under root, in the *enter* chain
+				if (value == root)
+					postpone_validation = false;
+				else {
+					postpone_validation = true;
+					walk = value;
+					while (walk != root && walk != null) {
+						if (walk.CausesValidation)
+							postpone_validation = false;
+
+						topmost_under_root = walk;
+						walk = walk.Parent;
 					}
+				}
+
+				Control failed_validation_control = PerformValidation (form == null ? this : form, postpone_validation, 
+						validation_chain, topmost_under_root);
+				if (failed_validation_control != null) {
+					active_control = value = failed_validation_control;
+					fire_enter = true;
 				}
 
 				if (fire_enter) {
@@ -195,6 +214,72 @@ namespace System.Windows.Forms {
 					SendControlFocus (active_control);
 			}
 		}
+
+		// Return the control where validation failed, and null otherwise
+		// @topmost_under_root is the control under the root in the enter chain, if any
+		//
+		// The process of validation happens as described:
+		//
+		// 	1. Iterate over the nodes in the enter chain (walk down), looking for any node
+		// 	causing validation. If we can't find any, don't validate the current validation chain, but postpone it,
+		// 	saving it in the top_container.pending_validation_chain field, since we need to keep track of it later.
+		// 	If we have a previous pending_validation_chain, add the new nodes, making sure they are not repeated
+		// 	(this is computed in ActiveControl and we receive if as the postpone_validation parameter).
+		//
+		// 	2. If we found at least one node causing validation in the enter chain, try to validate the elements
+		// 	in pending_validation_chain, if any. Then continue with the ones receives as parameters.
+		//
+		// 	3. Return null if all the validation performed successfully, and return the control where the validation
+		// 	failed otherwise.
+		//
+		private Control PerformValidation (ContainerControl top_container, bool postpone_validation, ArrayList validation_chain, 
+				Control topmost_under_root)
+		{
+			validation_failed = false;
+
+			if (postpone_validation) {
+				AddValidationChain (top_container, validation_chain);
+				return null;
+			}
+
+			// if not null, pending chain has always one element or more
+			if (top_container.pending_validation_chain != null) {
+				// if the topmost node in the enter chain is exactly the topmost
+				// int the validation chain, remove it, as .net does
+				int last_idx = top_container.pending_validation_chain.Count - 1;
+				if (topmost_under_root == top_container.pending_validation_chain [last_idx])
+					top_container.pending_validation_chain.RemoveAt (last_idx);
+
+				AddValidationChain (top_container, validation_chain);
+				validation_chain = top_container.pending_validation_chain;
+				top_container.pending_validation_chain = null;
+			}
+
+			for (int i = 0; i < validation_chain.Count; i ++) {
+				if (!ValidateControl ((Control)validation_chain[i])) {
+					validation_failed = true;
+					return (Control)validation_chain[i];
+				}
+			}
+
+			return null;
+		}
+
+		// Add the elements in validation_chain to the pending validation chain stored in top_container
+		private void AddValidationChain (ContainerControl top_container, ArrayList validation_chain)
+		{
+			if (validation_chain.Count == 0)
+				return;
+
+			if (top_container.pending_validation_chain == null || top_container.pending_validation_chain.Count == 0) {
+				top_container.pending_validation_chain = validation_chain;
+				return;
+			}
+
+			foreach (Control c in validation_chain)
+				if (!top_container.pending_validation_chain.Contains (c))
+					top_container.pending_validation_chain.Add (c);
+		}	
 
 		private bool ValidateControl (Control c)
 		{
@@ -648,6 +733,19 @@ namespace System.Windows.Forms {
 		#region Internal Methods
 		internal void ChildControlRemoved (Control control)
 		{
+			ContainerControl top_container = FindForm ();
+			if (top_container == null)
+				top_container = this;
+
+			// Remove controls -as well as any sub control- that was in the pending validation chain
+			ArrayList pending_validation_chain = top_container.pending_validation_chain;
+			if (pending_validation_chain != null) {
+				RemoveChildrenFromValidation (pending_validation_chain, control);
+
+				if (pending_validation_chain.Count == 0)
+					top_container.pending_validation_chain = null;
+			}
+
 			if (control == active_control || control.Contains (active_control)) {
 				SelectNextControl (this, true, true, true, true);
 				if (control == active_control || control.Contains (active_control)) {
@@ -655,6 +753,33 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+		// Check that this control (or any child) is included in the pending validation chain
+		bool RemoveChildrenFromValidation (ArrayList validation_chain, Control c)
+		{
+			if (RemoveFromValidationChain (validation_chain, c))
+				return true;
+
+			foreach (Control child in c.Controls)
+				if (RemoveChildrenFromValidation (validation_chain, child))
+					return true;
+
+			return false;
+		}
+
+		// Remove the top most control in the pending validation chain, as well as any children there,
+		// taking advantage of the fact that the chain is in reverse order of the control's hierarchy
+		bool RemoveFromValidationChain (ArrayList validation_chain, Control c)
+		{
+			int idx = validation_chain.IndexOf (c);
+			if (idx > -1) {
+				pending_validation_chain.RemoveAt (idx--);
+				return true;
+			}
+
+			return false;
+		}
+
 		internal virtual void CheckAcceptButton()
 		{
 			// do nothing here, only called if it is a Form
