@@ -1,3 +1,7 @@
+2009-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_delegate_compatibility): Fix error message.
+
 2009-04-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Fix typo
