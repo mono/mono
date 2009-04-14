@@ -332,11 +332,11 @@ public class Node : IComparable {
 	{
 		Indent ();
 		Console.WriteLine ("{0},{1}", node.Element, node.Caption);
-		if (node.Nodes == null)
+		if (node.Nodes.Count == 0)
 			return;
 
 		indent++;
-		foreach (Node n in node.nodes)
+		foreach (Node n in node.Nodes)
 			PrintTree (n);
 		indent--;
 	}
