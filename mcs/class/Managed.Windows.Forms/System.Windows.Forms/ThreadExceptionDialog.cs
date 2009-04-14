@@ -28,6 +28,7 @@
 // COMPLETE - BUT DISABLED TEXTBOX
 
 using System;
+using System.Drawing;
 using System.Text;
 using System.Reflection;
 using System.ComponentModel;
@@ -148,6 +149,7 @@ namespace System.Windows.Forms
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.TopMost = true;
+			this.Paint += new PaintEventHandler (PaintHandler);
 			this.ResumeLayout(false);
 		}
 	
@@ -207,6 +209,12 @@ namespace System.Windows.Forms
 		void buttonAbort_Click(object sender, System.EventArgs e)
 		{
 			Application.Exit ();
+		}
+
+		void PaintHandler (object o, PaintEventArgs args)
+		{
+			Graphics g = args.Graphics;
+			g.DrawIcon (SystemIcons.Error, 15, 10);
 		}
 
 #if NET_2_0

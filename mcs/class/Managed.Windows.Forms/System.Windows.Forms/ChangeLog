@@ -1,3 +1,8 @@
+2009-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ThreadExceptionDialog.cs: Draw the error icon, previously missing.
+	Fixes #474253.
+
 2009-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ContainerControl.cs: Implement support for Control.CausesValidation,
