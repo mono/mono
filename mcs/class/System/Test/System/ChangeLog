@@ -1,3 +1,7 @@
+2009-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UriTest2.cs: More test cases for the handling of %2f and %5c
+
 2009-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTest.cs : added test for windows local path with '\' (used in

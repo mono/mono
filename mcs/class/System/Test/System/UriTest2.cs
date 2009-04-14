@@ -236,5 +236,165 @@ TextWriter sw = Console.Out;
 		{
 			new Uri ("http://127.0.0.1::::/");
 		}
+#if NET_2_0
+		[Test]
+		public void File ()
+		{
+			string s = "file:///dir1%2f..%2fdir%2fapp.xap#header";
+			Uri uri = new Uri (s);
+			Assert.AreEqual ("/dir/app.xap", uri.AbsolutePath, "AbsolutePath");
+			// default port is removed
+			Assert.AreEqual ("file:///dir/app.xap#header", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual (String.Empty, uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("#header", uri.Fragment, "Fragment");
+			Assert.AreEqual (String.Empty, uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/dir/app.xap", uri.LocalPath, "LocalPath");
+			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
+			Assert.AreEqual (-1, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("file", uri.Scheme, "Scheme");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void HttpWithDefaultPort ()
+		{
+			string s = "HTTP://host.domain.com:80/app.xap";
+			Uri uri = new Uri (s);
+			Assert.AreEqual ("/app.xap", uri.AbsolutePath, "AbsolutePath");
+			// default port is removed
+			Assert.AreEqual ("http://host.domain.com/app.xap", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/app.xap", uri.LocalPath, "LocalPath");
+			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
+			Assert.AreEqual (80, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("http", uri.Scheme, "Scheme");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void HttpWithoutPort ()
+		{
+			string s = "Http://host.DOMAIN.com/dir/app.xap#options";
+			Uri uri = new Uri (s);
+			Assert.AreEqual ("/dir/app.xap", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("http://host.domain.com/dir/app.xap#options", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("#options", uri.Fragment, "Fragment");
+			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/dir/app.xap", uri.LocalPath, "LocalPath");
+			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
+			Assert.AreEqual (80, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("http", uri.Scheme, "Scheme");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void HttpWithNonStandardPort ()
+		{
+			string s = "http://monkey:s3kr3t@HOST.domain.Com:8080/dir/../app.xap?option=1";
+			Uri uri = new Uri (s);
+			Assert.AreEqual ("/app.xap", uri.AbsolutePath, "AbsolutePath");
+			// non-standard port is present
+			Assert.AreEqual ("http://monkey:s3kr3t@host.domain.com:8080/app.xap?option=1", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/app.xap", uri.LocalPath, "LocalPath");
+			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
+			Assert.AreEqual (8080, uri.Port, "Port");
+			Assert.AreEqual ("?option=1", uri.Query, "Query");
+			Assert.AreEqual ("http", uri.Scheme, "Scheme");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual ("monkey:s3kr3t", uri.UserInfo, "UserInfo");
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void HttpsWithDefaultPort ()
+		{
+			string s = "httpS://host.domain.com:443/";
+			Uri uri = new Uri (s);
+			Assert.AreEqual ("/", uri.AbsolutePath, "AbsolutePath");
+			// default port is removed
+			Assert.AreEqual ("https://host.domain.com/", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/", uri.LocalPath, "LocalPath");
+			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
+			Assert.AreEqual (443, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("https", uri.Scheme, "Scheme");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void HttpsWithoutPort ()
+		{
+			string s = "Https://host.DOMAIN.com/dir%2fapp.xap#";
+			Uri uri = new Uri (s);
+			Assert.AreEqual ("/dir/app.xap", uri.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("https://host.domain.com/dir/app.xap#", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual ("#", uri.Fragment, "Fragment");
+			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/dir/app.xap", uri.LocalPath, "LocalPath");
+			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
+			Assert.AreEqual (443, uri.Port, "Port");
+			Assert.AreEqual (String.Empty, uri.Query, "Query");
+			Assert.AreEqual ("https", uri.Scheme, "Scheme");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, uri.UserInfo, "UserInfo");
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void HttpsWithNonStandardPort ()
+		{
+			string s = "https://monkey:s3kr3t@HOST.domain.Com:4430/dir/..%5Capp.xap?";
+			Uri uri = new Uri (s);
+			Assert.AreEqual ("/app.xap", uri.AbsolutePath, "AbsolutePath");
+			// non-standard port is present
+			Assert.AreEqual ("https://monkey:s3kr3t@host.domain.com:4430/app.xap?", uri.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual ("host.domain.com", uri.DnsSafeHost, "DnsSafeHost");
+			Assert.AreEqual (String.Empty, uri.Fragment, "Fragment");
+			Assert.AreEqual ("host.domain.com", uri.Host, "Host");
+			Assert.IsTrue (uri.IsAbsoluteUri, "IsAbsoluteUri");
+			Assert.IsFalse (uri.IsUnc, "IsUnc");
+			Assert.AreEqual ("/app.xap", uri.LocalPath, "LocalPath");
+			Assert.AreEqual (s, uri.OriginalString, "OriginalString");
+			Assert.AreEqual (4430, uri.Port, "Port");
+			Assert.AreEqual ("?", uri.Query, "Query");
+			Assert.AreEqual ("https", uri.Scheme, "Scheme");
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+			Assert.AreEqual ("monkey:s3kr3t", uri.UserInfo, "UserInfo");
+			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+#endif
 	}
 }
