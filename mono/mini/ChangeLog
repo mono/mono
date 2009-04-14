@@ -1,5 +1,8 @@
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c tramp-arm.c mini-arm.c: Implement static rgctx 
+	trampolines for ARM. Add full-aot support for delegate invokes for ARM.
+
 	* mini-trampolines.c (mono_magic_trampoline): Fix the build.
 
 	* liveness.c (visit_bb): Remove a needless assert.
