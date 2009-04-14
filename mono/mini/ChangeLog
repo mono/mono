@@ -1,5 +1,7 @@
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): Fix the build.
+
 	* liveness.c (visit_bb): Remove a needless assert.
 
 2009-04-13  Zoltan Varga  <vargaz@gmail.com>
