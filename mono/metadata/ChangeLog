@@ -1,5 +1,12 @@
 2009-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Don't fail if an unconditional branch
+	with non empty stack happens before the beginning of a try block.
+
+	Fixes #494812.
+
+2009-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify typename and typenamespace fields of
 	the typeref table.
 
