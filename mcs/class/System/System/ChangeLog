@@ -1,3 +1,8 @@
+2009-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Uri.cs: Fix processing of %2f and %5c in paths. Avoid a few
+	computation where the result is not used (overwritten)
+
 2009-03-16  Raja R Harinath  <harinath@hurrynot.org>
 
 	Reduce dependence of UriParser on Uri

@@ -1461,11 +1461,14 @@ namespace System {
 			}
 
 			// 5 path
-			pos = uriString.IndexOf ('/', startpos, endpos-startpos);
-			if (pos == -1 && windowsFilePath)
-				pos = uriString.IndexOf ('\\', startpos, endpos-startpos);
-			if (unixAbsPath)
+			if (unixAbsPath) {
 				pos = -1;
+			} else {
+				pos = uriString.IndexOf ('/', startpos, endpos-startpos);
+				if (pos == -1 && windowsFilePath)
+					pos = uriString.IndexOf ('\\', startpos, endpos-startpos);
+			}
+
 			if (pos == -1) {
 				if ((scheme != Uri.UriSchemeMailto) &&
 #if ONLY_1_1
@@ -1487,9 +1490,10 @@ namespace System {
 
 			// 4.b port
 			port = -1;
-			pos = uriString.LastIndexOf (':', endpos-1, endpos-startpos);
 			if (unixAbsPath)
 				pos = -1;
+			else
+				pos = uriString.LastIndexOf (':', endpos-1, endpos-startpos);
 			if (pos != -1 && pos != endpos - 1) {
 				string portStr = uriString.Substring(pos + 1, endpos - (pos + 1));
 				if (portStr.Length > 0 && portStr[portStr.Length - 1] != ']') {
@@ -1522,7 +1526,7 @@ namespace System {
 			host = uriString;
 
 			if (unixAbsPath) {
-				path = '/' + uriString;
+				path = Reduce ('/' + uriString);
 				host = String.Empty;
 			} else if (host.Length == 2 && host [1] == ':') {
 				// windows filepath
@@ -1579,7 +1583,39 @@ namespace System {
 
 		private static string Reduce (string path)
 		{
-			path = path.Replace ('\\','/');
+			// quick out, allocation-free, for a common case
+			if (path == "/")
+				return path;
+
+			// replace '\', %5C ('\') and %2f ('/') into '/'
+			// other escaped values seems to survive this step
+			StringBuilder res = new StringBuilder();
+			for (int i=0; i < path.Length; i++) {
+				char c = path [i];
+				switch (c) {
+				case '\\':
+					res.Append ('/');
+					break;
+				case '%':
+					if (i < path.Length - 2) {
+						char c1 = path [i + 1];
+						char c2 = Char.ToUpper (path [i + 2]);
+						if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
+							res.Append ('/');
+							i += 2;
+						} else {
+							res.Append (c);
+						}
+					} else {
+						res.Append (c);
+					}
+					break;
+				default:
+					res.Append (c);
+					break;
+				}
+			}
+			path = res.ToString ();
 			ArrayList result = new ArrayList ();
 
 			for (int startpos = 0; startpos < path.Length; ) {
@@ -1618,7 +1654,7 @@ namespace System {
 			if (result.Count == 0)
 				return "/";
 
-			StringBuilder res = new StringBuilder();
+			res.Length = 0;
 			if (path [0] == '/')
 				res.Append ('/');
 
