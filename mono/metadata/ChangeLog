@@ -9,6 +9,10 @@
 
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_delegate_to_ftnptr): Use mono_gc_alloc_fixed () for
+	allocating the location holding the this argument to prevent
+	'too many root sets' errors.
+
 	* object.c (mono_class_create_runtime_vtable): Set field->offset to -1
 	to mark fields as special static.
 	(mono_field_static_get_value): Handle special static fields.
