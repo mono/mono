@@ -1,5 +1,10 @@
 2009-04-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* socket-io.c: don't return IPv4/IPv6 addresses if the machine does
+	not have any interface configured for IPv4/IPv6.
+
+2009-04-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* assembly.c: fix typo in error message.
 
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
