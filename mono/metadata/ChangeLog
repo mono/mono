@@ -1,3 +1,8 @@
+2009-04-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke_sig): Don't share runtime
+	invoke signatures returning an enum. Fixes #494847.
+
 2009-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): Don't fail if an unconditional branch
