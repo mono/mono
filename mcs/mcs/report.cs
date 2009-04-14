@@ -684,7 +684,9 @@ namespace Mono.CSharp {
 				if (mb != null) {
 					mb = TypeManager.DropGenericMethodArguments (mb);
 					IMethodData md = TypeManager.GetMethod (mb);
-					SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError ());
+					if (md != null)
+						SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError ());
+
 					return;
 				}
 

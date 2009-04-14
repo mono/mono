@@ -1,3 +1,8 @@
+2009-04-14  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #494243
+	* report.cs (SymbolRelatedToPreviousError): Fixed NRE.
+
 2009-04-13  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #493887
