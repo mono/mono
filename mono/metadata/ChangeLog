@@ -1,3 +1,9 @@
+2009-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (delegate_hash_table_add): Make delegate_target_locations 
+	a MonoGHashTable to keep its values alive.
+	(emit_marshal_boolean): Fix a warning.
+
 2009-04-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: don't return IPv4/IPv6 addresses if the machine does
