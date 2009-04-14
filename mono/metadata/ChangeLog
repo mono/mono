@@ -1,3 +1,7 @@
+2009-04-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* assembly.c: fix typo in error message.
+
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_class_create_runtime_vtable): Set field->offset to -1
