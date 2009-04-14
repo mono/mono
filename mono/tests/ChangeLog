@@ -1,3 +1,7 @@
+2009-04-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* runtime-invoke.cs: Add a test for #494847.
+
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* thread-static.cs: Add a test for accesses through reflection.
