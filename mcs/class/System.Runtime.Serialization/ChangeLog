@@ -1,3 +1,7 @@
+2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Runtime.Serialization.dll.sources : added mtom reader.
+
 2009-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Runtime.Serialization.dll.sources : added mtom writer.

@@ -552,66 +552,59 @@ namespace System.Xml
 			return new XmlSimpleDictionaryReader (reader);
 		}
 
-		[MonoTODO]
+#if !NET_2_1
 		public static XmlDictionaryReader CreateMtomReader (
 			Stream stream, Encoding encoding,
 			XmlDictionaryReaderQuotas quotas)
 		{
-			throw new NotImplementedException ();
+			return new XmlMtomDictionaryReader (stream, encoding, quotas);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateMtomReader (
 			Stream stream, Encoding [] encodings,
 			XmlDictionaryReaderQuotas quotas)
 		{
-			throw new NotImplementedException ();
+			return CreateMtomReader (stream, encodings, null, quotas);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateMtomReader (
 			Stream stream, Encoding [] encodings, string contentType,
 			XmlDictionaryReaderQuotas quotas)
 		{
-			throw new NotImplementedException ();
+			return CreateMtomReader (stream, encodings, contentType, quotas, int.MaxValue, null);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateMtomReader (
 			Stream stream, Encoding [] encodings, string contentType,
 			XmlDictionaryReaderQuotas quotas,
 			int maxBufferSize,
 			OnXmlDictionaryReaderClose onClose)
 		{
-			throw new NotImplementedException ();
+			return new XmlMtomDictionaryReader (stream, encodings, contentType, quotas, maxBufferSize, onClose);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateMtomReader (
 			byte [] buffer, int offset, int count,
 			Encoding encoding, XmlDictionaryReaderQuotas quotas)
 		{
-			throw new NotImplementedException ();
+			return CreateMtomReader (new MemoryStream (buffer, offset, count), encoding, quotas);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateMtomReader (
 			byte [] buffer, int offset, int count,
 			Encoding [] encodings, XmlDictionaryReaderQuotas quotas)
 		{
-			throw new NotImplementedException ();
+			return CreateMtomReader (new MemoryStream (buffer, offset, count), encodings, quotas);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateMtomReader (
 			byte [] buffer, int offset, int count,
 			Encoding [] encodings, string contentType,
 			XmlDictionaryReaderQuotas quotas)
 		{
-			throw new NotImplementedException ();
+			return CreateMtomReader (new MemoryStream (buffer, offset, count), encodings, contentType, quotas);
 		}
 
-		[MonoTODO]
 		public static XmlDictionaryReader CreateMtomReader (
 			byte [] buffer, int offset, int count,
 			Encoding [] encodings, string contentType,
@@ -619,8 +612,9 @@ namespace System.Xml
 			int maxBufferSize,
 			OnXmlDictionaryReaderClose onClose)
 		{
-			throw new NotImplementedException ();
+			return CreateMtomReader (new MemoryStream (buffer, offset, count), encodings, contentType, quotas, maxBufferSize, onClose);
 		}
+#endif
 
 		public static XmlDictionaryReader CreateTextReader (byte [] buffer, XmlDictionaryReaderQuotas quotas)
 		{
