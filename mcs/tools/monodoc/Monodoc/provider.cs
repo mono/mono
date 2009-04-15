@@ -426,7 +426,7 @@ public class HelpSource {
 	public static bool FullHtml = true;
 
 	// should only be enabled by ASP.NET webdoc
-	public static bool IgnoreCache = true;
+	public static bool UseWebdocCache;
 
 	//
 	// The unique ID for this HelpSource.
@@ -444,7 +444,7 @@ public class HelpSource {
 		tree_filename = base_filename + ".tree";
 		zip_filename = base_filename + ".zip";
 		base_dir = XmlDocUtils.GetCacheDirectory (base_filename);
-		if (!IgnoreCache && !create && Directory.Exists (base_dir)) {
+		if (!UseWebdocCache && !create && Directory.Exists (base_dir)) {
 			nozip = true;
 		}
 

@@ -1,5 +1,10 @@
 2009-04-15  Jonathan Pryor  <jpryor@novell.com>
 
+	* Monodoc/provider.cs: UseWebdocCache is a better name that
+	  IgnoreCache (considering that cache is disabled by default).
+
+2009-04-15  Jonathan Pryor  <jpryor@novell.com>
+
 	* Monodoc/provider.cs:
 	  - Add HelpSource.IgnoreCache field, so that if the cache is present 
 	    it will be ignored.  (Required by 'mdoc export-html-webdoc' so it 
