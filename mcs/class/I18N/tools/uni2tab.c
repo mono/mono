@@ -26,7 +26,7 @@
 
 Usage: uni2tab
 
-Required files from ftp.unicode.org: Unihan.txt, shiftjis.txt
+Required files from ftp.unicode.org: Unihan.txt, CP932.TXT
 
 */
 
@@ -62,11 +62,11 @@ int main(int argc, char *argv[])
 	}
 	fclose(file);
 
-	/* Load the relevant contents from the shiftjis.txt file,
+	/* Load the relevant contents from the CP932.TXT file,
 	   to get mappings for non-CJK characters */
-	if((file = fopen("shiftjis.txt", "r")) == NULL)
+	if((file = fopen("CP932.TXT", "r")) == NULL)
 	{
-		perror("shiftjis.txt");
+		perror("CP932.TXT");
 		return 1;
 	}
 	while(fgets(buffer, sizeof(buffer), file))
@@ -242,7 +242,7 @@ static void convertLine(char *buf)
 }
 
 /*
- * Convert a line from the "shiftjis.txt" file.
+ * Convert a line from the "CP932.TXT" file.
  */
 static void convertSJISLine(char *buf)
 {
