@@ -49,13 +49,13 @@ namespace Mono.Documentation
 			var options = new OptionSet () {
 			{ "o|out=",
 				"The {DIRECTORY} to place the generated files and directories.\n\n" +
-				"If not specified, defaults to FILES without an extension.",
+				"If not specified, defaults to\n`dirname FILE`/cache/`basename FILE .tree`.",
 				v => dir = v },
 			};
 			List<string> files = Parse (options, args, "export-html-webdoc", 
 					"[OPTIONS]+ FILES",
 					"Export mdoc documentation within FILES to HTML for use by ASP.NET webdoc.\n\n" +
-					"FILES are .tree or .zip files as produced by 'mdoc update'.");
+					"FILES are .tree or .zip files as produced by 'mdoc assemble'.");
 			if (files == null)
 				return;
 			if (files.Count == 0)
@@ -81,7 +81,10 @@ namespace Mono.Documentation
 				if (hs == null) {
 					throw new Exception ("Only installed .tree and .zip files are supported.");
 				}
-				string outDir = dir ?? basePath;
+				string outDir = dir ?? Path.Combine (
+						Path.Combine (Path.GetDirectoryName (basePath), "cache"),
+						Path.GetFileName (basePath));
+				Console.WriteLine ("# outDir={0}", outDir);
 				Directory.CreateDirectory (outDir);
 				foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
 					var url = node.URL;

@@ -1,5 +1,11 @@
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/webdoc.cs: Change the default -o value to
+	  include a "cache" intermediate directory.  This makes it easier to
+	  kill the entire cache at once.
+
+2009-04-15  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/webdoc.cs: Provide nice default -o value.
 
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
