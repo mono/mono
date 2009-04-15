@@ -1,3 +1,10 @@
+2009-04-15  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: use generic lists for import, namespace and
+	interface caches. If a namespace is added (e.g. by parsing the
+	Import directive), find the assembly in which namespace is
+	defined.
+
 2009-04-07  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: ApplyTheme - make sure Page is not null before using

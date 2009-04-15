@@ -1,3 +1,10 @@
+2009-04-15  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: do not add all assemblies in bin/ when serving
+	a precompiled site. Fixes bug #493873
+	When serving a precompiled site, check if the bin/ directory
+	contains certain well-known assemblies and load them if present.
+
 2009-04-10  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: enabled recursion checking for page

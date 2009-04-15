@@ -377,7 +377,7 @@ namespace System.Web.Compilation {
                         bool addAssembliesInBin = false;
                         foreach (AssemblyInfo info in compConfig.Assemblies) {
                                 if (info.Assembly == "*")
-                                        addAssembliesInBin = true;
+                                        addAssembliesInBin = is_precompiled ? false : true;
                                 else
                                         LoadAssembly (info, al);
                         }
@@ -387,8 +387,18 @@ namespace System.Web.Compilation {
 
 			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
 				LoadAssembly (assLocation, al);
-			
-                        if (addAssembliesInBin)
+
+			if (is_precompiled) {
+				// Add well-known assemblies which need to be referenced by everyone
+				string binDir = HttpApplication.BinDirectory;
+				string asmPath;
+
+				foreach (String s in new string[] {"App_Code.dll", "App_GlobalResources.dll", "App_global.asax.dll"}) {
+					asmPath = Path.Combine (binDir, s);
+					if (File.Exists (asmPath))
+						LoadAssembly (asmPath, al);
+				}
+			} else if (addAssembliesInBin) {
 				foreach (string s in HttpApplication.BinDirectoryAssemblies) {
 					try {
 						LoadAssembly (s, al);
@@ -396,7 +406,8 @@ namespace System.Web.Compilation {
 						// ignore silently
 					}
 				}
-			
+			}
+
 			lock (buildCacheLock) {
 				foreach (Assembly asm in referencedAssemblies)
 					if (!al.Contains (asm))
