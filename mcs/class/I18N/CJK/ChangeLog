@@ -1,3 +1,7 @@
+2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* jis.table : regenerated. Fixed bug #491799.
+
 2008-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ISO2022JP.cs : handle ESC-J sequence which is obsoleted in

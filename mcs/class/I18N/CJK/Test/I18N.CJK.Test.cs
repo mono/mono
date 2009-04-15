@@ -289,6 +289,13 @@ namespace MonoTests.I18N.CJK
 				bytes, "#6");
 		}
 
+		[Test]
+		public void Bug491799 ()
+		{
+			Assert.AreEqual (new byte [] {0xEE, 0xFC},
+					   Encoding.GetEncoding (932).GetBytes ("\uFF02"));
+		}
+
 #if NET_2_0
 		[Test]
 		public void Decoder932Refresh ()
