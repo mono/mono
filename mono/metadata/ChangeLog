@@ -1,3 +1,9 @@
+2009-04-15  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c
+	(mono_debug_symfile_lookup_location): Don't print a warning for
+	unknown extended opcodes if they're within 0x40 and 0x7f.
+
 2009-04-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke_sig): Don't share runtime
