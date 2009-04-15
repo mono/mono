@@ -1,5 +1,11 @@
 2009-04-15  Martin Baulig  <martin@ximian.com>
 
+	* MonoSymbolWriter.cs: Move `ISourceFile', `ICompileUnit' and
+	`IMethodDef' into MonoSymbolFile.cs.  This allows us to use the
+	symbol reader part without MonoSymbolWriter.cs.
+
+2009-04-15  Martin Baulig  <martin@ximian.com>
+
 	* MonoSymbolTable.cs
 	(LineNumberTable.DW_LNE_MONO__extensions_start): New const.
 	(LineNumberTable.DW_LNE_MONO__extensions_end): New const.
