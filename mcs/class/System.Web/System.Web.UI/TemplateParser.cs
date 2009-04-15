@@ -71,9 +71,17 @@ namespace System.Web.UI {
 		ArrayList dependencies;
 		ArrayList assemblies;
 		Hashtable anames;
+#if NET_2_0
+		string[] binDirAssemblies;
+		Dictionary <string, bool> namespacesCache;
+		List <string> imports;
+		List <string> interfaces;
+		List <ServerSideScript> scripts;
+#else
 		ArrayList imports;
 		ArrayList interfaces;
 		ArrayList scripts;
+#endif
 		Type baseType;
 		bool baseTypeIsGlobal = true;
 		string className;
@@ -120,9 +128,8 @@ namespace System.Web.UI {
 		internal TemplateParser ()
 		{
 			LoadConfigDefaults ();
-			
-			imports = new ArrayList ();
 #if NET_2_0
+			imports = new List <string> ();
 			AddNamespaces (imports);
 #else
 			imports.Add ("System");
@@ -143,16 +150,10 @@ namespace System.Web.UI {
 			assemblies = new ArrayList ();
 #if NET_2_0
 			CompilationSection compConfig = CompilationConfig;
-			
-			bool addAssembliesInBin = false;
 			foreach (AssemblyInfo info in compConfig.Assemblies) {
-				if (info.Assembly == "*")
-					addAssembliesInBin = true;
-				else
+				if (info.Assembly != "*")
 					AddAssemblyByName (info.Assembly);
 			}
-			if (addAssembliesInBin)
-				AddAssembliesInBin ();
 
 			foreach (NamespaceInfo info in PagesConfig.Namespaces) {
 				imports.Add (info.Namespace);
@@ -200,7 +201,7 @@ namespace System.Web.UI {
 			generator.AddControl (type, attributes);
 		}
 		
-		void AddNamespaces (ArrayList imports)
+		void AddNamespaces (List <string> imports)
 		{
 			if (BuildManager.HaveResources)
 				imports.Add ("System.Resources");
@@ -477,8 +478,13 @@ namespace System.Web.UI {
 		
 		internal virtual void AddInterface (string iface)
 		{
-			if (interfaces == null)
+			if (interfaces == null) {
+#if NET_2_0
+				interfaces = new List <string> ();
+#else
 				interfaces = new ArrayList ();
+#endif
+			}
 
 			if (!interfaces.Contains (iface))
 				interfaces.Add (iface);
@@ -486,13 +492,70 @@ namespace System.Web.UI {
 		
 		internal virtual void AddImport (string namesp)
 		{
-			if (imports == null)
+			if (imports == null) {
+#if NET_2_0
+				imports = new List <string> ();
+#else
 				imports = new ArrayList ();
-
-			if (!imports.Contains (namesp))
-				imports.Add (namesp);
+#endif
+			}
+			
+			if (imports.Contains (namesp))
+				return;
+			
+			imports.Add (namesp);
+#if NET_2_0
+			AddAssemblyForNamespace (namesp);
+#endif
 		}
 
+#if NET_2_0
+		void AddAssemblyForNamespace (string namesp)
+		{
+			if (binDirAssemblies == null)
+				binDirAssemblies = HttpApplication.BinDirectoryAssemblies;
+			if (binDirAssemblies.Length == 0)
+				return;
+
+			if (namespacesCache == null)
+				namespacesCache = new Dictionary <string, bool> ();
+			else if (namespacesCache.ContainsKey (namesp))
+				return;
+			
+			foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies ())
+				if (FindNamespaceInAssembly (asm, namesp))
+					return;
+			
+			IList tla = BuildManager.TopLevelAssemblies;
+			if (tla != null && tla.Count > 0) {
+				foreach (Assembly asm in tla) {
+					if (FindNamespaceInAssembly (asm, namesp))
+						return;
+				}
+			}
+
+			Assembly a;
+			foreach (string s in binDirAssemblies) {
+				a = Assembly.LoadFrom (s);
+				if (FindNamespaceInAssembly (a, namesp))
+					return;
+			}
+		}
+
+		bool FindNamespaceInAssembly (Assembly asm, string namesp)
+		{
+			foreach (Type type in asm.GetTypes ()) {
+				if (String.Compare (type.Namespace, namesp, StringComparison.Ordinal) == 0) {
+					namespacesCache.Add (namesp, true);
+					AddAssembly (asm, true);
+					return true;
+				}
+			}
+
+			return false;
+		}
+#endif
+		
 		internal virtual void AddSourceDependency (string filename)
 		{
 			if (dependencies != null && dependencies.Contains (filename))
@@ -1152,6 +1215,24 @@ namespace System.Web.UI {
 			}
 		}
 
+#if NET_2_0
+		internal List <ServerSideScript> Scripts {
+			get {
+				if (scripts == null)
+					scripts = new List <ServerSideScript> ();
+
+				return scripts;
+			}
+		}
+
+		internal List <string> Imports {
+			get { return imports; }
+		}
+
+		internal List <string> Interfaces {
+			get { return interfaces; }
+		}
+#else
 		internal ArrayList Scripts {
 			get {
 				if (scripts == null)
@@ -1165,6 +1246,11 @@ namespace System.Web.UI {
 			get { return imports; }
 		}
 
+		internal ArrayList Interfaces {
+			get { return interfaces; }
+		}
+#endif
+		
 		internal ArrayList Assemblies {
 			get {
 				if (appAssemblyIndex != -1) {
@@ -1176,10 +1262,6 @@ namespace System.Web.UI {
 
 				return assemblies;
 			}
-		}
-
-		internal ArrayList Interfaces {
-			get { return interfaces; }
 		}
 
 		internal RootBuilder RootBuilder {
