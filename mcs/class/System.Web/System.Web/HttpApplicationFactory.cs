@@ -722,6 +722,15 @@ namespace System.Web {
 				return;
 			if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true) != 0)
 				return;
+
+			// {Inotify,FAM}Watcher will notify about events for a directory regardless
+			// of the filter pattern. This might be a bug in the watchers code, but
+			// since I couldn't find any rationale for the code in there I'd opted for
+			// not removing it and instead working around the issue here. Fix for bug
+			// #495011
+			FileSystemWatcher watcher = sender as FileSystemWatcher;
+			if (watcher != null && String.Compare (watcher.Filter, "?eb.?onfig", true) == 0)
+				return;
 			
 	        	lock (watchers_lock) {
 				if(app_shutdown)
