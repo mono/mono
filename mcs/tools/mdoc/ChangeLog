@@ -1,5 +1,12 @@
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/webdoc.cs: Do as make(1) does: if the
+	  target directory already exists and is newer than the source files, 
+	  don't regenerate output.  (Greatly speeds things up if nothing has
+	  changed.)  Add a --force-update option to disable this behavior.
+
+2009-04-15  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/webdoc.cs: Change the default -o value to
 	  include a "cache" intermediate directory.  This makes it easier to
 	  kill the entire cache at once.

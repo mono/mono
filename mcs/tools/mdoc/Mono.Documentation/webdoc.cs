@@ -46,11 +46,17 @@ namespace Mono.Documentation
 		public override void Run (IEnumerable<string> args)
 		{
 			string dir = null;
+			bool forceUpdate = false;
 			var options = new OptionSet () {
-			{ "o|out=",
-				"The {DIRECTORY} to place the generated files and directories.\n\n" +
-				"If not specified, defaults to\n`dirname FILE`/cache/`basename FILE .tree`.",
-				v => dir = v },
+				{ "force-update",
+					"Always generate new files.  If not specified, will only generate " +
+					"files if the write time of the output directory is older than the " +
+					"write time of the source .tree/.zip files.",
+					v => forceUpdate = v != null },
+				{ "o|out=",
+					"The {DIRECTORY} to place the generated files and directories.\n\n" +
+					"If not specified, defaults to\n`dirname FILE`/cache/`basename FILE .tree`.",
+					v => dir = v },
 			};
 			List<string> files = Parse (options, args, "export-html-webdoc", 
 					"[OPTIONS]+ FILES",
@@ -72,6 +78,13 @@ namespace Mono.Documentation
 				string zipFile  = basePath + ".zip";
 				if (!Exists (treeFile) || !Exists (zipFile))
 					continue;
+				string outDir = dir ?? Path.Combine (
+						Path.Combine (Path.GetDirectoryName (basePath), "cache"),
+						Path.GetFileName (basePath));
+				Directory.CreateDirectory (outDir);
+				if (!forceUpdate && 
+							MaxWriteTime (treeFile, zipFile) < Directory.GetLastWriteTime (outDir))
+					continue;
 				Console.WriteLine ("# Tree file={0}", treeFile);
 				Tree tree = new Tree (null, treeFile);
 				RootTree docRoot = RootTree.LoadTree ();
@@ -81,11 +94,6 @@ namespace Mono.Documentation
 				if (hs == null) {
 					throw new Exception ("Only installed .tree and .zip files are supported.");
 				}
-				string outDir = dir ?? Path.Combine (
-						Path.Combine (Path.GetDirectoryName (basePath), "cache"),
-						Path.GetFileName (basePath));
-				Console.WriteLine ("# outDir={0}", outDir);
-				Directory.CreateDirectory (outDir);
 				foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
 					var url = node.URL;
 					Console.WriteLine ("# NodeUrl={0}", url);
@@ -110,6 +118,11 @@ namespace Mono.Documentation
 					return false;
 			}
 			return true;
+		}
+
+		DateTime MaxWriteTime (params string[] files)
+		{
+			return files.Select (f => File.GetLastWriteTime (f)).Max ();
 		}
 	}
 }
