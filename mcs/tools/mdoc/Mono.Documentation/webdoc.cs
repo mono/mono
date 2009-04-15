@@ -35,9 +35,12 @@ using System.Text;
 using System.Web;
 
 using Monodoc;
+using Mono.Documentation;
 
 using Mono.Options;
 using Mono.Rocks;
+
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace Mono.Documentation
 {
@@ -78,35 +81,13 @@ namespace Mono.Documentation
 				string zipFile  = basePath + ".zip";
 				if (!Exists (treeFile) || !Exists (zipFile))
 					continue;
-				string outDir = dir ?? Path.Combine (
-						Path.Combine (Path.GetDirectoryName (basePath), "cache"),
-						Path.GetFileName (basePath));
+				string outDir = dir ?? XmlDocUtils.GetCacheDirectory (basePath);
 				if (!forceUpdate && Directory.Exists (outDir) &&
 							MaxWriteTime (treeFile, zipFile) < Directory.GetLastWriteTime (outDir))
 					continue;
 				Directory.CreateDirectory (outDir);
-				Console.WriteLine ("# Tree file={0}", treeFile);
-				Tree tree = new Tree (null, treeFile);
-				RootTree docRoot = RootTree.LoadTree ();
-				string helpSourceName = Path.GetFileName (basePath);
-				HelpSource hs = docRoot.HelpSources.Cast<HelpSource> ()
-					.FirstOrDefault (h => h.Name == helpSourceName);
-				if (hs == null) {
-					throw new Exception ("Only installed .tree and .zip files are supported.");
-				}
-				foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
-					var url = node.URL;
-					Console.WriteLine ("# NodeUrl={0}", url);
-					if (string.IsNullOrEmpty (url))
-						continue;
-					var file = Path.Combine (outDir,
-							HttpUtility.UrlEncode (url).Replace ('/', '+').Replace ("*", "%2a"));
-					Console.WriteLine ("# file={0}", file);
-					using (var o = File.AppendText (file)) {
-						Node _;
-						o.Write (hs.GetText (url, out _));
-					}
-				}
+				ExtractZipFile (zipFile, outDir);
+				GenerateCache (basePath, treeFile, outDir);
 			}
 		}
 
@@ -123,6 +104,44 @@ namespace Mono.Documentation
 		DateTime MaxWriteTime (params string[] files)
 		{
 			return files.Select (f => File.GetLastWriteTime (f)).Max ();
+		}
+
+		void ExtractZipFile (string zipFile, string outDir)
+		{
+			ZipInputStream zip = new ZipInputStream (File.OpenRead (zipFile));
+
+			ZipEntry entry;
+			while ((entry = zip.GetNextEntry ()) != null) {
+				string file = Path.Combine (outDir, entry.Name);
+				Console.WriteLine ("# Extracting zip entry: {0}; to: {1}", entry.Name, file);
+				Directory.CreateDirectory (Path.GetDirectoryName (file));
+				zip.WriteTo (File.OpenWrite (file));
+			}
+		}
+
+		void GenerateCache (string basePath, string treeFile, string outDir)
+		{
+			Console.WriteLine ("# Tree file={0}", treeFile);
+			Tree tree = new Tree (null, treeFile);
+			RootTree docRoot = RootTree.LoadTree ();
+			string helpSourceName = Path.GetFileName (basePath);
+			HelpSource hs = docRoot.HelpSources.Cast<HelpSource> ()
+				.FirstOrDefault (h => h.Name == helpSourceName);
+			if (hs == null) {
+				throw new Exception ("Only installed .tree and .zip files are supported.");
+			}
+			foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
+				var url = node.URL;
+				Console.WriteLine ("# NodeUrl={0}", url);
+				if (string.IsNullOrEmpty (url))
+					continue;
+				var file = XmlDocUtils.GetCachedFileName (outDir, url);
+				Console.WriteLine ("# file={0}", file);
+				using (var o = File.AppendText (file)) {
+					Node _;
+					o.Write (hs.GetText (url, out _));
+				}
+			}
 		}
 	}
 }

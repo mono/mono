@@ -41,6 +41,12 @@ namespace Mono.Rocks {
 				throw new ArgumentNullException ("childrenSelector");
 		}
 
+		public static void Destination (object destination)
+		{
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+		}
+
 		public static void Self (object self)
 		{
 			if (self == null)

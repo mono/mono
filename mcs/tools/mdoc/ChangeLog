@@ -1,5 +1,18 @@
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
 
+	* Makefile: Add reference to ICSharpCode.SharpZipLib.dll.
+	* mdoc.exe.sources: Add Mono.Rocks/ObjectRocks.cs,
+	  Mono.Rocks/StreamRocks.cs.
+	* Mono.Documentation/webdoc.cs: Refactor into smaller methods.  Extract 
+	  ZIP file contents in addition to generating HTML output.  Use
+	  monodoc helper methods to determine cache directory.
+	* Mono.Documentation/ObjectRocks.cs: Rename to
+	  Mono.Rocks/ObjectRocks.cs.
+	* Mono.Rocks/ObjectRocks.cs: Add Check.Destination().
+	* Mono.Rocks/StreamRocks.cs: Added; extension methods for Streams.
+
+2009-04-15  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/webdoc.cs: The timestamp logic was wrong it the
 	  output directory didn't exist.  Fix.
 
