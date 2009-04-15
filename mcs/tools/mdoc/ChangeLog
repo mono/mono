@@ -1,5 +1,9 @@
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/webdoc.cs: Provide nice default -o value.
+
+2009-04-15  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/webdoc.cs: Load documentation through a
 	  HelpSource, not through the RootTree, as URLs of the form
 	  "ecma:0#AvoidExtensionMethodOnSystemObjectRule/" use the number (0

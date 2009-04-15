@@ -48,7 +48,8 @@ namespace Mono.Documentation
 			string dir = null;
 			var options = new OptionSet () {
 			{ "o|out=",
-				"The {DIRECTORY} to place the generated files and directories.",
+				"The {DIRECTORY} to place the generated files and directories.\n\n" +
+				"If not specified, defaults to FILES without an extension.",
 				v => dir = v },
 			};
 			List<string> files = Parse (options, args, "export-html-webdoc", 
@@ -63,7 +64,9 @@ namespace Mono.Documentation
 			HelpSource.FullHtml = false;
 			SettingsHandler.Settings.EnableEditing = false;
 			foreach (var basePath in 
-					files.Select (f => Path.GetFileNameWithoutExtension (f)).Distinct ()) {
+					files.Select (f => 
+							Path.Combine (Path.GetDirectoryName (f), Path.GetFileNameWithoutExtension (f)))
+					.Distinct ()) {
 				Console.WriteLine ("# Processing BasePath={0}", basePath);
 				string treeFile = basePath + ".tree";
 				string zipFile  = basePath + ".zip";
@@ -78,14 +81,14 @@ namespace Mono.Documentation
 				if (hs == null) {
 					throw new Exception ("Only installed .tree and .zip files are supported.");
 				}
-				// monodoc url == docRoot.RenderUrl
-				// tree link == HelpSource.GetText()
+				string outDir = dir ?? basePath;
+				Directory.CreateDirectory (outDir);
 				foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
 					var url = node.URL;
 					Console.WriteLine ("# NodeUrl={0}", url);
 					if (string.IsNullOrEmpty (url))
 						continue;
-					var file = Path.Combine (dir, 
+					var file = Path.Combine (outDir,
 							HttpUtility.UrlEncode (url).Replace ('/', '+').Replace ("*", "%2a"));
 					Console.WriteLine ("# file={0}", file);
 					using (var o = File.AppendText (file)) {
