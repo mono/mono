@@ -81,10 +81,10 @@ namespace Mono.Documentation
 				string outDir = dir ?? Path.Combine (
 						Path.Combine (Path.GetDirectoryName (basePath), "cache"),
 						Path.GetFileName (basePath));
-				Directory.CreateDirectory (outDir);
-				if (!forceUpdate && 
+				if (!forceUpdate && Directory.Exists (outDir) &&
 							MaxWriteTime (treeFile, zipFile) < Directory.GetLastWriteTime (outDir))
 					continue;
+				Directory.CreateDirectory (outDir);
 				Console.WriteLine ("# Tree file={0}", treeFile);
 				Tree tree = new Tree (null, treeFile);
 				RootTree docRoot = RootTree.LoadTree ();
