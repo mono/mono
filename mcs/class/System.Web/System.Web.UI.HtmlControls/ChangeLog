@@ -1,3 +1,8 @@
+2009-04-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HtmlInputText.cs: make sure we're inside a Page before dereferencing
+	it.
+
 2008-11-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: added the undocumented, but supported, Action
