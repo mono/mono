@@ -1,3 +1,7 @@
+2009-04-15  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (instr): Handle unidentified local var id.
+
 2009-03-31  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ILParser.jay: Fix integer labels in handler blocks.

@@ -2382,6 +2382,8 @@ instr			: INSTR_NONE
                         | INSTR_LOCAL id
                           {
                                 int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
+                                if (slot < 0)
+                                        Report.Error (String.Format ("Undeclared identifier '{0}'", (string) $2));
                                 codegen.CurrentMethodDef.AddInstr (
                                         new IntInstr ((IntOp) $1, slot, tokenizer.Location));
                           }
@@ -2407,6 +2409,8 @@ instr			: INSTR_NONE
 			| INSTR_I id
                           {
                                 int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
+                                if (slot < 0)
+                                        Report.Error (String.Format ("Undeclared identifier '{0}'", (string) $2));
                                 codegen.CurrentMethodDef.AddInstr (new
                                         IntInstr ((IntOp) $1, slot, tokenizer.Location));
                           }

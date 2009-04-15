@@ -241,6 +241,8 @@ namespace Mono.ILASM {
                 public int GetNamedLocalSlot (string name)
                 {
                         Local local = (Local) named_local_table[name];
+                        if (local == null)
+                                return -1;
 
                         return local.Slot;
                 }

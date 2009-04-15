@@ -10,6 +10,7 @@ namespace Mono.ILASM {
 	/// </summary>
 	internal class StringHelper : StringHelperBase {
 
+		private static readonly string startIdChars = "#$@_";
 		private static readonly string idChars = "_$@?`";
 
 		/// <summary>
@@ -27,7 +28,7 @@ namespace Mono.ILASM {
 		{
 			mode = Token.UNKNOWN;
 
-			if (Char.IsLetter (ch) || idChars.IndexOf (ch) != -1) {
+			if (Char.IsLetter (ch) || startIdChars.IndexOf (ch) != -1) {
 				mode = Token.ID;
 			} else if (ch == '\'') {
 				mode = Token.SQSTRING;
