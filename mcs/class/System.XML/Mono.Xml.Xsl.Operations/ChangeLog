@@ -1,3 +1,8 @@
+2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslForEach.cs : disabled an intelligent optimization for dotnet
+	  compatibility bug, #487065.
+
 2008-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslVariable.cs : now XPathNodeIterator.Current is always null at

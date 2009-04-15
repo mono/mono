@@ -1,3 +1,8 @@
+2009-04-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Expression.cs : extensions could return null and it should be
+	  regarded as empty node-set, not an error.
+
 2009-03-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Expression.cs : gave up another optimization for bug #443090.

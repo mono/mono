@@ -518,9 +518,12 @@ namespace System.Xml.XPath
 				}
 				if (iterResult != null)
 					return iterResult;
+				if (o == null)
+					return new NullIterator (iter);
+				type = GetReturnType (o);
 				break;
 			}
-			throw new XPathException ("expected nodeset: "+ToString ());
+			throw new XPathException (String.Format ("expected nodeset but was {1}: {0}", ToString (), type));
 		}
 
 		protected static XPathResultType GetReturnType (object obj)

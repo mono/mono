@@ -86,8 +86,9 @@ namespace Mono.Xml.Xsl.Operations {
 			if (p.Debugger != null)
 				p.Debugger.DebugExecute (p, this.DebugInput);
 
-			if (children == null)
-				return;
+			// This intelligent optimization causes poor compatibility bug shown in bug #457065
+//			if (children == null)
+//				return;
 
 			XPathNodeIterator iter = sortEvaluator != null ?
 				sortEvaluator.SortedSelect (p) :

@@ -2325,6 +2325,59 @@ World";
 			xslt.Transform (new XmlTextReader (new StringReader (@"<foo>bar</foo>")), null, sw);
 			Assert.AreEqual (" ", sw.ToString ());
 		}
+
+		[Test]
+		public void Bug487065 ()
+		{
+			using (XmlReader input = GetInput ()) {
+				using (XmlWriter output = XmlWriter.Create (Path.Combine(Path.GetTempPath(), "out.xml"))) {
+					PreProcess (input, output);
+					Assert.IsTrue (valueHasBeenSet, "#1");
+				}
+			}
+		}
+
+		private static XmlReader GetInput ()
+		{
+			return XmlReader.Create (new StringReader ("<cb:config-template xmlns:cb=\"urn:ccnet.config.builder\"><cb:define name=\"var1\">value1</cb:define></cb:config-template>"));
+		}
+
+		private void PreProcess (XmlReader input, XmlWriter output)
+		{
+			var xsltsettings = new XsltSettings (true, true);
+			var xsltpreprocess = new XslCompiledTransform (true);
+
+			var stream =
+				new StringReader (@"
+<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'
+ xmlns:msxsl='urn:schemas-microsoft-com:xslt'
+ xmlns:cb='urn:ccnet.config.builder'    
+ xmlns:env='environment'
+ xmlns:exsl='http://exslt.org/common'
+ exclude-result-prefixes='msxsl cb env exsl'>
+  <xsl:template match='cb:define[not(*) and @name]'>
+    <xsl:for-each select='env:define_text_constant(@name,.)'/>
+  </xsl:template>
+</xsl:stylesheet>");
+
+			using (XmlReader xsltreader = XmlReader.Create (stream))
+				xsltpreprocess.Load (xsltreader, xsltsettings, new XmlUrlResolver());
+
+			var xsltargs = new XsltArgumentList ();
+
+			// The XSLT calls extension functions in _current_env.
+			xsltargs.AddExtensionObject ("environment", this);
+			xsltpreprocess.Transform (input, xsltargs, output, null);
+		}
+
+		public void define_text_constant (string name, string value)
+		{
+			Assert.AreEqual("var1", name, "#a1");
+			Assert.AreEqual("value1", value, "#a2");
+			valueHasBeenSet = true;
+		}
+
+		private bool valueHasBeenSet;
 #endif
 	}
 }
