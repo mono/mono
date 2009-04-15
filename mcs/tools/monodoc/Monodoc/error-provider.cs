@@ -236,6 +236,10 @@ namespace Monodoc {
 		public override string GetText (string url, out Node match_node)
 		{
 			match_node = null;
+
+			string c = GetCachedText (url);
+			if (c != null)
+				return c;
 			
 			if (url == "root:")
 				if (HelpSource.use_css)

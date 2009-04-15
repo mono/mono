@@ -580,6 +580,14 @@ public class EcmaHelpSource : HelpSource {
 	public override string GetText (string url, out Node match_node)
 	{
 		match_node = null;
+
+		string c = GetCachedText (url);
+		if (c != null)
+			return c;
+
+		string cached = GetCachedText (url);
+		if (cached != null)
+			return cached;
 		
 		if (url == "root:")
 		{

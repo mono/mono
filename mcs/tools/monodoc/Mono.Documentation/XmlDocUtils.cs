@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 using System.Xml;
 
 namespace Mono.Documentation {
@@ -171,6 +172,20 @@ namespace Mono.Documentation {
 						GetInterfaces (ifaces, d, loader);
 				}
 			}
+		}
+
+		// Turns e.g. sources/netdocs into sources/cache/netdocs
+		public static string GetCacheDirectory (string assembledBase)
+		{
+			return Path.Combine (
+						Path.Combine (Path.GetDirectoryName (assembledBase), "cache"),
+						Path.GetFileName (assembledBase));
+		}
+
+		public static string GetCachedFileName (string cacheDir, string url)
+		{
+			return Path.Combine (cacheDir,
+					HttpUtility.UrlEncode (url).Replace ('/', '+').Replace ("*", "%2a"));
 		}
 	}
 }

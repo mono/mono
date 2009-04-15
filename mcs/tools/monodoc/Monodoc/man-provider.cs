@@ -77,6 +77,11 @@ public class ManHelpSource : HelpSource {
 	public override string GetText (string url, out Node match_node)
 	{
 		match_node = null;
+
+		string c = GetCachedText (url);
+		if (c != null)
+			return c;
+
 		if (url.IndexOf (MAN_PREFIX) > -1)
 			return GetTextFromUrl (url);
 		if (url == "root:") {

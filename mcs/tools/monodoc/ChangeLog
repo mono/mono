@@ -1,3 +1,22 @@
+2009-04-15  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/provider.cs:
+	  - Add HelpSource.IgnoreCache field, so that if the cache is present 
+	    it will be ignored.  (Required by 'mdoc export-html-webdoc' so it 
+	    gets "fresh" content to generate the cache, and by monodoc GUI as 
+	    it can't use the cache'd HTML; cache'd HTML is for ASP.NET 
+	    webdoc only.)
+	  - Alter the cache directory from e.g. sources/netdocs to 
+	    sources/cache/netdocs (as defined by 
+	    XmlDocUtils.GetCacheDirectory()).
+	  - Add HelpSource.GetCachedText() method which will return the 
+	    contents of the cache for an id.
+	* Monodoc/addins-provider.cs, Monodoc/ecma-provider.cs, 
+	  Monodoc/error-provider.cs, Monodoc/man-provider.cs, 
+	  Monodoc/simple-provider.cs: Use GetCachedText().
+	* Mono.Documentation/XmlDocUtils.cs: Add GetCacheDirectory(),
+	  GetCacheFileName() methods.
+
 2009-04-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/provider.cs: Fix NullReferenceException in 'mdoc dump-tree'.

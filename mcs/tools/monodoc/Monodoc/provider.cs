@@ -26,6 +26,9 @@ using ICSharpCode.SharpZipLib.Zip;
 
 using Monodoc.Lucene.Net.Index;
 using Monodoc.Lucene.Net.Analysis.Standard;
+
+using Mono.Documentation;
+
 /// <summary>
 ///    This tree is populated by the documentation providers, or populated
 ///    from a binary encoding of the tree.  The format of the tree is designed
@@ -422,6 +425,9 @@ public class HelpSource {
 
 	public static bool FullHtml = true;
 
+	// should only be enabled by ASP.NET webdoc
+	public static bool IgnoreCache = true;
+
 	//
 	// The unique ID for this HelpSource.
 	//
@@ -437,9 +443,9 @@ public class HelpSource {
 		this.name = Path.GetFileName (base_filename);
 		tree_filename = base_filename + ".tree";
 		zip_filename = base_filename + ".zip";
-		if (!create && Directory.Exists (base_filename)) {
+		base_dir = XmlDocUtils.GetCacheDirectory (base_filename);
+		if (!IgnoreCache && !create && Directory.Exists (base_dir)) {
 			nozip = true;
-			base_dir = base_filename;
 		}
 
 		if (create)
@@ -492,7 +498,7 @@ public class HelpSource {
 	public virtual Stream GetHelpStream (string id)
 	{
 		if (nozip) {
-			string path = Path.Combine (base_dir, id);
+			string path = XmlDocUtils.GetCachedFileName (base_dir, id);
 			if (File.Exists (path))
 				return File.OpenRead (path);
 			return null;
@@ -521,7 +527,7 @@ public class HelpSource {
 	public XmlReader GetHelpXml (string id)
 	{
 		if (nozip) {
-			Stream s = File.OpenRead (Path.Combine (base_dir, id));
+			Stream s = File.OpenRead (XmlDocUtils.GetCachedFileName (base_dir, id));
 			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
 			return new XmlTextReader (url, s);
 		}
@@ -541,7 +547,7 @@ public class HelpSource {
 	public virtual XmlDocument GetHelpXmlWithChanges (string id)
 	{
 		if (nozip) {
-			Stream s = File.OpenRead (Path.Combine (base_dir, id));
+			Stream s = File.OpenRead (XmlDocUtils.GetCachedFileName (base_dir, id));
 			string url = "monodoc:///" + SourceID + "@" + System.Web.HttpUtility.UrlEncode (id) + "@";
 			XmlReader r = new XmlTextReader (url, s);
 			XmlDocument ret = new XmlDocument ();
@@ -701,6 +707,16 @@ public class HelpSource {
 	{
 		n = null;
 		return null;
+	}
+
+	protected string GetCachedText (string url)
+	{
+		if (!nozip)
+			return null;
+		string file = XmlDocUtils.GetCachedFileName (base_dir, url);
+		if (!File.Exists (file))
+			return null;
+		return File.OpenText (file).ReadToEnd ();
 	}
 
 	public virtual Stream GetImage (string url)
