@@ -1,3 +1,15 @@
+2009-04-15  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Add reference to System.Web.dll, for HttpUtility.
+	* mdoc.exe.sources: Add ObjectRocks.cs, webdoc.cs to the build.
+	* Mono.Documentation/mdoc.cs: Add export-html-webdoc command, which
+	  "pre-renders" HTML for use by the webdoc ASP.NET renderer.
+	* Mono.Documentation/webdoc.cs: Added; MDocExportWebdocHtml
+	  implementation; attempts to pre-render HTML based on .tree/.zip
+	  file contents.
+	* Mono.Documentation/ObjectRocks.cs: Added; extension methods for tree
+	  traversal (from Mono.Rocks).  For use in webdoc.cs.
+
 2009-04-09  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: Using a single IAssemblyResolver is

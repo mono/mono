@@ -39,6 +39,7 @@ namespace Mono.Documentation {
 				{ "assemble",         new MDocAssembler () },
 				{ "dump-tree",        new MDocTreeDumper () },
 				{ "export-html",      new MDocToHtmlConverter () },
+				{ "export-html-webdoc",   new MDocExportWebdocHtml () },
 				{ "export-msxdoc",    new MDocToMSXDocConverter () },
 				{ "help",             new MDocHelpCommand (this) },
 				{ "update",           new MDocUpdater () },

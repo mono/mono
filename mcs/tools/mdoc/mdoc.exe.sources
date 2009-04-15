@@ -7,5 +7,7 @@ Mono.Documentation/monodocer.cs
 Mono.Documentation/monodocs2html.cs
 Mono.Documentation/monodocs2slashdoc.cs
 Mono.Documentation/normalize.cs
+Mono.Documentation/ObjectRocks.cs
 Mono.Documentation/validate.cs
+Mono.Documentation/webdoc.cs
 Mono.Documentation/XhtmlWriter.cs
