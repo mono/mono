@@ -38,31 +38,6 @@ using System.IO;
 	
 namespace Mono.CompilerServices.SymbolWriter
 {
-	public interface ISourceFile
-	{
-		SourceFileEntry Entry {
-			get;
-		}
-	}
-
-	public interface ICompileUnit
-	{
-		CompileUnitEntry Entry {
-			get;
-		}
-	}
-
-	public interface IMethodDef
-	{
-		string Name {
-			get;
-		}
-
-		int Token {
-			get;
-		}
-	}
-
 	public class MonoSymbolWriter
 	{
 		ArrayList methods = null;
