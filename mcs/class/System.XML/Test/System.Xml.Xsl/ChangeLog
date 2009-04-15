@@ -1,3 +1,7 @@
+2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformTests.cs : test for bug #457065 by Leszek Ciesielski.
+
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformTests.cs : test for bug #450797 by Jonathan Anderson.
