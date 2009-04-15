@@ -9,7 +9,7 @@ using System.Text; /* Encoding */
 
 public class table_to {
   static String toHexString1 (int i) {
-    return new String(new char[] { "0123456789ABCDEF".get_Chars(i) });
+    return new String(new char[] { "0123456789ABCDEF" [i] });
   }
   static String toHexString2 (int i) {
     return  toHexString1((i>>4)&0x0f)
