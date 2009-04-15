@@ -1,3 +1,11 @@
+2009-04-15  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: if a notification is received from a
+	FileSystemWatcher which was configured to watch for
+	subdirectories, uses a filter (currently we have just one such
+	watcher - waiting for changes to '?eb.?onfig') and the event
+	doesn't match the filter, ignore the event. Fixes bug #495011
+
 2009-04-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpUtility.cs: the collection returned from ParseQueryString knows
