@@ -111,8 +111,9 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (UniqueID);
+			Page page = Page;
+			if (page != null)
+				page.ClientScript.RegisterForEventValidation (UniqueID);
 			base.Render (writer);
 		}
 #endif
