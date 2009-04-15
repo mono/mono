@@ -72,10 +72,14 @@ namespace Mono.Documentation
 				Console.WriteLine ("# Tree file={0}", treeFile);
 				Tree tree = new Tree (null, treeFile);
 				RootTree docRoot = RootTree.LoadTree ();
+				string helpSourceName = Path.GetFileName (basePath);
+				HelpSource hs = docRoot.HelpSources.Cast<HelpSource> ()
+					.FirstOrDefault (h => h.Name == helpSourceName);
+				if (hs == null) {
+					throw new Exception ("Only installed .tree and .zip files are supported.");
+				}
 				// monodoc url == docRoot.RenderUrl
 				// tree link == HelpSource.GetText()
-				Console.WriteLine ("# tree contents:");
-				Tree.PrintTree (tree);
 				foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
 					var url = node.URL;
 					Console.WriteLine ("# NodeUrl={0}", url);
@@ -86,8 +90,7 @@ namespace Mono.Documentation
 					Console.WriteLine ("# file={0}", file);
 					using (var o = File.AppendText (file)) {
 						Node _;
-						o.Write (docRoot.RenderUrl (url, out _));
-						//  tree.HelpSource.GetText (url, out _));
+						o.Write (hs.GetText (url, out _));
 					}
 				}
 			}

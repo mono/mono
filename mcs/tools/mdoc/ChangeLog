@@ -1,5 +1,13 @@
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/webdoc.cs: Load documentation through a
+	  HelpSource, not through the RootTree, as URLs of the form
+	  "ecma:0#AvoidExtensionMethodOnSystemObjectRule/" use the number (0
+	  in this case) as a HelpSource-relative identifier.  Result: you get
+	  the wrong documentation if you go through RootTree.
+
+2009-04-15  Jonathan Pryor <jpryor@novell.com>
+
 	* Makefile: Add reference to System.Web.dll, for HttpUtility.
 	* mdoc.exe.sources: Add ObjectRocks.cs, webdoc.cs to the build.
 	* Mono.Documentation/mdoc.cs: Add export-html-webdoc command, which
