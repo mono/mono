@@ -1,3 +1,9 @@
+2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AtomPub10CategoriesDocumentFormatterTest.cs,
+	  AtomPub10ServiceDocumentFormatterTest.cs : aded GetSchema() and
+	  WriteElementExtensions() tests.
+
 2009-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AtomPub10ServiceDocumentFormatterTest.cs : add ReadFrom() test.

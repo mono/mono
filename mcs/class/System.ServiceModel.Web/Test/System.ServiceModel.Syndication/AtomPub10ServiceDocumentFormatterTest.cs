@@ -32,6 +32,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 using System.ServiceModel.Syndication;
 using NUnit.Framework;
 
@@ -44,6 +45,20 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void Read (XmlReader reader)
 		{
 			ReadFrom (reader);
+		}
+
+		public void CallWriteDocument ()
+		{
+			var w = XmlWriter.Create (TextWriter.Null);
+			ServiceDocumentFormatter.WriteElementExtensions (w, new MyDocument (), "http://www.w3.org/2007/app");
+		}
+	}
+
+	class MyDocument : ServiceDocument
+	{
+		protected override void WriteElementExtensions (XmlWriter writer, string version)
+		{
+			throw new ApplicationException ();
 		}
 	}
 
@@ -104,6 +119,21 @@ namespace MonoTests.System.ServiceModel.Syndication
 		public void ReadFrom ()
 		{
 			new MyServiceFormatter ().Read (XmlReader.Create (new StringReader (app2)));
+		}
+
+		[Test]
+		public void GetSchema ()
+		{
+			IXmlSerializable i = new AtomPub10ServiceDocumentFormatter ();
+			Assert.IsNull (i.GetSchema ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ApplicationException))]
+		public void WriteElementExtensions ()
+		{
+			// this test is to verify that the overriden WriteElementExtensions() is called in the staic ServiceDocumentFormatter method.
+			new MyServiceFormatter ().CallWriteDocument ();
 		}
 	}
 }

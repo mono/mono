@@ -1,3 +1,14 @@
+2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDocument.cs : remove Utility class. It is not precise
+	  implementation to write extensions.
+	* ServiceDocumentFormatter.cs : virtual extension writer methods
+	  should call possibly overriden Write[Element/Attribute]Extensions()
+	  in possibly derived document item classes.
+	  Implemented LoadElementExtensions().
+	* AtomPub10CategoriesDocumentFormatter.cs,
+	  AtomPub10ServiceDocumentFormatter.cs : Implemented GetSchema().
+
 2009-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceDocumentFormatter.cs

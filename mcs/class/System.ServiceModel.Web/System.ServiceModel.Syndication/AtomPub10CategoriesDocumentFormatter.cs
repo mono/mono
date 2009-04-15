@@ -183,10 +183,9 @@ namespace System.ServiceModel.Syndication
 				atom10_formatter.WriteCategory (cat, writer);
 		}
 
-		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		void IXmlSerializable.ReadXml (XmlReader reader)

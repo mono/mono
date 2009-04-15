@@ -145,10 +145,9 @@ namespace System.ServiceModel.Syndication
 			writer.WriteEndElement ();
 		}
 
-		[MonoTODO]
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		void IXmlSerializable.ReadXml (XmlReader reader)

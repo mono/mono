@@ -35,21 +35,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Syndication
 {
-	internal class Utility
-	{
-		public static void WriteAttributeExtensions (Dictionary<XmlQualifiedName,string> attributes, XmlWriter writer, string version)
-		{
-			foreach (var p in attributes)
-				writer.WriteAttributeString (p.Key.Name, p.Key.Namespace, p.Value);
-		}
-
-		public static void WriteElementExtensions (SyndicationElementExtensionCollection elements, XmlWriter writer, string version)
-		{
-			foreach (var x in elements)
-				x.WriteTo (writer);
-		}
-	}
-
 	public class ServiceDocument
 	{
 		public static TServiceDocument Load<TServiceDocument> (XmlReader reader)

@@ -32,6 +32,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
+using System.Xml.Serialization;
 using System.ServiceModel.Syndication;
 using NUnit.Framework;
 
@@ -114,6 +115,13 @@ namespace MonoTests.System.ServiceModel.Syndication
 			Assert.IsNotNull (inline, "#1");
 			Assert.IsNull (inline.Scheme, "#2");
 			Assert.AreEqual (1, inline.Categories.Count, "#3");
+		}
+
+		[Test]
+		public void GetSchema ()
+		{
+			IXmlSerializable i = new AtomPub10CategoriesDocumentFormatter ();
+			Assert.IsNull (i.GetSchema ());
 		}
 	}
 }

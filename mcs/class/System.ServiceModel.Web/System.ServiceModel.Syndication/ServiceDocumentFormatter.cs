@@ -63,116 +63,108 @@ namespace System.ServiceModel.Syndication
 			return document.CreateWorkspace ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Use maxExtensionSize somewhere")]
 		protected static void LoadElementExtensions (XmlReader reader, CategoriesDocument categories, int maxExtensionSize)
 		{
-			throw new NotImplementedException ();
+			categories.ElementExtensions.Add (reader);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Use maxExtensionSize somewhere")]
 		protected static void LoadElementExtensions (XmlReader reader,ResourceCollectionInfo collection, int maxExtensionSize)
 		{
-			throw new NotImplementedException ();
+			collection.ElementExtensions.Add (reader);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Use maxExtensionSize somewhere")]
 		protected static void LoadElementExtensions (XmlReader reader, ServiceDocument document, int maxExtensionSize)
 		{
-			throw new NotImplementedException ();
+			document.ElementExtensions.Add (reader);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Use maxExtensionSize somewhere")]
 		protected static void LoadElementExtensions (XmlReader reader, Workspace workspace, int maxExtensionSize)
 		{
-			throw new NotImplementedException ();
+			workspace.ElementExtensions.Add (reader);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseAttribute (string name, string ns, string value, CategoriesDocument categories, string version)
 		{
-			throw new NotImplementedException ();
+			return categories.TryParseAttribute (name, ns, value, version);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseAttribute (string name, string ns, string value, ResourceCollectionInfo collection, string version)
 		{
-			throw new NotImplementedException ();
+			return collection.TryParseAttribute (name, ns, value, version);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseAttribute (string name, string ns, string value, ServiceDocument document, string version)
 		{
-			throw new NotImplementedException ();
+			return document.TryParseAttribute (name, ns, value, version);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseAttribute (string name, string ns, string value, Workspace workspace, string version)
 		{
-			throw new NotImplementedException ();
+			return workspace.TryParseAttribute (name, ns, value, version);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseElement (XmlReader reader, CategoriesDocument categories, string version)
 		{
-			throw new NotImplementedException ();
+			return categories.TryParseElement (reader, version);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseElement (XmlReader reader, ResourceCollectionInfo collection, string version)
 		{
-			throw new NotImplementedException ();
+			return collection.TryParseElement (reader, version);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseElement (XmlReader reader, ServiceDocument document, string version)
 		{
-			throw new NotImplementedException ();
+			return document.TryParseElement (reader, version);
 		}
 
-		[MonoTODO]
 		protected static bool TryParseElement (XmlReader reader, Workspace workspace, string version)
 		{
-			throw new NotImplementedException ();
+			return workspace.TryParseElement (reader, version);
 		}
 
 		protected static void WriteAttributeExtensions (XmlWriter writer, CategoriesDocument categories, string version)
 		{
-			Utility.WriteAttributeExtensions (categories.AttributeExtensions, writer, version);
+			categories.WriteAttributeExtensions (writer, version);
 		}
 
 		protected static void WriteAttributeExtensions (XmlWriter writer, ResourceCollectionInfo collection, string version)
 		{
-			Utility.WriteAttributeExtensions (collection.AttributeExtensions, writer, version);
+			collection.WriteAttributeExtensions (writer, version);
 		}
 
 		protected static void WriteAttributeExtensions (XmlWriter writer, ServiceDocument document, string version)
 		{
-			Utility.WriteAttributeExtensions (document.AttributeExtensions, writer, version);
+			document.WriteAttributeExtensions (writer, version);
 		}
 
 		protected static void WriteAttributeExtensions (XmlWriter writer, Workspace workspace, string version)
 		{
-			Utility.WriteAttributeExtensions (workspace.AttributeExtensions, writer, version);
+			workspace.WriteAttributeExtensions (writer, version);
 		}
 
 		protected static void WriteElementExtensions (XmlWriter writer, CategoriesDocument categories, string version)
 		{
-			Utility.WriteElementExtensions (categories.ElementExtensions, writer, version);
+			categories.WriteElementExtensions (writer, version);
 		}
 
 		protected static void WriteElementExtensions (XmlWriter writer, ResourceCollectionInfo collection, string version)
 		{
-			Utility.WriteElementExtensions (collection.ElementExtensions, writer, version);
+			collection.WriteElementExtensions (writer, version);
 		}
 
 		protected static void WriteElementExtensions (XmlWriter writer, ServiceDocument document, string version)
 		{
-			Utility.WriteElementExtensions (document.ElementExtensions, writer, version);
+			document.WriteElementExtensions (writer, version);
 		}
 
 		protected static void WriteElementExtensions (XmlWriter writer, Workspace workspace, string version)
 		{
-			Utility.WriteElementExtensions (workspace.ElementExtensions, writer, version);
+			workspace.WriteElementExtensions (writer, version);
 		}
 
 		// instance members
