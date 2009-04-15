@@ -1,3 +1,11 @@
+2009-04-15  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs
+	(LineNumberTable.DW_LNE_MONO__extensions_start): New const.
+	(LineNumberTable.DW_LNE_MONO__extensions_end): New const.
+	(LineNumberTable.DoRead): Ignore unknown extended opcodes if
+	they're within the Mono extension range.
+
 2008-11-19  Marek Safar  <marek.safar@gmail.com>
 
 	* MonoSymbolWriter.cs, MonoSymbolTable.cs: Change always boxed

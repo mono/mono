@@ -812,6 +812,9 @@ namespace Mono.CompilerServices.SymbolWriter
 		// MONO extensions.
 		public const byte DW_LNE_MONO_negate_is_hidden = 0x40;
 
+		internal const byte DW_LNE_MONO__extensions_start = 0x40;
+		internal const byte DW_LNE_MONO__extensions_end   = 0x7f;
+
 		protected LineNumberTable (MonoSymbolFile file)
 		{
 			this.LineBase = file.OffsetTable.LineNumberTable_LineBase;
@@ -920,10 +923,14 @@ namespace Mono.CompilerServices.SymbolWriter
 					} else if (opcode == DW_LNE_MONO_negate_is_hidden) {
 						is_hidden = !is_hidden;
 						modified = true;
-					} else
+					} else if ((opcode >= DW_LNE_MONO__extensions_start) &&
+						   (opcode <= DW_LNE_MONO__extensions_end)) {
+						; // reserved for future extensions
+					} else {
 						throw new MonoSymbolFileException (
 							"Unknown extended opcode {0:x} in LNT ({1})",
 							opcode, file.FileName);
+					}
 
 					br.BaseStream.Position = end_pos;
 					continue;
