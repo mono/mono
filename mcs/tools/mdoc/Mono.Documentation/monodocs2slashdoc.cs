@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
+using Monodoc;
 using Mono.Options;
 
 namespace Mono.Documentation {
@@ -118,31 +119,10 @@ public class MDocToMSXDocConverter : MDocCommand {
 				XmlElement members = outputfiles [assemblyname];
 				if (members == null) continue; // assembly is strangely not listed in the index
 				
-				string typeName = XmlDocUtils.ToEscapedTypeName (type.SelectSingleNode("Type/@FullName").InnerText);
-				CreateMember("T:" + typeName, type.DocumentElement, members);
+				CreateMember(EcmaDoc.GetCref (type.DocumentElement), type.DocumentElement, members);
 					
 				foreach (XmlElement memberdoc in type.SelectNodes("Type/Members/Member")) {
-					string name = typeName;
-					switch (memberdoc.SelectSingleNode("MemberType").InnerText) {
-						case "Constructor":
-							name = "C:" + name + MakeArgs(memberdoc);
-							break;
-						case "Method":
-							name = "M:" + name + "." + XmlDocUtils.ToEscapedMemberName (memberdoc.GetAttribute("MemberName")) + MakeArgs(memberdoc);
-							if (memberdoc.GetAttribute("MemberName") == "op_Implicit" || memberdoc.GetAttribute("MemberName") == "op_Explicit")
-								name += "~" + XmlDocUtils.ToTypeName (memberdoc.SelectSingleNode("ReturnValue/ReturnType").InnerText, memberdoc);
-							break;
-						case "Property":
-							name = "P:" + name + "." + XmlDocUtils.ToEscapedMemberName (memberdoc.GetAttribute("MemberName")) + MakeArgs(memberdoc);
-							break;
-						case "Field":
-							name = "F:" + name + "." + XmlDocUtils.ToEscapedMemberName (memberdoc.GetAttribute("MemberName"));
-							break;
-						case "Event":
-							name = "E:" + name + "." + XmlDocUtils.ToEscapedMemberName (memberdoc.GetAttribute("MemberName"));
-							break;
-					}
-					
+					string name = EcmaDoc.GetCref (memberdoc);
 					CreateMember(name, memberdoc, members);
 				}
 			}
@@ -172,22 +152,6 @@ public class MDocToMSXDocConverter : MDocCommand {
 		
 		foreach (XmlNode docnode in input.SelectSingleNode("Docs"))
 			member.AppendChild(output.OwnerDocument.ImportNode(docnode, true));
-	}
-	
-	private static string MakeArgs (XmlElement member)
-	{
-		XmlNodeList parameters = member.SelectNodes ("Parameters/Parameter");
-		if (parameters.Count == 0)
-			return "";
-		StringBuilder args = new StringBuilder ();
-		args.Append ("(");
-		args.Append (XmlDocUtils.ToTypeName (parameters [0].Attributes ["Type"].Value, member));
-		for (int i = 1; i < parameters.Count; ++i) {
-			args.Append (",");
-			args.Append (XmlDocUtils.ToTypeName (parameters [i].Attributes ["Type"].Value, member));
-		}
-		args.Append (")");
-		return args.ToString ();
 	}
 
 	private static void WriteXml(XmlElement element, System.IO.TextWriter output) {

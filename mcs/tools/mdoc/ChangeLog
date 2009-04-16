@@ -1,3 +1,11 @@
+2009-04-16  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocs2slashdoc.cs: Code refactor; use
+	  EcmaDoc.GetCref() to generate //member/@name values.
+	* Mono.Documentation/dump.cs: Add -f=FORMAT support, so that we can
+	  load an appropriate HelpSource (if supplied) so that an appropriate
+	  Node.PublicUrl can be displayed in the output.
+
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/webdoc.cs: Remove console debug spew.  If you run
