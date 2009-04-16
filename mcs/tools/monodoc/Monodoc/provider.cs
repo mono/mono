@@ -444,7 +444,7 @@ public class HelpSource {
 		tree_filename = base_filename + ".tree";
 		zip_filename = base_filename + ".zip";
 		base_dir = XmlDocUtils.GetCacheDirectory (base_filename);
-		if (!UseWebdocCache && !create && Directory.Exists (base_dir)) {
+		if (UseWebdocCache && !create && Directory.Exists (base_dir)) {
 			nozip = true;
 		}
 
