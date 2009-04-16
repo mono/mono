@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 using NUnit.Framework;
 using System.Web;
 using System.Web.Compilation;
@@ -62,6 +63,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ValidPropertyBind3.aspx", "ValidPropertyBind3.aspx");
 			WebTest.CopyResource (GetType (), "ValidPropertyBind4.aspx", "ValidPropertyBind4.aspx");
 			WebTest.CopyResource (GetType (), "ValidPropertyBind5.aspx", "ValidPropertyBind5.aspx");
+			WebTest.CopyResource (GetType (), "NoBindForMethodsWithBindInName.aspx", "NoBindForMethodsWithBindInName.aspx");
 			WebTest.CopyResource (GetType (), "ReadWritePropertyControl.ascx", "ReadWritePropertyControl.ascx");
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.aspx", "ContentPlaceHolderInTemplate.aspx");
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.master", "ContentPlaceHolderInTemplate.master");
@@ -142,6 +144,17 @@ namespace MonoTests.System.Web.Compilation {
 		public void ValidPropertyBindTest5 ()
 		{
 			new WebTest ("ValidPropertyBind5.aspx").Run ();
+		}
+
+		// bug #493639
+		[Test]
+		public void NoBindForMethodsWithBindInNameTest ()
+		{
+			string pageHtml = new WebTest ("NoBindForMethodsWithBindInName.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = "<span id=\"grid_ctl02_lblTest\">Test</span>";
+			
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 #endif
 		

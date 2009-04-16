@@ -67,6 +67,7 @@ namespace System.Web.Compilation
 		
 #if NET_2_0
 		List <string> masterPageContentPlaceHolders;
+		static Regex startsWithBindRegex = new Regex (@"^Bind\s*\(", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		// When modifying those, make sure to look at the SanitizeBindCall to make sure it
 		// picks up correct groups.
 		static Regex bindRegex = new Regex (@"Bind\s*\(\s*[""']+(.*?)[""']+((\s*,\s*[""']+(.*?)[""']+)?)\s*\)\s*%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
@@ -522,7 +523,7 @@ namespace System.Web.Compilation
 			
 #if NET_2_0
 			bool need_if = false;
-			if (StrUtils.StartsWith (value, "Bind", true)) {
+			if (startsWithBindRegex.Match (value).Success) {
 				valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, true);
 				if (valueExpression != null)
 					need_if = true;
@@ -989,7 +990,7 @@ namespace System.Web.Compilation
 				string value = attvalue.Substring (3, attvalue.Length - 5).Trim ();
 				CodeExpression valueExpression = null;
 #if NET_2_0
-				if (StrUtils.StartsWith (value, "Bind", true))
+				if (startsWithBindRegex.Match (value).Success)
 					valueExpression = CreateEvalInvokeExpression (bindRegexInValue, value, true);
 				else
 #endif
