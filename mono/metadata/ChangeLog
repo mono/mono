@@ -1,5 +1,10 @@
 2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_typedef_table): Verify for some invalid
+	flags combinations.
+
+2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_module_table): Ignore the generation field.
 
 2009-04-15  Martin Baulig  <martin@ximian.com>
