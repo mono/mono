@@ -21,7 +21,7 @@
 
 
 <example><code lang="C#">
-    Form f = (Form) Activator.CreateInstace (typeof (Form));
+    Form f = (Form) Activator.CreateInstance (typeof (Form));
   </code></example></remarks>
   </Docs>
   <Members>
@@ -194,10 +194,10 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="type">The <see cref="Type" /> to create an instance of.</param>
+        <param name="type">The <see cref="T:System.Type" /> to create an instance of.</param>
         <param name="args">The parameters to pass to the type's constructor.</param>
         <summary>Create an instance of a given <see cref="T:System.Type" />, providing a list of parameters to pass to the constructor.</summary>
-        <returns>The created instance of the <see cref="Type" />.</returns>
+        <returns>The created instance of the <see cref="T:System.Type" />.</returns>
         <remarks>To be added</remarks>
       </Docs>
       <AssemblyInfo>
@@ -440,8 +440,8 @@
       </Parameters>
       <Docs>
         <param name="assemblyFile">The path name of the assembly to load from disk.</param>
-        <param name="typeName">The name of the <see cref="System.Type" /> to load from the assembly.</param>
-        <summary>Create a <see cref="System.Type" /> and instantiate it.</summary>
+        <param name="typeName">The name of the <see cref="T:System.Type" /> to load from the assembly.</param>
+        <summary>Create a <see cref="T:System.Type" /> and instantiate it.</summary>
         <returns>To be added: an object of type 'Runtime.Remoting.ObjectHandle'</returns>
         <remarks>This is equivalent to doing Activator.CreateInstance(Assembly.LoadFrom(assemblyFile).GetType(typeName))</remarks>
       </Docs>
