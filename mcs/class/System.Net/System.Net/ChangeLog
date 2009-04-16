@@ -1,3 +1,13 @@
+2009-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HttpWebRequest_2_1.cs: Rework the throwing of NIE so gui-compare
+	does not report them (since they are the "right" behavior)
+	* WebClient_2_1.cs: Fix BaseAddress property to return the URI to 
+	the XAP file. Implement protected GetWebRequest which will make an
+	absolute URI from a relative one (using BaseAddress). That remove
+	the need of the previous hack.
+	* WebRequest_2_1.cs: Remove previous hack
+
 2009-04-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* WebClient_2_1.cs: WebClient allows relative URI...

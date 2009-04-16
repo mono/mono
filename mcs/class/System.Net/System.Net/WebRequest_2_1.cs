@@ -60,14 +60,9 @@ namespace System.Net {
 
 		public static WebRequest Create (Uri uri)
 		{
-			return CreateInternal (uri, false);
-		}
-
-		public static WebRequest CreateInternal (Uri uri, bool allowRelative)
-		{
 			if (uri == null)
 				throw new ArgumentNullException ("uri");
-			if (!allowRelative && !uri.IsAbsoluteUri)
+			if (!uri.IsAbsoluteUri)
 				throw new InvalidOperationException ("Uri is not absolute.");
 
 			switch (uri.Scheme) {

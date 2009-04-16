@@ -68,11 +68,13 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading;
-using System.Net.Cache;
+
+using Mono;
 
 namespace System.Net 
 {
 #if NET_2_1
+	// note: this type is effectively sealed to transparent code since it's default .ctor is marked with [SecuritySafeCritical]
 	public class WebClient
 	{
 		private delegate void ProgressChangedDelegate (long read, long length, object state);
@@ -103,9 +105,14 @@ namespace System.Net
 //				hexBytes [index] = (byte) i;
 //		}
 //		
-//		public WebClient ()
-//		{
-//		}
+		public WebClient ()
+		{
+			// kind of calling NativeMethods.plugin_instance_get_source_location (PluginHost.Handle)
+			// but without adding dependency on System.Windows.dll. GetData is [SecurityCritical]
+			// this makes the default .ctor [SecuritySafeCritical] which would be a problem (inheritance)
+			// but it happens that MS SL2 also has this default .ctor as SSC :-)
+			baseAddress = new Uri (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
+		}
 //		
 //		// Properties
 //		
@@ -113,15 +120,15 @@ namespace System.Net
 			get {
 				if (baseString == null) {
 					if (baseAddress == null)
-						return "";
+						return String.Empty;
+					else
+						baseString = baseAddress.ToString ();
 				}
-
-				baseString = baseAddress.ToString ();
 				return baseString;
 			}
 			
 			set {
-				if (value == null || value == "") {
+				if (String.IsNullOrEmpty (value)) {
 					baseAddress = null;
 				} else {
 					baseAddress = new Uri (value);
@@ -871,9 +878,9 @@ namespace System.Net
 //			return new Uri (baseAddress, path + query, (query != null));
 //		}
 //		
-		WebRequest SetupRequest (Uri uri)
-		{
-			WebRequest request = WebRequest.CreateInternal (baseAddress != null ? new Uri (baseAddress, uri) : uri, true);
+//		WebRequest SetupRequest (Uri uri)
+//		{
+//			WebRequest request = WebRequest.CreateInternal (baseAddress != null ? new Uri (baseAddress, uri) : uri, true);
 //			if (Proxy != null)
 //				request.Proxy = Proxy;
 //			request.Credentials = credentials;
@@ -916,15 +923,12 @@ namespace System.Net
 //			}
 //
 //			responseHeaders = null;
-			request.SetupProgressDelegate ((ProgressChangedDelegate) delegate (long read, long length, object state) {
-				OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, state));
-			});
-			return request;
-		}
+//			return request;
+//		}
 
 		WebRequest SetupRequest (Uri uri, string method)
 		{
-			WebRequest request = SetupRequest (uri);
+			WebRequest request = GetWebRequest (uri);
 			request.Method = DetermineMethod (uri, method);
 			return request;
 		}
@@ -1171,7 +1175,7 @@ namespace System.Net
 					object [] args = (object []) state;
 					WebRequest request = null;
 					try {
-						request = SetupRequest ((Uri) args [0]);
+						request = SetupRequest ((Uri) args [0], "GET");
 						//WebResponse response = request.GetResponse ();
 						IAsyncResult asyncresult = request.BeginGetResponse (null, userToken);
 						asyncresult.AsyncWaitHandle.WaitOne ();
@@ -1551,10 +1555,20 @@ namespace System.Net
 			throw new NotImplementedException ();
 		}
 
-		[MonoNotSupported("")]
 		protected virtual WebRequest GetWebRequest (Uri address)
 		{
-			throw new NotImplementedException ();
+			if (address == null)
+				throw new ArgumentNullException ("address");
+
+			// if the URI is relative then we use our base address URI to make an absolute one
+			Uri uri = address.IsAbsoluteUri ? address : new Uri (baseAddress, address);
+
+			WebRequest request = WebRequest.Create (uri);
+
+			request.SetupProgressDelegate ((ProgressChangedDelegate) delegate (long read, long length, object state) {
+				OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, state));
+			});
+			return request;
 		}
 //
 //		protected virtual WebResponse GetWebResponse (WebRequest request)

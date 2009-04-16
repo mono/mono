@@ -58,8 +58,8 @@ namespace System.Net {
 		}
 
 		public virtual bool AllowReadStreamBuffering {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
 		}
 
 		public override string ContentType {
@@ -73,7 +73,7 @@ namespace System.Net {
 		}
 
 		public virtual bool HaveResponse {
-			get { throw new NotImplementedException (); }
+			get { throw NotImplemented (); }
 		}
 
 		public override WebHeaderCollection Headers {
@@ -90,38 +90,44 @@ namespace System.Net {
 		}
 
 		public override string Method {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
 		}
 
 		public override Uri RequestUri {
-			get { throw new NotImplementedException (); }
+			get { throw NotImplemented (); }
 		}
 
 
 		public override void Abort ()
 		{
-			throw new NotImplementedException ();
+			throw NotImplemented ();
 		}
 
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			throw NotImplemented ();
 		}
 
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			throw NotImplemented ();
 		}
 
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			throw NotImplemented ();
 		}
 
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			throw NotImplemented ();
+		}
+
+		static Exception NotImplemented ()
+		{
+			// a bit less IL and hide the "normal" NotImplementedException from corcompare-like tools
+			return new NotImplementedException ();
 		}
 	}
 }
