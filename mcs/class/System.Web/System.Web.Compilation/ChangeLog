@@ -2,6 +2,10 @@
 
 	* TemplateControlCompiler.cs: using a regexp to check whether an
 	expression is a Bind one. Fixes bug #493639
+	AssignPropertyFromResources now checks whether the field/property
+	passed to it is decorated with the Localizable custom attribute
+	and whether the resource provider contains an entry for that
+	property.
 
 2009-04-15  Marek Habersack  <mhabersack@novell.com>
 
