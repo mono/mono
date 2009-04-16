@@ -1,5 +1,15 @@
 2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_typedef_table): Verify the extends field.
+
+	* metadata-verify.c (mono_image_verify): Add a is_corlib.
+
+	* verify-internals.h: Same.
+
+	* pedump.c: Fix for mono_image_verify new signature.
+
+2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_typedef_table): Verify for some invalid
 	flags combinations.
 
