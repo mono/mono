@@ -37,6 +37,7 @@ using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Text;
+using System.Threading;
 
 using Mono.Security.Cryptography;
 
@@ -56,6 +57,7 @@ namespace System.IO.IsolatedStorage {
 		private bool _resolved;
 		private ulong _maxSize;
 		private Evidence _fullEvidences;
+		private static Mutex mutex = new Mutex ();
 
 		public static IEnumerator GetEnumerator (IsolatedStorageScope scope)
 		{
@@ -392,8 +394,12 @@ namespace System.IO.IsolatedStorage {
 			// identities have been selected
 			directory = new DirectoryInfo (root);
 			if (!directory.Exists) {
-				directory.Create ();
-				SaveIdentities (root);
+				try {
+					directory.Create ();
+					SaveIdentities (root);
+				}
+				catch (IOException) {
+				}
 			}
 		}
 
@@ -646,10 +652,9 @@ namespace System.IO.IsolatedStorage {
 			if (!File.Exists (root + ".storage"))
 				throw new IsolatedStorageException (Locale.GetText ("Missing identities."));
 
+			BinaryFormatter deformatter = new BinaryFormatter ();
 			using (FileStream fs = File.OpenRead (root + ".storage")) {
-				BinaryFormatter deformatter = new BinaryFormatter ();
 				Identities identities = (Identities) deformatter.Deserialize (fs);
-				fs.Close ();
 
 				_applicationIdentity = identities.Application;
 				_assemblyIdentity = identities.Assembly;
@@ -661,10 +666,15 @@ namespace System.IO.IsolatedStorage {
 		private void SaveIdentities (string root)
 		{
 			Identities identities = new Identities (_applicationIdentity, _assemblyIdentity, _domainIdentity);
-			using (FileStream fs = File.OpenWrite (root + ".storage")) {
-				BinaryFormatter formatter = new BinaryFormatter ();
-				formatter.Serialize (fs, identities);
-				fs.Close ();
+			BinaryFormatter formatter = new BinaryFormatter ();
+			mutex.WaitOne ();
+			try {
+				using (FileStream fs = File.Create (root + ".storage")) {
+					formatter.Serialize (fs, identities);
+				}
+			}
+			finally {
+				mutex.ReleaseMutex ();
 			}
 		}
 	}

@@ -1,3 +1,10 @@
+2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Fix thread-safety issue at creation time.
+	[Fix bug #431039]
+	* IsolatedStorageFileStream.cs: Fix missing path check in Verify.
+	[Fix bug #487659]
+
 2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Use Url as the default evidence type when
