@@ -1,5 +1,15 @@
 2009-04-16  Jonathan Pryor  <jpryor@novell.com>
 
+	* Monodoc/man-provider.cs: NEVER return a non-null string from
+	  HelpSource.GetText() unless *useful* content is being returned, as
+	  when non-null is returned RootTree.RenderUrl() assumes that the url
+	  was handled and won't try any other HelpSources.  In this case, we
+	  can (and do) have multiple ManHelpSources present, but since
+	  ManHelpSource.GetText() was returning "<html>url was null</html>",
+	  RootTree thought it was handled...when it wasn't.  Fix.
+
+2009-04-16  Jonathan Pryor  <jpryor@novell.com>
+
 	* Monodoc/provider.cs: Overview: MonoDevelop loads monodoc.dll into
 	  it's own process, and spawns monodoc GUI into a separate process,
 	  then sends Node.URL values (obtained from the MonoDevelop process)

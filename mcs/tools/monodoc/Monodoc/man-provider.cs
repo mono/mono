@@ -110,7 +110,7 @@ public class ManHelpSource : HelpSource {
 		if (url == null || url.Length == 0)
 		{
 			Message (TraceLevel.Warning, "Warning, NULL url!");
-			return "<html>url was null</html>";
+			return null;
 		}
 
 		Stream stream = GetHelpStream (url);
@@ -120,7 +120,7 @@ public class ManHelpSource : HelpSource {
 	public static string GetTextFromStream (Stream stream)
 	{
 		if (stream == null)
-			return "<html>url was null</html>";
+			return null;
 		StreamReader file = new StreamReader(stream);
 
 		string line;
