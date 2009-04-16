@@ -1,3 +1,8 @@
+2009-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Move the calls to
+	mono_debug_add_delegate_trampoline () to get_delegate_invoke_impl ().
+
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c tramp-arm.c mini-arm.c: Implement static rgctx 
