@@ -1,3 +1,10 @@
+2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: allow System, System.Xml and Mono.
+	CompilerServices.SymbolWriter access to mscorlib internals
+	for 2.1 (Moonlight) so they can access internalized types
+	like non-generic System.Collections
+
 2009-04-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: allow System.Runtime.Serialization to see 
