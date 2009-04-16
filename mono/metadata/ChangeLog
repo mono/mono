@@ -1,5 +1,14 @@
 2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_pe_optional_header): Add comment of why
+	the code is commented.
+
+	* metadata-verify.c (verify_resources_table): Remove spurious printf
+	and don't fail if there are unmanaged resources. Gmcs generates a useless
+	one	for all assemblies - I bet it's some MS compatibility junk.
+
+2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_typedef_table): Verify the extends field.
 
 	* metadata-verify.c (mono_image_verify): Add a is_corlib.
