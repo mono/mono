@@ -1,3 +1,8 @@
+2009-04-16  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: using a regexp to check whether an
+	expression is a Bind one. Fixes bug #493639
+
 2009-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: do not add all assemblies in bin/ when serving
