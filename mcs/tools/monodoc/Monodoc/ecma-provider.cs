@@ -140,6 +140,48 @@ public static class EcmaDoc {
 			nsxml = Path.Combine (dir, ns + ".xml");
 		return nsxml;
 	}
+
+	public static string GetCref (XmlElement member)
+	{
+		string typeName = XmlDocUtils.ToEscapedTypeName (member.SelectSingleNode("/Type/@FullName").InnerText);
+		if (member.Name == "Type")
+			return "T:" + typeName;
+		string memberType = member.SelectSingleNode("MemberType").InnerText;
+		switch (memberType) {
+			case "Constructor":
+				return "C:" + typeName + MakeArgs(member);
+			case "Event":
+				return "E:" + typeName + "." + XmlDocUtils.ToEscapedMemberName (member.GetAttribute("MemberName"));
+			case "Field":
+				return "F:" + typeName + "." + XmlDocUtils.ToEscapedMemberName (member.GetAttribute("MemberName"));
+			case "Method": {
+				string name = "M:" + typeName + "." + XmlDocUtils.ToEscapedMemberName (member.GetAttribute("MemberName")) + MakeArgs(member);
+				if (member.GetAttribute("MemberName") == "op_Implicit" || member.GetAttribute("MemberName") == "op_Explicit")
+					name += "~" + XmlDocUtils.ToTypeName (member.SelectSingleNode("ReturnValue/ReturnType").InnerText, member);
+				return name;
+			}
+			case "Property":
+				return "P:" + typeName + "." + XmlDocUtils.ToEscapedMemberName (member.GetAttribute("MemberName")) + MakeArgs(member);
+			default:
+				throw new NotSupportedException ("MemberType '" + memberType + "' is not supported.");
+		}
+	}
+	
+	private static string MakeArgs (XmlElement member)
+	{
+		XmlNodeList parameters = member.SelectNodes ("Parameters/Parameter");
+		if (parameters.Count == 0)
+			return "";
+		StringBuilder args = new StringBuilder ();
+		args.Append ("(");
+		args.Append (XmlDocUtils.ToTypeName (parameters [0].Attributes ["Type"].Value, member));
+		for (int i = 1; i < parameters.Count; ++i) {
+			args.Append (",");
+			args.Append (XmlDocUtils.ToTypeName (parameters [i].Attributes ["Type"].Value, member));
+		}
+		args.Append (")");
+		return args.ToString ();
+	}
 }
 
 //
@@ -575,6 +617,73 @@ public class EcmaHelpSource : HelpSource {
 
 	public override string InlineJavaScript {
 		get {return js_code + base.InlineJavaScript;}
+	}
+
+	public override string GetPublicUrl (string url)
+	{
+		if (url == null || url.Length == 0)
+			return url;
+		try {
+			string rest;
+			XmlDocument d = GetXmlFromUrl (url, out rest);
+			if (rest == "")
+				return EcmaDoc.GetCref (d.DocumentElement);
+			XmlElement e = GetDocElement (d, rest);
+			if (e == null)
+				return url;
+			return EcmaDoc.GetCref (e);
+		}
+		catch (Exception e) {
+			return url;
+		}
+	}
+
+	private static XmlElement GetDocElement (XmlDocument d, string rest)
+	{
+		string memberType = null;
+		string memberIndex = null;
+
+		string [] nodes = rest.Split (new char [] {'/'});
+		
+		switch (nodes.Length) {
+			// e.g. C; not supported.
+			case 1:
+				return null;
+			// e.g. C/0 or M/MethodName; the latter isn't supported.
+			case 2:
+				try {
+					// XPath wants 1-based indexes, while the url uses 0-based values.
+					memberIndex = (int.Parse (nodes [1]) + 1).ToString ();
+					memberType  = GetMemberType (nodes [0]);
+				} catch {
+					return null;
+				}
+				break;
+			// e.g. M/MethodName/0
+			case 3:
+				memberIndex = (int.Parse (nodes [2]) + 1).ToString ();
+				memberType  = GetMemberType (nodes [0]);
+				break;
+			// not supported
+			default:
+				return null;
+		}
+		string xpath = "/Type/Members/Member[MemberType=\"" + memberType + "\"]" + 
+				"[position()=" + memberIndex + "]";
+		return (XmlElement) d.SelectSingleNode (xpath);
+	}
+
+	private static string GetMemberType (string type)
+	{
+		switch (type) {
+			case "C": return "Constructor";
+			case "E": return "Event";
+			case "F": return "Field";
+			case "M": return "Method";
+			case "P": return "Property";
+			default:
+				throw new NotSupportedException ("Member Type: '" + type + "'.");
+		}
 	}
 
 	public override string GetText (string url, out Node match_node)

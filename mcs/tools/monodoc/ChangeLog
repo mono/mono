@@ -1,3 +1,28 @@
+2009-04-16  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/provider.cs: Overview: MonoDevelop loads monodoc.dll into
+	  it's own process, and spawns monodoc GUI into a separate process,
+	  then sends Node.URL values (obtained from the MonoDevelop process)
+	  to load the documentation into the monodoc GUI.  Problem:
+	  occasionally the requested documentation isn't loaded, but instead
+	  some completely unrelated documentation is shown instead.  This is
+	  because the Node.URL value contains HelpSource-dependent data, e.g.
+	  a Node.URL value of "ecma:0#Foo/" will specify the 1st file
+	  within...whatever HelpSource is first consulted by monodoc (which
+	  can vary between monodoc runs, the phase of the moon, etc.).
+	  Solution: Add a Node.PublicUrl property which returns _stable_ URLs
+	  which aren't specific to a given HelpSource.
+	  - Add Node.PublicUrl property, which delegates to
+	    Provider.GetPublicUrl(string), so that a Provider can generate a
+	    Provider-independent URL (if possible).
+	  - Print PublicUrl from Node.PrintTree().
+	  - Add RootTree.GetSupportedFormats(), RootTree.GetProvider()
+	    methods.
+	  - Make RootTree.GetHelpSource() public.
+	* Monodoc/ecma-provider.cs: Add EcmaDoc.GetCref() method (generates an
+	  XML documentation //see/@cref value), override
+	  Provider.GetPublicUrl() (which will return cref's if possible).
+
 2009-04-15  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/ecma-provider.cs: EcmaHelpSource.GetText() doesn't need to

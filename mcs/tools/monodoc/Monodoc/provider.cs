@@ -334,7 +334,7 @@ public class Node : IComparable {
 	public static void PrintTree (Node node)
 	{
 		Indent ();
-		Console.WriteLine ("{0},{1}", node.Element, node.Caption);
+		Console.WriteLine ("{0},{1}\t[PublicUrl: {2}]", node.Element, node.Caption, node.PublicUrl);
 		if (node.Nodes.Count == 0)
 			return;
 
@@ -367,6 +367,14 @@ public class Node : IComparable {
 					return parent.URL + "/" + element;
 			} else
 				return element;
+		}
+	}
+
+	public string PublicUrl {
+		get {
+			return tree.HelpSource != null
+				? tree.HelpSource.GetPublicUrl (URL)
+				: URL;
 		}
 	}
 
@@ -702,6 +710,11 @@ public class HelpSource {
 	{
 		throw new NotImplementedException ();
 	}
+
+	public virtual string GetPublicUrl (string id)
+	{
+		return id;
+	}
 	
 	public virtual string GetText (string url, out Node n)
 	{
@@ -997,9 +1010,21 @@ public class RootTree : Tree {
 		
 		return purge;
 	}
-					
+
+	public static string[] GetSupportedFormats ()
+	{
+		return new string[]{
+			"ecma", 
+			"ecmaspec", 
+			"error", 
+			"hb", 
+			"man", 
+			"simple", 
+			"xhtml"
+		};
+	}
 	
-	static HelpSource GetHelpSource (string provider, string basefilepath)
+	public static HelpSource GetHelpSource (string provider, string basefilepath)
 	{
 		try {
 			switch (provider){
@@ -1009,7 +1034,7 @@ public class RootTree : Tree {
 				return new EcmaUncompiledHelpSource (basefilepath);
 			case "monohb":
 				return new MonoHBHelpSource(basefilepath, false);
-			case "xhtml":
+			case "xhtml": case "hb":
 				return new XhtmlHelpSource (basefilepath, false);
 			case "man":
 				return new ManHelpSource (basefilepath, false);
@@ -1032,7 +1057,33 @@ public class RootTree : Tree {
 			return null;
 		}
 	}
-		
+
+	public static Provider GetProvider (string provider, params string[] basefilepaths)
+	{
+		switch (provider) {
+		case "addins":
+			return new AddinsProvider (basefilepaths [0]);
+		case "ecma": {
+			EcmaProvider p = new EcmaProvider ();
+			foreach (string d in basefilepaths)
+				p.AddDirectory (d);
+			return p;
+		}
+		case "ecmaspec":
+			return new EcmaSpecProvider (basefilepaths [0]);
+		case "error":
+			return new ErrorProvider (basefilepaths [0]);
+		case "man":
+			return new ManProvider (basefilepaths);
+		case "simple":
+			return new SimpleProvider (basefilepaths [0]);
+		case "xhtml":
+		case "hb":
+			return new XhtmlProvider (basefilepaths [0]);
+		default:
+			throw new NotSupportedException (provider);
+		}
+	}
 
 	//
 	// Maintains the name to node mapping
