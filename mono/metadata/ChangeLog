@@ -1,5 +1,10 @@
 2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_typedef_table): Add tests for FieldList and
+	a missing of for interface types.
+
+2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_pe_optional_header): Add comment of why
 	the code is commented.
 
