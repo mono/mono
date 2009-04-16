@@ -464,40 +464,59 @@ namespace System.Web {
 			return GetGlobalResourceObject (classKey, resourceKey, Thread.CurrentThread.CurrentUICulture);
 		}
 
+		static bool EnsureProviderFactory ()
+		{
+			if (resource_providers == null)
+				resource_providers = new Dictionary <string, IResourceProvider> ();
+			
+			if (provider_factory != null)
+				return true;
+
+			GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization") as GlobalizationSection;
+
+			if (gs == null)
+				return false;
+
+			String rsfTypeName = gs.ResourceProviderFactoryType;
+			if (String.IsNullOrEmpty (rsfTypeName))
+				return false;
+			
+			Type rsfType = HttpApplication.LoadType (rsfTypeName, true);
+			ResourceProviderFactory rpf = Activator.CreateInstance (rsfType) as ResourceProviderFactory;
+			
+			if (rpf == null)
+				return false;
+
+			provider_factory = rpf;
+			return true;
+		}
+		
+		internal static IResourceProvider GetResourceProvider (string key, bool isLocal)
+		{
+			if (!EnsureProviderFactory ())
+				return null;
+
+			IResourceProvider rp = null;
+			if (!resource_providers.TryGetValue (key, out rp)) {
+				if (isLocal)
+					rp = provider_factory.CreateLocalResourceProvider (key);
+				else
+					rp = provider_factory.CreateGlobalResourceProvider (key);
+				if (rp == null)
+					return null;
+				resource_providers.Add (key, rp);
+			}
+
+			return rp;
+		}
+
 		static object GetGlobalObjectFromFactory (string classKey, string resourceKey, CultureInfo culture)
 		{
 			// FIXME: Retention of data
-
-			if (provider_factory == null) {
-				GlobalizationSection gs = WebConfigurationManager.GetSection ("system.web/globalization") as GlobalizationSection;
-
-				if (gs == null)
-					return null;
-
-				String rsfTypeName = gs.ResourceProviderFactoryType;
-				if (String.IsNullOrEmpty (rsfTypeName))
-					return null;
+			IResourceProvider rp = GetResourceProvider (classKey, false);
+			if (rp == null)
+				return null;
 			
-				Type rsfType = Type.GetType (rsfTypeName, true);
-				ResourceProviderFactory rpf = Activator.CreateInstance (rsfType) as ResourceProviderFactory;
-			
-				if (rpf == null)
-					return null;
-
-				provider_factory = rpf;
-			}
-
-			if (resource_providers == null)
-				resource_providers = new Dictionary <string, IResourceProvider> ();
-
-			IResourceProvider rp;
-			if (!resource_providers.TryGetValue (classKey, out rp)) {
-				rp = provider_factory.CreateGlobalResourceProvider (classKey);
-				if (rp == null)
-					return null;
-				resource_providers.Add (classKey, rp);
-			}
-
 			return rp.GetObject (resourceKey, culture);
 		}
 		
@@ -518,12 +537,25 @@ namespace System.Web {
 			return GetLocalResourceObject (virtualPath, resourceKey, Thread.CurrentThread.CurrentUICulture);
 		}
 
+		static object GetLocalObjectFromFactory (string virtualPath, string resourceKey, CultureInfo culture)
+		{
+			IResourceProvider rp = GetResourceProvider (virtualPath, true);
+			if (rp == null)
+				return null;
+			
+			return rp.GetObject (resourceKey, culture);
+		}
+		
 		public static object GetLocalResourceObject (string virtualPath, string resourceKey, CultureInfo culture)
 		{
 			if (!VirtualPathUtility.IsAbsolute (virtualPath))
 				throw new ArgumentException ("The specified virtualPath was not rooted.");
+
+			object ret = GetLocalObjectFromFactory (virtualPath, resourceKey, culture);
+			if (ret != null)
+				return ret;
 			
-			string path = Path.GetDirectoryName (virtualPath);
+			string path = VirtualPathUtility.GetDirectory (virtualPath);
 			Assembly asm = AppResourcesCompiler.GetCachedLocalResourcesAssembly (path);
 			if (asm == null) {
 				AppResourcesCompiler ac = new AppResourcesCompiler (path);

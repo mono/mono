@@ -47,6 +47,7 @@ using System.Configuration;
 using System.Collections.Specialized;
 using System.Collections.Generic;
 using System.Web.Configuration;
+using System.Resources;
 #endif
 
 namespace System.Web.Compilation
@@ -852,6 +853,32 @@ namespace System.Web.Compilation
 			
 			return ret;
 		}
+
+		bool ResourceProviderHasObject (string key)
+		{
+			IResourceProvider rp = HttpContext.GetResourceProvider (key, true);
+			if (rp == null)
+				return false;
+
+			IResourceReader rr = rp.ResourceReader;
+			if (rr == null)
+				return false;
+
+			IDictionaryEnumerator ide = rr.GetEnumerator ();
+			if (ide == null)
+				return false;
+			
+			string dictKey;
+			while (ide.MoveNext ()) {
+				dictKey = ide.Key as string;
+				if (String.IsNullOrEmpty (dictKey))
+					continue;
+				if (String.Compare (key, dictKey, StringComparison.Ordinal) == 0)
+					return true;
+			}
+
+			return false;
+		}
 		
 		void AssignPropertyFromResources (ControlBuilder builder, MemberInfo mi, string attvalue)
 		{
@@ -861,9 +888,16 @@ namespace System.Web.Compilation
 			if (!isProperty && !isField || !IsWritablePropertyOrField (mi))
 				return;			
 
+			object[] attrs = mi.GetCustomAttributes (typeof (LocalizableAttribute), true);
+			if (attrs == null || attrs.Length == 0 || !((LocalizableAttribute)attrs [0]).IsLocalizable)
+				return;
+			
 			string memberName = mi.Name;
 			string resname = String.Concat (attvalue, ".", memberName);
 
+			if (!ResourceProviderHasObject (resname))
+				return;
+			
 			// __ctrl.Text = System.Convert.ToString(HttpContext.GetLocalResourceObject("ButtonResource1.Text"));
 			string inputFile = parser.InputFile;
 			string physPath = HttpContext.Current.Request.PhysicalApplicationPath;

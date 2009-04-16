@@ -1,3 +1,9 @@
+2009-04-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: local resources code now uses the custom
+	resource provider factory, just like the global resources
+	code. Fixes bug #493263
+
 2009-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: if a notification is received from a
