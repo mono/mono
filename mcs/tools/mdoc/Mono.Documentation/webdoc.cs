@@ -115,7 +115,8 @@ namespace Mono.Documentation
 				string file = Path.Combine (outDir, entry.Name);
 				Console.WriteLine ("# Extracting zip entry: {0}; to: {1}", entry.Name, file);
 				Directory.CreateDirectory (Path.GetDirectoryName (file));
-				zip.WriteTo (File.OpenWrite (file));
+				using (var output = File.OpenWrite (file))
+					zip.WriteTo (output);
 			}
 		}
 
@@ -139,7 +140,15 @@ namespace Mono.Documentation
 				Console.WriteLine ("# file={0}", file);
 				using (var o = File.AppendText (file)) {
 					Node _;
-					o.Write (hs.GetText (url, out _));
+					// Sometimes the HelpSource won't directly support a url.
+					// Case in point: the Tree will contain N:Enter.Namespace.Here nodes
+					// which aren't supported by HelpSource.GetText.
+					// If this happens, docRoot.RenderUrl() works.
+					// (And no, we can't always use docRoot.RenderUrl() for URLs like
+					// "ecma:0#Foo/", as that'll just grab the 0th stream contents from
+					// the first EcmaHelpSource found...
+					string contents = hs.GetText (url, out _) ?? docRoot.RenderUrl (url, out _);
+					o.Write (contents);
 				}
 			}
 		}
