@@ -7,7 +7,7 @@
 //      Miguel de Icaza (miguel@novell.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2007, 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007, 2008, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +31,7 @@
 #if NET_2_1
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security;
 
 namespace System.IO.IsolatedStorage {
@@ -38,78 +39,27 @@ namespace System.IO.IsolatedStorage {
 	// Most of the time there will only be a single instance of both 
 	// * Application Store (GetUserStoreForApplication)
 	// * Site Store (GetUserStoreForSite)
-	// However both can have multiple concurrent uses
-	// E.g. another instance of the same application (same URL) running in another Moonlight instance
-	// E.g. another application on the same site (i.e. host) for a site store
-
-	// TODO: use shared memory (and locks) to keep the quota and used values synchronized
-
-	// TODO: we need to be initialized by Application (System.Windows.dll) to know the correct root directories
-
-	// FIXME: we need to tool to set quota (SL does this on a property page of the "Silverlight Configuration" menu)
-	// the beta2 user interface (that I only see in IE) does not seems to differentiate application and site storage
+	// However both can have multiple concurrent uses, e.g.
+	// * another instance of the same application (same URL) running in another Moonlight instance
+	// * another application on the same site (i.e. host) for a site store
+	// and share the some quota, i.e. a site and all applications on the sites share the same space
 
 	// notes:
 	// * quota seems computed in (disk) blocks, i.e. a small file will have a (non-small) size
+	// e.g. every files and directories entries takes 1KB
 
 	public sealed class IsolatedStorageFile : IDisposable {
 
-		private const long DefaultQuota = 1024 * 1024;
-		// Since we can extend more than AvailableFreeSize we need to substract the "safety" value out of it
-		private const int SafetyZone = 1024;
-
-		static string isolated_root;
-		static string isolated_appdir;
-		static string isolated_sitedir;
-
 		static object locker = new object ();
-		
-		static string TryDirectory (string path)
-		{
-			try {
-				Directory.CreateDirectory (path);
-				return path;
-			} catch {
-				return null;
-			}
-		}
-		
-		static IsolatedStorageFile ()
-		{
-                        string xdg_data_home = Environment.GetEnvironmentVariable ("XDG_DATA_HOME");
-                        if (String.IsNullOrEmpty (xdg_data_home)) {
-                                xdg_data_home = Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData);
-                        }
-
-			string isolated_root;
-			isolated_root = TryDirectory (Path.Combine (xdg_data_home, "moonlight"));
-			if (isolated_root == null)
-				throw new IsolatedStorageException ("No root");
-
-			isolated_appdir = TryDirectory (Path.Combine (isolated_root, "application"));
-			isolated_sitedir = TryDirectory (Path.Combine (isolated_root, "site"));
-		}
-
+	
 		private string basedir;
-		private string datafile;
-		private long quota;
 		private long used;
 		private bool removed = false;
 		private bool disposed = false;
 
-		internal IsolatedStorageFile (string root, string dirname)
+		internal IsolatedStorageFile (string root)
 		{
-			string dir = Path.Combine (root, dirname);
-			basedir = TryDirectory (dir);
-
-			datafile = Path.Combine (root, dirname + ".data");
-			if (File.Exists (datafile)) {
-				ReadStoreData ();
-			} else {
-				used = 0;
-				quota = DefaultQuota;
-				UpdateStoreData ();
-			}
+			basedir = root;
 		}
 		
 		internal void PreCheck ()
@@ -122,47 +72,29 @@ namespace System.IO.IsolatedStorage {
 
 		public static IsolatedStorageFile GetUserStoreForApplication ()
 		{
-			if (isolated_appdir == null)
-				throw new SecurityException ();
-			
-			// from System.Windows.Application we made "xap_uri" correspond to
-			//	 Application.Current.Host.Source.AbsoluteUri
-			string app = (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
-			if (app == null)
-				throw new SecurityException ();
-
-			return new IsolatedStorageFile (isolated_appdir, app.Replace ("/", "%27"));
+			return new IsolatedStorageFile (IsolatedStorage.ApplicationPath);
 		}
 
 		public static IsolatedStorageFile GetUserStoreForSite ()
 		{
-			if (isolated_sitedir == null)
-				throw new SecurityException ();
-
-			// from System.Windows.Application we made "xap_host" correspond to
-			//	Application.Current.Host.Source.Host
-			string site = (AppDomain.CurrentDomain.GetData ("xap_host") as string);
-			if (site == null)
-				throw new SecurityException ();
-			// no host is defined for things like: file://home/...
-			if (site.Length == 0)
-				site = "localhost:file";
-
-			return new IsolatedStorageFile (isolated_sitedir, site);
+			return new IsolatedStorageFile (IsolatedStorage.SitePath);
 		}
 
 		internal string Verify (string path)
 		{
+			// special case: 'path' would be returned (instead of combined)
+			if ((path.Length > 0) && (path [0] == '/'))
+				path = path.Substring (1, path.Length - 1);
+
 			// outside of try/catch since we want to get things like
-			// 	ArgumentNullException for null paths
 			//	ArgumentException for invalid characters
 			string combined = Path.Combine (basedir, path);
 			try {
 				string full = Path.GetFullPath (combined);
-				full = Path.GetFullPath (combined);
 				if (full.StartsWith (basedir))
 					return full;
 			} catch {
+				// we do not supply an inner exception since it could contains details about the path
 				throw new IsolatedStorageException ();
 			}
 			throw new IsolatedStorageException ();
@@ -171,7 +103,11 @@ namespace System.IO.IsolatedStorage {
 		public void CreateDirectory (string dir)
 		{
 			PreCheck ();
-			Directory.CreateDirectory (Verify (dir));
+			if (dir == null)
+				throw new ArgumentNullException ("dir");
+			// empty dir is ignored
+			if (dir.Length > 0)
+				Directory.CreateDirectory (Verify (dir));
 		}
 
 		public IsolatedStorageFileStream CreateFile (string path)
@@ -189,12 +125,16 @@ namespace System.IO.IsolatedStorage {
 		public void DeleteDirectory (string dir)
 		{
 			PreCheck ();
+			if (dir == null)
+				throw new ArgumentNullException ("dir");
 			Directory.Delete (Verify (dir));
 		}
 
 		public void DeleteFile (string file)
 		{
 			PreCheck ();
+			if (file == null)
+				throw new ArgumentNullException ("file");
 			string checked_filename = Verify (file);
 			if (!File.Exists (checked_filename))
 				throw new IsolatedStorageException ("File does not exists");
@@ -276,16 +216,8 @@ namespace System.IO.IsolatedStorage {
 		public void Remove ()
 		{
 			PreCheck ();
-			try {
-				Directory.Delete (basedir, true);
-			}
-			finally {
-				used = 0;
-				quota = DefaultQuota;
-				UpdateStoreData ();
-				TryDirectory (basedir);
-				removed = true;
-			}
+			IsolatedStorage.Remove (basedir);
+			removed = true;
 		}
 
 		// note: available free space could be changed from another application (same URL, another ML instance) or
@@ -293,8 +225,7 @@ namespace System.IO.IsolatedStorage {
 		public long AvailableFreeSpace {
 			get {
 				PreCheck ();
-				ReadStoreData ();
-				return quota - used - SafetyZone;
+				return IsolatedStorage.AvailableFreeSpace;
 			}
 		}
 
@@ -303,56 +234,31 @@ namespace System.IO.IsolatedStorage {
 		public long Quota {
 			get {
 				PreCheck ();
-				ReadStoreData ();
-				return quota;
+				return IsolatedStorage.Quota;
 			}
 		}
+
+		[DllImport ("moon")]
+		[return: MarshalAs (UnmanagedType.Bool)]
+		extern static bool isolated_storage_increase_quota_to (string primary_text, string secondary_text);
+
+		const long mb = 1024 * 1024;
 
 		public bool IncreaseQuotaTo (long newQuotaSize)
 		{
 			PreCheck ();
 
-			if (newQuotaSize <= quota)
+			if (newQuotaSize <= Quota)
 				throw new ArgumentException ("newQuotaSize", "Only increases are possible");
 
-			// FIXME: we must ensure this is called from an event handler (or return false)
-			// we need to find out where it's valid (e.g. Page.Loaded and Page.MouseLeftButtonUp are not)
-
-			// FIXME: need plugin UI to confirm the change
-
-			return false;
-		}
-
-		internal bool CanExtend (long request)
-		{
-			bool result = (request <= AvailableFreeSpace + SafetyZone);
-			if (result) {
-				lock (locker) {
-					used += request;
-				}
-			}
+			string message = String.Format ("This web site, <u>{0}</u>, is requesting an increase of its local storage capacity on your computer. It is currently using <b>{1:F1} MB</b> out of a maximum of <b>{2:F1} MB</b>.",
+				IsolatedStorage.Site, IsolatedStorage.Current / mb, IsolatedStorage.Quota / mb);
+			string question = String.Format ("Do you want to increase the web site quota to a new maximum of <b>{0:F1} MB</b> ?", 
+				newQuotaSize / mb);
+			bool result = isolated_storage_increase_quota_to (message, question);
+			if (result)
+				IsolatedStorage.Quota = newQuotaSize;
 			return result;
-		}
-
-		// TEMPORARY - not thread (or cross process) safe
-
-		private byte [] data = new byte [16];
-
-		internal void ReadStoreData ()
-		{
-			using (FileStream fs = new FileStream (datafile, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) {
-				fs.Read (data, 0, 16);
-				quota = BitConverter.ToInt64 (data, 0);
-				used = BitConverter.ToInt64 (data, 8);
-			}
-		}
-
-		internal void UpdateStoreData ()
-		{
-			using (FileStream fs = new FileStream (datafile, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite)) {
-				fs.Write (BitConverter.GetBytes (quota), 0, 8);
-				fs.Write (BitConverter.GetBytes (used), 0, 8);
-			}
 		}
 	}
 }

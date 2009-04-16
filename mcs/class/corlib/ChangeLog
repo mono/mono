@@ -1,3 +1,8 @@
+2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Add System.IO.IsolatedStorage/
+	MoonIsolatedStorage.cs to the build
+
 2009-02-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile: Add Test/resources/Fergie.GED to EXTRA_DIST.

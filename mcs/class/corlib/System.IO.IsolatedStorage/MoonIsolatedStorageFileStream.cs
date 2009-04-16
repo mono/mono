@@ -114,7 +114,7 @@ namespace System.IO.IsolatedStorage {
 
 			// will that request put us in a position to grow *or shrink* the file ?
 			// note: this can be negative, e.g. calling SetLength(0), so we can't call EnsureQuotaLimits directly
-			if (!container.CanExtend (value - Length))
+			if (!IsolatedStorage.CanExtend (value - Length))
 				throw new IsolatedStorageException ("Requested size is larger than remaining quota allowance.");
 
 			base.SetLength (value);
@@ -212,7 +212,7 @@ namespace System.IO.IsolatedStorage {
 			if (grow < 0)
 				return;
 
-			if (!container.CanExtend (grow))
+			if (!IsolatedStorage.CanExtend (grow))
 				throw new IsolatedStorageException ("Requested size is larger than remaining quota allowance.");
 		}
 	}

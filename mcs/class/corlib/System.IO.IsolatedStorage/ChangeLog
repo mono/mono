@@ -1,3 +1,11 @@
+2009-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MoonIsolatedStorage.cs: New. Manage the shared (location, quota)
+	information about Moonlight isolated storage.
+	* MoonIsolatedStorageFile.cs: Adjust with new MoonIsolatedStorage.
+	Implement IncreaseQuotaTo UI.
+	* MoonIsolatedStorageFileStream.cs: Adjust with MoonIsolatedStorage.
+
 2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Fix thread-safety issue at creation time.
