@@ -1,15 +1,6 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
-../corlib/System/ICloneable.cs
-../corlib/System.Collections/ArrayList.cs
-../corlib/System.Collections/CaseInsensitiveComparer.cs
-../corlib/System.Collections/CaseInsensitiveHashCodeProvider.cs
-../corlib/System.Collections/Comparer.cs
-../corlib/System.Collections/Hashtable.cs
-../corlib/System.Collections/IHashCodeProvider.cs
-../corlib/System.Collections/Queue.cs
-../corlib/System.Collections/Stack.cs
 Assembly/AssemblyInfo.cs
 Mono.Xml/IHasXmlParserContext.cs
 Mono.Xml/SubtreeXmlReader.cs
