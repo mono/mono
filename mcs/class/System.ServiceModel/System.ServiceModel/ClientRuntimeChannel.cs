@@ -63,10 +63,10 @@ namespace System.ServiceModel
 		delegate void SendDelegate (Message msg, TimeSpan timeout);
 		#endregion
 
-		public ClientRuntimeChannel (ClientRuntime runtime,
+		public ClientRuntimeChannel (ServiceEndpoint endpoint,
 			ChannelFactory factory)
 		{
-			this.runtime = runtime;
+			this.runtime = endpoint.CreateRuntime ();
 			this.factory = factory;
 			_processDelegate = new ProcessDelegate (Process);
 			requestDelegate = new RequestDelegate (Request);

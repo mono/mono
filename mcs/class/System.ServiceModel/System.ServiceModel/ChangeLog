@@ -1,5 +1,13 @@
 2009-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs, ClientProxyGenerator.cs, ClientBase.cs,
+	  ChannelFactory_1.cs :
+	  Sort of reverted internal client channel type changes from
+	  February, but to work fine in SL2 too. Now ChannelFactory<T>
+	  can handle combined interface of IClientChannel and the contract.
+
+2009-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexChannelFactory.cs : a bit of constructor implementation.
 
 2009-04-08  Atsushi Enomoto  <atsushi@ximian.com>

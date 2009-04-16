@@ -38,36 +38,36 @@ namespace System.ServiceModel
 {
 	internal class ClientProxyGenerator
 	{
-		public static Type CreateProxyType (ContractDescription cd)
+		public static Type CreateProxyType (Type contractInterface, ContractDescription cd)
 		{
 			string modname = "dummy";
-			Type clientBaseType = typeof (ClientBase<>).MakeGenericType (cd.ContractType);
-			Type channelBaseType = typeof (ClientBase<>.ChannelBase<>).MakeGenericType (cd.ContractType, cd.ContractType);
+			Type crtype = typeof (ClientRuntimeChannel);
 
 			// public class __clientproxy_MyContract : ClientRuntimeChannel, [ContractType]
 			CodeClass c = new CodeModule (modname).CreateClass (
 				"__clientproxy_" + cd.Name,
-				channelBaseType,
-				new Type [] {cd.ContractType});
+				crtype,
+				new Type [] {contractInterface});
 
 			//
 			// public __clientproxy_MyContract (
-			//	ClientRuntime arg1, ChannelFactory arg2)
+			//	ServiceEndpoint arg1, ChannelFactory arg2)
 			//	: base (arg1, arg2)
 			// {
 			// }
 			//
-			Type [] ctorargs = new Type [] {clientBaseType};
+			Type [] ctorargs = new Type [] {typeof (ServiceEndpoint), typeof (ChannelFactory)};
 			CodeMethod ctor = c.CreateConstructor (
 				MethodAttributes.Public, ctorargs);
 			CodeBuilder b = ctor.CodeBuilder;
-			MethodBase baseCtor = channelBaseType.GetConstructors (
+			MethodBase baseCtor = crtype.GetConstructors (
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance) [0];
 			if (baseCtor == null) throw new Exception ("INTERNAL ERROR: ClientBase<T>.ChannelBase<T>#C.ctor(ClientBase<T>) does not exist.");
 			b.Call (
 				ctor.GetThis (),
 				baseCtor,
-				new CodeArgumentReference (clientBaseType, 1, "arg0"));
+				new CodeArgumentReference (typeof (ServiceEndpoint), 1, "arg0"),
+				new CodeArgumentReference (typeof (ChannelFactory), 2, "arg1"));
 
 			// member implementation
 			BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
@@ -75,12 +75,12 @@ namespace System.ServiceModel
 				// FIXME: handle properties and events.
 #if !NET_2_1
 				if (od.SyncMethod != null)
-					GenerateMethodImpl (c, channelBaseType.GetMethod ("Invoke", bf), od.Name, od.SyncMethod);
+					GenerateMethodImpl (c, crtype.GetMethod ("Process", bf), od.Name, od.SyncMethod);
 #endif
 				if (od.BeginMethod != null)
-					GenerateBeginMethodImpl (c, channelBaseType.GetMethod ("BeginInvoke", bf), od.Name, od.BeginMethod);
+					GenerateBeginMethodImpl (c, crtype.GetMethod ("BeginProcess", bf), od.Name, od.BeginMethod);
 				if (od.EndMethod != null)
-					GenerateEndMethodImpl (c, channelBaseType.GetMethod ("EndInvoke", bf), od.Name, od.EndMethod);
+					GenerateEndMethodImpl (c, crtype.GetMethod ("EndProcess", bf), od.Name, od.EndMethod);
 			}
 
 			//Type zzz = c.CreateType ();
@@ -116,14 +116,14 @@ namespace System.ServiceModel
 			CodeLiteral argOperName = new CodeLiteral (name);
 			CodeVariableReference retValue = null;
 			if (mi.ReturnType == typeof (void))
-				b.Call (m.GetThis (), processMethod, /*argMethodInfo, */argOperName, paramsRef);
+				b.Call (m.GetThis (), processMethod, argMethodInfo, argOperName, paramsRef);
 			else {
 				CodeVariableDeclaration retValueDecl = new CodeVariableDeclaration (mi.ReturnType, "retValue");
 				b.CurrentBlock.Add (retValueDecl);
 				retValue = retValueDecl.Variable;
 				b.Assign (retValue,
 					new CodeCast (mi.ReturnType,
-						b.CallFunc (m.GetThis (), processMethod, /*argMethodInfo, */argOperName, paramsRef)));
+						b.CallFunc (m.GetThis (), processMethod, argMethodInfo, argOperName, paramsRef)));
 			}
 			for (int i = 0; i < pinfos.Length; i++) {
 				ParameterInfo par = pinfos [i];
@@ -172,7 +172,7 @@ namespace System.ServiceModel
 			CodeVariableReference retValue = retValueDecl.Variable;
 			b.Assign (retValue,
 				new CodeCast (mi.ReturnType,
-					b.CallFunc (m.GetThis (), beginProcessMethod, /*argMethodInfo, */argOperName, paramsRef, callbackRef, stateRef)));
+					b.CallFunc (m.GetThis (), beginProcessMethod, argMethodInfo, argOperName, paramsRef, callbackRef, stateRef)));
 
 			b.Return (retValue);
 		}
