@@ -6247,6 +6247,11 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 }
 
 void
+mono_xdebug_init (void)
+{
+}
+
+void
 mono_save_xdebug_info (MonoMethod *method, guint8 *code, guint32 code_size, MonoInst **args, GSList *unwind_info)
 {
 }

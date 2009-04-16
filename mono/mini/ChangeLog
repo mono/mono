@@ -1,3 +1,7 @@
+2009-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_xdebug_init): Fix the DISABLE_AOT build.
+
 2009-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.h: Error out if VFP support is requested, since its not
