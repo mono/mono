@@ -2,17 +2,6 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
-../corlib/System/ICloneable.cs
-../corlib/System.Collections/ArrayList.cs
-../corlib/System.Collections/BitArray.cs
-../corlib/System.Collections/CaseInsensitiveComparer.cs
-../corlib/System.Collections/CaseInsensitiveHashCodeProvider.cs
-../corlib/System.Collections/CollectionBase.cs
-../corlib/System.Collections/Comparer.cs
-../corlib/System.Collections/Hashtable.cs
-../corlib/System.Collections/IHashCodeProvider.cs
-../corlib/System.Collections/Queue.cs
-../corlib/System.Collections/Stack.cs
 System.CodeDom.Compiler/GeneratedCodeAttribute.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs

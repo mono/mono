@@ -1,3 +1,8 @@
+2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.dll.sources: Remove corlib's files since System
+	can now access, for 2.1 (moonlight) corlib's internals.
+
 2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.dll.sources: Add System.Net.Sockets/Socket_2_1.cs
