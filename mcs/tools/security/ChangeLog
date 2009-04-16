@@ -1,3 +1,9 @@
+2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* certmgr.cs: Don't throw if we're missing an argument. Fix by
+	Romain Tartiere (bug #464765). Updated help to specify that 
+	"option type" is mandatory in some cases.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add doc-update target support.
