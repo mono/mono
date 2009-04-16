@@ -76,7 +76,6 @@ namespace Mono.Documentation
 					files.Select (f => 
 							Path.Combine (Path.GetDirectoryName (f), Path.GetFileNameWithoutExtension (f)))
 					.Distinct ()) {
-				Console.WriteLine ("# Processing BasePath={0}", basePath);
 				string treeFile = basePath + ".tree";
 				string zipFile  = basePath + ".zip";
 				if (!Exists (treeFile) || !Exists (zipFile))
@@ -85,6 +84,7 @@ namespace Mono.Documentation
 				if (!forceUpdate && Directory.Exists (outDir) &&
 							MaxWriteTime (treeFile, zipFile) < Directory.GetLastWriteTime (outDir))
 					continue;
+				Message (TraceLevel.Warning, "Processing files: {0}, {1}", treeFile, zipFile);
 				Directory.CreateDirectory (outDir);
 				ExtractZipFile (zipFile, outDir);
 				GenerateCache (basePath, treeFile, outDir);
@@ -113,7 +113,6 @@ namespace Mono.Documentation
 			ZipEntry entry;
 			while ((entry = zip.GetNextEntry ()) != null) {
 				string file = Path.Combine (outDir, entry.Name);
-				Console.WriteLine ("# Extracting zip entry: {0}; to: {1}", entry.Name, file);
 				Directory.CreateDirectory (Path.GetDirectoryName (file));
 				using (var output = File.OpenWrite (file))
 					zip.WriteTo (output);
@@ -122,7 +121,6 @@ namespace Mono.Documentation
 
 		void GenerateCache (string basePath, string treeFile, string outDir)
 		{
-			Console.WriteLine ("# Tree file={0}", treeFile);
 			Tree tree = new Tree (null, treeFile);
 			RootTree docRoot = RootTree.LoadTree ();
 			string helpSourceName = Path.GetFileName (basePath);
@@ -133,11 +131,10 @@ namespace Mono.Documentation
 			}
 			foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
 				var url = node.URL;
-				Console.WriteLine ("# NodeUrl={0}", url);
+				Message (TraceLevel.Info, "\tProcessing URL: {0}", url);
 				if (string.IsNullOrEmpty (url))
 					continue;
 				var file = XmlDocUtils.GetCachedFileName (outDir, url);
-				Console.WriteLine ("# file={0}", file);
 				using (var o = File.AppendText (file)) {
 					Node _;
 					// Sometimes the HelpSource won't directly support a url.

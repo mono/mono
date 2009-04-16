@@ -1,5 +1,10 @@
 2009-04-15  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/webdoc.cs: Remove console debug spew.  If you run
+	  with `mdoc -v`, each URL will be printed as it's processed.
+
+2009-04-15  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/webdoc.cs: When extracting files from the .zip
 	  file, ensure that the output file is closed.  Properly pre-render
 	  ecma namespace documentation.
