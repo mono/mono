@@ -581,10 +581,6 @@ public class EcmaHelpSource : HelpSource {
 	{
 		match_node = null;
 
-		string c = GetCachedText (url);
-		if (c != null)
-			return c;
-
 		string cached = GetCachedText (url);
 		if (cached != null)
 			return cached;
