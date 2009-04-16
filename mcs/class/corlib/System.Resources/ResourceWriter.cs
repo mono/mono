@@ -183,7 +183,7 @@ namespace System.Resources
 
 			resman.Write (typeof (ResourceReader).AssemblyQualifiedName);
 #if NET_2_0
-			resman.Write (typeof (ResourceSet).FullName);
+			resman.Write (typeof (RuntimeResourceSet).FullName);
 #else
 			resman.Write (typeof (ResourceSet).AssemblyQualifiedName);
 #endif

@@ -1,3 +1,8 @@
+2009-04-16  Geoff Norton  <gnorton@novell.com>
+
+	* ResourceWriter.cs: The magic internal type here is required to match
+	Microsofts for SL2 resource deserialization.
+
 2009-03-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ResourceSet.cs: for custom resource sets without a reader, pretende
