@@ -1,3 +1,18 @@
+2009-04-18  Mark Probst  <mark.probst@gmail.com>
+
+	* icall-def.h: New icall for getting the thread abort exception
+	state for a thread.
+
+	* object.c, thread.c, object-internals.h: A thread's abort
+	exception state is now a GC handle.  To get the object it stands
+	for, we must move it into the current app domain, if it's
+	different than the one where it originated from.
+
+	* appdomain.c: Bump corlib version.
+
+	* domain.c, domain-internals.h: New function for setting the
+	domain and migrate the thread abort exception or not.
+
 2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add initial verification of the

@@ -1,3 +1,10 @@
+2009-04-18  Mark Probst  <mark.probst@gmail.com>
+
+	* appdomain-thread-abort.cs: New tests for thread aborts across
+	app domains.
+
+	* Makefile.am: Test added.
+
 2009-04-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* coreclr-security.cs: Add test case for the "special" case about
