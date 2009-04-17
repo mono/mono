@@ -420,4 +420,38 @@ namespace Mono.CSharp {
 			}
 		}
 	}
+
+	/// <summary>
+	///   An exception used to terminate the compiler resolution phase and provide completions
+	/// </summary>
+	/// <remarks>
+	///   This is thrown when we want to return the completions or
+	///   terminate the completion process by AST nodes used in
+	///   the completion process.
+	/// </remarks>
+	public class CompletionResult : Exception {
+		string [] result;
+		string base_text;
+		
+		public CompletionResult (string base_text, string [] res)
+		{
+			if (base_text == null)
+				throw new ArgumentNullException ("base_text");
+			this.base_text = base_text;
+			
+			result = res;
+		}
+
+		public string [] Result {
+			get {
+				return result;
+			}
+		}
+
+		public string BaseText {
+			get {
+				return base_text;
+			}
+		}
+	}
 }

@@ -6,6 +6,7 @@ cs-tokenizer.cs
 cfold.cs
 class.cs
 codegen.cs
+complete.cs
 const.cs
 constant.cs
 convert.cs

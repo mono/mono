@@ -15,7 +15,7 @@
 //
 // Only remove it if you need to debug locally on your tree.
 //
-#define PRODUCTION
+//#define PRODUCTION
 
 using System;
 using System.IO;
@@ -758,7 +758,7 @@ namespace Mono.CSharp {
 
 		bool resolved;
 		bool unreachable;
-
+		
 		public bool ResolveTopBlock (EmitContext anonymous_method_host, ToplevelBlock block,
 					     ParametersCompiled ip, IMethodData md, out bool unreachable)
 		{

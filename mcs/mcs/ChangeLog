@@ -60,6 +60,71 @@
 
 2009-03-22  Miguel de Icaza  <miguel@novell.com>
 
+	Initial support to provide code completion facilities to consumers
+	of the evaluator API.
+	
+	* cs-tokenizer.cs (CompleteOnEOF): this new property is used to
+	support the completion engine.   When we reach the end of the
+	input stream instead of returning EOF, when this flag is true the
+	tokenizer instead produces:
+
+		One GENERATE_COMPLETION token: this token then must be
+		handled in the grammar at every point where the user
+		would likely request a completion.
+
+		As many COMPLETE_COMPLETION tokens as necessary.   These
+		tokens are generated to assist the parser in unwinding and
+		producing a valid parse tree.    
+
+	The parser rules do not have to be perfect, the parser needs to be
+	augmented with judicious use of GENERATE_COMPLETION tokens to
+	improve the areas where we can provide completion and the parser
+	needs to add support for COMPLETE_COMPLETION tokens in productions
+	to make them work.
+
+	It is common to not have enough support for COMPLETE_COMPLETION
+	under certain rules and that even if we generated the
+	GENERATE_COMPLETION token that the resulting tree will be invalid
+	due to the missing rules that support COMPLETE_COMPLETION.
+
+	The final EOF token is produced by having the parser notify the
+	tokenizer when it reaches the root production that the next token
+	should be EOF.
+
+	* support.cs (CompletionResult): New Exception.   This exception
+	is thrown to return the completion results when one of the special
+	completion expressions is reached.
+
+	This exception is thrown by the completing ExpressionStatements
+	classes that live in complete.cs
+
+	* complete.cs (CompletingExpression): a new base class for
+	completing expressions.   This derives from the
+	ExpressionStatement class and not from Expression as it allows
+	completion to happen not only where expressions are expected in
+	the grammar, but also where statements are expected.
+
+	(CompletionSimpleName): A new class used to provide completions
+	for SimpleNames.     This currently only resolves to local
+	variables from the evaluator context (GetVars call).
+
+	(CompletionMemberAccess): Implements support for completing member
+	access patterns. 
+
+	* cs-parser.jay: Add support for completion in a few places. 
+
+	* eval.cs (GetCompletions): New public API for the evaluator that
+	returns a list of possible completions given the input.   The
+	return value is an array of completions 
+
+	* anonymous.cs (Compatible): If the exception thrown from the
+	resolved expression is a CompletionResult exception let that one
+	through instead of printing a diagnostic error in the try/catch. 
+	
+2009-03-22  Miguel de Icaza  <miguel@novell.com>
+
+	* 
+
 	* driver.cs (Main): Use Environment.Exit to quit quickly and
 	prevent the compiler from doing the usual wait for helper thread
 	to terminate.  

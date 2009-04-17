@@ -113,6 +113,14 @@ namespace Mono.CSharp
 		bool tokens_seen = false;
 
 		//
+		// Set to true once the GENERATE_COMPLETION token has bee
+		// returned.   This helps produce one GENERATE_COMPLETION,
+		// as many COMPLETE_COMPLETION as necessary to complete the
+		// AST tree and one final EOF.
+		//
+		bool generated;
+		
+		//
 		// Whether a token has been seen on the file
 		// This is needed because `define' is not allowed to be used
 		// after a token has been seen.
@@ -152,6 +160,10 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// This is used to trigger completion generation on the parser
+		public bool CompleteOnEOF;
+		
 		void AddEscapedIdentifier (LocatedToken lt)
 		{
 			if (escaped_identifiers == null)
@@ -1542,7 +1554,7 @@ namespace Mono.CSharp
 
 		public bool advance ()
 		{
-			return peek_char () != -1;
+			return peek_char () != -1 || CompleteOnEOF;
 		}
 
 		public Object Value {
@@ -2599,7 +2611,7 @@ namespace Mono.CSharp
 					}
 
 					return Token.OP_GT;
-				
+
 				case '+':
 					d = peek_char ();
 					if (d == '+') {
@@ -2870,7 +2882,16 @@ namespace Mono.CSharp
 				error_details = ((char)c).ToString ();
 				return Token.ERROR;
 			}
+
+			if (CompleteOnEOF){
+				if (generated)
+					return Token.COMPLETE_COMPLETION;
+				
+				generated = true;
+				return Token.GENERATE_COMPLETION;
+			}
 			
+
 			return Token.EOF;
 		}
 

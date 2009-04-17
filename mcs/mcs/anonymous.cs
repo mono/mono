@@ -1058,6 +1058,8 @@ namespace Mono.CSharp {
 					compatibles.Add (type, am == null ? EmptyExpression.Null : am);
 
 				return am;
+			} catch (CompletionResult){
+				throw;
 			} catch (Exception e) {
 				throw new InternalErrorException (e, loc);
 			}

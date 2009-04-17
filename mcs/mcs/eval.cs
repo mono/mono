@@ -37,6 +37,18 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class Evaluator {
 
+		enum ParseMode {
+			// Parse silently, do not output any error messages
+			Silent,
+
+			// Report errors during parse
+			ReportErrors,
+
+			// Auto-complete, means that the tokenizer will start producing
+			// GETCOMPLETIONS tokens when it reaches a certain point.
+			GetCompletions
+		}
+
 		static object evaluator_lock = new object ();
 		
 		static string current_debug_name;
@@ -220,13 +232,13 @@ namespace Mono.CSharp {
 					Init ();
 				
 				bool partial_input;
-				CSharpParser parser = ParseString (true, input, out partial_input);
+				CSharpParser parser = ParseString (ParseMode.Silent, input, out partial_input);
 				if (parser == null){
 					compiled = null;
 					if (partial_input)
 						return input;
 					
-					ParseString (false, input, out partial_input);
+					ParseString (ParseMode.ReportErrors, input, out partial_input);
 					return null;
 				}
 				
@@ -347,7 +359,68 @@ namespace Mono.CSharp {
 
 			return null;
 		}
+
+		public static string [] GetCompletions (string input, out string prefix)
+		{
+			prefix = "";
+			if (input == null || input.Length == 0)
+				return null;
 			
+			lock (evaluator_lock){
+				if (!inited)
+					Init ();
+				
+				bool partial_input;
+				CSharpParser parser = ParseString (ParseMode.GetCompletions, input, out partial_input);
+				if (parser == null){
+					Console.WriteLine ("DEBUG: No completions available");
+					return null;
+				}
+				
+				Class parser_result = parser.InteractiveResult as Class;
+				
+				if (parser_result == null){
+					Console.WriteLine ("Do not know how to cope with !Class yet");
+					return null;
+				}
+
+				try {
+					RootContext.ResolveTree ();
+					if (Report.Errors != 0)
+						return null;
+					
+					RootContext.PopulateTypes ();
+					if (Report.Errors != 0)
+						return null;
+
+					MethodOrOperator method = null;
+					foreach (MemberCore member in parser_result.Methods){
+						if (member.Name != "Host")
+							continue;
+						
+						method = (MethodOrOperator) member;
+						break;
+					}
+					if (method == null)
+						throw new InternalErrorException ("did not find the the Host method");
+
+					EmitContext ec = method.CreateEmitContext (method.Parent, null);
+					bool unreach;
+
+					try {
+						ec.ResolveTopBlock (null, method.Block, method.ParameterInfo, method, out unreach);
+					} catch (CompletionResult cr){
+						prefix = cr.BaseText;
+						return cr.Result;
+					}
+				} finally {
+					parser.undo.ExecuteUndo ();
+				}
+				
+			}
+			return null;
+		}
+		
 		/// <summary>
 		///   Executes the given expression or statement.
 		/// </summary>
@@ -394,7 +467,7 @@ namespace Mono.CSharp {
 
 			return result;
 		}
-		
+	
 		enum InputKind {
 			EOF,
 			StatementOrExpression,
@@ -516,7 +589,7 @@ namespace Mono.CSharp {
 		// @partial_input: if @silent is true, then it returns whether the
 		// parsed expression was partial, and more data is needed
 		//
-		static CSharpParser ParseString (bool silent, string input, out bool partial_input)
+		static CSharpParser ParseString (ParseMode mode, string input, out bool partial_input)
 		{
 			partial_input = false;
 			Reset ();
@@ -527,14 +600,14 @@ namespace Mono.CSharp {
 
 			InputKind kind = ToplevelOrStatement (seekable);
 			if (kind == InputKind.Error){
-				if (!silent)
+				if (mode == ParseMode.ReportErrors)
 					Report.Error (-25, "Detection Parsing Error");
 				partial_input = false;
 				return null;
 			}
 
 			if (kind == InputKind.EOF){
-				if (silent == false)
+				if (mode == ParseMode.ReportErrors)
 					Console.Error.WriteLine ("Internal error: EOF condition should have been detected in a previous call with silent=true");
 				partial_input = true;
 				return null;
@@ -559,20 +632,29 @@ namespace Mono.CSharp {
 				RootContext.StatementMode = false;
 			}
 
-			if (silent)
+			if (mode == ParseMode.GetCompletions)
+				parser.Lexer.CompleteOnEOF = true;
+
+			bool disable_error_reporting;
+			if (mode == ParseMode.Silent && CSharpParser.yacc_verbose_flag == 0)
+				disable_error_reporting = true;
+			else
+				disable_error_reporting = false;
+			
+			if (disable_error_reporting)
 				Report.DisableReporting ();
 			try {
 				parser.parse ();
 			} finally {
 				if (Report.Errors != 0){
-					if (silent && parser.UnexpectedEOF)
+					if (mode != ParseMode.ReportErrors  && parser.UnexpectedEOF)
 						partial_input = true;
 
 					parser.undo.ExecuteUndo ();
 					parser = null;
 				}
 
-				if (silent)
+				if (disable_error_reporting)
 					Report.EnableReporting ();
 			}
 			return parser;
@@ -732,6 +814,13 @@ namespace Mono.CSharp {
 			}
 		}
 
+		static internal string [] GetVarNames ()
+		{
+			lock (evaluator_lock){
+				return (string []) new ArrayList (fields.Keys).ToArray (typeof (string));
+			}
+		}
+		
 		static public string GetVars ()
 		{
 			lock (evaluator_lock){

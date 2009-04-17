@@ -330,6 +330,9 @@ namespace Mono.CSharp
 %token EVAL_COMPILATION_UNIT_PARSER
 %token EVAL_USING_DECLARATIONS_UNIT_PARSER
 
+%token GENERATE_COMPLETION
+%token COMPLETE_COMPLETION
+
 /* Add precedence rules to solve dangling else s/r conflict */
 %nonassoc IF
 %nonassoc ELSE
@@ -359,7 +362,7 @@ compilation_unit
         | outer_declarations global_attributes opt_EOF
         | global_attributes opt_EOF
 	| opt_EOF /* allow empty files */
-	| interactive_parsing opt_EOF
+	| interactive_parsing  { Lexer.CompleteOnEOF = false; } opt_EOF
 	;
 
 opt_EOF
@@ -2933,6 +2936,10 @@ primary_expression_no_array_creation
 		LocatedToken lt = (LocatedToken) $1;
 		$$ = new SimpleName (MemberName.MakeName (lt.Value, (TypeArguments)$2), (TypeArguments)$2, lt.Location);	  
 	  }
+	| IDENTIFIER GENERATE_COMPLETION {
+		LocatedToken lt = (LocatedToken) $1;
+	       $$ = new CompletionSimpleName (MemberName.MakeName (lt.Value, null), lt.Location);
+	  }
 	| parenthesized_expression
 	| default_value_expression
 	| member_access
@@ -3006,6 +3013,10 @@ parenthesized_expression
 	  {
 		$$ = new ParenthesizedExpression ((Expression) $2);
 	  }
+	| OPEN_PARENS expression COMPLETE_COMPLETION
+	  {
+		$$ = new ParenthesizedExpression ((Expression) $2);
+	  }
 	;
 	
 member_access
@@ -3027,6 +3038,22 @@ member_access
 
 		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (TypeArguments) $3, lt1.Location);
 	  }
+	| primary_expression DOT GENERATE_COMPLETION {
+		$$ = new CompletionMemberAccess ((Expression) $1, null,GetLocation ($3));
+	  }
+	| primary_expression DOT IDENTIFIER GENERATE_COMPLETION {
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new CompletionMemberAccess ((Expression) $1, lt.Value, lt.Location);
+	  }
+	| predefined_type DOT GENERATE_COMPLETION
+	  {
+		// TODO: Location is wrong as some predefined types doesn't hold a location
+		$$ = new CompletionMemberAccess ((Expression) $1, null, lexer.Location);
+	  }
+	| predefined_type DOT IDENTIFIER GENERATE_COMPLETION {
+		LocatedToken lt = (LocatedToken) $3;
+		$$ = new CompletionMemberAccess ((Expression) $1, lt.Value, lt.Location);
+ 	  }
 	;
 
 invocation_expression
@@ -4010,8 +4037,8 @@ lambda_expression
 	;
 
 expression
-	: assignment_expression
-	| non_assignment_expression
+	: assignment_expression 
+	| non_assignment_expression 
 	;
 	
 non_assignment_expression
@@ -4231,12 +4258,25 @@ block
 		++lexer.parsing_block;
 		start_block ((Location) $1);
 	  } 
-	  opt_statement_list CLOSE_BRACE 
+	  opt_statement_list block_end
+	  {
+		$$ = $4;
+          }
+	;
+
+block_end 
+	: CLOSE_BRACE 
 	  {
 	 	--lexer.parsing_block;
-		$$ = end_block ((Location) $4);
+		$$ = end_block ((Location) $1);
+	  }
+	| COMPLETE_COMPLETION
+	  {
+	 	--lexer.parsing_block;
+		$$ = end_block (lexer.Location);
 	  }
 	;
+
 
 block_prepared
 	: OPEN_BRACE
@@ -4523,10 +4563,12 @@ local_constant_declaration
 
 expression_statement
 	: statement_expression SEMICOLON { $$ = $1; }
+	| statement_expression COMPLETE_COMPLETION { $$ = $1; }
 	;
 
 interactive_expression_statement
 	: interactive_statement_expression SEMICOLON { $$ = $1; }
+	| interactive_statement_expression COMPLETE_COMPLETION { $$ = $1; }
 	;
 
 	//
@@ -5655,7 +5697,7 @@ interactive_parsing
 	        ++lexer.parsing_block;
 		start_block (lexer.Location);
 	  }		
-	  interactive_statement_list
+	  interactive_statement_list opt_COMPLETE_COMPLETION
 	  {
 		--lexer.parsing_block;
 		Method method = (Method) oob_stack.Pop ();
@@ -5678,6 +5720,11 @@ interactive_compilation_unit
 	| outer_declarations global_attributes 
 	| global_attributes 
 	| /* nothing */
+	;
+
+opt_COMPLETE_COMPLETION
+	: /* nothing */
+	| COMPLETE_COMPLETION
 	;
 %%
 
