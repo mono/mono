@@ -1,5 +1,10 @@
 2009-04-18  Mark Probst  <mark.probst@gmail.com>
 
+	* Thread.cs: Don't keep the current number formatter here because
+	it's shared between app domains.
+
+2009-04-18  Mark Probst  <mark.probst@gmail.com>
+
 	* Thread.cs: Make the abort exception state a GC handle, to
 	properly separate AppDomains.  Add internal method for getting the
 	state object.

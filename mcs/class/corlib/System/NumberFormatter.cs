@@ -773,14 +773,27 @@ namespace System
 
 		#region public number formatting methods
 
+		[ThreadStatic]
+		static NumberFormatter threadNumberFormatter;
+
 		private static NumberFormatter GetInstance()
 		{
-			return Thread.CurrentThread.AcquireNumberFormatter();
+			NumberFormatter res = threadNumberFormatter;
+			threadNumberFormatter = null;
+			if (res == null)
+				return new NumberFormatter (Thread.CurrentThread);
+			return res;
 		}
 
 		private void Release()
 		{
-			_thread.ReleaseNumberFormatter (this);
+			threadNumberFormatter = this;
+		}
+
+		internal static void SetThreadCurrentCulture (CultureInfo culture)
+		{
+			if (threadNumberFormatter != null)
+				threadNumberFormatter.CurrentCulture = culture;
 		}
 
 		public static string NumberToString (string format, sbyte value, IFormatProvider fp)
