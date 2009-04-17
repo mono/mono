@@ -1,3 +1,11 @@
+2009-04-16  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* dump.c: Add dump_table_fieldrva.
+
+	* dump.h: Same.
+
+	* main.c: Add the option to dump the field rva table.
+
 2009-04-09  Raja R Harinath  <harinath@hurrynot.org>
 
 	* get.c: Use new MonoGenericParamInfo accessors.
