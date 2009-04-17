@@ -1,5 +1,11 @@
 2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Fixed constant table description.
+	Fixed calculation of HasCustomAttribute coded index size.
+	Fixed calculation of size for many table indexes. 
+
+2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c (dump_metadata): Dump table offset instead
 	of useless pointer in memory.
 
