@@ -1,3 +1,7 @@
+2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (verify_typedef_table): Add tests for MethodList.
+
 2009-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (verify_typedef_table): Add tests for FieldList and
