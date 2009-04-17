@@ -43,12 +43,25 @@ namespace System.ServiceModel
 		// instance members
 
 		ServiceEndpoint service_endpoint;
+		IChannelFactory factory;
 
 		protected ChannelFactory ()
 		{
 		}
 
-		internal IChannelFactory OpenedChannelFactory { get; private set; }
+		internal IChannelFactory OpenedChannelFactory {
+			get {
+				if (factory == null) {
+					factory = CreateFactory ();
+					factory.Open ();
+				}
+
+				return factory;
+			}
+			private set {
+				factory = value;
+			}
+		}
 
 		public ServiceEndpoint Endpoint {
 			get { return service_endpoint; }

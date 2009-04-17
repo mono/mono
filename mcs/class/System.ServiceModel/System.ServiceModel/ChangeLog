@@ -1,3 +1,9 @@
+2009-04-17  Geoff Norton  <gnorton@novell.com>
+
+	* ChannelFactory.cs: Ensure we create and open a factory here,
+	avoids a NRE regression in
+	System.ServiceModel.ClientRuntimeChannel.SetupRequestChannel ()
+
 2009-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory.cs, ClientRuntimeChannel.cs : implemented
