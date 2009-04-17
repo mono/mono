@@ -50,11 +50,8 @@ namespace Mono.CSharp {
 			this.prefix = prefix;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		void AppendResults (ArrayList results, string prefix, IEnumerable names)
 		{
-			string [] names = Evaluator.GetVarNames ();
-
-			ArrayList results = new ArrayList ();
 			foreach (string name in names){
 				if (!name.StartsWith (prefix))
 					continue;
@@ -67,6 +64,17 @@ namespace Mono.CSharp {
 				else
 					results.Add (name);
 			}
+
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			ArrayList results = new ArrayList ();
+
+			AppendResults (results, prefix, Evaluator.GetVarNames ());
+			AppendResults (results, prefix, ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, prefix));
+			AppendResults (results, prefix, Evaluator.GetUsingList ());
+			
 			throw new CompletionResult (prefix, (string []) results.ToArray (typeof (string)));
 		}
 

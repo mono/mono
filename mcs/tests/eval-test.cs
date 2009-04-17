@@ -42,6 +42,24 @@ public class MyTest {
 
 		Run ("LINQ-3", "var first_scope = new int [] {1,2,3};");
 		Run ("LINQ-4", "var second_scope = from x in first_scope select x;");
+
+		string prefix = "";
+		string [] res = Evaluator.GetCompletions ("ConsoleK", out prefix);
+		if (res [0] != "ey" || res [1] != "eyInfo"){
+			Console.WriteLine (res [0]);
+			Console.WriteLine (res [1]);
+			throw new Exception ("Expected two completions ConsoleKey and ConsoleKeyInfo");
+		}
+
+		res = Evaluator.GetCompletions ("Converte", out prefix);
+		if (res [0] != "r<"){
+			throw new Exception ("Expected one completion for Conveter<");
+		}
+
+		res = Evaluator.GetCompletions ("Sys", out prefix);
+		if (res [0] != "tem"){
+			throw new Exception ("Expected at least a conversion for System");
+		}
 	}
 	
 }

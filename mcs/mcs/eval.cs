@@ -56,7 +56,7 @@ namespace Mono.CSharp {
 		static Thread invoke_thread;
 		
 		static ArrayList using_alias_list = new ArrayList ();
-		static ArrayList using_list = new ArrayList ();
+		internal static ArrayList using_list = new ArrayList ();
 		static Hashtable fields = new Hashtable ();
 
 		static Type   interactive_base_class = typeof (InteractiveBase);
@@ -814,6 +814,14 @@ namespace Mono.CSharp {
 			}
 		}
 
+		static internal ICollection GetUsingList ()
+		{
+			ArrayList res = new ArrayList (using_list.Count);
+			foreach (object ue in using_list)
+				res.Add (ue.ToString ());
+			return res;
+		}
+		
 		static internal string [] GetVarNames ()
 		{
 			lock (evaluator_lock){

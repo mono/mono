@@ -438,8 +438,9 @@ namespace Mono.CSharp {
 			if (base_text == null)
 				throw new ArgumentNullException ("base_text");
 			this.base_text = base_text;
-			
+
 			result = res;
+			Array.Sort (result);
 		}
 
 		public string [] Result {

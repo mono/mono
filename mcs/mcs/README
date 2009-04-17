@@ -4,12 +4,12 @@ Completion support
 	Supported:
 	
 		a.<TAB>
+		a<TAB> for types and namespaces
 		a.W<TAB>
 		a<TAB> for local variables
 
 	Unsupported:
 	
-		a<TAB> for types and namespaces
 		delegate { FOO.<TAB>
 		using statement autocompletion
 	

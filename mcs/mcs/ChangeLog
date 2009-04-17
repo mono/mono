@@ -1,5 +1,12 @@
 2009-04-17  Miguel de Icaza  <miguel@novell.com>
 
+	* complete.cs: Include namespace resolution in simple names as
+	well as global types and types in the using scope in the
+	resolution. 
+
+	* namespace.cs: Supporting infrastrcture to provide completions
+	based on the current using scope. 
+
 	* eval.cs: Introduce an entry point that allows for initialization
 	to return a list of the files passed on the command line.
 
@@ -120,7 +127,7 @@
 	* anonymous.cs (Compatible): If the exception thrown from the
 	resolved expression is a CompletionResult exception let that one
 	through instead of printing a diagnostic error in the try/catch. 
-	
+<	
 2009-03-22  Miguel de Icaza  <miguel@novell.com>
 
 	* 

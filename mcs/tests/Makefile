@@ -55,7 +55,7 @@ test-casts: boot-casts.out mcs-casts.out
 test-local: casts-boot.exe
 
 eval.exe: eval-tests.cs
-	
+
 ifeq (net_2_1, $(PROFILE))
 COMPILER_NAME = smcs
 TEST_PATTERN = '*test-*.cs'

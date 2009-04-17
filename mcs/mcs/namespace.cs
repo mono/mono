@@ -99,6 +99,30 @@ namespace Mono.CSharp {
 			return found_type;
 		}
 
+		//
+		// Returns the types starting with the given prefix
+		//
+		public ICollection CompletionGetTypesStartingWith (string prefix)
+		{
+			Hashtable result = null;
+			
+			foreach (Assembly a in referenced_assemblies){
+				Type [] mtypes = a.GetTypes ();
+
+				foreach (Type t in mtypes){
+					string f = t.FullName;
+
+					if (f.StartsWith (prefix) && (result == null || !result.Contains (f))){
+						if (result == null)
+							result = new Hashtable ();
+
+						result [f] = f;
+					}
+				}
+			}
+			return result == null ? result : result.Keys;
+		}
+		
 		protected void Error_AmbiguousPredefinedType (Location loc, string name, Type type)
 		{
 			Report.Warning (1685, 1, loc,
@@ -528,6 +552,38 @@ namespace Mono.CSharp {
 				return (Namespace) namespaces [name];
 
 			return LookupType (name, loc);
+		}
+
+		//
+		// Completes types with the given `prefix' and stores the results in `result'
+		//
+		public void CompletionGetTypesStartingWith (DeclSpace ds, string prefix, Hashtable result)
+		{
+			int l = fullname.Length + 1;
+			ICollection res = root.CompletionGetTypesStartingWith (fullname + "." + prefix);
+
+			if (res == null)
+				return;
+			
+			foreach (string match in res){
+				string x = match.Substring (l);
+
+				// Turn reflection nested classes foo+bar into foo.bar
+				x = x.Replace ('+', '.');
+
+				// Only get the first name element, no point in adding anything beyond the first dot.
+				int p = x.IndexOf ('.');
+				if (p != -1)
+					x = x.Substring (0, p);
+
+				// Turn Foo`N into Foo<
+				p = x.IndexOf ('`');
+				if (p != -1)
+					x = x.Substring (0, p) + "<";
+
+				if (!result.Contains (x))
+					result [x] = x;
+			}
 		}
 
 		public void RegisterExternalExtensionMethodClass (Type type)
@@ -1032,6 +1088,19 @@ namespace Mono.CSharp {
 			return resolved;
 		}
 
+		public ICollection CompletionGetTypesStartingWith (DeclSpace ds, string prefix)
+		{
+			Hashtable result = new Hashtable ();
+			
+			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent){
+				foreach (Namespace using_ns in GetUsingTable ()){
+					using_ns.CompletionGetTypesStartingWith (ds, prefix, result);
+				}
+			}
+
+			return result.Keys;
+		}
+		
 		static void Error_AmbiguousTypeReference (Location loc, string name, FullNamedExpression t1, FullNamedExpression t2)
 		{
 			Report.SymbolRelatedToPreviousError (t1.Type);
