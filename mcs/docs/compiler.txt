@@ -2,7 +2,7 @@
 	
 				Miguel de Icaza
 			      (miguel@ximian.com)
-				   2002, 2007
+			       2002, 2007, 2009
 
 * Abstract
 
@@ -811,6 +811,152 @@
 	into an empty operation.   Otherwise the above will become
 	a return statement that can infer return types.
 
+* Evaluation API
+
+	The compiler can now be used as a library, the API exposed
+	lives in the Mono.CSharp.Evaluator class and it can currently
+	compile statements and expressions passed as strings and
+	compile or compile and execute immediately.
+
+	As of April 2009 this creates a new in-memory assembly for
+	each statement evaluated.   
+
+	To support this evaluator mode, the evaluator API primes the
+	tokenizer with an initial character that would not appear in
+	valid C# code and is one of:
+
+	    int EvalStatementParserCharacter = 0x2190;   // Unicode Left Arrow
+	    int EvalCompilationUnitParserCharacter = 0x2191;  // Unicode Arrow
+	    int EvalUsingDeclarationsParserCharacter = 0x2192;  // Unicode Arrow
+
+        These character are turned into the following tokens:
+
+	  %token EVAL_STATEMENT_PARSER
+	  %token EVAL_COMPILATION_UNIT_PARSER
+	  %token EVAL_USING_DECLARATIONS_UNIT_PARSER
+
+	This means that the first token returned by the tokenizer when
+	used by the Evalutor API is a special token that helps the
+	yacc parser go from the traditional parsing of a full
+	compilation-unit to the interactive parsing:
+
+	The entry production for the compiler basically becomes:
+
+	  compilation_unit
+		//
+		// The standard rules
+		//
+	        : outer_declarations opt_EOF  
+	        | outer_declarations global_attributes opt_EOF
+	        | global_attributes opt_EOF
+	  	| opt_EOF /* allow empty files */
+
+		//
+		// The rule that allows interactive parsing
+		//
+	  	| interactive_parsing  { Lexer.CompleteOnEOF = false; } opt_EOF
+	  	;
+	  
+	  //
+	  // This is where Evaluator API drives the compilation
+	  //
+	  interactive_parsing
+	  	: EVAL_STATEMENT_PARSER EOF 
+	  	| EVAL_USING_DECLARATIONS_UNIT_PARSER using_directives
+	  	| EVAL_STATEMENT_PARSER 
+	  	  interactive_statement_list opt_COMPLETE_COMPLETION 
+	  	| EVAL_COMPILATION_UNIT_PARSER 
+	  	  interactive_compilation_unit
+	  	;
+	
+	Since there is a little bit of ambiguity for example in the
+	presence of the using directive and the using statement a
+	micro-predicting parser with multiple token look aheads is
+	used in eval.cs to resolve the ambiguity and produce the
+	actual token that will drive the compilation.
+
+	This helps this scenario:
+	     using System;
+	   vs
+	     using (var x = File.OpenRead) {}
+
+	This is the meaning of these new initial tokens:
+
+	     EVAL_STATEMENT_PARSER
+	     	Used to parse statements or expressions as statements.
+
+	     EVAL_USING_DECLARATIONS_UNIT_PARSER
+	        This instructs the parser to merely do using-directive
+	        parsing instead of statement parsing. 
+
+	     EVAL_COMPILATION_UNIT_PARSER
+		Used to evaluate toplevel declarations like namespaces
+		and classes.   
+
+		The feature is currently disabled because later stages
+		of the compiler are not yet able to lookup previous
+		definitions of classes.   
+
+		What happens is that between each call to Evaluate()
+		we reset the compiler state and at this stage we drop
+		also any existing definitions, so evaluating "class X
+		{}" followed by "class Y : X {}" does not currently
+		work. 
+
+		We need to make sure that new type definitions used
+		interactively are preseved from one evaluation to the
+		next. 
+
+	The evaluator the expression or statement `BODY' is hosted
+	inside a wrapper class.   If the statement is a variable
+	declaration then the declaration is split from the assignment
+	into a DECLARATION and BODY.   
+
+	This is what the code generated looks like:
+
+	     public class Foo : $InteractiveBaseClass {
+	     	    DECLARATION
+
+	     	    static void Host (ref object $retval)
+		    {
+			BODY
+		    }
+	     }
+
+	Since both statements and expressions are mixed together and
+	it is useful to use the Evaluator to compute expressions we
+	return expressions for example for "1+2" in the `retval'
+	reference object. 
+
+	To support this, the reference retval parameter is set to a
+	special internal value that means "Value was not set" before
+	the method Host is invoked.    During parsing the parser turns
+	expressions like "1+2" into:
+
+		    retval = 1 + 2;
+
+	This is done using a special OptionalAssign
+	ExpressionStatement class. 
+
+	When the Host method return, if the value of retval is still
+	the special flag no value was set.  Otherwise the result of
+	the expression is in retval.
+
+	The `InteractiveBaseClass' is the base class for the method,
+	this allows for embedders to provide different base classes
+	that could expose new static methods that could be useful
+	during expression evaluation.
+	
+	Our default implementation is InteractiveBaseClass and new
+	implementations should derive from this and set the property
+	in the Evaluator to it. 
+
+	In the future we will move to creating dynamic methods as the
+	wrapper for this code.
+
+* Code Completion
+
+	
 * Miscellaneous
 
 ** Error Processing.
@@ -850,7 +996,7 @@
 	RootContext.WarningLevel in a few places to decide whether a
 	warning is worth reporting to the user or not.  
 
-* Debugging the compiler
+** Debugging the compiler
 
 	Sometimes it is convenient to find *how* a particular error
 	message is being reported from, to do that, you might want to use
@@ -860,7 +1006,7 @@
 	You can use this with -warnaserror to obtain the same effect
 	with warnings. 
 
-* Debugging the Parser.
+** Debugging the Parser.
 
 	A useful trick while debugging the parser is to pass the -v
 	command line option to the compiler.
@@ -878,7 +1024,8 @@
 
 * Editing the compiler sources
 
-	The compiler sources are intended to be edited with 134 columns of width
+	The compiler sources are intended to be edited with 134
+	columns of width.
 
 * Quick Hacks
 
