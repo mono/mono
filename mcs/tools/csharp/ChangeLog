@@ -1,3 +1,8 @@
+2009-04-17  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: Support executing files that were specified in the
+	command line. 
+
 2008-12-16  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: use the monolinker.exe from the profile directory.

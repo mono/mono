@@ -66,9 +66,32 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public static void Init (string [] args)
 		{
+			InitAndGetStartupFiles (args);
+		}
+
+
+		/// <summary>
+		///   Optional initialization for the Evaluator.
+		/// </summary>
+		/// <remarks>
+		///  Initializes the Evaluator with the command line
+		///  options that would be processed by the command
+		///  line compiler.  Only the first call to
+		///  InitAndGetStartupFiles or Init will work, any future
+		///  invocations are ignored.
+		///
+		///  You can safely avoid calling this method if your application
+		///  does not need any of the features exposed by the command line
+		///  interface.
+		///
+		///  This method return an array of strings that contains any
+		///  files that were specified in `args'.
+		/// </remarks>
+		public static string [] InitAndGetStartupFiles (string [] args)
+		{
 			lock (evaluator_lock){
 				if (inited)
-					return;
+					return new string [0];
 				
 				RootContext.Version = LanguageVersion.Default;
 				driver = Driver.Create (args, false);
@@ -76,10 +99,17 @@ namespace Mono.CSharp {
 					throw new Exception ("Failed to create compiler driver with the given arguments");
 				
 				driver.ProcessDefaultConfig ();
+
+				ArrayList startup_files = new ArrayList ();
+				foreach (CompilationUnit file in Location.SourceFiles)
+					startup_files.Add (file.Path);
+				
 				CompilerCallableEntryPoint.Reset ();
 				driver.LoadReferences ();
 				RootContext.EvalMode = true;
 				inited = true;
+
+				return (string []) startup_files.ToArray (typeof (string));
 			}
 		}
 
