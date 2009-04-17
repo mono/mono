@@ -1,5 +1,10 @@
 2009-04-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Fix the computation of ins_sreg_counts for ia64
+	OP_IA64_CMP_<cond>_IMM opcodes.
+
+2009-04-17  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-llvm.c (emit_cond_system_exception): Implement throwing of
 	corlib exceptions.
 
