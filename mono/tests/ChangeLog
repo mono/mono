@@ -1,3 +1,8 @@
+2009-04-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* coreclr-security.cs: Add test case for the "special" case about
+	a default ctor being SSC on a transparent type (e.g. WebClient)
+
 2009-04-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* runtime-invoke.cs: Add a test for #494847.
