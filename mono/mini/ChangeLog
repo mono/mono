@@ -15,6 +15,9 @@
 
 2009-04-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_get_static_rgctx_trampoline): Fix AOT
+	support.
+
 	* tramp-x86.c (mono_arch_get_unbox_trampoline): Implement static
 	rgctx invoke trampolines for x86.
 
