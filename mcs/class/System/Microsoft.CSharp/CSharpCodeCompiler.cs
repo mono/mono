@@ -216,6 +216,22 @@ namespace Mono.CSharp
 			mcsOutput = new StringCollection ();
 			mcsOutMutex = new Mutex ();
 #endif
+
+			string monoPath = Environment.GetEnvironmentVariable ("MONO_PATH");
+			if (monoPath == null)
+				monoPath = String.Empty;
+			
+			string privateBinPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
+			if (privateBinPath != null && privateBinPath.Length > 0)
+				monoPath = String.Format ("{0}:{1}", privateBinPath, monoPath);
+
+			if (monoPath.Length > 0) {
+				StringDictionary dict = mcs.StartInfo.EnvironmentVariables;
+				if (dict.ContainsKey ("MONO_PATH"))
+					dict ["MONO_PATH"] = monoPath;
+				else
+					dict.Add ("MONO_PATH", monoPath);
+			}
 			
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
@@ -321,6 +337,10 @@ namespace Mono.CSharp
 			else
 				args.Append("/target:library ");
 
+			string privateBinPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
+			if (privateBinPath != null && privateBinPath.Length > 0)
+				args.AppendFormat ("/lib:\"{0}\" ", privateBinPath);
+			
 			if (options.Win32Resource != null)
 				args.AppendFormat("/win32res:\"{0}\" ",
 					options.Win32Resource);
