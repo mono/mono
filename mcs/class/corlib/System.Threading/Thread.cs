@@ -69,7 +69,7 @@ namespace System.Threading {
 		private int name_len; 
 		private ThreadState state = ThreadState.Unstarted;
 		private object abort_exc;
-		internal object abort_state;
+		private int abort_state_handle;
 		/* thread_id is only accessed from unmanaged code */
 		private Int64 thread_id;
 		
@@ -674,7 +674,10 @@ namespace System.Threading {
 		{
 			Abort_internal (stateInfo);
 		}
-		
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern object GetAbortExceptionState ();
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern void Interrupt_internal ();
 		

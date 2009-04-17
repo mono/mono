@@ -56,7 +56,7 @@ namespace System.Threading
 
 		public object ExceptionState {
 			get {
-				return Thread.CurrentThread.abort_state;
+				return Thread.CurrentThread.GetAbortExceptionState ();
 			}
 		}
 	}

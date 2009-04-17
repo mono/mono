@@ -1,3 +1,12 @@
+2009-04-18  Mark Probst  <mark.probst@gmail.com>
+
+	* Thread.cs: Make the abort exception state a GC handle, to
+	properly separate AppDomains.  Add internal method for getting the
+	state object.
+
+	* ThreadAbortException.cs: Get the abort exception state via the
+	method in Thread.
+
 2009-04-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WaitHandle.cs: implemented 2 missing WaitAny overloads.
