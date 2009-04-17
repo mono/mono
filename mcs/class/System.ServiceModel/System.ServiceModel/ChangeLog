@@ -1,3 +1,9 @@
+2009-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory.cs, ClientRuntimeChannel.cs : implemented
+	  CreateFactory() and moved corresponding code from latter to
+	  former. Made implementation closer to .NET behavior.
+
 2009-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs, ClientProxyGenerator.cs, ClientBase.cs,

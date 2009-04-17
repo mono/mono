@@ -410,34 +410,12 @@ namespace System.ServiceModel
 		{
 			if (output_channel != null)
 				return;
-			BindingParameterCollection pl =
-				CreateBindingParameters ();
-			bool session = false;
-			switch (factory.Endpoint.Contract.SessionMode) {
-			case SessionMode.Required:
-				session = factory.Endpoint.Binding.CanBuildChannelFactory<IOutputSessionChannel> (pl);
-				if (!session)
-					throw new InvalidOperationException ("The contract requires session support, but the binding does not support it.");
-				break;
-			case SessionMode.Allowed:
-				session = !factory.Endpoint.Binding.CanBuildChannelFactory<IOutputChannel> (pl);
-				break;
-			}
 
 			EndpointAddress address = factory.Endpoint.Address;
 			Uri via = Runtime.Via;
 
-			if (session) {
-				IChannelFactory<IOutputSessionChannel> f =
-					factory.Endpoint.Binding.BuildChannelFactory<IOutputSessionChannel> (pl);
-				f.Open ();
-				output_channel = f.CreateChannel (address, via);
-			} else {
-				IChannelFactory<IOutputChannel> f =
-					factory.Endpoint.Binding.BuildChannelFactory<IOutputChannel> (pl);
-				f.Open ();
-				output_channel = f.CreateChannel (address, via);
-			}
+			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
+			output_channel = (IOutputChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {address, via});
 
 			output_channel.Open ();
 		}
@@ -447,34 +425,11 @@ namespace System.ServiceModel
 			if (request_channel != null)
 				return;
 
-			BindingParameterCollection pl =
-				CreateBindingParameters ();
-			bool session = false;
-			switch (factory.Endpoint.Contract.SessionMode) {
-			case SessionMode.Required:
-				session = factory.Endpoint.Binding.CanBuildChannelFactory<IRequestSessionChannel> (pl);
-				if (!session)
-					throw new InvalidOperationException ("The contract requires session support, but the binding does not support it.");
-				break;
-			case SessionMode.Allowed:
-				session = !factory.Endpoint.Binding.CanBuildChannelFactory<IRequestChannel> (pl);
-				break;
-			}
-
 			EndpointAddress address = factory.Endpoint.Address;
 			Uri via = Runtime.Via;
 
-			if (session) {
-				IChannelFactory<IRequestSessionChannel> f =
-					factory.Endpoint.Binding.BuildChannelFactory<IRequestSessionChannel> (pl);
-				f.Open ();
-				request_channel = f.CreateChannel (address, via);
-			} else {
-				IChannelFactory<IRequestChannel> f =
-					factory.Endpoint.Binding.BuildChannelFactory<IRequestChannel> (pl);
-				f.Open ();
-				request_channel = f.CreateChannel (address, via);
-			}
+			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
+			request_channel = (IRequestChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {address, via});
 
 			request_channel.Open ();
 		}
