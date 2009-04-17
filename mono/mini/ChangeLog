@@ -1,3 +1,11 @@
+2009-04-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (mono_dwarf_writer_emit_method): Handle --regression
+	correctly.
+
+	* mini-llvm.c (type_to_llvm_type): Avoid accessing t->data.klass for
+	GENERICINST.
+
 2009-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mini-exceptions.c : add thread id to EXCEPTION trace message.
