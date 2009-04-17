@@ -528,6 +528,8 @@ namespace System.Web.Compilation
 		
 		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 		{
+			bool tagIgnored;
+			
 			this.location = new Location (location);
 			if (tparser != null)
 				tparser.Location = location;
@@ -554,8 +556,9 @@ namespace System.Web.Compilation
 				tparser.AddDirective (tagid, attributes.GetDictionary (null));
 				break;
 			case TagType.Tag:
-				if (ProcessTag (location, tagid, attributes, tagtype)) {
-					useOtherTags = true;
+				if (ProcessTag (location, tagid, attributes, tagtype, out tagIgnored)) {
+					if (!tagIgnored)
+						useOtherTags = true;
 					break;
 				}
 
@@ -579,7 +582,7 @@ namespace System.Web.Compilation
 				break;
 			case TagType.SelfClosing:
 				int count = stack.Count;
-				if (!ProcessTag (location, tagid, attributes, tagtype)) {
+				if (!ProcessTag (location, tagid, attributes, tagtype, out tagIgnored) && !tagIgnored) {
 					string plainText = location.PlainText;
 					if (!ProcessTagsInAttributes (location, tagid, attributes, TagType.SelfClosing))
 						TextParsed (location, plainText);
@@ -774,8 +777,9 @@ namespace System.Web.Compilation
 				parent.AppendSubBuilder (builder);
 		}
 		
-		bool ProcessTag (ILocation location, string tagid, TagAttributes atts, TagType tagtype)
+		bool ProcessTag (ILocation location, string tagid, TagAttributes atts, TagType tagtype, out bool ignored)
 		{
+			ignored = false;
 			if (isApplication) {
 				if (String.Compare (tagid, "object", true, CultureInfo.InvariantCulture) != 0)
 					throw new ParseException (location, "Invalid tag for application file.");
@@ -783,6 +787,13 @@ namespace System.Web.Compilation
 
 			ControlBuilder parent = stack.Builder;
 			ControlBuilder builder = null;
+			if (parent != null && parent.ControlType == typeof (HtmlTable) &&
+			    (String.Compare (tagid, "thead", true, CultureInfo.InvariantCulture) == 0 ||
+			     String.Compare (tagid, "tbody", true, CultureInfo.InvariantCulture) == 0)) {
+				ignored = true;
+				return true;
+			}
+				
 			Hashtable htable = (atts != null) ? atts.GetDictionary (null) : emptyHash;
 			if (stack.Count > 1) {
 				try {
@@ -931,6 +942,9 @@ namespace System.Web.Compilation
 				}
 				return true;
 			}
+
+			if (current.ControlType == typeof (HtmlTable) && String.Compare (tagid, "thead", true, CultureInfo.InvariantCulture) == 0)
+				return true;
 			
 			if (0 != String.Compare (tagid, btag, true, CultureInfo.InvariantCulture))
 				return false;

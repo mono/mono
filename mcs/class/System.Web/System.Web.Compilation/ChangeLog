@@ -1,3 +1,8 @@
+2009-04-17  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: if thead/tbody are parsed as children of a
+	server-side table control, ignore them. Fixes bug #481622
+
 2009-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: using a regexp to check whether an
