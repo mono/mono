@@ -1,3 +1,9 @@
+2009-04-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_output_basic_block): Add a few nops before
+	indirect calls to simplify get_vcall_slot_addr (). Fixes #494567.
+	(mono_arch_get_vcall_slot): Simplify this.
+
 2009-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_get_delegate_invoke_impl): Move the calls to
