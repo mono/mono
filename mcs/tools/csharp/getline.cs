@@ -42,7 +42,18 @@ namespace Mono.Terminal {
 
 	public class LineEditor {
 
-		public delegate string [] AutoCompleteHandler (string text, int pos);
+		public class Completion {
+			public string [] Result;
+			public string Prefix;
+
+			public Completion (string prefix, string [] result)
+			{
+				Prefix = prefix;
+				Result = result;
+			}
+		}
+		
+		public delegate Completion AutoCompleteHandler (string text, int pos);
 		
 		//static StreamWriter log;
 		
@@ -356,22 +367,53 @@ namespace Mono.Terminal {
 			bool complete = false;
 
 			if (AutoCompleteEvent != null){
-				for (int i = 0; i < cursor; i++){
-					if (!Char.IsWhiteSpace (text [i])){
-						complete = true;
-						break;
+				if (TabAtStartCompletes)
+					complete = true;
+				else {
+					for (int i = 0; i < cursor; i++){
+						if (!Char.IsWhiteSpace (text [i])){
+							complete = true;
+							break;
+						}
 					}
 				}
+
 				if (complete){
-					string [] completions = AutoCompleteEvent (text.ToString (), cursor);
-					if (completions == null || completions.Length == 0)
+					Completion completion = AutoCompleteEvent (text.ToString (), cursor);
+					string [] completions = completion.Result;
+					if (completions == null)
+						return;
+					
+					int ncompletions = completions.Length;
+					if (ncompletions == 0)
 						return;
 					
 					if (completions.Length == 1){
 						InsertTextAtCursor (completions [0]);
 					} else {
+						int last = -1;
+						
+						for (int p = 0; p < completions [0].Length; p++){
+							char c = completions [0][p];
+
+
+							for (int i = 1; i < ncompletions; i++){
+								if (completions [i].Length < p)
+									goto mismatch;
+							
+								if (completions [i][p] != c){
+									goto mismatch;
+								}
+							}
+							last = p;
+						}
+					mismatch:
+						if (last != -1){
+							InsertTextAtCursor (completions [0].Substring (0, last+1));
+						}
 						Console.WriteLine ();
 						foreach (string s in completions){
+							Console.Write (completion.Prefix);
 							Console.Write (s);
 							Console.Write (' ');
 						}
@@ -827,6 +869,8 @@ namespace Mono.Terminal {
 			return result;
 		}
 
+		public bool TabAtStartCompletes { get; set; }
+			
 		//
 		// Emulates the bash-like behavior, where edits done to the
 		// history are recorded

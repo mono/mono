@@ -956,7 +956,83 @@
 
 * Code Completion
 
+	Support for code completion is available to allow the compiler
+	to provide a list of possible completions at any given point
+	int he parsing process.   This is used for Tab-completion in
+	an interactive shell or visual aids in GUI shells for possible
+	method completions. 
+
+	This method is available as part of the Evaluator API where a
+	special method GetCompletions returns a list of possible
+	completions given a partial input.
+
+	The parser and tokenizer work together so that the tokenizer
+	upon reaching the end of the input generates the following
+	tokens: GENERATE_COMPLETION followed by as many
+	COMPLETE_COMPLETION token and finally the EOF token.
+
+	GENERATE_COMPLETION needs to be handled in every production
+	where the user is likely to press the TAB key in the shell (or
+	in the future the GUI, or an explicit request in an IDE).
+	COMPLETE_COMPLETION must be handled throughout the grammar to
+	provide a way of completing the parsed expression.  See below
+	for details.
+
+	For the member access case, I have added productions that
+	mirror the non-completing productions, for example:
+
+	  primary_expression DOT IDENTIFIER GENERATE_COMPLETION 
+	  {
+	        LocatedToken lt = (LocatedToken) $3;
+	        $$ = new CompletionMemberAccess ((Expression) $1, lt.Value, lt.Location);
+	  }
 	
+	This mirrors:
+
+	  primary_expression DOT IDENTIFIER opt_type_argument_list
+	  {
+	        LocatedToken lt = (LocatedToken) $3;
+	        $$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
+	  }
+	
+	The CompletionMemberAccess is a new kind of
+	Mono.CSharp.Expression that does the actual lookup.  It
+	internally mimics some of the MemberAccess code but has been
+	tuned for this particular use.
+
+	After this initial token is processed GENERATE_COMPLETION the
+	tokenizer will emit COMPLETE_COMPLETION tokens.  This is done
+	to help the parser basically produce a valid result from the
+	partial input it received.  For example it is able to produce
+	a valid AST from "(x" even if no parenthesis has been closed.
+	This is achieved by sprinkling the grammar with productions
+	that can cope with this "winding down" token, for example this
+	is what parenthesized_expression looks like now:
+
+	  parenthesized_expression
+	          : OPEN_PARENS expression CLOSE_PARENS
+	            {
+	                  $$ = new ParenthesizedExpression ((Expression) $2);
+	            }
+	          //
+	          // New production
+	          //
+	          | OPEN_PARENS expression COMPLETE_COMPLETION
+	            {
+	                  $$ = new ParenthesizedExpression ((Expression) $2);
+	            }
+	          ;
+	  
+	  Once we have wrapped up everything we generate the last EOF token.
+
+	When the AST is complete we actually trigger the regular semantic
+	analysis process.   The DoResolve method of each node in our abstract
+	syntax tree will compute the result and communicate the possible
+	completions by throwing an exception of type CompletionResult.
+
+	So for example if the user type "T" and the completion is
+	"ToString" we return "oString".
+
 * Miscellaneous
 
 ** Error Processing.

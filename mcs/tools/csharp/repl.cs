@@ -46,11 +46,42 @@ namespace Mono {
 				string [] startup_files;
 				try {
 					startup_files = Evaluator.InitAndGetStartupFiles (args);
+					Evaluator.InteractiveBaseClass = typeof (InteractiveBaseShell);
 				} catch {
 					return 1;
 				}
 
 				return new CSharpShell ().Run (startup_files);
+			}
+		}
+	}
+
+	public class InteractiveBaseShell : InteractiveBase {
+		static bool tab_at_start_completes;
+		
+		static InteractiveBaseShell ()
+		{
+			tab_at_start_completes = false;
+		}
+
+		internal static Mono.Terminal.LineEditor Editor;
+		
+		public static bool TabAtStartCompletes {
+			get {
+				return tab_at_start_completes;
+			}
+
+			set {
+				tab_at_start_completes = value;
+				if (Editor != null)
+					Editor.TabAtStartCompletes = value;
+			}
+		}
+
+		public static new string help {
+			get {
+				return InteractiveBase.help +
+					"  TabAtStartCompletes - Whether tab will complete even on emtpy lines\n";
 			}
 		}
 	}
@@ -76,6 +107,18 @@ namespace Mono {
 			dumb = term == "dumb" || term == null || isatty == false;
 			
 			editor = new Mono.Terminal.LineEditor ("csharp", 300);
+			InteractiveBaseShell.Editor = editor;
+
+			editor.AutoCompleteEvent += delegate (string s, int pos){
+				string prefix = null;
+
+				string complete = s.Substring (0, pos);
+				
+				string [] completions = Evaluator.GetCompletions (complete, out prefix);
+				
+				return new Mono.Terminal.LineEditor.Completion (prefix, completions);
+			};
+			
 #if false
 			//
 			// This is a sample of how completions sould be implemented.
