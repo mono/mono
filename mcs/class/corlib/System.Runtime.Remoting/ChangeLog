@@ -1,3 +1,8 @@
+2009-04-18  Mark Probst  <mark.probst@gmail.com>
+
+	* RemotingServices.cs (GetDomainProxy): Make a copy of the array
+	created in the other app domain so as not to pollute our own.
+
 2008-10-04  Robert Jordan  <robertj@gmx.net>
 
 	* ServerIdentity.cs (DisposeServerObject):

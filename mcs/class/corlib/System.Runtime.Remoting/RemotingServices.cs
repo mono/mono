@@ -856,7 +856,9 @@ namespace System.Runtime.Remoting
 				AppDomain.InternalSetContext (currentContext);
 			}				
 
-			MemoryStream stream = new MemoryStream (data);
+			byte[] data_copy = new byte [data.Length];
+			data.CopyTo (data_copy, 0);
+			MemoryStream stream = new MemoryStream (data_copy);
 			ObjRef appref = (ObjRef) CADSerializer.DeserializeObject (stream);
 			return (AppDomain) RemotingServices.Unmarshal(appref);
 		}
