@@ -1,5 +1,10 @@
 2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add remaining table descriptions offsets.
+	Add remaining coded index descriptions.
+
+2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Fixed constant table description.
 	Fixed calculation of HasCustomAttribute coded index size.
 	Fixed calculation of size for many table indexes. 
