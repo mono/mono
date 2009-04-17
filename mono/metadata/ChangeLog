@@ -1,5 +1,12 @@
 2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add a macro to conditionally enable
+	dumping of verification information. Add  make_coded_token
+	and search_sorted_table to enable search sorted tables
+	by a given coded token.
+
+2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Add array mapping from table index
 	to description offset. Add get_col_offset and get_col_size
 	functions.
