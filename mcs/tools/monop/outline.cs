@@ -571,7 +571,12 @@ public class Outline {
 	// out a way to do this while not making things confusing.
 	string FormatType (Type t)
 	{
+		if (t == null)
+			return "";
+
 		string type = GetFullName (t);
+		if (type == null)
+			return t.ToString ();
 		
 		if (!type.StartsWith ("System.")) {
 			if (t.Namespace == this.t.Namespace)

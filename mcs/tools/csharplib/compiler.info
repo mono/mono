@@ -123,6 +123,17 @@
                   <parameter name="args" position="0" attrib="0" type="System.String[]" />
                 </parameters>
               </method>
+              <method name="GetCompletions(System.String,out System.String&amp;)" attrib="150" static="true" returntype="System.String[]">
+                <parameters>
+                  <parameter name="input" position="0" attrib="0" type="System.String" />
+                  <parameter name="prefix" position="1" attrib="2" type="System.String&amp;" direction="out"/>
+                </parameters>
+              </method>
+              <method name="InitAndGetStartupFiles(System.String[])" attrib="150" static="true" returntype="System.String[]">
+                <parameters>
+                  <parameter name="args" position="0" attrib="0" type="System.String[]" />
+                </parameters>
+              </method>
               <method name="Interrupt()" attrib="150" static="true" returntype="System.Void">
                 <parameters />
               </method>

@@ -34,6 +34,7 @@ net_1_1_dirs := \
 net_2_0_dirs := \
 	al			\
 	corcompare	\
+	csharplib	\
 	csharp		\
 	mono-xsd	\
 	wsdl		\
@@ -54,8 +55,7 @@ net_2_0_dirs := \
 	sqlsharp	\
 	sqlmetal	\
 	gacutil		\
-	svcutil		\
-	csharplib
+	svcutil
 
 net_2_1_dirs := \
 	compiler-tester

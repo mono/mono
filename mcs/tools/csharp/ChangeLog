@@ -1,5 +1,8 @@
 2009-04-17  Miguel de Icaza  <miguel@novell.com>
 
+	* Makefile: Make this build using csharplib instead of referencing
+	the gmcs.exe that was just built.
+	
 	* repl.cs: Support executing files that were specified in the
 	command line. 
 
