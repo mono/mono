@@ -6,7 +6,7 @@
 .SH NAME 
 csharp, gsharp \- Interactive C# Shell 
 .SH SYNOPSIS
-.B csharp [--attach PID] 
+.B csharp [--attach PID] [file1 [file2]]
 [options] 
 .P
 .B gsharp [file1 [file2]]
@@ -27,8 +27,8 @@ into the main loop of a Gtk# application, avoiding any problems
 arising from the multi-threaded nature of injecting itself into a
 target process.
 .PP
-This version allows a number of scripts to be specified in the command
-line. 
+Files specified in the command line will be loaded and executed as
+scripts.
 .SH OPTIONS
 .TP 
 .I "\-\-attach"
