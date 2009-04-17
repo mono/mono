@@ -1,5 +1,11 @@
 2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add array mapping from table index
+	to description offset. Add get_col_offset and get_col_size
+	functions.
+
+2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Add remaining table descriptions offsets.
 	Add remaining coded index descriptions.
 
