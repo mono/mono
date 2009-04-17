@@ -1,5 +1,10 @@
 2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add initial verification of the
+	field table.
+
+2009-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Add a macro to conditionally enable
 	dumping of verification information. Add  make_coded_token
 	and search_sorted_table to enable search sorted tables
