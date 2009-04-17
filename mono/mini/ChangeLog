@@ -1,3 +1,7 @@
+2009-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mini-exceptions.c : add thread id to EXCEPTION trace message.
+
 2009-04-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c (mono_arch_get_unbox_trampoline): Implement static
@@ -760,7 +764,7 @@ Mon Apr 6 14:09:53 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+	Extracted from a patch by Kornel Pal <kornelpal@gmail.com>.
 
 	* cpu-x86.md: Fix the sizes for long_conv_to_r_un and long_conv_to_r_un_2.
 
@@ -772,7 +776,7 @@ Mon Apr 6 14:09:53 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+	Extracted from a patch by Kornel Pal <kornelpal@gmail.com>.
 
 	* cpu-x86.md: Fix the sizes for fcall(_reg,_membase), long_conv_to_r4_2
 	and long_conv_to_r8_2:
@@ -781,7 +785,7 @@ Mon Apr 6 14:09:53 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+	Extracted from a patch by Kornel Pal <kornelpal@gmail.com>.
 
 	* mini-x86.c (mono_arch_output_basic_block): Adjust precision of int to float
 	conversion to 32 bits.
@@ -794,7 +798,7 @@ Mon Apr 6 14:09:53 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+	Extracted from a patch by Kornel Pal <kornelpal@gmail.com>.
 
 	* mini-x86.c (mono_arch_output_basic_block): Adjust precision of long to double
 	conversion to 64 bits.
@@ -805,7 +809,7 @@ Mon Apr 6 14:09:53 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+	Extracted from a patch by Kornel Pal <kornelpal@gmail.com>.
 
 	* mini-x86.c (emit_move_return_value): Don't reduce precision of functions returning float.
 	This behavior is compatible with MS.
@@ -816,7 +820,7 @@ Mon Apr 6 14:09:53 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 2009-02-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	Extracted from a patch by Kornél Pál <kornelpal@gmail.com>.
+	Extracted from a patch by Kornel Pal <kornelpal@gmail.com>.
 
 	* mini-x86.c (mono_arch_output_basic_block): Implement OP_FCONV_TO_R4, it must
 	change the precision of the value.
@@ -2041,7 +2045,7 @@ Fri Jan 16 15:21:21 CET 2009 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c tramp-arm.c: Fix calls to mono_arch_flush_icache.
 
-2008-12-12  Andrés G. Aragoneses  <aaragoneses@novell.com>
+2008-12-12  Andres G. Aragoneses  <aaragoneses@novell.com>
 
 	* driver.c: Sync --help-trace with man page (EXPR,EXPR).
 
@@ -4196,7 +4200,7 @@ Tue Oct 7 19:59:07 CEST 2008 Paolo Molaro <lupus@ximian.com>
 Mon Oct 6 11:04:38 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: mono_arch_flush_icache () cast pointer using gsize for
-	64 bit safety (from Olaf Hering and Andreas Färber).
+	64 bit safety (from Olaf Hering and Andreas Farber).
 
 2008-10-06  Zoltan Varga  <vargaz@gmail.com>
 	
@@ -4223,7 +4227,7 @@ Mon Oct 6 11:04:38 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* mini-<ARCH>.h mini-x86.c: Remove some unused defines.
 
-2008-10-04  Andreas Färber  <andreas.faerber@web.de>
+2008-10-04  Andreas Farber  <andreas.faerber@web.de>
 
 	* Makefile.am: Add build rules for ppc64.
 	This avoids the build failing at pedump with unresolved symbols
@@ -6319,7 +6323,7 @@ Fri Aug 1 16:30:37 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* mini.c: Error out when creating trampolines or JIT compiling if --aot-only is
 	set.
 
-2008-06-26  Kornél Pál  <kornelpal@gmail.com>
+2008-06-26  Kornel Pal  <kornelpal@gmail.com>
 
 	* driver.c (DllMain): Remove mono_module_handle.
 
@@ -6559,7 +6563,7 @@ Fri Aug 1 16:30:37 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* debug-mini.c
 	(mono_debug_close_method): Check whether `cfg->epilogue_begin != NULL'.
 
-2008-06-09  Kornél Pál  <kornelpal@gmail.com>
+2008-06-09  Kornel Pal  <kornelpal@gmail.com>
 
 	* main.c: Add and set argv [argc] to NULL to match C specification that fixes
 	possible error when no arguments are passed.
@@ -6626,7 +6630,7 @@ Fri Aug 1 16:30:37 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* debug-debugger.c (debugger_lookup_class): Also call
 	mono_class_setup_methods() here; we're only called from RTI.
 
-2008-06-05  Andreas Färber  <andreas.faerber@web.de>
+2008-06-05  Andreas Farber  <andreas.faerber@web.de>
 
 	* mini.c (mini_init): Add DTrace probes ves-init-{begin,end}.
 	(mini_method_compile) Add DTrace probes method-compile-{begin,end}.
@@ -6849,25 +6853,25 @@ Tue Jun 3 13:07:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* driver.c (mono_main): Using --verify-all enables the verifier under validil mode
 	if no related --security flag is passed.
 
-2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+2008-05-05  Andreas Farber  <andreas.faerber@web.de>
 
 	* mini-arch.h: Prepare support for ppc64.
 
 	Contributed under MIT/X11 license.
 
-2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+2008-05-05  Andreas Farber  <andreas.faerber@web.de>
 
 	* aot-runtime.c: Prepare support for ppc64.
 
 	Contributed under MIT/X11 license.
 
-2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+2008-05-05  Andreas Farber  <andreas.faerber@web.de>
 
 	* mini-ops.h: Prepare support for ppc64.
 
 	Contributed under MIT/X11 license.
 
-2008-05-04  Andreas Färber  <andreas.faerber@web.de>
+2008-05-04  Andreas Farber  <andreas.faerber@web.de>
 
 	* helpers.c: Add support for OSX/ppc64 and Linux/ppc64 (dis)assemblers.
 
@@ -6879,7 +6883,7 @@ Tue Jun 3 13:07:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	assemblies, since aot_name is not a full path, causing us to load MS.NET 
 	assemblies on windows.
 
-﻿2008-04-28  Kornél Pál  <kornelpal@gmail.com>
+?2008-04-28  Kornel Pal  <kornelpal@gmail.com>
 
 	* mini.c (mono_jit_compile_method_inner): Use g_warning instead of g_error
 	for unsupported METHOD_IMPL_ATTRIBUTE_NATIVE.
@@ -7312,7 +7316,7 @@ Tue Jun 3 13:07:03 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* iltests.il: Add new tests.
 
-2008-03-20  Kornél Pál  <kornelpal@gmail.com>
+2008-03-20  Kornel Pal  <kornelpal@gmail.com>
 
 	* mini.c: Removed Windows version macros.
 
@@ -9131,7 +9135,7 @@ Thu Oct 4 14:43:49 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
 Thu Oct 4 12:35:27 CEST 2007 Paolo Molaro <lupus@ximian.com>
 
-	* genmdesc.pl: patch from Henryk Plötz <henryk@openmoko.org> to
+	* genmdesc.pl: patch from Henryk Plotz <henryk@openmoko.org> to
 	use the preprocessor from the CPP env var if it is set.
 
 Wed Oct 3 17:11:38 CEST 2007 Paolo Molaro <lupus@ximian.com>
@@ -11229,7 +11233,7 @@ Mon Sep 11 11:31:10 BST 2006 Paolo Molaro <lupus@ximian.com>
 
 	* mini-amd64.c (emit_call): Avoid strstr () call if possible.
 
-2006-09-05  Kornél Pál  <kornelpal@gmail.com>
+2006-09-05  Kornel Pal  <kornelpal@gmail.com>
 
 	* Makefile.am: Renamed mono-1.dll to mono.dll. (-avoid-version)
 
@@ -11458,7 +11462,7 @@ Fri Aug 18 19:38:28 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* aot-compiler.c (compile_method): Fix some of the memory allocated during
 	compilation. Fixes #78827.
 
-2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+2006-07-18  Kornel Pal  <kornelpal@gmail.com>
 
 	* declsec.c: Use original security informations for
 	  MONO_WRAPPER_MANAGED_TO_MANAGED.
@@ -13763,7 +13767,7 @@ Mon Aug 1 18:37:38 BST 2005 Paolo Molaro <lupus@ximian.com>
 	* mini-amd64.c (mono_arch_setup_jit_tls_data): Use the nice way of
 	getting TLS offsets on AMD64 too.
 
-2005-07-20  Kornél Pál <kornelpal@hotmail.com>
+2005-07-20  Kornel Pal <kornelpal@hotmail.com>
 
 	* driver.c: Detach console when executing IMAGE_SUBSYSTEM_WINDOWS_GUI on win32
 
