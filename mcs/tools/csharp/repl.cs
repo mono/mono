@@ -25,6 +25,7 @@ using System.Reflection.Emit;
 using System.Threading;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections.Generic;
 
 using Mono.CSharp;
 using Mono.Attach;
@@ -36,25 +37,27 @@ namespace Mono {
 		static int Main (string [] args)
 		{
 			if (args.Length > 0 && args [0] == "--attach") {
-				new ClientCSharpShell (Int32.Parse (args [1])).Run ();
+				new ClientCSharpShell (Int32.Parse (args [1])).Run (null);
 				return 0;
 			} else if (args.Length > 0 && args [0].StartsWith ("--agent:")) {
 				new CSharpAgent (args [0]);
 				return 0;
 			} else {
+				string [] startup_files;
 				try {
-					Evaluator.Init (args);
+					startup_files = Evaluator.InitAndGetStartupFiles (args);
 				} catch {
 					return 1;
 				}
-			
-				return new CSharpShell ().Run ();
+
+				return new CSharpShell ().Run (startup_files);
 			}
 		}
 	}
 	
 	public class CSharpShell {
 		static bool isatty = true;
+		string [] startup_files;
 		
 		Mono.Terminal.LineEditor editor;
 		bool dumb;
@@ -132,6 +135,25 @@ namespace Mono {
 
 		}
 
+		void ExecuteSources (IEnumerable<string> sources, bool ignore_errors)
+		{
+			foreach (string file in sources){
+				try {
+					try {
+						using (System.IO.StreamReader r = System.IO.File.OpenText (file)){
+							ReadEvalPrintLoopWith (p => r.ReadLine ());
+						}
+					} catch (FileNotFoundException){
+						Console.Error.WriteLine ("cs2001: Source file `{0}' not found", file);
+						return;
+					}
+				} catch {
+					if (!ignore_errors)
+						throw;
+				}
+			}
+		}
+		
 		protected virtual void LoadStartupFiles ()
 		{
 			string dir = Path.Combine (
@@ -140,8 +162,8 @@ namespace Mono {
 			if (!Directory.Exists (dir))
 				return;
 
-			ArrayList sources = new ArrayList ();
-			ArrayList libraries = new ArrayList ();
+			List<string> sources = new List<string> ();
+			List<string> libraries = new List<string> ();
 			
 			foreach (string file in System.IO.Directory.GetFiles (dir)){
 				string l = file.ToLower ();
@@ -152,18 +174,10 @@ namespace Mono {
 					libraries.Add (file);
 			}
 
-			foreach (string file in libraries){
+			foreach (string file in libraries)
 				Evaluator.LoadAssembly (file);
-			}
-			
-			foreach (string file in sources){
-				try {
-					using (System.IO.StreamReader r = System.IO.File.OpenText (file)){
-						ReadEvalPrintLoopWith (p => r.ReadLine ());
-					}
-				} catch {
-				}
-			}
+
+			ExecuteSources (sources, true);
 		}
 
 		void ReadEvalPrintLoopWith (ReadLiner readline)
@@ -185,12 +199,20 @@ namespace Mono {
 
 		public int ReadEvalPrintLoop ()
 		{
-			InitTerminal ();
+			if (startup_files.Length == 0)
+				InitTerminal ();
 
 			InitializeUsing ();
 
 			LoadStartupFiles ();
-			ReadEvalPrintLoopWith (GetLine);
+
+			//
+			// Interactive or startup files provided?
+			//
+			if (startup_files.Length != 0)
+				ExecuteSources (startup_files, false);
+			else
+				ReadEvalPrintLoopWith (GetLine);
 
 			return 0;
 		}
@@ -333,8 +355,9 @@ namespace Mono {
 		{
 		}
 
-		public virtual int Run ()
+		public virtual int Run (string [] startup_files)
 		{
+			this.startup_files = startup_files;
 			return ReadEvalPrintLoop ();
 		}
 		
@@ -403,7 +426,7 @@ namespace Mono {
 			}
 		}
 		
-		public override int Run ()
+		public override int Run (string [] startup_files)
 		{
 			// The difference is that we do not call Evaluator.Init, that is done on the target
 			return ReadEvalPrintLoop ();
@@ -513,7 +536,7 @@ namespace Mono {
 			NetworkStream s = client.GetStream ();
 			interrupt_stream = interrupt_client.GetStream ();
 			new Thread (InterruptListener).Start ();
-			
+
 			try {
 				Evaluator.Init (new string [0]);
 			} catch {

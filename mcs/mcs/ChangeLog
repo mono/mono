@@ -1,3 +1,8 @@
+2009-04-17  Miguel de Icaza  <miguel@novell.com>
+ 
+	* eval.cs: Introduce an entry point that allows for initialization
+	to return a list of the files passed on the command line.
+ 
 2009-04-13  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #493887
