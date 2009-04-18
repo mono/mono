@@ -134,7 +134,6 @@ namespace Tests.Mono.Options
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")] // seems to cause an assert in the runtime
 		public void OptionalValues ()
 		{
 			string a = null;
@@ -191,7 +190,6 @@ namespace Tests.Mono.Options
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")] // seems to cause an assert in the runtime
 		public void CombinationPlatter ()
 		{
 			int a = -1, b = -1;
@@ -226,7 +224,6 @@ namespace Tests.Mono.Options
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotWorking")] // seems to cause an assert in the runtime
 		public void Exceptions ()
 		{
 			string a = null;
@@ -294,6 +291,15 @@ namespace Tests.Mono.Options
 				{ "long-desc2",
 					"IWantThisDescriptionToBreakInsideAWordGeneratingAutoWordHyphenation.",
 					v => {} },
+				{ "long-desc3",
+					"OnlyOnePeriod.AndNoWhitespaceShouldBeSupportedEvenWithLongDescriptions",
+					v => {} },
+				{ "long-desc4",
+					"Lots of spaces in the middle 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 and more until the end.",
+					v => {} },
+				{ "long-desc5",
+					"Lots of spaces in the middle - . - . - . - . - . - . - . - and more until the end.",
+					v => {} },
 				{ "h|?|help",           "show help text",                       v => {} },
 				{ "version",            "output version information and exit",  v => {} },
 				{ "<>", v => {} },
@@ -314,8 +320,15 @@ namespace Tests.Mono.Options
 			expected.WriteLine ("                               break-on-hyphen.  Also, a list:");
 			expected.WriteLine ("                                 item 1");
 			expected.WriteLine ("                                 item 2");
-			expected.WriteLine ("      --long-desc2           IWantThisDescriptionToBreakInsideAWordGenerating-");
-			expected.WriteLine ("                               AutoWordHyphenation.");
+			expected.WriteLine ("      --long-desc2           IWantThisDescriptionToBreakInsideAWordGeneratingAu-");
+			expected.WriteLine ("                               toWordHyphenation.");
+			expected.WriteLine ("      --long-desc3           OnlyOnePeriod.");
+			expected.WriteLine ("                               AndNoWhitespaceShouldBeSupportedEvenWithLongDesc-");
+			expected.WriteLine ("                               riptions");
+			expected.WriteLine ("      --long-desc4           Lots of spaces in the middle 1 2 3 4 5 6 7 8 9 0");
+			expected.WriteLine ("                               1 2 3 4 5 and more until the end.");
+			expected.WriteLine ("      --long-desc5           Lots of spaces in the middle - . - . - . - . - . -");
+			expected.WriteLine ("                                . - . - and more until the end.");
 			expected.WriteLine ("  -h, -?, --help             show help text");
 			expected.WriteLine ("      --version              output version information and exit");
 

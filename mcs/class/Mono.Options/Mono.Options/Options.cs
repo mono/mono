@@ -919,12 +919,13 @@ namespace Mono.Options
 					o.Write (new string (' ', OptionWidth));
 				}
 
-				List<string> lines = GetLines (localizer (GetDescription (p.Description)));
-				o.WriteLine (lines [0]);
+				bool indent = false;
 				string prefix = new string (' ', OptionWidth+2);
-				for (int i = 1; i < lines.Count; ++i) {
-					o.Write (prefix);
-					o.WriteLine (lines [i]);
+				foreach (string line in GetLines (localizer (GetDescription (p.Description)))) {
+					if (indent) 
+						o.Write (prefix);
+					o.WriteLine (line);
+					indent = true;
 				}
 			}
 		}
@@ -1052,56 +1053,44 @@ namespace Mono.Options
 			return sb.ToString ();
 		}
 
-		private static List<string> GetLines (string description)
+		private static IEnumerable<string> GetLines (string description)
 		{
-			List<string> lines = new List<string> ();
 			if (string.IsNullOrEmpty (description)) {
-				lines.Add (string.Empty);
-				return lines;
+				yield return string.Empty;
+				yield break;
 			}
-			int length = 80 - OptionWidth - 2;
+			int length = 80 - OptionWidth - 1;
 			int start = 0, end;
 			do {
 				end = GetLineEnd (start, length, description);
-				bool cont = false;
-				if (end < description.Length) {
-					char c = description [end];
-					if (c == '-' || (char.IsWhiteSpace (c) && c != '\n'))
-						++end;
-					else if (c != '\n') {
-						cont = true;
-						--end;
-					}
-				}
-				lines.Add (description.Substring (start, end - start));
-				if (cont) {
-					lines [lines.Count-1] += "-";
-				}
+				char c = description [end-1];
+				if (char.IsWhiteSpace (c))
+					--end;
+				bool writeContinuation = end != description.Length && !IsEolChar (c);
+				string line = description.Substring (start, end - start) +
+						(writeContinuation ? "-" : "");
+				yield return line;
 				start = end;
-				if (start < description.Length && description [start] == '\n')
+				if (char.IsWhiteSpace (c))
 					++start;
+				length = 80 - OptionWidth - 2 - 1;
 			} while (end < description.Length);
-			return lines;
+		}
+
+		private static bool IsEolChar (char c)
+		{
+			return !char.IsLetterOrDigit (c);
 		}
 
 		private static int GetLineEnd (int start, int length, string description)
 		{
 			int end = System.Math.Min (start + length, description.Length);
 			int sep = -1;
-			for (int i = start; i < end; ++i) {
-				switch (description [i]) {
-					case ' ':
-					case '\t':
-					case '\v':
-					case '-':
-					case ',':
-					case '.':
-					case ';':
-						sep = i;
-						break;
-					case '\n':
-						return i;
-				}
+			for (int i = start+1; i < end; ++i) {
+				if (description [i] == '\n')
+					return i+1;
+				if (IsEolChar (description [i]))
+					sep = i+1;
 			}
 			if (sep == -1 || end == description.Length)
 				return end;

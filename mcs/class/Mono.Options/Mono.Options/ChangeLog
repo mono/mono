@@ -1,3 +1,11 @@
+2009-04-17  Jonathan Pryor  <jpryor@novell.com>
+
+	* Options.cs: Viktor Lundgren reported that Option.Description text of 
+	  `"aaa." . "a" x 64` (that is, "aaa." followed by 64 "a"s) would cause 
+	  GetLines() to go into an infinite loop and (eventually) die from an 
+	  OutOfMemoryException.  Oops.  Fix this, simplify the logic, and turn 
+	  GetLines() into an IEnumerable<string>.
+
 2008-10-23  Jonathan Pryor  <jpryor@novell.com>
 
 	* Options.cs: Options.cs: Use the underlying target type in the error 
