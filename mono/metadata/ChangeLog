@@ -1,5 +1,10 @@
 2009-04-18  Mark Probst  <mark.probst@gmail.com>
 
+	* object.c (mono_raise_exception): Don't reset the thread abort
+	exception state here.
+
+2009-04-18  Mark Probst  <mark.probst@gmail.com>
+
 	* icall-def.h: New icall for getting the thread abort exception
 	state for a thread.
 
