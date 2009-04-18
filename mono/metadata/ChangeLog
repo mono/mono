@@ -1,3 +1,9 @@
+2009-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_install_vtable_trampoline): Make this receive a
+	trampoline creation function instead of trampoline, allowing the JIT
+	to use a different trampoline for each vtable.
+
 2009-04-18  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c (mono_raise_exception): Don't reset the thread abort
