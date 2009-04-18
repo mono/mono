@@ -1,3 +1,8 @@
+2009-04-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Add statistics for methods JITted
+	with/without LLVM.
+
 2009-04-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Fix the computation of ins_sreg_counts for ia64
