@@ -1,3 +1,8 @@
+2009-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Convert arguments of SWITCH and
+	THROW to the appropriate llvm type.
+
 2009-04-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Add statistics for methods JITted
