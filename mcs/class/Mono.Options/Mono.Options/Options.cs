@@ -1086,7 +1086,7 @@ namespace Mono.Options
 		{
 			int end = System.Math.Min (start + length, description.Length);
 			int sep = -1;
-			for (int i = start+1; i < end; ++i) {
+			for (int i = start; i < end; ++i) {
 				if (description [i] == '\n')
 					return i+1;
 				if (IsEolChar (description [i]))

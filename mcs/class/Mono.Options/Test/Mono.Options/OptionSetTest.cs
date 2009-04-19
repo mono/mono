@@ -300,6 +300,10 @@ namespace Tests.Mono.Options
 				{ "long-desc5",
 					"Lots of spaces in the middle - . - . - . - . - . - . - . - and more until the end.",
 					v => {} },
+				{ "o|out=",
+					"The {DIRECTORY} to place the generated files and directories.\n\n" +
+					"If not specified, defaults to\n`dirname FILE`/cache/`basename FILE .tree`.",
+					v => {} },
 				{ "h|?|help",           "show help text",                       v => {} },
 				{ "version",            "output version information and exit",  v => {} },
 				{ "<>", v => {} },
@@ -329,6 +333,11 @@ namespace Tests.Mono.Options
 			expected.WriteLine ("                               1 2 3 4 5 and more until the end.");
 			expected.WriteLine ("      --long-desc5           Lots of spaces in the middle - . - . - . - . - . -");
 			expected.WriteLine ("                                . - . - and more until the end.");
+ 			expected.WriteLine ("  -o, --out=DIRECTORY        The DIRECTORY to place the generated files and");
+			expected.WriteLine ("                               directories.");
+ 			expected.WriteLine ("                               ");
+			expected.WriteLine ("                               If not specified, defaults to");
+ 			expected.WriteLine ("                               `dirname FILE`/cache/`basename FILE .tree`.");
 			expected.WriteLine ("  -h, -?, --help             show help text");
 			expected.WriteLine ("      --version              output version information and exit");
 

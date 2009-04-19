@@ -1,3 +1,9 @@
+2009-04-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* Options.cs: GetLineEnd() shouldn't skip the start character, as it
+	  may contain '\n' (thus preventing the following text from being
+	  properly indented).
+
 2009-04-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Options.cs: Viktor Lundgren reported that Option.Description text of 
