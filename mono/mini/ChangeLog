@@ -4,9 +4,6 @@
 	OP_IA64_CSET opcode.
 
 	* mini.c: Fix a warning.
-	
-	* mini.c (mini_create_vtable_trampoline): Make this receive a
-	vtable argument, not yet used.
 
 	* mini-llvm.c (mono_llvm_emit_method): Convert arguments of SWITCH and
 	THROW to the appropriate llvm type.
