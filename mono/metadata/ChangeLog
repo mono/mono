@@ -1,3 +1,42 @@
+2009-04-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	This patch starts to integrate the metadata verifier with the runtime code.
+
+	This patch causes major regression in functionality for the metadata verifier
+	as cli and table verification are disabled since they require to be ported to
+	use MonoImage information.
+
+	* image.c (do_mono_image_load): Split the code in this function
+	into mono_image_load_pe_data and mono_image_load_cli_data.
+	Add	care_about_pecoff parameter to not load pecoff data.
+	Call into the metadata verifier for pecoff and cli verification.
+
+	* image.c (mono_image_open_raw): New function that doesn't perform
+	any parsing of the image contents.
+	
+	The reason for the 3 new functions is to give pedump better control
+	into the interaction with the verifier.
+
+	* metadata-internals.h: Add new functions from image.c as part of the
+	internal mono API.
+
+	* metadata-verify.c: Split mono_image_verify into mono_verifier_verify_pe_data,
+	mono_verifier_verify_cli_data and mono_verifier_verify_table_data. Prepare
+	to make those functions work together with the runtime.
+
+	* verify.c: Add mono_verifier_is_enabled_for_image function that returns
+	true if the image needs to be verified.
+
+	* verify-internals.h: Export new functions from metadata-verify.c and verify.c.
+
+	* pedump.c: Use new metadata verifier API.
+
+2009-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_install_vtable_trampoline): Make this receive a
+	trampoline creation function instead of trampoline, allowing the JIT
+	to use a different trampoline for each vtable.
+
 2009-04-18  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c (mono_raise_exception): Don't reset the thread abort
