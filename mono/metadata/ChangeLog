@@ -1,5 +1,12 @@
 2009-04-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (can_access_type): Check visibility against
+	the element type for pointers and arrays.
+
+	Fixes #496150.
+
+2009-04-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Fix cli and table verification to use information
 	from the MonoImage. A lot of duplicated code got killed.
 
