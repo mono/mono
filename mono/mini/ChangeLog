@@ -1,5 +1,21 @@
 2009-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Handle compares followed by an
+	unconditional branch.
+
+	* mini.h (MonoTrampolineType): Add new trampoline type 
+	'MONO_TRAMPOLINE_LLVM_VCALL' which handles virtual calls made from LLVM
+	compiled code.
+
+	* mini-trampolines.c (mono_llvm_vcall_trampoline): New C trampoline 
+	function.
+
+	* mini-trampolines.c (mono_create_llvm_vcall_trampoline): New trampoline
+	creation function.
+
+	* mini.c (mini_init): Avoid using the common vtable trampoline when LLVM
+	is enabled. Instead, use the llvm vcall trampoline.
+	
 	* mini-trampolines.c (mono_get_vcall_slot_addr): New helper function.
 
 	* mini-trampolines.c tramp-amd64.c tramp-x86.c: Use it.
