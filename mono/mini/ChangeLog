@@ -1,5 +1,8 @@
 2009-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_lowering_pass): Null out the sregs of the
+	OP_IA64_CSET opcode.
+
 	* mini.c: Fix a warning.
 	
 	* mini.c (mini_create_vtable_trampoline): Make this receive a
