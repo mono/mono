@@ -1,5 +1,11 @@
 2009-04-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Fix cli and table verification to use information
+	from the MonoImage. A lot of duplicated code got killed.
+
+2009-04-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+
 	This patch starts to integrate the metadata verifier with the runtime code.
 
 	This patch causes major regression in functionality for the metadata verifier
