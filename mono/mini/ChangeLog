@@ -1,5 +1,7 @@
 2009-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c: Fix a warning.
+	
 	* mini.c (mini_create_vtable_trampoline): Make this receive a
 	vtable argument, not yet used.
 
