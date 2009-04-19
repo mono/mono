@@ -1,5 +1,12 @@
 2009-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_get_vcall_slot_addr): New helper function.
+
+	* mini-trampolines.c tramp-amd64.c tramp-x86.c: Use it.
+	
+	* mini-<ARCH>.c: Get rid of the identical mono_arch_get_vcall_slot_addr ()
+	functions.
+
 	* mini-<ARCH>.h mini-trampolines.c mini.c: Get rid of 
 	MONO_ARCH_COMMON_VTABLE_TRAMPOLINE, it is supported by all archs.
 
