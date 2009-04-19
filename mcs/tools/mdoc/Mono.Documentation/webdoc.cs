@@ -57,8 +57,10 @@ namespace Mono.Documentation
 					"write time of the source .tree/.zip files.",
 					v => forceUpdate = v != null },
 				{ "o|out=",
-					"The {DIRECTORY} to place the generated files and directories.\n\n" +
-					"If not specified, defaults to\n`dirname FILE`/cache/`basename FILE .tree`.",
+					"The {PREFIX} to place the generated files and directories.  " + 
+					"Default: \"`dirname FILE`/cache/\".\n" +
+					"Underneath {PREFIX}, `basename FILE .tree` directories will be " + 
+					"created which will contain the pre-generated HTML content.",
 					v => dir = v },
 			};
 			List<string> files = Parse (options, args, "export-html-webdoc", 
@@ -80,7 +82,9 @@ namespace Mono.Documentation
 				string zipFile  = basePath + ".zip";
 				if (!Exists (treeFile) || !Exists (zipFile))
 					continue;
-				string outDir = dir ?? XmlDocUtils.GetCacheDirectory (basePath);
+				string outDir = dir != null 
+					? Path.Combine (dir, Path.GetFileName (basePath))
+					: XmlDocUtils.GetCacheDirectory (basePath);
 				if (!forceUpdate && Directory.Exists (outDir) &&
 							MaxWriteTime (treeFile, zipFile) < Directory.GetLastWriteTime (outDir))
 					continue;

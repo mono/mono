@@ -1,3 +1,11 @@
+2009-04-18  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/webdoc.cs: Change -o semantics to be a directory
+	  prefix, e.g. `mdoc export-html-webdoc -o cache.new foo.tree` will
+	  output files into `cache.new/foo` instead of directly into
+	  `cache.new`.  This makes it easier to specify more than one
+	  .tree/.zip file on the command line.
+
 2009-04-16  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2slashdoc.cs: Code refactor; use
