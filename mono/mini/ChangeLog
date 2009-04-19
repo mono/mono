@@ -1,5 +1,8 @@
 2009-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-<ARCH>.h mini-trampolines.c mini.c: Get rid of 
+	MONO_ARCH_COMMON_VTABLE_TRAMPOLINE, it is supported by all archs.
+
 	* mini-ia64.c (mono_arch_lowering_pass): Null out the sregs of the
 	OP_IA64_CSET opcode.
 
