@@ -1,3 +1,8 @@
+2009-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_access_nested_class_multidym_array.cs: Regression test for
+	#496150.
+
 2009-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_br_before_try_block.il: Regression test for #494812.
