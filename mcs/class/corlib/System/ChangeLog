@@ -1,3 +1,14 @@
+2009-04-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Enum.cs (MonoEnumInfo): Compare bytes, shorts, ints and longs as
+	unsigned values as specified and to fix 371559, from the bug:
+
+		So the actual difference is that MSFT's Enum.GetValues
+		orders the members as unsigned even when the underlying
+		type is int.  See the following.  Perhaps that's what's
+		being implied by "binary values" in that Enum.GetValues
+		MSDN quote above.
+
 2009-04-18  Mark Probst  <mark.probst@gmail.com>
 
 	* NumberFormatter.cs: Keep the current thread's number formatter

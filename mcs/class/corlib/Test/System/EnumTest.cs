@@ -938,6 +938,124 @@ namespace MonoTests.System
 			Assert.AreEqual (ulong.MinValue.CompareTo ((ulong)789),  EnUInt64.A.CompareTo (EnUInt64.D), "u64#1");
 			Assert.AreEqual (((ulong)789).CompareTo (ulong.MinValue), EnUInt64.D.CompareTo (EnUInt64.A), "u64#2");
 		}
+
+		//
+		// This is used to verify that the output matches the specified behavior
+		// See bug #371559 for details.
+		//
+		[Test]
+		public void CompareOrder_FromGetNames ()
+		{
+			Array r = Enum.GetValues (typeof (EnumByte));
+			Assert.AreEqual (5, r.Length);
+			Assert.AreEqual ("byte_Cc", Enum.GetName (typeof (EnumByte), (EnumByte)(0x00)));
+			Assert.AreEqual ("byte_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("byte_Aa", Enum.GetName (typeof (EnumByte), (EnumByte)(0x05)));
+			Assert.AreEqual ("byte_Aa", r.GetValue (1).ToString ());
+			Assert.AreEqual ("byte_Ff", Enum.GetName (typeof (EnumByte), (EnumByte)(0x64)));
+			Assert.AreEqual ("byte_Ff", r.GetValue (2).ToString ());
+			Assert.AreEqual ("byte_Dd", Enum.GetName (typeof (EnumByte), (EnumByte)(0x7F)));
+			Assert.AreEqual ("byte_Dd", r.GetValue (3).ToString ());
+			Assert.AreEqual ("byte_Bb", Enum.GetName (typeof (EnumByte), (EnumByte)(0xFF)));
+			Assert.AreEqual ("byte_Bb", r.GetValue (4).ToString ());
+			
+			r = Enum.GetValues (typeof (EnumSByte));
+			Assert.AreEqual (6, r.Length);
+			Assert.AreEqual ("sbyte_Cc", Enum.GetName (typeof (EnumSByte), (EnumSByte)(0x00)));
+			Assert.AreEqual ("sbyte_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("sbyte_Aa", Enum.GetName (typeof (EnumSByte), (EnumSByte)(0x05)));
+			Assert.AreEqual ("sbyte_Aa", r.GetValue (1).ToString ());
+			Assert.AreEqual ("sbyte_Ff", Enum.GetName (typeof (EnumSByte), (EnumSByte)(0x64)));
+			Assert.AreEqual ("sbyte_Ff", r.GetValue (2).ToString ());
+			Assert.AreEqual ("sbyte_Ee", Enum.GetName (typeof (EnumSByte), (EnumSByte)(0x7F)));
+			Assert.AreEqual ("sbyte_Ee", r.GetValue (3).ToString ());
+			Assert.AreEqual ("sbyte_Bb", Enum.GetName (typeof (EnumSByte), unchecked ((EnumSByte)(0xF0))));
+			Assert.AreEqual ("sbyte_Bb", r.GetValue (4).ToString ());
+			Assert.AreEqual ("sbyte_Dd", Enum.GetName (typeof (EnumSByte), unchecked ((EnumSByte)(0xFF))));
+			Assert.AreEqual ("sbyte_Dd", r.GetValue (5).ToString ());
+			
+			r = Enum.GetValues (typeof (EnumUShort));
+			Assert.AreEqual (5, r.Length);
+			Assert.AreEqual ("ushort_Cc", Enum.GetName (typeof (EnumUShort), (EnumUShort)(0x0000)));
+			Assert.AreEqual ("ushort_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("ushort_Aa", Enum.GetName (typeof (EnumUShort), (EnumUShort)(0x0005)));
+			Assert.AreEqual ("ushort_Aa", r.GetValue (1).ToString ());
+			Assert.AreEqual ("ushort_Ff", Enum.GetName (typeof (EnumUShort), (EnumUShort)(0x0064)));
+			Assert.AreEqual ("ushort_Ff", r.GetValue (2).ToString ());
+			Assert.AreEqual ("ushort_Ee", Enum.GetName (typeof (EnumUShort), (EnumUShort)(0x7FFF)));
+			Assert.AreEqual ("ushort_Ee", r.GetValue (3).ToString ());
+			Assert.AreEqual ("ushort_Bb", Enum.GetName (typeof (EnumUShort), (EnumUShort)(0xFF00)));
+			Assert.AreEqual ("ushort_Bb", r.GetValue (4).ToString ());
+			
+			r = Enum.GetValues (typeof (EnumShort));
+			Assert.AreEqual (6, r.Length);
+			Assert.AreEqual ("short_Cc", Enum.GetName (typeof (EnumShort), (EnumShort)(0x0000)));
+			Assert.AreEqual ("short_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("short_Aa", Enum.GetName (typeof (EnumShort), (EnumShort)(0x0005)));
+			Assert.AreEqual ("short_Aa", r.GetValue (1).ToString ());
+			Assert.AreEqual ("short_Ff", Enum.GetName (typeof (EnumShort), (EnumShort)(0x0064)));
+			Assert.AreEqual ("short_Ff", r.GetValue (2).ToString ());
+			Assert.AreEqual ("short_Ee", Enum.GetName (typeof (EnumShort), (EnumShort)(0x7FFF)));
+			Assert.AreEqual ("short_Ee", r.GetValue (3).ToString ());
+			Assert.AreEqual ("short_Bb", Enum.GetName (typeof (EnumShort), unchecked ((EnumShort)(0xFF00))));
+			Assert.AreEqual ("short_Bb", r.GetValue (4).ToString ());
+			Assert.AreEqual ("short_Dd", Enum.GetName (typeof (EnumShort), unchecked ((EnumShort)(0xFFFF))));
+			Assert.AreEqual ("short_Dd", r.GetValue (5).ToString ());
+			
+			r = Enum.GetValues (typeof (EnumUInt));
+			Assert.AreEqual (4, r.Length);
+			Assert.AreEqual ("uint_Cc", Enum.GetName (typeof (EnumUInt), (EnumUInt)(0x00000000)));
+			Assert.AreEqual ("uint_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("uint_Aa", Enum.GetName (typeof (EnumUInt), (EnumUInt)(0x00000005)));
+			Assert.AreEqual ("uint_Aa", r.GetValue (1).ToString ());
+			Assert.AreEqual ("uint_Ff", Enum.GetName (typeof (EnumUInt), (EnumUInt)(0x00000064)));
+			Assert.AreEqual ("uint_Ff", r.GetValue (2).ToString ());
+			Assert.AreEqual ("uint_Ee", Enum.GetName (typeof (EnumUInt), (EnumUInt)(0x7FFFFFFF)));
+			Assert.AreEqual ("uint_Ee", r.GetValue (3).ToString ());
+			
+			r = Enum.GetValues (typeof (EnumInt));
+			Assert.AreEqual (6, r.Length);
+			Assert.AreEqual ("int_Cc", Enum.GetName (typeof (EnumInt), (EnumInt)(0x00000000)));
+			Assert.AreEqual ("int_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("int_Aa", Enum.GetName (typeof (EnumInt), (EnumInt)(0x00000005)));
+			Assert.AreEqual ("int_Aa", r.GetValue (1).ToString ());
+			Assert.AreEqual ("int_Ff", Enum.GetName (typeof (EnumInt), (EnumInt)(0x00000064)));
+			Assert.AreEqual ("int_Ff", r.GetValue (2).ToString ());
+			Assert.AreEqual ("int_Ee", Enum.GetName (typeof (EnumInt), (EnumInt)(0x7FFFFFFF)));
+			Assert.AreEqual ("int_Ee", r.GetValue (3).ToString ());
+			Assert.AreEqual ("int_Bb", Enum.GetName (typeof (EnumInt), unchecked ((EnumInt)(0xFFFF0000))));
+			Assert.AreEqual ("int_Bb", r.GetValue (4).ToString ());
+			Assert.AreEqual ("int_Dd", Enum.GetName (typeof (EnumInt), unchecked ((EnumInt)(0xFFFFFFFF))));
+			Assert.AreEqual ("int_Dd", r.GetValue (5).ToString ());
+			
+			r = Enum.GetValues (typeof (EnumULong));
+			Assert.AreEqual (5, r.Length);
+			Assert.AreEqual ("ulong_Cc", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000000)));
+			Assert.AreEqual ("ulong_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("ulong_Cc", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000000)));
+			Assert.AreEqual ("ulong_Cc", r.GetValue (1).ToString ());
+			Assert.AreEqual ("ulong_Aa", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000005)));
+			Assert.AreEqual ("ulong_Aa", r.GetValue (2).ToString ());
+			Assert.AreEqual ("ulong_Ff", Enum.GetName (typeof (EnumULong), (EnumULong)(0x0000000000000064)));
+			Assert.AreEqual ("ulong_Ff", r.GetValue (3).ToString ());
+			Assert.AreEqual ("ulong_Ee", Enum.GetName (typeof (EnumULong), (EnumULong)(0x7FFFFFFFFFFFFFFF)));
+			Assert.AreEqual ("ulong_Ee", r.GetValue (4).ToString ());
+			
+			r = Enum.GetValues (typeof (EnumLong));
+			Assert.AreEqual (6, r.Length);
+			Assert.AreEqual ("long_Cc", Enum.GetName (typeof (EnumLong), (EnumLong)(0x0000000000000000)));
+			Assert.AreEqual ("long_Cc", r.GetValue (0).ToString ());
+			Assert.AreEqual ("long_Aa", Enum.GetName (typeof (EnumLong), (EnumLong)(0x0000000000000005)));
+			Assert.AreEqual ("long_Aa", r.GetValue (1).ToString ());
+			Assert.AreEqual ("long_Ff", Enum.GetName (typeof (EnumLong), (EnumLong)(0x0000000000000064)));
+			Assert.AreEqual ("long_Ff", r.GetValue (2).ToString ());
+			Assert.AreEqual ("long_Ee", Enum.GetName (typeof (EnumLong), (EnumLong)(0x7FFFFFFFFFFFFFFF)));
+			Assert.AreEqual ("long_Ee", r.GetValue (3).ToString ());
+			Assert.AreEqual ("long_Bb", Enum.GetName (typeof (EnumLong), unchecked ((EnumLong)(0xFFFFFFFF00000000))));
+			Assert.AreEqual ("long_Bb", r.GetValue (4).ToString ());
+			Assert.AreEqual ("long_Dd", Enum.GetName (typeof (EnumLong), unchecked ((EnumLong)(0xFFFFFFFFFFFFFFFF))));
+			Assert.AreEqual ("long_Dd", r.GetValue (5).ToString ());
+		}
 		
 		[Flags]
 		enum SomeEnum
@@ -1121,5 +1239,79 @@ namespace MonoTests.System
 			C = UInt64.MaxValue,
 			D = 789L
 		}
+		
+		enum EnumByte : byte {
+		  byte_Aa = 5,
+		  byte_Bb = 0xff,
+		  byte_Cc = 0,
+		  byte_Dd = 0x7f,
+		  byte_Ff = 100
+		}
+		
+		enum EnumSByte : sbyte {
+		  sbyte_Aa = 5,
+		  sbyte_Bb = unchecked ((sbyte) 0xf0),
+		  sbyte_Cc = 0,
+		  sbyte_Dd = -1,
+		  sbyte_Ee = 0x7F,
+		  sbyte_Ff = 100
+		}
+		
+		enum EnumShort : short
+		{
+		  short_Aa = 5,
+		  short_Bb = unchecked((short)0xFF00),
+		  short_Cc = 0,
+		  short_Dd = -1,
+		  short_Ee = 0x7FFF,
+		  short_Ff = 100
+		}
+		
+		enum EnumUShort : ushort
+		{
+		  ushort_Aa = 5,
+		  ushort_Bb = unchecked((int)0xFF00),
+		  ushort_Cc = 0,
+		  ushort_Ee = 0x7FFF,
+		  ushort_Ff = 100
+		}
+		
+		enum EnumInt
+		{
+		  int_Aa = 5,
+		  int_Bb = unchecked((int)0xFFFF0000),
+		  int_Cc = 0,
+		  int_Dd = -1,
+		  int_Ee = 0x7FFFFFFF,
+		  int_Ff = 100
+		}
+		
+		enum EnumUInt : uint
+		{
+		  uint_Aa = 5,
+		  uint_Cc = 0,
+		  uint_Ee = 0x7FFFFFFF,
+		  uint_Ff = 100
+		}
+		
+		enum EnumLong : long
+		{
+		  long_Aa = 5,
+		  long_Bb = unchecked((long)0xffffFFFF00000000),
+		  long_Cc = 0,
+		  long_Dd = -1,
+		  long_Ee = 0x7FFFFFFFffffffff,
+		  long_Ff = 100
+		}
+		
+		enum EnumULong : ulong
+		{
+		  ulong_Aa = 5,
+		  ulong_Bb = unchecked((int)0xffffFFFF00000000),
+		  ulong_Cc = 0,
+		  ulong_Ee = 0x7FFFFFFFffffffff,
+		  ulong_Ff = 100
+		}
+		
 	}
 }

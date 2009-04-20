@@ -54,6 +54,110 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
 
+		//
+		// These comparers are needed because enumerations must be compared
+		// using unsigned values so that negative numbers can be looked up
+		// See bug: #371559
+		//
+		internal static SByteComparer  sbyte_comparer = new SByteComparer ();
+		internal static ShortComparer short_comparer = new ShortComparer ();
+		internal static IntComparer   int_comparer = new IntComparer ();
+		internal static LongComparer  long_comparer = new LongComparer ();
+		
+		internal class SByteComparer : IComparer
+#if NET_2_0
+	, System.Collections.Generic.IComparer<sbyte>
+#endif
+		{
+			public int Compare (object x, object y)
+			{
+				sbyte ix = (sbyte) x;
+				sbyte iy = (sbyte) y;
+				
+				return ((byte) ix) - ((byte) iy);
+			}
+
+			public int Compare (sbyte ix, sbyte iy)
+			{
+				return ((byte) ix) - ((byte) iy);
+			}
+		}
+		
+		internal class ShortComparer : IComparer
+#if NET_2_0
+	, System.Collections.Generic.IComparer<short>
+#endif
+	  	{
+			public int Compare (object x, object y)
+			{
+				short ix = (short) x;
+				short iy = (short) y;
+				
+				return ((ushort) ix) - ((ushort) iy);
+			}
+
+			public int Compare (short ix, short iy)
+			{
+				return ((ushort) ix) - ((ushort) iy);
+			}
+		}
+		
+		internal class IntComparer : IComparer 
+#if NET_2_0
+	, System.Collections.Generic.IComparer<int>
+#endif
+		  {
+			public int Compare (object x, object y)
+			{
+				int ix = (int) x;
+				int iy = (int) y;
+
+				if (ix == iy)
+					return 0;
+
+				if (((uint) ix) < ((uint) iy))
+					return -1;
+				return 1;
+			}
+
+			public int Compare (int ix, int iy)
+			{
+				if (ix == iy)
+					return 0;
+
+				if (((uint) ix) < ((uint) iy))
+					return -1;
+				return 1;
+			}
+		}
+
+		internal class LongComparer : IComparer
+#if NET_2_0
+	, System.Collections.Generic.IComparer<long>
+#endif
+		{
+			public int Compare (object x, object y)
+			{
+				long ix = (long) x;
+				long iy = (long) y;
+				
+				if (ix == iy)
+					return 0;
+				if (((ulong) ix) < ((ulong) iy))
+					return -1;
+				return 1;
+			}
+
+			public int Compare (long ix, long iy)
+			{
+				if (ix == iy)
+					return 0;
+				if (((ulong) ix) < ((ulong) iy))
+					return -1;
+				return 1;
+			}
+		}
+			
 		static MonoEnumInfo ()
 		{
 			global_cache_monitor = new object ();
@@ -94,7 +198,18 @@ namespace System
 			}
 
 			get_enum_info (enumType, out info);
-			Array.Sort (info.values, info.names);
+
+			IComparer ic = null;
+			if (info.values is int [])
+				ic = int_comparer;
+			else if (info.values is short [])
+				ic = short_comparer;
+			else if (info.values is sbyte [])
+				ic = sbyte_comparer;
+			else if (info.values is long [])
+				ic = long_comparer;
+			
+			Array.Sort (info.values, info.names, ic);
 			if (info.names.Length > 50) {
 				info.name_hash = new Hashtable (info.names.Length);
 				for (int i = 0; i <  info.names.Length; ++i)
@@ -264,6 +379,69 @@ namespace System
 		}
 
 #if NET_2_0
+		//
+		// The faster, non-boxing version.   It must use the special MonoEnumInfo.xxx_comparers
+		// to ensure that we are perfoming bitwise compares, and not signed compares.
+		//
+		// It also tries to use the non-boxing version of the various Array.BinarySearch methods
+		//
+		static int FindPosition (object value, Array values)
+		{
+			int[] int_array = values as int[];
+			if (int_array != null)
+				return Array.BinarySearch (int_array, (int)value, MonoEnumInfo.int_comparer);
+
+			uint[] uint_array = values as uint [];
+			if (uint_array != null)
+				return Array.BinarySearch (uint_array, (uint)value);
+			
+			short [] short_array = values as short [];
+			if (short_array != null)
+				return Array.BinarySearch (short_array, (short)value, MonoEnumInfo.short_comparer);
+
+			ushort [] ushort_array = values as ushort [];
+			if (ushort_array != null)
+				return Array.BinarySearch (ushort_array, (ushort)value);
+					
+			sbyte [] sbyte_array = values as sbyte [];
+			if (sbyte_array != null)
+				return Array.BinarySearch (sbyte_array, (sbyte) value,  MonoEnumInfo.sbyte_comparer);
+			
+			byte [] byte_array = values as byte [];
+			if (byte_array != null)
+				return Array.BinarySearch (byte_array, (byte) value);
+			
+			long [] long_array = values as long [];
+			if (long_array != null)
+				return Array.BinarySearch (long_array, (long) value,  MonoEnumInfo.long_comparer);
+
+			ulong [] ulong_array = values as ulong [];
+			if (ulong_array != null)
+				return Array.BinarySearch (ulong_array, (ulong) value);
+
+			// This should never happen
+			return Array.BinarySearch (values, value);
+		}
+#else
+		static int FindPosition (object value, Array values)
+		{
+			IComparer ic = null;
+
+			if (values is int[])
+				return Array.BinarySearch (values, value, MonoEnumInfo.int_comparer);
+			if (values is short[])
+				return Array.BinarySearch (values, value, MonoEnumInfo.short_comparer);
+			if (values is sbyte [])
+				return Array.BinarySearch (values, value,  MonoEnumInfo.sbyte_comparer);
+			if (values is long [])
+				return Array.BinarySearch (values, value,  MonoEnumInfo.long_comparer);
+
+			return Array.BinarySearch (values, value);
+
+		}
+#endif
+	
+#if NET_2_0
 		[ComVisible (true)]
 #endif
 		public static string GetName (Type enumType, object value)
@@ -280,15 +458,7 @@ namespace System
 			value = ToObject (enumType, value);
 			MonoEnumInfo.GetInfo (enumType, out info);
 
-			int i;
-#if NET_2_0
-			int[] int_array = info.values as int[];
-			if (int_array != null)
-				i = Array.BinarySearch (int_array, (int)value);
-			else
-#endif
-				i = Array.BinarySearch (info.values, value);
-
+			int i = FindPosition (value, info.values);
 			return (i >= 0) ? info.names [i] : null;
 		}
 
@@ -314,13 +484,8 @@ namespace System
 			} else if ((vType == info.utype) || (vType == enumType)) {
 				value = ToObject (enumType, value);
 				MonoEnumInfo.GetInfo (enumType, out info);
-#if NET_2_0
-			int[] int_array = info.values as int[];
-			if (int_array != null)
-				return Array.BinarySearch (int_array, (int)value) >= 0;
-			else
-#endif
-				return (Array.BinarySearch (info.values, value) >= 0);
+
+				return FindPosition (value, info.values) >= 0;
 			} else {
 				throw new ArgumentException("The value parameter is not the correct type."
 					+ "It must be type String or the same type as the underlying type"
