@@ -1,5 +1,10 @@
 2009-04-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Enable ABCREM when running with LLVM.
+
+	* mini-llvm.c (mono_llvm_emit_method): Add support for OP_LOADI4_MEM/
+	OP_LOADI8_MEM.
+
 	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add a MONO_LLVM env variable
 	allowing some options to be set dynamically.
 
