@@ -1,3 +1,8 @@
+2009-04-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* virtual-sync.cs: Remove this, there is already a test for this in
+	synchronized.cs.
+
 2009-04-18  Mark Probst  <mark.probst@gmail.com>
 
 	* appdomain-thread-abort.cs: New tests for thread aborts across
