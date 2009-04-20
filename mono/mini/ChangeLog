@@ -1,3 +1,8 @@
+2009-04-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add a MONO_LLVM env variable
+	allowing some options to be set dynamically.
+
 2009-04-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Handle compares followed by an
