@@ -1,3 +1,7 @@
+2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_initobj_this.cs: Regression test for #496175.
+
 2009-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_access_nested_class_multidym_array.cs: Regression test for
