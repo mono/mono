@@ -1,5 +1,11 @@
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (dump_stack_value): Fix compilation with extra debug turned on.
+
+	* verify.c (do_initobj): Improve error message.
+
+2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Enable pe verification as the issue with #496453
 	is that the authenticode data directory have a different unspecified
 	format. Ignore it for now.
