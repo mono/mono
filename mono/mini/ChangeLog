@@ -1,5 +1,14 @@
 2009-04-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (type_to_llvm_type): Fix the mapping of enums.
+	(mono_llvm_emit_method): Add support for CAS. Fix handling of CSET opcodes
+	on volatile values.
+
+	* mini-trampolines.c (mono_llvm_vcall_trampoline): Add support for 
+	synchronized methods.
+
+	* mini.c (mini_method_compile): Disable LLVM for dynamic methods.
+
 	* mini.c (mini_method_compile): Enable ABCREM when running with LLVM.
 
 	* mini-llvm.c (mono_llvm_emit_method): Add support for OP_LOADI4_MEM/
