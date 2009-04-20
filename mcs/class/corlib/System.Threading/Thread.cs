@@ -733,6 +733,31 @@ namespace System.Threading {
 			}
 		}
 
+#if NET_2_1
+		private void StartSafe ()
+		{
+			try {
+				if (threadstart is ThreadStart) {
+					((ThreadStart) threadstart) ();
+				} else {
+					((ParameterizedThreadStart) threadstart) (start_obj);
+				}
+			} catch (Exception ex) {
+				try {
+					try {
+						var assembly = System.Reflection.Assembly.Load ("System.Windows, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
+						var application = assembly.GetType ("System.Windows.Application");
+						var method = application.GetMethod ("OnUnhandledException", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+						method.Invoke (null, new object [] {null, ex});
+					} catch (Exception e) {
+						Console.WriteLine ("Unexpected exception while trying to report unhandled application exception: {0}", e);
+					}
+				} catch {
+				}
+			}
+		}
+#endif
+
 		public void Start() {
 			// propagate informations from the original thread to the new thread
 #if NET_2_0
@@ -748,7 +773,11 @@ namespace System.Threading {
 				_principal = CurrentThread._principal;
 
 			// Thread_internal creates and starts the new thread, 
+#if NET_2_1
+			if (Thread_internal((ThreadStart) StartSafe) == (IntPtr) 0)
+#else
 			if (Thread_internal(threadstart) == (IntPtr) 0)
+#endif
 				throw new SystemException ("Thread creation failed.");
 		}
 
