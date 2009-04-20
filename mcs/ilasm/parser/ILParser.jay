@@ -2245,12 +2245,14 @@ scope_block		: scope_block_begin method_decls CLOSE_BRACE
                           {
                                 $$ = new HandlerBlock ((LabelInfo) $1,
                                         codegen.CurrentMethodDef.AddLabel ());
+                                codegen.CurrentMethodDef.EndLocalsScope ();
                           }
 			;
 
 scope_block_begin       : OPEN_BRACE
                           {
                                 $$ = codegen.CurrentMethodDef.AddLabel ();
+                                codegen.CurrentMethodDef.BeginLocalsScope ();
                           }
                         ;
                         

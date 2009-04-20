@@ -39,7 +39,8 @@ namespace Mono.ILASM {
                 private bool is_resolved;
                 private bool is_defined;
                 private ArrayList local_list;
-                private Hashtable named_local_table;
+                private ArrayList named_local_tables;
+                private int current_scope_depth;
                 private bool init_locals;
                 private int max_stack;
                 private bool pinvoke_info;
@@ -73,7 +74,9 @@ namespace Mono.ILASM {
                         labelref_table = new Hashtable ();
                         label_list = new ArrayList ();
                         local_list = new ArrayList ();
-                        named_local_table = new Hashtable ();
+                        named_local_tables = new ArrayList ();
+                        named_local_tables.Add (new Hashtable ());
+                        current_scope_depth = 0;
 
                         entry_point = false;
                         zero_init = false;
@@ -215,9 +218,25 @@ namespace Mono.ILASM {
                         this.ret_param.AddMarshalInfo (native_type);
                 }
 
+                //try/catch scope, used to scope local vars
+                public void BeginLocalsScope ()
+                {
+                        current_scope_depth ++;
+                        named_local_tables.Add (new Hashtable ());
+                }
+
+                public void EndLocalsScope ()
+                {
+                        named_local_tables.RemoveAt (current_scope_depth);
+                        current_scope_depth --;
+                }
+
                 public void AddLocals (ArrayList local_list)
                 {
                         int slot_pos = this.local_list.Count;
+
+                        Hashtable current_named_table = null;
+                        current_named_table = (Hashtable) named_local_tables [current_scope_depth];
 
                         foreach (Local local in local_list) {
                                 if (local.Slot == -1) {
@@ -226,21 +245,31 @@ namespace Mono.ILASM {
                                 slot_pos++;
                                 if (local.Name == null)
                                         continue;
-				if(!named_local_table.Contains(local.Name))
-				  named_local_table.Add (local.Name, local);
-                        }
+
+                                if (!current_named_table.Contains (local.Name))
+                                        current_named_table.Add (local.Name, local);
+                         }
 
                         this.local_list.AddRange (local_list);
                 }
 
                 public Local GetNamedLocal (string name)
                 {
-                        return (Local) named_local_table[name];
+                        Local ret = null;
+                        int i = current_scope_depth;
+                        while (ret == null && i >= 0) {
+                                Hashtable current_named_table = (Hashtable) named_local_tables [i];
+                                ret = (Local) current_named_table [name];
+
+                                i --;
+                        }
+
+                        return ret;
                 }
 
                 public int GetNamedLocalSlot (string name)
                 {
-                        Local local = (Local) named_local_table[name];
+                        Local local = GetNamedLocal (name);
                         if (local == null)
                                 return -1;
 
@@ -268,7 +297,7 @@ namespace Mono.ILASM {
                 {
                         System.IO.MemoryStream str = new System.IO.MemoryStream();
                         int i = 0;
-                        int num_locals = named_local_table.Count;
+                        int num_locals = ((Hashtable) named_local_tables [current_scope_depth]).Count;
                         LocalVariableEntry[] locals = new LocalVariableEntry[num_locals];
 
                         foreach (Local local in local_list) {

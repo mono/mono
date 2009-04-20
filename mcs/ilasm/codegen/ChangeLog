@@ -1,3 +1,11 @@
+2009-04-20  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #494221
+	* MethodDef.cs (BeginLocalsScope): New.
+	(EndLocalsScope): New.
+	(AddLocals):
+	(GetNamedLocal): Support scoping for .locals
+
 2009-04-15  Ankit Jain  <jankit@novell.com>
 
 	* MethodDef.cs (GetNamedLocalSlot): Return -1 if local var not found.
