@@ -1,3 +1,10 @@
+2009-04-20  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources:
+	  added several Peer transport support files.
+	* System.ServiceModel.dll_test.sources: added
+	  NetPeerTcpBindingTest.cs and PeerTransportBindingElementTest.cs.
+
 2009-04-08  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources:

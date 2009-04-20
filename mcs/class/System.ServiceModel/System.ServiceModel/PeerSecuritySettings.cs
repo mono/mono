@@ -26,5 +26,11 @@ namespace System.ServiceModel
 		}
 
 		public PeerTransportSecuritySettings Transport { get; private set; }
+
+		internal void CopyTo (PeerSecuritySettings other)
+		{
+			other.mode = mode;
+			other.Transport.CredentialType = Transport.CredentialType;
+		}
 	}
 }

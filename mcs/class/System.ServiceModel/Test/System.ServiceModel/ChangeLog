@@ -1,3 +1,7 @@
+2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetPeerTcpBindingTest.cs : new test.
+
 2009-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetTcpBindingTest.cs : fix wrong value expectation.

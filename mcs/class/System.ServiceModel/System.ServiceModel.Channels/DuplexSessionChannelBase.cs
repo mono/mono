@@ -20,9 +20,11 @@ namespace System.ServiceModel.Channels
 		EndpointAddress remote_address;
 		Uri via;
 		
-		public DuplexChannelBase (ChannelFactoryBase factory) : base (factory)
+		public DuplexChannelBase (ChannelFactoryBase factory, EndpointAddress remoteAddress, Uri via) : base (factory)
 		{
 			channel_factory_base = factory;
+			remote_address = remoteAddress;
+			this.via = via;
 		}
 		
 		public DuplexChannelBase (ChannelListenerBase listener) : base (listener)
@@ -32,22 +34,38 @@ namespace System.ServiceModel.Channels
 
 		public abstract EndpointAddress LocalAddress { get; }
 		
-		public abstract EndpointAddress RemoteAddress { get; }
+		public EndpointAddress RemoteAddress {
+			get { return remote_address; }
+		}
+
+		public Uri Via {
+			get { return via; }
+		}
 		
-		public abstract Uri Via { get; }
-		
-		public abstract IAsyncResult BeginSend (Message message, AsyncCallback callback, object state);
+		public virtual IAsyncResult BeginSend (Message message, AsyncCallback callback, object state)
+		{
+			return BeginSend (message, this.DefaultSendTimeout, callback, state);
+		}
 		
 		public abstract IAsyncResult BeginSend (Message message, TimeSpan timeout, AsyncCallback callback, object state);
 		
 		public abstract void EndSend (IAsyncResult result);
 		
-		public abstract void Send (Message message);
-		
-		public abstract void Send (Message message, TimeSpan timeout);
-		
-		public abstract IAsyncResult BeginReceive (AsyncCallback callback, object state);
-		
+		public virtual void Send (Message message)
+		{
+			Send (message, this.DefaultSendTimeout);
+		}
+
+		public virtual void Send (Message message, TimeSpan timeout)
+		{
+			EndSend (BeginSend (message, timeout, null, null));
+		}
+
+		public virtual IAsyncResult BeginReceive (AsyncCallback callback, object state)
+		{
+			return BeginReceive (this.DefaultReceiveTimeout, callback, state);
+		}
+
 		public abstract IAsyncResult BeginReceive (TimeSpan timeout, AsyncCallback callback, object state);
 		
 		public abstract IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state);
@@ -60,12 +78,24 @@ namespace System.ServiceModel.Channels
 		
 		public abstract bool EndWaitForMessage (IAsyncResult result);
 		
-		public abstract Message Receive ();
+		public virtual Message Receive ()
+		{
+			return Receive (this.DefaultReceiveTimeout);
+		}
+
+		public virtual Message Receive (TimeSpan timeout)
+		{
+			return EndReceive (BeginReceive (timeout, null, null));
+		}
 		
-		public abstract Message Receive (TimeSpan timeout);
-		
-		public abstract bool TryReceive (TimeSpan timeout, out Message message);
-		
-		public abstract bool WaitForMessage (TimeSpan timeout);
+		public virtual bool TryReceive (TimeSpan timeout, out Message message)
+		{
+			return EndTryReceive (BeginTryReceive (timeout, null, null), out message);
+		}
+
+		public virtual bool WaitForMessage (TimeSpan timeout)
+		{
+			return EndWaitForMessage (BeginWaitForMessage (timeout, null, null));
+		}
 	}
 }

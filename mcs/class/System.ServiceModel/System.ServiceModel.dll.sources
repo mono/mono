@@ -243,6 +243,12 @@ System.ServiceModel.Channels/OneWayBindingElement.cs
 System.ServiceModel.Channels/OneWayBindingElementImporter.cs
 System.ServiceModel.Channels/OutputChannelBase.cs
 System.ServiceModel.Channels/PeerResolverBindingElement.cs
+System.ServiceModel.Channels/PeerChannelFactory.cs
+System.ServiceModel.Channels/PeerChannelListener.cs
+System.ServiceModel.Channels/PeerCustomResolverBindingElement.cs
+System.ServiceModel.Channels/PeerDuplexChannel.cs
+System.ServiceModel.Channels/PeerInputChannel.cs
+System.ServiceModel.Channels/PeerOutputChannel.cs
 System.ServiceModel.Channels/PeerTransportBindingElement.cs
 System.ServiceModel.Channels/PnrpPeerResolverBindingElement.cs
 System.ServiceModel.Channels/ReliableSessionBindingElementImporter.cs

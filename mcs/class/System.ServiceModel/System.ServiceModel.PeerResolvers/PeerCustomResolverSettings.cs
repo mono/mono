@@ -14,34 +14,23 @@ namespace System.ServiceModel.PeerResolvers
 {
 	public class PeerCustomResolverSettings
 	{
-		EndpointAddress address;
-		Binding binding;
-		PeerResolver resolver;
-		
 		public PeerCustomResolverSettings()
 		{
 		}
 		
-		[MonoTODO]
-		public EndpointAddress Address {
-			get { return address; }
-			set { address = value; }
-		}
+		public EndpointAddress Address { get; set; }
 		
-		[MonoTODO]
-		public Binding Binding {
-			get { return binding; }
-			set { binding = value; }
-		}
+		public Binding Binding { get; set; }
 		
 		public bool IsBindingSpecified {
 			get { return Binding != null; }
 		}
 		
-		[MonoTODO]
-		public PeerResolver Resolver {
-			get { return resolver; }
-			set { resolver = value; }
+		public PeerResolver Resolver { get; set; }
+
+		internal PeerCustomResolverBindingElement CreateBinding ()
+		{
+			return new PeerCustomResolverBindingElement (this);
 		}
 	}
 }

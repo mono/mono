@@ -28,8 +28,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Security;
-using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.ServiceModel.PeerResolvers;
 using System.Text;
 using System.Xml;
 
@@ -46,6 +46,8 @@ namespace System.ServiceModel.Channels
 		protected PeerResolverBindingElement (PeerResolverBindingElement other)
 		{
 		}
+
+		public abstract PeerReferralPolicy ReferralPolicy { get; set; }
 
 		public abstract PeerResolver CreatePeerResolver ();
 	}

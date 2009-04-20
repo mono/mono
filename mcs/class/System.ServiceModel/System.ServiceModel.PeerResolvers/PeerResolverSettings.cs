@@ -8,7 +8,7 @@
 // 
 
 using System;
-using System.ServiceModel.PeerResolvers;
+using System.ServiceModel.Channels;
 
 namespace System.ServiceModel.PeerResolvers
 {
@@ -17,27 +17,29 @@ namespace System.ServiceModel.PeerResolvers
 		PeerCustomResolverSettings custom = new PeerCustomResolverSettings ();
 		// FIXME: Is it really by default Auto?
 		PeerResolverMode mode = PeerResolverMode.Auto;
-		PeerReferralPolicy referral_policy;
 		
 		public PeerResolverSettings ()
 		{
 		}
-		
-		[MonoTODO]
+
 		public PeerCustomResolverSettings Custom {
 			get { return custom; }
 		}
 		
-		[MonoTODO]
-		public PeerResolverMode Mode {
-			get { return mode; }
-			set { mode = value; }
-		}
+		public PeerResolverMode Mode { get; set; }
 		
-		[MonoTODO]
-		public PeerReferralPolicy ReferralPolicy {
-			get { return referral_policy; }
-			set { referral_policy = value; }
+		public PeerReferralPolicy ReferralPolicy { get; set; }
+
+		internal BindingElement CreateBinding ()
+		{
+			switch (Mode) {
+			case PeerResolverMode.Pnrp:
+				return new PnrpPeerResolverBindingElement () { ReferralPolicy = this.ReferralPolicy };
+			default:
+				var be = Custom.CreateBinding ();
+				be.ReferralPolicy = this.ReferralPolicy;
+				return be;
+			}
 		}
 	}
 }

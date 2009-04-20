@@ -36,21 +36,23 @@ namespace System.ServiceModel.Channels
 {
 	[MonoTODO]
 	public sealed class PeerTransportBindingElement
-		: TransportBindingElement, ISecurityCapabilities
+		: TransportBindingElement, IPolicyExportExtension, IWsdlExportExtension
 	{
-		long max_recv_message_size;
-		bool auth_msg;
+		long max_recv_message_size = 0x10000;
 		int port;
+		PeerSecuritySettings security = new PeerSecuritySettings ();
 
 		public PeerTransportBindingElement ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		private PeerTransportBindingElement (
 			PeerTransportBindingElement other)
 			: base (other)
 		{
+			max_recv_message_size = other.max_recv_message_size;
+			port = other.port;
+			other.security.CopyTo (security);
 		}
 
 		public IPAddress ListenIPAddress { get; set; }
@@ -58,11 +60,6 @@ namespace System.ServiceModel.Channels
 		public override long MaxReceivedMessageSize {
 			get { return max_recv_message_size; }
 			set { max_recv_message_size = value; }
-		}
-
-		public bool MessageAuthentication {
-			get { return auth_msg; }
-			set { auth_msg = value; }
 		}
 
 		public int Port {
@@ -74,10 +71,45 @@ namespace System.ServiceModel.Channels
 			get { return "net.p2p"; }
 		}
 
+		public override bool CanBuildChannelFactory<TChannel> (
+			BindingContext context)
+		{
+			return  typeof (TChannel) == typeof (IOutputChannel) ||
+				typeof (TChannel) == typeof (IDuplexChannel);
+		}
+
+		public override bool CanBuildChannelListener<TChannel> (
+			BindingContext context)
+		{
+			return  typeof (TChannel) == typeof (IInputChannel) ||
+				typeof (TChannel) == typeof (IDuplexChannel);
+		}
+
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (!CanBuildChannelFactory<TChannel> (context))
+				throw new ArgumentException (String.Format ("Not supported channel type '{0}'", typeof (TChannel)));
+			if (typeof (TChannel) == typeof (IOutputChannel))
+				return (IChannelFactory<TChannel>) (object) new PeerChannelFactory<IOutputChannel> (this, context);
+			else if (typeof (TChannel) == typeof (IDuplexChannel))
+				return (IChannelFactory<TChannel>) (object) new PeerChannelFactory<IDuplexChannel> (this, context);
+			throw new InvalidOperationException (String.Format ("Not supported channel '{0}' (is incorrectly allowed at construction time)", typeof (TChannel)));
+		}
+
+		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
+			BindingContext context)
+		{
+			if (!CanBuildChannelListener<TChannel> (context))
+				throw new ArgumentException (String.Format ("Not supported channel type '{0}'", typeof (TChannel)));
+
+			// FIXME: check LocalIPAddress.
+
+			if (typeof (TChannel) == typeof (IInputChannel))
+				return (IChannelListener<TChannel>) (object) new PeerChannelListener<IInputChannel> (this, context);
+			else if (typeof (TChannel) == typeof (IDuplexChannel))
+				return (IChannelListener<TChannel>) (object) new PeerChannelListener<IDuplexChannel> (this, context);
+			throw new InvalidOperationException (String.Format ("Not supported channel '{0}' (is incorrectly allowed at construction time)", typeof (TChannel)));
 		}
 
 		public override BindingElement Clone ()
@@ -85,30 +117,38 @@ namespace System.ServiceModel.Channels
 			return new PeerTransportBindingElement (this);
 		}
 
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
+		{
+			if (typeof (T) == typeof (IBindingMulticastCapabilities))
+				return (T) (object) this;
+			if (typeof (T) == typeof (ISecurityCapabilities))
+				return (T) (object) this;
+			if (typeof (T) == typeof (IBindingDeliveryCapabilities))
+				return (T) (object) this;
+
+			return default (T);
+		}
+
+		public PeerSecuritySettings Security {
+			get { return security; }
+		}
+
+		[MonoTODO]
+		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter, PolicyConversionContext contxt)
 		{
 			throw new NotImplementedException ();
 		}
 
-		ProtectionLevel ISecurityCapabilities.SupportedRequestProtectionLevel {
-			get { throw new NotImplementedException (); }
+		[MonoTODO]
+		void IWsdlExportExtension.ExportEndpoint (WsdlExporter exporter, WsdlEndpointConversionContext context)
+		{
+			throw new NotImplementedException ();
 		}
 
-		ProtectionLevel ISecurityCapabilities.SupportedResponseProtectionLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		bool ISecurityCapabilities.SupportsClientAuthentication {
-			get { throw new NotImplementedException (); }
-		}
-
-		bool ISecurityCapabilities.SupportsClientWindowsIdentity {
-			get { throw new NotImplementedException (); }
-		}
-
-		bool ISecurityCapabilities.SupportsServerAuthentication {
-			get { throw new NotImplementedException (); }
+		[MonoTODO]
+		void IWsdlExportExtension.ExportContract (WsdlExporter exporter, WsdlContractConversionContext context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

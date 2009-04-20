@@ -21,7 +21,6 @@ namespace System.ServiceModel.Activation.Configuration
 
 namespace System.ServiceModel.Channels
 {
-	public class PeerCustomResolverBindingElement { }
 	public class PrivacyNoticeBindingElement { }
 	public class PrivacyNoticeBindingElementImporter { }
 	public class ReliableSessionBindingElement { }

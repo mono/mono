@@ -29,6 +29,7 @@ System.ServiceModel.Channels/MsmqTransportBindingElementTest.cs
 System.ServiceModel.Channels/NamedPipeTransportBindingElementTest.cs
 System.ServiceModel.Channels/OneWayBindingElementTest.cs
 System.ServiceModel.Channels/OutputChannelBase.cs
+System.ServiceModel.Channels/PeerTransportBindingElementTest.cs
 System.ServiceModel.Channels/ReplyChannelBase.cs
 System.ServiceModel.Channels/RequestChannelBase.cs
 System.ServiceModel.Channels/SecurityAssert.cs
@@ -123,6 +124,7 @@ System.ServiceModel/IntegratedConnectionTest.cs
 System.ServiceModel/MessageSecurityVersionTest.cs
 System.ServiceModel/NetMsmqBindingTest.cs
 System.ServiceModel/NetTcpBindingTest.cs
+System.ServiceModel/NetPeerTcpBindingTest.cs
 System.ServiceModel/ServiceAssert.cs
 System.ServiceModel/ServiceEndpointCollectionTest.cs
 System.ServiceModel/ServiceEndpointTest.cs

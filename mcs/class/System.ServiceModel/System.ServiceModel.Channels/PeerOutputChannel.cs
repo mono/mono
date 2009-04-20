@@ -1,10 +1,10 @@
 //
-// PnrpPeerResolverBindingElement.cs
+// PeerOutputChannel.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,86 +27,80 @@
 //
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.IO;
+using System.Net;
 using System.Net.Security;
+using System.ServiceModel;
 using System.ServiceModel.Description;
-using System.ServiceModel.PeerResolvers;
-using System.Text;
-using System.Xml;
+using System.ServiceModel.Security;
+using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO ("We aren't actually going to implement this windows-only protocol")]
-	public class PnrpPeerResolverBindingElement : PeerResolverBindingElement
+	internal class PeerOutputChannel : OutputChannelBase
 	{
-		public PnrpPeerResolverBindingElement ()
+		PeerChannelFactory<IOutputChannel> factory;
+
+		public PeerOutputChannel (PeerChannelFactory<IOutputChannel> factory, EndpointAddress address, Uri via)
+			: base (factory, address, via)
 		{
+			this.factory = factory;
 		}
 
-		private PnrpPeerResolverBindingElement (
-			PnrpPeerResolverBindingElement other)
-			: base (other)
-		{
-			ReferralPolicy = other.ReferralPolicy;
-		}
+		// OutputChannelBase
 
-		public override PeerReferralPolicy ReferralPolicy { get; set; }
-
-		[MonoTODO]
-		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
-			BindingContext context)
+		public override IAsyncResult BeginSend (Message message, TimeSpan timeout, AsyncCallback callback, object state)
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public override IChannelListener<TChannel>
-			BuildChannelListener<TChannel> (
-			BindingContext context)
+		public override void EndSend (IAsyncResult result)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public override BindingElement Clone ()
+		// CommunicationObject
+		
+		[MonoTODO]
+		protected override void OnAbort ()
 		{
-			return new PnrpPeerResolverBindingElement (this);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override PeerResolver CreatePeerResolver ()
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
+			AsyncCallback callback, object state)
 		{
-			return new PnrpPeerResolver (this);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override T GetProperty<T> (BindingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-
-	class PnrpPeerResolver : PeerResolver
-	{
-		public PnrpPeerResolver (PnrpPeerResolverBindingElement binding)
-		{
-		}
-
-		public override object Register (string meshId, PeerNodeAddress nodeAddress, TimeSpan timeout)
+		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
+			AsyncCallback callback, object state)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public override ReadOnlyCollection<PeerNodeAddress> Resolve (string meshId, int maxAddresses, TimeSpan timeout)
+		[MonoTODO]
+		protected override void OnClose (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		protected override void OnEndClose (IAsyncResult result)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public override void Unregister (object registrationId, TimeSpan timeout)
+		[MonoTODO]
+		protected override void OnEndOpen (IAsyncResult result)
 		{
 			throw new NotImplementedException ();
 		}
-
-		public override void Update (object registrationId, PeerNodeAddress updatedNodeAddress, TimeSpan timeout)
+		
+		[MonoTODO]
+		protected override void OnOpen (TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
 		}

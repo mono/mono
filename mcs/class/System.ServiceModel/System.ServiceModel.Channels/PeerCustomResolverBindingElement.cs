@@ -1,10 +1,10 @@
 //
-// PnrpPeerResolverBindingElement.cs
+// PeerCustomResolverBindingElement.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Net.Security;
+using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.PeerResolvers;
 using System.Text;
@@ -36,19 +37,32 @@ using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO ("We aren't actually going to implement this windows-only protocol")]
-	public class PnrpPeerResolverBindingElement : PeerResolverBindingElement
+	public class PeerCustomResolverBindingElement : PeerResolverBindingElement
 	{
-		public PnrpPeerResolverBindingElement ()
+		public PeerCustomResolverBindingElement ()
 		{
 		}
 
-		private PnrpPeerResolverBindingElement (
-			PnrpPeerResolverBindingElement other)
+		private PeerCustomResolverBindingElement (
+			PeerCustomResolverBindingElement other)
 			: base (other)
 		{
 			ReferralPolicy = other.ReferralPolicy;
 		}
+
+		public PeerCustomResolverBindingElement (BindingContext context, PeerCustomResolverSettings settings)
+			: this (settings)
+		{
+			this.context = context;
+		}
+
+		public PeerCustomResolverBindingElement (PeerCustomResolverSettings settings)
+		{
+			this.settings = settings;
+		}
+
+		BindingContext context;
+		PeerCustomResolverSettings settings;
 
 		public override PeerReferralPolicy ReferralPolicy { get; set; }
 
@@ -56,7 +70,7 @@ namespace System.ServiceModel.Channels
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.BuildInnerChannelFactory<TChannel> ();
 		}
 
 		[MonoTODO]
@@ -64,49 +78,26 @@ namespace System.ServiceModel.Channels
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.BuildInnerChannelListener<TChannel> ();
 		}
 
 		public override BindingElement Clone ()
 		{
-			return new PnrpPeerResolverBindingElement (this);
+			return new PeerCustomResolverBindingElement (this);
 		}
 
 		[MonoTODO]
 		public override PeerResolver CreatePeerResolver ()
 		{
-			return new PnrpPeerResolver (this);
+			if (settings != null)
+				return settings.Resolver;
+
+			// FIXME: create from configuration
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-	}
-
-	class PnrpPeerResolver : PeerResolver
-	{
-		public PnrpPeerResolver (PnrpPeerResolverBindingElement binding)
-		{
-		}
-
-		public override object Register (string meshId, PeerNodeAddress nodeAddress, TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override ReadOnlyCollection<PeerNodeAddress> Resolve (string meshId, int maxAddresses, TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Unregister (object registrationId, TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override void Update (object registrationId, PeerNodeAddress updatedNodeAddress, TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
 		}

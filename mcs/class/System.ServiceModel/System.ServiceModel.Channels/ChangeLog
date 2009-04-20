@@ -1,3 +1,16 @@
+2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerChannelFactory.cs, PeerChannelListener.cs,
+	  PeerCustomResolverBindingElement.cs, PeerDuplexChannel.cs
+	  PeerInputChannel.cs, PeerOutputChannel.cs :
+	  new; ongoing peer transport implementation.
+	* DuplexSessionChannelBase.cs, InputChannelBase.cs
+	  MsmqOutputChannel.cs, OutputChannelBase.cs,
+	  PeerResolverBindingElement.cs, PeerTransportBindingElement.cs,
+	  PnrpPeerResolverBindingElement.cs, TcpDuplexSessionChannel.cs :
+	  several internal changes (either required or for simplification)
+	  for ongoing peer transport implementation.
+
 2009-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerTransportBindingElement.cs : ListenIPAddress is IPAddress.

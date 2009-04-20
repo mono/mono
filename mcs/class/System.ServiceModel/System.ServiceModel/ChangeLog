@@ -1,3 +1,9 @@
+2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy.cs : remove some peer transport stuff.
+	* NetPeerTcpBinding.cs : implemented some members.
+	* PeerSecuritySettings.cs : added copy utility method.
+
 2009-04-17  Geoff Norton  <gnorton@novell.com>
 
 	* ChannelFactory.cs: Ensure we create and open a factory here,

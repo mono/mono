@@ -25,18 +25,14 @@ namespace System.ServiceModel.Channels
 		TcpClient client;
 		bool is_service_side;
 		EndpointAddress local_address;
-		EndpointAddress remote_address;
 		TcpListener tcp_listener;
 		TimeSpan timeout;
-		Uri via;
 		
 		public TcpDuplexSessionChannel (ChannelFactoryBase factory, TcpChannelInfo info, EndpointAddress address, Uri via)
-			: base (factory)
+			: base (factory, address, via)
 		{
 			is_service_side = false;
 			this.info = info;
-			remote_address = address;
-			this.via = via;
 		}
 		
 		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient acceptedRequest, TimeSpan timeout)
@@ -74,17 +70,9 @@ namespace System.ServiceModel.Channels
 			get { return local_address; }
 		}
 		
-		public override EndpointAddress RemoteAddress {
-			get { return remote_address; }
-		}
-		
 		// FIXME: implement
 		public IDuplexSession Session {
 			get { throw new NotImplementedException (); }
-		}
-		
-		public override Uri Via {
-			get { return via; }
 		}
 		
 		[MonoTODO]

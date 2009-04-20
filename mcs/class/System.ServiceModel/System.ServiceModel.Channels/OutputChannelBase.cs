@@ -33,10 +33,12 @@ namespace System.ServiceModel.Channels
 	{
 		ChannelFactoryBase channel_factory;
 
-		public OutputChannelBase (ChannelFactoryBase factory)
+		public OutputChannelBase (ChannelFactoryBase factory, EndpointAddress remoteAddress, Uri via)
 			: base (factory)
 		{
 			this.channel_factory = factory;
+			RemoteAddress = remoteAddress;
+			Via = via;
 		}
 
 		protected internal override TimeSpan DefaultCloseTimeout {
@@ -48,9 +50,9 @@ namespace System.ServiceModel.Channels
 		}
 
 		// IOutputChannel
-		public abstract EndpointAddress RemoteAddress { get; }
+		public EndpointAddress RemoteAddress { get; private set; }
 
-		public abstract Uri Via { get; }
+		public Uri Via { get; private set; }
 
 		public IAsyncResult BeginSend (Message message, AsyncCallback callback, object state)
 		{
@@ -66,6 +68,9 @@ namespace System.ServiceModel.Channels
 			Send (message, channel_factory.DefaultSendTimeout);
 		}
 
-		public abstract void Send (Message message, TimeSpan timeout);
+		public virtual void Send (Message message, TimeSpan timeout)
+		{
+			EndSend (BeginSend (message, timeout, null, null));
+		}
 	}
 }

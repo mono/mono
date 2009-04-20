@@ -63,10 +63,19 @@ namespace System.ServiceModel.Channels
 			return Receive (DefaultReceiveTimeout);
 		}
 
-		public abstract Message Receive (TimeSpan timeout);
+		public virtual Message Receive (TimeSpan timeout)
+		{
+			return EndReceive (BeginReceive (timeout, null, null));
+		}
 
-		public abstract bool TryReceive (TimeSpan timeout, out Message message);
+		public virtual bool TryReceive (TimeSpan timeout, out Message message)
+		{
+			return EndTryReceive (BeginTryReceive (timeout, null, null), out message);
+		}
 
-		public abstract bool WaitForMessage (TimeSpan timeout);
+		public virtual bool WaitForMessage (TimeSpan timeout)
+		{
+			return EndWaitForMessage (BeginWaitForMessage (timeout, null, null));
+		}
 	}
 }

@@ -35,26 +35,13 @@ namespace System.ServiceModel.Channels
 	internal class MsmqOutputChannel : OutputChannelBase
 	{
 		MsmqChannelFactory<IOutputChannel> source;
-		EndpointAddress address;
-		Uri via;
 		MessageQueue queue;
 
 		public MsmqOutputChannel (MsmqChannelFactory<IOutputChannel> factory,
 			EndpointAddress address, Uri via)
-			: base (factory)
+			: base (factory, address, via)
 		{
 			this.source = factory;
-			this.address = address;
-			this.via = via;
-		}
-
-		// IOutputChannel
-		public override EndpointAddress RemoteAddress {
-			get { return address; }
-		}
-
-		public override Uri Via {
-			get { return via; }
 		}
 
 		// Send
