@@ -264,7 +264,7 @@ namespace System.Windows.Forms
 						Point p = new Point (LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()));
 						
 						if (this.SizingGrip && this.SizeGripBounds.Contains (p)) {
-							this.Cursor = Cursors.SizeNESW;
+							this.Cursor = Cursors.SizeNWSE;
 							return;
 						} else
 							this.Cursor = Cursors.Default;
