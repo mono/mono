@@ -857,6 +857,9 @@ namespace System.Diagnostics {
 		{
 			int [] pids = GetProcesses_internal ();
 			ArrayList proclist = new ArrayList ();
+
+			if (pids == null)
+				return new Process [0];
 			
 			for (int i = 0; i < pids.Length; i++) {
 				try {

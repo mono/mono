@@ -1,3 +1,9 @@
+2009-04-19  Miguel de Icaza  <miguel@novell.com>
+
+	* Process.cs: Do not crash if GetProcesses_internal returns null
+	This happens on operating systems where we have not implemented
+	EnumProcesses in the io-layer, see bug 496294.
+
 2009-02-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* Process.cs: Throw IOEs instead of normal exceptions.
