@@ -1,5 +1,14 @@
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verify_type_compatibility_full): Compare MonoClass and
+	not MonoType to check for equality of valuetypes as the generic type
+	definition allows for two different encodings: the generic type definition
+	class or a generic instance over the GTD arguments.
+
+	Fixes #496175.
+
+2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (dump_stack_value): Fix compilation with extra debug turned on.
 
 	* verify.c (do_initobj): Improve error message.
