@@ -1,3 +1,11 @@
+2009-04-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When calculating the height of the ComboListBox,
+	specially for the 2.0 profile, use MaxDropDownItems if the
+	DropDownHeight property hasn't been set, and use the later if it has
+	been set. This way we support both properties.
+	Fixes #493308.
+
 2009-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ThreadExceptionDialog.cs: Draw the error icon, previously missing.

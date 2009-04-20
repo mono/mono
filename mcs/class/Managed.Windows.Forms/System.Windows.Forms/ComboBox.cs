@@ -76,8 +76,9 @@ namespace System.Windows.Forms
 		private AutoCompleteStringCollection auto_complete_custom_source = null;
 		private AutoCompleteMode auto_complete_mode = AutoCompleteMode.None;
 		private AutoCompleteSource auto_complete_source = AutoCompleteSource.None;
-		private int drop_down_height;
 		private FlatStyle flat_style;
+		private int drop_down_height;
+		const int default_drop_down_height = 106;
 #endif
 
 		[ComVisible(true)]
@@ -104,7 +105,7 @@ namespace System.Windows.Forms
 			border_style = BorderStyle.None;
 
 #if NET_2_0
-			drop_down_height = 106;
+			drop_down_height = default_drop_down_height;
 			flat_style = FlatStyle.Standard;
 #endif
 
@@ -390,6 +391,9 @@ namespace System.Windows.Forms
 				if (value < 1)
 					throw new ArgumentOutOfRangeException ("DropDownHeight", "DropDownHeight must be greater than 0.");
 					
+				if (value == drop_down_height)
+					return;
+
 				drop_down_height = value;
 				IntegralHeight = false;
 			}
@@ -2486,7 +2490,7 @@ namespace System.Windows.Forms
 						
 					} else	{
 #if NET_2_0
-						height = owner.DropDownHeight;
+						height = owner.DropDownHeight == default_drop_down_height ? owner.ItemHeight * count : owner.DropDownHeight;
 #else		
 						height = owner.ItemHeight * count;
 #endif
