@@ -1,5 +1,10 @@
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* valid_nested_eh_in_try_of_try_filter_block.il:  Regression
+	test for #495656.
+
+2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* valid_initobj_this.cs: Regression test for #496175.
 
 2009-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
