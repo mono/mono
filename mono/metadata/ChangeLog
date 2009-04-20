@@ -1,5 +1,15 @@
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verify_clause_relationship): Only mask as an error if the exception clause
+	is nested in the filter block.
+
+	* verify.c (verify_clause_relationship): The disjoint check must verify if the exception
+	block is not fully nested.
+
+	Fixes #495656.
+
+2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verify_type_compatibility_full): Compare MonoClass and
 	not MonoType to check for equality of valuetypes as the generic type
 	definition allows for two different encodings: the generic type definition
