@@ -1,5 +1,10 @@
 2009-04-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm-cpp.cpp (mono_llvm_dump_value): New helper function to print
+	a Value to stdout.
+
+	* mini-llvm.c (mono_llvm_emit_method): Use it.
+	
 	* mini-llvm.c (type_to_llvm_type): Fix the mapping of enums.
 	(mono_llvm_emit_method): Add support for CAS. Fix handling of CSET opcodes
 	on volatile values.
