@@ -35,7 +35,9 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Security;
+using System.Security.Cryptography;
 using System.Security.Policy;
+using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.XPath;
@@ -130,7 +132,10 @@ namespace Mono.Xml.Xsl {
 #if TARGET_JVM
 				throw new NotImplementedException ();
 #else
-				string suffix = Guid.NewGuid ().ToString ("N");
+				string suffix = "";
+				foreach (byte b in MD5.Create ().ComputeHash (Encoding.Unicode.GetBytes (code))) {
+					suffix += b.ToString ("x2");
+				}
 				switch (this.language) {
 				case ScriptingLanguage.CSharp:
 					return new CSharpCompilerInfo ().GetScriptClass (Code, suffix, node, evidence);

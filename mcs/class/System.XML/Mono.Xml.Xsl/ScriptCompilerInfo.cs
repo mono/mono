@@ -81,6 +81,30 @@ namespace Mono.Xml.Xsl
 			if (ps != null)
 				ps.Demand ();
 
+			// The attempt to use an already pre-compiled
+			// class assumes the caller has computed the
+			// classSuffix as a hash of the code
+			// string. MSXslScriptManager.cs does that.
+			// The mechanism how exactly such pre-compiled
+			// classes should be produced are not
+			// specified here.
+			string scriptname = "Script" + classSuffix;
+			string typename = "GeneratedAssembly." + scriptname;
+			try {
+				Type retval = Type.GetType (typename);
+				if (retval != null)
+					return retval;
+			} catch {
+			}
+
+			try {
+				Type retval =  Assembly.LoadFrom (scriptname + ".dll").GetType (typename);
+				if (retval != null)
+					return retval;
+			} catch {
+			}
+
+			// OK, we have to actually compile the script.
 			ICodeCompiler compiler = CodeDomProvider.CreateCompiler ();
 			CompilerParameters parameters = new CompilerParameters ();
 			parameters.CompilerOptions = DefaultCompilerOptions;
@@ -115,7 +139,7 @@ namespace Mono.Xml.Xsl
 
 			if (res.CompiledAssembly == null)
 				throw new XsltCompileException ("Cannot compile stylesheet script", null, scriptNode);
-			return res.CompiledAssembly.GetType ("GeneratedAssembly.Script" + classSuffix);
+			return res.CompiledAssembly.GetType (typename);
 		}
 
 		private string FormatErrorMessage (CompilerResults res)

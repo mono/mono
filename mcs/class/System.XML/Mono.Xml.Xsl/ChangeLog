@@ -1,3 +1,9 @@
+2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ScriptCompilerInfo.cs, MSXslScriptManager.cs :
+	  Cache compiled msxsl:script.
+	  Close bug #495918. Patch by Tor Lillqvist.
+
 2008-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformProcessor.cs : reduce BaseIterator dependency.
