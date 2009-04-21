@@ -10,6 +10,10 @@
 
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_newobj): Improve error message.
+
+2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verify_clause_relationship): Only mask as an error if the exception clause
 	is nested in the filter block.
 
