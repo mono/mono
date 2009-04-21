@@ -1047,6 +1047,11 @@ namespace System.Net
 		
 		internal void SetWriteStreamError (WebExceptionStatus status)
 		{
+			SetWriteStreamError (status, null);
+		}
+
+		internal void SetWriteStreamError (WebExceptionStatus status, Exception exc)
+		{
 			if (aborted)
 				return;
 
@@ -1055,7 +1060,12 @@ namespace System.Net
 				r = asyncRead;
 
 			if (r != null) {
-				r.SetCompleted (false, new WebException ("Error: " + status, status));
+				string msg;
+				if (exc == null)
+					msg = "Error: " + status;
+				else
+					msg = String.Format ("Error: {0} ({1})", status, exc.Message);
+				r.SetCompleted (false, new WebException (msg, status));
 				r.DoCallback ();
 			}
 		}

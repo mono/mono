@@ -1,3 +1,9 @@
+2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnection.cs:
+	* HttpWebRequest.cs: provide more information on why the connection
+	could not be established.
+
 2009-04-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: send REST after PASV to avoid some servers

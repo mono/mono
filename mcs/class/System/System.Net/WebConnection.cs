@@ -75,6 +75,7 @@ namespace System.Net
 
 		bool ssl;
 		bool certsAvailable;
+		Exception connect_exception;
 		static object classLock = new object ();
 		static Type sslStream;
 		static PropertyInfo piClient;
@@ -142,12 +143,13 @@ namespace System.Net
 							socket.Connect (remote);
 							status = WebExceptionStatus.Success;
 							break;
-						} catch (SocketException) {
+						} catch (SocketException exc) {
 							// This might be null if the request is aborted
 							if (socket != null) {
 								socket.Close ();
 								socket = null;
 								status = WebExceptionStatus.ConnectFailure;
+								connect_exception = exc;
 							}
 						}
 #if NET_2_0
@@ -597,7 +599,9 @@ namespace System.Net
 				if (Data.Challenge != null)
 					goto retry;
 
-				request.SetWriteStreamError (status);
+				Exception cnc_exc = connect_exception;
+				connect_exception = null;
+				request.SetWriteStreamError (status, cnc_exc);
 				Close (true);
 				return;
 			}
