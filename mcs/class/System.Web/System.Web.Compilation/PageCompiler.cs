@@ -38,6 +38,7 @@ using System.Web.UI;
 using System.Web.SessionState;
 using System.Web.Util;
 #if NET_2_0
+using System.Collections.Generic;
 using System.Web.Profile;
 #endif
 
@@ -68,6 +69,15 @@ namespace System.Web.Compilation
 			fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
 			fld.InitExpression = new CodePrimitiveExpression (null);
 			mainClass.Members.Add (fld);
+
+#if NET_2_0
+			if (pageParser.OutputCache) {
+				fld = new CodeMemberField (typeof (OutputCacheParameters), "__outputCacheSettings");
+				fld.Attributes = MemberAttributes.Private | MemberAttributes.Static;
+				fld.InitExpression = new CodePrimitiveExpression (null);
+				mainClass.Members.Add (fld);
+			}
+#endif
 		}
 		
 		protected override void CreateConstructor (CodeStatementCollection localVars,
@@ -223,13 +233,16 @@ namespace System.Web.Compilation
 			if (contentType != null)
 				method.Statements.Add (CreatePropertyAssign ("ContentType", contentType));
 
+#if !NET_2_0
 			if (pageParser.OutputCache) {
 				CodeMethodReferenceExpression init = new CodeMethodReferenceExpression (null,
 						"InitOutputCache");
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (init,
 						OutputCacheParams ());
 				method.Statements.Add (invoke);
+
 			}
+#endif
 			
 			int lcid = pageParser.LCID;
 			if (lcid != -1)
@@ -289,6 +302,15 @@ namespace System.Web.Compilation
 			}
 #endif
 		}
+
+#if NET_2_0
+		protected override void AddStatementsToConstructor (CodeConstructor ctor)
+		{
+			base.AddStatementsToConstructor (ctor);
+			if (pageParser.OutputCache)
+				OutputCacheParamsBlock (ctor);
+		}
+#endif
 		
 		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
@@ -355,7 +377,15 @@ namespace System.Web.Compilation
 #endif
 				);
 
-			}			
+			}
+
+#if NET_2_0
+			if (pageParser.OutputCache) {
+				CodeMethodReferenceExpression init = new CodeMethodReferenceExpression (thisRef, "InitOutputCache");
+				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (init, GetMainClassFieldReferenceExpression ("__outputCacheSettings"));
+				method.Statements.Add (invoke);
+			}
+#endif
 
 #if ONLY_1_1
 			AddStatementsFromDirective (method);
@@ -372,13 +402,69 @@ namespace System.Web.Compilation
 #endif
 		}
 
+#if NET_2_0
+		CodeAssignStatement AssignOutputCacheParameter (CodeVariableReferenceExpression variable, string propName, object value)
+		{
+			var ret = new CodeAssignStatement ();
+
+			ret.Left = new CodeFieldReferenceExpression (variable, propName);
+			ret.Right = new CodePrimitiveExpression (value);
+			return ret;
+		}
+		
+		void OutputCacheParamsBlock (CodeMemberMethod method)
+		{
+			var statements = new List <CodeStatement> ();
+			var localSettingsDecl = new CodeVariableDeclarationStatement (typeof (OutputCacheParameters), "outputCacheSettings");
+			var localSettings = new CodeVariableReferenceExpression ("outputCacheSettings");
+			
+			statements.Add (localSettingsDecl);
+			statements.Add (
+				new CodeAssignStatement (
+					localSettings,
+					new CodeObjectCreateExpression (typeof (OutputCacheParameters), new CodeExpression[] {})
+				)
+			);
+			
+			TemplateParser.OutputCacheParsedParams parsed = pageParser.OutputCacheParsedParameters;
+			if ((parsed & TemplateParser.OutputCacheParsedParams.CacheProfile) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "CacheProfile", pageParser.OutputCacheCacheProfile));
+			statements.Add (AssignOutputCacheParameter (localSettings, "Duration", pageParser.OutputCacheDuration));
+			if ((parsed & TemplateParser.OutputCacheParsedParams.Location) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "Location", pageParser.OutputCacheLocation));
+			if ((parsed & TemplateParser.OutputCacheParsedParams.NoStore) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "NoStore", pageParser.OutputCacheNoStore));
+			if ((parsed & TemplateParser.OutputCacheParsedParams.SqlDependency) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "SqlDependency", pageParser.OutputCacheSqlDependency));
+			if ((parsed & TemplateParser.OutputCacheParsedParams.VaryByContentEncodings) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "VaryByContentEncoding", pageParser.OutputCacheVaryByContentEncodings));
+			if ((parsed & TemplateParser.OutputCacheParsedParams.VaryByControl) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "VaryByControl", pageParser.OutputCacheVaryByControls));
+			if ((parsed & TemplateParser.OutputCacheParsedParams.VaryByCustom) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "VaryByCustom", pageParser.OutputCacheVaryByCustom));
+			if ((parsed & TemplateParser.OutputCacheParsedParams.VaryByHeader) != 0)
+				statements.Add (AssignOutputCacheParameter (localSettings, "VaryByHeader", pageParser.OutputCacheVaryByHeader));
+			statements.Add (AssignOutputCacheParameter (localSettings, "VaryByParam", pageParser.OutputCacheVaryByParam));
+
+			CodeFieldReferenceExpression outputCacheSettings = GetMainClassFieldReferenceExpression ("__outputCacheSettings");
+			statements.Add (new CodeAssignStatement (outputCacheSettings, localSettings));
+			
+			var cond = new CodeConditionStatement (
+				new CodeBinaryOperatorExpression (
+					outputCacheSettings,
+					CodeBinaryOperatorType.IdentityEquality,
+					new CodePrimitiveExpression (null)
+				),
+				statements.ToArray ()
+			);
+
+			method.Statements.Add (cond);
+		}
+#else
 		CodeExpression[] OutputCacheParams ()
 		{
 			return new CodeExpression [] {
 				new CodePrimitiveExpression (pageParser.OutputCacheDuration),
-#if NET_2_0
-				new CodePrimitiveExpression (pageParser.OutputCacheVaryByContentEncodings),
-#endif
 				new CodePrimitiveExpression (pageParser.OutputCacheVaryByHeader),
 				new CodePrimitiveExpression (pageParser.OutputCacheVaryByCustom),
 				new CodeSnippetExpression (typeof (OutputCacheLocation).ToString () +
@@ -386,7 +472,8 @@ namespace System.Web.Compilation
 				new CodePrimitiveExpression (pageParser.OutputCacheVaryByParam)
 				};
 		}
-
+#endif
+		
 #if NET_2_0
 		void CreateStronglyTypedProperty (Type type, string name)
 		{

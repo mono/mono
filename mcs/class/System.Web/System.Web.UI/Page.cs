@@ -963,16 +963,22 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
-	[MonoTODO("The following properties of OutputCacheParameters are silently ignored: CacheProfile, NoStore, SqlDependency")]
+	[MonoTODO("The following properties of OutputCacheParameters are silently ignored: CacheProfile, SqlDependency")]
 	protected internal virtual void InitOutputCache(OutputCacheParameters cacheSettings)
 	{
-		if (cacheSettings.Enabled)
+		if (cacheSettings.Enabled) {
 			InitOutputCache(cacheSettings.Duration,
 					cacheSettings.VaryByContentEncoding,
 					cacheSettings.VaryByHeader,
 					cacheSettings.VaryByCustom,
 					cacheSettings.Location,
 					cacheSettings.VaryByParam);
+
+			HttpResponse response = Response;
+			HttpCachePolicy cache = response != null ? response.Cache : null;
+			if (cache != null && cacheSettings.NoStore)
+				cache.SetNoStore ();
+		}
 	}
 #endif
 
