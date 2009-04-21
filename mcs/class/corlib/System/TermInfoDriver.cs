@@ -72,6 +72,7 @@ namespace System {
 		string keypadXmit, keypadLocal;
 		bool controlCAsInput;
 		bool inited;
+		object initLock = new object ();
 		bool initKeys;
 		string origPair;
 		string origColors;
@@ -174,78 +175,82 @@ namespace System {
 			if (inited)
 				return;
 
-			/* This should not happen any more, since it is checked for in Console */
-			if (!ConsoleDriver.IsConsole)
-				throw new IOException ("Not a tty.");
-
-			inited = true;
-
-			ConsoleDriver.SetEcho (false);
-
-			string endString = null;
-			keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
-			keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
-			if (keypadXmit != null) {
-				WriteConsole (keypadXmit); // Needed to get the arrows working
-				if (keypadLocal != null)
-					endString += keypadLocal;
-			}
-
-			origPair = reader.Get (TermInfoStrings.OrigPair);
-			origColors = reader.Get (TermInfoStrings.OrigColors);
-			setfgcolor = MangleParameters (reader.Get (TermInfoStrings.SetAForeground));
-			setbgcolor = MangleParameters (reader.Get (TermInfoStrings.SetABackground));
-			// lighter fg colours are 90 -> 97 rather than 30 -> 37
-			setlfgcolor = color16 ? setfgcolor.Replace ("[3", "[9") : setfgcolor;
-			// lighter bg colours are 100 -> 107 rather than 40 -> 47
-			setlbgcolor = color16 ? setbgcolor.Replace ("[4", "[10") : setbgcolor;
-			string resetColors = (origColors == null) ? origPair : origColors;
-			if (resetColors != null)
-				endString += resetColors;
-
-			unsafe {
-				if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size))
-					throw new IOException ("Error initializing terminal.");
-			}
-
-			stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
-			clear = reader.Get (TermInfoStrings.ClearScreen);
-			bell = reader.Get (TermInfoStrings.Bell);
-			if (clear == null) {
-				clear = reader.Get (TermInfoStrings.CursorHome);
-				clear += reader.Get (TermInfoStrings.ClrEos);
-			}
-
-			csrVisible = reader.Get (TermInfoStrings.CursorNormal);
-			if (csrVisible == null)
-				csrVisible = reader.Get (TermInfoStrings.CursorVisible);
-
-			csrInvisible = reader.Get (TermInfoStrings.CursorInvisible);
-			if (term == "cygwin" || term == "linux" || (term != null && term.StartsWith ("xterm")) ||
-				term == "rxvt" || term == "dtterm") {
-				titleFormat = "\x1b]0;{0}\x7"; // icon + window title
-			} else if (term == "iris-ansi") {
-				titleFormat = "\x1bP1.y{0}\x1b\\"; // not tested
-			} else if (term == "sun-cmd") {
-				titleFormat = "\x1b]l{0}\x1b\\"; // not tested
-			}
-
-			cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
-			if (cursorAddress != null) {
-				string result = cursorAddress.Replace ("%i", String.Empty);
-				home_1_1 = (cursorAddress != result);
-				cursorAddress = MangleParameters (result);
-			}
-
-			GetCursorPosition ();
+			lock (initLock){
+				if (inited)
+					return;
+				inited = true;
+				
+				/* This should not happen any more, since it is checked for in Console */
+				if (!ConsoleDriver.IsConsole)
+					throw new IOException ("Not a tty.");
+				
+				ConsoleDriver.SetEcho (false);
+				
+				string endString = null;
+				keypadXmit = reader.Get (TermInfoStrings.KeypadXmit);
+				keypadLocal = reader.Get (TermInfoStrings.KeypadLocal);
+				if (keypadXmit != null) {
+					WriteConsole (keypadXmit); // Needed to get the arrows working
+					if (keypadLocal != null)
+						endString += keypadLocal;
+				}
+				
+				origPair = reader.Get (TermInfoStrings.OrigPair);
+				origColors = reader.Get (TermInfoStrings.OrigColors);
+				setfgcolor = MangleParameters (reader.Get (TermInfoStrings.SetAForeground));
+				setbgcolor = MangleParameters (reader.Get (TermInfoStrings.SetABackground));
+				// lighter fg colours are 90 -> 97 rather than 30 -> 37
+				setlfgcolor = color16 ? setfgcolor.Replace ("[3", "[9") : setfgcolor;
+				// lighter bg colours are 100 -> 107 rather than 40 -> 47
+				setlbgcolor = color16 ? setbgcolor.Replace ("[4", "[10") : setbgcolor;
+				string resetColors = (origColors == null) ? origPair : origColors;
+				if (resetColors != null)
+					endString += resetColors;
+				
+				unsafe {
+					if (!ConsoleDriver.TtySetup (keypadXmit, endString, out control_characters, out native_terminal_size))
+						throw new IOException ("Error initializing terminal.");
+				}
+				
+				stdin = new StreamReader (Console.OpenStandardInput (0), Console.InputEncoding);
+				clear = reader.Get (TermInfoStrings.ClearScreen);
+				bell = reader.Get (TermInfoStrings.Bell);
+				if (clear == null) {
+					clear = reader.Get (TermInfoStrings.CursorHome);
+					clear += reader.Get (TermInfoStrings.ClrEos);
+				}
+				
+				csrVisible = reader.Get (TermInfoStrings.CursorNormal);
+				if (csrVisible == null)
+					csrVisible = reader.Get (TermInfoStrings.CursorVisible);
+				
+				csrInvisible = reader.Get (TermInfoStrings.CursorInvisible);
+				if (term == "cygwin" || term == "linux" || (term != null && term.StartsWith ("xterm")) ||
+				    term == "rxvt" || term == "dtterm") {
+					titleFormat = "\x1b]0;{0}\x7"; // icon + window title
+				} else if (term == "iris-ansi") {
+					titleFormat = "\x1bP1.y{0}\x1b\\"; // not tested
+				} else if (term == "sun-cmd") {
+					titleFormat = "\x1b]l{0}\x1b\\"; // not tested
+				}
+				
+				cursorAddress = reader.Get (TermInfoStrings.CursorAddress);
+				if (cursorAddress != null) {
+					string result = cursorAddress.Replace ("%i", String.Empty);
+					home_1_1 = (cursorAddress != result);
+					cursorAddress = MangleParameters (result);
+				}
+				
+				GetCursorPosition ();
 #if DEBUG
-			logger.WriteLine ("noGetPosition: {0} left: {1} top: {2}", noGetPosition, cursorLeft, cursorTop);
-			logger.Flush ();
+					logger.WriteLine ("noGetPosition: {0} left: {1} top: {2}", noGetPosition, cursorLeft, cursorTop);
+				logger.Flush ();
 #endif
-			if (noGetPosition) {
-				WriteConsole (clear);
-				cursorLeft = 0;
-				cursorTop = 0;
+				if (noGetPosition) {
+					WriteConsole (clear);
+					cursorLeft = 0;
+					cursorTop = 0;
+				}
 			}
 		}
 
@@ -1213,9 +1218,10 @@ namespace System {
 		void CreateKeyMap ()
 		{
 			keymap = new Hashtable ();
+			
 			keymap [TermInfoStrings.KeyBackspace] = new ConsoleKeyInfo ('\0', ConsoleKey.Backspace, false, false, false);
 			keymap [TermInfoStrings.KeyClear] = new ConsoleKeyInfo ('\0', ConsoleKey.Clear, false, false, false);
-			// Delete character...
+ 			// Delete character...
 			keymap [TermInfoStrings.KeyDown] = new ConsoleKeyInfo ('\0', ConsoleKey.DownArrow, false, false, false);
 			keymap [TermInfoStrings.KeyF1] = new ConsoleKeyInfo ('\0', ConsoleKey.F1, false, false, false);
 			keymap [TermInfoStrings.KeyF10] = new ConsoleKeyInfo ('\0', ConsoleKey.F10, false, false, false);
@@ -1228,7 +1234,6 @@ namespace System {
 			keymap [TermInfoStrings.KeyF8] = new ConsoleKeyInfo ('\0', ConsoleKey.F8, false, false, false);
 			keymap [TermInfoStrings.KeyF9] = new ConsoleKeyInfo ('\0', ConsoleKey.F9, false, false, false);
 			keymap [TermInfoStrings.KeyHome] = new ConsoleKeyInfo ('\0', ConsoleKey.Home, false, false, false);
-
 			keymap [TermInfoStrings.KeyLeft] = new ConsoleKeyInfo ('\0', ConsoleKey.LeftArrow, false, false, false);
 			keymap [TermInfoStrings.KeyLl] = new ConsoleKeyInfo ('\0', ConsoleKey.NumPad1, false, false, false);
 			keymap [TermInfoStrings.KeyNpage] = new ConsoleKeyInfo ('\0', ConsoleKey.PageDown, false, false, false);
@@ -1273,13 +1278,79 @@ namespace System {
 			keymap [TermInfoStrings.KeyF22] = new ConsoleKeyInfo ('\0', ConsoleKey.F22, false, false, false);
 			keymap [TermInfoStrings.KeyF23] = new ConsoleKeyInfo ('\0', ConsoleKey.F23, false, false, false);
 			keymap [TermInfoStrings.KeyF24] = new ConsoleKeyInfo ('\0', ConsoleKey.F24, false, false, false);
-
-
 			// These were previously missing:
 			keymap [TermInfoStrings.KeyDc] = new ConsoleKeyInfo ('\0', ConsoleKey.Delete, false, false, false);
 			keymap [TermInfoStrings.KeyIc] = new ConsoleKeyInfo ('\0', ConsoleKey.Insert, false, false, false);
 		}
 
+		//
+		// The keys that we know about and use
+		//
+		static TermInfoStrings [] UsedKeys = {
+			TermInfoStrings.KeyBackspace,
+			TermInfoStrings.KeyClear,
+			TermInfoStrings.KeyDown,
+			TermInfoStrings.KeyF1,
+			TermInfoStrings.KeyF10,
+			TermInfoStrings.KeyF2,
+			TermInfoStrings.KeyF3,
+			TermInfoStrings.KeyF4,
+			TermInfoStrings.KeyF5,
+			TermInfoStrings.KeyF6,
+			TermInfoStrings.KeyF7,
+			TermInfoStrings.KeyF8,
+			TermInfoStrings.KeyF9,
+			TermInfoStrings.KeyHome,
+			TermInfoStrings.KeyLeft,
+			TermInfoStrings.KeyLl,
+			TermInfoStrings.KeyNpage,
+			TermInfoStrings.KeyPpage,
+			TermInfoStrings.KeyRight,
+			TermInfoStrings.KeySf,
+			TermInfoStrings.KeySr,
+			TermInfoStrings.KeyUp,
+			TermInfoStrings.KeyA1,
+			TermInfoStrings.KeyA3,
+			TermInfoStrings.KeyB2,
+			TermInfoStrings.KeyC1,
+			TermInfoStrings.KeyC3,
+			TermInfoStrings.KeyBtab,
+			TermInfoStrings.KeyBeg,
+			TermInfoStrings.KeyCopy,
+			TermInfoStrings.KeyEnd,
+			TermInfoStrings.KeyEnter,
+			TermInfoStrings.KeyHelp,
+			TermInfoStrings.KeyPrint,
+			TermInfoStrings.KeyUndo,
+			TermInfoStrings.KeySbeg,
+			TermInfoStrings.KeyScopy,
+			TermInfoStrings.KeySdc,
+			TermInfoStrings.KeyShelp,
+			TermInfoStrings.KeyShome,
+			TermInfoStrings.KeySleft,
+			TermInfoStrings.KeySprint,
+			TermInfoStrings.KeySright,
+			TermInfoStrings.KeySundo,
+			TermInfoStrings.KeyF11,
+			TermInfoStrings.KeyF12,
+			TermInfoStrings.KeyF13,
+			TermInfoStrings.KeyF14,
+			TermInfoStrings.KeyF15,
+			TermInfoStrings.KeyF16,
+			TermInfoStrings.KeyF17,
+			TermInfoStrings.KeyF18,
+			TermInfoStrings.KeyF19,
+			TermInfoStrings.KeyF20,
+			TermInfoStrings.KeyF21,
+			TermInfoStrings.KeyF22,
+			TermInfoStrings.KeyF23,
+			TermInfoStrings.KeyF24,
+
+			// These were missing
+			TermInfoStrings.KeyDc,
+			TermInfoStrings.KeyIc
+		};
+		
 		void InitKeys ()
 		{
 			if (initKeys)
@@ -1287,69 +1358,10 @@ namespace System {
 
 			CreateKeyMap ();
 			rootmap = new ByteMatcher ();
-			AddStringMapping (TermInfoStrings.KeyBackspace);
-			AddStringMapping (TermInfoStrings.KeyClear);
-			AddStringMapping (TermInfoStrings.KeyDown);
-			AddStringMapping (TermInfoStrings.KeyF1);
-			AddStringMapping (TermInfoStrings.KeyF10);
-			AddStringMapping (TermInfoStrings.KeyF2);
-			AddStringMapping (TermInfoStrings.KeyF3);
-			AddStringMapping (TermInfoStrings.KeyF4);
-			AddStringMapping (TermInfoStrings.KeyF5);
-			AddStringMapping (TermInfoStrings.KeyF6);
-			AddStringMapping (TermInfoStrings.KeyF7);
-			AddStringMapping (TermInfoStrings.KeyF8);
-			AddStringMapping (TermInfoStrings.KeyF9);
-			AddStringMapping (TermInfoStrings.KeyHome);
-			AddStringMapping (TermInfoStrings.KeyLeft);
-			AddStringMapping (TermInfoStrings.KeyLl);
-			AddStringMapping (TermInfoStrings.KeyNpage);
-			AddStringMapping (TermInfoStrings.KeyPpage);
-			AddStringMapping (TermInfoStrings.KeyRight);
-			AddStringMapping (TermInfoStrings.KeySf);
-			AddStringMapping (TermInfoStrings.KeySr);
-			AddStringMapping (TermInfoStrings.KeyUp);
-			AddStringMapping (TermInfoStrings.KeyA1);
-			AddStringMapping (TermInfoStrings.KeyA3);
-			AddStringMapping (TermInfoStrings.KeyB2);
-			AddStringMapping (TermInfoStrings.KeyC1);
-			AddStringMapping (TermInfoStrings.KeyC3);
-			AddStringMapping (TermInfoStrings.KeyBtab);
-			AddStringMapping (TermInfoStrings.KeyBeg);
-			AddStringMapping (TermInfoStrings.KeyCopy);
-			AddStringMapping (TermInfoStrings.KeyEnd);
-			AddStringMapping (TermInfoStrings.KeyEnter);
-			AddStringMapping (TermInfoStrings.KeyHelp);
-			AddStringMapping (TermInfoStrings.KeyPrint);
-			AddStringMapping (TermInfoStrings.KeyUndo);
-			AddStringMapping (TermInfoStrings.KeySbeg);
-			AddStringMapping (TermInfoStrings.KeyScopy);
-			AddStringMapping (TermInfoStrings.KeySdc);
-			AddStringMapping (TermInfoStrings.KeyShelp);
-			AddStringMapping (TermInfoStrings.KeyShome);
-			AddStringMapping (TermInfoStrings.KeySleft);
-			AddStringMapping (TermInfoStrings.KeySprint);
-			AddStringMapping (TermInfoStrings.KeySright);
-			AddStringMapping (TermInfoStrings.KeySundo);
-			AddStringMapping (TermInfoStrings.KeyF11);
-			AddStringMapping (TermInfoStrings.KeyF12);
-			AddStringMapping (TermInfoStrings.KeyF13);
-			AddStringMapping (TermInfoStrings.KeyF14);
-			AddStringMapping (TermInfoStrings.KeyF15);
-			AddStringMapping (TermInfoStrings.KeyF16);
-			AddStringMapping (TermInfoStrings.KeyF17);
-			AddStringMapping (TermInfoStrings.KeyF18);
-			AddStringMapping (TermInfoStrings.KeyF19);
-			AddStringMapping (TermInfoStrings.KeyF20);
-			AddStringMapping (TermInfoStrings.KeyF21);
-			AddStringMapping (TermInfoStrings.KeyF22);
-			AddStringMapping (TermInfoStrings.KeyF23);
-			AddStringMapping (TermInfoStrings.KeyF24);
 
-			// These were missing
-			AddStringMapping (TermInfoStrings.KeyDc);
-			AddStringMapping (TermInfoStrings.KeyIc);
-
+			foreach (TermInfoStrings tis in UsedKeys)
+				AddStringMapping (tis);
+			
 			rootmap.AddMapping (TermInfoStrings.KeyBackspace, new byte [] { control_characters [ControlCharacters.Erase] });
 			rootmap.Sort ();
 			initKeys = true;

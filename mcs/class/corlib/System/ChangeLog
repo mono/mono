@@ -1,3 +1,14 @@
+2009-04-21  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs: Prevent race condition if two threads try to
+	initialize the Console at the same time. 
+
+	What happens is that inited is set, and elsewhere we try to
+	dereference native_terminal_size before it is set.
+
+	* Reduce code size by using a table instead of manually making a
+	few hundred calls.
+	
 2009-04-20  Miguel de Icaza  <miguel@novell.com>
 
 	* Enum.cs (MonoEnumInfo): Compare bytes, shorts, ints and longs as
