@@ -1,3 +1,8 @@
+2009-04-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_generic_class_init_trampoline): Remove
+	a racy assert.
+
 2009-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_xdebug_init): Fix the DISABLE_AOT build.
