@@ -112,10 +112,15 @@ namespace System {
 
 		// Constructors		
 
+#if NET_2_1
+		public Uri (string uriString) : this (uriString, UriKind.Absolute) 
+		{
+		}
+#else
 		public Uri (string uriString) : this (uriString, false) 
 		{
 		}
-
+#endif
 		protected Uri (SerializationInfo serializationInfo, 
 			       StreamingContext streamingContext) :
 			this (serializationInfo.GetString ("AbsoluteUri"), true)
@@ -190,8 +195,8 @@ namespace System {
 		}
 
 		public Uri (Uri baseUri, Uri relativeUri)
-			: this (baseUri, relativeUri.OriginalString, false)
 		{
+			Merge (baseUri, relativeUri == null ? String.Empty : relativeUri.OriginalString);
 			// FIXME: this should call UriParser.Resolve
 		}
 
@@ -219,8 +224,8 @@ namespace System {
 #endif
 
 		public Uri (Uri baseUri, string relativeUri) 
-			: this (baseUri, relativeUri, false) 
 		{
+			Merge (baseUri, relativeUri);
 			// FIXME: this should call UriParser.Resolve
 		}
 
@@ -229,9 +234,17 @@ namespace System {
 #endif
 		public Uri (Uri baseUri, string relativeUri, bool dontEscape) 
 		{
+			userEscaped = dontEscape;
+			Merge (baseUri, relativeUri);
+		}
+
+		private void Merge (Uri baseUri, string relativeUri)
+		{
 #if NET_2_0
 			if (baseUri == null)
 				throw new ArgumentNullException ("baseUri");
+			if (!baseUri.IsAbsoluteUri)
+				throw new ArgumentOutOfRangeException ("baseUri");
 			if (relativeUri == null)
 				relativeUri = String.Empty;
 #else
@@ -239,8 +252,6 @@ namespace System {
 				throw new NullReferenceException ("baseUri");
 #endif
 			// See RFC 2396 Par 5.2 and Appendix C
-
-			userEscaped = dontEscape;
 
 			// Check Windows UNC (for // it is scheme/host separator)
 			if (relativeUri.Length >= 2 && relativeUri [0] == '\\' && relativeUri [1] == '\\') {
@@ -1362,8 +1373,12 @@ namespace System {
 				// It must be Unix file path or Windows UNC
 				if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
 					ParseAsUnixAbsoluteFilePath (uriString);
+#if NET_2_1
+					isAbsoluteUri = false;
+#else
 					if (kind == UriKind.Relative)
 						isAbsoluteUri = false;
+#endif
 					
 				} else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\')
 					ParseAsWindowsUNC (uriString);
