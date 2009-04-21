@@ -32,6 +32,9 @@ namespace System.Xml.Schema {
 
 	public class XmlSchema : XmlSchemaObject {
 
+		internal const string Namespace = "http://www.w3.org/2001/XMLSchema";
+		internal const string InstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
+
 		private XmlSchema ()
 		{
 		}
