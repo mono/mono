@@ -1,3 +1,7 @@
+2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DnsTest.cs: new IP for go-mono and fix AsyncResolve test.
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EndPointTest.cs: New

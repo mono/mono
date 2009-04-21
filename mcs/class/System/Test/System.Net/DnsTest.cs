@@ -29,7 +29,7 @@ namespace MonoTests.System.Net
 	public class DnsTest
 	{
 		private String site1Name = "www.go-mono.com",
-			site1Dot = "130.57.21.12",
+			site1Dot = "130.57.21.18",
 			site2Name = "info.diku.dk",
 			site2Dot = "130.225.96.4",
 			noneExistingSite = "www.unlikely.novell.com";
@@ -63,7 +63,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
 			IPHostEntry entry = Dns.EndResolve (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.AreEqual (site1Dot, entry.HostName);
+			Assert.AreEqual (site1Dot, entry.AddressList [0].ToString ());
 		}
 
 		void ResolveCallback (IAsyncResult ar)
