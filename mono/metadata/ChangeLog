@@ -1,3 +1,15 @@
+2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r132170.
+
+	* metadata-verify.c: Enable pe verification as the issue with #496453
+	is that the authenticode data directory have a different unspecified
+	format. Ignore it for now.
+
+	* pedump.c: Run the metadata verifier together with the IL verifier.
+
+	Fixes ##496453.
+
 2009-04-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* metadata-verify.c: Temporarily disable pe verification due to #496453.
