@@ -397,12 +397,33 @@ namespace System.Windows.Forms
 
 		protected internal override bool ProcessCmdKey (ref Message m, Keys keyData)
 		{
-			if (this.Enabled && keyData == this.shortcut_keys) {
+			Control source = Control.FromHandle (m.HWnd);
+			Form f = source == null ? null : (Form)source.TopLevelControl;
+
+			if (this.Enabled && keyData == this.shortcut_keys && GetTopLevelControl () == f) {
 				this.FireEvent (EventArgs.Empty, ToolStripItemEventType.Click);
 				return true;
 			}
 				
 			return base.ProcessCmdKey (ref m, keyData);
+		}
+
+		Control GetTopLevelControl ()
+		{
+			ToolStripItem item = this;
+			while (item.OwnerItem != null)
+				item = item.OwnerItem;
+
+			if (item.Owner == null)
+				return null;
+
+			if (item.Owner is ContextMenuStrip) {
+				Control container = ((ContextMenuStrip)item.Owner).container;
+				return container == null ? null : container.TopLevelControl;
+			}
+
+			// MainMenuStrip
+			return item.Owner.TopLevelControl;
 		}
 
 		protected internal override bool ProcessMnemonic (char charCode)

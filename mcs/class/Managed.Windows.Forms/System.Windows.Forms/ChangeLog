@@ -1,3 +1,13 @@
+2009-04-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Control.cs, ContextMenuStrip.cs, ToolStripMenuItem.cs: Only process any 
+	shortchut in ToolStripMenuItem.ProcessCmdKey if the control generating the 
+	event is the same as the owner of the menu item. Also set properly 
+	SourceControl for ContextMenuStrip, as well as add an internal field to 
+	contain the control that owns the ContextMenuStrip (we need to know this 
+	even before the public property is assigned).
+	Fixes bits of #393775.
+
 2009-04-20  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* StatusStrip.cs: Use the same icon as .net when the mouse is over the
