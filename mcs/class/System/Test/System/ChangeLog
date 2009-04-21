@@ -1,3 +1,7 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UriTest2.cs: More constructor test cases
+
 2009-04-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UriTest2.cs: More test cases for the handling of %2f and %5c

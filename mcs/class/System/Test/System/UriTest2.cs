@@ -10,9 +10,51 @@ using NUnit.Framework;
 
 namespace MonoTests.System
 {
+#if NET_2_0
+	// help bring Moonlight tests back to mono/mcs nunit
+
+	public delegate void TestCode ();
+
+	static class Assert2 {
+
+		public static void Throws<TException> (TestCode code, string message) where TException : Exception
+		{
+			Throws (code, typeof (TException), null, message);
+		}
+
+		public static void Throws (TestCode code, Type expected_exception, Type expected_inner_exception, string message)
+		{
+			bool failed = false;
+			try {
+				code ();
+				failed = true;
+			}
+			catch (Exception ex) {
+				if (!(ex.GetType () == expected_exception))
+					throw new AssertionException (string.Format ("Expected '{0}', got '{1}'. {2}", expected_exception.FullName, ex.GetType ().FullName, message));
+				//System.Diagnostics.Debug.WriteLine (ex.ToString ());
+				if (expected_inner_exception != null) {
+					// we only check if the inner exception was supplied
+					if (ex.InnerException.GetType () != expected_inner_exception)
+						throw new AssertionException (string.Format ("Expected InnerException '{0}', got '{1}'. {2}", expected_inner_exception.FullName, ex.InnerException.GetType ().FullName, message));
+				}
+			}
+			if (failed)
+				throw new AssertionException (string.Format ("Expected '{0}', but got no exception. {1}", expected_exception.FullName, message));
+		}
+	}
+#endif
 	[TestFixture]
 	public class UriTest2
 	{
+		protected bool isWin32 = false;
+		
+		[SetUp]
+		public void SetUp ()
+		{
+			isWin32 = (Path.DirectorySeparatorChar == '\\');
+		}
+
 		// Segments cannot be validated here...
 		public void AssertUri (string relsrc, Uri uri,
 			string toString,
@@ -394,6 +436,88 @@ TextWriter sw = Console.Out;
 			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
 			Assert.AreEqual ("monkey:s3kr3t", uri.UserInfo, "UserInfo");
 			Assert.AreEqual (uri.AbsoluteUri, uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void Relative ()
+		{
+			Uri relative = new Uri ("/Moonlight", UriKind.Relative);
+
+			Assert2.Throws<ArgumentNullException> (delegate {
+				new Uri (null, "/Moonlight");
+			}, "null,string");
+			Assert2.Throws<ArgumentNullException> (delegate {
+				new Uri (null, relative);
+			}, "null,Uri");
+
+			Assert2.Throws<ArgumentOutOfRangeException> (delegate {
+				new Uri (relative, "/Moonlight");
+			}, "Uri,string");
+			Assert2.Throws<ArgumentOutOfRangeException> (delegate {
+				new Uri (relative, relative);
+			}, "Uri,Uri");
+
+			Assert2.Throws<ArgumentOutOfRangeException> (delegate {
+				new Uri (relative, (string) null);
+			}, "Uri,string-null");
+			Assert2.Throws<ArgumentOutOfRangeException> (delegate {
+				new Uri (relative, (Uri) null);
+			}, "Uri,Uri-null");
+		}
+
+		private void CheckRelativeUri (Uri uri)
+		{
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.AbsolutePath);
+			}, "AbsolutePath");
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.AbsoluteUri);
+			}, "AbsoluteUri");
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.DnsSafeHost);
+			}, "DnsSafeHost");
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.Fragment);
+			}, "Fragment");
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.Host);
+			}, "Host");
+
+			Assert.IsFalse (uri.IsAbsoluteUri, "IsAbsoluteUri");
+
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.IsUnc);
+			}, "IsUnc");
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.LocalPath);
+			}, "LocalPath");
+
+			Assert.AreEqual ("/Moonlight", uri.OriginalString, "OriginalString");
+
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.Port);
+			}, "Port");
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.Query);
+			}, "Query");
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.Scheme);
+			}, "Scheme");
+
+			Assert.IsFalse (uri.UserEscaped, "UserEscaped");
+
+			Assert2.Throws<InvalidOperationException> (delegate {
+				Assert.IsNotNull (uri.UserInfo);
+			}, "UserInfo");
+
+			Assert.AreEqual ("/Moonlight", uri.ToString (), "ToString");
+		}
+
+		[Test]
+		public void Relative_AsRelative ()
+		{
+			Uri uri = new Uri ("/Moonlight", UriKind.Relative);
+			CheckRelativeUri (uri);
 		}
 #endif
 	}
