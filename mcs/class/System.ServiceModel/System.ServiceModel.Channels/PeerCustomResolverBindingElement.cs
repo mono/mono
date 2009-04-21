@@ -66,19 +66,25 @@ namespace System.ServiceModel.Channels
 
 		public override PeerReferralPolicy ReferralPolicy { get; set; }
 
-		[MonoTODO]
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-			return context.BuildInnerChannelFactory<TChannel> ();
+			var cf = context.BuildInnerChannelFactory<TChannel> ();
+			var pcf = cf as PeerChannelFactory<TChannel>;
+			if (pcf != null)
+				pcf.Resolver = CreatePeerResolver ();
+			return cf;
 		}
 
-		[MonoTODO]
 		public override IChannelListener<TChannel>
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			return context.BuildInnerChannelListener<TChannel> ();
+			var cl = context.BuildInnerChannelListener<TChannel> ();
+			var pcl = cl as PeerChannelListener<TChannel>;
+			if (pcl != null)
+				pcl.Resolver = CreatePeerResolver ();
+			return cl;
 		}
 
 		public override BindingElement Clone ()

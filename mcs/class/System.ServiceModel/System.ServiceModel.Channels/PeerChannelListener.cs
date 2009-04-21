@@ -65,6 +65,8 @@ namespace System.ServiceModel.Channels
 				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
 		}
 
+		public PeerResolver Resolver { get; set; }
+
 		public MessageEncoder MessageEncoder {
 			get { return encoder; }
 		}

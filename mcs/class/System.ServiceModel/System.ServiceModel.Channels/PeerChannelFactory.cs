@@ -55,6 +55,12 @@ namespace System.ServiceModel.Channels
 				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
 		}
 
+		public PeerResolver Resolver { get; set; }
+
+		public PeerTransportBindingElement Source {
+			get { return source; }
+		}
+
 		public MessageEncoder MessageEncoder {
 			get { return encoder; }
 		}
@@ -69,9 +75,9 @@ namespace System.ServiceModel.Channels
 
 			Type t = typeof (TChannel);
 			if (t == typeof (IOutputChannel))
-				return (TChannel) (object) new PeerOutputChannel ((PeerChannelFactory<IOutputChannel>) (object) this, address, via);
+				return (TChannel) (object) new PeerOutputChannel ((PeerChannelFactory<IOutputChannel>) (object) this, address, via, Resolver);
 			if (t == typeof (IDuplexChannel))
-				return (TChannel) (object) new PeerDuplexChannel ((PeerChannelFactory<IDuplexChannel>) (object) this, address, via);
+				return (TChannel) (object) new PeerDuplexChannel ((PeerChannelFactory<IDuplexChannel>) (object) this, address, via, Resolver);
 			throw new InvalidOperationException (String.Format ("channel type {0} is not supported.", typeof (TChannel).Name));
 		}
 

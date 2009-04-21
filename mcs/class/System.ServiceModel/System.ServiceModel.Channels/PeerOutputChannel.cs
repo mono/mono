@@ -40,11 +40,19 @@ namespace System.ServiceModel.Channels
 	internal class PeerOutputChannel : OutputChannelBase
 	{
 		PeerChannelFactory<IOutputChannel> factory;
+		PeerResolver resolver;
+		PeerNode node;
 
-		public PeerOutputChannel (PeerChannelFactory<IOutputChannel> factory, EndpointAddress address, Uri via)
+		public PeerOutputChannel (PeerChannelFactory<IOutputChannel> factory, EndpointAddress address, Uri via, PeerResolver resolver)
 			: base (factory, address, via)
 		{
 			this.factory = factory;
+			this.resolver = resolver;
+
+			string mesh = RemoteAddress.Uri.Host;
+			// It could be opened even with empty list of PeerNodeAddresses.
+			// So, do not create PeerNode per PeerNodeAddress, but do it with PeerNodeAddress[].
+			node = new PeerNodeImpl (resolver, mesh, factory.Source.Port);
 		}
 
 		// OutputChannelBase
@@ -99,10 +107,9 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			node.Open (timeout);
 		}
 	}
 }

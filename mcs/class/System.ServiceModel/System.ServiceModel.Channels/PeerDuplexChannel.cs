@@ -41,16 +41,20 @@ namespace System.ServiceModel.Channels
 	{
 		PeerChannelFactory<IDuplexChannel> factory;
 		PeerChannelListener<IDuplexChannel> listener;
-		EndpointAddress remote_address;
 		EndpointAddress local_address;
-		Uri via;
+		PeerResolver resolver;
+		PeerNode node;
 
-		public PeerDuplexChannel (PeerChannelFactory<IDuplexChannel> factory, EndpointAddress address, Uri via)
+		public PeerDuplexChannel (PeerChannelFactory<IDuplexChannel> factory, EndpointAddress address, Uri via, PeerResolver resolver)
 			: base (factory, address, via)
 		{
 			this.factory = factory;
-			this.remote_address = address;
-			this.via = via;
+			this.resolver = resolver;
+
+			string mesh = RemoteAddress.Uri.Host;
+			// It could be opened even with empty list of PeerNodeAddresses.
+			// So, do not create PeerNode per PeerNodeAddress, but do it with PeerNodeAddress[].
+			node = new PeerNodeImpl (resolver, mesh, factory.Source.Port);
 		}
 
 		// FIXME: receive local_address too
@@ -58,10 +62,19 @@ namespace System.ServiceModel.Channels
 			: base (listener)
 		{
 			this.listener = listener;
+
+			// FIXME: set resolver and node.
 		}
 
 		public override EndpointAddress LocalAddress {
 			get { return local_address; }
+		}
+
+		public override T GetProperty<T> ()
+		{
+			if (typeof (T).IsInstanceOfType (node))
+				return (T) (object) node;
+			return base.GetProperty<T> ();
 		}
 
 		// DuplexChannelBase
@@ -145,11 +158,11 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
-		
-		[MonoTODO]
+
+		// At some stage I should unify this class with PeerOutputChannel (and probably PeerInputChannel). Too much duplicate.
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			node.Open (timeout);
 		}
 	}
 }
