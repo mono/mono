@@ -1,3 +1,21 @@
+2009-04-21  Marek Habersack  <mhabersack@novell.com>
+
+	* SimpleWebHandlerParser.cs: retrieve CompilationSection from the
+	appropriate web.config file.
+
+	* BaseParser.cs: moved the internal property VirtualPath from
+	TemplateParser to here and added an internal method
+	GetConfigSection to retrieve sections from the correct web.config
+	file on 2.0 applications. Fixes bug #494245
+
+	* PageParser.cs: use the new GetConfigSection method to retrieve
+	ClientTargetSection.
+
+	* TemplateParser.cs: moved the VirtualPath property to
+	BaseParser.
+	PagesConfig now uses the new GetConfigSection method. Fixes bug
+	#494245
+
 2009-04-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: use generic lists for import, namespace and

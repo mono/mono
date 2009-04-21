@@ -151,10 +151,23 @@ namespace System.Web.UI
 		}
 
 #if NET_2_0
+		internal TSection GetConfigSection <TSection> (string section) where TSection: global::System.Configuration.ConfigurationSection
+		{
+			VirtualPath vpath = VirtualPath;
+			string vp = vpath != null ? vpath.Absolute : null;
+			if (vp == null)
+				return WebConfigurationManager.GetWebApplicationSection (section) as TSection;
+			else
+				return WebConfigurationManager.GetSection (section, vp) as TSection;
+		}
+		
+		internal VirtualPath VirtualPath {
+			get;
+			set;
+		}
+
 		internal CompilationSection CompilationConfig {
-			get {
-				return WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
-			}
+			get { return GetConfigSection <CompilationSection> ("system.web/compilation"); }
 		}
 
 #else
