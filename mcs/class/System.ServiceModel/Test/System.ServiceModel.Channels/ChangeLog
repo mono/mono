@@ -1,3 +1,7 @@
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerTransportBindingElementTest.cs : test PeerNode property too.
+
 2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerTransportBindingElementTest.cs : new.

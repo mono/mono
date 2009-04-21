@@ -72,7 +72,10 @@ namespace MonoTests.System.ServiceModel.Channels
 				new HandlerTransportBindingElement (null));
 			BindingContext ctx = new BindingContext (
 				binding, new BindingParameterCollection ());
-			be.BuildChannelFactory<IRequestChannel> (ctx);
+
+			var f = be.BuildChannelFactory<IRequestChannel> (ctx);
+			Assert.IsNotNull (f.GetProperty<IOnlineStatus> (), "#1");
+			Assert.IsNotNull (f.GetProperty<PeerNode> (), "#2");
 		}
 
 		[Test]
