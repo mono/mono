@@ -47,7 +47,7 @@ namespace System.ServiceModel
 		ClientRuntime runtime;
 		ChannelFactory factory;
 		IRequestChannel request_channel;
-		IOutputChannel output_channel;
+		IOutputChannel output_channel; // could also be IDuplexChannel instance.
 
 		#region delegates
 		readonly ProcessDelegate _processDelegate;
@@ -75,6 +75,12 @@ namespace System.ServiceModel
 			// default values
 			AllowInitializationUI = true;
 			OperationTimeout = TimeSpan.FromMinutes (1);
+
+			// determine operation channel to create.
+			if (factory.OpenedChannelFactory is IChannelFactory<IRequestChannel>)
+				SetupRequestChannel ();
+			else
+				SetupOutputChannel ();
 		}
 
 		public ClientRuntime Runtime {
@@ -239,7 +245,6 @@ namespace System.ServiceModel
 		[MonoTODO]
 		public bool AllowOutputBatching { get; set; }
 
-		[MonoTODO]
 		public IInputSession InputSession {
 			get {
 				ISessionChannel<IInputSession> ch = request_channel as ISessionChannel<IInputSession>;
@@ -248,15 +253,16 @@ namespace System.ServiceModel
 			}
 		}
 
-		[MonoTODO]
 		public EndpointAddress LocalAddress {
-			get { throw new NotImplementedException (); }
+			get {
+				var dc = OperationChannel as IDuplexChannel;
+				return dc != null ? dc.LocalAddress : null;
+			}
 		}
 
 		[MonoTODO]
 		public TimeSpan OperationTimeout { get; set; }
 
-		[MonoTODO]
 		public IOutputSession OutputSession {
 			get {
 				ISessionChannel<IOutputSession> ch = request_channel as ISessionChannel<IOutputSession>;
@@ -265,14 +271,12 @@ namespace System.ServiceModel
 			}
 		}
 
-		[MonoTODO]
 		public EndpointAddress RemoteAddress {
-			get { throw new NotImplementedException (); }
+			get { return request_channel != null ? request_channel.RemoteAddress : output_channel.RemoteAddress; }
 		}
 
-		[MonoTODO]
 		public string SessionId {
-			get { throw new NotImplementedException (); }
+			get { return OutputSession != null ? OutputSession.Id : InputSession != null ? InputSession.Id : null; }
 		}
 
 		#endregion
@@ -324,9 +328,14 @@ namespace System.ServiceModel
 		}
 
 		// IChannel
+
+		IChannel OperationChannel {
+			get { return (IChannel) request_channel ?? output_channel; }
+		}
+
 		public T GetProperty<T> () where T : class
 		{
-			return factory.GetProperty<T> ();
+			return OperationChannel.GetProperty<T> ();
 		}
 
 		// IExtensibleObject<IContextChannel>
@@ -406,6 +415,7 @@ namespace System.ServiceModel
 			return pl;
 		}
 
+		// This handles IDuplexChannel, IOutputChannel, and those for session channels.
 		void SetupOutputChannel ()
 		{
 			if (output_channel != null)
@@ -416,10 +426,9 @@ namespace System.ServiceModel
 
 			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
 			output_channel = (IOutputChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {address, via});
-
-			output_channel.Open ();
 		}
 
+		// This handles both IRequestChannel and IRequestSessionChannel.
 		void SetupRequestChannel ()
 		{
 			if (request_channel != null)
@@ -430,13 +439,12 @@ namespace System.ServiceModel
 
 			var method = factory.OpenedChannelFactory.GetType ().GetMethod ("CreateChannel", new Type [] {typeof (EndpointAddress), typeof (Uri)});
 			request_channel = (IRequestChannel) method.Invoke (factory.OpenedChannelFactory, new object [] {address, via});
-
-			request_channel.Open ();
 		}
 
 		void Output (OperationDescription od, object [] parameters)
 		{
-			SetupOutputChannel ();
+			if (output_channel.State != CommunicationState.Opened)
+				output_channel.Open ();
 
 			ClientOperation op = runtime.Operations [od.Name];
 			// FIXME: pass configured default timeout
@@ -445,7 +453,8 @@ namespace System.ServiceModel
 
 		object Request (OperationDescription od, object [] parameters)
 		{
-			SetupRequestChannel ();
+			if (request_channel.State != CommunicationState.Opened)
+				request_channel.Open ();
 
 			ClientOperation op = runtime.Operations [od.Name];
 			object [] inspections = new object [runtime.MessageInspectors.Count];

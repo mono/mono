@@ -1,5 +1,12 @@
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : setup IChannel instance at construction
+	  time, so that it can GetProperty<T>() immediately after
+	  ChannelFactory.CreateChannel().
+	  Implement some properties.
+
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerNode.cs : update API to the latest .NET amd implement some.
 
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
