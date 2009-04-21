@@ -1,3 +1,13 @@
+2009-04-21  Mark Probst  <mark.probst@gmail.com>
+
+	* object-internals.h: The Thread object has no execution_context
+	member anymore.
+
+	* threads.c, threadpool.c, threads-types.h: Accessor functions for
+	the execution context.
+
+	* appdomain.c: Bump corlib version.
+
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (verify_clause_relationship): Only mask as an error if the exception clause
