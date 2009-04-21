@@ -1,3 +1,8 @@
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerResolver.cs, PeerResolverImpl.cs :
+	  update API to the latest .NET.
+
 2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Dummy.cs : remove some peer transport stuff.

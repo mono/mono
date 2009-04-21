@@ -40,6 +40,10 @@ namespace System.ServiceModel
 		{
 		}
 
+		public override bool CanShareReferrals {
+			get { throw new NotImplementedException (); }
+		}
+
 		public override object Register (string meshId,
 			PeerNodeAddress nodeAddress, TimeSpan timeout)
 		{

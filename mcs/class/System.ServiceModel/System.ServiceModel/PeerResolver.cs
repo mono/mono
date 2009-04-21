@@ -27,7 +27,10 @@
 //
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using System.ServiceModel.Security.Tokens;
+using System.ServiceModel.PeerResolvers;
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.ServiceModel
@@ -35,6 +38,12 @@ namespace System.ServiceModel
 	public abstract class PeerResolver
 	{
 		protected PeerResolver ()
+		{
+		}
+
+		public abstract bool CanShareReferrals { get; }
+
+		public virtual void Initialize (EndpointAddress address, Binding binding, ClientCredentials credentials, PeerReferralPolicy referralPolicy)
 		{
 		}
 

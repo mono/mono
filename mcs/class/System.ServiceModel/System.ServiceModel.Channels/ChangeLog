@@ -1,5 +1,9 @@
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PnrpPeerResolverBindingElement.cs : sync with PeerResolver changes.
+
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinaryMessageEncodingBindingElement.cs, ChannelBase.cs,
 	  ChannelFactoryBase.cs, WindowsStreamSecurityBindingElement.cs :
 	  implement GetProperty<T>(). Return documented objects or null.
