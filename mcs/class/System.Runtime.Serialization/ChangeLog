@@ -1,3 +1,10 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.Runtime.Serialization.dll.sources: Remove
+	MonoTODOAttribute since we get it from mscorlib (fix build too).
+	Remove System.Xml.Schema/XmlSchema.cs from build since we can
+	get the fields directly from System.Xml.dll
+
 2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Runtime.Serialization.dll.sources : added mtom reader.
