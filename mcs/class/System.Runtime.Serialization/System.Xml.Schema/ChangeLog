@@ -1,4 +1,0 @@
-2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
-			Jb Evain  <jbevain@novell.com>
-
-	* XmlSchema.cs: add helper internal class.

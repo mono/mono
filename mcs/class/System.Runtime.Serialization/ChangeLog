@@ -1,3 +1,9 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* System.Xml.Schema/*: Remove (not needed for 2.1 anymore)
+	* net_2_1_raw_System.Runtime.Serialization.dll.sources: Remove 
+	more code duplication for 2.1 and fix the build
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.Runtime.Serialization.dll.sources: Remove

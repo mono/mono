@@ -1,5 +1,3 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
 Assembly/AssemblyInfo.cs
 System.Runtime.Serialization/CollectionDataContractAttribute.cs
 System.Runtime.Serialization/ContractNamespaceAttribute.cs
