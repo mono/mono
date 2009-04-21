@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005,2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,25 +32,89 @@ using System.ServiceModel.Channels;
 
 namespace System.ServiceModel
 {
-	public abstract class PeerNode
+	public abstract class PeerNode : IOnlineStatus
 	{
-		protected PeerNode ()
+		internal PeerNode (string meshId, int port)
 		{
+			MeshId = meshId;
+			Port = port;
 		}
 
-		public abstract event EventHandler Offline;
-		public abstract event EventHandler Online;
+		public event EventHandler Offline;
+		public event EventHandler Online;
 
-		public abstract bool IsOnline { get; }
+		public bool IsOnline { get; internal set; }
 
-		public abstract bool IsOpen { get; }
+		internal string MeshId { get; private set; }
+
+		internal int NodeId { get; set; }
+
+		internal abstract bool IsOpen { get; }
+
+		public int Port { get; private set; }
 
 		public abstract PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
 
-		[MonoTODO]
-		public static PeerNode Get (Uri listenUri)
+		internal abstract void Open (TimeSpan timeout);
+
+		public void RefreshConnection ()
 		{
-			throw new NotImplementedException ();
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("MeshId: {0}, Node ID: {1}, Online: {2}, Opened:{3}, Port: {4}", MeshId, NodeId, IsOnline, IsOpen, Port);
+		}
+
+		internal void SetOnline ()
+		{
+			IsOnline = true;
+			if (Online != null)
+				Online (this, EventArgs.Empty);
+		}
+
+		internal void SetOffline ()
+		{
+			IsOnline = false;
+			if (Offline != null)
+				Offline (this, EventArgs.Empty);
+		}
+	}
+
+	internal class PeerNodeImpl : PeerNode
+	{
+		internal PeerNodeImpl (PeerResolver resolver, string meshId, int port)
+			: base (meshId, port)
+		{
+			this.resolver = resolver;
+		}
+
+		PeerResolver resolver;
+		ICollection<PeerNodeAddress> addresses;
+		object registered_id;
+
+		// FIXME: implement
+		public override PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
+
+		internal override bool IsOpen {
+			get { return registered_id != null; }
+		}
+
+		internal override void Open (TimeSpan timeout)
+		{
+			DateTime startTime = DateTime.Now;
+
+			int maxAddresses = 3; // FIXME: get it from somewhere
+
+			// FIXME: not sure how I should handle addresses
+			int idx = 0;
+			foreach (var addr in resolver.Resolve (MeshId, maxAddresses, timeout)) {
+				idx++;
+				registered_id = resolver.Register (MeshId, addr, timeout - (DateTime.Now - startTime));
+				NodeId = idx;
+				SetOnline ();
+				break;
+			}
 		}
 	}
 }

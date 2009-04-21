@@ -1,5 +1,9 @@
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerNode.cs : update API to the latest .NET amd implement some.
+
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerResolver.cs, PeerResolverImpl.cs :
 	  update API to the latest .NET.
 
