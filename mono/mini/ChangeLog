@@ -1,5 +1,10 @@
 2009-04-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Emit the unwind info into a separate
+	table to avoid duplicates.
+
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this.
+	
 	* aot-compiler.c (emit_method_code): Avoid writing symbols if the nodebug
 	option is used.
 
