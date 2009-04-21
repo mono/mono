@@ -94,7 +94,6 @@ namespace System.Threading {
 		private int serialized_culture_info_len;
 		private IntPtr serialized_ui_culture_info;
 		private int serialized_ui_culture_info_len;
-		private ExecutionContext _ec;
 		private bool thread_dump_requested;
 		private IntPtr end_stack;
 		private bool thread_interrupt_requested;
@@ -118,6 +117,9 @@ namespace System.Threading {
 		// the name of local_slots is important as it's used by the runtime.
 		[ThreadStatic] 
 		static object[] local_slots;
+
+		[ThreadStatic]
+		static ExecutionContext _ec;
 
 		// can be both a ThreadSart and a ParameterizedThreadStart
 		private MulticastDelegate threadstart;
@@ -946,7 +948,6 @@ namespace System.Threading {
 		}
 
 		[MonoTODO ("limited to CompressedStack support")]
-		// FIXME: We share the _ec object between appdomains
 		public ExecutionContext ExecutionContext {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {

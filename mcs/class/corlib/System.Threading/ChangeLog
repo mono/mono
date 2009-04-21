@@ -1,3 +1,8 @@
+2009-04-21  Mark Probst  <mark.probst@gmail.com>
+
+	* Thread.cs: Make the execution context field thread-static to
+	avoid it being shared between app domains.
+
 2009-04-20  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Thread.cs: For 2.1 ensure exceptions in threads are handled using the

@@ -63,7 +63,7 @@ namespace System {
 		 * Changes which are already detected at runtime, like the addition
 		 * of icalls, do not require an increment.
 		 */
-		private const int mono_corlib_version = 75;
+		private const int mono_corlib_version = 76;
 
 #if NET_2_0
 		[ComVisible (true)]
