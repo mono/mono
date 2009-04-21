@@ -33,9 +33,6 @@ namespace Mono.Cecil.Cil {
 
 	sealed class SymbolStoreHelper {
 
-		const string MonoSymbolSupport = "Mono.Cecil.Mdb.MdbFactory, Mono.Cecil.Mdb";
-		const string DotNetSymbolSupport = "Mono.Cecil.Pdb.PdbFactory, Mono.Cecil.Pdb";
-
 		static ISymbolStoreFactory s_factory;
 
 		SymbolStoreHelper ()
@@ -61,17 +58,38 @@ namespace Mono.Cecil.Cil {
 			if (s_factory != null)
 				return;
 
-			Type factoryType = Type.GetType (OnMono () ?
-				MonoSymbolSupport :
-				DotNetSymbolSupport,
-				true);
+			string assembly_name;
+			string type_name = GetSymbolSupportType (out assembly_name);
+
+			Type factoryType = Type.GetType (type_name + ", " + assembly_name, false);
+			if (factoryType == null) {
+				try {
+					SR.Assembly assembly = SR.Assembly.LoadWithPartialName (assembly_name);
+					factoryType = assembly.GetType (type_name);
+				} catch {}
+			}
+
+			if (factoryType == null)
+				throw new NotSupportedException ();
 
 			s_factory = (ISymbolStoreFactory) Activator.CreateInstance (factoryType);
 		}
 
+		static string GetSymbolSupportType (out string assembly)
+		{
+			string kind = GetSymbolKind ();
+			assembly = "Mono.Cecil." + kind;
+			return string.Format (assembly + "." + kind + "Factory");
+		}
+
+		static string GetSymbolKind ()
+		{
+			return OnMono () ? "Mdb" : "Pdb";
+		}
+
 		static bool OnMono ()
 		{
-			return typeof (object).Assembly.GetType ("System.MonoType", false) != null;
+			return Type.GetType ("Mono.Runtime") != null;
 		}
 	}
 }

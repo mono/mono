@@ -1,3 +1,8 @@
+2009-04-21  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Cil/SymbolStoreHelper.cs: look for the assembly in the GAC
+	as well if it's not local.
+
 2009-04-03  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Metadata/BlobHeap.cs
