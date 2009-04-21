@@ -1,5 +1,11 @@
 2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_delegate_type_equal): Compare valuetypes using
+	mono_class_from_mono_type to avoid bad interactions with the dual representation
+	of the generic type definition.
+
+2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_invoke_method): Use mono_class_from_mono_type to
 	get the MonoClass for the call context type as it might be a generic
 	instance.
