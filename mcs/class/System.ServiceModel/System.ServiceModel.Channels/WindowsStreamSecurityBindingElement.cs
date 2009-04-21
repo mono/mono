@@ -88,10 +88,13 @@ namespace System.ServiceModel.Channels
 			return new WindowsStreamSecurityBindingElement (this);
 		}
 
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (typeof (T) == typeof (ISecurityCapabilities))
+				return (T) (object) this;
+			if (typeof (T) == typeof (IdentityVerifier))
+				return (T) (object) IdentityVerifier.CreateDefault ();
+			return null;
 		}
 
 		#region explicit interface implementations

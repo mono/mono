@@ -133,10 +133,9 @@ namespace System.ServiceModel.Channels
 			get { return send_timeout; }
 		}
 
-		[MonoTODO]
 		public virtual T GetProperty<T> () where T : class
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[MonoTODO ("find out what to do here.")]

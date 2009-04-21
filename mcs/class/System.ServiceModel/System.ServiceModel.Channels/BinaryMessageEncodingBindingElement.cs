@@ -111,10 +111,11 @@ namespace System.ServiceModel.Channels
 			return new BinaryMessageEncodingBindingElement (this);
 		}
 
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			if (typeof (T) == typeof (MessageVersion))
+				return (T) (object) MessageVersion;
+			return null;
 		}
 
 		public override MessageEncoderFactory

@@ -1,3 +1,9 @@
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncodingBindingElement.cs, ChannelBase.cs,
+	  ChannelFactoryBase.cs, WindowsStreamSecurityBindingElement.cs :
+	  implement GetProperty<T>(). Return documented objects or null.
+
 2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerChannelFactory.cs, PeerChannelListener.cs,
