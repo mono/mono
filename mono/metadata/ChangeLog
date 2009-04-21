@@ -1,5 +1,16 @@
 2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Backport of r132185.
+
+	* verify.c (verify_type_compatibility_full): Compare MonoClass and
+	not MonoType to check for equality of valuetypes as the generic type
+	definition allows for two different encodings: the generic type definition
+	class or a generic instance over the GTD arguments.
+
+	Fixes #496175.
+
+2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Backport of r132170.
 
 	* metadata-verify.c: Enable pe verification as the issue with #496453
