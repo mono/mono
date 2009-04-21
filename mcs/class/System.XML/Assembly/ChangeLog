@@ -1,3 +1,8 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Open internals to System.Runtime.Serialization
+	since it needs some stuff from XmlSchema
+
 2009-04-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Remove AllowPartiallyTrustedCallers from NET_2_1
