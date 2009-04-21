@@ -519,6 +519,35 @@ TextWriter sw = Console.Out;
 			Uri uri = new Uri ("/Moonlight", UriKind.Relative);
 			CheckRelativeUri (uri);
 		}
+
+		[Test]
+		public void Bug496783 ()
+		{
+			string s = "tcp://csve2.csse.unimelb.edu.au:9090/Aneka";
+			Uri uri = new Uri (s);
+			// this is not parsed by a known UriParser
+			Assert.IsFalse (UriParser.IsKnownScheme (uri.Scheme), "UriParser");
+
+			Uri uri2 = new Uri ("tcp://csve2.csse.unimelb.edu.au:9090/");
+			Assert.IsTrue (uri2.IsBaseOf (uri), "IsBaseOf");
+
+			Assert.AreEqual (uri.AbsoluteUri, uri.GetComponents (UriComponents.AbsoluteUri, UriFormat.Unescaped), "AbsoluteUri");
+			Assert.AreEqual (uri.Fragment, uri.GetComponents (UriComponents.Fragment, UriFormat.Unescaped), "Fragment");
+			Assert.AreEqual (uri.Host, uri.GetComponents (UriComponents.Host, UriFormat.Unescaped), "Host");
+			Assert.AreEqual (uri.Authority, uri.GetComponents (UriComponents.HostAndPort, UriFormat.Unescaped), "HostAndPort");
+			Assert.AreEqual (uri.AbsoluteUri, uri.GetComponents (UriComponents.HttpRequestUrl, UriFormat.Unescaped), "HttpRequestUrl");
+			Assert.AreEqual (String.Empty, uri.GetComponents (UriComponents.KeepDelimiter, UriFormat.Unescaped), "KeepDelimiter");
+			Assert.AreEqual ("Aneka", uri.GetComponents (UriComponents.Path, UriFormat.Unescaped), "Path");
+			Assert.AreEqual (uri.LocalPath, uri.GetComponents (UriComponents.PathAndQuery, UriFormat.Unescaped), "PathAndQuery");
+			Assert.AreEqual (uri.Port.ToString (), uri.GetComponents (UriComponents.Port, UriFormat.Unescaped), "Port");
+			Assert.AreEqual (uri.Query, uri.GetComponents (UriComponents.Query, UriFormat.Unescaped), "Query");
+			Assert.AreEqual (uri.Scheme, uri.GetComponents (UriComponents.Scheme, UriFormat.Unescaped), "Scheme");
+			Assert.AreEqual ("tcp://csve2.csse.unimelb.edu.au:9090", uri.GetComponents (UriComponents.SchemeAndServer, UriFormat.Unescaped), "SchemeAndServer");
+			Assert.AreEqual (uri.OriginalString, uri.GetComponents (UriComponents.SerializationInfoString, UriFormat.Unescaped), "SerializationInfoString");
+			Assert.AreEqual (uri.Authority, uri.GetComponents (UriComponents.StrongAuthority, UriFormat.Unescaped), "StrongAuthority");
+			Assert.AreEqual (uri.Port.ToString (), uri.GetComponents (UriComponents.StrongPort, UriFormat.Unescaped), "StrongPort");
+			Assert.AreEqual (uri.UserInfo, uri.GetComponents (UriComponents.UserInfo, UriFormat.Unescaped), "UserInfo");
+		}
 #endif
 	}
 }

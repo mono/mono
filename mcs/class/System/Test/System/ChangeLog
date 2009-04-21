@@ -1,3 +1,9 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* UriParserTest.cs: Ensure "tcp" is not a registred scheme
+	* UriTest2.cs: Make sure GetComponents and IsBaseOf do not throw
+	NRE is no UriParser was registred for the URI scheme
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UriTest2.cs: More constructor test cases

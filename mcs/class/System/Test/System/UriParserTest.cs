@@ -453,6 +453,9 @@ namespace MonoTests.System {
 			// variations - mixed and upper case
 			Assert.IsTrue (UriParser.IsKnownScheme ("FiLe"), "FiLe");
 			Assert.IsTrue (UriParser.IsKnownScheme ("FTP"), "ftp");
+
+			// see 496783
+			Assert.IsFalse (UriParser.IsKnownScheme ("tcp"), "tcp");
 		}
 
 		[Test]
