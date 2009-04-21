@@ -65,6 +65,21 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class TemplateParser : BaseParser
 	{
+#if NET_2_0
+		[Flags]
+		internal enum OutputCacheParsedParams
+		{
+			Location               = 0x0001,
+			CacheProfile           = 0x0002,
+			NoStore                = 0x0004,
+			SqlDependency          = 0x0008,
+			VaryByCustom           = 0x0010,
+			VaryByHeader           = 0x0020,
+			VaryByControl          = 0x0040,
+			VaryByContentEncodings = 0x0080
+		}
+#endif
+		
 		string inputFile;
 		string text;
 		Hashtable mainAttributes;
@@ -97,7 +112,9 @@ namespace System.Web.UI {
 		int oc_duration;
 		string oc_header, oc_custom, oc_param, oc_controls;
 #if NET_2_0
-		string oc_content_encodings;
+		string oc_content_encodings, oc_cacheprofile, oc_sqldependency;
+		bool oc_nostore;
+		OutputCacheParsedParams oc_parsed_params = 0;
 #endif
 		bool oc_shared;
 		OutputCacheLocation oc_location;
@@ -391,8 +408,28 @@ namespace System.Web.UI {
 										     "to a positive integer value");
 							break;
 #if NET_2_0
+						case "sqldependency":
+							oc_sqldependency = (string) entry.Value;
+							break;
+							
+						case "nostore":
+							try {
+								oc_nostore = Boolean.Parse ((string) entry.Value);
+								oc_parsed_params |= OutputCacheParsedParams.NoStore;
+							} catch {
+								ThrowParseException ("The 'NoStore' attribute is case sensitive" +
+										     " and must be set to 'true' or 'false'.");
+							}
+							break;
+
+						case "cacheprofile":
+							oc_cacheprofile = (string) entry.Value;
+							oc_parsed_params |= OutputCacheParsedParams.CacheProfile;
+							break;
+							
 						case "varybycontentencodings":
 							oc_content_encodings = (string) entry.Value;
+							oc_parsed_params |= OutputCacheParsedParams.VaryByContentEncodings;
 							break;
 #endif
 						case "varybyparam":
@@ -402,9 +439,15 @@ namespace System.Web.UI {
 							break;
 						case "varybyheader":
 							oc_header = (string) entry.Value;
+#if NET_2_0
+							oc_parsed_params |= OutputCacheParsedParams.VaryByHeader;
+#endif
 							break;
 						case "varybycustom":
 							oc_custom = (string) entry.Value;
+#if NET_2_0
+							oc_parsed_params |= OutputCacheParsedParams.VaryByCustom;
+#endif
 							break;
 						case "location":
 							if (!(this is PageParser))
@@ -413,6 +456,9 @@ namespace System.Web.UI {
 							try {
 								oc_location = (OutputCacheLocation) Enum.Parse (
 									typeof (OutputCacheLocation), (string) entry.Value, true);
+#if NET_2_0
+								oc_parsed_params |= OutputCacheParsedParams.Location;
+#endif
 							} catch {
 								ThrowParseException ("The 'location' attribute is case sensitive and " +
 										     "must be one of the following values: Any, Client, " +
@@ -425,6 +471,9 @@ namespace System.Web.UI {
 								goto default;
 #endif
 							oc_controls = (string) entry.Value;
+#if NET_2_0
+							oc_parsed_params |= OutputCacheParsedParams.VaryByControl;
+#endif
 							break;
 						case "shared":
 							if (this is PageParser)
@@ -1300,10 +1349,26 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
+		internal OutputCacheParsedParams OutputCacheParsedParameters {
+			get { return oc_parsed_params; }
+		}
+
+		internal string OutputCacheSqlDependency {
+			get { return oc_sqldependency; }
+		}
+		
+		internal string OutputCacheCacheProfile {
+			get { return oc_cacheprofile; }
+		}
+		
 		internal string OutputCacheVaryByContentEncodings {
 			get { return oc_content_encodings; }
 		}
 
+		internal bool OutputCacheNoStore {
+			get { return oc_nostore; }
+		}
+		
 		internal virtual TextReader Reader {
 			get { return null; }
 			set { /* no-op */ }

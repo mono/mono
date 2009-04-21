@@ -1,5 +1,8 @@
 2009-04-21  Marek Habersack  <mhabersack@novell.com>
 
+	* Page.cs: added support for OutputCacheParameters.NoStore to
+	InitOutputCache.
+
 	* SimpleWebHandlerParser.cs: retrieve CompilationSection from the
 	appropriate web.config file.
 
@@ -15,6 +18,8 @@
 	BaseParser.
 	PagesConfig now uses the new GetConfigSection method. Fixes bug
 	#494245
+	Added support for the SqlDependency, NoStore and CacheProfile
+	attributes of the OutputCache directive. Fixes bug #496951
 
 2009-04-15  Marek Habersack  <mhabersack@novell.com>
 

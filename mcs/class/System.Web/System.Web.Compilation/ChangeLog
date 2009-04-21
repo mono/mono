@@ -1,3 +1,10 @@
+2009-04-21  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs: implemented new way of setting output cache
+	parameters in the 2.0 profile. The generated code is now the same
+	as on .NET and uses the OutputCacheParameters class to pass
+	settings to InitOutputCache.
+
 2009-04-17  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: if thead/tbody are parsed as children of a
