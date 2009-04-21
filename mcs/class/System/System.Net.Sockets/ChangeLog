@@ -1,3 +1,15 @@
+2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: End* methods can only be called once per IAsyncResult.
+	Bug #466031 fixed.
+
+2009-02-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: instead of clearing the sockets form the output and then
+	adding them back, we just remove the ones that have not been signaled.
+	Fixes bug #354090 and bug #476138.
+
+
 2009-02-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: instead of clearing the sockets form the output and then
