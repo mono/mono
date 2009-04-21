@@ -1,3 +1,8 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources: Remove 
+	MonoTODOAttribute since we can get it from mscorlib.dll
+
 2009-04-20  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources:
