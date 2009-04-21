@@ -20,7 +20,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.Web.Abstractions.dll \
 	        /r:System.Web.Routing.dll \
 	        /r:System.Web.Extensions.dll \
-		$(RESX_RES:%=/resource:%)
+		$(foreach r, $(RESX_RES), /resource:$(r),System.Web.Mvc.Resources.$(notdir $(r)))
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
 # This is a .NET 3.5 only assembly, but built during the 2.0 build
