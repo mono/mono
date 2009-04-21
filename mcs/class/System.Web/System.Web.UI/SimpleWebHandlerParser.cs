@@ -575,7 +575,11 @@ namespace System.Web.UI
 #if NET_2_0
 		CompilationSection CompilationConfig {
 			get {
-				return (CompilationSection)WebConfigurationManager.GetWebApplicationSection ("system.web/compilation");
+				string vp = VirtualPath;
+				if (String.IsNullOrEmpty (vp))
+					return WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
+				else
+					return WebConfigurationManager.GetSection ("system.web/compilation", vp) as CompilationSection;
 			}
 		}
 

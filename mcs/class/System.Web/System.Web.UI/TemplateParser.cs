@@ -206,7 +206,7 @@ namespace System.Web.UI {
 			if (BuildManager.HaveResources)
 				imports.Add ("System.Resources");
 			
-			PagesSection pages = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
+			PagesSection pages = PagesConfig;
 			if (pages == null)
 				return;
 
@@ -1006,13 +1006,13 @@ namespace System.Web.UI {
 			get {
 				if (pageParserFilter != null)
 					return pageParserFilter;
-				
+
 				if (String.IsNullOrEmpty (pageParserFilterTypeName))
 					return null;
 
 				pageParserFilter = Activator.CreateInstance (PageParserFilterType) as PageParserFilter;
 				pageParserFilter.Initialize (VirtualPath, this);
-				
+
 				return pageParserFilter;
 			}
 		}
@@ -1038,14 +1038,7 @@ namespace System.Web.UI {
 		internal ILocation DirectiveLocation {
 			get { return directiveLocation; }
 		}
-
-#if NET_2_0
-		internal VirtualPath VirtualPath {
-			get;
-			set;
-		}
-#endif
-
+		
 		internal string ParserDir {
 			get {
 				if (includeDirs == null || includeDirs.Count == 0)
@@ -1347,9 +1340,7 @@ namespace System.Web.UI {
 		}
 		
 		internal PagesSection PagesConfig {
-			get {
-				return WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
-			}
+			get { return GetConfigSection <PagesSection> ("system.web/pages") as PagesSection; }
 		}
 
 		internal AspGenerator AspGenerator {
