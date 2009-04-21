@@ -90,7 +90,6 @@ namespace System.ServiceModel
 		}
 
 		PeerResolver resolver;
-		ICollection<PeerNodeAddress> addresses;
 		object registered_id;
 
 		// FIXME: implement

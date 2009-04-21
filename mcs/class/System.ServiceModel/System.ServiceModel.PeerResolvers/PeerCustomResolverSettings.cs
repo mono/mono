@@ -14,7 +14,7 @@ namespace System.ServiceModel.PeerResolvers
 {
 	public class PeerCustomResolverSettings
 	{
-		public PeerCustomResolverSettings()
+		public PeerCustomResolverSettings ()
 		{
 		}
 		
@@ -31,6 +31,15 @@ namespace System.ServiceModel.PeerResolvers
 		internal PeerCustomResolverBindingElement CreateBinding ()
 		{
 			return new PeerCustomResolverBindingElement (this);
+		}
+
+		internal PeerCustomResolverSettings Clone ()
+		{
+			return new PeerCustomResolverSettings () {
+				Binding = this.Binding,
+				Address = this.Address,
+				Resolver = this.Resolver
+				};
 		}
 	}
 }

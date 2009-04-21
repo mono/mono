@@ -1,5 +1,10 @@
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerCustomResolverBindingElement.cs :
+	  implement full custom resolver.
+
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerDuplexChannel.cs, PeerChannelListener.cs,
 	  PeerOutputChannel.cs, PeerCustomResolverBindingElement.cs,
 	  PeerChannelFactory.cs : ongoing p2p channel implementation.

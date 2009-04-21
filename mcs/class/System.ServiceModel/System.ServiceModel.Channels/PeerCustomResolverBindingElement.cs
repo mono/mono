@@ -41,6 +41,7 @@ namespace System.ServiceModel.Channels
 	{
 		public PeerCustomResolverBindingElement ()
 		{
+			settings = new PeerCustomResolverSettings ();
 		}
 
 		private PeerCustomResolverBindingElement (
@@ -48,6 +49,7 @@ namespace System.ServiceModel.Channels
 			: base (other)
 		{
 			ReferralPolicy = other.ReferralPolicy;
+			settings = other.settings.Clone ();
 		}
 
 		public PeerCustomResolverBindingElement (BindingContext context, PeerCustomResolverSettings settings)
@@ -92,20 +94,69 @@ namespace System.ServiceModel.Channels
 			return new PeerCustomResolverBindingElement (this);
 		}
 
-		[MonoTODO]
 		public override PeerResolver CreatePeerResolver ()
 		{
-			if (settings != null)
+			if (settings != null && settings.Resolver != null)
 				return settings.Resolver;
 
-			// FIXME: create from configuration
-			throw new NotImplementedException ();
+			var se = new ServiceEndpoint (ContractDescription.GetContract (typeof (IPeerResolverContract)), settings.Binding, settings.Address);
+			return new PeerCustomResolver (se);
 		}
 
 		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
 			throw new NotImplementedException ();
+		}
+	}
+
+	internal interface ICustomPeerResolverClient : IPeerResolverContract, IClientChannel
+	{
+	}
+
+	internal class PeerCustomResolver : PeerResolver
+	{
+		Guid client_id = Guid.NewGuid ();
+		ICustomPeerResolverClient client;
+		string preserved_mesh_id;
+
+		public PeerCustomResolver (ServiceEndpoint endpoint)
+		{
+			var client = new ChannelFactory<ICustomPeerResolverClient> (endpoint).CreateChannel ();
+		}
+
+		public override bool CanShareReferrals {
+			get { return false; }
+		}
+
+		public override object Register (string meshId,
+			PeerNodeAddress nodeAddress, TimeSpan timeout)
+		{
+			client.OperationTimeout = timeout;
+			preserved_mesh_id = meshId;
+			return client.Register (new RegisterInfo (client_id, meshId, nodeAddress)).RegistrationId;
+		}
+
+		public override ReadOnlyCollection<PeerNodeAddress> Resolve (
+			string meshId, int maxAddresses, TimeSpan timeout)
+		{
+			client.OperationTimeout = timeout;
+			return new ReadOnlyCollection<PeerNodeAddress> (client.Resolve (new ResolveInfo (client_id, meshId, maxAddresses)).Addresses);
+		}
+
+		public override void Unregister (object registrationId,
+			TimeSpan timeout)
+		{
+			client.OperationTimeout = timeout;
+			preserved_mesh_id = null;
+			client.Unregister (new UnregisterInfo (preserved_mesh_id, (Guid) registrationId));
+		}
+
+		public override void Update (object registrationId,
+			PeerNodeAddress updatedNodeAddress, TimeSpan timeout)
+		{
+			client.OperationTimeout = timeout;
+			client.Update (new UpdateInfo ((Guid) registrationId, client_id, preserved_mesh_id, updatedNodeAddress));
 		}
 	}
 }

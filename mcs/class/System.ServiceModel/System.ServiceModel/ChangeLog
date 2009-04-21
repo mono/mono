@@ -1,5 +1,9 @@
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerNode.cs : remove extra field.
+
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : setup IChannel instance at construction
 	  time, so that it can GetProperty<T>() immediately after
 	  ChannelFactory.CreateChannel().
