@@ -37,8 +37,11 @@ using System.Threading;
 namespace System.ServiceModel
 {
 	[MonoTODO ("It somehow rejects classes, but dunno how we can do that besides our code wise.")]
-	public abstract class ClientBase<TChannel>
-		: IDisposable, ICommunicationObject where TChannel : class
+	public abstract class ClientBase<TChannel> :
+#if !NET_2_1
+		IDisposable,
+#endif
+		ICommunicationObject where TChannel : class
 	{
 		static InstanceContext initialContxt = new InstanceContext (null);
 #if NET_2_1
@@ -47,15 +50,13 @@ namespace System.ServiceModel
 
 		static ClientBase ()
 		{
-			foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies ()) {
-				if (ass.GetName ().Name != "System.Windows")
-					continue;
-				Type dispatcher_type = ass.GetType ("System.Windows.Threading.Dispatcher", true);
-				dispatcher_main_property = dispatcher_type.GetProperty ("Main", BindingFlags.NonPublic | BindingFlags.Static);
-				dispatcher_begin_invoke_method = dispatcher_type.GetMethod ("BeginInvoke", new Type [] {typeof (Delegate), typeof (object [])});
-			}
+			Type dispatcher_type = Type.GetType ("System.Windows.Threading.Dispatcher, System.Windows, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e", true);
+
+			dispatcher_main_property = dispatcher_type.GetProperty ("Main", BindingFlags.NonPublic | BindingFlags.Static);
 			if (dispatcher_main_property == null)
 				throw new SystemException ("Dispatcher.Main not found");
+
+			dispatcher_begin_invoke_method = dispatcher_type.GetMethod ("BeginInvoke", new Type [] {typeof (Delegate), typeof (object [])});
 			if (dispatcher_begin_invoke_method == null)
 				throw new SystemException ("Dispatcher.BeginInvoke not found");
 		}
@@ -272,13 +273,12 @@ namespace System.ServiceModel
 			begin_async_result = beginOperationDelegate (inValues, cb, userState);
 		}
 		IAsyncResult begin_async_result;
-#endif
-		
+#else
 		void IDisposable.Dispose ()
 		{
 			Close ();
 		}
-
+#endif
 		protected virtual TChannel CreateChannel ()
 		{
 			return ChannelFactory.CreateChannel ();
