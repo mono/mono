@@ -43,14 +43,16 @@ namespace System.Net {
 		public IPEndPoint (IPAddress address, int port)
 		{
 			if (address == null)
-				throw new ArgumentNullException ("Value cannot be null");
+				throw new ArgumentNullException ("address");
 
 			Address = address;
 			Port = port;
 		}
 		
-		public IPEndPoint (long iaddr, int port) : this (new IPAddress (iaddr), port)
+		public IPEndPoint (long iaddr, int port)
 		{
+			Address = new IPAddress (iaddr);
+			Port = port;
 		}
 
 		public IPAddress Address {
@@ -84,18 +86,16 @@ namespace System.Net {
 
 		// bytes 2 and 3 store the port, the rest
 		// stores the address
-		public override EndPoint Create(SocketAddress sockaddr) {
-			int size=sockaddr.Size;
-			
-			// LAMESPEC: no mention of what to do if
-			// sockaddr is bogus
-			if(size<8) {
-				// absolute minimum amount needed for
-				// an address family, buffer size,
-				// port and address
-				return(null);
-			}
+		public override EndPoint Create (SocketAddress socketAddress)
+		{
+			if (socketAddress == null)
+				throw new ArgumentNullException ("socketAddress");
 
+			if (socketAddress.Family != AddressFamily)
+				throw new ArgumentException ("socketAddress");
+
+			SocketAddress sockaddr = socketAddress;
+			int size =sockaddr.Size;
 			AddressFamily family = sockaddr.Family;
 			int port;
 
