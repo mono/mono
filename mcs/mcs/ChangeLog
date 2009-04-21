@@ -1,3 +1,8 @@
+2009-04-21  Raja R Harinath  <harinath@hurrynot.org>
+
+	* cs-parser.jay (GetTokenName): Mark GENERATE_COMPLETION and
+	COMPLETE_COMPLETION as internal.
+
 2009-04-17  Miguel de Icaza  <miguel@novell.com>
 
 	* complete.cs: Include namespace resolution in simple names as

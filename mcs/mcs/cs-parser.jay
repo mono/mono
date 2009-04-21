@@ -6631,7 +6631,9 @@ static string GetTokenName (int token)
 	case Token.EVAL_COMPILATION_UNIT_PARSER:
 	case Token.EVAL_USING_DECLARATIONS_UNIT_PARSER:
 	case Token.EVAL_STATEMENT_PARSER:
-	case Token.LAST_KEYWORD:	
+	case Token.LAST_KEYWORD:
+	case Token.GENERATE_COMPLETION:
+	case Token.COMPLETE_COMPLETION:
 		return "<internal>";
 
 		// A bit more robust.
