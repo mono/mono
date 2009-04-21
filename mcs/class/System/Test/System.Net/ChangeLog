@@ -1,3 +1,7 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EndPointTest.cs: New
+
 2009-02-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DnsTest.cs: Use Assert syntax, and spaces to tabs. Added tests
