@@ -361,7 +361,7 @@ namespace System.Web.Services.Protocols
 		void SerializeFault (HttpContext context, SoapServerMessage requestMessage, Exception ex)
 		{
 			SoapException soex = ex as SoapException;
-			if (soex == null) soex = new SoapException (ex.Message, WebServiceHelper.ServerFaultCode (requestMessage != null && requestMessage.IsSoap12), ex);
+			if (soex == null) soex = new SoapException (ex.ToString (), WebServiceHelper.ServerFaultCode (requestMessage != null && requestMessage.IsSoap12), ex);
 
 			SoapServerMessage faultMessage;
 			if (requestMessage != null)

@@ -1,8 +1,14 @@
+2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpSoapWebServiceHandler.cs: provide the full stack trace instead
+	of just the Message to aid in debugging web service problems.
+	Bug #496758 fixed.
+
 2008-06-10  Vladimir Krasnov  <vladimirk@mainsoft.com>
 
 	* TypeStubManager.cs: fixed TypeStubInfo ctor, default binding name is
-        wrong, when declared in WebServiceBindingAttribute, but not used.
-        fixes. bug number: #345448
+	wrong, when declared in WebServiceBindingAttribute, but not used.
+	fixes. bug number: #345448
 
 2008-02-22  Atsushi Enomoto  <atsushi@ximian.com>
 
