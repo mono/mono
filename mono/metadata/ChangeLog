@@ -1,5 +1,17 @@
 2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Backport of r132207.
+
+	* verify.c (verify_clause_relationship): Only mask as an error if the exception clause
+	is nested in the filter block.
+
+	* verify.c (verify_clause_relationship): The disjoint check must verify if the exception
+	block is not fully nested.
+
+	Fixes #495656.
+
+2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Backport of r132185.
 
 	* verify.c (verify_type_compatibility_full): Compare MonoClass and
