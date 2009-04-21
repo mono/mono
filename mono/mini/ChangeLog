@@ -1,3 +1,8 @@
+2009-04-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_code): Avoid writing symbols if the nodebug
+	option is used.
+
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mini_method_verify): Fail fulltrust code if the exception
