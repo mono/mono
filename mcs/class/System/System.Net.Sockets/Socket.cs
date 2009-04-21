@@ -123,6 +123,7 @@ namespace System.Net.Sockets
 			internal int error;
 			SocketOperation operation;
 			public object ares;
+			public int EndCalled;
 
 			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
 			{
@@ -1947,6 +1948,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndAccept");
 			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
@@ -1970,6 +1973,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndConnect");
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -1989,6 +1994,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndDisconnect");
 			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
@@ -2020,6 +2027,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndReceive");
 			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
@@ -2041,6 +2050,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndReceiveFrom");
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -2069,6 +2080,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndReceiveMessageFrom");
 			throw new NotImplementedException ();
 		}
 #endif
@@ -2097,6 +2110,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndSend");
 			if (!asyncResult.IsCompleted)
 				asyncResult.AsyncWaitHandle.WaitOne ();
 
@@ -2120,9 +2135,16 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndSendFile");
 			throw new NotImplementedException ();
 		}
 #endif
+
+		Exception InvalidAsyncOp (string method)
+		{
+			return new InvalidOperationException (method + " can only be called once per asynchronous operation");
+		}
 
 		public int EndSendTo (IAsyncResult result)
 		{
@@ -2136,6 +2158,8 @@ namespace System.Net.Sockets
 			if (req == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
+			if (Interlocked.CompareExchange (ref req.EndCalled, 1, 0) == 1)
+				throw InvalidAsyncOp ("EndSendTo");
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 

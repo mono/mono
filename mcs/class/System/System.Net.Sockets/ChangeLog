@@ -1,3 +1,8 @@
+2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: End* methods can only be called once per IAsyncResult.
+	Bug #466031 fixed.
+
 2009-04-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Socket.cs: Split socket class into two files (this one and the
