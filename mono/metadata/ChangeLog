@@ -1,3 +1,11 @@
+2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Use mono_class_from_mono_type to
+	get the MonoClass for the call context type as it might be a generic
+	instance.
+
+	Fixes #491483.
+
 2009-04-21  Mark Probst  <mark.probst@gmail.com>
 
 	* object-internals.h: The Thread object has no execution_context
