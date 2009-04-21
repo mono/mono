@@ -1,3 +1,7 @@
+2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetPeerTcpBindingTest.cs : fix build.
+
 2009-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetPeerTcpBindingTest.cs : new test.
