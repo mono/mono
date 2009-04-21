@@ -1925,8 +1925,12 @@ namespace System {
 
 		private UriParser Parser {
 			get {
-				if (parser == null)
+				if (parser == null) {
 					parser = UriParser.GetParser (Scheme);
+					// no specific parser ? then use a default one
+					if (parser == null)
+						parser = new DefaultUriParser ("*");
+				}
 				return parser;
 			}
 			set { parser = value; }
@@ -2095,7 +2099,7 @@ namespace System {
 		{
 			try {
 				// FIXME: this should call UriParser.Resolve
-				result = new Uri (baseUri, relativeUri);
+				result = new Uri (baseUri, relativeUri.OriginalString);
 				return true;
 			} catch (UriFormatException) {
 				result = null;

@@ -1,3 +1,11 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DefaultUriParser.cs: Add special case for schema
+	* Uri.cs: Make sure we can use a default parser if none was
+	registred for the URI schema.
+	* UriParser.cs: Handle "*" as a special schema for "anything"
+	[Fix bug #496783]
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Uri.cs: Fix some issues found with Moonlight (see new unit

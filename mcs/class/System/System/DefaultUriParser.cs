@@ -36,5 +36,10 @@ namespace System {
 		public DefaultUriParser ()
 		{
 		}
+
+		public DefaultUriParser (string scheme)
+		{
+			scheme_name = scheme;
+		}
 	}
 }
