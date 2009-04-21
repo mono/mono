@@ -1,3 +1,8 @@
+2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: allow System.ServiceModel access to mscorlib
+	internals (e.g. non-generic System.Collections.*)
+
 2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: allow System, System.Xml and Mono.
