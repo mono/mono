@@ -1,3 +1,8 @@
+2009-04-22  Miguel de Icaza  <miguel@novell.com>
+
+	* aot-runtime.c (make_writable): Use mono_mprotect to simplify
+	some porting work.
+
 2009-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Force init_locals to be TRUE
