@@ -66,6 +66,7 @@
     </Compile>
     <Compile Include="codegen.cs">
     </Compile>
+    <Compile Include="complete.cs" />
     <Compile Include="const.cs">
     </Compile>
     <Compile Include="constant.cs">
