@@ -1,3 +1,12 @@
+2009-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Net.dll.sources: Remove the common Const, Locale and 
+	MonoTODOAttribute since we can now get them from mscorlib.dll.
+	Remove all System/System.Net.NetworkInformation/* types since
+	Socket does not depend on them anymore.
+	* DummySystemNet.cs: Add a dummy System.Net.NetworkInformation
+	namespace to please compilers.
+
 2009-04-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* System.Net.dll.sources: Remove some unneeded files for the
