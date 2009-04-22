@@ -1,3 +1,8 @@
+2009-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: allow System.ServiceModel.Web access to mscorlib
+	internals (e.g. non-generic System.Collections.*)
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: allow System.ServiceModel access to mscorlib
