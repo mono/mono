@@ -1,3 +1,9 @@
+2009-04-22  Miguel de Icaza  <miguel@novell.com>
+
+	* Makefile.am: Split the console support in platform specific code
+	and put together a framework for making this easy in the future so
+	that we can start splitting code instead of having a mess of PLATFORM_WIN32
+
 2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_delegate_type_equal): Compare valuetypes using
