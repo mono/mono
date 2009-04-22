@@ -110,6 +110,6 @@ namespace System.ComponentModel
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern string W32ErrorMessage (int error_code);
+		internal static extern string W32ErrorMessage (int error_code);
 	}
 }

@@ -1,3 +1,7 @@
+2009-04-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Win32Exception.cs: made W32ErrorMessage internal.
+
 2009-02-21  Jb Evain  <jbevain@novell.com>
 
 	* EventHandlerList.cs: fix the 1.1 profile.
