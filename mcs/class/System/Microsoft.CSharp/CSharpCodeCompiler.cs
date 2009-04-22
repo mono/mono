@@ -34,6 +34,7 @@ namespace Mono.CSharp
 	using System;
 	using System.CodeDom;
 	using System.CodeDom.Compiler;
+	using System.ComponentModel;
 	using System.IO;
 	using System.Text;
 	using System.Reflection;
@@ -243,7 +244,16 @@ namespace Mono.CSharp
 			
 			try {
 				mcs.Start();
+			} catch (Exception e) {
+				Win32Exception exc = e as Win32Exception;
+				if (exc != null) {
+					throw new SystemException (String.Format ("Error running {0}: {1}", mcs.StartInfo.FileName,
+									Win32Exception.W32ErrorMessage (exc.NativeErrorCode)));
+				}
+				throw;
+			}
 
+			try {
 #if NET_2_0
 				mcs.BeginOutputReadLine ();
 				mcs.BeginErrorReadLine ();

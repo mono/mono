@@ -35,6 +35,7 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Reflection;
@@ -263,6 +264,16 @@ namespace Microsoft.VisualBasic
 			vbnc.StartInfo.RedirectStandardOutput = true;
 			try {
 				vbnc.Start ();
+			} catch (Exception e) {
+				Win32Exception exc = e as Win32Exception;
+				if (exc != null) {
+					throw new SystemException (String.Format ("Error running {0}: {1}", vbnc.StartInfo.FileName,
+											Win32Exception.W32ErrorMessage (exc.NativeErrorCode)));
+				}
+				throw;
+			}
+
+			try {
 				vbnc_output = vbnc.StandardOutput.ReadToEnd ();
 				vbnc.WaitForExit ();
 			} finally {

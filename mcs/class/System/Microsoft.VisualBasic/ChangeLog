@@ -1,3 +1,8 @@
+2009-04-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* VBCodeCompiler.cs: better error when there's a problem running the
+	specified exec.
+
 2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Fixed generated code for abstract properties.
