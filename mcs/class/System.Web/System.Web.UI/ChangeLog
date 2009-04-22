@@ -1,3 +1,8 @@
+2009-04-22  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: create the imports ArrayList before
+	attempting to use it. Fixes bug #497174
+
 2009-04-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: added support for OutputCacheParameters.NoStore to
