@@ -2,7 +2,7 @@
 
 	* XmlSchemaValidator.cs, BuiltInDatatype.cs, XmlAtomicValue.cs:
 	  use xsd-supported version of XmlQualifiedName.Parse().
-	  Fixed bug #496205.
+	  Fixed bug #496192.
 
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
