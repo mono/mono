@@ -149,6 +149,7 @@ namespace System.Web.UI {
 			imports = new List <string> ();
 			AddNamespaces (imports);
 #else
+			imports = new ArrayList ();
 			imports.Add ("System");
 			imports.Add ("System.Collections");
 			imports.Add ("System.Collections.Specialized");
