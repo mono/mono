@@ -1,3 +1,7 @@
+2009-04-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 496192.xml, 496192.xsd : new test files.
+
 2005-10-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* 79683.dtd : added for bug #79683.

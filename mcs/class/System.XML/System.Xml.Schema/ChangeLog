@@ -1,5 +1,10 @@
 2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : quick fix for bug #496205. Reset xsi:type
+	  and endelement.
+
+2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs, BuiltInDatatype.cs, XmlAtomicValue.cs:
 	  use xsd-supported version of XmlQualifiedName.Parse().
 	  Fixed bug #496192.

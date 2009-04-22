@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<xs:schema id="Person" 
+    targetNamespace="http://tempuri.org/Person.xsd"
+    xmlns="http://tempuri.org/Person.xsd"
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="Person" type="Person"/>
+  <xs:complexType name="Person" mixed="false">
+    <xs:sequence>
+      <xs:element name="Addresses" type="ArrayOfAddress" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="Firstname" type="xs:string" use="required"/>
+    <xs:attribute name="Middlename" type="xs:string" use="optional"/>
+    <xs:attribute name="Lastname" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="Address">
+    <xs:attribute name="Street" type="xs:string" use="required"/>
+    <xs:attribute name="ZIP" type="xs:string" use="required"/>
+    <xs:attribute name="City" type="xs:string" use="required"/>
+    <xs:attribute name="Country" type="xs:string" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="HotelAddress">
+    <xs:complexContent>
+      <xs:extension base="Address">
+        <xs:attribute name="RoomNo" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ArrayOfAddress">
+    <xs:sequence>
+      <xs:element name="Address" type="Address" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

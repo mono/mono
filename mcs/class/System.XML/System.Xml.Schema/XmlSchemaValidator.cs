@@ -915,6 +915,7 @@ namespace System.Xml.Schema
 			}
 			Context.PopCurrentElement ();
 			state.PopContext ();
+			Context.XsiType = null; // FIXME: this is hack. should be stacked as well as element.
 		}
 
 		// Utility for missing validation completion related to child items.

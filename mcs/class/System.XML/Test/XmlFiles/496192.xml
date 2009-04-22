@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Person xmlns="http://tempuri.org/Person.xsd" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Firstname="Daniel" Lastname="Stutz">
+  <Addresses>
+    <Address Street="Teststreet" ZIP="8000" City="Zich"/>
+    <Address xsi:type="HotelAddress"  Street="" ZIP="" City="Angaga" Country="Maldives" RoomNo="34"/>
+  </Addresses>
+</Person>

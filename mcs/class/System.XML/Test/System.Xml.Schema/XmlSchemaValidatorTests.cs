@@ -146,6 +146,14 @@ namespace MonoTests.System.Xml
 </Message>";
 			Validate (xml, xsd);
 		}
+
+		[Test]
+		public void Bug496192_496205 ()
+		{
+			using (var xmlr = new StreamReader ("Test/XmlFiles/496192.xml"))
+				using (var xsdr = new StreamReader ("Test/XmlFiles/496192.xsd"))
+					Validate (xmlr.ReadToEnd (), xsdr.ReadToEnd ());
+		}
 	}
 }
 
