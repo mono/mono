@@ -1,3 +1,12 @@
+2009-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Socket_2_1.cs: Use old-n-simple CheckProtocolSupport to implement
+	OSSupportsIP[v4|v6] for Moonlight (NET_2_1 only) so we can avoid 
+	including a bunch of types (22) from System.Net.NetworkInformation 
+	and drop the number of [SecuritySafeCritical] methods to audit (the 
+	same 22) and [SecurityCritical] (8) beside getting a smaller 
+	System.Net.dll assembly :)
+
 2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: End* methods can only be called once per IAsyncResult.

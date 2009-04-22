@@ -126,17 +126,19 @@ namespace System.Net.Sockets {
 #if NET_2_1
 		public static bool OSSupportsIPv4 {
 			get {
-				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
-				
-				foreach (NetworkInterface adapter in nics) {
-					if (adapter.Supports (NetworkInterfaceComponent.IPv4))
-						return true;
-				}
-				return false;
+				CheckProtocolSupport();
+				return ipv4Supported == 1;
 			}
 		}
 #endif
-#if NET_2_0
+#if NET_2_1
+		public static bool OSSupportsIPv6 {
+			get {
+				CheckProtocolSupport();
+				return ipv6Supported == 1;
+			}
+		}
+#elif NET_2_0
 		public static bool OSSupportsIPv6 {
 			get {
 				NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces ();
