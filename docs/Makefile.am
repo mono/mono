@@ -39,7 +39,6 @@ EXTRA_DIST = \
 	local-regalloc.txt	\
 	magic.diff		\
 	mini-doc.txt		\
-	mini-porting.txt	\
 	mono-api-metadata.html	\
 	mono-file-formats.config\
 	mono-file-formats.source\
