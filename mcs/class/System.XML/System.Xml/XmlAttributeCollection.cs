@@ -255,6 +255,8 @@ namespace System.Xml
 				throw new ArgumentException ("this AttributeCollection is read only.");
 
 			XmlAttribute attr = node as XmlAttribute;
+			if (attr.OwnerElement == ownerElement)
+				return node; // do nothing
 			if (attr.OwnerElement != null)
 				throw new ArgumentException ("This attribute is already set to another element.");
 

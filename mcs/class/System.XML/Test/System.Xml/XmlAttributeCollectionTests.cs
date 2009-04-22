@@ -213,5 +213,15 @@ namespace MonoTests.System.Xml
 			defAttr.Value = "default"; // same value as default
 			AssertEquals (true, defAttr.Specified);
 		}
+
+		[Test]
+		public void AddIdenticalAttrToTheSameNode ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (@"<blah><br><mynode txt='blah/drinks1'/></br><br><mynode txt='hello world'/></br></blah>");
+			XmlAttribute a = doc.CreateAttribute ("MyAttribute");
+			doc.SelectNodes ("//mynode") [0].Attributes.Append (a);
+			doc.SelectNodes ("//mynode") [0].Attributes.Append (a);
+		}
 	}
 }

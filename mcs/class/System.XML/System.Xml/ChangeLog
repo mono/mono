@@ -1,3 +1,9 @@
+2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAttributeCollection.cs : when the node to be inserted has owner
+	  element _but_ is identical to that of this collection, do not
+	  reject it to raise an error. Fixed bug #496022.
+
 2009-03-25  Geoff Norton  <gnorton@novell.com>
 
 	* XmlTextReader.cs: Create the uri as relativeorabsolute.
