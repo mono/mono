@@ -1,3 +1,8 @@
+2009-04-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CSharpCodeCompiler.cs: better error when there's a problem running
+	the specified exec.
+
 2009-04-17  Marek Habersack  <mhabersack@novell.com>
 
 	* CSharpCodeCompiler.cs: pass current application's domain
