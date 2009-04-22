@@ -1,3 +1,7 @@
+2009-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Open internals to System.ServiceModel.Web
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Open internals to System.Runtime.Serialization
