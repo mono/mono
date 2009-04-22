@@ -1531,7 +1531,7 @@ namespace Mono.Xml.Schema
 				throw new ArgumentNullException ("name table");
 			if (nsmgr == null)
 				throw new ArgumentNullException ("namespace manager");
-			XmlQualifiedName name = XmlQualifiedName.Parse (s, nsmgr);
+			XmlQualifiedName name = XmlQualifiedName.Parse (s, nsmgr, true);
 			nameTable.Add (name.Name);
 			nameTable.Add (name.Namespace);
 			return name;

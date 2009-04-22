@@ -1,3 +1,9 @@
+2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs, BuiltInDatatype.cs, XmlAtomicValue.cs:
+	  use xsd-supported version of XmlQualifiedName.Parse().
+	  Fixed bug #496205.
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlSchema_2_1.cs: Add internal fields needed by S.R.S.dll

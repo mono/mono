@@ -300,7 +300,7 @@ namespace System.Xml.Schema
 			case XmlTypeCode.Item:
 				return TypedValue;
 			case XmlTypeCode.QName:
-				return XmlQualifiedName.Parse (Value, nsResolver);
+				return XmlQualifiedName.Parse (Value, nsResolver, true);
 			}
 			throw new NotImplementedException ();
 		}
