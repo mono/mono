@@ -1,3 +1,7 @@
+2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimezoneInfo.cs: TimeZoneDirectory property should not be public
+
 2008-10-31  Stephane Delcroix  <sdelcroix@novell.com>
 
 	* TimezoneInfo.cs: Drop overlapping rules, fix the 3 dst changes in 

@@ -106,7 +106,7 @@ namespace System
 		}
 #if LIBC
 		static string timeZoneDirectory = null;
-		public static string TimeZoneDirectory {
+		static string TimeZoneDirectory {
 			get {
 				if (timeZoneDirectory == null)
 					timeZoneDirectory = "/usr/share/zoneinfo";
