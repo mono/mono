@@ -1,3 +1,8 @@
+2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Regex.cs: Remove Compiler-related support for NET_2_1
+	* RegexOptions.cs: Remove Compile from values available on NET_2_1
+
 2009-03-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* RxInterpreter.cs (ResetGroups): Avoid allocating larger than needed

@@ -233,13 +233,11 @@ namespace System.Text.RegularExpressions {
 			this._groupNumberToNameMap = this.machineFactory.NamesMapping;
 		}
 
+#if !NET_2_1
 		// The new rx engine has blocking bugs like
 		// https://bugzilla.novell.com/show_bug.cgi?id=470827
 		static readonly bool old_rx =
-#if !NET_2_1
 			Environment.GetEnvironmentVariable ("MONO_NEW_RX") == null;
-#else
-			true;
 #endif
 
 		private static IMachineFactory CreateMachineFactory (string pattern, RegexOptions options) 
@@ -247,6 +245,9 @@ namespace System.Text.RegularExpressions {
 			Parser psr = new Parser ();
 			RegularExpression re = psr.ParseRegularExpression (pattern, options);
 
+#if NET_2_1
+			ICompiler cmp = new PatternCompiler ();
+#else
 			ICompiler cmp;
 			if (!old_rx) {
 				if ((options & RegexOptions.Compiled) != 0)
@@ -256,6 +257,7 @@ namespace System.Text.RegularExpressions {
 			} else {
 				cmp = new PatternCompiler ();
 			}
+#endif
 
 			re.Compile (cmp, (options & RegexOptions.RightToLeft) != 0);
 
@@ -449,12 +451,12 @@ namespace System.Text.RegularExpressions {
 			// expressions compiled to assemblies.
 			Init ();
 		}
-
+#if !NET_2_1
 		protected bool UseOptionC ()
 		{
 			return ((roptions & RegexOptions.Compiled) != 0);
 		}
-
+#endif
 		protected bool UseOptionR ()
 		{
 			return ((roptions & RegexOptions.RightToLeft) != 0);
@@ -511,20 +513,21 @@ namespace System.Text.RegularExpressions {
 		// MS undocumented members
 #if NET_2_1
 		[MonoTODO]
-		protected internal System.Collections.Generic.Dictionary<string, int> capnames;
+		internal System.Collections.Generic.Dictionary<string, int> capnames;
 		[MonoTODO]
-		protected internal System.Collections.Generic.Dictionary<int, int> caps;
+		internal System.Collections.Generic.Dictionary<int, int> caps;
 #else
 		[MonoTODO]
 		protected internal System.Collections.Hashtable capnames;
 		[MonoTODO]
 		protected internal System.Collections.Hashtable caps;
+
+		[MonoTODO]
+		protected internal RegexRunnerFactory factory;
 #endif
 		[MonoTODO]
 		protected internal int capsize;
 		[MonoTODO]
 		protected internal string [] capslist;
-		[MonoTODO]
-		protected internal RegexRunnerFactory factory;
 	}
 }
