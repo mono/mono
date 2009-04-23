@@ -77,7 +77,8 @@ namespace System.ServiceModel
 			OperationTimeout = TimeSpan.FromMinutes (1);
 
 			// determine operation channel to create.
-			if (factory.OpenedChannelFactory is IChannelFactory<IRequestChannel>)
+			if (factory.OpenedChannelFactory is IChannelFactory<IRequestChannel> ||
+			    factory.OpenedChannelFactory is IChannelFactory<IRequestSessionChannel>)
 				SetupRequestChannel ();
 			else
 				SetupOutputChannel ();
@@ -447,14 +448,13 @@ namespace System.ServiceModel
 				output_channel.Open ();
 
 			ClientOperation op = runtime.Operations [od.Name];
-			// FIXME: pass configured default timeout
-			Send (CreateRequest (op, parameters), factory.Endpoint.Binding.SendTimeout);
+			Send (CreateRequest (op, parameters), OperationTimeout);
 		}
 
 		object Request (OperationDescription od, object [] parameters)
 		{
-			if (request_channel.State != CommunicationState.Opened)
-				request_channel.Open ();
+			if (OperationChannel.State != CommunicationState.Opened)
+				OperationChannel.Open ();
 
 			ClientOperation op = runtime.Operations [od.Name];
 			object [] inspections = new object [runtime.MessageInspectors.Count];
@@ -463,8 +463,7 @@ namespace System.ServiceModel
 			for (int i = 0; i < inspections.Length; i++)
 				inspections [i] = runtime.MessageInspectors [i].BeforeSendRequest (ref req, this);
 
-			// FIXME: pass configured default timeout
-			Message res = Request (req, factory.Endpoint.Binding.SendTimeout);
+			Message res = Request (req, OperationTimeout);
 			if (res.IsFault) {
 				MessageFault fault = MessageFault.CreateFault (res, runtime.MaxFaultSize);
 				if (fault.HasDetail && fault is MessageFault.SimpleMessageFault) {
@@ -495,7 +494,13 @@ namespace System.ServiceModel
 		// They are internal for ClientBase<T>.ChannelBase use.
 		internal Message Request (Message msg, TimeSpan timeout)
 		{
-			return request_channel.Request (msg, timeout);
+			if (request_channel != null)
+				return request_channel.Request (msg, timeout);
+			else {
+				DateTime startTime = DateTime.Now;
+				output_channel.Send (msg, timeout);
+				return ((IDuplexChannel) output_channel).Receive (timeout - (DateTime.Now - startTime));
+			}
 		}
 
 		internal IAsyncResult BeginRequest (Message msg, TimeSpan timeout, AsyncCallback callback, object state)

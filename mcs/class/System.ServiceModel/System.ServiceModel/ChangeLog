@@ -1,5 +1,9 @@
 2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : now Request() supports duplex ones too.
+
+2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexChannelFactory.cs : remove todos. Implement CreateChannel().
 
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
