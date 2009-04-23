@@ -373,14 +373,16 @@ namespace Mono.CSharp {
 				bool partial_input;
 				CSharpParser parser = ParseString (ParseMode.GetCompletions, input, out partial_input);
 				if (parser == null){
-					Console.WriteLine ("DEBUG: No completions available");
+					if (CSharpParser.yacc_verbose_flag != 0)
+						Console.WriteLine ("DEBUG: No completions available");
 					return null;
 				}
 				
 				Class parser_result = parser.InteractiveResult as Class;
 				
 				if (parser_result == null){
-					Console.WriteLine ("Do not know how to cope with !Class yet");
+					if (CSharpParser.yacc_verbose_flag != 0)
+						Console.WriteLine ("Do not know how to cope with !Class yet");
 					return null;
 				}
 
@@ -636,7 +638,7 @@ namespace Mono.CSharp {
 				parser.Lexer.CompleteOnEOF = true;
 
 			bool disable_error_reporting;
-			if (mode == ParseMode.Silent && CSharpParser.yacc_verbose_flag == 0)
+			if ((mode == ParseMode.Silent || mode == ParseMode.GetCompletions) && CSharpParser.yacc_verbose_flag == 0)
 				disable_error_reporting = true;
 			else
 				disable_error_reporting = false;
