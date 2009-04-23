@@ -38,6 +38,7 @@ man_MANS = \
 	mono-xmltool.1        \
 	mozroots.1            \
 	oldmono.1             \
+	pdb2mdb.1	      \
 	permview.1            \
 	prj2make.1            \
 	resgen.1              \
