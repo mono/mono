@@ -151,10 +151,7 @@ namespace System.ServiceModel
 
 		protected virtual IChannelFactory CreateFactory ()
 		{
-			bool session = false;
 			bool isOneWay = true; // check OperationDescription.IsOneWay
-			bool isDuplex = Endpoint.Contract.CallbackContractType != null;
-
 			foreach (var od in Endpoint.Contract.Operations)
 				if (!od.IsOneWay) {
 					isOneWay = false;
@@ -163,27 +160,37 @@ namespace System.ServiceModel
 
 			BindingParameterCollection pl = CreateBindingParameters ();
 
-			if (isDuplex) {
-				switch (Endpoint.Contract.SessionMode) {
-				case SessionMode.Required:
-					if (Endpoint.Binding.CanBuildChannelFactory<IDuplexSessionChannel> (pl))
-						return Endpoint.Binding.BuildChannelFactory<IDuplexSessionChannel> (pl);
-					throw new InvalidOperationException ("The contract requires session channel, but the binding does not support it.");
-				case SessionMode.Allowed:
-					if (Endpoint.Binding.CanBuildChannelFactory<IDuplexChannel> (pl))
-						return Endpoint.Binding.BuildChannelFactory<IDuplexChannel> (pl);
-					goto case SessionMode.Required;
-				default:
-					if (Endpoint.Binding.CanBuildChannelFactory<IDuplexChannel> (pl))
-						return Endpoint.Binding.BuildChannelFactory<IDuplexChannel> (pl);
-					throw new InvalidOperationException ("The contract requires non-session channel, but the binding does not support it.");
-				}
-			} else if (isOneWay) {
+			// the assumption on the type of created channel could
+			// be wrong, but would mostly fit the actual 
+			// requirements. No books have explained how it is done.
+
+			// try duplex
+			switch (Endpoint.Contract.SessionMode) {
+			case SessionMode.Required:
+				if (Endpoint.Binding.CanBuildChannelFactory<IDuplexSessionChannel> (pl))
+					return Endpoint.Binding.BuildChannelFactory<IDuplexSessionChannel> (pl);
+				break;
+			case SessionMode.Allowed:
+				if (Endpoint.Binding.CanBuildChannelFactory<IDuplexChannel> (pl))
+					return Endpoint.Binding.BuildChannelFactory<IDuplexChannel> (pl);
+				if (Endpoint.Binding.CanBuildChannelFactory<IDuplexSessionChannel> (pl))
+					return Endpoint.Binding.BuildChannelFactory<IDuplexSessionChannel> (pl);
+				break;
+			default:
+				if (Endpoint.Binding.CanBuildChannelFactory<IDuplexChannel> (pl))
+					return Endpoint.Binding.BuildChannelFactory<IDuplexChannel> (pl);
+				break;
+			}
+
+			if (Endpoint.Contract.CallbackContractType != null)
+				throw new InvalidOperationException ("The binding does not support duplex channel types that the contract requies for CallbackContractType.");
+
+			if (isOneWay) {
 				switch (Endpoint.Contract.SessionMode) {
 				case SessionMode.Required:
 					if (Endpoint.Binding.CanBuildChannelFactory<IOutputSessionChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IOutputSessionChannel> (pl);
-					throw new InvalidOperationException ("The contract requires session channel, but the binding does not support it.");
+					break;
 				case SessionMode.Allowed:
 					if (Endpoint.Binding.CanBuildChannelFactory<IOutputChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IOutputChannel> (pl);
@@ -191,24 +198,27 @@ namespace System.ServiceModel
 				default:
 					if (Endpoint.Binding.CanBuildChannelFactory<IOutputChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IOutputChannel> (pl);
-					throw new InvalidOperationException ("The contract requires non-session channel, but the binding does not support it.");
+					break;
 				}
 			} else {
 				switch (Endpoint.Contract.SessionMode) {
 				case SessionMode.Required:
 					if (Endpoint.Binding.CanBuildChannelFactory<IRequestSessionChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IRequestSessionChannel> (pl);
-					throw new InvalidOperationException ("The contract requires session channel, but the binding does not support it.");
+					break;
 				case SessionMode.Allowed:
 					if (Endpoint.Binding.CanBuildChannelFactory<IRequestChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IRequestChannel> (pl);
-					goto case SessionMode.Required;
+					if (Endpoint.Binding.CanBuildChannelFactory<IRequestSessionChannel> (pl))
+						return Endpoint.Binding.BuildChannelFactory<IRequestSessionChannel> (pl);
+					break;
 				default:
 					if (Endpoint.Binding.CanBuildChannelFactory<IRequestChannel> (pl))
 						return Endpoint.Binding.BuildChannelFactory<IRequestChannel> (pl);
-					throw new InvalidOperationException ("The contract requires non-session channel, but the binding does not support it.");
+					break;
 				}
 			}
+			throw new InvalidOperationException ("The binding does not support any of the channel types that the contract allows.");
 		}
 
 		BindingParameterCollection CreateBindingParameters ()

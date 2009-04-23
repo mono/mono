@@ -1,3 +1,9 @@
+2009-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory.cs : reordered preferrence of created channel types,
+	  and fixed to allow duplex channels without CallbackContractType
+	  (which does not always exist for duplex channels).
+
 2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : now Request() supports duplex ones too.
