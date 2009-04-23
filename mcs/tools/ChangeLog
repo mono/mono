@@ -1,5 +1,9 @@
 2009-04-23  Jb Evain  <jbevain@novell.com>
 
+	* Makefile: add pdb2mdb to the build.
+
+2009-04-23  Jb Evain  <jbevain@novell.com>
+
 	* Makefile: disable moon. Tuning is done by moonlight, which
 	will populate back the mcs tree with tuned assemblies for tests.
 

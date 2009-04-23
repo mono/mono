@@ -52,6 +52,7 @@ net_2_0_dirs := \
 	mconfig		\
 	installutil	\
 	nunitreport	\
+	pdb2mdb		\
 	sqlsharp	\
 	sqlmetal	\
 	gacutil		\
