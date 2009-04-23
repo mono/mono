@@ -65,7 +65,7 @@ public class MyTest {
 
 		res = Evaluator.GetCompletions ("System.Int3", out prefix);
 		if (res [0] != "2"){
-			throw new Expected ("Expected completion to System.Int32");
+			throw new Exception ("Expected completion to System.Int32");
 		}
 	}
 	
