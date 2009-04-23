@@ -1,3 +1,10 @@
+2009-04-23  Mark Probst  <mark.probst@gmail.com>
+
+	* boehm-gc.c, gc-internal.h, gc.c, monitor.c, null-gc.c,
+	sgen-gc.c: Implement track resurrection in weak GC handles in SGen
+	by using the lowest bit in the link to store whether the link is
+	tracked.  Move the track_resurrection hashes into boehm-gc.c.
+
 2009-04-22  Miguel de Icaza  <miguel@novell.com>
 
 	* Makefile.am: Split the console support in platform specific code
