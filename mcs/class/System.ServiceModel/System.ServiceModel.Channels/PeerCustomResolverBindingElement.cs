@@ -66,6 +66,7 @@ namespace System.ServiceModel.Channels
 		BindingContext context;
 		PeerCustomResolverSettings settings;
 
+		[MonoTODO]
 		public override PeerReferralPolicy ReferralPolicy { get; set; }
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
@@ -122,7 +123,7 @@ namespace System.ServiceModel.Channels
 
 		public PeerCustomResolver (ServiceEndpoint endpoint)
 		{
-			var client = new ChannelFactory<ICustomPeerResolverClient> (endpoint).CreateChannel ();
+			client = new ChannelFactory<ICustomPeerResolverClient> (endpoint).CreateChannel ();
 		}
 
 		public override bool CanShareReferrals {
