@@ -1,7 +1,11 @@
-all: pdb2mdb.exe
+thisdir = tools/pdb2mdb
+SUBDIRS =
+include ../../build/rules.make
 
-pdb2mdb.exe:
-	gmcs -r:`pkg-config --variable=Libraries cecil` -r:Mono.CompilerServices.SymbolWriter.dll -out:pdb2mdb.exe *.cs
+PROGRAM = pdb2mdb.exe
 
-clean:
-	rm -f pdb2mdb.exe
+LOCAL_MCS_FLAGS = \
+	/r:$(topdir)/class/lib/net_1_1/Mono.Cecil.dll	\
+	/r:Mono.CompilerServices.SymbolWriter.dll
+
+include ../../build/executable.make
