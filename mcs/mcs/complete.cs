@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 			this.prefix = prefix;
 		}
 
-		void AppendResults (ArrayList results, string prefix, IEnumerable names)
+		public static void AppendResults (ArrayList results, string prefix, IEnumerable names)
 		{
 			foreach (string name in names){
 				if (!name.StartsWith (prefix))
@@ -150,23 +150,47 @@ namespace Mono.CSharp {
 			}
 
 			ArrayList results = new ArrayList ();
-			MemberInfo [] result = expr_type.FindMembers (MemberTypes.All, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public, CollectingFilter, partial_name);
-			foreach (MemberInfo r in result){
-				string name;
+			if (expr_resolved is Namespace){
+				Namespace nexpr = expr_resolved as Namespace;
+				string namespaced_partial;
 
-				MethodBase rasb = r as MethodBase;
-				if (rasb != null && rasb.IsSpecialName)
-					continue;
-				
 				if (partial_name == null)
-					name = r.Name;
-				else {
-					name = r.Name.Substring (partial_name.Length);
+					namespaced_partial = nexpr.Name;
+				else
+					namespaced_partial = nexpr.Name + "." + partial_name;
+
+#if false
+				Console.WriteLine ("Workign with: namespaced partial {0}", namespaced_partial);
+				foreach (var x in ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, namespaced_partial)){
+					Console.WriteLine ("    {0}", x);
 				}
-				
-				if (results.Contains (name))
-					continue;
-				results.Add (name);
+#endif
+
+				CompletionSimpleName.AppendResults (
+					results,
+					partial_name, 
+					ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, namespaced_partial));
+			} else {
+				MemberInfo [] result = expr_type.FindMembers (
+					MemberTypes.All, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public,
+					CollectingFilter, partial_name);
+
+				foreach (MemberInfo r in result){
+					string name;
+					
+					MethodBase rasb = r as MethodBase;
+					if (rasb != null && rasb.IsSpecialName)
+						continue;
+					
+					if (partial_name == null)
+						name = r.Name;
+					else 
+						name = r.Name.Substring (partial_name.Length);
+					
+					if (results.Contains (name))
+						continue;
+					results.Add (name);
+				}
 			}
 
 			throw new CompletionResult (partial_name == null ? "" : partial_name, (string []) results.ToArray (typeof (string)));

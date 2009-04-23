@@ -27,6 +27,8 @@ public class MyTest {
 	
 	static void Main ()
 	{
+		Evaluator.Init (new string [] { "-v", "-v" });
+		Evaluate ("multiply", "1*2;", 2);
 		Run ("1",      "System.Console.WriteLine (100);");
 		Run ("Length", "var a = new int [] {1,2,3}; var b = a.Length;");
 		
@@ -59,6 +61,11 @@ public class MyTest {
 		res = Evaluator.GetCompletions ("Sys", out prefix);
 		if (res [0] != "tem"){
 			throw new Exception ("Expected at least a conversion for System");
+		}
+
+		res = Evaluator.GetCompletions ("System.Int3", out prefix);
+		if (res [0] != "2"){
+			throw new Expected ("Expected completion to System.Int32");
 		}
 	}
 	

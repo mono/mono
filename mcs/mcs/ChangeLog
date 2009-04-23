@@ -1,3 +1,15 @@
+2009-04-23  Miguel de Icaza  <miguel@novell.com>
+
+	* namespace.cs (NamespaceEntry.CompletionGetTypesStartingWith):
+	Consider looking up the namespace that matches the prefix being
+	used. 
+
+	This is part of the support for allowing completions like:
+	`System.Co<TAB>' to complete to System.Console.
+
+	* complete.cs (CompletionSimpleName.AppendResults): Make this
+	routine reusable.
+
 2009-04-21  Raja R Harinath  <harinath@hurrynot.org>
 
 	* cs-parser.jay (GetTokenName): Mark GENERATE_COMPLETION and

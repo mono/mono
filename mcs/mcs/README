@@ -3,7 +3,7 @@ Completion support
 
 	Supported:
 	
-		a.<TAB>
+		a.<TAB> to complete members of type `a'
 		a<TAB> for types and namespaces
 		a.W<TAB>
 		a<TAB> for local variables

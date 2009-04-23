@@ -105,7 +105,7 @@ namespace Mono.CSharp {
 		public ICollection CompletionGetTypesStartingWith (string prefix)
 		{
 			Hashtable result = null;
-			
+
 			foreach (Assembly a in referenced_assemblies){
 				Type [] mtypes = a.GetTypes ();
 
@@ -1094,6 +1094,14 @@ namespace Mono.CSharp {
 			
 			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent){
 				foreach (Namespace using_ns in GetUsingTable ()){
+					if (prefix.StartsWith (using_ns.Name)){
+						int ld = prefix.LastIndexOf ('.');
+						if (ld != -1){
+							string rest = prefix.Substring (ld+1);
+
+							using_ns.CompletionGetTypesStartingWith (ds, rest, result);
+						}
+					}
 					using_ns.CompletionGetTypesStartingWith (ds, prefix, result);
 				}
 			}
