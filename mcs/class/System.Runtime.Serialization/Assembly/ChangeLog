@@ -1,3 +1,8 @@
+2009-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Open up the internals to System.ServiceModel.Web, 
+	e.g. calls to IDataContractSurrogate, JsonReader ...
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Remove extra attributes for 2.1. Open up the 
