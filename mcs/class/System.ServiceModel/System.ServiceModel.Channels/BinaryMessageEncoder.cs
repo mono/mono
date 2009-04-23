@@ -41,7 +41,10 @@ namespace System.ServiceModel.Channels
 
 		public BinaryMessageEncoder (BinaryMessageEncoderFactory owner)
 		{
+			this.owner = owner;
 		}
+
+		BinaryMessageEncoderFactory owner;
 
 		public override string ContentType {
 			get { return "application/soap+msbin1"; }
@@ -60,30 +63,27 @@ namespace System.ServiceModel.Channels
 			BufferManager bufferManager, string contentType)
 		{
 			// FIXME: use bufferManager
-			// FIXME: set quotas properly.
 			return Message.CreateMessage (
 				XmlDictionaryReader.CreateBinaryReader (
 					buffer.Array, buffer.Offset, buffer.Count,
-					new XmlDictionaryReaderQuotas ()),
+					new XmlDictionary (),
+					owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas ()),
 				int.MaxValue, MessageVersion);
 		}
 
-		[MonoTODO]
 		public override Message ReadMessage (Stream stream,
 			int maxSizeOfHeaders, string contentType)
 		{
-			// FIXME: set quotas properly.
 			return Message.CreateMessage (
-				XmlDictionaryReader.CreateBinaryReader (stream, new XmlDictionaryReaderQuotas ()),
+				XmlDictionaryReader.CreateBinaryReader (stream, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas ()),
 				maxSizeOfHeaders, MessageVersion);
 		}
 
-		[MonoTODO]
 		public override void WriteMessage (Message message, Stream stream)
 		{
 			VerifyMessageVersion (message);
 
-			throw new NotImplementedException ();
+			message.WriteMessage (XmlDictionaryWriter.CreateBinaryWriter (stream));
 		}
 
 		[MonoTODO]

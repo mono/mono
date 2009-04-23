@@ -1,3 +1,8 @@
+2009-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : use quotas in binding element.
+	  Implement WriteMessage().
+
 2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerCustomResolverBindingElement.cs : do initialize field.
