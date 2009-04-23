@@ -45,8 +45,12 @@ namespace System {
 		private int default_port;
 
 		// Regexp from RFC 2396
+#if NET_2_1
+		readonly static Regex uri_regex = new Regex (@"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?");
+#else
 		// Groups:    				        12            3  4          5       6  7        8 9
 		readonly static Regex uri_regex = new Regex (@"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?", RegexOptions.Compiled);
+#endif
 
 		// Groups:				         12         3    4 5
 		readonly static Regex auth_regex = new Regex (@"^(([^@]+)@)?(.*?)(:([0-9]+))?$");

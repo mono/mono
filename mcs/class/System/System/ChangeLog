@@ -1,3 +1,8 @@
+2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UriParser.cs: Don't use compiled regex on NET_2_1 (feature is
+	not available)
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DefaultUriParser.cs: Add special case for schema
