@@ -1,3 +1,7 @@
+2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexChannelFactory.cs : remove todos. Implement CreateChannel().
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClientBase.cs (NET_2_1): Change cctor not to require being 

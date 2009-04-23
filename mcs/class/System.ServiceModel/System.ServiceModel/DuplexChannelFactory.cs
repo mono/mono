@@ -40,20 +40,17 @@ namespace System.ServiceModel
 	{
 		InstanceContext callback_instance;
 		
-		[MonoTODO]
 		public DuplexChannelFactory (object callbackInstance)
 			: this (new InstanceContext (callbackInstance))
 		{
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (object callbackInstance,
 			string endpointConfigurationName)
 			: this (new InstanceContext (callbackInstance), endpointConfigurationName)
 		{
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (object callbackInstance,
 			string endpointConfigurationName,
 			EndpointAddress remoteAddress)
@@ -61,21 +58,18 @@ namespace System.ServiceModel
 		{
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (object callbackInstance,
 			ServiceEndpoint endpoint)
 			: this (new InstanceContext (callbackInstance), endpoint)
 		{
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (object callbackInstance,
 			Binding binding)
 			: this (new InstanceContext (callbackInstance), binding)
 		{
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (object callbackInstance,
 			Binding binding,
 			EndpointAddress remoteAddress)
@@ -83,7 +77,6 @@ namespace System.ServiceModel
 		{
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (InstanceContext callbackInstance,
 			Binding binding)
 			: base (binding)
@@ -91,7 +84,6 @@ namespace System.ServiceModel
 			callback_instance = callbackInstance;
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (InstanceContext callbackInstance,
 			Binding binding,
 			EndpointAddress remoteAddress)
@@ -100,7 +92,6 @@ namespace System.ServiceModel
 			callback_instance = callbackInstance;
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (InstanceContext callbackInstance,
 			string endpointConfigurationName,
 			EndpointAddress remoteAddress)
@@ -109,7 +100,6 @@ namespace System.ServiceModel
 			callback_instance = callbackInstance;
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (InstanceContext callbackInstance,
 			string endpointConfigurationName)
 			: base (endpointConfigurationName)
@@ -117,7 +107,6 @@ namespace System.ServiceModel
 			callback_instance = callbackInstance;
 		}
 
-		[MonoTODO]
 		public DuplexChannelFactory (InstanceContext callbackInstance,
 			ServiceEndpoint endpoint)
 			: base (endpoint)
@@ -125,12 +114,11 @@ namespace System.ServiceModel
 			callback_instance = callbackInstance;
 		}
 		
-		[MonoTODO]
 		public static TChannel CreateChannel (InstanceContext callbackInstance, 
 		                                      Binding binding, 
 		                                      EndpointAddress endpointAddress)
 		{
-			throw new NotImplementedException ();
+			return new DuplexChannelFactory<TChannel> (callbackInstance, binding, endpointAddress).CreateChannel ();
 		}
 	}
 }
