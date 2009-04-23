@@ -1,3 +1,9 @@
+2009-04-23  Marek Habersack  <mhabersack@novell.com>
+
+	* AsyncPostBackTrigger.cs: HasTriggered () must look up the
+	UniqueID of the control specified in the ControlID property or
+	otherwise it may miss certain triggers.
+
 2009-04-11  Marek Habersack  <mhabersack@novell.com>
 
 	* UpdatePanel.cs: implemented SingleChildControlCollection to be

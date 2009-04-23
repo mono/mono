@@ -65,7 +65,12 @@ namespace System.Web.UI
 
 		protected internal override bool HasTriggered ()
 		{
-			if (String.Compare (Owner.ScriptManager.AsyncPostBackSourceElementID, ControlID, StringComparison.Ordinal) == 0)
+			Control ctrl = Owner.FindControl (ControlID);
+			string ctrlUniqueID = ctrl != null ? ctrl.UniqueID : null;
+			if (ctrlUniqueID == null)
+				return false;
+			
+			if (String.Compare (Owner.ScriptManager.AsyncPostBackSourceElementID, ctrlUniqueID, StringComparison.Ordinal) == 0)
 				return true;
 			return false;
 		}
