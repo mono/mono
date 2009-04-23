@@ -91,6 +91,7 @@ scripts_2_0 = \
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
+	pdb2mdb$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)			\
 	xsd2$(SCRIPT_SUFFIX)			\
 	mono-xmltool$(SCRIPT_SUFFIX)		\
