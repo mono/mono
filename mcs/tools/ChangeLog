@@ -1,3 +1,8 @@
+2009-04-23  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: disable moon. Tuning is done by moonlight, which
+	will populate back the mcs tree with tuned assemblies for tests.
+
 2009-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: switch this too.
