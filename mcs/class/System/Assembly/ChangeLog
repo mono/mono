@@ -1,3 +1,8 @@
+2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Remove InternalsVisibleTo on Mono.Moonlight 
+	since it does not exists anymore
+
 2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Change InternalsVisibleTo on Mono.Moonlight to
