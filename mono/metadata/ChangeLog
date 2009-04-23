@@ -1,3 +1,18 @@
+2009-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_suspend_all_other_threads): Handle the case when
+	the a thread does not suspend within 100ms.
+
+	* monitor.c (mono_monitor_try_enter_internal): Handle SuspendRequested
+	in addition to StopRequested as well.
+
+	* mono-debug.c: Call _mono_debug_get_image () while holding the debug lock.
+
+	* debug-mono-symfile.c (mono_debug_symfile_lookup_method): Actually
+	search the method_hash before inserting a new entry, to avoid crashes when
+	the same method is inserted multiple times, causing the old 
+	MonoDebugMethodInfo structure to be freed by the value dtor function.
+
 2009-04-15  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.c
