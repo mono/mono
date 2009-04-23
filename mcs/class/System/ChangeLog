@@ -1,3 +1,7 @@
+2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.dll.sources: Remove some unneeded files.
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System_test.dll.sources: Add EndPointTest.cs
