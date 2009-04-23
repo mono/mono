@@ -1,3 +1,7 @@
+2009-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchOperation.cs : implement GetFormatter() at service side too.
+
 2009-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationInvokeHandler.cs : replace MS copycat exception message.

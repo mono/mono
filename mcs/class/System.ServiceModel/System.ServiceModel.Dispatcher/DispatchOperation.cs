@@ -175,5 +175,31 @@ namespace System.ServiceModel.Dispatcher
 		MessageVersion MessageVersion {
 			get { return Parent.ChannelDispatcher.MessageVersion; }
 		}
+
+		OperationDescription Description {
+			get {
+				// FIXME: ContractDescription should be acquired from elsewhere.
+				ContractDescription cd = ContractDescription.GetContract (Parent.Type);
+				OperationDescription od = cd.Operations.Find (Name);
+				if (od == null) {
+					if (Name == "*")
+						throw new Exception (String.Format ("INTERNAL ERROR: Contract {0} in namespace {1} does not contain Operations.", Parent.EndpointDispatcher.ContractName, Parent.EndpointDispatcher.ContractNamespace));
+					else
+						throw new Exception (String.Format ("INTERNAL ERROR: Operation {0} was not found.", Name));
+				}
+				return od;
+			}
+		}
+
+		internal IDispatchMessageFormatter GetFormatter ()
+		{
+			if (actual_formatter == null) {
+				if (Formatter != null)
+					actual_formatter = Formatter;
+				else
+					actual_formatter = BaseMessagesFormatter.Create (Description);
+			}
+			return actual_formatter;
+		}
 	}
 }
