@@ -1,3 +1,10 @@
+
+Fri Apr 24 16:44:08 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, genmdesc.c, genmdesc.pl: tiny refactor to allow
+	multiple machine description files to be specified.
+	* mini-ops.h: fixes for cross-compilation.
+
 2009-04-22  Miguel de Icaza  <miguel@novell.com>
 
 	* aot-runtime.c (make_writable): Use mono_mprotect to simplify
