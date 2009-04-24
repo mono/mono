@@ -9422,9 +9422,11 @@ namespace Mono.CSharp {
 					if (element_initializer != null) {
 						element_names = new ArrayList (initializers.Count);
 						element_names.Add (element_initializer.Name);
+					} else if (initializer is CompletingExpression){
+						initializer.Resolve (ec);
+						throw new InternalErrorException ("This line should never be reached");
 					} else {
-						if (!TypeManager.ImplementsInterface (ec.CurrentInitializerVariable.Type,
-							TypeManager.ienumerable_type)) {
+						if (!TypeManager.ImplementsInterface (ec.CurrentInitializerVariable.Type, TypeManager.ienumerable_type)) {
 							Report.Error (1922, loc, "A field or property `{0}' cannot be initialized with a collection " +
 								"object initializer because type `{1}' does not implement `{2}' interface",
 								ec.CurrentInitializerVariable.GetSignatureForError (),
