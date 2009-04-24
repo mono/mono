@@ -359,14 +359,14 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (UIAEnabledChangedEvent, value); }
 		}
 		
-		protected virtual void OnUIATextChanged(EventArgs e)
+		private virtual void OnUIATextChanged(EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [UIATextChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
 		
-		protected virtual void OnEnabledChanged (EventArgs e)
+		private virtual void OnEnabledChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [UIAEnabledChangedEvent]);
 			if (eh != null)
