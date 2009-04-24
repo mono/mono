@@ -1,3 +1,12 @@
+2009-04-23  Raja R Harinath  <harinath@hurrynot.org>
+
+	Don't use MonoGenericParamInfo for ownerless generic params.
+	* class.c (get_anon_gparam_class, set_anon_gparam_class): New.  Don't
+	use ParamInfo class at all.
+	(mono_class_from_generic_parameter): Use them.
+	(make_generic_param_class): Fix a couple of instances where 'pinfo
+	== NULL' wasn't handle.
+
 2009-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
 	* class.c (make_generic_param_class): Carve out of ...
