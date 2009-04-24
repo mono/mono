@@ -1,3 +1,23 @@
+2009-04-24  Miguel de Icaza  <miguel@novell.com>
+
+	* complete.cs (CompletionElementInitializer): New completion class
+	to support completing inside a C# 3 element initializer, so this
+	allows completion for Silverlight situations where it is very
+	common to do:
+
+	new TextBlock () { Fo<TAB>
+
+	(CompletionSimpleName): Expose the prefix that was
+	passed to the simple name.
+
+	* cs-parser.jay (object_or_collection_initializer): Add support
+	for element_initializers.
+
+	* expression.cs (CollectionOrObjectInitializers.DoResolve):
+	special case completion expressions as this method aggressively
+	collects data before it operates, and errors were being thrown
+	earlier than we were able to complete.
+
 2009-04-23  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs: Make getcompletions silent and enable debugging output

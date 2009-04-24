@@ -67,6 +67,16 @@ public class MyTest {
 		if (res [0] != "2"){
 			throw new Exception ("Expected completion to System.Int32");
 		}
+
+		res = Evaluator.GetCompletions ("new System.Text.StringBuilder () { Ca", out prefix);
+		if (res [0] != "pacity"){
+			throw new Expected ("Expected completion to Capacity");
+		}
+
+		res = Evaluator.GetCompletions ("new System.Text.StringBuilder () { ", out prefix);
+		if (res.Lenght != 4){
+			throw new Expected ("Expected 4 completions (Capacity Chars Length MaxCapacity)");
+		}
 	}
 	
 }
