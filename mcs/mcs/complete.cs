@@ -247,10 +247,5 @@ namespace Mono.CSharp {
 		{
 			// Nothing
 		}
-
-		public override string ToString ()
-		{
-			return "CompletionElementInitializer (" + (partial_name ?? "") + ")";
-		}
 	}
 }
