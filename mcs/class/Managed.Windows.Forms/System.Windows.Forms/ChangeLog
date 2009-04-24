@@ -1,3 +1,15 @@
+2009-04-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripDropDown.cs: In OnVisibleChanged, if we have an OwnerItem,
+	fire OnDropDownOpened/OnDropDownClosed depending on the new
+	visibility. This also ensures that any direct access to this instance
+	will fire the mentioned events for the OwnerItem.
+	* ToolStripDropDownItem.cs: Remove the invocations to
+	OnDropDownOpened/OnDropDownClosed, since they are handled in
+	ToolStripDropDown, as well as updating the
+	OnDropDownHide/OnDropDownShow calls to be in the right order.
+	Fixes #496193.
+
 2009-04-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Control.cs, ContextMenuStrip.cs, ToolStripMenuItem.cs: Only process any 
