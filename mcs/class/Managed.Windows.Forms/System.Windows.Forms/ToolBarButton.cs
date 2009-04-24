@@ -103,6 +103,9 @@ namespace System.Windows.Forms
 					menu = (ContextMenu) value;
 				else
 					throw new ArgumentException ("DropDownMenu must be of type ContextMenu.");
+#if NET_2_0
+				OnUIADropDownMenuChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -243,6 +246,10 @@ namespace System.Windows.Forms
 				
 				if (parent != null)
 					parent.Redraw (true);
+				
+#if NET_2_0
+				OnUIAStyleChanged (EventArgs.Empty);
+#endif
 			}
 		}
 
@@ -338,6 +345,8 @@ namespace System.Windows.Forms
 		static object UIALostFocusEvent = new object ();
 		static object UIATextChangedEvent = new object ();
 		static object UIAEnabledChangedEvent = new object ();
+		static object UIADropDownMenuChangedEvent = new object ();
+		static object UIAStyleChangedEvent = new object ();
 		
 		internal event EventHandler UIAGotFocus {
 			add { Events.AddHandler (UIAGotFocusEvent, value); }
@@ -359,6 +368,16 @@ namespace System.Windows.Forms
 			remove { Events.RemoveHandler (UIAEnabledChangedEvent, value); }
 		}
 		
+		internal event EventHandler UIADropDownMenuChanged {
+			add { Events.AddHandler (UIADropDownMenuChangedEvent, value); }
+			remove { Events.RemoveHandler (UIADropDownMenuChangedEvent, value); }
+		}
+		
+		internal event EventHandler UIAStyleChanged {
+			add { Events.AddHandler (UIAStyleChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAStyleChangedEvent, value); }
+		}
+		
 		private void OnUIATextChanged(EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [UIATextChangedEvent]);
@@ -369,6 +388,20 @@ namespace System.Windows.Forms
 		private void OnUIAEnabledChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [UIAEnabledChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		private void OnUIADropDownMenuChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [UIADropDownMenuChangedEvent]);
+			if (eh != null)
+				eh (this, e);
+		}
+		
+		private void OnUIAStyleChanged (EventArgs e)
+		{
+			EventHandler eh = (EventHandler)(Events [UIAStyleChangedEvent]);
 			if (eh != null)
 				eh (this, e);
 		}
