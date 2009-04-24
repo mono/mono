@@ -1,6 +1,7 @@
 2009-04-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
-	* ToolBarButton.cs: change visibility of some UIA methods to private.
+	* ToolBarButton.cs: change visibility of some UIA methods from
+	protected virtual to private.
 
 2009-04-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
