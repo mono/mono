@@ -1,3 +1,10 @@
+2009-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlizedException.cs: make HtmlException derive from
+	HttpException. System.Web.Mvc relies upon compile and parse
+	exception being descendants of HttpException or otherwise it will
+	catch and ignore compilation/parsing errors.
+
 2009-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: local resources code now uses the custom

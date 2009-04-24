@@ -87,12 +87,17 @@ namespace System.Web
 		}
 		
 #if NET_2_0
-		protected HttpException (SerializationInfo info, StreamingContext context)
+		protected
+#else
+		internal
+#endif
+		HttpException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			http_code = info.GetInt32 ("_httpCode");
 		}
 
+#if NET_2_0
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
