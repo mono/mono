@@ -1,3 +1,8 @@
+2009-04-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c (main): Init mono with mscorlib so it defaults to 2.0 and
+	doesn't try to parse the input assembly, which can be broken.
+
 2009-04-23  Mark Probst  <mark.probst@gmail.com>
 
 	* boehm-gc.c, gc-internal.h, gc.c, monitor.c, null-gc.c,
