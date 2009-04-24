@@ -1,3 +1,16 @@
+2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: Add mono_reflection_cleanup_domain to cleanup
+	reflection memory on domain unload.
+
+	* domain.c (mono_domain_free): Don't free refobject_hash, let the
+	reflection cleanup code do it.
+
+	* domain-internals.h: Add mono_reflection_cleanup_domain.
+
+	This fixes a memory leak for managed mirrors of reflection objects
+	on domain unload. 
+
 2009-04-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Implement more verification of the field table.
