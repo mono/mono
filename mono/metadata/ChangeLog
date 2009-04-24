@@ -1,5 +1,9 @@
 2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add verification of the method table.
+
+2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_Type_GetMethodsByName): Fix memleak for the
 	Delegate::Invoke optimization.
 
