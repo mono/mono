@@ -1,3 +1,8 @@
+2009-04-24  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* get.c (dis_stringify_method_signature_full): Don't assert
+	if no marshal info is found.
+
 2009-04-16  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* dump.c: Add dump_table_fieldrva.
