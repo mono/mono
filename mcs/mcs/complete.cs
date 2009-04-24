@@ -42,12 +42,12 @@ namespace Mono.CSharp {
 	}
 	
 	public class CompletionSimpleName : CompletingExpression {
-		public string Prefix;
+		string prefix;
 		
 		public CompletionSimpleName (string prefix, Location l)
 		{
 			this.loc = l;
-			this.Prefix = prefix;
+			this.prefix = prefix;
 		}
 
 		public static void AppendResults (ArrayList results, string prefix, IEnumerable names)
@@ -71,11 +71,11 @@ namespace Mono.CSharp {
 		{
 			ArrayList results = new ArrayList ();
 
-			AppendResults (results, Prefix, Evaluator.GetVarNames ());
-			AppendResults (results, Prefix, ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, Prefix));
-			AppendResults (results, Prefix, Evaluator.GetUsingList ());
+			AppendResults (results, prefix, Evaluator.GetVarNames ());
+			AppendResults (results, prefix, ec.TypeContainer.NamespaceEntry.CompletionGetTypesStartingWith (ec.TypeContainer, prefix));
+			AppendResults (results, prefix, Evaluator.GetUsingList ());
 			
-			throw new CompletionResult (Prefix, (string []) results.ToArray (typeof (string)));
+			throw new CompletionResult (prefix, (string []) results.ToArray (typeof (string)));
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 		string partial_name;
 		TypeArguments targs;
 
-		internal static MemberFilter CollectingFilter = new MemberFilter (Match);
+		static MemberFilter CollectingFilter = new MemberFilter (Match);
 
 		static bool Match (MemberInfo m, object filter_criteria)
 		{
@@ -204,48 +204,6 @@ namespace Mono.CSharp {
 				target.targs = targs.Clone ();
 
 			target.expr = expr.Clone (clonectx);
-		}
-	}
-
-	public class CompletionElementInitializer : CompletingExpression {
-		string partial_name;
-		
-		public CompletionElementInitializer (string partial_name, Location l)
-		{
-			this.partial_name = partial_name;
-			this.loc = l;
-		}
-		
-		public override Expression DoResolve (EmitContext ec)
-		{
-			MemberList members = TypeManager.FindMembers (
-				ec.CurrentInitializerVariable.Type,
-				MemberTypes.Field | MemberTypes.Property,
-				BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public,
-				CompletionMemberAccess.CollectingFilter, partial_name);
-
-			string [] result = new string [members.Count];
-			int i = 0;
-			foreach (MemberInfo mi in members){
-				string name;
-				
-				if (partial_name == null)
-					name = mi.Name;
-				else
-					name = mi.Name.Substring (partial_name.Length);
-				
-				result [i++] = name;
-			}
-
-			if (partial_name != null && i > 0 && result [0] == "")
-				throw new CompletionResult ("", new string [] { "=" });
-			
-			throw new CompletionResult (partial_name == null ? "" : partial_name, result);
-		}
-
-		protected override void CloneTo (CloneContext clonectx, Expression t)
-		{
-			// Nothing
 		}
 	}
 }

@@ -330,15 +330,7 @@ namespace Mono.CSharp
 %token EVAL_COMPILATION_UNIT_PARSER
 %token EVAL_USING_DECLARATIONS_UNIT_PARSER
 
-// 
-// This token is generated to trigger the completion engine at this point
-//
 %token GENERATE_COMPLETION
-
-//
-// This token is return repeatedly after the first GENERATE_COMPLETION
-// token is produced and before the final EOF
-//
 %token COMPLETE_COMPLETION
 
 /* Add precedence rules to solve dangling else s/r conflict */
@@ -3077,12 +3069,12 @@ opt_object_or_collection_initializer
 	;
 
 object_or_collection_initializer
-	: OPEN_BRACE opt_member_initializer_list close_brace_or_complete_completion
+	: OPEN_BRACE opt_member_initializer_list CLOSE_BRACE
 	  {
 	  	if ($2 == null)
-	  		$$ = CollectionOrObjectInitializers.Empty;
+	  	  $$ = CollectionOrObjectInitializers.Empty;
 	  	else
-	  		$$ = new CollectionOrObjectInitializers ((ArrayList) $2, GetLocation ($1));
+	  	  $$ = new CollectionOrObjectInitializers ((ArrayList) $2, GetLocation ($1));
 	  }
 	| OPEN_BRACE member_initializer_list COMMA CLOSE_BRACE
 	  {
@@ -3099,7 +3091,7 @@ opt_member_initializer_list
 	;
 
 member_initializer_list
-	: member_initializer 
+	: member_initializer
 	  {
 	  	ArrayList a = new ArrayList ();
 	  	a.Add ($1);
@@ -3119,16 +3111,9 @@ member_initializer
 	  	LocatedToken lt = $1 as LocatedToken;
 	  	$$ = new ElementInitializer (lt.Value, (Expression)$3, lt.Location);
 	  }
-	| GENERATE_COMPLETION 
+	| non_assignment_expression
 	  {
-		$$ = new CompletionElementInitializer (null, GetLocation ($1));
-	  }
-	| non_assignment_expression COMPLETE_COMPLETION  {
-		CompletionSimpleName csn = $1 as CompletionSimpleName;
-		if (csn == null)
-			$$ = new CollectionElementInitializer ((Expression)$1);
-		else
-			$$ = new CompletionElementInitializer (csn.Prefix, csn.Location);
+		$$ = new CollectionElementInitializer ((Expression)$1);
 	  }
 	| OPEN_BRACE expression_list CLOSE_BRACE
 	  {
@@ -5739,11 +5724,6 @@ interactive_compilation_unit
 
 opt_COMPLETE_COMPLETION
 	: /* nothing */
-	| COMPLETE_COMPLETION
-	;
-
-close_brace_or_complete_completion
-	: CLOSE_BRACE
 	| COMPLETE_COMPLETION
 	;
 %%
