@@ -54,6 +54,8 @@ System/UriIdnScope.cs
 System/UriTypeConverter.cs
 System.Net/IPAddress.cs
 System.Net/IPv6Address.cs
+System.Net.Mime/ContentType.cs
+System.Net.Mime/TransferEncoding.cs
 System.Net.Sockets/AddressFamily.cs
 System/SRDescriptionAttribute.cs
 System.Text.RegularExpressions/arch.cs
