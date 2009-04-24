@@ -2,6 +2,7 @@
 
 	* TemplateParser.cs: PageParserFilter.Initialize now takes just
 	one parameter.
+	AddImport ignores null/empty namespaces. Fixes bug #498118
 
 	* PageParserFilter.cs: a few alignments for .NET compatibility in
 	the default behavior.

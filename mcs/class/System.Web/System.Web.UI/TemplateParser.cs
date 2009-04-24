@@ -361,8 +361,7 @@ namespace System.Web.UI {
 				if (atts.Count > 0)
 					ThrowParseException ("Attribute " + GetOneKey (atts) + " unknown.");
 				
-				if (namesp != null && namesp != "")
-					AddImport (namesp);
+				AddImport (namesp);
 				return;
 			}
 
@@ -542,6 +541,9 @@ namespace System.Web.UI {
 		
 		internal virtual void AddImport (string namesp)
 		{
+			if (namesp == null || namesp.Length == 0)
+				return;
+			
 			if (imports == null) {
 #if NET_2_0
 				imports = new List <string> ();
