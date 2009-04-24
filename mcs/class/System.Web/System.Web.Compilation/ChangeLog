@@ -1,3 +1,9 @@
+2009-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: ProcessCode should _not_ stop processing the
+	passed code string if the filter's ProcessCodeConstruct returns
+	false. Fixes bug #497775
+
 2009-04-21  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: implemented new way of setting output cache

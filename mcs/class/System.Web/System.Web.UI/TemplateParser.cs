@@ -1061,7 +1061,7 @@ namespace System.Web.UI {
 					return null;
 
 				pageParserFilter = Activator.CreateInstance (PageParserFilterType) as PageParserFilter;
-				pageParserFilter.Initialize (VirtualPath, this);
+				pageParserFilter.Initialize (this);
 
 				return pageParserFilter;
 			}

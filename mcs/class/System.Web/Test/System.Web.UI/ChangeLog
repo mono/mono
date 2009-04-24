@@ -1,3 +1,7 @@
+2009-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* PageParserFilterTest.cs: added
+
 2009-01-21  Marek Habersack  <mhabersack@novell.com>
 
 	* XhtmlTextWriterTest.cs: temporarily disabled the
