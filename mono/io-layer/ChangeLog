@@ -1,3 +1,7 @@
+2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* shared.c: Fix a bunch of memleaks.
+
 2009-03-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.h: Add a comment to CreateThread.
