@@ -1,3 +1,12 @@
+2009-04-24  Raja R Harinath  <harinath@hurrynot.org>
+
+	Simplify mono_class_from_generic_parameter
+	* class-internals.h (MonoGenericParamInfo::token): New field.
+	* metadata.c (mono_metadata_load_generic_params): Initialize it
+	from metadata.
+	* class.c (mono_class_from_generic_parameter): Use it instead of
+	searching through metadata.
+
 2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add verification of the method table.
