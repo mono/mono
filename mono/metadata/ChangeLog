@@ -1,4 +1,19 @@
-2009-04-23  Raja R Harinath  <harinath@hurrynot.org>
+2009-04-24  Raja R Harinath  <harinath@hurrynot.org>
+
+	Don't allocate MonoGenericInfo for ownerless generic params.
+	* class-internals.h (MonoGenericParam::info): Move field to ...
+	(MonoGenericParamFull): ... this.  New struct.
+	(MonoGenericContainer::type_params): Change type to
+	MonoGenericParamFull.
+	(MonoGenericParam, MonoGenericContainer): Update accessors.
+	* metadata.c (mono_metadata_parse_generic_param): Don't initialize
+	'info' field for ownerless generic param.
+	(mono_metadata_load_generic_params): Update to changes.
+	* reflection.c (mono_reflection_create_generic_class): Likewise.
+	(reflection_methodbuilder_to_mono_method): Likewise.
+	(mono_reflection_initialize_generic_parameter): Likewise.
+
+2009-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
 	Don't use MonoGenericParamInfo for ownerless generic params.
 	* class.c (get_anon_gparam_class, set_anon_gparam_class): New.  Don't
