@@ -1,5 +1,10 @@
 2009-04-24  Raja R Harinath  <harinath@hurrynot.org>
 
+	* class.c (make_generic_param_class): Carve out of ...
+	(mono_class_from_generic_parameter): ... here.
+
+2009-04-24  Raja R Harinath  <harinath@hurrynot.org>
+
 	Simplify mono_class_from_generic_parameter
 	* class-internals.h (MonoGenericParamInfo::token): New field.
 	* metadata.c (mono_metadata_load_generic_params): Initialize it
