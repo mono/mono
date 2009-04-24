@@ -1,5 +1,10 @@
 2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_Type_GetMethodsByName): Fix memleak for the
+	Delegate::Invoke optimization.
+
+2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* appdomain.c (mono_domain_create_appdomain_internal): Free the
 	string returned by get_shadow_assembly_location_base.
 
