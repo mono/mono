@@ -164,14 +164,43 @@ namespace Microsoft.Build.Utilities
 				return false;
 			}
 
+			bool typeLoadException = false;
+			StringBuilder compilerOutput = new StringBuilder ();
 			foreach (string s in new string[] { output, error }) {
 				using (StreamReader sr = File.OpenText (s)) {
 					string line;
 					while ((line = sr.ReadLine ()) != null) {
+						if (typeLoadException) {
+							compilerOutput.Append (sr.ReadToEnd ());
+							break;
+						}
+
+						compilerOutput.AppendLine (line);
+
+						line = line.Trim ();
+						if (line.Length == 0)
+							continue;
+
+						if (line.StartsWith ("Unhandled Exception: System.TypeLoadException") ||
+						    line.StartsWith ("Unhandled Exception: System.IO.FileNotFoundException")) {
+							typeLoadException = true;
+						}
 						LogEventsFromTextOutput (line, MessageImportance.Low);
 					}
 				}
+				if (typeLoadException) {
+					string output_str = compilerOutput.ToString ();
+					Regex reg  = new Regex (@".*WARNING.*used in (mscorlib|System),.*", RegexOptions.Multiline);
+					if (reg.Match (output_str).Success)
+						Log.LogError ("Error: A referenced assembly may be built with an incompatible CLR version. See the compilation output for more details.");
+					else
+						Log.LogError ("Error: A dependency of a referenced assembly may be missing, or you may be referencing an assembly created with a newer CLR version. See the compilation output for more details.");
+					Log.LogError (output_str);
+				}
 			}
+
+			if (!Log.HasLoggedErrors && exitCode != 0)
+				Log.LogError ("Compiler crashed: " + compilerOutput.ToString ());
 			
 			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", pathToTool));
 			
@@ -182,7 +211,11 @@ namespace Microsoft.Build.Utilities
 		[MonoTODO]
 		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
 		{
-			if (String.IsNullOrEmpty (singleLine))
+			// When IncludeDebugInformation is true, prevents the debug symbols stats from braeking this.
+			if (singleLine.StartsWith ("WROTE SYMFILE") ||
+				singleLine.StartsWith ("OffsetTable") ||
+				singleLine.StartsWith ("Compilation succeeded") ||
+				singleLine.StartsWith ("Compilation failed"))
 				return;
 
 			string filename, origin, category, code, subcategory, text;
@@ -196,15 +229,13 @@ namespace Microsoft.Build.Utilities
 			text = m.Groups [regex.GroupNumberFromName ("TEXT")].Value;
 			
 			ParseOrigin (origin, out filename, out lineNumber, out columnNumber, out endLineNumber, out endColumnNumber);
-			
+
 			if (category == "warning") {
 				Log.LogWarning (subcategory, code, null, filename, lineNumber, columnNumber, endLineNumber,
 					endColumnNumber, text, null);
 			} else if (category == "error") {
 				Log.LogError (subcategory, code, null, filename, lineNumber, columnNumber, endLineNumber,
 					endColumnNumber, text, null);
-			} else {
-				Log.LogError (singleLine);
 			}
 		}
 		
