@@ -1,5 +1,13 @@
 2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* appdomain.c (mono_domain_create_appdomain_internal): Free the
+	string returned by get_shadow_assembly_location_base.
+
+	* appdomain.c (get_shadow_assembly_location_base): Add a comment
+	about caller's ownership.
+
+2009-04-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c: Add mono_reflection_cleanup_domain to cleanup
 	reflection memory on domain unload.
 
