@@ -1,5 +1,11 @@
 2009-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_method_table): Check for runtime
+	implemented functions such as delegate .ctors. Remove spurious
+	printf.
+	
+2009-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c: Proper initialize the runtime forcing the 2.0 profile.
 
 2009-04-24  Raja R Harinath  <harinath@hurrynot.org>
