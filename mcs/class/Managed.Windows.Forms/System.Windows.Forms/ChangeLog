@@ -1,5 +1,9 @@
 2009-04-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
+	* ToolBarButton.cs: rename a method to include UIA prefix.
+
+2009-04-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
 	* ToolBarButton.cs: change visibility of some UIA methods from
 	protected virtual to private.
 

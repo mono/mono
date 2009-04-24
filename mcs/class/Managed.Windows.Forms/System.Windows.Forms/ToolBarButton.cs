@@ -118,7 +118,7 @@ namespace System.Windows.Forms
 				Invalidate ();
 				
 #if NET_2_0
-				OnEnabledChanged (EventArgs.Empty);
+				OnUIAEnabledChanged (EventArgs.Empty);
 #endif
 			}
 		}
@@ -366,7 +366,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 		
-		private void OnEnabledChanged (EventArgs e)
+		private void OnUIAEnabledChanged (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events [UIAEnabledChangedEvent]);
 			if (eh != null)
