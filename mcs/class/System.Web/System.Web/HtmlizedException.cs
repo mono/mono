@@ -37,7 +37,7 @@ using System.Security.Permissions;
 namespace System.Web
 {
 	[Serializable]
-	internal abstract class HtmlizedException : Exception
+	internal abstract class HtmlizedException : HttpException
 	{
 		protected HtmlizedException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
