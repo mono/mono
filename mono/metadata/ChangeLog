@@ -1,5 +1,9 @@
 2009-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the param table.
+
+2009-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_typedef_table): Range check FieldList and
 	MethodList.
 
