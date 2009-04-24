@@ -13,6 +13,10 @@
 
 2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c: Fix a warning.
+
+2009-04-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_delegate_type_equal): Compare valuetypes using
 	mono_class_from_mono_type to avoid bad interactions with the dual representation
 	of the generic type definition.
