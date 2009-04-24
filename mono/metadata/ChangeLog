@@ -1,5 +1,9 @@
 2009-04-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Implement more verification of the field table.
+
+2009-04-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c (main): Init mono with mscorlib so it defaults to 2.0 and
 	doesn't try to parse the input assembly, which can be broken.
 
