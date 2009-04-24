@@ -1,5 +1,13 @@
 2009-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_typedef_table): Range check FieldList and
+	MethodList.
+
+	* metadata-verify.c (verify_method_table): Proper check the ParamList
+	field.
+
+2009-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_method_table): Check for runtime
 	implemented functions such as delegate .ctors. Remove spurious
 	printf.
