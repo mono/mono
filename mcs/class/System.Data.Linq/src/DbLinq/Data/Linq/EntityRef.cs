@@ -82,6 +82,7 @@ namespace DbLinq.Data.Linq
                         if (entity != null)
                             throw new InvalidOperationException ("Sequence contains more than one element");
                         entity = s;
+                        hasLoadedOrAssignedValue = true;
                     }
                     source = null;
                 }

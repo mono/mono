@@ -1,3 +1,9 @@
+2009-04-24  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*: Flush; syncs to DbLinq r1053.  Adds
+	  DataContext(string,MappingSource) support, the beginnings of object
+	  tracking, more tests...
+
 2009-04-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* **/* (svn:ignore): Ignore generated files and directories.

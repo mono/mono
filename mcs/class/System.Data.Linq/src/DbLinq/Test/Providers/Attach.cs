@@ -50,17 +50,8 @@ using nwind;
             var employee = new Employee();
 
             db1.Employees.Attach(employee);
+            employee.Address = "new address";
 
-            // You can't attach the same object to multiple databases.
-            db2.Employees.Attach(employee);
-        }
-
-        [Test, ExpectedException(typeof(NotSupportedException))]
-        public void Attach03()
-        {
-            var db1 = CreateDB();
-            var db2 = CreateDB();
-            var employee = db1.Employees.First();
             db2.Employees.Attach(employee);
         }
 

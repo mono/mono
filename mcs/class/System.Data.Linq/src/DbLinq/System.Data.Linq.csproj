@@ -115,9 +115,11 @@
     <Compile Include="Data\Linq\Identity\Implementation\IdentityReaderFactory.cs" />
     <Compile Include="Data\Linq\IExecuteResult.cs" />
     <Compile Include="Data\Linq\IMemberModificationHandler.cs" />
+    <Compile Include="Data\Linq\Implementation\DisabledEntityTracker.cs" />
     <Compile Include="Data\Linq\Implementation\EntityState.cs" />
     <Compile Include="Data\Linq\Implementation\EntityTrack.cs" />
     <Compile Include="Data\Linq\Implementation\EntityTracker.cs" />
+    <Compile Include="Data\Linq\Implementation\IEntityTracker.cs" />
     <Compile Include="Data\Linq\Implementation\MemberModificationHandler.cs" />
     <Compile Include="Data\Linq\Implementation\QueryProvider.cs" />
     <Compile Include="Data\Linq\Implementation\VendorProvider.cs" />
@@ -133,6 +135,7 @@
     <Compile Include="Data\Linq\Mapping\AttributedMetaType.cs" />
     <Compile Include="Data\Linq\Mapping\AttributeMappingSource.cs" />
     <Compile Include="Data\Linq\Mapping\MappingContext.cs" />
+    <Compile Include="Data\Linq\Mapping\XmlMappingSource.cs" />
     <Compile Include="Data\Linq\RefreshMode.cs" />
     <Compile Include="Data\Linq\SqlClient\FirebirdProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\IngresProvider.cs" />
@@ -295,7 +298,6 @@
     <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\ResultTypeAttribute.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\TableAttribute.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\UpdateCheck.cs" />
-    <Compile Include="System.Data.Linq\System.Data.Linq.Mapping\XmlMappingSource.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient.Implementation\ObjectMaterializer.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\Sql2000Provider.cs" />
     <Compile Include="System.Data.Linq\System.Data.Linq.SqlClient\Sql2005Provider.cs" />

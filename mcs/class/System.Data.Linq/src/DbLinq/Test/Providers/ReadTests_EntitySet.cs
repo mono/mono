@@ -217,31 +217,43 @@ using nwind;
         public void ListChangedEvent()
         {
             var db = CreateDB();
-            var customer = db.Customers.First();
+            var customer = db.Customers.Where(c => c.Orders.Count > 0).First();
+            Assert.Greater(customer.Orders.Count, 0);
             bool ok;
-            customer.Orders.ListChanged += delegate { ok = true; };
+            System.ComponentModel.ListChangedEventArgs args = null;
+            customer.Orders.ListChanged += delegate(object sender, System.ComponentModel.ListChangedEventArgs a) 
+                { 
+                    ok = true; 
+                    args = a; 
+                };
 
             ok = false;
+            args = null;
             customer.Orders.Remove(customer.Orders.First());
             Assert.IsTrue(ok);
 
             ok = false;
+            args = null;
             customer.Orders.Assign(Enumerable.Empty<Order>());
             Assert.IsTrue(ok);
 
             ok = false;
-            customer.Orders.Add(db.Orders.First(o => !customer.Orders.Contains(o)));
+            args = null;
+            customer.Orders.Add(db.Orders.First());
             Assert.IsTrue(ok);
 
             ok = false;
+            args = null;
             customer.Orders.Clear();
             Assert.IsTrue(ok);
 
             ok = false;
+            args = null;
             customer.Orders.Insert(0, new Order());
             Assert.IsTrue(ok);
 
             ok = false;
+            args = null;
             customer.Orders.RemoveAt(0);
             Assert.IsTrue(ok);
         }

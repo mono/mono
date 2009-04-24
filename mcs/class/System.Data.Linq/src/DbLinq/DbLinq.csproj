@@ -68,6 +68,8 @@
     <Compile Include="Data\Linq\DBLinqExtendedAttributte.cs" />
     <Compile Include="Data\Linq\EntityRef.cs" />
     <Compile Include="Data\Linq\EntitySet.cs" />
+    <Compile Include="Data\Linq\Implementation\DisabledEntityTracker.cs" />
+    <Compile Include="Data\Linq\Implementation\IEntityTracker.cs" />
     <Compile Include="Data\Linq\Implementation\EntityTrack.cs" />
     <Compile Include="Data\Linq\Implementation\EntityState.cs" />
     <Compile Include="Data\Linq\Implementation\EntityTracker.cs" />
@@ -97,6 +99,7 @@
     <Compile Include="Data\Linq\Mapping\AttributedMetaType.cs" />
     <Compile Include="Data\Linq\Mapping\AttributeMappingSource.cs" />
     <Compile Include="Data\Linq\Mapping\MappingContext.cs" />
+    <Compile Include="Data\Linq\Mapping\XmlMappingSource.cs" />
     <Compile Include="Data\Linq\SqlClient\FirebirdProvider.cs" />
     <Compile Include="Data\Linq\SqlClient\Sql2005Provider.cs" />
     <Compile Include="Data\Linq\SqlClient\Sql2000Provider.cs" />

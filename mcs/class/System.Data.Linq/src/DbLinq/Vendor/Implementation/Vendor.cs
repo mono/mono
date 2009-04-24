@@ -166,21 +166,25 @@ namespace DbLinq.Vendor.Implementation
         /// </summary>
         public IDbConnection CreateDbConnection(string connectionString)
         {
-            var reConnectionType = new System.Text.RegularExpressions.Regex(@"DbLinqConnectionType=([^;]+)");
+            var reConnectionType = new System.Text.RegularExpressions.Regex(@"DbLinqConnectionType=([^;]*)");
+            string connTypeVal = null;
             if (!reConnectionType.IsMatch(connectionString))
-                throw new ArgumentException("No DbLinqConnectionType parameter found.  " +
-                    "Please specify the assembly qualified type name to use for the Connection Type.",
-                    "connectionString");
+            {
+                connTypeVal = "System.Data.SqlClient.SqlConnection, System.Data";
+            }
+            else
+            {
+                var    match        = reConnectionType.Match(connectionString);
+                connTypeVal         = match.Groups[1].Value;
+                connectionString    = reConnectionType.Replace(connectionString, "");
+            }
 
-            var    match        = reConnectionType.Match(connectionString);
-            string connTypeVal  = match.Groups[1].Value;
             var    connType     = Type.GetType(connTypeVal);
             if (connType == null)
                 throw new ArgumentException(string.Format(
                         "Could not load the specified DbLinqConnectionType `{0}'.",
                         connTypeVal),
                     "connectionString");
-            connectionString = reConnectionType.Replace(connectionString, "");
             return (IDbConnection)Activator.CreateInstance(connType, connectionString);
         }
     }

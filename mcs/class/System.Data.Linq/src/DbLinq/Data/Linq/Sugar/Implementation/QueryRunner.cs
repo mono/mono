@@ -58,43 +58,43 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         public virtual IEnumerable<T> Select<T>(SelectQuery selectQuery)
         {
             var rowObjectCreator = selectQuery.GetRowObjectCreator<T>();
-            Console.WriteLine("# rowObjectCreator={0}", rowObjectCreator.Method);
-            Console.WriteLine("# rowObjectCreator.Target={0}", rowObjectCreator.Target.GetType().FullName);
+
+            IList<T> results = new List<T>();
 
             // handle the special case where the query is empty, meaning we don't need the DB
             if (string.IsNullOrEmpty(selectQuery.Sql.ToString()))
             {
-                yield return rowObjectCreator(null, null);
-                yield break;
+                results.Add(rowObjectCreator(null, null));
             }
-
-            using (var dbCommand = selectQuery.GetCommand())
+            else
             {
-
-                // write query to log
-                selectQuery.DataContext.WriteLog(dbCommand.Command);
-
-                using (var reader = dbCommand.Command.ExecuteReader())
+                using (var dbCommand = selectQuery.GetCommand())
                 {
-                    while (reader.Read())
+                    // write query to log
+                    selectQuery.DataContext.WriteLog(dbCommand.Command);
+
+                    using (var reader = dbCommand.Command.ExecuteReader())
                     {
-                        // someone told me one day this could happen (in SQLite)
-                        if (reader.FieldCount == 0)
-                            continue;
-
-                        var row = rowObjectCreator(reader, selectQuery.DataContext._MappingContext);
-                        // the conditions to register and watch an entity are:
-                        // - not null (can this happen?)
-                        // - registered in the model
-                        if (row != null && selectQuery.DataContext.Mapping.GetTable(row.GetType()) != null)
+                        while (reader.Read())
                         {
-                            row = (T)selectQuery.DataContext.Register(row);
-                        }
+                            // someone told me one day this could happen (in SQLite)
+                            if (reader.FieldCount == 0)
+                                continue;
 
-                        yield return row;
+                            var row = rowObjectCreator(reader, selectQuery.DataContext._MappingContext);
+                            // the conditions to register and watch an entity are:
+                            // - not null (can this happen?)
+                            // - registered in the model
+                            if (row != null && selectQuery.DataContext.Mapping.GetTable(row.GetType()) != null)
+                            {
+                                row = (T)selectQuery.DataContext.Register(row);
+                            }
+                            results.Add(row);
+                        }
                     }
                 }
             }
+            return results;
         }
 
         /// <summary>

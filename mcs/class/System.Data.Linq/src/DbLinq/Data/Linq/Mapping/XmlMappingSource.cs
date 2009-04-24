@@ -127,7 +127,7 @@ namespace System.Data.Linq.Mapping
 namespace DbLinq.Data.Linq.Mapping
 #endif
 {
-    public sealed class XmlMappingSource : MappingSource
+    public sealed class XmlMappingSource : System.Data.Linq.Mapping.MappingSource
     {
         DbmlDatabase db;
 
@@ -156,7 +156,7 @@ namespace DbLinq.Data.Linq.Mapping
             return FromReader(XmlReader.Create(new StringReader(xml)));
         }
 
-        protected override MetaModel CreateModel(Type dataContextType)
+        protected override System.Data.Linq.Mapping.MetaModel CreateModel(System.Type dataContextType)
         {
             return new XmlMetaModel(this, db, dataContextType);
         }
@@ -340,11 +340,11 @@ namespace DbLinq.Data.Linq.Mapping
             public bool IsPrimaryKey;
             public bool IsDbGenerated;
             public bool CanBeNull;
-            public UpdateCheck UpdateCheck;
+            public System.Data.Linq.Mapping.UpdateCheck UpdateCheck;
             public bool IsDiscriminator;
             public string Expression;
             public bool IsVersion;
-            public AutoSync AutoSync;
+            public System.Data.Linq.Mapping.AutoSync AutoSync;
 
             public DbmlColumn(XmlReader r)
             {
@@ -355,11 +355,11 @@ namespace DbLinq.Data.Linq.Mapping
                 IsPrimaryKey = GetBooleanAttribute(r, "IsPrimaryKey");
                 IsDbGenerated = GetBooleanAttribute(r, "IsDbGenerated");
                 CanBeNull = GetBooleanAttribute(r, "CanBeNull");
-                UpdateCheck = GetEnumAttribute<UpdateCheck>(r, "UpdateCheck");
+                UpdateCheck = GetEnumAttribute<System.Data.Linq.Mapping.UpdateCheck>(r, "UpdateCheck");
                 IsDiscriminator = GetBooleanAttribute(r, "IsDiscriminator");
                 Expression = r.GetAttribute("Expression");
                 IsVersion = GetBooleanAttribute(r, "IsVersion");
-                AutoSync = GetEnumAttribute<AutoSync>(r, "AutoSync");
+                AutoSync = GetEnumAttribute<System.Data.Linq.Mapping.AutoSync>(r, "AutoSync");
                 ReadEmptyContent(r, "Column");
             }
         }
@@ -458,16 +458,16 @@ namespace DbLinq.Data.Linq.Mapping
             }
         }
 
-        class XmlMetaModel : MetaModel
+        class XmlMetaModel : System.Data.Linq.Mapping.MetaModel
         {
-            MappingSource source;
+            System.Data.Linq.Mapping.MappingSource source;
             DbmlDatabase d;
-            Type context_type;
-            MetaFunction[] functions;
-            MetaTable[] tables;
-            Dictionary<Type, XmlMetaType> types;
+            System.Type context_type;
+            System.Data.Linq.Mapping.MetaFunction[] functions;
+            System.Data.Linq.Mapping.MetaTable[] tables;
+            Dictionary<System.Type, XmlMetaType> types;
 
-            public XmlMetaModel(MappingSource source, DbmlDatabase database, Type contextType)
+            public XmlMetaModel(System.Data.Linq.Mapping.MappingSource source, DbmlDatabase database, System.Type contextType)
             {
                 this.source = source;
                 this.d = database;
@@ -477,7 +477,7 @@ namespace DbLinq.Data.Linq.Mapping
 
             void RegisterTypes()
             {
-                types = new Dictionary<Type, XmlMetaType>();
+                types = new Dictionary<System.Type, XmlMetaType>();
                 foreach (var t in d.Tables)
                     RegisterTypeAndDescendants(t.Type);
             }
@@ -485,7 +485,7 @@ namespace DbLinq.Data.Linq.Mapping
             void RegisterTypeAndDescendants(DbmlType dt)
             {
 
-                Type t = GetTypeFromName(dt.Name);
+                System.Type t = GetTypeFromName(dt.Name);
                 if (t == null)
                     throw new ArgumentException(String.Format("type '{0}' not found", dt.Name));
                 if (types.ContainsKey(t))
@@ -495,7 +495,7 @@ namespace DbLinq.Data.Linq.Mapping
                     RegisterTypeAndDescendants(cdt);
             }
 
-            public override Type ContextType
+            public override System.Type ContextType
             {
                 get { return context_type; }
             }
@@ -505,17 +505,17 @@ namespace DbLinq.Data.Linq.Mapping
                 get { return d.Name; }
             }
 
-            public override MappingSource MappingSource
+            public override System.Data.Linq.Mapping.MappingSource MappingSource
             {
                 get { return source; }
             }
 
-            public override Type ProviderType
+            public override System.Type ProviderType
             {
                 get { return GetTypeFromName(d.Provider); }
             }
 
-            public override MetaFunction GetFunction(MethodInfo method)
+            public override System.Data.Linq.Mapping.MetaFunction GetFunction(MethodInfo method)
             {
                 foreach (var f in GetFunctions())
                     if (f.Method == method)
@@ -523,11 +523,11 @@ namespace DbLinq.Data.Linq.Mapping
                 throw new ArgumentException(String.Format("Corresponding MetaFunction for method '{0}' was not found", method));
             }
 
-            public override IEnumerable<MetaFunction> GetFunctions()
+            public override IEnumerable<System.Data.Linq.Mapping.MetaFunction> GetFunctions()
             {
                 if (functions == null)
                 {
-                    var l = new List<MetaFunction>();
+                    var l = new List<System.Data.Linq.Mapping.MetaFunction>();
                     foreach (var f in d.Functions)
                         l.Add(new XmlMetaFunction(this, f));
                     functions = l.ToArray();
@@ -535,7 +535,7 @@ namespace DbLinq.Data.Linq.Mapping
                 return functions;
             }
 
-            public Type GetTypeFromName(string name)
+            public System.Type GetTypeFromName(string name)
             {
                 string ns = context_type.Namespace;
                 string full = !name.Contains('.') && !String.IsNullOrEmpty(ns) ? String.Concat(ns, ".", name) : name;
@@ -545,14 +545,14 @@ namespace DbLinq.Data.Linq.Mapping
                 return t;
             }
 
-            public override MetaType GetMetaType(Type type)
+            public override System.Data.Linq.Mapping.MetaType GetMetaType(System.Type type)
             {
                 if (!types.ContainsKey(type))
                     throw new ArgumentException(String.Format("Type '{0}' is not found in the mapping", type));
                 return types[type];
             }
 
-            public override MetaTable GetTable(Type rowType)
+            public override System.Data.Linq.Mapping.MetaTable GetTable(System.Type rowType)
             {
                 foreach (var t in GetTables())
                     if (t.RowType.Type == rowType)
@@ -561,11 +561,11 @@ namespace DbLinq.Data.Linq.Mapping
                 return null;
             }
 
-            public override IEnumerable<MetaTable> GetTables()
+            public override IEnumerable<System.Data.Linq.Mapping.MetaTable> GetTables()
             {
                 if (tables == null)
                 {
-                    var l = new List<MetaTable>();
+                    var l = new List<System.Data.Linq.Mapping.MetaTable>();
                     foreach (var t in d.Tables)
                         l.Add(new XmlMetaTable(this, t));
                     tables = l.ToArray();
@@ -574,7 +574,7 @@ namespace DbLinq.Data.Linq.Mapping
             }
         }
 
-        class XmlMetaParameter : MetaParameter
+        class XmlMetaParameter : System.Data.Linq.Mapping.MetaParameter
         {
             string dbtype, mapped_name;
             ParameterInfo pi;
@@ -595,10 +595,10 @@ namespace DbLinq.Data.Linq.Mapping
             public override string MappedName { get { return mapped_name; } }
             public override string Name { get { return Parameter.Name; } }
             public override ParameterInfo Parameter { get { return pi; } }
-            public override Type ParameterType { get { return pi.ParameterType; } }
+            public override System.Type ParameterType { get { return pi.ParameterType; } }
         }
 
-        class XmlMetaTable : MetaTable
+        class XmlMetaTable : System.Data.Linq.Mapping.MetaTable
         {
             public XmlMetaTable(XmlMetaModel model, DbmlTable table)
             {
@@ -624,7 +624,7 @@ namespace DbLinq.Data.Linq.Mapping
                 if (row_type == null)
                     throw new ArgumentException(String.Format("MetaType for '{0}' was not found", rt));
             }
-            static IEnumerable<MemberInfo> GetFieldsAndProperties(Type type)
+            static IEnumerable<MemberInfo> GetFieldsAndProperties(System.Type type)
             {
                 foreach (var f in type.GetFields())
                     yield return f;
@@ -635,8 +635,8 @@ namespace DbLinq.Data.Linq.Mapping
             XmlMetaModel model;
             DbmlTable t;
             MemberInfo table_member;
-            Type member_type;
-            MetaType row_type;
+            System.Type member_type;
+            System.Data.Linq.Mapping.MetaType row_type;
 
             [DbLinqToDo]
             public override MethodInfo DeleteMethod
@@ -648,9 +648,9 @@ namespace DbLinq.Data.Linq.Mapping
             {
                 get { throw new NotImplementedException(); }
             }
-            public override MetaModel Model { get { return model; } }
-            public override MetaType RowType { get { return row_type; } }
-            Type MemberType { get { return member_type; } }
+            public override System.Data.Linq.Mapping.MetaModel Model { get { return model; } }
+            public override System.Data.Linq.Mapping.MetaType RowType { get { return row_type; } }
+            System.Type MemberType { get { return member_type; } }
             public override string TableName { get { return t.Name; } }
             [DbLinqToDo]
             public override MethodInfo UpdateMethod
@@ -670,13 +670,13 @@ namespace DbLinq.Data.Linq.Mapping
             }
         }
 
-        class XmlMetaType : MetaType
+        class XmlMetaType : System.Data.Linq.Mapping.MetaType
         {
             XmlMetaModel model;
             DbmlType t;
-            ReadOnlyCollection<MetaAssociation> associations;
-            Type runtime_type;
-            ReadOnlyCollection<MetaDataMember> members, identity_members, persistent_members;
+            ReadOnlyCollection<System.Data.Linq.Mapping.MetaAssociation> associations;
+            System.Type runtime_type;
+            ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> members, identity_members, persistent_members;
 
             public XmlMetaType(XmlMetaModel model, DbmlType type)
             {
@@ -684,39 +684,39 @@ namespace DbLinq.Data.Linq.Mapping
                 this.t = type;
                 runtime_type = model.GetTypeFromName(t.Name);
                 int i = 0;
-                var l = new List<MetaDataMember>();
-                l.AddRange(Array.ConvertAll<DbmlColumn, MetaDataMember>(
+                var l = new List<System.Data.Linq.Mapping.MetaDataMember>();
+                l.AddRange(Array.ConvertAll<DbmlColumn, System.Data.Linq.Mapping.MetaDataMember>(
                     t.Columns.ToArray(), c => new XmlColumnMetaDataMember(model, this, c, i++)));
-                members = new ReadOnlyCollection<MetaDataMember>(l);
+                members = new ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember>(l);
             }
 
-            public override ReadOnlyCollection<MetaAssociation> Associations
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaAssociation> Associations
             {
                 get
                 {
                     if (associations == null)
                     {
-                        var l = new List<MetaAssociation>();
+                        var l = new List<System.Data.Linq.Mapping.MetaAssociation>();
                         // FIXME: Ordinal?
                         foreach (var a in t.Associations)
                             l.Add(new XmlMetaAssociation(this, new XmlAssociationMetaDataMember(model, this, a, -1), a));
-                        associations = new ReadOnlyCollection<MetaAssociation>(l.ToArray());
+                        associations = new ReadOnlyCollection<System.Data.Linq.Mapping.MetaAssociation>(l.ToArray());
                     }
                     return associations;
                 }
             }
             public override bool CanInstantiate { get { return !runtime_type.IsAbstract; } }
-            public override ReadOnlyCollection<MetaDataMember> DataMembers { get { return members; } }
-            public override MetaDataMember DBGeneratedIdentityMember
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> DataMembers { get { return members; } }
+            public override System.Data.Linq.Mapping.MetaDataMember DBGeneratedIdentityMember
             {
                 get { return members.First(m => m.IsDbGenerated && m.IsPrimaryKey); }
             }
             [DbLinqToDo]
-            public override ReadOnlyCollection<MetaType> DerivedTypes
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaType> DerivedTypes
             {
                 get { throw new NotImplementedException(); }
             }
-            public override MetaDataMember Discriminator
+            public override System.Data.Linq.Mapping.MetaDataMember Discriminator
             {
                 get { return members.First(m => m.IsDiscriminator); }
             }
@@ -738,44 +738,44 @@ namespace DbLinq.Data.Linq.Mapping
             {
                 get { return t.InheritanceCode != null; }
             }
-            public override bool HasUpdateCheck { get { return members.Any(m => m.UpdateCheck != UpdateCheck.Never); } }
-            public override ReadOnlyCollection<MetaDataMember> IdentityMembers
+            public override bool HasUpdateCheck { get { return members.Any(m => m.UpdateCheck != System.Data.Linq.Mapping.UpdateCheck.Never); } }
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> IdentityMembers
             {
                 get
                 {
                     if (identity_members == null)
                     {
-                        identity_members = new ReadOnlyCollection<MetaDataMember>(
+                        identity_members = new ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember>(
                             members.TakeWhile(m => m.IsPrimaryKey).ToArray());
                     }
                     return identity_members;
                 }
             }
             [DbLinqToDo]
-            public override MetaType InheritanceBase
+            public override System.Data.Linq.Mapping.MetaType InheritanceBase
             {
                 get { throw new NotImplementedException(); }
             }
             public override Object InheritanceCode { get { return t.InheritanceCode; } }
             [DbLinqToDo]
-            public override MetaType InheritanceDefault
+            public override System.Data.Linq.Mapping.MetaType InheritanceDefault
             {
                 get { throw new NotImplementedException(); }
             }
             [DbLinqToDo]
-            public override MetaType InheritanceRoot
+            public override System.Data.Linq.Mapping.MetaType InheritanceRoot
             {
                 get { throw new NotImplementedException(); }
             }
             [DbLinqToDo]
-            public override ReadOnlyCollection<MetaType> InheritanceTypes
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaType> InheritanceTypes
             {
                 get { throw new NotImplementedException(); }
             }
             [DbLinqToDo]
             public override bool IsEntity { get { return true; } }
             public override bool IsInheritanceDefault { get { return t.IsInheritanceDefault; } }
-            public override MetaModel Model { get { return model; } }
+            public override System.Data.Linq.Mapping.MetaModel Model { get { return model; } }
             public override string Name { get { return t.Name; } }
             [DbLinqToDo]
             public override MethodInfo OnLoadedMethod
@@ -787,47 +787,47 @@ namespace DbLinq.Data.Linq.Mapping
             {
                 get { throw new NotImplementedException(); }
             }
-            public override ReadOnlyCollection<MetaDataMember> PersistentDataMembers
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> PersistentDataMembers
             {
                 get
                 {
                     if (persistent_members == null)
                     {
-                        persistent_members = new ReadOnlyCollection<MetaDataMember>(
+                        persistent_members = new ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember>(
                             members.TakeWhile(m => m.IsPersistent).ToArray());
                     }
                     return persistent_members;
                 }
             }
-            public override MetaTable Table { get { return model.GetTable(runtime_type); } }
-            public override Type Type { get { return runtime_type; } }
-            public override MetaDataMember VersionMember { get { return members.First(m => m.IsVersion); } }
+            public override System.Data.Linq.Mapping.MetaTable Table { get { return model.GetTable(runtime_type); } }
+            public override System.Type Type { get { return runtime_type; } }
+            public override System.Data.Linq.Mapping.MetaDataMember VersionMember { get { return members.First(m => m.IsVersion); } }
 
-            public override MetaDataMember GetDataMember(MemberInfo member)
+            public override System.Data.Linq.Mapping.MetaDataMember GetDataMember(MemberInfo member)
             {
                 //return members.First(m => m.Member == member);
                 foreach (var m in members) if (m.Member == member) return m;
                 throw new ArgumentException(String.Format("No corresponding metadata member for '{0}'", member));
             }
 
-            public override MetaType GetInheritanceType(Type type)
+            public override System.Data.Linq.Mapping.MetaType GetInheritanceType(System.Type type)
             {
                 return InheritanceTypes.First(t => t.Type == type);
             }
 
             [DbLinqToDo]
-            public override MetaType GetTypeForInheritanceCode(object code)
+            public override System.Data.Linq.Mapping.MetaType GetTypeForInheritanceCode(object code)
             {
                 throw new NotImplementedException();
             }
         }
 
-        class XmlMetaAssociation : MetaAssociation
+        class XmlMetaAssociation : System.Data.Linq.Mapping.MetaAssociation
         {
             //XmlMetaType owner;
             DbmlAssociation a;
-            ReadOnlyCollection<MetaDataMember> these_keys, other_keys;
-            MetaDataMember member;
+            ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> these_keys, other_keys;
+            System.Data.Linq.Mapping.MetaDataMember member;
 
             public XmlMetaAssociation(XmlMetaType owner, XmlMetaDataMember member, DbmlAssociation a)
             {
@@ -843,7 +843,7 @@ namespace DbLinq.Data.Linq.Mapping
             private void SetupRelationship()
             {
                 //Get the association target type
-                Type targetType = member.Member.GetFirstInnerReturnType();
+                System.Type targetType = member.Member.GetFirstInnerReturnType();
 
                 var metaModel = ThisMember.DeclaringType.Model as XmlMetaModel;
                 if (metaModel == null)
@@ -851,7 +851,7 @@ namespace DbLinq.Data.Linq.Mapping
                     throw new InvalidOperationException("Internal Error: MetaModel is not a XmlMetaModel");
                 }
 
-                MetaTable otherTable = metaModel.GetTable(targetType);
+                System.Data.Linq.Mapping.MetaTable otherTable = metaModel.GetTable(targetType);
 
                 //Setup "this key"
                 these_keys = GetKeys(a.ThisKey ?? String.Empty, ThisMember.DeclaringType);
@@ -869,11 +869,11 @@ namespace DbLinq.Data.Linq.Mapping
             /// <param name="keyListString">The key list string.</param>
             /// <param name="parentType">Type of the parent.</param>
             /// <returns></returns>
-            private static ReadOnlyCollection<MetaDataMember> GetKeys(string keyListString, MetaType parentType)
+            private static ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> GetKeys(string keyListString, System.Data.Linq.Mapping.MetaType parentType)
             {
                 if (keyListString != null)
                 {
-                    var thisKeyList = new List<MetaDataMember>();
+                    var thisKeyList = new List<System.Data.Linq.Mapping.MetaDataMember>();
 
                     string[] keyNames = keyListString.Split(STRING_SEPERATOR, StringSplitOptions.RemoveEmptyEntries);
 
@@ -882,7 +882,7 @@ namespace DbLinq.Data.Linq.Mapping
                         string keyName = rawKeyName.Trim();
 
                         //TODO: maybe speed the lookup up
-                        MetaDataMember key = (from dataMember in parentType.PersistentDataMembers
+                        System.Data.Linq.Mapping.MetaDataMember key = (from dataMember in parentType.PersistentDataMembers
                                               where dataMember.Name == keyName
                                               select dataMember).SingleOrDefault();
 
@@ -897,7 +897,7 @@ namespace DbLinq.Data.Linq.Mapping
                         thisKeyList.Add(key);
                     }
 
-                    return new ReadOnlyCollection<MetaDataMember>(thisKeyList);
+                    return new ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember>(thisKeyList);
                 }
                 else //Key is the primary key of this table
                 {
@@ -915,25 +915,25 @@ namespace DbLinq.Data.Linq.Mapping
             }
             public override bool IsNullable { get { return member.Member.GetMemberType().IsNullable(); } }
             public override bool IsUnique { get { return a.IsUnique; } }
-            public override ReadOnlyCollection<MetaDataMember> OtherKey { get { return other_keys; } }
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> OtherKey { get { return other_keys; } }
             public override bool OtherKeyIsPrimaryKey { get { return OtherKey.All(m => m.IsPrimaryKey); } }
             [DbLinqToDo]
-            public override MetaDataMember OtherMember
+            public override System.Data.Linq.Mapping.MetaDataMember OtherMember
             {
                 get { throw new NotImplementedException(); }
             }
-            public override MetaType OtherType { get { return OtherMember.DeclaringType; } }
-            public override ReadOnlyCollection<MetaDataMember> ThisKey { get { return these_keys; } }
+            public override System.Data.Linq.Mapping.MetaType OtherType { get { return OtherMember.DeclaringType; } }
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaDataMember> ThisKey { get { return these_keys; } }
             public override bool ThisKeyIsPrimaryKey { get { return ThisKey.All(m => m.IsPrimaryKey); } }
-            public override MetaDataMember ThisMember { get { return member; } }
+            public override System.Data.Linq.Mapping.MetaDataMember ThisMember { get { return member; } }
         }
 
-        abstract class XmlMetaDataMember : MetaDataMember
+        abstract class XmlMetaDataMember : System.Data.Linq.Mapping.MetaDataMember
         {
             internal XmlMetaModel model;
             internal XmlMetaType type;
             internal MemberInfo member, storage;
-            MetaAccessor member_accessor, storage_accessor;
+            System.Data.Linq.Mapping.MetaAccessor member_accessor, storage_accessor;
             int ordinal;
 
             protected XmlMetaDataMember(XmlMetaModel model, XmlMetaType type, string memberName, string storageName, int ordinal)
@@ -951,11 +951,11 @@ namespace DbLinq.Data.Linq.Mapping
             }
 
             public override bool CanBeNull { get { return member.GetMemberType().IsNullable(); } }
-            public override MetaType DeclaringType { get { return type; } }
+            public override System.Data.Linq.Mapping.MetaType DeclaringType { get { return type; } }
             public override bool IsDeferred { get { return false; } }
             public override bool IsPersistent { get { return true; } }
             public override MemberInfo Member { get { return member; } }
-            public override MetaAccessor MemberAccessor
+            public override System.Data.Linq.Mapping.MetaAccessor MemberAccessor
             {
                 get
                 {
@@ -965,7 +965,7 @@ namespace DbLinq.Data.Linq.Mapping
                 }
             }
             public override int Ordinal { get { return ordinal; } }
-            public override MetaAccessor StorageAccessor
+            public override System.Data.Linq.Mapping.MetaAccessor StorageAccessor
             {
                 get
                 {
@@ -975,9 +975,9 @@ namespace DbLinq.Data.Linq.Mapping
                 }
             }
             public override MemberInfo StorageMember { get { return storage; } }
-            public override Type Type { get { return member.GetMemberType(); } }
+            public override System.Type Type { get { return member.GetMemberType(); } }
 
-            public override bool IsDeclaredBy(MetaType type)
+            public override bool IsDeclaredBy(System.Data.Linq.Mapping.MetaType type)
             {
                 return this.type == type;
             }
@@ -993,16 +993,16 @@ namespace DbLinq.Data.Linq.Mapping
                 this.c = column;
             }
 
-            public override MetaAssociation Association { get { return null; } }
-            public override AutoSync AutoSync { get { return (AutoSync)c.AutoSync; } }
+            public override System.Data.Linq.Mapping.MetaAssociation Association { get { return null; } }
+            public override System.Data.Linq.Mapping.AutoSync AutoSync { get { return (System.Data.Linq.Mapping.AutoSync)c.AutoSync; } }
             public override string DbType { get { return c.DbType; } }
             [DbLinqToDo]
-            public override MetaAccessor DeferredSourceAccessor
+            public override System.Data.Linq.Mapping.MetaAccessor DeferredSourceAccessor
             {
                 get { throw new NotImplementedException(); }
             }
             [DbLinqToDo]
-            public override MetaAccessor DeferredValueAccessor
+            public override System.Data.Linq.Mapping.MetaAccessor DeferredValueAccessor
             {
                 get { throw new NotImplementedException(); }
             }
@@ -1023,7 +1023,7 @@ namespace DbLinq.Data.Linq.Mapping
             }
             public override string MappedName { get { return c.Name; } }
             public override string Name { get { return c.Name ?? c.Member; } }
-            public override UpdateCheck UpdateCheck { get { return c.UpdateCheck; } }
+            public override System.Data.Linq.Mapping.UpdateCheck UpdateCheck { get { return c.UpdateCheck; } }
         }
 
         class XmlAssociationMetaDataMember : XmlMetaDataMember
@@ -1037,7 +1037,7 @@ namespace DbLinq.Data.Linq.Mapping
                 this.a = association;
             }
 
-            public override MetaAssociation Association
+            public override System.Data.Linq.Mapping.MetaAssociation Association
             {
                 get
                 {
@@ -1046,15 +1046,15 @@ namespace DbLinq.Data.Linq.Mapping
                     return ma;
                 }
             }
-            public override AutoSync AutoSync { get { return AutoSync.Never; } }
+            public override System.Data.Linq.Mapping.AutoSync AutoSync { get { return System.Data.Linq.Mapping.AutoSync.Never; } }
             public override string DbType { get { return String.Empty; } }
             [DbLinqToDo]
-            public override MetaAccessor DeferredSourceAccessor
+            public override System.Data.Linq.Mapping.MetaAccessor DeferredSourceAccessor
             {
                 get { throw new NotImplementedException(); }
             }
             [DbLinqToDo]
-            public override MetaAccessor DeferredValueAccessor
+            public override System.Data.Linq.Mapping.MetaAccessor DeferredValueAccessor
             {
                 get { throw new NotImplementedException(); }
             }
@@ -1083,7 +1083,7 @@ namespace DbLinq.Data.Linq.Mapping
             }
             public override string MappedName { get { return a.Member; } }
             public override string Name { get { return a.Name; } }
-            public override UpdateCheck UpdateCheck
+            public override System.Data.Linq.Mapping.UpdateCheck UpdateCheck
             {
                 get
                 {
@@ -1092,7 +1092,7 @@ namespace DbLinq.Data.Linq.Mapping
             }
         }
 
-        class XmlMetaAccessor : MetaAccessor
+        class XmlMetaAccessor : System.Data.Linq.Mapping.MetaAccessor
         {
             XmlMetaDataMember member;
             MemberInfo member_info;
@@ -1103,7 +1103,7 @@ namespace DbLinq.Data.Linq.Mapping
                 this.member_info = memberInfo;
             }
 
-            public override Type Type
+            public override System.Type Type
             {
                 get { return member_info is FieldInfo ? ((FieldInfo)member_info).FieldType : ((PropertyInfo)member_info).PropertyType; }
             }
@@ -1121,14 +1121,14 @@ namespace DbLinq.Data.Linq.Mapping
             }
         }
 
-        class XmlMetaFunction : MetaFunction
+        class XmlMetaFunction : System.Data.Linq.Mapping.MetaFunction
         {
             XmlMetaModel model;
             DbmlFunction f;
             MethodInfo method;
-            ReadOnlyCollection<MetaParameter> parameters;
-            ReadOnlyCollection<MetaType> result_types;
-            MetaParameter return_param;
+            ReadOnlyCollection<System.Data.Linq.Mapping.MetaParameter> parameters;
+            ReadOnlyCollection<System.Data.Linq.Mapping.MetaType> result_types;
+            System.Data.Linq.Mapping.MetaParameter return_param;
 
             public XmlMetaFunction(XmlMetaModel model, DbmlFunction function)
             {
@@ -1142,39 +1142,39 @@ namespace DbLinq.Data.Linq.Mapping
             public override bool IsComposable { get { return f.IsComposable; } }
             public override string MappedName { get { return f.Name; } }
             public override MethodInfo Method { get { return method; } }
-            public override MetaModel Model { get { return model; } }
+            public override System.Data.Linq.Mapping.MetaModel Model { get { return model; } }
             public override string Name { get { return f.Name; } }
-            public override ReadOnlyCollection<MetaParameter> Parameters
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaParameter> Parameters
             {
                 get
                 {
                     if (parameters == null)
                     {
-                        var l = new List<MetaParameter>();
+                        var l = new List<System.Data.Linq.Mapping.MetaParameter>();
                         int i = 0;
                         ParameterInfo[] mparams = method.GetParameters();
                         foreach (var p in f.Parameters)
                             l.Add(new XmlMetaParameter(p, mparams[i++]));
-                        parameters = new ReadOnlyCollection<MetaParameter>(l);
+                        parameters = new ReadOnlyCollection<System.Data.Linq.Mapping.MetaParameter>(l);
                     }
                     return parameters;
                 }
             }
-            public override ReadOnlyCollection<MetaType> ResultRowTypes
+            public override ReadOnlyCollection<System.Data.Linq.Mapping.MetaType> ResultRowTypes
             {
                 get
                 {
                     if (result_types == null)
                     {
-                        var l = new List<MetaType>();
+                        var l = new List<System.Data.Linq.Mapping.MetaType>();
                         foreach (var p in f.ElementTypes)
                             l.Add(model.GetMetaType(model.GetTypeFromName(p.Name)));
-                        result_types = new ReadOnlyCollection<MetaType>(l.ToArray());
+                        result_types = new ReadOnlyCollection<System.Data.Linq.Mapping.MetaType>(l.ToArray());
                     }
                     return result_types;
                 }
             }
-            public override MetaParameter ReturnParameter { get { return return_param; } }
+            public override System.Data.Linq.Mapping.MetaParameter ReturnParameter { get { return return_param; } }
         }
     }
 }

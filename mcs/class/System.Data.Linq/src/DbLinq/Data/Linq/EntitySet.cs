@@ -125,6 +125,9 @@ namespace DbLinq.Data.Linq
                 return;
             sourceAsList.Add(entity);
             OnAdd(entity);
+            ListChangedEventHandler handler = ListChanged;
+            if (handler != null)
+                handler(this, new ListChangedEventArgs(ListChangedType.ItemAdded, sourceAsList.Count - 1));
         }
 
         [DbLinqToDo]
@@ -161,6 +164,9 @@ namespace DbLinq.Data.Linq
                 throw new ArgumentOutOfRangeException();
             OnAdd(entity);
             sourceAsList.Insert(index, entity);
+            ListChangedEventHandler handler = ListChanged;
+            if (handler != null)
+                handler(this, new ListChangedEventArgs(ListChangedType.ItemAdded, index));
         }
 
         /// <summary>
@@ -171,6 +177,9 @@ namespace DbLinq.Data.Linq
         {
             OnRemove(sourceAsList[index]);
             sourceAsList.RemoveAt(index);
+            ListChangedEventHandler handler = ListChanged;
+            if (handler != null)
+                handler(this, new ListChangedEventArgs(ListChangedType.ItemDeleted, index));
         }
 
         /// <summary>
@@ -181,7 +190,9 @@ namespace DbLinq.Data.Linq
         {
             get
             {
-                return Source.ElementAt(index);
+                if(! this.HasLoadedOrAssignedValues)
+                    return Source.ElementAt(index);
+                return sourceAsList[index];
             }
             set
             {
@@ -195,14 +206,21 @@ namespace DbLinq.Data.Linq
 
         #region ICollection<TEntity> Members
 
+        private void clear()
+        {
+            sourceAsList.Clear();
+            Source = Enumerable.Empty<TEntity>();
+        }
+
         /// <summary>
         /// Removes all items in collection
         /// </summary>
         public void Clear()
         {
-            while (sourceAsList.Count > 0)
-                Remove(sourceAsList [0]);
-            Source = Enumerable.Empty<TEntity>();
+            clear();
+            ListChangedEventHandler handler = ListChanged;
+            if (handler != null)
+                handler(this, new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
 
         /// <summary>
@@ -212,9 +230,10 @@ namespace DbLinq.Data.Linq
         /// <returns>
         /// 	<c>true</c> if [contains] [the specified entity]; otherwise, <c>false</c>.
         /// </returns>
+        [DbLinqToDo]
         public bool Contains(TEntity entity)
         {
-            return Source.Contains(entity);
+            return sourceAsList.Contains(entity);
         }
 
         /// <summary>
@@ -234,6 +253,8 @@ namespace DbLinq.Data.Linq
         {
             get
             {
+                if (!this.HasLoadedOrAssignedValues)
+                    return Source.Count();
                 return sourceAsList.Count;
             }
         }
@@ -257,6 +278,10 @@ namespace DbLinq.Data.Linq
         public bool Remove(TEntity entity)
         {
             OnRemove(entity);
+            ListChangedEventHandler handler = ListChanged;
+            int i = sourceAsList.IndexOf(entity);
+            if (handler != null)
+                handler(this, new ListChangedEventArgs(ListChangedType.ItemDeleted, i));
             return sourceAsList.Remove(entity);
         }
 
@@ -369,7 +394,7 @@ namespace DbLinq.Data.Linq
         /// </value>
         public bool IsDeferred
         {
-            get { return Source is IQueryable; }
+            get { return SourceInUse == null && Source is IQueryable; }
         }
 
         /// <summary>
@@ -394,11 +419,16 @@ namespace DbLinq.Data.Linq
         public void Assign(IEnumerable<TEntity> entitySource)
         {
             // notifies removals and adds
-            Clear();
+            clear();
             foreach (var entity in entitySource)
+            {
                 OnAdd(entity);
+            }
             this.Source = entitySource;
             this.SourceInUse = sourceAsList;
+            ListChangedEventHandler handler = ListChanged;
+            if (handler != null)
+                handler(this, new ListChangedEventArgs(ListChangedType.Reset,-1));
         }
 
         /// <summary>
@@ -417,7 +447,7 @@ namespace DbLinq.Data.Linq
         /// </summary>
         public void Load()
         {
-            this.sourceAsList.Count();
+            IList<TEntity> list = this.sourceAsList;
         }
 
         /// <summary>

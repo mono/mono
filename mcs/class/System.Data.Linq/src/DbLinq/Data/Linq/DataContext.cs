@@ -83,7 +83,26 @@ namespace DbLinq.Data.Linq
         internal IDatabaseContext DatabaseContext { get; private set; }
         // /all properties...
 
-        private readonly EntityTracker entityTracker = new EntityTracker();
+        private bool objectTrackingEnabled = true;
+        private bool deferredLoadingEnabled = true;
+
+        private IEntityTracker entityTracker;
+        private IEntityTracker EntityTracker
+        {
+            get
+            {
+                if (this.entityTracker == null)
+                {
+                    if (this.ObjectTrackingEnabled)
+                        this.entityTracker = new EntityTracker();
+                    else
+                        this.entityTracker = new DisabledEntityTracker();
+                }
+                return this.entityTracker;
+            }
+        }
+
+
 
         private IIdentityReaderFactory identityReaderFactory;
         private readonly IDictionary<Type, IIdentityReader> identityReaders = new Dictionary<Type, IIdentityReader>();
@@ -113,7 +132,25 @@ namespace DbLinq.Data.Linq
         [DbLinqToDo]
         public DataContext(string fileOrServerOrConnection, MappingSource mapping)
         {
-            throw new NotImplementedException();
+            if (fileOrServerOrConnection == null)
+                throw new ArgumentNullException("fileOrServerOrConnection");
+            if (mapping == null)
+                throw new ArgumentNullException("mapping");
+
+            if (File.Exists(fileOrServerOrConnection))
+                throw new NotImplementedException("File names not supported.");
+
+            // Is this a decent server name check?
+            // It assumes that the connection string will have at least 2
+            // parameters (separated by ';')
+            if (!fileOrServerOrConnection.Contains(";"))
+                throw new NotImplementedException("Server name not supported.");
+
+            // Assume it's a connection string...
+            IVendor ivendor = GetVendor(fileOrServerOrConnection);
+
+            IDbConnection dbConnection = ivendor.CreateDbConnection(fileOrServerOrConnection);
+            Init(new DatabaseContext(dbConnection), mapping, ivendor);
         }
 
         /// <summary>
@@ -327,11 +364,13 @@ namespace DbLinq.Data.Linq
         /// <param name="failureMode"></param>
         public virtual void SubmitChanges(ConflictMode failureMode)
         {
+            if (this.objectTrackingEnabled == false)
+                throw new InvalidOperationException("Object tracking is not enabled for the current data context instance.");
             using (DatabaseContext.OpenConnection()) //ConnMgr will close connection for us
             using (IDatabaseTransaction transaction = DatabaseContext.Transaction())
             {
                 var queryContext = new QueryContext(this);
-                var entityTracks = entityTracker.EnumerateAll().ToList();
+                var entityTracks = EntityTracker.EnumerateAll().ToList();
                 foreach (var entityTrack in entityTracks)
                 {
                     switch (entityTrack.EntityState)
@@ -411,7 +450,7 @@ namespace DbLinq.Data.Linq
             if (identityKey == null) // if we don't have an entitykey here, it means that the entity has no PK
                 return entity;
             // even 
-            var registeredEntityTrack = entityTracker.FindByIdentity(identityKey);
+            var registeredEntityTrack = EntityTracker.FindByIdentity(identityKey);
             if (registeredEntityTrack != null)
                 return registeredEntityTrack.Entity;
             return null;
@@ -440,18 +479,23 @@ namespace DbLinq.Data.Linq
                 return entity;
 
             // try to find an already registered entity and return it
-            var registeredEntityTrack = entityTracker.FindByIdentity(identityKey);
+            var registeredEntityTrack = EntityTracker.FindByIdentity(identityKey);
             if (registeredEntityTrack != null)
                 return registeredEntityTrack.Entity;
 
             // otherwise, register and return
-            entityTracker.RegisterToWatch(entity, identityKey);
+            EntityTracker.RegisterToWatch(entity, identityKey);
             return entity;
         }
 
         readonly IDataMapper DataMapper = ObjectFactory.Get<IDataMapper>();
         private void SetEntityRefQueries(object entity)
         {
+            if (!this.deferredLoadingEnabled)
+                return;
+
+            // BUG: This is ignoring External Mappings from XmlMappingSource.
+
             Type thisType = entity.GetType();
             IList<MemberInfo> properties = DataMapper.GetEntityRefAssociations(thisType);
 
@@ -512,6 +556,11 @@ namespace DbLinq.Data.Linq
         /// <param name="entity"></param>
         private void SetEntitySetsQueries(object entity)
         {
+            if (!this.deferredLoadingEnabled)
+                return;
+
+            // BUG: This is ignoring External Mappings from XmlMappingSource.
+
             IList<MemberInfo> properties = DataMapper.GetEntitySetAssociations(entity.GetType());
             
             if (properties.Any()) {
@@ -595,7 +644,7 @@ namespace DbLinq.Data.Linq
         /// <param name="entity"></param>
         internal void RegisterInsert(object entity)
         {
-            entityTracker.RegisterToInsert(entity);
+            EntityTracker.RegisterToInsert(entity);
         }
 
         /// <summary>
@@ -608,14 +657,16 @@ namespace DbLinq.Data.Linq
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
+            if (!this.objectTrackingEnabled)
+                return;
+
             var identityReader = _GetIdentityReader(entity.GetType());
             var identityKey = identityReader.GetIdentityKey(entity);
-            Console.WriteLine("# identityKey={0}", identityKey == null ? "<null>" : identityKey.ToString());
             // if we have no key, we can not watch
             if (identityKey == null)
                 return;
             // register entity
-            entityTracker.RegisterToWatch(entity, identityKey);
+            EntityTracker.RegisterToWatch(entity, identityKey);
         }
 
         /// <summary>
@@ -625,6 +676,8 @@ namespace DbLinq.Data.Linq
         /// <returns></returns>
         internal object Register(object entity)
         {
+            if (! this.objectTrackingEnabled)
+                return entity;
             var registeredEntity = _GetOrRegisterEntity(entity);
             // the fact of registering again clears the modified state, so we're... clear with that
             MemberModificationHandler.Register(registeredEntity, Mapping);
@@ -639,6 +692,8 @@ namespace DbLinq.Data.Linq
         /// <param name="entityOriginalState"></param>
         internal void RegisterUpdate(object entity, object entityOriginalState)
         {
+            if (!this.objectTrackingEnabled)
+                return;
             RegisterUpdate(entity);
             MemberModificationHandler.Register(entity, entityOriginalState, Mapping);
         }
@@ -649,6 +704,8 @@ namespace DbLinq.Data.Linq
         /// <param name="entity"></param>
         internal void RegisterUpdateAgain(object entity)
         {
+            if (!this.objectTrackingEnabled)
+                return;
             MemberModificationHandler.ClearModified(entity, Mapping);
         }
 
@@ -658,7 +715,9 @@ namespace DbLinq.Data.Linq
         /// <param name="entity"></param>
         internal void RegisterDelete(object entity)
         {
-            entityTracker.RegisterToDelete(entity);
+            if (!this.objectTrackingEnabled)
+                return;
+            EntityTracker.RegisterToDelete(entity);
         }
 
         /// <summary>
@@ -667,7 +726,9 @@ namespace DbLinq.Data.Linq
         /// <param name="entity"></param>
         internal void UnregisterDelete(object entity)
         {
-            entityTracker.RegisterDeleted(entity);
+            if (!this.objectTrackingEnabled)
+                return;
+            EntityTracker.RegisterDeleted(entity);
         }
 
         #endregion
@@ -681,7 +742,7 @@ namespace DbLinq.Data.Linq
             var inserts = new List<object>();
             var updates = new List<object>();
             var deletes = new List<object>();
-            foreach (var entityTrack in entityTracker.EnumerateAll())
+            foreach (var entityTrack in EntityTracker.EnumerateAll())
             {
                 switch (entityTrack.EntityState)
                 {
@@ -746,7 +807,11 @@ namespace DbLinq.Data.Linq
         /// Gets or sets the load options
         /// </summary>
         [DbLinqToDo]
-        public DataLoadOptions LoadOptions { get; set; }
+        public DataLoadOptions LoadOptions 
+        {
+            get { throw new NotImplementedException(); }
+            set { throw new NotImplementedException(); }
+        }
 
         public DbTransaction Transaction { get; set; }
 
@@ -856,12 +921,15 @@ namespace DbLinq.Data.Linq
             }
         }
 
-
-        [DbLinqToDo]
         public bool ObjectTrackingEnabled
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return this.objectTrackingEnabled; }
+            set 
+            {
+                if (this.entityTracker != null && value != this.objectTrackingEnabled)
+                    throw new InvalidOperationException("Data context options cannot be modified after results have been returned from a query.");
+                this.objectTrackingEnabled = value;
+            }
         }
 
         [DbLinqToDo]
@@ -871,11 +939,15 @@ namespace DbLinq.Data.Linq
             set { throw new NotImplementedException(); }
         }
 
-        [DbLinqToDo]
         public bool DeferredLoadingEnabled
         {
-            get { throw new NotImplementedException(); }
-            set { throw new NotImplementedException(); }
+            get { return this.deferredLoadingEnabled; }
+            set
+            {
+                if (this.entityTracker != null && value != this.deferredLoadingEnabled)
+                    throw new InvalidOperationException("Data context options cannot be modified after results have been returned from a query.");
+                this.deferredLoadingEnabled = value;
+            }
         }
 
         [DbLinqToDo]

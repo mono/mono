@@ -26,10 +26,12 @@ src/DbLinq/Data/Linq/Identity/Implementation/IdentityReaderFactory.cs
 src/DbLinq/Data/Linq/IEntityMap.cs
 src/DbLinq/Data/Linq/IExecuteResult.cs
 src/DbLinq/Data/Linq/IMemberModificationHandler.cs
+src/DbLinq/Data/Linq/Implementation/DisabledEntityTracker.cs
 src/DbLinq/Data/Linq/Implementation/EntityMap.cs
 src/DbLinq/Data/Linq/Implementation/EntityState.cs
 src/DbLinq/Data/Linq/Implementation/EntityTrack.cs
 src/DbLinq/Data/Linq/Implementation/EntityTracker.cs
+src/DbLinq/Data/Linq/Implementation/IEntityTracker.cs
 src/DbLinq/Data/Linq/Implementation/MemberModificationHandler.cs
 src/DbLinq/Data/Linq/Implementation/QueryProvider.cs
 src/DbLinq/Data/Linq/Implementation/VendorProvider.cs
@@ -45,6 +47,7 @@ src/DbLinq/Data/Linq/Mapping/AttributedMetaTable.cs
 src/DbLinq/Data/Linq/Mapping/AttributedMetaType.cs
 src/DbLinq/Data/Linq/Mapping/AttributeMappingSource.cs
 src/DbLinq/Data/Linq/Mapping/MappingContext.cs
+src/DbLinq/Data/Linq/Mapping/XmlMappingSource.cs
 src/DbLinq/Data/Linq/RefreshMode.cs
 src/DbLinq/Data/Linq/SqlClient/FirebirdProvider.cs
 src/DbLinq/Data/Linq/SqlClient/IngresProvider.cs
@@ -266,7 +269,6 @@ src/DbLinq/System.Data.Linq/System.Data.Linq.Mapping/ProviderAttribute.cs
 src/DbLinq/System.Data.Linq/System.Data.Linq.Mapping/ResultTypeAttribute.cs
 src/DbLinq/System.Data.Linq/System.Data.Linq.Mapping/TableAttribute.cs
 src/DbLinq/System.Data.Linq/System.Data.Linq.Mapping/UpdateCheck.cs
-src/DbLinq/System.Data.Linq/System.Data.Linq.Mapping/XmlMappingSource.cs
 src/DbLinq/System.Data.Linq/System.Data.Linq.SqlClient.Implementation/ObjectMaterializer.cs
 src/DbLinq/System.Data.Linq/System.Data.Linq.SqlClient/SqlHelpers.cs
 src/DbLinq/System.Data.Linq/System.Data.Linq.SqlClient/SqlMethods.cs

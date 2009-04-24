@@ -108,6 +108,12 @@ namespace DbLinqTest {
         }
 
         [Test, ExpectedException(typeof(ArgumentException))]
+        public void Ctor_ConnectionString_DbLinqConnectionType_Empty2()
+        {
+            new DataContext("DbLinqConnectionType=;");
+        }
+
+        [Test, ExpectedException(typeof(ArgumentException))]
         public void Ctor_ConnectionString_DbLinqConnectionType_Invalid()
         {
             new DataContext("DbLinqConnectionType=InvalidType, DoesNotExist");
@@ -124,6 +130,40 @@ namespace DbLinqTest {
         {
             new DataContext("DbLinqProvider=DbLinq.Sqlite.dll");
         }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void Ctor_FileOrServerOrConnectionIsNull()
+        {
+            MappingSource mapping = new AttributeMappingSource();
+            string fileOrServerOrConnection = null;
+            new DataContext(fileOrServerOrConnection, mapping);
+        }
+
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void Ctor_MappingIsNull()
+        {
+            MappingSource mapping = null;
+            string fileOrServerOrConnection = null;
+            new DataContext("", mapping);
+        }
+
+#if !MONO_STRICT
+        [Test, ExpectedException(typeof(NotImplementedException))]
+        public void Ctor_FileOrServerOrConnectionIsFilename()
+        {
+            MappingSource mapping = new AttributeMappingSource();
+            string fileOrServerOrConnection = typeof(DataContextTest).Assembly.Location;
+            new DataContext(fileOrServerOrConnection, mapping);
+        }
+
+        [Test, ExpectedException(typeof(NotImplementedException))]
+        public void Ctor_FileOrServerOrConnectionIsServer()
+        {
+            MappingSource mapping = new AttributeMappingSource();
+            string fileOrServerOrConnection = "ThisIsAssumedToBeAServerName";
+            new DataContext(fileOrServerOrConnection, mapping);
+        }
+#endif
 
         [Test]
         public void Connection()
