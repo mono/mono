@@ -1,3 +1,7 @@
+2009-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* PageParserFilterTest.cs: added
+
 2009-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* ControlTest.cs: added test for bug #471305

@@ -995,7 +995,16 @@ namespace System.Web.Compilation
 		{
 #if NET_2_0
 			PageParserFilter pfilter = PageParserFilter;
-			if (pfilter != null && (!pfilter.AllowCode || !pfilter.ProcessCodeConstruct (MapTagTypeToConstructType (tagtype), code)))
+			// LAMESPEC:
+			//
+			// http://msdn.microsoft.com/en-us/library/system.web.ui.pageparserfilter.processcodeconstruct.aspx
+			//
+			// The above page says if false is returned then we should NOT process the
+			// code further, wheras in reality it's the other way around. The
+			// ProcessCodeConstruct return value means whether or not the filter
+			// _processed_ the code.
+			//
+			if (pfilter != null && (!pfilter.AllowCode || pfilter.ProcessCodeConstruct (MapTagTypeToConstructType (tagtype), code)))
 				return true;
 #endif
 			ControlBuilder b = null;

@@ -47,7 +47,7 @@ namespace System.Web.UI
 
 		[MonoTODO ("Need to implement support for this in the parser")]
 		protected int Line {
-			get { return 0; }
+			get { return parser.Location.BeginLine; }
 		}
 
 		public virtual int NumberOfControlsAllowed {
@@ -63,8 +63,7 @@ namespace System.Web.UI
 		}
 		
 		protected string VirtualPath {
-			get;
-			private set;
+			get { return parser.VirtualPath.Absolute; }
 		}
 
 		protected void AddControl (Type type, IDictionary attributes)
@@ -113,13 +112,9 @@ namespace System.Web.UI
 		{
 		}
 
-		internal void Initialize (VirtualPath virtualPath, TemplateParser parser)
+		internal void Initialize (TemplateParser parser)
 		{
-			if (virtualPath == null)
-				throw new ArgumentNullException ("virtualPath");
-			
 			this.parser = parser;
-			VirtualPath = virtualPath.Absolute;
 			Initialize ();
 		}
 		
