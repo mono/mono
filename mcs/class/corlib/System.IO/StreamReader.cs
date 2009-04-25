@@ -368,6 +368,15 @@ namespace System.IO {
 			return decoded_buffer [pos];
 		}
 
+		//
+		// Used internally by our console, as it previously depended on Peek() being a
+		// routine that would not block.
+		//
+		internal bool DataAvailable ()
+		{
+			return pos < decoded_count;
+		}
+		
 		public override int Read ()
 		{
 			if (base_stream == null)

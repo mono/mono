@@ -1,3 +1,9 @@
+2009-04-25  Miguel de Icaza  <miguel@novell.com>
+
+	* TermInfoDriver.cs: Use the new StreamReader.DataAvailable to
+	load all the data that was added into the `stdin' stream when we
+	did the `Read'.
+
 2009-04-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Environment.cs: #ifdef out code that use the registry for the 
