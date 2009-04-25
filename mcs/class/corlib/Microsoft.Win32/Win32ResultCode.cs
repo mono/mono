@@ -30,6 +30,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -57,3 +59,6 @@ namespace Microsoft.Win32
 		public const int MarkedForDeletion = 1018;
 	}
 }
+
+#endif // NET_2_1
+

@@ -1,3 +1,9 @@
+2009-04-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* *.cs: Exclude the files for the NET_2_1 profile, since they are
+	unneeded and adds a bunch (23) [SecuritySafeCritical] to audit for
+	Moonlight
+
 2008-02-25  Robert Jordan  <robertj@gmx.net>
 
 	* Win32RegistryApi.cs (ToString): Don't emit the handle value

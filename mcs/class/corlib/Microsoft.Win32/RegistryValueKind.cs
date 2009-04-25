@@ -25,6 +25,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 #if NET_2_0
 using System.Runtime.InteropServices;
 #endif
@@ -49,3 +51,6 @@ namespace Microsoft.Win32
 		QWord = 11,
 	}
 }
+
+#endif // NET_2_1
+
