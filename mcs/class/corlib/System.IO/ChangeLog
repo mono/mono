@@ -1,3 +1,10 @@
+2009-04-25  Miguel de Icaza  <miguel@novell.com>
+
+	* StreamReader.cs (DataAvailable): New internal function to work
+	around the fact that StreamReaders are now blocking on Peek(), and
+	that our own Console.TermInfoDriver used Peek() as a way of
+	probing if there was data on a stream before to avoid blocking. o
+
 2009-04-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StreamReader.cs: if Peek() needs to block, do it.

@@ -931,11 +931,11 @@ namespace System {
 						do {
 							AddToBuffer (stdin.Read ());
 						} while (ConsoleDriver.InternalKeyAvailable (0) > 0);
-					} /* else if (stdin.Peek () != -1) {
+					} else if (stdin.DataAvailable ()) {
 						do {
 							AddToBuffer (stdin.Read ());
-						} while (stdin.Peek () != -1);
-					} */ else {						
+						} while (stdin.DataAvailable ());
+					} else {
 						if ((o = GetKeyFromBuffer (false)) != null)
 							break;
 
