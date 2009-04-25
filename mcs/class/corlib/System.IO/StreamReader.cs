@@ -358,6 +358,10 @@ namespace System.IO {
 			return decoded_count;
 		}
 
+		//
+		// Peek can block:
+		// http://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=96484
+		//
 		public override int Peek ()
 		{
 			if (base_stream == null)
