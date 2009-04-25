@@ -1,3 +1,7 @@
+2009-04-25  Jonathan Chambers  <joncham@gmail.com>
+
+	* Makefile: Adjust assembly name for 3.5 profile.
+
 2009-02-25  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Utilities.dll.sources: Add ProcessService.cs,

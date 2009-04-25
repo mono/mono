@@ -139,7 +139,11 @@ net_2_1_dirs := \
 	System.ServiceModel.Web
 
 net_3_5_dirs := \
-	System.Web.Extensions.Design
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Microsoft.Build.Tasks		\
+	System.Web.Extensions.Design	
 
 net_1_1_SUBDIRS := $(common_dirs) $(net_1_1_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)

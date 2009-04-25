@@ -10,6 +10,10 @@ NO_TEST = yes
 NO_SIGN_ASSEMBLY = yes
 endif
 
+ifeq (3.5, $(FRAMEWORK_VERSION))
+LIBRARY_NAME = Microsoft.Build.Tasks.v3.5.dll
+endif
+
 LIB_MCS_FLAGS = \
 	/r:$(corlib)				\
 	/r:System.dll				\
