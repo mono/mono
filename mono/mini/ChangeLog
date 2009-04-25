@@ -1,4 +1,27 @@
+2009-04-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Add OP_LLVM_OUTARG_VT opcode.
+
+	* mini.h (LLVMCallInfo): New structure to store calling convention 
+	information for the LLVM back end similar to the CallInfo structures in 
+	the back-ends.
+
+	* mini-amd64.c (mono_arch_get_llvm_call_info): New arch function to return
+	call information in a format usable by LLVM.
+	(mono_arch_emit_call): Move the LLVM handling code to mono_llvm_emit_call ().
+
+	* method-to-ir.c (mono_emit_call_args): Emit calls using 
+	mono_llvm_emit_call () when compiling using LLVM.
+
+	* mini-llvm.c: Implement support for passing/receiving valuetypes. Add
+	comments to all functions. Fix memory leaks. Add a public init/cleanup
+	function.
+
+	* mini.c: Call the llvm init/cleanup functions in mini_init()/cleanup().
+
+	* method-to-ir.c (handle_array_new): Disable llvm when calling the vararg
+	mono_array_new_va () jit icall.
+	
 Fri Apr 24 16:44:08 CEST 2009 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, genmdesc.c, genmdesc.pl: tiny refactor to allow
