@@ -1,3 +1,10 @@
+2009-04-25 Daniel Nauck <dna@mono-project.de>
+
+	Fix bug #484649:
+	* LoggerInfo.cs: fixed the parsing of the /logger: argument as described in
+	http://msdn.microsoft.com/en-us/library/ms164311.aspx
+	Added logger class detection if it's not explicit specified in the argument.
+
 2009-03-19  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #484773.
