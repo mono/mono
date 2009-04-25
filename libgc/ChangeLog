@@ -1,3 +1,10 @@
+2009-04-24  Kostyantyn Gushtin, Yevgen Kiruha, Serhiy Naumenko, Serhiy
+Stetskovych and Ian Dichkovsky <mono@n-ix.com.ua>
+
+	* include/private/gcconfig.h: Changes to support 64-bit ABI on MIPS.
+	Add an additional condition for a proper defining of  ALIGNMENT
+	and CPP_WORDSZ.
+
 2009-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gc_locks.h (GC_test_and_set): Merge a change from libgc
