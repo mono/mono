@@ -53,6 +53,9 @@ namespace Mono.CSharp {
 		public static void AppendResults (ArrayList results, string prefix, IEnumerable names)
 		{
 			foreach (string name in names){
+				if (name == null)
+					continue;
+				
 				if (!name.StartsWith (prefix))
 					continue;
 

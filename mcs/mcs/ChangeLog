@@ -1,5 +1,10 @@
 2009-04-24  Miguel de Icaza  <miguel@novell.com>
 
+	* complete.cs: No idea how gonzalo got a null in the list, but
+	avoid crashing.
+
+2009-04-24  Miguel de Icaza  <miguel@novell.com>
+
 	* complete.cs (CompletionElementInitializer): New completion class
 	to support completing inside a C# 3 element initializer, so this
 	allows completion for Silverlight situations where it is very
