@@ -780,5 +780,73 @@ public class StreamReaderTest
 			return 2;
 		}
 	}
+
+	[Test]
+	public void PeekWhileBlocking ()
+	{
+		StreamReader reader = new StreamReader (new MyStream ());
+		int c = reader.Read ();
+		Assert.IsFalse (reader.EndOfStream);
+		string str = reader.ReadToEnd ();
+		Assert.AreEqual ("bc", str);
+	}
 }
+
+class MyStream : Stream {
+	int n;
+
+	public override int Read (byte [] buffer, int offset, int size)
+	{
+		if (n == 0) {
+			buffer [offset] = (byte) 'a';
+			n++;
+			return 1;
+		} else if (n == 1) {
+			buffer [offset] = (byte) 'b';
+			buffer [offset + 1] = (byte) 'c';
+			n++;
+			return 2;
+		}
+		return 0;
+	}
+
+	public override bool CanRead {
+		get { return true; }
+	}
+
+	public override bool CanSeek {
+		get { return false; }
+	}
+
+	public override bool CanWrite {
+		get { return false; }
+	}
+
+	public override long Length {
+		get { return 0; }
+	}
+
+	public override long Position {
+		get { return 0; }
+			set { }
+	}
+
+	public override void Flush ()
+	{
+	}
+
+	public override long Seek (long offset, SeekOrigin origin)
+	{
+		return 0;
+	}
+
+	public override void SetLength (long value)
+	{
+	}
+
+	public override void Write (byte[] buffer, int offset, int count)
+	{
+	}
+}
+
 }
