@@ -2471,7 +2471,7 @@ namespace System {
 			else {
 				provider = ci.NumberFormat;
 			}
-			return ToType (value, conversionType, provider);
+			return ToType (value, conversionType, provider, true);
 		}
 		
 		public static object ChangeType (object value, TypeCode typeCode)
@@ -2485,20 +2485,20 @@ namespace System {
 			else {
 				provider = ci.NumberFormat;
 			}
-			return ToType (value, conversionType, provider);
+			return ToType (value, conversionType, provider, true);
 		}
 
 		public static object ChangeType (object value, Type conversionType, IFormatProvider provider)
 		{
 			if ((value != null) && (conversionType == null))
 				throw new ArgumentNullException ("conversionType");
-			return ToType (value, conversionType, provider);
+			return ToType (value, conversionType, provider, true);
 		}
 		
 		public static object ChangeType (object value, TypeCode typeCode, IFormatProvider provider)
 		{
 			Type conversionType = conversionTable [(int)typeCode];
-			return ToType (value, conversionType, provider);
+			return ToType (value, conversionType, provider, true);
 		}
 
 		private static bool NotValidBase (int value)
@@ -2825,8 +2825,19 @@ namespace System {
 		// it as an object. In place for the core data types to use
 		// when implementing IConvertible. Uses hardcoded indexes in 
 		// the conversionTypes array, so if modify carefully.
-		internal static object ToType (object value, Type conversionType, 
-					       IFormatProvider provider) 
+	
+		//
+		// The `try_target_to_type' boolean indicates if the code
+		// should try to call the IConvertible.ToType method if everything
+		// else fails.
+		//
+		// This should be true for invocations from Convert.cs, and
+		// false from the mscorlib types that implement IConvertible that 
+		// all into this internal function.
+		//
+		// This was added to keep the fix for #481687 working and to avoid
+		// the regression that the simple fix introduced (485377)
+		internal static object ToType (object value, Type conversionType, IFormatProvider provider, bool try_target_to_type) 
 		{
 			if (value == null) {
 				if ((conversionType != null) && conversionType.IsValueType){

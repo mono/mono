@@ -186,7 +186,7 @@ namespace System
 
 		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return Convert.ToType (get_value (), type, provider);
+			return Convert.ToType (get_value (), type, provider, false);
 		}
 
 #if ONLY_1_1

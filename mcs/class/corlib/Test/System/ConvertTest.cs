@@ -4596,5 +4596,16 @@ namespace MonoTests.System {
 		{
 			Convert.ToUInt64 ("-", 16);
 		}
+
+		// This is a simple and happy struct.
+		struct Foo {
+		}
+		
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))]
+		public void ChangeType_ShouldThrowOnString ()
+		{
+			Foo f = (Foo) Convert.ChangeType ("this-is-a-string", typeof (Foo));
+		}
 	}
 }

@@ -1,3 +1,22 @@
+2009-04-25  Miguel de Icaza  <miguel@novell.com>
+
+	Backport of r129367
+	
+        * Convert.cs (ToType): Control whether this internal function will
+        call an IConvertible.ToType method or not.
+
+        Classes and structs implementing IConvertible in mscorlib (the
+        only callers that can access Convert.ToType) must pass false to
+        avoid a infinite recursion problem and callers from the public
+        Convert API must call it with true.
+
+        This fixes the regression reported in #485377 that was introduced
+        by the fix for #481687.
+
+        * Int16.cs, UInt64.cs, Double.cs, Enum.cs, SByte.cs, UInt16.cs,
+        Byte.cs, Decimal.cs, Int32.cs, String.cs, Int64.cs, Char.cs,
+        Boolean.cs, Single.cs, UInt32.cs: Update the call sites.
+
 2008-11-15  Jonathan Pryor  <jpryor@novell.com>
 
 	* Documentation/en/**: Flush; changes due to mdoc-update 

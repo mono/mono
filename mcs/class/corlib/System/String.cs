@@ -2427,7 +2427,7 @@ namespace System
 
 		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			return Convert.ToType (this, type, provider);
+			return Convert.ToType (this, type, provider, false);
 		}
 
 #if ONLY_1_1
