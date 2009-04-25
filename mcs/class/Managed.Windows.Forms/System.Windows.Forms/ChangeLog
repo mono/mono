@@ -1,3 +1,9 @@
+2009-04-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStrip.cs: Even if we are not exactly a MenuStrip instance, close
+	any ToolStripDropDownItem when receiving a mouse down event in an
+	empty area.
+
 2009-04-24  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ToolBarButton.cs: add UIA events for style and dropdownmenu changes.

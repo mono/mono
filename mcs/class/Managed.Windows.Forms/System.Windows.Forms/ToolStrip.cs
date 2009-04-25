@@ -884,8 +884,7 @@ namespace System.Windows.Forms
 				if (this is MenuStrip && mouse_currently_over is ToolStripMenuItem && !(mouse_currently_over as ToolStripMenuItem).HasDropDownItems)
 					return;
 			} else {
-				if (this is MenuStrip)
-					this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
+				this.HideMenus (true, ToolStripDropDownCloseReason.AppClicked);
 			}
 			
 			if (this is MenuStrip)
