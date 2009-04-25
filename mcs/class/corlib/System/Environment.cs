@@ -203,7 +203,7 @@ namespace System {
 				return trace.ToString ();
 			}
 		}
-
+#if !NET_2_1
 		/// <summary>
 		/// Get a fully qualified path to the system directory
 		/// </summary>
@@ -212,7 +212,7 @@ namespace System {
 				return GetFolderPath (SpecialFolder.System);
 			}
 		}
-
+#endif
 		/// <summary>
 		/// Get the number of milliseconds that have elapsed since the system was booted
 		/// </summary>
@@ -557,7 +557,7 @@ namespace System {
 			return GetLogicalDrivesInternal ();
 		}
 
-#if NET_2_0
+#if NET_2_0 && !NET_2_1
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void internalBroadcastSettingChange ();
 
@@ -672,12 +672,6 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
 
-		public static extern int ProcessorCount {
-			[EnvironmentPermission (SecurityAction.Demand, Read="NUMBER_OF_PROCESSORS")]
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;			
-		}
-
 		[MonoTODO ("Not implemented")]
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
@@ -685,13 +679,19 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 #endif
-
+#if NET_2_0
+		public static extern int ProcessorCount {
+			[EnvironmentPermission (SecurityAction.Demand, Read="NUMBER_OF_PROCESSORS")]
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;			
+		}
+#endif
 		// private methods
 
 		internal static bool IsRunningOnWindows {
 			get { return ((int) Platform < 4); }
 		}
-
+#if !NET_2_1
 		//
 		// Used by gacutil.exe
 		//
@@ -708,7 +708,9 @@ namespace System {
 			}
 		}
 #pragma warning restore 169
-
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string internalGetGacPath ();
+#endif
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string [] GetLogicalDrivesInternal ();
 
@@ -717,9 +719,6 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string GetMachineConfigPath ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal extern static string internalGetGacPath ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string internalGetHome ();

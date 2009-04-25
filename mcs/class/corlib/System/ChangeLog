@@ -1,3 +1,9 @@
+2009-04-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Environment.cs: #ifdef out code that use the registry for the 
+	NET_2_1 profile and some other properties (2) that added
+	[SecuritySafeCritical] methods to audit inside Moonlight.
+
 2009-04-21  Mark Probst  <mark.probst@gmail.com>
 
 	* Environment.cs: Bump corlib version.
