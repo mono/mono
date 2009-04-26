@@ -1,3 +1,10 @@
+2009-04-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Prevent sreg1/dreg to be allocated
+	to the same register as a fixed sreg2. Fixes #497271.
+
+	* iltests.il.in: Add a new test.
+
 2009-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c: Use moves instead of pushes for passing arguments on the
