@@ -1,3 +1,14 @@
+2009-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_llvm_vcall_trampoline): Add an assert.
+
+	* method-to-ir.c (mono_method_to_ir): Disable fast virtual generic methods
+	when using llvm.
+
+	* mini-llvm.c (mono_llvm_emit_method): Call jit icall wrappers, not the 
+	icalls themselves. Convert arguments of FCOMPARE. Convert the destination
+	of FMOVE if it is an R4.
+
 2009-04-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add OP_LLVM_OUTARG_VT opcode.
