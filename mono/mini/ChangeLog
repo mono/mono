@@ -1,5 +1,11 @@
 2009-04-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c: Use moves instead of pushes for passing arguments on the
+	stack, since pushes complicate exception handling.
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Don't pop the arguments of
+	the stack if they are passed using moves.
+
 	* mini-trampolines.c (mono_llvm_vcall_trampoline): Add an assert.
 
 	* method-to-ir.c (mono_method_to_ir): Disable fast virtual generic methods
