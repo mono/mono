@@ -1,3 +1,9 @@
+2009-04-26  Mark Probst  <mark.probst@gmail.com>
+
+	* domain.c, domain-internals.h: Disable
+	track_resurrection_{objects,handles}_hash in MonoDomain if using
+	SGen.
+
 2009-04-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the param table.
