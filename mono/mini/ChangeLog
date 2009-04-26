@@ -1,5 +1,12 @@
 2009-04-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Implement OP_CHECK_THIS using
+	a volatile load. Get rid of get_tempname (), llvm assigns names
+	automatically.
+
+	* mini-llvm-cpp.cpp (mono_llvm_build_volatile_load): New instruction
+	builder function.
+
 	* mini-llvm.c (mono_llvm_emit_method): Don't call LLVMGetParam on
 	a value.
 
