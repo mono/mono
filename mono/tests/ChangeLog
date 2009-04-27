@@ -1,3 +1,7 @@
+2009-04-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* custom-attr.cs: Add a test for #498545.
+
 2009-04-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* virtual-sync.cs: Remove this, there is already a test for this in
