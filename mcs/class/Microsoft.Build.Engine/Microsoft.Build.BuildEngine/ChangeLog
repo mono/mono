@@ -1,5 +1,10 @@
 2009-04-27  Ankit Jain  <jankit@novell.com>
 
+	* TaskEngine.cs (Prepare): Emit a useful error message property value
+	can't be converted to required type.
+
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
 	* ExpressionCollection.cs (ConvertToObject): Allow true/on/yes
 	as valid true values for bool, and corresponding for false.
 

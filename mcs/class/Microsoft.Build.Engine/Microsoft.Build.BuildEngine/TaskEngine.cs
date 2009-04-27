@@ -76,7 +76,13 @@ namespace Microsoft.Build.BuildEngine {
 					throw new InvalidProjectFileException (String.Format ("Task does not have property \"{0}\" defined",
 						de.Key));
 				
-				value = GetObjectFromString (de.Value, currentProperty.PropertyType);		
+				try {
+					value = GetObjectFromString (de.Value, currentProperty.PropertyType);
+				} catch (Exception e) {
+					throw new Exception (String.Format (
+							"Error converting Property named '{0}' with value '{1}' to type {2}: {3}",
+							de.Key, de.Value, currentProperty.PropertyType, e.Message), e);
+				}
 				
 				if (value != null)
 					values.Add (de.Key, value);
