@@ -110,7 +110,12 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool CheckOnClick {
 			get { return this.check_on_click; }
-			set { this.check_on_click = value; }
+			set {
+				if (this.check_on_click != value) {
+					this.check_on_click = value;
+					OnUIACheckOnClickChangedEvent (EventArgs.Empty);
+				}
+			}
 		}
 
 		[DefaultValue (CheckState.Unchecked)]
@@ -223,6 +228,23 @@ namespace System.Windows.Forms
 		public event EventHandler CheckStateChanged {
 			add { Events.AddHandler (CheckStateChangedEvent, value); }
 			remove { Events.RemoveHandler (CheckStateChangedEvent, value); }
+		}
+		#endregion
+
+		#region UIA Framework Events
+		static object UIACheckOnClickChangedEvent = new object ();
+		
+		internal event EventHandler UIACheckOnClickChanged {
+			add { Events.AddHandler (UIACheckOnClickChangedEvent, value); }
+			remove { Events.RemoveHandler (UIACheckOnClickChangedEvent, value); }
+		}
+
+		internal void OnUIACheckOnClickChangedEvent (EventArgs args)
+		{
+			EventHandler eh
+				= (EventHandler) Events [UIACheckOnClickChangedEvent];
+			if (eh != null)
+				eh (this, args);
 		}
 		#endregion
 	}

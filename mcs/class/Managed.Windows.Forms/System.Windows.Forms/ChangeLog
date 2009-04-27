@@ -1,3 +1,8 @@
+2009-04-27  Brad Taylor  <brad@getcoded.net>
+
+	* ToolStripButton.cs: Emit an internal event when CheckOnClick is
+	changed.
+
 2009-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* XplatUIX11.cs: Properly support UTF8 when handling the
