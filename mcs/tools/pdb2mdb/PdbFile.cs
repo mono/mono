@@ -5,7 +5,9 @@
 //-----------------------------------------------------------------------------
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
+using System.Diagnostics.SymbolStore;
 
 namespace Microsoft.Cci.Pdb {
   internal class PdbFile {
@@ -13,8 +15,14 @@ namespace Microsoft.Cci.Pdb {
     {
     }
 
-    static int LoadPdbStream(BitAccess bits) {
-      int nameStream = -1;
+    static void LoadGuidStream(BitAccess bits, out Guid doctype, out Guid language, out Guid vendor) {
+      bits.ReadGuid(out language);
+      bits.ReadGuid(out vendor);
+      bits.ReadGuid(out doctype);
+    }
+
+    static Dictionary<string,int> LoadNameIndex(BitAccess bits) {
+      Dictionary<string, int> result = new Dictionary<string, int>();
       int ver;
       int sig;
       int age;
@@ -64,20 +72,14 @@ namespace Microsoft.Cci.Pdb {
           bits.ReadCString(out name);
           bits.Position = saved;
 
-          if (name == "/names") {
-            nameStream = ni;
-          } else if (name == "/src/headerblock") {
-            // srchStream = ni;
-          } else if (name == "/LinkInfo") {
-            // linkStream = ni;
-          }
+          result.Add(name, ni);
           j++;
         }
       }
       if (j != cnt) {
         throw new PdbDebugException("Count mismatch. ({0} != {1})", j, cnt);
       }
-      return nameStream;
+      return result;
     }
 
     static IntHashTable LoadNameStream(BitAccess bits) {
@@ -127,7 +129,6 @@ namespace Microsoft.Cci.Pdb {
     }
 
     private static PdbFunction match = new PdbFunction();
-    private static IntHashTable checks = new IntHashTable();
 
     private static PdbFunction FindFunction(PdbFunction[] funcs, ushort sec, uint off) {
       match.segment = sec;
@@ -143,9 +144,12 @@ namespace Microsoft.Cci.Pdb {
     static void LoadManagedLines(PdbFunction[] funcs,
                                  IntHashTable names,
                                  BitAccess bits,
+                                 MsfDirectory dir,
+                                 Dictionary<string, int> nameIndex,
+                                 PdbReader reader,
                                  uint limit) {
       Array.Sort(funcs, PdbFunction.byAddress);
-      checks.Clear();
+      IntHashTable checks = new IntHashTable();
 
       // Read the files first
       int begin = bits.Position;
@@ -168,7 +172,17 @@ namespace Microsoft.Cci.Pdb {
               bits.ReadUInt8(out chk.type);
 
               string name = (string)names[(int)chk.name];
-              PdbSource src = new PdbSource((uint)ni, name);
+              int guidStream;
+              Guid doctypeGuid = SymDocumentType.Text;
+              Guid languageGuid = SymLanguageType.CSharp;
+              Guid vendorGuid = SymLanguageVendor.Microsoft;
+              if (nameIndex.TryGetValue("/src/files/"+name, out guidStream)) {
+                var guidBits = new BitAccess(0x100);
+                dir.streams[guidStream].Read(reader, guidBits);
+                LoadGuidStream(guidBits, out doctypeGuid, out languageGuid, out vendorGuid);
+              }
+
+              PdbSource src = new PdbSource((uint)ni, name, doctypeGuid, languageGuid, vendorGuid);
               checks.Add(ni, src);
               bits.Position += chk.len;
               bits.Align(4);
@@ -268,7 +282,10 @@ namespace Microsoft.Cci.Pdb {
                                        DbiModuleInfo info,
                                        IntHashTable names,
                                        ArrayList funcList,
-                                       bool readStrings) {
+                                       bool readStrings,
+                                       MsfDirectory dir,
+                                       Dictionary<string, int> nameIndex,
+                                       PdbReader reader) {
       PdbFunction[] funcs = null;
 
       bits.Position = 0;
@@ -285,7 +302,7 @@ namespace Microsoft.Cci.Pdb {
                                                readStrings);
       if (funcs != null) {
         bits.Position = info.cbSyms + info.cbOldLines;
-        LoadManagedLines(funcs, names, bits,
+        LoadManagedLines(funcs, names, bits, dir, nameIndex, reader,
                          (uint)(info.cbSyms + info.cbOldLines + info.cbLines));
 
         for (int i = 0; i < funcs.Length; i++) {
@@ -360,8 +377,9 @@ namespace Microsoft.Cci.Pdb {
       DbiDbgHdr header;
 
       dir.streams[1].Read(reader, bits);
-      int nameStream = LoadPdbStream(bits);
-      if (nameStream <= 0) {
+      Dictionary<string, int> nameIndex = LoadNameIndex(bits);
+      int nameStream;
+      if (!nameIndex.TryGetValue("/names", out nameStream)) {
         throw new PdbException("No `name' stream");
       }
 
@@ -378,7 +396,7 @@ namespace Microsoft.Cci.Pdb {
           if (modules[m].stream > 0) {
             dir.streams[modules[m].stream].Read(reader, bits);
             LoadFuncsFromDbiModule(bits, modules[m], names, funcList,
-                                   readAllStrings);
+                                   readAllStrings, dir, nameIndex, reader);
           }
         }
       }

@@ -1,3 +1,7 @@
+2009-04-27  Jb Evain  <jbevain@novell.com>
+
+	* sync with CodePlex r10923.
+
 2009-04-23  Jb Evain  <jbevain@novell.com>
 
 	* pdb2mdb.exe.sources: added.
