@@ -1,3 +1,7 @@
+2009-04-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* assembly.c: assemblies in the GAC should never be shadow-copied.
+
 2009-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_thread_suspend_all_other_threads): Handle the case when
