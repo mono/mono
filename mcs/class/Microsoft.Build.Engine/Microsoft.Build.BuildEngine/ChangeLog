@@ -1,5 +1,11 @@
 2009-04-27  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #497839.
+	* Engine.cs (BuildProjectFile): Set project's GlobalProperties to the
+	one passed as argument.
+
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
 	* TaskEngine.cs (Prepare): Emit a useful error message property value
 	can't be converted to required type.
 

@@ -182,7 +182,8 @@ namespace Microsoft.Build.BuildEngine {
 				project = CreateNewProject ();
 				project.Load (projectFile);
 			}
-			
+
+			project.GlobalProperties = globalProperties;
 			return project.Build (targetNames, targetOutputs, buildFlags);
 		}
 
