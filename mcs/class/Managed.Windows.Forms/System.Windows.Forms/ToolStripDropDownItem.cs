@@ -73,7 +73,10 @@ namespace System.Windows.Forms
 			
 				return this.drop_down;
 			}
-			set { this.drop_down = value; }
+			set { 
+				this.drop_down = value;
+				this.drop_down.OwnerItem = this;
+			}
 		}
 
 		[Browsable (false)]
