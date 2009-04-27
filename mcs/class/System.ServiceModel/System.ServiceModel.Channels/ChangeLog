@@ -1,3 +1,7 @@
+2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelManagerBase.cs : implement Open/CloseTimeout correctly.
+
 2009-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryMessageEncoder.cs : use quotas in binding element.

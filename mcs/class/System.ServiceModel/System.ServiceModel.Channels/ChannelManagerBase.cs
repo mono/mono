@@ -44,18 +44,12 @@ namespace System.ServiceModel.Channels
 
 		protected internal abstract TimeSpan DefaultSendTimeout { get; }
 
-		// The reason why this class implements 
-		// IDefaultCommunicationTimeouts is not clear, so they
-		// are likely to be refactored.
-
-		[MonoTODO ("verify it.")]
 		TimeSpan IDefaultCommunicationTimeouts.OpenTimeout {
-			get { return TimeSpan.FromMinutes (1); }
+			get { return DefaultOpenTimeout; }
 		}
 
-		[MonoTODO ("verify it.")]
 		TimeSpan IDefaultCommunicationTimeouts.CloseTimeout {
-			get { return TimeSpan.FromMinutes (1); }
+			get { return DefaultCloseTimeout; }
 		}
 
 		TimeSpan IDefaultCommunicationTimeouts.ReceiveTimeout {
