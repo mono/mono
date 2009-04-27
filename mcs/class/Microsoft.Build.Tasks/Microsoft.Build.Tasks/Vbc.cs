@@ -30,6 +30,8 @@
 
 using System;
 using System.IO;
+using System.Text;
+
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
@@ -51,11 +53,13 @@ namespace Microsoft.Build.Tasks {
 
 			commandLine.AppendSwitchIfNotNull ("/baseaddress:", BaseAddress);
 
-			commandLine.AppendSwitchIfNotNull ("/define:", DefineConstants);
+			if (DefineConstants != null)
+				commandLine.AppendSwitchUnquotedIfNotNull ("/define:",
+						String.Format ("\"{0}\"", EscapeDoubleQuotes (DefineConstants)));
 
 			// DisabledWarnings
 
-			commandLine.AppendSwitchIfNotNull ("/doc", DocumentationFile);
+			commandLine.AppendSwitchIfNotNull ("/doc:", DocumentationFile);
 
 			// ErrorReport
 			
@@ -116,6 +120,14 @@ namespace Microsoft.Build.Tasks {
 
 			// WarningsNotAsErrors
 
+		}
+
+		string EscapeDoubleQuotes (string text)
+		{
+			if (text == null)
+				return null;
+
+			return text.Replace ("\"", "\\\"");
 		}
 		
 		[MonoTODO]

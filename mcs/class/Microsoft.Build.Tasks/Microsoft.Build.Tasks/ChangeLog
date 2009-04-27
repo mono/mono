@@ -1,3 +1,9 @@
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* Vbc.cs (AddResponseFileCommands): Escape DefineConstants as it can
+	contain double quotes itself. Fix /doc switch.
+	(EscapeDoubleQuotes): New.
+
 2009-03-22  Daniel Nauck  <dna@mono-project.de>
 
 	* GenerateResource.cs: Set BasePath property of
