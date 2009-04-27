@@ -1,3 +1,8 @@
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* ExpressionCollection.cs (ConvertToObject): Allow true/on/yes
+	as valid true values for bool, and corresponding for false.
+
 2009-03-27  Jonathan Chambers  <joncham@gmail.com>
 
 	* BuildWhen.cs: Add basic implementation.
