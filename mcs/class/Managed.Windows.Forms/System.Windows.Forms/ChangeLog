@@ -1,3 +1,11 @@
+2009-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* XplatUIX11.cs: Properly support UTF8 when handling the
+	SelectionRequest event - this is helpful supporting some window
+	managers, such KDE, that explictly request the text in utf8, as
+	opposed to gnome, that supports ascii.
+	Fixes #489393.
+
 2009-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripDropDownItem.cs: When assigning a new

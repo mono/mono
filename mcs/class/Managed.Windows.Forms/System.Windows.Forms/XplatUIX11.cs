@@ -1742,40 +1742,31 @@ namespace System.Windows.Forms {
 							Marshal.FreeHGlobal(buffer);
 						}
 					} else if (Clipboard.IsSourceText) {
-						IntPtr	buffer;
+						IntPtr	buffer = IntPtr.Zero;
 						int	buflen;
+						Encoding encoding = null;
 
 						buflen = 0;
 
+						// Select an encoding depending on the target
 						IntPtr target_atom = xevent.SelectionRequestEvent.target;
-						if (target_atom == (IntPtr)Atom.XA_STRING) {
-							Byte[] bytes;
+						if (target_atom == (IntPtr)Atom.XA_STRING || target_atom == OEMTEXT)
+							// FIXME - EOMTEXT should encode into ISO2022
+							encoding = Encoding.ASCII;
+						else if (target_atom == UTF16_STRING)
+							encoding = Encoding.Unicode;
+						else if (target_atom == UTF8_STRING)
+							encoding = Encoding.UTF8;
 
-							bytes = Encoding.ASCII.GetBytes(Clipboard.GetPlainText ());
-							buffer = Marshal.AllocHGlobal(bytes.Length);
-							buflen = bytes.Length;
-
-							for (int i = 0; i < buflen; i++) {
-								Marshal.WriteByte(buffer, i, bytes[i]);
-							}
-						} else if (target_atom == OEMTEXT) {
-							// FIXME - this should encode into ISO2022
-							buffer = Marshal.StringToHGlobalAnsi(Clipboard.GetPlainText ());
-							while (Marshal.ReadByte(buffer, buflen) != 0) {
-								buflen++;
-							}
-						} else if (target_atom == UTF16_STRING) {
+						if (encoding != null) {
 							Byte [] bytes;
 
-							bytes = Encoding.Unicode.GetBytes (Clipboard.GetPlainText ());
+							bytes = encoding.GetBytes (Clipboard.GetPlainText ());
 							buffer = Marshal.AllocHGlobal (bytes.Length);
 							buflen = bytes.Length;
 
-							for (int i = 0; i < buflen; i++) {
+							for (int i = 0; i < buflen; i++)
 								Marshal.WriteByte (buffer, i, bytes [i]);
-							}
-						} else {
-							buffer = IntPtr.Zero;
 						}
 
 						if (buffer != IntPtr.Zero) {
