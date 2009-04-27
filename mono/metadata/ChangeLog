@@ -1,3 +1,8 @@
+2009-04-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c: Avoid returning random cattrs for synthetic methods.
+	Fixes #498545.
+
 2009-04-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* assembly.c: assemblies in the GAC should never be shadow-copied.
