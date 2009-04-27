@@ -1,5 +1,9 @@
 2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : implemented some channel methods.
+
+2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinaryMessageEncoder.cs : use XmlDictionary specified as [MC-NBFS].
 
 2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>

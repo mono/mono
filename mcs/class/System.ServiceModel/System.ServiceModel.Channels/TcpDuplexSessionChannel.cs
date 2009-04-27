@@ -20,7 +20,6 @@ namespace System.ServiceModel.Channels
 {
 	internal class TcpDuplexSessionChannel : DuplexChannelBase, IDuplexSessionChannel
 	{
-
 		TcpChannelInfo info;
 		TcpClient client;
 		bool is_service_side;
@@ -93,9 +92,14 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override void Send (Message message)
 		{
+			Send (message, DefaultSendTimeout);
+		}
+		
+		public override void Send (Message message, TimeSpan timeout)
+		{
+			client.SendTimeout = (int) timeout.TotalMilliseconds;
 			MemoryStream ms = new MemoryStream ();
 			BinaryFormatter bf = new BinaryFormatter ();
 			
@@ -115,12 +119,6 @@ namespace System.ServiceModel.Channels
 			{
 				throw e;
 			}
-		}
-		
-		[MonoTODO]
-		public override void Send (Message message, TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
@@ -165,14 +163,21 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public override Message Receive ()
 		{
+			return Receive (DefaultReceiveTimeout);
+		}
+		
+		public override Message Receive (TimeSpan timeout)
+		{
+			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
 			Stream s = client.GetStream ();
 			s.ReadByte (); // 6
 			MyBinaryReader br = new MyBinaryReader (s);
 //			string msg = br.ReadString ();
 //			br.Read7BitEncodedInt ();
+
+			// FIXME: implement [MC-NMF] correctly. Currently it is a guessed protocol hack.
 			byte [] buffer = new byte [65536];
 			buffer = br.ReadBytes ();
 			MemoryStream ms = new MemoryStream ();
@@ -193,22 +198,26 @@ namespace System.ServiceModel.Channels
 			return msg;
 		}
 		
-		[MonoTODO]
-		public override Message Receive (TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		public override bool TryReceive (TimeSpan timeout, out Message message)
 		{
-			throw new NotImplementedException ();
+			try {
+				message = Receive (timeout);
+				return true;
+			} catch (TimeoutException) {
+				message = null;
+				return false;
+			}
 		}
 		
-		[MonoTODO]
 		public override bool WaitForMessage (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
+			try {
+				client.GetStream ();
+				return true;
+			} catch (TimeoutException) {
+				return false;
+			}
 		}
 		
 		// CommunicationObject
