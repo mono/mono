@@ -3440,7 +3440,7 @@ namespace System.Windows.Forms
 				eh (this, e);
 		}
 
-		protected virtual void OnColumnClick (ColumnClickEventArgs e)
+		protected internal virtual void OnColumnClick (ColumnClickEventArgs e)
 		{
 			ColumnClickEventHandler eh = (ColumnClickEventHandler)(Events [ColumnClickEvent]);
 			if (eh != null)
