@@ -786,7 +786,9 @@ public class StreamReaderTest
 	{
 		StreamReader reader = new StreamReader (new MyStream ());
 		int c = reader.Read ();
+#if NET_2_0
 		Assert.IsFalse (reader.EndOfStream);
+#endif
 		string str = reader.ReadToEnd ();
 		Assert.AreEqual ("bc", str);
 	}
