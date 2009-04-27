@@ -1,3 +1,11 @@
+2009-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_create_specific_trampoline): Add a stat for the
+	number of trampolines used in full-aot mode.
+
+	* aot-compiler.c: Add an ntrampolines option to set the number of 
+	trampolines emitted in full-aot mode.
+
 2009-04-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Implement OP_CHECK_THIS using
