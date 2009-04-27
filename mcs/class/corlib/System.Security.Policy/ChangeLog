@@ -1,3 +1,13 @@
+2009-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Custom GetDefaultHostEvidence for NET_2_1
+	* Hash.cs: Do not include for NET_2_1 build
+	* HashMembershipCondition.cs: Do not include for NET_2_1 build
+	* PolicyLevel.cs: Do not include for NET_2_1 build
+	* PolicyLevel_2_1.cs: Alternate implementation for NET_2_1
+	* Zone.cs: Do not include for NET_2_1 build
+	* ZoneMembershipCondition.cs: Do not include for NET_2_1 build
+
 2008-07-06  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* ApplicationTrust.cs: Add missing attribute

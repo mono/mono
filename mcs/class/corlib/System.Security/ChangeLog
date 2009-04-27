@@ -1,3 +1,9 @@
+2009-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityException.cs: Remove CAS-specific stuff from ToString
+	* SecurityManager.cs: Do not include for NET_2_1 build
+	* SecurityManager_2_1.cs: Alternate implementation for NET_2_1
+
 2009-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Remove VerificationException (not used from

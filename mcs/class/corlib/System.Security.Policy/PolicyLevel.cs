@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.Collections; // for IList
 using System.Globalization;
 using System.IO;
@@ -608,3 +610,6 @@ namespace System.Security.Policy {
 		}
         }
 }
+
+#endif
+

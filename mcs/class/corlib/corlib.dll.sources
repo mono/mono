@@ -1084,6 +1084,7 @@ System.Security/SecurityElement.cs
 System.Security/SecurityFrame.cs
 System.Security/SecurityException.cs
 System.Security/SecurityManager.cs
+System.Security/SecurityManager_2_1.cs
 System.Security/SecuritySafeCriticalAttribute.cs
 System.Security/SecurityState.cs
 System.Security/SecurityTransparentAttribute.cs
@@ -1328,6 +1329,7 @@ System.Security.Policy/NetCodeGroup.cs
 System.Security.Policy/PermissionRequestEvidence.cs
 System.Security.Policy/PolicyException.cs
 System.Security.Policy/PolicyLevel.cs
+System.Security.Policy/PolicyLevel_2_1.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
 System.Security.Policy/Publisher.cs

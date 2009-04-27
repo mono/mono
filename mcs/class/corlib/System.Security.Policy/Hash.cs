@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -218,3 +220,6 @@ public sealed class Hash : ISerializable, IBuiltInEvidence {
 }
 
 }
+
+#endif
+

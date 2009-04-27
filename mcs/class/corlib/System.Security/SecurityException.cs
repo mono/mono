@@ -285,6 +285,9 @@ namespace System.Security {
 
 		public override string ToString ()
 		{
+#if NET_2_1
+			return base.ToString ();
+#else
 			StringBuilder sb = new StringBuilder (base.ToString ());
 			try {
 				if (permissionType != null) {
@@ -325,6 +328,7 @@ namespace System.Security {
 				// some informations can't be displayed
 			}
 			return sb.ToString ();
+#endif
 		}
 	}
 }

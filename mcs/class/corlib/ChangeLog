@@ -1,3 +1,8 @@
+2009-04-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Add new specific to 2.1 version of some 
+	classes.
+
 2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Add System.IO.IsolatedStorage/
