@@ -1,3 +1,8 @@
+2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHost.cs : split dispatcher open from dispatcher loop start.
+	  Use DispatchRuntime.Type to specify service type.
+
 2009-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory.cs : reordered preferrence of created channel types,

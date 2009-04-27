@@ -61,7 +61,7 @@ namespace System.ServiceModel.Dispatcher
 		EndpointListenerAsyncResult async_result;
 
 		ListenerLoopManager loop_manager;
-		SynchronizedCollection<EndpointDispatcher> _endpoints;
+		SynchronizedCollection<EndpointDispatcher> endpoints;
 
 		[MonoTODO ("get binding info from config")]
 		public ChannelDispatcher (IChannelListener listener)			
@@ -82,7 +82,7 @@ namespace System.ServiceModel.Dispatcher
 			IChannelListener listener, string bindingName,
 			IDefaultCommunicationTimeouts timeouts)
 		{
-		if (listener == null)
+			if (listener == null)
 				throw new ArgumentNullException ("listener");
 			if (bindingName == null)
 				throw new ArgumentNullException ("bindingName");
@@ -92,11 +92,12 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		private void Init (IChannelListener listener, string bindingName,
-			IDefaultCommunicationTimeouts timeouts) {
+			IDefaultCommunicationTimeouts timeouts)
+		{
 			this.listener = listener;
 			this.binding_name = bindingName;
 			this.timeouts = timeouts;
-			_endpoints = new SynchronizedCollection<EndpointDispatcher> ();
+			endpoints = new SynchronizedCollection<EndpointDispatcher> ();
 		}
 
 		public string BindingName {
@@ -120,9 +121,7 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		public SynchronizedCollection<EndpointDispatcher> Endpoints {
-			get {				
-				return _endpoints;
-			}
+			get { return endpoints; }
 		}
 
 		[MonoTODO]
@@ -186,7 +185,7 @@ namespace System.ServiceModel.Dispatcher
 		protected internal override void Attach (ServiceHostBase host)
 		{
 			this.host = host;
-		}		
+		}
 
 		public override void CloseInput ()
 		{
@@ -269,7 +268,11 @@ namespace System.ServiceModel.Dispatcher
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			ProcessOpen (timeout);
+			if (Host == null || MessageVersion == null)
+				throw new InvalidOperationException ("Service host is not attached to this ChannelDispatcher.");
+
+			// FIXME: hack, just to make it runnable
+			loop_manager = new ListenerLoopManager (this, timeout);
 		}
 
 		[MonoTODO ("what to do here?")]
@@ -277,31 +280,31 @@ namespace System.ServiceModel.Dispatcher
 		{
 		}
 
-		[MonoTODO ("what to do here?")]
 		protected override void OnOpened ()
 		{
+			ProcessOpened ();
 		}
 
 		void ProcessClose (TimeSpan timeout)
 		{
 			if (loop_manager != null)
-				loop_manager.Stop ();
+				loop_manager.Stop (timeout);
 			CloseInput ();
 		}
 
-		void ProcessOpen (TimeSpan timeout)
+		void ProcessOpened ()
 		{
-			if (Host == null || MessageVersion == null)
-				throw new InvalidOperationException ("Service host is not attached to this ChannelDispatcher.");			
 			try {
-				// FIXME: hack, just to make it runnable
-				listener.Open (timeout);
-				loop_manager = new ListenerLoopManager (this);
-				loop_manager.Start ();
+				loop_manager.Setup ();
 			} finally {
 				if (async_result != null)
 					async_result.Complete (false);
 			}
+		}
+
+		internal void StartLoop ()
+		{
+			loop_manager.Start ();
 		}
 
 		bool IsMessageMatchesEndpointDispatcher (Message req, EndpointDispatcher endpoint)
@@ -323,20 +326,33 @@ namespace System.ServiceModel.Dispatcher
 
 		class ListenerLoopManager
 		{
+			delegate IChannel ChannelAcceptor ();
+
 			ChannelDispatcher owner;
 			AutoResetEvent handle;
 			IReplyChannel reply;
 			IInputChannel input;
 			bool loop;
 			Thread loop_thread;
+			TimeSpan open_timeout;
+			ChannelAcceptor channel_acceptor;
 
-			public ListenerLoopManager (ChannelDispatcher owner)
+			public ListenerLoopManager (ChannelDispatcher owner, TimeSpan openTimeout)
 			{
 				this.owner = owner;
-				MethodInfo mi = owner.Listener.GetType ().GetMethod ("AcceptChannel", Type.EmptyTypes);
-				object channel = mi.Invoke (owner.Listener, new object [0]);
-				reply = channel as IReplyChannel;
-				input = channel as IInputChannel;
+				open_timeout = openTimeout;
+			}
+
+			public void Setup ()
+			{
+				if (owner.Listener.State != CommunicationState.Opened)
+					owner.Listener.Open (open_timeout);
+
+				// It is tested at Open(), but strangely it is not instantiated at this point.
+				foreach (var ed in owner.Endpoints)
+					if (ed.DispatchRuntime.Type == null || ed.DispatchRuntime.Type.GetConstructor (Type.EmptyTypes) == null)
+						throw new InvalidOperationException ("There is no default constructor for the service Type in the DispatchRuntime");
+				SetupChannel ();
 			}
 
 			public void Start ()
@@ -346,7 +362,43 @@ namespace System.ServiceModel.Dispatcher
 				loop_thread.Start ();
 			}
 
-			public void Stop ()
+			void SetupChannel ()
+			{
+				IChannelListener<IReplyChannel> r = owner.Listener as IChannelListener<IReplyChannel>;
+				if (r != null) {
+					channel_acceptor = delegate { return r.AcceptChannel (); };
+					return;
+				}
+				IChannelListener<IReplySessionChannel> rs = owner.Listener as IChannelListener<IReplySessionChannel>;
+				if (rs != null) {
+					channel_acceptor = delegate { return rs.AcceptChannel (); };
+					return;
+				}
+				IChannelListener<IInputChannel> i = owner.Listener as IChannelListener<IInputChannel>;
+				if (i != null) {
+					channel_acceptor = delegate { return i.AcceptChannel (); };
+					return;
+				}
+				IChannelListener<IInputSessionChannel> iss = owner.Listener as IChannelListener<IInputSessionChannel>;
+				if (iss != null) {
+					channel_acceptor = delegate { return iss.AcceptChannel (); };
+					return;
+				}
+				IChannelListener<IDuplexChannel> d = owner.Listener as IChannelListener<IDuplexChannel>;
+				if (d != null) {
+					channel_acceptor = delegate { return d.AcceptChannel (); };
+					return;
+				}
+				IChannelListener<IDuplexSessionChannel> ds = owner.Listener as IChannelListener<IDuplexSessionChannel>;
+				if (ds != null) {
+					channel_acceptor = delegate { return ds.AcceptChannel (); };
+					return;
+				}
+
+				throw new InvalidOperationException (String.Format ("Unrecognized channel listener type: {0}", owner.Listener.GetType ()));
+			}
+
+			public void Stop (TimeSpan timeout)
 			{
 				StopLoop ();
 				owner.Listener.Close ();
@@ -376,6 +428,10 @@ namespace System.ServiceModel.Dispatcher
 				//2. Get the appropriate EndPointDispatcher that can handle the message
 				//   which is done using the filters (AddressFilter, ContractFilter).
 				//3. Let the appropriate endpoint handle the request.
+
+				IChannel ch = channel_acceptor ();
+				reply = ch as IReplyChannel;
+				input = ch as IInputChannel;
 
 				if (reply != null) {
 					while (loop) {

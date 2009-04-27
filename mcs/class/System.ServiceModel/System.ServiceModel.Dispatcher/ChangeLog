@@ -1,3 +1,11 @@
+2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntime.cs : some comment.
+	* ChannelDispatcher.cs : ongoing changes to handle listeners and
+	  accepted channels at more precise state. Listeners are opened,
+	  without accepting channels. Some setup code is done at OnOpen(),
+	  while some are done at OnOpened().
+
 2009-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DispatchOperation.cs : implement GetFormatter() at service side too.

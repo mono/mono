@@ -1,3 +1,8 @@
+2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcherTest.cs : added a couple of EndpointDispatcher
+	  state tests.
+
 2009-02-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs:

@@ -407,6 +407,7 @@ namespace System.ServiceModel
 			//Attach one EndpointDispacher to the ChannelDispatcher
 			EndpointDispatcher endpoint_dispatcher =
 				new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
+			endpoint_dispatcher.DispatchRuntime.Type = Description.ServiceType;
 			endpoint_dispatcher.ContractFilter = GetContractFilter (se.Contract);
 			endpoint_dispatcher.ChannelDispatcher = cd;
 			cd.Endpoints.Add (endpoint_dispatcher);
@@ -506,8 +507,12 @@ namespace System.ServiceModel
 
 		void DoOpen (TimeSpan timeout)
 		{
-			for (int i = 0; i < ChannelDispatchers.Count; i++)
-				ChannelDispatchers [i].Open (timeout);
+			foreach (var cd in ChannelDispatchers) {
+				cd.Open (timeout);
+				// This is likely hack.
+				if (cd is ChannelDispatcher)
+					((ChannelDispatcher) cd).StartLoop ();
+			}
 		}
 
 		IChannelListener BuildListener (ServiceEndpoint se,
