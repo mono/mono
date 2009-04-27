@@ -73,6 +73,8 @@ EXTRA_DISTFILES = \
 	Test/MonoMicro.Test.csproj	\
 	Test/XmlFiles/76102.xml		\
 	Test/XmlFiles/79683.dtd		\
+	Test/XmlFiles/496192.xml	\
+	Test/XmlFiles/496192.xsd	\
 	$(wildcard Test/XmlFiles/xsd/*.xml) \
 	$(wildcard Test/XmlFiles/xsd/*.xsd) \
 	$(wildcard Test/XmlFiles/xsl/*.xml) \
