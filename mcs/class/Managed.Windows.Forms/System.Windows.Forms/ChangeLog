@@ -1,3 +1,8 @@
+2009-04-27  Brad Taylor  <brad@getcoded.net>
+
+	* ToolStripButton.cs: Emit an internal event when CheckOnClick is
+	changed.
+
 2009-02-24  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewCell.cs: Invalidate the datagrid when the cell is selected 
