@@ -1,3 +1,7 @@
+2009-04-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* assembly.c: assemblies in the GAC should never be shadow-copied.
+
 2009-04-26  Mark Probst  <mark.probst@gmail.com>
 
 	* domain.c, domain-internals.h: Disable
