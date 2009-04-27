@@ -1426,6 +1426,10 @@ namespace Mono.CSharp
 				load_default_config = false;
 				return true;
 
+				// We just ignore this.
+			case "/errorreport":
+				return true;
+				
 			case "/help2":
 				OtherFlags ();
 				Environment.Exit(0);
