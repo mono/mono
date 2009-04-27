@@ -1,3 +1,8 @@
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.VisualBasic.targets: Update to use
+	CreateVisualBasicManifestResourceName task, and fix compiler params.
+
 2009-04-25 Daniel Nauck <dna@mono-project.de>
 
 	Fix bug #484649:

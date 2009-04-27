@@ -1,5 +1,12 @@
 2009-04-27  Ankit Jain  <jankit@novell.com>
 
+	* CreateCSharpManifestResourceName.cs (GetResourceIdFromFileName): Move
+	to ..
+	* CreateManifestResourceName.cs: .. here.
+	* CreateVisualBasicManifestResourceName.cs: Implement.
+
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
 	* Vbc.cs (AddResponseFileCommands): Escape DefineConstants as it can
 	contain double quotes itself. Fix /doc switch.
 	(EscapeDoubleQuotes): New.

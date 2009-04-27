@@ -5,6 +5,7 @@ Microsoft.Build.Tasks/CombinePathTest.cs
 Microsoft.Build.Tasks/CopyTest.cs
 Microsoft.Build.Tasks/Consts.cs
 Microsoft.Build.Tasks/CreateCSharpManifestResourceNameTest.cs
+Microsoft.Build.Tasks/CreateVisualBasicManifestResourceNameTest.cs
 Microsoft.Build.Tasks/CreateItemTest.cs
 Microsoft.Build.Tasks/CreatePropertyTest.cs
 Microsoft.Build.Tasks/CscTest.cs

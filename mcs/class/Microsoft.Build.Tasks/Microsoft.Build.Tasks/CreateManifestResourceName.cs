@@ -86,6 +86,32 @@ namespace Microsoft.Build.Tasks {
 			throw new NotImplementedException ();
 		}
 		
+		// No dependent file
+		internal static string GetResourceIdFromFileName (string fileName, string rootNamespace)
+		{
+			string culture = null;
+			if (String.Compare (Path.GetExtension (fileName), ".resx", true) == 0) {
+				fileName = Path.ChangeExtension (fileName, null);
+			} else {
+				string only_filename, extn;
+				if (AssignCulture.TrySplitResourceName (fileName, out only_filename, out culture, out extn)) {
+					//remove the culture from fileName
+					//foo.it.bmp -> foo.bmp
+					fileName = only_filename + "." + extn;
+				}
+			}
+
+			//FIXME: path char!
+			string rname = fileName.Replace ('/', '.').Replace ('\\', '.');
+
+			if (!String.IsNullOrEmpty (rootNamespace))
+				rname = rootNamespace + "." + rname;
+			if (culture == null)
+				return rname;
+			else
+				return Path.Combine (culture, rname);
+		}
+
 		protected abstract string CreateManifestName (string fileName,
 							      string linkFileName,
 							      string rootNamespace,
