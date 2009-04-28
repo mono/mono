@@ -182,6 +182,12 @@ namespace System.Xml
 
 		private Stream GetStreamFromUrl (string url, out string absoluteUriString)
 		{
+#if NET_2_1
+			if (url == null)
+				throw new ArgumentNullException ("url");
+			if (url.Length == 0)
+				throw new ArgumentException ("url");
+#endif
 			Uri uri = resolver.ResolveUri (null, url);
 			absoluteUriString = uri != null ? uri.ToString () : String.Empty;
 			return resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
@@ -1054,6 +1060,9 @@ namespace System.Xml
 			nsmgr = nsmgr != null ? nsmgr : new XmlNamespaceManager (nameTable);
 
 			if (url != null && url.Length > 0) {
+#if NET_2_1
+				Uri uri = new Uri (url, UriKind.RelativeOrAbsolute);
+#else
 				Uri uri = null;
 				try {
 #if NET_2_0
@@ -1065,6 +1074,7 @@ namespace System.Xml
 					string path = Path.GetFullPath ("./a");
 					uri = new Uri (new Uri (path), url);
 				}
+#endif
 				parserContext.BaseURI = uri.ToString ();
 			}
 

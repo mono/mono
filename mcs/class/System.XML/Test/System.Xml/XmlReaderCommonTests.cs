@@ -1576,6 +1576,13 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Create_String_Empty ()
+		{
+			XmlReader.Create (String.Empty);
+		}
+
+		[Test]
 		public void ReadToDescendant ()
 		{
 			string xml = @"<root><foo/><bar/><foo> test text <bar><bar></bar></bar></foo></root>";

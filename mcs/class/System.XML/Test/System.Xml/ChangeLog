@@ -1,3 +1,7 @@
+2009-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* XmlReaderCommonTests.cs: Add test case for an empty string url
+
 2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlResolverTest.cs: New. Unit tests for base features.

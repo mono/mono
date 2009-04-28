@@ -1,3 +1,9 @@
+2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>  
+
+	* XmlTextReader.cs (InitializeContext): Under NET_2_1 do not give
+	a second change	using Path.GetFullPath. (GetStreamFromUrl) Add
+	extra validations that would be missed in NET_2_1
+
 2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlReaderSettings.cs: Add MaxCharactersInDocument property for 
