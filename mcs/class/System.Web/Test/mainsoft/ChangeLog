@@ -1,3 +1,7 @@
+2009-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWebResources/LinkInHeadWithEmbeddedExpression.aspx: added
+
 2009-02-05  Marek Habersack  <mhabersack@novell.com>
 
 	* NunitWebResources/NoDoubleOnInitOnRemoveAdd.aspx,

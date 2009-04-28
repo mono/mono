@@ -1,3 +1,9 @@
+2009-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: ProcessTag doesn't process a tag which is not
+	server-side and which has declarative expressions embedded. Fixes
+	bug #498637
+
 2009-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: ProcessCode should _not_ stop processing the

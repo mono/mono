@@ -67,6 +67,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ReadWritePropertyControl.ascx", "ReadWritePropertyControl.ascx");
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.aspx", "ContentPlaceHolderInTemplate.aspx");
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.master", "ContentPlaceHolderInTemplate.master");
+			WebTest.CopyResource (GetType (), "LinkInHeadWithEmbeddedExpression.aspx", "LinkInHeadWithEmbeddedExpression.aspx");
 #endif
 		}
 		
@@ -154,6 +155,17 @@ namespace MonoTests.System.Web.Compilation {
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			string originalHtml = "<span id=\"grid_ctl02_lblTest\">Test</span>";
 			
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		// bug #498637
+		[Test]
+		public void LinkInHeadWithEmbeddedExpression ()
+		{
+			string pageHtml = new WebTest ("LinkInHeadWithEmbeddedExpression.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = "<link href=\"Themes/Default/Content/Site.css\" rel=\"stylesheet\" type=\"text/css\" />";
+
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 #endif
