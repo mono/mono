@@ -1,3 +1,8 @@
+2009-04-23 Tom Hindle <tom_hindle@sil.org>
+
+	* cominterop.c (ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal):
+	changed to match .Net behaviour of not aborting on additional calls to ReleaseComObject.
+
 2009-04-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* assembly.c: assemblies in the GAC should never be shadow-copied.
