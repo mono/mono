@@ -8,6 +8,15 @@
 	* cominterop.c (ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal):
 	changed to match .Net behaviour of not aborting on additional calls to ReleaseComObject.
 
+2009-03-31  Martin Baulig  <martin@ximian.com>
+
+	Backport of r130658.
+
+	* mono-debug-debugger.c
+	(mono_debugger_register_class_init_callback): Also register the
+	class init callback if the class is already initialized to make
+	things work with shadow copied assemblies.
+
 2009-04-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* assembly.c: assemblies in the GAC should never be shadow-copied.

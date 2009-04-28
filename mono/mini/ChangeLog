@@ -1,3 +1,10 @@
+2009-03-31  Martin Baulig  <martin@ximian.com>
+
+	Backport of r130658.
+
+	* debug-debugger.c (debugger_remove_breakpoint): Call
+	mono_debugger_remove_class_init_callback ().
+
 2009-04-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Force init_locals to be TRUE
