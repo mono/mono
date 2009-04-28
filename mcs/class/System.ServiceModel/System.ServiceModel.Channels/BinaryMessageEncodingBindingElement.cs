@@ -125,15 +125,6 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		protected override void OnImportPolicy (XmlElement assertion,
-			MessageVersion messageVersion,
-			MetadataImporter exporter,
-			PolicyConversionContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		void IWsdlExportExtension.ExportContract (WsdlExporter exporter,
 			WsdlContractConversionContext context)
 		{
@@ -148,7 +139,7 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		public void ExportPolicy (MetadataExporter exporter,
+		void IPolicyExportExtension.ExportPolicy (MetadataExporter exporter,
 			PolicyConversionContext context)
 		{
 			throw new NotImplementedException ();

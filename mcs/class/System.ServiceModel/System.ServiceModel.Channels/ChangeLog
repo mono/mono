@@ -1,3 +1,7 @@
+2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncodingBindingElement.cs : clear extra public members.
+
 2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : implemented some channel methods.
