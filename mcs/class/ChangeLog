@@ -1,5 +1,9 @@
-2009-04-25  Jonathan Chambers  <joncham@gmail.com>
+2009-04-07  Miguel de Icaza  <miguel@novell.com>
 
+	* Mono.Tasklets/Mono.Tasklets/Continuation.cs: Fix the signature
+	for store.
+
+2009-04-25  Jonathan Chambers  <joncham@gmail.com>
 	* Makefile: Add Microsoft.Build.* to 3.5 profile.
 
 Mon Apr 6 14:37:32 CEST 2009 Paolo Molaro <lupus@ximian.com>
