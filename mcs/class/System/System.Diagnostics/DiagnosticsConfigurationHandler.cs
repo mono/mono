@@ -35,6 +35,7 @@ using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Reflection;
 using System.Threading;
 #if (XML_DEP)
 using System.Xml;
@@ -454,7 +455,11 @@ namespace System.Diagnostics
 				types = Type.EmptyTypes;
 			}
 
-			System.Reflection.ConstructorInfo ctor = t.GetConstructor (types);
+			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+			if (t.Assembly == GetType ().Assembly)
+				flags |= BindingFlags.NonPublic;
+
+			ConstructorInfo ctor = t.GetConstructor (flags, null, types, null);
 			if (ctor == null) 
 				throw new ConfigurationException ("Couldn't find constructor for class " + type);
 			
