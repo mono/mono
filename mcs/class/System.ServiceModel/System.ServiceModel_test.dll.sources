@@ -1,6 +1,7 @@
 System.ServiceModel.Channels/AddressHeaderTest.cs
 System.ServiceModel.Channels/AddressingVersionTest.cs
 System.ServiceModel.Channels/AsymmetricSecurityBindingElementTest.cs
+System.ServiceModel.Channels/BinaryMessageEncodingBindingElementTest.cs
 System.ServiceModel.Channels/BindingContextTest.cs
 System.ServiceModel.Channels/BindingElementTest.cs
 System.ServiceModel.Channels/BindingTest.cs

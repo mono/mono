@@ -1,3 +1,8 @@
+2009-04-28  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll_test.sources: added
+	  BinaryMessageEncodingBindingElementTest.cs.
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.dll.sources: Remove 

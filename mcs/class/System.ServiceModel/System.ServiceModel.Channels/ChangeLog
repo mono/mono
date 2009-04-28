@@ -1,5 +1,11 @@
 2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : implement in-band dictionary support
+	  in [MC-NMF] and [MC-NBFSE], used in duplex channels. Added some
+	  comments for magic numbers based on [MC-NMF].
+
+2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinaryMessageEncoder.cs : implement part of in-band dictionary
 	  support for [MC-NBFSE] record in [MC-NMF], in this class.
 

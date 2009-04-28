@@ -2,10 +2,32 @@
 // TcpDuplexSessionChannel.cs
 // 
 // Author: 
-//     Marcos Cobena (marcoscobena@gmail.com)
+//	Marcos Cobena (marcoscobena@gmail.com)
+//	Atsushi Enomoto  <atsushi@ximian.com>
 // 
 // Copyright 2007 Marcos Cobena (http://www.youcannoteatbits.org/)
+//
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 // 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
 using System;
 using System.IO;
@@ -14,6 +36,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.ServiceModel.Channels;
+using System.Text;
 using System.Xml;
 
 namespace System.ServiceModel.Channels
@@ -172,27 +195,36 @@ namespace System.ServiceModel.Channels
 		{
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
 			Stream s = client.GetStream ();
-			s.ReadByte (); // 6
-			MyBinaryReader br = new MyBinaryReader (s);
-//			string msg = br.ReadString ();
-//			br.Read7BitEncodedInt ();
+			var packetType = s.ReadByte (); // 6
+			if (packetType != 6)
+				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
+			var br = new BinaryFrameSupportReader (s);
 
 			// FIXME: implement [MC-NMF] correctly. Currently it is a guessed protocol hack.
-			byte [] buffer = new byte [65536];
-			buffer = br.ReadBytes ();
-			MemoryStream ms = new MemoryStream ();
-			ms.Write (buffer, 0, buffer.Length);
-			ms.Seek (0, SeekOrigin.Begin);
-			
-//			while (s.CanRead)
-//				Console.Write ("{0:X02} ", s.ReadByte ());
-			
-			Message msg = null;
-			// FIXME: To supply maxSizeOfHeaders.
-			msg = Encoder.ReadMessage (ms, 0x10000);
-			s.ReadByte (); // 7
-//			Console.WriteLine (msg);
-			s.WriteByte (7);
+			byte [] buffer = br.ReadSizedChunk ();
+
+			var ms = new MemoryStream (buffer, 0, buffer.Length);
+			// The returned buffer consists of a serialized reader 
+			// session and the binary xml body. 
+			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
+
+			var session = new XmlBinaryReaderSession ();
+			byte [] rsbuf = new BinaryFrameSupportReader (ms).ReadSizedChunk ();
+			int count = 0;
+			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
+				var rbr = new BinaryReader (rms, Encoding.UTF8);
+				while (rms.Position < rms.Length)
+					session.Add (count++, rbr.ReadString ());
+			}
+			var benc = Encoder as BinaryMessageEncoder;
+			if (benc != null)
+				benc.CurrentBinarySession = session;
+			// FIXME: supply maxSizeOfHeaders.
+			Message msg = Encoder.ReadMessage (ms, 0x10000);
+			if (benc != null)
+				benc.CurrentBinarySession = null;
+//			s.ReadByte (); // 7
+//			s.WriteByte (7);
 			s.Flush ();
 
 			return msg;
@@ -269,19 +301,20 @@ namespace System.ServiceModel.Channels
 				                        //RemoteAddress.Uri.Port);
 				
 				NetworkStream ns = client.GetStream ();
-				ns.WriteByte (0);
-				ns.WriteByte (1);
-				ns.WriteByte (0);
-				ns.WriteByte (1);
-				ns.WriteByte (2);
-				ns.WriteByte (2);
+				ns.WriteByte (0); // Version record
+				ns.WriteByte (1); //  - major
+				ns.WriteByte (0); //  - minor
+				ns.WriteByte (1); // Mode record
+				ns.WriteByte (2); //  - mode - Duplex
+				ns.WriteByte (2); // Via record
 				byte [] bytes = System.Text.Encoding.UTF8.GetBytes (RemoteAddress.Uri.ToString ());
 				ns.WriteByte ((byte) bytes.Length);
 				ns.Write (bytes, 0, bytes.Length);
-				ns.WriteByte (3);
-				ns.WriteByte (3);
-				ns.WriteByte (0xC);
-				int hoge = ns.ReadByte ();
+				ns.WriteByte (3); // Known encoding record
+				ns.WriteByte (3); //  - encoding - UTF8
+				ns.WriteByte (0xC); // Preamble end record
+				if (ns.ReadByte () != 0x0B)
+					throw new NotImplementedException ("Preamble Ack was expected");
 				//while (ns.CanRead)
 				//	Console.Write ("{0:X02} ", ns.ReadByte ());
 			}
@@ -290,28 +323,6 @@ namespace System.ServiceModel.Channels
 			else
 				Console.WriteLine ("Server side.");
 			*/
-		}
-		
-		// FIXME: To look for other way to do this.
-		class MyBinaryReader : BinaryReader
-		{
-			public MyBinaryReader (Stream s)
-				: base (s)
-			{
-			}
-			
-			public byte [] ReadBytes ()
-			{
-				byte [] buffer = new byte [65536];
-				int length = Read7BitEncodedInt ();
-				
-				if (length > 65536)
-					throw new InvalidOperationException ("The message is too large.");
-				
-				Read (buffer, 0, length);
-				
-				return buffer;
-			}
 		}
 		
 		class MyBinaryWriter : BinaryWriter
@@ -326,6 +337,27 @@ namespace System.ServiceModel.Channels
 				Write7BitEncodedInt (bytes.Length);
 				Write (bytes);
 			}
+		}
+	}
+		
+	class BinaryFrameSupportReader : BinaryReader
+	{
+		public BinaryFrameSupportReader (Stream s)
+			: base (s)
+		{
+		}
+		
+		public byte [] ReadSizedChunk ()
+		{
+			int length = Read7BitEncodedInt ();
+			
+			if (length > 65536)
+				throw new InvalidOperationException ("The message is too large.");
+
+			byte [] buffer = new byte [length];
+			Read (buffer, 0, length);
+			
+			return buffer;
 		}
 	}
 }

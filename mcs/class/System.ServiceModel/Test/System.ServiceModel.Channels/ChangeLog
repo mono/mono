@@ -1,3 +1,8 @@
+2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncodingBindingElementTest.cs, binary-message.raw:
+	  new test files.
+
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerTransportBindingElementTest.cs : test PeerNode property too.
