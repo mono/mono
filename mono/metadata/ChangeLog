@@ -1,3 +1,8 @@
+2009-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_fixup_vtable): Avoid casting an lvalue. Fixes 
+	part of #498692.
+
 2009-04-23 Tom Hindle <tom_hindle@sil.org>
 
 	* cominterop.c (ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal):
