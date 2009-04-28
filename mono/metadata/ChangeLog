@@ -1,3 +1,9 @@
+2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Avoid redundant checks for platform code, 
+	e.g. check for method and for class (very common) and check
+	for class and outer class (less common)...
+
 2009-04-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c: Avoid returning random cattrs for synthetic methods.
