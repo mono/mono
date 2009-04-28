@@ -1,3 +1,8 @@
+2009-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.h *.c: Use TARGET_<ARCH> defines instead of __<arch>__ defines in the
+	JIT code.
+
 2009-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_create_specific_trampoline): Add a stat for the
