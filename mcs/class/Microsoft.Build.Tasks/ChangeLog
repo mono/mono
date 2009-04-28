@@ -1,3 +1,10 @@
+2009-04-28  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (NAME_SUFFIX): New.
+	(LIBRARY_NAME): Use it.
+	(TEST_MCS_FLAGS): Don't mention name of library.  Use NAME_SUFFIX
+	as appropriate when referring to other msbuild dlls.
+
 2009-04-27  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks_test.dll.sources: Added
