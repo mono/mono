@@ -1,3 +1,9 @@
+2009-04-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When losing the focus, if our textbox is not null,
+	close its auto complete list, if any.
+	Fixes part of #489339.
+
 2009-04-27  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ListView.cs: Make OnColumnClick +internal to be used by a11y.
