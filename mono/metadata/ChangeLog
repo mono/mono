@@ -656,10 +656,6 @@
 
 2009-03-31  Martin Baulig  <martin@ximian.com>
 
-	* mono-debug.h (MONO_DEBUGGER_MINOR_VERSION): Bump to 2.
-
-2009-03-31  Martin Baulig  <martin@ximian.com>
-
 	* mono-debug-debugger.h (MonoDebuggerEvent): Add
 	`MONO_DEBUGGER_EVENT_CREATE_APPDOMAIN' and
 	`MONO_DEBUGGER_EVENT_UNLOAD_APPDOMAIN'.
