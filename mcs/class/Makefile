@@ -197,3 +197,6 @@ $(basic_files:%=lib/basic/%):
 
 dist-default: $(monolite_files)
 dist-local: dist-default
+
+csproj-local:
+
