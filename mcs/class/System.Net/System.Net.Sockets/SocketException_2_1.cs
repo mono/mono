@@ -1,12 +1,11 @@
 //
-// System.Net.Sockets.NetworkStream.cs
+// System.Net.Sockets.SocketException
 //
 // Author:
 //	Dick Porter <dick@ximian.com>
 //
 // (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.Serialization;
-using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace System.Net.Sockets {
@@ -51,16 +48,7 @@ namespace System.Net.Sockets {
 			error_code = error;
 		}
 
-		public SocketException (int error, string message)
-		{
-			error_code = error;
-		}
-
 		public int ErrorCode {
-			get { return error_code; }
-		}
-
-		public int NativeErrorCode {
 			get { return error_code; }
 		}
 
