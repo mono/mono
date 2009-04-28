@@ -1,3 +1,9 @@
+2009-04-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #495112
+	* class.cs (IsUnmanagedType): Handle recursive unmanaged types using
+	local cache.
+
 2009-04-27  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs: Add a flag to work as a replacement for CSC in VS.
