@@ -1,3 +1,7 @@
+2009-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* misc.c (GC_init): Avoid casting an lvalue. Fixes part of #498692.
+
 2009-04-24  Kostyantyn Gushtin, Yevgen Kiruha, Serhiy Naumenko, Serhiy
 Stetskovych and Ian Dichkovsky <mono@n-ix.com.ua>
 
