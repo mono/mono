@@ -136,9 +136,17 @@ precedence over the attributes.
 Extracts the C#/XML documentation from the source code and stores in in
 the given FILE.
 .TP
+.I \-errorreport
+This flag is ignored by Mono's C# compiler and is present only to
+allow MCS to be used as a CSC replacement for msbuild/xbuild.
+.TP
 .I \-\-fatal 
 This is used for debugging the compiler.  This makes the error emission
 generate an exception that can be caught by a debugger.
+.TP
+.I \-filealign
+This flag is ignored by Mono's C# compiler and is present only to
+allow MCS to be used as a CSC replacement for msbuild/xbuild.
 .TP
 .I \-keyfile:KEYFILE
 Strongname (sign) the output assembly using the key pair present in 
@@ -268,6 +276,10 @@ command line tool.
 For more details see the PACKAGE section in this document
 .ne
 .RE
+.TP
+.I \-platform
+This flag is ignored by Mono's C# compiler and is present only to
+allow MCS to be used as a CSC replacement for msbuild/xbuild.
 .TP
 .I -resource:RESOURCE[,ID]
 Embeds to the given resource file.  The optional ID can be used to
