@@ -1,3 +1,8 @@
+2009-04-23 Tom Hindle <tom_hindle@sil.org>
+
+	* cominterop.c (ves_icall_System_Runtime_InteropServices_Marshal_ReleaseComObjectInternal):
+	changed to match .Net behaviour of not aborting on additional calls to ReleaseComObject.
+
 2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Avoid redundant checks for platform code, 
