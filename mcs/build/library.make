@@ -78,6 +78,22 @@ endif
 
 all-local: $(the_lib)
 
+ifeq ($(LIBRARY_COMPILE),$(BOOT_COMPILE))
+is_boot=true
+else
+is_boot=false
+endif
+
+csproj-local: 
+	(echo $(is_boot); \
+	echo $(MCS);	\
+	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
+	echo $(LIBRARY_NAME); \
+	echo $(BUILT_SOURCES_cmdline); \
+	echo $(build_lib); \
+	echo $(response)) | mono $(topdir)/build/csproj/genproj.exe $(topdir)/build/csproj/csproj.tmpl > `basename $(LIBRARY_NAME) .dll`.csproj
+
+
 install-local: all-local
 test-local: all-local
 uninstall-local:
@@ -213,6 +229,8 @@ else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
+
+
 ifdef ENABLE_AOT
 ifneq (,$(filter $(AOT_IN_PROFILES), $(PROFILE)))
 	$(Q_AOT) MONO_PATH=$(the_libdir) $(RUNTIME) --aot=bind-to-runtime-version $@ > $(PROFILE)_aot.log 2>&1
