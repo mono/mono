@@ -806,7 +806,8 @@ namespace System.Web.Compilation
 				}
 			}
 
-			if (builder == null && atts != null && atts.IsRunAtServer ()) {
+			bool runatServer = atts != null && atts.IsRunAtServer ();
+			if (builder == null && runatServer) {
 				string id = htable ["id"] as string;
 				if (id != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (id))
 					throw new ParseException (Location, "'" + id + "' is not a valid identifier");
@@ -823,6 +824,8 @@ namespace System.Web.Compilation
 			if (builder == null)
 				return false;
 
+			if (!runatServer && location.PlainText.IndexOf ("<%") > -1)
+				return false;
 #if NET_2_0
 			PageParserFilter pfilter = PageParserFilter;
 			if (pfilter != null && !pfilter.AllowControl (builder.ControlType, builder))
