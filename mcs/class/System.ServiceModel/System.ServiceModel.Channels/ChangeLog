@@ -1,5 +1,10 @@
 2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BinaryMessageEncoder.cs : implement part of in-band dictionary
+	  support for [MC-NBFSE] record in [MC-NMF], in this class.
+
+2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinaryMessageEncodingBindingElement.cs : clear extra public members.
 
 2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>

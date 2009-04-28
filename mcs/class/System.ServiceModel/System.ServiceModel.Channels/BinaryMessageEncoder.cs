@@ -215,6 +215,14 @@ namespace System.ServiceModel.Channels
 		public override Message ReadMessage (ArraySegment<byte> buffer,
 			BufferManager bufferManager, string contentType)
 		{
+			if (contentType != ContentType)
+				throw new ProtocolException ("Only content type 'application/soap+msbin1' is allowed.");
+
+			// FIXME: retrieve reader session and message body.
+
+			throw new NotImplementedException ();
+
+/*
 			// FIXME: use bufferManager
 			return Message.CreateMessage (
 				XmlDictionaryReader.CreateBinaryReader (
@@ -222,13 +230,20 @@ namespace System.ServiceModel.Channels
 					soap_dictionary,
 					owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas ()),
 				int.MaxValue, MessageVersion);
+*/
 		}
+
+		// It is sort of nasty hack, but there is no other way to provide reader session from TCP stream.
+		internal XmlBinaryReaderSession CurrentBinarySession { get; set; }
 
 		public override Message ReadMessage (Stream stream,
 			int maxSizeOfHeaders, string contentType)
 		{
+			if (contentType != ContentType)
+				throw new ProtocolException ("Only content type 'application/soap+msbin1' is allowed.");
+
 			return Message.CreateMessage (
-				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas ()),
+				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), CurrentBinarySession),
 				maxSizeOfHeaders, MessageVersion);
 		}
 
