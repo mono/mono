@@ -1,3 +1,10 @@
+2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlReaderSettings.cs: Add MaxCharactersInDocument property for 
+	NET_2_1 profile
+	* XmlUrlResolver.cs: Cleanup #ifdef NET_2_1 inside this file 
+	since this is not used anymore in Moonlight
+
 2009-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* XmlXapResolver.cs: Remove dependency on XmlUrlResolver. Small 

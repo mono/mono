@@ -62,7 +62,8 @@ namespace System.Xml
 		private XmlResolver xmlResolver;
 #if NET_2_1
 		private DtdProcessing dtdProcessing;
-		private Int64 maxCharactersFromEntities;
+		private long maxCharactersFromEntities;
+		private long maxCharactersInDocument;
 #endif
 
 		public XmlReaderSettings ()
@@ -123,9 +124,15 @@ namespace System.Xml
 			set { dtdProcessing = value; }
 		}
 
-		public Int64 MaxCharactersFromEntities {
+		public long MaxCharactersFromEntities {
 			get { return maxCharactersFromEntities; }
 			set { maxCharactersFromEntities = value; }
+		}
+
+		[MonoTODO ("not used yet")]
+		public long MaxCharactersInDocument {
+			get { return maxCharactersInDocument; }
+			set { maxCharactersInDocument = value; }
 		}
 #endif
 

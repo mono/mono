@@ -35,10 +35,8 @@ namespace System.Xml
 {
 	public class XmlUrlResolver : XmlResolver
 	{
-#if !NET_2_1
 		// Field
 		ICredentials credential;
-#endif
 
 		// Constructor
 		public XmlUrlResolver ()
@@ -46,18 +44,13 @@ namespace System.Xml
 		{
 		}
 
-#if !NET_2_1
 		// Properties		
 		public override ICredentials Credentials
 		{
 			set { credential = value; }
 		}
-#endif
 
 		// Methods
-#if NET_2_1
-		[MonoTODO ("What should/can we do for non-file URLs, without HttpWebRequest implementation in System.dll?")]
-#endif
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
 			if (ofObjectToReturn == null)
@@ -76,16 +69,11 @@ namespace System.Xml
 				return new FileStream (UnescapeRelativeUriBody (absoluteUri.LocalPath), FileMode.Open, FileAccess.Read, FileShare.Read);
 			}
 
-#if NET_2_1
-			// So, what can I do here? HttpWebRequest cannot be instantiated within System.dll
-			throw new NotImplementedException ();
-#else
 			// (MS documentation says) parameter role isn't used yet.
 			WebRequest req = WebRequest.Create (absoluteUri);
 			if (credential != null)
 				req.Credentials = credential;
 			return req.GetResponse().GetResponseStream();
-#endif
 		}
 
 #if NET_2_0
