@@ -29,7 +29,6 @@
 //
 
 using System.IO;
-using System.Net;
 using System.Reflection;
 
 namespace System.Xml
@@ -40,27 +39,29 @@ namespace System.Xml
 		static readonly PropertyInfo property;
 		static XmlXapResolver ()
 		{
-			var at = Type.GetType ("System.Windows.Application, System.Windows, Version=2.0.5.0, Culture=neutral", true); // , PublicKeyToken=7cec85d7bea7798e
+			var at = Type.GetType ("System.Windows.Application, System.Windows, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e", true);
 			method = at.GetMethod ("GetResourceStream", new Type [] {typeof (Uri)});
-			var rt = Type.GetType ("System.Windows.Resources.StreamResourceInfo, System.Windows, Version=2.0.5.0, Culture=neutral", true);
+			var rt = Type.GetType ("System.Windows.Resources.StreamResourceInfo, System.Windows, Version=2.0.5.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e", true);
 			property = rt.GetProperty ("Stream");
 		}
 
-		// FIXME: remove this compromised part when this class got working
-		XmlUrlResolver url_resolver = new XmlUrlResolver ();
-
 		public override object GetEntity (Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
+			if (absoluteUri == null)
+				throw new ArgumentNullException ("absoluteUri");
+			if (absoluteUri.IsAbsoluteUri)
+				throw new XmlException ("URI must be relative to the application XAP");
+			if (!SupportsType (absoluteUri, ofObjectToReturn))
+				throw new XmlException (String.Format ("Unsupported entity type '{0}'", ofObjectToReturn.GetType ()));
+			
 			try {
-				if (ofObjectToReturn != typeof (Stream))
-					throw new NotSupportedException (String.Format ("Not supported entity type '{0}'", ofObjectToReturn));
 				var sri = method.Invoke (null, new object [] {absoluteUri});
 				if (sri == null)
-					throw new ArgumentException (String.Format ("Resource '{0}' not found", absoluteUri));
+					throw new XmlException (String.Format ("Resource '{0}' not found", absoluteUri));
 				return property.GetValue (sri, new object [0]);
-			} catch (Exception ex) {
-Console.WriteLine ("!!!!! GetEntity FAILED: " + ex);
-				return url_resolver.GetEntity (absoluteUri, role, ofObjectToReturn);
+			} catch (TargetInvocationException tie) {
+				// throw the original exception
+				throw tie.InnerException;
 			}
 		}
 	}

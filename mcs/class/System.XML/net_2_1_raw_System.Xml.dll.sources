@@ -44,7 +44,6 @@ System.Xml/XmlTextReader.cs
 System.Xml/XmlTextReader2.cs
 System.Xml/XmlTextWriter2.cs
 System.Xml/XmlTokenizedType.cs
-System.Xml/XmlUrlResolver.cs
 System.Xml/XmlWriter.cs
 System.Xml/XmlWriterSettings.cs
 System.Xml/XmlXapResolver.cs
