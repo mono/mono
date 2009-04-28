@@ -1429,6 +1429,10 @@ namespace Mono.CSharp
 				// We just ignore this.
 			case "/errorreport":
 				return true;
+			case "/filealign":
+				return true;
+			case "/platform":
+				return true;
 				
 			case "/help2":
 				OtherFlags ();
