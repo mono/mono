@@ -24,6 +24,7 @@ System.Xml/XmlSecureResolverTests.cs
 System.Xml/XmlSignificantWhitespaceTests.cs
 System.Xml/XmlReaderCommonTests.cs
 System.Xml/XmlReaderSettingsTests.cs
+System.Xml/XmlResolverTest.cs
 System.Xml/XmlParserContextTests.cs
 System.Xml/XmlTextReaderTests.cs
 System.Xml/XmlTextTests.cs

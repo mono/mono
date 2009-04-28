@@ -6,7 +6,7 @@
 //   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2001 Jason Diamond  http://injektilo.org/
-// (C) 2004 Novell Inc.
+// Copyright (C) 2004,2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -53,15 +53,16 @@ namespace System.Xml
 			if (baseUri == null) {
 				if (relativeUri == null)
 					throw new ArgumentNullException ("Either baseUri or relativeUri are required.");
+#if NET_2_1
+				return new Uri (relativeUri, UriKind.RelativeOrAbsolute);
+#else
 				// Don't ignore such case that relativeUri is in fact absolute uri (e.g. ResolveUri (null, "http://foo.com")).
 				if (relativeUri.StartsWith ("http:") ||
 					relativeUri.StartsWith ("https:") ||
+					relativeUri.StartsWith ("ftp:") ||
 					relativeUri.StartsWith ("file:"))
 					return new Uri (relativeUri);
 				else
-#if NET_2_1
-					return new Uri (relativeUri, UriKind.RelativeOrAbsolute);
-#else
 					return new Uri (Path.GetFullPath (relativeUri));
 #endif
 			}
@@ -81,5 +82,13 @@ namespace System.Xml
 				.Replace ("%", "%25")
 				.Replace ("\"", "%22");
 		}
+#if NET_2_1
+		public virtual bool SupportsType (Uri absoluteUri, Type type)
+		{
+			if (absoluteUri == null)
+				throw new ArgumentNullException ("absoluteUri");
+			return ((type == null) || (type == typeof (Stream)));
+		}
+#endif
 	}
 }

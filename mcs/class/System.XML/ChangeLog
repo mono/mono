@@ -1,3 +1,8 @@
+2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Xml_test.dll.sources: Add System.Xml/XmlResolverTest.cs to
+	the unit tests
+
 2009-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add missing Test/XmlFiles/496192.x* files to dist

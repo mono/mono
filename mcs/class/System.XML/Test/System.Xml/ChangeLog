@@ -1,3 +1,7 @@
+2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlResolverTest.cs: New. Unit tests for base features.
+
 2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlAttributeCollectionTests.cs : added test for bug #496022.
