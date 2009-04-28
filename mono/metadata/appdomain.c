@@ -41,6 +41,7 @@
 #include <mono/metadata/monitor.h>
 #include <mono/metadata/threadpool.h>
 #include <mono/metadata/mono-debug.h>
+#include <mono/metadata/mono-debug-debugger.h>
 #include <mono/metadata/attach.h>
 #include <mono/metadata/file-io.h>
 #include <mono/metadata/console-io.h>
@@ -110,6 +111,9 @@ add_assemblies_to_domain (MonoDomain *domain, MonoAssembly *ass, GHashTable *has
 
 static MonoAppDomain *
 mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *setup);
+
+static char *
+get_shadow_assembly_location_base (MonoDomain *domain);
 
 static MonoLoadFunc load_function = NULL;
 
@@ -413,6 +417,8 @@ mono_domain_create_appdomain_internal (char *friendly_name, MonoAppDomainSetup *
 	mono_set_private_bin_path_from_config (data);
 	
 	add_assemblies_to_domain (data, mono_defaults.corlib->assembly, NULL);
+
+	mono_debugger_event_create_appdomain (data, get_shadow_assembly_location_base (data));
 
 	return ad;
 }
@@ -2031,6 +2037,8 @@ mono_domain_unload (MonoDomain *domain)
 			g_assert_not_reached ();
 		}
 	}
+
+	mono_debugger_event_unload_appdomain (domain);
 
 	mono_domain_set (domain, FALSE);
 	/* Notify OnDomainUnload listeners */

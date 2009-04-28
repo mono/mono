@@ -10,6 +10,19 @@
 
 2009-03-31  Martin Baulig  <martin@ximian.com>
 
+	Backport of r130659.
+
+	* mono-debug-debugger.h (MonoDebuggerEvent): Add
+	`MONO_DEBUGGER_EVENT_CREATE_APPDOMAIN' and
+	`MONO_DEBUGGER_EVENT_UNLOAD_APPDOMAIN'.
+	(mono_debugger_event_create_appdomain): New function.
+	(mono_debugger_event_unload_appdomain): New function.
+
+	* appdomain.c (mono_domain_create_appdomain_internal): Call
+	mono_debugger_event_create_appdomain().
+
+2009-03-31  Martin Baulig  <martin@ximian.com>
+
 	Backport of r130658.
 
 	* mono-debug-debugger.c
