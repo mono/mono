@@ -1,3 +1,11 @@
+2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ConsoleTraceListener.cs: add an internal constructor that takes a
+	string argument. Used when 'initializeData' is set.
+	* DiagnosticsConfigurationHandler.cs: try internal constructors when
+	the assembly is System.
+	Fixes bug #498853.
+
 2009-04-19  Miguel de Icaza  <miguel@novell.com>
 
 	* Process.cs: Do not crash if GetProcesses_internal returns null

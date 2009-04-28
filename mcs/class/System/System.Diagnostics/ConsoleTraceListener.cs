@@ -33,6 +33,9 @@ namespace System.Diagnostics {
 		public ConsoleTraceListener () : this (false) {}
 		public ConsoleTraceListener (bool useErrorStream) :
 			base (useErrorStream ? Console.Error : Console.Out) {}
+
+		internal ConsoleTraceListener (string data) :
+			this (Convert.ToBoolean (data)) {}
 	}
 }
 
