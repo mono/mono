@@ -876,7 +876,13 @@ namespace System.Web.UI.WebControls
 				return rows;
 			}
 		}
-		
+
+		[BrowsableAttribute(false)]
+		public IAutoFieldGenerator RowsGenerator {
+			get;
+			set;
+		}
+
 		[WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
@@ -960,6 +966,14 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual ICollection CreateFieldSet (object dataItem, bool useDataSource)
 		{
+			bool autoGenerate = AutoGenerateRows;
+			
+			if (autoGenerate) {
+				IAutoFieldGenerator fieldGenerator = RowsGenerator;
+				if (fieldGenerator != null)
+					return fieldGenerator.GenerateFields (this);
+			}
+			
 			ArrayList fields = new ArrayList ();
 			
 			if (AutoGenerateRows) {
