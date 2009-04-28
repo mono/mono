@@ -103,6 +103,7 @@ namespace System.Xml
 			public string Prefix;
 			public XmlDictionaryString DictLocalName;
 			public XmlDictionaryString DictNS;
+			public XmlDictionaryString DictValue; // BF.TextIndex
 			public XmlNodeType NodeType;
 			public object TypedValue;
 			public byte ValueType;
@@ -135,7 +136,7 @@ namespace System.Xml
 
 			public string Name {
 				get {
-					if (name == null)
+					if (name.Length == 0)
 						name = Prefix.Length > 0 ?
 							String.Concat (Prefix, ":", LocalName) :
 							LocalName;
@@ -143,10 +144,8 @@ namespace System.Xml
 				}
 			}
 
-			public string Value {
+			public virtual string Value {
 				get {
-					if (BF.AttrString <= ValueType && ValueType <= BF.PrefixNAttrIndexEnd)
-						return value; // attribute
 					switch (ValueType) {
 					case 0:
 					case BF.Comment:
@@ -158,6 +157,8 @@ namespace System.Xml
 					case BF.Utf16_16:
 					case BF.Utf16_32:
 						return value;
+					case BF.TextIndex:
+						return DictValue.Value;
 					case BF.Zero:
 					case BF.One:
 						return XmlConvert.ToString ((int) TypedValue);
@@ -206,6 +207,12 @@ namespace System.Xml
 
 		class AttrNodeInfo : NodeInfo
 		{
+			public AttrNodeInfo (XmlBinaryDictionaryReader owner)
+			{
+				this.owner = owner;
+			}
+
+			XmlBinaryDictionaryReader owner;
 			public int ValueIndex;
 			public int NSIndex;
 
@@ -214,6 +221,10 @@ namespace System.Xml
 				base.Reset ();
 				ValueIndex = -1;
 				NodeType = XmlNodeType.Attribute;
+			}
+
+			public override string Value {
+				get { return owner.attr_values [ValueIndex].Value; }
 			}
 		}
 
@@ -317,7 +328,7 @@ namespace System.Xml
 		}
 
 		public override bool HasValue {
-			get { return current.Value.Length > 0; }
+			get { return Value.Length > 0; }
 		}
 
 		public override bool IsEmptyElement {
@@ -335,6 +346,10 @@ namespace System.Xml
 		// looks like it may return attribute's name even if it is on its value node.
 		public override string LocalName {
 			get { return current_attr >= 0 ? attributes [current_attr].LocalName : current.LocalName; }
+		}
+
+		public override string Name {
+			get { return current_attr >= 0 ? attributes [current_attr].Name : current.Name; }
 		}
 
 		public override string NamespaceURI {
@@ -487,14 +502,6 @@ namespace System.Xml
 				return true;
 			}
 			// Actually there is no case for attribute whose value is split to more than two nodes. We could simplify the node structure.
-			/*
-			for (int i = start; i < end; i++) {
-				if (current == attr_values [i] && i + 1 < end) {
-					current = attr_values [i + 1];
-					return true;
-				}
-			}
-			*/
 			return false;
 		}
 
@@ -517,10 +524,10 @@ namespace System.Xml
 
 			// clear.
 			state = ReadState.Interactive;
+			MoveToElement ();
 			attr_count = 0;
 			attr_value_count = 0;
 			ns_slot = 0;
-			current = node;
 
 			if (node.NodeType == XmlNodeType.Element) {
 				// push element scope
@@ -536,6 +543,7 @@ namespace System.Xml
 
 			if (is_next_end_element) {
 				is_next_end_element = false;
+				node.Reset ();
 				ProcessEndElement ();
 				return true;
 			}
@@ -752,7 +760,7 @@ namespace System.Xml
 		private void ReadAttribute (byte ident)
 		{
 			if (attributes.Count == attr_count)
-				attributes.Add (new AttrNodeInfo ());
+				attributes.Add (new AttrNodeInfo (this));
 			AttrNodeInfo a = attributes [attr_count++];
 			a.Reset ();
 			a.Position = source.Position;
@@ -774,12 +782,12 @@ namespace System.Xml
 				goto case BF.AttrIndex;
 			default:
 				if (BF.PrefixNAttrStringStart <= ident && ident <= BF.PrefixNAttrStringEnd) {
-					a.Prefix = ((char) ('a' + ident)).ToString ();
+					a.Prefix = ((char) ('a' + ident - BF.PrefixNAttrStringStart)).ToString ();
 					a.LocalName = ReadUTF8 ();
 					break;
 				}
 				else if (BF.PrefixNAttrIndexStart <= ident && ident <= BF.PrefixNAttrIndexEnd) {
-					a.Prefix = ((char) ('a' + ident)).ToString ();
+					a.Prefix = ((char) ('a' + ident - BF.PrefixNAttrIndexStart)).ToString ();
 					a.DictLocalName = ReadDictName ();
 					break;
 				}
@@ -790,8 +798,16 @@ namespace System.Xml
 
 		private void ReadNamespace (byte ident)
 		{
+			// create attrubute slot.
+			if (attributes.Count == attr_count)
+				attributes.Add (new AttrNodeInfo (this));
+			AttrNodeInfo a = attributes [attr_count++];
+			a.Reset ();
+			a.Position = source.Position;
+
 			string prefix = null, ns = null;
-				XmlDictionaryString dns;
+			XmlDictionaryString dns = null;
+
 			switch (ident) {
 			case BF.DefaultNSString:
 				prefix = String.Empty;
@@ -814,6 +830,20 @@ namespace System.Xml
 				ns = dns.Value;
 				break;
 			}
+
+			// fill attribute slot.
+			a.Prefix = prefix.Length > 0 ? "xmlns" : String.Empty;
+			a.LocalName = prefix.Length > 0 ? prefix : "xmlns";
+			a.NS = "http://www.w3.org/2000/xmlns/";
+			a.ValueIndex = attr_value_count;
+			if (attr_value_count == attr_values.Count)
+				attr_values.Add (new NodeInfo (true));
+			NodeInfo v = attr_values [attr_value_count++];
+			v.Reset ();
+			v.Value = ns;
+			v.ValueType = BF.Chars8;
+			v.NodeType = XmlNodeType.Text;
+
 			ns_store.Add (new QName (prefix, ns));
 			context.NamespaceManager.AddNamespace (prefix, ns);
 		}
@@ -821,17 +851,14 @@ namespace System.Xml
 		private void ReadAttributeValueBinary (AttrNodeInfo a)
 		{
 			a.ValueIndex = attr_value_count;
-			do {
-				if (attr_value_count == attr_values.Count)
-					attr_values.Add (new NodeInfo (true));
-				NodeInfo v = attr_values [attr_value_count++];
-				v.Reset ();
-				int ident = ReadByteOrError ();
-				is_next_end_element = ident > 0x80 && (ident & 1) == 1;
-				ident -= is_next_end_element ? 1 : 0;
-				if (!ReadTextOrValue ((byte) ident, v, true) || is_next_end_element)
-					break;
-			} while (true);
+			if (attr_value_count == attr_values.Count)
+				attr_values.Add (new NodeInfo (true));
+			NodeInfo v = attr_values [attr_value_count++];
+			v.Reset ();
+			int ident = ReadByteOrError ();
+			bool end = ident > 0x80 && (ident & 1) == 1;
+			ident -= end ? 1 : 0;
+			ReadTextOrValue ((byte) ident, v, true);
 		}
 
 		private bool ReadTextOrValue (byte ident, NodeInfo node, bool canSkip)
@@ -924,6 +951,10 @@ namespace System.Xml
 				break;
 			case BF.EmptyText:
 				node.Value = String.Empty;
+				node.NodeType = XmlNodeType.Text;
+				break;
+			case BF.TextIndex:
+				node.DictValue = ReadDictName ();
 				node.NodeType = XmlNodeType.Text;
 				break;
 			default:

@@ -1,3 +1,16 @@
+2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReader.cs : several fixes;
+	  - Name property was always empty.
+	  - Value property was always empty for attributes.
+	  - TextIndex node type was not supported.
+	  - node reset at Read() was incomplete.
+	  - attribute Prefix for single character had wrong value.
+	  - namespace nodes did not appear as attribute nodes.
+	  - attribute value node must be always single. Another text node
+	    means a text child of the element, not the following attr value.
+	  tests will go in sys.servicemodel.
+
 2009-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlMtomDictionaryReader.cs : new.
