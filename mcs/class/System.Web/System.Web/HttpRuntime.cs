@@ -332,12 +332,18 @@ namespace System.Web {
 			// Remove all items from cache.
 		}
 
-		static void QueuePendingRequests ()
+		internal static HttpWorkerRequest QueuePendingRequest (bool started_internally)
 		{
-			HttpWorkerRequest request = queue_manager.GetNextRequest (null);
-			if (request == null)
-				return;
-			ThreadPool.QueueUserWorkItem (do_RealProcessRequest, request);
+			HttpWorkerRequest next = queue_manager.GetNextRequest (null);
+			if (next == null)
+				return null;
+
+			if (!started_internally) {
+				next.StartedInternally = true;
+				ThreadPool.QueueUserWorkItem (do_RealProcessRequest, next);
+				return null;
+			}
+			return next;
 		}
 
 #if !TARGET_J2EE
@@ -456,14 +462,24 @@ namespace System.Web {
 		
 		static void RealProcessRequest (object o)
 		{
+			HttpWorkerRequest req = (HttpWorkerRequest) o;
+			bool started_internally = req.StartedInternally;
+			do {
+				Process (req);
+				req = QueuePendingRequest (started_internally);
+			} while (started_internally && req != null);
+		}
+
+		static void Process (HttpWorkerRequest req)
+		{
 #if TARGET_J2EE
 			HttpContext context = HttpContext.Current;
 			if (context == null)
-				context = new HttpContext ((HttpWorkerRequest) o);
+				context = new HttpContext (req);
 			else
-				context.SetWorkerRequest ((HttpWorkerRequest) o);
+				context.SetWorkerRequest (req);
 #else
-			HttpContext context = new HttpContext ((HttpWorkerRequest) o);
+			HttpContext context = new HttpContext (req);
 #endif
 			HttpContext.Current = context;
 			bool error = false;
@@ -474,7 +490,7 @@ namespace System.Web {
 #endif
 				firstRun = false;
 				if (initialException != null) {
-					FinishWithException ((HttpWorkerRequest) o, new HttpException ("Initial exception", initialException));
+					FinishWithException (req, new HttpException ("Initial exception", initialException));
 					error = true;
 				}
 			}
@@ -493,7 +509,7 @@ namespace System.Web {
 				try {
 					app = HttpApplicationFactory.GetApplication (context);
 				} catch (Exception e) {
-					FinishWithException ((HttpWorkerRequest) o, new HttpException ("", e));
+					FinishWithException (req, new HttpException ("", e));
 					error = true;
 				}
 			}
@@ -532,8 +548,6 @@ namespace System.Web {
 
 				HttpApplicationFactory.Recycle (app);
 			}
-			
-			QueuePendingRequests ();
 		}
 		
 		//
@@ -555,6 +569,7 @@ namespace System.Web {
 			if (request == null)
 				return;
 
+			QueuePendingRequest (false);
 			RealProcessRequest (request);
 		}
 
