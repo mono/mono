@@ -1,5 +1,9 @@
 2009-04-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the memberef table.
+
+2009-04-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (get_coded_index_token): Remove
 	dead argument.
 
