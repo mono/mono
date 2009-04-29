@@ -1,3 +1,8 @@
+2009-04-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* sockets.c: don't display a warning when connect() fails because the
+	socket was closed in another thread.
+
 2009-02-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* io.c: EXDEV when moving directories fails now without creating a
