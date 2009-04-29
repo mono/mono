@@ -1,3 +1,16 @@
+2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TdsConnectionPool.cs: if GetConnection() fails to create a
+	connection, try again several times and then throw. Improved
+	ResetConnectionPool() so that it does not immediately close
+	connections in use. Don't re-add connections that have been closed.
+
+	* Tds.cs: Connected tests the socket connection too. Made Disconnect()
+	not throw.
+
+	* TdsComm.cs: set more socket options (timeout and NoDelay) and have a
+	single entry point for reading from the stream.
+
 2009-01-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Tds70.cs: fix for output parameters and '@'.
