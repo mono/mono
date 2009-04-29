@@ -302,6 +302,15 @@ namespace System.Data.SqlClient
 
 		private void ErrorHandler (object sender, TdsInternalErrorMessageEventArgs e)
 		{
+			try {
+				if (!tds.IsConnected)
+					Close ();
+			} catch {
+				try {
+					Close ();
+				} catch {
+				}
+			}
 			throw new SqlException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono SqlClient Data Provider", e.State);
 		}
 
