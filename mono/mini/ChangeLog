@@ -1,3 +1,8 @@
+2009-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* decompose.c (mono_decompose_long_opts): Move the implementation of LNEG
+	to mono_arch_decompose_long_opts () for x86 and arm.
+
 2009-04-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_regstate_alloc_int): Use __x86_64__ instead of
