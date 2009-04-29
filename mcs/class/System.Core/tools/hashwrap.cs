@@ -62,6 +62,8 @@ class Program {
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 namespace System.Security.Cryptography {
 
 	// this is a wrapper around <wrapAround>
@@ -109,6 +111,8 @@ namespace System.Security.Cryptography {
 		}
 	}
 }
+
+#endif
 ";
 
 	static int Main (string [] args)
