@@ -146,7 +146,7 @@ namespace Mono.Data.Tds.Protocol
 		}
 
 		public bool IsConnected {
-			get { return connected; }
+			get { return connected && comm != null && comm.IsConnected (); }
 			set { connected = value; }
 		}
 
@@ -443,11 +443,15 @@ namespace Mono.Data.Tds.Protocol
 
 		public void Disconnect ()
 		{
-			comm.StartPacket (TdsPacketType.Logoff);
-			comm.Append ((byte) 0);
-			comm.SendPacket ();
-			comm.Close ();
+			try {
+				comm.StartPacket (TdsPacketType.Logoff);
+				comm.Append ((byte) 0);
+				comm.SendPacket ();
+			} catch {
+				// We're closing the socket anyway
+			}
 			connected = false;
+			comm.Close ();
 		}
 		
 		public virtual bool Reset ()

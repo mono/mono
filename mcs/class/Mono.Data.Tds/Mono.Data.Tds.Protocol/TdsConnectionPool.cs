@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 using System.Threading;
 
 namespace Mono.Data.Tds.Protocol 
@@ -101,6 +102,18 @@ namespace Mono.Data.Tds.Protocol
 		public int Timeout;
 		public int PoolMinSize;
 		public int PoolMaxSize;
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.AppendFormat ("DataSouce: {0}\n", DataSource);
+			sb.AppendFormat ("Port: {0}\n", Port);
+			sb.AppendFormat ("PacketSize: {0}\n", PacketSize);
+			sb.AppendFormat ("Timeout: {0}\n", Timeout);
+			sb.AppendFormat ("PoolMinSize: {0}\n", PoolMinSize);
+			sb.AppendFormat ("PoolMaxSize: {0}", PoolMaxSize);
+			return sb.ToString ();
+		}
 	}
 
 	public class TdsConnectionPool
@@ -110,7 +123,6 @@ namespace Mono.Data.Tds.Protocol
 		TdsConnectionPoolManager manager;
 		Queue available;
 		ArrayList conns;
-		object next_free;
 		
 		public TdsConnectionPool (TdsConnectionPoolManager manager, TdsConnectionInfo info)
 		{
@@ -123,14 +135,14 @@ namespace Mono.Data.Tds.Protocol
 
 		void InitializePool ()
 		{
-			for (int i = 0; i < info.PoolMinSize; i++) {
-				if (i == 0) {
-					next_free = manager.CreateConnection (info);
-					conns.Add (next_free);
-				} else {
+			/* conns.Count might not be 0 when we are resetting the connection pool */
+			for (int i = conns.Count; i < info.PoolMinSize; i++) {
+				try {
 					Tds t = manager.CreateConnection (info);
 					conns.Add (t);
 					available.Enqueue (t);
+				} catch {
+					// Ignore. GetConnection will throw again.
 				}
 			}
 		}
@@ -142,32 +154,27 @@ namespace Mono.Data.Tds.Protocol
 
 		#region Methods
 
+		int in_progress;
 		public Tds GetConnection ()
 		{
 			if (no_pooling)
 				return manager.CreateConnection (info);
 
+			Tds result = null;
+			bool create_new;
+			int retries = info.PoolMaxSize * 2;
 retry:
-			Tds result = (Tds) Interlocked.Exchange (ref next_free, null);
-			if (result != null && !result.IsConnected)
-				result = null;
-
 			while (result == null) {
+				create_new = false;
 				lock (available) {
 					if (available.Count > 0) {
 						result = (Tds) available.Dequeue ();
 						break; // .. and do the reset out of the loop
-					} else {
-						result = (Tds) Interlocked.Exchange (ref next_free, null);
-						if (result != null && result.IsConnected)
-							break;
-						result = null;
 					}
 					Monitor.Enter (conns);
 					try {
-						if (conns.Count >= info.PoolMaxSize) {
+						if (conns.Count >= info.PoolMaxSize - in_progress) {
 							Monitor.Exit (conns);
-							//Console.WriteLine ("GONZ: ENTERING LOCK");
 							bool got_lock = Monitor.Wait (available, info.Timeout * 1000);
 							if (!got_lock) {
 								throw new InvalidOperationException (
@@ -175,48 +182,73 @@ retry:
 									"connection could be obtained. A possible explanation " +
 									"is that all the connections in the pool are in use, " +
 									"and the maximum pool size is reached.");
+							} else if (available.Count > 0) {
+								result = (Tds) available.Dequeue ();
+								break; // .. and do the reset out of the loop
 							}
 							continue;
+						} else {
+							create_new = true;
+							in_progress++;
 						}
 					} finally {
-						Monitor.Exit (conns); // Exiting if not owned is ok
+						Monitor.Exit (conns); // Exiting if not owned is ok < 2.x
 					}
 				}
-				lock (conns) {
-					if (conns.Count < info.PoolMaxSize) {
-						try {
-							//Console.WriteLine ("GONZ: NEW");
-							result = manager.CreateConnection (info);
+				if (create_new) {
+					try {
+						result = manager.CreateConnection (info);
+						lock (conns)
 							conns.Add (result);
-							return result; // no reset needed
-						} catch {
-						}
-						continue;
+						return result;
+					} finally {
+						lock (available)
+							in_progress--;
 					}
 				}
 			}
 
-			if (!result.IsConnected || !result.Reset ()) {
-				//Console.WriteLine ("GONZ: RESET FAILED");
+			bool remove_cnc = true;
+			Exception exc = null;
+			try {
+				remove_cnc = (!result.IsConnected || !result.Reset ());
+			} catch (Exception e) {
+				remove_cnc = true;
+				exc = e;
+			}
+			if (remove_cnc) {
 				lock (conns)
 					conns.Remove (result);
-				ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), result);
+				result.Disconnect ();
+				retries--;
+				if (retries == 0)
+					throw exc;
 				goto retry;
 			}
-			//Console.WriteLine ("GONZ: REUSED");
 			return result;
 		}
 
 		public void ReleaseConnection (Tds connection)
 		{
+			if (connection == null)
+				return;
 			if (no_pooling) {
-				ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), connection);
+				connection.Disconnect ();
 				return;
 			}
+
+			if (connection.poolStatus == 2) {
+				lock (conns)
+					conns.Remove (connection);
+				connection.Disconnect ();
+				connection = null;
+			}
 			lock (available) {
-				if (Interlocked.CompareExchange (ref next_free, connection, null) != null)
-					available.Enqueue (connection);
-				Monitor.Pulse (available);
+				if (connection != null) // connection is still open
+ 					available.Enqueue (connection);
+				// We pulse even if we don't queue, because null means that there's a slot
+				// available in 'conns'
+ 				Monitor.Pulse (available);
 			}
 		}
 
@@ -224,27 +256,25 @@ retry:
 		public void ResetConnectionPool ()
 		{
 			lock (available) {
-				available.Clear ();
 				lock (conns) {
-					for (int i = 0; i < conns.Count; i++) {
-						Tds tds = (Tds) conns [i];
-						ThreadPool.QueueUserWorkItem (new WaitCallback (DestroyConnection), tds);
+					Tds tds;
+					int i;
+					for (i = conns.Count - 1; i >= 0; i++) {
+						tds = (Tds) conns [i];
+						tds.poolStatus = 2; // 2 -> disconnect me upon release
 					}
-					conns.Clear ();
+					for (i = available.Count - 1; i >= 0; i--) {
+						tds = (Tds) available.Dequeue ();
+						tds.Disconnect ();
+						conns.Remove (tds);
+					}
+					available.Clear ();
 					InitializePool ();
-					Monitor.PulseAll (available);
 				}
+				Monitor.PulseAll (available);
 			}
 		}
 #endif
-
-		static void DestroyConnection (object state)
-		{
-			Tds connection = state as Tds;
-			if (connection != null) {
-				connection.Disconnect ();
-			}
-		}
 		#endregion // Methods
 	}
 }

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 // Copyright (C) 2002 Tim Coleman
+// Copyright (c) 2009 Novell, Inc.
 //
 
 //
@@ -29,6 +31,7 @@
 //
 
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -84,6 +87,7 @@ namespace Mono.Data.Tds.Protocol {
 			inBufferLength = packetSize;
 
 			IPEndPoint endPoint;
+			bool have_exception = false;
 			
 			try {
 #if NET_2_0
@@ -105,7 +109,8 @@ namespace Mono.Data.Tds.Protocol {
 			try {
 				socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				IAsyncResult ares = socket.BeginConnect (endPoint, null, null);
-				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout * 1000, false))
+				int timeout_ms = timeout * 1000;
+				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout_ms, false))
 					throw Tds.CreateTimeoutException (dataSource, "Open()");
 				socket.EndConnect (ares);
 				try {
@@ -115,18 +120,33 @@ namespace Mono.Data.Tds.Protocol {
 					// Some platform may throw an exception, so
 					// eat all socket exception, yeaowww! 
 				}
-				
+
+				try {
+#if NET_2_0
+					socket.NoDelay = true;
+#endif
+					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.SendTimeout, timeout_ms);
+					socket.SetSocketOption (SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, timeout_ms);
+				} catch {
+					// Ignore exceptions here for systems that do not support these options.
+				}
+				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout * 1000, false))
 				// Let the stream own the socket and take the pleasure of closing it
 				stream = new NetworkStream (socket, true);
 			} catch (SocketException e) {
-				if (socket != null) {
+				have_exception = true;
+				throw new TdsInternalException ("Server does not exist or connection refused.", e);
+			} catch (Exception) {
+				have_exception = true;
+				throw;
+			} finally {
+				if (have_exception && socket != null) {
 					try {
 						Socket s = socket;
 						socket = null;
 						s.Close ();
 					} catch {}
 				}
-				throw new TdsInternalException ("Server does not exist or connection refused.", e);
 			}
 			if (!socket.Connected)
 				throw new TdsInternalException ("Server does not exist or connection refused.", null);
@@ -377,9 +397,16 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Close ()
 		{
+			if (stream == null)
+				return;
+
 			connReset = false;
 			socket = null;
-			stream.Close ();
+			try {
+				stream.Close ();
+			} catch {
+			}
+			stream = null;
 		}
 
 		public bool IsConnected () 
@@ -423,7 +450,7 @@ namespace Mono.Data.Tds.Protocol {
 				int avail = inBufferLength - inBufferIndex;
 				avail = avail>len-i ? len-i : avail;
 
-				System.Array.Copy (inBuffer, inBufferIndex, result, i, avail);
+				Buffer.BlockCopy (inBuffer, inBufferIndex, result, i, avail);
 				i += avail;
 				inBufferIndex += avail;
 			}
@@ -507,13 +534,32 @@ namespace Mono.Data.Tds.Protocol {
                         GetPhysicalPacketData (dataLength);
 		}
 
+		int Read (byte [] buffer, int offset, int count)
+		{
+			try {
+				return stream.Read (buffer, offset, count);
+			} catch {
+				socket = null;
+				stream.Close ();
+				throw;
+			}
+		}
+
                 private int GetPhysicalPacketHeader ()
                 {
                         int nread = 0;
 
+			int n;
 			// read the header
-			while (nread < 8)
-				nread += stream.Read (tmpBuf, nread, 8 - nread);
+			while (nread < 8) {
+				n = Read (tmpBuf, nread, 8 - nread);
+				if (n <= 0) {
+					socket = null;
+					stream.Close ();
+					throw new IOException (n == 0 ? "Connection lost" : "Connection error");
+				}
+				nread += n;
+			}
 
 			TdsPacketType packetType = (TdsPacketType) tmpBuf[0];
 			if (packetType != TdsPacketType.Logon && packetType != TdsPacketType.Query && packetType != TdsPacketType.Reply) 
@@ -538,9 +584,16 @@ namespace Mono.Data.Tds.Protocol {
                 {
                         // now get the data
 			int nread = 0;
+			int n;
 
 			while (nread < length) {
-				nread += stream.Read (inBuffer, nread, length - nread);
+				n = Read (inBuffer, nread, length - nread);
+				if (n <= 0) {
+					socket = null;
+					stream.Close ();
+					throw new IOException (n == 0 ? "Connection lost" : "Connection error");
+				}
+				nread += n;
 			}
 
 			packetsReceived++;
@@ -592,7 +645,7 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			if (newSize != outBufferLength) {
 				byte[] newBuf = new byte [newSize];
-				Array.Copy (outBuffer, 0, newBuf, 0, newSize);
+				Buffer.BlockCopy (outBuffer, 0, newBuf, 0, newSize);
 				outBufferLength = newSize;
 				outBuffer = newBuf;
 			}
@@ -687,9 +740,17 @@ namespace Mono.Data.Tds.Protocol {
                 {
                         TdsAsyncResult ar = (TdsAsyncResult) socketAsyncResult.AsyncState;
                         int nread = stream.EndRead (socketAsyncResult);
+			int n;
                         
-                        while (nread < 8)
-                                nread += stream.Read (tmpBuf, nread, 8 - nread);
+			while (nread < 8) {
+				n = Read (tmpBuf, nread, 8 - nread);
+				if (n <= 0) {
+					socket = null;
+					stream.Close ();
+					throw new IOException (n == 0 ? "Connection lost" : "Connection error");
+				}
+				nread += n;
+			}
 
 			TdsPacketType packetType = (TdsPacketType) tmpBuf[0];
 			if (packetType != TdsPacketType.Logon && packetType != TdsPacketType.Query && packetType != TdsPacketType.Reply) 
