@@ -1,3 +1,11 @@
+2009-04-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig.cs: Change to partial class and don't include this
+	part (#ifdef out) in the NET_2_1 build.
+	* CryptoConfig_2_1.cs: Partial class that contains only what's 
+	needed for Moonlight (NET_2_1). This disallow dynamically replacing
+	cryptographic algorithms using machine.config
+
 2008-09-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Add missing URI for HMAC algorithms.

@@ -1167,6 +1167,7 @@ System.Security.Cryptography/Base64Constants.cs
 System.Security.Cryptography/CipherMode.cs
 System.Security.Cryptography/CryptoAPITransform.cs
 System.Security.Cryptography/CryptoConfig.cs
+System.Security.Cryptography/CryptoConfig_2_1.cs
 System.Security.Cryptography/CryptographicException.cs
 System.Security.Cryptography/CryptographicUnexpectedOperationExcpetion.cs
 System.Security.Cryptography/CryptoStream.cs

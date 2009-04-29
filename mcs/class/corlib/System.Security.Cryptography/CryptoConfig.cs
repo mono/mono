@@ -29,6 +29,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -45,7 +47,7 @@ namespace System.Security.Cryptography {
 #if NET_2_0
 [ComVisible (true)]
 #endif
-public class CryptoConfig {
+public partial      class CryptoConfig {
 
 	static private object lockObject;
 	static private Hashtable algorithms;
@@ -454,100 +456,6 @@ public class CryptoConfig {
 		}
 	}
 
-	// encode (7bits array) number greater than 127
-	private static byte[] EncodeLongNumber (long x)
-	{
-		// for MS BCL compatibility
-		// comment next two lines to remove restriction
-		if ((x > Int32.MaxValue) || (x < Int32.MinValue))
-			throw new OverflowException (Locale.GetText ("Part of OID doesn't fit in Int32"));
-
-		long y = x;
-		// number of bytes required to encode this number
-		int n = 1;
-		while (y > 0x7F) {
-			y = y >> 7;
-			n++;
-		}
-		byte[] num = new byte [n];
-		// encode all bytes 
-		for (int i = 0; i < n; i++) {
-			y = x >> (7 * i);
-			y = y & 0x7F;
-			if (i != 0)
-				y += 0x80;
-			num[n-i-1] = Convert.ToByte (y);
-		}
-		return num;
-	}
-
-	public static byte[] EncodeOID (string str)
-	{
-#if NET_2_0
-		if (str == null)
-			throw new ArgumentNullException ("str");
-#endif
-		char[] delim = { '.' };
-		string[] parts = str.Split (delim);
-		// according to X.208 n is always at least 2
-		if (parts.Length < 2) {
-			throw new CryptographicUnexpectedOperationException (
-				Locale.GetText ("OID must have at least two parts"));
-		}
-
-		// we're sure that the encoded OID is shorter than its string representation
-		byte[] oid = new byte [str.Length];
-		// now encoding value
-		try {
-			byte part0 = Convert.ToByte (parts [0]);
-			// OID[0] > 2 is invalid but "supported" in MS BCL
-			// uncomment next line to trap this error
-			// if (part0 > 2) throw new CryptographicUnexpectedOperationException ();
-			byte part1 = Convert.ToByte (parts [1]);
-			// OID[1] >= 40 is illegal for OID[0] < 2 because of the % 40
-			// however the syntax is "supported" in MS BCL
-			// uncomment next 2 lines to trap this error
-			//if ((part0 < 2) && (part1 >= 40))
-			//	throw new CryptographicUnexpectedOperationException ();
-			oid[2] = Convert.ToByte (part0 * 40 + part1);
-		}
-		catch {
-			throw new CryptographicUnexpectedOperationException (
-				Locale.GetText ("Invalid OID"));
-		}
-		int j = 3;
-		for (int i = 2; i < parts.Length; i++) {
-			long x = Convert.ToInt64 (parts [i]);
-			if (x > 0x7F) {
-				byte[] num = EncodeLongNumber (x);
-				Buffer.BlockCopy (num, 0, oid, j, num.Length);
-				j += num.Length;
-			}
-			else
-				oid[j++] = Convert.ToByte (x);
-		}
-
-		int k = 2;
-		// copy the exact number of byte required
-		byte[] oid2 = new byte [j];
-		oid2[0] = 0x06; // always - this tag means OID
-		// Length (of value)
-		if (j > 0x7F) {
-			// for compatibility with MS BCL
-			throw new CryptographicUnexpectedOperationException (
-				Locale.GetText ("OID > 127 bytes"));
-			// comment exception and uncomment next 3 lines to remove restriction
-			//byte[] num = EncodeLongNumber (j);
-			//Buffer.BlockCopy (num, 0, oid, j, num.Length);
-			//k = num.Length + 1;
-		}
-		else
-			oid2 [1] = Convert.ToByte (j - 2); 
-
-		Buffer.BlockCopy (oid, k, oid2, k, j - k);
-		return oid2;
-	}
-
 	public static string MapNameToOID (string name)
 	{
 		if (name == null)
@@ -688,3 +596,6 @@ public class CryptoConfig {
 	}
 }
 }
+
+#endif
+

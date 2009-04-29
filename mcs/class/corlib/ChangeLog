@@ -1,3 +1,8 @@
+2009-04-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Add CryptoConfig_2_1.cs (partial class) to
+	the build
+
 2009-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Add new specific to 2.1 version of some 
