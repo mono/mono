@@ -1,3 +1,8 @@
+2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SqlConnection.cs: if the error causes a disconnection from the
+	server, close the data stream.
+
 2009-03-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlDataReader.cs (GetSchemaRowType): Correctly handle Tds 8 BigInt type.
