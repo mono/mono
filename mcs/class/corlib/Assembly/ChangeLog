@@ -1,3 +1,8 @@
+2009-04-29  Chris Toshok  <toshok@ximian.com>
+
+	* AssemblyInfo.cs: in the 2.1 case we're InternalsVisibleTo
+	System.Windows.Browser
+
 2009-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: allow System.ServiceModel.Web access to mscorlib
