@@ -1,3 +1,7 @@
+2009-04-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify the custom attribute table.
+
 2009-04-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the constant table.
