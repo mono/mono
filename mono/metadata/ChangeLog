@@ -1,3 +1,10 @@
+2009-04-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Improve error message.
+
+	* debug-helpers.c (mono_type_get_desc): Harden the code that
+	deals with VAR and MVAR.
+
 2009-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_fixup_vtable): Avoid casting an lvalue. Fixes 
