@@ -1,3 +1,8 @@
+2009-04-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.h *.c: Use TARGET_<ARCH> defines instead of __<arch>__ defines in the
+	JIT code.
+
 2009-03-31  Martin Baulig  <martin@ximian.com>
 
 	Backport of r130658.

@@ -10,7 +10,7 @@
 #include "mini.h"
 #include "unwind.h"
 
-#ifdef __x86_64__
+#ifdef TARGET_AMD64
 static int map_hw_reg_to_dwarf_reg [] = { 0, 2, 1, 3, 7, 6, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 #endif
 
@@ -22,7 +22,7 @@ static int map_hw_reg_to_dwarf_reg [] = { 0, 2, 1, 3, 7, 6, 4, 5, 8, 9, 10, 11, 
 int
 mono_hw_reg_to_dwarf_reg (int reg)
 {
-#ifdef __x86_64__
+#ifdef TARGET_AMD64
 	return map_hw_reg_to_dwarf_reg [reg];
 #else
 	g_assert_not_reached ();

@@ -836,7 +836,7 @@ MINI_OP(OP_CMOV_LLE_UN, "cmov_lle_un", IREG, IREG, IREG)
 MINI_OP(OP_CMOV_LLT_UN, "cmov_llt_un", IREG, IREG, IREG)
 
 /* Arch specific opcodes */
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 MINI_OP(OP_X86_TEST_NULL,          "x86_test_null", NONE, NONE, NONE)
 MINI_OP(OP_X86_COMPARE_MEMBASE_REG,"x86_compare_membase_reg", NONE, IREG, IREG)
 MINI_OP(OP_X86_COMPARE_MEMBASE_IMM,"x86_compare_membase_imm", NONE, IREG, NONE)
@@ -882,7 +882,7 @@ MINI_OP(OP_X86_SETNE_MEMBASE,      "x86_setne_membase", NONE, IREG, NONE)
 MINI_OP(OP_X86_FXCH,               "x86_fxch", NONE, NONE, NONE)
 #endif
 
-#if defined(__x86_64__)
+#if defined(TARGET_AMD64)
 MINI_OP(OP_AMD64_TEST_NULL,              "amd64_test_null", NONE, NONE, NONE)
 MINI_OP(OP_AMD64_SET_XMMREG_R4,          "amd64_set_xmmreg_r4", FREG, FREG, NONE)
 MINI_OP(OP_AMD64_SET_XMMREG_R8,          "amd64_set_xmmreg_r8", FREG, FREG, NONE)
@@ -924,7 +924,7 @@ MINI_OP(OP_PPC_SUBFZE,             "ppc_subfze", IREG, IREG, NONE)
 MINI_OP(OP_CHECK_FINITE,           "ppc_check_finite", NONE, IREG, NONE)
 #endif
 
-#if defined(__arm__)
+#if defined(TARGET_ARM)
 MINI_OP(OP_ARM_RSBS_IMM,            "arm_rsbs_imm", IREG, IREG, NONE)
 MINI_OP(OP_ARM_RSC_IMM,             "arm_rsc_imm", IREG, IREG, NONE)
 #endif

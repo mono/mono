@@ -131,16 +131,16 @@ typedef struct MonoAotStats {
 	int jit_time, gen_time, link_time;
 } MonoAotStats;
 
-#if defined(__x86_64__) && !defined(PLATFORM_WIN32)
+#if defined(TARGET_AMD64) && !defined(PLATFORM_WIN32)
 #define USE_ELF_WRITER 1
 #define USE_ELF_RELA 1
 #endif
 
-#if defined(__i386__) && !defined(PLATFORM_WIN32)
+#if defined(TARGET_X86) && !defined(PLATFORM_WIN32)
 #define USE_ELF_WRITER 1
 #endif
 
-#if defined(__arm__) && !defined(__MACH__)
+#if defined(TARGET_ARM) && !defined(__MACH__)
 #define USE_ELF_WRITER 1
 #endif
 
@@ -1004,7 +1004,7 @@ resolve_relocations (MonoAotCompile *acfg)
 static void
 do_reloc (MonoAotCompile *acfg, BinReloc *reloc, guint8 *data, gssize addr)
 {
-#ifdef __arm__
+#ifdef TARGET_ARM
 	/*
 	 * We use the official ARM relocation types, but implement only the stuff actually
 	 * needed by the code we generate.
@@ -1320,11 +1320,11 @@ bin_writer_emit_writeout (MonoAotCompile *acfg)
 		header.e_ident [i] = 0;
 
 	header.e_type = ET_DYN;
-#if defined(__i386__)
+#if defined(TARGET_X86)
 	header.e_machine = EM_386;
-#elif defined(__x86_64__)
+#elif defined(TARGET_AMD64)
 	header.e_machine = EM_X86_64;
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 	header.e_machine = EM_ARM;
 #else
 	g_assert_not_reached ();
@@ -1518,7 +1518,7 @@ asm_writer_emit_section_change (MonoAotCompile *acfg, const char *section_name, 
 		fprintf (acfg->fp, "%s\n", ".data");
 	else
 		fprintf (acfg->fp, "%s\n", section_name);
-#elif defined(sparc) || defined(__arm__)
+#elif defined(sparc) || defined(TARGET_ARM)
 	/* For solaris as, GNU as should accept the same */
 	fprintf (acfg->fp, ".section \"%s\"\n", section_name);
 #else
@@ -1544,11 +1544,11 @@ asm_writer_emit_symbol_type (MonoAotCompile *acfg, const char *name, gboolean fu
 	asm_writer_emit_unset_mode (acfg);
 #if defined(__MACH__)
 
-#elif defined(sparc) || defined(__arm__)
+#elif defined(sparc) || defined(TARGET_ARM)
 	fprintf (acfg->fp, "\t.type %s,#%s\n", name, stype);
 #elif defined(PLATFORM_WIN32)
 
-#elif defined(__x86_64__) || defined(__i386__)
+#elif defined(TARGET_AMD64) || defined(TARGET_X86)
 	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
 #else
 	fprintf (acfg->fp, "\t.type %s,@%s\n", name, stype);
@@ -1614,7 +1614,7 @@ static void
 asm_writer_emit_alignment (MonoAotCompile *acfg, int size)
 {
 	asm_writer_emit_unset_mode (acfg);
-#if defined(__arm__)
+#if defined(TARGET_ARM)
 	fprintf (acfg->fp, "\t.align %d\n", ilog2 (size));
 #elif defined(__ppc__) && defined(__MACH__)
 	// the mach-o assembler specifies alignments as powers of 2.
@@ -1631,7 +1631,7 @@ asm_writer_emit_pointer_unaligned (MonoAotCompile *acfg, const char *target)
 {
 	asm_writer_emit_unset_mode (acfg);
 	asm_writer_emit_alignment (acfg, sizeof (gpointer));
-#if defined(__x86_64__)
+#if defined(TARGET_AMD64)
 	fprintf (acfg->fp, "\t.quad %s\n", target ? target : "0");
 #elif defined(sparc) && SIZEOF_VOID_P == 8
 	fprintf (acfg->fp, "\t.xword %s\n", target ? target : "0");
@@ -1684,7 +1684,7 @@ asm_writer_emit_int16 (MonoAotCompile *acfg, int value)
 	if ((acfg->col_count++ % 8) == 0)
 #if defined(__MACH__)
 		fprintf (acfg->fp, "\n\t.short ");
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 		/* FIXME: Use .hword on other archs as well */
 		fprintf (acfg->fp, "\n\t.hword ");
 #else
@@ -1747,7 +1747,7 @@ asm_writer_emit_writeout (MonoAotCompile *acfg)
 
 	fclose (acfg->fp);
 
-#if defined(__x86_64__)
+#if defined(TARGET_AMD64)
 #define AS_OPTIONS "--64"
 #elif defined(sparc) && SIZEOF_VOID_P == 8
 #define AS_OPTIONS "-xarch=v9"
@@ -3039,13 +3039,13 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 				}
 
 				if (direct_call) {
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(TARGET_X86) || defined(TARGET_AMD64)
 					g_assert (code [i] == 0xe8);
 					/* Need to make sure this is exactly 5 bytes long */
 					emit_byte (acfg, '\xe8');
 					emit_symbol_diff (acfg, direct_call_target, ".", -4);
 					i += 4;
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 #ifdef USE_BIN_WRITER
 					{
 						guint8 buf [4];
@@ -3069,11 +3069,11 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 					got_slot = get_got_offset (acfg, patch_info);
 
 					emit_bytes (acfg, code + i, mono_arch_get_patch_offset (code + i));
-#ifdef __x86_64__
+#ifdef TARGET_AMD64
 					emit_symbol_diff (acfg, "got", ".", (unsigned int) ((got_slot * sizeof (gpointer)) - 4));
-#elif defined(__i386__)
+#elif defined(TARGET_X86)
 					emit_int32 (acfg, (unsigned int) ((got_slot * sizeof (gpointer))));
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 					emit_symbol_diff (acfg, "got", ".", (unsigned int) ((got_slot * sizeof (gpointer))) - 12);
 #else
 					g_assert_not_reached ();
@@ -3594,7 +3594,7 @@ emit_plt (MonoAotCompile *acfg)
 
 	emit_section_change (acfg, ".text", 0);
 	emit_global (acfg, symbol, TRUE);
-#ifdef __i386__
+#ifdef TARGET_X86
 	/* This section will be made read-write by the AOT loader */
 	emit_alignment (acfg, PAGESIZE);
 #else
@@ -3604,7 +3604,7 @@ emit_plt (MonoAotCompile *acfg)
 
 	for (i = 0; i < acfg->plt_offset; ++i) {
 		char label [128];
-#if defined(__arm__)
+#if defined(TARGET_ARM)
 		guint8 buf [256];
 		guint8 *code;
 #endif
@@ -3616,7 +3616,7 @@ emit_plt (MonoAotCompile *acfg)
 		 * The first plt entry is used to transfer code to the AOT loader. 
 		 */
 
-#if defined(__i386__)
+#if defined(TARGET_X86)
 		if (i == 0) {
 			/* It is filled up during loading by the AOT loader. */
 			emit_zero_bytes (acfg, 16);
@@ -3626,7 +3626,7 @@ emit_plt (MonoAotCompile *acfg)
 			emit_symbol_diff (acfg, "plt", ".", -4);
 			emit_int32 (acfg, acfg->plt_got_info_offsets [i]);
 		}
-#elif defined(__x86_64__)
+#elif defined(TARGET_AMD64)
 		/*
 		 * We can't emit jumps because they are 32 bits only so they can't be patched.
 		 * So we make indirect calls through GOT entries which are patched by the AOT 
@@ -3639,7 +3639,7 @@ emit_plt (MonoAotCompile *acfg)
 		emit_symbol_diff (acfg, "got", ".", ((acfg->plt_got_offset_base + i) * sizeof (gpointer)) -4);
 		/* Used by mono_aot_get_plt_info_offset */
 		emit_int32 (acfg, acfg->plt_got_info_offsets [i]);
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 		/* FIXME:
 		 * - optimize OP_AOTCONST implementation
 		 * - optimize the PLT entries
@@ -3777,7 +3777,7 @@ emit_trampolines (MonoAotCompile *acfg)
 
 		code = mono_arch_get_nullified_class_init_trampoline (&code_size);
 		emit_named_code (acfg, "nullified_class_init_trampoline", code, code_size, acfg->got_offset, NULL);
-#if defined(__x86_64__) && defined(MONO_ARCH_MONITOR_OBJECT_REG)
+#if defined(TARGET_AMD64) && defined(MONO_ARCH_MONITOR_OBJECT_REG)
 		code = mono_arch_create_monitor_enter_trampoline_full (&code_size, &ji, TRUE);
 		emit_named_code (acfg, "monitor_enter_trampoline", code, code_size, acfg->got_offset, ji);
 		code = mono_arch_create_monitor_exit_trampoline_full (&code_size, &ji, TRUE);
@@ -3798,7 +3798,7 @@ emit_trampolines (MonoAotCompile *acfg)
 		code = mono_arch_get_throw_corlib_exception_full (&code_size, &ji, TRUE);
 		emit_named_code (acfg, "throw_corlib_exception", code, code_size, acfg->got_offset, ji);
 
-#if defined(__x86_64__) || defined(__arm__)
+#if defined(TARGET_AMD64) || defined(TARGET_ARM)
 		for (i = 0; i < 128; ++i) {
 			int offset;
 
@@ -3844,7 +3844,7 @@ emit_trampolines (MonoAotCompile *acfg)
 			 *   address of the trampoline to get the address of the got slot, and
 			 *   loading the argument from the there.
 			 */
-#if defined(__x86_64__)
+#if defined(TARGET_AMD64)
 			/* This should be exactly 16 bytes long */
 			/* It should work together with the generic trampoline code in tramp-amd64.c */
 			/* call *<offset>(%rip) */
@@ -3855,7 +3855,7 @@ emit_trampolines (MonoAotCompile *acfg)
 			/* This should be relative to the start of the trampoline */
 			emit_symbol_diff (acfg, "got", ".", (offset * sizeof (gpointer)) - 4 + 19);
 			emit_zero_bytes (acfg, 5);
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 			{
 				guint8 buf [128];
 
@@ -3906,7 +3906,7 @@ emit_trampolines (MonoAotCompile *acfg)
 
 		sprintf (call_target, ".Lm_%x", get_method_index (acfg, cfg->orig_method));
 
-#if defined(__x86_64__)
+#if defined(TARGET_AMD64)
 		{
 			guint8 buf [32];
 			int this_reg;
@@ -3920,7 +3920,7 @@ emit_trampolines (MonoAotCompile *acfg)
 			emit_byte (acfg, '\xe9');
 			emit_symbol_diff (acfg, call_target, ".", -4);
 		}
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 		{
 			guint8 buf [128];
 			int this_pos = 0;
@@ -5129,14 +5129,14 @@ emit_globals (MonoAotCompile *acfg)
 #ifdef USE_BIN_WRITER
 			g_assert_not_reached ();
 #else
-#ifdef __x86_64__
+#ifdef TARGET_AMD64
 			fprintf (acfg->fp, "leaq globals(%%rip), %%rdi\n");
 			fprintf (acfg->fp, "call mono_aot_register_globals@PLT\n");
 			fprintf (acfg->fp, "ret\n");
 			fprintf (acfg->fp, ".section .ctors,\"aw\",@progbits\n");
 			emit_alignment (acfg, 8);
 			emit_pointer (acfg, symbol);
-#elif defined(__arm__) && defined(__MACH__)
+#elif defined(TARGET_ARM) && defined(__MACH__)
 				
 			fprintf (acfg->fp, ".text\n");
 			fprintf (acfg->fp, ".align   3\n");
@@ -5160,7 +5160,7 @@ emit_globals (MonoAotCompile *acfg)
 			fprintf (acfg->fp, ".align	2\n");
 			fprintf (acfg->fp, ".long	%s@target1\n", symbol);
 
-#elif defined(__arm__)
+#elif defined(TARGET_ARM)
 			/* 
 			 * Taken from gcc generated code for:
 			 * static int i;
@@ -5322,7 +5322,7 @@ emit_dwarf_abbrev (MonoAotCompile *acfg, int code, int tag, gboolean has_child,
 static void
 emit_cie (MonoAotCompile *acfg)
 {
-#if defined(__x86_64__)
+#if defined(TARGET_AMD64)
 	emit_section_change (acfg, ".debug_frame", 0);
 
 	emit_alignment (acfg, 8);
@@ -5333,14 +5333,14 @@ emit_cie (MonoAotCompile *acfg)
 	emit_byte (acfg, 3); /* version */
 	emit_string (acfg, ""); /* augmention */
 	emit_sleb128 (acfg, 1); /* code alignment factor */
-#ifdef __x86_64__
+#ifdef TARGET_AMD64
 	emit_sleb128 (acfg, -8); /* data alignment factor */
 	emit_uleb128 (acfg, AMD64_RIP);
 #else
 	g_assert_not_reached ();
 #endif
 
-#ifdef __x86_64__
+#ifdef TARGET_AMD64
 	emit_byte (acfg, DW_CFA_def_cfa);
 	emit_uleb128 (acfg, mono_hw_reg_to_dwarf_reg (AMD64_RSP));
 	emit_uleb128 (acfg, 8); /* offset=8 */
@@ -5366,7 +5366,7 @@ static void
 emit_fde (MonoAotCompile *acfg, int fde_index, char *start_symbol, char *end_symbol,
 		  guint8 *code, guint32 code_size, GSList *unwind_ops, gboolean use_cie)
 {
-#if defined(__x86_64__)
+#if defined(TARGET_AMD64)
 	char symbol [128];
 	GSList *l;
 	guint8 *uw_info;
@@ -5388,7 +5388,7 @@ emit_fde (MonoAotCompile *acfg, int fde_index, char *start_symbol, char *end_sym
 	}
 
 	l = unwind_ops;
-#ifdef __x86_64__
+#ifdef TARGET_AMD64
 	if (use_cie)
 		/* Skip the first two ops which are in the CIE */
 		l = l->next->next;
@@ -5873,7 +5873,7 @@ emit_trampoline_dwarf_info (MonoAotCompile *acfg, const char *tramp_name, char *
 static void
 emit_dwarf_info (MonoAotCompile *acfg)
 {
-#if defined(USE_ELF_WRITER) && defined(__x86_64__)
+#if defined(USE_ELF_WRITER) && defined(TARGET_AMD64)
 	int i;
 	char symbol [128], symbol2 [128];
 
