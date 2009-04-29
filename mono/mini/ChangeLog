@@ -1,5 +1,7 @@
 2009-04-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (inline_method): Save/Restore cfg->ret_var_set too.
+
 	* mini.c (mini_method_compile): Use TARGET_<ARCH> defines instead of 
 	__<arch>__ defines in the JIT code.
 
