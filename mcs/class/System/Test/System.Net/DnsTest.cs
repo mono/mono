@@ -260,9 +260,11 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+/*** Current go-mono.com IP works fine here***
 #if ONLY_1_1
 		[ExpectedException (typeof (SocketException))]
 #endif
+********/
 		public void GetHostByAddressString5 ()
 		{
 			Dns.GetHostByAddress (site1Dot);
