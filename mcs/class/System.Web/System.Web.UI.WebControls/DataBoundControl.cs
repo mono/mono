@@ -62,6 +62,10 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 		
+		internal IDataSource InternalGetDataSource ()
+		{
+			return GetDataSource ();
+		}
 		
 		protected virtual IDataSource GetDataSource ()
 		{

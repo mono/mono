@@ -1,3 +1,8 @@
+2009-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* DataBinder.cs: GetPropertyValue must throw also if propName is
+	empty.
+
 2009-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: PageParserFilter.Initialize now takes just

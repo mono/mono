@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -44,30 +45,106 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DynamicField : DataControlField, IAttributeAccessor, IFieldFormattingOptions
 	{
-		[MonoTODO]
+		MetaColumn myColumn;
+		Dictionary <string, string> attributes;
+		
 		public DynamicField ()
 		{
-			throw new NotImplementedException ();
+			DataFormatString = String.Empty;
+			HtmlEncode = true;
+			NullDisplayText = String.Empty;
+		}
+		
+		public bool ApplyFormatInEditMode {
+			get; set;
 		}
 
-		[MonoTODO]
-		public bool ApplyFormatInEditMode { get; set; }
-		[MonoTODO]
-		public bool ConvertEmptyStringToNull { get; set; }
-		[MonoTODO]
-		public virtual string DataField { get; set; }
-		[MonoTODO]
-		public string DataFormatString { get; set; }
-		[MonoTODO]
-		public override string HeaderText { get; set; }
-		[MonoTODO]
-		public bool HtmlEncode { get; set; }
-		[MonoTODO]
-		public string NullDisplayText { get; set; }
-		[MonoTODO]
-		public override string SortExpression { get; set; }
-		[MonoTODO]
-		public virtual string UIHint { get; set; }
+		public bool ConvertEmptyStringToNull {
+			get; set;
+		}
+
+		public virtual string DataField {
+			get { return ViewState.GetString ("_DataField", String.Empty); }
+			set {
+				ViewState ["_DataField"] = value;
+				OnFieldChanged ();
+			}
+		}		
+
+		public string DataFormatString {
+			get; set;
+		}
+
+		public override string HeaderText {
+			get {
+				string s = ViewState.GetString ("headerText", null);
+				if (s != null)
+					return s;
+
+				MetaColumn column = MyColumn;
+				if (column != null)
+					return column.DisplayName;
+				
+				return DataField;
+			}
+			
+			set { base.HeaderText = value; }
+		}		
+
+		public bool HtmlEncode {
+			get; set;
+		}
+
+		MetaColumn MyColumn {
+			get {
+				if (myColumn != null)
+					return myColumn;
+				Control owner = Control;
+				if (owner == null)
+					return null;
+				
+				MetaTable table = owner.FindMetaTable ();
+				if (table == null)
+					return null;
+
+				myColumn = table.GetColumn (DataField);
+				return myColumn;
+			}
+		}
+		
+		public string NullDisplayText {
+			get; set;
+		}
+
+		public override string SortExpression {
+			get {
+				string s = ViewState.GetString ("sortExpression", null);
+				if (s != null)
+					return s;
+
+				MetaColumn column = MyColumn;
+				if (column != null)
+					return column.SortExpression;
+
+				return String.Empty;
+			}
+			
+			set { base.SortExpression = value; }
+		}		
+
+		public virtual string UIHint {
+			get {
+				string s = ViewState.GetString ("uiHint", null);
+				if (s == null)
+					return String.Empty;
+				return s;
+			}
+			
+			set {
+				ViewState ["uiHint"] = value;
+				OnFieldChanged ();
+			}
+		}
 
 		[MonoTODO]
 		protected override void CopyProperties (DataControlField newField)
@@ -87,22 +164,50 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string GetAttribute (string key)
 		{
-			throw new NotImplementedException ();
+			if (attributes == null)
+				return null;
+
+			string ret;
+			if (attributes.TryGetValue (key, out ret))
+				return ret;
+
+			return null;
 		}
 
-		[MonoTODO]
 		public override void InitializeCell (DataControlFieldCell cell, DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
-			throw new NotImplementedException ();
+			if (cellType == DataControlCellType.Header || cellType == DataControlCellType.Footer) {
+				base.InitializeCell (cell, cellType, rowState, rowIndex);
+				return;
+			}
+
+			DynamicControl dc = new DynamicControl ();
+			dc.ApplyFormatInEditMode = ApplyFormatInEditMode;
+			dc.ConvertEmptyStringToNull = ConvertEmptyStringToNull;
+			dc.Column = MyColumn;
+			dc.DataField = DataField;
+			dc.DataFormatString = DataFormatString;
+			dc.HtmlEncode = HtmlEncode;
+			dc.Mode = (rowState & DataControlRowState.Edit) != 0 ? DataBoundControlMode.Edit :
+				(rowState & DataControlRowState.Insert) != 0 ? DataBoundControlMode.Insert : DataBoundControlMode.ReadOnly;
+			dc.NullDisplayText = NullDisplayText;
+			dc.UIHint = UIHint;
+			dc.InternalSetAttributes (attributes);
+			
+			cell.Controls.Add (dc);
 		}
 
-		[MonoTODO]
 		public void SetAttribute (string key, string value)
 		{
-			throw new NotImplementedException ();
+			if (attributes == null)
+				attributes = new Dictionary <string, string> ();
+
+			if (attributes.ContainsKey (key))
+				attributes [key] = value;
+			else
+				attributes.Add (key, value);
 		}
 	}
 }

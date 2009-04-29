@@ -1,3 +1,11 @@
+2009-04-23  Marek Habersack  <mhabersack@novell.com>
+
+	* AssociatedMetadataTypeTypeDescriptor.cs: added - doesn't add any
+	real functionality yet.
+
+	* AssociatedMetadataTypeTypeDescriptionProvider.cs: implemented
+	all the methods.
+
 2008-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AssociatedMetadataTypeTypeDescriptionProvider.cs

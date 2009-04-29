@@ -179,7 +179,7 @@ namespace System.Web.UI {
 		{
 			if (container == null)
 				throw new ArgumentNullException ("container");
-			if (propName == null)
+			if (propName == null || propName.Length == 0)
 				throw new ArgumentNullException ("propName");
 
 			PropertyDescriptor prop = TypeDescriptor.GetProperties (container).Find (propName, true);

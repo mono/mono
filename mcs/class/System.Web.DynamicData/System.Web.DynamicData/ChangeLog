@@ -1,3 +1,27 @@
+2009-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: implemented the DataContextType,
+	DataContextPropertyName properties and the ToString method.
+
+	* MetaColumn.cs: implemented the Scaffold, DisplayName,
+	SortExpression, UIHint properties and the ToString method.
+
+	* DynamicField.cs: implemented
+
+	* DynamicDataManager.cs: partially implemented RegisterControl.
+	Added internal AutoFieldGenerator class, used by RegisterControl
+	when dealing with GridView.
+	Implemented some properties.
+
+	* DynamicDataExtensions.cs: implemented GetTable and FindMetaTable
+
+	* DynamicControl.cs: implemented parts of the class.
+
+2009-04-23  Marek Habersack  <mhabersack@novell.com>
+
+	* ContextConfiguration.cs: implemented all the methods and added a
+	parameterless constructor.
+
 2008-10-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DynamicDataRouteHandler.cs, DynamicDataRoute.cs, MetaTable.cs:

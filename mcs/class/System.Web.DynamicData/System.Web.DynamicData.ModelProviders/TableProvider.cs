@@ -3,8 +3,9 @@
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -33,6 +34,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Security.Permissions;
+using System.Web.UI;
 
 namespace System.Web.DynamicData.ModelProviders
 {
@@ -42,33 +44,29 @@ namespace System.Web.DynamicData.ModelProviders
 	{
 		protected TableProvider (DataModelProvider model)
 		{
-			if (model == null)
-				throw new ArgumentNullException ("model");
 			DataModel = model;
 		}
 
-		[MonoTODO]
 		public abstract ReadOnlyCollection<ColumnProvider> Columns { get; }
-		[MonoTODO]
+
 		public DataModelProvider DataModel { get; private set; }
-		[MonoTODO]
 		public virtual Type EntityType { get; protected set; }
-		[MonoTODO]
 		public virtual string Name { get; protected set; }
 
-		[MonoTODO]
 		public virtual object EvaluateForeignKey (object row, string foreignKeyName)
 		{
-			throw new NotImplementedException ();
+			return DataBinder.GetPropertyValue (row, foreignKeyName);
 		}
 
-		[MonoTODO]
 		public abstract IQueryable GetQuery (object context);
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			string name = Name;
+			if (String.IsNullOrEmpty (name))
+				return base.ToString ();
+
+			return name;
 		}
 	}
 }

@@ -1,3 +1,7 @@
+System.Web.DynamicData/ContextConfigurationTest.cs
+System.Web.DynamicData/DynamicDataManagerTest.cs
 System.Web.DynamicData/DynamicDataRouteTest.cs
+System.Web.DynamicData/DynamicDataExtensionsTest.cs
 System.Web.DynamicData/MetaModelTest.cs
 System.Web.DynamicData/TestStubTypes.cs
+System.Web.DynamicData.ModelProviders/TableProviderTest.cs

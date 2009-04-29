@@ -2,9 +2,9 @@
 // AssociatedMetadataTypeTypeDescriptionProvider.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2009 Novell Inc. http://novell.com
 //
 
 //
@@ -32,33 +32,22 @@ using System.ComponentModel;
 
 namespace System.ComponentModel.DataAnnotations
 {
-	public class AssociatedMetadataTypeTypeDescriptionProvider : TypeDescriptionProvider
+	// This class currently adds no functionality to its base class.
+	class AssociatedMetadataTypeTypeDescriptor : CustomTypeDescriptor
 	{
 		Type type;
 		Type associatedMetadataType;
 		
-		public AssociatedMetadataTypeTypeDescriptionProvider (Type type)
+		public AssociatedMetadataTypeTypeDescriptor (ICustomTypeDescriptor parent, Type type)
+			: this (parent, type, null)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			
-			this.type = type;
 		}
 
-		public AssociatedMetadataTypeTypeDescriptionProvider (Type type, Type associatedMetadataType)
+		public AssociatedMetadataTypeTypeDescriptor (ICustomTypeDescriptor parent, Type type, Type associatedMetadataType)
+			: base (parent)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			if (associatedMetadataType == null)
-				throw new ArgumentNullException ("associatedMetadataType");
-			
 			this.type = type;
 			this.associatedMetadataType = associatedMetadataType;
-		}
-
-		public override ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
-		{
-			return new AssociatedMetadataTypeTypeDescriptor (base.GetTypeDescriptor (objectType, instance), type, associatedMetadataType);
 		}
 	}
 }

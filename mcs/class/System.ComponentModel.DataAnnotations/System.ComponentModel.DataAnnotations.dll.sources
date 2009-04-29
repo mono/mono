@@ -2,6 +2,7 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
+System.ComponentModel.DataAnnotations/AssociatedMetadataTypeTypeDescriptor.cs
 System.ComponentModel.DataAnnotations/AssociatedMetadataTypeTypeDescriptionProvider.cs
 System.ComponentModel.DataAnnotations/DataType.cs
 System.ComponentModel.DataAnnotations/DataTypeAttribute.cs

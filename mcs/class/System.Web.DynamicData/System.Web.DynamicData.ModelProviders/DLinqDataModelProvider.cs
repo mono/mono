@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -74,67 +74,6 @@ namespace System.Web.DynamicData.ModelProviders
 		public override object CreateContext ()
 		{
 			return factory ();
-		}
-	}
-
-	class DLinqTableProvider : TableProvider
-	{
-		public DLinqTableProvider (DataModelProvider owner, DMetaTable meta)
-			: base (owner)
-		{
-			EntityType = meta.RowType.Type;
-
-			Name = meta.TableName;
-			int idx = Name.LastIndexOf ('.');
-			Name = idx < 0 ? Name : Name.Substring (idx + 1);
-
-			var l = new List<ColumnProvider> ();
-			foreach (var c in meta.RowType.DataMembers)
-				l.Add (new DLinqColumnProvider (this, c));
-			columns = new ReadOnlyCollection<ColumnProvider> (l);
-		}
-
-		MetaTable table;
-		ReadOnlyCollection<ColumnProvider> columns;
-
-		public override ReadOnlyCollection<ColumnProvider> Columns {
-			get { return columns; }
-		}
-
-		public override IQueryable GetQuery (object context)
-		{
-			return ((DataContext) context).GetTable (EntityType);
-		}
-
-		public override string ToString ()
-		{
-			return base.ToString ();
-		}
-	}
-
-	class DLinqColumnProvider : ColumnProvider
-	{
-		public DLinqColumnProvider (TableProvider owner, MetaDataMember meta)
-			: base (owner)
-		{
-			if (owner == null)
-				throw new ArgumentNullException ("owner");
-			if (meta == null)
-				throw new ArgumentNullException ("meta");
-
-			this.meta = meta;
-
-			// FIXME: fill more
-			Name = meta.Name;
-			Nullable = meta.CanBeNull;
-		}
-
-		MetaDataMember meta;
-
-		[MonoTODO]
-		public override string ToString ()
-		{
-			return base.ToString ();
 		}
 	}
 }

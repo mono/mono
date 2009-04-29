@@ -1,3 +1,29 @@
+2009-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* Test/System.Web.DynamicData.ModelProviders/TableProviderTest.cs:
+	added
+
+	* System.Web.DynamicData_test.dll.sources: added
+	System.Web.DynamicData/DynamicDataManagerTest.cs,
+	System.Web.DynamicData/DynamicDataExtensionsTest.cs,
+	System.Web.DynamicData.ModelProviders/TableProviderTest.cs
+
+	* System.Web.DynamicData.dll.sources: added
+	System.Web.DynamicData.ModelProviders/DLinqAssociationProvider.cs 
+	System.Web.DynamicData.ModelProviders/DLinqColumnProvider.cs
+	System.Web.DynamicData.ModelProviders/DLinqDataModelProvider.cs
+	System.Web.DynamicData.ModelProviders/DLinqTableProvider.cs and
+	removed
+	System.Web.DynamicData.ModelProviders/DLinqDataModelProviders.cs
+
+2009-04-23  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.DynamicData_test.dll.sources: added
+	System.Web.DynamicData/ContextConfigurationTest.cs
+
+	* Makefile: tests need to be linked with
+	System.ComponentModel.DataAnnotations.dll
+
 2008-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added -r:System.Data.

@@ -1,10 +1,10 @@
 //
-// AssociatedMetadataTypeTypeDescriptionProvider.cs
+// DLinqColumnProvider.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -28,37 +28,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
+using System.Linq;
+using System.Security.Permissions;
 
-namespace System.ComponentModel.DataAnnotations
+using DMetaModel = System.Data.Linq.Mapping.MetaModel;
+using DMetaTable = System.Data.Linq.Mapping.MetaTable;
+
+namespace System.Web.DynamicData.ModelProviders
 {
-	public class AssociatedMetadataTypeTypeDescriptionProvider : TypeDescriptionProvider
+	class DLinqColumnProvider : ColumnProvider
 	{
-		Type type;
-		Type associatedMetadataType;
-		
-		public AssociatedMetadataTypeTypeDescriptionProvider (Type type)
+		public DLinqColumnProvider (TableProvider owner, MetaDataMember meta)
+			: base (owner)
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			
-			this.type = type;
+			if (owner == null)
+				throw new ArgumentNullException ("owner");
+			if (meta == null)
+				throw new ArgumentNullException ("meta");
+
+			this.meta = meta;
+
+			// FIXME: fill more
+			Name = meta.Name;
+			Nullable = meta.CanBeNull;
 		}
 
-		public AssociatedMetadataTypeTypeDescriptionProvider (Type type, Type associatedMetadataType)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			if (associatedMetadataType == null)
-				throw new ArgumentNullException ("associatedMetadataType");
-			
-			this.type = type;
-			this.associatedMetadataType = associatedMetadataType;
-		}
+		MetaDataMember meta;
 
-		public override ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
+		[MonoTODO]
+		public override string ToString ()
 		{
-			return new AssociatedMetadataTypeTypeDescriptor (base.GetTypeDescriptor (objectType, instance), type, associatedMetadataType);
+			return base.ToString ();
 		}
 	}
 }

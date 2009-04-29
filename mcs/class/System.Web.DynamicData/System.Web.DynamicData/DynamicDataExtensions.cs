@@ -74,10 +74,24 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static MetaTable FindMetaTable (this Control current)
 		{
-			throw new NotImplementedException ();
+			// .NET doesn't perform the check, we will
+			if (current == null)
+				throw new NullReferenceException ();
+
+			while (current != null) {
+				DataBoundControl dbc = current as DataBoundControl;
+				if (dbc != null) {
+					IDynamicDataSource dds = dbc.InternalGetDataSource () as IDynamicDataSource;
+					if (dds != null)
+						return dds.GetTable ();
+				}
+
+				current = current.NamingContainer;
+			}
+
+			return null;
 		}
 
 		[MonoTODO]
@@ -92,10 +106,36 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		static string GetDataSourceId (IDynamicDataSource dataSource)
+		{
+			Control c = dataSource as Control;
+			if (c == null)
+				return String.Empty;
+			
+			return c.ID;
+		}
+		
 		public static MetaTable GetTable (this IDynamicDataSource dataSource)
 		{
-			throw new NotImplementedException ();
+			if (dataSource == null)
+				return null;
+
+			string entitySetName = dataSource.EntitySetName;
+			if (String.IsNullOrEmpty (entitySetName)) {
+				// LAMESPEC: MSDN says we should throw in this case, but .NET calls
+				// DynamicDataRouteHandler.GetRequestMetaTable(HttpContext
+				// httpContext) instead (eventually)
+				MetaTable ret = DynamicDataRouteHandler.GetRequestMetaTable (HttpContext.Current);
+				if (ret == null)
+					throw new InvalidOperationException ("The control '" + GetDataSourceId (dataSource) +
+									     "' does not have a TableName property and a table name cannot be inferred from the URL.");
+			}
+			
+			Type contextType = dataSource.ContextType;
+			if (contextType == null)
+				throw new InvalidOperationException ("The ContextType property of control '" + GetDataSourceId (dataSource) + "' must specify a data context");
+			
+			return MetaModel.GetModel (contextType).GetTable (entitySetName);
 		}
 
 		[MonoTODO]

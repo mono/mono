@@ -59,7 +59,8 @@ namespace System.Web.DynamicData
 			Columns = new ReadOnlyCollection<MetaColumn> (l);
 
 			DisplayName = Name;
-
+			DataContextType = provider.DataModel.ContextType;
+			
 			// FIXME: fill more properties.
 		}
 
@@ -71,10 +72,10 @@ namespace System.Web.DynamicData
 		[MonoTODO]
 		public ReadOnlyCollection<MetaColumn> Columns { get; private set; }
 
-		[MonoTODO]
-		public string DataContextPropertyName { get; private set; }
+		public string DataContextPropertyName {
+			get { return Provider.Name; }	
+		}
 
-		[MonoTODO]
 		public Type DataContextType { get; private set; }
 
 		[MonoTODO]
@@ -206,10 +207,9 @@ namespace System.Web.DynamicData
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return Name;
 		}
 
 		public bool TryGetColumn (string columnName, out MetaColumn column)

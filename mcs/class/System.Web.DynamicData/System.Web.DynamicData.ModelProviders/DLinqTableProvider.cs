@@ -1,9 +1,8 @@
 //
-// ContextConfiguration.cs
+// DLinqTableProvider.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
-//      Marek Habersack <mhabersack@novell.com>
 //
 // Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
@@ -29,29 +28,51 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Globalization;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
+using System.Linq;
 using System.Security.Permissions;
-using System.Security.Principal;
-using System.Web.Caching;
-using System.Web.DynamicData.ModelProviders;
 
-namespace System.Web.DynamicData
+using DMetaModel = System.Data.Linq.Mapping.MetaModel;
+using DMetaTable = System.Data.Linq.Mapping.MetaTable;
+
+namespace System.Web.DynamicData.ModelProviders
 {
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class ContextConfiguration
+	class DLinqTableProvider : TableProvider
 	{
-		public ContextConfiguration ()
+		public DLinqTableProvider (DataModelProvider owner, DMetaTable meta)
+			: base (owner)
 		{
-			MetadataProviderFactory = (Type t) => new AssociatedMetadataTypeTypeDescriptionProvider (t);
+			EntityType = meta.RowType.Type;
+
+			Name = meta.TableName;
+			int idx = Name.LastIndexOf ('.');
+			Name = idx < 0 ? Name : Name.Substring (idx + 1);
+
+			var l = new List<ColumnProvider> ();
+			foreach (var c in meta.RowType.DataMembers)
+				l.Add (new DLinqColumnProvider (this, c));
+			columns = new ReadOnlyCollection<ColumnProvider> (l);
 		}
-		
-		public Func<Type, TypeDescriptionProvider> MetadataProviderFactory { get; set; }
-		public bool ScaffoldAllTables { get; set; }
+
+		MetaTable table;
+		ReadOnlyCollection<ColumnProvider> columns;
+
+		public override ReadOnlyCollection<ColumnProvider> Columns {
+			get { return columns; }
+		}
+
+		public override IQueryable GetQuery (object context)
+		{
+			return ((DataContext) context).GetTable (EntityType);
+		}
+
+		public override string ToString ()
+		{
+			return base.ToString ();
+		}
 	}
 }

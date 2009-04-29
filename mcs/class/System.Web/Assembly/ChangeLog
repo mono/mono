@@ -1,3 +1,8 @@
+2009-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: added InternalsVisibleTo for
+	System.Web.DynamicData
+
 2009-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyInfo.cs: made internals visible to

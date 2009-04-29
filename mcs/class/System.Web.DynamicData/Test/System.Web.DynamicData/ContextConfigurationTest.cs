@@ -1,10 +1,10 @@
 //
-// AssociatedMetadataTypeTypeDescriptionProvider.cs
+// DynamicDataRouteTest.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2009 Novell Inc. http://novell.com
 //
 
 //
@@ -29,36 +29,26 @@
 //
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Web;
+using System.Web.DynamicData;
+using NUnit.Framework;
 
-namespace System.ComponentModel.DataAnnotations
+namespace MonoTests.System.Web.DynamicData
 {
-	public class AssociatedMetadataTypeTypeDescriptionProvider : TypeDescriptionProvider
+	[TestFixture]
+	public class ContextConfigurationTests
 	{
-		Type type;
-		Type associatedMetadataType;
-		
-		public AssociatedMetadataTypeTypeDescriptionProvider (Type type)
+		[Test]
+		public void DefaultValues()
 		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			
-			this.type = type;
-		}
+			var ctx = new ContextConfiguration();
+			var func = ctx.MetadataProviderFactory;
 
-		public AssociatedMetadataTypeTypeDescriptionProvider (Type type, Type associatedMetadataType)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			if (associatedMetadataType == null)
-				throw new ArgumentNullException ("associatedMetadataType");
-			
-			this.type = type;
-			this.associatedMetadataType = associatedMetadataType;
-		}
-
-		public override ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
-		{
-			return new AssociatedMetadataTypeTypeDescriptor (base.GetTypeDescriptor (objectType, instance), type, associatedMetadataType);
+			Assert.IsTrue(func != null, "#A1");
+			Assert.AreEqual(typeof (Func <Type, TypeDescriptionProvider>), func.GetType (), "#A2");
+			Assert.AreEqual(false, ctx.ScaffoldAllTables, "#A3");
+			Assert.AreEqual(typeof(AssociatedMetadataTypeTypeDescriptionProvider), func(typeof(string)).GetType (), "#A4");
 		}
 	}
 }

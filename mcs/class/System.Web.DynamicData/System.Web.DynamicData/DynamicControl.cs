@@ -48,10 +48,10 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DynamicControl : Control, IAttributeAccessor, IFieldTemplateHost, IFieldFormattingOptions
 	{
-		[MonoTODO]
+		Dictionary <string, string> attributes;
+		
 		public DynamicControl ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -126,29 +126,45 @@ namespace System.Web.DynamicData
 		[Category ("Behavior")]
 		[DefaultValue ("")]
 		public virtual string ValidationGroup { get; set; }
-
-		[MonoTODO]
+		
 		public string GetAttribute (string key)
 		{
-			throw new NotImplementedException ();
+			if (attributes == null)
+				return null;
+
+			string ret;
+			if (attributes.TryGetValue (key, out ret))
+				return ret;
+
+			return null;
 		}
 
 		[MonoTODO]
 		protected override void OnInit (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnInit (e);
 		}
 
-		[MonoTODO]
 		protected override void Render (HtmlTextWriter writer)
 		{
-			throw new NotImplementedException ();
+			base.Render (writer);
+			// Why override?
 		}
 
-		[MonoTODO]
+		internal void InternalSetAttributes (Dictionary <string, string> attributes)
+		{
+			this.attributes = attributes;
+		}
+		
 		public void SetAttribute (string key, string value)
 		{
-			throw new NotImplementedException ();
+			if (attributes == null)
+				attributes = new Dictionary <string, string> ();
+
+			if (attributes.ContainsKey (key))
+				attributes [key] = value;
+			else
+				attributes.Add (key, value);
 		}
 	}
 }
