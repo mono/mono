@@ -1,3 +1,10 @@
+2009-04-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MD5Cng.cs, SHA1Cng.cs, SHA256Cng.cs, SHA256CryptoServiceProvider.cs,
+	SHA384Cng.cs, SHA384CryptoServiceProvider.cs, SHA512Cng.cs,
+	SHA512CryptoServiceProvider.cs: Regenerated to be excluded from
+	NET_2_1
+
 2008-08-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Aes.cs: Don't set the (unexisting) FeedbackSizeValue field
