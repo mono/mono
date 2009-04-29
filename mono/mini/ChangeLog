@@ -1,3 +1,8 @@
+2009-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (asm_writer_emit_writeout): Strip 'mapping symbols'
+	when compiling for ARM.
+
 2009-04-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (inline_method): Save/Restore cfg->ret_var_set too.

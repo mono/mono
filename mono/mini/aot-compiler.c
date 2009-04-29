@@ -1805,9 +1805,9 @@ asm_writer_emit_writeout (MonoAotCompile *acfg)
 		/* 
 		 * Need to link using gcc so our ctor function gets called.
 		 */
-		command = g_strdup_printf ("gcc -shared -o %s %s.o", outfile_name, acfg->tmpfname);
+		command = g_strdup_printf ("gcc -shared -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
 	} else {
-		command = g_strdup_printf ("ld -shared -o %s %s.o", outfile_name, acfg->tmpfname);
+		command = g_strdup_printf ("ld -shared -o %s %s.o", tmp_outfile_name, acfg->tmpfname);
 	}
 #endif
 	printf ("Executing the native linker: %s\n", command);
@@ -1825,6 +1825,22 @@ asm_writer_emit_writeout (MonoAotCompile *acfg)
 	printf ("Stripping the binary: %s\n", com);
 	system (com);
 	g_free (com);*/
+
+#if defined(TARGET_ARM) && !defined(__MACH__)
+       /*
+        * gas generates 'mapping symbols' each time code and data is mixed, which
+        * happens a lot in emit_and_reloc_code (), so we need to get rid of them.
+        */
+       command = g_strdup_printf ("strip --strip-symbol=\\$a --strip-symbol=\\$d %s", tmp_outfile_name);
+       printf ("Stripping the binary: %s\n", command);
+       if (system (command) != 0) {
+               g_free (tmp_outfile_name);
+               g_free (outfile_name);
+               g_free (command);
+               g_free (objfile);
+               return 1;
+       }
+#endif
 
 	rename (tmp_outfile_name, outfile_name);
 
