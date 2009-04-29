@@ -1,3 +1,7 @@
+2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Enum.cs: avoid exceptions from ToObject and use Try* instead.
+
 2009-04-25  Miguel de Icaza  <miguel@novell.com>
 
 	* TermInfoDriver.cs: Use the new StreamReader.DataAvailable to
@@ -9,11 +13,11 @@
 	* String.cs (LastIndexOf): Handle empty strings correctly. Fixes #486234.
 
 2009-03-06  Miguel de Icaza  <miguel@novell.com>
- 
+
 	* Convert.cs: Apply patch from Tom Hindle that uses
 	IConvertible.ToType if there are no other possible conversions
 	defined. 
- 
+
 	Fixes: #481687
 	
 2009-02-28  Zoltan Varga  <vargaz@gmail.com>
