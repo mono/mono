@@ -610,11 +610,59 @@ namespace System
 			}
 
 			// is 'value' a number?
+#if !NET_2_0
 			try {
 				return ToObject (enumType, Convert.ChangeType (value, typeCode));
 			} catch (FormatException) {
 				throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
 			}
+#else
+			switch (typeCode) {
+			case TypeCode.SByte:
+				sbyte sb;
+				if (SByte.TryParse (value, out sb))
+					return sb;
+				break;
+			case TypeCode.Byte:
+				byte b;
+				if (Byte.TryParse (value, out b))
+					return b;
+				break;
+			case TypeCode.Int16:
+				short i16;
+				if (Int16.TryParse (value, out i16))
+					return i16;
+				break;
+			case TypeCode.UInt16:
+				ushort u16;
+				if (UInt16.TryParse (value, out u16))
+					return u16;
+				break;
+			case TypeCode.Int32:
+				int i32;
+				if (Int32.TryParse (value, out i32))
+					return i32;
+				break;
+			case TypeCode.UInt32:
+				uint u32;
+				if (UInt32.TryParse (value, out u32))
+					return u32;
+				break;
+			case TypeCode.Int64:
+				long i64;
+				if (Int64.TryParse (value, out i64))
+					return i64;
+				break;
+			case TypeCode.UInt64:
+				ulong u64;
+				if (UInt64.TryParse (value, out u64))
+					return u64;
+				break;
+			default:
+				break;
+			}
+			throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
+#endif
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
