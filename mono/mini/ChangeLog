@@ -1,3 +1,8 @@
+2009-04-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_regstate_alloc_int): Use __x86_64__ instead of
+	TARGET_AMD64 here.
+
 2009-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* *.h *.c: Use TARGET_<ARCH> defines instead of __<arch>__ defines in the
