@@ -130,7 +130,6 @@ namespace Mono.Data.Tds.Protocol {
 				} catch {
 					// Ignore exceptions here for systems that do not support these options.
 				}
-				if (timeout > 0 && !ares.IsCompleted && !ares.AsyncWaitHandle.WaitOne (timeout * 1000, false))
 				// Let the stream own the socket and take the pleasure of closing it
 				stream = new NetworkStream (socket, true);
 			} catch (SocketException e) {
