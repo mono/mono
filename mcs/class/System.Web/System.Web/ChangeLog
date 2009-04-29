@@ -1,7 +1,12 @@
-2009-04-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
-	* HttpUtility.cs: the collection returned from ParseQueryString knows
-	how to convert the key/value pairs to a string.
+	* HttpContext.cs:
+	* HttpWorkerRequest.cs:
+	* HttpRuntime.cs: if other parts of the system are using the
+	threadpool and we queue requests, once the threadpool is free we
+	might still not get back to use it to the maximum extent possible.
+	Adding a few more calls to QueuePendingRequest ensures that does not
+	happen.
 
 2009-04-24  Marek Habersack  <mhabersack@novell.com>
 
