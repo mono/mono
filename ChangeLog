@@ -1,3 +1,8 @@
+2009-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Define a TARGET_<ARCH> preprocessor symbol for some
+	architectures.
+
 2009-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* acinclude.m4 (dolt_supported): Handle ARM as well.
