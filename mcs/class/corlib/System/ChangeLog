@@ -1,3 +1,7 @@
+2009-04-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Enum.cs: return the value as an enum of the right type.
+
 2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Enum.cs: avoid exceptions from ToObject and use Try* instead.
