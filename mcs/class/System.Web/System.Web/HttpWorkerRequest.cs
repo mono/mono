@@ -119,6 +119,12 @@ namespace System.Web {
 				ResponseHeaderIndexer[GetKnownResponseHeaderName(i)] = i;
 		}
 
+		bool started_internally;
+		internal bool StartedInternally {
+			get { return started_internally; }
+			set { started_internally = value; }
+		}
+
 		public virtual string MachineConfigPath {
 			get {
 				return null;

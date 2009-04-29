@@ -1,3 +1,8 @@
+2009-04-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpUtility.cs: the collection returned from ParseQueryString knows
+	how to convert the key/value pairs to a string.
+
 2009-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlizedException.cs: make HtmlException derive from
