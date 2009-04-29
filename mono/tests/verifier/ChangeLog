@@ -1,3 +1,7 @@
+2009-04-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_ldflda_owned_field_on_cctor.il: Fix visibility of .ctor.
+
 2009-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_nested_eh_in_try_of_try_filter_block.il:  Regression
