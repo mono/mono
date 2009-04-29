@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.Globalization;
 using System.Runtime.InteropServices;
 
@@ -321,3 +323,6 @@ namespace System.Security.Cryptography {
 		};
 	}
 }
+
+#endif
+

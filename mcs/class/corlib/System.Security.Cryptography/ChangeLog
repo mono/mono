@@ -1,3 +1,20 @@
+2009-04-29  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DES.cs, DESCryptoServiceProvider.cs: Do not include in NET_2_1
+	* HMACMD5.cs, HMACRIPEMD160.cs, HMACSHA384.cs, HMACSHA512.cs: Do 
+	not include in NET_2_1
+	* MACTripleDES.cs: Do not include in NET_2_1
+	* RC2.cs, RC2CryptoServiceProvider.cs: Do not include in NET_2_1
+	* Rijndael.cs, RijndaelManaged.cs, RijndaelManagedTransform.cs:
+	Do not include in NET_2_1 (AES is available in System.Core.dll)
+	* RIPEMD160.cs, RIPEMD160Managed.cs: Do not include in NET_2_1
+	* SHA1CryptoServiceProvider.cs: Do not include in NET_2_1, however
+	SHA1Managed is available.
+	* SHA384.cs, SHA384Managed.cs: Do not include in NET_2_1
+	* SHA512.cs, SHA512Managed.cs: Do not include in NET_2_1
+	* TripleDES.cs, TripleDESCryptoServiceProvider.cs: Do not include
+	in NET_2_1
+
 2009-04-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig.cs: Change to partial class and don't include this

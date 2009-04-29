@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -139,3 +141,6 @@ public abstract class TripleDES : SymmetricAlgorithm {
 }
 
 }
+
+#endif
+

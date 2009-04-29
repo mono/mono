@@ -317,6 +317,8 @@ namespace System.Security.Cryptography {
 		}
 	}
 
+#if !NET_2_1
+
 #if NET_2_0
 	[ComVisible (true)]
 #endif
@@ -357,4 +359,5 @@ namespace System.Security.Cryptography {
 			sha.Initialize ();
 		}
 	}
+#endif // NET_2_1
 }

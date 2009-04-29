@@ -31,6 +31,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.Runtime.InteropServices;
 using Mono.Security.Cryptography;
 
@@ -1460,3 +1462,6 @@ namespace System.Security.Cryptography {
 		#endregion
 	}
 }
+
+#endif
+
