@@ -7159,7 +7159,7 @@ namespace System.Windows.Forms
 
 		}
 
-		[MonoTODO]
+		[MonoInternalNote ("Does not respect Mixed")]
 		public override void CPDrawMixedCheckBox (Graphics graphics, Rectangle rectangle, ButtonState state)
 		{
 			CPDrawCheckBox (graphics, rectangle, state);

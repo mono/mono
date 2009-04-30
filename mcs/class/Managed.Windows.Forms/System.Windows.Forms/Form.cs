@@ -3251,7 +3251,7 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		[MonoTODO ("Not hooked up to event")]
+		[MonoTODO ("Will never be called")]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void OnHelpButtonClicked (CancelEventArgs e)
 		{

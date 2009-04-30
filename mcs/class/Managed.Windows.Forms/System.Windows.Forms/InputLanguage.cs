@@ -38,7 +38,7 @@ namespace System.Windows.Forms {
 		private static InputLanguage	default_input;
 
 		#region Private Constructor
-		[MonoTODO("Pull Microsofts InputLanguages and enter them here")]
+		[MonoInternalNote ("Pull Microsofts InputLanguages and enter them here")]
 		internal InputLanguage()
 		{
 		}

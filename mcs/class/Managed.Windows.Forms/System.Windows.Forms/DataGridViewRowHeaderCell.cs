@@ -185,7 +185,7 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
-		[MonoTODO ("Needs row header cell selected/edit pencil glyphs")]
+		[MonoInternalNote ("Needs row header cell selected/edit pencil glyphs")]
 		protected override void Paint (Graphics graphics, Rectangle clipBounds, Rectangle cellBounds, int rowIndex, DataGridViewElementStates cellState, object value, object formattedValue, string errorText, DataGridViewCellStyle cellStyle, DataGridViewAdvancedBorderStyle advancedBorderStyle, DataGridViewPaintParts paintParts)
 		{
 			// Prepaint

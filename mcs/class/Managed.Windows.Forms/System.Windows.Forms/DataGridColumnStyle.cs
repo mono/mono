@@ -56,7 +56,7 @@ namespace System.Windows.Forms
 			#endregion //Constructors
 
 			#region Public Instance Properties
-			[MonoTODO]
+			[MonoTODO ("Not implemented, will throw NotImplementedException")]
 			public override Rectangle Bounds {
 				get {
 					throw new NotImplementedException ();
@@ -87,7 +87,7 @@ namespace System.Windows.Forms
 			#endregion
 
 			#region Public Instance Methods
-			[MonoTODO]
+			[MonoTODO ("Not implemented, will throw NotImplementedException")]
 			public override AccessibleObject Navigate (AccessibleNavigation navdir)
 			{
 				throw new NotImplementedException ();
@@ -102,7 +102,7 @@ namespace System.Windows.Forms
 			}
 
 			#region Public Instance Methods
-			[MonoTODO]
+			[MonoTODO ("Not implemented, will throw NotImplementedException")]
 			public static TraceSwitch DGEditColumnEditing {
 				get {
 					throw new NotImplementedException ();
@@ -355,7 +355,7 @@ namespace System.Windows.Forms
 		#region Public Instance Methods
 		protected internal abstract void Abort (int rowNum);
 
-		[MonoTODO]
+		[MonoTODO ("Will not suspend updates")]
 		protected void BeginUpdate ()
 		{
 		}
@@ -383,7 +383,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO]
 		protected internal virtual void ColumnStartedEditing (Control editingControl)
 		{
 		}
@@ -426,7 +425,6 @@ namespace System.Windows.Forms
 			bool cellIsVisible);
 
 
-		[MonoTODO]
 		protected void EndUpdate ()
 		{
 		}

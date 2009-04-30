@@ -104,7 +104,7 @@ namespace System.Windows.Forms
 				if (WebHost.Document == null || WebHost.Document.DocumentElement == null)
 					return null;
 
-				return WebHost.Document.DocumentElement.ContentStream;
+				return null; //WebHost.Document.DocumentElement.ContentStream;
 			}
 			set { 
 				if (this.allowNavigation)
@@ -263,7 +263,7 @@ namespace System.Windows.Forms
 		
 		#endregion
 
-		[MonoTODO ("Stub, not implemented")]
+		[MonoTODO ("WebBrowser control is only supported on Linux/Windows. No support for OSX.")]
 		public WebBrowser ()
 		{
 		}
@@ -456,13 +456,11 @@ namespace System.Windows.Forms
 			base.DetachSink ();
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		protected override void Dispose (bool disposing)
 		{
 			base.Dispose (disposing);
 		}
 
-		[MonoTODO ("Stub, not implemented")]
 		protected override void WndProc (ref Message m)
 		{
 			base.WndProc (ref m);
@@ -681,10 +679,10 @@ namespace System.Windows.Forms
 
 
 		void SetScrollbars () {
-			if (!scrollbarsEnabled)
-				WebHost.ExecuteScript ("document.body.style.overflow='hidden';");
-			else
-				WebHost.ExecuteScript ("document.body.style.overflow='auto';");
+			//if (!scrollbarsEnabled)
+			//        WebHost.ExecuteScript ("document.body.style.overflow='hidden';");
+			//else
+			//        WebHost.ExecuteScript ("document.body.style.overflow='auto';");
 		}
 
 		[MonoTODO ("Stub, not implemented")]

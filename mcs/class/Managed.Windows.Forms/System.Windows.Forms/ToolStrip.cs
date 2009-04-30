@@ -127,13 +127,13 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Public Properties
-		[MonoTODO ()]
+		[MonoTODO ("Stub, does nothing")]
 		public override bool AllowDrop {
 			get { return base.AllowDrop; }
 			set { base.AllowDrop = value; }
 		}
-		
-		[MonoTODO ()]
+
+		[MonoTODO ("Stub, does nothing")]
 		[DefaultValue (false)]
 		public bool AllowItemReorder {
 			get { return this.allow_item_reorder; }
@@ -736,7 +736,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO ("Not called")]
+		[MonoTODO ("Stub, never called")]
 		protected virtual void OnBeginDrag (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events[BeginDragEvent]);
@@ -749,7 +749,7 @@ namespace System.Windows.Forms
 			base.OnDockChanged (e);
 		}
 
-		[MonoTODO ("Not called")]
+		[MonoTODO ("Stub, never called")]
 		protected virtual void OnEndDrag (EventArgs e)
 		{
 			EventHandler eh = (EventHandler)(Events[EndDragEvent]);
@@ -1142,14 +1142,13 @@ namespace System.Windows.Forms
 
 			return base.ProcessMnemonic (charCode);
 		}
-		
-		[MonoTODO ()]
+
+		[MonoTODO ("Stub, does nothing")]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected virtual void RestoreFocus ()
 		{
 		}
 
-		[MonoTODO ()]
 		protected override void Select (bool directed, bool forward)
 		{
 			foreach (ToolStripItem tsi in this.DisplayedItems)
@@ -1233,7 +1232,7 @@ namespace System.Windows.Forms
 			remove { base.AutoSizeChanged -= value; }
 		}
 
-		[MonoTODO ()]
+		[MonoTODO ("Event never raised")]
 		public event EventHandler BeginDrag {
 			add { Events.AddHandler (BeginDragEvent, value); }
 			remove { Events.RemoveHandler (BeginDragEvent, value); }
@@ -1265,7 +1264,7 @@ namespace System.Windows.Forms
 			remove { base.CursorChanged -= value; }
 		}
 
-		[MonoTODO ()]
+		[MonoTODO ("Event never raised")]
 		public event EventHandler EndDrag {
 			add { Events.AddHandler (EndDragEvent, value); }
 			remove { Events.RemoveHandler (EndDragEvent, value); }

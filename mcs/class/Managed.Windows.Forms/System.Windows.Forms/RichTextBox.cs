@@ -229,7 +229,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[DefaultValue (false)]
 		public bool EnableAutoDragDrop {
 			get { return enable_auto_drag_drop; }
@@ -274,7 +274,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public RichTextBoxLanguageOptions LanguageOption {
@@ -302,7 +302,6 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
 		public string RedoActionName {
 			get {
 				return document.undo.RedoActionName;
@@ -310,7 +309,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DefaultValue (true)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
@@ -322,7 +321,8 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(0)]
 		[Localizable(true)]
-		[MonoTODO("Teach TextControl.RecalculateLine to consider the right margin as well")]
+		[MonoTODO ("Stub, does nothing")]
+		[MonoInternalNote ("Teach TextControl.RecalculateLine to consider the right margin as well")]
 		public int RightMargin {
 			get {
 				return margin_right;
@@ -487,7 +487,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Stub")]
+		[MonoTODO ("Stub, does nothing")]
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color SelectionBackColor {
@@ -499,7 +499,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public bool SelectionBullet {
 			get {
 				return false;
@@ -512,7 +512,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionCharOffset {
 			get {
 				return 0;
@@ -641,7 +641,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionHangingIndent {
 			get {
 				return 0;
@@ -654,7 +654,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionIndent {
 			get {
 				return 0;
@@ -679,7 +679,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public bool SelectionProtected {
 			get {
 				return false;
@@ -692,7 +692,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int SelectionRightIndent {
 			get {
 				return 0;
@@ -704,7 +704,7 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public int[] SelectionTabs {
 			get {
 				return new int[0];
@@ -732,7 +732,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		public bool ShowSelectionMargin {
 			get {
 				return false;
@@ -1190,7 +1190,7 @@ namespace System.Windows.Forms {
 				eh (this, e);
 		}
 
-		[MonoTODO("Determine when to call this")]
+		[MonoTODO ("Stub, never called")]
 		protected virtual void OnImeChange(EventArgs e) {
 			EventHandler eh = (EventHandler)(Events [ImeChangeEvent]);
 			if (eh != null)
@@ -1354,7 +1354,7 @@ namespace System.Windows.Forms {
 			remove { base.QueryContinueDrag -= value; }
 		}
 
-		[MonoTODO("Currently does not ever fire")]
+		[MonoTODO ("Event never raised")]
 		public event EventHandler SelectionChanged {
 			add { Events.AddHandler (SelectionChangedEvent, value); }
 			remove { Events.RemoveHandler (SelectionChangedEvent, value); }
@@ -1424,7 +1424,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Add QuadJust support for justified alignment")]
+		[MonoInternalNote ("Add QuadJust support for justified alignment")]
 		private void HandleControl(RTF.RTF rtf) {
 			switch(rtf.Major) {
 				case RTF.Major.Unicode: {
@@ -1927,7 +1927,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("Emit unicode and other special characters properly")]
+		[MonoInternalNote ("Emit unicode and other special characters properly")]
 		private void EmitRTFText(StringBuilder rtf, string text) {
 			rtf.Append(text);
 		}

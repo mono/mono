@@ -531,8 +531,8 @@ namespace System.Windows.Forms
 
 		#region Public Instance Methods
 
-		[MonoTODO]
-		public bool BeginEdit (DataGridColumnStyle gridColumn,  int rowNumber)
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
+		public bool BeginEdit (DataGridColumnStyle gridColumn, int rowNumber)
 		{
 			throw new NotImplementedException ();
 		}
@@ -566,8 +566,8 @@ namespace System.Windows.Forms
 			base.Dispose (disposing);
 		}
 
-		[MonoTODO]
-		public bool EndEdit ( DataGridColumnStyle gridColumn,  int rowNumber,  bool shouldAbort)
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
+		public bool EndEdit (DataGridColumnStyle gridColumn, int rowNumber, bool shouldAbort)
 		{
 			throw new NotImplementedException ();
 		}

@@ -855,7 +855,7 @@ namespace System.Windows.Forms {
 			set { base.WindowState = value; }
 		}
 
-		[MonoTODO("Throw InvalidPrinterException")]
+		[MonoInternalNote ("Throw InvalidPrinterException")]
 		protected override void CreateHandle() {
 
 //			if (this.Document != null && !this.Document.PrinterSettings.IsValid) {

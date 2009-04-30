@@ -31,7 +31,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 	/// <summary>
 	/// Summary description for PropertyGridRootGridItem
 	/// </summary>
-	[MonoTODO ("needs to implement IRootGridEntry")]
+	[MonoInternalNote ("needs to implement IRootGridEntry")]
 	internal class RootGridEntry : GridEntry /*, IRootGridEntry */
 	{
 		object[] val;

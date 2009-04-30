@@ -187,7 +187,7 @@ namespace System.Windows.Forms
 			base.CopyTo (array, index);
 		}
 
-		[MonoTODO ()]
+		[MonoTODO ("searchAllChildren parameter isn't used")]
 		public ToolStripItem[] Find (string key, bool searchAllChildren)
 		{
 			if (key == null)

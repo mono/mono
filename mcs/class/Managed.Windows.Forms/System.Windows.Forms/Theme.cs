@@ -576,7 +576,7 @@ namespace System.Windows.Forms
 			else return value;
 		}
 
-		[MonoTODO("Figure out where to point for My Network Places")]
+		[MonoInternalNote ("Figure out where to point for My Network Places")]
 		public virtual string Places(UIIcon index) {
 			switch (index) {
 				case UIIcon.PlacesRecentDocuments: {

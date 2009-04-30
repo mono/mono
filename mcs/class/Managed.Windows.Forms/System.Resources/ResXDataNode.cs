@@ -113,25 +113,25 @@ namespace System.Resources
 		//TODO make this class internal for 1.1 and add field type_name, mime_type 
 		//move resolvetype and resolve value here
 
-		[MonoTODO ("Move the type parsing process from ResxResourceReader")]
+		[MonoInternalNote ("Move the type parsing process from ResxResourceReader")]
 		public string GetValueTypeName (AssemblyName[] names)
 		{
 			return type.AssemblyQualifiedName;
 		}
 
-		[MonoTODO ("Move the type parsing process from ResxResourceReader")]
+		[MonoInternalNote ("Move the type parsing process from ResxResourceReader")]
 		public string GetValueTypeName (ITypeResolutionService typeResolver)
 		{
 			return type.AssemblyQualifiedName;
 		}
 
-		[MonoTODO ("Move the value parsing process from ResxResourceReader")]
+		[MonoInternalNote ("Move the value parsing process from ResxResourceReader")]
 		public Object GetValue (AssemblyName[] names)
 		{
 			return value;
 		}
-		
-		[MonoTODO ("Move the value parsing process from ResxResourceReader")]
+
+		[MonoInternalNote ("Move the value parsing process from ResxResourceReader")]
 		public Object GetValue (ITypeResolutionService typeResolver)
 		{
 			return value;

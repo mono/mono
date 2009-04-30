@@ -545,8 +545,8 @@ namespace System.Windows.Forms
 			#region IList Members
 			object IList.this [int index] {
 				get { return this [index]; }
-				[MonoTODO]
-				set { throw new NotImplementedException (); }
+				[MonoTODO ("Stub, does nothing")]
+				set { }
 			}
 
 			bool IList.IsFixedSize {

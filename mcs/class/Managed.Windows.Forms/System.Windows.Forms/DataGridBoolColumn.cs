@@ -172,9 +172,10 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		protected internal override void ConcedeFocus ()
 		{
+			base.ConcedeFocus ();
 		}
 
 #if NET_2_0
@@ -194,10 +195,10 @@ namespace System.Windows.Forms
 			grid.Invalidate (grid.GetCurrentCellBounds ());
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		protected internal override void EnterNullValue ()
 		{
-
+			base.EnterNullValue ();
 		}
 
 		private bool ValueEquals (object value, object obj)

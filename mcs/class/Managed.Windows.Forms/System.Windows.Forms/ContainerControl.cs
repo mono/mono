@@ -504,7 +504,7 @@ namespace System.Windows.Forms {
 		}
 #endif
 
-		[MonoTODO]
+		[MonoTODO ("Stub, not implemented")]
 		static bool ValidateWarned;
 		public bool Validate() {
 			//throw new NotImplementedException();

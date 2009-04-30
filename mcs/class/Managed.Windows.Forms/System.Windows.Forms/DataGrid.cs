@@ -977,7 +977,6 @@ namespace System.Windows.Forms
 			}
 		}
 
-		[MonoTODO]
 		public bool BeginEdit (DataGridColumnStyle gridColumn, int rowNumber)
 		{
 			if (is_changing)
@@ -1020,7 +1019,6 @@ namespace System.Windows.Forms
 			is_editing = false;
 		}
 
-		[MonoTODO]
 		public void Collapse (int row)
 		{
 			if (!rows[row].IsExpanded)
@@ -1068,6 +1066,7 @@ namespace System.Windows.Forms
 			return CreateGridColumn (prop, false);
 		}
 
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
 		protected virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop, bool isDefault)
 		{
 			throw new NotImplementedException();
@@ -1288,7 +1287,6 @@ namespace System.Windows.Forms
 			return rows[row].IsSelected;
 		}
 
-		[MonoTODO]
 		public void NavigateBack ()
 		{
 			if (data_source_stack.Count == 0)
@@ -1304,7 +1302,6 @@ namespace System.Windows.Forms
 			CurrentCell = source.current;
 		}
 
-		[MonoTODO]
 		public void NavigateTo (int rowNumber, string relationName)
 		{
 			if (allow_navigation == false)

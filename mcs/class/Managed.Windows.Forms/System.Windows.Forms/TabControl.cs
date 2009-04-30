@@ -273,7 +273,7 @@ namespace System.Windows.Forms {
 		}
 
 #if NET_2_0
-		[MonoTODO ("Saves the value and raises event, but needs actual implementation call")]
+		[MonoTODO ("RTL not supported")]
 		[Localizable (true)]
 		[DefaultValue (false)]
 		public virtual bool RightToLeftLayout {

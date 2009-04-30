@@ -868,7 +868,7 @@ namespace System.Windows.Forms
 			return String.Concat (base.ToString (), ", Text: ", Text);
 		}
 
-		[MonoTODO("Deleting is classed as Typing, instead of its own Undo event")]
+		[MonoInternalNote ("Deleting is classed as Typing, instead of its own Undo event")]
 		public void Undo ()
 		{
 			if (document.undo.Undo ())

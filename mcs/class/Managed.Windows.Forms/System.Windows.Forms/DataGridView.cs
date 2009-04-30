@@ -2863,7 +2863,6 @@ namespace System.Windows.Forms {
 			return new HitTestInfo (-1, x, -1, y, DataGridViewHitTestType.None);
 		}
 
-		[MonoTODO ("Invalidates whole grid")]
 		public void InvalidateCell (DataGridViewCell dataGridViewCell)
 		{
 			if (dataGridViewCell == null)
@@ -2875,7 +2874,6 @@ namespace System.Windows.Forms {
 			InvalidateCell (dataGridViewCell.ColumnIndex, dataGridViewCell.RowIndex);
 		}
 
-		[MonoTODO ("Invalidates whole grid")]
 		public void InvalidateCell (int columnIndex, int rowIndex)
 		{
 			if (columnIndex < 0 || columnIndex >= columns.Count)
@@ -2887,7 +2885,6 @@ namespace System.Windows.Forms {
 			Invalidate (GetCellDisplayRectangle (columnIndex, rowIndex, true));
 		}
 
-		[MonoTODO ("Invalidates whole grid")]
 		public void InvalidateColumn (int columnIndex)
 		{
 			if (columnIndex < 0 || columnIndex >= columns.Count)
@@ -2896,7 +2893,6 @@ namespace System.Windows.Forms {
 			Invalidate (GetColumnDisplayRectangle (columnIndex, true));
 		}
 
-		[MonoTODO ("Invalidates whole grid")]
 		public void InvalidateRow (int rowIndex)
 		{
 			if (rowIndex < 0 || rowIndex >= rows.Count)
@@ -5308,7 +5304,7 @@ namespace System.Windows.Forms {
 			return false;
 		}
 
-		[MonoTODO ("What does insert do?")]
+		[MonoInternalNote ("What does insert do?")]
 		protected bool ProcessInsertKey (Keys keyData)
 		{
 			return false;

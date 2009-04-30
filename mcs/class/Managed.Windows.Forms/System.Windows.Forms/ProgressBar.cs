@@ -404,7 +404,7 @@ namespace System.Windows.Forms
 			
 		[Localizable(true)]
 		[DefaultValue(false)]
-		[MonoTODO ("Layout is currently always from left to right")]
+		[MonoTODO ("RTL is not supported")]
 		public virtual bool RightToLeftLayout {
 				get { return right_to_left_layout;}
 				set	{ 

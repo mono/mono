@@ -148,7 +148,7 @@ namespace System.Windows.Forms
 				DataGridView.InvalidateColumn (Index);
 			}
 		}
-		[MonoTODO]
+		[MonoInternalNote ("")]
 		[DefaultValue ((string) null)]
 		public string Text {
 			get {

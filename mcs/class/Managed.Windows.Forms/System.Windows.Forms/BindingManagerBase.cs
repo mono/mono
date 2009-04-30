@@ -117,13 +117,13 @@ namespace System.Windows.Forms
 		}
 
 		#region Protected Instance Methods
-		[MonoTODO]
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
 		protected internal virtual PropertyDescriptorCollection GetItemProperties (ArrayList dataSources, ArrayList listAccessors)
 		{
 			throw new NotImplementedException();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
 		protected virtual PropertyDescriptorCollection GetItemProperties (Type listType, int offset, ArrayList dataSources, ArrayList listAccessors)
 		{
 			throw new NotImplementedException();

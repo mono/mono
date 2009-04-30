@@ -702,9 +702,9 @@ namespace System.Windows.Forms
 				return Title;
 			}
 		}
-		
-		[MonoTODO]
-		protected  override IntPtr HookProc (IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
+
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
+		protected override IntPtr HookProc (IntPtr hWnd, int msg, IntPtr wparam, IntPtr lparam)
 		{
 			throw new NotImplementedException ();
 		}

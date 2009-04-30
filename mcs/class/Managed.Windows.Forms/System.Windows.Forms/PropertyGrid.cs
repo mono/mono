@@ -1077,7 +1077,7 @@ namespace System.Windows.Forms
 			return tab;
 		}
 		
-		[MonoTODO]
+		[MonoTODO ("Never called")]
 		protected void OnComComponentNameChanged(ComponentRenameEventArgs e)
 		{
 			ComponentRenameEventHandler eh = (ComponentRenameEventHandler)(Events [ComComponentNameChangedEvent]);
@@ -1319,41 +1319,37 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Com2Interop.IComPropertyBrowser Interface
-		[MonoTODO]
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
 		bool ComponentModel.Com2Interop.IComPropertyBrowser.InPropertySet {
 			get {
 				throw new NotImplementedException();
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.DropDownDone ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not implemented, will throw NotImplementedException")]
 		bool ComponentModel.Com2Interop.IComPropertyBrowser.EnsurePendingChangesCommitted ()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.HandleF4 ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.LoadState (Microsoft.Win32.RegistryKey optRoot)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Stub, does nothing")]
 		void ComponentModel.Com2Interop.IComPropertyBrowser.SaveState (Microsoft.Win32.RegistryKey optRoot)
 		{
-			throw new NotImplementedException ();
 		}
 
 		static object ComComponentNameChangedEvent = new object ();
@@ -1803,7 +1799,7 @@ namespace System.Windows.Forms
 		}
 
 
-		[MonoTODO ("not sure what this class does, but it's listed as a type converter for a property in this class, and this causes problems if it's not present")]
+		[MonoInternalNote ("not sure what this class does, but it's listed as a type converter for a property in this class, and this causes problems if it's not present")]
 		private class SelectedObjectConverter : TypeConverter
 		{
 		}

@@ -50,7 +50,7 @@ namespace System.Windows.Forms
 			ShowHelp(parent, url, navigator, null);
 		}
 
-		[MonoTODO("Create glue code to tie into libCHM")]
+[MonoTODO ("Stub, does nothing")]
 #if NET_2_0
 		public static void ShowHelp (Control parent, string url, HelpNavigator command, object parameter)
 		{
@@ -59,10 +59,6 @@ namespace System.Windows.Forms
 		public static void ShowHelp (Control parent, string url, HelpNavigator command, object param)
 		{
 #endif
-			MessageBox.Show(parent, Locale.GetText("Help (" + command +
-					(param != null ? "(" + param + ")" : String.Empty) +
-					") not yet implemented"), Locale.GetText("Popup Help"),
-					MessageBoxButtons.OK, MessageBoxIcon.Stop);
 		}
 
 		public static void ShowHelp (Control parent, string url, string keyword)
@@ -77,11 +73,9 @@ namespace System.Windows.Forms
 			ShowHelp (parent, url, HelpNavigator.Index, null);
 		}
 
-		[MonoTODO("Create glue code to tie into libCHM")]
+		[MonoTODO ("Stub, does nothing")]
 		public static void ShowPopup (Control parent, string caption, Point location)
 		{
-			MessageBox.Show (parent, Locale.GetText ("Popup Help not yet implemented"),
-				Locale.GetText ("Popup Help"), MessageBoxButtons.OK, MessageBoxIcon.Stop);
 		}
 		#endregion	// Public Static Methods
 	}

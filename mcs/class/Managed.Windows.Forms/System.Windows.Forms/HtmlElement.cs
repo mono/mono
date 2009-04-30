@@ -167,7 +167,6 @@ namespace System.Windows.Forms
 			get { return element.TagName; }
 		}
 
-		[MonoTODO ("Needs implementation")]
 		public short TabIndex {
 			get { return (short)element.TabIndex; }
 			set { element.TabIndex = value; }
@@ -187,7 +186,6 @@ namespace System.Windows.Forms
 			set { this.element.OuterText = value; }
 		}
 
-		[MonoTODO ("Needs implementation")]
 		public string Style {
 			get { return this.element.Style; }
 			set { this.element.Style = value; }
