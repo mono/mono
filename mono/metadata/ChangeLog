@@ -1,3 +1,7 @@
+2009-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify the decl security table.
+
 2009-04-30  Mark Probst  <mark.probst@gmail.com>
 
 	* domain.c (mono_domain_set_internal_with_options): Don't do
@@ -37,7 +41,7 @@
 
 2009-04-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* metadata-verify.c: Verify the custom field marshal table.
+	* metadata-verify.c: Verify the field marshal table.
 
 2009-04-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
