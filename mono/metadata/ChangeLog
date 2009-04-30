@@ -1,5 +1,11 @@
 2009-04-30  Mark Probst  <mark.probst@gmail.com>
 
+	* domain.c (mono_domain_set_internal_with_options): Don't do
+	anything if the old domain is the same as the old one.  Fixes
+	#499326.
+
+2009-04-30  Mark Probst  <mark.probst@gmail.com>
+
 	* appdomain.c: Deregister the reflection_info roots when unloading
 	a domain.
 
