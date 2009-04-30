@@ -756,7 +756,7 @@ namespace MonoTests.System.Windows.Forms
 
 		[Test] // bug #499887
 		[Category ("NotWorking")]
-		public void FireFocusWhenSettingSelectionIndex ()
+		public void SelectedIndexChangeFiresFocus ()
 		{
 			Form f = new Form ();
 			TabControl tc = new TabControl ();
