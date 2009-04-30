@@ -1,3 +1,8 @@
+2009-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Avoid 
+	returning refonly assemblies if refonly is FALSE. Fixes #499013.
+
 2009-04-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the custom field marshal table.
