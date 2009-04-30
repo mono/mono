@@ -1428,10 +1428,10 @@ namespace Mono.CSharp
 
 				// We just ignore this.
 			case "/errorreport":
-				return true;
 			case "/filealign":
-				return true;
 			case "/platform":
+			case "/debug:full":
+			case "/debug:pdbonly":
 				return true;
 				
 			case "/help2":
