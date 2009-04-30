@@ -667,7 +667,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			mem = Marshal.ReAllocHGlobal (mem, (IntPtr) 1000000);
 			Marshal.FreeHGlobal (mem);
 		}
-
+#if NET_2_1
 		[Test]
 		public void TestGetExceptionForHR ()
 		{
@@ -680,7 +680,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			ex = Marshal.GetExceptionForHR (E_INVALIDARG);
 			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "E_INVALIDARG");
 		}
-
+#endif
 		bool RunningOnUnix {
 			get {
 				int p = (int) Environment.OSVersion.Platform;

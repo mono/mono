@@ -1,3 +1,7 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* MarshalTest.cs: Fix building unit tests for NET_1_1
+
 2009-04-29  Jonathan Chambers  <joncham@gmail.com>
 
 	* MarshalTest.cs: Add test for GetExceptionForHR.
