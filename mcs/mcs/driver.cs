@@ -1343,6 +1343,12 @@ namespace Mono.CSharp
 				return true;
 				
 			case "/debug":
+				if (value == "pdbonly" || value == "full"){
+					/* ignore */
+				} else
+					want_debugging_support = true;
+				return true;
+				
 			case "/debug+":
 				want_debugging_support = true;
 				return true;
@@ -1430,8 +1436,6 @@ namespace Mono.CSharp
 			case "/errorreport":
 			case "/filealign":
 			case "/platform":
-			case "/debug:full":
-			case "/debug:pdbonly":
 				return true;
 				
 			case "/help2":
