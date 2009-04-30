@@ -667,7 +667,7 @@ namespace MonoTests.System.Runtime.InteropServices
 			mem = Marshal.ReAllocHGlobal (mem, (IntPtr) 1000000);
 			Marshal.FreeHGlobal (mem);
 		}
-#if NET_2_1
+#if NET_2_0
 		[Test]
 		public void TestGetExceptionForHR ()
 		{
