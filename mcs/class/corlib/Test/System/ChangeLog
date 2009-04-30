@@ -1,3 +1,7 @@
+2009-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomainTest.cs: Add a test for #499013.
+
 2009-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* ArrayTest.cs: Add a test for ICollection:IsReadOnly on generic arrays.

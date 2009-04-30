@@ -3224,7 +3224,18 @@ namespace MonoTests.System
 			ad = AppDomain.CreateDomain ("ReflectionOnlyGetAssemblies");
 			Assembly [] a = ad.ReflectionOnlyGetAssemblies ();
 			Assert.IsNotNull (a, "ReflectionOnlyGetAssemblies");
-			Assert.AreEqual (0, a.Length, "Count");
+			Assert.AreEqual (0, a.Length, "Count");			
+
+			string assemblyFile = Path.Combine (tempDir, "bug499013.dll");
+			AssemblyName aname = new AssemblyName ();
+			aname.Name = "bug499013";
+			aname.Version = new Version (2, 4);
+
+			GenerateAssembly (aname, assemblyFile);
+
+			Assembly.ReflectionOnlyLoadFrom (assemblyFile);
+			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies ())
+				Assert.IsTrue (assembly.GetName ().Name != "bug499013");
 		}
 
 		[Test]
