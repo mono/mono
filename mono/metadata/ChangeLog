@@ -1,5 +1,10 @@
 2009-04-30  Mark Probst  <mark.probst@gmail.com>
 
+	* appdomain.c (clear_cached_vtable): Free the static fields memory
+	block.
+
+2009-04-30  Mark Probst  <mark.probst@gmail.com>
+
 	* gc.c: Set the correct domain when invoking finalizers.
 
 	* appdomain.c: Set the correct domain when creating threads.
