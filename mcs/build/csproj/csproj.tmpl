@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <OutputPath>@OUTPUTDIR@</OutputPath>
     <DefineConstants>@DEFINECONSTANTS@</DefineConstants>
-    <CscToolPath>@CSCTOOOLPATH@</CscToolPath>
+    <CscToolPath>@CSCTOOLPATH@</CscToolPath>
     @NOSTDLIB@
     @ALLOWUNSAFE@
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -21,10 +21,9 @@
     </StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>@DEBUG@</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>@DEFINECONSTANTS@</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -32,14 +31,13 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>@DEFINECONSTANTS@</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    @SOURCES@
+@SOURCES@
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -49,8 +47,9 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>copy ..\..\ecma.pub ..</PreBuildEvent>
+    <PreBuildEvent></PreBuildEvent>
   </PropertyGroup>
+  @REFERENCES@
   <ItemGroup>
     <Folder Include="Properties\" />
   </ItemGroup>

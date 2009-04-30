@@ -37,7 +37,7 @@ class MsbuildGenerator {
 	static bool VerifyClsCompliance = true;
 
 	static string win32IconFile;
-	static bool want_debugging_support = true;
+	static bool want_debugging_support = false;
 	static bool Checked = false;
 	static bool WarningsAreErrors;
 	static Dictionary<string,string> embedded_resources = new Dictionary<string,string> ();
@@ -376,11 +376,47 @@ class MsbuildGenerator {
 
 		return false;
 	}
-	
+
+	static string FindMcsRoot ()
+	{
+		string p = Path.GetFullPath (".");
+		string steps = "";
+
+		while (p != Path.GetPathRoot (p)){
+			if (Directory.Exists (Path.Combine (p, "jay")) &&
+			    Directory.Exists (Path.Combine (p, "ilasm")))
+				return steps;
+
+			p = Path.GetFullPath (Path.Combine (p, ".."));
+			steps = Path.Combine (steps, "..");
+		}
+		Console.WriteLine ("Can not detect the root of MCS");
+		Environment.Exit (1);
+		return null;
+	}
+
+	static string FindClassRoot ()
+	{
+		string p = Path.GetFullPath (".");
+		string steps = "";
+
+		while (p != Path.GetPathRoot (p)){
+			if (Directory.Exists (Path.Combine (p, "corlib")) &&
+			    Directory.Exists (Path.Combine (p, "Managed.Windows.Forms")))
+				return steps;
+
+			p = Path.GetFullPath (Path.Combine (p, ".."));
+			steps = Path.Combine (steps, "..");
+		}
+		Console.WriteLine ("Can not detect the mcs/class directory");
+		Environment.Exit (1);
+		return null;
+	}
+
 	static void Main (string [] args)
 	{
-		if (args.Length != 1){
-			Console.WriteLine ("You must specify the template file");
+		if (args.Length != 2){
+			Console.WriteLine ("You must specify the template file and the output file");
 			return;
 		}
 		
@@ -396,12 +432,12 @@ class MsbuildGenerator {
 
 		string [] f = flags.Split ();
 		for (int i = 0; i < f.Length; i++){
-			if (f [i][0] == '/')
+			if (f [i][0] == '-')
 				f [i] = "/" + f [i].Substring (1);
 
-			if (CSCParseOption (f [0], ref f))
+			if (CSCParseOption (f [i], ref f))
 				continue;
-			Console.WriteLine ("Failure");
+			Console.WriteLine ("Failure with {0}", f [i]);
 			Environment.Exit (1);
 		}
 
@@ -420,20 +456,70 @@ class MsbuildGenerator {
 		string template = input.ReadToEnd ();
 
 		//
-		// Replace the template values
+		// Compute the csc command that we need to use
 		//
+		// The mcs string is formatted like this:
+		// MONO_PATH=./../../class/lib/basic: /cvs/mono/runtime/mono-wrapper ./../../class/lib/basic/mcs.exe
+		//
+		// The first block is a set of MONO_PATHs, the last part is the compiler
+		//
+		if (mcs.StartsWith ("MONO_PATH="))
+			mcs = mcs.Substring (10);
+		
+		var compiler = mcs.Substring (mcs.LastIndexOf (' ') + 1);
+		if (compiler.EndsWith ("class/lib/basic/mcs.exe"))
+			compiler = "basic";
+		else if (compiler.EndsWith ("class/lib/net_1_1_bootstrap/mcs.exe"))
+			compiler = "net_1_1_bootstrap";
+		else if (compiler.EndsWith ("class/lib/net_1_1/mcs.exe"))
+			compiler = "net_1_1";
+		else if (compiler.EndsWith ("class/lib/net_2_0_bootstrap/gmcs.exe"))
+			compiler = "net_2_0_bootstrap";
+		else if (compiler.EndsWith ("mcs/gmcs.exe"))
+			compiler = "gmcs";
+		else if (compiler.EndsWith ("class/lib/net_2_1_bootstrap/smcs.exe"))
+			compiler = "net_2_1_bootstrap";
+		else if (compiler.EndsWith ("class/lib/net_2_1_raw/smcs.exe"))
+			compiler = "net_2_1_raw";
+		else {
+			Console.WriteLine ("Can not determine compiler from {0}", compiler);
+			Environment.Exit (1);
+		}
 
+		var mono_paths = mcs.Substring (0, mcs.IndexOf (' ')).Split (new char [] {':'});
+		for (int i = 0; i < mono_paths.Length; i++){
+			int p = mono_paths [i].LastIndexOf ('/');
+			if (p != -1)
+				mono_paths [i] = mono_paths [i].Substring (p + 1);
+		}
+		
+		var encoded_mono_paths = string.Join ("-", mono_paths).Replace ("--", "-");
+
+		Console.WriteLine ("The root is at {0}", FindMcsRoot ());
+		string csc_tool_path = FindMcsRoot ().Replace ("/", "\\") + "\\..\\mono\\msvc\\scripts\\" + encoded_mono_paths + "-" + compiler;
+		csc_tool_path = csc_tool_path.Replace ("--", "-");
+
+		var refs = new StringBuilder ();
+		
+		if (references.Count > 0){
+			refs.Append ("<ItemGroup>\n");
+			string class_root = FindClassRoot ();
+			string last = mono_paths [0].Substring (mono_paths [0].LastIndexOf ('/') + 1);
+			
+			string hint_path = FindClassRoot () + "\\lib\\" + last;
+			
+			foreach (string r in references){
+				refs.Append ("    <Reference Include=\"" + r + "\">\n");
+				refs.Append ("      <SpecificVersion>False</SpecificVersion>\n");
+				refs.Append ("      <HintPath>" + hint_path + "\\" + r + "</HintPath>\n");
+				refs.Append ("    </Reference>\n");
+			}
+			
+			refs.Append ("  </ItemGroup>\n");
+		}
+		
 		//
-		// ARGH: The CscToolPath will require more temporary setups to work properly
-		// corlib does this:
-		// MONO_PATH=./../../class/lib/net_2_0: false ./../../mcs/gmcs.exe
-		//
-		// this means:
-		//    runtime:  ../../class/lib/net_2_0
-		//    compiler: ../../mcs/gmcs.exe
-		//
-		// And our current `csc' script fails for this as it assumes that the
-		// compiler will be in the same place as the runtime
+		// Replace the template values
 		//
 		string output = template.
 			Replace ("@DEFINES@", defines.ToString ()).
@@ -441,8 +527,14 @@ class MsbuildGenerator {
 			Replace ("@ALLOWUNSAFE@", Unsafe ? "<AllowUnsafeBlocks>true</AllowUnsafeBlocks>" : "").
 			Replace ("@ASSEMBLYNAME@", Path.GetFileNameWithoutExtension (output_name)).
 			Replace ("@OUTPUTDIR@", Path.GetDirectoryName (library_output)).
+			Replace ("@DEFINECONSTANTS@", defines.ToString ()).
+			Replace ("@CSCTOOLPATH@", csc_tool_path).
+			Replace ("@DEBUG@", want_debugging_support ? "true" : "false").
+			Replace ("@REFERENCES@", refs.ToString ()).
 			Replace ("@SOURCES@", sources.ToString ());
 
-		Console.WriteLine (output);
+		using (var o = new StreamWriter (args [1])){
+			o.WriteLine (output);
+		}
 	}
 }
