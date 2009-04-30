@@ -1,3 +1,9 @@
+2009-04-30  Jonathan Pryor <jonpryor@vt.edu>
+
+	* sqlmetal.exe.config: The MySQL provider should use ByteFX.Data's
+	  MySQL connection types, as those are actually included with Mono
+	  (unlike MySql.Data, which isn't included with Mono).
+
 2009-04-08  Jonathan Pryor <jonpryor@vt.edu>
 
 	* AssemblyInfo.cs: Building against the local AssemblyInfo.cs broke
