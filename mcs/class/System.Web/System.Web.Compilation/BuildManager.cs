@@ -333,7 +333,7 @@ namespace System.Web.Compilation {
 					} catch (CompilationException ex) {
 						attempts--;
 						if (singleBuild)
-							throw;
+							throw new HttpException ("Single file build failed.", ex);
 						
 						if (attempts == 0) {
 							needMainVpBuild = true;
@@ -343,7 +343,7 @@ namespace System.Web.Compilation {
 						
 						CompilerResults results = ex.Results;
 						if (results == null)
-							throw;
+							throw new HttpException ("No results returned from failed compilation.", ex);
 						else
 							RemoveFailedAssemblies (vpabsolute, ex, abuilder, group, results, debug);
 					}
@@ -373,7 +373,7 @@ namespace System.Web.Compilation {
 					// In theory this code is unreachable. If the recursive
 					// build of the main vp failed, then it should have thrown
 					// the build exception.
-					throw compilationError;
+					throw new HttpException ("Requested virtual path build failed.", compilationError);
 				}
 			}
 		}

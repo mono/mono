@@ -1,3 +1,8 @@
+2009-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: when BuildInner catches a compilation
+	exception, wrap it in HttpException before re-throwing.
+
 2009-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: ProcessTag doesn't process a tag which is not

@@ -1,3 +1,12 @@
+2009-04-30  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: removed the PageParserFilterTypeName
+	property, the filter type name is looked up on demand now.
+
+	* ApplicationFileParser.cs, MasterPageParser.cs,
+	UserControlParser.cs: load config defaults explicitly after
+	initializing the instance.
+
 2009-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* DataBinder.cs: GetPropertyValue must throw also if propName is

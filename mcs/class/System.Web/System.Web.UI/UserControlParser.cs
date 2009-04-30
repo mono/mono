@@ -84,6 +84,7 @@ namespace System.Web.UI
 			InputFile = inputFile;
 			SetBaseType (type);
 			AddApplicationAssembly ();
+			LoadConfigDefaults ();
 		}
 
 		internal UserControlParser (VirtualPath virtualPath, TextReader reader, HttpContext context)
@@ -96,7 +97,7 @@ namespace System.Web.UI
 			VirtualPath = virtualPath;
 			Context = context;
 			BaseVirtualDir = virtualPath.DirectoryNoNormalize;
-
+			
 			if (String.IsNullOrEmpty (inputFile))
 				InputFile = virtualPath.PhysicalPath;
 			else
@@ -105,6 +106,7 @@ namespace System.Web.UI
 			Reader = reader;
 			SetBaseType (null);
 			AddApplicationAssembly ();
+			LoadConfigDefaults ();
 		}
 
 		internal UserControlParser (TextReader reader, int? uniqueSuffix, HttpContext context)
@@ -122,6 +124,7 @@ namespace System.Web.UI
 			Reader = reader;
 			SetBaseType (null);
 			AddApplicationAssembly ();
+			LoadConfigDefaults ();
 		}		
 
 		internal static Type GetCompiledType (TextReader reader, int? inputHashCode, HttpContext context)
