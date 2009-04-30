@@ -1,5 +1,9 @@
 2009-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the field layout table.
+
+2009-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_type_get_name_recurse): Don't crash
 	for ownerless generic params.
 
