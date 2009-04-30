@@ -1,5 +1,16 @@
 2009-04-30  Mark Probst  <mark.probst@gmail.com>
 
+	* appdomain.c: Deregister the reflection_info roots when unloading
+	a domain.
+
+	* sgen-gc.c, domain.c, gc-internal.h: mono_gc_clear_domain() nulls
+	memory allocated by a domain and frees its disappearing links.
+
+	* boehm-gc.c, null-gc.c: Empty implementation of
+	mono_gc_clear_domain().
+
+2009-04-30  Mark Probst  <mark.probst@gmail.com>
+
 	* appdomain.c (clear_cached_vtable): Free the static fields memory
 	block.
 
