@@ -1,3 +1,7 @@
+2009-04-30  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Fix skip size for vectors.
+
 2009-04-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Avoid 
