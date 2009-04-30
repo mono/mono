@@ -76,7 +76,7 @@ GACDIR = $(mono_libdir)
 GACROOT = $(DESTDIR)$(mono_libdir)
 endif
 
-all-local: $(the_lib)
+all-local: $(the_lib) $(extra_targets)
 
 ifeq ($(LIBRARY_COMPILE),$(BOOT_COMPILE))
 is_boot=true
@@ -91,7 +91,7 @@ csproj-local:
 	echo $(LIBRARY_NAME); \
 	echo $(BUILT_SOURCES_cmdline); \
 	echo $(build_lib); \
-	echo $(response)) | mono $(topdir)/build/csproj/genproj.exe $(topdir)/build/csproj/csproj.tmpl > `basename $(LIBRARY_NAME) .dll`.csproj
+	echo $(response)) | mono $(topdir)/build/csproj/genproj.exe $(topdir)/build/csproj/csproj.tmpl > `basename $(LIBRARY_NAME) .dll`-PROFILE.csproj
 
 
 install-local: all-local
