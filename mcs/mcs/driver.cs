@@ -1343,10 +1343,9 @@ namespace Mono.CSharp
 				return true;
 				
 			case "/debug":
-				if (value == "pdbonly" || value == "full"){
-					/* ignore */
-				} else
+				if (value == "full" || value == "")
 					want_debugging_support = true;
+
 				return true;
 				
 			case "/debug+":
