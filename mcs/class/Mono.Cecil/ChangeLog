@@ -1,3 +1,7 @@
+2009-04-30  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil.Signatures/SignatureReader.cs: fix reading out extra mods.
+
 2009-04-21  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Cil/SymbolStoreHelper.cs: look for the assembly in the GAC

@@ -375,7 +375,6 @@ namespace Mono.Cecil.Signatures {
 				break;
 			default :
 				rt.TypedByRef = rt.Void = rt.ByRef = false;
-				rt.CustomMods = CombineCustomMods (rt.CustomMods, ReadCustomMods (data, start, out start));
 				rt.Type = ReadType (data, curs, out start);
 				break;
 			}
@@ -449,13 +448,7 @@ namespace Mono.Cecil.Signatures {
 			default :
 				p.TypedByRef = false;
 				p.ByRef = false;
-
-				start = curs;
-
-				if (p.CustomMods == null || p.CustomMods.Length == 0)
-					p.CustomMods = ReadCustomMods (data, start, out start);
-
-				p.Type = ReadType (data, start, out start);
+				p.Type = ReadType (data, curs, out start);
 				break;
 			}
 			return p;
