@@ -127,7 +127,6 @@ namespace System.Web.UI {
 		string codeFileBaseClass;
 		string metaResourceKey;
 		Type codeFileBaseClassType;
-		string pageParserFilterTypeName;
 		Type pageParserFilterType;
 		PageParserFilter pageParserFilter;
 		
@@ -192,9 +191,6 @@ namespace System.Web.UI {
 		internal virtual void LoadConfigDefaults ()
 		{
 			debug = CompilationConfig.Debug;
-#if NET_2_0
-			pageParserFilterTypeName = PagesConfig.PageParserFilterType;
-#endif
 		}
 		
 		internal void AddApplicationAssembly ()
@@ -1050,19 +1046,16 @@ namespace System.Web.UI {
 			set { md5checksum = value; }
 		}
 
-		internal string PageParserFilterTypeName {
-			get { return pageParserFilterTypeName; }
-		}
-
 		internal PageParserFilter PageParserFilter {
 			get {
 				if (pageParserFilter != null)
 					return pageParserFilter;
 
-				if (String.IsNullOrEmpty (pageParserFilterTypeName))
+				Type t = PageParserFilterType;
+				if (t == null)
 					return null;
-
-				pageParserFilter = Activator.CreateInstance (PageParserFilterType) as PageParserFilter;
+				
+				pageParserFilter = Activator.CreateInstance (t) as PageParserFilter;
 				pageParserFilter.Initialize (this);
 
 				return pageParserFilter;
@@ -1071,9 +1064,14 @@ namespace System.Web.UI {
 		
 		internal Type PageParserFilterType {
 			get {
-				if (pageParserFilterType == null)
-					pageParserFilterType = Type.GetType (PageParserFilterTypeName, true);
-
+				if (pageParserFilterType == null) {
+					string typeName = PagesConfig.PageParserFilterType;
+					if (String.IsNullOrEmpty (typeName))
+						return null;
+					
+					pageParserFilterType = Type.GetType (typeName, true);
+				}
+				
 				return pageParserFilterType;
 			}
 		}
@@ -1422,4 +1420,3 @@ namespace System.Web.UI {
 #endif
 	}
 }
-

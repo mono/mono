@@ -50,6 +50,7 @@ namespace System.Web.UI
 #if NET_2_0
 			VirtualPath = new VirtualPath ("/" + Path.GetFileName (fname));
 #endif
+			LoadConfigDefaults ();
 		}
 
 #if NET_2_0
@@ -70,6 +71,7 @@ namespace System.Web.UI
 				InputFile = inputFile;
 			
 			SetBaseType (null);
+			LoadConfigDefaults ();
 		}
 #endif
 		

@@ -55,6 +55,7 @@ namespace System.Web.UI
 			this.cacheEntryName = String.Concat ("@@MasterPagePHIDS:", virtualPath, ":", inputFile);
 			
 			contentPlaceHolderIds = HttpRuntime.InternalCache.Get (this.cacheEntryName) as List <string>;
+			LoadConfigDefaults ();
 		}
 
 		internal MasterPageParser (VirtualPath virtualPath, TextReader reader, HttpContext context)
@@ -68,6 +69,7 @@ namespace System.Web.UI
 			this.cacheEntryName = String.Concat ("@@MasterPagePHIDS:", virtualPath, ":", InputFile);
 			
 			contentPlaceHolderIds = HttpRuntime.InternalCache.Get (this.cacheEntryName) as List <string>;
+			LoadConfigDefaults ();
 		}
 		
 		public static MasterPage GetCompiledMasterInstance (string virtualPath, string inputFile, HttpContext context)
