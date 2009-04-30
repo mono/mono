@@ -1,5 +1,13 @@
 2009-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_type_get_name_recurse): Don't crash
+	for ownerless generic params.
+
+	* debug-helpers.c (mono_type_get_desc): Correct the format
+	for ownerless generic params.
+
+2009-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify the class layout table.
 
 2009-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
