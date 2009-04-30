@@ -1,3 +1,8 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* X509Certificate.cs: Adapt to work with only [DSA|RSA]Managed when
+	built for NET_2_1, i.e. remove use of [DSA|RSA]CryptoServiceProvider
+
 2008-09-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs, X509Store.cs: Use File.Create instead of OpenWrite to

@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_1
+
 using System.Runtime.InteropServices;
 using SSCX = System.Security.Cryptography.X509Certificates;
 
@@ -92,3 +94,6 @@ namespace System.Security.Permissions {
 		}
 	}
 }
+
+#endif
+

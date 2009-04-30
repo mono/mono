@@ -1,3 +1,7 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* AuthenticodeBase.cs, AuthenticodeDeformatter.cs: Remove from NET_2_1
+
 2008-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: Use RSAManaged and the new overloaded

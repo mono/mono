@@ -34,6 +34,8 @@ using SSCX = System.Security.Cryptography.X509Certificates;
 using System.Security.Permissions;
 using System.Text;
 
+using Mono.Security.Cryptography;
+
 namespace Mono.Security.X509 {
 
 	// References:
@@ -267,8 +269,12 @@ namespace Mono.Security.X509 {
 					// BUG: MS BCL 1.0 can't import a key which 
 					// isn't the same size as the one present in
 					// the container.
+#if NET_2_1
+					_dsa = new DSAManaged (dsaParams.Y.Length << 3);
+#else
 					_dsa = (DSA) new DSACryptoServiceProvider (dsaParams.Y.Length << 3);
 					_dsa.ImportParameters (dsaParams);
+#endif
 				}
 				return _dsa; 
 			}
@@ -364,8 +370,12 @@ namespace Mono.Security.X509 {
 					// isn't the same size as the one present in
 					// the container.
 					int keySize = (rsaParams.Modulus.Length << 3);
+#if NET_2_1
+					_rsa = new RSAManaged (keySize);
+#else
 					_rsa = (RSA) new RSACryptoServiceProvider (keySize);
 					_rsa.ImportParameters (rsaParams);
+#endif
 				}
 				return _rsa; 
 			}
@@ -493,27 +503,33 @@ namespace Mono.Security.X509 {
 			return v.VerifySignature (this.Hash, this.Signature);
 		}
 
+		internal string GetHashNameFromOID (string oid)
+		{
+			switch (oid) {
+			// MD2 with RSA encryption 
+			case "1.2.840.113549.1.1.2":
+				// maybe someone installed MD2 ?
+				return "MD2";
+			// MD5 with RSA encryption 
+			case "1.2.840.113549.1.1.4":
+				return "MD5";
+			// SHA-1 with RSA Encryption 
+			case "1.2.840.113549.1.1.5":
+			case "1.3.14.3.2.29":
+				return "SHA1";
+			default:
+				return null;
+			}
+		}
+
 		internal bool VerifySignature (RSA rsa) 
 		{
 			RSAPKCS1SignatureDeformatter v = new RSAPKCS1SignatureDeformatter (rsa);
-			switch (m_signaturealgo) {
-				// MD2 with RSA encryption 
-				case "1.2.840.113549.1.1.2":
-					// maybe someone installed MD2 ?
-					v.SetHashAlgorithm ("MD2");
-					break;
-				// MD5 with RSA encryption 
-				case "1.2.840.113549.1.1.4":
-					v.SetHashAlgorithm ("MD5");
-					break;
-				// SHA-1 with RSA Encryption 
-				case "1.2.840.113549.1.1.5":
-				case "1.3.14.3.2.29":
-					v.SetHashAlgorithm ("SHA1");
-					break;
-				default:
-					throw new CryptographicException ("Unsupported hash algorithm: " + m_signaturealgo);
-			}
+			string hashName = GetHashNameFromOID (m_signaturealgo);
+			if (hashName == null)
+				throw new CryptographicException ("Unsupported hash algorithm: " + m_signaturealgo);
+
+			v.SetHashAlgorithm (hashName);
 			return v.VerifySignature (this.Hash, this.Signature);
 		}
 
@@ -532,8 +548,14 @@ namespace Mono.Security.X509 {
 
 		public bool CheckSignature (byte[] hash, string hashAlgorithm, byte[] signature) 
 		{
+#if NET_2_1
+			string hashName = GetHashNameFromOID (hashAlgorithm);
+			HashAlgorithm algo = HashAlgorithm.Create (hashName);
+			return PKCS1.Verify_v15 (RSA, algo, hash, signature);
+#else
 			RSACryptoServiceProvider r = (RSACryptoServiceProvider) RSA;
 			return r.VerifyHash (hash, hashAlgorithm, signature);
+#endif
 		}
 
 		public bool IsSelfSigned {

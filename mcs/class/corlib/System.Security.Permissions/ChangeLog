@@ -1,3 +1,7 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PublisherIdentityPermissionAttribute.cs: Remove from NET_2_1
+
 2008-07-06  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* ReflectionPermissionFlag.cs: Add missing member

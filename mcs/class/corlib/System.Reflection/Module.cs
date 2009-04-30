@@ -233,7 +233,8 @@ namespace System.Reflection {
 
 			UnitySerializationHolder.GetModuleData (this, info, context);
 		}
-	
+
+#if !NET_2_1
 		public X509Certificate GetSignerCertificate ()
 		{
 			try {
@@ -243,6 +244,7 @@ namespace System.Reflection {
 				return null;
 			}
 		}
+#endif
 
 #if NET_2_0
 		[ComVisible (true)]

@@ -1,3 +1,10 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CryptoConvert.cs, PKCS8.cs: Adapt to work with only [DSA|RSA]
+	Managed	when built for NET_2_1, i.e. remove use of [DSA|RSA]
+	CryptoServiceProvider
+	* KeyPairPersistence.cs: Remove from NET_2_1
+
 2009-04-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS1.cs: Make this work under NET_2_1 where SHA384 and SHA512

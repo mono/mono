@@ -1,3 +1,8 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* StrongName.cs: Adapt to work with only RSAManaged when built 
+	for NET_2_1, i.e. remove use of RSACryptoServiceProvider
+
 2008-09-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Use File.Create instead of OpenWrite to make sure nothing

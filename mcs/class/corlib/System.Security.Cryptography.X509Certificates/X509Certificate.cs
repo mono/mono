@@ -33,11 +33,13 @@ using System.Security.Permissions;
 using System.Text;
 
 using Mono.Security;
-using Mono.Security.Authenticode;
 using Mono.Security.X509;
 
 #if NET_2_0
 using System.Runtime.Serialization;
+#endif
+#if !NET_2_1
+using Mono.Security.Authenticode;
 #endif
 
 namespace System.Security.Cryptography.X509Certificates {
@@ -101,7 +103,8 @@ namespace System.Security.Cryptography.X509Certificates {
 			byte[] data = Load (filename);
 			return new X509Certificate (data);
 		}
-	
+
+#if !NET_2_1
 		[MonoTODO ("Incomplete - minimal validation in this version")]
 		public static X509Certificate CreateFromSignedFile (string filename)
 		{
@@ -142,7 +145,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			return new X509Certificate (cert);
 #endif
 		}
-	
+
+#endif // NET_2_1
+
 		// constructors
 	
 		// special constructor for Publisher (and related classes).

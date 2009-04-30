@@ -129,11 +129,13 @@ public class StrongNameKeyPair
 				_keyPairArray = null;
 			}
 		}
+#if !NET_2_1
 		else if (_keyPairContainer != null) {
 			CspParameters csp = new CspParameters ();
 			csp.KeyContainerName = _keyPairContainer;
 			_rsa = new RSACryptoServiceProvider (csp);
 		}
+#endif
 		return _rsa;
 	}
 

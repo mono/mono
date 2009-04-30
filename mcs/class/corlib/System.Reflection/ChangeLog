@@ -1,3 +1,10 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Module.cs: Exclude GetSignerCertificate (Authenticode related) 
+	from NET_2_1
+	* StrongNameKeyPair.cs: Adapt to work with only RSAManaged when 
+	built for NET_2_1, i.e. remove use of RSACryptoServiceProvider
+
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoMethod.cs: Add a 'member' argument to the get_parameter_info () icall.

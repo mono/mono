@@ -1,3 +1,8 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DSACryptoServiceProvider.cs, RSACryptoServiceProvider.cs: Remove
+	from NET_2_1
+
 2009-04-29  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DES.cs, DESCryptoServiceProvider.cs: Do not include in NET_2_1

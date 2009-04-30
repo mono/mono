@@ -1,3 +1,9 @@
+2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* X509Certificate.cs: Remove CreateFromSignedFile from NET_2_1 
+	since it's unneeded and bring more code and [SecuritySafeCritical]
+	API into the assemblies.
+
 2008-08-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate[20].cs: Silverlight 2.0 does not implement either
