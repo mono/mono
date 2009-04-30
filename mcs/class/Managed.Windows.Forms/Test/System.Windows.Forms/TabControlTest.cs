@@ -754,7 +754,41 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("tc_OnEnter;p1_OnEnter;p1_OnLeave;tc_OnLeave;", events, "A2");
 		}
 
-		
+		[Test] // bug #499887
+		[Category ("NotWorking")]
+		public void FireFocusWhenSettingSelectionIndex ()
+		{
+			Form f = new Form ();
+			TabControl tc = new TabControl ();
+			TabPage p1 = new TabPage ();
+			TabPage p2 = new TabPage ();
+			string events = string.Empty;
+
+			tc.TabPages.Add (p1);
+			tc.TabPages.Add (p2);
+			tc.SelectedIndex = 0;
+			Button b1 = new Button ();
+			Button b2 = new Button ();
+
+			f.Controls.Add (b1);
+			f.Controls.Add (b2);
+			f.Controls.Add (tc);
+
+			f.Show ();
+			b1.Focus ();
+			b2.GotFocus += new EventHandler (delegate (Object obj, EventArgs e) {
+				tc.SelectedIndex = 1;
+			});
+			
+			tc.GotFocus += new EventHandler (delegate (Object obj, EventArgs e) { events += ("tc_OnGotFocus;"); });
+			p2.Enter += new EventHandler (delegate (Object obj, EventArgs e) { events += ("p2_OnEnter;");});
+			p2.Leave += new EventHandler (delegate (Object obj, EventArgs e) { events += ("p2_OnLeave;"); });
+	
+			b2.Focus ();
+			Assert.AreEqual ("tc_OnGotFocus;p2_OnEnter;", events, "A1");
+			Assert.IsTrue (tc.Focused, "A2");
+		}
+
 
 #endif
 	}
