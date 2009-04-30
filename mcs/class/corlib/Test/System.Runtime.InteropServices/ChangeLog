@@ -1,3 +1,7 @@
+2009-04-29  Jonathan Chambers  <joncham@gmail.com>
+
+	* MarshalTest.cs: Add test for GetExceptionForHR.
+
 2008-06-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MarshalTest.cs: Added tests for GetHINSTANCE. Improved existing

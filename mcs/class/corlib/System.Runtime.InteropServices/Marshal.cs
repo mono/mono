@@ -1128,6 +1128,17 @@ namespace System.Runtime.InteropServices
 		internal
 #endif
 		static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo) {
+
+			const int E_OUTOFMEMORY = unchecked ((int)0x8007000EL);
+			const int E_INVALIDARG = unchecked ((int)0X80070057);
+			
+			switch (errorCode)
+			{
+			case E_OUTOFMEMORY:
+				return new OutOfMemoryException ();
+			case E_INVALIDARG:
+				return new ArgumentException ();
+			}
 			if (errorCode < 0)
 				return new COMException ("", errorCode);
 			return null;

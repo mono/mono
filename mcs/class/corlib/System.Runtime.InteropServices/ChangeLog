@@ -1,3 +1,8 @@
+2009-04-17 Tom Hindle <tom_hindle@sil.org>
+
+	* Marshal.cs: Improved GetExceptionForHR to return real C# exceptions in 
+	certain cases instead of always COMException.
+
 2009-02-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SafeHandle.cs: Add default ctor in 2.1 profile (needed to compile

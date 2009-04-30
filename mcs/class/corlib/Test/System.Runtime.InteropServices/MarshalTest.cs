@@ -668,6 +668,19 @@ namespace MonoTests.System.Runtime.InteropServices
 			Marshal.FreeHGlobal (mem);
 		}
 
+		[Test]
+		public void TestGetExceptionForHR ()
+		{
+			const int E_OUTOFMEMORY = unchecked ((int) 0x8007000E);
+			const int E_INVALIDARG = unchecked ((int) 0X80070057);
+			
+			Exception ex = Marshal.GetExceptionForHR (E_OUTOFMEMORY);
+			Assert.AreEqual (typeof (OutOfMemoryException), ex.GetType (), "E_OUTOFMEMORY");
+			
+			ex = Marshal.GetExceptionForHR (E_INVALIDARG);
+			Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "E_INVALIDARG");
+		}
+
 		bool RunningOnUnix {
 			get {
 				int p = (int) Environment.OSVersion.Platform;
