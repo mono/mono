@@ -1,3 +1,11 @@
+2009-05-01  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CodeAccessSecurityAttribute.cs, SecurityAction.cs, 
+	SecurityAttribute.cs, SecurityPermissionAttribute.cs: Add [Obsolete]
+	on NET_2_1 since CAS stuff is not available in Moonlight. Note that
+	the types needs to be present because compiler insert them inside
+	assemblies.
+
 2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PublisherIdentityPermissionAttribute.cs: Remove from NET_2_1
