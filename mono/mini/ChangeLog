@@ -15,6 +15,9 @@
 
 2009-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Use mono_pagesize () instead of the
+	PAGESIZE constant.
+
 	* aot-runtime.c (load_aot_module): Get rid of another mprotect call.
 
 2009-04-30  Zoltan Varga  <vargaz@gmail.com>
