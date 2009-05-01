@@ -1,3 +1,9 @@
+2009-05-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SqliteConnection.cs: implement Dispose for 2.0. It was leaking an fd
+	in using().
+	Bug #499864 fixed.
+
 2008-07-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SqliteDataSourceEnumerator.cs: Replace a few Type.GetType by typeof
