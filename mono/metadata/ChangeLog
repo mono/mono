@@ -1,3 +1,8 @@
+2009-05-01  Mark Probst  <mark.probst@gmail.com>
+
+	* gc.c (mono_gc_run_finalize): Don't set the domain too late,
+	because mono_delegate_free_ftnptr() needs it.
+
 2009-04-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the eventmap table.
