@@ -1,3 +1,18 @@
+2009-05-01 Jonathan Pryor  <jpryor@novell.com>
+
+	* DiagnosticsConfigurationHandler.cs: Don't refer to TraceImpl member
+	  while reading the .config file, instead cache the values and refer
+	  to the cached values during initialization.  This prevents recursive
+	  initialization calls (Trace.OnInit() ... Trace.Listeners.Add() ...
+	  Trace.OnInit() ...), and associated duplicate parsing of .config file
+	  sections.  Fixes bnc#499442.
+	* TraceImpl.cs: Cope with DiagnosticsConfigurationHandler changes.
+	* TraceListenerCollection.cs: Add internal 
+	  Add(TraceListener,TraceImplSettings) method for adding
+	  TraceListeners during DiagnosticsConfigurationHandler initialization
+	  (which can't access TraceImpl, as we may still be reading the
+	  .config file to determine the TraceImpl values).
+
 2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ConsoleTraceListener.cs: add an internal constructor that takes a

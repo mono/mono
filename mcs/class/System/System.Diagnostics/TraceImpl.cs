@@ -37,6 +37,19 @@ using System.Threading;
 
 namespace System.Diagnostics {
 
+	internal class TraceImplSettings {
+		public const string Key = ".__TraceInfoSettingsKey__.";
+
+		public bool AutoFlush;
+		public int IndentLevel, IndentSize = 4;
+		public TraceListenerCollection Listeners = new TraceListenerCollection (false);
+
+		public TraceImplSettings ()
+		{
+			Listeners.Add (new DefaultTraceListener (), this);
+		}
+	}
+
 	internal class TraceImpl {
 
 		private static object initLock = new object ();
@@ -73,14 +86,6 @@ namespace System.Diagnostics {
 		[ThreadStatic]
 		private static int indentSize;
 #endif
-
-		static TraceImpl ()
-		{
-			// defaults
-			autoFlush = false;
-			indentLevel = 0;
-			indentSize = 4;
-		}
 
 		private TraceImpl ()
 		{
@@ -182,25 +187,28 @@ namespace System.Diagnostics {
 		//
 		// There are also some ordering issues.
 		//
-		// The DiagnosticsConfigurationHandler assumes that the TraceImpl.Listeners
-		// collection exists (so it can initialize the DefaultTraceListener and
-		// add/remove existing listeners).
-		private static object InitOnce ()
+		// DiagnosticsConfigurationHandler doesn't store values within TraceImpl,
+		// but instead stores values it reads from the .config file within a
+		// TraceImplSettings object (accessible via the TraceImplSettings.Key key
+		// in the IDictionary returned).
+		private static void InitOnce ()
 		{
-			object d = null;
-
 			if (initLock != null) {
 				lock (initLock) {
 					if (listeners == null) {
-						listeners = new TraceListenerCollection (false);
-						listeners.Add (new DefaultTraceListener ());
-						d = DiagnosticsConfiguration.Settings;
-						initLock = null;
+						IDictionary       d = DiagnosticsConfiguration.Settings;
+						TraceImplSettings s = (TraceImplSettings) d [TraceImplSettings.Key];
+
+						d.Remove (TraceImplSettings.Key);
+
+						autoFlush   = s.AutoFlush;
+						indentLevel = s.IndentLevel;
+						indentSize  = s.IndentSize;
+						listeners   = s.Listeners;
 					}
 				}
+				initLock = null;
 			}
-
-			return d;
 		}
 
 		// FIXME: According to MSDN, this method should display a dialog box

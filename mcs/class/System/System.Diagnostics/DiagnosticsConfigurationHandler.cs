@@ -87,6 +87,8 @@ namespace System.Diagnostics
 #endif
 	public class DiagnosticsConfigurationHandler : IConfigurationSectionHandler
 	{
+		TraceImplSettings configValues;
+
 		delegate void ElementHandler (IDictionary d, XmlNode node);
 
 		IDictionary elementHandlers = new Hashtable ();
@@ -108,6 +110,11 @@ namespace System.Diagnostics
 				d = new Hashtable (CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
 			else
 				d = (IDictionary) ((ICloneable)parent).Clone();
+
+			if (d.Contains (TraceImplSettings.Key))
+				configValues = (TraceImplSettings) d [TraceImplSettings.Key];
+			else
+				d.Add (TraceImplSettings.Key, configValues = new TraceImplSettings ());
 
 #if NET_2_0
 			// process <sharedListeners> first
@@ -170,7 +177,7 @@ namespace System.Diagnostics
 			if (logfilename != null)
 				d ["logfilename"] = logfilename;
 
-			DefaultTraceListener dtl = (DefaultTraceListener) TraceImpl.Listeners["Default"];
+			DefaultTraceListener dtl = (DefaultTraceListener) configValues.Listeners["Default"];
 			if (dtl != null) {
 				if (assertuienabled != null)
 					dtl.AssertUiEnabled = (bool) d ["assertuienabled"];
@@ -254,7 +261,7 @@ namespace System.Diagnostics
 					continue;
 				if (t == XmlNodeType.Element) {
 					if (child.Name == "listeners")
-						AddTraceListeners (d, child, TraceImpl.Listeners);
+						AddTraceListeners (d, child, configValues.Listeners);
 					else
 						ThrowUnrecognizedElement (child);
 					ValidateInvalidAttributes (child.Attributes, child);
@@ -280,7 +287,7 @@ namespace System.Diagnostics
 					throw new ConfigurationException ("The `autoflush' attribute must be `true' or `false'",
 							e, node);
 				}
-				TraceImpl.AutoFlush = autoflush;
+				configValues.AutoFlush = autoflush;
 			}
 			if (indentsizeConf != null) {
 				int indentsize = 0;
@@ -291,7 +298,7 @@ namespace System.Diagnostics
 					throw new ConfigurationException ("The `indentsize' attribute must be an integral value.",
 							e, node);
 				}
-				TraceImpl.IndentSize = indentsize;
+				configValues.IndentSize = indentsize;
 			}
 		}
 
@@ -401,7 +408,7 @@ namespace System.Diagnostics
 							RemoveTraceListener (name);
 							break;
 						case "clear":
-							TraceImpl.Listeners.Clear ();
+							configValues.Listeners.Clear ();
 							break;
 						default:
 							ThrowUnrecognizedElement (child);
@@ -432,7 +439,7 @@ namespace System.Diagnostics
 						"Listener '{0}' references a shared " +
 						"listener and can only have a 'Name' " +
 						"attribute.", name));
-				listeners.Add (shared);
+				listeners.Add (shared, configValues);
 				return;
 			}
 #else
@@ -499,13 +506,13 @@ namespace System.Diagnostics
 			}
 #endif
 
-			listeners.Add (l);
+			listeners.Add (l, configValues);
 		}
 
 		private void RemoveTraceListener (string name)
 		{
 			try {
-				TraceImpl.Listeners.Remove (name);
+				configValues.Listeners.Remove (name);
 			}
 			catch (ArgumentException) {
 				// The specified listener wasn't in the collection

@@ -109,6 +109,13 @@ namespace System.Diagnostics {
 			return listeners.Add (listener);
 		}
 
+		internal void Add (TraceListener listener, TraceImplSettings settings)
+		{
+			listener.IndentLevel = settings.IndentLevel;
+			listener.IndentSize  = settings.IndentSize;
+			listeners.Add (listener);
+		}
+
 		private void InitializeListener (TraceListener listener)
 		{
 			listener.IndentLevel = TraceImpl.IndentLevel;
