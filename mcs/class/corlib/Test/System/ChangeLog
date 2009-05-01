@@ -1,3 +1,7 @@
+2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainManagerTest.cs: New. Unit test for CheckSecuritySettings
+
 2009-04-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomainTest.cs: Add a test for #499013.
