@@ -1,3 +1,8 @@
+2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityState.cs: Implement IsStateAvailable (added in 2.0SP 
+	and part of SL API)
+
 2009-04-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityException.cs: Remove CAS-specific stuff from ToString

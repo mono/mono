@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,12 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_1
+#if NET_2_0
 
 namespace System.Security {
 
-	[MonoTODO]
-	[SecurityCritical]
+	// available in FX2.0 with service pack 1, including the 2.0 shipped as part of FX3.5
 	public abstract class SecurityState {
 
 		protected SecurityState ()
@@ -42,9 +41,13 @@ namespace System.Security {
 
 		public bool IsStateAvailable ()
 		{
-			throw new NotImplementedException ();
+			AppDomainManager adm = AppDomain.CurrentDomain.DomainManager;
+			if (adm == null)
+				return false;
+			return adm.CheckSecuritySettings (this);
 		}
 	}
 }
 
 #endif
+
