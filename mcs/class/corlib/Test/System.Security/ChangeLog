@@ -1,3 +1,7 @@
+2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityStateTest.cs: New. Unit tests for IsStateAvailable
+
 2008-01-02  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SecureStringTest.cs: Add test case for InsertAt (#350820)
