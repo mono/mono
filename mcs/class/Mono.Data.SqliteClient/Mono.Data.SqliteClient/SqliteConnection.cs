@@ -56,6 +56,9 @@ namespace Mono.Data.SqliteClient
 		private ConnectionState state;
 		private Encoding encoding;
 		private int busy_timeout;
+#if NET_2_0
+		bool disposed;
+#endif
 
 #endregion
 
@@ -82,6 +85,19 @@ namespace Mono.Data.SqliteClient
 		public void Dispose ()
 		{
 			Close ();
+		}
+#else
+		protected override void Dispose (bool disposing)
+		{
+			try {
+				if (disposing && !disposed) {
+					Close ();
+					conn_str = null;
+				}
+			} finally {
+				disposed = true;
+				base.Dispose (disposing);
+			}
 		}
 #endif
 		                
