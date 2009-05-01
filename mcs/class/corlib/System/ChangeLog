@@ -1,3 +1,8 @@
+2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainManager.cs: Fix base class for NET_2_1 and implement
+	CheckSecuritySettings (added in 2.0SP and part of SL API)
+
 2009-04-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Enum.cs: return the value as an enum of the right type.
