@@ -1,3 +1,8 @@
+2009-05-01  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* corlib_test.dll.sources: Add unit tests for AppDomainManager
+	and SecurityState
+
 2009-04-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Add CryptoConfig_2_1.cs (partial class) to

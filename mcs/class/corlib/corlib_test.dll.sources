@@ -3,6 +3,7 @@ Microsoft.Win32/RegistryKeyTest.cs
 Mono/DataConvertTest.cs
 ../Mono/DataConverter.cs
 System/ActivatorTest.cs
+System/AppDomainManagerTest.cs
 System/AppDomainSetupTest.cs
 System/AppDomainTest.cs
 System/ApplicationIdentityTest.cs
@@ -320,6 +321,7 @@ System.Security/SecurityCriticalAttributeTest.cs
 System.Security/SecurityElementTest.cs
 System.Security/SecurityExceptionTest.cs
 System.Security/SecurityManagerTest.cs
+System.Security/SecurityStateTest.cs
 System.Security/SecurityTransparentAttributeTest.cs
 System/SingleTest.cs
 System/SingleFormatterTest.cs
