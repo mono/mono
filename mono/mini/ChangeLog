@@ -1,3 +1,15 @@
+2009-05-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c mini-x86.c: Implement 32 bit and x86 support.
+
+	* ssa.c (mono_ssa_compute): Don't skip I8 values when using LLVM.
+
+	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Update to the latest
+	LLVM API.
+
+	* mini.c (mini_method_compile): Set the from_llvm flag in MonoJitInfo
+	if needed. Don't decompose long operations when using llvm.
+
 2009-05-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_aot_module): Get rid of another mprotect call.
