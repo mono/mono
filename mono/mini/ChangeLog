@@ -1,5 +1,8 @@
 2009-05-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c (mono_arch_get_throw_exception_by_name): Simplify this
+	as it is not used.
+
 	* mini-llvm.c mini-x86.c: Implement 32 bit and x86 support.
 
 	* ssa.c (mono_ssa_compute): Don't skip I8 values when using LLVM.
