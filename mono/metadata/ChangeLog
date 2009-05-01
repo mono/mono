@@ -1,3 +1,7 @@
+2009-05-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain-internals.h (struct _MonoJitInfo): Add a 'from_llvm' flag.
+
 2009-05-01  Mark Probst  <mark.probst@gmail.com>
 
 	* gc.c (mono_gc_run_finalize): Don't set the domain too late,
