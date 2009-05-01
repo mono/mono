@@ -429,10 +429,10 @@ namespace System.Net.Sockets
 
 					result.Complete ();
 				} else if (result.Addresses != null) {
+					int error = (int) SocketError.InProgress; // why?
 					foreach(IPAddress address in result.Addresses) {
 						IPEndPoint iep = new IPEndPoint (address, result.Port);
 						SocketAddress serial = iep.Serialize ();
-						int error = 0;
 						
 						Socket.Connect_internal (result.Sock.socket, serial, out error);
 						if (error == 0) {
@@ -457,7 +457,7 @@ namespace System.Net.Sockets
 						}
 					}
 					
-					result.Complete (new SocketException ((int)SocketError.InProgress));
+					result.Complete (new SocketException (error));
 				} else {
 					result.Complete (new SocketException ((int)SocketError.AddressNotAvailable));
 				}
