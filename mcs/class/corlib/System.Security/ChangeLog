@@ -1,3 +1,9 @@
+2009-05-01  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecurityCriticalAttribute.cs: Add simpler version NET_2_1
+	* SecuritySafeCriticalAttribute.cs: Remove MonoTODO for NET_2_1
+	* SecurityTransparentAttribute.cs: Remove MonoTODO for NET_2_1
+
 2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityState.cs: Implement IsStateAvailable (added in 2.0SP 

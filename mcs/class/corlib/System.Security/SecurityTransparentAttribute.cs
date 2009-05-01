@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,12 +30,13 @@
 
 namespace System.Security {
 
+#if !NET_2_1
+	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
+#endif
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple=false, Inherited=false)]
-	[MonoTODO ("Not supported by the runtime")]
 	public sealed class SecurityTransparentAttribute : Attribute {
 
 		public SecurityTransparentAttribute ()
-			: base ()
 		{
 		}
 	}

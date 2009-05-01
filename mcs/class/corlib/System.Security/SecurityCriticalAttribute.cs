@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,15 +26,28 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Security {
+
+#if NET_2_1
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
 		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
 		AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate,
 		AllowMultiple=false, Inherited=false)]
-	[MonoTODO ("Not supported by the runtime")]
+	public sealed class SecurityCriticalAttribute : Attribute {
+
+		public SecurityCriticalAttribute ()
+		{
+		}
+	}
+
+#elif NET_2_0
+
+	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | AttributeTargets.Class | AttributeTargets.Struct |
+		AttributeTargets.Enum | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property |
+		AttributeTargets.Field | AttributeTargets.Event | AttributeTargets.Interface | AttributeTargets.Delegate,
+		AllowMultiple=false, Inherited=false)]
 	public sealed class SecurityCriticalAttribute : Attribute {
 
 		private SecurityCriticalScope _scope;
@@ -63,6 +76,5 @@ namespace System.Security {
 			get { return _scope; }
 		}
 	}
-}
-
 #endif
+}
