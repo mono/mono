@@ -1,3 +1,10 @@
+2009-04-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Tds.cs (ExecuteQuery): Reset all the variables related to LoadData when 
+	performing queries with SequentialAccess set to true.  Fixes incorrect 
+	handling of data retrieval when consecutive queries are run with 
+	SequentialAccess set to true.
+	
 2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TdsConnectionPool.cs: if GetConnection() fails to create a
