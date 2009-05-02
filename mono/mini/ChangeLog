@@ -1,5 +1,8 @@
 2009-05-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-amd64.c (mono_arch_get_static_rgctx_trampoline): Increase the
+	buffer length to work with AOT code.
+
 	* method-to-ir.c (mono_method_to_ir): Handle loading errors in the
 	ldfld/stfld opcodes.
 
