@@ -1,5 +1,8 @@
 2009-05-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Handle loading errors in the
+	ldfld/stfld opcodes.
+
 	* exceptions-x86.c (mono_arch_get_throw_exception_by_name): Simplify this
 	as it is not used.
 
