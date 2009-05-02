@@ -84,6 +84,17 @@ KEEP_OUTPUT_FILE_COPY = yes
 include ../build/executable.make
 endif
 
+csproj-local:
+	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \
+	echo $(thisdir):$$config_file >> $(topdir)/../mono/msvc/scripts/order; \
+	(echo $(is_boot); \
+	echo $(BOOT_COMPILE);	\
+	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
+	echo $(PROGRAM); \
+	echo $(BUILT_SOURCES_cmdline); \
+	echo $(build_lib); \
+	echo $(response)) > $(topdir)/../mono/msvc/scripts/inputs/$$config_file
+
 #
 # Below this line we have local targets used for testing and development
 #
@@ -154,6 +165,5 @@ q: cs-parser.cs qh
 	echo -e 'int j;\nj = 1;' | mono csharp.exe
 	echo -e 'var a = new int[]{1,2,3};\nfrom x in a select x;' | mono csharp.exe
 	echo -e 'var a = from f in System.IO.Directory.GetFiles ("/tmp") where f == "passwd" select f;' | mono csharp.exe
-
 
 
