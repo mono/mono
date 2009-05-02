@@ -1,3 +1,9 @@
+2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs (ThrowSecurityException): Don't include
+	CAS-specific information when throwing a SecurityException in
+	NET_2_1
+
 2009-05-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SecurityCriticalAttribute.cs: Add simpler version NET_2_1

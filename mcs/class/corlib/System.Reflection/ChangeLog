@@ -1,3 +1,7 @@
+2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Exclude CAS-specific code for NET_2_1
+
 2009-04-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Module.cs: Exclude GetSignerCertificate (Authenticode related) 

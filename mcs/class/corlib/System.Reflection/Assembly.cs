@@ -794,6 +794,7 @@ namespace System.Reflection {
 		}
 #endif
 
+#if !NET_2_1
 		// Code Access Security
 
 		internal void Resolve () 
@@ -874,5 +875,6 @@ namespace System.Reflection {
 				}
 			}
 		}
+#endif
 	}
 }

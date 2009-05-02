@@ -1,3 +1,9 @@
+2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Remove code to initialize from an handle
+	in NET_2_1 since this is only possible from Windows and would be
+	SC anyway.
+
 2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* X509Certificate.cs: Remove CreateFromSignedFile from NET_2_1 

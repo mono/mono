@@ -391,11 +391,15 @@ namespace System.Security {
 		internal static void ThrowSecurityException (object demanded, string message, SecurityFrame frame,
 			SecurityAction action, IPermission failed)
 		{
+#if NET_2_1
+			throw new SecurityException (message);
+#else
 			Assembly a = frame.Assembly;
 			throw new SecurityException (Locale.GetText (message), 
 				a.UnprotectedGetName (), a.GrantedPermissionSet, 
 				a.DeniedPermissionSet, frame.Method, action, demanded, 
 				failed, a.UnprotectedGetEvidence ());
+#endif
 		}
 	}
 }

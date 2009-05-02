@@ -1,3 +1,8 @@
+2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Console.cs: Remove Windows-specific p/invokes and SSC code
+	from the NET_2_1 build.
+
 2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainManager.cs: Fix base class for NET_2_1 and implement

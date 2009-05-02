@@ -174,9 +174,16 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (handle == IntPtr.Zero)
 				throw new ArgumentException ("Invalid handle.");
 #endif
+#if NET_2_1
+			// this works on Windows-only so it's of no use for Moonlight
+			// even more since this ctor is [SecurityCritical]
+			throw new NotSupportedException ();
+#else
 			InitFromHandle (handle);
+#endif
 		}
 
+#if !NET_2_1
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		private void InitFromHandle (IntPtr handle)
 		{
@@ -189,6 +196,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 			// for 1.x IntPtr.Zero results in an "empty" certificate instance
 		}
+#endif
 	
 		public X509Certificate (System.Security.Cryptography.X509Certificates.X509Certificate cert) 
 		{

@@ -48,6 +48,7 @@ namespace System
 #endif
 	class Console
 	{
+#if !NET_2_1
 		private class WindowsConsole
 		{
 			[DllImport ("kernel32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
@@ -67,7 +68,7 @@ namespace System
 				return GetConsoleOutputCP ();
 			}
 		}
-
+#endif
 		internal static TextWriter stdout;
 		private static TextWriter stderr;
 		private static TextReader stdin;
@@ -83,6 +84,10 @@ namespace System
 				//
 				// On Windows, follow the Windows tradition
 				//
+#if NET_2_1
+				// should never happen since Moonlight does not run on windows
+				inputEncoding = outputEncoding = Encoding.GetEncoding (28591);
+#else			
 				try {
 					inputEncoding = Encoding.GetEncoding (WindowsConsole.GetInputCodePage ());
 					outputEncoding = Encoding.GetEncoding (WindowsConsole.GetOutputCodePage ());
@@ -92,6 +97,7 @@ namespace System
 					// Use Latin 1 as it is fast and UTF-8 is never used as console code page
 					inputEncoding = outputEncoding = Encoding.GetEncoding (28591);
 				}
+#endif
 			} else {
 				//
 				// On Unix systems (128), do not output the
