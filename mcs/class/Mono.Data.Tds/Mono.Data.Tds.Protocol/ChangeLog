@@ -1,3 +1,8 @@
+2009-04-19  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Tds.cs (InitExec): Move initialization of state variables here.  Useful 
+	in case of asynchronous queries.
+	
 2009-04-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Tds.cs (ExecuteQuery): Reset all the variables related to LoadData when 
