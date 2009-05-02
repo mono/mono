@@ -421,6 +421,8 @@ namespace Mono.Data.Tds.Protocol
 			StreamIndex = 0;
 			StreamColumnIndex = 0;
 			LoadInProgress = false;
+			
+			// Reset more variables
 			queryInProgress = false;
 			cancelsRequested = 0;
 			cancelsProcessed = 0;
