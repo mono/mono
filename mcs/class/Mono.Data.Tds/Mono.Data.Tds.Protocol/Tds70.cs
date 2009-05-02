@@ -372,6 +372,7 @@ namespace Mono.Data.Tds.Protocol
 			// Set "reset-connection" bit for the next message packet
 			Comm.ResetConnection = true;
 
+			base.Reset ();
 			return true;
 		}
 
