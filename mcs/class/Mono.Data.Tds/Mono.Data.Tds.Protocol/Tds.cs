@@ -520,6 +520,10 @@ namespace Mono.Data.Tds.Protocol
 
 		protected void ExecuteQuery (string sql, int timeout, bool wantResults)
 		{
+			// Reset "read" status variables  - used in case of SequentialAccess
+			isResultRead = false;
+			isRowRead = false;
+
 			InitExec ();
 
 			Comm.StartPacket (TdsPacketType.Query);

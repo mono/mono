@@ -1,31 +1,3 @@
-2009-05-02  Veerapuram Varadhan  <vvaradhan@novell.com>
-
-	** Fixes #462947 - Patch by Gert Driesen
-	* Tds.cs (InitExec): More intialization of variables. 
-	
-2009-04-28  Veerapuram Varadhan  <vvaradhan@novell.com>
-
-	* Tds.cs (InitExec):  Move initialization of SequentialAccess related 
-	variables here.
-	
-2009-04-28  Veerapuram Varadhan  <vvaradhan@novell.com>
-	
-	* Tds.cs (ExecuteQuery): Reset all the variables related to LoadData 
-	when performing queries with SequentialAccess set to true.  Fixes 
-	incorrect handling of data retrieval when multiple queries are run 
-	with SequentialAccess set to true for the same instance of Tds.
-	
-2009-04-28  Veerapuram Varadhan  <vvaradhan@novell.com>
-
-	* Tds.cs (ExecuteQuery): Reset SequentialAccess read state variables 
-	in order to avoid blocking forever when two queries are executed with 
-	SequentialAccess set to true for the same instance of Tds.
-	
-2009-04-28  Veerapuram Varadhan  <vvaradhan@novell.com>
-
-	** Fixes#463011
-	* Tds70.cs (Reset): Call base.Reset to update Database being used.
-	
 2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TdsConnectionPool.cs: if GetConnection() fails to create a
