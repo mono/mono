@@ -1,3 +1,8 @@
+2009-05-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CredentialCache.cs : implement all not-implemented methods.
+	  Patch by Mineda Nozomi. Close bug #499556.
+
 2009-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EndPoint.cs: Throw NotImplementedException instead of 
@@ -328,7 +333,7 @@
 
 	(TryParse): Provide a exception-less parsing path.
 
-2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>µ
+2008-07-25  Gert Driesen  <drieseng@users.sourceforge.net>μ
 
 2008-08-06  Atsushi Enomoto  <atsushi@ximian.com>
 

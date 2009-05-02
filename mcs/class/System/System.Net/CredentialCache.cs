@@ -38,10 +38,16 @@ namespace System.Net {
 	{
 		static NetworkCredential empty = new NetworkCredential (String.Empty, String.Empty, String.Empty);
 		Hashtable cache;
+#if NET_2_0
+		Hashtable cacheForHost;
+#endif
 
 		public CredentialCache () 
 		{
 			cache = new Hashtable ();
+#if NET_2_0
+			cacheForHost = new Hashtable ();
+#endif
 		}
 		
 		[MonoTODO ("Need EnvironmentPermission implementation first")]
@@ -131,22 +137,55 @@ namespace System.Net {
 		}
 		
 #if NET_2_0
-		[MonoNotSupported ("")]
-		public void Add (string host, int port, string authenticationType, NetworkCredential credential)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoNotSupported ("")]
 		public NetworkCredential GetCredential (string host, int port, string authenticationType)
 		{
-			throw new NotImplementedException ();
+			NetworkCredential result = null;
+			
+			if (host == null || port < 0 || authenticationType == null)
+				return null;
+
+			IDictionaryEnumerator e = cacheForHost.GetEnumerator ();
+			while (e.MoveNext ()) {
+				CredentialCacheForHostKey key = e.Key as CredentialCacheForHostKey;
+				
+				if (String.Compare (key.AuthType, authenticationType, true) != 0)
+					continue;
+				
+				if (key.Host != host)
+					continue;
+				
+				if (key.Port != port)
+					continue;
+				
+				result = (NetworkCredential) e.Value;
+			}
+			
+			return result;
 		}
 
-		[MonoNotSupported ("")]
+		public void Add (string host, int port, string authenticationType, NetworkCredential credential)
+		{
+			if (host == null)
+				throw new ArgumentNullException("host");
+
+			if (port < 0)
+				throw new ArgumentOutOfRangeException("port");
+
+			if (authenticationType == null)
+				throw new ArgumentOutOfRangeException("authenticationType");
+
+			cacheForHost.Add (new CredentialCacheForHostKey (host, port, authenticationType), credential);
+		}
+
 		public void Remove (string host, int port, string authenticationType)
 		{
-			throw new NotImplementedException ();
+			if (host == null)
+				return;
+
+			if (authenticationType == null)
+				return;
+
+			cacheForHost.Remove (new CredentialCacheForHostKey (host, port, authenticationType));
 		}
 #endif
 
@@ -202,7 +241,55 @@ namespace System.Net {
 				return absPath + " : " + authType + " : len=" + len;
 			}
 		}
-	} 
+
+#if NET_2_0
+		class CredentialCacheForHostKey {
+			string host;
+			int port;
+			string authType;
+			int hash;
+
+			internal CredentialCacheForHostKey (string host, int port, string authType)
+			{
+				this.host = host;
+				this.port = port;
+				this.authType = authType;
+
+				this.hash = host.GetHashCode ()
+					+ port.GetHashCode ()
+					+ authType.GetHashCode ();
+			}
+
+			public string Host {
+				get { return host; }
+			}
+
+			public int Port {
+				get { return port; }
+			}
+
+			public string AuthType {
+				get { return authType; }
+			}
+
+		public override int GetHashCode ()
+		{
+			return hash;
+		}
+
+		public override bool Equals (object obj)
+		{
+			CredentialCacheForHostKey key = obj as CredentialCacheForHostKey;
+			return ((key != null) && (this.hash == key.hash));
+		}
+
+		public override string ToString ()
+		{
+			return host + " : " + authType;
+		}
+	}
+#endif
+}
 }
 
 

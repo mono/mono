@@ -99,6 +99,25 @@ public class CredentialCacheTest
 			Console.WriteLine (e.Current.GetType () + " : " + e.Current.ToString ());
 		}
 		*/
+#if NET_2_0
+		result = c.GetCredential ("www.ximian.com", 80, "Basic");
+		Assertion.Assert ("#18", result == null);		
+
+		c.Add ("www.ximian.com", 80, "Basic", cred1);
+
+		try {
+			c.Add ("www.ximian.com", 80, "Basic", cred1);
+			Assertion.Fail ("#19: should have failed");
+		} catch (ArgumentException) { }
+
+		result = c.GetCredential ("www.ximian.com", 80, "Basic");
+		Assertion.AssertEquals ("#20", result, cred1);		
+
+		c.Remove (new Uri("http://www.contoso.com"), "Basic");
+		c.Add ("www.contoso.com", 80, "Basic", cred5);
+		result = c.GetCredential (new Uri("http://www.contoso.com"), "Basic");
+		Assertion.Assert ("#21", result == null);		
+#endif
 	}
 }
 
