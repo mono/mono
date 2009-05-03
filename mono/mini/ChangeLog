@@ -1,3 +1,10 @@
+2009-05-03  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.c (debugger_insert_source_breakpoint): Don't call
+	mono_debugger_insert_method_breakpoint() since the class init
+	handler we're inserting at the top of the method already gives us
+	a notification.
+
 2009-04-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (asm_writer_emit_writeout): Strip 'mapping symbols'
