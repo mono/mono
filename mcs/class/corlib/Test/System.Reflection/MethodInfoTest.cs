@@ -277,6 +277,31 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 		}
 
+		class TestInheritedMethodA {
+			private void TestMethod ()
+			{
+			}
+
+			public void TestMethod2 ()
+			{
+			}
+		}
+
+		class TestInheritedMethodB : TestInheritedMethodA {
+		}
+
+		[Test]
+		public void InheritanceTestGetMethodTest ()
+		{
+			MethodInfo inheritedMethod = typeof(TestInheritedMethodB).GetMethod("TestMethod", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			MethodInfo baseMethod = typeof(TestInheritedMethodB).GetMethod("TestMethod", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			Assert.AreSame (inheritedMethod, baseMethod);
+
+			MethodInfo inheritedMethod2 = typeof(TestInheritedMethodB).GetMethod("TestMethod2", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			MethodInfo baseMethod2 = typeof(TestInheritedMethodB).GetMethod("TestMethod2", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			Assert.AreSame (inheritedMethod, baseMethod);
+		}
+
 #if NET_2_0
 #if !TARGET_JVM // MethodBody is not supported for TARGET_JVM
 		[Test]

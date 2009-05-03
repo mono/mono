@@ -1,3 +1,8 @@
+2009-05-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MethodInfoTest.cs: Add test cases from Joachim Ante for bug
+	#500385.
+
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* ParameterInfoTest.cs: Add a test for #488383.
