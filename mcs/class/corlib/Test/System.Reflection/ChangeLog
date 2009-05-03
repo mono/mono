@@ -1,3 +1,9 @@
+2009-05-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MethodInfoTest.cs: Add test cases from Joachim Ante for bug
+	#500385.
+	[Backport of r133428]
+
 2008-02-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r125410.

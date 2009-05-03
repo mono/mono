@@ -38,6 +38,11 @@ using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 #endif
 
+namespace A.B.C {
+	public struct MethodInfoTestStruct {
+		int p;
+	}
+}
 namespace MonoTests.System.Reflection
 {
 	[TestFixture]
@@ -232,7 +237,24 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual ("Int32* PtrFunc(Int32*)", this.GetType ().GetMethod ("PtrFunc").ToString ());
 		}
 
+
 #if NET_2_0
+		public struct SimpleStruct
+		{
+			int a;
+		}
+
+		public static unsafe SimpleStruct* PtrFunc2 (SimpleStruct* a, A.B.C.MethodInfoTestStruct *b)
+		{
+			return (SimpleStruct*) 0;
+		}
+
+		[Test]
+		public void ToStringWithPointerSignaturesToNonPrimitiveType ()
+		{
+			Assert.AreEqual ("SimpleStruct* PtrFunc2(SimpleStruct*, A.B.C.MethodInfoTestStruct*)", 
+				this.GetType ().GetMethod ("PtrFunc2").ToString ());
+		}	
 		[Test]
 		public void ToStringGenericMethod ()
 		{
@@ -253,6 +275,31 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (GBD_A), typeof (GBD_C).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_D).GetMethod ("f").GetBaseDefinition ().DeclaringType);
 			Assert.AreEqual (typeof (GBD_D), typeof (GBD_E).GetMethod ("f").GetBaseDefinition ().DeclaringType);
+		}
+
+		class TestInheritedMethodA {
+			private void TestMethod ()
+			{
+			}
+
+			public void TestMethod2 ()
+			{
+			}
+		}
+
+		class TestInheritedMethodB : TestInheritedMethodA {
+		}
+
+		[Test]
+		public void InheritanceTestGetMethodTest ()
+		{
+			MethodInfo inheritedMethod = typeof(TestInheritedMethodB).GetMethod("TestMethod", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			MethodInfo baseMethod = typeof(TestInheritedMethodB).GetMethod("TestMethod", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			Assert.AreSame (inheritedMethod, baseMethod);
+
+			MethodInfo inheritedMethod2 = typeof(TestInheritedMethodB).GetMethod("TestMethod2", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			MethodInfo baseMethod2 = typeof(TestInheritedMethodB).GetMethod("TestMethod2", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			Assert.AreSame (inheritedMethod, baseMethod);
 		}
 
 #if NET_2_0
