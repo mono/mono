@@ -67,6 +67,12 @@
 
 	* sgen-gc.c: Fix skip size for vectors.
 
+2009-05-03  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c
+	(mono_debugger_check_breakpoints): Check class init handlers even
+	if we don't have any method load handers.
+
 2009-04-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (ves_icall_System_AppDomain_GetAssemblies): Avoid 
