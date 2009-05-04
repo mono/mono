@@ -47,7 +47,6 @@ namespace System.Web.Compilation
 	{
 		delegate void ExtractDirectiveDependencies (string baseDirectory, CaptureCollection names, CaptureCollection values, TemplateBuildProvider bp);
 		
-		static Regex directiveRegex = new Regex (@"<%\s*@(\s*(?<attrname>\w[\w:]*(?=\W))(\s*(?<equal>=)\s*""(?<attrval>[^""]*)""|\s*(?<equal>=)\s*'(?<attrval>[^']*)'|\s*(?<equal>=)\s*(?<attrval>[^\s%>]*)|(?<equal>)(?<attrval>\s*?)))*\s*?%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 		static SortedDictionary <string, ExtractDirectiveDependencies> directiveAttributes;
 		static char[] directiveValueTrimChars = {' ', '\t', '\r', '\n', '"', '\''};
 
@@ -247,7 +246,7 @@ namespace System.Web.Compilation
 			if (String.IsNullOrEmpty (input))
 				return null;
 
-			MatchCollection matches = directiveRegex.Matches (input);
+			MatchCollection matches = AspGenerator.DirectiveRegex.Matches (input);
 			if (matches == null || matches.Count == 0)
 				return null;
 			

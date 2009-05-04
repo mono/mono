@@ -109,6 +109,8 @@ namespace System.Web.UI {
 					  IDictionary attribs)
 		{
 			// enough?
+			if (parser != null)
+				FileName = parser.InputFile;
 			base.Init (parser, parentBuilder, type, tagName, ID, attribs);
 		}
 		

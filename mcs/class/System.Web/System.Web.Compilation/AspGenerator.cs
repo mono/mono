@@ -179,6 +179,11 @@ namespace System.Web.Compilation
 
 	class AspGenerator
 	{
+#if NET_2_0
+		const int READ_BUFFER_SIZE = 8192;
+		
+		internal static Regex DirectiveRegex = new Regex (@"<%\s*@(\s*(?<attrname>\w[\w:]*(?=\W))(\s*(?<equal>=)\s*""(?<attrval>[^""]*)""|\s*(?<equal>=)\s*'(?<attrval>[^']*)'|\s*(?<equal>=)\s*(?<attrval>[^\s%>]*)|(?<equal>)(?<attrval>\s*?)))*\s*?%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+#endif
 		ParserStack pstack;
 		BuilderLocationStack stack;
 		TemplateParser tparser;
@@ -192,20 +197,32 @@ namespace System.Web.Compilation
 		bool inForm;
 		bool useOtherTags;
 		TagType lastTag;
+#if NET_2_0
+		AspComponentFoundry componentFoundry;
+		Stream inputStream;
 
+		public AspGenerator (TemplateParser tparser, AspComponentFoundry componentFoundry) : this (tparser)
+		{
+			this.componentFoundry = componentFoundry;
+		}
+#endif
+		
 		public AspGenerator (TemplateParser tparser)
 		{
 			this.tparser = tparser;
 			text = new StringBuilder ();
 			stack = new BuilderLocationStack ();
+
+#if !NET_2_0
 			rootBuilder = new RootBuilder (tparser);
-			stack.Push (rootBuilder, null);
 			tparser.RootBuilder = rootBuilder;
+			stack.Push (rootBuilder, null);
+#endif
 			pstack = new ParserStack ();
 		}
 
 		public RootBuilder RootBuilder {
-			get { return tparser.RootBuilder; }
+			get { return rootBuilder; }
 		}
 
 		public AspParser Parser {
@@ -224,6 +241,186 @@ namespace System.Web.Compilation
 
 				return tparser.PageParserFilter;
 			}
+		}
+
+		// KLUDGE WARNING
+		//
+		// The kludge to determine the base type of the to-be-generated ASP.NET class is
+		// very unfortunate but with our current parser it is, unfortunately, necessary. The
+		// reason for reading the entire file into memory and parsing it with a regexp is
+		// that we need to read the main directive (i.e. <%@Page %>, <%@Control %> etc),
+		// pass it to the page parser filter if it exists, and finally read the inherits
+		// attribute of the directive to get access to the base type of the class to be
+		// generated. On that type we check whether it is decorated with the
+		// FileLevelControlBuilder attribute and, if yes, use the indicated type as the
+		// RootBuilder. This is necessary for the ASP.NET MVC views using the "generic"
+		// inherits declaration to work properly. Our current parser is not able to parse
+		// the input file out of sequence (i.e. directives first, then the rest) so we need
+		// to do what we do below, alas.
+		Hashtable GetDirectiveAttributesDictionary (string skipKeyName, CaptureCollection names, CaptureCollection values)
+		{
+			var ret = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+
+			int index = 0;
+			string keyName;
+			foreach (Capture c in names) {
+				keyName = c.Value;
+				if (String.Compare (skipKeyName, keyName, StringComparison.OrdinalIgnoreCase) == 0) {
+					index++;
+					continue;
+				}
+				
+				ret.Add (c.Value, values [index++].Value);
+			}
+
+			return ret;
+		}
+
+		string GetDirectiveName (CaptureCollection names)
+		{
+			string val;
+			foreach (Capture c in names) {
+				val = c.Value;
+				if (Directive.IsDirective (val))
+					return val;
+			}
+
+			return tparser.DefaultDirectiveName;
+		}
+		
+		Type GetInheritedType (string fileContents)
+		{
+			MatchCollection matches = DirectiveRegex.Matches (fileContents);
+			if (matches == null || matches.Count == 0)
+				return null;
+
+			string wantedDirectiveName = tparser.DefaultDirectiveName.ToLower ();
+			string directiveName;
+			GroupCollection groups;
+			CaptureCollection ccNames;
+			
+			foreach (Match match in matches) {
+				groups = match.Groups;
+				if (groups.Count < 6)
+					continue;
+
+				ccNames = groups [3].Captures;
+				directiveName = GetDirectiveName (ccNames);
+				if (String.IsNullOrEmpty (directiveName))
+					continue;
+				
+				if (String.Compare (directiveName.ToLower (), wantedDirectiveName, StringComparison.Ordinal) != 0)
+					continue;
+
+				tparser.allowedMainDirectives = 2;
+				tparser.AddDirective (wantedDirectiveName, GetDirectiveAttributesDictionary (wantedDirectiveName, ccNames, groups [5].Captures));
+
+				return tparser.BaseType;
+			}
+			
+			return null;
+		}
+
+		string ReadFileContents (Stream inputStream, string filename)
+		{
+			string ret = null;
+			
+			if (inputStream != null) {
+				if (inputStream.CanSeek) {
+					long curPos = inputStream.Position;
+					inputStream.Seek (0, SeekOrigin.Begin);
+
+					Encoding enc = WebEncoding.FileEncoding;
+					StringBuilder sb = new StringBuilder ();
+					byte[] buffer = new byte [READ_BUFFER_SIZE];
+					int nbytes;
+					
+					while ((nbytes = inputStream.Read (buffer, 0, READ_BUFFER_SIZE)) > 0)
+						sb.Append (enc.GetString (buffer, 0, nbytes));
+					inputStream.Seek (curPos, SeekOrigin.Begin);
+					
+					ret = sb.ToString ();
+					sb.Length = 0;
+					sb.Capacity = 0;
+				} else {
+					FileStream fs = inputStream as FileStream;
+					if (fs != null) {
+						string fname = fs.Name;
+						try {
+							if (File.Exists (fname))
+								ret = File.ReadAllText (fname);
+						} catch {
+							// ignore
+						}
+					}
+				}
+			}
+
+			if (ret == null && !String.IsNullOrEmpty (filename) && String.Compare (filename, "@@inner_string@@", StringComparison.Ordinal) != 0) {
+				try {
+					if (File.Exists (filename))
+						ret = File.ReadAllText (filename);
+				} catch {
+					// ignore
+				}
+			}
+
+			return ret;
+		}
+		
+		Type GetRootBuilderType (Stream inputStream, string filename)
+		{
+			Type ret = null;
+			string fileContents;
+
+			if (tparser != null)
+				fileContents = ReadFileContents (inputStream, filename);
+			else
+				fileContents = null;
+			
+			if (!String.IsNullOrEmpty (fileContents)) {
+				Type inheritedType = GetInheritedType (fileContents);
+				fileContents = null;
+				if (inheritedType != null) {
+					FileLevelControlBuilderAttribute attr;
+					
+					try {
+						object[] attrs = inheritedType.GetCustomAttributes (typeof (FileLevelControlBuilderAttribute), true);
+						if (attrs != null && attrs.Length > 0)
+							attr = attrs [0] as FileLevelControlBuilderAttribute;
+						else
+							attr = null;
+					} catch {
+						attr = null;
+					}
+
+					ret = attr != null ? attr.BuilderType : null;
+				}
+			}
+			
+			if (ret == null) {
+				if (tparser is PageParser)
+					return typeof (FileLevelPageControlBuilder);
+				else if (tparser is UserControlParser)
+					return typeof (FileLevelUserControlBuilder);
+				else
+					return typeof (RootBuilder);
+			} else
+				return ret;
+		}
+		
+		void CreateRootBuilder (Stream inputStream, string filename)
+		{
+			Type rootBuilderType = GetRootBuilderType (inputStream, filename);
+			rootBuilder = Activator.CreateInstance (rootBuilderType) as RootBuilder;
+			if (rootBuilder == null)
+				throw new HttpException ("Cannot create an instance of file-level control builder.");
+			rootBuilder.Init (tparser, null, null, null, null, null);
+			if (componentFoundry != null)
+				rootBuilder.Foundry = componentFoundry;
+			
+			stack.Push (rootBuilder, null);
+			tparser.RootBuilder = rootBuilder;
 		}
 #endif
 		
@@ -255,6 +452,7 @@ namespace System.Web.Compilation
 #if NET_2_0
 			parser.ParsingComplete += new ParsingCompleteHandler (ParsingCompleted);
 			tparser.AspGenerator = this;
+			CreateRootBuilder (inputStream, filename);
 #endif
 			if (!pstack.Push (parser))
 				throw new ParseException (Location, "Infinite recursion detected including file: " + filename);
@@ -303,7 +501,7 @@ namespace System.Web.Compilation
 				pstack.Pop ();
 
 #if DEBUG
-				PrintTree (rootBuilder, 0);
+				PrintTree (RootBuilder, 0);
 #endif
 
 				if (stack.Count > 1 && pstack.Count == 0)
@@ -318,6 +516,9 @@ namespace System.Web.Compilation
 
 		public void Parse (Stream stream, string filename, bool doInitParser)
 		{
+#if NET_2_0
+			inputStream = stream;
+#endif
 			Parse (new StreamReader (stream, WebEncoding.FileEncoding), filename, doInitParser);
 		}
 		
@@ -523,7 +724,7 @@ namespace System.Web.Compilation
 			if (pfilter == null)
 				return;
 
-			pfilter.ParseComplete (rootBuilder);
+			pfilter.ParseComplete (RootBuilder);
 		}
 #endif
 		
@@ -761,7 +962,7 @@ namespace System.Web.Compilation
 			if (!typeof (System.Web.UI.WebControls.Content).IsAssignableFrom (cb.ControlType))
 				return true;
 
-			if (BuilderHasOtherThan (typeof (System.Web.UI.WebControls.Content), rootBuilder))
+			if (BuilderHasOtherThan (typeof (System.Web.UI.WebControls.Content), RootBuilder))
 				return false;
 			
 			return true;
@@ -813,7 +1014,7 @@ namespace System.Web.Compilation
 					throw new ParseException (Location, "'" + id + "' is not a valid identifier");
 					
 				try {
-					builder = rootBuilder.CreateSubBuilder (tagid, htable, null, tparser, location);
+					builder = RootBuilder.CreateSubBuilder (tagid, htable, null, tparser, location);
 				} catch (TypeLoadException e) {
 					throw new ParseException (Location, "Type not found.", e);
 				} catch (Exception e) {

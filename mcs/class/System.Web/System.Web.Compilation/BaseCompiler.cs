@@ -836,6 +836,20 @@ namespace System.Web.Compilation
 			get { return unit; }
 		}
 
+#if NET_2_0
+		internal CodeTypeDeclaration DerivedType {
+			get { return mainClass; }
+		}
+
+		internal CodeTypeDeclaration BaseType {
+			get {
+				if (partialClass == null)
+					return DerivedType;
+				return partialClass;
+			}
+		}
+#endif
+
 		internal TemplateParser Parser {
 			get { return parser; }
 		}
