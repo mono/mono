@@ -959,7 +959,7 @@ namespace System {
 		bool InputPending ()
 		{
 			// check if we've got pending input we can read immediately
-			return readpos < writepos || stdin.Peek () != -1;
+			return readpos < writepos || stdin.DataAvailable ();
 		}
 
 		char [] echobuf = null;
