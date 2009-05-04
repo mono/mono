@@ -1,5 +1,8 @@
 2009-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Implement TLS support on 
+	x86/amd64.
+
 	* aot-compiler.c (encode_patch_list): Simplify this considerably as we are
 	no longer saving offsets, so just save the patch types along with the other
 	info.
