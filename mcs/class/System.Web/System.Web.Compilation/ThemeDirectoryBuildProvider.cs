@@ -94,8 +94,7 @@ namespace System.Web.Compilation
 				PageThemeFileParser ptfp = new PageThemeFileParser (new VirtualPath (skin_file_url), skin_file, context);
 
 				ptp.AddDependency (skin_file_url);
-				generator = new AspGenerator (ptfp);
-				ptfp.RootBuilder.Foundry = shared_foundry;
+				generator = new AspGenerator (ptfp, shared_foundry);
 				generator.Parse ();
 
 				if (ptfp.RootBuilder.Children != null)

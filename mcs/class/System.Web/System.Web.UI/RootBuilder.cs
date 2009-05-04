@@ -43,6 +43,8 @@ namespace System.Web.UI {
 
 		public RootBuilder ()
 		{
+			foundry = new AspComponentFoundry ();
+			Line = 1;
 		}
 #else
 	public sealed class RootBuilder : TemplateBuilder {

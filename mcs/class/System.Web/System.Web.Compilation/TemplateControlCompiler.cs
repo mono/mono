@@ -537,7 +537,6 @@ namespace System.Web.Compilation
 				valueExpression = new CodeSnippetExpression (value);
 			
 			method = CreateDBMethod (builder, dbMethodName, GetContainerType (builder), builder.ControlType);
-			
 			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
 
 			// This should be a CodePropertyReferenceExpression for properties... but it works anyway
@@ -1096,6 +1095,9 @@ namespace System.Web.Compilation
 			AddEventAssign (method, builder, "DataBinding", typeof (EventHandler), dbMethodName);
 
 			method = CreateDBMethod (builder, dbMethodName, GetContainerType (builder), builder.ControlType);
+#if NET_2_0
+			builder.DataBindingMethod = method;
+#endif
 			CodeCastExpression cast;
 			CodeMethodReferenceExpression methodExpr;
 			CodeMethodInvokeExpression expr;
@@ -1413,7 +1415,9 @@ namespace System.Web.Compilation
 
 			// Add the DataBind handler
 			method = CreateDBMethod (builder, dbMethodName, GetContainerType (builder), typeof (DataBoundLiteralControl));
-
+#if NET_2_0
+			builder.DataBindingMethod = method;
+#endif
 			CodeVariableReferenceExpression targetExpr = new CodeVariableReferenceExpression ("target");
 			CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression ();
 			invoke.Method = new CodeMethodReferenceExpression (targetExpr, "SetDataBoundString");
@@ -1428,7 +1432,7 @@ namespace System.Web.Compilation
 			method.Statements.Add (AddLinePragma (invoke, builder));
 			
 			mainClass.Members.Add (method);
-
+			
 			AddChildCall (builder, db);
 		}
 
@@ -1491,11 +1495,8 @@ namespace System.Web.Compilation
 					FlushText (builder, sb);
 					if (b is ObjectTagBuilder) {
 						ProcessObjectTag ((ObjectTagBuilder) b);
-						continue;
-					}
-
-					StringPropertyBuilder pb = b as StringPropertyBuilder;
-					if (pb != null){
+					} else if (b is StringPropertyBuilder) {
+						StringPropertyBuilder pb = b as StringPropertyBuilder;
 						if (pb.Children != null && pb.Children.Count > 0) {
 							StringBuilder asb = new StringBuilder ();
 							foreach (string s in pb.Children)
@@ -1506,11 +1507,9 @@ namespace System.Web.Compilation
 							assign.Right = new CodePrimitiveExpression (asb.ToString ());
 							method.Statements.Add (AddLinePragma (assign, builder));
 						}
-						continue;
 					}
-
 #if NET_2_0
-					if (b is ContentBuilderInternal) {
+					else if (b is ContentBuilderInternal) {
 						ContentBuilderInternal cb = (ContentBuilderInternal) b;
 						CreateControlTree (cb, false, true);
 						AddContentTemplateInvocation (cb, builder.Method, cb.Method.Name);
@@ -1518,32 +1517,27 @@ namespace System.Web.Compilation
 					}
 #endif
 					// Ignore TemplateBuilders - they are processed in InitMethod
-					if (b is TemplateBuilder)
-						continue;
-
-					if (b is CodeRenderBuilder) {
+					else if (b is TemplateBuilder) {
+					} else if (b is CodeRenderBuilder) {
 						AddCodeRender (builder, (CodeRenderBuilder) b);
-						continue;
-					}
-
-					if (b is DataBindingBuilder) {
+					} else if (b is DataBindingBuilder) {
 						AddDataBindingLiteral (builder, (DataBindingBuilder) b);
-						continue;
-					}
-					
-					if (b is ControlBuilder) {
+					} else if (b is ControlBuilder) {
 						ControlBuilder child = (ControlBuilder) b;
 						CreateControlTree (child, inTemplate, builder.ChildrenAsProperties);
 						AddChildCall (builder, child);
 						continue;
-					}
+					} else
+						throw new Exception ("???");
 
-					throw new Exception ("???");
+#if NET_2_0
+					ControlBuilder bldr = b as ControlBuilder;
+					bldr.ProcessGeneratedCode (CompileUnit, BaseType, DerivedType, bldr.Method, bldr.DataBindingMethod);
+#endif
 				}
 
 				FlushText (builder, sb);
 			}
-
 
 			ControlBuilder defaultPropertyBuilder = builder.DefaultPropertyBuilder;
 			if (defaultPropertyBuilder != null) {
@@ -1580,6 +1574,10 @@ namespace System.Web.Compilation
 
 			if (!childrenAsProperties && typeof (Control).IsAssignableFrom (builder.ControlType))
 				builder.Method.Statements.Add (new CodeMethodReturnStatement (ctrlVar));
+
+#if NET_2_0
+			builder.ProcessGeneratedCode (CompileUnit, BaseType, DerivedType, builder.Method, builder.DataBindingMethod);
+#endif
 		}
 
 #if NET_2_0

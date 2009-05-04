@@ -142,6 +142,13 @@ namespace System.Web.UI {
 			set { method = value; }
 		}
 
+#if NET_2_0
+		internal CodeMemberMethod DataBindingMethod {
+			get;
+			set;
+		}
+#endif
+			
 		internal CodeStatementCollection MethodStatements {
 			get { return methodStatements; }
 			set { methodStatements = value; }
@@ -317,7 +324,7 @@ namespace System.Web.UI {
 		
 		internal RootBuilder Root {
 			get {
-				if (GetType () == typeof (RootBuilder))
+				if (typeof (RootBuilder).IsAssignableFrom (GetType ()))
 					return (RootBuilder) this;
 
 				return (RootBuilder) parentBuilder.Root;
@@ -754,14 +761,13 @@ namespace System.Web.UI {
 			return CreateInstance ();
 		}
 		
-		[MonoTODO]
 		public virtual void ProcessGeneratedCode(CodeCompileUnit codeCompileUnit,
-			CodeTypeDeclaration baseType,
-			CodeTypeDeclaration derivedType,
-			CodeMemberMethod buildMethod,
-			CodeMemberMethod dataBindingMethod)
+							 CodeTypeDeclaration baseType,
+							 CodeTypeDeclaration derivedType,
+							 CodeMemberMethod buildMethod,
+							 CodeMemberMethod dataBindingMethod)
 		{
-			throw new NotImplementedException ();
+			// nothing to do
 		}
 
 		internal void ResetState()

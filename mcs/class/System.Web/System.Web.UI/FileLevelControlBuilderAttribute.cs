@@ -3,8 +3,10 @@
 //
 // Authors:
 //     Arina Itkes (arinai@mainsoft.com)
+//     Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2007 Mainsoft Co. (http://www.mainsoft.com)
+// (C) 2009 Novell, Inc (http://novell.com/)
 //
 //
 //
@@ -34,28 +36,49 @@ namespace System.Web.UI
 	[AttributeUsageAttribute (AttributeTargets.Class)]
 	public sealed class FileLevelControlBuilderAttribute : Attribute
 	{
-		public FileLevelControlBuilderAttribute (Type builderType)
-		{}
-
-		public static readonly FileLevelControlBuilderAttribute Default;
+		public static readonly FileLevelControlBuilderAttribute Default = new FileLevelControlBuilderAttribute (null);
 		
-		public Type BuilderType { get { throw new NotImplementedException (); } }
+		public FileLevelControlBuilderAttribute (Type builderType)
+		{
+			this.BuilderType = builderType;
+		}
+		
+		public Type BuilderType {
+			get;
+			private set;
+		}
 		
 		public override bool Equals (Object obj)
 		{
-			throw new NotImplementedException ();
+			var attr = obj as FileLevelControlBuilderAttribute;
+			return ((attr != null) && this.BuilderType == attr.BuilderType);
 		}
-		public static bool Equals (Object objA, Object objB)
+		
+		public new static bool Equals (Object objA, Object objB)
 		{
-			throw new NotImplementedException ();
+			var attrA = objA as FileLevelControlBuilderAttribute;
+			if (attrA == null)
+				return false;
+
+			var attrB = objB as FileLevelControlBuilderAttribute;
+			if (attrB == null)
+				return false;
+
+			return (attrA.BuilderType == attrB.BuilderType);
 		}
+			
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			Type type = BuilderType;
+			if (type == null)
+				return base.GetHashCode ();
+
+			return type.GetHashCode ();
 		}
+		
 		public override bool IsDefaultAttribute ()
 		{
-			throw new NotImplementedException ();
+			return Equals (Default);
 		}
 	}
 }

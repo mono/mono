@@ -1,10 +1,12 @@
 //
-// System.Web.UI.FileLevelControlBuilderAttribute.cs
+// System.Web.UI.FileLevelControlBuilder.cs
 //
 // Authors:
 //     Arina Itkes (arinai@mainsoft.com)
+//     Marek Habersack <mhabersack@novell.com>
 //
 // (C) 2007 Mainsoft Co. (http://www.mainsoft.com)
+// (C) 2009 Novell, Inc (http://novell.com/)
 //
 //
 //
@@ -30,22 +32,50 @@
 
 #if NET_2_0
 using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace System.Web.UI
 {
 	public class FileLevelPageControlBuilder : RootBuilder
 	{
+		bool hasContentControls;
+		bool hasLiteralControls;
+		bool hasOtherControls;
+		
 		public FileLevelPageControlBuilder ()
 		{
-			throw new NotImplementedException ();
 		}
+		
 		public override void AppendLiteralString (string text)
 		{
-			throw new NotImplementedException ();
+			bool emptyText = text != null ? text.Trim ().Length == 0 : true;
+			if (hasContentControls && !emptyText)
+				throw new HttpException ("Literal strings cannot be appended to Content pages.");
+
+			if (!emptyText)
+				hasLiteralControls = true;
+			
+			base.AppendLiteralString (text);
 		}
+		
 		public override void AppendSubBuilder (ControlBuilder subBuilder)
 		{
-			throw new NotImplementedException ();
+			if (subBuilder == null) {
+				base.AppendSubBuilder (subBuilder);
+				return;
+			}
+			
+			if (typeof (ContentBuilderInternal).IsAssignableFrom (subBuilder.GetType ())) {
+				if (hasOtherControls)
+					throw new HttpException ("Only Content controls are supported on content pages.");
+				
+				hasContentControls = true;
+				if (hasLiteralControls)
+					throw new HttpParseException ("Only Content controls are supported on content pages.");
+			} else
+				hasOtherControls = true;
+			
+			base.AppendSubBuilder (subBuilder);
 		}
 	}
 }

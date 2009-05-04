@@ -37,7 +37,6 @@ namespace System.Web.UI
 	{
 		public FileLevelUserControlBuilder ()
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }

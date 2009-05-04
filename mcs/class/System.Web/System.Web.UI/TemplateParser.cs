@@ -120,6 +120,10 @@ namespace System.Web.UI {
 		OutputCacheLocation oc_location;
 		CultureInfo invariantCulture = CultureInfo.InvariantCulture;
 #if NET_2_0
+		// Kludge needed to support pre-parsing of the main directive (see
+		// AspNetGenerator.GetRootBuilderType)
+		internal int allowedMainDirectives = 0;
+		
 		byte[] md5checksum;
 		string src;
 		bool srcIsLegacy;
@@ -316,18 +320,33 @@ namespace System.Web.UI {
 		{
 #if NET_2_0
 			var pageParserFilter = PageParserFilter;
-			if (pageParserFilter != null)
-				pageParserFilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
 #endif
 			if (String.Compare (directive, DefaultDirectiveName, true) == 0) {
-				if (mainAttributes != null)
+#if NET_2_0
+				bool allowMainDirective = allowedMainDirectives > 0;
+#else
+				bool allowMainDirective = false;
+#endif
+				if (mainAttributes != null && !allowMainDirective)
 					ThrowParseException ("Only 1 " + DefaultDirectiveName + " is allowed");
-
+#if NET_2_0
+				allowedMainDirectives--;
+				if (mainAttributes != null)
+					return;
+				
+				if (pageParserFilter != null)
+					pageParserFilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+#endif
+				
 				mainAttributes = atts;
 				ProcessMainAttributes (mainAttributes);
 				return;
 			}
-
+#if NET_2_0
+			else if (pageParserFilter != null)
+				pageParserFilter.PreprocessDirective (directive.ToLower (CultureInfo.InvariantCulture), atts);
+#endif
+				
 			int cmp = String.Compare ("Assembly", directive, true);
 			if (cmp == 0) {
 				string name = GetString (atts, "Name", null);
@@ -728,7 +747,7 @@ namespace System.Web.UI {
 			explicitOn = GetBool (atts, "Explicit", compConfig.Explicit);
 			if (atts.ContainsKey ("LinePragmas"))
 				linePragmasOn = GetBool (atts, "LinePragmas", true);
-			
+
 			string inherits = GetString (atts, "Inherits", null);
 #if NET_2_0
 			string srcRealPath = null;
@@ -1308,7 +1327,16 @@ namespace System.Web.UI {
 		}
 
 		internal RootBuilder RootBuilder {
-			get { return rootBuilder; }
+			get {
+#if NET_2_0
+				if (rootBuilder != null)
+					return rootBuilder;
+				AspGenerator generator = AspGenerator;
+				if (generator != null)
+					rootBuilder = generator.RootBuilder;
+#endif
+				return rootBuilder;
+			}
 			set { rootBuilder = value; }
 		}
 

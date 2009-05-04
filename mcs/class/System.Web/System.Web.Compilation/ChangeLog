@@ -1,3 +1,28 @@
+2009-05-04  Marek Habersack  <mhabersack@novell.com>
+
+	* ThemeDirectoryBuildProvider.cs: use new AspGenerator constructor
+	which takes AspComponentFoundery as its
+	parameter. AspGenerator.RootBuilder isn't initialized until after
+	the parser is initialized.
+
+	* TemplateControlCompiler.cs: make sure to call
+	ProcessGeneratedCode on each instance of ControlBuilder after it's
+	fully generated. Fixes bug #500075
+
+	* BaseCompiler.cs: added two internal properties, BaseType and
+	DerivedType, which are used in calls to
+	ControlBuilder.ProcessGeneratedCode. Fixes bug #500075
+
+	* AspGenerator.cs: implemented a work around for our parser
+	limitation which is unable to extract the page/control's base type
+	before parsing the actual file contents. This is necessary to
+	support ASP.NET MVC's "generic" Inherits attribute. The reason we
+	need to find out what the base type is before parsing the file is
+	that we need to look at the type's custom attributes to see if a
+	root control builder type is specified (which is what ASP.NET MVC
+	does) and, if yes, use it instead of the default type. Fixes bug
+	#500075
+
 2009-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: ProcessTag doesn't process a tag which is not
