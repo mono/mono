@@ -1,3 +1,8 @@
+2009-05-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Ping.cs: we just need the address(es), not a host entry. This avoids
+	querying the DNS server(s) when the target is an IP address.
+
 2009-03-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Ping.cs: MacOS has different arguments for ping.
