@@ -1,3 +1,7 @@
+2009-05-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TermInfoDriver.cs: replace Peek with DataAvailable.
+
 2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Console.cs: Remove Windows-specific p/invokes and SSC code
