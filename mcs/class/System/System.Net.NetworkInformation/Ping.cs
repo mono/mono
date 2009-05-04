@@ -161,8 +161,8 @@ namespace System.Net.NetworkInformation {
 
 		public PingReply Send (string hostNameOrAddress, int timeout, byte [] buffer, PingOptions options)
 		{
-			IPAddress address = Dns.GetHostEntry (hostNameOrAddress).AddressList [0];
-			return Send (address, timeout, buffer, options);
+			IPAddress [] addresses = Dns.GetHostAddresses (hostNameOrAddress);
+			return Send (addresses [0], timeout, buffer, options);
 		}
 
 		static IPAddress GetNonLoopbackIP ()
