@@ -1,5 +1,8 @@
 2009-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Resurrect static linking support. Kill the
+	half-finished no-dlsym code.
+	
 	* aot-runtime.c (load_method): Kill the old and bit-rotten use_loaded_code
 	option.
 
