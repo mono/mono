@@ -1,3 +1,9 @@
+2009-05-04  Jonathan Pryor  <jpryor@novell.com>
+
+	* TranslationResources.resx (ErrOperationAborted): Send viewers of
+	  this message to the Wiki for possible reasons they may get an
+	  exception (and how to fix it).
+
 2009-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* WebUIValidation_2.0.js: CustomValidatorEvaluateIsValid calls the

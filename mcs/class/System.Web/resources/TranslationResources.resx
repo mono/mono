@@ -151,7 +151,7 @@
     <value>Incorrect password answer.</value>
   </data>
   <data name="ErrOperationAborted" xml:space="preserve">
-    <value>Operation aborted due to an exception (see Trace for details).</value>
+    <value>Operation aborted due to an exception (see Trace for details).  See http://www.mono-project.com/FAQ:_ASP.NET#Common_Problems for additional suggestions.</value>
   </data>
   <data name="ErrPasswordAnswerRequired" xml:space="preserve">
     <value>Password answer required for password reset.</value>
