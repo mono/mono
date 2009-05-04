@@ -1,5 +1,8 @@
 2009-05-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_method): Kill the old and bit-rotten use_loaded_code
+	option.
+
 	* mini-<ARCH>.h mini-trampolines.c aot-runtime.c: Kill the 
 	MONO_ARCH_HAVE_CREATE_TRAMPOLINE_FROM_TOKEN define.
 
