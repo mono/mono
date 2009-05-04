@@ -754,7 +754,40 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("tc_OnEnter;p1_OnEnter;p1_OnLeave;tc_OnLeave;", events, "A2");
 		}
 
-		
+		[Test] // bug #499887
+		public void SelectedIndexChangeFiresFocus ()
+		{
+			Form f = new Form ();
+			TabControl tc = new TabControl ();
+			TabPage p1 = new TabPage ();
+			TabPage p2 = new TabPage ();
+			string events = string.Empty;
+
+			tc.TabPages.Add (p1);
+			tc.TabPages.Add (p2);
+			tc.SelectedIndex = 0;
+			Button b1 = new Button ();
+			Button b2 = new Button ();
+
+			f.Controls.Add (b1);
+			f.Controls.Add (b2);
+			f.Controls.Add (tc);
+
+			f.Show ();
+			b1.Focus ();
+			b2.GotFocus += new EventHandler (delegate (Object obj, EventArgs e) {
+				tc.SelectedIndex = 1;
+			});
+			
+			tc.GotFocus += new EventHandler(delegate (Object obj, EventArgs e) { events += ("tc_OnGotFocus" + tc.SelectedIndex + ";"); });
+			tc.SelectedIndexChanged += new EventHandler(delegate (Object obj, EventArgs e) { events += ("tc_OnSelectedIndexChanged" + tc.SelectedIndex + ";"); });
+			p2.Enter += new EventHandler(delegate (Object obj, EventArgs e) { events += ("p2_OnEnter" + tc.SelectedIndex + ";"); });
+			p2.Leave += new EventHandler (delegate (Object obj, EventArgs e) { events += ("p2_OnLeave;"); });
+	
+			b2.Focus ();
+			Assert.AreEqual ("tc_OnGotFocus0;p2_OnEnter1;tc_OnSelectedIndexChanged1;", events, "A1");
+			Assert.IsTrue (tc.Focused, "A2");
+		}
 
 #endif
 	}

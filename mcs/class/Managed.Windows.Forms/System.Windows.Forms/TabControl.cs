@@ -295,6 +295,7 @@ namespace System.Windows.Forms {
 					return;
 
 #endif
+				Focus ();
 				int old_index = selected_index;
 				int new_index = value;
 
