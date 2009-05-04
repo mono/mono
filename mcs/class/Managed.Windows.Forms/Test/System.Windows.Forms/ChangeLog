@@ -1,3 +1,8 @@
+2009-05-04  Andrés G. Aragoneses <aaragoneses@novell.com>
+
+	* TabControlTest.cs: More accurate test for bug#499887 showing
+	the SelectedIndex at the moment of the event (passes on Vista).
+
 2009-04-30  Andrés G. Aragoneses <aaragoneses@novell.com>
 
 	* TabControlTest.cs: Added test for bug#499887.

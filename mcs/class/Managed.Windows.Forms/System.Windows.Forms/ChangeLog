@@ -1,3 +1,8 @@
+2009-05-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* TabControl.cs: call Focus() to emit GotFocus event at the
+	proper time when SelectionIndex changes. Fixes #499887.
+
 2009-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MonthCalendar.cs: In SetBoundsCore always do the bounds check to

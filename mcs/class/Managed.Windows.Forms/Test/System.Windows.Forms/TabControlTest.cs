@@ -755,7 +755,6 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test] // bug #499887
-		[Category ("NotWorking")]
 		public void SelectedIndexChangeFiresFocus ()
 		{
 			Form f = new Form ();
@@ -780,12 +779,13 @@ namespace MonoTests.System.Windows.Forms
 				tc.SelectedIndex = 1;
 			});
 			
-			tc.GotFocus += new EventHandler (delegate (Object obj, EventArgs e) { events += ("tc_OnGotFocus;"); });
-			p2.Enter += new EventHandler (delegate (Object obj, EventArgs e) { events += ("p2_OnEnter;");});
+			tc.GotFocus += new EventHandler(delegate (Object obj, EventArgs e) { events += ("tc_OnGotFocus" + tc.SelectedIndex + ";"); });
+			tc.SelectedIndexChanged += new EventHandler(delegate (Object obj, EventArgs e) { events += ("tc_OnSelectedIndexChanged" + tc.SelectedIndex + ";"); });
+			p2.Enter += new EventHandler(delegate (Object obj, EventArgs e) { events += ("p2_OnEnter" + tc.SelectedIndex + ";"); });
 			p2.Leave += new EventHandler (delegate (Object obj, EventArgs e) { events += ("p2_OnLeave;"); });
 	
 			b2.Focus ();
-			Assert.AreEqual ("tc_OnGotFocus;p2_OnEnter;", events, "A1");
+			Assert.AreEqual ("tc_OnGotFocus0;p2_OnEnter1;tc_OnSelectedIndexChanged1;", events, "A1");
 			Assert.IsTrue (tc.Focused, "A2");
 		}
 
