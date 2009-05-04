@@ -1,3 +1,8 @@
+2009-05-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-<ARCH>.h mini-trampolines.c aot-runtime.c: Kill the 
+	MONO_ARCH_HAVE_CREATE_TRAMPOLINE_FROM_TOKEN define.
+
 2009-05-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_get_static_rgctx_trampoline): Increase the
