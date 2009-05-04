@@ -88,11 +88,11 @@ csproj-local:
 	config_file=`basename $(PROGRAM) .exe`-$(PROFILE).input; \
 	echo $(thisdir):$$config_file >> $(topdir)/../mono/msvc/scripts/order; \
 	(echo $(is_boot); \
-	echo $(BOOT_COMPILE);	\
+	echo $(BOOTSTRAP_MCS);	\
 	echo $(USE_MCS_FLAGS) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS); \
 	echo $(PROGRAM); \
-	echo $(BUILT_SOURCES_cmdline); \
-	echo $(build_lib); \
+	echo $(BUILT_SOURCES); \
+	echo $(PROGRAM); \
 	echo $(response)) > $(topdir)/../mono/msvc/scripts/inputs/$$config_file
 
 #
