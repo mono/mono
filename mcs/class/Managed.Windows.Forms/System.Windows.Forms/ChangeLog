@@ -1,3 +1,9 @@
+2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* MaskedTextBox.cs: If Insert is pressed, change the internal
+	overwrite mode for our default value.
+	Fixes some bits of #477395.
+
 2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MaskedTextBox.cs: When setting Text use the very precise algorithm
