@@ -1,3 +1,9 @@
+2009-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Methods.cs: if SoapRpcMethodAttribute doesn't specify the action
+	or the action name is an empty string, generate the Action in
+	SoapMethodStubInfo constructor. Fixes bug #459790
+
 2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpSoapWebServiceHandler.cs: provide the full stack trace instead
