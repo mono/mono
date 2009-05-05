@@ -1,3 +1,11 @@
+2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+	
+	* MaskedTextBox.cs: In OnKeyPress handle backspace by calling
+	MaskedTextProvider.RemoveAt method. Also for setting the SelectionStart
+	property after the text was modified, adjust the testPosition value
+	depending on what method was called.
+	Fixes part of #477383.
+
 2009-05-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* TabControl.cs: call Focus() to emit GotFocus event at the
