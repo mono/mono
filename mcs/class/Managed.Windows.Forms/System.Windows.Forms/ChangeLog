@@ -1,3 +1,10 @@
+2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* MaskedTextBox.cs: Handle OnKeyDown to properly process the Delete
+	key. Also create a new method to avoid code duplication between
+	OnKeyDown and OnKeyPress.
+	Fixes #477388.
+
 2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MaskedTextBox.cs: In OnKeyPress the IsOverwriteMode check is

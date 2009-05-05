@@ -226,7 +226,23 @@ namespace System.Windows.Forms
 
 		protected override void OnKeyDown (KeyEventArgs e)
 		{
-			base.OnKeyDown (e);
+			// Only handle Delete here
+			if (e.KeyCode != Keys.Delete || is_empty_mask) {
+				base.OnKeyDown (e);
+				return;
+			}
+
+			int testPosition, endSelection;
+			MaskedTextResultHint resultHint;
+			bool result;
+
+			// Use a slightly different approach than the one used for backspace
+			endSelection = SelectionLength == 0 ? SelectionStart : SelectionStart + SelectionLength - 1;
+			result = provider.RemoveAt (SelectionStart, endSelection, out testPosition, out resultHint);
+
+			PostprocessKeyboardInput (result, testPosition, testPosition, resultHint);
+
+			e.Handled = true;
 		}
 
 		protected override void OnKeyPress (KeyPressEventArgs e)
@@ -255,20 +271,24 @@ namespace System.Windows.Forms
 				result = provider.InsertAt (e.KeyChar, SelectionStart, out testPosition, out resultHint);
 				editPosition = testPosition + 1;
 			}
+
+			PostprocessKeyboardInput (result, editPosition, testPosition, resultHint);
 			
-			if (!result) {
+			e.Handled = true;
+		}
+
+		void PostprocessKeyboardInput (bool result, int newPosition, int testPosition, MaskedTextResultHint resultHint)
+		{
+			if (!result)
 				OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
-			} else {
-				if (editPosition != MaskedTextProvider.InvalidIndex) {
-					SelectionStart = editPosition;
-				} else {
+			else {
+				if (newPosition != MaskedTextProvider.InvalidIndex)
+					SelectionStart = newPosition;
+				else
 					SelectionStart = provider.Length;
-				}
 
 				UpdateVisibleText ();
 			}
-			
-			e.Handled = true;
 		}
 
 		protected override void OnKeyUp (KeyEventArgs e)
