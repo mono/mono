@@ -36,7 +36,7 @@ ILASM = $(RUNTIME) $(CLASS)/ilasm.exe
 AM_CFLAGS = \
 	-I$(top_srcdir) 	\
 	$(LIBGC_CFLAGS)		\
-	$(GLIB_CFLAGS)
+	$(GLIB_CFLAGS)		\
 	$(PLATFORM_CFLAGS) $(ARCH_CFLAGS)
 
 if PLATFORM_WIN32
