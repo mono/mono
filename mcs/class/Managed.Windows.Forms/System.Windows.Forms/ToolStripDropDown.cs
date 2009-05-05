@@ -647,6 +647,14 @@ namespace System.Windows.Forms
 		protected override void OnVisibleChanged (EventArgs e)
 		{
 			base.OnVisibleChanged (e);
+
+			if (owner_item != null && owner_item is ToolStripDropDownItem) {
+				ToolStripDropDownItem dropdown_owner = (ToolStripDropDownItem)owner_item;
+				if (Visible)
+					dropdown_owner.OnDropDownOpened (EventArgs.Empty);
+				else
+					dropdown_owner.OnDropDownClosed (EventArgs.Empty);
+			}
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

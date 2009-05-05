@@ -129,11 +129,11 @@ namespace System.Windows.Forms
 			if (this.drop_down == null || !this.DropDown.Visible)
 				return;
 
+			// OnDropDownHide is called before actually closing DropDown
+			this.OnDropDownHide (EventArgs.Empty);
 			this.DropDown.Close (ToolStripDropDownCloseReason.CloseCalled);
 			this.is_pressed = false;
 			this.Invalidate ();
-			this.OnDropDownHide (EventArgs.Empty);
-			this.OnDropDownClosed (EventArgs.Empty);
 		}
 
 		public void ShowDropDown ()
@@ -152,7 +152,6 @@ namespace System.Windows.Forms
 			
 			this.Invalidate ();
 			this.DropDown.Show (this.DropDownLocation);
-			this.OnDropDownOpened (EventArgs.Empty);
 		}
 		#endregion
 
@@ -325,11 +324,11 @@ namespace System.Windows.Forms
 			if (this.drop_down == null || !this.DropDown.Visible)
 				return;
 
+			// OnDropDownHide is called before actually closing DropDown
+			this.OnDropDownHide (EventArgs.Empty);
 			this.DropDown.Close (reason);
 			this.is_pressed = false;
 			this.Invalidate ();
-			this.OnDropDownHide (EventArgs.Empty);
-			this.OnDropDownClosed (EventArgs.Empty);
 		}
 		
 		private void DropDown_ItemAdded (object sender, ToolStripItemEventArgs e)
