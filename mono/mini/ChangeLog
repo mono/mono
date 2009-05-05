@@ -1,3 +1,7 @@
+2009-05-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* genmdesc.pl (load_opcodes): Fix this after the TARGET_... changes.
+
 2009-05-03  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c (debugger_insert_source_breakpoint): Don't call
