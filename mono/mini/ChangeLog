@@ -1,3 +1,8 @@
+2009-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Update the OP_TLS_GET implementation
+	to the latest LLVM code.
+
 2009-05-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* genmdesc.pl (load_opcodes): Fix this after the TARGET_... changes.
