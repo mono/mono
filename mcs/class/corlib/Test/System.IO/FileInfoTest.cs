@@ -853,6 +853,220 @@ namespace MonoTests.System.IO
 			}
 		}
 
+		
+		[Test]
+		public void Replace1 ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			string path2 = TempFolder + DSC + "FIT.Replace.Dest.Test";
+			string path3 = TempFolder + DSC + "FIT.Replace.Back.Test";
+			
+			DeleteFile (path1);
+			DeleteFile (path2);
+			DeleteFile (path3);
+			try {
+				File.Create (path1).Close ();
+				File.Create (path2).Close ();
+				File.Create (path3).Close ();				
+				FileInfo info = new FileInfo (path1);
+				Assert.IsTrue (info.Exists, "#1");
+				FileInfo info2 = info.Replace (path2, path3);
+				Assert.IsTrue (info2.Exists, "#2");				
+				FileInfo info3 = new FileInfo (path3);
+				Assert.IsTrue (info3.Exists, "#3");							
+			} finally {
+				DeleteFile (path2);
+				DeleteFile (path3);
+			}
+		}
+
+		[Test]
+		public void Replace1_Backup_Null ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			string path2 = TempFolder + DSC + "FIT.Replace.Dest.Test";
+			
+			DeleteFile (path1);
+			DeleteFile (path2);
+			try {
+				File.Create (path1).Close ();
+				File.Create (path2).Close ();
+				FileInfo info = new FileInfo (path1);
+				Assert.IsTrue (info.Exists, "#1");
+				FileInfo info2 = info.Replace (path2, null);
+				Assert.IsTrue (info2.Exists, "#2");
+				info = new FileInfo (path1);
+				Assert.IsFalse (info.Exists, "#3");				
+			} finally {
+				DeleteFile (path2);
+			} 
+		}
+
+		[Test]
+		public void Replace1_DestFileName_Null ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			DeleteFile (path1);
+			try {
+				try {
+					File.Create (path1).Close ();
+					FileInfo info = new FileInfo (path1);
+					info.Replace (null, null);
+					Assert.Fail ("#1");						
+				} catch (ArgumentNullException ex) {
+					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");				
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");	
+				}
+			} finally {
+				DeleteFile (path1);
+			}
+		}
+
+		[Test]
+		public void Replace1_DestFileName_Empty ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			DeleteFile (path1);
+			try {
+				try {
+					File.Create (path1).Close ();
+					FileInfo info = new FileInfo (path1);
+					info.Replace (string.Empty, null);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			} finally {
+				DeleteFile (path1);
+			}
+		}
+		
+		[Test]
+		public void Replace1_DestFileName_WhiteSpace ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			DeleteFile (path1);
+			try {
+				try {
+					File.Create (path1).Close ();
+					FileInfo info = new FileInfo (path1);
+					info.Replace ("     ", null);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			} finally {
+				DeleteFile (path1);
+			}
+		}
+
+		[Test] 
+		public void Replace1_DestFileName_InvalidPathChars ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			string path2 = string.Empty;
+			DeleteFile (path1);
+
+			try {
+				File.Create (path1).Close ();
+				FileInfo info = new FileInfo (path1);
+				foreach (char c in Path.InvalidPathChars)
+					path2 += c;
+				try {
+					info.Replace (path2, null);
+					Assert.Fail ("#1");
+				} catch (ArgumentException ex) {
+					// Illegal characters in path
+					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+					Assert.IsNull (ex.ParamName, "#5");
+				}
+			} finally {
+				DeleteFile (path1);
+			}
+		}
+
+		[Test]
+		public void Replace1_DestFileName_FileNotFound ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			string path2 = TempFolder + DSC + "FIT.Replace.Dest.Test";
+			DeleteFile (path1);
+			DeleteFile (path2);
+
+			try {
+				try {
+					File.Create (path1).Close ();
+					FileInfo info = new FileInfo (path1);
+					info.Replace (path2, null);
+					Assert.Fail ("#1");
+				} catch (FileNotFoundException ex) {
+					Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			} finally {
+				DeleteFile (path1);			
+			}
+		}
+
+		[Test]
+		public void Replace1_DestFileName_IsReadOnly ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			string path2 = TempFolder + DSC + "FIT.Replace.Dest.Test";
+			DeleteFile (path1);
+			DeleteFile (path2);
+
+			try {
+				try {
+					File.Create (path1).Close ();
+					File.Create (path2).Close ();
+					File.SetAttributes (path2, FileAttributes.ReadOnly);
+					FileInfo info = new FileInfo (path1);
+					info.Replace (path2, null);
+					Assert.Fail ("#1");
+				} catch (UnauthorizedAccessException ex) {
+					Assert.AreEqual (typeof (UnauthorizedAccessException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			} finally {
+				File.SetAttributes (path2, FileAttributes.Normal);
+				DeleteFile (path1);
+				DeleteFile (path2);			
+			}
+		}
+
+		[Test]
+		public void Replace1_Source_FileNotFound ()
+		{
+			string path1 = TempFolder + DSC + "FIT.Replace.Source.Test";
+			string path2 = TempFolder + DSC + "FIT.Replace.Dest.Test";
+			DeleteFile (path2);
+
+			try {
+				try {
+					File.Create (path2).Close ();
+					FileInfo info = new FileInfo (path1);
+					info.Replace (path2, null);
+					Assert.Fail ("#1");
+				} catch (FileNotFoundException ex) {
+					Assert.AreEqual (typeof (FileNotFoundException), ex.GetType (), "#2");
+					Assert.IsNull (ex.InnerException, "#3");
+					Assert.IsNotNull (ex.Message, "#4");
+				}
+			} finally {
+				DeleteFile (path2);			
+			}		
+		}
+		
 		[Test]
 		public void Open ()
 		{
@@ -1055,7 +1269,7 @@ namespace MonoTests.System.IO
 				Assert.IsNotNull (ex.Message, "#4");
 			}
 		}
-
+			
 		[Test]
 		public void Serialization ()
 		{
