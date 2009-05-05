@@ -101,8 +101,11 @@ namespace System.Web.Routing
 						return null;
 
 			var rd = new RouteData (this, RouteHandler);
+			RouteValueDictionary rdValues = rd.Values;
+			
 			foreach (var p in values)
-				rd.Values.Add (p.Key, p.Value);
+				rdValues.Add (p.Key, p.Value);
+			
 			return rd;
 		}
 

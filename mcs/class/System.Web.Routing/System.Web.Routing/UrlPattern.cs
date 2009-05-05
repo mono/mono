@@ -115,6 +115,21 @@ namespace System.Web.Routing
 				end = segment.Length;
 			return segment.Substring (start, end - start);
 		}
+
+		RouteValueDictionary AddDefaults (RouteValueDictionary dict, RouteValueDictionary defaults)
+		{
+			if (defaults != null && defaults.Count > 0) {
+				string key;
+				foreach (var def in defaults) {
+					key = def.Key;
+					if (dict.ContainsKey (key))
+						continue;
+					dict.Add (key, def.Value);
+				}
+			}
+			
+			return dict;
+		}
 		
 		RouteValueDictionary tmp = new RouteValueDictionary ();
 		public RouteValueDictionary Match (string path, RouteValueDictionary defaults)
@@ -123,7 +138,7 @@ namespace System.Web.Routing
 
 			// quick check
 			if (Url == path && Url.IndexOf ('{') < 0)
-				return tmp;
+				return AddDefaults (tmp, defaults);
 
 			string [] argSegs = path.Split ('/');
 			int argsLen = argSegs.Length;
@@ -191,7 +206,7 @@ namespace System.Web.Routing
 					return null;
 			}
 
-			return tmp;
+			return AddDefaults (tmp, defaults);
 		}
 
 		static readonly string [] substsep = {"{{"};

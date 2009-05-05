@@ -1,3 +1,7 @@
+2009-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteTest.cs: added test for bug #500739
+
 2008-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RouteTest.cs :
