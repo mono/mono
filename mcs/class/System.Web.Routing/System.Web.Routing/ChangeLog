@@ -1,3 +1,10 @@
+2009-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlPattern.cs: Match adds defaults values should some keys be
+	missing from the url. Fixes bug #500739
+
+	* Route.cs: a small GetRouteData loop optimization
+
 2009-02-18  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlPattern.cs: TrySubstitute now gets the collection of default

@@ -365,5 +365,24 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (r, vp.Route, "#3");
 			Assert.AreEqual (0, vp.DataTokens.Count, "#4");
 		}
+
+		// Bug #500739
+		[Test]
+		public void RouteGetRequiredStringWithDefaults ()
+		{
+			var routes = new RouteValueDictionary ();
+			var route = new Route ("Hello/{name}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new {controller = "Home", action = "Hello"})
+				};
+			routes.Add ("Name", route);
+
+			var hc = new HttpContextStub2 ("~/Hello/World", String.Empty);
+			var rd = route.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1");
+			Assert.AreEqual ("Home", rd.GetRequiredString ("controller"), "#A2");
+			Assert.AreEqual ("Hello", rd.GetRequiredString ("action"), "#A3");
+			Assert.AreEqual ("World", rd.Values ["name"], "#A4");
+		}
 	}
 }
