@@ -1,3 +1,9 @@
+2009-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: PageParserFilterType uses
+	HttpApplication.LoadType so that it is able to load the filter
+	from App_Code or with not fully qualified type names.
+
 2009-05-04  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: take RootBuilder from the associated

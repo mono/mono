@@ -1088,7 +1088,7 @@ namespace System.Web.UI {
 					if (String.IsNullOrEmpty (typeName))
 						return null;
 					
-					pageParserFilterType = Type.GetType (typeName, true);
+					pageParserFilterType = HttpApplication.LoadType (typeName, true);
 				}
 				
 				return pageParserFilterType;
