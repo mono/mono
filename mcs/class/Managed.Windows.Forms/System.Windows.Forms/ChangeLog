@@ -1,3 +1,12 @@
+2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextBox.cs: When setting Text use the very precise algorithm
+	that .net uses: iterate over every char of the new value, trying to
+	use every char, and use a normal call to MaskedTextProvider.Replace
+	call if RejectInputOnFirstFailure is true. Fire OnMaskInputRejected 
+	in case of error in both cases, as well.
+	Fixes #477408.
+
 2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* MaskedTextBox.cs: Handle OnKeyDown to properly process the Delete

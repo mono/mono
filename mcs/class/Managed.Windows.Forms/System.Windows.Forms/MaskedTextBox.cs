@@ -723,7 +723,8 @@ namespace System.Windows.Forms
 					base.Text = value;
 					setting_text = false;
 				} else {
-					InputText (value, true, true);
+					SelectionStart = 0;
+					InputText (value, true);
 				}
 				UpdateVisibleText ();
 			}
@@ -867,7 +868,7 @@ namespace System.Windows.Forms
 			setting_text = false;
 		}
 		
-		private void InputText (string text, bool overwrite, bool clear)
+		private void InputText (string text, bool clear)
 		{
 			string input = text;
 			
@@ -877,27 +878,24 @@ namespace System.Windows.Forms
 
 			int testPosition;
 			MaskedTextResultHint resultHint;
-			bool result = false;
+			bool result;
 			
 			if (RejectInputOnFirstFailure) {
-				if (overwrite) {
-					provider.Replace (input, SelectionStart, SelectionStart + input.Length - 1, out testPosition, out resultHint);
-				} else {
-					provider.InsertAt (input, SelectionStart);
-				}
+				result = provider.Replace (input, SelectionStart, SelectionStart + input.Length - 1, out testPosition, out resultHint);
+				if (!result)
+					OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
 			} else {
-				while (!result && input.Length > 0) {
-					if (overwrite) {
-						result = provider.Replace (input, SelectionStart, SelectionStart + input.Length - 1, out testPosition, out resultHint);
-					} else {
-						result = provider.InsertAt (input, SelectionStart, out testPosition, out resultHint);
-					}
-					
-					if (result) {
-						break;
-					}
-					
-					input = input.Substring (0, Math.Min(testPosition - SelectionStart - 1, input.Length - 1));
+				// Unfortunately we can't break if we reach the end of the mask, since
+				// .net iterates over _all_ the chars in the input
+				testPosition = SelectionStart;
+				for (int i = 0; i < input.Length; i++) {
+					char c = input [i];
+
+					result = provider.InsertAt (c, testPosition, out testPosition, out resultHint);
+					if (result)
+						testPosition++; // Move to the next free position
+					else
+						OnMaskInputRejected (new MaskInputRejectedEventArgs (testPosition, resultHint));
 				}
 			}
 		}
