@@ -1,3 +1,12 @@
+2009-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: RemoveFailedAssemblies wraps the compilation
+	exception to be rethrown in a HttpException instance.
+
+	* AspGenerator.cs: create a Location and pass it to the parser
+	before calling AddDirective from GetInheritedType, so that we get
+	meaningful exception messages with source, line information etc.
+
 2009-05-04  Marek Habersack  <mhabersack@novell.com>
 
 	* ThemeDirectoryBuildProvider.cs: use new AspGenerator constructor

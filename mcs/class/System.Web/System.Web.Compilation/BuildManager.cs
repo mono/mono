@@ -491,7 +491,7 @@ namespace System.Web.Compilation {
 					bp.GenerateCode (abuilder);
 				} catch (Exception ex) {
 					if (String.Compare (bvp, vpabsolute, stringComparer) == 0)
-						throw;
+						throw new HttpException ("Code generation failed.", ex);
 					if (failedBuildProviders == null)
 						failedBuildProviders = new List <BuildProvider> ();
 					failedBuildProviders.Add (bp);
@@ -1042,7 +1042,7 @@ namespace System.Web.Compilation {
 			}
 
 			if (rethrow)
-				throw ex;
+				throw new HttpException ("Compilation failed.", ex);
 		}
 		
 		static void SetCommonParameters (CompilationSection config, CompilerParameters p, Type compilerType, string language)

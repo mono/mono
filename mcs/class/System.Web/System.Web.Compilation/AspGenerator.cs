@@ -287,8 +287,47 @@ namespace System.Web.Compilation
 
 			return tparser.DefaultDirectiveName;
 		}
+
+		int GetLineNumberForIndex (string fileContents, int index)
+		{
+			int line = 1;
+			char c;
+			bool foundCR = false;
+			
+			for (int pos = 0; pos < index; pos++) {
+				c = fileContents [pos];
+				if (c == '\n' || foundCR) {
+					line++;
+					foundCR = false;
+				}
+				
+				foundCR = (c == '\r');
+			}
+
+			return line;
+		}
+
+		int GetNumberOfLinesForRange (string fileContents, int index, int length)
+		{
+			int lines = 0;
+			int stop = index + length;
+			char c;
+			bool foundCR = false;
+			
+			for (int pos = index; pos < stop; pos++) {
+				c = fileContents [pos];
+				if (c == '\n' || foundCR) {
+					lines++;
+					foundCR = false;
+				}
+
+				foundCR = (c == '\r');
+			}
+
+			return lines;
+		}
 		
-		Type GetInheritedType (string fileContents)
+		Type GetInheritedType (string fileContents, string filename)
 		{
 			MatchCollection matches = DirectiveRegex.Matches (fileContents);
 			if (matches == null || matches.Count == 0)
@@ -312,6 +351,14 @@ namespace System.Web.Compilation
 				if (String.Compare (directiveName.ToLower (), wantedDirectiveName, StringComparison.Ordinal) != 0)
 					continue;
 
+				var loc = new Location (null);
+				int index = match.Index;
+				
+				loc.Filename = filename;
+				loc.BeginLine = GetLineNumberForIndex (fileContents, index);
+				loc.EndLine = loc.BeginLine + GetNumberOfLinesForRange (fileContents, index, match.Length);
+				
+				tparser.Location = loc;
 				tparser.allowedMainDirectives = 2;
 				tparser.AddDirective (wantedDirectiveName, GetDirectiveAttributesDictionary (wantedDirectiveName, ccNames, groups [5].Captures));
 
@@ -379,7 +426,7 @@ namespace System.Web.Compilation
 				fileContents = null;
 			
 			if (!String.IsNullOrEmpty (fileContents)) {
-				Type inheritedType = GetInheritedType (fileContents);
+				Type inheritedType = GetInheritedType (fileContents, filename);
 				fileContents = null;
 				if (inheritedType != null) {
 					FileLevelControlBuilderAttribute attr;
