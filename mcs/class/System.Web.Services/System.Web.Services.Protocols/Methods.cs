@@ -157,6 +157,8 @@ namespace System.Web.Services.Protocols {
 				Use = SoapBindingUse.Encoded;	// RPC always use encoded
 
 				Action = rma.Action;
+				if (Action != null && Action.Length == 0)
+					Action = null;
 				Binding = rma.Binding;
 				
 				// When using RPC, MS.NET seems to ignore RequestElementName and
