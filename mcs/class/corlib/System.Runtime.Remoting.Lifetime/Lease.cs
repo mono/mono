@@ -139,7 +139,15 @@ namespace System.Runtime.Remoting.Lifetime
 		{
 			lock (this) {
 				if (_sponsors == null) return;
-				_sponsors.Remove (obj);
+				
+				// Don't use ArrayList.Remove() here because it will end calling Equals, which may
+				// crash if the sponsor is not available anymore
+				for (int n=0; n < _sponsors.Count; n++) {
+					if (object.ReferenceEquals (_sponsors [n], obj)) {
+						_sponsors.RemoveAt (n);
+						break;
+					}
+				}
 			}
 		}
 

@@ -1,3 +1,9 @@
+2009-05-06  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Lease.cs: Don't use ArrayList.Remove() to remove sponsors because
+	it will end calling Equals, which may crash if the sponsor is not
+	available anymore. Just compare references.
+
 2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
 	* ClientSponsor.cs: Fix parameter names
