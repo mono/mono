@@ -1,3 +1,13 @@
+2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextBox.cs: In OnKeyPress the IsOverwriteMode check is
+	actually inversed, so put it the right way. Also, don't automatically
+	look for the next editable item after adding a new one, but way for
+	the next insertion (this is what .net does) - this is not needed when
+	MaskedTextProvider.InsertAt is called however, since it already looks for the
+	next editable position.
+	Fixes the remaining bits of #477383.
+
 2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 	
 	* MaskedTextBox.cs: In OnKeyPress handle backspace by calling
