@@ -189,13 +189,26 @@ namespace System.Runtime.Remoting.Proxies
 				
 			if (null == res_msg) 
 			{
-				res_msg = (IMethodReturnMessage)rp.Invoke (msg);
-
+				bool failed = false;
+				
+				try {
+					res_msg = (IMethodReturnMessage)rp.Invoke (msg);
+				} catch (Exception ex) {
+					failed = true;
+					if (call_type == CallType.BeginInvoke) {
+						// If async dispatch crashes, don't propagate the exception.
+						// The exception will be raised when calling EndInvoke.
+						mMsg.AsyncResult.SyncProcessMessage (new ReturnMessage (ex, msg as IMethodCallMessage));
+						res_msg = new ReturnMessage (null, null, 0, null, msg as IMethodCallMessage);
+					} else
+						throw;
+				}
+				
 				// Note, from begining this code used AsyncResult.IsCompleted for
 				// checking if it was a remoting or custom proxy, but in some
 				// cases the remoting proxy finish before the call returns
 				// causing this method to be called, therefore causing all kind of bugs.
-				if ((!is_remproxy) && call_type == CallType.BeginInvoke)
+				if ((!is_remproxy) && call_type == CallType.BeginInvoke && !failed)
 				{
 					IMessage asyncMsg = null;
 
