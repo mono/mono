@@ -140,6 +140,25 @@ namespace Microsoft.Build.BuildEngine {
 				} else if (input [ptr] == "..") {
 					di = new DirectoryInfo [1];
 					di [0] = directory.Parent;
+				} else if (input[ptr] == "**")
+				{
+					// Read this directory and all subdirectories recursive
+					Stack<DirectoryInfo> currentDirectories = new Stack<DirectoryInfo>();					
+					currentDirectories.Push(directory);
+					List<DirectoryInfo> allDirectories = new List<DirectoryInfo>();
+					
+					while (currentDirectories.Count > 0)
+					{
+						DirectoryInfo current = currentDirectories.Pop();
+						allDirectories.Add (current);
+						foreach (DirectoryInfo dir in current.GetDirectories())
+						{
+							currentDirectories.Push(dir);
+						}						
+					}
+					
+					// No further directories shall be read
+					di = allDirectories.ToArray();					
 				} else
 					di = directory.GetDirectories (input [ptr]);
 				foreach (DirectoryInfo info in di) {
