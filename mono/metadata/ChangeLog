@@ -1,5 +1,9 @@
 2009-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the methodimpl table.
+
+2009-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify the property table.
 
 2009-05-06  Zoltan Varga  <vargaz@gmail.com>
