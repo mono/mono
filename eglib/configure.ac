@@ -2,7 +2,7 @@ AC_INIT(README)
 AC_CANONICAL_SYSTEM
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(eglib,0.2)
+AM_INIT_AUTOMAKE(eglib,0.3)
 AM_MAINTAINER_MODE
 
 AC_PROG_CC
@@ -55,7 +55,7 @@ AM_CONDITIONAL(PLATFORM_WIN32, test x$OS = xWIN32)
 
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(void *)
-AC_CHECK_FUNCS(strndup strlcpy getpwent_r strtok_r)
+AC_CHECK_FUNCS(strndup strlcpy getpwent_r strtok_r rewinddir)
 AC_CHECK_LIB(iconv, libiconv_open, LIBS="$LIBS -liconv")
 old_ldflags="${LDFLAGS}"
 LDFLAGS="${LDFLAGS} -Wl,-export-dynamic"
@@ -84,10 +84,34 @@ else
    G_GUINT64_FORMAT='"llu"'
 fi
 
-PKG_CHECK_MODULES(GLIB, glib-2.0,
-	[AM_CONDITIONAL(HAVE_GLIB, test x = x)],
-	[AM_CONDITIONAL(HAVE_GLIB, test x = y)]
-	)
+AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+if test "x$PKG_CONFIG" = "xno"; then
+	AC_MSG_ERROR([You need to install pkg-config])
+fi
+
+pkg_config_path=
+AC_ARG_WITH(crosspkgdir, [  --with-crosspkgdir=/path/to/pkg-config/dir      Change pkg-config dir to custom dir],
+	if test x$with_crosspkgdir = "x"; then
+		if test -s $PKG_CONFIG_PATH; then
+			pkg_config_path=$PKG_CONFIG_PATH
+		fi
+	else
+		pkg_config_path=$with_crosspkgdir
+		PKG_CONFIG_PATH=$pkg_config_path
+		export PKG_CONFIG_PATH
+	fi
+)
+
+dnl
+dnl No, you can not replace the call below with a pkg.m4 macro
+dnl
+if $PKG_CONFIG --atleast-version=$GLIB_REQUIRED_VERSION glib-2.0; then
+    have_glib=true;
+else
+    have_glib=false;
+fi
+AM_CONDITIONAL(HAVE_GLIB, $have_glib)
+
 AC_SUBST(GPOINTER_TO_INT)
 AC_SUBST(GPOINTER_TO_UINT)
 AC_SUBST(GINT_TO_POINTER)
