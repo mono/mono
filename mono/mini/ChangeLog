@@ -1,5 +1,8 @@
 2009-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mini_regression): Disable optimizations not supported by
+	the cpu. Fixes #500019.
+
 	* aot-runtime.c (mono_aot_get_unwind_info): Fix the --enable-minimal=aot
 	build.
 
