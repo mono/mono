@@ -1,3 +1,8 @@
+2009-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mini_regression): Disable optimizations not supported by
+	the cpu. Fixes #500019.
+
 2009-05-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* genmdesc.pl (load_opcodes): Fix this after the TARGET_... changes.
