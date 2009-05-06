@@ -1,6 +1,7 @@
 /mcs.exe
 /*.mdb
 /*.pdb
+/*.exe
 /Web
 /References
 /Web
