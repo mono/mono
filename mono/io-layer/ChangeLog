@@ -1,3 +1,8 @@
+2009-05-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* events.c: fix event_signal and namedevent_signal to actually signal
+	the handle.
+
 2009-04-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* sockets.c: don't display a warning when connect() fails because the

@@ -1,3 +1,9 @@
+2009-05-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall-def.h:
+	* threads-types.h:
+	* threads.c: added internal call for WaitHandle.SignalAndWait.
+
 2009-05-03  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c
