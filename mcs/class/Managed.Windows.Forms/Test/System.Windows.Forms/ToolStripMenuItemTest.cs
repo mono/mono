@@ -176,6 +176,7 @@ namespace MonoTests.System.Windows.Forms
 			MenuStrip menu = new MenuStrip ();
 			menu.Items.Add (tsmiFile);
 			menu.Items.Add (tsmiHelp);
+			
 			var parent = tsmiFile.GetCurrentParent ();
 			Assert.IsNotNull (parent, "A1");
 			Assert.AreEqual (parent.GetType ().Name, typeof (MenuStrip).Name, "A2");
@@ -183,6 +184,52 @@ namespace MonoTests.System.Windows.Forms
 			
 			//because it's not visible?:
 			Assert.IsNull (tsmiQuit.GetCurrentParent (), "A4");
+		}
+		
+		[Test]
+		public void Owner ()
+		{
+			ToolStripMenuItem tsmiFile = new ToolStripMenuItem ("File");
+			ToolStripMenuItem tsmiHelp = new ToolStripMenuItem ("Help");
+			ToolStripMenuItem tsmiQuit = new ToolStripMenuItem ("Quit");
+			ToolStripMenuItem tsmiNew = new ToolStripMenuItem ("New");
+			ToolStripMenuItem tsmiAbout = new ToolStripMenuItem ("About");
+			tsmiQuit.DropDownItems.Add (tsmiNew);
+			tsmiFile.DropDownItems.Add (tsmiQuit);
+			tsmiHelp.DropDownItems.Add (tsmiAbout);
+			MenuStrip menu = new MenuStrip ();
+			menu.Items.Add (tsmiFile);
+			menu.Items.Add (tsmiHelp);
+			
+			Assert.IsNotNull (tsmiFile.Owner);
+			Assert.AreEqual (tsmiFile.Owner.GetType().Name, typeof (MenuStrip).Name);
+			Assert.AreEqual (tsmiFile.Owner, menu);
+
+			Assert.IsNotNull (tsmiQuit.Owner);
+			Assert.AreEqual (tsmiQuit.Owner.GetType().Name, typeof (ToolStripDropDownMenu).Name);
+			Assert.AreEqual (tsmiQuit.Owner, tsmiFile.DropDown);
+		}
+		
+		[Test]
+		public void OwnerItem ()
+		{
+			ToolStripMenuItem tsmiFile = new ToolStripMenuItem ("File");
+			ToolStripMenuItem tsmiHelp = new ToolStripMenuItem ("Help");
+			ToolStripMenuItem tsmiQuit = new ToolStripMenuItem ("Quit");
+			ToolStripMenuItem tsmiNew = new ToolStripMenuItem ("New");
+			ToolStripMenuItem tsmiAbout = new ToolStripMenuItem ("About");
+			tsmiQuit.DropDownItems.Add (tsmiNew);
+			tsmiFile.DropDownItems.Add (tsmiQuit);
+			tsmiHelp.DropDownItems.Add (tsmiAbout);
+			MenuStrip menu = new MenuStrip ();
+			menu.Items.Add (tsmiFile);
+			menu.Items.Add (tsmiHelp);
+
+			Assert.IsNull (tsmiFile.OwnerItem);
+
+			Assert.IsNotNull (tsmiQuit.OwnerItem);
+			Assert.AreEqual (tsmiQuit.OwnerItem.GetType ().Name, typeof (ToolStripMenuItem).Name);
+			Assert.AreEqual (tsmiQuit.OwnerItem, tsmiFile);
 		}
 		
 		private class ExposeProtectedMethods : ToolStripMenuItem

@@ -1,5 +1,9 @@
 2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
 
+	* ToolStripMenuItemTest.cs: add tests for Owner and OwnerItem.
+
+2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
+
 	* ToolStripMenuItemTest.cs: more accurate test, and fix build
 	(namespace clash).
 
