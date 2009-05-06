@@ -163,6 +163,25 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (null, tsmi.ShortcutKeyDisplayString, "A5");
 		}
 		
+		[Test]
+		[Category ("NotWorking")]
+		public void GetCurrentParent ()
+		{
+			ToolStripMenuItem tsmiFile = new ToolStripMenuItem ("File");
+			ToolStripMenuItem tsmiHelp = new ToolStripMenuItem ("Help");
+			ToolStripMenuItem tsmiQuit = new ToolStripMenuItem ("Quit");
+			ToolStripMenuItem tsmiAbout = new ToolStripMenuItem ("About");
+			tsmiFile.DropDownItems.Add (tsmiQuit);
+			tsmiHelp.DropDownItems.Add (tsmiAbout);
+			MenuStrip menu = new MenuStrip ();
+			menu.Items.Add (tsmiFile);
+			menu.Items.Add (tsmiHelp);
+			var parent = tsmiFile.GetCurrentParent ();
+			Assert.IsNotNull (parent, "A1");
+			Assert.AreEqual (parent.GetType ().Name, typeof (MenuStrip).Name, "A2");
+			Assert.AreEqual (parent, menu, "A3");
+		}
+		
 		private class ExposeProtectedMethods : ToolStripMenuItem
 		{
 			public bool PublicProcessCmdKey (ref Message m, Keys keys)

@@ -666,7 +666,7 @@ namespace MonoTests.System.Windows.Forms
 
 			tc.DeselectTab ("Three");
 			Assert.AreEqual (0, tc.SelectedIndex, "A8");		
-}
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -788,7 +788,6 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual ("tc_OnGotFocus0;p2_OnEnter1;tc_OnSelectedIndexChanged1;", events, "A1");
 			Assert.IsTrue (tc.Focused, "A2");
 		}
-
 
 #endif
 	}
