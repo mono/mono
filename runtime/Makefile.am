@@ -21,12 +21,15 @@ SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if INSTALL_2_0
 if INSTALL_2_1
-build_profiles = net_1_1 net_2_0 net_3_5 net_2_1
+build_profiles = net_1_1 net_2_0 net_3_5 net_2_1_raw
+test_profiles = net_1_1 net_2_0 net_3_5 net_2_1
 else
 build_profiles = net_1_1 net_2_0 net_3_5
+test_profiles = $(build_profiles)
 endif
 else
 build_profiles = net_1_1
+test_profiles = $(build_profiles)
 endif
 
 if BUILD_MCS
@@ -68,11 +71,19 @@ else
 test_select = ONLY_CENTUM_TESTS=yes
 endif
 
+if INSTALL_2_1
+moon-do-build: test-support-files
+	cd $(top_builddir)/../moon/class && $(MAKE) all
+else
+moon-do-build:
+	@:
+endif
+
 mcs-do-test-profiles:
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' test-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' test-profiles
 
 mcs-do-run-test-profiles: test-support-files
-	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(build_profiles)' run-test-profiles
+	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' run-test-profiles
 
 if PLATFORM_WIN32
 if CROSS_COMPILING
@@ -92,7 +103,7 @@ endif
 # Skip net 2.1 assemblies for now because of visibility problems
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
-	for profile in $(build_profiles); do \
+	for profile in $(test_profiles); do \
 	  if [ "net_2_1" = "$$profile" ]; then \
           break; \
       fi; \
