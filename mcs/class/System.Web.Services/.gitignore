@@ -1,0 +1,13 @@
+/*.csproj.user
+/*.dll
+/*.mdb
+/*.pdb
+/*.sln
+/*.suo
+/.makefrag
+/.response
+/TestResult*
+/bin
+/library-deps.stamp
+/obj
+/semantic.cache

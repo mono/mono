@@ -1,0 +1,11 @@
+/*.user
+/*.resharper
+/bin
+/obj
+/Properties
+/Message
+/masterinfos*
+/output
+/*.mdb
+/*.dll
+/tune.stamp

@@ -1,0 +1,5 @@
+/semantic.cache
+/*.dll
+/*.mdb
+/*.pdb
+/TestResult-*

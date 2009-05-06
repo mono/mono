@@ -1,0 +1,10 @@
+/.makefrag
+/.response
+/System.Drawing_test*
+/TestResult*
+/semantic.cache
+/*.dll
+/*.mdb
+/library-deps.stamp
+/*.png
+/*.bmp

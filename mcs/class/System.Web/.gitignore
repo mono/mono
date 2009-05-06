@@ -1,0 +1,10 @@
+/*.dll
+/.makefrag
+/.response
+/Temp.build
+/lib
+/library-deps.stamp
+/TestResult*
+/*.mdb
+/semantic.cache
+/System.Web*.xml

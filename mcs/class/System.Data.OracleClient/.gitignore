@@ -1,0 +1,9 @@
+/.makefrag
+/.response
+/library-deps.stamp
+/*.dll
+/*.mdb
+/TestResult*
+/semantic.cache
+/System.Data.OracleClient_test_default.dll.config
+/System.Data.OracleClient_test_net_2_0.dll.config

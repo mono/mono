@@ -1,0 +1,12 @@
+/bin
+/obj
+/*.pdb
+/*.exe
+/cormissing.xml
+/*.mdb
+/semantic.cache
+/*.user
+/*.suo
+/*.pidb
+/*.userprefs
+/*.usertasks

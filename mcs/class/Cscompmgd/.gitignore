@@ -1,0 +1,8 @@
+/.makefrag
+/.response
+/Cscompmgd_test*
+/TestResult*
+/*.dll
+/*.mdb
+/semantic.cache
+/library-deps.stamp

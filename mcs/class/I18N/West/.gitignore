@@ -1,0 +1,16 @@
+/list
+/.makefrag
+/.response
+/library-deps.stamp
+/I18N.West_test_default.dll
+/I18N.West_test_default.dll.mdb
+/I18N.West_test_net_2_0.dll
+/I18N.West_test_net_2_0.dll.mdb
+/TestResult-default.log
+/TestResult-default.xml
+/TestResult-net_2_0.log
+/TestResult-net_2_0.xml
+/TestResult-ondotnet-default.log
+/TestResult-ondotnet-default.xml
+/TestResult-ondotnet-net_2_0.log
+/TestResult-ondotnet-net_2_0.xml

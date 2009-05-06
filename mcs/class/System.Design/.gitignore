@@ -1,0 +1,15 @@
+/.makefrag
+/.response
+/library-deps.stamp
+/TestResult-default.log
+/TestResult-default.xml
+/TestResult-net_2_0.log
+/TestResult-net_2_0.xml
+/TestResult-ondotnet-default.log
+/TestResult-ondotnet-default.xml
+/TestResult-ondotnet-net_2_0.log
+/TestResult-ondotnet-net_2_0.xml
+/System.Design_test_default.dll
+/System.Design_test_default.dll.mdb
+/System.Design_test_net_2_0.dll
+/System.Design_test_net_2_0.dll.mdb

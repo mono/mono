@@ -1,0 +1,10 @@
+/*.dll
+/*.mdb
+/.makefrag
+/.response
+/library-deps.stamp
+/mono-options.pc
+/Mono.Options.dll
+/Mono.Options_test*
+/semantic.cache
+/TestResult*

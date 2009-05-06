@@ -1,0 +1,16 @@
+/*.dll
+/*.exe
+/*.log
+/*.netmodule
+/xml-*.xml
+/gxml-*.xml
+/test-471.xml
+/data.xml
+/casts.cs
+/boot-casts.out
+/dir-gmcs
+/dir-mcs
+/mcs-casts.out
+/semantic.cache
+/dummy.xml
+/*.mdb

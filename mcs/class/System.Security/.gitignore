@@ -1,0 +1,9 @@
+/.makefrag
+/.response
+/System.Security_test*
+/TestResult*
+/*.dll
+/*.mdb
+/semantic.cache
+/library-deps.stamp
+/list

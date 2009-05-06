@@ -1,0 +1,8 @@
+/*.dll
+/*.exe
+/*.log
+/*.mdb
+/error-1.out
+/semantic.cache
+/dummy.xml
+/*.junk

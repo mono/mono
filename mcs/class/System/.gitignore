@@ -1,0 +1,11 @@
+/*.mdb
+/.makefrag
+/.response
+/System.dll
+/System_test*
+/TestResult*
+/*.dll
+/semantic.cache
+/library-deps.stamp
+/list
+/argument.txt

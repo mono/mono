@@ -1,0 +1,9 @@
+/.makefrag
+/.response
+/System.Runtime.Serialization.Formatters.Soap_test*
+/TestResult*
+/*.dll
+/*.mdb
+/library-deps.stamp
+/list
+/semantic.cache

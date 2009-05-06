@@ -1,0 +1,4 @@
+/.deps
+/*.dll
+/I18N-handlers.def
+/semantic.cache

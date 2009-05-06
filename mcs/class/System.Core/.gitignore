@@ -1,0 +1,16 @@
+/bin
+/obj
+/System.Core.csproj
+/*.user
+/System.Core.sln
+/*.suo
+/System.Core.pidb
+/System.Core.mdp System.Core.mds System.Core.userprefs System.Core.usertasks
+/System.Core.csproj System.Core.csproj.user System.Core.sln System.Core.suo
+/Properties
+/*.log
+/*.dll
+/*.mdb
+/Test*.xml
+/masterinfos
+/System.Core.xml

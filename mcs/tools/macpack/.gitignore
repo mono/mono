@@ -1,0 +1,5 @@
+/*.exe
+/*.mdb
+/TestResult*
+/*.dll
+/semantic.cache

@@ -1,0 +1,13 @@
+/semantic.cache
+/*.dll
+/*.exe
+/*.mdb
+/TestResult*
+/*.suo
+/*.pidb
+/*.userprefs
+/*.usertasks
+/*.user
+/bin
+/obj
+/Properties

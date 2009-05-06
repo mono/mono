@@ -1,0 +1,9 @@
+/config.make
+/Mono.Cecil.dll
+/mono-cecil.pc
+/bin
+/obj
+/build.properties
+/*.user
+/*.resharper
+/Message

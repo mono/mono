@@ -1,0 +1,10 @@
+/*.csproj.user
+/*.dll
+/*.pdb
+/*~
+/.makefrag
+/.response
+/System.DirectoryServices_test*
+/semantic.cache
+/TestResult*
+/library-deps.stamp

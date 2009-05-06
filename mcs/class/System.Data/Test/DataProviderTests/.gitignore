@@ -1,0 +1,13 @@
+/semantic.cache
+/TAGS
+/tags
+/.makefrag
+/.response
+/System.Data.dll
+/System.Data_test*
+/Temp
+/TestResult*
+/library-deps.stamp
+/tmp
+/*.dll
+/*.mdb
