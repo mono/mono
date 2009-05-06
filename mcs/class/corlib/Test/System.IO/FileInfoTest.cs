@@ -853,7 +853,7 @@ namespace MonoTests.System.IO
 			}
 		}
 
-		
+#if NET_2_0
 		[Test]
 		public void Replace1 ()
 		{
@@ -1066,7 +1066,8 @@ namespace MonoTests.System.IO
 				DeleteFile (path2);			
 			}		
 		}
-		
+#endif
+
 		[Test]
 		public void Open ()
 		{
