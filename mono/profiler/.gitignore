@@ -5,3 +5,6 @@
 /mono-cov.lo
 /libmono-profiler-cov.la
 /.cvsignore
+/*.la
+/*.lo
+/*.o

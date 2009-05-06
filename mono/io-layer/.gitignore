@@ -4,6 +4,7 @@
 /Makefile
 /Makefile.in
 /mono-handle-d
+/*.o
 /*.lo
 /*.la
 /.project

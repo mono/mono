@@ -9,6 +9,8 @@
 /0
 /stest.dat
 /semantic.cache
+/*.o
+/*.lo
 /*.exe
 /*.stderr
 /*.dll

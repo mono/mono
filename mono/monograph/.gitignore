@@ -3,3 +3,6 @@
 /Makefile
 /Makefile.in
 /monograph
+/*.o
+/*.lo
+/*.la

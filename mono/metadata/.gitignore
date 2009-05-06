@@ -5,6 +5,7 @@
 /monodiet
 /.libs
 /.deps
+/*.o
 /*.lo
 /*.la
 /semantic.cache

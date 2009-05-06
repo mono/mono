@@ -4,6 +4,7 @@
 /.deps
 /monodis
 /*.a
+/*.o
 /semantic.cache
 /.project
 /.cproject
