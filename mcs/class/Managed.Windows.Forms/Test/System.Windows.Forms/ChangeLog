@@ -1,5 +1,10 @@
 2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
 
+	* ToolStripMenuItemTest.cs: more accurate test, and fix build
+	(namespace clash).
+
+2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
+
 	* ToolStripMenuItemTest.cs: Add a test for GetCurrentParent
 	(passes on MS.NET). Related to a11y bugs #485524 and #479397.
 

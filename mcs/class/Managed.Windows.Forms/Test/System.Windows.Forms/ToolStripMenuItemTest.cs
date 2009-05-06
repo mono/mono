@@ -164,7 +164,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
+		[NUnit.Framework.Category ("NotWorking")]
 		public void GetCurrentParent ()
 		{
 			ToolStripMenuItem tsmiFile = new ToolStripMenuItem ("File");
@@ -180,6 +180,9 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsNotNull (parent, "A1");
 			Assert.AreEqual (parent.GetType ().Name, typeof (MenuStrip).Name, "A2");
 			Assert.AreEqual (parent, menu, "A3");
+			
+			//because it's not visible?:
+			Assert.IsNull (tsmiQuit.GetCurrentParent (), "A4");
 		}
 		
 		private class ExposeProtectedMethods : ToolStripMenuItem
