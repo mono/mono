@@ -1,3 +1,8 @@
+2009-05-06  Raja R Harinath  <harinath@hurrynot.org>
+
+	* method-to-ir.c (mono_method_to_ir): Revert change of 2009-05-02
+	due to regression in verifying System.dll.
+
 2009-05-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-mini.c (mono_debugger_method_has_breakpoint): Allow breakpoints
