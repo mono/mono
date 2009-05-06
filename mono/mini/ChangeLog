@@ -1,5 +1,8 @@
 2009-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* debug-mini.c (mono_debugger_method_has_breakpoint): Allow breakpoints
+	in dynamic methods.
+
 	* dwarfwriter.c (emit_class_dwarf_info): Add support for generic
 	instances.
 
