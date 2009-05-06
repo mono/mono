@@ -1,0 +1,14 @@
+/
+/*.dll
+/etc
+/*.exe*
+/Makefile
+/Makefile.in
+/*.mdb
+/*-wrapper
+/semantic.cache
+/.wapi
+/wrapper-config
+/_tmpinst
+/net_2_0
+/net_1_1
