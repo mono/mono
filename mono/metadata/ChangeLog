@@ -1,3 +1,8 @@
+2009-05-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_method_desc_match): Add support for generic
+	glob patterns.
+
 2009-05-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the propertymap table.
