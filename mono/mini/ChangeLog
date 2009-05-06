@@ -1,5 +1,8 @@
 2009-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c (emit_class_dwarf_info): Add support for generic
+	instances.
+
 	* aot-compiler.c aot-runtime.c: Use our own hash function instead of
 	g_str_hash () which can change.
 
