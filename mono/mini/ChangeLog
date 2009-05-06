@@ -1,5 +1,10 @@
 2009-05-06  Zoltan Varga  <vargaz@gmail.com>
 
+	Backport of r133651.
+	
+	* aot-compiler.c aot-runtime.c: Use our own hash function instead of
+	g_str_hash () which can change.
+	
 	* driver.c (mini_regression): Disable optimizations not supported by
 	the cpu. Fixes #500019.
 

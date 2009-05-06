@@ -4565,6 +4565,27 @@ typedef struct HashEntry {
 } HashEntry;
 
 /*
+ * mono_aot_str_hash:
+ *
+ * Hash function for strings which we use to hash strings for things which are
+ * saved in the AOT image, since g_str_hash () can change.
+ */
+guint
+mono_aot_str_hash (gconstpointer v1)
+{
+	/* Same as g_str_hash () in glib */
+	char *p = (char *) v1;
+	guint hash = *p;
+
+	while (*p++) {
+		if (*p)
+			hash = (hash << 5) - hash + *p;
+	}
+
+	return hash;
+} 
+
+/*
  * emit_extra_methods:
  *
  * Emit methods which are not in the METHOD table, like wrappers.
@@ -4658,7 +4679,7 @@ emit_extra_methods (MonoAotCompile *acfg)
 		value = get_method_index (acfg, method);
 
 		if (method->wrapper_type) {
-			hash = g_str_hash (method->name) % table_size;
+			hash = mono_aot_str_hash (method->name) % table_size;
 		} else {
 			// FIXME:
 			hash = 0 % table_size;
@@ -4870,7 +4891,7 @@ emit_class_name_table (MonoAotCompile *acfg)
 		token = MONO_TOKEN_TYPE_DEF | (i + 1);
 		klass = mono_class_get (acfg->image, token);
 		full_name = mono_type_get_name_full (mono_class_get_type (klass), MONO_TYPE_NAME_FORMAT_FULL_NAME);
-		hash = g_str_hash (full_name) % table_size;
+		hash = mono_aot_str_hash (full_name) % table_size;
 		g_free (full_name);
 
 		/* FIXME: Allocate from the mempool */

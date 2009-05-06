@@ -1271,6 +1271,7 @@ gpointer mono_aot_get_lazy_fetch_trampoline (guint32 slot) MONO_INTERNAL;
 void     mono_aot_register_globals          (gpointer *globals);
 /* This too */
 void     mono_aot_register_module           (gpointer *aot_info);
+guint    mono_aot_str_hash                  (gconstpointer v1) MONO_INTERNAL;
 
 void     mono_xdebug_init                   (void) MONO_INTERNAL;
 void     mono_save_xdebug_info              (MonoMethod *method, guint8 *code, guint32 code_size, MonoInst **args, GSList *unwind_info) MONO_INTERNAL;

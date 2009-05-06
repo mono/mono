@@ -1267,7 +1267,7 @@ mono_aot_get_class_from_name (MonoImage *image, const char *name_space, const ch
 			full_name = g_strdup_printf ("%s.%s", name_space, name);
 		}
 	}
-	hash = g_str_hash (full_name) % table_size;
+	hash = mono_aot_str_hash (full_name) % table_size;
 	if (full_name != full_name_buf)
 		g_free (full_name);
 
@@ -2082,7 +2082,7 @@ find_extra_method_in_amodule (MonoAotModule *amodule, MonoMethod *method)
 	}
 
 	if (method->wrapper_type)
-		hash = g_str_hash (method->name) % table_size;
+		hash = mono_aot_str_hash (method->name) % table_size;
 	else
 		hash = 0 % table_size;
 
