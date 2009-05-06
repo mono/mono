@@ -5636,13 +5636,15 @@ namespace System.Windows.Forms {
 							case FormWindowState.Maximized:	SetWindowState(handle, FormWindowState.Maximized); break;
 						}
 					}
-
-					SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
 				}
 				else {
 					UnmapWindow(hwnd, WindowType.Both);
 				}
 			}
+
+			if (visible)
+				SendMessage(handle, Msg.WM_WINDOWPOSCHANGED, IntPtr.Zero, IntPtr.Zero);
+
 			return true;
 		}
 

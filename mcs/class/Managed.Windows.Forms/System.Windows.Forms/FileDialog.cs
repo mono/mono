@@ -1546,7 +1546,7 @@ namespace System.Windows.Forms
 				
 				if (panel.focusButton != null && panel.focusButton.ButtonState == PopupButtonState.Up) {
 					panel.focusButton.ButtonState = PopupButtonState.Normal;
-					panel.focusButton = null;
+					panel.SetFocusButton (null);
 				}
 				Invalidate ();
 				base.OnMouseEnter (e);
@@ -1648,7 +1648,7 @@ namespace System.Windows.Forms
 			
 			SetStyle (ControlStyles.StandardClick, false);
 		}
-		
+
 		void OnClickButton (object sender, EventArgs e)
 		{
 			if (lastPopupButton != null && lastPopupButton != sender as PopupButton)
@@ -1676,6 +1676,28 @@ namespace System.Windows.Forms
 				eh (this, EventArgs.Empty);
 		}
 		
+#if NET_2_0
+		static object UIAFocusedItemChangedEvent = new object ();
+
+		internal event EventHandler UIAFocusedItemChanged {
+			add { Events.AddHandler (UIAFocusedItemChangedEvent, value); }
+			remove { Events.RemoveHandler (UIAFocusedItemChangedEvent, value); }
+		}
+
+		internal void OnUIAFocusedItemChanged ()
+		{
+			EventHandler eh = (EventHandler) Events [UIAFocusedItemChangedEvent];
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+		}
+
+		internal PopupButton UIAFocusButton {
+			get {
+				return focusButton;
+			}
+		}
+#endif
+
 		public string CurrentFolder {
 			set {
 				string currentPath = value;
@@ -1734,7 +1756,7 @@ namespace System.Windows.Forms
 		{
 			if (lastPopupButton != recentlyusedButton) {
 				recentlyusedButton.ButtonState = PopupButton.PopupButtonState.Up;
-				focusButton = recentlyusedButton;
+				SetFocusButton (recentlyusedButton);
 			}
 			currentFocusIndex = 0;
 			
@@ -1792,7 +1814,7 @@ namespace System.Windows.Forms
 					focusButton.ButtonState = PopupButton.PopupButtonState.Normal;
 				if (newfocusButton.ButtonState != PopupButton.PopupButtonState.Down)
 					newfocusButton.ButtonState = PopupButton.PopupButtonState.Up;
-				focusButton = newfocusButton;
+				SetFocusButton (newfocusButton);
 			}
 			
 			e.Handled = true;
@@ -1803,6 +1825,17 @@ namespace System.Windows.Forms
 		public event EventHandler DirectoryChanged {
 			add { Events.AddHandler (PDirectoryChangedEvent, value); }
 			remove { Events.RemoveHandler (PDirectoryChangedEvent, value); }
+		}
+
+		internal void SetFocusButton (PopupButton button)
+		{
+			if (button == focusButton)
+			return;
+
+			focusButton = button;
+#if NET_2_0
+				OnUIAFocusedItemChanged ();
+#endif
 		}
 	}
 	#endregion
@@ -2758,6 +2791,19 @@ namespace System.Windows.Forms
 			}
 		}
 		
+#if NET_2_0
+		#region UIA Framework Members
+		internal void PerformClick ()
+		{
+			OnClick (EventArgs.Empty);
+		}
+
+		internal void PerformDoubleClick ()
+		{
+			OnDoubleClick (EventArgs.Empty);
+		}
+		#endregion
+#endif
 		protected override void OnClick (EventArgs e)
 		{
 			if (!MultiSelect) {

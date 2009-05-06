@@ -1,3 +1,9 @@
+2009-05-06  Mike Gorse  <mgorse@novell.com>
+
+	* FileDialog.cs: Add UIAFocusedItemChanged to PopupButtonPanel.
+	Add PerformClick and PerformDoubleClick to PopupButton.
+	Fixes #499851.
+
 2009-05-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripDropDown.cs: In OnVisibleChanged, if we have an OwnerItem,
