@@ -1,3 +1,9 @@
+2009-05-06  Mike Gorse  <mgorse@novell.com>
+
+	* FileDialog.cs: Add UIAFocusedItemChanged to PopupButtonPanel.
+	Add PerformClick and PerformDoubleClick to PopupButton.
+	Fixes #499851.
+
 2009-05-04  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* TabControl.cs: call Focus() to emit GotFocus event at the
