@@ -1,3 +1,8 @@
+2009-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UniqueId.cs: Fix attributes for v3.5 (and later 2.0 SP) and remove
+	them (in particular [SecurityTreatAsSafe]) from the NET_2_1 build.
+
 2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryReader.cs : several fixes;
