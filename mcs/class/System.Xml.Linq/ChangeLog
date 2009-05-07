@@ -1,3 +1,8 @@
+2009-05-07  Jb Evain  <jbevain@novell.com>
+
+	* System.Xml.Linq/XElement.cs: do a bit of refactoring to avoid
+	multiple ifdefs.
+
 2008-11-20  Jb Evain  <jbevain@novell.com>
 
 	* Assembly/AssemblyInfo.cs: sign with winfx.pub on NET_2_1.
