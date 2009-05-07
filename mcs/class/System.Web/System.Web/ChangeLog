@@ -1,3 +1,7 @@
+2009-05-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* MimeTypes.cs: add silverlight related types.
+
 2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpContext.cs:
