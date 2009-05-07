@@ -275,6 +275,33 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual ("B", values [1]);
 			Assert.AreEqual ("C", values [2]);
 		}
+ 		public void CopyTo ()
+ 		{	
+ 			ICollection<KeyValuePair<int, string>> col1 =
+ 				list as ICollection<KeyValuePair<int, string>>;
+ 			KeyValuePair <int, string> [] array1 =
+ 				new KeyValuePair <int, string> [col1.Count];
+ 			col1.CopyTo (array1, 0);
+ 			Assert.AreEqual (3, array1.Length);
+ 			
+ 			ICollection col = list as ICollection;
+ 			array1 = new KeyValuePair <int, string> [col.Count];
+ 			col.CopyTo (array1, 0);			
+ 			Assert.AreEqual (3, array1.Length);
+ 			
+ 			ICollection<KeyValuePair<string, int>> col2 =
+ 				list2 as ICollection<KeyValuePair<string, int>>;
+ 			KeyValuePair <string, int> [] array2 =
+ 				new KeyValuePair <string, int> [col2.Count];
+ 			col2.CopyTo (array2, 0);
+ 			Assert.AreEqual (0, array2.Length);
+ 			
+ 			col = list2 as ICollection;
+ 			array2 = new KeyValuePair <string, int> [col.Count];
+ 			col.CopyTo (array2, 0);
+ 			Assert.AreEqual (0, array2.Length);			
+ 		}
+		
 	}
 }
 

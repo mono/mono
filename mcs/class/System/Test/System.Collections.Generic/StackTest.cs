@@ -103,6 +103,14 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual  (10, x [0], "#1");
 			Assert.AreEqual (2, x [1], "#2");
 			Assert.AreEqual (1, x [2], "#3");
+			
+			z = new Stack <int> ();
+			x = new int [z.Count];
+			z.CopyTo (x, 0);			
+			
+			ICollection c = new Stack <int> ();
+			x = new int [c.Count];
+			c.CopyTo (x, 0);
 		}
 
 		[Test]

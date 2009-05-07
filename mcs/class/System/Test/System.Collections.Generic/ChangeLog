@@ -1,3 +1,13 @@
+2009-05-06  Pia Eriksson  <pe@hallerud.se>
+
+	* SortedListTest.cs: Added test for CopyTo
+	* LinkedListTest.cs: Test for CopyTo extended w. case when Count == 0
+	* LinkedListTest.cs: Test for CopyTo extended w. case when Count == 0
+	* QueueTest.cs: Test for CopyTo extended w. case when Count == 0
+	* StackTest.cs: Test for CopyTo extended w. case when Count == 0
+	* SortedDictionaryTest.cs: Added test for CopyTo on SortedDictionary,
+	SortedDictionary.Keys and SortedDictionary.Values
+	
 2007-08-20  Jb Evain  <jbevain@novell.com>
 
 	* SortedListTest.cs: Tests for #82492.

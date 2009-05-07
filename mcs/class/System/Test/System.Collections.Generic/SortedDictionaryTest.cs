@@ -249,6 +249,30 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
+		public void CopyTo ()
+		{
+			SortedDictionary<int,string> d =
+				new SortedDictionary<int,string> ();			
+			d.Add (1, "A");			
+			KeyValuePair <int, string> [] array =
+				new KeyValuePair <int, string> [d.Count];
+			d.CopyTo (array, 0);
+			Assert.AreEqual (1, array.Length);
+			Assert.AreEqual (1, array [0].Key);
+			Assert.AreEqual ("A", array [0].Value);
+			
+			d = new SortedDictionary<int,string> ();			
+			array = new KeyValuePair <int, string> [d.Count];
+			d.CopyTo (array, 0);
+			Assert.AreEqual (0, array.Length);
+			
+			ICollection c = new SortedDictionary<int,string> ();
+			array = new KeyValuePair <int, string> [c.Count];
+			c.CopyTo (array, 0);
+			Assert.AreEqual (0, array.Length);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void IDictionaryAddKeyNull ()
 		{
@@ -311,6 +335,24 @@ namespace MonoTests.System.Collections.Generic
 			col.Remove (1);
 		}
 
+		[Test]		
+		public void KeysICollectionCopyTo ()
+		{
+			SortedDictionary<int,string> d = new SortedDictionary<int, string> ();
+			d.Add (1, "A");
+			ICollection<int> col = d.Keys;
+			int[] array = new int [col.Count];
+			col.CopyTo (array, 0);
+			Assert.AreEqual (1, array.Length);
+			Assert.AreEqual (1, array [0]);
+			
+			// Bug #497720
+			d = new SortedDictionary<int, string> ();			
+			col = d.Keys;
+			array = new int [col.Count];
+			col.CopyTo (array, 0);
+		}
+		
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ValuesICollectionAdd ()
@@ -339,6 +381,23 @@ namespace MonoTests.System.Collections.Generic
 			d.Add (1, "A");
 			ICollection<string> col = d.Values;
 			col.Remove ("A");
+		}
+
+		[Test]		
+		public void ValuesICollectionCopyTo ()
+		{
+			SortedDictionary<int,string> d = new SortedDictionary<int,string> ();
+			d.Add (1, "A");
+			ICollection<string> col = d.Values;
+			string[] array = new string [col.Count];
+			col.CopyTo (array, 0);
+			Assert.AreEqual (1, array.Length);
+			Assert.AreEqual ("A", array [0]);
+			
+			d = new SortedDictionary<int,string> ();			
+			col = d.Values;
+			array = new string [col.Count];
+			col.CopyTo (array, 0);
 		}
 
 		[Test]
