@@ -389,7 +389,7 @@ namespace System.Xml.Linq
 
 		public static XElement Load (XmlReader reader, LoadOptions options)
 		{
-			XmlReaderSettings s = reader.Settings.Clone ();
+			XmlReaderSettings s = reader.Settings != null ? reader.Settings.Clone () : new XmlReaderSettings ();
 			s.ProhibitDtd = false;
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (reader, s)) {
