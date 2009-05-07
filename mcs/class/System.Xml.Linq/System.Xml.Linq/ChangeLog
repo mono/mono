@@ -1,3 +1,8 @@
+2009-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XElement.cs: Use XmlReaderSettings.DtdProcessing property instead
+	of ProhibitDtd for NET_2_1 code.
+
 2009-05-07  Jb Evain  <jbevain@novell.com>
 
 	* XElement.cs (Load (XmlReader,LoadOptions)): prevent a NRE if

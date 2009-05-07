@@ -360,7 +360,12 @@ namespace System.Xml.Linq
 		public static XElement Load (string uri, LoadOptions options)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
+#if NET_2_1
+			// 2.1 has a DtdProcessing property which defaults to DtdProcessing.Prohibit
+			s.DtdProcessing = DtdProcessing.Parse;
+#else
 			s.ProhibitDtd = false;
+#endif
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (uri, s)) {
 				return LoadCore (r, options);
@@ -375,7 +380,11 @@ namespace System.Xml.Linq
 		public static XElement Load (TextReader tr, LoadOptions options)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
+#if NET_2_1
+			s.DtdProcessing = DtdProcessing.Parse;
+#else
 			s.ProhibitDtd = false;
+#endif
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (tr, s)) {
 				return LoadCore (r, options);
@@ -390,7 +399,11 @@ namespace System.Xml.Linq
 		public static XElement Load (XmlReader reader, LoadOptions options)
 		{
 			XmlReaderSettings s = reader.Settings != null ? reader.Settings.Clone () : new XmlReaderSettings ();
+#if NET_2_1
+			s.DtdProcessing = DtdProcessing.Parse;
+#else
 			s.ProhibitDtd = false;
+#endif
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (reader, s)) {
 				return LoadCore (r, options);
