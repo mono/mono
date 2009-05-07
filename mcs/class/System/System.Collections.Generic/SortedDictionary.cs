@@ -194,6 +194,8 @@ namespace System.Collections.Generic
 
 		public void CopyTo (KeyValuePair<TKey,TValue>[] array, int arrayIndex)
 		{
+			if (Count == 0)
+				return;
 			if (array == null)
 				throw new ArgumentNullException ();
 			if (arrayIndex < 0 || array.Length <= arrayIndex)
@@ -331,6 +333,8 @@ namespace System.Collections.Generic
 
 		void ICollection.CopyTo (Array array, int index)
 		{
+			if (Count == 0)
+				return;
 			if (array == null)
 				throw new ArgumentNullException ();
 			if (index < 0 || array.Length <= index)
@@ -399,6 +403,8 @@ namespace System.Collections.Generic
 
 			public void CopyTo (TValue [] array, int arrayIndex)
 			{
+				if (Count == 0)
+					return;
 				if (array == null)
 					throw new ArgumentNullException ();
 				if (arrayIndex < 0 || array.Length <= arrayIndex)
@@ -434,6 +440,8 @@ namespace System.Collections.Generic
 		
 			void ICollection.CopyTo (Array array, int index)
 			{
+				if (Count == 0)
+					return;
 				if (array == null)
 					throw new ArgumentNullException ();
 				if (index < 0 || array.Length <= index)
@@ -524,6 +532,8 @@ namespace System.Collections.Generic
 
 			public void CopyTo (TKey [] array, int arrayIndex)
 			{
+				if (Count == 0)
+					return;
 				if (array == null)
 					throw new ArgumentNullException ();
 				if (arrayIndex < 0 || array.Length <= arrayIndex)
@@ -554,6 +564,8 @@ namespace System.Collections.Generic
 
 			void ICollection.CopyTo (Array array, int index)
 			{
+				if (Count == 0)
+					return;
 				if (array == null)
 					throw new ArgumentNullException ();
 				if (index < 0 || array.Length <= index)

@@ -327,6 +327,9 @@ namespace System.Collections.Generic
 
 		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (KeyValuePair<TKey, TValue>[] array, int arrayIndex)
 		{
+			if (Count == 0)
+				return;
+			
 			if (null == array)
 				throw new ArgumentNullException();
 
@@ -421,6 +424,9 @@ namespace System.Collections.Generic
 
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
+			if (Count == 0)
+				return;
+			
 			if (null == array)
 				throw new ArgumentNullException();
 

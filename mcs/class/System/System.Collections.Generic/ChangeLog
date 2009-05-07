@@ -3,6 +3,11 @@
 	* SortedList.cs: Add version checking to the Key/Value enumerators +
 	implement support for Reset (). Fixes #483985.
 
+2009-05-06  Pia Eriksson  <pe@hallerud.se>
+
+	* SortedList.cs: Handle Count == 0 in CopyTo correcly
+	* SortedDictionary.cs: Handle Count == 0 in CopyTo correcly
+
 2007-11-15  Roei Erez  <roeie@mainsoft.com>
 
 	* Stack.cs: Performance improvement in the case where the stack is popped
