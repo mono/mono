@@ -1,3 +1,11 @@
+2009-05-07  Jb Evain  <jbevain@novell.com>
+
+	backport of r133710.
+
+	* XElement.cs (Load (XmlReader,LoadOptions)): prevent a NRE if
+	the provided XmlReader doesn't have existing settings.
+	Fixes #501589.
+
 2009-02-23  Jb Evain  <jbevain@novell.com>
 
 	backport of 127784.
