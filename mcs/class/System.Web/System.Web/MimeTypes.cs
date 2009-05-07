@@ -509,6 +509,9 @@ namespace System.Web
 			mimeTypes.Add ("wsrc", "application/x-wais-source");
 			mimeTypes.Add ("wtk", "application/x-wintalk");
 			mimeTypes.Add ("xaf", "x-world/x-vrml");
+			mimeTypes.Add ("xaml", "application/xaml+xml");
+			mimeTypes.Add ("xap", "application/x-silverlight-app");
+			mimeTypes.Add ("xbap", "application/x-ms-xbap");
 			mimeTypes.Add ("xbm", "image/x-xbitmap");
 			mimeTypes.Add ("xdr", "video/x-amt-demorun");
 			mimeTypes.Add ("xgz", "xgl/drawing");
