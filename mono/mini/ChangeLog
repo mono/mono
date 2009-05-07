@@ -1,3 +1,8 @@
+2009-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_wrappers): Add remoting-invoke-with-check wrappers
+	for virtual methods too.
+
 2009-05-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* method-to-ir.c (mono_method_to_ir): Revert change of 2009-05-02
