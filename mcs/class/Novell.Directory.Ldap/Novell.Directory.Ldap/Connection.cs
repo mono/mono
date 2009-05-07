@@ -1150,7 +1150,9 @@ namespace Novell.Directory.Ldap
 				{
 					if(Ssl)
 					{
-						sock.Shutdown(SocketShutdown.Both);
+						try {
+							sock.Shutdown(SocketShutdown.Both);
+						} catch {}
 						sock.Close();
 					}
 					else
@@ -1160,7 +1162,7 @@ namespace Novell.Directory.Ldap
 						socket.Close();
 					}
 				}
-				catch (System.IO.IOException ie)
+				catch (Exception)
 				{
 					// ignore problem closing socket
 				}
