@@ -1,3 +1,7 @@
+2009-05-07  Jb Evain  <jbevain@novell.com>
+
+	* XElementTest.cs: add test for bug #501589.
+
 2009-02-23  Jb Evain  <jbevain@novell.com>
 
 	* XAttributeTest.cs: add test for XAttribute holding DateTimes.

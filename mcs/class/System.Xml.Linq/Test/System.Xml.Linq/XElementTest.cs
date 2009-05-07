@@ -526,5 +526,12 @@ namespace MonoTests.System.Xml.Linq
 			x.Save (sw, SaveOptions.DisableFormatting);
 			Assert.AreEqual (@"<?xml version=""1.0"" encoding=""utf-16""?><xxx:a xmlns:xxx=""http://www.foobar.com""><xxx:b>blah blah blah</xxx:b></xxx:a>", sw.ToString ());
 		}
+
+		[Test]
+		public void LoadFromXmlTextReader ()
+		{
+			var foo = XElement.Load (new XmlTextReader (new StringReader ("<foo></foo>")));
+			Assert.IsNotNull (foo);
+		}
 	}
 }
