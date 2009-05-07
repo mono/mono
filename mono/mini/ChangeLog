@@ -1,3 +1,7 @@
+2009-05-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (arch_emit_got_access): Fix the aot-not-supported build.
+
 2009-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Add remoting-invoke-with-check wrappers
