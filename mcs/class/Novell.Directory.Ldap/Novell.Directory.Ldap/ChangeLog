@@ -1,3 +1,11 @@
+2009-05-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Connection.cs: if the socket is already disconnected, Shutdown will
+	fail with a SocketException... Also, catch *all* the possible
+	exceptions since the socket.Close method could also throw
+	ObjectDisposedException.
+	Fixes bug #449092.
+
 2008-12-20  Jeroen Asselman <jeroen-novel@asselman.com>
 
 	* Connection.cs: Apply patch from #436775, there is no need to
