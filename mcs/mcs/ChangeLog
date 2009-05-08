@@ -1,3 +1,9 @@
+2009-05-08  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #496922
+	* expression: Always use temporary variable when using object
+	initializer.
+
 2009-04-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #495112

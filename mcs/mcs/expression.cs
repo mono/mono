@@ -9596,12 +9596,6 @@ namespace Mono.CSharp {
 			Expression previous = ec.CurrentInitializerVariable;
 			ec.CurrentInitializerVariable = new InitializerTargetExpression (this);
 			initializers.Resolve (ec);
-
-			// Empty initializer can be optimized to simple new
-			if (initializers.IsEmpty) {
-				e = ReducedExpression.Create (e, this).Resolve (ec);
-			}
-			
 			ec.CurrentInitializerVariable = previous;
 			return e;
 		}
@@ -9613,36 +9607,25 @@ namespace Mono.CSharp {
 			if (initializers.IsEmpty)
 				return left_on_stack;
 
-			LocalTemporary temp = null;
-
-			//
-			// If target is non-hoisted variable, let's use it
-			//
-			VariableReference variable = target as VariableReference;
-			if (variable != null && !variable.IsRef) {
-				instance = target;
-
-				if (left_on_stack) {
-					variable.EmitAssign (ec, EmptyExpression.Null, false, false);
-					left_on_stack = false;
-				}
-			} else {
-				temp = target as LocalTemporary;
-				bool is_address = false;
-				if (temp == null) {
-					if (!left_on_stack) {
-						is_address = true;
+			LocalTemporary temp = target as LocalTemporary;
+			if (temp == null) {
+				if (!left_on_stack) {
+					VariableReference vr = target as VariableReference;
+					
+					// FIXME: This still does not work correctly for pre-set variables
+					if (vr != null && vr.IsRef)
 						target.AddressOf (ec, AddressOp.Load);
-						left_on_stack = true;
-					}
 
-					temp = new LocalTemporary (type);
+					((Expression) target).Emit (ec);
+					left_on_stack = true;
 				}
 
-				instance = temp;
-				if (left_on_stack && !is_address)
-					temp.Store (ec);
+				temp = new LocalTemporary (type);
 			}
+
+			instance = temp;
+			if (left_on_stack)
+				temp.Store (ec);
 
 			initializers.Emit (ec);
 
