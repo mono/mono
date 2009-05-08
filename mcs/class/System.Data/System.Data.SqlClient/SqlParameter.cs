@@ -628,6 +628,14 @@ namespace System.Data.SqlClient {
 				MetaParameter.TypeName = "datetime";
 				sqlDbType = SqlDbType.DateTime;
 				break;
+#if NET_2_0
+				// Handle Xml type as string
+			case DbType.Xml:
+				MetaParameter.TypeName = "xml";
+				sqlDbType = SqlDbType.Xml;
+				MetaParameter.IsVariableSizeType = true;
+				break;
+#endif
 			default:
 				string exception = String.Format ("No mapping exists from DbType {0} to a known SqlDbType.", type);
 				throw new ArgumentException (exception);
@@ -711,6 +719,11 @@ namespace System.Data.SqlClient {
 			case "sql_variant":
 				SqlDbType = SqlDbType.Variant;
 				break;
+#if NET_2_0				
+			case "xml":
+				SqlDbType = SqlDbType.Xml;
+				break;
+#endif
 			default:
 				SqlDbType = SqlDbType.Variant;
 				break;
@@ -828,6 +841,13 @@ namespace System.Data.SqlClient {
 				MetaParameter.TypeName = "sql_variant";
 				dbType = DbType.Object;
 				break;
+#if NET_2_0
+			case SqlDbType.Xml:
+				MetaParameter.TypeName = "xml";
+				dbType = DbType.Xml;
+				MetaParameter.IsVariableSizeType = true;
+				break;
+#endif
 			default:
 				string exception = String.Format ("No mapping exists from SqlDbType {0} to a known DbType.", type);
 				throw new ArgumentOutOfRangeException ("SqlDbType", exception);
@@ -966,6 +986,9 @@ namespace System.Data.SqlClient {
 			case SqlDbType.NChar:
 			case SqlDbType.Text:
 			case SqlDbType.NText:
+#if NET_2_0
+			case SqlDbType.Xml:
+#endif
 				return Convert.ChangeType (value,  typeof (string));
 			case SqlDbType.UniqueIdentifier:
 				return Convert.ChangeType (value,  typeof (Guid));

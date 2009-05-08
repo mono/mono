@@ -1228,10 +1228,10 @@ namespace System.Data.SqlClient
 			if (!(value is SqlXml)) {
 				if (value is DBNull) {
 					throw new SqlNullValueException ();
-				} else if (command.Tds.TdsVersion == TdsVersion.tds70 && value is SqlString) {
-					// Workaround for TDS 7 clients
-					// Xml column types are supported only from Sql Server 2005 / TDS 8, however
-					// when a TDS 7 client requests for Xml column data, Sql Server 2005 returns
+				} else if (command.Tds.TdsVersion <= TdsVersion.tds80 && value is SqlString) {
+					// Workaround for TDS 7/8/8.1 clients
+					// Xml column types are supported only from Sql Server 2005 / TDS 9, however
+					// when a TDS 7/8/8.1 client requests for Xml column data, Sql Server 2005 returns
 					// it as NTEXT
 					MemoryStream stream = null;
 					if (!((SqlString) value).IsNull)

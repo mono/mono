@@ -1,3 +1,10 @@
+2009-05-08  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #497715
+	* SqlDataReader.cs: (GetSqlXml): Handle Xml types for TDS 8/8.1 
+	clients as well.
+	* SqlParameter.cs: Map XML type properly.
+	
 2009-04-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SqlConnection.cs: if the error causes a disconnection from the
