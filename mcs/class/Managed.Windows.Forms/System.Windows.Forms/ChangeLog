@@ -1,3 +1,11 @@
+2009-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ToolStripControlHost.cs: DefaultSize must return the current size of
+	the Control, not the value returned by GetPreferredSize. Also connect
+	a handle to the control Resize event, and use it to fire
+	OnHostedControlReize.
+	Fixes the remaining bits of #483146.
+
 2009-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripDropDown.cs: When performing the layout, use

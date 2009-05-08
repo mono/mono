@@ -47,6 +47,7 @@ namespace System.Windows.Forms
 			this.control = c;
 			this.control_align = ContentAlignment.MiddleCenter;
 			this.control.TabStop = false;
+			this.control.Resize += ControlResizeHandler;
 			this.Size = DefaultSize;
 			this.OnSubscribeControlEvents (this.control);
 		}
@@ -250,7 +251,7 @@ namespace System.Windows.Forms
 				if (control == null)
 					return new Size (23, 23);
 
-				return control.GetPreferredSize (Size.Empty);
+				return control.Size;
 			}
 		}
 		#endregion
@@ -316,9 +317,17 @@ namespace System.Windows.Forms
 			if (eh != null)
 				eh (this, e);
 		}
+
+		void ControlResizeHandler (object obj, EventArgs args)
+		{
+			OnHostedControlResize (args);
+		}
 		
 		protected virtual void OnHostedControlResize (EventArgs e)
 		{
+			// Since the control size has been just adjusted, only update the location
+			if (control != null)
+				control.Location = AlignInRectangle (this.Bounds, control.Size, this.control_align).Location;
 		}
 		
 		protected virtual void OnKeyDown (KeyEventArgs e)
