@@ -2,6 +2,17 @@
 
 	* aot-compiler.c (arch_emit_got_access): Fix the aot-not-supported build.
 
+2009-05-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_emit_call_args): Add a 'tail' flag argument.
+	(mono_method_to_ir): Use MONO_ARCH_USE_OP_TAIL_CALL macro to determine
+	whenever to make tail calls using OP_TAIL_CALL. Enable support for tail
+	calls returning structures by addr on amd64.
+
+	* mini-amd64.h (MONO_ARCH_USE_OP_TAIL_CALL): New arch-specific macro.
+
+	* iltests.il.in: Restructure the tail call tests a bit.
+	
 2009-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Add remoting-invoke-with-check wrappers
