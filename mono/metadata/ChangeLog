@@ -1,5 +1,9 @@
 2009-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the typespec table.
+
+2009-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify the module table.
 
 2009-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
