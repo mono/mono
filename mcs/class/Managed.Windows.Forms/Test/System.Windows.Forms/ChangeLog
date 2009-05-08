@@ -1,3 +1,8 @@
+2009-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripControlHost.cs: New tests for DefaultSize and
+	OnHostedControlResize members.
+
 2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ToolStripMenuItemTest.cs: Simplify test.

@@ -177,6 +177,19 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void PropertyDefaultSize ()
+		{
+			VariableSizeControl c = new VariableSizeControl ();
+			ExposeProtectedProperties epp = new ExposeProtectedProperties (c);
+
+			Assert.AreEqual (new Size (-1, -1), epp.DefaultSize, "#A1");
+
+			c.Size = new Size (666, 666);
+			Assert.AreEqual (new Size (666, 666), c.Size, "#B99");
+			Assert.AreEqual (new Size (666, 666), epp.DefaultSize, "#B1");
+		}
+
+		[Test]
 		public void PropertyEnabled ()
 		{
 			ToolStripControlHost tsi = new ToolStripControlHost (new Control ());
@@ -432,7 +445,41 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (new Size (100, 50), tsi.Size, "H10");
 			Assert.AreEqual (new Size (292, 53), ts.Size, "H11");
 		}
-		
+
+		[Test]
+		public void MethodOnHostedControlResize ()
+		{
+			ToolStripControlHostChild control_host = new ToolStripControlHostChild (new Control ());
+			Control c = control_host.Control;
+
+			Assert.AreEqual (false, control_host.OnHostedControlResizeFired, "#A1");
+
+			c.Size = new Size (666, 666);
+			Assert.AreEqual (true, control_host.OnHostedControlResizeFired, "#A2");
+		}
+
+		private class ToolStripControlHostChild : ToolStripControlHost {
+			bool on_hosted_control_resize_fired;
+
+			public ToolStripControlHostChild (Control c) : base (c)
+			{
+			}
+
+			protected override void OnHostedControlResize (EventArgs e)
+			{
+				base.OnHostedControlResize (e);
+				on_hosted_control_resize_fired = true;
+			}
+
+			public bool OnHostedControlResizeFired
+			{
+				get
+				{
+					return on_hosted_control_resize_fired;
+				}
+			}
+		}
+
 		private class EventWatcher
 		{
 			private string events = string.Empty;
@@ -463,9 +510,24 @@ namespace MonoTests.System.Windows.Forms
 		
 		private class ExposeProtectedProperties : ToolStripControlHost
 		{
+			public ExposeProtectedProperties (Control c) : base (c) {}
 			public ExposeProtectedProperties () : base (new Control ()) {}
 			
 			public new Size DefaultSize { get { return base.DefaultSize; } }
+		}
+
+		private class VariableSizeControl : Control 
+		{
+			public override Size GetPreferredSize (Size proposedSize)
+			{
+				return new Size (999, 999);
+			}
+
+			protected override Size DefaultSize {
+				get {
+					return new Size (-1, -1);
+				}
+			}
 		}
 	}
 }
