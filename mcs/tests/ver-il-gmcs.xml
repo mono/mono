@@ -10409,7 +10409,7 @@
         <size>19</size>
       </method>
       <method name="Void Main()">
-        <size>20</size>
+        <size>22</size>
       </method>
     </type>
   </test>
@@ -12184,10 +12184,10 @@
         <size>16</size>
       </method>
       <method name="Void &lt;Main&gt;m__4()">
-        <size>59</size>
+        <size>61</size>
       </method>
       <method name="Void &lt;Main&gt;m__5()">
-        <size>51</size>
+        <size>53</size>
       </method>
     </type>
   </test>
@@ -14478,7 +14478,7 @@
         <size>81</size>
       </method>
       <method name="Int32 Main()">
-        <size>507</size>
+        <size>524</size>
       </method>
     </type>
     <type name="Test+Wrap">
@@ -14499,7 +14499,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>69</size>
+        <size>73</size>
       </method>
     </type>
   </test>
@@ -16294,7 +16294,7 @@
         <size>7</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>61</size>
+        <size>63</size>
       </method>
     </type>
     <type name="ChatClient">
@@ -16756,7 +16756,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>65</size>
+        <size>67</size>
       </method>
     </type>
   </test>
@@ -16766,7 +16766,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>1054</size>
+        <size>1099</size>
       </method>
     </type>
     <type name="Test+Point">
@@ -16817,7 +16817,7 @@
         <size>15</size>
       </method>
       <method name="Void Main()">
-        <size>48</size>
+        <size>52</size>
       </method>
     </type>
   </test>
@@ -16840,7 +16840,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>215</size>
+        <size>219</size>
       </method>
     </type>
   </test>
@@ -16853,7 +16853,7 @@
         <size>39</size>
       </method>
       <method name="Void Foo(Point ByRef)">
-        <size>31</size>
+        <size>38</size>
       </method>
     </type>
   </test>
@@ -16927,6 +16927,30 @@
       </method>
       <method name="Int32 Main()">
         <size>54</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-initialize-10.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 get_P()">
+        <size>7</size>
+      </method>
+      <method name="Void set_P(Int32)">
+        <size>8</size>
+      </method>
+    </type>
+    <type name="Y">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>38</size>
+      </method>
+      <method name="Boolean Do(Foo)">
+        <size>86</size>
       </method>
     </type>
   </test>
@@ -17440,7 +17464,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>137</size>
+        <size>148</size>
       </method>
     </type>
     <type name="Collection`1+&lt;GetEnumerator&gt;c__Iterator0[T]">
