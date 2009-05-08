@@ -1,3 +1,8 @@
+2009-05-08  Brad Taylor  <brad@getcoded.net>
+
+	* DateTimePicker.cs: Add a UIA-specific property to ensure that if
+	is_checkbox_checked is changed, we won't break.
+
 2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* ToolStripItem.cs: Prevent NRE when our holder is a
