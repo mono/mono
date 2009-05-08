@@ -1,6 +1,8 @@
 2009-05-08  Veerapuram Varadhan  <vvaradhan@novell.com>
 
-	** Fixes #497715
+	** Fixes #497715 - based on a patch by Jonas Larsson 
+	<jonas.larsson@manodo.se>
+	
 	* SqlDataReader.cs: (GetSqlXml): Handle Xml types for TDS 8/8.1 
 	clients as well.
 	* SqlParameter.cs: Map XML type properly.
