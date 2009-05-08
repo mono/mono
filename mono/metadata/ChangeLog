@@ -1,3 +1,8 @@
+2009-05-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_fields): Set class->field.first for
+	generic instances.
+
 2009-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the typespec table.
