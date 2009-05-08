@@ -1,5 +1,10 @@
 2009-05-08  Brad Taylor  <brad@getcoded.net>
 
+	* DateTimePicker.cs: Add a UIA-specific property to ensure that if
+	is_checkbox_checked is changed, we won't break.
+
+2009-05-08  Brad Taylor  <brad@getcoded.net>
+
 	* DateTimePicker.cs: Wrap UIA specific code in NET_2_0 wrappers.  Send
 	OnUIASelectionChanged when ShowCheckbox is true and the checkbox
 	recieves focus.  Part of fix for #502029.

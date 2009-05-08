@@ -2024,6 +2024,10 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		#region UIA Framework: Methods, Properties and Events
 
+		internal bool UIAIsCheckBoxSelected {
+			get { return is_checkbox_selected; }
+		}
+
 		static object UIAMinimumChangedEvent = new object ();
 		static object UIAMaximumChangedEvent = new object ();
 		static object UIASelectionChangedEvent = new object ();
