@@ -613,7 +613,7 @@ namespace System.Windows.Forms
 					height = 22;
 
 				tsi.SetBounds (new Rectangle (x, y, preferred_size.Width, height));
-				y += tsi.Height + tsi.Margin.Bottom;
+				y += height + tsi.Margin.Bottom;
 			}
 
 			this.Size = new Size (widest, y + this.Padding.Bottom);
