@@ -2,6 +2,10 @@
 
 	* UnitTest.cs: added a test for equality with Unit.Empty
 
+2009-03-12  Marek Habersack  <mhabersack@novell.com>
+
+	* EditCommandColumnTest.cs: ignore two tests, most likely broken.
+
 2009-02-10  Marek Habersack  <mhabersack@novell.com>
 
 	* ImageButtonTest.cs: added test for bug #463939
