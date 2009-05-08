@@ -1,5 +1,10 @@
 2009-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* method-to-ir.c (mono_method_to_ir): Fix boostrap of non amd64 builds
+	cmethod can be null for quite a some reasons.
+
+2009-05-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c (mono_method_to_ir): Fix non amd64 builds.
 
 2009-05-08  Zoltan Varga  <vargaz@gmail.com>
