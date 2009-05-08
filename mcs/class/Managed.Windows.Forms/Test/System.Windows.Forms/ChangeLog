@@ -1,3 +1,7 @@
+2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+        * ToolStripMenuItemTest.cs: Add a test for a NRE bug.
+
 2009-05-04  Andrés G. Aragoneses <aaragoneses@novell.com>
 
 	* TabControlTest.cs: Added test for bug#499887.
