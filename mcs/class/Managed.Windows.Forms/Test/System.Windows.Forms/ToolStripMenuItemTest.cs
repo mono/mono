@@ -237,23 +237,9 @@ namespace MonoTests.System.Windows.Forms
 		public void ToolStripDropDownButton_SelectChild ()
 		{
 			var tsddb = new ToolStripDropDownButton ();
-			string [] extreme_fjords = new string [] {
-				"Scoresby Sund", "Sognefjord", "Hardangerfjord"
-			};
-
-			while (tsddb.DropDownItems.Count > 0)
-				tsddb.DropDownItems.Remove (tsddb.DropDownItems [0]);
-
-			ToolStripMenuItem first = null;
-			foreach (string name in extreme_fjords)
-			{
-				var item = new ToolStripMenuItem ();
-				item.Text = name;
-				if (first == null)
-					first = item;
-				tsddb.DropDownItems.Add (item);
-			}
-			first.Select ();
+			var item = new ToolStripMenuItem ();
+			tsddb.DropDownItems.Add (item);
+			item.Select ();
 		}
 		
 		private class ExposeProtectedMethods : ToolStripMenuItem
