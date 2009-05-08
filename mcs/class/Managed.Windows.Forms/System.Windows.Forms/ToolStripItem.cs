@@ -925,11 +925,13 @@ namespace System.Windows.Forms
 			if (!this.is_selected && this.CanSelect) {
 				this.is_selected = true;
 				
-				if (this.Visible && this.Parent.Focused && this is ToolStripControlHost)
-					(this as ToolStripControlHost).Focus ();
-					
-				this.Invalidate ();
-				this.Parent.NotifySelectedChanged (this);
+				if (this.Parent != null) {
+					if (this.Visible && this.Parent.Focused && this is ToolStripControlHost)
+						(this as ToolStripControlHost).Focus ();
+						
+					this.Invalidate ();
+					this.Parent.NotifySelectedChanged (this);
+				}
 				OnUIASelectionChanged ();
 			}
 		}

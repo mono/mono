@@ -1,3 +1,8 @@
+2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolStripItem.cs: Prevent NRE when our holder is a
+	ToolStripDropDownButton and we get Select()ed.
+
 2009-05-08  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ToolStripControlHost.cs: DefaultSize must return the current size of

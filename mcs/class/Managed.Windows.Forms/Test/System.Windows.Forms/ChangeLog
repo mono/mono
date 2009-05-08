@@ -5,6 +5,11 @@
 
 2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
+	* ToolStripMenuItemTest.cs: Improve test, and remove the
+	NotWorking attribute. Also remove the 'var' keywords, doh!
+
+2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
 	* ToolStripMenuItemTest.cs: Simplify test.
 
 2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
