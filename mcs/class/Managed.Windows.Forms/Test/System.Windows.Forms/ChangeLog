@@ -1,3 +1,8 @@
+2009-05-08  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* ToolStripMenuItemTest.cs: Add yet another non-passing test
+	  (wors in MS.NET).
+
 2009-05-06  Andrés G. Aragoneses <aaragoneses@novell.com>
 
 	* ToolStripMenuItemTest.cs: add tests for Owner and OwnerItem.

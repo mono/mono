@@ -232,6 +232,30 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (tsmiQuit.OwnerItem, tsmiFile);
 		}
 		
+		[Test]
+		[NUnit.Framework.Category ("NotWorking")] //generates NRE
+		public void ToolStripDropDownButton_SelectChild ()
+		{
+			var tsddb = new ToolStripDropDownButton ();
+			string [] extreme_fjords = new string [] {
+				"Scoresby Sund", "Sognefjord", "Hardangerfjord"
+			};
+
+			while (tsddb.DropDownItems.Count > 0)
+				tsddb.DropDownItems.Remove (tsddb.DropDownItems [0]);
+
+			ToolStripMenuItem first = null;
+			foreach (string name in extreme_fjords)
+			{
+				var item = new ToolStripMenuItem ();
+				item.Text = name;
+				if (first == null)
+					first = item;
+				tsddb.DropDownItems.Add (item);
+			}
+			first.Select ();
+		}
+		
 		private class ExposeProtectedMethods : ToolStripMenuItem
 		{
 			public bool PublicProcessCmdKey (ref Message m, Keys keys)
