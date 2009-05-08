@@ -2917,12 +2917,13 @@ namespace System {
 				else if (conversionType == conversionTable[18]) // 18 TypeCode.String
 					return (object) convertValue.ToString (provider);
 				else {
-					return convertValue.ToType (conversionType, provider);
+					if (try_target_to_type)
+						return convertValue.ToType (conversionType, provider);
 				}
-			} else
-				// Not in the conversion table
-				throw new InvalidCastException ((Locale.GetText (
-					"Value is not a convertible object: " + value.GetType().ToString() + " to " + conversionType.FullName)));
+			} 
+			// Not in the conversion table
+			throw new InvalidCastException ((Locale.GetText (
+								 "Value is not a convertible object: " + value.GetType().ToString() + " to " + conversionType.FullName)));
 		}
 	}
 }

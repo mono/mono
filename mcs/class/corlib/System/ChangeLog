@@ -1,3 +1,7 @@
+2009-05-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Convert.cs: backport from HEAD.
+
 2009-05-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TermInfoDriver.cs: replace Peek with DataAvailable.
