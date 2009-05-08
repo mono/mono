@@ -63,7 +63,7 @@ namespace MonoTests.System.Net
 			IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
 			IPHostEntry entry = Dns.EndResolve (async);
 			SubTestValidIPHostEntry (entry);
-			Assert.AreEqual (site1Dot, entry.IPAddressList [0].ToString ());
+			Assert.AreEqual (site1Dot, entry.AddressList [0].ToString ());
 		}
 
 		void ResolveCallback (IAsyncResult ar)
