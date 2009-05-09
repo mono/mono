@@ -1,5 +1,9 @@
 2009-05-09  Miguel de Icaza  <miguel@novell.com>
 
+	* messages.c: Split the scan into common and uncommon messages to
+	allow the messages that are not produced by Mono to be removed on
+	embedded scenarios.
+	
 	* messages.c (message_string): instead of having a gigantic switch
 	table, use a sorted structure in memory and do a binary search on
 	it.
