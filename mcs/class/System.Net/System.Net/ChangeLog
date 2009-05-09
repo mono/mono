@@ -1,3 +1,9 @@
+2009-05-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebHeaderCollection_2_1.cs: When associated with a WebRequest 
+	the header collection items needs to be validated since not all
+	headers will be valid. Part of fix for DRT#532
+
 2009-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* HttpWebRequest_2_1.cs: Rework the throwing of NIE so gui-compare

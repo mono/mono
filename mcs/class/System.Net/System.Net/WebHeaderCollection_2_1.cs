@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Jb Evain  <jbevain@novell.com>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (c) 2007 Novell, Inc. (http://www.novell.com)
+// (c) 2007, 2009 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -38,10 +39,17 @@ namespace System.Net {
 
 	public class WebHeaderCollection : IEnumerable {
 
-		Dictionary<string, string> headers = new Dictionary<string, string> ();
+		internal Dictionary<string, string> headers = new Dictionary<string, string> ();
+		bool validate;
 
 		public WebHeaderCollection ()
+			: this (false)
 		{
+		}
+
+		internal WebHeaderCollection (bool restrict)
+		{
+			validate = restrict;
 		}
 
 		public int Count {
@@ -61,11 +69,9 @@ namespace System.Net {
 				if (header == null)
 					throw new ArgumentNullException ("header");
 
-				string value;
-				if (headers.TryGetValue (header, out value))
-					return value;
-
-				return null;
+				string value = null;
+				headers.TryGetValue (header.ToLowerInvariant (), out value);
+				return value;
 			}
 			set {
 				if (header == null)
@@ -73,13 +79,21 @@ namespace System.Net {
 				if (header.Length == 0)
 					throw new ArgumentException ("header");
 
+				header = header.ToLowerInvariant ();
+				if (validate)
+					ValidateHeader (header);
 				headers [header] = value;
 			}
 		}
 
 		public string this [HttpRequestHeader header] {
 			get { return this [HttpRequestHeaderToString (header)]; }
-			set { this [HttpRequestHeaderToString (header)] = value; }
+			set {
+				string h = HttpRequestHeaderToString (header);
+				if (validate)
+					ValidateHeader (h);
+				headers [h] = value;
+			}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
@@ -171,6 +185,72 @@ namespace System.Net {
 			case HttpRequestHeader.UserAgent:			return "user-agent";
 			default:
 				throw new IndexOutOfRangeException ();
+			}
+		}
+
+		internal static void ValidateHeader (string header)
+		{
+			switch (header) {
+			case "connection":
+			case "date":
+			case "keep-alive":
+			case "trailer":
+			case "transfer-encoding":
+			case "upgrade":
+			case "via":
+			case "warning":
+			case "allow":
+			case "content-length":
+			case "content-type":
+			case "content-location":
+			case "content-range":
+			case "last-modified":
+			case "accept":
+			case "accept-charset":
+			case "accept-encoding":
+			case "accept-language":
+			case "authorization":
+			case "cookie":
+			case "expect":
+			case "host":
+			case "if-modified-since":
+			case "max-forwards":
+			case "proxy-authorization":
+			case "referer":
+			case "range":
+			case "te":
+			case "user-agent":
+			// extra (not HttpRequestHeader defined) headers that are not accepted by SL2
+			// note: the HttpResponseHeader enum is not available in SL2
+			case "accept-ranges":
+			case "age":
+			case "allowed":
+			case "connect":
+			case "content-transfer-encoding":
+			case "delete":
+			case "etag":
+			case "get":
+			case "head":
+			case "location":
+			case "options":
+			case "post":
+			case "proxy-authenticate":
+			case "proxy-connection":
+			case "public":
+			case "put":
+			case "request-range":
+			case "retry-after":
+			case "server":
+			case "sec-headertest":
+			case "sec-":
+			case "trace":
+			case "uri":
+			case "vary":
+			case "www-authenticate":
+			case "x-flash-version":
+				throw new ArgumentException ();
+			default:
+				return;
 			}
 		}
 	}
