@@ -1,3 +1,11 @@
+2009-05-09  Miguel de Icaza  <miguel@novell.com>
+
+	* verify.c, metadata-verifier.c: Add support for disabling the
+	verifier in some builds.
+
+	[ Sorry, my previous commit accidentally commited some work in
+	progress ]
+
 2009-05-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_setup_fields): Set class->field.first for
