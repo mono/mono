@@ -1,3 +1,10 @@
+2009-05-09  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-value-hash.c (mono_value_hash_table_insert_replace):
+	Initialize variable, to quiet the compiler. 
+
+	* mono-proclib.c: Eliminate two warnings.
+
 2009-04-03  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-filemap.c: Move mono_file_unmap for the not-mmap case to
