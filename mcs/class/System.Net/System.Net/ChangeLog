@@ -1,3 +1,13 @@
+2009-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: Move Headers property logic here (as 
+	shown by adding more unit tests)
+	* WebClient_2_1.cs: Add comment that Headers are not validated
+	there, but later.
+	* WebHeaderCollection_2_1.cs: Add a SetHeader method that can 
+	work around the normal validations that the "this" property
+	needs to do.
+
 2009-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebHeaderCollection_2_1.cs: When associated with a WebRequest 

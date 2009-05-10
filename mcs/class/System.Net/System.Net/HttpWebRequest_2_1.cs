@@ -37,6 +37,10 @@ namespace System.Net {
 
 	// note: the NotImplementedException are needed to match MS implementation
 
+	// note: MS documents a lot of thing for this type but, in truth, all happens
+	// in a type that derive from HttpWebRequest. In Moonlight case this is
+	// BrowserHttpWebRequest and is located in System.Windows.Browser.dll
+
 	public abstract class HttpWebRequest : WebRequest {
 
 		private string accept;
@@ -79,13 +83,22 @@ namespace System.Net {
 		public override WebHeaderCollection Headers {
 			get {
 				if (headers == null)
-					headers = new WebHeaderCollection ();
+					headers = new WebHeaderCollection (true);
 				return headers;
 			}
 			set {
-				if (value == null)
-					throw new NullReferenceException ();
-				headers = value;
+				// note: this is not a field assignment but a copy (see unit tests)
+				// make sure everything we're supplied is valid...
+				string[] keys = value.AllKeys;
+				foreach (string header in keys) {
+					// anything bad will throw
+					WebHeaderCollection.ValidateHeader (header);
+				}
+				// ... before making those values our own
+				headers.headers.Clear ();
+				foreach (string header in keys) {
+					headers [header] = value [header];
+				}
 			}
 		}
 

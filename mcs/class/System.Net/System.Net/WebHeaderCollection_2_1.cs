@@ -82,7 +82,7 @@ namespace System.Net {
 				header = header.ToLowerInvariant ();
 				if (validate)
 					ValidateHeader (header);
-				headers [header] = value;
+				SetHeader (header, value);
 			}
 		}
 
@@ -92,8 +92,16 @@ namespace System.Net {
 				string h = HttpRequestHeaderToString (header);
 				if (validate)
 					ValidateHeader (h);
-				headers [h] = value;
+				SetHeader (h, value);
 			}
+		}
+
+		// some headers cannot be set using the "this" property but by using
+		// the right property of the Web[Request|Response]. However the value 
+		// does end up in the collection (and can be read safely from there)
+		internal void SetHeader (string header, string value)
+		{
+			headers [header] = value;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

@@ -170,6 +170,7 @@ namespace System.Net
 //			set { credentials = value; }
 //		}
 //
+		// this is an unvalidated collection, HttpWebRequest is responsable to validate it
 		public WebHeaderCollection Headers {
 			get {
 				if (headers == null)
