@@ -1,3 +1,11 @@
+2009-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c aot-runtime.c: Emit the got addr using a separate symbol,
+	as done previously, instead of in MonoAotFileInfo, since pointers might have
+	alignment requirements.
+
+	* mini.h: Bump AOT file format version.
+
 2009-05-10  Miguel de Icaza  <miguel@novell.com>
 
 	* aot-runtime.c (mono_aot_is_shared_got_patch): Move this routine
