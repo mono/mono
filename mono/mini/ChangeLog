@@ -1,3 +1,10 @@
+2009-05-10  Miguel de Icaza  <miguel@novell.com>
+
+	* aot-runtime.c (mono_aot_is_shared_got_patch): Move this routine
+	that is used at runtime from the aot-compiler.c, this makes it
+	work on setups that remove the AOT compiler from the output
+	image. 
+
 2009-05-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-<ARCH>.h: Kill the MONO_ARCH_ENABLE_EMIT_STATE_OPT define.
