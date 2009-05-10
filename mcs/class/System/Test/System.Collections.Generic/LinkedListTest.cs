@@ -127,6 +127,10 @@ namespace MonoTests.System.Collections.Generic
 			intlist.CopyTo (output, 0);
 			for (int i = 0; i < 3; i++)
 				Assert.AreEqual (values [i], output [i]);
+			
+			LinkedList <int> l = new LinkedList <int> ();
+			values = new int [l.Count];
+			l.CopyTo (values, 0);
 		}
 
 		[Test]
