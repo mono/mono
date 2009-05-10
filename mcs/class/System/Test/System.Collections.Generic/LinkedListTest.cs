@@ -127,10 +127,6 @@ namespace MonoTests.System.Collections.Generic
 			intlist.CopyTo (output, 0);
 			for (int i = 0; i < 3; i++)
 				Assert.AreEqual (values [i], output [i]);
-
-			LinkedList <int> l = new LinkedList <int> ();
-			values = new int [l.Count];
-			l.CopyTo (values, 0);
 		}
 
 		[Test]
@@ -181,7 +177,7 @@ namespace MonoTests.System.Collections.Generic
 		{
 			intlist.Remove (null);
 		}
-
+		
 		[Test, ExpectedException (typeof (InvalidOperationException))]
 		public void RemoveInvalidNodeTest ()
 		{
@@ -246,6 +242,35 @@ namespace MonoTests.System.Collections.Generic
 				i++;
 			}
 			Assert.AreEqual(3, i);
+		}
+		
+		[Test] //bug 481621
+		[Category ("NotWorking")]
+		public void PlayWithNullValues ()
+		{
+			LinkedList <string> li = new LinkedList <string> ();
+			li.AddLast ((string)null);
+			li.AddLast ("abcd");
+			li.AddLast ((string)null);
+			li.AddLast ("efgh");
+			Assert.AreEqual (4, li.Count);
+			Assert.AreEqual ("efgh", li.Last.Value);
+			Assert.IsNull (li.First.Value);
+
+			Assert.IsTrue (li.Remove ((string)null));
+			Assert.AreEqual (3, li.Count);
+			Assert.AreEqual ("efgh", li.Last.Value);
+			Assert.AreEqual ("abcd", li.First.Value);
+
+			Assert.IsTrue (li.Remove ((string)null));
+			Assert.AreEqual (2, li.Count);
+			Assert.AreEqual ("efgh", li.Last.Value);
+			Assert.AreEqual ("abcd", li.First.Value);
+
+			Assert.IsFalse (li.Remove ((string)null));
+			Assert.AreEqual (2, li.Count);
+			Assert.AreEqual ("efgh", li.Last.Value);
+			Assert.AreEqual ("abcd", li.First.Value);
 		}
 	}
 }

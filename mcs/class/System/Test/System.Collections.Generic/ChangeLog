@@ -1,3 +1,8 @@
+2009-05-10  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* LinkedListTest.cs: Added NotWorking test for #481621,
+	converted from example code by Andy Hume <andyhume32@yahoo.co.uk>.
+
 2009-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* SortedListTest.cs: Add tests for #483985.
