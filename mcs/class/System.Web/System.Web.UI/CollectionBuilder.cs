@@ -44,7 +44,7 @@ namespace System.Web.UI
 
 		public override void AppendLiteralString (string s)
 		{
-			if (s != null && s.Trim () != "")
+			if (s != null && s.Trim ().Length > 0)
 				throw new HttpException ("Literal content not allowed for " + ControlType);
 		}
 

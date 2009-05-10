@@ -161,7 +161,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/CustomSectionEmptyCollection.aspx \
 	Test/mainsoft/NunitWebResources/LoginDisplayRememberMe.aspx \
 	Test/mainsoft/NunitWebResources/NoBindForMethodsWithBindInName.aspx \
-	Test/mainsoft/NunitWebResources/LinkInHeadWithEmbeddedExpression.aspx
+	Test/mainsoft/NunitWebResources/LinkInHeadWithEmbeddedExpression.aspx \
+	Test/mainsoft/NunitWebResources/ExpressionInListControl.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifeq (net_2_0, $(PROFILE))

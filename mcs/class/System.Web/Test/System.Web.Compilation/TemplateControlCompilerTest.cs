@@ -68,6 +68,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.aspx", "ContentPlaceHolderInTemplate.aspx");
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.master", "ContentPlaceHolderInTemplate.master");
 			WebTest.CopyResource (GetType (), "LinkInHeadWithEmbeddedExpression.aspx", "LinkInHeadWithEmbeddedExpression.aspx");
+			WebTest.CopyResource (GetType (), "ExpressionInListControl.aspx", "ExpressionInListControl.aspx");
 #endif
 		}
 		
@@ -166,6 +167,18 @@ namespace MonoTests.System.Web.Compilation {
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			string originalHtml = "<link href=\"Themes/Default/Content/Site.css\" rel=\"stylesheet\" type=\"text/css\" />";
 
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test]
+		public void ExpressionInListControl ()
+		{
+			string pageHtml = new WebTest ("ExpressionInListControl.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = @"<select name=""DropDown1"" id=""DropDown1"">
+	<option value=""strvalue"">str</option>
+
+</select>";
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 #endif
