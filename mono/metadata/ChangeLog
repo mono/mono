@@ -1,3 +1,10 @@
+2009-05-10  Andreas Faerber  <andreas.faerber@web.de>
+
+	* null-gc.c (mono_gc_weak_link_add, mono_gc_clear_domain): Fix
+	stub signatures.
+	
+	Contributed unter MIT/X11 license.
+
 2009-05-09  Miguel de Icaza  <miguel@novell.com>
 
 	* verify.c, metadata-verifier.c: Add support for disabling the
