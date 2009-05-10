@@ -717,7 +717,7 @@ namespace System.Data.Common {
 			return dataTable;
 		}
 
-		public DbProviderFactory DbProviderFactory {
+		protected DbProviderFactory DbProviderFactory {
 			get { return DbProviderFactories.GetFactory (this.GetType (). ToString ()); }
 		}
 #endif
