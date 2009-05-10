@@ -1,3 +1,7 @@
+2009-05-10  Andy Hume  <andyhume32@yahoo.co.uk>
+
+	* LinkedList.cs: Add null check. Fixes #481621.
+
 2009-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* SortedList.cs: Add version checking to the Key/Value enumerators +

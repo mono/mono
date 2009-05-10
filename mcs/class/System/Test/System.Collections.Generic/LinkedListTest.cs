@@ -249,7 +249,6 @@ namespace MonoTests.System.Collections.Generic
 		}
 		
 		[Test] //bug 481621
-		[Category ("NotWorking")]
 		public void PlayWithNullValues ()
 		{
 			LinkedList <string> li = new LinkedList <string> ();

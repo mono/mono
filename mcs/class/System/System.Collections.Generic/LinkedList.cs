@@ -1,5 +1,5 @@
 //
-// System.Collections.Generic.LinkedListNode
+// System.Collections.Generic.LinkedList
 //
 // Author:
 //    David Waite
@@ -235,7 +235,8 @@ namespace System.Collections.Generic
 				return null;
 			do
 			{
-				if ( (value == null && node.Value == null) || value.Equals (node.Value))
+				if ( (value == null && node.Value == null) || 
+				     (value != null && value.Equals (node.Value)) )
 					return node;
 				node = node.forward;
 			}
