@@ -1,5 +1,9 @@
 2009-05-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Fix the build by moving is_shared_got_patch
+	back into aot-compiler.c to a place where the other functions shared by
+	the runtime and aot compiler are.
+	
 	* aot-compiler.c aot-runtime.c: Emit the got addr using a separate symbol,
 	as done previously, instead of in MonoAotFileInfo, since pointers might have
 	alignment requirements.
