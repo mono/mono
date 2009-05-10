@@ -1,3 +1,8 @@
+2009-05-10  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompilerTest.cs: added a test for expressions in
+	list control items.
+
 2009-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompilerTest.cs: added test for bug #498637

@@ -1,3 +1,8 @@
+2009-05-10  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: keep processing the tag if it is not a server
+	one and contains expressions and no code render blocks.
+
 2009-05-05  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: RemoveFailedAssemblies wraps the compilation

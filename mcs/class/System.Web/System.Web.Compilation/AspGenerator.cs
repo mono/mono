@@ -1072,7 +1072,10 @@ namespace System.Web.Compilation
 			if (builder == null)
 				return false;
 
-			if (!runatServer && location.PlainText.IndexOf ("<%") > -1)
+			// This is as good as we can do for now - if the parsed location contains
+			// both expressions and code render blocks then we're out of luck...
+			string plainText = location.PlainText;
+			if (!runatServer && plainText.IndexOf ("<%$") == -1&& plainText.IndexOf ("<%") > -1)
 				return false;
 #if NET_2_0
 			PageParserFilter pfilter = PageParserFilter;
@@ -1385,7 +1388,9 @@ namespace System.Web.Compilation
 						break;
 						
 					default:
-						builder.AppendLiteralString (location.PlainText);
+						string text = location.PlainText;
+						if (text != null && text.Trim ().Length > 0)
+							builder.AppendLiteralString (text);
 						break;
 				}
 			}
