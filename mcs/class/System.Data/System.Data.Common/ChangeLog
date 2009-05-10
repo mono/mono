@@ -1,3 +1,7 @@
+2009-05-10  Marek Habersack  <mhabersack@novell.com>
+
+	* DbConnection.cs: implemented the DbProviderFactory property
+
 2009-03-31  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Fixes rest of #480377
