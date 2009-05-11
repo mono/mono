@@ -1,3 +1,7 @@
+2009-05-12  Tor Lillqvist  <tml@novell.com>
+
+	* mkbundle.1: Document MONO_BUNDLED_OPTIONS.
+
 2009-04-09  Jonathan Pryor  <jpryor@novell.com>
 
 	* mdoc-update.1: Document -L, -r options.

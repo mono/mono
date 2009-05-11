@@ -126,6 +126,10 @@ Assembler command. The default is "as".
 .I "CC"
 C compiler command. The default is "cc" under Linux and "gcc -mno-cygwin"
 under Windows.
+.TP
+.I "MONO_BUNDLED_OPTIONS"
+Options to be passed to the bundled
+Mono runtime, separated by spaces. See the mono(1) manual page or run mono --help.
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 
