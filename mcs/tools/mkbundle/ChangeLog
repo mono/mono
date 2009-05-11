@@ -1,3 +1,14 @@
+2009-05-11  Tor Lillqvist  <tml@novell.com>
+
+	* template_main.c: Enable passing options to the bundled Mono
+	interpreter through a MONO_BUNDLED_OPTIONS environment
+	variable. Requested in bug #495858.
+
+	Enable non-ASCII (arbitraty Unicode in fact) command-line
+	parameters to a mkbundled executable on Windows. Use
+	GetCommandLineW(), CommandLineToArgvW(), and then
+	g_utf16_to_utf8(). From bug #446172.
+
 2009-03-15  Steven Munroe  <munroesj@us.ibm.com>
 
 	This patch is contributed under the terms of the MIT/X11 license
