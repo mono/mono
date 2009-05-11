@@ -1,3 +1,7 @@
+2009-05-07  Jonas Larsson <jonas.larsson@manodo.se> 
+
+	* XmlSchemaValidatorTests.cs : added test for bug #501666.
+
 2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidatorTests.cs : added test for bug #496192 and #496205.

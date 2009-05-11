@@ -1,3 +1,7 @@
+2009-05-07  Jonas Larsson <jonas.larsson@manodo.se> 
+
+	* XmlAtomicValue.cs : support more type conversion. fixed bug #501666.
+
 2009-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidator.cs : quick fix for bug #496205. Reset xsi:type

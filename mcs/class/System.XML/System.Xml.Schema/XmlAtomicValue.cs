@@ -368,10 +368,20 @@ namespace System.Xml.Schema
 				case XmlTypeCode.Double:
 					stringValue = XQueryConvert.DoubleToString (ValueAsDouble);
 					break;
+				case XmlTypeCode.NonPositiveInteger:
+				case XmlTypeCode.NonNegativeInteger:
+				case XmlTypeCode.NegativeInteger:
 				case XmlTypeCode.Long:
+				case XmlTypeCode.UnsignedLong:
+				case XmlTypeCode.PositiveInteger:
 					stringValue = XQueryConvert.IntegerToString (ValueAsLong);
 					break;
 				case XmlTypeCode.Int:
+				case XmlTypeCode.Short:
+				case XmlTypeCode.Byte:
+				case XmlTypeCode.UnsignedInt:
+				case XmlTypeCode.UnsignedShort:
+				case XmlTypeCode.UnsignedByte:
 					stringValue = XQueryConvert.IntToString (ValueAsInt);
 					break;
 				case XmlTypeCode.String:
@@ -414,7 +424,7 @@ namespace System.Xml.Schema
 				if (objectValue != null)
 					throw new InvalidCastException (String.Format ("Conversion from runtime type {0} to {1} is not supported", objectValue.GetType (), XmlTypeCode.String));
 				else
-					throw new InvalidCastException (String.Format ("Conversion from schema type {0} (type code {1}) to {2} is not supported", schemaType.QualifiedName, xmlTypeCode, XmlTypeCode.String));
+					throw new InvalidCastException (String.Format ("Conversion from schema type {0} (type code {1}, resolved type code {2}) to {3} is not supported.", schemaType.QualifiedName, xmlTypeCode, ResolvedTypeCode, XmlTypeCode.String));
 			}
 		}
 

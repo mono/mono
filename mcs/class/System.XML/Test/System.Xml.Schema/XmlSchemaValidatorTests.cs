@@ -154,6 +154,37 @@ namespace MonoTests.System.Xml
 				using (var xsdr = new StreamReader ("Test/XmlFiles/496192.xsd"))
 					Validate (xmlr.ReadToEnd (), xsdr.ReadToEnd ());
 		}
+		
+		[Test]		
+		public void Bug501666 ()
+		{
+			string xsd = @"
+			<xs:schema id='Settings'
+				targetNamespace='foo'                
+				xmlns='foo'
+				xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+
+				<xs:element name='Settings' type='Settings'/>
+
+				<xs:complexType name='Settings'>
+					<xs:attribute name='port' type='PortNumber' use='required'/>
+				</xs:complexType>
+                
+				<xs:simpleType name='PortNumber'>
+					<xs:restriction base='xs:positiveInteger'>
+						<xs:minInclusive value='1'/>
+						<xs:maxInclusive value='65535'/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:schema>";
+
+			string xml = @"<Settings port='1337' xmlns='foo'/>";
+
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			doc.Schemas.Add (XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null));
+			doc.Validate (null);
+		}
 	}
 }
 
