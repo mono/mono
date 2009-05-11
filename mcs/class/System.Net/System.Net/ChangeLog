@@ -1,5 +1,11 @@
 2009-05-11  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* WebHeaderCollection_2_1.cs: Headers are removed only in special
+	cases and never when the "this" property is used. Call ToLower
+	in SetHeader too in order to avoid typos.
+
+2009-05-11  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* HttpWebRequest_2_1.cs: Fix Accept and ContentType properties
 	to use, with special care, the Headers property
 	* WebHeaderCollection_2_1.cs (SetHeader): Add or remove header.

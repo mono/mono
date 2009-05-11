@@ -82,7 +82,7 @@ namespace System.Net {
 				header = header.ToLowerInvariant ();
 				if (validate)
 					ValidateHeader (header);
-				SetHeader (header, value);
+				headers [header] = value;
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace System.Net {
 				string h = HttpRequestHeaderToString (header);
 				if (validate)
 					ValidateHeader (h);
-				SetHeader (h, value);
+				headers [h] = value;
 			}
 		}
 
@@ -101,6 +101,8 @@ namespace System.Net {
 		// does end up in the collection (and can be read safely from there)
 		internal void SetHeader (string header, string value)
 		{
+			header = header.ToLowerInvariant ();
+
 			if (String.IsNullOrEmpty (value))
 				headers.Remove (header);
 			else
