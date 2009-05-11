@@ -1,3 +1,9 @@
+2009-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_and_reloc_code): Move the implementation of
+	MONO_PATCH_INFO_GOT_OFFSET to a separate arch-specific function.
+	(emit_plt): Fix a warning.
+
 2009-05-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c aot-runtime.c: Fix the build by moving is_shared_got_patch
