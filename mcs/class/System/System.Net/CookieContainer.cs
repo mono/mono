@@ -254,9 +254,6 @@ namespace System.Net
 			if (domain == String.Empty)
 				return false;
 
-			if (domain [0] != '.')
-				domain = "." + domain;
-
 			int hlen = host.Length;
 			int dlen = domain.Length;
 			if (hlen < dlen)
@@ -264,6 +261,11 @@ namespace System.Net
 
 			if (hlen == dlen)
 				return (String.Compare (domain, host, true, CultureInfo.InvariantCulture) == 0);
+
+			if (domain [0] != '.') {
+				domain = "." + domain;
+				dlen++;
+			}
 
 			string subdomain = host.Substring (hlen - dlen);
 			return (String.Compare (subdomain, domain, true, CultureInfo.InvariantCulture) == 0);
