@@ -1,3 +1,8 @@
+2009-05-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CustomizableFileSettingsProvider.cs: make sure 'values' is
+	initialized in Reset(). Fixes bug #436592.
+
 2009-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* CustomizableFileSettingsProvider.cs: added a way for System.Web
