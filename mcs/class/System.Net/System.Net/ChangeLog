@@ -1,3 +1,9 @@
+2009-05-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: Fix Accept and ContentType properties
+	to use, with special care, the Headers property
+	* WebHeaderCollection_2_1.cs (SetHeader): Add or remove header.
+
 2009-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWebRequest_2_1.cs: Move Headers property logic here (as 

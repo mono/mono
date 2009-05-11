@@ -101,7 +101,10 @@ namespace System.Net {
 		// does end up in the collection (and can be read safely from there)
 		internal void SetHeader (string header, string value)
 		{
-			headers [header] = value;
+			if (String.IsNullOrEmpty (value))
+				headers.Remove (header);
+			else
+				headers [header] = value;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

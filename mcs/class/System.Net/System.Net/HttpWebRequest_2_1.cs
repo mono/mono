@@ -43,8 +43,6 @@ namespace System.Net {
 
 	public abstract class HttpWebRequest : WebRequest {
 
-		private string accept;
-		private string content_type;
 		private WebHeaderCollection headers;
 
 		protected HttpWebRequest ()
@@ -52,13 +50,9 @@ namespace System.Net {
 		}
 
 		public string Accept {
-			get { return accept; }
-			set {
-				if (String.IsNullOrEmpty (value))
-					accept = null;
-				else
-					accept = value;
-			}
+			get { return Headers [HttpRequestHeader.Accept]; }
+			// this header cannot be set directly inside the collection (hence the helper)
+			set { Headers.SetHeader ("accept", value); }
 		}
 
 		public virtual bool AllowReadStreamBuffering {
@@ -67,13 +61,9 @@ namespace System.Net {
 		}
 
 		public override string ContentType {
-			get { return content_type; }
-			set {
-				if (String.IsNullOrEmpty (value))
-					content_type = null;
-				else
-					content_type = value;
-			}
+			get { return Headers [HttpRequestHeader.ContentType]; }
+			// this header cannot be set directly inside the collection (hence the helper)
+			set { Headers.SetHeader ("content-type", value); }
 		}
 
 		public virtual bool HaveResponse {
