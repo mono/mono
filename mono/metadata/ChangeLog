@@ -1,3 +1,15 @@
+2009-05-11  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c (need_remove_object_for_domain): Remove the special
+	case for the Thread class.
+
+	* threads.c: Do clean-up of abort exception/state in
+	thread_cleanup() instead of Thread.free_internal().  Also clean up
+	current_appcontext.  The reason we have to do that is because
+	those references might point into another domain and if that
+	domain is unloaded before the thread is finalized, they point to
+	invalid data.
+
 2009-05-10  Andreas Faerber  <andreas.faerber@web.de>
 
 	* null-gc.c (mono_gc_weak_link_add, mono_gc_clear_domain): Fix
