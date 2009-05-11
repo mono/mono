@@ -1,3 +1,7 @@
+2009-05-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CustomizableFileSettingsProvider.cs: make sure 'values' is
+	initialized in Reset(). Fixes bug #436592.
 
 2008-11-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

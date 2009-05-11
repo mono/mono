@@ -809,7 +809,8 @@ namespace System.Configuration
 
 		public void Reset (SettingsContext context)
 		{
-			CreateExeMap ();
+			SettingsPropertyCollection coll = new SettingsPropertyCollection ();
+			GetPropertyValues (context, coll);
 			foreach (SettingsPropertyValue propertyValue in values) {
 				propertyValue.PropertyValue = propertyValue.Property.DefaultValue;
 				propertyValue.IsDirty = true;
