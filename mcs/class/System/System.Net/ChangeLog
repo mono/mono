@@ -1,3 +1,8 @@
+2009-05-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CookieContainer.cs: matching hosts to domain names like MS does.
+	Bug #421827 fixed.
+
 2009-04-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebRequest.cs: send REST after PASV to avoid some servers

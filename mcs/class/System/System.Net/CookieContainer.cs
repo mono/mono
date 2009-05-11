@@ -251,20 +251,21 @@ namespace System.Net
 
 		static bool CheckDomain (string domain, string host)
 		{
-			if (domain != "" && domain [0] != '.')
-				return (String.Compare (domain, host, true, CultureInfo.InvariantCulture) == 0);
-
-			int dot = host.IndexOf ('.');
-			if (dot == -1)
-				return (String.Compare (host, domain, true, CultureInfo.InvariantCulture) == 0);
-
-			if (dot == 0 && String.Compare ("." + host, domain, true, CultureInfo.InvariantCulture) == 0)
-			    return true;
-	
-			if (host.Length < domain.Length)
+			if (domain == String.Empty)
 				return false;
 
-			string subdomain = host.Substring (host.Length - domain.Length);
+			if (domain [0] != '.')
+				domain = "." + domain;
+
+			int hlen = host.Length;
+			int dlen = domain.Length;
+			if (hlen < dlen)
+				return false;
+
+			if (hlen == dlen)
+				return (String.Compare (domain, host, true, CultureInfo.InvariantCulture) == 0);
+
+			string subdomain = host.Substring (hlen - dlen);
 			return (String.Compare (subdomain, domain, true, CultureInfo.InvariantCulture) == 0);
 		}
 
@@ -280,8 +281,7 @@ namespace System.Net
 
 			foreach (Cookie cookie in cookies) {
 				string domain = cookie.Domain;
-				string host = uri.Host;
-				if (!CheckDomain (domain, host))
+				if (!CheckDomain (domain, uri.Host))
 					continue;
 
 				if (cookie.Port != "" && cookie.Ports != null && uri.Port != -1) {
