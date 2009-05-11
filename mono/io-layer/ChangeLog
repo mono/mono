@@ -1,3 +1,8 @@
+2009-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* shared.c: Applied patch from Koushik K. Dutta (koush@koushikdutta.com).
+	Fix the build on android.
+
 2009-05-09  Miguel de Icaza  <miguel@novell.com>
 
 	* messages.c: Split the scan into common and uncommon messages to
