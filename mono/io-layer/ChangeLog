@@ -1,3 +1,8 @@
+2009-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* collection.c (collection_thread): Get rid of all the ifdefs and
+	gcc attributes, simply return NULL.
+
 2009-05-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* shared.c: Applied patch from Koushik K. Dutta (koush@koushikdutta.com).
