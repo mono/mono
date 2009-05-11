@@ -237,10 +237,61 @@ namespace MonoTests.System.Web.Routing
 			hc.SetResponse (new HttpResponseStub (2));
 			var rd = c.GetRouteData (hc);
 			var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
-			Assert.AreEqual ("apppath/x/y_modified", vpd.VirtualPath, "#1");
-			Assert.AreEqual (0, vpd.DataTokens.Count, "#2");
+			Assert.IsNotNull (vpd, "#1");
+			Assert.AreEqual ("apppath/x/y_modified", vpd.VirtualPath, "#2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#3");
 		}
 
+		[Test (Description = "Bug #502555")]
+		public void GetVirtualPath2 ()
+		{
+			var c = new RouteCollection ();
+			
+			c.Add ("Summary",
+			       new MyRoute ("summary/{action}-{type}/{page}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Summary", action = "Index", page = 1}) }
+			);
+			       
+			c.Add ("Apis",
+			       new MyRoute ("apis/{apiname}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Apis", action = "Index" }) }
+			);
+							    
+			c.Add ("Single Report",
+			       new MyRoute ("report/{guid}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Reports", action = "SingleReport" }) }
+			);
+			
+			c.Add ("Reports",
+			       new MyRoute ("reports/{page}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Reports", action = "Index", page = 1 }) }
+			);
+
+			c.Add ("Default",
+			       new MyRoute ("{controller}/{action}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Home", action = "Index"}) }
+			);
+
+			var hc = new HttpContextStub2 ("~/Home/About", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (2));
+			var rd = c.GetRouteData (hc);
+			var vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+			Assert.IsNotNull (vpd, "#A1");
+			Assert.AreEqual ("/Home/About_modified", vpd.VirtualPath, "#A2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#A3");
+
+			hc = new HttpContextStub2 ("~/Home/Index", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (2));
+			rd = c.GetRouteData (hc);
+			vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+			Assert.IsNotNull (vpd, "#B1");
+			Assert.AreEqual ("/Home/Index_modified", vpd.VirtualPath, "#B2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#B3");
+
+			hc = new HttpContextStub2 ("~/Account/LogOn", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (2));
+			rd = c.GetRouteData (hc);
+			vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
+			Assert.IsNotNull (vpd, "#C1");
+			Assert.AreEqual ("/Account/LogOn_modified", vpd.VirtualPath, "#C2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#C3");
+		}
+		
 		[Test]
 		[Ignore ("looks like RouteExistingFiles ( = false) does not affect... so this test needs more investigation")]
 		public void GetVirtualPathToExistingFile ()

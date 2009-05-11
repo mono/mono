@@ -39,8 +39,8 @@ namespace System.Web.Routing
 		int segmentsCount;
 		string [] segments;
 		int [] segmentLengths;
-		bool [] segment_flags;		
-		string [] tokens;
+		bool [] segment_flags;
+		List <string> tokens;
 
 		public UrlPattern (string url)
 		{
@@ -59,7 +59,7 @@ namespace System.Web.Routing
 			if (Url.IndexOf ('?') >= 0)
 				throw new ArgumentException ("Url must not contain '?'");
 
-			var tokens = new List<string> ();
+			tokens = new List<string> ();
 
 			segments = Url.Split ('/');
 			segmentsCount = segments.Length;
@@ -98,8 +98,6 @@ namespace System.Web.Routing
 					from = end + 1;
 				}
 			}
-
-			this.tokens = tokens.ToArray ();
 		}
 
 		string SegmentToKey (string segment)
@@ -127,7 +125,7 @@ namespace System.Web.Routing
 					dict.Add (key, def.Value);
 				}
 			}
-			
+
 			return dict;
 		}
 		
@@ -210,32 +208,34 @@ namespace System.Web.Routing
 		}
 
 		static readonly string [] substsep = {"{{"};
-
+		
 		// it may return null for invalid values.
 		public bool TrySubstitute (RouteValueDictionary values, RouteValueDictionary defaults, out string value)
 		{
-			var replacements = new RouteValueDictionary ();
 			if (values == null) {
 				value = Url;
 				return true;
 			} else {
-				object val;
-				bool missing;
 				foreach (string token in tokens) {
-					val = null;
-					missing = false;
-					if (!values.TryGetValue (token, out val))
-						if (defaults == null || !defaults.TryGetValue (token, out val))
-							missing = true;
-					if (missing) {
+					if (!values.ContainsKey (token)) {
 						value = null;
 						return false;
 					}
-
-					replacements.Add (token, val);
 				}
 			}
 
+			var replacements = new RouteValueDictionary (values);
+			if (defaults != null) {
+				string key;
+			
+				foreach (var de in defaults) {
+					key = de.Key;
+					if (replacements.ContainsKey (key))
+						continue;
+					replacements.Add (key, de.Value);
+				}
+			}
+			
 			// horrible hack, but should work
 			string [] arr = Url.Split (substsep, StringSplitOptions.None);
 			for (int i = 0; i < arr.Length; i++) {

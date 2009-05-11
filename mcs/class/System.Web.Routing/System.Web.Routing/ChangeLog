@@ -1,3 +1,10 @@
+2009-05-11  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlPattern.cs: TrySubstitute treats defaults differently
+	now. They are not consulted when checking if the passed values
+	match the pattern, but only when substituting the values. Fixes
+	bug #502555
+
 2009-05-05  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlPattern.cs: Match adds defaults values should some keys be
