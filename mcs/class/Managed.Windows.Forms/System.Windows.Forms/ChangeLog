@@ -1,3 +1,8 @@
+2009-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Control.cs: When assigning ContextMenu, do a null check before
+	assigning its container field.
+
 2009-05-08  Brad Taylor  <brad@getcoded.net>
 
 	* DateTimePicker.cs: Add a UIA-specific property to ensure that if
