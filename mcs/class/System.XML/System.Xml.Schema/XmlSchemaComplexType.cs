@@ -497,6 +497,9 @@ namespace System.Xml.Schema
 				} else {
 					validatableParticle = baseComplexType.ValidatableParticle;
 					resolvedContentType = baseComplexType.resolvedContentType;
+					// Bug #501814
+					if (resolvedContentType == XmlSchemaContentType.Empty)
+						resolvedContentType = GetComplexContentType (contentModel);
 				}
 			} else if (baseComplexType.validatableParticle == XmlSchemaParticle.Empty
 				|| baseComplexType == XmlSchemaComplexType.AnyType) {

@@ -935,5 +935,55 @@ namespace MonoTests.System.Xml
 				r.Read ();
 		}
 #endif
+
+#if NET_2_0		
+		[Test]		
+		public void Bug501814 ()
+		{
+			string xsd = @"
+			<xs:schema id='Layout'
+				targetNamespace='foo'
+				elementFormDefault='qualified'
+				xmlns='foo'                  
+				xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+
+				<xs:element name='Layout' type='Layout' />
+
+				<xs:complexType name='Layout'>
+					<xs:group ref='AnyLayoutElement' minOccurs='0' maxOccurs='unbounded' />
+				</xs:complexType>
+
+				<xs:group name='AnyLayoutElement'>
+					<xs:choice>			
+						<xs:element name='Label' type='Label' />			
+					</xs:choice>
+				</xs:group>
+	
+				<xs:complexType name='LayoutElement' abstract='true'>
+					<xs:attribute name='id' type='xs:ID' use='optional' />
+					<xs:attribute name='visible' type='xs:boolean' use='optional' default='true' />
+				</xs:complexType>
+	
+				<xs:complexType name='Label'>
+					<xs:complexContent mixed='true'>
+						<xs:extension base='LayoutElement'>
+						<xs:attribute name='bold' type='xs:boolean' use='required'/>
+						</xs:extension>
+					</xs:complexContent>
+					</xs:complexType>
+			</xs:schema>";
+			
+			XmlDocument doc = new XmlDocument ();
+			
+			XmlSchema schema = XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null);			
+			
+			doc.LoadXml (@"
+				<Layout xmlns='foo'>
+	            <Label bold='false'>Text inside label</Label>
+                </Layout>");
+			doc.Schemas.Add (schema);
+			doc.Validate (null);
+		}
+#endif
 	}
 }

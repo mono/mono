@@ -1,5 +1,10 @@
 2009-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlValidatingReaderTests.cs : test for bug #501814 by Jonas
+	  Larsson.
+
+2009-05-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XsdValidatingReaderTest.cs : test for bug #501763 by Jonas Larsson.
 
 2009-04-28  Sebastien Pouliot  <sebastien@ximian.com> 
