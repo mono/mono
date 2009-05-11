@@ -574,7 +574,70 @@ namespace MonoTests.System.Xml
 
 			RunValidation (xml, xsd);
 		}
+		
+		[Test]
+		public void Bug501763 ()
+		{
+			string xsd1 = @"
+			<xs:schema id='foo1'
+				targetNamespace='foo1'
+				elementFormDefault='qualified'
+				xmlns='foo1'			  
+				xmlns:xs='http://www.w3.org/2001/XMLSchema'
+				xmlns:f2='foo2'>
 
+				<xs:import namespace='foo2' />
+				<xs:element name='Foo1Element' type='f2:Foo2ExtendedType'/>	
+			</xs:schema>";
+
+			string xsd2 = @"
+			<xs:schema id='foo2'
+				targetNamespace='foo2'
+				elementFormDefault='qualified'
+				xmlns='foo2'    
+				xmlns:xs='http://www.w3.org/2001/XMLSchema' >
+
+				<xs:element name='Foo2Element' type='Foo2Type' />
+	
+				<xs:complexType name='Foo2Type'>
+					<xs:attribute name='foo2Attr' type='xs:string' use='required'/>
+				</xs:complexType>
+	
+				<xs:complexType name='Foo2ExtendedType'>
+					<xs:complexContent>
+						<xs:extension base='Foo2Type'>
+							<xs:attribute name='foo2ExtAttr' type='xs:string' use='required'/>
+						</xs:extension>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:schema>";
+
+			
+			XmlDocument doc = new XmlDocument ();
+			
+			XmlSchema schema1 = XmlSchema.Read (XmlReader.Create (new StringReader (xsd1)), null);
+			XmlSchema schema2 = XmlSchema.Read (XmlReader.Create (new StringReader (xsd2)), null);
+			
+			doc.LoadXml (@"
+				<Foo2Element
+					foo2Attr='dummyvalue1'
+					xmlns='foo2'
+				/>");
+			doc.Schemas.Add (schema2);
+			doc.Validate (null);
+			
+			doc = new XmlDocument();
+			doc.LoadXml(@"
+				<Foo1Element
+					foo2Attr='dummyvalue1'
+					foo2ExtAttr='dummyvalue2'
+					xmlns='foo1'
+				/>");
+			doc.Schemas.Add (schema2);
+			doc.Schemas.Add (schema1);
+			doc.Validate (null);
+		}
+		
 		void RunValidation (string xml, string xsd)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();

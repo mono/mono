@@ -1,3 +1,8 @@
+2009-05-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaComplexType.cs : do not forget to clear attributes
+	  before Compile(). Patch by Jonas Larsson. Fixed bug #501763.
+
 2009-05-07  Jonas Larsson <jonas.larsson@manodo.se> 
 
 	* XmlAtomicValue.cs : support more type conversion. fixed bug #501666.

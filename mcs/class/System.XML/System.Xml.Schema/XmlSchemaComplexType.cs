@@ -223,6 +223,7 @@ namespace System.Xml.Schema
 				return errorCount;
 
 			ValidatedIsAbstract = isAbstract;
+			attributeUses.Clear();
 
 			if (isRedefinedComponent) {
 				if (Annotation != null)
