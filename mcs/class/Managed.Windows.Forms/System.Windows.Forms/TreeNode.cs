@@ -312,10 +312,12 @@ namespace System.Windows.Forms
 					TreeView.OnBeforeCheck (args);
 				if (!args.Cancel) {
 					check = value;
-					if (TreeView != null) {
+
+					// TreeView can become null after OnAfterCheck, this the double null check
+					if (TreeView != null)
 						TreeView.OnAfterCheck (new TreeViewEventArgs (this, check_reason));
+					if (TreeView != null)
 						TreeView.UpdateNode (this);
-					}
 				}
 				check_reason = TreeViewAction.Unknown;
 			}
