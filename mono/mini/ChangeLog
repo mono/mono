@@ -1,5 +1,8 @@
 2009-05-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_compile_assembly): Don't emit imt thunk if the
+	arch doesn't support it.
+
 	* mini.c (mini_init): Don't disable IMT for full aot if the
 	architecture supports it.
 
