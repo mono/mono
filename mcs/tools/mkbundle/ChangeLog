@@ -1,3 +1,11 @@
+2009-05-12  Tor Lillqvist  <tml@novell.com>
+
+	* template_main.c: Some small improvements on Windows: No need to
+	include <shellapi.h>, <windows.h> does it already. Don't use the
+	argc value as passed to main(), instead just let
+	CommandLineToArgvW() overwrite it. Free the buffer returned by
+	CommandLineToArgvW().
+
 2009-05-12  Kornél Pál  <kornelpal@gmail.com>
 
 	* TODO: Added notices about linking Mono statically.

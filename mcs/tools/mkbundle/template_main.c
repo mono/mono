@@ -3,7 +3,6 @@ int mono_main (int argc, char* argv[]);
 #include <stdlib.h>
 #ifdef _WIN32
 #include <windows.h>
-#include <shellapi.h>
 #endif
 
 static char **mono_options = NULL;
@@ -48,13 +47,20 @@ static int count_mono_options_args (void)
 
 int main (int argc, char* argv[])
 {
-	char **newargs = (char **) malloc (sizeof (char *) * (argc + 2) + count_mono_options_args ());
+	char **newargs;
 	int i, k = 0;
 
 #ifdef _WIN32
-	int wargc;
-	wchar_t **wargv = CommandLineToArgvW (GetCommandLineW (), &wargc);
+	/* CommandLineToArgvW() might return a different argc than the
+	 * one passed to main(), so let it overwrite that, as we won't
+	 * use argv[] on Windows anyway.
+	 */
+	wchar_t **wargv = CommandLineToArgvW (GetCommandLineW (), &argc);
+#endif
 
+	newargs = (char **) malloc (sizeof (char *) * (argc + 2) + count_mono_options_args ());
+
+#ifdef _WIN32
 	newargs [k++] = g_utf16_to_utf8 (wargv [0], -1, NULL, NULL, NULL);
 #else
 	newargs [k++] = argv [0];
@@ -75,6 +81,9 @@ int main (int argc, char* argv[])
 		newargs [k++] = argv [i];
 #endif
 	}
+#ifdef _WIN32
+	LocalFree (wargv);
+#endif
 	newargs [k] = NULL;
 	
 	if (config_dir != NULL && getenv ("MONO_CFG_DIR") == NULL)
