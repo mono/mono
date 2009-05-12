@@ -1,3 +1,7 @@
+2009-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c: Fix a warning.
+
 2009-05-12  Kornél Pál  <kornelpal@gmail.com>
 
 	* gc.c (mono_gc_init): Set gc_thread on creation. This avoids the
