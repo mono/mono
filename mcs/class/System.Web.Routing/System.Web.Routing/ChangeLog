@@ -2,7 +2,9 @@
 
 	* UrlPattern.cs: TrySubstitute performs substitution trimming. If
 	a segment would be set to a default value and all of its following
-	segments as well, it will be omitted from the generated URL.
+	segments as well, it will be omitted from the generated URL. The
+	value comparison is done case-insensitively when the dictionary
+	values are strings. Fixes bug #502555
 
 2009-05-11  Marek Habersack  <mhabersack@novell.com>
 

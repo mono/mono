@@ -36,6 +36,11 @@ namespace System.Web.Routing
 {
 	internal class UrlPattern
 	{
+		sealed class TrimEntry 
+		{
+			public bool Allowed;
+		}
+		
 		int segmentsCount;
 		string [] segments;
 		int [] segmentLengths;
@@ -217,10 +222,9 @@ namespace System.Web.Routing
 				return true;
 			}
 
-			var trim = new Dictionary <string, bool> ();
-			bool trimValue;
-
+			var trim = new Dictionary <string, TrimEntry> (StringComparer.OrdinalIgnoreCase);
 			foreach (string token in tokens) {
+				bool trimValue;
 				if (!values.ContainsKey (token)) {
 					value = null;
 					return false;
@@ -228,7 +232,9 @@ namespace System.Web.Routing
 
 				object left, right;
 				if (values.TryGetValue (token, out left) && defaults != null && defaults.TryGetValue (token, out right)) {
-					if (left == right)
+					if (left is string && right is string)
+						trimValue = String.Compare ((string)left, (string)right, StringComparison.OrdinalIgnoreCase) == 0;
+					else if (left == right)
 						trimValue = true;
 					else
 						trimValue = false;
@@ -236,20 +242,12 @@ namespace System.Web.Routing
 					trimValue = false;
 
 				if (!trimValue) {
-					var keys = trim.Keys;
-					int count = keys.Count;
-					var keynames = new List <string> (count);
-					int i = 0;
-					
-					foreach (string k in keys)
-						keynames.Add (k);
-
-					foreach (string k in keynames)
-						trim [k] = false;
+					foreach (var de in trim)
+						de.Value.Allowed = false;
 				}
 				
 				if (!trim.ContainsKey (token))
-					trim.Add (token, trimValue);
+					trim.Add (token, new TrimEntry { Allowed = trimValue});
 			}
 
 			var replacements = new RouteValueDictionary (values);
@@ -271,10 +269,10 @@ namespace System.Web.Routing
 				foreach (var p in replacements) {
 					string pKey = p.Key;
 					string pValue;
-					bool doTrim;
+					TrimEntry trimValue;
 					
-					if (trim.TryGetValue (pKey, out doTrim)) {
-						if (doTrim)
+					if (trim.TryGetValue (pKey, out trimValue)) {
+						if (trimValue.Allowed)
 							pValue = String.Empty;
 						else
 							pValue = p.Value.ToString ();
