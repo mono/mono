@@ -1,3 +1,8 @@
+2009-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_get_method_from_token): Avoid the expensive call to
+	mono_metadata_load_generic_params () for non-generic methods.
+
 2009-05-12  Mark Probst  <mark.probst@gmail.com>
 
 	* monitor.c, monitor.h (mono_monitor_get_object_monitor_weak_link):
