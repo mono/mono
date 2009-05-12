@@ -1371,8 +1371,8 @@ namespace System.Net.Sockets
 			if (islistening)
 				throw new InvalidOperationException ();
 
-			IPHostEntry hostent = Dns.GetHostEntry (host);
-			return (BeginConnect (hostent.AddressList, port, callback, state));
+			IPAddress [] addresses = Dns.GetHostAddresses (host);
+			return (BeginConnect (addresses, port, callback, state));
 		}
 
 		public IAsyncResult BeginDisconnect (bool reuseSocket,
@@ -1850,8 +1850,8 @@ namespace System.Net.Sockets
 
 		public void Connect (string host, int port)
 		{
-			IPHostEntry hostent = Dns.GetHostEntry (host);
-			Connect (hostent.AddressList, port);
+			IPAddress [] addresses = Dns.GetHostAddresses (host);
+			Connect (addresses, port);
 		}
 
 #if NET_2_0
