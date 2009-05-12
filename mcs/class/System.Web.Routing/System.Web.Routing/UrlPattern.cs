@@ -164,9 +164,12 @@ namespace System.Web.Routing
 								     // value in the defaults
 								     // dictionary.
 
-						v = o as string;
-						if (v == null)
-							throw new InvalidOperationException ("The RouteData must contain an item named '" + key + "' with a string value.");
+						v = (o != null) ? o.ToString () : null;
+						if (v == null && o != null) {
+							Type type = (o != null) ? o.GetType () : null;
+							throw new InvalidOperationException ("The RouteData must contain an item named '" + key + "' of type " + type + "'.");
+						} else if (v == null)
+							throw new InvalidOperationException ("The RouteData must contain an item named '" + key + "'.");
 					}
 					
 					int tfrom = 0, vfrom = 0;
