@@ -1,3 +1,7 @@
+2009-05-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* UrlPattern.cs: non-string default arguments work now.
+
 2009-05-12  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlPattern.cs: TrySubstitute performs substitution trimming. If
