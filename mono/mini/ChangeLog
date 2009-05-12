@@ -1,5 +1,8 @@
 2009-05-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (find_extra_method_in_amodule): Get rid of the
+	num_decodes variables.
+
 	* aot-compiler.c (mono_aot_method_hash): Revert part of the last
 	change as it doesn't seem to work.
 	
