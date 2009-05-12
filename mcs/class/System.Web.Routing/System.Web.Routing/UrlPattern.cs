@@ -215,19 +215,47 @@ namespace System.Web.Routing
 			if (values == null) {
 				value = Url;
 				return true;
-			} else {
-				foreach (string token in tokens) {
-					if (!values.ContainsKey (token)) {
-						value = null;
-						return false;
-					}
+			}
+
+			var trim = new Dictionary <string, bool> ();
+			bool trimValue;
+
+			foreach (string token in tokens) {
+				if (!values.ContainsKey (token)) {
+					value = null;
+					return false;
 				}
+
+				object left, right;
+				if (values.TryGetValue (token, out left) && defaults != null && defaults.TryGetValue (token, out right)) {
+					if (left == right)
+						trimValue = true;
+					else
+						trimValue = false;
+				} else
+					trimValue = false;
+
+				if (!trimValue) {
+					var keys = trim.Keys;
+					int count = keys.Count;
+					var keynames = new List <string> (count);
+					int i = 0;
+					
+					foreach (string k in keys)
+						keynames.Add (k);
+
+					foreach (string k in keynames)
+						trim [k] = false;
+				}
+				
+				if (!trim.ContainsKey (token))
+					trim.Add (token, trimValue);
 			}
 
 			var replacements = new RouteValueDictionary (values);
 			if (defaults != null) {
 				string key;
-			
+				
 				foreach (var de in defaults) {
 					key = de.Key;
 					if (replacements.ContainsKey (key))
@@ -240,8 +268,22 @@ namespace System.Web.Routing
 			string [] arr = Url.Split (substsep, StringSplitOptions.None);
 			for (int i = 0; i < arr.Length; i++) {
 				string s = arr [i];
-				foreach (var p in replacements)
-					s = s.Replace ("{" + p.Key + "}", p.Value.ToString ());
+				foreach (var p in replacements) {
+					string pKey = p.Key;
+					string pValue;
+					bool doTrim;
+					
+					if (trim.TryGetValue (pKey, out doTrim)) {
+						if (doTrim)
+							pValue = String.Empty;
+						else
+							pValue = p.Value.ToString ();
+					} else
+						pValue = p.Value.ToString ();
+
+					s = s.Replace ("{" + pKey + "}", pValue);
+				}
+				
 				arr [i] = s;
 			}
 			value = String.Join ("{{", arr);
