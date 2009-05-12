@@ -1,3 +1,9 @@
+2009-05-12  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlPattern.cs: TrySubstitute performs substitution trimming. If
+	a segment would be set to a default value and all of its following
+	segments as well, it will be omitted from the generated URL.
+
 2009-05-11  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlPattern.cs: TrySubstitute treats defaults differently
