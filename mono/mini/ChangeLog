@@ -1,5 +1,18 @@
 2009-05-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Install mono_aot_get_imt_thunk as the IMT thunk
+	builder when using full aot.
+
+	* mini-amd64.c (mono_arch_build_imt_thunk): Don't handle the full-aot case
+	here, it is already handled.
+	
+	* mini-arm.c (mono_arch_emit_imt_argument): Pass the dynamic imt arg
+	correctly for IMT.
+
+	* aot-compiler.c (arch_emit_imt_thunk): Implement this for ARM.
+
+	* mini-arm.h: Enable IMT for full aot.
+	
 	* aot-compiler.c (mono_compile_assembly): Don't emit imt thunk if the
 	arch doesn't support it.
 
