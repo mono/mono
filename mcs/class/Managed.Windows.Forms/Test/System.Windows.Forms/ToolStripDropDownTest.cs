@@ -62,6 +62,34 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Layout ()
+		{
+			ToolStripDropDown drop_down = new ToolStripDropDown ();
+			drop_down.Items.Add (new ToolStripVariableSizeItem ());
+			drop_down.PerformLayout ();
+
+			// We want to be sure the DropDown is using the size provided
+			// by GetPreferredSize, not DefaultSize, and since the extra padding/margin
+			// can change by some few pixels, we do a light check
+			Assert.AreEqual (true, drop_down.Size.Width >= 100, "A1");
+			Assert.AreEqual (true, drop_down.Size.Height >= 100, "A2");
+		}
+
+		private class ToolStripVariableSizeItem : ToolStripItem {
+
+			public override Size GetPreferredSize (Size constrainingSize) 
+			{
+				return new Size (100, 100);
+			}
+
+			protected override Size DefaultSize {
+				get {
+					return new Size (33, 33);
+				}
+			}
+		}
+
+		[Test]
 		public void ProtectedProperties ()
 		{
 			ExposeProtectedProperties epp = new ExposeProtectedProperties ();
