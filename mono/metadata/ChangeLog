@@ -1,3 +1,12 @@
+2009-05-12  Mark Probst  <mark.probst@gmail.com>
+
+	* monitor.c, monitor.h (mono_monitor_get_object_monitor_weak_link):
+	New function for returning a monitor's weak link if it has one.
+
+	* sgen-gc.c: Remove an object's monitor's weak link (if it has
+	one) when clearing a domain.  These can still be around because
+	the object might not have been collected.
+
 2009-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc.c: Fix a warning.
