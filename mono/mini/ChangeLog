@@ -1,5 +1,8 @@
 2009-05-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c mini.c mini-amd64.h mini-arm.h: Kill 
+	MONO_ARCH_FULL_AOT_IMT_SUPPORTED define, both platforms now support imt.
+
 	* mini.c (mini_init): Install mono_aot_get_imt_thunk as the IMT thunk
 	builder when using full aot.
 
