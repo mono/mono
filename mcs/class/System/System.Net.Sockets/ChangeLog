@@ -1,3 +1,8 @@
+2009-05-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* UdpClient.cs: if possible, avoid DNS lookups when the host name is
+	an IP address. Related to bug #502866.
+
 2009-04-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: return the last error if a connect to multiple addresses
