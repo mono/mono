@@ -327,7 +327,7 @@ namespace System.Net
 			if (isHostname) {
 				this.hasWildcard = false;
 				try {
-					this.addresses = Dns.GetHostByName (hostname).AddressList;
+					this.addresses = Dns.GetHostAddresses (hostname);
 				} catch (System.Net.Sockets.SocketException) {					
 				}
 			} else {

@@ -285,7 +285,11 @@ namespace System.Net {
 		}
 
 #if NET_2_0
-		public static IPHostEntry GetHostEntry (string hostNameOrAddress)
+		public
+#else
+		internal
+#endif
+		static IPHostEntry GetHostEntry (string hostNameOrAddress)
 		{
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
@@ -302,7 +306,12 @@ namespace System.Net {
 			return GetHostByName (hostNameOrAddress);
 		}
 
-		public static IPHostEntry GetHostEntry (IPAddress address)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static IPHostEntry GetHostEntry (IPAddress address)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
@@ -310,7 +319,12 @@ namespace System.Net {
 			return GetHostByAddressFromString (address.ToString (), false);
 		}
 
-		public static IPAddress [] GetHostAddresses (string hostNameOrAddress)
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		static IPAddress [] GetHostAddresses (string hostNameOrAddress)
 		{
 			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
@@ -327,7 +341,6 @@ namespace System.Net {
 
 			return GetHostEntry (hostNameOrAddress).AddressList;
 		}
-#endif
 
 #if NET_2_0
 		[Obsolete ("Use GetHostEntry instead")]
