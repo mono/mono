@@ -1,3 +1,10 @@
+2009-05-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebHeaderCollection_2_1.cs: Headers are case insensitive but we
+	must keep them in their original form since AllKeys property will
+	report them that way and user code (like DRT#288) can depends on
+	this behavior.
+
 2009-05-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebHeaderCollection_2_1.cs: Headers are removed only in special
