@@ -181,7 +181,7 @@ namespace System.Net.Sockets
 			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
 				throw new ArgumentOutOfRangeException ("port");
 
-			IPAddress[] addresses = Dns.Resolve (hostname).AddressList;
+			IPAddress[] addresses = Dns.GetHostAddresses (hostname);
 			for(int i=0; i<addresses.Length; i++) {
 				try {
 					this.family = addresses[i].AddressFamily;
