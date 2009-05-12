@@ -1,3 +1,13 @@
+2009-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* TestDriver.cs: Add a CategoryAttribute class and an --exclude option
+	to exclude tests belonging to a category.
+
+	* generics.cs: Mark some tests with a !FULLAOT category.
+
+	* Makefile.am (fullaotcheck): Run tests with --exclude !FULLAOT. Include
+	generics tests.
+
 2009-05-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_and_reloc_code): Move the implementation of
