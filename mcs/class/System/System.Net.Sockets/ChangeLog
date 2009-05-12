@@ -1,5 +1,12 @@
 2009-05-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* TcpClient.cs:
+	* Socket.cs:
+	* UdpClient.cs: use GetHostAddresses() instead of Resolve or
+	GetHostEntry.
+
+2009-05-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* UdpClient.cs: if possible, avoid DNS lookups when the host name is
 	an IP address. Related to bug #502866.
 

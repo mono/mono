@@ -314,9 +314,8 @@ namespace System.Net.Sockets
 
 		public void Connect (string hostname, int port)
 		{
-			IPHostEntry host = Dns.GetHostByName(hostname);
-
-			Connect (host.AddressList, port);
+			IPAddress [] addresses = Dns.GetHostAddresses (hostname);
+			Connect (addresses, port);
 		}
 
 #if NET_2_0
