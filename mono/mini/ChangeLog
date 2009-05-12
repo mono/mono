@@ -1,3 +1,8 @@
+2009-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_aot_method_hash): Improve the hashing of
+	wrappers.
+
 2009-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c mini.c mini-amd64.h mini-arm.h: Kill 
