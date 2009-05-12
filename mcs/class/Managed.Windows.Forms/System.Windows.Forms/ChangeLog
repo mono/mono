@@ -1,3 +1,8 @@
+2009-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripDropDownMenu.cs: Use the height returned by
+	ToolStripItem.GetPreferredHeight to calculate our own height.
+
 2009-05-10  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* TreeNode.cs: When setting Checked, do a double null check, since the
