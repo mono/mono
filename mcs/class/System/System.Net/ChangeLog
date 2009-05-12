@@ -1,3 +1,8 @@
+2009-05-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Dns.cs: made GetHostAddresses and friends internal for 1.x
+	* EndpointPermission.cs: use GetHostAddresses.
+
 2009-05-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CookieContainer.cs: matching hosts to domain names like MS does.
