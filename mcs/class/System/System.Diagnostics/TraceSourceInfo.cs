@@ -38,12 +38,21 @@ namespace System.Diagnostics
 	{
 		string name;
 		SourceLevels levels;
-		TraceListenerCollection listeners = new TraceListenerCollection ();
+		TraceListenerCollection listeners;
 
 		public TraceSourceInfo (string name, SourceLevels levels)
 		{
 			this.name = name;
 			this.levels = levels;
+			this.listeners = new TraceListenerCollection ();
+		}
+
+		internal TraceSourceInfo (string name, SourceLevels levels, TraceImplSettings settings)
+		{
+			this.name = name;
+			this.levels = levels;
+			this.listeners = new TraceListenerCollection (false);
+			this.listeners.Add (new DefaultTraceListener(), settings);
 		}
 
 		public string Name {

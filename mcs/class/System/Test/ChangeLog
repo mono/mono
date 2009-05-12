@@ -1,3 +1,8 @@
+2009-05-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* test-config-file: Add a /configuration/system.diagnostics/source
+	  section to elicit the buggy behavior found in #502944.
+
 2008-12-09  Christian Hergert <christian.hergert@gmail.com>
 
 	* System.Diagnostics/CounterCreationDataTest.cs: New test to verify

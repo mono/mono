@@ -1,3 +1,12 @@
+2009-05-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* DiagnosticsConfigurationHandler.cs: Use the new
+	  TraceSourceInfo(string, SourceLevels, TraceImplSettings) constructor.
+	* TraceSourceInfo.cs: Add a new constructor, 
+	  TraceSourceInfo(string, SourceLevels, TraceImplSettings), which adds
+	  the DefaultTraceListener w/o depending upon (the possibly still
+	  initializing) TraceImpl members.  Fixes #502944.
+
 2009-05-01 Jonathan Pryor  <jpryor@novell.com>
 
 	* DiagnosticsConfigurationHandler.cs: Don't refer to TraceImpl member

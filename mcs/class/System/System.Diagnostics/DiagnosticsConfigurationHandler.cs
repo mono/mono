@@ -364,7 +364,7 @@ namespace System.Diagnostics
 			if (sources.ContainsKey (name))
 				return;
 
-			TraceSourceInfo sinfo = new TraceSourceInfo (name, levels);
+			TraceSourceInfo sinfo = new TraceSourceInfo (name, levels, configValues);
 			sources.Add (sinfo.Name, sinfo);
 			
 			foreach (XmlNode child in node.ChildNodes) {
