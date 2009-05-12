@@ -1,3 +1,8 @@
+2009-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify the implmap table.
+	Don't require that #US and #Strings be present.
+
 2009-05-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Delegate checks are done at creation time,
@@ -2997,7 +3002,7 @@ Thu Dec 18 16:35:22 CET 2008 Paolo Molaro <lupus@ximian.com>
 
 	Fixes #448560.
 
-2008-11-29  Kornél Pál  <kornelpal@gmail.com>
+2008-11-29  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* coree.c (MonoFixupExe): Use sizeof(IMAGE_BASE_RELOCATION) instead of
 	IMAGE_SIZEOF_BASE_RELOCATION as newer Vista SDKs no longer define the latter.
@@ -3718,7 +3723,7 @@ Mon Oct 6 16:10:02 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	for the no-gc case.
 	* attach.c (mono_attach_init): Remove the #ifdef.
 
-2008-10-04  Andreas Färber  <andreas.faerber@web.de>
+2008-10-04  Andreas Fï¿½rber  <andreas.faerber@web.de>
 
 	* attach.c (mono_attach_init): Don't use
 	mono_gc_add_finalizer_thread_callback when compiling without GC.
@@ -3898,7 +3903,7 @@ Mon Sep 22 17:29:54 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	(mono_image_get_generic_field_token): Call add_custom_modifiers ().
 	(fieldbuilder_to_mono_class_field): Ditto. Fixes #424663.
 
-2008-09-19  Kornél Pál  <kornelpal@gmail.com>
+2008-09-19  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* coree.c (_CorValidateImage): Some 64-bit IL only images have entry point
 	calling _CorDllMain imported from mscoree.dll. Set entry point RVA to 0 for
@@ -4351,7 +4356,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	(ves_icall_System_Diagnostics_Process_ProcessHandle_duplicate):
 	New internal calls to duplicate and close a process handle.
 
-2008-07-27  Andreas Färber  <andreas.faerber@web.de>
+2008-07-27  Andreas Fï¿½rber  <andreas.faerber@web.de>
 
 	* object.c (CHECK_ADD_OVERFLOW_UN): Add missing bracket. Fixes #412499.
 
@@ -4478,7 +4483,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* class-internals.h: New exception type MONO_EXCEPTION_OBJECT_SUPPLIED
 	for the case where the exception object is supplied.
 
-2008-07-16  Kornél Pál  <kornelpal@gmail.com>
+2008-07-16  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* coree.h: Define __ImageBase as _image_base__ on cygwin that fixes build with
 	old ld versions.
@@ -4649,7 +4654,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* domain.c: Initialize+cleanup jit_code_hash_lock.
 	
-2008-06-30  Kornél Pál  <kornelpal@gmail.com>
+2008-06-30  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* coree.c (mono_load_coree): Set coree_module_handle global variable only
 	after initialization.
@@ -4658,7 +4663,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	Contributed under MIT/X11 license.
 
-2008-06-30  Kornél Pál  <kornelpal@gmail.com>
+2008-06-30  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* coree.c (_CorValidateImage): Retain IMAGE_DIRECTORY_ENTRY_SECURITY
 	because that is platform independent. Check NumberOfRvaAndSizes in PE32
@@ -4716,7 +4721,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* object.c (mono_value_box): Fix boxing of nullables.
 
-2008-06-26  Kornél Pál  <kornelpal@gmail.com>
+2008-06-26  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* assembly.c (mono_set_rootdir): Use __ImageBase instead of
 	mono_module_handle that is defined by the linker; no initialization required.
@@ -4835,7 +4840,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* icall-def.h: Implement Socket generic Send() and Receive()
 	methods.  Fixes bug 395168.
 
-2008-06-19  Kornél Pál  <kornelpal@gmail.com>
+2008-06-19  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* icall-def.h, icall.c: Add ves_icall_System_Reflection_Module_GetHINSTANCE.
 
@@ -5309,7 +5314,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* appdomain.c (set_domain_search_path): Acquire the domain lock since we
 	modify domain state.
 
-2008-06-05  Andreas Färber  <andreas.faerber@web.de>
+2008-06-05  Andreas Fï¿½rber  <andreas.faerber@web.de>
 
 	* boehm-gc.c: Add DTrace probes gc-{begin,end}.
 	* Makefile.am (pedump_LDADD): Post-process object files and
@@ -5845,14 +5850,14 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* reflection.c (mono_image_create_token): Add a 'register_token' argument, and use
 	it to avoid registering tokens during metadata generation. Fixes #390023.
 
-2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+2008-05-14  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* coree.c: Rename dwOldProtect to OldProtect that makes naming convention
 	consistent.
 
 	Contributed under MIT/X11 license.
 
-2008-05-14  Kornél Pál  <kornelpal@gmail.com>
+2008-05-14  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* domain.c (mono_init_internal): Enable LoadLibrary support. Load EXE image
 	even when get_runtimes_from_exe didn't load it that allows mono_fixup_exe_image
@@ -6008,13 +6013,13 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	(MONO_SYMBOL_FILE_COMPATIBILITY_VERSION): Removed; dropped support
 	for old pre-terrania symbol files.
 
-2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+2008-05-05  Andreas Fï¿½rber  <andreas.faerber@web.de>
 
 	* mono-config.c: Add ppc64 architecture.
 
 	Code is contributed under MIT/X11 license.
 
-2008-05-05  Andreas Färber  <andreas.faerber@web.de>
+2008-05-05  Andreas Fï¿½rber  <andreas.faerber@web.de>
 
 	* object.c (mono_create_ftnptr, mono_get_addr_from_ftnptr):
 	  PPC64 uses function descriptors as well.
@@ -6097,7 +6102,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* verify.c (mono_method_verify): Check the bounds of
 	all access of the code array.
 
-2008-04-29  Kornél Pál  <kornelpal@gmail.com>
+2008-04-29  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* appdomain.c: Use HAVE_SYS_UTIME_H that fixes MSVC build.
 
@@ -6106,7 +6111,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 	* image.c (mono_image_strong_name_position): Fix return value when the rva is
 	not valid.
 
-2008-04-28  Kornél Pál  <kornelpal@gmail.com>
+2008-04-28  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* loader.c (mono_get_method_from_token, mono_method_signature): Add
 	support for METHOD_IMPL_ATTRIBUTE_NATIVE.
@@ -6472,7 +6477,7 @@ Fri Aug 1 16:07:09 CEST 2008 Paolo Molaro <lupus@ximian.com>
 
 	* verify.c: Implemented readonly prefix and verify controled mutability pointers.
 
-2008-03-20  Kornél Pál  <kornelpal@gmail.com>
+2008-03-20  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* file-io.c, filewatcher.c, threadpool.c, threads.c: Removed Windows
 	version macros.
@@ -8325,7 +8330,7 @@ Thu Nov 8 15:31:21 CET 2007 Paolo Molaro <lupus@ximian.com>
 	* socket-io.c: Apple requires sin(6)_len to be set for getnameinfo
 	to succeed
 
-2007-11-05  Kornél Pál  <kornelpal@gmail.com>
+2007-11-05  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* process.c: Added run-time GetProcessId API detection for Windows.
 
@@ -12636,7 +12641,7 @@ Fri Jul 28 19:04:34 CEST 2006 Paolo Molaro <lupus@ximian.com>
 	* threads.c (start_wrapper): Do the thread cleanup while we still
 	hold a reference to its object.  Fixes bug 78123.
 
-2006-07-18  Kornél Pál  <kornelpal@gmail.com>
+2006-07-18  Kornï¿½l Pï¿½l  <kornelpal@gmail.com>
 
 	* class-internals.h: Added MONO_WRAPPER_MANAGED_TO_MANAGED wrapper type.
 	* debug-helpers.c: Map MONO_WRAPPER_MANAGED_TO_MANAGED to
@@ -16477,7 +16482,7 @@ Wed Jun 8 19:26:38 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: avoid segfault when an unstarted thread is aborted.
 
-2005-06-05  Kornél Pál <kornelpal@hotmail.com>
+2005-06-05  Kornï¿½l Pï¿½l <kornelpal@hotmail.com>
 
 	* icall.c: Added ves_icall_Mono_Runtime_GetDisplayName:
 	Returns the name and version of the runtime for reporting.
