@@ -74,6 +74,15 @@ namespace System.ServiceModel.Dispatcher
 			set { user_events_handler = value; }
 		}
 
+		public void Reply (IDuplexChannel channel, bool useTimeout)
+		{
+			EventsHandler.BeforeSendReply ();
+			if (useTimeout)
+				channel.Send (ReplyMessage, Operation.Parent.ChannelDispatcher.timeouts.SendTimeout);
+			else
+				channel.Send (ReplyMessage);
+		}
+
 		public void Reply (bool useTimeout)
 		{
 			EventsHandler.BeforeSendReply ();
@@ -81,7 +90,7 @@ namespace System.ServiceModel.Dispatcher
 				RequestContext.Reply (ReplyMessage, Operation.Parent.ChannelDispatcher.timeouts.SendTimeout);
 			else
 				RequestContext.Reply (ReplyMessage);
-		}		
+		}
 	}
 
 	#region user events implementation

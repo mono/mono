@@ -1,5 +1,13 @@
 2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ReplyHandler.cs, InputOrReplyRequestProcessor.cs,
+	  MessageProcessingContext.cs : reply processing is also needed by
+	  non-request channels (i.e. duplex). Current code basis lacked
+	  such possibility. Quick fix by adding duplex support in
+	  ReplyHandler so far.
+
+2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs, SecurityHandler.cs,
 	  InputOrReplyRequestProcessor.cs, MessageProcessingContext.cs :
 	  remove default communication timeouts from several types. They

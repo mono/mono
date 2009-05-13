@@ -24,7 +24,7 @@ namespace System.ServiceModel.Dispatcher
 			ProcessingChain.AddHandler (new PostReceiveRequestHandler ()).
 							AddHandler(new SecurityHandler ()).
 							AddHandler(new OperationInvokerHandler ()).
-							AddHandler(new ReplyHandler ());			
+							AddHandler(new ReplyHandler (replyOrInput));
 
 			//errors
 			ErrorChain.AddHandler (new ErrorProcessingHandler ());
