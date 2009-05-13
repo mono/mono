@@ -1,5 +1,9 @@
 2009-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Fix rows limit check.
+
+2009-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify the fieldrva table.
 
 2009-05-13  Mark Probst  <mark.probst@gmail.com>
