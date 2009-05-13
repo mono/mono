@@ -225,9 +225,9 @@ namespace System.ServiceModel.Channels
 
 			public XmlReader CreateReader ()
 			{
-				var r = new XmlTextReader (new StringReader (body));
-				r.MoveToContent ();
-				return r;
+				var reader = XmlReader.Create (new StringReader (body));
+				reader.MoveToContent ();
+				return reader;
 			}
 
 			protected override void OnWriteHeaderContents (

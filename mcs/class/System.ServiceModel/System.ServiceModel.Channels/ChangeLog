@@ -1,3 +1,8 @@
+2009-05-13  Jb Evain  <jbevain@novell.com>
+
+	* MessageHeader.cs: use a SL friendly way of creating an XmlReader
+	from a StringReader.
+
 2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageImpl.cs, MessageHeader.cs : eliminate xlinq in 2.1, and
