@@ -12,11 +12,10 @@ namespace System.ServiceModel.Dispatcher
 	{
 		DispatchRuntime dispatch_runtime;
 		IChannel reply_or_input;
-		IDefaultCommunicationTimeouts communication_timeouts;
 
-		public InputOrReplyRequestProcessor (DispatchRuntime runtime, IChannel replyOrInput, IDefaultCommunicationTimeouts timeouts)
+		public InputOrReplyRequestProcessor (DispatchRuntime runtime, IChannel replyOrInput)
 		{
-			Init (runtime, reply_or_input, timeouts);
+			Init (runtime, reply_or_input);
 
 			//initialization
 			InitializeChain.AddHandler (new InitializingHandler ());
@@ -34,11 +33,10 @@ namespace System.ServiceModel.Dispatcher
 			FinalizationChain.AddHandler (new FinalizeProcessingHandler ());
 		}
 
-		void Init (DispatchRuntime runtime, IChannel replyOrInput, IDefaultCommunicationTimeouts timeouts)
+		void Init (DispatchRuntime runtime, IChannel replyOrInput)
 		{
 			dispatch_runtime = runtime;
 			reply_or_input = replyOrInput;
-			communication_timeouts = timeouts;
 		}
 
 		public void ProcessInput (Message message)
@@ -62,7 +60,6 @@ namespace System.ServiceModel.Dispatcher
 			OperationContext opCtx = new OperationContext (contextChannel);
 			opCtx.IncomingMessage = incoming;
 			opCtx.EndpointDispatcher = dispatch_runtime.EndpointDispatcher;
-			opCtx.CommunicationTimeouts = communication_timeouts;
 			return opCtx;
 		}
 	}

@@ -14,6 +14,13 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 	[TestFixture]
 	public class ChannelDispatcherTest
 	{
+		[Test]
+		public void ConstructorNullBindingName ()
+		{
+			new ChannelDispatcher (new MyChannelListener (new Uri ("urn:foo")), null);
+			new ChannelDispatcher (new MyChannelListener (new Uri ("urn:foo")), null, null);
+		}
+
 		[Test]			
 		public void Collection_Add_Remove () {
 			Console.WriteLine ("STart test Collection_Add_Remove");

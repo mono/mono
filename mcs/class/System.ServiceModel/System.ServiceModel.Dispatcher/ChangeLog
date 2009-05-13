@@ -1,5 +1,13 @@
 2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs, SecurityHandler.cs,
+	  InputOrReplyRequestProcessor.cs, MessageProcessingContext.cs :
+	  remove default communication timeouts from several types. They
+	  bring bogus NRE. Instead, fill timeouts in ChannelDispatcher and
+	  use it when required (it was actually *only* request processor).
+
+2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : wrong channel argument.
 
 2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>

@@ -11,7 +11,6 @@ namespace System.ServiceModel.Dispatcher
 		OperationContext operation_context;
 		RequestContext request_context;
 		Message incoming_message;
-		IDefaultCommunicationTimeouts timeouts;
 
 		Message reply_message;		
 		InstanceContext instance_context;		
@@ -24,7 +23,6 @@ namespace System.ServiceModel.Dispatcher
 			operation_context = opCtx;
 			request_context = opCtx.RequestContext;
 			incoming_message = opCtx.IncomingMessage;
-			timeouts = opCtx.CommunicationTimeouts;
 			user_events_handler = new UserEventsHandler (this);
 		}
 
@@ -45,12 +43,6 @@ namespace System.ServiceModel.Dispatcher
 			get { return reply_message; }
 			set { reply_message = value; }
 		}
-
-		public IDefaultCommunicationTimeouts CommunicationTimeouts
-		{
-			get { return timeouts; }
-			set { timeouts = value; }
-		}		
 
 		public InstanceContext InstanceContext
 		{
@@ -86,7 +78,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			EventsHandler.BeforeSendReply ();
 			if (useTimeout)
-				RequestContext.Reply (ReplyMessage, CommunicationTimeouts.SendTimeout);
+				RequestContext.Reply (ReplyMessage, Operation.Parent.ChannelDispatcher.timeouts.SendTimeout);
 			else
 				RequestContext.Reply (ReplyMessage);
 		}		

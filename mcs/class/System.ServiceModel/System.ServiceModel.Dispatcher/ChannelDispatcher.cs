@@ -45,7 +45,7 @@ namespace System.ServiceModel.Dispatcher
 		Collection<IErrorHandler> error_handlers
 			= new Collection<IErrorHandler> ();
 		IChannelListener listener;
-		IDefaultCommunicationTimeouts timeouts;
+		internal IDefaultCommunicationTimeouts timeouts; // FIXME: remove internal
 		MessageVersion message_version;
 		bool receive_sync, include_exception_detail_in_faults,
 			manual_addressing, is_tx_receive;
@@ -64,17 +64,14 @@ namespace System.ServiceModel.Dispatcher
 		SynchronizedCollection<EndpointDispatcher> endpoints;
 
 		[MonoTODO ("get binding info from config")]
-		public ChannelDispatcher (IChannelListener listener)			
+		public ChannelDispatcher (IChannelListener listener)
+			: this (listener, null)
 		{
-			if (listener == null)
-				throw new ArgumentNullException ("listener");
-			Init (listener, null, null);
 		}
 
 		public ChannelDispatcher (
 			IChannelListener listener, string bindingName)
-			: this (listener, bindingName, 
-				DefaultCommunicationTimeouts.Instance)
+			: this (listener, bindingName, null)
 		{
 		}
 
@@ -84,10 +81,6 @@ namespace System.ServiceModel.Dispatcher
 		{
 			if (listener == null)
 				throw new ArgumentNullException ("listener");
-			if (bindingName == null)
-				throw new ArgumentNullException ("bindingName");
-			if (timeouts == null)
-				throw new ArgumentNullException ("timeouts");
 			Init (listener, bindingName, timeouts);
 		}
 
@@ -96,7 +89,9 @@ namespace System.ServiceModel.Dispatcher
 		{
 			this.listener = listener;
 			this.binding_name = bindingName;
-			this.timeouts = timeouts;
+			// IChannelListener is often a ChannelListenerBase
+			// which implements IDefaultCommunicationTimeouts.
+			this.timeouts = timeouts ?? listener as IDefaultCommunicationTimeouts ?? DefaultCommunicationTimeouts.Instance;
 			endpoints = new SynchronizedCollection<EndpointDispatcher> ();
 		}
 
@@ -467,7 +462,7 @@ namespace System.ServiceModel.Dispatcher
 						throw new InvalidOperationException ("The reply channel didn't return RequestContext");
 
 					EndpointDispatcher candidate = FindEndpointDispatcher (rc.RequestMessage);
-					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, reply, owner.timeouts).
+					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, reply).
 						ProcessReply (rc);
 				}
 				catch (EndpointNotFoundException ex) {
@@ -482,7 +477,7 @@ namespace System.ServiceModel.Dispatcher
 
 				try {
 					candidate = FindEndpointDispatcher (message);
-					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input, owner.timeouts).
+					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input).
 						ProcessInput(message);
 				}
 				catch (EndpointNotFoundException ex) {

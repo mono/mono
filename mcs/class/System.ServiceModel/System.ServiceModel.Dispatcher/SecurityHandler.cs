@@ -35,7 +35,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			negoResponse.Headers.CopyHeadersFrom (mrc.OperationContext.OutgoingMessageHeaders);
 			negoResponse.Properties.CopyProperties (mrc.OperationContext.OutgoingMessageProperties);			
-			mrc.RequestContext.Reply (negoResponse, mrc.CommunicationTimeouts.SendTimeout);
+			mrc.RequestContext.Reply (negoResponse, mrc.Operation.Parent.ChannelDispatcher.timeouts.SendTimeout);
 			return;
 		}
 	}
