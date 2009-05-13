@@ -1,3 +1,9 @@
+2009-05-12  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes rest of #497715 - Patch by Jonas Larsson <Jonas.Larsson@manodo.se>
+	* TdsMetaParameter.cs: Add support for XML type.  For now, handle 
+	XML type as just NVarchar.
+
 2009-01-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TdsMetaParameter.cs: Modified signature of delegate to also allow
