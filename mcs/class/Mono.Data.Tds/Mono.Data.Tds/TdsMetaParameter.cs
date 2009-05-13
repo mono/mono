@@ -190,7 +190,9 @@ namespace Mono.Data.Tds {
 			// if size is set, truncate the value to specified size
 			string text = newValue as string;
 			if (text != null) {
-				if (TypeName == "nvarchar" || TypeName == "nchar") {
+				if (TypeName == "nvarchar" || 
+				    TypeName == "nchar" ||
+				    TypeName == "xml") {
 					if (text.Length > size)
 						return text.Substring (0, size);
 				}
@@ -243,6 +245,7 @@ namespace Mono.Data.Tds {
 				result.Append (size > 8000 ? "(max)" : String.Format ("({0})", size));
 				break;
 			case "nvarchar":
+			case "xml":
 				result.Append (Size > 0 ? (Size > 8000 ? "(max)" : String.Format ("({0})", Size)) : "(4000)");
 				break;
 			case "char":
@@ -263,7 +266,9 @@ namespace Mono.Data.Tds {
 			switch (Value.GetType ().ToString ()) {
 			case "System.String":
 				int len = ((string)value).Length;
-				if (TypeName == "nvarchar" || TypeName == "nchar" || TypeName == "ntext")
+				if (TypeName == "nvarchar" || TypeName == "nchar" 
+				    || TypeName == "ntext"
+				    || TypeName == "xml")
 					len *= 2;
 				return len ;	
 			case "System.Byte[]":
@@ -315,6 +320,7 @@ namespace Mono.Data.Tds {
 				case "nvarchar" :
 				case "nchar" :
 				case "ntext" :
+				case "xml" :
 					return Encoding.Unicode.GetBytes ((string)Value);
 				case "varchar" :
 				case "char" :
@@ -372,6 +378,7 @@ namespace Mono.Data.Tds {
 				return TdsColumnType.NChar;
 			case "ntext":
 				return TdsColumnType.NText;
+			case "xml":
 			case "nvarchar":
 				return TdsColumnType.BigNVarChar;
 			case "real":

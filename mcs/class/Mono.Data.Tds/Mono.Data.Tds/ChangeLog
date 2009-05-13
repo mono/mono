@@ -1,3 +1,9 @@
+2009-05-12  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes rest of #497715 - Patch by Jonas Larsson <Jonas.Larsson@manodo.se>
+	* TdsMetaParameter.cs: Add support for XML type.  For now, handle 
+	XML type as just NVarchar.
+	
 2009-03-23  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* TdsMetaParameter.cs (GetMetaType): Return TdsColumnType.BigInt 
