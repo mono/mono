@@ -1,5 +1,8 @@
 2009-05-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_aot_method_hash): Implement this properly based
+	on mono_method_get_imt_slot ().
+
 	* aot-runtime.c (find_extra_method_in_amodule): Get rid of the
 	num_decodes variables.
 
