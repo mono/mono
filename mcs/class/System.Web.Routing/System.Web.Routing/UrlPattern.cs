@@ -282,7 +282,11 @@ namespace System.Web.Routing
 					} else
 						pValue = p.Value.ToString ();
 
-					s = s.Replace ("{" + pKey + "}", pValue);
+					string rkey = "{" + pKey + "}";
+					if (String.IsNullOrEmpty (pValue) && s.EndsWith ("/" + rkey)) {
+						s = s.Substring (0, s.Length - rkey.Length - 1);
+					} else
+						s = s.Replace (rkey, pValue);
 				}
 				
 				arr [i] = s;
