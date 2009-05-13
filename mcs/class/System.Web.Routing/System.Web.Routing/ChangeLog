@@ -1,5 +1,10 @@
 2009-05-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* UrlPattern.cs: if the pattern is line {a}/{b} and {b} is substituted
+	by an empty string, remove the '/' too.
+
+2009-05-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* UrlPattern.cs: non-string default arguments work now.
 
 2009-05-12  Marek Habersack  <mhabersack@novell.com>
