@@ -127,11 +127,12 @@ namespace System.ServiceModel.Description
 			// do nothing
 		}
 
+		[MonoTODO]
 		void IServiceBehavior.Validate (
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
 		{
-			throw new NotImplementedException ();
+			// unlike MSDN description, it does not throw NIE.
 		}
 	}
 }

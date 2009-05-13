@@ -1,3 +1,8 @@
+2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceCredentials.cs : IServiceBehavior.Validate() should not
+	  throw NIE. No check so far.
+
 2009-03-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageBodyDescription.cs, MessagePartDescription.cs,
