@@ -1,3 +1,8 @@
+2009-05-13  Mark Probst  <mark.probst@gmail.com>
+
+	* marshal.c (delegate_hash_table_add): When overwriting an entry,
+	free the old GCHandle (only applies to SGen).
+
 2009-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_get_method_from_token): Avoid the expensive call to
