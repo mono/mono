@@ -1,5 +1,0 @@
-# [SecuritySafeCritical] needed inside System.Core to call all [SecurityCritical] methods
-# 2 methods
-
-+SSC-M: System.Void System.Linq.Expressions.EmitContext::.ctor(System.Linq.Expressions.CompilationContext,System.Linq.Expressions.LambdaExpression)
-+SSC-M: System.TimeZoneInfo System.TimeZoneInfo::FindSystemTimeZoneByFileName(System.String,System.String)

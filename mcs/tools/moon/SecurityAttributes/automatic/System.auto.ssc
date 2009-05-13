@@ -1,5 +1,0 @@
-# [SecuritySafeCritical] needed inside System to call all [SecurityCritical] methods
-# 2 methods
-
-+SSC-M: System.Threading.SynchronizationContext System.ComponentModel.AsyncOperationManager::get_SynchronizationContext()
-+SSC-M: System.Reflection.Emit.DynamicMethod System.Text.RegularExpressions.CILCompiler::CreateEvalMethod(System.Byte[],System.Int32)

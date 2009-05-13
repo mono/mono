@@ -1,5 +1,0 @@
-# [SecuritySafeCritical] needed inside System.Xml to call all [SecurityCritical] methods
-# 2 methods
-
-+SSC-M: System.Void Mono.Xml2.XmlTextReader::InitializeContext(System.String,System.Xml.XmlParserContext,System.IO.TextReader,System.Xml.XmlNodeType)
-+SSC-M: System.Object System.Xml.XmlUrlResolver::GetEntity(System.Uri,System.String,System.Type)
