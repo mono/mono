@@ -1,3 +1,8 @@
+2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationContext.cs : missing from the previous commit (remove
+	  timeouts).
+
 2009-04-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHost.cs : split dispatcher open from dispatcher loop start.

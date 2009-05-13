@@ -39,7 +39,6 @@ namespace System.ServiceModel
 		// generated guid (no special meaning)
 		const string operation_context_name = "c15795e2-bb44-4cfb-a89c-8529feb170cb";
 		Message incoming_message;
-		IDefaultCommunicationTimeouts timeouts;
 
 		public static OperationContext Current {
 			get { return Thread.GetData (Thread.GetNamedDataSlot (operation_context_name)) as OperationContext; }
@@ -181,16 +180,6 @@ namespace System.ServiceModel
 			}
 			set {
 				incoming_message = value;
-			}
-		}
-
-		internal IDefaultCommunicationTimeouts CommunicationTimeouts
-		{
-			get {
-				return timeouts;
-			}
-			set {
-				timeouts = value;
 			}
 		}
 	}
