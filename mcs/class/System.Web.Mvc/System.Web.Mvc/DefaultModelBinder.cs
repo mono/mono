@@ -159,14 +159,13 @@ namespace System.Web.Mvc {
                 // We couldn't find any entry that began with the prefix. If this is the top-level element, fall back
                 // to the empty prefix.
                 if (bindingContext.FallbackToEmptyPrefix) {
-                    var ctx = new ModelBindingContext() {
+                    bindingContext = new ModelBindingContext() {
                         Model = bindingContext.Model,
                         ModelState = bindingContext.ModelState,
                         ModelType = bindingContext.ModelType,
                         PropertyFilter = bindingContext.PropertyFilter,
                         ValueProvider = bindingContext.ValueProvider
                     };
-                    bindingContext = ctx;
                     performedFallback = true;
                 }
                 else {
