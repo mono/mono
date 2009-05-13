@@ -482,7 +482,7 @@ namespace System.ServiceModel.Dispatcher
 
 				try {
 					candidate = FindEndpointDispatcher (message);
-					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, reply, owner.timeouts).
+					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input, owner.timeouts).
 						ProcessInput(message);
 				}
 				catch (EndpointNotFoundException ex) {
