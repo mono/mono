@@ -1,5 +1,9 @@
 2009-05-13  Andreia Gaita  <avidigal@novell.com>
 
+	* HtmlDocument.cs: If the objects are strings, wrap them in ""
+
+2009-05-13  Andreia Gaita  <avidigal@novell.com>
+
 	* HtmlDocument.cs: Fix InvokeScript call (duh).
 
 2009-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>

@@ -135,7 +135,10 @@ namespace System.Windows.Forms
 		{
 			string[] strArgs = new string[args.Length];
 			for (int i = 0; i < args.Length; i++) {
-				strArgs[i] = args[i].ToString();
+				if (args[i] is string)
+					strArgs[i] = "\"" + args[i].ToString() + "\"";
+				else
+					strArgs[i] = args[i].ToString();
 			}
 			return document.InvokeScript ("eval ('" + scriptName + "(" + String.Join (",", strArgs) + ")');");
 		}
