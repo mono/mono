@@ -1,3 +1,8 @@
+2009-05-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_code): Emit a C style symbol for each
+	method so a breakpoint can be set when using gdb.
+
 2009-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_aot_method_hash): Implement this properly based
