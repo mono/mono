@@ -1,3 +1,7 @@
+2009-05-13  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : remove xlinq dependency.
+
 2009-04-28  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll_test.sources: added

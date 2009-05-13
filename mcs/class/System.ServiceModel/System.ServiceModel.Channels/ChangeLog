@@ -1,3 +1,8 @@
+2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageImpl.cs, MessageHeader.cs : eliminate xlinq in 2.1, and
+	  actually eliminate DOM-based implementation too in 2.0.
+
 2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : implement in-band dictionary support
