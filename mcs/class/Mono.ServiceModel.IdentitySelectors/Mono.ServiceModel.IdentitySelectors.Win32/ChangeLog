@@ -1,0 +1,11 @@
+2007-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CardSelectorClientWin32.cs :
+	  almost identical to former CardSpaceSelector.cs in S.IM.S.dll.
+	* CardSpaceProofToken.cs
+	  NativePolicyElement.cs
+	  NativeGenericXmlToken.cs
+	  AsymmetricProofTokenSecurityKey.cs
+	  NativeInfocardCryptoHandle.cs
+	  NativeInfocardHandleType.cs : moved from S.IM.S.dll.
+

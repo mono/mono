@@ -1,0 +1,6 @@
+2007-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Mono.ServiceModel.IdentitySelectors.dll.sources,
+	  Mono.ServiceModel.IdentitySelectors_test.dll.sources,
+	  Makefile : initial commit.
+

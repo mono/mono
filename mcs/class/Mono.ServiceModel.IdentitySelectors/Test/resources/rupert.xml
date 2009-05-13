@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RoamingStore xmlns="http://schemas.xmlsoap.org/ws/2005/05/identity">
+    <RoamingInformationCard>
+        <InformationCardMetaData xml:lang="ja">
+            <InformationCardReference>
+                <CardId>urn:uuid:4105d42c-ab63-470b-9c0c-2c067c4dccd5</CardId>
+                <CardVersion>1</CardVersion>
+            </InformationCardReference>
+            <CardName>rupert1</CardName>
+
+            <CardImage MimeType="image/jpeg">/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCACQAIoDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDpvLzShPWpQOM04CvnGj1ucZsp2zHWnj3p+3NLlJ5yNVxnAoIycd6tbVWAMy9T1qS3hEjLtGcnANWqd3Yh1LK4+xsTOQ7/AHF/U1HcWuxiU5A7VvW8eyNUT7qiqc+0Y+QDk8iuqdBQpnN7Z81zDZeauWNujyNLKoMadj/Ee1PaFJGzkAmnFVDeVu+WPjjue5/z6VypJamsql1ZGfJFtdgPWmiPHvWgVRW+bJApjy26g8ZPpU8vUqNR7GbOmZE9hSrbu/QGrDzorbxGp/Wmtfu3YAVGhupStohv2Mj71RPbxL9+UCmvcDklFNVnuu4AqblKMupK32ZRncT9FqPz4PR/yqpJdu/AqPbcelUXZlu0uGV/KbJHY1pKqnq4FU1XBwBgU/BrRy1M/ZlsNEOu6pBcxqMBMn3qjzikwc80uYXs0zWZvNtUbjknpS2135LbWG4dPpVWCVhaMrKSq88U6zu7EttdxEx/56cUuaXOnExcLRdzodyJErh87uarTct97GexFTwRRMiiFxIn98dKS6jdAq7PmzjHPNenUvKGpw2syhuEO5+uOn1qCKVEQkj86bqFxHbsIVG5+pVeeazHN1dfJnyI/blv/rV5M52djupUeaN2TTaiZrpbZJAGPO2nTQjGaggs7e1BK8seS3Umr0cyz5GRnFTGV9DecVC3KUcbTio34HSpp/lk4qsweRulC3saxd1cru5GcGoVjeZuOnrV5bQDlzmpgoVeOntV7D5kVY7ZI+2T61NsH90U8DJp+2jchsZ3p4OaYRxTk605bh0DHOc1JjOOM0grQ0qGMyGeZsLGcKv95qqnHmkkZ1J8sbl2HT/JtkjZv3jcsPSnS28MS7ZgpB/vDNRat4h0nQl83ULsRybcrCvzSN+FcHL4xutdkb+zoXsrbODIWzI/4/w13zhCnHU46UKtaVkdXfT6NYMVVWab+5FlTn8Olcrqmta3csEtr1rOEHgBzI//AH0aIopHXZBGzHqxHX8azrh2jk2uhUjsetcftZX0PcpZfTivfd2Sx6pqVt964jmPcsuCatxeKAi/6TbuD6od2awkjuLoM8MbOq9SOlVpmlhbbNGy/UVHs1J6mk6cFojs4tbs7m2E+/y0LbRv459KtQ3ibwySrwex5rzdzG0isVBxXomky2WradC91bRyTxfKXI5OOmaidFR1Ryy0Wq0NO5kM4RyE6dVHWmnAAx0p0hXACjA7AUzPrWSZj00GMwzSE/KaUjJpCMnFO5VkCY60u5fU0YwOlNx9aq4uVMOq4pEOPel70w5HSrn3CI9pVBx3p4uTBHJJHkMEPIPI4quuCvvT4v4lprQTj3PP7uNJZJXf53kPLNySfetu1t0t4IbWEfMcD8agv9DuYb0PGm+3L5yO31qyWkW5jaJGdlcEBRurScr2R3YZRSbRvTzw2UHkxrhR6Dr9aw7u+aZsMqOP9sBsVS8RtqDRN9mhfzD2ZTnFQ6RpusPYgz2M5cn+7jAqeR8vNcPbJS5SV5sJ85CqPwFQzFZ4WQnK4qvrnh7WrmJBDbyJ2ZT3qSLSry00sQ7cuqY5NNRSV7i5m5Wsc+JDuxniu38Jy4jkUnqM1wrQvFLsdcMD0Nd74as9umiY5y5P5VVa3IZeR0QmDHGaeapBcc1J5hBBPSuIlw7FjGadjaKRSMZpSc0zNjCDTakY5pmKYxnIOaR+tLmkfjBraewo7iBVJz39qGlWMdD+NRYWTg5B9RT1hRcHlj70ohJD3P7jnrjmrGkwRW1v5uPnk5J9BVZiAMN0pEn8qARscbapOzuWk3HlTNg3gQccVi6pfXkb+faSuxHDRM3B+nvVOfUQCQG4qjLeZ6mk5s3p4eK3LtnqN1zPeTOWf7sfZRTL27SVO2TWZJclu9V3m9TU6s3XLFaFPUrZJVEir8w/Wu2sIRb6dBF02oK4O/1WGx8ppfmBdTtB6jNehRSx3ECTR4KOoYYqqikoo45zTkNI5pjL8tSFQGpxXK1zspOwsHzLjuKnVD0qODAfpWikWRTirnNVnysqGM4qHNaTpFt+Z/wFQfZkP/LOShxsZRqozTQxyhpoRl+6SR6GnZOOldLN0VmOHqVZBjrVeV/mqBZTn2qIo0ZauJOgrE1bW4rN1hkJ3Ebs1oTTrHG0kh2qvJJrznxJqC394ZowQgXaorqo0ed6nPWrKmrrc6IajHcx+ZFIGH8qZ9qHdq88+0TQPuidkPsakGu3ijlg31FbvC9iYYzud8bpc8NVG/1eCyiZ5Hyeyjqa4yXW751xuC59BWc0jyuWdiSe5NOGF11FUxmmhdvtRl1C4Msh4/hHoKu6T4h1DSpvNtbhl9VJyCPpWJnHbj1pwbDV1ezja1jidSTdz1/QPHtjqW2HUNtrcdn/AIG/wrtEXevygkNyp7H8a+bw2DXV+FvGN/ocyJ5jS2efmgY8f8B9K4K+BvrA6aeKezPbEt9vzM2KnWbfnJworP0/UbfWbJLq0mDxn+AHlfY1aAK8sM+3avLd4Oxo3z7k+VIHFNKx5+6PzqpKZWfKTFR/dK0vmN/kUuYFSKS8juKf8oG4ngdzXH3Piy7UYht4UP8A30ax59a1W5bM10+3+4vyivQVJs15lc7OW7gO5lljKeu6s+XWbCEHfcoT6J8x/SuKn1GeIFQuag+3uYySgBPtzVQoO46lSKje5ta5ry3EflQFhEOTnjdXGy3DPLknFLqF1jCBs1mNLnFenCCirI8mU+d3ZJLksRXW+G/CjXwiLqjTSr5g3/ciTONxHcnsK5IvmSvafCZSS1uDEAWKwle2V2DH65rkx9aVKneJ0YWmpy1Ik8C2gHlvf/vSM7fJjx/3zjOPxrkfFHg/7GHeKNElRC/7r7kqjqQP4WHpXeapeahcTy2emRwWzQr58ktwvLN6KB16dfek1kSyeH4prp4nuElRg0Qwpy2P5GvMo4utGUXJ3udUqMZXR4Ow4I70it2NT6jGIdQuET7qyMB+dQwiNrhPNYrHn5iBk4r6BO6ueZJWdiTOec0+M/MOwqBmRZXCElAeCRVuzi82RT2FDdlccItux7p4C0c6X4Zikkx511+8b2HYV0MhbPpXBeCfE3kQDTbpjtX/AFR9PauyGqQPMI/n3NwBtzXgV0+Z3O5U5InKnvTcUsVzbzbgkgcg4ODyKXKetYWNU2eVtGjckYNV2tnJOw59qsEbV3PwtVZbp5PljG1fbqa9YvQr3MQgjMsmG9hWLNc72L4x6e1dDDp9xeBkSNtuPmwOgrldTt5LSd4mHHY1vRa2OLEwlv0M+4m3zEmo4j85J69qCp6mkKMDnaRmuq5yWY4q27rXfeCPEZtWSGT5pEGwLnBkj64HuDyK5Gz02a8RPJkiYtxsLjINa0fg7UpLeWfMIiiBZyHzjHb6/wCIrnrxp1I8smbUpSg7o9Xj13R0m82S+SN1HKTAq4PfIP0FYfivxBBFaiVYvLiHzxI42vPJ2bb/AHR1yetc7Z6Z4ig0+0dNekggmXKDe3yDIBz6df0qrd+GLU3TPe+IY5WZSzS9fm57k5PIxXn08FRpz5r3OuVectkcVM5d2Zjksc5NNMUgTzChCE4Ddq6O5bQtMmBtne6Pl4II4DfX0qpNr4vbhFvLYSWan/UI2zHuD616kZN7I4pR7si0i0trxZI5R+9/hJbFWI4vscrQv94HrXZ6F4F8P+JoUuNA12aC6HLWV5GCw+jKRuH0FaGo/DbWCoAFu5Xo6NWdS9zajOK33OW0+OWSZRDkEc7vSu6snuNO0ifUDK0jY8uIOP4j1P5VDYeDb62jSF3iXPfdkmta/wBPuGvLWwRRHBGmN55Uk/SvPqWbsdynFnPQ6yq4Z42SQdw1XR4uQDH/ALKaytT08Wd9NCzgmNiDjpkVlllz0o9lFl7lyFHuGYOuQB6VZWycMvyxgD25r2KTwJoEhLpatET3jkIrF1Dwtp2k7bu3u5mZW2iJ8EfWumpRnFXOSniISdjFs7dNIsvulp5OWArj/FFlFcgyzQKJHG7iuu1G8EacNjccVyd7efbb0L/CvOK46cpc1z0ZQi42MJdER0jURhY1HAqtqGjK8RGeR90+ldFNKFGKyby8VFI4rojUk3czlRhGNjiHieGRhyCp6ilF1cqpVbiQKecBq0rkK0m8d6rNBHJ22n2rtjNPc8yVGS+FlJppXOWldvcmmHJ71cNkmfv05bWFfvsSarmiR7KoUVXcQqAk1bt7PzH+fgelWE2R/cXHvUcc+WKnipc29jSNFJ3ZpRRywMktvI0bocqytgg+1eheHvilc2qrbeIIXuIxwLmEfOP94d686il+WpkbPWsbvqbyownseyWni7StevC2ltM00K5Imi2jB71Mly99q0BEg2W8qu+eA2K868N2F60puLeXyEYbWbGdw9K7VMouC5JHUiuKq0pGlKg2rHMa1NJe311LGjZaUkY+tZXl33/PNv8Avmu58yMDhRmm+b7LSjVstjpVBrqf/9k=</CardImage>
+            <Issuer>http://schemas.xmlsoap.org/ws/2005/05/identity/issuer/self</Issuer>
+            <TimeIssued>2007-04-18T11:08:03.171875Z</TimeIssued>
+            <TimeExpires>9999-12-31T23:59:59.9999999Z</TimeExpires>
+            <SupportedTokenTypeList>
+                <TokenType xmlns="http://schemas.xmlsoap.org/ws/2005/02/trust">urn:oasis:names:tc:SAML:1.0:assertion</TokenType>
+
+                <TokenType xmlns="http://schemas.xmlsoap.org/ws/2005/02/trust">http://docs.oasis-open.org/wss/oasis-wss-saml-token-profile-1.1#SAMLV1.1</TokenType>
+            </SupportedTokenTypeList>
+            <SupportedClaimTypeList>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname">
+                    <DisplayTag>First Name</DisplayTag>
+                    <Description>First Name</Description>
+                </SupportedClaimType>
+
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname">
+                    <DisplayTag>Last Name</DisplayTag>
+                    <Description>Last Name</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress">
+                    <DisplayTag>Email Address</DisplayTag>
+                    <Description>Email Address</Description>
+
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/streetaddress">
+                    <DisplayTag>Street</DisplayTag>
+                    <Description>Street</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality">
+                    <DisplayTag>City</DisplayTag>
+
+                    <Description>City</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince">
+                    <DisplayTag>State</DisplayTag>
+                    <Description>State</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode">
+
+                    <DisplayTag>Postal Code</DisplayTag>
+                    <Description>Postal Code</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country">
+                    <DisplayTag>Country/Region</DisplayTag>
+                    <Description>Country/Region</Description>
+                </SupportedClaimType>
+
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone">
+                    <DisplayTag>Home Phone</DisplayTag>
+                    <Description>Home Phone Number</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone">
+                    <DisplayTag>Other Phone</DisplayTag>
+                    <Description>Other Phone Number</Description>
+
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone">
+                    <DisplayTag>Mobile Phone</DisplayTag>
+                    <Description>Mobile Phone Number</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth">
+                    <DisplayTag>Date of Birth</DisplayTag>
+
+                    <Description>Date of Birth</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/gender">
+                    <DisplayTag>Gender</DisplayTag>
+                    <Description>Gender</Description>
+                </SupportedClaimType>
+                <SupportedClaimType Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/webpage">
+
+                    <DisplayTag>Web Page</DisplayTag>
+                    <Description>Web Page</Description>
+                </SupportedClaimType>
+            </SupportedClaimTypeList>
+            <IsSelfIssued>true</IsSelfIssued>
+            <HashSalt>EMmXS+TVm+GLiJZDSZ7mPw==</HashSalt>
+            <TimeLastUpdated>2007-04-18T11:22:03.875Z</TimeLastUpdated>
+
+            <IssuerId/>
+            <IssuerName>Self</IssuerName>
+            <BackgroundColor>16777215</BackgroundColor>
+        </InformationCardMetaData>
+        <InformationCardPrivateData>
+            <MasterKey>VTH3VHGQd6YTliRZcGiS4JdKcY2ASe9jKr+zu4PP7tc=</MasterKey>
+            <ClaimValueList>
+
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname">
+                    <Value>Rupert</Value>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname">
+                    <Value>Bonobo</Value>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress">
+                    <Value/>
+
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/streetaddress">
+                    <Value/>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality">
+                    <Value/>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince">
+                    <Value/>
+
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/postalcode">
+                    <Value/>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/country">
+                    <Value/>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone">
+                    <Value/>
+
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/otherphone">
+                    <Value/>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone">
+                    <Value/>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/dateofbirth">
+                    <Value/>
+
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/gender">
+                    <Value/>
+                </ClaimValue>
+                <ClaimValue Uri="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/webpage">
+                    <Value/>
+                </ClaimValue>
+            </ClaimValueList>
+        </InformationCardPrivateData>
+
+    </RoamingInformationCard>
+</RoamingStore>
+

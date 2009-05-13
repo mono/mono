@@ -1,0 +1,22 @@
+2007-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdentityCard.cs : TokenService contains UserCredential as well as
+	  EndpointAddress.
+
+2007-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdentityCardEncryption.cs, CardSelectorClient.cs :
+	  implemented store encryption. Changed the reader API a bit too.
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdentityCard.cs : implemented Save. It was rather xs:dateTime fixes.
+	* IdentityStore.cs, CardSelectorClient.cs : some store implementation.
+
+2007-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CardSelectionContext.cs
+	  CardSelectorClient.cs
+	  Constants.cs
+	  IdentityCard.cs
+	  IdentityCardEncryption.cs : initial commit.

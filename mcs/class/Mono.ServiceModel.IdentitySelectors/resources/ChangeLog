@@ -1,0 +1,8 @@
+2007-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* schemas-xmlsoap-or-ws-2005-05-identity.rnc : TokenService element
+	  also contains UserCredential.
+
+2007-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* schemas-xmlsoap-or-ws-2005-05-identity.rnc : initial commit.

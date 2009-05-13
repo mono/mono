@@ -1,0 +1,16 @@
+2007-04-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdentityCardTest.cs : some flexibility on xml declarations.
+
+2007-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdentityCardEncryptionTest.cs : added encryption test (roundtrip).
+
+2007-04-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdentityCardTest.cs : added test for Save().
+
+2007-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* IdentityCardTest.cs
+	  IdentityCardEncryptionTest.cs : initial commit.

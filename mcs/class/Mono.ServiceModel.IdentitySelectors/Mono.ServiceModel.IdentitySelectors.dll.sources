@@ -1,0 +1,17 @@
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
+Assembly/AssemblyInfo.cs
+Mono.ServiceModel.IdentitySelectors.Win32/AsymmetricProofTokenSecurityKey.cs
+Mono.ServiceModel.IdentitySelectors.Win32/CardSelectorClientWin32.cs
+Mono.ServiceModel.IdentitySelectors.Win32/CardSpaceProofToken.cs
+Mono.ServiceModel.IdentitySelectors.Win32/NativeGenericXmlToken.cs
+Mono.ServiceModel.IdentitySelectors.Win32/NativeInfocardCryptoHandle.cs
+Mono.ServiceModel.IdentitySelectors.Win32/NativeInfocardHandleType.cs
+Mono.ServiceModel.IdentitySelectors.Win32/NativePolicyElement.cs
+Mono.ServiceModel.IdentitySelectors/CardSelectionContext.cs
+Mono.ServiceModel.IdentitySelectors/CardSelectorClient.cs
+Mono.ServiceModel.IdentitySelectors/Constants.cs
+Mono.ServiceModel.IdentitySelectors/IdentityCard.cs
+Mono.ServiceModel.IdentitySelectors/IdentityCardEncryption.cs
+Mono.ServiceModel.IdentitySelectors/IdentityStore.cs

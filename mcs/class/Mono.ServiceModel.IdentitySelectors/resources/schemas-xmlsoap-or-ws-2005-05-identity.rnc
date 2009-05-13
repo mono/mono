@@ -1,0 +1,96 @@
+default namespace = "http://schemas.xmlsoap.org/ws/2005/05/identity"
+datatypes xs = "http://www.w3.org/2001/XMLSchema"
+namespace wst = "http://schemas.xmlsoap.org/ws/2005/02/trust"
+
+grammar {
+
+start = element  RoamingStore {
+  element  RoamingInformationCard {
+    element  InformationCardMetaData {
+      attribute  xml:lang { text },
+      element  InformationCardReference {
+        element  CardId { text },
+        element  CardVersion { text }
+      },
+      element  CardName { text },
+      element  CardImage {
+        attribute  MimeType { text },
+        xs:base64Binary
+      },
+      element  Issuer { xs:anyURI },
+      element  TimeIssued { xs:dateTime },
+      element  TimeExpires { xs:dateTime },
+      element  TokenServiceList {
+        element  TokenService {
+          element  wsa:EndpointReference {
+            element  wsa:Address { xs:anyURI },
+            element  wsa:Metadata {
+              element  mex:Metadata {
+                element  wsx:MetadataSection {
+                  element  wsx:MetadataReference {
+                    element  wsa:Address { xs:anyURI }
+                  }
+                }
+              }
+            }*,
+            element  wsa:Identity {
+              element  dsig:KeyInfo {
+                element  dsig:X509Data {
+                  element dsig:X509Certificate { xs:base64Binary }
+                }
+              }
+            }?
+          },
+          element  UserCredential {
+            element DisplayCredentialHint { any* },
+            credentialElement
+          }
+        }+
+      }?,
+      element  SupportedTokenTypeList {
+        element  wst:TokenType { xs:anyURI }+
+      },
+      element  SupportedClaimTypeList {
+        element  SupportedClaimType {
+          attribute  Uri { xs:anyURI },
+          element  DisplayTag { text },
+          element  Description { text }
+        }+
+      },
+      element  IsSelfIssued { xs:boolean },
+      element  HashSalt { xs:base64Binary },
+      element  TimeLastUpdated { xs:dateTime },
+      element  IssuerId { text },
+      element  IssuerName { text },
+      element  BackgroundColor { xs:int }
+    },
+    element  InformationCardPrivateData {
+      element  MasterKey { xs:base64Binary },
+      element  ClaimValueList {
+        element  ClaimValue {
+          attribute  Uri { xs:anyURI },
+          element  Value { text }
+        }+
+      }?
+    }
+  }+
+}
+
+any-content =
+	element * { attribute * { text }* | any-content* } |
+	text
+
+credentialElement =
+  element  UsernamePasswordCredential {
+    element  Username { text }?
+  } |
+  element  X509V3Credential {
+    # specified in xmldsig schema
+    any-content
+  } |
+  element  KerberosV5Credential { attribute * { text}* } |
+  element  SelfIssuedCredential {
+    element  PrivatePersonalIdentifier { any-content }
+  }
+
+}

@@ -1,0 +1,4 @@
+2007-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* managed.xml, rupert.xml, rupert.crds : initial commit (managed.xml
+	  is an extracted version of a backup card from pingidentity.com).
