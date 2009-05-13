@@ -1,5 +1,10 @@
 2009-05-13  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen.c: Speed up weak links and finalizers by grouping them by
+	generation.
+
+2009-05-13  Mark Probst  <mark.probst@gmail.com>
+
 	* marshal.c (delegate_hash_table_add): When overwriting an entry,
 	free the old GCHandle (only applies to SGen).
 
