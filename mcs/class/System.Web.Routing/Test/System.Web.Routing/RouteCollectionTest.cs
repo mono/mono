@@ -280,7 +280,7 @@ namespace MonoTests.System.Web.Routing
 			rd = c.GetRouteData (hc);
 			vpd = c.GetVirtualPath (new RequestContext (hc, rd), rd.Values);
 			Assert.IsNotNull (vpd, "#B1");
-			Assert.AreEqual ("//_modified", vpd.VirtualPath, "#B2");
+			Assert.AreEqual ("/_modified", vpd.VirtualPath, "#B2");
 			Assert.AreEqual (0, vpd.DataTokens.Count, "#B3");
 
 			hc = new HttpContextStub2 ("~/Account/LogOn", String.Empty, String.Empty);
