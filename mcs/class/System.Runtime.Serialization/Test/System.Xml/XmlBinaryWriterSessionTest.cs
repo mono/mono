@@ -27,6 +27,8 @@
 //
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 using NUnit.Framework;
 
@@ -60,6 +62,52 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (0, idx, "#1");
 			s.TryAdd (d3, out idx);
 			Assert.AreEqual (1, idx, "#2"); // not 2
+		}
+
+		[Test]
+		public void WriterAddsStringsToSession ()
+		{
+			var ms = new MemoryStream ();
+			var d = new MyXmlDictionary ();
+			var s = new MyXmlBinaryWriterSession ();
+			var w = XmlDictionaryWriter.CreateBinaryWriter (ms, d, s);
+			w.WriteStartElement ("root1");
+			w.WriteEndElement ();
+			Assert.AreEqual (0, d.List.Count, "#1");
+			Assert.AreEqual (0, s.List.Count, "#2");
+			w.WriteStartElement (d.Add ("root2"), XmlDictionaryString.Empty);
+			w.WriteEndElement ();
+			Assert.AreEqual (1, d.List.Count, "#3");
+			Assert.AreEqual (0, s.List.Count, "#4");
+			w.WriteStartElement (new XmlDictionary ().Add ("root3"), XmlDictionaryString.Empty);
+			w.WriteEndElement ();
+			Assert.AreEqual (1, d.List.Count, "#5");
+			Assert.AreEqual (1, s.List.Count, "#6");
+		}
+
+		class MyXmlDictionary : XmlDictionary
+		{
+			public List<XmlDictionaryString> List = new List<XmlDictionaryString> ();
+
+			public override XmlDictionaryString Add (string s)
+			{
+				var r = base.Add (s);
+				List.Add (r);
+				return r;
+			}
+		}
+
+		class MyXmlBinaryWriterSession : XmlBinaryWriterSession
+		{
+			public List<XmlDictionaryString> List = new List<XmlDictionaryString> ();
+
+			public override bool TryAdd (XmlDictionaryString s, out int key)
+			{
+				if (!base.TryAdd (s, out key))
+					return false;
+				List.Add (s);
+				return true;
+			}
 		}
 	}
 }
