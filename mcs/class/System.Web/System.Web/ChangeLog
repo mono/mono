@@ -1,3 +1,8 @@
+2009-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: LocateHandler won't cache if a default
+	handler was returned.
+
 2009-05-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* MimeTypes.cs: add silverlight related types.

@@ -1,3 +1,8 @@
+2009-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpHandlersSection.cs: if we're matching a default handler,
+	disallow caching.
+
 2009-03-12  Dean Brettle  <dean@brettle.com>
 
 	* nBrowser/Build.cs: made Browser() method thread-safe and moved the
