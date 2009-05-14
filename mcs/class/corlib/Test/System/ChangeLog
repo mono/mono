@@ -1,3 +1,7 @@
+2009-05-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TypeTest.cs: test for bug #503728
+
 2009-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : added test for parsing no-millisecond time
