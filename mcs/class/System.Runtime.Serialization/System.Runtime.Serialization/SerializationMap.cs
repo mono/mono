@@ -566,14 +566,18 @@ namespace System.Runtime.Serialization
 			var icoll = RuntimeType.GetInterfaces ().FirstOrDefault (
 				iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>));
 			if (icoll != null) {
-				var imap = RuntimeType.GetInterfaceMap (icoll);
-				for (int i = 0; i < imap.InterfaceMethods.Length; i++)
-					if (imap.InterfaceMethods [i].Name == "Add") {
-						add_method = imap.TargetMethods [i];
-						break;
-					}
-				if (add_method == null)
-					add_method = type.GetMethod ("Add", icoll.GetGenericArguments());
+				if (RuntimeType.IsInterface) {
+					add_method = RuntimeType.GetMethod ("Add", icoll.GetGenericArguments ());
+				} else {
+					var imap = RuntimeType.GetInterfaceMap (icoll);
+					for (int i = 0; i < imap.InterfaceMethods.Length; i++)
+						if (imap.InterfaceMethods [i].Name == "Add") {
+							add_method = imap.TargetMethods [i];
+							break;
+						}
+					if (add_method == null)
+						add_method = type.GetMethod ("Add", icoll.GetGenericArguments ());
+				}
 			}
 		}
 

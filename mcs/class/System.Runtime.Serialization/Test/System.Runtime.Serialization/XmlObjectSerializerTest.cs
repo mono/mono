@@ -1181,6 +1181,15 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual ("bar", d ["foo"], "#3");
 		}
 
+		[Test]
+		[Category ("NotWorking")] // FIXME: remove once #503728 gets fixed.
+		public void SerializeInterfaceCollection ()
+		{
+			var ser = new DataContractSerializer (typeof (InterfaceCollectionType));
+			using (var xw = XmlWriter.Create (TextWriter.Null))
+				ser.WriteObject (xw, new InterfaceCollectionType ());
+		}
+
 		private T Deserialize<T> (string xml)
 		{
 			return Deserialize<T> (xml, typeof (T));
@@ -1450,6 +1459,12 @@ namespace MonoTests.System.Runtime.Serialization
 		public string this [int index] { get { return l [index]; } set { l [index] = value; } }
 	}
 
+	[DataContract]
+	internal class InterfaceCollectionType
+	{
+		[DataMember]
+		public IList<int> Array { get; set; }
+	}
 }
 
 [DataContract]
