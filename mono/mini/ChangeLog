@@ -94,6 +94,11 @@
 
 2009-05-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ppc.c (mono_arch_get_static_rgctx_trampoline): Implement this for
+	PPC.
+
+	* mini-ppc.h: Enable static rgctx trampolines for ppc.
+
 	* mini-<ARCH>.h: Kill the MONO_ARCH_ENABLE_EMIT_STATE_OPT define.
 
 	* decompose.c (mono_decompose_long_opts): Move the ppc/sparc specific 
