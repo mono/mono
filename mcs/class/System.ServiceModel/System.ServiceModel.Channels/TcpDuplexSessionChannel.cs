@@ -30,6 +30,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -68,7 +69,7 @@ namespace System.ServiceModel.Channels
 
 			Stream s = client.GetStream ();
 
-			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s);
+			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s) { Encoder = this.Encoder };
 			frame.ProcessPreambleRecipient ();
 
 			// FIXME: use retrieved record properties in the request processing.
@@ -113,25 +114,9 @@ namespace System.ServiceModel.Channels
 		public override void Send (Message message, TimeSpan timeout)
 		{
 			client.SendTimeout = (int) timeout.TotalMilliseconds;
-			MemoryStream ms = new MemoryStream ();
-			BinaryFormatter bf = new BinaryFormatter ();
-			
-			try
-			{
-				NetworkStream stream = client.GetStream ();
-				MyBinaryWriter bw = new MyBinaryWriter (stream);
-				bw.Write ((byte) 6);
-				Encoder.WriteMessage (message, ms);
-				bw.WriteBytes (ms.ToArray ());
-				bw.Write ((byte) 7);
-				bw.Flush ();
+			frame.WriteSizedMessage (message);
 
-				stream.ReadByte (); // 7
-			}
-			catch (Exception e)
-			{
-				throw e;
-			}
+			// FIXME: should EndRecord be sent here?
 		}
 		
 		[MonoTODO]
@@ -185,38 +170,8 @@ namespace System.ServiceModel.Channels
 		{
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
 			Stream s = client.GetStream ();
-			var packetType = s.ReadByte (); // 6
-			if (packetType != 6)
-				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
 
-			// FIXME: implement [MC-NMF] correctly. Currently it is a guessed protocol hack.
-			byte [] buffer = frame.ReadSizedChunk ();
-
-			var ms = new MemoryStream (buffer, 0, buffer.Length);
-			// The returned buffer consists of a serialized reader 
-			// session and the binary xml body. 
-			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
-
-			var session = new XmlBinaryReaderSession ();
-			byte [] rsbuf = new TcpBinaryFrameManager (0, ms).ReadSizedChunk ();
-			int count = 0;
-			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
-				var rbr = new BinaryReader (rms, Encoding.UTF8);
-				while (rms.Position < rms.Length)
-					session.Add (count++, rbr.ReadString ());
-			}
-			var benc = Encoder as BinaryMessageEncoder;
-			if (benc != null)
-				benc.CurrentBinarySession = session;
-			// FIXME: supply maxSizeOfHeaders.
-			Message msg = Encoder.ReadMessage (ms, 0x10000);
-			if (benc != null)
-				benc.CurrentBinarySession = null;
-//			s.ReadByte (); // 7
-//			s.WriteByte (7);
-			s.Flush ();
-
-			return msg;
+			return frame.ReadSizedMessage ();
 		}
 		
 		public override bool TryReceive (TimeSpan timeout, out Message message)
@@ -290,9 +245,9 @@ namespace System.ServiceModel.Channels
 				                        //RemoteAddress.Uri.Port);
 				
 				NetworkStream ns = client.GetStream ();
-				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns);
-				// FIXME: it still results in SocketException (remote host closes the connection).
-				frame.Via = RemoteAddress.Uri;
+				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns) {
+					Encoder = this.Encoder,
+					Via = RemoteAddress.Uri };
 				frame.ProcessPreambleInitiator ();
 			}
 			// Service side.
@@ -333,6 +288,32 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
+		class MyBinaryWriter : BinaryWriter
+		{
+			public MyBinaryWriter (Stream s)
+				: base (s)
+			{
+			}
+
+			public void WriteVariableInt (int value)
+			{
+				Write7BitEncodedInt (value);
+			}
+		}
+
+		class MyXmlBinaryWriterSession : XmlBinaryWriterSession
+		{
+			public override bool TryAdd (XmlDictionaryString value, out int key)
+			{
+				if (!base.TryAdd (value, out key))
+					return false;
+				List.Add (value);
+				return true;
+			}
+
+			public List<XmlDictionaryString> List = new List<XmlDictionaryString> ();
+		}
+
 		public const byte VersionRecord = 0;
 		public const byte ModeRecord = 1;
 		public const byte ViaRecord = 2;
@@ -352,20 +333,27 @@ namespace System.ServiceModel.Channels
 		public const byte SimplexMode = 3;
 		public const byte SingletonSizedMode = 4;
 		MyBinaryReader reader;
-		BinaryWriter writer;
+		MyBinaryWriter writer;
 
 		public TcpBinaryFrameManager (int mode, Stream s)
 		{
 			this.mode = mode;
 			this.s = s;
 			reader = new MyBinaryReader (s);
-			writer = new BinaryWriter (s);
+			writer = new MyBinaryWriter (s);
+
+			EncodingRecord = 8; // FIXME: it should depend on mode.
 		}
 
 		Stream s;
 
 		int mode;
-		int encoding_record = 3; // SOAP12, UTF-8
+
+		public byte EncodingRecord { get; set; }
+
+		public Uri Via { get; set; }
+
+		public MessageEncoder Encoder { get; set; }
 
 		public byte [] ReadSizedChunk ()
 		{
@@ -380,7 +368,11 @@ namespace System.ServiceModel.Channels
 			return buffer;
 		}
 
-		public Uri Via { get; set; }
+		public void WriteSizedChunk (byte [] data)
+		{
+			writer.WriteVariableInt (data.Length);
+			writer.Write (data, 0, data.Length);
+		}
 
 		public void ProcessPreambleInitiator ()
 		{
@@ -392,7 +384,7 @@ namespace System.ServiceModel.Channels
 			s.WriteByte (ViaRecord);
 			writer.Write (Via.ToString ());
 			s.WriteByte (KnownEncodingRecord); // FIXME
-			s.WriteByte ((byte) encoding_record);
+			s.WriteByte ((byte) EncodingRecord);
 			s.WriteByte (PreambleEndRecord);
 			s.Flush ();
 
@@ -427,7 +419,7 @@ namespace System.ServiceModel.Channels
 					Via = new Uri (reader.ReadString ());
 					break;
 				case KnownEncodingRecord:
-					encoding_record = s.ReadByte ();
+					EncodingRecord = (byte) s.ReadByte ();
 					break;
 				case ExtendingEncodingRecord:
 					throw new NotImplementedException ();
@@ -443,6 +435,81 @@ namespace System.ServiceModel.Channels
 				}
 			}
 			s.WriteByte (PreambleAckRecord);
+		}
+
+		public Message ReadSizedMessage ()
+		{
+			// FIXME: implement [MC-NMF] correctly. Currently it is a guessed protocol hack.
+			var packetType = s.ReadByte (); // 6
+			if (packetType != SizedEnvelopeRecord)
+				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
+
+			byte [] buffer = ReadSizedChunk ();
+
+			var ms = new MemoryStream (buffer, 0, buffer.Length);
+
+			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
+			if (EncodingRecord != 8)
+				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+
+			// Encoding type 8:
+			// the returned buffer consists of a serialized reader 
+			// session and the binary xml body. 
+
+			var session = new XmlBinaryReaderSession ();
+			byte [] rsbuf = new TcpBinaryFrameManager (0, ms).ReadSizedChunk ();
+			int count = 0;
+			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
+				var rbr = new BinaryReader (rms, Encoding.UTF8);
+				while (rms.Position < rms.Length)
+					session.Add (count++, rbr.ReadString ());
+			}
+			var benc = Encoder as BinaryMessageEncoder;
+			if (benc != null)
+				benc.CurrentReaderSession = session;
+			// FIXME: supply maxSizeOfHeaders.
+			Message msg = Encoder.ReadMessage (ms, 0x10000);
+			if (benc != null)
+				benc.CurrentReaderSession = null;
+			s.Flush ();
+
+			return msg;
+		}
+
+		public void WriteSizedMessage (Message message)
+		{
+			// FIXME: implement full [MC-NMF] protocol.
+
+			if (EncodingRecord != 8)
+				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+
+			s.WriteByte (SizedEnvelopeRecord);
+			MemoryStream ms = new MemoryStream ();
+			var session = new MyXmlBinaryWriterSession ();
+			// FIXME: it is dummy
+			int dummy;
+			session.TryAdd (new XmlDictionary ().Add ("urn:foo"), out dummy);
+			var benc = Encoder as BinaryMessageEncoder;
+			try {
+				if (benc != null)
+					benc.CurrentWriterSession = session;
+				Encoder.WriteMessage (message, ms);
+			} finally {
+				benc.CurrentWriterSession = null;
+			}
+
+			// dictionary
+			MemoryStream msd = new MemoryStream ();
+			BinaryWriter dw = new BinaryWriter (msd);
+			foreach (var ds in session.List)
+				dw.Write (ds.Value);
+			dw.Flush ();
+			WriteSizedChunk (msd.ToArray ());
+			// message body
+			WriteSizedChunk (ms.ToArray ());
+
+			writer.Write (EndRecord);
+			writer.Flush ();
 		}
 	}
 }

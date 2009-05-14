@@ -1,5 +1,14 @@
 2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : more [MC-NMF] implementation. Moved
+	  sending/receiving SizedMessageRecord parts to manager class.
+	  Handle writer session, though it is likely broken at dictionary
+	  writer part (no string is written so far).
+	* BinaryMessageEncoder.cs : add writer session and rename reader
+	  session.
+
+2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : more [MC-NMF] implementation. Via uri
 	  is mandatory in initiator preamble packet. Handle Fault reply in
 	  initiator preamble.

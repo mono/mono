@@ -233,8 +233,9 @@ namespace System.ServiceModel.Channels
 */
 		}
 
-		// It is sort of nasty hack, but there is no other way to provide reader session from TCP stream.
-		internal XmlBinaryReaderSession CurrentBinarySession { get; set; }
+		// It is sort of nasty hack, but there is no other way to provide reader/writer session from TCP stream.
+		internal XmlBinaryReaderSession CurrentReaderSession { get; set; }
+		internal XmlBinaryWriterSession CurrentWriterSession { get; set; }
 
 		public override Message ReadMessage (Stream stream,
 			int maxSizeOfHeaders, string contentType)
@@ -243,7 +244,7 @@ namespace System.ServiceModel.Channels
 				throw new ProtocolException ("Only content type 'application/soap+msbin1' is allowed.");
 
 			return Message.CreateMessage (
-				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), CurrentBinarySession),
+				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), CurrentReaderSession),
 				maxSizeOfHeaders, MessageVersion);
 		}
 
@@ -251,7 +252,7 @@ namespace System.ServiceModel.Channels
 		{
 			VerifyMessageVersion (message);
 
-			message.WriteMessage (XmlDictionaryWriter.CreateBinaryWriter (stream));
+			message.WriteMessage (XmlDictionaryWriter.CreateBinaryWriter (stream, soap_dictionary, CurrentWriterSession));
 		}
 
 		[MonoTODO]
