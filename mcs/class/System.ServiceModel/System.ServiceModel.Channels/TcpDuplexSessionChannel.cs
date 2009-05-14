@@ -292,6 +292,7 @@ namespace System.ServiceModel.Channels
 				NetworkStream ns = client.GetStream ();
 				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns);
 				// FIXME: it still results in SocketException (remote host closes the connection).
+				frame.Via = RemoteAddress.Uri;
 				frame.ProcessPreambleInitiator ();
 			}
 			// Service side.
@@ -317,8 +318,21 @@ namespace System.ServiceModel.Channels
 	}
 
 	// seealso: [MC-NMF] Windows Protocol document.
-	class TcpBinaryFrameManager : BinaryReader
+	class TcpBinaryFrameManager
 	{
+		class MyBinaryReader : BinaryReader
+		{
+			public MyBinaryReader (Stream s)
+				: base (s)
+			{
+			}
+
+			public int ReadVariableInt ()
+			{
+				return Read7BitEncodedInt ();
+			}
+		}
+
 		public const byte VersionRecord = 0;
 		public const byte ModeRecord = 1;
 		public const byte ViaRecord = 2;
@@ -337,12 +351,15 @@ namespace System.ServiceModel.Channels
 		public const byte DuplexMode = 2;
 		public const byte SimplexMode = 3;
 		public const byte SingletonSizedMode = 4;
+		MyBinaryReader reader;
+		BinaryWriter writer;
 
 		public TcpBinaryFrameManager (int mode, Stream s)
-			: base (s)
 		{
 			this.mode = mode;
 			this.s = s;
+			reader = new MyBinaryReader (s);
+			writer = new BinaryWriter (s);
 		}
 
 		Stream s;
@@ -352,13 +369,13 @@ namespace System.ServiceModel.Channels
 
 		public byte [] ReadSizedChunk ()
 		{
-			int length = Read7BitEncodedInt ();
+			int length = reader.ReadVariableInt ();
 			
 			if (length > 65536)
 				throw new InvalidOperationException ("The message is too large.");
 
 			byte [] buffer = new byte [length];
-			Read (buffer, 0, length);
+			reader.Read (buffer, 0, length);
 			
 			return buffer;
 		}
@@ -372,14 +389,22 @@ namespace System.ServiceModel.Channels
 			s.WriteByte (0);
 			s.WriteByte (ModeRecord);
 			s.WriteByte ((byte) mode);
+			s.WriteByte (ViaRecord);
+			writer.Write (Via.ToString ());
 			s.WriteByte (KnownEncodingRecord); // FIXME
 			s.WriteByte ((byte) encoding_record);
 			s.WriteByte (PreambleEndRecord);
 			s.Flush ();
 
-			int b;
-			if ((b = s.ReadByte ()) != PreambleAckRecord)
+			int b = s.ReadByte ();
+			switch (b) {
+			case PreambleAckRecord:
+				return; // success
+			case FaultRecord:
+				throw new FaultException (reader.ReadString ());
+			default:
 				throw new ArgumentException (String.Format ("Preamble Ack Record is expected, got {0:X}", b));
+			}
 		}
 
 		public void ProcessPreambleRecipient ()
@@ -399,7 +424,7 @@ namespace System.ServiceModel.Channels
 						throw new ArgumentException (String.Format ("Duplex mode is expected to be {0:X}", mode));
 					break;
 				case ViaRecord:
-					Via = new Uri (ReadString ());
+					Via = new Uri (reader.ReadString ());
 					break;
 				case KnownEncodingRecord:
 					encoding_record = s.ReadByte ();

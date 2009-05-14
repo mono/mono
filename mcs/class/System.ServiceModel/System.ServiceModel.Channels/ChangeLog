@@ -1,5 +1,11 @@
 2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : more [MC-NMF] implementation. Via uri
+	  is mandatory in initiator preamble packet. Handle Fault reply in
+	  initiator preamble.
+
+2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : ongoing refactoring to collect [MC-NMF]
 	  based communication under TcpBinaryFrameManager class.
 
