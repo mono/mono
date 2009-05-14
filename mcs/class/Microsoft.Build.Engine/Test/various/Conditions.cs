@@ -354,9 +354,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// A reference to an item list at position 1 is not allowed in this condition "@(A)".
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"A reference to an item list at position 1 is not allowed in this condition \"@(A)\".  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestIncorrectCondition2 ()
 		{
@@ -374,9 +374,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// Found an unexpected character '%' at position 0 in condition \%(A)\.
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"Found an unexpected character '%' at position 0 in condition \"%(A)\".  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestIncorrectCondition3 ()
 		{
@@ -394,9 +394,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// Found an unexpected character '%' at position 0 in condition "%(A)\.
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"Found an unexpected character '%' at position 0 in condition \"%(A)\".  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestIncorrectCondition4 ()
 		{

@@ -237,11 +237,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			CheckItems (proj, "Item7", "A6", "A", "B", "C");
 		}
 
+		// The expression "@(Item1, '@(A,'')')" cannot be used in this context. 
+		// Item lists cannot be concatenated with other strings where an item list is expected. 
+		// Use a semicolon to separate multiple item lists.
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The expression \"@(Item1, '@(A,'')')\" cannot be used in this context. " +
-			"Item lists cannot be concatenated with other strings where an item list is expected. " +
-			"Use a semicolon to separate multiple item lists.  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestItems7 ()
 		{
@@ -260,11 +260,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// The expression "@(Item1, '@(A->'')')" cannot be used in this context.
+		// Item lists cannot be concatenated with other strings where an item list is expected.
+		// Use a semicolon to separate multiple item lists.
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The expression \"@(Item1, '@(A->'')')\" cannot be used in this context. " +
-			"Item lists cannot be concatenated with other strings where an item list is expected. " +
-			"Use a semicolon to separate multiple item lists.  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestItems8 ()
 		{
@@ -283,11 +283,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// The expression "@(Item1, '@(A->'','')')" cannot be used in this context.
+		// Item lists cannot be concatenated with other strings where an item list is expected.
+		// Use a semicolon to separate multiple item lists.
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The expression \"@(Item1, '@(A->'','')')\" cannot be used in this context. " +
-			"Item lists cannot be concatenated with other strings where an item list is expected. " +
-			"Use a semicolon to separate multiple item lists.  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestItems9 ()
 		{

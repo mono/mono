@@ -1,3 +1,8 @@
+2009-05-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Items.cs
+	* Conditions.cs: Don't check exception messages.
+
 2009-02-23  Ankit Jain  <jankit@novell.com>
 
 	* Items.cs (TestItemsInTarget8): New.
