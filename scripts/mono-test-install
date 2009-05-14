@@ -147,3 +147,32 @@ else
     echo Failed to compile sample System.Drawing program, your installation is broken
     exit 1
 fi
+
+cat > $temp_cs <<EOF
+using System;
+using System.Reflection;
+using System.IO;
+
+class Program {
+
+    public static void Main()
+    {
+        object watcher = new FileSystemWatcher()
+            .GetType ()
+            .GetField ("watcher", BindingFlags.NonPublic | BindingFlags.Static)
+            .GetValue (null);
+        
+        Console.WriteLine ("Your file system watcher is: {0}",
+                   watcher != null
+                   ? watcher.GetType ().FullName
+                   : "unknown");
+    }
+}
+EOF
+
+if mcs $temp_cs >& /dev/null; then
+    mono $temp_exe
+else
+    echo Failed to compile sample test program, your installation is broken
+    exit 1
+fi
