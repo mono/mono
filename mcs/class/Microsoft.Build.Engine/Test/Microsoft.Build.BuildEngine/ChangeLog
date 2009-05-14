@@ -1,3 +1,10 @@
+2009-05-12  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestAssignment1):
+	* UsingTaskTest.cs (TestTaskName):
+	(TestAssemblyNameOrAssemblyFile1):
+	(TestAssemblyNameOrAssemblyFile2): Don't compare exception messages. 
+
 2009-03-27  Jonathan Chambers  <joncham@gmail.com>
 
 	* BuildChooseTest.cs: Enable tests.

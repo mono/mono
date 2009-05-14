@@ -127,8 +127,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The required attribute \"TaskName\" is missing from element <UsingTask>.  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestTaskName ()
 		{
 			string documentString = @"
@@ -145,8 +144,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestAssemblyNameOrAssemblyFile1 ()
 		{
 			string documentString = @"
@@ -185,8 +183,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestAssemblyNameOrAssemblyFile2 ()
 		{
 			string documentString = @"

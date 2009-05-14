@@ -89,11 +89,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		*/
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-		@"The default XML namespace of the project must be the MSBuild XML namespace." + 
-		" If the project is authored in the MSBuild 2003 format, please add " +
-		"xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" to the <Project> element. " +
-		"If the project has been authored in the old 1.0 or 1.2 format, please convert it to MSBuild 2003 format.  ")]
 		public void TestAssignment1 ()
 		{
 			Engine engine;
@@ -104,16 +99,22 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine = new Engine (Consts.BinPath);
 			DateTime time = DateTime.Now;
 			project = engine.CreateNewProject ();
-			project.LoadXml (documentString);
+			try {
+				project.LoadXml (documentString);
+			} catch (InvalidProjectFileException e) {
+				Assert.AreEqual (true, project.BuildEnabled, "A1");
+				Assert.AreEqual (String.Empty, project.DefaultTargets, "A2");
+				Assert.AreEqual (String.Empty, project.FullFileName, "A3");
+				Assert.AreEqual (false, project.IsDirty, "A4");
+				Assert.AreEqual (false, project.IsValidated, "A5");
+				Assert.AreEqual (engine, project.ParentEngine, "A6");
+				Console.WriteLine ("time: {0} p.t: {1}", time, project.TimeOfLastDirty);
+				Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
+				Assert.IsTrue (String.Empty != project.Xml, "A8");
+				return;
+			}
 
-			Assert.AreEqual (true, project.BuildEnabled, "A1");
-			Assert.AreEqual (String.Empty, project.DefaultTargets, "A2");
-			Assert.AreEqual (String.Empty, project.FullFileName, "A3");
-			Assert.AreEqual (false, project.IsDirty, "A4");
-			Assert.AreEqual (false, project.IsValidated, "A5");
-			Assert.AreEqual (engine, project.ParentEngine, "A6");
-			Assert.IsTrue (time <= project.TimeOfLastDirty, "A7");
-			Assert.IsTrue (String.Empty != project.Xml, "A8");
+			Assert.Fail ("Expected InvalidProjectFileException");
 		}
 
 		[Test]
