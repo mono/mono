@@ -78,10 +78,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine = new Engine (Consts.BinPath);
 		}
 
+		// Before a project can be instantiated, Engine.BinPath must be set to the location on disk where MSBuild is installed.
+		// This is used to evaluate $(MSBuildBinPath).
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-		@"Before a project can be instantiated, Engine.BinPath must be set to the location on disk where MSBuild is installed. " +
-		"This is used to evaluate $(MSBuildBinPath).")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestNewProject ()
 		{
 			engine = new Engine ();
@@ -170,9 +170,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine.RegisterLogger (null);
 		}
 
+		// The "Project" object specified does not belong to the correct "Engine" object.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"The \"Project\" object specified does not belong to the correct \"Engine\" object.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestUnloadProject1 ()
 		{
 			Engine a = new Engine (Consts.BinPath);
@@ -193,9 +193,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			a.UnloadProject (null);
 		}
 
+		// This project object has been unloaded from the MSBuild engine and is no longer valid.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"This project object has been unloaded from the MSBuild engine and is no longer valid.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestUnloadProject3 ()
 		{
 			Engine a = new Engine (Consts.BinPath);

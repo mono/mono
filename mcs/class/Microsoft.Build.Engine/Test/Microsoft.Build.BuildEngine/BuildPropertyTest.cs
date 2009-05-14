@@ -94,9 +94,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 		}
 
+		// A shallow clone of this object cannot be created.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"A shallow clone of this object cannot be created.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestClone1 ()
 		{
 			bp = new BuildProperty ("name", "value");
@@ -256,9 +256,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("true", a.Condition, "A1");
 		}
 
+		// Cannot set a condition on an object not represented by an XML element in the project file.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestCondition2 ()
 		{
 			BuildProperty a = new BuildProperty ("name", "value");

@@ -1,3 +1,14 @@
+2009-05-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemTest.cs:
+	* BuildPropertyGroupTest.cs:
+	* BuildPropertyGroupCollectionTest.cs:
+	* BuildPropertyTest.cs:
+	* BuildItemGroupTest.cs:
+	* EngineTest.cs:
+	* InternalLoggerExceptionTest.cs:
+	* ProjectTest.cs: Don't compare exception messages.
+
 2009-05-12  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestAssignment1):

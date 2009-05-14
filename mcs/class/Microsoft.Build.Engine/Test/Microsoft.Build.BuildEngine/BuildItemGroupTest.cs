@@ -388,9 +388,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("Item", items [0].Name, "A7");
 		}
 
+		// A shallow clone of this object cannot be created
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"A shallow clone of this object cannot be created.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestClone5 ()
 		{
 			Engine engine;
@@ -474,9 +474,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.IsFalse (groups [0].IsImported, "A2");
 		}
 
+		// Cannot set a condition on an object not represented by an XML element in the project file.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestCondition2 ()
 		{
 			BuildItemGroup big = new BuildItemGroup ();

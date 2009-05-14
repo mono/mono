@@ -93,9 +93,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			new BuildItem (null, "something");
 		}
 
+		// Parameter "itemInclude" cannot have zero length.
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"Parameter \"itemInclude\" cannot have zero length.")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TestCtor6 ()
 		{
 			new BuildItem (null, String.Empty);
@@ -124,9 +124,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("name", item2.Name, "A6");
 		}
 
+		// Cannot set a condition on an object not represented by an XML element in the project file.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestCondition1 ()
 		{
 			item = new BuildItem ("name", "1");
@@ -217,9 +217,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			item.CopyCustomMetadataTo (null);
 		}
 
+		// Assigning the "Exclude" attribute of a virtual item is not allowed.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Assigning the \"Exclude\" attribute of a virtual item is not allowed.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestExclude1 ()
 		{
 			item = new BuildItem ("name", "1");
@@ -561,9 +561,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			item.RemoveMetadata ("undefined_metadata");
 		}
 
+		// "Filename" is a reserved item meta-data, and cannot be modified or deleted.
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"\"Filename\" is a reserved item meta-data, and cannot be modified or deleted.")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TestRemoveMetadata4 ()
 		{
 			item = new BuildItem ("name", "value");
@@ -671,9 +671,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (Utilities.Escape ("$(A)"), item.GetMetadata ("b"), "A5");
 			Assert.AreEqual ("$(A)", item.GetMetadata ("c"), "A6");
 		}
+
+		// "Filename" is a reserved item meta-data, and cannot be modified or deleted.
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"\"Filename\" is a reserved item meta-data, and cannot be modified or deleted.")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TestSetMetadata4 ()
 		{
 			item = new BuildItem ("name", "include");

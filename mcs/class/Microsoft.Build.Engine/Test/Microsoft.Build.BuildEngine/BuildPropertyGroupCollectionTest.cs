@@ -60,9 +60,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.PropertyGroups.CopyTo (null, 0);
 		}
 
+		// Index was outside the bounds of the array.
 		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException),
-			"Index was outside the bounds of the array.")]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void TestCopyTo2 ()
 		{
 			string documentString = @"
@@ -102,9 +102,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				new BuildPropertyGroup ()}}, 0);
 		}
 
+		// Index was outside the bounds of the array.
 		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException),
-			"Index was outside the bounds of the array.")]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void TestCopyTo4 ()
 		{
 			string documentString = @"
@@ -123,9 +123,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.PropertyGroups.CopyTo (new BuildPropertyGroup [1], 2);
 		}
 
+		// Index was outside the bounds of the array.
 		[Test]
-		[ExpectedException (typeof (IndexOutOfRangeException),
-			"Index was outside the bounds of the array.")]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
 		public void TestCopyTo5 ()
 		{
 			string documentString = @"

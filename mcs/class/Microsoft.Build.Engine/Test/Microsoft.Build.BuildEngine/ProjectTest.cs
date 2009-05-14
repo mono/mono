@@ -101,7 +101,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			try {
 				project.LoadXml (documentString);
-			} catch (InvalidProjectFileException e) {
+			} catch (InvalidProjectFileException) {
 				Assert.AreEqual (true, project.BuildEnabled, "A1");
 				Assert.AreEqual (String.Empty, project.DefaultTargets, "A2");
 				Assert.AreEqual (String.Empty, project.FullFileName, "A3");
@@ -932,9 +932,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			p1.RemoveItemGroup (null);
 		}
 
+		// The "BuildItemGroup" object specified does not belong to the correct "Project" object.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-					"The \"BuildItemGroup\" object specified does not belong to the correct \"Project\" object.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		[Category ("NotWorking")]
 		public void TestRemoveItemGroup2 ()
 		{
@@ -967,9 +967,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.RemoveItem (null);
 		}
 
+		// The object passed in is not part of the project.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"The object passed in is not part of the project.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestRemoveItem2 ()
 		{
 			Engine engine;
@@ -981,9 +981,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.RemoveItem (new BuildItem ("name", "include"));
 		}
 
+		// The "BuildItemGroup" object specified does not belong to the correct "Project" object.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-					"The \"BuildItemGroup\" object specified does not belong to the correct \"Project\" object.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestRemoveItem3 ()
 		{
 			Engine engine;
