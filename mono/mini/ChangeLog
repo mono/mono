@@ -1,5 +1,8 @@
 2009-05-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c (asm_writer_emit_local_symbol): Make this a nop on
+	osx.
+
 	* mini-mips.c mini-mips.h exceptions-mips.c: Transition the mips backend
 	to use mono_arch_throw_corlib_exception.
 
