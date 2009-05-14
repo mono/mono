@@ -1,5 +1,12 @@
 2009-05-14  Jonathan Pryor  <jpryor@novell.com>
 
+	* src/DbLinq/Data/Linq/Sugar/Implementation/QueryCache.cs: Temporarily
+	  disable QueryCache.GetFromSelectCache(), as the cache keeps breaking
+	  for currently undiagnosed reasons.  With this disabled, NerdDinner
+	  seems to work properly.
+
+2009-05-14  Jonathan Pryor  <jpryor@novell.com>
+
 	* Makefile: Add 'update-dblinq' target, which copies files from my
 	  dblinq checkout into src.
 	* System.Data.Linq.dll.sources, System.Data.Linq_test.dll.sources: Add

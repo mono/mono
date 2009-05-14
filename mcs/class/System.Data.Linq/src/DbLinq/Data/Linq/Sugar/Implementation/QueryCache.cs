@@ -71,6 +71,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
         public SelectQuery GetFromSelectCache(ExpressionChain expressions)
         {
+            return null;
             SelectQuery selectQuery;
             selectQueries.TryGetValue(expressions, out selectQuery);
             return selectQuery;
