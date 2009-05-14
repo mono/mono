@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <system.diagnostics>
+    <sources>
+      <source name="source1" switchName="switch" switchType="System.Diagnostics.SourceSwitch">
+        <!--
+        <listeners>
+          <add name="console" type="System.Diagnostics.ConsoleTraceListener"/>
+        </listeners>
+          -->
+      </source>
+    </sources>
     <switches>
       <!-- Boolean switches: any non-zero value is true -->
       <add name="bool-true" value="1"/>

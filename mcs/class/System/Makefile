@@ -129,8 +129,13 @@ $(the_lib): $(CYCLIC_DEP_FILES)
 
 $(test_lib): $(test_lib).config $(TEST_RESOURCES)
 
+ifeq (net_2_0, $(PROFILE))
+$(test_lib).config: Test/test-config-file-net-2.0
+	cp $< $@
+else
 $(test_lib).config: Test/test-config-file
 	cp $< $@
+endif
 
 CLEAN_FILES = $(test_lib).config
 
