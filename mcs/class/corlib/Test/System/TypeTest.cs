@@ -333,6 +333,13 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetInterfaceMapOnInterface ()
+		{
+			typeof (IList).GetInterfaceMap (typeof (ICollection));
+		}
+
+		[Test]
 		public void TestIsSubclassOf ()
 		{
 			Assert.IsTrue (typeof (ICloneable).IsSubclassOf (typeof (object)), "#01");
