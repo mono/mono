@@ -32,6 +32,7 @@ EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file				\
+	Test/test-config-file-net-2.0			\
 	Test/System.Security.Cryptography.X509Certificates/pkits/ChangeLog	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/Makefile	\
 	Test/System.Security.Cryptography.X509Certificates/pkits/README		\

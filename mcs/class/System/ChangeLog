@@ -1,3 +1,7 @@
+2009-05-14  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile: Distribute Test/test-config-file-net-2.0.
+
 2009-05-13  Jonathan Pryor <jpryor@novell.com>
 
 	* System_test.dll.sources: Add ListChangedEventArgsTest.cs.
