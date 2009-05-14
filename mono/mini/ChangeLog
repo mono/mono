@@ -1,5 +1,8 @@
 2009-05-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-mips.c mini-mips.h exceptions-mips.c: Transition the mips backend
+	to use mono_arch_throw_corlib_exception.
+
 	* mini-ppc.c mini-ppc.h exceptions-ppc.c: Use 
 	mono_arch_throw_corlib_exception for throwing corlib exceptions.
 
