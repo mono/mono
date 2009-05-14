@@ -92,6 +92,7 @@ namespace Microsoft.Build.BuildEngine {
 			xmlDocument.DocumentElement.SetAttribute ("xmlns", ns);
 			
 			fullFileName = String.Empty;
+			timeOfLastDirty = DateTime.Now;
 
 			globalProperties = new BuildPropertyGroup (null, this, null, false);
 			foreach (BuildProperty bp in parentEngine.GlobalProperties)

@@ -1,3 +1,7 @@
+2009-05-12  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (.ctor): Init timeOfLastDirty.
+
 2009-05-05  Miguel de Icaza  <miguel@novell.com>
 
 	* Contribution from Martin Brenn to fix #498154.
