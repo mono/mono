@@ -33,7 +33,10 @@ TEST_MCS_FLAGS = \
 	/r:Microsoft.Build.Framework.dll	\
 	/r:Microsoft.Build.Utilities$(NAME_SUFFIX).dll
 
-EXTRA_DISTFILES = Test/resources/test.cs Test/resources/Sample.cs
+EXTRA_DISTFILES = \
+	Test/resources/test.cs \
+	Test/resources/Sample.cs \
+	Test/resources/Sample.vb
 
 test-local: Test/resources/test.dll
 

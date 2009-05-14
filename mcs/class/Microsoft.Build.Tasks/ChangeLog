@@ -1,3 +1,8 @@
+2009-05-14  Ankit Jain  <jankit@novell.com>
+
+	Fix tests on monobuild
+	* Makefile (EXTRA_DISTFILES): Add Test/resources/Sample.vb
+
 2009-04-28  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (NAME_SUFFIX): New.
