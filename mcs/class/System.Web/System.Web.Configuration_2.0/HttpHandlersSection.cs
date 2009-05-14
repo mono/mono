@@ -66,17 +66,19 @@ namespace System.Web.Configuration
 		}
 
 #region CompatabilityCode
-		internal object LocateHandler (string verb, string filepath)
+		internal object LocateHandler (string verb, string filepath, out bool allowCache)
 		{
 			int top = Handlers.Count;
-
+			
 			for (int i = 0; i < top; i++){
 				HttpHandlerAction handler = (HttpHandlerAction) Handlers [i];
 
 				string[] verbs = handler.Verbs;
 				if (verbs == null){
-					if (handler.PathMatches (filepath))
+					if (handler.PathMatches (filepath)) {
+						allowCache = handler.Path != "*";
 						return handler.GetHandlerInstance ();
+					}
 					continue;
 				}
 
@@ -84,11 +86,14 @@ namespace System.Web.Configuration
 					j--;
 					if (verbs [j] != verb)
 						continue;
-					if (handler.PathMatches (filepath))
+					if (handler.PathMatches (filepath)) {
+						allowCache = handler.Path != "*";
 						return handler.GetHandlerInstance ();
+					}
 				}
 			}
 
+			allowCache = false;
 			return null;
 		}
 #endregion

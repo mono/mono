@@ -1597,17 +1597,18 @@ namespace System.Web {
 
 			if (ret != null)
 				return ret;
-			
+
+			bool allowCache;
 #if NET_2_0
 			HttpHandlersSection httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpHandlers");
-			ret = httpHandlersSection.LocateHandler (verb, url);
+			ret = httpHandlersSection.LocateHandler (verb, url, out allowCache);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
-			ret = factory_config.LocateHandler (verb, url);
+			ret = factory_config.LocateHandler (verb, url, out allowCache);
 #endif
 
 			IHttpHandler handler = ret as IHttpHandler;
-			if (handler != null && handler.IsReusable)
+			if (allowCache && handler != null && handler.IsReusable)
 				cache [id] = ret;
 			
 			return ret;
@@ -1631,7 +1632,6 @@ namespace System.Web {
 			object o = LocateHandler (verb, url);
 			
 			factory = o as IHttpHandlerFactory;
-			
 			if (factory == null) {
 				handler = (IHttpHandler) o;
 			} else {

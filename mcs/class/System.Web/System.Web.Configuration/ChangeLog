@@ -1,3 +1,8 @@
+2009-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* HandlerFactoryConfiguration.cs: if we're matching a default
+	handler, disallow caching.
+
 2009-01-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HandlerFactoryConfiguration.cs: Allow handlers with non-public

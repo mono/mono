@@ -184,7 +184,7 @@ namespace System.Web.Configuration {
 			return false;
 		}
 
-		public object LocateHandler (string verb, string filepath)
+		public object LocateHandler (string verb, string filepath, out bool allowCache)
 		{
 			int start, end;
 			int count = handlers.Count;
@@ -197,8 +197,10 @@ namespace System.Web.Configuration {
 					HttpHandler handler = (HttpHandler) handlers [i];
 
 					if (handler.Verbs == null){
-						if (handler.PathMatches (filepath))
+						if (handler.PathMatches (filepath)) {
+							allowCache = handler.OriginalPath != "*";
 							return handler.GetHandlerInstance ();
+						}
 						continue;
 					}
 
@@ -207,12 +209,15 @@ namespace System.Web.Configuration {
 						j--;
 						if (verbs [j] != verb)
 							continue;
-						if (handler.PathMatches (filepath))
+						if (handler.PathMatches (filepath)) {
+							allowCache = handler.OriginalPath != "*";
 							return handler.GetHandlerInstance ();
+						}
 					}
 				}
 			}
 
+			allowCache = false;
 			return null;
 		}
 	}
