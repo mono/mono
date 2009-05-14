@@ -107,6 +107,9 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         public SqlStatement Build(SelectExpression selectExpression, QueryContext queryContext)
         {
+            var translator = GetTranslator(queryContext.DataContext.Vendor.SqlProvider);
+            selectExpression = translator.OuterExpression(selectExpression);
+
             // A scope usually has:
             // - a SELECT: the operation creating a CLR object with data coming from SQL tier
             // - a FROM: list of tables
@@ -221,6 +224,14 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 return firstOperand;
             }
             return sqlProvider.GetLiteral(expression.NodeType, literalOperands);
+        }
+
+        private Expressions.ExpressionTranslator GetTranslator(DbLinq.Vendor.ISqlProvider provider)
+        {
+            var p = provider as DbLinq.Vendor.Implementation.SqlProvider;
+            if (p != null)
+                return p.GetTranslator();
+            return new ExpressionTranslator();
         }
 
         /// <summary>

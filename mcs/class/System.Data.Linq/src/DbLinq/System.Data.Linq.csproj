@@ -93,6 +93,9 @@
     <Compile Include="..\DbLinq.Sqlite\SqliteVendor.cs">
       <Link>Vendors\DbLinq.Sqlite\SqliteVendor.cs</Link>
     </Compile>
+    <Compile Include="..\DbLinq.SqlServer\SqlServerExpressionTranslator.cs">
+      <Link>Vendors\DbLinq.SqlServer\SqlServerExpressionTranslator.cs</Link>
+    </Compile>
     <Compile Include="Data\Linq\ChangeAction.cs" />
     <Compile Include="Data\Linq\ChangeSet.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseContext.cs" />
@@ -179,6 +182,7 @@
     <Compile Include="Data\Linq\Sugar\ExpressionQuery.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ColumnExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\EntitySetExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\ExpressionTranslator.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ObjectInputParameterExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ObjectOutputParameterExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\CustomExpressionType.cs" />
@@ -311,6 +315,7 @@
     <Compile Include="Language\ILanguages.cs" />
     <Compile Include="Language\ILanguageWords.cs" />
     <Compile Include="Util\IDbDataParameterExtensions.cs" />
+    <Compile Include="Util\IThreadSafeDictionary.cs" />
     <Compile Include="Util\LambdaComparer.cs" />
     <Compile Include="Util\DataCommand.cs" />
     <Compile Include="Schema\INameFormatter.cs" />
@@ -324,6 +329,7 @@
     <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\StringExtensions.cs" />
     <Compile Include="Util\TextWriterExtension.cs" />
+    <Compile Include="Util\ThreadSafeDictionary.cs" />
     <Compile Include="Util\TypeConvert.cs" />
     <Compile Include="Util\QuotesHelper.cs" />
     <Compile Include="Util\ReferenceEqualityComparer.cs" />

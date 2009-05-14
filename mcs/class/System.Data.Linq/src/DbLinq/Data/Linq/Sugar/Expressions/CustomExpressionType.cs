@@ -33,7 +33,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// <summary>
     /// Those types are required by DbLinq internal expressions
     /// </summary>
-    internal enum CustomExpressionType
+#if !MONO_STRICT
+    public
+#endif
+    enum CustomExpressionType
     {
         Scope = 1000,
         MetaTable = 1010,

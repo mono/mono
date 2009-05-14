@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
 using System.Xml;
+using DbLinq.Util;
 
 namespace DbLinq.Factory.Implementation
 {
@@ -39,6 +40,9 @@ namespace DbLinq.Factory.Implementation
     internal class ReflectionObjectFactory : IObjectFactory
     {
         private IDictionary<Type, IList<Type>> implementations;
+
+        private readonly object lockObject = new object(); // For filling implementation (since it could be done concurrently at startup)
+
         /// <summary>
         /// Gets the implementations for given Type.
         /// </summary>
@@ -49,7 +53,11 @@ namespace DbLinq.Factory.Implementation
             {
                 if (implementations == null)
                 {
-                    implementations = ParseAppDomain();
+                    lock (lockObject)   // Strong lock, since run only at statup
+                    {
+                        if (implementations == null)
+                            implementations = ParseAppDomain();
+                    }
                 }
                 return implementations;
             }
@@ -58,7 +66,7 @@ namespace DbLinq.Factory.Implementation
         /// <summary>
         /// Singletons table per Type
         /// </summary>
-        protected readonly IDictionary<Type, object> Singletons = new Dictionary<Type, object>();
+        protected readonly IThreadSafeDictionary<Type, object> Singletons = new ThreadSafeDictionary<Type, object>();
 
         /// <summary>
         /// Gets the assemblies to avoid.
@@ -150,7 +158,10 @@ namespace DbLinq.Factory.Implementation
         {
             object r;
             if (!Singletons.TryGetValue(t, out r))
-                Singletons[t] = r = Create(t);
+            {
+                r = Create(t);
+                Singletons.MergeSafe(t, r);
+            }
             return r;
         }
 

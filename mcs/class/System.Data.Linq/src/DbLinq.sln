@@ -45,8 +45,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{C11FF24E-368
 		..\lib\System.Data.SQLite.DLL = ..\lib\System.Data.SQLite.DLL
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualMetal", "VisualMetal\VisualMetal.csproj", "{05260362-DD1C-4DF4-890B-163D0A6D94B9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMetal", "DbMetal\DbMetal.csproj", "{363FF43D-C870-4423-BE50-DAED7793A6D1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Linq", "DbLinq\System.Data.Linq.csproj", "{97305421-3071-4175-AA3C-9A432CC28121}"
@@ -138,11 +136,6 @@ Global
 		{90D57CD9-D704-409E-88A1-0F22AC79065A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90D57CD9-D704-409E-88A1-0F22AC79065A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90D57CD9-D704-409E-88A1-0F22AC79065A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{05260362-DD1C-4DF4-890B-163D0A6D94B9}.Debug - Mono Strict|Any CPU.ActiveCfg = Debug|Any CPU
-		{05260362-DD1C-4DF4-890B-163D0A6D94B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{05260362-DD1C-4DF4-890B-163D0A6D94B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{05260362-DD1C-4DF4-890B-163D0A6D94B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{05260362-DD1C-4DF4-890B-163D0A6D94B9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{363FF43D-C870-4423-BE50-DAED7793A6D1}.Debug - Mono Strict|Any CPU.ActiveCfg = Debug|Any CPU
 		{363FF43D-C870-4423-BE50-DAED7793A6D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{363FF43D-C870-4423-BE50-DAED7793A6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU

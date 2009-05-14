@@ -51,6 +51,7 @@
       <Link>Properties\DbLinq.ProductInfo.cs</Link>
     </Compile>
     <Compile Include="SqlServerDataContext.cs" />
+    <Compile Include="SqlServerExpressionTranslator.cs" />
     <Compile Include="SqlServerSqlProvider.cs" />
     <Compile Include="SqlServerTypeConversions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

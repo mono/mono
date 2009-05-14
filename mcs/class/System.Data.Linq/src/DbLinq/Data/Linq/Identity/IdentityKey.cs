@@ -47,7 +47,7 @@ namespace DbLinq.Data.Linq.Identity
 #else
     public
 #endif
-    class IdentityKey
+    sealed class IdentityKey
     {
         /// <summary>
         /// Entity type
@@ -57,6 +57,8 @@ namespace DbLinq.Data.Linq.Identity
         /// Entity keys
         /// </summary>
         public IList<object> Keys { get; private set; }
+
+        private readonly int hashCode;
 
         /// <summary>
         /// Determines equality between two refs
@@ -84,12 +86,7 @@ namespace DbLinq.Data.Linq.Identity
         /// <returns></returns>
         public override int GetHashCode()
         {
-            int hash = Type.GetHashCode();
-            foreach (object key in Keys)
-            {
-                hash ^= key.GetHashCode();
-            }
-            return hash;
+            return hashCode;
         }
 
         /// <summary>
@@ -101,6 +98,13 @@ namespace DbLinq.Data.Linq.Identity
         {
             Type = type;
             Keys = new List<object>(keys);
+
+            // Done here becouse IdentityKeys exists to be keys in dictionaries...
+            hashCode = type.GetHashCode();
+            foreach (object key in keys)
+            {
+                hashCode ^= key.GetHashCode();
+            }
         }
 
         /// <summary>
@@ -112,6 +116,13 @@ namespace DbLinq.Data.Linq.Identity
         {
             Type = type;
             Keys = new List<object>(keys);
+
+            // Done here becouse IdentityKeys exists to be keys in dictionaries...
+            hashCode = Type.GetHashCode();
+            foreach (object key in Keys)
+            {
+                hashCode ^= key.GetHashCode();
+            }
         }
     }
 }

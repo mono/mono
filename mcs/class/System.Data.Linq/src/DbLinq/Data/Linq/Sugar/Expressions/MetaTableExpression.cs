@@ -43,7 +43,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// <summary>
     /// A MetaTablePiece contains aliases for tables (used on joins)
     /// </summary>
-    internal class MetaTableExpression : MutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    class MetaTableExpression : MutableExpression
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.MetaTable;
 

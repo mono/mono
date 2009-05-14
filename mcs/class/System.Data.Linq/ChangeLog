@@ -1,3 +1,12 @@
+2009-05-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile: Add 'update-dblinq' target, which copies files from my
+	  dblinq checkout into src.
+	* System.Data.Linq.dll.sources, System.Data.Linq_test.dll.sources: Add
+	  additional files.
+	* src/**/*: Flush; syncs to DbLinq r1073, greatly improves object
+	  tracking support, more tests....
+
 2009-04-24  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/**/*: Add missing files (doh!).  Fixes the build.

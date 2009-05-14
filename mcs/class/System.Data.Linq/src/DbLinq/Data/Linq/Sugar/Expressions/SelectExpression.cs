@@ -43,7 +43,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// ScopeExpression describes a selection.
     /// It can be present at top-level or as subexpressions
     /// </summary>
-    internal class SelectExpression : OperandsMutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    class SelectExpression : OperandsMutableExpression
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.Scope;
 

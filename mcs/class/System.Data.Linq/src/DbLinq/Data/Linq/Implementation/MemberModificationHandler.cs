@@ -46,6 +46,8 @@ namespace DbLinq.Data.Linq.Implementation
         private readonly IDictionary<object, IDictionary<string, object>> rawDataEntities = new Dictionary<object, IDictionary<string, object>>(new ReferenceEqualityComparer<object>());
         private readonly IDictionary<object, IDictionary<string, MemberInfo>> modifiedProperties = new Dictionary<object, IDictionary<string, MemberInfo>>(new ReferenceEqualityComparer<object>());
 
+        private static readonly IDictionary<string, MemberInfo> propertyChangingSentinal = new Dictionary<string, MemberInfo>();
+
         /// <summary>
         /// Gets the column members.
         /// </summary>
@@ -167,55 +169,43 @@ namespace DbLinq.Data.Linq.Implementation
             // raw data, we keep a snapshot of the current state
             else
             {
-                lock (rawDataEntities)
-                {
-                    if (!rawDataEntities.ContainsKey(entity) && entityOriginalState != null)
-                        rawDataEntities[entity] = GetEntityRawData(entityOriginalState, metaModel);
-                }
+                if (!rawDataEntities.ContainsKey(entity) && entityOriginalState != null)
+                    rawDataEntities[entity] = GetEntityRawData(entityOriginalState, metaModel);
             }
         }
 
         private void RegisterNotification(object entity, object entityOriginalState, MetaModel metaModel)
         {
-            lock (modifiedProperties)
-            {
-                if (modifiedProperties.ContainsKey(entity))
-                    return;
-                modifiedProperties[entity] = new Dictionary<string, MemberInfo>();
-                if (entity is INotifyPropertyChanging)
-                {
-                    ((INotifyPropertyChanging)entity).PropertyChanging += (OnPropertyChangingEvent);
-                }
+            if (modifiedProperties.ContainsKey(entity))
+                return;
+            modifiedProperties[entity] = null;
 
-                if (entity is INotifyPropertyChanged)
+            var entityChanged = entity as INotifyPropertyChanged;
+            if (entityChanged != null)
+            {
+                entityChanged.PropertyChanged += OnPropertyChangedEvent;
+            }
+
+            var entityChanging = entity as INotifyPropertyChanging;
+            if (entityChanging != null)
+            {
+                entityChanging.PropertyChanging += OnPropertyChangingEvent;
+            }
+
+            // then check all properties, and note them as changed if they already did
+            if (!ReferenceEquals(entity, entityOriginalState)) // only if we specified another original entity
+            {
+                foreach (var dataMember in metaModel.GetTable(entity.GetType()).RowType.PersistentDataMembers)
                 {
-                    ((INotifyPropertyChanged)entity).PropertyChanged += (OnPropertyChangedEvent);
-                }
-                // then check all properties, and note them as changed if they already did
-                if (!ReferenceEquals(entity, entityOriginalState)) // only if we specified another original entity
-                {
-                    foreach (var dataMember in metaModel.GetTable(entity.GetType()).RowType.PersistentDataMembers)
+                    var memberInfo = dataMember.Member;
+                    if (entityOriginalState == null ||
+                        IsPropertyModified(memberInfo.GetMemberValue(entity),
+                                           memberInfo.GetMemberValue(entityOriginalState)))
                     {
-                        var memberInfo = dataMember.Member;
-                        if (entityOriginalState == null ||
-                            IsPropertyModified(memberInfo.GetMemberValue(entity),
-                                               memberInfo.GetMemberValue(entityOriginalState)))
-                        {
-                            SetPropertyChanged(entity, memberInfo.Name);
-                        }
+                        SetPropertyChanged(entity, memberInfo.Name);
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Occurs on INotifyPropertyChanging.PropertyChanging
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnPropertyChangingEvent(object sender, PropertyChangingEventArgs e)
-        {
-            //SetPropertyChanged(sender, e.PropertyName);
         }
 
         /// <summary>
@@ -226,6 +216,12 @@ namespace DbLinq.Data.Linq.Implementation
         private void OnPropertyChangedEvent(object sender, PropertyChangedEventArgs e)
         {
             SetPropertyChanged(sender, e.PropertyName);
+        }
+
+        private void OnPropertyChangingEvent(object entity, PropertyChangingEventArgs e)
+        {
+            if (modifiedProperties[entity] == null)
+                modifiedProperties[entity] = propertyChangingSentinal;
         }
 
         /// <summary>
@@ -239,29 +235,25 @@ namespace DbLinq.Data.Linq.Implementation
                 UnregisterNotification(entity);
             else
             {
-                lock (rawDataEntities)
-                {
-                    if (rawDataEntities.ContainsKey(entity))
-                        rawDataEntities.Remove(entity);
-                }
+                if (rawDataEntities.ContainsKey(entity))
+                    rawDataEntities.Remove(entity);
             }
         }
 
         private void UnregisterNotification(object entity)
         {
-            lock (modifiedProperties)
+            if (!modifiedProperties.ContainsKey(entity))
+                return;
+            modifiedProperties.Remove(entity);
+            INotifyPropertyChanged npc = entity as INotifyPropertyChanged;
+            if (npc != null)
             {
-                if (!modifiedProperties.ContainsKey(entity))
-                    return;
-                modifiedProperties.Remove(entity);
+                npc.PropertyChanged -= OnPropertyChangedEvent;
             }
-            if (entity is INotifyPropertyChanging)
+            var changing = entity as INotifyPropertyChanging;
+            if (changing != null)
             {
-                ((INotifyPropertyChanging)entity).PropertyChanging -= OnPropertyChangingEvent;
-            }
-            else if (entity is INotifyPropertyChanged)
-            {
-                ((INotifyPropertyChanged)entity).PropertyChanged -= OnPropertyChangedEvent;
+                changing.PropertyChanging -= OnPropertyChangingEvent;
             }
         }
 
@@ -273,14 +265,16 @@ namespace DbLinq.Data.Linq.Implementation
         /// <param name="propertyName"></param>
         private void SetPropertyChanged(object entity, string propertyName)
         {
-            lock (modifiedProperties)
-            {
-                PropertyInfo pi = GetProperty(entity, propertyName);
-                if (pi == null)
-                    throw new ArgumentException("Incorrect property changed");
+            PropertyInfo pi = GetProperty(entity, propertyName);
+            if (pi == null)
+                throw new ArgumentException("Incorrect property changed");
 
-                modifiedProperties[entity][propertyName] = pi;
+            if (modifiedProperties[entity] == null || 
+                    ReferenceEquals(propertyChangingSentinal, modifiedProperties[entity]))
+            {
+                modifiedProperties[entity] = new Dictionary<string, MemberInfo>();
             }
+            modifiedProperties[entity][propertyName] = pi;
         }
 
         /// <summary>
@@ -308,10 +302,10 @@ namespace DbLinq.Data.Linq.Implementation
         /// </returns>
         private bool IsNotifyingModified(object entity)
         {
-            lock (modifiedProperties)
-            {
-                return !modifiedProperties.ContainsKey(entity) || modifiedProperties[entity].Count > 0;
-            }
+            if (!modifiedProperties.ContainsKey(entity) || modifiedProperties[entity] == null)
+                return false;
+            return ReferenceEquals(propertyChangingSentinal, modifiedProperties[entity]) ||
+                modifiedProperties[entity].Count > 0;
         }
 
         /// <summary>
@@ -337,23 +331,20 @@ namespace DbLinq.Data.Linq.Implementation
         /// </returns>
         private bool IsRawModified(object entity, MetaModel metaModel)
         {
-            lock (rawDataEntities)
+            // if not present, maybe it was inserted (or set to dirty)
+            // TODO: this will be useless when we will support the differential properties
+            if (!rawDataEntities.ContainsKey(entity))
+                return true;
+
+            IDictionary<string, object> originalData = rawDataEntities[entity];
+            IDictionary<string, object> currentData = GetEntityRawData(entity, metaModel);
+
+            foreach (string key in originalData.Keys)
             {
-                // if not present, maybe it was inserted (or set to dirty)
-                // TODO: this will be useless when we will support the differential properties
-                if (!rawDataEntities.ContainsKey(entity))
+                object originalValue = originalData[key];
+                object currentValue = currentData[key];
+                if (IsPropertyModified(originalValue, currentValue))
                     return true;
-
-                IDictionary<string, object> originalData = rawDataEntities[entity];
-                IDictionary<string, object> currentData = GetEntityRawData(entity, metaModel);
-
-                foreach (string key in originalData.Keys)
-                {
-                    object originalValue = originalData[key];
-                    object currentValue = currentData[key];
-                    if (IsPropertyModified(originalValue, currentValue))
-                        return true;
-                }
             }
             return false;
         }
@@ -405,14 +396,12 @@ namespace DbLinq.Data.Linq.Implementation
         /// <returns></returns>
         protected IList<MemberInfo> GetNotifyingModifiedProperties(object entity, MetaModel metaModel)
         {
-            lock (modifiedProperties)
-            {
-                IDictionary<string, MemberInfo> properties;
-                // if we don't have it, it is fully dirty
-                if (!modifiedProperties.TryGetValue(entity, out properties))
-                    return GetAllColumnProperties(entity, metaModel);
-                return new List<MemberInfo>(properties.Values);
-            }
+            IDictionary<string, MemberInfo> properties;
+            // if we don't have it, it is fully dirty
+            if (!modifiedProperties.TryGetValue(entity, out properties) || 
+                    ReferenceEquals(propertyChangingSentinal, modifiedProperties[entity]))
+                return GetAllColumnProperties(entity, metaModel);
+            return new List<MemberInfo>(properties.Values);
         }
 
         /// <summary>
@@ -426,12 +415,9 @@ namespace DbLinq.Data.Linq.Implementation
             var properties = new List<MemberInfo>();
 
             IDictionary<string, object> originalData;
-            lock (rawDataEntities)
-            {
-                // if we don't have this entity we consider all its properties as having been modified
-                if (!rawDataEntities.TryGetValue(entity, out originalData))
-                    return GetAllColumnProperties(entity, metaModel);
-            }
+            // if we don't have this entity we consider all its properties as having been modified
+            if (!rawDataEntities.TryGetValue(entity, out originalData))
+                return GetAllColumnProperties(entity, metaModel);
             var currentData = GetEntityRawData(entity, metaModel);
 
             // otherwise, we iterate and find what's changed
@@ -465,10 +451,7 @@ namespace DbLinq.Data.Linq.Implementation
         /// <param name="entity">The entity.</param>
         private void ClearNotifyingModified(object entity)
         {
-            lock (modifiedProperties)
-            {
-                modifiedProperties[entity] = new Dictionary<string, MemberInfo>();
-            }
+            modifiedProperties[entity] = null;
         }
 
         /// <summary>
@@ -478,10 +461,7 @@ namespace DbLinq.Data.Linq.Implementation
         /// <param name="metaModel">The meta model.</param>
         private void ClearRawModified(object entity, MetaModel metaModel)
         {
-            lock (rawDataEntities)
-            {
-                rawDataEntities[entity] = GetEntityRawData(entity, metaModel);
-            }
+            rawDataEntities[entity] = GetEntityRawData(entity, metaModel);
         }
 
         /// <summary>

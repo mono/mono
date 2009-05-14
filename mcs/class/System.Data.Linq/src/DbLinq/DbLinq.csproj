@@ -144,6 +144,7 @@
     <Compile Include="Data\Linq\Sugar\ExpressionMutator\Implementation\UnaryExpressionMutator.cs" />
     <Compile Include="Data\Linq\Sugar\ExpressionPrecedence.cs" />
     <Compile Include="Data\Linq\Sugar\ExpressionQuery.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\ExpressionTranslator.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ColumnExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\EntitySetExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\ObjectInputParameterExpression.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Util\DbmlExtensions.cs" />
     <Compile Include="Util\ExpressionChainEqualityComparer.cs" />
     <Compile Include="Util\ExpressionEqualityComparer.cs" />
+    <Compile Include="Util\IThreadSafeDictionary.cs" />
     <Compile Include="Util\Output.cs" />
     <Compile Include="Util\IDataRecordExtensions.cs" />
     <Compile Include="Util\IDataTypeExtensions.cs" />
@@ -253,6 +255,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\StringExtensions.cs" />
+    <Compile Include="Util\ThreadSafeDictionary.cs" />
     <Compile Include="Util\TypeConvert.cs" />
     <Compile Include="Util\QuotesHelper.cs" />
     <Compile Include="Util\ReferenceEqualityComparer.cs" />

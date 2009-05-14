@@ -50,7 +50,7 @@ namespace DbLinq.Util
         /// <returns>A MemberInfo or null</returns>
         public static MemberInfo GetSingleMember(this Type t, string name)
         {
-            return GetSingleMember(t, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+            return GetSingleMember(t, name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
         /// <summary>

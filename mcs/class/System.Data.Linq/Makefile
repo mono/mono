@@ -36,3 +36,6 @@ dist-DbLinq:
 	tar cTf .files - | (cd $(distdir); tar xf -) ; \
 	rm .files
 
+update-dblinq:
+	rsync -avz --exclude '.svn' --exclude '*.user' $$HOME/Development/mono-HEAD/dblinq2007/src/ src/
+

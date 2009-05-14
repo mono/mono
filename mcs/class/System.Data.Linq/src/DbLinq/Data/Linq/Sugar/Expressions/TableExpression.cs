@@ -44,7 +44,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// Different joins specify different tables
     /// </summary>
     [DebuggerDisplay("TableExpression {Name} (as {Alias})")]
-    internal class TableExpression : MutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    class TableExpression : MutableExpression
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.Table;
 

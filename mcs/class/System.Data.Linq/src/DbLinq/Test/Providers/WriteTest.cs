@@ -81,8 +81,12 @@ using Id = System.Int32;
             //This is a DbLinq-defined escape sequence, by Pascal.
             //db.ExecuteCommand("DELETE FROM [Products] WHERE [ProductName] like 'temp%'");
 
-            var toDelete = db.Products.Where(p => p.ProductName.StartsWith("temp")).ToList();
-            db.Products.DeleteAllOnSubmit(toDelete);
+            var deleteProducts = db.Products.Where(p => p.ProductName.StartsWith("temp")).ToList();
+            db.Products.DeleteAllOnSubmit(deleteProducts);
+
+            var deleteCategories = db.Categories.Where(c => c.CategoryName.StartsWith("temp")).ToList();
+            db.Categories.DeleteAllOnSubmit(deleteCategories);
+
             db.SubmitChanges();
         }
     }
@@ -763,6 +767,59 @@ dummy text
             //undo changes
             p.BirthDate = beforeDateTime;
             db.SubmitChanges();
+        }
+
+        [Test]
+        public void InsertAndDeleteWithDependencies()
+        {
+            const string newCategoryName  = "temp Category";
+            const string newProduct1 = "temp First Test Product";
+            const string newProduct2 = "temp Second Test Product";
+
+            var db = CreateDB();
+
+            var product = new Product
+            {
+                Discontinued = true,
+                ProductName = newProduct1,
+            };
+
+            var category = new Category
+            {
+                CategoryName = newCategoryName,
+                Description  = "Insert Description Here",
+            };
+            category.Products.Add(product);
+
+            Assert.AreEqual(0, category.CategoryID);
+            Assert.AreEqual(0, product.CategoryID.Value);
+
+            db.Categories.InsertOnSubmit(category);
+            db.SubmitChanges();
+
+            Assert.AreEqual(1, db.Categories.Where(c => c.CategoryName == newCategoryName).Count());
+            Assert.AreNotEqual(0, category.CategoryID);
+            Assert.AreEqual(1, db.Products.Where(p => p.ProductName == newProduct1).Count());
+            Assert.AreEqual(category.CategoryID, product.CategoryID.Value);
+
+            var p2 = new Product
+            {
+                Discontinued = true,
+                ProductName = newProduct2
+            };
+            category.Products.Add(p2);
+            db.SubmitChanges();
+
+            Assert.AreEqual(1, db.Products.Where(p => p.ProductName == newProduct2).Count());
+
+            db.Products.DeleteOnSubmit(product);
+            db.Products.DeleteOnSubmit(p2);
+            db.Categories.DeleteOnSubmit(category);
+            db.SubmitChanges();
+
+            Assert.AreEqual(0, db.Categories.Where(c => c.CategoryName == newCategoryName).Count());
+            Assert.AreEqual(0, db.Products.Where(p => p.ProductName == newProduct1).Count());
+            Assert.AreEqual(0, db.Products.Where(p => p.ProductName == newProduct2).Count());
         }
     }
 }

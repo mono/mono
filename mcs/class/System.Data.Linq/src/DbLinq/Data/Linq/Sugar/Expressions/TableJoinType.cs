@@ -33,7 +33,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
 #endif
 {
     [Flags]
-    internal enum TableJoinType
+#if !MONO_STRICT
+    public
+#endif
+    enum TableJoinType
     {
         /// <summary>
         /// No join specified

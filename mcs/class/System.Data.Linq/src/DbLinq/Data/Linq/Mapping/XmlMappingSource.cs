@@ -539,7 +539,7 @@ namespace DbLinq.Data.Linq.Mapping
             {
                 string ns = context_type.Namespace;
                 string full = !name.Contains('.') && !String.IsNullOrEmpty(ns) ? String.Concat(ns, ".", name) : name;
-                var t = this.context_type.Assembly.GetType(full);
+                var t = this.context_type.Assembly.GetType(full) ?? System.Type.GetType(full);
                 if (t == null)
                     throw new ArgumentException(String.Format("Type '{0}' was not found", full));
                 return t;

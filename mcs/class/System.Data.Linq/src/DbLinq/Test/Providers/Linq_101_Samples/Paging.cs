@@ -28,6 +28,32 @@ using nwind;
     namespace Test_NUnit_Firebird.Linq_101_Samples
 #endif
 {
+    class CustomerComparer : IEqualityComparer<Customer>
+    {
+        public bool Equals(Customer x, Customer y)
+        {
+            if (object.ReferenceEquals (x, y))
+                return true;
+            return x.Address == y.Address &&
+                x.City == y.City &&
+                x.CompanyName == y.CompanyName &&
+                x.ContactName == y.ContactName &&
+                x.ContactTitle == y.ContactTitle &&
+                x.Country == y.Country &&
+                x.CustomerID == y.CustomerID &&
+                x.Fax == y.Fax &&
+                x.Phone == y.Phone &&
+                x.PostalCode == y.PostalCode &&
+                x.Region == y.Region &&
+                true; // TODO: compare Orders: x.Orders.SequenceEqual(y.Orders, new OrderComparer());
+        }
+
+        public int GetHashCode(Customer obj)
+        {
+ 	        throw new NotImplementedException();
+        }
+    }
+
     [TestFixture]
     public class Paging : TestBase
     {
@@ -42,8 +68,35 @@ using nwind;
                     .Skip(1)
                     .Take(2);
 
-            var list = q.ToList();
-            Assert.IsTrue(list.Count > 0);
+            var expected = new[]{
+                new Customer {
+                    Address       = "Heerstr. 22",
+                    City          = "Leipzig",
+                    CompanyName   = "Morgenstern Gesundkost",
+                    ContactName   = "Alexander Feuer",
+                    ContactTitle  = "Marketing Assistant",
+                    Country       = "Germany",
+                    CustomerID    = "MORGK",
+                    Fax           = null,
+                    Phone         = "0342-023176",
+                    PostalCode    = "04179",
+                    Region        = null
+                },
+                new Customer {
+                    Address       = "Avda. de la Constitución 2222",
+                    City          = "México D.F.",
+                    CompanyName   = "Ana Trujillo Emparedados y helados",
+                    ContactName   = "Ana Trujillo",
+                    ContactTitle  = "Owner",
+                    Country       = "Mexico",
+                    CustomerID    = "ANATR",
+                    Fax           = "(5) 555-3745",
+                    Phone         = "(5) 555-4729",
+                    PostalCode    = "05021",
+                    Region        = null
+                },
+            };
+            Assert.IsTrue(expected.SequenceEqual(q, new CustomerComparer()));
         }
 
         [Test(Description = "Paging - Ordered Unique Key. This sample uses a where clause and the take operator to do paging by, first filtering to get only the ProductIDs above 50 (the last ProductID from page 5), then ordering by ProductID, and finally taking the first 10 results, thereby providing the data for page 6 of the Products table. Note that this method only works when ordering by a unique key.")]
@@ -59,6 +112,48 @@ using nwind;
 
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
+        }
+
+        [Test(Description = "Paging - Index. This sample uses the Skip and Take operators to do paging by skipping the first 50 records and then returning the next 10, thereby providing the data for page 6 of the Products table.")]
+        public void LinqToSqlPaging03()
+        {
+            // This is basically LinqToSqlPaging01() without the `orderby` clause.
+            Northwind db = CreateDB();
+
+            var q = (from c in db.Customers
+                     select c)
+                    .Skip(1)
+                    .Take(2);
+
+            var expected = new[]{
+                new Customer {
+                    Address       = "Avda. de la Constitución 2222",
+                    City          = "México D.F.",
+                    CompanyName   = "Ana Trujillo Emparedados y helados",
+                    ContactName   = "Ana Trujillo",
+                    ContactTitle  = "Owner",
+                    Country       = "Mexico",
+                    CustomerID    = "ANATR",
+                    Fax           = "(5) 555-3745",
+                    Phone         = "(5) 555-4729",
+                    PostalCode    = "05021",
+                    Region        = null
+                },
+                new Customer {
+                    Address       = "Mataderos  2312",
+                    City          = "México D.F.",
+                    CompanyName   = "Antonio Moreno Taquería",
+                    ContactName   = "Antonio Moreno",
+                    ContactTitle  = "Owner",
+                    Country       = "Mexico",
+                    CustomerID    = "ANTON",
+                    Fax           = null,
+                    Phone         = "(5) 555-3932",
+                    PostalCode    = "05023",
+                    Region        = null
+                },
+            };
+            Assert.IsTrue(expected.SequenceEqual(q, new CustomerComparer()));
         }
     }
 }

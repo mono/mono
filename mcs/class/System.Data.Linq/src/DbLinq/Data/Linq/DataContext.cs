@@ -86,23 +86,36 @@ namespace DbLinq.Data.Linq
         private bool objectTrackingEnabled = true;
         private bool deferredLoadingEnabled = true;
 
-        private IEntityTracker entityTracker;
-        private IEntityTracker EntityTracker
+        private IEntityTracker currentTransactionEntities;
+        private IEntityTracker CurrentTransactionEntities
         {
             get
             {
-                if (this.entityTracker == null)
+                if (this.currentTransactionEntities == null)
                 {
                     if (this.ObjectTrackingEnabled)
-                        this.entityTracker = new EntityTracker();
+                        this.currentTransactionEntities = new EntityTracker();
                     else
-                        this.entityTracker = new DisabledEntityTracker();
+                        this.currentTransactionEntities = new DisabledEntityTracker();
                 }
-                return this.entityTracker;
+                return this.currentTransactionEntities;
             }
         }
 
-
+        private IEntityTracker allTrackedEntities;
+        private IEntityTracker AllTrackedEntities
+        {
+            get
+            {
+                if (this.allTrackedEntities == null)
+                {
+                    allTrackedEntities = ObjectTrackingEnabled
+                        ? (IEntityTracker) new EntityTracker()
+                        : (IEntityTracker) new DisabledEntityTracker();
+                }
+                return this.allTrackedEntities;
+            }
+        }
 
         private IIdentityReaderFactory identityReaderFactory;
         private readonly IDictionary<Type, IIdentityReader> identityReaders = new Dictionary<Type, IIdentityReader>();
@@ -316,25 +329,22 @@ namespace DbLinq.Data.Linq
 		/// <exception cref="InvalidOperationException">If the type is not mappable as a Table.</exception>
         public ITable GetTable(Type type)
         {
-            lock (_tableMap)
-            {
-                ITable tableExisting;
-				if (_tableMap.TryGetValue(type, out tableExisting))
-                    return tableExisting;
+            ITable tableExisting;
+			if (_tableMap.TryGetValue(type, out tableExisting))
+                return tableExisting;
 
-				//Check for table mapping
-				CheckTableMapping(type);
+			//Check for table mapping
+			CheckTableMapping(type);
 
-                var tableNew = Activator.CreateInstance(
-                                  typeof(Table<>).MakeGenericType(type)
-                                  , BindingFlags.NonPublic | BindingFlags.Instance
-                                  , null
-                                  , new object[] { this }
-                                  , System.Globalization.CultureInfo.CurrentCulture) as ITable;
+            var tableNew = Activator.CreateInstance(
+                              typeof(Table<>).MakeGenericType(type)
+                              , BindingFlags.NonPublic | BindingFlags.Instance
+                              , null
+                              , new object[] { this }
+                              , System.Globalization.CultureInfo.CurrentCulture) as ITable;
 
-                _tableMap[type] = tableNew;
-                return tableNew;
-            }
+            _tableMap[type] = tableNew;
+            return tableNew;
         }
 
         public void SubmitChanges()
@@ -370,38 +380,162 @@ namespace DbLinq.Data.Linq
             using (IDatabaseTransaction transaction = DatabaseContext.Transaction())
             {
                 var queryContext = new QueryContext(this);
-                var entityTracks = EntityTracker.EnumerateAll().ToList();
-                foreach (var entityTrack in entityTracks)
+
+                // There's no sense in updating an entity when it's going to 
+                // be deleted in the current transaction, so do deletes first.
+                foreach (var entityTrack in CurrentTransactionEntities.EnumerateAll().ToList())
                 {
                     switch (entityTrack.EntityState)
                     {
-                        case EntityState.ToInsert:
-                            var insertQuery = QueryBuilder.GetInsertQuery(entityTrack.Entity, queryContext);
-                            QueryRunner.Insert(entityTrack.Entity, insertQuery);
-                            Register(entityTrack.Entity);
-                            break;
-                        case EntityState.ToWatch:
-                            if (MemberModificationHandler.IsModified(entityTrack.Entity, Mapping))
-                            {
-                                var modifiedMembers = MemberModificationHandler.GetModifiedProperties(entityTrack.Entity, Mapping);
-                                var updateQuery = QueryBuilder.GetUpdateQuery(entityTrack.Entity, modifiedMembers, queryContext);
-                                QueryRunner.Update(entityTrack.Entity, updateQuery, modifiedMembers);
-
-                                RegisterUpdateAgain(entityTrack.Entity);
-                            }
-                            break;
                         case EntityState.ToDelete:
                             var deleteQuery = QueryBuilder.GetDeleteQuery(entityTrack.Entity, queryContext);
                             QueryRunner.Delete(entityTrack.Entity, deleteQuery);
 
                             UnregisterDelete(entityTrack.Entity);
+                            AllTrackedEntities.RegisterToDelete(entityTrack.Entity);
+                            AllTrackedEntities.RegisterDeleted(entityTrack.Entity);
+                            break;
+                        default:
+                            // ignore.
+                            break;
+                    }
+                }
+                foreach (var entityTrack in CurrentTransactionEntities.EnumerateAll()
+                        .Concat(AllTrackedEntities.EnumerateAll())
+                        .ToList())
+                {
+                    switch (entityTrack.EntityState)
+                    {
+                        case EntityState.ToInsert:
+                            foreach (var toInsert in GetReferencedObjects(entityTrack.Entity))
+                            {
+                                InsertEntity(toInsert, queryContext);
+                            }
+                            break;
+                        case EntityState.ToWatch:
+                            foreach (var toUpdate in GetReferencedObjects(entityTrack.Entity))
+                            {
+                                UpdateEntity(toUpdate, queryContext);
+                            }
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
+                            break;
                     }
                 }
                 // TODO: handle conflicts (which can only occur when concurrency mode is implemented)
                 transaction.Commit();
+            }
+        }
+
+        private static IEnumerable<object> GetReferencedObjects(object value)
+        {
+            var values = new EntitySet<object>();
+            FillReferencedObjects(value, values);
+            return values;
+        }
+
+        // Breadth-first traversal of an object graph
+        private static void FillReferencedObjects(object value, EntitySet<object> values)
+        {
+            if (value == null)
+                return;
+            values.Add(value);
+            var children = new List<object>();
+            foreach (var p in value.GetType().GetProperties())
+            {
+                var type = p.PropertyType.IsGenericType
+                    ? p.PropertyType.GetGenericTypeDefinition()
+                    : null;
+                if (type != null && p.CanRead && type == typeof(EntitySet<>) &&
+                        p.GetGetMethod().GetParameters().Length == 0)
+                {
+                    var set = p.GetValue(value, null);
+                    if (set == null)
+                        continue;
+                    var hasLoadedOrAssignedValues = p.PropertyType.GetProperty("HasLoadedOrAssignedValues");
+                    if (!((bool)hasLoadedOrAssignedValues.GetValue(set, null)))
+                        continue;   // execution deferred; ignore.
+                    foreach (var o in ((IEnumerable)set))
+                        children.Add(o);
+                }
+            }
+            foreach (var c in children)
+            {
+                FillReferencedObjects(c, values);
+            }
+        }
+
+        private void InsertEntity(object entity, QueryContext queryContext)
+        {
+            var insertQuery = QueryBuilder.GetInsertQuery(entity, queryContext);
+            QueryRunner.Insert(entity, insertQuery);
+            Register(entity);
+            UpdateReferencedObjects(entity, AutoSync.OnInsert);
+            MoveToAllTrackedEntities(entity, true);
+        }
+
+        private void UpdateEntity(object entity, QueryContext queryContext)
+        {
+            if (!AllTrackedEntities.ContainsReference(entity))
+                InsertEntity(entity, queryContext);
+            else if (MemberModificationHandler.IsModified(entity, Mapping))
+            {
+                var modifiedMembers = MemberModificationHandler.GetModifiedProperties(entity, Mapping);
+                var updateQuery = QueryBuilder.GetUpdateQuery(entity, modifiedMembers, queryContext);
+                QueryRunner.Update(entity, updateQuery, modifiedMembers);
+
+                RegisterUpdateAgain(entity);
+                UpdateReferencedObjects(entity, AutoSync.OnUpdate);
+                MoveToAllTrackedEntities(entity, false);
+            }
+        }
+
+        private void UpdateReferencedObjects(object root, AutoSync sync)
+        {
+            var metaType = Mapping.GetMetaType(root.GetType());
+            foreach (var assoc in metaType.Associations)
+            {
+                var memberData = assoc.ThisMember;
+                if (memberData.Association.ThisKey.Any(m => m.AutoSync != sync))
+                    continue;
+                var oks = memberData.Association.OtherKey.Select(m => m.StorageMember).ToList();
+                if (oks.Count == 0)
+                    continue;
+                var pks = memberData.Association.ThisKey
+                    .Select(m => m.StorageMember.GetMemberValue(root))
+                    .ToList();
+                if (pks.Count != pks.Count)
+                    throw new InvalidOperationException(
+                        string.Format("Count of primary keys ({0}) doesn't match count of other keys ({1}).",
+                            pks.Count, oks.Count));
+                var members = memberData.Member.GetMemberValue(root) as IEnumerable;
+                if (members == null)
+                    continue;
+                foreach (var member in members)
+                {
+                    for (int i = 0; i < pks.Count; ++i)
+                    {
+                        oks[i].SetMemberValue(member, pks[i]);
+                    }
+                }
+            }
+        }
+
+        private void MoveToAllTrackedEntities(object entity, bool insert)
+        {
+            if (!ObjectTrackingEnabled)
+                return;
+            if (CurrentTransactionEntities.ContainsReference(entity))
+            {
+                CurrentTransactionEntities.RegisterToDelete(entity);
+                if (!insert)
+                    CurrentTransactionEntities.RegisterDeleted(entity);
+            }
+            if (!AllTrackedEntities.ContainsReference(entity))
+            {
+                var identityReader = _GetIdentityReader(entity.GetType());
+                AllTrackedEntities.RegisterToWatch(entity, identityReader.GetIdentityKey(entity));
             }
         }
 
@@ -430,13 +564,10 @@ namespace DbLinq.Data.Linq
         internal IIdentityReader _GetIdentityReader(Type t)
         {
             IIdentityReader identityReader;
-            lock (identityReaders)
+            if (!identityReaders.TryGetValue(t, out identityReader))
             {
-                if (!identityReaders.TryGetValue(t, out identityReader))
-                {
-                    identityReader = identityReaderFactory.GetReader(t, this);
-                    identityReaders[t] = identityReader;
-                }
+                identityReader = identityReaderFactory.GetReader(t, this);
+                identityReaders[t] = identityReader;
             }
             return identityReader;
         }
@@ -450,7 +581,9 @@ namespace DbLinq.Data.Linq
             if (identityKey == null) // if we don't have an entitykey here, it means that the entity has no PK
                 return entity;
             // even 
-            var registeredEntityTrack = EntityTracker.FindByIdentity(identityKey);
+            var registeredEntityTrack = 
+                CurrentTransactionEntities.FindByIdentity(identityKey) ??
+                AllTrackedEntities.FindByIdentity(identityKey);
             if (registeredEntityTrack != null)
                 return registeredEntityTrack.Entity;
             return null;
@@ -479,12 +612,14 @@ namespace DbLinq.Data.Linq
                 return entity;
 
             // try to find an already registered entity and return it
-            var registeredEntityTrack = EntityTracker.FindByIdentity(identityKey);
+            var registeredEntityTrack = 
+                CurrentTransactionEntities.FindByIdentity(identityKey) ??
+                AllTrackedEntities.FindByIdentity(identityKey);
             if (registeredEntityTrack != null)
                 return registeredEntityTrack.Entity;
 
             // otherwise, register and return
-            EntityTracker.RegisterToWatch(entity, identityKey);
+            AllTrackedEntities.RegisterToWatch(entity, identityKey);
             return entity;
         }
 
@@ -610,6 +745,10 @@ namespace DbLinq.Data.Linq
                         prop.SetValue(entity, entitySetValue, null);
                     }
 
+                    var hasLoadedOrAssignedValues = entitySetValue.GetType().GetProperty("HasLoadedOrAssignedValues");
+                    if ((bool)hasLoadedOrAssignedValues.GetValue(entitySetValue, null))
+                        continue;
+
                     var setSourceMethod = entitySetValue.GetType().GetMethod("SetSource");
                     setSourceMethod.Invoke(entitySetValue, new[] { query });
                     //employee.EmployeeTerritories.SetSource(Table[EmployeesTerritories].Where(other=>other.employeeID="WARTH"))
@@ -644,7 +783,7 @@ namespace DbLinq.Data.Linq
         /// <param name="entity"></param>
         internal void RegisterInsert(object entity)
         {
-            EntityTracker.RegisterToInsert(entity);
+            CurrentTransactionEntities.RegisterToInsert(entity);
         }
 
         /// <summary>
@@ -666,7 +805,7 @@ namespace DbLinq.Data.Linq
             if (identityKey == null)
                 return;
             // register entity
-            EntityTracker.RegisterToWatch(entity, identityKey);
+            AllTrackedEntities.RegisterToWatch(entity, identityKey);
         }
 
         /// <summary>
@@ -717,7 +856,7 @@ namespace DbLinq.Data.Linq
         {
             if (!this.objectTrackingEnabled)
                 return;
-            EntityTracker.RegisterToDelete(entity);
+            CurrentTransactionEntities.RegisterToDelete(entity);
         }
 
         /// <summary>
@@ -728,7 +867,7 @@ namespace DbLinq.Data.Linq
         {
             if (!this.objectTrackingEnabled)
                 return;
-            EntityTracker.RegisterDeleted(entity);
+            CurrentTransactionEntities.RegisterDeleted(entity);
         }
 
         #endregion
@@ -742,7 +881,8 @@ namespace DbLinq.Data.Linq
             var inserts = new List<object>();
             var updates = new List<object>();
             var deletes = new List<object>();
-            foreach (var entityTrack in EntityTracker.EnumerateAll())
+            foreach (var entityTrack in CurrentTransactionEntities.EnumerateAll()
+                    .Concat(AllTrackedEntities.EnumerateAll()))
             {
                 switch (entityTrack.EntityState)
                 {
@@ -792,7 +932,6 @@ namespace DbLinq.Data.Linq
 
         public IEnumerable ExecuteQuery(Type elementType, string query, params object[] parameters)
         {
-            Console.WriteLine("# ExecuteQuery: query={0}", query != null ? query : "<null>");
             if (elementType == null)
                 throw new ArgumentNullException("elementType");
             if (query == null)
@@ -926,7 +1065,7 @@ namespace DbLinq.Data.Linq
             get { return this.objectTrackingEnabled; }
             set 
             {
-                if (this.entityTracker != null && value != this.objectTrackingEnabled)
+                if (this.currentTransactionEntities != null && value != this.objectTrackingEnabled)
                     throw new InvalidOperationException("Data context options cannot be modified after results have been returned from a query.");
                 this.objectTrackingEnabled = value;
             }
@@ -944,7 +1083,7 @@ namespace DbLinq.Data.Linq
             get { return this.deferredLoadingEnabled; }
             set
             {
-                if (this.entityTracker != null && value != this.deferredLoadingEnabled)
+                if (this.currentTransactionEntities != null && value != this.deferredLoadingEnabled)
                     throw new InvalidOperationException("Data context options cannot be modified after results have been returned from a query.");
                 this.deferredLoadingEnabled = value;
             }

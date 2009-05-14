@@ -39,7 +39,10 @@ namespace System.Data.Linq.Sugar.Expressions
 namespace DbLinq.Data.Linq.Sugar.Expressions
 #endif
 {
-    internal abstract class MutableExpression : Expression, IMutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    abstract class MutableExpression : Expression, IMutableExpression
     {
         protected MutableExpression(ExpressionType expressionType, Type type)
             : base(expressionType, type)

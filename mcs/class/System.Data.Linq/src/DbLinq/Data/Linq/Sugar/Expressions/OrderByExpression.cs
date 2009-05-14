@@ -35,7 +35,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// <summary>
     /// Represents a ORDER column to be sorted on
     /// </summary>
-    internal class OrderByExpression : MutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    class OrderByExpression : MutableExpression
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.OrderBy;
 

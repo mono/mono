@@ -55,9 +55,6 @@ namespace DbLinq.Data.Linq.Implementation
         /// </summary>
         private readonly IDictionary<IdentityKey, EntityTrack> entitiesByKey = new Dictionary<IdentityKey, EntityTrack>();
 
-        /// lock key, for thread safety
-        private readonly object lockObject = new object();
-
         /// <summary>
         /// Finds an entity tracking info by object reference
         /// </summary>
@@ -65,8 +62,8 @@ namespace DbLinq.Data.Linq.Implementation
         /// <returns></returns>
         private EntityTrack FindByReference(object entity)
         {
-            lock (lockObject)
-                return (from e in entities where e.Entity == entity select e).FirstOrDefault();
+            //    return (from e in entities where e.Entity == entity select e).FirstOrDefault();
+            return this.entities.Find(e => object.ReferenceEquals(entity, e.Entity));
         }
 
         /// <summary>
@@ -77,8 +74,7 @@ namespace DbLinq.Data.Linq.Implementation
         public EntityTrack FindByIdentity(IdentityKey identityKey)
         {
             EntityTrack entityTrack;
-            lock (lockObject)
-                entitiesByKey.TryGetValue(identityKey, out entityTrack);
+            entitiesByKey.TryGetValue(identityKey, out entityTrack);
             return entityTrack;
         }
 
@@ -89,7 +85,7 @@ namespace DbLinq.Data.Linq.Implementation
         /// <returns></returns>
         public bool ContainsReference(object entity)
         {
-            return FindByReference(entity) == null;
+            return FindByReference(entity) != null;
         }
 
         /// <summary>
@@ -101,31 +97,28 @@ namespace DbLinq.Data.Linq.Implementation
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            lock (lockObject)
+            var entityTrack = FindByReference(entity);
+            if (entityTrack == null)
             {
-                var entityTrack = FindByReference(entity);
-                if (entityTrack == null)
+                entityTrack = new EntityTrack(entity, EntityState.ToInsert);
+                entities.Add(entityTrack);
+            }
+            else
+            {
+                switch (entityTrack.EntityState)
                 {
-                    entityTrack = new EntityTrack(entity, EntityState.ToInsert);
-                    entities.Add(entityTrack);
-                }
-                else
-                {
-                    switch (entityTrack.EntityState)
-                    {
-                    // if already registered for insert/update, then this is an error
-                    case EntityState.ToInsert:
-                    case EntityState.ToWatch:
-                        throw new InvalidOperationException();
-                    // whenever the object is registered for deletion, the fact of
-                    // registering it for insertion sets it back to watch
-                    case EntityState.ToDelete:
-                        entityTrack.EntityState = EntityState.ToWatch;
-                        entitiesByKey[entityTrack.IdentityKey] = entityTrack;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                    }
+                // if already registered for insert/update, then this is an error
+                case EntityState.ToInsert:
+                case EntityState.ToWatch:
+                    throw new InvalidOperationException();
+                // whenever the object is registered for deletion, the fact of
+                // registering it for insertion sets it back to watch
+                case EntityState.ToDelete:
+                    entityTrack.EntityState = EntityState.ToWatch;
+                    entitiesByKey[entityTrack.IdentityKey] = entityTrack;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -137,32 +130,29 @@ namespace DbLinq.Data.Linq.Implementation
         /// <param name="identityKey"></param>
         public void RegisterToWatch(object entity, IdentityKey identityKey)
         {
-            lock (lockObject)
+            var entityTrack = FindByReference(entity);
+            if (entityTrack == null)
             {
-                var entityTrack = FindByReference(entity);
-                if (entityTrack == null)
+                entityTrack = new EntityTrack(entity, EntityState.ToWatch) { IdentityKey = identityKey };
+                entities.Add(entityTrack);
+                entitiesByKey[identityKey] = entityTrack;
+            }
+            else
+            {
+                // changes the state of the current entity
+                switch (entityTrack.EntityState)
                 {
-                    entityTrack = new EntityTrack(entity, EntityState.ToWatch) { IdentityKey = identityKey };
-                    entities.Add(entityTrack);
+                case EntityState.ToInsert:
+                    entityTrack.EntityState = EntityState.ToWatch;
+                    entityTrack.IdentityKey = identityKey;
                     entitiesByKey[identityKey] = entityTrack;
-                }
-                else
-                {
-                    // changes the state of the current entity
-                    switch (entityTrack.EntityState)
-                    {
-                    case EntityState.ToInsert:
-                        entityTrack.EntityState = EntityState.ToWatch;
-                        entityTrack.IdentityKey = identityKey;
-                        entitiesByKey[identityKey] = entityTrack;
-                        break;
-                    // watched entities should not be registered again
-                    case EntityState.ToWatch:
-                    case EntityState.ToDelete:
-                        throw new InvalidOperationException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                    }
+                    break;
+                // watched entities should not be registered again
+                case EntityState.ToWatch:
+                case EntityState.ToDelete:
+                    throw new InvalidOperationException();
+                default:
+                    throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -176,34 +166,31 @@ namespace DbLinq.Data.Linq.Implementation
             if (entity == null)
                 throw new ArgumentNullException("entity");
 
-            lock (lockObject)
+            var entityTrack = FindByReference(entity);
+            if (entityTrack == null)
             {
-                var entityTrack = FindByReference(entity);
-                if (entityTrack == null)
+                entityTrack = new EntityTrack(entity, EntityState.ToDelete);
+                entities.Add(entityTrack);
+            }
+            else
+            {
+                // changes the state of the current entity
+                switch (entityTrack.EntityState)
                 {
-                    entityTrack = new EntityTrack(entity, EntityState.ToDelete);
-                    entities.Add(entityTrack);
-                }
-                else
-                {
-                    // changes the state of the current entity
-                    switch (entityTrack.EntityState)
-                    {
-                    // if entity was to be inserted, we just remove it from the list
-                    // as if it never came here
-                    case EntityState.ToInsert:
-                        entities.Remove(entityTrack);
-                        break;
-                    // watched entities are registered to be removed
-                    case EntityState.ToWatch:
-                        entityTrack.EntityState = EntityState.ToDelete;
-                        entitiesByKey.Remove(entityTrack.IdentityKey);
-                        break;
-                    case EntityState.ToDelete:
-                        throw new InvalidOperationException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                    }
+                // if entity was to be inserted, we just remove it from the list
+                // as if it never came here
+                case EntityState.ToInsert:
+                    entities.Remove(entityTrack);
+                    break;
+                // watched entities are registered to be removed
+                case EntityState.ToWatch:
+                    entityTrack.EntityState = EntityState.ToDelete;
+                    entitiesByKey.Remove(entityTrack.IdentityKey);
+                    break;
+                case EntityState.ToDelete:
+                    throw new InvalidOperationException();
+                default:
+                    throw new ArgumentOutOfRangeException();
                 }
             }
         }
@@ -214,26 +201,23 @@ namespace DbLinq.Data.Linq.Implementation
         /// <param name="entity"></param>
         public void RegisterDeleted(object entity)
         {
-            lock (lockObject)
+            // TODO: we could require an index
+            var entityTrack = FindByReference(entity);
+            if (entityTrack == null)
             {
-                // TODO: we could require an index
-                var entityTrack = FindByReference(entity);
-                if (entityTrack == null)
-                {
-                    throw new ArgumentException("entity");
-                }
-                // changes the state of the current entity
-                switch (entityTrack.EntityState)
-                {
-                case EntityState.ToDelete:
-                    entities.Remove(entityTrack);
-                    break;
-                case EntityState.ToInsert:
-                case EntityState.ToWatch:
-                    throw new InvalidOperationException();
-                default:
-                    throw new ArgumentOutOfRangeException();
-                }
+                throw new ArgumentException("entity");
+            }
+            // changes the state of the current entity
+            switch (entityTrack.EntityState)
+            {
+            case EntityState.ToDelete:
+                entities.Remove(entityTrack);
+                break;
+            case EntityState.ToInsert:
+            case EntityState.ToWatch:
+                throw new InvalidOperationException();
+            default:
+                throw new ArgumentOutOfRangeException();
             }
         }
 

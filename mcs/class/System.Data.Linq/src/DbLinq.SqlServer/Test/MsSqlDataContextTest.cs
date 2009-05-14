@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -62,15 +63,63 @@ namespace DbLinqTest {
 
         protected override string People(string firstName)
         {
-            return
-                "SELECT [first_name], [last_name]\n" + 
-                "FROM [people]\n" +
-                "WHERE [first_name] = '" + firstName + "'";
+            return string.Format(
+                "SELECT [first_name], [last_name]{0}" + 
+                "FROM [people]{0}" +
+                "WHERE [first_name] = '" + firstName + "'", 
+                Environment.NewLine); ;
         }
 
         protected override string People(string firstName, string lastName)
         {
             return People(firstName) + " AND [last_name] = '" + lastName + "'";
+        }
+
+        protected override string People(string firstName, string lastName, int skip, int take)
+        {
+            return string.Format("SELECT *{0}" +
+                "FROM ({0}" +
+                "    SELECT [first_name], [last_name]{0}" +
+                ",{0}" +
+                "    ROW_NUMBER() OVER(ORDER BY [first_name], [last_name]{0}" +
+                ") AS [__ROW_NUMBER]{0}" +
+                "    FROM [people]{0}" +
+                "WHERE [first_name] = '{1}' AND [last_name] = '{2}'    ) AS [t0]{0}" +
+                "WHERE [__ROW_NUMBER] BETWEEN {3}+1 AND {3}+{4}{0}" +
+                "ORDER BY [__ROW_NUMBER]",
+                Environment.NewLine, firstName, lastName, skip, take);
+        }
+
+        [Test]
+        public void Count()
+        {
+            var oldLog = Context.Log;
+            var log = new StringWriter();
+            try
+            {
+                Context.Log = log;
+                (from p in Context.GetTable<Person>()
+                     orderby p.LastName
+                     select p)
+                    .Count();
+            }
+            catch (NotSupportedException)
+            {
+                Console.WriteLine("# logfile=\n{0}", log.ToString());
+                var expected = string.Format("SELECT COUNT(*){0}" +
+                    "FROM [people]{0}" +
+                    "--",
+                    Environment.NewLine);
+                Assert.IsTrue(log.ToString().Contains(expected));
+            }
+            catch (Exception e)
+            {
+                Assert.Fail("# ExecuteCommand: Got exception {0}", e.ToString());
+            }
+            finally
+            {
+                Context.Log = oldLog;
+            }
         }
     }
 }

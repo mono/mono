@@ -44,7 +44,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// It is usually transparent, except for return value, where it mutates the type to IGrouping
     /// </summary>
     [DebuggerDisplay("GroupExpression")]
-    internal class GroupExpression : MutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    class GroupExpression : MutableExpression
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.Group;
 

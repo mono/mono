@@ -73,6 +73,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="CsvArrayAdapterTest.cs" />
     <Compile Include="DataContextTest.cs" />
+    <Compile Include="EntitySetTest.cs" />
     <Compile Include="ExpressionEqualityComparerTest.cs" />
     <Compile Include="IDataTypeExtensionsTest.cs" />
     <Compile Include="NullProvider.cs">

@@ -231,31 +231,49 @@ using nwind;
             args = null;
             customer.Orders.Remove(customer.Orders.First());
             Assert.IsTrue(ok);
+            Assert.AreEqual(System.ComponentModel.ListChangedType.ItemDeleted, args.ListChangedType);
+            Assert.AreEqual(0, args.NewIndex);
+            Assert.AreEqual(-1, args.OldIndex);
 
             ok = false;
             args = null;
             customer.Orders.Assign(Enumerable.Empty<Order>());
             Assert.IsTrue(ok);
+            Assert.AreEqual(System.ComponentModel.ListChangedType.Reset, args.ListChangedType);
+            Assert.AreEqual(0, args.NewIndex);
+            Assert.AreEqual(-1, args.OldIndex);
 
             ok = false;
             args = null;
             customer.Orders.Add(db.Orders.First());
             Assert.IsTrue(ok);
+            Assert.AreEqual(System.ComponentModel.ListChangedType.ItemAdded, args.ListChangedType);
+            Assert.AreEqual(0, args.NewIndex);
+            Assert.AreEqual(-1, args.OldIndex);
 
             ok = false;
             args = null;
             customer.Orders.Clear();
             Assert.IsTrue(ok);
+            Assert.AreEqual(System.ComponentModel.ListChangedType.Reset, args.ListChangedType);
+            Assert.AreEqual(0, args.NewIndex);
+            Assert.AreEqual(-1, args.OldIndex);
 
             ok = false;
             args = null;
             customer.Orders.Insert(0, new Order());
             Assert.IsTrue(ok);
+            Assert.AreEqual(System.ComponentModel.ListChangedType.ItemAdded, args.ListChangedType);
+            Assert.AreEqual(0, args.NewIndex);
+            Assert.AreEqual(-1, args.OldIndex);
 
             ok = false;
             args = null;
             customer.Orders.RemoveAt(0);
             Assert.IsTrue(ok);
+            Assert.AreEqual(System.ComponentModel.ListChangedType.ItemDeleted, args.ListChangedType);
+            Assert.AreEqual(args.NewIndex, 0);
+            Assert.AreEqual(args.OldIndex, -1);
         }
 
         [Test]

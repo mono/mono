@@ -47,6 +47,11 @@ namespace DbLinq.SqlServer
 #endif
  class SqlServerSqlProvider : SqlProvider
     {
+        public override ExpressionTranslator GetTranslator()
+        {
+            return new SqlServerExpressionTranslator();
+        }
+
         protected override char SafeNameStartQuote { get { return '['; } }
         protected override char SafeNameEndQuote { get { return ']'; } }
 
@@ -85,6 +90,44 @@ namespace DbLinq.SqlServer
                 return SqlStatement.Format("SELECT TOP ({0}) {1}", limit, selectBuilder.ToSqlStatement());
             }
             throw new ArgumentException("S0051: Unknown select format");
+        }
+
+        public override SqlStatement GetLiteralLimit(SqlStatement select, SqlStatement limit, SqlStatement offset, SqlStatement offsetAndLimit)
+        {
+            var from    = "FROM ";
+            var orderBy = "ORDER BY ";
+            var selectK = "SELECT ";
+            int fromIdx     = select[0].Sql.IndexOf(from);
+            int orderByIdx  = select[0].Sql.IndexOf(orderBy);
+
+            if (fromIdx < 0)
+                throw new ArgumentException("S0051: Unknown select format: " + select[0].Sql);
+
+            string orderByClause = null;
+            string sourceClause = null;
+            if (orderByIdx >= 0)
+            {
+                orderByClause = select[0].Sql.Substring(orderByIdx);
+                sourceClause = select[0].Sql.Substring(fromIdx, orderByIdx - fromIdx);
+            }
+            else
+            {
+                orderByClause = "ORDER BY " + select[0].Sql.Substring(selectK.Length, fromIdx - selectK.Length);
+                sourceClause = select[0].Sql.Substring(fromIdx);
+            }
+
+            var selectFieldsClause = select[0].Sql.Substring(0, fromIdx);
+
+            return SqlStatement.Format(
+                "SELECT *{0}" +
+                "FROM ({0}" +
+                "    {1},{0}" +
+                "    ROW_NUMBER() OVER({2}) AS [__ROW_NUMBER]{0}" +
+                "    {3}" +
+                "    ) AS [t0]{0}" +
+                "WHERE [__ROW_NUMBER] BETWEEN {4}+1 AND {4}+{5}{0}" +
+                "ORDER BY [__ROW_NUMBER]",
+                NewLine, selectFieldsClause, orderByClause, sourceClause, offset, limit);
         }
 
         protected override SqlStatement GetLiteralDateDiff(SqlStatement dateA, SqlStatement dateB)

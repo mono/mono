@@ -50,6 +50,10 @@ namespace DbLinq.Vendor.Implementation
 #endif
  class SqlProvider : ISqlProvider
     {
+        public virtual ExpressionTranslator GetTranslator()
+        {
+            return new ExpressionTranslator();
+        }
 
         /// <summary>
         /// Builds an insert clause

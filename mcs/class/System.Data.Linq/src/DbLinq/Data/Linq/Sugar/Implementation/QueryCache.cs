@@ -41,6 +41,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         {
             private readonly Type tableType;
             private readonly IList<string> columns;
+			private readonly int hash; 
 
             public override bool Equals(object obj)
             {
@@ -52,9 +53,6 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
             public override int GetHashCode()
             {
-                int hash = tableType.GetHashCode();
-                foreach (var column in columns)
-                    hash ^= column.GetHashCode();
                 return hash;
             }
 
@@ -62,40 +60,39 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             {
                 this.tableType = tableType;
                 this.columns = columns;
+				hash = tableType.GetHashCode();
+                foreach (var column in columns)
+                    hash ^= column.GetHashCode();
             }
         }
 
-        private readonly IDictionary<ExpressionChain, SelectQuery> selectQueries = new Dictionary<ExpressionChain, SelectQuery>((IEqualityComparer<ExpressionChain>) new ExpressionChainEqualityComparer());
-        private readonly IDictionary<TableReaderSignature, Delegate> tableReaders = new Dictionary<TableReaderSignature, Delegate>();
+        private readonly IThreadSafeDictionary<ExpressionChain, SelectQuery> selectQueries = new ThreadSafeDictionary<ExpressionChain, SelectQuery>((IEqualityComparer<ExpressionChain>)new ExpressionChainEqualityComparer());
+        private readonly IThreadSafeDictionary<TableReaderSignature, Delegate> tableReaders = new ThreadSafeDictionary<TableReaderSignature, Delegate>();
 
         public SelectQuery GetFromSelectCache(ExpressionChain expressions)
         {
             SelectQuery selectQuery;
-            lock (selectQueries)
-                selectQueries.TryGetValue(expressions, out selectQuery);
+            selectQueries.TryGetValue(expressions, out selectQuery);
             return selectQuery;
         }
 
         public void SetInSelectCache(ExpressionChain expressions, SelectQuery sqlSelectQuery)
         {
-            lock (selectQueries)
-                selectQueries[expressions] = sqlSelectQuery;
+            selectQueries.MergeSafe(expressions, sqlSelectQuery);
         }
 
         public Delegate GetFromTableReaderCache(Type tableType, IList<string> columns)
         {
             var signature = new TableReaderSignature(tableType, columns);
             Delegate tableReader;
-            lock (tableReaders)
-                tableReaders.TryGetValue(signature, out tableReader);
+            tableReaders.TryGetValue(signature, out tableReader);
             return tableReader;
         }
 
         public void SetInTableReaderCache(Type tableType, IList<string> columns, Delegate tableReader)
         {
             var signature = new TableReaderSignature(tableType, columns);
-            lock (tableReaders)
-                tableReaders[signature] = tableReader;
+            tableReaders.MergeSafe(signature, tableReader);
         }
     }
 }

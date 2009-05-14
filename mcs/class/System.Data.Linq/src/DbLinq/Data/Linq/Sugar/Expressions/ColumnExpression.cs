@@ -44,7 +44,10 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
     /// Describes a column, related to a table
     /// </summary>
     [DebuggerDisplay("ColumnExpression {Table.Name} (as {Table.Alias}).{Name}")]
-    internal class ColumnExpression : MutableExpression
+#if !MONO_STRICT
+    public
+#endif
+    class ColumnExpression : MutableExpression
     {
         public const ExpressionType ExpressionType = (ExpressionType)CustomExpressionType.Column;
 

@@ -48,6 +48,10 @@ namespace DbLinqTest {
     {
         DataContext context;
 
+        protected DataContext Context {
+            get { return context; }
+        }
+
         [SetUp]
         public void SetUp()
         {
@@ -125,6 +129,7 @@ namespace DbLinqTest {
 
         protected abstract string People(string firstName);
         protected abstract string People(string firstName, string lastName);
+        protected abstract string People(string firstName, string lastName, int skip, int take);
 
         [Test]
         public void GetCommand()
@@ -135,16 +140,18 @@ namespace DbLinqTest {
                 select p;
             var cmd = context.GetCommand(foos);
 
-            Console.WriteLine ("# GetCommand: cmd={0}", cmd.CommandText);
-            // Assert.AreEqual(People("foo"), cmd.CommandText);
+            Assert.AreEqual(People("foo"), cmd.CommandText);
 
             foos = foos.Where(p => p.LastName == "bar");
             var cmd2 = context.GetCommand(foos);
 
             Assert.IsFalse(object.ReferenceEquals(cmd, cmd2));
 
-            Console.WriteLine ("# GetCommand: cmd2={0}", cmd2.CommandText);
-            // Assert.AreEqual(People("foo", "bar"), cmd2.CommandText);
+            Assert.AreEqual(People("foo", "bar"), cmd2.CommandText);
+
+            foos = foos.Skip(1).Take(2);
+            cmd = context.GetCommand(foos);
+            Assert.AreEqual(People("foo", "bar", 1, 2), cmd.CommandText);
         }
     }
 }
