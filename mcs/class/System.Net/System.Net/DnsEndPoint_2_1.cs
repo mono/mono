@@ -4,7 +4,7 @@
 // Authors:
 //	Stephane Delcroix  <stephane@delcroix.org>
 //
-// (c) 2007 Novell, Inc. (http://www.novell.com)
+// (c) 2007, 2009 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -100,6 +100,23 @@ namespace System.Net {
 
 		public int Port {
 			get { return port; }
+		}
+
+		// Serialize is not overriden by we still need it. The alternative is creating an 
+		// IPEndPoint from the DnsEndPoint as it simplifies a few other things as well
+		internal IPEndPoint AsIPEndPoint ()
+		{
+			IPHostEntry entry = Dns.GetHostEntry (host);
+
+			// if family is unspecified then return first address
+			if (addressFamily == AddressFamily.Unspecified)
+				return new IPEndPoint (entry.AddressList [0], port);
+
+			foreach (IPAddress addr in entry.AddressList) {
+				if (addressFamily == addr.AddressFamily)
+					return new IPEndPoint (addr, port);
+			}
+			return null;
 		}
 	}
 }
