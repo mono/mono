@@ -655,6 +655,8 @@ namespace System {
 				throw new ArgumentNullException ("interfaceType");
 			if (!interfaceType.IsInterface)
 				throw new ArgumentException (Locale.GetText ("Argument must be an interface."), "interfaceType");
+			if (IsInterface)
+				throw new ArgumentException ("'this' type cannot be an interface itself");
 			res.TargetType = this;
 			res.InterfaceType = interfaceType;
 			GetInterfaceMapData (this, interfaceType, out res.TargetMethods, out res.InterfaceMethods);
