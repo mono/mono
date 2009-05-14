@@ -49,6 +49,7 @@ namespace System.ServiceModel.Channels
 		EndpointAddress local_address;
 		TcpListener tcp_listener;
 		TimeSpan timeout;
+		TcpBinaryFrameManager frame;
 		
 		public TcpDuplexSessionChannel (ChannelFactoryBase factory, TcpChannelInfo info, EndpointAddress address, Uri via)
 			: base (factory, address, via)
@@ -67,21 +68,10 @@ namespace System.ServiceModel.Channels
 
 			Stream s = client.GetStream ();
 
-			//while (s.CanRead)
-			//	Console.Write ("{0:X02} ", s.ReadByte ());
-			
-			for (int i = 0; i < 6; i++)
-				s.ReadByte ();
-			
-			int size = s.ReadByte ();
-			
-			for (int i = 0; i < size; i++)
-				s.ReadByte (); // URI
-			
-			s.ReadByte ();
-			s.ReadByte ();
-			s.ReadByte ();
-			s.WriteByte (0x0B);
+			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s);
+			frame.ProcessPreambleRecipient ();
+
+			// FIXME: use retrieved record properties in the request processing.
 		}
 		
 		public MessageEncoder Encoder {
@@ -198,10 +188,9 @@ namespace System.ServiceModel.Channels
 			var packetType = s.ReadByte (); // 6
 			if (packetType != 6)
 				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
-			var br = new BinaryFrameSupportReader (s);
 
 			// FIXME: implement [MC-NMF] correctly. Currently it is a guessed protocol hack.
-			byte [] buffer = br.ReadSizedChunk ();
+			byte [] buffer = frame.ReadSizedChunk ();
 
 			var ms = new MemoryStream (buffer, 0, buffer.Length);
 			// The returned buffer consists of a serialized reader 
@@ -209,7 +198,7 @@ namespace System.ServiceModel.Channels
 			// FIXME: turned out that it could be either in-band dictionary ([MC-NBFSE]), or a mere xml body ([MC-NBFS]).
 
 			var session = new XmlBinaryReaderSession ();
-			byte [] rsbuf = new BinaryFrameSupportReader (ms).ReadSizedChunk ();
+			byte [] rsbuf = new TcpBinaryFrameManager (0, ms).ReadSizedChunk ();
 			int count = 0;
 			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
 				var rbr = new BinaryReader (rms, Encoding.UTF8);
@@ -301,22 +290,9 @@ namespace System.ServiceModel.Channels
 				                        //RemoteAddress.Uri.Port);
 				
 				NetworkStream ns = client.GetStream ();
-				ns.WriteByte (0); // Version record
-				ns.WriteByte (1); //  - major
-				ns.WriteByte (0); //  - minor
-				ns.WriteByte (1); // Mode record
-				ns.WriteByte (2); //  - mode - Duplex
-				ns.WriteByte (2); // Via record
-				byte [] bytes = System.Text.Encoding.UTF8.GetBytes (RemoteAddress.Uri.ToString ());
-				ns.WriteByte ((byte) bytes.Length);
-				ns.Write (bytes, 0, bytes.Length);
-				ns.WriteByte (3); // Known encoding record
-				ns.WriteByte (3); //  - encoding - UTF8
-				ns.WriteByte (0xC); // Preamble end record
-				if (ns.ReadByte () != 0x0B)
-					throw new NotImplementedException ("Preamble Ack was expected");
-				//while (ns.CanRead)
-				//	Console.Write ("{0:X02} ", ns.ReadByte ());
+				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns);
+				// FIXME: it still results in SocketException (remote host closes the connection).
+				frame.ProcessPreambleInitiator ();
 			}
 			// Service side.
 			/*
@@ -339,14 +315,41 @@ namespace System.ServiceModel.Channels
 			}
 		}
 	}
-		
-	class BinaryFrameSupportReader : BinaryReader
+
+	// seealso: [MC-NMF] Windows Protocol document.
+	class TcpBinaryFrameManager : BinaryReader
 	{
-		public BinaryFrameSupportReader (Stream s)
+		public const byte VersionRecord = 0;
+		public const byte ModeRecord = 1;
+		public const byte ViaRecord = 2;
+		public const byte KnownEncodingRecord = 3;
+		public const byte ExtendingEncodingRecord = 4;
+		public const byte UnsizedEnvelopeRecord = 5;
+		public const byte SizedEnvelopeRecord = 6;
+		public const byte EndRecord = 7;
+		public const byte FaultRecord = 8;
+		public const byte UpgradeRequestRecord = 9;
+		public const byte UpgradeResponseRecord = 0xA;
+		public const byte PreambleAckRecord = 0xB;
+		public const byte PreambleEndRecord = 0xC;
+
+		public const byte SingletonUnsizedMode = 1;
+		public const byte DuplexMode = 2;
+		public const byte SimplexMode = 3;
+		public const byte SingletonSizedMode = 4;
+
+		public TcpBinaryFrameManager (int mode, Stream s)
 			: base (s)
 		{
+			this.mode = mode;
+			this.s = s;
 		}
-		
+
+		Stream s;
+
+		int mode;
+		int encoding_record = 3; // SOAP12, UTF-8
+
 		public byte [] ReadSizedChunk ()
 		{
 			int length = Read7BitEncodedInt ();
@@ -358,6 +361,63 @@ namespace System.ServiceModel.Channels
 			Read (buffer, 0, length);
 			
 			return buffer;
+		}
+
+		public Uri Via { get; set; }
+
+		public void ProcessPreambleInitiator ()
+		{
+			s.WriteByte (VersionRecord);
+			s.WriteByte (1);
+			s.WriteByte (0);
+			s.WriteByte (ModeRecord);
+			s.WriteByte ((byte) mode);
+			s.WriteByte (KnownEncodingRecord); // FIXME
+			s.WriteByte ((byte) encoding_record);
+			s.WriteByte (PreambleEndRecord);
+			s.Flush ();
+
+			int b;
+			if ((b = s.ReadByte ()) != PreambleAckRecord)
+				throw new ArgumentException (String.Format ("Preamble Ack Record is expected, got {0:X}", b));
+		}
+
+		public void ProcessPreambleRecipient ()
+		{
+			bool preambleEnd = false;
+			while (!preambleEnd) {
+				int b = s.ReadByte ();
+				switch (b) {
+				case VersionRecord:
+					if (s.ReadByte () != 1)
+						throw new ArgumentException ("Major version must be 1");
+					if (s.ReadByte () != 0)
+						throw new ArgumentException ("Minor version must be 0");
+					break;
+				case ModeRecord:
+					if (s.ReadByte () != mode)
+						throw new ArgumentException (String.Format ("Duplex mode is expected to be {0:X}", mode));
+					break;
+				case ViaRecord:
+					Via = new Uri (ReadString ());
+					break;
+				case KnownEncodingRecord:
+					encoding_record = s.ReadByte ();
+					break;
+				case ExtendingEncodingRecord:
+					throw new NotImplementedException ();
+				case UpgradeRequestRecord:
+					throw new NotImplementedException ();
+				case UpgradeResponseRecord:
+					throw new NotImplementedException ();
+				case PreambleEndRecord:
+					preambleEnd = true;
+					break;
+				default:
+					throw new ArgumentException (String.Format ("Unexpected record type {0:X2}", b));
+				}
+			}
+			s.WriteByte (PreambleAckRecord);
 		}
 	}
 }
