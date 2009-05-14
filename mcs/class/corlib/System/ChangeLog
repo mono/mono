@@ -1,3 +1,8 @@
+2009-05-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Type.cs: (GetInterfaceMap) 'this' can't be an interface itself.
+	Fixed bug #503728.
+
 2009-05-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Convert.cs: backport from HEAD.
