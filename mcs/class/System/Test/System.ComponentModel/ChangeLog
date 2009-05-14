@@ -1,3 +1,7 @@
+2009-05-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* ListChangedEventArgsTest.cs: Added; tests for ListChangedEventArgs.
+
 2009-02-19  Marek Habersack  <mhabersack@novell.com>
 
 	* TypeDescriptorTests.cs: added a test for

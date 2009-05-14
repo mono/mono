@@ -42,9 +42,8 @@ namespace System.ComponentModel {
 
 		public ListChangedEventArgs (ListChangedType listChangedType,
 					     int newIndex)
+			: this (listChangedType, newIndex, -1)
 		{
-			this.changedType = listChangedType;
-			this.newIndex = newIndex;
 		}
 	
 		public ListChangedEventArgs (ListChangedType listChangedType,
@@ -71,6 +70,7 @@ namespace System.ComponentModel {
 		{
 			this.changedType = listChangedType;
 			this.newIndex = newIndex;
+			this.oldIndex = newIndex;
 			this.propDesc = propDesc;
 		}
 #endif

@@ -1,5 +1,9 @@
 2009-05-13  Jonathan Pryor <jpryor@novell.com>
 
+	* System_test.dll.sources: Add ListChangedEventArgsTest.cs.
+
+2009-05-13  Jonathan Pryor <jpryor@novell.com>
+
 	* Makefile: $(test_lib).config needs to be profile-specific.
 
 2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>

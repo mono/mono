@@ -1,3 +1,8 @@
+2009-05-14  Jonathan Pryor  <jpryor@novell.com>
+
+	* ListChangedEventArgs.cs: Fix .NET compatibility problems (discovered
+	  from trying to run the System.Data.Linq unit tests).
+
 2009-04-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Win32Exception.cs: made W32ErrorMessage internal.

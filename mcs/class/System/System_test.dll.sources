@@ -136,6 +136,7 @@ System.ComponentModel/Int32ConverterTests.cs
 System.ComponentModel/Int64ConverterTests.cs
 System.ComponentModel/InvalidEnumArgumentExceptionTest.cs
 System.ComponentModel/LicenseManagerTests.cs
+System.ComponentModel/ListChangedEventArgsTest.cs
 System.ComponentModel/LookupBindingPropertiesAttributeTest.cs
 System.ComponentModel/MaskedTextProviderTest.cs
 System.ComponentModel/NestedContainerTest.cs
