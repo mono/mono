@@ -1,3 +1,9 @@
+2009-05-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #424908
+	* OracleParameter.cs:  Make sure size and sizeSet are properly 
+	updated whenever value changes.
+	
 2009-03-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Fixes #480377
