@@ -1,3 +1,8 @@
+2009-05-15  Geoff Norton  <gnorton@novell.com>
+
+	* handles.c: Don't start the collection thread if we've disabled
+	shared handles.
+
 2009-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* collection.c (collection_thread): Get rid of all the ifdefs and
