@@ -1,5 +1,11 @@
 2009-05-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_assembly_table): Fix an error message.
+
+	* metadata-verify.c: Verify the assemblyref table.
+
+2009-05-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_assembly_table): Fix the valid
 	bits mask for flags.
 
