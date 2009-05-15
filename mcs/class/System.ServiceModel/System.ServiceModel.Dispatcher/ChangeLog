@@ -1,5 +1,9 @@
 2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : open channel before using it.
+
+2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ReplyHandler.cs, InputOrReplyRequestProcessor.cs,
 	  MessageProcessingContext.cs : reply processing is also needed by
 	  non-request channels (i.e. duplex). Current code basis lacked

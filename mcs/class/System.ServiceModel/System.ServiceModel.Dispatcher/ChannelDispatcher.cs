@@ -425,6 +425,7 @@ namespace System.ServiceModel.Dispatcher
 				//3. Let the appropriate endpoint handle the request.
 
 				IChannel ch = channel_acceptor ();
+				ch.Open (owner.timeouts.OpenTimeout);
 				reply = ch as IReplyChannel;
 				input = ch as IInputChannel;
 
