@@ -1,3 +1,10 @@
+2009-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Application.cs: We should dismiss the active ToolStrip when we
+	receive a WM_SYSKEYDOWN message, instead of WM_SYSKEYUP, so the next
+	keyboard short cut can be properly processed by another menu item.
+	Fixes part of #503663.
+
 2009-05-13  Andreia Gaita  <avidigal@novell.com>
 
 	* HtmlDocument.cs: If the objects are strings, wrap them in ""

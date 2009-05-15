@@ -909,7 +909,7 @@ namespace System.Windows.Forms
 					// give it the message, and then drop the message
 					if (keyboard_capture != null) {
 						// WM_SYSKEYUP does not make it into ProcessCmdKey, so do it here
-						if ((Msg)m.Msg == Msg.WM_SYSKEYUP)
+						if ((Msg)m.Msg == Msg.WM_SYSKEYDOWN)
 							if (m.WParam.ToInt32() == (int)Keys.Menu) {
 								keyboard_capture.GetTopLevelToolStrip ().Dismiss (ToolStripDropDownCloseReason.Keyboard);
 								continue;
