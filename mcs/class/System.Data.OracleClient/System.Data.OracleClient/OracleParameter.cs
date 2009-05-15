@@ -123,9 +123,13 @@ namespace System.Data.OracleClient
 		{
 			this.name = name;
 			this.value = value;
+			if (value != null) {
+				this.sizeSet = true;
+				this.size = InferSize (value);
+			}
 			srcColumn = string.Empty;
 			SourceVersion = DataRowVersion.Current;
-			InferOracleType (value);
+			InferOracleType (value);			
 		}
 
 		public OracleParameter (string name, OracleType oracleType)
@@ -150,6 +154,7 @@ namespace System.Data.OracleClient
 			if (size < 0)
 				throw new ArgumentException("Size must be not be negative.");
 			this.size = size;
+			this.sizeSet = true;
 			this.value = value;
 			SourceColumnNullMapping = sourceColumnNullMapping;
 			OracleType = oracleType;
@@ -165,6 +170,7 @@ namespace System.Data.OracleClient
 			if (size < 0)
 				throw new ArgumentException("Size must be not be negative.");
 			this.size = size;
+			this.sizeSet = true;
 			this.value = value;
 			this.isNullable = isNullable;
 			this.precision = precision;
@@ -353,6 +359,10 @@ namespace System.Data.OracleClient
 				this.value = value;
 				if (!oracleTypeSet)
 					InferOracleType (value);
+				if (value != null) {
+					this.size = InferSize ();
+					this.sizeSet = true;
+				}
 			}
 		}
 
@@ -865,6 +875,10 @@ namespace System.Data.OracleClient
 
 		private void InferOracleType (object value)
 		{
+			// Should we throw an exception here?
+			if (value is null)
+				return;
+			
 			Type type = value.GetType ();
 			string exception = String.Format ("The parameter data type of {0} is invalid.", type.FullName);
 			switch (type.FullName) {
