@@ -1,5 +1,11 @@
 2009-05-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): Handle static rgctx invoke
+	wrappers during full aot mode correctly.
+
+	* aot-runtime.c (mono_aot_get_unbox_trampoline): Handle shared generic
+	methods correctly.
+
 	* aot-compiler.c (mono_aot_method_hash): Use our internal version of
 	mono_metadata_type_hash ().
 
