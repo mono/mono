@@ -18,6 +18,17 @@
 	* aot-compiler.c (mono_aot_method_hash): Use our internal version of
 	mono_metadata_type_hash ().
 
+2009-05-14  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.h, mini-codegen.c, mini-alpha.c, mini-amd64.c, mini-arm.c,
+	mini-hppa.h, mini-hppa.c, mini-ia64.c, mini-mips.h, mini-mips.c,
+	mini-ppc.c, mini-s390.c, mini-s390x.c, mini-sparc.c, mini-886.c:
+	Removed MONO_INST_BRLABEL from the instruction flags, and the
+	remaining code that used it, because we do not support branches inside
+	basic blocks (and branch target labels) anymore.
+	* Makefile.am: As part of the above cleanup, remove reference to
+	BURG files which don't exist anymore.
+
 2009-05-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* image-writer.c (asm_writer_emit_local_symbol): Make this a nop on
