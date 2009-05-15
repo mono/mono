@@ -1,3 +1,8 @@
+2009-05-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorCommonTests.cs : test that LookupNamespace() in
+	  XmlReader from ReadSubtree() works correctly on text nodes.
+
 2009-03-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* SelectNodesTests.cs : added 2nd test for bug #443490.

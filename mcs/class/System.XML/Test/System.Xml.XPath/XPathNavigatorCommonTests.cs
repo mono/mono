@@ -451,6 +451,19 @@ namespace MonoTests.System.Xml
 </one>";
 			AssertEquals (ret, nav.OuterXml.Replace ("\r\n", "\n"));
 		}
+
+		[Test]
+		public void ReadSubtreeLookupNamespace ()
+		{
+			string xml = "<x:foo xmlns:x='urn:x'><bar>x:val</bar></x:foo>";
+			var doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XPathNavigator nav = doc.LastChild.LastChild.CreateNavigator ();
+			var xr = nav.ReadSubtree ();
+			xr.MoveToContent ();
+			xr.Read (); // should be at x:val
+			AssertEquals ("urn:x", xr.LookupNamespace ("x"));
+		}
 #endif
 
 		[Test]

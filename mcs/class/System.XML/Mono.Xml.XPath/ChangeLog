@@ -1,3 +1,8 @@
+2009-05-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigatorReader.cs : LookupNamespace() in XmlReader from
+	  ReadSubtree() should work correctly on text nodes.
+
 2008-09-10  Atsushi Enomoto <atsushi@ximian,com>
 
 	* XPathEditableDocument.cs : added some overrides.

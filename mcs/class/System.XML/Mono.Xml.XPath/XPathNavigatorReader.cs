@@ -718,6 +718,8 @@ namespace Mono.Xml.XPath
 			XPathNavigator backup = current.Clone ();
 			try {
 				this.MoveToElement ();
+				if (current.NodeType != XPathNodeType.Element) // text etc.
+					current.MoveToParent ();
 				if (current.MoveToFirstNamespace ()) {
 					do {
 						if (current.LocalName == prefix)
