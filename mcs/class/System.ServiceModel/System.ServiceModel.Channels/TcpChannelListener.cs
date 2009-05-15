@@ -68,11 +68,9 @@ namespace System.ServiceModel.Channels
 		
 		TChannel PopulateChannel (TimeSpan timeout)
 		{
-			TcpClient cli = tcp_listener.AcceptTcpClient ();
-
 			// FIXME: pass delegate or something to remove the channel instance from "channels" when it is closed.
 			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
-				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, cli, timeout);
+				return (TChannel) (object) new TcpDuplexSessionChannel (this, info, tcp_listener, timeout);
 
 			// FIXME: To implement more.
 			throw new NotImplementedException ();

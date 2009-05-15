@@ -59,20 +59,13 @@ namespace System.ServiceModel.Channels
 			this.info = info;
 		}
 		
-		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpClient acceptedRequest, TimeSpan timeout)
+		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpListener tcpListener, TimeSpan timeout)
 			: base (listener)
 		{
 			is_service_side = true;
+			tcp_listener = tcpListener;
 			this.info = info;
-			this.client = acceptedRequest;
 			this.timeout = timeout;
-
-			Stream s = client.GetStream ();
-
-			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s) { Encoder = this.Encoder };
-			frame.ProcessPreambleRecipient ();
-
-			// FIXME: use retrieved record properties in the request processing.
 		}
 		
 		public MessageEncoder Encoder {
@@ -115,8 +108,9 @@ namespace System.ServiceModel.Channels
 		{
 			client.SendTimeout = (int) timeout.TotalMilliseconds;
 			frame.WriteSizedMessage (message);
-
 			// FIXME: should EndRecord be sent here?
+			//if (is_service_side && client.Available > 0)
+			//	frame.ProcessEndRecordRecipient ();
 		}
 		
 		[MonoTODO]
@@ -187,9 +181,16 @@ namespace System.ServiceModel.Channels
 		
 		public override bool WaitForMessage (TimeSpan timeout)
 		{
-			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
+			// FIXME: use timeout
 			try {
-				client.GetStream ();
+				client = tcp_listener.AcceptTcpClient ();
+				Stream s = client.GetStream ();
+
+				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s) { Encoder = this.Encoder };
+				frame.ProcessPreambleRecipient ();
+
+				// FIXME: use retrieved record properties in the request processing.
+
 				return true;
 			} catch (TimeoutException) {
 				return false;
@@ -249,12 +250,9 @@ namespace System.ServiceModel.Channels
 					Encoder = this.Encoder,
 					Via = RemoteAddress.Uri };
 				frame.ProcessPreambleInitiator ();
+			} else {
+				// server side
 			}
-			// Service side.
-			/*
-			else
-				Console.WriteLine ("Server side.");
-			*/
 		}
 		
 		class MyBinaryWriter : BinaryWriter
@@ -395,7 +393,7 @@ namespace System.ServiceModel.Channels
 			case FaultRecord:
 				throw new FaultException (reader.ReadString ());
 			default:
-				throw new ArgumentException (String.Format ("Preamble Ack Record is expected, got {0:X}", b));
+				throw new ProtocolException (String.Format ("Preamble Ack Record is expected, got {0:X}", b));
 			}
 		}
 
@@ -407,13 +405,13 @@ namespace System.ServiceModel.Channels
 				switch (b) {
 				case VersionRecord:
 					if (s.ReadByte () != 1)
-						throw new ArgumentException ("Major version must be 1");
+						throw new ProtocolException ("Major version must be 1");
 					if (s.ReadByte () != 0)
-						throw new ArgumentException ("Minor version must be 0");
+						throw new ProtocolException ("Minor version must be 0");
 					break;
 				case ModeRecord:
 					if (s.ReadByte () != mode)
-						throw new ArgumentException (String.Format ("Duplex mode is expected to be {0:X}", mode));
+						throw new ProtocolException (String.Format ("Duplex mode is expected to be {0:X}", mode));
 					break;
 				case ViaRecord:
 					Via = new Uri (reader.ReadString ());
@@ -431,7 +429,7 @@ namespace System.ServiceModel.Channels
 					preambleEnd = true;
 					break;
 				default:
-					throw new ArgumentException (String.Format ("Unexpected record type {0:X2}", b));
+					throw new ProtocolException (String.Format ("Unexpected record type {0:X2}", b));
 				}
 			}
 			s.WriteByte (PreambleAckRecord);
@@ -440,7 +438,8 @@ namespace System.ServiceModel.Channels
 		public Message ReadSizedMessage ()
 		{
 			// FIXME: implement [MC-NMF] correctly. Currently it is a guessed protocol hack.
-			var packetType = s.ReadByte (); // 6
+
+			var packetType = s.ReadByte ();
 			if (packetType != SizedEnvelopeRecord)
 				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
 
@@ -484,11 +483,9 @@ namespace System.ServiceModel.Channels
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
 			s.WriteByte (SizedEnvelopeRecord);
+
 			MemoryStream ms = new MemoryStream ();
 			var session = new MyXmlBinaryWriterSession ();
-			// FIXME: it is dummy
-			int dummy;
-			session.TryAdd (new XmlDictionary ().Add ("urn:foo"), out dummy);
 			var benc = Encoder as BinaryMessageEncoder;
 			try {
 				if (benc != null)
@@ -504,12 +501,21 @@ namespace System.ServiceModel.Channels
 			foreach (var ds in session.List)
 				dw.Write (ds.Value);
 			dw.Flush ();
+			writer.WriteVariableInt ((int) (msd.Position + ms.Position));
 			WriteSizedChunk (msd.ToArray ());
 			// message body
-			WriteSizedChunk (ms.ToArray ());
+			var arr = ms.GetBuffer ();
+			writer.Write (arr, 0, (int) ms.Position);
 
 			writer.Write (EndRecord);
 			writer.Flush ();
+		}
+
+		public void ProcessEndRecordRecipient ()
+		{
+			int b;
+			if ((b = s.ReadByte ()) != EndRecord)
+				throw new ProtocolException (String.Format ("EndRequest message was expected, got {0:X}", b));
 		}
 	}
 }

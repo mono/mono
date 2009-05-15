@@ -1,3 +1,9 @@
+2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs : on listener side, get TcpClient at
+	  Open(). Some (but not all yet) continuous communication works now.
+	  Use ProtocolException. Remove dummy binary session string.
+
 2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : more [MC-NMF] implementation. Moved
