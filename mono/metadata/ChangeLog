@@ -1,5 +1,9 @@
 2009-05-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the exported type table.
+
+2009-05-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c (main): Fake an assembly for netmodules to make the verifier happy.
 
 2009-05-15 Rodrigo Kumpera  <rkumpera@novell.com>
