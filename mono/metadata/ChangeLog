@@ -1,3 +1,8 @@
+2009-05-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (verify_assembly_table): Fix the valid
+	bits mask for flags.
+
 2009-05-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (mono_method_full_name): Print generic parameters of
