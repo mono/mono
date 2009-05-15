@@ -42,6 +42,7 @@ using System.Threading;
 using System.Reflection;
 using System.IO;
 using System.Net.Configuration;
+using System.Security;
 using System.Text;
 
 #if NET_2_0
@@ -387,12 +388,10 @@ namespace System.Net.Sockets {
 				IntPtr x = socket;
 				socket = (IntPtr) (-1);
 				Close_internal (x, out error);
-#if !NET_2_1
 				if (blocking_thread != null) {
 					blocking_thread.Abort ();
 					blocking_thread = null;
 				}
-#endif
 				if (error != 0)
 					throw new SocketException (error);
 			}
@@ -425,6 +424,8 @@ namespace System.Net.Sockets {
 
 		public void Connect (EndPoint remote_end)
 		{
+			SocketAddress serial = null;
+
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
@@ -436,28 +437,25 @@ namespace System.Net.Sockets {
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 			}
-
 #if NET_2_1
-			// Check for SL2.0b1 restrictions
-			// - tcp only
-			// - SiteOfOrigin
-			// - port 4502->4532 + default
 			if (protocol_type != ProtocolType.Tcp)
 				throw new SocketException ((int) SocketError.AccessDenied);
-			//FIXME: replace 80 by Application.Curent.Host.Source.Port
-			if (remote_end is IPEndPoint)
-				if (((remote_end as IPEndPoint).Port < 4502 || (remote_end as IPEndPoint).Port > 4530) && (remote_end as IPEndPoint).Port != 80)
-					throw new SocketException ((int) SocketError.AccessDenied);
-			else //unsuported endpoint type
-				throw new SocketException ((int) SocketError.AccessDenied);
-			//FIXME: check for Application.Curent.Host.Source.DnsSafeHost
+
+			DnsEndPoint dep = (remote_end as DnsEndPoint);
+			if (dep != null)
+				serial = dep.AsIPEndPoint ().Serialize ();
+			else
+				serial = remote_end.Serialize ();
 #elif NET_2_0
 			/* TODO: check this for the 1.1 profile too */
 			if (islistening)
 				throw new InvalidOperationException ();
+
+			serial = remote_end.Serialize ();
+#else
+			serial = remote_end.Serialize ();
 #endif
 
-			SocketAddress serial = remote_end.Serialize ();
 			int error = 0;
 
 			blocking_thread = Thread.CurrentThread;
@@ -465,9 +463,7 @@ namespace System.Net.Sockets {
 				Connect_internal (socket, serial, out error);
 			} catch (ThreadAbortException) {
 				if (disposed) {
-#if !NET_2_1 //2.1 profile does not contains Thread.ResetAbort
 					Thread.ResetAbort ();
-#endif
 					error = (int) SocketError.Interrupted;
 				}
 			} finally {
@@ -683,6 +679,72 @@ namespace System.Net.Sockets {
 				throw new SocketException ((int)SocketError.ProtocolOption);
 #endif
 		}
+
+#if NET_2_1
+		static MethodInfo check_socket_policy;
+
+		static void CheckConnect (SocketAsyncEventArgs e, bool checkPolicy)
+		{
+			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)
+
+			if (e.RemoteEndPoint == null)
+				throw new ArgumentNullException ("remoteEP");
+			if (e.BufferList != null)
+				throw new ArgumentException ("Multiple buffers cannot be used with this method.");
+
+			if (!checkPolicy)
+				return;
+
+			if (check_socket_policy == null) {
+				Type type = Type.GetType ("System.Windows.Browser.Net.CrossDomainPolicyManager, System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
+				check_socket_policy = type.GetMethod ("CheckEndPoint");
+				if (check_socket_policy == null)
+					throw new SecurityException ();
+			}
+			if (!(bool) check_socket_policy.Invoke (null, new object [1] { e.RemoteEndPoint }))
+				throw new SecurityException ();
+		}
+
+		// only _directly_ used (with false) to download the socket policy
+		internal bool ConnectAsync (SocketAsyncEventArgs e, bool checkPolicy)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			CheckConnect (e, checkPolicy);
+
+			e.DoOperation (SocketAsyncOperation.Connect, this);
+
+			// We always return true for now
+			return true;
+		}
+
+		public bool ConnectAsync (SocketAsyncEventArgs e)
+		{
+			return ConnectAsync (e, true);
+		}
+
+		public static bool ConnectAsync (SocketType socketType, ProtocolType protocolType, SocketAsyncEventArgs e)
+		{
+			CheckConnect (e, true);
+
+			Socket s = new Socket (AddressFamily.InterNetwork, socketType, protocolType);
+			e.DoOperation (SocketAsyncOperation.Connect, s);
+
+			// We always return true for now
+			return true;
+		}
+
+		public static void CancelConnectAsync (SocketAsyncEventArgs e)
+		{
+			if (e == null)
+				throw new ArgumentNullException ("e");
+
+			Socket s = e.ConnectSocket;
+			if ((s != null) && (s.blocking_thread != null))
+				s.blocking_thread.Abort ();
+		}
+#endif
 	}
 }
 

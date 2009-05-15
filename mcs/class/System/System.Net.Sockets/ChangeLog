@@ -1,3 +1,10 @@
+2009-05-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Socket_2_1.cs: Add ConnectAsync support for NET_2_1 which will
+	ensure the EndPoint has a valid policy before connecting.
+	* SocketAsyncEventArgs.cs: Add support for IList<ArraySegment<byte>>
+	when sending. Add ConnectSocket for NET_2_1
+
 2009-05-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TcpClient.cs:

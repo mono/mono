@@ -42,6 +42,7 @@ namespace System.Net.Sockets
 		public Socket AcceptSocket { get; set; }
 		public byte[] Buffer { get; private set; }
 
+		[MonoTODO ("not supported in all cases")]
 		public IList<ArraySegment<byte>> BufferList {
 			get { return _bufferList; }
 			set {
@@ -66,6 +67,18 @@ namespace System.Net.Sockets
 		public object UserToken { get; set; }
 
 		Socket curSocket;
+#if NET_2_1
+		public Socket ConnectSocket {
+			get {
+				switch (SocketError) {
+				case SocketError.AccessDenied:
+					return null;
+				default:
+					return curSocket;
+				}
+			}
+		}
+#endif
 		
 		public SocketAsyncEventArgs ()
 		{
@@ -152,6 +165,7 @@ namespace System.Net.Sockets
 			SocketError error = SocketError.Success;
 			
 			try {
+				// FIXME: this does not support using BufferList
 				BytesTransferred = curSocket.Receive_nochecks (Buffer, Offset, Count, SocketFlags, out error);
 			} finally {
 				SocketError = error;
@@ -194,7 +208,17 @@ namespace System.Net.Sockets
 			SocketError error = SocketError.Success;
 
 			try {
-				BytesTransferred = curSocket.Send_nochecks (Buffer, Offset, Count, SocketFlags.None, out error);
+				if (Buffer != null) {
+					BytesTransferred = curSocket.Send_nochecks (Buffer, Offset, Count, SocketFlags.None, out error);
+				} else if (BufferList != null) {
+					BytesTransferred = 0;
+					foreach (ArraySegment<byte> asb in BufferList) {
+						BytesTransferred += curSocket.Send_nochecks (asb.Array, asb.Offset, asb.Count, 
+							SocketFlags.None, out error);
+						if (error != SocketError.Success)
+							break;
+					}
+				}
 			} finally {
 				SocketError = error;
 				OnCompleted (this);
