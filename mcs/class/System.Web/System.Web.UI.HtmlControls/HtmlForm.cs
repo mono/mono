@@ -32,6 +32,7 @@ using System.Security.Permissions;
 using System.Web.Util;
 using System.Web.UI.WebControls;
 using System.Web.Configuration;
+using System.Web.SessionState;
 
 namespace System.Web.UI.HtmlControls 
 {
@@ -277,9 +278,32 @@ namespace System.Web.UI.HtmlControls
 				} else {
 					// Fun. We need to make cookieless sessions work, so no
 					// absolute paths here.
-					Uri current_uri = new Uri ("http://host" + current_path);
-					Uri fp_uri = new Uri ("http://host" + file_path);
-					action = fp_uri.MakeRelative (current_uri);
+					bool cookieless;
+
+#if NET_2_0
+					SessionStateSection sec = WebConfigurationManager.GetSection ("system.web/sessionState") as SessionStateSection;
+					cookieless = sec != null ? sec.Cookieless == HttpCookieMode.UseUri: false;
+#else
+					SessionConfig sec = HttpContext.GetAppConfig ("system.web/sessionState") as SessionConfig;
+					cookieless = sec != null ? sec.CookieLess : false;
+#endif
+					string appVPath = HttpRuntime.AppDomainAppVirtualPath;
+					int appVPathLen = appVPath.Length;
+						
+					if (appVPathLen > 1) {
+						if (cookieless) {
+							if (StrUtils.StartsWith (file_path, appVPath, true))
+								file_path = file_path.Substring (appVPathLen);
+						} else if (StrUtils.StartsWith (current_path, appVPath, true))
+							current_path = current_path.Substring (appVPathLen);
+					}
+					
+					if (cookieless) {
+						Uri current_uri = new Uri ("http://host" + current_path);
+						Uri fp_uri = new Uri ("http://host" + file_path);
+						action = fp_uri.MakeRelative (current_uri);
+					} else
+						action = current_path;
 				}
 #if NET_2_0
 			} else

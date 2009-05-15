@@ -1,3 +1,8 @@
+2009-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlForm.cs: if application isn't running on /, make sure we
+	generate the correct relative path for the action form attribute.
+
 2009-04-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HtmlInputText.cs: make sure we're inside a Page before dereferencing
