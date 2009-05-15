@@ -1,3 +1,8 @@
+2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializer.cs : write dictionary string directly for
+	  root name/ns (root only, so far).
+
 2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs: interface collection failed to serialize as

@@ -339,7 +339,7 @@ namespace System.Runtime.Serialization
 
 
 			if (graph == null) {
-				writer.WriteStartElement (root_name.Value, root_ns.Value);
+				writer.WriteStartElement (root_name, root_ns);
 				writer.WriteAttributeString ("i", "nil", XmlSchema.InstanceNamespace, "true");
 				return;
 			}
@@ -350,7 +350,7 @@ namespace System.Runtime.Serialization
 
 			known_types.Add (graph.GetType ());
 
-			writer.WriteStartElement (root_name.Value, root_ns.Value);
+			writer.WriteStartElement (root_name, root_ns);
 			if (root_ns.Value != root_qname.Namespace)
 				if (root_qname.Namespace != KnownTypeCollection.MSSimpleNamespace)
 					writer.WriteXmlnsAttribute (null, root_qname.Namespace);
