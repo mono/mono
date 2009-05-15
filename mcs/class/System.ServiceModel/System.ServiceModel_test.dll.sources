@@ -22,6 +22,7 @@ System.ServiceModel.Channels/LocalClientSecuritySettingsTest.cs
 System.ServiceModel.Channels/MessageBufferTest.cs
 System.ServiceModel.Channels/MessageEncoderTest.cs
 System.ServiceModel.Channels/MessageEncodingBindingElementTest.cs
+System.ServiceModel.Channels/MessageFaultTest.cs
 System.ServiceModel.Channels/MessageHeaderTest.cs
 System.ServiceModel.Channels/MessageHeadersTest.cs
 System.ServiceModel.Channels/MessageTest.cs

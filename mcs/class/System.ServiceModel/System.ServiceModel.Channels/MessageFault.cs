@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005-2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005-2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,10 +39,14 @@ namespace System.ServiceModel.Channels
 
 		public static MessageFault CreateFault (Message message, int maxBufferSize)
 		{
-			if (message.Version.Envelope == EnvelopeVersion.Soap11)
-				return CreateFault11 (message, maxBufferSize);
-			else if (message.Version.Envelope == EnvelopeVersion.Soap12)
-				return CreateFault12 (message, maxBufferSize);
+			try {
+				if (message.Version.Envelope == EnvelopeVersion.Soap11)
+					return CreateFault11 (message, maxBufferSize);
+				else if (message.Version.Envelope == EnvelopeVersion.Soap12)
+					return CreateFault12 (message, maxBufferSize);
+			} catch (XmlException ex) {
+				throw new CommunicationException ("Received an invalid SOAP Fault message", ex);
+			}
 			throw new InvalidOperationException ("The input message is not a SOAP envelope.");
 		}
 
@@ -78,6 +82,9 @@ namespace System.ServiceModel.Channels
 			}
 			r.ReadEndElement ();
 
+			if (fr == null)
+				throw new XmlException ("Reason is missing in the Fault message");
+
 			if (details == null)
 				return CreateFault (fc, fr);
 			return CreateFault (fc, fr, details);
@@ -100,9 +107,13 @@ namespace System.ServiceModel.Channels
 					fr = ReadFaultReason12 (r, message.Version.Envelope.Namespace);
 					break;
 				default:
-					throw new NotImplementedException ();
+					throw new XmlException (String.Format ("Unexpected node {0} name {1}", r.NodeType, r.Name));
 				}
+				r.MoveToContent ();
 			}
+
+			if (fr == null)
+				throw new XmlException ("Reason is missing in the Fault message");
 
 			r.ReadEndElement ();
 

@@ -1,3 +1,8 @@
+2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* soap-fault-incomplete.xml : new test file.
+	* MessageFaultTest.cs : new test.
+
 2009-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryMessageEncodingBindingElementTest.cs, binary-message.raw:

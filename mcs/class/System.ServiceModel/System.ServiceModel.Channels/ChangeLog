@@ -1,5 +1,10 @@
 2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageFault.cs : Reason is mandatory. raise XmlException, and
+	  CommunicationException in each CreateFault().
+
+2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : on listener side, get TcpClient at
 	  Open(). Some (but not all yet) continuous communication works now.
 	  Use ProtocolException. Remove dummy binary session string.
