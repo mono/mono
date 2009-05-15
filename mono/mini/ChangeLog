@@ -31,6 +31,9 @@
 
 2009-05-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_method_code): Skip a few more characters in the debug
+	label names.
+
 	* mini-trampolines.c (mono_magic_trampoline): Handle static rgctx invoke
 	wrappers during full aot mode correctly.
 
