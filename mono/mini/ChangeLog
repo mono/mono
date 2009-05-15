@@ -1,3 +1,25 @@
+2009-05-15  Massimiliano Mantione  <massi@ximian.com>
+
+	Made it possible for mono_arch_instrument_epilog to preserve
+	argument registers, otherwise instrumenting the "epilogue" before
+	a tail call would clobber them.
+	* mini.h: Added "mono_arch_instrument_epilog_full" prototype, which
+	if like mono_arch_instrument_epilog but with an additional parameter
+	that states if argument registers must be preserved.
+	* mini.c: implemented mono_arch_instrument_epilog as a call to
+	mono_arch_instrument_epilog_full without asking to preserve argument
+	registers (this makes the existing code work as usual).
+	* mini-amd64.c:
+	- mono_arch_instrument_epilog: add parameter to transform it into
+	mono_arch_instrument_epilog_full, and preserve argument registers
+	when required.
+	- mono_arch_output_basic_block, OP_TAILCALL case: call
+	mono_arch_instrument_epilog_full.
+	* mini-alpha.c, mini-arm.c, mini-hppa.c, mini-ia64.c, mini-mips.c,
+	mini-ppc.c, mini-s390.c, mini-s390x.c, mini-sparc.c, mini-x86.c:
+	only transformed mono_arch_instrument_epilog into
+	mono_arch_instrument_epilog_full.
+
 2009-05-15  Geoff Norton  <gnorton@novell.com>
 
 	* mini-darwin.c: This works on arm now.
