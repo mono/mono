@@ -321,11 +321,11 @@ namespace System.Windows.Forms
 			protected override bool ProcessDialogChar (char charCode)
 			{
 				// Shortcut keys, kinda like mnemonics, except you don't have to press Alt
-				if ((charCode == 'N' || charCode == 'n') && (CancelButton as Button).Text == "No")
+				if ((charCode == 'N' || charCode == 'n') && (CancelButton != null && (CancelButton as Button).Text == "No"))
 					CancelButton.PerformClick ();
 				else if ((charCode == 'Y' || charCode == 'y') && (AcceptButton as Button).Text == "Yes")
 					AcceptButton.PerformClick ();
-				else if ((charCode == 'A' || charCode == 'a') && (CancelButton as Button).Text == "Abort")
+				else if ((charCode == 'A' || charCode == 'a') && (CancelButton != null && (CancelButton as Button).Text == "Abort"))
 					CancelButton.PerformClick ();
 				else if ((charCode == 'R' || charCode == 'r') && (AcceptButton as Button).Text == "Retry")
 					AcceptButton.PerformClick ();
