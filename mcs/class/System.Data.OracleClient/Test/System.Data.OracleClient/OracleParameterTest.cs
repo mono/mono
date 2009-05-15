@@ -369,5 +369,141 @@ namespace MonoTests.System.Data.OracleClient
 					"Unexpected result value.");
 			}
 		}
+
+		private void ParamSize_SPCreation_ValueInsertion (OracleConnection conn)
+		{
+		    string createSP =
+			"CREATE OR REPLACE PROCEDURE GetTextValue \n" +
+			"( \n" +
+			"id IN Number(10),\n" +
+			"text OUT varchar2(64) \n" +
+			")\n" +
+			"AS\n" +
+			"BEGIN\n" +
+			"SELECT oratest.text INTO text \n" +
+			"  FROM oratest\n" +
+			"  WHERE oratest.id = id; \n" +
+			"END;\n";
+
+		    string insertValue = "INSERT INTO oratest VALUES " +
+			"(424608, \"This is a test for 424908 parameter size bug\", NULL);";
+
+		    OracleCommand cmd = new OracleCommand ();
+		    cmd.Connection = conn;
+		    cmd.CommandText = createSP;
+		    cmd.CommandType = CommandType.Text;
+		    cmd.ExecuteNonQuery ();
+
+		    cmd.CommandText = insertValue;
+		    cmd.ExecuteNonQuery ();
+
+		    cmd.CommandText = "commit";
+		    cmd.ExecuteNonQuery ();
+		    cmd.Dispose ();
+		}
+
+		[Test]
+		public void ParamSize_424908_ValueError ()
+		{
+		    OracleConnection conn = new OracleConnection (connection_string);
+		    conn.Open ();
+
+		    ParamSize_SPCreation_ValueInsertion (conn);
+
+		    OracleCommand cmd = new OracleCommand ();
+		    cmd.Connection = conn;
+
+		    OracleParameter id = new OracleParameter ();
+		    id.ParameterName = "id";
+		    id.OracleType = OracleType.Number;
+		    id.Direction = ParameterDirection.Input;
+		    id.Value = 424908;
+		    cmd.Parameters.Add (id);
+
+		    OracleParameter text = new OracleParameter ();
+		    text.ParameterName = "text";                                                                    
+		    text.OracleType = OracleType.NVarChar;                                                                  
+		    text.Direction = ParameterDirection.Output;
+		    text.Value = string.Empty;
+		    text.Size = 64;
+		    cmd.Parameters.Add (text);
+
+		    try {
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.CommandText = "GetTextValue";
+			cmd.ExecuteNonQuery ();
+			Assert.Fail ("Expected OracleException not occurred!");
+		    } catch (OracleException ex) {
+			Assert.AreEqual ("6502", ex.Code, "Error code mismatch");
+			connection.Close ();
+		    }
+		}
+
+		[Test]
+		public void ParamSize_424908_ConstructorSizeSetTest ()
+		{
+		    OracleConnection conn = new OracleConnection (connection_string);
+		    conn.Open ();
+
+		    ParamSize_SPCreation_ValueInsertion (conn);
+
+		    OracleCommand cmd = new OracleCommand ();
+		    cmd.Connection = conn;
+
+		    OracleParameter id = new OracleParameter ();
+		    id.ParameterName = "id";
+		    id.OracleType = OracleType.Number;
+		    id.Direction = ParameterDirection.Input;
+		    id.Value = 424908;
+		    cmd.Parameters.Add (id);
+
+		    OracleParameter text = new OracleParameter ("text", OracleType.NVarChar, 64);
+		    text.Direction = ParameterDirection.Output;
+		    text.Value = string.Empty;
+		    text.Size = 64;
+		    cmd.Parameters.Add (text);
+
+		    cmd.CommandType = CommandType.StoredProcedure;
+		    cmd.CommandText = "GetTextValue";
+		    cmd.ExecuteNonQuery ();
+
+		    Assert.AreEqual ("This is a test for 424908 parameter size bug", text.Value, "OracleParameter value mismatch");
+		    conn.Close ();
+		}
+		[Test]
+		public void ParamSize_424908_SizeNotSetError ()
+		{
+		    OracleConnection conn = new OracleConnection (connection_string);
+		    conn.Open ();
+
+		    ParamSize_SPCreation_ValueInsertion (conn);
+
+		    OracleCommand cmd = new OracleCommand ();
+		    cmd.Connection = conn;
+
+		    OracleParameter id = new OracleParameter ();
+		    id.ParameterName = "id";
+		    id.OracleType = OracleType.Number;
+		    id.Direction = ParameterDirection.Input;
+		    id.Value = 424908;
+		    cmd.Parameters.Add (id);
+
+		    OracleParameter text = new OracleParameter ();
+		    text.ParameterName = "text";                                                                    
+		    text.OracleType = OracleType.NVarChar;                                                                  
+		    text.Direction = ParameterDirection.Output;
+		    text.Value = DBNull.Value;
+		    cmd.Parameters.Add (text);
+
+		    try {
+			cmd.CommandType = CommandType.StoredProcedure;
+			cmd.CommandText = "GetTextValue";
+			cmd.ExecuteNonQuery ();
+			Assert.Fail ("Expected System.Exception not occurred!");
+		    } catch (Exception ex) {
+			conn.Close ();
+			Assert.AreEqual ("Size must be set.", ex.Message, "Exception mismatch");
+		    }		    
+		}
 	}
 }
