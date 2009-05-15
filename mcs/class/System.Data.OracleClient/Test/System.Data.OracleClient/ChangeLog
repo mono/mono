@@ -1,3 +1,7 @@
+2009-05-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OracleParameterTest.cs: Added tests corresponding to #424908
+	
 2008-05-07  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OracleDataAdapterTest.cs: Added ctor and basic property tests.

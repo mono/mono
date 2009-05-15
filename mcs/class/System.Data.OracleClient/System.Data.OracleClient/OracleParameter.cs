@@ -123,9 +123,9 @@ namespace System.Data.OracleClient
 		{
 			this.name = name;
 			this.value = value;
-			if (value != null) {
+			if (value != null && value != DBNull.Value) {
 				this.sizeSet = true;
-				this.size = InferSize (value);
+				this.size = InferSize ();
 			}
 			srcColumn = string.Empty;
 			SourceVersion = DataRowVersion.Current;
@@ -153,9 +153,12 @@ namespace System.Data.OracleClient
 			this.name = name;
 			if (size < 0)
 				throw new ArgumentException("Size must be not be negative.");
-			this.size = size;
-			this.sizeSet = true;
+			
 			this.value = value;
+			if (value != null && value != DBNull.Value) {
+				this.size = size;
+				this.sizeSet = true;
+			}
 			SourceColumnNullMapping = sourceColumnNullMapping;
 			OracleType = oracleType;
 			Direction = direction;
@@ -169,9 +172,12 @@ namespace System.Data.OracleClient
 			this.name = name;
 			if (size < 0)
 				throw new ArgumentException("Size must be not be negative.");
-			this.size = size;
-			this.sizeSet = true;
+			
 			this.value = value;
+			if (value != null && value != DBNull.Value) {
+				this.size = size;
+				this.sizeSet = true;
+			}
 			this.isNullable = isNullable;
 			this.precision = precision;
 			this.scale = scale;
@@ -359,7 +365,7 @@ namespace System.Data.OracleClient
 				this.value = value;
 				if (!oracleTypeSet)
 					InferOracleType (value);
-				if (value != null) {
+				if (value != null && value != DBNull.Value) {
 					this.size = InferSize ();
 					this.sizeSet = true;
 				}
@@ -876,7 +882,7 @@ namespace System.Data.OracleClient
 		private void InferOracleType (object value)
 		{
 			// Should we throw an exception here?
-			if (value is null)
+			if (value == null || value == DBNull.Value)
 				return;
 			
 			Type type = value.GetType ();
