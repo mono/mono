@@ -1,3 +1,7 @@
+2009-05-15  Geoff Norton  <gnorton@novell.com>
+
+	* mini-darwin.c: This works on arm now.
+
 2009-05-14  Geoff Norton  <gnorton@novell.com>
 
 	* jit.h, driver.c: Allow full-aot to be decided programatically by the
