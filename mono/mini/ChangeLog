@@ -1,5 +1,9 @@
 2009-05-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_method_code): Avoid duplicate labels for methods.
+
+2009-05-15  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-ppc.c (mono_arch_emit_exceptions): Nullify the processed patches.
 
 	* tramp-ppc.c (mono_arch_nullify_class_init_trampoline): Implement this
