@@ -137,7 +137,6 @@ namespace System.Windows.Forms
 			MouseMove += new MouseEventHandler (OnMouseMoveLB);
 			MouseUp += new MouseEventHandler (OnMouseUpLB);
 			MouseWheel += new MouseEventHandler (OnMouseWheelLB);
-			KeyDown += new KeyEventHandler (OnKeyDownLB);
 			KeyUp += new KeyEventHandler (OnKeyUpLB);
 			GotFocus += new EventHandler (OnGotFocus);
 			LostFocus += new EventHandler (OnLostFocus);
@@ -1205,6 +1204,17 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
 		{
+			if ((Msg)m.Msg == Msg.WM_KEYDOWN) {
+				if (ProcessKeyMessage (ref m))
+					m.Result = IntPtr.Zero;
+				else {
+					HandleKeyDown ((Keys)m.WParam.ToInt32 ());
+					DefWndProc (ref m);
+				}
+
+				return;
+			}
+
 			base.WndProc (ref m);
 		}
 
@@ -1649,17 +1659,17 @@ namespace System.Windows.Forms
 			return true;
 		}
 
-		internal void OnKeyDownLB (object sender, KeyEventArgs e)
+		internal void HandleKeyDown (Keys key)
 		{
 			int new_item = -1;
 			
 			if (Items.Count == 0)
 				return;
 
-			if (KeySearch (e.KeyCode))
+			if (KeySearch (key))
 				return;
 
-			switch (e.KeyCode) {
+			switch (key) {
 				
 				case Keys.ControlKey:
 					ctrl_pressed = true;

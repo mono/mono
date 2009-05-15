@@ -1,3 +1,13 @@
+2009-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListBox.cs: Handle the key down event in WndProc instead of doing it
+	in an event handler, as we need to avoid any operation in case
+	the user has handled it in its own OnKeyDown handler, and this can't
+	be achieved since our handler would be the first one always.
+	* FontDialog.cs: Update the calls since our method handling key down
+	has been renamed.
+	Fixes #503469.
+
 2009-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Application.cs: We should dismiss the active ToolStrip when we
