@@ -1,3 +1,8 @@
+2009-05-15  Geoff Norton  <gnorton@novell.com>
+
+	* gc.c: MachO/Darwin supports and uses semaphores fine for this 
+	use-case and is significantly more performant than the wapi layer.
+
 2009-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the assembly table.
