@@ -45,6 +45,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (0,  e.OldIndex);
 		}
 
+#if NET_2_0
 		[Test]
 		public void Ctor_ListChangedType_NewIndex_PropDesc()
 		{
@@ -54,5 +55,6 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (2,  e.NewIndex);
 			Assert.AreEqual (2,  e.OldIndex);
 		}
+#endif // NET_2_0
 	}
 }
