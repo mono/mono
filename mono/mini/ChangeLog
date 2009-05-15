@@ -1,3 +1,8 @@
+2009-05-14  Geoff Norton  <gnorton@novell.com>
+
+	* jit.h, driver.c: Allow full-aot to be decided programatically by the
+	embedding api.
+
 2009-05-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_magic_trampoline): Handle static rgctx invoke
