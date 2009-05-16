@@ -39,6 +39,9 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Text;
+#if NET_2_0
+using System.IO.Compression;
+#endif
 
 namespace System.Net 
 {
@@ -89,6 +92,13 @@ namespace System.Net
 				this.cookie_container = container;	
 				FillCookies ();
 			}
+#if NET_2_0
+			string content_encoding = webHeaders ["Content-Encoding"];
+			if (content_encoding == "gzip" && (data.request.AutomaticDecompression & DecompressionMethods.GZip) != 0)
+				stream = new GZipStream (stream, CompressionMode.Decompress);
+			else if (content_encoding == "deflate" && (data.request.AutomaticDecompression & DecompressionMethods.Deflate) != 0)
+				stream = new DeflateStream (stream, CompressionMode.Decompress);
+#endif
 		}
 
 #if NET_2_0
