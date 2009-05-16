@@ -1,3 +1,7 @@
+2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* SqlParameterTest.cs: Added test for bug #382589.
+	
 2009-02-02  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlCommandTest.cs:

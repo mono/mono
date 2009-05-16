@@ -1,3 +1,7 @@
+2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* TdsMetaParameter.cs (Prepare): Default precision is 29 and not 28.
+	
 2009-05-12  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes rest of #497715 - Patch by Jonas Larsson <Jonas.Larsson@manodo.se>

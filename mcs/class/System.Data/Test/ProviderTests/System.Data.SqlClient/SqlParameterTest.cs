@@ -4,6 +4,7 @@
 // Author:
 //      Senganal T (tsenganal@novell.com)
 //      Amit Biswas (amit@amitbiswas.com)
+//      Veerapuram Varadhan  (vvaradhan@novell.com)
 //
 // Copyright (c) 2004 Novell Inc., and the individuals listed
 // on the ChangeLog entries.
@@ -219,5 +220,98 @@ namespace MonoTests.System.Data.SqlClient
 				DBHelper.ExecuteNonQuery (conn, delete_data);
 			}
 		}
+
+		[Test] // bug# 382589
+		public void DecimalMaxAsParamValueTest () 
+		{
+		    string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,0) OUT)"
+			+ "AS " + Environment.NewLine
+			+ "BEGIN" + Environment.NewLine
+			+ "SET @decmax = 102.34" + Environment.NewLine
+			+ "END";
+
+		    cmd = new SqlCommand (create_sp, conn);
+		    cmd.ExecuteNonQuery ();
+
+		    cmd.CommandText = "[#sp_bug382539]";
+		    cmd.CommandType = CommandType.StoredProcedure;
+		    SqlParameter pValue = new SqlParameter("@decmax", Decimal.MaxValue);
+		    pValue.Direction = ParameterDirection.InputOutput;
+		    cmd.Parameters.Add(pValue);
+
+		    Assert.AreEqual (Decimal.MaxValue, pValue.Value, "Parameter initialization value mismatch");
+		    cmd.ExecuteNonQuery();
+
+		    Assert.AreEqual (102m, pValue.Value, "Parameter value mismatch");
+		}
+
+		[Test] // bug# 382589
+		public void DecimalMinAsParamValueTest () 
+		{
+		    string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,0) OUT)"
+			+ "AS " + Environment.NewLine
+			+ "BEGIN" + Environment.NewLine
+			+ "SET @decmax = 102.34" + Environment.NewLine
+			+ "END";
+
+		    cmd = new SqlCommand (create_sp, conn);
+		    cmd.ExecuteNonQuery ();
+
+		    cmd.CommandText = "[#sp_bug382539]";
+		    cmd.CommandType = CommandType.StoredProcedure;
+		    SqlParameter pValue = new SqlParameter("@decmax", Decimal.MinValue);
+		    pValue.Direction = ParameterDirection.InputOutput;
+		    cmd.Parameters.Add(pValue);
+	    
+		    Assert.AreEqual (Decimal.MinValue, pValue.Value, "Parameter initialization value mismatch");
+		    cmd.ExecuteNonQuery();
+
+		    Assert.AreEqual (102m, pValue.Value, "Parameter value mismatch");
+		}
+
+		[Test] // bug# 382589
+		[ExpectedException (typeof (SqlException))]
+		public void DecimalMaxAsParamValueExceptionTest () 
+		{
+		    string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,10) OUT)"
+			+ "AS " + Environment.NewLine
+			+ "BEGIN" + Environment.NewLine
+			+ "SET @decmax = 102.36" + Environment.NewLine
+			+ "END";
+
+		    cmd = new SqlCommand (create_sp, conn);
+		    cmd.ExecuteNonQuery ();
+
+		    cmd.CommandText = "[#sp_bug382539]";
+		    cmd.CommandType = CommandType.StoredProcedure;
+		    SqlParameter pValue = new SqlParameter("@decmax", Decimal.MaxValue);
+		    pValue.Direction = ParameterDirection.InputOutput;
+		    cmd.Parameters.Add(pValue);
+		    cmd.ExecuteNonQuery();
+		    Assert.Fail ("Expected exception didn't occur");
+		}
+
+		[Test] // bug# 382589
+		[ExpectedException (typeof (SqlException))]
+		public void DecimalMinAsParamValueExceptionTest () 
+		{
+		    string create_sp = "CREATE PROCEDURE #sp_bug382539 (@decmax decimal(29,10) OUT)"
+			+ "AS " + Environment.NewLine
+			+ "BEGIN" + Environment.NewLine
+			+ "SET @decmax = 102.36" + Environment.NewLine
+			+ "END";
+
+		    cmd = new SqlCommand (create_sp, conn);
+		    cmd.ExecuteNonQuery ();
+
+		    cmd.CommandText = "[#sp_bug382539]";
+		    cmd.CommandType = CommandType.StoredProcedure;
+		    SqlParameter pValue = new SqlParameter("@decmax", Decimal.MinValue);
+		    pValue.Direction = ParameterDirection.InputOutput;
+		    cmd.Parameters.Add(pValue);
+		    cmd.ExecuteNonQuery();
+		    Assert.Fail ("Expected exception didn't occur");
+		}
+
 	}
 }
