@@ -1,5 +1,9 @@
 2009-05-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c method-to-ir.c mini-trampolines.c: Get rid of the usage of
+	mono_marshal_get_static_rgctx_invoke (), all platforms which support
+	gshared use the static rgctx trampolines now.
+	
 	* mini.c (mini_init): Call mono_set_generic_sharing_supported () if the
 	platform supports it.
 
