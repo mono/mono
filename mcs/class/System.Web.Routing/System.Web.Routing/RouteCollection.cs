@@ -150,12 +150,30 @@ namespace System.Web.Routing
 				return null;
 
 			VirtualPathData vp = null;
-			if (!String.IsNullOrEmpty (name)) {
-				RouteBase rb = this [name];
-				if (rb != null)
-					vp = rb.GetVirtualPath (requestContext, values);
+			// Try the given route, if any,  or the current route first...
+			RouteBase current = null;
+			RouteValueDictionary dict = null;
+			bool named_route = (!String.IsNullOrEmpty (name));
+			if (named_route) {
+				current = this [name];
+				dict = values;
 			} else {
+				current = requestContext.RouteData.Route;
+				dict = new RouteValueDictionary ();
+				// Grab default values for the current route
+				foreach (var p in requestContext.RouteData.Values) {
+					if (!values.ContainsKey (p.Key))
+						dict.Add (p.Key, p.Value);
+				}
+				foreach (var p in values)
+					dict.Add (p.Key, p.Value);
+			}
+			vp = current.GetVirtualPath (requestContext, dict);
+			if (!named_route && vp == null) {
+				//..then try all the other routes in the order they were added
 				foreach (RouteBase rb in this) {
+					if (rb == current) // Already tried
+						continue;
 					vp = rb.GetVirtualPath (requestContext, values);
 					if (vp != null)
 						break;
