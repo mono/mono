@@ -447,7 +447,6 @@ namespace Mono.Data.Tds.Protocol
 				size <<= 1;
 			if (ServerTdsVersion > TdsVersion.tds70 
 			           && origColType == TdsColumnType.Decimal) {
-				param.TypeName = "numeric";
 				Comm.Append ((byte)TdsColumnType.Numeric);
 			} else {
 				Comm.Append ((byte)colType);
@@ -462,7 +461,7 @@ namespace Mono.Data.Tds.Protocol
 
 			// Precision and Scale are non-zero for only decimal/numeric
 			if ( param.TypeName == "decimal" || param.TypeName == "numeric") {
-				Comm.Append ((param.Precision !=0 ) ? param.Precision : (byte) 28);
+				Comm.Append ((param.Precision !=0 ) ? param.Precision : (byte) 29);
 				Comm.Append (param.Scale);
 			}
 

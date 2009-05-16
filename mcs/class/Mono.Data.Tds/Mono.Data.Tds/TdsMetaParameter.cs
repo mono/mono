@@ -229,9 +229,9 @@ namespace Mono.Data.Tds {
 			switch (typeName) {
 			case "decimal":
 			case "numeric":
-				// msdotnet sends a default precision of 28
+				// msdotnet sends a default precision of 29
 				result.Append (String.Format ("({0},{1})",
-					 (Precision == (byte)0 ? (byte)28 : Precision), Scale));
+					 (Precision == (byte)0 ? (byte)29 : Precision), Scale));
 				break;
 			case "varchar":
 			case "varbinary":
