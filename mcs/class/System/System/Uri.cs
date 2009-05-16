@@ -478,7 +478,7 @@ namespace System {
 				return host; 
 			} 
 		}
-
+#if !NET_2_1
 		public UriHostNameType HostNameType { 
 			get {
 				EnsureAbsoluteUri ();
@@ -499,6 +499,8 @@ namespace System {
 			} 
 		}
 
+#endif // NET_2_1
+
 		public bool IsDefaultPort { 
 			get {
 				EnsureAbsoluteUri ();
@@ -513,6 +515,7 @@ namespace System {
 			}
 		}
 
+#if !NET_2_1
 		public bool IsLoopback { 
 			get {
 				EnsureAbsoluteUri ();
@@ -542,6 +545,8 @@ namespace System {
 				return false;
 			} 
 		}
+
+#endif // NET_2_1
 
 		public bool IsUnc {
 			// rule: This should be true only if
@@ -780,6 +785,7 @@ namespace System {
 			
 			return true;
 		}
+#if !NET_2_1
 
 #if NET_2_0
 		[Obsolete("This method does nothing, it has been obsoleted")]
@@ -791,6 +797,16 @@ namespace System {
 			// internally, no longer in use, and Obsolete.
 			//
 		}
+
+		[MonoTODO ("Find out what this should do")]
+#if NET_2_0
+		[Obsolete]
+#endif
+		protected virtual void CheckSecurity ()
+		{
+		}
+
+#endif // NET_2_1
 
 		// defined in RFC3986 as = ALPHA *( ALPHA / DIGIT / "+" / "-" / ".")
 		public static bool CheckSchemeName (string schemeName) 
@@ -822,14 +838,6 @@ namespace System {
 			// Fx 1.x got this too large
 			return Char.IsLetter (c);
 #endif
-		}
-
-		[MonoTODO ("Find out what this should do")]
-#if NET_2_0
-		[Obsolete]
-#endif
-		protected virtual void CheckSecurity ()
-		{
 		}
 
 		public override bool Equals (object comparant) 
