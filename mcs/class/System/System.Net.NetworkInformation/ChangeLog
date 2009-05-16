@@ -1,3 +1,9 @@
+2009-05-16  Miguel de Icaza  <miguel@novell.com>
+
+	* Apply patch from Alex Shulgin
+	<alexander.shulgin@yessoftware.com> to support OSX in
+	NetworkInformation classes.
+
 2009-05-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Ping.cs: we just need the address(es), not a host entry. This avoids

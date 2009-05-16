@@ -53,34 +53,25 @@ namespace System.Net.NetworkInformation {
 		public abstract IPAddressCollection WinsServersAddresses { get; }
 	}
 
-	class LinuxIPInterfaceProperties : IPInterfaceProperties
+	abstract class UnixIPInterfaceProperties : IPInterfaceProperties
 	{
-		IPv4InterfaceProperties ipv4iface_properties;
-		LinuxNetworkInterface iface;
+		protected IPv4InterfaceProperties ipv4iface_properties;
+		protected UnixNetworkInterface iface;
 		List <IPAddress> addresses;
 		IPAddressCollection dns_servers;
 		string dns_suffix;
 		DateTime last_parse;
 		
-		public LinuxIPInterfaceProperties (LinuxNetworkInterface iface, List <IPAddress> addresses)
+		public UnixIPInterfaceProperties (UnixNetworkInterface iface, List <IPAddress> addresses)
 		{
 			this.iface = iface;
 			this.addresses = addresses;
-		}
-
-		public override IPv4InterfaceProperties GetIPv4Properties ()
-		{
-			if (ipv4iface_properties == null)
-				ipv4iface_properties = new LinuxIPv4InterfaceProperties (iface);
-			
-			return ipv4iface_properties;
 		}
 
 		public override IPv6InterfaceProperties GetIPv6Properties ()
 		{
 			throw new NotImplementedException ();
 		}
-
 
 		static Regex ns = new Regex (@"\s*nameserver\s+(?<address>.*)");
 		static Regex search = new Regex (@"\s*search\s+(?<domain>.*)");
@@ -231,6 +222,38 @@ namespace System.Net.NetworkInformation {
 				// I do SUPPOSE we could scrape /etc/samba/smb.conf, but.. yeesh.
 				return new IPAddressCollection ();
 			}
+		}
+	}
+
+	class LinuxIPInterfaceProperties : UnixIPInterfaceProperties
+	{
+		public LinuxIPInterfaceProperties (LinuxNetworkInterface iface, List <IPAddress> addresses)
+			: base (iface, addresses)
+		{
+		}
+
+		public override IPv4InterfaceProperties GetIPv4Properties ()
+		{
+			if (ipv4iface_properties == null)
+				ipv4iface_properties = new LinuxIPv4InterfaceProperties (iface as LinuxNetworkInterface);
+			
+			return ipv4iface_properties;
+		}
+	}
+
+	class MacOsIPInterfaceProperties : UnixIPInterfaceProperties
+	{
+		public MacOsIPInterfaceProperties (MacOsNetworkInterface iface, List <IPAddress> addresses)
+			: base (iface, addresses)
+		{
+		}
+
+		public override IPv4InterfaceProperties GetIPv4Properties ()
+		{
+			if (ipv4iface_properties == null)
+				ipv4iface_properties = new MacOsIPv4InterfaceProperties (iface as MacOsNetworkInterface);
+			
+			return ipv4iface_properties;
 		}
 	}
 

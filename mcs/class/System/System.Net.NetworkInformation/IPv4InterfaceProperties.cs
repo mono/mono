@@ -46,17 +46,17 @@ namespace System.Net.NetworkInformation {
 		public abstract bool UsesWins { get; }
 	}
 
-	sealed class LinuxIPv4InterfaceProperties : IPv4InterfaceProperties
+	abstract class UnixIPv4InterfaceProperties : IPv4InterfaceProperties
 	{
-		LinuxNetworkInterface iface;
+		protected UnixNetworkInterface iface;
 		
-		public LinuxIPv4InterfaceProperties (LinuxNetworkInterface iface)
+		public UnixIPv4InterfaceProperties (UnixNetworkInterface iface)
 		{
 			this.iface = iface;
 		}
 		
 		public override int Index {
-			get { return LinuxNetworkInterface.IfNameToIndex (iface.Name); }
+			get { return UnixNetworkInterface.IfNameToIndex (iface.Name); }
 		}
 
 		// TODO: how to discover that?
@@ -74,6 +74,18 @@ namespace System.Net.NetworkInformation {
 			get { return false; }
 		}
 	
+		public override bool UsesWins {
+			get { return false; }
+		}
+	}
+	
+	sealed class LinuxIPv4InterfaceProperties : UnixIPv4InterfaceProperties
+	{
+		public LinuxIPv4InterfaceProperties (LinuxNetworkInterface iface)
+			: base (iface)
+		{
+		}
+		
 		public override bool IsForwardingEnabled {
 			get {
 				string iface_path = "/proc/sys/net/ipv4/conf/" + iface.Name + "/forwarding";
@@ -87,9 +99,10 @@ namespace System.Net.NetworkInformation {
 				return false;
 			}
 		}
+
 		public override int Mtu {
 			get {
-				string iface_path = iface.IfacePath + "mtu";
+				string iface_path = (iface as LinuxNetworkInterface).IfacePath + "mtu";
 				int ret = 0;
 
 				if (File.Exists (iface_path)) {
@@ -105,9 +118,23 @@ namespace System.Net.NetworkInformation {
 						
 			}
 		}
-	
-		public override bool UsesWins {
+	}
+
+	sealed class MacOsIPv4InterfaceProperties : UnixIPv4InterfaceProperties
+	{
+		public MacOsIPv4InterfaceProperties (MacOsNetworkInterface iface)
+			: base (iface)
+		{
+		}
+
+		// dummy
+		public override bool IsForwardingEnabled {
 			get { return false; }
+		}
+
+		// dummy
+		public override int Mtu {
+			get { return 0; }
 		}
 	}
 	
