@@ -98,6 +98,9 @@ namespace System.Net
 		object locker = new object ();
 		bool is_ntlm_auth;
 		bool finished_reading;
+#if NET_2_0
+		DecompressionMethods auto_decomp;
+#endif
 #if NET_1_1
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
@@ -192,14 +195,14 @@ namespace System.Net
 			return new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public DecompressionMethods AutomaticDecompression
 		{
 			get {
-				throw GetMustImplement ();
+				return auto_decomp;
 			}
 			set {
-				throw GetMustImplement ();
+				CheckRequestStarted ();
+				auto_decomp = value;
 			}
 		}
 #endif
@@ -1024,6 +1027,15 @@ namespace System.Net
 					webHeaders.SetInternal ("Cookie", cookieHeader);
 			}
 
+#if NET_2_0
+			string accept_encoding = null;
+			if ((auto_decomp & DecompressionMethods.GZip) != 0)
+				accept_encoding = "gzip";
+			if ((auto_decomp & DecompressionMethods.Deflate) != 0)
+				accept_encoding = accept_encoding != null ? "gzip, deflate" : "deflate";
+			if (accept_encoding != null)
+				webHeaders.SetInternal ("Accept-Encoding", accept_encoding);
+#endif
 			if (!usedPreAuth && preAuthenticate)
 				DoPreAuthenticate ();
 

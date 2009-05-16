@@ -1,3 +1,10 @@
+2009-05-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebResponse.cs:
+	* HttpWebRequest.cs: support automatic decompression of the response.
+	Fixes bug #504391.
+
+
 2009-05-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Dns.cs: made GetHostAddresses and friends internal for 1.x
