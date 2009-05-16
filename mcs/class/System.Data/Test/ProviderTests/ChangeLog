@@ -1,3 +1,9 @@
+2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* app-net_2.0.config: New test box details - update.
+
+	* Makefile: Nunit 2.4 changes
+	
 2009-03-15  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* app-net_1.1.config: Added ClientVersion to Engine section. Added
