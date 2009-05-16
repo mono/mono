@@ -898,7 +898,7 @@ namespace System.Data
 			CodeMemberProperty pubTable = new CodeMemberProperty ();
 			pubTable.Type = TypeRef (tableTypeName);
 			pubTable.Attributes = MemberAttributes.Public;
-			pubTable.Name = tableVarName;
+			pubTable.Name = tableVarName == table.TableName ? "_"+tableVarName : tableVarName;
 			pubTable.HasSet = false;
 			// Code: return __table[foo];
 			pubTable.GetStatements.Add (Return (FieldRef ("__table" + tableVarName)));

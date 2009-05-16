@@ -1,3 +1,10 @@
+2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #325464 - ToolItems.xsd
+	* CustomDataClassGenerator.cs (CreateDataSetTableMembers): Prefix a "_" to 
+	member names when it is same as that of the dataset.  Fixes the CS0542 error
+	during compilation of the generated source.
+	
 2009-03-25  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataView.cs: Fire ListChanged when the RowFilter changes.
