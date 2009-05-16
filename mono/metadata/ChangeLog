@@ -1,5 +1,8 @@
 2009-05-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_get_vtable_entry): Avoid adding static-rgctx
+	wrappers, this is now done in the JIT.
+	
 	* class.c (mono_set_generic_sharing_supported): New internal function.
 	(mono_class_generic_sharing_enabled): Move the #ifdef stuff to the JIT.
 
