@@ -1,3 +1,8 @@
+2009-05-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_set_generic_sharing_supported): New internal function.
+	(mono_class_generic_sharing_enabled): Move the #ifdef stuff to the JIT.
+
 2009-05-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the exported type table.

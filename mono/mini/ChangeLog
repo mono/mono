@@ -1,3 +1,8 @@
+2009-05-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Call mono_set_generic_sharing_supported () if the
+	platform supports it.
+
 2009-05-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_allocate_vars): Correctly save R5 when using AOT.
