@@ -433,7 +433,12 @@ namespace Mono.Data.Tds.Protocol
 			TdsColumnType colType = param.GetMetaType ();
 			param.IsNullable = false;
 
-			Comm.Append ((byte)colType); // type
+			if (ServerTdsVersion > TdsVersion.tds70 
+			           && colType == TdsColumnType.Decimal) {
+				Comm.Append ((byte)TdsColumnType.Numeric);
+			} else {
+				Comm.Append ((byte)colType);
+			}
 
 			int size = param.Size;
 			if (size == 0)
@@ -445,13 +450,6 @@ namespace Mono.Data.Tds.Protocol
 			 */
 			if (colType == TdsColumnType.BigNVarChar)
 				size <<= 1;
-			if (ServerTdsVersion > TdsVersion.tds70 
-			           && origColType == TdsColumnType.Decimal) {
-				Comm.Append ((byte)TdsColumnType.Numeric);
-			} else {
-				Comm.Append ((byte)colType);
-			}
-			
 			if (IsLargeType (colType))
 				Comm.Append ((short)size); // Parameter size passed in SqlParameter
 			else if (IsBlobType (colType))

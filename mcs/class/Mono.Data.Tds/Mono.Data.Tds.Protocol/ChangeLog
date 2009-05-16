@@ -1,5 +1,9 @@
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* Tds70.cs (WriteParameterInfo): fix r134256 backport errors.
+	 
+2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* Tds70.cs (WriteParameterInfo): Default precision is 29 and not 28.
 	
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
