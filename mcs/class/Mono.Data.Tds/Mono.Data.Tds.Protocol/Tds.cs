@@ -196,6 +196,20 @@ namespace Mono.Data.Tds.Protocol
 			set { sequentialAccess = value; }
 		}
 
+		public TdsVersion ServerTdsVersion {
+			get { 
+				switch (databaseMajorVersion) {
+				case 4: return TdsVersion.tds42;
+				case 5: return TdsVersion.tds50;
+				case 7: return TdsVersion.tds70;
+				case 8: return TdsVersion.tds80;
+				case 9: return TdsVersion.tds90;
+				case 10: return TdsVersion.tds100;
+				default: return tdsVersion; // return client's version
+				}
+			}
+		}
+		
 		private void SkipRow ()
 		{
 			SkipToColumnIndex (Columns.Count);

@@ -445,6 +445,14 @@ namespace Mono.Data.Tds.Protocol
 			 */
 			if (colType == TdsColumnType.BigNVarChar)
 				size <<= 1;
+			if (ServerTdsVersion > TdsVersion.tds70 
+			           && origColType == TdsColumnType.Decimal) {
+				param.TypeName = "numeric";
+				Comm.Append ((byte)TdsColumnType.Numeric);
+			} else {
+				Comm.Append ((byte)colType);
+			}
+			
 			if (IsLargeType (colType))
 				Comm.Append ((short)size); // Parameter size passed in SqlParameter
 			else if (IsBlobType (colType))
