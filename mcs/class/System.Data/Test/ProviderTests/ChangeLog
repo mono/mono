@@ -1,3 +1,9 @@
+2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* app-net_2.0.config: New test box details - update.
+
+	* Makefile: Nunit 2.4 changes
+
 2008-12-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* app-default.config: Renamed to app-net_1_1.config, and added
