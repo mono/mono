@@ -1,3 +1,13 @@
+2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #382589
+	* Tds.cs (ServerTdsVersion): New property to access ServerVersion.
+	
+	* Tds70.cs (WriteParameterInfo): Treat Decimal types as Numeric 
+	types from SQL Server 2000.
+	
+	* TdsVersion.cs: Add SQL Server 2008 version.
+	
 2009-05-02  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #462947 - Patch by Gert Driesen

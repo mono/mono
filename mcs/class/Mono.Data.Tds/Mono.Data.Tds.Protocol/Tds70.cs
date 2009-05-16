@@ -489,6 +489,10 @@ namespace Mono.Data.Tds.Protocol
 			if (TdsVersion > TdsVersion.tds81 && partLenType) {
 				Comm.Append ((byte)origColType);
 				Comm.Append ((short)-1);
+			} else if (ServerTdsVersion > TdsVersion.tds70 
+			           && origColType == TdsColumnType.Decimal) {
+				param.TypeName = "numeric";
+				Comm.Append ((byte)TdsColumnType.Numeric);
 			} else {
 				Comm.Append ((byte)colType);
 			}
