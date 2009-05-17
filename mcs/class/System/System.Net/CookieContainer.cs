@@ -60,7 +60,11 @@ namespace System.Net
 		public CookieContainer (int capacity)
 		{
 			if (capacity <= 0)
-				throw new ArgumentException ("Must be greater than zero", "capacity");
+#if NET_2_0
+				throw new ArgumentException ("Must be greater than zero", "Capacity");
+#else
+				throw new ArgumentException ("Capacity");
+#endif
 
 			this.capacity = capacity;
 		}
@@ -69,10 +73,21 @@ namespace System.Net
 			: this (capacity)
 		{
 			if (perDomainCapacity != Int32.MaxValue && (perDomainCapacity <= 0 || perDomainCapacity > capacity))
-				throw new ArgumentException ("Invalid value", "perDomaniCapacity");
+#if NET_2_0
+				throw new ArgumentOutOfRangeException ("perDomainCapacity",
+					string.Format ("PerDomainCapacity must be " +
+					"greater than {0} and less than {1}.", 0,
+					capacity));
+#else
+				throw new ArgumentException ("PerDomainCapacity");
+#endif
 
 			if (maxCookieSize <= 0)
-				throw new ArgumentException ("Must be greater than zero", "maxCookieSize");
+#if NET_2_0
+				throw new ArgumentException ("Must be greater than zero", "MaxCookieSize");
+#else
+				throw new ArgumentException ("MaxCookieSize");
+#endif
 
 			this.perDomainCapacity = perDomainCapacity;
 			this.maxCookieSize = maxCookieSize;
@@ -88,12 +103,11 @@ namespace System.Net
 			get { return capacity; }
 			set { 
 				if (value < 0 || (value < perDomainCapacity && perDomainCapacity != Int32.MaxValue))
-					throw new ArgumentOutOfRangeException ("value");
-
-				if (value < maxCookieSize)
-					maxCookieSize = value;
-
-				capacity = value;							
+					throw new ArgumentOutOfRangeException ("value",
+						string.Format ("Capacity must be greater " +
+						"than {0} and less than {1}.", 0,
+						perDomainCapacity));
+				capacity = value;
 			}
 		}
 		
@@ -101,7 +115,7 @@ namespace System.Net
 			get { return maxCookieSize; }
 			set {
 				if (value <= 0)
-					throw new ArgumentOutOfRangeException ("value");				
+					throw new ArgumentOutOfRangeException ("value");
 				maxCookieSize = value;
 			}
 		}
@@ -110,8 +124,7 @@ namespace System.Net
 			get { return perDomainCapacity; }
 			set {
 				if (value != Int32.MaxValue && (value <= 0 || value > capacity))
-					throw new ArgumentOutOfRangeException ("value");					
-
+					throw new ArgumentOutOfRangeException ("value");
 				perDomainCapacity = value;
 			}
 		}
@@ -122,7 +135,11 @@ namespace System.Net
 				throw new ArgumentNullException ("cookie");
 
 			if (cookie.Domain == "")
-				throw new ArgumentException ("Cookie domain not set.", "cookie");
+#if NET_2_0
+				throw new ArgumentException ("Cookie domain not set.", "cookie.Domain");
+#else
+				throw new ArgumentException ("cookie.Domain");
+#endif
 
 			if (cookie.Value.Length > maxCookieSize)
 				throw new CookieException ("value is larger than MaxCookieSize.");

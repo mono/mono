@@ -1,3 +1,10 @@
+2009-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CookieContainer.cs: Provide meaningful information in exception
+	messages, and improve compatibility with MS. Modified set_Capacity to
+	no longer change MaxCookieSize when new value is less than
+	MaxCookieSize.
+
 2009-05-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebResponse.cs:

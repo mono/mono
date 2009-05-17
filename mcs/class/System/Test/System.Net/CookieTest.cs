@@ -140,6 +140,20 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		public void Path ()
+		{
+			Cookie c = new Cookie ();
+			c.Path = "/Whatever";
+			Assert.AreEqual ("/Whatever", c.Path, "#1");
+			c.Path = null;
+			Assert.AreEqual (string.Empty, c.Path, "#2");
+			c.Path = "ok";
+			Assert.AreEqual ("ok", c.Path, "#3");
+			c.Path = string.Empty;
+			Assert.AreEqual (string.Empty, c.Path, "#4");
+		}
+
+		[Test]
 		public void Value ()
 		{
 			// LAMESPEC: According to .Net specs the Value property should not accept 
