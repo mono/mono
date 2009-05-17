@@ -1,3 +1,7 @@
+2009-05-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (dis_one): Add little-endian support for ldstr.
+
 2009-05-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_vtable_entry): Avoid adding static-rgctx
