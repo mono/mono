@@ -1,3 +1,8 @@
+2009-05-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c mini.c: Get rid of the unused mono_arch_fixup_jinfo ()
+	function.
+
 2009-05-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* jit-icalls.c (mono_helper_compile_generic_method): Get rid of the 
