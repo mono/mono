@@ -1,5 +1,8 @@
 2009-05-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-ppc.c: Remove the caching from the trampoline creation 
+	functions, it is already done in the caller.
+
 	* mini-trampolines.c (mono_llvm_vcall_trampoline): Fix the llvm build.
 
 	* mini-ppc.h mini-arm.h mini-x86.h mini-amd64.h: Add 
