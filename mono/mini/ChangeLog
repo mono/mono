@@ -1,5 +1,10 @@
 2009-05-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.h mini-arm.h mini-x86.h mini-amd64.h: Add 
+	MONO_ARCH_GSHARED_SUPPORTED define.
+
+	* mini.c (mini_init): Use the MONO_ARCH_GSHARED_SUPPORTED define.
+
 	* mini-arm.c mini.c: Get rid of the unused mono_arch_fixup_jinfo ()
 	function.
 
