@@ -1,3 +1,7 @@
+2009-05-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (test_messages): Fix the dependencies of this test.
+
 2009-05-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (test-coreclr-security): Use the net_2_1_raw profile since
