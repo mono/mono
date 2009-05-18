@@ -188,16 +188,14 @@ namespace System.Runtime.Serialization
 		{
 			int xlen = KnownTypeCollection.DefaultClrNamespaceBase.Length;
 			string clrns = ns.Length > xlen ?  ns.Substring (xlen) : null;
+
 			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
-				bool sysass = ass != typeof (Type).Assembly && ass.FullName.StartsWith ("System"); // FIXME: hacky optimization
 				foreach (var t in ass.GetTypes ()) {
-					if (!sysass) {
-						var dca = t.GetCustomAttribute<DataContractAttribute> (true);
-						if (dca != null && dca.Name == name && dca.Namespace == ns)
-							return t;
-						if (clrns != null && t.Name == name && t.Namespace == clrns)
-							return t;
-					}
+					var dca = t.GetCustomAttribute<DataContractAttribute> (true);
+					if (dca != null && dca.Name == name && dca.Namespace == ns)
+						return t;
+					if (clrns != null && t.Name == name && t.Namespace == clrns)
+						return t;
 				}
 			}
 			throw new XmlException (String.Format ("Type not found; name: {0}, namespace: {1}", name, ns));

@@ -1,5 +1,12 @@
 2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlFormatterDeserializer.cs : remove type lookup optimization
+	  (since .NET 3.5 introduced system types with DC) and fix
+	  serialization of system types (ISerializable types were not
+	  resolved in previous code).
+
+2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs : it was only about 2.1. Fix build.
 
 2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
