@@ -38,18 +38,11 @@ namespace System.Windows.Forms
 	public abstract class ToolStripRenderer
 	{
 		private static ColorMatrix grayscale_matrix = new ColorMatrix (new float[][] {
-						//new float[]{0.3f,0.3f,0.3f,0,0},
-						//new float[]{0.59f,0.59f,0.59f,0,0},
-						//new float[]{0.11f,0.11f,0.11f,0,0},
-						//new float[]{0,0,0,1,0,0},
-						//new float[]{0,0,0,0,1,0},
-						//new float[]{0,0,0,0,0,1}
-					  new float[]{0.2f,0.2f,0.2f,0,0},
-					  new float[]{0.41f,0.41f,0.41f,0,0},
-					  new float[]{0.11f,0.11f,0.11f,0,0},
-					  new float[]{0.15f,0.15f,0.15f,1,0,0},
-					  new float[]{0.15f,0.15f,0.15f,0,1,0},
-					  new float[]{0.15f,0.15f,0.15f,0,0,1}
+					  new float[] {0.22f, 0.22f, 0.22f, 0, 0},
+					  new float[] {0.27f, 0.27f, 0.27f, 0, 0},
+					  new float[] {0.04f, 0.04f, 0.04f, 0, 0},
+					  new float[] {0.365f, 0.365f, 0.365f, 0.7f, 0},
+					  new float[] {0, 0, 0, 0, 1}
 				  });
 
 		protected ToolStripRenderer () 
@@ -66,7 +59,7 @@ namespace System.Windows.Forms
 			ImageAttributes ia = new ImageAttributes();
 			ia.SetColorMatrix (grayscale_matrix);
 			
-			Bitmap b = new Bitmap(normalImage);
+			Bitmap b = new Bitmap(normalImage.Width, normalImage.Height);
 			Graphics.FromImage(b).DrawImage(normalImage, new Rectangle (0, 0, normalImage.Width, normalImage.Height), 0, 0, normalImage.Width, normalImage.Height, GraphicsUnit.Pixel, ia);
 			
 			return b;

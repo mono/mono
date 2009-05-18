@@ -1,3 +1,9 @@
+2009-05-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ToolStripRenderer.cs: Apply patch from Thomas Goldstein to make
+	disabled graphics look closer to the ones that .Net produces.
+	[Fixes bug #473660]
+
 2009-05-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DateTimePicker.cs: When calculating the max width for the year part,
