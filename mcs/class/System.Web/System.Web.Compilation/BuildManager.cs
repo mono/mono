@@ -655,9 +655,9 @@ namespace System.Web.Compilation {
 			if (!is_precompiled)
 				return null;
 
-			Type apptype = GetPrecompiledType (HttpRuntime.AppDomainAppVirtualPath + "/Global.asax");
+			Type apptype = GetPrecompiledType (VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath, "Global.asax"));
 			if (apptype == null)
-				apptype = GetPrecompiledType (HttpRuntime.AppDomainAppVirtualPath + "/global.asax");
+				apptype = GetPrecompiledType (VirtualPathUtility.Combine (HttpRuntime.AppDomainAppVirtualPath , "global.asax"));
 			return apptype;
 		}
 
