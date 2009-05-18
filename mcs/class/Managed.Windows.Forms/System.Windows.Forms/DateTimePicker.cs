@@ -1274,7 +1274,8 @@ namespace System.Windows.Forms {
 			if (month_calendar.Visible) {
 				month_calendar.Hide ();
 			}
-	}
+			Focus ();
+		}
 
 		private int GetSelectedPartIndex()
 		{
@@ -1737,7 +1738,6 @@ namespace System.Windows.Forms {
 		private void MonthCalendarDateSelectedHandler (object sender, DateRangeEventArgs e)
 		{
 			this.HideMonthCalendar ();	
-			this.Focus ();			
 		} 
 
 		private void MouseUpHandler(object sender, MouseEventArgs e)
@@ -1803,7 +1803,6 @@ namespace System.Windows.Forms {
     				// mouse down on this control anywhere else collapses it
     				if (is_drop_down_visible) {    				
     					HideMonthCalendar ();
-					this.Focus ();
     				}
 				if (!(ShowCheckBox && Checked == false))
 				{
@@ -1844,7 +1843,6 @@ namespace System.Windows.Forms {
 				DropDownMonthCalendar ();
 			} else {
 				HideMonthCalendar ();
-				this.Focus ();
 			}
 		}
 		

@@ -1,3 +1,9 @@
+2009-05-18  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* DateTimePicker.cs: Call Focus in HideMonthCalendar to avoid
+	duplication of code, as well as actually getting the focus back in
+	*any* scenario where the drop down is closed.
+
 2009-05-18 Tom Hindle <tom_hindle@sil.org>
 	* ScrollableControl.cs: Ignore setting properties HScroll and 
 	VScroll when AutoScroll is true.
