@@ -1,3 +1,7 @@
+2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultConverter.cs : avoid NRE for null IncomingMessageHeaders.
+
 2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageFault.cs : Reason is mandatory. raise XmlException, and
