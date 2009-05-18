@@ -1,3 +1,9 @@
+2009-05-18  Jb Evain  <jbevain@novell.com>
+
+	backport of 134333.
+
+	* Enumerable.cs (Max, Min): fix generic versions.
+
 2009-04-03  Jb Evain  <jbevain@novell.com>
 
 	backport of 130961.
