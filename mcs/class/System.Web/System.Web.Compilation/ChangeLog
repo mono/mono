@@ -1,3 +1,10 @@
+2009-05-18  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: GetPrecompiledApplicationType () uses
+	VirtualPathUtility.Combine to build global.asax virtual
+	path. Patch from Robert Jordan <robertj@gmx.net>, thanks! Fixes
+	bug #504615
+
 2009-05-10  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: keep processing the tag if it is not a server
