@@ -1,5 +1,9 @@
 2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs : it was only about 2.1. Fix build.
+
+2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs : It is not possible to get schema without
 	  IXmlSerializable instance.
 

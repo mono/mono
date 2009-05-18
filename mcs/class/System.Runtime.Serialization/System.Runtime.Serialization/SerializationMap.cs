@@ -432,11 +432,13 @@ namespace System.Runtime.Serialization
 			ixs.WriteXml (serializer.Writer);
 		}
 
+#if !NET_2_1
 		// FIXME: verify return value sanity.
 		public override XmlSchemaType GetSchemaType (XmlSchemaSet schemas, Dictionary<QName, XmlSchemaType> generated_schema_types)
 		{
 			return null;
 		}
+#endif
 	}
 
 	internal class SharedContractMap : SerializationMap
