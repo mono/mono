@@ -1,3 +1,8 @@
+2009-05-18 Tom Hindle <tom_hindle@sil.org>
+	* ScrollableControl.cs: Ignore setting properties HScroll and 
+	VScroll when AutoScroll is true.
+	[Fixes bug #500213]
+
 2009-05-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripRenderer.cs: Apply patch from Thomas Goldstein to make

@@ -568,7 +568,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (hscrollbar.VisibleInternal != value) {
+				if (!AutoScroll && hscrollbar.VisibleInternal != value) {
 					force_hscroll_visible = value;
 					Recalculate (false);
 				}
@@ -581,7 +581,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (vscrollbar.VisibleInternal != value) {
+				if (!AutoScroll && vscrollbar.VisibleInternal != value) {
 					force_vscroll_visible = value;
 					Recalculate (false);
 				}
