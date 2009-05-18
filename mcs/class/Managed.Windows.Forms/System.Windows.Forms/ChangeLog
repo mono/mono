@@ -1,3 +1,11 @@
+2009-05-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DateTimePicker.cs: When calculating the max width for the year part,
+	use the current value, since *all* the possible values are exactly a 4
+	digits number. This way we avoid a ArgumentOutOfRangeException trying
+	to check against different values.
+	Fixes #500917.
+
 2009-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MessageBox.cs: When handling ProcessDialogChar, check that
