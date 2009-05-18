@@ -1,3 +1,8 @@
+2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ErrorProcessingHandler.cs, InputOrReplyRequestProcessor.cs :
+	  they also premise request-reply channel and broke duplex channels.
+
 2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : open channel before using it.

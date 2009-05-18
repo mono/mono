@@ -27,7 +27,7 @@ namespace System.ServiceModel.Dispatcher
 							AddHandler(new ReplyHandler (replyOrInput));
 
 			//errors
-			ErrorChain.AddHandler (new ErrorProcessingHandler ());
+			ErrorChain.AddHandler (new ErrorProcessingHandler (replyOrInput));
 
 			//finalize
 			FinalizationChain.AddHandler (new FinalizeProcessingHandler ());

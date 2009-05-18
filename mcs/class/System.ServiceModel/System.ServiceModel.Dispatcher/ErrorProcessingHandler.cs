@@ -8,6 +8,13 @@ namespace System.ServiceModel.Dispatcher
 {
 	internal class ErrorProcessingHandler : BaseRequestProcessorHandler
 	{
+		public ErrorProcessingHandler (IChannel channel)
+		{
+			duplex = channel as IDuplexChannel;
+		}
+
+		IDuplexChannel duplex;
+
 		protected override bool ProcessRequest (MessageProcessingContext mrc)
 		{
 			Exception ex = mrc.ProcessingException;
@@ -24,7 +31,10 @@ namespace System.ServiceModel.Dispatcher
 			if (!fc.TryCreateFaultMessage (ex, out res))
 				throw ex;
 			mrc.ReplyMessage = res;
-			mrc.Reply (true);
+			if (duplex != null)
+				mrc.Reply (duplex, true);
+			else
+				mrc.Reply (true);
 			return false;
 		}		
 	}
