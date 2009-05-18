@@ -1,5 +1,12 @@
 2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs, XmlFormatterDeserializer.cs,
+	  KnownTypeCollection.cs : Support for array of some primitive types
+	  in the deserializer was missing, which resulted in peer resolver
+	  RegisterInfo deserialization failure.
+
+2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlFormatterDeserializer.cs : remove type lookup optimization
 	  (since .NET 3.5 introduced system types with DC) and fix
 	  serialization of system types (ISerializable types were not

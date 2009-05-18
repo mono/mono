@@ -408,7 +408,7 @@ namespace System.Runtime.Serialization
 			KnownTypes.Add (type);
 			QName qname = KnownTypes.GetQName (type);
 			string rootNamespace = KnownTypes.GetQName (mi.DeclaringType).Namespace;
-			if (KnownTypeCollection.IsPrimitiveType (qname))
+			if (KnownTypeCollection.GetPrimitiveTypeFromName (qname.Name) != null)
 				return new DataMemberInfo (mi, dma, rootNamespace, null);
 			else
 				return new DataMemberInfo (mi, dma, rootNamespace, qname.Namespace);

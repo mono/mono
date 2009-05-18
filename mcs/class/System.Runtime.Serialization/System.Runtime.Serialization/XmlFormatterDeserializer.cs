@@ -155,7 +155,7 @@ namespace System.Runtime.Serialization
 
 		object DeserializeContent (QName name, Type type, XmlReader reader, bool isEmpty)
 		{
-			if (KnownTypeCollection.IsPrimitiveType (name)) {
+			if (KnownTypeCollection.GetPrimitiveTypeFromName (name.Name) != null) {
 				string value;
 				if (isEmpty) {
 					if (type.IsValueType)
@@ -170,10 +170,11 @@ namespace System.Runtime.Serialization
 			}
 
 			SerializationMap map = types.FindUserMap (name);
-			if (map == null && name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal)) {
+			if (map == null && (name.Namespace == KnownTypeCollection.MSArraysNamespace ||
+			    name.Namespace.StartsWith (KnownTypeCollection.DefaultClrNamespaceBase, StringComparison.Ordinal))) {
 				var it = GetTypeFromNamePair (name.Name, name.Namespace);
-				if (types.TryRegister (it))
-					map = types.FindUserMap (name);
+				types.TryRegister (it);
+				map = types.FindUserMap (name);
 			}
 			if (map == null)
 				throw new SerializationException (String.Format ("Unknown type {0} is used for DataContract with reference of name {1}. Any derived types of a data contract or a data member should be added to KnownTypes.", type, name));
@@ -186,6 +187,12 @@ namespace System.Runtime.Serialization
 
 		Type GetTypeFromNamePair (string name, string ns)
 		{
+			Type p = KnownTypeCollection.GetPrimitiveTypeFromName (name); // FIXME: namespace?
+			if (p != null)
+				return p;
+			if (name.StartsWith ("ArrayOf", StringComparison.Ordinal) && ns == KnownTypeCollection.MSArraysNamespace)
+				return GetTypeFromNamePair (name.Substring (7), String.Empty).MakeArrayType ();
+
 			int xlen = KnownTypeCollection.DefaultClrNamespaceBase.Length;
 			string clrns = ns.Length > xlen ?  ns.Substring (xlen) : null;
 

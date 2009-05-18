@@ -266,34 +266,53 @@ namespace System.Runtime.Serialization
 			}
 		}
 
-		internal static bool IsPrimitiveType (QName qname)
+		internal static Type GetPrimitiveTypeFromName (string name)
 		{
-			/* FIXME: qname.Namespace ? */
-			switch (qname.Name) {
+			switch (name) {
 			case "anyURI":
+				return typeof (Uri);
 			case "boolean":
+				return typeof (bool);
 			case "base64Binary":
+				return typeof (byte []);
 			case "dateTime":
+				return typeof (DateTime);
 			case "duration":
+				return typeof (TimeSpan);
 			case "QName":
+				return typeof (QName);
 			case "decimal":
+				return typeof (decimal);
 			case "double":
+				return typeof (double);
 			case "float":
+				return typeof (float);
 			case "byte":
+				return typeof (sbyte);
 			case "short":
+				return typeof (short);
 			case "int":
+				return typeof (int);
 			case "long":
+				return typeof (long);
 			case "unsignedByte":
+				return typeof (byte);
 			case "unsignedShort":
+				return typeof (ushort);
 			case "unsignedInt":
+				return typeof (uint);
 			case "unsignedLong":
+				return typeof (ulong);
 			case "string":
+				return typeof (string);
 			case "anyType":
+				return typeof (object);
 			case "guid":
+				return typeof (Guid);
 			case "char":
-				return true;
+				return typeof (char);
 			default:
-				return false;
+				return null;
 			}
 		}
 
