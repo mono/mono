@@ -1133,36 +1133,53 @@ namespace System.Linq
 			return value;
 		}
 
+		static TSource IterateNullable<TSource> (IEnumerable<TSource> source, Func<TSource, TSource, bool> selector)
+		{
+			var value = default (TSource);
+
+			foreach (var element in source) {
+				if (element == null)
+					continue;
+
+				if (value == null || selector (element, value))
+					value = element;
+			}
+
+			return value;
+		}
+
+		static TSource IterateNonNullable<TSource> (IEnumerable<TSource> source, Func<TSource, TSource, bool> selector)
+		{
+			var value = default (TSource);
+			bool empty = true;
+			foreach (var element in source) {
+				if (empty) {
+					value = element;
+					empty = false;
+					continue;
+				}
+
+				if (selector (element, value))
+					value = element;
+			}
+
+			if (empty)
+				throw new InvalidOperationException ();
+
+			return value;
+		}
+
 		public static TSource Max<TSource> (this IEnumerable<TSource> source)
 		{
 			Check.Source (source);
 
-			bool notAssigned = true;
-			TSource maximum = default (TSource);
-			int counter = 0;
-			foreach (TSource element in source) {
-				if (notAssigned) {
-					maximum = element;
-					notAssigned = false;
-				} else {
-					int comparison;
-					if (element is IComparable<TSource>)
-						comparison = ((IComparable<TSource>) element).CompareTo (maximum);
-					else if (element is System.IComparable)
-						comparison = ((System.IComparable) element).CompareTo (maximum);
-					else
-						throw new ArgumentNullException ();
+			var comparer = Comparer<TSource>.Default;
+			Func<TSource, TSource, bool> compare = (a, b) => comparer.Compare (a, b) > 0;
 
-					if (comparison > 0)
-						maximum = element;
-				}
-				counter++;
-			}
+			if (default (TSource) == null)
+				return IterateNullable (source, compare);
 
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
+			return IterateNonNullable (source, compare);
 		}
 
 		public static int Max<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
@@ -1253,33 +1270,7 @@ namespace System.Linq
 		{
 			Check.SourceAndSelector (source, selector);
 
-			bool notAssigned = true;
-			TResult maximum = default (TResult);
-			int counter = 0;
-			foreach (TSource item in source) {
-				TResult element = selector (item);
-				if (notAssigned) {
-					maximum = element;
-					notAssigned = false;
-				} else {
-					int comparison;
-					if (element is IComparable<TResult>)
-						comparison = ((IComparable<TResult>) element).CompareTo (maximum);
-					else if (element is System.IComparable)
-						comparison = ((System.IComparable) element).CompareTo (maximum);
-					else
-						throw new ArgumentNullException ();
-
-					if (comparison > 0)
-						maximum = element;
-				}
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return maximum;
+			return source.Select (selector).Max ();
 		}
 
 		#endregion
@@ -1360,32 +1351,13 @@ namespace System.Linq
 		{
 			Check.Source (source);
 
-			bool notAssigned = true;
-			TSource minimum = default (TSource);
-			int counter = 0;
-			foreach (TSource element in source) {
-				if (notAssigned) {
-					minimum = element;
-					notAssigned = false;
-				} else {
-					int comparison;
-					if (element is IComparable<TSource>)
-						comparison = ((IComparable<TSource>) element).CompareTo (minimum);
-					else if (element is System.IComparable)
-						comparison = ((System.IComparable) element).CompareTo (minimum);
-					else
-						throw new ArgumentNullException ();
+			var comparer = Comparer<TSource>.Default;
+			Func<TSource, TSource, bool> compare = (a, b) => comparer.Compare (a, b) < 0;
 
-					if (comparison < 0)
-						minimum = element;
-				}
-				counter++;
-			}
+			if (default (TSource) == null)
+				return IterateNullable (source, compare);
 
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
+			return IterateNonNullable (source, compare);
 		}
 
 		public static int Min<TSource> (this IEnumerable<TSource> source, Func<TSource, int> selector)
@@ -1462,33 +1434,7 @@ namespace System.Linq
 		{
 			Check.SourceAndSelector (source, selector);
 
-			bool notAssigned = true;
-			TResult minimum = default (TResult);
-			int counter = 0;
-			foreach (TSource item in source) {
-				TResult element = selector (item);
-				if (notAssigned) {
-					minimum = element;
-					notAssigned = false;
-				} else {
-					int comparison;
-					if (element is IComparable<TResult>)
-						comparison = ((IComparable<TResult>) element).CompareTo (minimum);
-					else if (element is System.IComparable)
-						comparison = ((System.IComparable) element).CompareTo (minimum);
-					else
-						throw new ArgumentNullException ();
-
-					if (comparison < 0)
-						minimum = element;
-				}
-				counter++;
-			}
-
-			if (counter == 0)
-				throw new InvalidOperationException ();
-			else
-				return minimum;
+			return source.Select (selector).Min ();
 		}
 
 		#endregion
