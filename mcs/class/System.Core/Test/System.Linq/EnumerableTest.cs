@@ -273,6 +273,18 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void TestMinStringEmpty ()
+		{
+			Assert.IsNull ((new string [0]).Min ());
+		}
+
+		[Test]
+		public void TestMaxStringEmpty ()
+		{
+			Assert.IsNull ((new string [0]).Max ());
+		}
+
+		[Test]
 		public void TestToList ()
 		{
 			int [] data = {3, 5, 2};
