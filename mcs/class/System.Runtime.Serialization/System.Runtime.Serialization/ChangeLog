@@ -1,3 +1,8 @@
+2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : It is not possible to get schema without
+	  IXmlSerializable instance.
+
 2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractSerializer.cs : write dictionary string directly for
