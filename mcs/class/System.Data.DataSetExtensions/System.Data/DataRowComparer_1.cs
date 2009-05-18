@@ -61,7 +61,7 @@ namespace System.Data
 			for (int i = 0; i < columnCount; i++)
 				if (!ColumnsEqual (leftRow [i], rightRow [i]))
 					return false;
-			return false;
+			return true;
 		}
 
 		bool ColumnsEqual (object leftCol, object rightCol)
@@ -76,8 +76,7 @@ namespace System.Data
 			if (vt != null && vt.Equals (rightCol))
 				return true;
 
-			
-			return false;
+			return leftCol.Equals (rightCol);
 		}
 		
 		public int GetHashCode (TRow row)

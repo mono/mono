@@ -2,6 +2,11 @@
 
 	* DataRowExtensionsTest.cs: added
 
+2008-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataRowComparerTest.cs: added tests for Equals and GetHashCode.
+	Enabled GetHashCodeWithVersions test.
+
 2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableExtensionsTest.cs : new test.
