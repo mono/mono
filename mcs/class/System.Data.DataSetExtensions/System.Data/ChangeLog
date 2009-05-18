@@ -5,6 +5,12 @@
 	do not throw exception for column value being DBNull but return
 	null instead.
 
+2008-08-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataRowComparer_1.cs: Modified Equals to return true if all column
+	values are equal. Modified ColumnsEqual to use Object.Equals for
+	reference types. Fixes bug #417398.
+
 2008-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableExtensions.cs :
