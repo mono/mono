@@ -106,6 +106,10 @@ namespace System.ServiceModel.Channels
 		
 		public override void Send (Message message, TimeSpan timeout)
 		{
+			// FIXME: add MessageID and ReplyTo (might not be here; it's likely in session channel in common)
+
+			if (!is_service_side && message.Headers.To == null)
+				message.Headers.To = RemoteAddress.Uri;
 			client.SendTimeout = (int) timeout.TotalMilliseconds;
 			frame.WriteSizedMessage (message);
 			// FIXME: should EndRecord be sent here?

@@ -1,5 +1,9 @@
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : add To header.
+
+2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageFault.cs : fix several SOAP12 fault deserialization in xml
 	  parsing.
 
