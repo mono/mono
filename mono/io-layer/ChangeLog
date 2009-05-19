@@ -1,5 +1,8 @@
 2009-05-18  Miguel de Icaza  <miguel@novell.com>
 
+	* daemon.c: Move the compile check of MONO_SIZEOF_SUNPATH to the
+	file that uses it.
+
 	* Rename `threads.c' to `wthreads.c' as broken build systems are
 	not able to cope with two files with the same name across multiple
 	directories. 
