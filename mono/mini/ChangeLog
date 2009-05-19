@@ -1,3 +1,20 @@
+2009-05-19  Massimiliano Mantione  <massi@ximian.com>
+
+	Fixed estimate for short branches on amd64 (they were off mark, and
+	enabling call prolog-epilog instrumentations caused assertions).
+	* mini.h (struct MonoBasicBlock): added max_length field to hold the
+	estimate for the maximum length of this basic block.
+	* mini-amd64.c:
+	- mono_arch_emit_prolog: compute max_length for each basic block
+	  (instead of max_offset), and inflate size estimate also for entry bb
+	  in case of code instrumentation.
+	- mono_arch_output_basic_block: get rid of "cpos" (the current
+	  estimated "position" in the code), and always use "offset" instead,
+	  which is accurate; at the beginning of the function quickly recompute
+	  max_offset for all the remaining blocks, starting from the current
+	  cfg->code_len (which is correct, and not estimated) and using the
+	  estimated block lengths computed previously.
+
 2009-05-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-ppc.c: Remove the caching from the trampoline creation 
