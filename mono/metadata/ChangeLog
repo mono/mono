@@ -1,3 +1,8 @@
+2009-05-19  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Use generation enum more consistently and use the
+	correct generation in mono_gc_register_for_finalization().
+
 2009-05-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the nested class table.
