@@ -1,3 +1,7 @@
+2009-05-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify the manifest resource table.
+
 2009-05-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (dis_one): Add little-endian support for ldstr.
