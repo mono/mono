@@ -14,6 +14,13 @@ namespace MonoTests.System.ServiceModel.Channels
 	public class MessageFaultTest
 	{
 		[Test]
+		public void CreateFault ()
+		{
+			var msg = Message.CreateMessage (XmlReader.Create (new StreamReader ("Test/System.ServiceModel.Channels/soap-fault.xml")), 0x10000, MessageVersion.Default);
+			MessageFault.CreateFault (msg, 0x10000);
+		}
+
+		[Test]
 		[ExpectedException (typeof (CommunicationException))]
 		public void CreateFaultIncomplete ()
 		{
@@ -33,6 +40,14 @@ namespace MonoTests.System.ServiceModel.Channels
 		public void CreateFaultIncomplete3 ()
 		{
 			MessageFault.CreateFault (new FaultCode ("s:Sender"), new FaultReason ("anyways"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (CommunicationException))]
+		public void CreateFaultIncomplete4 ()
+		{
+			var msg = Message.CreateMessage (XmlReader.Create (new StreamReader ("Test/System.ServiceModel.Channels/soap-fault-incomplete4.xml")), 0x10000, MessageVersion.Default);
+			MessageFault.CreateFault (msg, 0x10000);
 		}
 	}
 }

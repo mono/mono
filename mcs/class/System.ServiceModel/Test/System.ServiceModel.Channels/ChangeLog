@@ -1,3 +1,8 @@
+2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageFaultTest.cs : added more SOAP 12 fault parser tests.
+	* soap-fault.xml, soap-fault-incomplete4.xml : new test files.
+
 2009-05-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* soap-fault-incomplete.xml : new test file.

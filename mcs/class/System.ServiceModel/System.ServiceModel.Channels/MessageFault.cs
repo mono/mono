@@ -148,9 +148,9 @@ namespace System.ServiceModel.Channels
 			XmlQualifiedName value = XmlQualifiedName.Empty;
 
 			if (r.IsEmptyElement)
-				throw new ArgumentException ("Value element is mandatory in SOAP fault code.");
+				throw new ArgumentException ("either SubCode or Value element is mandatory in SOAP fault code.");
 
-			r.ReadStartElement ("Code", ns);
+			r.ReadStartElement (); // could be either Code or SubCode
 			r.MoveToContent ();
 			while (r.NodeType != XmlNodeType.EndElement) {
 				switch (r.LocalName) {
@@ -176,11 +176,13 @@ namespace System.ServiceModel.Channels
 			if (r.IsEmptyElement)
 				throw new ArgumentException ("One or more Text element is mandatory in SOAP fault reason text.");
 
-			r.ReadStartElement ("Code", ns);
+			r.ReadStartElement ("Reason", ns);
 			for (r.MoveToContent ();
 			     r.NodeType != XmlNodeType.EndElement;
 			     r.MoveToContent ()) {
 				string lang = r.GetAttribute ("lang", "http://www.w3.org/XML/1998/namespace");
+				if (lang == null)
+					throw new XmlException ("xml:lang is mandatory on fault reason Text");
 				l.Add (new FaultReasonText (r.ReadElementContentAsString ("Text", ns), lang));
 			}
 			return new FaultReason (l);
