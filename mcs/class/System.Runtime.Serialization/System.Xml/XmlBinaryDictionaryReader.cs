@@ -531,7 +531,8 @@ namespace System.Xml
 
 			if (node.NodeType == XmlNodeType.Element) {
 				// push element scope
-				depth++;
+				if (++depth == quota.MaxDepth)
+					throw new XmlException (String.Format ("Binary XML stream quota exceeded. Depth must be less than {0}", quota.MaxDepth));
 				if (node_stack.Count <= depth) {
 					node_stack.Add (node);
 					node = new NodeInfo ();
@@ -610,6 +611,8 @@ namespace System.Xml
 					throw new XmlException ("The stream has ended where the array item type is expected");
 				array_item_type = (byte) ident;
 				array_item_remaining = ReadVariantSize ();
+				if (array_item_remaining > quota.MaxArrayLength)
+					throw new Exception (String.Format ("Binary xml stream exceeded max array length quota. Items are {0} and should be less than quota.MaxArrayLength", quota.MaxArrayLength));
 				array_state = XmlNodeType.Element;
 				break;
 
@@ -916,7 +919,7 @@ namespace System.Xml
 					(ident == BF.Bytes8) ? source.Reader.ReadByte () :
 					(ident == BF.Bytes16) ? source.Reader.ReadUInt16 () :
 					source.Reader.ReadInt32 ();
-				byte [] base64 = new byte [size];
+				byte [] base64 = Alloc (size);
 				source.Reader.Read (base64, 0, base64.Length);
 				node.TypedValue = base64;
 				break;
@@ -944,7 +947,7 @@ namespace System.Xml
 					(ident == BF.Chars8) ? source.Reader.ReadByte () :
 					(ident == BF.Chars16) ? source.Reader.ReadUInt16 () :
 					source.Reader.ReadInt32 ();
-				byte [] bytes = new byte [size];
+				byte [] bytes = Alloc (size);
 				source.Reader.Read (bytes, 0, size);
 				node.Value = enc.GetString (bytes, 0, size);
 				node.NodeType = XmlNodeType.Text;
@@ -964,6 +967,13 @@ namespace System.Xml
 				return false;
 			}
 			return true;
+		}
+
+		byte [] Alloc (int size)
+		{
+			if (size > quota.MaxStringContentLength || size < 0)
+				throw new XmlException (String.Format ("Text content buffer exceeds the quota limitation. {0} bytes and should be less than {1} bytes", size, quota.MaxStringContentLength));
+			return new byte [size];
 		}
 
 		private int ReadVariantSize ()
@@ -989,7 +999,7 @@ namespace System.Xml
 				return String.Empty;
 			if (tmp_buffer.Length < size) {
 				int extlen = tmp_buffer.Length * 2;
-				tmp_buffer = new byte [size < extlen ? extlen : size];
+				tmp_buffer = Alloc (size < extlen ? extlen : size);
 			}
 			size = source.Read (tmp_buffer, 0, size);
 			return utf8enc.GetString (tmp_buffer, 0, size);
@@ -1133,7 +1143,7 @@ namespace System.Xml
 					ret = (byte []) node.TypedValue;
 				else {
 					byte [] tmp = (byte []) node.TypedValue;
-					byte [] tmp2 = new byte [ret.Length + tmp.Length];
+					byte [] tmp2 = Alloc (ret.Length + tmp.Length);
 					Array.Copy (ret, tmp2, ret.Length);
 					Array.Copy (tmp, 0, tmp2, ret.Length, tmp.Length);
 					ret = tmp2;

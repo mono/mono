@@ -1,3 +1,7 @@
+2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReader.cs : support reader quotas.
+
 2009-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UniqueId.cs: Fix attributes for v3.5 (and later 2.0 SP) and remove
