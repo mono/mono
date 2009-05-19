@@ -1,5 +1,9 @@
 2009-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Verify the methodspec table.
+
+2009-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify the generic param table.
 
 2009-05-19  Mark Probst  <mark.probst@gmail.com>
