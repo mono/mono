@@ -54,7 +54,7 @@
 # endif
 
 # include <stdio.h>
-# if defined(MSWINCE)
+# if defined(MSWINCE) || defined (SN_TARGET_PS3)
 #   define SIGSEGV 0 /* value is irrelevant */
 # else
 #   include <signal.h>
@@ -511,7 +511,7 @@ void GC_enable_signals(void)
 #  if !defined(PCR) && !defined(AMIGA) && !defined(MSWIN32) \
       && !defined(MSWINCE) \
       && !defined(MACOS) && !defined(DJGPP) && !defined(DOS4GW) \
-      && !defined(NOSYS) && !defined(ECOS)
+      && !defined(NOSYS) && !defined(ECOS) && !defined(SN_TARGET_PS3)
 
 #   if defined(sigmask) && !defined(UTS4) && !defined(HURD)
 	/* Use the traditional BSD interface */

@@ -804,6 +804,7 @@
 #     define STACKBOTTOM ((ptr_t) LMGetCurStackBase())
 #     define DATAEND  /* not needed */
 #   endif
+
 #   ifdef LINUX
 #     if defined(__powerpc64__)
 #       define ALIGNMENT 8
@@ -882,6 +883,20 @@
 #     define DATASTART GC_data_start
 #     define DYNAMIC_LOADING
 #   endif
+#   ifdef SN_TARGET_PS3
+#       define NO_GETENV
+#       define CPP_WORDSZ 32
+#       define ALIGNMENT 4
+        extern int _end [];
+//       extern int _dso_handle[];
+		extern int __bss;
+
+#       define DATAEND (_end)
+#       define DATASTART (__bss)
+#       define HEURISTIC2
+#       define USE_GENERIC_PUSHREGS
+#   endif
+
 #   ifdef NOSYS
 #     define ALIGNMENT 4
 #     define OS_TYPE "NOSYS"
@@ -2368,8 +2383,13 @@
 			  GC_amiga_get_mem((size_t)bytes + GC_page_size) \
 			  + GC_page_size-1)
 #	      else
+#           if defined(SN_TARGET_PS3)
+	           extern void *ps3_get_mem (size_t size);
+#              define GET_MEM(bytes) (struct hblk*) ps3_get_mem (bytes)
+#           else
 		extern ptr_t GC_unix_get_mem();
 #               define GET_MEM(bytes) (struct hblk *)GC_unix_get_mem(bytes)
+#endif
 #	      endif
 #	    endif
 #	  endif

@@ -1,3 +1,7 @@
+2009-05-18  Miguel de Icaza  <miguel@novell.com>
+
+	* include/private/gcconfig.h: Add support for Linux on the PS3
+
 2009-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* misc.c (GC_init): Avoid casting an lvalue. Fixes part of #498692.
