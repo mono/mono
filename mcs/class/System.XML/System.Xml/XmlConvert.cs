@@ -399,9 +399,13 @@ namespace System.Xml {
 			return Double.Parse (s, floatStyle, CultureInfo.InvariantCulture);
 		}
 
-		public static Guid ToGuid(string s)
+		public static Guid ToGuid (string s)
 		{
-			return new Guid(s);
+			try {
+				return new Guid(s);
+			} catch (FormatException ex) {
+				throw new FormatException (String.Format ("Invalid Guid input '{0}'", ex.InnerException));
+			}
 		}
 
 		public static short ToInt16(string s)

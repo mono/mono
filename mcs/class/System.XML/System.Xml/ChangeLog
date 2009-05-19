@@ -1,3 +1,8 @@
+2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : no reason not to report invalid input string for
+	  ToGuid().
+
 2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>  
 
 	* XmlTextReader.cs (InitializeContext): Under NET_2_1 do not give
