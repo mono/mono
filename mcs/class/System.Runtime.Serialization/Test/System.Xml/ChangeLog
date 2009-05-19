@@ -1,3 +1,7 @@
+2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReaderTest.cs : added test for utf16 chars.
+
 2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryWriterSession.cs : added test to verify that session is

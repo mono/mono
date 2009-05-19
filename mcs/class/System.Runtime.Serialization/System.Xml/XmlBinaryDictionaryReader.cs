@@ -55,35 +55,29 @@ namespace System.Xml
 
 		internal class StreamSource : ISource
 		{
-			BinaryReader stream;
-			int position;
+			BinaryReader reader;
 
 			public StreamSource (Stream stream)
 			{
-				this.stream = new BinaryReader (stream);
+				this.reader = new BinaryReader (stream);
 			}
 
 			public int Position {
-				get { return position - 1; }
+				get { return (int) reader.BaseStream.Position; }
 			}
 
 			public BinaryReader Reader {
-				get { return stream; }
+				get { return reader; }
 			}
 
 			public int ReadByte ()
 			{
-				if (stream.PeekChar () < 0)
-					return -1;
-				position++;
-				return stream.ReadByte ();
+				return reader.ReadByte ();
 			}
 
 			public int Read (byte [] data, int offset, int count)
 			{
-				int ret = stream.Read (data, offset, count);
-				position += ret;
-				return ret;
+				return reader.Read (data, offset, count);
 			}
 		}
 
@@ -214,7 +208,6 @@ namespace System.Xml
 
 			XmlBinaryDictionaryReader owner;
 			public int ValueIndex;
-			public int NSIndex;
 
 			public override void Reset ()
 			{
@@ -944,8 +937,8 @@ namespace System.Xml
 			case BF.Utf16_32:
 				Encoding enc = ident <= BF.Chars32 ? Encoding.UTF8 : Encoding.Unicode;
 				size =
-					(ident == BF.Chars8) ? source.Reader.ReadByte () :
-					(ident == BF.Chars16) ? source.Reader.ReadUInt16 () :
+					(ident == BF.Chars8 || ident == BF.Utf16_8) ? source.Reader.ReadByte () :
+					(ident == BF.Chars16 || ident == BF.Utf16_16) ? source.Reader.ReadUInt16 () :
 					source.Reader.ReadInt32 ();
 				byte [] bytes = Alloc (size);
 				source.Reader.Read (bytes, 0, size);
@@ -972,7 +965,7 @@ namespace System.Xml
 		byte [] Alloc (int size)
 		{
 			if (size > quota.MaxStringContentLength || size < 0)
-				throw new XmlException (String.Format ("Text content buffer exceeds the quota limitation. {0} bytes and should be less than {1} bytes", size, quota.MaxStringContentLength));
+				throw new XmlException (String.Format ("Text content buffer exceeds the quota limitation at {2}. {0} bytes and should be less than {1} bytes", size, quota.MaxStringContentLength, source.Position));
 			return new byte [size];
 		}
 

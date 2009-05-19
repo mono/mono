@@ -1,5 +1,11 @@
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryReader.cs : fix utf16 array on getting its
+	  length. Report correct length (since BinaryReader is directly used
+	  it makes no sense to incompletely keep track of position in Source).
+
+2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryReader.cs : support reader quotas.
 
 2009-05-07  Sebastien Pouliot  <sebastien@ximian.com>
