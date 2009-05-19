@@ -108,11 +108,12 @@ namespace Mono.Xml.Schema
 		}
 
 		public override Type ValueType {
-#if BUGGY_MS_COMPLIANT
-			get { return typeof (string); }
-#else
-			get { return typeof (object); }
-#endif
+			get {
+				if (XmlSchemaUtil.StrictMsCompliant)
+					return typeof (string);
+				else
+					return typeof (object);
+			}
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -1556,11 +1557,12 @@ namespace Mono.Xml.Schema
 		}
 
 		public override XmlTokenizedType TokenizedType {
-#if BUGGY_MS_COMPLIANT
-			get { return XmlTokenizedType.None; }
-#else
-			get { return XmlTokenizedType.CDATA; }
-#endif
+			get {
+				if (XmlSchemaUtil.StrictMsCompliant)
+					return XmlTokenizedType.None;
+				else
+					return XmlTokenizedType.CDATA;
+			}
 		}
 
 #if NET_2_0

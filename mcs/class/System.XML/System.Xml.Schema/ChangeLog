@@ -1,3 +1,9 @@
+2009-05-19  Jonas Larsson <jonas.larsson@manodo.se> 
+
+	* XmlSchemaUtil.cs, BuiltInDatatype.cs, XmlSchemaComplexType.cs:
+	  Introduced new MS compatibility option by environment variable,
+	  for bug #502115.
+
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaGroupRef.cs : when getting optimized particle, reset was

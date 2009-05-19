@@ -68,11 +68,11 @@ namespace System.Xml.Schema
 					anyType = new XmlSchemaComplexType ();
 					anyType.Name = "";	// In MS.NET, it is not "anyType"
 					anyType.QNameInternal = XmlQualifiedName.Empty;	// Not xs:anyType as well.
-#if BUGGY_MS_COMPLIANT
-					anyType.validatableParticle = XmlSchemaParticle.Empty; // This code makes validator handles these schemas incorrectly: particlesIb001, mgM013, mgH014, ctE004, ctD004
-#else
-					anyType.validatableParticle = XmlSchemaAny.AnyTypeContent;
-#endif
+					if (XmlSchemaUtil.StrictMsCompliant)
+						anyType.validatableParticle = XmlSchemaParticle.Empty; // This code makes validator handles these schemas incorrectly: particlesIb001, mgM013, mgH014, ctE004, ctD004
+					else
+						anyType.validatableParticle = XmlSchemaAny.AnyTypeContent;
+
 					anyType.contentTypeParticle = anyType.validatableParticle;
 					anyType.DatatypeInternal = XmlSchemaSimpleType.AnySimpleType;
 					anyType.isMixed = true;
