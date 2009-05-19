@@ -1,17 +1,3 @@
-2009-05-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* RouteCollection.cs: when there is no named route, try the current
-	route before going through the list. The known values (default or
-	not) for the current route are merged with the values provided when
-	attempting to match.
-	Example:
-		Html.RouteLink ("Text", new { page = 5 });
-	
-	when the current path is /some/path-here and the route is:
-
-		routes.MapRoute("RouteName", "some/{one}-{two}/{page}",
-		new { controller = "Some", action = "Index", page = 1});
-
 2009-05-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* UrlPattern.cs: if the pattern is line {a}/{b} and {b} is substituted
