@@ -1,5 +1,10 @@
 2009-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_generic_param_table): Fix
+	thinko on the valid flags bits for generic params.
+
+2009-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Verify the methodspec table.
 
 2009-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
