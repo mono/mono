@@ -1,3 +1,7 @@
+2009-05-12  Jonas Larsson  <jonas.larsson@manodo.se>
+
+	* XmlValidatingReaderTests.cs : test for bug #502168
+
 2009-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlValidatingReaderTests.cs : test for bug #501814 by Jonas

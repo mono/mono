@@ -137,6 +137,7 @@ namespace System.Xml.Schema
 				OptimizedParticle = OptimizedParticle.GetOptimizedParticle (isTop);
 				if (OptimizedParticle != XmlSchemaParticle.Empty && (ValidatedMinOccurs != 1 || ValidatedMaxOccurs != 1)) {
 					OptimizedParticle = OptimizedParticle.GetShallowClone ();
+					OptimizedParticle.OptimizedParticle = null;
 					OptimizedParticle.MinOccurs = this.MinOccurs;
 					OptimizedParticle.MaxOccurs = this.MaxOccurs;
 					OptimizedParticle.CompileOccurence (null, null);

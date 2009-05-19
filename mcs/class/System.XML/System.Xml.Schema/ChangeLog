@@ -1,3 +1,8 @@
+2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaGroupRef.cs : when getting optimized particle, reset was
+	  incomplete. Patch by Jonas Larsson. Fixed bug #502168.
+
 2009-05-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaComplexType.cs : make complex content type work like .NET

@@ -985,5 +985,90 @@ namespace MonoTests.System.Xml
 			doc.Validate (null);
 		}
 #endif
+		
+#if NET_2_0
+		[Test]		
+		public void Bug502168 ()
+		{
+			string xsd = @"<xs:schema id='Layout'
+				targetNamespace='foo'
+				elementFormDefault='qualified'
+				xmlns='foo'                  
+				xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+
+				<xs:element name='Layout' type='Layout' />
+				
+				 <xs:complexType name='Layout'>
+				  <xs:group ref='AnyLayoutElement' minOccurs='0' maxOccurs='unbounded' />
+				 </xs:complexType>
+				
+				 <xs:group name='AnyLayoutElement'>
+				  <xs:choice>
+				   <xs:element name='Layout' type='Layout' />   
+				   <xs:element name='ImageContainer' type='ImageContainer' />
+				   <xs:element name='VideoInstance' type='VideoInstance'/>
+				  </xs:choice>
+				 </xs:group>
+				
+				 <xs:complexType name='ImageDummy'>
+				 </xs:complexType>
+				
+				 <xs:complexType name='LayoutElement' abstract='true'>  
+				 </xs:complexType>
+				
+				 <xs:group name='AnyImageElement'>
+				  <xs:choice>
+				   <xs:element name='ImageDummy' type='ImageDummy' />
+				  </xs:choice>
+				 </xs:group>
+				
+				 <xs:complexType name='ImageContainer'>
+				  <xs:complexContent>
+				   <xs:extension base='LayoutElement'>
+				    <xs:choice minOccurs='1' maxOccurs='1'>
+				     <xs:element name='Content' type='SingleImage' minOccurs='1' maxOccurs='1'
+				nillable='false'/>
+				    </xs:choice>    
+				   </xs:extension>
+				  </xs:complexContent>
+				 </xs:complexType>
+				
+				 <xs:complexType name='SingleImage'>
+				  <xs:group ref='AnyImageElement' minOccurs='1' maxOccurs='1'/>
+				 </xs:complexType>
+				
+				 <xs:complexType name='VideoApplicationFile'>
+				  <xs:complexContent>
+				   <xs:extension base='VideoInstance'>
+				    <xs:attribute name='fileName' type='xs:string' use='optional'/>
+				   </xs:extension>
+				  </xs:complexContent>
+				 </xs:complexType>
+				
+				 <xs:complexType abstract='true' name='Video'>
+				  <xs:complexContent>
+				   <xs:extension base='LayoutElement'>
+				    <xs:group ref='AnyImageElement' minOccurs='0' maxOccurs='1'/>    
+				   </xs:extension>
+				  </xs:complexContent>
+				 </xs:complexType>
+				
+				 <xs:complexType abstract='true' name='VideoInstance'>
+				  <xs:complexContent>
+				   <xs:extension base='Video'>
+				    <xs:attribute name='name' type='xs:string' use='optional'/>
+				   </xs:extension>
+				  </xs:complexContent>
+				 </xs:complexType>
+				</xs:schema>";
+
+
+			XmlDocument doc = new XmlDocument ();
+			XmlSchema schema = XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null);
+			doc.LoadXml (@"<Layout xmlns='foo' />");
+			doc.Schemas.Add(schema);
+			doc.Validate(null);
+		}
+#endif		
 	}
 }
