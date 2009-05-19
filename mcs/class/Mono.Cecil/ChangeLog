@@ -1,3 +1,10 @@
+2009-05-19  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/TargetRuntime.cs
+	* Mono.Cecil/StructureReader.cs
+	* Mono.Cecil.Metadata/MetadataWriter.cs:
+		add support for .net 4.0 detection.
+
 2009-04-30  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil.Signatures/SignatureReader.cs: fix reading out extra mods.

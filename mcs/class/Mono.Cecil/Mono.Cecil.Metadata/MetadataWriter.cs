@@ -366,6 +366,9 @@ namespace Mono.Cecil.Metadata {
 			case TargetRuntime.NET_2_0 :
 				m_root.Header.Version = "v2.0.50727";
 				break;
+			case TargetRuntime.NET_4_0 :
+				m_root.Header.Version = "v4.0.20506";
+				break;
 			}
 
 			m_root.Streams.TablesHeap.Tables.Accept (m_tableWriter);

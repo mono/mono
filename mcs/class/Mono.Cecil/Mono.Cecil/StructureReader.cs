@@ -102,8 +102,11 @@ namespace Mono.Cecil {
 			case "v1.1.4322" :
 				asm.Runtime = TargetRuntime.NET_1_1;
 				break;
-			default :
+			case "v2.0.50727":
 				asm.Runtime = TargetRuntime.NET_2_0;
+				break;
+			case "v4.0.20506" :
+				asm.Runtime = TargetRuntime.NET_4_0;
 				break;
 			}
 
