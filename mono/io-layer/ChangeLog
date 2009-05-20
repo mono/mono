@@ -1,3 +1,7 @@
+2009-05-20  Miguel de Icaza  <miguel@novell.com>
+
+	* locking.c: Split locking code into a separate file.
+
 2009-05-18  Miguel de Icaza  <miguel@novell.com>
 
 	* daemon.c: Move the compile check of MONO_SIZEOF_SUNPATH to the
