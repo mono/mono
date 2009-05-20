@@ -1,0 +1,39 @@
+* purpose
+
+	This tool is to generate globalization information from Unicode CLDR, with some changes
+	to fill the gap between .NET(Windows)-ism and the global standard.
+
+* input resources
+
+	There is only an external resource: unicode CLDR. I used version 1.7, the latest one as of
+	May, 2009:
+	http://unicode.org/Public/cldr/1.7.0/core.zip
+
+	There is a couple of extra mono resources included in this directory:
+	- lcids.xml for LCIDs.
+	- textinfos.xml for TextInfo.
+	- supplementalData.xml and supp/*.xml for .NET(Windows)-ism fixup.
+
+* generated file
+
+	culture-info-table.h contains the following sections:
+
+	- datetime_format_entries
+	  See DateTimeFormatEntry.AppendTableRow() in DateTimeFormatEntry.cs.
+	- number_format_entries
+	  See NumberFormatEntry.AppendTableRow() in NumberFormatEntry.cs.
+	- culture_entries
+	  See CultureInfoEntry.AppendTableRow() in CultureInfoEntry.cs.
+	- culture_name_entries
+	  See Driver.Run() in Driver.cs.
+	- region_entries
+	  See RegionInfoEntry.AppendTableRow() in RegionInfoEntry.cs.
+	- region_name_entries
+	  See Driver.Run() in Driver.cs.
+	- locale_strings
+	  See Driver.Run() in Driver.cs.
+
+	In each entry, strings are extracted to locale_strings table, and in each structure they are
+	represented as an index to the string.
+
+

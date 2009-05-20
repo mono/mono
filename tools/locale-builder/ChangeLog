@@ -1,3 +1,7 @@
+2009-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README: added (I needed it!)
+
 2009-03-05  Marek Habersack  <mhabersack@novell.com>
 
 	* locales/en_TT.xml: added here since openi18n.org times out and
