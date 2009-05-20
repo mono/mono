@@ -253,10 +253,10 @@ restart:
 						ins->inst_basereg = def->sreg1;
 						ins->inst_offset += def->inst_imm;
 					}
-				} else if ((ins->opcode == OP_ISUB_IMM) && (def->opcode == OP_IADD_IMM) && (def->next == ins)) {
+				} else if ((ins->opcode == OP_ISUB_IMM) && (def->opcode == OP_IADD_IMM) && (def->next == ins) && (def->dreg != def->sreg1)) {
 					ins->sreg1 = def->sreg1;
 					ins->inst_imm -= def->inst_imm;
-				} else if ((ins->opcode == OP_IADD_IMM) && (def->opcode == OP_ISUB_IMM) && (def->next == ins)) {
+				} else if ((ins->opcode == OP_IADD_IMM) && (def->opcode == OP_ISUB_IMM) && (def->next == ins) && (def->dreg != def->sreg1)) {
 					ins->sreg1 = def->sreg1;
 					ins->inst_imm -= def->inst_imm;
 				} else if (ins->opcode == OP_STOREI1_MEMBASE_REG &&
