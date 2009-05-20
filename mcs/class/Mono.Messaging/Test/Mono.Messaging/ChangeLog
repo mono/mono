@@ -2,3 +2,7 @@
 
 	* MessageBaseTest.cs: New
 	* QueueReferenceTest.cs: New
+
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageBaseTest.cs: Used reflection to create Message Object

@@ -56,5 +56,12 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			Assert.IsNotNull (q);   
 		}
 		
+		[Test]
+		public void GetProvider ()
+		{
+			IMessagingProvider p = MessagingProviderLocator.GetProvider ();
+			Assert.IsNotNull (p);
+		}
+		
 	}
 }

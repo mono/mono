@@ -68,3 +68,10 @@
 	* MessagingProviderLocator.cs: New
 	* MonoMessagingException.cs: New
 	* QueueReference.cs: New
+
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* IMessage.cs: Added additional comments.
+	* IMessagingProvider.cs: Added additional comments.
+	* MessagingProviderLocator.cs: Added support for specifing messaging
+	implementation using an environment variable.

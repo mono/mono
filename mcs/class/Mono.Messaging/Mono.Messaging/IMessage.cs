@@ -200,6 +200,11 @@ namespace Mono.Messaging {
 			get; set;
 		}
 		
+		/// <summary>
+		/// Sets all of the information about a message after is has been
+		/// delivered.  Implementing classes should set the values of the
+		/// appropriate properties in this method call.
+		/// </summary>
 		void SetDeliveryInfo (Acknowledgment acknowledgment,
                               DateTime arrivedTime,
                               IMessageQueue destinationQueue,

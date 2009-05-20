@@ -43,6 +43,11 @@ using RabbitMQ.Util;
 
 namespace Mono.Messaging.RabbitMQ {
 
+	/// <summary>
+	/// RabbitMQ Implementation of a message queue.  Currrently this implementation
+	/// attempts to be as stateless as possible.  Connection the AMQP server
+	/// are only created as needed.
+	/// </summary>
 	public class RabbitMQMessageQueue : MessageQueueBase, IMessageQueue {
 		
 		private bool authenticate = false;

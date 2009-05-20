@@ -54,3 +54,8 @@
 
 	* BasicMessagingTest.cs: New
 	* RabbitMQMessagingProviderTest.cs: New
+	
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessagingProviderTest.cs: Added test for dynamic create of 
+	MessagingProvider

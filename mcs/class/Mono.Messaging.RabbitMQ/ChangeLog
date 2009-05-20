@@ -7,3 +7,7 @@
 2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
 
 	* AssemblyInfo.cs: New
+
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Makefile:  Added environment variable for the RabbitMQMessagingProvider

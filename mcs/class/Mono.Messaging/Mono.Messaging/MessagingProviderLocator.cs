@@ -29,37 +29,55 @@
 //
 using System;
 using System.Reflection;
+using System.Collections;
 
 namespace Mono.Messaging 
 {
+	/// <summary>
+	/// The main entry point for System.Messaging to get a handle on the 
+	/// messaging implementation.  It will maintain a single instance of the 
+	/// IMessagingProvider (i.e. a singleton) that will be shared between
+	/// threads, therefore any implementation of the IMessagingProvider must
+	/// be thread safe.
+	/// </summary>
 	public class MessagingProviderLocator 
 	{
-		private static IMessagingProvider provider = null;
-		private static readonly object syncObj = new object();
 		public static readonly TimeSpan InfiniteTimeout = TimeSpan.MaxValue;
-	
+		
+		private static MessagingProviderLocator instance = new MessagingProviderLocator();		
+		private readonly object syncObj = new object();
+		private IMessagingProvider provider = null;
+		
+		private MessagingProviderLocator () {
+			string providerName = System.Environment.GetEnvironmentVariable("MONO_MESSAGING_PROVIDER");
+			if (providerName == null || providerName == "")
+				throw new Exception("Environment Variable MONO_MESSAGING_PROVIDER not defined");
+			provider = CreateProvider (providerName);
+		}
+		
+		public static MessagingProviderLocator Instance { get { return instance; } }
+		
 		public static IMessagingProvider GetProvider ()
 		{
-			//Assembly a = Assembly.Load("Mono.Messaging.RabbitMQ.dll");
-			//Type[] ts = a.GetTypes ();
-			
-			//foreach (type in ts)
-			//	Console.WriteLine (type.GetName ());
-			lock (syncObj) {
-				if (provider == null) {
-					Type t = Type.GetType ("Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider, Mono.Messaging.RabbitMQ");
-					if (t == null)
-						throw new Exception ("Can't find class");
-					ConstructorInfo ci = t.GetConstructor (
-						BindingFlags.Public | BindingFlags.Instance, 
-								Type.DefaultBinder, new Type[0],
-								new ParameterModifier[0]);
-					if (ci == null)
-						throw new Exception ("Can't find constructor");
-					provider = (IMessagingProvider) ci.Invoke (new object[0]);
-				}
-			}
-			return provider;
+			return Instance.provider;
 		}
+		
+		private IMessagingProvider CreateProvider (string className)
+		{
+			Type t = Type.GetType (className);
+			if (t == null)
+				throw new Exception ("Can't find class: " + className);
+			
+			ConstructorInfo ci = t.GetConstructor (BindingFlags.Public | 
+			                                       BindingFlags.Instance,
+			                                       Type.DefaultBinder,
+			                                       new Type[0],
+			                                       new ParameterModifier[0]);
+			if (ci == null)
+				throw new Exception ("Can't find constructor");
+			
+			return (IMessagingProvider) ci.Invoke (new object[0]);
+		}
+		
 	}
 }

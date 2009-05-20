@@ -30,6 +30,11 @@
 
 namespace Mono.Messaging {
 
+	/// <summary>
+	/// Provides access to the core implementation classes.  A single instance of
+	/// this class will be maintained by the MessagingProviderLocator, therefore
+	/// any implementations of this class must be thread safe.
+	/// </summary>
 	public interface IMessagingProvider {
 		
 		bool Exists (QueueReference qRef);

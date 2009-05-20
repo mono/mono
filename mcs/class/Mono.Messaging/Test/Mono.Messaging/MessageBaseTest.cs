@@ -30,6 +30,8 @@
 
 using System;
 using System.Messaging;
+using System.Reflection;
+using Mono.Messaging;
 
 using NUnit.Framework;
 
@@ -41,7 +43,19 @@ namespace MonoTests.Mono.Messaging {
 		[Test]
 		public void CheckDefaultValues ()
 		{
-			Message m = new Message ();
+            Type[] types = { 
+                typeof (IMessage), typeof (object), typeof (IMessageFormatter)
+            };
+                
+            ConstructorInfo ci = typeof (Message).GetConstructor (
+                BindingFlags.NonPublic | BindingFlags.Instance, 
+                Type.DefaultBinder, types, new ParameterModifier[0]);
+                
+            if (ci == null)
+                throw new Exception ("ConstructorInfo is null");
+            
+            Message m = (Message) ci.Invoke (new object[] { new MessageBase (), null, null });
+			
 			Assert.IsNull (m.Body, "Body default should be Null");
 			Assert.IsNull (m.Formatter, "Formatter default should null");
 			
@@ -75,7 +89,7 @@ namespace MonoTests.Mono.Messaging {
 			Assert.AreEqual ("", m.Label, "Label should default to \"\"");
 			Assert.AreEqual (false, m.IsFirstInTransaction, "IsFirstInTransaction should default to false");
 			Assert.AreEqual (false, m.IsLastInTransaction, "IsLastInTransaction should default to false");
-			Assert.AreEqual (MessagePriority.Normal, m.Priority,
+			Assert.AreEqual (System.Messaging.MessagePriority.Normal, m.Priority,
 					"Priority should default to Normal");
 			Assert.AreEqual (false, m.Recoverable, "Recoverable should default to false");
 			Assert.AreEqual (null, m.ResponseQueue, "ResponseQueue should default to null");
@@ -95,6 +109,5 @@ namespace MonoTests.Mono.Messaging {
 					"UseJournalQueue should default to false");
 			Assert.AreEqual (false, m.UseTracing, "UseTracing should default to false");
 		}
-		
 	}
 }

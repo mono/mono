@@ -44,3 +44,7 @@
 
 	* RabbitMQMessageQueue.cs: New
 	* RabbitMQMessagingProvider.cs: New
+	
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueue.cs: Added comments.
