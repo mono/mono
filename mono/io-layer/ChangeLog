@@ -1,5 +1,21 @@
 2009-05-20  Miguel de Icaza  <miguel@novell.com>
 
+	* versioninfo.c: Use the portable mono_map_ interface instead of
+	using mmap directly and change the style to the Mono style.
+
+	Remove more DEBUG/ifdefs combos
+
+	* shared.c: Split the code to make DISABLE_SHARED remove all the
+	code that does not use the shared handles.   Before it merely
+	removed some of it, with this we avoid hacks on platforms that can
+	not implement it.
+
+	Split the code to reduce the amount of ifdefs.
+
+	Remove #ifdef DEBUG from the source and use a macro instead.
+
+2009-05-20  Miguel de Icaza  <miguel@novell.com>
+
 	* locking.c: Split locking code into a separate file.
 
 2009-05-18  Miguel de Icaza  <miguel@novell.com>
