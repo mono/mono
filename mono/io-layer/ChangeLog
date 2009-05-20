@@ -1,5 +1,16 @@
 2009-05-20  Miguel de Icaza  <miguel@novell.com>
 
+	* thread-private.h: Use indent ifdef style for clarity
+
+	* sockets-wrappers.h: sys/socket.h conditional
+
+	* daemon-messages.h: sys/uio.h conditional.
+
+	* sockets.c: sys/ioctl.h conditional
+
+	* wthreads.c: work around for platforms with no thread fetching
+	information. 
+
 	* versioninfo.c: Use the portable mono_map_ interface instead of
 	using mmap directly and change the style to the Mono style.
 
