@@ -85,6 +85,7 @@ namespace Mono.XBuild.CommandLine {
 		static Regex projectConfigurationBuildRegex = new Regex ("\\s*(" + guidExpression + ")\\.(.*?)\\|(.*?)\\.Build\\.0 = (.*?)\\|(.+)");
 
 		static string solutionFolderGuid = "{2150E333-8FDC-42A3-9474-1A3956D46DE8}";
+		static string vcprojGuid = "{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}";
 
 		public void ParseSolution (string file, Project p)
 		{
@@ -104,6 +105,13 @@ namespace Mono.XBuild.CommandLine {
 				if (String.Compare (m.Groups [1].Value, solutionFolderGuid,
 						StringComparison.InvariantCultureIgnoreCase) == 0) {
 					// Ignore solution folders
+					m = m.NextMatch ();
+					continue;
+				}
+				if (String.Compare (m.Groups [1].Value, vcprojGuid,
+						StringComparison.InvariantCultureIgnoreCase) == 0) {
+					// Ignore vcproj 
+					ErrorUtilities.ReportWarning (0, string.Format("Ignoring vcproj '{0}'.", projectInfo.Name));
 					m = m.NextMatch ();
 					continue;
 				}
