@@ -141,13 +141,15 @@ namespace System.Windows.Forms {
 
 		internal void FlushQueue () {
 			CheckTimers (DateTime.UtcNow);
-			while (MessageQueue.Count > 0) {
-				object queueobj = MessageQueue.Dequeue ();
-				if (queueobj is GCHandle) {
-					XplatUIDriverSupport.ExecuteClientMessage((GCHandle)queueobj);
-				} else {
-					MSG msg = (MSG)queueobj;
-					NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
+			lock (queuelock) {
+				while (MessageQueue.Count > 0) {
+					object queueobj = MessageQueue.Dequeue ();
+					if (queueobj is GCHandle) {
+						XplatUIDriverSupport.ExecuteClientMessage((GCHandle)queueobj);
+					} else {
+						MSG msg = (MSG)queueobj;
+						NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
+					}
 				}
 			}
 		}
@@ -420,7 +422,7 @@ namespace System.Windows.Forms {
 				msg.message = Msg.WM_MOUSEHOVER;
 				msg.wParam = GetMousewParam (0);
 				msg.lParam = (IntPtr)((ushort)Hover.X << 16 | (ushort)Hover.X);
-				MessageQueue.Enqueue (msg);
+				EnqueueMessage (msg);
 			}
 		}
 		#endregion
@@ -736,7 +738,7 @@ namespace System.Windows.Forms {
 					MSG msg = new MSG ();
 					msg.message = Msg.WM_PAINT;
 					msg.hwnd = hwnd.Handle;
-					MessageQueue.Enqueue (msg);
+					EnqueueMessage (msg);
 					hwnd.expose_pending = true;
 				}
 			} else {
@@ -749,7 +751,7 @@ namespace System.Windows.Forms {
 					msg.wParam = hrgn == IntPtr.Zero ? (IntPtr)1 : hrgn;
 					msg.refobject = rgn;
 					msg.hwnd = hwnd.Handle;
-					MessageQueue.Enqueue (msg);
+					EnqueueMessage (msg);
 					hwnd.nc_expose_pending = true;
 
 				}
@@ -1613,7 +1615,7 @@ namespace System.Windows.Forms {
 			msg.message = message;
 			msg.wParam = wParam;
 			msg.lParam = lParam;
-			MessageQueue.Enqueue (msg);
+			EnqueueMessage (msg);
 			return true;
 		}
 
@@ -1681,7 +1683,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		internal override void SendAsyncMethod (AsyncMethodData method) {
 			// Fake async
-			MessageQueue.Enqueue (GCHandle.Alloc (method));
+			lock (queuelock) {
+				MessageQueue.Enqueue (GCHandle.Alloc (method));
+			}
 		}
 
 		[MonoTODO]
