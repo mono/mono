@@ -1,3 +1,8 @@
+2009-05-20  Andreia Gaita  <avidigal@novell.com>
+
+	* Makefile.am: avoid going on the network just to get the revision,
+	use git log instead
+
 2009-05-19  Massimiliano Mantione  <massi@ximian.com>
 
 	Fixed estimate for short branches on amd64 (they were off mark, and
