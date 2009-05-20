@@ -1,3 +1,17 @@
+2009-05-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* local-propagation.c (mono_local_cprop): Avoid local propagation
+	across paired add/sub if the first instruction dest reg is it's
+	source reg. For example:
+
+	int_add_imm R12 <- R12 [1] clobbers: 1
+	int_sub_imm R42 <- R12 [1] clobbers: 1
+
+	The cprop pass would wrongly const prop + 1 to int_sub_imm which doesn't
+	maintain the math identify.
+
+	Fixes #505375.
+
 2009-05-20  Andreia Gaita  <avidigal@novell.com>
 
 	* Makefile.am: avoid going on the network just to get the revision,
