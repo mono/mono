@@ -1,3 +1,10 @@
+2009-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_wrappers): Add StructureToPtr/PtrToStructure wrappers.
+
+	* basic.cs: Move the test_2_cprop_bug () test to generics.cs as it involves
+	generics.
+
 2009-05-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* local-propagation.c (mono_local_cprop): Avoid local propagation
