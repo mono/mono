@@ -1,3 +1,8 @@
+2009-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Share more runtime
+	invoke wrappers.
+
 2009-05-20  Miguel de Icaza  <miguel@novell.com>
 
 	* socket-io.c
