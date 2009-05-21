@@ -5416,7 +5416,7 @@ namespace Mono.CSharp {
  				return true;
  			}
  
- 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0) {
+ 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.BACKING_FIELD)) == 0) {
 				Report.SymbolRelatedToPreviousError (conflict_symbol);
 				Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
 					GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
@@ -7068,14 +7068,16 @@ namespace Mono.CSharp {
 					GetSignatureForError ());
 			}
 
-			if (!HasBackingField)
+			if (!HasBackingField) {
+				SetMemberIsUsed ();
 				return true;
+			}
 
 			// FIXME: We are unable to detect whether generic event is used because
 			// we are using FieldExpr instead of EventExpr for event access in that
 			// case.  When this issue will be fixed this hack can be removed.
 			if (TypeManager.IsGenericType (MemberType))
-				SetMemberIsUsed();
+				SetMemberIsUsed ();
 
 			if (Add.IsInterfaceImplementation)
 				SetMemberIsUsed ();
