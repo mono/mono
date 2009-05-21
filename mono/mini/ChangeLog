@@ -1,3 +1,8 @@
+2009-05-20  Miguel de Icaza  <miguel@novell.com>
+
+	* aot-runtime.c (mono_aot_init): Use g_getenv to work on systems
+	without getenv.
+
 2009-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Add StructureToPtr/PtrToStructure wrappers.
