@@ -1,5 +1,10 @@
 2009-05-20  Miguel de Icaza  <miguel@novell.com>
 
+	* wapi_glob.c (_wapi_glob): Use PATH_MAX from limits.h instead of
+	the BSD name from sys/param.h (MAXPATHLEN)
+
+	Do not include pwd.h as it is not used.
+
 	* thread-private.h: Use indent ifdef style for clarity
 
 	* sockets-wrappers.h: sys/socket.h conditional
