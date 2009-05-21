@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -75,8 +81,7 @@ namespace RabbitMQ.Client.MessagePatterns {
     ///	using (IConnection conn = new ConnectionFactory()
     ///	                                .CreateConnection(serverAddress)) {
     ///	    using (IModel ch = conn.CreateModel()) {
-    ///	        ushort ticket = ch.AccessRequest("/data");
-    ///	        Subscription sub = new Subscription(ch, ticket, queueName);
+    ///	        Subscription sub = new Subscription(ch, queueName);
     ///	        new MySimpleRpcServerSubclass(sub).MainLoop();
     ///	    }
     ///	}
@@ -256,8 +261,7 @@ namespace RabbitMQ.Client.MessagePatterns {
                 }
 
                 replyProperties.CorrelationId = properties.CorrelationId;
-                m_subscription.Model.BasicPublish(m_subscription.Ticket,
-                                                  replyAddress,
+                m_subscription.Model.BasicPublish(replyAddress,
                                                   replyProperties,
                                                   reply);
             } else {
@@ -269,23 +273,23 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///<summary>Called by HandleCall and HandleCast when a
         ///"jms/stream-message" request is received.</summary>
         ///<remarks>
-	///<para>
-	/// The args array contains the values decoded by HandleCall
-	/// or HandleCast.
-	///</para>
-	///<para>
-	/// The replyWriter parameter will be null if we were called
-	/// from HandleCast, in which case a reply is not expected or
-	/// possible, or non-null if we were called from
-	/// HandleCall. Use the methods of replyWriter in this case to
-	/// assemble your reply, which will be sent back to the remote
-	/// caller.
-	///</para>
-	///<para>
-	/// This default implementation does nothing, which
-	/// effectively sends back an empty reply to any and all
-	/// remote callers.
-	///</para>
+        ///<para>
+        /// The args array contains the values decoded by HandleCall
+        /// or HandleCast.
+        ///</para>
+        ///<para>
+        /// The replyWriter parameter will be null if we were called
+        /// from HandleCast, in which case a reply is not expected or
+        /// possible, or non-null if we were called from
+        /// HandleCall. Use the methods of replyWriter in this case to
+        /// assemble your reply, which will be sent back to the remote
+        /// caller.
+        ///</para>
+        ///<para>
+        /// This default implementation does nothing, which
+        /// effectively sends back an empty reply to any and all
+        /// remote callers.
+        ///</para>
         ///</remarks>
         public virtual void HandleStreamMessageCall(IStreamMessageBuilder replyWriter,
                                                     bool isRedelivered,
@@ -298,29 +302,29 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///<summary>Called by ProcessRequest(), this is the most
         ///general method that handles RPC-style requests.</summary>
         ///<remarks>
-	///<para>
-	/// This method should map requestProperties and body to
-	/// replyProperties and the returned byte array.
-	///</para>
-	///<para>
-	/// The default implementation checks
-	/// requestProperties.ContentType, and if it is
-	/// "jms/stream-message" (i.e. the current value of
-	/// StreamMessageBuilder.MimeType), parses it using
-	/// StreamMessageReader and delegates to
-	/// HandleStreamMessageCall before encoding and returning the
-	/// reply. If the ContentType is any other value, the request
-	/// is passed to HandleSimpleCall instead.
-	///</para>
-	///<para>
-	/// The isRedelivered flag is true when the server knows for
-	/// sure that it has tried to send this request previously
-	/// (although not necessarily to this application). It is not
-	/// a reliable indicator of previous receipt, however - the
-	/// only claim it makes is that a delivery attempt was made,
-	/// not that the attempt succeeded. Be careful if you choose
-	/// to use the isRedelivered flag.
-	///</para>
+        ///<para>
+        /// This method should map requestProperties and body to
+        /// replyProperties and the returned byte array.
+        ///</para>
+        ///<para>
+        /// The default implementation checks
+        /// requestProperties.ContentType, and if it is
+        /// "jms/stream-message" (i.e. the current value of
+        /// StreamMessageBuilder.MimeType), parses it using
+        /// StreamMessageReader and delegates to
+        /// HandleStreamMessageCall before encoding and returning the
+        /// reply. If the ContentType is any other value, the request
+        /// is passed to HandleSimpleCall instead.
+        ///</para>
+        ///<para>
+        /// The isRedelivered flag is true when the server knows for
+        /// sure that it has tried to send this request previously
+        /// (although not necessarily to this application). It is not
+        /// a reliable indicator of previous receipt, however - the
+        /// only claim it makes is that a delivery attempt was made,
+        /// not that the attempt succeeded. Be careful if you choose
+        /// to use the isRedelivered flag.
+        ///</para>
         ///</remarks>
         public virtual byte[] HandleCall(bool isRedelivered,
                                          IBasicProperties requestProperties,
@@ -347,13 +351,13 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///<summary>Called by the default HandleCall() implementation
         ///as a fallback.</summary>
         ///<remarks>
-	/// If the MIME ContentType of the request did not match any
-	/// of the types specially recognised
-	/// (e.g. "jms/stream-message"), this method is called instead
-	/// with the raw bytes of the request. It should fill in
-	/// replyProperties (or set it to null) and return a byte
-	/// array to send back to the remote caller as a reply
-	/// message.
+        /// If the MIME ContentType of the request did not match any
+        /// of the types specially recognised
+        /// (e.g. "jms/stream-message"), this method is called instead
+        /// with the raw bytes of the request. It should fill in
+        /// replyProperties (or set it to null) and return a byte
+        /// array to send back to the remote caller as a reply
+        /// message.
         ///</remarks>
         public virtual byte[] HandleSimpleCall(bool isRedelivered,
                                                IBasicProperties requestProperties,
@@ -369,26 +373,26 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///general method that handles asynchronous, one-way
         ///requests.</summary>
         ///<remarks>
-	///<para>
-	/// The default implementation checks
-	/// requestProperties.ContentType, and if it is
-	/// "jms/stream-message" (i.e. the current value of
-	/// StreamMessageBuilder.MimeType), parses it using
-	/// StreamMessageReader and delegates to
-	/// HandleStreamMessageCall, passing in null as the
-	/// replyWriter parameter to indicate that no reply is desired
-	/// or possible. If the ContentType is any other value, the
-	/// request is passed to HandleSimpleCast instead.
-	///</para>
-	///<para>
-	/// The isRedelivered flag is true when the server knows for
-	/// sure that it has tried to send this request previously
-	/// (although not necessarily to this application). It is not
-	/// a reliable indicator of previous receipt, however - the
-	/// only claim it makes is that a delivery attempt was made,
-	/// not that the attempt succeeded. Be careful if you choose
-	/// to use the isRedelivered flag.
-	///</para>
+        ///<para>
+        /// The default implementation checks
+        /// requestProperties.ContentType, and if it is
+        /// "jms/stream-message" (i.e. the current value of
+        /// StreamMessageBuilder.MimeType), parses it using
+        /// StreamMessageReader and delegates to
+        /// HandleStreamMessageCall, passing in null as the
+        /// replyWriter parameter to indicate that no reply is desired
+        /// or possible. If the ContentType is any other value, the
+        /// request is passed to HandleSimpleCast instead.
+        ///</para>
+        ///<para>
+        /// The isRedelivered flag is true when the server knows for
+        /// sure that it has tried to send this request previously
+        /// (although not necessarily to this application). It is not
+        /// a reliable indicator of previous receipt, however - the
+        /// only claim it makes is that a delivery attempt was made,
+        /// not that the attempt succeeded. Be careful if you choose
+        /// to use the isRedelivered flag.
+        ///</para>
         ///</remarks>
         public virtual void HandleCast(bool isRedelivered,
                                        IBasicProperties requestProperties,
@@ -410,10 +414,10 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///<summary>Called by the default HandleCast() implementation
         ///as a fallback.</summary>
         ///<remarks>
-	/// If the MIME ContentType of the request did not match any
-	/// of the types specially recognised
-	/// (e.g. "jms/stream-message"), this method is called instead
-	/// with the raw bytes of the request.
+        /// If the MIME ContentType of the request did not match any
+        /// of the types specially recognised
+        /// (e.g. "jms/stream-message"), this method is called instead
+        /// with the raw bytes of the request.
         ///</remarks>
         public virtual void HandleSimpleCast(bool isRedelivered,
                                              IBasicProperties requestProperties,

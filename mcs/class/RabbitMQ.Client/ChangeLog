@@ -39,3 +39,6 @@
 	RabbitMQ.Client assembly from RabbitMQ project.
 	http://www.rabbitmq.com/
 
+2009-05-21  Michael Barker  <mike@middlesoft.co.uk>
+
+	Updated to version 1.5.3 of the RabbitMQ libraries.

@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -169,6 +175,20 @@ namespace RabbitMQ.Client
         ///</remarks>
         void Close();
         
+        ///<summary>Close this connection and all its channels.</summary>
+        ///<remarks>
+        ///The method behaves in the same way as Close(), with the only
+        ///difference that the connection is closed with the given connection
+        ///close code and message. 
+        ///<para>
+        ///The close code (See under "Reply Codes" in the AMQP specification)
+        ///</para>
+        ///<para>
+        ///A message indicating the reason for closing the connection
+        ///</para>
+        ///</remarks>
+        void Close(ushort reasonCode, string reasonText);
+        
         ///<summary>Close this connection and all its channels
         ///and wait with a timeout for all the in-progress close operations
         ///to complete.
@@ -189,6 +209,23 @@ namespace RabbitMQ.Client
         ///</remarks>
         void Close(int timeout);
         
+        ///<summary>Close this connection and all its channels
+        ///and wait with a timeout for all the in-progress close operations
+        ///to complete.
+        ///</summary>
+        ///<remarks>
+        ///The method behaves in the same way as Close(int timeout), with the only
+        ///difference that the connection is closed with the given connection
+        ///close code and message.
+        ///<para>
+        ///The close code (See under "Reply Codes" in the AMQP specification)
+        ///</para>
+        ///<para>
+        ///A message indicating the reason for closing the connection
+        ///</para>
+        ///</remarks>
+        void Close(ushort reasonCode, string reasonText, int timeout);
+        
         ///<summary>Abort this connection and all its channels.</summary>
         ///<remarks>
         ///Note that all active channels, sessions, and models will be
@@ -200,10 +237,24 @@ namespace RabbitMQ.Client
         ///</remarks>
         void Abort();
         
+        ///<summary>Abort this connection and all its channels.</summary>
+        ///<remarks>
+        ///The method behaves in the same way as Abort(), with the only
+        ///difference that the connection is closed with the given connection
+        ///close code and message.
+        ///<para>
+        ///The close code (See under "Reply Codes" in the AMQP specification)
+        ///</para>
+        ///<para>
+        ///A message indicating the reason for closing the connection
+        ///</para>
+        ///</remarks>
+        void Abort(ushort reasonCode, string reasonText);
+        
         ///<summary>
         ///Abort this connection and all its channels and wait with a
         ///timeout for all the in-progress close operations to complete.
-        ///.</summary>
+        ///</summary>
         ///<remarks>
         ///This method, behaves in a similar way as method Abort() with the
         ///only difference that it explictly specifies the timeout given
@@ -216,6 +267,23 @@ namespace RabbitMQ.Client
         ///</para>
         ///</remarks>
         void Abort(int timeout);
+        
+        ///<summary>
+        ///Abort this connection and all its channels and wait with a
+        ///timeout for all the in-progress close operations to complete.
+        ///</summary>
+        ///<remarks>
+        ///The method behaves in the same way as Abort(timeout), with the only
+        ///difference that the connection is closed with the given connection
+        ///close code and message.
+        ///<para>
+        ///The close code (See under "Reply Codes" in the AMQP specification)
+        ///</para>
+        ///<para>
+        ///A message indicating the reason for closing the connection
+        ///</para>
+        ///</remarks>
+        void Abort(ushort reasonCode, string reasonText, int timeout);
         
         ///<summary>Returns the list of ShutdownReportEntry objects that
         ///contain information about any errors reported while closing the

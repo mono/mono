@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -58,8 +64,6 @@ namespace RabbitMQ.Client.Impl {
         public abstract int MinorVersion { get; }
         public abstract string ApiName { get; }
         public abstract int DefaultPort { get; }
-
-	public abstract bool DefaultSuppressAccessRequest { get; }
 
         public abstract IFrameHandler CreateFrameHandler(AmqpTcpEndpoint endpoint);
         public abstract IConnection CreateConnection(ConnectionParameters parameters,
@@ -85,6 +89,10 @@ namespace RabbitMQ.Client.Impl {
                                                    out Command request,
                                                    out int replyClassId,
                                                    out int replyMethodId);
+                                                   
+        ///<summary>Used in the quiescing session to determine if the command
+        ///is allowed to be sent.</summary>
+        public abstract bool CanSendWhileClosed(Command cmd); 
 
         public AmqpVersion Version {
             get {

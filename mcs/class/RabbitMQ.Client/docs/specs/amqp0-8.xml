@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-
+<!-- WARNING: Modified from the official 0-8 specification XML by
+     the addition of queue.unbind, queue.unbind-ok -->
 <!--
 Copyright Notice
 ================
@@ -1618,6 +1619,59 @@ localised reply text
   </doc>
       <chassis name="client" implement="MUST"/>
     </method>
+
+    <!-- Unofficial additions to the 0-8 protocol, lifted from the 0-9
+         protocol specification: queue.unbind, queue.unbind-ok -->
+
+    <method name = "unbind" synchronous = "1" index = "50" label = "unbind a queue from an exchange">
+      <doc>This method unbinds a queue from an exchange.</doc>
+      <rule name = "01">
+        <doc>If a unbind fails, the server MUST raise a connection exception.</doc>
+      </rule>
+      <chassis name="server" implement="MUST"/>
+      <response name="unbind-ok"/>
+
+      <field name = "ticket" domain = "access ticket">
+        <doc>
+          The client provides a valid access ticket giving "active"
+          access rights to the queue's access realm.
+        </doc>
+      </field>
+
+      <field name = "queue" domain = "queue name">
+        <doc>Specifies the name of the queue to unbind.</doc>
+        <rule name = "02">
+          <doc>
+            If the queue does not exist the server MUST raise a channel exception
+            with reply code 404 (not found).
+          </doc>
+        </rule>
+      </field>
+
+      <field name = "exchange" domain = "exchange name">
+        <doc>The name of the exchange to unbind from.</doc>
+        <rule name = "03">
+          <doc>
+            If the exchange does not exist the server MUST raise a channel
+            exception with reply code 404 (not found).
+          </doc>
+        </rule>
+      </field>
+
+      <field name = "routing key" domain = "shortstr" label = "routing key of binding">
+        <doc>Specifies the routing key of the binding to unbind.</doc>
+      </field>
+
+      <field name = "arguments" domain = "table" label = "arguments of binding">
+        <doc>Specifies the arguments of the binding to unbind.</doc>
+      </field>
+    </method>
+
+    <method name = "unbind-ok" synchronous = "1" index = "51" label = "confirm unbind successful">
+      <doc>This method confirms that the unbind was successful.</doc>
+      <chassis name = "client" implement = "MUST"/>
+    </method>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <method name="purge" synchronous="1" index="30">
   purge a queue

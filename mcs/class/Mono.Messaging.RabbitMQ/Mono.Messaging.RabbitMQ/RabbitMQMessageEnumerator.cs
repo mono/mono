@@ -117,10 +117,10 @@ namespace Mono.Messaging.RabbitMQ {
 				if (subscription == null) {
 					IModel ch = Model;
 					
-					ushort ticket = ch.AccessRequest ("/data");
-					string finalName = ch.QueueDeclare (ticket, qRef.Queue, false);
+					//ushort ticket = ch.AccessRequest ("/data");
+					string finalName = ch.QueueDeclare (qRef.Queue, false);
 					
-					subscription = new Subscription (ch, ticket, finalName);
+					subscription = new Subscription (ch, finalName);
 				}
 				
 				return subscription;

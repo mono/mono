@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -76,6 +82,8 @@ namespace RabbitMQ.Client.Impl
         private readonly object m_eventLock = new object();
         private BasicReturnEventHandler m_basicReturn;
         private CallbackExceptionEventHandler m_callbackException;
+        
+        public ManualResetEvent m_flowControlBlock = new ManualResetEvent(true);
 
         public event ModelShutdownEventHandler ModelShutdown
         {
@@ -225,6 +233,7 @@ namespace RabbitMQ.Client.Impl
                     }
                 }
             }
+            m_flowControlBlock.Set();
         }
 
         public virtual void OnBasicReturn(BasicReturnEventArgs args)
@@ -318,6 +327,9 @@ namespace RabbitMQ.Client.Impl
 
         public void ModelSend(MethodBase method, ContentHeaderBase header, byte[] body)
         {
+            if (method.HasContent) {
+                m_flowControlBlock.WaitOne();
+            }
             m_session.Transmit(new Command(method, header, body));
         }
         
@@ -380,6 +392,17 @@ namespace RabbitMQ.Client.Impl
             e.BasicProperties = basicProperties;
             e.Body = body;
             OnBasicReturn(e);
+        }
+        
+        public abstract void _Private_ChannelFlowOk();
+        
+        public void HandleChannelFlow(bool active)
+        {
+            if (active)
+                m_flowControlBlock.Set();
+            else
+                m_flowControlBlock.Reset();
+            _Private_ChannelFlowOk();
         }
 
         public void HandleConnectionStart(byte versionMajor,
@@ -444,8 +467,13 @@ namespace RabbitMQ.Client.Impl
                              replyText,
                              classId,
                              methodId));
-            FinishClose();
-            _Private_ChannelCloseOk();
+            
+            m_session.Close(m_closeReason, false);
+            try {
+                _Private_ChannelCloseOk();
+            } finally {
+                m_session.Notify();
+            }
         }
 
         public void FinishClose()
@@ -464,95 +492,17 @@ namespace RabbitMQ.Client.Impl
 
         public abstract void ChannelFlow(bool active);
         
-        public ushort AccessRequest(string realm)
+        public void ExchangeDeclare(string exchange, string type, bool durable)
         {
-            return AccessRequest(realm, false, true, true, true, true);
-        }
-        
-        public static AccessRequestConfig GetEnvironmentAccessRequestConfig()
-        {
-            string setting = Environment.GetEnvironmentVariable("AMQP_ACCESS_REQUEST");
-            if (setting == null)
-            {
-                return AccessRequestConfig.UseDefault;
-            }
-            switch (setting)
-            {
-                case "ENABLE": return AccessRequestConfig.Enable;
-                case "SUPPRESS": return AccessRequestConfig.Suppress;
-                case "USE_DEFAULT": return AccessRequestConfig.UseDefault;
-                default: {
-                    string message = string.Format("Unsupported AMQP_ACCESS_REQUEST setting: {0}",
-                                                   setting);
-                    throw new NotSupportedException(message);
-                }
-            }
+            ExchangeDeclare(exchange, type, false, durable, false, false, false, null);
         }
 
-        public static AccessRequestConfig Combine(AccessRequestConfig first,
-                                                  AccessRequestConfig second)
+        public void ExchangeDeclare(string exchange, string type)
         {
-            return (first == AccessRequestConfig.UseDefault) ? second : first;
+            ExchangeDeclare(exchange, type, false, false, false, false, false, null);
         }
 
-        public ushort AccessRequest(string realm,
-                        bool exclusive,
-                        bool passive,
-                        bool active,
-                        bool write,
-                        bool read)
-        {
-            bool send;
-            switch (Combine(m_session.Connection.Parameters.AccessRequestConfig,
-                            GetEnvironmentAccessRequestConfig()))
-            {
-                case AccessRequestConfig.Enable:
-                    send = true;
-                    break;
-                case AccessRequestConfig.Suppress:
-                    send = false;
-                    break;
-                case AccessRequestConfig.UseDefault:
-                    send = !m_session.Connection.Protocol.DefaultSuppressAccessRequest;
-                    break;
-                default: {
-                    send = false;
-
-                    string message = string.Format("Illegal value for AccessRequestConfig: {0}",
-                                                   (int) m_session.Connection.Parameters.AccessRequestConfig);
-                    throw new ArgumentException(message);
-                }
-            }
-            if (send)
-            {
-                return _Private_AccessRequest(realm, exclusive, passive, active, write, read);
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-        // TODO: Consider changing the access modifier or name, _Private => protected (?)
-        public abstract ushort _Private_AccessRequest(string realm,
-                              bool exclusive,
-                              bool passive,
-                              bool active,
-                              bool write,
-                              bool read);
-
-        public void ExchangeDeclare(ushort ticket, string exchange, string type, bool durable)
-        {
-            ExchangeDeclare(ticket, exchange, type, false, durable, false, false, false, null);
-        }
-
-        public void ExchangeDeclare(ushort ticket, string exchange, string type)
-        {
-            ExchangeDeclare(ticket, exchange, type, false, false, false, false, false, null);
-        }
-
-        public abstract void ExchangeDeclare(ushort ticket,
-                                             string exchange,
+        public abstract void ExchangeDeclare(string exchange,
                                              string type,
                                              bool passive,
                                              bool durable,
@@ -561,31 +511,28 @@ namespace RabbitMQ.Client.Impl
                                              bool nowait,
                                              IDictionary arguments);
 
-        public abstract void ExchangeDelete(ushort ticket,
-                                            string exchange,
+        public abstract void ExchangeDelete(string exchange,
                                             bool ifUnused,
                                             bool nowait);
 
         //TODO: Mark these as virtual, maybe the model has an optimized way
         //      of dealing with missing parameters.
-
-        public string QueueDeclare(ushort ticket)
+        public string QueueDeclare()
         {
-            return QueueDeclare(ticket, "", false, false, true, true, false, null);
+            return QueueDeclare("", false, false, true, true, false, null);
         }
 
-        public string QueueDeclare(ushort ticket, string queue)
+        public string QueueDeclare(string queue)
         {
-            return QueueDeclare(ticket, queue, false);
+            return QueueDeclare(queue, false);
         }
 
-        public string QueueDeclare(ushort ticket, string queue, bool durable)
+        public string QueueDeclare(string queue, bool durable)
         {
-            return QueueDeclare(ticket, queue, false, durable, false, false, false, null);
+            return QueueDeclare(queue, false, durable, false, false, false, null);
         }
 
-        public abstract string QueueDeclare(ushort ticket,
-                                            string queue,
+        public abstract string QueueDeclare(string queue,
                                             bool passive,
                                             bool durable,
                                             bool exclusive,
@@ -593,54 +540,47 @@ namespace RabbitMQ.Client.Impl
                                             bool nowait,
                                             IDictionary arguments);
 
-        public abstract void QueueBind(ushort ticket,
-                                       string queue,
+        public abstract void QueueBind(string queue,
                                        string exchange,
                                        string routingKey,
                                        bool nowait,
                                        IDictionary arguments);
 
-        public abstract void QueueUnbind(ushort ticket,
-                                         string queue,
+        public abstract void QueueUnbind(string queue,
                                          string exchange,
                                          string routingKey,
                                          IDictionary arguments);
 
-        public abstract uint QueuePurge(ushort ticket,
-                                        string queue,
+        public abstract uint QueuePurge(string queue,
                                         bool nowait);
 
-        public abstract uint QueueDelete(ushort ticket,
-                                         string queue,
+        public abstract uint QueueDelete(string queue,
                                          bool ifUnused,
                                          bool ifEmpty,
                                          bool nowait);
 
-        public string BasicConsume(ushort ticket,
-                                   string queue,
+        public string BasicConsume(string queue,
                                    IDictionary filter,
                                    IBasicConsumer consumer)
         {
-            return BasicConsume(ticket, queue, false, filter, consumer);
+            return BasicConsume(queue, false, filter, consumer);
         }
 
-        public string BasicConsume(ushort ticket,
-                                   string queue,
+        public string BasicConsume(string queue,
                                    bool noAck,
                                    IDictionary filter,
                                    IBasicConsumer consumer)
         {
-            return BasicConsume(ticket, queue, noAck, "", filter, consumer);
+            return BasicConsume(queue, noAck, "", filter, consumer);
         }
 
-        public string BasicConsume(ushort ticket,
-                                   string queue,
+        public string BasicConsume(string queue,
                                    bool noAck,
                                    string consumerTag,
                                    IDictionary filter,
                                    IBasicConsumer consumer)
         {
-            return BasicConsume(ticket, queue, noAck, consumerTag, false, false, filter, consumer);
+            return BasicConsume(queue, noAck, consumerTag, false, false, filter, consumer);
         }
 
         public class BasicConsumerRpcContinuation : SimpleBlockingRpcContinuation
@@ -650,8 +590,7 @@ namespace RabbitMQ.Client.Impl
             public BasicConsumerRpcContinuation() { }
         }
 
-        public string BasicConsume(ushort ticket,
-                                   string queue,
+        public string BasicConsume(string queue,
                                    bool noAck,
                                    string consumerTag,
                                    bool noLocal,
@@ -669,7 +608,7 @@ namespace RabbitMQ.Client.Impl
             // the RPC response, but a response is still expected.
             try
             {
-                _Private_BasicConsume(ticket, queue, consumerTag, noLocal, noAck, exclusive,
+                _Private_BasicConsume(queue, consumerTag, noLocal, noAck, exclusive,
                     /*nowait:*/ false, filter);
             }
             catch (AlreadyClosedException)
@@ -764,15 +703,14 @@ namespace RabbitMQ.Client.Impl
             public BasicGetRpcContinuation() { }
         }
 
-        public BasicGetResult BasicGet(ushort ticket,
-                                       string queue,
+        public BasicGetResult BasicGet(string queue,
                                        bool noAck)
         {
             BasicGetRpcContinuation k = new BasicGetRpcContinuation();
             Enqueue(k);
             try
             {
-                _Private_BasicGet(ticket, queue, noAck);
+                _Private_BasicGet(queue, noAck);
             }
             catch (AlreadyClosedException)
             {
@@ -788,8 +726,7 @@ namespace RabbitMQ.Client.Impl
                                       ushort prefetchCount,
                                       bool global);
 
-        public abstract void _Private_BasicConsume(ushort ticket,
-                                                   string queue,
+        public abstract void _Private_BasicConsume(string queue,
                                                    string consumerTag,
                                                    bool noLocal,
                                                    bool noAck,
@@ -800,26 +737,22 @@ namespace RabbitMQ.Client.Impl
         public abstract void _Private_BasicCancel(string consumerTag,
                                                   bool nowait);
 
-        public void BasicPublish(ushort ticket,
-                                 PublicationAddress addr,
+        public void BasicPublish(PublicationAddress addr,
                                  IBasicProperties basicProperties,
                                  byte[] body)
         {
-            BasicPublish(ticket,
-                         addr.ExchangeName,
+            BasicPublish(addr.ExchangeName,
                          addr.RoutingKey,
                          basicProperties,
                          body);
         }
 
-        public void BasicPublish(ushort ticket,
-                                 string exchange,
+        public void BasicPublish(string exchange,
                                  string routingKey,
                                  IBasicProperties basicProperties,
                                  byte[] body)
         {
-            BasicPublish(ticket,
-                         exchange,
+            BasicPublish(exchange,
                          routingKey,
                          false,
                          false,
@@ -827,8 +760,7 @@ namespace RabbitMQ.Client.Impl
                          body);
         }
 
-        public void BasicPublish(ushort ticket,
-                                 string exchange,
+        public void BasicPublish(string exchange,
                                  string routingKey,
                                  bool mandatory,
                                  bool immediate,
@@ -839,8 +771,7 @@ namespace RabbitMQ.Client.Impl
             {
                 basicProperties = CreateBasicProperties();
             }
-            _Private_BasicPublish(ticket,
-                                  exchange,
+            _Private_BasicPublish(exchange,
                                   routingKey,
                                   mandatory,
                                   immediate,
@@ -848,8 +779,7 @@ namespace RabbitMQ.Client.Impl
                                   body);
         }
 
-        public abstract void _Private_BasicPublish(ushort ticket,
-                                                   string exchange,
+        public abstract void _Private_BasicPublish(string exchange,
                                                    string routingKey,
                                                    bool mandatory,
                                                    bool immediate,
@@ -873,22 +803,49 @@ namespace RabbitMQ.Client.Impl
 
         void IDisposable.Dispose()
         {
-            Close(200, "");
+            Close();
+        }
+        
+        public void Close()
+        {
+        	Close(200, "Goodbye");
         }
 
-        public void Close(ushort replyCode, string replyText)
+		public void Close(ushort replyCode, string replyText)
+        {
+        	Close(replyCode, replyText, false);
+        }
+        
+        public void Abort() 
+        {
+            Abort(200, "Goodbye");
+        }
+        
+        public void Abort(ushort replyCode, string replyText)
+        {
+            Close(replyCode, replyText, true);
+        }
+        
+        public void Close(ushort replyCode, string replyText, bool abort)
         {
             ShutdownContinuation k = new ShutdownContinuation();
             ModelShutdown += new ModelShutdownEventHandler(k.OnShutdown);
-
-            if (SetCloseReason(new ShutdownEventArgs(ShutdownInitiator.Application,
-                                 replyCode,
-                                 replyText)))
-            {
-                _Private_ChannelClose(replyCode, replyText, 0, 0);
+            
+            try {
+                if (SetCloseReason(new ShutdownEventArgs(ShutdownInitiator.Application,
+                                     replyCode,
+                                     replyText)))
+                {
+                    _Private_ChannelClose(replyCode, replyText, 0, 0);
+                }
+                k.Wait();
+            } catch (AlreadyClosedException ace) {
+            	if (!abort)
+            		throw ace;
+            } catch (IOException ioe) {
+            	if (!abort)
+            		throw ioe;
             }
-
-            k.Wait();
         }
 
         public void HandleChannelCloseOk()
@@ -905,8 +862,7 @@ namespace RabbitMQ.Client.Impl
 
         public abstract void _Private_ChannelCloseOk();
 
-        public abstract void _Private_BasicGet(ushort ticket,
-                                               string queue,
+        public abstract void _Private_BasicGet(string queue,
                                                bool noAck);
 
         public void HandleBasicGetOk(ulong deliveryTag,

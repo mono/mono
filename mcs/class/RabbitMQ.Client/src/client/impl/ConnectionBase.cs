@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -122,7 +128,7 @@ namespace RabbitMQ.Client.Impl
 
             m_sessionManager = new SessionManager(this);
             m_session0 = new MainSession(this);
-            m_session0.Handler = NotifyReceivedClose;
+            m_session0.Handler = new MainSession.SessionCloseDelegate(NotifyReceivedCloseOk);
             m_model0 = (ModelBase)Protocol.CreateModel(m_session0);
 
             StartMainLoop();
@@ -334,7 +340,16 @@ namespace RabbitMQ.Client.Impl
 
         void IDisposable.Dispose()
         {
-            Close();
+            Abort();
+            if (ShutdownReport.Count > 0)
+            {
+            	foreach (ShutdownReportEntry entry in ShutdownReport)
+            	{
+            	    if (entry.Exception != null)
+            	        throw entry.Exception;
+            	}
+            	throw new OperationInterruptedException(null);
+            }
         }
 
         ///<summary>API-side invocation of connection close.</summary>
@@ -343,27 +358,39 @@ namespace RabbitMQ.Client.Impl
             Close(200, "Goodbye", Timeout.Infinite);
         }
         
+        ///<summary>API-side invocation of connection close.</summary>
+        public void Close(ushort reasonCode, string reasonText)
+        {
+            Close(reasonCode, reasonText, Timeout.Infinite);
+        }
+        
         ///<summary>API-side invocation of connection close with timeout.</summary>
         public void Close(int timeout)
         {
             Close(200, "Goodbye", timeout);
         }
-
-        public void Close(ShutdownEventArgs reason)
-        {
-            Close(reason, false, Timeout.Infinite);
-        }
         
+        ///<summary>API-side invocation of connection close with timeout.</summary>
         public void Close(ushort reasonCode, string reasonText, int timeout)
         {
             Close(new ShutdownEventArgs(ShutdownInitiator.Application, reasonCode, reasonText), false, timeout);
         }
-        
+
+        public void Close(ShutdownEventArgs reason)
+        {
+            Close(reason, false, Timeout.Infinite);
+        }        
         
         ///<summary>API-side invocation of connection abort.</summary>
         public void Abort()
         {
             Abort(Timeout.Infinite);
+        }
+
+        ///<summary>API-side invocation of connection abort.</summary>
+        public void Abort(ushort reasonCode, string reasonText)
+        {
+            Abort(reasonCode, reasonText, Timeout.Infinite);
         }
         
         ///<summary>API-side invocation of connection abort with timeout.</summary>
@@ -372,6 +399,7 @@ namespace RabbitMQ.Client.Impl
             Abort(200, "Connection close forced", timeout);
         }
         
+        ///<summary>API-side invocation of connection abort with timeout.</summary>
         public void Abort(ushort reasonCode, string reasonText, int timeout)
         {
             Abort(reasonCode, reasonText, ShutdownInitiator.Application, timeout);
@@ -539,13 +567,12 @@ namespace RabbitMQ.Client.Impl
             FinishClose();
         }
         
-        public void HandleHeartbeatFrame()
+        public void NotifyHeartbeatThread()
         {
             if (m_heartbeat == 0) {
                 // Heartbeating not enabled for this connection.
                 return;
             }
-            
             m_heartbeatRead.Set();
         }
 
@@ -601,11 +628,11 @@ namespace RabbitMQ.Client.Impl
         {
             Frame frame = m_frameHandler.ReadFrame();
 
+            NotifyHeartbeatThread();
             // We have received an actual frame.
             if (frame.Type == CommonFraming.Constants.FrameHeartbeat) {
                 // Ignore it: we've already just reset the heartbeat
                 // counter.
-                HandleHeartbeatFrame();
                 return;
             }
 
@@ -650,7 +677,7 @@ namespace RabbitMQ.Client.Impl
             closed = true;
             m_heartbeatRead.Set();
             m_heartbeatWrite.Set();
-        
+
             m_frameHandler.Close();                
             m_model0.SetCloseReason(m_closeReason);
             m_model0.FinishClose();
@@ -684,10 +711,10 @@ namespace RabbitMQ.Client.Impl
         ///</remarks>
         public void ClosingLoop()
         {
-            m_frameHandler.Timeout = ConnectionCloseTimeout;
-            DateTime startTimeout = DateTime.Now;
             try
             {
+                m_frameHandler.Timeout = ConnectionCloseTimeout;
+                DateTime startTimeout = DateTime.Now;
                 // Wait for response/socket closure or timeout
                 while (!closed)
                 {
@@ -698,6 +725,11 @@ namespace RabbitMQ.Client.Impl
                     }
                     MainLoopIteration();
                 }
+            }
+            catch (ObjectDisposedException ode)
+            {
+                if (!closed)
+                    LogCloseError("Connection didn't close cleanly", ode);
             }
             catch (EndOfStreamException eose)
             {
@@ -716,10 +748,10 @@ namespace RabbitMQ.Client.Impl
             }
         }
         
-        public void NotifyReceivedClose()
+        public void NotifyReceivedCloseOk()
         {
+            TerminateMainloop();
             closed = true;
-            m_frameHandler.Close();
         }
         
         ///<summary>

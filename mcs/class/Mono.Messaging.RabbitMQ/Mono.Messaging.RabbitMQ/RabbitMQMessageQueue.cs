@@ -209,8 +209,7 @@ namespace Mono.Messaging.RabbitMQ {
 			
 			using (IConnection cn = cf.CreateConnection (qRef.Host)) {
 				using (IModel model = cn.CreateModel ()) {
-					ushort ticket = model.AccessRequest (realm);
-					model.QueueDelete (ticket, qRef.Queue, false, false, false);
+					model.QueueDelete (qRef.Queue, false, false, false);
 				}
 			}
 		}			
@@ -298,11 +297,10 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private void Send (IModel model, IMessage msg)
 		{
-			ushort ticket = model.AccessRequest ("/data");
-			string finalName = model.QueueDeclare (ticket, QRef.Queue, true);
+			string finalName = model.QueueDeclare (QRef.Queue, true);
 			IMessageBuilder mb = helper.WriteMessage (model, msg);
 
-			model.BasicPublish (ticket, "", finalName,
+			model.BasicPublish ("", finalName,
 			                    (IBasicProperties) mb.GetContentHeader(),
 			                    mb.GetContentBody ());
 		}
@@ -313,8 +311,7 @@ namespace Mono.Messaging.RabbitMQ {
 
 			using (IConnection cn = cf.CreateConnection (QRef.Host)) {
 				using (IModel model = cn.CreateModel ()) {
-					ushort ticket = model.AccessRequest (realm);
-					model.QueuePurge (ticket, QRef.Queue, false);
+					model.QueuePurge (QRef.Queue, false);
 				}
 			}
 		}
@@ -677,10 +674,9 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private IMessage Receive (IModel model, int timeout, bool doAck)
 		{
-			ushort ticket = model.AccessRequest (realm);
-			string finalName = model.QueueDeclare (ticket, QRef.Queue, false);
+			string finalName = model.QueueDeclare (QRef.Queue, false);
 			
-			using (Subscription sub = new Subscription (model, ticket, finalName)) {
+			using (Subscription sub = new Subscription (model, finalName)) {
 				BasicDeliverEventArgs result;
 				if (sub.Next (timeout, out result)) {
 					IMessage m = helper.ReadMessage (QRef, result);
@@ -696,10 +692,9 @@ namespace Mono.Messaging.RabbitMQ {
 		private IMessage Receive (IModel model, int timeout, 
 		                          bool doAck, IsMatch matcher)
 		{
-			ushort ticket = model.AccessRequest (realm);
-			string finalName = model.QueueDeclare (ticket, QRef.Queue, false);
+			string finalName = model.QueueDeclare (QRef.Queue, false);
 			
-			using (Subscription sub = new Subscription (model, ticket, finalName)) {
+			using (Subscription sub = new Subscription (model, finalName)) {
 				BasicDeliverEventArgs result;
 				while (sub.Next (timeout, out result)) {
 					

@@ -48,3 +48,8 @@
 2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
 
 	* RabbitMQMessageQueue.cs: Added comments.
+	
+2009-05-20  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageEnumerator.cs:  Removed references to realms & tickets.
+	* RabbitMQMessageQueue.cs:  Removed references to realms & tickets.

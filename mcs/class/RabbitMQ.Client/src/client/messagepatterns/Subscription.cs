@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -87,12 +93,9 @@ namespace RabbitMQ.Client.MessagePatterns {
     ///</remarks>
     public class Subscription: IEnumerable, IEnumerator, IDisposable {
         protected IModel m_model;
-        protected ushort m_ticket;
 
         ///<summary>Retrieve the IModel our subscription is carried by.</summary>
         public IModel Model { get { return m_model; } }
-        ///<summary>Retrieve the ticket we use for all our server operations.</summary>
-        public ushort Ticket { get { return m_ticket; } }
 
         protected string m_queueName;
         protected QueueingBasicConsumer m_consumer;
@@ -135,9 +138,9 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///property of the Subscription. After creating the queue, the
         ///queue is bound to the named exchange, using Bind() with the
         ///given routingKey bind parameter.</summary>
-        public Subscription(IModel model, ushort ticket,
-                            string exchangeName, string exchangeType, string routingKey)
-            : this(model, ticket)
+        public Subscription(IModel model, string exchangeName,
+                            string exchangeType, string routingKey)
+            : this(model)
         {
             Bind(exchangeName, exchangeType, routingKey);
         }
@@ -146,8 +149,8 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///consuming from a fresh, autodelete, anonymous queue. The
         ///name of the queue can be retrieved using the QueueName
         ///property of the Subscription.</summary>
-        public Subscription(IModel model, ushort ticket)
-            : this(model, ticket, null) {}
+        public Subscription(IModel model)
+            : this(model, null) {}
 
         ///<summary>Creates a new Subscription in "noAck" mode,
         ///consuming from a named queue. If the queueName parameter is
@@ -157,9 +160,9 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///called. After declaring the queue and starting the
         ///consumer, the queue is bound to the named exchange, using
         ///Bind() with the given routingKey bind parameter.</summary>
-        public Subscription(IModel model, ushort ticket, string queueName,
-                            string exchangeName, string exchangeType, string routingKey)
-            : this(model, ticket, queueName)
+        public Subscription(IModel model, string queueName, string exchangeName,
+                            string exchangeType, string routingKey)
+            : this(model, queueName)
         {
             Bind(exchangeName, exchangeType, routingKey);
         }
@@ -170,8 +173,8 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///anonymous queue; otherwise, the queue is declared using
         ///IModel.QueueDeclare() before IModel.BasicConsume() is
         ///called.</summary>
-        public Subscription(IModel model, ushort ticket, string queueName)
-            : this(model, ticket, queueName, true) {}
+        public Subscription(IModel model, string queueName)
+            : this(model, queueName, true) {}
 
         ///<summary>Creates a new Subscription, with full control over
         ///both "noAck" mode and the name of the queue (which, if null
@@ -180,9 +183,9 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///queue and starting the consumer, the queue is bound to the
         ///named exchange, using Bind() with the given routingKey bind
         ///parameter.</summary>
-        public Subscription(IModel model, ushort ticket, string queueName, bool noAck,
+        public Subscription(IModel model, string queueName, bool noAck,
                             string exchangeName, string exchangeType, string routingKey)
-            : this(model, ticket, queueName, noAck)
+            : this(model, queueName, noAck)
         {
             Bind(exchangeName, exchangeType, routingKey);
         }
@@ -191,19 +194,18 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///both "noAck" mode and the name of the queue (which, if null
         ///or the empty-string, will be a fresh autodelete queue, as
         ///for the other constructor overloads).</summary>
-        public Subscription(IModel model, ushort ticket, string queueName, bool noAck)
+        public Subscription(IModel model, string queueName, bool noAck)
         {
             m_model = model;
-            m_ticket = ticket;
             if (queueName == null || queueName.Equals("")) {
-                m_queueName = m_model.QueueDeclare(ticket);
+                m_queueName = m_model.QueueDeclare();
                 m_shouldDelete = true;
             } else {
-                m_queueName = m_model.QueueDeclare(ticket, queueName);
+                m_queueName = m_model.QueueDeclare(queueName);
                 m_shouldDelete = false;
             }
             m_consumer = new QueueingBasicConsumer(m_model);
-            m_consumerTag = m_model.BasicConsume(m_ticket, m_queueName, m_noAck, null, m_consumer);
+            m_consumerTag = m_model.BasicConsume(m_queueName, m_noAck, null, m_consumer);
             m_latestEvent = null;
         }
 
@@ -225,7 +227,7 @@ namespace RabbitMQ.Client.MessagePatterns {
                     // We set m_shouldDelete false before attempting
                     // the delete, because trying twice is worse than
                     // trying once and failing.
-                    m_model.QueueDelete(m_ticket, m_queueName, false, false, false);
+                    m_model.QueueDelete(m_queueName, false, false, false);
                 }
             } catch (OperationInterruptedException) {
                 // We don't mind, here.
@@ -254,8 +256,8 @@ namespace RabbitMQ.Client.MessagePatterns {
         ///</remarks>
         public void Bind(string exchangeName, string exchangeType, string routingKey)
         {
-            m_model.ExchangeDeclare(m_ticket, exchangeName, exchangeType);
-            m_model.QueueBind(m_ticket, m_queueName, exchangeName, routingKey, false, null);
+            m_model.ExchangeDeclare(exchangeName, exchangeType);
+            m_model.QueueBind(m_queueName, exchangeName, routingKey, false, null);
         }
 
         ///<summary>If LatestEvent is non-null, passes it to
@@ -296,22 +298,22 @@ namespace RabbitMQ.Client.MessagePatterns {
 
         ///<summary>Retrieves the next incoming delivery in our
         ///subscription queue.</summary>
-	///<remarks>
-	///<para>
-	/// Returns null when the end of the stream is reached and on
+        ///<remarks>
+        ///<para>
+        /// Returns null when the end of the stream is reached and on
         /// every subsequent call. End-of-stream can arise through the
         /// action of the Subscription.Close() method, or through the
         /// closure of the IModel or its underlying IConnection.
-	///</para>
-	///<para>
-	/// Updates LatestEvent to the value returned.
-	///</para>
-	///<para>
-	/// Does not acknowledge any deliveries at all (but in "noAck"
+        ///</para>
+        ///<para>
+        /// Updates LatestEvent to the value returned.
+        ///</para>
+        ///<para>
+        /// Does not acknowledge any deliveries at all (but in "noAck"
         /// mode, the server will have auto-acknowledged each event
         /// before it is even sent across the wire to us).
-	///</para>
-	///</remarks>
+        ///</para>
+        ///</remarks>
         public BasicDeliverEventArgs Next()
         {
             try {
@@ -323,54 +325,53 @@ namespace RabbitMQ.Client.MessagePatterns {
             } catch (EndOfStreamException) {
                 m_latestEvent = null;
             }
-	    return m_latestEvent;
+            return m_latestEvent;
         }
 
         ///<summary>Retrieves the next incoming delivery in our
         ///subscription queue, or times out after a specified number
         ///of milliseconds.</summary>
-
-	///<remarks>
-	///<para>
-	/// Returns false only if the timeout expires before either a
-	/// delivery appears or the end-of-stream is reached. If false
-	/// is returned, the out parameter "result" is set to null,
-	/// but LatestEvent is not updated.
-	///</para>
-	///<para>
-	/// Returns true to indicate a delivery or the end-of-stream.
-	///</para>
-	///<para>
-	/// If a delivery is already waiting in the queue, or one
-	/// arrives before the timeout expires, it is removed from the
-	/// queue and placed in the "result" out parameter. If the
-	/// end-of-stream is detected before the timeout expires,
-	/// "result" is set to null.
-	///</para>
-	///<para>
-	/// Whenever this method returns true, it updates LatestEvent
-	/// to the value placed in "result" before returning.
-	///</para>
-	///<para>
-	/// End-of-stream can arise through the action of the
-	/// Subscription.Close() method, or through the closure of the
-	/// IModel or its underlying IConnection.
-	///</para>
-	///<para>
-	/// This method does not acknowledge any deliveries at all
+        ///<remarks>
+        ///<para>
+        /// Returns false only if the timeout expires before either a
+        /// delivery appears or the end-of-stream is reached. If false
+        /// is returned, the out parameter "result" is set to null,
+        /// but LatestEvent is not updated.
+        ///</para>
+        ///<para>
+        /// Returns true to indicate a delivery or the end-of-stream.
+        ///</para>
+        ///<para>
+        /// If a delivery is already waiting in the queue, or one
+        /// arrives before the timeout expires, it is removed from the
+        /// queue and placed in the "result" out parameter. If the
+        /// end-of-stream is detected before the timeout expires,
+        /// "result" is set to null.
+        ///</para>
+        ///<para>
+        /// Whenever this method returns true, it updates LatestEvent
+        /// to the value placed in "result" before returning.
+        ///</para>
+        ///<para>
+        /// End-of-stream can arise through the action of the
+        /// Subscription.Close() method, or through the closure of the
+        /// IModel or its underlying IConnection.
+        ///</para>
+        ///<para>
+        /// This method does not acknowledge any deliveries at all
         /// (but in "noAck" mode, the server will have
         /// auto-acknowledged each event before it is even sent across
         /// the wire to us).
-	///</para>
-        ///<para>
-	/// A timeout of -1 (i.e. System.Threading.Timeout.Infinite)
-	/// will be interpreted as a command to wait for an
-	/// indefinitely long period of time for an item or the end of
-	/// the stream to become available. Usage of such a timeout is
-	/// equivalent to calling Next() with no arguments (modulo
-	/// predictable method signature differences).
         ///</para>
-	///</remarks>
+        ///<para>
+        /// A timeout of -1 (i.e. System.Threading.Timeout.Infinite)
+        /// will be interpreted as a command to wait for an
+        /// indefinitely long period of time for an item or the end of
+        /// the stream to become available. Usage of such a timeout is
+        /// equivalent to calling Next() with no arguments (modulo
+        /// predictable method signature differences).
+        ///</para>
+        ///</remarks>
         public bool Next(int millisecondsTimeout, out BasicDeliverEventArgs result)
         {
             try {
@@ -378,17 +379,17 @@ namespace RabbitMQ.Client.MessagePatterns {
                     // Closed!
                     throw new InvalidOperationException();
                 }
-		object qValue;
-		if (!m_consumer.Queue.Dequeue(millisecondsTimeout, out qValue)) {
-		    result = null;
-		    return false;
-		}
+                object qValue;
+                if (!m_consumer.Queue.Dequeue(millisecondsTimeout, out qValue)) {
+                    result = null;
+                    return false;
+                }
                 m_latestEvent = (BasicDeliverEventArgs) qValue;
             } catch (EndOfStreamException) {
                 m_latestEvent = null;
             }
-	    result = m_latestEvent;
-	    return true;
+            result = m_latestEvent;
+            return true;
         }
 
         ///<summary>Implementation of the IEnumerable interface, for

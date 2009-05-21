@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -82,12 +88,11 @@ namespace RabbitMQ.Client.Examples {
                         ch.ModelShutdown += new ModelShutdownEventHandler(Second);
                         ch.CallbackException += new CallbackExceptionEventHandler(OnCallbackException);
 
-                        ushort ticket = ch.AccessRequest("/data");
-                        string queueName = ch.QueueDeclare(ticket);
+                        string queueName = ch.QueueDeclare();
 
                         ThrowingConsumer consumer = new ThrowingConsumer(ch);
-                        string consumerTag = ch.BasicConsume(ticket, queueName, null, consumer);
-                        ch.BasicPublish(ticket, "", queueName, null, Encoding.UTF8.GetBytes("test"));
+                        string consumerTag = ch.BasicConsume(queueName, null, consumer);
+                        ch.BasicPublish("", queueName, null, Encoding.UTF8.GetBytes("test"));
                         ch.BasicCancel(consumerTag);
                         return 0;
                     }

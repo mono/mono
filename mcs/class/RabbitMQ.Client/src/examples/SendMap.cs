@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -96,12 +102,11 @@ namespace RabbitMQ.Client.Examples {
                     Console.Error.WriteLine("  /persist     send message in 'persistent' mode");
                     return 1;
                 }
-
-		Uri uri = new Uri(args[optionIndex++]);
+                
+                Uri uri = new Uri(args[optionIndex++]);
                 string exchange = uri.Segments[1].TrimEnd(new char[] { '/' });
-                string exchangeType =
-		    uri.Query.StartsWith("?type=") ? uri.Query.Substring(6) : null;
-		string routingKey = uri.Segments.Length > 2 ? uri.Segments[2] : "";
+                string exchangeType = uri.Query.StartsWith("?type=") ? uri.Query.Substring(6) : null;
+                string routingKey = uri.Segments.Length > 2 ? uri.Segments[2] : "";
 
                 if (exchange == "amq.default") {
                     exchange = "";
@@ -110,10 +115,9 @@ namespace RabbitMQ.Client.Examples {
                 using (IConnection conn = new ConnectionFactory().CreateConnection(uri))
                 {
                     using (IModel ch = conn.CreateModel()) {
-                        ushort ticket = ch.AccessRequest("/data");
 
                         if (exchangeType != null) {
-                            ch.ExchangeDeclare(ticket, exchange, exchangeType);
+                            ch.ExchangeDeclare(exchange, exchangeType);
                         }
 
                         IMapMessageBuilder b = new MapMessageBuilder(ch);
@@ -182,8 +186,7 @@ namespace RabbitMQ.Client.Examples {
                         if (persistMode) {
                             ((IBasicProperties) b.GetContentHeader()).DeliveryMode = 2;
                         }
-                        ch.BasicPublish(ticket,
-                                        exchange,
+                        ch.BasicPublish(exchange,
                                         routingKey,
                                         (IBasicProperties) b.GetContentHeader(),
                                         b.GetContentBody());

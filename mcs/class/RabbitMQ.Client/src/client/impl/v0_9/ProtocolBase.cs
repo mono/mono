@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -54,7 +60,6 @@ using RabbitMQ.Util;
 
 namespace RabbitMQ.Client.Framing.Impl.v0_9 {
     public abstract class ProtocolBase: AbstractProtocolBase {
-	public override bool DefaultSuppressAccessRequest { get { return false; } }
 
         public override IFrameHandler CreateFrameHandler(AmqpTcpEndpoint endpoint) {
             return new SocketFrameHandler_0_9(endpoint);
@@ -95,6 +100,11 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
                                                                                      0, 0)); 
             replyClassId = RabbitMQ.Client.Framing.Impl.v0_9.ChannelCloseOk.ClassId;
             replyMethodId = RabbitMQ.Client.Framing.Impl.v0_9.ChannelCloseOk.MethodId;                                                                                     
+        }
+        
+        public override bool CanSendWhileClosed(Command cmd)
+        {
+            return cmd.m_method is RabbitMQ.Client.Framing.Impl.v0_9.ChannelCloseOk;
         }
     }
 }

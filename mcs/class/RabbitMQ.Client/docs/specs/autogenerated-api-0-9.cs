@@ -8381,28 +8381,7 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
 
   public class Model: RabbitMQ.Client.Impl.ModelBase {
     public Model(RabbitMQ.Client.Impl.ISession session): base(session) {}
-    public override System.UInt16 _Private_AccessRequest(
-      System.String @realm,
-      System.Boolean @exclusive,
-      System.Boolean @passive,
-      System.Boolean @active,
-      System.Boolean @write,
-      System.Boolean @read)
-    {
-      AccessRequest __req = new AccessRequest();
-      __req.m_realm = @realm;
-      __req.m_exclusive = @exclusive;
-      __req.m_passive = @passive;
-      __req.m_active = @active;
-      __req.m_write = @write;
-      __req.m_read = @read;
-      RabbitMQ.Client.Impl.MethodBase __repBase = ModelRpc(__req,null,null);
-      AccessRequestOk __rep = __repBase as AccessRequestOk;
-      if (__rep == null) throw new UnexpectedMethodException(__repBase);
-      return __rep.m_ticket;
-    }
     public override void _Private_BasicPublish(
-      System.UInt16 @ticket,
       System.String @exchange,
       System.String @routingKey,
       System.Boolean @mandatory,
@@ -8411,7 +8390,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       System.Byte[] @body)
     {
       BasicPublish __req = new BasicPublish();
-      __req.m_ticket = @ticket;
       __req.m_exchange = @exchange;
       __req.m_routingKey = @routingKey;
       __req.m_mandatory = @mandatory;
@@ -8419,7 +8397,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       ModelSend(__req, (BasicProperties) basicProperties,body);
     }
     public override void _Private_BasicConsume(
-      System.UInt16 @ticket,
       System.String @queue,
       System.String @consumerTag,
       System.Boolean @noLocal,
@@ -8429,7 +8406,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       System.Collections.IDictionary @filter)
     {
       BasicConsume __req = new BasicConsume();
-      __req.m_ticket = @ticket;
       __req.m_queue = @queue;
       __req.m_consumerTag = @consumerTag;
       __req.m_noLocal = @noLocal;
@@ -8476,14 +8452,17 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       ModelSend(__req,null,null);
     }
     public override void _Private_BasicGet(
-      System.UInt16 @ticket,
       System.String @queue,
       System.Boolean @noAck)
     {
       BasicGet __req = new BasicGet();
-      __req.m_ticket = @ticket;
       __req.m_queue = @queue;
       __req.m_noAck = @noAck;
+      ModelSend(__req,null,null);
+    }
+    public override void _Private_ChannelFlowOk()
+    {
+      ChannelFlowOk __req = new ChannelFlowOk();
       ModelSend(__req,null,null);
     }
     public override RabbitMQ.Client.Impl.ConnectionTuneDetails ConnectionStartOk(
@@ -8570,7 +8549,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       if (__rep == null) throw new UnexpectedMethodException(__repBase);
     }
     public override void ExchangeDeclare(
-      System.UInt16 @ticket,
       System.String @exchange,
       System.String @type,
       System.Boolean @passive,
@@ -8581,7 +8559,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       System.Collections.IDictionary @arguments)
     {
       ExchangeDeclare __req = new ExchangeDeclare();
-      __req.m_ticket = @ticket;
       __req.m_exchange = @exchange;
       __req.m_type = @type;
       __req.m_passive = @passive;
@@ -8598,13 +8575,11 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       if (__rep == null) throw new UnexpectedMethodException(__repBase);
     }
     public override void ExchangeDelete(
-      System.UInt16 @ticket,
       System.String @exchange,
       System.Boolean @ifUnused,
       System.Boolean @nowait)
     {
       ExchangeDelete __req = new ExchangeDelete();
-      __req.m_ticket = @ticket;
       __req.m_exchange = @exchange;
       __req.m_ifUnused = @ifUnused;
       __req.m_nowait = @nowait;
@@ -8616,7 +8591,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       if (__rep == null) throw new UnexpectedMethodException(__repBase);
     }
     public override System.String QueueDeclare(
-      System.UInt16 @ticket,
       System.String @queue,
       System.Boolean @passive,
       System.Boolean @durable,
@@ -8626,7 +8600,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       System.Collections.IDictionary @arguments)
     {
       QueueDeclare __req = new QueueDeclare();
-      __req.m_ticket = @ticket;
       __req.m_queue = @queue;
       __req.m_passive = @passive;
       __req.m_durable = @durable;
@@ -8644,7 +8617,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       return __rep.m_queue;
     }
     public override void QueueBind(
-      System.UInt16 @ticket,
       System.String @queue,
       System.String @exchange,
       System.String @routingKey,
@@ -8652,7 +8624,6 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       System.Collections.IDictionary @arguments)
     {
       QueueBind __req = new QueueBind();
-      __req.m_ticket = @ticket;
       __req.m_queue = @queue;
       __req.m_exchange = @exchange;
       __req.m_routingKey = @routingKey;
@@ -8666,14 +8637,12 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       if (__rep == null) throw new UnexpectedMethodException(__repBase);
     }
     public override void QueueUnbind(
-      System.UInt16 @ticket,
       System.String @queue,
       System.String @exchange,
       System.String @routingKey,
       System.Collections.IDictionary @arguments)
     {
       QueueUnbind __req = new QueueUnbind();
-      __req.m_ticket = @ticket;
       __req.m_queue = @queue;
       __req.m_exchange = @exchange;
       __req.m_routingKey = @routingKey;
@@ -8683,12 +8652,10 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       if (__rep == null) throw new UnexpectedMethodException(__repBase);
     }
     public override System.UInt32 QueuePurge(
-      System.UInt16 @ticket,
       System.String @queue,
       System.Boolean @nowait)
     {
       QueuePurge __req = new QueuePurge();
-      __req.m_ticket = @ticket;
       __req.m_queue = @queue;
       __req.m_nowait = @nowait;
       if (nowait) {
@@ -8701,14 +8668,12 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
       return __rep.m_messageCount;
     }
     public override System.UInt32 QueueDelete(
-      System.UInt16 @ticket,
       System.String @queue,
       System.Boolean @ifUnused,
       System.Boolean @ifEmpty,
       System.Boolean @nowait)
     {
       QueueDelete __req = new QueueDelete();
-      __req.m_ticket = @ticket;
       __req.m_queue = @queue;
       __req.m_ifUnused = @ifUnused;
       __req.m_ifEmpty = @ifEmpty;
@@ -8849,6 +8814,12 @@ namespace RabbitMQ.Client.Framing.Impl.v0_9 {
             __impl.m_routingKey,
             (RabbitMQ.Client.IBasicProperties) cmd.Header,
             cmd.Body);
+          return true;
+        }
+        case 1310740: {
+          ChannelFlow __impl = (ChannelFlow) __method;
+          HandleChannelFlow(
+            __impl.m_active);
           return true;
         }
         case 1310760: {

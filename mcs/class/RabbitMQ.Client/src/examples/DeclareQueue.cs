@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -49,6 +55,7 @@
 //
 //---------------------------------------------------------------------------
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 
@@ -64,9 +71,17 @@ namespace RabbitMQ.Client.Examples {
                 int optionIndex = 0;
                 bool durable = false;
                 bool delete = false;
+                IDictionary arguments = null;
                 while (optionIndex < args.Length) {
                     if (args[optionIndex] == "/durable") { durable = true; }
                     else if (args[optionIndex] == "/delete") { delete = true; }
+                    else if (args[optionIndex].StartsWith("/arg:")) {
+                        if (arguments == null) { arguments = new Hashtable(); }
+                        string[] pieces = args[optionIndex].Split(new Char[] { ':' });
+                        if (pieces.Length >= 3) {
+                            arguments[pieces[1]] = pieces[2];
+                        }
+                    }
                     else { break; }
                     optionIndex++;
                 }
@@ -79,6 +94,7 @@ namespace RabbitMQ.Client.Examples {
                     Console.Error.WriteLine("Available options:");
                     Console.Error.WriteLine("  /durable      declare a durable queue");
                     Console.Error.WriteLine("  /delete       delete after declaring");
+                    Console.Error.WriteLine("  /arg:KEY:VAL  add longstr entry to arguments table");
                     return 1;
                 }
 
@@ -88,20 +104,21 @@ namespace RabbitMQ.Client.Examples {
                 using (IConnection conn = new ConnectionFactory().CreateConnection(serverAddress))
                 {
                     using (IModel ch = conn.CreateModel()) {
-                        ushort ticket = ch.AccessRequest("/data");
 
-                        string finalName = ch.QueueDeclare(ticket, inputQueueName, durable);
+                        string finalName = ch.QueueDeclare(inputQueueName, false,
+                                                           durable, false, false,
+                                                           false, arguments);
                         Console.WriteLine("{0}\t{1}", finalName, durable);
                 
                         while ((optionIndex + 1) < args.Length) {
                             string exchange = args[optionIndex++];
                             string routingKey = args[optionIndex++];
-                            ch.QueueBind(ticket, finalName, exchange, routingKey, false, null);
+                            ch.QueueBind(finalName, exchange, routingKey, false, null);
                             Console.WriteLine("{0}\t{1}\t{2}", finalName, exchange, routingKey);
                         }
 
                         if (delete) {
-                            ch.QueueDelete(ticket, finalName, false, false, false);
+                            ch.QueueDelete(finalName, false, false, false);
                         }
 
                         return 0;

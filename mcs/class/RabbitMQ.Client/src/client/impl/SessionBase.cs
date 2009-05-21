@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007, 2008 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,19 @@
 //
 //   The Original Code is The RabbitMQ .NET Client.
 //
-//   The Initial Developers of the Original Code are LShift Ltd.,
-//   Cohesive Financial Technologies LLC., and Rabbit Technologies Ltd.
+//   The Initial Developers of the Original Code are LShift Ltd,
+//   Cohesive Financial Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd., Cohesive Financial Technologies
-//   LLC., and Rabbit Technologies Ltd. are Copyright (C) 2007, 2008
-//   LShift Ltd., Cohesive Financial Technologies LLC., and Rabbit
-//   Technologies Ltd.;
+//   Portions created before 22-Nov-2008 00:00:00 GMT by LShift Ltd,
+//   Cohesive Financial Technologies LLC, or Rabbit Technologies Ltd
+//   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
+//   Technologies LLC, and Rabbit Technologies Ltd.
+//
+//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Ltd. Portions created by Cohesive Financial Technologies LLC are
+//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   LLC. Portions created by Rabbit Technologies Ltd are Copyright
+//   (C) 2007-2009 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -165,7 +171,8 @@ namespace RabbitMQ.Client.Impl
             {
                 if (m_closeReason != null)
                 {
-                    throw new AlreadyClosedException(m_closeReason);
+                    if (!m_connection.Protocol.CanSendWhileClosed(cmd))
+                  	    throw new AlreadyClosedException(m_closeReason);
                 }
                 // We transmit *inside* the lock to avoid interleaving
                 // of frames within a channel.
@@ -175,6 +182,11 @@ namespace RabbitMQ.Client.Impl
 
         public void Close(ShutdownEventArgs reason)
         {
+            Close(reason, true);
+        }
+        
+        public void Close(ShutdownEventArgs reason, bool notify)
+        {
             lock (m_shutdownLock)
             {
                 if (m_closeReason == null)
@@ -182,7 +194,19 @@ namespace RabbitMQ.Client.Impl
                     m_closeReason = reason;
                 }
             }
-
+            if (notify)
+                OnSessionShutdown(m_closeReason);
+        }
+        
+        public void Notify()
+        {
+            // Ensure that we notify only when session is already closed
+            // If not, throw exception, since this is a serious bug in the library
+            lock (m_shutdownLock)
+            {
+        	    if (m_closeReason == null)
+                    throw new Exception("Internal Error in Session.Close");   	
+            }
             OnSessionShutdown(m_closeReason);
         }
     }
