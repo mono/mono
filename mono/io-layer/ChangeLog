@@ -1,3 +1,7 @@
+2009-05-21  Miguel de Icaza  <miguel@novell.com>
+
+	* shared.c (_wapi_shm_attach): Implemention for DISABLE_SHARED_HANDLES 
+
 2009-05-20  Miguel de Icaza  <miguel@novell.com>
 
 	* sockets.c (ioctlsocket): Move support for MacOS semantics to the
