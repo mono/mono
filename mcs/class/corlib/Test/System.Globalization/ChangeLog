@@ -1,3 +1,7 @@
+2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfoTest.cs : test zh-Hant.
+
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : added test for #462957.

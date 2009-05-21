@@ -496,5 +496,12 @@ namespace MonoTests.System.Globalization
 			ms.Seek (0, SeekOrigin.Begin);
 			var deserializedCulture = (CultureInfo) formatter.Deserialize (ms);
 		}
+
+		[Test]
+		public void ZhHant ()
+		{
+			Assert.AreEqual (31748, new CultureInfo ("zh-Hant").LCID);
+			Assert.AreEqual (31748, CultureInfo.GetCultureInfo ("zh-Hant").LCID);
+		}
 	}
 }

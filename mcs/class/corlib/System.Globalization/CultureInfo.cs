@@ -619,6 +619,18 @@ namespace System.Globalization
 
 		bool ConstructInternalLocaleFromName (string locale)
 		{
+			// It is sort of hack to get those new pseudo-alias
+			// culture names that are not supported in good old
+			// Windows.
+			switch (locale) {
+			case "zh-hans":
+				locale = "zh-chs";
+				break;
+			case "zh-hant":
+				locale = "zh-cht";
+				break;
+			}
+
 			if (!construct_internal_locale_from_name (locale))
 				return false;
 			return true;

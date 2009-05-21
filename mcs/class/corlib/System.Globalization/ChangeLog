@@ -1,3 +1,9 @@
+2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfo.cs : it seems that zh-Hant and zh-Hans are introduced
+	  as almost alias  of zh-CHS/zh-CHT in vista and some new windows.
+	  Add hacky support for them.
+
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : Fixed bug #462957. With empty target string it
