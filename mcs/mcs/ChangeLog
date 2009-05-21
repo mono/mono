@@ -1,7 +1,13 @@
+2009-05-21  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #504667
+	* class.cs: Check for static class using parent container instead of
+	parent type.
+
 2009-05-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #496922
-	* expression: Always use temporary variable when using object
+	* expression.cs: Always use temporary variable when using object
 	initializer.
 
 2009-04-28  Marek Safar  <marek.safar@gmail.com>

@@ -4214,7 +4214,7 @@ namespace Mono.CSharp {
 				return true;
 
 			if (Parameters.HasExtensionMethodType) {
-				if (Parent.IsStaticClass && !Parent.IsGeneric) {
+				if (Parent.PartialContainer.IsStaticClass && !Parent.IsGeneric) {
 					if (!Parent.IsTopLevel)
 						Report.Error (1109, Location, "`{0}': Extension methods cannot be defined in a nested class",
 							GetSignatureForError ());
