@@ -1,3 +1,18 @@
+2009-05-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r134536.
+
+	* mini-x86.c (mono_arch_emit_call): The decompose code now supports
+	decomposing 8 bytes structs into a LCALL.
+
+	* mini-x86.c (emit_move_return_value): We no longer push the vtype
+	pointer for where to store the returned regs.
+
+	* decompose.c (mono_decompose_vtype_opts): Fix the comment to properly
+	state the concern.
+
+	Fixes #471747, #471751 and #4734530 (in fact, it's a bunch of dups).
+
 2009-05-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r134470.
