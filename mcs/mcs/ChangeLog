@@ -1,3 +1,9 @@
+2009-05-21  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #504667
+	* class.cs: Check for static class using parent container instead of
+	parent type.
+
 2009-04-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #495112
