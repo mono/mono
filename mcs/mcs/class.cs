@@ -2914,6 +2914,9 @@ namespace Mono.CSharp {
 	}
 
 	public sealed class Struct : ClassOrStruct {
+
+		bool is_unmanaged, has_unmanaged_check_done;
+
 		// <summary>
 		//   Modifiers allowed in a struct declaration
 		// </summary>
@@ -2973,6 +2976,11 @@ namespace Mono.CSharp {
 			if (requires_delayed_unmanagedtype_check)
 				return true;
 
+			if (has_unmanaged_check_done)
+				return is_unmanaged;
+
+			has_unmanaged_check_done = true;
+
 			foreach (FieldBase f in fields) {
 				if ((f.ModFlags & Modifiers.STATIC) != 0)
 					continue;
@@ -2981,6 +2989,7 @@ namespace Mono.CSharp {
 				// struct S { S* s; }
 				Type mt = f.MemberType;
 				if (mt == null) {
+					has_unmanaged_check_done = false;
 					requires_delayed_unmanagedtype_check = true;
 					return true;
 				}
@@ -2997,6 +3006,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			is_unmanaged = true;
 			return true;
 		}
 
