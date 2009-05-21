@@ -1,5 +1,9 @@
 2009-05-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-x86.c (emit_move_return_value): Remove unused vars.
+
+2009-05-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-x86.c (mono_arch_emit_call): The decompose code now supports
 	decomposing 8 bytes structs into a LCALL.
 
