@@ -1,3 +1,11 @@
+2009-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_extra_method): Fix up the collection of extra
+	methods so wrapper don't get added twice.
+	(add_generic_instances): Don't add methods of arrays.
+
+	* generics.cs: Mark one test as !FULLAOT.
+
 2009-05-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-x86.c (emit_move_return_value): Remove unused vars.
