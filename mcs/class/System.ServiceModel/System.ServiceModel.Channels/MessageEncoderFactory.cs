@@ -40,10 +40,10 @@ namespace System.ServiceModel.Channels
 
 		public abstract MessageVersion MessageVersion { get; }
 
-		[MonoTODO]
+		[MonoTODO ("Not sure how it is used; it just returns Encoder so far")]
 		public virtual MessageEncoder CreateSessionEncoder ()
 		{
-			throw new NotImplementedException ();
+			return Encoder;
 		}
 	}
 }

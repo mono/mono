@@ -1,3 +1,7 @@
+2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageEncoderFactory.cs : implement CreateSessionEncoder().
+
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : add To header.
