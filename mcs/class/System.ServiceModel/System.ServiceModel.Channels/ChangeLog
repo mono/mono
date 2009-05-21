@@ -1,5 +1,10 @@
 2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* InputChannelBase.cs, TransportBindingElement.cs, RequestContext.cs:
+	  a few minor API fixes.
+
+2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageEncoderFactory.cs : implement CreateSessionEncoder().
 
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>

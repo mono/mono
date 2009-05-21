@@ -59,7 +59,7 @@ namespace System.ServiceModel.Channels
 			set { manual_addressing = value; }
 		}
 
-		public long MaxBufferPoolSize {
+		public virtual long MaxBufferPoolSize {
 			get { return max_buffer_pool_size; }
 			set { max_buffer_pool_size = value; }
 		}

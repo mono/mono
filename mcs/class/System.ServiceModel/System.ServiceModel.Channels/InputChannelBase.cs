@@ -29,7 +29,7 @@ using System.ServiceModel;
 
 namespace System.ServiceModel.Channels
 {
-	public abstract class InputChannelBase : ChannelBase, IInputChannel
+	internal abstract class InputChannelBase : ChannelBase, IInputChannel
 	{
 		ChannelListenerBase channel_listener;
 

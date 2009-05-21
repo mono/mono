@@ -40,9 +40,15 @@ namespace System.ServiceModel.Channels
 		public abstract void Reply (Message message);
 		public abstract void Reply (Message message, TimeSpan timeout);
 
-		public void Dispose ()
+		protected virtual void Dispose (bool disposing)
 		{
-			Close ();
+			if (disposing)
+				Close ();
+		}
+
+		void IDisposable.Dispose ()
+		{
+			Dispose (true);
 		}
 	}
 }
