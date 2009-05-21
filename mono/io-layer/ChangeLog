@@ -1,5 +1,8 @@
 2009-05-20  Miguel de Icaza  <miguel@novell.com>
 
+	* sockets.c (ioctlsocket): Move support for MacOS semantics to the
+	ioctlsocket from the ifdef that was previously on metadata/
+
 	* wapi_glob.c (_wapi_glob): Use PATH_MAX from limits.h instead of
 	the BSD name from sys/param.h (MAXPATHLEN)
 

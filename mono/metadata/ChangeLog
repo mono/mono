@@ -1,3 +1,9 @@
+2009-05-20  Miguel de Icaza  <miguel@novell.com>
+
+	* socket-io.c
+	(ves_icall_System_Net_Sockets_Socket_Available_internal): Remove
+	the ifdef here and instead put that on io-layer
+
 2009-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify the generic param constraint table.
