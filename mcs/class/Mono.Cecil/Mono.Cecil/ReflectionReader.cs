@@ -815,15 +815,12 @@ namespace Mono.Cecil {
 
 			for (int i = 0; i < etTable.Rows.Count; i++) {
 				ExportedTypeRow etRow = etTable [i];
-				if (etRow.Implementation.TokenType != TokenType.File)
-					continue;
 
-				string name = m_root.Streams.StringsHeap [etRow.TypeName];
-				string ns = m_root.Streams.StringsHeap [etRow.TypeNamespace];
-				if (ns.Length == 0)
-					buffer [i] = m_module.TypeReferences [name];
-				else
-					buffer [i] = m_module.TypeReferences [string.Concat (ns, '.', name)];
+				buffer [i] = new TypeDefinition (
+					m_root.Streams.StringsHeap [etRow.TypeName],
+					m_root.Streams.StringsHeap [etRow.TypeNamespace],
+					etRow.Flags);
+				buffer [i].AttachToScope (GetExportedTypeScope (etRow.Implementation));
 			}
 
 			for (int i = 0; i < etTable.Rows.Count; i++) {
@@ -831,15 +828,31 @@ namespace Mono.Cecil {
 				if (etRow.Implementation.TokenType != TokenType.ExportedType)
 					continue;
 
+				TypeReference exported = buffer [i];
 				TypeReference owner = buffer [etRow.Implementation.RID - 1];
-				string name = m_root.Streams.StringsHeap [etRow.TypeName];
-				buffer [i] = m_module.TypeReferences [string.Concat (owner.FullName, '/', name)];
+				exported.DeclaringType = owner;
+				exported.AttachToScope (owner.Scope);
 			}
 
 			for (int i = 0; i < buffer.Length; i++) {
 				TypeReference curs = buffer [i];
 				if (curs != null)
 					ext.Add (curs);
+			}
+		}
+
+		IMetadataScope GetExportedTypeScope (MetadataToken scope)
+		{
+			int index = (int) scope.RID - 1;
+			switch (scope.TokenType) {
+			case TokenType.AssemblyRef:
+				return Module.AssemblyReferences [index];
+			case TokenType.File:
+				return Module.ModuleReferences [index];
+			case TokenType.ExportedType:
+				return null; // resolved later
+			default:
+				throw new NotSupportedException ();
 			}
 		}
 

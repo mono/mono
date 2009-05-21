@@ -1,3 +1,7 @@
+2009-05-21  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionReader.cs: add support for type forwarders.
+
 2009-05-19  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/TargetRuntime.cs
