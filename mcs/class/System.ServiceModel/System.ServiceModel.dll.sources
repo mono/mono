@@ -165,6 +165,7 @@ System.ServiceModel.Channels/CustomBinding.cs
 System.ServiceModel.Channels/DeliveryFailure.cs
 System.ServiceModel.Channels/DeliveryStatus.cs
 System.ServiceModel.Channels/DirectionalAction.cs
+System.ServiceModel.Channels/DuplexSessionBase.cs
 System.ServiceModel.Channels/DuplexSessionChannelBase.cs
 System.ServiceModel.Channels/FaultConverter.cs
 System.ServiceModel.Channels/HostedTransportConfiguration.cs

@@ -1,5 +1,12 @@
 2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DuplexSessionBase.cs : new file, for session implementation.
+	* TcpDuplexSessionChannel.cs, PeerDuplexChannel.cs,
+	  DuplexSessionChannelBase.cs : changed sync/async implementation
+	  pattern. Now async methods call sync methods using delegates.
+
+2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* InputChannelBase.cs, TransportBindingElement.cs, RequestContext.cs:
 	  a few minor API fixes.
 

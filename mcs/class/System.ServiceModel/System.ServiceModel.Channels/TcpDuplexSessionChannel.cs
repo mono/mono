@@ -44,6 +44,26 @@ namespace System.ServiceModel.Channels
 {
 	internal class TcpDuplexSessionChannel : DuplexChannelBase, IDuplexSessionChannel
 	{
+		class TcpDuplexSession : DuplexSessionBase
+		{
+			TcpDuplexSessionChannel owner;
+
+			internal TcpDuplexSession (TcpDuplexSessionChannel owner)
+			{
+				this.owner = owner;
+			}
+
+			public override TimeSpan DefaultCloseTimeout {
+				get { return owner.DefaultCloseTimeout; }
+			}
+
+			public override void Close (TimeSpan timeout)
+			{
+				// FIXME: what to do here?
+				throw new NotImplementedException ();
+			}
+		}
+
 		TcpChannelInfo info;
 		TcpClient client;
 		bool is_service_side;
@@ -51,12 +71,14 @@ namespace System.ServiceModel.Channels
 		TcpListener tcp_listener;
 		TimeSpan timeout;
 		TcpBinaryFrameManager frame;
+		TcpDuplexSession session;
 		
 		public TcpDuplexSessionChannel (ChannelFactoryBase factory, TcpChannelInfo info, EndpointAddress address, Uri via)
 			: base (factory, address, via)
 		{
 			is_service_side = false;
 			this.info = info;
+			session = new TcpDuplexSession (this);
 		}
 		
 		public TcpDuplexSessionChannel (ChannelListenerBase listener, TcpChannelInfo info, TcpListener tcpListener, TimeSpan timeout)
@@ -65,6 +87,7 @@ namespace System.ServiceModel.Channels
 			is_service_side = true;
 			tcp_listener = tcpListener;
 			this.info = info;
+			session = new TcpDuplexSession (this);
 			this.timeout = timeout;
 		}
 		
@@ -76,27 +99,8 @@ namespace System.ServiceModel.Channels
 			get { return local_address; }
 		}
 		
-		// FIXME: implement
 		public IDuplexSession Session {
-			get { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public override IAsyncResult BeginSend (Message message, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override IAsyncResult BeginSend (Message message, TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override void EndSend (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
+			get { return session; }
 		}
 
 		public override void Send (Message message)
@@ -118,43 +122,13 @@ namespace System.ServiceModel.Channels
 		}
 		
 		[MonoTODO]
-		public override IAsyncResult BeginReceive (AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override IAsyncResult BeginReceive (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		public override IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state)
 		{
 			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
-		public override IAsyncResult BeginWaitForMessage (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override Message EndReceive (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
 		public override bool EndTryReceive (IAsyncResult result, out Message message)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override bool EndWaitForMessage (IAsyncResult result)
 		{
 			throw new NotImplementedException ();
 		}

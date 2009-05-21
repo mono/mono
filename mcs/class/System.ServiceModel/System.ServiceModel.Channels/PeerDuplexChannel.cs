@@ -79,17 +79,12 @@ namespace System.ServiceModel.Channels
 
 		// DuplexChannelBase
 
-		public override IAsyncResult BeginSend (Message message, TimeSpan timeout, AsyncCallback callback, object state)
+		public override void Send (Message message, TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public override void EndSend (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override IAsyncResult BeginReceive (TimeSpan timeout, AsyncCallback callback, object state)
+		public override Message Receive (TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
 		}
@@ -99,22 +94,12 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		public override IAsyncResult BeginWaitForMessage (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override Message EndReceive (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override bool EndTryReceive (IAsyncResult result, out Message message)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public override bool EndWaitForMessage (IAsyncResult result)
+		public override bool WaitForMessage (TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
 		}
