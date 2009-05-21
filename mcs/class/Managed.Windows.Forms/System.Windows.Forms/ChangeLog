@@ -1,3 +1,7 @@
+2009-05-21  Neville Gao  <nevillegao@gmail.com>
+
+	* ContextMenu.cs: Cleaned up UIA properties.
+
 2009-05-20  Dick Porter  <dick@acm.org>
 
 	* XplatUICarbon.cs: Add more locking around MessageQueue

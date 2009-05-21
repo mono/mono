@@ -118,28 +118,13 @@ namespace System.Windows.Forms
 
 			src_control = control;
 
-#if NET_2_0
-			visible = true;
-#endif
 			OnPopup (EventArgs.Empty);
 			pos = control.PointToScreen (pos);
 			MenuTracker.TrackPopupMenu (this, pos);
 #if NET_2_0
-			visible = false;
 			OnCollapse (EventArgs.Empty);
 #endif
 		}
-
-		#region UIA Framework Properties
-#if NET_2_0
-		private bool visible;
-
-		public bool UIAVisible {
-			get { return visible; }
-			set { visible = value; }
-		}
-#endif
-		#endregion
 
 #if NET_2_0
 		public void Show (Control control, Point pos, LeftRightAlignment alignment)
