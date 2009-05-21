@@ -1,5 +1,7 @@
 2009-05-21  Miguel de Icaza  <miguel@novell.com>
 
+	* daemon.c: Remove more DEBUG ifdef mess.
+
 	* shared.c (_wapi_shm_attach): Implemention for DISABLE_SHARED_HANDLES 
 
 2009-05-20  Miguel de Icaza  <miguel@novell.com>
