@@ -1,5 +1,8 @@
 2009-05-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_extra_methods): Encode direct runtime invoke
+	wrappers normally.
+	
 	* aot-compiler.c (add_extra_method): Fix up the collection of extra
 	methods so wrapper don't get added twice.
 	(add_generic_instances): Don't add methods of arrays.
