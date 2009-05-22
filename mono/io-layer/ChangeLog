@@ -1,5 +1,18 @@
 2009-05-22  Miguel de Icaza  <miguel@novell.com>
 
+	* wapi_glob.c: Do not need sys/param.h anymore, we now use the
+	POSIX PATH_MAX instead of BSD's MAXPATHLEN
+
+	* handles.c: Do not pull a reference to sockets if they are
+	disabled.
+
+	* sockets.c: Allow for ports to define their own ioctlsocket. 
+
+	* wthreads.c: Remove obsolete code that I recently introudced (the
+	hook for mono_register_thread_attr.
+
+2009-05-22  Miguel de Icaza  <miguel@novell.com>
+
 	* versioninfo.c: One missing signature, fixed.
 
 2009-05-21  Miguel de Icaza  <miguel@novell.com>
