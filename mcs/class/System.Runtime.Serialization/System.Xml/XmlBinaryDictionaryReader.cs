@@ -1045,7 +1045,7 @@ namespace System.Xml
 
 		public override string ReadContentAsString ()
 		{
-			string value = Value;
+			string value = String.Empty;
 			do {
 				switch (NodeType) {
 				case XmlNodeType.Element:
