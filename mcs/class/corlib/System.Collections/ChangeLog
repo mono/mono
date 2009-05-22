@@ -1,3 +1,7 @@
+2009-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* IStructuralComparable.cs IStructuralEquatable.cs: New files.
+
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* BitArray.cs (CopyTo): Allow an index equal to the array length if
