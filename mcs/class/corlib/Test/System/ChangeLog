@@ -1,3 +1,7 @@
+2009-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* LazyTest.cs: New file.
+
 2009-05-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TypeTest.cs: test for bug #503728
