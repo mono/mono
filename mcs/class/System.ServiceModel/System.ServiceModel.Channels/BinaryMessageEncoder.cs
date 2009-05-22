@@ -3,7 +3,7 @@
 //
 // Author: Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005,2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -192,19 +192,21 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		public BinaryMessageEncoder (BinaryMessageEncoderFactory owner)
+		public BinaryMessageEncoder (BinaryMessageEncoderFactory owner, bool session)
 		{
 			this.owner = owner;
+			this.session = session;
 		}
 
 		BinaryMessageEncoderFactory owner;
+		bool session;
 
 		public override string ContentType {
-			get { return "application/soap+msbin1"; }
+			get { return MediaType; }
 		}
 
 		public override string MediaType {
-			get { return "application/soap+msbin1"; }
+			get { return session ? "application/soap+msbinsession1" : "application/soap+msbin1"; }
 		}
 
 		public override MessageVersion MessageVersion {
@@ -244,7 +246,7 @@ namespace System.ServiceModel.Channels
 				throw new ProtocolException ("Only content type 'application/soap+msbin1' is allowed.");
 
 			return Message.CreateMessage (
-				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), CurrentReaderSession),
+				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), session ? CurrentReaderSession : null),
 				maxSizeOfHeaders, MessageVersion);
 		}
 

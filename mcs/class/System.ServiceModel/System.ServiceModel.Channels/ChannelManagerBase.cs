@@ -59,5 +59,18 @@ namespace System.ServiceModel.Channels
 		TimeSpan IDefaultCommunicationTimeouts.SendTimeout {
 			get { return DefaultSendTimeout; }
 		}
+
+		internal MessageEncoder CreateEncoder<TChannel> (MessageEncodingBindingElement mbe)
+		{
+			var f = mbe.CreateMessageEncoderFactory ();
+			if (this is IRequestSessionChannel ||
+			    this is IReplySessionChannel ||
+			    this is IInputSessionChannel ||
+			    this is IOutputSessionChannel ||
+			    this is IDuplexSessionChannel)
+				return f.CreateSessionEncoder ();
+			else
+				return f.Encoder;
+		}
 	}
 }

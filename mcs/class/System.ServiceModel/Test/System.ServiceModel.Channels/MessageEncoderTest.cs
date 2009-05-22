@@ -108,5 +108,13 @@ namespace MonoTests.System.ServiceModel.Channels
 			MessageEncoderFactory f = new TextMessageEncodingBindingElement (MessageVersion.Soap11, Encoding.UTF8).CreateMessageEncoderFactory ();
 			f.Encoder.WriteMessage (msg, new MemoryStream ());
 		}
+
+		[Test]
+		public void CreateSessionEncoder ()
+		{
+			Assert.AreEqual ("application/soap+xml", new TextMessageEncodingBindingElement ().CreateMessageEncoderFactory ().CreateSessionEncoder ().MediaType, "#1");
+			Assert.AreEqual ("application/soap+msbinsession1", new BinaryMessageEncodingBindingElement ().CreateMessageEncoderFactory ().CreateSessionEncoder ().MediaType, "#2"); // different from application/soap+msbin1
+			Assert.AreEqual ("multipart/related", new MtomMessageEncodingBindingElement ().CreateMessageEncoderFactory ().CreateSessionEncoder ().MediaType, "#3");
+		}
 	}
 }

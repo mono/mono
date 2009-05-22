@@ -1,3 +1,7 @@
+2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageEncoderTest.cs : test CreateSessionEncoder().
+
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageFaultTest.cs : added more SOAP 12 fault parser tests.

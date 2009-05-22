@@ -1,5 +1,17 @@
 2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BinaryMessageEncoderFactory.cs, BinaryMessageEncoder.cs
+	  This encoder factory implements CreateSessionEncoder() and binary
+	  encoder does support session transmit, in different media type.
+	* ChannelManagerBase.cs : added utility method to create appropriate
+	  encoder.
+	* HttpChannelFactory.cs, HttpChannelListener.cs,
+	  MsmqChannelFactory.cs, MsmqChannelListener.cs,
+	  PeerChannelFactory.cs, PeerChannelListener.cs,
+	  TcpChannelFactory.cs, TcpChannelListener.cs : use above.
+
+2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : add ReplyTo header.
 
 2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>

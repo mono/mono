@@ -40,7 +40,7 @@ namespace System.ServiceModel.Channels
 			BinaryMessageEncodingBindingElement owner)
 		{
 			this.owner = owner;
-			encoder = new BinaryMessageEncoder (this);
+			encoder = new BinaryMessageEncoder (this, false);
 		}
 
 		public BinaryMessageEncodingBindingElement Owner {
@@ -54,6 +54,11 @@ namespace System.ServiceModel.Channels
 
 		public override MessageVersion MessageVersion {
 			get { return MessageVersion.Default; }
+		}
+
+		public override MessageEncoder CreateSessionEncoder ()
+		{
+			return new BinaryMessageEncoder (this, true);
 		}
 	}
 }

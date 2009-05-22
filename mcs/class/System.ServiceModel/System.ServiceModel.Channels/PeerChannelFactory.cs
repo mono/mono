@@ -47,7 +47,7 @@ namespace System.ServiceModel.Channels
 			foreach (BindingElement be in ctx.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = mbe.CreateMessageEncoderFactory ().Encoder;
+					encoder = CreateEncoder<TChannel> (mbe);
 					break;
 				}
 			}
