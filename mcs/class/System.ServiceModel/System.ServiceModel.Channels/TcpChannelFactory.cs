@@ -15,27 +15,24 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.Text;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
 	internal class TcpChannelInfo
 	{
-		public TcpChannelInfo (TcpTransportBindingElement element, MessageEncoder encoder)
+		public TcpChannelInfo (TcpTransportBindingElement element, MessageEncoder encoder, XmlDictionaryReaderQuotas readerQuotas)
 		{
-			this.element = element;
-			this.encoder = encoder;
+			this.BindingElement = element;
+			this.MessageEncoder = encoder;
+			this.ReaderQuotas = readerQuotas ?? new XmlDictionaryReaderQuotas ();
 		}
 
-		TcpTransportBindingElement element;
-		MessageEncoder encoder;
+		public TcpTransportBindingElement BindingElement { get; private set; }
 
-		public TcpTransportBindingElement BindingElement {
-			get { return element; }
-		}
+		public MessageEncoder MessageEncoder { get; private set; }
 
-		public MessageEncoder MessageEncoder {
-			get { return encoder; }
-		}
+		public XmlDictionaryReaderQuotas ReaderQuotas { get; private set; }
 	}
 
 	internal class TcpChannelFactory<TChannel> : ChannelFactoryBase<TChannel>
@@ -46,16 +43,18 @@ namespace System.ServiceModel.Channels
 		public TcpChannelFactory (TcpTransportBindingElement source, BindingContext ctx)
 		{
 			MessageEncoder encoder = null;
+			XmlDictionaryReaderQuotas quotas = null;
 			foreach (BindingElement be in ctx.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);
+					quotas = mbe.GetProperty<XmlDictionaryReaderQuotas> (ctx);
 					break;
 				}
 			}
 			if (encoder == null)
 				encoder = new BinaryMessageEncoder ();
-			info = new TcpChannelInfo (source, encoder);
+			info = new TcpChannelInfo (source, encoder, quotas);
 		}
 
 		[MonoTODO]

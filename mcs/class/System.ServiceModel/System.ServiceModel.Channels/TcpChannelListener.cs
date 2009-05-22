@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.ServiceModel.Description;
 using System.Text;
+using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
@@ -32,6 +33,8 @@ namespace System.ServiceModel.Channels
 		                           BindingContext context) : base (context.Binding)
 		{
 			MessageEncoder encoder = null;
+			XmlDictionaryReaderQuotas quotas = null;
+
 			if (context.ListenUriMode == ListenUriMode.Explicit)
 				listen_uri =
 					context.ListenUriRelativeAddress != null ?
@@ -44,6 +47,7 @@ namespace System.ServiceModel.Channels
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);
+					quotas = mbe.GetProperty<XmlDictionaryReaderQuotas> (context);
 					break;
 				}
 			}
@@ -51,7 +55,7 @@ namespace System.ServiceModel.Channels
 			if (encoder == null)
 				encoder = new BinaryMessageEncoder ();
 
-			info = new TcpChannelInfo (source, encoder);
+			info = new TcpChannelInfo (source, encoder, quotas);
 		}
 		
 		public override Uri Uri {
