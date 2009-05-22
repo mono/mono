@@ -1,3 +1,24 @@
+2009-05-22  Miguel de Icaza  <miguel@novell.com>
+
+	* icall.c: Remove warnings.
+
+	* mono-config.c: Allow for CONFIG_CPU to be set in config.h and
+	prevent auto-detection based on GCC defines.
+
+	Add PS3
+
+	* metadata-verify.c: Do not include signal.h
+
+	* generic-sharing.c, marshal.c: Add returns to avoid some warning
+	messages.  Not sure why the g_assert_not_reached is not enough to
+	quiet the compiler.
+	
+
+	* appdomain.c: Remove code that is not used when
+	DISABLE_SHADOW_COPY is set.
+
+	* image.c: use g_getenv
+
 2009-05-21  Miguel de Icaza  <miguel@novell.com>
 
 	* reflection.c: Remove code that it not used with
