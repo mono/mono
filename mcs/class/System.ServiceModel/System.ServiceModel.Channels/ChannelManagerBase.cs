@@ -63,11 +63,12 @@ namespace System.ServiceModel.Channels
 		internal MessageEncoder CreateEncoder<TChannel> (MessageEncodingBindingElement mbe)
 		{
 			var f = mbe.CreateMessageEncoderFactory ();
-			if (this is IRequestSessionChannel ||
-			    this is IReplySessionChannel ||
-			    this is IInputSessionChannel ||
-			    this is IOutputSessionChannel ||
-			    this is IDuplexSessionChannel)
+			var t = typeof (TChannel);
+			if (t == typeof (IRequestSessionChannel) ||
+			    t == typeof (IReplySessionChannel) ||
+			    t == typeof (IInputSessionChannel) ||
+			    t == typeof (IOutputSessionChannel) ||
+			    t == typeof (IDuplexSessionChannel))
 				return f.CreateSessionEncoder ();
 			else
 				return f.Encoder;

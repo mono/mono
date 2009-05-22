@@ -1,5 +1,9 @@
 2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelManagerBase.cs : fix wrong session channel detection.
+
+2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinaryMessageEncoderFactory.cs, BinaryMessageEncoder.cs
 	  This encoder factory implements CreateSessionEncoder() and binary
 	  encoder does support session transmit, in different media type.
