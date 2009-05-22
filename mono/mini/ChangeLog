@@ -1,3 +1,8 @@
+2009-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (get_call_info): Handle structures with alignment requirements
+	correctly.
+
 2009-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_extra_methods): Encode direct runtime invoke
