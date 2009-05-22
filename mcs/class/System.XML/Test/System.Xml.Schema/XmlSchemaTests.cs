@@ -20,6 +20,8 @@ namespace MonoTests.System.Xml
 	[TestFixture]
 	public class XmlSchemaTests : XmlSchemaAssertion
 	{
+		static readonly bool StrictMsCompliant = Environment.GetEnvironmentVariable ("MONO_STRICT_MS_COMPLIANT") == "yes";
+
 		[Test]
 		public void TestRead ()
 		{
@@ -419,7 +421,135 @@ namespace MonoTests.System.Xml
 				r.Close ();
 			}
 		}
-		
+
+		[Test] // bug #502115
+		public void ExtensionRedefineAttribute1 ()
+		{
+			const string xml = "<Bar xmlns='foo'/>";
+
+			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/extension-attr-redefine-1.xsd");
+
+#if NET_2_0
+			XmlSchemaSet xss = new XmlSchemaSet ();
+			xss.Add (schema);
+			if (StrictMsCompliant) {
+				xss.Compile ();
+			} else {
+				try {
+					xss.Compile ();
+					Fail ();
+				} catch (XmlSchemaException) {
+				}
+				return;
+			}
+
+			StringReader sr = new StringReader (xml);
+
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ValidationType = ValidationType.Schema;
+			settings.Schemas = xss;
+			XmlReader vr = XmlReader.Create (sr, settings);
+#else
+			if (StrictMsCompliant) {
+				schema.Compile (null);
+			} else {
+				try {
+					schema.Compile (null);
+					Fail ();
+				} catch (XmlSchemaException) {
+				}
+			}
+
+			XmlValidatingReader vr = new XmlValidatingReader (xml,
+				XmlNodeType.Document, null);
+			vr.Schemas.Add (schema);
+			vr.ValidationType = ValidationType.Schema;
+#endif
+
+			try {
+				vr.Read ();
+				Fail ();
+			} catch (XmlSchemaException) {
+			}
+		}
+
+		[Test] // bug #502115
+		public void ExtensionRedefineAttribute2 ()
+		{
+			const string xml = "<Bar xmlns='foo'/>";
+
+			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/extension-attr-redefine-2.xsd");
+
+#if NET_2_0
+			XmlSchemaSet xss = new XmlSchemaSet ();
+			xss.Add (schema);
+			xss.Compile ();
+
+			StringReader sr = new StringReader (xml);
+
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ValidationType = ValidationType.Schema;
+			settings.Schemas = xss;
+			XmlReader vr = XmlReader.Create (sr, settings);
+#else
+			schema.Compile (null);
+
+			XmlValidatingReader vr = new XmlValidatingReader (xml,
+				XmlNodeType.Document, null);
+			vr.Schemas.Add (schema);
+			vr.ValidationType = ValidationType.Schema;
+#endif
+
+			while (vr.Read ()) ;
+		}
+
+		[Test] // bug #502115
+		public void ExtensionRedefineAttribute3 ()
+		{
+			const string xml = "<Bar xmlns='foo'/>";
+
+			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/extension-attr-redefine-3.xsd");
+
+#if NET_2_0
+			XmlSchemaSet xss = new XmlSchemaSet ();
+			xss.Add (schema);
+			if (StrictMsCompliant) {
+				xss.Compile ();
+			} else {
+				try {
+					xss.Compile ();
+					Fail ();
+				} catch (XmlSchemaException) {
+				}
+				return;
+			}
+
+			StringReader sr = new StringReader ("<Bar xmlns='foo'/>");
+
+			XmlReaderSettings settings = new XmlReaderSettings ();
+			settings.ValidationType = ValidationType.Schema;
+			settings.Schemas = xss;
+			XmlReader vr = XmlReader.Create (sr, settings);
+#else
+			if (StrictMsCompliant) {
+				schema.Compile (null);
+			} else {
+				try {
+					schema.Compile (null);
+					Fail ();
+				} catch (XmlSchemaException) {
+				}
+			}
+
+			XmlValidatingReader vr = new XmlValidatingReader (xml,
+				XmlNodeType.Document, null);
+			vr.Schemas.Add (schema);
+			vr.ValidationType = ValidationType.Schema;
+#endif
+
+			while (vr.Read ()) ;
+		}
+
 #if NET_2_0
 
 		internal class XmlTestResolver : XmlResolver

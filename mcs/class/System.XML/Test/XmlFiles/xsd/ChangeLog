@@ -1,3 +1,7 @@
+2009-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* extension-attr-redefine-*.xsd: new test files.
+
 2008-12-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* import-subst-dbr-base.xsd, import-subst-dbr-ext.xsd :

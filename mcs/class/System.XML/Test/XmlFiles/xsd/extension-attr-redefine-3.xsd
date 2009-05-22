@@ -1,0 +1,14 @@
+<xs:schema xmlns="foo" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="foo" id="foo">
+	<xs:element name="Foo" type="FooType" />
+	<xs:element name="Bar" type="BarType" />
+	<xs:complexType name="FooType">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="BarType">
+		<xs:complexContent>
+			<xs:extension base="FooType">
+				<xs:attribute name="name" type="xs:string" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>
