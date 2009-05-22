@@ -1,3 +1,8 @@
+2009-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* corlib.dll.sources: Add System/{Lazy,LazyExecutionMode,Funcs}.cs for
+	NET 4.0.
+
 2009-05-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* corlib_test.dll.sources: Add unit tests for AppDomainManager

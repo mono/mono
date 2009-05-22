@@ -150,6 +150,7 @@ System/ExecutionEngineException.cs
 System/FieldAccessException.cs
 System/FlagsAttribute.cs
 System/FormatException.cs
+System/Funcs.cs
 System/GC.cs
 System/GCCollectionMode.cs
 System/GCNotificationStatus.cs
@@ -176,6 +177,8 @@ System/InvalidOperationException.cs
 System/InvalidProgramException.cs
 System/IServiceProvider.cs
 System/KnownTerminals.cs
+System/Lazy.cs
+System/LazyExecutionMode.cs
 System/LoaderOptimization.cs
 System/LoaderOptimizationAttribute.cs
 System/LocalDataStoreSlot.cs
