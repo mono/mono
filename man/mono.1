@@ -1360,6 +1360,16 @@ Both files are read by System.Web on application startup, if they are found at t
 above locations. If you don't want the mapping to be performed you can set this
 variable in your environment before starting the application and no action will
 be taken.
+.TP
+\fBMONO_MESSAGING_PROVIDER\fR
+Mono supports a plugin model for its implementation of System.Messaging making
+it possible to support a variety of messaging implementations (e.g. AMQP, ActiveMQ).
+To specify which messaging implementation is to be used the evironement variable
+needs to be set to the full class name for the provider.  E.g. to use the RabbitMQ based
+AMQP implementation the variable should be set to:
+
+.nf
+Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider,Mono.Messaging.RabbitMQ
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 \fBMONO_ASPNET_NODELETE\fR

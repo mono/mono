@@ -286,3 +286,7 @@ Mon Jan 22 11:15:26 CET 2007 Paolo Molaro <lupus@ximian.com>
 	* mono-shlib-cop.1: Document another BUG/design issue that it doesn't check
 	  for; formatting/style changes.
 
+2009-05-22  Michael Barker  <mike@middlesoft.co.uk>
+
+	* man.1: Added documentation for MONO_MESSAGING_PROVIDER environment
+	variable.
