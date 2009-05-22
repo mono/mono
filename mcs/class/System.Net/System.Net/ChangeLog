@@ -1,3 +1,10 @@
+2009-05-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebClient_2_1.cs: Add an internal OpenPolicyReadAsync. Check 
+	result in ProcessResponse and throw if not Ok (200).
+	* WebRequest_2_1.cs: Add an internal overload to BeginGetResponse
+	from where we can handle downloading the policy.
+
 2009-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsEndPoint_2_1.cs: Add method to return an IPEndPoint from a

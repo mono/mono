@@ -937,7 +937,25 @@ namespace System.Net
 		Stream ProcessResponse (WebResponse response)
 		{
 //			responseHeaders = response.Headers;
-			return response.GetResponseStream ();
+			HttpWebResponse hwr = (response as HttpWebResponse);
+			if (hwr == null)
+				throw new NotSupportedException ();
+
+			HttpStatusCode status_code = HttpStatusCode.NotFound;
+			Stream s = null;
+			try {
+				status_code = hwr.StatusCode;
+				if (status_code == HttpStatusCode.OK)
+					s = response.GetResponseStream ();
+			}
+			catch (Exception e) {
+				throw new WebException ("NotFound", e, WebExceptionStatus.UnknownError, response);
+			}
+			finally {
+				if (status_code != HttpStatusCode.OK)
+					throw new WebException ("NotFound", null, WebExceptionStatus.UnknownError, response);
+			}
+			return s;
 		}
 
 		Stream ReadAll (Stream stream, int length, object userToken)
@@ -1160,10 +1178,27 @@ namespace System.Net
 
 		public void OpenReadAsync (Uri address)
 		{
-			OpenReadAsync (address, null);
+			OpenReadAsync (address, null, false);
 		}
 
 		public void OpenReadAsync (Uri address, object userToken)
+		{
+			OpenReadAsync (address, userToken, false);
+		}
+
+		internal void OpenPolicyReadAsync (Uri address)
+		{
+			switch (address.LocalPath) {
+			case "/clientaccesspolicy.xml":
+			case "/crossdomain.xml":
+				OpenReadAsync (address, null, true);
+				break;
+			default:
+				throw new SecurityException ();
+			}
+		}
+
+		private void OpenReadAsync (Uri address, object userToken, bool policy)
 		{
 			if (address == null)
 				throw new ArgumentNullException ("address");
@@ -1176,9 +1211,8 @@ namespace System.Net
 					object [] args = (object []) state;
 					WebRequest request = null;
 					try {
-						request = SetupRequest ((Uri) args [0], "GET");
-						//WebResponse response = request.GetResponse ();
-						IAsyncResult asyncresult = request.BeginGetResponse (null, userToken);
+						request = SetupRequest (address, "GET");
+						IAsyncResult asyncresult = request.BeginGetResponse (null, userToken, policy);
 						asyncresult.AsyncWaitHandle.WaitOne ();
 						WebResponse response = request.EndGetResponse (asyncresult);
 						Stream stream = ProcessResponse (response);

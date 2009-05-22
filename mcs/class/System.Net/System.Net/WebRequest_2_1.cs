@@ -58,6 +58,11 @@ namespace System.Net {
 		public abstract Stream EndGetRequestStream (IAsyncResult asyncResult);
 		public abstract WebResponse EndGetResponse (IAsyncResult asyncResult);
 
+		internal virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state, bool policy)
+		{
+			return BeginGetResponse (callback, state);
+		}
+
 		public static WebRequest Create (Uri uri)
 		{
 			if (uri == null)
