@@ -1,3 +1,8 @@
+2009-05-22  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XmlResolverTest.cs: Fix ResolveUri test on Windows when current
+	directory is not on C drive.
+
 2009-05-12  Jonas Larsson  <jonas.larsson@manodo.se>
 
 	* XmlValidatingReaderTests.cs : test for bug #502168

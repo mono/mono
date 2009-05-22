@@ -74,9 +74,11 @@ namespace MonoTest.System.Xml {
 			Uri uri = xr.ResolveUri (null, "/Moonlight");
 			// note: this is *very* different from [silver|moon]light
 			Assert.IsTrue (uri.IsAbsoluteUri, "null,string");
-			if (isWin32)
-				Assert.AreEqual ("file:///C:/Moonlight", uri.ToString (), "ToString");
-			else
+			if (isWin32) {
+				string currentdir = Directory.GetCurrentDirectory ();
+				string volume = currentdir.Substring (0, 2);
+				Assert.AreEqual ("file:///" + volume + "/Moonlight", uri.ToString (), "ToString");
+			} else
 				Assert.AreEqual ("file:///Moonlight", uri.ToString (), "ToString");
 
 			uri = new Uri ("http://www.mono-project.com");
