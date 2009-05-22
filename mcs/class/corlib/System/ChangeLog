@@ -1,3 +1,7 @@
+2009-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* Lazy.cs LazyExecutionMode.cs Funcs.cs: New files.
+
 2009-05-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Type.cs: (GetInterfaceMap) 'this' can't be an interface itself.
