@@ -1514,7 +1514,7 @@ void GC_register_data_segments()
 
 # if !defined(OS2) && !defined(PCR) && !defined(AMIGA) \
 	&& !defined(MSWIN32) && !defined(MSWINCE) \
-	&& !defined(MACOS) && !defined(DOS4GW)
+	&& !defined(MACOS) && !defined(DOS4GW) && !defined(SN_TARGET_PS3)
 
 # ifdef SUNOS4
     extern caddr_t sbrk();
