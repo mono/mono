@@ -1,3 +1,7 @@
+2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs : add ReplyTo header.
+
 2009-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DuplexSessionBase.cs : new file, for session implementation.
