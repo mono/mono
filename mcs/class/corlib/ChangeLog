@@ -1,5 +1,7 @@
 2009-05-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* corlib_test.dll.sources: Add System/LazyTest.cs.
+
 	* corlib.dll.sources: Add System/{Lazy,LazyExecutionMode,Funcs}.cs for
 	NET 4.0.
 

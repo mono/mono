@@ -24,6 +24,7 @@ System/DelegateTest.cs
 System/ModuleHandleTest.cs
 System/ObsoleteAttributeTest.cs
 System/IntegerTryParse.cs
+System/LazyTest.cs
 System.Collections/ArrayListTest.cs
 System.Collections/BitArrayTest.cs
 System.Collections/CaseInsensitiveComparerTest.cs
