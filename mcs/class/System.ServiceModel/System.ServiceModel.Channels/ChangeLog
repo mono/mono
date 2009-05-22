@@ -1,5 +1,9 @@
 2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelManagerBase.cs : there was annoying non-2.1 stuff.
+
+2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpChannelListener.cs, TcpChannelFactory.cs : get reader quotas.
 
 2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
