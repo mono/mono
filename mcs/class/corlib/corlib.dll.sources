@@ -250,6 +250,8 @@ System/TypedReference.cs
 System/TypeInitializationException.cs
 System/TypeLoadException.cs
 System/TypeUnloadedException.cs
+System/Tuple.cs
+System/Tuples.cs
 System/UInt16.cs
 System/UInt32.cs
 System/UInt64.cs
@@ -284,6 +286,8 @@ System.Collections/IEnumerator.cs
 System.Collections/IEqualityComparer.cs
 System.Collections/IHashCodeProvider.cs
 System.Collections/IList.cs
+System.Collections/IStructuralComparable.cs
+System.Collections/IStructuralEquatable.cs
 System.Collections/Queue.cs
 System.Collections/ReadOnlyCollectionBase.cs
 System.Collections/SortedList.cs
