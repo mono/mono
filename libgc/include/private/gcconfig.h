@@ -889,11 +889,11 @@
 #       define ALIGNMENT 4
         extern int _end [];
 //       extern int _dso_handle[];
-		extern int __bss;
+		extern int __bss_start;
 
 #       define DATAEND (_end)
-#       define DATASTART (__bss)
-#       define HEURISTIC2
+#       define DATASTART (__bss_start)
+#       define STACKBOTTOM ((ptr_t) ps3_get_stack_bottom ())
 #       define USE_GENERIC_PUSHREGS
 #   endif
 
