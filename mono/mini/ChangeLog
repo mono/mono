@@ -1,3 +1,9 @@
+2009-05-22  Geoff Norton  <gnorton@novell.com>
+
+	* mini-arm.c (get_call_info): If a structure is split between the stack
+	and argument registers, we should not advance the stack pointer by the entire
+	native size, but just by the amount that spilled.
+
 2009-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (get_call_info): Handle structures with alignment requirements
