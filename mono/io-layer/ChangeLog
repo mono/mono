@@ -1,3 +1,7 @@
+2009-05-22  Miguel de Icaza  <miguel@novell.com>
+
+	* versioninfo.c: One missing signature, fixed.
+
 2009-05-21  Miguel de Icaza  <miguel@novell.com>
 
 	* daemon.c: Remove more DEBUG ifdef mess.
