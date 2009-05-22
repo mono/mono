@@ -1,3 +1,13 @@
+2009-05-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Socket_2_1.cs: Do not throw a SecurityException if the security
+	policy check fails in NET_2_1 but set the SocketError to AccessDenied
+	ensure the EndPoint has a valid policy before connecting.
+	* SocketAsyncEventArgs.cs: Don't recurse endlessly in SendCallback
+	and ReceiveCallback if the socket is not connected. Check for
+	AccessDenied in ConnectCallback (needed for the security policy
+	check in NET_2_1).
+
 2009-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Socket_2_1.cs: Add ConnectAsync support for NET_2_1 which will

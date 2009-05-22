@@ -191,6 +191,10 @@ namespace System.Net.Sockets {
 		
 		public Socket(AddressFamily family, SocketType type, ProtocolType proto)
 		{
+#if NET_2_1
+			if (family == AddressFamily.Unspecified)
+				throw new ArgumentException ("family");
+#endif
 			address_family=family;
 			socket_type=type;
 			protocol_type=proto;
@@ -695,14 +699,15 @@ namespace System.Net.Sockets {
 			if (!checkPolicy)
 				return;
 
+			e.SocketError = SocketError.AccessDenied;
 			if (check_socket_policy == null) {
 				Type type = Type.GetType ("System.Windows.Browser.Net.CrossDomainPolicyManager, System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
 				check_socket_policy = type.GetMethod ("CheckEndPoint");
 				if (check_socket_policy == null)
 					throw new SecurityException ();
 			}
-			if (!(bool) check_socket_policy.Invoke (null, new object [1] { e.RemoteEndPoint }))
-				throw new SecurityException ();
+			if ((bool) check_socket_policy.Invoke (null, new object [1] { e.RemoteEndPoint }))
+				e.SocketError = SocketError.Success;
 		}
 
 		// only _directly_ used (with false) to download the socket policy

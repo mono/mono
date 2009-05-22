@@ -163,6 +163,11 @@ namespace System.Net.Sockets
 			SocketError = SocketError.Success;
 			LastOperation = SocketAsyncOperation.Receive;
 			SocketError error = SocketError.Success;
+
+			if (!curSocket.Connected) {
+				SocketError = SocketError.NotConnected;
+				return;
+			}
 			
 			try {
 				// FIXME: this does not support using BufferList
@@ -175,8 +180,15 @@ namespace System.Net.Sockets
 
 		void ConnectCallback ()
 		{
-			SocketError = SocketError.Success;
 			LastOperation = SocketAsyncOperation.Connect;
+#if NET_2_1
+			if (SocketError == SocketError.AccessDenied) {
+				curSocket.Connected = false;
+				OnCompleted (this);
+				return;
+			}
+#endif
+			SocketError = SocketError.Success;
 			SocketError error = SocketError.Success;
 
 			try {
@@ -206,6 +218,11 @@ namespace System.Net.Sockets
 			SocketError = SocketError.Success;
 			LastOperation = SocketAsyncOperation.Send;
 			SocketError error = SocketError.Success;
+
+			if (!curSocket.Connected) {
+				SocketError = SocketError.NotConnected;
+				return;
+			}
 
 			try {
 				if (Buffer != null) {
