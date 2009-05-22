@@ -46,5 +46,9 @@ namespace System.Reflection.Emit
 	,
 	ReflectionOnly = 6
 #endif
+#if NET_4_0
+	,
+	RunAndCollect = 9
+#endif
   }
 }

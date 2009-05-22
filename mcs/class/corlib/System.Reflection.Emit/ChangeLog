@@ -1,3 +1,10 @@
+2009-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilder.cs (.ctor): Error out if the not yet supported 
+	RunAndCollect flag was given.
+
+	* AssemblyBuilderAccess.cs: Add RunAndCollect flag for net 4.0.
+
 2009-03-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DynamicMethod.cs (Invoke): Wrap a MethodAccessException inside a

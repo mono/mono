@@ -162,6 +162,11 @@ namespace System.Reflection.Emit
 					"access");
 #endif
 
+#if NET_4_0
+			if ((access & AssemblyBuilderAccess.RunAndCollect) == AssemblyBuilderAccess.RunAndCollect)
+				throw new NotSupportedException ("RunAndCollect not yet supported.");
+#endif
+
 			name = n.Name;
 			this.access = (uint)access;
 			flags = (uint) n.Flags;
