@@ -1,3 +1,8 @@
+2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs, ServiceRuntimeChannel.cs :
+	  IDuplexSession was not supported.
+
 2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationContext.cs : missing from the previous commit (remove

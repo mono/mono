@@ -60,9 +60,11 @@ namespace System.ServiceModel
 
 		public IInputSession InputSession {
 			get {
-				if (channel is IInputSessionChannel)
-					return ((IInputSessionChannel) channel).Session;
-				return null;
+				var ch = channel as ISessionChannel<IInputSession>;
+				if (ch != null)
+					return ch.Session;
+				var dch = channel as ISessionChannel<IDuplexSession>;
+				return dch != null ? dch.Session : null;
 			}
 		}
 
@@ -84,9 +86,11 @@ namespace System.ServiceModel
 
 		public IOutputSession OutputSession {
 			get {
-				if (channel is IOutputSessionChannel)
-					return ((IOutputSessionChannel) channel).Session;
-				return null;
+				var ch = channel as ISessionChannel<IOutputSession>;
+				if (ch != null)
+					return ch.Session;
+				var dch = channel as ISessionChannel<IDuplexSession>;
+				return dch != null ? dch.Session : null;
 			}
 		}
 

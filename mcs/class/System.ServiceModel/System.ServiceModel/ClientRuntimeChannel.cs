@@ -32,6 +32,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Security;
 using System.Threading;
+using System.Xml;
 
 namespace System.ServiceModel
 {
@@ -250,7 +251,10 @@ namespace System.ServiceModel
 			get {
 				ISessionChannel<IInputSession> ch = request_channel as ISessionChannel<IInputSession>;
 				ch = ch ?? output_channel as ISessionChannel<IInputSession>;
-				return ch != null ? ch.Session : null;
+				if (ch != null)
+					return ch.Session;
+				var dch = output_channel as ISessionChannel<IDuplexSession>;
+				return dch != null ? dch.Session : null;
 			}
 		}
 
@@ -268,7 +272,10 @@ namespace System.ServiceModel
 			get {
 				ISessionChannel<IOutputSession> ch = request_channel as ISessionChannel<IOutputSession>;
 				ch = ch ?? output_channel as ISessionChannel<IOutputSession>;
-				return ch != null ? ch.Session : null;
+				if (ch != null)
+					return ch.Session;
+				var dch = output_channel as ISessionChannel<IDuplexSession>;
+				return dch != null ? dch.Session : null;
 			}
 		}
 
@@ -541,7 +548,11 @@ namespace System.ServiceModel
 					version, parameters);
 			else
 				msg = (Message) parameters [0];
+
+			if (OutputSession != null)
+				msg.Headers.MessageId = new UniqueId (OutputSession.Id);
 			msg.Properties.AllowOutputBatching = AllowOutputBatching;
+
 			return msg;
 		}
 
