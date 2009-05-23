@@ -1,5 +1,7 @@
 2009-05-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c: Fix the definition of TARGET_ASM_....
+	
 	* image-writer.c: Fix the emission of assembler directives in the last
 	change.
 
