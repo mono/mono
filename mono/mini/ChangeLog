@@ -1,3 +1,8 @@
+2009-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* image-writer.c: Clean up the #ifdef hell a bit by adding defines for
+	the assembler dialect instead of using platform specific defines.
+
 2009-05-22  Geoff Norton  <gnorton@novell.com>
 
 	* mini-arm.c (get_call_info): If a structure is split between the stack
