@@ -651,16 +651,8 @@ namespace System.Windows.Forms {
 			wrapped = false;
 			c = active_control;
 
-#if NET_2_0
-			System.Collections.Generic.List<MenuStrip> strips = new System.Collections.Generic.List<MenuStrip> ();
-#endif
-
 			do {
 				c = GetNextControl(c, true);
-#if NET_2_0
-				if (c is MenuStrip)
-					strips.Add ((MenuStrip)c);
-#endif
 				if (c != null) {
 					// This is stupid. I want to be able to call c.ProcessMnemonic directly
 					if (c.ProcessControlMnemonic(charCode)) {
@@ -674,14 +666,6 @@ namespace System.Windows.Forms {
 					wrapped = true;
 				}
 			} while (c != active_control);
-
-#if NET_2_0
-			// No one has an explicit mnemonic for this key.
-			// Let MenuStrips have a chance at implicit mnemonics.
-			foreach (MenuStrip ms in strips)
-				if (ms.ProcessImplicitMnemonic (charCode))
-					return true;
-#endif
 
 			return false;
 		}

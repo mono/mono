@@ -1,3 +1,15 @@
+2009-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ContainerControl.cs:
+	* MenuStrip.cs
+	* ToolStrip.cs: Implicit mnemonic processing should happen for every
+	ToolStrip child, not only for MenuStrip, so we are going to do that in
+	ToolStrip.ProcessMnemonic, where we already had that exactly
+	functionality, but we are only just checking that either this instance
+	is a ToolStripDropDownMenu instance or Alt has been pressed. Finally
+	remove the extra code, since we are not going to use it now.
+	Fixes the remaining bits of #503663.
+
 2009-05-21  Neville Gao  <nevillegao@gmail.com>
 
 	* ContextMenu.cs: Cleaned up UIA properties.

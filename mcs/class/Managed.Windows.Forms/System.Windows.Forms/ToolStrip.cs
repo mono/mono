@@ -1135,7 +1135,7 @@ namespace System.Windows.Forms
 			string code = Char.ToUpper (charCode).ToString ();
 			
 			// If any item's text starts with our letter, it gets the message
-			if (this is ToolStripDropDownMenu)
+			if ((Control.ModifierKeys & Keys.Alt) != 0 || this is ToolStripDropDownMenu)
 				foreach (ToolStripItem tsi in this.Items)
 					if (tsi.Enabled && tsi.Visible && !string.IsNullOrEmpty (tsi.Text) && tsi.Text.ToUpper ().StartsWith (code) && !(tsi is ToolStripControlHost))
 						return tsi.ProcessMnemonic (charCode);
