@@ -1,3 +1,7 @@
+2009-05-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Include the size prefix in the bounds check.
+
 2009-05-22  Miguel de Icaza  <miguel@novell.com>
 
 	* icall.c: Remove warnings.
