@@ -1,5 +1,8 @@
 2009-05-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c: Fix the emission of assembler directives in the last
+	change.
+
 	* mini-ppc.c (mono_arch_emit_exceptions): Increase the size of the
 	exception throwing code to accomodate ppc64.
 
