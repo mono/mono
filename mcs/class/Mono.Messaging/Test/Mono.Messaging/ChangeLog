@@ -6,3 +6,7 @@
 2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageBaseTest.cs: Used reflection to create Message Object
+	
+2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* QueueReferenceTest.cs: Incorrect namespace for test

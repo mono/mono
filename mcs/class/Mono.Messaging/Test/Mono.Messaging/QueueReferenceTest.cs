@@ -34,7 +34,7 @@ using System.Text.RegularExpressions;
 using Mono.Messaging;
 using NUnit.Framework;
 
-namespace MonoTests.Mono.Messsaging
+namespace MonoTests.Mono.Messaging
 {
 	[TestFixture]
 	public class QueueReferenceTest
