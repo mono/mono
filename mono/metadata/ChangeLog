@@ -1,5 +1,10 @@
 2009-05-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (is_valid_method_signature): Verify parts
+	of the return type. Provide an error message in case of failure.
+
+2009-05-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_method_signature): Verify the call conv.
 
 2009-05-22 Rodrigo Kumpera  <rkumpera@novell.com>
