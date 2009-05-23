@@ -1,5 +1,14 @@
 2009-05-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_emit_exceptions): Increase the size of the
+	exception throwing code to accomodate ppc64.
+
+	* tramp-ppc.c (mono_arch_get_nullified_class_init_trampoline): Increase the
+	size to work on ppc64 too.
+
+	* mini-ppc.h (MonoCompileArch): Enable static rgctx trampolines on ppc64
+	too.
+
 	* image-writer.c: Clean up the #ifdef hell a bit by adding defines for
 	the assembler dialect instead of using platform specific defines.
 
