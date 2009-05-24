@@ -1,3 +1,8 @@
+2009-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* image-writer.c (asm_writer_emit_section_change): Avoid using
+	.bss subsections on ppc too.
+
 2009-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* image-writer.c: Fix the definition of TARGET_ASM_....
