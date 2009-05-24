@@ -1,0 +1,4 @@
+
+ADD_DEFINITIONS(${GMODULE_CFLAGS})
+ADD_LIBRARY(ikvm_native SHARED jni.c os.c jni.h)
+TARGET_LINK_LIBRARIES(ikvm_native ${GMODULE_LIBS})
