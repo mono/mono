@@ -153,6 +153,11 @@ namespace MonoTests.Remoting
 	[TestFixture]
 	public class GenericTest
 	{
+		// Under MS.NET, INested.Test<V>(V v) isn't supported over the
+		// xappdom channel anymore (as of .NET 3.5). The stacktrace
+		// looks like if INested.Test(int) is invoked in place of
+		// INested.Test<int>(int).
+		[Category("NotDotNet")]
 		[Test]
 		public void TestCrossAppDomainChannel ()
 		{
