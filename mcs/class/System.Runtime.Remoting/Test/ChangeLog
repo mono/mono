@@ -1,5 +1,10 @@
 2009-05-24  Robert Jordan  <robertj@gmx.net>
 
+	* GenericTest.cs: differentiate between "Test(int)" and
+	"Test<int>(int)" to prove that the correct method is invoked.
+
+2009-05-24  Robert Jordan  <robertj@gmx.net>
+
 	* GenericTest.cs (TestCrossAppDomainChannel): disable on MS.NET as
 	some generic calls do not seem to be supported anymore. It looks
 	like a bug, though, since the same tests are passing when performed

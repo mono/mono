@@ -97,7 +97,7 @@ namespace MonoTests.Remoting
 		
 		public int Test (int i)
 		{
-			return i;
+			return i + 500;
 		}
 
 		int INested.Test (int a, int b)
@@ -130,7 +130,7 @@ namespace MonoTests.Remoting
 
 		public int Test (int i)
 		{
-			return i;
+			return i + 500;
 		}
 
 		int INested.Test (int a, int b)
@@ -219,7 +219,7 @@ namespace MonoTests.Remoting
 			Assert.AreEqual (42, cao.Test (),
 					 "#5a calling INested.Test ()");
 
-			Assert.AreEqual (42, cao.Test (42),
+			Assert.AreEqual (42 + 500, cao.Test (42),
 					 "#5 calling INested.Test (int)");
 
 			Assert.AreEqual (42, cao.Test (21, 21),
@@ -235,7 +235,7 @@ namespace MonoTests.Remoting
 			Assert.AreEqual (42, cao.Test (),
 					 "#9a calling INested.Test ()");
 
-			Assert.AreEqual (42, cao.Test (42),
+			Assert.AreEqual (42 + 500, cao.Test (42),
 					 "#9 calling INested.Test (int)");
 
 			Assert.AreEqual (42, cao.Test (21, 21),
