@@ -1,3 +1,9 @@
+2009-05-24  Robert Jordan  <robertj@gmx.net>
+
+	* GenericTest.cs (TestTcpChannel): create a unique channel and
+	unregister it upon termination. Fixes issues that were uncovered
+	by the NUnit upgrade (see Atsushi's changelogs below).
+
 2009-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RemotingServicesTest.cs : mark failing test as NotWorking, and 

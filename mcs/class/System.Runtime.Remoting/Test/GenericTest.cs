@@ -8,6 +8,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Tcp;
@@ -155,30 +156,43 @@ namespace MonoTests.Remoting
 		[Test]
 		public void TestCrossAppDomainChannel ()
 		{
-			RunTests (GetRemObject <Server<object>> ());
+			RunTests (RegisterAndConnect <Server<object>> ());
 		}
 
 		[Test]
-		[Ignore ("disabled as it got not working by NUnit upgrade to 2.4.8 (applies to .NET too)")]
 		public void TestTcpChannel ()
 		{
-			RunTests (GetRemObjectTcp <Server<object>> ());
+			IDictionary props = new Hashtable ();
+			props ["name"] = Guid.NewGuid ().ToString("N");
+			props ["port"] = 18191;
+			TcpChannel chan = new TcpChannel (props, null, null);
+			ChannelServices.RegisterChannel (chan);
+			
+			try {
+				Register <Server<object>> ("gentcptest.rem");
+				RunTests (Connect <Server<object>> ("tcp://localhost:18191/gentcptest.rem"));
+			} finally {
+				ChannelServices.UnregisterChannel (chan);
+			}
 		}
 
-		static T GetRemObject <T> () where T: MarshalByRefObject
+		static T RegisterAndConnect <T> () where T: MarshalByRefObject
 		{
-			AppDomain d = BaseCallTest.CreateDomain ("Foo");
+			AppDomain d = BaseCallTest.CreateDomain ("GenericTests");
 			return (T) d.CreateInstanceAndUnwrap (
 				typeof (T).Assembly.FullName,
 				typeof (T).FullName);
 		}
 
-		static T GetRemObjectTcp <T> () where T: MarshalByRefObject
+		static void Register <T> (string uri) where T: MarshalByRefObject
 		{
-			new TcpChannel (18191);
 			object obj = Activator.CreateInstance (typeof(T));
-			RemotingServices.Marshal ((MarshalByRefObject)obj, "test.rem");
-			return (T) RemotingServices.Connect (typeof (T), "tcp://localhost:18191/test.rem");
+			RemotingServices.Marshal ((MarshalByRefObject)obj, uri);
+		}
+
+		static T Connect <T> (string uri) where T: MarshalByRefObject
+		{
+			return (T) RemotingServices.Connect (typeof (T), uri);
 		}
 
 		static void RunTests (ServerBase<object> rem)
