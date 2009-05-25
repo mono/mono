@@ -1,5 +1,10 @@
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_fields): Don't mark simd types as having
+	16 bytes alignment as the whole runtime doesn't support.
+
+2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (safe_read): Use endian safe read macros.
 
 2009-05-25  Zoltan Varga  <vargaz@gmail.com>
