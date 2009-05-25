@@ -1,3 +1,8 @@
+2009-05-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_create_ftnptr): Don't allocate from the code mempool since
+	it is read-only when using full aot.
+
 2009-05-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (is_valid_method_signature): Verify parts
