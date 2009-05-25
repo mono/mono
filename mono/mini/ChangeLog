@@ -1,5 +1,9 @@
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* basic.cs: Add regression test for #506915.
+
+2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c (mono_method_to_ir): When doing the ldobj+stobj
 	optimization we must check the bb of the first byte of stobj as
 	it's the only one set in cil_offset_to_bb.
