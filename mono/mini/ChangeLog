@@ -1,5 +1,16 @@
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-x86.c (mono_arch_output_basic_block): Fix the precision of
+	long_conv_to_r_un to 64 bits.
+
+	* cpu-x86.md: Increase the instruction size due to the changes.
+
+	* iltests.il.in: Add regression test.
+
+	Fixes #467201.
+
+2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* objects.cs: Move the previous test from basic.cs to here.
 
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
