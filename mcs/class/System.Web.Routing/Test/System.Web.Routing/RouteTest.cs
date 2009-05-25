@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2009 Novell Inc. http://novell.com
 //
 
 //
@@ -34,6 +34,14 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Web.Routing
 {
+	class TestUrl
+	{
+		public string Url { get; set; }
+		public string Expected { get; set; }
+		public string Label { get; set; }
+		public Type ExpectedExceptionType { get; set; }	
+	}
+
 	[TestFixture]
 	public class RouteTest
 	{
@@ -54,96 +62,89 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (String.Empty, r.Url);
 		}
 
+		static readonly TestUrl[] __invalidUrls = {
+			// cannot start with '~'
+			new TestUrl () { Url = "~", ExpectedExceptionType = typeof (ArgumentException), Label = "#1" },
+
+			// cannot start with '/'
+			new TestUrl () { Url = "/", ExpectedExceptionType = typeof (ArgumentException), Label = "#2" },
+
+			// cannot contain '?'
+			new TestUrl () { Url = "foo?bar", ExpectedExceptionType = typeof (ArgumentException), Label = "#3" },
+
+			// unmatched '{'
+			new TestUrl () { Url = "foo/{bar", ExpectedExceptionType = typeof (ArgumentException), Label = "#4" },
+
+			// unmatched '}'
+			new TestUrl () { Url = "foo/bar}", ExpectedExceptionType = typeof (ArgumentException), Label = "#5"  },
+
+			// "" is an invalid parameter name.
+			new TestUrl () { Url = "foo/{}", ExpectedExceptionType = typeof (ArgumentException), Label = "#6" },
+
+			// incomplete parameter in path segment.
+			new TestUrl () { Url = "foo/{x/y/z}", ExpectedExceptionType = typeof (ArgumentException), Label = "#7" },
+
+			// regarded as an incomplete parameter
+			new TestUrl () { Url = "foo/{a{{b}}c}", ExpectedExceptionType = typeof (ArgumentException), Label = "#8" },
+
+			// consecutive parameters are not allowed
+			new TestUrl () { Url = "foo/{a}{b}", ExpectedExceptionType = typeof (ArgumentException), Label = "#9" },
+
+			// consecutive segment separators '/' are not allowed
+			new TestUrl () { Url = "foo//bar", ExpectedExceptionType = typeof (ArgumentException), Label = "#10" },
+
+			// A catch-all parameter can only appear as the last segment of the route URL
+			new TestUrl () { Url = "{first}/{*rest}/{foo}", ExpectedExceptionType = typeof (ArgumentException), Label = "#11" },
+
+			// A path segment that contains more than one section, such as a literal section or a parameter, cannot contain a catch-all parameter.
+			new TestUrl () { Url = "{first}/{*rest}-{foo}", ExpectedExceptionType = typeof (ArgumentException), Label = "#12" },
+
+			// A path segment that contains more than one section, such as a literal section or a parameter, cannot contain a catch-all parameter.
+			new TestUrl () { Url = "{first}/{foo}-{*rest}", ExpectedExceptionType = typeof (ArgumentException), Label = "#13" },
+
+			// A path segment that contains more than one section, such as a literal section or a parameter, cannot contain a catch-all parameter.
+			new TestUrl () { Url = "-{*rest}", ExpectedExceptionType = typeof (ArgumentException), Label = "#14" },
+		};
+		
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl ()
+		public void InvalidUrls ()
 		{
-			new Route ("~", null); // cannot start with '~'
+			Route r;
+
+			foreach (TestUrl tu in __invalidUrls) {
+				AssertExtensions.Throws (tu.ExpectedExceptionType, () => r = new Route (tu.Url, null), tu.Label);
+			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl2 ()
-		{
-			new Route ("/", null); // cannot start with '/'
-		}
+		static readonly TestUrl[] __validUrls = {
+			new TestUrl () { Url = "{foo}/{bar}", Expected = "{foo}/{bar}", Label = "#1" },
+			new TestUrl () { Url = "a~c", Expected = "a~c", Label = "#2" },
+			new TestUrl () { Url = "foo/", Expected = "foo/", Label = "#3" },
+			new TestUrl () { Url = "summary/{action}-{type}/{page}", Expected = "summary/{action}-{type}/{page}", Label = "#4" },
+			new TestUrl () { Url = "{first}/{*rest}", Expected = "{first}/{*rest}", Label = "#5" },
+			new TestUrl () { Url = "{language}-{country}/{controller}/{action}", Expected = "{language}-{country}/{controller}/{action}", Label = "#6" },
+			new TestUrl () { Url = "{controller}.{action}.{id}", Expected = "{controller}.{action}.{id}", Label = "#7" },
+			new TestUrl () { Url = "{reporttype}/{year}/{month}/{date}", Expected = "{reporttype}/{year}/{month}/{date}", Label = "#8" },
+			new TestUrl () { Url = "Book{title}and{foo}", Expected = "Book{title}and{foo}", Label = "#9" },
+			new TestUrl () { Url = "foo/{ }", Expected = "foo/{ }", Label = "#10" },
+			new TestUrl () { Url = "foo/{ \t}", Expected = "foo/{ \t}", Label = "#11" },
+			new TestUrl () { Url = "foo/{ \n}", Expected = "foo/{ \n}", Label = "#12" },
+			new TestUrl () { Url = "foo/{ \t\n}", Expected = "foo/{ \t\n}", Label = "#13" },
+			new TestUrl () { Url = "-{foo}", Expected = "-{foo}", Label = "#14" },
+		};
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl3 ()
+		public void ValidUrls ()
 		{
-			new Route ("foo?bar", null); // cannot contain '?'
-		}
+			Route r;
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl4 ()
-		{
-			new Route ("foo/{bar", null); // unmatched '{'
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl5 ()
-		{
-			new Route ("foo/bar}", null); // unmatched '}'
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl6 ()
-		{
-			new Route ("foo/{}", null); // "" is an invalid parameter name.
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl7 ()
-		{
-			new Route ("foo/{x/y/z}", null); // incomplete parameter in path segment.
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl8 ()
-		{
-			new Route ("foo/{a{{b}}c}", null); // regarded as an incomplete parameter
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl9 ()
-		{
-			new Route ("foo/{a}{b}", null); // consecutive parameters are not allowed
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void InvalidUrl10 ()
-		{
-			new Route ("foo//bar", null); // consecutive segment separators '/' are not allowed
-		}
-
-		[Test]
-		public void ValidUrl ()
-		{
-			var r = new Route ("{foo}/{bar}", null);
-			Assert.AreEqual ("{foo}/{bar}", r.Url, "#1");
-			Assert.IsNull (r.DataTokens, "#2");
-			Assert.IsNull (r.Defaults, "#3");
-			Assert.IsNull (r.Constraints, "#4");
-		}
-
-		[Test]
-		public void ValidUrl2 ()
-		{
-			new Route ("a~c", null);
-		}
-
-		[Test]
-		public void ValidUrl3 ()
-		{
-			new Route ("foo/", null);
+			foreach (TestUrl tu in __validUrls) {
+				r = new Route (tu.Url, null);
+				Assert.AreEqual (tu.Expected, r.Url, tu.Label);
+				Assert.IsNull (r.DataTokens, tu.Label + "-2");
+				Assert.IsNull (r.Defaults, tu.Label + "-3");
+				Assert.IsNull (r.Constraints, tu.Label + "-4");
+			}
 		}
 
 		[Test]
@@ -258,7 +259,6 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
-		[Ignore ("Pending testing - might be invalid test")]
 		public void GetRouteData7 ()
 		{
 			var r = new Route ("{table}/{action}.aspx", null);
@@ -266,6 +266,408 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsNull (rd, "#1");
 		}
 
+		[Test]
+		public void GetRouteData8 ()
+		{
+			var r = new Route ("{first}/{*rest}", null);
+			var hc = new HttpContextStub ("~/a/b/c/d", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (2, rd.Values.Count, "#4");
+			Assert.AreEqual ("a", rd.Values ["first"], "#4-1");
+			Assert.AreEqual ("b/c/d", rd.Values ["rest"], "#4-2");
+		}
+
+		[Test]
+		public void GetRouteData9 ()
+		{
+			var r = new Route ("summary/{action}-{type}/{page}", null);
+			var hc = new HttpContextStub ("~/summary/test-xml/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (3, rd.Values.Count, "#4");
+			Assert.AreEqual ("test", rd.Values["action"], "#4-1");
+			Assert.AreEqual ("xml", rd.Values["type"], "#4-2");
+			Assert.AreEqual ("1", rd.Values["page"], "#4-2");
+		}
+
+		[Test]
+		public void GetRouteData10 ()
+		{
+			var r = new Route ("summary/{action}-{type}/{page}", null);
+			var hc = new HttpContextStub ("~/summary/-xml/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1"); // mismatch, missing action
+		}
+
+		[Test]
+		public void GetRouteData11 ()
+		{
+			var r = new Route ("summary/{action}-{type}/{page}", null);
+			var hc = new HttpContextStub ("~/summary/test-/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1"); // mismatch, missing type
+		}
+
+		[Test]
+		public void GetRouteData12 ()
+		{
+			var r = new Route ("summary/{action}-{type}/{page}", null);
+			var hc = new HttpContextStub ("~/summary/test-xml", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1"); // mismatch, missing page
+		}
+
+		[Test]
+		public void GetRouteData13 ()
+		{
+			var r = new Route ("summary/{action}-{type}/{page}", null) {
+					Defaults = new RouteValueDictionary (new { action = "Index", page = 1 } )
+						};
+			var hc = new HttpContextStub ("~/summary/test-xml/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (3, rd.Values.Count, "#4");
+			Assert.AreEqual ("test", rd.Values["action"], "#4-1");
+			Assert.AreEqual ("xml", rd.Values["type"], "#4-2");
+			Assert.AreEqual ("1", rd.Values["page"], "#4-2");
+		}
+
+		[Test]
+		public void GetRouteData14 ()
+		{
+			var r = new Route ("{filename}.{ext}", null);
+			var hc = new HttpContextStub ("~/Foo.xml.aspx", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (2, rd.Values.Count, "#4");
+			Assert.AreEqual ("Foo.xml", rd.Values["filename"], "#4-1");
+			Assert.AreEqual ("aspx", rd.Values["ext"], "#4-2");
+		}
+
+		[Test]
+		public void GetRouteData15 ()
+		{
+			var r = new Route ("My{location}-{sublocation}", null);
+			var hc = new HttpContextStub ("~/MyHouse-LivingRoom", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (2, rd.Values.Count, "#4");
+			Assert.AreEqual ("House", rd.Values["location"], "#4-1");
+			Assert.AreEqual ("LivingRoom", rd.Values["sublocation"], "#4-2");
+		}
+
+		[Test]
+		public void GetRouteData16 ()
+		{
+			var r = new Route ("My{location}---{sublocation}", null);
+			var hc = new HttpContextStub ("~/MyHouse-LivingRoom", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1");
+		}
+
+		[Test]
+		public void GetRouteData17 ()
+		{
+			var r = new Route ("{foo}xyz{bar}", null);
+			var hc = new HttpContextStub ("~/xyzxyzxyzblah", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (2, rd.Values.Count, "#4");
+			Assert.AreEqual ("xyzxyz", rd.Values["foo"], "#4-1");
+			Assert.AreEqual ("blah", rd.Values["bar"], "#4-2");
+		}
+
+		[Test]
+		public void GetRouteData18 ()
+		{
+			var r = new Route ("foo/{ }", null);
+			var hc = new HttpContextStub ("~/foo/stuff", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (1, rd.Values.Count, "#4");
+			Assert.AreEqual ("stuff", rd.Values[" "], "#4-1");
+		}
+
+		[Test]
+		public void GetRouteData19 ()
+		{
+			var r = new Route ("foo/{ \t}", null);
+			var hc = new HttpContextStub ("~/foo/stuff", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (1, rd.Values.Count, "#4");
+			Assert.AreEqual ("stuff", rd.Values[" \t"], "#4-1");
+		}
+
+		[Test]
+		public void GetRouteData20 ()
+		{
+			var r = new Route ("foo/{ \n}", null);
+			var hc = new HttpContextStub ("~/foo/stuff", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (1, rd.Values.Count, "#4");
+			Assert.AreEqual ("stuff", rd.Values[" \n"], "#4-1");
+		}
+
+		[Test]
+		public void GetRouteData21 ()
+		{
+			var r = new Route ("foo/{ \t\n}", null);
+			var hc = new HttpContextStub ("~/foo/stuff", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (1, rd.Values.Count, "#4");
+			Assert.AreEqual ("stuff", rd.Values[" \t\n"], "#4-1");
+		}
+
+		[Test]
+		public void GetRouteData22 ()
+		{
+			var r = new Route ("foo/{ \t\n}", null);
+			var hc = new HttpContextStub ("~/FOO/stuff", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (1, rd.Values.Count, "#4");
+			Assert.AreEqual ("stuff", rd.Values[" \t\n"], "#4-1");
+		}
+
+		[Test]
+		public void GetRouteData23 ()
+		{
+			var r = new Route ("foo/{bar}-{baz}/{dancefloor}", null) {
+					Defaults = new RouteValueDictionary (new { bar = "BlueOyster", dancefloor = 1 })
+			};
+				
+			var hc = new HttpContextStub ("~/foo/-nyc/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#1");
+
+			hc = new HttpContextStub ("~/foo/blueoyster-nyc", String.Empty);
+			rd = r.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#2");
+			Assert.AreEqual (r, rd.Route, "#2-1");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#2-2");
+			Assert.AreEqual (3, rd.Values.Count, "#2-3");
+			Assert.AreEqual ("blueoyster", rd.Values["bar"], "#2-4");
+			Assert.AreEqual ("nyc", rd.Values["baz"], "#2-5");
+			Assert.AreEqual (1, rd.Values["dancefloor"], "#2-6");
+			Assert.IsTrue (typeof (int) == rd.Values["dancefloor"].GetType (), "#2-7");
+		}
+
+		[Test]
+		public void GetRouteData24 ()
+		{
+			var r = new Route ("foo/{bar}-{baz}/{dancefloor}", null) {
+					Defaults = new RouteValueDictionary (new { baz = "nyc", dancefloor = 1 })
+			};
+				
+			var hc = new HttpContextStub ("~/foo/BlueOyster-/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#1");
+
+			hc = new HttpContextStub ("~/foo/blueoyster-", String.Empty);
+			rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#2");
+
+			hc = new HttpContextStub ("~/foo/blueoyster-nyc", String.Empty);
+			rd = r.GetRouteData (hc);
+			
+			Assert.IsNotNull (rd, "#3");
+			Assert.AreEqual (r, rd.Route, "#3-1");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3-2");
+			Assert.AreEqual (3, rd.Values.Count, "#3-3");
+			Assert.AreEqual ("blueoyster", rd.Values["bar"], "#3-4");
+			Assert.AreEqual ("nyc", rd.Values["baz"], "#3-5");
+			Assert.AreEqual (1, rd.Values["dancefloor"], "#3-6");
+			Assert.IsTrue (typeof (int) == rd.Values["dancefloor"].GetType (), "#3-7");
+
+			hc = new HttpContextStub ("~/foo/blueoyster-nyc/4", String.Empty);
+			rd = r.GetRouteData (hc);
+			
+			Assert.IsNotNull (rd, "#4");
+			Assert.AreEqual (r, rd.Route, "#4-1");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#4-2");
+			Assert.AreEqual (3, rd.Values.Count, "#4-3");
+			Assert.AreEqual ("blueoyster", rd.Values["bar"], "#4-4");
+			Assert.AreEqual ("nyc", rd.Values["baz"], "#4-5");
+			Assert.AreEqual ("4", rd.Values["dancefloor"], "#4-6");
+			Assert.IsTrue (typeof (string) == rd.Values["dancefloor"].GetType (), "#4-7");
+		}
+
+		[Test]
+		public void GetRouteData25 ()
+		{
+			var r = new Route ("foo/{bar}/{baz}/{dancefloor}", null) {
+					Defaults = new RouteValueDictionary (new { baz = "nyc", dancefloor = 1 })
+			};
+				
+			var hc = new HttpContextStub ("~/foo/BlueOyster", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#1-1");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#1-2");
+			Assert.AreEqual (3, rd.Values.Count, "#1-3");
+			Assert.AreEqual ("BlueOyster", rd.Values["bar"], "#1-4");
+			Assert.AreEqual ("nyc", rd.Values["baz"], "#1-5");
+			Assert.AreEqual (1, rd.Values["dancefloor"], "#1-6");
+			Assert.IsTrue (typeof (int) == rd.Values["dancefloor"].GetType (), "#1-7");
+			
+			hc = new HttpContextStub ("~/foo/blueoyster/bigapple", String.Empty);
+			rd = r.GetRouteData (hc);
+			Assert.IsNotNull (rd, "#2");
+			Assert.AreEqual (r, rd.Route, "#2-1");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#2-2");
+			Assert.AreEqual (3, rd.Values.Count, "#2-3");
+			Assert.AreEqual ("blueoyster", rd.Values["bar"], "#2-4");
+			Assert.AreEqual ("bigapple", rd.Values["baz"], "#2-5");
+			Assert.AreEqual (1, rd.Values["dancefloor"], "#2-6");
+			Assert.IsTrue (typeof (int) == rd.Values["dancefloor"].GetType (), "#2-7");
+			
+			hc = new HttpContextStub ("~/foo/blueoyster/bigapple/3", String.Empty);
+			rd = r.GetRouteData (hc);
+			
+			Assert.IsNotNull (rd, "#3");
+			Assert.AreEqual (r, rd.Route, "#3-1");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3-2");
+			Assert.AreEqual (3, rd.Values.Count, "#3-3");
+			Assert.AreEqual ("blueoyster", rd.Values["bar"], "#3-4");
+			Assert.AreEqual ("bigapple", rd.Values["baz"], "#3-5");
+			Assert.AreEqual ("3", rd.Values["dancefloor"], "#3-6");
+			Assert.IsTrue (typeof (string) == rd.Values["dancefloor"].GetType (), "#3-7");
+		}
+
+		[Test]
+		public void GetRouteData26 ()
+		{
+			var r = new Route ("foo/{bar}/{baz}-{dancefloor}", null) {
+					Defaults = new RouteValueDictionary (new { baz = "nyc", dancefloor = 1 })
+			};
+				
+			var hc = new HttpContextStub ("~/foo/BlueOyster", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#1");
+			
+			hc = new HttpContextStub ("~/foo/blueoyster/bigapple", String.Empty);
+			rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#2");
+			
+			hc = new HttpContextStub ("~/foo/blueoyster/bigapple-3", String.Empty);
+			rd = r.GetRouteData (hc);
+			
+			Assert.IsNotNull (rd, "#3");
+			Assert.AreEqual (r, rd.Route, "#3-1");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3-2");
+			Assert.AreEqual (3, rd.Values.Count, "#3-3");
+			Assert.AreEqual ("blueoyster", rd.Values["bar"], "#3-4");
+			Assert.AreEqual ("bigapple", rd.Values["baz"], "#3-5");
+			Assert.AreEqual ("3", rd.Values["dancefloor"], "#3-6");
+			Assert.IsTrue (typeof (string) == rd.Values["dancefloor"].GetType (), "#3-7");
+
+			hc = new HttpContextStub ("~/foo/blueoyster/-", String.Empty);
+			rd = r.GetRouteData (hc);
+			
+			Assert.IsNull (rd, "#4");
+		}
+
+		[Test]
+		public void GetRouteData27 ()
+		{
+			var r = new Route ("foo/{bar}/{baz}/{dancefloor}", null) {
+					Defaults = new RouteValueDictionary (new { bar = "BlueOyster", dancefloor = 1 })
+			};
+				
+			var hc = new HttpContextStub ("~/foo/nyc", String.Empty);
+			var rd = r.GetRouteData (hc);
+			Assert.IsNull (rd, "#1");
+		}
+
+		[Test]
+		public void GetRouteData28 ()
+		{
+			var r = new Route ("{foo}xyz{bar}xyz{baz}", null);
+			var hc = new HttpContextStub ("~/xyzxyzxyzxyzblah", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1");
+		}
+
+		[Test]
+		public void GetRouteData29 ()
+		{
+			var r = new Route ("{foo}xyz{bar}", null);
+			var hc = new HttpContextStub ("~/xyzxyzxyzxyzblah", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			Assert.AreEqual (r, rd.Route, "#2");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#3");
+			Assert.AreEqual (2, rd.Values.Count, "#4");
+			Assert.AreEqual ("xyzxyzxyz", rd.Values["foo"], "#4-1");
+			Assert.AreEqual ("blah", rd.Values["bar"], "#4-2");
+		}
+
+		[Test]
+		public void GetRouteData30 ()
+		{
+			var r = new Route ("{foo}/bar/{baz}/boo/{blah}", null) {
+					Defaults = new RouteValueDictionary (new { baz = "meep", blah = "blurb" })
+			};
+				
+			var hc = new HttpContextStub ("~/foo/bar", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#1");
+
+			hc = new HttpContextStub ("~/foo/bar/baz/boo", String.Empty);
+			rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#2");
+			Assert.AreEqual (r, rd.Route, "#3");
+			Assert.AreEqual (0, rd.DataTokens.Count, "#4");
+			Assert.AreEqual (3, rd.Values.Count, "#4");
+			Assert.AreEqual ("foo", rd.Values["foo"], "#4-1");
+			Assert.AreEqual ("baz", rd.Values["baz"], "#4-2");
+			Assert.AreEqual ("blurb", rd.Values["blah"], "#4-3");
+		}
+		
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetVirtualPathNullContext ()
@@ -366,6 +768,173 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual (0, vp.DataTokens.Count, "#4");
 		}
 
+		[Test]
+		public void GetVirtualPath6 ()
+		{
+			var r = new MyRoute ("summary/{action}-{type}/{page}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new { action = "Index", page = 1 })
+						};
+			var hc = new HttpContextStub2 ("~/summary/Index-test/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+			var values = new RouteValueDictionary (new { page = 2 });
+
+			Assert.IsNotNull (rd, "#1");
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+
+			Assert.IsNotNull (vp, "#2");
+			Assert.AreEqual ("summary/Index-test/2", vp.VirtualPath, "#2-1");
+			Assert.AreEqual (r, vp.Route, "#2-2");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#2-3");
+
+			values = new RouteValueDictionary (new { page = 2, extra = "stuff" });
+			vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+
+			Assert.IsNotNull (vp, "#3");
+			Assert.AreEqual ("summary/Index-test/2?extra=stuff", vp.VirtualPath, "#3-2");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#3-3");
+		}
+
+		[Test]
+		public void GetVirtualPath7 ()
+		{
+			var r = new MyRoute ("summary/{action}-{type}/{page}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new { action = "Index", page = 1 })
+			};
+			var hc = new HttpContextStub2 ("~/summary/Index-test/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+			var values = new RouteValueDictionary (new { page = 2 });
+
+			Assert.IsNotNull (rd, "#1");
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+
+			Assert.IsNotNull (vp, "#2");
+			Assert.AreEqual ("summary/Index-test/2", vp.VirtualPath, "#2-1");
+			Assert.AreEqual (r, vp.Route, "#2-2");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#2-3");
+		}
+
+		[Test]
+		public void GetVirtualPath8 ()
+		{
+			var r = new MyRoute ("todo/{action}/{page}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new { controller="todo", action="list", page=0 })
+			};
+			var hc = new HttpContextStub2 ("~/todo/list/2", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary (new { page = 3 }));
+			Assert.IsNotNull (vp, "#2");
+			Assert.AreEqual ("todo/list/3", vp.VirtualPath, "#2-1");
+		}
+
+		[Test]
+		public void GetVirtualPath9 ()
+		{
+			var r = new MyRoute ("todo/{action}/{page}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary {
+							{"controller", "todo"},
+							{"action", null},
+							{"page", null}
+						}
+				};
+			
+			var hc = new HttpContextStub2 ("~/todo/list/2", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+			
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary (new { page = 3 }));
+			Assert.IsNotNull (vp, "#2");
+			Assert.AreEqual ("todo/list/3", vp.VirtualPath, "#2-1");
+		}
+
+		[Test]
+		public void GetVirtualPath10 ()
+		{
+			var r = new MyRoute ("{foo}/{bar}", new MyRouteHandler ());
+			var hc = new HttpContextStub ("~/foo/bar", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#1");
+
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary (new { page = 3 }));
+			Assert.IsNotNull (vp, "#2");
+			Assert.AreEqual ("foo/bar?page=3", vp.VirtualPath, "#2-1");
+
+			vp = r.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary (new { page = 3, another = "stuff" }));
+			Assert.IsNotNull (vp, "#3");
+			Assert.AreEqual ("foo/bar?page=3&another=stuff", vp.VirtualPath, "#3-1");
+
+			vp = r.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary (new { page = 3, another = "stuff", value = "with ; spaces & other chars" }));
+			Assert.IsNotNull (vp, "#4");
+			Assert.AreEqual ("foo/bar?page=3&another=stuff&value=with%20%3B%20spaces%20%26%20other%20chars", vp.VirtualPath, "#4-1");
+		}
+
+		[Test]
+		public void GetVirtualPath11 ()
+		{
+			var r = new MyRoute ("summary/{action}/{page}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new { action = "Index", page = 1 })
+						};
+			var hc = new HttpContextStub2 ("~/summary/test/1", String.Empty);
+			var rd = r.GetRouteData (hc);
+			var values = new RouteValueDictionary (new { page = 2 });
+
+			Assert.IsNotNull (rd, "#1");
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+
+			Assert.IsNotNull (vp, "#2");
+			Assert.AreEqual ("summary/test/2", vp.VirtualPath, "#2-1");
+			Assert.AreEqual (r, vp.Route, "#2-2");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#2-3");
+
+			values = new RouteValueDictionary (new { page = 2, extra = "stuff" });
+			vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+
+			Assert.IsNotNull (vp, "#3");
+			Assert.AreEqual ("summary/test/2?extra=stuff", vp.VirtualPath, "#3-2");
+			Assert.AreEqual (0, vp.DataTokens.Count, "#3-3");
+		}
+
+		[Test]
+		public void GetVirtualPath12 ()
+		{
+			var r = new MyRoute ("{foo}/{bar}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new { bar = "baz" })
+						};
+						
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty);
+			var rd = r.GetRouteData (hc);
+			var values = new RouteValueDictionary ();
+
+			// Partial override is possible if defaults are specified
+			values ["foo"] = "A";
+			values ["baz"] = "B";
+			
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+			Assert.IsNotNull (vp, "#1");
+			Assert.AreEqual ("A?baz=B", vp.VirtualPath, "#1-1");
+		}
+
+		[Test]
+		public void GetVirtualPath13 ()
+		{
+			var r = new MyRoute ("{foo}/{bar}", new MyRouteHandler ()) {
+					Defaults = new RouteValueDictionary (new { baz = "baz" })
+						};
+			var hc = new HttpContextStub2 ("~/x/y", String.Empty);
+			var rd = r.GetRouteData (hc);
+
+			// override a value incompletely
+			var values = new RouteValueDictionary ();
+			values ["foo"] = "A";
+
+			var vp = r.GetVirtualPath (new RequestContext (hc, rd), values);
+			Assert.IsNull (vp);
+		}
+		
 		// Bug #500739
 		[Test]
 		public void RouteGetRequiredStringWithDefaults ()
@@ -373,7 +942,8 @@ namespace MonoTests.System.Web.Routing
 			var routes = new RouteValueDictionary ();
 			var route = new Route ("Hello/{name}", new MyRouteHandler ()) {
 					Defaults = new RouteValueDictionary (new {controller = "Home", action = "Hello"})
-				};
+			};
+			
 			routes.Add ("Name", route);
 
 			var hc = new HttpContextStub2 ("~/Hello/World", String.Empty);
@@ -383,6 +953,39 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("Home", rd.GetRequiredString ("controller"), "#A2");
 			Assert.AreEqual ("Hello", rd.GetRequiredString ("action"), "#A3");
 			Assert.AreEqual ("World", rd.Values ["name"], "#A4");
+		}
+
+		[Test]
+		public void ProcessConstraint ()
+		{
+			var route = new MyRoute ("hello/{name}", new MyRouteHandler ());
+
+			Assert.IsFalse (route.DoProcessConstraint (null, "regex", "parameter", new RouteValueDictionary (), RouteDirection.IncomingRequest), "#1");
+
+			// constraint is null
+			AssertExtensions.Throws <InvalidOperationException> (
+				() => route.DoProcessConstraint (null, null, "parameter", new RouteValueDictionary (), RouteDirection.IncomingRequest),
+				"#2"
+			);
+
+			// constraint is neither a string or an IRouteConstraint instance
+			AssertExtensions.Throws <InvalidOperationException> (
+				() => route.DoProcessConstraint (null, 1, "parameter", new RouteValueDictionary (), RouteDirection.IncomingRequest),
+				"#3"
+			);
+
+			AssertExtensions.Throws <ArgumentNullException> (
+				() => route.DoProcessConstraint (null, "regex", null, new RouteValueDictionary (), RouteDirection.IncomingRequest),
+				"#4"
+			);
+
+			Assert.IsFalse (route.DoProcessConstraint (null, "regex", String.Empty, new RouteValueDictionary (), RouteDirection.IncomingRequest), "#5");
+			
+			// This is a .NET programming error, so not sure if we should test for this...
+			AssertExtensions.Throws <NullReferenceException> (
+				() => route.DoProcessConstraint (null, "regex", "parameter", null, RouteDirection.IncomingRequest),
+				"#6"
+			);
 		}
 	}
 }

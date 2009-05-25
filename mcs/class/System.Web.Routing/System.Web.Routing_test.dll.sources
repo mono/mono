@@ -1,3 +1,4 @@
+System.Web.Routing/AssertExtensions.cs
 System.Web.Routing/HttpMethodConstraintTest.cs
 System.Web.Routing/RouteCollectionTest.cs
 System.Web.Routing/RouteDataTest.cs

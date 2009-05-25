@@ -1,3 +1,13 @@
+2009-05-25  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteTest.cs: added several tests for GetVirtualPath,
+	GetRouteData, ProcessConstraint and refactored some tests.
+
+	* RouteCollectionTest.cs: added several tests for GetVirtualPath
+
+	* AssertExtensions.cs: added some methods to make code testing for
+	exception throws look nicer.
+
 2009-05-11  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteCollectionTest.cs: added test for bug #502555
