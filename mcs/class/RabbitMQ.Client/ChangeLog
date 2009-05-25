@@ -1,3 +1,12 @@
+2009-05-25  Michael Barker  <mike@middlesoft.co.uk>
+
+    * Removed amqp spec files and modified generated code to fix licensing 
+    issues.
+
+2009-05-21  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Updated to version 1.5.3 of the RabbitMQ libraries.
+
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: those paths are all wrong!
@@ -38,7 +47,3 @@
 	Patch by Michael Barker (patches are on bug #432471). Imported
 	RabbitMQ.Client assembly from RabbitMQ project.
 	http://www.rabbitmq.com/
-
-2009-05-21  Michael Barker  <mike@middlesoft.co.uk>
-
-	Updated to version 1.5.3 of the RabbitMQ libraries.
