@@ -1,3 +1,23 @@
+2009-05-25  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlPattern.cs: removed - replaced by PatternParser below.
+	
+	* RouteValueDictionaryExtensions.cs: added - some shortcuts for
+	using RouteValueDictionary in PatternParser
+
+	* Route.cs: use the new PatternParser.
+	Factored out ProcessConstraint into ProcessConstraintInternal so
+	that the latter can be used by the PatternParser class.
+	Added parameter checks in ProcessConstraint.
+
+	* PatternTokenType.cs: added
+
+	* PatternToken.cs: added a helper class for the pattern parser.
+
+	* PatternParser.cs: added. New implementation of url
+	parser/matcher/generator which fixes all URL isues known so
+	far. Fixes bug #504378
+
 2009-05-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* UrlPattern.cs: if the pattern is line {a}/{b} and {b} is substituted

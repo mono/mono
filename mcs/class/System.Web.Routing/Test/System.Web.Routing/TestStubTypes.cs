@@ -76,7 +76,7 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		string req_path, path_info;
-
+		
 		public override string AppRelativeCurrentExecutionFilePath {
 			get { return req_path ?? base.AppRelativeCurrentExecutionFilePath; }
 		}
@@ -326,6 +326,11 @@ namespace MonoTests.System.Web.Routing
 			if (ex != null)
 				throw ex;
 			return base.GetVirtualPath (requestContext, values);
+		}
+
+		public bool DoProcessConstraint (HttpContextBase httpContext, object constraint, string parameterName, RouteValueDictionary values, RouteDirection routeDirection)
+		{
+			return ProcessConstraint (httpContext, constraint, parameterName, values, routeDirection);
 		}
 	}
 }
