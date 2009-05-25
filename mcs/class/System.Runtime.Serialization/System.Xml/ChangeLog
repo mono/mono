@@ -1,3 +1,8 @@
+2009-05-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReader.cs : fix regression on stream consumption
+	  excess.
+
 2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryReader.cs : ReadContentString() returned

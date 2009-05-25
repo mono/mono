@@ -72,6 +72,8 @@ namespace System.Xml
 
 			public int ReadByte ()
 			{
+				if (reader.PeekChar () < 0)
+					return -1;
 				return reader.ReadByte ();
 			}
 
