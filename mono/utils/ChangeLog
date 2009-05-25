@@ -1,3 +1,7 @@
+2009-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* CMakeLists.txt: New file.
+
 2009-05-09  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-value-hash.c (mono_value_hash_table_insert_replace):
