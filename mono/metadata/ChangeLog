@@ -1,3 +1,7 @@
+2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (safe_read): Use endian safe read macros.
+
 2009-05-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_create_ftnptr): Don't allocate from the code mempool since
