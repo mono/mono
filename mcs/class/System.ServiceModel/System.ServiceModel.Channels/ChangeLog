@@ -1,5 +1,10 @@
 2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : reader does not always return full
+	  buffer (depending on the stream).
+
+2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerDuplexChannel.cs, PeerOutputChannel.cs : use new PeerNode.ctor.
 
 2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>

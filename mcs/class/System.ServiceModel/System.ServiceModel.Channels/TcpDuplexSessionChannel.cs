@@ -340,8 +340,8 @@ namespace System.ServiceModel.Channels
 				throw new InvalidOperationException ("The message is too large.");
 
 			byte [] buffer = new byte [length];
-			reader.Read (buffer, 0, length);
-			
+			for (int readSize = 0; readSize < length; )
+				readSize += reader.Read (buffer, readSize, length - readSize);
 			return buffer;
 		}
 
