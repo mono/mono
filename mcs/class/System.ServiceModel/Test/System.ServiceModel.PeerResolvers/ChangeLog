@@ -1,3 +1,8 @@
+2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerResolverSerializationTest.cs : new test for general
+	  serialization tests.
+
 2009-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	(bah, bad manner; no ChangeLog previously.)
