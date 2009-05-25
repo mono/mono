@@ -1,3 +1,8 @@
+2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerCustomResolverBindingElement.cs : (Resolve) returned addresses
+	  could be null.
+
 2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelManagerBase.cs : there was annoying non-2.1 stuff.

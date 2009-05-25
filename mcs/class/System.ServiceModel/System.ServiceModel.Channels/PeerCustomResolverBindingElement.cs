@@ -142,7 +142,7 @@ namespace System.ServiceModel.Channels
 			string meshId, int maxAddresses, TimeSpan timeout)
 		{
 			client.OperationTimeout = timeout;
-			return new ReadOnlyCollection<PeerNodeAddress> (client.Resolve (new ResolveInfo (client_id, meshId, maxAddresses)).Addresses);
+			return new ReadOnlyCollection<PeerNodeAddress> (client.Resolve (new ResolveInfo (client_id, meshId, maxAddresses)).Addresses ?? new PeerNodeAddress [0]);
 		}
 
 		public override void Unregister (object registrationId,
