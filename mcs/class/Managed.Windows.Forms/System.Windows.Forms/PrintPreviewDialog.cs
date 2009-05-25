@@ -64,7 +64,8 @@ namespace System.Windows.Forms {
 
 			print_preview = new PrintPreviewControl();
 			print_preview.Location = new Point (0, toolbar.Location.Y + toolbar.Size.Height);
-			print_preview.Dock = DockStyle.Fill;
+			print_preview.Size = new Size (ClientSize.Width, ClientSize.Height - toolbar.Bottom);
+			print_preview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			Controls.Add (print_preview);
 			print_preview.Show ();
 		}
