@@ -1300,8 +1300,8 @@ namespace System.Windows.Forms
 		
 		private void WriteConfigValues ()
 		{
-			MWFConfig.SetValue (filedialog_string, width_string, form.Width);
-			MWFConfig.SetValue (filedialog_string, height_string, form.Height);
+			MWFConfig.SetValue (filedialog_string, width_string, form.ClientSize.Width);
+			MWFConfig.SetValue (filedialog_string, height_string, form.ClientSize.Height);
 			MWFConfig.SetValue (filedialog_string, x_string, form.Location.X);
 			MWFConfig.SetValue (filedialog_string, y_string, form.Location.Y);
 			

@@ -1,3 +1,10 @@
+2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* FileDialog.cs: When saving the size of the dialog, use the
+	ClientSize instead of Size, so we have always the same size for the
+	form. Patch by Alex Shulgin.
+	Fixes #503064.
+
 2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MessageBox.cs: When showing the dialog call XplatUI.AudibleAlert to
