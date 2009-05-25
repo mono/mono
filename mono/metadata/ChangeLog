@@ -1,3 +1,10 @@
+2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r134723.
+
+	* class.c (mono_class_setup_fields): Don't mark simd types as having
+	16 bytes alignment as the whole runtime doesn't support.
+
 2009-05-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* icall-def.h:

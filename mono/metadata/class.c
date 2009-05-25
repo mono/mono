@@ -1044,8 +1044,14 @@ mono_class_setup_fields (MonoClass *class)
 		class->min_align = 1;
 	}
 
-	if (class->simd_type)
+	/* We can't really enable 16 bytes alignment until the GC supports it.
+	The whole layout/instance size code must be reviewed because we do alignment calculation in terms of the
+	boxed instance, which leads to unexplainable holes at the beginning of an object embedding a simd type.
+	Bug #506144 is an example of this issue.
+
+	 if (class->simd_type)
 		class->min_align = 16;
+	 */
 
 	/* Get the real size */
 	explicit_size = mono_metadata_packing_from_typedef (class->image, class->type_token, &packing_size, &real_size);
