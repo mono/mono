@@ -1,3 +1,9 @@
+2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs, XmlFormatterSerializer.cs :
+	  collection types should not output xsi:type e.g. IList<T> should
+	  not exposed xsi:type as xsi:type=List`1.
+
 2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs, XmlFormatterDeserializer.cs,

@@ -108,6 +108,10 @@ namespace System.Runtime.Serialization
 			Members = new List<DataMemberInfo> ();
 		}
 
+		public virtual bool OutputXsiType {
+			get { return true; }
+		}
+
 		public QName XmlName { get; set; }
 
 		public CollectionDataContractAttribute GetCollectionDataContractAttribute (Type type)
@@ -587,6 +591,10 @@ namespace System.Runtime.Serialization
 						add_method = type.GetMethod ("Add", icoll.GetGenericArguments ());
 				}
 			}
+		}
+
+		public override bool OutputXsiType {
+			get { return false; }
 		}
 
 		internal virtual string CurrentNamespace {
