@@ -1,3 +1,9 @@
+2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MessageBox.cs: When showing the dialog call XplatUI.AudibleAlert to
+	show a beep, similar to what .net does. 
+	Fixes #473725.
+
 2009-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ContainerControl.cs:

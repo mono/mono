@@ -190,6 +190,7 @@ namespace System.Windows.Forms
 				if (Owner != null)
 					TopMost = Owner.TopMost;
 					
+				XplatUI.AudibleAlert ();
 				this.ShowDialog ();
 
 				return this.DialogResult;
