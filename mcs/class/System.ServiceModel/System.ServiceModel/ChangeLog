@@ -1,3 +1,8 @@
+2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerNode.cs : if Resolve() returns no address, create a new peer
+	  address here, and shut it down when it is closed.
+
 2009-05-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs, ServiceRuntimeChannel.cs :

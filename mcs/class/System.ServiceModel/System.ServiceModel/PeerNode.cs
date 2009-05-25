@@ -28,6 +28,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net;
+using System.Net.Sockets;
 using System.ServiceModel.Channels;
 
 namespace System.ServiceModel
@@ -56,6 +58,7 @@ namespace System.ServiceModel
 		public abstract PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
 
 		internal abstract void Open (TimeSpan timeout);
+		internal abstract void Close (TimeSpan timeout);
 
 		public void RefreshConnection ()
 		{
@@ -83,14 +86,25 @@ namespace System.ServiceModel
 
 	internal class PeerNodeImpl : PeerNode
 	{
-		internal PeerNodeImpl (PeerResolver resolver, string meshId, int port)
-			: base (meshId, port)
+		class NodeInfo
+		{
+			public int Id { get; set; }
+			public PeerNodeAddress Address { get; set; }
+		}
+
+		Dictionary<string,NodeInfo> mesh_map = new Dictionary<string,NodeInfo> ();
+
+		internal PeerNodeImpl (PeerResolver resolver, EndpointAddress remoteAddress, int port)
+			: base (remoteAddress.Uri.Host, port)
 		{
 			this.resolver = resolver;
+			this.remote_address = remoteAddress;
 		}
 
 		PeerResolver resolver;
+		EndpointAddress remote_address;
 		object registered_id;
+		TcpListener listener; // FIXME: not sure if it is actually used ...
 
 		// FIXME: implement
 		public override PeerMessagePropagationFilter MessagePropagationFilter { get; set; }
@@ -105,15 +119,43 @@ namespace System.ServiceModel
 
 			int maxAddresses = 3; // FIXME: get it from somewhere
 
-			// FIXME: not sure how I should handle addresses
-			int idx = 0;
-			foreach (var addr in resolver.Resolve (MeshId, maxAddresses, timeout)) {
-				idx++;
-				registered_id = resolver.Register (MeshId, addr, timeout - (DateTime.Now - startTime));
-				NodeId = idx;
-				SetOnline ();
-				break;
+			NodeInfo info;
+			if (!mesh_map.TryGetValue (MeshId, out info)) {
+				var rnd = new Random ();
+				// FIXME: not sure how I should handle addresses
+				foreach (var address in resolver.Resolve (MeshId, maxAddresses, timeout)) {
+					info = new NodeInfo () { Id = rnd.Next (), Address = address };
+					break;
+				}
+				if (info == null) { // there was no resolved IP for the MeshId, so create a new peer ...
+					int p = rnd.Next (50000, 60000);
+					while (p < 60000) {
+						try {
+							listener = new TcpListener (p);
+							break;
+						} catch {
+						}
+					}
+					if (listener == null)
+						throw new Exception ("No port is available for a peer node to listen");
+					listener.Start ();
+					var ep = (IPEndPoint) listener.LocalEndpoint;
+					string name = Dns.GetHostName ();
+					info = new NodeInfo () { Id = new Random ().Next (0, int.MaxValue), Address = new PeerNodeAddress (new EndpointAddress ("net.tcp://" + name + ":" + ep.Port + "/PeerChannelEndpoints/" + Guid.NewGuid ()), new ReadOnlyCollection<IPAddress> (Dns.GetHostEntry (name).AddressList)) };
+				}
 			}
+			registered_id = resolver.Register (MeshId, info.Address, timeout - (DateTime.Now - startTime));
+			mesh_map [MeshId] = info;
+			NodeId = info.Id;
+			SetOnline ();
+		}
+
+		internal override void Close (TimeSpan timeout)
+		{
+			resolver.Unregister (registered_id, timeout);
+			if (listener != null)
+				listener.Stop ();
+			registered_id = null;
 		}
 	}
 }

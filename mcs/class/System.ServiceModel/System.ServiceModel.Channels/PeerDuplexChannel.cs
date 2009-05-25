@@ -51,10 +51,9 @@ namespace System.ServiceModel.Channels
 			this.factory = factory;
 			this.resolver = resolver;
 
-			string mesh = RemoteAddress.Uri.Host;
 			// It could be opened even with empty list of PeerNodeAddresses.
 			// So, do not create PeerNode per PeerNodeAddress, but do it with PeerNodeAddress[].
-			node = new PeerNodeImpl (resolver, mesh, factory.Source.Port);
+			node = new PeerNodeImpl (resolver, RemoteAddress, factory.Source.Port);
 		}
 
 		// FIXME: receive local_address too
@@ -126,10 +125,9 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			node.Close (timeout);
 		}
 		
 		[MonoTODO]

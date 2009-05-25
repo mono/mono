@@ -1,5 +1,9 @@
 2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerDuplexChannel.cs, PeerOutputChannel.cs : use new PeerNode.ctor.
+
+2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* PeerCustomResolverBindingElement.cs : (Resolve) returned addresses
 	  could be null.
 
