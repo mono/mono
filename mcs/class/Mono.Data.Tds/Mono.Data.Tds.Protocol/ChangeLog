@@ -1,3 +1,12 @@
+2009-05-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #382734
+	* Tds80.cs: Consider queries with Parameters as RPCs and avoid formatting 
+	param values as strings.  Fixes issues with locale specific string 
+	formatting/conversions.
+	
+	* TdsRpcProcId.cs: New - enum of rpc Ids to use with RPC packet type.
+	
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* Tds70.cs (WriteParameterInfo): Default precision is 29 and not 28.

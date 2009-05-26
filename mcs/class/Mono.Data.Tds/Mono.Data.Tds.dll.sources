@@ -2,6 +2,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 Mono.Data.Tds.Protocol/TdsCollation.cs
+Mono.Data.Tds.Protocol/TdsRpcProcId.cs
 Mono.Data.Tds/TdsMetaParameter.cs
 Mono.Data.Tds/TdsMetaParameterCollection.cs
 Mono.Data.Tds/TdsParameterDirection.cs
