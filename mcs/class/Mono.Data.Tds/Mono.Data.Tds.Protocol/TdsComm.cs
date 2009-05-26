@@ -278,7 +278,7 @@ namespace Mono.Data.Tds.Protocol {
 				AppendInternal ((int) val);
 			} else if (bytes ==4) {
 				val = span.Hours * 60 + span.Minutes;
-				AppendInternal ((ushort) days);
+				AppendInternal ((short) days);
 				AppendInternal ((short) val);
 			} else {
 				throw new Exception ("Invalid No of bytes");

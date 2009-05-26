@@ -584,7 +584,9 @@ namespace Mono.Data.Tds.Protocol
 
 		 	// LAMESPEC: size should be 0xFFFF for any bigvarchar, bignvarchar and bigvarbinary 
 			// types if param value is NULL
-			if (IsLargeType (colType) && 
+			if ((colType == TdsColumnType.BigVarChar || 
+			     colType == TdsColumnType.BigNVarChar ||
+			     colType == TdsColumnType.BigVarBinary) && 
 			    (param.Value == null || param.Value == DBNull.Value))
 				size = -1;
 			else
