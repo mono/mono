@@ -16565,6 +16565,34 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-28.cs">
+    <type name="Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Extensions">
+      <method name="Boolean IsFoo(Foo)">
+        <size>2</size>
+      </method>
+      <method name="Boolean IsBar(Bar)">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="Bar">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -35266,6 +35294,73 @@
       </method>
       <method name="Void meth(System.Object)">
         <size>8</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-720.cs">
+    <type name="N.Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>18</size>
+      </method>
+    </type>
+    <type name="N.Parent">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_Example(N.Parent+ExampleHandler)">
+        <size>0</size>
+      </method>
+      <method name="Void remove_Example(N.Parent+ExampleHandler)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="N.Child">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void add_Example(N.Parent+ExampleHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_Example(N.Parent+ExampleHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void OnExample()">
+        <size>23</size>
+      </method>
+    </type>
+    <type name="N.Parent+ExampleHandler">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-721.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>55</size>
+      </method>
+    </type>
+    <type name="Control">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Foo(Int32)">
+        <size>1</size>
       </method>
     </type>
   </test>
