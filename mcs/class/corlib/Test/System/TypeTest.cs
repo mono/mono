@@ -9,6 +9,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
 using System.Collections;
 #if NET_2_0
 using System.Collections.Generic;
@@ -3158,6 +3159,51 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (t1, t2);
 		}
 
+
+		[Test]
+		public void Bug506757 ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "customMod";
+			assemblyName.Version = new Version (1, 2, 3, 4);
+	
+			AssemblyBuilder assembly 
+				= Thread.GetDomain().DefineDynamicAssembly(
+					  assemblyName, AssemblyBuilderAccess.RunAndSave);
+	
+			ModuleBuilder module = assembly.DefineDynamicModule("res.exe", "res.exe");
+	
+			TypeBuilder type0 = module.DefineType ("Base", TypeAttributes.Public, typeof (object));
+			TypeBuilder type1 = module.DefineType ("Middle", TypeAttributes.Public, type0);
+			TypeBuilder type2 = module.DefineType ("End", TypeAttributes.Public, type1);
+	
+			MethodAttributes attrs0 = MethodAttributes.Virtual | MethodAttributes.HideBySig |
+						  MethodAttributes.NewSlot | MethodAttributes.FamORAssem;
+	
+			MethodAttributes attrs1 = MethodAttributes.Virtual | MethodAttributes.HideBySig |
+						  MethodAttributes.FamORAssem;
+	
+			MethodAttributes attrs2 = MethodAttributes.Virtual | MethodAttributes.HideBySig |
+						  MethodAttributes.Public;
+	
+	
+			MethodBuilder m0 = type0.DefineMethod ("Tst", attrs0, typeof (void), null);
+			m0.GetILGenerator ().Emit (OpCodes.Ret);
+	
+			MethodBuilder m1 = type1.DefineMethod ("Tst", attrs1, typeof (void), null);
+			m1.GetILGenerator ().Emit (OpCodes.Ret);
+	
+			MethodBuilder m2 = type2.DefineMethod ("Tst", attrs2, typeof (void), null);
+			m2.GetILGenerator ().Emit (OpCodes.Ret);
+	
+	
+			type0.CreateType ();
+			type1.CreateType ();
+			Type t2 = type2.CreateType ();
+	
+			foreach (var m in t2.GetMethods (BindingFlags.Instance | BindingFlags.NonPublic))
+				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
+		}
 		static bool ContainsProperty (PropertyInfo [] props, string name)
 		{
 			foreach (PropertyInfo p in props)

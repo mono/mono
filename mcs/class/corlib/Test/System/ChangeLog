@@ -1,3 +1,7 @@
+2009-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: test for bug #506757.
+
 2009-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* LazyTest.cs: New file.
