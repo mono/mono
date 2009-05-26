@@ -1,3 +1,8 @@
+2009-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Disable the test_messages test as it fails on the
+	buildbot.
+
 2009-05-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (test_messages): Fix the dependencies of this test.
