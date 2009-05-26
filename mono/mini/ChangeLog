@@ -1,3 +1,7 @@
+2009-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-sparc.c (add_outarg_load): Fix the sparc build.
+
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r134713/134715.
