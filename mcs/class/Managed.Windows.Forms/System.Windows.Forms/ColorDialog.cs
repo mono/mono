@@ -263,6 +263,7 @@ namespace System.Windows.Forms {
 			form.Controls.Add (okButton);
 			form.Controls.Add (cancelButton);
 			form.Controls.Add (addColoursButton);
+			form.Controls.Add (helpButton);
 			
 			form.Controls.Add (baseColorControl);
 			form.Controls.Add (colorMatrixControl);
