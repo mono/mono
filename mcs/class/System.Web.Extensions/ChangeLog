@@ -1,5 +1,11 @@
 2009-05-26  Marek Habersack  <mhabersack@novell.com>
 
+	* Test/System.Web.UI/ScriptReferenceBaseTest.cs: added tests for
+	ReplaceExtension
+
+	* System.Web.Extensions_test.dll.sources: added
+	System.Web.UI/ScriptReferenceBaseTest.cs
+
 	* System.Web.Extensions.dll.sources: added
 	System.Web.UI/ScriptReferenceBase.cs
 

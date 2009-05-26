@@ -38,6 +38,7 @@ System.Web.Script.Serialization/JavaScriptSerializerTest.cs
 System.Web.UI/ScriptBehaviorDescriptorTest.cs
 System.Web.UI/ScriptComponentDescriptorTest.cs
 System.Web.UI/ScriptControlDescriptorTest.cs
+System.Web.UI/ScriptReferenceBaseTest.cs
 System.Web.UI/UpdateProgressTest.cs
 System.Web.UI.WebControls/EventRecorder.cs
 System.Web.UI.WebControls/ListViewTest.cs

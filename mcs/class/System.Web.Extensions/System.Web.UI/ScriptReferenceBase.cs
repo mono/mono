@@ -67,10 +67,17 @@ namespace System.Web.UI
 		protected internal abstract string GetUrl (ScriptManager scriptManager, bool zip);
 		protected internal abstract bool IsFromSystemWebExtensions ();
 
+		// This method is an example of particularily bad coding - .NET performs NO checks
+		// on pathOrName!
 		protected static string ReplaceExtension (string pathOrName)
 		{
-			return null;
+			// emulate .NET behavior
+			if (pathOrName == null)
+				throw new NullReferenceException ();
+			
+			// We should check the length, but since .NET doesn't do that, we won't
+			// either. Ugh.
+			return pathOrName.Substring (0, pathOrName.Length - 2) + "debug.js";
 		}
-		
 	}
 }
