@@ -284,6 +284,16 @@ namespace System.ServiceModel.Channels
 			{
 				Write7BitEncodedInt (value);
 			}
+
+			public int GetSizeOfLength (int value)
+			{
+				int x = 0;
+				do {
+					value /= 0x100;
+					x++;
+				} while (value != 0);
+				return x;
+			}
 		}
 
 		class MyXmlBinaryWriterSession : XmlBinaryWriterSession
@@ -494,8 +504,13 @@ namespace System.ServiceModel.Channels
 			foreach (var ds in session.List)
 				dw.Write (ds.Value);
 			dw.Flush ();
-			writer.WriteVariableInt ((int) (msd.Position + ms.Position));
-			WriteSizedChunk (msd.ToArray ());
+
+			int length = (int) (msd.Position + ms.Position);
+			var msda = msd.ToArray ();
+			int sizeOfLength = writer.GetSizeOfLength (msda.Length);
+
+			writer.WriteVariableInt (length + sizeOfLength); // dictionary array also involves the size of itself.
+			WriteSizedChunk (msda);
 			// message body
 			var arr = ms.GetBuffer ();
 			writer.Write (arr, 0, (int) ms.Position);

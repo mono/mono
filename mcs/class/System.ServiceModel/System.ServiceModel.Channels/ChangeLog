@@ -1,5 +1,10 @@
 2009-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : there was a miscalculation on the
+	  length of the SizedMessage in the output.
+
+2009-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CommunicationObject.cs : use sane default timeout.
 	* PeerCustomResolverBindingElement.cs : check timeout arg sanity.
 	* TcpDuplexSessionChannel.cs : ditto.
