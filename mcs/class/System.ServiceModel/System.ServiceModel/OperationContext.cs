@@ -92,15 +92,15 @@ namespace System.ServiceModel
 #endif
 
 		public MessageHeaders IncomingMessageHeaders {
-			get { return request_ctx != null ? request_ctx.RequestMessage.Headers : null; }
+			get { return incoming_message != null ? incoming_message.Headers : null; }
 		}
 
 		public MessageProperties IncomingMessageProperties {
-			get { return request_ctx != null ? request_ctx.RequestMessage.Properties : null; }
+			get { return incoming_message != null ? incoming_message.Properties : null; }
 		}
 
 		public MessageVersion IncomingMessageVersion {
-			get { return request_ctx != null ? request_ctx.RequestMessage.Version : null; }
+			get { return incoming_message != null ? incoming_message.Version : null; }
 		}
 
 		[MonoTODO]

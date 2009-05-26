@@ -1,3 +1,8 @@
+2009-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationContext.cs : IncomingMessage* properties should work
+	  for non-reply channels as well.
+
 2009-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerNode.cs : if Resolve() returns no address, create a new peer
