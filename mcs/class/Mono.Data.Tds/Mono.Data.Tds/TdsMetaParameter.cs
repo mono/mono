@@ -341,6 +341,8 @@ namespace Mono.Data.Tds {
 					return TdsColumnType.BitN;
 				return TdsColumnType.Bit;
 			case "bigint":
+				if (IsNullable)
+					return TdsColumnType.IntN ;
 				return TdsColumnType.BigInt;
 			case "char":
 				return TdsColumnType.Char;

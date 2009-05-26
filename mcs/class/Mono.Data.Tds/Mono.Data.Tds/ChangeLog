@@ -1,3 +1,8 @@
+2009-05-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* TdsMetaParameter.cs (GetMetaType): If param is Nullable, use IntN instead 
+	of BigInt for column type.
+	
 2009-05-16  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* TdsMetaParameter.cs (Prepare): Default precision is 29 and not 28.
