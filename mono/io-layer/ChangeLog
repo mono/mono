@@ -1,3 +1,8 @@
+2009-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* shared.c (_wapi_shm_file): Avoid creating a .wapi directory here, create
+	it in _wapi_shm_file_open (), since platforms using posix shm don't need it.
+
 2009-05-22  Miguel de Icaza  <miguel@novell.com>
 
 	* wapi_glob.c: Do not need sys/param.h anymore, we now use the
