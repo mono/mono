@@ -1,3 +1,7 @@
+2009-05-26  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources: cosmetic file renaming.
+
 2009-05-25  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll_test.sources:
