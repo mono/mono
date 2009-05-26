@@ -1,5 +1,9 @@
 2009-05-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* TdsBulkCopy.cs (WriteParameterInfo): Update default precision from 28 to 29.
+	
+2009-05-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* TdsComm.cs (Append): When appending smalldatetime values, cast value of 
 	days to short instead of ushort.  Fixes Tds error in RPC packet.
 	

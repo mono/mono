@@ -132,7 +132,7 @@ namespace Mono.Data.Tds.Protocol {
 
 			// Precision and Scale are non-zero for only decimal/numeric
 			if ( param.TypeName == "decimal" || param.TypeName == "numeric") {
-				tds.Comm.Append ((param.Precision!=0)?param.Precision:(byte)28);
+				tds.Comm.Append ((param.Precision!=0)?param.Precision:(byte)29);
 				tds.Comm.Append (param.Scale);
 			}
 		}
