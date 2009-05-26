@@ -1,5 +1,7 @@
 2009-05-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-sparc.c (add_outarg_load): Fix the sparc build.
+
 	* aot-compiler.c (emit_method_code): Always write out C style symbols for
 	methods.
 
