@@ -1,5 +1,9 @@
 2009-05-26  Mark Probst  <mark.probst@gmail.com>
 
+	* icall.c: Free the old array when resizing a mono_ptr_array.
+
+2009-05-26  Mark Probst  <mark.probst@gmail.com>
+
 	* reflection.c (create_dynamic_mono_image): Use mono_object_hash()
 	for the hashes whose keys are managed objects.
 
