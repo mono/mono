@@ -1,3 +1,8 @@
+2009-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_method_code): Always write out C style symbols for
+	methods.
+
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-x86.c (mono_arch_output_basic_block): Fix the precision of
