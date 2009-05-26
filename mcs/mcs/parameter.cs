@@ -115,7 +115,7 @@ namespace Mono.CSharp {
 		public ImplicitParameter (MethodBuilder mb):
 			base (null)
 		{
-			builder = mb.DefineParameter (1, ParameterAttributes.None, "");			
+			builder = mb.DefineParameter (1, ParameterAttributes.None, "value");			
 		}
 
 		public override AttributeTargets AttributeTargets {

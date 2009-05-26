@@ -1,3 +1,10 @@
+2009-05-26  Rodrigo Kumpera  <rkumpera@novell.com>
+			Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #377509
+	* parameter.cs: Use predefined and not empty name for implicit
+	setters.
+
 2009-05-21  Marek Safar  <marek.safar@gmail.com>
 
 	* class.cs: Don't report wrong warnings for event fields.
