@@ -110,10 +110,15 @@ namespace System.ServiceModel.Channels
 		
 		public override void Send (Message message, TimeSpan timeout)
 		{
-			if (!is_service_side && message.Headers.To == null)
-				message.Headers.To = RemoteAddress.Uri;
-			if (!is_service_side && message.Headers.ReplyTo == null)
-				message.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
+			if (!is_service_side) {
+				if (message.Headers.To == null)
+					message.Headers.To = RemoteAddress.Uri;
+				if (message.Headers.ReplyTo == null)
+					message.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
+			} else {
+				if (message.Headers.RelatesTo == null)
+					message.Headers.RelatesTo = OperationContext.Current.IncomingMessageHeaders.MessageId;
+			}
 
 			client.SendTimeout = (int) timeout.TotalMilliseconds;
 			frame.WriteSizedMessage (message);
@@ -142,8 +147,6 @@ namespace System.ServiceModel.Channels
 		public override Message Receive (TimeSpan timeout)
 		{
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
-			Stream s = client.GetStream ();
-
 			return frame.ReadSizedMessage ();
 		}
 		
@@ -316,13 +319,15 @@ namespace System.ServiceModel.Channels
 		{
 			this.mode = mode;
 			this.s = s;
+			this.buffer = new MemoryStream ();
 			reader = new MyBinaryReader (s);
-			writer = new MyBinaryWriter (s);
+			writer = new MyBinaryWriter (buffer);
 
 			EncodingRecord = 8; // FIXME: it should depend on mode.
 		}
 
 		Stream s;
+		MemoryStream buffer;
 
 		int mode;
 
@@ -353,17 +358,20 @@ namespace System.ServiceModel.Channels
 
 		public void ProcessPreambleInitiator ()
 		{
-			s.WriteByte (VersionRecord);
-			s.WriteByte (1);
-			s.WriteByte (0);
-			s.WriteByte (ModeRecord);
-			s.WriteByte ((byte) mode);
-			s.WriteByte (ViaRecord);
+			buffer.Position = 0;
+			buffer.WriteByte (VersionRecord);
+			buffer.WriteByte (1);
+			buffer.WriteByte (0);
+			buffer.WriteByte (ModeRecord);
+			buffer.WriteByte ((byte) mode);
+			buffer.WriteByte (ViaRecord);
 			writer.Write (Via.ToString ());
-			s.WriteByte (KnownEncodingRecord); // FIXME
-			s.WriteByte ((byte) EncodingRecord);
-			s.WriteByte (PreambleEndRecord);
-			s.Flush ();
+			buffer.WriteByte (KnownEncodingRecord); // FIXME
+			buffer.WriteByte ((byte) EncodingRecord);
+			buffer.WriteByte (PreambleEndRecord);
+			buffer.Flush ();
+
+			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
 
 			int b = s.ReadByte ();
 			switch (b) {
@@ -449,19 +457,20 @@ namespace System.ServiceModel.Channels
 			Message msg = Encoder.ReadMessage (ms, 0x10000);
 			if (benc != null)
 				benc.CurrentReaderSession = null;
-			s.Flush ();
 
 			return msg;
 		}
 
 		public void WriteSizedMessage (Message message)
 		{
+			buffer.Position = 0;
+
 			// FIXME: implement full [MC-NMF] protocol.
 
 			if (EncodingRecord != 8)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
 
-			s.WriteByte (SizedEnvelopeRecord);
+			buffer.WriteByte (SizedEnvelopeRecord);
 
 			MemoryStream ms = new MemoryStream ();
 			var session = new MyXmlBinaryWriterSession ();
@@ -488,6 +497,8 @@ namespace System.ServiceModel.Channels
 
 			writer.Write (EndRecord);
 			writer.Flush ();
+
+			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
 		}
 
 		public void ProcessEndRecordRecipient ()
