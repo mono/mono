@@ -1,3 +1,8 @@
+2009-05-25  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Removed amqp spec files and modified generated code to fix licensing 
+	issues.
+	
 2008-12-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: those paths are all wrong!
