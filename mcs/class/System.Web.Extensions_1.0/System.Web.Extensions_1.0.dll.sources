@@ -47,6 +47,7 @@
 ../System.Web.Extensions/System.Web.UI/AuthenticationServiceManager.cs
 ../System.Web.Extensions/System.Web.UI/ScriptBehaviorDescriptor.cs
 ../System.Web.Extensions/System.Web.UI/ScriptReference.cs
+../System.Web.Extensions/System.Web.UI/ScriptReferenceBase.cs
 ../System.Web.Extensions/System.Web.UI/ScriptComponentDescriptor.cs
 ../System.Web.Extensions/System.Web.UI/UpdatePanelTrigger.cs
 ../System.Web.Extensions/System.Web.UI/UpdatePanelControlTrigger.cs

@@ -3,7 +3,7 @@
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,19 +25,46 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design;
 using System.Data;
+using System.Web.UI.WebControls;
 using System.Windows.Forms.Design;
 
 namespace System.Web.UI.Design.WebControls {
 
-	public abstract class ListControlDesigner : TemplatedControlDesigner, IDataSourceProvider
+	public class ListControlDesigner :
+#if NET_2_0
+	DataBoundControlDesigner
+#else
+	ControlDesigner,
+	IDataSourceProvider
+#endif
 	{
+		string data_key_field;
+		string data_member;
+		string data_text_field;
+		string data_value_field;
+		
 		public ListControlDesigner ()
 			: base ()
 		{
 		}
 
+#if NET_2_0
+		public override DesignerActionListCollection ActionLists {
+			get { throw new NotImplementedException (); }
+		}
+
+		protected override bool UseDataSourcePickerActionList {
+			get { throw new NotImplementedException (); }
+		}
+
+		public string DataSource {
+			get; set;
+		}
+#endif
 		public string DataKeyField {
 			get { return data_key_field; }
 			set { data_key_field = value; }
@@ -54,10 +81,22 @@ namespace System.Web.UI.Design.WebControls {
 		}
 
 		public string DataValueField {
-			get { return data_source; }
-			set { data_source = value; }
+			get { return data_value_field; }
+			set { data_value_field = value; }
 		}
 
+#if NET_2_0
+		protected override void DataBind (BaseDataBoundControl dataBoundControl)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override void Initialize (IComponent component)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		
 		public override string GetDesignTimeHtml ()
 		{
 			throw new NotImplementedException ();

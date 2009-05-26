@@ -1,3 +1,14 @@
+2009-05-26  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptReferenceBase.cs: implemented (3.5 SP1)
+
+	* ScriptReference.cs: now inherits from the ScriptReferenceBase
+	class. Implemented all the required methods, removed some
+	properties which now live in the base class.
+
+	* ScriptManager.cs: code refactoring - moved parts of script
+	registration code to ScriptReference
+
 2009-04-23  Marek Habersack  <mhabersack@novell.com>
 
 	* AsyncPostBackTrigger.cs: HasTriggered () must look up the

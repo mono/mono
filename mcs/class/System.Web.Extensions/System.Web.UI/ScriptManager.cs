@@ -244,7 +244,7 @@ namespace System.Web.UI
 			}
 		}
 
-		bool IsDeploymentRetail {
+		internal bool IsDeploymentRetail {
 			get {
 #if TARGET_J2EE
 				return false;
@@ -814,53 +814,17 @@ namespace System.Web.UI
 			RegisterClientScriptInclude (control, type, resourceName, ScriptResourceHandler.GetResourceUrl (type.Assembly, resourceName, true));
 		}
 
-		void RegisterScriptReference (Control control, ScriptReference script, bool loadScriptsBeforeUI) {
-			bool isDebugMode = IsDeploymentRetail ? false : (script.ScriptModeInternal == ScriptMode.Inherit ? IsDebuggingEnabled : (script.ScriptModeInternal == ScriptMode.Debug));
-			string url;
-			if (!String.IsNullOrEmpty (script.Path)) {
-				url = GetScriptName (control.ResolveClientUrl (script.Path), isDebugMode, EnableScriptLocalization ? script.ResourceUICultures : null);
-			}
-			else if (!String.IsNullOrEmpty (script.Name)) {
-				Assembly assembly;
-				if (String.IsNullOrEmpty (script.Assembly))
-					assembly = typeof (ScriptManager).Assembly;
-				else
-					assembly = Assembly.Load (script.Assembly);
-				string name = GetScriptName (script.Name, isDebugMode, null);
-				if (script.IgnoreScriptPath || String.IsNullOrEmpty (ScriptPath))
-					url = ScriptResourceHandler.GetResourceUrl (assembly, name, script.NotifyScriptLoaded);
-				else {
-					AssemblyName an = assembly.GetName ();
-					url = ResolveClientUrl (String.Concat (VirtualPathUtility.AppendTrailingSlash (ScriptPath), an.Name, '/', an.Version, '/', name));
-				}
-			}
-			else {
-				throw new InvalidOperationException ("Name and Path cannot both be empty.");
-			}
-
+		void RegisterScriptReference (Control control, ScriptReference script, bool loadScriptsBeforeUI)
+		{
+			string scriptPath = script.Path;
+			string url = script.GetUrl (this, false);
+			if (control != this && !String.IsNullOrEmpty (scriptPath))
+				url = control.ResolveClientUrl (url);
+			
 			if (loadScriptsBeforeUI)
 				RegisterClientScriptInclude (control, typeof (ScriptManager), url, url);
 			else
 				RegisterStartupScript (control, typeof (ScriptManager), url, String.Format ("<script src=\"{0}\" type=\"text/javascript\"></script>", url), false);
-		}
-
-		static string GetScriptName (string releaseName, bool isDebugMode, string [] supportedUICultures) {
-			if (!isDebugMode && (supportedUICultures == null || supportedUICultures.Length == 0))
-				return releaseName;
-
-			if (releaseName.Length < 3 || !releaseName.EndsWith (".js", StringComparison.OrdinalIgnoreCase))
-				throw new InvalidOperationException (String.Format ("'{0}' is not a valid script path.  The path must end in '.js'.", releaseName));
-
-			StringBuilder sb = new StringBuilder (releaseName);
-			sb.Length -= 3;
-			if (isDebugMode)
-				sb.Append (".debug");
-			string culture = Thread.CurrentThread.CurrentUICulture.Name;
-			if (supportedUICultures != null && Array.IndexOf<string> (supportedUICultures, culture) >= 0)
-				sb.AppendFormat (".{0}", culture);
-			sb.Append (".js");
-
-			return sb.ToString ();
 		}
 
 		void RegisterServiceReference (Control control, ServiceReference serviceReference)

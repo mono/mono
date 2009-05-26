@@ -29,22 +29,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
+using System.Reflection;
+using System.Text;
+using System.Threading;
+using System.Web.Handlers;
 using System.Web.UI.WebControls;
 
 namespace System.Web.UI
 {
 	[DefaultProperty ("Path")]
-	public class ScriptReference
+	public class ScriptReference : ScriptReferenceBase
 	{
-		string _path;
 		string _name;
 		string _assembly;
-		ScriptMode _scriptMode = ScriptMode.Auto;
-		bool _notifyScriptLoaded = true;
 		bool _ignoreScriptPath;
-		string [] _resourceUICultures;
 
 		public ScriptReference ()
 		{
@@ -52,7 +51,7 @@ namespace System.Web.UI
 
 		public ScriptReference (string path)
 		{
-			_path = path;
+			this.Path = path;
 		}
 
 		public ScriptReference (string name, string assembly)
@@ -88,43 +87,6 @@ namespace System.Web.UI
 			}
 		}
 
-		public bool NotifyScriptLoaded {
-			get {
-				return _notifyScriptLoaded;
-			}
-			set {
-				_notifyScriptLoaded = value;
-			}
-		}
-
-		public string Path {
-			get {
-				return _path != null ? _path : String.Empty;
-			}
-			set {
-				_path = value;
-			}
-		}
-
-		[TypeConverter (typeof (StringArrayConverter))]
-		public string [] ResourceUICultures {
-			get {
-				return _resourceUICultures;
-			}
-			set {
-				_resourceUICultures = value;
-			}
-		}
-
-		public ScriptMode ScriptMode {
-			get {
-				return _scriptMode;
-			}
-			set {
-				_scriptMode = value;
-			}
-		}
-
 		internal ScriptMode ScriptModeInternal {
 			get {
 				if (ScriptMode == ScriptMode.Auto) {
@@ -138,6 +100,63 @@ namespace System.Web.UI
 			}
 		}
 
+		[MonoTODO ("Compression not supported yet.")]
+		protected internal override string GetUrl (ScriptManager scriptManager, bool zip)
+		{
+			bool isDebugMode = scriptManager.IsDeploymentRetail ? false :
+				(ScriptModeInternal == ScriptMode.Inherit ? scriptManager.IsDebuggingEnabled : (ScriptModeInternal == ScriptMode.Debug));
+			string path = Path;
+			string url = String.Empty;
+			
+			if (!String.IsNullOrEmpty (path)) {
+				url = GetScriptName (path, isDebugMode, scriptManager.EnableScriptLocalization ? ResourceUICultures : null);
+			} else if (!String.IsNullOrEmpty (Name)) {
+				Assembly assembly;
+				string assemblyName = this.Assembly;
+				
+				if (String.IsNullOrEmpty (assemblyName))
+					assembly = typeof (ScriptManager).Assembly;
+				else
+					assembly = global::System.Reflection.Assembly.Load (assemblyName);
+				string name = GetScriptName (Name, isDebugMode, null);
+				string scriptPath = scriptManager.ScriptPath;
+				if (IgnoreScriptPath || String.IsNullOrEmpty (scriptPath))
+					url = ScriptResourceHandler.GetResourceUrl (assembly, name, NotifyScriptLoaded);
+				else {
+					AssemblyName an = assembly.GetName ();
+					url = scriptManager.ResolveClientUrl (String.Concat (VirtualPathUtility.AppendTrailingSlash (scriptPath), an.Name, '/', an.Version, '/', name));
+				}
+			} else {
+				throw new InvalidOperationException ("Name and Path cannot both be empty.");
+			}
+
+			return url;
+		}
+
+		static string GetScriptName (string releaseName, bool isDebugMode, string [] supportedUICultures) {
+			if (!isDebugMode && (supportedUICultures == null || supportedUICultures.Length == 0))
+				return releaseName;
+
+			if (releaseName.Length < 3 || !releaseName.EndsWith (".js", StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException (String.Format ("'{0}' is not a valid script path.  The path must end in '.js'.", releaseName));
+
+			StringBuilder sb = new StringBuilder (releaseName);
+			sb.Length -= 3;
+			if (isDebugMode)
+				sb.Append (".debug");
+			string culture = Thread.CurrentThread.CurrentUICulture.Name;
+			if (supportedUICultures != null && Array.IndexOf<string> (supportedUICultures, culture) >= 0)
+				sb.AppendFormat (".{0}", culture);
+			sb.Append (".js");
+
+			return sb.ToString ();
+		}
+		
+		protected internal override bool IsFromSystemWebExtensions ()
+		{
+			return false;
+		}
+		
 		public override string ToString ()
 		{
 			return Name.Length > 0 ? Name : Path;

@@ -1,3 +1,8 @@
+2009-05-26  Marek Habersack  <mhabersack@novell.com>
+
+	* ListControlDesigner.cs: updated to match MSDN specs, added 2.0
+	methods. Used in the latest AjaxControlToolkit.
+
 2008-06-15  Noam Lampert  <noaml@mainsoft.com>
 
 	* CompositeControlDesigner.cs: Add stubs. 

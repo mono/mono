@@ -238,6 +238,7 @@ System.Web.UI.Design.WebControls/CompositeControlDesigner.cs
 System.Web.UI.Design.WebControls/DataSourceIDConverter.cs
 System.Web.UI.Design.WebControls/DataProviderNameConverter.cs
 System.Web.UI.Design.WebControls/LinkButtonDesigner.cs
+System.Web.UI.Design.WebControls/ListControlDesigner.cs
 System.Web.UI.Design.WebControls/AdRotatorDesigner.cs
 System.Web.UI.Design.WebControls/TableRowsCollectionEditor.cs
 System.Web.UI.Design.WebControls/RepeaterDesigner.cs
