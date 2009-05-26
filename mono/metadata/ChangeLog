@@ -1,5 +1,10 @@
 2009-05-26  Mark Probst  <mark.probst@gmail.com>
 
+	* reflection.c (create_dynamic_mono_image): Use mono_object_hash()
+	for the hashes whose keys are managed objects.
+
+2009-05-26  Mark Probst  <mark.probst@gmail.com>
+
 	* object-internals.h, threads.c: Set the execution context on
 	thread start here, not in corlib.
 
