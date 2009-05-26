@@ -35,7 +35,7 @@ namespace System.ServiceModel.Channels
 	{
 		object mutex;
 		CommunicationState state = CommunicationState.Created;
-		TimeSpan open_timeout, close_timeout;
+		TimeSpan default_open_timeout = TimeSpan.FromMinutes (1), default_close_timeout = TimeSpan.FromMinutes (1);
 		bool aborted;
 
 		protected CommunicationObject ()
@@ -100,7 +100,7 @@ namespace System.ServiceModel.Channels
 		public IAsyncResult BeginClose (AsyncCallback callback,
 			object state)
 		{
-			return BeginClose (close_timeout, callback, state);
+			return BeginClose (default_close_timeout, callback, state);
 		}
 
 		public IAsyncResult BeginClose (TimeSpan timeout,
@@ -113,7 +113,7 @@ namespace System.ServiceModel.Channels
 		public IAsyncResult BeginOpen (AsyncCallback callback,
 			object state)
 		{
-			return BeginOpen (open_timeout, callback, state);
+			return BeginOpen (default_open_timeout, callback, state);
 		}
 
 		public IAsyncResult BeginOpen (TimeSpan timeout,
@@ -125,7 +125,7 @@ namespace System.ServiceModel.Channels
 
 		public void Close ()
 		{
-			Close (close_timeout);
+			Close (default_close_timeout);
 		}
 
 		public void Close (TimeSpan timeout)
@@ -149,7 +149,7 @@ namespace System.ServiceModel.Channels
 
 		public void Open ()
 		{
-			Open (open_timeout);
+			Open (default_open_timeout);
 		}
 
 		public void Open (TimeSpan timeout)

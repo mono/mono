@@ -1,5 +1,11 @@
 2009-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CommunicationObject.cs : use sane default timeout.
+	* PeerCustomResolverBindingElement.cs : check timeout arg sanity.
+	* TcpDuplexSessionChannel.cs : ditto.
+
+2009-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : It seems that buffered stream channel
 	  only accepts buffered messages, so do as such for write buffers.
 	  Add RelatesTo header.

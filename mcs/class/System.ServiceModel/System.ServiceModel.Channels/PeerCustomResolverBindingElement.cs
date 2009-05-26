@@ -133,6 +133,9 @@ namespace System.ServiceModel.Channels
 		public override object Register (string meshId,
 			PeerNodeAddress nodeAddress, TimeSpan timeout)
 		{
+			if (timeout <= TimeSpan.Zero)
+				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
+
 			client.OperationTimeout = timeout;
 			preserved_mesh_id = meshId;
 			return client.Register (new RegisterInfo (client_id, meshId, nodeAddress)).RegistrationId;
@@ -141,6 +144,9 @@ namespace System.ServiceModel.Channels
 		public override ReadOnlyCollection<PeerNodeAddress> Resolve (
 			string meshId, int maxAddresses, TimeSpan timeout)
 		{
+			if (timeout <= TimeSpan.Zero)
+				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
+
 			client.OperationTimeout = timeout;
 			return new ReadOnlyCollection<PeerNodeAddress> (client.Resolve (new ResolveInfo (client_id, meshId, maxAddresses)).Addresses ?? new PeerNodeAddress [0]);
 		}
@@ -148,6 +154,9 @@ namespace System.ServiceModel.Channels
 		public override void Unregister (object registrationId,
 			TimeSpan timeout)
 		{
+			if (timeout <= TimeSpan.Zero)
+				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
+
 			client.OperationTimeout = timeout;
 			preserved_mesh_id = null;
 			client.Unregister (new UnregisterInfo (preserved_mesh_id, (Guid) registrationId));
@@ -156,6 +165,9 @@ namespace System.ServiceModel.Channels
 		public override void Update (object registrationId,
 			PeerNodeAddress updatedNodeAddress, TimeSpan timeout)
 		{
+			if (timeout <= TimeSpan.Zero)
+				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
+
 			client.OperationTimeout = timeout;
 			client.Update (new UpdateInfo ((Guid) registrationId, client_id, preserved_mesh_id, updatedNodeAddress));
 		}

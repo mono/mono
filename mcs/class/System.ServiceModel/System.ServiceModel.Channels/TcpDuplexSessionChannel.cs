@@ -110,6 +110,9 @@ namespace System.ServiceModel.Channels
 		
 		public override void Send (Message message, TimeSpan timeout)
 		{
+			if (timeout <= TimeSpan.Zero)
+				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
+
 			if (!is_service_side) {
 				if (message.Headers.To == null)
 					message.Headers.To = RemoteAddress.Uri;
@@ -146,6 +149,8 @@ namespace System.ServiceModel.Channels
 		
 		public override Message Receive (TimeSpan timeout)
 		{
+			if (timeout <= TimeSpan.Zero)
+				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
 			return frame.ReadSizedMessage ();
 		}
