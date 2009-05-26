@@ -1,3 +1,8 @@
+2009-05-26  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+        * AssemblyInfo.cs: Add InternalsVisibleTo for MoonAtkBridge
+	under a MOON_A11Y_INTERNAL_HACK define.
+
 2009-04-29  Chris Toshok  <toshok@ximian.com>
 
 	* AssemblyInfo.cs: in the 2.1 case we're InternalsVisibleTo

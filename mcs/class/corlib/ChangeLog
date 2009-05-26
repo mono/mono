@@ -1,3 +1,7 @@
+2009-05-26  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* Makefile: Handling of the MOON_A11Y_INTERNAL_HACK env var.
+
 2009-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* corlib.dll.sources: Add new net 4.0 files.

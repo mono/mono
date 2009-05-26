@@ -25,6 +25,12 @@ RESOURCE_FILES = \
 corlib_flags = -unsafe -nostdlib
 LOCAL_MCS_FLAGS = -nowarn:612,618 -d:INSIDE_CORLIB
 
+# this hack will be dropped once we get this working:
+# http://www.mono-project.com/Moonlight/SecurityStatus#Assembly_Loading
+ifdef MOON_A11Y_INTERNAL_HACK
+	MCS_FLAGS += -define:MOON_A11Y_INTERNAL_HACK
+endif
+
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -define:MONO_DATACONVERTER_STATIC_METHODS
 
