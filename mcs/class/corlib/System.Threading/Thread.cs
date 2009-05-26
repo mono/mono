@@ -102,6 +102,10 @@ namespace System.Threading {
 		private int small_id;
 		private IntPtr manage_callback;
 		private object pending_exception;
+		/* This is the ExecutionContext that will be set by
+		   start_wrapper() in the runtime. */
+		private ExecutionContext ec_to_set;
+
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
@@ -118,6 +122,9 @@ namespace System.Threading {
 		[ThreadStatic] 
 		static object[] local_slots;
 
+		/* The actual ExecutionContext of the thread.  It's
+		   ThreadStatic so that it's not shared between
+		   AppDomains. */
 		[ThreadStatic]
 		static ExecutionContext _ec;
 
@@ -764,12 +771,12 @@ namespace System.Threading {
 			// propagate informations from the original thread to the new thread
 #if NET_2_0
 			if (!ExecutionContext.IsFlowSuppressed ())
-				_ec = ExecutionContext.Capture ();
+				ec_to_set = ExecutionContext.Capture ();
 #else
 			// before 2.0 this was only used for security (mostly CAS) so we
 			// do this only if the security manager is active
 			if (SecurityManager.SecurityEnabled)
-				_ec = ExecutionContext.Capture ();
+				ec_to_set = ExecutionContext.Capture ();
 #endif
 			if (CurrentThread._principal != null)
 				_principal = CurrentThread._principal;

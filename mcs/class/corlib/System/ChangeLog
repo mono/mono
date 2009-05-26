@@ -1,3 +1,12 @@
+2009-05-26  Mark Probst  <mark.probst@gmail.com>
+
+	* Thread.cs: Don't set the execution context when creating a
+	thread because the _ec member is thread static and we set the
+	wrong one.  It's now set by the runtime.  We just provide the
+	correct one.
+
+	* Environment.cs: Bump corlib version.
+
 2009-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* Tuple.cs Tuples.cs: New files.
