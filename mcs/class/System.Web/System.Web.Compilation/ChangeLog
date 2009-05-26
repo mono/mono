@@ -1,3 +1,9 @@
+2009-05-26  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: before including a file specified with the
+	<!--#include file="" --> directive, check if it's within the
+	current application's root.
+
 2009-05-18  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: GetPrecompiledApplicationType () uses

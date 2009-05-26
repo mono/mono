@@ -774,6 +774,34 @@ namespace System.Web.Compilation
 			pfilter.ParseComplete (RootBuilder);
 		}
 #endif
+
+		void CheckIfIncludeFileIsSecure (string filePath)
+		{
+			if (filePath == null || filePath.Length == 0)
+				return;
+			
+			// a bit slow, but fully portable
+			string newdir = null;
+			Exception exception = null;
+			try {
+				string origdir = Directory.GetCurrentDirectory ();
+				Directory.SetCurrentDirectory (Path.GetDirectoryName (filePath));
+				newdir = Directory.GetCurrentDirectory ();
+				Directory.SetCurrentDirectory (origdir);
+				if (newdir [newdir.Length - 1] != '/')
+					newdir += "/";
+			} catch (DirectoryNotFoundException ex) {
+				return; // will be converted into 404
+			} catch (FileNotFoundException ex) {
+				return; // as above
+			} catch (Exception ex) {
+				// better safe than sorry
+				exception = ex;
+			}
+
+			if (exception != null || !StrUtils.StartsWith (newdir, HttpRuntime.AppDomainAppPath))
+				throw new ParseException (Location, "Files above the application's root directory cannot be included.");
+		}
 		
 		void TagParsed (ILocation location, TagType tagtype, string tagid, TagAttributes attributes)
 		{
@@ -876,6 +904,7 @@ namespace System.Web.Compilation
 						Parse (tparser.MapPath (file), true);
 				} else {
 					string includeFilePath = GetIncludeFilePath (tparser.ParserDir, file);
+					CheckIfIncludeFileIsSecure (includeFilePath);
 					tparser.PushIncludeDir (Path.GetDirectoryName (includeFilePath));
 					try {
 						Parse (includeFilePath, true);
