@@ -1,3 +1,9 @@
+2009-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebClient_2_1.cs: Add internal WebHeaderCollection. Change
+	signature for OpenPolicyReadAsync to take an addtional object
+	* WebResponse_2_1.cs: Add internal WebHeaderCollection
+
 2009-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebClient_2_1.cs: Add an internal OpenPolicyReadAsync. Check 

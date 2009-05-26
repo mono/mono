@@ -83,7 +83,7 @@ namespace System.Net
 //		static byte [] hexBytes;
 //		ICredentials credentials;
 		WebHeaderCollection headers;
-//		WebHeaderCollection responseHeaders;
+		WebHeaderCollection responseHeaders;
 		Uri baseAddress;
 		string baseString;
 //		NameValueCollection queryString;
@@ -191,9 +191,10 @@ namespace System.Net
 //			set { queryString = value; }
 //		}
 //		
-//		public WebHeaderCollection ResponseHeaders {
-//			get { return responseHeaders; }
-//		}
+		// note: it's public in SL3 beta 1 - but we need it right now
+		internal WebHeaderCollection ResponseHeaders {
+			get { return responseHeaders; }
+		}
 //
 //#if NET_2_0
 		public Encoding Encoding {
@@ -936,7 +937,7 @@ namespace System.Net
 
 		Stream ProcessResponse (WebResponse response)
 		{
-//			responseHeaders = response.Headers;
+			responseHeaders = response.Headers;
 			HttpWebResponse hwr = (response as HttpWebResponse);
 			if (hwr == null)
 				throw new NotSupportedException ();
@@ -1186,12 +1187,12 @@ namespace System.Net
 			OpenReadAsync (address, userToken, false);
 		}
 
-		internal void OpenPolicyReadAsync (Uri address)
+		internal void OpenPolicyReadAsync (Uri address, object userToken)
 		{
 			switch (address.LocalPath) {
 			case "/clientaccesspolicy.xml":
 			case "/crossdomain.xml":
-				OpenReadAsync (address, null, true);
+				OpenReadAsync (address, userToken, true);
 				break;
 			default:
 				throw new SecurityException ();

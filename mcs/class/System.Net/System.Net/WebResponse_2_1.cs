@@ -41,6 +41,9 @@ namespace System.Net {
 		public abstract string ContentType { get; }
 		public abstract Uri ResponseUri { get; }
 
+		// the getter is public in SL3 beta 1
+		internal virtual WebHeaderCollection Headers { get; set; }
+
 		protected WebResponse ()
 		{
 		}
