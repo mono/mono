@@ -1,3 +1,11 @@
+2009-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_Type_GetMethodsByName): Virtual methods should be
+	discarded based on their most specific definition so we set the method_slots
+	array before checking if the method is acceptable or not.
+
+	Fixes #506757.
+
 2009-05-26  Mark Probst  <mark.probst@gmail.com>
 
 	* icall.c: Free the old array when resizing a mono_ptr_array.
