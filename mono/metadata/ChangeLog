@@ -1,3 +1,10 @@
+2009-05-26  Mark Probst  <mark.probst@gmail.com>
+
+	* object-internals.h, threads.c: Set the execution context on
+	thread start here, not in corlib.
+
+	* appdomain.c: Bump corlib version.
+
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_fields): Don't mark simd types as having
