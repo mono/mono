@@ -1,3 +1,7 @@
+2009-05-27  Andrew Jorgensen  <ajorgensen@novell.com>
+
+	* Makefile: Fixed dist
+
 2009-05-25  Michael Barker  <mike@middlesoft.co.uk>
 
 	* Removed amqp spec files and modified generated code to fix licensing 
