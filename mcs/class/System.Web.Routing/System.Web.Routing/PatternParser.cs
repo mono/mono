@@ -207,18 +207,29 @@ namespace System.Web.Routing
 		{
 			var ret = new RouteValueDictionary ();
 			string url = Url;
+			string [] argSegs;
+			int argsCount;
 			
-			// quick check
-			if (String.Compare (url, path, StringComparison.Ordinal) == 0 && url.IndexOf ('{') < 0)
-				return AddDefaults (ret, defaults);
+			if (String.IsNullOrEmpty (path)) {
+				argSegs = null;
+				argsCount = 0;
+			} else {
+				// quick check
+				if (String.Compare (url, path, StringComparison.Ordinal) == 0 && url.IndexOf ('{') < 0)
+					return AddDefaults (ret, defaults);
 
-			string [] argSegs = path.Split ('/');
-			int argsCount = argSegs.Length;
+				argSegs = path.Split ('/');
+				argsCount = argSegs.Length;
+			}
+			
 			bool haveDefaults = defaults != null && defaults.Count > 0;
 
+			if (argsCount == 1 && String.IsNullOrEmpty (argSegs [0]))
+				argsCount = 0;
+			
 			if (!haveDefaults && ((haveSegmentWithCatchAll && argsCount < segmentCount) || (!haveSegmentWithCatchAll && argsCount != segmentCount)))
 				return null;
-			
+
 			int i = 0;
 
 			foreach (PatternSegment segment in segments) {

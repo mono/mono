@@ -483,5 +483,45 @@ namespace MonoTests.System.Web.Routing
 			Assert.AreEqual ("./Test/test.html", vpd.VirtualPath, "#1");
 			Assert.AreEqual (0, vpd.DataTokens.Count, "#2");
 		}
+
+		[Test (Description="Routes from NerdDinner")]
+		public void GetRouteDataNerdDinner ()
+		{
+			var c = new RouteCollection ();
+
+			c.Add ("UpcomingDiners",
+			       new MyRoute ("Dinners/Page/{page}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Dinners", action = "Index" }) }
+			);
+
+			c.Add ("Default",
+			       new MyRoute ("{controller}/{action}/{id}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Home", action = "Index", id = "" })}
+			);
+
+			var hc = new HttpContextStub2 ("~/", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+			
+			Assert.IsNotNull (rd, "#A1");
+		}
+
+		[Test (Description="Routes from NerdDinner")]
+		public void GetRouteDataNerdDinner2 ()
+		{
+			var c = new RouteCollection ();
+
+			c.Add ("UpcomingDiners",
+			       new MyRoute ("Dinners/Page/{page}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Dinners", action = "Index" }) }
+			);
+
+			c.Add ("Default",
+			       new MyRoute ("{controller}/{action}/{id}", new MyRouteHandler ()) { Defaults = new RouteValueDictionary (new { controller = "Home", action = "Index", id = "" })}
+			);
+
+			var hc = new HttpContextStub2 ("~/Home/Index", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+			
+			Assert.IsNotNull (rd, "#A1");
+		}
 	}
 }
