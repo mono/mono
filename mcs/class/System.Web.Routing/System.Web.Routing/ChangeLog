@@ -1,3 +1,9 @@
+2009-05-27  Marek Habersack  <mhabersack@novell.com>
+
+	* PatternParser.cs: if Match is passed an empty path, do not
+	attempt to match the Url segments, skip to defaults matching right
+	away.
+
 2009-05-25  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlPattern.cs: removed - replaced by PatternParser below.

@@ -1,3 +1,8 @@
+2009-05-27  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (LIB_MCS_FLAGS): added support for defining the DEBUG
+	symbol on compiler command line.
+
 2009-05-25  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.Routing_test.dll.sources: added

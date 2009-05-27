@@ -1,3 +1,8 @@
+2009-05-27  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteCollectionTest.cs: added a test for routes from
+	NerdDinner.
+
 2009-05-25  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteTest.cs: added several tests for GetVirtualPath,
