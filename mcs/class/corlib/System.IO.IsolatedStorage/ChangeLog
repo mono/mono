@@ -1,3 +1,7 @@
+2009-05-27  Jackson Harper  <jackson@ximian.com>
+
+	* MoonIsolatedStorageFile.cs: Allow paths in search patterns.
+
 2009-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MoonIsolatedStorage.cs: New. Manage the shared (location, quota)

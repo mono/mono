@@ -191,10 +191,40 @@ namespace System.IO.IsolatedStorage {
 
 		public string [] GetFileNames (string searchPattern)
 		{
-			if (searchPattern.IndexOf ('/') != -1)
-				throw new IsolatedStorageException ();
-			
-			return HideAppDirs (Directory.GetFiles (basedir, searchPattern));
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			// note: IsolatedStorageFile accept a "dir/file" pattern which is not allowed by DirectoryInfo
+			// so we need to split them to get the right results
+			string path = Path.GetDirectoryName (searchPattern);
+			string pattern = Path.GetFileName (searchPattern);
+			string [] afi = null;
+
+			if (path == null || path.Length == 0) {
+				return HideAppDirs (Directory.GetFiles (basedir, searchPattern));
+			} else {
+				// we're looking for a single result, identical to path (no pattern here)
+				// we're also looking for something under the current path (not outside isolated storage)
+
+				string [] subdirs = Directory.GetDirectories (basedir, path);
+				if (subdirs.Length != 1 || subdirs [0].IndexOf (basedir) < 0)
+					throw new IsolatedStorageException ();
+
+				DirectoryInfo dir = new DirectoryInfo (subdirs [0]);
+				if (dir.Name != path)
+					throw new IsolatedStorageException ();
+
+				return GetNames (dir.GetFiles (pattern));
+			}
+		}
+
+		// Return the file name portion of a full path
+		private string[] GetNames (FileSystemInfo[] afsi)
+		{
+			string[] r = new string[afsi.Length];
+			for (int i = 0; i != afsi.Length; ++i)
+				r[i] = afsi[i].Name;
+			return r;
 		}
 
 		public IsolatedStorageFileStream OpenFile (string path, FileMode mode)
