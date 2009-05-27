@@ -334,9 +334,8 @@ namespace System.ServiceModel.Channels
 		{
 			this.mode = mode;
 			this.s = s;
-			this.buffer = new MemoryStream ();
 			reader = new MyBinaryReader (s);
-			writer = new MyBinaryWriter (buffer);
+			ResetWriteBuffer ();
 
 			EncodingRecord = 8; // FIXME: it should depend on mode.
 		}
@@ -351,6 +350,12 @@ namespace System.ServiceModel.Channels
 		public Uri Via { get; set; }
 
 		public MessageEncoder Encoder { get; set; }
+
+		void ResetWriteBuffer ()
+		{
+			this.buffer = new MemoryStream ();
+			writer = new MyBinaryWriter (buffer);
+		}
 
 		public byte [] ReadSizedChunk ()
 		{
@@ -373,7 +378,8 @@ namespace System.ServiceModel.Channels
 
 		public void ProcessPreambleInitiator ()
 		{
-			buffer.Position = 0;
+			ResetWriteBuffer ();
+
 			buffer.WriteByte (VersionRecord);
 			buffer.WriteByte (1);
 			buffer.WriteByte (0);
@@ -387,6 +393,7 @@ namespace System.ServiceModel.Channels
 			buffer.Flush ();
 
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
+			s.Flush ();
 
 			int b = s.ReadByte ();
 			switch (b) {
@@ -478,7 +485,7 @@ namespace System.ServiceModel.Channels
 
 		public void WriteSizedMessage (Message message)
 		{
-			buffer.Position = 0;
+			ResetWriteBuffer ();
 
 			// FIXME: implement full [MC-NMF] protocol.
 
@@ -515,10 +522,11 @@ namespace System.ServiceModel.Channels
 			var arr = ms.GetBuffer ();
 			writer.Write (arr, 0, (int) ms.Position);
 
-			writer.Write (EndRecord);
 			writer.Flush ();
 
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
+
+			s.WriteByte (EndRecord);
 		}
 
 		public void ProcessEndRecordRecipient ()

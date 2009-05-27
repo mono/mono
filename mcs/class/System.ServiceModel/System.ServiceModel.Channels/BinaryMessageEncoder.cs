@@ -254,7 +254,8 @@ namespace System.ServiceModel.Channels
 		{
 			VerifyMessageVersion (message);
 
-			message.WriteMessage (XmlDictionaryWriter.CreateBinaryWriter (stream, soap_dictionary, CurrentWriterSession));
+			using (var xw = XmlDictionaryWriter.CreateBinaryWriter (stream, soap_dictionary, CurrentWriterSession))
+				message.WriteMessage (xw);
 		}
 
 		[MonoTODO]

@@ -1,3 +1,10 @@
+2009-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : the serializer somehow leaves binary
+	  xml open, so close the writer as well as open elements.
+	* TcpDuplexSessionChannel.cs : clear write buffer on each operation.
+	  Do not output EndRecord and SizedMessage at a time.
+
 2009-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : there was a miscalculation on the
