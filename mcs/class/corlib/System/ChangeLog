@@ -1,3 +1,7 @@
+2009-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomain.cs (DoAssemblyResolve): Fix recursion detection. Fixes #507003.
+
 2009-05-26  Mark Probst  <mark.probst@gmail.com>
 
 	* Thread.cs: Don't set the execution context when creating a
