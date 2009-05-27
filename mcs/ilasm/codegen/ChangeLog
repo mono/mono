@@ -1,3 +1,8 @@
+2009-05-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeDef.cs: Add field method_list to preserve definition
+	order of methods when emiting the PE file.
+
 2009-04-20  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #494221
