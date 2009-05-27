@@ -1,3 +1,8 @@
+2009-05-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlReaderSettings.cs: Set prohibitDtd when changing the value 
+	of DtdProcessing. Will fix a few Moonlight DRT tests
+
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : no reason not to report invalid input string for

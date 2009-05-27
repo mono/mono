@@ -121,7 +121,10 @@ namespace System.Xml
 #if NET_2_1
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
-			set { dtdProcessing = value; }
+			set {
+				dtdProcessing = value;
+				prohibitDtd = (value == DtdProcessing.Prohibit);
+			}
 		}
 
 		public long MaxCharactersFromEntities {
