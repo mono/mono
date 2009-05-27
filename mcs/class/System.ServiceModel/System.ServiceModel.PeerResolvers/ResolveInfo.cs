@@ -25,6 +25,12 @@ namespace System.ServiceModel.PeerResolvers
 		public ResolveInfo (Guid clientId, string meshId, int maxAddresses)
 			: this ()
 		{
+			if (clientId == Guid.Empty)
+				throw new ArgumentException ("Empty Guid");
+			if (String.IsNullOrEmpty (meshId))
+				throw new ArgumentNullException ("meshId");
+			if (maxAddresses <= 0)
+				throw new ArgumentOutOfRangeException ("maxAddresses must be positive integer");
 			body.ClientId = clientId;
 			body.MeshId = meshId;
 			body.MaxAddresses = maxAddresses;

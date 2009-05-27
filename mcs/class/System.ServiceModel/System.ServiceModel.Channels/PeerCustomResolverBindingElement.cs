@@ -133,6 +133,10 @@ namespace System.ServiceModel.Channels
 		public override object Register (string meshId,
 			PeerNodeAddress nodeAddress, TimeSpan timeout)
 		{
+			if (String.IsNullOrEmpty (meshId))
+				throw new ArgumentNullException ("meshId");
+			if (nodeAddress == null)
+				throw new ArgumentNullException ("nodeAddress");
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 
@@ -144,6 +148,10 @@ namespace System.ServiceModel.Channels
 		public override ReadOnlyCollection<PeerNodeAddress> Resolve (
 			string meshId, int maxAddresses, TimeSpan timeout)
 		{
+			if (String.IsNullOrEmpty (meshId))
+				throw new ArgumentNullException ("meshId");
+			if (maxAddresses <= 0)
+				throw new ArgumentOutOfRangeException ("maxAddresses must be positive integer");
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 

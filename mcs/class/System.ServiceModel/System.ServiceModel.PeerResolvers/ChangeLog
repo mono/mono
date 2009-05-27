@@ -1,3 +1,7 @@
+2009-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ResolveInfo.cs : argument check.
+
 2009-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerCustomResolverSettings.cs : added Clone().

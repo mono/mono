@@ -1,5 +1,9 @@
 2009-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* PeerCustomResolverBindingElement.cs : some argument check.
+
+2009-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BinaryMessageEncoder.cs : the serializer somehow leaves binary
 	  xml open, so close the writer as well as open elements.
 	* TcpDuplexSessionChannel.cs : clear write buffer on each operation.
