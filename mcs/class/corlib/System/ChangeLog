@@ -1,3 +1,7 @@
+2009-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomain.cs (DoAssemblyResolve): Fix recursion detection. Fixes #507003.
+
 2009-05-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Type.cs: (GetInterfaceMap) 'this' can't be an interface itself.

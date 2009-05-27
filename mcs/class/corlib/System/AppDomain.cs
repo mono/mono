@@ -73,6 +73,9 @@ namespace System {
 		[ThreadStatic]
 		static Hashtable assembly_resolve_in_progress;
 
+		[ThreadStatic]
+		static Hashtable assembly_resolve_in_progress_refonly;
+
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
@@ -1109,20 +1112,24 @@ namespace System {
 				return null;
 			
 			/* Prevent infinite recursion */
-			Hashtable ht = assembly_resolve_in_progress;
-			if (ht == null) {
-				ht = new Hashtable ();
-				assembly_resolve_in_progress = ht;
+			Hashtable ht;
+			if (refonly) {
+				ht = assembly_resolve_in_progress_refonly;
+				if (ht == null) {
+					ht = new Hashtable ();
+					assembly_resolve_in_progress_refonly = ht;
+				}
+			} else {
+				ht = assembly_resolve_in_progress;
+				if (ht == null) {
+					ht = new Hashtable ();
+					assembly_resolve_in_progress = ht;
+				}
 			}
 
-			Assembly ass = (Assembly) ht [name];
-#if NET_2_0
-			if (ass != null && (ass.ReflectionOnly == refonly))
+			string s = (string) ht [name];
+			if (s != null)
 				return null;
-#else
-			if (ass != null)
-				return null;
-#endif
 			ht [name] = name;
 			try {
 				Delegate[] invocation_list = del.GetInvocationList ();
