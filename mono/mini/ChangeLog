@@ -1,3 +1,9 @@
+2009-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-trampolines.c: Kill mono_find_delegate_trampoline_by_addr as
+	this is no longer in use.
+	* mini.h: Same.
+
 2009-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (add_outarg_load): Fix the sparc build.
