@@ -24,11 +24,14 @@ namespace Mono.CSharp {
 		ISO_1		= 1,
 		Default_MCS	= 2,
 		ISO_2		= 3,
-		LINQ		= 4,
-		Future		= 5,
+		V_3			= 4,
+		V_4			= 5,
+		Future		= 100,
 
-#if GMCS_SOURCE
-		Default		= LINQ
+#if NET_4_0
+		Default		= V_4,
+#elif GMCS_SOURCE
+		Default		= V_3
 #else
 		Default		= Default_MCS
 #endif

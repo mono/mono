@@ -1289,7 +1289,7 @@ namespace Mono.CSharp {
 
 					GenericTypeExpr ct = iface as GenericTypeExpr;
 					if (ct != null) {
-						if (!ct.CheckConstraints (this) || !ct.VerifyVariantTypeParameters ())
+						if (!ct.CheckConstraints (this) || !ct.VerifyVariantTypeParameters (this))
 							return false;
 					}
 				}
@@ -5286,11 +5286,10 @@ namespace Mono.CSharp {
 						      "accessible than field `" + GetSignatureForError () + "'");
 				}
 			}
-#if GMCS_SOURCE
-			if (MemberType.IsGenericParameter && (MemberType.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
-				Report.Error (-33, Location, "Contravariant type parameters can only be used in input positions");
-			}
-#endif
+
+			var tp = TypeManager.LookupTypeParameter (MemberType);
+			if (tp != null && tp.Variance == Variance.Contravariant)
+				tp.ErrorInvalidVariance (this, Variance.Covariant);
 		}
 
 		protected bool IsTypePermitted ()

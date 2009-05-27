@@ -294,7 +294,7 @@ namespace Mono.CSharp {
 
 				// TODO: silent flag is ignored
 				ct.CheckConstraints (ec);
-				ct.VerifyVariantTypeParameters ();
+				ct.VerifyVariantTypeParameters (ec);
 			}
 
 			return te;

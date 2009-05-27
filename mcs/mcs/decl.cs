@@ -349,7 +349,7 @@ namespace Mono.CSharp {
 				}
 			} else {
 				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN | Modifiers.PARTIAL)) == 0) {
-					if (RootContext.Version >= LanguageVersion.LINQ) {
+					if (RootContext.Version >= LanguageVersion.V_3) {
 						Property.PropertyMethod pm = this as Property.PropertyMethod;
 						if (pm is Indexer.GetIndexerMethod || pm is Indexer.SetIndexerMethod)
 							pm = null;
@@ -1334,9 +1334,14 @@ namespace Mono.CSharp {
 					}
 				}
 
+				var variance = name.Variance;
+				if (name.Variance != Variance.None && !(this is Delegate || this is Interface)) {
+					Report.Error (1960, name.Location, "Variant type parameters can only be used with interfaces and delegates");
+					variance = Variance.None;
+				}
+
 				type_params [i] = new TypeParameter (
-					Parent, this, name.Name, constraints, name.OptAttributes, name.Variance,
-					Location);
+					Parent, this, name.Name, constraints, name.OptAttributes, variance, Location);
 
 				AddToContainer (type_params [i], name.Name);
 			}

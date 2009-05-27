@@ -1506,12 +1506,15 @@ namespace Mono.CSharp
 				case "iso-2":
 					RootContext.Version = LanguageVersion.ISO_2;
 					return true;
+				case "3":
+					RootContext.Version = LanguageVersion.V_3;
+					return true;
 				case "future":
 					RootContext.Version = LanguageVersion.Future;
 					return true;
 #endif
 				}
-				Report.Error (1617, "Invalid option `{0}' for /langversion. It must be either `ISO-1', `ISO-2' or `Default'", value);
+				Report.Error (1617, "Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', `3' or `Default'", value);
 				return true;
 
 			case "/codepage":

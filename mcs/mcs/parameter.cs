@@ -361,32 +361,25 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-#if GMCS_SOURCE
-			if (parameter_type.IsGenericParameter) {
-				AbstractPropertyEventMethod accessor = ec as AbstractPropertyEventMethod;
-				if (accessor == null || !accessor.IsDummy) {
-					if ((parameter_type.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0) {
-						Report.Error (-38, Location, "Covariant type parameters cannot be used as method parameters");
-						return null;
-					} else if ((ModFlags & Modifier.ISBYREF) != 0 &&
-					           (parameter_type.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0) {
-						Report.Error (-37, Location, "Contravariant type parameters cannot be used in output positions");
-						return null;
-					}
+			var tp = TypeManager.LookupTypeParameter (parameter_type);
+			if (tp != null) {
+				if ((modFlags & Parameter.Modifier.ISBYREF) != 0) {
+					if (tp.Variance != Variance.None)
+						tp.ErrorInvalidVariance ((MemberCore) ec, Variance.None);
+				} else if (tp.Variance == Variance.Covariant) {
+					tp.ErrorInvalidVariance ((MemberCore) ec, Variance.Contravariant);
 				}
-				return parameter_type;
-			}
-#endif
+			} else {
+				if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
+					Report.Error (721, Location, "`{0}': static types cannot be used as parameters",
+						texpr.GetSignatureForError ());
+					return parameter_type;
+				}
 
-			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
-				Report.Error (721, Location, "`{0}': static types cannot be used as parameters",
-					texpr.GetSignatureForError ());
-				return parameter_type;
-			}
-
-			if ((modFlags & Modifier.This) != 0 && parameter_type.IsPointer) {
-				Report.Error (1103, Location, "The type of extension method cannot be `{0}'",
-					TypeManager.CSharpName (parameter_type));
+				if ((modFlags & Modifier.This) != 0 && parameter_type.IsPointer) {
+					Report.Error (1103, Location, "The type of extension method cannot be `{0}'",
+						TypeManager.CSharpName (parameter_type));
+				}
 			}
 
 			return parameter_type;

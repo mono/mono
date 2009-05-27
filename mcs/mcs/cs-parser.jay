@@ -2769,7 +2769,7 @@ type_parameter
 	: opt_attributes opt_type_parameter_variance IDENTIFIER
 	  {
 		LocatedToken lt = (LocatedToken)$3;
-		$$ = new TypeParameterName (lt.Value, (Attributes)$1, (Variance)$2, lt.Location);
+		$$ = new TypeParameterName (lt.Value, (Attributes)$1, (Variance) $2, lt.Location);
   	  }
   	| error
   	  {
@@ -4237,8 +4237,9 @@ opt_type_parameter_variance
 	  }
 	| type_parameter_variance
 	  {
-		if (RootContext.Version < LanguageVersion.Future)
-			Report.FeatureIsNotAvailable (lexer.Location, "generic variance");
+		if (RootContext.Version <= LanguageVersion.V_3)
+			Report.FeatureIsNotAvailable (lexer.Location, "generic type variance");
+
 		$$ = $1;
 	  }
 	;

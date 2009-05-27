@@ -656,9 +656,6 @@ namespace Mono.CSharp {
 			this.decl = decl;
 			this.constraints = constraints;
 			this.variance = variance;
-			if (variance != Variance.None && !(decl is Interface) && !(decl is Delegate)) {
-				Report.Error (-36, loc, "Generic variance can only be used with interfaces and delegates");
-			}
 		}
 
 		public GenericConstraints GenericConstraints {
@@ -697,6 +694,22 @@ namespace Mono.CSharp {
 
 			this.type = type;
 			TypeManager.AddTypeParameter (type, this);
+		}
+
+		public void ErrorInvalidVariance (MemberCore mc, Variance expected)
+		{
+			Report.SymbolRelatedToPreviousError (mc);
+			string input_variance = Variance == Variance.Contravariant ? "contravariant" : "covariant";
+			string gtype_variance;
+			switch (expected) {
+			case Variance.Contravariant: gtype_variance = "contravariantly"; break;
+			case Variance.Covariant: gtype_variance = "covariantly"; break;
+			default: gtype_variance = "invariantly"; break;
+			}
+
+			Report.Error (1961, Location,
+				"The {2} type parameter `{0}' must be {3} valid on `{1}'",
+					GetSignatureForError (), mc.GetSignatureForError (), input_variance, gtype_variance);
 		}
 
 		/// <summary>
@@ -1364,37 +1377,21 @@ namespace Mono.CSharp {
 		{
 			return ConstraintChecker.CheckConstraints (ec, open_type, gen_params, args.Arguments, loc);
 		}
-
-		static bool IsVariant (Type type)
-		{
-			return (type.GenericParameterAttributes & GenericParameterAttributes.VarianceMask) != 0;
-		}
 	
-		static bool IsCovariant (Type type)
-		{
-			return (type.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0;
-		}
-	
-		static bool IsContravariant (Type type)
-		{
-			return (type.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0;
-		}
-	
-		public bool VerifyVariantTypeParameters ()
+		public bool VerifyVariantTypeParameters (IResolveContext rc)
 		{
 			for (int i = 0; i < args.Count; i++) {
-				Type argument = args.Arguments[i];
-				if (argument.IsGenericParameter && IsVariant (argument)) {
-					if (IsContravariant (argument) && !IsContravariant (gen_params[i])) {
-						Report.Error (-34, loc, "Contravariant type parameters can only be used " +
-				              "as type arguments in contravariant positions");
-						return false;
-					}
-					else if (IsCovariant (argument) && !IsCovariant (gen_params[i])) {
-						Report.Error (-35, loc, "Covariant type parameters can only be used " +
-				              "as type arguments in covariant positions");
-						return false;
-					}
+				var argument = args.Arguments [i];
+				TypeParameter tparam = TypeManager.LookupTypeParameter (argument);
+				if (tparam == null)
+					continue;
+
+				if (tparam.Variance == Variance.None)
+					continue;
+
+				if (tparam.Variance != TypeManager.GetTypeParameterVariance (gen_params [i])) {
+					var mc = (MemberCore) rc;
+					tparam.ErrorInvalidVariance (mc, TypeManager.GetTypeParameterVariance (gen_params[i]));
 				}
 			}
 			return true;
@@ -1877,6 +1874,22 @@ namespace Mono.CSharp {
 		{
 			t = DropGenericTypeArguments (t);
 			return LookupTypeContainer (t);
+		}
+
+		public static Variance GetTypeParameterVariance (Type type)
+		{
+			TypeParameter tparam = LookupTypeParameter (type);
+			if (tparam != null)
+				return tparam.Variance;
+
+			switch (type.GenericParameterAttributes & GenericParameterAttributes.VarianceMask) {
+			case GenericParameterAttributes.Covariant:
+				return Variance.Covariant;
+			case GenericParameterAttributes.Contravariant:
+				return Variance.Contravariant;
+			default:
+				return Variance.None;
+			}
 		}
 
 		/// <summary>

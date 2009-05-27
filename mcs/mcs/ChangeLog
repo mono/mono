@@ -1,3 +1,12 @@
+2009-05-27  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, parameter.cs, decl.cs, ecore.cs, class.cs, delegate.cs
+    cs-parser.jay, generic-mcs.cs: Report wrong variant types
+	declarations.
+	  
+	* driver.cs, rootcontext.cs, report.cs: Add 3.0 language version
+	filter.
+
 2009-05-26  Rodrigo Kumpera  <rkumpera@novell.com>
 			Marek Safar  <marek.safar@gmail.com>
 

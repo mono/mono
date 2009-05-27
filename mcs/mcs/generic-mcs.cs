@@ -124,6 +124,10 @@ namespace Mono.CSharp
 		{
 			throw new NotImplementedException ();
 		}
+		
+		public void ErrorInvalidVariance (MemberCore mc, Variance v)
+		{
+		}
 
 		//
 		// MemberContainer
@@ -310,7 +314,7 @@ namespace Mono.CSharp
 			get { throw new NotImplementedException (); }
 		}
 
-		public bool VerifyVariantTypeParameters ()
+		public bool VerifyVariantTypeParameters (IResolveContext rc)
 		{
 			throw new NotImplementedException ();
 		}
