@@ -1,3 +1,15 @@
+2009-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (decode_signature_header): Fix bounds check.
+
+	* metadata-verify.c (parse_custom_mods): Check custom mods.
+
+	* metadata-verify.c (parse_type): Do initial basic verification
+	of valid values.
+	
+	* metadata-verify.c (is_valid_method_signature): Parse the generic
+	param count.
+
 2009-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_Type_GetMethodsByName): Virtual methods should be
