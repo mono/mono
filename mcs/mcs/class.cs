@@ -5287,7 +5287,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			var tp = TypeManager.LookupTypeParameter (MemberType);
+			TypeParameter tp = TypeManager.LookupTypeParameter (MemberType);
 			if (tp != null && tp.Variance == Variance.Contravariant)
 				tp.ErrorInvalidVariance (this, Variance.Covariant);
 		}

@@ -1334,7 +1334,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				var variance = name.Variance;
+				Variance variance = name.Variance;
 				if (name.Variance != Variance.None && !(this is Delegate || this is Interface)) {
 					Report.Error (1960, name.Location, "Variant type parameters can only be used with interfaces and delegates");
 					variance = Variance.None;

@@ -361,7 +361,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			var tp = TypeManager.LookupTypeParameter (parameter_type);
+			TypeParameter tp = TypeManager.LookupTypeParameter (parameter_type);
 			if (tp != null) {
 				if ((modFlags & Parameter.Modifier.ISBYREF) != 0) {
 					if (tp.Variance != Variance.None)

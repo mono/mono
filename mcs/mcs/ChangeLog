@@ -1,3 +1,8 @@
+2009-05-27  Alan McGovern  <amcgovern@novell.com>
+
+	* class.cs, decl.cs, delegate.cs, parameter.cs: 
+	Fix the build by replacing the use of 'var' with the actual type.
+
 2009-05-27  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, parameter.cs, decl.cs, ecore.cs, class.cs, delegate.cs
