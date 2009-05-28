@@ -44,12 +44,15 @@ namespace Microsoft.Build.BuildEngine {
 		const string		defaultTasksProjectName = "Microsoft.Common.tasks";
 		EventSource		eventSource;
 		bool			buildStarted;
-		BuildPropertyGroup	globalProperties;
+		BuildPropertyGroup	global_properties;
 		//IDictionary		importedProjects;
 		List <ILogger>		loggers;
 		//bool			onlyLogCriticalEvents;
 		Dictionary <string, Project>	projects;
+
+		// the key here represents the project+target+global_properties set
 		Dictionary <string, ITaskItem[]> builtTargetsOutputByName;
+		Stack<Project> currentlyBuildingProjectsStack;
 
 		static Engine		globalEngine;
 		static Version		version;
@@ -74,8 +77,9 @@ namespace Microsoft.Build.BuildEngine {
 			this.eventSource = new EventSource ();
 			this.loggers = new List <ILogger> ();
 			this.buildStarted = false;
-			this.globalProperties = new BuildPropertyGroup ();
+			this.global_properties = new BuildPropertyGroup ();
 			this.builtTargetsOutputByName = new Dictionary<string, ITaskItem[]> ();
+			this.currentlyBuildingProjectsStack = new Stack<Project> ();
 			
 			RegisterDefaultTasks ();
 		}
@@ -113,7 +117,6 @@ namespace Microsoft.Build.BuildEngine {
 			return BuildProject (project, targetNames, targetOutputs, BuildSettings.None);
 		}
 		
-		[MonoTODO ("use buildFlags")]
 		public bool BuildProject (Project project,
 					  string[] targetNames,
 					  IDictionary targetOutputs,
@@ -124,7 +127,6 @@ namespace Microsoft.Build.BuildEngine {
 			if (targetNames == null)
 				return false;
 
-			StartBuild ();
 			return project.Build (targetNames, targetOutputs, buildFlags);
 		}
 
@@ -165,7 +167,6 @@ namespace Microsoft.Build.BuildEngine {
 			return BuildProjectFile (projectFile, targetNames, globalProperties, targetOutputs, BuildSettings.None);
 		}
 		
-		[MonoTODO ("use buildFlags")]
 		public bool BuildProjectFile (string projectFile,
 					      string[] targetNames,
 					      BuildPropertyGroup globalProperties,
@@ -174,8 +175,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Project project;
 
-			StartBuild ();
-			
 			if (projects.ContainsKey (projectFile)) {
 				project = (Project) projects [projectFile];
 			} else {
@@ -183,8 +182,27 @@ namespace Microsoft.Build.BuildEngine {
 				project.Load (projectFile);
 			}
 
-			project.GlobalProperties = globalProperties;
-			return project.Build (targetNames, targetOutputs, buildFlags);
+			BuildPropertyGroup engine_old_grp = null;
+			BuildPropertyGroup project_old_grp = null;
+			if (globalProperties != null) {
+				engine_old_grp = GlobalProperties.Clone (true);
+				project_old_grp = project.GlobalProperties.Clone (true);
+
+				// Override project's global properties with the
+				// ones explicitlcur_y specified here
+				foreach (BuildProperty bp in globalProperties)
+					project.GlobalProperties.AddProperty (bp);
+				project.NeedToReevaluate ();
+			}
+
+			try {
+				return project.Build (targetNames, targetOutputs, buildFlags);
+			} finally {
+				if (globalProperties != null) {
+					GlobalProperties = engine_old_grp;
+					project.GlobalProperties = project_old_grp;
+				}
+			}
 		}
 
 		void CheckBinPath ()
@@ -261,21 +279,74 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			// FIXME: check if build succeeded
 			// FIXME: it shouldn't be here
-			LogBuildFinished (true);
+			if (buildStarted)
+				LogBuildFinished (true);
 			foreach (ILogger i in loggers) {
 				i.Shutdown ();
 			}
 			loggers.Clear ();
 		}
 
-		internal void StartBuild ()
+		internal void StartProjectBuild (Project project, string [] target_names)
 		{
 			if (!buildStarted) {
 				LogBuildStarted ();
 				buildStarted = true;
 			}
+
+			if (currentlyBuildingProjectsStack.Count == 0 ||
+				String.Compare (currentlyBuildingProjectsStack.Peek ().FullFileName, project.FullFileName) != 0)
+					LogProjectStarted (project, target_names);
+
+			currentlyBuildingProjectsStack.Push (project);
 		}
-		
+
+		internal void EndProjectBuild (Project project, bool succeeded)
+		{
+			if (!buildStarted)
+				throw new Exception ("build isnt started currently");
+
+			Project top_project = currentlyBuildingProjectsStack.Pop ();
+
+			if (String.Compare (project.FullFileName, top_project.FullFileName) != 0)
+				throw new Exception (String.Format (
+							"INTERNAL ERROR: Project finishing is not the same as the one on top " +
+							"of the stack. Project: {0} Top of stack: {1}",
+							project.FullFileName, top_project.FullFileName));
+
+			if (currentlyBuildingProjectsStack.Count == 0 ||
+				String.Compare (top_project.FullFileName, currentlyBuildingProjectsStack.Peek ().FullFileName) != 0)
+				LogProjectFinished (top_project, succeeded);
+
+			if (currentlyBuildingProjectsStack.Count == 0) {
+				//FIXME: build result
+				LogBuildFinished (true);
+				buildStarted = false;
+			}
+		}
+
+		void LogProjectStarted (Project project, string [] target_names)
+		{
+			ProjectStartedEventArgs psea;
+			if (target_names == null || target_names.Length == 0) {
+				if (project.DefaultTargets != String.Empty)
+					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName,
+						project.DefaultTargets, null, null);
+				else
+					psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, "default", null, null);
+			} else
+			psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, String.Join (";",
+				target_names), null, null);
+			eventSource.FireProjectStarted (this, psea);
+		}
+
+		void LogProjectFinished (Project project, bool succeeded)
+		{
+			ProjectFinishedEventArgs pfea;
+			pfea = new ProjectFinishedEventArgs ("Project started.", null, project.FullFileName, succeeded);
+			eventSource.FireProjectFinished (this, pfea);
+		}
+
 		void LogBuildStarted ()
 		{
 			BuildStartedEventArgs bsea;
@@ -331,8 +402,8 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		public BuildPropertyGroup GlobalProperties {
-			get { return globalProperties; }
-			set { globalProperties = value; }
+			get { return global_properties; }
+			set { global_properties = value; }
 		}
 
 		public bool OnlyLogCriticalEvents {

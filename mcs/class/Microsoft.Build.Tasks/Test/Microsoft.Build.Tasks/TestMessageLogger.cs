@@ -12,11 +12,37 @@ namespace MonoTests.Microsoft.Build.Tasks
 		List<BuildEventArgs> all_messages;
 		int target_started, target_finished;
 		int task_started, task_finished;
+		int project_started, project_finished;
+		int build_started, build_finished;
+
+		public int BuildStarted
+		{
+			get { return build_started; }
+			set { build_started = value; }
+		}
+
+		public int BuildFinished
+		{
+			get { return build_finished; }
+			set { build_finished = value; }
+		}
 
 		public TestMessageLogger ()
 		{
 			messages = new List<BuildMessageEventArgs> ();
 			all_messages = new List<BuildEventArgs> ();
+		}
+
+		public int ProjectStarted
+		{
+			get { return project_started; }
+			set { project_started = value; }
+		}
+
+		public int ProjectFinished
+		{
+			get { return project_finished; }
+			set { project_finished = value; }
 		}
 
 		public int TargetFinished
@@ -61,6 +87,10 @@ namespace MonoTests.Microsoft.Build.Tasks
 			eventSource.TargetFinished += delegate { target_finished++; };
 			eventSource.TaskStarted += delegate { task_started++; };
 			eventSource.TaskFinished += delegate { task_finished++; };
+			eventSource.ProjectStarted += delegate(object sender, ProjectStartedEventArgs args) { project_started++; Console.WriteLine ("Project started: {0}", args.ProjectFile); };
+			eventSource.ProjectFinished += delegate (object sender, ProjectFinishedEventArgs args) { project_finished++; Console.WriteLine ("Project finished: {0}", args.ProjectFile); };
+			eventSource.BuildStarted += delegate { build_started ++; };
+			eventSource.BuildFinished += delegate { build_finished++; };
 		}
 
 		public void Shutdown ()
@@ -98,22 +128,25 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		public int CheckHead (string text, MessageImportance importance, out string actual_msg)
 		{
-			BuildMessageEventArgs actual;
+			BuildMessageEventArgs actual = null;
 			actual_msg = String.Empty;
 
 			if (messages.Count > 0) {
 				//find first @importance level message
-				int i = 0;
-				while (messages [i].Importance != importance && i < messages.Count)
-					i++;
+				int i = -1;
+				while (++i < messages.Count && messages [i].Importance != importance)
+					;
 
-				actual = messages [i];
-				messages.RemoveAt (i);
+				if (i < messages.Count) {
+					actual = messages [i];
+					messages.RemoveAt (i);
+				}
 			} else
 				return 1;
 
-			actual_msg = actual.Message;
-			if (text == actual.Message && importance == actual.Importance)
+			if (actual != null)
+				actual_msg = actual.Message;
+			if (actual != null && text == actual_msg && importance == actual.Importance)
 				return 0;
 			else
 				return 2;

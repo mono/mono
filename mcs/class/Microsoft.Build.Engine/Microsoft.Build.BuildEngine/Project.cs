@@ -72,6 +72,8 @@ namespace Microsoft.Build.BuildEngine {
 		bool				unloaded;
 		bool				initialTargetsBuilt;
 		List<string>			builtTargetKeys;
+		bool				building;
+		BuildSettings			current_settings;
 
 		static XmlNamespaceManager	manager;
 		static string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
@@ -93,6 +95,9 @@ namespace Microsoft.Build.BuildEngine {
 			
 			fullFileName = String.Empty;
 			timeOfLastDirty = DateTime.Now;
+			current_settings = BuildSettings.None;
+
+			builtTargetKeys = new List<string> ();
 
 			globalProperties = new BuildPropertyGroup (null, this, null, false);
 			foreach (BuildProperty bp in parentEngine.GlobalProperties)
@@ -255,11 +260,19 @@ namespace Microsoft.Build.BuildEngine {
 		
 		{
 			bool result = false;
-			LogProjectStarted (targetNames);
+			ParentEngine.StartProjectBuild (this, targetNames);
+			string current_directory = Environment.CurrentDirectory;
 			try {
+				current_settings = buildFlags;
+				if (!String.IsNullOrEmpty (fullFileName))
+					Directory.SetCurrentDirectory (Path.GetDirectoryName (fullFileName));
+				building = true;
 				result = BuildInternal (targetNames, targetOutputs, buildFlags);
 			} finally {
-				LogProjectFinished (result);
+				ParentEngine.EndProjectBuild (this, result);
+				current_settings = BuildSettings.None;
+				Directory.SetCurrentDirectory (current_directory);
+				building = false;
 			}
 
 			return result;
@@ -270,7 +283,6 @@ namespace Microsoft.Build.BuildEngine {
 				   BuildSettings buildFlags)
 		{
 			CheckUnloaded ();
-			ParentEngine.StartBuild ();
 			if (buildFlags == BuildSettings.None)
 				Reevaluate ();
 			
@@ -309,12 +321,15 @@ namespace Microsoft.Build.BuildEngine {
 				return false;
 			}
 
-			string key = fullFileName + ":" + target;
+			// built targets are keyed by the particular set of global
+			// properties. So, a different set could allow a target
+			// to run again
+			string key = fullFileName + ":" + target + ":" + GlobalPropertiesToString (GlobalProperties);
 			ITaskItem[] outputs;
 			if (ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs)) {
 				if (targetOutputs != null)
 					targetOutputs.Add (target, outputs);
-				LogTargetSkipped ();
+				LogTargetSkipped (target);
 				return true;
 			}
 
@@ -327,6 +342,14 @@ namespace Microsoft.Build.BuildEngine {
 				targetOutputs.Add (target, targets [target].Outputs);
 
 			return true;
+		}
+
+		string GlobalPropertiesToString (BuildPropertyGroup bgp)
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (BuildProperty bp in bgp)
+				sb.AppendFormat (" {0}:{1}", bp.Name, bp.FinalValue);
+			return sb.ToString ();
 		}
 
 		[MonoTODO]
@@ -523,7 +546,10 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void ResetBuildStatus ()
 		{
+			// hack to allow built targets to be removed
+			building = true;
 			Reevaluate ();
+			building = false;
 		}
 
 		public void Save (string projectFileName)
@@ -790,8 +816,8 @@ namespace Microsoft.Build.BuildEngine {
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
 			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedProperties = new BuildPropertyGroup (null, null, null, true);
-			RemoveBuiltTargets ();
+			if (building && current_settings == BuildSettings.None)
+				RemoveBuiltTargets ();
 
 			InitializeProperties ();
 
@@ -805,22 +831,33 @@ namespace Microsoft.Build.BuildEngine {
 		// Removes entries of all earlier built targets for this project
 		void RemoveBuiltTargets ()
 		{
-			if (builtTargetKeys != null)
-				foreach (string key in builtTargetKeys)
-					ParentEngine.BuiltTargetsOutputByName.Remove (key);
-
-			builtTargetKeys = new List<string> ();
+			foreach (string key in builtTargetKeys)
+				ParentEngine.BuiltTargetsOutputByName.Remove (key);
 		}
 
 		void InitializeProperties ()
 		{
 			BuildProperty bp;
 
+			evaluatedProperties = new BuildPropertyGroup (null, null, null, true);
+
 			foreach (BuildProperty gp in GlobalProperties) {
 				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
 				EvaluatedProperties.AddProperty (bp);
 			}
 			
+			foreach (BuildProperty gp in GlobalProperties)
+				ParentEngine.GlobalProperties.AddProperty (gp);
+
+			// add properties that we dont have from parent engine's
+			// global properties
+			foreach (BuildProperty gp in ParentEngine.GlobalProperties) {
+				if (EvaluatedProperties [gp.Name] == null) {
+					bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
+					EvaluatedProperties.AddProperty (bp);
+				}
+			}
+
 			foreach (DictionaryEntry de in Environment.GetEnvironmentVariables ()) {
 				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
 				EvaluatedProperties.AddProperty (bp);
@@ -1036,10 +1073,11 @@ namespace Microsoft.Build.BuildEngine {
 			return default (T);
 		}
 
-		void LogTargetSkipped ()
+		void LogTargetSkipped (string targetName)
 		{
 			BuildMessageEventArgs bmea;
-			bmea = new BuildMessageEventArgs ("Target {0} skipped, as it has already been built.",
+			bmea = new BuildMessageEventArgs (String.Format (
+						"Target {0} skipped, as it has already been built.", targetName),
 					null, null, MessageImportance.Low);
 
 			ParentEngine.EventSource.FireMessageRaised (this, bmea);
@@ -1157,29 +1195,6 @@ namespace Microsoft.Build.BuildEngine {
 		internal static string XmlNamespace {
 			get { return ns; }
 		}
-
-		void LogProjectStarted (string [] targetNames)
-		{
-			ProjectStartedEventArgs psea;
-			if (targetNames == null || targetNames.Length == 0) {
-				if (DefaultTargets != String.Empty)
-					psea = new ProjectStartedEventArgs ("Project started.", null, FullFileName,
-						DefaultTargets, null, null);
-				else
-					psea = new ProjectStartedEventArgs ("Project started.", null, FullFileName, "default", null, null);
-			} else
-			psea = new ProjectStartedEventArgs ("Project started.", null, FullFileName, String.Join (";",
-				targetNames), null, null);
-			ParentEngine.EventSource.FireProjectStarted (this, psea);
-		}
-
-		void LogProjectFinished (bool succeeded)
-		{
-			ProjectFinishedEventArgs pfea;
-			pfea = new ProjectFinishedEventArgs ("Project started.", null, FullFileName, succeeded);
-			ParentEngine.EventSource.FireProjectFinished (this, pfea);
-		}
-
 	}
 }
 

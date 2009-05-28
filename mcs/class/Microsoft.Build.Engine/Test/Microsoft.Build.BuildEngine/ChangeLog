@@ -1,3 +1,10 @@
+2009-05-29  Ankit Jain  <jankit@novell.com>
+
+	* EngineTest.cs (TestGlobalProperties*): New tests
+	and some helper methods.
+	* ProjectTest.cs (TestResetBuildStatus): Reset twice. Update
+	the event counts.
+
 2009-05-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* BuildItemTest.cs:

@@ -1067,9 +1067,11 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project.Build ("T");
 			project.ResetBuildStatus ();
 			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
+			project.ResetBuildStatus ();
+			project.Build (new string [1] { "T" }, null, BuildSettings.DoNotResetPreviouslyBuiltTargets);
 
-			Assert.AreEqual (2, tl.TargetStartedEvents, "A1");
-			Assert.AreEqual (2, tl.TargetFinishedEvents, "A1");
+			Assert.AreEqual (3, tl.TargetStartedEvents, "A1");
+			Assert.AreEqual (3, tl.TargetFinishedEvents, "A1");
 		}
 		
 		[Test]
