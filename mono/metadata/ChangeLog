@@ -1,5 +1,11 @@
 2009-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (parse_return_type): Proper byref check.
+	* metadata-verify.c (is_valid_method_signature): Check for zero arity
+	generic signatures and method params.
+
+2009-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (decode_signature_header): Fix bounds check.
 
 	* metadata-verify.c (parse_custom_mods): Check custom mods.
