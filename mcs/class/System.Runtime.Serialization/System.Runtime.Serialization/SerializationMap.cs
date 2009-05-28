@@ -401,10 +401,14 @@ namespace System.Runtime.Serialization
 		// For now it could be private.
 		protected void SetValue (DataMemberInfo dmi, object obj, object value)
 		{
-			if (dmi.Member is PropertyInfo)
-				((PropertyInfo) dmi.Member).SetValue (obj, value, null);
-			else
-				((FieldInfo) dmi.Member).SetValue (obj, value);
+			try {
+				if (dmi.Member is PropertyInfo)
+					((PropertyInfo) dmi.Member).SetValue (obj, value, null);
+				else
+					((FieldInfo) dmi.Member).SetValue (obj, value);
+			} catch (Exception ex) {
+				throw new InvalidOperationException (String.Format ("Failed to set value of type {0} for property {1}", value != null ? value.GetType () : null, dmi.Member), ex);
+			}
 		}
 
 		protected DataMemberInfo CreateDataMemberInfo (DataMemberAttribute dma, MemberInfo mi, Type type)
@@ -622,7 +626,9 @@ namespace System.Runtime.Serialization
 			if (RuntimeType.IsArray)
 				return new ArrayList ();
 			if (RuntimeType.IsInterface) {
-				if (RuntimeType.IsGenericType && Array.IndexOf (RuntimeType.GetGenericTypeDefinition ().GetInterfaces (), typeof (ICollection<>)) >= 0)
+				var icoll = RuntimeType.GetInterfaces ().FirstOrDefault (
+					iface => iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>));
+				if (icoll != null)
 					return Activator.CreateInstance (typeof (List<>).MakeGenericType (RuntimeType.GetGenericArguments () [0])); // List<T>
 				else // non-generic
 					return new ArrayList ();

@@ -1,5 +1,10 @@
 2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs : generic interface search has to be more
+	  complicated. Give kind error message on setting deserialized value.
+
+2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs: collection interface cannot be instantiated,
 	  so create List<T> (generic) or ArrayList (non-generic) instead.
 
