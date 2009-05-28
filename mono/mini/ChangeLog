@@ -1,3 +1,28 @@
+2009-05-28  Martin Baulig  <martin@ximian.com>
+
+	Correctly initialize the debugger when embedding Mono.
+
+	* mdb-debug-info32.s, mdb-debug-info64.s: Add a global variable
+	`MONO_DEBUGGER__using_debugger' to the `.mdb_debug_info' section;
+	see documentation in mini_debug_running_inside_mdb().
+
+	* debug-debugger.c
+	(mini_debug_running_inside_mdb): New function to check whether
+	we're running inside mdb.
+
+	* mini.c (mini_init): Call mini_debugger_init() if we're running
+	inside the debugger.
+
+	* driver.c (mono_main): Moved the call to mini_debugger_init()
+	into mini_init() to make this work when embedding Mono.
+
+	* debug-debugger.c (mini_debugger_init): Warn about duplicate
+	calls to mini_debugger_init().
+
+	* mini.h: Rename mono_debugger_init() -> mini_debugger_init(),
+	mono_debugger_main() -> mini_debugger_main() and put them inside a
+	`MONO_DEBUGGER_SUPPORTED' conditional.
+
 2009-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-trampolines.c: Kill mono_find_delegate_trampoline_by_addr as
@@ -12,19 +37,6 @@
 	methods.
 
 2009-05-27  Martin Baulig  <martin@ximian.com>
-
-	Correctly initialize the debugger when embedding Mono.
-
-	* mini.c (mini_init): Call mono_debugger_init() if we're running
-	inside the debugger.
-
-	* driver.c (mono_main): Moved the call to mono_debugger_init()
-	into mini_init(); `mono_debug_init (MONO_DEBUG_FORMAT_DEBUGGER)'
-	sets the mono_debug_using_mono_debugger () flag for us, so we can
-	do the mono_debugger_init() call in mini_init().
-
-	* debug-debugger.c (mono_debugger_init): Warn about duplicate
-	calls to mono_debugger_init().
 
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
