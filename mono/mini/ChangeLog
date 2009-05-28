@@ -1,5 +1,7 @@
 2009-05-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* objects.cs: Fix the signature of one of the tests.
+
 	* mini.c (mini_create_ftnptr): New helper function, moved here from
 	object.c.
 	(mini_get_addr_from_ftnptr): Ditto.
