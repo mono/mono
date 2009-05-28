@@ -1,5 +1,10 @@
 2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* RegisterResponseInfo.cs : oops, Marcos was right. .NET returns
+	  "Update" element here.
+
+2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceSettingsResponseInfo.cs, RegisterResponseInfo.cs,
 	  RefreshResponseInfo.cs, ResolveInfo.cs, UpdateInfo.cs,
 	  UnregisterInfo.cs, ResolveResponseInfo.cs, RefreshInfo.cs :

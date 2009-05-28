@@ -14,7 +14,7 @@ namespace System.ServiceModel.PeerResolvers
 	[MessageContract (IsWrapped = false)]
 	public class RegisterResponseInfo
 	{
-		[MessageBodyMember (Name = "RegisterResponse", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		[MessageBodyMember (Name = "Update", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")] // .NET indeed returns "Update" element here.
 		RegisterResponseInfoDC body;
 		
 		public RegisterResponseInfo ()
@@ -45,7 +45,7 @@ namespace System.ServiceModel.PeerResolvers
 		}
 	}
 	
-	[DataContract (Name = "RegisterResponse", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+	[DataContract (Name = "Update", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 	internal class RegisterResponseInfoDC
 	{
 		Guid registration_id;
