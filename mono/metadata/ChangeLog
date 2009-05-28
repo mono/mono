@@ -1,9 +1,5 @@
 2009-05-28  Zoltan Varga  <vargaz@gmail.com>
 
-	* reflection-save.c: New file, a copy of reflection.c which will contain
-	the reflection.emit AssemblyBuilder.Save related code. Not part of the build
-	yet.
-
 	* object-internals.h (MonoRuntimeCallbacks): New structure containing
 	callbacks supplied by the runtime.
 
