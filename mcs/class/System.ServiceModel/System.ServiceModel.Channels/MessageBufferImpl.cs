@@ -75,6 +75,7 @@ namespace System.ServiceModel.Channels
 				msg = new EmptyMessage (headers.MessageVersion, headers.Action);
 			else
 				msg = new SimpleMessage (headers.MessageVersion, headers.Action, body.CreateBufferedCopy (max_buffer_size), is_fault);
+			msg.Headers.CopyHeadersFrom (headers);
 			msg.Properties.CopyProperties (properties);
 			return msg;
 		}

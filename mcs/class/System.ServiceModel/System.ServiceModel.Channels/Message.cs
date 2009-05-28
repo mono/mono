@@ -213,24 +213,18 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		[MonoTODO]
 		protected virtual MessageBuffer OnCreateBufferedCopy (
 			int maxBufferSize)
 		{
-#if NET_2_1
 			var s = new XmlWriterSettings ();
 			s.OmitXmlDeclaration = true;
 			s.ConformanceLevel = ConformanceLevel.Auto;
 			StringWriter sw = new StringWriter ();
 			using (XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw, s)))
 				WriteBodyContents (w);
-			return new DefaultMessageBuffer (maxBufferSize, Headers, Properties, new XmlReaderBodyWriter (sw.ToString ()), false);
-#else
-			DTMXPathDocumentWriter2 pw = new DTMXPathDocumentWriter2 (new NameTable (), 100);
-			XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (pw);
-			WriteMessage (w);
-			return new XPathMessageBuffer (pw.CreateDocument (), Version, Headers.Count, this.Properties);
-#endif
+			var headers = new MessageHeaders (Headers);
+			var props = new MessageProperties (Properties);
+			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (sw.ToString ()), false);
 		}
 
 		protected virtual string OnGetBodyAttribute (

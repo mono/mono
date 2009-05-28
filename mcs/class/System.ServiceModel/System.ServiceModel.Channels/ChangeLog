@@ -1,5 +1,11 @@
 2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageBufferImpl.cs : it did not copy headers.
+	* Message.cs : remove 2_1 conditional implementation for buffered
+	  copy and hence remove bogus code.
+
+2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageProperties.cs : copy argument is wrong.
 
 2009-05-27  Atsushi Enomoto  <atsushi@ximian.com>
