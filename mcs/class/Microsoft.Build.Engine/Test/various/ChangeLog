@@ -1,3 +1,8 @@
+2009-05-29  Ankit Jain  <jankit@novell.com>
+
+	* Conditions.cs (TestHasTrailingSlash1): New.
+	(TestUnknownFunction): New.
+
 2009-05-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Items.cs
