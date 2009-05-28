@@ -541,6 +541,7 @@ namespace System.Runtime.Serialization
 					continue;
 				l.Add (new DataMemberInfo (mi, new DataMemberAttribute (), null, null));
 			}
+			l.Sort (DataMemberInfo.DataMemberInfoComparer.Instance);
 			return l;
 		}
 	}
@@ -903,7 +904,6 @@ namespace System.Runtime.Serialization
 		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)
 		{
 			List<DataMemberInfo> data_members = new List<DataMemberInfo> ();
-			int order = 0;
 			BindingFlags flags = AllInstanceFlags;
 			if (declared_only)
 				flags |= BindingFlags.DeclaredOnly;
@@ -917,9 +917,10 @@ namespace System.Runtime.Serialization
 				if (fi.IsInitOnly)
 					throw new InvalidDataContractException (String.Format ("DataMember field {0} must not be read-only.", fi));
 				DataMemberAttribute dma = new DataMemberAttribute ();
-				dma.Order = order++;
 				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
 			}
+
+			data_members.Sort (DataMemberInfo.DataMemberInfoComparer.Instance); // alphabetic order.
 
 			return data_members;
 		}
