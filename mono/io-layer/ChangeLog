@@ -1,3 +1,11 @@
+2009-05-28  Mark Probst  <mark.probst@gmail.com>
+
+	* collection.c (_wapi_collection_init): If pthread_create() fails,
+	try again with larger and then with no stack size set.  Fixes
+	#470336.
+
+	Backport of r134985.
+
 2009-05-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* events.c: fix event_signal and namedevent_signal to actually signal
