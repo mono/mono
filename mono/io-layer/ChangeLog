@@ -1,3 +1,9 @@
+2009-05-28  Mark Probst  <mark.probst@gmail.com>
+
+	* collection.c (_wapi_collection_init): If pthread_create() fails,
+	try again with larger and then with no stack size set.  Fixes
+	#470336.
+
 2009-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* shared.c (_wapi_shm_file): Avoid creating a .wapi directory here, create
