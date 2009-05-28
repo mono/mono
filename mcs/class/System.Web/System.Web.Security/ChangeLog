@@ -1,3 +1,12 @@
+2009-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* FormsAuthenticationModule.cs: if forms authentication login URL
+	is not rooted, make it relative to the application root, so that
+	MapPath maps it correctly.
+	Use String.Compare for checking whether requested URL matches the
+	login URL - be case-insensitive when running on Windows or with
+	IOMAP in effect.
+
 2009-03-10  Marek Habersack  <mhabersack@novell.com>
 
 	* UrlAuthorizationModule.cs: OnAuthorizeRequest must use the

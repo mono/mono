@@ -28,6 +28,7 @@
 //
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
@@ -109,14 +110,17 @@ namespace System.Web.Security
 			slidingExpiration = _config.SlidingExpiration;
 #endif
 
-			string reqPath = "";
+			if (!VirtualPathUtility.IsRooted (loginPage))
+				loginPage = "~/" + loginPage;
+
+			string reqPath = String.Empty;
 			string loginPath = null;
 			try {
 				reqPath = context.Request.PhysicalPath;
 				loginPath = context.Request.MapPath (loginPage);
 			} catch {} // ignore
 
-			context.SkipAuthorization = (reqPath == loginPath);
+			context.SkipAuthorization = String.Compare (reqPath, loginPath, HttpRuntime.CaseInsensitive, CultureInfo.InvariantCulture) == 0;
 			
 #if NET_2_0
 			//TODO: need to check that the handler is System.Web.Handlers.AssemblyResourceLoader type
