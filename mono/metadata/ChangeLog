@@ -1,3 +1,13 @@
+2009-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r134810.
+
+	* icall.c (ves_icall_Type_GetMethodsByName): Virtual methods should be
+	discarded based on their most specific definition so we set the method_slots
+	array before checking if the method is acceptable or not.
+
+	Fixes #506757.
+
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r134723.
