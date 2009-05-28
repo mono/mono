@@ -53,7 +53,7 @@ namespace System.ServiceModel.PeerResolvers
 		}
 	}
 	
-	[DataContract]
+	[DataContract (Name = "Resolve", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 	internal class ResolveInfoDC
 	{
 		Guid client_id;

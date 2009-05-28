@@ -1,3 +1,12 @@
+2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceSettingsResponseInfo.cs, RegisterResponseInfo.cs,
+	  RefreshResponseInfo.cs, ResolveInfo.cs, UpdateInfo.cs,
+	  UnregisterInfo.cs, ResolveResponseInfo.cs, RefreshInfo.cs :
+	  set explicit namespaces on DataContract so that their members can
+	  be serialized in appropriate namespace (namespaces in
+	  MessageBodyMemberAttribute does not apply there).
+
 2009-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ResolveInfo.cs : argument check.

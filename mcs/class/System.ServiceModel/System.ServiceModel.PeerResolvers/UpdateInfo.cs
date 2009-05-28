@@ -54,7 +54,7 @@ namespace System.ServiceModel.PeerResolvers
 		}
 	}
 	
-	[DataContract]
+	[DataContract (Name = "Update", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 	internal class UpdateInfoDC
 	{
 		Guid client_id;

@@ -40,7 +40,7 @@ namespace System.ServiceModel.PeerResolvers
 		}
 	}
 	
-	[DataContract]
+	[DataContract (Name = "ServiceSettings", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 	internal class ServiceSettingsResponseInfoDC
 	{
 		bool control_mesh_shape;

@@ -44,7 +44,7 @@ namespace System.ServiceModel.PeerResolvers
 		}
 	}
 	
-	[DataContract]
+	[DataContract (Name = "Refresh", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 	internal class RefreshInfoDC
 	{
 		string mesh_id;

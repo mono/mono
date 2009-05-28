@@ -44,7 +44,7 @@ namespace System.ServiceModel.PeerResolvers
 		}
 	}
 	
-	[DataContract]
+	[DataContract (Name = "Unregister", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 	internal class UnregisterInfoDC
 	{
 		string mesh_id;

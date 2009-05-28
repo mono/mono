@@ -40,7 +40,7 @@ namespace System.ServiceModel.PeerResolvers
 		}
 	}
 	
-	[DataContract]
+	[DataContract (Name = "ResolveResponse", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
 	internal class ResolveResponseInfoDC
 	{
 		IList<PeerNodeAddress> addresses;
