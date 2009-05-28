@@ -621,11 +621,16 @@ namespace System.Runtime.Serialization
 		{
 			if (RuntimeType.IsArray)
 				return new ArrayList ();
-			else
+			if (RuntimeType.IsInterface) {
+				if (RuntimeType.IsGenericType && Array.IndexOf (RuntimeType.GetGenericTypeDefinition ().GetInterfaces (), typeof (ICollection<>)) >= 0)
+					return Activator.CreateInstance (typeof (List<>).MakeGenericType (RuntimeType.GetGenericArguments () [0])); // List<T>
+				else // non-generic
+					return new ArrayList ();
+			}
 #if NET_2_1 // FIXME: is it fine?
-				return Activator.CreateInstance (RuntimeType);
+			return Activator.CreateInstance (RuntimeType);
 #else
-				return Activator.CreateInstance (RuntimeType, true);
+			return Activator.CreateInstance (RuntimeType, true);
 #endif
 		}
 
@@ -824,13 +829,26 @@ namespace System.Runtime.Serialization
 			}
 		}
 
+		object CreateInstance ()
+		{
+			if (RuntimeType.IsInterface) {
+				if (RuntimeType.IsGenericType && Array.IndexOf (RuntimeType.GetGenericTypeDefinition ().GetInterfaces (), typeof (IDictionary<,>)) >= 0) {
+					var gargs = RuntimeType.GetGenericArguments ();
+					return Activator.CreateInstance (typeof (Dictionary<,>).MakeGenericType (gargs [0], gargs [1])); // Dictionary<T>
+				}
+				else // non-generic
+					return new Hashtable ();
+			}
+#if NET_2_1 // FIXME: is it fine?
+			return Activator.CreateInstance (RuntimeType);
+#else
+			return Activator.CreateInstance (RuntimeType, true);
+#endif
+		}
+
 		public override object DeserializeContent(XmlReader reader, XmlFormatterDeserializer deserializer)
 		{
-#if NET_2_1 // FIXME: is it fine?
-			object instance = Activator.CreateInstance (RuntimeType);
-#else
-			object instance = Activator.CreateInstance (RuntimeType, true);
-#endif
+			object instance = CreateInstance ();
 			int depth = reader.NodeType == XmlNodeType.None ? reader.Depth : reader.Depth - 1;
 			while (reader.NodeType == XmlNodeType.Element && reader.Depth > depth) {
 				if (reader.IsEmptyElement)
