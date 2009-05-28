@@ -1,3 +1,16 @@
+2009-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (MonoRuntimeCallbacks): New structure containing
+	callbacks supplied by the runtime.
+
+	* object.c (mono_install_callbacks): New internal function to install
+	the callbacks.
+
+	* object.c (mono_create_ftnptr): Move the implementation of this to
+	mini/.
+
+	* object.c (mono_get_addr_from_ftnptr): Ditto.	
+
 2009-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (parse_return_type): Proper byref check.
