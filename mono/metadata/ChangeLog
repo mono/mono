@@ -40,6 +40,12 @@
 
 	* appdomain.c: Bump corlib version.
 
+2009-05-27  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_init): Use `MONO_DEBUG_FORMAT_DEBUGGER'
+	if `_mono_debug_using_mono_debugger' is set to make things work
+	properly when embedding Mono.
+
 2009-05-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_fields): Don't mark simd types as having
