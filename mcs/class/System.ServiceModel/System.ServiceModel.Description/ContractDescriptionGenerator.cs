@@ -331,7 +331,8 @@ namespace System.ServiceModel.Description
 			mb.WrapperName = name + (isRequest ? String.Empty : "Response");
 			mb.WrapperNamespace = defaultNamespace;
 
-			// FIXME: anything to do for ProtectionLevel?
+			if (oca.HasProtectionLevel)
+				md.ProtectionLevel = oca.ProtectionLevel;
 
 			// Parts
 			int index = 0;
