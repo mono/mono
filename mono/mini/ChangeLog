@@ -1,3 +1,10 @@
+2009-05-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_create_ftnptr): New helper function, moved here from
+	object.c.
+	(mini_get_addr_from_ftnptr): Ditto.
+	(mini_init): Install the new helpers.
+
 2009-05-28  Martin Baulig  <martin@ximian.com>
 
 	Correctly initialize the debugger when embedding Mono.
