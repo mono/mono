@@ -320,6 +320,25 @@ namespace MonoTests.System.Web {
 			}
 		}
 
+		[Test (Description="Bug #507666")]
+		public void UrlDecode_Bug507666 ()
+		{
+			// Get Encoding object.
+			var enc_utf8 = Encoding.UTF8;
+			var enc_sjis = Encoding.GetEncoding(932);
+
+			// Generate equiv. client request query string with url-encoded shift_jis string.
+			var utf8_string = "紅茶"; // it's UTF-8 string
+			var utf8_bin = enc_utf8.GetBytes(utf8_string); // convert to UTF-8 byte[]
+			var sjis_bin = Encoding.Convert(enc_utf8, enc_sjis, utf8_bin); // convert to Shift_jis byte[]
+			var urlenc_string = HttpUtility.UrlEncode(sjis_bin); // equiv. client request query string.
+
+			// Test using UrlDecode only.
+			var decoded_by_web = HttpUtility.UrlDecode(urlenc_string, enc_sjis);
+
+			Assert.AreEqual (utf8_string, decoded_by_web, "#A1");
+		}
+		
 		[Test]
 		public void Decode1 ()
 		{
@@ -487,7 +506,7 @@ namespace MonoTests.System.Web {
         }
 
 #endif
-
+		
 #if NET_2_0
 		[Test]
 #if TARGET_JVM
