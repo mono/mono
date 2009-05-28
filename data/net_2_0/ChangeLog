@@ -1,3 +1,7 @@
+2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* machine.config: fix WCF diagnostics section name.
+
 2009-03-31  Marek Habersack  <mhabersack@novell.com>
 
 	* DefaultWsdlHelpGenerator.aspx: the link element in <head> must
