@@ -37,6 +37,10 @@ using System.Security.Permissions;
 using System.Text;
 using System.Web.Util;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 namespace System.Web {
 
 	// CAS - no InheritanceDemand here as the class is sealed
@@ -381,6 +385,15 @@ namespace System.Web {
 			return e.GetChars (b.GetBuffer (), 0, (int) b.Length);
 		}
 
+		static void WriteCharBytes (IList buf, char ch, Encoding e)
+		{
+			if (ch > 255) {
+				foreach (byte b in e.GetBytes (new char[] { ch }))
+					buf.Add (b);
+			} else
+				buf.Add ((byte)ch);
+		}
+		
 		public static string UrlDecode (string s, Encoding e)
 		{
 			if (null == s) 
@@ -388,57 +401,53 @@ namespace System.Web {
 
 			if (s.IndexOf ('%') == -1 && s.IndexOf ('+') == -1)
 				return s;
-
+			
 			if (e == null)
 				e = Encoding.UTF8;
-	
-			StringBuilder output = new StringBuilder ();
-			long len = s.Length;
-			MemoryStream bytes = new MemoryStream ();
-			int xchar;
-	
-			for (int i = 0; i < len; i++) {
-				if (s [i] == '%' && i + 2 < len && s [i + 1] != '%') {
-					if (s [i + 1] == 'u' && i + 5 < len) {
-						if (bytes.Length > 0) {
-							output.Append (GetChars (bytes, e));
-							bytes.SetLength (0);
-						}
 
+			long len = s.Length;
+#if NET_2_0
+			var bytes = new List <byte> ();
+#else
+			ArrayList bytes = new ArrayList ();
+#endif
+			int xchar;
+			char ch;
+			
+			for (int i = 0; i < len; i++) {
+				ch = s [i];
+				if (ch == '%' && i + 2 < len && s [i + 1] != '%') {
+					if (s [i + 1] == 'u' && i + 5 < len) {
+						// unicode hex sequence
 						xchar = GetChar (s, i + 2, 4);
 						if (xchar != -1) {
-							output.Append ((char) xchar);
+							WriteCharBytes (bytes, (char)xchar, e);
 							i += 5;
-						} else {
-							output.Append ('%');
-						}
+						} else
+							WriteCharBytes (bytes, '%', e);
 					} else if ((xchar = GetChar (s, i + 1, 2)) != -1) {
-						bytes.WriteByte ((byte) xchar);
+						WriteCharBytes (bytes, (char)xchar, e);
 						i += 2;
 					} else {
-						output.Append ('%');
+						WriteCharBytes (bytes, '%', e);
 					}
 					continue;
 				}
 
-				if (bytes.Length > 0) {
-					output.Append (GetChars (bytes, e));
-					bytes.SetLength (0);
-				}
-
-				if (s [i] == '+') {
-					output.Append (' ');
-				} else {
-					output.Append (s [i]);
-				}
-	         	}
-	
-			if (bytes.Length > 0) {
-				output.Append (GetChars (bytes, e));
+				if (ch == '+')
+					WriteCharBytes (bytes, ' ', e);
+				else
+					WriteCharBytes (bytes, ch, e);
 			}
-
+			
+#if NET_2_0
+			byte[] buf = bytes.ToArray ();
+#else
+			byte[] buf = (byte[])bytes.ToArray (typeof (byte));
+#endif
 			bytes = null;
-			return output.ToString ();
+			return e.GetString (buf);
+			
 		}
 	
 		public static string UrlDecode (byte [] bytes, Encoding e)

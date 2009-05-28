@@ -1,3 +1,7 @@
+2009-05-28  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpUtilityTest.cs: added test for bug #507666
+
 2009-03-26  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponseTest.cs: enabled the WriteHeader test. Modified the
