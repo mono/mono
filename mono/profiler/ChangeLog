@@ -1,3 +1,8 @@
+2009-05-25  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c (setup_user_options): Avoid tracking stacks
+	and emitting allocation caller information if we are already emitting
+	method enter and exit events.
+
 2009-04-06  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Added monitor contention profiling.
 	- Changed RESERVE_EVENTS to require a call to the new 
