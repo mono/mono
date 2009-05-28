@@ -52,7 +52,7 @@ namespace System.ServiceModel.Channels
 
 		public MessageProperties (MessageProperties properties)
 		{
-			properties.CopyProperties (this);
+			CopyProperties (properties);
 		}
 
 		[MonoTODO ("This should actually be internal of a property.")]
