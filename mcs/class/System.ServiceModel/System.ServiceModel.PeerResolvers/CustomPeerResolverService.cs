@@ -9,9 +9,11 @@
 
 using System.Collections.Generic;
 using System.Transactions;
+using System.Timers;
 
 namespace System.ServiceModel.PeerResolvers
 {
+	[MonoTODO ("Implement cleanup and refresh")]
 	// FIXME: TransactionTimeout must be null by-default.
 	[ServiceBehavior (AutomaticSessionShutdown = true, ConcurrencyMode = ConcurrencyMode.Multiple, 
 	                  InstanceContextMode = InstanceContextMode.Single, ReleaseServiceInstanceOnTransactionComplete = true, 
@@ -19,31 +21,39 @@ namespace System.ServiceModel.PeerResolvers
 	                  UseSynchronizationContext = false, ValidateMustUnderstand = true)]
 	public class CustomPeerResolverService : IPeerResolverContract
 	{
-		TimeSpan cleanup_interval;
 		bool control_shape;
 		bool opened;
 		// Maybe it's worth to change List<T> for a better distributed and faster collection.
 		List<Node> mesh = new List<Node> ();
 		object mesh_lock = new object ();
-		TimeSpan refresh_interval;
+		Timer refresh_timer, cleanup_timer;
 
 		public CustomPeerResolverService ()
 		{
-			cleanup_interval = new TimeSpan (0, 1, 0);
+			refresh_timer = new Timer () { AutoReset = true };
+			RefreshInterval = new TimeSpan (0, 10, 0);
+			refresh_timer.Elapsed += delegate {
+					// FIXME: implement
+				};
+			cleanup_timer = new Timer () { AutoReset = true };
+			CleanupInterval = new TimeSpan (0, 1, 0);
+			cleanup_timer.Elapsed += delegate {
+					// FIXME: implement
+				};
 			control_shape = false;
 			opened = false;
-			refresh_interval = new TimeSpan (0, 10, 0);
 		}
 
-		[MonoTODO ("To check for InvalidOperationException")]
 		public TimeSpan CleanupInterval {
-			get { return cleanup_interval; }
+			get { return TimeSpan.FromMilliseconds ((int) cleanup_timer.Interval); }
 			set {
 				if ((value < TimeSpan.Zero) || (value > TimeSpan.MaxValue))
 					throw new ArgumentOutOfRangeException (
 					"The interval is either zero or greater than max value.");
+				if (opened)
+					throw new InvalidOperationException ("The interval must be set before it is opened");
 
-				cleanup_interval = value;
+				cleanup_timer.Interval = value.TotalMilliseconds;
 			}
 		}
 
@@ -52,23 +62,26 @@ namespace System.ServiceModel.PeerResolvers
 			set { control_shape = value; }
 		}
 
-		[MonoTODO ("To check for InvalidOperationException")]
 		public TimeSpan RefreshInterval {
-			get { return refresh_interval; }
+			get { return TimeSpan.FromMilliseconds ((int) refresh_timer.Interval); }
 			set {
 				if ((value < TimeSpan.Zero) || (value > TimeSpan.MaxValue))
 					throw new ArgumentOutOfRangeException (
 					"The interval is either zero or greater than max value.");
+				if (opened)
+					throw new InvalidOperationException ("The interval must be set before it is opened");
 
-				refresh_interval = value;
+				refresh_timer.Interval = value.TotalMilliseconds;
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Do we have to unregister nodes here?")]
 		public virtual void Close ()
 		{
 			if (! opened)
 				throw new InvalidOperationException ("The service has never been opened or it was closed by a previous call to this method.");
+			refresh_timer.Stop ();
+			cleanup_timer.Stop ();
 		}
 
 		[MonoTODO]
@@ -81,16 +94,18 @@ namespace System.ServiceModel.PeerResolvers
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void Open ()
 		{
-			if ((cleanup_interval == TimeSpan.Zero) || (refresh_interval == TimeSpan.Zero))
+			if ((CleanupInterval == TimeSpan.Zero) || (RefreshInterval == TimeSpan.Zero))
 				throw new ArgumentException ("Cleanup interval or refresh interval are set to a time span interval of zero.");
 
 			if (opened)
 				throw new InvalidOperationException ("The service has been started by a previous call to this method.");
 			
 			opened = true;
+
+			refresh_timer.Start ();
+			cleanup_timer.Start ();
 		}
 
 		[MonoTODO]
@@ -117,46 +132,34 @@ namespace System.ServiceModel.PeerResolvers
 			return Register (registerInfo.ClientId, registerInfo.MeshId, registerInfo.NodeAddress);
 		}
 
-		[MonoTODO]
-		public virtual RegisterResponseInfo Register (Guid clientId, 
-			string meshId, 
-			PeerNodeAddress address)
+		public virtual RegisterResponseInfo Register (Guid clientId, string meshId, PeerNodeAddress address)
 		{
-			Node n = new Node ();
+			Node n = new Node () { RegistrationId = Guid.NewGuid (), MeshId = meshId, ClientId = clientId, NodeAddress = address };
 			RegisterResponseInfo rri = new RegisterResponseInfo ();
-			
-			if (ControlShape) {
-				// FIXME: To update mesh node here.
-				lock (mesh_lock)
-				{
-					mesh.Add (n);
-//					Console.WriteLine ("{0}, {1}, {2}", clientId, meshId, address);
-				}
-			}
+			rri.RegistrationId = n.RegistrationId;
+			lock (mesh_lock)
+				mesh.Add (n);
 			
 			return rri;
 		}
 
-		[MonoTODO]
 		public virtual ResolveResponseInfo Resolve (ResolveInfo resolveInfo)
 		{
 			ResolveResponseInfo rri = new ResolveResponseInfo ();
-			
 			if (resolveInfo == null)
 				throw new ArgumentException ("Resolve info cannot be null.");
 			
 			if (! opened)
 				throw new InvalidOperationException ("The service has never been opened or it was closed previously.");
 			
-			if (ControlShape)
-			{
-				// FIXME: To resolve address here.
-			}
+			foreach (var node in mesh)
+				if (node.MeshId == resolveInfo.MeshId &&
+				    node.ClientId == resolveInfo.ClientId)
+					rri.Addresses.Add (node.NodeAddress);
 			
 			return rri;
 		}
 
-		[MonoTODO]
 		public virtual void Unregister (UnregisterInfo unregisterInfo)
 		{
 			if (unregisterInfo == null)
@@ -165,10 +168,13 @@ namespace System.ServiceModel.PeerResolvers
 			if (! opened)
 				throw new InvalidOperationException ("The service has never been opened or it was closed previously.");
 			
-			if (ControlShape)
-			{
-				// FIXME: To remove node from mesh here.
-			}
+			lock (mesh_lock)
+				foreach (var node in mesh)
+					if (node.MeshId == unregisterInfo.MeshId &&
+					    node.RegistrationId == unregisterInfo.RegistrationId) {
+						mesh.Remove (node);
+						break;
+					}
 		}
 
 		[MonoTODO]
@@ -187,6 +193,9 @@ namespace System.ServiceModel.PeerResolvers
 	
 	internal class Node
 	{
-		
+		public Guid ClientId { get; set; }
+		public string MeshId { get; set; }
+		public Guid RegistrationId { get; set; }
+		public PeerNodeAddress NodeAddress { get; set; }
 	}
 }

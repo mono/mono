@@ -1,5 +1,9 @@
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CustomPeerResolverService.cs : implement some members.
+
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* RegisterResponseInfo.cs : it does not always reply lifetime.
 
 2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
