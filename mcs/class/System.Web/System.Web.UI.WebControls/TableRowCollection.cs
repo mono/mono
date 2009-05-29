@@ -39,12 +39,16 @@ namespace System.Web.UI.WebControls {
 	public sealed class TableRowCollection : IList, ICollection, IEnumerable
 	{
 		ControlCollection cc;
+#if NET_2_0
 		Table owner;
+#endif
 		
 		internal TableRowCollection (Table table)
 		{
 			cc = table.Controls;
+#if NET_2_0
 			owner = table;
+#endif
 		}
 
 		public int Count {

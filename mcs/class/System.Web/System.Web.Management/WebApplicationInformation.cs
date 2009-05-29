@@ -34,7 +34,9 @@ namespace System.Web.Management
 {
         public sealed class WebApplicationInformation
         {
+#pragma warning disable 0649
                 string application_domain, application_path, application_virtual_path, machine_name, trust_level;
+#pragma warning restore 0649
 
                 internal WebApplicationInformation ()
                 {

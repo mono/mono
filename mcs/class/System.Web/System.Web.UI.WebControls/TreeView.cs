@@ -897,7 +897,6 @@ namespace System.Web.UI.WebControls
 		{
 			string[] segments = args [0].Split ('_');
 			TreeNode ret = null, node;
-			StringBuilder sb = new StringBuilder ();
 
 			foreach (string seg in segments) {
 				int idx = Int32.Parse (seg);

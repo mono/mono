@@ -59,6 +59,11 @@ namespace System.Web.UI {
 		{
 			this.filter = filter;
 		}
+
+		internal void SetCollection (ICollection collection)
+		{
+			this.collection = collection;
+		}
 #endif
 
 		public EventHandler DataBindingHandler {

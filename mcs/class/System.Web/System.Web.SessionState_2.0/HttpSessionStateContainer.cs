@@ -74,6 +74,7 @@ namespace System.Web.SessionState
 			this.cookieMode = cookieMode;
 			this.mode = mode;
 			this.isReadOnly = isReadonly;
+			this.isCookieless = cookieMode == HttpCookieMode.UseUri;
 		}
 		
 		public int CodePage {

@@ -1485,7 +1485,9 @@ namespace System.Web {
 			cfg = GlobalizationConfiguration.GetInstance (null);
 			if (cfg != null) {
 				app_culture = cfg.Culture;
+				autoCulture = false; // to hush the warning
 				appui_culture = cfg.UICulture;
+				autoUICulture = false; // to hush the warning
 			}
 #endif
 

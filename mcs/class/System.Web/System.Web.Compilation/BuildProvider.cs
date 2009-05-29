@@ -43,10 +43,10 @@ using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
 
-namespace System.Web.Compilation {
-
-	public abstract class BuildProvider {
-		string virtual_path;
+namespace System.Web.Compilation
+{
+	public abstract class BuildProvider
+	{
 		ArrayList ref_assemblies;
 		
 		ICollection vpath_deps;

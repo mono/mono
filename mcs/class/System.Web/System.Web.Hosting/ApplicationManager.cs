@@ -116,6 +116,7 @@ namespace System.Web.Hosting {
 		{
 			BareApplicationHost host;
 			host = (BareApplicationHost) ApplicationHost.CreateApplicationHost (typeof (BareApplicationHost), vpath, ppath);
+			HostingEnvironment.SetIsHosted (true);
 			host.Manager = this;
 			host.AppID = appId;
 			id_to_host [appId] = host;

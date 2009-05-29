@@ -68,11 +68,12 @@ namespace System.Web.Security
 			if (config == null)
 				return;
 #endif
-			if (!config.IsValidUser (context.User, context.Request.HttpMethod)) {
+			if (!config.IsValidUser (context.User, req.HttpMethod)) {
 				HttpException e = new HttpException (401, "Unauthorized");
+				HttpResponse response = context.Response;
 				
-				context.Response.StatusCode = 401;
-				context.Response.Write (e.GetHtmlErrorMessage ());
+				response.StatusCode = 401;
+				response.Write (e.GetHtmlErrorMessage ());
 				app.CompleteRequest ();
 			}
 		}

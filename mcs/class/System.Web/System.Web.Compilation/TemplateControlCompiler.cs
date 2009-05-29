@@ -1321,6 +1321,7 @@ namespace System.Web.Compilation
 			parent.RenderMethod.Statements.Add (AddLinePragma (expr, cr));
 		}
 
+#if !NET_2_0
 		static PropertyInfo GetContainerProperty (Type type, string[] propNames)
 		{
 			PropertyInfo prop;
@@ -1334,7 +1335,6 @@ namespace System.Web.Compilation
 			return null;
 		}
 
-#if !NET_2_0
 		static string[] containerPropNames = {"Items", "Rows"};
 #endif
 		

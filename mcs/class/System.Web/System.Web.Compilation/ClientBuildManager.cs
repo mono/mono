@@ -189,13 +189,13 @@ namespace System.Web.Compilation {
 			// A null file string causes virtualPath to be mapped and read to generate the code
 			//
 
-			if (virtualPath == null || virtualPath == "")
+			if (String.IsNullOrEmpty (virtualPath))
 				throw new ArgumentNullException ("virtualPath");
 
 			Type cprovider_type;
 			CompilerParameters parameters;
-			CodeCompileUnit unit = GenerateCodeCompileUnit (virtualPath, virtualFileString, out cprovider_type,
-									out parameters, out linePragmasTable);
+			GenerateCodeCompileUnit (virtualPath, virtualFileString, out cprovider_type,
+						 out parameters, out linePragmasTable);
 			return null;
 		}
 

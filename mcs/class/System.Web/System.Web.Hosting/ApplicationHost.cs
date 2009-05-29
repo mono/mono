@@ -259,6 +259,7 @@ namespace System.Web.Hosting {
 			appdomain.SetData (".hostingInstallDir", Path.GetDirectoryName (typeof (Object).Assembly.CodeBase));
 #if NET_2_0
 			appdomain.SetData ("DataDirectory", Path.Combine (physicalDir, "App_Data"));
+			HostingEnvironment.SetIsHosted (false);
 #endif
 			appdomain.SetData (MonoHostedDataKey, "yes");
 			

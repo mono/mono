@@ -110,8 +110,9 @@ namespace System.Web.UI {
 #endif
 			} else
 				algoKey = vkey;
-			
-			return new HMACSHA1 (algoKey);
+
+			algo = new HMACSHA1 (algoKey);
+			return algo;
 		}
 
 		static int ValidateInput (HashAlgorithm algo, byte [] data, int offset, int size)

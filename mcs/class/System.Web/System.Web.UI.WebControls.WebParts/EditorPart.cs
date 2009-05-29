@@ -40,6 +40,7 @@ namespace System.Web.UI.WebControls.WebParts
 	public abstract class EditorPart : Part
 	{	
 		bool				display = true;
+#pragma warning disable 0649
 		WebPart				webPartToEdit;
 #if false
 		WebPartManager		manager;
@@ -47,7 +48,7 @@ namespace System.Web.UI.WebControls.WebParts
 #endif
 		object zone;
 		string				displayTitle;
-		
+#pragma warning restore 0649
 
 		protected EditorPart() {}
 

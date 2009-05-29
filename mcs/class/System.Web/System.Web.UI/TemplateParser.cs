@@ -534,11 +534,13 @@ namespace System.Web.UI {
 			return type;
 		}
 
+#if !NET_2_0
 		void AddAssembliesInBin ()
 		{
 			foreach (string s in HttpApplication.BinDirectoryAssemblies)
 				assemblies.Add (s);
 		}
+#endif
 		
 		internal virtual void AddInterface (string iface)
 		{

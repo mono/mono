@@ -790,9 +790,9 @@ namespace System.Web.Compilation
 				Directory.SetCurrentDirectory (origdir);
 				if (newdir [newdir.Length - 1] != '/')
 					newdir += "/";
-			} catch (DirectoryNotFoundException ex) {
+			} catch (DirectoryNotFoundException) {
 				return; // will be converted into 404
-			} catch (FileNotFoundException ex) {
+			} catch (FileNotFoundException) {
 				return; // as above
 			} catch (Exception ex) {
 				// better safe than sorry

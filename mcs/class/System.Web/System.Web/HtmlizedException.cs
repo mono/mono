@@ -59,7 +59,7 @@ namespace System.Web
 		}
 
 		public abstract string Title { get; }
-		public abstract string Description { get; }
+		public new abstract string Description { get; }
 		public abstract string ErrorMessage { get; }
 		public abstract string FileName { get; }
 		public abstract string SourceFile { get; }

@@ -46,8 +46,10 @@ namespace System.Web.Hosting {
 	public sealed class HostingEnvironment : MarshalByRefObject
 	{
 		static bool is_hosted;
+#pragma warning disable 0649
 		static string site_name;
 		static ApplicationShutdownReason shutdown_reason;
+#pragma warning restore 0649
 		internal static BareApplicationHost Host;
 		static VirtualPathProvider vpath_provider = (HttpRuntime.AppDomainAppVirtualPath == null) ? null :
 								new DefaultVirtualPathProvider ();
@@ -196,6 +198,11 @@ namespace System.Web.Hosting {
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			Host.UnregisterObject (obj);
+		}
+
+		internal static void SetIsHosted (bool isHosted)
+		{
+			is_hosted = isHosted;
 		}
 	}
 }

@@ -82,11 +82,9 @@ namespace System.Web
 		bool set_no_store;
 		bool set_no_transform;
 		bool valid_until_expires;
-
-		// always false in 1.x
-		bool omit_vary_star;
-
 #if NET_2_0
+		bool omit_vary_star;
+		
 		public HttpCacheVaryByContentEncodings VaryByContentEncodings {
 			get { return vary_by_content_encodings; }
 		}
@@ -123,7 +121,13 @@ namespace System.Web
 
 		// always false in 1.x
 		internal bool OmitVaryStar {
-			get { return omit_vary_star; }
+			get {
+#if NET_2_0
+				return omit_vary_star;
+#else
+				return false;
+#endif
+			}
 		}
 
 		internal bool ValidUntilExpires {
@@ -272,6 +276,7 @@ namespace System.Web
 				return;
 
 			ProxyMaxAge = delta;
+			HaveProxyMaxAge = true;
 		}
 
 		public void SetRevalidation (HttpCacheRevalidation revalidation)

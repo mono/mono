@@ -103,6 +103,11 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
+		internal void SetZoneIndex (int index)
+		{
+			zoneIndex = index;
+		}
+		
 		protected internal virtual void OnClosing (EventArgs e)
 		{ /* no base class implementation */ }
 
