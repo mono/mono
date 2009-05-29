@@ -736,5 +736,15 @@ Console.WriteLine ();
 			xw.WriteAttributeString ("xml", "lang", null, "en-US");
 			xw.WriteEndElement ();
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FailConflictingNamespace ()
+		{
+			var ms = new MemoryStream ();
+			var xw = XmlDictionaryWriter.CreateBinaryWriter (ms);
+			xw.WriteStartElement ("x", "foo", "urn:foo");
+			xw.WriteAttributeString ("x", "a", "urn:baz", "v");
+		}
 	}
 }

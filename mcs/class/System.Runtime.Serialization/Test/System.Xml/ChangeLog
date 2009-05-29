@@ -1,6 +1,11 @@
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* XmlBinaryDictionaryWriter.cs : added test for writing xml/xmlns
+	* XmlBinaryDictionaryWriterTest.cs : added test for failing duplicate
+	  namespace declaration in the same element context.
+
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriterTest.cs : added test for writing xml/xmlns
 	  attributes with null namespace.
 
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>

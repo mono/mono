@@ -793,10 +793,14 @@ namespace System.Xml
 
 			if (prefix == null)
 				throw new InvalidOperationException ();
-			var o = namespaces.FirstOrDefault (i => i.Key == prefix);
+			var o = namespaces.LastOrDefault (i => i.Key == prefix);
 			if (o.Key != null) { // i.e. exists
-				if (o.Value.ToString () != ns.ToString ())
-					throw new ArgumentException (String.Format ("The prefix '{0}' is already mapped to another namespace URI '{1}' in this element scope and cannot be mapped to '{2}'", prefix ?? "(null)", o.Value ?? "(null)", ns.ToString ()));
+				if (o.Value.ToString () != ns.ToString ()) {
+					if (namespaces.LastIndexOf (o) >= ns_index)
+						throw new ArgumentException (String.Format ("The prefix '{0}' is already mapped to another namespace URI '{1}' in this element scope and cannot be mapped to '{2}'", prefix ?? "(null)", o.Value ?? "(null)", ns.ToString ()));
+					else
+						AddNamespace  (prefix, ns);
+				}
 			}
 			else
 				AddNamespace  (prefix, ns);

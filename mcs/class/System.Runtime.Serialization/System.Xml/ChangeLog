@@ -1,5 +1,10 @@
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryWriter.cs : allow mapping an identical prefix
+	  to different xmlns in different element level.
+
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryWriter.cs : allow writing xml/xmlns attributes
 	  without specifying their corresponding namespaces.
 
