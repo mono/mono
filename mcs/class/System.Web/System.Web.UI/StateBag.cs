@@ -271,13 +271,16 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
-		public void SetDirty (bool dirty)
+		public
+#else
+		internal
+#endif
+		void SetDirty (bool dirty)
 		{
 			foreach (DictionaryEntry de in ht) {
 				StateItem si = (StateItem) de.Value;
 				si.IsDirty = dirty;
 			}
 		}
-#endif
 	}
 }

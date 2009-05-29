@@ -4,7 +4,7 @@
 // Authors:
 //	Ben Maurer (bmaurer@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -116,6 +116,7 @@ namespace System.Web.UI.WebControls {
 			if (states [0] != null) {
 				sb = new StateBag (true);
 				sb.LoadViewState (states[0]);
+				sb.SetDirty (true);
 			}
 			
 			if (states [1] != null)
@@ -163,6 +164,10 @@ namespace System.Web.UI.WebControls {
 		internal void TrackViewState ()
 		{
 			tracking = true;
+			if (sb != null) {
+				sb.TrackViewState ();
+				sb.SetDirty (true);
+			}
 		}
 
 		public override string ToString ()
@@ -209,7 +214,7 @@ namespace System.Web.UI.WebControls {
 				if (r == null)
 					r = value;
 				if (r == null)
-					r = "";
+					r = String.Empty;
 				return r;
 			}
 		
@@ -227,7 +232,7 @@ namespace System.Web.UI.WebControls {
 				if (r == null)
 					r = text;
 				if (r == null)
-					r = "";
+					r = String.Empty;
 				return r;
 			}
 		
