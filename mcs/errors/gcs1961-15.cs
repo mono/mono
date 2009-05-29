@@ -1,12 +1,9 @@
-// CS1961: The contravariant type parameter `T' must be covariantly valid on `B<T>.C(A<T>)'
+// CS1961: The covariant type parameter `U' must be contravariantly valid on `D<U>()'
 // Line: 9
 // Compiler options: -langversion:future
 
-interface A<out T>
+interface I<in T>
 {
 }
 
-interface B<in T>
-{
-	void C(A<T> a);
-}
+delegate I<U[]> D<out U> ();
