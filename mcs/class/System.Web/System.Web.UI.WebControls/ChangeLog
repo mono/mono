@@ -1,3 +1,11 @@
+2009-05-29  Marek Habersack  <mhabersack@novell.com>
+
+	* ListItem.cs: when tracking view state is turned on after
+	attributes have been set, make sure that the associated state bag
+	begins tracking state and that all of its existing items are
+	marked as dirty. Do the same after loading view state. Fixes bug
+	#507836
+
 2009-03-17  Marek Habersack  <mhabersack@novell.com>
 
 	* Unit.cs: introduced a field to tell the difference between empty
