@@ -1,3 +1,8 @@
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriter.cs : allow writing xml/xmlns attributes
+	  without specifying their corresponding namespaces.
+
 2009-05-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryReader.cs : fix regression on stream consumption

@@ -539,8 +539,18 @@ namespace System.Xml
 				if (String.IsNullOrEmpty (prefix))
 					prefix = CreateNewPrefix ();
 			}
-			else if (prefix.Length > 0 && ns.Length == 0)
-				throw new ArgumentException ("Cannot use prefix with an empty namespace.");
+			else if (prefix.Length > 0 && ns.Length == 0) {
+				switch (prefix) {
+				case "xml":
+					nsObj = ns = XmlNamespace;
+					break;
+				case "xmlns":
+					nsObj = ns = XmlnsNamespace;
+					break;
+				default:
+					throw new ArgumentException ("Cannot use prefix with an empty namespace.");
+				}
+			}
 			// here we omit such cases that it is used for writing
 			// namespace-less xml, unlike XmlTextWriter.
 			if (prefix == "xmlns" && ns != XmlnsNamespace)
@@ -786,7 +796,7 @@ namespace System.Xml
 			var o = namespaces.FirstOrDefault (i => i.Key == prefix);
 			if (o.Key != null) { // i.e. exists
 				if (o.Value.ToString () != ns.ToString ())
-					throw new ArgumentException (String.Format ("The prefix '{0}' is already mapped to another namespace URI '{1}' in this element scope", prefix ?? "(null)", o.Value ?? "(null)"));
+					throw new ArgumentException (String.Format ("The prefix '{0}' is already mapped to another namespace URI '{1}' in this element scope and cannot be mapped to '{2}'", prefix ?? "(null)", o.Value ?? "(null)", ns.ToString ()));
 			}
 			else
 				AddNamespace  (prefix, ns);

@@ -1,3 +1,8 @@
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryWriter.cs : added test for writing xml/xmlns
+	  attributes with null namespace.
+
 2009-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryReaderTest.cs : added test for utf16 chars.

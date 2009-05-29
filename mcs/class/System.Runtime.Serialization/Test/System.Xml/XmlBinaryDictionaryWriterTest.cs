@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005, 2007 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005, 2007, 2009 Novell, Inc.  http://www.novell.com
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -725,5 +725,16 @@ Console.WriteLine ();
 			0x03, 0x40, 2, 0x65, 0x6C, 0x01,
 			0x8D, 3, 0, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0,
 			};
+
+		[Test]
+		public void WriteXmlXmlnsAttributesWithNullNS ()
+		{
+			var ms = new MemoryStream ();
+			var xw = XmlDictionaryWriter.CreateBinaryWriter (ms);
+			xw.WriteStartElement ("foo");
+			xw.WriteAttributeString ("xmlns", "foo", null, "urn:foo");
+			xw.WriteAttributeString ("xml", "lang", null, "en-US");
+			xw.WriteEndElement ();
+		}
 	}
 }
