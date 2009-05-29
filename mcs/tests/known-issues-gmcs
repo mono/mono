@@ -13,8 +13,8 @@ gtest-443.cs # see #487738.  This is expected to fail until the generated IL is 
 
 gtest-variance-1.cs IGNORE 	# Runtime support for variance is not yet in place
 gtest-variance-2.cs IGNORE 
-gtest-variance-3.cs IGNORE
-gtest-variance-4.cs IGNORE
+gtest-variance-3.cs
+gtest-variance-4.cs
 gtest-variance-5.cs IGNORE
 
 test-704.cs IGNORE #472845

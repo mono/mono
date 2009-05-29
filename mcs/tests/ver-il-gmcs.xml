@@ -19022,6 +19022,362 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-6.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Cov1`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 Invoke(IContravariant`1)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(IContravariant`1, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Cov2`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 Invoke(IContravariant`1)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(IContravariant`1, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Cov3`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 Invoke(IContravariant`1)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(IContravariant`1, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Cov4`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="ICovariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Cov5`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Contra5`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 Invoke(U, ICovariant`1)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(U, ICovariant`1, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Contra6`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Contra7`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 Invoke(U, ICovariant`1)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(U, ICovariant`1, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Contra8`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 Invoke(U, ICovariant`1)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(U, ICovariant`1, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="IContravariant`1 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-variance-7.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Covariant`1[T]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="T Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="T EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Contra`1[T]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="CoContra`2[TR,T]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="TR Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="TR EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="None`1[T]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Covariant`1[Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[U]]]]]]]] Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Covariant`1[Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[U]]]]]]]] EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test2`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Covariant`1[Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[U]]]]]]]]] Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Covariant`1[Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[U]]]]]]]]] EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test3`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Contra`1[Contra`1[U]]]]]]]] Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Contra`1[Contra`1[U]]]]]]]] EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test4`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Contra`1[Covariant`1[Covariant`1[Contra`1[Contra`1[Contra`1[Contra`1[U]]]]]]]] Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Contra`1[Covariant`1[Covariant`1[Contra`1[Contra`1[Contra`1[Contra`1[U]]]]]]]] EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test5`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Contra`1[Covariant`1[Covariant`1[Contra`1[Contra`1[Contra`1[U]]]]]]] Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Contra`1[Contra`1[Covariant`1[Covariant`1[Contra`1[Contra`1[Contra`1[U]]]]]]] EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Test6`1[U]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(Covariant`1[Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[U]]]]]]]])">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Covariant`1[Contra`1[Contra`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[Covariant`1[U]]]]]]]], System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Both`2[U,V]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(CoContra`2[U,V])">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(CoContra`2[U,V], System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Both2`2[U,V]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(CoContra`2[U,Contra`1[U]])">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(CoContra`2[U,Contra`1[U]], System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Both3`2[U,V]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(CoContra`2[U,Contra`1[System.Int32]])">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(CoContra`2[U,Contra`1[System.Int32]], System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Both4`2[U,V]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(Both`2[V,U])">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Both`2[V,U], System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="Both5`2[U,V]">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Void Invoke(Both`2[V,System.Int32])">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Both`2[V,System.Int32], System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="ltest-01.cs">
     <type name="X">
       <method name="Void .ctor(Int32)">
