@@ -61,7 +61,7 @@ namespace System.ServiceModel.PeerResolvers
 			set { registration_id = value; }
 		}
 		
-		[DataMember]
+		[DataMember (EmitDefaultValue = false)]
 		public TimeSpan RegistrationLifetime {
 			get { return registration_lifetime; }
 			set { registration_lifetime = value; }
