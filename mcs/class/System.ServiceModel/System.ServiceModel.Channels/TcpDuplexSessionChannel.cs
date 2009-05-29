@@ -449,9 +449,10 @@ namespace System.ServiceModel.Channels
 		public Message ReadSizedMessage ()
 		{
 			// FIXME: implement full [MC-NMF].
-
-			ProcessPreambleRecipient ();
-			ProcessPreambleAckRecipient ();
+			if (is_service_side) {
+				ProcessPreambleRecipient ();
+				ProcessPreambleAckRecipient ();
+			}
 
 			var packetType = s.ReadByte ();
 			if (packetType != SizedEnvelopeRecord)
@@ -485,9 +486,9 @@ namespace System.ServiceModel.Channels
 			if (benc != null)
 				benc.CurrentReaderSession = null;
 
-//			if (s.Read (eof_buffer, 0, 1) == 1)
-//				if (eof_buffer [0] != EndRecord)
-//					throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
+			if (s.Read (eof_buffer, 0, 1) == 1)
+				if (eof_buffer [0] != EndRecord)
+					throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
 
 			return msg;
 		}

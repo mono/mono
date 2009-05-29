@@ -1,5 +1,12 @@
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : looks like I have added some bogus
+	  code. Handle preamble ack on ReadSizedMessage() only at server.
+	  Consume EndRecord from server, at client side. Though it is likely
+	  changed as it's blocking when mono is at server side.
+
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : .NET seems to be based on somewhat
 	  different protocol than existing code with related to preamble ack.
 	  So changed it to work fine with .NET client (finally).
