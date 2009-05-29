@@ -173,8 +173,7 @@ namespace System.ServiceModel.Channels
 				client = tcp_listener.AcceptTcpClient ();
 				Stream s = client.GetStream ();
 
-				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s) { Encoder = this.Encoder };
-				frame.ProcessPreambleRecipient ();
+				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s, is_service_side) { Encoder = this.Encoder };
 
 				// FIXME: use retrieved record properties in the request processing.
 
@@ -233,10 +232,9 @@ namespace System.ServiceModel.Channels
 				                        //RemoteAddress.Uri.Port);
 				
 				NetworkStream ns = client.GetStream ();
-				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns) {
+				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, ns, is_service_side) {
 					Encoder = this.Encoder,
 					Via = RemoteAddress.Uri };
-				frame.ProcessPreambleInitiator ();
 			} else {
 				// server side
 			}
@@ -330,10 +328,11 @@ namespace System.ServiceModel.Channels
 		MyBinaryReader reader;
 		MyBinaryWriter writer;
 
-		public TcpBinaryFrameManager (int mode, Stream s)
+		public TcpBinaryFrameManager (int mode, Stream s, bool isServiceSide)
 		{
 			this.mode = mode;
 			this.s = s;
+			this.is_service_side = isServiceSide;
 			reader = new MyBinaryReader (s);
 			ResetWriteBuffer ();
 
@@ -342,6 +341,7 @@ namespace System.ServiceModel.Channels
 
 		Stream s;
 		MemoryStream buffer;
+		bool is_service_side;
 
 		int mode;
 
@@ -376,10 +376,8 @@ namespace System.ServiceModel.Channels
 			writer.Write (data, 0, data.Length);
 		}
 
-		public void ProcessPreambleInitiator ()
+		void ProcessPreambleInitiator ()
 		{
-			ResetWriteBuffer ();
-
 			buffer.WriteByte (VersionRecord);
 			buffer.WriteByte (1);
 			buffer.WriteByte (0);
@@ -391,10 +389,10 @@ namespace System.ServiceModel.Channels
 			buffer.WriteByte ((byte) EncodingRecord);
 			buffer.WriteByte (PreambleEndRecord);
 			buffer.Flush ();
+		}
 
-			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
-			s.Flush ();
-
+		void ProcessPreambleAckInitiator ()
+		{
 			int b = s.ReadByte ();
 			switch (b) {
 			case PreambleAckRecord:
@@ -406,7 +404,12 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
-		public void ProcessPreambleRecipient ()
+		void ProcessPreambleAckRecipient ()
+		{
+			s.WriteByte (PreambleAckRecord);
+		}
+
+		void ProcessPreambleRecipient ()
 		{
 			bool preambleEnd = false;
 			while (!preambleEnd) {
@@ -441,12 +444,14 @@ namespace System.ServiceModel.Channels
 					throw new ProtocolException (String.Format ("Unexpected record type {0:X2}", b));
 				}
 			}
-			s.WriteByte (PreambleAckRecord);
 		}
 
 		public Message ReadSizedMessage ()
 		{
-			// FIXME: implement [MC-NMF] correctly. Currently it is a guessed protocol hack.
+			// FIXME: implement full [MC-NMF].
+
+			ProcessPreambleRecipient ();
+			ProcessPreambleAckRecipient ();
 
 			var packetType = s.ReadByte ();
 			if (packetType != SizedEnvelopeRecord)
@@ -465,7 +470,7 @@ namespace System.ServiceModel.Channels
 			// session and the binary xml body. 
 
 			var session = new XmlBinaryReaderSession ();
-			byte [] rsbuf = new TcpBinaryFrameManager (0, ms).ReadSizedChunk ();
+			byte [] rsbuf = new TcpBinaryFrameManager (0, ms, is_service_side).ReadSizedChunk ();
 			int count = 0;
 			using (var rms = new MemoryStream (rsbuf, 0, rsbuf.Length)) {
 				var rbr = new BinaryReader (rms, Encoding.UTF8);
@@ -480,12 +485,21 @@ namespace System.ServiceModel.Channels
 			if (benc != null)
 				benc.CurrentReaderSession = null;
 
+//			if (s.Read (eof_buffer, 0, 1) == 1)
+//				if (eof_buffer [0] != EndRecord)
+//					throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
+
 			return msg;
 		}
+
+		byte [] eof_buffer = new byte [1];
 
 		public void WriteSizedMessage (Message message)
 		{
 			ResetWriteBuffer ();
+
+			if (!is_service_side)
+				ProcessPreambleInitiator ();
 
 			// FIXME: implement full [MC-NMF] protocol.
 
@@ -525,15 +539,21 @@ namespace System.ServiceModel.Channels
 			writer.Flush ();
 
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
+			s.Flush ();
 
-			s.WriteByte (EndRecord);
+			// It is processed at *this* late.
+			if (!is_service_side)
+				ProcessPreambleAckInitiator ();
+
+			s.WriteByte (EndRecord); // it is required
+			s.Flush ();
 		}
 
 		public void ProcessEndRecordRecipient ()
 		{
 			int b;
 			if ((b = s.ReadByte ()) != EndRecord)
-				throw new ProtocolException (String.Format ("EndRequest message was expected, got {0:X}", b));
+				throw new ProtocolException (String.Format ("EndRecord message was expected, got {0:X}", b));
 		}
 	}
 }

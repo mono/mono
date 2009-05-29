@@ -1,3 +1,9 @@
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs : .NET seems to be based on somewhat
+	  different protocol than existing code with related to preamble ack.
+	  So changed it to work fine with .NET client (finally).
+
 2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageBufferImpl.cs : do not output Action twice.
