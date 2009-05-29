@@ -168,19 +168,7 @@ namespace System.ServiceModel.Channels
 		
 		public override bool WaitForMessage (TimeSpan timeout)
 		{
-			// FIXME: use timeout
-			try {
-				client = tcp_listener.AcceptTcpClient ();
-				Stream s = client.GetStream ();
-
-				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s, is_service_side) { Encoder = this.Encoder };
-
-				// FIXME: use retrieved record properties in the request processing.
-
-				return true;
-			} catch (TimeoutException) {
-				return false;
-			}
+			return true;
 		}
 		
 		// CommunicationObject
@@ -237,6 +225,13 @@ namespace System.ServiceModel.Channels
 					Via = RemoteAddress.Uri };
 			} else {
 				// server side
+				client = tcp_listener.AcceptTcpClient ();
+				Stream s = client.GetStream ();
+
+				frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.DuplexMode, s, is_service_side) { Encoder = this.Encoder };
+
+				// FIXME: use retrieved record properties in the request processing.
+
 			}
 		}
 		
@@ -409,7 +404,7 @@ namespace System.ServiceModel.Channels
 			s.WriteByte (PreambleAckRecord);
 		}
 
-		void ProcessPreambleRecipient ()
+		void ProcessPreambleRecipient (bool allowEndRecord)
 		{
 			bool preambleEnd = false;
 			while (!preambleEnd) {
@@ -440,17 +435,24 @@ namespace System.ServiceModel.Channels
 				case PreambleEndRecord:
 					preambleEnd = true;
 					break;
+				case EndRecord:
+					if (allowEndRecord)
+						break;
+					goto default;
 				default:
 					throw new ProtocolException (String.Format ("Unexpected record type {0:X2}", b));
 				}
 			}
 		}
 
+		bool message_already_read_once;
+
 		public Message ReadSizedMessage ()
 		{
 			// FIXME: implement full [MC-NMF].
 			if (is_service_side) {
-				ProcessPreambleRecipient ();
+				ProcessPreambleRecipient (message_already_read_once);
+				message_already_read_once = true;
 				ProcessPreambleAckRecipient ();
 			}
 
@@ -486,9 +488,10 @@ namespace System.ServiceModel.Channels
 			if (benc != null)
 				benc.CurrentReaderSession = null;
 
-			if (s.Read (eof_buffer, 0, 1) == 1)
-				if (eof_buffer [0] != EndRecord)
-					throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
+			if (!is_service_side)
+				if (s.Read (eof_buffer, 0, 1) == 1)
+					if (eof_buffer [0] != EndRecord)
+						throw new ProtocolException (String.Format ("Expected EndRecord message, got {0:X02}", eof_buffer [0]));
 
 			return msg;
 		}

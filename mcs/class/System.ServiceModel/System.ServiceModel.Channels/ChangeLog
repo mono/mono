@@ -1,5 +1,16 @@
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : Moved tcp listener accept to OnOpen().
+	  I cannot precisely identify when EndRecord should be consumed,
+	  so allow it at either at the end of ReadSizedMessage() or on
+	  consuming preamble (it's likely handling EndRecord of previous
+	  message though).
+
+	  Now duplex IPeerResolverContract communication works between
+	  either of .NET/Mono client and .NET/Mono server.
+
+2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : looks like I have added some bogus
 	  code. Handle preamble ack on ReadSizedMessage() only at server.
 	  Consume EndRecord from server, at client side. Though it is likely
