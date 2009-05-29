@@ -1,3 +1,9 @@
+2009-05-29  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, typemanager.cs, parameter.cs, ecore.cs, class.cs,
+	delegate.cs, generic-mcs.cs: Rewrote type variance checks to
+	actually work with closed generic types.
+
 2009-05-27  Alan McGovern  <amcgovern@novell.com>
 
 	* class.cs, decl.cs, delegate.cs, parameter.cs: 

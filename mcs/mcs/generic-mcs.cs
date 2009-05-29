@@ -439,4 +439,12 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();		
 		}
 	}
+	
+	partial class TypeManager
+	{
+		public static Variance CheckTypeVariance (Type type, Variance v, MemberCore mc)
+		{
+			return v;
+		}
+	}
 }

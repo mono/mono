@@ -30,10 +30,7 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
-#if GMCS_SOURCE
-	partial
-#endif
-	class TypeManager {
+	partial class TypeManager {
 	//
 	// A list of core types that the compiler requires or uses
 	//

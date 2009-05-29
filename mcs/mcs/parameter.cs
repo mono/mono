@@ -361,25 +361,22 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeParameter tp = TypeManager.LookupTypeParameter (parameter_type);
-			if (tp != null) {
-				if ((modFlags & Parameter.Modifier.ISBYREF) != 0) {
-					if (tp.Variance != Variance.None)
-						tp.ErrorInvalidVariance ((MemberCore) ec, Variance.None);
-				} else if (tp.Variance == Variance.Covariant) {
-					tp.ErrorInvalidVariance ((MemberCore) ec, Variance.Contravariant);
-				}
-			} else {
-				if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
-					Report.Error (721, Location, "`{0}': static types cannot be used as parameters",
-						texpr.GetSignatureForError ());
-					return parameter_type;
-				}
+			TypeManager.CheckTypeVariance (parameter_type,
+				(modFlags & Parameter.Modifier.ISBYREF) != 0 ? Variance.None : Variance.Contravariant,
+				ec as MemberCore);
 
-				if ((modFlags & Modifier.This) != 0 && parameter_type.IsPointer) {
-					Report.Error (1103, Location, "The type of extension method cannot be `{0}'",
-						TypeManager.CSharpName (parameter_type));
-				}
+			if (texpr is TypeParameterExpr)
+				return parameter_type;
+
+			if ((parameter_type.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
+				Report.Error (721, Location, "`{0}': static types cannot be used as parameters",
+					texpr.GetSignatureForError ());
+				return parameter_type;
+			}
+
+			if ((modFlags & Modifier.This) != 0 && parameter_type.IsPointer) {
+				Report.Error (1103, Location, "The type of extension method cannot be `{0}'",
+					TypeManager.CSharpName (parameter_type));
 			}
 
 			return parameter_type;

@@ -1289,7 +1289,10 @@ namespace Mono.CSharp {
 
 					GenericTypeExpr ct = iface as GenericTypeExpr;
 					if (ct != null) {
-						if (!ct.CheckConstraints (this) || !ct.VerifyVariantTypeParameters (this))
+						// TODO: passing `this' is wrong, should be base type iface instead
+						TypeManager.CheckTypeVariance (ct.Type, Variance.Covariant, this);
+
+						if (!ct.CheckConstraints (this))
 							return false;
 					}
 				}
@@ -5287,9 +5290,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			TypeParameter tp = TypeManager.LookupTypeParameter (MemberType);
-			if (tp != null && tp.Variance == Variance.Contravariant)
-				tp.ErrorInvalidVariance (this, Variance.Covariant);
+			TypeManager.CheckTypeVariance (MemberType, Variance.Covariant, this);
 		}
 
 		protected bool IsTypePermitted ()

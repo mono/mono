@@ -189,9 +189,12 @@ namespace Mono.CSharp {
 
 	public enum Variance
 	{
-		None,
-		Covariant,
-		Contravariant
+		//
+		// Don't add or modify internal values, they are used as -/+ calculation signs
+		//
+		None			= 0,
+		Covariant		= 1,
+		Contravariant	= -1
 	}
 
 	public enum SpecialConstraint
@@ -247,7 +250,7 @@ namespace Mono.CSharp {
 		///   Resolve the constraints - but only resolve things into Expression's, not
 		///   into actual types.
 		/// </summary>
-		public bool Resolve (IResolveContext ec)
+		public bool Resolve (IResolveContext ec, TypeParameter tp)
 		{
 			if (resolved)
 				return true;
@@ -335,6 +338,15 @@ namespace Mono.CSharp {
 					return false;
 				} else
 					class_constraint = expr;
+
+
+				//
+				// Checks whether each generic method parameter constraint type
+				// is valid with respect to T
+				//
+				if (tp != null && tp.Type.DeclaringMethod != null) {
+					TypeManager.CheckTypeVariance (expr.Type, Variance.Contravariant, ec as MemberCore);
+				}
 
 				num_constraints++;
 			}
@@ -707,9 +719,12 @@ namespace Mono.CSharp {
 			default: gtype_variance = "invariantly"; break;
 			}
 
+			Delegate d = mc as Delegate;
+			string parameters = d != null ? d.Parameters.GetSignatureForError () : "";
+
 			Report.Error (1961, Location,
-				"The {2} type parameter `{0}' must be {3} valid on `{1}'",
-					GetSignatureForError (), mc.GetSignatureForError (), input_variance, gtype_variance);
+				"The {2} type parameter `{0}' must be {3} valid on `{1}{4}'",
+					GetSignatureForError (), mc.GetSignatureForError (), input_variance, gtype_variance, parameters);
 		}
 
 		/// <summary>
@@ -728,7 +743,7 @@ namespace Mono.CSharp {
 		public bool Resolve (DeclSpace ds)
 		{
 			if (constraints != null) {
-				if (!constraints.Resolve (ds)) {
+				if (!constraints.Resolve (ds, this)) {
 					constraints = null;
 					return false;
 				}
@@ -878,7 +893,7 @@ namespace Mono.CSharp {
 			if (new_constraints == null)
 				return true;
 
-			if (!new_constraints.Resolve (ec))
+			if (!new_constraints.Resolve (ec, this))
 				return false;
 			if (!new_constraints.ResolveTypes (ec))
 				return false;
@@ -1378,26 +1393,6 @@ namespace Mono.CSharp {
 			return ConstraintChecker.CheckConstraints (ec, open_type, gen_params, args.Arguments, loc);
 		}
 	
-		public bool VerifyVariantTypeParameters (IResolveContext rc)
-		{
-			for (int i = 0; i < args.Count; i++) {
-				var argument = args.Arguments [i];
-				TypeParameter tparam = TypeManager.LookupTypeParameter (argument);
-				if (tparam == null)
-					continue;
-
-				if (tparam.Variance == Variance.None)
-					continue;
-
-				if (tparam.Variance != TypeManager.GetTypeParameterVariance (gen_params [i])) {
-					var mc = (MemberCore) rc;
-					tparam.ErrorInvalidVariance (mc, TypeManager.GetTypeParameterVariance (gen_params[i]));
-				}
-			}
-			return true;
-		}
-
-		
 		public override bool CheckAccessLevel (DeclSpace ds)
 		{
 			return ds.CheckAccessLevel (open_type);
@@ -1483,7 +1478,7 @@ namespace Mono.CSharp {
 				GenericConstraints agc = TypeManager.GetTypeParameterConstraints (atype);
 				if (agc != null) {
 					if (agc is Constraints)
-						((Constraints) agc).Resolve (ec);
+						((Constraints) agc).Resolve (ec, null);
 					is_class = agc.IsReferenceType;
 					is_struct = agc.IsValueType;
 				} else {
@@ -1876,7 +1871,7 @@ namespace Mono.CSharp {
 			return LookupTypeContainer (t);
 		}
 
-		public static Variance GetTypeParameterVariance (Type type)
+		static Variance GetTypeParameterVariance (Type type)
 		{
 			TypeParameter tparam = LookupTypeParameter (type);
 			if (tparam != null)
@@ -1890,6 +1885,36 @@ namespace Mono.CSharp {
 			default:
 				return Variance.None;
 			}
+		}
+
+		public static Variance CheckTypeVariance (Type t, Variance expected, MemberCore member)
+		{
+			TypeParameter tp = LookupTypeParameter (t);
+			if (tp != null) {
+				Variance v = tp.Variance;
+				if (expected == Variance.None && v != expected ||
+					expected == Variance.Covariant && v == Variance.Contravariant ||
+					expected == Variance.Contravariant && v == Variance.Covariant)
+					tp.ErrorInvalidVariance (member, expected);
+
+				return expected;
+			}
+
+			if (t.IsGenericType) {
+				var targs_definition = GetTypeArguments (DropGenericTypeArguments (t));
+				var targs = GetTypeArguments (t);
+				for (int i = 0; i < targs_definition.Length; ++i) {
+					var v = GetTypeParameterVariance (targs_definition[i]);
+					CheckTypeVariance (targs[i], (Variance) ((int)v * (int)expected), member);
+				}
+
+				return expected;
+			}
+
+			if (t.IsArray)
+				return CheckTypeVariance (GetElementType (t), expected, member);
+
+			return Variance.None;
 		}
 
 		/// <summary>
