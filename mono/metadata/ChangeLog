@@ -1,5 +1,9 @@
 2009-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Implement field signature check.
+
+2009-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Implement standalone signature check.
 
 2009-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
