@@ -1,3 +1,10 @@
+2009-05-29  Steven Munroe  <munroesj@us.ibm.com>
+
+	This patch is contributed under the terms of the MIT/X11 license
+
+       * template_main.c: Include string.h to define strchr, memcpy,
+       and strdup.
+	
 2009-05-12  Tor Lillqvist  <tml@novell.com>
 
 	* template_main.c: Some small improvements on Windows: No need to

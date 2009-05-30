@@ -1,6 +1,7 @@
 int mono_main (int argc, char* argv[]);
 
 #include <stdlib.h>
+#include <string.h>
 #ifdef _WIN32
 #include <windows.h>
 #endif
