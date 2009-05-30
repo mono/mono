@@ -1,3 +1,7 @@
+2009-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-ppc.c (mono_arch_get_static_rgctx_trampoline): Fix 64 bit support.
+
 2009-05-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* objects.cs: Fix the signature of one of the tests.
