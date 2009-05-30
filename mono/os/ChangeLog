@@ -1,3 +1,7 @@
+2009-05-30  Zoltan Varga  <vargaz@gmain.com>
+
+        * gc_wrapper.h: Disable thread-local allocation on arm.
+
 2008-01-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: Move the REGISTER/UNREGISTER macros to metadata/gc-internal.h.
