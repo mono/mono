@@ -1,3 +1,8 @@
+2009-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_compile_assembly): Move the creation of the
+	output file after the code has been compiled.
+
 2009-05-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ppc.c (mono_arch_get_static_rgctx_trampoline): Fix 64 bit support.
