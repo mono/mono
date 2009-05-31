@@ -1,3 +1,9 @@
+2009-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (create_dynamic_mono_image): Fix warnings.
+
+	* generic-sharing.c (other_info_equal): Ditto.
+	
 2009-05-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Implement field signature check.
