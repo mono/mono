@@ -1,3 +1,8 @@
+2009-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: fix mapping of our tag types into
+	CodeConstructType. Fixes bug #508570
+
 2009-05-26  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: before including a file specified with the
