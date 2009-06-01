@@ -3,11 +3,34 @@
 // 
 // Author: 
 //     Marcos Cobena (marcoscobena@gmail.com)
+//	Atsushi Enomoto  <atsushi@ximian.com>
 // 
 // Copyright 2007 Marcos Cobena (http://www.youcannoteatbits.org/)
+//
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 // 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Transactions;
 using System.Timers;
 
@@ -27,6 +50,7 @@ namespace System.ServiceModel.PeerResolvers
 		List<Node> mesh = new List<Node> ();
 		object mesh_lock = new object ();
 		Timer refresh_timer, cleanup_timer;
+		DateTime last_refresh_time = DateTime.Now;
 
 		public CustomPeerResolverService ()
 		{
@@ -116,9 +140,15 @@ namespace System.ServiceModel.PeerResolvers
 			
 			if (! opened)
 				throw new InvalidOperationException ("The service has never been opened or it was closed previously.");
-			
-//			return new RefreshResponseInfo ();
-			throw new NotImplementedException ();
+
+			var node = mesh.FirstOrDefault (n => n.MeshId == refreshInfo.MeshId && n.RegistrationId.Equals (refreshInfo.RegistrationId));
+			if (node == null)
+				return new RefreshResponseInfo (TimeSpan.Zero, RefreshResult.RegistrationNotFound);
+
+			// FIXME: implement actual refresh.
+			last_refresh_time = DateTime.Now;
+
+			return new RefreshResponseInfo (RefreshInterval - (DateTime.Now - last_refresh_time), RefreshResult.Success);
 		}
 
 		public virtual RegisterResponseInfo Register (RegisterInfo registerInfo)

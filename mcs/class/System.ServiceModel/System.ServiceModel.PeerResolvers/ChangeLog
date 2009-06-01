@@ -1,3 +1,7 @@
+2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomPeerResolverService.cs : Refresh() now gives readable reply.
+
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomPeerResolverService.cs : implement some members.
