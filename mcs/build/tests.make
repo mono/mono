@@ -16,7 +16,7 @@ endif
 
 ## Unit test support
 ifndef NO_TEST
-test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll
+test_nunit_lib = nunit.framework.dll nunit.core.dll nunit.util.dll nunit.mocks.dll
 test_nunit_dep = $(test_nunit_lib:%=$(topdir)/class/lib/$(PROFILE)/%)
 test_nunit_ref = $(test_nunit_dep:%=-r:%)
 tests_CLEAN_FILES += TestResult*.xml
