@@ -345,6 +345,7 @@ BASE_TEST_CS_SRC=		\
 	generic-unloading-sub.2.cs	\
 	bug-467456.cs	\
 	appdomain-unload-callback.cs	\
+	bug-508538.cs	\
 	bug-472692.2.cs
 
 if AMD64

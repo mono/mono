@@ -1,3 +1,7 @@
+2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-508538.cs: New regression test.
+
 2009-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs: Add a test for #488670.
