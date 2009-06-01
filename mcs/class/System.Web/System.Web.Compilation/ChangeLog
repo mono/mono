@@ -1,5 +1,8 @@
 2009-06-01  Marek Habersack  <mhabersack@novell.com>
 
+	* BuildManager.cs: when throwing a 404 exception, pass the virtual
+	path to the exception constructor.
+
 	* AspGenerator.cs: fix mapping of our tag types into
 	CodeConstructType. Fixes bug #508570
 

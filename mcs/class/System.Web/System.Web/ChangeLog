@@ -1,3 +1,9 @@
+2009-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: if custom errors are enabled and the error
+	code is 404 show the "standard" 404 error message instead of the
+	default custom error mode one. Fixes bug #508649
+
 2009-05-28  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpUtility.cs: fixed UrlDecode for encoded strings which

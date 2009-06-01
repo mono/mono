@@ -133,11 +133,15 @@ namespace System.Web
 		{
 			try {
 				HttpContext ctx = HttpContext.Current;
-				if (ctx != null && ctx.IsCustomErrorEnabled)
-					return GetCustomErrorDefaultMessage ();
+				if (ctx != null && ctx.IsCustomErrorEnabled) {
+					if (http_code != 404)
+						return GetCustomErrorDefaultMessage ();
+					else
+						return GetDefaultErrorMessage (false);
+				}
 				
 				if (!(this.InnerException is HtmlizedException))
-					return GetDefaultErrorMessage ();
+					return GetDefaultErrorMessage (true);
 				
 				return GetHtmlizedErrorMessage ();
 			} catch (Exception ex) {
@@ -292,7 +296,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			return builder.ToString ();
 		}
 		
-		string GetDefaultErrorMessage ()
+		string GetDefaultErrorMessage (bool showTrace)
 		{
 			Exception ex, baseEx;
 			ex = baseEx = GetBaseException ();
@@ -314,7 +318,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			builder.Append ("</p>\r\n");
 
 			if (resource_name != null && resource_name.Length > 0)
-				builder.AppendFormat ("<p><strong>Resource URL: </strong>{0}</p>\r\n", resource_name);
+				builder.AppendFormat ("<p><strong>Requested URL: </strong>{0}</p>\r\n", resource_name);
 			
 			if (baseEx != null && http_code != 404) {
 				builder.Append ("<p><strong>Stack Trace: </strong></p>");
@@ -322,7 +326,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 				WriteTextAsCode (builder, baseEx.ToString ());
 				builder.Append ("</td></tr>\r\n</table>\r\n");
 			}
-			WriteFileBottom (builder, true);
+			WriteFileBottom (builder, showTrace);
 			
 			return builder.ToString ();
 		}
