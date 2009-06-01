@@ -1110,7 +1110,7 @@ namespace System.Web.Compilation {
 			}
 
 			if (dothrow)
-				throw new HttpException (404, "The file '" + virtualPath + "' does not exist.");
+				throw new HttpException (404, "The file '" + virtualPath + "' does not exist.", virtualPath.Absolute);
 		}
 
 		const int ticketLockTimeout = 20000;
