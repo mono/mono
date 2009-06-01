@@ -1,5 +1,9 @@
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* load-exceptions.cs: Fix thiko.
+
+2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* load-exceptions.cs: Test for #508532.
 
 	* load-missing.il: Ditto.
