@@ -1259,13 +1259,13 @@ namespace System.Web.Compilation
 		CodeConstructType MapTagTypeToConstructType (TagType tagtype)
 		{
 			switch (tagtype) {
-				case TagType.DataBinding:
+				case TagType.CodeRenderExpression:
 					return CodeConstructType.ExpressionSnippet;
 
 				case TagType.CodeRender:
 					return CodeConstructType.CodeSnippet;
 
-				case TagType.CodeRenderExpression:
+				case TagType.DataBinding:
 					return CodeConstructType.DataBindingSnippet;
 
 				default:
