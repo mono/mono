@@ -20,7 +20,19 @@ ifeq (2.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll
+TEST_RESOURCE_FILES = \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/Global.asax \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/Global.asax.cs \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/My.ashx \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/My.master \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPage.aspx.cs \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/MyPageWithMaster.aspx \
+	../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/Web.mono.config
+
+NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
+
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll $(NUNIT_RESOURCE_FILES:%=/resource:%)
 
 EXTRA_DISTFILES =
 

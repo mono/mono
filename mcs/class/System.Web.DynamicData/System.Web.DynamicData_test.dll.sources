@@ -37,6 +37,7 @@ Common/AssertExtensions.cs
 Common/FakeHttpWorkerRequest.cs
 Common/KnownResponseHeader.cs
 Common/Mocks.cs
+Common/TestStubTypes.cs
 Common/UnknownResponseHeader.cs
 DataObjects/EmployeeColumn.cs
 DataObjects/Employee.cs
@@ -57,4 +58,3 @@ System.Web.DynamicData/DynamicDataManagerTest.cs
 System.Web.DynamicData/DynamicDataRouteTest.cs
 System.Web.DynamicData/MetaModelTest.cs
 System.Web.DynamicData.ModelProviders/TableProviderTest.cs
-System.Web.DynamicData/TestStubTypes.cs
