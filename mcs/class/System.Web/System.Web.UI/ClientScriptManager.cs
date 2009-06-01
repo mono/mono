@@ -658,7 +658,11 @@ namespace System.Web.UI
 #endif
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
+#if NET_2_0
 				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
+#else
+				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
+#endif
 			}
 #if NET_2_0
 			writer.RenderEndTag (); // DIV
