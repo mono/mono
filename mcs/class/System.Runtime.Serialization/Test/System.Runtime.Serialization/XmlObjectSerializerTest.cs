@@ -1182,12 +1182,27 @@ namespace MonoTests.System.Runtime.Serialization
 		}
 
 		[Test]
-		[Category ("NotWorking")] // FIXME: remove once #503728 gets fixed.
 		public void SerializeInterfaceCollection ()
 		{
 			var ser = new DataContractSerializer (typeof (InterfaceCollectionType));
-			using (var xw = XmlWriter.Create (TextWriter.Null))
-				ser.WriteObject (xw, new InterfaceCollectionType ());
+			var sw = new StringWriter ();
+			var obj = new InterfaceCollectionType ();
+			using (var xw = XmlWriter.Create (sw))
+				ser.WriteObject (xw, obj);
+			using (var xr = XmlReader.Create (new StringReader (sw.ToString ()))) {
+				obj = (InterfaceCollectionType) ser.ReadObject (xr);
+				Assert.IsNull (obj.Array, "#1");
+			}
+
+			sw = new StringWriter ();
+			obj.Array = new List<int> ();
+			obj.Array.Add (5);
+			using (var xw = XmlWriter.Create (sw))
+				ser.WriteObject (xw, obj);
+			using (var xr = XmlReader.Create (new StringReader (sw.ToString ()))) {
+				obj = (InterfaceCollectionType) ser.ReadObject (xr);
+				Assert.AreEqual (5, obj.Array [0], "#2");
+			}
 		}
 
 		private T Deserialize<T> (string xml)

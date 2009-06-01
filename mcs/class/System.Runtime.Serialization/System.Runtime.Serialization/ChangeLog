@@ -1,3 +1,10 @@
+2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterSerializer.cs, KnownTypeCollection.cs : collection
+	  types does not emit xsi:type when the actual type is different
+	  from the nominal serilaization type. To achieve this, introduced
+	  the idea of the actual serialization type.
+
 2009-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : for default / shared type map, members are

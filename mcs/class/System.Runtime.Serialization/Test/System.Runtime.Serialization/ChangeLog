@@ -1,3 +1,8 @@
+2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : enable interface collection test and
+	  add some more test lines.
+
 2009-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : added serialization test for

@@ -423,6 +423,18 @@ namespace System.Runtime.Serialization
 			return null;
 		}
 
+		internal Type GetSerializedType (Type type)
+		{
+			Type element = GetCollectionElementType (type);
+			if (element == null)
+				return type;
+			QName name = GetQName (type);
+			var map = FindUserMap (name);
+			if (map != null)
+				return map.RuntimeType;
+			return type;
+		}
+
 		internal SerializationMap FindUserMap (Type type)
 		{
 			for (int i = 0; i < contracts.Count; i++)
@@ -652,7 +664,7 @@ namespace System.Runtime.Serialization
 
 			TryRegister (element);
 
-			QName qname = GetCollectionContractQName (type) ?? GetCollectionQName (element);
+			QName qname = GetCollectionQName (element);
 
 			if (FindUserMap (qname) != null)
 				throw new InvalidOperationException (String.Format ("Failed to add type {0} to known type collection. There already is a registered type for XML name {1}", type, qname));

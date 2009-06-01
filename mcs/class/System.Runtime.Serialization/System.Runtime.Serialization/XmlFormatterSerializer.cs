@@ -90,8 +90,14 @@ namespace System.Runtime.Serialization
 				Type actualType = graph.GetType ();
 
 				SerializationMap map = types.FindUserMap (actualType);
+				// For some collection types, the actual type does not matter. So get nominal serialization type instead.
+				// (The code below also covers the lines above, but I don't remove above lines to avoid extra search cost.)
 				if (map == null) {
-					/* Unknown actual type */
+					actualType = types.GetSerializedType (actualType);
+					map = types.FindUserMap (actualType);
+				}
+				// If it is still unknown, then register it.
+				if (map == null) {
 					types.Add (actualType);
 					map = types.FindUserMap (actualType);
 				}
