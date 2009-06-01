@@ -1,5 +1,24 @@
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Change MonoImage::name_cache to be protected by the image lock
+	instead of the loader lock.
+
+	* appdomain.c (deregister_reflection_info_roots): Protect access
+	to name_cache.
+
+	* class.c (mono_image_init_name_cache): Change from the loader lock
+	to the image lock. Check if the cache wasn't already created.
+
+	* class.c: Change from the loader to the image lock.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetNamespaces): Fix
+	the code to hold the image lock while iterating over name_cache and
+	not go into mono_array_new holding it.
+
+	* metadata-internals.h: Add a comment about this change.
+
+2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType):
 	Under the 2.0 profile raise the loader error.
 
