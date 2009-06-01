@@ -4,6 +4,16 @@ using System;
 
 class TestVararg
 {
+	static void F (RuntimeArgumentHandle rah)
+	{
+	}
+	
+	static void G (__arglist)
+	{
+		F (new RuntimeArgumentHandle ());
+		F (__arglist);
+	}
+	
 	static int Main ()
 	{
 		int result = Vararg.AddABunchOfInts (__arglist ( 2, 3, 4 ));

@@ -28643,6 +28643,12 @@
       <method name="Int32 Main()">
         <size>345</size>
       </method>
+      <method name="Void F(RuntimeArgumentHandle)">
+        <size>1</size>
+      </method>
+      <method name="Void G(...)">
+        <size>22</size>
+      </method>
     </type>
   </test>
   <test name="test-4.cs">
