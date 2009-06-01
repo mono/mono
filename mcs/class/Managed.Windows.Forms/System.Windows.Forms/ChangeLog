@@ -1,3 +1,11 @@
+2009-06-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Clipboard.cs:
+	* XplatUIX11.cs:
+	* DataFormats.cs: Implement support for serializable types in our
+	clipboard.
+	Fixes #357642.
+
 2009-05-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ColorDialog.cs: Actually add the help button to the form, so it can

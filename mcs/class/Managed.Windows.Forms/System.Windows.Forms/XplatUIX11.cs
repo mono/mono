@@ -62,6 +62,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 
@@ -1261,6 +1263,18 @@ namespace System.Windows.Forms {
 					Clipboard.Item = Marshal.PtrToStringUni (prop, Encoding.Unicode.GetMaxCharCount ((int)nitems));
 				} else if (property == RICHTEXTFORMAT)
 					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
+				else if (DataFormats.ContainsFormat (property.ToInt32 ())) {
+					if (DataFormats.GetFormat (property.ToInt32 ()).is_serializable) {
+						MemoryStream memory_stream = new MemoryStream ((int)nitems);
+						for (int i = 0; i < (int)nitems; i++)
+							memory_stream.WriteByte (Marshal.ReadByte (prop, i));
+
+						memory_stream.Position = 0;
+						BinaryFormatter formatter = new BinaryFormatter ();
+						Clipboard.Item = formatter.Deserialize (memory_stream);
+						memory_stream.Close ();
+					}
+				}
 
 				XFree(prop);
 			}
@@ -1701,8 +1715,10 @@ namespace System.Windows.Forms {
 					sel_event.SelectionEvent.time = xevent.SelectionRequestEvent.time;
 					sel_event.SelectionEvent.property = IntPtr.Zero;
 
+					IntPtr format_atom = xevent.SelectionRequestEvent.target;
+
 					// Seems that some apps support asking for supported types
-					if (xevent.SelectionRequestEvent.target == TARGETS) {
+					if (format_atom == TARGETS) {
 						int[]	atoms;
 						int	atom_count;
 
@@ -1725,7 +1741,7 @@ namespace System.Windows.Forms {
 						XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, 
 								(IntPtr)xevent.SelectionRequestEvent.target, 32, PropertyMode.Replace, atoms, atom_count);
 						sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
-					} else if (xevent.SelectionRequestEvent.target == (IntPtr)RICHTEXTFORMAT) {
+					} else if (format_atom == (IntPtr)RICHTEXTFORMAT) {
 						string rtf_text = Clipboard.GetRtfText ();
 						if (rtf_text != null) {
 							// The RTF spec mentions that ascii is enough to contain it
@@ -1774,6 +1790,27 @@ namespace System.Windows.Forms {
 							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 							Marshal.FreeHGlobal(buffer);
 						}
+					} else if (Clipboard.GetSource (format_atom.ToInt32 ()) != null) { // check if we have an available value of this format
+						if (DataFormats.GetFormat (format_atom.ToInt32 ()).is_serializable) {
+							object serializable = Clipboard.GetSource (format_atom.ToInt32 ());
+
+							BinaryFormatter formatter = new BinaryFormatter ();
+							MemoryStream memory_stream = new MemoryStream ();
+							formatter.Serialize (memory_stream, serializable);
+
+							int buflen = (int)memory_stream.Length;
+							IntPtr buffer = Marshal.AllocHGlobal (buflen);
+							memory_stream.Position = 0;
+							for (int i = 0; i < buflen; i++)
+								Marshal.WriteByte (buffer, i, (byte)memory_stream.ReadByte ());
+							memory_stream.Close ();
+
+							XChangeProperty (DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target,
+									8, PropertyMode.Replace, buffer, buflen);
+							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+							Marshal.FreeHGlobal (buffer);
+						}
+
 					} else if (Clipboard.IsSourceImage) {
 						if (xevent.SelectionEvent.target == (IntPtr)Atom.XA_PIXMAP) {
 							// FIXME - convert image and store as property

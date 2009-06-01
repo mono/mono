@@ -30,6 +30,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
 using System.Collections;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -250,14 +251,21 @@ namespace System.Windows.Forms {
 			if (data is IDataObject) {
 				string[] formats;
 
-				formats = ((IDataObject)data).GetFormats();
+				IDataObject data_object = data as IDataObject;
+				formats = data_object.GetFormats();
 				for (int i = 0; i < formats.Length; i++) {
 					item_format = DataFormats.GetFormat(formats[i]);
 					if ((item_format != null) && (item_format.Name != DataFormats.StringFormat)) {
 						native_format = item_format.Id;
 					}
 
-					XplatUI.ClipboardStore(clipboard_handle, ((IDataObject)data).GetData(formats[i]), native_format, converter);
+					object obj = data_object.GetData (formats [i]);
+
+					// this is used only by custom formats
+					if (IsDataSerializable (obj))
+						item_format.is_serializable = true;
+
+					XplatUI.ClipboardStore(clipboard_handle, obj, native_format, converter);
 				}
 			} else {
 				item_format = DataFormats.Format.Find(data.GetType().FullName);
@@ -268,6 +276,15 @@ namespace System.Windows.Forms {
 				XplatUI.ClipboardStore(clipboard_handle, data, native_format, converter);
 			}
 			XplatUI.ClipboardClose(clipboard_handle);
+		}
+
+		static bool IsDataSerializable (object obj)
+		{
+			if (obj is ISerializable)
+				return true;
+
+			AttributeCollection attrs = TypeDescriptor.GetAttributes (obj);
+			return attrs [typeof (SerializableAttribute)] != null;
 		}
 
 #if NET_2_0
