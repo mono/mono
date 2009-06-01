@@ -1,5 +1,12 @@
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetType):
+	Under the 2.0 profile raise the loader error.
+
+	Fixes #508532.
+
+2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.c (mono_marshal_get_runtime_invoke): Emit the right kind
 	of ldind opcode for generic instances so we don't fail for direct wrappers.
 	This only affect direct calls.
