@@ -38,6 +38,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.ServiceModel.Channels;
 using System.Text;
+using System.Threading;
 using System.Xml;
 
 namespace System.ServiceModel.Channels
@@ -168,7 +169,16 @@ namespace System.ServiceModel.Channels
 		
 		public override bool WaitForMessage (TimeSpan timeout)
 		{
-			return true;
+			if (client.Available > 0)
+				return true;
+
+			DateTime start = DateTime.Now;
+			do {
+				Thread.Sleep (50);
+				if (client.Available > 0)
+					return true;
+			} while (DateTime.Now - start < timeout);
+			return false;
 		}
 		
 		// CommunicationObject

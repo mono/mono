@@ -1,3 +1,8 @@
+2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs : WaitForMessage() should not return
+	  true when socket input is not available.
+
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : Moved tcp listener accept to OnOpen().
