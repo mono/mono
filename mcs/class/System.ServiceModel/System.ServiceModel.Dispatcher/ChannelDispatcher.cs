@@ -442,7 +442,7 @@ namespace System.ServiceModel.Dispatcher
 				}
 			}
 
-			void sendEndpointNotFound (RequestContext rc, EndpointNotFoundException ex) 
+			void SendEndpointNotFound (RequestContext rc, EndpointNotFoundException ex) 
 			{
 				try {
 
@@ -465,24 +465,26 @@ namespace System.ServiceModel.Dispatcher
 					EndpointDispatcher candidate = FindEndpointDispatcher (rc.RequestMessage);
 					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, reply).
 						ProcessReply (rc);
-				}
-				catch (EndpointNotFoundException ex) {
-					sendEndpointNotFound (rc, ex);
+				} catch (EndpointNotFoundException ex) {
+					SendEndpointNotFound (rc, ex);
+				} catch (Exception ex) {
+					// FIXME: log it.
+					Console.WriteLine (ex);
 				}
 			}
 
 			void ProcessInput ()
 			{
-				Message message = input.Receive ();
-				EndpointDispatcher candidate = null;
-
 				try {
+					Message message = input.Receive ();
+					EndpointDispatcher candidate = null;
 					candidate = FindEndpointDispatcher (message);
 					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, input).
 						ProcessInput(message);
 				}
-				catch (EndpointNotFoundException ex) {
-					// silently ignore
+				catch (Exception ex) {
+					// FIXME: log it.
+					Console.WriteLine (ex);
 				}
 			}
 

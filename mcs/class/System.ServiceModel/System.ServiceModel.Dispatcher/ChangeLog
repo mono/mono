@@ -1,3 +1,7 @@
+2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : handle more errors gracefully.
+
 2009-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ErrorProcessingHandler.cs, InputOrReplyRequestProcessor.cs :
