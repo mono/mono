@@ -29,13 +29,91 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel.DataAnnotations;
+using System.Data.SqlClient;
+using System.Data.Linq;
+using System.Data.Linq.Mapping;
+using System.Globalization;
+using System.Reflection;
+using System.Security.Permissions;
+using System.Security.Principal;
 using System.Web;
+using System.Web.UI;
+using System.Web.DynamicData;
+using System.Web.DynamicData.ModelProviders;
 using System.Web.Routing;
+
+using MetaModel = System.Web.DynamicData.MetaModel;
+using MetaTable = System.Web.DynamicData.MetaTable;
+
 using NUnit.Framework;
 
 namespace MonoTests.System.Web.DynamicData
 {
+	class MyDynamicDataRouteHandler : DynamicDataRouteHandler
+	{
+		public override IHttpHandler CreateHandler (DynamicDataRoute route, MetaTable table, string action)
+		{
+			return new Page () as IHttpHandler;
+		}
+	}
+
+	class MyDataContext1 : DataContext
+	{
+		public MyDataContext1 ()
+			: base (new SqlConnection ("Data Source=localhost"))
+		{
+		}
+	}
+
+	[Database (Name = "MyDB1")]
+	class MyDataContext2 : DataContext
+	{
+		public MyDataContext2 ()
+			: base (new SqlConnection ("Data Source=localhost"))
+		{
+		}
+
+		public Table<Foo> FooTable { get { return GetTable<Foo> (); } }
+	}
+
+	class UseOnlyInGetModelTestDataContext : MyDataContext2
+	{
+	}
+
+	[Table (Name = "dbo...FooTable")]
+	partial class Foo
+	{
+		public Foo () : this (false)
+		{
+		}
+
+		public Foo (bool noThrow)
+		{
+			if (!noThrow)
+				throw new Exception ("ERROR");
+		}
+
+		[Column (Name = "Col1")]
+		public string Column1 { get; set; }
+	}
+
+	[Table (Name = "BarTable")]
+	class Bar
+	{
+		[Column (Name = "Col1")]
+		public string Column1 { get; set; }
+
+		[Column (Name = "Col2")]
+		public string Column2 { get; set; }
+	}
+	class MyDataContext3 : MyDataContext2
+	{
+	}
+
 	class HttpContextStub : HttpContextBase
 	{
 		HttpRequestStub req;
@@ -197,14 +275,14 @@ namespace MonoTests.System.Web.DynamicData
 		public override string ApplyAppPathModifier (string virtualPath)
 		{
 			switch (impl_type) {
-			case 3:
-				return virtualPath; // pass thru
-			case 2:
-				return virtualPath + "_modified";
-			case 1:
-				throw new ApplicationException (virtualPath);
-			default:
-				return base.ApplyAppPathModifier (virtualPath);
+				case 3:
+					return virtualPath; // pass thru
+				case 2:
+					return virtualPath + "_modified";
+				case 1:
+					throw new ApplicationException (virtualPath);
+				default:
+					return base.ApplyAppPathModifier (virtualPath);
 			}
 		}
 	}
