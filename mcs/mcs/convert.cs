@@ -299,8 +299,10 @@ namespace Mono.CSharp {
 
 				if (TypeManager.IsValueType (expr_type))
 					return false;
+
 				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type){
-					return expr_type != TypeManager.anonymous_method_type;
+					// No mcs internal types are convertible
+					return expr_type.Module != typeof (Convert).Module;
 				}
 
 				return false;
@@ -775,6 +777,10 @@ namespace Mono.CSharp {
 
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
 				return true;
+
+			// Conversion from __arglist to RuntimeArgumentHandle
+			if (expr_type == typeof (ArglistAccess))
+				return target_type == TypeManager.runtime_argument_handle_type;
 
 			return false;
 		}
@@ -1293,6 +1299,9 @@ namespace Mono.CSharp {
 				if (am != null)
 					return am.DoResolve (ec);
 			}
+
+			if (expr_type == typeof (ArglistAccess) && target_type == TypeManager.runtime_argument_handle_type)
+				return expr;
 
 			return null;
 		}

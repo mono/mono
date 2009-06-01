@@ -3614,7 +3614,7 @@ namespace Mono.CSharp {
 			if (++pos == arguments.Count)
 				return expr;
 
-			left = new Argument (new EmptyExpression (method.Type));
+			left = new Argument (new EmptyExpression (((MethodInfo)method).ReturnType));
 			return CreateExpressionAddCall (ec, left, expr, pos);
 		}
 
@@ -6795,13 +6795,13 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = TypeManager.runtime_argument_handle_type;
+			type = typeof (ArglistAccess);
 
 			if (ec.IsInFieldInitializer || !ec.CurrentBlock.Toplevel.Parameters.HasArglist) 
 			{
 				Error (190, "The __arglist construct is valid only within " +
 				       "a variable argument method");
-				return null;
+				return this;
 			}
 
 			return this;
@@ -6854,7 +6854,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = TypeManager.runtime_argument_handle_type;
+			type = typeof (ArglistAccess);
 
 			foreach (Argument arg in Arguments) {
 				if (!arg.Resolve (ec, loc))

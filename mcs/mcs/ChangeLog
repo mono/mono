@@ -1,3 +1,9 @@
+2009-06-01  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #508334
+	* typemanager.cs, parameter.cs, convert.cs, expression.cs, ecore.cs,
+	cs-parser.jay: Fully import __arglist modifier.
+
 2009-05-29  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, typemanager.cs, parameter.cs, ecore.cs, class.cs,

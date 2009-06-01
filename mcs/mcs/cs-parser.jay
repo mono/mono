@@ -6507,7 +6507,7 @@ static string GetTokenName (int token)
 	case Token.WHILE:
 		return "while";
 	case Token.ARGLIST:
-		return "arglist";
+		return "__arglist";
 	case Token.PARTIAL:
 		return "partial";
 	case Token.ARROW:

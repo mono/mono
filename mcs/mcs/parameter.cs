@@ -844,10 +844,15 @@ namespace Mono.CSharp {
 			        (method.DeclaringType.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
 					method.IsDefined (extension_attr.Type, false)) {
 					mod = Parameter.Modifier.This;
-				} else if (i >= pi.Length - 2 && types [i].IsArray) {
-					if (p.IsDefined (param_attr.Type, false)) {
-						mod = Parameter.Modifier.PARAMS;
-						is_params = true;
+				} else if (i >= pi.Length - 2) {
+					if (types[i].IsArray) {
+						if (p.IsDefined (param_attr.Type, false)) {
+							mod = Parameter.Modifier.PARAMS;
+							is_params = true;
+						}
+					} else if (types [i] == TypeManager.runtime_argument_handle_type) {
+						par [i] = new ArglistParameter (Location.Null);
+						continue;
 					}
 				}
 

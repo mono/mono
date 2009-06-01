@@ -3784,7 +3784,7 @@ namespace Mono.CSharp {
 					p_mod = pd.FixedParameters [i].ModFlags & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
 
 					if (p_mod == Parameter.Modifier.ARGLIST) {
-						if (a.Type == TypeManager.runtime_argument_handle_type)
+						if (a.Type == typeof (ArglistAccess))
 							continue;
 
 						p_mod = 0;
@@ -4375,7 +4375,7 @@ namespace Mono.CSharp {
 					has_unsafe_arg |= pt.IsPointer;
 
 					if (p_mod == Parameter.Modifier.ARGLIST) {
-						if (a.Type != TypeManager.runtime_argument_handle_type)
+						if (a.Type != typeof (ArglistAccess))
 							break;
 						continue;
 					}
