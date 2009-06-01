@@ -1,3 +1,10 @@
+2009-06-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: Avoid possible NRE while settings a
+	complete collection.
+	* WebResponse_2_1.cs: Use StringComparer.OrdinalIgnoreCase on 
+	the prefix Dictionary
+
 2009-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebClient_2_1.cs: Add internal WebHeaderCollection. Change

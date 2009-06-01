@@ -41,12 +41,17 @@ namespace System.Net {
 	public abstract class WebRequest {
 
 		static Type browser_http_request;
-		static Dictionary<string,IWebRequestCreate> registred_prefixes = new Dictionary<string,IWebRequestCreate> ();
+		static Dictionary<string, IWebRequestCreate> registred_prefixes;
 
 		public abstract string ContentType { get; set; }
 		public abstract WebHeaderCollection Headers { get; set; }
 		public abstract string Method { get; set; }
 		public abstract Uri RequestUri { get; }
+
+		static WebRequest ()
+		{
+			registred_prefixes = new Dictionary<string, IWebRequestCreate> (StringComparer.OrdinalIgnoreCase);
+		}
 
 		protected WebRequest ()
 		{
@@ -109,7 +114,6 @@ namespace System.Net {
 
 			// LAMESPEC: according to doc registering http or https will fail. Actually this is not true
 			// the registration works but the class being registred won't be used for http[s]
-			prefix = prefix.ToLowerInvariant ();
 			if (registred_prefixes.ContainsKey (prefix))
 				return false;
 

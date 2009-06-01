@@ -85,7 +85,7 @@ namespace System.Net {
 					WebHeaderCollection.ValidateHeader (header);
 				}
 				// ... before making those values our own
-				headers.headers.Clear ();
+				Headers.headers.Clear ();
 				foreach (string header in keys) {
 					headers [header] = value [header];
 				}
