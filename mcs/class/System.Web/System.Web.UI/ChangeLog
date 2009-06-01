@@ -1,3 +1,10 @@
+2009-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* ClientScriptManager.cs: WriteHiddenFields doesn't add the id
+	attribute to generated input element in the 1.1 profile. Fixes bug
+	#508167. Patch from Hubert FONGARNAND
+	<informatique.internet@fiducial.fr>, thanks!
+
 2009-05-29  Marek Habersack  <mhabersack@novell.com>
 
 	* StateBag.cs: made SetDirty (bool) available on 1.1 as
