@@ -1,3 +1,10 @@
+2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Emit the right kind
+	of ldind opcode for generic instances so we don't fail for direct wrappers.
+
+	Fixes #508538.
+
 2009-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r134810.
