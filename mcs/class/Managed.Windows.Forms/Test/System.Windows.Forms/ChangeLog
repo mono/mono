@@ -1,3 +1,7 @@
+2009-06-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ClipboardTest.cs: New test for serializable types.
+
 2009-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripDropDownTest.cs: New test to assure the Height atfer

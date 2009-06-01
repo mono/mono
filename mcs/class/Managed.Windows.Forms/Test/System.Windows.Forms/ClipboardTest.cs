@@ -75,6 +75,30 @@ namespace MonoTests.System.Windows.Forms
 
 			Clipboard.Clear ();
 		}
+
+		[Test]
+		public void CustomSerializableData ()
+		{
+			CustomSerializableClass obj = new CustomSerializableClass ();
+			obj.Name = "mono101";
+			obj.Id = -3;
+
+			Clipboard.SetData ("CustomSerializable", obj);
+
+			//Assert.AreEqual (true, Clipboard.ContainsData ("CustomSerializable"), "#A1");
+
+			CustomSerializableClass obj2 = (CustomSerializableClass)Clipboard.GetData ("CustomSerializable");
+
+			Assert.AreEqual ("mono101", obj2.Name, "#B1");
+			Assert.AreEqual (-3, obj2.Id, "#B2");
+		}
+
+		[Serializable]
+		private class CustomSerializableClass 
+		{
+			public string Name;
+			public int Id;
+		}
 #endif
 	}
 }
