@@ -268,22 +268,20 @@ namespace MonoTests.System.Web.DynamicData
             Assert.AreEqual (typeof (Foo), t.EntityType, "#C6");
         }
 
-        [Test]
-        public void GetActionPath ()
-        {
-            var foo = new Foo (true);
-            MetaModel m = GetModel<MyDataContext2> ();
+//        [Test]
+//        public void GetActionPath ()
+//        {
+//            var foo = new Foo (true);
+//            MetaModel m = GetModel<MyDataContext2> ();
 
-            // .NET stacktrace:
+            // None of those are thrown from GetTable - it seems this method performs NO checks at all, sigh...
             //
-            // at System.Web.DynamicData.MetaModel.TryGetTable(String uniqueTableName, MetaTable& table)
-            // at System.Web.DynamicData.MetaModel.GetTable(String uniqueTableName)
-            // at System.Web.DynamicData.MetaModel.GetActionPath(String tableName, String action, Object row)
-            AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath (null, PageAction.List, foo), "#A1");
-            AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", null, foo), "#A2");
-            AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", PageAction.List, null), "#A3");
-            AssertExtensions.Throws<ArgumentException> (() => m.GetActionPath ("NoSuchTable", PageAction.List, foo), "#A3");
-        }
+            //AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath (null, PageAction.List, foo), "#A1");
+            //AssertExtensions.Throws<ArgumentException> (() => m.GetActionPath (String.Empty, PageAction.List, foo), "#A2");
+            //AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", null, foo), "#A3");
+            //AssertExtensions.Throws<ArgumentNullException> (() => m.GetActionPath ("FooTable", PageAction.List, null), "#A4");
+            //AssertExtensions.Throws<ArgumentException> (() => m.GetActionPath ("NoSuchTable", PageAction.List, foo), "#A5");
+//        }
 
         [Test]
         public void GetActionPath2 ()

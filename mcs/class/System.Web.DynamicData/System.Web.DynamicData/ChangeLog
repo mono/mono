@@ -1,3 +1,9 @@
+2009-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaModel.cs: GetModel throws InvalidOperationException on
+	missing model.
+	Implemented GetActionPath and GetTable.
+
 2009-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTable.cs: implemented the DataContextType,

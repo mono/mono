@@ -62,7 +62,7 @@ namespace System.Web.DynamicData
 			MetaModel m;
 			if (registered_models.TryGetValue (contextType, out m))
 				return m;
-			throw new ArgumentException (String.Format ("Type '{0}' is not registered as a MetaModel", contextType));
+			throw new InvalidOperationException (String.Format ("Type '{0}' is not registered as a MetaModel", contextType));
 		}
 
 		public static void ResetRegistrationException ()
@@ -92,10 +92,9 @@ namespace System.Web.DynamicData
 
 		public List<MetaTable> VisibleTables { get; private set; }
 
-		[MonoTODO]
 		public string GetActionPath (string tableName, string action, object row)
 		{
-			throw new NotImplementedException ();
+			return GetTable (tableName).GetActionPath (action, row);
 		}
 
 		public bool TryGetTable (string uniqueTableName, out MetaTable table)
@@ -130,10 +129,9 @@ namespace System.Web.DynamicData
 			throw new ArgumentException (String.Format ("Entity type '{0}' does not exist in registered context", entityType));
 		}
 
-		[MonoTODO]
 		public MetaTable GetTable (string tableName, Type contextType)
 		{
-			throw new NotImplementedException ();
+			return GetModel (contextType).GetTable (tableName);
 		}
 
 		void CheckRegistrationError ()
