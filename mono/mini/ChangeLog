@@ -1,3 +1,8 @@
+2009-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_compile_assembly): Handle file open errors gracefully
+	instead of asserting.
+
 2009-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_compile_assembly): Move the creation of the
