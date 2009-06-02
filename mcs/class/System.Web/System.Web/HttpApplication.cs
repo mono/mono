@@ -1591,7 +1591,7 @@ namespace System.Web {
 			cache.Clear ();
 		}
 		
-		object LocateHandler (string verb, string url)
+		object LocateHandler (HttpRequest req, string verb, string url)
 		{
 			Hashtable cache = GetHandlerCache ();
 			string id = String.Concat (verb, url);
@@ -1602,7 +1602,8 @@ namespace System.Web {
 
 			bool allowCache;
 #if NET_2_0
-			HttpHandlersSection httpHandlersSection = (HttpHandlersSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpHandlers");
+			global::System.Configuration.Configuration cfg = WebConfigurationManager.OpenWebConfiguration (req.Path, null, req.FilePath);
+			HttpHandlersSection httpHandlersSection = cfg.GetSection ("system.web/httpHandlers") as HttpHandlersSection;
 			ret = httpHandlersSection.LocateHandler (verb, url, out allowCache);
 #else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
@@ -1631,7 +1632,7 @@ namespace System.Web {
 			string verb = request.RequestType;
 			
 			IHttpHandler handler = null;
-			object o = LocateHandler (verb, url);
+			object o = LocateHandler (request, verb, url);
 			
 			factory = o as IHttpHandlerFactory;
 			if (factory == null) {
