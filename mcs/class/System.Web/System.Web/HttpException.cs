@@ -134,7 +134,7 @@ namespace System.Web
 			try {
 				HttpContext ctx = HttpContext.Current;
 				if (ctx != null && ctx.IsCustomErrorEnabled) {
-					if (http_code != 404)
+					if (http_code != 404 && http_code != 403)
 						return GetCustomErrorDefaultMessage ();
 					else
 						return GetDefaultErrorMessage (false);

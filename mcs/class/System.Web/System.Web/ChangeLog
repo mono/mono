@@ -1,3 +1,8 @@
+2009-06-02  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: 403 errors get same treatment as 404
+	below. Fixes bug #509092
+
 2009-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: if custom errors are enabled and the error
