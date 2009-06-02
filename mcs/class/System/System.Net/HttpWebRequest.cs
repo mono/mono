@@ -744,7 +744,7 @@ namespace System.Net
 		{
 			bool send = (method == "PUT" || method == "POST");
 			if (send) {
-				if ((!KeepAlive || (ContentLength == -1 && !SendChunked)) && !AllowWriteStreamBuffering)
+				if (ContentLength == -1 && !SendChunked && !AllowWriteStreamBuffering)
 					throw new ProtocolViolationException ("Content-Length not set");
 			}
 
