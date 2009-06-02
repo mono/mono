@@ -1,5 +1,11 @@
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* threads.c (ves_icall_System_Threading_Thread_Sleep_internal):
+	Check if the thread was interrupted and proccess it straight away.
+	Makes abortion much more responsive.
+
+2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* threads.c (mono_thread_execute_interruption): Use atomic cas with
 	MonoThread::interruption_requested to match it's counterpart.
 
