@@ -1,5 +1,13 @@
 2009-06-02  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplication.cs: LocateHandler needs to pass current request
+	path and filepath to WebConfigurationManager when retrieving
+	system.web/httpHandlers section as only this will guarantee that
+	any <location> elements relating to the current request's which
+	contain system.web/httpHandlers section will be correctly read and
+	used. Also fixes reading httpHandlers section if it's found in
+	web.config located in a subdirectory. Fixes bug #509069
+
 	* HttpException.cs: 403 errors get same treatment as 404
 	below. Fixes bug #509092
 
