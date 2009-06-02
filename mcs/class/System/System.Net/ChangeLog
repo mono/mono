@@ -1,5 +1,10 @@
 2009-06-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebRequest.cs: KeepAlive check not needed.
+	Fixes bug #465613.
+
+2009-06-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpConnection.cs: unbind the context after every read for keep-alive
 	connections.
 	Bug #502274 fixed.
