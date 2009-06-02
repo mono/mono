@@ -302,6 +302,14 @@ namespace System.Net {
 			SendError (context.ErrorMessage, context.ErrorStatus);
 		}
 
+		void Unbind ()
+		{
+			if (context_bound) {
+				epl.UnbindContext (context);
+				context_bound = false;
+			}
+		}
+
 		public void Close ()
 		{
 			if (sock != null) {
@@ -314,6 +322,7 @@ namespace System.Net {
 				if (chunked && context.Response.ForceCloseChunked == false) {
 					// Don't close. Keep working.
 					chunked_uses++;
+					Unbind ();
 					Init ();
 					BeginReadRequest ();
 					return;
@@ -328,14 +337,13 @@ namespace System.Net {
 					} finally {
 						s.Close ();
 					}
+					Unbind ();
 				} else {
+					Unbind ();
 					Init ();
 					BeginReadRequest ();
 					return;
 				}
-
-				if (context_bound)
-					epl.UnbindContext (context);
 			}
 		}
 	}

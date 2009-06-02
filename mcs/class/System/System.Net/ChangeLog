@@ -1,3 +1,9 @@
+2009-06-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpConnection.cs: unbind the context after every read for keep-alive
+	connections.
+	Bug #502274 fixed.
+
 2009-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CookieContainer.cs: Provide meaningful information in exception
