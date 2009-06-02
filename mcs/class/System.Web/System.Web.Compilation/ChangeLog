@@ -1,3 +1,9 @@
+2009-06-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* BuildManager.cs: allow deployment of precompiled applications under
+	any virtual path, not just the default one used when precompiling.
+	Fixes bug #483268.
+
 2009-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: when throwing a 404 exception, pass the virtual

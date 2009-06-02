@@ -430,12 +430,44 @@ namespace System.Web.Compilation {
 			AddAssembly (Assembly.Load (info.Assembly), al);
 		}
 
+		// Deal with precompiled sites deployed in a different virtual path
+		static void FixVirtualPaths ()
+ 		{
+			string [] parts;
+			int skip = -1;
+			foreach (string vpath in precompiled.Keys) {
+				parts = vpath.Split ('/');
+				for (int i = 0; i < parts.Length; i++) {
+					string test_path = String.Join ("/", parts, i, parts.Length - i);
+					VirtualPath result = GetAbsoluteVirtualPath (test_path);
+					if (result != null && File.Exists (result.PhysicalPath)) {
+						skip = i;
+						break;
+					}
+				}
+			}
+			string app_vpath = HttpRuntime.AppDomainAppVirtualPath;
+			if (skip == -1 || (skip == 0 && app_vpath == "/"))
+				return;
+
+			string slash = (app_vpath.EndsWith ("/") ? "" : "/");
+			Dictionary<string, PreCompilationData> copy = new Dictionary<string, PreCompilationData> (precompiled);
+			precompiled.Clear ();
+			foreach (KeyValuePair<string,PreCompilationData> entry in copy) {
+				parts = entry.Key.Split ('/');
+				string new_path = app_vpath + slash + String.Join ("/", parts, skip, parts.Length - skip);
+				entry.Value.VirtualPath = new_path;
+				precompiled.Add (new_path, entry.Value);
+			}
+		}
+
 		static void LoadPrecompilationInfo ()
 		{
 			string [] compiled = Directory.GetFiles (HttpRuntime.BinDirectory, "*.compiled");
 			foreach (string str in compiled) {
 				LoadCompiled (str);
 			}
+			FixVirtualPaths ();
 		}
 
 		static void LoadCompiled (string filename)
