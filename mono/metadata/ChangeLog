@@ -1,5 +1,15 @@
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* threads.c (mono_thread_execute_interruption): Use atomic cas with
+	MonoThread::interruption_requested to match it's counterpart.
+
+	Fixes a hang in abort-stress-1 on a 2 core x86.
+
+	* threads.c (ves_icall_System_Threading_Thread_GetAbortExceptionState):
+	Fix warning.
+
+2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Change MonoImage::name_cache to be protected by the image lock
 	instead of the loader lock.
 
