@@ -1,3 +1,8 @@
+2009-06-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OracleParameterTest.cs: Use the member variables for
+	connection/command for executing the tests.
+	
 2009-05-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OracleParameterTest.cs: Added tests corresponding to #424908
