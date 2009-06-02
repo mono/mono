@@ -1,3 +1,7 @@
+2009-06-02  Marek Safar  <marek.safar@gmail.com>
+
+	* compiler-tester.cs: Add "safe-execution" options.
+
 2009-02-19  Marek Safar  <marek.safar@gmail.com>
 
 	* compiler-tester.cs: More verbosity needed for runtime crashes.

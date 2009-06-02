@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008, 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -135,7 +135,7 @@ namespace TestRunner {
 	}
 #endif
 
-	class TestCase
+	class TestCase : MarshalByRefObject
 	{
 		public readonly string FileName;
 		public readonly string[] CompilerOptions;
@@ -151,9 +151,9 @@ namespace TestRunner {
 
 	class PositiveTestCase : TestCase
 	{
-		public class VerificationData
+		public class VerificationData : MarshalByRefObject
 		{
-			public class MethodData
+			public class MethodData : MarshalByRefObject
 			{
 				public MethodData (MethodBase mi, int il_size)
 				{
@@ -290,59 +290,9 @@ namespace TestRunner {
 				return verif_data;
 			}
 		}
-
-		public bool CompareIL (MethodBase mi, PositiveChecker checker)
-		{
-			string m_name = mi.ToString ();
-			string decl_type = mi.DeclaringType.ToString ();
-			VerificationData.MethodData md = verif_data.FindMethodData (m_name, decl_type);
-			if (md == null) {
-				verif_data.AddNewMethod (mi, GetILSize (mi));
-				if (!verif_data.IsNewSet) {
-					checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError, decl_type + ": " + m_name + " (new method?)");
-					return false;
-				}
-
-				return true;
-			}
-
-			if (md.Checked) {
-				checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError, decl_type + ": " + m_name + " has a duplicate");
-				return false;
-			}
-			
-			md.Checked = true;
-
-			int il_size = GetILSize (mi);
-			if (md.ILSize == il_size)
-				return true;
-
-			if (md.ILSize > il_size) {
-				checker.LogFileLine (FileName, "{0} (code size reduction {1} -> {2})", m_name, md.ILSize, il_size);
-				md.ILSize = il_size;
-				return true;
-			}
-
-			checker.HandleFailure (FileName, PositiveChecker.TestResult.ILError,
-				string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
-
-			md.ILSize = il_size;
-
-			return false;
-		}
-
-		static int GetILSize (MethodBase mi)
-		{
-#if NET_2_0
-			MethodBody body = mi.GetMethodBody ();
-			if (body != null)
-				return body.GetILAsByteArray ().Length;
-#endif
-			return 0;
-		}
 	}
 
-	class Checker: IDisposable
+	class Checker: MarshalByRefObject, IDisposable
 	{
 		protected ITester tester;
 		protected int success;
@@ -363,6 +313,7 @@ namespace TestRunner {
 		protected ArrayList no_error_list = new ArrayList ();
 		
 		protected bool verbose;
+		protected bool safe_execution;
 			
 		int total_known_issues;
 
@@ -387,6 +338,12 @@ namespace TestRunner {
 		public bool Verbose {
 			set {
 				verbose = value;
+			}
+		}
+
+		public bool SafeExecution {
+			set {
+				safe_execution = value;
 			}
 		}
 
@@ -682,6 +639,9 @@ namespace TestRunner {
 			set {
 				update_verif_file = value;
 			}
+			get {
+				return update_verif_file;
+			}
 		}
 
 		protected override bool GetExtraOptions(string file, out string[] compiler_options,
@@ -699,6 +659,127 @@ namespace TestRunner {
 				}
 			}
 			return true;
+		}
+
+		class DomainTester : MarshalByRefObject
+		{
+			public bool CheckILSize (PositiveTestCase test, PositiveChecker checker, string file)
+			{
+				Assembly assembly = Assembly.LoadFile (file);
+
+				bool success = true;
+				Type[] types = assembly.GetTypes ();
+				foreach (Type t in types) {
+
+					// Skip interfaces
+					if (!t.IsClass && !t.IsValueType)
+						continue;
+
+					if (test.VerificationProvider == null) {
+						if (!checker.UpdateVerificationDataFile)
+							checker.LogFileLine (test.FileName, "Missing IL verification data");
+						test.CreateNewTest ();
+					}
+
+					foreach (MemberInfo m in t.GetMembers (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
+						MethodBase mi = m as MethodBase;
+						if (mi == null)
+							continue;
+
+						if ((mi.Attributes & (MethodAttributes.PinvokeImpl)) != 0)
+							continue;
+
+						success &= CompareIL (mi, test, checker);
+					}
+				}
+
+				return success;
+			}
+
+			bool CompareIL (MethodBase mi, PositiveTestCase test, PositiveChecker checker)
+			{
+				string m_name = mi.ToString ();
+				string decl_type = mi.DeclaringType.ToString ();
+				PositiveTestCase.VerificationData data_provider = test.VerificationProvider;
+
+				PositiveTestCase.VerificationData.MethodData md = data_provider.FindMethodData (m_name, decl_type);
+				if (md == null) {
+					data_provider.AddNewMethod (mi, GetILSize (mi));
+					if (!data_provider.IsNewSet) {
+						checker.HandleFailure (test.FileName, PositiveChecker.TestResult.ILError, decl_type + ": " + m_name + " (new method?)");
+						return false;
+					}
+
+					return true;
+				}
+
+				if (md.Checked) {
+					checker.HandleFailure (test.FileName, PositiveChecker.TestResult.ILError, decl_type + ": " + m_name + " has a duplicate");
+					return false;
+				}
+
+				md.Checked = true;
+
+				int il_size = GetILSize (mi);
+				if (md.ILSize == il_size)
+					return true;
+
+				if (md.ILSize > il_size) {
+					checker.LogFileLine (test.FileName, "{0} (code size reduction {1} -> {2})", m_name, md.ILSize, il_size);
+					md.ILSize = il_size;
+					return true;
+				}
+
+				checker.HandleFailure (test.FileName, PositiveChecker.TestResult.ILError,
+					string.Format ("{0} (code size {1} -> {2})", m_name, md.ILSize, il_size));
+
+				md.ILSize = il_size;
+
+				return false;
+			}
+
+			static int GetILSize (MethodBase mi)
+			{
+#if NET_2_0
+				MethodBody body = mi.GetMethodBody ();
+				if (body != null)
+					return body.GetILAsByteArray ().Length;
+#endif
+				return 0;
+			}
+
+			bool ExecuteFile (MethodInfo entry_point, string filename)
+			{
+				TextWriter stdout = Console.Out;
+				TextWriter stderr = Console.Error;
+				Console.SetOut (TextWriter.Null);
+				Console.SetError (TextWriter.Null);
+				ParameterInfo[] pi = entry_point.GetParameters ();
+				object[] args = pi.Length == 0 ? null : default_args;
+
+				object result = null;
+				try {
+					try {
+						result = entry_point.Invoke (null, args);
+					} finally {
+						Console.SetOut (stdout);
+						Console.SetError (stderr);
+					}
+				} catch (Exception e) {
+					throw new ApplicationException (e.ToString ());
+				}
+
+				if (result is int && (int) result != 0)
+					throw new ApplicationException ("Wrong return code: " + result.ToString ());
+
+				return true;
+			}
+
+			public bool Test (string file)
+			{
+				Assembly assembly = Assembly.LoadFile (file);
+				return ExecuteFile (assembly.EntryPoint, file);
+			}
 		}
 
 		protected override bool Check(TestCase test)
@@ -726,7 +807,6 @@ namespace TestRunner {
 				return true;
 			}
 
-			MethodInfo mi = null;
 			string file = Path.Combine (files_folder, Path.GetFileNameWithoutExtension (filename) + ".exe");
 
 			// Enable .dll only tests (no execution required)
@@ -735,42 +815,56 @@ namespace TestRunner {
 				return true;
 			}
 
-			Assembly assembly = null;
+			AppDomain domain = null;
+			if (safe_execution) {
+				// Create a new AppDomain, with the current directory as the base.
+				AppDomainSetup setupInfo = new AppDomainSetup ();
+				setupInfo.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+				setupInfo.LoaderOptimization = LoaderOptimization.SingleDomain;
+				domain = AppDomain.CreateDomain (Path.GetFileNameWithoutExtension (file), null, setupInfo);
+			}
+
 			try {
-				assembly = Assembly.LoadFile (file);
-				mi = assembly.EntryPoint;
-			}
-			catch (FileNotFoundException) {
-				if (File.Exists (file)) {
-					Console.WriteLine ("APPDOMAIN LIMIT REACHED");
-				}
-			}
-			catch (Exception e) {
-				HandleFailure (filename, TestResult.LoadError, e.ToString ());
-				return false;
-			}
-
-			if (!ExecuteFile (mi, file, filename))
-				return false;
-
-			if (doc_output != null) {
-				string ref_file = filename.Replace (".cs", "-ref.xml");
+				DomainTester tester;
 				try {
-#if !NET_2_1
-					XmlComparer.Compare (ref_file, doc_output);
-#endif
-				}
-				catch (Exception e) {
-					HandleFailure (filename, TestResult.XmlError, e.Message);
+					if (domain != null)
+						tester = (DomainTester) domain.CreateInstanceAndUnwrap (typeof (PositiveChecker).Assembly.FullName, typeof (DomainTester).FullName);
+					else
+						tester = new DomainTester ();
+
+					if (!tester.Test (file))
+						return false;
+
+				} catch (ApplicationException e) {
+					HandleFailure (filename, TestResult.ExecError, e.Message);
+					return false;
+				} catch (Exception e) {
+					HandleFailure (filename, TestResult.LoadError, e.ToString ());
 					return false;
 				}
-			} else {
-				if (verif_file != null) {
-					PositiveTestCase pt = (PositiveTestCase) test;
-					pt.VerificationProvider = (PositiveTestCase.VerificationData) verif_data [filename];
-					if (!CheckILSize (assembly, pt))
+
+				if (doc_output != null) {
+					string ref_file = filename.Replace (".cs", "-ref.xml");
+					try {
+#if !NET_2_1
+						XmlComparer.Compare (ref_file, doc_output);
+#endif
+					} catch (Exception e) {
+						HandleFailure (filename, TestResult.XmlError, e.Message);
 						return false;
+					}
+				} else {
+					if (verif_file != null) {
+						PositiveTestCase pt = (PositiveTestCase) test;
+						pt.VerificationProvider = (PositiveTestCase.VerificationData) verif_data[filename];
+
+						if (!tester.CheckILSize (pt, this, file))
+							return false;
+					}
 				}
+			} finally {
+				if (domain != null)
+					AppDomain.Unload (domain);
 			}
 
 			HandleFailure (filename, TestResult.Success, null);
@@ -780,67 +874,6 @@ namespace TestRunner {
 		protected override TestCase CreateTestCase (string filename, string [] options, string [] deps)
 		{
 			return new PositiveTestCase (filename, options, deps);
-		}
-
-		bool CheckILSize (Assembly assembly, PositiveTestCase test)
-		{
-			bool success = true;
-			Type[] types = assembly.GetTypes ();
-			foreach (Type t in types) {
-				
-				// Skip interfaces
-				if (!t.IsClass && !t.IsValueType)
-					continue;
-
-				if (test.VerificationProvider == null) {
-					if (!update_verif_file)
-						LogFileLine (test.FileName, "Missing IL verification data");
-					test.CreateNewTest ();
-				}
-
-				foreach (MemberInfo m in t.GetMembers (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
-					MethodBase mi = m as MethodBase;
-					if (mi == null)
-						continue;
-
-					if ((mi.Attributes & (MethodAttributes.PinvokeImpl)) != 0)
-						continue;
-
-					success &= test.CompareIL (mi, this);
-				}
-			}
-
-			return success;
-		}
-
-		bool ExecuteFile (MethodInfo entry_point, string exe_name, string filename)
-		{
-			TextWriter stdout = Console.Out;
-			TextWriter stderr = Console.Error;
-			Console.SetOut (TextWriter.Null);
-			Console.SetError (TextWriter.Null);
-			ParameterInfo[] pi = entry_point.GetParameters ();
-			object[] args = pi.Length == 0 ? null : default_args;
-
-			object result = null;
-			try {
-				try {
-					result = entry_point.Invoke (null, args);
-				} finally {
-					Console.SetOut (stdout);
-					Console.SetError (stderr);
-				}
-			}
-			catch (Exception e) {
-				HandleFailure (filename, TestResult.ExecError, e.ToString ());
-				return false;
-			}
-
-			if (result is int && (int)result != 0) {
-				HandleFailure (filename, TestResult.ExecError, "Wrong return code: " + result.ToString ());
-				return false;
-			}
-			return true;
 		}
 
 		public void HandleFailure (string file, TestResult status, string extra)
@@ -1310,6 +1343,8 @@ namespace TestRunner {
 				checker.LogFile = temp;
 			if (GetOption ("verbose", args, false, out temp))
 				checker.Verbose = true;
+			if (GetOption ("safe-execution", args, false, out temp))
+				checker.SafeExecution = true;
 			if (GetOption ("compiler-options", args, true, out temp)) {
 				string[] extra = temp.Split (' ');
 				checker.ExtraCompilerOptions = extra;
@@ -1375,7 +1410,7 @@ namespace TestRunner {
 		static void Usage ()
 		{
 			Console.WriteLine (
-				"Mono compiler tester, (C) 2008 Novell, Inc.\n" +
+				"Mono compiler tester, (C) 2009 Novell, Inc.\n" +
 				"compiler-tester -mode:[pos|neg] -compiler:FILE -files:file-list [options]\n" +
 				"   \n" +
 				"   -compiler:FILE   The file which will be used to compiler tests\n" +
@@ -1385,6 +1420,7 @@ namespace TestRunner {
 				"   -log:FILE        Writes any output also to the file\n" +
 				"   -help            Lists all options\n" +
 				"   -mode:[pos|neg]  Specifies compiler test mode\n" +
+				"   -safe-execution  Runs compiled executables in separate app-domain\n" +
 				"   -update-il       Updates IL-FILE to match compiler output\n" +
 				"   -verbose         Prints more details during testing\n"
 				);
