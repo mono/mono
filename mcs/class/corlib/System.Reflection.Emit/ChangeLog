@@ -1,3 +1,8 @@
+2009-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ILGenerator.cs (EmitCall): Under 2.0 profile ignore optional
+	arguments if the method call conv is not vararg.
+
 2009-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyBuilder.cs (.ctor): Error out if the not yet supported 

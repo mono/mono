@@ -387,6 +387,31 @@ namespace MonoTests.System.Reflection.Emit
 		}
 #endif
 
+#if NET_2_0
+		//Test for #509131
+		[Test]
+		public void TestEmitCallIgnoresOptionalArgsForNonVarargMethod ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.EmitCall (OpCodes.Call, typeof (object).GetMethod ("GetHashCode"), new Type[] { typeof (string) });
+			} catch (InvalidOperationException ex) {
+				Assert.Fail ("#1");
+			}
+		}
+#else
+		[Test]
+		public void TestEmitCallThrowsOnOptionalArgsForNonVarargMethod ()
+		{
+			DefineBasicMethod ();
+			try {
+				il_gen.EmitCall (OpCodes.Call, typeof (object).GetMethod ("GetHashCode"), new Type[] { typeof (string) });
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+			}
+		}
+#endif
+
 		[Test]
 		[ExpectedException (typeof (Exception))]
 		public void TestFilterEmittingWithoutHandlerExecution ()

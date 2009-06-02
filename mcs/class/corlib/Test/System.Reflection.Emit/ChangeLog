@@ -1,3 +1,7 @@
+2009-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ILGeneratorTest.cs: Tests for #509131.
+
 2009-03-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilderTest.cs: Add a test for #483852.

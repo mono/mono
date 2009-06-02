@@ -837,6 +837,10 @@ namespace System.Reflection.Emit {
 			short value = opcode.Value;
 			if (!(value == OpCodes.Call.Value || value == OpCodes.Callvirt.Value))
 				throw new NotSupportedException ("Only Call and CallVirt are allowed");
+#if NET_2_0
+			if ((methodInfo.CallingConvention & CallingConventions.VarArgs)  == 0)
+				optionalParameterTypes = null;
+#endif
 			if (optionalParameterTypes != null){
 				if ((methodInfo.CallingConvention & CallingConventions.VarArgs)  == 0){
 					throw new InvalidOperationException ("Method is not VarArgs method and optional types were passed");
