@@ -773,6 +773,9 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		protected override void Dispose(bool disposing) {
+			// call the base impl first to avoid conflicts with any parent's events
+			base.Dispose (disposing);
+
 			if (disposing) {
 				// Mop up the mess; or should we wait for the GC to kick in?
 				timer.Stop();
