@@ -1,3 +1,7 @@
+2009-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* profiles/net_4_0.make: Add preliminary net 4.0 profile.
+
 2009-04-09  Jonathan Pryor  <jpryor@novell.com>
 
 	* executable.make, library.make: Move the include for tests.make so
