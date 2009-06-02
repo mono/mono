@@ -1231,7 +1231,7 @@ namespace Mono.CSharp {
 									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 						} else {
 							string value = a.GetString ();
-							if (value.Length != 0)
+							if (value != null && value.Length != 0)
 								RootContext.StrongNameKeyFile = value;
 						}
 						break;
@@ -1244,7 +1244,7 @@ namespace Mono.CSharp {
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
 						} else {
 							string value = a.GetString ();
-							if (value.Length != 0)
+							if (value != null && value.Length != 0)
 								RootContext.StrongNameKeyContainer = value;
 						}
 						break;
