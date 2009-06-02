@@ -155,10 +155,11 @@ namespace System.Data.OracleClient
 				throw new ArgumentException("Size must be not be negative.");
 			
 			this.value = value;
-			if (value != null && value != DBNull.Value) {
-				this.size = size;
+			this.size = size;
+			// set sizeSet to true iff value is not-null or non-zero size value
+			if (value != null && value != DBNull.Value && size > 0)
 				this.sizeSet = true;
-			}
+
 			SourceColumnNullMapping = sourceColumnNullMapping;
 			OracleType = oracleType;
 			Direction = direction;
@@ -174,10 +175,12 @@ namespace System.Data.OracleClient
 				throw new ArgumentException("Size must be not be negative.");
 			
 			this.value = value;
-			if (value != null && value != DBNull.Value) {
-				this.size = size;
+			this.size = size;
+			
+			// set sizeSet to true iff value is not-null or non-zero size value
+			if (value != null && value != DBNull.Value && size > 0)
 				this.sizeSet = true;
-			}
+
 			this.isNullable = isNullable;
 			this.precision = precision;
 			this.scale = scale;
