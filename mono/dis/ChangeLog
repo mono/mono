@@ -1,3 +1,7 @@
+2009-06-03  Jb Evain  <jbevain@novell.com>
+
+	* main.c (dis_type): espace namespaces.
+
 2009-04-24  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* get.c (dis_stringify_method_signature_full): Don't assert
