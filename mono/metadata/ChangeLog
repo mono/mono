@@ -1,3 +1,9 @@
+2009-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (get_wrapper_target_class): New helper function.
+	(mono_marshal_get_runtime_invoke): Place runtime-invoke wrappers into
+	the <Module> class of the image. Fixes #509049.
+
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Sleep_internal):
