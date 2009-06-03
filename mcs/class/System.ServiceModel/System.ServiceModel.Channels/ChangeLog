@@ -1,3 +1,8 @@
+2009-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : that SL2/ML2 does not seem to allow null
+	  callbacks, so add hacky ones.
+
 2009-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : WaitForMessage() should not return

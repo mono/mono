@@ -136,7 +136,11 @@ namespace System.ServiceModel.Channels
 					throw new InvalidOperationException (String.Format ("Cross domain web service access to {0} is not allowed", destination));
 #endif
 
-				Stream requestStream = web_request.EndGetRequestStream (web_request.BeginGetRequestStream (null, null));
+				object state = new object ();
+				Stream requestStream = web_request.EndGetRequestStream (web_request.BeginGetRequestStream (delegate (IAsyncResult result) {
+					if (result.AsyncState != state)
+						throw new InvalidOperationException ("The argument async result has wrong state");
+					}, state));
 				requestStream.Write (buffer.GetBuffer (), 0, (int) buffer.Length);
 				requestStream.Close ();
 			}
@@ -144,7 +148,11 @@ namespace System.ServiceModel.Channels
 			WebResponse res;
 			Stream resstr;
 			try {
-				res = web_request.EndGetResponse (web_request.BeginGetResponse (null, null));
+				object state = new object ();
+				res = web_request.EndGetResponse (web_request.BeginGetResponse (delegate (IAsyncResult result) {
+					if (result.AsyncState != state)
+						throw new InvalidOperationException ("The argument async result has wrong state");
+					}, state));
 				resstr = res.GetResponseStream ();
 			} catch (WebException we) {
 				res = we.Response;
