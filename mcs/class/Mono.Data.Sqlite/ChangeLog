@@ -1,3 +1,8 @@
+2009-06-03  Marek Habersack  <mhabersack@novell.com>
+	
+	* Update SQLite.NET version to 1.0.61.0, applied Mono
+	modifications.
+
 2007-02-21  Marek Habersack  <grendello@gmail.com>
 
 	* Copied from Mono.Data.SqliteClient
