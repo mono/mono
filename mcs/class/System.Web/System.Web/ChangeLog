@@ -1,3 +1,14 @@
+2009-06-03  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpForbiddenHandler.cs: updated the error message to match
+	.NET, added requested path and description. Fixes bug #509092
+
+	* HttpException.cs: if trace is not requested, don't output <!--
+	following the version information in WriteFileBottom. Fixes bug
+	#509475
+	GetDefaultErrorMessage appends trace only if showTrace is
+	true. Fixes bug #509092
+
 2009-06-02  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: LocateHandler needs to pass current request
