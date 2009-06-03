@@ -5,12 +5,12 @@ require 'ftools'
 $gac = 'C:/WINDOWS/assembly/GAC_MSIL'
 $fx =  'C:/WINDOWS/Microsoft.NET/Framework'
 
-$fx1 = File.join $fx, "v1.1.4322"
-$fx2 = File.join $fx, "v2.0.50727"
+$fx1_1 = File.join $fx, "v1.1.4322"
+$fx2_0 = File.join $fx, "v2.0.50727"
 $fx3_0 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/v3.0'
 $fx3_5 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/v3.5'
 $fx4_0 = 'C:/Program Files/Reference Assemblies/Microsoft/Framework/.NETFramework/v4.0'
-$sl2_0 = 'C:/Program Files/Microsoft Silverlight/2.0.31005.0'
+$sl2_0 = 'C:/Program Files/Microsoft Silverlight/2.0.40115.0'
 $sl2_0sdk = 'C:/Program Files/Microsoft SDKs/Silverlight/v2.0/Libraries/Client/'
 
 $net_1_1 = [
@@ -349,9 +349,9 @@ end
 
 delete("*.tar.gz")
 
-process("1.1", $net_1_1, [$fx1])
-process("2.0", $net_2_0, [$fx2])
-process("3.0", $net_3_0, [$fx3_0, $fx2])
-process("3.5", $net_3_5, [$fx3_5, $fx2])
+process("1.1", $net_1_1, [$fx1_1])
+process("2.0", $net_2_0, [$fx2_0])
+process("3.0", $net_3_0, [$fx3_0, $fx2_0])
+process("3.5", $net_3_5, [$fx3_5, $fx2_0])
 process("4.0", $net_4_0, [$fx4_0])
 process("SL2", $sl_2_0, [$sl2_0, $sl2_0sdk])
