@@ -21,15 +21,15 @@ namespace Mono.Data.Sqlite
   /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
   [Serializable]
-  public sealed class SQLiteException : DbException
+  public sealed class SqliteException : DbException
 #else
-  public sealed class SQLiteException : Exception
+  public sealed class SqliteException : Exception
 #endif
   {
     private SQLiteErrorCode _errorCode;
 
 #if !PLATFORM_COMPACTFRAMEWORK
-    private SQLiteException(SerializationInfo info, StreamingContext context)
+    private SqliteException(SerializationInfo info, StreamingContext context)
       : base(info, context)
     {
     }
@@ -40,7 +40,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="errorCode">The SQLite error code to report</param>
     /// <param name="extendedInformation">Extra text to go along with the error message text</param>
-    public SQLiteException(int errorCode, string extendedInformation)
+    public SqliteException(int errorCode, string extendedInformation)
       : base(GetStockErrorMessage(errorCode, extendedInformation))
     {
       _errorCode = (SQLiteErrorCode)errorCode;
@@ -50,7 +50,7 @@ namespace Mono.Data.Sqlite
     /// Various public constructors that just pass along to the base Exception
     /// </summary>
     /// <param name="message">Passed verbatim to Exception</param>
-    public SQLiteException(string message)
+    public SqliteException(string message)
       : base(message)
     {
     }
@@ -58,7 +58,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Various public constructors that just pass along to the base Exception
     /// </summary>
-    public SQLiteException()
+    public SqliteException()
     {
     }
 
@@ -67,7 +67,7 @@ namespace Mono.Data.Sqlite
     /// <param name="message">Passed to Exception</param>
     /// <param name="innerException">Passed to Exception</param>
     /// </summary>
-    public SQLiteException(string message, Exception innerException)
+    public SqliteException(string message, Exception innerException)
       : base(message, innerException)
     {
     }

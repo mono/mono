@@ -21,7 +21,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The opaque pointer returned to us by the sqlite provider
     /// </summary>
-    protected SQLiteConnectionHandle _sql;
+    protected SqliteConnectionHandle _sql;
     protected string _fileName;
     protected bool _usePool;
     protected int _poolVersion = 0;
@@ -32,7 +32,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The user-defined functions registered on this connection
     /// </summary>
-    protected SQLiteFunction[] _functionsArray;
+    protected SqliteFunction[] _functionsArray;
 
     internal SQLite3(SQLiteDateFormats fmt)
       : base(fmt)
@@ -47,7 +47,7 @@ namespace Mono.Data.Sqlite
 
     // It isn't necessary to cleanup any functions we've registered.  If the connection
     // goes to the pool and is resurrected later, re-registered functions will overwrite the
-    // previous functions.  The SQLiteFunctionCookieHandle will take care of freeing unmanaged
+    // previous functions.  The SqliteFunctionCookieHandle will take care of freeing unmanaged
     // resources belonging to the previously-registered functions.
     internal override void Close()
     {
@@ -56,7 +56,7 @@ namespace Mono.Data.Sqlite
         if (_usePool)
         {
           SQLiteBase.ResetConnection(_sql);
-          SQLiteConnectionPool.Add(_fileName, _sql, _poolVersion);
+          SqliteConnectionPool.Add(_fileName, _sql, _poolVersion);
         }
         else
           _sql.Dispose();
@@ -102,7 +102,7 @@ namespace Mono.Data.Sqlite
       if (usePool)
       {
         _fileName = strFilename;
-        _sql = SQLiteConnectionPool.Remove(strFilename, maxPoolSize, out _poolVersion);
+        _sql = SqliteConnectionPool.Remove(strFilename, maxPoolSize, out _poolVersion);
       }
 
       if (_sql == null)
@@ -114,28 +114,28 @@ namespace Mono.Data.Sqlite
 #else
         int n = UnsafeNativeMethods.sqlite3_open_v2(ToUTF8(strFilename), out db, (int)flags, IntPtr.Zero);
 #endif
-        if (n > 0) throw new SQLiteException(n, null);
+        if (n > 0) throw new SqliteException(n, null);
 
         _sql = db;
       }
       // Bind functions to this connection.  If any previous functions of the same name
       // were already bound, then the new bindings replace the old.
-      _functionsArray = SQLiteFunction.BindFunctions(this);
+      _functionsArray = SqliteFunction.BindFunctions(this);
       SetTimeout(0);
     }
 
     internal override void ClearPool()
     {
-      SQLiteConnectionPool.ClearPool(_fileName);
+      SqliteConnectionPool.ClearPool(_fileName);
     }
 
     internal override void SetTimeout(int nTimeoutMS)
     {
       int n = UnsafeNativeMethods.sqlite3_busy_timeout(_sql, nTimeoutMS);
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override bool Step(SQLiteStatement stmt)
+    internal override bool Step(SqliteStatement stmt)
     {
       int n;
       Random rnd = null;
@@ -159,7 +159,7 @@ namespace Mono.Data.Sqlite
           r = Reset(stmt);
 
           if (r == 0)
-            throw new SQLiteException(n, SQLiteLastError());
+            throw new SqliteException(n, SQLiteLastError());
 
           else if ((r == 6 || r == 5) && stmt._command != null) // SQLITE_LOCKED || SQLITE_BUSY
           {
@@ -170,7 +170,7 @@ namespace Mono.Data.Sqlite
             // If we've exceeded the command's timeout, give up and throw an error
             if ((uint)Environment.TickCount - starttick > timeout)
             {
-              throw new SQLiteException(r, SQLiteLastError());
+              throw new SqliteException(r, SQLiteLastError());
             }
             else
             {
@@ -182,7 +182,7 @@ namespace Mono.Data.Sqlite
       }
     }
 
-    internal override int Reset(SQLiteStatement stmt)
+    internal override int Reset(SqliteStatement stmt)
     {
       int n;
 
@@ -197,7 +197,7 @@ namespace Mono.Data.Sqlite
       {
         // Recreate a dummy statement
         string str;
-        using (SQLiteStatement tmp = Prepare(null, stmt._sqlStatement, null, (uint)(stmt._command._commandTimeout * 1000), out str))
+        using (SqliteStatement tmp = Prepare(null, stmt._sqlStatement, null, (uint)(stmt._command._commandTimeout * 1000), out str))
         {
           // Finalize the existing statement
           stmt._sqlite_stmt.Dispose();
@@ -214,7 +214,7 @@ namespace Mono.Data.Sqlite
         return n;
 
       if (n > 0)
-        throw new SQLiteException(n, SQLiteLastError());
+        throw new SqliteException(n, SQLiteLastError());
 
       return 0; // We reset OK, no schema changes
     }
@@ -224,7 +224,7 @@ namespace Mono.Data.Sqlite
       return SQLiteBase.SQLiteLastError(_sql);
     }
 
-    internal override SQLiteStatement Prepare(SQLiteConnection cnn, string strSql, SQLiteStatement previous, uint timeoutMS, out string strRemain)
+    internal override SqliteStatement Prepare(SqliteConnection cnn, string strSql, SqliteStatement previous, uint timeoutMS, out string strRemain)
     {
       IntPtr stmt = IntPtr.Zero;
       IntPtr ptr = IntPtr.Zero;
@@ -233,7 +233,7 @@ namespace Mono.Data.Sqlite
       int retries = 0;
       byte[] b = ToUTF8(strSql);
       string typedefs = null;
-      SQLiteStatement cmd = null;
+      SqliteStatement cmd = null;
       Random rnd = null;
       uint starttick = (uint)Environment.TickCount;
 
@@ -282,7 +282,7 @@ namespace Mono.Data.Sqlite
               _buildingSchema = true;
               try
               {
-                ISQLiteSchemaExtensions ext = ((IServiceProvider)SQLiteFactory.Instance).GetService(typeof(ISQLiteSchemaExtensions)) as ISQLiteSchemaExtensions;
+                ISQLiteSchemaExtensions ext = ((IServiceProvider)SqliteFactory.Instance).GetService(typeof(ISQLiteSchemaExtensions)) as ISQLiteSchemaExtensions;
 
                 if (ext != null)
                   ext.BuildTempSchema(cnn);
@@ -311,7 +311,7 @@ namespace Mono.Data.Sqlite
             // If we've exceeded the command's timeout, give up and throw an error
             if ((uint)Environment.TickCount - starttick > timeoutMS)
             {
-              throw new SQLiteException(n, SQLiteLastError());
+              throw new SqliteException(n, SQLiteLastError());
             }
             else
             {
@@ -321,11 +321,11 @@ namespace Mono.Data.Sqlite
           }
         }
 
-        if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+        if (n > 0) throw new SqliteException(n, SQLiteLastError());
 
         strRemain = UTF8ToString(ptr, len);
 
-        if (stmt != IntPtr.Zero) cmd = new SQLiteStatement(this, stmt, strSql.Substring(0, strSql.Length - strRemain.Length), previous);
+        if (stmt != IntPtr.Zero) cmd = new SqliteStatement(this, stmt, strSql.Substring(0, strSql.Length - strRemain.Length), previous);
 
         return cmd;
       }
@@ -335,64 +335,64 @@ namespace Mono.Data.Sqlite
       }
     }
 
-    internal override void Bind_Double(SQLiteStatement stmt, int index, double value)
+    internal override void Bind_Double(SqliteStatement stmt, int index, double value)
     {
 #if !PLATFORM_COMPACTFRAMEWORK
       int n = UnsafeNativeMethods.sqlite3_bind_double(stmt._sqlite_stmt, index, value);
 #else
       int n = UnsafeNativeMethods.sqlite3_bind_double_interop(stmt._sqlite_stmt, index, ref value);
 #endif
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override void Bind_Int32(SQLiteStatement stmt, int index, int value)
+    internal override void Bind_Int32(SqliteStatement stmt, int index, int value)
     {
       int n = UnsafeNativeMethods.sqlite3_bind_int(stmt._sqlite_stmt, index, value);
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override void Bind_Int64(SQLiteStatement stmt, int index, long value)
+    internal override void Bind_Int64(SqliteStatement stmt, int index, long value)
     {
 #if !PLATFORM_COMPACTFRAMEWORK
       int n = UnsafeNativeMethods.sqlite3_bind_int64(stmt._sqlite_stmt, index, value);
 #else
       int n = UnsafeNativeMethods.sqlite3_bind_int64_interop(stmt._sqlite_stmt, index, ref value);
 #endif
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override void Bind_Text(SQLiteStatement stmt, int index, string value)
+    internal override void Bind_Text(SqliteStatement stmt, int index, string value)
     {
       byte[] b = ToUTF8(value);
       int n = UnsafeNativeMethods.sqlite3_bind_text(stmt._sqlite_stmt, index, b, b.Length - 1, (IntPtr)(-1));
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override void Bind_DateTime(SQLiteStatement stmt, int index, DateTime dt)
+    internal override void Bind_DateTime(SqliteStatement stmt, int index, DateTime dt)
     {
       byte[] b = ToUTF8(dt);
       int n = UnsafeNativeMethods.sqlite3_bind_text(stmt._sqlite_stmt, index, b, b.Length - 1, (IntPtr)(-1));
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override void Bind_Blob(SQLiteStatement stmt, int index, byte[] blobData)
+    internal override void Bind_Blob(SqliteStatement stmt, int index, byte[] blobData)
     {
       int n = UnsafeNativeMethods.sqlite3_bind_blob(stmt._sqlite_stmt, index, blobData, blobData.Length, (IntPtr)(-1));
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override void Bind_Null(SQLiteStatement stmt, int index)
+    internal override void Bind_Null(SqliteStatement stmt, int index)
     {
       int n = UnsafeNativeMethods.sqlite3_bind_null(stmt._sqlite_stmt, index);
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override int Bind_ParamCount(SQLiteStatement stmt)
+    internal override int Bind_ParamCount(SqliteStatement stmt)
     {
       return UnsafeNativeMethods.sqlite3_bind_parameter_count(stmt._sqlite_stmt);
     }
 
-    internal override string Bind_ParamName(SQLiteStatement stmt, int index)
+    internal override string Bind_ParamName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -402,17 +402,17 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override int Bind_ParamIndex(SQLiteStatement stmt, string paramName)
+    internal override int Bind_ParamIndex(SqliteStatement stmt, string paramName)
     {
       return UnsafeNativeMethods.sqlite3_bind_parameter_index(stmt._sqlite_stmt, ToUTF8(paramName));
     }
 
-    internal override int ColumnCount(SQLiteStatement stmt)
+    internal override int ColumnCount(SqliteStatement stmt)
     {
       return UnsafeNativeMethods.sqlite3_column_count(stmt._sqlite_stmt);
     }
 
-    internal override string ColumnName(SQLiteStatement stmt, int index)
+    internal override string ColumnName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -422,12 +422,12 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override TypeAffinity ColumnAffinity(SQLiteStatement stmt, int index)
+    internal override TypeAffinity ColumnAffinity(SqliteStatement stmt, int index)
     {
       return UnsafeNativeMethods.sqlite3_column_type(stmt._sqlite_stmt, index);
     }
 
-    internal override string ColumnType(SQLiteStatement stmt, int index, out TypeAffinity nAffinity)
+    internal override string ColumnType(SqliteStatement stmt, int index, out TypeAffinity nAffinity)
     {
       int len;
 #if !SQLITE_STANDARD
@@ -463,7 +463,7 @@ namespace Mono.Data.Sqlite
       }
     }
 
-    internal override int ColumnIndex(SQLiteStatement stmt, string columnName)
+    internal override int ColumnIndex(SqliteStatement stmt, string columnName)
     {
       int x = ColumnCount(stmt);
 
@@ -475,7 +475,7 @@ namespace Mono.Data.Sqlite
       return -1;
     }
 
-    internal override string ColumnOriginalName(SQLiteStatement stmt, int index)
+    internal override string ColumnOriginalName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -485,7 +485,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override string ColumnDatabaseName(SQLiteStatement stmt, int index)
+    internal override string ColumnDatabaseName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -495,7 +495,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override string ColumnTableName(SQLiteStatement stmt, int index)
+    internal override string ColumnTableName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -523,7 +523,7 @@ namespace Mono.Data.Sqlite
       csLen = -1;
       n = UnsafeNativeMethods.sqlite3_table_column_metadata(_sql, ToUTF8(dataBase), ToUTF8(table), ToUTF8(column), out dataTypePtr, out collSeqPtr, out nnotNull, out nprimaryKey, out nautoInc);
 #endif
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
 
       dataType = UTF8ToString(dataTypePtr, dtLen);
       collateSequence = UTF8ToString(collSeqPtr, csLen);
@@ -533,7 +533,7 @@ namespace Mono.Data.Sqlite
       autoIncrement = (nautoInc == 1);
     }
 
-    internal override double GetDouble(SQLiteStatement stmt, int index)
+    internal override double GetDouble(SqliteStatement stmt, int index)
     {
       double value;
 #if !PLATFORM_COMPACTFRAMEWORK
@@ -544,12 +544,12 @@ namespace Mono.Data.Sqlite
       return value;
     }
 
-    internal override int GetInt32(SQLiteStatement stmt, int index)
+    internal override int GetInt32(SqliteStatement stmt, int index)
     {
       return UnsafeNativeMethods.sqlite3_column_int(stmt._sqlite_stmt, index);
     }
 
-    internal override long GetInt64(SQLiteStatement stmt, int index)
+    internal override long GetInt64(SqliteStatement stmt, int index)
     {
       long value;
 #if !PLATFORM_COMPACTFRAMEWORK
@@ -560,7 +560,7 @@ namespace Mono.Data.Sqlite
       return value;
     }
 
-    internal override string GetText(SQLiteStatement stmt, int index)
+    internal override string GetText(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -570,7 +570,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override DateTime GetDateTime(SQLiteStatement stmt, int index)
+    internal override DateTime GetDateTime(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -580,7 +580,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override long GetBytes(SQLiteStatement stmt, int index, int nDataOffset, byte[] bDest, int nStart, int nLength)
+    internal override long GetBytes(SqliteStatement stmt, int index, int nDataOffset, byte[] bDest, int nStart, int nLength)
     {
       IntPtr ptr;
       int nlen;
@@ -594,14 +594,16 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
-      if (nCopied > 0)
-        Marshal.Copy((IntPtr)(ptr.ToInt32() + nDataOffset), bDest, nStart, nCopied);
-      else nCopied = 0;
+      unsafe {
+	      if (nCopied > 0)
+		      Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
+	      else nCopied = 0;
+      }
 
       return nCopied;
     }
 
-    internal override long GetChars(SQLiteStatement stmt, int index, int nDataOffset, char[] bDest, int nStart, int nLength)
+    internal override long GetChars(SqliteStatement stmt, int index, int nDataOffset, char[] bDest, int nStart, int nLength)
     {
       int nlen;
       int nCopied = nLength;
@@ -621,7 +623,7 @@ namespace Mono.Data.Sqlite
       return nCopied;
     }
 
-    internal override bool IsNull(SQLiteStatement stmt, int index)
+    internal override bool IsNull(SqliteStatement stmt, int index)
     {
       return (ColumnAffinity(stmt, index) == TypeAffinity.Null);
     }
@@ -642,14 +644,14 @@ namespace Mono.Data.Sqlite
       n = UnsafeNativeMethods.sqlite3_create_function(_sql, ToUTF8(strFunction), nArgs, 4, IntPtr.Zero, func, funcstep, funcfinal);
       if (n == 0) n = UnsafeNativeMethods.sqlite3_create_function(_sql, ToUTF8(strFunction), nArgs, 1, IntPtr.Zero, func, funcstep, funcfinal);
 #endif
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
     internal override void CreateCollation(string strCollation, SQLiteCollation func, SQLiteCollation func16)
     {
       int n = UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 2, IntPtr.Zero, func16);
       if (n == 0) UnsafeNativeMethods.sqlite3_create_collation(_sql, ToUTF8(strCollation), 1, IntPtr.Zero, func);
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
     internal override int ContextCollateCompare(CollationEncodingEnum enc, IntPtr context, string s1, string s2)
@@ -710,7 +712,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override CollationSequence GetCollationSequence(SQLiteFunction func, IntPtr context)
+    internal override CollationSequence GetCollationSequence(SqliteFunction func, IntPtr context)
     {
 #if !SQLITE_STANDARD
       CollationSequence seq = new CollationSequence();
@@ -744,9 +746,11 @@ namespace Mono.Data.Sqlite
       if (nCopied + nStart > bDest.Length) nCopied = bDest.Length - nStart;
       if (nCopied + nDataOffset > nlen) nCopied = nlen - nDataOffset;
 
-      if (nCopied > 0)
-        Marshal.Copy((IntPtr)(ptr.ToInt32() + nDataOffset), bDest, nStart, nCopied);
-      else nCopied = 0;
+      unsafe {
+	      if (nCopied > 0)
+		      Marshal.Copy((IntPtr)((byte*)ptr + nDataOffset), bDest, nStart, nCopied);
+	      else nCopied = 0;
+      }
 
       return nCopied;
     }
@@ -845,13 +849,13 @@ namespace Mono.Data.Sqlite
     internal override void SetPassword(byte[] passwordBytes)
     {
       int n = UnsafeNativeMethods.sqlite3_key(_sql, passwordBytes, passwordBytes.Length);
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
     internal override void ChangePassword(byte[] newPasswordBytes)
     {
       int n = UnsafeNativeMethods.sqlite3_rekey(_sql, newPasswordBytes, (newPasswordBytes == null) ? 0 : newPasswordBytes.Length);
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
     internal override void SetUpdateHook(SQLiteUpdateCallback func)
@@ -876,7 +880,7 @@ namespace Mono.Data.Sqlite
     /// <param name="index">The column index to retrieve</param>
     /// <param name="typ">The type of data contained in the column.  If Uninitialized, this function will retrieve the datatype information.</param>
     /// <returns>Returns the data in the column</returns>
-    internal override object GetValue(SQLiteStatement stmt, int index, SQLiteType typ)
+    internal override object GetValue(SqliteStatement stmt, int index, SQLiteType typ)
     {
       if (IsNull(stmt, index)) return DBNull.Value;
       TypeAffinity aff = typ.Affinity;
@@ -884,7 +888,7 @@ namespace Mono.Data.Sqlite
 
       if (typ.Type != DbType.Object)
       {
-        t = SQLiteConvert.SQLiteTypeToType(typ);
+        t = SqliteConvert.SQLiteTypeToType(typ);
         aff = TypeToAffinity(t);
       }
 
@@ -917,7 +921,7 @@ namespace Mono.Data.Sqlite
       }
     }
 
-    internal override int GetCursorForTable(SQLiteStatement stmt, int db, int rootPage)
+    internal override int GetCursorForTable(SqliteStatement stmt, int db, int rootPage)
     {
 #if !SQLITE_STANDARD
       return UnsafeNativeMethods.sqlite3_table_cursor(stmt._sqlite_stmt, db, rootPage);
@@ -926,7 +930,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override long GetRowIdForCursor(SQLiteStatement stmt, int cursor)
+    internal override long GetRowIdForCursor(SqliteStatement stmt, int cursor)
     {
 #if !SQLITE_STANDARD
       long rowid;
@@ -947,7 +951,7 @@ namespace Mono.Data.Sqlite
       int rc;
 
       rc = UnsafeNativeMethods.sqlite3_index_column_info_interop(_sql, ToUTF8(database), ToUTF8(index), ToUTF8(column), out sortMode, out onError, out coll, out colllen);
-      if (rc != 0) throw new SQLiteException(rc, "");
+      if (rc != 0) throw new SqliteException(rc, "");
 
       collationSequence = UTF8ToString(coll, colllen);
 #else

@@ -17,10 +17,10 @@ namespace Mono.Data.Sqlite
   /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
   [DefaultEvent("RowUpdated")]
-  [ToolboxItem("SQLite.Designer.SQLiteDataAdapterToolboxItem, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139")]
+  [ToolboxItem("SQLite.Designer.SqliteDataAdapterToolboxItem, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139")]
   [Designer("Microsoft.VSDesigner.Data.VS.SqlDataAdapterDesigner, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-  public sealed class SQLiteDataAdapter : DbDataAdapter
+  public sealed class SqliteDataAdapter : DbDataAdapter
   {
     private static object _updatingEventPH = new object();
     private static object _updatedEventPH = new object();
@@ -31,7 +31,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Default constructor.
     /// </summary>
-    public SQLiteDataAdapter()
+    public SqliteDataAdapter()
     {
     }
 
@@ -39,7 +39,7 @@ namespace Mono.Data.Sqlite
     /// Constructs a data adapter using the specified select command.
     /// </summary>
     /// <param name="cmd">The select command to associate with the adapter.</param>
-    public SQLiteDataAdapter(SQLiteCommand cmd)
+    public SqliteDataAdapter(SqliteCommand cmd)
     {
       SelectCommand = cmd;
     }
@@ -49,20 +49,20 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="commandText">The select command text to associate with the data adapter.</param>
     /// <param name="connection">The connection to associate with the select command.</param>
-    public SQLiteDataAdapter(string commandText, SQLiteConnection connection)
+    public SqliteDataAdapter(string commandText, SqliteConnection connection)
     {
-      SelectCommand = new SQLiteCommand(commandText, connection);
+      SelectCommand = new SqliteCommand(commandText, connection);
     }
 
     /// <summary>
     /// Constructs a data adapter with the specified select command text, and using the specified database connection string.
     /// </summary>
     /// <param name="commandText">The select command text to use to construct a select command.</param>
-    /// <param name="connectionString">A connection string suitable for passing to a new SQLiteConnection, which is associated with the select command.</param>
-    public SQLiteDataAdapter(string commandText, string connectionString)
+    /// <param name="connectionString">A connection string suitable for passing to a new SqliteConnection, which is associated with the select command.</param>
+    public SqliteDataAdapter(string commandText, string connectionString)
     {
-      SQLiteConnection cnn = new SQLiteConnection(connectionString);
-      SelectCommand = new SQLiteCommand(commandText, cnn);
+      SqliteConnection cnn = new SqliteConnection(connectionString);
+      SelectCommand = new SqliteCommand(commandText, cnn);
     }
 
     /// <summary>
@@ -145,9 +145,9 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue((string)null), Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-    public new SQLiteCommand SelectCommand
+    public new SqliteCommand SelectCommand
     {
-      get { return (SQLiteCommand)base.SelectCommand; }
+      get { return (SqliteCommand)base.SelectCommand; }
       set { base.SelectCommand = value; }
     }
 
@@ -157,9 +157,9 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue((string)null), Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-    public new SQLiteCommand InsertCommand
+    public new SqliteCommand InsertCommand
     {
-      get { return (SQLiteCommand)base.InsertCommand; }
+      get { return (SqliteCommand)base.InsertCommand; }
       set { base.InsertCommand = value; }
     }
 
@@ -169,9 +169,9 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue((string)null), Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-    public new SQLiteCommand UpdateCommand
+    public new SqliteCommand UpdateCommand
     {
-      get { return (SQLiteCommand)base.UpdateCommand; }
+      get { return (SqliteCommand)base.UpdateCommand; }
       set { base.UpdateCommand = value; }
     }
 
@@ -181,9 +181,9 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue((string)null), Editor("Microsoft.VSDesigner.Data.Design.DBCommandEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-    public new SQLiteCommand DeleteCommand
+    public new SqliteCommand DeleteCommand
     {
-      get { return (SQLiteCommand)base.DeleteCommand; }
+      get { return (SqliteCommand)base.DeleteCommand; }
       set { base.DeleteCommand = value; }
     }
   }

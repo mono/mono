@@ -25,7 +25,7 @@ EXTRA_DISTFILES = Test/SqliteTest.cs \
 	resources/MetaDataCollections.xml \
 	$(wildcard resources/*.bmp)
 
-run-test-local: test.db 
+test-local: test.db 
 
 test.db: Test/test.sql
 	rm -f $@

@@ -17,9 +17,9 @@ namespace Mono.Data.Sqlite
   /// SQLite implementation of DbCommand.
   /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-  [Designer("SQLite.Designer.SQLiteCommandDesigner, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139"), ToolboxItem(true)]
+  [Designer("SQLite.Designer.SqliteCommandDesigner, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139"), ToolboxItem(true)]
 #endif
-  public sealed class SQLiteCommand : DbCommand, ICloneable
+  public sealed class SqliteCommand : DbCommand, ICloneable
   {
     /// <summary>
     /// The command text this command is based on
@@ -28,7 +28,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The connection the command is associated with
     /// </summary>
-    private SQLiteConnection _cnn;
+    private SqliteConnection _cnn;
     /// <summary>
     /// The version of the connection the command is associated with
     /// </summary>
@@ -52,11 +52,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The collection of parameters for the command
     /// </summary>
-    private SQLiteParameterCollection _parameterCollection;
+    private SqliteParameterCollection _parameterCollection;
     /// <summary>
     /// The SQL command text, broken into individual SQL statements as they are executed
     /// </summary>
-    internal List<SQLiteStatement> _statementList;
+    internal List<SqliteStatement> _statementList;
     /// <summary>
     /// Unprocessed SQL text that has not been executed
     /// </summary>
@@ -64,15 +64,15 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Transaction associated with this command
     /// </summary>
-    private SQLiteTransaction _transaction;
+    private SqliteTransaction _transaction;
 
     ///<overloads>
-    /// Constructs a new SQLiteCommand
+    /// Constructs a new SqliteCommand
     /// </overloads>
     /// <summary>
     /// Default constructor
     /// </summary>
-    public SQLiteCommand() :this(null, null)
+    public SqliteCommand() :this(null, null)
     {
     }
 
@@ -80,7 +80,7 @@ namespace Mono.Data.Sqlite
     /// Initializes the command with the given command text
     /// </summary>
     /// <param name="commandText">The SQL command text</param>
-    public SQLiteCommand(string commandText) 
+    public SqliteCommand(string commandText) 
       : this(commandText, null, null)
     {
     }
@@ -91,7 +91,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="commandText">The SQL command text</param>
     /// <param name="connection">The connection to associate with the command</param>
-    public SQLiteCommand(string commandText, SQLiteConnection connection)
+    public SqliteCommand(string commandText, SqliteConnection connection)
       : this(commandText, connection, null)
     {
     }
@@ -100,18 +100,18 @@ namespace Mono.Data.Sqlite
     /// Initializes the command and associates it with the specified connection.
     /// </summary>
     /// <param name="connection">The connection to associate with the command</param>
-    public SQLiteCommand(SQLiteConnection connection) 
+    public SqliteCommand(SqliteConnection connection) 
       : this(null, connection, null)
     {
     }
 
-    private SQLiteCommand(SQLiteCommand source) : this(source.CommandText, source.Connection, source.Transaction)
+    private SqliteCommand(SqliteCommand source) : this(source.CommandText, source.Connection, source.Transaction)
     {
       CommandTimeout = source.CommandTimeout;
       DesignTimeVisible = source.DesignTimeVisible;
       UpdatedRowSource = source.UpdatedRowSource;
 
-      foreach (SQLiteParameter param in source._parameterCollection)
+      foreach (SqliteParameter param in source._parameterCollection)
       {
         Parameters.Add(param.Clone());
       }
@@ -123,12 +123,12 @@ namespace Mono.Data.Sqlite
     /// <param name="commandText">The SQL command text</param>
     /// <param name="connection">The connection to associate with the command</param>
     /// <param name="transaction">The transaction the command should be associated with</param>
-    public SQLiteCommand(string commandText, SQLiteConnection connection, SQLiteTransaction transaction)
+    public SqliteCommand(string commandText, SqliteConnection connection, SqliteTransaction transaction)
     {
       _statementList = null;
       _activeReader = null;
       _commandTimeout = 30;
-      _parameterCollection = new SQLiteParameterCollection(this);
+      _parameterCollection = new SqliteParameterCollection(this);
       _designTimeVisible = true;
       _updateRowSource = UpdateRowSource.None;
       _transaction = null;
@@ -157,12 +157,12 @@ namespace Mono.Data.Sqlite
       if (disposing)
       {
         // If a reader is active on this command, don't destroy the command, instead let the reader do it
-        SQLiteDataReader reader = null;
+        SqliteDataReader reader = null;
         if (_activeReader != null)
         {
           try
           {
-            reader = _activeReader.Target as SQLiteDataReader;
+            reader = _activeReader.Target as SqliteDataReader;
           }
           catch
           {
@@ -189,10 +189,10 @@ namespace Mono.Data.Sqlite
     {
       if (_activeReader != null)
       {
-        SQLiteDataReader reader = null;
+        SqliteDataReader reader = null;
         try
         {
-          reader = _activeReader.Target as SQLiteDataReader;
+          reader = _activeReader.Target as SqliteDataReader;
         }
         catch
         {
@@ -218,9 +218,9 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Builds an array of prepared statements for each complete SQL statement in the command text
     /// </summary>
-    internal SQLiteStatement BuildNextCommand()
+    internal SqliteStatement BuildNextCommand()
     {
-      SQLiteStatement stmt = null;
+      SqliteStatement stmt = null;
 
       try
       {
@@ -232,7 +232,7 @@ namespace Mono.Data.Sqlite
         {
           stmt._command = this;
           if (_statementList == null)
-            _statementList = new List<SQLiteStatement>();
+            _statementList = new List<SqliteStatement>();
 
           _statementList.Add(stmt);
 
@@ -258,7 +258,7 @@ namespace Mono.Data.Sqlite
       }
     }
 
-    internal SQLiteStatement GetStatement(int index)
+    internal SqliteStatement GetStatement(int index)
     {
       // Haven't built any statements yet
       if (_statementList == null) return BuildNextCommand();
@@ -270,7 +270,7 @@ namespace Mono.Data.Sqlite
         else return null; // No more commands
       }
 
-      SQLiteStatement stmt = _statementList[index];
+      SqliteStatement stmt = _statementList[index];
       stmt.BindParameters();
 
       return stmt;
@@ -283,7 +283,7 @@ namespace Mono.Data.Sqlite
     {
       if (_activeReader != null)
       {
-        SQLiteDataReader reader = _activeReader.Target as SQLiteDataReader;
+        SqliteDataReader reader = _activeReader.Target as SqliteDataReader;
         if (reader != null)
           reader.Cancel();
       }
@@ -369,9 +369,9 @@ namespace Mono.Data.Sqlite
     /// Create a new parameter
     /// </summary>
     /// <returns></returns>
-    public new SQLiteParameter CreateParameter()
+    public new SqliteParameter CreateParameter()
     {
-      return new SQLiteParameter();
+      return new SqliteParameter();
     }
 
     /// <summary>
@@ -380,7 +380,7 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue((string)null), Editor("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-    public new SQLiteConnection Connection
+    public new SqliteConnection Connection
     {
       get { return _cnn; }
       set
@@ -414,17 +414,17 @@ namespace Mono.Data.Sqlite
       }
       set
       {
-        Connection = (SQLiteConnection)value;
+        Connection = (SqliteConnection)value;
       }
     }
 
     /// <summary>
-    /// Returns the SQLiteParameterCollection for the given command
+    /// Returns the SqliteParameterCollection for the given command
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 #endif
-    public new SQLiteParameterCollection Parameters
+    public new SqliteParameterCollection Parameters
     {
       get { return _parameterCollection; }
     }
@@ -447,7 +447,7 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
-    public new SQLiteTransaction Transaction
+    public new SqliteTransaction Transaction
     {
       get { return _transaction; }
       set
@@ -483,7 +483,7 @@ namespace Mono.Data.Sqlite
       }
       set
       {
-        Transaction = (SQLiteTransaction)value;
+        Transaction = (SqliteTransaction)value;
       }
     }
 
@@ -518,41 +518,41 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// Creates a new SQLiteDataReader to execute/iterate the array of SQLite prepared statements
+    /// Creates a new SqliteDataReader to execute/iterate the array of SQLite prepared statements
     /// </summary>
     /// <param name="behavior">The behavior the data reader should adopt</param>
-    /// <returns>Returns a SQLiteDataReader object</returns>
+    /// <returns>Returns a SqliteDataReader object</returns>
     protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
     {
       return ExecuteReader(behavior);
     }
 
     /// <summary>
-    /// Overrides the default behavior to return a SQLiteDataReader specialization class
+    /// Overrides the default behavior to return a SqliteDataReader specialization class
     /// </summary>
     /// <param name="behavior">The flags to be associated with the reader</param>
-    /// <returns>A SQLiteDataReader</returns>
-    public new SQLiteDataReader ExecuteReader(CommandBehavior behavior)
+    /// <returns>A SqliteDataReader</returns>
+    public new SqliteDataReader ExecuteReader(CommandBehavior behavior)
     {
       InitializeForReader();
 
-      SQLiteDataReader rd = new SQLiteDataReader(this, behavior);
+      SqliteDataReader rd = new SqliteDataReader(this, behavior);
       _activeReader = new WeakReference(rd, false);
 
       return rd;
     }
 
     /// <summary>
-    /// Overrides the default behavior of DbDataReader to return a specialized SQLiteDataReader class
+    /// Overrides the default behavior of DbDataReader to return a specialized SqliteDataReader class
     /// </summary>
-    /// <returns>A SQLiteDataReader</returns>
-    public new SQLiteDataReader ExecuteReader()
+    /// <returns>A SqliteDataReader</returns>
+    public new SqliteDataReader ExecuteReader()
     {
       return ExecuteReader(CommandBehavior.Default);
     }
 
     /// <summary>
-    /// Called by the SQLiteDataReader when the data reader is closed.
+    /// Called by the SqliteDataReader when the data reader is closed.
     /// </summary>
     internal void ClearDataReader()
     {
@@ -565,7 +565,7 @@ namespace Mono.Data.Sqlite
     /// <returns></returns>
     public override int ExecuteNonQuery()
     {
-      using (SQLiteDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SingleResult))
+      using (SqliteDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SingleResult))
       {
         while (reader.NextResult()) ;
         return reader.RecordsAffected;
@@ -579,7 +579,7 @@ namespace Mono.Data.Sqlite
     /// <returns>The first column of the first row of the first resultset from the query</returns>
     public override object ExecuteScalar()
     {
-      using (SQLiteDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SingleResult))
+      using (SqliteDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SingleResult))
       {
         if (reader.Read())
           return reader[0];
@@ -595,7 +595,7 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// Sets the method the SQLiteCommandBuilder uses to determine how to update inserted or updated rows in a DataTable.
+    /// Sets the method the SqliteCommandBuilder uses to determine how to update inserted or updated rows in a DataTable.
     /// </summary>
     [DefaultValue(UpdateRowSource.None)]
     public override UpdateRowSource UpdatedRowSource
@@ -634,10 +634,10 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Clones a command, including all its parameters
     /// </summary>
-    /// <returns>A new SQLiteCommand with the same commandtext, connection and parameters</returns>
+    /// <returns>A new SqliteCommand with the same commandtext, connection and parameters</returns>
     public object Clone()
     {
-      return new SQLiteCommand(this);
+      return new SqliteCommand(this);
     }
   }
 }

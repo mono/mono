@@ -754,25 +754,25 @@ namespace Mono.Data.Sqlite
 #endif
 
   // Handles the unmanaged database pointer, and provides finalization support for it.
-  internal class SQLiteConnectionHandle : CriticalHandle
+  internal class SqliteConnectionHandle : CriticalHandle
   {
-    public static implicit operator IntPtr(SQLiteConnectionHandle db)
+    public static implicit operator IntPtr(SqliteConnectionHandle db)
     {
       return db.handle;
     }
 
-    public static implicit operator SQLiteConnectionHandle(IntPtr db)
+    public static implicit operator SqliteConnectionHandle(IntPtr db)
     {
-      return new SQLiteConnectionHandle(db);
+      return new SqliteConnectionHandle(db);
     }
 
-    private SQLiteConnectionHandle(IntPtr db)
+    private SqliteConnectionHandle(IntPtr db)
       : this()
     {
       SetHandle(db);
     }
 
-    internal SQLiteConnectionHandle()
+    internal SqliteConnectionHandle()
       : base(IntPtr.Zero)
     {
     }
@@ -783,7 +783,7 @@ namespace Mono.Data.Sqlite
       {
         SQLiteBase.CloseConnection(this);
       }
-      catch (SQLiteException)
+      catch (SqliteException)
       {
       }
       return true;
@@ -796,25 +796,25 @@ namespace Mono.Data.Sqlite
   }
 
   // Provides finalization support for unmanaged SQLite statements.
-  internal class SQLiteStatementHandle : CriticalHandle
+  internal class SqliteStatementHandle : CriticalHandle
   {
-    public static implicit operator IntPtr(SQLiteStatementHandle stmt)
+    public static implicit operator IntPtr(SqliteStatementHandle stmt)
     {
       return stmt.handle;
     }
 
-    public static implicit operator SQLiteStatementHandle(IntPtr stmt)
+    public static implicit operator SqliteStatementHandle(IntPtr stmt)
     {
-      return new SQLiteStatementHandle(stmt);
+      return new SqliteStatementHandle(stmt);
     }
 
-    private SQLiteStatementHandle(IntPtr stmt)
+    private SqliteStatementHandle(IntPtr stmt)
       : this()
     {
       SetHandle(stmt);
     }
 
-    internal SQLiteStatementHandle()
+    internal SqliteStatementHandle()
       : base(IntPtr.Zero)
     {
     }
@@ -825,7 +825,7 @@ namespace Mono.Data.Sqlite
       {
         SQLiteBase.FinalizeStatement(this);
       }
-      catch (SQLiteException)
+      catch (SqliteException)
       {
       }
       return true;

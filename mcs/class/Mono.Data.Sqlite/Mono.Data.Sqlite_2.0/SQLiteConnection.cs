@@ -21,7 +21,7 @@ namespace Mono.Data.Sqlite
   /// SQLite implentation of DbConnection.
   /// </summary>
   /// <remarks>
-  /// The <see cref="ConnectionString">ConnectionString</see> property of the SQLiteConnection class can contain the following parameter(s), delimited with a semi-colon:
+  /// The <see cref="ConnectionString">ConnectionString</see> property of the SqliteConnection class can contain the following parameter(s), delimited with a semi-colon:
   /// <list type="table">
   /// <listheader>
   /// <term>Parameter</term>
@@ -145,7 +145,7 @@ namespace Mono.Data.Sqlite
   /// </item>
   /// </list>
   /// </remarks>
-  public sealed partial class SQLiteConnection : DbConnection, ICloneable
+  public sealed partial class SqliteConnection : DbConnection, ICloneable
   {
     private const string _dataDirectory = "|DataDirectory|";
     private const string _masterdb = "sqlite_master";
@@ -211,12 +211,12 @@ namespace Mono.Data.Sqlite
     public override event StateChangeEventHandler StateChange;
 
     ///<overloads>
-    /// Constructs a new SQLiteConnection object
+    /// Constructs a new SqliteConnection object
     /// </overloads>
     /// <summary>
     /// Default constructor
     /// </summary>
-    public SQLiteConnection()
+    public SqliteConnection()
       : this("")
     {
     }
@@ -225,7 +225,7 @@ namespace Mono.Data.Sqlite
     /// Initializes the connection with the specified connection string
     /// </summary>
     /// <param name="connectionString">The connection string to use on the connection</param>
-    public SQLiteConnection(string connectionString)
+    public SqliteConnection(string connectionString)
     {
       _sql = null;
       _connectionState = ConnectionState.Closed;
@@ -244,7 +244,7 @@ namespace Mono.Data.Sqlite
     /// attach to them.
     /// </summary>
     /// <param name="connection"></param>
-    public SQLiteConnection(SQLiteConnection connection)
+    public SqliteConnection(SqliteConnection connection)
       : this(connection.ConnectionString)
     {
       string str;
@@ -262,7 +262,7 @@ namespace Mono.Data.Sqlite
             if (String.Compare(str, "main", true, CultureInfo.InvariantCulture) != 0
               && String.Compare(str, "temp", true, CultureInfo.InvariantCulture) != 0)
             {
-              using (SQLiteCommand cmd = CreateCommand())
+              using (SqliteCommand cmd = CreateCommand())
               {
                 cmd.CommandText = String.Format(CultureInfo.InvariantCulture, "ATTACH DATABASE '{0}' AS [{1}]", row[1], row[0]);
                 cmd.ExecuteNonQuery();
@@ -293,11 +293,11 @@ namespace Mono.Data.Sqlite
     /// <returns></returns>
     public object Clone()
     {
-      return new SQLiteConnection(this);
+      return new SqliteConnection(this);
     }
 
     /// <summary>
-    /// Disposes of the SQLiteConnection, closing it if it is active.
+    /// Disposes of the SqliteConnection, closing it if it is active.
     /// </summary>
     /// <param name="disposing">True if the connection is being explicitly closed.</param>
     protected override void Dispose(bool disposing)
@@ -362,34 +362,34 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// OBSOLETE.  Creates a new SQLiteTransaction if one isn't already active on the connection.
+    /// OBSOLETE.  Creates a new SqliteTransaction if one isn't already active on the connection.
     /// </summary>
     /// <param name="isolationLevel">This parameter is ignored.</param>
     /// <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
     /// When FALSE, a writelock is obtained immediately.  The default is TRUE, but in a multi-threaded multi-writer 
     /// environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
-    /// <returns>Returns a SQLiteTransaction object.</returns>
+    /// <returns>Returns a SqliteTransaction object.</returns>
     [Obsolete("Use one of the standard BeginTransaction methods, this one will be removed soon")]
-    public SQLiteTransaction BeginTransaction(IsolationLevel isolationLevel, bool deferredLock)
+    public SqliteTransaction BeginTransaction(IsolationLevel isolationLevel, bool deferredLock)
     {
-      return (SQLiteTransaction)BeginDbTransaction(deferredLock == false ? IsolationLevel.Serializable : IsolationLevel.ReadCommitted);
+      return (SqliteTransaction)BeginDbTransaction(deferredLock == false ? IsolationLevel.Serializable : IsolationLevel.ReadCommitted);
     }
 
     /// <summary>
-    /// OBSOLETE.  Creates a new SQLiteTransaction if one isn't already active on the connection.
+    /// OBSOLETE.  Creates a new SqliteTransaction if one isn't already active on the connection.
     /// </summary>
     /// <param name="deferredLock">When TRUE, SQLite defers obtaining a write lock until a write operation is requested.
     /// When FALSE, a writelock is obtained immediately.  The default is false, but in a multi-threaded multi-writer 
     /// environment, one may instead choose to lock the database immediately to avoid any possible writer deadlock.</param>
-    /// <returns>Returns a SQLiteTransaction object.</returns>
+    /// <returns>Returns a SqliteTransaction object.</returns>
     [Obsolete("Use one of the standard BeginTransaction methods, this one will be removed soon")]
-    public SQLiteTransaction BeginTransaction(bool deferredLock)
+    public SqliteTransaction BeginTransaction(bool deferredLock)
     {
-      return (SQLiteTransaction)BeginDbTransaction(deferredLock == false ? IsolationLevel.Serializable : IsolationLevel.ReadCommitted);
+      return (SqliteTransaction)BeginDbTransaction(deferredLock == false ? IsolationLevel.Serializable : IsolationLevel.ReadCommitted);
     }
 
     /// <summary>
-    /// Creates a new SQLiteTransaction if one isn't already active on the connection.
+    /// Creates a new SqliteTransaction if one isn't already active on the connection.
     /// </summary>
     /// <param name="isolationLevel">Supported isolation levels are Serializable, ReadCommitted and Unspecified.</param>
     /// <remarks>
@@ -401,19 +401,19 @@ namespace Mono.Data.Sqlite
     /// a transaction in ReadCommitted mode, but if a thread attempts to commit a transaction while another thread
     /// has a ReadCommitted lock, it may timeout or cause a deadlock on both threads until both threads' CommandTimeout's are reached.
     /// </remarks>
-    /// <returns>Returns a SQLiteTransaction object.</returns>
-    public new SQLiteTransaction BeginTransaction(IsolationLevel isolationLevel)
+    /// <returns>Returns a SqliteTransaction object.</returns>
+    public new SqliteTransaction BeginTransaction(IsolationLevel isolationLevel)
     {
-      return (SQLiteTransaction)BeginDbTransaction(isolationLevel);
+      return (SqliteTransaction)BeginDbTransaction(isolationLevel);
     }
 
     /// <summary>
-    /// Creates a new SQLiteTransaction if one isn't already active on the connection.
+    /// Creates a new SqliteTransaction if one isn't already active on the connection.
     /// </summary>
-    /// <returns>Returns a SQLiteTransaction object.</returns>
-    public new SQLiteTransaction BeginTransaction()
+    /// <returns>Returns a SqliteTransaction object.</returns>
+    public new SqliteTransaction BeginTransaction()
     {
-      return (SQLiteTransaction)BeginDbTransaction(_defaultIsolation);
+      return (SqliteTransaction)BeginDbTransaction(_defaultIsolation);
     }
 
     /// <summary>
@@ -431,7 +431,7 @@ namespace Mono.Data.Sqlite
       if (isolationLevel != IsolationLevel.Serializable && isolationLevel != IsolationLevel.ReadCommitted)
         throw new ArgumentException("isolationLevel");
 
-      return new SQLiteTransaction(this, isolationLevel != IsolationLevel.Serializable);
+      return new SqliteTransaction(this, isolationLevel != IsolationLevel.Serializable);
     }
 
     /// <summary>
@@ -456,7 +456,7 @@ namespace Mono.Data.Sqlite
           // If the connection is enlisted in a transaction scope and the scope is still active,
           // we cannot truly shut down this connection until the scope has completed.  Therefore make a 
           // hidden connection temporarily to hold open the connection until the scope has completed.
-          SQLiteConnection cnn = new SQLiteConnection();
+          SqliteConnection cnn = new SqliteConnection();
           cnn._sql = _sql;
           cnn._transactionLevel = _transactionLevel;
           cnn._enlistment = _enlistment;
@@ -484,7 +484,7 @@ namespace Mono.Data.Sqlite
     /// will be discarded instead of returned to the pool when they are closed.
     /// </summary>
     /// <param name="connection"></param>
-    public static void ClearPool(SQLiteConnection connection)
+    public static void ClearPool(SqliteConnection connection)
     {
       if (connection._sql == null) return;
       connection._sql.ClearPool();
@@ -495,7 +495,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     public static void ClearAllPools()
     {
-      SQLiteConnectionPool.ClearAllPools();
+      SqliteConnectionPool.ClearAllPools();
     }
 
     /// <summary>
@@ -627,7 +627,7 @@ namespace Mono.Data.Sqlite
     /// </remarks>
 #if !PLATFORM_COMPACTFRAMEWORK
     [RefreshProperties(RefreshProperties.All), DefaultValue("")]
-    [Editor("SQLite.Designer.SQLiteConnectionStringEditor, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+    [Editor("SQLite.Designer.SqliteConnectionStringEditor, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
     public override string ConnectionString
     {
@@ -648,12 +648,12 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// Create a new SQLiteCommand and associate it with this connection.
+    /// Create a new SqliteCommand and associate it with this connection.
     /// </summary>
-    /// <returns>Returns an instantiated SQLiteCommand object already assigned to this connection.</returns>
-    public new SQLiteCommand CreateCommand()
+    /// <returns>Returns an instantiated SqliteCommand object already assigned to this connection.</returns>
+    public new SqliteCommand CreateCommand()
     {
-      return new SQLiteCommand(this);
+      return new SqliteCommand(this);
     }
 
     /// <summary>
@@ -693,6 +693,42 @@ namespace Mono.Data.Sqlite
       }
     }
 
+    /// <summary>
+    /// Maps mono-specific connection string keywords to the standard ones
+    /// </summary>
+    /// <returns>The mapped keyword name</returns>
+    internal static void MapMonoKeyword (string[] arPiece, SortedList<string, string> ls)
+    {
+            string keyword, value;
+            
+            switch (arPiece[0].ToLower (CultureInfo.InvariantCulture)) {
+                    case "uri":
+                            keyword = "Data Source";
+                            value = MapMonoUriPath (arPiece[1]);
+                            break;
+                            
+                    default:
+                            keyword = arPiece[0];
+                            value = arPiece[1];
+                            break;
+            }
+
+            ls.Add(keyword, value);
+    }
+
+    internal static string MapMonoUriPath (string path)
+    {
+            if (path.StartsWith ("file://")) {
+                    return path.Substring (7);
+            } else if (path.StartsWith ("file:")) {
+                    return path.Substring (5);
+            } else if (path.StartsWith ("/")) {
+                    return path;
+            } else {
+                    throw new InvalidOperationException ("Invalid connection string: invalid URI");
+            }
+    }
+
     internal static string MapUriPath(string path)
     {
 	    if (path.StartsWith ("file://"))
@@ -712,23 +748,24 @@ namespace Mono.Data.Sqlite
     /// <returns>An array of key-value pairs representing each parameter of the connection string</returns>
     internal static SortedList<string, string> ParseConnectionString(string connectionString)
     {
-      string s = connectionString;
+      string s = connectionString.Replace (',', ';'); // Mono compatibility
       int n;
       SortedList<string, string> ls = new SortedList<string, string>(StringComparer.OrdinalIgnoreCase);
 
       // First split into semi-colon delimited values.  The Split() function of SQLiteBase accounts for and properly
       // skips semi-colons in quoted strings
-      string[] arParts = SQLiteConvert.Split(s, ';');
+      string[] arParts = SqliteConvert.Split(s, ';');
       string[] arPiece;
 
       int x = arParts.Length;
       // For each semi-colon piece, split into key and value pairs by the presence of the = sign
       for (n = 0; n < x; n++)
       {
-        arPiece = SQLiteConvert.Split(arParts[n], '=');
+	      Console.WriteLine (arParts [n]);
+        arPiece = SqliteConvert.Split(arParts[n], '=');
         if (arPiece.Length == 2)
         {
-          ls.Add(arPiece[0], arPiece[1]);
+	  MapMonoKeyword (arPiece, ls);
         }
         else throw new ArgumentException(String.Format(CultureInfo.CurrentCulture, "Invalid ConnectionString format for parameter \"{0}\"", (arPiece.Length > 0) ? arPiece[0] : "null"));
       }
@@ -807,8 +844,8 @@ namespace Mono.Data.Sqlite
       }
       try
       {
-        bool usePooling = (SQLiteConvert.ToBoolean(FindKey(opts, "Pooling", Boolean.FalseString)) == true);
-        bool bUTF16 = (SQLiteConvert.ToBoolean(FindKey(opts, "UseUTF16Encoding", Boolean.FalseString)) == true);
+        bool usePooling = (SqliteConvert.ToBoolean(FindKey(opts, "Pooling", Boolean.FalseString)) == true);
+        bool bUTF16 = (SqliteConvert.ToBoolean(FindKey(opts, "UseUTF16Encoding", Boolean.FalseString)) == true);
         int maxPoolSize = Convert.ToInt32(FindKey(opts, "Max Pool Size", "100"));
 
         _defaultTimeout = Convert.ToInt32(FindKey(opts, "Default Timeout", "30"), CultureInfo.CurrentCulture);
@@ -829,17 +866,17 @@ namespace Mono.Data.Sqlite
 
         SQLiteOpenFlagsEnum flags = SQLiteOpenFlagsEnum.None;
 
-        if (SQLiteConvert.ToBoolean(FindKey(opts, "FailIfMissing", Boolean.FalseString)) == false)
+        if (SqliteConvert.ToBoolean(FindKey(opts, "FailIfMissing", Boolean.FalseString)) == false)
           flags |= SQLiteOpenFlagsEnum.Create;
 
-        if (SQLiteConvert.ToBoolean(FindKey(opts, "Read Only", Boolean.FalseString)) == true)
+        if (SqliteConvert.ToBoolean(FindKey(opts, "Read Only", Boolean.FalseString)) == true)
           flags |= SQLiteOpenFlagsEnum.ReadOnly;
         else
           flags |= SQLiteOpenFlagsEnum.ReadWrite;
 
         _sql.Open(fileName, flags, maxPoolSize, usePooling);
 
-        _binaryGuid = (SQLiteConvert.ToBoolean(FindKey(opts, "BinaryGUID", Boolean.TrueString)) == true);
+        _binaryGuid = (SqliteConvert.ToBoolean(FindKey(opts, "BinaryGUID", Boolean.TrueString)) == true);
 
         string password = FindKey(opts, "Password", null);
 
@@ -854,7 +891,7 @@ namespace Mono.Data.Sqlite
         OnStateChange(ConnectionState.Open);
         _version++;
 
-        using (SQLiteCommand cmd = CreateCommand())
+        using (SqliteCommand cmd = CreateCommand())
         {
           string defValue;
 
@@ -876,7 +913,7 @@ namespace Mono.Data.Sqlite
           }
 
           defValue = FindKey(opts, "Legacy Format", Boolean.FalseString);
-          cmd.CommandText = String.Format(CultureInfo.InvariantCulture, "PRAGMA legacy_file_format={0}", SQLiteConvert.ToBoolean(defValue) == true ? "ON" : "OFF");
+          cmd.CommandText = String.Format(CultureInfo.InvariantCulture, "PRAGMA legacy_file_format={0}", SqliteConvert.ToBoolean(defValue) == true ? "ON" : "OFF");
           cmd.ExecuteNonQuery();
 
           defValue = FindKey(opts, "Synchronous", "Normal");
@@ -911,11 +948,11 @@ namespace Mono.Data.Sqlite
           _sql.SetRollbackHook(_rollbackCallback);
 
 #if !PLATFORM_COMPACTFRAMEWORK
-        if (global::System.Transactions.Transaction.Current != null && SQLiteConvert.ToBoolean(FindKey(opts, "Enlist", Boolean.TrueString)) == true)
+        if (global::System.Transactions.Transaction.Current != null && SqliteConvert.ToBoolean(FindKey(opts, "Enlist", Boolean.TrueString)) == true)
 		EnlistTransaction(global::System.Transactions.Transaction.Current);
 #endif
       }
-      catch (SQLiteException)
+      catch (SqliteException)
       {
         Close();
         throw;
@@ -924,7 +961,7 @@ namespace Mono.Data.Sqlite
 
     /// <summary>
     /// Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
-    /// commands used internally such as inside a SQLiteTransaction, where setting the timeout is not possible.
+    /// commands used internally such as inside a SqliteTransaction, where setting the timeout is not possible.
     /// This can also be set in the ConnectionString with "Default Timeout"
     /// </summary>
     public int DefaultTimeout
@@ -1325,8 +1362,8 @@ namespace Mono.Data.Sqlite
 
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
 
-      using (SQLiteCommand cmdTables = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table' OR [type] LIKE 'view'", strCatalog, master), this))
-      using (SQLiteDataReader rdTables = cmdTables.ExecuteReader())
+      using (SqliteCommand cmdTables = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table' OR [type] LIKE 'view'", strCatalog, master), this))
+      using (SqliteDataReader rdTables = cmdTables.ExecuteReader())
       {
         while (rdTables.Read())
         {
@@ -1334,8 +1371,8 @@ namespace Mono.Data.Sqlite
           {
             try
             {
-              using (SQLiteCommand cmd = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}]", strCatalog, rdTables.GetString(2)), this))
-              using (SQLiteDataReader rd = (SQLiteDataReader)cmd.ExecuteReader(CommandBehavior.SchemaOnly))
+              using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}]", strCatalog, rdTables.GetString(2)), this))
+              using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader(CommandBehavior.SchemaOnly))
               using (DataTable tblSchema = rd.GetSchemaTable(true, true))
               {
                 foreach (DataRow schemaRow in tblSchema.Rows)
@@ -1355,7 +1392,7 @@ namespace Mono.Data.Sqlite
                     row["COLUMN_DEFAULT"] = schemaRow[SchemaTableOptionalColumn.DefaultValue];
                     row["IS_NULLABLE"] = schemaRow[SchemaTableColumn.AllowDBNull];
                     row["DATA_TYPE"] = schemaRow["DataTypeName"].ToString().ToLower(CultureInfo.InvariantCulture);
-                    row["EDM_TYPE"] = SQLiteConvert.DbTypeToTypeName((DbType)schemaRow[SchemaTableColumn.ProviderType]).ToString().ToLower(CultureInfo.InvariantCulture);
+                    row["EDM_TYPE"] = SqliteConvert.DbTypeToTypeName((DbType)schemaRow[SchemaTableColumn.ProviderType]).ToString().ToLower(CultureInfo.InvariantCulture);
                     row["CHARACTER_MAXIMUM_LENGTH"] = schemaRow[SchemaTableColumn.ColumnSize];
                     row["TABLE_SCHEMA"] = schemaRow[SchemaTableColumn.BaseSchemaName];
                     row["PRIMARY_KEY"] = schemaRow[SchemaTableColumn.IsKey];
@@ -1367,7 +1404,7 @@ namespace Mono.Data.Sqlite
                 }
               }
             }
-            catch(SQLiteException)
+            catch(SqliteException)
             {
             }
           }
@@ -1428,8 +1465,8 @@ namespace Mono.Data.Sqlite
 
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
       
-      using (SQLiteCommand cmdTables = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
-      using (SQLiteDataReader rdTables = cmdTables.ExecuteReader())
+      using (SqliteCommand cmdTables = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
+      using (SqliteDataReader rdTables = cmdTables.ExecuteReader())
       {
         while (rdTables.Read())
         {
@@ -1441,8 +1478,8 @@ namespace Mono.Data.Sqlite
             // Such indexes are not listed in the indexes list but count as indexes just the same.
             try
             {
-              using (SQLiteCommand cmdTable = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].table_info([{1}])", strCatalog, rdTables.GetString(2)), this))
-              using (SQLiteDataReader rdTable = cmdTable.ExecuteReader())
+              using (SqliteCommand cmdTable = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].table_info([{1}])", strCatalog, rdTables.GetString(2)), this))
+              using (SqliteDataReader rdTable = cmdTable.ExecuteReader())
               {
                 while (rdTable.Read())
                 {
@@ -1457,7 +1494,7 @@ namespace Mono.Data.Sqlite
                 }
               }
             }
-            catch (SQLiteException)
+            catch (SqliteException)
             {
             }
             if (primaryKeys.Count == 1 && maybeRowId == true)
@@ -1483,8 +1520,8 @@ namespace Mono.Data.Sqlite
             // Now fetch all the rest of the indexes.
             try
             {
-              using (SQLiteCommand cmd = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].index_list([{1}])", strCatalog, rdTables.GetString(2)), this))
-              using (SQLiteDataReader rd = (SQLiteDataReader)cmd.ExecuteReader())
+              using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].index_list([{1}])", strCatalog, rdTables.GetString(2)), this))
+              using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
               {
                 while (rd.Read())
                 {
@@ -1501,8 +1538,8 @@ namespace Mono.Data.Sqlite
                     row["PRIMARY_KEY"] = false;
 
                     // get the index definition
-                    using (SQLiteCommand cmdIndexes = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{2}] WHERE [type] LIKE 'index' AND [name] LIKE '{1}'", strCatalog, rd.GetString(1).Replace("'", "''"), master), this))
-                    using (SQLiteDataReader rdIndexes = cmdIndexes.ExecuteReader())
+                    using (SqliteCommand cmdIndexes = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{2}] WHERE [type] LIKE 'index' AND [name] LIKE '{1}'", strCatalog, rd.GetString(1).Replace("'", "''"), master), this))
+                    using (SqliteDataReader rdIndexes = cmdIndexes.ExecuteReader())
                     {
                       while (rdIndexes.Read())
                       {
@@ -1517,8 +1554,8 @@ namespace Mono.Data.Sqlite
                     // primary key, and all the columns in the given index match the primary key columns
                     if (primaryKeys.Count > 0 && rd.GetString(1).StartsWith("sqlite_autoindex_" + rdTables.GetString(2), StringComparison.InvariantCultureIgnoreCase) == true)
                     {
-                      using (SQLiteCommand cmdDetails = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].index_info([{1}])", strCatalog, rd.GetString(1)), this))
-                      using (SQLiteDataReader rdDetails = cmdDetails.ExecuteReader())
+                      using (SqliteCommand cmdDetails = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].index_info([{1}])", strCatalog, rd.GetString(1)), this))
+                      using (SqliteDataReader rdDetails = cmdDetails.ExecuteReader())
                       {
                         int nMatches = 0;
                         while (rdDetails.Read())
@@ -1543,7 +1580,7 @@ namespace Mono.Data.Sqlite
                 }
               }
             }
-            catch (SQLiteException)
+            catch (SqliteException)
             {
             }
           }
@@ -1574,8 +1611,8 @@ namespace Mono.Data.Sqlite
       if (String.IsNullOrEmpty(catalog)) catalog = "main";
       string master = (String.Compare(catalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
 
-      using (SQLiteCommand cmd = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT [type], [name], [tbl_name], [rootpage], [sql], [rowid] FROM [{0}].[{1}] WHERE [type] LIKE 'trigger'", catalog, master), this))
-      using (SQLiteDataReader rd = (SQLiteDataReader)cmd.ExecuteReader())
+      using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT [type], [name], [tbl_name], [rootpage], [sql], [rowid] FROM [{0}].[{1}] WHERE [type] LIKE 'trigger'", catalog, master), this))
+      using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
       {
         while (rd.Read())
         {
@@ -1629,8 +1666,8 @@ namespace Mono.Data.Sqlite
 
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
 
-      using (SQLiteCommand cmd = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT [type], [name], [tbl_name], [rootpage], [sql], [rowid] FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
-      using (SQLiteDataReader rd = (SQLiteDataReader)cmd.ExecuteReader())
+      using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT [type], [name], [tbl_name], [rootpage], [sql], [rowid] FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
+      using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
       {
         while (rd.Read())
         {
@@ -1695,8 +1732,8 @@ namespace Mono.Data.Sqlite
 
       string master = (String.Compare(strCatalog, "temp", true, CultureInfo.InvariantCulture) == 0) ? _tempmasterdb : _masterdb;
 
-      using (SQLiteCommand cmd = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'view'", strCatalog, master), this))
-      using (SQLiteDataReader rd = (SQLiteDataReader)cmd.ExecuteReader())
+      using (SqliteCommand cmd = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'view'", strCatalog, master), this))
+      using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
       {
         while (rd.Read())
         {
@@ -1744,8 +1781,8 @@ namespace Mono.Data.Sqlite
 
       tbl.BeginLoadData();
 
-      using (SQLiteCommand cmd = new SQLiteCommand("PRAGMA database_list", this))
-      using (SQLiteDataReader rd = (SQLiteDataReader)cmd.ExecuteReader())
+      using (SqliteCommand cmd = new SqliteCommand("PRAGMA database_list", this))
+      using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader())
       {
         while (rd.Read())
         {
@@ -1844,8 +1881,8 @@ namespace Mono.Data.Sqlite
 
       tbl.BeginLoadData();
 
-      using (SQLiteCommand cmdTables = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
-      using (SQLiteDataReader rdTables = cmdTables.ExecuteReader())
+      using (SqliteCommand cmdTables = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
+      using (SqliteDataReader rdTables = cmdTables.ExecuteReader())
       {
         while (rdTables.Read())
         {
@@ -1855,8 +1892,8 @@ namespace Mono.Data.Sqlite
           {
             try
             {
-              using (SQLiteCommand cmdTable = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].table_info([{1}])", strCatalog, rdTables.GetString(2)), this))
-              using (SQLiteDataReader rdTable = cmdTable.ExecuteReader())
+              using (SqliteCommand cmdTable = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].table_info([{1}])", strCatalog, rdTables.GetString(2)), this))
+              using (SqliteDataReader rdTable = cmdTable.ExecuteReader())
               {
                 while (rdTable.Read())
                 {
@@ -1870,7 +1907,7 @@ namespace Mono.Data.Sqlite
                 }
               }
             }
-            catch (SQLiteException)
+            catch (SqliteException)
             {
             }
             // This is a rowid row
@@ -1892,8 +1929,8 @@ namespace Mono.Data.Sqlite
                 tbl.Rows.Add(row);
             }
 
-            using (SQLiteCommand cmdIndexes = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{2}] WHERE [type] LIKE 'index' AND [tbl_name] LIKE '{1}'", strCatalog, rdTables.GetString(2).Replace("'", "''"), master), this))
-            using (SQLiteDataReader rdIndexes = cmdIndexes.ExecuteReader())
+            using (SqliteCommand cmdIndexes = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{2}] WHERE [type] LIKE 'index' AND [tbl_name] LIKE '{1}'", strCatalog, rdTables.GetString(2).Replace("'", "''"), master), this))
+            using (SqliteDataReader rdIndexes = cmdIndexes.ExecuteReader())
             {
               while (rdIndexes.Read())
               {
@@ -1902,8 +1939,8 @@ namespace Mono.Data.Sqlite
                 {
                   try
                   {
-                    using (SQLiteCommand cmdIndex = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].index_info([{1}])", strCatalog, rdIndexes.GetString(1)), this))
-                    using (SQLiteDataReader rdIndex = cmdIndex.ExecuteReader())
+                    using (SqliteCommand cmdIndex = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].index_info([{1}])", strCatalog, rdIndexes.GetString(1)), this))
+                    using (SqliteDataReader rdIndex = cmdIndex.ExecuteReader())
                     {
                       while (rdIndex.Read())
                       {
@@ -1934,7 +1971,7 @@ namespace Mono.Data.Sqlite
                       }
                     }
                   }
-                  catch (SQLiteException)
+                  catch (SqliteException)
                   {
                   }
                 }
@@ -2002,14 +2039,14 @@ namespace Mono.Data.Sqlite
       
       tbl.BeginLoadData();
 
-      using (SQLiteCommand cmdViews = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'view'", strCatalog, master), this))
-      using (SQLiteDataReader rdViews = cmdViews.ExecuteReader())
+      using (SqliteCommand cmdViews = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'view'", strCatalog, master), this))
+      using (SqliteDataReader rdViews = cmdViews.ExecuteReader())
       {
         while (rdViews.Read())
         {
           if (String.IsNullOrEmpty(strView) || String.Compare(strView, rdViews.GetString(2), true, CultureInfo.InvariantCulture) == 0)
           {
-            using (SQLiteCommand cmdViewSelect = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}]", strCatalog, rdViews.GetString(2)), this))
+            using (SqliteCommand cmdViewSelect = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}]", strCatalog, rdViews.GetString(2)), this))
             {
               strSql = rdViews.GetString(4).Replace('\r', ' ').Replace('\n', ' ').Replace('\t', ' ');
               n = CultureInfo.InvariantCulture.CompareInfo.IndexOf(strSql, " AS ", CompareOptions.IgnoreCase);
@@ -2018,9 +2055,9 @@ namespace Mono.Data.Sqlite
 
               strSql = strSql.Substring(n + 4);
 
-              using (SQLiteCommand cmd = new SQLiteCommand(strSql, this))
-              using (SQLiteDataReader rdViewSelect = cmdViewSelect.ExecuteReader(CommandBehavior.SchemaOnly))
-              using (SQLiteDataReader rd = (SQLiteDataReader)cmd.ExecuteReader(CommandBehavior.SchemaOnly))
+              using (SqliteCommand cmd = new SqliteCommand(strSql, this))
+              using (SqliteDataReader rdViewSelect = cmdViewSelect.ExecuteReader(CommandBehavior.SchemaOnly))
+              using (SqliteDataReader rd = (SqliteDataReader)cmd.ExecuteReader(CommandBehavior.SchemaOnly))
               using (DataTable tblSchemaView = rdViewSelect.GetSchemaTable(false, false))
               using (DataTable tblSchema = rd.GetSchemaTable(false, false))
               {
@@ -2045,8 +2082,8 @@ namespace Mono.Data.Sqlite
                     row["COLUMN_DEFAULT"] = viewRow[SchemaTableOptionalColumn.DefaultValue];
                     row["ORDINAL_POSITION"] = viewRow[SchemaTableColumn.ColumnOrdinal];
                     row["IS_NULLABLE"] = viewRow[SchemaTableColumn.AllowDBNull];
-                    row["DATA_TYPE"] = viewRow["DataTypeName"]; // SQLiteConvert.DbTypeToType((DbType)viewRow[SchemaTableColumn.ProviderType]).ToString();
-                    row["EDM_TYPE"] = SQLiteConvert.DbTypeToTypeName((DbType)viewRow[SchemaTableColumn.ProviderType]).ToString().ToLower(CultureInfo.InvariantCulture);
+                    row["DATA_TYPE"] = viewRow["DataTypeName"]; // SqliteConvert.DbTypeToType((DbType)viewRow[SchemaTableColumn.ProviderType]).ToString();
+                    row["EDM_TYPE"] = SqliteConvert.DbTypeToTypeName((DbType)viewRow[SchemaTableColumn.ProviderType]).ToString().ToLower(CultureInfo.InvariantCulture);
                     row["CHARACTER_MAXIMUM_LENGTH"] = viewRow[SchemaTableColumn.ColumnSize];
                     row["TABLE_SCHEMA"] = viewRow[SchemaTableColumn.BaseSchemaName];
                     row["PRIMARY_KEY"] = viewRow[SchemaTableColumn.IsKey];
@@ -2103,8 +2140,8 @@ namespace Mono.Data.Sqlite
 
       tbl.BeginLoadData();
 
-      using (SQLiteCommand cmdTables = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
-      using (SQLiteDataReader rdTables = cmdTables.ExecuteReader())
+      using (SqliteCommand cmdTables = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}] WHERE [type] LIKE 'table'", strCatalog, master), this))
+      using (SqliteDataReader rdTables = cmdTables.ExecuteReader())
       {
         while (rdTables.Read())
         {
@@ -2112,11 +2149,11 @@ namespace Mono.Data.Sqlite
           {
             try
             {
-              using (SQLiteCommandBuilder builder = new SQLiteCommandBuilder())
-              //using (SQLiteCommand cmdTable = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}]", strCatalog, rdTables.GetString(2)), this))
-              //using (SQLiteDataReader rdTable = cmdTable.ExecuteReader(CommandBehavior.SchemaOnly))
-              using (SQLiteCommand cmdKey = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].foreign_key_list([{1}])", strCatalog, rdTables.GetString(2)), this))
-              using (SQLiteDataReader rdKey = cmdKey.ExecuteReader())
+              using (SqliteCommandBuilder builder = new SqliteCommandBuilder())
+              //using (SqliteCommand cmdTable = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "SELECT * FROM [{0}].[{1}]", strCatalog, rdTables.GetString(2)), this))
+              //using (SqliteDataReader rdTable = cmdTable.ExecuteReader(CommandBehavior.SchemaOnly))
+              using (SqliteCommand cmdKey = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].foreign_key_list([{1}])", strCatalog, rdTables.GetString(2)), this))
+              using (SqliteDataReader rdKey = cmdKey.ExecuteReader())
               {
                 while (rdKey.Read())
                 {
@@ -2139,7 +2176,7 @@ namespace Mono.Data.Sqlite
                 }
               }
             }
-            catch (SQLiteException)
+            catch (SqliteException)
             {
             }
           }

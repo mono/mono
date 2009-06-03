@@ -22,7 +22,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// This base class provides datatype conversion services for the SQLite provider.
   /// </summary>
-  public abstract class SQLiteConvert
+  public abstract class SqliteConvert
   {
     /// <summary>
     /// An array of ISO8601 datetime formats we support conversion from
@@ -59,7 +59,7 @@ namespace Mono.Data.Sqlite
     /// Initializes the conversion class
     /// </summary>
     /// <param name="fmt">The default date/time format to use for this instance</param>
-    internal SQLiteConvert(SQLiteDateFormats fmt)
+    internal SqliteConvert(SQLiteDateFormats fmt)
     {
       _datetimeFormat = fmt;
     }
@@ -342,7 +342,7 @@ namespace Mono.Data.Sqlite
     /// <param name="stmt">The statement to retrieve information for</param>
     /// <param name="i">The column to retrieve type information on</param>
     /// <param name="typ">The SQLiteType to receive the affinity for the given column</param>
-    internal static void ColumnToType(SQLiteStatement stmt, int i, SQLiteType typ)
+    internal static void ColumnToType(SqliteStatement stmt, int i, SQLiteType typ)
     {
       typ.Type = TypeNameToDbType(stmt._sql.ColumnType(stmt, i, out typ.Affinity));
     }
@@ -357,7 +357,7 @@ namespace Mono.Data.Sqlite
       if (t.Type == DbType.Object)
         return _affinitytotype[(int)t.Affinity];
       else
-        return SQLiteConvert.DbTypeToType(t.Type);
+        return SqliteConvert.DbTypeToType(t.Type);
     }
 
     private static Type[] _affinitytotype = {

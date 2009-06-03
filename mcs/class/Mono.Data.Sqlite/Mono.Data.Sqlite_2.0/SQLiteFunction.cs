@@ -18,7 +18,7 @@ namespace Mono.Data.Sqlite
   /// connection to the database.
   /// </summary>
   /// <remarks>
-  /// Although there is one instance of a class derived from SQLiteFunction per database connection, the derived class has no access
+  /// Although there is one instance of a class derived from SqliteFunction per database connection, the derived class has no access
   /// to the underlying connection.  This is necessary to deter implementers from thinking it would be a good idea to make database
   /// calls during processing.
   /// 
@@ -29,7 +29,7 @@ namespace Mono.Data.Sqlite
   /// For aggregate functions, always create and store your per-statement data in the contextData object on the 1st step.  This data will
   /// be automatically freed for you (and Dispose() called if the item supports IDisposable) when the statement completes.
   /// </remarks>
-  public abstract class SQLiteFunction : IDisposable
+  public abstract class SqliteFunction : IDisposable
   {
     private class AggregateData
     {
@@ -74,21 +74,21 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// This static list contains all the user-defined functions declared using the proper attributes.
     /// </summary>
-    private static List<SQLiteFunctionAttribute> _registeredFunctions = new List<SQLiteFunctionAttribute>();
+    private static List<SqliteFunctionAttribute> _registeredFunctions = new List<SqliteFunctionAttribute>();
 
     /// <summary>
     /// Internal constructor, initializes the function's internal variables.
     /// </summary>
-    protected SQLiteFunction()
+    protected SqliteFunction()
     {
       _contextDataList = new Dictionary<long, AggregateData>();
     }
 
     /// <summary>
-    /// Returns a reference to the underlying connection's SQLiteConvert class, which can be used to convert
+    /// Returns a reference to the underlying connection's SqliteConvert class, which can be used to convert
     /// strings and DateTime's into the current connection's encoding schema.
     /// </summary>
-    public SQLiteConvert SQLiteConvert
+    public SqliteConvert SqliteConvert
     {
       get
       {
@@ -244,7 +244,7 @@ namespace Mono.Data.Sqlite
         }
       }
 
-      switch (SQLiteConvert.TypeToAffinity(t))
+      switch (SqliteConvert.TypeToAffinity(t))
       {
         case TypeAffinity.Null:
           _base.ReturnNull(context);
@@ -288,7 +288,7 @@ namespace Mono.Data.Sqlite
     /// than the second.</returns>
     internal int CompareCallback(IntPtr ptr, int len1, IntPtr ptr1, int len2, IntPtr ptr2)
     {
-      return Compare(SQLiteConvert.UTF8ToString(ptr1, len1), SQLiteConvert.UTF8ToString(ptr2, len2));
+      return Compare(SqliteConvert.UTF8ToString(ptr1, len1), SqliteConvert.UTF8ToString(ptr2, len2));
     }
 
     internal int CompareCallback16(IntPtr ptr, int len1, IntPtr ptr1, int len2, IntPtr ptr2)
@@ -390,17 +390,17 @@ namespace Mono.Data.Sqlite
 
     /// <summary>
     /// Using reflection, enumerate all assemblies in the current appdomain looking for classes that
-    /// have a SQLiteFunctionAttribute attribute, and registering them accordingly.
+    /// have a SqliteFunctionAttribute attribute, and registering them accordingly.
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [global::System.Security.Permissions.FileIOPermission(global::System.Security.Permissions.SecurityAction.Assert, AllFiles = global::System.Security.Permissions.FileIOPermissionAccess.PathDiscovery)]
 #endif
-    static SQLiteFunction()
+    static SqliteFunction()
     {
       try
       {
 #if !PLATFORM_COMPACTFRAMEWORK
-        SQLiteFunctionAttribute at;
+        SqliteFunctionAttribute at;
         System.Reflection.Assembly[] arAssemblies = System.AppDomain.CurrentDomain.GetAssemblies();
         int w = arAssemblies.Length;
         System.Reflection.AssemblyName sqlite = System.Reflection.Assembly.GetCallingAssembly().GetName();
@@ -439,11 +439,11 @@ namespace Mono.Data.Sqlite
           {
             if (arTypes[x] == null) continue;
 
-            object[] arAtt = arTypes[x].GetCustomAttributes(typeof(SQLiteFunctionAttribute), false);
+            object[] arAtt = arTypes[x].GetCustomAttributes(typeof(SqliteFunctionAttribute), false);
             int u = arAtt.Length;
             for (int y = 0; y < u; y++)
             {
-              at = arAtt[y] as SQLiteFunctionAttribute;
+              at = arAtt[y] as SqliteFunctionAttribute;
               if (at != null)
               {
                 at._instanceType = arTypes[x];
@@ -459,19 +459,19 @@ namespace Mono.Data.Sqlite
       }
     }
     /// <summary>
-    /// Manual method of registering a function.  The type must still have the SQLiteFunctionAttributes in order to work
+    /// Manual method of registering a function.  The type must still have the SqliteFunctionAttributes in order to work
     /// properly, but this is a workaround for the Compact Framework where enumerating assemblies is not currently supported.
     /// </summary>
     /// <param name="typ">The type of the function to register</param>
     public static void RegisterFunction(Type typ)
     {
-      object[] arAtt = typ.GetCustomAttributes(typeof(SQLiteFunctionAttribute), false);
+      object[] arAtt = typ.GetCustomAttributes(typeof(SqliteFunctionAttribute), false);
       int u = arAtt.Length;
-      SQLiteFunctionAttribute at;
+      SqliteFunctionAttribute at;
 
       for (int y = 0; y < u; y++)
       {
-        at = arAtt[y] as SQLiteFunctionAttribute;
+        at = arAtt[y] as SqliteFunctionAttribute;
         if (at != null)
         {
           at._instanceType = typ;
@@ -491,14 +491,14 @@ namespace Mono.Data.Sqlite
     /// </remarks>
     /// <param name="sqlbase">The base object on which the functions are to bind</param>
     /// <returns>Returns an array of functions which the connection object should retain until the connection is closed.</returns>
-    internal static SQLiteFunction[] BindFunctions(SQLiteBase sqlbase)
+    internal static SqliteFunction[] BindFunctions(SQLiteBase sqlbase)
     {
-      SQLiteFunction f;
-      List<SQLiteFunction> lFunctions = new List<SQLiteFunction>();
+      SqliteFunction f;
+      List<SqliteFunction> lFunctions = new List<SqliteFunction>();
 
-      foreach (SQLiteFunctionAttribute pr in _registeredFunctions)
+      foreach (SqliteFunctionAttribute pr in _registeredFunctions)
       {
-        f = (SQLiteFunction)Activator.CreateInstance(pr._instanceType);
+        f = (SqliteFunction)Activator.CreateInstance(pr._instanceType);
         f._base = sqlbase;
         f._InvokeFunc = (pr.FuncType == FunctionType.Scalar) ? new SQLiteCallback(f.ScalarCallback) : null;
         f._StepFunc = (pr.FuncType == FunctionType.Aggregate) ? new SQLiteCallback(f.StepCallback) : null;
@@ -507,7 +507,7 @@ namespace Mono.Data.Sqlite
         f._CompareFunc16 = (pr.FuncType == FunctionType.Collation) ? new SQLiteCollation(f.CompareCallback16) : null;
 
         if (pr.FuncType != FunctionType.Collation)
-          sqlbase.CreateFunction(pr.Name, pr.Arguments, (f is SQLiteFunctionEx), f._InvokeFunc, f._StepFunc, f._FinalFunc);
+          sqlbase.CreateFunction(pr.Name, pr.Arguments, (f is SqliteFunctionEx), f._InvokeFunc, f._StepFunc, f._FinalFunc);
         else
           sqlbase.CreateCollation(pr.Name, f._CompareFunc, f._CompareFunc16);
 
@@ -515,7 +515,7 @@ namespace Mono.Data.Sqlite
         lFunctions.Add(f);
       }
 
-      SQLiteFunction[] arFunctions = new SQLiteFunction[lFunctions.Count];
+      SqliteFunction[] arFunctions = new SqliteFunction[lFunctions.Count];
       lFunctions.CopyTo(arFunctions, 0);
 
       return arFunctions;
@@ -523,12 +523,12 @@ namespace Mono.Data.Sqlite
   }
 
   /// <summary>
-  /// Extends SQLiteFunction and allows an inherited class to obtain the collating sequence associated with a function call.
+  /// Extends SqliteFunction and allows an inherited class to obtain the collating sequence associated with a function call.
   /// </summary>
   /// <remarks>
   /// User-defined functions can call the GetCollationSequence() method in this class and use it to compare strings and char arrays.
   /// </remarks>
-  public class SQLiteFunctionEx : SQLiteFunction
+  public class SqliteFunctionEx : SqliteFunction
   {
     /// <summary>
     /// Obtains the collating sequence in effect for the given function.
@@ -659,7 +659,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Context of the function that requested the collating sequence
     /// </summary>
-    internal SQLiteFunction _func;
+    internal SqliteFunction _func;
 
     /// <summary>
     /// Calls the base collating sequence to compare two strings

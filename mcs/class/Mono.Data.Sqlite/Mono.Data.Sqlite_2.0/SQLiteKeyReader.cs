@@ -18,10 +18,10 @@ namespace Mono.Data.Sqlite
   /// Providing key information for a given statement is non-trivial :(
   /// </remarks>
   /// </summary>
-  internal sealed class SQLiteKeyReader : IDisposable
+  internal sealed class SqliteKeyReader : IDisposable
   {
     private KeyInfo[] _keyInfo;
-    private SQLiteStatement _stmt;
+    private SqliteStatement _stmt;
     private bool _isValid;
 
     /// <summary>
@@ -44,12 +44,12 @@ namespace Mono.Data.Sqlite
     /// </summary>
     private sealed class KeyQuery : IDisposable
     {
-      private SQLiteCommand _command;
-      internal SQLiteDataReader _reader;
+      private SqliteCommand _command;
+      internal SqliteDataReader _reader;
 
-      internal KeyQuery(SQLiteConnection cnn, string database, string table, params string[] columns)
+      internal KeyQuery(SqliteConnection cnn, string database, string table, params string[] columns)
       {
-        using (SQLiteCommandBuilder builder = new SQLiteCommandBuilder())
+        using (SqliteCommandBuilder builder = new SqliteCommandBuilder())
         {
           _command = cnn.CreateCommand();
           for (int n = 0; n < columns.Length; n++)
@@ -99,7 +99,7 @@ namespace Mono.Data.Sqlite
     /// <param name="cnn"></param>
     /// <param name="reader"></param>
     /// <param name="stmt"></param>
-    internal SQLiteKeyReader(SQLiteConnection cnn, SQLiteDataReader reader, SQLiteStatement stmt)
+    internal SqliteKeyReader(SqliteConnection cnn, SqliteDataReader reader, SqliteStatement stmt)
     {
       Dictionary<string, int> catalogs = new Dictionary<string, int>();
       Dictionary<string, List<string>> tables = new Dictionary<string, List<string>>();

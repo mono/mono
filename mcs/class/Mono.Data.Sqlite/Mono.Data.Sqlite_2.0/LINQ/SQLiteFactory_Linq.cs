@@ -15,12 +15,12 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbProviderFactory.
   /// </summary>
-  public sealed partial class SQLiteFactory : IServiceProvider
+  public sealed partial class SqliteFactory : IServiceProvider
   {
     private static Type _dbProviderServicesType;
     private static object _sqliteServices;
 
-    static SQLiteFactory()
+    static SqliteFactory()
     {
       _dbProviderServicesType = Type.GetType("System.Data.Common.DbProviderServices, System.Data.Entity, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", false);
     }

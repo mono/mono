@@ -15,7 +15,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// Represents a single SQL statement in SQLite.
   /// </summary>
-  internal sealed class SQLiteStatement : IDisposable
+  internal sealed class SqliteStatement : IDisposable
   {
     /// <summary>
     /// The underlying SQLite object this statement is bound to
@@ -28,7 +28,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The actual statement pointer
     /// </summary>
-    internal SQLiteStatementHandle  _sqlite_stmt;
+    internal SqliteStatementHandle  _sqlite_stmt;
     /// <summary>
     /// An index from which unnamed parameters begin
     /// </summary>
@@ -40,11 +40,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Parameters for this statement
     /// </summary>
-    internal SQLiteParameter[] _paramValues;
+    internal SqliteParameter[] _paramValues;
     /// <summary>
     /// Command this statement belongs to (if any)
     /// </summary>
-    internal SQLiteCommand     _command;
+    internal SqliteCommand     _command;
 
     private string[] _types;
 
@@ -55,7 +55,7 @@ namespace Mono.Data.Sqlite
     /// <param name="stmt">The statement</param>
     /// <param name="strCommand">The command text for this statement</param>
     /// <param name="previous">The previous command in a multi-statement command</param>
-    internal SQLiteStatement(SQLiteBase sqlbase, SQLiteStatementHandle stmt, string strCommand, SQLiteStatement previous)
+    internal SqliteStatement(SQLiteBase sqlbase, SqliteStatementHandle stmt, string strCommand, SqliteStatement previous)
     {
       _sql     = sqlbase;
       _sqlite_stmt = stmt;
@@ -73,7 +73,7 @@ namespace Mono.Data.Sqlite
           nCmdStart = previous._unnamedParameters;
 
         _paramNames = new string[n];
-        _paramValues = new SQLiteParameter[n];
+        _paramValues = new SqliteParameter[n];
 
         for (x = 0; x < n; x++)
         {
@@ -91,12 +91,12 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// Called by SQLiteParameterCollection, this function determines if the specified parameter name belongs to
+    /// Called by SqliteParameterCollection, this function determines if the specified parameter name belongs to
     /// this statement, and if so, keeps a reference to the parameter so it can be bound later.
     /// </summary>
     /// <param name="s">The parameter name to map</param>
     /// <param name="p">The parameter to assign it</param>
-    internal bool MapParameter(string s, SQLiteParameter p)
+    internal bool MapParameter(string s, SqliteParameter p)
     {
       if (_paramNames == null) return false;
       
@@ -157,10 +157,10 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="index">The index of the parameter to bind</param>
     /// <param name="param">The parameter we're binding</param>
-    private void BindParameter(int index, SQLiteParameter param)
+    private void BindParameter(int index, SqliteParameter param)
     {
       if (param == null)
-        throw new SQLiteException((int)SQLiteErrorCode.Error, "Insufficient parameters supplied to the command");
+        throw new SqliteException((int)SQLiteErrorCode.Error, "Insufficient parameters supplied to the command");
 
       object obj = param.Value;
       DbType objType = param.DbType;
@@ -172,7 +172,7 @@ namespace Mono.Data.Sqlite
       }
 
       if (objType == DbType.Object)
-        objType = SQLiteConvert.TypeToDbType(obj.GetType());
+        objType = SqliteConvert.TypeToDbType(obj.GetType());
 
       switch (objType)
       {

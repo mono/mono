@@ -10,7 +10,7 @@ namespace Mono.Data.Sqlite
   using System;
   using System.Collections.Generic;
 
-  internal static class SQLiteConnectionPool
+  internal static class SqliteConnectionPool
   {
     /// <summary>
     /// Keeps track of connections made on a specified file.  The PoolVersion dictates whether old objects get
@@ -46,7 +46,7 @@ namespace Mono.Data.Sqlite
     /// <param name="maxPoolSize">The maximum size the connection pool for the filename can be</param>
     /// <param name="version">The pool version the returned connection will belong to</param>
     /// <returns>Returns NULL if no connections were available.  Even if none are, the poolversion will still be a valid pool version</returns>
-    internal static SQLiteConnectionHandle Remove(string fileName, int maxPoolSize, out int version)
+    internal static SqliteConnectionHandle Remove(string fileName, int maxPoolSize, out int version)
     {
       lock (_connections)
       {
@@ -76,7 +76,7 @@ namespace Mono.Data.Sqlite
         while (queue.Queue.Count > 0)
         {
           WeakReference cnn = queue.Queue.Dequeue();
-          SQLiteConnectionHandle hdl = cnn.Target as SQLiteConnectionHandle;
+          SqliteConnectionHandle hdl = cnn.Target as SqliteConnectionHandle;
           if (hdl != null)
           {
             return hdl;
@@ -99,7 +99,7 @@ namespace Mono.Data.Sqlite
           while (pair.Value.Queue.Count > 0)
           {
             WeakReference cnn = pair.Value.Queue.Dequeue();
-            SQLiteConnectionHandle hdl = cnn.Target as SQLiteConnectionHandle;
+            SqliteConnectionHandle hdl = cnn.Target as SqliteConnectionHandle;
             if (hdl != null)
             {
               hdl.Dispose();
@@ -134,7 +134,7 @@ namespace Mono.Data.Sqlite
           while (queue.Queue.Count > 0)
           {
             WeakReference cnn = queue.Queue.Dequeue();
-            SQLiteConnectionHandle hdl = cnn.Target as SQLiteConnectionHandle;
+            SqliteConnectionHandle hdl = cnn.Target as SqliteConnectionHandle;
             if (hdl != null)
             {
               hdl.Dispose();
@@ -153,7 +153,7 @@ namespace Mono.Data.Sqlite
     /// <remarks>
     /// If the version numbers don't match between the connection and the pool, then the handle is discarded.
     /// </remarks>
-    internal static void Add(string fileName, SQLiteConnectionHandle hdl, int version)
+    internal static void Add(string fileName, SqliteConnectionHandle hdl, int version)
     {
       lock (_connections)
       {
@@ -181,7 +181,7 @@ namespace Mono.Data.Sqlite
       while (queue.Queue.Count > target)
       {
         WeakReference cnn = queue.Queue.Dequeue();
-        SQLiteConnectionHandle hdl = cnn.Target as SQLiteConnectionHandle;
+        SqliteConnectionHandle hdl = cnn.Target as SqliteConnectionHandle;
         if (hdl != null)
         {
           hdl.Dispose();

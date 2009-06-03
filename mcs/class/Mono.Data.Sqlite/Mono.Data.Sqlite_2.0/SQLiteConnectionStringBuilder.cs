@@ -23,7 +23,7 @@ namespace Mono.Data.Sqlite
   /// </summary>
   [DefaultProperty("DataSource")]
   [DefaultMember("Item")]
-  public sealed class SQLiteConnectionStringBuilder : DbConnectionStringBuilder
+  public sealed class SqliteConnectionStringBuilder : DbConnectionStringBuilder
   {
     /// <summary>
     /// Properties of this class
@@ -36,7 +36,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Default constructor
     /// </summary>
-    public SQLiteConnectionStringBuilder()
+    public SqliteConnectionStringBuilder()
     {
       Initialize(null);
     }
@@ -45,7 +45,7 @@ namespace Mono.Data.Sqlite
     /// Constructs a new instance of the class using the specified connection string.
     /// </summary>
     /// <param name="connectionString">The connection string to parse</param>
-    public SQLiteConnectionStringBuilder(string connectionString)
+    public SqliteConnectionStringBuilder(string connectionString)
     {
       Initialize(connectionString);
     }
@@ -125,7 +125,7 @@ namespace Mono.Data.Sqlite
       {
         object value;
         TryGetValue("useutf16encoding", out value);
-        return SQLiteConvert.ToBoolean(value);
+        return SqliteConvert.ToBoolean(value);
       }
       set
       {
@@ -144,7 +144,7 @@ namespace Mono.Data.Sqlite
       {
         object value;
         TryGetValue("pooling", out value);
-        return SQLiteConvert.ToBoolean(value);
+        return SqliteConvert.ToBoolean(value);
       }
       set
       {
@@ -164,7 +164,7 @@ namespace Mono.Data.Sqlite
       {
         object value;
         TryGetValue("binaryguid", out value);
-        return SQLiteConvert.ToBoolean(value);
+        return SqliteConvert.ToBoolean(value);
       }
       set
       {
@@ -212,7 +212,7 @@ namespace Mono.Data.Sqlite
 
     /// <summary>
     /// Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
-    /// commands used internally such as inside a SQLiteTransaction, where setting the timeout is not possible.
+    /// commands used internally such as inside a SqliteTransaction, where setting the timeout is not possible.
     /// </summary>
     [DisplayName("Default Timeout")]
     [Browsable(true)]
@@ -243,7 +243,7 @@ namespace Mono.Data.Sqlite
       {
         object value;
         TryGetValue("enlist", out value);
-        return SQLiteConvert.ToBoolean(value);
+        return SqliteConvert.ToBoolean(value);
       }
       set
       {
@@ -263,7 +263,7 @@ namespace Mono.Data.Sqlite
       {
         object value;
         TryGetValue("failifmissing", out value);
-        return SQLiteConvert.ToBoolean(value);
+        return SqliteConvert.ToBoolean(value);
       }
       set
       {
@@ -284,7 +284,7 @@ namespace Mono.Data.Sqlite
       {
         object value;
         TryGetValue("legacy format", out value);
-        return SQLiteConvert.ToBoolean(value);
+        return SqliteConvert.ToBoolean(value);
       }
       set
       {
@@ -304,7 +304,7 @@ namespace Mono.Data.Sqlite
       {
         object value;
         TryGetValue("read only", out value);
-        return SQLiteConvert.ToBoolean(value);
+        return SqliteConvert.ToBoolean(value);
       }
       set
       {
@@ -479,7 +479,7 @@ namespace Mono.Data.Sqlite
       if (b)
       {
         if (pd.PropertyType == typeof(Boolean))
-          value = SQLiteConvert.ToBoolean(value);
+          value = SqliteConvert.ToBoolean(value);
         else
           value = TypeDescriptor.GetConverter(pd.PropertyType).ConvertFrom(value);
       }

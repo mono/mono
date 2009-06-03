@@ -12,7 +12,7 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// MetaDataCollections specific to SQLite
   /// </summary>
-  public static class SQLiteMetaDataCollectionNames
+  public static class SqliteMetaDataCollectionNames
   {
     /// <summary>
     /// Returns a list of databases attached to the connection

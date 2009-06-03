@@ -55,6 +55,7 @@ namespace MonoTests.Mono.Data.Sqlite
 			}
 			catch(Exception e)
 			{
+				Console.WriteLine (e);
 				throw new AssertionException("Create table failed",e);
 			}
 			finally

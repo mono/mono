@@ -17,12 +17,12 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbDataReader.
   /// </summary>
-  public sealed class SQLiteDataReader : DbDataReader
+  public sealed class SqliteDataReader : DbDataReader
   {
     /// <summary>
     /// Underlying command this reader is attached to
     /// </summary>
-    private SQLiteCommand _command;
+    private SqliteCommand _command;
     /// <summary>
     /// Index of the current statement in the command being processed
     /// </summary>
@@ -30,7 +30,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Current statement being Read()
     /// </summary>
-    private SQLiteStatement _activeStatement;
+    private SqliteStatement _activeStatement;
     /// <summary>
     /// State of the current statement being processed.
     /// -1 = First Step() executed, so the first Read() will be ignored
@@ -65,16 +65,16 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// An array of rowid's for the active statement if CommandBehavior.KeyInfo is specified
     /// </summary>
-    private SQLiteKeyReader _keyInfo;
+    private SqliteKeyReader _keyInfo;
 
     internal long _version; // Matches the version of the connection
 
     /// <summary>
     /// Internal constructor, initializes the datareader and sets up to begin executing statements
     /// </summary>
-    /// <param name="cmd">The SQLiteCommand this data reader is for</param>
+    /// <param name="cmd">The SqliteCommand this data reader is for</param>
     /// <param name="behave">The expected behavior of the data reader</param>
-    internal SQLiteDataReader(SQLiteCommand cmd, CommandBehavior behave)
+    internal SqliteDataReader(SqliteCommand cmd, CommandBehavior behave)
     {
       _command = cmd;
       _version = _command.Connection._version;
@@ -159,7 +159,7 @@ namespace Mono.Data.Sqlite
         throw new InvalidOperationException("DataReader has been closed");
 
       if (_version == 0)
-        throw new SQLiteException((int)SQLiteErrorCode.Abort, "Execution was aborted by the user");
+        throw new SqliteException((int)SQLiteErrorCode.Abort, "Execution was aborted by the user");
 
       if (_command.Connection.State != ConnectionState.Open || _command.Connection._version != _version)
         throw new InvalidOperationException("Connection was closed, statement was terminated");
@@ -373,7 +373,7 @@ namespace Mono.Data.Sqlite
         return _keyInfo.GetDataTypeName(i - VisibleFieldCount);
 
       SQLiteType typ = GetSQLiteType(i);
-      if (typ.Type == DbType.Object) return SQLiteConvert.SQLiteTypeToType(typ).Name;
+      if (typ.Type == DbType.Object) return SqliteConvert.SQLiteTypeToType(typ).Name;
       return _activeStatement._sql.ColumnType(_activeStatement, i, out typ.Affinity);
     }
 
@@ -429,7 +429,7 @@ namespace Mono.Data.Sqlite
       if (i >= VisibleFieldCount && _keyInfo != null)
         return _keyInfo.GetFieldType(i - VisibleFieldCount);
 
-      return SQLiteConvert.SQLiteTypeToType(GetSQLiteType(i));
+      return SqliteConvert.SQLiteTypeToType(GetSQLiteType(i));
     }
 
     /// <summary>
@@ -601,9 +601,9 @@ namespace Mono.Data.Sqlite
         // Default settings for the column
         row[SchemaTableColumn.ColumnName] = GetName(n);
         row[SchemaTableColumn.ColumnOrdinal] = n;
-        row[SchemaTableColumn.ColumnSize] = SQLiteConvert.DbTypeToColumnSize(typ);
-        row[SchemaTableColumn.NumericPrecision] = SQLiteConvert.DbTypeToNumericPrecision(typ);
-        row[SchemaTableColumn.NumericScale] = SQLiteConvert.DbTypeToNumericScale(typ);
+        row[SchemaTableColumn.ColumnSize] = SqliteConvert.DbTypeToColumnSize(typ);
+        row[SchemaTableColumn.NumericPrecision] = SqliteConvert.DbTypeToNumericPrecision(typ);
+        row[SchemaTableColumn.NumericScale] = SqliteConvert.DbTypeToNumericScale(typ);
         row[SchemaTableColumn.ProviderType] = GetSQLiteType(n).Type;
         row[SchemaTableColumn.IsLong] = false;
         row[SchemaTableColumn.AllowDBNull] = true;
@@ -675,7 +675,7 @@ namespace Mono.Data.Sqlite
           if (wantDefaultValue)
           {
             // Determine the default value for the column, which sucks because we have to query the schema for each column
-            using (SQLiteCommand cmdTable = new SQLiteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].TABLE_INFO([{1}])",
+            using (SqliteCommand cmdTable = new SqliteCommand(String.Format(CultureInfo.InvariantCulture, "PRAGMA [{0}].TABLE_INFO([{1}])",
               row[SchemaTableOptionalColumn.BaseCatalogName],
               row[SchemaTableColumn.BaseTableName]
               ), _command.Connection))
@@ -853,7 +853,7 @@ namespace Mono.Data.Sqlite
     {
       CheckClosed();
 
-      SQLiteStatement stmt = null;
+      SqliteStatement stmt = null;
       int fieldCount;
 
       while (true)
@@ -953,7 +953,7 @@ namespace Mono.Data.Sqlite
       // If not initialized, then fetch the declared column datatype and attempt to convert it 
       // to a known DbType.
       if (typ.Affinity == TypeAffinity.Uninitialized)
-        typ.Type = SQLiteConvert.TypeNameToDbType(_activeStatement._sql.ColumnType(_activeStatement, i, out typ.Affinity));
+        typ.Type = SqliteConvert.TypeNameToDbType(_activeStatement._sql.ColumnType(_activeStatement, i, out typ.Affinity));
       else
         typ.Affinity = _activeStatement._sql.ColumnAffinity(_activeStatement, i);
 
@@ -1026,7 +1026,7 @@ namespace Mono.Data.Sqlite
       if (_keyInfo != null)
         _keyInfo.Dispose();
 
-      _keyInfo = new SQLiteKeyReader(_command.Connection, this, _activeStatement);
+      _keyInfo = new SqliteKeyReader(_command.Connection, this, _activeStatement);
     }
   }
 }

@@ -15,7 +15,7 @@ namespace Mono.Data.Sqlite
   /// the loaded assemblies and initialize them in SQLite as connections are made.
   /// </summary>
   [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-  public sealed class SQLiteFunctionAttribute : Attribute
+  public sealed class SqliteFunctionAttribute : Attribute
   {
     private string       _name;
     private int          _arguments;
@@ -25,7 +25,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Default constructor, initializes the internal variables for the function.
     /// </summary>
-    public SQLiteFunctionAttribute()
+    public SqliteFunctionAttribute()
     {
       Name = "";
       Arguments = -1;

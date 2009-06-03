@@ -14,14 +14,14 @@ namespace Mono.Data.Sqlite
   using System.Globalization;
   using System.ComponentModel;
 
-  public sealed partial class SQLiteConnection
+  public sealed partial class SqliteConnection
   {
     /// <summary>
     /// Returns a SQLiteProviderFactory object.
     /// </summary>
     protected override DbProviderFactory DbProviderFactory
     {
-      get { return SQLiteFactory.Instance; }
+      get { return SqliteFactory.Instance; }
     }
   }
 }

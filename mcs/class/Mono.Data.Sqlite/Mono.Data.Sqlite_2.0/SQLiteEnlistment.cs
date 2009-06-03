@@ -15,11 +15,11 @@ namespace Mono.Data.Sqlite
 
   internal class SQLiteEnlistment : IEnlistmentNotification
   {
-    internal SQLiteTransaction _transaction;
+    internal SqliteTransaction _transaction;
     internal Transaction _scope;
     internal bool _disposeConnection;
 
-    internal SQLiteEnlistment(SQLiteConnection cnn, Transaction scope)
+    internal SQLiteEnlistment(SqliteConnection cnn, Transaction scope)
     {
       _transaction = cnn.BeginTransaction();
       _scope = scope;
@@ -28,7 +28,7 @@ namespace Mono.Data.Sqlite
       _scope.EnlistVolatile(this, System.Transactions.EnlistmentOptions.None);
     }
 
-    private void Cleanup(SQLiteConnection cnn)
+    private void Cleanup(SqliteConnection cnn)
     {
       if (_disposeConnection)
         cnn.Dispose();
@@ -41,7 +41,7 @@ namespace Mono.Data.Sqlite
 
     public void Commit(Enlistment enlistment)
     {
-      SQLiteConnection cnn = _transaction.Connection;
+      SqliteConnection cnn = _transaction.Connection;
       cnn._enlistment = null;
 
       try
@@ -73,7 +73,7 @@ namespace Mono.Data.Sqlite
 
     public void Rollback(Enlistment enlistment)
     {
-      SQLiteConnection cnn = _transaction.Connection;
+      SqliteConnection cnn = _transaction.Connection;
       cnn._enlistment = null;
 
       try

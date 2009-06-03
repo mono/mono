@@ -21,7 +21,7 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// Overrides SQLiteConvert.ToString() to marshal UTF-16 strings instead of UTF-8
+    /// Overrides SqliteConvert.ToString() to marshal UTF-16 strings instead of UTF-8
     /// </summary>
     /// <param name="b">A pointer to a UTF-16 string</param>
     /// <param name="nbytelen">The length (IN BYTES) of the string</param>
@@ -49,7 +49,7 @@ namespace Mono.Data.Sqlite
       if (usePool)
       {
         _fileName = strFilename;
-        _sql = SQLiteConnectionPool.Remove(strFilename, maxPoolSize, out _poolVersion);
+        _sql = SqliteConnectionPool.Remove(strFilename, maxPoolSize, out _poolVersion);
       }
 
       if (_sql == null)
@@ -60,34 +60,34 @@ namespace Mono.Data.Sqlite
         int n = UnsafeNativeMethods.sqlite3_open16_interop(ToUTF8(strFilename), (int)flags, out db);
 #else
         if ((flags & SQLiteOpenFlagsEnum.Create) == 0 && System.IO.File.Exists(strFilename) == false)
-          throw new SQLiteException((int)SQLiteErrorCode.CantOpen, strFilename);
+          throw new SqliteException((int)SQLiteErrorCode.CantOpen, strFilename);
 
         int n = UnsafeNativeMethods.sqlite3_open16(strFilename, out db);
 #endif
-        if (n > 0) throw new SQLiteException(n, null);
+        if (n > 0) throw new SqliteException(n, null);
 
         _sql = db;
       }
-      _functionsArray = SQLiteFunction.BindFunctions(this);
+      _functionsArray = SqliteFunction.BindFunctions(this);
     }
 
-    internal override void Bind_DateTime(SQLiteStatement stmt, int index, DateTime dt)
+    internal override void Bind_DateTime(SqliteStatement stmt, int index, DateTime dt)
     {
       Bind_Text(stmt, index, ToString(dt));
     }
 
-    internal override void Bind_Text(SQLiteStatement stmt, int index, string value)
+    internal override void Bind_Text(SqliteStatement stmt, int index, string value)
     {
       int n = UnsafeNativeMethods.sqlite3_bind_text16(stmt._sqlite_stmt, index, value, value.Length * 2, (IntPtr)(-1));
-      if (n > 0) throw new SQLiteException(n, SQLiteLastError());
+      if (n > 0) throw new SqliteException(n, SQLiteLastError());
     }
 
-    internal override DateTime GetDateTime(SQLiteStatement stmt, int index)
+    internal override DateTime GetDateTime(SqliteStatement stmt, int index)
     {
       return ToDateTime(GetText(stmt, index));
     }
 
-    internal override string ColumnName(SQLiteStatement stmt, int index)
+    internal override string ColumnName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -97,7 +97,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override string GetText(SQLiteStatement stmt, int index)
+    internal override string GetText(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -107,7 +107,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override string ColumnOriginalName(SQLiteStatement stmt, int index)
+    internal override string ColumnOriginalName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -117,7 +117,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override string ColumnDatabaseName(SQLiteStatement stmt, int index)
+    internal override string ColumnDatabaseName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;
@@ -127,7 +127,7 @@ namespace Mono.Data.Sqlite
 #endif
     }
 
-    internal override string ColumnTableName(SQLiteStatement stmt, int index)
+    internal override string ColumnTableName(SqliteStatement stmt, int index)
     {
 #if !SQLITE_STANDARD
       int len;

@@ -14,12 +14,12 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbTransaction.
   /// </summary>
-  public sealed class SQLiteTransaction : DbTransaction
+  public sealed class SqliteTransaction : DbTransaction
   {
     /// <summary>
     /// The connection to which this transaction is bound
     /// </summary>
-    internal SQLiteConnection _cnn;
+    internal SqliteConnection _cnn;
     internal long _version; // Matches the version of the connection
     private IsolationLevel _level;
 
@@ -28,7 +28,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="connection">The connection to open a transaction on</param>
     /// <param name="deferredLock">TRUE to defer the writelock, or FALSE to lock immediately</param>
-    internal SQLiteTransaction(SQLiteConnection connection, bool deferredLock)
+    internal SqliteTransaction(SqliteConnection connection, bool deferredLock)
     {
       _cnn = connection;
       _version = _cnn._version;
@@ -39,7 +39,7 @@ namespace Mono.Data.Sqlite
       {
         try
         {
-          using (SQLiteCommand cmd = _cnn.CreateCommand())
+          using (SqliteCommand cmd = _cnn.CreateCommand())
           {
             if (!deferredLock)
               cmd.CommandText = "BEGIN IMMEDIATE";
@@ -49,7 +49,7 @@ namespace Mono.Data.Sqlite
             cmd.ExecuteNonQuery();
           }
         }
-        catch (SQLiteException)
+        catch (SqliteException)
         {
           _cnn._transactionLevel--;
           _cnn = null;
@@ -67,7 +67,7 @@ namespace Mono.Data.Sqlite
 
       if (_cnn._transactionLevel - 1 == 0)
       {
-        using (SQLiteCommand cmd = _cnn.CreateCommand())
+        using (SqliteCommand cmd = _cnn.CreateCommand())
         {
           cmd.CommandText = "COMMIT";
           cmd.ExecuteNonQuery();
@@ -80,7 +80,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Returns the underlying connection to which this transaction applies.
     /// </summary>
-    public new SQLiteConnection Connection
+    public new SqliteConnection Connection
     {
       get { return _cnn; }
     }
@@ -132,9 +132,9 @@ namespace Mono.Data.Sqlite
       _cnn = null;
     }
 
-    internal static void IssueRollback(SQLiteConnection cnn)
+    internal static void IssueRollback(SqliteConnection cnn)
     {
-      using (SQLiteCommand cmd = cnn.CreateCommand())
+      using (SqliteCommand cmd = cnn.CreateCommand())
       {
         cmd.CommandText = "ROLLBACK";
         cmd.ExecuteNonQuery();
@@ -151,17 +151,17 @@ namespace Mono.Data.Sqlite
 
       if (_cnn._transactionLevel == 0)
       {
-        if (throwError == true) throw new SQLiteException((int)SQLiteErrorCode.Misuse, "No transaction is active on this connection");
+        if (throwError == true) throw new SqliteException((int)SQLiteErrorCode.Misuse, "No transaction is active on this connection");
         else return false;
       }
       if (_cnn._version != _version)
       {
-        if (throwError == true) throw new SQLiteException((int)SQLiteErrorCode.Misuse, "The connection was closed and re-opened, changes were rolled back");
+        if (throwError == true) throw new SqliteException((int)SQLiteErrorCode.Misuse, "The connection was closed and re-opened, changes were rolled back");
         else return false;
       }
       if (_cnn.State != ConnectionState.Open)
       {
-        if (throwError == true) throw new SQLiteException((int)SQLiteErrorCode.Misuse, "Connection was closed");
+        if (throwError == true) throw new SqliteException((int)SQLiteErrorCode.Misuse, "Connection was closed");
         else return false;
       }
 

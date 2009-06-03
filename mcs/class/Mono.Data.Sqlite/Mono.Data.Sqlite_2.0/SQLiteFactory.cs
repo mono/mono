@@ -14,65 +14,65 @@ namespace Mono.Data.Sqlite
   /// <summary>
   /// SQLite implementation of DbProviderFactory.
   /// </summary>
-  public sealed partial class SQLiteFactory : DbProviderFactory
+  public sealed partial class SqliteFactory : DbProviderFactory
   {
     /// <summary>
-    /// Static instance member which returns an instanced SQLiteFactory class.
+    /// Static instance member which returns an instanced SqliteFactory class.
     /// </summary>
-    public static readonly SQLiteFactory Instance = new SQLiteFactory();
+    public static readonly SqliteFactory Instance = new SqliteFactory();
 
     /// <summary>
-    /// Returns a new SQLiteCommand object.
+    /// Returns a new SqliteCommand object.
     /// </summary>
-    /// <returns>A SQLiteCommand object.</returns>
+    /// <returns>A SqliteCommand object.</returns>
     public override DbCommand CreateCommand()
     {
-      return new SQLiteCommand();
+      return new SqliteCommand();
     }
 
     /// <summary>
-    /// Returns a new SQLiteCommandBuilder object.
+    /// Returns a new SqliteCommandBuilder object.
     /// </summary>
-    /// <returns>A SQLiteCommandBuilder object.</returns>
+    /// <returns>A SqliteCommandBuilder object.</returns>
     public override DbCommandBuilder CreateCommandBuilder()
     {
-      return new SQLiteCommandBuilder();
+      return new SqliteCommandBuilder();
     }
 
     /// <summary>
-    /// Creates a new SQLiteConnection.
+    /// Creates a new SqliteConnection.
     /// </summary>
-    /// <returns>A SQLiteConnection object.</returns>
+    /// <returns>A SqliteConnection object.</returns>
     public override DbConnection CreateConnection()
     {
-      return new SQLiteConnection();
+      return new SqliteConnection();
     }
 
     /// <summary>
-    /// Creates a new SQLiteConnectionStringBuilder.
+    /// Creates a new SqliteConnectionStringBuilder.
     /// </summary>
-    /// <returns>A SQLiteConnectionStringBuilder object.</returns>
+    /// <returns>A SqliteConnectionStringBuilder object.</returns>
     public override DbConnectionStringBuilder CreateConnectionStringBuilder()
     {
-      return new SQLiteConnectionStringBuilder();
+      return new SqliteConnectionStringBuilder();
     }
 
     /// <summary>
-    /// Creates a new SQLiteDataAdapter.
+    /// Creates a new SqliteDataAdapter.
     /// </summary>
-    /// <returns>A SQLiteDataAdapter object.</returns>
+    /// <returns>A SqliteDataAdapter object.</returns>
     public override DbDataAdapter CreateDataAdapter()
     {
-      return new SQLiteDataAdapter();
+      return new SqliteDataAdapter();
     }
 
     /// <summary>
-    /// Creates a new SQLiteParameter.
+    /// Creates a new SqliteParameter.
     /// </summary>
-    /// <returns>A SQLiteParameter object.</returns>
+    /// <returns>A SqliteParameter object.</returns>
     public override DbParameter CreateParameter()
     {
-      return new SQLiteParameter();
+      return new SqliteParameter();
     }
   }
 #endif
