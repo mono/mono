@@ -94,9 +94,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			
 		}
 
+		// A shallow clone of this object cannot be created.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"A shallow clone of this object cannot be created.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestClone1 ()
 		{
 			bp = new BuildProperty ("name", "value");
@@ -256,9 +256,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("true", a.Condition, "A1");
 		}
 
+		// Cannot set a condition on an object not represented by an XML element in the project file.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestCondition2 ()
 		{
 			BuildProperty a = new BuildProperty ("name", "value");
@@ -347,5 +347,37 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			node = xd.SelectSingleNode ("tns:Project/tns:PropertyGroup/tns:Name", TestNamespaceManager.NamespaceManager);
 			Assert.AreEqual ("AnotherValue", node.InnerText, "A1");
 		}
+
+		[Test]
+                public void TestValueXml ()
+                {
+                        BuildPropertyGroup [] bpgs = new BuildPropertyGroup [1];
+                        BuildProperty [] props;
+                        XmlDocument xd;
+                        XmlNode node;
+
+                        string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+                                        <PropertyGroup>
+                                                <Name>Value</Name>
+                                        </PropertyGroup>
+                                </Project>
+                        ";
+
+                        engine = new Engine (Consts.BinPath);
+
+                        project = engine.CreateNewProject ();
+                        project.LoadXml (documentString);
+
+                        project.PropertyGroups.CopyTo (bpgs, 0);
+                        bpgs[0].AddNewProperty("XmlProp", "<XmlStuff></XmlStuff>");
+
+                        xd = new XmlDocument ();
+                        xd.LoadXml (project.Xml);
+			Console.WriteLine(project.Xml);
+                        node = xd.SelectSingleNode ("tns:Project/tns:PropertyGroup/tns:XmlProp/tns:XmlStuff", TestNamespaceManager.NamespaceManager);
+                        Assert.IsNotNull (node, "A1");
+                }
+
 	}
 }

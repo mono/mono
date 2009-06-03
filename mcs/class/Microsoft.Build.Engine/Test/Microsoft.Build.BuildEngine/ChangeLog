@@ -1,3 +1,72 @@
+2009-05-29  Ankit Jain  <jankit@novell.com>
+
+	* EngineTest.cs (TestGlobalProperties*): New tests
+	and some helper methods.
+	* ProjectTest.cs (TestResetBuildStatus): Reset twice. Update
+	the event counts.
+
+2009-05-15  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildItemTest.cs:
+	* BuildPropertyGroupTest.cs:
+	* BuildPropertyGroupCollectionTest.cs:
+	* BuildPropertyTest.cs:
+	* BuildItemGroupTest.cs:
+	* EngineTest.cs:
+	* InternalLoggerExceptionTest.cs:
+	* ProjectTest.cs: Don't compare exception messages.
+
+2009-05-12  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestAssignment1):
+	* UsingTaskTest.cs (TestTaskName):
+	(TestAssemblyNameOrAssemblyFile1):
+	(TestAssemblyNameOrAssemblyFile2): Don't compare exception messages. 
+
+2009-03-27  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildChooseTest.cs: Enable tests.
+	* Microsoft.Build.Engine.Test.csproj: Update post build step.
+
+2009-03-26  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildTaskTest.cs (TestTaskInNamespace): Add test for Task in namespace.
+
+2009-02-24  Ankit Jain  <jankit@novell.com>
+
+	* UsingTaskTest.cs (TestLazyLoad{1,2,3}): New.
+	(TestAssemblyNameOrAssemblyFileConditionFalse): New.
+	(TestDuplicate1): New.
+	* TargetTest (CheckLoggedMessageHead): Moved to TestMessageLogger,
+	use that.
+
+2009-02-15  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildChooseTest.cs (TestValueXml): Add tests for Choose.
+	Currently not working.
+
+2009-02-12  Jonathan Chambers  <joncham@gmail.com>
+
+	* BuildPropertyTest.cs (TestValueXml): New.
+
+2009-02-01  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestBuild[23]): Check number of task started/finished
+	events.
+	(TestResetBuildStat): Remove "NotWorking".
+	(TestBuild4): Likewise. Check number of task started/finished events.
+
+	* TargetTest.cs (TestTargetOutputs1): New.
+
+2009-01-30  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest.cs (TestRequiredTask_*): New.
+	(TestBatchedMetadataRef5): New.
+
+2009-01-29  Ankit Jain  <jankit@novell.com>
+
+	* BuildItemTest.cs (TestBuildItemTransform): New.
+
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestInitialTargets): New.

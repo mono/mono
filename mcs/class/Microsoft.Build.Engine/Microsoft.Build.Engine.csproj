@@ -1,0 +1,115 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Microsoft.Build.Engine</RootNamespace>
+    <AssemblyName>Microsoft.Build.Engine</AssemblyName>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{49CC9B64-E28A-4818-97F9-301E14B383B9}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>.\</OutputPath>
+    <Optimize>False</Optimize>
+    <DefineConstants>TRACE;DEBUG;NET_2_0</DefineConstants>
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>Full</DebugType>
+    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <DocumentationFile>
+    </DocumentationFile>
+    <RegisterForComInterop>false</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <Optimize>True</Optimize>
+    <DefineConstants>TRACE;NET_2_0</DefineConstants>
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <DocumentationFile>
+    </DocumentationFile>
+    <RegisterForComInterop>false</RegisterForComInterop>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'DebugMS' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DebugMS\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_2_0</DefineConstants>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <DebugType>Full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)' == 'DebugMS' ">
+    <Compile Include="Assembly\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\build\common\Consts.cs" />
+    <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
+    <Compile Include="..\Microsoft.Build.Framework\Mono.XBuild.Framework/AssemblyLoadInfo.cs" />
+    <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities/ReservedNameUtils.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BatchingImplBase.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildChoose.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildEngine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildItem.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildItemGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildItemGroupCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildProperty.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildPropertyGroup.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildPropertyGroupCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildSettings.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\BuildWhen.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ChangeType.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ColorResetter.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ColorSetter.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionAndExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionFactorExpresion.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionFunctionExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionNotExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionOrExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionParser.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionRelationalExpression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConditionTokenizer.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ConsoleLogger.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\DirectoryScanner.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Engine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\EventSource.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Expression.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ExpressionCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ExpressionParseException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\FileLogger.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\GroupingCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Import.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ImportCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ImportedProject.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\InternalLoggerException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\InvalidProjectFileException.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\IReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\ItemReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\MetadataReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Project.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\PropertyPosition.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\PropertyReference.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\SolutionParser.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Target.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TargetBatchingImpl.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TargetCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskBatchingImpl.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskDatabase.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\TaskEngine.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Token.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\UsingTask.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\UsingTaskCollection.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\Utilities.cs" />
+    <Compile Include="Microsoft.Build.BuildEngine\WriteHandler.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
+</Project>

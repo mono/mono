@@ -309,6 +309,82 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsNotNull (proj.EvaluatedProperties ["D"], "A4");
 			Assert.IsNotNull (proj.EvaluatedProperties ["E"], "A5");
 		}
+		[Test]
+		public void TestCondition11 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+			string documentString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup>
+		<FooProp>true</FooProp>
+	</PropertyGroup>
+	<ItemGroup>
+		<FooList Include=""abc.exe""/>
+		<List1 Include=""fr_a.txt"" Condition="" $(FooProp) == 'true'"" />
+		<List1 Include=""fr_b.txt"" Condition="" '@(FooList->'%(Extension)a(foo', ',')' == '.exea(foo'"" />
+		<List1 Include=""fr_c.txt"" Condition="" @(FooList -> '%(Extension)', ',') == '.exe'"" />
+	</ItemGroup>
+</Project>";
+
+			proj.LoadXml (documentString);
+
+			BuildItemGroup bgp = proj.GetEvaluatedItemsByName ("List1");
+			Assert.IsNotNull (bgp, "Expected values in List1");
+			Assert.AreEqual (3, bgp.Count, "A1");
+			Assert.AreEqual ("fr_a.txt", bgp [0].FinalItemSpec, "A2");
+			Assert.AreEqual ("fr_b.txt", bgp [1].FinalItemSpec, "A3");
+			Assert.AreEqual ("fr_c.txt", bgp [2].FinalItemSpec, "A4");
+		}
+
+		[Test]
+		public void TestHasTrailingSlash1 ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<EmptyProp></EmptyProp>
+						<WithTrailingBackSlash>foo\ </WithTrailingBackSlash>
+						<WithTrailingFwdSlash>foo/  </WithTrailingFwdSlash>
+						<NoTrailing>Foo</NoTrailing>
+
+						<A Condition="" HasTrailingSlash('$(EmptyProp)') ""></A>
+						<B Condition="" HasTrailingSlash('$(WithTrailingBackSlash)') ""></B>
+						<C Condition="" HasTrailingSlash('$(WithTrailingFwdSlash)') ""></C>
+						<D Condition="" HasTrailingSlash('$(NoTrailing)') ""></D>
+						<E Condition="" HasTrailingSlash('$(NonExistant)') ""></E>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+
+			Assert.IsNull (proj.EvaluatedProperties ["A"], "A1");
+			Assert.IsNotNull (proj.EvaluatedProperties ["B"], "A2");
+			Assert.IsNotNull (proj.EvaluatedProperties ["C"], "A3");
+			Assert.IsNull (proj.EvaluatedProperties ["D"], "A4");
+			Assert.IsNull (proj.EvaluatedProperties ["E"], "A5");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestUnknownFunction ()
+		{
+			Engine engine = new Engine (Consts.BinPath);
+			Project proj = engine.CreateNewProject ();
+
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<PropertyGroup>
+						<A Condition="" NonExistantFunction('$(EmptyProp)') ""></A>
+					</PropertyGroup>
+				</Project>
+			";
+
+			proj.LoadXml (documentString);
+		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidProjectFileException))]
@@ -328,9 +404,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// A reference to an item list at position 1 is not allowed in this condition "@(A)".
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"A reference to an item list at position 1 is not allowed in this condition \"@(A)\".  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestIncorrectCondition2 ()
 		{
@@ -348,9 +424,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// Found an unexpected character '%' at position 0 in condition \%(A)\.
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"Found an unexpected character '%' at position 0 in condition \"%(A)\".  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestIncorrectCondition3 ()
 		{
@@ -368,9 +444,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			proj.LoadXml (documentString);
 		}
 
+		// Found an unexpected character '%' at position 0 in condition "%(A)\.
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"Found an unexpected character '%' at position 0 in condition \"%(A)\".  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		[Category ("NotWorking")]
 		public void TestIncorrectCondition4 ()
 		{

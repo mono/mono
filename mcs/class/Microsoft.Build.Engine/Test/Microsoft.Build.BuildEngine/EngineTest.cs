@@ -30,6 +30,7 @@ using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using NUnit.Framework;
+using System.IO;
 
 namespace MonoTests.Microsoft.Build.BuildEngine {
 
@@ -61,6 +62,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 	public class EngineTest {
 
 		Engine engine;
+		string secondProject;
 
 		static string GetPropValue (BuildPropertyGroup bpg, string name)
 		{
@@ -72,16 +74,34 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			return String.Empty;
 		}
 
+		[SetUp]
+		public void Setup ()
+		{
+			secondProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<PropertyGroup Condition=""'$(foo)' == 'hello'"">
+		<A>FooWasHello</A>
+	</PropertyGroup>
+	<Target Name=""TargetA"">
+		<Message Text=""(TargetA) foo: $(foo) A: $(A) External: $(External)""/>
+	</Target>
+
+	<Target Name=""TargetB"">
+		<Message Text=""(TargetB) foo: $(foo) A: $(A) External: $(External)""/>
+	</Target>
+</Project>";
+
+		}
+
 		[Test]
 		public void TestCtor ()
 		{
 			engine = new Engine (Consts.BinPath);
 		}
 
+		// Before a project can be instantiated, Engine.BinPath must be set to the location on disk where MSBuild is installed.
+		// This is used to evaluate $(MSBuildBinPath).
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-		@"Before a project can be instantiated, Engine.BinPath must be set to the location on disk where MSBuild is installed. " +
-		"This is used to evaluate $(MSBuildBinPath).")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestNewProject ()
 		{
 			engine = new Engine ();
@@ -170,9 +190,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine.RegisterLogger (null);
 		}
 
+		// The "Project" object specified does not belong to the correct "Engine" object.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"The \"Project\" object specified does not belong to the correct \"Engine\" object.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestUnloadProject1 ()
 		{
 			Engine a = new Engine (Consts.BinPath);
@@ -193,9 +213,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			a.UnloadProject (null);
 		}
 
+		// This project object has been unloaded from the MSBuild engine and is no longer valid.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"This project object has been unloaded from the MSBuild engine and is no longer valid.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestUnloadProject3 ()
 		{
 			Engine a = new Engine (Consts.BinPath);
@@ -297,6 +317,486 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			engine = new Engine (Consts.BinPath);
 			engine.BuildProject (null, (string)null);
 		}
+
+		// Tests to check global properties behavior
+		[Test]
+		public void TestGlobalProperties1 ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+	</Target>
+</Project>
+";
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				9, 7, 13,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ",
+					"(TargetB) foo: foofoo A:  External: ",
+					"(TargetA) foo:  A:  External: ",
+					"(TargetB) foo: foofoo1 A:  External: ",
+					"second" });
+		}
+
+		[Test]
+		public void TestGlobalProperties1a ()
+		{
+			Directory.CreateDirectory ("Test/resources/foo");
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+	</Target>
+</Project>
+";
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				10, 7, 14,
+				 new string [] {
+					"(TargetA) foo: bar A:  External: ",
+					"(TargetB) foo: foofoo A:  External: ",
+					"(TargetA) foo:  A:  External: ",
+					"(TargetB) foo: foofoo1 A:  External: ",
+					"second"});
+		}
+
+		[Test]
+		public void TestGlobalProperties1b ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+	</Target>
+</Project>
+";
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				10, 7, 14,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ",
+					"(TargetA) foo:  A:  External: ",
+					"(TargetB) foo: foofoo A:  External: ",
+					"(TargetB) foo: foofoo1 A:  External: ",
+					"second"});
+		}
+
+		[Test]
+		public void TestGlobalProperties2 ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1""/>
+		<MSBuild Projects=""first.proj"" Targets = ""2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+	</Target>
+</Project>
+";
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				10, 7, 14,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ",
+					"(TargetB) foo: foofoo A:  External: ",
+					"(TargetA) foo:  A:  External: ",
+					"(TargetB) foo: foofoo1 A:  External: ",
+					"second"});
+		}
+
+		[Test]
+		public void TestGlobalProperties3 ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1""/>
+		<CallTarget Targets=""Call2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+	<Target Name=""Call2"">
+		<MSBuild Projects=""first.proj"" Targets = ""2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+	</Target>
+</Project>
+";
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				10, 8, 15,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ",
+					"(TargetB) foo: foofoo A:  External: ",
+					"(TargetA) foo:  A:  External: ",
+					"(TargetB) foo: foofoo1 A:  External: ",
+					"second"});
+		}
+
+		//externally set global properties
+		[Test]
+		public void TestGlobalProperties4 ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1""/>
+		<CallTarget Targets=""Call2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+	<Target Name=""Call2"">
+		<MSBuild Projects=""first.proj"" Targets = ""2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+	</Target>
+</Project>
+";
+
+			BuildPropertyGroup globalprops = new BuildPropertyGroup ();
+			globalprops.SetProperty ("foo", "hello");
+			engine.GlobalProperties = globalprops;
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				globalprops, null, 10, 8, 15,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ",
+					"(TargetB) foo: foofoo A:  External: ",
+					"(TargetA) foo: hello A: FooWasHello External: ",
+					"(TargetB) foo: foofoo1 A:  External: ",
+					"second"});
+		}
+
+		//externally set global properties, merge with explicit
+		[Test]
+		public void TestGlobalProperties4a ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1""/>
+		<CallTarget Targets=""Call2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+	<Target Name=""Call2"">
+		<MSBuild Projects=""first.proj"" Targets = ""2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+	</Target>
+</Project>
+";
+
+			BuildPropertyGroup globalprops = new BuildPropertyGroup ();
+			globalprops.SetProperty ("external", "ExternalValue");
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				globalprops, null,
+				10, 8, 15,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ExternalValue",
+					"(TargetB) foo: foofoo A:  External: ExternalValue",
+					"(TargetA) foo:  A:  External: ExternalValue",
+					"(TargetB) foo: foofoo1 A:  External: ExternalValue",
+					"second"});
+		}
+
+		//set global properties on _project_, merge with explicit
+		[Test]
+		public void TestGlobalProperties4b ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1""/>
+		<CallTarget Targets=""Call2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+	<Target Name=""Call2"">
+		<MSBuild Projects=""first.proj"" Targets = ""2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+	</Target>
+</Project>
+";
+
+			BuildPropertyGroup globalprops = new BuildPropertyGroup ();
+			globalprops.SetProperty ("external", "ExternalValue");
+
+			BuildPropertyGroup project_globalprops = new BuildPropertyGroup ();
+			project_globalprops.SetProperty ("external", "ProjExternalValue");
+			project_globalprops.SetProperty ("foo", "ProjFooValue");
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				globalprops, project_globalprops,
+				10, 8, 15,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ProjExternalValue",
+					"(TargetB) foo: foofoo A:  External: ProjExternalValue",
+					"(TargetA) foo: ProjFooValue A:  External: ProjExternalValue",
+					"(TargetB) foo: foofoo1 A:  External: ProjExternalValue",
+					"second"});
+		}
+
+		//set global properties on _project_, and engine and explicit via msbuild
+		[Test]
+		public void TestGlobalProperties4c ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild"" AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name=""main"">
+		<MSBuild Projects=""first.proj"" Targets = ""1""/>
+		<CallTarget Targets=""Call2""/>
+		<Message Text=""second""/>
+		<MSBuild Projects=""first.proj"" Targets = ""1;2""/>
+	</Target>
+	<Target Name=""Call2"">
+		<MSBuild Projects=""first.proj"" Targets = ""2""/>
+	</Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+	<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+		AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+	<Target Name = ""1"">
+		<MSBuild Projects=""second.proj"" Properties=""foo=bar""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo""/>
+	</Target>
+	<Target Name=""2"">
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetA""/>
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo"" />
+		<MSBuild Projects=""second.proj"" Targets = ""TargetB"" Properties=""foo=foofoo1"" />
+	</Target>
+</Project>
+";
+
+			BuildPropertyGroup globalprops = new BuildPropertyGroup ();
+			globalprops.SetProperty ("foo", "EngineFooValue");
+
+			BuildPropertyGroup project_globalprops = new BuildPropertyGroup ();
+			project_globalprops.SetProperty ("foo", "ProjFooValue");
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				globalprops, project_globalprops,
+				10, 8, 15,
+				new string [] {
+					"(TargetA) foo: bar A:  External: ",
+					"(TargetB) foo: foofoo A:  External: ",
+					"(TargetA) foo: ProjFooValue A:  External: ",
+					"(TargetB) foo: foofoo1 A:  External: ",
+					"second"});
+		}
+
+		// Helper Methods for TestGlobalProperties*
+
+		void CreateAndCheckGlobalPropertiesTest (string main, string first, string second,
+			int project_count, int target_count, int task_count, string [] messages)
+		{
+			CreateAndCheckGlobalPropertiesTest (main, first, second, null, null,
+				project_count, target_count, task_count, messages);
+		}
+
+		void CreateAndCheckGlobalPropertiesTest (string main, string first, string second,
+			BuildPropertyGroup engine_globals, BuildPropertyGroup project_globals,
+			int project_count, int target_count, int task_count, string [] messages)
+		{
+			WriteGlobalPropertiesProjects (main, first, second);
+
+			Engine engine = new Engine (Consts.BinPath);
+			if (engine_globals != null)
+				engine.GlobalProperties = engine_globals;
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			Project project = engine.CreateNewProject ();
+			project.Load (Path.Combine ("Test", Path.Combine ("resources", "main.proj")));
+			if (project_globals != null)
+				project.GlobalProperties = project_globals;
+
+			bool result = project.Build ();
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			CheckEventCounts (logger, project_count, target_count, task_count);
+
+			CheckLoggedMessages (logger, messages, "A1");
+		}
+
+		void CheckEventCounts (MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger,
+			int project, int target, int task)
+		{
+			try {
+				Assert.AreEqual (project, logger.ProjectStarted, "#project started events");
+				Assert.AreEqual (project, logger.ProjectFinished, "#project finished events");
+				Assert.AreEqual (target, logger.TargetStarted, "#target started events");
+				Assert.AreEqual (target, logger.TargetFinished, "#target finished events");
+				Assert.AreEqual (task, logger.TaskStarted, "#task started events");
+				Assert.AreEqual (task, logger.TaskFinished, "#task finished events");
+				Assert.AreEqual (1, logger.BuildStarted, "#build started events");
+				Assert.AreEqual (1, logger.BuildFinished, "#build finished events");
+			} catch (AssertionException) {
+				logger.DumpMessages ();
+				throw;
+			}
+		}
+
+		void CheckLoggedMessages (MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger, string [] messages,
+			string prefix)
+		{
+			try {
+				for (int i = 0; i < messages.Length; i++) {
+					logger.CheckLoggedMessageHead (messages [i], String.Format ("{0} #{1}", prefix, i));
+				}
+			} catch {
+				logger.DumpMessages ();
+				throw;
+			}
+
+			Assert.AreEqual (0, logger.NormalMessageCount, "Number of remaining messages");
+		}
+
+		// helper methods for TestGlobalProperties*
+		void WriteGlobalPropertiesProjects (string mainProject, string firstProject, string secondProject)
+		{
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "main.proj")))) {
+				sw.Write (mainProject);
+			}
+
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "first.proj")))) {
+				sw.Write (firstProject);
+			}
+
+			using (StreamWriter sw = new StreamWriter (Path.Combine ("Test", Path.Combine ("resources", "second.proj")))) {
+				sw.Write (secondProject);
+			}
+		}
+
 
 	}
 }

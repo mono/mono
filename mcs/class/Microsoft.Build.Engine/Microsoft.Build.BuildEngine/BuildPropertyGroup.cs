@@ -129,7 +129,24 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public BuildPropertyGroup Clone (bool deepClone)
 		{
-			throw new NotImplementedException ();
+			BuildPropertyGroup bpg = new BuildPropertyGroup (propertyGroup, parentProject, importedProject, read_only);
+			if (FromXml) {
+				foreach (BuildProperty bp in properties) {
+					if (deepClone)
+						bpg.AddProperty (bp.Clone (true));
+					else
+						bpg.AddNewProperty (bp.Name, bp.FinalValue);
+				}
+			} else {
+				foreach (BuildProperty bp in propertiesByName.Values) {
+					if (deepClone)
+						bpg.AddProperty (bp.Clone (true));
+					else
+						bpg.AddNewProperty (bp.Name, bp.FinalValue);
+				}
+			}
+
+			return bpg;
 		}
 
 		public IEnumerator GetEnumerator ()

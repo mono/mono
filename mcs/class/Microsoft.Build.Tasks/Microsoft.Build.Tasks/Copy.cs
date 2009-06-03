@@ -52,60 +52,48 @@ namespace Microsoft.Build.Tasks {
 			try {
 				List <ITaskItem> temporaryCopiedFiles = new List <ITaskItem> ();
 			
-				if (sourceFiles.Length != destinationFiles.Length)
+				if (sourceFiles != null && destinationFiles != null &&
+					sourceFiles.Length != destinationFiles.Length)
 					throw new Exception ("Number of source files is different than number of destination files.");
 				if (destinationFiles != null && destinationFolder != null)
 					throw new Exception ("You must specify only one attribute from DestinationFiles and DestinationFolder");
 				if (destinationFiles != null) {
-					IEnumerator <ITaskItem> source, destination;
-					source = ((IEnumerable <ITaskItem>) sourceFiles).GetEnumerator ();
-					destination = ((IEnumerable <ITaskItem>) destinationFiles).GetEnumerator ();
-					while (source.MoveNext ()) {
-						destination.MoveNext ();
-						ITaskItem sourceItem = source.Current;
-						ITaskItem destinationItem = destination.Current;
+					for (int i = 0; i < sourceFiles.Length; i ++) {
+						ITaskItem sourceItem = sourceFiles [i];
+						ITaskItem destinationItem = destinationFiles [i];
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string destinationFile = destinationItem.GetMetadata ("FullPath");
 
-						if (skipUnchangedFiles == true) {
-							FileInfo sourceInfo = new FileInfo (sourceFile);
-							FileInfo destinationInfo = new FileInfo (destinationFile);
-							if (sourceInfo.Length == destinationInfo.Length && File.GetLastWriteTime(sourceFile) <=
-								File.GetLastWriteTime (destinationFile))
-								continue;
-						}
-						Log.LogMessage ("Copying file from '{0}' to '{1}'", sourceFile, destinationFile);
-						File.Copy (sourceFile, destinationFile, true);
-						temporaryCopiedFiles.Add (source.Current);
+						if (!skipUnchangedFiles || HasFileChanged (sourceFile, destinationFile))
+							CopyFile (sourceFile, destinationFile, true);
+
+						sourceItem.CopyMetadataTo (destinationItem);
+						temporaryCopiedFiles.Add (destinationItem);
 					}
 					
 				} else if (destinationFolder != null) {
-					bool directoryCreated = false;
+					List<ITaskItem> temporaryDestinationFiles = new List<ITaskItem> ();
 					string destinationDirectory = destinationFolder.GetMetadata ("FullPath");
-					if (Directory.Exists (destinationDirectory) == false) {
-						Directory.CreateDirectory (destinationDirectory);
-						directoryCreated = true;
-					}
+					bool directoryCreated = CreateDirectoryIfRequired (destinationDirectory);
 					
-					IEnumerator <ITaskItem> source;
-					source = (IEnumerator <ITaskItem>) sourceFiles.GetEnumerator ();
-					while (source.MoveNext ()) {
-						ITaskItem sourceItem = source.Current;
+					foreach (ITaskItem sourceItem in sourceFiles) {
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string filename = sourceItem.GetMetadata ("Filename") + sourceItem.GetMetadata ("Extension");
 						string destinationFile = Path.Combine (destinationDirectory,filename);
 
-						if (skipUnchangedFiles == true && directoryCreated == false) {
-							FileInfo sourceInfo = new FileInfo (sourceFile);
-							FileInfo destinationInfo = new FileInfo (destinationFile);
-							if (sourceInfo.Length == destinationInfo.Length && File.GetLastWriteTime(sourceFile) <=
-								File.GetLastWriteTime (destinationFile))
-								continue;
-						}
-						Log.LogMessage ("Copying file from '{0}' to '{1}'", sourceFile, destinationFile);
-						File.Copy (sourceFile, destinationFile, true);
-						temporaryCopiedFiles.Add (source.Current);
+						if (!skipUnchangedFiles || directoryCreated ||
+							HasFileChanged (sourceFile, destinationFile))
+							CopyFile (sourceFile, destinationFile, false);
+
+						temporaryCopiedFiles.Add (new TaskItem (
+								Path.Combine (destinationFolder.GetMetadata ("Identity"), filename),
+								sourceItem.CloneCustomMetadata ()));
+
+						temporaryDestinationFiles.Add (new TaskItem (
+								Path.Combine (destinationFolder.GetMetadata ("Identity"), filename),
+								sourceItem.CloneCustomMetadata ()));
 					}
+					destinationFiles = temporaryDestinationFiles.ToArray ();
 				} else {
 					throw new Exception ("You must specify DestinationFolder or DestinationFiles attribute.");
 				}
@@ -163,6 +151,37 @@ namespace Microsoft.Build.Tasks {
 			set {
 				sourceFiles = value;
 			}
+		}
+
+		// returns whether directory was created or not
+		bool CreateDirectoryIfRequired (string name)
+		{
+			if (Directory.Exists (name))
+				return false;
+
+			Log.LogMessage ("Creating directory '{0}'", name);
+			Directory.CreateDirectory (name);
+			return true;
+		}
+
+		void CopyFile (string source, string dest, bool create_dir)
+		{
+			if (create_dir)
+				CreateDirectoryIfRequired (Path.GetDirectoryName (dest));
+			Log.LogMessage ("Copying file from '{0}' to '{1}'", source, dest);
+			File.Copy (source, dest, true);
+		}
+
+		bool HasFileChanged (string source, string dest)
+		{
+			if (!File.Exists (dest))
+				return true;
+
+			FileInfo sourceInfo = new FileInfo (source);
+			FileInfo destinationInfo = new FileInfo (dest);
+
+			return !(sourceInfo.Length == destinationInfo.Length &&
+					File.GetLastWriteTime(source) <= File.GetLastWriteTime (dest));
 		}
 
 	}

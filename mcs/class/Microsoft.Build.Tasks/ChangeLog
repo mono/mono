@@ -1,3 +1,28 @@
+2009-05-14  Ankit Jain  <jankit@novell.com>
+
+	Fix tests on monobuild
+	* Makefile (EXTRA_DISTFILES): Add Test/resources/Sample.vb
+
+2009-04-28  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (NAME_SUFFIX): New.
+	(LIBRARY_NAME): Use it.
+	(TEST_MCS_FLAGS): Don't mention name of library.  Use NAME_SUFFIX
+	as appropriate when referring to other msbuild dlls.
+
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added
+	CreateVisualBasicManifestResourceNameTest.cs .
+
+2009-04-25  Jonathan Chambers  <joncham@gmail.com>
+
+	* Makefile: Adjust assembly name for 3.5 profile.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added CopyTest.cs
+
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add Test/resources/Sample.cs

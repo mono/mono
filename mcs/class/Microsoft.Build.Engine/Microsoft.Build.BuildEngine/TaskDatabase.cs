@@ -36,6 +36,7 @@ using Mono.XBuild.Framework;
 namespace Microsoft.Build.BuildEngine {
 	internal class TaskDatabase {
 		
+		Dictionary<string, UsingTaskInfo> usingTasksByFullName;
 		// full name -> AssemblyLoadInfo
 		Dictionary <string, AssemblyLoadInfo>	assemblyInformation;
 		// full name -> Type
@@ -48,6 +49,7 @@ namespace Microsoft.Build.BuildEngine {
 			assemblyInformation = new Dictionary <string, AssemblyLoadInfo> ();
 			typesByFullName = new Dictionary <string, Type> ();
 			typesByShortName = new Dictionary <string, Type> ();
+			usingTasksByFullName = new Dictionary <string, UsingTaskInfo> ();
 		}
 		
 		public void RegisterTask (string classname, AssemblyLoadInfo assemblyLoadInfo)
@@ -63,15 +65,64 @@ namespace Microsoft.Build.BuildEngine {
 				assembly = Assembly.Load (assemblyLoadInfo.AssemblyNameString);
 			
 			Type type = assembly.GetType (classname);
+			if (type == null) {
+				// search for matching class in case namespace was not used
+				foreach (Type exportedType in assembly.GetExportedTypes()) {
+					if (exportedType.Name == classname) {
+						type = exportedType;
+						break;
+					}
+				}
+			}
 			typesByFullName.Add (classname, type);
-			typesByShortName.Add (GetShortName (classname), type);
+			typesByShortName [GetShortName (classname)] = type;
+		}
+
+		public void RegisterUsingTask (UsingTask ut)
+		{
+			usingTasksByFullName [ut.TaskName] = new UsingTaskInfo (GetShortName (ut.TaskName), ut);
 		}
 		
 		public Type GetTypeFromClassName (string classname)
 		{
+			Type ret = GetTypeFromClassNameInternal (classname);
+			if (ret == null) {
+				// Task not already loaded,
+				// Check list of pending UsingTasks
+				bool is_shortname = classname.IndexOf ('.') < 0;
+				UsingTaskInfo info = new UsingTaskInfo (String.Empty, null);
+				if (is_shortname) {
+					// Linear search UsingTaskInfo objects for short name match
+					foreach (UsingTaskInfo ut_info in usingTasksByFullName.Values) {
+						if (String.Compare (ut_info.ShortName, classname) == 0) {
+							info = ut_info;
+							break;
+						}
+					}
+
+					if (info.Task == null)
+						ThrowTaskNotRegistered (classname);
+				} else {
+					// Look for full name match
+					if (!usingTasksByFullName.TryGetValue (classname, out info))
+						ThrowTaskNotRegistered (classname);
+				}
+
+				usingTasksByFullName.Remove (info.Task.TaskName);
+				info.Task.Load (this);
+				ret = GetTypeFromClassNameInternal (classname);
+			}
+
+			if (ret == null)
+				ThrowTaskNotRegistered (classname);
+			return ret;
+		}
+
+		Type GetTypeFromClassNameInternal (string classname)
+		{
 			if (!typesByFullName.ContainsKey (classname)) {
 				if (!typesByShortName.ContainsKey (classname))
-					throw new Exception (String.Format ("Not registered task {0}.", classname));
+					return null;
 				else
 					return typesByShortName [classname];
 			} else
@@ -86,12 +137,30 @@ namespace Microsoft.Build.BuildEngine {
 				typesByFullName.Add (kvp.Key, kvp.Value);
 			foreach (KeyValuePair <string, Type> kvp in taskDatabase.typesByShortName)
 				typesByShortName.Add (kvp.Key, kvp.Value);
+			foreach (KeyValuePair <string, UsingTaskInfo> kvp in taskDatabase.usingTasksByFullName)
+				usingTasksByFullName.Add (kvp.Key, kvp.Value);
 		}
 		
 		private string GetShortName (string fullname)
 		{
 			string[] parts = fullname.Split ('.');
 			return parts [parts.Length - 1];
+		}
+
+		void ThrowTaskNotRegistered (string classname)
+		{
+			throw new Exception (String.Format ("Not registered task {0}.", classname));
+		}
+	}
+
+	struct UsingTaskInfo {
+		public string ShortName;
+		public UsingTask Task;
+
+		public UsingTaskInfo (string shortname, UsingTask task)
+		{
+			ShortName = shortname;
+			Task = task;
 		}
 	}
 }

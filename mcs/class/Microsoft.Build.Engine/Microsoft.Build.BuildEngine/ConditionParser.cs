@@ -165,10 +165,9 @@ namespace Microsoft.Build.BuildEngine {
 				e = new ConditionFactorExpression (token);
 			} else if (token.Type == TokenType.Number) {
 				e = new ConditionFactorExpression (token);
-			} else if (token.Type == TokenType.Item) {
-				throw new NotImplementedException ();
-			} else if (token.Type == TokenType.Property) {
-				throw new NotImplementedException ();
+			} else if (token.Type == TokenType.Item || token.Type == TokenType.Property
+					|| token.Type == TokenType.Metadata) {
+				e = ParseReferenceExpression (token.Value);
 			} else if (token.Type == TokenType.Not) {
 				e = ParseNotExpression ();
 			} else
@@ -207,6 +206,45 @@ namespace Microsoft.Build.BuildEngine {
 			}
 			
 			return list;
+		}
+
+		//@prefix: @ or $
+		ConditionExpression ParseReferenceExpression (string prefix)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			ExpectToken (TokenType.LeftParen);
+			tokenizer.GetNextToken ();
+
+			sb.AppendFormat ("{0}({1}", prefix, tokenizer.Token.Value);
+
+			tokenizer.GetNextToken ();
+			if (prefix == "@" && tokenizer.Token.Type == TokenType.Transform) {
+				tokenizer.GetNextToken ();
+				sb.AppendFormat ("->'{0}'", tokenizer.Token.Value);
+
+				tokenizer.GetNextToken ();
+				if (tokenizer.Token.Type == TokenType.Comma) {
+					tokenizer.GetNextToken ();
+					sb.AppendFormat (", '{0}'", tokenizer.Token.Value);
+					tokenizer.GetNextToken ();
+				}
+			}
+
+			ExpectToken (TokenType.RightParen);
+			tokenizer.GetNextToken ();
+
+			sb.Append (")");
+
+			//FIXME: HACKY!
+			return new ConditionFactorExpression (new Token (sb.ToString (), TokenType.String));
+		}
+
+		void ExpectToken (TokenType type)
+		{
+			if (tokenizer.Token.Type != type)
+				throw new ExpressionParseException ("Expected token type of type: " + type + ", got " +
+						tokenizer.Token.Type + " (" + tokenizer.Token.Value + ") .");
 		}
 	}
 }

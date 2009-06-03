@@ -1,3 +1,41 @@
+2009-05-29  Ankit Jain  <jankit@novell.com>
+
+	* TestMessageLogger.cs: Add counts for project/build start/finish
+	events.
+
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* CreateVisualBasicManifestResourceNameTest.cs: New.
+
+2009-03-03  Ankit Jain  <jankit@novell.com>
+
+	* CscTest.cs (DefineConstants): Add some extra semi-colons,
+	that should get removed on output.
+	(DefineConstants2): New. Test effectively empty define constants.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* CreateCSharpManifestResourceNameTest.cs (CheckResourceNames):
+	Refactor a bit to improve error reporting.
+	Update to use Path.Combine instead of hardcoding "\".
+
+2009-02-24  Ankit Jain  <jankit@novell.com>
+
+	* TestMessageLogger.cs (CheckLoggedMessageHead): Move here from
+	* TaskBatchingTest.cs: .. here. Track api change.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* CopyTest.cs: New.
+
+2009-01-31  Ankit Jain  <jankit@novell.com>
+
+	* TaskBatchingTest.cs (*): Add tests for target/task events.
+	(TestTargetBatching*): New tests for target batching.
+	* TestMessageLogger.cs: Add counts for target/task started/finished
+	events.
+	(NormalMessageCount): New.
+
 2008-12-22  Ankit Jain  <jankit@novell.com>
 
 	* TestMessageLogger.cs: Emit debug messages to stderr.

@@ -3,7 +3,9 @@
 Assembly/AssemblyInfo.cs
 ../Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
 ../Microsoft.Build.Utilities/Mono.XBuild.Utilities/ReservedNameUtils.cs
-Microsoft.Build.BuildEngine/BatchingImpl.cs
+Microsoft.Build.BuildEngine/BatchingImplBase.cs
+Microsoft.Build.BuildEngine/TargetBatchingImpl.cs
+Microsoft.Build.BuildEngine/TaskBatchingImpl.cs
 Microsoft.Build.BuildEngine/BuildChoose.cs
 Microsoft.Build.BuildEngine/BuildEngine.cs
 Microsoft.Build.BuildEngine/BuildItem.cs

@@ -29,6 +29,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Resources;
@@ -98,30 +99,18 @@ namespace Microsoft.Build.Utilities
 						   string responseFileCommands,
 						   string commandLineCommands)
 		{
-			string arguments;
-			bool success;
-			
-			arguments = String.Concat (commandLineCommands, " ", responseFileCommands);
-			
-			success  = RealExecute (pathToTool, arguments);
-			
-			if (success)
-				return 0;
-			else
-				return -1;
+			return RealExecute (pathToTool, responseFileCommands, commandLineCommands) ? 0 : -1;
 		}
 		
 		public override bool Execute ()
 		{
-			int result;
-			
-			result = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
+			if (SkipTaskExecution ())
+				return true;
+
+			int result = ExecuteTool (GenerateFullPathToTool (), GenerateResponseFileCommands (),
 				GenerateCommandLineCommands ());
 			
-			if (result == 0)
-				return true;
-			else
-				return false;
+			return result == 0;
 		}
 		
 		[MonoTODO]
@@ -130,36 +119,90 @@ namespace Microsoft.Build.Utilities
 			return null;
 		}
 		
-		private bool RealExecute (string filename, string arguments)
+		private bool RealExecute (string pathToTool,
+					   string responseFileCommands,
+					   string commandLineCommands)
+
 		{
-			string line;
-		
-			if (filename == null)
-				throw new ArgumentNullException ("filename");
-			if (arguments == null)
-				throw new ArgumentNullException ("arguments");
-			
-			process = new Process ();
-			process.StartInfo.Arguments = arguments;
-			process.StartInfo.CreateNoWindow = true;
-			process.StartInfo.FileName = filename;
-			process.StartInfo.RedirectStandardError = true;
-			process.StartInfo.RedirectStandardOutput = true;
-			process.StartInfo.UseShellExecute = false;
-			
-			Log.LogMessage (MessageImportance.Normal, String.Format ("Tool {0} execution started with arguments: {1}",
-				filename, arguments));
-			
-			process.Start ();
-			process.WaitForExit ();
-			
-			exitCode = process.ExitCode;
-			
-			while ((line = process.StandardError.ReadLine ()) != null) {
-				LogEventsFromTextOutput (line, MessageImportance.Low);
+			if (pathToTool == null)
+				throw new ArgumentNullException ("pathToTool");
+
+			if (!File.Exists (pathToTool)) {
+				Log.LogError ("Unable to find tool {0} at '{1}'", ToolName, pathToTool);
+				return false;
 			}
+
+			string responseFileName = Path.GetTempFileName ();
+			File.WriteAllText (responseFileName, responseFileCommands);
+
+			string arguments = String.Concat (commandLineCommands, " ", GetResponseFileSwitch (responseFileName));
+
+			Log.LogMessage (MessageImportance.Normal, String.Format ("Tool {0} execution started with arguments: {1} {2}",
+				pathToTool, commandLineCommands, responseFileCommands));
+
+			string output = Path.GetTempFileName ();
+			string error = Path.GetTempFileName ();
+			StreamWriter outwr = new StreamWriter (output);
+			StreamWriter errwr = new StreamWriter (error);
+
+			ProcessStartInfo pinfo = new ProcessStartInfo (pathToTool, arguments);
+			pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
+
+			pinfo.UseShellExecute = false;
+			pinfo.RedirectStandardOutput = true;
+			pinfo.RedirectStandardError = true;
+
+			try {
+				ProcessWrapper pw = ProcessService.StartProcess (pinfo, outwr, errwr, null, environmentOverride);
+				pw.WaitForOutput();
+				exitCode = pw.ExitCode;
+				outwr.Close();
+				errwr.Close();
+				pw.Dispose ();
+			} catch (System.ComponentModel.Win32Exception e) {
+				Log.LogError ("Error executing tool '{0}': {1}", pathToTool, e.Message);
+				return false;
+			}
+
+			bool typeLoadException = false;
+			StringBuilder compilerOutput = new StringBuilder ();
+			foreach (string s in new string[] { output, error }) {
+				using (StreamReader sr = File.OpenText (s)) {
+					string line;
+					while ((line = sr.ReadLine ()) != null) {
+						if (typeLoadException) {
+							compilerOutput.Append (sr.ReadToEnd ());
+							break;
+						}
+
+						compilerOutput.AppendLine (line);
+
+						line = line.Trim ();
+						if (line.Length == 0)
+							continue;
+
+						if (line.StartsWith ("Unhandled Exception: System.TypeLoadException") ||
+						    line.StartsWith ("Unhandled Exception: System.IO.FileNotFoundException")) {
+							typeLoadException = true;
+						}
+						LogEventsFromTextOutput (line, MessageImportance.Low);
+					}
+				}
+				if (typeLoadException) {
+					string output_str = compilerOutput.ToString ();
+					Regex reg  = new Regex (@".*WARNING.*used in (mscorlib|System),.*", RegexOptions.Multiline);
+					if (reg.Match (output_str).Success)
+						Log.LogError ("Error: A referenced assembly may be built with an incompatible CLR version. See the compilation output for more details.");
+					else
+						Log.LogError ("Error: A dependency of a referenced assembly may be missing, or you may be referencing an assembly created with a newer CLR version. See the compilation output for more details.");
+					Log.LogError (output_str);
+				}
+			}
+
+			if (!Log.HasLoggedErrors && exitCode != 0)
+				Log.LogError ("Compiler crashed: " + compilerOutput.ToString ());
 			
-			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", filename));
+			Log.LogMessage (MessageImportance.Low, String.Format ("Tool {0} execution finished.", pathToTool));
 			
 			return !Log.HasLoggedErrors;
 		}
@@ -168,6 +211,13 @@ namespace Microsoft.Build.Utilities
 		[MonoTODO]
 		protected virtual void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
 		{
+			// When IncludeDebugInformation is true, prevents the debug symbols stats from braeking this.
+			if (singleLine.StartsWith ("WROTE SYMFILE") ||
+				singleLine.StartsWith ("OffsetTable") ||
+				singleLine.StartsWith ("Compilation succeeded") ||
+				singleLine.StartsWith ("Compilation failed"))
+				return;
+
 			string filename, origin, category, code, subcategory, text;
 			int lineNumber, columnNumber, endLineNumber, endColumnNumber;
 		
@@ -179,7 +229,7 @@ namespace Microsoft.Build.Utilities
 			text = m.Groups [regex.GroupNumberFromName ("TEXT")].Value;
 			
 			ParseOrigin (origin, out filename, out lineNumber, out columnNumber, out endLineNumber, out endColumnNumber);
-			
+
 			if (category == "warning") {
 				Log.LogWarning (subcategory, code, null, filename, lineNumber, columnNumber, endLineNumber,
 					endColumnNumber, text, null);

@@ -33,23 +33,21 @@ using System.Xml;
 
 namespace Microsoft.Build.BuildEngine {
 	internal class BuildWhen {
-		//Project			parentProject;
+		Project			parentProject;
 		GroupingCollection	groupingCollection;
 		XmlElement		whenElement;
 	
 		public BuildWhen (XmlElement whenElement, Project parentProject)
 		{
-		/*
+		
 			this.parentProject = parentProject;
 			this.groupingCollection = new GroupingCollection (null);
 			if (whenElement == null)
 				throw new ArgumentNullException ("whenElement");
 			this.whenElement = whenElement;
-			if (whenElement.GetAttribute ("Condition") != String.Empty)
-				condition = whenElement.GetAttributeNode ("Condition");
 			foreach (XmlElement xe in whenElement.ChildNodes) {
 				if (xe.Name == "ItemGroup") {
-					BuildItemGroup big = new BuildItemGroup ();
+					BuildItemGroup big = new BuildItemGroup (xe, parentProject, null, true);
 					//big.BindToXml (xe);
 					groupingCollection.Add (big);
 				// FIXME: add nested chooses
@@ -60,7 +58,12 @@ namespace Microsoft.Build.BuildEngine {
 				} else
 					throw new InvalidProjectFileException ("Invalid element in When.");
 			}
-		*/
+		
+		}
+
+		public void Evaluate()
+		{
+			groupingCollection.Evaluate ();
 		}
 		
 		public string Condition {

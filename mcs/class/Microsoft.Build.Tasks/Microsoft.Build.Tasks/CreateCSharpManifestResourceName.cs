@@ -103,33 +103,6 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		// No dependent file
-		static string GetResourceIdFromFileName (string fileName, string rootNamespace)
-		{
-			string culture = null;
-			if (String.Compare (Path.GetExtension (fileName), ".resx", true) == 0) {
-				fileName = Path.ChangeExtension (fileName, null);
-			} else {
-				string only_filename, extn;
-				if (AssignCulture.TrySplitResourceName (fileName, out only_filename, out culture, out extn)) {
-					//remove the culture from fileName
-					//foo.it.bmp -> foo.bmp
-					fileName = only_filename + "." + extn;
-				}
-			}
-
-			//FIXME: path char!
-			string rname = fileName.Replace ('/', '.').Replace ('\\', '.');
-
-			if (!String.IsNullOrEmpty (rootNamespace))
-				rname = rootNamespace + "." + rname;
-			if (culture == null)
-				return rname;
-			else
-				//FIXME: Why??!! Tests show that this is required!
-				return culture + "\\" + rname;
-		}
-
 		/* Special parser for C# files
 		 * Assumes that the file is compilable
 		 * skips comments,

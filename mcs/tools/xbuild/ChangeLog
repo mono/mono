@@ -1,3 +1,125 @@
+2009-05-20  Jonathan Chambers  <joncham@gmail.com>
+
+	* SolutionParser.cs (ParseSolution): Ignore vcproj projects in solutions 
+	and issue warning. 
+
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.VisualBasic.targets: Update to use
+	CreateVisualBasicManifestResourceName task, and fix compiler params.
+
+2009-04-25 Daniel Nauck <dna@mono-project.de>
+
+	Fix bug #484649:
+	* LoggerInfo.cs: fixed the parsing of the /logger: argument as described in
+	http://msdn.microsoft.com/en-us/library/ms164311.aspx
+	Added logger class detection if it's not explicit specified in the argument.
+
+2009-03-19  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #484773.
+	* Main.cs (Execute): Check whether the project file exists or not.
+	* Parameters.cs (ParseArguments): Handle absolute paths too.
+
+2009-03-13  Ankit Jain  <jankit@novell.com>
+
+	* Main.cs (Execute): Build the project/sln with current directory set to
+	the project file's dir.
+	* SolutionParser.cs (ParseSolution): Project paths are relative to
+	solution directory.
+
+2009-03-06  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #481336.
+	* SolutionParser.cs (AddWarningForMissingProjectConfiguration): New.
+	(AddProjectTargets): Emit warning for missing project configurations.
+
+2009-02-26  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.CSharp.targets (Csc): Fix "Resources" argument to use
+	ManifestNonResxWithCultureOnDisk instead of ManifestResourceWithNoCultureOnDisk.
+
+2009-02-26  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Make targets extensible. Add
+	before/after hooks.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Use obj/$(Config) as the default intermediate
+	output path, instead of just obj/
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (CopyNonResxEmbeddedResources): New.
+	(GenerateSatelliteAssemblies): Update to use the new ManifestNonResxWithCultureOnDisk
+	instead of NonResxWithCulture.
+	* xbuild/Microsoft.CSharp.targets (Csc): Fix "Resources" argument to use
+	the new on disk file names instead of original filenames.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (GetTargetPath): Add a path separator.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseSolution): Report warning instead of error
+	for unknown global sections.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/xbuild.rsp: Add descriptive comments.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* Parameters.cs (LoadResponseFile): Handle comments.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseSolution): Ignore solution folders.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseSolution): Ignore GlobalSection named
+	'NestedProjects'.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseProjectConfigurationPlatforms): Report missing
+	project guids as Warnings and not errors. Report every missing guid only
+	once.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (projectRegex): Use '\s' to match whitespace.
+
+2009-02-19  Jonathan Chambers  <joncham@gmail.com>
+
+	* xbuild.csproj: Add.
+	* xbuild.sln: Add.
+
+2009-02-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* SolutionParser.cs: Make Guid Regex case insensitive.
+	Handle project dependencies. The solution has explicit
+	dependencies, but we have to open projects for implicit
+	dependencies (via ProjectReferences).
+
+2009-02-13  Jonathan Chambers  <joncham@gmail.com>
+
+	* Main.cs: Add support for .sln files.
+	* SolutionParser.cs: Class for generating project file
+	from solution file.
+	* xbuild.exe.sources: Added SolutionParser.cs.
+
+2009-02-02  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.CSharp.targets: Add targets to generate resource ids.
+	* Microsoft.Common.targets: Add targets for generating resources,
+	generate and deploy satellite assemblies, resolve project and assembly
+	references. All intermediate build output goes into a 'obj/' dir by
+	default. 'Clean' target enabled.
+
 2008-12-12  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.CSharp.targets: Add CreateCSharpManifestResourceName task.

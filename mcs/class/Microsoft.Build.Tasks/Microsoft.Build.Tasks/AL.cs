@@ -95,15 +95,7 @@ namespace Microsoft.Build.Tasks {
 		
 		public override bool Execute ()
 		{
-			CommandLineBuilderExtension clbe = new CommandLineBuilderExtension ();
-			AddResponseFileCommands (clbe);
-			
-			alProcess = new Process ();
-			alProcess.StartInfo.Arguments = clbe.ToString ();
-			alProcess.StartInfo.FileName = GenerateFullPathToTool ();
-			alProcess.Start ();
-			alProcess.WaitForExit ();
-			return true;
+			return base.Execute ();
 		}
 
 		protected override string GenerateFullPathToTool ()

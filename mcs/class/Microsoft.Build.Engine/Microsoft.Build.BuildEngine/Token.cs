@@ -29,6 +29,8 @@
 
 #if NET_2_0
 
+using System;
+
 namespace Microsoft.Build.BuildEngine {
 
 	internal class Token {
@@ -49,6 +51,11 @@ namespace Microsoft.Build.BuildEngine {
 		public TokenType Type {
 			get { return tokenType; }
 		}
+
+		public override string ToString ()
+		{
+			return String.Format ("Token (Type: {0} -> Value: {1})", tokenType, tokenValue);
+		}
 	}
 	
 	internal enum TokenType {
@@ -63,7 +70,7 @@ namespace Microsoft.Build.BuildEngine {
 		Property,
 		Metadata,
 		FunctionName,
-//		Transform,
+		Transform,
 //		LiteralSubExpression,
 
 		FirstPunct,

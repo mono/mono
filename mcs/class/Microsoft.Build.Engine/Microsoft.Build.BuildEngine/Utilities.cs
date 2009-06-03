@@ -3,8 +3,10 @@
 //
 // Author:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Lluis Sanchez Gual <lluis@novell.com>
 //
 // (C) 2005 Marek Sieradzki
+// Copyright (c) 2008 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +31,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 
 namespace Microsoft.Build.BuildEngine {
@@ -77,7 +80,67 @@ namespace Microsoft.Build.BuildEngine {
 			
 			return sb.ToString ();
 		}
+
+		internal static string FromMSBuildPath (string relPath)
+		{
+			if (relPath == null || relPath.Length == 0)
+				return null;
+
+			string path = relPath;
+			if (Path.DirectorySeparatorChar != '\\')
+				path = path.Replace ("\\", "/");
+
+			if (char.IsLetter (path [0]) && path.Length > 1 && path[1] == ':')
+				return null;
+
+			if (System.IO.File.Exists (path)){
+				return Path.GetFullPath (path);
+			}
+
+			if (Path.IsPathRooted (path)) {
+
+				// Windows paths are case-insensitive. When mapping an absolute path
+				// we can try to find the correct case for the path.
+
+				string[] names = path.Substring (1).Split ('/');
+				string part = "/";
+
+				for (int n=0; n<names.Length; n++) {
+					string[] entries;
+
+					if (names [n] == ".."){
+						if (part == "/")
+							return ""; // Can go further back. It's not an existing file
+						part = Path.GetFullPath (part + "/..");
+						continue;
+					}
+
+					entries = Directory.GetFileSystemEntries (part);
+
+					string fpath = null;
+					foreach (string e in entries) {
+						if (string.Compare (Path.GetFileName (e), names[n], true) == 0) {
+							fpath = e;
+							break;
+						}
+					}
+					if (fpath == null) {
+						// Part of the path does not exist. Can't do any more checking.
+						part = Path.GetFullPath (part);
+						for (; n < names.Length; n++)
+							part += "/" + names[n];
+						return part;
+					}
+
+					part = fpath;
+				}
+				return Path.GetFullPath (part);
+			} else {
+				return Path.GetFullPath (path);
+			}
+		}
 	}
+
 }
 
 #endif

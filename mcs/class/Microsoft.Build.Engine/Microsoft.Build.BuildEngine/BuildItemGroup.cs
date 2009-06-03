@@ -49,7 +49,12 @@ namespace Microsoft.Build.BuildEngine {
 			: this (null, null, null, false)
 		{
 		}
-		
+
+		internal BuildItemGroup (Project project)
+			: this (null, project, null, false)
+		{
+		}
+
 		internal BuildItemGroup (XmlElement xmlElement, Project project, ImportedProject importedProject, bool readOnly)
 		{
 			this.buildItems = new List <BuildItem> ();
@@ -95,6 +100,7 @@ namespace Microsoft.Build.BuildEngine {
 				item = new BuildItem (element, this);
 			} else {
 				item = new BuildItem (itemName, itemInclude);
+				item.ParentItemGroup = this;
 			}
 
 			item.Evaluate (null, true);
@@ -175,6 +181,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildItem buildItem;
 			buildItem = new BuildItem (name, taskItem);
+			buildItem.ParentItemGroup = this;
 			buildItems.Add (buildItem);
 		}
 
@@ -269,6 +276,11 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal Project ParentProject {
 			get { return parentProject; }
+			set {
+				if (parentProject != null)
+					throw new InvalidOperationException ("parentProject is already set");
+				parentProject = value;
+			}
 		}
 
 		internal bool FromXml {

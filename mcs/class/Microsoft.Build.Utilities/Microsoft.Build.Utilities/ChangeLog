@@ -1,3 +1,32 @@
+2009-04-24  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (RealExecute): Handle TypeLoadExceptions, compiler
+	crashes and report them. Borrow some tricks from md.
+	(LogEventsFromTextOutput): Ignore known non-error messages. Don't
+	log unknown lines, crashes get handled elsewhere.
+
+2009-04-08  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #491828.
+	* ToolTask.cs (LogEventsFromTextOutput): Log even in case of
+	unrecognized errors.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* ProcessService.cs, IAsyncOperation.cs, IProcessAsyncOperation.cs,
+	ProcessWrapper.cs: Brought in from monodevelop.
+	* ToolTask.cs: Use the new ProcessService to execute the tool. Honor
+	SkipTaskExecution (). Use response files, but log the contents of the
+	response file instead of "@foo.rsp". Support environmentOverrides.
+	(LogEventsFromTextOutput): Add null check.
+	* Exec.cs (GetWorkingDirectory): Use the workingDirectory property.
+
+2009-02-20  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #475438.
+	* ToolTask.cs (RealExecute): Check whether the target executable exists.
+	Log any execution errors.
+
 2008-08-06  Ankit Jain  <jankit@novell.com>
 
 	* CommandLineBuilder.cs (AppendSwitchIfNotNull): Quote individual items

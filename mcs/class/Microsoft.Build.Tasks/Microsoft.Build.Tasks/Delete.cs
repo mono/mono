@@ -50,12 +50,14 @@ namespace Microsoft.Build.Tasks {
 			List <ITaskItem> temporaryDeletedFiles = new List <ITaskItem> ();
 		
 			foreach (ITaskItem file in files) {
+				string path = file.GetMetadata ("FullPath");
+				if (path == null || !File.Exists (path))
+					//skip
+					continue;
+
 				try {
-					File.Delete (file.GetMetadata ("FullPath"));
+					File.Delete (path);
 					temporaryDeletedFiles.Add (file);
-				}
-				catch (ArgumentNullException ex) {
-					LogException (ex);
 				}
 				catch (ArgumentException ex) {
 					LogException (ex);

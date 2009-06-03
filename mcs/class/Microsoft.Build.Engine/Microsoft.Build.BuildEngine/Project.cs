@@ -71,6 +71,9 @@ namespace Microsoft.Build.BuildEngine {
 		XmlDocument			xmlDocument;
 		bool				unloaded;
 		bool				initialTargetsBuilt;
+		List<string>			builtTargetKeys;
+		bool				building;
+		BuildSettings			current_settings;
 
 		static XmlNamespaceManager	manager;
 		static string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
@@ -91,6 +94,10 @@ namespace Microsoft.Build.BuildEngine {
 			xmlDocument.DocumentElement.SetAttribute ("xmlns", ns);
 			
 			fullFileName = String.Empty;
+			timeOfLastDirty = DateTime.Now;
+			current_settings = BuildSettings.None;
+
+			builtTargetKeys = new List<string> ();
 
 			globalProperties = new BuildPropertyGroup (null, this, null, false);
 			foreach (BuildProperty bp in parentEngine.GlobalProperties)
@@ -252,9 +259,32 @@ namespace Microsoft.Build.BuildEngine {
 				   BuildSettings buildFlags)
 		
 		{
+			bool result = false;
+			ParentEngine.StartProjectBuild (this, targetNames);
+			string current_directory = Environment.CurrentDirectory;
+			try {
+				current_settings = buildFlags;
+				if (!String.IsNullOrEmpty (fullFileName))
+					Directory.SetCurrentDirectory (Path.GetDirectoryName (fullFileName));
+				building = true;
+				result = BuildInternal (targetNames, targetOutputs, buildFlags);
+			} finally {
+				ParentEngine.EndProjectBuild (this, result);
+				current_settings = BuildSettings.None;
+				Directory.SetCurrentDirectory (current_directory);
+				building = false;
+			}
+
+			return result;
+		}
+
+		bool BuildInternal (string [] targetNames,
+				   IDictionary targetOutputs,
+				   BuildSettings buildFlags)
+		{
 			CheckUnloaded ();
-			ParentEngine.StartBuild ();
-			NeedToReevaluate ();
+			if (buildFlags == BuildSettings.None)
+				Reevaluate ();
 			
 			if (targetNames == null || targetNames.Length == 0) {
 				if (defaultTargets != null && defaultTargets.Length != 0)
@@ -291,13 +321,35 @@ namespace Microsoft.Build.BuildEngine {
 				return false;
 			}
 
+			// built targets are keyed by the particular set of global
+			// properties. So, a different set could allow a target
+			// to run again
+			string key = fullFileName + ":" + target + ":" + GlobalPropertiesToString (GlobalProperties);
+			ITaskItem[] outputs;
+			if (ParentEngine.BuiltTargetsOutputByName.TryGetValue (key, out outputs)) {
+				if (targetOutputs != null)
+					targetOutputs.Add (target, outputs);
+				LogTargetSkipped (target);
+				return true;
+			}
+
 			if (!targets [target].Build ())
 				return false;
 
+			ParentEngine.BuiltTargetsOutputByName [key] = (ITaskItem[]) targets [target].Outputs.Clone ();
+			builtTargetKeys.Add (key);
 			if (targetOutputs != null)
 				targetOutputs.Add (target, targets [target].Outputs);
 
 			return true;
+		}
+
+		string GlobalPropertiesToString (BuildPropertyGroup bgp)
+		{
+			StringBuilder sb = new StringBuilder ();
+			foreach (BuildProperty bp in bgp)
+				sb.AppendFormat (" {0}:{1}", bp.Name, bp.FinalValue);
+			return sb.ToString ();
 		}
 
 		[MonoTODO]
@@ -319,7 +371,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedItemsByName.ContainsKey (itemName))
 				return evaluatedItemsByName [itemName];
 			else
-				return new BuildItemGroup ();
+				return new BuildItemGroup (this);
 		}
 
 		public BuildItemGroup GetEvaluatedItemsByNameIgnoringCondition (string itemName)
@@ -332,7 +384,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (evaluatedItemsByNameIgnoringCondition.ContainsKey (itemName))
 				return evaluatedItemsByNameIgnoringCondition [itemName];
 			else
-				return new BuildItemGroup ();
+				return new BuildItemGroup (this);
 		}
 
 		public string GetEvaluatedProperty (string propertyName)
@@ -367,8 +419,8 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void Load (string projectFileName)
 		{
-			this.fullFileName = Path.GetFullPath (projectFileName);
-			DoLoad (new StreamReader (projectFileName));
+			this.fullFileName = Utilities.FromMSBuildPath (Path.GetFullPath (projectFileName));
+			DoLoad (new StreamReader (fullFileName));
 		}
 		
 		[MonoTODO ("Not tested")]
@@ -426,7 +478,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (itemToRemove == null)
 				throw new ArgumentNullException ("itemToRemove");
 
-			if (!itemToRemove.FromXml && !itemToRemove.HasParent)
+			if (!itemToRemove.FromXml && !itemToRemove.HasParentItem)
 				throw new InvalidOperationException ("The object passed in is not part of the project.");
 
 			BuildItemGroup big = itemToRemove.ParentItemGroup;
@@ -494,7 +546,10 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public void ResetBuildStatus ()
 		{
-			throw new NotImplementedException ();
+			// hack to allow built targets to be removed
+			building = true;
+			Reevaluate ();
+			building = false;
 		}
 
 		public void Save (string projectFileName)
@@ -761,7 +816,8 @@ namespace Microsoft.Build.BuildEngine {
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (null, this, null, true);
 			evaluatedItemsByName = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
 			evaluatedItemsByNameIgnoringCondition = new Dictionary <string, BuildItemGroup> (StringComparer.InvariantCultureIgnoreCase);
-			evaluatedProperties = new BuildPropertyGroup (null, null, null, true);
+			if (building && current_settings == BuildSettings.None)
+				RemoveBuiltTargets ();
 
 			InitializeProperties ();
 
@@ -772,21 +828,43 @@ namespace Microsoft.Build.BuildEngine {
 				usingTask.Evaluate ();
 		}
 
+		// Removes entries of all earlier built targets for this project
+		void RemoveBuiltTargets ()
+		{
+			foreach (string key in builtTargetKeys)
+				ParentEngine.BuiltTargetsOutputByName.Remove (key);
+		}
+
 		void InitializeProperties ()
 		{
 			BuildProperty bp;
+
+			evaluatedProperties = new BuildPropertyGroup (null, null, null, true);
 
 			foreach (BuildProperty gp in GlobalProperties) {
 				bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
 				EvaluatedProperties.AddProperty (bp);
 			}
 			
+			foreach (BuildProperty gp in GlobalProperties)
+				ParentEngine.GlobalProperties.AddProperty (gp);
+
+			// add properties that we dont have from parent engine's
+			// global properties
+			foreach (BuildProperty gp in ParentEngine.GlobalProperties) {
+				if (EvaluatedProperties [gp.Name] == null) {
+					bp = new BuildProperty (gp.Name, gp.Value, PropertyType.Global);
+					EvaluatedProperties.AddProperty (bp);
+				}
+			}
+
 			foreach (DictionaryEntry de in Environment.GetEnvironmentVariables ()) {
 				bp = new BuildProperty ((string) de.Key, (string) de.Value, PropertyType.Environment);
 				EvaluatedProperties.AddProperty (bp);
 			}
 
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", parentEngine.BinPath, PropertyType.Reserved));
 
 			// FIXME: make some internal method that will work like GetDirectoryName but output String.Empty on null/String.Empty
 			string projectDir;
@@ -993,6 +1071,16 @@ namespace Microsoft.Build.BuildEngine {
 				return t;
 
 			return default (T);
+		}
+
+		void LogTargetSkipped (string targetName)
+		{
+			BuildMessageEventArgs bmea;
+			bmea = new BuildMessageEventArgs (String.Format (
+						"Target {0} skipped, as it has already been built.", targetName),
+					null, null, MessageImportance.Low);
+
+			ParentEngine.EventSource.FireMessageRaised (this, bmea);
 		}
 
 		public BuildPropertyGroup EvaluatedProperties {

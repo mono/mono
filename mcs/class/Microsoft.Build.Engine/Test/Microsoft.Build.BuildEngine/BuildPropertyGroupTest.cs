@@ -122,9 +122,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		// FIXME: what was that supposed to test?
+		// Properties in persisted property groups cannot be accessed by name.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Properties in persisted property groups cannot be accessed by name.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestClone1 ()
 		{
                         string documentString = @"
@@ -179,9 +179,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (0, array [0].Count, "A1");
 		}
 
+		// Cannot set a condition on an object not represented by an XML element in the project file.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestCondition1 ()
 		{
 			string condition = "condition";
@@ -284,9 +284,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("3", bpg ["a"].Value, "A4");
 		}
 
+		// Properties in persisted property groups cannot be accessed by name.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Properties in persisted property groups cannot be accessed by name.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestIndexer2 ()
 		{
 			string documentString = @"
@@ -307,9 +307,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("a", array [0] ["a"].Name, "A1");
 		}
 
+		// Properties in persisted property groups cannot be accessed by name.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Properties in persisted property groups cannot be accessed by name.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestIndexer3 ()
 		{
 			string documentString = @"
@@ -430,9 +430,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.IsNull (node, "A3");
 		}
 
+		// The specified property does not belong to the current property group.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"The specified property does not belong to the current property group.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestRemoveProperty6 ()
 		{
 			Engine engine;
@@ -535,9 +535,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("$(A)", b2.FinalValue, "A6");
 		}
 
+		// The name "1" contains an invalid character "1".
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"The name \"1\" contains an invalid character \"1\".")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TestSetProperty5 ()
 		{
 			BuildPropertyGroup bpg = new BuildPropertyGroup ();
@@ -615,9 +615,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.IsNull (project.EvaluatedProperties ["A"], "A1");
 		}
 
+		// This method is only valid for virtual property groups, not <PropertyGroup> elements.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"This method is only valid for virtual property groups, not <PropertyGroup> elements.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestSetProperty9 ()
 		{
 			Engine engine;

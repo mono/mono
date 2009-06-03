@@ -41,6 +41,19 @@ namespace Microsoft.Build.BuildEngine {
 	internal class ExpressionCollection {
 	
 		IList objects;
+		static Dictionary<string, bool> boolValues;
+
+		static ExpressionCollection ()
+		{
+			string[] trueValuesArray = new string[] {"true", "on", "yes"};
+			string[] falseValuesArray = new string[] {"false", "off", "no"};
+
+			boolValues = new Dictionary<string, bool> (StringComparer.InvariantCultureIgnoreCase);
+			foreach (string s in trueValuesArray)
+				boolValues.Add (s, true);
+			foreach (string s in falseValuesArray)
+				boolValues.Add (s, false);
+		}
 	
 		public ExpressionCollection ()
 		{
@@ -100,9 +113,15 @@ namespace Microsoft.Build.BuildEngine {
 
 		object ConvertToObject (string raw, Type type)
 		{
-			if (type == typeof (bool))
-				return Boolean.Parse (raw);
-			else if (type == typeof (string))
+			if (type == typeof (bool)) {
+				bool value;
+				if (boolValues.TryGetValue (raw, out value))
+					return value;
+				else
+					return false;
+			}
+
+			if (type == typeof (string))
 				return raw;
 			else if (type == typeof (int))
 				return Int32.Parse (raw);

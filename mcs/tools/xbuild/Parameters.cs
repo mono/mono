@@ -97,9 +97,7 @@ namespace Mono.XBuild.CommandLine {
 				LoadResponseFile (responseFile);
 			}
 			foreach (string s in flatArguments) {
-				if (s [0] == '/') {
-					ParseFlatArgument (s);
-				} else
+				if (s [0] != '/' || !ParseFlatArgument (s))
 					remainingArguments.Add (s);
 			}
 			if (remainingArguments.Count == 0) {
@@ -128,6 +126,10 @@ namespace Mono.XBuild.CommandLine {
 
                                         for (int i = 0; i < t; i++) {
                                                 char c = line [i];
+
+						if (c == '#')
+							// comment, ignore rest of the line
+							break;
 
                                                 if (c == '"' || c == '\'') {
                                                         char end = c;
@@ -161,7 +163,7 @@ namespace Mono.XBuild.CommandLine {
                         }
 		}
 		
-		private void ParseFlatArgument (string s)
+		private bool ParseFlatArgument (string s)
 		{
 			switch (s) {
 			case "/help":
@@ -187,24 +189,22 @@ namespace Mono.XBuild.CommandLine {
 			default:
 				if (s.StartsWith ("/target:") || s.StartsWith ("/t:")) {
 					ProcessTarget (s);
-				}
-				if (s.StartsWith ("/property:") || s.StartsWith ("/p:")) {
+				} else if (s.StartsWith ("/property:") || s.StartsWith ("/p:")) {
 					ProcessProperty (s);
-				}
-				if (s.StartsWith ("/logger:") || s.StartsWith ("/l:")) {
+				} else  if (s.StartsWith ("/logger:") || s.StartsWith ("/l:")) {
 					ProcessLogger (s);
-				}
-				if (s.StartsWith ("/verbosity:") || s.StartsWith ("/v:")) {
+				} else if (s.StartsWith ("/verbosity:") || s.StartsWith ("/v:")) {
 					ProcessVerbosity (s);
-				}
-				if (s.StartsWith ("/consoleloggerparameters:") || s.StartsWith ("/clp:")) {
+				} else if (s.StartsWith ("/consoleloggerparameters:") || s.StartsWith ("/clp:")) {
 					ProcessConsoleLoggerParameters (s);
-				}
-				if (s.StartsWith ("/validate:") || s.StartsWith ("/val:")) {
+				} else if (s.StartsWith ("/validate:") || s.StartsWith ("/val:")) {
 					ProcessValidate (s);
-				}
+				} else
+					return false;
 				break;
 			}
+
+			return true;
 		}
 		
 		internal void ProcessTarget (string s)

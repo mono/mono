@@ -76,7 +76,13 @@ namespace Microsoft.Build.BuildEngine {
 					throw new InvalidProjectFileException (String.Format ("Task does not have property \"{0}\" defined",
 						de.Key));
 				
-				value = GetObjectFromString (de.Value, currentProperty.PropertyType);		
+				try {
+					value = GetObjectFromString (de.Value, currentProperty.PropertyType);
+				} catch (Exception e) {
+					throw new Exception (String.Format (
+							"Error converting Property named '{0}' with value '{1}' to type {2}: {3}",
+							de.Key, de.Value, currentProperty.PropertyType, e.Message), e);
+				}
 				
 				if (value != null)
 					values.Add (de.Key, value);
@@ -162,6 +168,7 @@ namespace Microsoft.Build.BuildEngine {
 					       string itemName)
 		{
 			BuildItemGroup newItems = ChangeType.ToBuildItemGroup (o, propertyInfo.PropertyType, itemName);
+			newItems.ParentProject = parentProject;
 			
 			if (parentProject.EvaluatedItemsByName.ContainsKey (itemName)) {
 				BuildItemGroup big = parentProject.EvaluatedItemsByName [itemName];
@@ -181,8 +188,11 @@ namespace Microsoft.Build.BuildEngine {
 			
 			e = new Expression ();
 			e.Parse (raw, true);
-			
-			if ((string) e.ConvertTo (parentProject, typeof (string)) == String.Empty)
+
+			// Empty contents allowed only for arrays
+			// See TestRequiredTask_*
+			if (!type.IsArray &&
+				(string) e.ConvertTo (parentProject, typeof (string)) == String.Empty)
 				return null;
 			
 			result = e.ConvertTo (parentProject, type);

@@ -102,7 +102,7 @@ namespace Microsoft.Build.BuildEngine {
 					file = Path.Combine (dir, EvaluatedProjectPath);
 			}
 			
-			return file;
+			return Utilities.FromMSBuildPath (file);
 		}
 		
 		public string Condition {

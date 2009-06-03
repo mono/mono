@@ -1,3 +1,108 @@
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* CreateCSharpManifestResourceName.cs (GetResourceIdFromFileName): Move
+	to ..
+	* CreateManifestResourceName.cs: .. here.
+	* CreateVisualBasicManifestResourceName.cs: Implement.
+
+2009-04-27  Ankit Jain  <jankit@novell.com>
+
+	* Vbc.cs (AddResponseFileCommands): Escape DefineConstants as it can
+	contain double quotes itself. Fix /doc switch.
+	(EscapeDoubleQuotes): New.
+
+2009-03-22  Daniel Nauck  <dna@mono-project.de>
+
+	* GenerateResource.cs: Set BasePath property of
+		ResXResourceReader class.
+		See: http://lists.ximian.com/pipermail/mono-devel-list/2009-March/031459.html
+
+2009-03-19  Ankit Jain  <jankit@novell.com>
+
+	Fix bugs #323833 and #484384.
+	* AssemblyResolver.cs (GatherGacAssemblies): Handle duplicate entries.
+	These seem to be old copies of the assemblies with old keys. Pick
+	the one with the latest timestamp.
+
+2009-03-03  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #480856.
+	* Csc.cs (AddResponseFileCommands): Split DefineConstants on ';'.
+
+2009-02-26  Ankit Jain  <jankit@novell.com>
+
+	* MakeDir.cs (Execute): Don't create+log if dir already exists.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* AL.cs (Execute): Use ToolTask.Execute instead of doing our own.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs:
+	* ResolveAssemblyReference.cs: Honor SpecificVersion. Emit detailed error
+	messages incase assembly resolution fails. Make specific version
+	strict.
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* ManagedCompiler.cs (AddResponseFileCommands): Use LogicalName for
+	embedded resources, wherever available.
+	* CreateCSharpManifestResourceName.cs (GetResourceIdFromFileName): Use
+	Path.Combine instead of hardcoding "\".
+
+2009-02-25  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (Execute): Reset current directory back after every
+	project's execution.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #458916.
+	* Copy.cs: CopiedFiles and DestinationFiles should have target paths
+	instead of source. Also, the metadata should get retained from source
+	items. Based on a patch by Jeffrey Richardson <themann@indyfantasysports.net>
+	Refactor a bit to remove code duplication.
+
+2009-02-21  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (SplitPropertiesToDictionary): Split into exactly 2 parts.
+
+2009-02-11  Leszek Ciesielski <skolima@gmail.com>
+
+	* ResolveAssemblyReference.cs : AllowedRelatedFileExtensions stub
+
+2009-02-02  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (Execute): Disable incorrect 'rebaseOutputs' behavior.
+
+2009-02-02  Ankit Jain  <jankit@novell.com>
+
+	* ResolveAssemblyReference.cs: Honor SearchPaths and the special
+	items like '{HintPathFromItem}', '{TargetFrameworkDirectory}' etc.
+	* AssemblyResolver.cs: Add api for more specific search, like search
+	in a directory, target frameworks, gac etc.
+
+2009-02-01  Ankit Jain  <jankit@novell.com>
+
+	* CallTarget.cs: Copy all items from target to TargetOutputs.
+
+2009-02-01  Ankit Jain  <jankit@novell.com>
+
+	* Csc.cs (AddResponseFileCommands):
+	* ManagedCompiler.cs (AddResponseFileCommands): 'AddModules' and
+	'AdditionalLibPaths' can be empty.
+
+2009-01-30  Ankit Jain  <jankit@novell.com>
+
+	* Copy.cs (Execute): Use for loop instead of enumerators.
+	sourceFiles and destinationFiles can be null, handle that.
+	Create new directory if required.
+
+2009-01-27  Ankit Jain  <jankit@novell.com>
+
+	* Delete.cs (Execute): Skip non-existant files.
+
 2009-01-06  Ankit Jain  <jankit@novell.com>
 
 	* CreateManifestResourceName.cs (Execute): Use full path, also helps

@@ -54,7 +54,8 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddResponseFileCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
-			commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
+			if (AddModules != null && AddModules.Length > 0)
+				commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
 			if (Bag ["CodePage"] != null)
 				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
 
@@ -91,8 +92,14 @@ namespace Microsoft.Build.Tasks {
 				commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);
 			
 			if (Resources != null)
-				foreach (ITaskItem item in Resources)
+				foreach (ITaskItem item in Resources) {
+					string logical_name = item.GetMetadata ("LogicalName");
+					if (logical_name.Length > 0)
+						commandLine.AppendSwitchIfNotNull ("/resource:",
+								String.Format ("{0},{1}", item.ItemSpec, logical_name));
+					else
 						commandLine.AppendSwitchIfNotNull ("/resource:", item.ItemSpec);
+				}
 
 			if (Sources != null)
 				foreach (ITaskItem item in Sources)

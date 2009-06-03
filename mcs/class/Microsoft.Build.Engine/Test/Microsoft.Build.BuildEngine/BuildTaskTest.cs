@@ -344,7 +344,41 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 
 			Assert.AreEqual ("ItemName", project.EvaluatedItems [0].Name, "A1");
 			Assert.AreEqual ("some_text", project.EvaluatedItems [0].FinalItemSpec, "A2");
-		}
+        }
+
+        [Test]
+        public void TestTaskInNamespace()
+        {
+            Engine engine;
+            Project project;
+
+            string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<UsingTask
+						AssemblyFile='Test\resources\TestTasks.dll'
+						TaskName='NamespacedOutputTestTask'
+					/>
+					<Target Name='T'>
+						<NamespacedOutputTestTask />
+					</Target>
+				</Project>
+			";
+
+            engine = new Engine(Consts.BinPath);
+            project = engine.CreateNewProject();
+            project.LoadXml(documentString);
+
+            Target[] t = new Target[1];
+            BuildTask[] bt;
+            project.Targets.CopyTo(t, 0);
+            bt = GetTasks(t[0]);
+
+            bt[0].AddOutputItem("Property", "ItemName");
+            project.Build("T");
+
+            Assert.AreEqual("ItemName", project.EvaluatedItems[0].Name, "A1");
+            Assert.AreEqual("some_text", project.EvaluatedItems[0].FinalItemSpec, "A2");
+        }
 
 		[Test]
 		public void TestAddOutputProperty1 ()

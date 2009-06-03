@@ -59,7 +59,8 @@ namespace Microsoft.Build.BuildEngine {
 				       IDictionary targetOutputs)
 		{
 			if (String.IsNullOrEmpty (projectFileName)) {
-				return engine.BuildProject (project, targetNames, targetOutputs);
+				return engine.BuildProject (project, targetNames, targetOutputs,
+						BuildSettings.DoNotResetPreviouslyBuiltTargets);
 			} else {
 				BuildPropertyGroup bpg = new BuildPropertyGroup ();
 				if (globalProperties != null)
@@ -68,7 +69,7 @@ namespace Microsoft.Build.BuildEngine {
 							(string) de.Key, (string) de.Value,
 							PropertyType.Global));
 				return engine.BuildProjectFile (projectFileName,
-					targetNames, bpg, targetOutputs);
+					targetNames, bpg, targetOutputs, BuildSettings.DoNotResetPreviouslyBuiltTargets);
 			}
 		}
 

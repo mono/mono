@@ -32,10 +32,12 @@ using NUnit.Framework;
 namespace MonoTests.Microsoft.Build.BuildEngine {
 	[TestFixture]
 	public class InternalLoggerExceptionTest {
+
+
+		// An InternalLoggerException can only be thrown by the MSBuild engine.
+		// The public constructors of this class cannot be used to create an instance of the exception.
 		[Test]
-		[ExpectedException (typeof (System.InvalidOperationException),
-		"An InternalLoggerException can only be thrown by the MSBuild engine." +
-		" The public constructors of this class cannot be used to create an instance of the exception.")]
+		[ExpectedException (typeof (System.InvalidOperationException))]
 		public void TestCtorMessage ()
 		{
 			string message = "message";
@@ -43,10 +45,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			new InternalLoggerException (message);
 		}
 		
+		// An InternalLoggerException can only be thrown by the MSBuild engine.
+		// The public constructors of this class cannot be used to create an instance of the exception.
 		[Test]
-		[ExpectedException (typeof (System.InvalidOperationException),
-		"An InternalLoggerException can only be thrown by the MSBuild engine." +
-		" The public constructors of this class cannot be used to create an instance of the exception.")]
+		[ExpectedException (typeof (System.InvalidOperationException))]
 		public void TestCtorMessageException ()
 		{
 			string message = "message";

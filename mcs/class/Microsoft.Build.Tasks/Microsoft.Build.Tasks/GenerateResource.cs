@@ -108,7 +108,13 @@ namespace Microsoft.Build.Tasks {
 			case ".resources":
 				return new ResourceReader (stream);
 			case ".resx":
-				return new System.Resources.ResXResourceReader (stream);
+				ResXResourceReader reader = new ResXResourceReader (stream);
+
+				// set correct basepath to resolve relative paths in file refs
+				if (useSourcePath)
+					reader.BasePath = Path.GetDirectoryName (Path.GetFullPath (name));
+
+				return reader;
 			default:
 				throw new Exception ("Unknown format in file " + name);
 			}

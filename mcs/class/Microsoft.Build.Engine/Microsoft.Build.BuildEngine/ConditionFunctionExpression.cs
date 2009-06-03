@@ -44,7 +44,7 @@ namespace Microsoft.Build.BuildEngine {
 		static ConditionFunctionExpression ()
 		{
 			Type t = typeof (ConditionFunctionExpression);
-			string [] names = new string [] { "Exists" };
+			string [] names = new string [] { "Exists", "HasTrailingSlash" };
 		
 			functions = new Dictionary <string, MethodInfo> ();
 			foreach (string name in names)
@@ -115,6 +115,21 @@ namespace Microsoft.Build.BuildEngine {
 		
 			return File.Exists (file);
 		}
+
+		static bool HasTrailingSlash (string file, Project context)
+		{
+			if (file == null)
+				return false;
+
+			file = file.Trim ();
+
+			int len = file.Length;
+			if (len == 0)
+				return false;
+
+			return file [len - 1] == '\\' || file [len - 1] == '/';
+		}
+
 #endregion
 #pragma warning restore 0169
 

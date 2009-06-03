@@ -57,7 +57,16 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void Evaluate ()
 		{
-			AssemblyLoadInfo loadInfo;
+			if (AssemblyName == null && AssemblyFile == null)
+				throw new InvalidProjectFileException ("A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ");
+
+			if (ConditionParser.ParseAndEvaluate (Condition, project))
+				project.TaskDatabase.RegisterUsingTask (this);
+		}
+
+		internal void Load (TaskDatabase db)
+		{
+			AssemblyLoadInfo loadInfo = null;
 
 			if (AssemblyName != null) {
 				loadInfo = new AssemblyLoadInfo (AssemblyName, TaskName);
@@ -79,10 +88,9 @@ namespace Microsoft.Build.BuildEngine {
 					filename = Path.Combine (ffn, filename);
 				}
 				loadInfo = new AssemblyLoadInfo (LoadInfoType.AssemblyFilename, filename, null, null, null, null, TaskName);
-			} else {
-				throw new InvalidProjectFileException ("A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ");
 			}
-			project.TaskDatabase.RegisterTask (TaskName, loadInfo);
+
+			db.RegisterTask (TaskName, loadInfo);
 		}
 
 		public bool IsImported {

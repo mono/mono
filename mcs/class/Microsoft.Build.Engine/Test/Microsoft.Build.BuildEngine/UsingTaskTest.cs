@@ -127,8 +127,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 		
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"The required attribute \"TaskName\" is missing from element <UsingTask>.  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestTaskName ()
 		{
 			string documentString = @"
@@ -145,8 +144,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ")]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestAssemblyNameOrAssemblyFile1 ()
 		{
 			string documentString = @"
@@ -163,8 +161,29 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidProjectFileException),
-			"A <UsingTask> element must contain either the \"AssemblyName\" attribute or the \"AssemblyFile\" attribute (but not both).  ")]
+		public void TestAssemblyNameOrAssemblyFileConditionFalse ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						TaskName='SimpleTask'
+						Condition='false'
+					/>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			try {
+				project.LoadXml (documentString);
+			} catch (InvalidProjectFileException) {
+				return;
+			}
+			Assert.Fail ("Project load should've failed");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
 		public void TestAssemblyNameOrAssemblyFile2 ()
 		{
 			string documentString = @"
@@ -181,5 +200,182 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			project = engine.CreateNewProject ();
 			project.LoadXml (documentString);
 		}
+
+		[Test]
+		public void TestDuplicate1 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='TrueTestTask'
+					/>
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='TrueTestTask'
+					/>
+
+					<Target Name='1'>
+						<TrueTestTask/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (documentString);
+
+			if (!project.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			Assert.AreEqual (2, project.UsingTasks.Count, "A0");
+
+			foreach (UsingTask ut in project.UsingTasks) {
+				Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
+				Assert.IsNull (ut.AssemblyName, "A2");
+				Assert.AreEqual (null, ut.Condition, "A3");
+				Assert.AreEqual (false, ut.IsImported, "A4");
+				Assert.AreEqual ("TrueTestTask", ut.TaskName, "A5");
+			}
+		}
+
+
+		[Test]
+		public void TestLazyLoad1 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='NonExistantAssembly.dll'
+						TaskName='SimpleTask'
+					/>
+					<Target Name='1'>
+						<Message Text='hello'/>
+					</Target>
+					<Target Name='2'>
+						<SimpleTask Foo='bar'/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (documentString);
+
+			if (!project.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			if (project.Build ("2"))
+				Assert.Fail ("Build should've failed, as a task from a nonexistant assembly is referenced");
+
+
+			IEnumerator en = project.UsingTasks.GetEnumerator ();
+			en.MoveNext ();
+
+			UsingTask ut = (UsingTask) en.Current;
+
+			Assert.AreEqual ("NonExistantAssembly.dll", ut.AssemblyFile, "A1");
+			Assert.IsNull (ut.AssemblyName, "A2");
+			Assert.AreEqual (null, ut.Condition, "A3");
+			Assert.AreEqual (false, ut.IsImported, "A4");
+			Assert.AreEqual ("SimpleTask", ut.TaskName, "A5");
+		}
+
+		[Test]
+		public void TestLazyLoad2 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='Another.SameTask'
+					/>
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='Other.SameTask'
+					/>
+
+					<Target Name='1'>
+						<Other.SameTask>
+							<Output TaskParameter='OutputString' ItemName='I0'/>
+						</Other.SameTask>
+						<Another.SameTask>
+							<Output TaskParameter='OutputString' ItemName='I1'/>
+						</Another.SameTask>
+						<Message Text='I0: @(I0) I1: @(I1)'/>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (documentString);
+
+			if (!project.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			logger.CheckLoggedMessageHead ("I0: Other.SameTask I1: Another.SameTask", "A1");
+		}
+
+		[Test]
+		public void TestLazyLoad3 ()
+		{
+			string documentString = @"
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<UsingTask
+						AssemblyFile='Test/resources/TestTasks.dll'
+						TaskName='Another.SameTask'
+						Condition='false'
+					/>
+
+					<Target Name='1'>
+						<Another.SameTask />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			project.LoadXml (documentString);
+
+			IEnumerator en = project.UsingTasks.GetEnumerator ();
+			en.MoveNext ();
+
+			UsingTask ut = (UsingTask) en.Current;
+
+			Assert.AreEqual ("Test/resources/TestTasks.dll", ut.AssemblyFile, "A1");
+			Assert.IsNull (ut.AssemblyName, "A2");
+			Assert.AreEqual ("false", ut.Condition, "A3");
+			Assert.AreEqual (false, ut.IsImported, "A4");
+			Assert.AreEqual ("Another.SameTask", ut.TaskName, "A5");
+
+			if (project.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build should've failed");
+			}
+		}
+
 	}
 }

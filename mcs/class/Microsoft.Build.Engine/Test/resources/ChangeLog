@@ -1,3 +1,22 @@
+2009-03-26  Jonathan Chambers  <joncham@gmail.com>
+
+	* TestTasks.cs (NamespacedOutputTestTask): New.
+
+2009-02-24  Ankit Jain  <jankit@novell.com>
+
+	* TestTasks.cs (Another.SameTask): New.
+	(Other.SameTask): New.
+
+2009-01-30  Ankit Jain  <jankit@novell.com>
+
+	* TestTasks.cs (RequiredTestTask): Rename to ..
+	(RequiredTestTask_TaskItems): .. this.
+	(RequiredTestTask_*): New types.
+
+2009-01-29  Ankit Jain  <jankit@novell.com>
+
+	* TestTasks.cs (BatchingTestTask.TaskItemsOutput): New.
+
 2008-12-30  Ankit Jain  <jankit@novell.com>
 
 	* TestTasks.cs (BatchingTestTask): Add specific properties

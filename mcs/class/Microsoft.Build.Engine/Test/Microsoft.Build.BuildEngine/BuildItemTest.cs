@@ -93,9 +93,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			new BuildItem (null, "something");
 		}
 
+		// Parameter "itemInclude" cannot have zero length.
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"Parameter \"itemInclude\" cannot have zero length.")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TestCtor6 ()
 		{
 			new BuildItem (null, String.Empty);
@@ -124,9 +124,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("name", item2.Name, "A6");
 		}
 
+		// Cannot set a condition on an object not represented by an XML element in the project file.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Cannot set a condition on an object not represented by an XML element in the project file.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestCondition1 ()
 		{
 			item = new BuildItem ("name", "1");
@@ -217,9 +217,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			item.CopyCustomMetadataTo (null);
 		}
 
+		// Assigning the "Exclude" attribute of a virtual item is not allowed.
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException),
-			"Assigning the \"Exclude\" attribute of a virtual item is not allowed.")]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void TestExclude1 ()
 		{
 			item = new BuildItem ("name", "1");
@@ -561,9 +561,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			item.RemoveMetadata ("undefined_metadata");
 		}
 
+		// "Filename" is a reserved item meta-data, and cannot be modified or deleted.
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"\"Filename\" is a reserved item meta-data, and cannot be modified or deleted.")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TestRemoveMetadata4 ()
 		{
 			item = new BuildItem ("name", "value");
@@ -671,9 +671,10 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual (Utilities.Escape ("$(A)"), item.GetMetadata ("b"), "A5");
 			Assert.AreEqual ("$(A)", item.GetMetadata ("c"), "A6");
 		}
+
+		// "Filename" is a reserved item meta-data, and cannot be modified or deleted.
 		[Test]
-		[ExpectedException (typeof (ArgumentException),
-			"\"Filename\" is a reserved item meta-data, and cannot be modified or deleted.")]
+		[ExpectedException (typeof (ArgumentException))]
 		public void TestSetMetadata4 ()
 		{
 			item = new BuildItem ("name", "include");
@@ -801,6 +802,51 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("Value", project.EvaluatedItems [0].GetMetadata ("Meta"), "A2");
 			project.ItemGroups.CopyTo (groups, 0);
 			Assert.AreEqual (1, groups [0].Count, "A3");
+		}
+
+		[Test]
+		public void TestBuildItemTransform ()
+		{
+			string projectText = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+				<UsingTask TaskName='BatchingTestTask' AssemblyFile='Test\resources\TestTasks.dll' />
+
+				<ItemGroup>
+					<Foo Include='abc'/>
+					<Foo Include='def'/>
+				</ItemGroup>
+				<PropertyGroup>
+					<FooProp>PropValue/</FooProp>
+				</PropertyGroup>
+
+				<Target Name=""main"">
+					<CreateItem Include=""@(Foo)"">
+						<Output TaskParameter =""Include"" ItemName=""SyntheticFoo""/>
+					</CreateItem>
+
+					<BatchingTestTask
+						TaskItemsOutput=""@(SyntheticFoo->'$(FooProp)%(Identity).txt')"">
+						<Output TaskParameter='TaskItemsOutput' ItemName='I0' />
+					</BatchingTestTask>
+				</Target>
+			</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+			Project project = engine.CreateNewProject ();
+			project.LoadXml (projectText);
+
+			bool result = project.Build ("main");
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			BuildItemGroup grp = project.GetEvaluatedItemsByName ("I0");
+			Assert.AreEqual (2, grp.Count, "A1");
+			Assert.AreEqual ("PropValue/abc.txt", grp [0].FinalItemSpec, "A2");
+			Assert.AreEqual ("PropValue/def.txt", grp [1].FinalItemSpec, "A3");
 		}
 	}
 }

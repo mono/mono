@@ -1,8 +1,12 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
+	<UsingTask TaskName="Microsoft.Build.Tasks.CreateVisualBasicManifestResourceName" AssemblyName="Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"/>
 	<PropertyGroup>
 		<DefaultLanguageSourceExtension>.vb</DefaultLanguageSourceExtension>
 		<Language>VB</Language>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<CreateManifestResourceNamesDependsOn></CreateManifestResourceNamesDependsOn>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -28,13 +32,12 @@
 	<Target
 		Name="CoreCompile"
 		Inputs="@(Compile)"
-		Outputs="$(OutputPath)$(AssemblyName)$(TargetExt)"
+		Outputs="$(IntermediateAssembly)"
 	>
-
 		<Vbc
 			AdditionalLibPaths="$(AdditionalLibPaths)"
 			AddModules="@(AddModules)"
-			BaseAddress="$(BaseAddress)"          
+			BaseAddress="$(BaseAddress)"
 			CodePage="$(CodePage)"
 			DebugType="$(DebugType)"
 			DefineConstants="$(FinalDefineConstants)"
@@ -50,6 +53,7 @@
 			KeyFile="$(KeyOriginatorFile)"
 			MainEntryPoint="$(StartupObject)"
 			NoConfig="true"
+			NoLogo="$(NoLogo)"
 			NoStandardLib="$(NoStdLib)"
 			NoWarnings="$(_NoWarnings)"
 			Optimize="$(Optimize)"
@@ -57,15 +61,13 @@
 			OptionExplicit="$(OptionExplicit)"
 			OptionStrict="$(OptionStrict)"
 			OptionStrictType="$(OptionStrictType)" 
-			OutputAssembly="$(OutputPath)$(AssemblyName)$(TargetExt)"
+			OutputAssembly="$(IntermediateAssembly)"
 			Platform="$(PlatformTarget)"
-			References="@(ReferencePath)"
+			References="@(ResolvedFiles);@(ChildProjectReferences)"
 			RemoveIntegerChecks="$(RemoveIntegerChecks)"
+			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
 			ResponseFiles="$(CompilerResponseFile)"
-			RootNamespace="$(RootNamespace)"
-			SdkPath="$(FrameworkPathOverride)"
 			Sources="@(Compile)"
-			TargetCompactFramework="$(TargetCompactFramework)"
 			TargetType="$(OutputType)"
 			TreatWarningsAsErrors="$(TreatWarningsAsErrors)"
 			UseHostCompilerIfAvailable="$(UseHostCompilerIfAvailable)"
@@ -73,16 +75,33 @@
 			Verbosity="$(VbcVerbosity)"
 			WarningsAsErrors="$(WarningsAsErrors)"
 			WarningsNotAsErrors="$(WarningsNotAsErrors)"
-			Win32Icon="$(ApplicationIcon)"
+			Win32Icon="$(Win32Icon)"
 			Win32Resource="$(Win32Resource)"
-		/>
+			/>
+			<!-- ToolPath="$(CscToolPath)" -->
 
-		<!--
-			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
-			ToolPath="$(VbcToolPath)"
+	</Target>
 
-		-->
+	<Target Name="CreateManifestResourceNames">
+		<CreateVisualBasicManifestResourceName Condition="'@(ResxWithNoCulture)' != ''"
+			ResourceFiles="@(ResxWithNoCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestResourceWithNoCultureName" />
+		</CreateVisualBasicManifestResourceName>
 
+		<CreateVisualBasicManifestResourceName Condition="'@(NonResxWithNoCulture)' != ''"
+			ResourceFiles="@(NonResxWithNoCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestNonResxWithNoCulture" />
+		</CreateVisualBasicManifestResourceName>
+
+		<CreateVisualBasicManifestResourceName Condition="'@(ResxWithCulture)' != ''"
+			ResourceFiles="@(ResxWithCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestResourceWithCultureName" />
+		</CreateVisualBasicManifestResourceName>
+
+		<CreateVisualBasicManifestResourceName Condition="'@(NonResxWithCulture)' != ''"
+			ResourceFiles="@(NonResxWithCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestNonResxWithCulture" />
+		</CreateVisualBasicManifestResourceName>
 	</Target>
 
 	<Import Project="Microsoft.Common.targets" />

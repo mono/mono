@@ -44,7 +44,8 @@ namespace Microsoft.Build.Tasks {
 		{
 			base.AddResponseFileCommands (commandLine);
 
-			commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
+			if (AdditionalLibPaths != null && AdditionalLibPaths.Length > 0)
+				commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
 
 			if (Bag ["AllowUnsafeBlocks"] != null)
 				if (AllowUnsafeBlocks)
@@ -60,7 +61,13 @@ namespace Microsoft.Build.Tasks {
 				else
 					commandLine.AppendSwitch ("/checked-");
 
-			commandLine.AppendSwitchUnquotedIfNotNull ("/define:", DefineConstants);
+			if (!String.IsNullOrEmpty (DefineConstants)) {
+				string [] defines = DefineConstants.Split (new char [] {';'},
+						StringSplitOptions.RemoveEmptyEntries);
+				if (defines.Length > 0)
+					commandLine.AppendSwitchUnquotedIfNotNull ("/define:",
+							String.Join (";", defines));
+			}
 
 			commandLine.AppendSwitchIfNotNull ("/nowarn:", DisabledWarnings);
 

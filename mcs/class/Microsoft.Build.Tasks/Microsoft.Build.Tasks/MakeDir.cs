@@ -49,8 +49,12 @@ namespace Microsoft.Build.Tasks {
 			List <ITaskItem> temporaryDirectoriesCreated = new List  <ITaskItem> ();
 			
 			foreach (ITaskItem directory in directories) {
+				string path = directory.GetMetadata ("FullPath");
+				if (Directory.Exists (path))
+					continue;
+
 				try {
-					Directory.CreateDirectory (directory.GetMetadata ("FullPath"));
+					Directory.CreateDirectory (path);
 					temporaryDirectoriesCreated.Add (directory);
 					Log.LogMessage (MessageImportance.High, "Created directory \"{0}\"", directory.ItemSpec);
 				}

@@ -29,6 +29,23 @@ using System;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 
+namespace Foo
+{
+    public class NamespacedOutputTestTask : Task
+    {
+        public override bool Execute()
+        {
+            return true;
+        }
+
+        [Output]
+        public string Property
+        {
+            get { return "some_text"; }
+        }
+    }
+}
+
 public class OutputTestTask : Task {
 	public override bool Execute ()
 	{
@@ -41,17 +58,93 @@ public class OutputTestTask : Task {
 	}
 }
 
-public class RequiredTestTask : Task {
+public class RequiredTestTask_TaskItems : Task {
+	string output;
 	public override bool Execute ()
 	{
+		output = items == null ? "null" : "count: " + items.Length.ToString ();
+		return true;
+	}
+
+	ITaskItem [] items;
+	[Required]
+	public ITaskItem[] Property {
+		set { items = value; }
+	}
+
+	[Output]
+	public string Output
+	{
+		get { return output; }
+	}
+}
+
+public class RequiredTestTask_TaskItem : Task
+{
+	string output;
+	public override bool Execute ()
+	{
+		output = item == null ? "null" : "not null: " + item.ItemSpec;
+		return true;
+	}
+
+	ITaskItem item;
+	[Required]
+	public ITaskItem Property
+	{
+		set { item = value; }
+	}
+
+	[Output]
+	public string Output
+	{
+		get { return output; }
+	}
+}
+
+public class RequiredTestTask_String : Task
+{
+	string output;
+	public override bool Execute ()
+	{
+		output = property == null ? "null" : property.Length.ToString ();
 		return true;
 	}
 
 	string property;
-
 	[Required]
-	public string Property {
+	public string Property
+	{
 		set { property = value; }
+	}
+
+	[Output]
+	public string Output
+	{
+		get { return output; }
+	}
+}
+
+public class RequiredTestTask_IntArray: Task
+{
+	string output;
+	public override bool Execute ()
+	{
+		output = items == null ? "null" : "count: " + items.Length.ToString ();
+		return true;
+	}
+
+	int[] items;
+	[Required]
+	public int[] Property
+	{
+		set { items = value; }
+	}
+
+	[Output]
+	public string Output
+	{
+		get { return output; }
 	}
 }
 
@@ -192,6 +285,51 @@ public class BatchingTestTask : Task
 	public string [] StringsOutput
 	{
 		get { return strings; }
+	}
+
+	[Output]
+	public ITaskItem [] TaskItemsOutput
+	{
+		get { return sources; }
+		set { sources = value; }
+	}
+}
+
+namespace Another
+{
+	public class SameTask : Task
+	{
+		string output;
+		public override bool Execute ()
+		{
+			output = "Another.SameTask";
+			return true;
+		}
+
+		[Output]
+		public string OutputString
+		{
+			get { return output; }
+		}
+	}
+}
+
+namespace Other
+{
+	public class SameTask : Task
+	{
+		string output;
+		public override bool Execute ()
+		{
+			output = "Other.SameTask";
+			return true;
+		}
+
+		[Output]
+		public string OutputString
+		{
+			get { return output; }
+		}
 	}
 }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 using NUnit.Framework;
@@ -16,10 +17,11 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		public CreateCSharpManifestResourceNameTest ()
 		{
+			string sample_cs_path = Path.Combine ("Test", Path.Combine ("resources", "Sample.cs"));
 			resx_no_culture_files = new string [,] {
 				// With dependent file
-				{ "foo.resx", null, "Test\\resources\\Sample.cs" },
-				{ "foo.resx", "RandomName", "Test\\resources\\Sample.cs" },
+				{ "foo.resx", null, sample_cs_path },
+				{ "foo.resx", "RandomName", sample_cs_path },
 
 				{ "Test/resources/foo.resx", null, "Sample.cs" },
 				{ "Test/resources/foo.resx", "RandomName", "Sample.cs" },
@@ -34,8 +36,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 			resx_with_culture_files = new string [,] {
 				// With dependent file
-				{ "foo.de.resx", null, "Test\\resources\\Sample.cs" },
-				{ "foo.de.resx", "RandomName", "Test\\resources\\Sample.cs" },
+				{ "foo.de.resx", null, sample_cs_path },
+				{ "foo.de.resx", "RandomName", sample_cs_path },
 
 				{ "Test/resources/foo.de.resx", null, "Sample.cs" },
 				{ "Test/resources/foo.de.resx", "RandomName", "Sample.cs" },
@@ -122,16 +124,16 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void TestNonResxNoRootNamespaceWithCulture ()
 		{
 			CheckResourceNames (non_resx_with_culture_files, new string [] {
-				"de\\foo.txt", "de\\foo.txt",
-				"de\\Test.resources.foo.txt", "de\\Test.resources.foo.txt"}, null);
+				Path.Combine ("de", "foo.txt"), Path.Combine ("de", "foo.txt"),
+				Path.Combine ("de", "Test.resources.foo.txt"), Path.Combine ("de", "Test.resources.foo.txt")}, null);
 		}
 
 		[Test]
 		public void TestNonResxWithRootNamespaceWithCulture ()
 		{
 			CheckResourceNames (non_resx_with_culture_files, new string [] {
-				"de\\RN1.RN2.foo.txt", "de\\RN1.RN2.foo.txt",
-				"de\\RN1.RN2.Test.resources.foo.txt", "de\\RN1.RN2.Test.resources.foo.txt"},
+				Path.Combine ("de", "RN1.RN2.foo.txt"), Path.Combine ("de", "RN1.RN2.foo.txt"),
+				Path.Combine ("de", "RN1.RN2.Test.resources.foo.txt"), Path.Combine ("de", "RN1.RN2.Test.resources.foo.txt")},
 				"RN1.RN2");
 		}
 
@@ -160,26 +162,25 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 			Engine engine = new Engine (Consts.BinPath);
 			Project project = engine.CreateNewProject ();
-			TestMessageLogger testLogger = new TestMessageLogger ();
-			engine.RegisterLogger (testLogger);
-
+			TestMessageLogger logger = new TestMessageLogger ();
+			engine.RegisterLogger (logger);
+			Console.WriteLine (projectText);
 			project.LoadXml (projectText);
-			try {
-				Assert.IsTrue (project.Build ("1"), "A1, Error building");
+			if (!project.Build ("1")) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
 
-				BuildItemGroup group = project.GetEvaluatedItemsByName ("ResourceNames");
-				Assert.AreEqual (names.Length, group.Count, "A2");
-				for (int i = 0; i <= files.GetUpperBound (0); i++) {
-					Assert.AreEqual (names [i], group [i].FinalItemSpec, "A3 #" + (i + 1));
-					if (files [i, 1] != null)
-						Assert.IsTrue (group [i].HasMetadata ("LogicalName"), "A4 #" + (i + 1));
-					if (files [i, 2] != null)
-						Assert.IsTrue (group [i].HasMetadata ("DependentUpon"), "A5 #" + (i + 1));
-				}
-			} catch (Exception) {
-				Console.WriteLine (projectText);
-				testLogger.DumpMessages ();
-				throw;
+			BuildItemGroup group = project.GetEvaluatedItemsByName ("ResourceNames");
+			Assert.AreEqual (names.Length, group.Count, "A2");
+			for (int i = 0; i <= files.GetUpperBound (0); i++) {
+				Assert.AreEqual (names [i], group [i].FinalItemSpec, "A3 #" + (i + 1));
+				Assert.AreEqual (files [i, 1] != null, group [i].HasMetadata ("LogicalName"), "A4 #" + (i + 1));
+				if (files [i, 1] != null)
+					Assert.AreEqual (files [i, 1], group [i].GetMetadata ("LogicalName"), "A5 #" + (i + 1));
+				Assert.AreEqual (files [i, 2] != null, group [i].HasMetadata ("DependentUpon"), "A6 #" + (i + 1));
+				if (files [i, 2] != null)
+					Assert.AreEqual (files [i, 2], group [i].GetMetadata ("DependentUpon"), "A7 #" + (i + 1));
 			}
 		}
 

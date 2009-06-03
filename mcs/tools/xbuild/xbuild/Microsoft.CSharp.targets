@@ -10,6 +10,10 @@
 		<DebugType    Condition=" '$(DebugType)' == 'none' "></DebugType>
 	</PropertyGroup>
 
+	<PropertyGroup>
+		<CreateManifestResourceNamesDependsOn></CreateManifestResourceNamesDependsOn>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<DocFileItem Include="$(DocumentationFile)" Condition="'$(DocumentationFile)' != ''"/>
 	</ItemGroup>
@@ -17,7 +21,7 @@
 	<Target
 		Name="CoreCompile"
 		Inputs="@(Compile)"
-		Outputs="$(OutputPath)$(AssemblyName)$(TargetExt)"
+		Outputs="$(IntermediateAssembly)"
 	>
 		<Csc
 			AdditionalLibPaths="$(AdditionalLibPaths)"
@@ -44,7 +48,7 @@
 			NoLogo="$(NoLogo)"
 			NoStandardLib="$(NoStdLib)"
 			Optimize="$(Optimize)"
-			OutputAssembly="$(OutputPath)$(AssemblyName)$(TargetExt)"
+			OutputAssembly="$(IntermediateAssembly)"
 			PdbFile="$(PdbFile)" 
 			Platform="$(PlatformTarget)"
 		 	References="@(ResolvedFiles);@(ChildProjectReferences)"
@@ -58,12 +62,32 @@
 			WarningsAsErrors="$(WarningsAsErrors)"
 			Win32Icon="$(Win32Icon)"
 			Win32Resource="$(Win32Resource)"
-		/>
-			<!-- Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)" -->
+			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)" />
 			<!-- ToolPath="$(CscToolPath)" -->
 
 	</Target>
 
-	<Import Project="Microsoft.Common.targets" />
+	<Target Name="CreateManifestResourceNames">
+		<CreateCSharpManifestResourceName Condition="'@(ResxWithNoCulture)' != ''"
+			ResourceFiles="@(ResxWithNoCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestResourceWithNoCultureName" />
+		</CreateCSharpManifestResourceName>
 
+		<CreateCSharpManifestResourceName Condition="'@(NonResxWithNoCulture)' != ''"
+			ResourceFiles="@(NonResxWithNoCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestNonResxWithNoCulture" />
+		</CreateCSharpManifestResourceName>
+
+		<CreateCSharpManifestResourceName Condition="'@(ResxWithCulture)' != ''"
+			ResourceFiles="@(ResxWithCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestResourceWithCultureName" />
+		</CreateCSharpManifestResourceName>
+
+		<CreateCSharpManifestResourceName Condition="'@(NonResxWithCulture)' != ''"
+			ResourceFiles="@(NonResxWithCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestNonResxWithCulture" />
+		</CreateCSharpManifestResourceName>
+	</Target>
+
+	<Import Project="Microsoft.Common.targets" />
 </Project>

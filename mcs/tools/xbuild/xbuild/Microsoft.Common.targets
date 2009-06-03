@@ -14,23 +14,44 @@
 	<PropertyGroup>
 		<AllowUnsafeBlocks Condition="'$(AllowUnsafeBlocks)' == ''">false</AllowUnsafeBlocks>
 		<AssemblyName Condition="'$(AssemblyName)' == ''">$(RootNamespace)</AssemblyName>
-		<!--<OutputPath Condition="'$(OutputPath)' != ''">$(OutputPath)\</OutputPath>-->
+		<!-- OutputPath Condition="'$(OutputPath)' != ''">$(OutputPath)\</OutputPath-->
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 	</PropertyGroup>
+
+	<PropertyGroup>
+		<BaseIntermediateOutputPath Condition="'$(BaseIntermediateOutputPath)' == ''">obj\</BaseIntermediateOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(IntermediateOutputPath)' == ''">
+		<IntermediateOutputPath Condition=" '$(PlatformName)' == 'AnyCPU'">$(BaseIntermediateOutputPath)$(Configuration)\</IntermediateOutputPath>
+		<IntermediateOutputPath Condition=" '$(PlatformName)' != 'AnyCPU'">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<IntermediateAssembly Condition="'$(IntermediateAssembly)' == ''">$(IntermediateOutputPath)$(AssemblyName)$(TargetExt)</IntermediateAssembly>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<TargetPath Include="$(OutputPath)" />
+	</ItemGroup>
 
 	<Target Name="PrepareForBuild">
 		<Message Importance="High" Text="Configuration: $(Configuration) Platform: $(Platform)"/>
 		
 		<MakeDir 
-			Condition="'$(OutputPath)' != ''"
-			Directories="$(OutputPath)"
+			Directories="$(OutputPath);$(IntermediateOutputPath)"
 		/>
+
+		<GetFrameworkPath>
+			<Output TaskParameter="Path" PropertyName="TargetFrameworkPath"/>
+		</GetFrameworkPath>
 	</Target>
 
 	<Target Name="ResolveAssemblyReferences">
 		<ResolveAssemblyReference
-			Assemblies="@(Reference)"
-			SearchPaths=" "
+			Assemblies="@(Reference);@(ChildProjectReferences)"
+			SearchPaths="{HintPathFromItem};{TargetFrameworkDirectory};{GAC};{RawFileName};$(OutputPath)"
+			TargetFrameworkDirectories="$(TargetFrameworkPath)"
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
 		</ResolveAssemblyReference>
@@ -39,13 +60,11 @@
 	<Target
 		Name="ResolveProjectReferences"
 		Condition=" '@(ProjectReference)' != ''"
-		Inputs="@(ProjectReference)"
-		Outputs="@(ChildProjectReferences)"
 	>
+		<!-- FIXME: don't build if building a .sln, since project ref would already have been built -->
 		<MSBuild
 			Projects="@(ProjectReference)"
-			Targets="Build"
-			RebaseOutputs="true"
+			Targets="GetTargetPath"
 		>
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
@@ -60,18 +79,153 @@
 	</Target>
 -->
 
+	<PropertyGroup>
+		<BuildDependsOn>
+			BeforeBuild;
+			CoreBuild;
+			AfterBuild
+		</BuildDependsOn>
+	</PropertyGroup>
+
+	<Target Name="BeforeBuild"/>
+	<Target Name="AfterBuild"/>
+
+	<Target Name="Build" DependsOnTargets="$(BuildDependsOn)" Outputs="$(TargetPath)"/>
+
+	<PropertyGroup>
+		<CoreBuildDependsOn>
+			PrepareForBuild;
+			ResolveAssemblyReferences;
+			ResolveProjectReferences;
+			BuildResources;
+			CoreCompile;
+			DeployOutputFiles
+		</CoreBuildDependsOn>
+	</PropertyGroup>
+
 	<Target
-		Name="Build"
-		DependsOnTargets="PrepareForBuild;ResolveAssemblyReferences;ResolveProjectReferences;CoreCompile"
+		Name="CoreBuild"
+		DependsOnTargets="$(CoreBuildDependsOn)"
 		Outputs="$(OutputPath)$(AssemblyName)$(TargetExt)"
 	/>
 
-<!--
-	Doesn't work because it treats every property in Delete.Files as separate ITaskItem
-	<Target Name="Clean">
+	<Target Name="BuildResources"
+		DependsOnTargets="SplitResourcesByCulture;CreateManifestResourceNames;CopyNonResxEmbeddedResources;GenerateResources;GenerateSatelliteAssemblies">
+	</Target>
+
+	<Target Name="SplitResourcesByCulture">
+		<AssignCulture Files="@(EmbeddedResource)">
+			<Output TaskParameter="AssignedFilesWithNoCulture" ItemName="ResourcesWithNoCulture"/>
+			<Output TaskParameter="AssignedFilesWithCulture" ItemName="ResourcesWithCulture"/>
+		</AssignCulture>
+
+		<CreateItem Include="@(ResourcesWithNoCulture)" Condition="'%(Extension)' == '.resx'">
+			<Output TaskParameter="Include" ItemName="ResxWithNoCulture"/>
+		</CreateItem>
+
+		<CreateItem Include="@(ResourcesWithNoCulture)" Condition="'%(Extension)' != '.resx'">
+			<Output TaskParameter="Include" ItemName="NonResxWithNoCulture"/>
+		</CreateItem>
+
+		<CreateItem Include="@(ResourcesWithCulture)" Condition="'%(Extension)' == '.resx'">
+			<Output TaskParameter="Include" ItemName="ResxWithCulture"/>
+		</CreateItem>
+
+		<CreateItem Include="@(ResourcesWithCulture)" Condition="'%(Extension)' != '.resx'">
+			<Output TaskParameter="Include" ItemName="NonResxWithCulture"/>
+		</CreateItem>
+	</Target>
+
+	<!-- Copy non-resx resources to their manifest resource names, this is what the compiler expects -->
+	<Target Name = "CopyNonResxEmbeddedResources"
+		Condition = "'@(NonResxWithCulture)' != '' or '@(NonResxWithNoCulture)' != '' or '@(ManifestNonResxWithCulture)' != '' or '@(ManifestNonResxWithNoCulture)' != ''">
+
+		<MakeDir Directories="$(IntermediateOutputPath)%(ManifestNonResxWithCulture.Culture)"/>
+		<Copy SourceFiles = "@(NonResxWithCulture)"
+			DestinationFiles = "@(ManifestNonResxWithCulture->'$(IntermediateOutputPath)%(Identity)')">
+			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithCultureOnDisk"/>
+		</Copy>
+
+		<Copy SourceFiles = "@(NonResxWithNoCulture)"
+			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')">
+			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithNoCultureOnDisk"/>
+		</Copy>
+
+	</Target>
+
+	<Target Name = "GenerateResources">
+		<GenerateResource
+			Sources = "@(ResxWithNoCulture)"
+			UseSourcePath = "true"
+			OutputResources = "@(ManifestResourceWithNoCultureName->'$(IntermediateOutputPath)%(Identity).resources')"
+			Condition = "'@(ResxWithNoCulture)' != '' ">
+
+			<Output TaskParameter = "OutputResources" ItemName = "ManifestResourceWithNoCulture"/>
+		</GenerateResource>
+
+		<GenerateResource
+			Sources = "@(ResxWithCulture)"
+			UseSourcePath = "true"
+			OutputResources = "@(ManifestResourceWithCultureName->'$(IntermediateOutputPath)%(Identity).resources')"
+			Condition = "'@(ResxWithCulture)' != '' ">
+
+			<Output TaskParameter = "OutputResources" ItemName = "ManifestResourceWithCulture"/>
+		</GenerateResource>
+	</Target>
+
+	<Target Name="GenerateSatelliteAssemblies"
+		Inputs="@(ManifestResourceWithCulture);@(ManifestNonResxWithCultureOnDisk)"
+		Outputs="$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll" >
+		<!-- @(NonResxWithCulture) - rename files to ManifestNon.. and then use for AL -->
+		<MakeDir Directories = "$(IntermediateOutputPath)%(ManifestResourceWithCulture.Culture)" Condition = "'@(ManifestResourceWithCulture)' != ''" />
+		<MakeDir Directories = "$(IntermediateOutputPath)%(ManifestNonResxWithCultureOnDisk.Culture)" Condition = "'@(ManifestNonResxWithCultureOnDisk)' != ''" />
+
+		<AL
+			Culture = "%(Culture)"
+			EmbedResources = "@(ManifestResourceWithCulture);@(ManifestNonResxWithCultureOnDisk)"
+			OutputAssembly = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll"
+		/>
+
+		<CreateItem
+			Include = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll"
+			AdditionalMetadata = "Culture=%(Culture)"
+			Condition = "'@(ManifestResourceWithCulture)' != '' or '@(ManifestNonResxWithCultureOnDisk)' != ''">
+			<Output TaskParameter = "Include" ItemName = "IntermediateSatelliteAssemblies" />
+		</CreateItem>
+	</Target>
+
+	<Target Name="DeployOutputFiles"
+		DependsOnTargets="BuildResources;CoreCompile">
+
+		<!-- FIXME: Hardcoded for copying .mdb -->
+		<!-- Copy SourceFiles="$(IntermediateAssembly);$(IntermediateAssembly).mdb" DestinationFolder="$(OutputPath)" /-->
+		<Copy SourceFiles="$(IntermediateAssembly)" DestinationFolder="$(OutputPath)" />
+
+		<Copy
+			SourceFiles = "@(IntermediateSatelliteAssemblies)"
+			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutputPath)\%(Culture)\$(AssemblyName).resources.dll')" />
+	</Target>
+
+	<Target Name="GetTargetPath" Outputs="@(TargetPath->'%(FullPath)\$(AssemblyName)$(TargetExt)')"/>
+
+	<PropertyGroup>
+		<CleanDependsOn>
+			BeforeClean;
+			CoreClean;
+			AfterClean
+		</CleanDependsOn>
+	</PropertyGroup>
+
+	<!-- FIXME: Include all generated files -->
+	<Target Name="Clean" DependsOnTargets="$(CleanDependsOn)"/>
+
+	<!-- Override in project to run before/after clean tasks -->
+	<Target Name="BeforeClean" />
+	<Target Name="AfterClean" />
+
+	<Target Name="CoreClean">
 		<Message Text="Trying to delete $(OutputPath)$(AssemblyName)$(TargetExt)"/>
 		<Delete Files="$(OutputPath)$(AssemblyName)$(TargetExt)" />
 	</Target>
--->
 
 </Project>

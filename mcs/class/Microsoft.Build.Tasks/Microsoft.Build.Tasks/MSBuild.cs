@@ -74,8 +74,10 @@ namespace Microsoft.Build.Tasks {
 						ITaskItem [] array = (ITaskItem []) de.Value;
 						foreach (ITaskItem item in array) {
 							outputItems.Add (item);
-							if (rebaseOutputs)
-								File.Copy (item.ItemSpec, Path.Combine (currentDirectory, item.ItemSpec), true);
+							//FIXME: Correctly rebase output paths to be relative to the
+							//	 calling project
+							//if (rebaseOutputs)
+							//	File.Copy (item.ItemSpec, Path.Combine (currentDirectory, item.ItemSpec), true);
 						}
 					}
 				} else {
@@ -83,6 +85,8 @@ namespace Microsoft.Build.Tasks {
 					if (stopOnFirstFailure)
 						break;
 				}
+
+				Directory.SetCurrentDirectory (currentDirectory);
 			}
 
 			if (result)
@@ -140,10 +144,9 @@ namespace Microsoft.Build.Tasks {
 				if (String.IsNullOrEmpty (kvpair))
 					continue;
 
-				string [] parts = kvpair.Trim ().Split ('=');
+				string [] parts = kvpair.Trim ().Split (new char [] {'='}, 2);
 				if (parts.Length != 2) {
-					//FIXME: Log the error and .. ?
-					Console.WriteLine ("Invalid key/value pairs in Properties, ignoring.");
+					Log.LogWarning ("Invalid key/value pairs ({0}) in Properties, ignoring.", kvpair);
 					continue;
 				}
 
