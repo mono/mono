@@ -65,6 +65,13 @@ namespace Mono.Cecil {
 			if (module != null)
 				return module.Types [type.FullName];
 
+			ModuleReference mod_reference = type.Scope as ModuleReference;
+			if (mod_reference != null) {
+				foreach (ModuleDefinition netmodule in type.Module.Assembly.Modules)
+					if (netmodule.Name == mod_reference.Name)
+						return netmodule.Types [type.FullName];
+			}
+
 			throw new NotImplementedException ();
 		}
 
