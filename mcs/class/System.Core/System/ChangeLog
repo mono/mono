@@ -1,3 +1,7 @@
+2009-06-03  Marek Safar  <marek.safar@gmail.com>
+
+	* Func.cs: Add 4.0 forwarders.
+
 2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimezoneInfo.cs: TimeZoneDirectory property should not be public
