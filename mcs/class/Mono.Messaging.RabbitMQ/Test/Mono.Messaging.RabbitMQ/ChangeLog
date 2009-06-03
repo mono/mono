@@ -1,3 +1,7 @@
+2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageEnumeratorTest.cs:  Added tests for timeout methods.
+
 2009-01-05  Michael Barker  <mike@middlesoft.co.uk>
 
 	* BinaryMessageFormatter.cs, XMLMessageFormatterTest.cs, TestUtils.cs, 

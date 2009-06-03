@@ -87,6 +87,45 @@ namespace MonoTests.Mono.Messaging.RabbitMQ
 			MessageQueue.Delete (qName);
 		}
 		
+		[Test]
+		public void RemoveMessageWithTimeout ()
+		{
+			SendMessage ("message 1");
+			SendMessage ("message 2");
+			SendMessage ("message 3");
+			SendMessage ("message 4");
+			
+			MessageQueue mq0 = MQUtil.GetQueue (qName);
+			MessageEnumerator me0 = mq0.GetMessageEnumerator ();
+			
+			TimeSpan ts = new TimeSpan (0, 0, 2);
+			
+			me0.MoveNext (ts);
+			me0.MoveNext (ts);
+			me0.MoveNext (ts);
+			
+			Message m0 = me0.RemoveCurrent (ts);
+			
+			me0.MoveNext (ts);
+			
+			me0.Dispose ();
+			mq0.Dispose ();
+			
+			MessageQueue mq1 = MQUtil.GetQueue (qName);
+			MessageEnumerator me1 = mq1.GetMessageEnumerator ();
+			
+			me1.MoveNext (ts);
+			me1.MoveNext (ts);
+			me1.MoveNext (ts);
+			
+			Message m1 = me1.Current;
+			m1.Formatter = new BinaryMessageFormatter ();
+			Assert.AreEqual ("message 4", (String) m1.Body, "body incorrect");
+			
+			mq1.Purge ();
+			MessageQueue.Delete (qName);
+		}
+		
 		//[Test]
 		// Not supported with AMQP
 		public void RemoveMessageWithTx ()

@@ -65,6 +65,10 @@ namespace Mono.Messaging.RabbitMQ {
 			}
 		}
 		
+		public IntPtr CursorHandle {
+			get { throw new NotImplementedException (); }
+		}
+		
 		public void Close ()
 		{
 			if (subscription != null) {
@@ -117,7 +121,6 @@ namespace Mono.Messaging.RabbitMQ {
 				if (subscription == null) {
 					IModel ch = Model;
 					
-					//ushort ticket = ch.AccessRequest ("/data");
 					string finalName = ch.QueueDeclare (qRef.Queue, false);
 					
 					subscription = new Subscription (ch, finalName);
@@ -131,6 +134,12 @@ namespace Mono.Messaging.RabbitMQ {
 		{
 			Subscription sub = Subscription;
 			return sub.Next (500, out current);
+		}
+		
+		public bool MoveNext (TimeSpan timeout)
+		{
+			int to = MessageFactory.TimeSpanToInt32 (timeout);
+			return Subscription.Next (to, out current);
 		}
 
 		public IMessage RemoveCurrent ()
@@ -151,6 +160,29 @@ namespace Mono.Messaging.RabbitMQ {
 		public IMessage RemoveCurrent (MessageQueueTransactionType transactionType)
 		{
 			throw new NotSupportedException ("Unable to remove messages within a transaction");
+		}
+		
+		public IMessage RemoveCurrent (TimeSpan timeout)
+		{
+			// Timeout makes no sense for this implementation, so we just work 
+			// the same as the non-timeout based one. 
+			
+			if (current == null)
+				throw new InvalidOperationException ();
+			
+			IMessage msg = CreateMessage (current);
+			Subscription.Ack (current);
+			return msg;
+		}
+		
+		public IMessage RemoveCurrent (TimeSpan timeout, IMessageQueueTransaction transaction)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public IMessage RemoveCurrent (TimeSpan timeout, MessageQueueTransactionType transactionType)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		private IMessage CreateMessage (BasicDeliverEventArgs result)

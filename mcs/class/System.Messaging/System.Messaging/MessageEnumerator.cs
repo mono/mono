@@ -3,6 +3,7 @@
 //
 // Authors:
 //      Peter Van Isacker (sclytrack@planetinternet.be)
+//      Michael Barker (mike@middlesoft.co.uk)
 //
 // (C) 2003 Peter Van Isacker
 //
@@ -61,8 +62,7 @@ namespace System.Messaging
 		}
 		
 		public IntPtr CursorHandle {
-			[MonoTODO]
-			get {throw new NotImplementedException();}
+			get { return delegateEnumerator.CursorHandle; }
 		}
 
 		public void Close()
@@ -87,58 +87,122 @@ namespace System.Messaging
 		{
 			return delegateEnumerator.MoveNext ();
 		}
-		[MonoTODO]
-		public bool MoveNext(TimeSpan timeout)
-		{
-			throw new NotImplementedException();
-		}
 
+		public bool MoveNext (TimeSpan timeout)
+		{
+			return delegateEnumerator.MoveNext (timeout);
+		}
+		
 		public Message RemoveCurrent()
 		{
-			IMessage iMsg = delegateEnumerator.RemoveCurrent ();
-			if (iMsg == null)
-				return null;
-			return new Message (iMsg, null, formatter);
+			try {
+				IMessage iMsg = delegateEnumerator.RemoveCurrent ();
+				if (iMsg == null)
+					return null;
+				return new Message (iMsg, null, formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}			
 		}
 
 		public Message RemoveCurrent (MessageQueueTransaction transaction)
 		{
-			
-			IMessage iMsg = delegateEnumerator.RemoveCurrent (transaction.DelegateTx);
-			if (iMsg == null)
-				return null;
-			return new Message (iMsg, null, formatter);
+			try {
+				IMessage iMsg = delegateEnumerator.RemoveCurrent (transaction.DelegateTx);
+				if (iMsg == null)
+					return null;
+				return new Message (iMsg, null, formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}			
 		}
 
 		public Message RemoveCurrent(MessageQueueTransactionType transactionType)
 		{
-			IMessage iMsg = delegateEnumerator.RemoveCurrent ((Mono.Messaging.MessageQueueTransactionType) transactionType);
-			if (iMsg == null)
-				return null;
-			return new Message (iMsg, null, formatter);
+			try {
+				IMessage iMsg = delegateEnumerator.RemoveCurrent ((Mono.Messaging.MessageQueueTransactionType) transactionType);
+				if (iMsg == null)
+					return null;
+				return new Message (iMsg, null, formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}			
 		}
-		[MonoTODO]
-		public Message RemoveCurrent(TimeSpan timeout)
+
+		public Message RemoveCurrent (TimeSpan timeout)
 		{
-			throw new NotImplementedException();
+			try {
+				IMessage iMsg = delegateEnumerator.RemoveCurrent (timeout);
+				if (iMsg == null)
+					return null;
+				return new Message (iMsg, null, formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}			
 		}
-		[MonoTODO]
-		public Message RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transaction)
+
+		public Message RemoveCurrent (TimeSpan timeout,
+		                              MessageQueueTransaction transaction)
 		{
-			throw new NotImplementedException();
+			try {
+				IMessage iMsg = delegateEnumerator.RemoveCurrent (timeout,
+				                                                  transaction.DelegateTx);
+				if (iMsg == null)
+					return null;
+				return new Message (iMsg, null, formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}			
 		}
-		[MonoTODO]
-		public Message RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType)
+
+		public Message RemoveCurrent (TimeSpan timeout, MessageQueueTransactionType transactionType)
 		{
-			throw new NotImplementedException();
+			try {
+				IMessage iMsg = delegateEnumerator.RemoveCurrent (timeout, 
+				                                                  (Mono.Messaging.MessageQueueTransactionType) transactionType);
+				if (iMsg == null)
+					return null;
+				return new Message (iMsg, null, formatter);
+				
+			} catch (ConnectionException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.QueueNotAvailable, e.Message);
+			} catch (MessageUnavailableException e) {
+				throw new InvalidOperationException (e.Message, e);
+			} catch (MonoMessagingException e) {
+				throw new MessageQueueException (MessageQueueErrorCode.Generic, e.Message);
+			}			
 		}
-		[MonoTODO]
+
 		public void Reset()
 		{
 			Close ();
 		}
 
-		[MonoTODO]
 		~MessageEnumerator()
 		{
 			Dispose(false);

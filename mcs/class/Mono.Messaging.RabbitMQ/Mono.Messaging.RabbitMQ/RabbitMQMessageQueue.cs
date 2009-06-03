@@ -590,7 +590,7 @@ namespace Mono.Messaging.RabbitMQ {
 		private static TxReceiver.DoReceive Receiver (TimeSpan timeout,
 		                                              IsMatch matcher)
 		{
-			int to = TimeSpanToInt32 (timeout);
+			int to = MessageFactory.TimeSpanToInt32 (timeout);
 			return new DoReceiveWithTimeout (to, matcher).DoReceive;
 		}
 		
@@ -601,7 +601,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private static TxReceiver.DoReceive Receiver (TimeSpan timeout)
 		{
-			int to = TimeSpanToInt32 (timeout);
+			int to = MessageFactory.TimeSpanToInt32 (timeout);
 			return new DoReceiveWithTimeout (to, null).DoReceive;
 		}
 
@@ -617,7 +617,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private TxReceiver.DoReceive Peeker (TimeSpan timeout)
 		{
-			int to = TimeSpanToInt32 (timeout);
+			int to = MessageFactory.TimeSpanToInt32 (timeout);
 			return new DoReceiveWithTimeout (to, null, false).DoReceive;
 		}		
 		
@@ -628,7 +628,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private TxReceiver.DoReceive Peeker (TimeSpan timeout, IsMatch matcher)
 		{
-			int to = TimeSpanToInt32 (timeout);
+			int to = MessageFactory.TimeSpanToInt32 (timeout);
 			return new DoReceiveWithTimeout (to, matcher, false).DoReceive;
 		}
 		
@@ -714,13 +714,5 @@ namespace Mono.Messaging.RabbitMQ {
 		{
 			return (RabbitMQMessageQueueTransaction) provider.CreateMessageQueueTransaction ();
 		}		
-		
-		private static int TimeSpanToInt32 (TimeSpan timespan)
-		{
-			if (timespan == TimeSpan.MaxValue)
-				return -1;
-			else
-				return (int) timespan.TotalMilliseconds;
-		}
 	}
 }

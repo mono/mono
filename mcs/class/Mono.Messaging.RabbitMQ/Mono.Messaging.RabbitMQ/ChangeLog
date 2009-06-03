@@ -1,3 +1,19 @@
+2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageFactory.cs: Moved TimeSpanToInt32 method to here.
+	* RabbitMQMessageEnumerator.cs:  Added Remove/MoveNext methods that include
+	timeouts.
+	* RabbitMQMessageQueue.cs: Updated to cater for moved TimeSpanToInt32 method
+
+2009-05-20  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageEnumerator.cs:  Removed references to realms & tickets.
+	* RabbitMQMessageQueue.cs:  Removed references to realms & tickets.
+		
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueue.cs: Added comments.
+	
 2008-12-22  Michael Barker  <mike@middlesoft.co.uk>
 
 	* RabbitMQMessageQueue.cs:  Changed to extend MessageQueueBase to make use
@@ -44,12 +60,3 @@
 
 	* RabbitMQMessageQueue.cs: New
 	* RabbitMQMessagingProvider.cs: New
-	
-2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
-
-	* RabbitMQMessageQueue.cs: Added comments.
-	
-2009-05-20  Michael Barker  <mike@middlesoft.co.uk>
-
-	* RabbitMQMessageEnumerator.cs:  Removed references to realms & tickets.
-	* RabbitMQMessageQueue.cs:  Removed references to realms & tickets.

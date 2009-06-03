@@ -1,12 +1,16 @@
-2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
 
-	* MessageBaseTest.cs: New
-	* QueueReferenceTest.cs: New
-
-2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
-
-	* MessageBaseTest.cs: Used reflection to create Message Object
+	* MessageEnumeratorExceptionTest.cs:  New
 	
 2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
 
 	* QueueReferenceTest.cs: Incorrect namespace for test
+	
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageBaseTest.cs: Used reflection to create Message Object
+	
+2008-09-29  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageBaseTest.cs: New
+	* QueueReferenceTest.cs: New

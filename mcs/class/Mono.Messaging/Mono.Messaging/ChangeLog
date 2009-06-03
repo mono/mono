@@ -1,3 +1,15 @@
+2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* IMessageEnumerator.cs:  Added additional methods to support operations
+	specified by the System.Messaging version.
+	
+2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* IMessage.cs: Added additional comments.
+	* IMessagingProvider.cs: Added additional comments.
+	* MessagingProviderLocator.cs: Added support for specifing messaging
+	implementation using an environment variable.
+
 2009-01-03  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageQueueBase.cs:  Added support for handling exception asynchronously.
@@ -68,10 +80,3 @@
 	* MessagingProviderLocator.cs: New
 	* MonoMessagingException.cs: New
 	* QueueReference.cs: New
-
-2009-05-19  Michael Barker  <mike@middlesoft.co.uk>
-
-	* IMessage.cs: Added additional comments.
-	* IMessagingProvider.cs: Added additional comments.
-	* MessagingProviderLocator.cs: Added support for specifing messaging
-	implementation using an environment variable.

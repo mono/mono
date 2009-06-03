@@ -38,13 +38,15 @@ namespace Mono.Messaging {
 	
 		IMessage Current { get; }
 		
+		IntPtr CursorHandle { get; }		
+		
 		void Close();
 
 		void Dispose(bool disposing);
 
 		bool MoveNext();
 		
-		//bool MoveNext(TimeSpan timeout);
+		bool MoveNext(TimeSpan timeout);
 
 		IMessage RemoveCurrent();
 
@@ -52,11 +54,11 @@ namespace Mono.Messaging {
 
 		IMessage RemoveCurrent(MessageQueueTransactionType transactionType);
 
-		//IMessage RemoveCurrent(TimeSpan timeout);
+		IMessage RemoveCurrent(TimeSpan timeout);
 
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransaction transaction);
+		IMessage RemoveCurrent(TimeSpan timeout, IMessageQueueTransaction transaction);
 
-		//IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType);
+		IMessage RemoveCurrent(TimeSpan timeout, MessageQueueTransactionType transactionType);
 
 	}
 

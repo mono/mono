@@ -1,3 +1,8 @@
+2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* MessageEnumerator.cs:  Added calls to the delegate IMessageEnumerator
+	for methods that use a timeout and added exception handling.
+
 2008-12-20  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessageQueue.cs:  Added implementation for async methods: BeginReceive,

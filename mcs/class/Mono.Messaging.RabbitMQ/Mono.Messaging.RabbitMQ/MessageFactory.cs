@@ -219,6 +219,13 @@ namespace Mono.Messaging.RabbitMQ {
 			DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
 			return epoch.AddSeconds (ats.UnixTime).ToLocalTime ();
 		}
-		
+
+		public static int TimeSpanToInt32 (TimeSpan timespan)
+		{
+			if (timespan == TimeSpan.MaxValue)
+				return -1;
+			else
+				return (int) timespan.TotalMilliseconds;
+		}
 	}
 }

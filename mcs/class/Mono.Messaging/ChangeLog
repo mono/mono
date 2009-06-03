@@ -1,3 +1,8 @@
+2009-05-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Mono.Messaging_test.dll.sources:  Added MessageEnumeratorExceptionTest.cs
+	* Makefile:  Added nunit-mocks.dll to build
+
 2008-12-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (TEST_MCS_FLAGS): Reference System.Messaging.dll.
