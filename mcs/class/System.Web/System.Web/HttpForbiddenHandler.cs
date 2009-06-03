@@ -34,7 +34,16 @@ namespace System.Web
 	{
 		public void ProcessRequest (HttpContext context)
 		{
-			throw new HttpException (403, "Forbidden");
+			HttpRequest req = context != null ? context.Request : null;
+			string path = req != null ? req.Path : null;
+			string description = "The type of page you have requested is not served because it has been explicitly forbidden. The extension '" +
+				(path == null ? String.Empty : VirtualPathUtility.GetExtension (path)) +
+				"' may be incorrect. Please review the URL below and make sure that it is spelled correctly.";
+				
+			throw new HttpException (403,
+						 "This type of page is not served.",
+						 req != null ? req.Path : null,
+						 description);
 		}
 
 		public bool IsReusable

@@ -216,14 +216,15 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		void WriteFileBottom (StringBuilder builder, bool showTrace)
 		{
 			builder.Append ("<hr style=\"color: silver\"/>");
-			builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n<!--", Environment.Version);
+			builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n", Environment.Version);
 			if (!showTrace)
 				return;
 			
 			string trace, message;
 			bool haveTrace;
 			Exception ex = this;
-			
+
+			builder.Append ("\r\n<!--");
 			while (ex != null) {
 				trace = ex.StackTrace;
 				message = ex.Message;
@@ -320,7 +321,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			if (resource_name != null && resource_name.Length > 0)
 				builder.AppendFormat ("<p><strong>Requested URL: </strong>{0}</p>\r\n", resource_name);
 			
-			if (baseEx != null && http_code != 404) {
+			if (showTrace && baseEx != null && http_code != 404) {
 				builder.Append ("<p><strong>Stack Trace: </strong></p>");
 				builder.Append ("<table summary=\"Stack Trace\" class=\"sampleCode\">\r\n<tr><td>");
 				WriteTextAsCode (builder, baseEx.ToString ());
