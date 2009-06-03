@@ -1,4 +1,8 @@
 2009-06-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* OracleParameter.cs:  Infer the ocitype before inferring the size
+	
+2009-06-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	* OracleParameter.cs:  If a non-zero size is passed, update 
 	the size member but sizeSet is updated only when a non-null 

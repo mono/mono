@@ -386,7 +386,7 @@ namespace MonoTests.System.Data.OracleClient
 			"END;\n";
 
 		    string insertValue = "INSERT INTO oratest VALUES " +
-			"(424608, \"This is a test for 424908 parameter size bug\", NULL);";
+			"(424908, \"This is a test for 424908 parameter size bug\", NULL);";
 
 		    using (command = conn.CreateCommand ()) {
 			command.CommandText = createSP;
@@ -457,7 +457,6 @@ namespace MonoTests.System.Data.OracleClient
 			OracleParameter text = new OracleParameter ("text", OracleType.NVarChar, 64);
 			text.Direction = ParameterDirection.Output;
 			text.Value = string.Empty;
-			text.Size = 64;
 			command.Parameters.Add (text);
 
 			command.CommandType = CommandType.StoredProcedure;

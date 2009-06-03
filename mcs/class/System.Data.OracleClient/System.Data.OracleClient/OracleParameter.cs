@@ -123,13 +123,15 @@ namespace System.Data.OracleClient
 		{
 			this.name = name;
 			this.value = value;
+			InferOracleType (value);			
+			srcColumn = string.Empty;
+			SourceVersion = DataRowVersion.Current;
+
+			// Find the OciType before inferring for the size
 			if (value != null && value != DBNull.Value) {
 				this.sizeSet = true;
 				this.size = InferSize ();
 			}
-			srcColumn = string.Empty;
-			SourceVersion = DataRowVersion.Current;
-			InferOracleType (value);			
 		}
 
 		public OracleParameter (string name, OracleType oracleType)
