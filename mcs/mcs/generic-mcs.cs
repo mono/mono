@@ -446,5 +446,10 @@ namespace Mono.CSharp
 		{
 			return v;
 		}
+		
+		public static bool IsVariantOf (Type a, Type b)
+		{
+			return false;
+		}
 	}
 }

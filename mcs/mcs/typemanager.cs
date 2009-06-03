@@ -2019,39 +2019,6 @@ namespace Mono.CSharp {
 		return false;
 	}
 
-	public static bool IsVariantOf (Type type1, Type type2)
-	{
-#if GMCS_SOURCE
-		if (type1.IsGenericType && type2.IsGenericType) {
-			Type generic_target_type = type2.GetGenericTypeDefinition ();
-			if (type1.GetGenericTypeDefinition () == generic_target_type) {
-				Type [] t1 = type1.GetGenericArguments ();
-				Type [] t2 = type2.GetGenericArguments ();
-				int i = 0;
-				foreach (Type t in generic_target_type.GetGenericArguments ()) {
-					if ((t.GenericParameterAttributes & GenericParameterAttributes.VarianceMask) != 0) {
-						// FIXME this is not right
-						if (IsValueType (t1[i]) || IsValueType (t2[i])) {
-							return false;
-						}
-						if ((t.GenericParameterAttributes & GenericParameterAttributes.Covariant) != 0 && !t2[i].IsAssignableFrom (t1[i])) {
-							return false;
-						}
-						if ((t.GenericParameterAttributes & GenericParameterAttributes.Contravariant) != 0 && !t1[i].IsAssignableFrom (t2[i])) {
-							return false;
-						}
-					} else if (t1[i] != t2[i]) {
-						return false;
-					}
-					i++;
-				}
-				return true;
-			}
-		}
-#endif
-		return false;
-	}
-
 	static NumberFormatInfo nf_provider = CultureInfo.CurrentCulture.NumberFormat;
 
 	// This is a custom version of Convert.ChangeType() which works

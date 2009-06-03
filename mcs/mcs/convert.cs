@@ -367,6 +367,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (TypeManager.IsVariantOf (expr_type, target_type))
+				return true;
+
 			// from any interface type S to interface-type T.
 			if (expr_type.IsInterface && target_type.IsInterface) {
 				return TypeManager.ImplementsInterface (expr_type, target_type);
@@ -379,9 +382,6 @@ namespace Mono.CSharp {
 
 			if (TypeManager.IsEqual (expr_type, target_type))
 				return true;
-
-			if (TypeManager.IsVariantOf (expr_type, target_type))
-			    return true;
 
 			return false;
 		}

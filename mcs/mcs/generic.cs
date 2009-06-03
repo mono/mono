@@ -1917,6 +1917,37 @@ namespace Mono.CSharp {
 			return Variance.None;
 		}
 
+		public static bool IsVariantOf (Type type1, Type type2)
+		{
+			if (!type1.IsGenericType || !type2.IsGenericType)
+				return false;
+
+			Type generic_target_type = DropGenericTypeArguments (type2);
+			if (DropGenericTypeArguments (type1) != generic_target_type)
+				return false;
+
+			Type[] t1 = GetTypeArguments (type1);
+			Type[] t2 = GetTypeArguments (type2);
+			var targs_definition = GetTypeArguments (generic_target_type);
+			for (int i = 0; i < targs_definition.Length; ++i) {
+				var v = GetTypeParameterVariance (targs_definition [i]);
+				if (v == Variance.None) {
+					if (t1[i] == t2[i])
+						continue;
+					return false;
+				}
+
+				if (v == Variance.Covariant) {
+					if (!Convert.ImplicitReferenceConversionExists (new EmptyExpression (t1 [i]), t2 [i]))
+						return false;
+				} else if (!Convert.ImplicitReferenceConversionExists (new EmptyExpression (t2[i]), t1[i])) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		///   Check whether `a' and `b' may become equal generic types.
 		///   The algorithm to do that is a little bit complicated.

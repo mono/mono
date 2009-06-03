@@ -354,6 +354,11 @@ namespace Mono.CSharp {
 
 			parameter_type = texpr.Type;
 
+			// Ignore all checks for dummy members
+			var pem = ec as AbstractPropertyEventMethod;
+			if (pem != null && pem.IsDummy)
+				return parameter_type;
+
 			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 &&
 				TypeManager.IsSpecialType (parameter_type)) {
 				Report.Error (1601, Location, "Method or delegate parameter cannot be of type `{0}'",
