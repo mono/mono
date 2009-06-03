@@ -8,8 +8,8 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 LIB_MCS_FLAGS = -r:$(corlib) -r:System.dll -r:System.Xml.dll -r:System.Security.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-# This is a .NET 2.0 only assembly
-VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0, $(PROFILE))
+# This is a .NET 2.0+ only assembly
+VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_4_0, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Configuration.dll
 NO_INSTALL = yes

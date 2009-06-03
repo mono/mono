@@ -23,7 +23,7 @@ TEST_RESOURCES = \
 TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 -nowarn:169 -nowarn:612 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
-ifeq (2, $(FRAMEWORK_VERSION_MAJOR))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
 endif
@@ -39,10 +39,12 @@ EXTRA_DISTFILES = \
 	Test/System.Security.Cryptography.X509Certificates/pkits/x509build.cs	\
 	$(RESOURCE_FILES)				\
 	$(TEST_RESOURCES)
+	
+PROFILE_2_OR_4 := $(filter net_2_0 net_4_0, $(PROFILE))	
 
 lib_file := $(wildcard ../lib/$(PROFILE)/System.dll)
 ifdef lib_file
-ifeq (2.0, $(FRAMEWORK_VERSION))
+ifdef PROFILE_2_OR_4
 LIB_MCS_FLAGS += -r:PrebuiltSystem=$(lib_file)
 endif
 else
@@ -89,7 +91,7 @@ endif
 
 endif
 
-ifeq (2.0, $(FRAMEWORK_VERSION))
+ifdef PROFILE_2_OR_4
 # $(eval $(call cyclic-dep,Mono.Security.dll,SECURITY_DEP))
 CYCLIC_DEPS += Mono.Security.dll
 ifndef USE_BOOT_COMPILE

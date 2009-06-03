@@ -2,7 +2,7 @@ thisdir = class/Mono.Data.Sqlite
 SUBDIRS =
 include ../../build/rules.make
 
-ifeq (net_2_0, $(PROFILE))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_LIB_MCS_FLAGS = /r:System.Transactions.dll
 
 RESX_RESOURCES = resources/SR.resources

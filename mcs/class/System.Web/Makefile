@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Web.dll
 
-ifeq (net_2_0, $(PROFILE))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
@@ -171,12 +171,12 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ExpressionInListControl.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
-ifeq (net_2_0, $(PROFILE))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 RESX_RES = $(RESX_DIST:.resx=.resources)
 endif
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
-ifeq (net_2_0, $(PROFILE))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_RES += $(RESOURCE_FILES_2)
 OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll
 endif

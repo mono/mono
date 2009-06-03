@@ -11,7 +11,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Xml.dll			\
 	-r:System.Web.dll
 
-ifeq (net_2_0, $(PROFILE))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += \
 	-r:System.Configuration.dll \
 	-resource:System.Web.Services.Description/wsdl-1.1.xsd,wsdl-1.1.xsd \

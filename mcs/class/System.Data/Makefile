@@ -10,7 +10,7 @@ else
 system = $(topdir)/class/lib/$(PROFILE)/System.dll
 endif
 
-ifeq (net_2_0, $(PROFILE))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll \
 			-r:System.Transactions.dll
 endif

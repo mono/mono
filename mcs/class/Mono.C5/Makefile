@@ -11,8 +11,8 @@ EXTRA_DISTFILES = \
 	LICENSE.txt \
 	c5.pub c5.snk c5.xml
 
-# This is a .NET 2.0 only assembly
-VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0, $(PROFILE))
+# This is a .NET 2.0+ only assembly
+VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-Mono.C5.dll
 NO_INSTALL = yes

@@ -6,14 +6,14 @@ LIBRARY = System.Core.dll
 
 LIB_MCS_FLAGS = -d:LIBC /r:$(corlib) /r:System
 
-ifeq (2.0, $(FRAMEWORK_VERSION))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += -d:NET_3_5 -nowarn:1720
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-# This is a .NET > 2.0 only assembly
-VALID_PROFILE := $(filter net_2_0_bootstrap net_2_0 net_2_1_raw, $(PROFILE))
+# This is a .NET 2.0+ only assembly
+VALID_PROFILE := $(filter net_2_0 net_2_1_raw net_4_0, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Core.dll
 NO_INSTALL = yes

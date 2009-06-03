@@ -11,7 +11,7 @@ LIB_MCS_FLAGS = /unsafe \
 	@System.Windows.Forms.dll.resources \
 	-debug -nowarn:618,612,809
 
-ifeq (net_2_0, $(PROFILE))
+ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS += /r:System.Configuration.dll
 endif
 
