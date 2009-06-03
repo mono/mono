@@ -1,5 +1,11 @@
 2009-06-03  Jb Evain  <jbevain@novell.com>
 
+	backport of 135337.
+
+	* main.c (dis_code): don't try to locate invalid entry points.
+
+2009-06-03  Jb Evain  <jbevain@novell.com>
+
 	backport of r135334.
 
 	* main.c (dis_type): escape namespaces.
