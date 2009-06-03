@@ -106,7 +106,7 @@ $net_3_5 = [
 	"System.AddIn",
 	"System.AddIn.Contract",
 	"System.Configuration",
-	"System.Core", 
+	"System.Core",
 	"System.Configuration.Install",
 	"System.Data",
 	"System.Data.Linq",
@@ -150,7 +150,7 @@ $net_3_5 = [
 
 $net_4_0 = [
 	"mscorlib",
-	
+
 #	"Microsoft.Build.Conversion.v3.5",
 	"Microsoft.Build.Conversion.v4.0",
 	"Microsoft.Build",
@@ -293,7 +293,7 @@ def locate(assembly, fxs = nil)
 	end
 
 	gac = File.join $gac, assembly, "**", "*.dll"
-	
+
 	glob = Dir.glob gac
 
 	return glob.first if glob and glob.length > 0
@@ -314,10 +314,9 @@ def clean(pattern, allow_create = false)
 	delete(File.join("masterinfos", pattern))
 end
 
-def generate(assembly)
-	asm = File.join "masterinfos", assembly + ".dll"
+def generate(location, assembly)
 	out = File.join "masterinfos", assembly + ".xml"
-	system("./mono-api-info.exe #{asm} > #{out}")
+	system("./mono-api-info.exe \"#{location}\" > #{out}")
 end
 
 def process(profile, assemblies, fxs = nil)
@@ -325,11 +324,10 @@ def process(profile, assemblies, fxs = nil)
 
 	assemblies.each do |assembly|
 		if assembly != nil and assembly.length > 0
-			#puts assembly 
+			#puts assembly
 			location = locate(assembly, fxs)
 			if location
-				File.copy(location, "masterinfos")
-				generate(assembly)
+				generate(location, assembly)
 			else
 				puts "fail to locate " + assembly
 			end
