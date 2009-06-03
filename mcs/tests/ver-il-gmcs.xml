@@ -19378,6 +19378,19 @@
       </method>
     </type>
   </test>
+  <test name="gtest-variance-9.cs">
+    <type name="Test">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo(IIn`1)">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>10</size>
+      </method>
+    </type>
+  </test>
   <test name="ltest-01.cs">
     <type name="X">
       <method name="Void .ctor(Int32)">
