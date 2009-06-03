@@ -218,6 +218,22 @@
     <IsBestMatch>false</IsBestMatch>
   </DataTypes>
   <DataTypes>
+    <TypeName>boolean</TypeName>
+    <ProviderDbType>3</ProviderDbType>
+    <ColumnSize>1</ColumnSize>
+    <DataType>System.Boolean</DataType>
+    <CreateFormat>boolean</CreateFormat>
+    <IsAutoIncrementable>false</IsAutoIncrementable>
+    <IsCaseSensitive>false</IsCaseSensitive>
+    <IsFixedLength>true</IsFixedLength>
+    <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
+    <IsLong>false</IsLong>
+    <IsNullable>true</IsNullable>
+    <IsSearchable>true</IsSearchable>
+    <IsSearchableWithLike>false</IsSearchableWithLike>
+    <IsBestMatch>false</IsBestMatch>
+  </DataTypes>
+  <DataTypes>
     <TypeName>tinyint</TypeName>
     <ProviderDbType>2</ProviderDbType>
     <ColumnSize>3</ColumnSize>
@@ -346,7 +362,7 @@
     <IsCaseSensitive>false</IsCaseSensitive>
     <IsFixedLength>false</IsFixedLength>
     <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
-    <IsLong>true</IsLong>
+    <IsLong>false</IsLong>
     <IsNullable>true</IsNullable>
     <IsSearchable>false</IsSearchable>
     <IsSearchableWithLike>false</IsSearchableWithLike>
@@ -364,7 +380,7 @@
     <IsCaseSensitive>false</IsCaseSensitive>
     <IsFixedLength>false</IsFixedLength>
     <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
-    <IsLong>true</IsLong>
+    <IsLong>false</IsLong>
     <IsNullable>true</IsNullable>
     <IsSearchable>false</IsSearchable>
     <IsSearchableWithLike>false</IsSearchableWithLike>
@@ -382,7 +398,7 @@
     <IsCaseSensitive>false</IsCaseSensitive>
     <IsFixedLength>false</IsFixedLength>
     <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
-    <IsLong>true</IsLong>
+    <IsLong>false</IsLong>
     <IsNullable>true</IsNullable>
     <IsSearchable>false</IsSearchable>
     <IsSearchableWithLike>false</IsSearchableWithLike>
@@ -400,7 +416,7 @@
     <IsCaseSensitive>false</IsCaseSensitive>
     <IsFixedLength>false</IsFixedLength>
     <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
-    <IsLong>true</IsLong>
+    <IsLong>false</IsLong>
     <IsNullable>true</IsNullable>
     <IsSearchable>false</IsSearchable>
     <IsSearchableWithLike>false</IsSearchableWithLike>
@@ -418,7 +434,7 @@
     <IsCaseSensitive>false</IsCaseSensitive>
     <IsFixedLength>false</IsFixedLength>
     <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
-    <IsLong>true</IsLong>
+    <IsLong>false</IsLong>
     <IsNullable>true</IsNullable>
     <IsSearchable>false</IsSearchable>
     <IsSearchableWithLike>false</IsSearchableWithLike>
@@ -436,7 +452,7 @@
     <IsCaseSensitive>false</IsCaseSensitive>
     <IsFixedLength>false</IsFixedLength>
     <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
-    <IsLong>true</IsLong>
+    <IsLong>false</IsLong>
     <IsNullable>true</IsNullable>
     <IsSearchable>false</IsSearchable>
     <IsSearchableWithLike>false</IsSearchableWithLike>
@@ -489,6 +505,25 @@
     <CreateParameters>max length</CreateParameters>
     <DataType>System.String</DataType>
     <CreateFormat>memo({0})</CreateFormat>
+    <IsAutoIncrementable>false</IsAutoIncrementable>
+    <IsCaseSensitive>false</IsCaseSensitive>
+    <IsFixedLength>false</IsFixedLength>
+    <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
+    <IsLong>false</IsLong>
+    <IsNullable>true</IsNullable>
+    <IsSearchable>true</IsSearchable>
+    <IsSearchableWithLike>true</IsSearchableWithLike>
+    <LiteralPrefix>'</LiteralPrefix>
+    <LiteralSuffix>'</LiteralSuffix>
+    <IsBestMatch>false</IsBestMatch>
+  </DataTypes>
+  <DataTypes>
+    <TypeName>longtext</TypeName>
+    <ProviderDbType>16</ProviderDbType>
+    <ColumnSize>2147483647</ColumnSize>
+    <CreateParameters>max length</CreateParameters>
+    <DataType>System.String</DataType>
+    <CreateFormat>longtext({0})</CreateFormat>
     <IsAutoIncrementable>false</IsAutoIncrementable>
     <IsCaseSensitive>false</IsCaseSensitive>
     <IsFixedLength>false</IsFixedLength>
@@ -632,6 +667,24 @@
     <LiteralPrefix>'</LiteralPrefix>
     <LiteralSuffix>'</LiteralSuffix>
     <IsBestMatch>true</IsBestMatch>
+  </DataTypes>
+  <DataTypes>
+    <TypeName>smalldate</TypeName>
+    <ProviderDbType>6</ProviderDbType>
+    <ColumnSize>23</ColumnSize>
+    <DataType>System.DateTime</DataType>
+    <CreateFormat>smalldate</CreateFormat>
+    <IsAutoIncrementable>false</IsAutoIncrementable>
+    <IsCaseSensitive>false</IsCaseSensitive>
+    <IsFixedLength>true</IsFixedLength>
+    <IsFixedPrecisionScale>false</IsFixedPrecisionScale>
+    <IsLong>false</IsLong>
+    <IsNullable>true</IsNullable>
+    <IsSearchable>true</IsSearchable>
+    <IsSearchableWithLike>true</IsSearchableWithLike>
+    <LiteralPrefix>'</LiteralPrefix>
+    <LiteralSuffix>'</LiteralSuffix>
+    <IsBestMatch>false</IsBestMatch>
   </DataTypes>
   <DataTypes>
     <TypeName>timestamp</TypeName>

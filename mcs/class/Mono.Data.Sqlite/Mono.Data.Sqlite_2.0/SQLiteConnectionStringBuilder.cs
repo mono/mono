@@ -1,44 +1,11 @@
-//
-// Mono.Data.Sqlite.SQLiteConnectionStringBuilder.cs
-//
-// Author(s):
-//   Robert Simpson (robert@blackcastlesoft.com)
-//
-// Adapted and modified for the Mono Project by
-//   Marek Habersack (grendello@gmail.com)
-//
-//
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
-// Copyright (C) 2007 Marek Habersack
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-/********************************************************
- * ADO.NET 2.0 Data Provider for Sqlite Version 3.X
+﻿/********************************************************
+ * ADO.NET 2.0 Data Provider for SQLite Version 3.X
  * Written by Robert Simpson (robert@blackcastlesoft.com)
  * 
  * Released to the public domain, use at your own risk!
  ********************************************************/
-#if NET_2_0
-namespace Mono.Data.Sqlite
+
+namespace System.Data.SQLite
 {
   using System;
   using System.Data.Common;
@@ -51,11 +18,11 @@ namespace Mono.Data.Sqlite
   using System.ComponentModel.Design;
 
   /// <summary>
-  /// Sqlite implementation of DbConnectionStringBuilder.
+  /// SQLite implementation of DbConnectionStringBuilder.
   /// </summary>
   [DefaultProperty("DataSource")]
   [DefaultMember("Item")]
-  public sealed class SqliteConnectionStringBuilder : DbConnectionStringBuilder
+  public sealed class SQLiteConnectionStringBuilder : DbConnectionStringBuilder
   {
     /// <summary>
     /// Properties of this class
@@ -68,7 +35,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Default constructor
     /// </summary>
-    public SqliteConnectionStringBuilder()
+    public SQLiteConnectionStringBuilder()
     {
       Initialize(null);
     }
@@ -77,7 +44,7 @@ namespace Mono.Data.Sqlite
     /// Constructs a new instance of the class using the specified connection string.
     /// </summary>
     /// <param name="connectionString">The connection string to parse</param>
-    public SqliteConnectionStringBuilder(string connectionString)
+    public SQLiteConnectionStringBuilder(string connectionString)
     {
       Initialize(connectionString);
     }
@@ -88,15 +55,22 @@ namespace Mono.Data.Sqlite
     /// <param name="cnnString">The connection string to assign</param>
     private void Initialize(string cnnString)
     {
-      _properties = new Hashtable();
-      base.GetProperties(_properties);
+      _properties = new Hashtable(StringComparer.InvariantCultureIgnoreCase);
+      try
+      {
+        base.GetProperties(_properties);
+      }
+      catch(NotImplementedException)
+      {
+        FallbackGetProperties(_properties);
+      }
 
       if (String.IsNullOrEmpty(cnnString) == false)
         ConnectionString = cnnString;
     }
 
     /// <summary>
-    /// Gets/Sets the default version of the Sqlite engine to instantiate.  Currently the only valid value is 3, indicating version 3 of the sqlite library.
+    /// Gets/Sets the default version of the SQLite engine to instantiate.  Currently the only valid value is 3, indicating version 3 of the sqlite library.
     /// </summary>
     [Browsable(true)]
     [DefaultValue(3)]
@@ -104,21 +78,21 @@ namespace Mono.Data.Sqlite
     {
       get
       {
-        if (ContainsKey("Version") == false) return 3;
-
-        return Convert.ToInt32(this["Version"], CultureInfo.CurrentCulture);
+        object value;
+        TryGetValue("version", out value);
+        return Convert.ToInt32(value, CultureInfo.CurrentCulture);
       }
       set
       {
         if (value != 3)
           throw new NotSupportedException();
 
-        this["Version"] = value;
+        this["version"] = value;
       }
     }
 
     /// <summary>
-    /// Gets/Sets the synchronous mode of the connection string.  Default is "Normal".
+    /// Gets/Sets the synchronization mode (file flushing) of the connection string.  Default is "Normal".
     /// </summary>
     [DisplayName("Synchronous")]
     [Browsable(true)]
@@ -127,11 +101,15 @@ namespace Mono.Data.Sqlite
     {
       get
       {
-        return (SynchronizationModes)TypeDescriptor.GetConverter(typeof(SynchronizationModes)).ConvertFrom(this["Synchronous"]);
+        object value;
+        TryGetValue("synchronous", out value);
+        if (value is string)
+          return (SynchronizationModes)TypeDescriptor.GetConverter(typeof(SynchronizationModes)).ConvertFrom(value);
+        else return (SynchronizationModes)value;
       }
       set
       {
-        this["Synchronous"] = value;
+        this["synchronous"] = value;
       }
     }
 
@@ -144,11 +122,52 @@ namespace Mono.Data.Sqlite
     {
       get
       {
-        return Convert.ToBoolean(this["UseUTF16Encoding"], CultureInfo.CurrentCulture);
+        object value;
+        TryGetValue("useutf16encoding", out value);
+        return SQLiteConvert.ToBoolean(value);
       }
       set
       {
-        this["UseUTF16Encoding"] = value;
+        this["useutf16encoding"] = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets/Sets whether or not to use connection pooling.  The default is "False"
+    /// </summary>
+    [Browsable(true)]
+    [DefaultValue(false)]
+    public bool Pooling
+    {
+      get
+      {
+        object value;
+        TryGetValue("pooling", out value);
+        return SQLiteConvert.ToBoolean(value);
+      }
+      set
+      {
+        this["pooling"] = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets/Sets whethor not to store GUID's in binary format.  The default is True
+    /// which saves space in the database.
+    /// </summary>
+    [Browsable(true)]
+    [DefaultValue(true)]
+    public bool BinaryGUID
+    {
+      get
+      {
+        object value;
+        TryGetValue("binaryguid", out value);
+        return SQLiteConvert.ToBoolean(value);
+      }
+      set
+      {
+        this["binaryguid"] = value;
       }
     }
 
@@ -157,75 +176,158 @@ namespace Mono.Data.Sqlite
     /// </summary>
     [DisplayName("Data Source")]
     [Browsable(true)]
+    [DefaultValue("")]
     public string DataSource
     {
       get
       {
-        if (ContainsKey("Data Source") == false) return "";
-
-        return this["Data Source"].ToString();
+        object value;
+        TryGetValue("data source", out value);
+        return value.ToString();
       }
       set
       {
-        this["Data Source"] = value;
+        this["data source"] = value;
       }
     }
 
-#region Mono-specific
     /// <summary>
-    /// Gets/Sets the filename to open on the connection string (Mono-specific, uses DataSource).
+    /// An alternate to the data source property
     /// </summary>
-    [DisplayName("Data Source")]
-    [Browsable(true)]
+    [Browsable(false)]
     public string Uri
     {
       get
       {
-	return DataSource;
+        object value;
+        TryGetValue("uri", out value);
+        return value.ToString();
       }
       set
       {
-        DataSource = value;
+        this["uri"] = value;
       }
     }
-#endregion
-    
+
+    /// <summary>
+    /// Gets/sets the default command timeout for newly-created commands.  This is especially useful for 
+    /// commands used internally such as inside a SQLiteTransaction, where setting the timeout is not possible.
+    /// </summary>
+    [DisplayName("Default Timeout")]
+    [Browsable(true)]
+    [DefaultValue(30)]
+    public int DefaultTimeout
+    {
+      get
+      {
+        object value;
+        TryGetValue("default timeout", out value);
+        return Convert.ToInt32(value, CultureInfo.CurrentCulture);
+      }
+      set
+      {
+        this["default timeout"] = value;
+      }
+    }
+
     /// <summary>
     /// Determines whether or not the connection will automatically participate
     /// in the current distributed transaction (if one exists)
     /// </summary>
-    [DisplayName("Automatic Enlistment")]
     [Browsable(true)]
     [DefaultValue(true)]
     public bool Enlist
     {
       get
       {
-        if (ContainsKey("Enlist") == false) return true;
-
-        return (this["Enlist"].ToString() == "Y");
+        object value;
+        TryGetValue("enlist", out value);
+        return SQLiteConvert.ToBoolean(value);
       }
       set
       {
-        this["Enlist"] = (value == true) ? "Y" : "N";
+        this["enlist"] = value;
       }
     }
+
+    /// <summary>
+    /// If set to true, will throw an exception if the database specified in the connection
+    /// string does not exist.  If false, the database will be created automatically.
+    /// </summary>
+    [Browsable(true)]
+    [DefaultValue(false)]
+    public bool FailIfMissing
+    {
+      get
+      {
+        object value;
+        TryGetValue("failifmissing", out value);
+        return SQLiteConvert.ToBoolean(value);
+      }
+      set
+      {
+        this["failifmissing"] = value;
+      }
+    }
+
+    /// <summary>
+    /// If enabled, uses the legacy 3.xx format for maximum compatibility, but results in larger
+    /// database sizes.
+    /// </summary>
+    [DisplayName("Legacy Format")]
+    [Browsable(true)]
+    [DefaultValue(false)]
+    public bool LegacyFormat
+    {
+      get
+      {
+        object value;
+        TryGetValue("legacy format", out value);
+        return SQLiteConvert.ToBoolean(value);
+      }
+      set
+      {
+        this["legacy format"] = value;
+      }
+    }
+
+    /// <summary>
+    /// When enabled, the database will be opened for read-only access and writing will be disabled.
+    /// </summary>
+    [DisplayName("Read Only")]
+    [Browsable(true)]
+    [DefaultValue(false)]
+    public bool ReadOnly
+    {
+      get
+      {
+        object value;
+        TryGetValue("read only", out value);
+        return SQLiteConvert.ToBoolean(value);
+      }
+      set
+      {
+        this["read only"] = value;
+      }
+    }
+
     /// <summary>
     /// Gets/sets the database encryption password
     /// </summary>
     [Browsable(true)]
     [PasswordPropertyText(true)]
+    [DefaultValue("")]
     public string Password
     {
       get
       {
-        if (ContainsKey("Password") == false) return "";
-
-        return this["Password"].ToString();
+        object value;
+        TryGetValue("password", out value);
+        return value.ToString();
       }
       set
       {
-        this["Password"] = value;
+        this["password"] = value;
       }
     }
 
@@ -239,12 +341,33 @@ namespace Mono.Data.Sqlite
     {
       get
       {
-        if (ContainsKey("Page Size") == false) return 1024;
-        return Convert.ToInt32(this["Page Size"], CultureInfo.InvariantCulture);
+        object value;
+        TryGetValue("page size", out value);
+        return Convert.ToInt32(value, CultureInfo.CurrentCulture);
       }
       set
       {
-        this["Page Size"] = value;
+        this["page size"] = value;
+      }
+    }
+
+    /// <summary>
+    /// Gets/Sets the maximum number of pages the database may hold
+    /// </summary>
+    [DisplayName("Max Page Count")]
+    [Browsable(true)]
+    [DefaultValue(0)]
+    public int MaxPageCount
+    {
+      get
+      {
+        object value;
+        TryGetValue("max page count", out value);
+        return Convert.ToInt32(value, CultureInfo.CurrentCulture);
+      }
+      set
+      {
+        this["max page count"] = value;
       }
     }
 
@@ -258,12 +381,13 @@ namespace Mono.Data.Sqlite
     {
       get
       {
-        if (ContainsKey("Cache Size") == false) return 2000;
-        return Convert.ToInt32(this["Cache Size"], CultureInfo.InvariantCulture);
+        object value;
+        TryGetValue("cache size", out value);
+        return Convert.ToInt32(value, CultureInfo.CurrentCulture);
       }
       set
       {
-        this["Cache Size"] = value;
+        this["cache size"] = value;
       }
     }
 
@@ -271,18 +395,66 @@ namespace Mono.Data.Sqlite
     /// Gets/Sets the datetime format for the connection.
     /// </summary>
     [Browsable(true)]
-    [DefaultValue(SqliteDateFormats.ISO8601)]
-    public SqliteDateFormats DateTimeFormat
+    [DefaultValue(SQLiteDateFormats.ISO8601)]
+    public SQLiteDateFormats DateTimeFormat
     {
       get
       {
-        if (ContainsKey("DateTimeFormat") == false) return SqliteDateFormats.ISO8601;
-
-        return (SqliteDateFormats)TypeDescriptor.GetConverter(typeof(SqliteDateFormats)).ConvertFrom(this["DateTimeFormat"]);
+        object value;
+        TryGetValue("datetimeformat", out value);
+        if (value is string)
+          return (SQLiteDateFormats)TypeDescriptor.GetConverter(typeof(SQLiteDateFormats)).ConvertFrom(value);
+        else return (SQLiteDateFormats)value;
       }
       set
       {
-        this["DateTimeFormat"] = value;
+        this["datetimeformat"] = value;
+      }
+    }
+
+    /// <summary>
+    /// Determines how SQLite handles the transaction journal file.
+    /// </summary>
+    [Browsable(true)]
+    [DefaultValue(SQLiteJournalModeEnum.Delete)]
+    [DisplayName("Journal Mode")]
+    public SQLiteJournalModeEnum JournalMode
+    {
+      get
+      {
+        object value;
+        TryGetValue("journal mode", out value);
+        if (value is string)
+          return (SQLiteJournalModeEnum)TypeDescriptor.GetConverter(typeof(SQLiteJournalModeEnum)).ConvertFrom(value);
+        else
+          return (SQLiteJournalModeEnum)value;
+      }
+      set
+      {
+        this["journal mode"] = value;
+      }
+    }
+
+    /// <summary>
+    /// Sets the default isolation level for transactions on the connection.
+    /// </summary>
+    [Browsable(true)]
+    [DefaultValue(IsolationLevel.Serializable)]
+    [DisplayName("Default Isolation Level")]
+    public IsolationLevel DefaultIsolationLevel
+    {
+      get
+      {
+        object value;
+        TryGetValue("default isolationlevel", out value);
+        if (value is string)
+          return (IsolationLevel)TypeDescriptor.GetConverter(typeof(IsolationLevel)).ConvertFrom(value);
+        else
+          return (IsolationLevel)value;
+      }
+      set
+      {
+        this["default isolationlevel"] = value;
       }
     }
 
@@ -302,9 +474,13 @@ namespace Mono.Data.Sqlite
 
       if (pd == null) return b;
 
+      // Attempt to coerce the value into something more solid
       if (b)
       {
-        value = TypeDescriptor.GetConverter(pd.PropertyType).ConvertFrom(value);
+        if (pd.PropertyType == typeof(Boolean))
+          value = SQLiteConvert.ToBoolean(value);
+        else
+          value = TypeDescriptor.GetConverter(pd.PropertyType).ConvertFrom(value);
       }
       else
       {
@@ -317,7 +493,21 @@ namespace Mono.Data.Sqlite
       }
       return b;
     }
+
+    /// <summary>
+    /// Fallback method for MONO, which doesn't implement DbConnectionStringBuilder.GetProperties()
+    /// </summary>
+    /// <param name="propertyList">The hashtable to fill with property descriptors</param>
+    private void FallbackGetProperties(Hashtable propertyList)
+    {
+      foreach (PropertyDescriptor descriptor in TypeDescriptor.GetProperties(this, true))
+      {
+        if (descriptor.Name != "ConnectionString" && propertyList.ContainsKey(descriptor.DisplayName) == false)
+        {
+          propertyList.Add(descriptor.DisplayName, descriptor);
+        }
+      }
+    }
   }
 #endif
 }
-#endif

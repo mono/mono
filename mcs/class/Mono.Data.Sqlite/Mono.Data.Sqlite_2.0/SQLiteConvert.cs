@@ -1,47 +1,13 @@
-//
-// Mono.Data.Sqlite.SQLiteConvert.cs
-//
-// Author(s):
-//   Robert Simpson (robert@blackcastlesoft.com)
-//
-// Adapted and modified for the Mono Project by
-//   Marek Habersack (grendello@gmail.com)
-//
-//
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
-// Copyright (C) 2007 Marek Habersack
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-/********************************************************
- * ADO.NET 2.0 Data Provider for Sqlite Version 3.X
+﻿/********************************************************
+ * ADO.NET 2.0 Data Provider for SQLite Version 3.X
  * Written by Robert Simpson (robert@blackcastlesoft.com)
  * 
  * Released to the public domain, use at your own risk!
  ********************************************************/
-#if NET_2_0
-namespace Mono.Data.Sqlite
+
+namespace System.Data.SQLite
 {
   using System;
-  using System.Data;
   using System.Runtime.InteropServices;
   using System.Collections.Generic;
   using System.ComponentModel;
@@ -53,133 +19,46 @@ namespace Mono.Data.Sqlite
 #endif
 
   /// <summary>
-  /// Sqlite has very limited types, and is inherently text-based.  The first 5 types below represent the sum of all types Sqlite
-  /// understands.  The DateTime extension to the spec is for internal use only.
+  /// This base class provides datatype conversion services for the SQLite provider.
   /// </summary>
-  public enum TypeAffinity
-  {
-    /// <summary>
-    /// Not used
-    /// </summary>
-    Uninitialized = 0,
-    /// <summary>
-    /// All integers in Sqlite default to Int64
-    /// </summary>
-    Int64 = 1,
-    /// <summary>
-    /// All floating point numbers in Sqlite default to double
-    /// </summary>
-    Double = 2,
-    /// <summary>
-    /// The default data type of Sqlite is text
-    /// </summary>
-    Text = 3,
-    /// <summary>
-    /// Typically blob types are only seen when returned from a function
-    /// </summary>
-    Blob = 4,
-    /// <summary>
-    /// Null types can be returned from functions
-    /// </summary>
-    Null = 5,
-    /// <summary>
-    /// Used internally by this provider
-    /// </summary>
-    DateTime = 10,
-    /// <summary>
-    /// Used internally
-    /// </summary>
-    None = 11,
-  }
-
-  /// <summary>
-  /// This implementation of Sqlite for ADO.NET can process date/time fields in databases in only one of two formats.  Ticks and ISO8601.
-  /// Ticks is inherently more accurate, but less compatible with 3rd party tools that query the database, and renders the DateTime field
-  /// unreadable without post-processing.
-  /// ISO8601 is more compatible, readable, fully-processable, but less accurate as it doesn't provide time down to fractions of a second.
-  /// </summary>
-  public enum SqliteDateFormats
-  {
-    /// <summary>
-    /// Using ticks is more accurate but less compatible with other viewers and utilities that access your database.
-    /// </summary>
-    Ticks = 0,
-    /// <summary>
-    /// The default format for this provider.
-    /// </summary>
-    ISO8601 = 1,
-  }
-
-  /// <summary>
-  /// Struct used internally to determine the datatype of a column in a resultset
-  /// </summary>
-  internal struct SqliteType
-  {
-    /// <summary>
-    /// The DbType of the column, or DbType.Object if it cannot be determined
-    /// </summary>
-    internal DbType Type;
-    /// <summary>
-    /// The affinity of a column, used for expressions or when Type is DbType.Object
-    /// </summary>
-    internal TypeAffinity Affinity;
-  }
-
-  internal struct SqliteTypeNames
-  {
-    internal SqliteTypeNames(string newtypeName, DbType newdataType)
-    {
-      typeName = newtypeName;
-      dataType = newdataType;
-    }
-
-    internal string typeName;
-    internal DbType dataType;
-  }
-
-  /// <summary>
-  /// This base class provides datatype conversion services for the Sqlite provider.
-  /// </summary>
-  public abstract class SqliteConvert
+  public abstract class SQLiteConvert
   {
     /// <summary>
     /// An array of ISO8601 datetime formats we support conversion from
     /// </summary>
     private static string[] _datetimeFormats = new string[] {
-      "yyyy-MM-dd HH:mm:ss.fffffff",
-      "yyyy-MM-dd HH:mm:ss",
-      "yyyy-MM-dd HH:mm",                               
-      "yyyyMMddHHmmss",
-      "yyyyMMddHHmm",
-      "yyyyMMddTHHmmssfffffff",
-      "yyyy-MM-dd",
-      "yy-MM-dd",
-      "yyyyMMdd",
-      "HH:mm:ss",
-      "HH:mm",
       "THHmmss",
       "THHmm",
-      "yyyy-MM-dd HH:mm:ss.fff",
+      "HH:mm:ss",
+      "HH:mm",
+      "HH:mm:ss.FFFFFFF",
+      "yy-MM-dd",
+      "yyyy-MM-dd",
+      "yyyy-MM-dd HH:mm:ss.FFFFFFF",
+      "yyyy-MM-dd HH:mm:ss",
+      "yyyy-MM-dd HH:mm",                               
+      "yyyy-MM-ddTHH:mm:ss.FFFFFFF",
       "yyyy-MM-ddTHH:mm",
       "yyyy-MM-ddTHH:mm:ss",
-      "yyyy-MM-ddTHH:mm:ss.fff",
-      "yyyy-MM-ddTHH:mm:ss.ffffff",
-      "HH:mm:ss.fff"
+      "yyyyMMddHHmmss",
+      "yyyyMMddHHmm",
+      "yyyyMMddTHHmmssFFFFFFF",
+      "yyyyMMdd"
     };
 
     /// <summary>
     /// An UTF-8 Encoding instance, so we can convert strings to and from UTF-8
     /// </summary>
-    private Encoding _utf8 = new UTF8Encoding();
+    private static Encoding _utf8 = new UTF8Encoding();
     /// <summary>
     /// The default DateTime format for this instance
     /// </summary>
-    internal SqliteDateFormats _datetimeFormat;
+    internal SQLiteDateFormats _datetimeFormat;
     /// <summary>
     /// Initializes the conversion class
     /// </summary>
     /// <param name="fmt">The default date/time format to use for this instance</param>
-    internal SqliteConvert(SqliteDateFormats fmt)
+    internal SQLiteConvert(SQLiteDateFormats fmt)
     {
       _datetimeFormat = fmt;
     }
@@ -190,7 +69,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="sourceText">The string to convert to UTF-8</param>
     /// <returns>A byte array containing the converted string plus an extra 0 terminating byte at the end of the array.</returns>
-    public byte[] ToUTF8(string sourceText)
+    public static byte[] ToUTF8(string sourceText)
     {
       Byte[] byteArray;
       int nlen = _utf8.GetByteCount(sourceText) + 1;
@@ -222,9 +101,9 @@ namespace Mono.Data.Sqlite
     /// <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
     /// <param name="nativestringlen">The number of bytes to decode</param>
     /// <returns>A string containing the translated character(s)</returns>
-    public virtual string ToString(IntPtr nativestring)
+    public virtual string ToString(IntPtr nativestring, int nativestringlen)
     {
-      return UTF8ToString(nativestring);
+      return UTF8ToString(nativestring, nativestringlen);
     }
 
     /// <summary>
@@ -233,26 +112,22 @@ namespace Mono.Data.Sqlite
     /// <param name="nativestring">The pointer to the memory where the UTF-8 string is encoded</param>
     /// <param name="nativestringlen">The number of bytes to decode</param>
     /// <returns>A string containing the translated character(s)</returns>
-    public virtual string UTF8ToString(IntPtr nativestring)
+    public static string UTF8ToString(IntPtr nativestring, int nativestringlen)
     {
-      if (nativestring == IntPtr.Zero)
-        return null;
-    
-      // This assumes a single byte terminates the string.
-
-      int len = 0;
-      while (Marshal.ReadByte (nativestring, len) != 0)
-        checked {++len;}
-
-      unsafe { 
-        string s = new string ((sbyte*) nativestring, 0, len, _utf8);
-        len = s.Length;
-        while (len > 0 && s [len-1] == 0)
-          --len;
-        if (len == s.Length) 
-          return s;
-        return s.Substring (0, len);
+      if (nativestringlen == 0 || nativestring == IntPtr.Zero) return "";
+      if (nativestringlen == -1)
+      {
+        do
+        {
+          nativestringlen++;
+        } while (Marshal.ReadByte(nativestring, nativestringlen) != 0);
       }
+
+      byte[] byteArray = new byte[nativestringlen];
+      
+      Marshal.Copy(nativestring, byteArray, 0, nativestringlen);
+
+      return _utf8.GetString(byteArray, 0, nativestringlen);
     }
 
 
@@ -273,32 +148,56 @@ namespace Mono.Data.Sqlite
     ///   HH:mm:ss
     ///   THHmmss
     /// </remarks>
-    /// <param name="dateText">The string containing either a Tick value or an ISO8601-format string</param>
+    /// <param name="dateText">The string containing either a Tick value, a JulianDay double, or an ISO8601-format string</param>
     /// <returns>A DateTime value</returns>
     public DateTime ToDateTime(string dateText)
     {
       switch (_datetimeFormat)
       {
-        case SqliteDateFormats.Ticks:
+        case SQLiteDateFormats.Ticks:
           return new DateTime(Convert.ToInt64(dateText, CultureInfo.InvariantCulture));
+        case SQLiteDateFormats.JulianDay:
+          return ToDateTime(Convert.ToDouble(dateText, CultureInfo.InvariantCulture));
         default:
           return DateTime.ParseExact(dateText, _datetimeFormats, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None);
       }
     }
 
     /// <summary>
+    /// Converts a julianday value into a DateTime
+    /// </summary>
+    /// <param name="julianDay">The value to convert</param>
+    /// <returns>A .NET DateTime</returns>
+    public DateTime ToDateTime(double julianDay)
+    {
+      return DateTime.FromOADate(julianDay - 2415018.5);
+    }
+
+    /// <summary>
+    /// Converts a DateTime struct to a JulianDay double
+    /// </summary>
+    /// <param name="value">The DateTime to convert</param>
+    /// <returns>The JulianDay value the Datetime represents</returns>
+    public double ToJulianDay(DateTime value)
+    {
+      return value.ToOADate() + 2415018.5;
+    }
+
+    /// <summary>
     /// Converts a DateTime to a string value, using the current DateTimeFormat specified for the connection when it was opened.
     /// </summary>
     /// <param name="dateValue">The DateTime value to convert</param>
-    /// <returns>Either a string consisting of the tick count for DateTimeFormat.Ticks, or a date/time in ISO8601 format.</returns>
+    /// <returns>Either a string consisting of the tick count for DateTimeFormat.Ticks, a JulianDay double, or a date/time in ISO8601 format.</returns>
     public string ToString(DateTime dateValue)
     {
       switch (_datetimeFormat)
       {
-        case SqliteDateFormats.Ticks:
+        case SQLiteDateFormats.Ticks:
           return dateValue.Ticks.ToString(CultureInfo.InvariantCulture);
+        case SQLiteDateFormats.JulianDay:
+          return ToJulianDay(dateValue).ToString(CultureInfo.InvariantCulture);
         default:
-          return dateValue.ToString(_datetimeFormats[0], CultureInfo.InvariantCulture);
+          return dateValue.ToString(_datetimeFormats[7], CultureInfo.InvariantCulture);
       }
     }
 
@@ -312,10 +211,11 @@ namespace Mono.Data.Sqlite
     /// <param name="ptr">A pointer to the UTF-8 encoded string</param>
     /// <param name="len">The length in bytes of the string</param>
     /// <returns>The parsed DateTime value</returns>
-    internal DateTime ToDateTime(IntPtr ptr)
+    internal DateTime ToDateTime(IntPtr ptr, int len)
     {
-      return ToDateTime(ToString(ptr));
+      return ToDateTime(ToString(ptr, len));
     }
+
     #endregion
 
     /// <summary>
@@ -356,29 +256,82 @@ namespace Mono.Data.Sqlite
         if (n == -1) break;
         if (source[n] == toks[0])
         {
-          source = source.Remove(n, 1);
-          n = source.IndexOfAny(quot, n);
+          //source = source.Remove(n, 1);
+          n = source.IndexOfAny(quot, n + 1);
           if (n == -1)
           {
-            source = "\"" + source;
+            //source = "\"" + source;
             break;
           }
-          source = source.Remove(n, 1);
+          n++;
+          //source = source.Remove(n, 1);
         }
         else
         {
           s = source.Substring(0, n).Trim();
+          if (s.Length > 1 && s[0] == quot[0] && s[s.Length - 1] == s[0])
+            s = s.Substring(1, s.Length - 2);
+
           source = source.Substring(n + 1).Trim();
           if (s.Length > 0) ls.Add(s);
           n = 0;
         }
       }
-      if (source.Length > 0) ls.Add(source);
+      if (source.Length > 0)
+      {
+        s = source.Trim();
+        if (s.Length > 1 && s[0] == quot[0] && s[s.Length - 1] == s[0])
+          s = s.Substring(1, s.Length - 2);
+        ls.Add(s);
+      }
 
       string[] ar = new string[ls.Count];
       ls.CopyTo(ar, 0);
 
       return ar;
+    }
+
+    /// <summary>
+    /// Convert a value to true or false.
+    /// </summary>
+    /// <param name="source">A string or number representing true or false</param>
+    /// <returns></returns>
+    public static bool ToBoolean(object source)
+    {
+      if (source is bool) return (bool)source;
+
+      return ToBoolean(source.ToString());
+    }
+
+    /// <summary>
+    /// Convert a string to true or false.
+    /// </summary>
+    /// <param name="source">A string representing true or false</param>
+    /// <returns></returns>
+    /// <remarks>
+    /// "yes", "no", "y", "n", "0", "1", "on", "off" as well as Boolean.FalseString and Boolean.TrueString will all be
+    /// converted to a proper boolean value.
+    /// </remarks>
+    public static bool ToBoolean(string source)
+    {
+      if (String.Compare(source, bool.TrueString, StringComparison.OrdinalIgnoreCase) == 0) return true;
+      else if (String.Compare(source, bool.FalseString, StringComparison.OrdinalIgnoreCase) == 0) return false;
+
+      switch(source.ToLower())
+      {
+        case "yes":
+        case "y":
+        case "1":
+        case "on":
+          return true;
+        case "no":
+        case "n":
+        case "0":
+        case "off":
+          return false;
+        default:
+          throw new ArgumentException("source");
+      }
     }
 
     #region Type Conversions
@@ -387,42 +340,34 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="stmt">The statement to retrieve information for</param>
     /// <param name="i">The column to retrieve type information on</param>
-    /// <returns>Returns a SqliteType struct</returns>
-    internal static SqliteType ColumnToType(SqliteStatement stmt, int i)
+    /// <param name="typ">The SQLiteType to receive the affinity for the given column</param>
+    internal static void ColumnToType(SQLiteStatement stmt, int i, SQLiteType typ)
     {
-      SqliteType typ;
-
       typ.Type = TypeNameToDbType(stmt._sql.ColumnType(stmt, i, out typ.Affinity));
-
-      return typ;
     }
 
     /// <summary>
-    /// Converts a SqliteType to a .NET Type object
+    /// Converts a SQLiteType to a .NET Type object
     /// </summary>
-    /// <param name="t">The SqliteType to convert</param>
+    /// <param name="t">The SQLiteType to convert</param>
     /// <returns>Returns a .NET Type object</returns>
-    internal static Type SqliteTypeToType(SqliteType t)
+    internal static Type SQLiteTypeToType(SQLiteType t)
     {
-      if (t.Type != DbType.Object)
-        return SqliteConvert.DbTypeToType(t.Type);
-
-      return _typeaffinities[(int)t.Affinity];
+      if (t.Type == DbType.Object)
+        return _affinitytotype[(int)t.Affinity];
+      else
+        return SQLiteConvert.DbTypeToType(t.Type);
     }
 
-    static Type[] _typeaffinities = {
-      null,
+    private static Type[] _affinitytotype = {
+      typeof(object),
       typeof(Int64),
       typeof(Double),
       typeof(string),
       typeof(byte[]),
-      typeof(DBNull),
-      null,
-      null,
-      null,
-      null,
+      typeof(object),
       typeof(DateTime),
-      null,
+      typeof(object)
     };
 
     /// <summary>
@@ -503,6 +448,100 @@ namespace Mono.Data.Sqlite
       2147483647,   // 25 (Xml)
     };
 
+    internal static object DbTypeToNumericPrecision(DbType typ)
+    {
+      return _dbtypetonumericprecision[(int)typ];
+    }
+
+    private static object[] _dbtypetonumericprecision = {
+      DBNull.Value, // 0
+      DBNull.Value, // 1
+      3,
+      DBNull.Value,
+      19,
+      DBNull.Value, // 5
+      DBNull.Value, // 6
+      53,
+      53,
+      DBNull.Value,
+      5,
+      10,
+      19,
+      DBNull.Value,
+      3,
+      24,
+      DBNull.Value,
+      DBNull.Value,
+      5,
+      10,
+      19,
+      53,
+      DBNull.Value,
+      DBNull.Value,
+      DBNull.Value
+    };
+
+    internal static object DbTypeToNumericScale(DbType typ)
+    {
+      return _dbtypetonumericscale[(int)typ];
+    }
+
+    private static object[] _dbtypetonumericscale = {
+      DBNull.Value, // 0
+      DBNull.Value, // 1
+      0,
+      DBNull.Value,
+      4,
+      DBNull.Value, // 5
+      DBNull.Value, // 6
+      DBNull.Value,
+      DBNull.Value,
+      DBNull.Value,
+      0,
+      0,
+      0,
+      DBNull.Value,
+      0,
+      DBNull.Value,
+      DBNull.Value,
+      DBNull.Value,
+      0,
+      0,
+      0,
+      0,
+      DBNull.Value,
+      DBNull.Value,
+      DBNull.Value
+    };
+
+    internal static string DbTypeToTypeName(DbType typ)
+    {
+      for (int n = 0; n < _dbtypeNames.Length; n++)
+      {
+        if (_dbtypeNames[n].dataType == typ)
+          return _dbtypeNames[n].typeName;
+      }
+
+      return String.Empty;
+    }
+
+    private static SQLiteTypeNames[] _dbtypeNames = {
+      new SQLiteTypeNames("INTEGER", DbType.Int64),
+      new SQLiteTypeNames("TINYINT", DbType.Byte),
+      new SQLiteTypeNames("INT", DbType.Int32),
+      new SQLiteTypeNames("VARCHAR", DbType.AnsiString),
+      new SQLiteTypeNames("NVARCHAR", DbType.String),
+      new SQLiteTypeNames("CHAR", DbType.AnsiStringFixedLength),
+      new SQLiteTypeNames("NCHAR", DbType.StringFixedLength),
+      new SQLiteTypeNames("FLOAT", DbType.Double),
+      new SQLiteTypeNames("REAL", DbType.Single),          
+      new SQLiteTypeNames("BIT", DbType.Boolean),
+      new SQLiteTypeNames("DECIMAL", DbType.Decimal),
+      new SQLiteTypeNames("DATETIME", DbType.DateTime),
+      new SQLiteTypeNames("BLOB", DbType.Binary),
+      new SQLiteTypeNames("UNIQUEIDENTIFIER", DbType.Guid),
+      new SQLiteTypeNames("SMALLINT", DbType.Int16),
+    };
     /// <summary>
     /// Convert a DbType to a Type
     /// </summary>
@@ -543,10 +582,10 @@ namespace Mono.Data.Sqlite
     };
 
     /// <summary>
-    /// For a given type, return the closest-match Sqlite TypeAffinity, which only understands a very limited subset of types.
+    /// For a given type, return the closest-match SQLite TypeAffinity, which only understands a very limited subset of types.
     /// </summary>
     /// <param name="typ">The type to evaluate</param>
-    /// <returns>The Sqlite type affinity for that type.</returns>
+    /// <returns>The SQLite type affinity for that type.</returns>
     internal static TypeAffinity TypeToAffinity(Type typ)
     {
       TypeCode tc = Type.GetTypeCode(typ);
@@ -601,51 +640,175 @@ namespace Mono.Data.Sqlite
     }
     #endregion
 
-    private static SqliteTypeNames[] _typeNames = {
-      new SqliteTypeNames("COUNTER", DbType.Int64),
-      new SqliteTypeNames("AUTOINCREMENT", DbType.Int64),
-      new SqliteTypeNames("IDENTITY", DbType.Int64),
-      new SqliteTypeNames("LONGTEXT", DbType.String),
-      new SqliteTypeNames("LONGCHAR", DbType.String),
-      new SqliteTypeNames("LONGVARCHAR", DbType.String),
-      new SqliteTypeNames("LONG", DbType.Int64),
-      new SqliteTypeNames("TINYINT", DbType.Byte),
-      new SqliteTypeNames("INTEGER", DbType.Int64),
-      new SqliteTypeNames("INT", DbType.Int32),
-      new SqliteTypeNames("VARCHAR", DbType.String),
-      new SqliteTypeNames("NVARCHAR", DbType.String),
-      new SqliteTypeNames("CHAR", DbType.String),
-      new SqliteTypeNames("NCHAR", DbType.String),
-      new SqliteTypeNames("TEXT", DbType.String),
-      new SqliteTypeNames("NTEXT", DbType.String),
-      new SqliteTypeNames("STRING", DbType.String),
-      new SqliteTypeNames("DOUBLE", DbType.Double),
-      new SqliteTypeNames("FLOAT", DbType.Double),
-      new SqliteTypeNames("REAL", DbType.Single),          
-      new SqliteTypeNames("BIT", DbType.Boolean),
-      new SqliteTypeNames("YESNO", DbType.Boolean),
-      new SqliteTypeNames("LOGICAL", DbType.Boolean),
-      new SqliteTypeNames("BOOL", DbType.Boolean),
-      new SqliteTypeNames("NUMERIC", DbType.Decimal),
-      new SqliteTypeNames("DECIMAL", DbType.Decimal),
-      new SqliteTypeNames("MONEY", DbType.Decimal),
-      new SqliteTypeNames("CURRENCY", DbType.Decimal),
-      new SqliteTypeNames("TIME", DbType.DateTime),
-      new SqliteTypeNames("DATE", DbType.DateTime),
-      new SqliteTypeNames("SMALLDATE", DbType.DateTime),
-      new SqliteTypeNames("BLOB", DbType.Binary),
-      new SqliteTypeNames("BINARY", DbType.Binary),
-      new SqliteTypeNames("VARBINARY", DbType.Binary),
-      new SqliteTypeNames("IMAGE", DbType.Binary),
-      new SqliteTypeNames("GENERAL", DbType.Binary),
-      new SqliteTypeNames("OLEOBJECT", DbType.Binary),
-      new SqliteTypeNames("GUID", DbType.Guid),
-      new SqliteTypeNames("UNIQUEIDENTIFIER", DbType.Guid),
-      new SqliteTypeNames("MEMO", DbType.String),
-      new SqliteTypeNames("NOTE", DbType.String),
-      new SqliteTypeNames("SMALLINT", DbType.Int16),
-      new SqliteTypeNames("BIGINT", DbType.Int64),
+    private static SQLiteTypeNames[] _typeNames = {
+      new SQLiteTypeNames("COUNTER", DbType.Int64),
+      new SQLiteTypeNames("AUTOINCREMENT", DbType.Int64),
+      new SQLiteTypeNames("IDENTITY", DbType.Int64),
+      new SQLiteTypeNames("LONGTEXT", DbType.String),
+      new SQLiteTypeNames("LONGCHAR", DbType.String),
+      new SQLiteTypeNames("LONGVARCHAR", DbType.String),
+      new SQLiteTypeNames("LONG", DbType.Int64),
+      new SQLiteTypeNames("TINYINT", DbType.Byte),
+      new SQLiteTypeNames("INTEGER", DbType.Int64),
+      new SQLiteTypeNames("INT", DbType.Int32),
+      new SQLiteTypeNames("VARCHAR", DbType.String),
+      new SQLiteTypeNames("NVARCHAR", DbType.String),
+      new SQLiteTypeNames("CHAR", DbType.String),
+      new SQLiteTypeNames("NCHAR", DbType.String),
+      new SQLiteTypeNames("TEXT", DbType.String),
+      new SQLiteTypeNames("NTEXT", DbType.String),
+      new SQLiteTypeNames("STRING", DbType.String),
+      new SQLiteTypeNames("DOUBLE", DbType.Double),
+      new SQLiteTypeNames("FLOAT", DbType.Double),
+      new SQLiteTypeNames("REAL", DbType.Single),          
+      new SQLiteTypeNames("BIT", DbType.Boolean),
+      new SQLiteTypeNames("YESNO", DbType.Boolean),
+      new SQLiteTypeNames("LOGICAL", DbType.Boolean),
+      new SQLiteTypeNames("BOOL", DbType.Boolean),
+      new SQLiteTypeNames("NUMERIC", DbType.Decimal),
+      new SQLiteTypeNames("DECIMAL", DbType.Decimal),
+      new SQLiteTypeNames("MONEY", DbType.Decimal),
+      new SQLiteTypeNames("CURRENCY", DbType.Decimal),
+      new SQLiteTypeNames("TIME", DbType.DateTime),
+      new SQLiteTypeNames("DATE", DbType.DateTime),
+      new SQLiteTypeNames("SMALLDATE", DbType.DateTime),
+      new SQLiteTypeNames("BLOB", DbType.Binary),
+      new SQLiteTypeNames("BINARY", DbType.Binary),
+      new SQLiteTypeNames("VARBINARY", DbType.Binary),
+      new SQLiteTypeNames("IMAGE", DbType.Binary),
+      new SQLiteTypeNames("GENERAL", DbType.Binary),
+      new SQLiteTypeNames("OLEOBJECT", DbType.Binary),
+      new SQLiteTypeNames("GUID", DbType.Guid),
+      new SQLiteTypeNames("UNIQUEIDENTIFIER", DbType.Guid),
+      new SQLiteTypeNames("MEMO", DbType.String),
+      new SQLiteTypeNames("NOTE", DbType.String),
+      new SQLiteTypeNames("SMALLINT", DbType.Int16),
+      new SQLiteTypeNames("BIGINT", DbType.Int64),
     };
   }
+
+  /// <summary>
+  /// SQLite has very limited types, and is inherently text-based.  The first 5 types below represent the sum of all types SQLite
+  /// understands.  The DateTime extension to the spec is for internal use only.
+  /// </summary>
+  public enum TypeAffinity
+  {
+    /// <summary>
+    /// Not used
+    /// </summary>
+    Uninitialized = 0,
+    /// <summary>
+    /// All integers in SQLite default to Int64
+    /// </summary>
+    Int64 = 1,
+    /// <summary>
+    /// All floating point numbers in SQLite default to double
+    /// </summary>
+    Double = 2,
+    /// <summary>
+    /// The default data type of SQLite is text
+    /// </summary>
+    Text = 3,
+    /// <summary>
+    /// Typically blob types are only seen when returned from a function
+    /// </summary>
+    Blob = 4,
+    /// <summary>
+    /// Null types can be returned from functions
+    /// </summary>
+    Null = 5,
+    /// <summary>
+    /// Used internally by this provider
+    /// </summary>
+    DateTime = 10,
+    /// <summary>
+    /// Used internally
+    /// </summary>
+    None = 11,
+  }
+
+  /// <summary>
+  /// This implementation of SQLite for ADO.NET can process date/time fields in databases in only one of three formats.  Ticks, ISO8601
+  /// and JulianDay.
+  /// </summary>
+  /// <remarks>
+  /// ISO8601 is more compatible, readable, fully-processable, but less accurate as it doesn't provide time down to fractions of a second.
+  /// JulianDay is the numeric format the SQLite uses internally and is arguably the most compatible with 3rd party tools.  It is
+  /// not readable as text without post-processing.
+  /// Ticks less compatible with 3rd party tools that query the database, and renders the DateTime field unreadable as text without post-processing.
+  /// 
+  /// The preferred order of choosing a datetime format is JulianDay, ISO8601, and then Ticks.  Ticks is mainly present for legacy 
+  /// code support.
+  /// </remarks>
+  public enum SQLiteDateFormats
+  {
+    /// <summary>
+    /// Using ticks is not recommended and is not well supported with LINQ.
+    /// </summary>
+    Ticks = 0,
+    /// <summary>
+    /// The default format for this provider.
+    /// </summary>
+    ISO8601 = 1,
+    /// <summary>
+    /// JulianDay format, which is what SQLite uses internally
+    /// </summary>
+    JulianDay = 2
+  }
+
+  /// <summary>
+  /// This enum determines how SQLite treats its journal file.
+  /// </summary>
+  /// <remarks>
+  /// By default SQLite will create and delete the journal file when needed during a transaction.
+  /// However, for some computers running certain filesystem monitoring tools, the rapid
+  /// creation and deletion of the journal file can cause those programs to fail, or to interfere with SQLite.
+  /// 
+  /// If a program or virus scanner is interfering with SQLite's journal file, you may receive errors like "unable to open database file"
+  /// when starting a transaction.  If this is happening, you may want to change the default journal mode to Persist.
+  /// </remarks>
+  public enum SQLiteJournalModeEnum
+  {
+    /// <summary>
+    /// The default mode, this causes SQLite to create and destroy the journal file as-needed.
+    /// </summary>
+    Delete = 0,
+    /// <summary>
+    /// When this is set, SQLite will keep the journal file even after a transaction has completed.  It's contents will be erased,
+    /// and the journal re-used as often as needed.  If it is deleted, it will be recreated the next time it is needed.
+    /// </summary>
+    Persist = 1,
+    /// <summary>
+    /// This option disables the rollback journal entirely.  Interrupted transactions or a program crash can cause database
+    /// corruption in this mode!
+    /// </summary>
+    Off = 2
+  }
+
+  /// <summary>
+  /// Struct used internally to determine the datatype of a column in a resultset
+  /// </summary>
+  internal class SQLiteType
+  {
+    /// <summary>
+    /// The DbType of the column, or DbType.Object if it cannot be determined
+    /// </summary>
+    internal DbType Type;
+    /// <summary>
+    /// The affinity of a column, used for expressions or when Type is DbType.Object
+    /// </summary>
+    internal TypeAffinity Affinity;
+  }
+
+  internal struct SQLiteTypeNames
+  {
+    internal SQLiteTypeNames(string newtypeName, DbType newdataType)
+    {
+      typeName = newtypeName;
+      dataType = newdataType;
+    }
+
+    internal string typeName;
+    internal DbType dataType;
+  }
 }
-#endif

@@ -1,44 +1,11 @@
-//
-// Mono.Data.Sqlite.SQLiteCommand.cs
-//
-// Author(s):
-//   Robert Simpson (robert@blackcastlesoft.com)
-//
-// Adapted and modified for the Mono Project by
-//   Marek Habersack (grendello@gmail.com)
-//
-//
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
-// Copyright (C) 2007 Marek Habersack
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-/********************************************************
+﻿/********************************************************
  * ADO.NET 2.0 Data Provider for SQLite Version 3.X
  * Written by Robert Simpson (robert@blackcastlesoft.com)
  * 
  * Released to the public domain, use at your own risk!
  ********************************************************/
-#if NET_2_0
-namespace Mono.Data.Sqlite
+
+namespace System.Data.SQLite
 {
   using System;
   using System.Data;
@@ -47,12 +14,12 @@ namespace Mono.Data.Sqlite
   using System.ComponentModel;
 
   /// <summary>
-  /// Sqlite implementation of DbCommand.
+  /// SQLite implementation of DbCommand.
   /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-  [Designer("Sqlite.Designer.SqliteCommandDesigner, Sqlite.Designer, Version=1.0.31.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139"), ToolboxItem(true)]
+  [Designer("SQLite.Designer.SQLiteCommandDesigner, SQLite.Designer, Version=1.0.36.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139"), ToolboxItem(true)]
 #endif
-  public sealed class SqliteCommand : DbCommand, ICloneable
+  public sealed class SQLiteCommand : DbCommand, ICloneable
   {
     /// <summary>
     /// The command text this command is based on
@@ -61,13 +28,17 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The connection the command is associated with
     /// </summary>
-    private SqliteConnection _cnn;
+    private SQLiteConnection _cnn;
+    /// <summary>
+    /// The version of the connection the command is associated with
+    /// </summary>
+    private long _version;
     /// <summary>
     /// Indicates whether or not a DataReader is active on the command.
     /// </summary>
-    private SqliteDataReader _activeReader;
+    private WeakReference _activeReader;
     /// <summary>
-    /// The timeout for the command, kludged because Sqlite doesn't support per-command timeout values
+    /// The timeout for the command, kludged because SQLite doesn't support per-command timeout values
     /// </summary>
     internal int _commandTimeout;
     /// <summary>
@@ -81,11 +52,11 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// The collection of parameters for the command
     /// </summary>
-    private SqliteParameterCollection _parameterCollection;
+    private SQLiteParameterCollection _parameterCollection;
     /// <summary>
     /// The SQL command text, broken into individual SQL statements as they are executed
     /// </summary>
-    internal List<SqliteStatement> _statementList;
+    internal List<SQLiteStatement> _statementList;
     /// <summary>
     /// Unprocessed SQL text that has not been executed
     /// </summary>
@@ -93,15 +64,15 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Transaction associated with this command
     /// </summary>
-    private SqliteTransaction _transaction;
+    private SQLiteTransaction _transaction;
 
     ///<overloads>
-    /// Constructs a new SqliteCommand
+    /// Constructs a new SQLiteCommand
     /// </overloads>
     /// <summary>
     /// Default constructor
     /// </summary>
-    public SqliteCommand() :this(null, null)
+    public SQLiteCommand() :this(null, null)
     {
     }
 
@@ -109,7 +80,7 @@ namespace Mono.Data.Sqlite
     /// Initializes the command with the given command text
     /// </summary>
     /// <param name="commandText">The SQL command text</param>
-    public SqliteCommand(string commandText) 
+    public SQLiteCommand(string commandText) 
       : this(commandText, null, null)
     {
     }
@@ -120,7 +91,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     /// <param name="commandText">The SQL command text</param>
     /// <param name="connection">The connection to associate with the command</param>
-    public SqliteCommand(string commandText, SqliteConnection connection)
+    public SQLiteCommand(string commandText, SQLiteConnection connection)
       : this(commandText, connection, null)
     {
     }
@@ -129,18 +100,18 @@ namespace Mono.Data.Sqlite
     /// Initializes the command and associates it with the specified connection.
     /// </summary>
     /// <param name="connection">The connection to associate with the command</param>
-    public SqliteCommand(SqliteConnection connection) 
+    public SQLiteCommand(SQLiteConnection connection) 
       : this(null, connection, null)
     {
     }
 
-    private SqliteCommand(SqliteCommand source) : this(source.CommandText, source.Connection, source.Transaction)
+    private SQLiteCommand(SQLiteCommand source) : this(source.CommandText, source.Connection, source.Transaction)
     {
       CommandTimeout = source.CommandTimeout;
       DesignTimeVisible = source.DesignTimeVisible;
       UpdatedRowSource = source.UpdatedRowSource;
 
-      foreach (SqliteParameter param in source._parameterCollection)
+      foreach (SQLiteParameter param in source._parameterCollection)
       {
         Parameters.Add(param.Clone());
       }
@@ -152,21 +123,24 @@ namespace Mono.Data.Sqlite
     /// <param name="commandText">The SQL command text</param>
     /// <param name="connection">The connection to associate with the command</param>
     /// <param name="transaction">The transaction the command should be associated with</param>
-    public SqliteCommand(string commandText, SqliteConnection connection, SqliteTransaction transaction)
+    public SQLiteCommand(string commandText, SQLiteConnection connection, SQLiteTransaction transaction)
     {
       _statementList = null;
       _activeReader = null;
-      _commandTimeout = connection != null ? connection._busyTimeout : 30;
-      _parameterCollection = new SqliteParameterCollection(this);
+      _commandTimeout = 30;
+      _parameterCollection = new SQLiteParameterCollection(this);
       _designTimeVisible = true;
-      _updateRowSource = UpdateRowSource.FirstReturnedRecord;
+      _updateRowSource = UpdateRowSource.None;
       _transaction = null;
 
       if (commandText != null)
         CommandText = commandText;
 
       if (connection != null)
+      {
         DbConnection = connection;
+        _commandTimeout = connection.DefaultTimeout;
+      }
 
       if (transaction != null)
         Transaction = transaction;
@@ -180,16 +154,32 @@ namespace Mono.Data.Sqlite
     {
       base.Dispose(disposing);
 
-      // If a reader is active on this command, don't destroy it completely
-      if (_activeReader != null)
+      if (disposing)
       {
-        _activeReader._disposeCommand = true;
-        return;
-      }
+        // If a reader is active on this command, don't destroy the command, instead let the reader do it
+        SQLiteDataReader reader = null;
+        if (_activeReader != null)
+        {
+          try
+          {
+            reader = _activeReader.Target as SQLiteDataReader;
+          }
+          catch
+          {
+          }
+        }
 
-      Connection = null;
-      _parameterCollection.Clear();
-      _commandText = null;
+        if (reader != null)
+        {
+          reader._disposeCommand = true;
+          _activeReader = null;
+          return;
+        }
+
+        Connection = null;
+        _parameterCollection.Clear();
+        _commandText = null;
+      }
     }
 
     /// <summary>
@@ -198,7 +188,21 @@ namespace Mono.Data.Sqlite
     internal void ClearCommands()
     {
       if (_activeReader != null)
-        _activeReader.Close();
+      {
+        SQLiteDataReader reader = null;
+        try
+        {
+          reader = _activeReader.Target as SQLiteDataReader;
+        }
+        catch
+        {
+        }
+
+        if (reader != null)
+          reader.Close();
+
+        _activeReader = null;
+      }
 
       if (_statementList == null) return;
 
@@ -214,21 +218,21 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Builds an array of prepared statements for each complete SQL statement in the command text
     /// </summary>
-    internal SqliteStatement BuildNextCommand()
+    internal SQLiteStatement BuildNextCommand()
     {
-      SqliteStatement stmt = null;
+      SQLiteStatement stmt = null;
 
       try
       {
         if (_statementList == null)
           _remainingText = _commandText;
 
-        stmt = _cnn._sql.Prepare(_remainingText, (_statementList == null) ? null : _statementList[_statementList.Count - 1], out _remainingText);
+        stmt = _cnn._sql.Prepare(_cnn, _remainingText, (_statementList == null) ? null : _statementList[_statementList.Count - 1], (uint)(_commandTimeout * 1000), out _remainingText);
         if (stmt != null)
         {
           stmt._command = this;
           if (_statementList == null)
-            _statementList = new List<SqliteStatement>();
+            _statementList = new List<SQLiteStatement>();
 
           _statementList.Add(stmt);
 
@@ -254,7 +258,7 @@ namespace Mono.Data.Sqlite
       }
     }
 
-    internal SqliteStatement GetStatement(int index)
+    internal SQLiteStatement GetStatement(int index)
     {
       // Haven't built any statements yet
       if (_statementList == null) return BuildNextCommand();
@@ -266,7 +270,7 @@ namespace Mono.Data.Sqlite
         else return null; // No more commands
       }
 
-      SqliteStatement stmt = _statementList[index];
+      SQLiteStatement stmt = _statementList[index];
       stmt.BindParameters();
 
       return stmt;
@@ -277,6 +281,12 @@ namespace Mono.Data.Sqlite
     /// </summary>
     public override void Cancel()
     {
+      if (_activeReader != null)
+      {
+        SQLiteDataReader reader = _activeReader.Target as SQLiteDataReader;
+        if (reader != null)
+          reader.Cancel();
+      }
     }
 
     /// <summary>
@@ -295,7 +305,7 @@ namespace Mono.Data.Sqlite
       {
         if (_commandText == value) return;
 
-        if (_activeReader != null)
+        if (_activeReader != null && _activeReader.IsAlive)
         {
           throw new InvalidOperationException("Cannot set CommandText while a DataReader is active");
         }
@@ -326,7 +336,7 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// The type of the command.  Sqlite only supports CommandType.Text
+    /// The type of the command.  SQLite only supports CommandType.Text
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [RefreshProperties(RefreshProperties.All), DefaultValue(CommandType.Text)]
@@ -359,9 +369,9 @@ namespace Mono.Data.Sqlite
     /// Create a new parameter
     /// </summary>
     /// <returns></returns>
-    public new SqliteParameter CreateParameter()
+    public new SQLiteParameter CreateParameter()
     {
-      return new SqliteParameter();
+      return new SQLiteParameter();
     }
 
     /// <summary>
@@ -370,24 +380,26 @@ namespace Mono.Data.Sqlite
 #if !PLATFORM_COMPACTFRAMEWORK
     [DefaultValue((string)null), Editor("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, Microsoft.VSDesigner, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 #endif
-    public new SqliteConnection Connection
+    public new SQLiteConnection Connection
     {
       get { return _cnn; }
       set
       {
-        if (_activeReader != null)
+        if (_activeReader != null && _activeReader.IsAlive)
           throw new InvalidOperationException("Cannot set Connection while a DataReader is active");
 
         if (_cnn != null)
         {
           ClearCommands();
-          _cnn.RemoveCommand(this);
+          //_cnn.RemoveCommand(this);
         }
 
         _cnn = value;
-
         if (_cnn != null)
-          _cnn.AddCommand(this);
+          _version = _cnn._version;
+
+        //if (_cnn != null)
+        //  _cnn.AddCommand(this);
       }
     }
 
@@ -402,17 +414,17 @@ namespace Mono.Data.Sqlite
       }
       set
       {
-        Connection = (SqliteConnection)value;
+        Connection = (SQLiteConnection)value;
       }
     }
 
     /// <summary>
-    /// Returns the SqliteParameterCollection for the given command
+    /// Returns the SQLiteParameterCollection for the given command
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 #endif
-    public new SqliteParameterCollection Parameters
+    public new SQLiteParameterCollection Parameters
     {
       get { return _parameterCollection; }
     }
@@ -429,20 +441,20 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// The transaction associated with this command.  Sqlite only supports one transaction per connection, so this property forwards to the
+    /// The transaction associated with this command.  SQLite only supports one transaction per connection, so this property forwards to the
     /// command's underlying connection.
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
     [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 #endif
-    public new SqliteTransaction Transaction
+    public new SQLiteTransaction Transaction
     {
       get { return _transaction; }
       set
       {
         if (_cnn != null)
         {
-          if (_activeReader != null)
+          if (_activeReader != null && _activeReader.IsAlive)
             throw new InvalidOperationException("Cannot set Transaction while a DataReader is active");
 
           if (value != null)
@@ -452,8 +464,11 @@ namespace Mono.Data.Sqlite
           }
           _transaction = value;
         }
-        else if (value != null)
-          throw new ArgumentOutOfRangeException("SqliteTransaction", "Not associated with a connection");
+        else
+        {
+          Connection = value.Connection;
+          _transaction = value;
+        }
       }
     }
 
@@ -468,7 +483,7 @@ namespace Mono.Data.Sqlite
       }
       set
       {
-        Transaction = (SqliteTransaction)value;
+        Transaction = (SQLiteTransaction)value;
       }
     }
 
@@ -479,7 +494,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     private void InitializeForReader()
     {
-      if (_activeReader != null)
+      if (_activeReader != null && _activeReader.IsAlive)
         throw new InvalidOperationException("DataReader already active on this command");
 
       if (_cnn == null)
@@ -488,49 +503,56 @@ namespace Mono.Data.Sqlite
       if (_cnn.State != ConnectionState.Open)
         throw new InvalidOperationException("Database is not open");
 
+      // If the version of the connection has changed, clear out any previous commands before starting
+      if (_cnn._version != _version)
+      {
+        _version = _cnn._version;
+        ClearCommands();
+      }
+
       // Map all parameters for statements already built
       _parameterCollection.MapParameters(null);
 
-      // Set the default command timeout
-      _cnn._sql.SetTimeout(_commandTimeout * 1000);
+      //// Set the default command timeout
+      //_cnn._sql.SetTimeout(_commandTimeout * 1000);
     }
 
     /// <summary>
-    /// Creates a new SqliteDataReader to execute/iterate the array of Sqlite prepared statements
+    /// Creates a new SQLiteDataReader to execute/iterate the array of SQLite prepared statements
     /// </summary>
     /// <param name="behavior">The behavior the data reader should adopt</param>
-    /// <returns>Returns a SqliteDataReader object</returns>
+    /// <returns>Returns a SQLiteDataReader object</returns>
     protected override DbDataReader ExecuteDbDataReader(CommandBehavior behavior)
     {
       return ExecuteReader(behavior);
     }
 
     /// <summary>
-    /// Overrides the default behavior to return a SqliteDataReader specialization class
+    /// Overrides the default behavior to return a SQLiteDataReader specialization class
     /// </summary>
     /// <param name="behavior">The flags to be associated with the reader</param>
-    /// <returns>A SqliteDataReader</returns>
-    public new SqliteDataReader ExecuteReader(CommandBehavior behavior)
+    /// <returns>A SQLiteDataReader</returns>
+    public new SQLiteDataReader ExecuteReader(CommandBehavior behavior)
     {
       InitializeForReader();
 
-      SqliteDataReader rd = new SqliteDataReader(this, behavior);
-      _activeReader = rd;
+      SQLiteDataReader rd = new SQLiteDataReader(this, behavior);
+      _activeReader = new WeakReference(rd, false);
 
       return rd;
     }
 
     /// <summary>
-    /// Overrides the default behavior of DbDataReader to return a specialized SqliteDataReader class
+    /// Overrides the default behavior of DbDataReader to return a specialized SQLiteDataReader class
     /// </summary>
-    /// <returns>A SqliteDataReader</returns>
-    public new SqliteDataReader ExecuteReader()
+    /// <returns>A SQLiteDataReader</returns>
+    public new SQLiteDataReader ExecuteReader()
     {
       return ExecuteReader(CommandBehavior.Default);
     }
 
     /// <summary>
-    /// Called by the SqliteDataReader when the data reader is closed.
+    /// Called by the SQLiteDataReader when the data reader is closed.
     /// </summary>
     internal void ClearDataReader()
     {
@@ -543,24 +565,11 @@ namespace Mono.Data.Sqlite
     /// <returns></returns>
     public override int ExecuteNonQuery()
     {
-      InitializeForReader();
-
-      int nAffected = 0;
-      int x = 0;
-      SqliteStatement stmt;
-
-      for(;;)
+      using (SQLiteDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SingleResult))
       {
-        stmt = GetStatement(x);
-        x++;
-        if (stmt == null) break;
-
-        _cnn._sql.Step(stmt);
-        nAffected += _cnn._sql.Changes;
-        _cnn._sql.Reset(stmt);
+        while (reader.NextResult()) ;
+        return reader.RecordsAffected;
       }
-
-      return nAffected;
     }
 
     /// <summary>
@@ -570,29 +579,12 @@ namespace Mono.Data.Sqlite
     /// <returns>The first column of the first row of the first resultset from the query</returns>
     public override object ExecuteScalar()
     {
-      InitializeForReader();
-
-      int x = 0;
-      object ret = null;
-      SqliteType typ = new SqliteType();
-      SqliteStatement stmt;
-
-      // We step through every statement in the command, but only grab the first row of the first resultset.
-      // We keep going even after obtaining it.
-      for (;;)
+      using (SQLiteDataReader reader = ExecuteReader(CommandBehavior.SingleRow | CommandBehavior.SingleResult))
       {
-        stmt = GetStatement(x);
-        x++;
-        if (stmt == null) break;
-
-        if (_cnn._sql.Step(stmt) == true && ret == null)
-        {
-          ret = _cnn._sql.GetValue(stmt, 0, ref typ);
-        }
-        _cnn._sql.Reset(stmt);
+        if (reader.Read())
+          return reader[0];
       }
-
-      return ret;
+      return null;
     }
 
     /// <summary>
@@ -603,9 +595,9 @@ namespace Mono.Data.Sqlite
     }
 
     /// <summary>
-    /// Sets the method the SqliteCommandBuilder uses to determine how to update inserted or updated rows in a DataTable.
+    /// Sets the method the SQLiteCommandBuilder uses to determine how to update inserted or updated rows in a DataTable.
     /// </summary>
-    [DefaultValue(UpdateRowSource.FirstReturnedRecord)]
+    [DefaultValue(UpdateRowSource.None)]
     public override UpdateRowSource UpdatedRowSource
     {
       get
@@ -642,16 +634,10 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Clones a command, including all its parameters
     /// </summary>
-    /// <returns>A new SqliteCommand with the same commandtext, connection and parameters</returns>
+    /// <returns>A new SQLiteCommand with the same commandtext, connection and parameters</returns>
     public object Clone()
     {
-      return new SqliteCommand(this);
-    }
-
-    public int LastInsertRowID ()
-    {
-	    return _cnn.LastInsertRowId;
+      return new SQLiteCommand(this);
     }
   }
 }
-#endif

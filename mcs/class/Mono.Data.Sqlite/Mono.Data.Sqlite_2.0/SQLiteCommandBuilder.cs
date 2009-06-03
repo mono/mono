@@ -1,44 +1,11 @@
-//
-// Mono.Data.Sqlite.SQLiteCommandBuilder.cs
-//
-// Author(s):
-//   Robert Simpson (robert@blackcastlesoft.com)
-//
-// Adapted and modified for the Mono Project by
-//   Marek Habersack (grendello@gmail.com)
-//
-//
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
-// Copyright (C) 2007 Marek Habersack
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-/********************************************************
- * ADO.NET 2.0 Data Provider for Sqlite Version 3.X
+﻿/********************************************************
+ * ADO.NET 2.0 Data Provider for SQLite Version 3.X
  * Written by Robert Simpson (robert@blackcastlesoft.com)
  * 
  * Released to the public domain, use at your own risk!
  ********************************************************/
-#if NET_2_0
-namespace Mono.Data.Sqlite
+
+namespace System.Data.SQLite
 {
   using System;
   using System.Data;
@@ -47,16 +14,14 @@ namespace Mono.Data.Sqlite
   using System.ComponentModel;
 
   /// <summary>
-  /// Sqlite implementation of DbCommandBuilder.
+  /// SQLite implementation of DbCommandBuilder.
   /// </summary>
-  public sealed class SqliteCommandBuilder : DbCommandBuilder
+  public sealed class SQLiteCommandBuilder : DbCommandBuilder
   {
-    private EventHandler<RowUpdatingEventArgs> _handler;
-
     /// <summary>
     /// Default constructor
     /// </summary>
-    public SqliteCommandBuilder() : this(null)
+    public SQLiteCommandBuilder() : this(null)
     {
     }
 
@@ -64,7 +29,7 @@ namespace Mono.Data.Sqlite
     /// Initializes the command builder and associates it with the specified data adapter.
     /// </summary>
     /// <param name="adp"></param>
-    public SqliteCommandBuilder(SqliteDataAdapter adp)
+    public SQLiteCommandBuilder(SQLiteDataAdapter adp)
     {
       QuotePrefix = "[";
       QuoteSuffix = "]";
@@ -80,7 +45,7 @@ namespace Mono.Data.Sqlite
     /// <param name="whereClause">Whether the application of the parameter is part of a WHERE clause</param>
     protected override void ApplyParameterInfo(DbParameter parameter, DataRow row, StatementType statementType, bool whereClause)
     {
-      SqliteParameter param = (SqliteParameter)parameter;
+      SQLiteParameter param = (SQLiteParameter)parameter;
       param.DbType = (DbType)row[SchemaTableColumn.ProviderType];
     }
 
@@ -121,10 +86,14 @@ namespace Mono.Data.Sqlite
     /// <param name="adapter">A data adapter to receive events on.</param>
     protected override void SetRowUpdatingHandler(DbDataAdapter adapter)
     {
-      SqliteDataAdapter adp = (SqliteDataAdapter)adapter;
-
-      _handler = new EventHandler<RowUpdatingEventArgs>(RowUpdatingEventHandler);
-      adp.RowUpdating += _handler;
+      if (adapter == base.DataAdapter)
+      {
+        ((SQLiteDataAdapter)adapter).RowUpdating -= new EventHandler<RowUpdatingEventArgs>(RowUpdatingEventHandler);
+      }
+      else
+      {
+        ((SQLiteDataAdapter)adapter).RowUpdating += new EventHandler<RowUpdatingEventArgs>(RowUpdatingEventHandler);
+      }
     }
 
     private void RowUpdatingEventHandler(object sender, RowUpdatingEventArgs e)
@@ -135,67 +104,67 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Gets/sets the DataAdapter for this CommandBuilder
     /// </summary>
-    public new SqliteDataAdapter DataAdapter
+    public new SQLiteDataAdapter DataAdapter
     {
-      get { return (SqliteDataAdapter)base.DataAdapter; }
+      get { return (SQLiteDataAdapter)base.DataAdapter; }
       set { base.DataAdapter = value; }
     }
 
     /// <summary>
-    /// Returns the automatically-generated Sqlite command to delete rows from the database
+    /// Returns the automatically-generated SQLite command to delete rows from the database
     /// </summary>
     /// <returns></returns>
-    public new SqliteCommand GetDeleteCommand()
+    public new SQLiteCommand GetDeleteCommand()
     {
-      return (SqliteCommand)base.GetDeleteCommand();
+      return (SQLiteCommand)base.GetDeleteCommand();
     }
 
     /// <summary>
-    /// Returns the automatically-generated Sqlite command to delete rows from the database
+    /// Returns the automatically-generated SQLite command to delete rows from the database
     /// </summary>
     /// <param name="useColumnsForParameterNames"></param>
     /// <returns></returns>
-    public new SqliteCommand GetDeleteCommand(bool useColumnsForParameterNames)
+    public new SQLiteCommand GetDeleteCommand(bool useColumnsForParameterNames)
     {
-      return (SqliteCommand)base.GetDeleteCommand(useColumnsForParameterNames);
+      return (SQLiteCommand)base.GetDeleteCommand(useColumnsForParameterNames);
     }
 
     /// <summary>
-    /// Returns the automatically-generated Sqlite command to update rows in the database
+    /// Returns the automatically-generated SQLite command to update rows in the database
     /// </summary>
     /// <returns></returns>
-    public new SqliteCommand GetUpdateCommand()
+    public new SQLiteCommand GetUpdateCommand()
     {
-      return (SqliteCommand)base.GetUpdateCommand();
+      return (SQLiteCommand)base.GetUpdateCommand();
     }
 
     /// <summary>
-    /// Returns the automatically-generated Sqlite command to update rows in the database
-    /// </summary>
-    /// <param name="useColumnsForParameterNames"></param>
-    /// <returns></returns>
-    public new SqliteCommand GetUpdateCommand(bool useColumnsForParameterNames)
-    {
-      return (SqliteCommand)base.GetUpdateCommand(useColumnsForParameterNames);
-    }
-
-    /// <summary>
-    /// Returns the automatically-generated Sqlite command to insert rows into the database
-    /// </summary>
-    /// <returns></returns>
-    public new SqliteCommand GetInsertCommand()
-    {
-      return (SqliteCommand)base.GetInsertCommand();
-    }
-
-    /// <summary>
-    /// Returns the automatically-generated Sqlite command to insert rows into the database
+    /// Returns the automatically-generated SQLite command to update rows in the database
     /// </summary>
     /// <param name="useColumnsForParameterNames"></param>
     /// <returns></returns>
-    public new SqliteCommand GetInsertCommand(bool useColumnsForParameterNames)
+    public new SQLiteCommand GetUpdateCommand(bool useColumnsForParameterNames)
     {
-      return (SqliteCommand)base.GetInsertCommand(useColumnsForParameterNames);
+      return (SQLiteCommand)base.GetUpdateCommand(useColumnsForParameterNames);
+    }
+
+    /// <summary>
+    /// Returns the automatically-generated SQLite command to insert rows into the database
+    /// </summary>
+    /// <returns></returns>
+    public new SQLiteCommand GetInsertCommand()
+    {
+      return (SQLiteCommand)base.GetInsertCommand();
+    }
+
+    /// <summary>
+    /// Returns the automatically-generated SQLite command to insert rows into the database
+    /// </summary>
+    /// <param name="useColumnsForParameterNames"></param>
+    /// <returns></returns>
+    public new SQLiteCommand GetInsertCommand(bool useColumnsForParameterNames)
+    {
+      return (SQLiteCommand)base.GetInsertCommand(useColumnsForParameterNames);
     }
 
     /// <summary>
@@ -372,4 +341,3 @@ namespace Mono.Data.Sqlite
     }
   }
 }
-#endif

@@ -1,44 +1,11 @@
-//
-// Mono.Data.Sqlite.SQLiteException.cs
-//
-// Author(s):
-//   Robert Simpson (robert@blackcastlesoft.com)
-//
-// Adapted and modified for the Mono Project by
-//   Marek Habersack (grendello@gmail.com)
-//
-//
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
-// Copyright (C) 2007 Marek Habersack
-//
-// Permission is hereby granted, free of charge, to any person obtaining
-// a copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to
-// permit persons to whom the Software is furnished to do so, subject to
-// the following conditions:
-// 
-// The above copyright notice and this permission notice shall be
-// included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-//
-
-/********************************************************
- * ADO.NET 2.0 Data Provider for Sqlite Version 3.X
+﻿/********************************************************
+ * ADO.NET 2.0 Data Provider for SQLite Version 3.X
  * Written by Robert Simpson (robert@blackcastlesoft.com)
  * 
  * Released to the public domain, use at your own risk!
  ********************************************************/
-#if NET_2_0
-namespace Mono.Data.Sqlite
+
+namespace System.Data.SQLite
 {
   using System;
   using System.Collections.Generic;
@@ -50,40 +17,40 @@ namespace Mono.Data.Sqlite
 #endif
 
   /// <summary>
-  /// Sqlite exception class.
+  /// SQLite exception class.
   /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
   [Serializable]
-  public class SqliteException : DbException
+  public sealed class SQLiteException : DbException
 #else
-  public class SqliteException : Exception
+  public sealed class SQLiteException : Exception
 #endif
   {
-    private SqliteErrorCode _errorCode;
+    private SQLiteErrorCode _errorCode;
 
 #if !PLATFORM_COMPACTFRAMEWORK
-    private SqliteException(SerializationInfo info, StreamingContext context)
+    private SQLiteException(SerializationInfo info, StreamingContext context)
       : base(info, context)
     {
     }
 #endif
 
     /// <summary>
-    /// Public constructor for generating a Sqlite error given the base error code
+    /// Public constructor for generating a SQLite error given the base error code
     /// </summary>
-    /// <param name="errorCode">The Sqlite error code to report</param>
+    /// <param name="errorCode">The SQLite error code to report</param>
     /// <param name="extendedInformation">Extra text to go along with the error message text</param>
-    public SqliteException(int errorCode, string extendedInformation)
+    public SQLiteException(int errorCode, string extendedInformation)
       : base(GetStockErrorMessage(errorCode, extendedInformation))
     {
-      _errorCode = (SqliteErrorCode)errorCode;
+      _errorCode = (SQLiteErrorCode)errorCode;
     }
 
     /// <summary>
     /// Various public constructors that just pass along to the base Exception
     /// </summary>
     /// <param name="message">Passed verbatim to Exception</param>
-    public SqliteException(string message)
+    public SQLiteException(string message)
       : base(message)
     {
     }
@@ -91,7 +58,7 @@ namespace Mono.Data.Sqlite
     /// <summary>
     /// Various public constructors that just pass along to the base Exception
     /// </summary>
-    public SqliteException()
+    public SQLiteException()
     {
     }
 
@@ -100,27 +67,27 @@ namespace Mono.Data.Sqlite
     /// <param name="message">Passed to Exception</param>
     /// <param name="innerException">Passed to Exception</param>
     /// </summary>
-    public SqliteException(string message, Exception innerException)
+    public SQLiteException(string message, Exception innerException)
       : base(message, innerException)
     {
     }
 
     /// <summary>
-    /// Retrieves the underlying Sqlite error code for this exception
+    /// Retrieves the underlying SQLite error code for this exception
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    public new SqliteErrorCode ErrorCode
+    public new SQLiteErrorCode ErrorCode
 #else
-    public SqliteErrorCode ErrorCode
+    public SQLiteErrorCode ErrorCode
 #endif
     {
       get { return _errorCode; }
     }
 
     /// <summary>
-    /// Initializes the exception class with the Sqlite error code.
+    /// Initializes the exception class with the SQLite error code.
     /// </summary>
-    /// <param name="errorCode">The Sqlite error code</param>
+    /// <param name="errorCode">The SQLite error code</param>
     /// <param name="errorMessage">A detailed error message</param>
     /// <returns>An error message string</returns>
     private static string GetStockErrorMessage(int errorCode, string errorMessage)
@@ -137,9 +104,9 @@ namespace Mono.Data.Sqlite
     }
 
     private static string[] _errorMessages = {
-      "Sqlite OK",
-      "Sqlite error",
-      "An internal logic error in Sqlite",
+      "SQLite OK",
+      "SQLite error",
+      "An internal logic error in SQLite",
       "Access permission denied",
       "Callback routine requested an abort",
       "The database file is locked",
@@ -168,9 +135,9 @@ namespace Mono.Data.Sqlite
   }
 
   /// <summary>
-  /// Sqlite error codes
+  /// SQLite error codes
   /// </summary>
-  public enum SqliteErrorCode
+  public enum SQLiteErrorCode
   {
     /// <summary>
     /// Success
@@ -181,7 +148,7 @@ namespace Mono.Data.Sqlite
     /// </summary>
     Error,
     /// <summary>
-    /// Internal logic error in Sqlite
+    /// Internal logic error in SQLite
     /// </summary>
     Internal,
     /// <summary>
@@ -290,4 +257,3 @@ namespace Mono.Data.Sqlite
     Done = 101,
   }
 }
-#endif
