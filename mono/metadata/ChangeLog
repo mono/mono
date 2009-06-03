@@ -1,5 +1,9 @@
 2009-06-04  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.h: Register saving support for PPC.
+
+2009-06-04  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Fixed a pthread TLS screwup.
 
 2009-06-04  Mark Probst  <mark.probst@gmail.com>
