@@ -1,3 +1,11 @@
+2009-06-03  Marek Habersack  <mhabersack@novell.com>
+
+	* MonoSettingsSection.cs: added new property,
+	verificationCompatibility, which serves the same purpose as the
+	registry key described in http://support.microsoft.com/kb/932552
+	(when set to 1 it turns off virtual path validity
+	verification). Fixes bug #509163
+
 2009-05-14  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpHandlersSection.cs: if we're matching a default handler,

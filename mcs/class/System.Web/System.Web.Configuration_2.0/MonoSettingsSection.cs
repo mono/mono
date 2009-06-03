@@ -40,16 +40,19 @@ namespace System.Web.Configuration
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty compilersCompatibilityProp;
 		static ConfigurationProperty useCompilersCompatibilityProp;
+		static ConfigurationProperty verificationCompatibilityProp;
 		
 		static MonoSettingsSection ()
 		{
 			compilersCompatibilityProp = new ConfigurationProperty ("compilersCompatibility", typeof (CompilerCollection), null, null, PropertyHelper.DefaultValidator,
 										ConfigurationPropertyOptions.None);
 			useCompilersCompatibilityProp = new ConfigurationProperty ("useCompilersCompatibility", typeof (bool), true);
+			verificationCompatibilityProp = new ConfigurationProperty ("verificationCompatibility", typeof (int), 0);
 			
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (compilersCompatibilityProp);
 			properties.Add (useCompilersCompatibilityProp);
+			properties.Add (verificationCompatibilityProp);
 		}
 
 		[ConfigurationProperty ("compilersCompatibility")]
@@ -61,6 +64,12 @@ namespace System.Web.Configuration
                 public bool UseCompilersCompatibility {
                         get { return (bool) base [useCompilersCompatibilityProp]; }
                         set { base [useCompilersCompatibilityProp] = value; }
+                }
+
+		[ConfigurationProperty ("verificationCompatibility", DefaultValue = "0")]
+                public int VerificationCompatibility {
+                        get { return (int) base [verificationCompatibilityProp]; }
+                        set { base [verificationCompatibilityProp] = value; }
                 }
 		
 		protected override ConfigurationPropertyCollection Properties {

@@ -1,5 +1,14 @@
 2009-06-03  Marek Habersack  <mhabersack@novell.com>
 
+	* VirtualPathUtility.cs: IsValidVirtualPath now checks the value
+	of the
+	HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ASP.NET\VerificationCompatibility
+	registry key when running on Windows and also consults the
+	mono-specific system.web/monoSettings configuration section to see
+	what is the verificationCompatibility property set to. If either
+	of the two is set to 1, Mono will not verify the validity of
+	the current request's path. Fixes bug #509163
+
 	* HttpApplicationFactory.cs: OnFileChanged must check whether the
 	modified location is a directory before it decides to ignore it
 	when watcher's filter is "?eb.?config". Fixes bug #509450 (see

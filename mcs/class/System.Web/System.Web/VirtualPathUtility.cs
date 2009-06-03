@@ -29,9 +29,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+using System.Collections.Specialized;
+using System.Web.Configuration;
 using System.Web.Util;
 using System.Text;
+using Microsoft.Win32;
 
 namespace System.Web {
 
@@ -455,12 +457,35 @@ namespace System.Web {
 		}
 
 		// See: http://support.microsoft.com/kb/932552
+		// See: https://bugzilla.novell.com/show_bug.cgi?id=509163
 		static readonly char[] invalidVirtualPathChars = {':', '*'};
+		static readonly string aspNetVerificationKey = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\ASP.NET";
 		internal static bool IsValidVirtualPath (string path)
 		{
 			if (path == null)
 				return false;
-			
+
+#if NET_2_0
+			bool doValidate = true;
+			if (HttpRuntime.RunningOnWindows) {
+				try {
+					object v = Registry.GetValue (aspNetVerificationKey, "VerificationCompatibility", null);
+					if (v != null && v is int)
+						doValidate = (int)v != 1;
+				} catch {
+					// ignore
+				}
+			}
+
+			if (doValidate) {
+				var monoSettings = WebConfigurationManager.GetWebApplicationSection ("system.web/monoSettings") as MonoSettingsSection;
+				if (monoSettings != null)
+					doValidate = monoSettings.VerificationCompatibility != 1;
+			}
+
+			if (!doValidate)
+				return true;
+#endif
 			return path.IndexOfAny (invalidVirtualPathChars) == -1;
 		}
 	}
