@@ -1,3 +1,9 @@
+2009-06-03  Jb Evain  <jbevain@novell.com>
+
+	backport of r135334.
+
+	* main.c (dis_type): escape namespaces.
+
 2009-01-12  Jb Evain  <jbevain@novell.com>
 
 	* main.c: update reference to METHOD_ATTRIBUTE_CHECK_ACCESS_ON_OVERRIDE
