@@ -1,5 +1,10 @@
 2009-06-04  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Do TLS using pthread API if __thread keyword is not
+	supported.
+
+2009-06-04  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Disable TLA and managed allocation if the __thread
 	keyword is not supported.
 
