@@ -1,3 +1,7 @@
+2009-06-03  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/BaseAssemblyResolver.cs: look for 4.0.0.0 assemblies.
+
 2009-05-21  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs: add support for type forwarders.
