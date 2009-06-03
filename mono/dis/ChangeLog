@@ -1,5 +1,9 @@
 2009-06-03  Jb Evain  <jbevain@novell.com>
 
+	* main.c (dis_code): don't try to locate invalid entry points.
+
+2009-06-03  Jb Evain  <jbevain@novell.com>
+
 	* main.c (dis_type): espace namespaces.
 
 2009-04-24  Rodrigo Kumpera  <kumpera@gmail.com>
