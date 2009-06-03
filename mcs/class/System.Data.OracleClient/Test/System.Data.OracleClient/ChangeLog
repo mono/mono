@@ -1,5 +1,10 @@
 2009-06-03  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	* OracleParameterTest.cs: Mark tests for bug #424908 as NotWorking
+	as it requires some more thorough debugging.
+	
+2009-06-03  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	* OracleParameterTest.cs: Use the member variables for
 	connection/command for executing the tests.
 	
