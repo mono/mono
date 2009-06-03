@@ -1,5 +1,10 @@
 2009-06-03  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpApplicationFactory.cs: OnFileChanged must check whether the
+	modified location is a directory before it decides to ignore it
+	when watcher's filter is "?eb.?config". Fixes bug #509450 (see
+	also bug #495011)
+
 	* HttpForbiddenHandler.cs: updated the error message to match
 	.NET, added requested path and description. Fixes bug #509092
 

@@ -729,7 +729,7 @@ namespace System.Web {
 			// not removing it and instead working around the issue here. Fix for bug
 			// #495011
 			FileSystemWatcher watcher = sender as FileSystemWatcher;
-			if (watcher != null && String.Compare (watcher.Filter, "?eb.?onfig", true) == 0)
+			if (watcher != null && String.Compare (watcher.Filter, "?eb.?onfig", true) == 0 && Directory.Exists (name))
 				return;
 			
 	        	lock (watchers_lock) {
