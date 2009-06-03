@@ -45,9 +45,9 @@ namespace GuiCompare {
 		public AssemblyDefinition Resolve (string fullName)
 		{
 			if (File.Exists (fullName))
-				return ProcessFile (fullName);
+				return Attach (ProcessFile (fullName));
 
-			return resolver.Resolve (fullName);
+			return Attach (resolver.Resolve (fullName));
 		}
 
 		AssemblyDefinition ProcessFile (string file)
@@ -58,7 +58,13 @@ namespace GuiCompare {
 
 		public AssemblyDefinition Resolve (AssemblyNameReference name)
 		{
-			return resolver.Resolve (name);
+			return Attach (resolver.Resolve (name));
+		}
+
+		AssemblyDefinition Attach (AssemblyDefinition assembly)
+		{
+			assembly.Resolver = this;
+			return assembly;
 		}
 	}
 }

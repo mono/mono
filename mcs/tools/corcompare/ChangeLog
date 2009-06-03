@@ -1,3 +1,8 @@
+2009-06-03  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyResolver.cs: properly attach the resolver to the
+	assemblies we've found.
+
 2009-01-28  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyResolver.cs
