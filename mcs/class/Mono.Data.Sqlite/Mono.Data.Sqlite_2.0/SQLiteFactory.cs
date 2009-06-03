@@ -5,7 +5,7 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
-namespace System.Data.SQLite
+namespace Mono.Data.Sqlite
 {
   using System;
   using System.Data.Common;

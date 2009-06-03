@@ -6,7 +6,7 @@
  ********************************************************/
 
 #if !PLATFORM_COMPACTFRAMEWORK
-namespace System.Data.SQLite
+namespace Mono.Data.Sqlite
 {
   using System;
   using System.Data;

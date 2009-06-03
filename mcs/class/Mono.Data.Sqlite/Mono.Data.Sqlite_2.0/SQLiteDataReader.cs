@@ -5,7 +5,7 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
-namespace System.Data.SQLite
+namespace Mono.Data.Sqlite
 {
   using System;
   using System.Data;
@@ -178,7 +178,7 @@ namespace System.Data.SQLite
     /// Enumerator support
     /// </summary>
     /// <returns>Returns a DbEnumerator object.</returns>
-    public override Collections.IEnumerator GetEnumerator()
+    public override global::System.Collections.IEnumerator GetEnumerator()
     {
       return new DbEnumerator(this, ((_commandBehavior & CommandBehavior.CloseConnection) == CommandBehavior.CloseConnection));
     }

@@ -5,7 +5,7 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
-namespace System.Data.SQLite
+namespace Mono.Data.Sqlite
 {
   using System;
   using System.Data;
@@ -911,8 +911,8 @@ namespace System.Data.SQLite
           _sql.SetRollbackHook(_rollbackCallback);
 
 #if !PLATFORM_COMPACTFRAMEWORK
-        if (Transactions.Transaction.Current != null && SQLiteConvert.ToBoolean(FindKey(opts, "Enlist", Boolean.TrueString)) == true)
-          EnlistTransaction(Transactions.Transaction.Current);
+        if (global::System.Transactions.Transaction.Current != null && SQLiteConvert.ToBoolean(FindKey(opts, "Enlist", Boolean.TrueString)) == true)
+		EnlistTransaction(global::System.Transactions.Transaction.Current);
 #endif
       }
       catch (SQLiteException)

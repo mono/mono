@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace System.Data.SQLite {
+namespace Mono.Data.Sqlite {
     using System;
     
     
@@ -36,7 +36,7 @@ namespace System.Data.SQLite {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("System.Data.SQLite.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Mono.Data.Sqlite.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

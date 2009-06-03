@@ -5,9 +5,10 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
-namespace System.Data.SQLite
+namespace Mono.Data.Sqlite
 {
   using System;
+  using System.Data;
   using System.Runtime.InteropServices;
   using System.Collections.Generic;
   using System.Globalization;

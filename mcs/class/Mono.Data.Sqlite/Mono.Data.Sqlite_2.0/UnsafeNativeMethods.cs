@@ -5,7 +5,7 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
-namespace System.Data.SQLite
+namespace Mono.Data.Sqlite
 {
   using System;
   using System.Security;
@@ -21,7 +21,7 @@ namespace System.Data.SQLite
 #if !USE_INTEROP_DLL
 
 #if !PLATFORM_COMPACTFRAMEWORK
-    private const string SQLITE_DLL = "System.Data.SQLite.DLL";
+    private const string SQLITE_DLL = "Mono.Data.Sqlite.DLL";
 #else
     internal const string SQLITE_DLL = "SQLite.Interop.061.DLL";
 #endif // PLATFORM_COMPACTFRAMEWORK

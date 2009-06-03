@@ -5,7 +5,7 @@
  * Released to the public domain, use at your own risk!
  ********************************************************/
 
-namespace System.Data.SQLite
+namespace Mono.Data.Sqlite
 {
   using System;
   using System.Collections;
@@ -393,7 +393,7 @@ namespace System.Data.SQLite
     /// have a SQLiteFunctionAttribute attribute, and registering them accordingly.
     /// </summary>
 #if !PLATFORM_COMPACTFRAMEWORK
-    [Security.Permissions.FileIOPermission(Security.Permissions.SecurityAction.Assert, AllFiles = Security.Permissions.FileIOPermissionAccess.PathDiscovery)]
+    [global::System.Security.Permissions.FileIOPermission(global::System.Security.Permissions.SecurityAction.Assert, AllFiles = global::System.Security.Permissions.FileIOPermissionAccess.PathDiscovery)]
 #endif
     static SQLiteFunction()
     {
@@ -429,7 +429,7 @@ namespace System.Data.SQLite
 
             arTypes = arAssemblies[n].GetTypes();
           }
-          catch (Reflection.ReflectionTypeLoadException e)
+          catch (global::System.Reflection.ReflectionTypeLoadException e)
           {
             arTypes = e.Types;
           }
