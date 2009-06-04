@@ -69,7 +69,8 @@ namespace System.Web {
 		string user_cache_control = "private";
 		string redirect_location;
 		
-		static UnknownResponseHeader version_header;
+		UnknownResponseHeader version_header;
+		bool version_header_checked;
 		
 		//
 		// Negative Content-Length means we auto-compute the size of content-length
@@ -104,19 +105,6 @@ namespace System.Web {
 		Encoding headerEncoding;
 #endif
 
-		static HttpResponse ()
-		{
-#if NET_2_0
-			HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
-#else
-			HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
-#endif
-			if (config != null && config.EnableVersionHeader) {
-				string version = Environment.Version.ToString (3);
-				version_header = new UnknownResponseHeader ("X-AspNet-Version", version);
-			}
-		}
-		
 		internal HttpResponse ()
 		{
 			output_stream = new HttpResponseStream (this);
@@ -145,6 +133,25 @@ namespace System.Web {
 			return prev;
 		}
 
+		internal UnknownResponseHeader VersionHeader {
+			get {
+				if (!version_header_checked && version_header == null) {
+					version_header_checked = true;
+#if NET_2_0
+					HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+#else
+					HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
+#endif
+					if (config != null && config.EnableVersionHeader) {
+						string version = Environment.Version.ToString (3);
+						version_header = new UnknownResponseHeader ("X-AspNet-Version", version);
+					}
+				}
+
+				return version_header;
+			}
+		}
+		
 		internal string[] FileDependencies {
 			get {
 				if (fileDependencies == null || fileDependencies.Count == 0)
@@ -641,7 +648,8 @@ namespace System.Web {
 				write_headers.Add (new UnknownResponseHeader ("Location", redirect_location));
 			
 #if !TARGET_J2EE
-			if (version_header != null)
+			UnknownResponseHeader vh = VersionHeader;
+			if (vh != null)
 				write_headers.Add (version_header);
 
 			//
