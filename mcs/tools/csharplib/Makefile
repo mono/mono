@@ -29,7 +29,7 @@ EXTRA_DISTFILES = compiler.info link.xml $(docs)
 
 include ../../build/library.make
 
-MONO_PATH=MONO_PATH="$(topdir)/class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_1_1$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+MONO_PATH=MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/net_1_1$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 $(the_lib): $(the_libdir)/.stamp Makefile Mono.CSharp.dll.sources $(build_lib)
 	$(MKINSTALLDIRS) fixup
