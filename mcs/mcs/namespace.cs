@@ -85,6 +85,10 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				// When type is forwarded
+				if (t.Assembly == found_type.Assembly)
+					continue;					
+
 				Report.SymbolRelatedToPreviousError (found_type);
 				Report.SymbolRelatedToPreviousError (t);
 				if (loc.IsNull) {

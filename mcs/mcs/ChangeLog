@@ -1,5 +1,10 @@
 2009-06-04  Marek Safar  <marek.safar@gmail.com>
 
+	* namespace.cs (LookupTypeReflection): Ignore collisions between
+	forwarded types.
+
+2009-06-04  Marek Safar  <marek.safar@gmail.com>
+
 	* codegen.cs: Enabled generic type forwarders.
 
 2009-06-04  Marek Safar  <marek.safar@gmail.com>
