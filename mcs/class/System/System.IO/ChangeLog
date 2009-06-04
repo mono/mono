@@ -1,3 +1,9 @@
+2009-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* InotifyWatcher.cs: filter pattern should be matched on file name
+	alone, not on the relative path of the file triggering the
+	event. Fixes bug #509998
+
 2009-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* InotifyWatcher.cs: don't send events when a directory is created

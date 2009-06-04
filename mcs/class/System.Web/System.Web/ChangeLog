@@ -1,3 +1,8 @@
+2009-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: OnFileChanged ignores the directory
+	part of the file triggering the event. Fixes bug #509998
+
 2009-06-03  Marek Habersack  <mhabersack@novell.com>
 
 	* VirtualPathUtility.cs: IsValidVirtualPath now checks the value

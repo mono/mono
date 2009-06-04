@@ -717,10 +717,10 @@ namespace System.Web {
 	        static void OnFileChanged(object sender, FileSystemEventArgs args)
 	        {
 			string name = args.Name;
-
-			if (StrUtils.EndsWith (name, "onfig", true) && String.Compare (name, "web.config", true) != 0)
-				return;
-			if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true) != 0)
+			if (StrUtils.EndsWith (name, "onfig", true)) {
+				if (String.Compare (Path.GetFileName (name), "web.config", true) != 0)
+					return;
+			} else if (StrUtils.EndsWith (name, "lobal.asax", true) && String.Compare (name, "global.asax", true) != 0)
 				return;
 
 			// {Inotify,FAM}Watcher will notify about events for a directory regardless
