@@ -1,3 +1,10 @@
+2009-06-04  Jb Evain  <jbevain@novell.com>
+
+	* resources/SR.resx: adjust file names.
+	* Mono.Data.Sqlite.dll.sources: rename from
+		net_2_0_Mono.Data.Sqlite.dll.sources.
+		Hopefully fixes the build.
+
 2009-06-03  Marek Habersack  <mhabersack@novell.com>
 	
 	* Update SQLite.NET version to 1.0.61.0, applied Mono
