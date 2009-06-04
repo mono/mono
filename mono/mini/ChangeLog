@@ -1,5 +1,10 @@
 2009-06-04  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-darwin.c: The exception thread must not be registered with
+	the GC.
+
+2009-06-04  Mark Probst  <mark.probst@gmail.com>
+
 	* mini-gc.c: Disable the code because it makes SGen crash.
 
 2009-06-03  Zoltan Varga  <vargaz@gmail.com>
