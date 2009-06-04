@@ -1,3 +1,7 @@
+2009-06-04  Marek Safar  <marek.safar@gmail.com>
+
+	* Consts.cs.in: Add NET_4_0 constants.
+
 2008-11-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Consts.cs.in: Update Silverlight's FxFileVersion to final

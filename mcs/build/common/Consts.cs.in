@@ -51,7 +51,13 @@ internal
 	public const string MonoProduct = "MONO Common language infrastructure";
 	public const string MonoCopyright = "(c) various MONO Authors";
 
-#if NET_3_5
+#if NET_4_0
+	public const string FxVersion = "4.0.0.0";
+	public const string FxFileVersion = "4.0.20506.1";
+	
+	public const string VsVersion = "0.0.0.0"; // Useless ?
+	public const string VsFileVersion = "10.0.0.0"; // TODO:
+#elif NET_3_5
 	// Versions of .NET Framework 3.5 RTM
 	public const string FxVersion = "3.5.0.0";
 	public const string FxFileVersion = "3.5.21022.8";
