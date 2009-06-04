@@ -1,3 +1,11 @@
+2009-06-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebClient_2_1.cs: Remove the creation of threads and use the
+	async methods provided by WebRequest (and its friends). Use an
+	internal object to lock on (not this). Remove comments from the
+	original (mono) WebClient since the code has diverged so much.
+	Fix DRT#326 (hopefully others too or at least more than it breaks)
+
 2009-06-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWebRequest_2_1.cs: Avoid possible NRE while settings a
