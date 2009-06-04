@@ -25,7 +25,9 @@ PROFILES = \
 	net_2_1_raw \
 	net_2_1 \
 	net_1_0	\
-	net_3_5
+	net_3_5	\
+	net_4_0_bootstrap \
+	net_4_0	
 
 COMMON_SRCS = \
 	Consts.cs.in			\
