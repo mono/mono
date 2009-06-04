@@ -1,3 +1,8 @@
+2009-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: if plain text is parsed and it contains
+	server-side controls, parse and process them. Fixes bug #508888
+
 2009-06-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* BuildManager.cs: allow deployment of precompiled applications under

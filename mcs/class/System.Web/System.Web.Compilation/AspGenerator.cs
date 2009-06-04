@@ -950,6 +950,8 @@ namespace System.Web.Compilation
 			if (ignore_text)
 				return;
 
+			// And again... the first one wins - if we have expressions and server-side
+			// controls together in one block of plain text, tough luck...
 			if (text.IndexOf ("<%") != -1 && !inScript) {
 				if (this.text.Length > 0)
 					FlushText (true);
@@ -957,8 +959,32 @@ namespace System.Web.Compilation
 				r.AddChildren (this);
 				return;
 			}
+
+			int startIndex = 0, index = 0;
+			Match match;
+			int textLen = text.Length;
+
+			while (index > -1 && startIndex < textLen) {
+				match = runatServer.Match (text, index);
+					
+				if (match.Success) {
+					string value = match.Value;
+					index = match.Index;
+					if (index > startIndex)
+						this.text.Append (text.Substring (startIndex, index - startIndex));
+					ParseAttributeTag (value);
+					index += value.Length;
+					startIndex = index;
+				} else
+					break;
+
+				if (index < textLen)
+					index = text.IndexOf ('<', index);
+				else
+					break;
+			}
 			
-			this.text.Append (text);
+			this.text.Append (text.Substring (startIndex));
 			//PrintLocation (location);
 		}
 
@@ -1093,6 +1119,12 @@ namespace System.Web.Compilation
 					builder = RootBuilder.CreateSubBuilder (tagid, htable, null, tparser, location);
 				} catch (TypeLoadException e) {
 					throw new ParseException (Location, "Type not found.", e);
+				} catch (HttpException e) {
+					CompilationException inner = e.InnerException as CompilationException;
+					if (inner != null)
+						throw inner;
+					
+					throw new ParseException (Location, e.Message, e);
 				} catch (Exception e) {
 					throw new ParseException (Location, e.Message, e);
 				}
