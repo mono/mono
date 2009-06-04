@@ -19,7 +19,7 @@ EXTRA_DISTFILES = \
 	Test/Resources/test.pfx \
 	Test/Resources/test2.pfx
 
-VALID_PROFILE := $(filter net_2_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.IdentityModel.dll
 NO_INSTALL = yes

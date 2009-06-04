@@ -36,7 +36,9 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -
 
 EXTRA_DISTFILES =
 
-ifneq (net_2_0, $(PROFILE))
+# This is a .NET 3.5+ assembly
+VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
+ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.Web.DynamicData.dll
 NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes

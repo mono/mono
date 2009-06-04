@@ -17,8 +17,10 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-ifneq (net_2_0, $(PROFILE))
-LIBRARY_NAME = dummy-System.Web.DynamicData.dll
+# This is a .NET 3.5+ assembly
+VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
+ifndef VALID_PROFILE
+LIBRARY_NAME = dummy-System.ComponentModel.DataAnnotations.dll
 NO_INSTALL = yes
 NO_SIGN_ASSEMBLY = yes
 NO_TEST = yes

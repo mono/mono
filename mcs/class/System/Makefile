@@ -26,8 +26,9 @@ TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -nowa
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
-PROFILE_2_OR_4 := $(filter net_2_0 net_4_0, $(PROFILE))	
 endif
+
+PROFILE_2_OR_4 := $(strip($(filter net_2_0 net_4_0, $(PROFILE)))
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
@@ -43,7 +44,7 @@ EXTRA_DISTFILES = \
 	
 lib_file := $(wildcard ../lib/$(PROFILE)/System.dll)
 ifdef lib_file
-ifdef PROFILE_2_OR_4
+ifeq "$(PROFILE_2_OR_4)" ""
 LIB_MCS_FLAGS += -r:PrebuiltSystem=$(lib_file)
 endif
 else
@@ -90,7 +91,7 @@ endif
 
 endif
 
-ifdef PROFILE_2_OR_4
+ifeq "$(PROFILE_2_OR_4)" ""
 # $(eval $(call cyclic-dep,Mono.Security.dll,SECURITY_DEP))
 CYCLIC_DEPS += Mono.Security.dll
 ifndef USE_BOOT_COMPILE

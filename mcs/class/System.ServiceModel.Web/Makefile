@@ -14,7 +14,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 
-VALID_PROFILE := $(filter net_2_0 net_2_1_raw, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 net_2_1_raw net_4_0, $(PROFILE))
 ifndef VALID_PROFILE
 LIBRARY_NAME = dummy-System.ServiceModel.Web.dll
 NO_INSTALL = yes

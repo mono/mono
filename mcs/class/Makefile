@@ -15,9 +15,6 @@ bootstrap_dirs := \
 # We may have to add those if 'mcs' starts using them.
 basic_SUBDIRS := corlib System System.XML System
 
-net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
-net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
-
 net_1_1_java_SUBDIRS = \
 	System.Xml					\
 	System.Data					\
@@ -110,8 +107,6 @@ net_2_0_dirs := \
 	System.Web			\
 	System.Web.Abstractions		\
 	System.Web.Routing		\
-	System.Web.Extensions_1.0	\
-	System.Web.Extensions.Design_1.0	\
 	System.Web.Extensions		\
 	System.Web.Extensions.Design	\
 	System.ComponentModel.DataAnnotations	\
@@ -125,6 +120,10 @@ net_2_0_dirs := \
 	Mono.Options 			\
 	Mono.Simd			\
 	Mono.Tasklets
+	
+net_2_0_only_dirs := \
+	System.Web.Extensions_1.0	\
+	System.Web.Extensions.Design_1.0
 
 net_2_1_dirs := \
 	corlib			\
@@ -145,11 +144,15 @@ net_3_5_dirs := \
 	Microsoft.Build.Tasks		\
 	System.Web.Extensions.Design	
 
+net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
 net_1_1_SUBDIRS := $(common_dirs) $(net_1_1_dirs)
-net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
+net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
+net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
 net_2_1_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 net_3_5_SUBDIRS := $(net_3_5_dirs)
+net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
 
 include ../build/rules.make
 
