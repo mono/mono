@@ -547,7 +547,7 @@ namespace System.IO {
 						}
 					}
 
-					if (filename != data.Directory && !fsw.Pattern.IsMatch (filename)) {
+					if (filename != data.Directory && !fsw.Pattern.IsMatch (Path.GetFileName (filename))) {
 						continue;
 					}
 
