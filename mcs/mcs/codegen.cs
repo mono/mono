@@ -1425,6 +1425,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
+				t = TypeManager.DropGenericTypeArguments (t);
 				if (emitted_forwarders == null) {
 					emitted_forwarders = new ListDictionary();
 				} else if (emitted_forwarders.Contains(t)) {
@@ -1446,11 +1447,6 @@ namespace Mono.CSharp {
 				if (t.DeclaringType != null) {
 					Report.Error (730, a.Location, "Cannot forward type `{0}' because it is a nested type",
 						TypeManager.CSharpName (t));
-					return;
-				}
-
-				if (TypeManager.IsGenericType (t)) {
-					Report.Error (733, a.Location, "Cannot forward generic type `{0}'", TypeManager.CSharpName (t));
 					return;
 				}
 
