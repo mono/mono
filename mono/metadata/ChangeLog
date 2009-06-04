@@ -10,6 +10,18 @@
 
 	Code is contributed under MIT/X11 license.
 
+2009-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* wrapper-types.h: Delete STATIC_RGCTX_INVOKE.
+
+	* marshal.c (mono_marshal_ret_static_rgctx_invoke): Remove, no longer
+	used.
+
+	* icall.c (ves_icall_System_Delegate_CreateDelegate_internal): Avoid
+	adding a static-rgctx invoke wrapper, it is done by the runtime trampolines.
+
+	* generic-sharing.c (inflate_other_data): Ditto.
+	
 2009-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Implement property signature check.

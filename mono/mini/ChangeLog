@@ -1,3 +1,8 @@
+2009-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c aot-runtime.c: Delete references to static rgctx
+	invoke wrappers, we now use trampolines instead.
+
 2009-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-darwin.c: The exception thread must not be registered with
