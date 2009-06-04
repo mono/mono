@@ -1,3 +1,7 @@
+2009-06-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Implement property signature check.
+
 2009-06-04  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.h: Register saving support for PPC.
