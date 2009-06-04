@@ -53,6 +53,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ReadOnlyPropertyBind.aspx", "ReadOnlyPropertyBind.aspx");
 			WebTest.CopyResource (GetType (), "ReadOnlyPropertyControl.ascx", "ReadOnlyPropertyControl.ascx");
 			WebTest.CopyResource (GetType (), "TemplateControlParsingTest.aspx", "TemplateControlParsingTest.aspx");
+			WebTest.CopyResource (GetType (), "ServerSideControlsInScriptBlock.aspx", "ServerSideControlsInScriptBlock.aspx");
 #if NET_2_0
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind1.aspx", "InvalidPropertyBind1.aspx");
 			WebTest.CopyResource (GetType (), "InvalidPropertyBind2.aspx", "InvalidPropertyBind2.aspx");
@@ -179,6 +180,15 @@ namespace MonoTests.System.Web.Compilation {
 	<option value=""strvalue"">str</option>
 
 </select>";
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test (Description="Bug #508888")]
+		public void ServerSideControlsInScriptBlock ()
+		{
+			string pageHtml = new WebTest ("ServerSideControlsInScriptBlock.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = @"<script type=""text/javascript"">alert (escape(""reporting/location?report=ViewsByDate&minDate=minDate&maxDate=maxDate""));</script>";
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 #endif

@@ -168,7 +168,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/LoginDisplayRememberMe.aspx \
 	Test/mainsoft/NunitWebResources/NoBindForMethodsWithBindInName.aspx \
 	Test/mainsoft/NunitWebResources/LinkInHeadWithEmbeddedExpression.aspx \
-	Test/mainsoft/NunitWebResources/ExpressionInListControl.aspx
+	Test/mainsoft/NunitWebResources/ExpressionInListControl.aspx \
+	Test/mainsoft/NunitWebResources/ServerSideControlsInScriptBlock.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
