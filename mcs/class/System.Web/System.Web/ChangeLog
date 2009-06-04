@@ -5,6 +5,7 @@
 
 	* HttpException.cs: do not show version info if custom errors are
 	in effect. Fixes bug #509092
+	Don't generate trace for 403. Fixes bug #509092
 
 	* HttpApplicationFactory.cs: OnFileChanged ignores the directory
 	part of the file triggering the event. Fixes bug #509998
