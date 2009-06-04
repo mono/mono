@@ -355,7 +355,7 @@ namespace Mono.CSharp {
 			parameter_type = texpr.Type;
 
 			// Ignore all checks for dummy members
-			var pem = ec as AbstractPropertyEventMethod;
+			AbstractPropertyEventMethod pem = ec as AbstractPropertyEventMethod;
 			if (pem != null && pem.IsDummy)
 				return parameter_type;
 

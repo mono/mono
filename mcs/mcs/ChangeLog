@@ -1,3 +1,8 @@
+2009-06-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* generic.cs, parameter.cs: Avoid using 'var' so we can bootstrap
+	the compiler from older mono versions (like moon's bots)
+
 2009-06-04  Marek Safar  <marek.safar@gmail.com>
 
 	* namespace.cs (LookupTypeReflection): Ignore collisions between

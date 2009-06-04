@@ -1901,10 +1901,10 @@ namespace Mono.CSharp {
 			}
 
 			if (t.IsGenericType) {
-				var targs_definition = GetTypeArguments (DropGenericTypeArguments (t));
-				var targs = GetTypeArguments (t);
+				Type[] targs_definition = GetTypeArguments (DropGenericTypeArguments (t));
+				Type[] targs = GetTypeArguments (t);
 				for (int i = 0; i < targs_definition.Length; ++i) {
-					var v = GetTypeParameterVariance (targs_definition[i]);
+					Variance v = GetTypeParameterVariance (targs_definition[i]);
 					CheckTypeVariance (targs[i], (Variance) ((int)v * (int)expected), member);
 				}
 
@@ -1928,9 +1928,9 @@ namespace Mono.CSharp {
 
 			Type[] t1 = GetTypeArguments (type1);
 			Type[] t2 = GetTypeArguments (type2);
-			var targs_definition = GetTypeArguments (generic_target_type);
+			Type[] targs_definition = GetTypeArguments (generic_target_type);
 			for (int i = 0; i < targs_definition.Length; ++i) {
-				var v = GetTypeParameterVariance (targs_definition [i]);
+				Variance v = GetTypeParameterVariance (targs_definition [i]);
 				if (v == Variance.None) {
 					if (t1[i] == t2[i])
 						continue;
