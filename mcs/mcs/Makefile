@@ -27,6 +27,11 @@ LOCAL_MCS_FLAGS += -d:GMCS_SOURCE -d:SMCS_SOURCE
 COMPILER_NAME = smcs
 endif
 
+ifeq (4.0, $(FRAMEWORK_VERSION))
+LOCAL_MCS_FLAGS += -d:GMCS_SOURCE
+COMPILER_NAME = dmcs
+endif
+
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 
 BUILT_SOURCES = cs-parser.cs
