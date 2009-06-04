@@ -292,6 +292,22 @@ namespace MonoTests.System.Web.Routing
 			Assert.IsNotNull (vpd, "#C1");
 			Assert.AreEqual ("/Account/LogOn_modified", vpd.VirtualPath, "#C2");
 			Assert.AreEqual (0, vpd.DataTokens.Count, "#C3");
+
+			hc = new HttpContextStub2 ("~/", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			rd = c.GetRouteData (hc);
+			vpd = c.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary (new { controller = "home" }) );
+			Assert.IsNotNull (vpd, "#D1");
+			Assert.AreEqual ("/", vpd.VirtualPath, "#D2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#D3");
+
+			hc = new HttpContextStub2 ("~/", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			rd = c.GetRouteData (hc);
+			vpd = c.GetVirtualPath (new RequestContext (hc, rd), new RouteValueDictionary (new { controller = "Home" }) );
+			Assert.IsNotNull (vpd, "#E1");
+			Assert.AreEqual ("/", vpd.VirtualPath, "#E2");
+			Assert.AreEqual (0, vpd.DataTokens.Count, "#E3");
 		}
 
 		[Test]
