@@ -1,5 +1,8 @@
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpException.cs: do not show version info if custom errors are
+	in effect. Fixes bug #509092
+
 	* HttpApplicationFactory.cs: OnFileChanged ignores the directory
 	part of the file triggering the event. Fixes bug #509998
 

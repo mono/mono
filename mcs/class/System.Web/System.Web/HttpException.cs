@@ -215,34 +215,35 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 		
 		void WriteFileBottom (StringBuilder builder, bool showTrace)
 		{
-			builder.Append ("<hr style=\"color: silver\"/>");
-			builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n", Environment.Version);
-			if (!showTrace)
-				return;
+			if (showTrace) {
+				builder.Append ("<hr style=\"color: silver\"/>");
+				builder.AppendFormat ("<strong>Version information: </strong> Mono Version: {0}; ASP.NET Version: {0}</body></html>\r\n", Environment.Version);
 			
-			string trace, message;
-			bool haveTrace;
-			Exception ex = this;
+				string trace, message;
+				bool haveTrace;
+				Exception ex = this;
 
-			builder.Append ("\r\n<!--");
-			while (ex != null) {
-				trace = ex.StackTrace;
-				message = ex.Message;
-				haveTrace = (trace != null && trace.Length > 0);
+				builder.Append ("\r\n<!--");
+				while (ex != null) {
+					trace = ex.StackTrace;
+					message = ex.Message;
+					haveTrace = (trace != null && trace.Length > 0);
 				
-				if (!haveTrace && (message == null || message.Length == 0)) {
+					if (!haveTrace && (message == null || message.Length == 0)) {
+						ex = ex.InnerException;
+						continue;
+					}
+
+					builder.Append ("\r\n[" + ex.GetType () + "]: " + HtmlEncode (message) + "\r\n");
+					if (haveTrace)
+						builder.Append (ex.StackTrace);
+				
 					ex = ex.InnerException;
-					continue;
 				}
-
-				builder.Append ("\r\n[" + ex.GetType () + "]: " + HtmlEncode (message) + "\r\n");
-				if (haveTrace)
-					builder.Append (ex.StackTrace);
-				
-				ex = ex.InnerException;
-			}
 			
-			builder.Append ("\r\n-->");
+				builder.Append ("\r\n-->");
+			} else
+				builder.Append ("</body></html>\r\n");
 		}
 
 		string GetCustomErrorDefaultMessage ()
