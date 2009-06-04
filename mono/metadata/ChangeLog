@@ -5,6 +5,14 @@
 
 	Fixes #508538.
 
+2009-06-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c metadata.c: Applied patch from Ulrich Weigand 
+	<uweigand@de.ibm.com>: Free the wrappers of inflated generic methods when
+	the inflated method is freed. Fixes #508389.
+
+	The code is contributed under the MIT/X11 license.
+	
 2009-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of r134810.
