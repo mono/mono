@@ -68,8 +68,8 @@ namespace System.Web {
 		CachedRawResponse cached_response;
 		string user_cache_control = "private";
 		string redirect_location;
-		
-		static string version_header;
+		string version_header;
+		bool version_header_checked;
 		
 		//
 		// Negative Content-Length means we auto-compute the size of content-length
@@ -105,17 +105,6 @@ namespace System.Web {
 		Encoding headerEncoding;
 #endif
 
-		static HttpResponse ()
-		{
-#if NET_2_0
-			HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
-#else
-			HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
-#endif
-			if (config != null && config.EnableVersionHeader)
-				version_header = Environment.Version.ToString (3);
-		}
-		
 		internal HttpResponse ()
 		{
 			output_stream = new HttpResponseStream (this);
@@ -144,6 +133,23 @@ namespace System.Web {
 			return prev;
 		}
 
+		internal string VersionHeader {
+			get {
+				if (!version_header_checked && version_header == null) {
+					version_header_checked = true;
+#if NET_2_0
+					HttpRuntimeSection config = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+#else
+					HttpRuntimeConfig config = HttpContext.GetAppConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
+#endif
+					if (config != null && config.EnableVersionHeader)
+						version_header = Environment.Version.ToString (3);
+				}
+
+				return version_header;
+			}
+		}
+		
 		internal string[] FileDependencies {
 			get {
 				if (fileDependencies == null || fileDependencies.Count == 0)
@@ -675,8 +681,9 @@ namespace System.Web {
 				write_headers.Add ("Location", redirect_location);
 			
 #if !TARGET_J2EE
-			if (version_header != null)
-				write_headers.Add ("X-AspNet-Version", version_header);
+			string vh = VersionHeader;
+			if (vh != null)
+				write_headers.Add ("X-AspNet-Version", vh);
 
 			//
 			// If Content-Length is set.
