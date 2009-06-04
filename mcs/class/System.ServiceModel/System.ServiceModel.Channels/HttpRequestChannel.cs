@@ -79,11 +79,13 @@ namespace System.ServiceModel.Channels
 
 		public override Message Request (Message message, TimeSpan timeout)
 		{
-			return ProcessRequest (message, timeout);
+			return EndRequest (BeginRequest (message, timeout, null, null));
 		}
 
-		Message ProcessRequest (Message message, TimeSpan timeout)
+		void BeginProcessRequest (HttpChannelRequestAsyncResult result)
 		{
+			Message message = result.Message;
+			TimeSpan timeout = result.Timeout;
 			// FIXME: is distination really like this?
 			Uri destination = message.Headers.To ?? Via ?? RemoteAddress.Uri;
 
@@ -136,23 +138,30 @@ namespace System.ServiceModel.Channels
 					throw new InvalidOperationException (String.Format ("Cross domain web service access to {0} is not allowed", destination));
 #endif
 
-				object state = new object ();
-				Stream requestStream = web_request.EndGetRequestStream (web_request.BeginGetRequestStream (delegate (IAsyncResult result) {
-					if (result.AsyncState != state)
-						throw new InvalidOperationException ("The argument async result has wrong state");
-					}, state));
-				requestStream.Write (buffer.GetBuffer (), 0, (int) buffer.Length);
-				requestStream.Close ();
+				web_request.BeginGetRequestStream (delegate (IAsyncResult r) {
+					try {
+						result.CompletedSynchronously &= r.CompletedSynchronously;
+						using (Stream s = web_request.EndGetRequestStream (r))
+							s.Write (buffer.GetBuffer (), 0, (int) buffer.Length);
+						web_request.BeginGetResponse (GotResponse, result);
+					} catch (Exception ex) {
+						result.Complete (ex);
+					}
+				}, null);
+			} else {
+				web_request.BeginGetResponse (GotResponse, result);
 			}
-
+		}
+		
+		void GotResponse (IAsyncResult result)
+		{
+			HttpChannelRequestAsyncResult channelResult = (HttpChannelRequestAsyncResult) result.AsyncState;
+			channelResult.CompletedSynchronously &= result.CompletedSynchronously;
+			
 			WebResponse res;
 			Stream resstr;
 			try {
-				object state = new object ();
-				res = web_request.EndGetResponse (web_request.BeginGetResponse (delegate (IAsyncResult result) {
-					if (result.AsyncState != state)
-						throw new InvalidOperationException ("The argument async result has wrong state");
-					}, state));
+				res = web_request.EndGetResponse (result);
 				resstr = res.GetResponseStream ();
 			} catch (WebException we) {
 				res = we.Response;
@@ -166,7 +175,9 @@ namespace System.ServiceModel.Channels
 #if NET_2_1 // debug
 					Console.WriteLine (we2);
 #endif
-					throw we;
+
+					channelResult.Complete (we2);
+					return;
 				}
 			}
 			
@@ -184,7 +195,7 @@ namespace System.ServiceModel.Channels
 					}
 					ms.Seek (0, SeekOrigin.Begin);
 
-					Message ret = Encoder.ReadMessage (
+					channelResult.Response = Encoder.ReadMessage (
 						//responseStream, MaxSizeOfHeaders);
 						ms, MaxSizeOfHeaders, res.ContentType);
 /*
@@ -195,10 +206,12 @@ w.Formatting = System.Xml.Formatting.Indented;
 buf.CreateMessage ().WriteMessage (w);
 w.Close ();
 */
-					return ret;
+					channelResult.Complete ();
 				}
+			} catch (Exception ex) {
+				channelResult.Complete (ex);
 			} finally {
-				res.Close ();
+				res.Close ();	
 			}
 		}
 
@@ -206,7 +219,9 @@ w.Close ();
 		{
 			ThrowIfDisposedOrNotOpen ();
 
-			return new HttpChannelRequestAsyncResult (this, message, timeout, callback, state);
+			HttpChannelRequestAsyncResult result = new HttpChannelRequestAsyncResult (message, timeout, callback, state);
+			BeginProcessRequest (result);
+			return result;
 		}
 
 		public override Message EndRequest (IAsyncResult result)
@@ -264,42 +279,31 @@ w.Close ();
 
 		class HttpChannelRequestAsyncResult : IAsyncResult
 		{
-			HttpRequestChannel channel;
-			Message message;
-			TimeSpan timeout;
+			public Message Message {
+				get; private set;
+			}
+			
+			public TimeSpan Timeout {
+				get; private set;
+			}
+
 			AsyncCallback callback;
-			object state;
-			AutoResetEvent wait;
-			bool done, waiting;
-			Message response;
+			ManualResetEvent wait;
 			Exception error;
 
-			public HttpChannelRequestAsyncResult (HttpRequestChannel channel, Message message, TimeSpan timeout, AsyncCallback callback, object state)
+			public HttpChannelRequestAsyncResult (Message message, TimeSpan timeout, AsyncCallback callback, object state)
 			{
-				this.channel = channel;
-				this.message = message;
-				this.timeout = timeout;
+				CompletedSynchronously = true;
+				Message = message;
+				Timeout = timeout;
 				this.callback = callback;
-				this.state = state;
+				AsyncState = state;
 
-				wait = new AutoResetEvent (false);
-				Thread t = new Thread (delegate () {
-					try {
-						response = channel.ProcessRequest (message, timeout);
-						if (callback != null)
-							callback (this);
-					} catch (Exception ex) {
-						error = ex;
-					} finally {
-						done = true;
-						wait.Set ();
-					}
-				});
-				t.Start ();
+				wait = new ManualResetEvent (false);
 			}
 
 			public Message Response {
-				get { return response; }
+				get; set;
 			}
 
 			public WaitHandle AsyncWaitHandle {
@@ -307,22 +311,44 @@ w.Close ();
 			}
 
 			public object AsyncState {
-				get { return state; }
+				get; private set;
 			}
 
+			public void Complete ()
+			{
+				Complete (null);
+			}
+			
+			public void Complete (Exception ex)
+			{
+				if (IsCompleted) {
+					return;
+				}
+				// If we've already stored an error, don't replace it
+				error = error ?? ex;
+
+				IsCompleted = true;
+				wait.Set ();
+				if (callback != null)
+					callback (this);
+			}
+			
 			public bool CompletedSynchronously {
-				get { return done && !waiting; }
+				get; set;
 			}
 
 			public bool IsCompleted {
-				get { return done; }
+				get; private set;
 			}
 
 			public void WaitEnd ()
 			{
-				if (!done) {
-					waiting = true;
-					wait.WaitOne (timeout, true);
+				if (!IsCompleted) {
+					// FIXME: Do we need to use the timeout? If so, what happens when the timeout is reached.
+					// Is the current request cancelled and an exception thrown? If so we need to pass the
+					// exception to the Complete () method and allow the result to complete 'normally'.
+					//wait.WaitOne (Timeout, true);
+					wait.WaitOne ();
 				}
 				if (error != null)
 					throw error;
