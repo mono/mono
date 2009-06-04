@@ -11,7 +11,7 @@ EXTRA_DISTFILES = \
 	generic.cs		\
 	NOTES			\
 	TODO			\
-	gmcs.exe.config
+	*mcs.exe.config
 
 ifeq (1.0, $(FRAMEWORK_VERSION))
 COMPILER_NAME = mcs
