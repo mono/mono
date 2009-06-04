@@ -51,7 +51,7 @@ internal
 	public const string MonoProduct = "MONO Common language infrastructure";
 	public const string MonoCopyright = "(c) various MONO Authors";
 
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 	public const string FxVersion = "4.0.0.0";
 	public const string FxFileVersion = "4.0.20506.1";
 	
