@@ -1,3 +1,9 @@
+2009-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteValueDictionaryExtensions.cs: if both values are strings in
+	Has (string, value), compare them case-insensitively. Fixes bug
+	#502555
+
 2009-05-27  Marek Habersack  <mhabersack@novell.com>
 
 	* PatternParser.cs: if Match is passed an empty path, do not

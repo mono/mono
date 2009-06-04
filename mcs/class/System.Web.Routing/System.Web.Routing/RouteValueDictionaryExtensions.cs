@@ -49,9 +49,19 @@ namespace System.Web.Routing
 				return false;
 
 			object entryValue;
-			if (dict.TryGetValue (key, out entryValue))
+			if (dict.TryGetValue (key, out entryValue)) {
+				if (value is string) {
+					if (!(entryValue is string))
+						return false;
+					
+					string s1 = value as string;
+					string s2 = entryValue as string;
+					return String.Compare (s1, s2, StringComparison.OrdinalIgnoreCase) == 0;
+				}
+				
 				return entryValue == null ? value == null : entryValue.Equals (value);
-
+			}
+			
 			return false;
 		}
 
