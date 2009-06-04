@@ -156,7 +156,7 @@ net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_1_1_dirs) $(net_2_0_dirs) $(net_2_1_dirs) $(net_3_5_dirs)
+SUBDIRS = $(common_dirs) $(net_1_1_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_2_1_dirs) $(net_3_5_dirs)
 
 # These libraries below are either unimplemented or don't compile, but
 #BROKEN_SUBDIRS =
