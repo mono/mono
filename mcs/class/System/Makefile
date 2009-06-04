@@ -26,9 +26,8 @@ TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -nowa
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
-endif
-
 PROFILE_2_OR_4 := $(strip($(filter net_2_0 net_4_0, $(PROFILE)))
+endif
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
