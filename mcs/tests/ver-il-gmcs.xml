@@ -7680,7 +7680,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>46</size>
+        <size>60</size>
       </method>
     </type>
   </test>

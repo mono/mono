@@ -19,3 +19,11 @@ public class D
 		return typeof (D).FullName;
 	}
 }
+
+public struct G<T>
+{
+	public static T Test (T t)
+	{
+		return t;
+	}
+}

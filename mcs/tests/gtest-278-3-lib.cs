@@ -5,3 +5,4 @@ using System.Runtime.CompilerServices;
 
 [assembly: TypeForwardedTo (typeof (C))]
 [assembly: TypeForwardedTo (typeof (D))]
+[assembly: TypeForwardedTo (typeof (G<int>))]
