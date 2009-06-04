@@ -26,6 +26,7 @@
 //
 
 #if NET_4_0
+using System;
 using System.Runtime.CompilerServices;
 
 [assembly:TypeForwardedTo (typeof(Func<>))]
