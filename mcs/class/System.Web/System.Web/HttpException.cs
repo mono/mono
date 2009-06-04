@@ -322,7 +322,7 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			if (resource_name != null && resource_name.Length > 0)
 				builder.AppendFormat ("<p><strong>Requested URL: </strong>{0}</p>\r\n", resource_name);
 			
-			if (showTrace && baseEx != null && http_code != 404) {
+			if (showTrace && baseEx != null && http_code != 404 && http_code != 403) {
 				builder.Append ("<p><strong>Stack Trace: </strong></p>");
 				builder.Append ("<table summary=\"Stack Trace\" class=\"sampleCode\">\r\n<tr><td>");
 				WriteTextAsCode (builder, baseEx.ToString ());
