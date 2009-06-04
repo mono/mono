@@ -127,11 +127,13 @@ namespace System.Data.OracleClient
 			srcColumn = string.Empty;
 			SourceVersion = DataRowVersion.Current;
 
+#if NET_2_0
 			// Find the OciType before inferring for the size
 			if (value != null && value != DBNull.Value) {
 				this.sizeSet = true;
 				this.size = InferSize ();
 			}
+#endif
 		}
 
 		public OracleParameter (string name, OracleType oracleType)
@@ -370,10 +372,12 @@ namespace System.Data.OracleClient
 				this.value = value;
 				if (!oracleTypeSet)
 					InferOracleType (value);
+#if NET_2_0
 				if (value != null && value != DBNull.Value) {
 					this.size = InferSize ();
 					this.sizeSet = true;
 				}
+#endif
 			}
 		}
 

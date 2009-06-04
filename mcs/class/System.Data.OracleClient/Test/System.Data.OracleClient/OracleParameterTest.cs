@@ -128,9 +128,6 @@ namespace MonoTests.System.Data.OracleClient
 		}
 
 		[Test] // ctor ()
-#if NET_2_0
-		[Category ("NotWorking")] // #A8 fails
-#endif
 		public void Constructor2 ()
 		{
 			OracleParameter param;
@@ -163,7 +160,11 @@ namespace MonoTests.System.Data.OracleClient
 			Assert.AreEqual (string.Empty, param.ParameterName, "#B5");
 			Assert.AreEqual ((byte) 0, param.Precision, "#B6");
 			Assert.AreEqual ((byte) 0, param.Scale, "#B7");
+#if NET_2_0
+			Assert.AreEqual (7, param.Size, "#B8");
+#else
 			Assert.AreEqual (0, param.Size, "#B8");
+#endif
 			Assert.AreEqual (string.Empty, param.SourceColumn, "#B9");
 #if NET_2_0
 			Assert.IsFalse (param.SourceColumnNullMapping, "#B10");
