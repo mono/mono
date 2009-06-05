@@ -1,5 +1,12 @@
 2009-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (parse_type): Check pointer, class/valuetype
+	and generic params. 
+
+	* metadata-verify.c (parse_field): Check the signature.
+
+2009-06-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Implement locals signature check.
 
 2009-06-04  Marek Safar  <marek.safar@gmail.com>
