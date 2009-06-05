@@ -33,6 +33,8 @@ using System.Collections;
 using System.Collections.Specialized;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Configuration
@@ -42,8 +44,6 @@ namespace System.Configuration
 	/// </summary>
 	public class DictionarySectionHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
-
 		/// <summary>
 		///		Creates a new DictionarySectionHandler object and adds the object to the collection.
 		/// </summary>
@@ -53,10 +53,13 @@ namespace System.Configuration
 		/// <returns></returns>
 		public virtual object Create(object parent, object context, XmlNode section)
 		{
+#if (XML_DEP)			
 			return ConfigHelper.GetDictionary (parent as IDictionary, section,
 							   KeyAttributeName, ValueAttributeName);
-		}
+#else
+			return null;
 #endif
+		}
 
 		/// <summary>
 		///		Gets the name of the key attribute tag. This property is overidden by derived classes to change 

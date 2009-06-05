@@ -30,6 +30,8 @@
 using System;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Configuration
@@ -39,7 +41,6 @@ namespace System.Configuration
 	/// </summary>
 	public interface IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		/// <summary>
 		///		Creates a new configuration handler and adds the specified configuration object to the collection.
 		/// </summary>
@@ -48,6 +49,5 @@ namespace System.Configuration
 		/// <param name="section">The XML node that contains the configuration information to be handled. section provides direct access to the XML contents of the configuration section.</param>
 		/// <returns></returns>
 		object Create(object parent, object configContext, XmlNode section);
-#endif
 	}
 }

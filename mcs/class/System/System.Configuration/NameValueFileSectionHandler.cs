@@ -33,15 +33,17 @@ using System.Collections.Specialized;
 using System.IO;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Configuration
 {
 	public class NameValueFileSectionHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		public object Create (object parent, object configContext, XmlNode section)
 		{
+#if (XML_DEP)
 			XmlNode file = null;
 			if (section.Attributes != null)
 				file = section.Attributes.RemoveNamedItem ("file");
@@ -69,8 +71,10 @@ namespace System.Configuration
 			}
 
 			return pairs;
+#else
+			return null;
+#endif			
 		}
-#endif
 	}
 }
 

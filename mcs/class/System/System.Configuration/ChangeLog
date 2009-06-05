@@ -1,3 +1,10 @@
+2009-06-05 Marek Safar <marek.safar@gmail.com>
+
+	* DictionarySectionHandler.cs, NameValueSectionHandler.cs,
+	NameValueFileSectionHandler.cs, SingleTagSectionHandler.cs,
+	IConfigurationSectionHandler.cs, IgnoreSectionHandler.cs: Always
+	build IConfigurationSectionHandler.
+
 2009-05-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CustomizableFileSettingsProvider.cs: make sure 'values' is

@@ -32,6 +32,8 @@ using System;
 using System.Collections;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Configuration
@@ -41,7 +43,6 @@ namespace System.Configuration
 	/// </summary>
 	public class SingleTagSectionHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		/// <summary>
 		///		Returns a collection of configuration section values.
 		/// </summary>
@@ -58,6 +59,7 @@ namespace System.Configuration
 			else
 				settingsCollection = (Hashtable) parent;
 
+#if (XML_DEP)
 			//Get all of the ChildNodes in the XML section.
 			if(section.HasChildNodes)
 			{
@@ -72,9 +74,9 @@ namespace System.Configuration
 			{
 				settingsCollection.Add(xmlAttributes[i].Name, xmlAttributes[i].Value);
 			}
+#endif			
 			
 			return settingsCollection;
 		}
-#endif
 	}
 }

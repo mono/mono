@@ -31,6 +31,8 @@
 using System;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Configuration
@@ -40,7 +42,6 @@ namespace System.Configuration
 	/// </summary>
 	public class IgnoreSectionHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		/// <summary>
 		///		Creates a new configuration handler and adds the specified configuration object to the collection.
 		/// </summary>
@@ -52,6 +53,5 @@ namespace System.Configuration
 		{
 			return null;
 		}
-#endif
 	}
 }

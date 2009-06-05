@@ -31,6 +31,8 @@ using System;
 using System.Collections.Specialized;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Configuration
@@ -40,7 +42,6 @@ namespace System.Configuration
 	/// </summary>
 	public class NameValueSectionHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		/// <summary>
 		///		Creates a new configuration handler and adds the specified configuration object to the collection.
 		/// </summary>
@@ -50,10 +51,14 @@ namespace System.Configuration
 		/// <returns></returns>
 		public object Create(object parent, object context, XmlNode section)
 		{
+#if (XML_DEP)			
 			return ConfigHelper.GetNameValueCollection (parent as NameValueCollection, section,
 								    KeyAttributeName, ValueAttributeName);
-		}
+#else
+			return null;
 #endif
+		}
+
 		/// <summary>
 		/// Gets the name of the key attribute tag. This property is overidden by derived classes to change 
 		/// the name of the key attribute tag. The default is "key".
