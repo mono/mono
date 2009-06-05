@@ -1,3 +1,8 @@
+2009-06-05  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Fixed NET_2_0 conditional to actually handle Mono.Security
+	dependency.
+
 2005-10-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ProtectedData.cs: Added support for Windows (2000 and later) by 

@@ -59,7 +59,7 @@ namespace System.Security.Cryptography.Xml {
 			AddCertificate (cert);
 		}
 
-#if NET_2_0
+#if NET_2_0 && SECURITY_DEP
 		public KeyInfoX509Data (X509Certificate cert, X509IncludeOption includeOption)
 		{
 			if (cert == null)

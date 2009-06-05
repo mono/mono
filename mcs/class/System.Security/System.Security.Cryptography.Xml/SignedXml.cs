@@ -721,7 +721,7 @@ namespace System.Security.Cryptography.Xml {
 				pkEnumerator = m_signature.KeyInfo.GetEnumerator ();
 			}
 			
-#if NET_2_0
+#if NET_2_0 && SECURITY_DEP
 			if (_x509Enumerator != null) {
 				if (_x509Enumerator.MoveNext ()) {
 					X509Certificate cert = (X509Certificate) _x509Enumerator.Current;
@@ -745,7 +745,7 @@ namespace System.Security.Cryptography.Xml {
 					return key;
 				}
 
-#if NET_2_0
+#if NET_2_0 && SECURITY_DEP
 				if (kic is KeyInfoX509Data) {
 					_x509Enumerator = ((KeyInfoX509Data) kic).Certificates.GetEnumerator ();
 					if (_x509Enumerator.MoveNext ()) {

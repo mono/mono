@@ -1,3 +1,8 @@
+2009-06-05  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Fixed NET_2_0 conditional to actually handle Mono.Security
+	dependency.
+
 2008-11-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Security_test.dll.sources: Add new tests to build
