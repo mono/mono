@@ -383,7 +383,7 @@ namespace System.Xml
 
 		public override string GetAttribute (string name)
 		{
-			for (int i = 0; i < attributes.Count; i++)
+			for (int i = 0; i < attr_count; i++)
 				if (attributes [i].Name == name)
 					return attributes [i].Value;
 			return null;
@@ -391,7 +391,7 @@ namespace System.Xml
 
 		public override string GetAttribute (string localName, string ns)
 		{
-			for (int i = 0; i < attributes.Count; i++)
+			for (int i = 0; i < attr_count; i++)
 				if (attributes [i].LocalName == localName &&
 					attributes [i].NS == ns)
 					return attributes [i].Value;

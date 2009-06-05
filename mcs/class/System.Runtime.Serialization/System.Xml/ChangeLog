@@ -1,5 +1,10 @@
 2009-06-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlBinaryDictionaryReader.cs : fix GetAttribute() that returns
+	  attributes from cache that are *not* in current element.
+
+2009-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryReader.cs : there was wrong reusage of nodes
 	  when the node was at the top of the stack. It was added twice and
 	  call to reset resulted in end element with empty names.
