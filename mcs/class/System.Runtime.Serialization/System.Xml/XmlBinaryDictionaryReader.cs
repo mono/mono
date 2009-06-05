@@ -304,6 +304,7 @@ namespace System.Xml
 
 			current = node = new NodeInfo ();
 			current.Reset ();
+			node_stack.Add (node);
 		}
 
 		public override int AttributeCount {
@@ -526,16 +527,17 @@ namespace System.Xml
 
 			if (node.NodeType == XmlNodeType.Element) {
 				// push element scope
-				if (++depth == quota.MaxDepth)
-					throw new XmlException (String.Format ("Binary XML stream quota exceeded. Depth must be less than {0}", quota.MaxDepth));
-				if (node_stack.Count <= depth) {
-					node_stack.Add (node);
+				if (node_stack.Count <= ++depth) {
+					if (depth == quota.MaxDepth)
+						throw new XmlException (String.Format ("Binary XML stream quota exceeded. Depth must be less than {0}", quota.MaxDepth));
 					node = new NodeInfo ();
+					node_stack.Add (node);
+				} else {
+					node = node_stack [depth]; // reuse
+					node.Reset ();
 				}
-				else
-					node = node_stack [depth];
-				current = node;
 			}
+			current = node;
 
 			if (is_next_end_element) {
 				is_next_end_element = false;

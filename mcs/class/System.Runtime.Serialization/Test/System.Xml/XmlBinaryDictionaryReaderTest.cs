@@ -435,8 +435,11 @@ namespace MonoTests.System.Xml
 			var dic = new XmlDictionary ();
 			for (int i = 0; i < 128; i++) dic.Add ("s" + i);
 			var xr = XmlDictionaryReader.CreateBinaryReader (new MemoryStream (buffer), dic, new XmlDictionaryReaderQuotas ());
-			while (!xr.EOF)
+			while (!xr.EOF) {
 				xr.Read ();
+				if (xr.NodeType == XmlNodeType.EndElement && xr.LocalName == String.Empty)
+					Assert.Fail ("EndElement has empty name");
+			}
 		}
 	}
 }

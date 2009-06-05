@@ -1,3 +1,8 @@
+2009-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReaderTest.cs : verify that end element has
+	  non-empty local name.
+
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryWriterTest.cs : added test for failing duplicate

@@ -1,3 +1,9 @@
+2009-06-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReader.cs : there was wrong reusage of nodes
+	  when the node was at the top of the stack. It was added twice and
+	  call to reset resulted in end element with empty names.
+
 2009-05-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlBinaryDictionaryWriter.cs : allow mapping an identical prefix
