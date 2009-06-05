@@ -96,12 +96,15 @@ namespace System.Web {
 		bool validate_cookies, validate_query_string, validate_form;
 		bool checked_cookies, checked_query_string, checked_form;
 
+#if NET_2_0
 		static readonly UrlMappingCollection urlMappings;
+#endif
 		
 		readonly static char [] queryTrimChars = {'?'};
 		
 		static HttpRequest ()
 		{
+#if NET_2_0
 			try {
 				UrlMappingsSection ums = WebConfigurationManager.GetWebApplicationSection ("system.web/urlMappings") as UrlMappingsSection;
 				if (ums != null && ums.IsEnabled) {
@@ -112,6 +115,7 @@ namespace System.Web {
 			} catch {
 				// unlikely to happen
 			}
+#endif
 			
 			host_addresses = GetLocalHostAddresses ();
 		}
