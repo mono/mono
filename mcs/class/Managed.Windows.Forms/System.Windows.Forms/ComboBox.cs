@@ -2495,16 +2495,18 @@ namespace System.Windows.Forms
 			internal void CalcListBoxArea ()
 			{
 				int width, height;
-				bool show_scrollbar = false;
+				bool show_scrollbar;
 
 				if (owner.DropDownStyle == ComboBoxStyle.Simple) {
 					Rectangle area = owner.listbox_area;
 					width = area.Width;
 					height = area.Height;
+					show_scrollbar = owner.Items.Count * owner.ItemHeight > height;
 
 					// No calculation needed
 					if (height <= 0 || width <= 0)
 						return;
+
 				}
 				else { // DropDown or DropDownList
 					
@@ -2516,12 +2518,21 @@ namespace System.Windows.Forms
 						for (int i = 0; i < count; i++) {
 							height += owner.GetItemHeight (i);
 						}
+
+						show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
 						
 					} else	{
 #if NET_2_0
-						height = owner.DropDownHeight == default_drop_down_height ? owner.ItemHeight * count : owner.DropDownHeight;
+						if (owner.DropDownHeight == default_drop_down_height) { // ignore DropDownHeight
+							height = owner.ItemHeight * count;
+							show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
+						} else {
+							height = owner.DropDownHeight;
+							show_scrollbar = (count * owner.ItemHeight) > height;
+						}
 #else		
 						height = owner.ItemHeight * count;
+						show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
 #endif
 					}
 				}
@@ -2529,8 +2540,7 @@ namespace System.Windows.Forms
 				page_size = Math.Max (height / owner.ItemHeight, 1);
 
 				ComboBoxStyle dropdown_style = owner.DropDownStyle;
-				if ((dropdown_style != ComboBoxStyle.Simple && owner.Items.Count <= owner.MaxDropDownItems)
-					|| (dropdown_style == ComboBoxStyle.Simple && owner.Items.Count * owner.ItemHeight < height)) {
+				if (!show_scrollbar) {
 
 					if (vscrollbar_ctrl != null)
 						vscrollbar_ctrl.Visible = false;
@@ -2559,7 +2569,7 @@ namespace System.Windows.Forms
 					if (large < 1)
 						large = 1;
 					vscrollbar_ctrl.LargeChange = large;
-					show_scrollbar = vscrollbar_ctrl.Visible = true;
+					vscrollbar_ctrl.Visible = true;
 
 					int hli = HighlightedIndex;
 					if (hli > 0) {

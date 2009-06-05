@@ -1,3 +1,10 @@
+2009-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: Properly detect whether we need to use our vertical
+	scrollbar or not, specially for DropDownList/DropDown styles,
+	depending on the value of DropDownHeight.
+	Fixes #508541.
+
 2009-06-01  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* ToolTip.cs: Call the base implementation in Dispose, but do it
