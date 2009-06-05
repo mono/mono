@@ -1,3 +1,7 @@
+2009-06-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* bug-508538.cs: New regression test for bug #508538.
+
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* load-exceptions.cs: Fix thiko.
