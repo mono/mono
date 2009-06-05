@@ -1,3 +1,8 @@
+2009-06-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Added tests for bugs #465613, #510661,
+	#510642 and #508027.
+
 2009-05-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CookieTest.cs: Added test for Path.
