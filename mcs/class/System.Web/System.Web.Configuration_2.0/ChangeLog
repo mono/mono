@@ -21,6 +21,15 @@
 	* HttpHandlersSection.cs: if we're matching a default handler,
 	disallow caching.
 
+2009-04-03  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: added code in the static constructor
+	to enable retrieving application settings via
+	ApplicationSettingsBase from within asp.net applications. Fixes
+	bug #491531
+
+	* ApplicationSettingsConfigurationFileMap.cs: added.
+
 2009-03-12  Dean Brettle  <dean@brettle.com>
 
 	* nBrowser/Build.cs: made Browser() method thread-safe and moved the

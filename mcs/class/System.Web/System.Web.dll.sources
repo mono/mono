@@ -140,6 +140,7 @@ System.Web.Configuration/WebConfigurationSettings.cs
 System.Web.Configuration/WebControlsSectionHandler.cs
 System.Web.Configuration_2.0/AdapterDictionary.cs
 System.Web.Configuration_2.0/AnonymousIdentificationSection.cs
+System.Web.Configuration_2.0/ApplicationSettingsConfigurationFileMap.cs
 System.Web.Configuration_2.0/AssemblyCollection.cs
 System.Web.Configuration_2.0/AssemblyInfo.cs
 System.Web.Configuration_2.0/AuthenticationSection.cs

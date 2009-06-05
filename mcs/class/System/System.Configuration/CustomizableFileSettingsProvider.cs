@@ -71,6 +71,17 @@ namespace System.Configuration
 	
 	internal class CustomizableFileSettingsProvider : SettingsProvider, IApplicationSettingsProvider
 	{
+		// KLUDGE WARNING.
+		//
+		// This is used from within System.Web to allow mapping of the ExeConfigFilename to
+		// the correct Web.config for the current request. Otherwise web applications will
+		// not be able to access settings from Web.config. The type assigned to this
+		// variable must descend from the ConfigurationFileMap class and its
+		// MachineConfigFilename will be used to set the ExeConfigFilename.
+		//
+		// This is necessary to fix bug #491531
+		private static Type webConfigurationFileMapType;
+		
 		private static string userRoamingPath = "";
 		private static string userLocalPath = "";
 		private static string userRoamingPathPrevVersion = "";
@@ -783,12 +794,26 @@ namespace System.Configuration
 
 				// current version
 				exeMapCurrent = new ExeConfigurationFileMap ();
+				
 				// exeMapCurrent.ExeConfigFilename = System.Windows.Forms.Application.ExecutablePath + ".config";
 				Assembly entry = Assembly.GetEntryAssembly () ?? Assembly.GetExecutingAssembly ();
 				exeMapCurrent.ExeConfigFilename = entry.Location + ".config";
 				exeMapCurrent.LocalUserConfigFilename = UserLocalFullPath;
 				exeMapCurrent.RoamingUserConfigFilename = UserRoamingFullPath;
 
+				if (webConfigurationFileMapType != null && typeof (ConfigurationFileMap).IsAssignableFrom (webConfigurationFileMapType)) {
+					try {
+						ConfigurationFileMap cfgFileMap = Activator.CreateInstance (webConfigurationFileMapType) as ConfigurationFileMap;
+						if (cfgFileMap != null) {
+							string fpath = cfgFileMap.MachineConfigFilename;
+							if (!String.IsNullOrEmpty (fpath))
+								exeMapCurrent.ExeConfigFilename = fpath;
+						}
+					} catch {
+						// ignore
+					}
+				}
+				
 				// previous version
 				if ((PrevUserLocalFullPath != "") && (PrevUserRoamingFullPath != ""))
 				{

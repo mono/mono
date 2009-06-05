@@ -3,6 +3,11 @@
 	* CustomizableFileSettingsProvider.cs: make sure 'values' is
 	initialized in Reset(). Fixes bug #436592.
 
+2009-04-03  Marek Habersack  <mhabersack@novell.com>
+  
+	* CustomizableFileSettingsProvider.cs: added a way for System.Web
+	to specify path to the current Web.config. Fixes bug #491531
+
 2008-11-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ConfigHelper.cs: allow xmlns attribute.
