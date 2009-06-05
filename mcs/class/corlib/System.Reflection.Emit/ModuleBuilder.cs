@@ -543,7 +543,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public void DefineManifestResource (string name, Stream stream, ResourceAttributes attribute) {
 			if (name == null)
 				throw new ArgumentNullException ("name");
