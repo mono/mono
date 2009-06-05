@@ -1,3 +1,8 @@
+2009-06-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecurityPermissionFlag.cs: Add [Obsolete] on NET_2_1 since CAS 
+	stuff is not available in Moonlight.
+
 2009-05-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CodeAccessSecurityAttribute.cs, SecurityAction.cs, 
