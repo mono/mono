@@ -1,3 +1,13 @@
+2009-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: OpenWebConfiguration caches
+	configurations with a key generated from all the parameters passed
+	to it, not just from path.
+	Added internal GetSection method which takes HttpContext as its
+	third parameter - used in calling OpenWebConfiguration.
+	FindWebConfig is no longer used in GetSection - it breaks handling
+	of <location> elements in config files. Fixes bug #510302
+
 2009-06-03  Marek Habersack  <mhabersack@novell.com>
 
 	* MonoSettingsSection.cs: added new property,

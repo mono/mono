@@ -636,7 +636,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	void InitializeTheme ()
 	{
 		if (_theme == null) {
-			PagesSection ps = WebConfigurationManager.GetWebApplicationSection ("system.web/pages") as PagesSection;
+			PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
 			if (ps != null)
 				_theme = ps.Theme;
 		}

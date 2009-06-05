@@ -1,3 +1,10 @@
+2009-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: InitializeTheme uses WebConfigurationManager.GetSection
+	to retrieve page theme name. GetWebApplicationSection cannot be
+	used because the system.web/pages section is valid also in
+	subdirectories. Fixes bug #510302
+
 2009-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* ClientScriptManager.cs: WriteHiddenFields doesn't add the id

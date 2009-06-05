@@ -1,3 +1,15 @@
+2009-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* VirtualPathUtility.cs: IsValidVirtualPath no longer uses
+	WebConfigurationManager.GetSection to retrieve the verification
+	setting. Instead, the setting is retrieved in the static
+	constructor.
+
+	* HttpRequest.cs: ApplyUrlMapping must not use
+	WebConfigurationManager.GetSection as it would cause a recursive
+	call loop. Code to detect whether url mappings are in effect has
+	been moved to a static constructor.
+
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: version header configuration is read lazily
