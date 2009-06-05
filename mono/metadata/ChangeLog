@@ -1,3 +1,7 @@
+2009-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (parse_type): Check array shape.
+
 2009-06-05  Robert Jordan  <robertj@gmx.net>
 
 	* class.c (mono_class_create_from_typedef): Check only for
