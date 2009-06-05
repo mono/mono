@@ -57,7 +57,7 @@ namespace System.ComponentModel.Design.Serialization
 		public object this[Type type] {
 			get {
 				for (int i = _contextList.Count - 1; i >= 0; i--)
-					if (_contextList[i].GetType () == type)
+					if (type.IsInstanceOfType (_contextList[i]))
  						return _contextList[i];
 				return null;
 			}

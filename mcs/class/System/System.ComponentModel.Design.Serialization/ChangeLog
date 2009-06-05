@@ -1,3 +1,9 @@
+2008-06-05  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* ContextStack.cs: Also check for subclasses in the Type-based
+	indexter property.
+	[Fixes bug #509151]
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ResolveNameEventHandler.cs, RootDesignerSerializerAttribute.cs,
