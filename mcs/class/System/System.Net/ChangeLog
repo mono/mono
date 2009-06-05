@@ -1,3 +1,8 @@
+2009-06-05  Robert Jordan  <robertj@gmx.net>
+
+	* WebClient.cs (UploadValuesCore): Encode POST arguments with UTF-8.
+	Fixes bug #484795.
+
 2009-06-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: KeepAlive check not needed.
