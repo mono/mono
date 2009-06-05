@@ -238,13 +238,13 @@ namespace System.Web.Configuration {
 			if (path == null || path.Length == 0)
 				path = "/";
 
-			_Configuration conf;
-
-			conf = (_Configuration) configurations [path];
+			string confKey = path + site + locationSubPath + server + userName + password;
+			_Configuration conf = null;
+			conf = (_Configuration) configurations [confKey];
 			if (conf == null) {
 				try {
 					conf = ConfigurationFactory.Create (typeof (WebConfigurationHost), null, path, site, locationSubPath, server, userName, password);
-					configurations [path] = conf;
+					configurations [confKey] = conf;
 				} catch (Exception ex) {
 					lock (hasConfigErrorsLock) {
 						hasConfigErrors = true;
@@ -305,27 +305,29 @@ namespace System.Web.Configuration {
 		
 		public static object GetSection (string sectionName)
 		{
-			return GetSection (sectionName, GetCurrentPath (HttpContext.Current));
+			HttpContext context = HttpContext.Current;
+			return GetSection (sectionName, GetCurrentPath (context), context);
 		}
 
 		public static object GetSection (string sectionName, string path)
+		{
+			return GetSection (sectionName, path, HttpContext.Current);
+		}
+
+		internal static object GetSection (string sectionName, string path, HttpContext context)
 		{
 			object cachedSection = sectionCache [GetSectionCacheKey (sectionName, path)];
 			if (cachedSection != null)
 				return cachedSection;
 
-			string configPath;
-			if (String.Compare (path, HttpRuntime.AppDomainAppVirtualPath, StringComparison.Ordinal) == 0) {
-				configPath = path;
-			} else {
-				int len = path != null ? path.Length : 0;
-				if (len == 0)
-					configPath = path;
-				else 
-					configPath = FindWebConfig (path);
-			}
-
-		       _Configuration c = OpenWebConfiguration (configPath);
+			
+			HttpRequest req = context != null ? context.Request : null;
+			_Configuration c = OpenWebConfiguration (path, /* path */
+								 null, /* site */
+					 			 req != null ? VirtualPathUtility.GetDirectory (req.Path) : null, /* locationSubPath */
+								 null, /* server */
+								 null, /* userName */
+								 null  /* password */);
 			ConfigurationSection section = c.GetSection (sectionName);
 
 			if (section == null)
@@ -351,7 +353,7 @@ namespace System.Web.Configuration {
 			return value;
 #endif
 		}
-
+		
 		static string MapPath (HttpRequest req, string virtualPath)
 		{
 			if (req != null)

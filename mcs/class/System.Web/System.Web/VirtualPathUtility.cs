@@ -42,6 +42,23 @@ namespace System.Web {
 #endif
 	static class VirtualPathUtility
 	{
+#if NET_2_0
+		static bool monoSettingsVerifyCompatibility;
+		static bool runningOnWindows;
+		
+		static VirtualPathUtility ()
+		{
+			try {
+				runningOnWindows = HttpRuntime.RunningOnWindows;
+				var monoSettings = WebConfigurationManager.GetWebApplicationSection ("system.web/monoSettings") as MonoSettingsSection;
+				if (monoSettings != null)
+					monoSettingsVerifyCompatibility = monoSettings.VerificationCompatibility != 1;
+			} catch {
+				// ignore
+			}
+		}
+#endif
+		
 		public static string AppendTrailingSlash (string virtualPath)
 		{
 			if (virtualPath == null)
@@ -467,7 +484,7 @@ namespace System.Web {
 
 #if NET_2_0
 			bool doValidate = true;
-			if (HttpRuntime.RunningOnWindows) {
+			if (runningOnWindows) {
 				try {
 					object v = Registry.GetValue (aspNetVerificationKey, "VerificationCompatibility", null);
 					if (v != null && v is int)
@@ -477,11 +494,8 @@ namespace System.Web {
 				}
 			}
 
-			if (doValidate) {
-				var monoSettings = WebConfigurationManager.GetWebApplicationSection ("system.web/monoSettings") as MonoSettingsSection;
-				if (monoSettings != null)
-					doValidate = monoSettings.VerificationCompatibility != 1;
-			}
+			if (doValidate)
+				doValidate = monoSettingsVerifyCompatibility;
 
 			if (!doValidate)
 				return true;
