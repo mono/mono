@@ -1,3 +1,7 @@
+2009-06-05  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: fix the 2.1 build.
+
 2009-05-07  Jb Evain  <jbevain@novell.com>
 
 	* System.Xml.Linq/XElement.cs: do a bit of refactoring to avoid
