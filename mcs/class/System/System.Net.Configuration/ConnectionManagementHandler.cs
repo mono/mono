@@ -32,6 +32,8 @@ using System.Collections;
 using System.Configuration;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Net.Configuration
@@ -95,11 +97,10 @@ namespace System.Net.Configuration
 
 	class ConnectionManagementHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
 			ConnectionManagementData cmd = new ConnectionManagementData (parent);
-			
+#if (XML_DEP)			
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				HandlersUtil.ThrowException ("Unrecognized attribute", section);
 
@@ -144,10 +145,10 @@ namespace System.Net.Configuration
 
 				HandlersUtil.ThrowException ("Unexpected element", child);
 			}
+#endif			
 
 			return cmd;
 		}
-#endif
 	}
 
 	internal class HandlersUtil

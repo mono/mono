@@ -32,15 +32,17 @@ using System.Collections;
 using System.Configuration;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Net.Configuration
 {
 	class NetAuthenticationModuleHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
+#if (XML_DEP)			
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				HandlersUtil.ThrowException ("Unrecognized attribute", section);
 
@@ -80,8 +82,12 @@ namespace System.Net.Configuration
 			}
 
 			return AuthenticationManager.RegisteredModules;
+#else
+			return null;
+#endif			
 		}
 
+#if (XML_DEP)			
 		static IAuthenticationModule CreateInstance (string typeName, XmlNode node)
 		{
 			IAuthenticationModule module = null;
@@ -95,7 +101,7 @@ namespace System.Net.Configuration
 
 			return module;
 		}
-#endif
+#endif		
 	}
 }
 

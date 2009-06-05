@@ -34,19 +34,20 @@ using System.Collections;
 using System.Configuration;
 #if (XML_DEP)
 using System.Xml;
+#else
+using XmlNode = System.Object;
 #endif
 
 namespace System.Net.Configuration
 {
 	class NetConfigurationHandler : IConfigurationSectionHandler
 	{
-#if (XML_DEP)
 		public virtual object Create (object parent, object configContext, XmlNode section)
 		{
+			NetConfig config = new NetConfig ();
+#if (XML_DEP)
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				HandlersUtil.ThrowException ("Unrecognized attribute", section);
-
-			NetConfig config = new NetConfig ();
 
 			XmlNodeList reqHandlers = section.ChildNodes;
 			foreach (XmlNode child in reqHandlers) {
@@ -98,9 +99,9 @@ namespace System.Net.Configuration
 
 				HandlersUtil.ThrowException ("Unexpected element", child);
 			}
+#endif			
 
 			return config;
 		}
-#endif
 	}
 }

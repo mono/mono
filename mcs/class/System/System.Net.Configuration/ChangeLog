@@ -1,3 +1,10 @@
+2009-06-05 Marek Safar <marek.safar@gmail.com>
+
+	* NetConfigurationHandler.cs, DefaultProxyHandler.cs, 
+	NetAuthenticationModuleHandler.cs, ConnectionManagementHandler.cs,
+	WebRequestModuleHandler.cs: Always build
+	IConfigurationSectionHandler.
+
 2007-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SmtpNetworkElement.cs, SmtpSection.cs : added missing 2,0 stuff.
