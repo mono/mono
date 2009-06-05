@@ -1,3 +1,12 @@
+2009-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientAccessPolicy.cs: Removed
+	* CrossDomainAccessManager.cs: Removed
+	* CrossDomainPolicy.cs: Removed
+	* HttpRequestChannel.cs: Remove call to CrossDomainAccessManager 
+	since this is now done inside the BeginGetResponse call (outside
+	this assembly) for Moonlight (NET_2_1)
+
 2009-06-04  Alan McGovern  <amcgovern@novell.com>
 
 	* HttpRequestChannel.cs : Rewrite ProcessRequest to use the async APIs

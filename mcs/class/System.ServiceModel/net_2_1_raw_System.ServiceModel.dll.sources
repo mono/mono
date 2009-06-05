@@ -149,7 +149,6 @@ System.ServiceModel/BasicHttpBinding.cs
 System.ServiceModel/BasicHttpSecurity_2_1.cs
 System.ServiceModel/ChannelFactory.cs
 System.ServiceModel/ChannelFactory_1.cs
-System.ServiceModel/ClientAccessPolicy.cs
 System.ServiceModel/ClientBase.cs
 System.ServiceModel/ClientProxyGenerator.cs
 System.ServiceModel/ClientRuntimeChannel.cs
@@ -157,8 +156,6 @@ System.ServiceModel/CommunicationException.cs
 System.ServiceModel/CommunicationObjectAbortedException.cs
 System.ServiceModel/CommunicationObjectFaultedException.cs
 System.ServiceModel/Constants.cs
-System.ServiceModel/CrossDomainPolicy.cs
-System.ServiceModel/CrossDomainAccessManager.cs
 System.ServiceModel/DataContractFormatAttribute.cs
 System.ServiceModel/DefaultCommunicationTimeouts.cs
 System.ServiceModel/Dummy.cs

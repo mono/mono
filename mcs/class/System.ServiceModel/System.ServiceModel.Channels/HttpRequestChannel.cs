@@ -131,13 +131,6 @@ namespace System.ServiceModel.Channels
 				web_request.ContentLength = (int) buffer.Length;
 #endif
 
-#if NET_2_1
-				// We can verify cross domain access policy 
-				// with full set of headers and target URL.
-				if (!CrossDomainAccessManager.Current.IsAllowed (destination, web_request.Headers.AllKeys))
-					throw new InvalidOperationException (String.Format ("Cross domain web service access to {0} is not allowed", destination));
-#endif
-
 				web_request.BeginGetRequestStream (delegate (IAsyncResult r) {
 					try {
 						result.CompletedSynchronously &= r.CompletedSynchronously;

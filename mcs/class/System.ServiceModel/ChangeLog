@@ -1,3 +1,11 @@
+2009-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources: Remove 
+	ClientAccessPolicy.cs, CrossDomainPolicy.cs and 
+	CrossDomainAccessManager.cs since the code and checks is now done
+	inside System.Windows.Browser.dll, by BrowserHttpWebRequest, for
+	every non-site-or-origin web connection - i.e. http[s]
+
 2009-05-26  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: cosmetic file renaming.
