@@ -1,3 +1,8 @@
+2009-06-05  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/BaseAssemblyResolver.cs: properly look for the 4.0 corlib
+	when running on Mono.
+
 2009-06-03  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/MetadataResolver.cs: add support for resolving from
