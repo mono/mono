@@ -741,10 +741,10 @@ namespace System.Net
 				Stream rqStream = request.GetRequestStream ();
 				MemoryStream tmpStream = new MemoryStream ();
 				foreach (string key in data) {
-					byte [] bytes = Encoding.ASCII.GetBytes (key);
+					byte [] bytes = Encoding.UTF8.GetBytes (key);
 					UrlEncodeAndWrite (tmpStream, bytes);
 					tmpStream.WriteByte ((byte) '=');
-					bytes = Encoding.ASCII.GetBytes (data [key]);
+					bytes = Encoding.UTF8.GetBytes (data [key]);
 					UrlEncodeAndWrite (tmpStream, bytes);
 					tmpStream.WriteByte ((byte) '&');
 				}
