@@ -1,5 +1,9 @@
 2009-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (parse_type): Check szarray.
+
+2009-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (parse_type): Check fnptr.
 
 2009-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
