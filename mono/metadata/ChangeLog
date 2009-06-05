@@ -1,5 +1,9 @@
 2009-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (parse_type): Check generic instances.
+
+2009-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (parse_type): Check array shape.
 
 2009-06-05  Robert Jordan  <robertj@gmx.net>
