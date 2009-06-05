@@ -1,3 +1,9 @@
+2009-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebClient_2_1.cs: Make sure *CompletedEventArgs gets called 
+	even in case an exception occurs before the BeginGetResponse 
+	call. Adjust API for OpenReadCompletedEventArgs.
+
 2009-06-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebClient_2_1.cs: Remove the creation of threads and use the

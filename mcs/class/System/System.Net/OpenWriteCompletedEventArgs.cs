@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2006,2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -46,7 +46,12 @@ namespace System.Net
 		Stream result;
 
 		public Stream Result {
-			get { return result; }
+			get {
+#if NET_2_1
+				RaiseExceptionIfNecessary ();
+#endif
+				return result;
+			}
 		}
 	}
 }

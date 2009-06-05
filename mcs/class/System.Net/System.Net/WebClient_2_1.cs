@@ -212,8 +212,15 @@ namespace System.Net {
 			lock (locker) {
 				SetBusy ();
 
-				request = SetupRequest (address, "GET");
-				request.BeginGetResponse (new AsyncCallback (DownloadStringAsyncCallback), userToken);
+				try {
+					request = SetupRequest (address, "GET");
+					request.BeginGetResponse (new AsyncCallback (DownloadStringAsyncCallback), userToken);
+				}
+				catch (Exception e) {
+					WebException wex = new WebException ("Could not start operation.", e);
+					OnDownloadStringCompleted (
+						new DownloadStringCompletedEventArgs (null, wex, false, userToken));
+				}
 			}
 		}
 
@@ -258,8 +265,15 @@ namespace System.Net {
 			lock (locker) {
 				SetBusy ();
 
-				request = SetupRequest (address, "GET");
-				request.BeginGetResponse (new AsyncCallback (OpenReadAsyncCallback), userToken);
+				try {
+					request = SetupRequest (address, "GET");
+					request.BeginGetResponse (new AsyncCallback (OpenReadAsyncCallback), userToken);
+				}
+				catch (Exception e) {
+					WebException wex = new WebException ("Could not start operation.", e);
+					OnOpenReadCompleted (
+						new OpenReadCompletedEventArgs (null, wex, false, userToken));
+				}
 			}
 		}
 
@@ -281,7 +295,7 @@ namespace System.Net {
 			}
 			finally {
 				OnOpenReadCompleted (
-					new OpenReadCompletedEventArgs (stream, request.RequestUri, ex, cancel, result.AsyncState));
+					new OpenReadCompletedEventArgs (stream, ex, cancel, result.AsyncState));
 			}
 		}
 
@@ -305,8 +319,15 @@ namespace System.Net {
 			lock (locker) {
 				SetBusy ();
 
-				request = SetupRequest (address, method);
-				request.BeginGetRequestStream (new AsyncCallback (OpenWriteAsyncCallback), userToken);
+				try {
+					request = SetupRequest (address, method);
+					request.BeginGetRequestStream (new AsyncCallback (OpenWriteAsyncCallback), userToken);
+				}
+				catch (Exception e) {
+					WebException wex = new WebException ("Could not start operation.", e);
+					OnOpenWriteCompleted (
+						new OpenWriteCompletedEventArgs (null, wex, false, userToken));
+				}
 			}
 		}
 
@@ -353,10 +374,17 @@ namespace System.Net {
 			lock (locker) {
 				SetBusy ();
 
-				request = SetupRequest (address, method);
-				object[] bag = new object [] { encoding.GetBytes (data), userToken };
+				try {
+					request = SetupRequest (address, method);
+					object[] bag = new object [] { encoding.GetBytes (data), userToken };
 
-				request.BeginGetRequestStream (new AsyncCallback (UploadStringRequestAsyncCallback), bag);
+					request.BeginGetRequestStream (new AsyncCallback (UploadStringRequestAsyncCallback), bag);
+				}
+				catch (Exception e) {
+					WebException wex = new WebException ("Could not start operation.", e);
+					OnUploadStringCompleted (
+						new UploadStringCompletedEventArgs (null, wex, false, userToken));
+				}
 			}
 		}
 

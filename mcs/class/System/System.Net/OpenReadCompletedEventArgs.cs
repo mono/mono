@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2006,2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -36,32 +36,22 @@ namespace System.Net
 {
 	public class OpenReadCompletedEventArgs : AsyncCompletedEventArgs
 	{
-#if NET_2_1
-		internal OpenReadCompletedEventArgs (Stream result, Uri address,
-#else
-		internal OpenReadCompletedEventArgs (Stream result,
-#endif
-			Exception error, bool cancelled, object userState)
+		internal OpenReadCompletedEventArgs (Stream result, Exception error, bool cancelled, object userState)
 			: base (error, cancelled, userState)
 		{
-#if NET_2_1
-			this.address = address;
-#endif
 			this.result = result;
 		}
 
 		Stream result;
 
 		public Stream Result {
-			get { return result; }
-		}
-
+			get {
 #if NET_2_1
-		Uri address;
-		public Uri Address {
-			get { return address; }
-		}
+				RaiseExceptionIfNecessary ();
 #endif
+				return result;
+			}
+		}
 	}
 }
 

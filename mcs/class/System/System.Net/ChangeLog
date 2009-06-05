@@ -1,3 +1,11 @@
+2009-06-05  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DownloadStringCompletedEventArgs.cs: Call RaiseExceptionIfNecessary
+	* OpenReadCompletedEventArgs.cs: Remove Address property since it's 
+	not part of SL2. Call RaiseExceptionIfNecessary
+	* OpenWriteCompletedEventArgs.cs: Call RaiseExceptionIfNecessary
+	* UploadStringCompletedEventArgs.cs: Call RaiseExceptionIfNecessary
+
 2009-06-05  Robert Jordan  <robertj@gmx.net>
 
 	* WebClient.cs (UploadValuesCore): Encode POST arguments with UTF-8.

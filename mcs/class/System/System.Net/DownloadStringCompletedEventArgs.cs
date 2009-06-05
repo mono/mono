@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2006 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2006,2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -30,7 +30,6 @@
 #if NET_2_0
 
 using System.ComponentModel;
-using System.IO;
 
 namespace System.Net
 {
@@ -46,7 +45,12 @@ namespace System.Net
 		string result;
 
 		public string Result {
-			get { return result; }
+			get {
+#if NET_2_1
+				RaiseExceptionIfNecessary ();
+#endif
+				return result;
+			}
 		}
 	}
 }
