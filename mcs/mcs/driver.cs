@@ -1865,6 +1865,28 @@ namespace Mono.CSharp
 
 		class EmbededResource : IResource
 		{
+#if GMCS_SOURCE
+			string name;
+			string file;
+			ResourceAttributes attributes;
+
+			public EmbededResource (string name, string file, bool isPrivate)
+			{
+				this.name = name;
+				this.file = file;
+				this.attributes = isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public;
+			}
+
+			public void Emit ()
+			{
+				RootContext.ToplevelTypes.Builder.DefineManifestResource (
+					name, new FileStream (file, FileMode.Open, FileAccess.Read), attributes);
+			}
+
+			public string FileName {
+				get { return file; }
+			}
+#else
 			static MethodInfo embed_res;
 
 			static EmbededResource () {
@@ -1901,6 +1923,7 @@ namespace Mono.CSharp
 					return (string)args [1];
 				}
 			}
+#endif
 		}
 
 		class LinkedResource : IResource

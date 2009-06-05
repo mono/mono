@@ -1,3 +1,8 @@
+2009-06-05  Jb Evain  <jbevain@novell.com>
+
+	* driver.cs (EmbededResource): avoid using an internal method
+	in gmcs to embed manifest resources.
+
 2009-06-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* generic.cs, parameter.cs: Avoid using 'var' so we can bootstrap
