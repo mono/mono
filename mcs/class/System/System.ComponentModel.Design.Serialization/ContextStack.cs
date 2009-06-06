@@ -47,18 +47,23 @@ namespace System.ComponentModel.Design.Serialization
 		}
 
 		public object Current {
-			get { 
-				if (_contextList.Count > 0)
-					return _contextList[_contextList.Count-1];
+			get {
+				int context_count = _contextList.Count;
+				if (context_count > 0)
+					return _contextList [context_count - 1];
 				return null;
 			}
 		}
 
 		public object this[Type type] {
 			get {
-				for (int i = _contextList.Count - 1; i >= 0; i--)
-					if (type.IsInstanceOfType (_contextList[i]))
- 						return _contextList[i];
+				if (type == null)
+					throw new ArgumentNullException ("type");
+				for (int i = _contextList.Count - 1; i >= 0; i--) {
+					object context = _contextList [i];
+					if (type.IsInstanceOfType (context))
+						return context;
+				}
 				return null;
 			}
 		}
@@ -66,9 +71,10 @@ namespace System.ComponentModel.Design.Serialization
 		public object this[int level] {
 			get {
 				if (level < 0)
-					throw new ArgumentException ("level has to be >= 0","level");
-				if (_contextList.Count > 0 && _contextList.Count > level)
-					return _contextList[_contextList.Count - 1 - level];
+					throw new ArgumentOutOfRangeException ("level");
+				int context_count = _contextList.Count;
+				if (context_count > 0 && context_count > level)
+					return _contextList [context_count - 1 - level];
 				return null;
 			}
 		}
@@ -76,11 +82,12 @@ namespace System.ComponentModel.Design.Serialization
 		public object Pop ()
 		{
 			object o = null;
-   			if (_contextList.Count > 0) {
-   				int lastItem = _contextList.Count - 1;
-   				o = _contextList[lastItem];
-   				_contextList.RemoveAt (lastItem);
-   			}
+			int context_count = _contextList.Count;
+			if (context_count > 0) {
+				int lastItem = context_count - 1;
+				o = _contextList [lastItem];
+				_contextList.RemoveAt (lastItem);
+			}
 			return o;
 		}
 
@@ -88,7 +95,6 @@ namespace System.ComponentModel.Design.Serialization
 		{
 			if (context == null)
 				throw new ArgumentNullException ("context");
-
 			_contextList.Add (context);
 		}
 
