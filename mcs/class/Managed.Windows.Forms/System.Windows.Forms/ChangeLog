@@ -1,3 +1,10 @@
+2009-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelper.cs: In GetListItemType handle gracefully the case
+	where an instance of IEnumerator returns a null value for its Current
+	property. Fix by Florent Fayolle (p.ricca at odyssee-ingenierie.com).
+	Fixes #507120.
+
 2009-06-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: Properly detect whether we need to use our vertical

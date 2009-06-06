@@ -97,7 +97,7 @@ namespace System.Windows.Forms
 			// IEnumerable seems to have higher precedence over IList
 			if (dataSource is IEnumerable) {
 				IEnumerator enumerator = ((IEnumerable) dataSource).GetEnumerator ();
-				if (enumerator.MoveNext ())
+				if (enumerator.MoveNext () && enumerator.Current != null)
 					return enumerator.Current.GetType ();
 
 				if (dataSource is IList || dataSource.GetType () == typeof (IList<>)) {
