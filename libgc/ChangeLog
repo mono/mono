@@ -1,3 +1,7 @@
+2009-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* CMakeLists.txt: CMake build file for libgc.
+
 2009-05-18  Miguel de Icaza  <miguel@novell.com>
 
 	* include/private/gcconfig.h: Add support for Linux on the PS3
