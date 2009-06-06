@@ -1,3 +1,7 @@
+2009-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-mips.c (mips_emit_exc_by_name): Fix the mips build.
+
 2009-06-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c aot-runtime.c: Delete references to static rgctx
