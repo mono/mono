@@ -335,6 +335,132 @@ namespace MonoTests.System.Windows.Forms
 			// finally, objects that are not array nor list
 			Assert.AreEqual (typeof (double), ListBindingHelper.GetListItemType (3.1416), "#E1");
 			Assert.AreEqual (null, ListBindingHelper.GetListItemType (null), "#E2");
+
+			// bug #507120 - an IEnumerator instance with a Current value returning null,
+			// falling back to IList.this detection, if possible
+			Assert.AreEqual (typeof (string), ListBindingHelper.GetListItemType (new NullEnumerable (), null), "#F1");
+		}
+
+		// useless class that help us with a simple enumerator with a null Current property
+		// and implementing IList to let the ListBindingHelper get info from the this [] property
+		class NullEnumerable : IList, ICollection, IEnumerable
+		{
+			public IEnumerator GetEnumerator ()
+			{
+				return new NullEnumerator ();
+			}
+
+			class NullEnumerator : IEnumerator
+			{
+				int pos = -1;
+
+				// the idea is that we just move one time - the first time
+				public bool MoveNext ()
+				{
+					if (pos > -1)
+						return false;
+
+					pos = 0;
+					return true;
+				}
+
+				public void Reset ()
+				{
+					pos = -1;
+				}
+
+				public object Current {
+					get {
+						return null;
+					}
+				}
+			}
+
+			// make this return a string, and hide the interface impl,
+			// so we are sure ListBindingHelper is actually accessing this property
+			public string this [int index] {
+				get {
+					if (index != 0)
+						throw new ArgumentOutOfRangeException ("index");
+
+					return null;
+				}
+				set {
+				}
+			}
+
+			object IList.this [int index] {
+				get {
+					return this [index];
+				}
+				set {
+				}
+			}
+
+			public int Add (object o)
+			{
+				return 0;
+			}
+
+			public void Clear ()
+			{
+			}
+
+			public bool Contains (object o)
+			{
+				return false;
+			}
+
+			public int IndexOf (object o)
+			{
+				return -1;
+			}
+
+			public void Insert (int index, object o)
+			{
+			}
+
+			public void Remove (object o)
+			{
+			}
+
+			public void RemoveAt (int index)
+			{
+			}
+
+			public bool IsFixedSize {
+				get {
+					return true;
+				}
+			}
+
+			public bool IsReadOnly {
+				get {
+					return true;
+				}
+			}
+
+			public void CopyTo (Array array, int offset)
+			{
+			}
+
+			public int Count {
+				get {
+					return 1;
+				}
+			}
+
+			public bool IsSynchronized {
+				get {
+					return false;
+				}
+			}
+
+			public object SyncRoot {
+				get {
+					return this;
+				}
+			}
 		}
 
 		[Test]
