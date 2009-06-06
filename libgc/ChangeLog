@@ -1,5 +1,8 @@
 2009-06-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* CMakeLists.txt: Fix handling of powerpc and the selection of 
+	threads. Delete commented out stuff.
+	
 	* CMakeLists.txt: CMake build file for libgc.
 
 2009-05-18  Miguel de Icaza  <miguel@novell.com>

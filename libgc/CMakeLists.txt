@@ -22,30 +22,9 @@
 #
 
 # FIXME:
-set(THREADS pthreads)
-
-# FIXME:
 add_definitions("-g -O2")
 
-###THREADS=$with_libgc_threads
-###
-###AC_ARG_ENABLE(win32-dllmain,
-###[  --enable-win32-dllmain    Define the DllMain function in win32_threads.c even if the collector is not built as a dll],
-###)
-###
-###AC_ARG_ENABLE(parallel-mark,
-###[  --enable-parallel-mark	parallelize marking and free list construction],
-###   [case "$THREADS" in
-###      no | none | single)
-###	AC_MSG_ERROR([Parallel mark requires --enable-threads=x spec])
-###	;;
-###    esac]
-###)
-###
-###AC_ARG_ENABLE(cplusplus,
-###[  --enable-cplusplus		install C++ support],
-###)
-###
+set(THREADS ${libgc_threads})
 
 set(THREADDLLIBS "")
 
@@ -112,33 +91,9 @@ if(THREADS STREQUAL "win32")
   endif()
 endif()
 
-### dgux386)
-###    THREADS=dgux386
-###    AC_MSG_RESULT($THREADDLLIBS)
-###    # Use pthread GCC  switch
-###    THREADDLLIBS=-pthread
-###    if test "${enable_parallel_mark}" = yes; then
-###        AC_DEFINE(PARALLEL_MARK)
-###    fi
-###    AC_DEFINE(THREAD_LOCAL_ALLOC)
-###    AC_DEFINE(GC_DGUX386_THREADS)
-###    AC_DEFINE(DGUX_THREADS)
-###    # Enable _POSIX4A_DRAFT10_SOURCE with flag -pthread
-###    INCLUDES="-pthread $INCLUDES"
-###    ;;
-### aix)
-###    THREADS=posix
-###    THREADDLLIBS=-lpthread
-###    AC_DEFINE(GC_AIX_THREADS)
-###    AC_DEFINE(_REENTRANT)
-###    ;;
-### decosf1|irix|mach|os2|solaris|dce|vxworks)
-###    AC_MSG_ERROR(thread package $THREADS not yet supported)
-###    ;;
-### *)
-###    AC_MSG_ERROR($THREADS is an unknown thread package)
-###    ;;
-###esac
+if(${host} MATCHES "powerpc-.*-darwin.*")
+  set(powerpc_darwin yes)
+endif()
 
 if(parallel_mark_supported AND enable_parallel_mark)
   add_definitions("-DPARALLEL_MARK")
@@ -223,11 +178,9 @@ set(top_srcdir ../)
 INCLUDE_DIRECTORIES(. .. include)
 add_definitions(${CPPFLAGS})
 
-###if POWERPC_DARWIN
-###asm_libgc_sources = powerpc_darwin_mach_dep.s
-###else
-###asm_libgc_sources = 
-###endif
+if(powerpc_darwin)
+  set(asm_libgc_sources powerpc_darwin_mach_dep.s)
+endif()
 
 set(libmonogc_la_SOURCES 
   allchblk.c alloc.c blacklst.c checksums.c dbg_mlc.c
