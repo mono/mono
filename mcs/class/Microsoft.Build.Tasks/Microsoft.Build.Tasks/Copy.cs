@@ -169,7 +169,8 @@ namespace Microsoft.Build.Tasks {
 			if (create_dir)
 				CreateDirectoryIfRequired (Path.GetDirectoryName (dest));
 			Log.LogMessage ("Copying file from '{0}' to '{1}'", source, dest);
-			File.Copy (source, dest, true);
+			if (String.Compare (source, dest) != 0)
+				File.Copy (source, dest, true);
 		}
 
 		bool HasFileChanged (string source, string dest)

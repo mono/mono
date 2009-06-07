@@ -1,3 +1,7 @@
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* Copy.cs (CopyFile): Don't copy if the source and dest are the same.
+
 2009-04-27  Ankit Jain  <jankit@novell.com>
 
 	* CreateCSharpManifestResourceName.cs (GetResourceIdFromFileName): Move
