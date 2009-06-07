@@ -1,3 +1,9 @@
+2009-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataObject.cs: Map StringFormat/Text/UnicodeText formats properly,
+	to match them in all the cases, as this is exactly what .net does.
+	Fixes #510728.
+
 2009-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: In GetListItemType handle gracefully the case

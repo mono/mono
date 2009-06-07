@@ -118,24 +118,15 @@ namespace System.Windows.Forms {
 					return e;
 				}
 
-				e = entries;
-				while (e != null) {
-					if (type == DataFormats.Text) {
-						if (e.type == DataFormats.UnicodeText) {
+				// map to *any* other text format if needed
+				if (type == DataFormats.StringFormat || type == DataFormats.Text || type == DataFormats.UnicodeText) {
+					e = entries;
+					while (e != null) {
+						if (e.type == DataFormats.StringFormat || e.type == DataFormats.Text || e.type == DataFormats.UnicodeText)
 							return e;
-						}
-					} else if (type == DataFormats.UnicodeText) {
-						if (e.type == DataFormats.Text) {
-							return e;
-						}
-					} else if (type == DataFormats.StringFormat) {
-						if (e.type == DataFormats.Text) {
-							return e;
-						} else if (e.type == DataFormats.UnicodeText) {
-							return e;
-						}
+
+						e = e.next;
 					}
-					e = e.next;
 				}
 
 				return null;
