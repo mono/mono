@@ -1,5 +1,11 @@
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
+	* AssignTargetPath.cs (Execute): Expand incoming path to absolute
+	path, and correctly extract relative path (skipping over the preceding
+	dir separator).
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
 	* Copy.cs (CopyFile): Don't copy if the source and dest are the same.
 
 2009-04-27  Ankit Jain  <jankit@novell.com>

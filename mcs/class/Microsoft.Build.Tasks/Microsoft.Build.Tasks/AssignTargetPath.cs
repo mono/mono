@@ -54,9 +54,18 @@ namespace Microsoft.Build.Tasks {
 				//FIXME: Hack!
 				string normalized_root = Path.GetFullPath (rootFolder);
 
+				// cur dir should already be set to
+				// the project dir
+				file = Path.GetFullPath (file);
+
 				if (file.StartsWith (normalized_root)) {
 					afile = Path.GetFullPath (file).Substring (
 							normalized_root.Length);
+					// skip over "root/"
+					if (afile [0] == '\\' ||
+						afile [0] == '/')
+						afile = afile.Substring (1);
+
 				} else {
 					afile = Path.GetFileName (file);
 				}
