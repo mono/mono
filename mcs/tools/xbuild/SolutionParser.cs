@@ -176,14 +176,6 @@ namespace Mono.XBuild.CommandLine {
 			p.AddNewUsingTaskFromAssemblyName ("CreateTemporaryVCProject", "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 			p.AddNewUsingTaskFromAssemblyName ("ResolveVCProjectOutput", "Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
-			BuildPropertyGroup configurationPropertyGroup = p.AddNewPropertyGroup (true);
-			configurationPropertyGroup.Condition = " '$(Configuration)' == '' ";
-			configurationPropertyGroup.AddNewProperty ("Configuration", "Debug");
-
-			BuildPropertyGroup platformPropertyGroup = p.AddNewPropertyGroup (true);
-			platformPropertyGroup.Condition = " '$(Platform)' == '' ";
-			platformPropertyGroup.AddNewProperty ("Platform", "Any CPU");
-
 			BuildPropertyGroup aspNetConfigurationPropertyGroup = p.AddNewPropertyGroup (true);
 			aspNetConfigurationPropertyGroup.Condition = " ('$(AspNetConfiguration)' == '') ";
 			aspNetConfigurationPropertyGroup.AddNewProperty ("AspNetConfiguration", "$(Configuration)");
@@ -263,6 +255,11 @@ namespace Mono.XBuild.CommandLine {
 
 		void AddCurrentSolutionConfigurationContents (Project p, List<TargetInfo> solutionTargets, Dictionary<Guid, ProjectInfo> projectInfos)
 		{
+			AddDefaultSolutionConfiguration (p,
+					solutionTargets.Count > 0 ?
+						solutionTargets [0] :
+						new TargetInfo ("Debug", "Any CPU"));
+
 			foreach (TargetInfo solutionTarget in solutionTargets) {
 				BuildPropertyGroup platformPropertyGroup = p.AddNewPropertyGroup (false);
 				platformPropertyGroup.Condition = string.Format (
@@ -284,6 +281,17 @@ namespace Mono.XBuild.CommandLine {
 
 				platformPropertyGroup.AddNewProperty ("CurrentSolutionConfigurationContents", solutionConfigurationContents);
 			}
+		}
+
+		void AddDefaultSolutionConfiguration (Project p, TargetInfo target)
+		{
+			BuildPropertyGroup configurationPropertyGroup = p.AddNewPropertyGroup (true);
+			configurationPropertyGroup.Condition = " '$(Configuration)' == '' ";
+			configurationPropertyGroup.AddNewProperty ("Configuration", target.Configuration);
+
+			BuildPropertyGroup platformPropertyGroup = p.AddNewPropertyGroup (true);
+			platformPropertyGroup.Condition = " '$(Platform)' == '' ";
+			platformPropertyGroup.AddNewProperty ("Platform", target.Platform);
 		}
 
 		void AddWarningForMissingProjectConfiguration (Target target, string slnConfig, string slnPlatform, string projectName)
