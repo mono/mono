@@ -1,5 +1,9 @@
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
+	* Csc.cs (AddResponseFileCommands): Split DefineConstants on space also.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
 	* AssignTargetPath.cs (Execute): Expand incoming path to absolute
 	path, and correctly extract relative path (skipping over the preceding
 	dir separator).

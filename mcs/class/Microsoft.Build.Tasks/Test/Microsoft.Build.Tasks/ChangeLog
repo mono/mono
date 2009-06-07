@@ -1,5 +1,10 @@
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
+	* CscTest.cs (TestDefineConstants): Update DefineConstants to include
+	spaces also.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
 	* AssignTargetPathTest.cs: Update tests to not depend on a fixed
 	root (C:\) or cur dir.
 
