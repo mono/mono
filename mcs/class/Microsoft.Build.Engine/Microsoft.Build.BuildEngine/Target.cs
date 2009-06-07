@@ -258,11 +258,7 @@ namespace Microsoft.Build.BuildEngine {
 				Expression e = new Expression ();
 				e.Parse (outputs, true);
 
-				string [] outputFiles = (string []) e.ConvertTo (project, typeof (string []));
-				ITaskItem [] outputItems = new ITaskItem [outputFiles.Length];
-				for (int i = 0; i < outputFiles.Length; i++)
-					outputItems [i] = new TaskItem (outputFiles [i]);
-				return outputItems;
+				return (ITaskItem []) e.ConvertTo (project, typeof (ITaskItem []));
 			}
 		}
 	}

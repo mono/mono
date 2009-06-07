@@ -1,3 +1,8 @@
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* Target.cs (Outputs): Use ITaskItem[] for conversion, to retain
+	the metadata.
+
 2009-05-29  Ankit Jain  <jankit@novell.com>
 
 	Correctly handle global properties. Correctly log

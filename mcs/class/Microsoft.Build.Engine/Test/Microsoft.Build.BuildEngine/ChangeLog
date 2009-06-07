@@ -1,3 +1,7 @@
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* TargetTest (TestTargetOutputsIncludingMetadata): New.
+
 2009-05-29  Ankit Jain  <jankit@novell.com>
 
 	* EngineTest.cs (TestGlobalProperties*): New tests
