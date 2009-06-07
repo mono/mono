@@ -21,11 +21,12 @@ SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if INSTALL_2_0
 if INSTALL_2_1
-build_profiles = net_1_1 net_2_0 net_3_5 net_2_1_raw
+build_profiles = net_1_1 net_2_0 net_3_5 net_4_0 net_2_1_raw
 test_profiles = net_1_1 net_2_0 net_3_5 net_2_1
 else
-build_profiles = net_1_1 net_2_0 net_3_5
-test_profiles = $(build_profiles)
+build_profiles = net_1_1 net_2_0 net_3_5 net_4_0
+# test_profiles = $(build_profiles)
+test_profiles = net_1_1 net_2_0 net_3_5
 endif
 else
 build_profiles = net_1_1
