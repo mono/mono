@@ -190,7 +190,8 @@ namespace Mono.XBuild.CommandLine {
 				if (s.StartsWith ("/target:") || s.StartsWith ("/t:")) {
 					ProcessTarget (s);
 				} else if (s.StartsWith ("/property:") || s.StartsWith ("/p:")) {
-					ProcessProperty (s);
+					if (!ProcessProperty (s))
+						return false;
 				} else  if (s.StartsWith ("/logger:") || s.StartsWith ("/l:")) {
 					ProcessLogger (s);
 				} else if (s.StartsWith ("/verbosity:") || s.StartsWith ("/v:")) {
@@ -213,15 +214,28 @@ namespace Mono.XBuild.CommandLine {
 			targets = temp [1].Split (';');
 		}
 		
-		internal void ProcessProperty (string s)
+		internal bool ProcessProperty (string s)
 		{
 			string[] parameter, splittedProperties, property;
 			parameter = s.Split (':');
+			if (parameter.Length != 2) {
+				ErrorUtilities.ReportError (5, "Property name and value expected as /p:<prop name>=<prop value>");
+				return false;
+			}
+
 			splittedProperties = parameter [1].Split (';');
 			foreach (string st in splittedProperties) {
+				if (st.IndexOf ('=') < 0) {
+					ErrorUtilities.ReportError (5,
+							"Invalid syntax. Property name and value expected as " +
+							"<prop name>=[<prop value>]");
+					return false;
+				}
 				property = st.Split ('=');
-				properties.SetProperty (property [0], property [1]);
+				properties.SetProperty (property [0], property.Length == 2 ? property [1] : "");
 			}
+
+			return true;
 		}
 		
 		internal void ProcessLogger (string s)

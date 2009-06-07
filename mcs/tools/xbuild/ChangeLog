@@ -1,5 +1,9 @@
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
+	* Parameters.cs (ProcessProperty): Handle invalid syntax.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
 	* SolutionParser.cs (AddGeneralSettings): Don't hardcode the default
 	config/platform. Move to ..
 	(AddDefaultSolutionConfiguration): .. here.
