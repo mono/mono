@@ -1,3 +1,12 @@
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Use ResolveAssemblyReference
+	to find satellite assemblies, dependent assemblies, dependent
+	files, copy local files etc.
+	Add targets to fetch all this info for all referenced projects,
+	and copy them to the target locations. Also, copy the debug (.mdb)
+	files. Honor, "CopyToOutputDirectory" metadata.
+
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
 	* Parameters.cs (ProcessProperty): Handle invalid syntax.

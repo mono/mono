@@ -1,3 +1,18 @@
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* ResolvedReference.cs: New.
+	* AssemblyResolver.cs (GetResolvedReference): New. Honor's the
+	'Private' metadata and sets CopyLocal.
+	(SearchPath): New. Used to track how the reference was resolved.
+	(IsStrongNamed): Fix potential null ref.
+	All the assembly resolution methods now return ResolvedReference
+	instead of strings, to aid in proper CopyLocal behavior and
+	dependency resolution.
+	* ResolveAssemblyReference.cs: Add support for finding related files,
+	satellite files, resolving dependencies, copy local files.
+	Resolve files specified in "AssemblyFiles" param also, used to resolve
+	project references and dependencies.
+
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
 	* Csc.cs (AddResponseFileCommands): Split DefineConstants on space also.
