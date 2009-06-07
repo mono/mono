@@ -148,6 +148,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, d.ContainsText (TextDataFormat.CommaSeparatedValue), "A5");
 
 			Assert.AreEqual ("yo", d.GetText (), "A6");
+			Assert.AreEqual ("yo", d.GetData (DataFormats.StringFormat), "A6-1");
 			
 			d.SetText ("<html></html>", TextDataFormat.Html);
 			Assert.AreEqual (true, d.ContainsText (), "A7");
@@ -156,6 +157,16 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (false, d.ContainsText (TextDataFormat.Rtf), "A10");
 			Assert.AreEqual (true, d.ContainsText (TextDataFormat.Text), "A11");
 			Assert.AreEqual (true, d.ContainsText (TextDataFormat.UnicodeText), "A12");
+
+			// directly put a string
+			d.SetData ("yo");
+
+			Assert.AreEqual (true, d.ContainsText (TextDataFormat.Text), "A13");
+			Assert.AreEqual (true, d.ContainsText (TextDataFormat.UnicodeText), "A14");
+
+			Assert.AreEqual ("yo", d.GetData (DataFormats.StringFormat), "A15");
+			Assert.AreEqual ("yo", d.GetData (DataFormats.Text), "A16");
+			Assert.AreEqual ("yo", d.GetData (DataFormats.UnicodeText), "A17");
 		}
 
 	}
