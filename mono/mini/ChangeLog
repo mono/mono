@@ -1,3 +1,10 @@
+2009-06-06  Steven Munroe  <munroesj@us.ibm.com>
+
+	This patch is contributed under the terms of the MIT/X11 license
+
+       * mini-ppc.c (mono_arch_emit_exceptions): Change assert to
+       code_len <= code_size
+
 2009-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-mips.c (mips_emit_exc_by_name): Fix the mips build.
