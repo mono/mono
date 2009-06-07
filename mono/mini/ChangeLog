@@ -1,3 +1,10 @@
+2009-06-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* image-writer.c (append_subsection): Don't align subsections of the
+	debug_line section as a workaround.
+
+	* dwarfwriter.c: Emit line number info in the AOT case as well.
+
 2009-06-06  Steven Munroe  <munroesj@us.ibm.com>
 
 	This patch is contributed under the terms of the MIT/X11 license
