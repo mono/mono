@@ -1,5 +1,9 @@
 2009-06-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* WebConnectionStream.cs: throw a WebException instead of an IOException.
+
+2009-06-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* FtpWebRequest.cs: avoid exception when the reply from the server
 	contains just response code. Fixes bug #510852.
 
