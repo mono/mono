@@ -155,6 +155,17 @@ namespace MonoTests.Microsoft.Build.Tasks
 				"RN1.RN2");
 		}
 
+		[Test]
+		public void TestInvalidCulture ()
+		{
+			string [,] files = new string [,] {
+				{ "Foo.invalid.txt", null, null },
+				{ "Foo.invalid.resx", null, null }
+			};
+			CheckResourceNames (files, new string [] {"RN1.RN2.Foo.invalid.txt", "RN1.RN2.Foo.invalid"},
+				"RN1.RN2");
+		}
+
 		void CheckResourceNames (string [,] files, string [] names, string rootNamespace)
 		{
 			Assert.AreEqual (files.GetUpperBound (0) + 1, names.Length, "Number of files and names must match");

@@ -98,6 +98,8 @@ namespace Microsoft.Build.Tasks {
 					//remove the culture from fileName
 					//foo.it.bmp -> foo.bmp
 					fileName = only_filename + "." + extn;
+				} else {
+					culture = null;
 				}
 			}
 

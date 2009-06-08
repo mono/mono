@@ -1,3 +1,7 @@
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* CreateCSharpManifestResourceNameTest.cs (TestInvalidCulture): New.
+
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
 	* CscTest.cs (TestDefineConstants): Update DefineConstants to include
