@@ -1,3 +1,9 @@
+2009-03-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Code.cs (CILLabel): Add new constructor to signal that
+	a label is an absolute il offset. This is required by exception
+	handling declarations that use offsets and not labels.
+
 2008-06-02  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #367114.

@@ -1,3 +1,25 @@
+2009-05-27  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeDef.cs: Add field method_list to preserve definition
+	order of methods when emiting the PE file.
+
+2009-04-20  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #494221
+	* MethodDef.cs (BeginLocalsScope): New.
+	(EndLocalsScope): New.
+	(AddLocals):
+	(GetNamedLocal): Support scoping for .locals
+
+2009-04-15  Ankit Jain  <jankit@novell.com>
+
+	* MethodDef.cs (GetNamedLocalSlot): Return -1 if local var not found.
+
+2009-03-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodDef.cs (WriteCode): Emit labels which use offsets as absolute PEAPI
+	CilLabels.
+
 2008-07-02  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #405383

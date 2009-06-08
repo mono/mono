@@ -1,3 +1,17 @@
+2009-04-20  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #494221.
+	* ILParser.jay (scope_block_begin): Mark begin .locals scope.
+	(scope_block): Mark end .locals scope.
+
+2009-04-15  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (instr): Handle unidentified local var id.
+
+2009-03-31  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ILParser.jay: Fix integer labels in handler blocks.
+
 2008-06-02  Ankit Jain  <jankit@novell.com>
 
 	Part of fix for bug #367114.

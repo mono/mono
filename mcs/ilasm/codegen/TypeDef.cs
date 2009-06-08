@@ -27,6 +27,7 @@ namespace Mono.ILASM {
                 private Hashtable field_table;
                 private ArrayList field_list;
                 private Hashtable method_table;
+                private ArrayList method_list;
                 private ArrayList customattr_list;
                 private DeclSecurity decl_sec;
                 private ArrayList event_list;
@@ -61,6 +62,7 @@ namespace Mono.ILASM {
                         field_list = new ArrayList ();
 
                         method_table = new Hashtable ();
+                        method_list = new ArrayList ();
 
                         size = -1;
                         pack = -1;
@@ -212,6 +214,7 @@ namespace Mono.ILASM {
                                 Report.Error (methoddef.StartLocation, "Duplicate method declaration: " + methoddef.Signature);
 
                         method_table.Add (methoddef.Signature, methoddef);
+                        method_list.Add (methoddef);
                 }
 
                 public void BeginEventDef (EventDef event_def)
@@ -419,7 +422,7 @@ namespace Mono.ILASM {
 
                         classdef.SetFieldOrder (fielddef_list);
 
-                        foreach (MethodDef methoddef in method_table.Values) {
+                        foreach (MethodDef methoddef in method_list) {
                                 methoddef.Define (code_gen);
                         }
 

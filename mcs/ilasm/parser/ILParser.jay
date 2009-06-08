@@ -2245,12 +2245,14 @@ scope_block		: scope_block_begin method_decls CLOSE_BRACE
                           {
                                 $$ = new HandlerBlock ((LabelInfo) $1,
                                         codegen.CurrentMethodDef.AddLabel ());
+                                codegen.CurrentMethodDef.EndLocalsScope ();
                           }
 			;
 
 scope_block_begin       : OPEN_BRACE
                           {
                                 $$ = codegen.CurrentMethodDef.AddLabel ();
+                                codegen.CurrentMethodDef.BeginLocalsScope ();
                           }
                         ;
                         
@@ -2362,8 +2364,8 @@ handler_block		: scope_block
                           }
 			| K_HANDLER int32 K_TO int32
 			  {
-				LabelInfo from = codegen.CurrentMethodDef.AddLabelRef ((string) $2);
-				LabelInfo to = codegen.CurrentMethodDef.AddLabelRef ((string) $4);
+				LabelInfo from = codegen.CurrentMethodDef.AddLabel ((int) $2);
+				LabelInfo to = codegen.CurrentMethodDef.AddLabel ((int) $4);
 
 				$$ = new HandlerBlock (from, to);
 			  }
@@ -2382,6 +2384,8 @@ instr			: INSTR_NONE
                         | INSTR_LOCAL id
                           {
                                 int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
+                                if (slot < 0)
+                                        Report.Error (String.Format ("Undeclared identifier '{0}'", (string) $2));
                                 codegen.CurrentMethodDef.AddInstr (
                                         new IntInstr ((IntOp) $1, slot, tokenizer.Location));
                           }
@@ -2407,6 +2411,8 @@ instr			: INSTR_NONE
 			| INSTR_I id
                           {
                                 int slot = codegen.CurrentMethodDef.GetNamedLocalSlot ((string) $2);
+                                if (slot < 0)
+                                        Report.Error (String.Format ("Undeclared identifier '{0}'", (string) $2));
                                 codegen.CurrentMethodDef.AddInstr (new
                                         IntInstr ((IntOp) $1, slot, tokenizer.Location));
                           }
