@@ -1,3 +1,7 @@
+2009-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Use acfg->temp_prefix instead of .L to prefix labels.
+
 2009-06-08  Martin Baulig  <martin@ximian.com>
 
 	* debug-mini.c
