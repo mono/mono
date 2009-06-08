@@ -35,28 +35,16 @@ using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
-	internal class HttpReplyChannel : ReplyChannelBase
+	internal class HttpSimpleReplyChannel : HttpReplyChannel
 	{
-		HttpChannelListener<IReplyChannel> source;
+		HttpSimpleChannelListener<IReplyChannel> source;
 		List<HttpListenerContext> waiting = new List<HttpListenerContext> ();
-		TimeSpan timeout;
 		EndpointAddress local_address;
 
-		public HttpReplyChannel (HttpChannelListener<IReplyChannel> listener,
-			TimeSpan timeout)
+		public HttpSimpleReplyChannel (HttpSimpleChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
 			this.source = listener;
-			this.timeout = timeout;
-		}
-
-		public MessageEncoder Encoder {
-			get { return source.MessageEncoder; }
-		}
-
-		// FIXME: where is it set?
-		public override EndpointAddress LocalAddress {
-			get { return local_address; }
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
@@ -124,31 +112,6 @@ w.Close ();
 			return true;
 		}
 
-		protected string GetHeaderItem (string raw)
-		{
-			if (raw == null || raw.Length == 0)
-				return raw;
-			switch (raw [0]) {
-			case '\'':
-			case '"':
-				if (raw [raw.Length - 1] == raw [0])
-					return raw.Substring (1, raw.Length - 2);
-				// FIXME: is it simply an error?
-				break;
-			}
-			return raw;
-		}
-
-		public override IAsyncResult BeginTryReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override bool EndTryReceiveRequest (IAsyncResult result, out RequestContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
 			AutoResetEvent wait = new AutoResetEvent (false);
@@ -173,6 +136,38 @@ w.Close ();
 			waiting.Add (source.Http.EndGetContext (result));
 			AutoResetEvent wait = (AutoResetEvent) result.AsyncState;
 			wait.Set ();
+		}
+	}
+
+	internal abstract class HttpReplyChannel : ReplyChannelBase
+	{
+		HttpChannelListenerBase<IReplyChannel> source;
+		List<HttpListenerContext> waiting = new List<HttpListenerContext> ();
+		EndpointAddress local_address;
+
+		public HttpReplyChannel (HttpChannelListenerBase<IReplyChannel> listener)
+			: base (listener)
+		{
+			this.source = listener;
+		}
+
+		public MessageEncoder Encoder {
+			get { return source.MessageEncoder; }
+		}
+
+		// FIXME: where is it set?
+		public override EndpointAddress LocalAddress {
+			get { return local_address; }
+		}
+
+		public override IAsyncResult BeginTryReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public override bool EndTryReceiveRequest (IAsyncResult result, out RequestContext context)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public override IAsyncResult BeginWaitForRequest (TimeSpan timeout, AsyncCallback callback, object state)
@@ -217,6 +212,21 @@ w.Close ();
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
+		}
+
+		protected string GetHeaderItem (string raw)
+		{
+			if (raw == null || raw.Length == 0)
+				return raw;
+			switch (raw [0]) {
+			case '\'':
+			case '"':
+				if (raw [raw.Length - 1] == raw [0])
+					return raw.Substring (1, raw.Length - 2);
+				// FIXME: is it simply an error?
+				break;
+			}
+			return raw;
 		}
 	}
 }

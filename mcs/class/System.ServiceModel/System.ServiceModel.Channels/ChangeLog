@@ -1,5 +1,12 @@
 2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpChannelManager.cs, HttpTransportBindingElement.cs,
+	  HttpReplyChannel.cs, AspNetReplyChannel.cs, HttpChannelListener.cs:
+	  they should be split into separate listener->reply channel lines
+	  (remove "if (HostingEnvironment.IsAspNet)".)
+
+2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CommunicationObject.cs : OnClosed() requires call to base method.
 	  Close() could rather abort the channel, and Abort() does not
 	  always invke OnAbort().

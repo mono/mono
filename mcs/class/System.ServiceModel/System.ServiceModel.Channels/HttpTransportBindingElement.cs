@@ -169,7 +169,10 @@ namespace System.ServiceModel.Channels
 		{
 			// remaining contexts are ignored ... e.g. such binding
 			// element that always causes an error is ignored.
-			return new HttpChannelListener<TChannel> (this, context);
+			if (ServiceHostingEnvironment.InAspNet)
+				return new AspNetChannelListener<TChannel> (this, context);
+			else
+				return new HttpSimpleChannelListener<TChannel> (this, context);
 		}
 #endif
 

@@ -35,17 +35,17 @@ namespace System.ServiceModel.Channels
 	internal class HttpChannelManager<TChannel> where TChannel : class, IChannel
 	{
 		static Dictionary<Uri, HttpListener> opened_listeners;
-		static Dictionary<Uri, List<HttpChannelListener<TChannel>>> registered_channels;
-		HttpChannelListener<TChannel> channel_listener;
+		static Dictionary<Uri, List<HttpSimpleChannelListener<TChannel>>> registered_channels;
+		HttpSimpleChannelListener<TChannel> channel_listener;
 		HttpListener http_listener;
 
 		static HttpChannelManager ()
 		{
 			opened_listeners = new Dictionary<Uri, HttpListener> ();
-			registered_channels = new Dictionary<Uri, List<HttpChannelListener<TChannel>>> ();
+			registered_channels = new Dictionary<Uri, List<HttpSimpleChannelListener<TChannel>>> ();
 		}
 
-		public HttpChannelManager (HttpChannelListener<TChannel> channel_listener)
+		public HttpChannelManager (HttpSimpleChannelListener<TChannel> channel_listener)
 		{
 			this.channel_listener = channel_listener;
 		}
@@ -63,7 +63,7 @@ namespace System.ServiceModel.Channels
 					listener.Start ();
 
 					opened_listeners [channel_listener.Uri] = listener;
-					List<HttpChannelListener<TChannel>> registeredList = new List<HttpChannelListener<TChannel>> ();					
+					List<HttpSimpleChannelListener<TChannel>> registeredList = new List<HttpSimpleChannelListener<TChannel>> ();
 					registered_channels [channel_listener.Uri] = registeredList;
 				}
 
@@ -77,7 +77,7 @@ namespace System.ServiceModel.Channels
 			lock (opened_listeners) {
 				if (http_listener == null)
 					return;
-				List<HttpChannelListener<TChannel>> channelsList = registered_channels [channel_listener.Uri];
+				List<HttpSimpleChannelListener<TChannel>> channelsList = registered_channels [channel_listener.Uri];
 				channelsList.Remove (channel_listener);
 				if (channelsList.Count == 0) {					
 					if (http_listener.IsListening)
