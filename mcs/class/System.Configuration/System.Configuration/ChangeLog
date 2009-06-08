@@ -1,3 +1,8 @@
+2009-06-08  Marek Habersack  <mhabersack@novell.com>
+
+	* ConfigurationLocation.cs: if the path passed to constructor
+	starts with any of ' ' '.' '/' or '\', throw an exception. Fixes
+	bug #510735
 
 2008-12-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

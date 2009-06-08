@@ -49,6 +49,16 @@ namespace System.Configuration {
 		
 		internal ConfigurationLocation (string path, string xmlContent, Configuration parent, bool allowOverride)
 		{
+			if (!String.IsNullOrEmpty (path)) {
+				switch (path [0]) {
+					case ' ':
+					case '.':
+					case '/':
+					case '\\':
+						throw new ConfigurationErrorsException ("<location> path attribute must be a relative virtual path.  It cannot start with any of ' ' '.' '/' or '\\'.");
+				}
+			}
+			
 			this.path = path;
 			this.xmlContent = xmlContent;
 			this.parent = parent;
