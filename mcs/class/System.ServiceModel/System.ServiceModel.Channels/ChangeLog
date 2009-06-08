@@ -1,5 +1,9 @@
 2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpChannelManager.cs, HttpListenerManager.cs : rename file too.
+
+2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelManager.cs, HttpChannelListener.cs: renaming, as
 	  "ChannelManager" is confusing (there is ChannelManagerBase).
 

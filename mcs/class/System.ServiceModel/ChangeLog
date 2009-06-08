@@ -1,3 +1,7 @@
+2009-06-08  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources: renamed a file.
+
 2009-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.dll.sources: Remove 

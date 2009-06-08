@@ -172,7 +172,7 @@ System.ServiceModel.Channels/HostedTransportConfiguration.cs
 System.ServiceModel.Channels/HtmlizedException.cs
 System.ServiceModel.Channels/HttpChannelFactory.cs
 System.ServiceModel.Channels/HttpChannelListener.cs
-System.ServiceModel.Channels/HttpChannelManager.cs
+System.ServiceModel.Channels/HttpListenerManager.cs
 System.ServiceModel.Channels/HttpReplyChannel.cs
 System.ServiceModel.Channels/HttpRequestChannel.cs
 System.ServiceModel.Channels/HttpRequestContext.cs
