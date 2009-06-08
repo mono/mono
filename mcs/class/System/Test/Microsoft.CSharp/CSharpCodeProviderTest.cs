@@ -207,7 +207,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.IsNotNull (resources, "#D1");
 			Assert.AreEqual (2, resources.Length, "#D2");
 
-			Assert.AreEqual ("file1.cs", resources[0], "#E1");
+			Assert.IsTrue (resources[0] == "file1.cs" || resources [0] == "file2.cs", "#E1");
 			Assert.IsNull (compiledAssembly.GetFile ("file1.cs"), "#E2");
 			Assert.IsNotNull (compiledAssembly.GetManifestResourceStream  ("file1.cs"), "#E3");
 			ManifestResourceInfo info = compiledAssembly.GetManifestResourceInfo ("file1.cs");
@@ -216,7 +216,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.IsNull (info.ReferencedAssembly, "#E6");
 			Assert.AreEqual ((ResourceLocation.Embedded | ResourceLocation.ContainedInManifestFile), info.ResourceLocation, "#E7");
 
-			Assert.AreEqual ("file2.cs", resources[1], "#F1");
+			Assert.IsTrue (resources[1] == "file1.cs" || resources [1] == "file2.cs", "#F1");
 			try {
 				compiledAssembly.GetFile ("file2.cs");
 				Assert.Fail ("#F2");
@@ -298,7 +298,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.IsNotNull (resources, "#D1");
 			Assert.AreEqual (2, resources.Length, "#D2");
 
-			Assert.AreEqual ("file1.cs", resources[0], "#E1");
+			Assert.IsTrue (resources[0] == "file1.cs" || resources [0] == "file2.cs", "#E1");
 			Assert.IsNull (compiledAssembly.GetFile ("file1.cs"), "#E2");
 			Assert.IsNotNull (compiledAssembly.GetManifestResourceStream  ("file1.cs"), "#E3");
 			ManifestResourceInfo info = compiledAssembly.GetManifestResourceInfo ("file1.cs");
@@ -307,7 +307,7 @@ namespace MonoTests.Microsoft.CSharp
 			Assert.IsNull (info.ReferencedAssembly, "#E6");
 			Assert.AreEqual ((ResourceLocation.Embedded | ResourceLocation.ContainedInManifestFile), info.ResourceLocation, "#E7");
 
-			Assert.AreEqual ("file2.cs", resources[1], "#F1");
+			Assert.IsTrue (resources[1] == "file1.cs" || resources [1] == "file2.cs", "#F1");
 			try {
 				compiledAssembly.GetFile ("file2.cs");
 				Assert.Fail ("#F2");

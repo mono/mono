@@ -1,3 +1,8 @@
+2009-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* CSharpCodeProviderTest.cs: Avoid depending on the order in which
+	GetManifestResourceNames () returns resource names.
+
 2008-05-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added tests for
