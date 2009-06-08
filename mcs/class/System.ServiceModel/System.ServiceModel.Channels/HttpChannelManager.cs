@@ -1,4 +1,4 @@
-﻿//
+//
 // HttpChannelManager.cs
 //
 // Author:
