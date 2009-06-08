@@ -683,7 +683,7 @@ namespace System.Net.Mail {
 			else
 				SendWithoutAttachments (message, null, false);
 
-			SendData (".");
+			SendDot ();
 
 			status = Read ();
 			if (IsError (status))
@@ -701,17 +701,39 @@ namespace System.Net.Mail {
 			Send (new MailMessage (from, to, subject, body));
 		}
 
+		private void SendDot()
+		{
+			writer.Write(".\r\n");
+			writer.Flush();
+		}
+
 		private void SendData (string data)
 		{
-			CheckCancellation ();
+			if (String.IsNullOrEmpty (data)) {
+				writer.Write("\r\n");
+				writer.Flush();
+				return;
+			}
 
-			// Certain SMTP servers will reject mail sent with unix line-endings; see http://cr.yp.to/docs/smtplf.html
-			StringBuilder sb = new StringBuilder (data);
-			sb.Replace ("\r\n", "\n");
-			sb.Replace ('\r', '\n');
-			sb.Replace ("\n", "\r\n");
-			writer.Write (sb.ToString ());
-			writer.Write ("\r\n");
+			StringReader sr = new StringReader (data);
+			string line;
+			bool escapeDots = deliveryMethod == SmtpDeliveryMethod.Network;
+			while ((line = sr.ReadLine ()) != null) {
+				CheckCancellation ();
+
+				if (escapeDots) {
+					int i;
+					for (i = 0; i < line.Length; i++) {
+						if (line[i] != '.')
+							break;
+					}
+					if (i > 0 && i == line.Length) {
+						line += ".";
+					}
+				}
+				writer.Write (line);
+				writer.Write ("\r\n");
+			}
 			writer.Flush ();
 		}
 
