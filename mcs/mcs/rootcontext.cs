@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 		V_4			= 5,
 		Future		= 100,
 
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 		Default		= V_4,
 #elif GMCS_SOURCE
 		Default		= V_3
