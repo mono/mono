@@ -709,6 +709,96 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 					"(TargetB) foo: foofoo1 A:  External: ",
 					"second"});
 		}
+		[Test]
+		public void TestMSBuildOutputs ()
+		{
+			string mainProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+			<UsingTask TaskName=""Microsoft.Build.Tasks.MSBuild""
+					AssemblyName=""Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"" />
+
+        <ItemGroup>
+                <ProjectRef Include=""first.proj"">
+                        <Prop3>value</Prop3>
+                        <Unique>true</Unique>
+                </ProjectRef>
+                <ProjectRef Include=""first.proj"">
+                        <Prop3>value2</Prop3>
+                        <Unique>false</Unique>
+                </ProjectRef>
+		
+		<ProjectRef Include=""second.proj"">
+                        <Prop3>value3</Prop3>
+                        <Unique>unique</Unique>
+                </ProjectRef>
+
+        </ItemGroup>
+
+        <Target Name='Main'>
+                <MSBuild Projects=""@(ProjectRef)"" Targets=""GetData"">
+                        <Output TaskParameter=""TargetOutputs"" ItemName=""F""/>
+                </MSBuild>
+                <Message Text=""@(F): F.Unique: %(F.Unique)""/>
+                <Message Text=""@(F): F.Prop1: %(F.Prop1)""/>
+                <Message Text=""@(F): F.Prop2: %(F.Prop2)""/>
+                <Message Text=""@(F): F.Prop3: %(F.Prop3)""/>
+        </Target>
+</Project>";
+
+			string firstProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+        <ItemGroup>
+                <A Include=""foofoo"">
+                        <Prop1>false</Prop1>
+                        <Prop2>false</Prop2>
+                        <Prop3>foo value</Prop3>
+                </A>
+		
+		<A Include=""barbar"">
+                        <Prop1>bar_false</Prop1>
+                        <Prop2>bar_false</Prop2>
+                        <Prop3>bar value</Prop3>
+                </A>
+
+        </ItemGroup>
+
+        <Target Name=""GetData"" Outputs=""@(AbcOutputs)"">
+                <CreateItem Include=""@(A)"">
+                        <Output TaskParameter=""Include"" ItemName=""AbcOutputs""/>
+                </CreateItem>
+        </Target>
+</Project>
+";
+			string secondProject = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+        <ItemGroup>
+                <A Include=""from_second"">
+                        <Prop1>false</Prop1>
+                        <Prop2>false</Prop2>
+                        <Prop3>new value</Prop3>
+                </A>
+        </ItemGroup>
+
+        <Target Name=""GetData"" Outputs=""@(AbcOutputs)"">
+                <CreateItem Include=""@(A)"">
+                        <Output TaskParameter=""Include"" ItemName=""AbcOutputs""/>
+                </CreateItem>
+        </Target>
+</Project>
+";
+
+			CreateAndCheckGlobalPropertiesTest (mainProject, firstProject, secondProject,
+				null, null,
+				4, 3, 12,
+				new string [] {
+					"foofoo;barbar;foofoo;barbar: F.Unique: true",
+					"from_second: F.Unique: unique",
+					"foofoo;foofoo;from_second: F.Prop1: false",
+					"barbar;barbar: F.Prop1: bar_false",
+					"foofoo;foofoo;from_second: F.Prop2: false",
+					"barbar;barbar: F.Prop2: bar_false",
+					"foofoo;foofoo: F.Prop3: foo value",
+					"barbar;barbar: F.Prop3: bar value",
+					"from_second: F.Prop3: new value",
+				});
+		}
 
 		// Helper Methods for TestGlobalProperties*
 

@@ -1,3 +1,7 @@
+2009-06-09  Ankit Jain  <jankit@novell.com>
+
+	* EngineTest.cs (TestMSBuildOutputs): New.
+
 2009-06-08  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest (TestBuildSolutionProject): New. Disabled for now.

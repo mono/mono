@@ -1,3 +1,8 @@
+2009-06-09  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (Execute): Copy metadata from the @Projects items
+	to the target outputs.
+
 2009-06-08  Ankit Jain  <jankit@novell.com>
 
 	* ResolvedReference.cs: Add missing file.
