@@ -1,3 +1,18 @@
+2009-06-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of 135171.
+
+	* threads.c (ves_icall_System_Threading_Thread_Sleep_internal):
+	Check if the thread was interrupted and proccess it straight away.
+	Makes abortion much more responsive.
+
+	Backport of 135170.
+
+	* threads.c (mono_thread_execute_interruption): Use atomic cas with
+	MonoThread::interruption_requested to match it's counterpart.
+
+	Fixes a hang in abort-stress-1 on a 2 core x86.
+
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Emit the right kind
