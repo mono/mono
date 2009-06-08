@@ -1,3 +1,10 @@
+2009-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* image-writer.c: Improve support for the osx assembler.
+
+	* dwarfwriter.c: Avoid the usage of subsections if the assembler doesn't
+	support them.
+
 2009-06-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* image-writer.c (append_subsection): Don't align subsections of the
