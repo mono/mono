@@ -1076,7 +1076,7 @@ namespace System.Net
 				if (!Int32.TryParse (response.Substring (0, 3), out code))
 					return ServiceNotAvailable ();
 
-				if (response [3] == '-'){
+				if (response.Length > 3 && response [3] == '-'){
 					string line = null;
 					string find = code.ToString() + ' ';
 					while (true){
