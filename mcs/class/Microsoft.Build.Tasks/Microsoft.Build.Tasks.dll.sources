@@ -89,6 +89,7 @@ Microsoft.Build.Tasks/RegisterAssembly.cs
 Microsoft.Build.Tasks/RemoveDir.cs
 Microsoft.Build.Tasks/RemoveDuplicates.cs
 Microsoft.Build.Tasks/ResolveAssemblyReference.cs
+Microsoft.Build.Tasks/ResolvedReference.cs
 Microsoft.Build.Tasks/ResolveManifestFiles.cs
 Microsoft.Build.Tasks/ResolveProjectBase.cs
 Microsoft.Build.Tasks/SGen.cs

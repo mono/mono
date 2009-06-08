@@ -112,7 +112,7 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
-		public string FindInTargetFramework (ITaskItem reference, string framework_dir, bool specific_version)
+		public ResolvedReference FindInTargetFramework (ITaskItem reference, string framework_dir, bool specific_version)
 		{
 			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
 			TargetFrameworkAssemblies gac_asm;
@@ -123,8 +123,11 @@ namespace Microsoft.Build.Tasks {
 
 			KeyValuePair<AssemblyName, string> pair;
 			if (gac_asm.NameToAssemblyNameCache.TryGetValue (key_aname.Name, out pair)) {
-				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version))
-					return pair.Value;
+				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version)) {
+					// gac and tgt frmwk refs are not copied private
+					return GetResolvedReference (reference, pair.Value, false,
+							SearchPath.TargetFrameworkDirectory);
+				}
 
 				SearchLogger.WriteLine ("Considered target framework dir {0}, assembly name '{1}' did not " +
 						"match the expected '{2}' (SpecificVersion={3})",
@@ -136,22 +139,27 @@ namespace Microsoft.Build.Tasks {
 			return null;
 		}
 
-		public string FindInDirectory (ITaskItem reference, string directory)
+		public ResolvedReference FindInDirectory (ITaskItem reference, string directory, string [] file_extensions)
 		{
 			if (reference.ItemSpec.IndexOf (',') > 0) {
+				// Probably an assembly name
 				AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
-				foreach (string file in Directory.GetFiles (directory, "*.dll")) {
-					AssemblyName found = AssemblyName.GetAssemblyName (file);
-					//FIXME: Extract 'name' and look only for name.dll name.exe ?
-					if (AssemblyNamesCompatible (key_aname, found, false))
-						return file;
+				foreach (string extn in file_extensions) {
+					foreach (string file in Directory.GetFiles (directory, "*" + extn)) {
+						AssemblyName found = AssemblyName.GetAssemblyName (file);
 
-					SearchLogger.WriteLine ("Considered {0}, but assembly name wasn't compatible.", file);
+						//FIXME: Extract 'name' and look only for name.dll name.exe ?
+						if (AssemblyNamesCompatible (key_aname, found, false))
+							return GetResolvedReference (reference, file, true, SearchPath.Directory);
+
+						SearchLogger.WriteLine ("Considered {0}, but assembly name wasn't compatible.", file);
+					}
 				}
 			} else {
+				// Try as a filename
 				string path = Path.Combine (directory, reference.ItemSpec);
 				if (GetAssemblyNameFromFile (path) != null)
-					return path;
+					return GetResolvedReference (reference, path, true, SearchPath.Directory);
 			}
 
 			return null;
@@ -169,7 +177,7 @@ namespace Microsoft.Build.Tasks {
 			return gac_asm;
 		}
 
-		public string ResolveGacReference (ITaskItem reference, bool specific_version)
+		public ResolvedReference ResolveGacReference (ITaskItem reference, bool specific_version)
 		{
 			AssemblyName name = new AssemblyName (reference.ItemSpec);
 			if (!gac.ContainsKey (name.Name)) {
@@ -181,7 +189,7 @@ namespace Microsoft.Build.Tasks {
 			if (name.Version != null) {
 				string ret;
 				if (gac [name.Name].TryGetValue (name.Version, out ret))
-					return ret;
+					return GetResolvedReference (reference, ret, false, SearchPath.Gac);
 
 				// not found
 				if (specific_version) {
@@ -195,13 +203,13 @@ namespace Microsoft.Build.Tasks {
 			gac [name.Name].Keys.CopyTo (versions, 0);
 			Array.Sort (versions, (IComparer <Version>) null);
 			Version highest = versions [versions.Length - 1];
-			return gac [name.Name] [highest];
+			return GetResolvedReference (reference, gac [name.Name] [highest], false, SearchPath.Gac);
 		}
 
-		public string ResolveHintPathReference (ITaskItem reference, bool specific_version)
+		public ResolvedReference ResolveHintPathReference (ITaskItem reference, bool specific_version)
 		{
 			AssemblyName name = new AssemblyName (reference.ItemSpec);
-			string resolved = null;
+			ResolvedReference resolved = null;
 
 			string hintpath = reference.GetMetadata ("HintPath");
 			if (String.IsNullOrEmpty (hintpath)) {
@@ -211,7 +219,7 @@ namespace Microsoft.Build.Tasks {
 
 			if (!File.Exists (hintpath)) {
 				log.LogMessage (MessageImportance.Low, "HintPath {0} does not exist.", hintpath);
-				SearchLogger.WriteLine ("Considererd {0}, but it does not exist.", hintpath);
+				SearchLogger.WriteLine ("Considered {0}, but it does not exist.", hintpath);
 				return null;
 			}
 
@@ -222,7 +230,7 @@ namespace Microsoft.Build.Tasks {
 			}
 
 			if (AssemblyNamesCompatible (name, found, specific_version)) {
-				resolved = hintpath;
+				resolved = GetResolvedReference (reference, hintpath, true, SearchPath.HintPath);
 			} else {
 				SearchLogger.WriteLine ("Considered {0}, but assembly name '{1}' did not match the " +
 						"expected '{2}' (SpecificVersion={3})", hintpath, found, name, specific_version);
@@ -279,7 +287,26 @@ namespace Microsoft.Build.Tasks {
 
 		public bool IsStrongNamed (AssemblyName name)
 		{
-			return (name.Version != null && name.GetPublicKeyToken ().Length != 0);
+			return (name.Version != null &&
+					name.GetPublicKeyToken () != null &&
+					name.GetPublicKeyToken ().Length != 0);
+		}
+
+		// FIXME: to get default values of CopyLocal, compare with TargetFrameworkDirectories
+
+		// If metadata 'Private' is present then use that or use @default_value
+		// as the value for CopyLocal
+		internal ResolvedReference GetResolvedReference (ITaskItem reference, string filename,
+				bool default_value, SearchPath search_path)
+		{
+			string pvt = reference.GetMetadata ("Private");
+
+			bool copy_local = default_value;
+			if (!String.IsNullOrEmpty (pvt))
+				//FIXME: log a warning for invalid value
+				Boolean.TryParse (pvt, out copy_local);
+
+			return new ResolvedReference (filename, copy_local, search_path);
 		}
 
 		public TaskLoggingHelper Log {
@@ -299,6 +326,18 @@ namespace Microsoft.Build.Tasks {
 			NameToAssemblyNameCache = new Dictionary<string, KeyValuePair<AssemblyName, string>> ();
 		}
 	}
+
+	enum SearchPath
+	{
+		Gac,
+		TargetFrameworkDirectory,
+		CandidateAssemblies,
+		HintPath,
+		Directory,
+		RawFileName
+	}
 }
+
+
 
 #endif

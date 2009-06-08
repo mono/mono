@@ -1581,6 +1581,123 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.AreEqual ("count: 0", group [0].FinalItemSpec, "A3");
 		}
 
+		// full solution test
+		//[Test]
+		public void TestBuildSolutionProject ()
+		{
+			string basepath = Path.Combine ("Test", Path.Combine ("resources", "Project01"));
+			string [] project_dirs = new string [] {
+				Path.Combine (basepath, "Lib4"),
+				Path.Combine (basepath, "Lib3"),
+				Path.Combine (basepath, "Lib2"),
+				Path.Combine (basepath, "Lib1"),
+				Path.Combine (basepath, "Project01")
+			};
+			string debug_extn = Consts.RunningOnMono () ? ".dll.mdb" : ".pdb";
+
+			// List of expected output files
+			// Lib3
+			string [] [] project_files = new string [5][] {
+				new string [] { "Lib4.dll", "Lib4" + debug_extn },
+				new string [] { "Lib3.dll" , "Lib3" + debug_extn },
+				// Lib2
+				new string [] {
+					"Lib2.dll", "Lib2" + debug_extn,
+					"lib2_folder/Lib2.deploy.txt",
+					Path.Combine ("fr-CA", "Lib2.resources.dll"),
+					Path.Combine ("fr-FR", "Lib2.resources.dll"),
+					"Lib4.dll", "Lib4" + debug_extn
+				},
+				
+				// lib1
+				new string [] {
+					// lib1 files
+					"Lib1.dll", "Lib2" + debug_extn,
+					"Lib1.deploy.txt",
+					Path.Combine ("fr-CA", "Lib1.resources.dll"),
+					Path.Combine ("fr-FR", "Lib1.resources.dll"),
+					Path.Combine ("en-US", "Lib1.resources.dll"),
+					// lib2 files
+					"Lib2.dll", "Lib2" + debug_extn,
+					"lib2_folder/Lib2.deploy.txt",
+					Path.Combine ("fr-CA", "Lib2.resources.dll"),
+					Path.Combine ("fr-FR", "Lib2.resources.dll"),
+					// lib3 files
+					"Lib3.dll", "Lib3" + debug_extn,
+					"Lib4.dll", "Lib4" + debug_extn
+					},
+
+				new string [] {
+					"Project01.exe",
+					"Project01" + (Consts.RunningOnMono () ? ".exe.mdb" : ".pdb"),
+					// lib1 files
+					"Lib1.dll", "Lib1" + debug_extn,
+					"Lib1.deploy.txt",
+					Path.Combine ("fr-CA", "Lib1.resources.dll"),
+					Path.Combine ("fr-FR", "Lib1.resources.dll"),
+					Path.Combine ("en-US", "Lib1.resources.dll"),
+					// lib2 files
+					"Lib2.dll", "Lib2" + debug_extn,
+					"lib2_folder/Lib2.deploy.txt",
+					Path.Combine ("fr-CA", "Lib2.resources.dll"),
+					Path.Combine ("fr-FR", "Lib2.resources.dll"),
+					"Lib4.dll", "Lib4" + debug_extn,
+					}
+			};
+
+			// Cleanup
+			for (int i = 0; i < project_dirs.Length; i ++) {
+				string bin_path = Path.Combine (project_dirs [i], Path.Combine ("bin", "Debug"));
+				string obj_path = Path.Combine (project_dirs [i], Path.Combine ("obj", "Debug"));
+
+				DeleteAllInDir (bin_path);
+
+				DeleteAllInDir (obj_path);
+			}
+
+			Engine engine = new Engine (Consts.BinPath);
+			MonoTests.Microsoft.Build.Tasks.TestMessageLogger logger =
+				new MonoTests.Microsoft.Build.Tasks.TestMessageLogger ();
+			engine.RegisterLogger (logger);
+
+			engine.GlobalProperties = new BuildPropertyGroup ();
+			engine.GlobalProperties.SetProperty ("TreatWarningsAsErrors", "false");
+
+			Project project = engine.CreateNewProject ();
+			project.Load (Path.Combine (basepath, "Project01.sln.proj"));
+			
+			bool result = project.Build ();
+			if (!result) {
+				logger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			// We check only the output dir, not the 'obj'
+			string debug = Path.Combine ("bin", "Debug");
+			for (int i = 0; i < project_dirs.Length; i++) {
+				CheckFilesExistInDir (Path.Combine (project_dirs [i], debug),
+					project_files [i]);
+			}
+		}
+
+		void DeleteAllInDir (string path)
+		{
+			if (!Directory.Exists (path))
+				return;
+
+			foreach (string file in Directory.GetFiles (path))
+				File.Delete (file);
+			Directory.Delete (path, true);
+		}
+
+		void CheckFilesExistInDir (string dir, params string [] files)
+		{
+			foreach (string file in files) {
+				string path = Path.Combine (dir, file);
+				Assert.IsTrue (File.Exists (path),
+					String.Format ("Expected to find file {0}", path));
+			}
+		}
 
 		Project CheckProjectForRequiredTests (string taskname, string property_arg, bool expected_result, string error_msg)
 		{

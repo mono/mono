@@ -1,3 +1,12 @@
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* ProjectTest (TestBuildSolutionProject): New. Disabled for now.
+	* Consts.cs (RunningOnMono): Make public.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* TargetTest (TestTargetOutputsIncludingMetadata): New.
+
 2009-05-29  Ankit Jain  <jankit@novell.com>
 
 	* EngineTest.cs (TestGlobalProperties*): New tests

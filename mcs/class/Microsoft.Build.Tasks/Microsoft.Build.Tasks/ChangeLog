@@ -1,3 +1,39 @@
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* AssignCulture.cs (TrySplitResourceName): Reset culture arg to null
+	if returning false.
+	* CreateCSharpManifestResourceName.cs: Set culture to null if the
+	culture was invalid.
+
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* ResolvedReference.cs: New.
+	* AssemblyResolver.cs (GetResolvedReference): New. Honor's the
+	'Private' metadata and sets CopyLocal.
+	(SearchPath): New. Used to track how the reference was resolved.
+	(IsStrongNamed): Fix potential null ref.
+	All the assembly resolution methods now return ResolvedReference
+	instead of strings, to aid in proper CopyLocal behavior and
+	dependency resolution.
+	* ResolveAssemblyReference.cs: Add support for finding related files,
+	satellite files, resolving dependencies, copy local files.
+	Resolve files specified in "AssemblyFiles" param also, used to resolve
+	project references and dependencies.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* Csc.cs (AddResponseFileCommands): Split DefineConstants on space also.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* AssignTargetPath.cs (Execute): Expand incoming path to absolute
+	path, and correctly extract relative path (skipping over the preceding
+	dir separator).
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* Copy.cs (CopyFile): Don't copy if the source and dest are the same.
+
 2009-04-27  Ankit Jain  <jankit@novell.com>
 
 	* CreateCSharpManifestResourceName.cs (GetResourceIdFromFileName): Move

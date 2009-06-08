@@ -1,3 +1,17 @@
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* CreateCSharpManifestResourceNameTest.cs (TestInvalidCulture): New.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* CscTest.cs (TestDefineConstants): Update DefineConstants to include
+	spaces also.
+
+2009-06-07  Ankit Jain  <jankit@novell.com>
+
+	* AssignTargetPathTest.cs: Update tests to not depend on a fixed
+	root (C:\) or cur dir.
+
 2009-05-29  Ankit Jain  <jankit@novell.com>
 
 	* TestMessageLogger.cs: Add counts for project/build start/finish

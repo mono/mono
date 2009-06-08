@@ -348,11 +348,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			CommandLineBuilderExtension c1 = new CommandLineBuilderExtension ();
 			CommandLineBuilderExtension c2 = new CommandLineBuilderExtension ();
 
-			csc.DefineConstants = "A;B;;CD;;;Foo";
+			csc.DefineConstants = "A;B;;CD;;;Foo  Bar";
 			csc.ARFC (c1);
 			csc.ACLC (c2);
 
-			Assert.AreEqual ("/define:A;B;CD;Foo", c1.ToString (), "A1");
+			Assert.AreEqual ("/define:A;B;CD;Foo;Bar", c1.ToString (), "A1");
 			Assert.AreEqual (String.Empty, c2.ToString (), "A2");
 		}
 

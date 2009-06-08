@@ -30,7 +30,7 @@ using Microsoft.Build.Utilities;
 
 public static class Consts {
 
-	static bool RunningOnMono ()
+	public static bool RunningOnMono ()
 	{
 		return Type.GetType ("Mono.Runtime") != null;
 	}

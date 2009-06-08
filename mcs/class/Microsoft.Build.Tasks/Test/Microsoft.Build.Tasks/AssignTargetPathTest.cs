@@ -64,7 +64,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 		{
 			if (OS == OsType.Unix) {
 				CheckTargetPath(
-					new string[] { "/a/b/./abc.cs", "/a/c/def.cs", "xyz.cs", "/different/xyz/foo.cs", "rel/bar.resx"},
+					new string[] { "/a/b/./abc.cs", "/a/c/def.cs", "a/xyz.cs", "/different/xyz/foo.cs", "rel/bar.resx"},
 					new string[] { "b/abc.cs", "c/def.cs", "xyz.cs", "foo.cs", "bar.resx" },
 					"/a/./", "A");
 			} else if (OS == OsType.Windows) {
@@ -78,32 +78,40 @@ namespace MonoTests.Microsoft.Build.Tasks
 		[Test]
 		public void TestExecute2()
 		{
+			string root = Path.GetPathRoot (Environment.CurrentDirectory);
+			string cur_dir_minus_root = Environment.CurrentDirectory.Substring (root.Length);
+
 			if (OS == OsType.Unix) {
 				CheckTargetPath(
 					new string[] { "//a/b/abc.cs", "k/../k/def.cs", "/xyz.cs", "/different/xyz/foo.cs"},
-					new string[] { "a/b/abc.cs", "def.cs", "xyz.cs", "different/xyz/foo.cs"},
+					new string[] { "a/b/abc.cs", Path.Combine (cur_dir_minus_root, "k/def.cs"), "xyz.cs", "different/xyz/foo.cs"},
 					"/", "A");
 			} else if (OS == OsType.Windows) {
 				CheckTargetPath(
-					new string[] { @"C:\\a\b\abc.cs", @"k\..\def.cs", @"C:\xyz.cs", @"C:\different\xyz\foo.cs"},
-					new string[] { "a\\b\\abc.cs", "def.cs", "xyz.cs", "different\\xyz\\foo.cs"},
-					"C:\\", "A");
+					new string[] { root + @"a\b\abc.cs", @"k\..\k\def.cs", root + @"xyz.cs", root + @"different\xyz\foo.cs"},
+					new string[] { "a\\b\\abc.cs", cur_dir_minus_root + "\\k\\def.cs", "xyz.cs", "different\\xyz\\foo.cs"},
+					root, "A");
 			}
 		}
 
 		[Test]
 		public void TestExecute3()
 		{
+			string root = Path.GetPathRoot (Environment.CurrentDirectory);
+			string cur_dir_minus_root = Environment.CurrentDirectory.Substring (root.Length);
+
 			if (OS == OsType.Unix) {
 				CheckTargetPath(
 					new string[] { "xyz.cs", "rel/bar.resx" },
-					new string[] { "xyz.cs", "bar.resx" },
+					new string[] { Path.Combine (cur_dir_minus_root, "xyz.cs"),
+						Path.Combine (cur_dir_minus_root, "rel/bar.resx") },
 					"/", "A");
 			} else if (OS == OsType.Windows) {
 				CheckTargetPath(
 					new string[] { "xyz.cs", "rel\\bar.resx" },
-					new string[] { "xyz.cs", "bar.resx" },
-					"C:\\", "A");
+					new string[] { Path.Combine (cur_dir_minus_root, "xyz.cs"),
+						Path.Combine (cur_dir_minus_root, "rel\\bar.resx") },
+					root, "A");
 			}
 		}
 
