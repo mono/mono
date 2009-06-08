@@ -237,6 +237,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			if (host != null)
 				host.ChannelDispatchers.Remove (this);
+			base.OnClosed ();
 		}
 
 		protected override void OnEndClose (IAsyncResult result)

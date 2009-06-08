@@ -71,6 +71,7 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClosed ()
 		{
+			base.OnClosed ();
 		}
 
 		TimeSpan IDefaultCommunicationTimeouts.CloseTimeout {

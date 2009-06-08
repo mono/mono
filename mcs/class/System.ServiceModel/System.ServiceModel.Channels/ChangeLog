@@ -1,3 +1,10 @@
+2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObject.cs : OnClosed() requires call to base method.
+	  Close() could rather abort the channel, and Abort() does not
+	  always invke OnAbort().
+	* ChannelBase.cs : add call to base as above.
+
 2009-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ClientAccessPolicy.cs: Removed

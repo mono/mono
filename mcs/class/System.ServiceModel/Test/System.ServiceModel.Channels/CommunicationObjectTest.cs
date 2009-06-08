@@ -34,7 +34,7 @@ namespace MonoTests.System.ServiceModel.Channels
 {
 	class ExtCommObj : CommunicationObject
 	{
-		public new bool Aborted, Opened, Closed;
+		public new bool Aborted, Opened, Closed, OnClosedCalled;
 
 		public ExtCommObj () : base ()
 		{
@@ -98,6 +98,27 @@ namespace MonoTests.System.ServiceModel.Channels
 				throw new Exception ("Already opened");
 			Opened = true;
 		}
+
+		protected override void OnClosed ()
+		{
+			if (OnClosedCalled)
+				throw new Exception ("OnClosed() already called");
+			OnClosedCalled = true;
+			base.OnClosed ();
+		}
+	}
+
+	class ExtCommObj2 : ExtCommObj
+	{
+		public bool OnClosedCalled;
+
+		// It does not call base -> Abort() detects it as an error.
+		protected override void OnClosed ()
+		{
+			if (OnClosedCalled)
+				throw new Exception ("OnClosed() already called");
+			OnClosedCalled = true;
+		}
 	}
 
 	[TestFixture]
@@ -127,12 +148,33 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CloseAtInitialState ()
 		{
 			ExtCommObj obj = new ExtCommObj ();
-			obj.Close (); // Aborted() is called.
-			Assert.IsTrue (obj.Aborted);
+			obj.Close ();
+			Assert.IsTrue (obj.Aborted, "#1"); // OnAbort() is called.
+			Assert.IsFalse (obj.Closed, "#2"); // OnClose() is *not* called.
+			Assert.IsTrue (obj.OnClosedCalled, "#3");
+		}
+
+		[Test]
+		public void CloseAtInitialStateAsync ()
+		{
+			ExtCommObj obj = new ExtCommObj ();
+			obj.EndClose (obj.BeginClose (null, null)); // does not call OnBeginClose() / OnEndClose().
+			Assert.IsTrue (obj.Aborted, "#1");
+			Assert.IsFalse (obj.Closed, "#2");
+			Assert.IsTrue (obj.OnClosedCalled, "#3");
+		}
+
+		[Test]
+		public void CloseAtOpenedState ()
+		{
+			ExtCommObj obj = new ExtCommObj ();
+			obj.Open ();
+			obj.Close (); // Aborted() is *not* called.
+			Assert.IsFalse (obj.Aborted, "#1");
+			Assert.IsTrue (obj.Closed, "#2");
 		}
 
 		[Test]
@@ -154,8 +196,8 @@ namespace MonoTests.System.ServiceModel.Channels
 			obj = new ExtCommObj ();
 			obj.Open ();
 			obj.XFault ();
-			Assert.AreEqual (CommunicationState.Faulted, obj.State);
-			Assert.AreEqual (false, obj.IsDisposed);
+			Assert.AreEqual (CommunicationState.Faulted, obj.State, "#1");
+			Assert.AreEqual (false, obj.IsDisposed, "#2");
 		}
 
 		[Test]
@@ -174,6 +216,37 @@ namespace MonoTests.System.ServiceModel.Channels
 			ExtCommObj obj = new ExtCommObj ();
 			obj.Open ();
 			obj.XFault ();
+			obj.Close ();
+		}
+
+		[Test]
+		public void AbortFaulted ()
+		{
+			ExtCommObj obj = new ExtCommObj ();
+			obj.Open ();
+			obj.XFault ();
+			Assert.AreEqual (CommunicationState.Faulted, obj.State, "#1");
+			obj.Abort (); // does not raise an error
+			Assert.AreEqual (CommunicationState.Closed, obj.State, "#2");
+			Assert.IsTrue (obj.Aborted, "#3");
+			Assert.IsFalse (obj.Closed, "#4");
+			obj.Abort (); // does not raise an error!
+		}
+
+		[Test]
+		public void AbortCreated ()
+		{
+			ExtCommObj obj = new ExtCommObj ();
+			obj.Abort ();
+			Assert.IsTrue (obj.Aborted, "#1"); // OnAbort() is called.
+			Assert.IsFalse (obj.Closed, "#2"); // OnClose() is *not* called.
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void OnClosedImplementedWithoutCallingBase ()
+		{
+			ExtCommObj obj = new ExtCommObj2 ();
 			obj.Close ();
 		}
 	}

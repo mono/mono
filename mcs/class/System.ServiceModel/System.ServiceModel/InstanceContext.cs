@@ -169,6 +169,7 @@ namespace System.ServiceModel
 
 		protected override void OnClosed ()
 		{
+			base.OnClosed ();
 		}
 
 		protected override void OnOpened ()
