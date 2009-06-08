@@ -1,3 +1,7 @@
+2009-06-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SmtpClient.cs: handle dots. Patch by Ted Unangst that fixes bug
+	#392875.
 
 2008-11-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
