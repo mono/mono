@@ -1,3 +1,8 @@
+2009-06-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpHandlerAction.cs: fix path matching when the pattern has more
+	than one slash.
+
 2009-06-05  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: OpenWebConfiguration caches
