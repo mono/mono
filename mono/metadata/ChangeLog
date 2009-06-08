@@ -1,3 +1,7 @@
+2009-06-08  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-config.c: Small change to report the PPC64/ILP32 model.
+
 2009-06-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (parse_type): Check szarray.
