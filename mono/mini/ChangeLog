@@ -1,3 +1,25 @@
+2009-06-08  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c
+	(MonoDebuggerExceptionAction): Moved into debug-mini.h.
+	(_mono_debugger_throw_exception): Don't make this static.
+	(_mono_debugger_unhandled_exception): Likewise.
+	(mono_debugger_handle_exception): Moved to mini-exceptions.c
+
+	* debug-mini.c
+	(MonoDebuggerExceptionAction): Moved here from debug-mini.c.
+	(_mono_debugger_throw_exception): Add function prototype.
+	(_mono_debugger_unhandled_exception): Likewise.
+
+	* mini-exceptions.c
+	(mono_handle_exception_internal): Added `MonoJitInfo **out_ji'
+	arg; return the first exception handler if the exception is caught
+	and we're running inside the debugger.
+	(mono_debugger_handle_exception): Moved here from debug-mini.c;
+	improve exception handle inside runtime-invoke, check whether the
+	exception is actually caught in the method being invoked and not
+	by the runtime-invoke-wrapper.
+
 2009-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-sparc.c (add_outarg_load): Fix the sparc build.
@@ -55,6 +77,28 @@
 
 	* aot-compiler.c (add_wrappers): Add remoting-invoke-with-check wrappers
 	for virtual methods too.
+
+2009-06-08  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c
+	(MonoDebuggerExceptionAction): Moved into debug-mini.h.
+	(_mono_debugger_throw_exception): Don't make this static.
+	(_mono_debugger_unhandled_exception): Likewise.
+	(mono_debugger_handle_exception): Moved to mini-exceptions.c
+
+	* debug-mini.c
+	(MonoDebuggerExceptionAction): Moved here from debug-mini.c.
+	(_mono_debugger_throw_exception): Add function prototype.
+	(_mono_debugger_unhandled_exception): Likewise.
+
+	* mini-exceptions.c
+	(mono_handle_exception_internal): Added `MonoJitInfo **out_ji'
+	arg; return the first exception handler if the exception is caught
+	and we're running inside the debugger.
+	(mono_debugger_handle_exception): Moved here from debug-mini.c;
+	improve exception handle inside runtime-invoke, check whether the
+	exception is actually caught in the method being invoked and not
+	by the runtime-invoke-wrapper.
 
 2009-05-06  Zoltan Varga  <vargaz@gmail.com>
 
