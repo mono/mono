@@ -28,7 +28,7 @@
 
 2009-06-02  Marek Safar  <marek.safar@gmail.com>
 
-	A fix for bug #508334
+	A fix for bug #507863
 	* codegen.cs: Fixes a crash on invalid string value attribute.
 
 2009-06-01  Marek Safar  <marek.safar@gmail.com>
