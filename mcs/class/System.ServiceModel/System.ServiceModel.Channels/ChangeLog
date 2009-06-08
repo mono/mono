@@ -1,5 +1,10 @@
 2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpChannelManager.cs, HttpChannelListener.cs: renaming, as
+	  "ChannelManager" is confusing (there is ChannelManagerBase).
+
+2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelManager.cs, HttpTransportBindingElement.cs,
 	  HttpReplyChannel.cs, AspNetReplyChannel.cs, HttpChannelListener.cs:
 	  they should be split into separate listener->reply channel lines

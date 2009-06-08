@@ -1,5 +1,5 @@
 //
-// HttpChannelManager.cs
+// HttpListenerManager.cs
 //
 // Author:
 //	Vladimir Krasnov <vladimirk@mainsoft.com>
@@ -32,20 +32,20 @@ using System.Net;
 
 namespace System.ServiceModel.Channels
 {
-	internal class HttpChannelManager<TChannel> where TChannel : class, IChannel
+	internal class HttpListenerManager<TChannel> where TChannel : class, IChannel
 	{
 		static Dictionary<Uri, HttpListener> opened_listeners;
 		static Dictionary<Uri, List<HttpSimpleChannelListener<TChannel>>> registered_channels;
 		HttpSimpleChannelListener<TChannel> channel_listener;
 		HttpListener http_listener;
 
-		static HttpChannelManager ()
+		static HttpListenerManager ()
 		{
 			opened_listeners = new Dictionary<Uri, HttpListener> ();
 			registered_channels = new Dictionary<Uri, List<HttpSimpleChannelListener<TChannel>>> ();
 		}
 
-		public HttpChannelManager (HttpSimpleChannelListener<TChannel> channel_listener)
+		public HttpListenerManager (HttpSimpleChannelListener<TChannel> channel_listener)
 		{
 			this.channel_listener = channel_listener;
 		}
@@ -68,7 +68,7 @@ namespace System.ServiceModel.Channels
 				}
 
 				http_listener = opened_listeners [channel_listener.Uri];
-				registered_channels [channel_listener.Uri].Add (channel_listener);				
+				registered_channels [channel_listener.Uri].Add (channel_listener);
 			}
 		}
 
@@ -79,13 +79,12 @@ namespace System.ServiceModel.Channels
 					return;
 				List<HttpSimpleChannelListener<TChannel>> channelsList = registered_channels [channel_listener.Uri];
 				channelsList.Remove (channel_listener);
-				if (channelsList.Count == 0) {					
+				if (channelsList.Count == 0) {
 					if (http_listener.IsListening)
 						http_listener.Stop ();
 					((IDisposable) http_listener).Dispose ();
 
-					opened_listeners.Remove (channel_listener.Uri);				
-				}				
+					opened_listeners.Remove (channel_listener.Uri);
 			}
 		}
 

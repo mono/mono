@@ -40,7 +40,7 @@ namespace System.ServiceModel.Channels
 	internal class HttpSimpleChannelListener<TChannel> : HttpChannelListenerBase<TChannel>
 		where TChannel : class, IChannel
 	{
-		HttpChannelManager<TChannel> httpChannelManager;
+		HttpListenerManager<TChannel> httpChannelManager;
 
 		public HttpSimpleChannelListener (HttpTransportBindingElement source,
 			BindingContext context)
@@ -75,7 +75,7 @@ namespace System.ServiceModel.Channels
 
 		void StartListening (TimeSpan timeout)
 		{
-			httpChannelManager = new HttpChannelManager<TChannel> (this);
+			httpChannelManager = new HttpListenerManager<TChannel> (this);
 			httpChannelManager.Open (timeout);
 		}
 	}
