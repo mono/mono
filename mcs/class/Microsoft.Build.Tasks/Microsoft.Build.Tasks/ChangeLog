@@ -1,5 +1,9 @@
 2009-06-08  Ankit Jain  <jankit@novell.com>
 
+	* ResolvedReference.cs: Add missing file.
+
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
 	* AssignCulture.cs (TrySplitResourceName): Reset culture arg to null
 	if returning false.
 	* CreateCSharpManifestResourceName.cs: Set culture to null if the
