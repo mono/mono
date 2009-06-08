@@ -1,3 +1,10 @@
+2009-06-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListBindingHelper.cs: In GetListItemType do a null check when
+	looking for IList.Item, since the impl could be explicit, and thus
+	private. Fix by Florent Fayolle (p.ricca at odyssee-ingenierie.com).
+	Fixes the remaining part of #507120
+
 2009-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataObject.cs: Map StringFormat/Text/UnicodeText formats properly,

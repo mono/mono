@@ -102,7 +102,8 @@ namespace System.Windows.Forms
 
 				if (dataSource is IList || dataSource.GetType () == typeof (IList<>)) {
 					PropertyInfo property = GetPropertyByReflection (dataSource.GetType (), "Item");
-					return property.PropertyType;
+					if (property != null) // `Item' could be interface-explicit, and thus private
+						return property.PropertyType;
 				}
 
 				// fallback to object
