@@ -1,3 +1,7 @@
+2009-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify typespec signatures.
+
 2009-06-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (free_inflated_method): Call 
