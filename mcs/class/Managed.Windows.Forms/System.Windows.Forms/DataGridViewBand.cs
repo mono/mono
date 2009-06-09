@@ -79,7 +79,7 @@ namespace System.Windows.Forms {
 		public Type DefaultHeaderCellType {
 			get { return defaultHeaderCellType; }
 			set {
-				if (value.IsSubclassOf(typeof(DataGridViewHeaderCell))) {
+				if (!value.IsSubclassOf(typeof(DataGridViewHeaderCell))) {
 					throw new ArgumentException("Type is not DataGridViewHeaderCell or a derived type.");
 				}
 				defaultHeaderCellType = value;

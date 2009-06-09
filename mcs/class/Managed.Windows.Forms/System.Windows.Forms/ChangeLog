@@ -1,5 +1,10 @@
 2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewBand.cs: Fix a typo in DefaultHeaderCellType.
+	[Fixes bug #506796]
+
+2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewColumnCollection.cs, DataGridViewRowCollection.cs, 
 	DataGridView.cs: Fire CollectionChangeAction.Refresh collection 
 	changed when Clearing the collections so that the DataGridView 
