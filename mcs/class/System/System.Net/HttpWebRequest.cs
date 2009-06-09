@@ -640,19 +640,6 @@ namespace System.Net
 		}
 #endif
 		
-		void CommonChecks (bool putpost)
-		{
-			if (method == null)
-				throw new ProtocolViolationException ("Method is null.");
-
-			if (putpost && contentLength == -1 && !sendChunked && !allowBuffering)
-				throw new ProtocolViolationException ("Content-Length not set");
-
-			string transferEncoding = TransferEncoding;
-			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
-				throw new ProtocolViolationException ("SendChunked should be true.");
-		}
-
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
 			if (aborted)
@@ -663,7 +650,12 @@ namespace System.Net
 			if (method == null || !send)
 				throw new ProtocolViolationException ("Cannot send data when method is: " + method);
 
-			CommonChecks (send);
+			if (contentLength == -1 && !sendChunked && !allowBuffering && KeepAlive)
+				throw new ProtocolViolationException ("Content-Length not set");
+
+			string transferEncoding = TransferEncoding;
+			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
+				throw new ProtocolViolationException ("SendChunked should be true.");
 			
 			lock (locker)
 			{
@@ -742,13 +734,17 @@ namespace System.Net
 
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
-			bool send = (method == "PUT" || method == "POST");
-			if (send) {
-				if (ContentLength == -1 && !SendChunked && !AllowWriteStreamBuffering)
-					throw new ProtocolViolationException ("Content-Length not set");
-			}
+			if (method == null)
+				throw new ProtocolViolationException ("Method is null.");
 
-			CommonChecks (send);
+			bool send = (method == "PUT" || method == "POST");
+			if (send && contentLength == -1 && !sendChunked && !allowBuffering && KeepAlive)
+				throw new ProtocolViolationException ("Content-Length not set");
+
+			string transferEncoding = TransferEncoding;
+			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
+				throw new ProtocolViolationException ("SendChunked should be true.");
+
 			Monitor.Enter (locker);
 			getResponseCalled = true;
 			if (asyncRead != null && !haveResponse) {
