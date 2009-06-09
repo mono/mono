@@ -97,8 +97,38 @@ namespace MonoTests.System.Net
 			} catch (InvalidOperationException) {}
 		}
 
+		[Test] // bug #471782
+		public void CloseRequestStreamAfterReadingResponse ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.Timeout = 2000;
+				req.ReadWriteTimeout = 2000;
+
+				byte [] data = new byte [128];
+				req.ContentLength = data.Length;
+
+				Stream rs = req.GetRequestStream ();
+				rs.Write (data, 0, data.Length);
+				rs.Flush ();
+
+				HttpWebResponse response = (HttpWebResponse) req.GetResponse ();
+				response.Close ();
+
+				rs.Close ();
+
+				responder.Stop ();
+			}
+		}
+
 		[Test]
-		[Category("InetAccess")] 
+		[Category("InetAccess")]
 		public void Cookies1 ()
 		{
 			// The purpose of this test is to ensure that the cookies we get from a request
@@ -256,6 +286,240 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		public void BeginGetRequestStream_Body_NotAllowed ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest request;
+
+				request = (HttpWebRequest) WebRequest.Create (url);
+				request.Method = "GET";
+
+				try {
+					request.BeginGetRequestStream (null, null);
+					Assert.Fail ("#A1");
+				} catch (ProtocolViolationException ex) {
+					// Cannot send a content-body with this
+					// verb-type
+					Assert.IsNull (ex.InnerException, "#A2");
+					Assert.IsNotNull (ex.Message, "#A3");
+				}
+
+				request = (HttpWebRequest) WebRequest.Create (url);
+				request.Method = "HEAD";
+
+				try {
+					request.BeginGetRequestStream (null, null);
+					Assert.Fail ("#B1");
+				} catch (ProtocolViolationException ex) {
+					// Cannot send a content-body with this
+					// verb-type
+					Assert.IsNull (ex.InnerException, "#B2");
+					Assert.IsNotNull (ex.Message, "#B3");
+				}
+			}
+		}
+
+		[Test] // bug #465613
+		public void BeginGetRequestStream_NoBuffering ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8002);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8002/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req;
+				Stream rs;
+				IAsyncResult ar;
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = false;
+				req.KeepAlive = false;
+				req.AllowWriteStreamBuffering = false;
+
+				ar = req.BeginGetRequestStream (null, null);
+				rs = req.EndGetRequestStream (ar);
+				rs.Close ();
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = false;
+				req.KeepAlive = true;
+				req.AllowWriteStreamBuffering = false;
+
+				try {
+					req.BeginGetRequestStream (null, null);
+					Assert.Fail ("#A1");
+				} catch (ProtocolViolationException ex) {
+					// When performing a write operation with
+					// AllowWriteStreamBuffering set to false,
+					// you must either set ContentLength to a
+					// non-negative number or set SendChunked
+					// to true
+					Assert.IsNull (ex.InnerException, "#A2");
+					Assert.IsNotNull (ex.Message, "#A3");
+				}
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = false;
+				req.KeepAlive = true;
+				req.AllowWriteStreamBuffering = false;
+				req.ContentLength = 0;
+
+				ar = req.BeginGetRequestStream (null, null);
+				rs = req.EndGetRequestStream (ar);
+				rs.Close ();
+			}
+		}
+
+		[Test] // bug #508027
+		[Category ("NotWorking")]
+		public void BeginGetResponse ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8003);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8003/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req;
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = false;
+				req.KeepAlive = false;
+				req.AllowWriteStreamBuffering = false;
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = true;
+				req.KeepAlive = false;
+				req.AllowWriteStreamBuffering = false;
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.ContentLength = 5;
+				req.SendChunked = false;
+				req.KeepAlive = false;
+				req.AllowWriteStreamBuffering = false;
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = false;
+				req.KeepAlive = true;
+				req.AllowWriteStreamBuffering = false;
+#if NET_2_0
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+#else
+				try {
+					req.BeginGetResponse (null, null);
+				} catch (ProtocolViolationException ex) {
+					// Either ContentLength must be set to a non-negative
+					// number, or SendChunked set to true in order to perform
+					// the write operation when AllowWriteStreamBuffering
+					// is disabled
+					Assert.IsNull (ex.InnerException, "#A2");
+					Assert.IsNotNull (ex.Message, "#A3");
+				} finally {
+					req.Abort ();
+				}
+#endif
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = false;
+				req.KeepAlive = false;
+				req.AllowWriteStreamBuffering = false;
+				req.ContentLength = 5;
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.SendChunked = false;
+				req.KeepAlive = true;
+				req.AllowWriteStreamBuffering = false;
+				req.ContentLength = 5;
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.SendChunked = true;
+#if NET_2_0
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+#else
+				try {
+					req.BeginGetResponse (null, null);
+					Assert.Fail ("#B1");
+				} catch (ProtocolViolationException ex) {
+					// Content-Length cannot be set for a
+					// non-write operation
+					Assert.IsNull (ex.InnerException, "#B2");
+					Assert.IsNotNull (ex.Message, "#B3");
+				} finally {
+					req.Abort ();
+				}
+#endif
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.ContentLength = 5;
+#if NET_2_0
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+#else
+				try {
+					req.BeginGetResponse (null, null);
+					Assert.Fail ("#C1");
+				} catch (ProtocolViolationException ex) {
+					// Content-Length cannot be set for a
+					// non-write operation
+					Assert.IsNull (ex.InnerException, "#C2");
+					Assert.IsNotNull (ex.Message, "#C3");
+				} finally {
+					req.Abort ();
+				}
+#endif
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.ContentLength = 0;
+#if NET_2_0
+				req.BeginGetResponse (null, null);
+				req.Abort ();
+#else
+				try {
+					req.BeginGetResponse (null, null);
+					Assert.Fail ("#D1");
+				} catch (ProtocolViolationException ex) {
+					// Content-Length cannot be set for a
+					// non-write operation
+					Assert.IsNull (ex.InnerException, "#D2");
+					Assert.IsNotNull (ex.Message, "#D3");
+				} finally {
+					req.Abort ();
+				}
+#endif
+			}
+		}
+
 		[Test] // bug #429200
 		public void GetRequestStream ()
 		{
@@ -277,7 +541,108 @@ namespace MonoTests.System.Net
 				Assert.AreSame (rs1, rs2, "#2");
 
 				rs1.Close ();
-				responder.Stop ();
+			}
+		}
+
+		[Test] // bug #510661
+		[Category ("NotWorking")]
+		public void GetRequestStream_Close_NotAllBytesWritten ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req;
+				Stream rs;
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.ContentLength = 2;
+				rs = req.GetRequestStream ();
+				try {
+					rs.Close ();
+					Assert.Fail ("#A1");
+				} catch (WebException ex) {
+					// The request was aborted: The request was canceled
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
+					Assert.IsNotNull (ex.Message, "#A3");
+					Assert.IsNull (ex.Response, "#A4");
+					Assert.AreEqual (WebExceptionStatus.RequestCanceled, ex.Status, "#A5");
+
+					// Cannot close stream until all bytes are written
+					Exception inner = ex.InnerException;
+					Assert.IsNotNull (inner, "#A6");
+					Assert.AreEqual (typeof (IOException), inner.GetType (), "#A7");
+					Assert.IsNull (inner.InnerException, "#A8");
+					Assert.IsNotNull (inner.Message, "#A9");
+				}
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.ContentLength = 2;
+				rs = req.GetRequestStream ();
+				rs.WriteByte (0x0d);
+				try {
+					rs.Close ();
+					Assert.Fail ("#B1");
+				} catch (WebException ex) {
+					// The request was aborted: The request was canceled
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#B2");
+					Assert.IsNotNull (ex.Message, "#B3");
+					Assert.IsNull (ex.Response, "#B4");
+					Assert.AreEqual (WebExceptionStatus.RequestCanceled, ex.Status, "#B5");
+
+					// Cannot close stream until all bytes are written
+					Exception inner = ex.InnerException;
+					Assert.IsNotNull (inner, "#B6");
+					Assert.AreEqual (typeof (IOException), inner.GetType (), "#B7");
+					Assert.IsNull (inner.InnerException, "#B8");
+					Assert.IsNotNull (inner.Message, "#B9");
+				}
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "POST";
+				req.ContentLength = 2;
+				rs = req.GetRequestStream ();
+				rs.WriteByte (0x0d);
+				rs.WriteByte (0x0d);
+				rs.Close ();
+			}
+		}
+
+		[Test] // bug #510642
+		[Category ("NotWorking")]
+		public void GetRequestStream_Write_Overflow ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8001);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8001/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.Timeout = 200;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				Stream rs = req.GetRequestStream ();
+
+				byte [] buffer = new byte [] { 0x2a, 0x2c, 0x1d };
+				try {
+					rs.Write (buffer, 0, 3);
+					Assert.Fail ("#1");
+				} catch (ProtocolViolationException ex) {
+					// Bytes to be written to the stream exceed
+					// Content-Length bytes size specified
+					Assert.IsNull (ex.InnerException, "#2");
+					Assert.IsNotNull (ex.Message, "#3");
+				} finally {
+					req.Abort ();
+				}
 			}
 		}
 
@@ -340,7 +705,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		[Test] // bug #81624
+		[Test] // bug #324300
 #if TARGET_JVM
 		[Category("NotWorking")]
 #endif
@@ -395,7 +760,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		[Test] // bug #81671
+		[Test] // bug #324347
 		[Category ("NotWorking")]
 		public void InternalServerError ()
 		{
@@ -461,7 +826,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
-		[Category ("NotWorking")] // we report a timeout
+		[Category ("NotWorking")] // #B3 fails; we get a SocketException: An existing connection was forcibly closed by the remote host
 		public void NoContentLength ()
 		{
 			IPEndPoint localEP = new IPEndPoint (IPAddress.Loopback, 8764);
@@ -483,9 +848,12 @@ namespace MonoTests.System.Net
 					req.GetResponse ();
 					Assert.Fail ("#A1");
 				} catch (WebException ex) {
-					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
 #if NET_2_0
-					//Assert.IsNotNull (ex.InnerException, "#A3");
+					// The underlying connection was closed:
+					// An unexpected error occurred on a
+					// receive
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
+					Assert.IsNotNull (ex.InnerException, "#A3");
 					Assert.AreEqual (WebExceptionStatus.ReceiveFailure, ex.Status, "#A4");
 					Assert.AreEqual (typeof (IOException), ex.InnerException.GetType (), "#A5");
 					
@@ -499,10 +867,8 @@ namespace MonoTests.System.Net
 					Assert.IsNotNull (ioe.Message, "#A7");
 					Assert.AreEqual (typeof (SocketException), ioe.InnerException.GetType (), "#A8");
 
-					// A connection attempt failed because the connected party
-					// did not properly respond after a period of time, or
-					// established connection failed because connected host has
-					// failed to respond
+					// An existing connection was forcibly
+					// closed by the remote host
 					SocketException soe = (SocketException) ioe.InnerException;
 					Assert.IsNull (soe.InnerException, "#A9");
 					Assert.IsNotNull (soe.Message, "#A10");
@@ -510,6 +876,9 @@ namespace MonoTests.System.Net
 					HttpWebResponse webResponse = ex.Response as HttpWebResponse;
 					Assert.IsNull (webResponse, "#A11");
 #else
+					// The remote server returned an error:
+					// (500) Internal Server Error
+					Assert.AreEqual (typeof (WebException), ex.GetType (), "#A2");
 					Assert.IsNull (ex.InnerException, "#A3");
 					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#A4");
 
@@ -537,6 +906,8 @@ namespace MonoTests.System.Net
 					req.GetResponse ();
 					Assert.Fail ("#B1");
 				} catch (WebException ex) {
+					// The remote server returned an error:
+					// (500) Internal Server Error
 					Assert.AreEqual (typeof (WebException), ex.GetType (), "#B2");
 					Assert.IsNull (ex.InnerException, "#B3");
 					Assert.AreEqual (WebExceptionStatus.ProtocolError, ex.Status, "#B4");
@@ -551,8 +922,54 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test]
+		[Category ("NotWorking")] // Assert #2 fails
+		public void NotModiedSince ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (NotModifiedSinceHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "GET";
+				req.KeepAlive = false;
+				req.Timeout = 20000;
+				req.ReadWriteTimeout = 20000;
 #if NET_2_0
-		[Test] // bug #81504
+				req.Headers.Add (HttpRequestHeader.IfNoneMatch, "898bbr2347056cc2e096afc66e104653");
+#else
+				req.Headers.Add ("If-None-Match", "898bbr2347056cc2e096afc66e104653");
+#endif
+				req.IfModifiedSince = new DateTime (2010, 01, 04);
+
+				DateTime start = DateTime.Now;
+				HttpWebResponse response = null;
+
+				try {
+					req.GetResponse ();
+					Assert.Fail ("#1");
+				} catch (WebException e) {
+					response = (HttpWebResponse) e.Response;
+				}
+
+				Assert.IsNotNull (response, "#2");
+				using (Stream stream = response.GetResponseStream ()) {
+					byte [] buffer = new byte [4096];
+					int bytesRead = stream.Read (buffer, 0, buffer.Length);
+					Assert.AreEqual (0, bytesRead, "#3");
+				}
+
+				TimeSpan elapsed = DateTime.Now - start;
+				Assert.IsTrue (elapsed.TotalMilliseconds < 2000, "#4");
+
+				responder.Stop ();
+			}
+		}
+
+#if NET_2_0
+		[Test] // bug #324182
 #if TARGET_JVM
 		[Category ("NotWorking")]
 #endif
@@ -695,6 +1112,21 @@ namespace MonoTests.System.Net
 		{
 			StringWriter sw = new StringWriter ();
 			sw.WriteLine ("HTTP/1.1 500 Too Lazy");
+			sw.WriteLine ();
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] NotModifiedSinceHandler (Socket socket)
+		{
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 304 Not Modified");
+			sw.WriteLine ("Date: Fri, 06 Feb 2009 12:50:26 GMT");
+			sw.WriteLine ("Server: Apache/2.2.6 (Debian) PHP/5.2.6-2+b1 with Suhosin-Patch mod_ssl/2.2.6 OpenSSL/0.9.8g");
+			sw.WriteLine ("Not-Modified-Since: Sun, 08 Feb 2009 08:49:26 GMT");
+			sw.WriteLine ("ETag: 898bbr2347056cc2e096afc66e104653");
+			sw.WriteLine ("Connection: close");
 			sw.WriteLine ();
 			sw.Flush ();
 
