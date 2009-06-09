@@ -737,9 +737,14 @@ namespace System.Net
 			if (method == null)
 				throw new ProtocolViolationException ("Method is null.");
 
+#if !NET_2_0
 			bool send = (method == "PUT" || method == "POST");
-			if (send && contentLength == -1 && !sendChunked && !allowBuffering && KeepAlive)
-				throw new ProtocolViolationException ("Content-Length not set");
+			if (send && contentLength < 0 && !sendChunked && !allowBuffering && KeepAlive)
+				throw new ProtocolViolationException ("Buffering is disabled, ContentLength is negative and SendChunked is disabled.");
+
+			if (!send && (contentLength > -1 || sendChunked))
+				throw new ProtocolViolationException ("ContentLength can't be set for non-write operations.");
+#endif
 
 			string transferEncoding = TransferEncoding;
 			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
