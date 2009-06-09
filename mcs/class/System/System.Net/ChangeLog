@@ -1,3 +1,9 @@
+2009-06-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: follow MS docs when throwing
+	ProtocolViolationException at the beginning of an asynchronous
+	operation. Fixes bug #465613.
+
 2009-06-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnectionStream.cs: throw a WebException instead of an IOException.
