@@ -101,7 +101,7 @@ namespace System.Windows.Forms {
 					bool available = true;
 					if (only_convertible && !entries.autoconvert)
 						available = false;
-					if (available && entries.type.Equals(type)) {
+					if (available && String.Compare (entries.type, type, true) == 0) {
 						return entries;
 					}
 					entries = entries.next;
