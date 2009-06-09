@@ -108,6 +108,8 @@ namespace System.Windows.Forms
 			dataGridView.RemoveEditingRow ();
 			
 			RegenerateSortedList ();
+
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
 
 		bool IList.Contains (object value)

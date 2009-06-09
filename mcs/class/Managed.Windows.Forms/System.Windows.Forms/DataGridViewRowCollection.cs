@@ -254,6 +254,8 @@ namespace System.Windows.Forms
 		{
 			int total = list.Count;
 			
+			DataGridView.OnRowsPreRemovedInternal (new DataGridViewRowsRemovedEventArgs (0, total));
+
 			for (int i = 0; i < total; i++) {
 				DataGridViewRow row = (DataGridViewRow)list[0];
 				
@@ -264,6 +266,9 @@ namespace System.Windows.Forms
 				list.Remove (row);
 				ReIndex ();
 			}
+
+			DataGridView.OnRowsPostRemovedInternal (new DataGridViewRowsRemovedEventArgs (0, total));
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
 
 		internal void ClearInternal ()

@@ -5758,6 +5758,8 @@ namespace System.Windows.Forms {
 					OnColumnPostRemovedInternal(new DataGridViewColumnEventArgs(e.Element as DataGridViewColumn));
 					break;
 				case CollectionChangeAction.Refresh:
+					hover_cell = null;
+					MoveCurrentCell (-1, -1, true, false, false, true);
 					break;
 			}
 		}

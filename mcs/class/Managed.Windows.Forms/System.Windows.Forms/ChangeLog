@@ -1,5 +1,13 @@
 2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewColumnCollection.cs, DataGridViewRowCollection.cs, 
+	DataGridView.cs: Fire CollectionChangeAction.Refresh collection 
+	changed when Clearing the collections so that the DataGridView 
+	can know and reset the current cell.
+	[Fixes bug #492549]
+
+2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* BindingSource.cs: In ResetBindings use the ListChangedEventArgs ctor 
 	with the PropertyDescriptor parameter instead of index, because the 
 	latter will set some irelevant indices. Fixes a bug uncovered by recent
