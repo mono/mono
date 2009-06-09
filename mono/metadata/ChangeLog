@@ -1,3 +1,8 @@
+2009-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Revert previous commit to threads.c until the race condition
+	is fixed.
+
 2009-06-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Backport of 135171.
