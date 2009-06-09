@@ -26,6 +26,7 @@
 
 #if NET_2_0
 
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Drawing;
@@ -45,6 +46,7 @@ namespace System.Windows.Forms {
 		public DataGridViewComboBoxColumn ()
 		{
 			CellTemplate = new DataGridViewComboBoxCell();
+			((DataGridViewComboBoxCell) CellTemplate).OwningColumnTemplate = this;
 			SortMode = DataGridViewColumnSortMode.NotSortable;
 			autoComplete = true;
 			displayStyle = DataGridViewComboBoxDisplayStyle.DropDownButton;
@@ -62,7 +64,15 @@ namespace System.Windows.Forms {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public override DataGridViewCell CellTemplate {
 			get { return base.CellTemplate; }
-			set { base.CellTemplate = value as DataGridViewComboBoxCell; }
+			set {
+
+				DataGridViewComboBoxCell cellTemplate = value as DataGridViewComboBoxCell;
+				if (cellTemplate == null)
+					throw new InvalidCastException ("Invalid cell tempalte type.");
+
+				cellTemplate.OwningColumnTemplate = this;
+				base.CellTemplate = cellTemplate;
+			}
 		}
 
 		[AttributeProvider (typeof (IListSource))]
@@ -198,6 +208,20 @@ namespace System.Windows.Forms {
 					throw new InvalidOperationException("CellTemplate is null.");
 				}
 				(base.CellTemplate as DataGridViewComboBoxCell).ValueMember = value;
+			}
+		}
+
+		internal void SyncItems (IList items)
+		{
+			if (DataSource != null || DataGridView == null)
+				return;
+
+			for (int i = 0; i < DataGridView.RowCount; i++) {
+				DataGridViewComboBoxCell comboCell = DataGridView.Rows[i].Cells[base.Index] as DataGridViewComboBoxCell;
+				if (comboCell != null) {
+					comboCell.Items.ClearInternal ();
+					comboCell.Items.AddRangeInternal (this.Items);
+				}
 			}
 		}
 

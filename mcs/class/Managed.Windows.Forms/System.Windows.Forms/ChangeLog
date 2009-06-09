@@ -1,5 +1,11 @@
 2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridViewComboBoxCell.cs, DataGridViewComboBoxColumn.cs: 
+	Implement items syncing in the non-databound scenario.
+	[Fixes bug #494031]
+
+2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Call OnCellValidating and OnCellValidated and 
 	handle the Cancel accordingly.
 	[Fixes bug #506838]
