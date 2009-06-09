@@ -326,7 +326,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #465613
-		[Category ("NotWorking")]
 		public void BeginGetRequestStream_NoBuffering ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8002);
