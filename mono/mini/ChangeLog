@@ -1,5 +1,12 @@
 2009-06-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_plt_resolve): Avoid creating trampolines in
+	the full-aot case if possible, since the trampoline will be called right 
+	away.
+
+	* aot-compiler.c (mono_compile_assembly): Decrease the number of full aot
+	trampolines to 1024 after the change above.
+
 	* aot-compiler.c (arch_emit_specific_trampoline): Rework the arm
 	trampoline to save 8 bytes per trampoline.
 
