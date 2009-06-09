@@ -1,3 +1,11 @@
+2009-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (arch_emit_specific_trampoline): Rework the arm
+	trampoline to save 8 bytes per trampoline.
+
+	* tramp-arm.c (mono_arch_create_trampoline_code_full): Update after the
+	change above.
+
 2009-06-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Use acfg->temp_prefix instead of .L to prefix labels.
