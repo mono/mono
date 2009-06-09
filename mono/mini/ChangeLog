@@ -1,5 +1,8 @@
 2009-06-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_method_code): Emit the unbox trampolines right
+	before the methods they belong to.
+
 	* aot-runtime.c (mono_aot_plt_resolve): Avoid creating trampolines in
 	the full-aot case if possible, since the trampoline will be called right 
 	away.
