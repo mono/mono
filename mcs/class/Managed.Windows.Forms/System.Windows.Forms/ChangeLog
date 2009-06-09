@@ -1,3 +1,10 @@
+2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* BindingSource.cs: In ResetBindings use the ListChangedEventArgs ctor 
+	with the PropertyDescriptor parameter instead of index, because the 
+	latter will set some irelevant indices. Fixes a bug uncovered by recent
+	 fix to ListChangedEventArgs.
+
 2009-06-09  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
 
 	* DataObject.cs: When looking for any specific format, do a case

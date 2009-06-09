@@ -925,7 +925,7 @@ namespace System.Windows.Forms {
 		public void ResetBindings (bool metadataChanged)
 		{
 			if (metadataChanged)
-				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged, 0));
+				OnListChanged (new ListChangedEventArgs (ListChangedType.PropertyDescriptorChanged, null));
 
 			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
