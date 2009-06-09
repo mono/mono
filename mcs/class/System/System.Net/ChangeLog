@@ -1,5 +1,10 @@
 2009-06-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebRequest.cs: ProtocolViolationException is not thrown in
+	certain cases since 2.0. Fixes bug #508027.
+
+2009-06-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpWebRequest.cs: follow MS docs when throwing
 	ProtocolViolationException at the beginning of an asynchronous
 	operation. Fixes bug #465613.
