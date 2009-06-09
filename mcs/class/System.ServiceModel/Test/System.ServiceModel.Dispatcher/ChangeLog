@@ -1,3 +1,7 @@
+2009-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcherTest.cs : add ServiceThrottle test, and comments.
+
 2009-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs : make sure ctor args are nullable.

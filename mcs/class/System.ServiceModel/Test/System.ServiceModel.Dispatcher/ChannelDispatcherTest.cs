@@ -21,6 +21,35 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			new ChannelDispatcher (new MyChannelListener (new Uri ("urn:foo")), null, null);
 		}
 
+		[Test]
+		public void ServiceThrottle ()
+		{
+			var cd = new ChannelDispatcher (new MyChannelListener<IReplyChannel> (new Uri ("urn:foo")));
+			var st = cd.ServiceThrottle;
+			Assert.IsNull (st, "#0");
+
+			var uri = new Uri ("http://localhost:37564");
+			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
+			h.AddServiceEndpoint (typeof (TestContract).FullName, new BasicHttpBinding (), "address");
+			h.ChannelDispatchers.Add (cd);
+			Assert.IsNull (st, "#1");
+			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
+			ed.DispatchRuntime.Type = typeof (TestContract);
+			cd.Endpoints.Add (ed);
+			cd.MessageVersion = MessageVersion.Default;
+
+			{
+				cd.Open ();
+				try {
+					Assert.IsNull (st, "#2");
+					// so, can't really test actual slot values as it is null.
+				} finally {
+					cd.Close ();
+				}
+				return;
+			}
+		}
+
 		[Test]			
 		public void Collection_Add_Remove () {
 			Console.WriteLine ("STart test Collection_Add_Remove");
