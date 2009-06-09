@@ -398,7 +398,7 @@ namespace System.ServiceModel.Dispatcher
 			{
 				StopLoop ();
 				owner.Listener.Close ();
-				if (loop_thread.IsAlive)
+				if (loop_thread != null && loop_thread.IsAlive)
 					loop_thread.Abort ();
 				loop_thread = null;
 			}
@@ -415,6 +415,10 @@ namespace System.ServiceModel.Dispatcher
 			void StartLoopCore ()
 			{
 				loop = true;
+
+				// FIXME: It should iterate (Begin)AcceptChannel
+				// calls until the amount of the channels
+				// reach ServiceThrottle.MaxConcurrentSessions.
 
 				// FIXME: use async WaitForBlah() method so
 				// that we can stop them at our own will.
