@@ -1,5 +1,7 @@
 2009-06-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Don't align code to 16 bytes on arm.
+	
 	* aot-compiler.c (emit_method_code): Emit the unbox trampolines right
 	before the methods they belong to.
 
