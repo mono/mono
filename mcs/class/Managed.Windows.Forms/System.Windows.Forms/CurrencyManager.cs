@@ -169,12 +169,11 @@ namespace System.Windows.Forms {
 
                 internal bool AllowNew {
                 	get {
-				/* if we're readonly, don't even bother checking if we can add new rows */
-				if (list.IsReadOnly)
-					return false;
-
 				if (list is IBindingList)
 					return ((IBindingList)list).AllowNew;
+
+				if (list.IsReadOnly)
+					return false;
 
 				return false;
 			}

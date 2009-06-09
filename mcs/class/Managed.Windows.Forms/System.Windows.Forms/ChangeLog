@@ -1,3 +1,11 @@
+2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* CurrencyManager.cs: In AllowNew firstly check if the list is a 
+	IBindingList and proxy to AllowNew. IBindingList has slightly differet 
+	logic and eventhough it's an IList IsReadOnly should not be used in this 
+	case as it might be True but AllowNew could be True as well.
+	Fixes a bug uncovered by a fix to the Array class.
+
 2009-06-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBindingHelper.cs: In GetListItemType do a null check when
