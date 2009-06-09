@@ -1,5 +1,5 @@
 //
-// MoonlightRestrictedAssemblyStep.cs
+// MoonlightA11yAssemblyStep.cs
 //
 // Author:
 //   Andrés G. Aragoneses (aaragoneses@novell.com)

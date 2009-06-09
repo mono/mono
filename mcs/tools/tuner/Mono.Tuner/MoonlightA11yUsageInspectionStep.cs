@@ -1,10 +1,10 @@
 //
-// BaseStep.cs
+// MoonlightA11yUsageInspectionStep.cs
 //
 // Author:
-//   Jb Evain (jbevain@novell.com)
+//   Andrés G. Aragoneses (aaragoneses@novell.com)
 //
-// (C) 2007 Novell, Inc.
+// (C) 2009 Novell, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,48 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Collections;
+using System.IO;
+
+using Mono.Linker;
+using Mono.Linker.Steps;
+
 using Mono.Cecil;
 
-namespace Mono.Linker.Steps {
+namespace Mono.Tuner {
 
-	public abstract class BaseStep : IStep {
+	public class MoonlightA11yUsageInspectionStep : MoonlightAssemblyStep {
 
-		private LinkContext _context;
-
-		public LinkContext Context {
-			get { return _context; }
-		}
-
-		public void Process (LinkContext context)
+		protected override void CustomizePipeline (Pipeline pipeline)
 		{
-			_context = context;
-
-			if (!ConditionToProcess ())
-				return;
-
-			Process ();
-
-			foreach (AssemblyDefinition assembly in context.GetAssemblies ())
-				ProcessAssembly (assembly);
-			
-			EndProcess ();
-		}
-
-		protected virtual bool ConditionToProcess ()
-		{
-			return true;
-		}
-
-		protected virtual void Process ()
-		{
-		}
-		
-		protected virtual void EndProcess ()
-		{
-		}
-
-		protected virtual void ProcessAssembly (AssemblyDefinition assembly)
-		{
+			pipeline.ReplaceStep (typeof (SweepStep), new MoonlightA11yDescriptorGenerator ());
+			pipeline.RemoveStep (typeof (LoadI18nAssemblies));
+			pipeline.RemoveStep (typeof (CleanStep));
+			pipeline.RemoveStep (typeof (RegenerateGuidStep));
 		}
 	}
 }
