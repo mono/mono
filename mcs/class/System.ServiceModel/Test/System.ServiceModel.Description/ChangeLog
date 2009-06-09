@@ -1,3 +1,7 @@
+2009-06-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceThrottlingBehaviorTest.cs : new.
+
 2009-02-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WsdlExporterTest.cs:

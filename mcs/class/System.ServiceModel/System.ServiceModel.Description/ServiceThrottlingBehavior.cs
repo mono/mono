@@ -39,21 +39,33 @@ namespace System.ServiceModel.Description
 		{
 		}
 
-		int max_calls, max_conn, max_instance;
+		int max_calls = 16, max_conn = 10, max_instance = 26;
 
 		public int MaxConcurrentCalls {
 			get { return max_calls; }
-			set { max_calls = value; }
+			set {
+				if (value <= 0)
+					throw new InvalidOperationException ("must be positive value");
+				max_calls = value;
+			}
 		}
 
-		public int MaxConnections {
+		public int MaxConcurrentSessions {
 			get { return max_conn; }
-			set { max_conn = value; }
+			set {
+				if (value <= 0)
+					throw new InvalidOperationException ("must be positive value");
+				max_conn = value;
+			}
 		}
 
-		public int MaxInstances {
+		public int MaxConcurrentInstances {
 			get { return max_instance; }
-			set { max_instance = value; }
+			set {
+				if (value <= 0)
+					throw new InvalidOperationException ("must be positive value");
+				max_instance = value;
+			}
 		}
 
 		void IServiceBehavior.AddBindingParameters (
@@ -62,14 +74,20 @@ namespace System.ServiceModel.Description
 			Collection<ServiceEndpoint> endpoints,
 			BindingParameterCollection parameters)
 		{
-			throw new NotImplementedException ();
 		}
 
 		void IServiceBehavior.ApplyDispatchBehavior (
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
 		{
-			throw new NotImplementedException ();
+			foreach (var cdb in serviceHostBase.ChannelDispatchers) {
+				var cd = cdb as ChannelDispatcher;
+				if (cd != null)
+					cd.ServiceThrottle = new ServiceThrottle () {
+						MaxConcurrentCalls = this.MaxConcurrentCalls,
+						MaxConcurrentSessions = this.MaxConcurrentSessions,
+						MaxConcurrentInstances = this.MaxConcurrentInstances };
+			}
 		}
 
 		void IServiceBehavior.Validate (

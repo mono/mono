@@ -1,3 +1,8 @@
+2009-06-09  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources:
+	  add ServiceThrottlingBehaviorTest.
+
 2009-06-08  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: renamed a file.

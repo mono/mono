@@ -1,10 +1,10 @@
 //
-// ServiceThrottle.cs
+// ServiceThrottlingBehaviorTest.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009 Novell, Inc.  http://novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,29 +25,35 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-namespace System.ServiceModel.Dispatcher
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using NUnit.Framework;
+using System.ServiceModel;
+using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
+using System.ServiceModel.Channels;
+
+namespace MonoTests.System.ServiceModel.Description
 {
-	public sealed class ServiceThrottle
+	[TestFixture]
+	public class ServiceThrottlingBehaviorTest
 	{
-		internal ServiceThrottle ()
+		[Test]
+		public void DefaultValues ()
 		{
+			var t = new ServiceThrottlingBehavior ();
+			Assert.AreEqual (10, t.MaxConcurrentSessions, "#1");
+			Assert.AreEqual (16, t.MaxConcurrentCalls, "#2");
+			Assert.AreEqual (26, t.MaxConcurrentInstances, "#3");
 		}
 
-		int max_call = 16, max_session = 10, max_instance = 26;
-
-		public int MaxConcurrentCalls {
-			get { return max_call; }
-			set { max_call = value; }
-		}
-
-		public int MaxConcurrentSessions {
-			get { return max_session; }
-			set { max_session = value; }
-		}
-
-		public int MaxConcurrentInstances {
-			get { return max_instance; }
-			set { max_instance = value; }
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))] // hmm...
+		public void SetZero ()
+		{
+			new ServiceThrottlingBehavior () { MaxConcurrentCalls = 0 };
 		}
 	}
 }
