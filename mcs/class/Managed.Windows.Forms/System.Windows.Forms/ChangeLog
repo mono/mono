@@ -1,5 +1,11 @@
 2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Call OnCellValidating and OnCellValidated and 
+	handle the Cancel accordingly.
+	[Fixes bug #506838]
+
+2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridViewBand.cs: Fix a typo in DefaultHeaderCellType.
 	[Fixes bug #506796]
 

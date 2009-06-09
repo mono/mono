@@ -2374,8 +2374,22 @@ namespace System.Windows.Forms {
 				return true;
 
 			try {
-				currentCell.Value = currentCell.ParseFormattedValue (currentCell.EditedFormattedValue, 
-										     currentCell.InheritedStyle, null, null);
+				// convert
+				object newValue = currentCell.ParseFormattedValue (currentCell.EditedFormattedValue, 
+										   currentCell.InheritedStyle, null, null);
+
+				DataGridViewCellValidatingEventArgs validateArgs = new DataGridViewCellValidatingEventArgs (currentCell.ColumnIndex, 
+															    currentCell.RowIndex, 
+															    newValue);
+				// validate
+				OnCellValidating (validateArgs);
+				if (validateArgs.Cancel)
+					return false;
+				OnCellValidated (new DataGridViewCellEventArgs (currentCell.ColumnIndex, currentCell.RowIndex));
+
+				// commit
+				currentCell.Value = newValue;
+
 			} catch (Exception e) {
 				DataGridViewDataErrorEventArgs args = new DataGridViewDataErrorEventArgs (e, currentCell.ColumnIndex, currentCell.RowIndex, 
 													  DataGridViewDataErrorContexts.Commit);
