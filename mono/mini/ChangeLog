@@ -1,5 +1,11 @@
 2009-06-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c (asm_writer_emit_symbol_diff): Disable the 
+	TARGET_ASM_APPLE stuff for now, as it doesn't seem to work on the
+	iphone.
+
+2009-06-10  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-arm.c (mono_arch_output_basic_block): Fix the implementation
 	of CKFINITE and FBGE for VFP.
 
