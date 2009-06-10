@@ -1,5 +1,8 @@
 2009-06-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (add_exported_type): Don't set the FORWARDER flag on
+	nested types.
+	
 	* reflection.c (mono_image_fill_export_table_from_type_forwarders): Add
 	support for nested types. Fixes #511704.
 
