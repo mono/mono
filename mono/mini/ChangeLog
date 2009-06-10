@@ -1,3 +1,8 @@
+2009-06-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_output_basic_block): Fix the implementation
+	of CKFINITE and FBGE for VFP.
+
 2009-06-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Don't align code to 16 bytes on arm.
