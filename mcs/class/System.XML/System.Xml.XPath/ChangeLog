@@ -1,3 +1,10 @@
+2009-06-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* XPathExpression.cs: Backport to Mono 2.4 the bug fix
+	for multithreaded applications that use XPath.
+
+	This was the fix for #477049 which also fixes #505678
+
 2009-01-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Expression.cs : give up sortless iterator optimization.
