@@ -1,5 +1,9 @@
 2009-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ReplyChannelBase.cs : fix wrong null delegate check point.
+
+2009-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpReplyChannel.cs, ReplyChannelBase.cs : async operations are
 	  now implemented as virtual in base class. Remove NIEs in http.
 

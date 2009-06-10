@@ -69,14 +69,14 @@ namespace System.ServiceModel.Channels
 
 		public virtual bool EndTryReceiveRequest (IAsyncResult result)
 		{
-			if (try_recv_delegate == null)
-				throw new InvalidOperationException ("BeginTryReceiveRequest operation has not started");
 			RequestContext dummy;
 			return EndTryReceiveRequest (result, out dummy);
 		}
 
 		public virtual bool EndTryReceiveRequest (IAsyncResult result, out RequestContext context)
 		{
+			if (try_recv_delegate == null)
+				throw new InvalidOperationException ("BeginTryReceiveRequest operation has not started");
 			return try_recv_delegate.EndInvoke (out context, result);
 		}
 
