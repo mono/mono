@@ -3,6 +3,7 @@
 //
 // Authors:
 //  Ben Maurer (bmaurer@ximian.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // Copyright (C) 2004 Novell
 //
@@ -25,8 +26,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
-namespace System {
+
+namespace System
+{
+#if NET_4_0
+	public delegate int Comparison <in T> (T x, T y);
+#elif NET_2_0
 	public delegate int Comparison <T> (T x, T y);
+#endif	
 }
-#endif
+

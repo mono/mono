@@ -1,3 +1,11 @@
+2009-06-10  Marek Safar  <marek.safar@gmail.com>
+
+	* Predicate.cs, Action.cs, Funcs.cs, Comparison.cs, IComparable.cs,
+	Converter.cs, EventHandler.cs: Add type variance.
+	
+	* InvalidTimeZoneException.cs,
+	TimeZoneNotFoundException.cs: New file.
+
 2009-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* AppDomain.cs (DoAssemblyResolve): Fix recursion detection. Fixes #507003.

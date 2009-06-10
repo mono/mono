@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -40,7 +41,11 @@ namespace System {
 		int CompareTo (object obj);
 	}
 	
-#if NET_2_0
+#if NET_4_0
+	public interface IComparable <in T> {
+		int CompareTo (T other);
+	}
+#elif NET_2_0
 	public interface IComparable <T> {
 		int CompareTo (T other);
 	}
