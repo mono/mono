@@ -1,3 +1,7 @@
+2009-06-10  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs: Better overload ctor collision error message.
+
 2009-06-05  Jb Evain  <jbevain@novell.com>
 
 	* driver.cs (EmbededResource): avoid using an internal method

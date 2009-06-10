@@ -2740,9 +2740,15 @@ namespace Mono.CSharp {
 										"A partial method declaration and partial method implementation must be both an extension method or neither");
 								}
 							} else {
-								Report.Error (663, member.Location,
-									"An overloaded method `{0}' cannot differ on use of parameter modifiers only",
-									member.GetSignatureForError ());
+								if (member is Constructor) {
+									Report.Error (851, member.Location,
+										"Overloaded contructor `{0}' cannot differ on use of parameter modifiers only",
+										member.GetSignatureForError ());
+								} else {
+									Report.Error (663, member.Location,
+										"Overloaded method `{0}' cannot differ on use of parameter modifiers only",
+										member.GetSignatureForError ());
+								}
 							}
 							return false;
 						}
