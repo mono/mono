@@ -19,25 +19,29 @@ using System.Diagnostics;
 
 namespace Mono.CSharp {
 
-	public enum LanguageVersion
+	enum LanguageVersion
 	{
 		ISO_1		= 1,
-		Default_MCS	= 2,
-		ISO_2		= 3,
-		V_3			= 4,
-		V_4			= 5,
+		ISO_2		= 2,
+		V_3			= 3,
+		V_4			= 4,
 		Future		= 100,
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
-		Default		= V_4,
-#elif GMCS_SOURCE
-		Default		= V_3
+		Default		= LanguageVersion.V_4,
 #else
-		Default		= Default_MCS
+		Default		= LanguageVersion.V_3
 #endif
 	}
 
-	public class RootContext {
+	enum MetadataVersion
+	{
+		v1,
+		v2,
+		v4
+	}
+
+	class RootContext {
 
 		//
 		// COMPILER OPTIONS CLASS
@@ -47,6 +51,8 @@ namespace Mono.CSharp {
 		public static bool VerifyClsCompliance = true;
 		public static bool Optimize = true;
 		public static LanguageVersion Version;
+
+		public static MetadataVersion MetadataCompatibilityVersion;
 
 		//
 		// We keep strongname related info here because
@@ -166,6 +172,12 @@ namespace Mono.CSharp {
 			Documentation = null;
 			impl_details_class = null;
 			helper_classes = null;
+
+#if GMCS_SOURCE
+			MetadataCompatibilityVersion = MetadataVersion.v2;
+#else
+			MetadataCompatibilityVersion = MetadataVersion.v1;
+#endif
 
 			//
 			// Setup default defines

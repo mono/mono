@@ -289,8 +289,6 @@ namespace Mono.CSharp
 
 		public static int Main (string[] args)
 		{
-			RootContext.Version = LanguageVersion.Default;
-
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
 
 			Driver d = Driver.Create (args, true);

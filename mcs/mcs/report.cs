@@ -590,10 +590,6 @@ namespace Mono.CSharp {
 			case LanguageVersion.V_3:
 				version = "3.0";
 				break;
-			case LanguageVersion.Default_MCS:
-				Report.Error (1644, loc, "Feature `{0}' is not available in Mono mcs1 compiler. Consider using the `gmcs' compiler instead",
-				              feature);
-				return;
 			default:
 				throw new InternalErrorException ("Invalid feature version", RootContext.Version);
 			}
@@ -601,6 +597,13 @@ namespace Mono.CSharp {
 			Report.Error (1644, loc,
 				"Feature `{0}' cannot be used because it is not part of the C# {1} language specification",
 				      feature, version);
+		}
+
+		public static void FeatureIsNotSupported (Location loc, string feature)
+		{
+			Report.Error (1644, loc,
+				"Feature `{0}' is not supported in Mono mcs1 compiler. Consider using the `gmcs' compiler instead",
+				feature);
 		}
 		
 		public static string FriendlyStackTrace (Exception e)

@@ -105,7 +105,6 @@ namespace Mono.CSharp {
 				if (inited)
 					return new string [0];
 				
-				RootContext.Version = LanguageVersion.Default;
 				driver = Driver.Create (args, false);
 				if (driver == null)
 					throw new Exception ("Failed to create compiler driver with the given arguments");

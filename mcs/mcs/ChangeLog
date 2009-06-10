@@ -1,5 +1,10 @@
 2009-06-10  Marek Safar  <marek.safar@gmail.com>
 
+	* eval.cs, anonymous.cs, report.cs, rootcontext.cs, cs-parser.jay,
+	driver.cs: Split lang version and metadata version.
+
+2009-06-10  Marek Safar  <marek.safar@gmail.com>
+
 	* decl.cs: Better overload ctor collision error message.
 
 2009-06-05  Jb Evain  <jbevain@novell.com>

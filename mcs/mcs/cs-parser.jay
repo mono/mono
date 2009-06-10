@@ -2601,7 +2601,9 @@ opt_nullable
 	  }
 	| INTERR_NULLABLE
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
+	  		Report.FeatureIsNotSupported (lexer.Location, "nullable types");
+		else if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (lexer.Location, "nullable types");
 	  
 	  	$$ = this;
@@ -2643,7 +2645,9 @@ opt_type_argument_list
 	: /* empty */ 		     { $$ = null; } 
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
+	  		Report.FeatureIsNotSupported (lexer.Location, "generics");
+		else if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");	  
 	  
 		$$ = $2;
@@ -2743,7 +2747,9 @@ opt_type_parameter_list
 	: /* empty */ 		     { $$ = null; } 
 	| OP_GENERICS_LT_DECL type_parameters OP_GENERICS_GT
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
+	  		Report.FeatureIsNotSupported (lexer.Location, "generics");
+		else if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "generics");
 	  
 		$$ = $2;
@@ -2838,8 +2844,7 @@ type_expression
 		if ($2 != null) {
 			$$ = new ComposedCast (name.GetTypeExpression (), "?", lexer.Location);
 		} else {
-			if (name.Left == null && name.Name == "var" &&
-			    (RootContext.Version > LanguageVersion.ISO_2 || RootContext.Version == LanguageVersion.Default_MCS))
+			if (name.Left == null && name.Name == "var" && RootContext.Version > LanguageVersion.ISO_2)
 				$$ = current_array_type = new VarExpr (name.Location);
 			else
 				$$ = name.GetTypeExpression ();
@@ -3368,7 +3373,9 @@ new_expr_start
 anonymous_type_expression
 	: NEW OPEN_BRACE anonymous_type_parameters_opt_comma CLOSE_BRACE
 	  {
-	  	if (RootContext.Version <= LanguageVersion.ISO_2)
+		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
+	  		Report.FeatureIsNotSupported (lexer.Location, "anonymous types");
+	  	else if (RootContext.Version <= LanguageVersion.ISO_2)
 	  		Report.FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
 
 		$$ = new AnonymousTypeDeclaration ((ArrayList) $3, current_container, GetLocation ($1));
@@ -3602,7 +3609,9 @@ unbound_type_name
 generic_dimension
 	: GENERIC_DIMENSION
 	  {
-		if (RootContext.Version < LanguageVersion.ISO_2)
+		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
+	  		Report.FeatureIsNotSupported (lexer.Location, "generics");
+		else if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (lexer.Location, "generics");
 
 		$$ = $1;
@@ -4237,7 +4246,9 @@ opt_type_parameter_variance
 	  }
 	| type_parameter_variance
 	  {
-		if (RootContext.Version <= LanguageVersion.V_3)
+		if (RootContext.MetadataCompatibilityVersion < MetadataVersion.v2)	  
+	  		Report.FeatureIsNotSupported (lexer.Location, "generic type variance");
+		else if (RootContext.Version <= LanguageVersion.V_3)
 			Report.FeatureIsNotAvailable (lexer.Location, "generic type variance");
 
 		$$ = $1;
@@ -4483,8 +4494,7 @@ variable_type
 			//
 			if (rank_or_nullable.Length == 0) {
 				SimpleName sn = expr as SimpleName;
-				if (sn != null && sn.Name == "var" &&
-				    (RootContext.Version > LanguageVersion.ISO_2 || RootContext.Version == LanguageVersion.Default_MCS))
+				if (sn != null && sn.Name == "var" && RootContext.Version > LanguageVersion.ISO_2)
 					$$ = current_array_type = new VarExpr (sn.Location);
 				else
 					$$ = $1;
