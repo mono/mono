@@ -1,3 +1,7 @@
+2009-06-10  Marek Safar  <marek.safar@gmail.com>
+
+	* LockRecursionException.cs: New file.
+
 2009-04-21  Mark Probst  <mark.probst@gmail.com>
 
 	* Thread.cs: Make the execution context field thread-static to
