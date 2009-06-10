@@ -1,4 +1,4 @@
-// CS0633: An overloaded method `C.Foo(string)' cannot differ on use of parameter modifiers only
+// CS0633: Overloaded method `C.Foo(string)' cannot differ on use of parameter modifiers only
 // Line: 11
 
 

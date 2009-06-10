@@ -1,4 +1,4 @@
-// CS0663: An overloaded method `WrongInterface.Test(ref int)' cannot differ on use of parameter modifiers only
+// CS0663: Overloaded method `WrongInterface.Test(ref int)' cannot differ on use of parameter modifiers only
 // Line: 6
 
 public interface WrongInterface {
