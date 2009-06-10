@@ -1,5 +1,12 @@
 2009-06-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_got_info): Don't emit offsets for the plt got entries.
+
+	* aot-compiler.c aot-runtime.c: Don't emit the first got offset in the
+	method info, it is not used anymore.
+
+	* mini.h: Bump AOT file format version.
+	
 	* aot-compiler.c (arch_emit_plt_entry): Make the arm plt entries one
 	word smaller.
 
