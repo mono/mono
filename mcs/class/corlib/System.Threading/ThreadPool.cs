@@ -90,14 +90,12 @@ namespace System.Threading {
 			
 		public static bool QueueUserWorkItem (WaitCallback callBack)
 		{
-			IAsyncResult ar = callBack.BeginInvoke (null, null, null);
-			if (ar == null)
-				return false;
-			return true;
+			return QueueUserWorkItem (callBack, null);
 		}
 
 		public static bool QueueUserWorkItem (WaitCallback callBack, object state)
 		{
+			callBack = MoonlightHandler (callBack);
 			IAsyncResult ar = callBack.BeginInvoke (state, null, null);
 			if (ar == null)
 				return false;
@@ -217,6 +215,22 @@ namespace System.Threading {
 			bool executeOnlyOnce) 
 		{
 			throw new NotImplementedException ();
+		}
+
+		static WaitCallback MoonlightHandler (WaitCallback callback)
+		{
+#if NET_2_1
+			return delegate (object o) {
+				try {
+					callback (o);
+				} 
+				catch (Exception ex) {
+					Thread.MoonlightUnhandledException (ex);
+				} 
+			};
+#else
+			return callback;
+#endif
 		}
 	}
 }

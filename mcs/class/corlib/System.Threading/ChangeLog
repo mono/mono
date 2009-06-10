@@ -1,3 +1,11 @@
+2009-06-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Refactor calling Moonlight's OnUnhandledException to 
+	make sur the delegate it not called from a [SecuritySafeCritical]
+	caller.
+	* ThreadPool.cs: Reuse the above code for QueueUserWorkItem. 
+	Original patch from Alan McGovern
+
 2009-06-10  Marek Safar  <marek.safar@gmail.com>
 
 	* LockRecursionException.cs: New file.

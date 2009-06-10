@@ -37,6 +37,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections;
+using System.Reflection;
 using System.Security;
 
 #if NET_2_0
@@ -752,17 +753,25 @@ namespace System.Threading {
 					((ParameterizedThreadStart) threadstart) (start_obj);
 				}
 			} catch (Exception ex) {
-				try {
-					try {
-						var assembly = System.Reflection.Assembly.Load ("System.Windows, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
-						var application = assembly.GetType ("System.Windows.Application");
-						var method = application.GetMethod ("OnUnhandledException", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
-						method.Invoke (null, new object [] {null, ex});
-					} catch (Exception e) {
-						Console.WriteLine ("Unexpected exception while trying to report unhandled application exception: {0}", e);
-					}
-				} catch {
+				MoonlightUnhandledException (ex);
+			}
+		}
+
+		static MethodInfo moonlight_unhandled_exception = null;
+
+		static internal void MoonlightUnhandledException (Exception e)
+		{
+			try {
+				if (moonlight_unhandled_exception == null) {
+					var assembly = System.Reflection.Assembly.Load ("System.Windows, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
+					var application = assembly.GetType ("System.Windows.Application");
+					moonlight_unhandled_exception = application.GetMethod ("OnUnhandledException", 
+						System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
 				}
+				moonlight_unhandled_exception.Invoke (null, new object [] { null, e });
+			}
+			catch {
+				Console.WriteLine ("Unexpected exception while trying to report unhandled application exception: {0}", e);
 			}
 		}
 #endif
