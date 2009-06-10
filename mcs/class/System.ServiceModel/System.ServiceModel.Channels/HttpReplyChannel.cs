@@ -160,41 +160,11 @@ w.Close ();
 			get { return local_address; }
 		}
 
-		public override IAsyncResult BeginTryReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override bool EndTryReceiveRequest (IAsyncResult result, out RequestContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override IAsyncResult BeginWaitForRequest (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override bool EndWaitForRequest (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override RequestContext ReceiveRequest (TimeSpan timeout)
 		{
 			RequestContext ctx;
 			TryReceiveRequest (timeout, out ctx);
 			return ctx;
-		}
-
-		public override IAsyncResult BeginReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override RequestContext EndReceiveRequest (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
 		}
 
 		protected override void OnAbort ()

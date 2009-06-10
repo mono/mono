@@ -56,15 +56,29 @@ namespace System.ServiceModel.Channels
 
 		public abstract bool TryReceiveRequest (TimeSpan timeout, out RequestContext context);
 
-		public abstract IAsyncResult BeginTryReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state);
+		delegate bool TryReceiveDelegate (TimeSpan timeout, out RequestContext context);
+		TryReceiveDelegate try_recv_delegate;
+
+		public virtual IAsyncResult BeginTryReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (try_recv_delegate == null)
+				try_recv_delegate = new TryReceiveDelegate (TryReceiveRequest);
+			RequestContext dummy;
+			return try_recv_delegate.BeginInvoke (timeout, out dummy, callback, state);
+		}
 
 		public virtual bool EndTryReceiveRequest (IAsyncResult result)
 		{
+			if (try_recv_delegate == null)
+				throw new InvalidOperationException ("BeginTryReceiveRequest operation has not started");
 			RequestContext dummy;
 			return EndTryReceiveRequest (result, out dummy);
 		}
 
-		public abstract bool EndTryReceiveRequest (IAsyncResult result, out RequestContext context);
+		public virtual bool EndTryReceiveRequest (IAsyncResult result, out RequestContext context)
+		{
+			return try_recv_delegate.EndInvoke (out context, result);
+		}
 
 		public virtual bool WaitForRequest ()
 		{
@@ -73,9 +87,22 @@ namespace System.ServiceModel.Channels
 
 		public abstract bool WaitForRequest (TimeSpan timeout);
 
-		public abstract IAsyncResult BeginWaitForRequest (TimeSpan timeout, AsyncCallback callback, object state);
+		delegate bool WaitDelegate (TimeSpan timeout);
+		WaitDelegate wait_delegate;
 
-		public abstract bool EndWaitForRequest (IAsyncResult result);
+		public virtual IAsyncResult BeginWaitForRequest (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (wait_delegate == null)
+				wait_delegate = new WaitDelegate (WaitForRequest);
+			return wait_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		public virtual bool EndWaitForRequest (IAsyncResult result)
+		{
+			if (wait_delegate == null)
+				throw new InvalidOperationException ("BeginWaitForRequest operation has not started");
+			return wait_delegate.EndInvoke (result);
+		}
 
 		public virtual RequestContext ReceiveRequest ()
 		{
@@ -89,9 +116,20 @@ namespace System.ServiceModel.Channels
 			return BeginReceiveRequest (channel_listener.DefaultReceiveTimeout, callback, state);
 		}
 
-		public abstract IAsyncResult BeginReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state);
+		Func<TimeSpan,RequestContext> recv_delegate;
+		public virtual IAsyncResult BeginReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (recv_delegate == null)
+				recv_delegate = new Func<TimeSpan,RequestContext> (ReceiveRequest);
+			return recv_delegate.BeginInvoke (timeout, callback, state);
+		}
 
-		public abstract RequestContext EndReceiveRequest (IAsyncResult result);
+		public virtual RequestContext EndReceiveRequest (IAsyncResult result)
+		{
+			if (recv_delegate == null)
+				throw new InvalidOperationException ("BeginReceiveRequest operation has not started");
+			return recv_delegate.EndInvoke (result);
+		}
 
 		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
 			AsyncCallback callback, object state)
