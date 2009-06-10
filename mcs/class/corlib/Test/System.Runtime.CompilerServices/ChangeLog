@@ -1,3 +1,8 @@
+2009-06-10  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* InternalVisibleToAttributeTest.cs: Added test for .ctor and
+	AllInternalsVisible property.
+
 2006-11-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RuntimeWrappedExceptionCas.cs: New. CAS tests for 
