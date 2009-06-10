@@ -24,6 +24,8 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#if (INSIDE_CORLIB && NET_4_0) || (NET_3_5 && !NET_4_0)
+
 using System.Runtime.Serialization;
 
 namespace System
@@ -130,3 +132,4 @@ namespace System
 	}
 }
 
+#endif

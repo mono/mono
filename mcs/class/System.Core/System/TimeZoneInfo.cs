@@ -25,6 +25,14 @@
  */
 
 using System;
+using System.Runtime.CompilerServices;
+
+#if !INSIDE_CORLIB && NET_4_0
+
+[assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
+
+#elif NET_3_5
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
@@ -37,6 +45,9 @@ using Mono;
 
 namespace System
 {
+#if NET_4_0
+	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
+#endif	
 	[SerializableAttribute]
 	public sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>, ISerializable, IDeserializationCallback
 	{
@@ -811,3 +822,5 @@ namespace System
 #endif
 	}
 }
+
+#endif

@@ -1,3 +1,9 @@
+2009-06-10  Marek Safar  <marek.safar@gmail.com>
+
+	* TimeZoneInfo.AdjustmentRule.cs, TimeZoneInfo.TransitionTime.cs,
+	Funcs.cs, InvalidTimeZoneException.cs, Actions.cs, TimeZoneInfo.cs,
+	TimeZoneNotFoundException.cs: Updated to 4.0 changes.
+
 2009-06-03  Marek Safar  <marek.safar@gmail.com>
 
 	* Func.cs: Add 4.0 forwarders.
