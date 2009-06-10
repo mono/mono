@@ -94,7 +94,6 @@ namespace System.ServiceModel.Description
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
 		{
-			throw new NotImplementedException ();
 		}
 	}
 }
