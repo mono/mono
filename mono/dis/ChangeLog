@@ -1,3 +1,7 @@
+2009-06-10  Jb Evain  <jbevain@novell.com>
+
+	* main.c: add support for extern types. Fixes #511672.
+
 2009-06-03  Jb Evain  <jbevain@novell.com>
 
 	* main.c (dis_code): don't try to locate invalid entry points.
