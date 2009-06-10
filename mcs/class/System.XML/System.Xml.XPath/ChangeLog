@@ -1,3 +1,19 @@
+2009-06-09  Gonzalo Paniagua, Miguel de Icaza  <gonzalo@novell.com, miguel@novell.com>
+
+	* Expression.cs: improve the ExpressionCache, it still does not
+	work, but it will at least work better with multithreaded apps (we
+	take locks) and we use WeakReferences correctly.
+
+	For WeakReferences it is important to not depend on IsAlive to
+	retrieve the target (this is a documented race).  IsAlive is only
+	useful to determine if it has already been collected, but if true,
+	the Target can still be released.
+
+	This race condition is exposed by #505678 on x86-64 platforms (only).
+
+	Sadly, this fix is not good enough to re-enable the cache, on
+	x86-64 this with a single thread, it still crashes randomly
+	
 2009-04-15  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Expression.cs : extensions could return null and it should be

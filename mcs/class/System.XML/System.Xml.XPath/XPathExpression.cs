@@ -95,8 +95,12 @@ namespace System.Xml.XPath
 		internal static XPathExpression Compile (string xpath,
 			NSResolver nsmgr, IStaticXsltContext ctx)
 		{
-			XPathParser parser = new XPathParser (ctx);
-			CompiledExpression x = new CompiledExpression (xpath, parser.Compile (xpath));
+			XPathExpression x = ExpressionCache.Get (xpath, ctx);
+			if (x == null) {
+				XPathParser parser = new XPathParser (ctx);
+				x = new CompiledExpression (xpath, parser.Compile (xpath));
+				ExpressionCache.Set (xpath, ctx, x);
+			}
 			x.SetContext (nsmgr);
 			return x;
 		}

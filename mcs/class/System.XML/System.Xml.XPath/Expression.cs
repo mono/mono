@@ -48,26 +48,29 @@ namespace System.Xml.XPath
 	{
 		static readonly Hashtable table_per_ctx = new Hashtable ();
 		static object dummy = new object ();
+		static object cache_lock = new object ();
 
 		public static XPathExpression Get (string xpath, IStaticXsltContext ctx)
 		{
 			object ctxkey = ctx != null ? ctx : dummy;
 
-			WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
-			if (wr == null)
-				return null;
-			if (!wr.IsAlive) {
-				table_per_ctx [ctxkey] = null;
-				return null;
-			}
-			Hashtable table = (Hashtable) wr.Target;
+			lock (cache_lock) {
+				WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
+				if (wr == null)
+					return null;
+				Hashtable table = wr.Target as Hashtable;
+				if (table == null) {
+					table_per_ctx [ctxkey] = null;
+					return null;
+				}
 
-			wr = table [xpath] as WeakReference;
-			if (wr != null) {
-				if (wr.IsAlive)
-					// it may return null (as it might be GC-ed), but we don't have to worrt about it here.
-					return (XPathExpression) wr.Target;
-				table [xpath] = null;
+				wr = table [xpath] as WeakReference;
+				if (wr != null) {
+					XPathExpression e = wr.Target as XPathExpression;
+					if (e != null)
+						return e;
+					table [xpath] = null;
+				}
 			}
 			return null;
 		}
@@ -77,15 +80,16 @@ namespace System.Xml.XPath
 			object ctxkey = ctx != null ? ctx : dummy;
 
 			Hashtable table = null;
-
-			WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
-			if (wr != null && wr.IsAlive)
-				table = (Hashtable) wr.Target;
-			if (table == null) {
-				table = new Hashtable ();
-				table_per_ctx [ctxkey] = new WeakReference (table);
+			lock (cache_lock) {
+				WeakReference wr = table_per_ctx [ctxkey] as WeakReference;
+				if (wr != null && wr.IsAlive)
+					table = (Hashtable) wr.Target;
+				if (table == null) {
+					table = new Hashtable ();
+					table_per_ctx [ctxkey] = new WeakReference (table);
+				}
+				table [xpath] = new WeakReference (exp);
 			}
-			table [xpath] = new WeakReference (exp);
 		}
 	}
 
