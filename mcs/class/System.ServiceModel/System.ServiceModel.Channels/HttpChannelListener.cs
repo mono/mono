@@ -112,6 +112,8 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (context.Binding)
 		{
+			accept_channel_delegate = new Func<TimeSpan,TChannel> (OnAcceptChannel);
+
 			// FIXME: consider ListenUriMode
 			// FIXME: there should be some way to post-provide Uri in case of null listenerUri in context.
 			listen_uri = context.ListenUriBaseAddress != null ?
@@ -148,16 +150,18 @@ namespace System.ServiceModel.Channels
 
 		protected abstract TChannel CreateChannel (TimeSpan timeout);
 
+		Func<TimeSpan,TChannel> accept_channel_delegate;
+
 		protected override IAsyncResult OnBeginAcceptChannel (
 			TimeSpan timeout, AsyncCallback callback,
 			object asyncState)
 		{
-			throw new NotImplementedException ();
+			return accept_channel_delegate.BeginInvoke (timeout, callback, asyncState);
 		}
 
 		protected override TChannel OnEndAcceptChannel (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			return accept_channel_delegate.EndInvoke (result);
 		}
 
 		protected override IAsyncResult OnBeginWaitForChannel (

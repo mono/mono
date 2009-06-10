@@ -1,3 +1,7 @@
+2009-06-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpChannelListener.cs : hack async implementation.
+
 2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpListenerManager.cs : oops, extra line removal.
