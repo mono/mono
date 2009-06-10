@@ -1,3 +1,8 @@
+2009-06-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Thread.cs: MoonlightUnhandledException: ensure there's no way to
+	reach native code with a managed exception.
+
 2009-06-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs: Refactor calling Moonlight's OnUnhandledException to 

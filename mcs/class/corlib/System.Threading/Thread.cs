@@ -771,7 +771,10 @@ namespace System.Threading {
 				moonlight_unhandled_exception.Invoke (null, new object [] { null, e });
 			}
 			catch {
-				Console.WriteLine ("Unexpected exception while trying to report unhandled application exception: {0}", e);
+				try {
+					Console.WriteLine ("Unexpected exception while trying to report unhandled application exception: {0}", e);
+				} catch {
+				}
 			}
 		}
 #endif
