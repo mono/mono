@@ -1,3 +1,8 @@
+2009-06-10  Marek Safar <marek.safar@gmail.com>
+
+	* IEqualityComparer.cs, IComparer.cs, IEnumerable.cs,
+	IEnumerator.cs: Add type variance.
+
 2009-04-02  Jb Evain  <jbevain@novell.com>
 
 	* Dictionary.cs (ValueCollection.CopyTo): fix for copying to

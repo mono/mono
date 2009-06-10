@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2003 Ben Maurer
 //
@@ -34,8 +35,14 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace System.Collections.Generic {
-	public interface IComparer<T> {
+namespace System.Collections.Generic
+{
+#if NET_4_0
+	public interface IComparer<in T>
+#else
+	public interface IComparer<T>
+#endif
+	{
 		int Compare (T x, T y);
 	}
 }

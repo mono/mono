@@ -4,6 +4,7 @@
 //
 // Author:
 //    Martin Baulig (martin@ximian.com)
+//    Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2003 Novell, Inc.
 //
@@ -37,7 +38,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Collections.Generic
 {
+#if NET_4_0
+	public interface IEnumerable<out T> : IEnumerable
+#else
 	public interface IEnumerable<T> : IEnumerable
+#endif
 	{
 		new IEnumerator<T> GetEnumerator ();
 	}

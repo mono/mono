@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@novell.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2005 Ben Maurer
 //
@@ -34,8 +35,14 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace System.Collections.Generic {
-	public interface IEqualityComparer<T> {
+namespace System.Collections.Generic
+{
+#if NET_4_0
+	public interface IEqualityComparer<in T>
+#else	
+	public interface IEqualityComparer<T>
+#endif	
+	{
 		bool Equals (T x, T y);
 		int GetHashCode (T obj);
 	}
