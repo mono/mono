@@ -1,3 +1,12 @@
+2009-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_wrappers): Don't emit remoting-invoke-with-check
+	wrappers.
+
+	* aot-runtime.c (mono_aot_get_method): Use the original method's code for
+	remoting-invoke-with-check wrappers, which are not needed when running with
+	full-aot, since it doesn't support remoting.
+	
 2009-06-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_got_info): Don't emit offsets for the plt got entries.
