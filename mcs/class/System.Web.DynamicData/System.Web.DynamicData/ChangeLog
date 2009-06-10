@@ -1,3 +1,14 @@
+2009-06-10  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: fixed DisplayName implementation.
+	Implemented GetPrimaryKeyString, GetQuery.
+
+2009-06-09  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: implemented more overloads of GetActionPath.
+	Implemented GetPrimaryKeyValues, GetActionPathFromRoutes,
+	Attributes, DisplayColumn, GetDisplayString.
+
 2009-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaModel.cs: GetModel throws InvalidOperationException on

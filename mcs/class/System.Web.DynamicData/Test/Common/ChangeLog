@@ -1,0 +1,32 @@
+2009-06-10  Marek Habersack  <mhabersack@novell.com>
+
+	* TestDataColumn.cs: added detection of foreign key columns.
+
+	* FooWithDefaults.cs: added foreign key columns
+
+	* FooDisplayName.cs, FooDisplayNameEmptyName.cs,
+	FooSettableDefaults.cs: added
+
+2009-06-09  Marek Habersack  <mhabersack@novell.com>
+
+	* Baz.cs, BazNoStrings.cs, BazNoStringsNoPrimary.cs,
+	FooDisplayColumnAttribute.cs, FooEmpty.cs,
+	FooEmptyDisplayColumnAttribute.cs,
+	FooInvalidDisplayColumnAttribute.cs, FooWithToString.cs,
+	TestDataColumn.cs, TestDataContainer.cs, TestDataTable.cs: added
+
+	* Utils.cs: added two BuildActionName methods to make building
+	action paths for testing more compact.
+
+	* FooNoPrimaryColumns.cs, FooNoDefaultsWithPrimaryKey.cs: added
+
+2009-06-08  Marek Habersack  <mhabersack@novell.com>
+
+	* Utils.cs: added.
+	  Moved GetModel here from MetaModelTest.cs
+	  Added RegisterContext methods.
+
+	* FooWithDefaultsContainer.cs,
+	FooWithDefaultsColumn.cs,FooWithDefaultsTable.cs,
+	FooWithDefaults.cs: added
+

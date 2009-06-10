@@ -1,3 +1,24 @@
+2009-06-10  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTableTest.cs: added more table contexts.
+	Added tests for: Attributes, Columns, DataContextPropertyName,
+	DataContextType, DisplayName, EntityType, ForeignKeyColumnNames
+	(doesn't work on .NET), GetPrimaryKeyString, GetQuery,
+	HasPrimaryKey, 
+
+2009-06-09  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTableTest.cs: added two more tables for various kinds of
+	tests (in fixture setup).
+	More tests for GetActionPath.
+	Tests for GetPrimaryKeyValues, DisplayColumn, Attributes,
+	GetDisplayString, GetColumn, TryGetColumn
+	
+
+2009-06-08  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTableTest.cs: added.
+
 2009-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaModelTest.cs: disabled GetActionPath test - nothing to test

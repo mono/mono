@@ -50,9 +50,33 @@ using MetaModel = System.Web.DynamicData.MetaModel;
 using MetaTable = System.Web.DynamicData.MetaTable;
 
 using NUnit.Framework;
+using MonoTests.DataSource;
 
 namespace MonoTests.System.Web.DynamicData
 {
+    class MyDynamicDataRoute : DynamicDataRoute
+    {
+        public RouteValueDictionary GetVirtualPathValues {
+            get; private set;
+        }
+
+        public bool Called {
+            get;
+            set;
+        }
+
+        public MyDynamicDataRoute (string url)
+            : base (url)
+        { }
+
+        public override VirtualPathData GetVirtualPath (RequestContext requestContext, RouteValueDictionary values)
+        {
+            GetVirtualPathValues = values;
+            Called = true;
+            return base.GetVirtualPath (requestContext, values);
+        }
+    }
+
 	class MyDynamicDataRouteHandler : DynamicDataRouteHandler
 	{
 		public override IHttpHandler CreateHandler (DynamicDataRoute route, MetaTable table, string action)
@@ -80,6 +104,10 @@ namespace MonoTests.System.Web.DynamicData
 		public Table<Foo> FooTable { get { return GetTable<Foo> (); } }
 	}
 
+    class MyDataContext3 : MyDataContext2
+    {
+    }
+
 	class UseOnlyInGetModelTestDataContext : MyDataContext2
 	{
 	}
@@ -100,7 +128,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Column (Name = "Col1")]
 		public string Column1 { get; set; }
 	}
-
+    
 	[Table (Name = "BarTable")]
 	class Bar
 	{
@@ -109,9 +137,6 @@ namespace MonoTests.System.Web.DynamicData
 
 		[Column (Name = "Col2")]
 		public string Column2 { get; set; }
-	}
-	class MyDataContext3 : MyDataContext2
-	{
 	}
 
 	class HttpContextStub : HttpContextBase

@@ -5,17 +5,11 @@ using System.Web;
 
 namespace MonoTests.DataSource
 {
-    public abstract class DynamicDataColumn
-    {
-        public Type DataType
-        {
-            get; protected set;
-        }
-
-        public string Name
-        {
-            get;
-            protected set;
-        }
-    }
+	public abstract class DynamicDataColumn
+	{
+		public Type DataType { get; protected set; }
+		public string Name { get; protected set; }
+		public bool PrimaryKey { get; protected set; }
+		public bool ForeignKey { get; protected set; }
+	}
 }

@@ -1,3 +1,16 @@
+2009-06-10  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.DynamicData_test.dll.sources: added
+	Common/FooDisplayName.cs 
+	Common/FooDisplayNameEmptyName.cs
+	Common/FooSettableDefaults.cs
+
+2009-06-09  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.DynamicData_test.dll.sources: added
+	Common/FooNoDefaultsWithPrimaryKey.cs 
+	Common/FooNoPrimaryColumns.cs
+
 2009-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* Test/System.Web.DynamicData.ModelProviders/TableProviderTest.cs:
