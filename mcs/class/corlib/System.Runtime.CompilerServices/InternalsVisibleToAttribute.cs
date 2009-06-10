@@ -36,6 +36,7 @@ namespace System.Runtime.CompilerServices {
 	public sealed class InternalsVisibleToAttribute : Attribute
 	{
 		string assemblyName;
+		bool all_visible;
 
 		public InternalsVisibleToAttribute (string assemblyName)
 		{
@@ -46,6 +47,11 @@ namespace System.Runtime.CompilerServices {
 			get {
 				return assemblyName;
 			}
+		}
+		
+		public bool AllInternalsVisible {
+			get { return all_visible; }
+			set { all_visible = value; }
 		}
 	}
 }

@@ -1,6 +1,7 @@
 2009-06-10  Marek Safar  <marek.safar@gmail.com>
 
-	* TypeForwardedFromAttribute: New file.
+	* InternalsVisibleToAttribute.cs: Updated to 2.0 SP2.
+	* TypeForwardedFromAttribute.cs: New file.
 
 2008-04-02  Andreas Nahr  <ClassDevelopment@A-SoftTech.com>
 
