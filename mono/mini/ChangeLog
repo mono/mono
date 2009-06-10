@@ -1,5 +1,7 @@
 2009-06-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_compile_assembly): Fix a warning.
+	
 	* aot-compiler.c (add_wrappers): Don't emit remoting-invoke-with-check
 	wrappers.
 
