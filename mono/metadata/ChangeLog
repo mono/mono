@@ -1,3 +1,7 @@
+2009-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Verify basic cattr content.
+
 2009-06-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (add_exported_type): Don't set the FORWARDER flag on
