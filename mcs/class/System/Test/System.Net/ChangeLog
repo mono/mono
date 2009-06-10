@@ -1,3 +1,7 @@
+2009-06-09  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* WebRequestTest.cs: Added tests for bug #323452.
+
 2009-06-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestTest.cs: Added tests for bugs #465613, #510661,
