@@ -1,3 +1,7 @@
+2009-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (add_custom_modifiers): Avoid reading invalid memory.
+
 2009-06-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Revert previous commit to threads.c until the race condition
