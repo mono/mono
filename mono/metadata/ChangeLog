@@ -1,3 +1,8 @@
+2009-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c (mono_image_close): Support debug_assembly_unload for
+	dynamic images too.
+
 2009-06-11 Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* class.c: Fix some typos in comments.
