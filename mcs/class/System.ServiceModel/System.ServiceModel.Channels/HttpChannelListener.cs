@@ -99,7 +99,7 @@ namespace System.ServiceModel.Channels
 		}
 	}
 
-	internal abstract class HttpChannelListenerBase<TChannel> : ChannelListenerBase<TChannel>
+	internal abstract class HttpChannelListenerBase<TChannel> : InternalChannelListenerBase<TChannel>
 		where TChannel : class, IChannel
 	{
 		HttpTransportBindingElement source;
@@ -112,7 +112,6 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (context.Binding)
 		{
-			accept_channel_delegate = new Func<TimeSpan,TChannel> (OnAcceptChannel);
 
 			// FIXME: consider ListenUriMode
 			// FIXME: there should be some way to post-provide Uri in case of null listenerUri in context.
@@ -150,56 +149,7 @@ namespace System.ServiceModel.Channels
 
 		protected abstract TChannel CreateChannel (TimeSpan timeout);
 
-		Func<TimeSpan,TChannel> accept_channel_delegate;
-
-		protected override IAsyncResult OnBeginAcceptChannel (
-			TimeSpan timeout, AsyncCallback callback,
-			object asyncState)
-		{
-			return accept_channel_delegate.BeginInvoke (timeout, callback, asyncState);
-		}
-
-		protected override TChannel OnEndAcceptChannel (IAsyncResult result)
-		{
-			return accept_channel_delegate.EndInvoke (result);
-		}
-
-		protected override IAsyncResult OnBeginWaitForChannel (
-			TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override bool OnEndWaitForChannel (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
 		protected override bool OnWaitForChannel (TimeSpan timeout)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override void OnEndOpen (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void OnEndClose (IAsyncResult result)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,3 +1,9 @@
+2009-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpChannelListener.cs, TcpChannelListener.cs,
+	  ChannelListenerBase_1.cs : put common internal listener base
+	  and let it handle those async stuff.
+
 2009-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReplyChannelBase.cs : fix wrong null delegate check point.

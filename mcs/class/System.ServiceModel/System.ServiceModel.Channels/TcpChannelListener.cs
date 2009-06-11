@@ -18,7 +18,7 @@ using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
-	internal class TcpChannelListener<TChannel> : ChannelListenerBase<TChannel> 
+	internal class TcpChannelListener<TChannel> : InternalChannelListenerBase<TChannel> 
 		where TChannel : class, IChannel
 	{
 		List<IChannel> channels = new List<IChannel> ();
@@ -81,32 +81,6 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		protected override IAsyncResult OnBeginAcceptChannel (TimeSpan timeout,
-			AsyncCallback callback, object asyncState)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override TChannel OnEndAcceptChannel (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		protected override IAsyncResult OnBeginWaitForChannel (
-			TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override bool OnEndWaitForChannel (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		protected override bool OnWaitForChannel (TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
@@ -121,36 +95,10 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
-			AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
 			tcp_listener.Stop ();
 			tcp_listener = null;
-		}
-		
-		[MonoTODO]
-		protected override void OnEndClose (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void OnEndOpen (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]

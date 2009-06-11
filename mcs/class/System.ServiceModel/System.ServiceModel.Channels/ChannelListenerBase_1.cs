@@ -30,6 +30,86 @@ using System.ServiceModel;
 
 namespace System.ServiceModel.Channels
 {
+	internal abstract class InternalChannelListenerBase<TChannel>
+		: ChannelListenerBase<TChannel>
+		where TChannel : class, IChannel
+	{
+		protected InternalChannelListenerBase ()
+			: base ()
+		{
+		}
+
+		protected InternalChannelListenerBase (IDefaultCommunicationTimeouts timeouts)
+			: base (timeouts)
+		{
+		}
+
+		Func<TimeSpan,TChannel> accept_channel_delegate;
+		Func<TimeSpan,bool> wait_delegate;
+		Action<TimeSpan> open_delegate, close_delegate;
+
+		protected override IAsyncResult OnBeginAcceptChannel (
+			TimeSpan timeout, AsyncCallback callback,
+			object asyncState)
+		{
+			if (accept_channel_delegate == null)
+				accept_channel_delegate = new Func<TimeSpan,TChannel> (OnAcceptChannel);
+			return accept_channel_delegate.BeginInvoke (timeout, callback, asyncState);
+		}
+
+		protected override TChannel OnEndAcceptChannel (IAsyncResult result)
+		{
+			if (accept_channel_delegate == null)
+				throw new InvalidOperationException ("Async AcceptChannel operation has not started");
+			return accept_channel_delegate.EndInvoke (result);
+		}
+
+		protected override IAsyncResult OnBeginWaitForChannel (
+			TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (wait_delegate == null)
+				wait_delegate = new Func<TimeSpan,bool> (OnWaitForChannel);
+			return wait_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override bool OnEndWaitForChannel (IAsyncResult result)
+		{
+			if (wait_delegate == null)
+				throw new InvalidOperationException ("Async WaitForChannel operation has not started");
+			return wait_delegate.EndInvoke (result);
+		}
+
+		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
+			AsyncCallback callback, object state)
+		{
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnOpen);
+			return open_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndOpen (IAsyncResult result)
+		{
+			if (open_delegate == null)
+				throw new InvalidOperationException ("Async Open operation has not started");
+			open_delegate.EndInvoke (result);
+		}
+
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout,
+			AsyncCallback callback, object state)
+		{
+			if (close_delegate == null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
+		}
+
+		protected override void OnEndClose (IAsyncResult result)
+		{
+			if (close_delegate == null)
+				throw new InvalidOperationException ("Async Close operation has not started");
+			close_delegate.EndInvoke (result);
+		}
+	}
+
 	public abstract class ChannelListenerBase<TChannel>
 		: ChannelListenerBase, IChannelListener<TChannel>, 
 		IChannelListener,  ICommunicationObject
