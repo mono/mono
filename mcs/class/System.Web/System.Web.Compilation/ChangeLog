@@ -1,3 +1,9 @@
+2009-06-11  Marek Habersack  <mhabersack@novell.com>
+
+	* PageCompiler.cs: if generating code to assign output cache
+	parameters, use special case for generating OutputCacheLocation
+	enum reference. Fixes bug #512037
+
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* AspGenerator.cs: if plain text is parsed and it contains

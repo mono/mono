@@ -408,7 +408,14 @@ namespace System.Web.Compilation
 			var ret = new CodeAssignStatement ();
 
 			ret.Left = new CodeFieldReferenceExpression (variable, propName);
-			ret.Right = new CodePrimitiveExpression (value);
+
+			if (value is OutputCacheLocation)
+				ret.Right = new CodeFieldReferenceExpression (
+					new CodeTypeReferenceExpression (new CodeTypeReference (typeof (OutputCacheLocation), CodeTypeReferenceOptions.GlobalReference)),
+					value.ToString ()
+				);
+			else
+				ret.Right = new CodePrimitiveExpression (value);
 			return ret;
 		}
 		
