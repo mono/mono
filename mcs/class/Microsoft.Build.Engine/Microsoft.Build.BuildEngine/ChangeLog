@@ -1,3 +1,8 @@
+2009-06-12  Ankit Jain  <jankit@novell.com>
+
+	* Utilities.cs (FromMSBuildPath): Return null if the path contains
+	"drive:" only on windows.
+
 2009-06-07  Ankit Jain  <jankit@novell.com>
 
 	* Target.cs (Outputs): Use ITaskItem[] for conversion, to retain
