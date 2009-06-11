@@ -1,5 +1,13 @@
 2009-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs : reject multiple WaitForRequest calls.
+	  Temporarily disable HTTP Keep-Alive since it somehow results in
+	  wrong reuse of connection (shown as NRE in HttpConnection).
+	  Make sure to close RequestContext which was created from it.
+	* HttpRequestContext.cs : simplify.
+
+2009-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelListener.cs, TcpChannelListener.cs,
 	  ChannelListenerBase_1.cs : put common internal listener base
 	  and let it handle those async stuff.

@@ -40,11 +40,18 @@ namespace System.ServiceModel.Channels
 		HttpSimpleChannelListener<IReplyChannel> source;
 		List<HttpListenerContext> waiting = new List<HttpListenerContext> ();
 		EndpointAddress local_address;
+		RequestContext reqctx;
 
 		public HttpSimpleReplyChannel (HttpSimpleChannelListener<IReplyChannel> listener)
 			: base (listener)
 		{
 			this.source = listener;
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			if (reqctx != null)
+				reqctx.Close ();
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
@@ -68,6 +75,12 @@ namespace System.ServiceModel.Channels
 			int maxSizeOfHeaders = 0x10000;
 
 			Message msg = null;
+
+			// FIXME: our HttpConnection (under HttpListener) 
+			// somehow breaks when the underlying connection is
+			// reused. Remove it when it gets fixed.
+			ctx.Response.KeepAlive = false;
+
 			if (ctx.Request.HttpMethod == "POST") {
 				if (!Encoder.IsContentTypeSupported (ctx.Request.ContentType)) {
 					ctx.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
@@ -109,22 +122,24 @@ buf.CreateMessage ().WriteMessage (w);
 w.Close ();
 */
 			context = new HttpRequestContext (this, msg, ctx);
+			reqctx = context;
 			return true;
 		}
 
+		AutoResetEvent wait;
+
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
-			AutoResetEvent wait = new AutoResetEvent (false);
+			if (wait != null)
+				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
-				source.Http.BeginGetContext (HttpContextReceived, wait);
+				wait = new AutoResetEvent (false);
+				source.Http.BeginGetContext (HttpContextReceived, null);
 			} catch (HttpListenerException e) {
 				if (e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.
 					while (true) Thread.Sleep (1000); // thread is about to be terminated.
 				throw;
 			} catch (ObjectDisposedException) { return false; }
-			// FIXME: we might want to take other approaches.
-			if (timeout.Ticks > int.MaxValue)
-				timeout = TimeSpan.FromDays (20);
 			return wait.WaitOne (timeout, false);
 		}
 
@@ -132,10 +147,11 @@ w.Close ();
 		{
 			if (State == CommunicationState.Closing || State == CommunicationState.Closed)
 				return;
-
+			if (wait == null)
+				throw new InvalidOperationException ("WaitForRequest operation has not started");
 			waiting.Add (source.Http.EndGetContext (result));
-			AutoResetEvent wait = (AutoResetEvent) result.AsyncState;
 			wait.Set ();
+			wait = null;
 		}
 	}
 

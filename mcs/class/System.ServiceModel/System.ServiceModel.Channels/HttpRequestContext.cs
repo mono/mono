@@ -34,67 +34,6 @@ namespace System.ServiceModel.Channels
 {
 	internal class HttpRequestContext : RequestContext
 	{
-		class HttpRequestContextAsyncResult : IAsyncResult
-		{
-			AutoResetEvent wait;
-			AsyncCallback callback;
-			object state;
-			bool done, waiting;
-			TimeSpan timeout;
-			Exception error;
-
-			public HttpRequestContextAsyncResult (
-				HttpRequestContext context,
-				Message msg,
-				TimeSpan timeout,
-				AsyncCallback callback,
-				object state)
-			{
-				this.timeout = timeout;
-				this.wait = new AutoResetEvent (false);
-				ThreadStart ts = delegate () {
-					try {
-						context.ProcessReply (msg, timeout);
-						if (callback != null)
-							callback (this);
-					} catch (Exception ex) {
-						error = ex;
-					} finally {
-						done = true;
-						wait.Set ();
-					}
-				};
-				Thread t = new Thread (ts);
-				t.Start ();
-			}
-
-			public WaitHandle AsyncWaitHandle {
-				get { return wait; }
-			}
-
-			public object AsyncState {
-				get { return state; }
-			}
-
-			public bool CompletedSynchronously {
-				get { return done && !waiting; }
-			}
-
-			public bool IsCompleted {
-				get { return done; }
-			}
-
-			public void WaitEnd ()
-			{
-				if (!done) {
-					waiting = true;
-					wait.WaitOne (timeout, true);
-				}
-				if (error != null)
-					throw error;
-			}
-		}
-
 		Message msg;
 		HttpListenerContext ctx;
 		HttpReplyChannel channel;
@@ -135,21 +74,24 @@ namespace System.ServiceModel.Channels
 				callback, state);
 		}
 
+		Action<Message,TimeSpan> reply_delegate;
+
 		public override IAsyncResult BeginReply (
 			Message msg, TimeSpan timeout,
 			AsyncCallback callback, object state)
 		{
-			return new HttpRequestContextAsyncResult (this, msg, timeout, callback, state);
+			if (reply_delegate == null)
+				reply_delegate = new Action<Message,TimeSpan> (Reply);
+			return reply_delegate.BeginInvoke (msg, timeout, callback, state);
 		}
 
 		public override void EndReply (IAsyncResult result)
 		{
 			if (result == null)
 				throw new ArgumentNullException ("result");
-			HttpRequestContextAsyncResult r = result as HttpRequestContextAsyncResult;
-			if (r == null)
-				throw new InvalidOperationException ("Wrong IAsyncResult");
-			r.WaitEnd ();
+			if (reply_delegate == null)
+				throw new InvalidOperationException ("reply operation has not started");
+			reply_delegate.EndInvoke (result);
 		}
 
 		public override void Reply (Message msg)
@@ -198,7 +140,6 @@ namespace System.ServiceModel.Channels
 
 		public override void Close (TimeSpan timeout)
 		{
-			// FIXME: use timeout
 			ctx.Response.Close ();
 		}
 	}
