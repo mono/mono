@@ -115,7 +115,7 @@ namespace Microsoft.Build.Tasks {
 
 		[MonoTODO]
 		protected override string ToolName {
-			get { return "sgen"; }
+			get { return Utilities.RunningOnWindows ? "sgen.bat" : "sgen"; }
 		}
 
 		[MonoTODO]

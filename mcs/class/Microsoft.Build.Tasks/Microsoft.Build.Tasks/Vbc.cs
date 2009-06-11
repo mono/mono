@@ -258,7 +258,7 @@ namespace Microsoft.Build.Tasks {
 
 		[MonoTODO]
 		protected override string ToolName {
-			get { return "vbnc"; }
+			get { return Utilities.RunningOnWindows ? "vbnc.bat" : "vbnc"; }
 		}
 
 		[MonoTODO]
