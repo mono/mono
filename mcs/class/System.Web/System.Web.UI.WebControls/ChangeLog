@@ -1,3 +1,9 @@
+2009-06-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ContentControlBuilderInternal.cs: detect missing
+	ContentPlaceHolderID attribute when parsing instead of throwing a
+	nullref later on.
+
 2009-05-29  Marek Habersack  <mhabersack@novell.com>
 
 	* ListItem.cs: when tracking view state is turned on after
