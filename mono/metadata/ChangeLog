@@ -4,6 +4,8 @@
 
 2009-06-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (add_custom_modifiers): Avoid reading invalid memory.
+
 	* threads.c (mono_thread_execute_interruption): Avoid creating the
 	abort exception object while holding the synch_cs lock.
 
