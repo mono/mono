@@ -1,4 +1,4 @@
-// gcs1910.cs: Argument of type `int[]' is not applicable for the DefaultValue attribute
+// CS1910: Argument of type `int[]' is not applicable for the DefaultParameterValue attribute
 // Line: 7
 
 using System.Runtime.InteropServices;

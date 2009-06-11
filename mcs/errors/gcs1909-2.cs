@@ -1,4 +1,4 @@
-// gcs1909-2.cs: The DefaultValue attribute is not applicable on parameters of type `System.Type'
+// CS1909: The DefaultParameterValue attribute is not applicable on parameters of type `System.Type'
 // Line: 7
 
 using System.Runtime.InteropServices;
