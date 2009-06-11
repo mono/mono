@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Text;
+using System.Reflection;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -68,7 +69,9 @@ namespace Mono.XBuild.CommandLine {
 			properties = new BuildPropertyGroup ();
 			targets = new string [0];
 			
-			responseFile = Path.Combine (binPath, "xbuild.rsp");
+			responseFile = Path.Combine (
+					Path.GetDirectoryName (Assembly.GetExecutingAssembly ().Location),
+					"xbuild.rsp");
 		}
 		
 		public void ParseArguments (string[] args)
