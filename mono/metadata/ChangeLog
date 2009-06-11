@@ -1,3 +1,8 @@
+2009-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_execute_interruption): Avoid creating the
+	abort exception object while holding the synch_cs lock.
+
 2009-06-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Verify basic cattr content.
