@@ -44,12 +44,12 @@ namespace System.Web.UI.HtmlControls
 		{
 			LiteralControl lit = obj as LiteralControl;
 			if (lit != null) text = lit.Text;
+			else base.AddParsedSubObject (obj);
 		}
 
-		/* Appears in corcompare */
 		protected override ControlCollection CreateControlCollection ()
 		{
-			return (base.CreateControlCollection ());
+			return new ControlCollection (this);
 		}
 		
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
