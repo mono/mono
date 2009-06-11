@@ -49,6 +49,8 @@ namespace System.Web.UI.WebControls
 		{
 			base.Init (parser, parentBuilder, type, tagName, ID, attribs);
 			placeHolderID = attribs ["ContentPlaceHolderID"] as string;
+			if (String.IsNullOrEmpty (placeHolderID))
+				throw new HttpException ("Missing required 'ContentPlaceHolderID' attribute");
 		}
 		
 		public string ContentPlaceHolderID {
