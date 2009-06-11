@@ -1,3 +1,17 @@
+2009-06-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (struct _MonoGenericContainer): Add an 'image'
+	field for owner-less generic containers.
+
+	* reflection.c (mono_reflection_initialize_generic_parameter): Set the
+	image field of the owner-less generic containers created here.
+
+	* metadata.c (mono_metadata_load_generic_params): Ditto, the
+	contain is ownerless until the caller sets its owner.
+
+	* metadata.c (type_in_image): Handle owner-less generic containers
+	correctly.
+	
 2009-06-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* image.c (mono_image_close): Support debug_assembly_unload for
