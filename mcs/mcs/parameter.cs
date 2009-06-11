@@ -245,6 +245,7 @@ namespace Mono.CSharp {
 		protected FullNamedExpression TypeName;
 		readonly Modifier modFlags;
 		string name;
+		Expression default_expr;
 		protected Type parameter_type;
 		public readonly Location Location;
 		int idx;
@@ -266,6 +267,12 @@ namespace Mono.CSharp {
 			modFlags = mod;
 			Location = loc;
 			TypeName = type;
+		}
+
+		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Expression defaultValue, Location loc)
+			: this (type, name, mod, attrs, loc)
+		{
+			default_expr = defaultValue;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
@@ -291,7 +298,13 @@ namespace Mono.CSharp {
 				Report.Warning (3022, 1, a.Location, "CLSCompliant attribute has no meaning when applied to parameters. Try putting it on the method instead");
 			}
 
-			// TypeManager.default_parameter_value_attribute_type is null if !NET_2_0, or if System.dll is not referenced
+			if (HasDefaultValue && (a.Type == pa.DefaultParameterValue || a.Type == pa.OptionalParameter)) {
+				Report.Error (1745, a.Location,
+					"Cannot specify `{0}' attribute on optional parameter `{1}'",
+					TypeManager.CSharpName (a.Type).Replace ("Attribute", ""), Name);
+				return;
+			}
+
 			if (a.Type == pa.DefaultParameterValue) {
 				object val = a.GetParameterDefaultValue ();
 				if (val != null) {
@@ -301,10 +314,10 @@ namespace Mono.CSharp {
 							if (!t.IsArray)
 								t = TypeManager.type_type;
 
-							Report.Error (1910, a.Location, "Argument of type `{0}' is not applicable for the DefaultValue attribute",
+							Report.Error (1910, a.Location, "Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
 								TypeManager.CSharpName (t));
 						} else {
-							Report.Error (1909, a.Location, "The DefaultValue attribute is not applicable on parameters of type `{0}'",
+							Report.Error (1909, a.Location, "The DefaultParameterValue attribute is not applicable on parameters of type `{0}'",
 								TypeManager.CSharpName (parameter_type)); ;
 						}
 						return;
@@ -340,24 +353,47 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Resolve is used in method definitions
 		// </summary>
-		public virtual Type Resolve (IResolveContext ec)
+		public virtual Type Resolve (IResolveContext rc)
 		{
 			// HACK: to resolve attributes correctly
-			this.resolve_context = ec;
+			this.resolve_context = rc;
 
 			if (parameter_type != null)
 				return parameter_type;
 
-			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (ec, false);
+			TypeExpr texpr = TypeName.ResolveAsTypeTerminal (rc, false);
 			if (texpr == null)
 				return null;
 
 			parameter_type = texpr.Type;
 
 			// Ignore all checks for dummy members
-			AbstractPropertyEventMethod pem = ec as AbstractPropertyEventMethod;
+			AbstractPropertyEventMethod pem = rc as AbstractPropertyEventMethod;
 			if (pem != null && pem.IsDummy)
 				return parameter_type;
+
+			if (default_expr != null) {
+				EmitContext ec = new EmitContext (rc, rc.DeclContainer, Location, null, parameter_type, 0);
+				default_expr = default_expr.Resolve (ec);
+				if (default_expr != null) {
+					Constant value = default_expr as Constant;
+					if (value == null) {
+						if (default_expr != null)
+							Report.Error (1736, default_expr.Location, "The expression being assigned to optional parameter `{0}' must be constant",
+								Name);
+					} else {
+						Constant c = value.ConvertImplicitly (parameter_type);
+						if (c == null)
+							Report.Error (1750, Location,
+								"Optional parameter value `{0}' cannot be converted to parameter type `{1}'",
+								value.GetValue (), GetSignatureForError ());
+
+					//	value = c;
+					}
+
+					default_expr = value;
+				}
+			}
 
 			if ((modFlags & Parameter.Modifier.ISBYREF) != 0 &&
 				TypeManager.IsSpecialType (parameter_type)) {
@@ -368,7 +404,7 @@ namespace Mono.CSharp {
 
 			TypeManager.CheckTypeVariance (parameter_type,
 				(modFlags & Parameter.Modifier.ISBYREF) != 0 ? Variance.None : Variance.Contravariant,
-				ec as MemberCore);
+				rc as MemberCore);
 
 			if (texpr is TypeParameterExpr)
 				return parameter_type;
@@ -392,6 +428,10 @@ namespace Mono.CSharp {
 			this.idx = idx;
 		}
 
+		public bool HasDefaultValue {
+			get { return default_expr != null; }
+		}
+
 		public bool HasExtensionMethodModifier {
 			get { return (modFlags & Modifier.This) != 0; }
 		}
@@ -406,7 +446,8 @@ namespace Mono.CSharp {
 		}
 
 		ParameterAttributes Attributes {
-			get { return ParametersCompiled.GetParameterAttribute (modFlags); }
+			get { return ParametersCompiled.GetParameterAttribute (modFlags) |
+				(HasDefaultValue ? ParameterAttributes.Optional : ParameterAttributes.None); }
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -463,6 +504,15 @@ namespace Mono.CSharp {
 
 			if (OptAttributes != null)
 				OptAttributes.Emit ();
+
+			if (HasDefaultValue) {
+				Constant c = (Constant) default_expr;
+				if (default_expr.Type == TypeManager.decimal_type) {
+					builder.SetCustomAttribute (Const.CreateDecimalConstantAttribute (c));
+				} else {
+					builder.SetConstant (c.GetValue ());
+				}
+			}
 		}
 
 		public override string[] ValidAttributeTargets {

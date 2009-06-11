@@ -1963,6 +1963,7 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute CoClass;
 		public readonly PredefinedAttribute AttributeUsage;
 		public readonly PredefinedAttribute DefaultParameterValue;
+		public readonly PredefinedAttribute OptionalParameter;
 
 		// New in .NET 2.0
 		public readonly PredefinedAttribute DefaultCharset;
@@ -2009,6 +2010,7 @@ namespace Mono.CSharp {
 			CoClass = new PredefinedAttribute ("System.Runtime.InteropServices", "CoClassAttribute");
 			AttributeUsage = new PredefinedAttribute ("System", "AttributeUsageAttribute");
 			DefaultParameterValue = new PredefinedAttribute ("System.Runtime.InteropServices", "DefaultParameterValueAttribute");
+			OptionalParameter = new PredefinedAttribute ("System.Runtime.InteropServices", "OptionalAttribute");
 
 			DefaultCharset = new PredefinedAttribute ("System.Runtime.InteropServices", "DefaultCharSetAttribute");
 			TypeForwarder = new PredefinedAttribute ("System.Runtime.CompilerServices", "TypeForwardedToAttribute");

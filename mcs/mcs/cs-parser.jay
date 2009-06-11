@@ -119,9 +119,9 @@ namespace Mono.CSharp
 		bool global_attrs_enabled = true;
 		bool has_get, has_set;
 		bool parameter_modifiers_not_allowed;
-		bool params_modifiers_not_allowed;
+		bool complex_parameters_modifiers_not_allowed;
 		bool arglist_allowed;
-
+		bool default_parameter_used;
 
 		/// When using the interactive parser, this holds the
 		/// resulting expression
@@ -1421,7 +1421,7 @@ opt_parameter_list_no_mod
 	;
 
 formal_parameter_list
-	: fixed_parameters		
+	: fixed_parameters
 	  { 
 		ArrayList pars_list = (ArrayList) $1;
 
@@ -1486,17 +1486,23 @@ fixed_parameters
 	: fixed_parameter	
 	  {
 		ArrayList pars = new ArrayList (4);
-
-		pars.Add ($1);
+		Parameter p = (Parameter) $1;
+		pars.Add (p);
+		
+		default_parameter_used = p.HasDefaultValue;
 		$$ = pars;
 	  }
 	| fixed_parameters COMMA fixed_parameter
 	  {
 		ArrayList pars = (ArrayList) $1;
-		Parameter p = (Parameter)$3;
+		Parameter p = (Parameter) $3;
 		if (p != null) {
 			if (p.HasExtensionMethodModifier)
 				Report.Error (1100, p.Location, "The parameter modifier `this' can only be used on the first parameter");
+			else if (!p.HasDefaultValue && default_parameter_used)
+				Report.Error (1737, p.Location, "Optional parameter cannot precede required parameters");
+
+			default_parameter_used |= p.HasDefaultValue;
 			pars.Add (p);
 		}
 		$$ = $1;
@@ -1524,16 +1530,11 @@ fixed_parameter
 	| opt_attributes
 	  opt_parameter_modifier
 	  type
+	  error
 	  {
-		Report.Error (1001, GetLocation ($3), "Identifier expected");
-		$$ = new Parameter ((FullNamedExpression) $3, "NeedSomeGeneratorHere", (Parameter.Modifier) $2, (Attributes) $1, lexer.Location);		
-	  }
-	| opt_attributes
-	  opt_parameter_modifier
-	  type
-	  error {
-		CheckIdentifierToken (yyToken, GetLocation ($4));
-		$$ = null;
+	  	Location l = GetLocation ($4);
+		CheckIdentifierToken (yyToken, l);
+		$$ = new Parameter ((FullNamedExpression) $3, "NeedSomeGeneratorHere", (Parameter.Modifier) $2, (Attributes) $1, l);
 	  }
 	| opt_attributes
 	  opt_parameter_modifier
@@ -1541,11 +1542,37 @@ fixed_parameter
 	  IDENTIFIER
 	  ASSIGN
 	  constant_expression
-	   {
+	  {
+		if (RootContext.Version <= LanguageVersion.V_3) {
+			Report.FeatureIsNotAvailable (GetLocation ($5), "optional parameter");
+		}
+		
+		Parameter.Modifier mod = (Parameter.Modifier) $2;
+		if (mod != Parameter.Modifier.NONE) {
+			switch (mod) {
+			case Parameter.Modifier.REF:
+			case Parameter.Modifier.OUT:
+				Report.Error (1741, GetLocation ($2), "Cannot specify a default value for the `{0}' parameter",
+					Parameter.GetModifierSignature (mod));
+				break;
+				
+			case Parameter.Modifier.This:
+				Report.Error (1743, GetLocation ($2), "Cannot specify a default value for the `{0}' parameter",
+					Parameter.GetModifierSignature (mod));
+				break;
+			default:
+				throw new NotImplementedException (mod.ToString ());
+			}
+				
+			mod = Parameter.Modifier.NONE;
+		}
+		
+		if (complex_parameters_modifiers_not_allowed)
+			Report.Error (1065, GetLocation ($6), "Optional parameter is not valid in this context");
+		
 		LocatedToken lt = (LocatedToken) $4;
-		Report.Error (241, lt.Location, "Default parameter specifiers are not permitted");
-		 $$ = null;
-	   }
+		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, mod, (Attributes) $1, (Expression) $6, lt.Location);
+	  }
 	;
 
 opt_parameter_modifier
@@ -1610,9 +1637,16 @@ parameter_modifier
 
 parameter_array
 	: opt_attributes params_modifier type IDENTIFIER
-	  { 
+	  {
 		LocatedToken lt = (LocatedToken) $4;
 		$$ = new ParamsParameter ((FullNamedExpression) $3, lt.Value, (Attributes) $1, lt.Location);
+	  }
+	| opt_attributes params_modifier type IDENTIFIER ASSIGN constant_expression
+	  {
+		Report.Error (1751, GetLocation ($2), "Cannot specify a default value for a parameter array");
+		
+		LocatedToken lt = (LocatedToken) $4;
+		$$ = new ParamsParameter ((FullNamedExpression) $3, lt.Value, (Attributes) $1, lt.Location);		
 	  }
 	| opt_attributes params_modifier type error {
 		CheckIdentifierToken (yyToken, GetLocation ($4));
@@ -1623,7 +1657,7 @@ parameter_array
 params_modifier
 	: PARAMS
 	  {
-		if (params_modifiers_not_allowed)
+		if (complex_parameters_modifiers_not_allowed)
 			Report.Error (1670, ((Location) $1), "The `params' modifier is not allowed in current context");
 	  }
 	| PARAMS parameter_modifier
@@ -1947,11 +1981,11 @@ operator_type
 operator_declarator
 	: operator_type OPERATOR overloadable_operator OPEN_PARENS
 	  {
-		params_modifiers_not_allowed = true;
+		complex_parameters_modifiers_not_allowed = true;
 	  }
 	  opt_parameter_list_no_mod CLOSE_PARENS
 	  {
-		params_modifiers_not_allowed = false;
+		complex_parameters_modifiers_not_allowed = false;
 
 		Location loc = (Location) $2;
 		Operator.OpType op = (Operator.OpType) $3;
@@ -2022,11 +2056,11 @@ overloadable_operator
 conversion_operator_declarator
 	: IMPLICIT OPERATOR type OPEN_PARENS
 	  {
-		params_modifiers_not_allowed = true;
+		complex_parameters_modifiers_not_allowed = true;
 	  }
 	  opt_parameter_list_no_mod CLOSE_PARENS
 	  {
-		params_modifiers_not_allowed = false;
+		complex_parameters_modifiers_not_allowed = false;
 
 		Location loc = (Location) $2;
 		current_local_parameters = (ParametersCompiled)$6;  
@@ -2040,11 +2074,11 @@ conversion_operator_declarator
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS
 	  {
-		params_modifiers_not_allowed = true;
+		complex_parameters_modifiers_not_allowed = true;
 	  }
 	  opt_parameter_list_no_mod CLOSE_PARENS
 	  {
-		params_modifiers_not_allowed = false;
+		complex_parameters_modifiers_not_allowed = false;
 		
 		Location loc = (Location) $2;
 		current_local_parameters = (ParametersCompiled)$6;  
@@ -2095,9 +2129,11 @@ constructor_declarator
 			tmpComment = Lexer.consume_doc_comment ();
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
+		arglist_allowed = true;
 	  }
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS
 	  {
+		arglist_allowed = false;
 		current_local_parameters = (ParametersCompiled) $6;  
 		
 		//
@@ -2367,8 +2403,15 @@ indexer_declaration
 		implicit_value_parameter_type = (FullNamedExpression) $3;
 		indexer_parameters = (ParametersCompiled) $6;
 		
-		if (indexer_parameters.IsEmpty)
+		if (indexer_parameters.IsEmpty) {
 			Report.Error (1551, GetLocation ($5), "Indexers must have at least one parameter");
+		} else if (indexer_parameters.Count == 1) {
+			Parameter p = indexer_parameters [0];
+			if (p.HasDefaultValue)
+				Report.Warning (1066, 1, p.Location,
+					"The default value specified for optional parameter 'i' will never be used",
+					p.Name);
+		}
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -3682,11 +3725,11 @@ opt_anonymous_method_signature
 anonymous_method_signature
 	: OPEN_PARENS
 	  {
-	  	params_modifiers_not_allowed = true; 
+	  	complex_parameters_modifiers_not_allowed = true; 
 	  }
 	  opt_formal_parameter_list CLOSE_PARENS
 	  {
-	  	params_modifiers_not_allowed = false;
+	  	complex_parameters_modifiers_not_allowed = false;
 	  	$$ = $3;
 	  }
 	;

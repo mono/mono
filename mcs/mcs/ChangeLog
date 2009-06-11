@@ -1,3 +1,8 @@
+2009-06-11  Marek Safar  <marek.safar@gmail.com>
+
+	* parameter.cs, const.cs, report.cs, cs-parser.jay, attribute.cs:
+	Add optional parameters grammar.
+
 2009-06-10  Marek Safar  <marek.safar@gmail.com>
 
 	* eval.cs, anonymous.cs, report.cs, rootcontext.cs, cs-parser.jay,
