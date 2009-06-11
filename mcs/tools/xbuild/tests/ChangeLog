@@ -1,5 +1,14 @@
 2009-06-08  Ankit Jain  <jankit@novell.com>
 
+	* standalone/Project01: Add missing Lib2.deploy.txt in the correct
+	location.
+
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* standalone/Project01: Fix location for lib2.deploy.txt
+
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
 	* standalone/Project01: New. Solution with interdependent multiple projects,
 	with deploy files, satellite assemblies etc.
 

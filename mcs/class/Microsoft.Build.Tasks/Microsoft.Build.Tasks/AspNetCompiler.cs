@@ -142,7 +142,7 @@ namespace Microsoft.Build.Tasks {
 		}
 		
 		protected override string ToolName {
-			get { return "aspnet_compiler"; }
+			get { return Utilities.RunningOnWindows ? "aspnet_compiler.bat" : "aspnet_compiler"; }
 		}
 	}
 }
