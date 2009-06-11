@@ -1,3 +1,8 @@
+2009-06-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HtmlTitle.cs: HtmlTitle allows children that are not
+	LiteralControls. Fixes bug #511882.
+
 2009-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: if application isn't running on /, make sure we
