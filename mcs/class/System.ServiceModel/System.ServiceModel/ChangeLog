@@ -1,5 +1,9 @@
 2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelFactory.cs : no need for NIE at OnAbort() (at least so far).
+
+2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	 * ServiceHostBase.cs : do not give up releasing further channel
 	   dispatchers when one of them threw an error. Use strict timeout.
 

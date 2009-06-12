@@ -281,7 +281,6 @@ namespace System.ServiceModel
 		[MonoTODO]
 		protected override void OnAbort ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
