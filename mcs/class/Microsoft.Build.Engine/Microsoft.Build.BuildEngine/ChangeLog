@@ -1,5 +1,11 @@
 2009-06-12  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #512535.
+	* ExpressionCollection.cs (ConvertToITaskItemArray): Whitespace around a
+	itemref is allowed if the prev/next element is ";".
+
+2009-06-12  Ankit Jain  <jankit@novell.com>
+
 	* Utilities.cs (FromMSBuildPath): Return null if the path contains
 	"drive:" only on windows.
 
