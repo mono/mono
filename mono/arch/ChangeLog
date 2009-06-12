@@ -1,3 +1,11 @@
+2009-10-06  Jerry Maine  <crashfourit@gmail.com>
+	
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
+	* amd64/amd64-codegen.h: Add marcos for coding two byte SIMD/SSE opcodes.
+	Added comments to help tell the different types of SSE code gen marcos appart.
+
 2009-04-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/arm-vfp-codegen.h: Add ARM_FSITOS/ARM_FSITOD.
