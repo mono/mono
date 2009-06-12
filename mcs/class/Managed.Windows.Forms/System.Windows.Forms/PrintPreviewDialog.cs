@@ -66,6 +66,7 @@ namespace System.Windows.Forms {
 			print_preview.Location = new Point (0, toolbar.Location.Y + toolbar.Size.Height);
 			print_preview.Size = new Size (ClientSize.Width, ClientSize.Height - toolbar.Bottom);
 			print_preview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+			print_preview.TabStop = false;
 			Controls.Add (print_preview);
 			print_preview.Show ();
 		}
@@ -84,7 +85,7 @@ namespace System.Windows.Forms {
 			MenuItem mi;
 			mag_menu = new ContextMenu ();
 
-			ToolBar toolbar = new ToolBar();
+			ToolBar toolbar = new PrintToolBar();
 			ToolBarButton print = new ToolBarButton();
 			ToolBarButton zoom = new ToolBarButton();
 			ToolBarButton separator1 = new ToolBarButton();
@@ -106,6 +107,7 @@ namespace System.Windows.Forms {
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.ShowToolTips = true;
 			toolbar.DropDownArrows = true;
+			toolbar.TabStop = true;
 			toolbar.Buttons.AddRange(new ToolBarButton[] { print, zoom, separator1, 
 														   one_page, two_page, three_page, four_page, six_page, separator2 });
 			toolbar.ButtonClick += new ToolBarButtonClickEventHandler (OnClickToolBarButton);
@@ -188,7 +190,7 @@ namespace System.Windows.Forms {
 			/* close button */
 			close.Location = new Point(196, 2);
 			close.Size = new Size(50, 20);
-			close.TabIndex = 2;
+			close.TabIndex = 0;
 			close.FlatStyle = FlatStyle.Popup;
 			close.Text = "Close";
 			close.Click += new EventHandler (CloseButtonClicked);
@@ -201,6 +203,53 @@ namespace System.Windows.Forms {
 //			MinimumSize = new Size (close.Location.X + close.Width + label.Width + pageUpDown.Width, 220);
 
 			return toolbar;
+		}
+
+		class PrintToolBar : ToolBar
+		{
+			public int GetNext (int pos)
+			{
+				// Select the next button that is *not* a separator
+				while (++pos < items.Length && items [pos].Button.Style == ToolBarButtonStyle.Separator)
+					;
+
+				return pos;
+			}
+
+			public int GetPrev (int pos)
+			{
+				// Select the previous button that is *not* a separator
+				while (--pos > -1 && items [pos].Button.Style == ToolBarButtonStyle.Separator)
+					;
+
+				return pos;
+			}
+
+			protected override void OnGotFocus (EventArgs args)
+			{
+				base.OnGotFocus (args);
+
+				// Select either the last one or the first one, depending on the direction
+				CurrentItem = (Control.ModifierKeys & Keys.Shift) != 0 ? GetPrev (items.Length) : 0;
+			}
+
+			protected override bool ProcessDialogKey (Keys key)
+			{
+				if ((key & Keys.Tab) == 0 || !Focused)
+					return base.ProcessDialogKey (key);
+
+				bool forward = (key & Keys.Shift) == 0;
+				int pos = forward ? GetNext (CurrentItem) : GetPrev (CurrentItem);
+
+				if (pos < 0 || pos >= items.Length) { // go to the prev/next control
+					CurrentItem = -1;
+					return base.ProcessDialogKey (key);
+				}
+					
+				CurrentItem = pos;
+				return true;
+			}
+
 		}
 
 		void CloseButtonClicked (object sender, EventArgs e)

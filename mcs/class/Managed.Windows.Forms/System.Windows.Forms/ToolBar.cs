@@ -657,6 +657,22 @@ namespace System.Windows.Forms
 		#endregion Protected Methods
 
 		#region Private Methods
+		internal int CurrentItem {
+			get {
+				return Array.IndexOf (items, current_item);
+			}
+			set {
+				if (current_item != null)
+					current_item.Hilight = false;
+
+				current_item = value == -1 ? null : items [value];
+
+				if (current_item != null)
+					current_item.Hilight = true;
+			}
+
+		}
+
 		private void FocusChanged (object sender, EventArgs args)
 		{
 #if NET_2_0

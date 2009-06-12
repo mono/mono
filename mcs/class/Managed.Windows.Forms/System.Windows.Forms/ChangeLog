@@ -1,3 +1,12 @@
+2009-06-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolBar.cs: Expose the current item as internal.
+	* PrintPreviewDialog.cs: Tune the TabStop property for
+	PrintPreviewControl/ToolBar so we match the .net scenario regarding
+	Tab navigation. Also implement support to navigate throughout the
+	items in the ToolBar.
+	Fixes #509142.
+
 2009-06-09  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridViewComboBoxCell.cs, DataGridViewComboBoxColumn.cs: 
