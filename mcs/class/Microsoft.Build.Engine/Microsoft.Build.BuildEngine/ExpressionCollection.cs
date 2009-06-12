@@ -187,10 +187,18 @@ namespace Microsoft.Build.BuildEngine {
 
 				string str = o as string;
 				if (str != null) {
-					if (str != ";" && prev != null && prev is ItemReference)
+					string trimmed_str = str.Trim ();
+					if (!IsSemicolon (str) && trimmed_str.Length > 0 && prev != null && prev is ItemReference)
+						// non-empty, non-semicolon string after item ref
 						ThrowCantConcatError (prev, str);
 
-					prev_can_concat = !(str.Length > 0 && str [str.Length - 1] == ';') && str.Trim ().Length > 0;
+					if (trimmed_str.Length == 0 && prev is string && IsSemicolon ((string) prev)) {
+						// empty string after a ';', ignore it
+						continue;
+					}
+
+					// empty string _after_ a itemref, not an error
+					prev_can_concat = !(str.Length > 0 && str [str.Length - 1] == ';') && trimmed_str.Length > 0;
 					AddItemsToArray (finalItems,
 							ConvertToITaskItemArrayFromString (str),
 							can_concat);
@@ -267,6 +275,11 @@ namespace Microsoft.Build.BuildEngine {
 				items.Add (new TaskItem (s));
 
 			return items.ToArray ();
+		}
+
+		bool IsSemicolon (string str)
+		{
+			return str != null && str.Length == 1 && str [0] == ';';
 		}
 
 		void ThrowCantConcatError (object first, object second)

@@ -459,6 +459,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 						"  $(C)   Foo    $(C)  Bar ; $(B)   ",
 						"@(A);$(C)",
 						"@(A);A;B;C",
+						"  abc;  @(A)  ;  $(C)  ;foo",
 					}) + "</Project>";
 
 
@@ -473,6 +474,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			CheckItems (proj, "I5", "A5", "A", "Foo    A", "Bar", "A", "B");
 			CheckItems (proj, "I6", "A6", "A", "B", "C", "A");
 			CheckItems (proj, "I7", "A7", "A", "B", "C", "A", "B", "C");
+			CheckItems (proj, "I8", "A8", "abc", "A", "B", "C", "A", "foo");
 		}
 
 		[Test]
