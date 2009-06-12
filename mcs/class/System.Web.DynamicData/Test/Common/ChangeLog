@@ -1,3 +1,19 @@
+2009-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* TestDataContainer.cs: GetTables uses an object of the associated
+	data type to create table collection.
+
+	* TestDataColumn.cs: foreign key columns are determined using a
+	custom attribute instead of a name now. This makes it possible to
+	specify which table.column they are associated with.
+
+	* FooDisplayColumnAttribute.cs: changed sortDescending to true in
+	class attributes.
+
+	* AssociatedBar.cs, AssociatedFoo.cs, FooEmptySortColumn.cs,
+	FooMisnamedSortColumn.cs, FooNoScaffold.cs, FooReadOnly.cs,
+	ITestDataContext.cs, TestDataContext.cs: added
+
 2009-06-10  Marek Habersack  <mhabersack@novell.com>
 
 	* TestDataColumn.cs: added detection of foreign key columns.

@@ -54,9 +54,14 @@ namespace System.Web.DynamicData
 	{
 		RouteCollection routes;
 		MetaColumn displayColumn;
+		MetaColumn sortColumn;
 		bool? entityHasToString;
+		bool? sortDescending;
 		global::System.ComponentModel.AttributeCollection attributes;
 		string displayName;
+
+		bool displayColumnChecked;
+		bool sortColumnChecked;
 		
 		internal MetaTable (MetaModel model, TableProvider provider, bool scaffold)
 		{
@@ -67,15 +72,33 @@ namespace System.Web.DynamicData
 			var columns = new List <MetaColumn> ();
 			var primaryKeyColumns = new List <MetaColumn> ();
 			var foreignKeyColumnNames = new List <string> ();
+			MetaColumn mc;
 			
 			foreach (var c in provider.Columns) {
-				var mc = new MetaColumn (this, c);
+				// this seems to be the determining factor on whether we create
+				// MetaColumn or MetaForeignKeyColumn/MetaChildrenColumn. As the
+				// determination depends upon the relationship direction, we must
+				// check that using the ColumnProvider's association, if any.
+				//
+				//  http://msdn.microsoft.com/en-us/library/system.web.dynamicdata.metaforeignkeycolumn.aspx
+				//  http://msdn.microsoft.com/en-us/library/system.web.dynamicdata.metachildrencolumn.aspx
+				//  http://forums.asp.net/t/1426992.aspx
+				var association = c.Association;
+				if (association == null)
+					mc = new MetaColumn (this, c);
+				else {
+					var dir = association.Direction;
+					if (dir == AssociationDirection.OneToOne || dir == AssociationDirection.ManyToOne)
+						mc = new MetaForeignKeyColumn (this, c);
+					else
+						mc = new MetaChildrenColumn (this, c);
+				}
+				
 				columns.Add (mc);
 				if (c.IsPrimaryKey)
 					primaryKeyColumns.Add (mc);
 
-				// TODO: check it - doesn't seem to work that way on .NET
-				if (c.IsForeignKeyComponent)
+				if (mc is MetaForeignKeyColumn)
 					foreignKeyColumnNames.Add (c.Name);
 			}
 			
@@ -89,6 +112,12 @@ namespace System.Web.DynamicData
 			DataContextType = provider.DataModel.ContextType;
 			HasPrimaryKey = primaryKeyColumns.Count > 0;
 
+			// See http://forums.asp.net/t/1388561.aspx
+			//
+			// Also, http://forums.asp.net/t/1307243.aspx - that seems to be out of
+			// scope for us, though (at least for now)
+			IsReadOnly = primaryKeyColumns.Count == 0;
+			
 			// FIXME: fill more properties.
 		}
 
@@ -136,12 +165,10 @@ namespace System.Web.DynamicData
 			get { return Provider.EntityType; }
 		}
 
-		[MonoTODO]
 		public string ForeignKeyColumnsNames { get; private set; }
 
 		public bool HasPrimaryKey { get; private set; }
 
-		[MonoTODO ("How it is determined?")]
 		public bool IsReadOnly { get; private set; }
 
 		public string ListActionPath {
@@ -162,11 +189,23 @@ namespace System.Web.DynamicData
 
 		public bool Scaffold { get; private set; }
 
-		[MonoTODO]
-		public MetaColumn SortColumn { get; private set; }
+		public MetaColumn SortColumn {
+			get {
+				if (sortColumn == null)
+					sortColumn = FindSortColumn ();
 
-		[MonoTODO]
-		public bool SortDescending { get; private set; }
+				return sortColumn;
+			}
+		}
+
+		public bool SortDescending {
+			get {
+				if (sortDescending == null)
+					sortDescending = DetermineSortDescending ();
+				
+				return (bool)sortDescending;
+			}
+		}
 
 		public object CreateContext ()
 		{
@@ -185,6 +224,16 @@ namespace System.Web.DynamicData
 				return String.Empty;
 
 			return name;
+		}
+
+		bool DetermineSortDescending ()
+		{
+			DisplayColumnAttribute attr = Attributes [typeof (DisplayColumnAttribute)] as DisplayColumnAttribute;
+
+			if (attr == null)
+				return false;
+
+			return attr.SortDescending;
 		}
 		
 		void FillWithPrimaryKeys (RouteValueDictionary values, IList<object> primaryKeyValues)
@@ -211,6 +260,10 @@ namespace System.Web.DynamicData
 		
 		MetaColumn FindDisplayColumn ()
 		{
+			if (displayColumnChecked)
+				return displayColumn;
+
+			displayColumnChecked = true;
 			ReadOnlyCollection<MetaColumn> columns = Columns;
 
 			// 1. The column that is specified by using the DisplayColumnAttribute attribute. 
@@ -254,6 +307,40 @@ namespace System.Web.DynamicData
 			return columns [0];
 		}
 
+		MetaColumn FindSortColumn ()
+		{
+			if (sortColumnChecked)
+				return sortColumn;
+
+			sortColumnChecked = true;
+			DisplayColumnAttribute attr = Attributes [typeof (DisplayColumnAttribute)] as DisplayColumnAttribute;
+
+			if (attr == null)
+				return null;
+
+			string name = attr.SortColumn;
+			if (String.IsNullOrEmpty (name))
+				return null;
+
+			MetaColumn ret = null;
+			Exception exception = null;
+			
+			try {
+				ret = Columns.First <MetaColumn> ((MetaColumn mc) => {
+					if (String.Compare (mc.Name, name, StringComparison.Ordinal) == 0)
+						return true;
+					return false;
+				});
+			} catch (Exception ex) {
+				exception = ex;
+			}
+
+			if (ret == null)
+				throw new InvalidOperationException ("The sort column '" + name + "' specified for table '" + Name + "' does not exist.", exception);
+			
+			return ret;
+		}
+		
 		public string GetActionPath (string action)
 		{
 			// You can see this is the call we should make by modifying one of the unit

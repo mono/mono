@@ -32,7 +32,14 @@ namespace MonoTests.Common
 			}
 
 			this.PrimaryKey = name.StartsWith ("PrimaryKeyColumn", StringComparison.Ordinal);
-			this.ForeignKey = name.StartsWith ("ForeignKeyColumn", StringComparison.Ordinal);
+			object[] attrs = member.GetCustomAttributes (typeof (DynamicDataAssociationAttribute), true);
+			if (attrs != null && attrs.Length > 0) {
+				var attr = attrs[0] as DynamicDataAssociationAttribute;
+				if (attr != null) {
+					AssociatedTo = attr.ColumnName;
+					AssociationDirection = attr.Direction;
+				}
+			}
 		}
 	}
 }

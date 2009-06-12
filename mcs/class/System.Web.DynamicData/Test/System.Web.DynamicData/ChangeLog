@@ -1,3 +1,10 @@
+2009-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTableTest.cs: tests use single data model provider now.
+	Implemented tests for IsReadOnly, ListActionPath, Model, Name,
+	Provider, Scaffold, SortColumn, SortDescending, ToString.
+	Fixed ForeignKeyColumnNames test.
+
 2009-06-10  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTableTest.cs: added more table contexts.

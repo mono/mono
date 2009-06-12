@@ -1,3 +1,9 @@
+2009-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: implemented correct detection of foreign key
+	columns.
+	Implemented IsReadOnly, SortColumn, SortDescending.
+
 2009-06-10  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTable.cs: fixed DisplayName implementation.

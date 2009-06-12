@@ -1,0 +1,8 @@
+2009-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicDataContainerColumnProvider.cs: implemented table
+	association support.
+
+	* DynamicDataAssociationProvider.cs,
+	DynamicDataAssociationAttribute.cs: added
+

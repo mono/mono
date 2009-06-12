@@ -9,7 +9,7 @@ using MonoTests.ModelProviders;
 
 namespace MonoTests.Common
 {
-	class TestDataContainer <DataType>: DynamicDataContainer<DataType>
+	class TestDataContainer <DataType>: DynamicDataContainer<DataType> where DataType: ITestDataContext
 	{
 		public TestDataContainer ()
 		: this (default (DataType))
@@ -41,10 +41,10 @@ namespace MonoTests.Common
 
 		public override List<DynamicDataTable> GetTables ()
 		{
-			var ret = new List<DynamicDataTable> ();
-			ret.Add (new TestDataTable <DataType> ());
-
-			return ret;
+			DataType data = Data;
+			if (data == null)
+				data = Activator.CreateInstance<DataType> ();
+			return data.GetTables ();
 		}
 	}
 }

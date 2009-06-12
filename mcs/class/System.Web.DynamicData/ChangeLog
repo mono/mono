@@ -1,3 +1,8 @@
+2009-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* Test/DataSource/DynamicDataColumn.cs: added table association
+	members.
+
 2009-06-10  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web.DynamicData_test.dll.sources: added

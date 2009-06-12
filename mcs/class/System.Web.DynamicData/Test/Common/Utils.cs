@@ -41,8 +41,9 @@ namespace MonoTests.Common
 			m = MetaModel.Default;
 			try {
 				m.RegisterContext (model, config);
-			} catch (InvalidOperationException) {
-				// ignore
+			} catch (InvalidOperationException ex) {
+				Console.WriteLine ("RegisterContext exception:");
+				Console.WriteLine (ex);
 			}
 		}
 

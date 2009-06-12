@@ -65,65 +65,13 @@ namespace MonoTests.System.Web.DynamicData
 	[TestFixture]
 	public class MetaTableTest
 	{
-		const int TableFooWithDefaults = 0;
-		const int TableFooNoPrimaryColumns = 1;
-		const int TableFooNoDefaultsWithPrimaryKey = 2;
-		const int TableFooDisplayColumnAttribute = 3;
-		const int TableFooEmpty = 4;
-		const int TableBaz = 5;
-		const int TableBazNoStrings = 6;
-		const int TableBazNoStringsNoPrimary = 7;
-		const int TableFooWithToString = 8;
-		const int TableFooInvalidDisplayColumnAttribute = 9;
-		const int TableFooEmptyDisplayColumnAttribute = 10;
-		const int TableFooSettableDefaults = 11;
-		const int TableFooDisplayName = 12;
-		const int TableFooDisplayNameEmptyName = 13;
+		DynamicDataContainerModelProvider dynamicModelProvider;
 
 		[TestFixtureSetUp]
 		public void SetUp ()
 		{
-			var modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer <FooWithDefaults>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-			
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer <FooNoPrimaryColumns>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooNoDefaultsWithPrimaryKey>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooDisplayColumnAttribute>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooEmpty>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<Baz>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<BazNoStrings>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<BazNoStringsNoPrimary>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooWithToString>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooInvalidDisplayColumnAttribute>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooEmptyDisplayColumnAttribute>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooSettableDefaults>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooDisplayName>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
-
-			modelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<FooDisplayNameEmptyName>));
-			Utils.RegisterContext (modelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
+			dynamicModelProvider = new DynamicDataContainerModelProvider (typeof (TestDataContainer<TestDataContext>));
+			Utils.RegisterContext (dynamicModelProvider, new ContextConfiguration () { ScaffoldAllTables = true });
 		}
 
 		[Test]
@@ -144,7 +92,7 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooEmpty];
+			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
 			Assert.IsNotNull (t.Attributes, "#A1");
 			Assert.AreEqual (0, t.Attributes.Count, "#A2");
 		}
@@ -167,11 +115,11 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooEmpty];
+			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
 			Assert.IsNotNull (t.Columns, "#A1");
 			Assert.AreEqual (0, t.Columns.Count, "#A2");
 
-			t = m.Tables[TableFooWithDefaults];
+			t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsNotNull (t.Columns, "#B1");
 			Assert.AreEqual (8, t.Columns.Count, "#B2");
 
@@ -203,15 +151,11 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void CreateContext ()
 		{
-			MetaTable t = MetaModel.Default.Tables [TableFooWithDefaults];
+			MetaTable t = MetaModel.Default.Tables[TestDataContext.TableFooWithDefaults];
 			object context = t.CreateContext ();
 
 			Assert.IsNotNull (context, "#A1");
-			Assert.AreEqual (typeof (FooWithDefaults), context.GetType (), "#A2");
-
-			var dataContext = context as FooWithDefaults;
-			Assert.AreEqual ("hello", dataContext.Column1, "#B1");
-			Assert.AreEqual (123, dataContext.Column2, "#B2");
+			Assert.AreEqual (typeof (TestDataContext), context.GetType (), "#A2");
 		}
 
 		[Test]
@@ -232,7 +176,7 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooEmpty];
+			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
 			Assert.AreEqual ("FooEmptyTable", t.DataContextPropertyName, "#A1");
 			Assert.AreEqual (t.Name, t.DataContextPropertyName, "#A2");
 		}
@@ -255,8 +199,8 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooEmpty];
-			Assert.IsTrue (t.DataContextType == typeof (FooEmpty), "#A1");
+			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
+			Assert.IsTrue (t.DataContextType == typeof (TestDataContext), "#A1");
 		}
 
 		[Test]
@@ -277,38 +221,38 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooDisplayColumnAttribute];
+			MetaTable t = m.Tables[TestDataContext.TableFooDisplayColumnAttribute];
 			MetaColumn mc = t.DisplayColumn;
 
 			Assert.IsNotNull (mc, "#A1");
 			Assert.AreEqual ("Column2", mc.Name, "#A2");
 
-			t = m.Tables[TableFooEmpty];
-			AssertExtensions.Throws <ArgumentOutOfRangeException> (() => mc = t.DisplayColumn, "#B1");
+			t = m.Tables[TestDataContext.TableFooEmpty];
+			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => mc = t.DisplayColumn, "#B1");
 
-			t = m.Tables[TableFooWithDefaults];
+			t = m.Tables[TestDataContext.TableFooWithDefaults];
 			mc = t.DisplayColumn;
 			Assert.IsNotNull (mc, "#C1");
 			Assert.AreEqual ("Column1", mc.Name, "C2");
 
-			t = m.Tables[TableBaz];
+			t = m.Tables[TestDataContext.TableBaz];
 			mc = t.DisplayColumn;
 			Assert.IsNotNull (mc, "#D1");
 			Assert.AreEqual ("PrimaryKeyColumn2", mc.Name, "#D2");
 
-			t = m.Tables[TableBazNoStrings];
+			t = m.Tables[TestDataContext.TableBazNoStrings];
 			mc = t.DisplayColumn;
 			Assert.IsNotNull (mc, "#E1");
 			Assert.AreEqual ("PrimaryKeyColumn1", mc.Name, "#E2");
 
-			t = m.Tables[TableBazNoStringsNoPrimary];
+			t = m.Tables[TestDataContext.TableBazNoStringsNoPrimary];
 			mc = t.DisplayColumn;
 			Assert.IsNotNull (mc, "#F1");
 			Assert.AreEqual ("Column1", mc.Name, "#F2");
 
-			t = m.Tables[TableFooInvalidDisplayColumnAttribute];
+			t = m.Tables[TestDataContext.TableFooInvalidDisplayColumnAttribute];
 			AssertExtensions.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G1");
-			t = m.Tables[TableFooEmptyDisplayColumnAttribute];
+			t = m.Tables[TestDataContext.TableFooEmptyDisplayColumnAttribute];
 			AssertExtensions.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G2");
 		}
 
@@ -330,13 +274,13 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual ("FooWithDefaultsTable", t.DisplayName, "#A1");
 
-			t = m.Tables[TableFooDisplayName];
+			t = m.Tables[TestDataContext.TableFooDisplayName];
 			Assert.AreEqual ("My name is FooDisplayName, and I am friendly", t.DisplayName, "#B1");
 
-			t = m.Tables[TableFooDisplayNameEmptyName];
+			t = m.Tables[TestDataContext.TableFooDisplayNameEmptyName];
 			Assert.AreEqual (String.Empty, t.DisplayName, "#C1");
 		}
 
@@ -358,18 +302,17 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsTrue (t.EntityType == typeof (FooWithDefaults), "#A1");
 
-			t = m.Tables[TableFooDisplayName];
+			t = m.Tables[TestDataContext.TableFooDisplayName];
 			Assert.IsTrue (t.EntityType == typeof (FooDisplayName), "#B1");
 
-			t = m.Tables[TableFooDisplayNameEmptyName];
+			t = m.Tables[TestDataContext.TableFooDisplayNameEmptyName];
 			Assert.IsTrue (t.EntityType == typeof (FooDisplayNameEmptyName), "#C1");
 		}
 
 		[Test]
-		[Ignore ("Does not work - for some reason the ForeignKeyColumn* columns aren't seen as part of foreign key.")]
 		public void ForeignKeyColumnNames ()
 		{
 			MetaModel m = MetaModel.Default;
@@ -387,10 +330,10 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableAssociatedFoo];
 			Assert.IsNotNull (t.ForeignKeyColumnsNames, "#A1");
 			Assert.IsFalse (t.ForeignKeyColumnsNames.Length == 0, "#A2");
-			Assert.AreEqual (String.Empty, t.ForeignKeyColumnsNames, "#A3");
+			Assert.AreEqual ("ForeignKeyColumn1,PrimaryKeyColumn1", t.ForeignKeyColumnsNames, "#A3");
 		}
 
 		[Test]
@@ -411,7 +354,7 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
 			Assert.AreEqual (String.Empty, t.GetActionPath (null), "#A1");
 			Assert.AreEqual (String.Empty, t.GetActionPath (String.Empty), "#A2");
@@ -436,7 +379,7 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details), "#A1");
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Edit), t.GetActionPath (PageAction.Edit), "#A2");
@@ -469,7 +412,7 @@ namespace MonoTests.System.Web.DynamicData
 				RouteHandler = new MyDynamicDataRouteHandler ()
 			});
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (t.Model, m, "#A0");
 			Assert.AreEqual (Utils.BuildActionName (t, "ListDetails"), t.GetActionPath (PageAction.Details), "#A1");
 			Assert.AreEqual (Utils.BuildActionName (t, "ListDetails"), t.GetActionPath (PageAction.List), "#A2");
@@ -501,35 +444,6 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
-		public void PrimaryKeyColumns ()
-		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
-
-			MetaTable t = m.Tables [TableFooWithDefaults];
-
-			Assert.AreEqual (3, t.PrimaryKeyColumns.Count, "#A1");
-			Assert.AreEqual ("PrimaryKeyColumn1", t.PrimaryKeyColumns[0].Name, "#A2");
-			Assert.IsTrue (t.PrimaryKeyColumns[0].ColumnType == typeof (string), "#A2-1");
-			Assert.AreEqual ("PrimaryKeyColumn2", t.PrimaryKeyColumns[1].Name, "#A3");
-			Assert.IsTrue (t.PrimaryKeyColumns[1].ColumnType == typeof (int), "#A3-1");
-			Assert.AreEqual ("PrimaryKeyColumn3", t.PrimaryKeyColumns[2].Name, "#A4");
-			Assert.IsTrue (t.PrimaryKeyColumns[2].ColumnType == typeof (bool), "#A4-1");
-		}
-
-		[Test]
 		public void GetActionPath_Action_PrimaryKeyValues ()
 		{
 			MetaModel m = MetaModel.Default;
@@ -547,7 +461,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (String.Empty, t.GetActionPath (null, (IList<object>) null), "#A1");
 			Assert.AreEqual (String.Empty, t.GetActionPath (String.Empty, (IList<object>) null), "#A2");
 			Assert.AreEqual (String.Empty, t.GetActionPath ("BogusValue", (IList<object>) null), "#A3");
@@ -571,7 +485,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList<object>) null), "#A1");
 
 			// check the contents of the passed values dictionary
@@ -601,10 +515,10 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList<object>) null), "#A1");
-			 
+
 			var dataList = new List<object> ();
 			dataList.Add ("first item");
 
@@ -614,7 +528,7 @@ namespace MonoTests.System.Web.DynamicData
 
 			dataList.Add (2);
 			dataList.Add (false);
-			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details , "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList), "#A3");
+			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList), "#A3");
 
 			dataList.Clear ();
 			dataList.Add (false);
@@ -650,7 +564,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var values = new RouteValueDictionary ();
 
 			// NO null check for the routeValues parameter _again_!
@@ -690,14 +604,14 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
 			var foo = new FooWithDefaults ();
 			Assert.AreEqual (String.Empty, t.GetActionPath (null, (object) null), "#A1");
 			AssertExtensions.Throws<HttpException> (() => t.GetActionPath (PageAction.Details, (object) "test"), "#A2");
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=primary%20key%20value&PrimaryKeyColumn2=456&PrimaryKeyColumn3=True"), t.GetActionPath (PageAction.Details, foo), "#A3");
 
-			t = m.Tables [TableFooNoDefaultsWithPrimaryKey];
+			t = m.Tables[TestDataContext.TableFooNoDefaultsWithPrimaryKey];
 			var foo2 = new FooNoDefaultsWithPrimaryKey ();
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, foo2), "#B1");
 		}
@@ -720,7 +634,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
 			var foo = new FooWithDefaults ();
 			Assert.AreEqual (String.Empty, t.GetActionPath (null, (object) null, null), "#A1");
@@ -754,29 +668,29 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
 			Assert.AreEqual (String.Empty, t.GetActionPath (null, (IList<object>) null, null), "#A1");
 			Assert.AreEqual (String.Empty, t.GetActionPath (null, (IList<object>) null, String.Empty), "#A2");
 
 			var dataList = new List<object> ();
 			dataList.Add ("first item");
-			
+
 			// Yet another lack of parameter checking - the number of items passed in the dataList must be at least equal
 			// to the number of columns in the PrimaryKeyColumns collection
 			AssertExtensions.Throws<ArgumentOutOfRangeException> (() => t.GetActionPath (PageAction.Details, dataList), "#A3");
 
 			dataList.Add (2);
 			dataList.Add (false);
-			
+
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList, null), "#A4");
-			Assert.AreEqual ("~/SomePath.aspx", t.GetActionPath (null, (IList <object>) null, "~/SomePath.aspx"), "#A5");
+			Assert.AreEqual ("~/SomePath.aspx", t.GetActionPath (null, (IList<object>) null, "~/SomePath.aspx"), "#A5");
 			Assert.AreEqual ("~/SomePath.aspx?PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False", t.GetActionPath (null, dataList, "~/SomePath.aspx"), "#A6");
-			Assert.AreEqual ("~/SomePath.aspx", t.GetActionPath (PageAction.Details, (IList <object>) null, "~/SomePath.aspx"), "#A7");
+			Assert.AreEqual ("~/SomePath.aspx", t.GetActionPath (PageAction.Details, (IList<object>) null, "~/SomePath.aspx"), "#A7");
 			Assert.AreEqual ("~/SomePath.aspx?PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False", t.GetActionPath (PageAction.Details, dataList, "~/SomePath.aspx"), "#A8");
-			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList <object>) null, null), "#A9");
+			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList<object>) null, null), "#A9");
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList, null), "#A10");
-			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList <object>) null, String.Empty), "#A11");
+			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList<object>) null, String.Empty), "#A11");
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details, "PrimaryKeyColumn1=first%20item&PrimaryKeyColumn2=2&PrimaryKeyColumn3=False"), t.GetActionPath (PageAction.Details, dataList, String.Empty), "#A12");
 		}
 
@@ -798,7 +712,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
 			AssertExtensions.Throws<ArgumentNullException> (() => t.GetColumn (null), "#A1");
 			AssertExtensions.Throws<InvalidOperationException> (() => t.GetColumn (String.Empty), "#A2");
@@ -827,20 +741,20 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var foo = new FooWithDefaults ();
 
 			Assert.AreEqual (String.Empty, t.GetDisplayString (null), "#A1");
-			AssertExtensions.Throws <HttpException> (() => t.GetDisplayString (String.Empty), "#A2");
+			AssertExtensions.Throws<HttpException> (() => t.GetDisplayString (String.Empty), "#A2");
 			Assert.AreEqual ("hello", t.GetDisplayString (foo), "#A3");
-			AssertExtensions.Throws <HttpException> (() => t.GetDisplayString ("TestString"), "#A4");
+			AssertExtensions.Throws<HttpException> (() => t.GetDisplayString ("TestString"), "#A4");
 
 			// The method looks at the entity type to see if it has an overriden ToString method, 
 			// it ignores such methods on the passed "row"
 			var foo2 = new FooWithToString ();
 			Assert.AreEqual ("hello", t.GetDisplayString (foo2), "#B1");
 
-			t = m.Tables[TableFooWithToString];
+			t = m.Tables[TestDataContext.TableFooWithToString];
 			Assert.AreEqual ("ValueFrom_ToString", t.GetDisplayString (foo2), "#C1");
 
 			// If we pass an object which is not of EntityType, 
@@ -848,7 +762,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.AreEqual (foo.GetType ().ToString (), t.GetDisplayString (foo), "#C2");
 
 			var foo3 = new FooNoDefaultsWithPrimaryKey ();
-			t = m.Tables[TableFooNoDefaultsWithPrimaryKey];
+			t = m.Tables[TestDataContext.TableFooNoDefaultsWithPrimaryKey];
 			Assert.AreEqual (String.Empty, t.GetDisplayString (foo3), "#D1");
 		}
 
@@ -870,7 +784,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var values = new List<object> ();
 
 			Assert.AreEqual (String.Empty, t.GetPrimaryKeyString ((IList<object>) null), "#A1");
@@ -934,16 +848,16 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var foo = new FooWithDefaults ();
 
 			Assert.AreEqual (String.Empty, t.GetPrimaryKeyString ((object) null), "#A1");
 			Assert.AreEqual ("primary key value,456,True", t.GetPrimaryKeyString (foo), "#A2");
 
 			var foo2 = new FooNoDefaultsWithPrimaryKey ();
-			AssertExtensions.Throws <HttpException> (() => t.GetPrimaryKeyString (foo2), "#B1");
+			AssertExtensions.Throws<HttpException> (() => t.GetPrimaryKeyString (foo2), "#B1");
 
-			t = m.Tables[TableFooSettableDefaults];
+			t = m.Tables[TestDataContext.TableFooSettableDefaults];
 			var foo3 = new FooSettableDefaults (null, null, null);
 			Assert.AreEqual (String.Empty, t.GetPrimaryKeyString (foo3), "#C1");
 
@@ -972,7 +886,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables [TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var foo = new FooWithDefaults ();
 
 			Assert.IsNull (t.GetPrimaryKeyValues (null), "#A1");
@@ -991,7 +905,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsTrue (ret[2] is bool, "#B2-8");
 			Assert.AreEqual (true, ret[2], "#B2-9");
 
-			t = m.Tables [TableFooNoPrimaryColumns];
+			t = m.Tables[TestDataContext.TableFooNoPrimaryColumns];
 			var foo2 = new FooNoPrimaryColumns ();
 			ret = t.GetPrimaryKeyValues (foo2);
 			Assert.IsNotNull (ret, "#C1");
@@ -1046,7 +960,7 @@ namespace MonoTests.System.Web.DynamicData
 			Assert.IsTrue (query.GetType () == typeof (Table<Foo>), "#A2");
 
 			var foo = new Foo (true);
-			AssertExtensions.Throws <TargetException> (() => t.GetQuery (foo), "#B1");
+			AssertExtensions.Throws<TargetException> (() => t.GetQuery (foo), "#B1");
 		}
 
 		[Test]
@@ -1067,11 +981,274 @@ namespace MonoTests.System.Web.DynamicData
 				    RouteHandler = new MyDynamicDataRouteHandler ()
 			    });
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsTrue (t.HasPrimaryKey, "#A1");
 
-			t = m.Tables[TableFooNoPrimaryColumns];
+			t = m.Tables[TestDataContext.TableFooNoPrimaryColumns];
 			Assert.IsFalse (t.HasPrimaryKey, "#A2");
+		}
+
+		[Test]
+		public void IsReadOnly ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			routes.Add (
+			    new DynamicDataRoute ("{table}/{action}.aspx") {
+				    Constraints = new RouteValueDictionary (new { action = "List|Details" }),
+				    Model = m,
+				    RouteHandler = new MyDynamicDataRouteHandler ()
+			    });
+
+			// According to this thread http://forums.asp.net/t/1388561.aspx IsReadOnly is set
+			// whenever a table doesn't have a primary key.
+			MetaTable t = m.Tables[TestDataContext.TableBazNoStringsNoPrimary];
+			Assert.IsTrue (t.IsReadOnly, "#A1");
+
+			// According to the same article above, the ReadOnly attribute does not and will not
+			// apply to tables, just columns.
+			t = m.Tables[TestDataContext.TableFooReadOnly];
+			Assert.IsFalse (t.IsReadOnly, "#A2");
+		}
+
+		[Test]
+		public void ListActionPath ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			routes.Add (
+			    new DynamicDataRoute ("{table}/{action}.aspx") {
+				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				    Model = m,
+				    RouteHandler = new MyDynamicDataRouteHandler ()
+			    });
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+			Assert.AreEqual (Utils.BuildActionName (t, PageAction.List), t.ListActionPath, "#A1");
+
+			t = m.Tables[TestDataContext.TableAssociatedBar];
+			Assert.AreEqual (Utils.BuildActionName (t, PageAction.List), t.ListActionPath, "#A2");
+		}
+
+		[Test]
+		public void Model ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			routes.Add (
+			    new DynamicDataRoute ("{table}/{action}.aspx") {
+				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				    Model = m,
+				    RouteHandler = new MyDynamicDataRouteHandler ()
+			    });
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+			Assert.IsTrue (t.Model == m, "#A1");
+		}
+
+		[Test]
+		public void Name ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			routes.Add (
+			    new DynamicDataRoute ("{table}/{action}.aspx") {
+				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				    Model = m,
+				    RouteHandler = new MyDynamicDataRouteHandler ()
+			    });
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+			Assert.IsNotNull (t.Name, "#A1");
+			Assert.IsTrue (t.Name.Length > 0, "#A2");
+			Assert.AreEqual ("FooWithDefaultsTable", t.Name, "#A3");
+		}
+
+		[Test]
+		public void PrimaryKeyColumns ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
+				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				Model = m,
+				RouteHandler = new MyDynamicDataRouteHandler ()
+			};
+			routes.Add (route);
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+
+			Assert.AreEqual (3, t.PrimaryKeyColumns.Count, "#A1");
+			Assert.AreEqual ("PrimaryKeyColumn1", t.PrimaryKeyColumns[0].Name, "#A2");
+			Assert.IsTrue (t.PrimaryKeyColumns[0].ColumnType == typeof (string), "#A2-1");
+			Assert.AreEqual ("PrimaryKeyColumn2", t.PrimaryKeyColumns[1].Name, "#A3");
+			Assert.IsTrue (t.PrimaryKeyColumns[1].ColumnType == typeof (int), "#A3-1");
+			Assert.AreEqual ("PrimaryKeyColumn3", t.PrimaryKeyColumns[2].Name, "#A4");
+			Assert.IsTrue (t.PrimaryKeyColumns[2].ColumnType == typeof (bool), "#A4-1");
+
+			t = m.Tables[TestDataContext.TableBazNoStringsNoPrimary];
+			Assert.AreEqual (0, t.PrimaryKeyColumns.Count, "#B1");
+		}
+
+		[Test]
+		public void Provider ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
+				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				Model = m,
+				RouteHandler = new MyDynamicDataRouteHandler ()
+			};
+			routes.Add (route);
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+			Assert.IsTrue (t.Provider != null, "#A1");
+			Assert.AreEqual ("FooWithDefaultsTable", t.Provider.Name, "#A1");
+		}
+
+		[Test]
+		public void Scaffold ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
+				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				Model = m,
+				RouteHandler = new MyDynamicDataRouteHandler ()
+			};
+			routes.Add (route);
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+			Assert.AreEqual (true, t.Scaffold, "#A1");
+
+			t = m.Tables[TestDataContext.TableFooNoScaffold];
+			Assert.AreEqual (false, t.Scaffold, "#A2");
+		}
+
+		[Test]
+		public void SortColumn ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
+				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				Model = m,
+				RouteHandler = new MyDynamicDataRouteHandler ()
+			};
+			routes.Add (route);
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+			Assert.IsNull (t.SortColumn, "#A1");
+
+			t = m.Tables[TestDataContext.TableFooDisplayColumnAttribute];
+			Assert.IsNotNull (t.SortColumn, "#B1");
+			Assert.AreEqual ("Column1", t.SortColumn.Name, "#B2");
+
+			MetaColumn mc;
+			t = m.Tables[TestDataContext.TableFooMisnamedSortColumn];
+			AssertExtensions.Throws <InvalidOperationException> (() => mc = t.SortColumn, "#C1");
+
+			t = m.Tables[TestDataContext.TableFooEmptySortColumn];
+			Assert.IsNull (t.SortColumn, "#D1");
+		}
+
+		[Test]
+		public void SortDescending ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
+				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				Model = m,
+				RouteHandler = new MyDynamicDataRouteHandler ()
+			};
+			routes.Add (route);
+
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
+			Assert.AreEqual (false, t.SortDescending, "#A1");
+
+			t = m.Tables[TestDataContext.TableFooDisplayColumnAttribute];
+			Assert.AreEqual (true, t.SortDescending, "#B1");
+		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
+				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+				Model = m,
+				RouteHandler = new MyDynamicDataRouteHandler ()
+			};
+			routes.Add (route);
+
+			MetaTable t = m.Tables[TestDataContext.TableBar];
+			Assert.AreEqual (t.Name, t.ToString (), "#A1");
+
+			t = m.Tables[TestDataContext.TableFooNoDefaultsWithPrimaryKey];
+			Assert.AreEqual (t.Name, t.ToString (), "#A2");
 		}
 
 		[Test]
@@ -1092,7 +1269,7 @@ namespace MonoTests.System.Web.DynamicData
 			};
 			routes.Add (route);
 
-			MetaTable t = m.Tables[TableFooWithDefaults];
+			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			MetaColumn mc = null;
 
 			AssertExtensions.Throws<ArgumentNullException> (() => t.TryGetColumn (null, out mc), "#A1");

@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
-
 namespace MonoTests.Common
 {
-	class FooEmpty
+	[DisplayColumn ("NoSuchColumn", "NoSuchColumn")]
+	class FooMisnamedSortColumn
 	{
 	}
 }

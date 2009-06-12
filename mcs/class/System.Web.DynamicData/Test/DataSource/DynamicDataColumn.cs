@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.DynamicData.ModelProviders;
 
 namespace MonoTests.DataSource
 {
@@ -10,6 +11,7 @@ namespace MonoTests.DataSource
 		public Type DataType { get; protected set; }
 		public string Name { get; protected set; }
 		public bool PrimaryKey { get; protected set; }
-		public bool ForeignKey { get; protected set; }
+		public string AssociatedTo { get; protected set; }
+		public AssociationDirection AssociationDirection { get; protected set; }
 	}
 }

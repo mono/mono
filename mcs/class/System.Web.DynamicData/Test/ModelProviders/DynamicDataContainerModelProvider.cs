@@ -10,85 +10,97 @@ using MonoTests.DataSource;
 
 namespace MonoTests.ModelProviders
 {
-    public class DynamicDataContainerModelProvider : DataModelProvider
-    {
-        IDynamicDataContainer container;
-        Type containerType;
-        ReadOnlyCollection<TableProvider> tables;
+	public class DynamicDataContainerModelProvider : DataModelProvider
+	{
+		IDynamicDataContainer container;
+		Type containerType;
+		ReadOnlyCollection<TableProvider> tables;
 
-        IDynamicDataContainer Container
-        {
-            get
-            {
-                if (container != null)
-                    return container;
+		IDynamicDataContainer Container
+		{
+			get
+			{
+				if (container != null)
+					return container;
 
-                container = Activator.CreateInstance (containerType) as IDynamicDataContainer;
-                if (container == null)
-                    throw new InvalidOperationException ("Failed to create an instance of container type '" + ContextType + "'.");
+				container = Activator.CreateInstance (containerType) as IDynamicDataContainer;
+				if (container == null)
+					throw new InvalidOperationException ("Failed to create an instance of container type '" + ContextType + "'.");
 
-                return container;
-            }
-        }
+				return container;
+			}
+		}
 
-        public override Type ContextType
-        {
-            get
-            {
-                return Container.ContainedType;
-            }
-            protected set
-            {
-                throw new InvalidOperationException ("Setting the context type on this provider is not supported.");
-            }
-        }
+		public override Type ContextType
+		{
+			get
+			{
+				return Container.ContainedType;
+			}
+			protected set
+			{
+				throw new InvalidOperationException ("Setting the context type on this provider is not supported.");
+			}
+		}
 
-        public DynamicDataContainerModelProvider (Type containerType)
-        {
-            if (containerType == null)
-                throw new ArgumentNullException ("contextType");
+		public DynamicDataContainerModelProvider (Type containerType)
+		{
+			if (containerType == null)
+				throw new ArgumentNullException ("contextType");
 
-            if (!typeof (IDynamicDataContainer).IsAssignableFrom (containerType))
-                throw new ArgumentException ("Container type must implement the IDynamicDataContainer interface.", "contextType");
+			if (!typeof (IDynamicDataContainer).IsAssignableFrom (containerType))
+				throw new ArgumentException ("Container type must implement the IDynamicDataContainer interface.", "contextType");
 
-            this.containerType = containerType;
-        }
+			this.containerType = containerType;
+		}
 
-        public DynamicDataContainerModelProvider (IDynamicDataContainer container)
-        {
-            if (container == null)
-                throw new ArgumentNullException ("container");
+		public DynamicDataContainerModelProvider (IDynamicDataContainer container)
+		{
+			if (container == null)
+				throw new ArgumentNullException ("container");
 
-            this.container = container;
-        }
+			this.container = container;
+		}
 
-        public override object CreateContext ()
-        {
-            return Activator.CreateInstance (ContextType);
-        }
+		public override object CreateContext ()
+		{
+			return Activator.CreateInstance (ContextType);
+		}
 
-        public override ReadOnlyCollection<TableProvider> Tables
-        {
-            get {
-                if (tables != null)
-                    return tables;
-                tables = LoadTables ();
-                return tables;
-            }
-        }
+		public override ReadOnlyCollection<TableProvider> Tables
+		{
+			get
+			{
+				if (tables != null)
+					return tables;
+				tables = LoadTables ();
 
-        ReadOnlyCollection<TableProvider> LoadTables ()
-        {
-            List<DynamicDataTable> containerTables = Container.GetTables ();
+				return tables;
+			}
+		}
 
-            if (containerTables == null || containerTables.Count == 0)
-                return new ReadOnlyCollection<TableProvider> (new List <TableProvider> ());
+		void ResolveAssociations ()
+		{
+			foreach (var t in Tables) {
+				var table = t as DynamicDataContainerTableProvider;
+				if (t == null)
+					continue;
+				table.ResolveAssociations ();
+			}
+		}
 
-            var tables = new List<TableProvider> ();
-            foreach (var table in containerTables)
-                tables.Add (new DynamicDataContainerTableProvider (this, table));
+		ReadOnlyCollection<TableProvider> LoadTables ()
+		{
+			List<DynamicDataTable> containerTables = Container.GetTables ();
 
-            return new ReadOnlyCollection<TableProvider> (tables);
-        }
-    }
+			if (containerTables == null || containerTables.Count == 0)
+				return new ReadOnlyCollection<TableProvider> (new List<TableProvider> ());
+
+			var tables = new List<TableProvider> ();
+			foreach (var table in containerTables)
+				tables.Add (new DynamicDataContainerTableProvider (this, table));
+
+			return new ReadOnlyCollection<TableProvider> (tables);
+		}
+	}
 }

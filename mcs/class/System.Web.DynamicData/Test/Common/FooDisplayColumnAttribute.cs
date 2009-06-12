@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace MonoTests.Common
 {
 	// Parameters: display column, sort column, whether sort is descending
-	[DisplayColumn ("Column2", "Column1", false)]
+	[DisplayColumn ("Column2", "Column1", true)]
 	class FooDisplayColumnAttribute
 	{
 		public string Column1 { get; set; }		
