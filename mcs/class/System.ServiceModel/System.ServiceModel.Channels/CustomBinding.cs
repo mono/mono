@@ -62,6 +62,10 @@ namespace System.ServiceModel.Channels
 				binding.Name, binding.Namespace)
 		{
 			this.binding = binding;
+			OpenTimeout = binding.OpenTimeout;
+			CloseTimeout = binding.CloseTimeout;
+			SendTimeout = binding.SendTimeout;
+			ReceiveTimeout = binding.ReceiveTimeout;
 			scheme = binding.Scheme;
 			security = binding as ISecurityCapabilities;
 		}
