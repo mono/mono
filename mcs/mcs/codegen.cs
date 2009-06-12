@@ -186,8 +186,36 @@ namespace Mono.CSharp {
 
 		static public void Save (string name, bool saveDebugInfo)
 		{
+#if GMCS_SOURCE
+			PortableExecutableKinds pekind;
+			ImageFileMachine machine;
+
+			switch (RootContext.Platform) {
+			case Platform.X86:
+				pekind = PortableExecutableKinds.Required32Bit;
+				machine = ImageFileMachine.I386;
+				break;
+			case Platform.X64:
+				pekind = PortableExecutableKinds.PE32Plus;
+				machine = ImageFileMachine.AMD64;
+				break;
+			case Platform.IA64:
+				pekind = PortableExecutableKinds.PE32Plus;
+				machine = ImageFileMachine.IA64;
+				break;
+			case Platform.AnyCPU:
+			default:
+				pekind = PortableExecutableKinds.ILOnly;
+				machine = ImageFileMachine.I386;
+				break;
+			}
+#endif
 			try {
+#if GMCS_SOURCE
+				Assembly.Builder.Save (Basename (name), pekind, machine);
+#else
 				Assembly.Builder.Save (Basename (name));
+#endif
 			}
 			catch (COMException) {
 				if ((RootContext.StrongNameKeyFile == null) || (!RootContext.StrongNameDelaySign))
@@ -204,6 +232,10 @@ namespace Mono.CSharp {
 			}
 			catch (System.UnauthorizedAccessException ua) {
 				Report.Error (16, "Could not write to file `"+name+"', cause: " + ua.Message);
+				return;
+			}
+			catch (System.NotImplementedException nie) {
+				Report.RuntimeMissingSupport (Location.Null, nie.Message);
 				return;
 			}
 

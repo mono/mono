@@ -47,6 +47,9 @@ namespace Mono.CSharp {
 		// COMPILER OPTIONS CLASS
 		//
 		public static Target Target;
+#if GMCS_SOURCE
+		public static Platform Platform;
+#endif
 		public static string TargetExt;
 		public static bool VerifyClsCompliance = true;
 		public static bool Optimize = true;
@@ -168,6 +171,9 @@ namespace Mono.CSharp {
 			MainClass = null;
 			Target = Target.Exe;
 			TargetExt = ".exe";
+#if GMCS_SOURCE
+			Platform = Platform.AnyCPU;
+#endif
 			Version = LanguageVersion.Default;
 			Documentation = null;
 			impl_details_class = null;

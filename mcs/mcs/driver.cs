@@ -26,6 +26,12 @@ namespace Mono.CSharp
 	public enum Target {
 		Library, Exe, Module, WinExe
 	};
+
+#if GMCS_SOURCE
+	enum Platform {
+		AnyCPU, X86, X64, IA64
+	};
+#endif
 	
 	/// <summary>
 	///    The compiler driver.
@@ -248,6 +254,8 @@ namespace Mono.CSharp
 #if !SMCS_SOURCE
 				"   -pkg:P1[,Pn]         References packages P1..Pn\n" + 
 #endif
+				"   -platform:ARCH       Specifies the target platform of the output assembly\n" +
+				"                        ARCH can be one of: anycpu, x86, x64 or itanium\n" +
 				"   -recurse:SPEC        Recursively compiles files according to SPEC pattern\n" + 
 				"   -reference:A1[,An]   Imports metadata from the specified assembly (short: -r)\n" +
 				"   -reference:ALIAS=A   Imports metadata using specified extern alias (short: -r)\n" +				
@@ -1429,10 +1437,31 @@ namespace Mono.CSharp
 				load_default_config = false;
 				return true;
 
+			case "/platform":
+#if GMCS_SOURCE
+				switch (value.ToLower (CultureInfo.InvariantCulture)) {
+				case "anycpu":
+					RootContext.Platform = Platform.AnyCPU;
+					break;
+				case "x86":
+					RootContext.Platform = Platform.X86;
+					break;
+				case "x64":
+					RootContext.Platform = Platform.X64;
+					break;
+				case "itanium":
+					RootContext.Platform = Platform.IA64;
+					break;
+				default:
+					Report.Error (1672, "Invalid platform type for -platform. Valid options are `anycpu', `x86', `x64' or `itanium'");
+					break;
+				}
+#endif
+				return true;
+
 				// We just ignore this.
 			case "/errorreport":
 			case "/filealign":
-			case "/platform":
 				return true;
 				
 			case "/help2":

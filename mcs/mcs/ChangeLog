@@ -1,3 +1,10 @@
+2009-06-12  Jb Evain  <jbevain@novell.com>
+
+	* rootcontext.cs: add a Platform field.
+	* driver.cs: handle /platform.
+	* codegen.cs: pass the proper flags according to
+	the platform when saving the assembly.
+
 2009-06-11  Marek Safar  <marek.safar@gmail.com>
 
 	* parameter.cs, const.cs, report.cs, cs-parser.jay, attribute.cs:
