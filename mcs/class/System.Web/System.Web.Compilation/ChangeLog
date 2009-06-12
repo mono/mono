@@ -1,3 +1,7 @@
+2009-06-12  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: avoid a NREX in FixVirtualPath
+
 2009-06-11  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: if generating code to assign output cache

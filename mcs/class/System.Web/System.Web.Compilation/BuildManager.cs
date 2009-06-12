@@ -155,6 +155,9 @@ namespace System.Web.Compilation {
 		// Deal with precompiled sites deployed in a different virtual path
 		static void FixVirtualPaths ()
 		{
+			if (precompiled == null)
+				return;
+			
 			string [] parts;
 			int skip = -1;
 			foreach (string vpath in precompiled.Keys) {
