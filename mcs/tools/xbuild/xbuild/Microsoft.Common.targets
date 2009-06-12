@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<ProjectDir Condition="'$(ProjectDir)' == ''">$(MSBuildProjectDirectoryectory)\</ProjectDir>
+		<ProjectDir Condition="'$(ProjectDir)' == ''">$(MSBuildProjectDirectory)\</ProjectDir>
 	</PropertyGroup>
 
 	<PropertyGroup>
