@@ -1,3 +1,9 @@
+2009-06-12  Jb Evain  <jbevain@novell.com>
+
+	* gtest-449.cs
+	* gtest-450.cs:
+		new tests for the /platform support.
+
 2009-02-07  Scott Peterson  <lunchtimemama@gmail.com>
 
 	This patch is contributed under the MIT/X11 license.
