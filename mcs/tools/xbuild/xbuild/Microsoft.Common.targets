@@ -27,9 +27,9 @@
 		<IntermediateOutputPath Condition=" '$(PlatformName)' != 'AnyCPU'">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<IntermediateAssembly Condition="'$(IntermediateAssembly)' == ''">$(IntermediateOutputPath)$(AssemblyName)$(TargetExt)</IntermediateAssembly>
-	</PropertyGroup>
+	<ItemGroup>
+		<IntermediateAssembly Include="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt)" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<TargetPath Include="$(OutputPath)" />
@@ -242,11 +242,11 @@
 		DependsOnTargets="BuildResources;CoreCompile;_CopyDeployFilesToOutputDirectory">
 
 		<Copy 
-			SourceFiles="$(IntermediateAssembly).mdb"
-			Condition="Exists('$(IntermediateAssembly).mdb')"
+			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
+			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
 			DestinationFolder="$(OutputPath)" />
 
-		<Copy SourceFiles="$(IntermediateAssembly)" DestinationFolder="$(OutputPath)" />
+		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutputPath)" />
 
 		<Copy
 			SourceFiles = "@(IntermediateSatelliteAssemblies)"

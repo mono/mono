@@ -21,7 +21,7 @@
 	<Target
 		Name="CoreCompile"
 		Inputs="@(Compile)"
-		Outputs="$(IntermediateAssembly)"
+		Outputs="@(IntermediateAssembly)"
 	>
 		<Csc
 			AdditionalLibPaths="$(AdditionalLibPaths)"
@@ -48,7 +48,7 @@
 			NoLogo="$(NoLogo)"
 			NoStandardLib="$(NoStdLib)"
 			Optimize="$(Optimize)"
-			OutputAssembly="$(IntermediateAssembly)"
+			OutputAssembly="@(IntermediateAssembly)"
 			PdbFile="$(PdbFile)" 
 			Platform="$(PlatformTarget)"
 		 	References="@(ResolvedFiles);@(ChildProjectReferences)"

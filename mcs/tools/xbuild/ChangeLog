@@ -1,5 +1,12 @@
 2009-06-12  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.Common.targets (IntermediateAssembly): Change to
+	an Item list to match msbuild.
+	* xbuild/Microsoft.CSharp.targets (IntermediateAssembly): Update for
+	above changes.
+
+2009-06-12  Ankit Jain  <jankit@novell.com>
+
 	* Parameters.cs (.ctor): Use assembly's location to build
 	path for the default response file.
 
