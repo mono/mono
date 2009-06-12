@@ -88,19 +88,28 @@ namespace System.ServiceModel.Channels
 		
 		// CommunicationObject
 		
-		[MonoTODO]
 		protected override void OnAbort ()
 		{
-			throw new NotImplementedException ();
+			if (State == CommunicationState.Closed)
+				return;
+			ProcessClose ();
 		}
 
-		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
+			if (State == CommunicationState.Closed)
+				return;
+			ProcessClose ();
+		}
+
+		void ProcessClose ()
+		{
+			if (tcp_listener == null)
+				throw new InvalidOperationException ("Current state is " + State);
 			tcp_listener.Stop ();
 			tcp_listener = null;
 		}
-		
+
 		[MonoTODO]
 		protected override void OnOpen (TimeSpan timeout)
 		{

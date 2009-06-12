@@ -186,7 +186,8 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		protected override void OnAbort ()
 		{
-			throw new NotImplementedException ();
+			if (client != null)
+				client.Close ();
 		}
 
 		[MonoTODO]
@@ -206,7 +207,8 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
-			client.Close ();
+			if (client != null)
+				client.Close ();
 		}
 		
 		[MonoTODO]

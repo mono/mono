@@ -1,5 +1,10 @@
 2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpChannelListener.cs, TcpDuplexSessionChannel.cs :
+	  more careful close to avoid NRE.
+
+2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelListener.cs : do not Close() more than once (though
 	  it is allowed to call it twice, we don't reject it; just ignore).
 
