@@ -1500,7 +1500,6 @@ namespace Mono.CSharp
 					RootContext.AddConditional ("__V2__");
 #endif
 					return true;
-#if GMCS_SOURCE
 				case "iso-2":
 					RootContext.Version = LanguageVersion.ISO_2;
 					return true;
@@ -1510,8 +1509,8 @@ namespace Mono.CSharp
 				case "future":
 					RootContext.Version = LanguageVersion.Future;
 					return true;
-#endif
 				}
+
 				Report.Error (1617, "Invalid -langversion option `{0}'. It must be `ISO-1', `ISO-2', `3' or `Default'", value);
 				return true;
 
