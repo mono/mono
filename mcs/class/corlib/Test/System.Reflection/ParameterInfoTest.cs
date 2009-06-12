@@ -202,5 +202,16 @@ namespace MonoTests.System.Reflection
 		class Derived : Base
 		{
 		}
+
+#if NET_4_0
+		public static void TestC (decimal u = decimal.MaxValue) {
+		}
+
+		[Test]
+		public void DefaultValueDecimal () {
+			var info = typeof (ParameterInfoTest).GetMethod ("TestC").GetParameters ();
+			Assert.AreEqual (decimal.MaxValue, info [0].DefaultValue);
+		}
+#endif
 	}
 }
