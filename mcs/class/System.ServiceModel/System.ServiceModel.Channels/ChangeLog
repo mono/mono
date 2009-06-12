@@ -1,5 +1,10 @@
 2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpChannelListener.cs : do not Close() more than once (though
+	  it is allowed to call it twice, we don't reject it; just ignore).
+
+2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CustomBinding.cs : copy timeouts from argument binding in copy ctr.
 
 2009-06-11  Atsushi Enomoto  <atsushi@ximian.com>

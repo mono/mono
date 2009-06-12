@@ -69,6 +69,8 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			if (State == CommunicationState.Closed)
+				return;
 			base.OnClose (timeout);
 			httpChannelManager.Stop ();
 		}
