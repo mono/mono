@@ -17,6 +17,7 @@
 	<dllmap dll="sqlite3" target="@SQLITE3@" os="!windows"/>
 	<dllmap dll="libX11" target="@X11@" os="!windows" />
 	<dllmap dll="libcairo-2.dll" target="libcairo.so.2" os="!windows"/>
+	<dllmap dll="libcups" target="libcups.so.2" os="!windows"/>
 	<dllmap dll="i:kernel32.dll">
 		<dllentry dll="__Internal" name="CopyMemory" target="mono_win32_compat_CopyMemory"/>
 		<dllentry dll="__Internal" name="FillMemory" target="mono_win32_compat_FillMemory"/>
