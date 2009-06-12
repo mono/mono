@@ -86,11 +86,13 @@ namespace Microsoft.Build.BuildEngine {
 			if (relPath == null || relPath.Length == 0)
 				return null;
 
+			bool is_windows = Path.DirectorySeparatorChar == '\\';
 			string path = relPath;
-			if (Path.DirectorySeparatorChar != '\\')
+			if (!is_windows)
 				path = path.Replace ("\\", "/");
 
-			if (char.IsLetter (path [0]) && path.Length > 1 && path[1] == ':')
+			// a path with drive letter is invalid/unusable on non-windows
+			if (!is_windows && char.IsLetter (path [0]) && path.Length > 1 && path[1] == ':')
 				return null;
 
 			if (System.IO.File.Exists (path)){

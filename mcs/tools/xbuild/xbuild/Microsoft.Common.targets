@@ -14,7 +14,7 @@
 	<PropertyGroup>
 		<AllowUnsafeBlocks Condition="'$(AllowUnsafeBlocks)' == ''">false</AllowUnsafeBlocks>
 		<AssemblyName Condition="'$(AssemblyName)' == ''">$(RootNamespace)</AssemblyName>
-		<!-- OutputPath Condition="'$(OutputPath)' != ''">$(OutputPath)\</OutputPath-->
+		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
 	</PropertyGroup>
 
@@ -27,9 +27,9 @@
 		<IntermediateOutputPath Condition=" '$(PlatformName)' != 'AnyCPU'">$(BaseIntermediateOutputPath)$(PlatformName)\$(Configuration)\</IntermediateOutputPath>
 	</PropertyGroup>
 
-	<PropertyGroup>
-		<IntermediateAssembly Condition="'$(IntermediateAssembly)' == ''">$(IntermediateOutputPath)$(AssemblyName)$(TargetExt)</IntermediateAssembly>
-	</PropertyGroup>
+	<ItemGroup>
+		<IntermediateAssembly Include="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt)" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<TargetPath Include="$(OutputPath)" />
@@ -47,13 +47,35 @@
 		</GetFrameworkPath>
 	</Target>
 
+	<PropertyGroup>
+		<AllowedReferenceAssemblyFileExtensions Condition=" '$(AllowedReferenceAssemblyFileExtensions)' == '' ">
+			.exe;
+			.dll
+		</AllowedReferenceAssemblyFileExtensions>
+
+		<AllowedReferenceRelatedFileExtensions Condition=" '$(AllowedReferenceRelatedFileExtensions)' == '' ">
+			.mdb
+		</AllowedReferenceRelatedFileExtensions>
+	</PropertyGroup>
+
 	<Target Name="ResolveAssemblyReferences">
 		<ResolveAssemblyReference
-			Assemblies="@(Reference);@(ChildProjectReferences)"
-			SearchPaths="{HintPathFromItem};{TargetFrameworkDirectory};{GAC};{RawFileName};$(OutputPath)"
+			Assemblies="@(Reference)"
+			AssemblyFiles="@(ChildProjectReferences)"
+			SearchPaths="{CandidateAssemblyFiles};{HintPathFromItem};{TargetFrameworkDirectory};{GAC};{RawFileName};$(OutputPath)"
+			CandidateAssemblyFiles="@(Content);@(None)"
 			TargetFrameworkDirectories="$(TargetFrameworkPath)"
+			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
+			AllowedRelatedFileExtensions="$(AllowedReferenceRelatedFileExtensions)"
+			FindDependencies="true"
+			FindSatellites="true"
+			FindRelatedFiles="true"
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
+			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolveAssemblyReferenceResolvedFiles"/>
+			<Output TaskParameter="RelatedFiles" ItemName="_ReferenceRelatedPaths"/>
+			<Output TaskParameter="SatelliteFiles" ItemName="ReferenceSatellitePaths"/>
+			<Output TaskParameter="CopyLocalFiles" ItemName="ReferenceCopyLocalPaths"/>
 		</ResolveAssemblyReference>
 	</Target>
 
@@ -68,6 +90,13 @@
 		>
 			<Output TaskParameter="TargetOutputs" ItemName="ChildProjectReferences" />
 		</MSBuild>
+	</Target>
+
+	<Target Name = "CopyFilesMarkedCopyLocal">
+		<Copy
+			SourceFiles="@(ReferenceCopyLocalPaths)"
+			DestinationFiles="@(ReferenceCopyLocalPaths->'$(OutputPath)%(DestinationSubDirectory)%(Filename)%(Extension)')"
+		/>
 	</Target>
 
 <!--
@@ -95,8 +124,9 @@
 	<PropertyGroup>
 		<CoreBuildDependsOn>
 			PrepareForBuild;
-			ResolveAssemblyReferences;
 			ResolveProjectReferences;
+			ResolveAssemblyReferences;
+			CopyFilesMarkedCopyLocal;
 			BuildResources;
 			CoreCompile;
 			DeployOutputFiles
@@ -110,11 +140,11 @@
 	/>
 
 	<Target Name="BuildResources"
-		DependsOnTargets="SplitResourcesByCulture;CreateManifestResourceNames;CopyNonResxEmbeddedResources;GenerateResources;GenerateSatelliteAssemblies">
+		DependsOnTargets="AssignTargetPaths;SplitResourcesByCulture;CreateManifestResourceNames;CopyNonResxEmbeddedResources;GenerateResources;GenerateSatelliteAssemblies">
 	</Target>
 
-	<Target Name="SplitResourcesByCulture">
-		<AssignCulture Files="@(EmbeddedResource)">
+	<Target Name="SplitResourcesByCulture" DependsOnTargets="AssignTargetPaths">
+		<AssignCulture Files="@(EmbeddedResourceWithTargetPath)">
 			<Output TaskParameter="AssignedFilesWithNoCulture" ItemName="ResourcesWithNoCulture"/>
 			<Output TaskParameter="AssignedFilesWithCulture" ItemName="ResourcesWithCulture"/>
 		</AssignCulture>
@@ -150,7 +180,6 @@
 			DestinationFiles = "@(ManifestNonResxWithNoCulture->'$(IntermediateOutputPath)%(Identity)')">
 			<Output TaskParameter = "DestinationFiles" ItemName = "ManifestNonResxWithNoCultureOnDisk"/>
 		</Copy>
-
 	</Target>
 
 	<Target Name = "GenerateResources">
@@ -194,19 +223,121 @@
 		</CreateItem>
 	</Target>
 
-	<Target Name="DeployOutputFiles"
-		DependsOnTargets="BuildResources;CoreCompile">
+	<!-- Assign target paths to files that will need to be copied along with the project -->
+	<Target Name = "AssignTargetPaths">
+		<AssignTargetPath Files="@(None)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="NoneWithTargetPath"/>
+		</AssignTargetPath>
 
-		<!-- FIXME: Hardcoded for copying .mdb -->
-		<!-- Copy SourceFiles="$(IntermediateAssembly);$(IntermediateAssembly).mdb" DestinationFolder="$(OutputPath)" /-->
-		<Copy SourceFiles="$(IntermediateAssembly)" DestinationFolder="$(OutputPath)" />
+		<AssignTargetPath Files="@(Content)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="ContentWithTargetPath"/>
+		</AssignTargetPath>
+
+		<AssignTargetPath Files="@(EmbeddedResource)" RootFolder="$(MSBuildProjectDirectory)">
+			<Output TaskParameter="AssignedFiles" ItemName="EmbeddedResourceWithTargetPath"/>
+		</AssignTargetPath>
+	</Target>
+
+	<Target Name="DeployOutputFiles"
+		DependsOnTargets="BuildResources;CoreCompile;_CopyDeployFilesToOutputDirectory">
+
+		<Copy 
+			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
+			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
+			DestinationFolder="$(OutputPath)" />
+
+		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutputPath)" />
 
 		<Copy
 			SourceFiles = "@(IntermediateSatelliteAssemblies)"
 			DestinationFiles = "@(IntermediateSatelliteAssemblies->'$(OutputPath)\%(Culture)\$(AssemblyName).resources.dll')" />
 	</Target>
 
+	<Target Name="_CopyDeployFilesToOutputDirectory"
+		DependsOnTargets="GetCopyToOutputDirectoryItems;
+			_CopyDeployFilesToOutputDirectoryToOutputDirectoryAlways;
+			CopyDeployFilesToOutputDirectoryPreserveNewest"/>
+
+	<Target Name="CopyDeployFilesToOutputDirectoryPreserveNewest"
+		Condition="'@(ItemsToCopyToOutputDirectoryAlways)' != ''">
+
+		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutputPath)%(TargetPath)')"/>
+	</Target>
+
+	<!-- Copy if newer -->
+	<Target Name="_CopyDeployFilesToOutputDirectoryToOutputDirectoryAlways"
+		Condition="'@(ItemsToCopyToOutputDirectoryPreserveNewest)' != ''"
+		Inputs="@(ItemsToCopyToOutputDirectoryPreserveNewest)"
+		Outputs="@(ItemsToCopyToOutputDirectoryPreserveNewest->'$(OutputPath)%(TargetPath)'">
+
+		<Copy SourceFiles="@(ItemsToCopyToOutputDirectoryAlways)"
+			DestinationFiles="@(ItemsToCopyToOutputDirectoryAlways->'$(OutputPath)%(TargetPath)')"/>
+	</Target>
+
 	<Target Name="GetTargetPath" Outputs="@(TargetPath->'%(FullPath)\$(AssemblyName)$(TargetExt)')"/>
+
+	<Target Name="GetCopyToOutputDirectoryItems"
+		Outputs="@(AllItemsFullPathWithTargetPath)"
+		DependsOnTargets="AssignTargetPaths">
+
+		<!-- FIXME: handle .vcproj -->
+		<MSBuild
+			Projects="@(ProjectReference)"
+			Targets="GetCopyToOutputDirectoryItems"
+			Condition="'@(ProjectReference)' != ''">
+
+			<Output TaskParameter="TargetOutputs" ItemName="AllChildProjectItemsWithTargetPath"/>
+		</MSBuild>
+
+		<!-- Process items from child project. The outputs need to have full path
+		     as they'll be used from other projects -->
+
+		<CreateItem
+			Include="@(AllChildProjectItemsWithTargetPath->'%(FullPath)')"
+			Condition="'%(AllChildProjectItemsWithTargetPath.CopyToOutputDirectory)' == 'Always' or '%(AllChildProjectItemsWithTargetPath.CopyToOutputDirectory)' == 'PreserveNewest'">
+
+			<Output TaskParameter="Include" ItemName="AllItemsFullPathWithTargetPath"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryAlways"
+				Condition="'%(AllChildProjectItemsWithTargetPath.CopyToOutputDirectory)'=='Always'"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryPreserveNewest"
+				Condition="'%(AllChildProjectItemsWithTargetPath.CopyToOutputDirectory)'=='PreserveNewest'"/>
+
+		</CreateItem>
+
+		<!-- Process _this_ project's items -->
+
+		<CreateItem
+			Include="@(NoneWithTargetPath->'%(FullPath)')"
+			Condition="'%(NoneWithTargetPath.CopyToOutputDirectory)' == 'Always' or '%(NoneWithTargetPath.CopyToOutputDirectory)' == 'PreserveNewest'">
+			<Output TaskParameter="Include" ItemName="AllItemsFullPathWithTargetPath"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryAlways"
+				Condition="'%(NoneWithTargetPath.CopyToOutputDirectory)'=='Always'"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryPreserveNewest"
+				Condition="'%(NoneWithTargetPath.CopyToOutputDirectory)'=='PreserveNewest'"/>
+		</CreateItem>
+
+		<CreateItem
+			Include="@(ContentWithTargetPath->'%(FullPath)')"
+			Condition="'%(ContentWithTargetPath.CopyToOutputDirectory)' == 'Always' or '%(ContentWithTargetPath.CopyToOutputDirectory)' == 'PreserveNewest'">
+			<Output TaskParameter="Include" ItemName="AllItemsFullPathWithTargetPath"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryAlways"
+				Condition="'%(ContentWithTargetPath.CopyToOutputDirectory)'=='Always'"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryPreserveNewest"
+				Condition="'%(ContentWithTargetPath.CopyToOutputDirectory)'=='PreserveNewest'"/>
+		</CreateItem>
+
+		<CreateItem
+			Include="@(EmbeddedResourceWithTargetPath->'%(FullPath)')"
+			Condition="'%(EmbeddedResourceWithTargetPath.CopyToOutputDirectory)' == 'Always' or '%(EmbeddedResourceWithTargetPath.CopyToOutputDirectory)' == 'PreserveNewest'">
+			<Output TaskParameter="Include" ItemName="AllItemsFullPathWithTargetPath"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryAlways"
+				Condition="'%(EmbeddedResourceWithTargetPath.CopyToOutputDirectory)'=='Always'"/>
+			<Output TaskParameter="Include" ItemName="ItemsToCopyToOutputDirectoryPreserveNewest"
+				Condition="'%(EmbeddedResourceWithTargetPath.CopyToOutputDirectory)'=='PreserveNewest'"/>
+		</CreateItem>
+
+	</Target>
 
 	<PropertyGroup>
 		<CleanDependsOn>

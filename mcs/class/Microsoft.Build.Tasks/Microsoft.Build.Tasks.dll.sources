@@ -100,6 +100,7 @@ Microsoft.Build.Tasks/ToolTaskExtension.cs
 Microsoft.Build.Tasks/Touch.cs
 Microsoft.Build.Tasks/UnregisterAssembly.cs
 Microsoft.Build.Tasks/UpdateManifest.cs
+Microsoft.Build.Tasks/Utilities.cs
 Microsoft.Build.Tasks/Vbc.cs
 Microsoft.Build.Tasks/VCBuild.cs
 Microsoft.Build.Tasks/Warning.cs

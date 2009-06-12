@@ -186,7 +186,9 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		protected override string ToolName {
-			get { return "gmcs"; }
+			get {
+				return Utilities.RunningOnWindows ? "gmcs.bat" : "gmcs";
+			}
 		}
 
 		public bool UseHostCompilerIfAvailable {

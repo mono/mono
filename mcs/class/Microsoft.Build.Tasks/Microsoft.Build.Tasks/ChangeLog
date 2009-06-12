@@ -1,3 +1,19 @@
+2009-06-12  Ankit Jain  <jankit@novell.com>
+
+	* Utilities.cs: New.
+	* AL.cs, AspNetCompiler.cs, Csc.cs,
+	SGen.cs, Vbc.cs (ToolName): Append ".bat" when running
+	on windows.
+
+2009-06-09  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs (Execute): Copy metadata from the @Projects items
+	to the target outputs.
+
+2009-06-08  Ankit Jain  <jankit@novell.com>
+
+	* ResolvedReference.cs: Add missing file.
+
 2009-06-08  Ankit Jain  <jankit@novell.com>
 
 	* AssignCulture.cs (TrySplitResourceName): Reset culture arg to null
