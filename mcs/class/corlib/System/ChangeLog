@@ -1,3 +1,10 @@
+2009-06-12  Bill Holmes  <billholmes54@gmail.com>
+
+	* Variant.cs (GetValue):  Changing the bool case to use the short value.  
+	  This is to avoid junk in the high word.
+
+	Contributed under MIT/X11 license.
+
 2009-06-10  Marek Safar  <marek.safar@gmail.com>
 
 	* Predicate.cs, Action.cs, Funcs.cs, Comparison.cs, IComparable.cs,

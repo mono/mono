@@ -236,7 +236,7 @@ namespace System
 				obj = dblVal;
 				break;
 			case VarEnum.VT_BOOL:
-				obj = !(lVal == 0);
+				obj = !(boolVal == 0);
 				break;
 			case VarEnum.VT_BSTR:
 				obj = Marshal.PtrToStringBSTR(bstrVal);
