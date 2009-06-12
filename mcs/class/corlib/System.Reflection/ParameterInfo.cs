@@ -99,7 +99,15 @@ namespace System.Reflection
 			get {return AttrsImpl;}
 		}
 		public virtual object DefaultValue {
-			get {return DefaultValueImpl;}
+			get {
+				if (ClassImpl == typeof (Decimal)) {
+					/* default values for decimals are encoded using a custom attribute */
+					DecimalConstantAttribute[] attrs = (DecimalConstantAttribute[])GetCustomAttributes (typeof (DecimalConstantAttribute), false);
+					if (attrs.Length > 0)
+						return attrs [0].Value;
+				}					
+				return DefaultValueImpl;
+			}
 		}
 
 		public bool IsIn {

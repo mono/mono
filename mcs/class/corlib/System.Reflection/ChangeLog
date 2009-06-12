@@ -1,3 +1,8 @@
+2009-06-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* ParameterInfo.cs (DefaultValue): Add support for decimals, their default
+	value is encoded using a custom attribute.
+
 2009-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Assembly.cs: Exclude CAS-specific code for NET_2_1
