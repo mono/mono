@@ -285,9 +285,10 @@ For more details see the PACKAGE section in this document
 .ne
 .RE
 .TP
-.I \-platform
-This flag is ignored by Mono's C# compiler and is present only to
-allow MCS to be used as a CSC replacement for msbuild/xbuild.
+.I \-platform:ARCH
+Used to specify the target platform. The possible values are: anycpu,
+x86, x64 or itanium. As of June 2009, the Mono runtime only have support
+to emit anycpu and x86 assemblies.
 .TP
 .I -resource:RESOURCE[,ID]
 Embeds to the given resource file.  The optional ID can be used to
