@@ -39,12 +39,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			cd.MessageVersion = MessageVersion.Default;
 
 			{
-				cd.Open ();
+				cd.Open (TimeSpan.FromSeconds (10));
 				try {
 					Assert.IsNull (st, "#2");
 					// so, can't really test actual slot values as it is null.
 				} finally {
-					cd.Close ();
+					cd.Close (TimeSpan.FromSeconds (10));
 				}
 				return;
 			}
@@ -118,6 +118,11 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			// ordinal process but need to be set manually in this case.
 			try {
 				d.Open ();
+				try {
+					// should not reach here, but in case it didn't, it must be closed.
+					d.Close (TimeSpan.FromSeconds (10));
+				} catch {
+				}
 			} finally {
 				Assert.AreEqual (CommunicationState.Opened, listener.State, "#5");
 			}
@@ -142,6 +147,8 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			// It rejects "unrecognized type" of the channel listener.
 			// Test6 uses IChannelListener<IReplyChannel> and works.
 			d.Open ();
+			// should not reach here, but in case it didn't, it must be closed.
+			d.Close (TimeSpan.FromSeconds (10));
 		}
 
 		[Test]
@@ -168,7 +175,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			Assert.IsNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it is not set after ChannelDispatcher.Open().
 			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
 
-			// d.Close (); // we don't have to even close it.
+			d.Close (); // we don't have to even close it.
 		}
 
 		[Test]
@@ -197,9 +204,8 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 			// This rejects already-opened ChannelDispatcher.
 			h.Open (TimeSpan.FromSeconds (10));
-			// In case it is kept opened, it will block following tests, so close it explicitly.
-			if (h.State == CommunicationState.Opened)
-				h.Close ();
+			// should not reach here, but in case it didn't, it must be closed.
+			h.Close (TimeSpan.FromSeconds (10));
 		}
 
 		[Test]
