@@ -1,3 +1,8 @@
+2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	 * ServiceHostBase.cs : do not give up releasing further channel
+	   dispatchers when one of them threw an error. Use strict timeout.
+
 2009-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* InstanceContext.cs :

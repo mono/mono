@@ -554,13 +554,23 @@ namespace System.ServiceModel
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected override void OnClose (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
 			ReleasePerformanceCounters ();
 			List<ChannelDispatcherBase> l = new List<ChannelDispatcherBase> (ChannelDispatchers);
-			foreach (ChannelDispatcherBase e in l)
-				e.Close ();
+			foreach (ChannelDispatcherBase e in l) {
+				try {
+					TimeSpan ts = timeout - (DateTime.Now - start);
+					if (ts < TimeSpan.Zero)
+						e.Abort ();
+					else
+						e.Close (ts);
+				} catch (Exception ex) {
+					Console.WriteLine ("ServiceHostBase failed to close the channel dispatcher:");
+					Console.WriteLine (ex);
+				}
+			}
 		}
 
 		protected override sealed void OnOpen (TimeSpan timeout)
