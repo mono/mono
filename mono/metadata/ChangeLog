@@ -1,3 +1,9 @@
+2009-06-12  Robert Jordan  <robertj@gmx.net>
+
+	* cominterop.c (cominterop_get_ccw): Increment mspec's SizeParamIndex
+	because "this" of the managed signature has become an
+	ordinary parameter in the unmanaged signature.
+
 2009-06-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h (struct _MonoGenericContainer): Add an 'image'
