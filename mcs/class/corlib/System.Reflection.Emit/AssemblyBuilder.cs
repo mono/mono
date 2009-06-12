@@ -771,7 +771,8 @@ namespace System.Reflection.Emit
 		}
 #endif
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		[MonoLimitation ("No support for PE32+ assemblies for AMD64 and IA64")]
 		public 
 #else
 		internal
@@ -780,6 +781,11 @@ namespace System.Reflection.Emit
 		{
 			this.peKind = portableExecutableKind;
 			this.machine = imageFileMachine;
+
+			if ((peKind & PortableExecutableKinds.PE32Plus) != 0 || (peKind & PortableExecutableKinds.Unmanaged32Bit) != 0)
+				throw new NotImplementedException (peKind.ToString ());
+			if (machine == ImageFileMachine.IA64 || machine == ImageFileMachine.AMD64)
+				throw new NotImplementedException (machine.ToString ());
 
 			if (resource_writers != null) {
 				foreach (IResourceWriter writer in resource_writers) {

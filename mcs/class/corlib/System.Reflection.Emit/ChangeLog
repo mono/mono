@@ -1,3 +1,9 @@
+2009-06-12  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyBuilder.cs (Save): throw a NotImplementedException
+	when asked to emit a pe32+ binary for a AMD64 or IA64
+	specific assembly.
+
 2009-06-05  Jb Evain  <jbevain@novell.com>
 
 	* ModuleBuilder.cs (DefineManifestResource): expose during
