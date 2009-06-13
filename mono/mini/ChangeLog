@@ -1,3 +1,13 @@
+2009-06-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (struct MonoBasicBlock): Add 'has_jump_table' and 
+	'has_call_handler' fields.
+
+	* method-to-ir.c (mono_method_to_ir): Set them if needed.
+
+	* branch-opts.c (mono_merge_basic_blocks): Avoid iterating through the
+	first bblock if not needed. Fixes #512790.
+	
 2009-06-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_compile_assembly): Fix a warning.
