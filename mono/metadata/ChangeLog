@@ -1,3 +1,8 @@
+2009-06-13  Geoff Norton  <gnorton@novell.com>
+
+	* domain.c: Ensure that mono_domain_assembly_open actually opens the
+	assembly in the target domain.
+
 2009-06-12  Robert Jordan  <robertj@gmx.net>
 
 	* cominterop.c (cominterop_get_ccw): Increment mspec's SizeParamIndex
