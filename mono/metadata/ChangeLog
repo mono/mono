@@ -1,3 +1,8 @@
+2009-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_from_name): Fix support for assembly references
+	in the EXPORTEDTYPE table. Fixes #511704.
+
 2009-06-13  Geoff Norton  <gnorton@novell.com>
 
 	* domain.c: Ensure that mono_domain_assembly_open actually opens the
