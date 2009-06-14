@@ -1,3 +1,8 @@
+2009-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (libmonoruntimeinclude_HEADERS): Remove duplicate
+	appdomain.h file.
+
 2009-06-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (add_custom_modifiers): Avoid reading invalid memory.
