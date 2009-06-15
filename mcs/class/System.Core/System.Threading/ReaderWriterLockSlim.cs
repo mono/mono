@@ -288,8 +288,11 @@ namespace System.Threading {
 			}
 
 			//Debug.Assert (numUpgradeWaiters > 0);
-			write_thread = upgradable_thread = null;
-			owners = 0;
+			if (upgradable_thread == Thread.CurrentThread)
+				owners = 1;
+			else
+				owners = 0;
+			write_thread = null;
 			ExitAndWakeUpAppropriateWaiters ();
 		}
 
