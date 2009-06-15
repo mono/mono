@@ -1,3 +1,8 @@
+2009-06-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_from_typeref): If the enclosing type is not
+	found return null instead of crashing. Fixes #508487.
+
 2009-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* normalization-tables.h : updated to the latest unicode charcter
