@@ -1,3 +1,7 @@
+2009-06-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* StringTest.cs: Fix make check.
+
 2009-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringTest.cs : added string normalization test.

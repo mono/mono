@@ -4272,7 +4272,7 @@ public class StringTest : TestCase
 	public void Normalize1 ()
 	{
 		string s = "\u03B1\u0313\u0345";
-		Assert ("#1", s.IsNormalized (s, NormalizationForm.FormC));
+		Assert ("#1", s.IsNormalized (NormalizationForm.FormC));
 		AssertEquals ("#2", s, s.Normalize (NormalizationForm.FormC));
 	}
 #endif
