@@ -1,3 +1,7 @@
+2009-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringTest.cs : added string normalization test.
+
 2009-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: test for bug #506757.

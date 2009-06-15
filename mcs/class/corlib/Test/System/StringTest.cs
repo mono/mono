@@ -3,10 +3,10 @@
 // Authors:
 //   Jeffrey Stedfast <fejj@ximian.com>
 //   David Brandt <bucky@keystreams.com>
-//   Kornél Pál <http://www.kornelpal.hu/>
+//   Kornel Pal <http://www.kornelpal.hu/>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2006 Kornél Pál
+// Copyright (C) 2006 Kornel Pal
 // Copyright (C) 2006 Novell (http://www.novell.com)
 //
 
@@ -4266,6 +4266,14 @@ public class StringTest : TestCase
 		AssertEquals ("#11-09-1", "hi", res[0]);
 		AssertEquals ("#11-09-2", "..", res[1]);
 		AssertEquals ("#11-09-3", 2, res.Length);
+	}
+
+	[Test]
+	public void Normalize1 ()
+	{
+		string s = "\u03B1\u0313\u0345";
+		Assert ("#1", s.IsNormalized (s, NormalizationForm.FormC));
+		AssertEquals ("#2", s, s.Normalize (NormalizationForm.FormC));
 	}
 #endif
 }

@@ -1,3 +1,7 @@
+2009-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Environment.cs : bump corlib version.
+
 2009-06-12  Bill Holmes  <billholmes54@gmail.com>
 
 	* Variant.cs (GetValue):  Changing the bool case to use the short value.  

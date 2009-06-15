@@ -1,3 +1,13 @@
+2008-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Normalization.cs : For NFC and NFKC, IsNormalized() was not working
+	  enough to check composed characters. It's not possible without
+	  the actual composition, so just call Normalize() and compare them.
+	  In Normalize() mapping helper didn't pick correct map index since
+	  the table for index stores index for "uncompressed" numbers.
+	* NormalizationTableUtil.cs : updated to the latest UCD.
+	* Makefile : to build test, source file must be downloaded too.
+
 2008-11-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ucd.cs : Write type for *_count. Add notice to not edit

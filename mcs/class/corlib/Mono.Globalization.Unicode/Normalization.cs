@@ -57,9 +57,10 @@ namespace Mono.Globalization.Unicode
 			return mapIdxToComposite [NUtil.Composite.ToIndex (src)];
 		}
 
-		static short GetPrimaryCompositeHelperIndex (int cp)
+		static int GetPrimaryCompositeHelperIndex (int cp)
 		{
-			return helperIndex [NUtil.Helper.ToIndex (cp)];
+			int originalMapIndex = helperIndex [NUtil.Helper.ToIndex (cp)]; // it returns an index at uncompressed state.
+			return NUtil.Map.ToIndex (originalMapIndex);
 		}
 
 		static int GetPrimaryCompositeCharIndex (object chars, int start)
@@ -363,6 +364,14 @@ namespace Mono.Globalization.Unicode
 				case NormalizationCheck.No:
 					return false;
 				case NormalizationCheck.Maybe:
+					// for those forms with composition, it cannot be checked here
+					switch (type) {
+					case 0: // NFC
+					case 2: // NFKC
+						return source == Normalize (source, type);
+					}
+					// go on...
+					
 					// partly copied from Combine()
 					int cur = i;
 					// FIXME: It should check "blocked" too
