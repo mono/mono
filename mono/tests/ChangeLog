@@ -1,3 +1,9 @@
+2009-06-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* load-exceptions.cs class.cs: Add regression test for #508487.
+
+	* t-missing.cs: Add nested type.
+
 2009-06-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* bug-508538.cs: New regression test for bug #508538.
