@@ -1,3 +1,9 @@
+2009-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* normalization-tables.h : updated to the latest unicode charcter
+	  data.
+	* appdomain.c : bump corlib version.
+
 2009-06-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_from_name): Fix support for assembly references
