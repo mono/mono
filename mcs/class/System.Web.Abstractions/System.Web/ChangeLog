@@ -1,3 +1,8 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* Decorated all classes with the TypeForwardedFrom attribute for
+	the 4.0 profile.
+
 2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpApplicationStateBase.cs

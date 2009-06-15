@@ -1,3 +1,9 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* net_4_0_System.Web.Abstractions.dll.sources: added. In the 4.0
+	profile all classes are compiled into System.Web,
+	System.Web.Abstractions becomes an empty assembly.
+
 2008-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Web.Abstractions_test.dll.sources: new.

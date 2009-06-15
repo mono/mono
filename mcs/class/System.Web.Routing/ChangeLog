@@ -1,3 +1,9 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* net_4_0_System.Web.Routing.dll.sources: added. In the 4.0
+	profile all classes are compiled into System.Web,
+	System.Web.Routing becomes an empty assembly.
+
 2009-05-27  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (LIB_MCS_FLAGS): added support for defining the DEBUG

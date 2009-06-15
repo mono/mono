@@ -1,3 +1,9 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* net_4_0_System.Web.dll.sources: added. System.Web.Routing and
+	System.Web.Abstractions are part of System.Web.dll in the 4.0
+	profile.
+
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added

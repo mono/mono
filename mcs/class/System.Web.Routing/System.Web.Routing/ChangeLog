@@ -1,3 +1,8 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* Decorated all classes with the TypeForwardedFrom attribute for
+	the 4.0 profile.
+
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteValueDictionaryExtensions.cs: if both values are strings in
