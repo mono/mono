@@ -1142,7 +1142,8 @@ namespace System.Net
 				writeStream.Write (bodyBuffer, 0, bodyBufferLength);
 				bodyBuffer = null;
 				writeStream.Close ();
-			} else if (method == "PUT" || method == "POST" || method == "OPTIONS") {
+			} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
+					method != "DELETE" && method != "TRACE") {
 				if (getResponseCalled && !writeStream.RequestWritten)
 					writeStream.WriteRequest ();
 			}
