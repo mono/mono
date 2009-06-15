@@ -536,8 +536,15 @@ namespace System.Web.UI {
 
 		void AddAssembliesInBin ()
 		{
-			foreach (string s in HttpApplication.BinDirectoryAssemblies)
-				assemblies.Add (s);
+			Assembly asm;
+			foreach (string s in HttpApplication.BinDirectoryAssemblies) {
+				try {
+					asm = Assembly.LoadFrom (s);
+					assemblies.Add (asm.Location);
+				} catch (BadImageFormatException) {
+					// ignore silently
+				}
+			}
 		}
 		
 		internal virtual void AddInterface (string iface)
