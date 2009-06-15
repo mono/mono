@@ -225,6 +225,13 @@ namespace System.Windows.Forms {
 				return pos;
 			}
 
+			void SelectNextOnParent (bool forward)
+			{
+				ContainerControl container = Parent as ContainerControl;
+				if (container != null && container.ActiveControl != null)
+					container.SelectNextControl (container.ActiveControl, forward, true, true, true);
+			}
+
 			protected override void OnGotFocus (EventArgs args)
 			{
 				base.OnGotFocus (args);
@@ -233,23 +240,63 @@ namespace System.Windows.Forms {
 				CurrentItem = (Control.ModifierKeys & Keys.Shift) != 0 ? GetPrev (items.Length) : 0;
 			}
 
-			protected override bool ProcessDialogKey (Keys key)
+			// We need to handle Left/Right for our controls by ourselves, as opposed to
+			// Tab
+			protected override bool ProcessDialogKey (Keys keyData)
 			{
-				if ((key & Keys.Tab) == 0 || !Focused)
-					return base.ProcessDialogKey (key);
-
-				bool forward = (key & Keys.Shift) == 0;
-				int pos = forward ? GetNext (CurrentItem) : GetPrev (CurrentItem);
-
-				if (pos < 0 || pos >= items.Length) { // go to the prev/next control
-					CurrentItem = -1;
-					return base.ProcessDialogKey (key);
+				switch ((keyData & Keys.KeyCode)) {
+					case Keys.Left:
+						SelectNextOnParent (false);
+						return true;
+					case Keys.Right:
+						SelectNextOnParent (true);
+						return true;
 				}
-					
-				CurrentItem = pos;
-				return true;
+
+				return base.ProcessDialogKey (keyData);
 			}
 
+			void NavigateItems (Keys key)
+			{
+				bool forward = true;
+				switch ((key & Keys.KeyCode)) {
+					case Keys.Left:
+						forward = false;
+						break;
+					case Keys.Right:
+						forward = true;
+						break;
+					case Keys.Tab:
+						forward = (Control.ModifierKeys & Keys.Shift) == 0;
+						break;
+				}
+
+				int pos = forward ? GetNext (CurrentItem) : GetPrev (CurrentItem);
+				if (pos < 0 || pos >= items.Length) { // go to the prev/next control
+					CurrentItem = -1;
+					SelectNextOnParent (forward);
+					return;
+				}
+				
+				CurrentItem = pos;
+			}
+
+			internal override bool InternalPreProcessMessage (ref Message msg)
+			{
+				Keys key = (Keys)msg.WParam.ToInt32 ();
+				switch (key) {
+					case Keys.Up:
+					case Keys.Down:
+						return true; // Ignore.
+					case Keys.Left:
+					case Keys.Right:
+					case Keys.Tab:
+						NavigateItems (key);
+						return true;
+				}
+
+				return base.InternalPreProcessMessage (ref msg);
+			}
 		}
 
 		void CloseButtonClicked (object sender, EventArgs e)
