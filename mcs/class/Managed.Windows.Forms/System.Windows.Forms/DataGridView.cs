@@ -737,9 +737,15 @@ namespace System.Windows.Forms {
 					throw new NotSupportedException ("Type cannot be bound.");
 					
 				ClearBinding ();
-				dataSource = value;
-				if (BindingContext != null)
+
+				// Do not set dataSource prior to te BindingContext check because there is some lazy initialization 
+				// code which might result in double call to ReBind here and in OnBindingContextChanged
+				if (BindingContext != null) {
+					dataSource = value;
 					ReBind ();
+				} else {
+					dataSource = value;
+				}
 				OnDataSourceChanged (EventArgs.Empty);
 			}
 		}

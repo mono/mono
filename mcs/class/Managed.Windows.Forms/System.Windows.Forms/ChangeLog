@@ -1,5 +1,11 @@
 2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs: Avoid calling ReBind twice during the initial data 
+	binding.
+	[Fixes bug #512807]
+
+2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Suppress invalidation during data binding.
 	[Fixes part of bug #512807]
 
