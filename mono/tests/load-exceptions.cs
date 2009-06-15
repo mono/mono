@@ -216,6 +216,15 @@ public class Tests : LoadMissing {
 	public static int test_0_missing_assembly_in_newobj () {
 		return check_type_load (new TestDel (missing_assembly_in_newobj));
 	}
+
+	public static void missing_outer () {
+		new Missing.Foo1.InnerFoo ();
+	}
+
+	//Regression test for #508487
+	public static int test_0_missing_outer_type_in_typeref () {
+		return check_type_load (new TestDel (missing_outer));
+	}
 	
 	//
 	// Missing classes referenced from metadata

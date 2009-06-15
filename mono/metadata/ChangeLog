@@ -1,3 +1,9 @@
+2009-06-15 Rodrigo Kumpera  <rkumpera@novell.com>
+	Backport of r136134.
+
+	* class.c (mono_class_from_typeref): If the enclosing type is not
+	found return null instead of crashing. Fixes #508487.
+
 2009-06-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (libmonoruntimeinclude_HEADERS): Remove duplicate

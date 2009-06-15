@@ -1,3 +1,11 @@
+2009-06-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Backport of r136135.
+
+	* load-exceptions.cs: Add regression test for #508487.
+
+	* t-missing.cs: Add nested type.
+
 2009-06-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-508538.cs: New regression test.
