@@ -1,3 +1,8 @@
+2009-06-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: for unknown methods, always send the request once
+	we are connected even if there's no writeStream. Fixes bug #513087.
+
 2009-06-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: ProtocolViolationException is not thrown in
