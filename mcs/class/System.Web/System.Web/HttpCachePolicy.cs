@@ -345,7 +345,7 @@ namespace System.Web
 					headers.Add (new UnknownResponseHeader ("Pragma", "no-cache"));
 				}
 			} else {
-				if (MaxAge.TotalSeconds != 0)
+				if (HaveMaxAge)
 					cc = String.Concat (cc, ", max-age=", ((long) MaxAge.TotalSeconds).ToString ());
 
 				if (have_expire_date) {
