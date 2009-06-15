@@ -106,19 +106,21 @@ namespace System.Windows.Forms
 			return Add (value as DataGridViewRow);
 		}
 
-		internal int AddInternal (DataGridViewRow dataGridViewRow, bool sharable)
+		private int AddCore (DataGridViewRow dataGridViewRow, bool sharable)
 		{
 			if (dataGridView.Columns.Count == 0)
 				throw new InvalidOperationException ("DataGridView has no columns.");
 			
 			int result;
 			
+			dataGridViewRow.SetDataGridView (dataGridView);
+
 			// 
 			// Add the row just before the editing row (if there is an editing row).
 			// 
 			int editing_index = -1;
 			if (DataGridView != null && DataGridView.EditingRow != null && DataGridView.EditingRow != dataGridViewRow) {
-				editing_index = list.IndexOf (DataGridView.EditingRow);
+				editing_index = list.Count - 1; // always the last row
 				DataGridView.EditingRow.SetIndex (list.Count);
 			}
 			
@@ -134,16 +136,17 @@ namespace System.Windows.Forms
 			} else {
 				dataGridViewRow.SetIndex (result);
 			}
-			dataGridViewRow.SetDataGridView (dataGridView);
+
 			CompleteRowCells (dataGridViewRow);
 			for (int i = 0; i < dataGridViewRow.Cells.Count; i++) {
 				dataGridViewRow.Cells [i].SetOwningColumn (dataGridView.Columns [i]);
 			}
 
-			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewRow));
 			if (raiseEvent) {
+				OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewRow));
 				DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (result, 1));
 			}
+
 			return result;
 		}
 
@@ -163,7 +166,7 @@ namespace System.Windows.Forms
 		{
 			if (dataGridView.DataSource != null)
 				throw new InvalidOperationException ("DataSource of DataGridView is not null.");
-			return AddInternal (dataGridViewRow, true);
+			return AddCore (dataGridViewRow, true);
 		}
 		
 		private bool CanBeShared (DataGridViewRow row)
@@ -212,7 +215,7 @@ namespace System.Windows.Forms
 				throw new InvalidOperationException("DataGridView is in virtual mode.");
 
 			DataGridViewRow row = (DataGridViewRow)dataGridView.RowTemplateFull;
-			int result = AddInternal (row, false);
+			int result = AddCore (row, false);
 			row.SetValues(values);
 			return result;
 		}
@@ -239,15 +242,17 @@ namespace System.Windows.Forms
 			if (dataGridView.DataSource != null)
 				throw new InvalidOperationException ("DataSource of DataGridView is not null.");
 
-			raiseEvent = false;
 			int count = 0;
 			int lastIndex = -1;
+			raiseEvent = false;
 			foreach (DataGridViewRow row in dataGridViewRows) {
 				lastIndex = Add (row);
 				count++;
 			}
-			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (lastIndex - count + 1, count));
 			raiseEvent = true;
+
+			DataGridView.OnRowsAddedInternal (new DataGridViewRowsAddedEventArgs (lastIndex - count + 1, count));
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewRows));
 		}
 
 		public virtual void Clear ()
@@ -409,6 +414,7 @@ namespace System.Windows.Forms
 			Insert (index, value as DataGridViewRow);
 		}
 
+		// FIXME: Do *not* allow insertation *after* the editing row!
 		public virtual void Insert (int rowIndex, DataGridViewRow dataGridViewRow)
 		{
 			dataGridViewRow.SetIndex (rowIndex);
@@ -534,18 +540,11 @@ namespace System.Windows.Forms
 				CollectionChanged (this, e);
 		}
 
-		internal void InternalAdd (DataGridViewRow dataGridViewRow)
+		internal void AddInternal (DataGridViewRow dataGridViewRow, bool sharable)
 		{
-			dataGridViewRow.SetDataGridView (dataGridView);
-			
-			// Add the row just before the editing row (if there is an editing row).
-			if (DataGridView != null && DataGridView.EditingRow != null && DataGridView.NewRowIndex >= 0) {
-				DataGridView.EditingRow.SetIndex (list.Count);
-				list.Insert (DataGridView.NewRowIndex, dataGridViewRow);
-			} else
-				list.Add (dataGridViewRow);
-				
-			dataGridViewRow.SetIndex (list.IndexOf (dataGridViewRow));
+			raiseEvent = false;
+			AddCore (dataGridViewRow, sharable);
+			raiseEvent = true;
 		}
 
 		internal ArrayList RowIndexSortedArrayList {

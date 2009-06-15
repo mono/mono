@@ -1,5 +1,10 @@
 2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
 
+	* DataGridView.cs, DataGridViewRowCollection.cs: Clean up a bit and 
+	optimize for batch adding rows.
+
+2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
 	* DataGridView.cs: Avoid calling ReBind twice during the initial data 
 	binding.
 	[Fixes bug #512807]

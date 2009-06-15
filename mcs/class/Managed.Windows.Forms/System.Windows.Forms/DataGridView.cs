@@ -1035,10 +1035,10 @@ namespace System.Windows.Forms {
 					if (ColumnCount == 0)
 						ColumnCount = 1;
 
-					for (int i = rows.Count; i < value; i++) {
-						DataGridViewRow row = (DataGridViewRow) RowTemplateFull;
-						rows.AddInternal (row, false);
-					}
+					List<DataGridViewRow> newRows = new List<DataGridViewRow> (value - rows.Count);
+					for (int i = rows.Count; i < value; i++)
+						newRows.Add ((DataGridViewRow) RowTemplateFull);
+					rows.AddRange (newRows.ToArray());
 				}
 			}
 		}
@@ -4981,7 +4981,7 @@ namespace System.Windows.Forms {
 
 			// Select the first row if we are not databound. 
 			// If we are databound selection is managed by the data manager.
-			if (IsHandleCreated && DataManager == null && Rows.Count == 1 && Columns.Count > 0)
+			if (IsHandleCreated && DataManager == null && CurrentCell == null && Rows.Count > 0 && Columns.Count > 0)
 				MoveCurrentCell (ColumnDisplayIndexToIndex (0), 0, true, false, false, true);
 
 			AutoResizeColumnsInternal ();
@@ -6012,10 +6012,9 @@ namespace System.Windows.Forms {
 				return;
 				
 			DataGridViewRow row = (DataGridViewRow)RowTemplateFull;
-			rows.InternalAdd (row);
+			rows.AddInternal (row, false);
 
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (element);
-			
 			foreach (PropertyDescriptor property in properties) {
 				if (property.PropertyType == typeof (IBindingList))
 					continue;
