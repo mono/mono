@@ -1,3 +1,8 @@
+2009-06-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (free_inflated_method): Call 
+	mono_marshal_free_inflated_wrappers (), which was missed earlier.
+
 2009-06-15 Rodrigo Kumpera  <rkumpera@novell.com>
 	Backport of r136134.
 
