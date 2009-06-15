@@ -2896,7 +2896,8 @@ namespace System.Windows.Forms {
 			if (rowIndex < 0 || rowIndex >= rows.Count)
 				throw new ArgumentOutOfRangeException ("Row index is out of range.");
 
-			Invalidate (GetCellDisplayRectangle (columnIndex, rowIndex, true));
+			if (!is_binding)
+				Invalidate (GetCellDisplayRectangle (columnIndex, rowIndex, true));
 		}
 
 		public void InvalidateColumn (int columnIndex)
@@ -2904,7 +2905,8 @@ namespace System.Windows.Forms {
 			if (columnIndex < 0 || columnIndex >= columns.Count)
 				throw new ArgumentOutOfRangeException ("Column index is out of range.");
 
-			Invalidate (GetColumnDisplayRectangle (columnIndex, true));
+			if (!is_binding)
+				Invalidate (GetColumnDisplayRectangle (columnIndex, true));
 		}
 
 		public void InvalidateRow (int rowIndex)
@@ -2912,7 +2914,8 @@ namespace System.Windows.Forms {
 			if (rowIndex < 0 || rowIndex >= rows.Count)
 				throw new ArgumentOutOfRangeException ("Row index is out of range.");
 
-			Invalidate (GetRowDisplayRectangle (rowIndex, true));
+			if (!is_binding)
+				Invalidate (GetRowDisplayRectangle (rowIndex, true));
 		}
 
 		public virtual void NotifyCurrentCellDirty (bool dirty) {
@@ -6126,8 +6129,6 @@ namespace System.Windows.Forms {
 			}
 
 			PrepareEditingRow (false, true);
-			PerformLayout();
-			Invalidate ();
 		}
 		
 		private void MoveCurrentCell (int x, int y, bool select, bool isControl, bool isShift, bool scroll)
@@ -6317,10 +6318,15 @@ namespace System.Windows.Forms {
 		private void ReBind ()
 		{
 			if (!is_binding) {
+				SuspendLayout ();
+
 				is_binding = true;
 				ClearBinding ();
 				DoBinding ();
 				is_binding = false;
+
+				ResumeLayout (true);
+				Invalidate ();
 			}
 		}
 		

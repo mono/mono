@@ -1,3 +1,8 @@
+2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
+
+	* DataGridView.cs: Suppress invalidation during data binding.
+	[Fixes part of bug #512807]
+
 2009-06-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* PrintPreviewDialog.cs: Tune the navigation among the buttons and
