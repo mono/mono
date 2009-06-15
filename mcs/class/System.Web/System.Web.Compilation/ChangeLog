@@ -1,3 +1,9 @@
+2009-06-15  Marek Habersack  <mhabersack@novell.com>
+
+	* AspGenerator.cs: CreateRootBuilder quits when root builder
+	already exist. This can happen when recursively parsing an include
+	file. Fixes bug #512028
+
 2009-06-12  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: avoid a NREX in FixVirtualPath

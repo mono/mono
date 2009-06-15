@@ -458,6 +458,9 @@ namespace System.Web.Compilation
 		
 		void CreateRootBuilder (Stream inputStream, string filename)
 		{
+			if (rootBuilder != null)
+				return;
+			
 			Type rootBuilderType = GetRootBuilderType (inputStream, filename);
 			rootBuilder = Activator.CreateInstance (rootBuilderType) as RootBuilder;
 			if (rootBuilder == null)
