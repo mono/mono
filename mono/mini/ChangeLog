@@ -1,3 +1,8 @@
+2009-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-mips.c (mono_arch_get_throw_exception_by_name): Fix the
+	mips build.
+
 2009-06-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (struct MonoBasicBlock): Add 'has_jump_table' and 
