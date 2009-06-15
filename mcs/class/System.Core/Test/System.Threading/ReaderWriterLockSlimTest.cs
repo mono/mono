@@ -391,5 +391,18 @@ namespace MonoTests.System.Threading
 				t.Join ();
 			}
 		}
+
+		[Test]
+		public void EnterWriteLock_After_ExitUpgradeableReadLock ()
+		{
+			var v = new ReaderWriterLockSlim ();
+
+			v.EnterUpgradeableReadLock ();
+			Assert.IsTrue (v.TryEnterWriteLock (100));
+			v.ExitWriteLock ();
+			v.ExitUpgradeableReadLock ();
+			Assert.IsTrue (v.TryEnterWriteLock (100));
+			v.ExitWriteLock ();
+		}
 	}
 }
