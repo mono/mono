@@ -1,3 +1,7 @@
+2009-06-14  Robert Jordan  <robertj@gmx.net>
+
+	* ScriptHandlerFactory.cs: handle precompiled web services.
+
 2009-04-03  Marek Habersack  <mhabersack@novell.com>
 
 	* LogicalTypeInfo.cs: don't throw NREX when the passed type

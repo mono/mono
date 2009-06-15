@@ -30,6 +30,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Web.Compilation;
 using System.Web.Services.Protocols;
 using System.Web.UI;
 
@@ -47,14 +48,20 @@ namespace System.Web.Script.Services
 			HttpRequest request = context.Request;
 			string contentType = request.ContentType;
 			if (!String.IsNullOrEmpty (contentType) && contentType.StartsWith ("application/json", StringComparison.OrdinalIgnoreCase)) {
-				Type handlerType;
+				Type handlerType = null;
 				if (url.EndsWith (ProfileService.DefaultWebServicePath, StringComparison.Ordinal))
 					handlerType = typeof (ProfileService);
 				else
 				if (url.EndsWith (AuthenticationService.DefaultWebServicePath, StringComparison.Ordinal))
 					handlerType = typeof(AuthenticationService);
-				else
-					handlerType = WebServiceParser.GetCompiledType (url, context);
+				else {
+#if !TARGET_JVM
+					handlerType = BuildManager.GetCompiledType (url);
+#endif
+					if (handlerType == null)
+						handlerType = WebServiceParser.GetCompiledType (url, context);
+				}
+
 				return RestHandler.GetHandler (context, handlerType, url);
 			}
 			if (request.PathInfo.StartsWith ("/js", StringComparison.OrdinalIgnoreCase))
