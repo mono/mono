@@ -1,3 +1,8 @@
+2009-06-15  Andreia Gaita  <avidigal@novell.com>
+
+	* data/config.in: add libcups dllmap entry
+	[Fixes #511414, backported from r136039]
+
 2009-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Disable USE_MUNMAP on ppc to work around #504411.
