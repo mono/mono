@@ -1,3 +1,9 @@
+2009-06-15  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateParser.cs: AddAssembliesInBin (1.1 profile) tries to
+	load every assembly in order to see if it's a valid one. All bad
+	dll image errors are silently ignored. Fixes bug #315816
+
 2009-06-05  Marek Habersack  <mhabersack@novell.com>
 
 	* Page.cs: InitializeTheme uses WebConfigurationManager.GetSection

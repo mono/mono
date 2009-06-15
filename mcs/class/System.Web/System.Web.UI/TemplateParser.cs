@@ -537,8 +537,15 @@ namespace System.Web.UI {
 #if !NET_2_0
 		void AddAssembliesInBin ()
 		{
-			foreach (string s in HttpApplication.BinDirectoryAssemblies)
-				assemblies.Add (s);
+			Assembly asm;
+			foreach (string s in HttpApplication.BinDirectoryAssemblies) {
+				try {
+					asm = Assembly.LoadFrom (s);
+					assemblies.Add (asm.Location);
+				} catch (BadImageFormatException) {
+					// ignore silently
+				}
+			}
 		}
 #endif
 		
