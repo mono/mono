@@ -1,3 +1,8 @@
+2009-06-15  Miguel de Icaza  <miguel@novell.com>
+
+	* MonoTODOAttribute.cs: Thin diet, no point in having virtual
+	methods and overrides that do the same thing.
+
 2009-06-10  Marek Safar  <marek.safar@gmail.com>
 
 	* Consts.cs.in: Add AssemblySystemCore_3_5.
