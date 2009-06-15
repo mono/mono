@@ -1,3 +1,7 @@
+2009-06-14  Robert Jordan  <robertj@gmx.net>
+
+	* ScriptHandlerFactory.cs: handle precompiled web services.
+
 2009-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ClientProxyHandler.cs: set cacheability to public.
