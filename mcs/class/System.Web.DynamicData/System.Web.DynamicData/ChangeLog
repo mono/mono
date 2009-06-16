@@ -1,3 +1,9 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicDataManager.cs, DynamicDataExtensions.cs: use new
+	DataBoundControl.DataSourceObject instead of
+	InternalGetDataSource.
+
 2009-06-12  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTable.cs: implemented correct detection of foreign key

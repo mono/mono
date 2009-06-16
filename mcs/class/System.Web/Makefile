@@ -198,12 +198,19 @@ LIB_MCS_FLAGS = \
 ifneq ($(CYCLIC_DEPS:%=../lib/$(PROFILE)/%), $(CYCLIC_DEP_FILES))
 NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
-all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources echo-warning
-.PHONY: echo-warning
+all-local: System.Web/UplevelHelper.cs resources/TranslationResources.resources echo-warning echo-warning-systemcore
+.PHONY: echo-warning echo-warning-systemcore
 
 ifeq   (, $(strip $(CYCLIC_DEP_FILES)))
 echo-warning:
 	@echo "** Warning: System.Web.dll built without parts that depend on: $(CYCLIC_DEPS)"
+endif
+endif
+
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+ifndef SYSTEMCORE_DEP_FILE
+echo-warning-systemcore:
+	@echo "** Warning: System.Web.dll built without parts that depend on $(SYSTEMCORE_DEP)"
 endif
 endif
 

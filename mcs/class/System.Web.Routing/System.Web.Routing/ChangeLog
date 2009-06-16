@@ -1,5 +1,11 @@
 2009-06-16  Marek Habersack  <mhabersack@novell.com>
 
+	* RouteValueDictionaryExtensions.cs: do not compile if
+	SYSTEMCORE_DEP is not defined
+
+	* PatternParser.cs: if SYSTEMCORE_DEP is not defined, do not
+	compile parts which require RouteValueDictionaryExtensions.
+
 	* Decorated all classes with the TypeForwardedFrom attribute for
 	the 4.0 profile.
 

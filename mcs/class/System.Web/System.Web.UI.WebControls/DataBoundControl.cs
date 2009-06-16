@@ -204,10 +204,13 @@ namespace System.Web.UI.WebControls {
 #if NET_4_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public IDataSource DataSourceObject {
+		public
+#else
+		internal
+#endif
+		IDataSource DataSourceObject {
 			get { return GetDataSource (); }
 		}
-#endif
 		
 		// 
 		// See DataBoundControl.MarkAsDataBound msdn doc for the code example

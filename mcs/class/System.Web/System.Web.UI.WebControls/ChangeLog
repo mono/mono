@@ -10,8 +10,8 @@
 	interface.
 
 	* DataBoundControl.cs: implemented 4.0 property DataSourceObject
-	and made the InternalPerformDataBinding method internal for the
-	4.0 profile.
+	(internal for 2.0) and made the InternalPerformDataBinding method
+	internal for the 4.0 profile.
 
 2009-06-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 

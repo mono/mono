@@ -118,7 +118,7 @@ namespace System.Web.DynamicData
 
 			DataBoundControl dbc = control as DataBoundControl;
 			if (dbc != null) {
-				IDynamicDataSource dds = dbc.InternalGetDataSource () as IDynamicDataSource;
+				IDynamicDataSource dds = dbc.DataSourceObject as IDynamicDataSource;
 				if (dds == null)
 					return;
 

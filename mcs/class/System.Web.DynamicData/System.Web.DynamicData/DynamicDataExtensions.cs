@@ -83,7 +83,7 @@ namespace System.Web.DynamicData
 			while (current != null) {
 				DataBoundControl dbc = current as DataBoundControl;
 				if (dbc != null) {
-					IDynamicDataSource dds = dbc.InternalGetDataSource () as IDynamicDataSource;
+					IDynamicDataSource dds = dbc.DataSourceObject as IDynamicDataSource;
 					if (dds != null)
 						return dds.GetTable ();
 				}
