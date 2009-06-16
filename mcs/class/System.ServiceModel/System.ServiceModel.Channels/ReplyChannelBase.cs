@@ -38,12 +38,9 @@ namespace System.ServiceModel.Channels
 {
 	internal abstract class ReplyChannelBase : ChannelBase, IReplyChannel
 	{
-		ChannelListenerBase channel_listener;
-
 		public ReplyChannelBase (ChannelListenerBase listener)
 			: base (listener)
 		{
-			this.channel_listener = listener;
 		}
 
 		public abstract EndpointAddress LocalAddress { get; }
@@ -51,7 +48,7 @@ namespace System.ServiceModel.Channels
 		public virtual bool TryReceiveRequest ()
 		{
 			RequestContext dummy;
-			return TryReceiveRequest (channel_listener.DefaultReceiveTimeout, out dummy);
+			return TryReceiveRequest (DefaultReceiveTimeout, out dummy);
 		}
 
 		public abstract bool TryReceiveRequest (TimeSpan timeout, out RequestContext context);
@@ -82,7 +79,7 @@ namespace System.ServiceModel.Channels
 
 		public virtual bool WaitForRequest ()
 		{
-			return WaitForRequest (channel_listener.DefaultReceiveTimeout);
+			return WaitForRequest (DefaultReceiveTimeout);
 		}
 
 		public abstract bool WaitForRequest (TimeSpan timeout);
@@ -106,14 +103,14 @@ namespace System.ServiceModel.Channels
 
 		public virtual RequestContext ReceiveRequest ()
 		{
-			return ReceiveRequest (channel_listener.DefaultReceiveTimeout);
+			return ReceiveRequest (DefaultReceiveTimeout);
 		}
 
 		public abstract RequestContext ReceiveRequest (TimeSpan timeout);
 
 		public virtual IAsyncResult BeginReceiveRequest (AsyncCallback callback, object state)
 		{
-			return BeginReceiveRequest (channel_listener.DefaultReceiveTimeout, callback, state);
+			return BeginReceiveRequest (DefaultReceiveTimeout, callback, state);
 		}
 
 		Func<TimeSpan,RequestContext> recv_delegate;
