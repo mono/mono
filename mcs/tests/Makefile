@@ -51,8 +51,7 @@ mcs-casts.out: casts-mcs.exe
 
 test-casts: boot-casts.out mcs-casts.out
 	cmp $^
-
-test-local: casts-boot.exe
+	-rm -f bootstrap-cast.exe casts.cs casts-boot.exe casts-mcs.exe boot-casts.out mcs-casts.out
 
 eval.exe: eval-tests.cs
 
@@ -87,6 +86,9 @@ eval-test:
 endif
 
 check: run-test
+
+test-local:
+	@:
 
 run-test-local: $(TEST_ILS:.il=.dll) eval-test
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS)

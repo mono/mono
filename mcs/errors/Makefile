@@ -48,12 +48,13 @@ all-local $(STD_TARGETS:=-local):
 VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1, $(PROFILE))
 ifdef VALID_PROFILE
 
-test-local: $(TEST_SUPPORT_FILES)
-
 check: run-test-local
 
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
+
+test-local:
+	@:
 
 run-test-local: run-mcs-tests 
 
@@ -79,10 +80,9 @@ COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
-
-run-mcs-tests:
 	rm -f *.exe *.mdb
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
+	-rm -f $(TEST_SUPPORT_FILES)
 
 cecil:
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:../tests/gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS) -verbose

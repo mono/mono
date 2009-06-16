@@ -1,3 +1,7 @@
+2009-06-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (test-local): Empty out.
+
 2009-06-12  Jb Evain  <jbevain@novell.com>
 
 	* gtest-449.cs
