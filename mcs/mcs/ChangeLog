@@ -1,5 +1,9 @@
 2009-06-16  Marek Safar  <marek.safar@gmail.com>
 
+	* ecore.cs: Report inaccessible delegate methods correctly.
+
+2009-06-16  Marek Safar  <marek.safar@gmail.com>
+
 	* parameter.cs, expression.cs, ecore.cs, class.cs, delegate.cs,
 	cs-parser.jay: Implemented C# 4.0 optional parameters.
 

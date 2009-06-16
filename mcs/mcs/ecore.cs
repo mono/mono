@@ -4134,7 +4134,7 @@ namespace Mono.CSharp {
 				// return error info about the closest match
 				//
 				if (best_candidate != null) {
-					if (CustomErrorHandler != null && CustomErrorHandler.NoExactMatch (ec, best_candidate))
+					if (CustomErrorHandler != null && !has_inaccessible_candidates_only && CustomErrorHandler.NoExactMatch (ec, best_candidate))
 						return null;
 
 					AParametersCollection pd = TypeManager.GetParameterData (best_candidate);
