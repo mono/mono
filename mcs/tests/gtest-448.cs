@@ -44,13 +44,12 @@ public class C
 
 		info = typeof (C).GetMethod ("TestC").GetParameters ();
 
-/* RUNTIME BUG #512330
 		if (info[0].DefaultValue.GetType () != typeof (decimal))
 			return 21;
 
-		if ((int) info[0].DefaultValue != decimal.MaxValue)
+		if ((decimal) info[0].DefaultValue != decimal.MaxValue)
 			return 22;
-*/
+
 		if (!info[0].IsOptional)
 			return 23;
 

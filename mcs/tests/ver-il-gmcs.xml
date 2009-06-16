@@ -11571,7 +11571,65 @@
         <size>1</size>
       </method>
       <method name="Int32 Main()">
-        <size>242</size>
+        <size>309</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-449.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>59</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-450.cs">
+    <type name="Program">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>59</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-451.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Test(Int32, System.String, Boolean, UInt16)">
+        <size>2</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>217</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-452.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Foo[T](T, T)">
+        <size>1</size>
+      </method>
+      <method name="Void TestParams(System.Int32[])">
+        <size>6</size>
+      </method>
+      <method name="Void TestParams(Int32)">
+        <size>1</size>
+      </method>
+      <method name="System.String get_Item(Int32, System.String)">
+        <size>2</size>
+      </method>
+      <method name="Void set_Item(Int32, System.String, System.String)">
+        <size>4</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>109</size>
       </method>
     </type>
   </test>
@@ -35768,6 +35826,33 @@
       </method>
     </type>
   </test>
+  <test name="test-722.cs">
+    <type name="Blah">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Int32 Foo(Int32, Int32)">
+        <size>4</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>46</size>
+      </method>
+    </type>
+    <type name="Blah+MyDelegate">
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+      <method name="Int32 Invoke(Int32, Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-73.cs">
     <type name="Abstract">
       <method name="Void .ctor()">
@@ -42311,6 +42396,19 @@
       </method>
       <method name="Void Foo()">
         <size>1</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-25.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void Partial(Int32)">
+        <size>14</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>8</size>
       </method>
     </type>
   </test>
