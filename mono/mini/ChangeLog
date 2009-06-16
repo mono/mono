@@ -1,5 +1,7 @@
 2009-06-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c (asm_writer_emit_symbol_diff): Call get_label ().
+
 	* dwarfwriter.c (emit_cie): Emit a separate symbol for the cie start, as
 	gcc does.
 	(emit_fde): Ditto.
