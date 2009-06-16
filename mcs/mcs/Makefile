@@ -56,7 +56,7 @@ clean-program:
 
 $(PROGRAM) $(PROGRAM).config: $(dir $(PROGRAM))/.stamp
 
-$(PROGRAM): $(topdir)/class/lib/net_1_1/mcs.exe
+$(PROGRAM): $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/mcs.exe
 	cp $< $@
 
 $(PROGRAM).config: gmcs.exe.config
