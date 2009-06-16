@@ -1,3 +1,9 @@
+2009-06-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_cie): Emit a separate symbol for the cie start, as
+	gcc does.
+	(emit_fde): Ditto.
+
 2009-06-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-mips.c (mono_arch_get_throw_exception_by_name): Fix the
