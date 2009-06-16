@@ -1,5 +1,8 @@
 2009-06-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c (mono_dwarf_writer_emit_base_info): Emit some line number
+	infor even if emit_line is FALSE, as the apple linker seems to require it.
+
 	* image-writer.c (asm_writer_emit_symbol_diff): Call get_label ().
 
 	* dwarfwriter.c (emit_cie): Emit a separate symbol for the cie start, as
