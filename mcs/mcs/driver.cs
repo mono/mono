@@ -1905,8 +1905,8 @@ namespace Mono.CSharp
 
 			public void Emit ()
 			{
-				RootContext.ToplevelTypes.Builder.DefineManifestResource (
-					name, new FileStream (file, FileMode.Open, FileAccess.Read), attributes);
+				using (FileStream fs = new FileStream (file, FileMode.Open, FileAccess.Read))
+					RootContext.ToplevelTypes.Builder.DefineManifestResource (name, fs, attributes);
 			}
 
 			public string FileName {

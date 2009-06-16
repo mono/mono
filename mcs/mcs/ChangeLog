@@ -1,3 +1,7 @@
+2009-06-16  Marek Safar  <marek.safar@gmail.com>
+
+	* driver.cs: Close resource handlers.
+
 2009-06-12  Jb Evain  <jbevain@novell.com>
 
 	* rootcontext.cs: add a Platform field.
