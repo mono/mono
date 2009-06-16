@@ -580,10 +580,13 @@ namespace System.Windows.Forms
 			if (e.Button.DropDownMenu == null)
 				return;
 
-			ToolBarItem item = current_item;
+			ShowDropDownMenu (current_item);
+		}
 
+		internal void ShowDropDownMenu (ToolBarItem item)
+		{
 			Point loc = new Point (item.Rectangle.X + 1, item.Rectangle.Bottom + 1);
-			((ContextMenu) e.Button.DropDownMenu).Show (this, loc);
+			((ContextMenu) item.Button.DropDownMenu).Show (this, loc);
 
 			item.DDPressed = false;
 			item.Hilight = false;

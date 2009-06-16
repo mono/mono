@@ -207,6 +207,9 @@ namespace System.Windows.Forms {
 
 		class PrintToolBar : ToolBar
 		{
+			bool dropdownmenu_visible;
+			ContextMenu dropdownmenu;
+
 			public int GetNext (int pos)
 			{
 				// Select the next button that is *not* a separator
@@ -287,7 +290,24 @@ namespace System.Windows.Forms {
 				switch (key) {
 					case Keys.Up:
 					case Keys.Down:
-						return true; // Ignore.
+						// We know that this toolbar only has one DropDownButton
+						if (CurrentItem != -1 && items [CurrentItem].Button.Style == ToolBarButtonStyle.DropDownButton) {
+							if (dropdownmenu == null) {
+								dropdownmenu = (ContextMenu)(items [CurrentItem].Button.DropDownMenu);
+#if NET_2_0
+								dropdownmenu.Collapse += new EventHandler (OnDropDownMenuCollapse);
+#endif
+							}
+
+							if (!dropdownmenu_visible) {
+								items [CurrentItem].DDPressed = dropdownmenu_visible = true;
+								items [CurrentItem].Invalidate ();
+
+								ShowDropDownMenu (items [CurrentItem]);
+							} else
+								dropdownmenu.ProcessCmdKey (ref msg, key);
+						}
+						return true;
 					case Keys.Left:
 					case Keys.Right:
 					case Keys.Tab:
@@ -297,6 +317,13 @@ namespace System.Windows.Forms {
 
 				return base.InternalPreProcessMessage (ref msg);
 			}
+
+#if NET_2_0
+			void OnDropDownMenuCollapse (object o, EventArgs args)
+			{
+				dropdownmenu_visible = false;
+			}
+#endif
 		}
 
 		void CloseButtonClicked (object sender, EventArgs e)

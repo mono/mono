@@ -1,3 +1,10 @@
+2009-06-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolBar.cs: Expose as internal the code used to show a dropdown menu.
+	* PrintPreviewDialog.cs: Handle the down/up arrow keys for our
+	DropDown element.
+	Fixes #509152.
+
 2009-06-16  Ivan N. Zlatev  <contact@i-nz.net>
 
 	* DataGridView.cs: Scrolling fixes.
