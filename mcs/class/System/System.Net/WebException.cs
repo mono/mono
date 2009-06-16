@@ -62,6 +62,12 @@ namespace System.Net
 		{
 			this.status = status;
 		}
+		
+		internal WebException (string message, Exception innerException, WebExceptionStatus status)
+			: base (message, innerException)
+		{
+			this.status = status;
+		}
 
 		public WebException(string message, 
 				    Exception innerException,

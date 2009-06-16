@@ -1074,11 +1074,15 @@ namespace System.Net
 
 			if (r != null) {
 				string msg;
-				if (exc == null)
+				WebException wex;
+				if (exc == null) {
 					msg = "Error: " + status;
-				else
+					wex = new WebException (msg, status);
+				} else {
 					msg = String.Format ("Error: {0} ({1})", status, exc.Message);
-				r.SetCompleted (false, new WebException (msg, status));
+					wex = new WebException (msg, exc, status);
+				}
+				r.SetCompleted (false, wex);
 				r.DoCallback ();
 			}
 		}

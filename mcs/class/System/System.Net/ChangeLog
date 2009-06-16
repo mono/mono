@@ -1,3 +1,10 @@
+2009-06-16 Andrés G. Aragoneses <aaragoneses@novell.com>
+
+	* WebConnection.cs: propagate the exception to the request.
+	* WebException.cs: new internal ctor.
+	* HttpWebRequest.cs: use new ctor to encapsulate the innerException.
+	Fixes #323452.
+
 2009-06-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: for unknown methods, always send the request once
