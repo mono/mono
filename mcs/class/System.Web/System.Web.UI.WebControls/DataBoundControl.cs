@@ -62,11 +62,6 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 		
-		internal IDataSource InternalGetDataSource ()
-		{
-			return GetDataSource ();
-		}
-		
 		protected virtual IDataSource GetDataSource ()
 		{
 			if (IsBoundUsingDataSourceID) {
@@ -205,6 +200,14 @@ namespace System.Web.UI.WebControls {
 				base.DataSourceID = value;
 			}
 		}
+
+#if NET_4_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		public IDataSource DataSourceObject {
+			get { return GetDataSource (); }
+		}
+#endif
 		
 		// 
 		// See DataBoundControl.MarkAsDataBound msdn doc for the code example
@@ -240,8 +243,13 @@ namespace System.Web.UI.WebControls {
 			// retrievedData collection to elements of the data-bound control.
 			InternalPerformDataBinding (data);
 		}
-		
-		protected void InternalPerformDataBinding (IEnumerable data)
+
+#if NET_4_0
+		internal
+#else
+		protected
+#endif
+		void InternalPerformDataBinding (IEnumerable data)
 		{
 			DataBoundControlAdapter adapter = Adapter as DataBoundControlAdapter;
 			if (adapter != null)

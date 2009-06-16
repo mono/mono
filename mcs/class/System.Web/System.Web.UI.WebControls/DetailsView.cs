@@ -48,6 +48,9 @@ namespace System.Web.UI.WebControls
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DetailsView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IDataItemContainer, INamingContainer, IPostBackEventHandler, IPostBackContainer
+#if NET_4_0
+		, IDataBoundItemControl
+#endif
 	{
 		object dataItem;
 		
@@ -296,6 +299,30 @@ namespace System.Web.UI.WebControls
 				throw new HttpException (String.Format (unhandledEventExceptionMessage, ID, "ItemUpdating"));
 		}
 		
+#if NET_4_0
+		
+		DataBoundControlMode IDataBoundItemControl.Mode {
+			get {
+				switch (CurrentMode) {
+					case DetailsViewMode.ReadOnly:
+						return DataBoundControlMode.ReadOnly;
+
+					case DetailsViewMode.Edit:
+						return DataBoundControlMode.Edit;
+
+					case DetailsViewMode.Insert:
+						return DataBoundControlMode.Insert;
+
+					default:
+						throw new InvalidOperationException (String.Format ("Unsupported CurrentMode value '{0}'", CurrentMode));
+				}
+			}
+		}
+
+		IDataSource IDataBoundControl.DataSourceObject {
+			get { return base.DataSourceObject; }
+		}
+#endif
 		
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute (false)]

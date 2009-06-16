@@ -1,10 +1,10 @@
 //
-// System.Web.UI.HtmlControls.HtmlHeadBuilder
+// System.Web.UI.WebControls.IFieldControl
 //
 // Authors:
-// 	Lluis Sanchez Gual (lluis@novell.com)
+// 	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009 Novell, Inc (http://novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,33 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+using System.ComponentModel;
 using System.Collections;
-using System.Globalization;
 using System.Security.Permissions;
+using System.Web.UI.WebControls;
 
-namespace System.Web.UI.HtmlControls
+namespace System.Web.UI.WebControls
 {
-	// CAS
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class HtmlHeadBuilder : ControlBuilder
+	public interface IFieldControl
 	{
-		public override bool AllowWhitespaceLiterals ()
-		{
-			return false;
-		}
-		
-		public override Type GetChildControlType (string tagName, IDictionary attribs)
-		{
-			if (String.Compare (tagName, "title", StringComparison.OrdinalIgnoreCase) == 0)
-				return typeof (HtmlTitle);
-			if (String.Compare (tagName, "link", StringComparison.OrdinalIgnoreCase) == 0)
-				return typeof (HtmlLink);
-			if (String.Compare (tagName, "meta", StringComparison.OrdinalIgnoreCase) == 0)
-				return typeof (HtmlMeta);
-			return null;
-		}
+		IAutoFieldGenerator FieldsGenerator { get; set; }
 	}
 }
-#endif

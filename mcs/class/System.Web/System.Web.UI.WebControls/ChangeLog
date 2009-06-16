@@ -1,3 +1,18 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* IPersistedSelector.cs: removed AspNetHostingPermission
+	attributes from the 4.0 profile.
+
+	* IDataBoundControl.cs, IDataBoundItemControl.cs,
+	IDataBoundListControl.cs, IFieldControl.cs: added
+
+	* DetailsView.cs: control implements 4.0 IDataBoundItemControl
+	interface.
+
+	* DataBoundControl.cs: implemented 4.0 property DataSourceObject
+	and made the InternalPerformDataBinding method internal for the
+	4.0 profile.
+
 2009-06-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ContentControlBuilderInternal.cs: detect missing

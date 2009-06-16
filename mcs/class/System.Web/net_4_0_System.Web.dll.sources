@@ -935,6 +935,10 @@ System.Web.UI.WebControls/HyperLinkField.cs
 System.Web.UI.WebControls/IButtonControl.cs
 System.Web.UI.WebControls/ICallbackContainer.cs
 System.Web.UI.WebControls/ICompositeControlDesignerAccessor.cs
+System.Web.UI.WebControls/IDataBoundControl.cs
+System.Web.UI.WebControls/IDataBoundItemControl.cs
+System.Web.UI.WebControls/IDataBoundListControl.cs
+System.Web.UI.WebControls/IFieldControl.cs
 System.Web.UI.WebControls/ImageAlign.cs
 System.Web.UI.WebControls/ImageButton.cs
 System.Web.UI.WebControls/Image.cs

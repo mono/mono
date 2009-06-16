@@ -3,7 +3,11 @@
 	* net_4_0_System.Web.dll.sources: added. System.Web.Routing and
 	System.Web.Abstractions are part of System.Web.dll in the 4.0
 	profile.
-	Added System.Web.Routing/PageRouteHandler.cs
+	Added System.Web.Routing/PageRouteHandler.cs,
+	System.Web.UI.WebControls/IDataBoundControl.cs,
+	System.Web.UI.WebControls/IDataBoundItemControl.cs,
+	System.Web.UI.WebControls/IDataBoundListControl.cs,,
+	System.Web.UI.WebControls/IFieldControl.cs
 
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 

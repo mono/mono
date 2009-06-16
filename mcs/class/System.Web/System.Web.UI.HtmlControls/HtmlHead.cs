@@ -4,7 +4,7 @@
 // Authors:
 // 	Lluis Sanchez Gual (lluis@novell.com)
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,8 +39,14 @@ namespace System.Web.UI.HtmlControls
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ControlBuilder (typeof(HtmlHeadBuilder))]
-	public sealed class HtmlHead: HtmlGenericControl, IParserAccessor {
-
+	public sealed class HtmlHead: HtmlGenericControl, IParserAccessor
+	{
+#if NET_4_0
+		string descriptionText;
+		string keywordsText;
+		HtmlMeta descriptionMeta;
+		HtmlMeta keywordsMeta;
+#endif
 		string titleText;
 		HtmlTitle title;
 		//Hashtable metadata;
@@ -94,6 +100,15 @@ namespace System.Web.UI.HtmlControls
 				title = t;
 			}
 
+#if NET_4_0
+			HtmlMeta meta = control as HtmlMeta;
+			if (meta != null) {
+				if (String.Compare ("keywords", meta.Name, StringComparison.OrdinalIgnoreCase) == 0)
+					keywordsMeta = meta;
+				else if (String.Compare ("description", meta.Name, StringComparison.OrdinalIgnoreCase) == 0)
+					descriptionMeta = meta;
+			}
+#endif
 			base.AddedControl (control, index);
 		}
 
@@ -102,6 +117,12 @@ namespace System.Web.UI.HtmlControls
 			if (title == control)
 				title = null;
 
+#if NET_4_0
+			if (keywordsMeta == control)
+				keywordsMeta = null;
+			else if (descriptionMeta == control)
+				descriptionMeta = null;
+#endif
 			base.RemovedControl (control);
 		}
 		
@@ -127,6 +148,38 @@ namespace System.Web.UI.HtmlControls
 //				return metadata;
 //			}
 //		}
+		
+#if NET_4_0
+		public string Description {
+			get {
+				if (descriptionMeta != null)
+					return descriptionMeta.Content;
+				return descriptionText;
+			}
+			
+			set {
+				if (descriptionMeta != null)
+					descriptionMeta.Content = value;
+				else
+					descriptionText = value;
+			}
+		}
+
+		public string Keywords {
+			get {
+				if (keywordsMeta != null)
+					return keywordsMeta.Content;
+				return keywordsText;
+			}
+			
+			set {
+				if (keywordsMeta != null)
+					keywordsMeta.Content = value;
+				else
+					keywordsText = value;
+			}
+		}
+#endif
 		
 		public IStyleSheet StyleSheet {
 			get {

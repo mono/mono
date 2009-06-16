@@ -1,3 +1,10 @@
+2009-06-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlHeadBuilder.cs: use faster String.Compare overloads.
+
+	* HtmlHead.cs: implemented 4.0 properties Description and
+	Keywords.
+
 2009-06-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HtmlTitle.cs: HtmlTitle allows children that are not
