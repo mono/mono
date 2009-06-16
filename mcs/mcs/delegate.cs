@@ -549,7 +549,7 @@ namespace Mono.CSharp {
 		//  delegate's target method
 		// </summary>
 		public static bool VerifyApplicability (EmitContext ec, Type delegate_type,
-							ArrayList args, Location loc)
+							ref ArrayList args, Location loc)
 		{
 			int arg_count;
 
@@ -567,7 +567,9 @@ namespace Mono.CSharp {
 
 			bool params_method = pd.HasParams;
 			bool is_params_applicable = false;
-			bool is_applicable = me.IsApplicable (ec, args, arg_count, ref mb, ref is_params_applicable) == 0;
+			bool is_applicable = me.IsApplicable (ec, ref args, arg_count, ref mb, ref is_params_applicable) == 0;
+			if (args != null)
+				arg_count = args.Count;
 
 			if (!is_applicable && !params_method && arg_count != pd_count) {
 				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
@@ -965,8 +967,7 @@ namespace Mono.CSharp {
 	public class DelegateInvocation : ExpressionStatement {
 
 		readonly Expression InstanceExpr;
-		readonly ArrayList  Arguments;
-
+		ArrayList  Arguments;
 		MethodInfo method;
 		
 		public DelegateInvocation (Expression instance_expr, ArrayList args, Location loc)
@@ -1011,7 +1012,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
+			if (!Delegate.VerifyApplicability (ec, del_type, ref Arguments, loc))
 				return null;
 
 			method = Delegate.GetInvokeMethod (ec.ContainerType, del_type);

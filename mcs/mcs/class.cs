@@ -3836,11 +3836,14 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.PARTIAL) != 0) {
 				for (int i = 0; i < Parameters.Count; ++i) {
-					if (Parameters.FixedParameters[i].ModFlags == Parameter.Modifier.OUT) {
+					IParameterData p = Parameters.FixedParameters [i];
+					if (p.ModFlags == Parameter.Modifier.OUT) {
 						Report.Error (752, Location, "`{0}': A partial method parameters cannot use `out' modifier",
 							GetSignatureForError ());
-						break;
 					}
+
+					if (p.HasDefaultValue && IsPartialImplementation)
+						((Parameter) p).Warning_UselessOptionalParameter ();
 				}
 			}
 		}
@@ -4336,6 +4339,11 @@ namespace Mono.CSharp {
 		{
 			caching_flags |= Flags.PartialDefinitionExists;
 			methodDefinition.MethodBuilder = MethodBuilder;
+
+			for (int i = 0; i < methodDefinition.Parameters.Count; ++i ) {
+				Parameters [i].DefaultValue = methodDefinition.Parameters [i].DefaultValue;
+			}
+
 			if (methodDefinition.attributes == null)
 				return;
 

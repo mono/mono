@@ -7635,7 +7635,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			if (Expr is Constant || Expr is MethodGroupExpr || Expr is AnonymousMethodExpression)
+			if (Expr is Constant || Expr is MethodGroupExpr || Expr is AnonymousMethodExpression || Expr is DefaultValueExpression)
 				return Expr;
 			
 			eclass = Expr.eclass;
@@ -7695,7 +7695,7 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return null;
 
-			if (Expr is Constant || Expr is MethodGroupExpr || Expr is AnonymousMethodExpression)
+			if (Expr is Constant || Expr is MethodGroupExpr || Expr is AnonymousMethodExpression || Expr is DefaultValueExpression)
 				return Expr;
 			
 			eclass = Expr.eclass;

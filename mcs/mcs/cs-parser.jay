@@ -1323,18 +1323,23 @@ method_header
 	  opt_modifiers
 	  PARTIAL
 	  VOID method_declaration_name
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  OPEN_PARENS
+	  {
+	  	arglist_allowed = true;
+	  }
+	  opt_formal_parameter_list CLOSE_PARENS 
 	  {
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_type_parameter_constraints_clauses
 	  {
 		lexer.ConstraintsParsing = false;
+		arglist_allowed = false;
 
 		MemberName name = (MemberName) $5;
-		current_local_parameters = (ParametersCompiled) $7;
+		current_local_parameters = (ParametersCompiled) $8;
 
-		if ($9 != null && name.TypeArguments == null)
+		if ($10 != null && name.TypeArguments == null)
 			Report.Error (80, lexer.Location,
 				      "Constraints are not allowed on non-generic declarations");
 
@@ -1344,7 +1349,7 @@ method_header
 			generic = new GenericMethod (current_namespace, current_class, name,
 						     TypeManager.system_void_expr, current_local_parameters);
 
-			generic.SetParameterInfo ((ArrayList) $10);
+			generic.SetParameterInfo ((ArrayList) $11);
 		}
 
 		int modifiers = (int) $2;
@@ -1363,7 +1368,7 @@ method_header
 			Report.Error (751, name.Location, "A partial method must be declared within a " +
        			"partial class or partial struct");
 		}
-
+		
 		modifiers |= Modifiers.PARTIAL | Modifiers.PRIVATE;
 		
 		method = new Method (current_class, generic, TypeManager.system_void_expr,
@@ -1571,7 +1576,9 @@ fixed_parameter
 			Report.Error (1065, GetLocation ($6), "Optional parameter is not valid in this context");
 		
 		LocatedToken lt = (LocatedToken) $4;
-		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, mod, (Attributes) $1, (Expression) $6, lt.Location);
+		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, mod, (Attributes) $1, lt.Location);
+		if ($6 != null)
+			((Parameter) $$).DefaultValue = (Expression) $6;
 	  }
 	;
 
@@ -2408,9 +2415,7 @@ indexer_declaration
 		} else if (indexer_parameters.Count == 1) {
 			Parameter p = indexer_parameters [0];
 			if (p.HasDefaultValue)
-				Report.Warning (1066, 1, p.Location,
-					"The default value specified for optional parameter 'i' will never be used",
-					p.Name);
+				p.Warning_UselessOptionalParameter ();
 		}
 
 		if (RootContext.Documentation != null) {

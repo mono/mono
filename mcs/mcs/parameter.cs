@@ -217,7 +217,9 @@ namespace Mono.CSharp {
 
 	public interface IParameterData
 	{
+		Expression DefaultValue { get; }
 		bool HasExtensionMethodModifier { get; }
+		bool HasDefaultValue { get; }
 		Parameter.Modifier ModFlags { get; }
 		string Name { get; }
 	}
@@ -267,12 +269,6 @@ namespace Mono.CSharp {
 			modFlags = mod;
 			Location = loc;
 			TypeName = type;
-		}
-
-		public Parameter (FullNamedExpression type, string name, Modifier mod, Attributes attrs, Expression defaultValue, Location loc)
-			: this (type, name, mod, attrs, loc)
-		{
-			default_expr = defaultValue;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
@@ -373,25 +369,31 @@ namespace Mono.CSharp {
 				return parameter_type;
 
 			if (default_expr != null) {
-				EmitContext ec = new EmitContext (rc, rc.DeclContainer, Location, null, parameter_type, 0);
+				EmitContext ec = new EmitContext (rc, rc.GenericDeclContainer, Location, null, parameter_type, 0);
 				default_expr = default_expr.Resolve (ec);
 				if (default_expr != null) {
 					Constant value = default_expr as Constant;
 					if (value == null) {
-						if (default_expr != null)
+						if (default_expr != null && !(default_expr is DefaultValueExpression)) {
 							Report.Error (1736, default_expr.Location, "The expression being assigned to optional parameter `{0}' must be constant",
 								Name);
+							default_expr = null;
+						}
 					} else {
 						Constant c = value.ConvertImplicitly (parameter_type);
-						if (c == null)
-							Report.Error (1750, Location,
-								"Optional parameter value `{0}' cannot be converted to parameter type `{1}'",
-								value.GetValue (), GetSignatureForError ());
-
-					//	value = c;
+						if (c == null) {
+							if (parameter_type == TypeManager.object_type) {
+								Report.Error (1763, Location,
+									"Optional parameter `{0}' of type `{1}' can only be initialized with `null'",
+									Name, GetSignatureForError ());
+							} else {
+								Report.Error (1750, Location,
+									"Optional parameter value `{0}' cannot be converted to parameter type `{1}'",
+									value.GetValue (), GetSignatureForError ());
+							}
+							default_expr = null;
+						}
 					}
-
-					default_expr = value;
 				}
 			}
 
@@ -506,11 +508,17 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 
 			if (HasDefaultValue) {
-				Constant c = (Constant) default_expr;
-				if (default_expr.Type == TypeManager.decimal_type) {
-					builder.SetCustomAttribute (Const.CreateDecimalConstantAttribute (c));
-				} else {
-					builder.SetConstant (c.GetValue ());
+				//
+				// Emit constant values for true constants only, the other
+				// constant-like expressions will rely on default value expression
+				//
+				Constant c = default_expr as Constant;
+				if (c != null) {
+					if (default_expr.Type == TypeManager.decimal_type) {
+						builder.SetCustomAttribute (Const.CreateDecimalConstantAttribute (c));
+					} else {
+						builder.SetConstant (c.GetValue ());
+					}
 				}
 			}
 		}
@@ -555,6 +563,11 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (new StringConstant (Name, Location)));
 			return new SimpleAssign (ExpressionTreeVariableReference (),
 				Expression.CreateExpressionFactoryCall ("Parameter", null, arguments, Location));
+		}
+
+		public Expression DefaultValue {
+			get { return default_expr; }
+			set { default_expr = value; }
 		}
 
 		public void Emit (EmitContext ec)
@@ -620,6 +633,13 @@ namespace Mono.CSharp {
 
 			return parameter_expr_tree_type;
 		}
+
+		public void Warning_UselessOptionalParameter ()
+		{
+			Report.Warning (1066, 1, Location,
+				"The default value specified for optional parameter `{0}' will never be used",
+				Name);
+		}
 	}
 
 	//
@@ -629,6 +649,7 @@ namespace Mono.CSharp {
 	{
 		readonly string name;
 		readonly Parameter.Modifier modifiers;
+		readonly Expression default_value;
 
 		public ParameterData (string name, Parameter.Modifier modifiers)
 		{
@@ -636,10 +657,24 @@ namespace Mono.CSharp {
 			this.modifiers = modifiers;
 		}
 
+		public ParameterData (string name, Parameter.Modifier modifiers, Expression defaultValue)
+			: this (name, modifiers)
+		{
+			this.default_value = defaultValue;
+		}
+
 		#region IParameterData Members
+
+		public Expression DefaultValue {
+			get { return default_value; }
+		}
 
 		public bool HasExtensionMethodModifier {
 			get { return (modifiers & Parameter.Modifier.This) != 0; }
+		}
+
+		public bool HasDefaultValue {
+			get { return default_value != null; }
 		}
 
 		public Parameter.Modifier ModFlags {
@@ -885,6 +920,7 @@ namespace Mono.CSharp {
 
 				ParameterInfo p = pi [i];
 				Parameter.Modifier mod = 0;
+				Expression default_value = null;
 				if (types [i].IsByRef) {
 					if ((p.Attributes & (ParameterAttributes.Out | ParameterAttributes.In)) == ParameterAttributes.Out)
 						mod = Parameter.Modifier.OUT;
@@ -899,19 +935,28 @@ namespace Mono.CSharp {
 			        (method.DeclaringType.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute &&
 					method.IsDefined (extension_attr.Type, false)) {
 					mod = Parameter.Modifier.This;
-				} else if (i >= pi.Length - 2) {
-					if (types[i].IsArray) {
-						if (p.IsDefined (param_attr.Type, false)) {
-							mod = Parameter.Modifier.PARAMS;
-							is_params = true;
+				} else {
+					if (i >= pi.Length - 2) {
+						if (types[i].IsArray) {
+							if (p.IsDefined (param_attr.Type, false)) {
+								mod = Parameter.Modifier.PARAMS;
+								is_params = true;
+							}
+						} else if (types[i] == TypeManager.runtime_argument_handle_type) {
+							par[i] = new ArglistParameter (Location.Null);
+							continue;
 						}
-					} else if (types [i] == TypeManager.runtime_argument_handle_type) {
-						par [i] = new ArglistParameter (Location.Null);
-						continue;
+					}
+
+					if (!is_params && p.IsOptional) {
+						if (p.DefaultValue == Missing.Value)
+							default_value = EmptyExpression.Null;
+						else
+							default_value = Constant.CreateConstant (types[i], p.DefaultValue, Location.Null);
 					}
 				}
 
-				par [i] = new ParameterData (p.Name, mod);
+				par [i] = new ParameterData (p.Name, mod, default_value);
 			}
 
 			return method != null ?

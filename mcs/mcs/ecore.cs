@@ -3510,7 +3510,7 @@ namespace Mono.CSharp {
 
 			if (candidate_param_count != best_param_count)
 				// can only happen if (candidate_params && best_params)
-				return candidate_param_count > best_param_count;
+				return candidate_param_count > best_param_count && best_pd.HasParams;
 
 			//
 			// now, both methods have the same number of parameters, and the parameters have the same types
@@ -3721,21 +3721,31 @@ namespace Mono.CSharp {
 		/// 0 = the best, int.MaxValue = the worst
 		///
 		public int IsApplicable (EmitContext ec,
-						 ArrayList arguments, int arg_count, ref MethodBase method, ref bool params_expanded_form)
+						ref ArrayList arguments, int arg_count, ref MethodBase method, ref bool params_expanded_form)
 		{
 			MethodBase candidate = method;
 
 			AParametersCollection pd = TypeManager.GetParameterData (candidate);
 			int param_count = GetApplicableParametersCount (candidate, pd);
+			int optional_count = 0;
 
 			if (arg_count != param_count) {
-				if (!pd.HasParams)
-					return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
-				if (arg_count < param_count - 1)
-					return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
-					
-				// Initialize expanded form of a method with 1 params parameter
-				params_expanded_form = param_count == 1 && pd.HasParams;
+				for (int i = 0; i < pd.Count; ++i) {
+					if (pd.FixedParameters [i].HasDefaultValue) {
+						optional_count = pd.Count - i;
+						break;
+					}
+				}
+
+				if (arg_count + optional_count != param_count) {
+					if (!pd.HasParams)
+						return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
+					if (arg_count < param_count - 1)
+						return int.MaxValue - 10000 + Math.Abs (arg_count - param_count);
+
+					// Initialize expanded form of a method with 1 params parameter
+					params_expanded_form = param_count == 1 && pd.HasParams;
+				}
 			}
 
 #if GMCS_SOURCE
@@ -3767,7 +3777,19 @@ namespace Mono.CSharp {
 				if (type_arguments != null)
 					return int.MaxValue - 15000;
 			}
-#endif			
+#endif
+
+			if (optional_count != 0) {
+ 				arguments = arg_count == 0 ? new ArrayList (optional_count) : new ArrayList (arguments);
+				for (int i = arg_count; i < pd.Count; ++i) {
+					Expression e = pd.FixedParameters [i].DefaultValue as Constant;
+					if (e == null)
+						e = new DefaultValueExpression (new TypeExpression (pd.Types [i], loc), loc).Resolve (ec);
+
+					arguments.Add (new Argument (e));
+				}
+			}
+
 
 			//
 			// 2. Each argument has to be implicitly convertible to method parameter
@@ -3813,7 +3835,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (arg_count != param_count)
+			if (arg_count + optional_count != param_count)
 				params_expanded_form = true;			
 			
 			return 0;
@@ -3967,7 +3989,6 @@ namespace Mono.CSharp {
 		{
 			bool method_params = false;
 			Type applicable_type = null;
-			int arg_count = 0;
 			ArrayList candidates = new ArrayList (2);
 			ArrayList candidate_overrides = null;
 
@@ -3979,9 +4000,10 @@ namespace Mono.CSharp {
 			// false is normal form, true is expanded form
 			//
 			Hashtable candidate_to_form = null;
+			Hashtable candidates_expanded = null;
+			ArrayList candidate_args = Arguments;
 
-			if (Arguments != null)
-				arg_count = Arguments.Count;
+			int arg_count = Arguments != null ? Arguments.Count : 0;
 
 			if (RootContext.Version == LanguageVersion.ISO_1 && Name == "Invoke" && TypeManager.IsDelegateType (DeclaringType)) {
 				if (!may_fail)
@@ -4042,7 +4064,7 @@ namespace Mono.CSharp {
 				// Check if candidate is applicable (section 14.4.2.1)
 				//
 				bool params_expanded_form = false;
-				int candidate_rate = IsApplicable (ec, Arguments, arg_count, ref Methods [i], ref params_expanded_form);
+				int candidate_rate = IsApplicable (ec, ref candidate_args, arg_count, ref Methods [i], ref params_expanded_form);
 
 				if (candidate_rate < best_candidate_rate) {
 					best_candidate_rate = candidate_rate;
@@ -4054,6 +4076,12 @@ namespace Mono.CSharp {
 						candidate_to_form = new PtrHashtable ();
 					MethodBase candidate = Methods [i];
 					candidate_to_form [candidate] = candidate;
+				} else if (candidate_args != Arguments) {
+					if (candidates_expanded == null)
+						candidates_expanded = new Hashtable (4);
+
+					candidates_expanded.Add (Methods [i], candidate_args);
+					candidate_args = Arguments;
 				}
 
 				if (candidate_rate != 0 || has_inaccessible_candidates_only) {
@@ -4316,12 +4344,21 @@ namespace Mono.CSharp {
 			}
 
 			//
+			// TODO: Broken inverse order of candidates logic does not work with optional
+			// parameters used for method overrides and I am not going to fix it for SRE
+			//
+			if (candidates_expanded != null && candidates_expanded.Contains (best_candidate)) {
+				candidate_args = (ArrayList) candidates_expanded [best_candidate];
+				arg_count = candidate_args.Count;
+			}
+
+			//
 			// And now check if the arguments are all
 			// compatible, perform conversions if
 			// necessary etc. and return if everything is
 			// all right
 			//
-			if (!VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate,
+			if (!VerifyArgumentsCompat (ec, ref candidate_args, arg_count, best_candidate,
 				method_params, may_fail, loc))
 				return null;
 
@@ -4344,6 +4381,7 @@ namespace Mono.CSharp {
 			if (data != null)
 				data.SetMemberIsUsed ();
 
+			Arguments = candidate_args;
 			return this;
 		}
 		
