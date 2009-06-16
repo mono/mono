@@ -157,10 +157,11 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				ServiceDebugBehavior db = h.Description.Behaviors.Find<ServiceDebugBehavior> ();
 				db.IncludeExceptionDetailInFaults = true;
 				h.Open ();
-				AllActionsProxy p = new AllActionsProxy (new BasicHttpBinding (), new EndpointAddress ("http://localhost:8080/AllActions"));
+				AllActionsProxy p = new AllActionsProxy (new BasicHttpBinding () { SendTimeout = TimeSpan.FromSeconds (5), ReceiveTimeout = TimeSpan.FromSeconds (5) }, new EndpointAddress ("http://localhost:8080/AllActions"));
 
 				for (int i = 0; i < invocations; ++i)
 					p.Get (10);
+				p.Close ();
 
 				//let ther server finish his work
 				Thread.Sleep (100);

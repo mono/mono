@@ -1,3 +1,9 @@
+2009-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntimeTest.cs : add reasonable timeout and close client
+	  appropriately. Objects are disposed in different ways than .NET.
+	  Do not expect things automatically disposed as just time goes by.
+
 2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs : make sure to close service host,
