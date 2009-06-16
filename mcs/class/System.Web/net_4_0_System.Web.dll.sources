@@ -406,6 +406,7 @@ System.Web.Profile/SqliteProfileProvider.cs
 System.Web.Profile/SqlProfileProvider.cs
 System.Web.Properties/TranslationProperties.Designer.cs
 System.Web/QueueManager.cs
+System.Web.Routing/PageRouteHandler.cs
 System.Web.Security/AspNetDBSchemaChecker.cs
 System.Web.Security/ActiveDirectoryConnectionProtection.cs
 System.Web.Security/ActiveDirectoryMembershipProvider.cs
