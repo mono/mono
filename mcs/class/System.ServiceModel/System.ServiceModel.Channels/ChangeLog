@@ -1,5 +1,9 @@
 2009-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs : cosometic simplification.
+
+2009-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestChannel.cs : Fixed timeout handling. It was causing
 	  infinite block in 2.0 profile.
 

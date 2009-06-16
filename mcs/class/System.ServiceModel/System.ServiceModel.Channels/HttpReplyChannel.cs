@@ -93,14 +93,14 @@ namespace System.ServiceModel.Channels
 
 				msg = Encoder.ReadMessage (
 					ctx.Request.InputStream, maxSizeOfHeaders);
-				if (source.MessageEncoder.MessageVersion.Envelope == EnvelopeVersion.Soap11 ||
-				    source.MessageEncoder.MessageVersion.Addressing == AddressingVersion.None) {
+				if (MessageVersion.Envelope == EnvelopeVersion.Soap11 ||
+				    MessageVersion.Addressing == AddressingVersion.None) {
 					string action = GetHeaderItem (ctx.Request.Headers ["SOAPAction"]);
 					if (action != null)
 						msg.Headers.Action = action;
 				}
 			} else if (ctx.Request.HttpMethod == "GET") {
-				msg = Message.CreateMessage (source.MessageEncoder.MessageVersion, null);
+				msg = Message.CreateMessage (MessageVersion, null);
 			}
 			msg.Headers.To = ctx.Request.Url;
 			
@@ -174,6 +174,10 @@ w.Close ();
 		// FIXME: where is it set?
 		public override EndpointAddress LocalAddress {
 			get { return local_address; }
+		}
+
+		internal MessageVersion MessageVersion {
+			get { return source.MessageEncoder.MessageVersion; }
 		}
 
 		public override RequestContext ReceiveRequest (TimeSpan timeout)
