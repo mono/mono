@@ -1,5 +1,9 @@
 2009-06-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Initial method header verification.
+
+2009-06-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_import_table): The IAT contents
 	might end been patched by the windows DL when running with
 	coree enabled.
