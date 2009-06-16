@@ -2407,17 +2407,32 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		[MonoTODO ("Always includes partial columns")]
 		public int DisplayedColumnCount (bool includePartialColumns)
 		{
 			int result = 0;
-			
-			for (int i = first_col_index; i < Columns.Count; i++)
-				if (Columns.ColumnDisplayIndexSortedArrayList[i].Displayed)
-					result++;
-				else
-					break;
+			int columnLeft = 0;
 
+			if (RowHeadersVisible)
+				columnLeft += RowHeadersWidth;
+
+			Size visibleClientArea = ClientSize;
+			if (verticalScrollBar.Visible)
+				visibleClientArea.Width -= verticalScrollBar.Width;
+			if (horizontalScrollBar.Visible)
+				visibleClientArea.Height -= horizontalScrollBar.Height;
+
+			for (int index = first_col_index; index < Columns.Count; index++) {
+				DataGridViewColumn column = Columns[ColumnDisplayIndexToIndex (index)];
+				if (columnLeft + column.Width <= visibleClientArea.Width) {
+					result++;
+					columnLeft += column.Width;
+				} else {
+					if (includePartialColumns)
+						result++;
+					break;
+				}
+			}
+					
 			return result;
 		}
 
@@ -5714,13 +5729,18 @@ namespace System.Windows.Forms {
 
 		internal void OnHScrollBarScroll (object sender, ScrollEventArgs e)
 		{
+			int lastRightVisibleColumntIndex = Columns.Count - DisplayedColumnCount (false);
 			horizontalScrollingOffset = e.NewValue;
 			int left = 0;
 
 			for (int index = 0; index < Columns.Count; index++) {
 				DataGridViewColumn col = Columns[index];
 
-				if (e.NewValue < left + col.Width) {
+				if (col.Index >= lastRightVisibleColumntIndex) {
+					first_col_index = lastRightVisibleColumntIndex;
+					Invalidate ();
+					OnScroll (e);
+				} else if (e.NewValue < left + col.Width) {
 					if (first_col_index != index) {
 						first_col_index = index;
 						Invalidate ();
@@ -5750,6 +5770,8 @@ namespace System.Windows.Forms {
 
 				if (row.Index >= lastTopVisibleRowIndex) {
 					first_row_index = lastTopVisibleRowIndex;
+					Invalidate ();
+					OnScroll (e);
 				} else if (e.NewValue < top + row.Height) {
 					if (first_row_index != index) {
 						first_row_index = index;
@@ -6200,14 +6222,14 @@ namespace System.Windows.Forms {
 			if (scroll) {
 				int disp_x = ColumnIndexToDisplayIndex (x);
 				bool scrollbarsRefreshed = false;
+				int displayedColumnsCount = DisplayedColumnCount (false);
+				int delta_x = 0;
 
+				// The trick here is that in order to avoid unnecessary calculations each time a row/column 
+				// is added/removed we recalculate the whole grid size just before the scroll to selection.
 				if (disp_x < first_col_index) {
-					// The trick here is that in order to avoid unnecessary calculations each time a row/column 
-					// is added/removed we recalculate the whole grid size just before just before the scroll 
-					// to selection.
 					RefreshScrollBars ();
 					scrollbarsRefreshed = true;
-					int delta_x = 0;
 
 					if (disp_x == 0)
 						delta_x = horizontalScrollBar.Value;
@@ -6220,6 +6242,18 @@ namespace System.Windows.Forms {
 					}
 				
 					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value - delta_x);
+					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
+				} else if (disp_x > first_col_index + displayedColumnsCount - 1) {
+					RefreshScrollBars ();
+					scrollbarsRefreshed = true;
+					
+					if (disp_x == Columns.Count - 1)
+						delta_x = horizontalScrollBar.Maximum - horizontalScrollBar.Value;
+					else
+						for (int i = first_col_index + displayedColumnsCount - 1; i < disp_x; i++)
+							delta_x += Columns[ColumnDisplayIndexToIndex (i)].Width;
+
+					horizontalScrollBar.SafeValueSet (horizontalScrollBar.Value + delta_x);
 					OnHScrollBarScroll (this, new ScrollEventArgs (ScrollEventType.ThumbPosition, horizontalScrollBar.Value));
 				}
 
