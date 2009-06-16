@@ -340,8 +340,8 @@ w.Close ();
 					// FIXME: Do we need to use the timeout? If so, what happens when the timeout is reached.
 					// Is the current request cancelled and an exception thrown? If so we need to pass the
 					// exception to the Complete () method and allow the result to complete 'normally'.
-					//wait.WaitOne (Timeout, true);
-					wait.WaitOne ();
+					if (!wait.WaitOne (Timeout, true))
+						throw new TimeoutException ();
 				}
 				if (error != null)
 					throw error;
