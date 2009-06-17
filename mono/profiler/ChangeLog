@@ -1,4 +1,8 @@
 2009-05-25  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c (write_thread_data_block): Only emit initial
+	stack snippet if we are tracking stacks.
+
+2009-05-25  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c (setup_user_options): Avoid tracking stacks
 	and emitting allocation caller information if we are already emitting
 	method enter and exit events.
