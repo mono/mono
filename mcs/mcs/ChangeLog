@@ -2,6 +2,8 @@
 
 	* expression.cs: The first multi-dimensional array nested array
 	initializers was not checked.
+	
+	* statement.cs (Switch): Fixed error message to reflect 2.0 changes.
 
 2009-06-17  Marek Safar  <marek.safar@gmail.com>
 

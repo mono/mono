@@ -3616,7 +3616,9 @@ namespace Mono.CSharp {
 			}
 
 			if (new_expr == null){
-				Report.Error (151, loc, "A value of an integral type or string expected for switch");
+				Report.Error (151, loc,
+					"A switch expression of type `{0}' cannot be converted to an integral type, bool, char, string, enum or nullable type",
+					TypeManager.CSharpName (Expr.Type));
 				return false;
 			}
 
