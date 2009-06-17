@@ -2080,7 +2080,7 @@ namespace System.Windows.Forms
 			{
 				int idx;
 
-				idx = AddItem (item);
+				idx = AddItem (item, false);
 				owner.UpdatedItems ();
 				return idx;
 			}
@@ -2091,8 +2091,10 @@ namespace System.Windows.Forms
 					throw new ArgumentNullException ("items");
 
 				foreach (object mi in items)
-					AddItem (mi);
+					AddItem (mi, true);
 					
+				Sort ();
+				
 				owner.UpdatedItems ();
 			}
 
@@ -2167,7 +2169,7 @@ namespace System.Windows.Forms
 				owner.BeginUpdate ();
 				
 				if (owner.Sorted)
-					AddItem (item);
+					AddItem (item, false);
 				else {
 					object_items.Insert (index, item);
 #if NET_2_0
@@ -2214,12 +2216,14 @@ namespace System.Windows.Forms
 			#endregion Public Methods
 
 			#region Private Methods
-			private int AddItem (object item)
+			private int AddItem (object item, bool suspend)
 			{
+				// suspend means do not sort as we put new items in, we will do a
+				// big sort at the end
 				if (item == null)
 					throw new ArgumentNullException ("item");
 
-				if (owner.Sorted) {
+				if (owner.Sorted && !suspend) {
 					int index = 0;
 					foreach (object o in object_items) {
 						if (String.Compare (item.ToString (), o.ToString ()) < 0) {
@@ -2254,7 +2258,9 @@ namespace System.Windows.Forms
 			internal void AddRange (IList items)
 			{
 				foreach (object mi in items)
-					AddItem (mi);
+					AddItem (mi, false);
+				
+				Sort ();
 				
 				owner.UpdatedItems ();
 			}
