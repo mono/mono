@@ -1,3 +1,8 @@
+2009-06-16  Geoff Norton  <gnorton@novell.com>
+
+	* include/private/gcconfig.h:  Disable static scanning on this platform
+	* misc.c: Enable platform-specific disabling of static scanning
+
 2008-09-29  Geoff Norton  <gnorton@novell.com>
 
 	* include/private/gcconfig.h: Make Darwin/ARM use mmap() instead of
