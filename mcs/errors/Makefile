@@ -3,7 +3,6 @@ SUBDIRS =
 include ../build/rules.make
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
-with_mono_path_n11b = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 ifeq (net_1_1, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
@@ -14,10 +13,8 @@ else
 EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll GCS0122-2-lib.dll GCS0730-lib.dll GCS0733-lib.dll GCS1685-lib.dll
 endif
 
-ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
-ILASM = $(with_mono_path_n11b) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
-
-GENERICS_COMPILE = $(CSCOMPILE) /target:library
+ilasm = $(topdir)/class/lib/$(PROFILE)/ilasm.exe
+ILASM = $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 
 DISTFILES = \
 	CONTRIBUTORS_README 	\
@@ -48,7 +45,7 @@ all-local $(STD_TARGETS:=-local):
 VALID_PROFILE := $(filter net_1_1 net_2_0 net_2_1, $(PROFILE))
 ifdef VALID_PROFILE
 
-check: run-test-local
+check: run-mcs-tests 
 
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
@@ -56,7 +53,7 @@ check: run-test-local
 test-local:
 	@:
 
-run-test-local: run-mcs-tests 
+run-test-local: clean-local run-mcs-tests
 
 test-everything:
 	$(MAKE) PROFILE=net_1_1 run-test
@@ -80,9 +77,7 @@ COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
-	rm -f *.exe *.mdb
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
-	-rm -f $(TEST_SUPPORT_FILES)
 
 cecil:
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:../tests/gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS) -verbose

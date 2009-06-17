@@ -1,3 +1,7 @@
+2009-06-17 Marek Safar <marek.safar@gmail.com>
+
+	* Makefile: Keep at least one target usable for me.
+
 2009-06-16  Raja R Harinath  <harinath@hurrynot.org>
 
 	Improve profile test coverage
