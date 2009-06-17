@@ -1,6 +1,9 @@
 //
 // Tests the valid value types for volatile fields.
 //
+
+using System;
+
 interface R {
 }
 
@@ -21,6 +24,8 @@ class X {
 	volatile X x;
 	volatile R r;
 	volatile XX dd;
+	volatile IntPtr ip;
+	volatile UIntPtr uip;
 
 	static void Main () {}
 }
