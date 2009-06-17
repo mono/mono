@@ -48,7 +48,7 @@ namespace Mono.ASPNET
 
 				Console.WriteLine ("WARNING: your site may be blocked from updating if you abuse.");
 				Console.WriteLine ("You're encouraged to browse and understand " +
-						   "http://www.GaryKeith.com/browsers");
+						   "http://browsers.GaryKeith.com/");
 
 				string r = "NO";
 				while (r != "YES") {
@@ -79,8 +79,8 @@ namespace Mono.ASPNET
 
 	class Updater
 	{
-		static string VersionUrl = "http://www.garykeith.com/browsers/version.asp";
-		static string BrowscapUrl = "http://www.garykeith.com/browsers/stream.asp?BrowsCapINI";
+		static string VersionUrl = "http://browsers.garykeith.com/version-number.asp";
+		static string BrowscapUrl = "http://browsers.garykeith.com/stream.asp?BrowsCapINI";
 		static string UserAgent = "Mono Browser Capabilities Updater 0.1";
 
 		string filename;
