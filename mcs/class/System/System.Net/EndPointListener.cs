@@ -307,6 +307,7 @@ namespace System.Net {
 
 				if (prefixes.ContainsKey (prefix)) {
 					prefixes.Remove (prefix);
+					CheckIfRemove ();
 				}
 			}
 		}
