@@ -1,3 +1,8 @@
+2009-06-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebClient_2_1.cs: Fix BaseAddress and remove dual base[Address|
+	String] variables.
+
 2009-06-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebClient_2_1.cs: Make sure *CompletedEventArgs gets called 

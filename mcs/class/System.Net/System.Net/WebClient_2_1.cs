@@ -44,8 +44,7 @@ namespace System.Net {
 
 		WebHeaderCollection headers;
 		WebHeaderCollection responseHeaders;
-		Uri baseAddress;
-		string baseString;
+		string baseAddress;
 		bool is_busy;
 		Encoding encoding = Encoding.UTF8;
 		bool allow_read_buffering = true;
@@ -58,28 +57,23 @@ namespace System.Net {
 			// but without adding dependency on System.Windows.dll. GetData is [SecurityCritical]
 			// this makes the default .ctor [SecuritySafeCritical] which would be a problem (inheritance)
 			// but it happens that MS SL2 also has this default .ctor as SSC :-)
-			baseAddress = new Uri (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
+			baseAddress = (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
 			locker = new object ();
 		}
 		
 		// Properties
 		
 		public string BaseAddress {
-			get {
-				if (baseString == null) {
-					if (baseAddress == null)
-						return String.Empty;
-					else
-						baseString = baseAddress.ToString ();
-				}
-				return baseString;
-			}
-			
+			get { return baseAddress; }
 			set {
 				if (String.IsNullOrEmpty (value)) {
-					baseAddress = null;
+					baseAddress = String.Empty;
 				} else {
-					baseAddress = new Uri (value);
+					Uri uri = null;
+					if (!Uri.TryCreate (value, UriKind.Absolute, out uri))
+						throw new ArgumentException ("Invalid URI");
+
+					baseAddress = Uri.UnescapeDataString (uri.AbsoluteUri);
 				}
 			}
 		}
@@ -483,7 +477,7 @@ namespace System.Net {
 				throw new ArgumentNullException ("address");
 
 			// if the URI is relative then we use our base address URI to make an absolute one
-			Uri uri = address.IsAbsoluteUri ? address : new Uri (baseAddress, address);
+			Uri uri = address.IsAbsoluteUri ? address : new Uri (new Uri (baseAddress), address);
 
 			WebRequest request = WebRequest.Create (uri);
 
