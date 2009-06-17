@@ -15,6 +15,8 @@ using System;
 using System.Net;
 using System.Collections;
 using System.Runtime.Serialization;
+using Socks = System.Net.Sockets;
+
 
 namespace MonoTests.System.Net {
 
@@ -322,6 +324,42 @@ namespace MonoTests.System.Net {
 			Assert.IsNotNull (ex.Message, "#4");
 			Assert.IsNotNull (ex.ParamName, "#5");
 			Assert.AreEqual ("prefix", ex.ParamName, "#6");
+		}
+	}
+
+	[Test] //BNC#323452
+	public void TestFailedConnection ()
+	{
+		try {
+			WebRequest.Create ("http://127.0.0.1:0/non-existant.txt").GetResponse ();
+			Assert.Fail ("Should have raised an exception");
+		} catch (Exception e) {
+			Assert.IsTrue (e is WebException, "Got " + e.GetType ().Name + ": " + e.Message);
+			//#if NET_2_0 e.Message == "Unable to connect to the remote server"
+			//#if NET_1_1 e.Message == "The underlying connection was closed: Unable to connect to the remote server."
+
+			Assert.AreEqual (((WebException)e).Status, WebExceptionStatus.ConnectFailure);
+
+			//#if !NET_1_1 (this is not true in .NET 1.x)
+			Assert.IsNotNull (e.InnerException);
+			Assert.IsTrue (e.InnerException is Socks.SocketException, "InnerException should be SocketException");
+			//e.Message == "The requested address is not valid in its context 127.0.0.1:0"
+			//#endif
+		}
+	}
+
+	[Test] //BNC#323452
+	public void TestFailedResolution ()
+	{
+		try {
+			WebRequest.Create ("http://thisdomaindoesnotexist.monotestcase.x/non-existant.txt").GetResponse ();
+			Assert.Fail ("Should have raised an exception");
+		} catch (Exception e) {
+			Assert.IsTrue (e is WebException);
+			//#if NET_2_0 e.Message == "The underlying connection was closed: The remote name could not be resolved."
+			//#if NET_1_1 e.Message == "The remote name could not be resolved: 'thisdomaindoesnotexist.monotestcase.x'"
+			Assert.AreEqual (((WebException)e).Status, WebExceptionStatus.NameResolutionFailure);
+			Assert.IsNull (e.InnerException);
 		}
 	}
 

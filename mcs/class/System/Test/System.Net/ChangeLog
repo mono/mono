@@ -1,3 +1,11 @@
+2009-06-16  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* WebRequestTest.cs: Drop NotWorking attrib, more accurate tests.
+
+2009-06-09  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+	* WebRequestTest.cs: Added tests for bug #323452.
+
 2009-04-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DnsTest.cs: new IP for go-mono and fix AsyncResolve test.

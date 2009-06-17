@@ -589,7 +589,7 @@ namespace System.Net
 			Connect ();
 			if (status != WebExceptionStatus.Success) {
 				if (status != WebExceptionStatus.RequestCanceled) {
-					request.SetWriteStreamError (status);
+					request.SetWriteStreamError (status, connect_exception);
 					Close (true);
 				}
 				return;
