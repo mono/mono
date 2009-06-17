@@ -5774,8 +5774,8 @@ namespace Mono.CSharp {
 		{
 			Report.Error (248, loc, "Cannot create an array with a negative size");
 		}
-		
-		bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims)
+
+		bool CheckIndices (EmitContext ec, ArrayList probe, int idx, bool specified_dims, int child_bounds)
 		{
 			if (specified_dims) { 
 				Argument a = (Argument) arguments [idx];
@@ -5796,42 +5796,29 @@ namespace Mono.CSharp {
 				int value = (int) c.GetValue ();
 				
 				if (value != probe.Count) {
-					Error_IncorrectArrayInitializer (loc);
+					Report.Error (847, loc, "An array initializer of length `{0}' was expected", value);
 					return false;
 				}
 				
 				bounds [idx] = value;
 			}
 
-			int child_bounds = -1;
 			only_constant_initializers = true;
 			for (int i = 0; i < probe.Count; ++i) {
 				object o = probe [i];
 				if (o is ArrayList) {
 					ArrayList sub_probe = o as ArrayList;
-					int current_bounds = sub_probe.Count;
-					
-					if (child_bounds == -1) 
-						child_bounds = current_bounds;
-
-					else if (child_bounds != current_bounds){
-						Error_IncorrectArrayInitializer (loc);
-						return false;
-					}
 					if (idx + 1 >= dimensions){
 						Error (623, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
 						return false;
 					}
 					
-					bool ret = CheckIndices (ec, sub_probe, idx + 1, specified_dims);
+					bool ret = CheckIndices (ec, sub_probe, idx + 1, specified_dims, child_bounds - 1);
 					if (!ret)
 						return false;
+				} else if (child_bounds > 1) {
+					Report.Error (846, ((Expression) o).Location, "A nested array initializer was expected");
 				} else {
-					if (child_bounds != -1){
-						Error_IncorrectArrayInitializer (loc);
-						return false;
-					}
-					
 					Expression element = ResolveArrayElement (ec, (Expression) o);
 					if (element == null)
 						continue;
@@ -5952,11 +5939,11 @@ namespace Mono.CSharp {
 			bounds = new System.Collections.Specialized.HybridDictionary ();
 			
 			if (arguments != null)
-				return CheckIndices (ec, initializers, 0, true);
+				return CheckIndices (ec, initializers, 0, true, dimensions);
 
 			arguments = new ArrayList ();
 
-			if (!CheckIndices (ec, initializers, 0, false))
+			if (!CheckIndices (ec, initializers, 0, false, dimensions))
 				return false;
 				
 			UpdateIndices ();
@@ -6022,10 +6009,6 @@ namespace Mono.CSharp {
 			//
 			if (!ResolveInitializers (ec))
 				return null;
-
-			if (arguments.Count != dimensions) {
-				Error_IncorrectArrayInitializer (loc);
-			}
 
 			foreach (Argument a in arguments){
 				if (!a.Resolve (ec, loc))
