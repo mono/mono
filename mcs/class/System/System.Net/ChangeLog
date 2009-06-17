@@ -1,3 +1,13 @@
+2009-06-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* EndPointListener.cs: call CheckIfRemove() after removing a regular
+	prefix. Fixes bug #513849.
+	* EndPointManager.cs: make sure we use the right lock when one prefix
+	of a collection fails to be added and we need to remove all of the
+	prefixes.
+	Clear the ip_to_endpoints hashtable if there are no more prefixes
+	listening on that address.
+
 2009-06-05  Robert Jordan  <robertj@gmx.net>
 
 	* WebClient.cs (UploadValuesCore): Encode POST arguments with UTF-8.
