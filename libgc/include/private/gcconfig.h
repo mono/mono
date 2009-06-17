@@ -334,6 +334,7 @@
 #    define ARM
 #    define mach_type_known
 #    define DARWIN_DONT_PARSE_STACK
+#    define GC_DONT_REGISTER_MAIN_STATIC_DATA
 #   endif
 # endif
 # if defined(NeXT) && defined(mc68000)
