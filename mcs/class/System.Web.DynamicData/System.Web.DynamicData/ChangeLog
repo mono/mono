@@ -1,8 +1,35 @@
+2009-06-17  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: fixed Scaffold implementation.
+	Added internal ScaffoldAllTables property.
+
+	* MetaColumn.cs: fixed TypeCode, MaxLength, Scaffold, UIHint
+	implementations.
+	Implemented IsLongString, IsBinaryData, IsReadOnly,
+	NullDisplayText, RequiredErrorMessage
+
 2009-06-16  Marek Habersack  <mhabersack@novell.com>
 
 	* DynamicDataManager.cs, DynamicDataExtensions.cs: use new
 	DataBoundControl.DataSourceObject instead of
 	InternalGetDataSource.
+
+2009-06-15  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaColumn.cs: implemented ApplyFormatInEditMode, Attributes,
+	ConvertEmptyStringToNull, DataFormatString, DataTypeAttribute,
+	DefaultValue, Description, DisplayName, IsRequired,
+	IsFloatingPoint, IsInteger, IsString, TypeCode
+
+	* MetaTable.cs: use MetaModel.GetTypeDescriptor to retrieve
+	associated entity type attributes.
+
+	* MetaModel.cs: implemented registration of type metadata
+	cache. Metadata is provided by a set of TypeDescriptionProvider
+	instances (if ContextConfig is present for given model provider)
+	or by default type description provider (note that this
+	functionality is not implemented in
+	System.ComponentModel.TypeDescriptor yet!).
 
 2009-06-12  Marek Habersack  <mhabersack@novell.com>
 

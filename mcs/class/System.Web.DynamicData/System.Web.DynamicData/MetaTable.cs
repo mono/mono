@@ -63,12 +63,15 @@ namespace System.Web.DynamicData
 		bool displayColumnChecked;
 		bool sortColumnChecked;
 		
-		internal MetaTable (MetaModel model, TableProvider provider, bool scaffold)
+		internal MetaTable (MetaModel model, TableProvider provider, bool scaffoldAllTables)
 		{
 			this.model = model;
 			Provider = provider;
-			Scaffold = scaffold;
+			ScaffoldAllTables = scaffoldAllTables;
 
+			var attr = Attributes [typeof (ScaffoldTableAttribute)] as ScaffoldTableAttribute;
+			Scaffold = attr != null ? attr.Scaffold : scaffoldAllTables;
+			
 			var columns = new List <MetaColumn> ();
 			var primaryKeyColumns = new List <MetaColumn> ();
 			var foreignKeyColumnNames = new List <string> ();
@@ -126,9 +129,9 @@ namespace System.Web.DynamicData
 		public global::System.ComponentModel.AttributeCollection Attributes {
 			get {
 				if (attributes == null) {
-					attributes = TypeDescriptor.GetAttributes (EntityType);
-					if (attributes == null)
-						attributes = new global::System.ComponentModel.AttributeCollection (null);
+					ICustomTypeDescriptor descriptor = MetaModel.GetTypeDescriptor (EntityType);
+					if (descriptor != null)
+						attributes = descriptor.GetAttributes ();
 				}
 				
 				return attributes;
@@ -189,6 +192,8 @@ namespace System.Web.DynamicData
 
 		public bool Scaffold { get; private set; }
 
+		internal bool ScaffoldAllTables { get; private set; }	
+		
 		public MetaColumn SortColumn {
 			get {
 				if (sortColumn == null)

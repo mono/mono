@@ -1,3 +1,16 @@
+2009-06-17  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaColumnTest.cs: added another data context.
+	Added tests for EntityTypeProperty, HtmlEncode, IsBinaryData,
+	IsCustomProperty, IsFloatingPoint, IsForeignKeyComponent,
+	IsGenerated, IsInteger, IsLongString, IsPrimaryKey, IsReadOnly,
+	IsString, MaxLength, Model, Name, NullDisplayText, Provider,
+	RequiredErrorMessage, Scaffold, Table, TypeCode, UIHint.
+
+2009-06-15  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaColumnTest.cs: added
+
 2009-06-12  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTableTest.cs: tests use single data model provider now.

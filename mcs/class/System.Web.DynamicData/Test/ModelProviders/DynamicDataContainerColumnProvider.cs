@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Web;
 using System.Web.DynamicData;
 using System.Web.DynamicData.ModelProviders;
@@ -41,6 +42,10 @@ namespace MonoTests.ModelProviders
 			ColumnType = columnType;
 			Nullable = columnType.IsGenericType && typeof (Nullable<>).IsAssignableFrom (columnType.GetGenericTypeDefinition ());
 			IsPrimaryKey = column.PrimaryKey;
+			EntityTypeProperty = GetPropertyInfo (owner.EntityType, Name);
+			IsCustomProperty = column.CustomProperty;
+			IsGenerated = column.Generated;
+			MaxLength = GetMaxLength (EntityTypeProperty);
 		}
 
 		public void ResolveAssociations ()
@@ -90,6 +95,38 @@ namespace MonoTests.ModelProviders
 
 			IsForeignKeyComponent = true;
 			Association = new DynamicDataAssociationProvider (column.AssociationDirection, this, toColumn);
+		}
+
+		int GetMaxLength (PropertyInfo pi)
+		{
+			if (pi == null)
+				return 0;
+
+			object[] attrs = pi.GetCustomAttributes (typeof (DynamicDataStringLengthAttribute), true);
+			if (attrs == null || attrs.Length == 0)
+				return 0;
+
+			var attr = attrs[0] as DynamicDataStringLengthAttribute;
+			if (attr == null)
+				return 0;
+
+			return attr.MaxLength;
+		}
+
+		PropertyInfo GetPropertyInfo (Type type, string name)
+		{
+			try {
+				PropertyInfo ret = type.GetProperties (BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy).
+					First<PropertyInfo> ((pi) => {
+						if (String.Compare (pi.Name, name, StringComparison.Ordinal) == 0)
+							return true;
+						return false;
+					}
+				);
+				return ret;
+			} catch (InvalidOperationException ex) {
+				return null;
+			}
 		}
 	}
 }

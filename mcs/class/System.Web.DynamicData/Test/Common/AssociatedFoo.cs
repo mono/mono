@@ -19,8 +19,6 @@ namespace MonoTests.Common
 		[DynamicDataAssociation ("AssociatedBarTable.Column2", AssociationDirection.OneToMany)]
 		public int PrimarykeyColumn2 { get; set; }
 
-		public AssociatedFoo ()
-		{
-		}
+		public int Column1 { get; set; }
 	}
 }

@@ -77,20 +77,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void Attributes ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
 			Assert.IsNotNull (t.Attributes, "#A1");
@@ -100,20 +87,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void Columns ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
 			Assert.IsNotNull (t.Columns, "#A1");
@@ -161,20 +135,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void DataContextPropertyName ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
 			Assert.AreEqual ("FooEmptyTable", t.DataContextPropertyName, "#A1");
@@ -184,20 +145,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void DataContextType ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooEmpty];
 			Assert.IsTrue (t.DataContextType == typeof (TestDataContext), "#A1");
@@ -206,20 +154,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void DisplayColumn ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooDisplayColumnAttribute];
 			MetaColumn mc = t.DisplayColumn;
@@ -254,25 +189,17 @@ namespace MonoTests.System.Web.DynamicData
 			AssertExtensions.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G1");
 			t = m.Tables[TestDataContext.TableFooEmptyDisplayColumnAttribute];
 			AssertExtensions.Throws<InvalidOperationException> (() => mc = t.DisplayColumn, "#G2");
+
+			t = m.Tables[TestDataContext.TableFooWithMetadataType];
+			mc = t.DisplayColumn;
+			Assert.IsNotNull (mc, "#E1");
+			Assert.AreEqual ("Column2", mc.Name, "#E2");
 		}
 
 		[Test]
 		public void DisplayName ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual ("FooWithDefaultsTable", t.DisplayName, "#A1");
@@ -287,20 +214,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void EntityType ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsTrue (t.EntityType == typeof (FooWithDefaults), "#A1");
@@ -315,20 +229,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void ForeignKeyColumnNames ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableAssociatedFoo];
 			Assert.IsNotNull (t.ForeignKeyColumnsNames, "#A1");
@@ -339,20 +240,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -364,20 +252,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_2 ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -446,20 +321,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_PrimaryKeyValues ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (String.Empty, t.GetActionPath (null, (IList<object>) null), "#A1");
@@ -470,20 +332,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_PrimaryKeyValues_2 ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.Details), t.GetActionPath (PageAction.Details, (IList<object>) null), "#A1");
@@ -500,20 +350,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_PrimaryKeyValues_3 ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -549,20 +387,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_RouteValues ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var values = new RouteValueDictionary ();
@@ -589,20 +415,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_Row ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -619,20 +433,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_Row_Path ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -653,20 +455,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetActionPath_Action_PrimaryKeyValues_Path ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -697,20 +487,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetColumn ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -726,20 +504,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetDisplayString ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var foo = new FooWithDefaults ();
@@ -769,20 +535,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetPrimaryKeyString_PrimaryKeyValues ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var values = new List<object> ();
@@ -833,20 +587,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetPrimaryKeyString_Row ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var foo = new FooWithDefaults ();
@@ -871,20 +613,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void GetPrimaryKeyValues ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			var foo = new FooWithDefaults ();
@@ -966,20 +696,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void HasPrimaryKey ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsTrue (t.HasPrimaryKey, "#A1");
@@ -991,20 +708,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void IsReadOnly ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			// According to this thread http://forums.asp.net/t/1388561.aspx IsReadOnly is set
 			// whenever a table doesn't have a primary key.
@@ -1020,20 +724,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void ListActionPath ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (Utils.BuildActionName (t, PageAction.List), t.ListActionPath, "#A1");
@@ -1045,20 +736,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void Model ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsTrue (t.Model == m, "#A1");
@@ -1067,20 +745,7 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void Name ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			routes.Add (
-			    new DynamicDataRoute ("{table}/{action}.aspx") {
-				    Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				    Model = m,
-				    RouteHandler = new MyDynamicDataRouteHandler ()
-			    });
+			MetaModel m = Utils.CommonInitialize ();
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsNotNull (t.Name, "#A1");
@@ -1091,20 +756,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void PrimaryKeyColumns ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 
@@ -1123,20 +776,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void Provider ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsTrue (t.Provider != null, "#A1");
@@ -1146,20 +787,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void Scaffold ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (true, t.Scaffold, "#A1");
@@ -1171,20 +800,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void SortColumn ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.IsNull (t.SortColumn, "#A1");
@@ -1204,20 +821,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void SortDescending ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			Assert.AreEqual (false, t.SortDescending, "#A1");
@@ -1229,20 +834,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void ToStringTest ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableBar];
 			Assert.AreEqual (t.Name, t.ToString (), "#A1");
@@ -1254,20 +847,8 @@ namespace MonoTests.System.Web.DynamicData
 		[Test]
 		public void TryGetColumn ()
 		{
-			MetaModel m = MetaModel.Default;
-
-			var req = new FakeHttpWorkerRequest ();
-			var ctx = new HttpContext (req);
-			HttpContext.Current = ctx;
-
-			RouteCollection routes = RouteTable.Routes;
-			routes.Clear ();
-			var route = new MyDynamicDataRoute ("{table}/{action}.aspx") {
-				Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
-				Model = m,
-				RouteHandler = new MyDynamicDataRouteHandler ()
-			};
-			routes.Add (route);
+			MetaModel m = Utils.CommonInitialize (true);
+			var route = RouteTable.Routes[0] as MyDynamicDataRoute;
 
 			MetaTable t = m.Tables[TestDataContext.TableFooWithDefaults];
 			MetaColumn mc = null;

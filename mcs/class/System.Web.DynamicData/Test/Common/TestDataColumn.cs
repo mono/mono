@@ -32,6 +32,8 @@ namespace MonoTests.Common
 			}
 
 			this.PrimaryKey = name.StartsWith ("PrimaryKeyColumn", StringComparison.Ordinal);
+			this.CustomProperty = name.StartsWith ("CustomProperty", StringComparison.Ordinal);
+			this.Generated = name.StartsWith ("GeneratedColumn", StringComparison.Ordinal);
 			object[] attrs = member.GetCustomAttributes (typeof (DynamicDataAssociationAttribute), true);
 			if (attrs != null && attrs.Length > 0) {
 				var attr = attrs[0] as DynamicDataAssociationAttribute;

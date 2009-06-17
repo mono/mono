@@ -13,5 +13,7 @@ namespace MonoTests.DataSource
 		public bool PrimaryKey { get; protected set; }
 		public string AssociatedTo { get; protected set; }
 		public AssociationDirection AssociationDirection { get; protected set; }
+		public bool CustomProperty { get; protected set; }
+		public bool Generated { get; protected set; }
 	}
 }

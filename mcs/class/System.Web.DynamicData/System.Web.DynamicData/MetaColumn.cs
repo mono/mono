@@ -35,6 +35,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -47,62 +48,177 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MetaColumn : IFieldFormattingOptions
 	{
-		MemberInfo dataFieldInfo;
-		string uiHint;
+		// (Int32.MaxValue / 2) - 5
+		const int SHORT_STRING_MAX_LENGTH = 0x3ffffffa;
+
 		bool? scaffold;
 		bool? scaffoldReflected;
+		bool? applyFormatInEditMode;
+		bool? convertEmptyStringToNull;
+		bool dataTypeReflected;
+		bool defaultValueReflected;
+		bool descriptionReflected;
+		bool requiredReflected;
+		bool uiHintReflected;
+		
+		string dataFormatString;
+		PropertyDescriptor property;
+		object defaultValue;
+		string description;
+		string displayName;
+		bool? readOnly;
+		int? maxLength;
+		string nullDisplayText;
+		string requiredErrorMessage;
+		string uiHint;
+		
+		// Attributes
+		AttributeCollection attributes;
+		
+		DisplayFormatAttribute displayFormatAttr;
+		DataTypeAttribute dataTypeAttr;
+		ScaffoldColumnAttribute scaffoldAttr;
+		RequiredAttribute requiredAttr;
 		
 		internal MetaColumn (MetaTable table, ColumnProvider provider)
 		{
 			Table = table;
 			Provider = provider;
 			Model = table.Model;
+			HtmlEncode = true;
+
+			Type columnType = ColumnType;
+			TypeCode code = Type.GetTypeCode (columnType);
+			TypeCode = code;
+			switch (code) {
+				case TypeCode.Single:
+				case TypeCode.Double:
+				case TypeCode.Decimal:
+					IsFloatingPoint = true;
+					break;
+
+				case TypeCode.Byte:
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.Int64:
+					IsInteger = true;
+					break;
+
+				case TypeCode.String:
+					IsString = true;
+					break;
+
+				case TypeCode.Object:
+					// So far only byte[] seems to be treated as a binary type
+					if (columnType.IsArray && columnType.GetArrayRank () == 1 && columnType.GetElementType () == typeof (byte))
+						IsBinaryData = true;
+					break;
+
+				default:
+					TypeCode = TypeCode.Object;
+					break;
+			}
+
+			IsLongString = MaxLength > SHORT_STRING_MAX_LENGTH;
 		}
 
-		[MonoTODO]
-		public bool ApplyFormatInEditMode { get; private set; }
+		public bool ApplyFormatInEditMode {
+			get {
+				if (applyFormatInEditMode == null)
+					applyFormatInEditMode = CheckApplyFormatInEditMode ();
 
-		[MonoTODO]
-		public AttributeCollection Attributes { get; private set; }
+				return (bool)applyFormatInEditMode;
+			}
+		}
+
+		public AttributeCollection Attributes {
+			get {
+				if (attributes == null)
+					attributes = LoadAttributes ();
+				
+				return attributes;
+			}
+			
+		}
 
 		public Type ColumnType {
 			get { return Provider.ColumnType; }
 		}
 
-		[MonoTODO]
-		public bool ConvertEmptyStringToNull { get; private set; }
+		public bool ConvertEmptyStringToNull {
+			get {
+				if (convertEmptyStringToNull == null)
+					convertEmptyStringToNull = CheckConvertEmptyStringToNull ();
 
-		[MonoTODO]
-		public string DataFormatString { get; private set; }
+				return (bool)convertEmptyStringToNull;
+			}
+			
+		}
 
-		[MonoTODO]
-		public DataTypeAttribute DataTypeAttribute { get; internal set; }
+		public string DataFormatString {
+			get {
+				if (dataFormatString == null)
+					dataFormatString = CheckDataFormatString ();
 
-		[MonoTODO]
-		public Object DefaultValue { get; private set; }
+				return dataFormatString;
+			}
+		}
 
-		[MonoTODO]
-		public string Description { get; private set; }
+		public DataTypeAttribute DataTypeAttribute {
+			get {
+				if (!dataTypeReflected && dataTypeAttr == null)
+					dataTypeAttr = CheckDataTypeAttribute ();
+					
+				return dataTypeAttr;
+			}
+			
+		}
+
+		public Object DefaultValue {
+			get {
+				if (!defaultValueReflected && defaultValue == null) {
+					DefaultValueAttribute defaultValueAttr = CheckDefaultValueAttribute ();
+					if (defaultValueAttr != null)
+						defaultValue = defaultValueAttr.Value;
+				}
+				
+				return defaultValue;
+			}
+		}
+
+		public string Description {
+			get {
+				if (!descriptionReflected && description == null) {
+					DescriptionAttribute descriptionAttr = CheckDescriptionAttribute ();
+					if (descriptionAttr != null)
+						description = descriptionAttr.Description;
+				}
+
+				return description;
+			}
+		}
 
 		public string DisplayName {
-			get { return Provider.Name; }
+			get {
+				if (displayName == null)
+					displayName = CheckDisplayName ();
+
+				return displayName;
+			}
 		}
 
 		public PropertyInfo EntityTypeProperty {
 			get { return Provider.EntityTypeProperty; }
 		}
 
-		[MonoTODO]
 		public bool HtmlEncode { get; private set; }
 
-		[MonoTODO]
 		public bool IsBinaryData { get; private set; }
 
 		public bool IsCustomProperty {
 			get { return Provider.IsCustomProperty; }
 		}
 
-		[MonoTODO]
 		public bool IsFloatingPoint { get; private set; }
 
 		public bool IsForeignKeyComponent {
@@ -113,27 +229,46 @@ namespace System.Web.DynamicData
 			get { return Provider.IsGenerated; }
 		}
 
-		[MonoTODO]
 		public bool IsInteger { get; private set; }
 
-		[MonoTODO]
 		public bool IsLongString { get; private set; }
 
 		public bool IsPrimaryKey {
 			get { return Provider.IsPrimaryKey; }
 		}
 
-		[MonoTODO]
-		public bool IsReadOnly { get; private set; }
+		public bool IsReadOnly {
+			get {
+				if (readOnly == null)
+					readOnly = CheckReadOnlyAttribute ();
 
-		[MonoTODO]
-		public bool IsRequired { get; private set; }
+				return (bool)readOnly;
+			}
+		}
 
-		[MonoTODO]
+		// It appears that all columns are required unless Provider.Nullable is true for
+		// them. We could skip checking for the RequiredAttribute for that reason, but that
+		// way we wouldn't be forward-compatible.
+		// What's more, it appears that a RequiredAttribute instance is always included in
+		// Attributes, whether or not the corresponding field is decorataed with it.
+		public bool IsRequired {
+			get {
+				if (!requiredReflected && requiredAttr == null)
+					requiredAttr = CheckRequiredAttribute ();
+
+				return requiredAttr != null;
+			}
+		}
+
 		public bool IsString { get; private set; }
 
 		public int MaxLength {
-			get { return Provider.MaxLength; }
+			get {
+				if (maxLength == null)
+					maxLength = CheckMaxLength ();
+
+				return (int)maxLength;
+			}
 		}
 
 		public MetaModel Model { get; private set; }
@@ -142,30 +277,52 @@ namespace System.Web.DynamicData
 			get { return Provider.Name; }
 		}
 
-		[MonoTODO]
-		public string NullDisplayText { get; private set; }
+		public string NullDisplayText {
+			get {
+				if (nullDisplayText == null)
+					nullDisplayText = CheckNullDisplayText ();
+
+				return nullDisplayText;
+			}
+		}
 
 		public ColumnProvider Provider { get; private set; }
 
-		[MonoTODO]
-		public string RequiredErrorMessage { get; private set; }
+		public string RequiredErrorMessage {
+			get {
+				if (requiredErrorMessage == null) {
+					RequiredAttribute attr = CheckRequiredAttribute ();
+					if (attr == null)
+						requiredErrorMessage = String.Empty;
+					else
+						requiredErrorMessage = attr.ErrorMessage;
+				}
+
+				return requiredErrorMessage;
+			}
+		}
 
 		public bool Scaffold {
 			get {
 				if (scaffold != null)
 					return (bool)scaffold;
 				if (scaffoldReflected != null)
-					return (bool)scaffoldReflected;
-				
-				ScaffoldColumnAttribute attr = GetDataFieldAttribute <ScaffoldColumnAttribute> ();
-				if (attr != null) {
-					scaffoldReflected = attr.Scaffold;
+					return (bool)scaffoldReflected;				
+
+				GetDataFieldAttribute <ScaffoldColumnAttribute> (ref scaffoldAttr);
+				if (scaffoldAttr != null) {
+					scaffoldReflected = scaffoldAttr.Scaffold;
 					return (bool)scaffoldReflected;
 				}
 
-				if (UIHint.Length > 0)
+				string uiHint = UIHint;
+				if (uiHint != null && uiHint.Length > 0)
 					scaffoldReflected = true;
-				else if (IsCustomProperty || IsGenerated || IsCustomProperty)
+				else if (Table.ScaffoldAllTables)
+					scaffoldReflected = true;
+
+				// LAMESPEC: IsForeignKeyComponent does NOT set Scaffold=false
+				else if (IsGenerated || IsCustomProperty)
 					scaffoldReflected = false;
 				else
 					scaffoldReflected = true;
@@ -188,75 +345,189 @@ namespace System.Web.DynamicData
 
 		public MetaTable Table { get; private set; }
 
-		[MonoTODO]
 		public TypeCode TypeCode { get; private set; }
 
+		// LAMESPEC: if there's no attribute, null is returned
 		public string UIHint {
 			get {
-				if (uiHint != null)
-					return uiHint;
-
-				UIHintAttribute attr = GetDataFieldAttribute <UIHintAttribute> ();
-				if (attr == null) {
-					uiHint = String.Empty;
-					return uiHint;
-				}
-
-				uiHint = attr.UIHint;
+				if (!uiHintReflected && uiHint == null)
+					uiHint = CheckUIHintAttribute ();
+				
 				return uiHint;
 			}
 		}
 
-		T GetDataFieldAttribute <T> () where T: Attribute
+		string CheckUIHintAttribute ()
 		{
-			MemberInfo mi = LoadFieldInfo ();
-			if (mi == null)
+			if (uiHintReflected)
+				return uiHint;
+
+			uiHintReflected = true;
+			UIHintAttribute attr = null;
+			GetDataFieldAttribute <UIHintAttribute> (ref attr);
+
+			if (attr == null)
 				return null;
 
-			object[] attrs = mi.GetCustomAttributes (typeof (T), true);
-			if (attrs.Length == 0)
-				return null;
-
-			return attrs [0] as T;
-		}
-
-		const BindingFlags DATA_FIELD_BINDING_FLAGS = BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
-		MemberInfo LoadFieldInfo ()
-		{
-			if (dataFieldInfo != null)
-				return dataFieldInfo;
-
-			MetaTable table = Table;
-			Type contextType = table.DataContextType;
-			if (contextType == null)
-				return null;
-
-			PropertyInfo pi = contextType.GetProperty (table.DataContextPropertyName, DATA_FIELD_BINDING_FLAGS);
-			if (pi == null)
-				return null;
-			contextType = pi.PropertyType;
-			if (contextType.IsGenericTypeDefinition)
-				return null;
-			if (contextType.IsGenericType) {
-				try {
-					Type[] types = contextType.GetGenericArguments ();
-					if (types.Length == 0)
-						return null;
-					contextType = types [0];
-				} catch (Exception ex) {
-					return null;
-				}
-			}
-				
-			MemberInfo[] mis = contextType.GetMember (Name, MemberTypes.Field | MemberTypes.Property, DATA_FIELD_BINDING_FLAGS);
-			if (mis.Length == 0)
-				return null;
-			
-			dataFieldInfo = mis [0];
-			return dataFieldInfo;
+			return attr.UIHint;
 		}
 		
-		public override string ToString ()
+		bool CheckApplyFormatInEditMode ()
+		{
+			var displayFormat = GetDisplayFormat ();
+			if (displayFormat == null)
+				return false;
+
+			return displayFormat.ApplyFormatInEditMode;
+		}
+
+		bool CheckConvertEmptyStringToNull ()
+		{
+			var displayFormat = GetDisplayFormat ();
+			if (displayFormat == null)
+				return true;
+
+			return displayFormat.ConvertEmptyStringToNull;
+		}
+
+		string CheckDataFormatString ()
+		{
+			var displayFormat = GetDisplayFormat ();
+			if (displayFormat == null)
+				return String.Empty;
+
+			return displayFormat.DataFormatString;
+		}
+
+		DataTypeAttribute CheckDataTypeAttribute ()
+		{
+			if (dataTypeReflected)
+				return dataTypeAttr;
+
+			dataTypeReflected = true;
+			GetDataFieldAttribute <DataTypeAttribute> (ref dataTypeAttr);
+			if (dataTypeAttr == null && (ColumnType == typeof (string)))
+				return new DataTypeAttribute (DataType.Text);
+
+			return dataTypeAttr;
+		}
+
+		DefaultValueAttribute CheckDefaultValueAttribute ()
+		{
+			defaultValueReflected = true;
+			DefaultValueAttribute dummy = null;
+			GetDataFieldAttribute <DefaultValueAttribute> (ref dummy);
+			if (dummy == null)
+				return null;
+
+			return dummy;
+		}
+
+		DescriptionAttribute CheckDescriptionAttribute ()
+		{
+			descriptionReflected = true;
+			DescriptionAttribute dummy = null;
+			GetDataFieldAttribute <DescriptionAttribute> (ref dummy);
+			if (dummy == null)
+				return null;
+			
+			return dummy;
+		}
+
+		string CheckDisplayName ()
+		{
+			DisplayNameAttribute attr = null;
+			GetDataFieldAttribute <DisplayNameAttribute> (ref attr);
+			if (attr != null)
+				return attr.DisplayName;
+
+			return Name;
+		}
+
+		RequiredAttribute CheckRequiredAttribute ()
+		{
+			if (requiredReflected)
+				return requiredAttr;
+
+			requiredReflected = true;
+			GetDataFieldAttribute <RequiredAttribute> (ref requiredAttr);
+
+			return requiredAttr;
+		}
+
+		bool CheckReadOnlyAttribute ()
+		{
+			ReadOnlyAttribute attr = null;
+			GetDataFieldAttribute <ReadOnlyAttribute> (ref attr);
+
+			// Apparently attr.IsReadOnly and/or comparisons to
+			// ReadOnlyAttribute.{Yes,No} don't matter. The sole presence of the
+			// attribute marks column as read-only
+			return attr != null;
+		}
+
+		int CheckMaxLength ()
+		{
+			StringLengthAttribute attr = null;
+			GetDataFieldAttribute <StringLengthAttribute> (ref attr);
+
+			if (attr != null)
+				return attr.MaximumLength;
+			
+			return Provider.MaxLength;
+		}
+
+		string CheckNullDisplayText ()
+		{
+			DisplayFormatAttribute displayFormat = GetDisplayFormat ();
+
+			if (displayFormat == null)
+				return String.Empty;
+
+			return displayFormat.NullDisplayText;
+		}
+		
+		void GetDataFieldAttribute <T> (ref T backingField) where T: Attribute
+		{
+			if (backingField != null)
+				return;
+			backingField = Attributes [typeof (T)] as T;
+		}
+
+		DisplayFormatAttribute GetDisplayFormat ()
+		{
+			GetDataFieldAttribute <DisplayFormatAttribute> (ref displayFormatAttr);
+			if (displayFormatAttr == null) {
+				var dta = DataTypeAttribute;
+				displayFormatAttr = dta == null ? null : dta.DisplayFormat;
+			}
+			
+			return displayFormatAttr;
+		}
+		
+		AttributeCollection LoadAttributes ()
+		{
+			var props = MetaModel.GetTypeDescriptor (Table.EntityType).GetProperties ();
+			AttributeCollection reflected;
+
+			int propsCount = props == null ? 0 : props.Count;
+			if (propsCount == 0)
+				reflected = AttributeCollection.Empty;
+			else {
+				var property = props.Find (Name, true);
+				if (property == null)
+					reflected = AttributeCollection.Empty;
+				else
+					reflected = property.Attributes;
+			}
+
+			if (!Provider.Nullable && reflected.OfType <RequiredAttribute> ().Count () == 0)
+				reflected = AttributeCollection.FromExisting (reflected, new Attribute[] { new RequiredAttribute () });
+			
+			return reflected;
+		}
+		
+ 		public override string ToString ()
 		{
 			return Name;
 		}

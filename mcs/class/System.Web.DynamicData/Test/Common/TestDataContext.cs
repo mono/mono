@@ -35,6 +35,9 @@ namespace MonoTests.Common
 		public const int TableFooMisnamedSortColumn = 18;
 		public const int TableFooEmptySortColumn = 19;
 		public const int TableFooNoScaffold = 20;
+		public const int TableBazColumnAttributes = 21;
+		public const int TableFooWithMetadataType = 22;
+		public const int TableBazDataTypeDefaultTypes = 23;
 
 		public FooWithDefaults FooWithDefaults { get; set; }
 		public FooNoPrimaryColumns FooNoPrimaryColumns { get; set; }
@@ -57,6 +60,9 @@ namespace MonoTests.Common
 		public FooMisnamedSortColumn FooMissingSortColumn { get; set; }
 		public FooEmptySortColumn FooEmptySortColumn { get; set; }
 		public FooNoScaffold FooNoScaffold { get; set; }
+		public BazColumnAttributes BazColumnAttributes { get; set; }
+		public FooWithMetadataType FooWithMetadataType { get; set; }
+		public BazDataTypeDefaultTypes BazDataTypeDefaultTypes { get; set; }
 
 		#region ITestDataContext Members
 
@@ -85,6 +91,9 @@ namespace MonoTests.Common
 			ret.Add (new TestDataTable<FooMisnamedSortColumn> ());
 			ret.Add (new TestDataTable<FooEmptySortColumn> ());
 			ret.Add (new TestDataTable<FooNoScaffold> ());
+			ret.Add (new TestDataTable<BazColumnAttributes> ());
+			ret.Add (new TestDataTable<FooWithMetadataType> ());
+			ret.Add (new TestDataTable<BazDataTypeDefaultTypes> ());
 
 			return ret;
 		}

@@ -2,13 +2,51 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 using System.Web.DynamicData;
 using System.Web.DynamicData.ModelProviders;
+using System.Web.Routing;
+
+using MonoTests.System.Web.DynamicData;
 
 namespace MonoTests.Common
 {
 	static class Utils
 	{
+		public static MetaModel CommonInitialize ()
+		{
+			return CommonInitialize (false);
+		}
+
+		public static MetaModel CommonInitialize (bool myDynamicDataRoute)
+		{
+			MetaModel m = MetaModel.Default;
+
+			var req = new FakeHttpWorkerRequest ();
+			var ctx = new HttpContext (req);
+			HttpContext.Current = ctx;
+
+			RouteCollection routes = RouteTable.Routes;
+			routes.Clear ();
+			if (myDynamicDataRoute) {
+				routes.Add (
+					new MyDynamicDataRoute ("{table}/{action}.aspx") {
+						Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+						Model = m,
+						RouteHandler = new MyDynamicDataRouteHandler ()
+					});
+			} else {
+				routes.Add (
+					new DynamicDataRoute ("{table}/{action}.aspx") {
+						Constraints = new RouteValueDictionary (new { action = "List|Details|Edit|Insert" }),
+						Model = m,
+						RouteHandler = new MyDynamicDataRouteHandler ()
+					});
+			}
+
+			return m;
+		}
+
 		public static MetaModel GetModel<ContextType> ()
 		{
 			// This is really, really dumb but we need that since if the type has already
@@ -34,16 +72,36 @@ namespace MonoTests.Common
 
 		public static void RegisterContext (DataModelProvider model, ContextConfiguration config)
 		{
+			RegisterContext (model, config, true);
+		}
+
+		public static void RegisterContext (DataModelProvider model, ContextConfiguration config, bool defaultModel)
+		{
 			// Just in case no model has been created yet
 			MetaModel m = new MetaModel ();
 
-			// And get the default model instead, whatever it is
-			m = MetaModel.Default;
+			if (defaultModel)
+				m = MetaModel.Default;
+
+			Exception exception = null;
+			MetaModel registered = null;
+
 			try {
-				m.RegisterContext (model, config);
+				registered = MetaModel.GetModel (model.ContextType);
+			} catch (Exception) {
+				// ignore
+			}
+
+			try {
+				if (registered == null)
+					m.RegisterContext (model, config);
 			} catch (InvalidOperationException ex) {
+				exception = ex;
+			}
+
+			if (exception != null) {
 				Console.WriteLine ("RegisterContext exception:");
-				Console.WriteLine (ex);
+				Console.WriteLine (exception);
 			}
 		}
 

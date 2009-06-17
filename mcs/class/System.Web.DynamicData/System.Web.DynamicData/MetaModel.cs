@@ -45,10 +45,14 @@ namespace System.Web.DynamicData
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class MetaModel
 	{
+		static object registered_models_lock = new object ();
+		static object description_providers_lock = new object ();
+		
 		static MetaModel default_model;
 		static Exception registration_exception;
-		static Dictionary<Type,MetaModel> registered_models = new Dictionary<Type,MetaModel> ();
-
+		static Dictionary<Type, MetaModel> registered_models;
+		static Dictionary<Type, TypeDescriptionProvider> description_providers;
+		
 		public static MetaModel Default {
 			get { return default_model; }
 			internal set { default_model = value; }
@@ -92,22 +96,15 @@ namespace System.Web.DynamicData
 
 		public List<MetaTable> VisibleTables { get; private set; }
 
+		void CheckRegistrationError ()
+		{
+			if (registration_exception != null)
+				throw new InvalidOperationException ("An error occured during context model registration", registration_exception);
+		}
+		
 		public string GetActionPath (string tableName, string action, object row)
 		{
 			return GetTable (tableName).GetActionPath (action, row);
-		}
-
-		public bool TryGetTable (string uniqueTableName, out MetaTable table)
-		{
-			if (uniqueTableName == null)
-				throw new ArgumentNullException ("uniqueTableName");
-			foreach (var t in Tables)
-				if (t.Name == uniqueTableName) {
-					table = t;
-					return true;
-				}
-			table = null;
-			return false;
 		}
 
 		public MetaTable GetTable (string uniqueTableName)
@@ -134,11 +131,18 @@ namespace System.Web.DynamicData
 			return GetModel (contextType).GetTable (tableName);
 		}
 
-		void CheckRegistrationError ()
+		internal static ICustomTypeDescriptor GetTypeDescriptor (Type type)
 		{
-			if (registration_exception != null)
-				throw new InvalidOperationException ("An error occured during context model registration", registration_exception);
+			lock (description_providers_lock) {
+				TypeDescriptionProvider provider;
+				
+				if (description_providers != null && description_providers.TryGetValue (type, out provider))
+					return provider.GetTypeDescriptor (type);
+			}
+
+			return TypeDescriptor.GetProvider (type).GetTypeDescriptor (type);
 		}
+		
 
 		public void RegisterContext (Func<object> contextFactory)
 		{
@@ -161,7 +165,8 @@ namespace System.Web.DynamicData
 				throw new ArgumentNullException ("contextType");
 			CheckRegistrationError ();
 			RegisterContext (() => Activator.CreateInstance (contextType), configuration);
-			registered_models [contextType] = this;
+			RegisterModel (contextType, this);
+			RegisterTypeDescriptionProvider (contextType, configuration);
 		}
 
 		public void RegisterContext (Func<object> contextFactory, ContextConfiguration configuration)
@@ -198,6 +203,55 @@ namespace System.Web.DynamicData
 				l.Add (new MetaTable (this, t, configuration != null && configuration.ScaffoldAllTables));
 			Tables = new ReadOnlyCollection<MetaTable> (l);
 			VisibleTables = l;
+			RegisterModel (dataModelProvider.ContextType, this);
+		}
+
+		static void RegisterModel (Type contextType, MetaModel model)
+		{
+			lock (registered_models_lock) {
+				if (registered_models == null)
+					registered_models = new Dictionary <Type, MetaModel> ();
+
+				if (registered_models.ContainsKey (contextType))
+					return;
+
+				registered_models.Add (contextType, model);
+			}
+		}
+
+		static void RegisterTypeDescriptionProvider (Type type, ContextConfiguration config)
+		{
+			Func <Type, TypeDescriptionProvider> factory = config == null ? null : config.MetadataProviderFactory;
+			if (config == null || factory == null)
+				return;
+
+			TypeDescriptionProvider provider = factory (type);
+			if (provider == null)
+				return;
+
+			lock (description_providers) {
+				if (description_providers == null)
+					description_providers = new Dictionary <Type, TypeDescriptionProvider> ();
+
+				if (description_providers.ContainsKey (type))
+					return;
+
+				description_providers.Add (type, provider);
+			}
+			
+		}
+
+		public bool TryGetTable (string uniqueTableName, out MetaTable table)
+		{
+			if (uniqueTableName == null)
+				throw new ArgumentNullException ("uniqueTableName");
+			foreach (var t in Tables)
+				if (t.Name == uniqueTableName) {
+					table = t;
+					return true;
+				}
+			table = null;
+			return false;
 		}
 	}
 }
