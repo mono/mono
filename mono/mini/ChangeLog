@@ -1,5 +1,13 @@
 2009-06-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c (mono_dwarf_writer_create): Add an 'appending' parameter
+	to control whenever the dwarf writer is in xdebug or aot mode.
+	(emit_class_dwarf_info): Use a separate abbrev for structures without
+	children.
+
+	* aot-compiler.c: Pass the appending parameter to 
+	mono_dwarf_writer_create ().
+
 	* branch-opts.c (mono_merge_basic_blocks): Fix the case when bbn
 	falls through to its next bblock. Fixes #513931.
 
