@@ -709,15 +709,8 @@ namespace Mono.CSharp.Nullable
 				user_operator.Emit (ec);
 				ig.Emit (Oper == Operator.Equality ? OpCodes.Brfalse_S : OpCodes.Brtrue_S, dissimilar_label);
 			} else {
-				if (left_unwrap != null && !(left is UserCast))
-					left_unwrap.Emit (ec);
-				else
-					left.Emit (ec);
-
-				if (right_unwrap != null && !(right is UserCast))
-					right_unwrap.Emit (ec);
-				else
-					right.Emit (ec);
+				left.Emit (ec);
+				right.Emit (ec);
 
 				ig.Emit (OpCodes.Bne_Un_S, dissimilar_label);
 			}
