@@ -1,3 +1,8 @@
+2009-06-17  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #514096
+	* class.cs: Allow IntPtr/UIntPtr fields to be volatile.
+
 2009-05-21  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #504667

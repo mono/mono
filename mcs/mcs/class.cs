@@ -5837,7 +5837,8 @@ namespace Mono.CSharp {
 				MemberType == TypeManager.sbyte_type || MemberType == TypeManager.byte_type ||
 				MemberType == TypeManager.short_type || MemberType == TypeManager.ushort_type ||
 				MemberType == TypeManager.int32_type || MemberType == TypeManager.uint32_type ||
-				MemberType == TypeManager.float_type)
+				MemberType == TypeManager.float_type ||
+				MemberType == TypeManager.intptr_type || MemberType == TypeManager.uintptr_type)
 				return true;
 
 			return false;
