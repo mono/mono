@@ -1,3 +1,8 @@
+2009-06-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (get_runtime_invoke_type): Don't share primitive types
+	for return values.
+
 2009-06-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Initial method header verification.
