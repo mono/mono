@@ -1,3 +1,7 @@
+2009-06-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* runtime-invoke.cs: Add test for sharing i8/u8 return values.
+
 2009-06-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* load-exceptions.cs class.cs: Add regression test for #508487.
