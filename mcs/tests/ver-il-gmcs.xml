@@ -3718,8 +3718,8 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>56</size>
+      <method name="Int32 Main()">
+        <size>134</size>
       </method>
     </type>
   </test>
@@ -15761,6 +15761,11 @@
     <type name="Tester+&lt;MemberAccessTest_9&gt;c__AnonStorey6">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="Tester">
+      <method name="Void EqualTest_15()">
+        <size>159</size>
       </method>
     </type>
   </test>
