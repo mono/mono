@@ -1,5 +1,5 @@
-// cs0151-2.cs: A value of an integral type or string expected for switch
-// Line: 12
+// CS0151: A switch expression of type `Y' cannot be converted to an integral type, bool, char, string, enum or nullable type
+// Line: 28
 
 class Y {
 	byte b;
