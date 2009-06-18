@@ -62,9 +62,8 @@ namespace System {
 			}
 		}
 
-		[MonoTODO]
 		public virtual Assembly EntryAssembly {
-			get { throw new NotImplementedException (); }
+			get { return Assembly.GetEntryAssembly (); }
 		}
 
 		[MonoTODO]

@@ -231,7 +231,7 @@ namespace System
 			}
 		}
 
-		[MonoTODO ("In Mono this is controlled by the --share-code flag")]
+		[MonoLimitation ("In Mono this is controlled by the --share-code flag")]
 		public LoaderOptimization LoaderOptimization {
 			get {
 				return loader_optimization;

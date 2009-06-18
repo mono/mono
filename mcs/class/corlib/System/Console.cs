@@ -625,19 +625,20 @@ namespace System
 			ConsoleDriver.Clear ();
 		}
 
-		[MonoTODO ("Not implemented")]
+		[MonoLimitation ("Implemented only on Windows")]
 		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
 						int targetLeft, int targetTop)
 		{
-			throw new NotImplementedException ();
+			ConsoleDriver.MoveBufferArea (sourceLeft, sourceTop, sourceWidth, sourceHeight, targetLeft, targetTop);
 		}
 
-		[MonoTODO("Not implemented")]
+		[MonoLimitation ("Implemented only on Windows")]
 		public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight,
 						int targetLeft, int targetTop, Char sourceChar,
 						ConsoleColor sourceForeColor, ConsoleColor sourceBackColor)
 		{
-			throw new NotImplementedException ();
+			ConsoleDriver.MoveBufferArea (sourceLeft, sourceTop, sourceWidth, sourceHeight, targetLeft, targetTop,
+							sourceChar, sourceForeColor, sourceBackColor);
 		}
 
 		public static ConsoleKeyInfo ReadKey ()

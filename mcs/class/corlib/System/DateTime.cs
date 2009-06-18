@@ -88,6 +88,7 @@ namespace System
 		private static readonly string[] ParseTimeFormats = new string [] {
 			"H:m:s.fffffffzzz",
 			"H:m:s.fffffff",
+			"H:m:s tt zzz",
 			"H:m:szzz",
 			"H:m:s",
 			"H:mzzz",
@@ -889,8 +890,9 @@ namespace System
 				throw new ArgumentNullException ("s");
 
 			DateTime res;
+			DateTimeOffset dto;
 			Exception exception = null;
-			if (!CoreParse (s, provider, styles, out res, true, ref exception))
+			if (!CoreParse (s, provider, styles, out res, out dto, true, ref exception))
 				throw exception;
 			
 			return res;
@@ -899,8 +901,9 @@ namespace System
 		const string formatExceptionMessage = "String was not recognized as a valid DateTime.";
 		
 		internal static bool CoreParse (string s, IFormatProvider provider, DateTimeStyles styles,
-					      out DateTime result, bool setExceptionOnError, ref Exception exception)
+					      out DateTime result, out DateTimeOffset dto, bool setExceptionOnError, ref Exception exception)
 		{
+			dto = new DateTimeOffset (9, TimeSpan.Zero);
 			if (s == null || s.Length == 0) {
 				if (setExceptionOnError)
 					exception = new FormatException (formatExceptionMessage);
@@ -918,19 +921,19 @@ namespace System
 				result = MinValue;
 				return false;
 			}
-					
+
 			bool longYear = false;
 			for (int i = 0; i < allDateFormats.Length; i++) {
 				string firstPart = allDateFormats [i];
 				bool incompleteFormat = false;
-				if (_DoParse (s, firstPart, "", false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
+				if (_DoParse (s, firstPart, "", false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
 					return true;
 
 				if (!incompleteFormat)
 					continue;
 
 				for (int j = 0; j < ParseTimeFormats.Length; j++) {
-					if (_DoParse (s, firstPart, ParseTimeFormats [j], false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
+					if (_DoParse (s, firstPart, ParseTimeFormats [j], false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
 						return true;
 				}
 			}
@@ -950,27 +953,27 @@ namespace System
 			string[] monthDayFormats = is_day_before_month ? DayMonthShortFormats : MonthDayShortFormats;
 			for (int i = 0; i < monthDayFormats.Length; i++) {
 				bool incompleteFormat = false;
-				if (_DoParse (s, monthDayFormats[i], "", false, out result, dfi, styles, true, ref incompleteFormat, ref longYear))
+				if (_DoParse (s, monthDayFormats[i], "", false, out result, out dto, dfi, styles, true, ref incompleteFormat, ref longYear))
 					return true;
 			}
 			
 			for (int j = 0; j < ParseTimeFormats.Length; j++) {
 				string firstPart = ParseTimeFormats [j];
 				bool incompleteFormat = false;
-				if (_DoParse (s, firstPart, "", false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
+				if (_DoParse (s, firstPart, "", false, out result, out dto, dfi, styles, false, ref incompleteFormat, ref longYear))
 					return true;
 				if (!incompleteFormat)
 					continue;
 
 				for (int i = 0; i < monthDayFormats.Length; i++) {
-					if (_DoParse (s, firstPart, monthDayFormats [i], false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
+					if (_DoParse (s, firstPart, monthDayFormats [i], false, out result, out dto, dfi, styles, false, ref incompleteFormat, ref longYear))
 						return true;
 				}
 				for (int i = 0; i < allDateFormats.Length; i++) {
 					string dateFormat = allDateFormats [i];
 					if (dateFormat[dateFormat.Length - 1] == 'T')
 						continue; // T formats must be before the time part
-					if (_DoParse (s, firstPart, dateFormat, false, out result, dfi, styles, false, ref incompleteFormat, ref longYear))
+					if (_DoParse (s, firstPart, dateFormat, false, out result, out dto, dfi, styles, false, ref incompleteFormat, ref longYear))
 						return true;
 				}
 			}
@@ -1196,6 +1199,7 @@ namespace System
 					      string secondPart,
 					      bool exact,
 					      out DateTime result,
+					      out DateTimeOffset dto,
 					      DateTimeFormatInfo dfi,
 					      DateTimeStyles style,
 					      bool firstPartIsDate,
@@ -1205,6 +1209,7 @@ namespace System
 			bool useutc = false;
 			bool use_invariant = false;
 			bool sloppy_parsing = false;
+			dto = new DateTimeOffset (0, TimeSpan.Zero);
 #if !NET_2_0
 			bool afterTimePart = firstPartIsDate && secondPart == "";
 #endif
@@ -1769,20 +1774,23 @@ namespace System
 			if (dayofweek != -1 && dayofweek != (int) result.DayOfWeek)
 				return false;
 
-			TimeSpan utcoffset;
-
-			bool adjustToUniversal = (style & DateTimeStyles.AdjustToUniversal) != 0;
-			
-			if (tzsign != -1) {
+			if (tzsign == -1) {
+				dto = new DateTimeOffset (result);
+			} else {
 				if (tzoffmin == -1)
 					tzoffmin = 0;
 				if (tzoffset == -1)
 					tzoffset = 0;
-				if (tzsign == 1)
+				if (tzsign == 1) {
 					tzoffset = -tzoffset;
-
-				utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
-				long newticks = (result.ticks - utcoffset).Ticks;
+					tzoffmin = -tzoffmin;
+				}
+				dto = new DateTimeOffset (result, new TimeSpan (tzoffset, tzoffmin, 0));
+			}
+			bool adjustToUniversal = (style & DateTimeStyles.AdjustToUniversal) != 0;
+			
+			if (tzsign != -1) {
+				long newticks = (result.ticks - dto.Offset).Ticks;
 				if (newticks < 0)
 					newticks += TimeSpan.TicksPerDay;
 				result = new DateTime (false, new TimeSpan (newticks));
@@ -1866,8 +1874,9 @@ namespace System
 			if (s != null){
 				try {
 					Exception exception = null;
+					DateTimeOffset dto;
 
-					return CoreParse (s, null, DateTimeStyles.AllowWhiteSpaces, out result, false, ref exception);
+					return CoreParse (s, null, DateTimeStyles.AllowWhiteSpaces, out result, out dto, false, ref exception);
 				} catch { }
 			}
 			result = MinValue;
@@ -1879,8 +1888,9 @@ namespace System
 			if (s != null){
 				try {
 					Exception exception = null;
+					DateTimeOffset dto;
 					
-					return CoreParse (s, provider, styles, out result, false, ref exception);
+					return CoreParse (s, provider, styles, out result, out dto, false, ref exception);
 				} catch {}
 			} 
 			result = MinValue;
@@ -1926,7 +1936,8 @@ namespace System
 				if (format == null || format == String.Empty)
 					break;
 
-				if (_DoParse (s, formats[i], null, exact, out result, dfi, style, false, ref incompleteFormat, ref longYear)) {
+				DateTimeOffset dto;
+				if (_DoParse (s, formats[i], null, exact, out result, out dto, dfi, style, false, ref incompleteFormat, ref longYear)) {
 					ret = result;
 					return true;
 				}

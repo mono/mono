@@ -1,3 +1,15 @@
+2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AppDomainSetup.cs: update attribute.
+	* TermInfoDriver.cs: ensure we are initialized in CheckWindowDimensions().
+	* DateTimeOffset.cs: Implement Parse().
+	* DateTime.cs: add 'zzz' to the list of default time formats. Return a
+	DateTimeOffset from _DoParse. Fixed the offset minutes when the
+	timezone is specified as a negative one.
+	* Console.cs: updates for MoveBufferArea().
+	* AppDomainManager.cs: implement EntryAssembly.
+	* AppDomain.cs: update attribute.
+
 2009-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Environment.cs : bump corlib version.

@@ -861,7 +861,7 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain createDomain (string friendlyName, AppDomainSetup info);
 
-		[MonoTODO ("Currently it does not allow the setup in the other domain")]
+		[MonoLimitationAttribute ("Currently it does not allow the setup in the other domain")]
 		[SecurityPermission (SecurityAction.Demand, ControlAppDomain = true)]
 		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
