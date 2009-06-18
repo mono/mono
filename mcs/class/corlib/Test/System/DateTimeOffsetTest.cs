@@ -345,6 +345,60 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void ParseDateOnly ()
+		{
+			DateTimeOffset dto = DateTimeOffset.Parse ("2009/06/14");
+			Assert.AreEqual (14, dto.Day, "Day");
+			Assert.AreEqual (6, dto.Month, "Month");
+			Assert.AreEqual (2009, dto.Year, "Year");
+		}
+
+		[Test]
+		public void ParseTimeOnly ()
+		{
+			DateTimeOffset dto = DateTimeOffset.Parse ("2:3:4");
+			Assert.AreEqual (2, dto.Hour, "Hour");
+			Assert.AreEqual (3, dto.Minute, "Minute");
+			Assert.AreEqual (4, dto.Second, "Second");
+		}
+
+		[Test]
+		public void ParseTimeTZ ()
+		{
+			DateTimeOffset dto = DateTimeOffset.Parse ("2:30:40 +3:4");
+			Assert.AreEqual (2, dto.Hour, "Hour");
+			Assert.AreEqual (30, dto.Minute, "Minute");
+			Assert.AreEqual (40, dto.Second, "Second");
+			Assert.AreEqual (3, dto.Offset.Hours, "Offset Hours");
+			Assert.AreEqual (4, dto.Offset.Minutes, "Offset Minutes");
+		}
+
+		[Test]
+		public void ParseTimePMTZ ()
+		{
+			DateTimeOffset dto = DateTimeOffset.Parse ("3:30:40 PM -3:4");
+			Assert.AreEqual (15, dto.Hour, "Hour");
+			Assert.AreEqual (30, dto.Minute, "Minute");
+			Assert.AreEqual (40, dto.Second, "Second");
+			Assert.AreEqual (-3, dto.Offset.Hours, "Offset Hours");
+			Assert.AreEqual (-4, dto.Offset.Minutes, "Offset Minutes");
+		}
+
+		[Test]
+		public void ParseFull1 ()
+		{
+			DateTimeOffset dto = DateTimeOffset.Parse ("2009/06/14 2:30:40 AM -03:04");
+			Assert.AreEqual (14, dto.Day, "Day");
+			Assert.AreEqual (6, dto.Month, "Month");
+			Assert.AreEqual (2009, dto.Year, "Year");
+			Assert.AreEqual (2, dto.Hour, "Hour");
+			Assert.AreEqual (30, dto.Minute, "Minute");
+			Assert.AreEqual (40, dto.Second, "Second");
+			Assert.AreEqual (-3, dto.Offset.Hours, "Offset Hours");
+			Assert.AreEqual (-4, dto.Offset.Minutes, "Offset Minutes");
+		}
+
+		[Test]
 		public void ParseExactWithFractions ()
 		{
 			CultureInfo fp = CultureInfo.InvariantCulture;

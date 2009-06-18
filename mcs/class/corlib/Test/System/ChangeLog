@@ -1,3 +1,8 @@
+2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DateTimeTest.cs: add test for parsing a negative timezone.
+	* DateTimeOffsetTest.cs: several tests for Parse.
+
 2009-06-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* StringTest.cs: Fix make check.
