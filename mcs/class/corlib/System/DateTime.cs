@@ -54,6 +54,26 @@ namespace System
 #if NET_2_0
 		DateTimeKind kind;
 #endif
+#if !NET_2_0
+		internal struct DateTimeOffset {
+			public DateTime DateTime;
+			public TimeSpan Offset;
+
+			public DateTimeOffset (DateTime dt) : this (dt, TimeSpan.Zero)
+			{
+			}
+
+			public DateTimeOffset (long ticks, TimeSpan offset) : this (new DateTime (ticks), offset)
+			{
+			}
+
+			public DateTimeOffset (DateTime dt, TimeSpan offset)
+			{
+				DateTime = dt;
+				Offset = offset;
+			}
+		}
+#endif
 
 		private const int dp400 = 146097;
 		private const int dp100 = 36524;
