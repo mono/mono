@@ -1197,12 +1197,7 @@ namespace Tests.System.Web.UI.WebControls
 			
 			EventRecorder events = new EventRecorder();
 			t.UserData = events;
-			t.Run ();
-			
-			Console.WriteLine ("recorded events:");
-			events = t.UserData as EventRecorder;
-			foreach (string e in events)
-				Console.WriteLine ("\t{0}", e);
+			t.Run ();			
 		}
 
 		public static void ListView_Edit_OnInit (Page p)

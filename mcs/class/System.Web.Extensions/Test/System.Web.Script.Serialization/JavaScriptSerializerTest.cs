@@ -45,7 +45,7 @@ using System.Web.UI.WebControls;
 using System.Collections.ObjectModel;
 
 
-namespace Tests.System.Web.Script.Serialization
+namespace MonoTests.System.Web.Script.Serialization
 {
 	[TestFixture]
 	public class JavaScriptSerializerTest
@@ -398,8 +398,11 @@ namespace Tests.System.Web.Script.Serialization
 			X s = new X ();
 			s.Init ();
 			string x = ser.Serialize (s);
+
+			Assert.AreEqual ("{\"z\":8,\"ch\":\"ｖ\",\"ch_null\":null,\"str\":\"ｖｗF59g\",\"b\":253,\"sb\":-48,\"sh\":-32740,\"ush\":65511,\"i\":-234235453,\"ui\":4294733061,\"l\":-9223372036854775780,\"ul\":18446744073709551612,\"f\":NaN,\"f1\":-Infinity,\"f2\":Infinity,\"f3\":-3.40282347E+38,\"f4\":3.40282347E+38,\"d\":NaN,\"d1\":-Infinity,\"d2\":Infinity,\"d3\":-1.7976931348623157E+308,\"d4\":1.7976931348623157E+308,\"de\":-1,\"de1\":0,\"de2\":1,\"de3\":-79228162514264337593543950335,\"de4\":79228162514264337593543950335,\"g\":\"000000ea-0002-0162-0102-030405060708\",\"nb\":null,\"dbn\":null,\"uri\":\"http://kostat@mainsoft/adfasdf/asdfasdf.aspx/asda/ads?a=b&c=d\",\"hash\":{\"mykey\":{\"BB\":10}},\"point\":{\"IsEmpty\":false,\"X\":150,\"Y\":150},\"MyEnum\":[1,10,345],\"MyEnum1\":[1,10,345],\"AA\":5,\"AA1\":[{\"BB\":10},{\"BB\":10}],\"BB\":18446744073709551610,\"YY\":[{\"BB\":10},{\"BB\":10}]}", x, "#A1");
+			
 			X n = ser.Deserialize<X> (x);
-			Assert.AreEqual (s, n);
+			Assert.AreEqual (s, n, "#A2");
 
 			//string json = "\\uFF56";
 			//string result = ser.Deserialize<string> (json);
@@ -416,8 +419,11 @@ namespace Tests.System.Web.Script.Serialization
 			x.Init ();
 
 			string s = ser.Serialize (x);
+			Console.WriteLine (s);
+			Assert.AreEqual ("{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+X, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"z\":8,\"ch\":\"ｖ\",\"ch_null\":null,\"str\":\"ｖｗF59g\",\"b\":253,\"sb\":-48,\"sh\":-32740,\"ush\":65511,\"i\":-234235453,\"ui\":4294733061,\"l\":-9223372036854775780,\"ul\":18446744073709551612,\"f\":NaN,\"f1\":-Infinity,\"f2\":Infinity,\"f3\":-3.40282347E+38,\"f4\":3.40282347E+38,\"d\":NaN,\"d1\":-Infinity,\"d2\":Infinity,\"d3\":-1.7976931348623157E+308,\"d4\":1.7976931348623157E+308,\"de\":-1,\"de1\":0,\"de2\":1,\"de3\":-79228162514264337593543950335,\"de4\":79228162514264337593543950335,\"g\":\"000000ea-0002-0162-0102-030405060708\",\"nb\":null,\"dbn\":null,\"uri\":\"http://kostat@mainsoft/adfasdf/asdfasdf.aspx/asda/ads?a=b&c=d\",\"hash\":{\"mykey\":{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}},\"point\":{\"__type\":\"System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\",\"IsEmpty\":false,\"X\":150,\"Y\":150},\"MyEnum\":[1,10,345],\"MyEnum1\":[1,10,345],\"AA\":5,\"AA1\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}],\"BB\":18446744073709551610,\"YY\":[{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10},{\"__type\":\"MonoTests.System.Web.Script.Serialization.JavaScriptSerializerTest+Y, System.Web.Extensions_test_net_2_0, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\",\"BB\":10}]}", s, "#A1");
+			
 			X x2 = ser.Deserialize<X> (s);
-			Assert.AreEqual (x, x2);
+			Assert.AreEqual (x, x2, "#A2");
 		}
 
 		[Test]
