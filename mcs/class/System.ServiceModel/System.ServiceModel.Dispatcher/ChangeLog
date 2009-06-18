@@ -1,3 +1,17 @@
+2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : significant changes:
+	  - simplified Open/Close async.
+	  - implement OnAbort().
+	  - create ServiceThrottle when it is null.
+	  - Channels are accepted as much as the throttle allows, and
+	    process requests when accepted an input (now it holds more than
+	    one channel).
+	  - Support ReceiveSynchronously and use Begin/EndAcceptChannel()
+	    for async pattern.
+	  - Close all channels and the listener when it is closed.
+	  - Cosmetic simplification on channel acceptor delegate creation.
+
 2009-06-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : avoid NRE (actually it should eliminate
