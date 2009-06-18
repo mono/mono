@@ -85,6 +85,7 @@ ModelProviders/DynamicDataAssociationProvider.cs
 ModelProviders/DynamicDataContainerColumnProvider.cs
 ModelProviders/DynamicDataContainerModelProvider.cs
 ModelProviders/DynamicDataContainerTableProvider.cs
+ModelProviders/DynamicDataSortableAttribute.cs
 ModelProviders/DynamicDataStringLengthAttribute.cs
 System.Web.DynamicData/ContextConfigurationTest.cs
 System.Web.DynamicData/DynamicDataExtensionsTest.cs
