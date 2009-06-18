@@ -1,5 +1,9 @@
 2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* DateTime.cs: quick fix for the 1.x build.
+
+2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* AppDomainSetup.cs: update attribute.
 	* TermInfoDriver.cs: ensure we are initialized in CheckWindowDimensions().
 	* DateTimeOffset.cs: Implement Parse().
