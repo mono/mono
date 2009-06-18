@@ -1,5 +1,12 @@
 2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelListenerBase_1.cs : added cancellation hook here too.
+	  HttpChannelListener.cs : use above.
+	  Do not allow parallel channel creation (this listener does not
+	  allow more than one AcceptChannel().
+
+2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ReplyChannelBase.cs, HttpReplyChannel.cs :
 	  Add cancellation hook for async TryReceiveRequest.
 

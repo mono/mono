@@ -52,7 +52,16 @@ namespace System.ServiceModel.Channels
 			get {  return httpChannelManager.HttpListener; }
 		}
 
+		object creator_lock = new object ();
+
 		protected override TChannel CreateChannel (TimeSpan timeout)
+		{
+			lock (creator_lock) {
+				return CreateChannelCore (timeout);
+			}
+		}
+
+		TChannel CreateChannelCore (TimeSpan timeout)
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))
 				return (TChannel) (object) new HttpSimpleReplyChannel ((HttpSimpleChannelListener<IReplyChannel>) (object) this);
@@ -168,9 +177,9 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO ("find out what to do here.")]
 		protected override void OnAbort ()
 		{
+			OnClose (TimeSpan.Zero);
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
@@ -179,8 +188,10 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
 			foreach (TChannel ch in Channels)
-				ch.Close(timeout);
+				ch.Close (timeout - (DateTime.Now - start));
+			base.OnClose (timeout - (DateTime.Now - start));
 		}
 	}
 }

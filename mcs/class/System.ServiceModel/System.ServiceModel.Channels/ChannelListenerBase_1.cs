@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
@@ -48,19 +49,64 @@ namespace System.ServiceModel.Channels
 		Func<TimeSpan,bool> wait_delegate;
 		Action<TimeSpan> open_delegate, close_delegate;
 
+		protected Thread CurrentAsyncThread { get; private set; }
+		protected IAsyncResult CurrentAsyncResult { get; private set; }
+
+		protected override void OnAbort ()
+		{
+			if (CurrentAsyncThread != null)
+				CurrentAsyncThread.Abort (); // it is not beautiful but there is no other way to stop it.
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			if (CurrentAsyncThread != null)
+				if (!CancelAsync (timeout))
+					if (CurrentAsyncThread != null) // being careful
+						CurrentAsyncThread.Abort (); // it is not beautiful but there is no other way to stop it.
+		}
+
+		// cancel ongoing async operations and return if it was 
+		// completed successfully. If not, it will abort.
+		public virtual bool CancelAsync (TimeSpan timeout)
+		{
+			return CurrentAsyncResult == null || CurrentAsyncResult.AsyncWaitHandle.WaitOne (timeout);
+		}
+
 		protected override IAsyncResult OnBeginAcceptChannel (
 			TimeSpan timeout, AsyncCallback callback,
 			object asyncState)
 		{
+			//if (CurrentAsyncResult != null)
+			//	throw new InvalidOperationException ("Another AcceptChannel operation is in progress");
+
+			ManualResetEvent wait = new ManualResetEvent (false);
+
 			if (accept_channel_delegate == null)
-				accept_channel_delegate = new Func<TimeSpan,TChannel> (OnAcceptChannel);
-			return accept_channel_delegate.BeginInvoke (timeout, callback, asyncState);
+				accept_channel_delegate = new Func<TimeSpan,TChannel> (delegate (TimeSpan tout) {
+					wait.WaitOne (); // make sure that CurrentAsyncResult is set.
+					CurrentAsyncThread = Thread.CurrentThread;
+
+					try {
+						return OnAcceptChannel (tout);
+					} finally {
+						CurrentAsyncThread = null;
+						CurrentAsyncResult = null;
+					}
+				});
+
+			CurrentAsyncResult = accept_channel_delegate.BeginInvoke (timeout, callback, asyncState);
+			wait.Set ();
+			return CurrentAsyncResult;
 		}
 
 		protected override TChannel OnEndAcceptChannel (IAsyncResult result)
 		{
 			if (accept_channel_delegate == null)
 				throw new InvalidOperationException ("Async AcceptChannel operation has not started");
+			// FIXME: what's wrong with this?
+			//if (CurrentAsyncResult == null)
+			//	throw new InvalidOperationException ("Async AcceptChannel operation has not started. Argument result was: " + result);
 			return accept_channel_delegate.EndInvoke (result);
 		}
 
