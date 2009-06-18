@@ -1,3 +1,8 @@
+2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DateTimeTest.cs: add test for parsing a negative timezone.
+	* DateTimeOffsetTest.cs: several tests for Parse.
+
 2009-05-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TypeTest.cs: test for bug #503728
