@@ -703,6 +703,9 @@ namespace System {
 
 		unsafe void CheckWindowDimensions ()
 		{
+			if (!inited)
+				Init ();
+
 			if (terminal_size == *native_terminal_size)
 				return;
 
