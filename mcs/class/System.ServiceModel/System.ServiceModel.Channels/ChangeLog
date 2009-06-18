@@ -1,3 +1,7 @@
+2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexChannelBase.cs : simple async delegate calls here too.
+
 2009-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReplyChannelBase.cs : cosmetic dependency reduction on listener.

@@ -130,9 +130,22 @@ namespace System.ServiceModel.Channels
 		// TryReceive
 		// FIXME: apply those "async to call sync" pattern too (but how?)
 
-		public abstract IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state);
+		delegate bool TryReceiveHandler (TimeSpan timeout, out Message msg);
+
+		TryReceiveHandler try_receive_handler;
+
+		public virtual IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			Message dummy;
+			if (try_receive_handler == null)
+				try_receive_handler = new TryReceiveHandler (TryReceive);
+			return try_receive_handler.BeginInvoke (timeout, out dummy, callback, state);
+		}
 		
-		public abstract bool EndTryReceive (IAsyncResult result, out Message message);
+		public virtual bool EndTryReceive (IAsyncResult result, out Message message)
+		{
+			return try_receive_handler.EndInvoke (out message, result);
+		}
 		
 		public virtual bool TryReceive (TimeSpan timeout, out Message message)
 		{
