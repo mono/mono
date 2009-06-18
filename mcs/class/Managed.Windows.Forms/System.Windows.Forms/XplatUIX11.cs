@@ -1757,7 +1757,11 @@ namespace System.Windows.Forms {
 							sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 							Marshal.FreeHGlobal(buffer);
 						}
-					} else if (Clipboard.IsSourceText) {
+					} else if (Clipboard.IsSourceText && 
+					           (format_atom == (IntPtr)Atom.XA_STRING 
+					            || format_atom == OEMTEXT
+					            || format_atom == UTF16_STRING
+					            || format_atom == UTF8_STRING)) {
 						IntPtr	buffer = IntPtr.Zero;
 						int	buflen;
 						Encoding encoding = null;
@@ -1774,16 +1778,14 @@ namespace System.Windows.Forms {
 						else if (target_atom == UTF8_STRING)
 							encoding = Encoding.UTF8;
 
-						if (encoding != null) {
-							Byte [] bytes;
+						Byte [] bytes;
 
-							bytes = encoding.GetBytes (Clipboard.GetPlainText ());
-							buffer = Marshal.AllocHGlobal (bytes.Length);
-							buflen = bytes.Length;
+						bytes = encoding.GetBytes (Clipboard.GetPlainText ());
+						buffer = Marshal.AllocHGlobal (bytes.Length);
+						buflen = bytes.Length;
 
-							for (int i = 0; i < buflen; i++)
-								Marshal.WriteByte (buffer, i, bytes [i]);
-						}
+						for (int i = 0; i < buflen; i++)
+							Marshal.WriteByte (buffer, i, bytes [i]);
 
 						if (buffer != IntPtr.Zero) {
 							XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, (IntPtr)xevent.SelectionRequestEvent.property, (IntPtr)xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);

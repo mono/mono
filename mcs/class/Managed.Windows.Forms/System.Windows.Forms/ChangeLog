@@ -1,3 +1,8 @@
+2009-06-18 Tom Hindle <tom_hindle@sil.org>
+	
+	* XplatUIX11.cs: Enabled Text to coexist with custom data formats.
+	Fixes #511849.
+
 2009-06-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListBox.cs: When calculating the scrollbars for non MultiColumn
