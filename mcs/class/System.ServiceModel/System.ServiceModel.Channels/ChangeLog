@@ -1,5 +1,10 @@
 2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ReplyChannelBase.cs, HttpReplyChannel.cs :
+	  Add cancellation hook for async TryReceiveRequest.
+
+2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelListener.cs, HttpListenerManager.cs :
 	  slightly improved BuildChannelListener().
 	  Implement OnAbort() and differentiate it from OnClose().

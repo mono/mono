@@ -33,6 +33,7 @@ using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
+using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
@@ -45,6 +46,25 @@ namespace System.ServiceModel.Channels
 
 		public abstract EndpointAddress LocalAddress { get; }
 
+		protected override void OnAbort ()
+		{
+			OnClose (TimeSpan.Zero);
+		}
+
+		protected override void OnClose (TimeSpan timeout)
+		{
+			if (CurrentAsyncThread != null)
+				if (!CancelAsync (timeout))
+					CurrentAsyncThread.Abort ();
+		}
+
+		public virtual bool CancelAsync (TimeSpan timeout)
+		{
+			// FIXME: It should wait for the actual completion.
+			return CurrentAsyncResult == null;
+			//return CurrentAsyncResult == null || CurrentAsyncResult.AsyncWaitHandle.WaitOne (timeout);
+		}
+
 		public virtual bool TryReceiveRequest ()
 		{
 			RequestContext dummy;
@@ -56,12 +76,27 @@ namespace System.ServiceModel.Channels
 		delegate bool TryReceiveDelegate (TimeSpan timeout, out RequestContext context);
 		TryReceiveDelegate try_recv_delegate;
 
+		protected Thread CurrentAsyncThread { get; private set; }
+		protected IAsyncResult CurrentAsyncResult { get; private set; }
+
 		public virtual IAsyncResult BeginTryReceiveRequest (TimeSpan timeout, AsyncCallback callback, object state)
 		{
+			if (CurrentAsyncResult != null)
+				throw new InvalidOperationException ("Another async TryReceiveRequest operation is in progress");
 			if (try_recv_delegate == null)
-				try_recv_delegate = new TryReceiveDelegate (TryReceiveRequest);
+				try_recv_delegate = new TryReceiveDelegate (delegate (TimeSpan tout, out RequestContext ctx) {
+					if (CurrentAsyncResult != null)
+						CurrentAsyncThread = Thread.CurrentThread;
+					try {
+						return TryReceiveRequest (tout, out ctx);
+					} finally {
+						CurrentAsyncResult = null;
+						CurrentAsyncThread = null;
+					}
+					});
 			RequestContext dummy;
-			return try_recv_delegate.BeginInvoke (timeout, out dummy, callback, state);
+			CurrentAsyncResult = try_recv_delegate.BeginInvoke (timeout, out dummy, callback, state);
+			return CurrentAsyncResult;
 		}
 
 		public virtual bool EndTryReceiveRequest (IAsyncResult result)

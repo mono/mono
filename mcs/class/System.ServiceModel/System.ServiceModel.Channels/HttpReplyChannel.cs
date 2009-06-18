@@ -50,8 +50,10 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			DateTime start = DateTime.Now;
 			if (reqctx != null)
-				reqctx.Close ();
+				reqctx.Close (timeout);
+			base.OnClose (timeout - (DateTime.Now - start));
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
@@ -189,12 +191,14 @@ w.Close ();
 
 		protected override void OnAbort ()
 		{
+			base.OnAbort ();
 			foreach (HttpListenerContext ctx in waiting)
 				ctx.Request.InputStream.Close ();
 		}
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			base.OnClose (timeout);
 			// FIXME: consider timeout
 			foreach (HttpListenerContext ctx in waiting)
 				ctx.Request.InputStream.Close ();
