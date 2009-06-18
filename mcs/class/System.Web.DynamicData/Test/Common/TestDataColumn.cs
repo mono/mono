@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -8,7 +9,7 @@ using MonoTests.ModelProviders;
 
 namespace MonoTests.Common
 {
-	public class TestDataColumn <DataType> : DynamicDataColumn
+	public class TestDataColumn<DataType> : DynamicDataColumn
 	{
 		public TestDataColumn (MemberInfo member)
 		{
@@ -34,14 +35,31 @@ namespace MonoTests.Common
 			this.PrimaryKey = name.StartsWith ("PrimaryKeyColumn", StringComparison.Ordinal);
 			this.CustomProperty = name.StartsWith ("CustomProperty", StringComparison.Ordinal);
 			this.Generated = name.StartsWith ("GeneratedColumn", StringComparison.Ordinal);
-			object[] attrs = member.GetCustomAttributes (typeof (DynamicDataAssociationAttribute), true);
-			if (attrs != null && attrs.Length > 0) {
-				var attr = attrs[0] as DynamicDataAssociationAttribute;
-				if (attr != null) {
-					AssociatedTo = attr.ColumnName;
-					AssociationDirection = attr.Direction;
-				}
+			
+			object[] attrs = member.GetCustomAttributes (true);
+			DynamicDataAssociationAttribute associationAttr;
+
+			try {
+				associationAttr = attrs.OfType<DynamicDataAssociationAttribute> ().First<DynamicDataAssociationAttribute> ();
+			} catch (InvalidOperationException) {
+				associationAttr = null;
 			}
+
+			if (associationAttr != null) {
+				AssociatedTo = associationAttr.ColumnName;
+				AssociationDirection = associationAttr.Direction;
+			}
+
+			DynamicDataSortableAttribute sortableAttr;
+
+			try {
+				sortableAttr = attrs.OfType<DynamicDataSortableAttribute> ().First<DynamicDataSortableAttribute> ();
+			} catch (InvalidOperationException) {
+				sortableAttr = null;
+			}
+
+			if (sortableAttr != null)
+				Sortable = sortableAttr.Sortable;
 		}
 	}
 }

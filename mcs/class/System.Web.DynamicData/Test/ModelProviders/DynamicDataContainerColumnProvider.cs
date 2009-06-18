@@ -46,6 +46,7 @@ namespace MonoTests.ModelProviders
 			IsCustomProperty = column.CustomProperty;
 			IsGenerated = column.Generated;
 			MaxLength = GetMaxLength (EntityTypeProperty);
+			IsSortable = column.Sortable;
 		}
 
 		public void ResolveAssociations ()

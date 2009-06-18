@@ -15,5 +15,6 @@ namespace MonoTests.DataSource
 		public AssociationDirection AssociationDirection { get; protected set; }
 		public bool CustomProperty { get; protected set; }
 		public bool Generated { get; protected set; }
+		public bool Sortable { get; protected set; }
 	}
 }

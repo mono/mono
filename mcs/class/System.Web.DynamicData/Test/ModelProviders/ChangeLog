@@ -1,3 +1,8 @@
+2009-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* DynamicDataContainerColumnProvider.cs: added setting of
+	IsSortable
+
 2009-06-17  Marek Habersack  <mhabersack@novell.com>
 
 	* DynamicDataStringLengthAttribute.cs: added

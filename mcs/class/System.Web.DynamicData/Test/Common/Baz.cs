@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 
+using MonoTests.ModelProviders;
+
 namespace MonoTests.Common
 {
 	class Baz
@@ -37,11 +39,14 @@ namespace MonoTests.Common
 		[Required (ErrorMessage = "Custom error message")]
 		public int ErrorMessageColumn1 { get; set; }
 
-		[Required (ErrorMessage = "")]
+		[Required (ErrorMessage = "s")]
 		public int ErrorMessageColumn2 { get; set; }
 
 		[UIHint ("")]
 		public int EmptyHintColumn { get; set; }
+
+		[DynamicDataSortable (true)]
+		public int SortableColumn1 { get; set; }
 
 		public Baz ()
 		{

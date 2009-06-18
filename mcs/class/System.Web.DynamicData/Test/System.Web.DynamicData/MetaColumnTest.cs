@@ -985,6 +985,23 @@ namespace MonoTests.System.Web.DynamicData
 		}
 
 		[Test]
+		public void SortExpression ()
+		{
+			MetaModel m = Utils.CommonInitialize ();
+
+			MetaTable t = m.Tables[TestDataContext.TableBaz];
+			MetaColumn mc = t.GetColumn ("Column1");
+			Assert.IsNotNull (mc, "#A1");
+			Assert.AreEqual (false, mc.Provider.IsSortable, "#A1-1");
+			Assert.AreEqual (String.Empty, mc.SortExpression, "#A1-2");
+
+			mc = t.GetColumn ("SortableColumn1");
+			Assert.IsNotNull (mc, "#B1");
+			Assert.AreEqual (true, mc.Provider.IsSortable, "#B1-1");
+			Assert.AreEqual ("SortableColumn1", mc.SortExpression, "#B1-2");
+		}
+
+		[Test]
 		public void Table ()
 		{
 			MetaModel m = Utils.CommonInitialize ();

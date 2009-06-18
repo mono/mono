@@ -1,3 +1,10 @@
+2009-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* TestDataColumn.cs: mark the column as sortable based on value of
+	the DynamicDataSortable attribute.
+
+	* Baz.cs: added a sortable column.
+
 2009-06-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TestDataContext.cs: added new tables
