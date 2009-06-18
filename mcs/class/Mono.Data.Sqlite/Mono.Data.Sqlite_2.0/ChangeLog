@@ -1,3 +1,15 @@
+2009-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* UnsafeNativeMethods.cs: added import of the old sqlite3_open
+	function to make code compatible with sqlite3 versions older than
+	3.5.0
+
+	* SQLite3.cs: added a workaround for systems which come with
+	sqlite3 older than 3.5.0 (which added new call sqlite3_open_v2,
+	used in this version of Mono.Data.Sqlite). If this function is not
+	found in the native shared library, the old sqlite3_open is used
+	as fallback.
+
 2009-02-04  Marek Habersack  <mhabersack@novell.com>
 
 	* SQLite3.cs, SQLite3_UTF16.cs, SQLiteBase.cs, SQLiteFunction.cs,
