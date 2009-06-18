@@ -72,7 +72,7 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
-		public void Stop ()
+		public void Stop (bool abort)
 		{
 			lock (opened_listeners) {
 				if (http_listener == null)
@@ -80,8 +80,12 @@ namespace System.ServiceModel.Channels
 				List<HttpSimpleChannelListener<TChannel>> channelsList = registered_channels [channel_listener.Uri];
 				channelsList.Remove (channel_listener);
 				if (channelsList.Count == 0) {
-					if (http_listener.IsListening)
-						http_listener.Stop ();
+					if (http_listener.IsListening) {
+						if (abort)
+							http_listener.Abort ();
+						else
+							http_listener.Close ();
+					}
 					((IDisposable) http_listener).Dispose ();
 
 					opened_listeners.Remove (channel_listener.Uri);

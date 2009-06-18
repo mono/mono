@@ -56,9 +56,11 @@ namespace System.ServiceModel.Channels
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))
 				return (TChannel) (object) new HttpSimpleReplyChannel ((HttpSimpleChannelListener<IReplyChannel>) (object) this);
+			// FIXME: session channel support
+			if (typeof (TChannel) == typeof (IReplySessionChannel))
+				throw new NotImplementedException ();
 
-			// FIXME: implement more
-			throw new NotImplementedException ();
+			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
@@ -67,12 +69,20 @@ namespace System.ServiceModel.Channels
 			StartListening (timeout);
 		}
 
+		protected override void OnAbort ()
+		{
+			httpChannelManager.Stop (true);
+		}
+
 		protected override void OnClose (TimeSpan timeout)
 		{
 			if (State == CommunicationState.Closed)
 				return;
 			base.OnClose (timeout);
-			httpChannelManager.Stop ();
+			// FIXME: it is said that channels are not closed
+			// when the channel listener is closed.
+			// http://blogs.msdn.com/drnick/archive/2006/03/22/557642.aspx
+			httpChannelManager.Stop (false);
 		}
 
 		void StartListening (TimeSpan timeout)
@@ -95,9 +105,11 @@ namespace System.ServiceModel.Channels
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))
 				return (TChannel) (object) new AspNetReplyChannel ((AspNetChannelListener<IReplyChannel>) (object) this);
+			// FIXME: session channel support
+			if (typeof (TChannel) == typeof (IReplySessionChannel))
+				throw new NotImplementedException ();
 
-			// FIXME: implement more
-			throw new NotImplementedException ();
+			throw new NotSupportedException (String.Format ("Channel type {0} is not supported", typeof (TChannel)));
 		}
 	}
 

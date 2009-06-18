@@ -1,5 +1,11 @@
 2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpChannelListener.cs, HttpListenerManager.cs :
+	  slightly improved BuildChannelListener().
+	  Implement OnAbort() and differentiate it from OnClose().
+
+2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs : remove NIE stubs.
 
 2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
