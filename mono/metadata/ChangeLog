@@ -1,3 +1,8 @@
+2009-06-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Added more header verification code.
+	Now only EH clauses are missing.
+
 2009-06-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (get_runtime_invoke_type): Don't share primitive types
