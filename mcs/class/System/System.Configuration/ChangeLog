@@ -1,3 +1,9 @@
+2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* IriParsingElement.cs:
+	* UriSection.cs:
+	* IdnElement.cs: new files that parse <uri> and subelements.
+
 2009-05-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CustomizableFileSettingsProvider.cs: make sure 'values' is
