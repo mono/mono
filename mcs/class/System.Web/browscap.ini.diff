@@ -1,6 +1,8 @@
---- browscap.ini.orig	2009-06-17 17:27:10.146043608 +0200
-+++ browscap.ini	2009-06-18 10:14:30.354679204 +0200
-@@ -36,6 +36,8 @@
+diff --git a/data/browscap.ini b/data/browscap.ini
+index 120eb6c..1267e1d 100644
+--- a/data/browscap.ini
++++ b/data/browscap.ini
+@@ -36,6 +36,8 @@ CssVersion=0
  supportsCSS=false
  AOL=false
  aolVersion=0
@@ -9,7 +11,7 @@
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Ask
  
-@@ -4808,7 +4810,7 @@
+@@ -4808,7 +4810,7 @@ Parent=Version Checkers
  Parent=Version Checkers
  Browser=Gary Keith's Version Checker
  
@@ -18,7 +20,7 @@
  Parent=Version Checkers
  Browser=TKC AutoDownloader
  
-@@ -8844,6 +8846,8 @@
+@@ -8844,6 +8846,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -27,7 +29,7 @@
  
  [Mozilla/5.0 (Macintosh; *Mac OS X*) AppleWebKit/* (*) Safari/100*]
  Parent=Safari
-@@ -10575,6 +10579,8 @@
+@@ -10575,6 +10579,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -36,7 +38,7 @@
  
  [Mozilla/?.* (compatible; MSIE ?.*; Linux*) Opera 8.5*]
  Parent=Opera 8.5
-@@ -10775,6 +10781,8 @@
+@@ -10775,6 +10781,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -45,7 +47,7 @@
  
  [Mozilla/* (compatible; MSIE*; Linux*) Opera 9.0*]
  Parent=Opera 9.0
-@@ -14416,6 +14424,8 @@
+@@ -14416,6 +14424,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -54,7 +56,7 @@
  
  [Mozilla/5.0 (Macintosh; *; *Mac OS X*; *; rv:1.*) Gecko/* Firefox/0.*]
  Parent=Firefox
-@@ -14557,6 +14567,8 @@
+@@ -14557,6 +14567,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -63,7 +65,7 @@
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.*) Gecko/* Firefox/1.0*]
  Parent=Firefox 1.0
-@@ -14662,6 +14674,8 @@
+@@ -14662,6 +14674,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -72,7 +74,7 @@
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.*) Gecko/* Firefox/1.4*]
  Parent=Firefox 1.4
-@@ -14755,6 +14769,8 @@
+@@ -14755,6 +14769,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -81,7 +83,7 @@
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.*) Gecko/* Firefox/1.5*]
  Parent=Firefox 1.5
-@@ -14855,6 +14871,8 @@
+@@ -14855,6 +14871,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -90,7 +92,7 @@
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.8*) Gecko/* Firefox/2.0*]
  Parent=Firefox 2.0
-@@ -14951,6 +14969,8 @@
+@@ -14951,6 +14969,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=3
  supportsCSS=true
@@ -99,7 +101,7 @@
  
  [Mozilla/5.0 (Macintosh; *; *Mac OS X*; *; rv:1.9*) Gecko/* Firefox/3.0*]
  Parent=Firefox 3.0
-@@ -15621,6 +15641,8 @@
+@@ -15621,6 +15641,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -108,7 +110,7 @@
  
  [Mozilla/5.0 (*rv:1.7*) Gecko/*]
  Parent=Mozilla 1.7
-@@ -15707,6 +15729,8 @@
+@@ -15707,6 +15729,8 @@ JavaApplets=true
  JavaScript=true
  CssVersion=2
  supportsCSS=true
@@ -117,7 +119,7 @@
  
  [Mozilla/5.0 (*rv:1.8*) Gecko/*]
  Parent=Mozilla 1.8
-@@ -15932,6 +15956,8 @@
+@@ -15932,6 +15956,8 @@ CssVersion=2
  supportsCSS=true
  AOL=true
  aolVersion=9.0
@@ -126,7 +128,7 @@
  
  [Mozilla/?.* (?compatible; *MSIE 5.5; *AOL 9.0*)*]
  Parent=AOL 9.0/IE 5.5
-@@ -16108,6 +16134,8 @@
+@@ -16108,6 +16134,8 @@ CssVersion=2
  supportsCSS=true
  AOL=true
  aolVersion=9.0
@@ -135,7 +137,7 @@
  
  [Mozilla/?.* (?compatible; *MSIE 6.0; *AOL 9.0*)*]
  Parent=AOL 9.0/IE 6.0
-@@ -16636,6 +16664,8 @@
+@@ -16636,6 +16664,8 @@ JavaScript=true
  ActiveXControls=true
  CssVersion=2
  supportsCSS=true
@@ -144,7 +146,7 @@
  
  [Mozilla/?.* (?compatible; *MSIE 5.5*)*]
  Parent=IE 5.5
-@@ -16692,6 +16722,9 @@
+@@ -16692,6 +16722,9 @@ JavaScript=true
  ActiveXControls=true
  CssVersion=2
  supportsCSS=true
@@ -154,7 +156,7 @@
  
  [Mozilla/?.* (?compatible; *MSIE 6.0*)*]
  Parent=IE 6.0
-@@ -16762,6 +16795,9 @@
+@@ -16762,6 +16795,9 @@ JavaScript=true
  ActiveXControls=true
  CssVersion=2
  supportsCSS=true
@@ -164,3 +166,13 @@
  
  [Mozilla/?.* (?compatible; *MSIE 7.0*)*]
  Parent=IE 7.0
+@@ -16836,6 +16872,9 @@ JavaScript=true
+ ActiveXControls=true
+ CssVersion=3
+ supportsCSS=true
++ecmascriptversion=1.2
++msdomversion=8.0
++w3cdomversion=1.0
+ 
+ [Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/4.0*)*]
+ Parent=IE 8.0
