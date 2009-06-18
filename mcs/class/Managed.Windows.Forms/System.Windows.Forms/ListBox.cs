@@ -2208,7 +2208,7 @@ namespace System.Windows.Forms
 				show = true;
 				hscrollbar.Maximum = canvas_size.Width;
 				hscrollbar.LargeChange = Math.Max (0, items_area.Width);
-			} else if (horizontal_scrollbar) {
+			} else if (scroll_always_visible && horizontal_scrollbar) {
 				show = true;
 				enabled = false;
 				hscrollbar.Maximum = 0;
