@@ -131,18 +131,6 @@ namespace System.ServiceModel.Channels
 			//	frame.ProcessEndRecordRecipient ();
 		}
 		
-		[MonoTODO]
-		public override IAsyncResult BeginTryReceive (TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public override bool EndTryReceive (IAsyncResult result, out Message message)
-		{
-			throw new NotImplementedException ();
-		}
-		
 		public override Message Receive ()
 		{
 			return Receive (DefaultReceiveTimeout);
