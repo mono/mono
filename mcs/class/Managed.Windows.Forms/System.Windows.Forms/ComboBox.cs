@@ -2092,8 +2092,9 @@ namespace System.Windows.Forms
 
 				foreach (object mi in items)
 					AddItem (mi, true);
-					
-				Sort ();
+
+				if (owner.sorted)
+					Sort ();
 				
 				owner.UpdatedItems ();
 			}
@@ -2260,7 +2261,8 @@ namespace System.Windows.Forms
 				foreach (object mi in items)
 					AddItem (mi, false);
 				
-				Sort ();
+				if (owner.sorted)
+					Sort ();
 				
 				owner.UpdatedItems ();
 			}

@@ -1,3 +1,8 @@
+2009-06-18  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ComboBox.cs: Only do my big sort at the end of AddRange if
+	the combobox is actually set to Sorted.
+
 2009-06-18 Tom Hindle <tom_hindle@sil.org>
 	
 	* XplatUIX11.cs: Enabled Text to coexist with custom data formats.
@@ -39894,5 +39899,4 @@
 	  XplatUIDriver.cs, XplatUIStructs.cs, XplatUIWin32.cs,
 	  XplatUIX11.cs, lang.cs:
 	  - Initial check-in
-
 
