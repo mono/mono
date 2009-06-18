@@ -426,7 +426,9 @@ System.Configuration/IApplicationSettingsProvider.cs
 System.Configuration/IConfigurationSectionHandler.cs
 System.Configuration/IConfigurationSystem.cs
 System.Configuration/IConfigXmlNode.cs
+System.Configuration/IdnElement.cs
 System.Configuration/IgnoreSectionHandler.cs
+System.Configuration/IriParsingElement.cs
 System.Configuration/IPersistComponentSettings.cs
 System.Configuration/ISettingsProviderService.cs
 System.Configuration/LocalFileSettingsProvider.cs
@@ -465,6 +467,7 @@ System.Configuration/SettingsGroupNameAttribute.cs
 System.Configuration/SingleTagSectionHandler.cs
 System.Configuration/SpecialSetting.cs
 System.Configuration/SpecialSettingAttribute.cs
+System.Configuration/UriSection.cs
 System.Configuration/UserSettingsGroup.cs
 System.Configuration/UserScopedSettingAttribute.cs
 System/DefaultUriParser.cs
