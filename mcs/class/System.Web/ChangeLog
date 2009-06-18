@@ -1,3 +1,8 @@
+2009-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* browscap.ini.diff: updated to match the latest upstream
+	version.
+
 2009-06-16  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: warn if the 4.0 assembly is compiled without

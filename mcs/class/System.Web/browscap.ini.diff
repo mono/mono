@@ -1,17 +1,15 @@
-Index: browscap.ini
-===================================================================
---- browscap.ini	(revision 75460)
-+++ browscap.ini	(working copy)
-@@ -43,6 +43,8 @@
+--- browscap.ini.orig	2009-06-17 17:27:10.146043608 +0200
++++ browscap.ini	2009-06-18 10:14:30.354679204 +0200
+@@ -36,6 +36,8 @@
+ supportsCSS=false
+ AOL=false
  aolVersion=0
- netCLR=false
- ClrVersion=0
 +ECMAScriptVersion=0.0
 +W3CDOMVersion=0.0
  
  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Ask
  
-@@ -4918,7 +4920,7 @@
+@@ -4808,7 +4810,7 @@
  Parent=Version Checkers
  Browser=Gary Keith's Version Checker
  
@@ -20,8 +18,8 @@ Index: browscap.ini
  Parent=Version Checkers
  Browser=TKC AutoDownloader
  
-@@ -9721,6 +9723,8 @@
- CSS=2
+@@ -8844,6 +8846,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.3
@@ -29,8 +27,8 @@ Index: browscap.ini
  
  [Mozilla/5.0 (Macintosh; *Mac OS X*) AppleWebKit/* (*) Safari/100*]
  Parent=Safari
-@@ -12205,6 +12209,8 @@
- CSS=2
+@@ -10575,6 +10579,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.3
@@ -38,8 +36,8 @@ Index: browscap.ini
  
  [Mozilla/?.* (compatible; MSIE ?.*; Linux*) Opera 8.5*]
  Parent=Opera 8.5
-@@ -12406,6 +12412,8 @@
- CSS=2
+@@ -10775,6 +10781,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.5
@@ -47,8 +45,8 @@ Index: browscap.ini
  
  [Mozilla/* (compatible; MSIE*; Linux*) Opera 9.0*]
  Parent=Opera 9.0
-@@ -14640,6 +14648,8 @@
- CSS=2
+@@ -14416,6 +14424,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.3
@@ -56,8 +54,8 @@ Index: browscap.ini
  
  [Mozilla/5.0 (Macintosh; *; *Mac OS X*; *; rv:1.*) Gecko/* Firefox/0.*]
  Parent=Firefox
-@@ -14782,6 +14792,8 @@
- CSS=2
+@@ -14557,6 +14567,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.3
@@ -65,8 +63,8 @@ Index: browscap.ini
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.*) Gecko/* Firefox/1.0*]
  Parent=Firefox 1.0
-@@ -14888,6 +14900,8 @@
- CSS=2
+@@ -14662,6 +14674,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.3
@@ -74,8 +72,8 @@ Index: browscap.ini
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.*) Gecko/* Firefox/1.4*]
  Parent=Firefox 1.4
-@@ -14982,6 +14996,8 @@
- CSS=2
+@@ -14755,6 +14769,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.5
@@ -83,8 +81,8 @@ Index: browscap.ini
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.*) Gecko/* Firefox/1.5*]
  Parent=Firefox 1.5
-@@ -15088,6 +15104,8 @@
- CSS=2
+@@ -14855,6 +14871,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.5
@@ -92,17 +90,17 @@ Index: browscap.ini
  
  [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.8*) Gecko/* Firefox/2.0*]
  Parent=Firefox 2.0
-@@ -15210,6 +15228,8 @@
- CSS=2
- CssVersion=2
+@@ -14951,6 +14969,8 @@
+ JavaScript=true
+ CssVersion=3
  supportsCSS=true
 +ecmascriptversion=1.5
 +w3cdomversion=1.0
  
- [Mozilla/5.0 (Linux; *; PPC*; *; rv:1.9*) Gecko/* Firefox/3.0*]
+ [Mozilla/5.0 (Macintosh; *; *Mac OS X*; *; rv:1.9*) Gecko/* Firefox/3.0*]
  Parent=Firefox 3.0
-@@ -15728,6 +15748,8 @@
- CSS=2
+@@ -15621,6 +15641,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.5
@@ -110,8 +108,8 @@ Index: browscap.ini
  
  [Mozilla/5.0 (*rv:1.7*) Gecko/*]
  Parent=Mozilla 1.7
-@@ -15815,6 +15837,8 @@
- CSS=2
+@@ -15707,6 +15729,8 @@
+ JavaScript=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.5
@@ -119,7 +117,7 @@ Index: browscap.ini
  
  [Mozilla/5.0 (*rv:1.8*) Gecko/*]
  Parent=Mozilla 1.8
-@@ -16013,6 +16037,8 @@
+@@ -15932,6 +15956,8 @@
  supportsCSS=true
  AOL=true
  aolVersion=9.0
@@ -128,7 +126,7 @@ Index: browscap.ini
  
  [Mozilla/?.* (?compatible; *MSIE 5.5; *AOL 9.0*)*]
  Parent=AOL 9.0/IE 5.5
-@@ -16245,6 +16271,8 @@
+@@ -16108,6 +16134,8 @@
  supportsCSS=true
  AOL=true
  aolVersion=9.0
@@ -137,8 +135,8 @@ Index: browscap.ini
  
  [Mozilla/?.* (?compatible; *MSIE 6.0; *AOL 9.0*)*]
  Parent=AOL 9.0/IE 6.0
-@@ -17025,6 +17053,8 @@
- CSS=2
+@@ -16636,6 +16664,8 @@
+ ActiveXControls=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.2
@@ -146,8 +144,8 @@ Index: browscap.ini
  
  [Mozilla/?.* (?compatible; *MSIE 5.5*)*]
  Parent=IE 5.5
-@@ -17250,6 +17280,9 @@
- CSS=2
+@@ -16692,6 +16722,9 @@
+ ActiveXControls=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.2
@@ -156,8 +154,8 @@ Index: browscap.ini
  
  [Mozilla/?.* (?compatible; *MSIE 6.0*)*]
  Parent=IE 6.0
-@@ -17890,6 +17923,9 @@
- CSS=2
+@@ -16762,6 +16795,9 @@
+ ActiveXControls=true
  CssVersion=2
  supportsCSS=true
 +ecmascriptversion=1.2
@@ -166,9 +164,3 @@ Index: browscap.ini
  
  [Mozilla/?.* (?compatible; *MSIE 7.0*)*]
  Parent=IE 7.0
-@@ -18568,3 +18604,5 @@
- aolVersion=0
- netCLR=false
- ClrVersion=0
-+ECMAScriptVersion=0.0
-+W3CDOMVersion=0.0
