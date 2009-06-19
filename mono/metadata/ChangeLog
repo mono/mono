@@ -1,5 +1,9 @@
 2009-06-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Finished with method header verification.
+
+2009-06-18 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Added more header verification code.
 	Now only EH clauses are missing.
 
