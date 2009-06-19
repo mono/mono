@@ -1,5 +1,7 @@
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ppc.c (mono_arch_create_trampoline_code): Fix the ppc build.
+
 	* mini-ops.h: Use TARGET_POWERPC define for consistency.
 
 	* patch-info.h: Add 'MSCORLIB_GOT_ADDR' patch type.
