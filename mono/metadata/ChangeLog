@@ -1,5 +1,10 @@
 2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_typedef_table): Move remaining
+	stuff to verify_typedef_table_full.
+
+2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Kill is_corlib from VerifyContext.
 	It is only used by the offline mode.
 	So we better remove it from the runtime path.
