@@ -1,5 +1,13 @@
 2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_field_table): Move signature
+	checking to verify_field_table_full.
+
+	* metata-verify.c (mono_verifier_verify_full_table_data):
+	Call verify_field_table_full.
+
+2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (verify_typedef_table): Move remaining
 	stuff to verify_typedef_table_full.
 
