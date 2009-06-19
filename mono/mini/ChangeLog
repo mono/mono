@@ -1,5 +1,9 @@
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* liveness.c (BITS_PER_CHUNK): Use MONO_BITSET_BITS_PER_CHUNK.
+
+	* regalloc2.c (BITS_PER_CHUNK): Ditto.	
+
 	* aot-compiler.c (emit_got_info): Fix reading unused memory.
 
 	* ir-emit.h (alloc_dreg): Add a 'return -1' to quiet some compilers.
