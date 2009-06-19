@@ -1,5 +1,21 @@
 2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (typedef_is_system_object): Fix System.Object
+	check.
+
+	* metadata-verify.c (verify_implmap_table): Fix implmap invalid
+	flags bits. SupportLastError was confused as bit 7 instead of 6.
+
+	* metadata-verify.c (verify_implmap_table): Fix import scope verication
+	to check against the module ref table instead of module.
+
+	* metadata-verify.c (verify_implmap_table): Fix corlib check.
+
+	* pedump.c: Call mono_image_load_names.
+
+
+2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* image.c: Extract mono_image_load_names from do_mono_image_load.
 
 	* metadata-internals.h: Export mono_image_load_names as part of
