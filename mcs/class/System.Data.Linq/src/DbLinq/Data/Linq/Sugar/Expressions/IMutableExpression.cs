@@ -27,11 +27,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     /// <summary>
     /// Allows an Expression to enumerator its Operands and be mutated, ie changing its operands

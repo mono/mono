@@ -23,45 +23,40 @@
 // THE SOFTWARE.
 // 
 #endregion
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Diagnostics;
+using System.Linq.Expressions;
 
-namespace VisualMetal
+using DbLinq.Data.Linq.Sugar.Expressions;
+
+namespace DbLinq.Data.Linq.Sugar.Expressions
 {
-	public partial class LoginWindow
-	{
-		MainWindow main;
+    /// <summary>
+    /// A table expression produced by a sub select, which work almost like any other table
+    /// Different joins specify different tables
+    /// </summary>
+    [DebuggerDisplay("SubSelectExpression {Name} (as {Alias})")]
+#if !MONO_STRICT
+    public
+#endif
+    class SubSelectExpression : TableExpression
+    {
+        public SelectExpression Select { get; private set; }
 
-		public LoginWindow(MainWindow window)
-		{
-			main = window;
+        public SubSelectExpression(SelectExpression select, Type type, string alias)
+            : base(type, alias)
+        {
+            this.Select = select;
+            this.Alias = alias;
+        }
 
-			InitializeComponent();
-
-			DataContext = main.Parameters;
-			SavePasswordCheckBox.DataContext = Properties.Settings.Default;
-
-			PasswordInput.Password = main.Parameters.Password; // can't bind to password for security reasons
-		}
-
-		private void Login_Click(object sender, RoutedEventArgs e)
-		{
-			main.Parameters.Password = PasswordInput.Password; // can't bind to password for security reasons
-
-			Cursor = Cursors.Wait;
-			if (main.LoadSchema())
-				Close();
-			Cursor = Cursors.Arrow;
-		}
-	}
+        public override bool IsEqualTo(TableExpression expression)
+        {
+            SubSelectExpression subSelectTable = expression as SubSelectExpression;
+            if (subSelectTable == null)
+                return false;
+            return Name == expression.Name && JoinID == expression.JoinID && Select == subSelectTable.Select;
+        }
+    }
 }

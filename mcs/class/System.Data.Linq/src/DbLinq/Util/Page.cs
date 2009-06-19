@@ -28,9 +28,7 @@ using System.Collections.Generic;
 
 namespace DbLinq.Util
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class Page

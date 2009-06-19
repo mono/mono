@@ -46,7 +46,7 @@ using nwind;
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
@@ -259,6 +259,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test(Description = "DateTime.Year. This sample uses the DateTime's Year property to find Orders placed in 1997.")]
         public void LinqToSqlString16()
         {
@@ -272,6 +275,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test(Description = "DateTime.Month. This sample uses the DateTime's Month property to find Orders placed in December.")]
         public void LinqToSqlString17()
         {
@@ -285,6 +291,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test(Description = "DateTime.Day. This sample uses the DateTime's Day property to find Orders placed on the 31st day of the month.")]
         public void LinqToSqlString18()
         {
@@ -298,6 +307,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test(Description = "DateTime.Seconds. This sample uses the DateTime's Day property to find Orders placed on the 31st day of the month.")]
         public void LinqToSqlString19()
         {

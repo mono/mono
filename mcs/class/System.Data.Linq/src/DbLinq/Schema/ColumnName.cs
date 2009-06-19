@@ -28,9 +28,7 @@ namespace DbLinq.Schema
     /// <summary>
     /// A column maps to a property
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class ColumnName : Name

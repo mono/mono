@@ -53,7 +53,7 @@ using Id = System.Int32;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -80,6 +80,9 @@ SELECT o$.*
 FROM Employees AS e$
 LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
          */
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Description("Subquery")]
         [Test]
         public void CQ2_Subquery()
@@ -91,6 +94,9 @@ LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
             Assert.IsTrue(count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Description("Subquery with nested select")]
         [Test]
         public void CQ3_SubquerySelect()
@@ -101,6 +107,9 @@ LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
             Assert.IsTrue(count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Description("Subquery with nested entityset")]
         [Test]
         public void CQ4_SubqueryNested()
@@ -111,6 +120,9 @@ LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
             Assert.IsTrue(count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Description("Subquery with nested query")]
         [Test]
         public void CQ5_SubqueryNestedQuery()
@@ -123,7 +135,7 @@ LEFT OUTER JOIN Orders AS o$ ON o$.[EmployeeID] = e$.[EmployeeID]
                                r.OrderID).Contains(d.OrderID)
                     select d;
             var count = q.ToList().Count;
-            Assert.AreEqual(count,1 );
+            Assert.AreEqual(38, count);
         }
 
     }

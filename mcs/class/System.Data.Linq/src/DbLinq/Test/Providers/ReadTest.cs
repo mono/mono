@@ -52,7 +52,7 @@ using DataLinq = DbLinq.Data.Linq;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -81,15 +81,19 @@ using DataLinq = DbLinq.Data.Linq;
 
 
 
+#if !DEBUG && (MSSQL && L2SQL)
+        // L2SQL doesn't support 'SELECT' queries in DataContext.ExecuteCommand().
+        [Explicit]
+#endif
         [Test]
         public void A3_ProductsTableHasPen()
         {
             Northwind db = CreateDB();
-            //string sql = @"SELECT count(*) FROM linqtestdb.Products WHERE ProductName='Pen'";
-            string sql = @"SELECT count(*) FROM [Products] WHERE [ProductName]='Pen'";
+            //string sql = @"SELECT count(*) FROM linqtestdb.Products WHERE ProductName='Chai'";
+            string sql = @"SELECT count(*) FROM [Products] WHERE [ProductName]='Chai'";
             long iResult = db.ExecuteCommand(sql);
             //long iResult = base.ExecuteScalar(sql);
-            Assert.AreEqual(iResult, 1L, "Expecting one Pen in Products table, got:" + iResult + " (SQL:" + sql + ")");
+            Assert.AreEqual(iResult, 1L, "Expecting one Chai in Products table, got:" + iResult + " (SQL:" + sql + ")");
         }
 
         [Test]
@@ -117,6 +121,7 @@ using DataLinq = DbLinq.Data.Linq;
             var cust = db.Customers.SingleOrDefault(c => c.CompanyName == "Around the Horn");
             Assert.IsNotNull(cust, "Expected one customer 'Around the Horn'.");
 
+#if false
             var id = "ALFKI";
             cust = db.Customers.SingleOrDefault(c => c.CustomerID == id);
             Assert.AreEqual("ALFKI", cust.CustomerID);
@@ -132,6 +137,27 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.AreEqual("ALFKI", cust.CustomerID);
             id = "BLAUS";
             cust = db.Customers.SingleOrDefault(c => c.CustomerID == id);
+#endif
+            cust = GetCustomerById(db, "ALFKI");
+            Assert.AreEqual("ALFKI", cust.CustomerID);
+
+            cust = GetCustomerById(db, "BLAUS");
+            Assert.AreEqual("BLAUS", cust.CustomerID);
+
+            cust = GetCustomerById(db, "DNE");
+            Assert.IsNull(cust);
+
+            cust = GetCustomerById(db, "ALFKI");
+            Assert.AreEqual("ALFKI", cust.CustomerID);
+
+            cust = GetCustomerById(db, "BLAUS");
+            Assert.AreEqual("BLAUS", cust.CustomerID);
+        }
+
+
+        private static Customer GetCustomerById(Northwind db, string id)
+        {
+            return db.Customers.SingleOrDefault(c => c.CustomerID == id);
         }
 
 
@@ -151,6 +177,33 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.IsTrue(p1.ProductID == 1);
         }
 
+        public void A8_SelectSingleOrDefault_QueryCacheDisabled()
+        {
+            Northwind db = CreateDB();
+#if !MONO_STRICT
+            db.QueryCacheEnabled = false;
+#endif
+
+            // Query for a specific customer
+            var cust = db.Customers.SingleOrDefault(c => c.CompanyName == "Around the Horn");
+            Assert.IsNotNull(cust, "Expected one customer 'Around the Horn'.");
+
+            cust = GetCustomerById(db, "ALFKI");
+            Assert.AreEqual("ALFKI", cust.CustomerID);
+
+            cust = GetCustomerById(db, "BLAUS");
+            Assert.AreEqual("BLAUS", cust.CustomerID);
+
+            cust = GetCustomerById(db, "DNE");
+            Assert.IsNull(cust);
+
+            cust = GetCustomerById(db, "ALFKI");
+            Assert.AreEqual("ALFKI", cust.CustomerID);
+
+            cust = GetCustomerById(db, "BLAUS");
+            Assert.AreEqual("BLAUS", cust.CustomerID);
+        }
+
         #endregion
 
         //TODO: group B, which checks AllTypes
@@ -167,12 +220,15 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.Greater(productCount, 0, "Expected some products, got none");
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test]
         public void C2_SelectPenId()
         {
             Northwind db = CreateDB();
 
-            var q = from p in db.Products where p.ProductName == "Pen" select p.ProductID;
+            var q = from p in db.Products where p.ProductName == "Chai" select p.ProductID;
             var productIDs = q.ToList();
             int productCount = productIDs.Count;
             Assert.AreEqual(productCount, 1, "Expected one pen, got count=" + productCount);
@@ -183,7 +239,7 @@ using DataLinq = DbLinq.Data.Linq;
         {
             Northwind db = CreateDB();
 
-            var pen = "Pen";
+            var pen = "Chai";
             var q = from p in db.Products where p.ProductName == pen select p.ProductID;
             var productIDs = q.ToList();
             int productCount = productIDs.Count;
@@ -196,13 +252,13 @@ using DataLinq = DbLinq.Data.Linq;
             Northwind db = CreateDB();
 
             var q = from p in db.Products
-                    where p.ProductName == "Pen"
+                    where p.ProductName == "Chai"
                     select new { ProductId = p.ProductID, Name = p.ProductName };
             int count = 0;
             //string penName;
             foreach (var v in q)
             {
-                Assert.AreEqual(v.Name, "Pen", "Expected ProductName='Pen'");
+                Assert.AreEqual(v.Name, "Chai", "Expected ProductName='Chai'");
                 count++;
             }
             Assert.AreEqual(count, 1, "Expected one pen, got count=" + count);
@@ -225,7 +281,7 @@ using DataLinq = DbLinq.Data.Linq;
             var res = from o in db.Orders
                       select new { test = 1 };
             var list = res.ToList();
-            Assert.IsTrue(list.Count > 0);
+            Assert.AreEqual(db.Orders.Count(), list.Count);
         }
 
 
@@ -266,6 +322,9 @@ using DataLinq = DbLinq.Data.Linq;
         /// <summary>
         /// from http://www.agilior.pt/blogs/pedro.rainho/archive/2008/04/11/4271.aspx
         /// </summary>
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "Using LIKE operator from linq query")]
         public void C7B_LikeOperator()
         {
@@ -284,7 +343,7 @@ using DataLinq = DbLinq.Data.Linq;
         public void C8_SelectPenByLocalVariable()
         {
             Northwind db = CreateDB();
-            string pen = "Pen";
+            string pen = "Chai";
 
             var q = from p in db.Products
                     where (p.ProductName == pen)
@@ -315,8 +374,68 @@ using DataLinq = DbLinq.Data.Linq;
                     where true
                     select p;
 
-            int count = q.ToList().Count();
-            Assert.Greater(count,0);
+            int count = q.ToList().Count;
+            Assert.AreEqual(count, db.Customers.Count());
+        }
+
+        [Test]
+        public void C10b_ConstantPredicate()
+        {
+            Northwind db = CreateDB();
+            var q = from p in db.Customers
+                    where false
+                    select p;
+
+            int count = q.Count();
+            Assert.AreEqual(count, 0);
+        }
+
+        [Test]
+        public void C10c_ConstantPredicate()
+        {
+            Northwind db = CreateDB();
+            var q = from p in db.Customers
+                    where (p.Address.StartsWith("A") && false)
+                    select p;
+
+            int count = q.Count();
+            Assert.AreEqual(count, 0);
+        }
+
+        [Test]
+        public void C10d_ConstantPredicate()
+        {
+            Northwind db = CreateDB();
+            var q = from p in db.Customers
+                    where (p.Address.StartsWith("A") || true)
+                    select p;
+
+            int count = q.Count();
+            Assert.AreEqual(count, db.Customers.Count());
+        }
+
+        [Test]
+        public void C10e_ConstantPredicate()
+        {
+            Northwind db = CreateDB();
+            var q = from p in db.Customers
+                    where (p.Address.StartsWith("A") || false)
+                    select p;
+
+            int count = q.Count();
+            Assert.Less(count, db.Customers.Count());
+        }
+
+        [Test]
+        public void C10f_ConstantPredicate()
+        {
+            Northwind db = CreateDB();
+            var q = from p in db.Customers
+                    where (p.Address.StartsWith("A") && true)
+                    select p;
+
+            int count = q.Count();
+            Assert.Less(count, db.Customers.Count());
         }
 
         [Test]
@@ -424,6 +543,122 @@ using DataLinq = DbLinq.Data.Linq;
             Assert.IsNotNull(territory.Region);
         }
 
+        [Test]
+        public void C19_SelectEmployee_Fluent()
+        {
+            Northwind db = CreateDB();
+            var q = db.GetTable<Territory>()
+                        .Join(db.GetTable<EmployeeTerritory>(), t => t.TerritoryID, l => l.TerritoryID, (t, l) => l)
+                        .Join(db.GetTable<Employee>().Where(e => e.EmployeeID > 0), l => l.EmployeeID, e => e.EmployeeID, (l, e) => e);
+            var employeeCount = q.Count();
+            Assert.Greater(employeeCount, 0, "Expected any employees, got count=" + employeeCount);
+        }
+
+        /// <summary>
+        /// Test the use of DbLinq as a QueryObject
+        /// http://www.martinfowler.com/eaaCatalog/queryObject.html
+        /// </summary>
+        [Test]
+        public void C20_SelectEmployee_DbLinqAsQueryObject()
+        {
+            Northwind db = CreateDB();
+            IQueryable<Employee> allEmployees = db.GetTable<Employee>();
+
+            allEmployees = filterByNameOrSurnameContains(db, allEmployees, "an");
+
+            allEmployees = filterByTerritoryName(db, allEmployees, "Neward");
+
+            Assert.AreEqual(1, allEmployees.Count());
+        }
+
+        [Test]
+        public void C21_SelectEmployee_DbLinqAsQueryObjectWithOrderCount()
+        {
+            Northwind db = CreateDB();
+            IQueryable<Employee> allEmployees = db.GetTable<Employee>();
+
+            allEmployees = filterByOrderCountGreaterThan(db, allEmployees, 50);
+            allEmployees = filterByNameOrSurnameContains(db, allEmployees, "an");
+
+            allEmployees = filterByTerritoryNames(db, allEmployees, "Neward", "Boston", "Wilton");
+
+            int employeesCount = allEmployees.ToList().Count;
+
+            Assert.AreEqual(employeesCount, allEmployees.Count());
+        }
+
+
+        private IQueryable<Employee> filterByOrderCountGreaterThan(Northwind db, IQueryable<Employee> allEmployees, int minimumOrderNumber)
+        {
+            return from e in allEmployees.Where(e => e.Orders.Count > minimumOrderNumber) select e;
+        }
+
+        private IQueryable<Employee> filterByNameOrSurnameContains(Northwind db, IQueryable<Employee> allEmployees, string namePart)
+        {
+            return from e in allEmployees.Where(e => e.FirstName.Contains(namePart) || e.LastName.Contains(namePart)) select e;
+        }
+
+        private IQueryable<Employee> filterByTerritoryName(Northwind db, IQueryable<Employee> allEmployees, string territoryName)
+        {
+            IQueryable<Territory> territoryRequired = db.GetTable<Territory>().Where(t => t.TerritoryDescription == territoryName);
+            var q = territoryRequired
+                        .Join(db.GetTable<EmployeeTerritory>(), t => t.TerritoryID, l => l.TerritoryID, (t, l) => l)
+                        .Join(allEmployees, l => l.EmployeeID, e => e.EmployeeID, (l, e) => e);
+            return q;
+        }
+
+        private IQueryable<Employee> filterByTerritoryNames(Northwind db, IQueryable<Employee> allEmployees, params string[] territoryNames)
+        {
+            IQueryable<Territory> territoryRequired = db.GetTable<Territory>().Where(t => territoryNames.Contains(t.TerritoryDescription));
+            var q = territoryRequired
+                        .Join(db.GetTable<EmployeeTerritory>(), t => t.TerritoryID, l => l.TerritoryID, (t, l) => l)
+                        .Join(allEmployees, l => l.EmployeeID, e => e.EmployeeID, (l, e) => e);
+            return q;
+        }
+
+        [Test]
+        public void C22_SelectEmployee_GetCommandTextWithNoFilter()
+        {
+            Northwind db = CreateDB();
+            IQueryable<Employee> allEmployees = db.GetTable<Employee>();
+            var commandText = db.GetCommand(allEmployees).CommandText;
+            Assert.IsNotNull(commandText);
+        }
+
+        [Test]
+        public void C23_SelectEmployees()
+        {
+            Northwind db = CreateDB();
+            var allEmployees = db.GetTable<Employee>();
+            int count = 0;
+            foreach (var emp in allEmployees)
+            {
+                ++count;
+            }
+            Assert.AreEqual(9, count);
+        }
+
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
+        [Test]
+        public void C24_SelectEmployee_DbLinqAsQueryObjectWithExceptAndImage()
+        {
+            // This fail becouse Employee contains a ndata, ndata is not comparable
+            // and EXCEPT make a distinct on DATA
+            Northwind db = CreateDB();
+            IQueryable<Employee> allEmployees = db.GetTable<Employee>();
+
+            var toExclude = filterByOrderCountGreaterThan(db, allEmployees, 50);
+            allEmployees = filterByNameOrSurnameContains(db, allEmployees, "a").Except(toExclude);
+
+            string commandText = db.GetCommand(allEmployees).CommandText;
+
+            int employeesCount = allEmployees.ToList().Count;
+
+            Assert.AreEqual(employeesCount, allEmployees.Count());
+        }
+
 
         #endregion
 
@@ -433,7 +668,7 @@ using DataLinq = DbLinq.Data.Linq;
         {
             Northwind db = CreateDB();
 
-            var q = from p in db.Products where p.ProductName == "Pen" select p.ProductID;
+            var q = from p in db.Products where p.ProductName == "Chai" select p.ProductID;
             var productID = q.First();
             Assert.Greater(productID, 0, "Expected penID>0, got " + productID);
         }
@@ -460,21 +695,28 @@ using DataLinq = DbLinq.Data.Linq;
         {
             Northwind db = CreateDB();
 
-            var q = from p in db.Products where p.ProductName == "Pen" select p;
+            var q = from p in db.Products where p.ProductName == "Chai" select p;
             Product pen = q.First();
             Assert.IsNotNull(pen, "Expected non-null Product");
         }
 
+#if !DEBUG && MSSQL
+        // L2SQL: System.NotSupportedException : The query operator 'Last' is not supported.
+        [Explicit]
+#endif
         [Test]
         public void D03_SelectLastPenID()
         {
             Northwind db = CreateDB();
 
-            var q = from p in db.Products where p.ProductName == "Pen" select p.ProductID;
+            var q = from p in db.Products where p.ProductName == "Chai" select p.ProductID;
             var productID = q.Last();
             Assert.Greater(productID, 0, "Expected penID>0, got " + productID);
         }
 
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Test]
         public void D04_SelectProducts_OrderByName()
         {
@@ -502,9 +744,9 @@ using DataLinq = DbLinq.Data.Linq;
         public void D05_SelectOrdersForProduct()
         {
             Northwind db = CreateDB();
-            //var q = from p in db.Products where "Pen"==p.ProductName select p.Order;
+            //var q = from p in db.Products where "Chai"==p.ProductName select p.Order;
             //List<Order> penOrders = q.ToList();
-            //Assert.Greater(penOrders.Count,0,"Expected some orders for product 'Pen'");
+            //Assert.Greater(penOrders.Count,0,"Expected some orders for product 'Chai'");
 
             var q =
                 from o in db.Orders
@@ -538,6 +780,7 @@ using DataLinq = DbLinq.Data.Linq;
             }
             Assert.Greater(list1.Count, 0, "Expected some orders for London customers");
         }
+
         [Test]
         public void D07_OrdersFromLondon_Alt()
         {
@@ -606,6 +849,10 @@ using DataLinq = DbLinq.Data.Linq;
         }
 
 
+#if !DEBUG && (SQLITE || MSSQL)
+        // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.ReadTest+Northwind1+CustomerDerivedClass' is not mapped as a Table.
+        [Explicit]
+#endif
         [Test]
         public void D12_SelectDerivedClass()
         {
@@ -640,14 +887,14 @@ using DataLinq = DbLinq.Data.Linq;
         {
             Northwind db = CreateDB();
 
-            var res = db.ExecuteQuery<Pen>(@"SELECT [ProductID] AS PenId FROM [Products] WHERE
-              [ProductName] ='Pen'").Single();
-            Assert.AreEqual(1, res.PenId);
+            var res = db.ExecuteQuery<Chai>(@"SELECT [ProductID] AS ChaiId FROM [Products] WHERE
+              [ProductName] ='Chai'").Single();
+            Assert.AreEqual(1, res.ChaiId);
         }
 
-        class Pen
+        class Chai
         {
-            internal int PenId;
+            internal int ChaiId;
         }
 
         [Test]
@@ -674,6 +921,10 @@ using DataLinq = DbLinq.Data.Linq;
             }
         }
 
+#if !DEBUG && (SQLITE || MSSQL)
+        // L2SQL: System.InvalidOperationException : The type 'Test_NUnit_MsSql_Strict.ReadTest+NorthwindDupl+CustomerDerivedClass' is not mapped as a Table.
+        [Explicit]
+#endif
         [Test]
         public void D15_DuplicateProperty()
         {
@@ -770,5 +1021,12 @@ using DataLinq = DbLinq.Data.Linq;
 
         #endregion
 
+        [Test]
+        public void SqlInjectionAttack()
+        {
+            var db = CreateDB();
+            var q = db.Customers.Where(c => c.ContactName == "'; DROP TABLE DoesNotExist; --");
+            Assert.AreEqual(0, q.Count());
+        }
     }
 }

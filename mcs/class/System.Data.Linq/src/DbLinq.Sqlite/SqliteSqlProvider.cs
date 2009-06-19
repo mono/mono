@@ -25,18 +25,12 @@
 #endregion
 
 using System.Collections.Generic;
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-#else
 using DbLinq.Data.Linq.Sql;
-#endif
 using DbLinq.Vendor.Implementation;
 
 namespace DbLinq.Sqlite
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class SqliteSqlProvider : SqlProvider
@@ -69,6 +63,13 @@ namespace DbLinq.Sqlite
         protected override bool IsNameCaseSafe(string namePart)
         {
             return true;
+        }
+
+        public override SqlStatement GetLiteral(bool literal)
+        {
+            if (literal)
+                return "1";
+            return "0";
         }
     }
 }

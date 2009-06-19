@@ -47,7 +47,7 @@ using nwind;
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
@@ -93,6 +93,9 @@ using nwind;
             Assert.IsTrue(list.Length > 0);
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test(Description = "ToList. This sample uses ToList to immediately evaluate a query into a List(Of T).")]
         public void LinqToSqlConversions03()
         {
@@ -108,7 +111,9 @@ using nwind;
             Assert.IsTrue(qList.Count > 0);
         }
 
-
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Linq101SamplesModified("Strange short to boolean casting, perhaps in the original Northwind Product.Discontinued was a boolean property")]
         [Test(Description = "ToDictionary. This sample uses ToDictionary to immediately evaluate a query and a key expression into an Dictionary(Of K, T).")]
         public void LinqToSqlConversion04()

@@ -26,26 +26,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 
-#if MONO_STRICT
-using System.Data.Linq.Sugar.ExpressionMutator;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
-using System.Text.RegularExpressions;
 using DbLinq.Factory;
 using DbLinq.Util;
-using System.Diagnostics;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     /// <summary>
     /// Full query builder, with cache management
@@ -98,7 +89,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         protected virtual IList<Expression> FindExpressionsByName(string name, BuilderContext builderContext)
         {
             var expressions = new List<Expression>();
-            expressions.AddRange(from t in builderContext.EnumerateAllTables() where t.Alias == name select (Expression)t);
+            expressions.AddRange((from t in builderContext.EnumerateAllTables() where t.Alias == name select (Expression)t).Distinct());
             expressions.AddRange(from c in builderContext.EnumerateScopeColumns() where c.Alias == name select (Expression)c);
             return expressions;
         }
@@ -126,7 +117,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <param name="builderContext"></param>
         protected virtual void CheckTablesAlias(BuilderContext builderContext)
         {
-            var tables = builderContext.EnumerateAllTables().ToList();
+            var tables = builderContext.EnumerateAllTables().Distinct().ToList();
             // just to be nice: if we have only one table involved, there's no need to alias it
             if (tables.Count == 1)
             {
@@ -175,7 +166,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     do
                     {
                         externalParameterExpression.Alias = MakeTableName(aliasBase, ++anonymousIndex, builderContext);
-                    } while (FindExpressionsByName(externalParameterExpression.Alias, builderContext).Count != 1);
+                    } while (FindParametersByName(externalParameterExpression.Alias, builderContext).Count > 1);
                 }
             }
         }
@@ -227,6 +218,12 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 // Query expressions query identification 
                 currentExpression = ExpressionDispatcher.Analyze(currentExpression, tableExpression, builderContext);
 
+                if(! builderContext.IsExternalInExpressionChain)
+                {
+                    EntitySetExpression setExpression = currentExpression as EntitySetExpression;
+                    if (setExpression != null)
+                        currentExpression = setExpression.TableExpression;
+                }
                 tableExpression = currentExpression;
             }
             ExpressionDispatcher.BuildSelect(tableExpression, builderContext);
@@ -292,9 +289,37 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 var scopeExpression = builderContext.SelectExpressions[scopeExpressionIndex];
 
                 // where clauses
+                List<int> whereToRemove = new List<int>(); // List of where clausole evaluating TRUE (could be ignored and so removed)
+                bool falseWhere = false; // true when the full where evaluate to FALSE
                 for (int whereIndex = 0; whereIndex < scopeExpression.Where.Count; whereIndex++)
                 {
-                    scopeExpression.Where[whereIndex] = processor(scopeExpression.Where[whereIndex], builderContext);
+                    Expression whereClausole = processor(scopeExpression.Where[whereIndex], builderContext);
+                    ConstantExpression constantWhereClausole = whereClausole as ConstantExpression;
+                    if (constantWhereClausole != null)
+                    {
+                        if (constantWhereClausole.Value.Equals(false))
+                        {
+                            falseWhere = true;
+                            break;
+                        }
+                        else if (constantWhereClausole.Value.Equals(true))
+                        {
+                            whereToRemove.Add(whereIndex);
+                            continue;
+                        }
+                    }
+                    scopeExpression.Where[whereIndex] = whereClausole;
+                }
+                if (scopeExpression.Where.Count > 0)
+                {
+                    if (falseWhere)
+                    {
+                        scopeExpression.Where.Clear();
+                        scopeExpression.Where.Add(Expression.Equal(Expression.Constant(true), Expression.Constant(false)));
+                    }
+                    else
+                        foreach (int whereIndex in whereToRemove)
+                            scopeExpression.Where.RemoveAt(whereIndex);
                 }
 
                 // limit clauses
@@ -382,36 +407,25 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         public SelectQuery GetSelectQuery(ExpressionChain expressions, QueryContext queryContext)
         {
-            var query = GetFromSelectCache(expressions);
+            SelectQuery query = null;
+            if (queryContext.DataContext.QueryCacheEnabled)
+            {
+                query = GetFromSelectCache(expressions);
+            }
             if (query == null)
             {
-#if DEBUG && !MONO_STRICT
-                var timer = new Stopwatch();
-                timer.Start();
-#endif
+                Profiler.At("START: GetSelectQuery(), building Expression query");
                 var expressionsQuery = BuildExpressionQuery(expressions, queryContext);
-#if DEBUG && !MONO_STRICT
-                timer.Stop();
-                long expressionBuildTime = timer.ElapsedMilliseconds;
+                Profiler.At("END: GetSelectQuery(), building Expression query");
 
-                timer.Reset();
-                timer.Start();
-#endif
+                Profiler.At("START: GetSelectQuery(), building Sql query");
                 query = BuildSqlQuery(expressionsQuery, queryContext);
-#if DEBUG && !MONO_STRICT
-                timer.Stop();
-                long sqlBuildTime = timer.ElapsedMilliseconds;
-#endif
-#if DEBUG && !MONO_STRICT
-                // generation time statistics
-                var log = queryContext.DataContext.Log;
-                if (log != null)
+                Profiler.At("END: GetSelectQuery(), building Sql query");
+
+                if (queryContext.DataContext.QueryCacheEnabled)
                 {
-                    log.WriteLine("Select Expression build: {0}ms", expressionBuildTime);
-                    log.WriteLine("Select SQL build:        {0}ms", sqlBuildTime);
+                    SetInSelectCache(expressions, query);
                 }
-#endif
-                SetInSelectCache(expressions, query);
             }
             return query;
         }
@@ -426,13 +440,20 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         public virtual Delegate GetTableReader(Type tableType, IList<string> parameters, QueryContext queryContext)
         {
-            var reader = GetFromTableReaderCache(tableType, parameters);
+            Delegate reader = null;
+            if (queryContext.DataContext.QueryCacheEnabled)
+            {
+                reader = GetFromTableReaderCache(tableType, parameters);
+            }
             if (reader == null)
             {
                 var lambda = ExpressionDispatcher.BuildTableReader(tableType, parameters,
                                                                    new BuilderContext(queryContext));
                 reader = lambda.Compile();
-                SetInTableReaderCache(tableType, parameters, reader);
+                if (queryContext.DataContext.QueryCacheEnabled)
+                {
+                    SetInTableReaderCache(tableType, parameters, reader);
+                }
             }
             return reader;
         }

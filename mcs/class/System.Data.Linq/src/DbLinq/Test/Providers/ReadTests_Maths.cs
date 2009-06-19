@@ -21,7 +21,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -63,6 +63,9 @@ using nwind;
 
         //EXP (SSIS)
 
+#if !DEBUG && (SQLITE && MONO)
+        [Explicit]
+#endif
         [Test]
         public void Exp()
         {
@@ -84,6 +87,9 @@ using nwind;
 
         //Devuelve el menor entero mayor o igual que una expresión numérica.
 
+#if !DEBUG && (SQLITE && MONO)
+        [Explicit]
+#endif
         [Test]
         public void Floor()
         {
@@ -102,48 +108,53 @@ using nwind;
 
         //LN (SSIS)
 
+#if !DEBUG && (SQLITE)
+        [Explicit]
+#endif
         [Test]
         public void Log01()
         {
             Northwind db = CreateDB();
 
             var q = from c in db.OrderDetails
-                    where Math.Log((double)(c.Discount)) > 0.0
+                    where Math.Log((double)(c.Discount + 1)) > 0.0
                     select c;
 
-            var list = q.ToList();
-
+            Assert.AreEqual(838, q.Count());
         }
 
+#if !DEBUG && (SQLITE)
+        [Explicit]
+#endif
         [Test]
         public void Log02()
         {
             Northwind db = CreateDB();
 
             var q = from c in db.OrderDetails
-                    where Math.Log((double)(c.Discount),3.0) > 0.0
+                    where Math.Log((double)(c.Discount + 1),3.0) > 0.0
                     select c;
 
-            var list = q.ToList();
-
+            Assert.AreEqual(838, q.Count());
         }
 
 
         //Devuelve el logaritmo natural de una expresión numérica.
 
         //LOG (SSIS)
-
+#if !DEBUG && (SQLITE && MONO)
+        [Explicit]
+#endif
         [Test]
         public void Log03()
         {
             Northwind db = CreateDB();
 
             var q = from c in db.OrderDetails
-                    where Math.Log10((double)(c.Discount)) > 0.0
+                    where Math.Log10((double)(c.Discount + 1)) > 0.0
                     select c;
 
-            var list = q.ToList();
-
+            Assert.AreEqual(838, q.Count());
         }
 
 
@@ -151,6 +162,9 @@ using nwind;
 
         //POWER (SSIS)
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test]
         public void Pow()
         {
@@ -166,7 +180,9 @@ using nwind;
         //Devuelve el resultado de elevar una expresión numérica a una determinada potencia.
 
         //ROUND (SSIS)
-
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Test]
         public void Round()
         {
@@ -180,6 +196,9 @@ using nwind;
 
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         [ExpectedException(typeof(NotSupportedException))]
         public void Round02()
@@ -199,6 +218,9 @@ using nwind;
         //SIGN (SSIS)
 
 
+#if !DEBUG && (SQLITE && MONO)
+        [Explicit]
+#endif
         [Test]
         public void Sign01()
         {
@@ -219,6 +241,9 @@ using nwind;
 
         //SQRT (SSIS) 
 
+#if !DEBUG && (SQLITE && MONO)
+        [Explicit]
+#endif
         [Test]
         public void Sqrt()
         {

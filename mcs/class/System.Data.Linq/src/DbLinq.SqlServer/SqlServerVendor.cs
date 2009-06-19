@@ -32,26 +32,27 @@ using System.Text;
 using System.Data;
 using System.Data.Linq.Mapping;
 
+using DbLinq.Data.Linq;
+using DbLinq.Data.Linq.SqlClient;
 using DbLinq.Util;
 using DbLinq.Vendor;
+
 #if MONO_STRICT
-using System.Data.Linq.SqlClient;
 using DataContext = System.Data.Linq.DataContext;
-using ITable = System.Data.Linq.ITable;
-using DataLinq = System.Data.Linq;
+using DataLinq    = System.Data.Linq;
+using ITable      = System.Data.Linq.ITable;
+using System.Data.Linq.SqlClient;
 #else
-using DbLinq.Data.Linq.SqlClient;
 using DataContext = DbLinq.Data.Linq.DataContext;
-using ITable = DbLinq.Data.Linq.ITable;
-using DataLinq = DbLinq.Data.Linq;
+using DataLinq    = DbLinq.Data.Linq;
+using ITable      = DbLinq.Data.Linq.ITable;
+using DbLinq.Data.Linq.SqlClient;
 #endif
 
 namespace DbLinq.SqlServer
 {
     [Vendor(typeof(SqlServerProvider), typeof(Sql2000Provider), typeof(Sql2005Provider))]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public 
 #endif
     class SqlServerVendor : Vendor.Implementation.Vendor

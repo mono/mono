@@ -32,22 +32,12 @@ using System.Linq.Expressions;
 using System.Reflection;
 using DbLinq.Util;
 
-#if MONO_STRICT
-using System.Data.Linq.Mapping;
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Mapping;
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     internal partial class ExpressionDispatcher
     {
@@ -100,31 +90,40 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         /// <returns></returns>
         protected virtual TableExpression PromoteTable(TableExpression tableExpression, BuilderContext builderContext)
         {
-            // 1. Find the table ScopeExpression
-            SelectExpression oldSelect = FindTableScope(ref tableExpression, builderContext);
-            if (oldSelect == null)
-                return null;
-            // 2. Find a common ScopeExpression
-            var commonScope = FindCommonScope(oldSelect, builderContext.CurrentSelect);
-            commonScope.Tables.Add(tableExpression);
-            return tableExpression;
-        }
-
-        protected virtual SelectExpression FindTableScope(ref TableExpression tableExpression, BuilderContext builderContext)
-        {
-            foreach (var scope in builderContext.SelectExpressions)
+            int currentIndex = 0;
+            SelectExpression oldSelect = null;
+            SelectExpression commonScope = null;
+            TableExpression foundTable = null;
+            do
             {
-                for (int tableIndex = 0; tableIndex < scope.Tables.Count; tableIndex++)
+                // take a select
+                oldSelect = builderContext.SelectExpressions[currentIndex];
+
+                // look for a common scope
+                if (oldSelect != builderContext.CurrentSelect)
                 {
-                    if (scope.Tables[tableIndex].IsEqualTo(tableExpression))
-                    {
-                        tableExpression = scope.Tables[tableIndex];
-                        scope.Tables.RemoveAt(tableIndex);
-                        return scope;
-                    }
+                    commonScope = FindCommonScope(oldSelect, builderContext.CurrentSelect);
+                    if (commonScope != null)
+                        // if a common scope exists, look for an equivalent table in that select
+                        for (int tableIndex = 0; tableIndex < oldSelect.Tables.Count && foundTable == null; tableIndex++)
+                        {
+                            if (oldSelect.Tables[tableIndex].IsEqualTo(tableExpression))
+                            {
+                                // found a matching table!
+                                foundTable = oldSelect.Tables[tableIndex];
+                            }
+                        }
                 }
+                ++currentIndex;
             }
-            return null;
+            while (currentIndex < builderContext.SelectExpressions.Count && foundTable == null);
+
+            if (foundTable != null)
+            {
+                oldSelect.Tables.Remove(foundTable);
+                commonScope.Tables.Add(foundTable);
+            }
+            return foundTable;
         }
 
         /// <summary>
@@ -143,7 +142,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                         return aScope;
                 }
             }
-            throw Error.BadArgument("S0127: No common ScopeExpression found");
+            return null;
         }
 
         /// <summary>
@@ -385,10 +384,14 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             var bindings = new List<MemberBinding>();
             foreach (var columnExpression in RegisterAllColumns(tableExpression, builderContext))
             {
-                var parameterColumn = GetOutputValueReader(columnExpression,
-                                                           dataRecordParameter, mappingContextParameter, builderContext);
-                var binding = Expression.Bind(columnExpression.MemberInfo, parameterColumn);
-                bindings.Add(binding);
+                PropertyInfo propertyInfo = columnExpression.MemberInfo as PropertyInfo;
+                if (propertyInfo == null || propertyInfo.CanWrite)
+                {
+                    var parameterColumn = GetOutputValueReader(columnExpression,
+                                                               dataRecordParameter, mappingContextParameter, builderContext);
+                    var binding = Expression.Bind(columnExpression.MemberInfo, parameterColumn);
+                    bindings.Add(binding);
+                }
             }
             var newExpression = Expression.New(tableExpression.Type);
             var initExpression = Expression.MemberInit(newExpression, bindings);

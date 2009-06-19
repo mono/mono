@@ -31,9 +31,7 @@ using DbLinq.Schema.Dbml;
 
 namespace DbLinq.Vendor
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface ISchemaLoader

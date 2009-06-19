@@ -27,10 +27,12 @@
 using System;
 
 #if MONO_STRICT
-namespace System.Data.Linq.Identity
+using System.Data.Linq;
 #else
-namespace DbLinq.Data.Linq.Identity
+using DbLinq.Data.Linq;
 #endif
+
+namespace DbLinq.Data.Linq.Identity
 {
     /// <summary>
     /// Provides a factory that creates IIdentityReaders

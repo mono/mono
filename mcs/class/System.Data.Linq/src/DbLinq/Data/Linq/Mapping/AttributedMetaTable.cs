@@ -28,11 +28,7 @@ using System.Data.Linq.Mapping;
 using System.Diagnostics;
 using System.Reflection;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Mapping
-#else
 namespace DbLinq.Data.Linq.Mapping
-#endif
 {
     [DebuggerDisplay("MetaTable for {TableName}")]
     internal class AttributedMetaTable : MetaTable

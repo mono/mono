@@ -29,9 +29,7 @@ namespace DbLinq.Schema.Dbml.Adapter
     /// <summary>
     /// A INamedType is a literally named type
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface INamedType

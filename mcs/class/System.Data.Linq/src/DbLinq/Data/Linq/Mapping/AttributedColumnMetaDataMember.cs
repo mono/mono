@@ -29,11 +29,7 @@ using System.Diagnostics;
 using System.Reflection;
 using DbLinq.Util;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Mapping
-#else
 namespace DbLinq.Data.Linq.Mapping
-#endif
 {
     [DebuggerDisplay("MetaDataMember for {MappedName}")]
     internal class AttributedColumnMetaDataMember : AttributedAbstractMetaDataMember

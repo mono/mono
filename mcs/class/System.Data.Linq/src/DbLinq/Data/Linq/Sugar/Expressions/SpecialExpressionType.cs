@@ -24,28 +24,23 @@
 // 
 #endregion
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     /// <summary>
     /// SQL specific (and DBlinq required) custom expression types.
     /// To add a new value here, please be sure to handle it everywhere
     /// For this, search for "// SETuse" comment in project
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- enum SpecialExpressionType
+    enum SpecialExpressionType
     {
         IsNull = 100,
         IsNotNull,
         Concat,
         Count,
+        Exists,
         Like,
         Min,
         Max,
@@ -73,6 +68,7 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
         Second,
         Millisecond,
         Now,
+        Date,
         DateDiffInMilliseconds,
 
         Abs,

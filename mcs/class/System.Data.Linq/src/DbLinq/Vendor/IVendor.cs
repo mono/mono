@@ -30,13 +30,13 @@ using System.Collections.Generic;
 
 #if MONO_STRICT
 using DataContext = System.Data.Linq.DataContext;
-using Data = System.Data;
 using System.Data.Linq;
 #else
 using DataContext = DbLinq.Data.Linq.DataContext;
+#endif
+
 using Data = DbLinq.Data;
 using DbLinq.Data.Linq;
-#endif
 using IExecuteResult = System.Data.Linq.IExecuteResult;
 
 namespace DbLinq.Vendor
@@ -44,9 +44,7 @@ namespace DbLinq.Vendor
     /// <summary>
     /// Vendor - specific part of DbLinq.
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IVendor

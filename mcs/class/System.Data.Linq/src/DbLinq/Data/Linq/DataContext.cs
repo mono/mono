@@ -28,36 +28,32 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Data.Common;
+using System.Data.Linq;
 using System.Data.Linq.Mapping;
+using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 
 #if MONO_STRICT
-using System.Data.Linq.Implementation;
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Identity;
-using DbLinq.Util;
-using AttributeMappingSource = System.Data.Linq.Mapping.AttributeMappingSource;
-using MappingContext = System.Data.Linq.Mapping.MappingContext;
-using DbLinq;
+using AttributeMappingSource  = System.Data.Linq.Mapping.AttributeMappingSource;
 #else
-using DbLinq.Data.Linq.Implementation;
-using DbLinq.Data.Linq.Sugar;
-using DbLinq.Data.Linq.Identity;
-using DbLinq.Util;
-using AttributeMappingSource = DbLinq.Data.Linq.Mapping.AttributeMappingSource;
-using MappingContext = DbLinq.Data.Linq.Mapping.MappingContext;
-using System.Data.Linq;
+using AttributeMappingSource  = DbLinq.Data.Linq.Mapping.AttributeMappingSource;
 #endif
 
-using DbLinq.Factory;
-using DbLinq.Vendor;
+using DbLinq;
+using DbLinq.Data.Linq;
 using DbLinq.Data.Linq.Database;
 using DbLinq.Data.Linq.Database.Implementation;
-using System.Linq.Expressions;
-using System.Reflection.Emit;
+using DbLinq.Data.Linq.Identity;
+using DbLinq.Data.Linq.Implementation;
+using DbLinq.Data.Linq.Mapping;
+using DbLinq.Data.Linq.Sugar;
+using DbLinq.Factory;
+using DbLinq.Util;
+using DbLinq.Vendor;
 
 #if MONO_STRICT
 namespace System.Data.Linq
@@ -85,6 +81,19 @@ namespace DbLinq.Data.Linq
 
         private bool objectTrackingEnabled = true;
         private bool deferredLoadingEnabled = true;
+
+        private bool queryCacheEnabled = false;
+
+        /// <summary>
+        /// Disable the QueryCache: this is surely good for rarely used Select, since preparing
+        /// the SelectQuery to be cached could require more time than build the sql from scratch.
+        /// </summary>
+        [DBLinqExtended]
+        public bool QueryCacheEnabled 
+        {
+            get { return queryCacheEnabled; }
+            set { queryCacheEnabled = value; }
+        }
 
         private IEntityTracker currentTransactionEntities;
         private IEntityTracker CurrentTransactionEntities
@@ -131,20 +140,25 @@ namespace DbLinq.Data.Linq
 
         public DataContext(IDbConnection connection, MappingSource mapping)
         {
+            Profiler.At("START DataContext(IDbConnection, MappingSource)");
             Init(new DatabaseContext(connection), mapping, null);
+            Profiler.At("END DataContext(IDbConnection, MappingSource)");
         }
 
         public DataContext(IDbConnection connection)
         {
+            Profiler.At("START DataContext(IDbConnection)");
             if (connection == null)
                 throw new ArgumentNullException("connection");
 
             Init(new DatabaseContext(connection), null, null);
+            Profiler.At("END DataContext(IDbConnection)");
         }
 
         [DbLinqToDo]
         public DataContext(string fileOrServerOrConnection, MappingSource mapping)
         {
+            Profiler.At("START DataContext(string, MappingSource)");
             if (fileOrServerOrConnection == null)
                 throw new ArgumentNullException("fileOrServerOrConnection");
             if (mapping == null)
@@ -160,10 +174,11 @@ namespace DbLinq.Data.Linq
                 throw new NotImplementedException("Server name not supported.");
 
             // Assume it's a connection string...
-            IVendor ivendor = GetVendor(fileOrServerOrConnection);
+            IVendor ivendor = GetVendor(ref fileOrServerOrConnection);
 
             IDbConnection dbConnection = ivendor.CreateDbConnection(fileOrServerOrConnection);
             Init(new DatabaseContext(dbConnection), mapping, ivendor);
+            Profiler.At("END DataContext(string, MappingSource)");
         }
 
         /// <summary>
@@ -179,21 +194,23 @@ namespace DbLinq.Data.Linq
         [DbLinqToDo]
         public DataContext(string connectionString)
         {
-            IVendor ivendor = GetVendor(connectionString);
+            Profiler.At("START DataContext(string)");
+            IVendor ivendor = GetVendor(ref connectionString);
 
             IDbConnection dbConnection = ivendor.CreateDbConnection(connectionString);
             Init(new DatabaseContext(dbConnection), null, ivendor);
 
+            Profiler.At("END DataContext(string)");
         }
 
-        private IVendor GetVendor(string connectionString)
+        private IVendor GetVendor(ref string connectionString)
         {
             if (connectionString == null)
                 throw new ArgumentNullException("connectionString");
 
             Assembly assy;
             string vendorClassToLoad;
-            GetVendorInfo(connectionString, out assy, out vendorClassToLoad);
+            GetVendorInfo(ref connectionString, out assy, out vendorClassToLoad);
 
             var types =
                 from type in assy.GetTypes()
@@ -214,10 +231,10 @@ namespace DbLinq.Data.Linq
             return (IVendor) Activator.CreateInstance(types.First());
         }
 
-        private void GetVendorInfo(string connectionString, out Assembly assembly, out string typeName)
+        private void GetVendorInfo(ref string connectionString, out Assembly assembly, out string typeName)
         {
             System.Text.RegularExpressions.Regex reProvider
-                = new System.Text.RegularExpressions.Regex(@"DbLinqProvider=([\w\.]+)");
+                = new System.Text.RegularExpressions.Regex(@"DbLinqProvider=([\w\.]+);?");
 
             string assemblyFile = null;
             string vendor;
@@ -274,13 +291,12 @@ namespace DbLinq.Data.Linq
             if (databaseContext.Connection.ConnectionString == null)
                 throw new NullReferenceException();
 
+            string connectionString = databaseContext.Connection.ConnectionString;
             _VendorProvider = ObjectFactory.Get<IVendorProvider>();
             Vendor = vendor ?? 
-                (databaseContext.Connection.ConnectionString != null
-                    ? GetVendor(databaseContext.Connection.ConnectionString)
-                    : null) ??
+                (connectionString != null ? GetVendor(ref connectionString) : null) ??
                 _VendorProvider.FindVendorByProviderType(typeof(SqlClient.Sql2005Provider));
-
+            
             DatabaseContext = databaseContext;
 
             MemberModificationHandler = ObjectFactory.Create<IMemberModificationHandler>(); // not a singleton: object is stateful
@@ -329,6 +345,7 @@ namespace DbLinq.Data.Linq
 		/// <exception cref="InvalidOperationException">If the type is not mappable as a Table.</exception>
         public ITable GetTable(Type type)
         {
+            Profiler.At("DataContext.GetTable(typeof({0}))", type != null ? type.Name : null);
             ITable tableExisting;
 			if (_tableMap.TryGetValue(type, out tableExisting))
                 return tableExisting;
@@ -420,7 +437,6 @@ namespace DbLinq.Data.Linq
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
-                            break;
                     }
                 }
                 // TODO: handle conflicts (which can only occur when concurrency mode is implemented)
@@ -802,7 +818,7 @@ namespace DbLinq.Data.Linq
             var identityReader = _GetIdentityReader(entity.GetType());
             var identityKey = identityReader.GetIdentityKey(entity);
             // if we have no key, we can not watch
-            if (identityKey == null)
+            if (identityKey == null || identityKey.Keys.Count == 0)
                 return;
             // register entity
             AllTrackedEntities.RegisterToWatch(entity, identityKey);
@@ -1098,6 +1114,16 @@ namespace DbLinq.Data.Linq
         [DbLinqToDo]
         public DbCommand GetCommand(IQueryable query)
         {
+            DbCommand dbCommand = GetIDbCommand(query) as DbCommand;
+            if (dbCommand == null)
+                throw new InvalidOperationException();
+
+            return dbCommand;
+        }
+
+        [DBLinqExtended]
+        public IDbCommand GetIDbCommand(IQueryable query)
+        {
             if (query == null)
                 throw new ArgumentNullException("query");
 
@@ -1105,11 +1131,29 @@ namespace DbLinq.Data.Linq
             if (qp == null)
                 throw new InvalidOperationException();
 
-            IDbCommand dbCommand = qp.GetQuery(null).GetCommand().Command;
-            if (!(dbCommand is DbCommand))
-                throw new InvalidOperationException();
+            if (qp.ExpressionChain.Expressions.Count == 0)
+                qp.ExpressionChain.Expressions.Add(CreateDefaultQuery(query));
 
-            return (DbCommand)dbCommand;
+            return qp.GetQuery(null).GetCommand().Command;
+        }
+
+        private Expression CreateDefaultQuery(IQueryable query)
+        {
+            // Manually create the expression tree for: IQueryable<TableType>.Select(e => e)
+            var identityParameter = Expression.Parameter(query.ElementType, "e");
+            var identityBody = Expression.Lambda(
+                typeof(Func<,>).MakeGenericType(query.ElementType, query.ElementType),
+                identityParameter,
+                new[] { identityParameter }
+            );
+
+            return Expression.Call(
+                typeof(Queryable),
+                "Select",
+                new[] { query.ElementType, query.ElementType },
+                query.Expression,
+                Expression.Quote(identityBody)
+            );
         }
 
         [DbLinqToDo]

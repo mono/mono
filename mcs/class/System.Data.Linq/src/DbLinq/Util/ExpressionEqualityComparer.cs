@@ -27,11 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Implementation;
-#else
 using DbLinq.Data.Linq.Implementation;
-#endif
 
 namespace DbLinq.Util
 {

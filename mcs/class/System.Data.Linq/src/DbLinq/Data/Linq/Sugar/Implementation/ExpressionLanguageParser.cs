@@ -30,19 +30,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.ExpressionMutator;
-#else
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     /// <summary>
     /// Analyzes language patterns and replace them with standard expressions

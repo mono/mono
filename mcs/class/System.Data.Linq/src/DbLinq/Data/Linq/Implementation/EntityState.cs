@@ -24,11 +24,7 @@
 // 
 #endregion
 
-#if MONO_STRICT
-namespace System.Data.Linq.Implementation
-#else
 namespace DbLinq.Data.Linq.Implementation
-#endif
 {
     /// <summary>
     /// Represents entity state in data context

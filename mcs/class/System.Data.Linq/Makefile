@@ -38,6 +38,21 @@ dist-DbLinq:
 	tar cTf .files - | (cd $(distdir); tar xf -) ; \
 	rm .files
 
+RSYNC_EXCLUDES = \
+	--exclude '*.cache'         \
+	--exclude '*.csproj.*.txt'  \
+	--exclude '*.dll'           \
+	--exclude '*.exe'           \
+	--exclude '*.force'         \
+	--exclude '*.pdb'           \
+	--exclude '*.pidb'          \
+	--exclude '*.suo'           \
+	--exclude '*.user'          \
+	--exclude '*.userprefs'     \
+	--exclude '*.usertasks'     \
+	--exclude '.svn' 
+
 update-dblinq:
-	rsync -avz --exclude '.svn' --exclude '*.user' $$HOME/Development/mono-HEAD/dblinq2007/src/ src/
+	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/src/ src/
+	rsync -avz $(RSYNC_EXCLUDES) $$HOME/Development/mono-HEAD/dblinq2007/tests/ tests/
 

@@ -27,17 +27,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Sugar.Expressions;
-#else
-using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
+using DbLinq.Data.Linq.Sugar.Expressions;
+
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     /// <summary>
     /// ScopeExpression describes a selection.
@@ -70,7 +63,7 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
         public SelectOperatorType NextSelectExpressionOperator;
 
         // Parent scope: we will climb up to find if we don't find the request table in the current scope
-        public SelectExpression Parent { get; private set; }
+        public SelectExpression Parent { get; set; }
 
         public SelectExpression()
             : base(ExpressionType, null, null)

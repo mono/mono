@@ -27,6 +27,8 @@
 using System;
 using System.Data.Linq.Mapping;
 
+using DbLinq.Data.Linq.Mapping;
+
 #if MONO_STRICT
 namespace System.Data.Linq.Mapping
 #else

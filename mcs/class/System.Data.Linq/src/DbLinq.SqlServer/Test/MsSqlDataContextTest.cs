@@ -66,13 +66,13 @@ namespace DbLinqTest {
             return string.Format(
                 "SELECT [first_name], [last_name]{0}" + 
                 "FROM [people]{0}" +
-                "WHERE [first_name] = '" + firstName + "'", 
+                "WHERE ([first_name] = '" + firstName + "')", 
                 Environment.NewLine); ;
         }
 
         protected override string People(string firstName, string lastName)
         {
-            return People(firstName) + " AND [last_name] = '" + lastName + "'";
+            return People(firstName) + " AND ([last_name] = '" + lastName + "')";
         }
 
         protected override string People(string firstName, string lastName, int skip, int take)
@@ -84,7 +84,7 @@ namespace DbLinqTest {
                 "    ROW_NUMBER() OVER(ORDER BY [first_name], [last_name]{0}" +
                 ") AS [__ROW_NUMBER]{0}" +
                 "    FROM [people]{0}" +
-                "WHERE [first_name] = '{1}' AND [last_name] = '{2}'    ) AS [t0]{0}" +
+                "WHERE ([first_name] = '{1}') AND ([last_name] = '{2}')    ) AS [t0]{0}" +
                 "WHERE [__ROW_NUMBER] BETWEEN {3}+1 AND {3}+{4}{0}" +
                 "ORDER BY [__ROW_NUMBER]",
                 Environment.NewLine, firstName, lastName, skip, take);

@@ -27,20 +27,12 @@
 using System;
 using System.Data;
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using MappingContext = System.Data.Linq.Mapping.MappingContext;
-#else
+
+using DbLinq.Data.Linq.Mapping;
 using DbLinq.Data.Linq.Sugar;
-using MappingContext = DbLinq.Data.Linq.Mapping.MappingContext;
-#endif
 using DbLinq.Util;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     internal class DataRecordReader : IDataRecordReader
     {
@@ -159,8 +151,8 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             }
             if (simpleReturnType == typeof(System.Data.Linq.Binary))
             {
-                return (Expression<Func<IDataRecord, MappingContext, int, byte[]>>)((dataRecord, mappingContext, valueIndex)
-                                                                                    => dataRecord.GetAsBytes(valueIndex));
+                return (Expression<Func<IDataRecord, MappingContext, int, System.Data.Linq.Binary>>)((dataRecord, mappingContext, valueIndex)
+                                                                                    => dataRecord.GetAsBinary(valueIndex));
             }
             // for polymorphic types especially for ExecuteQuery<>()
             if (simpleReturnType == typeof(object))

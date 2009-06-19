@@ -29,44 +29,42 @@ using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar
-#else
 namespace DbLinq.Data.Linq.Sugar
-#endif
 {
     [DebuggerDisplay("ExpressionChain {Expressions.Count} Expression(s)")]
     internal class ExpressionChain : IEnumerable<Expression>
     {
-        public List<Expression> Expressions { get; private set; }
+        private Expression[] expressions;
+        private List<Expression> expressionList;
+        public List<Expression> Expressions 
+        {
+            get
+            {
+                if (expressionList == null)
+                    if (expressions == null)
+                        expressionList = new List<Expression>();
+                    else
+                        expressionList = new List<Expression>(expressions);
+                return expressionList;
+            }
+        }
 
         public ExpressionChain()
         {
-            Expressions = new List<Expression>();
+            expressions = new Expression[] { };
         }
 
-        public ExpressionChain(IEnumerable<Expression> expressions)
+        public ExpressionChain(ExpressionChain chain)
         {
-            Expressions = new List<Expression>(expressions);
+            this.expressions = new Expression[chain.expressions.Length];
+            chain.expressions.CopyTo(this.expressions, 0);
         }
 
-        public ExpressionChain(IEnumerable expressions)
+        public ExpressionChain(ExpressionChain chain, Expression expression)
         {
-            Expressions = new List<Expression>();
-            foreach (Expression e in expressions)
-                Expressions.Add(e);
-        }
-
-        public ExpressionChain(IEnumerable expressions, Expression expression)
-            : this(expressions)
-        {
-            Expressions.Add(expression);
-        }
-
-        public ExpressionChain(IEnumerable expressions, IEnumerable<Expression> expressions2)
-            : this(expressions)
-        {
-            Expressions.AddRange(expressions2);
+            this.expressions = new Expression[chain.expressions.Length + 1];
+            chain.expressions.CopyTo(this.expressions, 0);
+            this.expressions[chain.expressions.Length] = expression;
         }
 
         public override bool Equals(object obj)

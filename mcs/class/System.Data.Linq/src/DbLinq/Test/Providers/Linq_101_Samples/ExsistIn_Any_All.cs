@@ -21,7 +21,7 @@ using nwind;
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
@@ -44,6 +44,7 @@ using nwind;
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
         }
+ 
 
         [Linq101SamplesModified("Strange casting, It seems like original northwind discontinued were boolean")]
         [Test(Description = "Any - Conditional. This sample uses Any to return only Categories that have at least one Discontinued product.")]

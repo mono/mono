@@ -20,7 +20,7 @@ using nwind;
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
@@ -98,6 +98,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "OrderBy - Group by. This sample uses Orderby, Max and Group by to find the Products that have the highest unit price in each category, and sorts the group by category id.")]
         public void LinqToSqlOrderBy06()
         {

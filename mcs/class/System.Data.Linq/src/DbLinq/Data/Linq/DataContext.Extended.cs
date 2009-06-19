@@ -33,6 +33,7 @@ using System.Data;
 using DbLinq.Vendor;
 using System.Data.Linq;
 using DbLinq.Data.Linq.Database.Implementation;
+using DbLinq.Util;
 
 namespace DbLinq.Data.Linq
 {
@@ -42,7 +43,9 @@ namespace DbLinq.Data.Linq
 
         public DataContext(IDatabaseContext databaseContext, MappingSource mappingSource, IVendor vendor)
         {
+            Profiler.At("START DataContext(IDatabaseContext, MappingSource, IVendor)");
             Init(databaseContext, mappingSource, vendor);
+            Profiler.At("END DataContext(IDatabaseContext, MappingSource, IVendor)");
         }
 
         public DataContext(IDbConnection dbConnection, MappingSource mappingSource, IVendor vendor)

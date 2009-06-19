@@ -26,19 +26,13 @@
 
 using System.Diagnostics;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sql
-#else
 namespace DbLinq.Data.Linq.Sql
-#endif
 {
     /// <summary>
     /// Represents a literal SQL part
     /// </summary>
     [DebuggerDisplay("SqlLiteralPart {Literal}")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class SqlLiteralPart : SqlPart

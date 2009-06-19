@@ -35,9 +35,7 @@ namespace DbLinq.Schema.Dbml
     /// <summary>
     /// Serializes DBML
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     static class DbmlSerializer

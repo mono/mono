@@ -28,9 +28,7 @@ using DbLinq.Vendor;
 
 namespace DbLinq.Util
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public // used by external vendors
 #endif
     static class IDataTypeExtensions

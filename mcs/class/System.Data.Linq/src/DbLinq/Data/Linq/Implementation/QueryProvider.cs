@@ -29,17 +29,16 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-#else
 using DbLinq.Data.Linq.Sugar;
-#endif
+using DbLinq.Util;
 
 #if MONO_STRICT
-namespace System.Data.Linq.Implementation
+using System.Data.Linq;
 #else
-namespace DbLinq.Data.Linq.Implementation
+using DbLinq.Data.Linq;
 #endif
+
+namespace DbLinq.Data.Linq.Implementation
 {
     /// <summary>
     /// QueryProvider is used by both DataContext and Table
@@ -147,7 +146,10 @@ namespace DbLinq.Data.Linq.Implementation
         /// <returns></returns>
         public IQueryable<TElement> CreateQuery<TElement>(Expression expression)
         {
-            return new QueryProvider<TElement>(TableType, _dataContext, ExpressionChain, expression);
+            Profiler.At("START QueryProvider.CreateQuery<{0}>({1})", typeof(TElement).Name, expression.ToString());
+            var query = new QueryProvider<TElement>(TableType, _dataContext, ExpressionChain, expression);
+            Profiler.At("END QueryProvider.CreateQuery<{0}>(...)", typeof(TElement).Name);
+            return query;
         }
 
         /// <summary>
@@ -181,8 +183,11 @@ namespace DbLinq.Data.Linq.Implementation
         /// <returns></returns>
         public TResult Execute<TResult>(Expression expression)
         {
+            Profiler.At("START QueryProvider.Execute<{0}>(): Executing expression...", typeof(TResult).Name);
             var query = GetQuery(expression);
-            return _dataContext.QueryRunner.SelectScalar<TResult>(query);
+            var result = _dataContext.QueryRunner.SelectScalar<TResult>(query);
+            Profiler.At("END QueryProvider.Execute<{0}>(): Executing expression...", typeof(TResult).Name);
+            return result;
         }
 
         /// <summary>
@@ -201,8 +206,11 @@ namespace DbLinq.Data.Linq.Implementation
         /// <returns></returns>
         public IEnumerator<T> GetEnumerator()
         {
+            Profiler.At("START QueryProvider.GetEnumerator<{0}>(): Executing expression...", typeof(T).Name);
             var query = GetQuery(null);
-            return _dataContext.QueryRunner.Select<T>(query).GetEnumerator();
+            var enumerator = _dataContext.QueryRunner.Select<T>(query).GetEnumerator();
+            Profiler.At("END QueryProvider.GetEnumerator<{0}>(): Executing expression...", typeof(T).Name);
+            return enumerator;
         }
 
         /// <summary>

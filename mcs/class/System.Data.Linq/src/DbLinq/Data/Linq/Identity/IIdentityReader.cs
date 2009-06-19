@@ -24,18 +24,12 @@
 // 
 #endregion
 
-#if MONO_STRICT
-namespace System.Data.Linq.Identity
-#else
 namespace DbLinq.Data.Linq.Identity
-#endif
 {
     /// <summary>
     /// Allows to read identity from entity
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IIdentityReader

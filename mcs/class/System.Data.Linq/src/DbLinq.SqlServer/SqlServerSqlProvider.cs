@@ -30,22 +30,15 @@ using System.Collections.Generic;
 
 using DbLinq.Vendor.Implementation;
 
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sql;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
 namespace DbLinq.SqlServer
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- class SqlServerSqlProvider : SqlProvider
+    class SqlServerSqlProvider : SqlProvider
     {
         public override ExpressionTranslator GetTranslator()
         {
@@ -67,11 +60,28 @@ namespace DbLinq.SqlServer
             return string.Format("{0} AS {1}", GetTable(table), GetTableAlias(alias));
         }
 
+        /// <summary>
+        /// Returns a table alias
+        /// Ensures about the right case
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="alias"></param>
+        /// <returns></returns>
+        public override string GetSubQueryAsAlias(string subquery, string alias)
+        {
+            return string.Format("({0}) AS {1}", subquery, GetTableAlias(alias));
+        }
+
         public override SqlStatement GetLiteral(bool literal)
         {
             if (literal)
                 return "1";
             return "0";
+        }
+
+        public override SqlStatement GetLiteral(DateTime literal)
+        {
+            return "'" + literal.ToString("o").Substring(0,23) + "'";
         }
 
         public override string GetParameterName(string nameBase)
@@ -189,7 +199,7 @@ namespace DbLinq.SqlServer
 
         protected override SqlStatement GetLiteralStringConcat(SqlStatement a, SqlStatement b)
         {
-            return SqlStatement.Format("{0} + {1}", a, b);
+            return SqlStatement.Format("{0} + {1}", a.Replace("sql_variant", "varchar", false), b.Replace("sql_variant", "varchar", false));
         }
 
         protected override SqlStatement GetLiteralStringToLower(SqlStatement a)
@@ -253,11 +263,14 @@ namespace DbLinq.SqlServer
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                 type = type.GetGenericArguments().First();
 
+            if (type.IsValueType && a[0].Sql.StartsWith("@"))
+                return a;
+
             SqlStatement sqlTypeName;
             if (typeMapping.ContainsKey(type))
                 sqlTypeName = typeMapping[type];
             else
-                sqlTypeName = "variant";
+                sqlTypeName = "sql_variant";
 
             return SqlStatement.Format("CONVERT({0},{1})", sqlTypeName, a);
         }

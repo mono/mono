@@ -29,7 +29,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -56,6 +56,9 @@ using nwind;
             Assert.Greater(customer.Orders.Count, 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void EntitySetEnumerationProjection()
         {
@@ -141,6 +144,9 @@ using nwind;
         }
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void Refresh01()
         {
@@ -158,6 +164,9 @@ using nwind;
             Assert.AreEqual(c.Orders.Count, beforeCount);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void Refresh02()
         {
@@ -181,6 +190,9 @@ using nwind;
         }
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void Refresh03()
         {
@@ -195,6 +207,9 @@ using nwind;
             Assert.AreNotEqual(order.CustomerID, newcustomerId);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void Refresh04()
         {
@@ -299,6 +314,9 @@ using nwind;
             Assert.IsFalse(customer.Orders.IsDeferred);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void DeferedExecutionAndLoadWith()
         {
@@ -317,9 +335,7 @@ using nwind;
         {
             var db = CreateDB();
             var customer = db.Customers.First();
-            Assert.AreEqual("jacques", customer.ContactName, "#1");
             int beforeCount = customer.Orders.Count;
-            Assert.AreEqual(1, beforeCount, "#2");
             var order = new Order();
             customer.Orders.Add(order);
             Assert.AreEqual(beforeCount + 1, customer.Orders.Count, "#3");
@@ -333,9 +349,6 @@ using nwind;
         {
             var db = CreateDB();
             var customer = db.Customers.First();
-            Assert.AreEqual("jacques", customer.ContactName, "#1");
-            int beforeCount = customer.Orders.Count;
-            Assert.AreEqual(1, beforeCount, "#2");
             var order = new Order();
             ((IList)customer.Orders).Add(order);
             ((IList)customer.Orders).Add(order); // raises ArgumentOutOfRangeException for duplicate
@@ -372,12 +385,17 @@ using nwind;
         {
             var db = CreateDB();
             var customer = db.Customers.First();
+            Assert.IsTrue(customer.Orders.IsDeferred);
             int beforeCount = customer.Orders.Count;
+            Assert.IsFalse(customer.Orders.IsDeferred);
 
             if (beforeCount == 0)
                 Assert.Ignore();
 
-            customer.Orders.Remove(customer.Orders.First());
+            Assert.IsFalse(customer.Orders.Remove(null));
+            Assert.AreEqual(beforeCount, customer.Orders.Count);
+
+            Assert.IsTrue(customer.Orders.Remove(customer.Orders.First()));
             Assert.AreEqual(customer.Orders.Count, beforeCount - 1);
         }
 

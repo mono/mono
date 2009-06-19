@@ -25,11 +25,6 @@
 #endregion
 
 using System.Collections.Generic;
-#if MONO_STRICT
-using System.Data.Linq;
-#else
-using DbLinq.Data.Linq;
-#endif
 
 #if MONO_STRICT
 namespace System.Data.Linq

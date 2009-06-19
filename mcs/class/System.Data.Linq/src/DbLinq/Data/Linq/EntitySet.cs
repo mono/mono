@@ -119,6 +119,9 @@ namespace DbLinq.Data.Linq
         /// </summary>
         public void Add(TEntity entity)
         {
+            if (entity == null)
+                throw new ArgumentNullException("entity");
+
             if (Source.Contains (entity))
                 return;
             Source.Add(entity);
@@ -175,9 +178,10 @@ namespace DbLinq.Data.Linq
         /// <param name="index"></param>
         public void RemoveAt(int index)
         {
-            OnRemove(Source[index]);
             deferred = false;
+            var item = Source[index];
             Source.RemoveAt(index);
+            OnRemove(item);
             ListChangedEventHandler handler = ListChanged;
             if (handler != null)
                 handler(this, new ListChangedEventArgs(ListChangedType.ItemDeleted, index));
@@ -285,15 +289,16 @@ namespace DbLinq.Data.Linq
         /// <returns></returns>
         public bool Remove(TEntity entity)
         {
-            OnRemove(entity);
-            deferred = false;
             int i = Source.IndexOf(entity);
             if(i < 0)
             	return false;
+            deferred = false;
+            Source.Remove(entity);
+            OnRemove(entity);
             ListChangedEventHandler handler = ListChanged;
             if (deferredSource != null && handler != null)
                 handler(this, new ListChangedEventArgs(ListChangedType.ItemDeleted, i));
-            return Source.Remove(entity);
+            return true;
         }
 
         #endregion

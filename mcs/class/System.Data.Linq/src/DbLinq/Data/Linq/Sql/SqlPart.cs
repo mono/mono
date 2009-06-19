@@ -24,18 +24,12 @@
 // 
 #endregion
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sql
-#else
 namespace DbLinq.Data.Linq.Sql
-#endif
 {
     /// <summary>
     /// An SqlPart is a constitutive string of SQL query
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     abstract class SqlPart

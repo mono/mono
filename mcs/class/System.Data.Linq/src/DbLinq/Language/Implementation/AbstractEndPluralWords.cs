@@ -29,9 +29,7 @@ namespace DbLinq.Language.Implementation
     /// <summary>
     /// Words with singular/plural capacity, changed in the end
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     abstract class AbstractEndPluralWords : AbstractWords

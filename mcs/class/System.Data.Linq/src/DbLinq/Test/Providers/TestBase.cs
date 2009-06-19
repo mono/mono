@@ -33,6 +33,37 @@ using NUnit.Framework;
 
 using nwind;
 
+#if MONO_STRICT && !MONO
+using System.Diagnostics;
+public static class Profiler
+{
+    private static Stopwatch timer = new Stopwatch();
+
+    [Conditional("DEBUG")]
+    public static void Start()
+    {
+        timer.Reset();
+        timer.Start();
+    }
+    [Conditional("DEBUG")]
+    public static void At(string format, params object[] args)
+    {
+        timer.Stop();
+        Console.Write("#AT({0:D12}) ", timer.ElapsedTicks);
+        Console.WriteLine(format, args);
+        timer.Start();
+    }
+
+    [Conditional("DEBUG")]
+    public static void Stop()
+    {
+        timer.Stop();
+    }
+}
+#else
+using DbLinq.Util;
+#endif
+
 namespace Test_NUnit
 {
     /// <summary>
@@ -41,6 +72,20 @@ namespace Test_NUnit
     /// </summary>
     public abstract partial class TestBase
     {
+        [SetUp]
+        public void BaseSetUp()
+        {
+            Profiler.Start();
+            Profiler.At("BaseSetUp()");
+        }
+
+        [TearDown]
+        public void BaseTearDown()
+        {
+            Profiler.At("BaseTearDown()");
+            Profiler.Stop();
+        }
+
         public string DbServer
         {
             get
@@ -53,7 +98,7 @@ namespace Test_NUnit
             get
             {
                 var xConnectionStringsDoc = new XmlDocument();
-                xConnectionStringsDoc.Load("../src/ConnectionStrings.xml");
+                xConnectionStringsDoc.Load("../tests/ConnectionStrings.xml");
                 XmlNode currentAssemblyNode = xConnectionStringsDoc.SelectSingleNode(string.Format("//Connection[@assembly=\"{0}\"]", Assembly.GetCallingAssembly().GetName().Name));
                 string stringConnection = currentAssemblyNode.FirstChild.Value.Replace(@"\\", @"\");
                 if (stringConnection.Contains("{0}"))

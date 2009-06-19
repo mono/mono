@@ -28,11 +28,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.ExpressionMutator.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.ExpressionMutator.Implementation
-#endif
 {
     internal class MemberMemberBindingMutator : IMemberBindingMutator
     {

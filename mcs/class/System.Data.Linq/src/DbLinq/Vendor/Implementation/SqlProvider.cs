@@ -31,24 +31,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sql;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
 using DbLinq.Util;
 
 namespace DbLinq.Vendor.Implementation
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- class SqlProvider : ISqlProvider
+    class SqlProvider : ISqlProvider
     {
         public virtual ExpressionTranslator GetTranslator()
         {
@@ -172,10 +165,15 @@ namespace DbLinq.Vendor.Implementation
             if (literal is bool)
                 return GetLiteral((bool)literal);
             if (literal is DateTime)
-                return GetLiteral(literal.ToString());
+                return GetLiteral((DateTime)literal);
             if (literal.GetType().IsArray)
                 return GetLiteral((Array)literal);
             return Convert.ToString(literal, CultureInfo.InvariantCulture);
+        }
+
+        public virtual SqlStatement GetLiteral(DateTime literal)
+        {
+            return literal.ToString("o");
         }
 
         public virtual SqlStatement GetLiteral(bool literal)
@@ -304,6 +302,8 @@ namespace DbLinq.Vendor.Implementation
                 return GetLiteralStringConcat(p[0], p[1]);
             case SpecialExpressionType.Count:
                 return GetLiteralCount(p[0]);
+            case SpecialExpressionType.Exists:
+                return GetLiteralExists(p[0]);
             case SpecialExpressionType.Like:
                 return GetLiteralLike(p[0], p[1]);
             case SpecialExpressionType.Min:
@@ -354,6 +354,8 @@ namespace DbLinq.Vendor.Implementation
             case SpecialExpressionType.Second:
             case SpecialExpressionType.Millisecond:
                 return GetLiteralDateTimePart(p[0], operationType);
+            case SpecialExpressionType.Date:
+                return p[0];
             case SpecialExpressionType.DateDiffInMilliseconds:
                 return GetLiteralDateDiff(p[0], p[1]);
             case SpecialExpressionType.Abs:
@@ -381,6 +383,11 @@ namespace DbLinq.Vendor.Implementation
 
             }
             throw new ArgumentException(operationType.ToString());
+        }
+
+        protected virtual SqlStatement GetLiteralExists(SqlStatement sqlStatement)
+        {
+            return SqlStatement.Format("EXISTS {0}", sqlStatement);
         }
 
         private int SpecificVendorStringIndexStart
@@ -697,6 +704,18 @@ namespace DbLinq.Vendor.Implementation
 
         /// <summary>
         /// Returns a table alias
+        /// Ensures about the right case
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="alias"></param>
+        /// <returns></returns>
+        public virtual string GetSubQueryAsAlias(string subquery, string alias)
+        {
+            return string.Format("({0}) {1}", subquery, GetTableAlias(alias));
+        }
+
+        /// <summary>
+        /// Returns a table alias
         /// </summary>
         /// <param name="table"></param>
         /// <returns></returns>
@@ -773,7 +792,7 @@ namespace DbLinq.Vendor.Implementation
         {
             if (wheres.Length == 0)
                 return SqlStatement.Empty;
-            return SqlStatement.Format("WHERE {0}", SqlStatement.Join(" AND ", wheres));
+            return SqlStatement.Format("WHERE ({0})", SqlStatement.Join(") AND (", wheres));
         }
 
         /// <summary>
@@ -798,6 +817,18 @@ namespace DbLinq.Vendor.Implementation
             if (selects.Length == 0)
                 return SqlStatement.Empty;
             return SqlStatement.Format("SELECT {0}", SqlStatement.Join(", ", selects));
+        }
+
+        /// <summary>
+        /// Joins a list of operands to make a SELECT clause
+        /// </summary>
+        /// <param name="selects"></param>
+        /// <returns></returns>
+        public virtual SqlStatement GetSelectDistinctClause(SqlStatement[] selects)
+        {
+            if (selects.Length == 0)
+                return SqlStatement.Empty;
+            return SqlStatement.Format("SELECT DISTINCT {0}", SqlStatement.Join(", ", selects));
         }
 
         /// <summary>
@@ -858,7 +889,7 @@ namespace DbLinq.Vendor.Implementation
         /// <returns></returns>
         protected virtual SqlStatement GetLiteralAnd(SqlStatement a, SqlStatement b)
         {
-            return SqlStatement.Format("{0} AND {1}", a, b);
+            return SqlStatement.Format("({0}) AND ({1})", a, b);
         }
 
         /// <summary>
@@ -968,7 +999,7 @@ namespace DbLinq.Vendor.Implementation
         /// <returns></returns>
         protected virtual SqlStatement GetLiteralExclusiveOr(SqlStatement a, SqlStatement b)
         {
-            return SqlStatement.Format("{0} XOR {1}", a, b);
+            return SqlStatement.Format("({0}) XOR ({1})", a, b);
         }
 
         /// <summary>
@@ -1118,7 +1149,7 @@ namespace DbLinq.Vendor.Implementation
         /// <returns></returns>
         protected virtual SqlStatement GetLiteralOr(SqlStatement a, SqlStatement b)
         {
-            return SqlStatement.Format("{0} OR {1}", a, b);
+            return SqlStatement.Format("({0}) OR ({1})", a, b);
         }
 
         /// <summary>

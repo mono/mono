@@ -24,17 +24,9 @@
 // 
 #endregion
 
-#if MONO_STRICT
-using System.Data.Linq.Identity;
-#else
 using DbLinq.Data.Linq.Identity;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Implementation
-#else
 namespace DbLinq.Data.Linq.Implementation
-#endif
 {
     /// <summary>
     /// Keeps track of a referenced entity

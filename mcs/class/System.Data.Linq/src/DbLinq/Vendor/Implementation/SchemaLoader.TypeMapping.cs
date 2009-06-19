@@ -45,12 +45,7 @@ namespace DbLinq.Vendor.Implementation
         /// <summary>
         /// Default IDataType implementation (see IDataType for details)
         /// </summary>
-#if MONO_STRICT
-        internal
-#else
-        public
-#endif
- class DataType : IDataType
+        public class DataType : IDataType
         {
             public virtual string Type { get; set; }
             public virtual bool Nullable { get; set; }

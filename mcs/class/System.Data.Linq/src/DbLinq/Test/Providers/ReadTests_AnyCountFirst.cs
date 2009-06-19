@@ -21,7 +21,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -218,6 +218,9 @@ using nwind;
                      select new { c.CustomerID, HasUSAOrders = c.Orders.Count(o => o.ShipCountry == "USA") }).ToList();
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void FirstInternal01()
         {
@@ -231,6 +234,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void FirstInternal02()
         {
@@ -243,6 +249,9 @@ using nwind;
             var list = q.ToList();
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void FirstInternal03()
         {
@@ -313,7 +322,7 @@ using nwind;
         public void ArrayContains()
         {
             var db = CreateDB();
-            decimal[] d = new decimal[] { 1, 4, 5, 6 };
+            decimal[] d = new decimal[] { 1, 4, 5, 6, 10248, 10255 };
             var q = db.OrderDetails.Where(o => d.Contains(o.OrderID));
 
             Assert.Greater(q.Count(), 0);

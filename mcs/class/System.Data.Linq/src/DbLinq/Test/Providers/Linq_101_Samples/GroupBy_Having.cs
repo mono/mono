@@ -21,7 +21,7 @@ using nwind;
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
@@ -36,6 +36,9 @@ using nwind;
     [TestFixture]
     public class GroupBy_Having : TestBase
     {
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Test(Description = "GroupBy - Simple. This sample uses group by to partition Products by CategoryID.")]
         public void LinqToSqlGroupBy01()
         {
@@ -51,6 +54,9 @@ using nwind;
 
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "GroupBy - Max. This sample uses group by and Max to find the maximum unit price for each CategoryID.")]
         public void LinqToSqlGroupBy02()
         {
@@ -64,6 +70,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "GroupBy - Min. This sample uses group by and Min to find the minimum unit price for each CategoryID.")]
         public void LinqToSqlGroupBy03()
         {
@@ -77,6 +86,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "GroupBy - Average. This sample uses group by and Average to find the average UnitPrice for each CategoryID.")]
         public void LinqToSqlGroupBy04()
         {
@@ -92,6 +104,9 @@ using nwind;
 
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "GroupBy - Sum. This sample uses group by and Sum to find the total UnitPrice for each CategoryID.")]
         public void LinqToSqlGroupBy05()
         {
@@ -105,6 +120,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "GroupBy - Count. This sample uses group by and Count to find the number of Products in each CategoryID.")]
         public void LinqToSqlGroupBy06()
         {
@@ -118,6 +136,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Linq101SamplesModified("Strange short to boolean casting, perhaps in the original Northwind Product.Discontinued was a boolean property")]
         [Test(Description = "GroupBy - Count - Conditional. This sample uses group by and Count to find the number of Products in each CategoryID that are discontinued.")]
         public void LinqToSqlGroupBy07()
@@ -135,6 +156,9 @@ using nwind;
 
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test(Description = "GroupBy - followed by where. This sample uses a where clause after a group by clause to find all categories that have at least 10 products.")]
         public void LinqToSqlGroupBy08()
         {
@@ -152,6 +176,9 @@ using nwind;
 
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Linq101SamplesModified("Strange syntactical strategy. Everybody aggree with this traduction?")]
         [Test(Description = "GroupBy - Multiple Columns. This sample uses group by to group products by CategoryID and SupplierID.")]
         public void LinqToSqlGroupBy09()
@@ -168,6 +195,9 @@ using nwind;
         }
 
 
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Linq101SamplesModified("Strange syntactical strategy. Everybody aggree with this traduction?")]
         [Test(Description = "GroupBy - Expression. This sample uses group by to return two sequences of products. The first sequence contains products with unit price greater than 10. The second sequence contains products with unit price less than or equal to 10.")]
         public void LinqToSqlGroupBy10()

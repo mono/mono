@@ -53,7 +53,7 @@ using Id = System.Int32;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -81,7 +81,7 @@ using Id = System.Int32;
 
             Northwind db = CreateDB();
 
-            Product localProduct = new Product { ProductName = "Pen" };
+            Product localProduct = new Product { ProductName = "Chai" };
             var q = from p in db.Products where p.ProductName == localProduct.ProductName select p;
 
             List<Product> products = q.ToList();
@@ -93,7 +93,7 @@ using Id = System.Int32;
         public void D1_SelectPensByLocalProperty()
         {
             Northwind db = CreateDB();
-            var pen = new { Name = "Pen" };
+            var pen = new { Name = "Chai" };
             var q = from p in db.Products where p.ProductName == pen.Name select p;
 
             List<Product> products = q.ToList();
@@ -102,18 +102,18 @@ using Id = System.Int32;
         }
 
         [Test]
-        public void D2_SelectPensByLocalPropertyAndConstant()
+        public void D2_SelectProductByLocalPropertyAndConstant()
         {
 
             Northwind db = CreateDB();
-            string pen = "Pen";
+            string product = "Carnarvon Tigers";
             var q = from p in db.Products
-                    where p.ProductName == pen &&
-                        p.QuantityPerUnit == "10"
+                    where p.ProductName == product &&
+                        p.QuantityPerUnit.StartsWith("16")
                     select p;
             List<Product> products = q.ToList();
             int productCount = products.Count;
-            Assert.AreEqual(1, productCount, "Expected one pen, got count=" + productCount);
+            Assert.AreEqual(1, productCount, "Expected one product, got count=" + productCount);
         }
 
         [Test]
@@ -188,18 +188,18 @@ using Id = System.Int32;
         public void F7_ExplicitJoin()
         {
             //a nice and light nonsense join:
-            //bring in rows such as {Pen,AIRBU}
+            //bring in rows such as {Chai,AIRBU}
             var q =
                 from p in db.Products
-                join o in db.Orders on p.ProductID equals o.OrderID
-                select new { p.ProductName, o.CustomerID };
+                join c in db.Categories on p.ProductID equals c.CategoryID
+                select new { p.ProductName, c.CategoryName };
 
             int rowCount = 0;
             foreach (var v in q)
             {
                 rowCount++;
                 Assert.IsTrue(v.ProductName != null);
-                Assert.IsTrue(v.CustomerID != null);
+                Assert.IsTrue(v.CategoryName != null);
             }
             Assert.IsTrue(rowCount > 2);
         }
@@ -282,17 +282,16 @@ using Id = System.Int32;
         {
             var q4 = from p in db.Products
                      where (p.ProductName + p.ProductID).Contains("e")
-                     select p.ProductName;
-            //select p.ProductName+p.ProductID;
+                     select p.ProductName+p.ProductID;
             //var q4 = from p in db.Products select p.ProductID;
-            var q5 = q4.ToList();
-            //Assert.Greater( q5.Count, 2, "Expected to see some concat strings");
-            //foreach(string s0 in q5)
-            //{
-            //    bool startWithLetter = Char.IsLetter(s0[0]);
-            //    bool endsWithDigit = Char.IsDigit(s0[s0.Length-1]);
-            //    Assert.IsTrue(startWithLetter && endsWithDigit, "String must start with letter and end with digit");
-            //}
+            //var q5 = q4.ToList();
+            Assert.Greater( q4.Count(), 2, "Expected to see some concat strings");
+            foreach(string s0 in q4)
+            {
+                bool startWithLetter = Char.IsLetter(s0[0]);
+                bool endsWithDigit = Char.IsDigit(s0[s0.Length-1]);
+                Assert.IsTrue(startWithLetter && endsWithDigit, "String must start with letter and end with digit");
+            }
         }
         #endregion
 
@@ -379,13 +378,168 @@ using Id = System.Int32;
         {
             var db = CreateDB();
 
-            var nc = new Category { CategoryName = "test", Picture = new byte[] { 1, 2, 3, 4 } };
+            var picture = new byte[] { 1, 2, 3, 4 };
+
+            var nc = new Category { CategoryName = "test", Picture = picture };
             db.Categories.InsertOnSubmit(nc);
             db.SubmitChanges();
 
-            var q = from c in db.Categories select new { c.Picture };
+            var q = from c in db.Categories 
+                    where c.CategoryName == "test"
+                    select new { c.Picture };
             var l = q.ToList();
             Assert.IsTrue(l.Count > 0);
+            Assert.IsTrue(picture.SequenceEqual(l[0].Picture.ToArray()));
+
+            db.Categories.DeleteOnSubmit(nc);
+            db.SubmitChanges();
+        }
+
+
+        [Test]
+        public void F19_ExceptWithCount_ViaToList()
+        {
+            var db = CreateDB();
+
+            var toExclude = from t in db.GetTable<Territory>()
+                            where t.TerritoryDescription.StartsWith("A")
+                            select t;
+            var universe = from t in db.GetTable<Territory>() select t;
+            var toTake = universe.Except(toExclude);
+            
+            int toListCount = toTake.ToList().Count;
+            Assert.AreEqual(51, toListCount);
+        }
+
+        [Test]
+        public void F20_ExceptWithCount()
+        {
+            var db = CreateDB();
+
+            var toExclude = from t in db.GetTable<Territory>()
+                            where t.TerritoryDescription.StartsWith("A")
+                            select t;
+            var universe = from t in db.GetTable<Territory>() select t;
+            var toTake = universe.Except(toExclude).Except(db.Territories.Where(terr => terr.TerritoryDescription.StartsWith("B")));
+
+            int toTakeCount = toTake.Count();
+            Assert.AreEqual(44, toTakeCount);
+        }
+
+#if !DEBUG && (SQLITE)
+        [Explicit]
+#endif
+        [Test]
+        public void F21_CountNestedExcepts()
+        {
+            var db = CreateDB();
+
+            var toExclude1 = from t in db.GetTable<Territory>()
+                            where t.TerritoryDescription.StartsWith("A")
+                            select t;
+            var toExclude2 = toExclude1.Except(db.GetTable<Territory>().Where(terr => terr.TerritoryDescription.Contains("i")));
+
+            var universe = from t in db.GetTable<Territory>() select t;
+
+            var toTake = universe.Except(toExclude2);
+
+            int toTakeCount = toTake.Count();
+            Assert.AreEqual(52, toTakeCount);
+        }
+
+#if !DEBUG && (SQLITE)
+        [Explicit]
+#endif
+        [Test]
+        public void F22_AnyNestedExcepts()
+        {
+            var db = CreateDB();
+
+            var toExclude1 = from t in db.GetTable<Territory>()
+                             where t.TerritoryDescription.StartsWith("A")
+                             select t;
+            var toExclude2 = toExclude1.Except(db.GetTable<Territory>().Where(terr => terr.TerritoryDescription.Contains("i")));
+
+            var universe = from t in db.GetTable<Territory>() select t;
+
+            var toTake = universe.Except(toExclude2);
+
+            Assert.IsTrue(toTake.Any());
+        }
+
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
+        [Test]
+        public void F23_AnyNestedExcepts_WithParameter()
+        {
+            var db = CreateDB();
+
+            var toExclude1 = from t in db.GetTable<Territory>()
+                             where t.TerritoryDescription.StartsWith("A")
+                             select t;
+            var toExclude2 = toExclude1.Except(db.GetTable<Territory>().Where(terr => terr.TerritoryDescription.Contains("i")));
+
+            var universe = from t in db.GetTable<Territory>() select t;
+
+            var toTake = universe.Except(toExclude2);
+
+            Assert.IsTrue(toTake.Any(t => t.TerritoryDescription.Contains("i")));
+        }
+
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
+        [Test]
+        public void F24_CountNestedExcepts_WithParameter()
+        {
+            var db = CreateDB();
+
+            var toExclude1 = from t in db.GetTable<Territory>()
+                             where t.TerritoryDescription.StartsWith("A")
+                             select t;
+            var toExclude2 = toExclude1.Except(db.GetTable<Territory>().Where(terr => terr.TerritoryDescription.Contains("i")));
+
+            var universe = from t in db.GetTable<Territory>() select t;
+
+            var toTake = universe.Except(toExclude2);
+
+            int toTakeCount = toTake.Count(t => t.TerritoryDescription.Contains("o"));
+            Assert.AreEqual(34, toTakeCount);
+        }
+
+        [Test]
+        public void F25_DistinctUnion()
+        {
+            var db = CreateDB();
+
+            var toInclude1 = from t in db.GetTable<Territory>()
+                             where t.TerritoryDescription.StartsWith("A")
+                             select t;
+            var toInclude2 = toInclude1.Concat(db.GetTable<Territory>().Where(terr => terr.TerritoryDescription.Contains("i")));
+
+            var toTake = toInclude2.Distinct();
+
+            int count = toTake.ToList().Count;
+
+            Assert.AreEqual(27, count);
+        }
+
+        [Test]
+        public void F26_DistinctUnion_Count()
+        {
+            var db = CreateDB();
+
+            var toInclude1 = from t in db.GetTable<Territory>()
+                             where t.TerritoryDescription.StartsWith("A")
+                             select t;
+            var toInclude2 = toInclude1.Concat(db.GetTable<Territory>().Where(terr => terr.TerritoryDescription.Contains("i")));
+
+            var toTake = toInclude2.Distinct();
+
+            int count = toTake.Count();
+
+            Assert.AreEqual(27, count);
         }
 
         /// <summary>
@@ -432,9 +586,6 @@ using Id = System.Int32;
                      select new { ContactName = e.LastName });
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0, "Expected some customers and employees from London");
-
-            int countOfGraeme = list.Count(l => l.ContactName == "graeme");
-            Assert.IsTrue(countOfGraeme == 1, "Expected London contacts to include graeme");
         }
 
         [Test]

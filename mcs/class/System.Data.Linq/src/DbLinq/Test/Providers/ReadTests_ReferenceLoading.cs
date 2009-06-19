@@ -22,7 +22,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -68,6 +68,9 @@ using nwind;
             Assert.AreEqual(db.Employees.Count(), list.Count);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Test]
         public void ComplexProjection01()
         {
@@ -78,6 +81,9 @@ using nwind;
             Assert.AreEqual(db.Employees.Count(), list.Count);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Test]
         public void ComplexProjection02()
         {
@@ -89,6 +95,9 @@ using nwind;
         }
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Test]
         public void ComplexProjection03()
         {
@@ -99,7 +108,10 @@ using nwind;
             Assert.AreEqual(db.Employees.Count(), list.Count);
         }
 
-        
+
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Test]
         public void ComplexProjection04()
         {
@@ -110,6 +122,9 @@ using nwind;
             Assert.AreEqual(db.Employees.Count(), list.Count);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Test]
         public void ComplexProjection05()
         {
@@ -120,6 +135,9 @@ using nwind;
             Assert.AreEqual(db.Orders.Count(), list.Count);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Test]
         public void ComplexProjection06()
         {
@@ -130,6 +148,9 @@ using nwind;
             Assert.AreEqual(db.Orders.Count(), list.Count);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Test]
         public void ComplexProjection07()
         {

@@ -53,7 +53,7 @@ namespace Test_NUnit_Sqlite
             var dc = new DataContext(connectionString);
             Assert.AreEqual(typeof(SqliteConnection), dc.Connection.GetType());
 
-            var dcq = from p in dc.GetTable<Product>() where p.ProductName == "Pen" select p.ProductID;
+            var dcq = from p in dc.GetTable<Product>() where p.ProductName == "Chai" select p.ProductID;
             var cmd = dc.GetCommand(dcq);
             var dcc = dcq.ToList().Count;
             Assert.AreEqual(dcc, 1);

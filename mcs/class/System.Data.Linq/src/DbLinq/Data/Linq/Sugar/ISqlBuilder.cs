@@ -24,17 +24,9 @@
 // 
 #endregion
 
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-#else
 using DbLinq.Data.Linq.Sql;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar
-#else
 namespace DbLinq.Data.Linq.Sugar
-#endif
 {
     internal interface ISqlBuilder
     {

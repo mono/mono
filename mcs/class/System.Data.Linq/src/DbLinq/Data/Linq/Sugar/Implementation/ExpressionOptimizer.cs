@@ -28,21 +28,11 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.ExpressionMutator;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     /// <summary>
     /// Optimizes expressions (such as constant chains)
@@ -62,8 +52,87 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
             expression = AnalyzeNull(expression, builderContext);
             expression = AnalyzeNot(expression, builderContext);
+            expression = AnalyzeBinaryBoolean(expression, builderContext);
             // constant optimization at last, because the previous optimizations may generate constant expressions
             expression = AnalyzeConstant(expression, builderContext);
+            return expression;
+        }
+
+        private Expression AnalyzeBinaryBoolean(Expression expression, BuilderContext builderContext)
+        {
+            if (expression.Type != typeof(bool))
+                return expression;
+            var bin = expression as BinaryExpression;
+            if (bin == null)
+                return expression;
+            bool canOptimizeLeft = bin.Left.NodeType == ExpressionType.Constant && bin.Left.Type == typeof(bool);
+            bool canOptimizeRight = bin.Right.NodeType == ExpressionType.Constant && bin.Right.Type == typeof(bool);
+            if (canOptimizeLeft && canOptimizeRight)
+                return Expression.Constant(expression.Evaluate());
+            if (canOptimizeLeft || canOptimizeRight)
+                switch (expression.NodeType)
+                {
+                    case ExpressionType.AndAlso:
+                        if (canOptimizeLeft)
+                            if ((bool)bin.Left.Evaluate())
+                                return bin.Right;   // (TRUE and X) == X 
+                            else
+                                return bin.Left;    // (FALSE and X) == FALSE 
+                        if (canOptimizeRight)
+                            if ((bool)bin.Right.Evaluate())
+                                return bin.Left;    // (X and TRUE) == X 
+                            else
+                                return bin.Right;   // (X and FALSE) == FALSE
+                        break;
+                    case ExpressionType.OrElse:
+                        if (canOptimizeLeft)
+                            if ((bool)bin.Left.Evaluate())
+                                return bin.Left;    // (TRUE or X) == TRUE 
+                            else
+                                return bin.Right;   // (FALSE or X) == X 
+                        if (canOptimizeRight)
+                            if ((bool)bin.Right.Evaluate())
+                                return bin.Right;   // (X or TRUE) == TRUE 
+                            else
+                                return bin.Left;    // (X or FALSE) == X
+                        break;
+                    case ExpressionType.Equal:
+                        // TODO: this optimization should work for Unary Expression Too
+                        // this actually produce errors becouse of string based Sql generation
+                        canOptimizeLeft = canOptimizeLeft && bin.Right is BinaryExpression;
+                        if (canOptimizeLeft)
+                            if ((bool)bin.Left.Evaluate())
+                                return bin.Right;                   // (TRUE == X) == X 
+                            else
+                                return Expression.Not(bin.Right);   // (FALSE == X) == not X 
+                        canOptimizeRight = canOptimizeRight && bin.Left is BinaryExpression;
+                        // TODO: this optimization should work for Unary Expression Too
+                        // this actually produce errors becouse of string based Sql generation
+                        if (canOptimizeRight)
+                            if ((bool)bin.Right.Evaluate())
+                                return bin.Left;                    // (X == TRUE) == X 
+                            else
+                                return Expression.Not(bin.Left);    // (X == FALSE) == not X
+                        break;
+                    case ExpressionType.NotEqual:
+                        canOptimizeLeft = canOptimizeLeft && bin.Right is BinaryExpression;
+                        // TODO: this optimization should work for Unary Expression Too
+                        // this actually produce errors becouse of string based Sql generation
+                        if (canOptimizeLeft)
+                            if ((bool)bin.Left.Evaluate())
+                                return Expression.Not(bin.Right);   // (TRUE != X) == not X 
+                            else
+                                return bin.Right;                   // (FALSE != X) == X 
+                        canOptimizeRight = canOptimizeRight && bin.Left is BinaryExpression;
+                        // TODO: this optimization should work for Unary Expression Too
+                        // this actually produce errors becouse of string based Sql generation
+                        if (canOptimizeRight)
+                            if ((bool)bin.Right.Evaluate())
+                                return Expression.Not(bin.Left);    // (X != TRUE) == not X 
+                            else
+                                return bin.Left;                    // (X != FALSE) == X
+                        break;
+                }
             return expression;
         }
 
@@ -75,11 +144,13 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 if (!(operand is ConstantExpression))
                     return expression;
             }
-            if (expression is ColumnExpression)
+            if (expression.NodeType == ExpressionType.Parameter)
                 return expression;
-            if (expression is TableExpression)
+            if (expression.NodeType == (ExpressionType)SpecialExpressionType.Like)
                 return expression;
-            if (expression is ParameterExpression)
+            // SETuse
+            // If the value of the first SpecialExpressionType change this 999 should change too
+            if ((short)expression.NodeType > 999)
                 return expression;
             // now, we just simply return a constant with new value
             try
@@ -90,7 +161,10 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     return optimizedExpression;
             }
                 // if we fail to evaluate the expression, then just return it
-            catch (ArgumentException) { }
+            catch (ArgumentException) 
+            {
+                return expression;
+            }
             return expression;
         }
 

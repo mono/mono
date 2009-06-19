@@ -30,16 +30,17 @@ using System.Text;
 using System.Data;
 using System.Data.Linq.Mapping;
 using System.Reflection;
-#if MONO_STRICT
-using System.Data.Linq;
-using System.Data.Linq.SqlClient;
-#else
 using DbLinq.Data.Linq;
 using DbLinq.Data.Linq.SqlClient;
-#endif
 using DbLinq.Sqlite;
 using DbLinq.Util;
 using DbLinq.Vendor;
+
+#if MONO_STRICT
+using DataContext = System.Data.Linq.DataContext;
+#else
+using DataContext = DbLinq.Data.Linq.DataContext;
+#endif
 
 namespace DbLinq.Sqlite
 {
@@ -47,12 +48,10 @@ namespace DbLinq.Sqlite
     /// SQLite - specific code.
     /// </summary>
     [Vendor(typeof(SqliteProvider))]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- class SqliteVendor : Vendor.Implementation.Vendor
+    class SqliteVendor : Vendor.Implementation.Vendor
     {
         public override string VendorName { get { return "SQLite"; } }
 

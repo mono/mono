@@ -28,18 +28,16 @@ using DbLinq.Util;
 using DbLinq.Data.Linq.Database;
 using System.Collections.Generic;
 
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-#else
 using DbLinq.Data.Linq.Sugar.Expressions;
 using DbLinq.Data.Linq.Sql;
-#endif
 
 #if MONO_STRICT
-namespace System.Data.Linq.Sugar
+using System.Data.Linq;
 #else
-namespace DbLinq.Data.Linq.Sugar
+using DbLinq.Data.Linq;
 #endif
+
+namespace DbLinq.Data.Linq.Sugar
 {
     /// <summary>
     /// Base class for all query types (select, insert, update, delete, raw)

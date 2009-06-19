@@ -29,22 +29,16 @@ using System.Collections;
 using System.Collections.Generic;
 using DbLinq.Util;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sql
-#else
 namespace DbLinq.Data.Linq.Sql
-#endif
 {
     /// <summary>
     /// An SqlStatement is a literal SQL request, composed of different parts (SqlPart)
     /// each part being either a parameter or a literal string
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- class SqlStatementBuilder
+    class SqlStatementBuilder
     {
         public readonly List<SqlPart> Parts = new List<SqlPart>();
 

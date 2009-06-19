@@ -147,7 +147,19 @@ namespace DbLinqTest {
             new DataContext("", mapping);
         }
 
-#if !MONO_STRICT
+#if L2SQL
+        // DbLinqProvider/etc. obviously aren't removed under L2SQL
+        [ExpectedException(typeof(ArgumentException))]
+#endif
+        [Test]
+        public void Ctor_ConnectionString_ExtraParameters_Munging()
+        {
+            DataContext ctx = new DataContext("Server=localhost;User id=test;Database=test;DbLinqProvider=Sqlite;DbLinqConnectionType=Mono.Data.Sqlite.SqliteConnection, Mono.Data.Sqlite");
+            Assert.AreEqual(-1, ctx.Connection.ConnectionString.IndexOf("DbLinqProvider"));
+            Assert.AreEqual(-1, ctx.Connection.ConnectionString.IndexOf("DbLinqConnectionType"));
+        }
+        
+#if !L2SQL
         [Test, ExpectedException(typeof(NotImplementedException))]
         public void Ctor_FileOrServerOrConnectionIsFilename()
         {
@@ -172,7 +184,7 @@ namespace DbLinqTest {
             DataContext dc = new DataContext(connection);
             Assert.AreEqual(connection, dc.Connection);
 
-#if !MONO_STRICT
+#if !L2SQL
             dc = new DataContext (new DummyConnection());
             Assert.AreEqual(null, dc.Connection);
 #endif

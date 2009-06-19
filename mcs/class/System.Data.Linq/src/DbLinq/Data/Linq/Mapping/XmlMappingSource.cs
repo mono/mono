@@ -604,22 +604,30 @@ namespace DbLinq.Data.Linq.Mapping
             {
                 this.model = model;
                 this.t = table;
-                foreach (var member in model.ContextType.GetMember(t.Member))
+                System.Type rt;
+                if (t.Member != null)
                 {
-                    if (table_member != null)
-                        throw new ArgumentException(String.Format("The context type '{0}' contains non-identical member '{1}'", model.ContextType, t.Member));
-                    table_member = member;
+                    foreach (var member in model.ContextType.GetMember(t.Member))
+                    {
+                        if (table_member != null)
+                            throw new ArgumentException(String.Format("The context type '{0}' contains non-identical member '{1}'", model.ContextType, t.Member));
+                        table_member = member;
+                    }
+                    if (table_member == null)
+                        table_member = GetFieldsAndProperties(model.ContextType).First(pi => pi.GetMemberType().IsGenericType &&
+                            pi.GetMemberType().GetGenericTypeDefinition() == typeof(Table<>) &&
+                            pi.GetMemberType().GetGenericArguments()[0] == model.GetTypeFromName(t.Type.Name));
+                    if (table_member == null)
+                        throw new ArgumentException(String.Format("The context type '{0}' does not contain member '{1}' which is specified in dbml", model.ContextType, t.Member));
+                    member_type = table_member.GetMemberType();
+                    if (member_type.GetGenericTypeDefinition() != typeof(Table<>))
+                        throw new ArgumentException(String.Format("The table member type was unexpected: '{0}'", member_type));
+                    rt = member_type.GetGenericArguments()[0];
                 }
-                if (table_member == null)
-                    table_member = GetFieldsAndProperties(model.ContextType).First(pi => pi.GetMemberType().IsGenericType &&
-                        pi.GetMemberType().GetGenericTypeDefinition() == typeof(Table<>) &&
-                        pi.GetMemberType().GetGenericArguments()[0] == model.GetTypeFromName(t.Type.Name));
-                if (table_member == null)
-                    throw new ArgumentException(String.Format("The context type '{0}' does not contain member '{1}' which is specified in dbml", model.ContextType, t.Member));
-                member_type = table_member.GetMemberType();
-                if (member_type.GetGenericTypeDefinition() != typeof(Table<>))
-                    throw new ArgumentException(String.Format("The table member type was unexpected: '{0}'", member_type));
-                var rt = member_type.GetGenericArguments()[0];
+                else
+                {
+                    rt = System.Type.GetType(t.Type.Name);
+                }
                 row_type = model.GetMetaType(rt);
                 if (row_type == null)
                     throw new ArgumentException(String.Format("MetaType for '{0}' was not found", rt));
@@ -806,7 +814,9 @@ namespace DbLinq.Data.Linq.Mapping
             public override System.Data.Linq.Mapping.MetaDataMember GetDataMember(MemberInfo member)
             {
                 //return members.First(m => m.Member == member);
-                foreach (var m in members) if (m.Member == member) return m;
+                foreach (var m in members) 
+                    if (m.Member == member || (m.Member.ToString() == member.ToString() && member.DeclaringType.IsAssignableFrom(m.Member.DeclaringType))) 
+                        return m;
                 throw new ArgumentException(String.Format("No corresponding metadata member for '{0}'", member));
             }
 
@@ -1022,7 +1032,7 @@ namespace DbLinq.Data.Linq.Mapping
                 }
             }
             public override string MappedName { get { return c.Name; } }
-            public override string Name { get { return c.Name ?? c.Member; } }
+            public override string Name { get { return c.Member ?? c.Name; } }
             public override System.Data.Linq.Mapping.UpdateCheck UpdateCheck { get { return c.UpdateCheck; } }
         }
 

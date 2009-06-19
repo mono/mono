@@ -27,15 +27,9 @@
 using System;
 using DbLinq.Vendor;
 
-#if MONO_STRICT
-namespace System.Data.Linq
-#else
 namespace DbLinq.Data.Linq
-#endif
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IVendorProvider

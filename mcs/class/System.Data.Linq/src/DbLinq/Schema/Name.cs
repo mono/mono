@@ -31,9 +31,7 @@ namespace DbLinq.Schema
     /// <summary>
     /// Base name class, with DB name and words contained
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class Name

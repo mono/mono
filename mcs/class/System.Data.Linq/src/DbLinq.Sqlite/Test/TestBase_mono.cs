@@ -35,12 +35,12 @@ namespace Test_NUnit
     public abstract partial class TestBase
     {
         static bool doRecreate = true;
-        public const StringComparison stringComparisonType = StringComparison.InvariantCulture;
+        public const StringComparison stringComparisonType = StringComparison.Ordinal;
 
         static partial void CheckRecreateSqlite ()
         {
             if (doRecreate) {
-                File.Copy ("../src/Northwind.db3", "Northwind.db3", true);
+                File.Copy ("../tests/Northwind.db3", "Northwind.db3", true);
                 doRecreate = false;
             }
         }

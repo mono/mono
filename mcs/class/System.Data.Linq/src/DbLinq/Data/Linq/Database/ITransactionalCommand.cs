@@ -32,12 +32,10 @@ namespace DbLinq.Data.Linq.Database
     /// <summary>
     /// Transaction-aware command
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- interface ITransactionalCommand : IDisposable
+    interface ITransactionalCommand : IDisposable
     {
         /// <summary>
         /// Gets the command.

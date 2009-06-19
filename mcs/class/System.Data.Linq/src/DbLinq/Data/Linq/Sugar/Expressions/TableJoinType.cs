@@ -26,11 +26,7 @@
 
 using System;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     [Flags]
 #if !MONO_STRICT

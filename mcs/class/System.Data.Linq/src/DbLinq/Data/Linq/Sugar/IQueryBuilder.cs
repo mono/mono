@@ -28,11 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar
-#else
 namespace DbLinq.Data.Linq.Sugar
-#endif
 {
     internal interface IQueryBuilder
     {

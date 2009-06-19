@@ -32,9 +32,7 @@ namespace DbLinq.Factory
     /// This class is used by ReflectionObjectFactory to determine if the interfaces come from a DbLinq assembly
     /// </summary>
     [AttributeUsage(AttributeTargets.Assembly)]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class DbLinqAttribute : Attribute

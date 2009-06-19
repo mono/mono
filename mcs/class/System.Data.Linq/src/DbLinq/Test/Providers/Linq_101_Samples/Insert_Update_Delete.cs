@@ -26,7 +26,7 @@ using nwind;
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
@@ -91,9 +91,15 @@ using nwind;
             Assert.AreEqual(reloadedCustomer.Country, newCustomer.Country);
             Assert.AreEqual(reloadedCustomer.Phone, newCustomer.Phone);
             Assert.AreEqual(reloadedCustomer.Fax, newCustomer.Fax);
+
+            db.Customers.DeleteOnSubmit(reloadedCustomer);
+            db.SubmitChanges();
         }
 
 #if !SQLITE
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
         [Linq101SamplesModified("The original sample didn't compile, db2 Northwind context was used for nothing")]
         [Test(Description = "Insert - 1-to-Many. This sample uses the Add method to add a new Category to the Categories table object, and a new Product to the Products Table object with a foreign key relationship to the new Category. The call to SubmitChanges persists these new objects and their relationships to the database.")]
@@ -107,18 +113,18 @@ using nwind;
             db.LoadOptions = ds;
 
             var q = from c in db.Categories
-                    where c.CategoryName == "Widgets"
+                    where c.CategoryName == "Temp Widgets"
                     select c;
 
             var newCategory = new Category
                                 {
-                                    CategoryName = "Widgets",
+                                    CategoryName = "Temp Widgets",
                                     Description = "Widgets are the customer-facing analogues to sprockets and cogs."
                                 };
 
             var newProduct = new Product
             {
-                ProductName = "Blue Widget",
+                ProductName = "temp Blue Widget",
                 UnitPrice = 34.56m,
                 Category = newCategory
             };
@@ -135,9 +141,16 @@ using nwind;
 
             Assert.AreEqual(reloadedCategory.CategoryName, newCategory.CategoryName);
             Assert.AreEqual(reloadedCategory.Description, reloadedCategory.Description);
+
+            db.Products.DeleteOnSubmit(newProduct);
+            db.Categories.DeleteOnSubmit(newCategory);
+            db.SubmitChanges();
         }
 #endif
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
         [Linq101SamplesModified("The original sample didn't compile, db2 Northwind context was used for nothing")]
         [Test(Description = "Insert - Many-to-Many. This sample uses the Add method to add a new Employee to the Employees table object, a new Territory to the Territories table object, and a new EmployeeTerritory to the EmployeeTerritories table object with foreign key relationships to the new Employee and Territory. The call to SubmitChanges persists these new objects and their relationships to the database.")]
@@ -153,15 +166,15 @@ using nwind;
             var q = from e in db.Employees where e.FirstName == "Nancy" select e;
 
 
-            if (db.Employees.Any(e => e.FirstName == "Kira" && e.LastName == "Smith"))
+            if (db.Employees.Any(e => e.FirstName == "Test Kira" && e.LastName == "Test Smith"))
                 Assert.Ignore();
 
 
-            var newEmployee = new Employee { FirstName = "Kira", LastName = "Smith" };
+            var newEmployee = new Employee { FirstName = "Test Kira", LastName = "Test Smith" };
             var newTerritory = new Territory
             {
                 TerritoryID = "12345",
-                TerritoryDescription = "Anytown",
+                TerritoryDescription = "Test Anytown",
                 Region = db.Regions.First()
             };
 
@@ -169,6 +182,12 @@ using nwind;
             db.Employees.InsertOnSubmit(newEmployee);
             db.Territories.InsertOnSubmit(newTerritory);
             db.EmployeeTerritories.InsertOnSubmit(newEmployeeTerritory);
+            db.SubmitChanges();
+
+            // cleanup
+            db.EmployeeTerritories.DeleteOnSubmit(newEmployeeTerritory);
+            db.Territories.DeleteOnSubmit(newTerritory);
+            db.Employees.DeleteOnSubmit(newEmployee);
             db.SubmitChanges();
         }
 
@@ -186,11 +205,16 @@ using nwind;
                              where c.CustomerID == "ALFKI"
                              select c).First();
 
+            var oldContactTitle = cust.ContactTitle;
             cust.ContactTitle = "Vice President";
             db.SubmitChanges();
 
             Customer reloadedCustomer = db.Customers.First(c => c.CustomerID == cust.CustomerID);
             Assert.AreEqual(reloadedCustomer.ContactTitle, cust.ContactTitle);
+
+            // undo
+            reloadedCustomer.ContactTitle = oldContactTitle;
+            db.SubmitChanges();
         }
 
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
@@ -217,42 +241,49 @@ using nwind;
                 Assert.AreEqual(original.Current.UnitPrice, reloaded.Current.UnitPrice);
 
             Assert.AreEqual(original.MoveNext(), reloaded.MoveNext());
+
+            // undo
+            foreach (var p in q)
+                p.UnitPrice -= 1.0m;
+            db.SubmitChanges();
         }
 
 
-
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
         [Test(Description = "Delete - Simple. This sample uses the Remove method to delete an OrderDetail from the OrderDetails Table object. The call to SubmitChanges persists this deletion to the database.")]
         public void LinqToSqlInsert06()
         {
             Northwind db = CreateDB();
 
-            OrderDetail ode = db.OrderDetails.First();
-            decimal orderID = ode.OrderID;
-            decimal productID = ode.ProductID;
-
-
-            OrderDetail order = (from c in db.OrderDetails
-                                 where c.OrderID == orderID && c.ProductID == productID
-                                 select c).First();
-
-            //what happened to Table.Remove()?
-            //The Add and AddAll methods are now InsertOnSubmit and InsertAllOnSubmit. The Remove and RemoveAll are now DeleteOnSubmit and DeleteAllOnSubmit.
-            //http://blogs.vertigo.com/personal/petar/Blog/Lists/Posts/Post.aspx?List=9441ab3e%2Df290%2D4a5b%2Da591%2D49a8226de525&ID=3
-
-            db.OrderDetails.DeleteOnSubmit(order); //formerly Remove(order);
-            db.SubmitChanges();
-
-            Assert.IsFalse(db.OrderDetails.Any(od => od.OrderID == orderID && od.ProductID == productID));
-
+            db.Connection.Open();
+            db.Transaction = db.Connection.BeginTransaction();
             try
             {
-                db.OrderDetails.InsertOnSubmit(order);
+                OrderDetail ode = db.OrderDetails.First();
+                decimal orderID = ode.OrderID;
+                decimal productID = ode.ProductID;
+
+
+                OrderDetail order = (from c in db.OrderDetails
+                                     where c.OrderID == orderID && c.ProductID == productID
+                                     select c).First();
+
+                //what happened to Table.Remove()?
+                //The Add and AddAll methods are now InsertOnSubmit and InsertAllOnSubmit. The Remove and RemoveAll are now DeleteOnSubmit and DeleteAllOnSubmit.
+                //http://blogs.vertigo.com/personal/petar/Blog/Lists/Posts/Post.aspx?List=9441ab3e%2Df290%2D4a5b%2Da591%2D49a8226de525&ID=3
+
+                db.OrderDetails.DeleteOnSubmit(order); //formerly Remove(order);
                 db.SubmitChanges();
+
+                Assert.IsFalse(db.OrderDetails.Any(od => od.OrderID == orderID && od.ProductID == productID));
             }
-            catch (Exception ex)
+            finally
             {
-                Assert.Ignore("the orderDetail deleted hasn't be restored, so next run over this text will fail: " + ex.Message);
+                db.Transaction.Rollback();
+                db.Transaction = null;
             }
         }
 
@@ -267,25 +298,32 @@ using nwind;
             //db.SubmitChanges();
         }
 
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
         [Test(Description = "Delete - One-to-Many. This sample uses the Remove method to delete an Order and Order Detail from the Order Details and Orders tables. First deleting Order Details and then deleting from Orders. The call to SubmitChanges persists this deletion to the database.")]
         public void LinqToSqlInsert07()
         {
             Northwind db = CreateDB();
-           
+
+            db.Connection.Open();
+            db.Transaction = db.Connection.BeginTransaction();
+            try
+            {
                 var orderDetails =
                     from o in db.OrderDetails
-                    where o.Order.CustomerID == "WARTH" 
+                    where o.Order.CustomerID == "WARTH"
                     select o;
 
                 var order =
                     (from o in db.Orders
-                     where o.CustomerID == "WARTH" 
+                     where o.CustomerID == "WARTH"
                      select o).FirstOrDefault();
 
                 if (!orderDetails.Any() || order == null)
                     Assert.Ignore("Preconditions");
-                
+
 
                 foreach (var od in orderDetails)
                 {
@@ -298,7 +336,12 @@ using nwind;
                 Assert.IsFalse(
                     db.OrderDetails.Any(od => od.Order.Customer.CustomerID == "WARTH" && od.Order.EmployeeID == 3));
                 Assert.IsFalse(db.Orders.Any(ord => ord.OrderID == order.OrderID));
-       
+            }
+            finally
+            {
+                db.Transaction.Rollback();
+                db.Transaction = null;
+            }
         }
     }
 }

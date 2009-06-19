@@ -26,11 +26,7 @@
 
 using System;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar
-#else
 namespace DbLinq.Data.Linq.Sugar
-#endif
 {
     [Flags]
     internal enum ExpressionTier

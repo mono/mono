@@ -23,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\..\build.dbg\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MSSQL;MONO_STRICT</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MSSQL;MONO_STRICT;L2SQL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -31,7 +31,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\..\build\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MSSQL;MONO_STRICT</DefineConstants>
+    <DefineConstants>TRACE;MSSQL;MONO_STRICT;L2SQL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

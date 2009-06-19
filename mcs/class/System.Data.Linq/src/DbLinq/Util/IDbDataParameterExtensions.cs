@@ -30,9 +30,7 @@ using System.Data.Linq;
 
 namespace DbLinq.Util
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     static class IDbDataParameterExtensions

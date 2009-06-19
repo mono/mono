@@ -24,21 +24,15 @@
 // 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-#else
 using DbLinq.Data.Linq.Sql;
-#endif
 using DbLinq.Vendor.Implementation;
-using System;
 
 namespace DbLinq.PostgreSql
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class PgsqlSqlProvider : SqlProvider
@@ -64,10 +58,40 @@ namespace DbLinq.PostgreSql
         {
             return string.Format("LOWER({0})", a);
         }
+        
         protected override SqlStatement GetLiteralDateDiff(SqlStatement dateA, SqlStatement dateB)
         {
             return string.Format("(DATE_PART('Day',{0}-{1})*86400000+DATE_PART('Hour',{0}-{1})*3600000+DATE_PART('Minute',{0}-{1})*60000+DATE_PART('Second',{0}-{1})*1000+DATE_PART('Millisecond',{0}-{1}))::real", dateA, dateB);
         }
+        
+        protected override SqlStatement GetLiteralEqual(SqlStatement a, SqlStatement b)
+        {
+            // PostgreSQL return NULL (and not a boolean) for every comparaison involving
+            // a NULL value, unless the operator used is "IS" (or "IS NOT"). Also,
+            // using those two operators when the right-hand value is not a literal
+            // NULL is an error. The only possibility is to explicitly check for NULL
+            // literals and even swap the operands to make sure NULL gets to the
+            // right place.
+            
+            if (b.Count == 1 && b[0].Sql == "NULL")
+                return SqlStatement.Format("{0} IS {1}", a, b);
+            else if (a.Count == 1 && a[0].Sql == "NULL")
+                return SqlStatement.Format("{0} IS {1}", b, a);
+            else
+                return SqlStatement.Format("{0} = {1}", a, b);
+        }
+        
+        protected override SqlStatement GetLiteralNotEqual(SqlStatement a, SqlStatement b)
+        {
+            // See comment above, in GetLiteralEqual().
+            
+            if (b.Count == 1 && b[0].Sql == "NULL")
+                return SqlStatement.Format("{0} IS NOT {1}", a, b);
+            else if (a.Count == 1 && a[0].Sql == "NULL")
+                return SqlStatement.Format("{0} IS NOT {1}", b, a);
+            else
+                return SqlStatement.Format("{0} <> {1}", a, b);
+        }        
 
         public static readonly Dictionary<Type, string> typeMapping = new Dictionary<Type, string>
                                                                           {

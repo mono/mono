@@ -33,9 +33,7 @@ namespace DbLinq.Util
     /// Types conversion.
     /// A "smart" extension to System.Convert (at least that's what we hope)
     /// </summary>
-#if MONO_STRICT || !DEBUG
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     static class TypeConvert

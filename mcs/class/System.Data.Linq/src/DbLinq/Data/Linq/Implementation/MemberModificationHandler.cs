@@ -30,11 +30,7 @@ using System.Data.Linq.Mapping;
 using System.Reflection;
 using DbLinq.Util;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Implementation
-#else
 namespace DbLinq.Data.Linq.Implementation
-#endif
 {
     /// <summary>
     /// ModificationHandler class handles entities in two ways:

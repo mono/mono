@@ -48,7 +48,7 @@ using nwind;
     namespace Test_NUnit_Sqlite.Linq_101_Samples
 #elif INGRES
     namespace Test_NUnit_Ingres.Linq_101_Samples
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict.Linq_101_Samples
 #elif MSSQL
     namespace Test_NUnit_MsSql.Linq_101_Samples
@@ -173,9 +173,16 @@ using nwind;
             Category customerReloaded=db.Categories.First(c=>c.CategoryID==con.CategoryID);
             Assert.AreEqual(customerReloaded.CategoryName, con.CategoryName);
             Assert.AreEqual(customerReloaded.Description, con.Description);
+
+            // cleanup
+            db.Categories.DeleteOnSubmit(con);
+            db.SubmitChanges();
         }
 
 
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Test(Description = "This sample uses orderbyDescending and Take to return the discontinued products of the top 10 most expensive products")]
         public void LinqToSqlAdvanced06()
         {

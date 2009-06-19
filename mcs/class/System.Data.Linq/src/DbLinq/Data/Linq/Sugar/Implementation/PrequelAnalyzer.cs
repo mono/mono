@@ -26,21 +26,11 @@
 
 using System.Linq.Expressions;
 
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.ExpressionMutator;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     /// <summary>
     /// Analyzes Expressions before translation to SQL, to help the translator

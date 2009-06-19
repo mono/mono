@@ -26,9 +26,7 @@
 
 namespace DbLinq.Schema
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class ProcedureName : Name

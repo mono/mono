@@ -36,17 +36,14 @@ using System.Linq.Expressions;
 using System.ComponentModel;
 
 #if MONO_STRICT
-using System.Data.Linq.Implementation;
-using System.Data.Linq.Sugar;
 using ITable = System.Data.Linq.ITable;
 #else
-using DbLinq.Data.Linq.Implementation;
-using DbLinq.Data.Linq.Sugar;
 using ITable = DbLinq.Data.Linq.ITable;
 #endif
 
 using DbLinq;
-
+using DbLinq.Data.Linq.Implementation;
+using DbLinq.Data.Linq.Sugar;
 
 #if MONO_STRICT
 namespace System.Data.Linq

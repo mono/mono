@@ -32,9 +32,7 @@ namespace DbLinq.Util
     /// <summary>
     /// Executes a given SQL command, with parameter and delegate
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     // TODO: once R# is fixed with internal extension methods problems, switch to full internal
     public // DataCommand is used by vendors
 #endif

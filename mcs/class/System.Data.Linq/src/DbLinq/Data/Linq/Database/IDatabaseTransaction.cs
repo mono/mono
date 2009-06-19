@@ -32,9 +32,7 @@ namespace DbLinq.Data.Linq.Database
     /// <summary>
     /// Transaction block.
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IDatabaseTransaction : IDisposable

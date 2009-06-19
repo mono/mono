@@ -66,7 +66,6 @@ src/DbLinq/Data/Linq/Database/ITransactionalCommand.cs
 src/DbLinq/Data/Linq/DataContext.cs
 src/DbLinq/Data/Linq/DataLoadOptions.cs
 src/DbLinq/Data/Linq/DBLinqExtendedAttributte.cs
-src/DbLinq/Data/Linq/EntityList.cs
 src/DbLinq/Data/Linq/EntityRef.cs
 src/DbLinq/Data/Linq/EntitySet.cs
 src/DbLinq/Data/Linq/Identity/IdentityKey.cs
@@ -76,11 +75,9 @@ src/DbLinq/Data/Linq/Identity/IIdentityReaderFactory.cs
 src/DbLinq/Data/Linq/Identity/Implementation/IdentityProviderReader.cs
 src/DbLinq/Data/Linq/Identity/Implementation/IdentityReader.cs
 src/DbLinq/Data/Linq/Identity/Implementation/IdentityReaderFactory.cs
-src/DbLinq/Data/Linq/IEntityMap.cs
 src/DbLinq/Data/Linq/IExecuteResult.cs
 src/DbLinq/Data/Linq/IMemberModificationHandler.cs
 src/DbLinq/Data/Linq/Implementation/DisabledEntityTracker.cs
-src/DbLinq/Data/Linq/Implementation/EntityMap.cs
 src/DbLinq/Data/Linq/Implementation/EntityState.cs
 src/DbLinq/Data/Linq/Implementation/EntityTrack.cs
 src/DbLinq/Data/Linq/Implementation/EntityTracker.cs
@@ -165,6 +162,7 @@ src/DbLinq/Data/Linq/Sugar/Expressions/SelectOperatorType.cs
 src/DbLinq/Data/Linq/Sugar/Expressions/SpecialExpression.cs
 src/DbLinq/Data/Linq/Sugar/Expressions/SpecialExpressionType.cs
 src/DbLinq/Data/Linq/Sugar/Expressions/StartIndexOffsetExpression.cs
+src/DbLinq/Data/Linq/Sugar/Expressions/SubSelectExpression.cs
 src/DbLinq/Data/Linq/Sugar/Expressions/TableExpression.cs
 src/DbLinq/Data/Linq/Sugar/Expressions/TableJoinType.cs
 src/DbLinq/Data/Linq/Sugar/ExpressionTier.cs
@@ -288,6 +286,7 @@ src/DbLinq/Util/MemberInfoExtensions.cs
 src/DbLinq/Util/Output.cs
 src/DbLinq/Util/OutputLevel.cs
 src/DbLinq/Util/Page.cs
+src/DbLinq/Util/Profiler.cs
 src/DbLinq/Util/QuotesHelper.cs
 src/DbLinq/Util/ReferenceEqualityComparer.cs
 src/DbLinq/Util/ReflectionExtensions.cs
@@ -312,7 +311,6 @@ src/DbLinq/Vendor/Implementation/SchemaLoader.Tables.cs
 src/DbLinq/Vendor/Implementation/SchemaLoader.TypeMapping.cs
 src/DbLinq/Vendor/Implementation/SqlProvider.cs
 src/DbLinq/Vendor/Implementation/Vendor.cs
-src/DbLinq/Vendor/Implementation/Vendor.Name.cs
 src/DbLinq/Vendor/Implementation/Vendor.ProcedureResult.cs
 src/DbLinq/Vendor/INameAliases.cs
 src/DbLinq/Vendor/ISchemaLoader.cs

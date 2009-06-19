@@ -48,7 +48,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -166,6 +166,9 @@ using nwind;
 
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test]
         public void IndexOf02()
         {
@@ -190,9 +193,11 @@ using nwind;
 
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
-
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test]
         public void IndexOf04()
         {
@@ -208,6 +213,9 @@ using nwind;
 
 
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test]
         public void IndexOf05()
         {
@@ -223,6 +231,9 @@ using nwind;
 
 
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test]
         public void IndexOf06()
         {
@@ -236,6 +247,9 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && SQLITE
+        [Explicit]
+#endif
         [Test]
         public void IndexOf08()
         {
@@ -327,6 +341,18 @@ using nwind;
             Assert.AreEqual(list.Count, db.Employees.Count());
         }
 
+        [Test]
+        public void IndexOf15()
+        {
+            Northwind db = CreateDB();
+
+            var q = from e in db.Employees
+                    where " fu".IndexOf('a') == 1
+                    select e;
+
+            var list = q.ToList();
+            Assert.AreEqual(0, list.Count);
+        }
 
         [Test]
         public void Remove01()
@@ -444,6 +470,9 @@ using nwind;
             Assert.IsTrue(custID == "ALFKI");
         }
 
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Test]
         public void StartsWith02()
         {
@@ -455,6 +484,29 @@ using nwind;
 
             bool matchStart = q.Single();
             Assert.IsTrue(matchStart);
+        }
+
+
+        /// <summary>
+        /// This test is related to paths: enable DbLinq to search for a path or it's container
+        /// Since we have no path in Nortwind we use a CustomerID.
+        /// </summary>
+#if !DEBUG && (MSSQL && L2SQL)
+        // L2SQL: System.NotSupportedException : Only arguments that can be evaluated on the client are supported for the String.StartsWith method.        [Test]
+        [Explicit]
+#endif
+        [Test]
+        public void StartsWith03()
+        {
+            string path = "ALFKI test";
+            Northwind db = CreateDB();
+
+            var q = from c in db.Customers
+                    where path.StartsWith(c.CustomerID)
+                    select c;
+
+            Customer match = q.Single();
+            Assert.IsNotNull(match);
         }
 
         [Test]
@@ -493,10 +545,12 @@ using nwind;
                     where "ALFKI".EndsWith("LFKI")
                     select c.CustomerID;
 
-            string custID = q.Single();
-            Assert.IsTrue(custID == "ALFKI");
+            Assert.AreEqual(q.ToList().Count, db.Customers.Count());
         }
 
+#if !DEBUG && (MSSQL && !L2SQL)
+        [Explicit]
+#endif
         [Test]
         public void EndsWith04()
         {
@@ -508,6 +562,9 @@ using nwind;
             Assert.IsTrue(q.Any(r => r == true));
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void StartsWithPercent01()
         {
@@ -522,6 +579,10 @@ using nwind;
             Assert.AreEqual(0, cnt);
         }
 
+#if !DEBUG && (MSSQL && L2SQL)
+        // L2SQL: System.NotSupportedException : Method 'System.String TrimStart(Char[])' has no supported translation to SQL.        [Test]
+        [Explicit]
+#endif
         [Test]
         public void LTrim01()
         {
@@ -535,6 +596,10 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (MSSQL)
+        // L2SQL: System.InvalidOperationException : Could not translate expression 'Table(Employee).Select(e => Not(e.LastName.TrimStart(Invoke(value(System.Func`1[System.Char[]]))).Contains(" ")))' into SQL and could not treat it as a local expression.
+        [Explicit]
+#endif
         [Test]
         public void LTrim02()
         {
@@ -547,6 +612,10 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (MSSQL && L2SQL)
+        // L2SQL: System.NotSupportedException : Method 'System.String TrimEnd(Char[])' has no supported translation to SQL.
+        [Explicit]
+#endif
         [Test]
         public void RTrim01()
         {
@@ -560,6 +629,10 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
+#if !DEBUG && (MSSQL)
+        // L2SQL: System.InvalidOperationException : Could not translate expression 'Table(Employee).Select(e => Not(e.LastName.TrimEnd(Invoke(value(System.Func`1[System.Char[]]))).Contains(" ")))' into SQL and could not treat it as a local expression.
+        [Explicit]
+#endif
         [Test]
         public void RTrim02()
         {

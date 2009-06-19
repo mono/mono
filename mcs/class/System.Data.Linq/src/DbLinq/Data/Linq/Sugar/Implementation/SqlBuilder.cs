@@ -29,24 +29,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-using System.Data.Linq.Sugar.ExpressionMutator;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sql;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
 using DbLinq.Factory;
 using DbLinq.Util;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     internal class SqlBuilder : ISqlBuilder
     {
@@ -108,6 +98,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
         public SqlStatement Build(SelectExpression selectExpression, QueryContext queryContext)
         {
             var translator = GetTranslator(queryContext.DataContext.Vendor.SqlProvider);
+            var sqlProvider = queryContext.DataContext.Vendor.SqlProvider;
             selectExpression = translator.OuterExpression(selectExpression);
 
             // A scope usually has:
@@ -116,11 +107,24 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             // - a WHERE: list of conditions
             // - a GROUP BY: grouping by selected columns
             // - a ORDER BY: sort
+            var select = BuildSelect(selectExpression, queryContext);
+            if (select.ToString() == string.Empty)
+            {
+                SubSelectExpression subselect = null;
+                if (selectExpression.Tables.Count == 1)
+                    subselect = selectExpression.Tables[0] as SubSelectExpression;
+                if(subselect != null)
+                    return sqlProvider.GetParenthesis(Build(subselect.Select, queryContext));
+            }
+
+            // TODO: the following might be wrong (at least this might be the wrong place to do this
+            if (select.ToString() == string.Empty)
+                select = new SqlStatement("SELECT " + sqlProvider.GetLiteral(null) + " AS " + sqlProvider.GetSafeName("Empty"));
+
             var tables = GetSortedTables(selectExpression);
             var from = BuildFrom(tables, queryContext);
             var join = BuildJoin(tables, queryContext);
             var where = BuildWhere(tables, selectExpression.Where, queryContext);
-            var select = BuildSelect(selectExpression, queryContext);
             var groupBy = BuildGroupBy(selectExpression.Group, queryContext);
             var having = BuildHaving(selectExpression.Where, queryContext);
             var orderBy = BuildOrderBy(selectExpression.OrderBy, queryContext);
@@ -193,6 +197,18 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
             if (expression is InputParameterExpression)
             {
                 var inputParameterExpression = (InputParameterExpression)expression;
+                if (expression.Type.IsArray)
+                {
+                    int i = 0;
+                    List<SqlStatement> inputParameters = new List<SqlStatement>();
+                    foreach (object p in (Array)inputParameterExpression.GetValue())
+                    {
+                        inputParameters.Add(new SqlStatement(new SqlParameterPart(sqlProvider.GetParameterName(inputParameterExpression.Alias + i.ToString()),
+                                                          inputParameterExpression.Alias + i.ToString())));
+                        ++i;
+                    }
+                    return new SqlStatement(sqlProvider.GetLiteral(inputParameters.ToArray()));
+                }
                 return
                     new SqlStatement(new SqlParameterPart(sqlProvider.GetParameterName(inputParameterExpression.Alias),
                                                           inputParameterExpression.Alias));
@@ -282,7 +298,18 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 {
                     if (tableExpression.Alias != null)
                     {
-                        var tableAlias = sqlProvider.GetTableAsAlias(tableExpression.Name, tableExpression.Alias);
+                        string tableAlias;
+
+                        // All subqueries has an alias in FROM
+                        SubSelectExpression subquery = tableExpression as SubSelectExpression;
+                        if (subquery == null)
+                            tableAlias = sqlProvider.GetTableAsAlias(tableExpression.Name, tableExpression.Alias);
+                        else
+                        {
+                            var subqueryStatements = new SqlStatement(Build(subquery.Select, queryContext));
+                            tableAlias = sqlProvider.GetSubQueryAsAlias(subqueryStatements.ToString(), tableExpression.Alias);
+                        }
+
                         if ((tableExpression.JoinType & TableJoinType.LeftOuter) != 0)
                             tableAlias = "/* LEFT OUTER */ " + tableAlias;
                         if ((tableExpression.JoinType & TableJoinType.RightOuter) != 0)
@@ -431,6 +458,20 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     selectClauses.Add(sqlProvider.GetParenthesis(expressionString));
                 else
                     selectClauses.Add(expressionString);
+            }
+            SelectExpression selectExp = select as SelectExpression;
+            if (selectExp != null)
+            {
+                if (selectExp.Group.Count == 1 && selectExp.Group[0].GroupedExpression == selectExp.Group[0].KeyExpression)
+                {
+                    // this is a select DISTINCT expression
+                    // TODO: better handle selected columns on DISTINCT: I suspect this will not work in some cases
+                    if (selectClauses.Count == 0)
+                    {
+                        selectClauses.Add(sqlProvider.GetColumns());
+                    }
+                    return sqlProvider.GetSelectDistinctClause(selectClauses.ToArray());
+                }
             }
             return sqlProvider.GetSelectClause(selectClauses.ToArray());
         }

@@ -33,9 +33,7 @@ namespace DbLinq.Schema.Dbml.Adapter
     /// <summary>
     /// Wraps a CSV string to an array
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class CsvArrayAdapter : ArrayAdapter<string>

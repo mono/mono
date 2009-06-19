@@ -26,17 +26,10 @@
 
 using System;
 using System.Collections.Generic;
-#if MONO_STRICT
-using System.Data.Linq.Sugar.Expressions;
-#else
-using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar
-#else
+using DbLinq.Data.Linq.Sugar.Expressions;
+
 namespace DbLinq.Data.Linq.Sugar
-#endif
 {
     /// <summary>
     /// Represents the first step Expression analysis result

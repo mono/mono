@@ -33,21 +33,11 @@ using System.Linq.Expressions;
 using System.Linq;
 using System.Collections.ObjectModel;
 
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.ExpressionMutator;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     /// <summary>
     /// Holds new expression types (sql related), all well as their operands
@@ -76,6 +66,8 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
                     return typeof(string);
                 case SpecialExpressionType.Count:
                     return typeof(int);
+                case SpecialExpressionType.Exists:
+                    return typeof(bool);
                 case SpecialExpressionType.Like:
                     return typeof(bool);
                 case SpecialExpressionType.Min:
@@ -114,6 +106,7 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
                 case SpecialExpressionType.Millisecond:
                     return typeof(int);
                 case SpecialExpressionType.Now:
+                case SpecialExpressionType.Date:
                     return typeof(DateTime);
                 case SpecialExpressionType.DateDiffInMilliseconds:
                     return typeof(long);
@@ -183,6 +176,17 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
                         // TODO: by default, shall we answer 1 or throw an exception?
                         return 1;
                     }
+                case SpecialExpressionType.Exists:
+                    {
+                        var value = operands[0].Evaluate();
+                        // TODO: string is IEnumerable. See what we do here
+                        if (value is IEnumerable)
+                        {
+                            return true;
+                        }
+                        // TODO: by default, shall we answer 1 or throw an exception?
+                        return false;
+                    }
                 case SpecialExpressionType.Min:
                     {
                         decimal? min = null;
@@ -249,6 +253,8 @@ namespace DbLinq.Data.Linq.Sugar.Expressions
                     return ((DateTime)operands[0].Evaluate()).Millisecond;
                 case SpecialExpressionType.Now:
                     return DateTime.Now;
+                case SpecialExpressionType.Date:
+                    return ((DateTime)operands[0].Evaluate());
                 case SpecialExpressionType.DateDiffInMilliseconds:
                     return ((DateTime)operands[0].Evaluate()) - ((DateTime)operands[1].Evaluate());
                 case SpecialExpressionType.Abs:

@@ -31,13 +31,10 @@ using System.Data.Linq.Mapping;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Text;
-#if MONO_STRICT
-using System.Data.Linq.SqlClient;
-#else
 using DbLinq.Data.Linq.SqlClient;
-#endif
 using DbLinq.Util;
 using DbLinq.Vendor;
+
 #if MONO_STRICT
 using DataContext = System.Data.Linq.DataContext;
 #else
@@ -50,9 +47,7 @@ namespace DbLinq.Ingres
     /// Ingres - specific code.
     /// </summary>
     [Vendor(typeof(IngresProvider))]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class IngresVendor : Vendor.Implementation.Vendor

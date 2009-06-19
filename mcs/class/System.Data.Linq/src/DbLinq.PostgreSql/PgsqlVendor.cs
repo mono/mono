@@ -30,14 +30,11 @@ using System.Linq;
 using System.Data.Linq.Mapping;
 using System.Reflection;
 using System.Collections.Generic;
-#if MONO_STRICT
-using System.Data.Linq.SqlClient;
-#else
 using DbLinq.Data.Linq.SqlClient;
-#endif
 using DbLinq.PostgreSql;
 using DbLinq.Util;
 using DbLinq.Vendor;
+
 #if MONO_STRICT
 using DataContext=System.Data.Linq.DataContext;
 #else
@@ -46,16 +43,23 @@ using DataContext=DbLinq.Data.Linq.DataContext;
 
 namespace DbLinq.PostgreSql
 {
+#if !MONO_STRICT
+    public
+#endif
+    class PgsqlVendor : PostgreSqlVendor
+    {
+        // This is a compatibility class. It will go away after the
+        // big PostgreSql rename.
+    }
+    
     /// <summary>
     /// PostgreSQL - specific code.
     /// </summary>
     [Vendor(typeof(PostgreSqlProvider))]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
-    class PgsqlVendor : Vendor.Implementation.Vendor
+    class PostgreSqlVendor : Vendor.Implementation.Vendor
     {
         public override string VendorName { get { return "PostgreSQL"; } }
 

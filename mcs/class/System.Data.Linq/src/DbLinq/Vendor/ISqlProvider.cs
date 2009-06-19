@@ -27,19 +27,12 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-#if MONO_STRICT
-using System.Data.Linq.Sql;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sql;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
 namespace DbLinq.Vendor
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface ISqlProvider
@@ -108,6 +101,15 @@ namespace DbLinq.Vendor
         string GetTableAsAlias(string table, string alias);
 
         /// <summary>
+        /// Returns a subquery alias
+        /// Ensures about the right case
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="alias"></param>
+        /// <returns></returns>
+        string GetSubQueryAsAlias(string table, string alias);
+
+        /// <summary>
         /// Returns a table alias
         /// </summary>
         /// <param name="table"></param>
@@ -147,6 +149,13 @@ namespace DbLinq.Vendor
         /// <param name="selects"></param>
         /// <returns></returns>
         SqlStatement GetSelectClause(SqlStatement[] selects);
+
+        /// <summary>
+        /// Joins a list of operands to make a SELECT clause
+        /// </summary>
+        /// <param name="selects"></param>
+        /// <returns></returns>
+        SqlStatement GetSelectDistinctClause(SqlStatement[] selects);
 
         /// <summary>
         /// Returns all table columns (*)

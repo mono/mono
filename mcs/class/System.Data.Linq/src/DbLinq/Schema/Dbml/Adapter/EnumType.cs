@@ -32,9 +32,7 @@ using DbLinq.Util;
 
 namespace DbLinq.Schema.Dbml.Adapter
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class EnumType : IDictionary<string, int>, INamedType

@@ -23,7 +23,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -58,6 +58,9 @@ using nwind;
             }
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void TransactionRollbackDelete()
         {
@@ -103,6 +106,9 @@ using nwind;
             return t;
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void TransactionCheckAndRollbackInsert()
         {
@@ -128,7 +134,17 @@ using nwind;
             afterCustomercount = db.Customers.Count();
             Assert.IsTrue(beforeCustomersCount == afterCustomercount);
 
+            // The Count is correct.  However, DataContext doesn't know that the 
+            // transaction was aborted, and will satisfy the following from
+            // an internal cache
             var customer = db.Customers.FirstOrDefault(c => c.CustomerID == id);
+            Assert.IsNotNull(customer);
+
+            // Let's let DataContext know that it doesn't exist anymore.
+            db.Customers.DeleteOnSubmit(customer);
+            db.SubmitChanges(); // Note no exception from deleting a non-existent entity
+
+            customer = db.Customers.FirstOrDefault(c => c.CustomerID == id);
             Assert.IsNull(customer);
         }
     }

@@ -28,9 +28,7 @@ namespace DbLinq.Vendor
     /// <summary>
     /// Represents a database column
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IDataTableColumn : IDataType

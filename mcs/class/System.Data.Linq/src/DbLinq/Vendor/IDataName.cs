@@ -28,9 +28,7 @@ namespace DbLinq.Vendor
     /// <summary>
     /// Basic name in a database entity, with a name and schema
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IDataName

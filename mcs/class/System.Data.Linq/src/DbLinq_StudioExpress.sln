@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLinq.Sqlite_test_mono_str
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbLinq_test_ndb_strict", "DbLinq\Test\DbLinq_test_ndb_strict.csproj", "{AB60629C-6B19-4465-89AA-DBD7A0428F4B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitRunner", "Tools\NUnitRunner\NUnitRunner.csproj", "{61EF7ADF-C133-4329-8848-C6B832122C4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +165,10 @@ Global
 		{AB60629C-6B19-4465-89AA-DBD7A0428F4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB60629C-6B19-4465-89AA-DBD7A0428F4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB60629C-6B19-4465-89AA-DBD7A0428F4B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61EF7ADF-C133-4329-8848-C6B832122C4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61EF7ADF-C133-4329-8848-C6B832122C4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61EF7ADF-C133-4329-8848-C6B832122C4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61EF7ADF-C133-4329-8848-C6B832122C4F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

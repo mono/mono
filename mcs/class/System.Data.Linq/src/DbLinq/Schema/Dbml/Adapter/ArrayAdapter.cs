@@ -40,9 +40,7 @@ namespace DbLinq.Schema.Dbml.Adapter
     /// </summary>
     /// <typeparam name="T"></typeparam>
     [DebuggerDisplay("{reflectedMember}")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class ArrayAdapter<T> : ISimpleList<T>

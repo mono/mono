@@ -48,7 +48,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -200,8 +200,9 @@ using nwind;
             Northwind db = CreateDB();
             var predicate = PredicateBuilder.True<Customer>();
             predicate = predicate.And(m => m.City == "Paris");
-            int count = db.Customers.Count(predicate);
-            Assert.AreEqual(1, count);
+            int predicateCount  = db.Customers.Count(predicate);
+            int normalCount     = db.Customers.Where(c => c.City == "Paris").Count();
+            Assert.AreEqual(normalCount, predicateCount);
         }
 
 

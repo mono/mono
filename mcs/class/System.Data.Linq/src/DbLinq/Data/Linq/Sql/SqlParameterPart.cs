@@ -26,22 +26,16 @@
 
 using System.Diagnostics;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sql
-#else
 namespace DbLinq.Data.Linq.Sql
-#endif
 {
     /// <summary>
     /// SqlPart exposing a parameter
     /// </summary>
     [DebuggerDisplay("SqlParameterPart {Parameter} (as {Alias})")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- class SqlParameterPart : SqlPart
+    class SqlParameterPart : SqlPart
     {
         /// <summary>
         /// The SQL part is the literal parameter

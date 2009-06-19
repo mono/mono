@@ -27,17 +27,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-#else
-using DbLinq.Data.Linq.Sugar;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
+using DbLinq.Data.Linq.Sugar;
+
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
 #if !MONO_STRICT
     public

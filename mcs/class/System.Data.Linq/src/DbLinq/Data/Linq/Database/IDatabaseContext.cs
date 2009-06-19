@@ -34,9 +34,7 @@ namespace DbLinq.Data.Linq.Database
     /// - connection
     /// - creates or manage a transaction
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IDatabaseContext : IDisposable

@@ -58,6 +58,9 @@ using nwind;
 
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Linq101SamplesModified("The original sample didn't compile, db2 Northwind context was used for nothing")]
         [Test(Description = "This sample demonstrates how to use Including to request related data during the original query so that additional roundtrips to the database are not required later when navigating through the retrieved objects.")]
         public void LinqToSqlObject02()
@@ -104,6 +107,9 @@ using nwind;
 
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !MONO_STRICT))
+        [Explicit]
+#endif
         [Linq101SamplesModified("The original sample didn't compile, db2 Northwind context was used for nothing")]
         [Test(Description = "This sample demonstrates how to use Including to request related data during the original query so that additional roundtrips to the database are not required later when navigating through the retrieved objects.")]
         public void LinqToSqlObject04()

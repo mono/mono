@@ -29,9 +29,7 @@ namespace DbLinq.Schema
     /// <summary>
     /// Determines how to extract words from a given text
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     enum WordsExtraction

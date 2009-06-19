@@ -28,9 +28,7 @@ namespace DbLinq.Schema
     /// <summary>
     /// Contains both parts for association name
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class AssociationName : Name

@@ -29,20 +29,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sql
-#else
 namespace DbLinq.Data.Linq.Sql
-#endif
 {
     /// <summary>
     /// An SqlStatement is a literal SQL request, composed of different parts (SqlPart)
     /// each part being either a parameter or a literal string
     /// </summary>
     [DebuggerDisplay("SqlStatement {ToString()}")]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class SqlStatement : IEnumerable<SqlPart>

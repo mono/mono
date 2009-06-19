@@ -34,12 +34,10 @@ namespace DbLinq.Language.Implementation
     /// <summary>
     /// Offer base mechanisms for words based languages (== all)
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- abstract class AbstractWords : ILanguageWords
+    abstract class AbstractWords : ILanguageWords
     {
         /// <summary>
         /// Words and corresponding weights

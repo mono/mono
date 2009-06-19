@@ -23,6 +23,13 @@ namespace DbLinqTest
             new EntitySet<Person>(null, null);
         }
 
+        [Test, ExpectedException(typeof(ArgumentNullException))]
+        public void Add_EntityNull()
+        {
+            var people = new EntitySet<Person>();
+            people.Add(null);
+        }
+
         [Test]
         public void Add_IgnoreRepeats()
         {
@@ -289,6 +296,30 @@ namespace DbLinqTest
             AssertEqual(events,
                 new ListChangedEventArgs(ListChangedType.ItemDeleted, 0, -1),
                 new ListChangedEventArgs(ListChangedType.ItemAdded, 0, -1));
+        }
+
+        [Test]
+        public void Remove()
+        {
+            var people = new EntitySet<Person>();
+            var events = new List<ListChangedEventArgs>();
+            people.ListChanged += (o, e) => events.Add(e);
+
+            people.SetSource(new[]{
+                new Person { FirstName = "(", LastName = ")" },
+            });
+            Assert.IsTrue(people.IsDeferred);
+            Assert.IsFalse(people.Remove(null));
+            AssertEqual(events);
+            events.Clear();
+            Assert.IsTrue(people.IsDeferred);
+
+            var p = people[0];
+            Assert.IsTrue(people.Remove(p));
+            Assert.IsFalse(people.IsDeferred);
+            Assert.AreEqual(0, people.Count);
+            AssertEqual(events, 
+                new ListChangedEventArgs(ListChangedType.ItemDeleted, 0, -1));
         }
 
         [Test]

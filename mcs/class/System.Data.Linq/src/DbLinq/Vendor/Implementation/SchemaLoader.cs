@@ -41,9 +41,7 @@ using DbLinq.Schema.Dbml;
 
 namespace DbLinq.Vendor.Implementation
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     abstract partial class SchemaLoader : ISchemaLoader

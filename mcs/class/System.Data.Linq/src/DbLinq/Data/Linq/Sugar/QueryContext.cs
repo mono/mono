@@ -25,14 +25,14 @@
 #endregion
 
 #if MONO_STRICT
-namespace System.Data.Linq.Sugar
+using System.Data.Linq;
 #else
-namespace DbLinq.Data.Linq.Sugar
+using DbLinq.Data.Linq;
 #endif
+
+namespace DbLinq.Data.Linq.Sugar
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class QueryContext

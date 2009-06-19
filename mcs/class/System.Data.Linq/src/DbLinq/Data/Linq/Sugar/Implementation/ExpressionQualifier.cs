@@ -25,19 +25,10 @@
 #endregion
 
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.Expressions;
-#else
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     internal class ExpressionQualifier : IExpressionQualifier
     {
@@ -68,6 +59,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 case SpecialExpressionType.Sum:
                 case SpecialExpressionType.Average:
                 case SpecialExpressionType.Count:
+                case SpecialExpressionType.Exists:
                 case SpecialExpressionType.StringLength:
                 case SpecialExpressionType.ToUpper:
                 case SpecialExpressionType.ToLower:
@@ -87,6 +79,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 case SpecialExpressionType.Second:
                 case SpecialExpressionType.Millisecond:
                 case SpecialExpressionType.Now:
+                case SpecialExpressionType.Date:
                 case SpecialExpressionType.DateDiffInMilliseconds:
                 case SpecialExpressionType.Abs:
                 case SpecialExpressionType.Exp:
@@ -238,6 +231,7 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                 case SpecialExpressionType.Second:
                 case SpecialExpressionType.Millisecond:
                 case SpecialExpressionType.Now:
+                case SpecialExpressionType.Date:
                 case SpecialExpressionType.DateDiffInMilliseconds:
                 case SpecialExpressionType.Abs:
                 case SpecialExpressionType.Exp:

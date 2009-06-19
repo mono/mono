@@ -1,3 +1,14 @@
+2009-06-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*, tests/**/*: Sync with DbLinq r1180.  Gets unit tests into
+	  a state (i.e. no release tests fail within NUnit), fixes several
+	  bugs, massive code cleanup (#if removal), EntitySet<T> fixes,
+	  removes some locale dependency issues, predicate building,
+	  performance improvements, and likely more.  Remove src/VisualMetal;
+	  it's no longer used.
+	* Makefile (update-dblinq): Exclude more files so that there's less
+	  "garbage" files to review on the next update.
+
 2009-05-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/DbLinq/Data/Linq/Sugar/Implementation/QueryCache.cs: Temporarily

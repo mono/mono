@@ -27,22 +27,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.Expressions;
-#else
+using System.Reflection;
+
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar
-#else
 namespace DbLinq.Data.Linq.Sugar
-#endif
 {
     internal class BuilderContext
     {
+        public Stack<MethodInfo> CallStack { get; private set; }
+
         // Global context
         public QueryContext QueryContext { get; private set; }
 
@@ -103,6 +98,7 @@ namespace DbLinq.Data.Linq.Sugar
 
         public BuilderContext(QueryContext queryContext)
         {
+            CallStack = new Stack<MethodInfo>();
             SelectExpressions = new List<SelectExpression>();
             currentScopeIndex = SelectExpressions.Count;
             SelectExpressions.Add(new SelectExpression());
@@ -124,6 +120,7 @@ namespace DbLinq.Data.Linq.Sugar
             var builderContext = new BuilderContext();
 
             // scope independent Parts
+            builderContext.CallStack = CallStack;
             builderContext.QueryContext = QueryContext;
             builderContext.ExpressionQuery = ExpressionQuery;
             builderContext.MetaTables = MetaTables;
@@ -146,6 +143,7 @@ namespace DbLinq.Data.Linq.Sugar
             var builderContext = new BuilderContext();
 
             // we basically copy everything
+            builderContext.CallStack = CallStack;
             builderContext.QueryContext = QueryContext;
             builderContext.ExpressionQuery = ExpressionQuery;
             builderContext.MetaTables = MetaTables;
@@ -160,10 +158,53 @@ namespace DbLinq.Data.Linq.Sugar
             return builderContext;
         }
 
+        /// <summary>
+        /// Creates a new BuilderContext with a new query scope with the same parent of the CurrentSelect
+        /// </summary>
+        /// <returns></returns>
+        public BuilderContext NewSisterSelect()
+        {
+            var builderContext = new BuilderContext();
+
+            // we basically copy everything
+            builderContext.CallStack = CallStack;
+            builderContext.QueryContext = QueryContext;
+            builderContext.ExpressionQuery = ExpressionQuery;
+            builderContext.MetaTables = MetaTables;
+            builderContext.Parameters = Parameters;
+            builderContext.SelectExpressions = SelectExpressions;
+            builderContext.ExpectMetaTableDefinition = ExpectMetaTableDefinition;
+
+            // except CurrentScope, of course
+            builderContext.currentScopeIndex = SelectExpressions.Count;
+            SelectExpressions.Add(new SelectExpression(CurrentSelect.Parent));
+
+            return builderContext;
+        }
+
+        /// <summary>
+        /// Creates a new BuilderContext with a new query scope which is parent of the current one
+        /// </summary>
+        /// <returns></returns>
+        public void NewParentSelect()
+        {
+            SelectExpression currentSelect = this.CurrentSelect;
+            SelectExpression newParentSelect = new SelectExpression(currentSelect.Parent);
+
+            while (currentSelect != null)
+            {
+                currentSelect.Parent = newParentSelect;
+                currentSelect = currentSelect.NextSelectExpression;
+            }
+            this.currentScopeIndex = SelectExpressions.Count;
+            SelectExpressions.Add(newParentSelect);
+        }
+
         public BuilderContext Clone()
         {
             var builderContext = new BuilderContext();
 
+            builderContext.CallStack = CallStack;
             builderContext.QueryContext = QueryContext;
             builderContext.ExpressionQuery = ExpressionQuery;
             builderContext.MetaTables = MetaTables;

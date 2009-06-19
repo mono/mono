@@ -24,11 +24,7 @@
 // 
 #endregion
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     /// <summary>
     /// Those types are required by DbLinq internal expressions

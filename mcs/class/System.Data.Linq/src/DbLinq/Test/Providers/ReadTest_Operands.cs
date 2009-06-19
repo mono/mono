@@ -47,7 +47,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -180,6 +180,9 @@ using nwind;
             Assert.IsTrue(count > 0, "Expected some products with ProductID != 1, got none");
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void J1_LocalFunction_DateTime_ParseExact()
         {
@@ -188,7 +191,7 @@ using nwind;
             //Lookup EmployeeID 1:
             //Andy Fuller - HireDate: 1989-01-01 00:00:00
 
-            string hireDate = "1989.01.01";
+            string hireDate = "1992.08.14";
 
             // Ingres assumes UTC on all date queries
             var q = from e in db.Employees
@@ -197,9 +200,9 @@ using nwind;
 #else
                     where e.HireDate == DateTime.ParseExact(hireDate, "yyyy.MM.dd", CultureInfo.InvariantCulture)
 #endif
-                    select e.EmployeeID;
-            var empID = q.Single(); //MTable_Projected.GetQueryText()
-            Assert.IsTrue(empID == 1);
+                    select e.LastName;
+            var empLastName = q.Single(); //MTable_Projected.GetQueryText()
+            Assert.AreEqual("Fuller", empLastName);
         }
 
     }

@@ -31,22 +31,21 @@ using System.Text;
 using System.Data.Linq.Mapping;
 using System.Reflection;
 using System.Data;
-#if MONO_STRICT
-using System.Data.Linq;
-using System.Data.Linq.SqlClient;
-#else
 using DbLinq.Data.Linq;
 using DbLinq.Data.Linq.SqlClient;
-#endif
 using DbLinq.Util;
 using DbLinq.Vendor;
+
+#if MONO_STRICT
+using System.Data.Linq;
+#else
+using DbLinq.Data.Linq;
+#endif
 
 namespace DbLinq.MySql
 {
     [Vendor(typeof(MySqlProvider))]
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     class MySqlVendor : Vendor.Implementation.Vendor

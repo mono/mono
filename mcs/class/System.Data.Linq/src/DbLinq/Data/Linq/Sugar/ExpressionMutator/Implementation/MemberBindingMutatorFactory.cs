@@ -25,19 +25,11 @@
 #endregion
 
 using System.Linq.Expressions;
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-using System.Data.Linq.Sugar.ExpressionMutator.Implementation;
-#else
+
 using DbLinq.Data.Linq.Sugar;
 using DbLinq.Data.Linq.Sugar.ExpressionMutator.Implementation;
-#endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.ExpressionMutator.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.ExpressionMutator.Implementation
-#endif
 {
     internal static class MemberBindingMutatorFactory
     {

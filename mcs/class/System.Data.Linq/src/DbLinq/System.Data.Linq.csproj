@@ -199,6 +199,7 @@
     <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\SpecialExpressionType.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\StartIndexOffsetExpression.cs" />
+    <Compile Include="Data\Linq\Sugar\Expressions\SubSelectExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\TableExpression.cs" />
     <Compile Include="Data\Linq\Sugar\Expressions\TableJoinType.cs" />
     <Compile Include="Data\Linq\Sugar\ExpressionTier.cs" />
@@ -325,6 +326,7 @@
     <Compile Include="Language\Implementation\NoLanguageWords.cs" />
     <Compile Include="Schema\Implementation\NameFormatter.cs" />
     <Compile Include="Util\MemberInfoExtensions.cs" />
+    <Compile Include="Util\Profiler.cs" />
     <Compile Include="Util\ReflectionExtensions.cs" />
     <Compile Include="Util\ReflectionUtility.cs" />
     <Compile Include="Util\StringExtensions.cs" />

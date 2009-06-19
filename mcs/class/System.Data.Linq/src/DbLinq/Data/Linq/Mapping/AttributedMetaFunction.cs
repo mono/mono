@@ -29,11 +29,7 @@ using System.Collections.ObjectModel;
 using System.Data.Linq.Mapping;
 using System.Reflection;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Mapping
-#else
 namespace DbLinq.Data.Linq.Mapping
-#endif
 {
     internal class AttributedMetaFunction : MetaFunction
     {

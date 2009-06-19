@@ -22,7 +22,7 @@ using nwind;
     namespace Test_NUnit_Sqlite
 #elif INGRES
     namespace Test_NUnit_Ingres
-#elif MSSQL && MONO_STRICT
+#elif MSSQL && L2SQL
     namespace Test_NUnit_MsSql_Strict
 #elif MSSQL
     namespace Test_NUnit_MsSql
@@ -40,6 +40,9 @@ using nwind;
             var customers = db.Customers.ToArray();
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void GetModifiedMembers()
         {
@@ -68,6 +71,9 @@ using nwind;
             Assert.AreEqual(modInfo.OriginalValue, beforeFax);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void GetOriginalEntityState()
         {
@@ -102,6 +108,9 @@ using nwind;
         //    Assert.IsTrue(db2.Customers.IsReadOnly);
         //}
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void Attach01()
         {
@@ -112,6 +121,9 @@ using nwind;
             Assert.IsFalse(db.Customers.Contains(customer));
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         [ExpectedException(typeof(NotSupportedException))]
         public void Attach02()
@@ -125,6 +137,9 @@ using nwind;
             db2.Customers.Attach(customer);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Attach03()
@@ -135,6 +150,9 @@ using nwind;
             db.Customers.Attach(customer);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void Attach04()
         {
@@ -146,6 +164,9 @@ using nwind;
             Assert.Greater(db.Customers.GetModifiedMembers(customer).Count(), 0);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
         public void Attach05()
@@ -155,6 +176,9 @@ using nwind;
             db.Customers.Attach(customer, true);
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void Attach06()
         {
@@ -167,6 +191,9 @@ using nwind;
         }
 
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void AttachAll()
         {
@@ -178,6 +205,9 @@ using nwind;
 
         }
 
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
+        [Explicit]
+#endif
         [Test]
         public void GetBindingList()
         {
@@ -200,11 +230,11 @@ using nwind;
             DbLinq.Data.Linq.DataContext(db.Connection, CreateVendor());
 #endif
 
-            var dbq = from p in db.Products where p.ProductName == "Pen" select p.ProductID;
+            var dbq = from p in db.Products where p.ProductName == "Chai" select p.ProductID;
             var dbc = dbq.ToList().Count;
             Assert.AreEqual(dbc, 1);
 
-            var dcq = from p in dc.GetTable<Product>() where p.ProductName == "Pen" select p.ProductID;
+            var dcq = from p in dc.GetTable<Product>() where p.ProductName == "Chai" select p.ProductID;
             var dcc = dcq.ToList().Count;
             Assert.AreEqual(dbc, 1);
         }

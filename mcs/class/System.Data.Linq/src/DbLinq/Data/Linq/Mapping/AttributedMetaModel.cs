@@ -28,28 +28,23 @@ using System;
 using System.Collections.Generic;
 using System.Data.Linq.Mapping;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 #if MONO_STRICT
 using System.Data.Linq;
-using DbLinq.Util;
-
 #else
 using DbLinq.Data.Linq;
+#endif
+
 using DbLinq.Data.Linq.Mapping;
 using DbLinq.Util;
-
-#endif
 
 //Change notes:
 //removed virtual init call from constructor
 //renamed member variables to be better distinguishable from local variables
 
-#if MONO_STRICT
-namespace System.Data.Linq.Mapping
-#else
 namespace DbLinq.Data.Linq.Mapping
-#endif
 {
     /// <summary>
     /// This class is a stateless attribute meta model (it does not depend on any provider)
@@ -93,7 +88,11 @@ namespace DbLinq.Data.Linq.Mapping
 		/// </remarks>
 		public override string DatabaseName
 		{
-			get { return _DatabaseName; }
+			get {
+                if (_DatabaseName == null)
+                    DiscoverDatabaseName();
+                return _DatabaseName;
+            }
 		}
 
 
@@ -104,11 +103,7 @@ namespace DbLinq.Data.Linq.Mapping
 		}
 
 		//This function will try to add unknown table types
-		//TODO: locking for multithreaded access, since it is not only used during init
 		private IDictionary<Type, MetaTable> _Tables = new Dictionary<Type, MetaTable>();
-
-		private IDictionary<MethodInfo, MetaFunction> _metaFunctions;
-		
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AttributedMetaModel"/> class.
@@ -119,36 +114,6 @@ namespace DbLinq.Data.Linq.Mapping
         {
             _ContextType = contextType;
             _MappingSource = mappingSource;
-
-			DiscoverDatabaseName();
-
-			FindTables();
-            
-			//Load looks a bit useles since it is only called here
-			Load(); //TODO refactor this method
-        }
-
-        private void Load()
-        {
-            // stored procedures
-            _metaFunctions = new Dictionary<MethodInfo, MetaFunction>();
-            var functionAttributes = GetFunctionsAttributes();
-            foreach (var functionPair in functionAttributes)
-            {
-                _metaFunctions[functionPair.Key] = new AttributedMetaFunction(functionPair.Key, functionPair.Value);
-            }
-        }
-
-        private IDictionary<MethodInfo, FunctionAttribute> GetFunctionsAttributes()
-        {
-            var functionAttributes = new Dictionary<MethodInfo, FunctionAttribute>();
-            foreach (var methodInfo in _ContextType.GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
-            {
-                var function = ReflectionExtensions.GetAttribute<FunctionAttribute>(methodInfo);
-                if (function != null)
-                    functionAttributes[methodInfo] = function;
-            }
-            return functionAttributes;
         }
 
 		/// <summary>
@@ -157,9 +122,7 @@ namespace DbLinq.Data.Linq.Mapping
 		/// <param name="method">The method info for which the <see cref="MetaFunction"/> should be returned.</param>
         public override MetaFunction GetFunction(MethodInfo method)
         {
-            MetaFunction metaFunction;
-            _metaFunctions.TryGetValue(method, out metaFunction);
-            return metaFunction;
+            return GetFunctions().SingleOrDefault(m => m.Method == method);
         }
 
 		/// <summary>
@@ -167,7 +130,13 @@ namespace DbLinq.Data.Linq.Mapping
 		/// </summary>
         public override IEnumerable<MetaFunction> GetFunctions()
         {
-            return _metaFunctions.Values;
+            const BindingFlags scope = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+            foreach (var methodInfo in _ContextType.GetMethods(scope))
+            {
+                var function = methodInfo.GetAttribute<FunctionAttribute>();
+                if (function != null)
+                    yield return new AttributedMetaFunction(methodInfo, function);
+            }
         }
 
         public override MetaType GetMetaType(Type type)
@@ -193,17 +162,46 @@ namespace DbLinq.Data.Linq.Mapping
 			{
 				return metaTable;
 			}
-
-			return AddTableType(tableType);
+			return GetTables().FirstOrDefault(t => t.RowType.Type == tableType)
+				?? AddTableType(tableType);
 		}
 
 		/// <summary>
 		/// Returns an enumeration of all mapped tables.
 		/// </summary>
+        //Discover all the tables used with this context, used for the GetTable/GetTables function
+        //Behaviour of GetTables in the Framework: STRANGE
+        //If the DataContext was a strong typed one (derived with fields for the tables),
+        //it returns a list of MetaTables for all this tables.
+        //But if you call GetTable<T> with an additional table - the table doesn't get added to this list.
+        //If you use a vanilla DataContext the list is empty at the beginning (ok no surprise here),
+        //if you call GetTable<T> here the table is added to the list.
+        //
+        //If you add to properties with the same T of Table<T> only the first gets into the list.
         public override IEnumerable<MetaTable> GetTables()
         {
-            return _Tables.Values;
-		}
+            const BindingFlags scope = BindingFlags.GetField |
+                BindingFlags.GetProperty | BindingFlags.Static |
+                BindingFlags.Instance | BindingFlags.NonPublic |
+                BindingFlags.Public;
+            foreach (var info in _ContextType.GetMembers(scope))
+            {
+                Type memberType = info.GetMemberType();
+
+                if (memberType == null || !memberType.IsGenericType ||
+                        memberType.GetGenericTypeDefinition() != typeof(Table<>))
+                    continue;
+                var tableType = memberType.GetGenericArguments()[0];
+                if (tableType.IsGenericParameter)
+                    continue;
+
+                MetaTable metaTable;
+                if (_Tables.TryGetValue(tableType, out metaTable))
+                  yield return metaTable;
+                else
+                  yield return AddTableType(tableType);
+            }
+        }
 
 		/// <summary>
 		/// Tries to discover the name of the database.
@@ -219,58 +217,6 @@ namespace DbLinq.Data.Linq.Mapping
 			else //Found no DatabaseAttribute get the class name
 			{
 				_DatabaseName = _ContextType.Name;
-			}
-		}
-
-		//Discover all the tables used with this context, used for the GetTable/GetTables function
-		//Behaviour of GetTables in the Framework: STRANGE
-		//If the DataContext was a strong typed one (derived with fields for the tables),
-		//it returns a list of MetaTables for all this tables.
-		//But if you call GetTable<T> with an additional table - the table doesn't get added to this list.
-		//If you use a vanilla DataContext the list is empty at the beginning (ok no surprise here),
-		//if you call GetTable<T> here the table is added to the list.
-		//
-		//If you add to properties with the same T of Table<T> only the first gets into the list.
-		private void FindTables()
-		{
-			MemberInfo[] memberInfos = _ContextType.GetMembers(BindingFlags.GetField
-					| BindingFlags.GetProperty | BindingFlags.Static | BindingFlags.Instance
-					| BindingFlags.NonPublic | BindingFlags.Public);
-
-			//foreach (var info in memberInfos)
-			for (int i = 0; i < memberInfos.Length; ++i )
-			{
-				var info = memberInfos[i];
-
-				Type memberType = info.GetMemberType();
-
-				if (memberType == null)
-				{
-					continue;
-				}
-
-				//Ok first possible problem here - there seems to be the .net ITable/Table and the local one
-				//Same goes for the attribute types
-				//Any reason for that?
-				//looking for a table generic
-				if (memberType.IsGenericType)
-				{
-					if (memberType.GetGenericTypeDefinition() != typeof(Table<>))
-					{
-						continue;
-					}
-
-					Type argumentType = memberType.GetGenericArguments()[0];
-
-					//If the argument type is a generic parameter we are not interested
-					//Most likly it is the GetTable function
-					if (argumentType.IsGenericParameter)
-					{
-						continue;
-					}
-
-					AddTableType(argumentType);
-				}
 			}
 		}
 
@@ -299,12 +245,6 @@ namespace DbLinq.Data.Linq.Mapping
 			var metaTable = new AttributedMetaTable(tableAttribute, metaType, this);
 			metaType.SetMetaTable(metaTable);
 			_Tables[tableType] = metaTable;
-
-			//After that we are ready to setup table associations, need to to this late
-			//because of possible circular dependencies
-			//In worst case if SetupAssociations throws an exception we end up with a table
-			//without complete association information, but this seems to be and ok tradeoff
-			metaType.SetupAssociations();
 
 			return metaTable;
 		}

@@ -32,9 +32,7 @@ namespace DbLinq.Factory
     /// The object factory is the start point for DbLinq main factory.
     /// See ObjectFactory.Current for details
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface IObjectFactory

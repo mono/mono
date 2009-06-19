@@ -27,19 +27,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-#if MONO_STRICT
-using System.Data.Linq.Sugar;
-#else
 using System.Data;
-using DbLinq.Data.Linq.Sugar;
-#endif
 using System.Reflection;
 
+using DbLinq.Data.Linq.Sugar;
+
 #if MONO_STRICT
-namespace System.Data.Linq.Sugar
+using System.Data.Linq;
 #else
-namespace DbLinq.Data.Linq.Sugar
+using DbLinq.Data.Linq;
 #endif
+
+namespace DbLinq.Data.Linq.Sugar
 {
     internal interface IQueryRunner
     {

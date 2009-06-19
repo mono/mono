@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     /// <summary>
     ///  Permits translation of expressions for specific database vendors

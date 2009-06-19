@@ -27,18 +27,11 @@
 using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
-#if MONO_STRICT
-using System.Data.Linq.Sugar.Expressions;
-#else
+
 using DbLinq.Data.Linq.Sugar.Expressions;
-#endif
 using DbLinq.Util;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Expressions
-#else
 namespace DbLinq.Data.Linq.Sugar.Expressions
-#endif
 {
     /// <summary>
     /// Describes a column, related to a table

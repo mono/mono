@@ -30,20 +30,16 @@ using System.Data;
 using DbLinq.Data.Linq.Database;
 
 #if MONO_STRICT
-using System.Data.Linq.Sql;
-using System.Data.Linq.Sugar.Expressions;
-using MappingContext = System.Data.Linq.Mapping.MappingContext;
+using System.Data.Linq;
 #else
-using DbLinq.Data.Linq.Sql;
-using DbLinq.Data.Linq.Sugar.Expressions;
-using MappingContext = DbLinq.Data.Linq.Mapping.MappingContext;
+using DbLinq.Data.Linq;
 #endif
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar
-#else
+using DbLinq.Data.Linq.Mapping;
+using DbLinq.Data.Linq.Sql;
+using DbLinq.Data.Linq.Sugar.Expressions;
+
 namespace DbLinq.Data.Linq.Sugar
-#endif
 {
     /// <summary>
     /// Represents a linq query, parsed and compiled, to be sent to database
@@ -88,13 +84,29 @@ namespace DbLinq.Data.Linq.Sugar
 
         public override ITransactionalCommand GetCommand()
         {
+            IDbDataParameter dbParameter;
             var dbCommand = base.GetCommand(false);
             foreach (var parameter in InputParameters)
             {
-                var dbParameter = dbCommand.Command.CreateParameter();
-                dbParameter.ParameterName = DataContext.Vendor.SqlProvider.GetParameterName(parameter.Alias);
-                dbParameter.Value = parameter.GetValue();
-                dbCommand.Command.Parameters.Add(dbParameter);
+                if (parameter.Type.IsArray)
+                {
+                    int i = 0;
+                    foreach (object p in (Array)parameter.GetValue())
+                    {
+                        dbParameter = dbCommand.Command.CreateParameter();
+                        dbParameter.ParameterName = DataContext.Vendor.SqlProvider.GetParameterName(parameter.Alias + i.ToString());
+                        dbParameter.Value = p;
+                        dbCommand.Command.Parameters.Add(dbParameter);
+                        ++i;
+                    }
+                }
+                else
+                {
+                    dbParameter = dbCommand.Command.CreateParameter();
+                    dbParameter.ParameterName = DataContext.Vendor.SqlProvider.GetParameterName(parameter.Alias);
+                    dbParameter.Value = parameter.GetValue();
+                    dbCommand.Command.Parameters.Add(dbParameter);
+                }
             }
             return dbCommand;
         }

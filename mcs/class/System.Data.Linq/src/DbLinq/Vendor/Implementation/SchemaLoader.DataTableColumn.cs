@@ -27,12 +27,7 @@ namespace DbLinq.Vendor.Implementation
 {
     partial class SchemaLoader
     {
-#if MONO_STRICT
-        internal
-#else
-        public
-#endif
-        class DataTableColumn : DataType, IDataTableColumn
+        public class DataTableColumn : DataType, IDataTableColumn
         {
             /// <summary>
             /// The column name

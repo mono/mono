@@ -29,9 +29,7 @@ namespace DbLinq.Schema
     /// <summary>
     /// Represent a case model
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     enum Case

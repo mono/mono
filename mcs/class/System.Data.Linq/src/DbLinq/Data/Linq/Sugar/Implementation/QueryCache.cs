@@ -29,11 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using DbLinq.Util;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Sugar.Implementation
-#else
 namespace DbLinq.Data.Linq.Sugar.Implementation
-#endif
 {
     internal class QueryCache : IQueryCache
     {
@@ -71,7 +67,6 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
         public SelectQuery GetFromSelectCache(ExpressionChain expressions)
         {
-            return null;
             SelectQuery selectQuery;
             selectQueries.TryGetValue(expressions, out selectQuery);
             return selectQuery;

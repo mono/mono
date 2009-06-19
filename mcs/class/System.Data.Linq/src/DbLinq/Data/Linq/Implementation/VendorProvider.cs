@@ -31,18 +31,12 @@ using System.Reflection;
 using DbLinq.Util;
 using DbLinq.Vendor;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Implementation
-#else
 namespace DbLinq.Data.Linq.Implementation
-#endif
 {
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- class VendorProvider : IVendorProvider
+    class VendorProvider : IVendorProvider
     {
         private readonly IDictionary<Type, Type> _vendorByType = new Dictionary<Type, Type>();
 

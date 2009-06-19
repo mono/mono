@@ -33,9 +33,7 @@ namespace DbLinq.Schema.Dbml.Adapter
     /// sort of light IList<>
     /// </summary>
     /// <typeparam name="T"></typeparam>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface ISimpleList<T> : IEnumerable<T>

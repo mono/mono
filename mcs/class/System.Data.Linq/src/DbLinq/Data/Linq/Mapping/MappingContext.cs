@@ -26,23 +26,17 @@
 
 using System;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Mapping
-#else
 namespace DbLinq.Data.Linq.Mapping
-#endif
 {
     /// <summary>
     /// MappingContext is used during the mapping process
     /// it contains events and properties give to mapper.
     /// There is one default instance in DataContext.
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
- class MappingContext
+    class MappingContext
     {
 #if MONO_STRICT
     internal

@@ -27,11 +27,7 @@
 using System;
 using System.Collections.Generic;
 
-#if MONO_STRICT
-namespace System.Data.Linq.Identity
-#else
 namespace DbLinq.Data.Linq.Identity
-#endif
 {
     /// <summary>
     /// Identifies an object in a unique way (think Primay Keys in a database table)
@@ -42,9 +38,7 @@ namespace DbLinq.Data.Linq.Identity
     /// Example: to store Product with ProductID=1, we use the following IdentityKey:
     ///  IdentityKey{Type=Product, Keys={1}}
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     sealed class IdentityKey

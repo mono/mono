@@ -28,11 +28,7 @@ using System.Collections.Generic;
 using System.Data.Linq.Mapping;
 using System.Reflection;
 
-#if MONO_STRICT
-namespace System.Data.Linq
-#else
 namespace DbLinq.Data.Linq
-#endif
 {
     /// <summary>
     /// Interface to watch modifications on registered entities

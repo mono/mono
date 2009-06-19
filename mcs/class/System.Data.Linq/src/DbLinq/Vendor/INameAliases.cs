@@ -30,9 +30,7 @@ namespace DbLinq.Vendor
     /// Represents aliases for table names or types.
     /// Depending on the implementation, search maybe case insensitive or schema insensitive
     /// </summary>
-#if MONO_STRICT
-    internal
-#else
+#if !MONO_STRICT
     public
 #endif
     interface INameAliases
