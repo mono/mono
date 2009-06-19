@@ -1,3 +1,10 @@
+2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* image.c: Extract mono_image_load_names from do_mono_image_load.
+
+	* metadata-internals.h: Export mono_image_load_names as part of
+	the internal API.
+	
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_cleanup): Free the generic method cache
