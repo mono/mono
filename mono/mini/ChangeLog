@@ -1,3 +1,7 @@
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-ppc.c (STACK): Fix this since we now push 31 registers.
+
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ppc.c (mono_arch_create_trampoline_code): Fix the ppc build.
