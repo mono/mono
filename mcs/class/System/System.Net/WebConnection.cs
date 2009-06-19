@@ -140,10 +140,12 @@ namespace System.Net
 					} else {
 #endif
 						try {
+							if (Data.request == null || Data.request.Aborted)
+								return;
 							socket.Connect (remote);
 							status = WebExceptionStatus.Success;
 							break;
-						} catch (SocketException exc) {
+						} catch (Exception exc) {
 							// This might be null if the request is aborted
 							if (socket != null) {
 								socket.Close ();
@@ -939,24 +941,32 @@ namespace System.Net
 		void Abort (object sender, EventArgs args)
 		{
 			lock (this) {
-				if (Data.request == sender) {
-					if (!Data.request.FinishedReading)
-						HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
-					return;
-				}
-
 				lock (queue) {
+					HttpWebRequest req = (HttpWebRequest) sender;
+					if (Data.request == req) {
+						if (!Data.request.FinishedReading)
+							HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
+						return;
+					} else if (Data.request == null && socket != null) {
+						Socket s = socket;
+						socket = null;
+						s.Close ();
+					}
+
+					req.FinishedReading = true;
+					req.SetResponseError (WebExceptionStatus.RequestCanceled, null, "User aborted");
 					if (queue.Count > 0 && queue.Peek () == sender) {
 						queue.Dequeue ();
-						return;
+					} else {
+						object [] old = queue.ToArray ();
+						queue.Clear ();
+						for (int i = old.Length - 1; i >= 0; i--) {
+							if (old [i] != sender)
+								queue.Enqueue (old [i]);
+						}
 					}
-
-					object [] old = queue.ToArray ();
-					queue.Clear ();
-					for (int i = old.Length - 1; i >= 0; i--) {
-						if (old [i] != sender)
-							queue.Enqueue (old [i]);
-					}
+					if (queue.Count == 0)
+						Close (false);
 				}
 			}
 		}

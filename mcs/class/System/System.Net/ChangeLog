@@ -1,3 +1,13 @@
+2009-06-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnection.cs: make sure we don't open a new socket if the
+	request is aborted before we establish the connection. Fixes bug
+	#514591.
+
+	* HttpWebRequest.cs: new property to return abort status. Invoke the
+	abort handler before doing anything else when Abort() is called for
+	the first time.
+
 2009-06-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* EndPointListener.cs: call CheckIfRemove() after removing a regular
