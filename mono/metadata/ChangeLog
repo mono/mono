@@ -1,5 +1,11 @@
 2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Kill is_corlib from VerifyContext.
+	It is only used by the offline mode.
+	So we better remove it from the runtime path.
+
+2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Add new mono_verifier_verify_full_table_data
 	function that perform the offline metadata verification steps.
 
