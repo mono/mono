@@ -1,3 +1,8 @@
+2009-06-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_metadata_cleanup): Free the generic method cache
+	first, as it could reference data in the other caches.
+
 2009-06-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Finished with method header verification.
