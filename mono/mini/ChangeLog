@@ -1,3 +1,7 @@
+2009-06-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* ir-emit.h (alloc_dreg): Add a 'return -1' to quiet some compilers.
+
 2009-06-17  Geoff Norton  <gnorton@novell.com>
 
 	* aot-compiler.c: Ensure we dont try to close a null dwarf writer.
