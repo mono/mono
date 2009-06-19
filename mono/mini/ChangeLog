@@ -1,5 +1,13 @@
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-<ARCH>.c (mono_arch_patch_plt_entry): Add 'got' and 'regs'
+	arguments which are needed on ppc.
+
+	* tramp-arm.c (mono_arch_nullify_class_init_trampoline): Add 'regs'
+	argument.
+
+	* mini-trampolines.c aot-runtime.c: Update after the above changes.
+	
 	* liveness.c (BITS_PER_CHUNK): Use MONO_BITSET_BITS_PER_CHUNK.
 
 	* regalloc2.c (BITS_PER_CHUNK): Ditto.	
