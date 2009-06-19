@@ -1,3 +1,8 @@
+2009-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* data/browscap.ini: applied Mono modifications to the upstream
+	version. Fixes three tests failing in System.Web.
+
 2009-06-15  Andreia Gaita  <avidigal@novell.com>
 
 	* data/config.in: add libcups dllmap entry
