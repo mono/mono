@@ -1,5 +1,18 @@
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h: Use TARGET_POWERPC define for consistency.
+
+	* patch-info.h: Add 'MSCORLIB_GOT_ADDR' patch type.
+
+	* aot-compiler.c aot-runtime.c: Put the mscorlib got address into the 
+	second got slot of every aot image.
+	
+	* aot-compiler.c aot-runtime.c mini-trampolines.c: Add support for
+	aot on platforms with function pointers.
+
+	* mini-ppc.h mini-ppp.c cpu-ppc.md exceptions-ppc.c tramp-ppc.c: Add
+	support for aot/full aot on ppc/ppc64.
+	
 	* tramp-<ARCH>.c (mono_arch_patch_plt_entry): Add 'got' and 'regs'
 	arguments which are needed on ppc.
 
