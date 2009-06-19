@@ -59,8 +59,7 @@ namespace Mono.Globalization.Unicode
 
 		static int GetPrimaryCompositeHelperIndex (int cp)
 		{
-			int originalMapIndex = helperIndex [NUtil.Helper.ToIndex (cp)]; // it returns an index at uncompressed state.
-			return NUtil.Map.ToIndex (originalMapIndex);
+			return helperIndex [NUtil.Helper.ToIndex (cp)];
 		}
 
 		static int GetPrimaryCompositeCharIndex (object chars, int start)
@@ -149,24 +148,15 @@ namespace Mono.Globalization.Unicode
 		private static void Combine (StringBuilder sb, int start, int checkType)
 		{
 			for (int i = start; i < sb.Length; i++) {
-				switch (QuickCheck (sb [i], checkType)) {
-				case NormalizationCheck.Yes:
+				if (QuickCheck (sb [i], checkType) == NormalizationCheck.Yes)
 					continue;
-				case NormalizationCheck.No:
-					break;
-				case NormalizationCheck.Maybe:
-					if (i == 0)
-						continue;
-					else
-						break;
-				}
 
 				int cur = i;
 				// FIXME: It should check "blocked" too
-				for (;i >= 0; i--)
+				for (;i > 0; i--) // this loop does not check sb[0], but regardless of the condition below it should not go under 0.
 					if (!CanBePrimaryComposite ((int) sb [i]))
 						break;
-				i++;
+
 				int idx = 0;
 				for (; i < cur; i++) {
 					idx = GetPrimaryCompositeMapIndex (sb, (int) sb [i], i);
@@ -397,6 +387,7 @@ namespace Mono.Globalization.Unicode
 			case 2:
 				return Compose (source, type);
 			case 1:
+			case 3:
 				return Decompose (source, type);
 			}
 		}

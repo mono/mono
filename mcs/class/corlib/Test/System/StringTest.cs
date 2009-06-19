@@ -4269,11 +4269,28 @@ public class StringTest : TestCase
 	}
 
 	[Test]
+	[Category ("NotDotNet")]
 	public void Normalize1 ()
 	{
+		// .NET does not combine them into U+1F80
+		// seealso: http://demo.icu-project.org/icu-bin/nbrowser?t=\u03B1\u0313\u0345
 		string s = "\u03B1\u0313\u0345";
-		Assert ("#1", s.IsNormalized (NormalizationForm.FormC));
-		AssertEquals ("#2", s, s.Normalize (NormalizationForm.FormC));
+		Assert ("#1", !s.IsNormalized (NormalizationForm.FormC));
+		Assert ("#2", !s.IsNormalized (NormalizationForm.FormKC));
+		AssertEquals ("#3", "\u1F80", s.Normalize (NormalizationForm.FormC));
+		AssertEquals ("#4", "\u1F80", s.Normalize (NormalizationForm.FormKC));
+	}
+
+	[Test]
+	[Category ("NotDotNet")]
+	public void Normalize2 ()
+	{
+		string s1 = "\u0061\u0301bc";
+		string s2 = "\u00e1bc";
+		// .NET does not combine \u0061\0301 into \u00E1
+		// seealso: http://demo.icu-project.org/icu-bin/nbrowser?t=\u0061\u0301bc
+		AssertEquals ("#1", s2, s1.Normalize (NormalizationForm.FormC));
+		AssertEquals ("#2", s2, s1.Normalize (NormalizationForm.FormKC));
 	}
 #endif
 }

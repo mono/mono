@@ -1,3 +1,8 @@
+2009-06-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringTest.cs : Fix the previous test. It was expecting wrong
+	  results. Added another NFC composition test.
+
 2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DateTimeTest.cs: add test for parsing a negative timezone.

@@ -1,3 +1,12 @@
+2008-06-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Normalization.cs :
+	  - reverted the previous index calculation change. It was correctly
+	    implemented and I rather broke it.
+	  - fix index calculation on combining.
+	  - NFKD was incorrectly directed to combining path. It should not.
+	  - Simplify quick check.
+
 2008-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Normalization.cs : For NFC and NFKC, IsNormalized() was not working
