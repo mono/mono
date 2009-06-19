@@ -1,5 +1,7 @@
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_got_info): Fix reading unused memory.
+
 	* ir-emit.h (alloc_dreg): Add a 'return -1' to quiet some compilers.
 
 2009-06-17  Geoff Norton  <gnorton@novell.com>
