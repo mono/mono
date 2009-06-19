@@ -1,5 +1,19 @@
 2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Add new mono_verifier_verify_full_table_data
+	function that perform the offline metadata verification steps.
+
+	* metadata-verify.c (verify_typedef_table): Move some checks to
+	verify_typedef_table_full and make it been called by new function
+	mono_verifier_verify_full_table_data.
+
+	* pedump.c: Call mono_verifier_verify_full_table_data.
+
+	* verify-internals.h: Export mono_verifier_verify_full_table_data as
+	part of the internal API.
+
+2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (typedef_is_system_object): Fix System.Object
 	check.
 
@@ -12,7 +26,6 @@
 	* metadata-verify.c (verify_implmap_table): Fix corlib check.
 
 	* pedump.c: Call mono_image_load_names.
-
 
 2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
