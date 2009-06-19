@@ -20,7 +20,7 @@
 	* metadata-verify.c (verify_implmap_table): Fix implmap invalid
 	flags bits. SupportLastError was confused as bit 7 instead of 6.
 
-	* metadata-verify.c (verify_implmap_table): Fix import scope verication
+	* metadata-verify.c (verify_implmap_table): Fix import scope verification
 	to check against the module ref table instead of module.
 
 	* metadata-verify.c (verify_implmap_table): Fix corlib check.
