@@ -1,3 +1,8 @@
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-ppc.c: Fix the calculation of the trampoline stack size now that
+	we save all 31 registers.
+
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ppc.c (mono_arch_create_trampoline_code): Fix the ppc build.
