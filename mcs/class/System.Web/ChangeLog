@@ -1,3 +1,8 @@
+2009-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* browscap.ini.diff: updated to match the latest upstream
+	version.
+
 2009-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added
