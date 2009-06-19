@@ -823,6 +823,10 @@ namespace System.Net
 			set { finished_reading = value; }
 		}
 
+		internal bool Aborted {
+			get { return aborted; }
+		}
+
 		public override void Abort ()
 		{
 			if (aborted)
@@ -833,6 +837,13 @@ namespace System.Net
 				return;
 
 			haveResponse = true;
+			if (abortHandler != null) {
+				try {
+					abortHandler (this, EventArgs.Empty);
+				} catch (Exception) {}
+				abortHandler = null;
+			}
+
 			if (asyncWrite != null) {
 				WebAsyncResult r = asyncWrite;
 				if (!r.IsCompleted) {
@@ -856,13 +867,6 @@ namespace System.Net
 				}
 				asyncRead = null;
 			}			
-
-			if (abortHandler != null) {
-				try {
-					abortHandler (this, EventArgs.Empty);
-				} catch (Exception) {}
-				abortHandler = null;
-			}
 
 			if (writeStream != null) {
 				try {
