@@ -1,4 +1,7 @@
 2009-06-18  Massimiliano Mantione <massi@ximian.com>
+	* mono-profiler-logging.c: Removed debugging printf statement.
+
+2009-06-18  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c:
 	Added assembly information to classes and wrapper flag to methods.
 
