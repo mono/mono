@@ -1,3 +1,12 @@
+2009-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Emit sizes for most symbols, only emit runtime-invoke
+	wrappers into the mscorlib image, Emit a unique plt symbol for each
+	image, emit symbols for plt entries.
+
+	* image-writer.c (img_writer_emit_symbol_size): New function to emit
+	a .size directive.
+	
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Avoid calling 
