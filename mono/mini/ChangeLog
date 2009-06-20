@@ -1,5 +1,7 @@
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Print a helpful message when cross-compiling.
+
 	* mini.c (mini_init): Disable signal handlers when cross-compiling.
 
 	* method-to-ir.c (initialize_array_data): Do the optimization if the
