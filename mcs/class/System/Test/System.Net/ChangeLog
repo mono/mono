@@ -1,3 +1,10 @@
+2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpListener2Test.cs: Added test for bug #513849.
+	* HttpWebRequestTest.cs: Enabled test for bug #508027. Added test for
+	bug #513087.
+	* WebClientTest.cs: Added test for bug #484795, for Encoding property.
+
 2009-06-16  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* WebRequestTest.cs: Drop NotWorking attrib, more accurate tests.

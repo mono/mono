@@ -381,7 +381,6 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #508027
-		[Category ("NotWorking")]
 		public void BeginGetResponse ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8003);
@@ -544,7 +543,7 @@ namespace MonoTests.System.Net
 			}
 		}
 
-		[Test] // bug #510661
+		[Test] // bug #510661 and #514996
 		[Category ("NotWorking")]
 		public void GetRequestStream_Close_NotAllBytesWritten ()
 		{
@@ -922,6 +921,40 @@ namespace MonoTests.System.Net
 			}
 		}
 
+		[Test] // bug #513087
+		public void NonStandardVerb ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/moved/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (VerbEchoHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				req.Method = "WhatEver";
+				req.KeepAlive = false;
+				req.Timeout = 20000;
+				req.ReadWriteTimeout = 20000;
+
+				Stream rs = req.GetRequestStream ();
+				rs.Close ();
+
+				using (HttpWebResponse resp = (HttpWebResponse) req.GetResponse ()) {
+					StreamReader sr = new StreamReader (resp.GetResponseStream (),
+						Encoding.UTF8);
+					string body = sr.ReadToEnd ();
+
+					Assert.AreEqual (resp.StatusCode, HttpStatusCode.OK, "#1");
+					Assert.AreEqual (resp.ResponseUri.ToString (), "http://" +
+						ep.ToString () + "/moved/", "#2");
+					Assert.AreEqual ("WhatEver", resp.Method, "#3");
+					Assert.AreEqual ("WhatEver", body, "#4");
+				}
+
+				responder.Stop ();
+			}
+		}
+
 		[Test]
 		[Category ("NotWorking")] // Assert #2 fails
 		public void NotModiedSince ()
@@ -1128,6 +1161,44 @@ namespace MonoTests.System.Net
 			sw.WriteLine ("ETag: 898bbr2347056cc2e096afc66e104653");
 			sw.WriteLine ("Connection: close");
 			sw.WriteLine ();
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
+
+		static byte [] VerbEchoHandler (Socket socket)
+		{
+			MemoryStream ms = new MemoryStream ();
+			byte [] buffer = new byte [4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				ms.Write (buffer, 0, bytesReceived);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
+			ms.Flush ();
+			ms.Position = 0;
+			string statusLine = null;
+			using (StreamReader sr = new StreamReader (ms, Encoding.UTF8)) {
+				statusLine = sr.ReadLine ();
+			}
+
+			string verb = "DEFAULT";
+			if (statusLine != null) {
+				string [] parts = statusLine.Split (' ');
+				if (parts.Length > 0)
+					verb = parts [0];
+			}
+
+			StringWriter sw = new StringWriter ();
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/plain");
+			sw.WriteLine ("Content-Length: " + verb.Length);
+			sw.WriteLine ();
+			sw.Write (verb);
 			sw.Flush ();
 
 			return Encoding.UTF8.GetBytes (sw.ToString ());

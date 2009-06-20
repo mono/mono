@@ -5,12 +5,15 @@
 //
 
 using System;
+using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Collections;
+using System.Net.Sockets;
 using System.Runtime.Serialization;
-
+using System.Text;
+using System.Threading;
 using NUnit.Framework;
 
 namespace MonoTests.System.Net
@@ -380,6 +383,30 @@ namespace MonoTests.System.Net
 				Assert.AreEqual (typeof (NotSupportedException), inner.GetType (), "#7");
 				Assert.IsNull (inner.InnerException, "#8");
 				Assert.IsNotNull (inner.Message, "#9");
+			}
+		}
+
+		[Test]
+		public void EncodingTest ()
+		{
+			WebClient wc = new WebClient ();
+			Assert.AreSame (Encoding.Default, wc.Encoding, "#1");
+			wc.Encoding = Encoding.ASCII;
+			Assert.AreSame (Encoding.ASCII, wc.Encoding, "#2");
+		}
+
+		[Test]
+		public void Encoding_Value_Null ()
+		{
+			WebClient wc = new WebClient ();
+			try {
+				wc.Encoding = null;
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException ex) {
+				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
+				Assert.IsNull (ex.InnerException, "#3");
+				Assert.IsNotNull (ex.Message, "#4");
+				Assert.AreEqual ("Encoding", ex.ParamName, "#6");
 			}
 		}
 #endif
@@ -1667,6 +1694,30 @@ namespace MonoTests.System.Net
 		}
 #endif
 
+		[Test]
+		public void UploadValues1 ()
+		{
+			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8000);
+			string url = "http://" + IPAddress.Loopback.ToString () + ":8000/test/";
+
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				WebClient wc = new WebClient ();
+#if NET_2_0
+				wc.Encoding = Encoding.ASCII;
+#endif
+
+				NameValueCollection nvc = new NameValueCollection ();
+				nvc.Add ("Name", "\u0041\u2262\u0391\u002E");
+				nvc.Add ("Address", "\u002E\u2262\u0041\u0391");
+
+				byte [] buffer = wc.UploadValues (url, nvc);
+				string response = Encoding.UTF8.GetString (buffer);
+				Assert.AreEqual ("Name=A%e2%89%a2%ce%91.&Address=.%e2%89%a2A%ce%91\r\n", response);
+			}
+		}
+
 		[Test] // UploadValues (string, NameValueCollection)
 		public void UploadValues1_Address_Null ()
 		{
@@ -1982,5 +2033,89 @@ namespace MonoTests.System.Net
 			}
 		}
 #endif
+
+		static byte [] EchoRequestHandler (Socket socket)
+		{
+			MemoryStream ms = new MemoryStream ();
+			byte [] buffer = new byte [4096];
+			int bytesReceived = socket.Receive (buffer);
+			while (bytesReceived > 0) {
+				ms.Write (buffer, 0, bytesReceived);
+				if (socket.Available > 0) {
+					bytesReceived = socket.Receive (buffer);
+				} else {
+					bytesReceived = 0;
+				}
+			}
+			ms.Flush ();
+			ms.Position = 0;
+
+			StringBuilder sb = new StringBuilder ();
+
+			string expect = null;
+
+			StreamReader sr = new StreamReader (ms, Encoding.UTF8);
+			string line = sr.ReadLine ();
+			byte state = 0;
+			while (line != null) {
+				if (state > 0) {
+					state = 2;
+					sb.Append (line);
+					sb.Append ("\r\n");
+					line = sr.ReadLine ();
+				} else {
+					if (line.StartsWith ("Expect:"))
+						expect = line.Substring (8);
+					line = sr.ReadLine ();
+					if (line.Length == 0) {
+						state = 1;
+						line = sr.ReadLine ();
+					}
+				}
+			}
+
+			StringWriter sw = new StringWriter ();
+
+			if (expect == "100-continue" && state != 2) {
+				sw.WriteLine ("HTTP/1.1 100 Continue");
+				sw.WriteLine ();
+				sw.Flush ();
+
+				socket.Send (Encoding.UTF8.GetBytes (sw.ToString ()));
+
+				// receive body
+				ms = new MemoryStream ();
+				buffer = new byte [4096];
+				bytesReceived = socket.Receive (buffer);
+				while (bytesReceived > 0) {
+					ms.Write (buffer, 0, bytesReceived);
+					if (socket.Available > 0) {
+						bytesReceived = socket.Receive (buffer);
+					} else {
+						bytesReceived = 0;
+					}
+				}
+				ms.Flush ();
+				ms.Position = 0;
+
+				sb = new StringBuilder ();
+				sr = new StreamReader (ms, Encoding.UTF8);
+				line = sr.ReadLine ();
+				while (line != null) {
+					sb.Append (line);
+					sb.Append ("\r\n");
+					line = sr.ReadLine ();
+				}
+			}
+
+			sw.WriteLine ("HTTP/1.1 200 OK");
+			sw.WriteLine ("Content-Type: text/xml");
+			sw.WriteLine ("Content-Length: " + sb.Length.ToString (CultureInfo.InvariantCulture));
+			sw.WriteLine ();
+			sw.Write (sb.ToString ());
+			sw.Flush ();
+
+			return Encoding.UTF8.GetBytes (sw.ToString ());
+		}
 	}
 }
