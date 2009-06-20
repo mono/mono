@@ -1,5 +1,8 @@
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (initialize_array_data): Do the optimization if the
+	target byte order is little endian, instead of the host byte order.
+
 	* aot-compiler.c: Emit sizes for most symbols, only emit runtime-invoke
 	wrappers into the mscorlib image, Emit a unique plt symbol for each
 	image, emit symbols for plt entries.
