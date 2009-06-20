@@ -103,7 +103,7 @@ namespace System.Net
 			for (int i = '0'; i <= '9'; i++, index++)
 				hexBytes [index] = (byte) i;
 
-			for (int i = 'A'; i <= 'F'; i++, index++)
+			for (int i = 'a'; i <= 'f'; i++, index++)
 				hexBytes [index] = (byte) i;
 		}
 		
@@ -117,7 +117,7 @@ namespace System.Net
 			get {
 				if (baseString == null) {
 					if (baseAddress == null)
-						return "";
+						return string.Empty;
 				}
 
 				baseString = baseAddress.ToString ();
@@ -125,7 +125,7 @@ namespace System.Net
 			}
 			
 			set {
-				if (value == null || value == "") {
+				if (value == null || value.Length == 0) {
 					baseAddress = null;
 				} else {
 					baseAddress = new Uri (value);
@@ -196,7 +196,7 @@ namespace System.Net
 			get { return encoding; }
 			set {
 				if (value == null)
-					throw new ArgumentNullException ("value");
+					throw new ArgumentNullException ("Encoding");
 				encoding = value;
 			}
 		}

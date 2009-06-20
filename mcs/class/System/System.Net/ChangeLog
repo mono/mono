@@ -1,3 +1,11 @@
+2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* WebClient.cs: Use lowercase hex bytes to match MS. Avoid using
+	zero-length string literal. Fixed exception argument name to match
+	MS. 
+	* WebConnectionStream.cs: Throw a WebException that wraps an
+	IOException when closing the stream before all bytes are written.
+
 2009-06-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs: make sure we don't open a new socket if the

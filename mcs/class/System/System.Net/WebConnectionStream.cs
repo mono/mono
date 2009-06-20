@@ -694,8 +694,10 @@ namespace System.Net
 			long length = request.ContentLength;
 
 			// writeBuffer could be null if KillBuffer was already called.
-			if (writeBuffer != null && length != -1 && length > writeBuffer.Length)
-				throw new WebException ("Cannot close the stream until all bytes are written", WebExceptionStatus.RequestCanceled);
+			if (writeBuffer != null && length != -1 && length > writeBuffer.Length) {
+				IOException io = new IOException ("Cannot close the stream until all bytes are written");
+				throw new WebException ("Request was cancelled.", io, WebExceptionStatus.RequestCanceled);
+			}
 
 			WriteRequest ();
 			disposed = true;
