@@ -91,7 +91,7 @@ namespace MonoTests.System.Threading
 			Thread thread1 = new Thread(new ThreadStart(class1.WithoutWait));
 			thread1.Start();
 			while(thread1.IsAlive);
-			AssertEquals("#02 The default value of The mutex wrong set:",class1.id,class1.marker);
+			Assert.AreEqual(class1.id,class1.marker);
 		}
 
 		[Test]
@@ -102,7 +102,7 @@ namespace MonoTests.System.Threading
 			Thread thread1 = new Thread(new ThreadStart(class1.WithoutWait));
 			thread1.Start();
 			while(thread1.IsAlive);
-			AssertEquals("#03 The value of The mutex wrong set:",class1.id,class1.marker);
+			Assert.AreEqual(class1.id,class1.marker);
 		}
 	
 		[Test]
@@ -113,7 +113,7 @@ namespace MonoTests.System.Threading
 			Thread thread1 = new Thread(new ThreadStart(class1.WithoutWait));
 			thread1.Start();
 			while(thread1.IsAlive);
-			AssertEquals("#04 The default value of The mutex wrong set:",class1.id,class1.marker);
+			Assert.AreEqual(class1.id,class1.marker);
 		}
 */
 

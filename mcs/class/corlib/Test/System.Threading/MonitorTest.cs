@@ -14,7 +14,7 @@ using System.Threading;
 namespace MonoTests.System.Threading {
 
 	[TestFixture]
-	public class MonitorTest : Assertion {
+	public class MonitorTest {
 
 		[Test]
 		public void ExitNoEnter ()

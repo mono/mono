@@ -17,7 +17,7 @@ namespace MonoTests.System.Threading
 	// DISABLED due to random hangs. Do not renable until you can run this
 	// a few thousand times on an SMP box.
 	[Category ("NotWorking")]
-	public class ReaderWriterLockTest : Assertion
+	public class ReaderWriterLockTest
 	{
 		ReaderWriterLock rwlock;
 		
@@ -66,32 +66,32 @@ namespace MonoTests.System.Threading
 		public void TestIsReaderLockHeld ()
 		{
 			rwlock = new ReaderWriterLock ();
-			Assert ("a1", !rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld, "#1");
 			rwlock.AcquireReaderLock (500);
-			Assert ("a2", rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsReaderLockHeld, "#1");
 			RunThread (new ThreadStart (IsReaderLockHeld_2));
 			rwlock.ReleaseReaderLock ();
 		}
 		
 		private void IsReaderLockHeld_2 ()
 		{
-			Assert ("a3", !rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
 		}
 		
 		[Test]
 		public void TestIsWriterLockHeld ()
 		{
 			rwlock = new ReaderWriterLock ();
-			Assert ("a1", !rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsWriterLockHeld, "#1");
 			rwlock.AcquireWriterLock (500);
-			Assert ("a2", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld, "#2");
 			RunThread (new ThreadStart (IsWriterLockHeld_2));
 			rwlock.ReleaseWriterLock ();
 		}
 		
 		private void IsWriterLockHeld_2 ()
 		{
-			Assert ("a3", !rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsWriterLockHeld);
 		}
 				
 		[Test]
@@ -101,13 +101,13 @@ namespace MonoTests.System.Threading
 			rwlock.AcquireReaderLock (500);
 			rwlock.AcquireReaderLock (500);
 			rwlock.ReleaseReaderLock ();
-			Assert ("a1", rwlock.IsReaderLockHeld);			
+				Assert.IsTrue (rwlock.IsReaderLockHeld, "#1");			
 			RunThread (new ThreadStart (AcquireLock_readerWorks));
-			Assert ("a2", rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsReaderLockHeld);
 			
 			RunThread (new ThreadStart (AcquireLock_writerFails));
 			rwlock.ReleaseReaderLock ();
-			Assert ("a6", !rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
 			
 			RunThread (new ThreadStart (AcquireLock_writerWorks));
 			
@@ -122,9 +122,9 @@ namespace MonoTests.System.Threading
 			rwlock.AcquireReaderLock (200);
 			rwlock.AcquireReaderLock (200);
 			rwlock.ReleaseReaderLock ();
-			Assert ("a3", rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsReaderLockHeld);
 			rwlock.ReleaseReaderLock ();
-			Assert ("a4", !rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
 		}
 		
 		void AcquireLock_writerFails ()
@@ -165,7 +165,7 @@ namespace MonoTests.System.Threading
 			rwlock = new ReaderWriterLock ();
 			rwlock.AcquireReaderLock (500);
 			rwlock.AcquireReaderLock (500);
-			Assert ("r1", rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsReaderLockHeld);
 			
 			LockCookie co = rwlock.ReleaseLock ();
 			RunThread (new ThreadStart (AcquireLock_writerWorks));
@@ -174,9 +174,9 @@ namespace MonoTests.System.Threading
 			RunThread (new ThreadStart (AcquireLock_writerFails));
 			
 			rwlock.ReleaseReaderLock ();
-			Assert ("r2", rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsReaderLockHeld);
 			rwlock.ReleaseReaderLock ();
-			Assert ("r3", !rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
 		}
 		
 		[Test]
@@ -185,7 +185,7 @@ namespace MonoTests.System.Threading
 			rwlock = new ReaderWriterLock ();
 			rwlock.AcquireWriterLock (500);
 			rwlock.AcquireWriterLock (500);
-			Assert ("w1", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld);
 			
 			LockCookie co = rwlock.ReleaseLock ();
 			RunThread (new ThreadStart (AcquireLock_readerWorks));
@@ -194,9 +194,9 @@ namespace MonoTests.System.Threading
 			RunThread (new ThreadStart (AcquireLock_readerFails));
 			
 			rwlock.ReleaseWriterLock ();
-			Assert ("w2", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld);
 			rwlock.ReleaseWriterLock ();
-			Assert ("w3", !rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsWriterLockHeld);
 		}
 		
 		[Test]
@@ -207,19 +207,19 @@ namespace MonoTests.System.Threading
 			rwlock.AcquireReaderLock (200);
 			
 			LockCookie co = rwlock.UpgradeToWriterLock (200);
-			Assert ("u1", !rwlock.IsReaderLockHeld);
-			Assert ("u2", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld);
 			RunThread (new ThreadStart (AcquireLock_writerFails));
 			
 			rwlock.DowngradeFromWriterLock (ref co);
-			Assert ("u3", rwlock.IsReaderLockHeld);
-			Assert ("u4", !rwlock.IsWriterLockHeld);
+			Assert.IsTrue (rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsWriterLockHeld);
 			RunThread (new ThreadStart (AcquireLock_readerWorks));
 			
 			rwlock.ReleaseReaderLock ();
-			Assert ("u5", rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsReaderLockHeld);
 			rwlock.ReleaseReaderLock ();
-			Assert ("u6", !rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
 		}
 		
 		[Test]
@@ -230,20 +230,20 @@ namespace MonoTests.System.Threading
 			rwlock = new ReaderWriterLock ();
 			rwlock.AcquireWriterLock (-1);
 			rwlock.AcquireReaderLock (-1);
-			Assert ("u1", !rwlock.IsReaderLockHeld);
-			Assert ("u2", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld);
 			rwlock.AcquireReaderLock (-1);
-			Assert ("u3", !rwlock.IsReaderLockHeld);
-			Assert ("u4", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld);
 			rwlock.ReleaseWriterLock ();
-			Assert ("u5", !rwlock.IsReaderLockHeld);
-			Assert ("u6", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld);
 			rwlock.ReleaseReaderLock ();
-			Assert ("u7", !rwlock.IsReaderLockHeld);
-			Assert ("u8", rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
+			Assert.IsTrue (rwlock.IsWriterLockHeld);
 			rwlock.ReleaseReaderLock ();
-			Assert ("u9", !rwlock.IsReaderLockHeld);
-			Assert ("u10", !rwlock.IsWriterLockHeld);
+			Assert.IsTrue (!rwlock.IsReaderLockHeld);
+			Assert.IsTrue (!rwlock.IsWriterLockHeld);
 		}
 		
 		[Test]

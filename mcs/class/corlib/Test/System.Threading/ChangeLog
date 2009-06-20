@@ -1,3 +1,7 @@
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.
+
 2009-01-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* ExecutionContextTest.cs (Copy_FromThread): Disable this test, it doesn't
