@@ -1,3 +1,7 @@
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.
+
 2009-04-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* MarshalTest.cs: Fix building unit tests for NET_1_1
