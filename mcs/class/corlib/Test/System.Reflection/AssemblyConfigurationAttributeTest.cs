@@ -17,7 +17,7 @@ namespace MonoTests.System.Reflection {
 	/// Test Fixture for AssemblyConfigurationAttribute class
 	/// </summary>
 	[TestFixture]
-	public class AssemblyConfigurationAttributeTest : Assertion
+	public class AssemblyConfigurationAttributeTest
 	{
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -49,34 +49,34 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void ConfigurationTest ()
 		{
-			AssertEquals ("#Testing Configuration",
+			Assert.AreEqual (
 				attr.Configuration,
-				"Config");
+				"Config", "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
 				typeof (AssemblyConfigurationAttribute)
-				);
+				, "#1");
 		}
 
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 
 		[Test]
 		public void MatchTestForFalse ()
 		{
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyConfigurationAttribute ("abcd")),
-				false);
+				false, "#1");
 		}
 	}
 }

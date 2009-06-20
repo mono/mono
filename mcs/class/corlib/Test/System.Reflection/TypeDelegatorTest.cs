@@ -37,41 +37,41 @@ using NUnit.Framework;
 namespace MonoTests.System.Reflection
 {
 [TestFixture]
-public class TypeDelegatorTest : Assertion {
+public class TypeDelegatorTest {
 
 	[Test]
 	public void IsAssignableFrom ()
 	{
 		TypeDelegator td = new TypeDelegator (typeof (int));
 
-		AssertEquals (true, typeof (int).IsAssignableFrom (td));
-		AssertEquals (false, typeof (string).IsAssignableFrom (td));
-		AssertEquals (true, td.IsAssignableFrom (typeof (int)));
-		AssertEquals (false, td.IsAssignableFrom (typeof (string)));
+		Assert.AreEqual (true, typeof (int).IsAssignableFrom (td));
+		Assert.AreEqual (false, typeof (string).IsAssignableFrom (td));
+		Assert.AreEqual (true, td.IsAssignableFrom (typeof (int)));
+		Assert.AreEqual (false, td.IsAssignableFrom (typeof (string)));
     }
 
 	[Test]
 	public void CreateInstance ()
 	{
-		AssertEquals (typeof (int[]), Array.CreateInstance (new TypeDelegator (typeof (int)), 100).GetType ());
+		Assert.AreEqual (typeof (int[]), Array.CreateInstance (new TypeDelegator (typeof (int)), 100).GetType ());
     }
 		
 	[Test]
 	public void Properties ()
 	{
-		AssertEquals (false, new TypeDelegator (typeof (IComparable)).IsClass);
-		AssertEquals (false, new TypeDelegator (typeof (IComparable)).IsValueType);
-		AssertEquals (false, new TypeDelegator (typeof (IComparable)).IsEnum);
-		AssertEquals (true, new TypeDelegator (typeof (IComparable)).IsInterface);
+		Assert.AreEqual (false, new TypeDelegator (typeof (IComparable)).IsClass);
+		Assert.AreEqual (false, new TypeDelegator (typeof (IComparable)).IsValueType);
+		Assert.AreEqual (false, new TypeDelegator (typeof (IComparable)).IsEnum);
+		Assert.AreEqual (true, new TypeDelegator (typeof (IComparable)).IsInterface);
 
-		AssertEquals (true, new TypeDelegator (typeof (TypeDelegatorTest)).IsClass);
-		AssertEquals (false, new TypeDelegator (typeof (TypeDelegatorTest)).IsValueType);
-		AssertEquals (false, new TypeDelegator (typeof (TypeDelegatorTest)).IsInterface);
+		Assert.AreEqual (true, new TypeDelegator (typeof (TypeDelegatorTest)).IsClass);
+		Assert.AreEqual (false, new TypeDelegator (typeof (TypeDelegatorTest)).IsValueType);
+		Assert.AreEqual (false, new TypeDelegator (typeof (TypeDelegatorTest)).IsInterface);
 
-		AssertEquals (false, new TypeDelegator (typeof (TypeCode)).IsClass);
-		AssertEquals (false, new TypeDelegator (typeof (TypeCode)).IsInterface);
-		AssertEquals (true, new TypeDelegator (typeof (TypeCode)).IsValueType);
-		AssertEquals (true, new TypeDelegator (typeof (TypeCode)).IsEnum);
+		Assert.AreEqual (false, new TypeDelegator (typeof (TypeCode)).IsClass);
+		Assert.AreEqual (false, new TypeDelegator (typeof (TypeCode)).IsInterface);
+		Assert.AreEqual (true, new TypeDelegator (typeof (TypeCode)).IsValueType);
+		Assert.AreEqual (true, new TypeDelegator (typeof (TypeCode)).IsEnum);
 	}
 }
 }

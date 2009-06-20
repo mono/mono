@@ -16,7 +16,7 @@ namespace MonoTests.System.Reflection {
 	/// Summary description for AssemblyDescriptionAttributeTest.
 	/// </summary>
 	[TestFixture]
-	public class AssemblyDescriptionAttributeTest : Assertion
+	public class AssemblyDescriptionAttributeTest
 	{
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -48,34 +48,34 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void DescriptionTest ()
 		{
-			AssertEquals ("#Testing Description",
+			Assert.AreEqual (
 				attr.Description,
-				"Emitted Assembly");
+				"Emitted Assembly", "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
-				typeof (AssemblyDescriptionAttribute)
+				typeof (AssemblyDescriptionAttribute), "#1"
 				);
 		}
 
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 
 		[Test]
 		public void MatchTestForFalse ()
 		{
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyDescriptionAttribute ("Descrptn")),
-				false);
+				false, "#1");
 		}
 	}
 }

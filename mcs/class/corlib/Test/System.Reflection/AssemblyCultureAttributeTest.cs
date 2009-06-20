@@ -17,7 +17,7 @@ namespace MonoTests.System.Reflection {
 	/// Test Fixture for AssemblyCultureAttribute
 	/// </summary>
 	[TestFixture]
-	public class AssemblyCultureAttributeTest : Assertion
+	public class AssemblyCultureAttributeTest
 	{
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -49,34 +49,34 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void CultureTest ()
 		{
-			AssertEquals ("#Testing Culture",
+			Assert.AreEqual (
 				attr.Culture,
-				"India");
+				"India", "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
-				typeof (AssemblyCultureAttribute)
+				typeof (AssemblyCultureAttribute), "#1"
 				);
 		}
 
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 
 		[Test]
 		public void MatchTestForFalse ()
 		{	
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyCultureAttribute ("Spanish")),
-				false);
+				false, "#1");
 		}
 	}
 }

@@ -17,7 +17,7 @@ namespace MonoTests.System.Reflection {
 	/// Test Fixture for AssemblyCopyrightAttribute
 	/// </summary>
 	[TestFixture]
-	public class AssemblyCopyrightAttributeTest : Assertion
+	public class AssemblyCopyrightAttributeTest
 	{
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -49,34 +49,34 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void CopyrightTest ()
 		{
-			AssertEquals ("#Testing Copyright",
+			Assert.AreEqual (
 				attr.Copyright,
-				"Ximian");
+				"Ximian", "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
 				typeof (AssemblyCopyrightAttribute)
-				);
+				, "#1");
 		}
 
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 
 		[Test]
 		public void MatchTestForFalse ()
 		{	
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyCopyrightAttribute ("imian")),
-				false);
+				false, "#1");
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace MonoTests.System.Reflection {
 	/// Summary description for AssemblyFileVersionAttributeTest.
 	/// </summary>
 	[TestFixture]
-	public class AssemblyFileVersionAttributeTest : Assertion {
+	public class AssemblyFileVersionAttributeTest {
 
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -56,34 +56,33 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void FileVersionTest ()
 		{
-			AssertEquals ("#Testing FileVersion",
-				attr.Version,
-				"1.0.0.0");
+			Assert.AreEqual (attr.Version,
+							 "1.0.0.0", "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
-				typeof (AssemblyFileVersionAttribute)
+				typeof (AssemblyFileVersionAttribute), "#1"
 				);
 		}
 
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 
 		[Test]
 		public void MatchTestForFalse ()
 		{
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyFileVersionAttribute ("Descrptn")),
-				false);
+				false, "#1");
 		}
 	}
 }

@@ -16,7 +16,7 @@ namespace MonoTests.System.Reflection {
 	/// Test Fixture for AssemblyInformationalVersionAttribute.
 	/// </summary>
 	[TestFixture]
-	public class AssemblyInformationalVersionAttributeTest : Assertion {
+	public class AssemblyInformationalVersionAttributeTest {
 
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -48,17 +48,16 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void InformationalVersionTest ()
 		{
-			AssertEquals ("#Testing InformationalVersion",
-				attr.InformationalVersion,
-				"2.0.0.0");
+			Assert.AreEqual (attr.InformationalVersion,
+							 "2.0.0.0", "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
-				typeof (AssemblyInformationalVersionAttribute)
+				typeof (AssemblyInformationalVersionAttribute), "#1"
 				);
 
 		}
@@ -66,17 +65,17 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 		[Test]
 		public void MatchTestForFalse ()
 		{
 			
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyInformationalVersionAttribute ("Descrptn")),
-				false);
+				false, "#1");
 		}
 	}
 }

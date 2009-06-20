@@ -17,7 +17,7 @@ namespace MonoTests.System.Reflection {
 	/// Test Fixture for AssemblyAlgorithmIdAttribute class
 	/// </summary>
 	[TestFixture]
-	public class AssemblyAlgorithmIdAttributeTest : Assertion
+	public class AssemblyAlgorithmIdAttributeTest
 	{
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -52,17 +52,17 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void AlgorithmIdTest()
 		{
-			AssertEquals ("#Testing AlgorithmId",
+			Assert.AreEqual (
 				attr.AlgorithmId,
-				(uint) AssemblyHashAlgorithm.MD5);
+				(uint) AssemblyHashAlgorithm.MD5, "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
-				typeof (AssemblyAlgorithmIdAttribute)
+				typeof (AssemblyAlgorithmIdAttribute), "#1"
 				);
 
 		}
@@ -70,16 +70,16 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 		[Test]
 		public void MatchTestForFalse ()
 		{			
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyAlgorithmIdAttribute (AssemblyHashAlgorithm.SHA1)),
-				false);
+				false, "#1");
 		}
 	}
 }

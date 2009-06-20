@@ -16,7 +16,7 @@ namespace MonoTests.System.Reflection {
 	/// Summary description for AssemblyDelaySignAttributeTest.
 	/// </summary>
 	[TestFixture]
-	public class AssemblyDelaySignAttributeTest:Assertion
+	public class AssemblyDelaySignAttributeTest
 	{
 		private AssemblyBuilder dynAssembly;
 		AssemblyName dynAsmName = new AssemblyName ();
@@ -48,33 +48,33 @@ namespace MonoTests.System.Reflection {
 		[Test]
 		public void DelaySignTest ()
 		{
-			AssertEquals ("#Testing DelaySign",
+			Assert.AreEqual (
 				attr.DelaySign,
-				false);
+				false, "#1");
 		}
 
 		[Test]
 		public void TypeIdTest ()
 		{
-			AssertEquals ("#testing Typeid",
+			Assert.AreEqual (
 				attr.TypeId,
 				typeof (AssemblyDelaySignAttribute)
-				);
+				, "#1");
 		}
 
 		[Test]
 		public void MatchTestForTrue ()
 		{
-			AssertEquals ("#testing Match method-- for true",
+			Assert.AreEqual (
 				attr.Match (attr),
-				true);
+				true, "#1");
 		}
 		[Test]
 		public void MatchTestForFalse ()
 		{
-			AssertEquals ("#testing Match method-- for false",
+			Assert.AreEqual (
 				attr.Match (new AssemblyDelaySignAttribute (true)),
-				false);
+				false, "#1");
 		}
 	}
 }

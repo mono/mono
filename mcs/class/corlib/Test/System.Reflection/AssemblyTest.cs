@@ -425,7 +425,7 @@ namespace MonoTests.System.Reflection
 			foreach (string s in names)
 				if (Assembly.LoadWithPartialName (s) != null)
 					return;
-			Assertion.Fail ("Was not able to load any corlib test");
+			Assert.Fail ("Was not able to load any corlib test");
 		}
 
 #if !TARGET_JVM // GetObjectData currently not implemented for Assembly.
