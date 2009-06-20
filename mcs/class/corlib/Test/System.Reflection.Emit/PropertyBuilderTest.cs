@@ -17,7 +17,7 @@ namespace MonoTests.System.Reflection.Emit
 {
 
 [TestFixture]
-public class PropertyBuilderTest : Assertion
+public class PropertyBuilderTest
 {	
     private TypeBuilder tb;
 
@@ -81,24 +81,24 @@ public class PropertyBuilderTest : Assertion
 		Type t = tb.CreateType ();
 
 		PropertyInfo[] props = t.GetProperties (BindingFlags.Public|BindingFlags.Instance);
-		AssertEquals (1, props.Length);
+		Assert.AreEqual (1, props.Length);
 
 		PropertyInfo p = t.GetProperty ("prop");
 
-		AssertEquals (PropertyAttributes.HasDefault, p.Attributes);
-		AssertEquals (true, p.CanRead);
-		AssertEquals (true, p.CanWrite);
-		AssertEquals ("prop", p.Name);
-		AssertEquals (MemberTypes.Property, p.MemberType);
-		AssertEquals (typeof (int), p.PropertyType);
+		Assert.AreEqual (PropertyAttributes.HasDefault, p.Attributes);
+		Assert.AreEqual (true, p.CanRead);
+		Assert.AreEqual (true, p.CanWrite);
+		Assert.AreEqual ("prop", p.Name);
+		Assert.AreEqual (MemberTypes.Property, p.MemberType);
+		Assert.AreEqual (typeof (int), p.PropertyType);
 		MethodInfo[] methods = p.GetAccessors ();
-		AssertEquals (2, methods.Length);
-		AssertNotNull (p.GetGetMethod ());
-		AssertNotNull (p.GetSetMethod ());
+		Assert.AreEqual (2, methods.Length);
+		Assert.IsNotNull (p.GetGetMethod ());
+		Assert.IsNotNull (p.GetSetMethod ());
 
 		object o = Activator.CreateInstance (t);
 		p.SetValue (o, 42, null);
-		AssertEquals (42, p.GetValue (o, null));
+		Assert.AreEqual (42, p.GetValue (o, null));
 	}
 }
 }

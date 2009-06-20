@@ -17,7 +17,7 @@ namespace MonoTests.System.Reflection.Emit
 {
 
 [TestFixture]
-public class EventBuilderTest : Assertion
+public class EventBuilderTest
 {
 	public delegate void AnEvent (object o);
 
@@ -170,36 +170,36 @@ public class EventBuilderTest : Assertion
 		MethodInfo mi = t.GetMethod ("OnAnEvent");
 
 		EventInfo[] events = t.GetEvents ();
-		AssertEquals (2, events.Length);
+		Assert.AreEqual (2, events.Length);
 
 		{
 			EventInfo ev = t.GetEvent ("event1");
-			AssertEquals ("event1", ev.Name);
-			AssertEquals (EventAttributes.None, ev.Attributes);
-			AssertEquals (t, ev.DeclaringType);
+			Assert.AreEqual ("event1", ev.Name);
+			Assert.AreEqual (EventAttributes.None, ev.Attributes);
+			Assert.AreEqual (t, ev.DeclaringType);
 
-			AssertEquals (typeof (AnEvent), ev.EventHandlerType);
-			AssertEquals (true, ev.IsMulticast);
-			AssertEquals (false, ev.IsSpecialName);
+			Assert.AreEqual (typeof (AnEvent), ev.EventHandlerType);
+			Assert.AreEqual (true, ev.IsMulticast);
+			Assert.AreEqual (false, ev.IsSpecialName);
 
-			AssertEquals (mi, ev.GetAddMethod ());
-			AssertEquals (null, ev.GetRaiseMethod ());
-			AssertEquals (mi, ev.GetRemoveMethod ());
+			Assert.AreEqual (mi, ev.GetAddMethod ());
+			Assert.AreEqual (null, ev.GetRaiseMethod ());
+			Assert.AreEqual (mi, ev.GetRemoveMethod ());
 		}
 
 		{
 			EventInfo ev = t.GetEvent ("event2");
-			AssertEquals ("event2", ev.Name);
-			AssertEquals (EventAttributes.SpecialName, ev.Attributes);
-			AssertEquals (t, ev.DeclaringType);
+			Assert.AreEqual ("event2", ev.Name);
+			Assert.AreEqual (EventAttributes.SpecialName, ev.Attributes);
+			Assert.AreEqual (t, ev.DeclaringType);
 
-			AssertEquals (typeof (AnEvent), ev.EventHandlerType);
-			AssertEquals (true, ev.IsMulticast);
-			AssertEquals (true, ev.IsSpecialName);
+			Assert.AreEqual (typeof (AnEvent), ev.EventHandlerType);
+			Assert.AreEqual (true, ev.IsMulticast);
+			Assert.AreEqual (true, ev.IsSpecialName);
 
-			AssertEquals (mi, ev.GetAddMethod ());
-			AssertEquals (mi, ev.GetRaiseMethod ());
-			AssertEquals (mi, ev.GetRemoveMethod ());
+			Assert.AreEqual (mi, ev.GetAddMethod ());
+			Assert.AreEqual (mi, ev.GetRaiseMethod ());
+			Assert.AreEqual (mi, ev.GetRemoveMethod ());
 		}
 	}		
 		

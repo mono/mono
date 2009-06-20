@@ -14,29 +14,24 @@ namespace MonoTests.System.Reflection.Emit
 	/// A simple class to test the values of the enum AssemblyBuilderAccess.
 	/// </summary>
 	[TestFixture]
-	public class AssemblyBuilderAccessTest : Assertion
+	public class AssemblyBuilderAccessTest
 	{
 		[Test]
 		public void RunTest ()
 		{
-			AssertEquals("Testing Run value",
-				(int) AssemblyBuilderAccess.Run , 1);
+			Assert.AreEqual((int) AssemblyBuilderAccess.Run, 1);
 		}
 		
 		[Test]
 		public void RunAndSaveTest ()
 		{
-			AssertEquals ("Testing RunAndSave value",
-				(int) AssemblyBuilderAccess.RunAndSave , 3);
+			Assert.AreEqual ((int) AssemblyBuilderAccess.RunAndSave, 3);
 		}
 		
 		[Test]
 		public void SaveTest()
 		{
-			AssertEquals ("Testing Save value",
-				(int) AssemblyBuilderAccess.Save , 2);
-		}
-
-		
+			Assert.AreEqual ((int) AssemblyBuilderAccess.Save, 2);
+		}		
 	}
 }

@@ -913,8 +913,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			/* Is .E a valid name ?
 			TypeBuilder tb4 = module.DefineType (".E");
-			AssertEquals ("",
-						  "E", tb4.Name);
+			Assert.AreEqual ("E", tb4.Name);
 			*/
 		}
 
@@ -932,8 +931,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			/* Is .E a valid name ?
 			TypeBuilder tb4 = module.DefineType (".E");
-			AssertEquals ("",
-						  "E", tb4.Name);
+			Assert.AreEqual ("E", tb4.Name);
 			*/
 		}
 

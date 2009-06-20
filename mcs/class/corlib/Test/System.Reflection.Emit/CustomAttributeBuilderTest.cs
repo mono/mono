@@ -29,7 +29,7 @@ namespace MonoTests.System.Reflection.Emit
 	/// </summary>
 
 	[TestFixture]
-	public class CustomAttributeBuilderTest : Assertion
+	public class CustomAttributeBuilderTest
 	{
 		
 		// the CustomAttribute class is used for testing and it has to be public
@@ -144,18 +144,18 @@ namespace MonoTests.System.Reflection.Emit
 			//check the validity of the attribute associated with Print method 
 			
 			object [] methodAttrs =  myType.GetMember ("Print") [0].GetCustomAttributes (true);
-			AssertEquals ("#method Print has exactly one attribute", methodAttrs.Length, 1);
+			Assert.AreEqual (methodAttrs.Length, 1, "#1");
 			CustomAttribute methodAttr = methodAttrs [0] as CustomAttribute;
-			AssertEquals ("#AttributeOne", methodAttr.AttributeOne, "hello");
-			AssertEquals ("#AttributeTwo", methodAttr.AttributeTwo, "world");
+			Assert.AreEqual (methodAttr.AttributeOne, "hello", "#2");
+			Assert.AreEqual (methodAttr.AttributeTwo, "world", "#3");
 			
 			//check the validity of the attribute associated with Str feild
 
 			object [] fieldAttrs = myType.GetField ("Str").GetCustomAttributes (true);
-			AssertEquals("#feild Str has exactly one attribute", fieldAttrs.Length, 1);
+			Assert.AreEqual(fieldAttrs.Length, 1, "#4");
 			CustomAttribute fieldAttr = fieldAttrs [0] as CustomAttribute;
-			AssertEquals("#AttributeOne", fieldAttr.AttributeOne, "one");
-			AssertEquals("#AttributeTwo", fieldAttr.AttributeTwo, "two");
+			Assert.AreEqual(fieldAttr.AttributeOne, "one", "#5");
+			Assert.AreEqual(fieldAttr.AttributeTwo, "two", "#6");
 		}
 
 		[Test]
@@ -207,13 +207,13 @@ namespace MonoTests.System.Reflection.Emit
 
 			//check the validity of the attribute associated with Print method 
 			object [] customAttrs = myType.GetCustomAttributes (false);
-			AssertEquals ("#TestType has exactly one attribute", customAttrs.Length, 1);
+			Assert.AreEqual (customAttrs.Length, 1, "1");
 
 			//Custom Attributes of TestType
 			CustomAttribute attr = customAttrs [0] as CustomAttribute;
-			AssertEquals ("#AttributeOne", attr.AttributeOne, "Test");
-			AssertEquals ("#AttributeTwo", attr.AttributeTwo, "Type");
-			AssertEquals ("#CustomAttribute.Feild",attr.Feild, "TestCase");
+			Assert.AreEqual (attr.AttributeOne, "Test", "#2");
+			Assert.AreEqual (attr.AttributeTwo, "Type", "#3");
+			Assert.AreEqual (attr.Feild, "TestCase", "#4");
 
 		}
 
@@ -266,11 +266,11 @@ namespace MonoTests.System.Reflection.Emit
 
 			//check the validity of the attribute associated with Print method 
 			object [] customAttrs = myType.GetCustomAttributes (false);
-			AssertEquals ("#TestType has exactly one attribute", customAttrs.Length , 1);
+			Assert.AreEqual (customAttrs.Length , 1, "#1");
 
 			//Custom Attributes of TestType
 			CustomAttribute attr = customAttrs [0] as CustomAttribute;
-			AssertEquals("#AttributeOne", attr.AttributeOne, "TestCase");
+			Assert.AreEqual(attr.AttributeOne, "TestCase", "#2");
 		}
 
 		[Test]
@@ -326,12 +326,12 @@ namespace MonoTests.System.Reflection.Emit
 
 			//check the validity of the attribute associated with Print method 
 			object [] customAttrs = myType.GetCustomAttributes (false);
-			AssertEquals("#TestType has exactly one attribute",customAttrs.Length , 1);
+			Assert.AreEqual(customAttrs.Length , 1, "#1");
 
 			//Custom Attributes of TestType
 			CustomAttribute attr = customAttrs [0] as CustomAttribute;
-			AssertEquals ("#AttributeOne", attr.AttributeOne, "TestCase");
-			AssertEquals ("#Field ", attr.Feild, "FieldValue");
+			Assert.AreEqual (attr.AttributeOne, "TestCase", "#2");
+			Assert.AreEqual (attr.Feild, "FieldValue", "#3");
 		}
 	
 		
@@ -370,7 +370,7 @@ namespace MonoTests.System.Reflection.Emit
 				typeof (CustomAttribute).GetConstructor (BindingFlags.Instance |
                                                 BindingFlags.NonPublic, null, ctorParams, null);
 
-			Assert ("#Custom Attribute has private constuctor ", classCtorInfo != null);
+			Assert.IsNotNull (classCtorInfo);
 
 			CustomAttributeBuilder typeCABuilder = new CustomAttributeBuilder (
 				classCtorInfo,
@@ -555,7 +555,7 @@ namespace MonoTests.System.Reflection.Emit
 			ConstructorInfo classCtorInfo = 
 				typeof (CustomAttribute).GetConstructor (ctorParams);
 
-			Assert ("#ctor not null", classCtorInfo != null);
+			Assert.IsNotNull (classCtorInfo);
 			CustomAttributeBuilder typeCABuilder = new CustomAttributeBuilder (
 				classCtorInfo,
 				new object [] { "1","2" },
@@ -577,7 +577,7 @@ namespace MonoTests.System.Reflection.Emit
 			ConstructorInfo classCtorInfo = 
 				typeof (CustomAttribute).GetConstructor (ctorParams);
 
-			Assert ("#ctor not null", classCtorInfo != null);
+			Assert.IsNotNull (classCtorInfo);
 			CustomAttributeBuilder typeCABuilder = new CustomAttributeBuilder (
 				classCtorInfo,
 				null, //<-- here is the error
@@ -599,7 +599,7 @@ namespace MonoTests.System.Reflection.Emit
 			ConstructorInfo classCtorInfo = 
 				typeof (CustomAttribute).GetConstructor (ctorParams);
 
-			Assert ("#ctor not null", classCtorInfo != null);
+			Assert.IsNotNull (classCtorInfo);
 			CustomAttributeBuilder typeCABuilder = new CustomAttributeBuilder (
 				classCtorInfo,
 				new object [] { "one","two" },
@@ -621,7 +621,7 @@ namespace MonoTests.System.Reflection.Emit
 			ConstructorInfo classCtorInfo = 
 				typeof (CustomAttribute).GetConstructor (ctorParams);
 
-			Assert ("#ctor not null", classCtorInfo != null);
+			Assert.IsNotNull (classCtorInfo);
 			CustomAttributeBuilder typeCABuilder = new CustomAttributeBuilder (
 				classCtorInfo,
 				new object [] { "one","two" },
