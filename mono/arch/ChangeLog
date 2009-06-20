@@ -1,5 +1,8 @@
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* ppc/ppc-codegen.h: Fix the last change to avoid self-assignments inside
+	macros.
+	
 	* ppc/ppc-codegen.h: Add ppc_ldr/ppc_str macros to store regsize quantities.
 	Handle little endian host platforms in ppc_emit32.
 
