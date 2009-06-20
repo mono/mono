@@ -1,3 +1,8 @@
+2009-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (mono_try_assembly_resolve): Don't call managed code when
+	running in no-exec mode.
+
 2009-06-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (verify_method_table): Move header
