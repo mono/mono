@@ -1,5 +1,11 @@
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Avoid calling 
+	mono_marshal_get_type_info () since it can assert for some types.
+
+	* method-to-ir.c (mono_method_to_ir): Disable aot when some forms of 
+	ldtoken are used inside wrappers.
+
 	* helpers.c: Add support for prefixing tools with the arch name.
 
 	* mini.h (OP_LOADR_MEMBASE): New opcodes to load/store pointer sized
