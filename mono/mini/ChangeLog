@@ -1,5 +1,7 @@
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* helpers.c: Add support for prefixing tools with the arch name.
+
 	* mini.h (OP_LOADR_MEMBASE): New opcodes to load/store pointer sized
 	quantities when using ilp32.
 
