@@ -1,8 +1,15 @@
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
-	* tramp-ppc.c: Fix the calculation of the trampoline stack size now that
-	we save all 31 registers.
+	* mini.h (OP_LOADR_MEMBASE): New opcodes to load/store pointer sized
+	quantities when using ilp32.
 
+	* mini-codegen.c: Use OP_LOADR_MEMBASE/OP_STORER_MEMBASE for loading/storing
+	spill slots. Use sizeof(mgreg_t) for the spill slot size.
+
+	* image-writer.c: Use .long on ilp32.
+
+	* aot-compiler.c: Use 32 bit loads on ilp32.
+	
 2009-06-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ppc.c (mono_arch_create_trampoline_code): Fix the ppc build.
