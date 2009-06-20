@@ -13,7 +13,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Runtime.CompilerServices {
 
 	[TestFixture]
-	public class RuntimeHelpersTest : Assertion {
+	public class RuntimeHelpersTest {
 	    struct FooStruct {
 			public int i;
 			public string j;
@@ -23,7 +23,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			}
 
 			public override bool Equals (object o) {
-				Fail ();
+				Assert.Fail ();
 				return false;
 			}
 		}
@@ -40,16 +40,16 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			}
 
 			public override bool Equals (object o) {
-				Fail ();
+				Assert.Fail ();
 				return true;
 			}
 		}
 
 		public void TestOffsetToStringData () 
 		{
-			AssertEquals ("OffsetToStringData is not constant",
+			Assert.AreEqual (
 						  RuntimeHelpers.OffsetToStringData,
-						  RuntimeHelpers.OffsetToStringData);
+						  RuntimeHelpers.OffsetToStringData, "OffsetToStringData is not constant");
 		}
 
 		public void TestGetObjectValue ()
@@ -58,13 +58,11 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			FooStruct s2;
 
 			// Test null
-			AssertEquals ("",
-						  RuntimeHelpers.GetObjectValue (null),
+			Assert.AreEqual (RuntimeHelpers.GetObjectValue (null),
 						  null);
 			
 			// Test non-valuetype
-			AssertEquals ("",
-						  RuntimeHelpers.GetObjectValue (this),
+			Assert.AreEqual (RuntimeHelpers.GetObjectValue (this),
 						  this);
 
 			// Test valuetype
@@ -73,34 +71,34 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			s2 = (FooStruct)RuntimeHelpers.GetObjectValue(s1);
 			s1.i = 43;
 			s1.j = "BAR";
-			AssertEquals ("", s2.i, 42);
-			AssertEquals ("", s2.j, "FOO");
+			Assert.AreEqual (s2.i, 42);
+			Assert.AreEqual (s2.j, "FOO");
 		}
 
 		public void TestRunClassConstructor ()
 		{
 			RuntimeHelpers.RunClassConstructor (typeof(FooClass).TypeHandle);
-			AssertEquals ("", FooClass.counter, 1);
+			Assert.AreEqual (FooClass.counter, 1);
 
 			// Each static constructor should only be run once
 			RuntimeHelpers.RunClassConstructor (typeof(FooClass).TypeHandle);
-			AssertEquals ("", FooClass.counter, 1);
+			Assert.AreEqual (FooClass.counter, 1);
 		}
 
 #if NET_1_1
 		public void TestGetHashCode ()
 		{
-			AssertEquals ("Null has hash code 0", 0, RuntimeHelpers.GetHashCode (null));
+			Assert.AreEqual (0, RuntimeHelpers.GetHashCode (null));
 			object o = new object ();
-			AssertEquals ("", o.GetHashCode (), RuntimeHelpers.GetHashCode (o));
-			Assert ("", 5 != RuntimeHelpers.GetHashCode (new FooClass ()));
+			Assert.AreEqual (o.GetHashCode (), RuntimeHelpers.GetHashCode (o));
+			Assert.IsTrue (5 != RuntimeHelpers.GetHashCode (new FooClass ()));
 		}			
 
 		public void TestEquals ()
 		{
-			Assert (RuntimeHelpers.Equals (null, null));
-			Assert (!RuntimeHelpers.Equals (new object (), null));
-			Assert (!RuntimeHelpers.Equals (null, new object ()));
+			Assert.IsTrue (RuntimeHelpers.Equals (null, null));
+			Assert.IsTrue (!RuntimeHelpers.Equals (new object (), null));
+			Assert.IsTrue (!RuntimeHelpers.Equals (null, new object ()));
 
 			FooStruct f1 = new FooStruct ();
 			f1.i = 5;
@@ -110,11 +108,11 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			object o2 = o1;
 			object o3 = f2;
 			object o4 = "AAA";
-			Assert (RuntimeHelpers.Equals (o1, o2));
+			Assert.IsTrue (RuntimeHelpers.Equals (o1, o2));
 
 			// This should do a bit-by-bit comparison for valuetypes
-			Assert (RuntimeHelpers.Equals (o1, o3));
-			Assert (!RuntimeHelpers.Equals (o1, o4));
+			Assert.IsTrue (RuntimeHelpers.Equals (o1, o3));
+			Assert.IsTrue (!RuntimeHelpers.Equals (o1, o4));
 		}
 #endif
 	}
