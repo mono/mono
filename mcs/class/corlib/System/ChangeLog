@@ -1,3 +1,7 @@
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* IntPtr.cs (.ctor): Allow long values whose 31th bit is set.
+
 2009-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DateTime.cs: quick fix for the 1.x build.
