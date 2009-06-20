@@ -1,5 +1,9 @@
 2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* SocketResponder.cs: Made a little more robust.
+
+2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* HttpListener2Test.cs: Added test for bug #513849.
 	* HttpWebRequestTest.cs: Enabled test for bug #508027. Added test for
 	bug #513087.
