@@ -1,5 +1,7 @@
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Disable signal handlers when cross-compiling.
+
 	* method-to-ir.c (initialize_array_data): Do the optimization if the
 	target byte order is little endian, instead of the host byte order.
 
