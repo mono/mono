@@ -1,3 +1,8 @@
+2009-06-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* ppc/ppc-codegen.h: Add ppc_ldr/ppc_str macros to store regsize quantities.
+	Handle little endian host platforms in ppc_emit32.
+
 2009-10-06  Jerry Maine  <crashfourit@gmail.com>
 	
 	Contributed under the terms of the MIT/X11 license by
