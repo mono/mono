@@ -74,10 +74,13 @@ namespace System
 #endif
 		public IntPtr (long value)
 		{
+			/* FIXME: Needs to figure the exact check which works on all architectures */
+			/*
 			if (((value >> 32 > 0) || (value < 0)) && (IntPtr.Size < 8)) {
 				throw new OverflowException (
 					Locale.GetText ("This isn't a 64bits machine."));
 			}
+			*/
 
 			m_value = (void *) value;
 		}
