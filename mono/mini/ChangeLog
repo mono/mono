@@ -1,5 +1,7 @@
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ppc.c (mono_arch_patch_plt_entry): Implement this.
+
 	* aot-compiler.c (mono_compile_assembly): Sanitize the plt symbol too,
 	not just the got symbol.
 
