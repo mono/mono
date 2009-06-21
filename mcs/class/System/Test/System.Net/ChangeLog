@@ -1,3 +1,7 @@
+2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestTest.cs: Improved and enabled test for bug #510642.
+
 2009-06-16  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
 	* WebRequestTest.cs: Drop NotWorking attrib, more accurate tests.

@@ -613,36 +613,199 @@ namespace MonoTests.System.Net
 		}
 
 		[Test] // bug #510642
-		[Category ("NotWorking")]
 		public void GetRequestStream_Write_Overflow ()
 		{
 			IPEndPoint ep = new IPEndPoint (IPAddress.Loopback, 8001);
 			string url = "http://" + IPAddress.Loopback.ToString () + ":8001/test/";
 
+			// buffered, non-chunked
 			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
 				responder.Start ();
 
-				HttpWebRequest req = (HttpWebRequest) WebRequest.Create (url);
+				HttpWebRequest req;
+				Stream rs;
+				byte [] buffer;
+
+				req = (HttpWebRequest) WebRequest.Create (url);
 				req.ProtocolVersion = HttpVersion.Version11;
 				req.Method = "POST";
-				req.Timeout = 200;
+				req.Timeout = 1000;
 				req.ReadWriteTimeout = 100;
 				req.ContentLength = 2;
 
-				Stream rs = req.GetRequestStream ();
+				rs = req.GetRequestStream ();
+				rs.WriteByte (0x2c);
 
-				byte [] buffer = new byte [] { 0x2a, 0x2c, 0x1d };
+				buffer = new byte [] { 0x2a, 0x1d };
 				try {
-					rs.Write (buffer, 0, 3);
-					Assert.Fail ("#1");
+					rs.Write (buffer, 0, buffer.Length);
+					Assert.Fail ("#A1");
 				} catch (ProtocolViolationException ex) {
 					// Bytes to be written to the stream exceed
 					// Content-Length bytes size specified
-					Assert.IsNull (ex.InnerException, "#2");
+					Assert.IsNull (ex.InnerException, "#A2");
+					Assert.IsNotNull (ex.Message, "#A3");
+				} finally {
+					req.Abort ();
+				}
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+
+				buffer = new byte [] { 0x2a, 0x2c, 0x1d };
+				try {
+					rs.Write (buffer, 0, buffer.Length);
+					Assert.Fail ("#B1");
+				} catch (ProtocolViolationException ex) {
+					// Bytes to be written to the stream exceed
+					// Content-Length bytes size specified
+					Assert.IsNull (ex.InnerException, "#B2");
+					Assert.IsNotNull (ex.Message, "#B3");
+				} finally {
+					req.Abort ();
+				}
+			}
+
+			// buffered, chunked
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req;
+				Stream rs;
+				byte [] buffer;
+
+				/*
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.SendChunked = true;
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+				rs.WriteByte (0x2c);
+
+				buffer = new byte [] { 0x2a, 0x1d };
+				rs.Write (buffer, 0, buffer.Length);
+				req.Abort ();
+				*/
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.SendChunked = true;
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+
+				buffer = new byte [] { 0x2a, 0x2c, 0x1d };
+				rs.Write (buffer, 0, buffer.Length);
+				req.Abort ();
+			}
+
+			// non-buffered, non-chunked
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req;
+				Stream rs;
+				byte [] buffer;
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.AllowWriteStreamBuffering = false;
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+				rs.WriteByte (0x2c);
+
+				buffer = new byte [] { 0x2a, 0x1d };
+				try {
+					rs.Write (buffer, 0, buffer.Length);
+					Assert.Fail ("#C1");
+				} catch (ProtocolViolationException ex) {
+					// Bytes to be written to the stream exceed
+					// Content-Length bytes size specified
+					Assert.IsNull (ex.InnerException, "#C2");
 					Assert.IsNotNull (ex.Message, "#3");
 				} finally {
 					req.Abort ();
 				}
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.AllowWriteStreamBuffering = false;
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+
+				buffer = new byte [] { 0x2a, 0x2c, 0x1d };
+				try {
+					rs.Write (buffer, 0, buffer.Length);
+					Assert.Fail ("#D1");
+				} catch (ProtocolViolationException ex) {
+					// Bytes to be written to the stream exceed
+					// Content-Length bytes size specified
+					Assert.IsNull (ex.InnerException, "#D2");
+					Assert.IsNotNull (ex.Message, "#D3");
+				} finally {
+					req.Abort ();
+				}
+			}
+
+			// non-buffered, chunked
+			using (SocketResponder responder = new SocketResponder (ep, new SocketRequestHandler (EchoRequestHandler))) {
+				responder.Start ();
+
+				HttpWebRequest req;
+				Stream rs;
+				byte [] buffer;
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.AllowWriteStreamBuffering = false;
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.SendChunked = true;
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+				rs.WriteByte (0x2c);
+
+				buffer = new byte [] { 0x2a, 0x1d };
+				rs.Write (buffer, 0, buffer.Length);
+				req.Abort ();
+
+				req = (HttpWebRequest) WebRequest.Create (url);
+				req.AllowWriteStreamBuffering = false;
+				req.ProtocolVersion = HttpVersion.Version11;
+				req.Method = "POST";
+				req.SendChunked = true;
+				req.Timeout = 1000;
+				req.ReadWriteTimeout = 100;
+				req.ContentLength = 2;
+
+				rs = req.GetRequestStream ();
+
+				buffer = new byte [] { 0x2a, 0x2c, 0x1d };
+				rs.Write (buffer, 0, buffer.Length);
+				req.Abort ();
 			}
 		}
 
