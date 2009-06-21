@@ -1,5 +1,8 @@
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c aot-compiler.c unwind.c: Implement generation of unwind info
+	on ppc.
+
 	* aot-compiler.c unwind.c: Add infrastructure for unwind support on
 	ppc.
 	
