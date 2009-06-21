@@ -46,6 +46,7 @@ namespace System.Net
 		int readBufferSize;
 		int contentLength;
 		int totalRead;
+		long totalWritten;
 		bool nextReadCalled;
 		int pendingReads;
 		int pendingWrites;
@@ -61,7 +62,6 @@ namespace System.Net
 		bool initRead;
 		bool read_eof;
 		bool complete_request_written;
-		long max_buffer_size;
 		int read_timeout;
 		int write_timeout;
 
@@ -100,13 +100,8 @@ namespace System.Net
 			this.request = request;
 			allowBuffering = request.InternalAllowBuffering;
 			sendChunked = request.SendChunked;
-			if (allowBuffering) {
+			if (allowBuffering)
 				writeBuffer = new MemoryStream ();
-				max_buffer_size = request.ContentLength;
-			} else {
-				max_buffer_size = -1;
-			}
-
 			if (sendChunked)
 				pending = new ManualResetEvent (true);
 		}
@@ -452,17 +447,11 @@ namespace System.Net
 			}
 
 			WebAsyncResult result = new WebAsyncResult (cb, state);
+			if (!sendChunked)
+				CheckWriteOverflow (request.ContentLength, totalWritten, size);
 			if (allowBuffering) {
-				if (max_buffer_size >= 0) {
-					long avail = max_buffer_size - writeBuffer.Length;
-					if (size > avail) {
-						if (requestWritten)
-							throw new ProtocolViolationException (
-							"The number of bytes to be written is greater than " +
-							"the specified ContentLength.");
-					}
-				}
 				writeBuffer.Write (buffer, offset, size);
+				totalWritten += size;
 				if (!sendChunked) {
 					result.SetCompleted (true, 0);
 					result.DoCallback ();
@@ -491,7 +480,20 @@ namespace System.Net
 			}
 
 			result.InnerAsyncResult = cnc.BeginWrite (buffer, offset, size, callback, result);
+			totalWritten += size;
 			return result;
+		}
+
+		static void CheckWriteOverflow (long contentLength, long totalWritten, long size)
+		{
+			if (contentLength == -1)
+				return;
+
+			long avail = contentLength - totalWritten;
+			if (size > avail)
+				throw new ProtocolViolationException (
+					"The number of bytes to be written is greater than " +
+					"the specified ContentLength.");
 		}
 
 		public override void EndWrite (IAsyncResult r)

@@ -1,5 +1,9 @@
 2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* HttpWebRequestTest.cs: Improved and enabled test for bug #510642.
+
+2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* SocketResponder.cs: Made a little more robust.
 
 2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>

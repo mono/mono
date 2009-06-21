@@ -1,5 +1,11 @@
 2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* WebConnectionStream.cs: Keep count of all bytes written, and perform
+	write overflow check in both buffered and non-buffered writing (if
+	not using chunked transfer encoding). Fixes bug #510642.
+
+2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* WebClient.cs: Use lowercase hex bytes to match MS. Avoid using
 	zero-length string literal. Fixed exception argument name to match
 	MS. 
