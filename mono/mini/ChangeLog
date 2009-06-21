@@ -1,5 +1,8 @@
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c unwind.c: Add infrastructure for unwind support on
+	ppc.
+	
 	* aot-compiler.c: Remove some fixmes.
 
 	* driver.c (mono_main): Print a helpful message when cross-compiling.
