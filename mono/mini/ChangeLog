@@ -1,5 +1,8 @@
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_compile_assembly): Sanitize the plt symbol too,
+	not just the got symbol.
+
 	* mini-ppc.c aot-compiler.c unwind.c: Implement generation of unwind info
 	on ppc.
 
