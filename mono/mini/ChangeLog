@@ -1,5 +1,9 @@
 2009-06-22  Mark Probst  <mark.probst@gmail.com>
 
+	* mini-ppc.c, cpu-ppc.md: Enable TLS on Darwin/G4.
+
+2009-06-22  Mark Probst  <mark.probst@gmail.com>
+
 	* mini.c, mini.h: Tell the runtime whether we support MONO_TLS.
 
 2009-06-20  Martin Baulig  <martin@ximian.com>
