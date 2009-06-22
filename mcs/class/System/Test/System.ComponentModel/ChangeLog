@@ -1,3 +1,8 @@
+2009-06-22  Marek Habersack  <mhabersack@novell.com>
+
+	* TypeDescriptorTests.cs: added tests for 2.0+ APIs which deal
+	with adding/removing/getting type description providers.
+
 2009-05-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* ListChangedEventArgsTest.cs: Fix .NET 1.1 compile error.

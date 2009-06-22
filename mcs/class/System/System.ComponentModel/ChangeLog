@@ -1,3 +1,14 @@
+2009-06-22  Marek Habersack  <mhabersack@novell.com>
+
+	* WeakObjectWrapper.cs, WeakObjectWrapperComparer.cs: added - used
+	by TypeDescriptor for storage of type description providers.
+
+	* TypeDescriptor.cs: implemented part of the 2.0+ API which deals
+	with adding/removing/getting type description providers.
+
+	* AttributeCollection.cs: do not throw NREX when attrList is
+	null in Count.
+
 2009-05-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* ListChangedEventArgs.cs: Fix .NET compatibility problems (discovered

@@ -14,6 +14,10 @@ using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 using System.ComponentModel.Design;
 using System.Globalization;
 
+#if NET_2_0
+using System.Collections.Generic;
+#endif
+
 using NUnit.Framework;
 
 namespace MonoTests.System.ComponentModel
@@ -362,7 +366,7 @@ namespace MonoTests.System.ComponentModel
 	{
 		public TestClass()
 		{}
-			
+
 		void TestFunction ()
 		{}
 	}
@@ -390,7 +394,7 @@ namespace MonoTests.System.ComponentModel
 
 		public TypeConverter GetConverter()
 		{
-			return new StringConverter();
+			return new StringConverter ();
 		}
 
 		public EventDescriptorCollection GetEvents(Attribute[] attributes)
@@ -452,9 +456,53 @@ namespace MonoTests.System.ComponentModel
 
 		public string GetClassName()
 		{
-			return this.GetType().Name;
+			return this.GetType ().Name;
 		}
 	}
+
+#if NET_2_0
+	class MyCustomTypeDescriptor : CustomTypeDescriptor
+	{
+		public MyTypeDescriptionProvider Provider { get; private set; }
+
+		public MyCustomTypeDescriptor (MyTypeDescriptionProvider provider)
+		{
+			Provider = provider;
+		}
+
+		public override string GetClassName ()
+		{
+			return Provider.Id;
+		}
+	}
+
+	class MyTypeDescriptionProvider : TypeDescriptionProvider
+	{
+		public string Id { get; private set; }
+		public bool CreateInstanceCalled { get; private set; }
+
+		public MyTypeDescriptionProvider ()
+			: this (null)
+		{
+		}
+
+		public MyTypeDescriptionProvider (string id)
+		{
+			Id = id;
+		}
+
+		public override ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
+		{
+			return new MyCustomTypeDescriptor (this);
+		}
+
+		public override object CreateInstance (IServiceProvider provider, Type objectType, Type[] argTypes, object[] args)
+		{
+			CreateInstanceCalled = true;
+			return base.CreateInstance (provider, objectType, argTypes, args);
+		}
+	}
+#endif
 
 	[TestFixture]
 	public class TypeDescriptorTests
@@ -464,6 +512,550 @@ namespace MonoTests.System.ComponentModel
 		MyComponent nfscom = new MyComponent (new NoFilterSite (new MyContainer ()));
 		AnotherComponent anothercom = new AnotherComponent ();
 		
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddAttributes_Type_Attributes_1 ()
+		{
+			TypeDescriptionProvider provider = TypeDescriptor.AddAttributes ((Type) null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddAttributes_Type_Attributes_2 ()
+		{
+			TypeDescriptionProvider provider = TypeDescriptor.AddAttributes (typeof (string), null);
+		}
+
+		[Test]
+		public void TestAddAttributes_Type_Attributes_3 ()
+		{
+			Attribute[] new_attributes = new Attribute[] {
+				new ReadOnlyAttribute (true),
+				new BindableAttribute (true)
+			};
+
+			TypeDescriptionProvider provider = null;
+			ICustomTypeDescriptor descriptor;
+			AttributeCollection attributes;
+
+			try {
+				provider = TypeDescriptor.AddAttributes (typeof (string), new Attribute[] { });
+				Assert.IsNotNull (provider, "#A1");
+
+				descriptor = provider.GetTypeDescriptor (typeof (string));
+				Assert.IsNotNull (descriptor, "#A1-1");
+
+				attributes = descriptor.GetAttributes ();
+				Assert.IsNotNull (attributes, "#A1-2");
+			} finally {
+				if (provider != null)
+					TypeDescriptor.RemoveProvider (provider, typeof (string));
+			}
+
+			provider = null;
+			try {
+				provider = TypeDescriptor.AddAttributes (typeof (string), new_attributes);
+				Assert.IsNotNull (provider, "#B1");
+
+				descriptor = provider.GetTypeDescriptor (typeof (string));
+				Assert.IsNotNull (descriptor, "#B1-1");
+
+				attributes = descriptor.GetAttributes ();
+				Assert.IsNotNull (attributes, "#B1-2");
+				Assert.AreNotEqual (0, attributes.Count, "#B1-3");
+				Assert.IsTrue (attributes.Contains (new_attributes));
+			} finally {
+				if (provider != null)
+					TypeDescriptor.RemoveProvider (provider, typeof (string));
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddAttributes_Instance_Attributes_1 ()
+		{
+			TypeDescriptionProvider provider = TypeDescriptor.AddAttributes ((object) null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddAttributes_Instance_Attributes_2 ()
+		{
+			string s = "test";
+			TypeDescriptionProvider provider = TypeDescriptor.AddAttributes (s, null);
+		}
+
+		[Test]
+		public void TestAddAttributes_Instance_Attributes_3 ()
+		{
+			Attribute[] new_attributes = new Attribute[] {
+				new ReadOnlyAttribute (true),
+				new BindableAttribute (true)
+			};
+
+			TypeDescriptionProvider provider = null;
+			ICustomTypeDescriptor descriptor;
+			AttributeCollection attributes;
+			string s = "test";
+
+			try {
+				provider = TypeDescriptor.AddAttributes (s, new Attribute[] { });
+				Assert.IsNotNull (provider, "#A1");
+
+				descriptor = provider.GetTypeDescriptor (s);
+				Assert.IsNotNull (descriptor, "#A1-1");
+
+				attributes = descriptor.GetAttributes ();
+				Assert.IsNotNull (attributes, "#A1-2");
+			} finally {
+				if (provider != null)
+					TypeDescriptor.RemoveProvider (provider, s);
+			}
+
+			provider = null;
+			try {
+				provider = TypeDescriptor.AddAttributes (s, new_attributes);
+				Assert.IsNotNull (provider, "#B1");
+
+				descriptor = provider.GetTypeDescriptor (s);
+				Assert.IsNotNull (descriptor, "#B1-1");
+
+				attributes = descriptor.GetAttributes ();
+				Assert.IsNotNull (attributes, "#B1-2");
+				Assert.AreNotEqual (0, attributes.Count, "#B1-3");
+				Assert.IsTrue (attributes.Contains (new_attributes));
+			} finally {
+				if (provider != null)
+					TypeDescriptor.RemoveProvider (provider, s);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddProvider_Provider_Instance_1 ()
+		{
+			TypeDescriptor.AddProvider (null, (object)null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddProvider_Provider_Instance_2 ()
+		{
+			var provider = new MyTypeDescriptionProvider ();
+			TypeDescriptor.AddProvider (provider, (object) null);
+		}
+
+		[Test]
+		public void TestAddProvider_Provider_Instance_3 ()
+		{
+			var instance = new MyComponent ();
+			var providers = new MyTypeDescriptionProvider[] {
+				new MyTypeDescriptionProvider ("One"),
+				new MyTypeDescriptionProvider ("Two"),
+				new MyTypeDescriptionProvider ("Three"),
+				new MyTypeDescriptionProvider ("Four")
+			};
+
+			try {
+				TypeDescriptionProvider provider;
+				ICustomTypeDescriptor descriptor;
+
+				TypeDescriptor.AddProvider (providers[0], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#A1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#A1-1");
+				Assert.AreEqual ("One", descriptor.GetClassName (), "#A1-2");
+				Assert.AreEqual (false, providers[0].CreateInstanceCalled, "#A1-3");
+
+				descriptor.GetProperties ();
+
+				TypeDescriptor.AddProvider (providers[1], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#B1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#B1-1");
+				Assert.AreEqual ("Two", descriptor.GetClassName (), "#B1-2");
+
+				// Providers are stored in a stack according to docs, but it's in reality
+				// a FIFO linked list
+				TypeDescriptor.AddProvider (providers[2], instance);
+				TypeDescriptor.AddProvider (providers[3], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#C1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#C1-1");
+				Assert.AreEqual ("Four", descriptor.GetClassName (), "#C1-2");
+
+				TypeDescriptor.RemoveProvider (providers[2], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#D1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#D1-1");
+				Assert.AreEqual ("Four", descriptor.GetClassName (), "#D1-2");
+
+				TypeDescriptor.RemoveProvider (providers[3], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#E1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#E1-1");
+				Assert.AreEqual ("Two", descriptor.GetClassName (), "#E1-2");
+
+			} finally {
+				TypeDescriptor.RemoveProvider (providers[0], instance);
+				TypeDescriptor.RemoveProvider (providers[1], instance);
+				TypeDescriptor.RemoveProvider (providers[2], instance);
+				TypeDescriptor.RemoveProvider (providers[3], instance);
+			}
+		}
+
+		[Test]
+		public void TestAddProvider_Provider_Instance_4 ()
+		{
+			var instance = new MyComponent ();
+			var providers = new MyTypeDescriptionProvider[] {
+				new MyTypeDescriptionProvider ("One"),
+				new MyTypeDescriptionProvider ("Two"),
+				new MyTypeDescriptionProvider ("Three"),
+				new MyTypeDescriptionProvider ("Four")
+			};
+
+			try {
+				TypeDescriptionProvider provider;
+				ICustomTypeDescriptor descriptor;
+
+				TypeDescriptor.AddProvider (providers[0], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#A1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#A1-1");
+				Assert.AreEqual ("One", descriptor.GetClassName (), "#A1-2");
+				Assert.AreEqual (false, providers[0].CreateInstanceCalled, "#A1-3");
+
+				descriptor.GetProperties ();
+
+				TypeDescriptor.AddProvider (providers[1], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#B1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#B1-1");
+				Assert.AreEqual ("Two", descriptor.GetClassName (), "#B1-2");
+
+				// Providers are stored in a stack according to docs, but it's in reality
+				// a FIFO linked list
+				TypeDescriptor.AddProvider (providers[0], instance);
+				TypeDescriptor.AddProvider (providers[0], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#C1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#C1-1");
+				Assert.AreEqual ("One", descriptor.GetClassName (), "#C1-2");
+
+				TypeDescriptor.RemoveProvider (providers[0], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#D1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#D1-1");
+				Assert.AreEqual ("One", descriptor.GetClassName (), "#D1-2");
+
+				TypeDescriptor.RemoveProvider (providers[0], instance);
+				provider = TypeDescriptor.GetProvider (instance);
+				Assert.IsNotNull (provider, "#E1");
+				descriptor = provider.GetTypeDescriptor (instance.GetType (), instance);
+				Assert.IsNotNull (descriptor, "#E1-1");
+				Assert.AreEqual ("Two", descriptor.GetClassName (), "#E1-2");
+
+			} finally {
+				TypeDescriptor.RemoveProvider (providers[0], instance);
+				TypeDescriptor.RemoveProvider (providers[1], instance);
+				TypeDescriptor.RemoveProvider (providers[2], instance);
+				TypeDescriptor.RemoveProvider (providers[3], instance);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddProvider_Provider_Type_1 ()
+		{
+			TypeDescriptor.AddProvider (null, (Type) null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestAddProvider_Provider_Type_2 ()
+		{
+			var provider = new MyTypeDescriptionProvider ();
+			TypeDescriptor.AddProvider (provider, (Type) null);
+		}
+
+		[Test]
+		public void TestAddProvider_Provider_Type_3 ()
+		{
+			var type = typeof (MyComponent);
+			var providers = new MyTypeDescriptionProvider[] {
+				new MyTypeDescriptionProvider ("One"),
+				new MyTypeDescriptionProvider ("Two"),
+				new MyTypeDescriptionProvider ("Three"),
+				new MyTypeDescriptionProvider ("Four")
+			};
+
+			try {
+				TypeDescriptionProvider provider;
+				ICustomTypeDescriptor descriptor;
+
+				TypeDescriptor.AddProvider (providers[0], type);
+				provider = TypeDescriptor.GetProvider (type);
+				Assert.IsNotNull (provider, "#A1");
+				descriptor = provider.GetTypeDescriptor (type);
+				Assert.IsNotNull (descriptor, "#A1-1");
+				Assert.AreEqual ("One", descriptor.GetClassName (), "#A1-2");
+				Assert.AreEqual (false, providers[0].CreateInstanceCalled, "#A1-3");
+
+				TypeDescriptor.AddProvider (providers[1], type);
+				provider = TypeDescriptor.GetProvider (type);
+				Assert.IsNotNull (provider, "#B1");
+				descriptor = provider.GetTypeDescriptor (type.GetType (), type);
+				Assert.IsNotNull (descriptor, "#B1-1");
+				Assert.AreEqual ("Two", descriptor.GetClassName (), "#B1-2");
+
+				// Providers are stored in a stack according to docs, but it's in reality
+				// a FIFO linked list
+				TypeDescriptor.AddProvider (providers[2], type);
+				TypeDescriptor.AddProvider (providers[3], type);
+				provider = TypeDescriptor.GetProvider (type);
+				Assert.IsNotNull (provider, "#C1");
+				descriptor = provider.GetTypeDescriptor (type.GetType (), type);
+				Assert.IsNotNull (descriptor, "#C1-1");
+				Assert.AreEqual ("Four", descriptor.GetClassName (), "#C1-2");
+
+				TypeDescriptor.RemoveProvider (providers[2], type);
+				provider = TypeDescriptor.GetProvider (type);
+				Assert.IsNotNull (provider, "#D1");
+				descriptor = provider.GetTypeDescriptor (type.GetType (), type);
+				Assert.IsNotNull (descriptor, "#D1-1");
+				Assert.AreEqual ("Four", descriptor.GetClassName (), "#D1-2");
+
+				TypeDescriptor.RemoveProvider (providers[3], type);
+				provider = TypeDescriptor.GetProvider (type);
+				Assert.IsNotNull (provider, "#E1");
+				descriptor = provider.GetTypeDescriptor (type.GetType (), type);
+				Assert.IsNotNull (descriptor, "#E1-1");
+				Assert.AreEqual ("Two", descriptor.GetClassName (), "#E1-2");
+
+			} finally {
+				TypeDescriptor.RemoveProvider (providers[0], type);
+				TypeDescriptor.RemoveProvider (providers[1], type);
+				TypeDescriptor.RemoveProvider (providers[2], type);
+				TypeDescriptor.RemoveProvider (providers[3], type);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetProvider_Type_1 ()
+		{
+			TypeDescriptor.GetProvider ((Type)null);
+		}
+
+		[Test]
+		public void TestGetProvider_Type_2 ()
+		{
+			TypeDescriptionProvider provider = TypeDescriptor.GetProvider (typeof (string));
+			Assert.IsNotNull (provider, "#A1");
+			provider = new MyTypeDescriptionProvider ("One");
+
+			try {
+				TypeDescriptor.AddProvider (provider, typeof (string));
+				ICustomTypeDescriptor descriptor = provider.GetTypeDescriptor (typeof (string));
+				Assert.IsNotNull (descriptor, "#B1");
+				Assert.AreEqual ("One", descriptor.GetClassName (), "#B1-1");
+			} finally {
+				TypeDescriptor.RemoveProvider (provider, typeof (string));
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetProvider_Instance_1 ()
+		{
+			TypeDescriptor.GetProvider ((object) null);
+		}
+
+		[Test]
+		public void TestGetProvider_Instance_2 ()
+		{
+			var instance = new MyComponent ();
+			TypeDescriptionProvider provider = TypeDescriptor.GetProvider (instance);
+			Assert.IsNotNull (provider, "#A1");
+			provider = new MyTypeDescriptionProvider ("One");
+
+			try {
+				TypeDescriptor.AddProvider (provider, instance);
+				ICustomTypeDescriptor descriptor = provider.GetTypeDescriptor (instance);
+				Assert.IsNotNull (descriptor, "#B1");
+				Assert.AreEqual ("One", descriptor.GetClassName (), "#B1-1");
+			} finally {
+				TypeDescriptor.RemoveProvider (provider, instance);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestRemoveProvider_Provider_Type_1 ()
+		{
+			TypeDescriptor.RemoveProvider (null, (Type)null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestRemoveProvider_Provider_Type_2 ()
+		{
+			var provider = new MyTypeDescriptionProvider ();
+			TypeDescriptor.RemoveProvider (provider, null);
+		}
+
+		[Test]
+		public void TestRemoveProvider_Provider_Type_3 ()
+		{
+			var provider = new MyTypeDescriptionProvider ();
+			bool refreshedCalled = false;
+			bool refreshedCorrectComponentChanged = false;
+			bool refreshedCorrectTypeChanged = false;
+
+			RefreshEventHandler handler = (RefreshEventArgs args) => {
+				refreshedCalled = true;
+				refreshedCorrectComponentChanged = args.ComponentChanged == null;
+				refreshedCorrectTypeChanged = args.TypeChanged == typeof (string);
+			};
+
+			try {
+				TypeDescriptor.Refreshed += handler;
+
+				TypeDescriptor.RemoveProvider (provider, typeof (string));
+				Assert.AreEqual (true, refreshedCalled, "#A1");
+				Assert.AreEqual (true, refreshedCorrectComponentChanged, "#A2");
+				Assert.AreEqual (true, refreshedCorrectTypeChanged, "#A3");
+			} finally {
+				TypeDescriptor.Refreshed -= handler;
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestRemoveProvider_Provider_Instance_1 ()
+		{
+			TypeDescriptor.RemoveProvider (null, (object)null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestRemoveProvider_Provider_Instance_2 ()
+		{
+			var provider = new MyTypeDescriptionProvider ();
+			TypeDescriptor.RemoveProvider (provider, (object)null);
+		}
+
+		[Test]
+		public void TestRemoveProvider_Provider_Instance_3 ()
+		{
+			var instance = new MyComponent ();
+			var provider = new MyTypeDescriptionProvider ();
+			bool refreshedCalled = false;
+			bool refreshedCorrectComponentChanged = false;
+			bool refreshedCorrectTypeChanged = false;
+
+			RefreshEventHandler handler = (RefreshEventArgs args) => {
+				refreshedCalled = true;
+				refreshedCorrectComponentChanged = args.ComponentChanged == instance;
+				refreshedCorrectTypeChanged = args.TypeChanged == typeof (MyComponent);
+			};
+
+			try {
+				TypeDescriptor.Refreshed += handler;
+
+				TypeDescriptor.RemoveProvider (provider, instance);
+				Assert.AreEqual (true, refreshedCalled, "#A1");
+				Assert.AreEqual (true, refreshedCorrectComponentChanged, "#A2");
+				Assert.AreEqual (true, refreshedCorrectTypeChanged, "#A3");
+			} finally {
+				TypeDescriptor.Refreshed -= handler;
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetReflectionType_Type_1 ()
+		{
+			TypeDescriptor.GetReflectionType ((Type) null);
+		}
+
+		[Test]
+		public void TestGetReflectionType_Type_2 ()
+		{
+			Type type = TypeDescriptor.GetReflectionType (typeof (string));
+			Assert.IsNotNull (type, "#A1");
+			Assert.AreEqual (typeof (string), type, "#A1-1");
+
+			type = TypeDescriptor.GetReflectionType (typeof (MyComponent));
+			Assert.IsNotNull (type, "#B1");
+			Assert.AreEqual (typeof (MyComponent), type, "#B1-1");
+
+			type = TypeDescriptor.GetReflectionType (typeof (List<string>));
+			Assert.IsNotNull (type, "#C1");
+			Assert.AreEqual (typeof (List <string>), type, "#C1-1");
+
+			type = TypeDescriptor.GetReflectionType (typeof (IList<>));
+			Assert.IsNotNull (type, "#D1");
+			Assert.AreEqual (typeof (IList<>), type, "#D1-1");
+
+			type = TypeDescriptor.GetReflectionType (typeof (IDictionary<,>));
+			Assert.IsNotNull (type, "#E1");
+			Assert.AreEqual (typeof (IDictionary<,>), type, "#E1-1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestGetReflectionType_Instance_1 ()
+		{
+			TypeDescriptor.GetReflectionType ((object) null);
+		}
+
+		[Test]
+		public void TestGetReflectionType_Instance_2 ()
+		{
+			string s = "string";
+			Type type = TypeDescriptor.GetReflectionType (s);
+			Assert.IsNotNull (type, "#A1");
+			Assert.AreEqual (typeof (string), type, "#A1-1");
+
+			var mc = new MyComponent ();
+			type = TypeDescriptor.GetReflectionType (mc);
+			Assert.IsNotNull (type, "#B1");
+			Assert.AreEqual (typeof (MyComponent), type, "#B1-1");
+
+			var l = new List<string> ();
+			type = TypeDescriptor.GetReflectionType (l);
+			Assert.IsNotNull (type, "#C1");
+			Assert.AreEqual (typeof (List<string>), type, "#C1-1");
+
+			IList il = new List<string> ();
+			type = TypeDescriptor.GetReflectionType (il);
+			Assert.IsNotNull (type, "#D1");
+			Assert.AreEqual (typeof (List<string>), type, "#D1-1");
+
+			IDictionary id = new Dictionary<string, object> ();
+			type = TypeDescriptor.GetReflectionType (id);
+			Assert.IsNotNull (type, "#E1");
+			Assert.AreEqual (typeof (Dictionary<string,object>), type, "#E1-1");
+
+			object o = 1;
+			type = TypeDescriptor.GetReflectionType (o);
+			Assert.IsNotNull (type, "#F1");
+			Assert.AreEqual (typeof (int), type, "#F1-1");
+		}
+#endif
+
 		[Test]
 		public void TestICustomTypeDescriptor ()
 		{

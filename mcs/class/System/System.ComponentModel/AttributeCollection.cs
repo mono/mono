@@ -161,7 +161,7 @@ namespace System.ComponentModel
 
 		public int Count {
 			get {
-				return attrList.Count;
+				return attrList != null ? attrList.Count : 0;
 			}
 		}
 
