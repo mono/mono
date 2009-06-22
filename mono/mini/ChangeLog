@@ -1,3 +1,7 @@
+2009-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_init): Revert a change which breaks cross-compilation.
+
 2009-06-22  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-ppc.c, cpu-ppc.md: Enable TLS on Darwin/G4.
