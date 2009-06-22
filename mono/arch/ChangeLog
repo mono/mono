@@ -1,3 +1,9 @@
+2009-06-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* ppc/ppc-codegen.h: Rework the naming of the load/store macros,
+	ldr/str now handle register sized quantities, while ldptr/stptr handle
+	pointer sized quantities.
+
 2009-06-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* ppc/ppc-codegen.h: Fix the last change to avoid self-assignments inside
