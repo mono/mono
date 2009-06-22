@@ -643,7 +643,7 @@ namespace System.Net
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
 			if (aborted)
-				throw new WebException ("The request was previosly aborted.");
+				throw new WebException ("The request was canceled.", WebExceptionStatus.RequestCanceled);
 
 			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" ||
 					method == "TRACE" || method == "DELETE");
@@ -656,7 +656,7 @@ namespace System.Net
 			string transferEncoding = TransferEncoding;
 			if (!sendChunked && transferEncoding != null && transferEncoding.Trim () != "")
 				throw new ProtocolViolationException ("SendChunked should be true.");
-			
+
 			lock (locker)
 			{
 				if (asyncWrite != null) {
@@ -734,6 +734,9 @@ namespace System.Net
 
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
+			if (aborted)
+				throw new WebException ("The request was canceled.", WebExceptionStatus.RequestCanceled);
+
 			if (method == null)
 				throw new ProtocolViolationException ("Method is null.");
 
