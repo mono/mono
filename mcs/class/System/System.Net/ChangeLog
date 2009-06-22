@@ -1,3 +1,8 @@
+2009-06-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnectionStream.cs: close the underlying socket if there's an
+	exception when closing the stream. Fixes bug #514996.
+
 2009-06-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* WebConnectionStream.cs: Keep count of all bytes written, and perform
