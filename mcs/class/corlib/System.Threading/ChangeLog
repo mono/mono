@@ -1,3 +1,9 @@
+2009-06-22  Bill Holmes  <billholmes54@gmail.com>
+
+	* Thread.cs : Adding interrupt_on_stop field.
+
+	Contributed under MIT/X11 license.
+
 2009-06-10  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Thread.cs: MoonlightUnhandledException: ensure there's no way to

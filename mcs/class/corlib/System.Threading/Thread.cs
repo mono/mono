@@ -107,11 +107,12 @@ namespace System.Threading {
 		   start_wrapper() in the runtime. */
 		private ExecutionContext ec_to_set;
 
+		private IntPtr interrupt_on_stop;
+
 		/* 
 		 * These fields are used to avoid having to increment corlib versions
 		 * when a new field is added to the unmanaged MonoThread structure.
 		 */
-		private IntPtr unused2;
 		private IntPtr unused3;
 		private IntPtr unused4;
 		private IntPtr unused5;
