@@ -1,4 +1,4 @@
-// cs1016.cs: Named attribute argument expected
+// CS1016: Named attribute arguments must appear after the positional arguments
 // Line: 19
 
 using System;

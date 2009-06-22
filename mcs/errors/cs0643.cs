@@ -1,4 +1,4 @@
-// cs0643.cs: 'x' duplicate named attribute argument
+// CS0643: Duplicate named attribute `x' argument
 // Line: 8
 
 using System;
