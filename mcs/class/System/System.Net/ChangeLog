@@ -1,5 +1,10 @@
 2009-06-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpWebRequest.cs: check for an aborted request in Begin* before
+	proceeding. Fixes bug #511851.
+
+2009-06-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* WebConnectionStream.cs: close the underlying socket if there's an
 	exception when closing the stream. Fixes bug #514996.
 
