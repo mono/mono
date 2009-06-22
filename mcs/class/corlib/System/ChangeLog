@@ -1,3 +1,7 @@
+2009-06-21  Marek Safar  <marek.safar@gmail.com>
+
+	* Tuples.cs: Add Equals, GetHashCode.
+
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* IntPtr.cs (.ctor): Disable the check in the long ctor until we
