@@ -1,3 +1,16 @@
+2009-06-18  Martin Baulig  <martin@ximian.com>
+
+	* debug-debugger.h (MonoDebuggerRuntimeFlags): New enum typedef.
+	(MonoDebuggerInfo): Renamed the `dummy' field info `runtime_info'.
+
+	* debug-debugger.c
+	(mini_debugger_set_attach_ok): New function; sets the attach-ok
+	flag in `MONO_DEBUGGER__info.runtime_info'.
+
+	* driver.c
+	(mono_main): Call mini_debugger_set_attach_ok() if generics
+	sharing is disabled.
+
 2009-06-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Fix a warning.

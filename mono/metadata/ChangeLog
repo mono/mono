@@ -1,3 +1,7 @@
+2009-06-18  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_MINOR_VERSION): Bump to 2.
+
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (mono_try_assembly_resolve): Don't call managed code when
