@@ -1,5 +1,10 @@
 2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Move remaininh blob checks to the offline
+	verification path.
+
+2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Move more blob checks to the offline verification
 	path.
 
