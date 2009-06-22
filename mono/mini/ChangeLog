@@ -1,3 +1,11 @@
+2009-06-20  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c
+	(MonoDebuggerThreadFlags): New enum typedef.
+	(MonoDebuggerThreadInfo): Added `guint32 thread_flags'.
+	(mono_debugger_thread_created): Added `gpointer func' argument;
+	initialize the new `thread_flags' field.
+
 2009-06-18  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.h (MonoDebuggerRuntimeFlags): New enum typedef.

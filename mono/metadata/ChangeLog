@@ -1,6 +1,6 @@
-2009-06-18  Martin Baulig  <martin@ximian.com>
+2009-06-20  Martin Baulig  <martin@ximian.com>
 
-	* mono-debug.h (MONO_DEBUGGER_MINOR_VERSION): Bump to 2.
+	* mono-debug.h (MONO_DEBUGGER_MINOR_VERSION): Bump to 3.
 
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
