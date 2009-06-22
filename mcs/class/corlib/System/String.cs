@@ -383,13 +383,19 @@ namespace System
 			return tmp;
 		}
 
-		private static readonly char[] WhiteChars = { (char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
+		private static readonly char[] WhiteChars = {
+			(char) 0x9, (char) 0xA, (char) 0xB, (char) 0xC, (char) 0xD,
 #if NET_2_0
 			(char) 0x85, (char) 0x1680, (char) 0x2028, (char) 0x2029,
 #endif
 			(char) 0x20, (char) 0xA0, (char) 0x2000, (char) 0x2001, (char) 0x2002, (char) 0x2003, (char) 0x2004,
 			(char) 0x2005, (char) 0x2006, (char) 0x2007, (char) 0x2008, (char) 0x2009, (char) 0x200A, (char) 0x200B,
-			(char) 0x3000, (char) 0xFEFF };
+			(char) 0x3000, (char) 0xFEFF,
+#if NET_2_1
+		        // Silverlight 
+		        (char) 0x202f, (char) 0x205f,
+#endif
+		};
 
 		public String Trim ()
 		{
@@ -475,8 +481,13 @@ namespace System
 				}
 				else {
 					if (c != 0xA0 && c != 0xFEFF && c != 0x3000) {
-#if NET_2_0
-						if (c != 0x85 && c != 0x1680 && c != 0x2028 && c != 0x2029)
+#if NET_2_0 || NET_2_1
+						if (c != 0x85 && c != 0x1680 && c != 0x2028 && c != 0x2029
+#if NET_2_1
+						    // On Silverlight this whitespace participates in Trim
+						    && c != 0x202f && c != 0x205f
+#endif
+							)
 #endif
 							if (c < 0x2000 || c > 0x200B)
 								return pos;

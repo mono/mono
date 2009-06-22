@@ -1,3 +1,8 @@
+2009-06-22  Miguel de Icaza  <miguel@novell.com>
+
+	* String.cs: In Silverlight the whitespace characters 0x202f and
+	0x205f are considered for Trim and Split purposes. 
+
 2009-06-21  Marek Safar  <marek.safar@gmail.com>
 
 	* Tuples.cs: Add Equals, GetHashCode.
