@@ -698,6 +698,8 @@ namespace System.Net
 			// writeBuffer could be null if KillBuffer was already called.
 			if (writeBuffer != null && length != -1 && length > writeBuffer.Length) {
 				IOException io = new IOException ("Cannot close the stream until all bytes are written");
+				nextReadCalled = true;
+				cnc.Close (true);
 				throw new WebException ("Request was cancelled.", io, WebExceptionStatus.RequestCanceled);
 			}
 
