@@ -1,3 +1,8 @@
+2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Move more blob checks to the offline verification
+	path.
+
 2009-06-22  Bill Holmes  <billholmes54@gmail.com>
 
 	* object-internals.h : Adding interrupt_on_stop field.
