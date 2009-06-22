@@ -1,3 +1,8 @@
+2009-06-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c tramp-ppc.c exceptions-ppc.c aot-compiler.c: Update after
+	the ppc load/store macro changes.
+
 2009-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ppc.c (mono_arch_patch_plt_entry): Implement this.
