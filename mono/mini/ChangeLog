@@ -1,5 +1,7 @@
 2009-06-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Fix a warning.
+
 	* mini-ppc.c tramp-ppc.c exceptions-ppc.c aot-compiler.c: Update after
 	the ppc load/store macro changes.
 
