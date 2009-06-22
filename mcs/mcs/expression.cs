@@ -4685,7 +4685,20 @@ namespace Mono.CSharp {
 
 		public Argument Clone (CloneContext clonectx)
 		{
-			return new Argument (Expr.Clone (clonectx), ArgType);
+			Argument a = (Argument) MemberwiseClone ();
+			a.Expr = Expr.Clone (clonectx);
+			return a;
+		}
+	}
+
+	class NamedArgument : Argument
+	{
+		public readonly LocatedToken Name;
+
+		public NamedArgument (LocatedToken name, Expression expr)
+			: base (expr)
+		{
+			Name = name;
 		}
 	}
 

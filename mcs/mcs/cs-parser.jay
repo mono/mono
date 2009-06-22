@@ -767,7 +767,7 @@ attribute
 	  {
 		++lexer.parsing_block;
 	  }
-	 opt_attribute_arguments
+	  opt_attribute_arguments
 	  {
 		--lexer.parsing_block;
 		MemberName mname = (MemberName) $1;
@@ -807,78 +807,64 @@ opt_attribute_arguments
 
 
 attribute_arguments
-	: opt_positional_argument_list
+	: /* empty */ 		{ $$ = null; } 
+	| positional_or_named_argument
 	  {
-		if ($1 == null)
-			$$ = null;
-		else {
-			$$ = new object [] { $1, null };
+		$$ = new object [] { new ArrayList (4) { $1 }, null };	  
+	  }
+	| named_attribute_argument
+	  {
+		$$ = new object [] { null, new ArrayList (4) { $1 } };		
+	  }
+    | attribute_arguments COMMA positional_or_named_argument
+	  {
+		object[] o = (object[]) $1;
+		if (o [1] != null) {
+			Report.Error (1016, ((Argument) $3).Expr.Location, "Named attribute arguments must appear after the positional arguments");
+			o [0] = new ArrayList (4);
 		}
+		
+		ArrayList args = ((ArrayList) o [0]);
+		if (args.Count > 0 && !($3 is NamedArgument) && args [args.Count - 1] is NamedArgument)
+			Error_NamedArgumentExpected ((NamedArgument) args [args.Count - 1]);
+		
+		args.Add ($3);
 	  }
-    | positional_argument_list COMMA named_argument_list
+    | attribute_arguments COMMA named_attribute_argument
 	  {
-		$$ = new object[] { $1, $3 };
-	  }
-    | named_argument_list
-	  {
-		$$ = new object [] { null, $1 };
+		object[] o = (object[]) $1;
+		if (o [1] == null) {
+			o [1] = new ArrayList (4);
+		}
+
+		((ArrayList) o [1]).Add ($3);
 	  }
     ;
 
-
-opt_positional_argument_list
-	: /* empty */ 		{ $$ = null; } 
-	| positional_argument_list
-	;
-
-positional_argument_list
+positional_or_named_argument
 	: expression
 	  {
-		ArrayList args = new ArrayList (4);
-		args.Add (new Argument ((Expression) $1, Argument.AType.Expression));
-
-		$$ = args;
+	  	$$ = new Argument ((Expression) $1, Argument.AType.Expression);
 	  }
-        | positional_argument_list COMMA expression
-	 {
-		ArrayList args = (ArrayList) $1;
-		args.Add (new Argument ((Expression) $3, Argument.AType.Expression));
-
-		$$ = args;
-	 }
-        ;
-
-named_argument_list
-	: named_argument
-	  {
-		ArrayList args = new ArrayList (4);
-		args.Add ($1);
-
-		$$ = args;
-	  }
-        | named_argument_list COMMA named_argument
-	  {	  
-		ArrayList args = (ArrayList) $1;
-		args.Add ($3);
-
-		$$ = args;
-	  }
-	| named_argument_list COMMA expression
-	  {
-		Report.Error (1016, ((Expression) $3).Location, "Named attribute argument expected");
-		$$ = null;
-	  }
+	| named_argument
 	;
 
-named_argument
+named_attribute_argument
 	: IDENTIFIER ASSIGN expression
 	  {
-		// FIXME: keep location
-		$$ = new DictionaryEntry (
-			((LocatedToken) $1).Value, 
-			new Argument ((Expression) $3, Argument.AType.Expression));
+		$$ = new NamedArgument ((LocatedToken) $1, (Expression) $3);	  
 	  }
 	;
+	
+named_argument
+	: IDENTIFIER COLON expression
+	  {
+		if (RootContext.Version <= LanguageVersion.V_3)
+			Report.FeatureIsNotAvailable (GetLocation ($1), "named argument");
+			
+		$$ = new NamedArgument ((LocatedToken) $1, (Expression) $3);
+	  }	  
+	;	
 
 		  
 class_body
@@ -3213,6 +3199,9 @@ argument_list
 	| argument_list COMMA argument
 	  {
 		ArrayList list = (ArrayList) $1;
+		if (!($3 is NamedArgument) && list [list.Count - 1] is NamedArgument)
+			Error_NamedArgumentExpected ((NamedArgument) list [list.Count - 1]);
+		
 		list.Add ($3);
 		$$ = list;
 	  }
@@ -3234,9 +3223,7 @@ argument
 		$$ = new Argument ((Expression) $1, Argument.AType.Expression);
 	  }
 	| non_simple_argument
-	  {
-		$$ = $1;
-	  }
+	| named_argument	
 	;
 
 non_simple_argument
@@ -3268,7 +3255,7 @@ non_simple_argument
 	;
 
 variable_reference
-	: expression { note ("section 5.4"); $$ = $1; }
+	: expression
 	;
 
 element_access
@@ -5868,7 +5855,7 @@ struct OperatorDeclaration {
 	}
 }
 
-void Error_ExpectingTypeName (Expression expr)
+static void Error_ExpectingTypeName (Expression expr)
 {
 	if (expr is Invocation){
 		Report.Error (1002, expr.Location, "Expecting `;'");
@@ -5892,6 +5879,11 @@ static void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier m
 static void Error_TypeExpected (Location loc)
 {
 	Report.Error (1031, loc, "Type expected");
+}
+
+static void Error_NamedArgumentExpected (NamedArgument a)
+{
+	Report.Error (1738, a.Name.Location, "Named arguments must appear after the positional arguments");
 }
 
 void push_current_class (TypeContainer tc, object partial_token)
@@ -6087,11 +6079,6 @@ static bool IsUnaryOperator (Operator.OpType op)
 void syntax_error (Location l, string msg)
 {
 	Report.Error (1003, l, "Syntax error, " + msg);
-}
-
-void note (string s)
-{
-	// Used to put annotations
 }
 
 Tokenizer lexer;

@@ -1177,7 +1177,7 @@ namespace Mono.CSharp {
 				pos.Add (new Argument (new MemberAccess (new MemberAccess (system_security_permissions, "SecurityAction", loc), "RequestMinimum")));
 
 				ArrayList named = new ArrayList (1);
-				named.Add (new DictionaryEntry ("SkipVerification", new Argument (new BoolLiteral (true, loc))));
+				named.Add (new NamedArgument (new LocatedToken (loc, "SkipVerification"), (new BoolLiteral (true, loc))));
 
 				GlobalAttribute g = new GlobalAttribute (new NamespaceEntry (null, null, null), "assembly", system_security_permissions,
 					"SecurityPermissionAttribute", new object[] { pos, named }, loc, false);

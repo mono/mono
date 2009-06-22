@@ -200,18 +200,19 @@ namespace Mono.CSharp {
 			owner.OptAttributes = null;
 		}
 
-		void Error_InvalidNamedArgument (string name)
+		void Error_InvalidNamedArgument (NamedArgument name)
 		{
-			Report.Error (617, Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
+			Report.Error (617, name.Name.Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
 				      "must be fields which are not readonly, static, const or read-write properties which are " +
 				      "public and not static",
-			      name);
+			      name.Name.Value);
 		}
 
-		void Error_InvalidNamedAgrumentType (string name)
+		void Error_InvalidNamedArgumentType (NamedArgument name)
 		{
-			Report.Error (655, Location, "`{0}' is not a valid named attribute argument because it is not a valid " +
-				      "attribute parameter type", name);
+			Report.Error (655, name.Name.Location,
+				"`{0}' is not a valid named attribute argument because it is not a valid attribute parameter type",
+				name.Name.Value);
 		}
 
 		public static void Error_AttributeArgumentNotValid (Location loc)
@@ -377,14 +378,14 @@ namespace Mono.CSharp {
 			if (NamedArguments == null) {
 				NamedArguments = new ArrayList (1);
 			} else {
-				foreach (DictionaryEntry de in NamedArguments) {
-					if ((string)de.Key == CharSetEnumMember)
+				foreach (NamedArgument a in NamedArguments) {
+					if (a.Name.Value == CharSetEnumMember)
 						return;
 				}
 			}
 			
-			NamedArguments.Add (new DictionaryEntry (CharSetEnumMember,
-				new Argument (Constant.CreateConstant (typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location))));
+			NamedArguments.Add (new NamedArgument (new LocatedToken (loc, CharSetEnumMember),
+				Constant.CreateConstant (typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location)));
  		}
 
 		public CustomAttributeBuilder Resolve ()
@@ -558,29 +559,28 @@ namespace Mono.CSharp {
 			ArrayList field_values = new ArrayList (named_arg_count);
 			ArrayList prop_values = new ArrayList (named_arg_count);
 
-			ArrayList seen_names = new ArrayList(named_arg_count);
+			ArrayList seen_names = new ArrayList (named_arg_count);
 			
-			foreach (DictionaryEntry de in NamedArguments) {
-				string member_name = (string) de.Key;
+			foreach (NamedArgument a in NamedArguments) {
+				string name = a.Name.Value;
+				if (seen_names.Contains (name)) {
+					Report.Error (643, a.Name.Location, "Duplicate named attribute `{0}' argument", name);
+					continue;
+				}			
+	
+				seen_names.Add (name);
 
-				if (seen_names.Contains(member_name)) {
-					Report.Error(643, Location, "'{0}' duplicate named attribute argument", member_name);
-					return false;
-				}				
-				seen_names.Add(member_name);
-
-				Argument a = (Argument) de.Value;
 				if (!a.Resolve (ec, Location))
 					return false;
 
 				Expression member = Expression.MemberLookup (
-					ec.ContainerType, Type, member_name,
+					ec.ContainerType, Type, name,
 					MemberTypes.All,
 					BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static,
 					Location);
 
 				if (member == null) {
-					member = Expression.MemberLookup (ec.ContainerType, Type, member_name,
+					member = Expression.MemberLookup (ec.ContainerType, Type, name,
 						MemberTypes.All, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static,
 						Location);
 
@@ -592,12 +592,12 @@ namespace Mono.CSharp {
 				}
 
 				if (member == null){
-					Expression.Error_TypeDoesNotContainDefinition (Location, Type, member_name);
+					Expression.Error_TypeDoesNotContainDefinition (Location, Type, name);
 					return false;
 				}
 				
 				if (!(member is PropertyExpr || member is FieldExpr)) {
-					Error_InvalidNamedArgument (member_name);
+					Error_InvalidNamedArgument (a);
 					return false;
 				}
 
@@ -613,13 +613,13 @@ namespace Mono.CSharp {
 
 					if (!pi.CanWrite || !pi.CanRead || pi.GetGetMethod ().IsStatic) {
 						Report.SymbolRelatedToPreviousError (pi);
-						Error_InvalidNamedArgument (member_name);
+						Error_InvalidNamedArgument (a);
 						return false;
 					}
 
 					if (!IsValidArgumentType (member.Type)) {
 						Report.SymbolRelatedToPreviousError (pi);
-						Error_InvalidNamedAgrumentType (member_name);
+						Error_InvalidNamedArgumentType (a);
 						return false;
 					}
 
@@ -640,13 +640,13 @@ namespace Mono.CSharp {
 					FieldInfo fi = ((FieldExpr) member).FieldInfo;
 
 					if (fi.IsInitOnly || fi.IsStatic) {
-						Error_InvalidNamedArgument (member_name);
+						Error_InvalidNamedArgument (a);
 						return false;
 					}
 
 					if (!IsValidArgumentType (member.Type)) {
 						Report.SymbolRelatedToPreviousError (fi);
-						Error_InvalidNamedAgrumentType (member_name);
+						Error_InvalidNamedArgumentType (a);
 						return false;
 					}
 
@@ -1288,9 +1288,7 @@ namespace Mono.CSharp {
 				if (NamedArguments == null)
 					return;
 			
-				foreach (DictionaryEntry de in NamedArguments) {
-					Argument arg  = (Argument) de.Value;
-
+				foreach (NamedArgument arg in NamedArguments) {
 					// Type is undefined (was error 246)
 					if (arg.Type == null)
 						return;
