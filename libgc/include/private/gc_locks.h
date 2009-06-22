@@ -565,7 +565,7 @@
 #     endif /* ALPHA */
 #     if defined(S390)
 #      if !defined(GENERIC_COMPARE_AND_SWAP)
-         inline static GC_bool GC_compare_and_exchange(volatile C_word *addr,
+         inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
                                          GC_word old, GC_word new_val)
          {
            int retval;

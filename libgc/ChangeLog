@@ -1,3 +1,7 @@
+2009-06-22  Neale Ferguson <neale@sinenomine.net>
+
+	* include/private/gc_locks.h: Fix typo in 390 version of GC_compare_and_exchange
+
 2009-06-16  Geoff Norton  <gnorton@novell.com>
 
 	* include/private/gcconfig.h:  Disable static scanning on this platform
