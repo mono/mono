@@ -1,3 +1,19 @@
+2009-06-22  Bill Holmes  <billholmes54@gmail.com>
+
+	* object-internals.h : Adding interrupt_on_stop field.
+
+	* threads.c (mono_thread_request_interruption) : On Windows exit the
+	  thread if interrupt_on_stop is set.
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Accept_internal) :
+	 Removing old interrupt logic and setting the interrupt_on_stop for the
+	 thread when calling accept.
+
+	* socket-io.c (ves_icall_System_Net_Sockets_Socket_Receive_internal) :
+	 setting the interrupt_on_stop for the thread when calling accept.
+
+	Contributed under MIT/X11 license.
+
 2009-06-20  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_MINOR_VERSION): Bump to 3.
