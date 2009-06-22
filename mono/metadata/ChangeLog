@@ -1,5 +1,10 @@
 2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (verify_param_table): Fix a crash for assemblies
+	without methods.
+
+2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_constant): Fix the string length check.
 	Use safe overflow checking. Add decent error messages.
 
