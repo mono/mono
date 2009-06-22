@@ -1,3 +1,10 @@
+2009-06-22  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Managed allocation with pthreads TLS.
+
+	* threads.c, threads-types.h: Functions for the JIT to tell the
+	runtime whether it supports the MONO_TLS opcode.
+
 2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (verify_param_table): Fix a crash for assemblies
