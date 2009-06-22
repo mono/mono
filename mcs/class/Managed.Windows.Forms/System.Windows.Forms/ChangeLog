@@ -1,3 +1,9 @@
+2009-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When handling WM_CHAR, process the message first, and
+	send it to the textbox only if it wasn't handled.
+	Fixes #507459.
+
 2009-06-18  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ComboBox.cs: Only do my big sort at the end of AddRange if

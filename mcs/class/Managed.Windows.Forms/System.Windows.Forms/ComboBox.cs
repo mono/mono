@@ -1396,9 +1396,10 @@ namespace System.Windows.Forms
 					break;
 				goto case Msg.WM_CHAR;
 			case Msg.WM_CHAR:
-				if (textbox_ctrl != null)
+				// Call our own handler first and send the message to the TextBox if still needed
+				if (!ProcessKeyMessage (ref m) && textbox_ctrl != null)
 					XplatUI.SendMessage (textbox_ctrl.Handle, (Msg) m.Msg, m.WParam, m.LParam);
-				break;
+				return;
 			case Msg.WM_MOUSELEAVE:
 				Point location = PointToClient (Control.MousePosition);
 				if (ClientRectangle.Contains (location))
