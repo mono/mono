@@ -1,5 +1,10 @@
 2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (is_valid_constant): Fix the string length check.
+	Use safe overflow checking. Add decent error messages.
+
+2009-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Move remaininh blob checks to the offline
 	verification path.
 
