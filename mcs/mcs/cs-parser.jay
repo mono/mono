@@ -810,11 +810,15 @@ attribute_arguments
 	: /* empty */ 		{ $$ = null; } 
 	| positional_or_named_argument
 	  {
-		$$ = new object [] { new ArrayList (4) { $1 }, null };	  
+	  	ArrayList a = new ArrayList (4);
+		a.Add ($1);
+		$$ = new object [] { a, null };
 	  }
 	| named_attribute_argument
 	  {
-		$$ = new object [] { null, new ArrayList (4) { $1 } };		
+	  	ArrayList a = new ArrayList (4);
+		a.Add ($1);  
+		$$ = new object [] { null, a };
 	  }
     | attribute_arguments COMMA positional_or_named_argument
 	  {
@@ -844,7 +848,7 @@ attribute_arguments
 positional_or_named_argument
 	: expression
 	  {
-	  	$$ = new Argument ((Expression) $1, Argument.AType.Expression);
+	  	$$ = new Argument ((Expression) $1);
 	  }
 	| named_argument
 	;
@@ -3220,7 +3224,7 @@ argument_list
 argument
 	: expression
 	  {
-		$$ = new Argument ((Expression) $1, Argument.AType.Expression);
+		$$ = new Argument ((Expression) $1);
 	  }
 	| non_simple_argument
 	| named_argument	
@@ -3241,16 +3245,15 @@ non_simple_argument
 		Argument[] args = new Argument [list.Count];
 		list.CopyTo (args, 0);
 
-		Expression expr = new Arglist (args, (Location) $1);
-		$$ = new Argument (expr, Argument.AType.Expression);
+		$$ = new Argument (new Arglist (args, (Location) $1));
 	  }
 	| ARGLIST open_parens_any CLOSE_PARENS
 	  {
-		$$ = new Argument (new Arglist ((Location) $1), Argument.AType.Expression);
+		$$ = new Argument (new Arglist ((Location) $1));
 	  }	  
 	| ARGLIST
 	  {
-		$$ = new Argument (new ArglistAccess ((Location) $1), Argument.AType.ArgList);
+		$$ = new Argument (new ArglistAccess ((Location) $1));
 	  }
 	;
 
