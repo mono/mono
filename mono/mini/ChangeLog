@@ -1,3 +1,10 @@
+
+Fri Apr 24 16:44:08 CEST 2009 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, genmdesc.c, genmdesc.pl: tiny refactor to allow
+	multiple machine description files to be specified.
+	* mini-ops.h: fixes for cross-compilation.
+
 2009-06-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_merge_basic_blocks): Fix the case when bbn
