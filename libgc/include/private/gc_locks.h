@@ -583,6 +583,7 @@
            return retval == 0;
          }
 #      endif
+#      define GC_memory_barrier()
 #     endif
 #     if !defined(GENERIC_COMPARE_AND_SWAP)
         /* Returns the original value of *addr.	*/
