@@ -1,3 +1,7 @@
+2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InputOrReplyRequestProcessor.cs : bogus initialization.
+
 2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : significant changes:

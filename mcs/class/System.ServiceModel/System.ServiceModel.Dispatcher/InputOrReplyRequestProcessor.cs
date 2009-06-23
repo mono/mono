@@ -15,7 +15,7 @@ namespace System.ServiceModel.Dispatcher
 
 		public InputOrReplyRequestProcessor (DispatchRuntime runtime, IChannel replyOrInput)
 		{
-			Init (runtime, reply_or_input);
+			Init (runtime, replyOrInput);
 
 			//initialization
 			InitializeChain.AddHandler (new InitializingHandler ());
