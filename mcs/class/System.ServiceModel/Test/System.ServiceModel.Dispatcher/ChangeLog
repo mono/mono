@@ -1,3 +1,10 @@
+2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcherTest.cs : make sure that the port to be in use is
+	  available before running the tests. Check attach state.
+	* DispatchRuntimeTest.cs : make sure that it runs through all the
+	  behavior tests.
+
 2009-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DispatchRuntimeTest.cs : add reasonable timeout and close client

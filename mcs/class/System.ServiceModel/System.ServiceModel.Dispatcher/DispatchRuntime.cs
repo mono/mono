@@ -84,8 +84,6 @@ namespace System.ServiceModel.Dispatcher
 			callback_client_runtime = new ClientRuntime (this);
 			unhandled_dispatch_oper = new DispatchOperation (
 				this, "*", "*", "*");
-			// FIXME: this should be null by default.
-			instance_context_provider = new DefaultInstanceContextProvider ();
 		}
 
 		public AuditLogLocation SecurityAuditLogLocation {

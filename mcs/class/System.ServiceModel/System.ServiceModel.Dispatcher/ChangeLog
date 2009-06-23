@@ -1,5 +1,11 @@
 2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DispatchRuntime.cs : do not fill InstanceContextProvider here.
+	* ChannelDispatcher.cs : do it here instead.
+	* ChannelDispatcherCollection.cs : remove TODOs.
+
+2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* InputOrReplyRequestProcessor.cs : bogus initialization.
 
 2009-06-18  Atsushi Enomoto  <atsushi@ximian.com>

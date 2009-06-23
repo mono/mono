@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using NUnit.Framework;
 using System.ServiceModel;
@@ -14,6 +15,19 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 	[TestFixture]
 	public class ChannelDispatcherTest
 	{
+		Uri CreateAvailableUri (string uriString)
+		{
+			var uri = new Uri (uriString);
+			try {
+				var t = new TcpListener (uri.Port);
+				t.Start ();
+				t.Stop ();
+			} catch (Exception ex) {
+				Assert.Fail ("Port {0} is not open. It is likely previous tests have failed and the port is kept opened");
+			}
+			return uri;
+		}
+
 		[Test]
 		public void ConstructorNullBindingName ()
 		{
@@ -28,7 +42,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			var st = cd.ServiceThrottle;
 			Assert.IsNull (st, "#0");
 
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			h.AddServiceEndpoint (typeof (TestContract).FullName, new BasicHttpBinding (), "address");
 			h.ChannelDispatchers.Add (cd);
@@ -53,7 +67,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[Test]			
 		public void Collection_Add_Remove () {
 			Console.WriteLine ("STart test Collection_Add_Remove");
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			h.AddServiceEndpoint (typeof (TestContract).FullName, new BasicHttpBinding (), "address");
 			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
@@ -71,7 +85,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[Test]
 		public void EndpointDispatcherAddTest ()
 		{
-			var uri = new Uri ("http://localhost:8080");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
 			d.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
 		}
@@ -79,7 +93,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))] 
 		public void EndpointDispatcherAddTest2 () {
-			var uri = new Uri ("http://localhost:8080");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
 			d.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
 			d.Open (); // the dispatcher must be attached.
@@ -89,7 +103,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void EndpointDispatcherAddTest3 ()
 		{
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			MyChannelDispatcher d = new MyChannelDispatcher (new MyChannelListener (uri));
 			d.Endpoints.Add (new EndpointDispatcher (new EndpointAddress (uri), "", ""));
@@ -101,7 +115,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[ExpectedException (typeof (InvalidOperationException))] // i.e. it is thrown synchronously in current thread.
 		public void EndpointDispatcherAddTest4 ()
 		{
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			var listener = new MyChannelListener (uri);
 			MyChannelDispatcher d = new MyChannelDispatcher (listener);
@@ -132,7 +146,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[ExpectedException (typeof (InvalidOperationException))] // i.e. it is thrown synchronously in current thread.
 		public void EndpointDispatcherAddTest5 ()
 		{
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			var binding = new BasicHttpBinding ();
 			var listener = new MyChannelListener (uri);
@@ -154,25 +168,27 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[Test]
 		public void EndpointDispatcherAddTest6 ()
 		{
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			var binding = new BasicHttpBinding ();
 			var listener = new MyChannelListener<IReplyChannel> (uri);
 			MyChannelDispatcher d = new MyChannelDispatcher (listener);
 			var ed = new EndpointDispatcher (new EndpointAddress (uri), "", "");
 			d.Endpoints.Add (ed);
+			Assert.IsFalse (d.Attached, "#x1");
 
 			ed.DispatchRuntime.Type = typeof (TestContract);
 
 			d.MessageVersion = MessageVersion.Default;
 			h.ChannelDispatchers.Add (d);
+			Assert.IsTrue (d.Attached, "#x2");
 			d.Open (); // At this state, it does *not* call AcceptChannel() yet.
 			Assert.IsFalse (listener.AcceptChannelTried, "#1");
 			Assert.IsFalse (listener.WaitForChannelTried, "#2");
 
 			Assert.IsNotNull (ed.DispatchRuntime, "#3");
 			Assert.IsNull (ed.DispatchRuntime.InstanceProvider, "#4");
-			Assert.IsNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it is not set after ChannelDispatcher.Open().
+			Assert.IsNull (ed.DispatchRuntime.InstanceContextProvider, "#5"); // it is not still set after ChannelDispatcher.Open().
 			Assert.IsNull (ed.DispatchRuntime.SingletonInstanceContext, "#6");
 
 			d.Close (); // we don't have to even close it.
@@ -182,7 +198,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void EndpointDispatcherAddTest7 ()
 		{
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			var binding = new BasicHttpBinding ();
 			var listener = new MyChannelListener<IReplyChannel> (uri);
@@ -211,7 +227,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		[Test]
 		public void EndpointDispatcherAddTest8 ()
 		{
-			var uri = new Uri ("http://localhost:37564");
+			var uri = CreateAvailableUri ("http://localhost:37564");
 			ServiceHost h = new ServiceHost (typeof (TestContract), uri);
 			var binding = new BasicHttpBinding ();
 			var listener = new MyChannelListener<IReplyChannel> (uri);

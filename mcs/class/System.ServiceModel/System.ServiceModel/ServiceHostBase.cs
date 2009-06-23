@@ -83,7 +83,6 @@ namespace System.ServiceModel
 			return new Uri (baseUri, relatieUri);
 		}
 
-		[MonoTODO]
 		public ChannelDispatcherCollection ChannelDispatchers {
 			get { return channel_dispatchers; }
 		}

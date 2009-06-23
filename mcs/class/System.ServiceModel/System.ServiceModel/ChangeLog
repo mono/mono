@@ -1,5 +1,9 @@
 2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : remove more TODO.
+
+2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* OperationContext.cs : implement SessionId.
 	* ServiceHostBase.cs : implement open/close async methods.
 	  remove some TODOs.

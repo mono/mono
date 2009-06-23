@@ -319,6 +319,10 @@ namespace System.ServiceModel.Dispatcher
 
 			public void Start ()
 			{
+				foreach (var ed in owner.Endpoints)
+					if (ed.DispatchRuntime.InstanceContextProvider == null)
+						ed.DispatchRuntime.InstanceContextProvider = new DefaultInstanceContextProvider ();
+
 				if (loop_thread == null)
 					loop_thread = new Thread (new ThreadStart (Loop));
 				loop_thread.Start ();

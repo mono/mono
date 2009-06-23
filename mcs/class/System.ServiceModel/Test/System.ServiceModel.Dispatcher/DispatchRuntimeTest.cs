@@ -103,11 +103,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			b.msgInspect = new MyMessageInspector (res);
 			string expected = "GetExistingInstanceContext , InitializeInstanceContext , OperationContext , InstanceContext = Opening , Initialize , OperationContext , InstanceContext = Opening , AfterReceiveRequest , OperationContext , InstanceContext = Opened , BeforeSendReply , OperationContext , InstanceContext = Opened , IsIdle , OperationContext , InstanceContext = Opened , NotifyIdle , OperationContext , InstanceContext = Opened , ";
 			TestInstanceBehavior (b, expected, res, 1);
+			Assert.IsTrue (res.Done, "done");
 		}
 
-		[Test]		
-		public void TestInstanceBehavior2 () {
-
+		[Test]
+		public void TestInstanceBehavior2 ()
+		{
 			Result res = new Result ();
 			MessageInspectBehavior b = new MessageInspectBehavior ();
 			b.instanceCtxInitializer = new MyInstanceContextInitializer (res);
@@ -116,11 +117,12 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			b.msgInspect = new MyMessageInspector (res);
 			string expected = "GetExistingInstanceContext , InitializeInstanceContext , OperationContext , InstanceContext = Opening , Initialize , OperationContext , InstanceContext = Opening , AfterReceiveRequest , OperationContext , InstanceContext = Opened , GetInstance1 , OperationContext , InstanceContext = Opened , BeforeSendReply , OperationContext , InstanceContext = Opened , ReleaseInstance , OperationContext , InstanceContext = Opened , IsIdle , OperationContext , InstanceContext = Opened , NotifyIdle , OperationContext , InstanceContext = Opened , ";
 			TestInstanceBehavior (b, expected, res, 1);
+			Assert.IsTrue (res.Done, "done");
 		}
 
-		[Test]		
-		public void TestInstanceBehavior3 () {
-
+		[Test]
+		public void TestInstanceBehavior3 ()
+		{
 			Result res = new Result ();
 			MessageInspectBehavior b = new MessageInspectBehavior ();
 			b.instanceCtxInitializer = new MyInstanceContextInitializer (res);
@@ -131,13 +133,13 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			b.instanceProvider = new MyInstanceProvider (new AllActions (res), res);
 			b.msgInspect = new MyMessageInspector (res);
 			string expected = "GetExistingInstanceContext , InitializeInstanceContext , OperationContext , InstanceContext = Opening , Initialize , OperationContext , InstanceContext = Opening , AfterReceiveRequest , OperationContext , InstanceContext = Opened , BeforeSendReply , OperationContext , InstanceContext = Opened , ";
-			TestInstanceBehavior (b, expected, res, 1);			
+			TestInstanceBehavior (b, expected, res, 1);					Assert.IsTrue (res.Done, "done");
 		}
 
 		[Test]
 		[Category ("NotWorking")]
-		public void TestInstanceBehavior4 () {
-
+		public void TestInstanceBehavior4 ()
+		{
 			Result res = new Result ();
 			MessageInspectBehavior b = new MessageInspectBehavior ();
 			b.instanceCtxInitializer = new MyInstanceContextInitializer (res);	
@@ -146,10 +148,11 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			b.instanceProvider = new MyInstanceProvider (new AllActions (res), res);
 			b.msgInspect = new MyMessageInspector (res);
 			string expected = "GetExistingInstanceContext , InitializeInstanceContext , OperationContext , InstanceContext = Opening , Initialize , OperationContext , InstanceContext = Opening , AfterReceiveRequest , OperationContext , InstanceContext = Opened , GetInstance1 , OperationContext , InstanceContext = Opened , BeforeSendReply , OperationContext , InstanceContext = Opened , ReleaseInstance , OperationContext , InstanceContext = Opened , IsIdle , OperationContext , InstanceContext = Opened , NotifyIdle , OperationContext , InstanceContext = Opened , GetExistingInstanceContext , InitializeInstanceContext , OperationContext , InstanceContext = Opening , Initialize , OperationContext , InstanceContext = Opening , AfterReceiveRequest , OperationContext , InstanceContext = Opened , GetInstance1 , OperationContext , InstanceContext = Opened , BeforeSendReply , OperationContext , InstanceContext = Opened , ReleaseInstance , OperationContext , InstanceContext = Opened , IsIdle , OperationContext , InstanceContext = Opened , NotifyIdle , OperationContext , InstanceContext = Opened , ";
-			TestInstanceBehavior (b, expected, res, 2);			
+			TestInstanceBehavior (b, expected, res, 2);					Assert.IsTrue (res.Done, "done");
 		}
 
-		void TestInstanceBehavior (MessageInspectBehavior b, string expected, Result actual, int invocations) {
+		void TestInstanceBehavior (MessageInspectBehavior b, string expected, Result actual, int invocations)
+		{
 			ServiceHost h = new ServiceHost (typeof (AllActions), new Uri ("http://localhost:8080"));
 			try {
 				h.AddServiceEndpoint (typeof (IAllActions).FullName, new BasicHttpBinding (), "AllActions");
@@ -165,7 +168,9 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 				//let ther server finish his work
 				Thread.Sleep (100);
+Console.WriteLine (actual.string_res);
 				Assert.AreEqual (expected, actual.string_res);
+				actual.Done = true;
 			}
 			finally {				
 				h.Close ();
@@ -327,6 +332,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 
 	public class Result
 	{
+		public bool Done;
 		public string string_res = "";
 
 		public void AddCurrentOperationContextInfo()
