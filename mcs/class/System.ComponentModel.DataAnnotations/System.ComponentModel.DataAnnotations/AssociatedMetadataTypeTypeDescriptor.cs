@@ -28,15 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace System.ComponentModel.DataAnnotations
 {
-	// This class currently adds no functionality to its base class.
 	class AssociatedMetadataTypeTypeDescriptor : CustomTypeDescriptor
 	{
 		Type type;
 		Type associatedMetadataType;
+		bool associatedMetadataTypeChecked;
+		PropertyDescriptorCollection properties;
+		
+		Type AssociatedMetadataType {
+			get {
+				if (!associatedMetadataTypeChecked && associatedMetadataType == null)
+					associatedMetadataType = FindMetadataType ();
+
+				return associatedMetadataType;
+			}
+		}
 		
 		public AssociatedMetadataTypeTypeDescriptor (ICustomTypeDescriptor parent, Type type)
 			: this (parent, type, null)
@@ -48,6 +60,109 @@ namespace System.ComponentModel.DataAnnotations
 		{
 			this.type = type;
 			this.associatedMetadataType = associatedMetadataType;
+		}
+
+		void CopyAttributes (object[] from, List <Attribute> to)
+		{
+			foreach (object o in from) {
+				Attribute a = o as Attribute;
+				if (a == null)
+					continue;
+
+				to.Add (a);
+			}
+		}
+		
+		public override AttributeCollection GetAttributes ()
+		{
+			var attributes = new List <Attribute> ();
+			CopyAttributes (type.GetCustomAttributes (true), attributes);
+			
+			Type metaType = AssociatedMetadataType;
+			if (metaType != null) 
+				CopyAttributes (metaType.GetCustomAttributes (true), attributes);
+			
+			return new AttributeCollection (attributes.ToArray ());
+		}
+
+		public override PropertyDescriptorCollection GetProperties ()
+		{
+			// Code partially copied from TypeDescriptor.TypeInfo.GetProperties
+			if (properties != null)
+                                return properties;
+
+			Dictionary <string, MemberInfo> metaMembers = null;
+                        var propertiesHash = new Dictionary <string, bool> (); // name - null
+                        var propertiesList = new List <AssociatedMetadataTypePropertyDescriptor> ();
+                        Type currentType = type;
+			Type metaType = AssociatedMetadataType;
+
+			if (metaType != null) {
+				metaMembers = new Dictionary <string, MemberInfo> ();
+				MemberInfo[] members = metaType.GetMembers (BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+
+				foreach (MemberInfo member in members) {
+					switch (member.MemberType) {
+						case MemberTypes.Field:
+						case MemberTypes.Property:
+							break;
+
+						default:
+							continue;
+					}
+
+					string name = member.Name;
+					if (metaMembers.ContainsKey (name))
+						continue;
+
+					metaMembers.Add (name, member);
+				}
+			}
+			
+                        // Getting properties type by type, because in the case of a property in the child type, where
+                        // the "new" keyword is used and also the return type is changed Type.GetProperties returns 
+                        // also the parent property. 
+                        // 
+                        // Note that we also have to preserve the properties order here.
+                        // 
+                        while (currentType != null && currentType != typeof (object)) {
+                                PropertyInfo[] props = currentType.GetProperties (BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                                foreach (PropertyInfo property in props) {
+					string propName = property.Name;
+					
+                                        if (property.GetIndexParameters ().Length == 0 && property.CanRead && !propertiesHash.ContainsKey (propName)) {
+						MemberInfo metaMember;
+
+						if (metaMembers != null)
+							metaMembers.TryGetValue (propName, out metaMember);
+						else
+							metaMember = null;
+                                                propertiesList.Add (new AssociatedMetadataTypePropertyDescriptor (property, metaMember));
+                                                propertiesHash.Add (propName, true);
+                                        }
+                                }
+                                currentType = currentType.BaseType;
+                        }
+
+                        properties = new PropertyDescriptorCollection ((PropertyDescriptor[]) propertiesList.ToArray (), true);
+                        return properties;
+		}
+		
+		Type FindMetadataType ()
+		{
+			associatedMetadataTypeChecked = true;
+			if (type == null)
+				return null;
+			
+			object[] attrs = type.GetCustomAttributes (typeof (MetadataTypeAttribute), true);
+			if (attrs == null || attrs.Length == 0)
+				return null;
+
+			var attr = attrs [0] as MetadataTypeAttribute;
+			if (attr == null)
+				return null;
+
+			return attr.MetadataClassType;
 		}
 	}
 }

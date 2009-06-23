@@ -772,9 +772,9 @@ public sealed class TypeDescriptor
 		}
 
 		if (ret == null)
-			ret = new DefaultTypeDescriptionProvider ();
-		
-		return new WrappedTypeDescriptionProvider (ret);
+			return new DefaultTypeDescriptionProvider ();
+		else
+			return new WrappedTypeDescriptionProvider (ret);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -792,9 +792,9 @@ public sealed class TypeDescriptor
 		}
 
 		if (ret == null)
-			ret = new DefaultTypeDescriptionProvider ();
-		
-		return new WrappedTypeDescriptionProvider (ret);
+			return new DefaultTypeDescriptionProvider ();
+		else
+			return new WrappedTypeDescriptionProvider (ret);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -1134,6 +1134,22 @@ public sealed class TypeDescriptor
 			this.instance = instance;
 		}
 
+		public override AttributeCollection GetAttributes ()
+		{
+			var wrapped = owner as WrappedTypeDescriptionProvider;
+
+			if (wrapped != null)
+				return wrapped.Wrapped.GetTypeDescriptor (objectType, instance).GetAttributes ();
+
+			if (instance != null)
+				return TypeDescriptor.GetAttributes (instance, false);
+
+			if (objectType != null)
+				return TypeDescriptor.GetTypeInfo (objectType).GetAttributes ();
+			
+			return base.GetAttributes ();
+		}
+		
 		public override string GetClassName ()
 		{
 			var wrapped = owner as WrappedTypeDescriptionProvider;
@@ -1161,6 +1177,22 @@ public sealed class TypeDescriptor
 
 			return ret;
 		}
+
+		public override PropertyDescriptorCollection GetProperties ()
+		{
+			var wrapped = owner as WrappedTypeDescriptionProvider;
+
+			if (wrapped != null)
+				return wrapped.Wrapped.GetTypeDescriptor (objectType, instance).GetProperties ();
+
+			if (instance != null)
+				return TypeDescriptor.GetProperties (instance, null, false);
+
+			if (objectType != null)
+				return TypeDescriptor.GetTypeInfo (objectType).GetProperties (null);
+
+			return base.GetProperties ();
+		}		
 	}
 
 	sealed class DefaultTypeDescriptionProvider : TypeDescriptionProvider

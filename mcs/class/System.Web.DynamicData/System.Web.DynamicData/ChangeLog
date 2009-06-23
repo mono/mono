@@ -1,3 +1,20 @@
+2009-06-23  Marek Habersack  <mhabersack@novell.com>
+
+	* MetaTable.cs: constructor now takes ContextConfiguration instead
+	of a boolean and uses the config to determine value of the
+	ScaffoldAllTables property. Also, if context config is present,
+	makes sure to register the associated type description provider
+	(if any) with TypeDescriptor.
+
+	* MetaModel.cs: no longer uses local cache for description
+	providers. Uses TypeDescriptor.{Add,Get}Provider now.
+
+	* MetaColumn.cs: fixed Scaffold to match tests - IsGenerated and
+	IsCustomProperty take precedence over Table.ScaffoldAllTables.
+	GetDataFieldAttribute doesn't use AttributeCollection indexer, as
+	the latter would create a default instance of the requested
+	attribute, which is not what we want here.
+
 2009-06-17  Marek Habersack  <mhabersack@novell.com>
 
 	* MetaTable.cs: fixed Scaffold implementation.

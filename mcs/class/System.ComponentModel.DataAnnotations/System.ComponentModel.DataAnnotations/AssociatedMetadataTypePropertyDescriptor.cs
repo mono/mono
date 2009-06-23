@@ -1,10 +1,10 @@
 //
-// UIHintAttribute.cs
+// AssociatedMetadataTypeTypeDescriptionProvider.cs
 //
 // Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2009 Novell Inc. http://novell.com
 //
 
 //
@@ -28,45 +28,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace System.ComponentModel.DataAnnotations
 {
-	public abstract class ValidationAttribute : Attribute
+	class AssociatedMetadataTypePropertyDescriptor : ReflectionPropertyDescriptor
 	{
-		protected ValidationAttribute ()
-			: this ("This member is required")
+		MemberInfo metaTypeMember;
+		
+		public AssociatedMetadataTypePropertyDescriptor (PropertyInfo typeProperty, MemberInfo metaTypeMember)
+			: base (typeProperty)
 		{
+			this.metaTypeMember = metaTypeMember;
 		}
-
-		[MonoTODO]
-		protected ValidationAttribute (Func<string> errorMessageAccessor)
+		
+		protected override void FillAttributes (IList attributeList)
 		{
-			throw new NotImplementedException ();
-		}
+			base.FillAttributes (attributeList);
+			if (metaTypeMember == null)
+				return;
+			
+			object[] attributes = metaTypeMember.GetCustomAttributes (false);
+			if (attributes == null || attributes.Length == 0)
+				return;
 
-		protected ValidationAttribute (string errorMessage)
-		{
-			ErrorMessage = errorMessage;
-		}
+			foreach (object o in attributes) {
+				var attr = o as Attribute;
+				if (attr == null)
+					continue;
 
-		[MonoTODO]
-		public virtual string FormatErrorMessage (string name)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public string ErrorMessage { get; set; }
-		public string ErrorMessageResourceName { get; set; }
-		public Type ErrorMessageResourceType { get; set; }
-		protected string ErrorMessageString { get; private set; }
-
-		public abstract bool IsValid (object value);
-
-		[MonoTODO]
-		public void Validate (object value, string name)
-		{
-			throw new NotImplementedException ();
+				attributeList.Add (attr);
+			}
 		}
 	}
 }

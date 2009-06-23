@@ -46,12 +46,10 @@ namespace System.Web.DynamicData
 	public class MetaModel
 	{
 		static object registered_models_lock = new object ();
-		static object description_providers_lock = new object ();
 		
 		static MetaModel default_model;
 		static Exception registration_exception;
 		static Dictionary<Type, MetaModel> registered_models;
-		static Dictionary<Type, TypeDescriptionProvider> description_providers;
 		
 		public static MetaModel Default {
 			get { return default_model; }
@@ -133,13 +131,6 @@ namespace System.Web.DynamicData
 
 		internal static ICustomTypeDescriptor GetTypeDescriptor (Type type)
 		{
-			lock (description_providers_lock) {
-				TypeDescriptionProvider provider;
-				
-				if (description_providers != null && description_providers.TryGetValue (type, out provider))
-					return provider.GetTypeDescriptor (type);
-			}
-
 			return TypeDescriptor.GetProvider (type).GetTypeDescriptor (type);
 		}
 		
@@ -165,8 +156,7 @@ namespace System.Web.DynamicData
 				throw new ArgumentNullException ("contextType");
 			CheckRegistrationError ();
 			RegisterContext (() => Activator.CreateInstance (contextType), configuration);
-			RegisterModel (contextType, this);
-			RegisterTypeDescriptionProvider (contextType, configuration);
+			RegisterModel (contextType, this, configuration);
 		}
 
 		public void RegisterContext (Func<object> contextFactory, ContextConfiguration configuration)
@@ -200,13 +190,13 @@ namespace System.Web.DynamicData
 		{
 			var l = new List<MetaTable> ();
 			foreach (var t in dataModelProvider.Tables)
-				l.Add (new MetaTable (this, t, configuration != null && configuration.ScaffoldAllTables));
+				l.Add (new MetaTable (this, t, configuration));
 			Tables = new ReadOnlyCollection<MetaTable> (l);
 			VisibleTables = l;
-			RegisterModel (dataModelProvider.ContextType, this);
+			RegisterModel (dataModelProvider.ContextType, this, configuration);
 		}
 
-		static void RegisterModel (Type contextType, MetaModel model)
+		static void RegisterModel (Type contextType, MetaModel model, ContextConfiguration configuration)
 		{
 			lock (registered_models_lock) {
 				if (registered_models == null)
@@ -217,6 +207,7 @@ namespace System.Web.DynamicData
 
 				registered_models.Add (contextType, model);
 			}
+			RegisterTypeDescriptionProvider (contextType, configuration);
 		}
 
 		static void RegisterTypeDescriptionProvider (Type type, ContextConfiguration config)
@@ -229,16 +220,7 @@ namespace System.Web.DynamicData
 			if (provider == null)
 				return;
 
-			lock (description_providers) {
-				if (description_providers == null)
-					description_providers = new Dictionary <Type, TypeDescriptionProvider> ();
-
-				if (description_providers.ContainsKey (type))
-					return;
-
-				description_providers.Add (type, provider);
-			}
-			
+			TypeDescriptor.AddProvider (provider, type);
 		}
 
 		public bool TryGetTable (string uniqueTableName, out MetaTable table)

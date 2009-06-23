@@ -1,3 +1,20 @@
+2009-06-23  Marek Habersack  <mhabersack@novell.com>
+
+	* ValidationAttribute.cs: error message must not ever be empty.
+
+	* UIHintAttribute.cs: do not throw NIEX from the constructor.
+
+	* DataTypeAttribute.cs: implemented correct DisplayFormat
+	intialization for DataType.Time.
+
+	* AssociatedMetadataTypeTypeDescriptor.cs: implemented retrieving
+	attributes of the associated metadata type, as well as merging of
+	attribute collections between metadata and main type properties.
+
+	* AssociatedMetadataTypePropertyDescriptor.cs: added. Helper class
+	which merges attributes from the metadata type (if any) with those
+	associated with property from the "main" type.
+
 2009-04-23  Marek Habersack  <mhabersack@novell.com>
 
 	* AssociatedMetadataTypeTypeDescriptor.cs: added - doesn't add any

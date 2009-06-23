@@ -1,3 +1,11 @@
+2009-06-23  Marek Habersack  <mhabersack@novell.com>
+
+	* TypeDescriptor.cs: do not wrap DefaultTypeDescriptionProvider.
+	Implemented GetAttributes and GetProperties in
+	DefaultTypeDescriptor.
+
+	* AttributeCollection.cs: make sure that attrList is never null.
+
 2009-06-22  Marek Habersack  <mhabersack@novell.com>
 
 	* WeakObjectWrapper.cs, WeakObjectWrapperComparer.cs: added - used

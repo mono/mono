@@ -316,14 +316,13 @@ namespace System.Web.DynamicData
 				}
 
 				string uiHint = UIHint;
-				if (uiHint != null && uiHint.Length > 0)
+				if (!String.IsNullOrEmpty (uiHint))
 					scaffoldReflected = true;
-				else if (Table.ScaffoldAllTables)
-					scaffoldReflected = true;
-
 				// LAMESPEC: IsForeignKeyComponent does NOT set Scaffold=false
 				else if (IsGenerated || IsCustomProperty)
 					scaffoldReflected = false;
+				else if (Table.ScaffoldAllTables)
+					scaffoldReflected = true;
 				else
 					scaffoldReflected = true;
 
@@ -491,7 +490,14 @@ namespace System.Web.DynamicData
 		{
 			if (backingField != null)
 				return;
-			backingField = Attributes [typeof (T)] as T;
+
+			foreach (Attribute attr in Attributes) {
+				if (attr == null || !typeof (T).IsAssignableFrom (attr.GetType ()))
+					continue;
+
+				backingField = attr as T;
+				break;
+			}
 		}
 
 		DisplayFormatAttribute GetDisplayFormat ()

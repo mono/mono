@@ -1,3 +1,8 @@
+2009-06-23  Marek Habersack  <mhabersack@novell.com>
+
+	* System.ComponentModel.DataAnnotations.dll.sources: added
+	System.ComponentModel.DataAnnotations/AssociatedMetadataTypePropertyDescriptor.cs
+
 2009-04-23  Marek Habersack  <mhabersack@novell.com>
 
 	* System.ComponentModel.DataAnnotations_test.dll.sources: added

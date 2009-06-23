@@ -63,12 +63,24 @@ namespace System.Web.DynamicData
 		bool displayColumnChecked;
 		bool sortColumnChecked;
 		
-		internal MetaTable (MetaModel model, TableProvider provider, bool scaffoldAllTables)
+		internal MetaTable (MetaModel model, TableProvider provider, ContextConfiguration configuration)
 		{
+			bool scaffoldAllTables;
+			
 			this.model = model;
 			Provider = provider;
-			ScaffoldAllTables = scaffoldAllTables;
-
+			if (configuration != null) {
+				ScaffoldAllTables = scaffoldAllTables = configuration.ScaffoldAllTables;
+				Func <Type, TypeDescriptionProvider> factory = configuration.MetadataProviderFactory;
+				if (factory != null) {
+					Type t = EntityType;
+					TypeDescriptionProvider p = factory (t);
+					if (p != null)
+						TypeDescriptor.AddProvider (p, t);
+				}
+			} else
+				scaffoldAllTables = false;
+			
 			var attr = Attributes [typeof (ScaffoldTableAttribute)] as ScaffoldTableAttribute;
 			Scaffold = attr != null ? attr.Scaffold : scaffoldAllTables;
 			

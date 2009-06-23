@@ -52,8 +52,6 @@ namespace System.ComponentModel.DataAnnotations
 			UIHint = uiHint;
 			PresentationLayer = presentationLayer;
 			ControlParameters = new Dictionary<string, object> ();
-
-			throw new NotImplementedException ();
 		}
 
 		public IDictionary<string, object> ControlParameters { get; private set; }

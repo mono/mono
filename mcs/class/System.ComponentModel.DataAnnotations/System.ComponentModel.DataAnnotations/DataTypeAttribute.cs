@@ -38,6 +38,22 @@ namespace System.ComponentModel.DataAnnotations
 		public DataTypeAttribute (DataType dataType)
 		{
 			DataType = dataType;
+
+			DisplayFormatAttribute displayFormat;
+			switch (dataType) {
+				case DataType.Time:
+					displayFormat = new DisplayFormatAttribute ();
+					displayFormat.ApplyFormatInEditMode = true;
+					displayFormat.ConvertEmptyStringToNull = true;
+					displayFormat.DataFormatString = "{0:t}";
+					break;
+
+				default:
+					displayFormat = null;
+					break;
+			}
+
+			DisplayFormat = displayFormat;
 		}
 
 		public DataTypeAttribute (string customDataType)

@@ -44,7 +44,8 @@ namespace System.ComponentModel
 		
 		internal AttributeCollection (ArrayList attributes)
 		{
-			attrList = attributes;
+			if (attributes != null)
+				attrList = attributes;
 		}
 		
 #if NET_2_0

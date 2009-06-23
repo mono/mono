@@ -1,3 +1,9 @@
+2009-06-23  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: added InternalsVisibleTo for
+	System.ComponentModel.DataAnnotations (needs
+	ReflectionPropertyDescriptor)
+
 2009-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Remove InternalsVisibleTo on Mono.Moonlight 
