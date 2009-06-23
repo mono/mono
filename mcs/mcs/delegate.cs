@@ -693,7 +693,7 @@ namespace Mono.CSharp {
 					// __arglist is not valid
 					throw new InternalErrorException ("__arglist modifier");
 				default:
-					atype_modifier = Argument.AType.Expression;
+					atype_modifier = 0;
 					break;
 				}
 				delegate_arguments.Add (new Argument (new TypeExpression (atype, loc), atype_modifier));
@@ -988,7 +988,7 @@ namespace Mono.CSharp {
 			args.Add (new Argument (InstanceExpr.CreateExpressionTree (ec)));
 			if (Arguments != null) {
 				foreach (Argument a in Arguments)
-					args.Add (new Argument (a.Expr.CreateExpressionTree (ec)));
+					args.Add (new Argument (a.CreateExpressionTree (ec)));
 			}
 
 			return CreateExpressionFactoryCall ("Invoke", args);

@@ -750,6 +750,19 @@ namespace Mono.CSharp {
 			return types;
 		}
 
+		//
+		// Returns the parameter information based on the name
+		//
+		public int GetParameterIndexByName (string name)
+		{
+			for (int idx = 0; idx < Count; ++idx) {
+				if (parameters [idx].Name == name)
+					return idx;
+			}
+
+			return -1;
+		}
+
 		public string GetSignatureForError ()
 		{
 			StringBuilder sb = new StringBuilder ("(");
@@ -1082,19 +1095,6 @@ namespace Mono.CSharp {
 		protected virtual void ErrorDuplicateName (Parameter p)
 		{
 			Report.Error (100, p.Location, "The parameter name `{0}' is a duplicate", p.Name);
-		}
-
-		/// <summary>
-		///    Returns the parameter information based on the name
-		/// </summary>
-		public int GetParameterIndexByName (string name)
-		{
-			for (int idx = 0; idx < Count; ++idx) {
-				if (parameters [idx].Name == name)
-					return idx;
-			}
-
-			return -1;
 		}
 
 		public bool Resolve (IResolveContext ec)

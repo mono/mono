@@ -943,7 +943,7 @@ namespace Mono.CSharp {
 				return null;
 
 			ArrayList arguments = new ArrayList (1);
-			arguments.Add (new Argument (e, Argument.AType.Expression));
+			arguments.Add (new Argument (e));
 			operator_group = operator_group.OverloadResolve (
 				ec, ref arguments, false, loc);
 
@@ -5562,7 +5562,7 @@ namespace Mono.CSharp {
 			}
 
 			ArrayList args = new ArrayList (1);
-			args.Add (new Argument (my_source, Argument.AType.Expression));
+			args.Add (new Argument (my_source));
 			
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, setter, args, loc, false, prepared);
 			
@@ -5773,7 +5773,7 @@ namespace Mono.CSharp {
 		public void EmitAddOrRemove (EmitContext ec, bool is_add, Expression source)
 		{
 			ArrayList args = new ArrayList (1);
-			args.Add (new Argument (source, Argument.AType.Expression));
+			args.Add (new Argument (source));
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, is_add ? add_accessor : remove_accessor, args, loc);
 		}
 	}

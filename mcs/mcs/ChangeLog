@@ -1,3 +1,10 @@
+2009-06-23  Marek Safar  <marek.safar@gmail.com>
+
+	* parameter.cs: Moved GetParameterIndexByName to base class.
+	
+	* expression.cs, statement.cs, ecore.cs, delegate.cs: Removed
+	unused AType. Use argument's version of GetExpressionTree.
+
 2009-06-22  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, cs-parser.jay, attribute.cs, codegen.cs: Named

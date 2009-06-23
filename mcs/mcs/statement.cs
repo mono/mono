@@ -5020,7 +5020,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Brfalse, skip);
 			}
 
-			Invocation.EmitCall (ec, false, var, TypeManager.void_dispose_void, new ArrayList (0), loc);
+			Invocation.EmitCall (ec, false, var, TypeManager.void_dispose_void, null, loc);
 
 			if (emit_null_check)
 				ig.MarkLabel (skip);
@@ -5771,7 +5771,7 @@ namespace Mono.CSharp {
 						ig.MarkLabel (call_dispose);
 					}
 
-					Invocation.EmitCall (ec, false, instance, TypeManager.void_dispose_void, new ArrayList (0), loc);
+					Invocation.EmitCall (ec, false, instance, TypeManager.void_dispose_void, null, loc);
 				}
 
 				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
