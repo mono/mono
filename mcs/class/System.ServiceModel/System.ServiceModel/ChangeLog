@@ -1,5 +1,11 @@
 2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* OperationContext.cs : implement SessionId.
+	* ServiceHostBase.cs : implement open/close async methods.
+	  remove some TODOs.
+
+2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceRuntimeChannel.cs : remove some NIEs for actual use.
 	  Dispose->Close.
 

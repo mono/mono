@@ -139,9 +139,8 @@ namespace System.ServiceModel
 			set { request_ctx = value; }
 		}
 
-		[MonoTODO]
 		public string SessionId {
-			get { throw new NotImplementedException (); }
+			get { return Channel.SessionId; }
 		}
 
 #if !NET_2_1

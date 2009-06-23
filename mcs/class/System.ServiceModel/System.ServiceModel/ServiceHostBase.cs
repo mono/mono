@@ -146,7 +146,6 @@ namespace System.ServiceModel
 				new Uri (address, UriKind.RelativeOrAbsolute));
 		}
 
-		[MonoTODO]
 		public ServiceEndpoint AddServiceEndpoint (
 			string implementedContract, Binding binding,
 			string address, Uri listenUri)
@@ -156,7 +155,6 @@ namespace System.ServiceModel
 				implementedContract, binding, uri, uri);
 		}
 
-		[MonoTODO]
 		public ServiceEndpoint AddServiceEndpoint (
 			string implementedContract, Binding binding,
 			Uri address)
@@ -164,7 +162,6 @@ namespace System.ServiceModel
 			return AddServiceEndpoint (implementedContract, binding, address, address);
 		}
 
-		[MonoTODO]
 		public ServiceEndpoint AddServiceEndpoint (
 			string implementedContract, Binding binding,
 			Uri address, Uri listenUri)
@@ -332,7 +329,6 @@ namespace System.ServiceModel
 		protected abstract ServiceDescription CreateDescription (
 			out IDictionary<string,ContractDescription> implementedContracts);
 
-		[MonoTODO]
 		protected void InitializeDescription (UriSchemeKeyedCollection baseAddresses)
 		{
 			this.base_addresses = baseAddresses;
@@ -343,7 +339,6 @@ namespace System.ServiceModel
 			ApplyConfiguration ();
 		}
 
-		[MonoTODO]
 		protected virtual void InitializeRuntime ()
 		{
 			//First validate the description, which should call all behaviors
@@ -375,7 +370,8 @@ namespace System.ServiceModel
 				ApplyDispatchBehavior(val.Value, val.Key);			
 		}
 
-		private void ValidateDescription () {
+		private void ValidateDescription ()
+		{
 			foreach (IServiceBehavior b in Description.Behaviors)
 				b.Validate (Description, this);
 			foreach (ServiceEndpoint endPoint in Description.Endpoints)
@@ -540,18 +536,23 @@ namespace System.ServiceModel
 		{
 		}
 
-		[MonoTODO]
+		Action<TimeSpan> close_delegate;
+		Action<TimeSpan> open_delegate;
+
 		protected override sealed IAsyncResult OnBeginClose (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate != null)
+				close_delegate = new Action<TimeSpan> (OnClose);
+			return close_delegate.BeginInvoke (timeout, callback, state);
 		}
 
-		[MonoTODO]
 		protected override sealed IAsyncResult OnBeginOpen (
 			TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (open_delegate == null)
+				open_delegate = new Action<TimeSpan> (OnOpen);
+			return open_delegate.BeginInvoke (timeout, callback, state);
 		}
 
 		protected override void OnClose (TimeSpan timeout)
@@ -579,16 +580,18 @@ namespace System.ServiceModel
 			DoOpen (timeout);
 		}
 
-		[MonoTODO]
 		protected override void OnEndClose (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (close_delegate == null)
+				throw new InvalidOperationException ("Async close operation has not started");
+			close_delegate.EndInvoke (result);
 		}
 
-		[MonoTODO]
 		protected override sealed void OnEndOpen (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (open_delegate == null)
+				throw new InvalidOperationException ("Aync open operation has not started");
+			open_delegate.EndInvoke (result);
 		}
 
 		protected override void OnOpened ()
