@@ -1795,7 +1795,8 @@ namespace System
 				return false;
 
 			if (tzsign == -1) {
-				dto = new DateTimeOffset (result);
+				if (result != DateTime.MinValue)
+					dto = new DateTimeOffset (result);
 			} else {
 				if (tzoffmin == -1)
 					tzoffmin = 0;

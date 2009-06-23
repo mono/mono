@@ -1,3 +1,8 @@
+2009-06-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DateTime.cs: ignore MinValue to avoid DateTimeOffset ctor throwing
+	when adjusting for TZ.
+
 2009-06-22  Miguel de Icaza  <miguel@novell.com>
 
 	* String.cs: In Silverlight the whitespace characters 0x202f and
