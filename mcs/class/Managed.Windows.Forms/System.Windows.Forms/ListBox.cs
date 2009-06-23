@@ -1345,7 +1345,8 @@ namespace System.Windows.Forms
 					rect.Width += hscrollbar.Value;
 				}
 
-				OnDrawItem (new DrawItemEventArgs (dc, Font, rect, i, state, ForeColor, BackColor));
+				Color fore_color = (state & DrawItemState.Selected) != 0 ? ThemeEngine.Current.ColorHighlightText : ForeColor;
+				OnDrawItem (new DrawItemEventArgs (dc, Font, rect, i, state, fore_color, BackColor));
 			}
 		}
 

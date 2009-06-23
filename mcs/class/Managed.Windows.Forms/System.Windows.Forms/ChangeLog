@@ -1,3 +1,10 @@
+2009-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListBox.cs: When creating DrawItemEventArgs, pass either
+	Theme.ColorHighlightText or ForeColor depending on the selected state
+	of our item, as .net does.
+	Fixes #512115.
+
 2009-06-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When handling WM_CHAR, process the message first, and
