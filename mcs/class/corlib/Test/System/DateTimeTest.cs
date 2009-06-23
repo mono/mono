@@ -569,7 +569,8 @@ namespace MonoTests.System
 							@"ddd, d MMM yyyy H:m:s zzz",
 							CultureInfo.CreateSpecificCulture("en-us"),
 							DateTimeStyles.AllowInnerWhite);
-			Assert.AreEqual (19, dt.Hour, "Hour");
+			dt = dt.ToUniversalTime ();
+			Assert.AreEqual (23, dt.Hour, "Hour");
 			Assert.AreEqual (21, dt.Minute, "Minute");
 		}
 
