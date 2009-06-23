@@ -53,10 +53,7 @@ namespace System.ServiceModel
 		#region IContextChannel
 
 		[MonoTODO]
-		public bool AllowOutputBatching {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public bool AllowOutputBatching { get; set; }
 
 		public IInputSession InputSession {
 			get {
@@ -79,10 +76,7 @@ namespace System.ServiceModel
 		}
 
 		[MonoTODO]
-		public TimeSpan OperationTimeout {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
+		public TimeSpan OperationTimeout { get; set; }
 
 		public IOutputSession OutputSession {
 			get {
@@ -209,8 +203,9 @@ namespace System.ServiceModel
 
 		#region IDisposable Members
 
-		public void Dispose () {
-			throw new NotImplementedException ();
+		public void Dispose ()
+		{
+			Close ();
 		}
 
 		#endregion

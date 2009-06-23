@@ -1,3 +1,8 @@
+2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceRuntimeChannel.cs : remove some NIEs for actual use.
+	  Dispose->Close.
+
 2009-06-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory.cs : no need for NIE at OnAbort() (at least so far).
