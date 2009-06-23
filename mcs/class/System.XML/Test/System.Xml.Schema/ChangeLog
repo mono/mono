@@ -1,3 +1,9 @@
+2009-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaAssertion.cs, XmlSchemaTests.cs : migrate from Assertion
+	  to Assert (it still uses XmlSchemaAssertion as the base class,
+	  but XmlSchemaAssertion is not based on Assertion anymore).
+
 2009-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XmlSchemaTests.cs: added tests for bug #502115.

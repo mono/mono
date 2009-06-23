@@ -26,7 +26,7 @@ namespace MonoTests.System.Xml
 		public void TestRead ()
 		{
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/1.xsd");
-			AssertEquals (6, schema.Items.Count);
+			Assert.AreEqual (6, schema.Items.Count);
 
 			bool fooValidated = false;
 			bool barValidated = false;
@@ -48,8 +48,8 @@ namespace MonoTests.System.Xml
 					barValidated = true;
 				}
 			}
-			Assert (fooValidated);
-			Assert (barValidated);
+			Assert.IsTrue (fooValidated);
+			Assert.IsTrue (barValidated);
 		}
 
 		[Test]
@@ -58,12 +58,12 @@ namespace MonoTests.System.Xml
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/2.xsd");
 			schema.Compile (null);
 			XmlSchemaElement el = schema.Items [0] as XmlSchemaElement;
-			AssertNotNull (el);
-			AssertEquals (XmlSchemaDerivationMethod.Extension, el.Block);
+			Assert.IsNotNull (el);
+			Assert.AreEqual (XmlSchemaDerivationMethod.Extension, el.Block);
 
 			el = schema.Items [1] as XmlSchemaElement;
-			AssertNotNull (el);
-			AssertEquals (XmlSchemaDerivationMethod.Extension |
+			Assert.IsNotNull (el);
+			Assert.AreEqual (XmlSchemaDerivationMethod.Extension |
 				XmlSchemaDerivationMethod.Restriction, el.Block);
 		}
 
@@ -85,33 +85,33 @@ namespace MonoTests.System.Xml
 			XmlSchemaSequence seq;
 
 			XmlSchema schema = GetSchema ("Test/XmlFiles/xsd/1.xsd");
-//			Assert (!schema.IsCompiled);
+//			Assert.IsTrue (!schema.IsCompiled);
 			schema.Compile (null);
-			Assert (schema.IsCompiled);
+			Assert.IsTrue (schema.IsCompiled);
 			string ns = "urn:bar";
 
 			XmlSchemaElement foo = (XmlSchemaElement) schema.Elements [QName ("Foo", ns)];
-			AssertNotNull (foo);
+			Assert.IsNotNull (foo);
 			XmlSchemaDatatype stringDatatype = foo.ElementType as XmlSchemaDatatype;
-			AssertNotNull (stringDatatype);
+			Assert.IsNotNull (stringDatatype);
 
 			// HogeType
 			qname = QName ("HogeType", ns);
 			cType = schema.SchemaTypes [qname] as XmlSchemaComplexType;
-			AssertNotNull (cType);
-			AssertNull (cType.ContentModel);
+			Assert.IsNotNull (cType);
+			Assert.IsNull (cType.ContentModel);
 			AssertCompiledComplexType (cType, qname, 0, 0,
 				false, null, true, XmlSchemaContentType.ElementOnly);
 			seq = cType.ContentTypeParticle as XmlSchemaSequence;
-			AssertNotNull (seq);
-			AssertEquals (2, seq.Items.Count);
+			Assert.IsNotNull (seq);
+			Assert.AreEqual (2, seq.Items.Count);
 			XmlSchemaElement refFoo = seq.Items [0] as XmlSchemaElement;
 			AssertCompiledElement (refFoo, QName ("Foo", ns), stringDatatype);
 
 			// FugaType
 			qname = QName ("FugaType", ns);
 			cType = schema.SchemaTypes [qname] as XmlSchemaComplexType;
-			AssertNotNull (cType);
+			Assert.IsNotNull (cType);
 			xccx = cType.ContentModel.Content as XmlSchemaComplexContentExtension;
 			AssertCompiledComplexContentExtension (
 				xccx, 0, false, QName ("HogeType", ns));
@@ -119,13 +119,13 @@ namespace MonoTests.System.Xml
 			AssertCompiledComplexType (cType, qname, 0, 0,
 				false, typeof (XmlSchemaComplexContent),
 				true, XmlSchemaContentType.ElementOnly);
-			AssertNotNull (cType.BaseSchemaType);
+			Assert.IsNotNull (cType.BaseSchemaType);
 
 			seq = xccx.Particle as XmlSchemaSequence;
-			AssertNotNull (seq);
-			AssertEquals (1, seq.Items.Count);
+			Assert.IsNotNull (seq);
+			Assert.AreEqual (1, seq.Items.Count);
 			XmlSchemaElement refBaz = seq.Items [0] as XmlSchemaElement;
-			AssertNotNull (refBaz);
+			Assert.IsNotNull (refBaz);
 			AssertCompiledElement (refBaz, QName ("Baz", ""), stringDatatype);
 
 			qname = QName ("Bar", ns);
@@ -139,7 +139,7 @@ namespace MonoTests.System.Xml
 		{
 			XmlSchema schema = new XmlSchema ();
 			schema.TargetNamespace = string.Empty;
-			Assert (!schema.IsCompiled);
+			Assert.IsTrue (!schema.IsCompiled);
 
 			// MS.NET 1.x: The Namespace '' is an invalid URI.
 			// MS.NET 2.0: The targetNamespace attribute cannot have empty string as its value.
@@ -159,16 +159,16 @@ namespace MonoTests.System.Xml
 		public void TestSimpleImport ()
 		{
 			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/3.xsd"), null);
-			AssertEquals ("urn:foo", schema.TargetNamespace);
+			Assert.AreEqual ("urn:foo", schema.TargetNamespace);
 			XmlSchemaImport import = schema.Includes [0] as XmlSchemaImport;
-			AssertNotNull (import);
+			Assert.IsNotNull (import);
 
 			schema.Compile (null);
-			AssertEquals (4, schema.Elements.Count);
-			AssertNotNull (schema.Elements [QName ("Foo", "urn:foo")]);
-			AssertNotNull (schema.Elements [QName ("Bar", "urn:foo")]);
-			AssertNotNull (schema.Elements [QName ("Foo", "urn:bar")]);
-			AssertNotNull (schema.Elements [QName ("Bar", "urn:bar")]);
+			Assert.AreEqual (4, schema.Elements.Count);
+			Assert.IsNotNull (schema.Elements [QName ("Foo", "urn:foo")]);
+			Assert.IsNotNull (schema.Elements [QName ("Bar", "urn:foo")]);
+			Assert.IsNotNull (schema.Elements [QName ("Foo", "urn:bar")]);
+			Assert.IsNotNull (schema.Elements [QName ("Bar", "urn:bar")]);
 			
 		}
 
@@ -189,20 +189,20 @@ namespace MonoTests.System.Xml
 			XmlSchema schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/5.xsd"), null);
 			schema.Compile (null);
 			XmlSchemaElement el = schema.Elements [QName ("Foo", "urn:bar")] as XmlSchemaElement;
-			AssertNotNull (el);
+			Assert.IsNotNull (el);
 			XmlSchemaComplexType ct = el.ElementType as XmlSchemaComplexType;
 			XmlSchemaSequence seq = ct.ContentTypeParticle as XmlSchemaSequence;
 			XmlSchemaElement elp = seq.Items [0] as XmlSchemaElement;
-			AssertEquals (QName ("Bar", ""), elp.QualifiedName);
+			Assert.AreEqual (QName ("Bar", ""), elp.QualifiedName);
 
 			schema = XmlSchema.Read (new XmlTextReader ("Test/XmlFiles/xsd/6.xsd"), null);
 			schema.Compile (null);
 			el = schema.Elements [QName ("Foo", "urn:bar")] as XmlSchemaElement;
-			AssertNotNull (el);
+			Assert.IsNotNull (el);
 			ct = el.ElementType as XmlSchemaComplexType;
 			seq = ct.ContentTypeParticle as XmlSchemaSequence;
 			elp = seq.Items [0] as XmlSchemaElement;
-			AssertEquals (QName ("Bar", "urn:bar"), elp.QualifiedName);
+			Assert.AreEqual (QName ("Bar", "urn:bar"), elp.QualifiedName);
 		}
 
 		[Test]
@@ -219,7 +219,7 @@ namespace MonoTests.System.Xml
 			xw = new XmlTextWriter (sw);
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
-			AssertEquals ("#1", "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			Assert.AreEqual ("<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#1");
 
 			// TargetNamespace
 			xs = new XmlSchema ();
@@ -228,7 +228,7 @@ namespace MonoTests.System.Xml
 			xs.TargetNamespace = "urn:foo";
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
-			AssertEquals ("#2", "<xs:schema xmlns:tns=\"urn:foo\" targetNamespace=\"urn:foo\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			Assert.AreEqual ("<xs:schema xmlns:tns=\"urn:foo\" targetNamespace=\"urn:foo\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#2");
 
 			// Zero-length TargetNamespace
 			xs = new XmlSchema ();
@@ -237,7 +237,7 @@ namespace MonoTests.System.Xml
 			xs.TargetNamespace = string.Empty;
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
-			AssertEquals ("#2b", "<xs:schema targetNamespace=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			Assert.AreEqual ("<xs:schema targetNamespace=\"\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#2b");
 
 			// XmlSerializerNamespaces
 			xs = new XmlSchema ();
@@ -247,7 +247,7 @@ namespace MonoTests.System.Xml
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
 			// commenting out. .NET 2.0 outputs xs:schema instead of schema, that also makes sense.
-			// AssertEquals ("#3", "<schema xmlns:hoge=\"urn:hoge\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			// Assert.AreEqual ("<schema xmlns:hoge=\"urn:hoge\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#3");
 
 			// TargetNamespace + XmlSerializerNamespaces
 			xs = new XmlSchema ();
@@ -258,7 +258,7 @@ namespace MonoTests.System.Xml
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
 			// commenting out. .NET 2.0 outputs xs:schema instead of schema, that also makes sense.
-			// AssertEquals ("#4", "<schema xmlns:hoge=\"urn:hoge\" targetNamespace=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			// Assert.AreEqual ("<schema xmlns:hoge=\"urn:hoge\" targetNamespace=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#4");
 
 			// Add XmlSchema.Namespace to XmlSerializerNamespaces
 			xs = new XmlSchema ();
@@ -267,7 +267,7 @@ namespace MonoTests.System.Xml
 			xs.Namespaces.Add ("a", XmlSchema.Namespace);
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
-			AssertEquals ("#5", "<a:schema xmlns:a=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			Assert.AreEqual ("<a:schema xmlns:a=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#5");
 
 			// UnhandledAttributes + XmlSerializerNamespaces
 			xs = new XmlSchema ();
@@ -279,7 +279,7 @@ namespace MonoTests.System.Xml
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
 			// commenting out. .NET 2.0 outputs xs:schema instead of schema, that also makes sense.
-			// AssertEquals ("#6", "<schema xmlns:hoge=\"urn:hoge\" hoge=\"\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			// Assert.AreEqual ("<schema xmlns:hoge=\"urn:hoge\" hoge=\"\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#6");
 
 			// Adding xmlns to UnhandledAttributes -> no output
 			xs = new XmlSchema ();
@@ -290,7 +290,7 @@ namespace MonoTests.System.Xml
 			xs.UnhandledAttributes = new XmlAttribute [] {attr};
 			xs.Write (xw);
 			doc.LoadXml (sw.ToString ());
-			AssertEquals ("#7", "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml);
+			Assert.AreEqual ("<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", doc.DocumentElement.OuterXml, "#7");
 		}
 
 		[Category ("NotWorking")]
@@ -304,32 +304,32 @@ namespace MonoTests.System.Xml
 			StringWriter sw;
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
-			AssertEquals ("#1", xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			Assert.AreEqual (xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString (), "#1");
 
 			xs.Namespaces = nss;
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
-			AssertEquals ("#2", xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			Assert.AreEqual (xmldecl + "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString (), "#2");
 
 			nss.Add ("foo", "urn:foo");
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
 			// commenting out. .NET 2.0 outputs xs:schema instead of schema, that also makes sense.
-			// AssertEquals ("#3", xmldecl + "<schema xmlns:foo=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			// Assert.AreEqual (xmldecl + "<schema xmlns:foo=\"urn:foo\" xmlns=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString (), "#3");
 
 			nss.Add ("", "urn:foo");
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
 			// commenting out. .NET 2.0 outputs xs:schema instead of q1:schema, that also makes sense.
-			// AssertEquals ("#4", xmldecl + "<q1:schema xmlns:foo=\"urn:foo\" xmlns=\"urn:foo\" xmlns:q1=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			// Assert.AreEqual (xmldecl + "<q1:schema xmlns:foo=\"urn:foo\" xmlns=\"urn:foo\" xmlns:q1=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString (), "#4");
 
 			nss.Add ("q1", "urn:q1");
 			sw = new StringWriter ();
 			xs.Write (new XmlTextWriter (sw));
 			//Not sure if testing for exact order of these name spaces is
 			// relevent, so using less strict test that passes on MS.NET
-			//AssertEquals (xmldecl + "<q2:schema xmlns:foo=\"urn:foo\" xmlns:q1=\"urn:q1\" xmlns=\"urn:foo\" xmlns:q2=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
-			Assert("q1", sw.ToString ().IndexOf ("xmlns:q1=\"urn:q1\"") != -1);
+			//Assert.AreEqual (xmldecl + "<q2:schema xmlns:foo=\"urn:foo\" xmlns:q1=\"urn:q1\" xmlns=\"urn:foo\" xmlns:q2=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
+			Assert.IsTrue (sw.ToString ().IndexOf ("xmlns:q1=\"urn:q1\"") != -1, "q1");
 		}
 
 		[Test]
@@ -339,7 +339,7 @@ namespace MonoTests.System.Xml
 			XmlTextReader xtr = new XmlTextReader (xsd, XmlNodeType.Document, null);
 			xtr.Read ();
 			XmlSchema xs = XmlSchema.Read (xtr, null);
-			AssertEquals (XmlNodeType.EndElement, xtr.NodeType);
+			Assert.AreEqual (XmlNodeType.EndElement, xtr.NodeType);
 		}
 
 		[Test]
@@ -375,7 +375,7 @@ namespace MonoTests.System.Xml
 			XmlSchemaAnnotation annotation = element.Annotation;
 			XmlSchemaDocumentation doc =
 				annotation.Items [0] as XmlSchemaDocumentation;
-			AssertEquals (0, doc.Markup.Length);
+			Assert.AreEqual (0, doc.Markup.Length);
 		}
 
 
@@ -388,10 +388,10 @@ namespace MonoTests.System.Xml
 
 			XmlSchema schema = XmlSchema.Read (tr, null);
 			XmlSchemaInclude inc = (XmlSchemaInclude) schema.Includes [0];
-			AssertNull (inc.Schema);
+			Assert.IsNull (inc.Schema);
 			schema.Compile (null);
 			tr.Close ();
-			AssertNotNull (inc.Schema);
+			Assert.IsNotNull (inc.Schema);
 		}
 
 		[Test]
@@ -437,7 +437,7 @@ namespace MonoTests.System.Xml
 			} else {
 				try {
 					xss.Compile ();
-					Fail ();
+					Assert.Fail ();
 				} catch (XmlSchemaException) {
 				}
 				return;
@@ -455,7 +455,7 @@ namespace MonoTests.System.Xml
 			} else {
 				try {
 					schema.Compile (null);
-					Fail ();
+					Assert.Fail ();
 				} catch (XmlSchemaException) {
 				}
 			}
@@ -468,7 +468,7 @@ namespace MonoTests.System.Xml
 
 			try {
 				vr.Read ();
-				Fail ();
+				Assert.Fail ();
 			} catch (XmlSchemaException) {
 			}
 		}
@@ -518,7 +518,7 @@ namespace MonoTests.System.Xml
 			} else {
 				try {
 					xss.Compile ();
-					Fail ();
+					Assert.Fail ();
 				} catch (XmlSchemaException) {
 				}
 				return;
@@ -536,7 +536,7 @@ namespace MonoTests.System.Xml
 			} else {
 				try {
 					schema.Compile (null);
-					Fail ();
+					Assert.Fail ();
 				} catch (XmlSchemaException) {
 				}
 			}
@@ -605,7 +605,7 @@ namespace MonoTests.System.Xml
 				// GetEntity method.
 			}
 			
-			AssertEquals ("assembly://MyAssembly.Name/MyProjectNameSpace/objects.xsd", resolver.ReceivedUri.OriginalString);
+			Assert.AreEqual ("assembly://MyAssembly.Name/MyProjectNameSpace/objects.xsd", resolver.ReceivedUri.OriginalString);
 		}
 
 		[Test]
