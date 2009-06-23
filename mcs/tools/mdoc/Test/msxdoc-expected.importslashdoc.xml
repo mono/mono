@@ -16,6 +16,9 @@
             <remarks>
                 <see cref="T:Mono.DocTest.Color" />.</remarks>
         </member>
+        <member name="F:Mono.DocTest.Color.AnotherGreen">
+            <summary>To be added.</summary>
+        </member>
         <member name="F:Mono.DocTest.Color.Blue">
             <summary>Insert Blue summary here</summary>
             <remarks>

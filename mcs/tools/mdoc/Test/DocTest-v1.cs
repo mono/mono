@@ -110,7 +110,9 @@ namespace Mono.DocTest {
 		Blue, 
 		/// <summary>Insert Green summary here</summary>
 		/// <remarks><c>F:Mono.DocTest.Color.Green</c>.</remarks>
-		Green
+		Green,
+
+		AnotherGreen = Green,
 	}
 
 	/// <summary>Process interface</summary>
