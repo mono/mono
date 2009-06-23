@@ -1,3 +1,8 @@
+2009-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.h: Applied patch from Romain Tartiere (romain@blogreen.org).
+	Use sigaction on freebsd as well.
+
 2009-06-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h: Don't define MONO_ARCH_HAVE_TLS_GET to 0, as some code
