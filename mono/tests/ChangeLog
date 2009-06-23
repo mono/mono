@@ -1,3 +1,8 @@
+2009-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c make_imt_test.sh: Applied patch from Romain Tartiere 
+	(romain@blogreen.org). Fix tests on freebsd.
+
 2009-06-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* runtime-invoke.cs: Add test for sharing i8/u8 return values.
