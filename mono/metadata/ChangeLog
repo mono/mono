@@ -1,3 +1,7 @@
+2009-06-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (is_valid_constant): Fix string bounds check.
+
 2009-06-22  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Managed allocation with pthreads TLS.
