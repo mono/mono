@@ -1,3 +1,10 @@
+2009-06-24  Neale Ferguson <neale@sinenomine.net>
+
+	* mini-s390x.c: Correct LCONV_TO_Ix and ICONV_TO_Ix routines. Fix leave_method
+	dump of structure return value. Fix some formatting.
+	* cpu-s390x.md: Fix lengths of instruction sequences.
+	* mini-s390.c: Minor formatting changes.
+
 2009-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.h: Applied patch from Romain Tartiere (romain@blogreen.org).

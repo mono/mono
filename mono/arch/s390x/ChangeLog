@@ -1,3 +1,7 @@
+2009-06-24	Neale Ferguson <neale@sinenomine.net>
+	
+	* s390x-codegen.h: Add some new instructions.
+
 2007-04-12	Neale Ferguson <neale@sinenomine.net>
 	
 	* tramp.c: Add MONO_TYPE_PTR case.
