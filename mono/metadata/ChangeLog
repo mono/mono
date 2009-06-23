@@ -1,5 +1,9 @@
 2009-06-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* image.c (do_mono_image_load): Enable table data verification.
+
+2009-06-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_constant): Fix nullref check.
 
 2009-06-23 Rodrigo Kumpera  <rkumpera@novell.com>
