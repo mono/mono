@@ -559,7 +559,7 @@ namespace MonoTests.System.Web.UI {
 		public void WriteBreakTest ()
 		{
 			w.WriteBreak ();
-			Assertion.AssertEquals ("WriteBreakTest01", "<br />", sw.ToString ());
+			Assert.AreEqual ("<br />", sw.ToString (), "WriteBreakTest01");
 		}
 #endif
 		

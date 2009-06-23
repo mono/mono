@@ -104,19 +104,19 @@ namespace MonoTests.System.Web.UI {
 			Hashtable elem_attrs = (Hashtable) attrs [elem_name];
 
 			// absent attr
-			Assertion.AssertEquals ("#A01", null, elem_attrs [absent_attr]);
+			Assert.AreEqual (null, elem_attrs [absent_attr], "#A01");
 
 			// recently added attr
 			xhtml.AddRecognizedAttribute (elem_name, absent_attr);
-			Assertion.AssertEquals ("A02", true, elem_attrs [absent_attr]);
+			Assert.AreEqual (true, elem_attrs [absent_attr], "A02");
 
 			// ensure there's no absent_elem
-			Assertion.AssertEquals ("#A03", null, attrs [absent_elem]);
+			Assert.AreEqual (null, attrs [absent_elem], "#A03");
 
 			// Given absent_elem and absent_attr, we must add the element 
 			// and bind the given attr to it
 			xhtml.AddRecognizedAttribute (absent_elem, absent_attr);
-			Assertion.AssertEquals ("#A04", true, ((Hashtable) attrs [absent_elem]) [absent_attr]);
+			Assert.AreEqual (true, ((Hashtable) attrs [absent_elem]) [absent_attr], "#A04");
 
 			// Given a known element and attribute
 		}
@@ -135,11 +135,11 @@ namespace MonoTests.System.Web.UI {
 		{
 			// ensure we add it
 			xhtml.AddRecognizedAttribute (elem_name, absent_attr);
-			Assertion.AssertEquals ("#B01", true, ((Hashtable) attrs [elem_name]) [absent_attr]);
+			Assert.AreEqual (true, ((Hashtable) attrs [elem_name]) [absent_attr], "#B01");
 
 			// ensure we remove it
 			xhtml.RemoveRecognizedAttribute (elem_name, absent_attr);
-			Assertion.AssertEquals ("#B02", null, ((Hashtable) attrs [elem_name]) [absent_attr]);
+			Assert.AreEqual (null, ((Hashtable) attrs [elem_name]) [absent_attr], "#B02");
 
 			// if the element does not exist we must resume cleanly
 			xhtml.RemoveRecognizedAttribute (absent_elem, absent_attr);
@@ -154,16 +154,16 @@ namespace MonoTests.System.Web.UI {
 			int i = 0;
 
 			foreach (HtmlTextWriterStyle style in Enum.GetValues (typeof (HtmlTextWriterStyle)))
-				Assertion.AssertEquals ("#C0" + i++, false,
+				Assert.AreEqual (false,
 						xhtml.PublicOnStyleAttributeRender (xhtml.PublicGetStyleName (style), 
-									    "foo", style));
+										    "foo", style), "#C0" + i++);
 		}
 
 		[Test]
 		public void WriteBreakTest ()
 		{
 			xhtml.WriteBreak ();
-			Assertion.AssertEquals ("#D01", "<br/>", writer.ToString ());
+			Assert.AreEqual ("<br/>", writer.ToString (), "#D01");
 		}
 
 		[Test]
@@ -179,7 +179,7 @@ namespace MonoTests.System.Web.UI {
 					i++;
 				}
 			}
-			Assertion.AssertEquals ("#F01", attrs.Length, i);
+			Assert.AreEqual (attrs.Length, i, "#F01");
 		}
 	}
 }

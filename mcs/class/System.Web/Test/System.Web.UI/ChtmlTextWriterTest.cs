@@ -106,7 +106,7 @@ namespace MonoTests.System.Web.UI {
 		public void AddRecognizedAttributeTest ()
 		{
 			chtml.AddRecognizedAttribute (absent_element, absent_attr);
-			Assertion.AssertEquals ("#A01", true, chtml.IsRecognizedAttribute (absent_element, absent_attr));
+			Assert.AreEqual (true, chtml.IsRecognizedAttribute (absent_element, absent_attr), "#A01");
 		}
 
 		[Test]
@@ -123,7 +123,7 @@ namespace MonoTests.System.Web.UI {
 			AddRecognizedAttributeTest ();
 
 			chtml.RemoveRecognizedAttribute (absent_element, absent_attr);
-			Assertion.AssertEquals ("#B01", false, chtml.IsRecognizedAttribute (absent_element, absent_attr));
+			Assert.AreEqual (false, chtml.IsRecognizedAttribute (absent_element, absent_attr), "#B01");
 
 			string version_two = "v2";
 			chtml.RemoveRecognizedAttribute (absent_element + version_two, absent_attr + version_two);
@@ -134,7 +134,7 @@ namespace MonoTests.System.Web.UI {
 		{
 			string br = "<br>";
 			chtml.WriteBreak ();
-			Assertion.AssertEquals ("#C01", true, br == writer.ToString ());
+			Assert.AreEqual (true, br == writer.ToString (), "#C01");
 		}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace MonoTests.System.Web.UI {
 			string unencoded_text = "&lt;custID&gt; &amp; &lt;invoice#&gt;";
 			chtml.WriteEncodedText (encoded_text);
 
-			Assertion.AssertEquals ("#D01", true, unencoded_text == writer.ToString ());
+			Assert.AreEqual (true, unencoded_text == writer.ToString (), "#D01");
 		}
 
 		[Test]
@@ -160,7 +160,7 @@ namespace MonoTests.System.Web.UI {
 					i++;
 				}
 			}
-			Assertion.AssertEquals ("#E01", enum_values.Length, i);
+			Assert.AreEqual (enum_values.Length, i, "#E01");
 		}
 
 		[Test]
@@ -171,7 +171,7 @@ namespace MonoTests.System.Web.UI {
 
 			foreach (HtmlTextWriterStyle tag in Enum.GetValues (typeof (HtmlTextWriterStyle))) {
 				expected = (tag == HtmlTextWriterStyle.Display);
-				Assertion.AssertEquals ("#F0" + i++, expected, chtml.PublicOnStyleAttributeRender ("foo", "foo", tag));
+				Assert.AreEqual (expected, chtml.PublicOnStyleAttributeRender ("foo", "foo", tag), "#F0" + i++);
 			}
 		}
 
@@ -184,7 +184,7 @@ namespace MonoTests.System.Web.UI {
 
 			foreach (HtmlTextWriterTag tag in Enum.GetValues (typeof (HtmlTextWriterTag))) {
 				expected = (tag != HtmlTextWriterTag.Span);
-				Assertion.AssertEquals ("#G0" + i++, expected, chtml.PublicOnTagRender ("foo", tag));
+				Assert.AreEqual (expected, chtml.PublicOnTagRender ("foo", tag), "#G0" + i++);
 			}
 		}
 	}
