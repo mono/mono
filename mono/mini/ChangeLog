@@ -1,5 +1,8 @@
 2009-06-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h: Don't define MONO_ARCH_HAVE_TLS_GET to 0, as some code
+	uses #ifdef on it.
+	
 	* mini.c (mini_init): Revert a change which breaks cross-compilation.
 
 2009-06-22  Mark Probst  <mark.probst@gmail.com>
