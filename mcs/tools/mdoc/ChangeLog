@@ -1,3 +1,15 @@
+2009-06-23  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Don't generate an exception when an
+	  enumeration contains multiple names with the same value.
+	  Fixes #515030.
+	* Test/DocTest-v1.cs: Add test for #515030.
+	* Test/en.expected/Mono.DocTest/Color.xml,
+	  Test/en.expected.since/Mono.DocTest/Color.xml,
+	  Test/html.expected/Mono.DocTest/Color.html,
+	  Test/msxdoc-expected.importslashdoc.xml,
+	  Test/en.expected.importslashdoc/Mono.DocTest/Color.xml: Flush.
+
 2009-04-18  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/webdoc.cs: Change -o semantics to be a directory

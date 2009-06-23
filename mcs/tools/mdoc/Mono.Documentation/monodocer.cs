@@ -2269,11 +2269,14 @@ class MDocUpdater : MDocCommand
 
 	private static Dictionary<ulong, string> GetEnumerationValues (TypeDefinition type)
 	{
-		return
-			(from f in type.Fields.Cast<FieldDefinition> ()
-			 where !(f.IsRuntimeSpecialName || f.IsSpecialName)
-			 select f)
-			.ToDictionary (f => Convert.ToUInt64 (f.Constant), f => f.Name);
+		var values = new Dictionary<ulong, string> ();
+		foreach (var f in 
+				(from f in type.Fields.Cast<FieldDefinition> ()
+				 where !(f.IsRuntimeSpecialName || f.IsSpecialName)
+				 select f)) {
+			values [Convert.ToUInt64 (f.Constant)] = f.Name;
+		}
+		return values;
 	}
 	
 	private void MakeParameters (XmlElement root, ParameterDefinitionCollection parameters)

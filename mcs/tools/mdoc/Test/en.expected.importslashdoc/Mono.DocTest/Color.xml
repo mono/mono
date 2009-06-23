@@ -13,6 +13,19 @@
       <see cref="T:Mono.DocTest.Color" />.</remarks>
   </Docs>
   <Members>
+    <Member MemberName="AnotherGreen">
+      <MemberSignature Language="C#" Value="AnotherGreen" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.DocTest.Color</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
     <Member MemberName="Blue">
       <MemberSignature Language="C#" Value="Blue" />
       <MemberType>Field</MemberType>
