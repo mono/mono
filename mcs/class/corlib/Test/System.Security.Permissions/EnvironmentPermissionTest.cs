@@ -35,7 +35,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class EnvironmentPermissionTest : Assertion {
+	public class EnvironmentPermissionTest {
 
 		private static string className = "System.Security.Permissions.EnvironmentPermission, ";
 		private static string envVariables = "TMP;TEMP";
@@ -44,25 +44,25 @@ namespace MonoTests.System.Security.Permissions {
 		public void PermissionStateNone () 
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (PermissionState.None);
-			AssertNotNull ("EnvironmentPermission(PermissionState.None)", ep);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsNotNull (ep, "EnvironmentPermission(PermissionState.None)");
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 			EnvironmentPermission copy = (EnvironmentPermission) ep.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", ep.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (ep.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = ep.ToXml ();
-			Assert ("ToXml-class", (se.Attributes ["class"] as string).StartsWith (className));
-			AssertEquals ("ToXml-version", "1", (se.Attributes ["version"] as string));
+			Assert.IsTrue ((se.Attributes ["class"] as string).StartsWith (className), "ToXml-class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "ToXml-version");
 		}
 
 		[Test]
 		public void PermissionStateUnrestricted () 
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (PermissionState.Unrestricted);
-			AssertNotNull ("EnvironmentPermission(PermissionState.Unrestricted)", ep);
-			Assert ("IsUnrestricted", ep.IsUnrestricted ());
+			Assert.IsNotNull (ep, "EnvironmentPermission(PermissionState.Unrestricted)");
+			Assert.IsTrue (ep.IsUnrestricted (), "IsUnrestricted");
 			EnvironmentPermission copy = (EnvironmentPermission) ep.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", ep.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (ep.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = ep.ToXml ();
-			AssertEquals ("ToXml-Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
+			Assert.AreEqual ("true", (se.Attributes ["Unrestricted"] as string), "ToXml-Unrestricted");
 		}
 
 		[Test]
@@ -76,28 +76,28 @@ namespace MonoTests.System.Security.Permissions {
 		public void AllAccess () 
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (EnvironmentPermissionAccess.AllAccess, envVariables);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void NoAccess () 
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (EnvironmentPermissionAccess.NoAccess, envVariables);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void ReadAccess () 
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void WriteAccess () 
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (EnvironmentPermissionAccess.Write, envVariables);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
@@ -111,8 +111,8 @@ namespace MonoTests.System.Security.Permissions {
 			ep.AddPathList (EnvironmentPermissionAccess.Write, "PROMPT");
 			SecurityElement se = ep.ToXml ();
 			// Note: Debugger can mess results (try to run without stepping)
-			AssertEquals ("AddPathList-ToXml-Read", "TMP;TEMP;UID", (se.Attributes ["Read"] as string));
-			AssertEquals ("AddPathList-ToXml-Write", "TMP;TEMP;PROMPT", (se.Attributes ["Write"] as string));
+			Assert.AreEqual ("TMP;TEMP;UID", (se.Attributes ["Read"] as string), "AddPathList-ToXml-Read");
+			Assert.AreEqual ("TMP;TEMP;PROMPT", (se.Attributes ["Write"] as string), "AddPathList-ToXml-Write");
 		}
 
 		[Test]
@@ -122,7 +122,7 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep = new EnvironmentPermission (PermissionState.None);
 			ep.AddPathList (EnvironmentPermissionAccess.Read, "UID");
 			ep.AddPathList (EnvironmentPermissionAccess.Write, "PROMPT");
-			AssertEquals ("GetPathList-AllAccess", "", ep.GetPathList (EnvironmentPermissionAccess.AllAccess));
+			Assert.AreEqual ("", ep.GetPathList (EnvironmentPermissionAccess.AllAccess), "GetPathList-AllAccess");
 		}
 
 		[Test]
@@ -132,7 +132,7 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep = new EnvironmentPermission (PermissionState.None);
 			ep.AddPathList (EnvironmentPermissionAccess.Read, "UID");
 			ep.AddPathList (EnvironmentPermissionAccess.Write, "PROMPT");
-			AssertEquals ("GetPathList-NoAccess", "", ep.GetPathList (EnvironmentPermissionAccess.NoAccess));
+			Assert.AreEqual ("", ep.GetPathList (EnvironmentPermissionAccess.NoAccess), "GetPathList-NoAccess");
 		}
 
 		[Test]
@@ -140,16 +140,16 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (PermissionState.None);
 #if NET_2_0
-			AssertEquals ("GetPathList-Read-Empty", String.Empty, ep.GetPathList (EnvironmentPermissionAccess.Read));
-			AssertEquals ("GetPathList-Write-Empty", String.Empty, ep.GetPathList (EnvironmentPermissionAccess.Write));
+			Assert.AreEqual (String.Empty, ep.GetPathList (EnvironmentPermissionAccess.Read), "GetPathList-Read-Empty");
+			Assert.AreEqual (String.Empty, ep.GetPathList (EnvironmentPermissionAccess.Write), "GetPathList-Write-Empty");
 #else
-			AssertNull ("GetPathList-Read-Empty", ep.GetPathList (EnvironmentPermissionAccess.Read));
-			AssertNull ("GetPathList-Write-Empty", ep.GetPathList (EnvironmentPermissionAccess.Write));
+			Assert.IsNull (ep.GetPathList (EnvironmentPermissionAccess.Read), "GetPathList-Read-Empty");
+			Assert.IsNull (ep.GetPathList (EnvironmentPermissionAccess.Write), "GetPathList-Write-Empty");
 #endif
 			ep.AddPathList (EnvironmentPermissionAccess.Read, "UID");
 			ep.AddPathList (EnvironmentPermissionAccess.Write, "PROMPT");
-			AssertEquals ("GetPathList-Read", "UID", ep.GetPathList (EnvironmentPermissionAccess.Read));
-			AssertEquals ("GetPathList-Write", "PROMPT", ep.GetPathList (EnvironmentPermissionAccess.Write));
+			Assert.AreEqual ("UID", ep.GetPathList (EnvironmentPermissionAccess.Read), "GetPathList-Read");
+			Assert.AreEqual ("PROMPT", ep.GetPathList (EnvironmentPermissionAccess.Write), "GetPathList-Write");
 		}
 
 		[Test]
@@ -162,8 +162,8 @@ namespace MonoTests.System.Security.Permissions {
 			ep.SetPathList (EnvironmentPermissionAccess.Read, "UID");
 			ep.SetPathList (EnvironmentPermissionAccess.Write, "PROMPT");
 			SecurityElement se = ep.ToXml ();
-			AssertEquals ("SetPathList-ToXml-Read", "UID", (se.Attributes ["Read"] as string));
-			AssertEquals ("SetPathList-ToXml-Write", "PROMPT", (se.Attributes ["Write"] as string));
+			Assert.AreEqual ("UID", (se.Attributes ["Read"] as string), "SetPathList-ToXml-Read");
+			Assert.AreEqual ("PROMPT", (se.Attributes ["Write"] as string), "SetPathList-ToXml-Write");
 		}
 
 		[Test]
@@ -209,15 +209,15 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			EnvironmentPermission ep = new EnvironmentPermission (PermissionState.None);
 			SecurityElement se = ep.ToXml ();
-			AssertNotNull ("ToXml()", se);
+			Assert.IsNotNull (se, "ToXml()");
 			ep.FromXml (se);
 			se.AddAttribute ("Read", envVariables);
 			ep.FromXml (se);
-			AssertEquals ("FromXml-Read", envVariables, ep.GetPathList (EnvironmentPermissionAccess.Read));
+			Assert.AreEqual (envVariables, ep.GetPathList (EnvironmentPermissionAccess.Read), "FromXml-Read");
 			se.AddAttribute ("Write", envVariables);
 			ep.FromXml (se);
-			AssertEquals ("FromXml-Read", envVariables, ep.GetPathList (EnvironmentPermissionAccess.Read));
-			AssertEquals ("FromXml-Write", envVariables, ep.GetPathList (EnvironmentPermissionAccess.Write));
+			Assert.AreEqual (envVariables, ep.GetPathList (EnvironmentPermissionAccess.Read), "FromXml-Read");
+			Assert.AreEqual (envVariables, ep.GetPathList (EnvironmentPermissionAccess.Write), "FromXml-Write");
 		}
 
 		[Test]
@@ -226,7 +226,7 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep1 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
 			EnvironmentPermission ep2 = null;
 			EnvironmentPermission ep3 = (EnvironmentPermission) ep1.Union (ep2);
-			AssertEquals ("EP1 U null == EP1", ep1.ToXml ().ToString (), ep3.ToXml ().ToString ());
+			Assert.AreEqual (ep1.ToXml ().ToString (), ep3.ToXml ().ToString (), "EP1 U null == EP1");
 		}
 
 		[Test]
@@ -235,9 +235,9 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep1 = new EnvironmentPermission (PermissionState.Unrestricted);
 			EnvironmentPermission ep2 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
 			EnvironmentPermission ep3 = (EnvironmentPermission) ep1.Union (ep2);
-			Assert ("Unrestricted U EP2 == Unrestricted", ep3.IsUnrestricted ());
+			Assert.IsTrue (ep3.IsUnrestricted (), "Unrestricted U EP2 == Unrestricted");
 			ep3 = (EnvironmentPermission) ep2.Union (ep1);
-			Assert ("EP2 U Unrestricted == Unrestricted", ep3.IsUnrestricted ());
+			Assert.IsTrue (ep3.IsUnrestricted (), "EP2 U Unrestricted == Unrestricted");
 		}
 #if NET_2_0
 		[Category ("NotWorking")]
@@ -249,7 +249,7 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep2 = new EnvironmentPermission (EnvironmentPermissionAccess.Write, envVariables);
 			EnvironmentPermission ep3 = (EnvironmentPermission) ep1.Union (ep2);
 			EnvironmentPermission ep4 = new EnvironmentPermission (EnvironmentPermissionAccess.AllAccess, envVariables);
-			AssertEquals ("EP1 U EP2 == EP1+2", ep3.ToXml ().ToString (), ep4.ToXml ().ToString ());
+			Assert.AreEqual (ep3.ToXml ().ToString (), ep4.ToXml ().ToString (), "EP1 U EP2 == EP1+2");
 		}
 
 		[Test]
@@ -267,7 +267,7 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep1 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
 			EnvironmentPermission ep2 = null;
 			EnvironmentPermission ep3 = (EnvironmentPermission) ep1.Intersect (ep2);
-			AssertNull ("EP1 N null == null", ep3);
+			Assert.IsNull (ep3, "EP1 N null == null");
 		}
 
 		[Test]
@@ -276,11 +276,11 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep1 = new EnvironmentPermission (PermissionState.Unrestricted);
 			EnvironmentPermission ep2 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
 			EnvironmentPermission ep3 = (EnvironmentPermission) ep1.Intersect (ep2);
-			Assert ("Unrestricted N EP2 == EP2", !ep3.IsUnrestricted ());
-			AssertEquals ("Unrestricted N EP2 == EP2", ep2.ToXml ().ToString (), ep3.ToXml ().ToString ());
+			Assert.IsTrue (!ep3.IsUnrestricted (), "Unrestricted N EP2 == EP2");
+			Assert.AreEqual (ep2.ToXml ().ToString (), ep3.ToXml ().ToString (), "Unrestricted N EP2 == EP2");
 			ep3 = (EnvironmentPermission) ep2.Intersect (ep1);
-			Assert ("EP2 N Unrestricted == EP2", !ep3.IsUnrestricted ());
-			AssertEquals ("EP2 N Unrestricted == EP2", ep2.ToXml ().ToString (), ep3.ToXml ().ToString ());
+			Assert.IsTrue (!ep3.IsUnrestricted (), "EP2 N Unrestricted == EP2");
+			Assert.AreEqual (ep2.ToXml ().ToString (), ep3.ToXml ().ToString (), "EP2 N Unrestricted == EP2");
 		}
 
 		[Test]
@@ -290,21 +290,21 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep1 = new EnvironmentPermission (EnvironmentPermissionAccess.Write, envVariables);
 			EnvironmentPermission ep2 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
 			EnvironmentPermission ep3 = (EnvironmentPermission) ep1.Intersect (ep2);
-			AssertNull ("EP1 N EP2 == null", ep3);
+			Assert.IsNull (ep3, "EP1 N EP2 == null");
 			// intersection in read
 			EnvironmentPermission ep4 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, "TMP");		
 			ep3 = (EnvironmentPermission) ep4.Intersect (ep2);
-			AssertEquals ("Intersect-Read", "TMP", ep3.GetPathList (EnvironmentPermissionAccess.Read));
+			Assert.AreEqual ("TMP", ep3.GetPathList (EnvironmentPermissionAccess.Read), "Intersect-Read");
 			// intersection in write
 			EnvironmentPermission ep5 = new EnvironmentPermission (EnvironmentPermissionAccess.Write, "TEMP");		
 			ep3 = (EnvironmentPermission) ep5.Intersect (ep1);
-			AssertEquals ("Intersect-Read", "TEMP", ep3.GetPathList (EnvironmentPermissionAccess.Write));
+			Assert.AreEqual ("TEMP", ep3.GetPathList (EnvironmentPermissionAccess.Write), "Intersect-Read");
 			// intersection in read and write
 			EnvironmentPermission ep6 = new EnvironmentPermission (EnvironmentPermissionAccess.AllAccess, "TEMP");
 			EnvironmentPermission ep7 = new EnvironmentPermission (EnvironmentPermissionAccess.AllAccess, envVariables);
 			ep3 = (EnvironmentPermission) ep6.Intersect (ep7);
-			AssertEquals ("Intersect-AllAccess-Read", "TEMP", ep3.GetPathList (EnvironmentPermissionAccess.Read));
-			AssertEquals ("Intersect-AllAccess-Write", "TEMP", ep3.GetPathList (EnvironmentPermissionAccess.Write));
+			Assert.AreEqual ("TEMP", ep3.GetPathList (EnvironmentPermissionAccess.Read), "Intersect-AllAccess-Read");
+			Assert.AreEqual ("TEMP", ep3.GetPathList (EnvironmentPermissionAccess.Write), "Intersect-AllAccess-Write");
 		}
 
 		[Test]
@@ -320,7 +320,7 @@ namespace MonoTests.System.Security.Permissions {
 		public void IsSubsetOfNull () 
 		{
 			EnvironmentPermission ep1 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
-			Assert ("IsSubsetOf(null)", !ep1.IsSubsetOf (null));
+			Assert.IsTrue (!ep1.IsSubsetOf (null), "IsSubsetOf(null)");
 		}
 
 		[Test]
@@ -329,9 +329,9 @@ namespace MonoTests.System.Security.Permissions {
 			EnvironmentPermission ep1 = new EnvironmentPermission (PermissionState.Unrestricted);
 			EnvironmentPermission ep2 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
 			EnvironmentPermission ep3 = new EnvironmentPermission (PermissionState.Unrestricted);
-			Assert ("Unrestricted.IsSubsetOf()", !ep1.IsSubsetOf (ep2));
-			Assert ("IsSubsetOf(Unrestricted)", ep2.IsSubsetOf (ep1));
-			Assert ("Unrestricted.IsSubsetOf(Unrestricted)", ep1.IsSubsetOf (ep3));
+			Assert.IsTrue (!ep1.IsSubsetOf (ep2), "Unrestricted.IsSubsetOf()");
+			Assert.IsTrue (ep2.IsSubsetOf (ep1), "IsSubsetOf(Unrestricted)");
+			Assert.IsTrue (ep1.IsSubsetOf (ep3), "Unrestricted.IsSubsetOf(Unrestricted)");
 		}
 
 		[Test]
@@ -339,11 +339,11 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			EnvironmentPermission ep1 = new EnvironmentPermission (EnvironmentPermissionAccess.Write, envVariables);
 			EnvironmentPermission ep2 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
-			Assert ("IsSubsetOf(nosubset1)", !ep1.IsSubsetOf (ep2));
-			Assert ("IsSubsetOf(nosubset2)", !ep2.IsSubsetOf (ep1));
+			Assert.IsTrue (!ep1.IsSubsetOf (ep2), "IsSubsetOf(nosubset1)");
+			Assert.IsTrue (!ep2.IsSubsetOf (ep1), "IsSubsetOf(nosubset2)");
 			EnvironmentPermission ep3 = new EnvironmentPermission (EnvironmentPermissionAccess.Write, "TMP");
-			Assert ("IsSubsetOf(TMP)", !ep1.IsSubsetOf (ep3));
-			Assert ("TMP.IsSubsetOf()", ep3.IsSubsetOf (ep1));
+			Assert.IsTrue (!ep1.IsSubsetOf (ep3), "IsSubsetOf(TMP)");
+			Assert.IsTrue (ep3.IsSubsetOf (ep1), "TMP.IsSubsetOf()");
 		}
 
 		[Test]
@@ -352,7 +352,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			EnvironmentPermission ep1 = new EnvironmentPermission (EnvironmentPermissionAccess.Read, envVariables);
 			FileDialogPermission fdp2 = new FileDialogPermission (PermissionState.Unrestricted);
-			Assert ("IsSubsetOf(FileDialogPermission)", ep1.IsSubsetOf (fdp2));
+			Assert.IsTrue (ep1.IsSubsetOf (fdp2), "IsSubsetOf(FileDialogPermission)");
 		}
 	}
 }

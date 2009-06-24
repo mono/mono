@@ -15,104 +15,104 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class ReflectionPermissionTest : Assertion {
+	public class ReflectionPermissionTest {
 
 		private static string className = "System.Security.Permissions.ReflectionPermission, ";
 
 		[Test]
-		public void PermissionStateNone () 
+		public void PermissionStateNone ()
 		{
 			ReflectionPermission p = new ReflectionPermission (PermissionState.None);
-			AssertNotNull ("ReflectionPermission(PermissionState.None)", p);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsNotNull (p, "ReflectionPermission(PermissionState.None)");
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			ReflectionPermission copy = (ReflectionPermission) p.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", p.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (p.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			Assert ("ToXml-class", (se.Attributes ["class"] as string).StartsWith (className));
-			AssertEquals ("ToXml-version", "1", (se.Attributes ["version"] as string));
+			Assert.IsTrue ((se.Attributes ["class"] as string).StartsWith (className), "ToXml-class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "ToXml-version");
 		}
 
 		[Test]
 		public void PermissionStateUnrestricted () 
 		{
 			ReflectionPermission p = new ReflectionPermission (PermissionState.Unrestricted);
-			AssertNotNull ("ReflectionPermission(PermissionState.Unrestricted)", p);
-			Assert ("IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsNotNull (p, "ReflectionPermission(PermissionState.Unrestricted)");
+			Assert.IsTrue (p.IsUnrestricted (), "IsUnrestricted");
 			ReflectionPermission copy = (ReflectionPermission) p.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", p.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (p.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
+			Assert.AreEqual ("true", (se.Attributes ["Unrestricted"] as string), "ToXml-Unrestricted");
 		}
 
 		[Test]
 		public void Derestricted () 
 		{
 			ReflectionPermission p = new ReflectionPermission (PermissionState.Unrestricted);
-			Assert ("IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue (p.IsUnrestricted (), "IsUnrestricted");
 			p.Flags = ReflectionPermissionFlag.NoFlags;
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void NoFlags () 
 		{
 			ReflectionPermission p = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Flags=NoFlags", "NoFlags", (se.Attributes ["Flags"] as string));
+			Assert.AreEqual ("NoFlags", (se.Attributes ["Flags"] as string), "ToXml-Flags=NoFlags");
 		}
 
 		[Test]
 		public void TypeInformation () 
 		{
 			ReflectionPermission p = new ReflectionPermission (ReflectionPermissionFlag.TypeInformation);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Flags=TypeInformation", "TypeInformation", (se.Attributes ["Flags"] as string));
+			Assert.AreEqual ("TypeInformation", (se.Attributes ["Flags"] as string), "ToXml-Flags=TypeInformation");
 		}
 
 		[Test]
 		public void MemberAccess () 
 		{
 			ReflectionPermission p = new ReflectionPermission (ReflectionPermissionFlag.MemberAccess);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Flags=MemberAccess", "MemberAccess", (se.Attributes ["Flags"] as string));
+			Assert.AreEqual ("MemberAccess", (se.Attributes ["Flags"] as string), "ToXml-Flags=MemberAccess");
 		}
 
 		[Test]
 		public void ReflectionEmit () 
 		{
 			ReflectionPermission p = new ReflectionPermission (ReflectionPermissionFlag.ReflectionEmit);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Flags=ReflectionEmit", "ReflectionEmit", (se.Attributes ["Flags"] as string));
+			Assert.AreEqual ("ReflectionEmit", (se.Attributes ["Flags"] as string), "ToXml-Flags=ReflectionEmit");
 		}
 
 		[Test]
 		public void AllFlags () 
 		{
 			ReflectionPermission p = new ReflectionPermission (ReflectionPermissionFlag.AllFlags);
-			Assert ("IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue (p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
+			Assert.AreEqual ("true", (se.Attributes ["Unrestricted"] as string), "ToXml-Unrestricted");
 		}
 
 		[Test]
 		public void Flags () 
 		{
 			ReflectionPermission p = new ReflectionPermission (PermissionState.None);
-			Assert ("Flags(default).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Flags(default).IsUnrestricted");
 			p.Flags = ReflectionPermissionFlag.NoFlags;
-			Assert ("Flags(NoFlags).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Flags(NoFlags).IsUnrestricted");
 			p.Flags = ReflectionPermissionFlag.TypeInformation;
-			Assert ("Flags(TypeInformation).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Flags(TypeInformation).IsUnrestricted");
 			p.Flags = ReflectionPermissionFlag.MemberAccess;
-			Assert ("Flags(MemberAccess).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Flags(MemberAccess).IsUnrestricted");
 			p.Flags = ReflectionPermissionFlag.ReflectionEmit;
-			Assert ("Flags(ReflectionEmit).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Flags(ReflectionEmit).IsUnrestricted");
 			p.Flags = ReflectionPermissionFlag.AllFlags;
-			Assert ("Flags(AllFlags).IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue (p.IsUnrestricted (), "Flags(AllFlags).IsUnrestricted");
 		}
 
 		[Test]
@@ -154,11 +154,11 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			ReflectionPermission p = new ReflectionPermission (PermissionState.None);
 			SecurityElement se = p.ToXml ();
-			AssertNotNull ("ToXml()", se);
+			Assert.IsNotNull (se, "ToXml()");
 
 			ReflectionPermission p2 = (ReflectionPermission) p.Copy ();
 			p2.FromXml (se);
-			AssertEquals ("FromXml-None", ReflectionPermissionFlag.NoFlags, p2.Flags);
+			Assert.AreEqual (ReflectionPermissionFlag.NoFlags, p2.Flags, "FromXml-None");
 
 			string className = (string) se.Attributes ["class"];
 			string version = (string) se.Attributes ["version"];
@@ -168,27 +168,27 @@ namespace MonoTests.System.Security.Permissions {
 			se2.AddAttribute ("version", version);
 			se2.AddAttribute ("Flags", "TypeInformation");
 			p2.FromXml (se2);
-			AssertEquals ("FromXml-TypeInformation", ReflectionPermissionFlag.TypeInformation, p2.Flags);
+			Assert.AreEqual (ReflectionPermissionFlag.TypeInformation, p2.Flags, "FromXml-TypeInformation");
 
 			se2 = new SecurityElement (se.Tag);
 			se2.AddAttribute ("class", className);
 			se2.AddAttribute ("version", version);
 			se2.AddAttribute ("Flags", "MemberAccess");
 			p2.FromXml (se2);
-			AssertEquals ("FromXml-MemberAccess", ReflectionPermissionFlag.MemberAccess, p2.Flags);
+			Assert.AreEqual (ReflectionPermissionFlag.MemberAccess, p2.Flags, "FromXml-MemberAccess");
 
 			se2 = new SecurityElement (se.Tag);
 			se2.AddAttribute ("class", className);
 			se2.AddAttribute ("version", version);
 			se2.AddAttribute ("Flags", "ReflectionEmit");
 			p2.FromXml (se2);
-			AssertEquals ("FromXml-ReflectionEmit", ReflectionPermissionFlag.ReflectionEmit, p2.Flags);
+			Assert.AreEqual (ReflectionPermissionFlag.ReflectionEmit, p2.Flags, "FromXml-ReflectionEmit");
 
 			se = p.ToXml ();
 			se.AddAttribute ("Unrestricted", "true");
 			p2.FromXml (se);
-			Assert ("FromXml-Unrestricted", p2.IsUnrestricted ());
-			AssertEquals ("FromXml-AllFlags", ReflectionPermissionFlag.AllFlags, p2.Flags);
+			Assert.IsTrue (p2.IsUnrestricted (), "FromXml-Unrestricted");
+			Assert.AreEqual (ReflectionPermissionFlag.AllFlags, p2.Flags, "FromXml-AllFlags");
 		}
 
 		[Test]
@@ -197,7 +197,7 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
 			ReflectionPermission p2 = null;
 			ReflectionPermission p3 = (ReflectionPermission) p1.Union (p2);
-			AssertEquals ("P1 U null == P1", p1.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.AreEqual (p1.ToXml ().ToString (), p3.ToXml ().ToString (), "P1 U null == P1");
 		}
 
 		[Test]
@@ -206,9 +206,9 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (PermissionState.Unrestricted);
 			ReflectionPermission p2 = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
 			ReflectionPermission p3 = (ReflectionPermission) p1.Union (p2);
-			Assert ("Unrestricted U P2 == Unrestricted", p3.IsUnrestricted ());
+			Assert.IsTrue (p3.IsUnrestricted (), "Unrestricted U P2 == Unrestricted");
 			p3 = (ReflectionPermission) p2.Union (p1);
-			Assert ("P2 U Unrestricted == Unrestricted", p3.IsUnrestricted ());
+			Assert.IsTrue (p3.IsUnrestricted (), "P2 U Unrestricted == Unrestricted");
 		}
 
 		[Test]
@@ -217,10 +217,10 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (ReflectionPermissionFlag.TypeInformation);
 			ReflectionPermission p2 = new ReflectionPermission (ReflectionPermissionFlag.MemberAccess);
 			ReflectionPermission p3 = (ReflectionPermission) p1.Union (p2);
-			AssertEquals (ReflectionPermissionFlag.MemberAccess | ReflectionPermissionFlag.TypeInformation, p3.Flags);
+			Assert.AreEqual (ReflectionPermissionFlag.MemberAccess | ReflectionPermissionFlag.TypeInformation, p3.Flags);
 			ReflectionPermission p4 = new ReflectionPermission (ReflectionPermissionFlag.ReflectionEmit);
 			ReflectionPermission p5 = (ReflectionPermission) p4.Union (p3);
-			Assert ("P3 U P4==Unrestricted", p5.IsUnrestricted ());
+			Assert.IsTrue (p5.IsUnrestricted (), "P3 U P4==Unrestricted");
 		}
 
 		[Test]
@@ -238,7 +238,7 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
 			ReflectionPermission p2 = null;
 			ReflectionPermission p3 = (ReflectionPermission) p1.Intersect (p2);
-			AssertNull ("P1 N null == null", p3);
+			Assert.IsNull (p3, "P1 N null == null");
 		}
 
 		[Test]
@@ -247,15 +247,15 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (PermissionState.Unrestricted);
 			ReflectionPermission p2 = new ReflectionPermission (ReflectionPermissionFlag.MemberAccess);
 			ReflectionPermission p3 = (ReflectionPermission) p1.Intersect (p2);
-			Assert ("Unrestricted N P2 == P2", !p3.IsUnrestricted ());
-			AssertEquals ("Unrestricted N EP2 == EP2", p2.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.IsTrue (!p3.IsUnrestricted (), "Unrestricted N P2 == P2");
+			Assert.AreEqual (p2.ToXml ().ToString (), p3.ToXml ().ToString (), "Unrestricted N EP2 == EP2");
 			p3 = (ReflectionPermission) p2.Intersect (p1);
-			Assert ("P2 N Unrestricted == P2", !p3.IsUnrestricted ());
-			AssertEquals ("P2 N Unrestricted == P2", p2.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.IsTrue (!p3.IsUnrestricted (), "P2 N Unrestricted == P2");
+			Assert.AreEqual (p2.ToXml ().ToString (), p3.ToXml ().ToString (), "P2 N Unrestricted == P2");
 
 			p2 = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
 			p3 = (ReflectionPermission) p1.Intersect (p2);
-			AssertNull ("Unrestricted N None == null", p3);
+			Assert.IsNull (p3, "Unrestricted N None == null");
 		}
 
 		[Test]
@@ -265,21 +265,21 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (ReflectionPermissionFlag.MemberAccess);
 			ReflectionPermission p2 = new ReflectionPermission (ReflectionPermissionFlag.TypeInformation);
 			ReflectionPermission p3 = (ReflectionPermission) p1.Intersect (p2);
-			AssertNull ("EP1 N EP2 == null", p3);
+			Assert.IsNull (p3, "EP1 N EP2 == null");
 			// intersection in MemberAccess
 			ReflectionPermission p4 = new ReflectionPermission (ReflectionPermissionFlag.MemberAccess | ReflectionPermissionFlag.ReflectionEmit);
 			p3 = (ReflectionPermission) p4.Intersect (p1);
-			AssertEquals ("Intersect-MemberAccess", ReflectionPermissionFlag.MemberAccess, p3.Flags);
+			Assert.AreEqual (ReflectionPermissionFlag.MemberAccess, p3.Flags, "Intersect-MemberAccess");
 			// intersection in TypeInformation
 			ReflectionPermission p5 = new ReflectionPermission (ReflectionPermissionFlag.TypeInformation | ReflectionPermissionFlag.ReflectionEmit);
 			p3 = (ReflectionPermission) p5.Intersect (p2);
-			AssertEquals ("Intersect-TypeInformation", ReflectionPermissionFlag.TypeInformation, p3.Flags);
+			Assert.AreEqual (ReflectionPermissionFlag.TypeInformation, p3.Flags, "Intersect-TypeInformation");
 			// intersection in AllFlags
 			ReflectionPermission p6 = new ReflectionPermission (ReflectionPermissionFlag.AllFlags);
 			ReflectionPermission p7 = new ReflectionPermission (ReflectionPermissionFlag.AllFlags);
 			p3 = (ReflectionPermission) p6.Intersect (p7);
-			AssertEquals ("Intersect-AllFlags", ReflectionPermissionFlag.AllFlags, p3.Flags);
-			Assert ("Intersect-AllFlags-Unrestricted", p3.IsUnrestricted ());
+			Assert.AreEqual (ReflectionPermissionFlag.AllFlags, p3.Flags, "Intersect-AllFlags");
+			Assert.IsTrue (p3.IsUnrestricted (), "Intersect-AllFlags-Unrestricted");
 		}
 
 		[Test]
@@ -295,9 +295,9 @@ namespace MonoTests.System.Security.Permissions {
 		public void IsSubsetOfNull () 
 		{
 			ReflectionPermission p = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
-			Assert ("NoFlags.IsSubsetOf(null)", p.IsSubsetOf (null));
+			Assert.IsTrue (p.IsSubsetOf (null), "NoFlags.IsSubsetOf(null)");
 			p = new ReflectionPermission (ReflectionPermissionFlag.MemberAccess);
-			Assert ("MemberAccess.IsSubsetOf(null)", !p.IsSubsetOf (null));
+			Assert.IsTrue (!p.IsSubsetOf (null), "MemberAccess.IsSubsetOf(null)");
 		}
 
 		[Test]
@@ -306,9 +306,9 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (PermissionState.Unrestricted);
 			ReflectionPermission p2 = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
 			ReflectionPermission p3 = new ReflectionPermission (PermissionState.Unrestricted);
-			Assert ("Unrestricted.IsSubsetOf()", !p1.IsSubsetOf (p2));
-			Assert ("IsSubsetOf(Unrestricted)", p2.IsSubsetOf (p1));
-			Assert ("Unrestricted.IsSubsetOf(Unrestricted)", p1.IsSubsetOf (p3));
+			Assert.IsTrue (!p1.IsSubsetOf (p2), "Unrestricted.IsSubsetOf()");
+			Assert.IsTrue (p2.IsSubsetOf (p1), "IsSubsetOf(Unrestricted)");
+			Assert.IsTrue (p1.IsSubsetOf (p3), "Unrestricted.IsSubsetOf(Unrestricted)");
 		}
 
 		[Test]
@@ -317,19 +317,19 @@ namespace MonoTests.System.Security.Permissions {
 			ReflectionPermission p1 = new ReflectionPermission (ReflectionPermissionFlag.MemberAccess);
 			ReflectionPermission p2 = new ReflectionPermission (ReflectionPermissionFlag.TypeInformation);
 			ReflectionPermission p3 = new ReflectionPermission (ReflectionPermissionFlag.ReflectionEmit);
-			Assert ("MemberAccess.IsSubsetOf(TypeInformation)", !p1.IsSubsetOf (p2));
-			Assert ("MemberAccess.IsSubsetOf(ReflectionEmit)", !p1.IsSubsetOf (p3));
-			Assert ("TypeInformation.IsSubsetOf(MemberAccess)", !p2.IsSubsetOf (p1));
-			Assert ("TypeInformation.IsSubsetOf(ReflectionEmit)", !p2.IsSubsetOf (p3));
-			Assert ("ReflectionEmit.IsSubsetOf(MemberAccess)", !p3.IsSubsetOf (p1));
-			Assert ("ReflectionEmit.IsSubsetOf(TypeInformation)", !p3.IsSubsetOf (p2));
+			Assert.IsTrue (!p1.IsSubsetOf (p2), "MemberAccess.IsSubsetOf(TypeInformation)");
+			Assert.IsTrue (!p1.IsSubsetOf (p3), "MemberAccess.IsSubsetOf(ReflectionEmit)");
+			Assert.IsTrue (!p2.IsSubsetOf (p1), "TypeInformation.IsSubsetOf(MemberAccess)");
+			Assert.IsTrue (!p2.IsSubsetOf (p3), "TypeInformation.IsSubsetOf(ReflectionEmit)");
+			Assert.IsTrue (!p3.IsSubsetOf (p1), "ReflectionEmit.IsSubsetOf(MemberAccess)");
+			Assert.IsTrue (!p3.IsSubsetOf (p2), "ReflectionEmit.IsSubsetOf(TypeInformation)");
 			ReflectionPermission p4 = new ReflectionPermission (ReflectionPermissionFlag.AllFlags);
-			Assert ("MemberAccess.IsSubsetOf(AllFlags)", p1.IsSubsetOf (p4));
-			Assert ("TypeInformation.IsSubsetOf(AllFlags)", p2.IsSubsetOf (p4));
-			Assert ("ReflectionEmit.IsSubsetOf(AllFlags)", p3.IsSubsetOf (p4));
-			Assert ("AllFlags.IsSubsetOf(MemberAccess)", !p4.IsSubsetOf (p1));
-			Assert ("AllFlags.IsSubsetOf(TypeInformation)", !p4.IsSubsetOf (p2));
-			Assert ("AllFlags.IsSubsetOf(ReflectionEmit)", !p4.IsSubsetOf (p3));
+			Assert.IsTrue (p1.IsSubsetOf (p4), "MemberAccess.IsSubsetOf(AllFlags)");
+			Assert.IsTrue (p2.IsSubsetOf (p4), "TypeInformation.IsSubsetOf(AllFlags)");
+			Assert.IsTrue (p3.IsSubsetOf (p4), "ReflectionEmit.IsSubsetOf(AllFlags)");
+			Assert.IsTrue (!p4.IsSubsetOf (p1), "AllFlags.IsSubsetOf(MemberAccess)");
+			Assert.IsTrue (!p4.IsSubsetOf (p2), "AllFlags.IsSubsetOf(TypeInformation)");
+			Assert.IsTrue (!p4.IsSubsetOf (p3), "AllFlags.IsSubsetOf(ReflectionEmit)");
 		}
 
 		[Test]
@@ -338,7 +338,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			ReflectionPermission p1 = new ReflectionPermission (ReflectionPermissionFlag.NoFlags);
 			EnvironmentPermission ep2 = new EnvironmentPermission (PermissionState.Unrestricted);
-			Assert ("IsSubsetOf(EnvironmentPermission)", p1.IsSubsetOf (ep2));
+			Assert.IsTrue (p1.IsSubsetOf (ep2), "IsSubsetOf(EnvironmentPermission)");
 		}
 	}
 }

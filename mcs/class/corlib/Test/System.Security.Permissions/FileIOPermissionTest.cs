@@ -51,7 +51,7 @@ namespace MonoTests.System.Security.Permissions {
 #endif
 
 	[TestFixture]
-	public class FileIOPermissionTest : Assertion {
+	public class FileIOPermissionTest {
 		
 		string[] pathArrayGood;
 		string[] pathArrayBad;
@@ -110,12 +110,12 @@ namespace MonoTests.System.Security.Permissions {
 		public void ConstructorPermissionState ()
 		{
 			p = new FileIOPermission(PermissionState.None);
-			AssertEquals("Should be Restricted", false, p.IsUnrestricted());
+			Assert.AreEqual(false, p.IsUnrestricted(), "Should be Restricted");
 			p = new FileIOPermission(PermissionState.Unrestricted);
-			AssertEquals("Should be Unrestricted", true, p.IsUnrestricted());
+			Assert.AreEqual(true, p.IsUnrestricted(), "Should be Unrestricted");
 			try{
 				p = new FileIOPermission((PermissionState)77);
-				Fail("Should have thrown an exception on invalid PermissionState");
+				Assert.Fail("Should have thrown an exception on invalid PermissionState");
 			}
 			catch{
 				// we should be here if things are working.  nothing to do
@@ -152,11 +152,11 @@ namespace MonoTests.System.Security.Permissions {
 			}
 			catch (ArgumentException) {
 				if (unix)
-					Fail ("Wildcard * is valid in filenames");
+					Assert.Fail ("Wildcard * is valid in filenames");
 				// else it's normal for Windows to throw ArgumentException
 			}
 			catch (Exception e) {
-				Fail ("Bad or wrong exception: " + e.ToString ());
+				Assert.Fail ("Bad or wrong exception: " + e.ToString ());
 			}
 		}
 
@@ -179,8 +179,8 @@ namespace MonoTests.System.Security.Permissions {
 
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathToAdd);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Does not contain correct number of paths. Expected 1 but got: "+pathsInPermission.Length, pathsInPermission.Length == 1);
-			Assert("Does not contain expected path from constructor: "+pathToAdd, pathsInPermission[0] == pathToAdd);
+			Assert.IsTrue (pathsInPermission.Length == 1, "Does not contain correct number of paths. Expected 1 but got: "+pathsInPermission.Length);
+			Assert.IsTrue(pathsInPermission[0] == pathToAdd, "Does not contain expected path from constructor: "+pathToAdd);
 		}
 
 		[Test]
@@ -199,11 +199,11 @@ namespace MonoTests.System.Security.Permissions {
 			}
 			catch (ArgumentException) {
 				if (unix)
-					Fail ("Wildcard * is valid in filenames");
+					Assert.Fail ("Wildcard * is valid in filenames");
 				// else it's normal for Windows to throw ArgumentException
 			}
 			catch (Exception e) {
-				Fail ("Bad or wrong exception: " + e.ToString ());
+				Assert.Fail ("Bad or wrong exception: " + e.ToString ());
 			}
 		}
 
@@ -219,9 +219,9 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Does not contain correct number of paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
+			Assert.IsTrue (pathsInPermission.Length == 2, "Does not contain correct number of paths. Expected 2 but got: "+pathsInPermission.Length);
 			foreach (string s in pathsInPermission){
-				Assert("Unexpected path in the Permission: " + s, Array.IndexOf(pathsInPermission, s) >=0);
+				Assert.IsTrue (Array.IndexOf(pathsInPermission, s) >=0, "Unexpected path in the Permission: " + s);
 			}
 		}
 
@@ -230,21 +230,21 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Does not contain correct number of paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
+			Assert.IsTrue (pathsInPermission.Length == 2, "Does not contain correct number of paths. Expected 2 but got: "+pathsInPermission.Length);
 			foreach (string s in pathsInPermission){
-				Assert("Unexpected path in the Permission: " + s, Array.IndexOf(pathsInPermission, s) >=0);
+				Assert.IsTrue (Array.IndexOf(pathsInPermission, s) >=0, "Unexpected path in the Permission: " + s);
 			}
 
 			p.AddPathList(FileIOPermissionAccess.Append, pathArrayGood);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should still contain correct number Read paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
+			Assert.IsTrue (pathsInPermission.Length == 2, "Should still contain correct number Read paths. Expected 2 but got: "+pathsInPermission.Length);
 			foreach (string s in pathsInPermission){
-				Assert("Unexpected path in the Permission: " + s, Array.IndexOf(pathsInPermission, s) >=0);
+				Assert.IsTrue (Array.IndexOf(pathsInPermission, s) >=0, "Unexpected path in the Permission: " + s);
 			}
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Append);
-			Assert("Should contain correct number of Append paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
+			Assert.IsTrue (pathsInPermission.Length == 2, "Should contain correct number of Append paths. Expected 2 but got: "+pathsInPermission.Length);
 			foreach (string s in pathsInPermission){
-				Assert("Unexpected path in the Permission: " + s, Array.IndexOf(pathsInPermission, s) >=0);
+				Assert.IsTrue (Array.IndexOf(pathsInPermission, s) >=0, "Unexpected path in the Permission: " + s);
 			}
 		}
 
@@ -259,52 +259,52 @@ namespace MonoTests.System.Security.Permissions {
 			
 			FileIOPermission intersection = (FileIOPermission)p.Intersect(unrestricted);
 			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
-			Assert("Should have Append bit in AllFiles.", (intersection.AllFiles & FileIOPermissionAccess.Append) != 0);
-			Assert("Should have Write bit in AllLocalFiles.", (intersection.AllLocalFiles & FileIOPermissionAccess.Write) != 0);
+			Assert.IsTrue (pathsInPermission.Length == 2, "Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length);
+			Assert.IsTrue((intersection.AllFiles & FileIOPermissionAccess.Append) != 0, "Should have Append bit in AllFiles.");
+			Assert.IsTrue((intersection.AllLocalFiles & FileIOPermissionAccess.Write) != 0, "Should have Write bit in AllLocalFiles.");
 
 			intersection = (FileIOPermission)unrestricted.Intersect(p);
 			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
-			Assert("Should have Append bit in AllFiles.", (intersection.AllFiles & FileIOPermissionAccess.Append) != 0);
-			Assert("Should have Write bit in AllLocalFiles.", (intersection.AllLocalFiles & FileIOPermissionAccess.Write) != 0);
+			Assert.IsTrue (pathsInPermission.Length == 2, "Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length);
+			Assert.IsTrue((intersection.AllFiles & FileIOPermissionAccess.Append) != 0, "Should have Append bit in AllFiles.");
+			Assert.IsTrue((intersection.AllLocalFiles & FileIOPermissionAccess.Write) != 0, "Should have Write bit in AllLocalFiles.");
 
 			p2 = new FileIOPermission(FileIOPermissionAccess.Append | FileIOPermissionAccess.Read, pathArrayGood2);
 			p2.AllFiles = FileIOPermissionAccess.Append | FileIOPermissionAccess.Write;
 			p2.AllLocalFiles = FileIOPermissionAccess.Write | FileIOPermissionAccess.Read;
 			intersection = (FileIOPermission)p.Intersect(p2);
 			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
-			AssertNotNull ("Should have some paths", pathsInPermission);
-			AssertEquals ("Should contain correct number of Read paths", 2, pathsInPermission.Length);
-			AssertEquals ("Should have only Append bit in AllFiles.",  FileIOPermissionAccess.Append, intersection.AllFiles);
-			AssertEquals ("Should have only Write bit in AllLocalFiles.",  FileIOPermissionAccess.Write, intersection.AllLocalFiles);
+			Assert.IsNotNull (pathsInPermission, "Should have some paths");
+			Assert.AreEqual (2, pathsInPermission.Length, "Should contain correct number of Read paths");
+			Assert.AreEqual ( FileIOPermissionAccess.Append, intersection.AllFiles, "Should have only Append bit in AllFiles.");
+			Assert.AreEqual ( FileIOPermissionAccess.Write, intersection.AllLocalFiles, "Should have only Write bit in AllLocalFiles.");
 
 			intersection = (FileIOPermission)p2.Intersect(p);
 			pathsInPermission = intersection.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length, pathsInPermission.Length == 2);
-			Assert("Should have only Append bit in AllFiles.", intersection.AllFiles == FileIOPermissionAccess.Append);
-			Assert("Should have only Write bit in AllLocalFiles.", intersection.AllLocalFiles == FileIOPermissionAccess.Write);
+			Assert.IsTrue (pathsInPermission.Length == 2, "Should contain correct number of Read paths. Expected 2 but got: "+pathsInPermission.Length);
+			Assert.IsTrue(intersection.AllFiles == FileIOPermissionAccess.Append, "Should have only Append bit in AllFiles.");
+			Assert.IsTrue(intersection.AllLocalFiles == FileIOPermissionAccess.Write, "Should have only Write bit in AllLocalFiles.");
 		}
 
 		[Test]
 		public void IsSubsetOf ()
 		{
 			unrestricted = new FileIOPermission(PermissionState.Unrestricted);
-			Assert("IsSubsetOf reflective test failed", unrestricted.IsSubsetOf(unrestricted));
+			Assert.IsTrue(unrestricted.IsSubsetOf(unrestricted), "IsSubsetOf reflective test failed");
 
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			p.AllFiles = FileIOPermissionAccess.Append;
 			p.AllLocalFiles = FileIOPermissionAccess.Write;
-			Assert("#1 IsSubsetOf reflective test failed", p.IsSubsetOf(p));
-			Assert("#1 IsSubsetOf false test failed", !unrestricted.IsSubsetOf(p));
-			Assert("#1 IsSubsetOf true test failed", p.IsSubsetOf(unrestricted));
+			Assert.IsTrue(p.IsSubsetOf(p), "#1 IsSubsetOf reflective test failed");
+			Assert.IsTrue(!unrestricted.IsSubsetOf(p), "#1 IsSubsetOf false test failed");
+			Assert.IsTrue(p.IsSubsetOf(unrestricted), "#1 IsSubsetOf true test failed");
 
 			p2 = new FileIOPermission(FileIOPermissionAccess.Append | FileIOPermissionAccess.Read, pathArrayGood2);
 			p2.AllFiles = FileIOPermissionAccess.Append | FileIOPermissionAccess.Write;
 			p2.AllLocalFiles = FileIOPermissionAccess.Write | FileIOPermissionAccess.Read;
-			Assert("#2 IsSubsetOf reflective test failed", p2.IsSubsetOf(p2));
-			Assert("#2 IsSubsetOf true test failed", p.IsSubsetOf(p2));
-			Assert("#2 IsSubsetOf false test failed", !p2.IsSubsetOf(p));
+			Assert.IsTrue(p2.IsSubsetOf(p2), "#2 IsSubsetOf reflective test failed");
+			Assert.IsTrue(p.IsSubsetOf(p2), "#2 IsSubsetOf true test failed");
+			Assert.IsTrue(!p2.IsSubsetOf(p), "#2 IsSubsetOf false test failed");
 		}
 
 		[Test]
@@ -315,27 +315,27 @@ namespace MonoTests.System.Security.Permissions {
 
 			FileIOPermission union = (FileIOPermission)unrestricted.Union(p);
 			pathsInPermission = union.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should get an unrestricted permission", union.IsUnrestricted());
-			Assert("Path list should be empty", pathsInPermission == null);
+			Assert.IsTrue(union.IsUnrestricted(), "Should get an unrestricted permission");
+			Assert.IsTrue(pathsInPermission == null, "Path list should be empty");
 
 			union = (FileIOPermission)p.Union(unrestricted);
 			pathsInPermission = union.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Should get an unrestricted permission", union.IsUnrestricted());
-			Assert("Path list should be empty", pathsInPermission == null);
+			Assert.IsTrue(union.IsUnrestricted(), "Should get an unrestricted permission");
+			Assert.IsTrue(pathsInPermission == null, "Path list should be empty");
 
 			p2 = new FileIOPermission(FileIOPermissionAccess.Append, pathArrayGood2);
 
 			union = (FileIOPermission)p.Union(p2);
 			pathsInPermission = union.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Path list should have 2 for Read", pathsInPermission.Length == pathArrayGood.Length);
+			Assert.IsTrue(pathsInPermission.Length == pathArrayGood.Length, "Path list should have 2 for Read");
 			pathsInPermission = union.GetPathList(FileIOPermissionAccess.Append);
-			Assert("Path list should have 3 for Append", pathsInPermission.Length == pathArrayGood2.Length);
+			Assert.IsTrue(pathsInPermission.Length == pathArrayGood2.Length, "Path list should have 3 for Append");
 
 			union = (FileIOPermission)p2.Union(p);
 			pathsInPermission = union.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Path list should have 2 for Read", pathsInPermission.Length == pathArrayGood.Length);
+			Assert.IsTrue(pathsInPermission.Length == pathArrayGood.Length, "Path list should have 2 for Read");
 			pathsInPermission = union.GetPathList(FileIOPermissionAccess.Append);
-			Assert("Path list should have 3 for Append", pathsInPermission.Length == pathArrayGood2.Length);
+			Assert.IsTrue(pathsInPermission.Length == pathArrayGood2.Length, "Path list should have 3 for Append");
 		}
 
 		[Test]
@@ -349,9 +349,9 @@ namespace MonoTests.System.Security.Permissions {
 			FileIOPermission union = (FileIOPermission) p.Union (p2);
 
 			string[] paths = union.GetPathList(FileIOPermissionAccess.Read);
-			AssertEquals ("Length", 2, paths.Length);
-			AssertEquals ("0", f1[0], paths[0]);
-			AssertEquals ("1", f1[1], paths[1]);
+			Assert.AreEqual (2, paths.Length, "Length");
+			Assert.AreEqual (f1[0], paths[0], "0");
+			Assert.AreEqual (f1[1], paths[1], "1");
 		}
 
 		private void Partial (string msg, string[] path1, string[] path2, int expected)
@@ -361,10 +361,10 @@ namespace MonoTests.System.Security.Permissions {
 			FileIOPermission union = (FileIOPermission) p.Union (p2);
 
 			string[] paths = union.GetPathList(FileIOPermissionAccess.Read);
-			AssertEquals (msg + ".Length", expected, paths.Length);
-			AssertEquals (msg + "[0]", path1[0], paths[0]);
+			Assert.AreEqual (expected, paths.Length, msg + ".Length");
+			Assert.AreEqual (path1[0], paths[0], msg + "[0]");
 			if (expected > 1)
-				AssertEquals (msg + "[1]", path2[0], paths[1]);
+				Assert.AreEqual (path2[0], paths[1], msg + "[1]");
 		}
 
 		[Test]
@@ -395,7 +395,7 @@ namespace MonoTests.System.Security.Permissions {
 			esd.AddAttribute("version", "1");
 			esd.AddAttribute("Unrestricted", "true");
 			p.FromXml(esd);
-			Assert("Should get an unrestricted permission", p.IsUnrestricted());
+			Assert.IsTrue(p.IsUnrestricted(), "Should get an unrestricted permission");
 
 			esd = new SecurityElement("IPermission");
 			esd.AddAttribute("class", "FileIOPermission");
@@ -412,9 +412,9 @@ namespace MonoTests.System.Security.Permissions {
 			p = new FileIOPermission(PermissionState.None);
 			p.FromXml(esd);
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Read);
-			Assert("Path list should have 2 for Read", pathsInPermission.Length == 2);
+			Assert.IsTrue(pathsInPermission.Length == 2, "Path list should have 2 for Read");
 			pathsInPermission = p.GetPathList(FileIOPermissionAccess.Write);
-			Assert("Path list should have 2 for Write", pathsInPermission.Length == 3);
+			Assert.IsTrue(pathsInPermission.Length == 3, "Path list should have 2 for Write");
 		}
 
 		[Test]
@@ -422,11 +422,11 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			p = new FileIOPermission(FileIOPermissionAccess.Read, pathArrayGood);
 			SecurityElement esd = p.ToXml();
-			Assert("Esd tag incorrect", esd.Tag == "IPermission");
-			Assert("Esd version incorrect", (String)esd.Attributes["version"] == "1");
+			Assert.IsTrue(esd.Tag == "IPermission", "Esd tag incorrect");
+			Assert.IsTrue((String)esd.Attributes["version"] == "1", "Esd version incorrect");
 			string read = (String)esd.Attributes["Read"];
 			pathsInPermission = read.Split(';');
-			Assert("Path list should have 2 for Read", pathsInPermission.Length == 2);
+			Assert.IsTrue(pathsInPermission.Length == 2, "Path list should have 2 for Read");
 		}
 #if !TARGET_JVM
 		[Test]
@@ -437,11 +437,11 @@ namespace MonoTests.System.Security.Permissions {
 			string filename = Path.GetTempFileName ();
 			p = new FileIOPermission(FileIOPermissionAccess.Read, filename);
 			string[] files = p.GetPathList (FileIOPermissionAccess.Read);
-			AssertEquals ("GetPathList.Count", 1, files.Length);
+			Assert.AreEqual (1, files.Length, "GetPathList.Count");
 			// FIXME: here GetTempFileName != GetPathList[0] for MS but == for Mono
-			AssertEquals ("Path.GetFileName(GetTempFileName)==Path.GetFileName(GetPathList[0])", Path.GetFileName (filename), Path.GetFileName (files [0]));
+			Assert.AreEqual (Path.GetFileName (filename), Path.GetFileName (files [0]), "Path.GetFileName(GetTempFileName)==Path.GetFileName(GetPathList[0])");
 			// note: this will fail on Linux as kernel32.dll isn't available
-			AssertEquals ("GetLongPathName(GetTempFileName)==GetPathList[0]", FilePathUtil.GetLongPathName (filename), files [0]);
+			Assert.AreEqual (FilePathUtil.GetLongPathName (filename), files [0], "GetLongPathName(GetTempFileName)==GetPathList[0]");
 		}
 #endif
 		[Test]

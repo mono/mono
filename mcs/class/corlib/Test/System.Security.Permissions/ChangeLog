@@ -1,3 +1,7 @@
+2009-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Convert all tests to new-style nunit classes/methods.
+
 2006-08-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermissionTest.cs: Added new test cases for union (#79118) and

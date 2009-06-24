@@ -15,7 +15,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class FileDialogPermissionTest : Assertion {
+	public class FileDialogPermissionTest {
 
 		private static string className = "System.Security.Permissions.FileDialogPermission, ";
 
@@ -23,85 +23,85 @@ namespace MonoTests.System.Security.Permissions {
 		public void PermissionStateNone () 
 		{
 			FileDialogPermission p = new FileDialogPermission (PermissionState.None);
-			AssertNotNull ("FileDialogPermission(PermissionState.None)", p);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsNotNull (p, "FileDialogPermission(PermissionState.None)");
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			FileDialogPermission copy = (FileDialogPermission) p.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", p.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (p.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			Assert ("ToXml-class", (se.Attributes ["class"] as string).StartsWith (className));
-			AssertEquals ("ToXml-version", "1", (se.Attributes ["version"] as string));
+			Assert.IsTrue ((se.Attributes ["class"] as string).StartsWith (className), "ToXml-class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "ToXml-version");
 		}
 
 		[Test]
 		public void PermissionStateUnrestricted () 
 		{
 			FileDialogPermission p = new FileDialogPermission (PermissionState.Unrestricted);
-			AssertNotNull ("FileDialogPermission(PermissionState.Unrestricted)", p);
-			Assert ("IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsNotNull (p, "FileDialogPermission(PermissionState.Unrestricted)");
+			Assert.IsTrue (p.IsUnrestricted (), "IsUnrestricted");
 			FileDialogPermission copy = (FileDialogPermission) p.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", p.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (p.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
+			Assert.AreEqual ("true", (se.Attributes ["Unrestricted"] as string), "ToXml-Unrestricted");
 		}
 
 		[Test]
 		public void Derestricted () 
 		{
 			FileDialogPermission p = new FileDialogPermission (PermissionState.Unrestricted);
-			Assert ("IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue (p.IsUnrestricted (), "IsUnrestricted");
 			p.Access = FileDialogPermissionAccess.None;
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void None () 
 		{
 			FileDialogPermission p = new FileDialogPermission (FileDialogPermissionAccess.None);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertNull ("ToXml-Access=None", (se.Attributes ["Access"] as string));
+			Assert.IsNull ((se.Attributes ["Access"] as string), "ToXml-Access=None");
 		}
 
 		[Test]
 		public void Open () 
 		{
 			FileDialogPermission p = new FileDialogPermission (FileDialogPermissionAccess.Open);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Access=Open", "Open", (se.Attributes ["Access"] as string));
+			Assert.AreEqual ("Open", (se.Attributes ["Access"] as string), "ToXml-Access=Open");
 		}
 
 		[Test]
 		public void Save () 
 		{
 			FileDialogPermission p = new FileDialogPermission (FileDialogPermissionAccess.Save);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Access=Save", "Save", (se.Attributes ["Access"] as string));
+			Assert.AreEqual ("Save", (se.Attributes ["Access"] as string), "ToXml-Access=Save");
 		}
 
 		[Test]
 		public void OpenSave () 
 		{
 			FileDialogPermission p = new FileDialogPermission (FileDialogPermissionAccess.OpenSave);
-			Assert ("IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue (p.IsUnrestricted (), "IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("ToXml-Unrestricted", "true", (se.Attributes ["Unrestricted"] as string));
+			Assert.AreEqual ("true", (se.Attributes ["Unrestricted"] as string), "ToXml-Unrestricted");
 		}
 
 		[Test]
 		public void Access () 
 		{
 			FileDialogPermission p = new FileDialogPermission (PermissionState.None);
-			Assert ("Access(default).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Access(default).IsUnrestricted");
 			p.Access = FileDialogPermissionAccess.None;
-			Assert ("Access(None).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Access(None).IsUnrestricted");
 			p.Access = FileDialogPermissionAccess.Open;
-			Assert ("Access(Open).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Access(Open).IsUnrestricted");
 			p.Access = FileDialogPermissionAccess.Save;
-			Assert ("Access(Save).IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue (!p.IsUnrestricted (), "Access(Save).IsUnrestricted");
 			p.Access = FileDialogPermissionAccess.OpenSave;
-			Assert ("Access(OpenSave).IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue (p.IsUnrestricted (), "Access(OpenSave).IsUnrestricted");
 		}
 
 		[Test]
@@ -143,25 +143,25 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			FileDialogPermission p = new FileDialogPermission (PermissionState.None);
 			SecurityElement se = p.ToXml ();
-			AssertNotNull ("ToXml()", se);
+			Assert.IsNotNull (se, "ToXml()");
 
 			FileDialogPermission p2 = (FileDialogPermission) p.Copy ();
 			p2.FromXml (se);
-			AssertEquals ("FromXml-None", FileDialogPermissionAccess.None, p2.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.None, p2.Access, "FromXml-None");
 
 			se.AddAttribute ("Access", "Open");
 			p2.FromXml (se);
-			AssertEquals ("FromXml-Open", FileDialogPermissionAccess.Open, p2.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.Open, p2.Access, "FromXml-Open");
 
 			se = p.ToXml ();
 			se.AddAttribute ("Access", "Save");
 			p2.FromXml (se);
-			AssertEquals ("FromXml-Save", FileDialogPermissionAccess.Save, p2.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.Save, p2.Access, "FromXml-Save");
 
 			se = p.ToXml ();
 			se.AddAttribute ("Unrestricted", "true");
 			p2.FromXml (se);
-			Assert ("FromXml-Unrestricted", p2.IsUnrestricted ());
+			Assert.IsTrue (p2.IsUnrestricted (), "FromXml-Unrestricted");
 		}
 
 		[Test]
@@ -170,7 +170,7 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermission p1 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			FileDialogPermission p2 = null;
 			FileDialogPermission p3 = (FileDialogPermission) p1.Union (p2);
-			AssertEquals ("P1 U null == P1", p1.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.AreEqual (p1.ToXml ().ToString (), p3.ToXml ().ToString (), "P1 U null == P1");
 		}
 
 		[Test]
@@ -179,9 +179,9 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermission p1 = new FileDialogPermission (PermissionState.Unrestricted);
 			FileDialogPermission p2 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			FileDialogPermission p3 = (FileDialogPermission) p1.Union (p2);
-			Assert ("Unrestricted U P2 == Unrestricted", p3.IsUnrestricted ());
+			Assert.IsTrue (p3.IsUnrestricted (), "Unrestricted U P2 == Unrestricted");
 			p3 = (FileDialogPermission) p2.Union (p1);
-			Assert ("P2 U Unrestricted == Unrestricted", p3.IsUnrestricted ());
+			Assert.IsTrue (p3.IsUnrestricted (), "P2 U Unrestricted == Unrestricted");
 		}
 
 		[Test]
@@ -191,8 +191,8 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermission p2 = new FileDialogPermission (FileDialogPermissionAccess.Save);
 			FileDialogPermission p3 = (FileDialogPermission) p1.Union (p2);
 			FileDialogPermission p4 = new FileDialogPermission (FileDialogPermissionAccess.OpenSave);
-			AssertEquals ("P1 U P2 == P1+2", p3.ToXml ().ToString (), p4.ToXml ().ToString ());
-			Assert ("P1+2==Unrestricted", p3.IsUnrestricted ());
+			Assert.AreEqual (p3.ToXml ().ToString (), p4.ToXml ().ToString (), "P1 U P2 == P1+2");
+			Assert.IsTrue (p3.IsUnrestricted (), "P1+2==Unrestricted");
 		}
 
 		[Test]
@@ -210,7 +210,7 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermission p1 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			FileDialogPermission p2 = null;
 			FileDialogPermission p3 = (FileDialogPermission) p1.Intersect (p2);
-			AssertNull ("P1 N null == null", p3);
+			Assert.IsNull (p3, "P1 N null == null");
 		}
 
 		[Test]
@@ -219,11 +219,11 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermission p1 = new FileDialogPermission (PermissionState.Unrestricted);
 			FileDialogPermission p2 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			FileDialogPermission p3 = (FileDialogPermission) p1.Intersect (p2);
-			Assert ("Unrestricted N P2 == P2", !p3.IsUnrestricted ());
-			AssertEquals ("Unrestricted N EP2 == EP2", p2.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.IsTrue (!p3.IsUnrestricted (), "Unrestricted N P2 == P2");
+			Assert.AreEqual (p2.ToXml ().ToString (), p3.ToXml ().ToString (), "Unrestricted N EP2 == EP2");
 			p3 = (FileDialogPermission) p2.Intersect (p1);
-			Assert ("P2 N Unrestricted == P2", !p3.IsUnrestricted ());
-			AssertEquals ("P2 N Unrestricted == P2", p2.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.IsTrue (!p3.IsUnrestricted (), "P2 N Unrestricted == P2");
+			Assert.AreEqual (p2.ToXml ().ToString (), p3.ToXml ().ToString (), "P2 N Unrestricted == P2");
 		}
 
 		[Test]
@@ -233,21 +233,21 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermission p1 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			FileDialogPermission p2 = new FileDialogPermission (FileDialogPermissionAccess.Save);
 			FileDialogPermission p3 = (FileDialogPermission) p1.Intersect (p2);
-			AssertNull ("EP1 N EP2 == null", p3);
+			Assert.IsNull (p3, "EP1 N EP2 == null");
 			// intersection in open
 			FileDialogPermission p4 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			p3 = (FileDialogPermission) p4.Intersect (p1);
-			AssertEquals ("Intersect-Open", FileDialogPermissionAccess.Open, p3.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.Open, p3.Access, "Intersect-Open");
 			// intersection in save
 			FileDialogPermission p5 = new FileDialogPermission (FileDialogPermissionAccess.Save);		
 			p3 = (FileDialogPermission) p5.Intersect (p2);
-			AssertEquals ("Intersect-Save", FileDialogPermissionAccess.Save, p3.Access);
+			Assert.AreEqual (FileDialogPermissionAccess.Save, p3.Access, "Intersect-Save");
 			// intersection in open and save
 			FileDialogPermission p6 = new FileDialogPermission (FileDialogPermissionAccess.OpenSave);
 			FileDialogPermission p7 = new FileDialogPermission (FileDialogPermissionAccess.OpenSave);
 			p3 = (FileDialogPermission) p6.Intersect (p7);
-			AssertEquals ("Intersect-AllAccess-OpenSave", FileDialogPermissionAccess.OpenSave, p3.Access);
-			Assert ("Intersect-OpenSave-Unrestricted", p3.IsUnrestricted ());
+			Assert.AreEqual (FileDialogPermissionAccess.OpenSave, p3.Access, "Intersect-AllAccess-OpenSave");
+			Assert.IsTrue (p3.IsUnrestricted (), "Intersect-OpenSave-Unrestricted");
 		}
 
 		[Test]
@@ -263,7 +263,7 @@ namespace MonoTests.System.Security.Permissions {
 		public void IsSubsetOfNull () 
 		{
 			FileDialogPermission p1 = new FileDialogPermission (FileDialogPermissionAccess.Open);
-			Assert ("IsSubsetOf(null)", !p1.IsSubsetOf (null));
+			Assert.IsTrue (!p1.IsSubsetOf (null), "IsSubsetOf(null)");
 		}
 
 		[Test]
@@ -272,9 +272,9 @@ namespace MonoTests.System.Security.Permissions {
 			FileDialogPermission p1 = new FileDialogPermission (PermissionState.Unrestricted);
 			FileDialogPermission p2 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			FileDialogPermission p3 = new FileDialogPermission (PermissionState.Unrestricted);
-			Assert ("Unrestricted.IsSubsetOf()", !p1.IsSubsetOf (p2));
-			Assert ("IsSubsetOf(Unrestricted)", p2.IsSubsetOf (p1));
-			Assert ("Unrestricted.IsSubsetOf(Unrestricted)", p1.IsSubsetOf (p3));
+			Assert.IsTrue (!p1.IsSubsetOf (p2), "Unrestricted.IsSubsetOf()");
+			Assert.IsTrue (p2.IsSubsetOf (p1), "IsSubsetOf(Unrestricted)");
+			Assert.IsTrue (p1.IsSubsetOf (p3), "Unrestricted.IsSubsetOf(Unrestricted)");
 		}
 
 		[Test]
@@ -282,11 +282,11 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			FileDialogPermission p1 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			FileDialogPermission p2 = new FileDialogPermission (FileDialogPermissionAccess.Save);
-			Assert ("IsSubsetOf(nosubset1)", !p1.IsSubsetOf (p2));
-			Assert ("IsSubsetOf(nosubset2)", !p2.IsSubsetOf (p1));
+			Assert.IsTrue (!p1.IsSubsetOf (p2), "IsSubsetOf(nosubset1)");
+			Assert.IsTrue (!p2.IsSubsetOf (p1), "IsSubsetOf(nosubset2)");
 			FileDialogPermission p3 = new FileDialogPermission (FileDialogPermissionAccess.OpenSave);
-			Assert ("IsSubsetOf(OpenSave)", p1.IsSubsetOf (p3));
-			Assert ("OpenSave.IsSubsetOf()", !p3.IsSubsetOf (p1));
+			Assert.IsTrue (p1.IsSubsetOf (p3), "IsSubsetOf(OpenSave)");
+			Assert.IsTrue (!p3.IsSubsetOf (p1), "OpenSave.IsSubsetOf()");
 		}
 
 		[Test]
@@ -295,7 +295,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			FileDialogPermission p1 = new FileDialogPermission (FileDialogPermissionAccess.Open);
 			EnvironmentPermission ep2 = new EnvironmentPermission (PermissionState.Unrestricted);
-			Assert ("IsSubsetOf(EnvironmentPermission)", p1.IsSubsetOf (ep2));
+			Assert.IsTrue (p1.IsSubsetOf (ep2), "IsSubsetOf(EnvironmentPermission)");
 		}
 	}
 }

@@ -34,7 +34,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class RegistryPermissionTest : Assertion	{
+	public class RegistryPermissionTest	{
 
 		private static string className = "System.Security.Permissions.RegistryPermission, ";
 		private static string keyCurrentUser = @"HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home";
@@ -46,25 +46,25 @@ namespace MonoTests.System.Security.Permissions {
 		public void PermissionStateNone ()
 		{
 			RegistryPermission ep = new RegistryPermission (PermissionState.None);
-			AssertNotNull ("RegistryPermission(PermissionState.None)", ep);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsNotNull (ep, "RegistryPermission(PermissionState.None)");
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 			RegistryPermission copy = (RegistryPermission)ep.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", ep.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (ep.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = ep.ToXml ();
-			Assert ("ToXml-class", se.Attribute ("class").StartsWith (className));
-			AssertEquals ("ToXml-version", "1", se.Attribute ("version"));
+			Assert.IsTrue (se.Attribute ("class").StartsWith (className), "ToXml-class");
+			Assert.AreEqual ("1", se.Attribute ("version"), "ToXml-version");
 		}
 
 		[Test]
 		public void PermissionStateUnrestricted ()
 		{
 			RegistryPermission ep = new RegistryPermission (PermissionState.Unrestricted);
-			AssertNotNull ("RegistryPermission(PermissionState.Unrestricted)", ep);
-			Assert ("IsUnrestricted", ep.IsUnrestricted ());
+			Assert.IsNotNull (ep, "RegistryPermission(PermissionState.Unrestricted)");
+			Assert.IsTrue (ep.IsUnrestricted (), "IsUnrestricted");
 			RegistryPermission copy = (RegistryPermission)ep.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", ep.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (ep.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = ep.ToXml ();
-			AssertEquals ("ToXml-Unrestricted", "true", se.Attribute ("Unrestricted"));
+			Assert.AreEqual ("true", se.Attribute ("Unrestricted"), "ToXml-Unrestricted");
 		}
 
 		[Test]
@@ -78,35 +78,35 @@ namespace MonoTests.System.Security.Permissions {
 		public void AllAccess ()
 		{
 			RegistryPermission ep = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void NoAccess ()
 		{
 			RegistryPermission ep = new RegistryPermission (RegistryPermissionAccess.NoAccess, keyLocalMachine);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void CreateAccess ()
 		{
 			RegistryPermission ep = new RegistryPermission (RegistryPermissionAccess.Create, keyLocalMachine);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void ReadAccess ()
 		{
 			RegistryPermission ep = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
 		public void WriteAccess ()
 		{
 			RegistryPermission ep = new RegistryPermission (RegistryPermissionAccess.Write, keyLocalMachine);
-			Assert ("IsUnrestricted", !ep.IsUnrestricted ());
+			Assert.IsTrue (!ep.IsUnrestricted (), "IsUnrestricted");
 		}
 
 		[Test]
@@ -120,9 +120,9 @@ namespace MonoTests.System.Security.Permissions {
 			ep.AddPathList (RegistryPermissionAccess.Write, keyCurrentUser);
 			SecurityElement se = ep.ToXml ();
 			// Note: Debugger can mess results (try to run without stepping)
-			AssertEquals ("AddPathList-ToXml-Create", @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000", se.Attribute ("Create"));
-			AssertEquals ("AddPathList-ToXml-Read", @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000;HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home", se.Attribute ("Read"));
-			AssertEquals ("AddPathList-ToXml-Write", @"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000;HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home", se.Attribute ("Write"));
+			Assert.AreEqual (@"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000", se.Attribute ("Create"), "AddPathList-ToXml-Create");
+			Assert.AreEqual (@"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000;HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home", se.Attribute ("Read"), "AddPathList-ToXml-Read");
+			Assert.AreEqual (@"HKEY_LOCAL_MACHINE\SOFTWARE\Novell\Novell iFolder\1.00.000;HKEY_CURRENT_USER\Software\Novell iFolder\spouliot\Home", se.Attribute ("Write"), "AddPathList-ToXml-Write");
 		}
 
 		[Test]
@@ -132,18 +132,18 @@ namespace MonoTests.System.Security.Permissions {
 			ep.AddPathList (RegistryPermissionAccess.AllAccess, keyLocalMachine);
 			ep.AddPathList (RegistryPermissionAccess.AllAccess, keyLocalMachineSubset);
 			SecurityElement se = ep.ToXml ();
-			AssertEquals ("AddPathList-ToXml-Create", keyLocalMachineSubset, se.Attribute ("Create"));
-			AssertEquals ("AddPathList-ToXml-Read", keyLocalMachineSubset, se.Attribute ("Read"));
-			AssertEquals ("AddPathList-ToXml-Write", keyLocalMachineSubset, se.Attribute ("Write"));
+			Assert.AreEqual (keyLocalMachineSubset, se.Attribute ("Create"), "AddPathList-ToXml-Create");
+			Assert.AreEqual (keyLocalMachineSubset, se.Attribute ("Read"), "AddPathList-ToXml-Read");
+			Assert.AreEqual (keyLocalMachineSubset, se.Attribute ("Write"), "AddPathList-ToXml-Write");
 
 			ep = new RegistryPermission (PermissionState.None);
 			ep.AddPathList (RegistryPermissionAccess.AllAccess, keyLocalMachine);
 			ep.AddPathList (RegistryPermissionAccess.Create, keyLocalMachineSubset);
 			ep.AddPathList (RegistryPermissionAccess.Read, keyCurrentUser);
 			se = ep.ToXml ();
-			AssertEquals ("AddPathList-ToXml-Create", keyLocalMachineSubset, se.Attribute ("Create"));
-			AssertEquals ("AddPathList-ToXml-Read", keyLocalMachine + ";" + keyCurrentUser, se.Attribute ("Read"));
-			AssertEquals ("AddPathList-ToXml-Write", keyLocalMachine, se.Attribute ("Write"));
+			Assert.AreEqual (keyLocalMachineSubset, se.Attribute ("Create"), "AddPathList-ToXml-Create");
+			Assert.AreEqual (keyLocalMachine + ";" + keyCurrentUser, se.Attribute ("Read"), "AddPathList-ToXml-Read");
+			Assert.AreEqual (keyLocalMachine, se.Attribute ("Write"), "AddPathList-ToXml-Write");
 		}
 
 		[Test]
@@ -161,7 +161,7 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep = new RegistryPermission (PermissionState.None);
 			ep.AddPathList (RegistryPermissionAccess.Read, keyCurrentUser);
 			ep.AddPathList (RegistryPermissionAccess.Write, keyLocalMachine);
-			AssertEquals ("GetPathList-NoAccess", String.Empty, ep.GetPathList (RegistryPermissionAccess.NoAccess));
+			Assert.AreEqual (String.Empty, ep.GetPathList (RegistryPermissionAccess.NoAccess), "GetPathList-NoAccess");
 		}
 
 		[Test]
@@ -169,23 +169,23 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			RegistryPermission ep = new RegistryPermission (PermissionState.None);
 #if NET_2_0
-			AssertEquals ("GetPathList-Create-Empty", String.Empty, ep.GetPathList (RegistryPermissionAccess.Create));
-			AssertEquals ("GetPathList-Read-Empty", String.Empty, ep.GetPathList (RegistryPermissionAccess.Read));
-			AssertEquals ("GetPathList-Write-Empty", String.Empty, ep.GetPathList (RegistryPermissionAccess.Write));
+			Assert.AreEqual (String.Empty, ep.GetPathList (RegistryPermissionAccess.Create), "GetPathList-Create-Empty");
+			Assert.AreEqual (String.Empty, ep.GetPathList (RegistryPermissionAccess.Read), "GetPathList-Read-Empty");
+			Assert.AreEqual (String.Empty, ep.GetPathList (RegistryPermissionAccess.Write), "GetPathList-Write-Empty");
 #else
-			AssertNull ("GetPathList-Create-Empty", ep.GetPathList (RegistryPermissionAccess.Create));
-			AssertNull ("GetPathList-Read-Empty", ep.GetPathList (RegistryPermissionAccess.Read));
-			AssertNull ("GetPathList-Write-Empty", ep.GetPathList (RegistryPermissionAccess.Write));
+			Assert.IsNull (ep.GetPathList (RegistryPermissionAccess.Create), "GetPathList-Create-Empty");
+			Assert.IsNull (ep.GetPathList (RegistryPermissionAccess.Read), "GetPathList-Read-Empty");
+			Assert.IsNull (ep.GetPathList (RegistryPermissionAccess.Write), "GetPathList-Write-Empty");
 #endif
 			ep.AddPathList (RegistryPermissionAccess.Create, keyLocalMachine);
 			ep.AddPathList (RegistryPermissionAccess.Create, keyCurrentUser);
-			AssertEquals ("GetPathList-Read", keyLocalMachine + ";" + keyCurrentUser, ep.GetPathList (RegistryPermissionAccess.Create));
+			Assert.AreEqual (keyLocalMachine + ";" + keyCurrentUser, ep.GetPathList (RegistryPermissionAccess.Create), "GetPathList-Read");
 
 			ep.AddPathList (RegistryPermissionAccess.Read, keyLocalMachine);
-			AssertEquals ("GetPathList-Read", keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read));
+			Assert.AreEqual (keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read), "GetPathList-Read");
 
 			ep.AddPathList (RegistryPermissionAccess.Write, keyCurrentUser);
-			AssertEquals ("GetPathList-Write", keyCurrentUser, ep.GetPathList (RegistryPermissionAccess.Write));
+			Assert.AreEqual (keyCurrentUser, ep.GetPathList (RegistryPermissionAccess.Write), "GetPathList-Write");
 		}
 
 		[Test]
@@ -198,8 +198,8 @@ namespace MonoTests.System.Security.Permissions {
 			ep.SetPathList (RegistryPermissionAccess.Read, keyCurrentUser);
 			ep.SetPathList (RegistryPermissionAccess.Write, keyCurrentUser);
 			SecurityElement se = ep.ToXml ();
-			AssertEquals ("SetPathList-ToXml-Read", keyCurrentUser, se.Attribute ("Read"));
-			AssertEquals ("SetPathList-ToXml-Write", keyCurrentUser, se.Attribute ("Write"));
+			Assert.AreEqual (keyCurrentUser, se.Attribute ("Read"), "SetPathList-ToXml-Read");
+			Assert.AreEqual (keyCurrentUser, se.Attribute ("Write"), "SetPathList-ToXml-Write");
 		}
 
 		[Test]
@@ -244,20 +244,20 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			RegistryPermission ep = new RegistryPermission (PermissionState.None);
 			SecurityElement se = ep.ToXml ();
-			AssertNotNull ("ToXml()", se);
+			Assert.IsNotNull (se, "ToXml()");
 			ep.FromXml (se);
 			se.AddAttribute ("Read", keyLocalMachine);
 			ep.FromXml (se);
-			AssertEquals ("FromXml-Read", keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read));
+			Assert.AreEqual (keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read), "FromXml-Read");
 			se.AddAttribute ("Write", keyLocalMachine);
 			ep.FromXml (se);
-			AssertEquals ("FromXml-Read", keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read));
-			AssertEquals ("FromXml-Write", keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Write));
+			Assert.AreEqual (keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read), "FromXml-Read");
+			Assert.AreEqual (keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Write), "FromXml-Write");
 			se.AddAttribute ("Create", keyCurrentUser);
 			ep.FromXml (se);
-			AssertEquals ("FromXml-Read", keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read));
-			AssertEquals ("FromXml-Write", keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Write));
-			AssertEquals ("FromXml-Create", keyCurrentUser, ep.GetPathList (RegistryPermissionAccess.Create));
+			Assert.AreEqual (keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Read), "FromXml-Read");
+			Assert.AreEqual (keyLocalMachine, ep.GetPathList (RegistryPermissionAccess.Write), "FromXml-Write");
+			Assert.AreEqual (keyCurrentUser, ep.GetPathList (RegistryPermissionAccess.Create), "FromXml-Create");
 		}
 
 		[Test]
@@ -266,7 +266,7 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			RegistryPermission ep2 = null;
 			RegistryPermission ep3 = (RegistryPermission)ep1.Union (ep2);
-			AssertEquals ("EP1 U null == EP1", ep1.ToXml ().ToString (), ep3.ToXml ().ToString ());
+			Assert.AreEqual (ep1.ToXml ().ToString (), ep3.ToXml ().ToString (), "EP1 U null == EP1");
 		}
 
 		[Test]
@@ -275,9 +275,9 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (PermissionState.Unrestricted);
 			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			RegistryPermission ep3 = (RegistryPermission)ep1.Union (ep2);
-			Assert ("Unrestricted U EP2 == Unrestricted", ep3.IsUnrestricted ());
+			Assert.IsTrue (ep3.IsUnrestricted (), "Unrestricted U EP2 == Unrestricted");
 			ep3 = (RegistryPermission)ep2.Union (ep1);
-			Assert ("EP2 U Unrestricted == Unrestricted", ep3.IsUnrestricted ());
+			Assert.IsTrue (ep3.IsUnrestricted (), "EP2 U Unrestricted == Unrestricted");
 		}
 
 #if NET_2_0
@@ -292,7 +292,7 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep4 = (RegistryPermission)ep1.Union (ep2);
 			ep4 = (RegistryPermission)ep4.Union (ep3);
 			RegistryPermission ep5 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
-			AssertEquals ("EP1 U EP2 U EP3 == EP1+2+3", ep4.ToXml ().ToString (), ep5.ToXml ().ToString ());
+			Assert.AreEqual (ep4.ToXml ().ToString (), ep5.ToXml ().ToString (), "EP1 U EP2 U EP3 == EP1+2+3");
 		}
 
 #if NET_2_0
@@ -304,9 +304,9 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
 			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Create, keyLocalMachineSubset);
 			RegistryPermission ep3 = (RegistryPermission)ep1.Union (ep2);
-			AssertEquals ("Create", keyLocalMachineSubset, ep3.GetPathList (RegistryPermissionAccess.Create));
-			AssertEquals ("Read", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read));
-			AssertEquals ("Write", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write));
+			Assert.AreEqual (keyLocalMachineSubset, ep3.GetPathList (RegistryPermissionAccess.Create), "Create");
+			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read), "Read");
+			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write), "Write");
 		}
 
 		[Test]
@@ -324,7 +324,7 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			RegistryPermission ep2 = null;
 			RegistryPermission ep3 = (RegistryPermission)ep1.Intersect (ep2);
-			AssertNull ("EP1 N null == null", ep3);
+			Assert.IsNull (ep3, "EP1 N null == null");
 		}
 
 		[Test]
@@ -333,11 +333,11 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (PermissionState.Unrestricted);
 			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			RegistryPermission ep3 = (RegistryPermission)ep1.Intersect (ep2);
-			Assert ("Unrestricted N EP2 == EP2", !ep3.IsUnrestricted ());
-			AssertEquals ("Unrestricted N EP2 == EP2", ep2.ToXml ().ToString (), ep3.ToXml ().ToString ());
+			Assert.IsTrue (!ep3.IsUnrestricted (), "Unrestricted N EP2 == EP2");
+			Assert.AreEqual (ep2.ToXml ().ToString (), ep3.ToXml ().ToString (), "Unrestricted N EP2 == EP2");
 			ep3 = (RegistryPermission)ep2.Intersect (ep1);
-			Assert ("EP2 N Unrestricted == EP2", !ep3.IsUnrestricted ());
-			AssertEquals ("EP2 N Unrestricted == EP2", ep2.ToXml ().ToString (), ep3.ToXml ().ToString ());
+			Assert.IsTrue (!ep3.IsUnrestricted (), "EP2 N Unrestricted == EP2");
+			Assert.AreEqual (ep2.ToXml ().ToString (), ep3.ToXml ().ToString (), "EP2 N Unrestricted == EP2");
 		}
 
 		[Test]
@@ -347,22 +347,22 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.Write, keyCurrentUser);
 			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			RegistryPermission ep3 = (RegistryPermission)ep1.Intersect (ep2);
-			AssertNull ("EP1 N EP2 == null", ep3);
+			Assert.IsNull (ep3, "EP1 N EP2 == null");
 			// intersection in read
 			RegistryPermission ep4 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			ep3 = (RegistryPermission)ep4.Intersect (ep2);
-			AssertEquals ("Intersect-Read", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read));
+			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read), "Intersect-Read");
 			// intersection in write
 			RegistryPermission ep5 = new RegistryPermission (RegistryPermissionAccess.Write, keyCurrentUser);
 			ep3 = (RegistryPermission)ep5.Intersect (ep1);
-			AssertEquals ("Intersect-Write", keyCurrentUser, ep3.GetPathList (RegistryPermissionAccess.Write));
+			Assert.AreEqual (keyCurrentUser, ep3.GetPathList (RegistryPermissionAccess.Write), "Intersect-Write");
 			// intersection in read and write
 			RegistryPermission ep6 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
 			RegistryPermission ep7 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
 			ep3 = (RegistryPermission)ep6.Intersect (ep7);
-			AssertEquals ("Intersect-AllAccess-Create", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Create));
-			AssertEquals ("Intersect-AllAccess-Read", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read));
-			AssertEquals ("Intersect-AllAccess-Write", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write));
+			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Create), "Intersect-AllAccess-Create");
+			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Read), "Intersect-AllAccess-Read");
+			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Write), "Intersect-AllAccess-Write");
 		}
 
 #if NET_2_0
@@ -374,9 +374,9 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
 			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Create, keyLocalMachineSubset);
 			RegistryPermission ep3 = (RegistryPermission)ep1.Intersect (ep2);
-			AssertEquals ("Create", keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Create));
-			AssertNull ("Read", ep3.GetPathList (RegistryPermissionAccess.Read));
-			AssertNull ("Write", ep3.GetPathList (RegistryPermissionAccess.Write));
+			Assert.AreEqual (keyLocalMachine, ep3.GetPathList (RegistryPermissionAccess.Create), "Create");
+			Assert.IsNull (ep3.GetPathList (RegistryPermissionAccess.Read), "Read");
+			Assert.IsNull (ep3.GetPathList (RegistryPermissionAccess.Write), "Write");
 		}
 
 		[Test]
@@ -392,7 +392,7 @@ namespace MonoTests.System.Security.Permissions {
 		public void IsSubsetOfNull ()
 		{
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
-			Assert ("IsSubsetOf(null)", !ep1.IsSubsetOf (null));
+			Assert.IsTrue (!ep1.IsSubsetOf (null), "IsSubsetOf(null)");
 		}
 
 		[Test]
@@ -401,9 +401,9 @@ namespace MonoTests.System.Security.Permissions {
 			RegistryPermission ep1 = new RegistryPermission (PermissionState.Unrestricted);
 			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			RegistryPermission ep3 = new RegistryPermission (PermissionState.Unrestricted);
-			Assert ("Unrestricted.IsSubsetOf()", !ep1.IsSubsetOf (ep2));
-			Assert ("IsSubsetOf(Unrestricted)", ep2.IsSubsetOf (ep1));
-			Assert ("Unrestricted.IsSubsetOf(Unrestricted)", ep1.IsSubsetOf (ep3));
+			Assert.IsTrue (!ep1.IsSubsetOf (ep2), "Unrestricted.IsSubsetOf()");
+			Assert.IsTrue (ep2.IsSubsetOf (ep1), "IsSubsetOf(Unrestricted)");
+			Assert.IsTrue (ep1.IsSubsetOf (ep3), "Unrestricted.IsSubsetOf(Unrestricted)");
 		}
 
 		[Test]
@@ -411,11 +411,11 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.Write, keyLocalMachine);
 			RegistryPermission ep2 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
-			Assert ("IsSubsetOf(nosubset1)", !ep1.IsSubsetOf (ep2));
-			Assert ("IsSubsetOf(nosubset2)", !ep2.IsSubsetOf (ep1));
+			Assert.IsTrue (!ep1.IsSubsetOf (ep2), "IsSubsetOf(nosubset1)");
+			Assert.IsTrue (!ep2.IsSubsetOf (ep1), "IsSubsetOf(nosubset2)");
 			RegistryPermission ep3 = new RegistryPermission (RegistryPermissionAccess.AllAccess, keyLocalMachine);
-			Assert ("Write.IsSubsetOf(All)", ep1.IsSubsetOf (ep3));
-			Assert ("All.IsSubsetOf(Write)", !ep3.IsSubsetOf (ep1));
+			Assert.IsTrue (ep1.IsSubsetOf (ep3), "Write.IsSubsetOf(All)");
+			Assert.IsTrue (!ep3.IsSubsetOf (ep1), "All.IsSubsetOf(Write)");
 		}
 
 		[Test]
@@ -424,7 +424,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			RegistryPermission ep1 = new RegistryPermission (RegistryPermissionAccess.Read, keyLocalMachine);
 			FileDialogPermission fdp2 = new FileDialogPermission (PermissionState.Unrestricted);
-			Assert ("IsSubsetOf(FileDialogPermission)", ep1.IsSubsetOf (fdp2));
+			Assert.IsTrue (ep1.IsSubsetOf (fdp2), "IsSubsetOf(FileDialogPermission)");
 		}
 	}
 }

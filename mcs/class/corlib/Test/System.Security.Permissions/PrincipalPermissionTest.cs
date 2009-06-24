@@ -15,7 +15,7 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class PrincipalPermissionTest : Assertion {
+	public class PrincipalPermissionTest {
 
 		private static string className = "System.Security.Permissions.PrincipalPermission, ";
 
@@ -23,23 +23,23 @@ namespace MonoTests.System.Security.Permissions {
 		public void PermissionStateNone () 
 		{
 			PrincipalPermission p = new PrincipalPermission (PermissionState.None);
-			AssertNotNull ("PrincipalPermission(PermissionState.None)", p);
-			Assert ("IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsNotNull (p, "PrincipalPermission(PermissionState.None)");
+			Assert.IsTrue (!p.IsUnrestricted (), "IsUnrestricted");
 			PrincipalPermission copy = (PrincipalPermission) p.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", p.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (p.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			SecurityElement se = p.ToXml ();
-			Assert ("ToXml-class", (se.Attributes ["class"] as string).StartsWith (className));
-			AssertEquals ("ToXml-version", "1", (se.Attributes ["version"] as string));
+			Assert.IsTrue ((se.Attributes ["class"] as string).StartsWith (className), "ToXml-class");
+			Assert.AreEqual ("1", (se.Attributes ["version"] as string), "ToXml-version");
 		}
 
 		[Test]
 		public void PermissionStateUnrestricted () 
 		{
 			PrincipalPermission p = new PrincipalPermission (PermissionState.Unrestricted);
-			AssertNotNull ("PrincipalPermission(PermissionState.Unrestricted)", p);
-			Assert ("IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsNotNull (p, "PrincipalPermission(PermissionState.Unrestricted)");
+			Assert.IsTrue (p.IsUnrestricted (), "IsUnrestricted");
 			PrincipalPermission copy = (PrincipalPermission) p.Copy ();
-			AssertEquals ("Copy.IsUnrestricted", p.IsUnrestricted (), copy.IsUnrestricted ());
+			Assert.AreEqual (p.IsUnrestricted (), copy.IsUnrestricted (), "Copy.IsUnrestricted");
 			// Note: Unrestricted isn't shown in XML
 		}
 
@@ -47,49 +47,49 @@ namespace MonoTests.System.Security.Permissions {
 		public void Name () 
 		{
 			PrincipalPermission p = new PrincipalPermission ("user", null);
-			Assert("Name.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue(!p.IsUnrestricted (), "Name.IsUnrestricted");
 		}
 
 		[Test]
 		public void UnauthenticatedName () 
 		{
 			PrincipalPermission p = new PrincipalPermission ("user", null, false);
-			Assert("UnauthenticatedName.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue(!p.IsUnrestricted (), "UnauthenticatedName.IsUnrestricted");
 		}
 
 		[Test]
 		public void Role () 
 		{
 			PrincipalPermission p = new PrincipalPermission (null, "users");
-			Assert("Role.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue(!p.IsUnrestricted (), "Role.IsUnrestricted");
 		}
 
 		[Test]
 		public void UnauthenticatedRole () 
 		{
 			PrincipalPermission p = new PrincipalPermission (null, "users", false);
-			Assert("UnauthenticatedRole.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue(!p.IsUnrestricted (), "UnauthenticatedRole.IsUnrestricted");
 		}
 
 		[Test]
 		public void NameRole () 
 		{
 			PrincipalPermission p = new PrincipalPermission ("user", "users", true);
-			Assert("NameRole.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue(!p.IsUnrestricted (), "NameRole.IsUnrestricted");
 		}
 
 		[Test]
 		public void UnauthenticatedNameRole () 
 		{
 			PrincipalPermission p = new PrincipalPermission ("user", "users", false);
-			Assert("UnauthenticatedNameRole.IsUnrestricted", !p.IsUnrestricted ());
+			Assert.IsTrue(!p.IsUnrestricted (), "UnauthenticatedNameRole.IsUnrestricted");
 		}
 
 		[Test]
 		public void AuthenticatedNullNull () 
 		{
 			PrincipalPermission p = new PrincipalPermission (null, null, true);
-			Assert("UnauthenticatedNameRole.IsUnrestricted", p.IsUnrestricted ());
+			Assert.IsTrue(p.IsUnrestricted (), "UnauthenticatedNameRole.IsUnrestricted");
 		}
 
 		[Test]
@@ -131,11 +131,11 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PrincipalPermission p = new PrincipalPermission (PermissionState.None);
 			SecurityElement se = p.ToXml ();
-			AssertNotNull ("ToXml()", se);
+			Assert.IsNotNull (se, "ToXml()");
 
 			PrincipalPermission p2 = (PrincipalPermission) p.Copy ();
 			p2.FromXml (se);
-			AssertEquals ("FromXml-Copy", p.ToString (), p2.ToString ());
+			Assert.AreEqual (p.ToString (), p2.ToString (), "FromXml-Copy");
 
 			string className = (string) se.Attributes ["class"];
 			string version = (string) se.Attributes ["version"];
@@ -149,7 +149,7 @@ namespace MonoTests.System.Security.Permissions {
 			sec.AddAttribute ("Authenticated", "true");
 			se2.AddChild (sec);
 			p2.FromXml (se2);
-			Assert ("FromXml-Unrestricted", p2.IsUnrestricted ());
+			Assert.IsTrue (p2.IsUnrestricted (), "FromXml-Unrestricted");
 		}
 
 		[Test]
@@ -158,7 +158,7 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission ("user", null);
 			PrincipalPermission p2 = null;
 			PrincipalPermission p3 = (PrincipalPermission) p1.Union (p2);
-			AssertEquals ("P1 U null == P1", p1.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.AreEqual (p1.ToXml ().ToString (), p3.ToXml ().ToString (), "P1 U null == P1");
 		}
 
 		[Test]
@@ -167,9 +167,9 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission (PermissionState.Unrestricted);
 			PrincipalPermission p2 = new PrincipalPermission ("user", "role");
 			PrincipalPermission p3 = (PrincipalPermission) p1.Union (p2);
-			Assert ("Unrestricted U P2 == Unrestricted", p3.IsUnrestricted ());
+			Assert.IsTrue (p3.IsUnrestricted (), "Unrestricted U P2 == Unrestricted");
 			p3 = (PrincipalPermission) p2.Union (p1);
-			Assert ("P2 U Unrestricted == Unrestricted", p3.IsUnrestricted ());
+			Assert.IsTrue (p3.IsUnrestricted (), "P2 U Unrestricted == Unrestricted");
 		}
 
 		[Test]
@@ -178,8 +178,8 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission ("user A", "role A");
 			PrincipalPermission p2 = new PrincipalPermission ("user B", "role B", false);
 			PrincipalPermission p3 = (PrincipalPermission) p1.Union (p2);
-			Assert ("Union.UserA", p3.ToString ().IndexOf ("user A") >= 0);
-			Assert ("Union.UserB", p3.ToString ().IndexOf ("user B") >= 0);
+			Assert.IsTrue (p3.ToString ().IndexOf ("user A") >= 0, "Union.UserA");
+			Assert.IsTrue (p3.ToString ().IndexOf ("user B") >= 0, "Union.UserB");
 		}
 
 		[Test]
@@ -197,7 +197,7 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission ("user", "role");
 			PrincipalPermission p2 = null;
 			PrincipalPermission p3 = (PrincipalPermission) p1.Intersect (p2);
-			AssertNull ("P1 N null == null", p3);
+			Assert.IsNull (p3, "P1 N null == null");
 		}
 
 		[Test]
@@ -206,11 +206,11 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission (PermissionState.Unrestricted);
 			PrincipalPermission p2 = new PrincipalPermission ("user", "role");
 			PrincipalPermission p3 = (PrincipalPermission) p1.Intersect (p2);
-			Assert ("Unrestricted N P2 == P2", !p3.IsUnrestricted ());
-			AssertEquals ("Unrestricted N EP2 == EP2", p2.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.IsTrue (!p3.IsUnrestricted (), "Unrestricted N P2 == P2");
+			Assert.AreEqual (p2.ToXml ().ToString (), p3.ToXml ().ToString (), "Unrestricted N EP2 == EP2");
 			p3 = (PrincipalPermission) p2.Intersect (p1);
-			Assert ("P2 N Unrestricted == P2", !p3.IsUnrestricted ());
-			AssertEquals ("P2 N Unrestricted == P2", p2.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.IsTrue (!p3.IsUnrestricted (), "P2 N Unrestricted == P2");
+			Assert.AreEqual (p2.ToXml ().ToString (), p3.ToXml ().ToString (), "P2 N Unrestricted == P2");
 		}
 
 		[Test]
@@ -220,17 +220,17 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission ("user A", "role 1");
 			PrincipalPermission p2 = new PrincipalPermission ("user B", "role 2");
 			PrincipalPermission p3 = (PrincipalPermission) p1.Intersect (p2);
-			AssertNull ("EP1 N EP2 == null", p3);
+			Assert.IsNull (p3, "EP1 N EP2 == null");
 			// intersection in role
 			PrincipalPermission p4 = new PrincipalPermission ("user C", "role 1");
 			p3 = (PrincipalPermission) p4.Intersect (p1);
-			Assert ("Intersect (!user A)", p3.ToString ().IndexOf ("user A") < 0);
-			Assert ("Intersect (!user C)", p3.ToString ().IndexOf ("user C") < 0);
-			Assert ("Intersect (role 1)", p3.ToString ().IndexOf ("role 1") >= 0);
+			Assert.IsTrue (p3.ToString ().IndexOf ("user A") < 0, "Intersect (!user A)");
+			Assert.IsTrue (p3.ToString ().IndexOf ("user C") < 0, "Intersect (!user C)");
+			Assert.IsTrue (p3.ToString ().IndexOf ("role 1") >= 0, "Intersect (role 1)");
 			// intersection in role without authentication
 			PrincipalPermission p5 = new PrincipalPermission ("user C", "role 1", false);
 			p3 = (PrincipalPermission) p5.Intersect (p1);
-			AssertNull ("EP5 N EP1 == null", p3);
+			Assert.IsNull (p3, "EP5 N EP1 == null");
 		}
 
 		[Test]
@@ -239,9 +239,9 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission ("user", "role");
 			PrincipalPermission p2 = new PrincipalPermission (null, "role");
 			PrincipalPermission p3 = (PrincipalPermission) p1.Intersect (p2);
-			AssertEquals ("p1 N p2 == p1", p1.ToString (), p3.ToString ());
+			Assert.AreEqual (p1.ToString (), p3.ToString (), "p1 N p2 == p1");
 			p3 = (PrincipalPermission) p2.Intersect (p1);
-			AssertEquals ("p2 N p1 == p1", p1.ToString (), p3.ToString ());
+			Assert.AreEqual (p1.ToString (), p3.ToString (), "p2 N p1 == p1");
 		}
 
 		[Test]
@@ -250,9 +250,9 @@ namespace MonoTests.System.Security.Permissions {
 			PrincipalPermission p1 = new PrincipalPermission ("user", "role");
 			PrincipalPermission p2 = new PrincipalPermission ("user", null);
 			PrincipalPermission p3 = (PrincipalPermission) p1.Intersect (p2);
-			AssertEquals ("p1 N p2 == p1", p1.ToString (), p3.ToString ());
+			Assert.AreEqual (p1.ToString (), p3.ToString (), "p1 N p2 == p1");
 			p3 = (PrincipalPermission) p2.Intersect (p1);
-			AssertEquals ("p2 N p1 == p1", p1.ToString (), p3.ToString ());
+			Assert.AreEqual (p1.ToString (), p3.ToString (), "p2 N p1 == p1");
 		}
 
 		[Test]
@@ -268,13 +268,13 @@ namespace MonoTests.System.Security.Permissions {
 		public void IsSubsetOfNull () 
 		{
 			PrincipalPermission p = new PrincipalPermission ("user", null);
-			Assert ("User.IsSubsetOf(null)", !p.IsSubsetOf (null));
+			Assert.IsTrue (!p.IsSubsetOf (null), "User.IsSubsetOf(null)");
 
 			p = new PrincipalPermission (PermissionState.None);
-			Assert ("None.IsSubsetOf(null)", p.IsSubsetOf (null));
+			Assert.IsTrue (p.IsSubsetOf (null), "None.IsSubsetOf(null)");
 
 			p = new PrincipalPermission (PermissionState.Unrestricted);
-			Assert ("Unrestricted.IsSubsetOf(null)", !p.IsSubsetOf (null));
+			Assert.IsTrue (!p.IsSubsetOf (null), "Unrestricted.IsSubsetOf(null)");
 		}
 
 		[Test]
@@ -282,13 +282,13 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PrincipalPermission none = new PrincipalPermission (PermissionState.None);
 			PrincipalPermission p = new PrincipalPermission ("user", null);
-			Assert ("User.IsSubsetOf(null)", !p.IsSubsetOf (none));
+			Assert.IsTrue (!p.IsSubsetOf (none), "User.IsSubsetOf(null)");
 
 			p = new PrincipalPermission (PermissionState.None);
-			Assert ("None.IsSubsetOf(null)", p.IsSubsetOf (none));
+			Assert.IsTrue (p.IsSubsetOf (none), "None.IsSubsetOf(null)");
 
 			p = new PrincipalPermission (PermissionState.Unrestricted);
-			Assert ("Unrestricted.IsSubsetOf(null)", !p.IsSubsetOf (none));
+			Assert.IsTrue (!p.IsSubsetOf (none), "Unrestricted.IsSubsetOf(null)");
 		}
 
 		[Test]
@@ -296,8 +296,8 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PrincipalPermission p1 = new PrincipalPermission (PermissionState.Unrestricted);
 			PrincipalPermission p2 = new PrincipalPermission ("user", "role", false);
-			Assert ("Unrestricted.IsSubsetOf(user)", !p1.IsSubsetOf (p2));
-			Assert ("user.IsSubsetOf(Unrestricted)", p2.IsSubsetOf (p1));
+			Assert.IsTrue (!p1.IsSubsetOf (p2), "Unrestricted.IsSubsetOf(user)");
+			Assert.IsTrue (p2.IsSubsetOf (p1), "user.IsSubsetOf(Unrestricted)");
 		}
 
 		[Test]
@@ -305,16 +305,16 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PrincipalPermission p1 = new PrincipalPermission ("user A", "role 1");
 			PrincipalPermission p2 = new PrincipalPermission (null, "role 1");
-			Assert ("UserRole.IsSubsetOf(Role)", p1.IsSubsetOf (p2));
-			Assert ("Role.IsSubsetOf(UserRole)", !p2.IsSubsetOf (p1));
+			Assert.IsTrue (p1.IsSubsetOf (p2), "UserRole.IsSubsetOf(Role)");
+			Assert.IsTrue (!p2.IsSubsetOf (p1), "Role.IsSubsetOf(UserRole)");
 
 			PrincipalPermission p3 = new PrincipalPermission ("user A", "role 1", false);
-			Assert ("UserRoleAuth.IsSubsetOf(UserRoleNA)", !p3.IsSubsetOf (p1));
-			Assert ("UserRoleNA.IsSubsetOf(UserRoleAuth)", !p1.IsSubsetOf (p3));
+			Assert.IsTrue (!p3.IsSubsetOf (p1), "UserRoleAuth.IsSubsetOf(UserRoleNA)");
+			Assert.IsTrue (!p1.IsSubsetOf (p3), "UserRoleNA.IsSubsetOf(UserRoleAuth)");
 
 			PrincipalPermission p4 = new PrincipalPermission (null, null, true); // unrestricted
-			Assert ("unrestricted.IsSubsetOf(UserRole)", !p4.IsSubsetOf (p1));
-			Assert ("UserRole.IsSubsetOf(unrestricted)", p1.IsSubsetOf (p4));
+			Assert.IsTrue (!p4.IsSubsetOf (p1), "unrestricted.IsSubsetOf(UserRole)");
+			Assert.IsTrue (p1.IsSubsetOf (p4), "UserRole.IsSubsetOf(unrestricted)");
 		}
 
 		[Test]
@@ -323,7 +323,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PrincipalPermission p1 = new PrincipalPermission ("user", null);
 			EnvironmentPermission ep2 = new EnvironmentPermission (PermissionState.Unrestricted);
-			Assert ("IsSubsetOf(EnvironmentPermission)", p1.IsSubsetOf (ep2));
+			Assert.IsTrue (p1.IsSubsetOf (ep2), "IsSubsetOf(EnvironmentPermission)");
 		}
 	}
 }

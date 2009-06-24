@@ -37,7 +37,7 @@ using System.Security.Cryptography.X509Certificates;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class PublisherIdentityPermissionTest : Assertion {
+	public class PublisherIdentityPermissionTest {
 
 		private static string className = "System.Security.Permissions.PublisherIdentityPermission, ";
 
@@ -93,13 +93,13 @@ namespace MonoTests.System.Security.Permissions {
 		public void PermissionStateNone () 
 		{
 			PublisherIdentityPermission p = new PublisherIdentityPermission (PermissionState.None);
-			AssertNotNull ("PublisherIdentityPermission(PermissionState.None)", p);
+			Assert.IsNotNull (p, "PublisherIdentityPermission(PermissionState.None)");
 			PublisherIdentityPermission copy = (PublisherIdentityPermission) p.Copy ();
 			SecurityElement se = p.ToXml ();
-			Assert ("ToXml-class", se.Attribute ("class").StartsWith (className));
-			AssertEquals ("ToXml-version", "1", se.Attribute("version"));
-			AssertNull ("ToXml-Unrestricted", se.Attribute("Unrestricted"));
-			AssertNull ("Certificate==null", p.Certificate);
+			Assert.IsTrue (se.Attribute ("class").StartsWith (className), "ToXml-class");
+			Assert.AreEqual ("1", se.Attribute("version"), "ToXml-version");
+			Assert.IsNull (se.Attribute("Unrestricted"), "ToXml-Unrestricted");
+			Assert.IsNull (p.Certificate, "Certificate==null");
 		}
 #if NET_2_0
 		[Test]
@@ -108,15 +108,15 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			// In 2.0 Unrestricted are permitted for identity permissions
 			PublisherIdentityPermission p = new PublisherIdentityPermission (PermissionState.Unrestricted);
-			AssertNotNull ("PublisherIdentityPermission(PermissionState.None)", p);
+			Assert.IsNotNull (p, "PublisherIdentityPermission(PermissionState.None)");
 			PublisherIdentityPermission copy = (PublisherIdentityPermission)p.Copy ();
 			SecurityElement se = p.ToXml ();
-			Assert ("ToXml-class", se.Attribute ("class").StartsWith (className));
-			AssertEquals ("ToXml-version", "1", se.Attribute("version"));
-			AssertEquals ("ToXml-Unrestricted", "true", se.Attribute("Unrestricted"));
-			AssertNull ("Certificate==null", p.Certificate);
+			Assert.IsTrue (se.Attribute ("class").StartsWith (className), "ToXml-class");
+			Assert.AreEqual ("1", se.Attribute("version"), "ToXml-version");
+			Assert.AreEqual ("true", se.Attribute("Unrestricted"), "ToXml-Unrestricted");
+			Assert.IsNull (p.Certificate, "Certificate==null");
 			// and they aren't equals to None
-			Assert (!p.Equals (new PublisherIdentityPermission (PermissionState.None)));
+			Assert.IsTrue (!p.Equals (new PublisherIdentityPermission (PermissionState.None)));
 		}
 #else
 		[Test]
@@ -135,7 +135,7 @@ namespace MonoTests.System.Security.Permissions {
 			PublisherIdentityPermission p2 = new PublisherIdentityPermission (PermissionState.None);
 			p2.Certificate = x509;
 
-			AssertEquals ("Certificate", p1.ToXml ().ToString (), p2.ToXml ().ToString ());
+			Assert.AreEqual (p1.ToXml ().ToString (), p2.ToXml ().ToString (), "Certificate");
 		}
 
 		[Test]
@@ -192,12 +192,12 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PublisherIdentityPermission p = new PublisherIdentityPermission (PermissionState.None);
 			SecurityElement se = p.ToXml ();
-			AssertNotNull ("ToXml()", se);
+			Assert.IsNotNull (se, "ToXml()");
 			p.FromXml (se);
 
 			se.AddAttribute ("X509v3Certificate", x509.GetRawCertDataString ());
 			p.FromXml (se);
-			AssertEquals ("CertificateHash", x509.GetCertHashString (), p.Certificate.GetCertHashString ());
+			Assert.AreEqual (x509.GetCertHashString (), p.Certificate.GetCertHashString (), "CertificateHash");
 		}
 
 		[Test]
@@ -206,7 +206,7 @@ namespace MonoTests.System.Security.Permissions {
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
 			PublisherIdentityPermission p2 = null;
 			PublisherIdentityPermission p3 = (PublisherIdentityPermission) p1.Union (p2);
-			AssertEquals ("P1 U null == P1", p1.ToXml ().ToString (), p3.ToXml ().ToString ());
+			Assert.AreEqual (p1.ToXml ().ToString (), p3.ToXml ().ToString (), "P1 U null == P1");
 		}
 
 		[Test]
@@ -216,18 +216,18 @@ namespace MonoTests.System.Security.Permissions {
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (PermissionState.None);
 			PublisherIdentityPermission p2 = new PublisherIdentityPermission (PermissionState.None);
 			PublisherIdentityPermission p3 = (PublisherIdentityPermission) p1.Union (p2);
-			AssertNull ("None U None == null", p3);
+			Assert.IsNull (p3, "None U None == null");
 			// with 1 certificate
 			p1 = new PublisherIdentityPermission (x509);
 			p2 = new PublisherIdentityPermission (PermissionState.None);
 			p3 = (PublisherIdentityPermission) p1.Union (p2);
-			AssertEquals ("cert U None == cert", p3.ToXml ().ToString (), p1.ToXml ().ToString ());
+			Assert.AreEqual (p3.ToXml ().ToString (), p1.ToXml ().ToString (), "cert U None == cert");
 			X509Certificate x2 = new X509Certificate (cert2);
 			// 2 certificates (same)
 			x2 = new X509Certificate (cert);
 			p2 = new PublisherIdentityPermission (x2);
 			p3 = (PublisherIdentityPermission) p1.Union (p2);
-			AssertEquals ("cert1 U cert1 == cert1", p3.ToString (), p1.ToString ());
+			Assert.AreEqual (p3.ToString (), p1.ToString (), "cert1 U cert1 == cert1");
 		}
 
 		[Test]
@@ -243,13 +243,13 @@ namespace MonoTests.System.Security.Permissions {
 #if NET_2_0
 			// new XML format is used to contain more than one X.509 certificate
 			SecurityElement se = p.ToXml ();
-			AssertEquals ("Childs", 2, se.Children.Count);
-			AssertEquals ("Cert#1", (se.Children [0] as SecurityElement).Attribute ("X509v3Certificate"), p1.ToXml ().Attribute ("X509v3Certificate"));
-			AssertEquals ("Cert#2", (se.Children [1] as SecurityElement).Attribute ("X509v3Certificate"), p2.ToXml ().Attribute ("X509v3Certificate"));
+			Assert.AreEqual (2, se.Children.Count, "Childs");
+			Assert.AreEqual ((se.Children [0] as SecurityElement).Attribute ("X509v3Certificate"), p1.ToXml ().Attribute ("X509v3Certificate"), "Cert#1");
+			Assert.AreEqual ((se.Children [1] as SecurityElement).Attribute ("X509v3Certificate"), p2.ToXml ().Attribute ("X509v3Certificate"), "Cert#2");
 			// strangely it is still versioned as 'version="1"'.
-			AssertEquals ("Version", "1", se.Attribute ("version"));
+			Assert.AreEqual ("1", se.Attribute ("version"), "Version");
 #else
-			AssertNull ("cert1 U cert2 == null", p);
+			Assert.IsNull (p, "cert1 U cert2 == null");
 #endif
 		}
 
@@ -268,7 +268,7 @@ namespace MonoTests.System.Security.Permissions {
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
 			PublisherIdentityPermission p2 = null;
 			PublisherIdentityPermission p3 = (PublisherIdentityPermission) p1.Intersect (p2);
-			AssertNull ("P1 N null == null", p3);
+			Assert.IsNull (p3, "P1 N null == null");
 		}
 
 		[Test]
@@ -278,22 +278,22 @@ namespace MonoTests.System.Security.Permissions {
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (PermissionState.None);
 			PublisherIdentityPermission p2 = new PublisherIdentityPermission (PermissionState.None);
 			PublisherIdentityPermission p3 = (PublisherIdentityPermission) p1.Intersect (p2);
-			AssertNull ("None N None == null", p3);
+			Assert.IsNull (p3, "None N None == null");
 			// with 1 certificate
 			p1 = new PublisherIdentityPermission (x509);
 			p2 = new PublisherIdentityPermission (PermissionState.None);
 			p3 = (PublisherIdentityPermission) p1.Intersect (p2);
-			AssertNull ("cert N None == None", p3);
+			Assert.IsNull (p3, "cert N None == None");
 			// 2 different certificates
 			X509Certificate x2 = new X509Certificate (cert2);
 			p2 = new PublisherIdentityPermission (x2);
 			p3 = (PublisherIdentityPermission) p1.Intersect (p2);
-			AssertNull ("cert1 N cert2 == null", p3);
+			Assert.IsNull (p3, "cert1 N cert2 == null");
 			// 2 certificates (same)
 			x2 = new X509Certificate (cert);
 			p2 = new PublisherIdentityPermission (x2);
 			p3 = (PublisherIdentityPermission) p1.Intersect (p2);
-			AssertEquals ("cert1 N cert1 == cert1", p3.ToString (), p1.ToString ());
+			Assert.AreEqual (p3.ToString (), p1.ToString (), "cert1 N cert1 == cert1");
 		}
 
 		[Test]
@@ -309,7 +309,7 @@ namespace MonoTests.System.Security.Permissions {
 		public void IsSubsetOfNull () 
 		{
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
-			Assert ("IsSubsetOf(null)", !p1.IsSubsetOf (null));
+			Assert.IsTrue (!p1.IsSubsetOf (null), "IsSubsetOf(null)");
 		}
 
 		[Test]
@@ -317,16 +317,16 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (PermissionState.None);
 			PublisherIdentityPermission p2 = new PublisherIdentityPermission (PermissionState.None);
-			Assert ("None.IsSubsetOf(None)", p1.IsSubsetOf (p2));
+			Assert.IsTrue (p1.IsSubsetOf (p2), "None.IsSubsetOf(None)");
 			PublisherIdentityPermission p3 = new PublisherIdentityPermission (x509);
-			Assert ("Cert.IsSubsetOf(None)", !p3.IsSubsetOf (p2));
-			Assert ("None.IsSubsetOf(Cert)", p2.IsSubsetOf (p3));
+			Assert.IsTrue (!p3.IsSubsetOf (p2), "Cert.IsSubsetOf(None)");
+			Assert.IsTrue (p2.IsSubsetOf (p3), "None.IsSubsetOf(Cert)");
 			PublisherIdentityPermission p4 = new PublisherIdentityPermission (x509);
-			Assert ("Cert.IsSubsetOf(Cert)", p3.IsSubsetOf (p4));
+			Assert.IsTrue (p3.IsSubsetOf (p4), "Cert.IsSubsetOf(Cert)");
 			X509Certificate x2 = new X509Certificate (cert2);
 			PublisherIdentityPermission p5 = new PublisherIdentityPermission (x2);
-			Assert ("Cert2.IsSubsetOf(Cert)", !p5.IsSubsetOf (p3));
-			Assert ("Cert.IsSubsetOf(Cert2)", !p3.IsSubsetOf (p5));
+			Assert.IsTrue (!p5.IsSubsetOf (p3), "Cert2.IsSubsetOf(Cert)");
+			Assert.IsTrue (!p3.IsSubsetOf (p5), "Cert.IsSubsetOf(Cert2)");
 		}
 
 		[Test]
@@ -335,7 +335,7 @@ namespace MonoTests.System.Security.Permissions {
 		{
 			PublisherIdentityPermission p1 = new PublisherIdentityPermission (x509);
 			FileDialogPermission fdp2 = new FileDialogPermission (PermissionState.Unrestricted);
-			Assert ("IsSubsetOf(PublisherIdentityPermission)", p1.IsSubsetOf (fdp2));
+			Assert.IsTrue (p1.IsSubsetOf (fdp2), "IsSubsetOf(PublisherIdentityPermission)");
 		}
 	}
 }
