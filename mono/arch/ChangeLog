@@ -1,3 +1,10 @@
+2009-06-26  Jerry Maine  <crashfourit@gmail.com>
+	
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
+	* amd64/amd64-codegen.h: Add marcos for coding several specific sse opcodes.
+
 2009-06-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* ppc/ppc-codegen.h: Rework the naming of the load/store macros,

@@ -1,3 +1,10 @@
+2009-06-26  Jerry Maine  <crashfourit@gmail.com>
+	
+	Contributed under the terms of the MIT/X11 license by
+	Jerry Maine <crashfourit@gail.com>.
+
+	* mini-amd64.c: Added code to convert simd IR to native amd64 sse.
+
 2009-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_plt): Define debug labels for most plt entries.
