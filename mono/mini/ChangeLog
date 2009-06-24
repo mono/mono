@@ -1,3 +1,7 @@
+2009-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_plt): Define debug labels for most plt entries.
+
 2009-06-24  Neale Ferguson <neale@sinenomine.net>
 
 	* mini-s390x.c: Correct LCONV_TO_Ix and ICONV_TO_Ix routines. Fix leave_method
