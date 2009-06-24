@@ -3,10 +3,10 @@
 	* ArrayListTest.cs, CollectionBaseTest.cs, DictionaryEntryTest.cs,
 	HashtableTest.cs: Convert all tests to new-style nunit methods.
 
-	* QueueTest.cs: likewise. Convertion revealed 25 test that were
+	* QueueTest.cs: likewise. Conversion revealed 25 test that were
 	disabled after the NUnit 2.4 update.
 
-	* StackTest.cs: likewise. Convertion revealed 24 test that were
+	* StackTest.cs: likewise. Conversion revealed 24 test that were
 	disabled after the NUnit 2.4 update.
 
 2008-08-31  Zoltan Varga  <vargaz@gmail.com>
