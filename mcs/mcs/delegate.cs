@@ -688,9 +688,6 @@ namespace Mono.CSharp {
 					atype_modifier = Argument.AType.Out;
 					//atype = atype.GetElementType ();
 					break;
-				case Parameter.Modifier.ARGLIST:
-					// __arglist is not valid
-					throw new InternalErrorException ("__arglist modifier");
 				default:
 					atype_modifier = 0;
 					break;

@@ -3792,14 +3792,6 @@ namespace Mono.CSharp {
 
 				if (p_mod != Parameter.Modifier.PARAMS) {
 					p_mod = pd.FixedParameters [i].ModFlags & ~(Parameter.Modifier.OUTMASK | Parameter.Modifier.REFMASK);
-
-					if (p_mod == Parameter.Modifier.ARGLIST) {
-						if (a.Type == typeof (ArglistAccess))
-							continue;
-
-						p_mod = 0;
-					}
-
 					pt = pd.Types [i];
 				} else {
 					params_expanded_form = true;
@@ -4399,12 +4391,6 @@ namespace Mono.CSharp {
 					p_mod = pd.FixedParameters [a_idx].ModFlags;
 					pt = pd.Types [a_idx];
 					has_unsafe_arg |= pt.IsPointer;
-
-					if (p_mod == Parameter.Modifier.ARGLIST) {
-						if (a.Type != typeof (ArglistAccess))
-							break;
-						continue;
-					}
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
 						if (chose_params_expanded) {

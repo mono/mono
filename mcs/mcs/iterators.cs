@@ -906,7 +906,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				if ((mod & Parameter.Modifier.ARGLIST) != 0) {
+				if (p is ArglistParameter) {
 					Report.Error (1636, method.Location,
 						"__arglist is not allowed in parameter list of iterators");
 					return;

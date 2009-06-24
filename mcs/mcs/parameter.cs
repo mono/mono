@@ -190,7 +190,7 @@ namespace Mono.CSharp {
 	public class ArglistParameter : Parameter {
 		// Doesn't have proper type because it's never chosen for better conversion
 		public ArglistParameter (Location loc) :
-			base (null, String.Empty, Parameter.Modifier.ARGLIST, null, loc)
+			base (null, String.Empty, Parameter.Modifier.NONE, null, loc)
 		{
 		}
 
@@ -206,7 +206,7 @@ namespace Mono.CSharp {
 
 		public override Type Resolve (IResolveContext ec)
 		{
-			return typeof (ArglistParameter);
+			return typeof (ArglistAccess);
 		}
 
 		public override string GetSignatureForError ()
@@ -236,7 +236,6 @@ namespace Mono.CSharp {
 			PARAMS  = 4,
 			// This is a flag which says that it's either REF or OUT.
 			ISBYREF = 8,
-			ARGLIST = 16,
 			REFMASK	= 32,
 			OUTMASK = 64,
 			This	= 128
@@ -805,7 +804,7 @@ namespace Mono.CSharp {
 			if (FixedParameters [pos].HasExtensionMethodModifier)
 				return "this " + type;
 
-			Parameter.Modifier mod = FixedParameters [pos].ModFlags & ~Parameter.Modifier.ARGLIST;
+			Parameter.Modifier mod = FixedParameters [pos].ModFlags;
 			if (mod == 0)
 				return type;
 
@@ -863,20 +862,12 @@ namespace Mono.CSharp {
 			has_params = param.HasParams;
 		}
 
-		ParametersImported (IParameterData [] parameters, Type [] types, MethodBase method, bool hasParams)
+		ParametersImported (IParameterData [] parameters, Type [] types, bool hasArglist, bool hasParams)
 		{
 			this.parameters = parameters;
 			this.types = types;
-			has_arglist = (method.CallingConvention & CallingConventions.VarArgs) != 0;
-			if (has_arglist) {
-				this.parameters = new IParameterData [parameters.Length + 1];
-				parameters.CopyTo (this.parameters, 0);
-				this.parameters [parameters.Length] = new ArglistParameter (Location.Null);
-				this.types = new Type [types.Length + 1];
-				types.CopyTo (this.types, 0);
-				this.types [types.Length] = TypeManager.arg_iterator_type;
-			}
-			has_params = hasParams;
+			this.has_arglist = hasArglist;
+			this.has_params = hasParams;
 		}
 
 		public ParametersImported (IParameterData [] param, Type[] types)
@@ -916,19 +907,17 @@ namespace Mono.CSharp {
 		//
 		public static AParametersCollection Create (ParameterInfo [] pi, MethodBase method)
 		{
-			if (pi.Length == 0) {
-				if (method != null && (method.CallingConvention & CallingConventions.VarArgs) != 0)
-					return new ParametersImported (new IParameterData [0], Type.EmptyTypes, method, false);
+			int varargs = method != null && (method.CallingConvention & CallingConventions.VarArgs) != 0 ? 1 : 0;
 
+			if (pi.Length == 0 && varargs == 0)
 				return ParametersCompiled.EmptyReadOnlyParameters;
-			}
 
-			Type [] types = new Type [pi.Length];
-			IParameterData [] par = new IParameterData [pi.Length];
+			Type [] types = new Type [pi.Length + varargs];
+			IParameterData [] par = new IParameterData [pi.Length + varargs];
 			bool is_params = false;
 			PredefinedAttribute extension_attr = PredefinedAttributes.Get.Extension;
 			PredefinedAttribute param_attr = PredefinedAttributes.Get.ParamArray;
-			for (int i = 0; i < types.Length; i++) {
+			for (int i = 0; i < pi.Length; i++) {
 				types [i] = TypeManager.TypeToCoreType (pi [i].ParameterType);
 
 				ParameterInfo p = pi [i];
@@ -949,15 +938,10 @@ namespace Mono.CSharp {
 					method.IsDefined (extension_attr.Type, false)) {
 					mod = Parameter.Modifier.This;
 				} else {
-					if (i >= pi.Length - 2) {
-						if (types[i].IsArray) {
-							if (p.IsDefined (param_attr.Type, false)) {
-								mod = Parameter.Modifier.PARAMS;
-								is_params = true;
-							}
-						} else if (types[i] == TypeManager.runtime_argument_handle_type) {
-							par[i] = new ArglistParameter (Location.Null);
-							continue;
+					if (i >= pi.Length - 2 && types[i].IsArray) {
+						if (p.IsDefined (param_attr.Type, false)) {
+							mod = Parameter.Modifier.PARAMS;
+							is_params = true;
 						}
 					}
 
@@ -972,8 +956,13 @@ namespace Mono.CSharp {
 				par [i] = new ParameterData (p.Name, mod, default_value);
 			}
 
+			if (varargs != 0) {
+				par [par.Length - 1] = new ArglistParameter (Location.Null);
+				types [types.Length - 1] = typeof (ArglistAccess);
+			}
+
 			return method != null ?
-				new ParametersImported (par, types, method, is_params) :
+				new ParametersImported (par, types, varargs != 0, is_params) :
 				new ParametersImported (par, types);
 		}
 	}

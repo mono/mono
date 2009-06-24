@@ -778,9 +778,9 @@ namespace Mono.CSharp {
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
 				return true;
 
-			// Conversion from __arglist to RuntimeArgumentHandle
+			// Conversion from __arglist to System.ArgIterator
 			if (expr_type == typeof (ArglistAccess))
-				return target_type == TypeManager.runtime_argument_handle_type;
+				return target_type == TypeManager.arg_iterator_type;
 
 			return false;
 		}
@@ -1300,7 +1300,7 @@ namespace Mono.CSharp {
 					return am.DoResolve (ec);
 			}
 
-			if (expr_type == typeof (ArglistAccess) && target_type == TypeManager.runtime_argument_handle_type)
+			if (expr_type == typeof (ArglistAccess) && target_type == TypeManager.arg_iterator_type)
 				return expr;
 
 			return null;

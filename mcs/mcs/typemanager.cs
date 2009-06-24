@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 		if (t == null_type)
 			return "null";
 
-		if (t == typeof (ArglistParameter) || t == typeof (ArglistAccess))
+		if (t == typeof (ArglistAccess))
 			return "__arglist";
 			
 		if (t == typeof (AnonymousMethodBody))

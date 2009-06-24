@@ -6564,7 +6564,7 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
-			type = typeof (ArglistAccess);
+			type = TypeManager.runtime_argument_handle_type;
 
 			if (ec.IsInFieldInitializer || !ec.CurrentBlock.Toplevel.Parameters.HasArglist) 
 			{

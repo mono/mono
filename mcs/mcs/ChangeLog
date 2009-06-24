@@ -1,5 +1,11 @@
 2009-06-24  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, parameter.cs, iterators.cs, convert.cs,
+	expression.cs, ecore.cs, delegate.cs: Removed unnecessary ArgList
+	parameter modifier. Also fixes bug #515497.
+
+2009-06-24  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Replaced ArrayList with Arguments in need of a nonsequential 
 	arguments expression to be implemented.
 	
