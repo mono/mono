@@ -1,5 +1,15 @@
 2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_get_header): Call into the verifier to
+	check the method header.
+
+	* metadata-verify.c: Add mono_verifier_verify_method_header.
+
+	* verify-internals.h: Export mono_verifier_verify_method_header as
+	part of the internal API.
+
+2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_find_enum_basetype): Call into the verifier to
 	check the field signature. Replace an assert with an explicit check.
 
