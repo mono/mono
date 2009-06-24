@@ -45,7 +45,7 @@ namespace System.Net
 		Headers,
 		Content
 	}
-	
+
 	class WebConnection
 	{
 		ServicePoint sPoint;
@@ -58,6 +58,7 @@ namespace System.Net
 		byte [] buffer;
 		static AsyncCallback readDoneDelegate = new AsyncCallback (ReadDone);
 		EventHandler abortHandler;
+		AbortHelper abortHelper;
 		ReadState readState;
 		internal WebConnectionData Data;
 		bool chunkedRead;
@@ -89,8 +90,22 @@ namespace System.Net
 			readState = ReadState.None;
 			Data = new WebConnectionData ();
 			initConn = new WaitCallback (InitConnection);
-			abortHandler = new EventHandler (Abort);
 			queue = group.Queue;
+			abortHelper = new AbortHelper ();
+			abortHelper.Connection = this;
+			abortHandler = new EventHandler (abortHelper.Abort);
+		}
+
+		class AbortHelper {
+			public WebConnection Connection;
+
+			public void Abort (object sender, EventArgs args)
+			{
+				WebConnection other = ((HttpWebRequest) sender).WebConnection;
+				if (other == null)
+					other = Connection;
+				other.Abort (sender, args);
+			}
 		}
 
 		bool CanReuse ()
@@ -100,7 +115,7 @@ namespace System.Net
 			return (socket.Poll (0, SelectMode.SelectRead) == false);
 		}
 		
-		void Connect ()
+		void Connect (HttpWebRequest request)
 		{
 			lock (socketLock) {
 				if (socket != null && socket.Connected && status == WebExceptionStatus.Success) {
@@ -126,6 +141,7 @@ namespace System.Net
 					return;
 				}
 
+				WebConnectionData data = Data;
 				foreach (IPAddress address in hostEntry.AddressList) {
 					socket = new Socket (address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
@@ -140,19 +156,29 @@ namespace System.Net
 					} else {
 #endif
 						try {
-							if (Data.request == null || Data.request.Aborted)
+							if (request.Aborted)
 								return;
 							socket.Connect (remote);
 							status = WebExceptionStatus.Success;
 							break;
+						} catch (ThreadAbortException) {
+							// program exiting...
+							Socket s = socket;
+							socket = null;
+							if (s != null)
+								s.Close ();
+							return;
+						} catch (ObjectDisposedException exc) {
+							// socket closed from another thread
+							return;
 						} catch (Exception exc) {
-							// This might be null if the request is aborted
-							if (socket != null) {
-								socket.Close ();
-								socket = null;
+							Socket s = socket;
+							socket = null;
+							if (s != null)
+								s.Close ();
+							if (!request.Aborted)
 								status = WebExceptionStatus.ConnectFailure;
-								connect_exception = exc;
-							}
+							connect_exception = exc;
 						}
 #if NET_2_0
 					}
@@ -312,7 +338,8 @@ namespace System.Net
 					nstream = serverStream;
 				}
 			} catch (Exception) {
-				status = WebExceptionStatus.ConnectFailure;
+				if (!request.Aborted)
+					status = WebExceptionStatus.ConnectFailure;
 				return false;
 			}
 
@@ -574,23 +601,21 @@ namespace System.Net
 		void InitConnection (object state)
 		{
 			HttpWebRequest request = (HttpWebRequest) state;
+			request.WebConnection = this;
 
-			if (status == WebExceptionStatus.RequestCanceled) {
-				lock (this) {
-					busy = false;
-					Data = new WebConnectionData ();
-					SendNext ();
-				}
+			if (request.Aborted)
 				return;
-			}
 
 			keepAlive = request.KeepAlive;
 			Data = new WebConnectionData ();
 			Data.request = request;
 		retry:
-			Connect ();
+			Connect (request);
+			if (request.Aborted)
+				return;
+
 			if (status != WebExceptionStatus.Success) {
-				if (status != WebExceptionStatus.RequestCanceled) {
+				if (!request.Aborted) {
 					request.SetWriteStreamError (status, connect_exception);
 					Close (true);
 				}
@@ -598,12 +623,16 @@ namespace System.Net
 			}
 			
 			if (!CreateStream (request)) {
+				if (request.Aborted)
+					return;
+
+				WebExceptionStatus st = status;
 				if (Data.Challenge != null)
 					goto retry;
 
 				Exception cnc_exc = connect_exception;
 				connect_exception = null;
-				request.SetWriteStreamError (status, cnc_exc);
+				request.SetWriteStreamError (st, cnc_exc);
 				Close (true);
 				return;
 			}
@@ -614,6 +643,9 @@ namespace System.Net
 		
 		internal EventHandler SendRequest (HttpWebRequest request)
 		{
+			if (request.Aborted)
+				return null;
+
 			lock (this) {
 				if (!busy) {
 					busy = true;
@@ -944,20 +976,23 @@ namespace System.Net
 				lock (queue) {
 					HttpWebRequest req = (HttpWebRequest) sender;
 					if (Data.request == req) {
-						if (!Data.request.FinishedReading)
-							HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
+						if (!req.FinishedReading) {
+							status = WebExceptionStatus.RequestCanceled;
+							Close (false);
+							Data = new WebConnectionData ();
+							if (queue.Count > 0) {
+								Data.request = (HttpWebRequest) queue.Dequeue ();
+								SendRequest (Data.request);
+							}
+						}
 						return;
-					} else if (Data.request == null && socket != null) {
-						Socket s = socket;
-						socket = null;
-						s.Close ();
 					}
 
 					req.FinishedReading = true;
 					req.SetResponseError (WebExceptionStatus.RequestCanceled, null, "User aborted");
 					if (queue.Count > 0 && queue.Peek () == sender) {
 						queue.Dequeue ();
-					} else {
+					} else if (queue.Count > 0) {
 						object [] old = queue.ToArray ();
 						queue.Clear ();
 						for (int i = old.Length - 1; i >= 0; i--) {
@@ -965,8 +1000,6 @@ namespace System.Net
 								queue.Enqueue (old [i]);
 						}
 					}
-					if (queue.Count == 0)
-						Close (false);
 				}
 			}
 		}

@@ -1,3 +1,13 @@
+2009-06-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnection.cs: 'socket' and 'Data' where being changed by 2
+	threads at the same time when there were queued requests and the
+	current one was aborted in Connect().
+	* HttpWebRequest.cs: 'aborted' is now an int and we use Interlocked to
+	access it. Added WebConnection field used when aborting the request.
+
+	Fixes bug #514591 for good.
+
 2009-06-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: check for an aborted request in Begin* before
