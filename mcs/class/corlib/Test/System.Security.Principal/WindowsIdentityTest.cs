@@ -19,7 +19,7 @@ using System.Security.Principal;
 namespace MonoTests.System.Security.Principal {
 
 	[TestFixture]
-	public class WindowsIdentityTest : Assertion {
+	public class WindowsIdentityTest {
 
 		private bool IsPosix {
 			get {
@@ -57,7 +57,7 @@ namespace MonoTests.System.Security.Principal {
 			try {
 				WindowsIdentity id = new WindowsIdentity (IntPtr.Zero);
 				if (!IsPosix)
-					Fail ("Expected ArgumentException on Windows platforms");
+					Assert.Fail ("Expected ArgumentException on Windows platforms");
 			}
 			catch (ArgumentException) {
 				if (IsPosix)
@@ -83,7 +83,7 @@ namespace MonoTests.System.Security.Principal {
 			try {
 				WindowsIdentity id = new WindowsIdentity (wi.Name);
 				/*if (!IsWin2k3orLater && !IsPosix)
-					Fail ("Expected ArgumentException but got none");*/
+					Assert.Fail ("Expected ArgumentException but got none");*/
 			}
 			catch (ArgumentException) {
 				if (/*IsWin2k3orLater ||*/ IsPosix)
@@ -109,7 +109,7 @@ namespace MonoTests.System.Security.Principal {
 			try {
 				WindowsIdentity id = new WindowsIdentity (wi.Name, null);
 				/*if (!IsWin2k3orLater && !IsPosix)
-					Fail ("Expected ArgumentException but got none");*/
+					Assert.Fail ("Expected ArgumentException but got none");*/
 			}
 			catch (ArgumentException) {
 				if (/*IsWin2k3orLater ||*/ IsPosix)
@@ -127,7 +127,7 @@ namespace MonoTests.System.Security.Principal {
 			try {
 				WindowsIdentity id = new WindowsIdentity (wi.Name, wi.AuthenticationType);
 				/*if (!IsWin2k3orLater && !IsPosix)
-					Fail ("Expected ArgumentException but got none");*/
+					Assert.Fail ("Expected ArgumentException but got none");*/
 			}
 			catch (ArgumentException) {
 				if (/*IsWin2k3orLater ||*/ IsPosix)
@@ -139,18 +139,18 @@ namespace MonoTests.System.Security.Principal {
 		public void Anonymous () 
 		{
 			WindowsIdentity id = WindowsIdentity.GetAnonymous ();
-			AssertEquals ("AuthenticationType", String.Empty, id.AuthenticationType);
-			Assert ("IsAnonymous", id.IsAnonymous);
-			Assert ("IsAuthenticated", !id.IsAuthenticated);
-			Assert ("IsGuest", !id.IsGuest);
-			Assert ("IsSystem", !id.IsSystem);
+			Assert.AreEqual (String.Empty, id.AuthenticationType, "AuthenticationType");
+			Assert.IsTrue (id.IsAnonymous, "IsAnonymous");
+			Assert.IsTrue (!id.IsAuthenticated, "IsAuthenticated");
+			Assert.IsTrue (!id.IsGuest, "IsGuest");
+			Assert.IsTrue (!id.IsSystem, "IsSystem");
 			if (IsPosix) {
-				Assert ("Token", (IntPtr.Zero != id.Token));
-				AssertNotNull ("Name", id.Name);
+				Assert.IsTrue ((IntPtr.Zero != id.Token), "Token");
+				Assert.IsNotNull (id.Name, "Name");
 			}
 			else {
-				AssertEquals ("Token", IntPtr.Zero, id.Token);
-				AssertEquals ("Name", String.Empty, id.Name);
+				Assert.AreEqual (IntPtr.Zero, id.Token, "Token");
+				Assert.AreEqual (String.Empty, id.Name, "Name");
 			}
 		}
 
@@ -158,16 +158,16 @@ namespace MonoTests.System.Security.Principal {
 		public void Current () 
 		{
 			WindowsIdentity id = WindowsIdentity.GetCurrent ();
-			AssertNotNull ("AuthenticationType", id.AuthenticationType);
-			Assert ("IsAnonymous", !id.IsAnonymous);
-			Assert ("IsAuthenticated", id.IsAuthenticated);
-			Assert ("IsGuest", !id.IsGuest);
+			Assert.IsNotNull (id.AuthenticationType, "AuthenticationType");
+			Assert.IsTrue (!id.IsAnonymous, "IsAnonymous");
+			Assert.IsTrue (id.IsAuthenticated, "IsAuthenticated");
+			Assert.IsTrue (!id.IsGuest, "IsGuest");
 			// root is 0 - so IntPtr.Zero is valid on Linux (but not on Windows)
-			Assert ("IsSystem", (!id.IsSystem || (id.Token == IntPtr.Zero)));
+			Assert.IsTrue ((!id.IsSystem || (id.Token == IntPtr.Zero)), "IsSystem");
 			if (!IsPosix) {
-				Assert ("Token", (id.Token != IntPtr.Zero));
+				Assert.IsTrue ((id.Token != IntPtr.Zero), "Token");
 			}
-			AssertNotNull ("Name", id.Name);
+			Assert.IsNotNull (id.Name, "Name");
 		}
 
 		[Test]
@@ -176,13 +176,13 @@ namespace MonoTests.System.Security.Principal {
 			WindowsIdentity id = WindowsIdentity.GetAnonymous ();
 
 			IIdentity i = (id as IIdentity);
-			AssertNotNull ("IIdentity", i);
+			Assert.IsNotNull (i, "IIdentity");
 
 			IDeserializationCallback dc = (id as IDeserializationCallback);
-			AssertNotNull ("IDeserializationCallback", dc);
+			Assert.IsNotNull (dc, "IDeserializationCallback");
 #if NET_1_1
 			ISerializable s = (id as ISerializable);
-			AssertNotNull ("ISerializable", s);
+			Assert.IsNotNull (s, "ISerializable");
 #endif
 		}
 
@@ -210,7 +210,7 @@ namespace MonoTests.System.Security.Principal {
 			foreach (string role in roles) {
 				// somehow I got a null in there ?
 				if (role != null)
-					Assert (role, wp.IsInRole (role));
+					Assert.IsTrue (wp.IsInRole (role), role);
 			}
 		}
 
@@ -223,12 +223,12 @@ namespace MonoTests.System.Security.Principal {
 			formatter.Serialize (ms, wi);
 			ms.Position = 0;
 			WindowsIdentity back = (WindowsIdentity) formatter.Deserialize (ms);
-			AssertEquals ("AuthenticationType", wi.AuthenticationType, back.AuthenticationType);
-			AssertEquals ("IsAnonymous", wi.IsAnonymous, back.IsAnonymous);
-			AssertEquals ("IsAuthenticated", wi.IsAuthenticated, back.IsAuthenticated);
-			AssertEquals ("IsGuest", wi.IsGuest, back.IsGuest);
-			AssertEquals ("IsSystem", wi.IsSystem, back.IsSystem);
-			AssertEquals ("Name", wi.Name, back.Name);
+			Assert.AreEqual (wi.AuthenticationType, back.AuthenticationType, "AuthenticationType");
+			Assert.AreEqual (wi.IsAnonymous, back.IsAnonymous, "IsAnonymous");
+			Assert.AreEqual (wi.IsAuthenticated, back.IsAuthenticated, "IsAuthenticated");
+			Assert.AreEqual (wi.IsGuest, back.IsGuest, "IsGuest");
+			Assert.AreEqual (wi.IsSystem, back.IsSystem, "IsSystem");
+			Assert.AreEqual (wi.Name, back.Name, "Name");
 			// note: token may be different (no compare)
 		}
 	}
