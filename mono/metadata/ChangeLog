@@ -1,5 +1,18 @@
 2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_signature): Call into the verifier to check
+	the method signature.
+
+	* metadata-verify.c (verify_method_table): Move signature verification
+	to verify_method_table_full.
+
+	* metadata-verify.c: Add mono_verifier_verify_method_signature.
+
+	* verify-internals.h: Export mono_verifier_verify_method_signature as
+	part of the internal API.
+
+2009-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_method_get_header): Call into the verifier to
 	check the method header.
 
